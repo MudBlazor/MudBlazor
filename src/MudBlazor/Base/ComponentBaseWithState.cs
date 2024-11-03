@@ -50,7 +50,7 @@ public class ComponentBaseWithState : ComponentBase
     /// Creates a scope for registering parameters.
     /// </summary>
     /// <returns>A <see cref="ParameterRegistrationBuilderScope"/> instance for registering parameters.</returns>
-    internal IParameterRegistrationBuilderScope CreateRegisterScope()
+    protected IParameterRegistrationBuilderScope CreateRegisterScope()
     {
         if (_scope.IsLocked)
         {

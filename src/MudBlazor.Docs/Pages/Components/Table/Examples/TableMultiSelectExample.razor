@@ -4,7 +4,7 @@
 @inject HttpClient httpClient
 
 <MudSwitch @bind-Value="_selectOnRowClick">SelectOnRowClick: @_selectOnRowClick</MudSwitch>
-<MudText Inline="true">Item: @_selectedItemText</MudText>
+<MudText HtmlTag="span">Item: @_selectedItemText</MudText>
 <MudText>Selected items (@selectedItems?.Count): @(selectedItems == null ? "" : string.Join(", ", selectedItems.OrderBy(x => x.Sign).Select(x => x.Sign)))</MudText>
 
 

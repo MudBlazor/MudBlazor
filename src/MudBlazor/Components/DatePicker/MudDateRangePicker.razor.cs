@@ -55,7 +55,7 @@ namespace MudBlazor
         public DateRange DateRange
         {
             get => _dateRange;
-            set => SetDateRangeAsync(value, true).AndForget();
+            set => SetDateRangeAsync(value, true).CatchAndLog();
         }
 
         protected async Task SetDateRangeAsync(DateRange range, bool updateValue)
@@ -113,7 +113,7 @@ namespace MudBlazor
 
                 Touched = true;
                 _rangeText = value;
-                SetDateRangeAsync(ParseDateRangeValue(value?.Start, value?.End), false).AndForget();
+                SetDateRangeAsync(ParseDateRangeValue(value?.Start, value?.End), false).CatchAndLog();
             }
         }
 

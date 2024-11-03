@@ -132,3 +132,8 @@
     padding-inline-end: unset;
   }
 }
+
+.mud-list-item-secondary-text {
+    font-weight: 500;
+    color: var(--mud-palette-text-secondary);
+}

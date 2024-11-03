@@ -1,18 +1,19 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace MudBlazor.Docs.WasmHost.Pages
+namespace MudBlazor.Docs.WasmHost.Pages;
+
+public class HostModel : PageModel
 {
-    public class HostModel : PageModel
+    public bool PreRender { get; set; }
+
+    public IActionResult OnGet()
     {
-        public bool PreRender { get; set; }
-        public IActionResult OnGet()
+        if (Request.Headers.ContainsKey("UsePrerender"))
         {
-            if (Request.Headers.ContainsKey("UsePrerender"))
-            {
-                PreRender = true;
-            }
-            return Page();
+            PreRender = true;
         }
+
+        return Page();
     }
 }

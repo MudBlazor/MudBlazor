@@ -21,7 +21,7 @@ namespace MudBlazor
             .Build();
 
         /// <summary>
-        /// Gets or sets the color of the button.
+        /// The color of the button.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Color.Default"/>.  Theme colors are supported.
@@ -31,7 +31,7 @@ namespace MudBlazor
         public Color Color { get; set; } = Color.Default;
 
         /// <summary>
-        /// Gets or sets the size of the button.
+        /// The size of the button.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Size.Large"/>.
@@ -41,7 +41,7 @@ namespace MudBlazor
         public Size Size { get; set; } = Size.Large;
 
         /// <summary>
-        /// Gets or sets the icon shown before any text.
+        /// The icon shown before any text.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  Use the <see cref="EndIcon"/> property to show an icon after text.
@@ -51,7 +51,7 @@ namespace MudBlazor
         public string? StartIcon { get; set; }
 
         /// <summary>
-        /// Gets or sets the icon shown after any text.
+        /// The icon shown after any text.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  Use the <see cref="StartIcon"/> property to show an icon before text.
@@ -61,7 +61,7 @@ namespace MudBlazor
         public string? EndIcon { get; set; }
 
         /// <summary>
-        /// Gets or sets the color of any icons.
+        /// The color of any icons.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Color.Inherit"/>.  Controls the color of <see cref="StartIcon"/> and <see cref="EndIcon"/> icons.
@@ -71,7 +71,7 @@ namespace MudBlazor
         public Color IconColor { get; set; } = Color.Inherit;
 
         /// <summary>
-        /// Gets or sets the size of the icon.
+        /// The size of the icon.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Size.Medium"/>.
@@ -81,7 +81,7 @@ namespace MudBlazor
         public Size IconSize { get; set; } = Size.Medium;
 
         /// <summary>
-        /// Gets or sets any text displayed in the button.
+        /// The text displayed in the button.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.

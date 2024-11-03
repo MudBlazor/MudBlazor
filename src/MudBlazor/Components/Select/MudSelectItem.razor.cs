@@ -33,7 +33,7 @@ namespace MudBlazor
                 _parent.CheckGenericTypeMatch(this);
                 if (MudSelect == null)
                     return;
-                var isSelected = MudSelect.Add(this);
+                var selected = MudSelect.Add(this);
                 if (_parent.MultiSelection)
                 {
                     MudSelect.SelectionChangedFromOutside += OnUpdateSelectionStateFromOutside;
@@ -41,13 +41,13 @@ namespace MudBlazor
                 }
                 else
                 {
-                    IsSelected = isSelected;
+                    Selected = selected;
                 }
             }
         }
 
         private IMudShadowSelect _shadowParent;
-        private bool _isSelected;
+        private bool _selected;
 
         [CascadingParameter]
         internal IMudShadowSelect IMudShadowSelect
@@ -73,9 +73,9 @@ namespace MudBlazor
         {
             if (selection == null)
                 return;
-            var old_is_selected = IsSelected;
-            IsSelected = selection.Contains(Value);
-            if (old_is_selected != IsSelected)
+            var old_selected = Selected;
+            Selected = selection.Contains(Value);
+            if (old_selected != Selected)
                 InvokeAsync(StateHasChanged);
         }
 
@@ -102,12 +102,12 @@ namespace MudBlazor
         /// <summary>
         /// Selected state of the option. Only works if the parent is a mulit-select
         /// </summary>
-        internal bool IsSelected
+        internal bool Selected
         {
-            get => _isSelected;
+            get => _selected;
             set
             {
-                _isSelected = value;
+                _selected = value;
             }
         }
 
@@ -120,7 +120,7 @@ namespace MudBlazor
             {
                 if (!MultiSelection)
                     return null;
-                return IsSelected ? Icons.Material.Filled.CheckBox : Icons.Material.Filled.CheckBoxOutlineBlank;
+                return Selected ? Icons.Material.Filled.CheckBox : Icons.Material.Filled.CheckBoxOutlineBlank;
             }
         }
 
@@ -138,7 +138,7 @@ namespace MudBlazor
         private void OnClicked()
         {
             if (MultiSelection)
-                IsSelected = !IsSelected;
+                Selected = !Selected;
 
             MudSelect?.SelectOption(Value);
             InvokeAsync(StateHasChanged);

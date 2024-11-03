@@ -16,7 +16,7 @@ namespace MudBlazor.State.Builder;
 /// Builder class for constructing instances of <see cref="ParameterState{T}"/>.
 /// </summary>
 /// <typeparam name="T">The type of the component's property value.</typeparam>
-internal class RegisterParameterBuilder<T> : IParameterBuilderAttach
+public class RegisterParameterBuilder<T> : IParameterBuilderAttach
 {
     private string? _handlerName;
     private string? _parameterName;

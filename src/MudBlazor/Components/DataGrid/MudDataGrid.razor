@@ -87,7 +87,7 @@
                                         </MudStack>
 
                                         <MudDropContainer @ref="_columnsPanelDropContainer" T="Column<T>" Items="@RenderedColumns" ItemsSelector="(item, dropzone) => true" 
-                                            ItemIsDisabled="@((item) => !this.ColumnsPanelReordering)" ItemDropped="ColumnOrderUpdated">
+                                            ItemDisabled="@((item) => !this.ColumnsPanelReordering)" ItemDropped="ColumnOrderUpdated">
                                             <ChildContent>
                                                 <MudDropZone T="Column<T>" Class="flex-grow-1" AllowReorder=this.ColumnsPanelReordering />
                                             </ChildContent>
@@ -337,7 +337,7 @@
         }
     </div>
     <CascadingValue Value="true" IsFixed Name="IsNested">
-        <MudDialog Options="EditDialogOptions" @bind-IsVisible="isEditFormOpen">
+        <MudDialog Options="EditDialogOptions" @bind-Visible="isEditFormOpen">
             <DialogContent>
                 <MudForm @ref="_editForm" FieldChanged="FormFieldChanged">
                     @foreach (var column in RenderedColumns)
@@ -355,12 +355,12 @@
                             if (propertyType == typeof(string))
                             {
                                 <MudTextField T="string" Label="@column.Title" Value="@cell._valueString" ValueChanged="@cell.StringValueChangedAsync" Margin="@Margin.Dense"
-                                  Required=column.Required Variant="@Variant.Outlined" Disabled="@(!column.IsEditable || ReadOnly)" Class="mt-4" />
+                                  Required=column.Required Variant="@Variant.Outlined" Disabled="@(!column.Editable || ReadOnly)" Class="mt-4" />
                             }
                             else if (TypeIdentifier.IsNumber(propertyType))
                             {
                                 <MudNumericField T="double?" Label="@column.Title" Value="@cell._valueNumber" ValueChanged="@cell.NumberValueChangedAsync" Margin="@Margin.Dense"
-                                     Required=column.Required Variant="@Variant.Outlined" Disabled="@(!column.IsEditable || ReadOnly)" Class="mt-4" />
+                                     Required=column.Required Variant="@Variant.Outlined" Disabled="@(!column.Editable || ReadOnly)" Class="mt-4" />
                             }
                         }
                     }
@@ -416,7 +416,7 @@
                 var cell = new Cell<T>(this, column, item);
             }
             <td data-label="@column.Title" class="@cell.computedClass" style="@cell.computedStyle">
-                @if (column.IsEditable && !ReadOnly && EditMode == DataGridEditMode.Cell)
+                @if (column.Editable && !ReadOnly && EditMode == DataGridEditMode.Cell)
                 {
                     if (column.EditTemplate is not null)
                     {

@@ -3,11 +3,11 @@
 @inherits MudComponentBase
 
 <tr class="@Classname" @onclick="@OnRowClickedAsync" @onmouseenter="@RowMouseEnterEventCallback" @onmouseleave="@RowMouseLeaveEventCallback" style="@Style" @attributes="@UserAttributes">
-    @if (IsEditable && ((Context?.Table.EditButtonPosition.DisplayEditButtonAtStart() == true && Context?.Table.EditTrigger == TableEditTrigger.EditButton) || Context?.Table.ApplyButtonPosition.DisplayApplyButtonAtStart() == true))
+    @if (Context?.Table?.Editable == true && ((Context?.Table.EditButtonPosition.DisplayEditButtonAtStart() == true && Context?.Table.EditTrigger == TableEditTrigger.EditButton) || Context?.Table.ApplyButtonPosition.DisplayApplyButtonAtStart() == true))
     {
         @* Add datalabel as a placeholder to avoid jumps on small viewports *@
         <MudTd DataLabel="&nbsp;" Class="py-3">
-            @if (Context?.Table.EditTrigger == TableEditTrigger.EditButton && !object.ReferenceEquals(Context?.Table._editingItem, Item) && (!Context?.Table.ReadOnly ?? false) && Context?.Table.EditButtonPosition.DisplayEditButtonAtStart() == true)
+            @if (Editable && Context?.Table.EditTrigger == TableEditTrigger.EditButton && !ReferenceEquals(Context?.Table._editingItem, Item) && (!Context?.Table.ReadOnly ?? false) && Context?.Table.EditButtonPosition.DisplayEditButtonAtStart() == true)
             {
                 @if (Context?.Table.EditButtonContent != null)
                 {
@@ -15,42 +15,42 @@
                 }
                 else
                 {
-                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="StartEditingItem" Disabled="Context.EditButtonDisabled(Item)" />
+                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="StartEditingItem" Disabled="Context?.EditButtonDisabled(Item) ?? false" />
                 }
             }
-            else if (object.ReferenceEquals(Context?.Table._editingItem, Item) && (!Context?.Table.ReadOnly ?? false) && Context?.Table.ApplyButtonPosition.DisplayApplyButtonAtStart() == true)
+            else if (ReferenceEquals(Context?.Table._editingItem, Item) && (!Context?.Table.ReadOnly ?? false) && Context?.Table.ApplyButtonPosition.DisplayApplyButtonAtStart() == true)
             {
                 <div style="display: flex;">
-                    <MudTooltip Text="@Context.Table.CommitEditTooltip">
-                        <MudIconButton Class="pa-0" Icon="@Context.Table.CommitEditIcon" OnClick="FinishEdit" Size="@Size.Small" Disabled="@(!(Context?.Table.Validator?.IsValid ?? false))" />
+                    <MudTooltip Text="@Context?.Table?.CommitEditTooltip">
+                        <MudIconButton Class="pa-0" Icon="@Context?.Table?.CommitEditIcon" OnClick="FinishEdit" Size="@Size.Small" Disabled="@(!(Context?.Table?.Validator?.IsValid ?? false))" />
                     </MudTooltip>
-                    @if (Context.Table.CanCancelEdit)
+                    @if (Context?.Table?.CanCancelEdit ?? false)
                     {
-                        <MudTooltip Text="@Context.Table.CancelEditTooltip">
-                            <MudIconButton Class="pa-0 ml-4" Icon="@Context.Table.CancelEditIcon" OnClick="CancelEdit" Size="@Size.Small" />
+                        <MudTooltip Text="@Context?.Table?.CancelEditTooltip">
+                            <MudIconButton Class="pa-0 ml-4" Icon="@Context?.Table?.CancelEditIcon" OnClick="CancelEdit" Size="@Size.Small" />
                         </MudTooltip>
                     }
                 </div>
             }
         </MudTd>
     }
-    @if (Expandable || IsCheckable)
+    @if (Expandable || Checkable)
     {
         <MudElement HtmlTag="@("Td")" Class="mud-table-cell">
             <div class="d-flex" style="@ActionsStylename">
-                @if (IsCheckable)
+                @if (Checkable)
                 {
-                    <MudCheckBox @bind-Value="IsChecked" StopClickPropagation="true" Class="mud-table-cell-checkbox"></MudCheckBox>
+                    <MudCheckBox @bind-Value="Checked" StopClickPropagation="true" Class="mud-table-cell-checkbox"></MudCheckBox>
                 }
             </div>
         </MudElement>
     }
     @ChildContent
-    @if (IsEditable && ((Context?.Table.EditButtonPosition.DisplayEditButtonAtEnd() == true && Context?.Table.EditTrigger == TableEditTrigger.EditButton) || Context?.Table.ApplyButtonPosition.DisplayApplyButtonAtEnd() == true))
+    @if (Context?.Table?.Editable == true && ((Context?.Table.EditButtonPosition.DisplayEditButtonAtEnd() == true && Context?.Table.EditTrigger == TableEditTrigger.EditButton) || Context?.Table.ApplyButtonPosition.DisplayApplyButtonAtEnd() == true))
     {
         @* Add datalabel as a placeholder to avoid jumps on small viewports *@
         <MudTd DataLabel="&nbsp;" Class="py-3">
-            @if (Context?.Table.EditTrigger == TableEditTrigger.EditButton && !object.ReferenceEquals(Context?.Table._editingItem, Item) && (!Context?.Table.ReadOnly ?? false) && Context?.Table.EditButtonPosition.DisplayEditButtonAtEnd() == true)
+            @if (Editable && Context?.Table.EditTrigger == TableEditTrigger.EditButton && !ReferenceEquals(Context?.Table._editingItem, Item) && (!Context?.Table.ReadOnly ?? false) && Context?.Table.EditButtonPosition.DisplayEditButtonAtEnd() == true)
             {
                 @if (Context?.Table.EditButtonContent != null)
                 {
@@ -58,10 +58,10 @@
                 }
                 else
                 {
-                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="StartEditingItem" Disabled="Context.EditButtonDisabled(Item)" />
+                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="StartEditingItem" Disabled="Context?.EditButtonDisabled(Item)?? false" />
                 }
             }
-            else if (object.ReferenceEquals(Context?.Table._editingItem, Item) && (!Context?.Table.ReadOnly ?? false) && Context?.Table.ApplyButtonPosition.DisplayApplyButtonAtEnd() == true)
+            else if (ReferenceEquals(Context?.Table._editingItem, Item) && (!Context?.Table.ReadOnly ?? false) && Context?.Table.ApplyButtonPosition.DisplayApplyButtonAtEnd() == true)
             {
                 <div style="display: flex;">
                     <MudTooltip Text="@Context.Table.CommitEditTooltip">

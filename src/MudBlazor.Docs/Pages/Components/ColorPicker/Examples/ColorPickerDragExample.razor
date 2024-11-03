@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudStack>
-    <MudColorPicker ThrottleInterval="Interval" DisableDragEffect="!Draggable" PickerVariant="PickerVariant.Static" />
+    <MudColorPicker ThrottleInterval="Interval" DragEffect="@Draggable" PickerVariant="PickerVariant.Static" />
 
     <MudNumericField T="int" @bind-Value="Interval" Label="Throttle interval" />
 

@@ -1,0 +1,19 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudTabs PanelClass="pa-6" Ripple="@Ripple">
+    <MudTabPanel Text="Tab One">
+        <MudText>Content One</MudText>
+    </MudTabPanel>
+    <MudTabPanel Text="Tab Two">
+        <MudText>Content Two</MudText>
+    </MudTabPanel>
+    <MudTabPanel Text="Tab Three">
+        <MudText>Content Three</MudText>
+    </MudTabPanel>
+</MudTabs>
+
+@code
+{
+    [Parameter]
+    public required bool Ripple { get; set; }
+}

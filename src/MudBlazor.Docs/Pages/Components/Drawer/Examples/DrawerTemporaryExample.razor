@@ -5,7 +5,7 @@
 <MudButton Variant="Variant.Text" OnClick="@(() => OpenDrawer(Anchor.Top))">Top</MudButton>
 <MudButton Variant="Variant.Text" OnClick="@(() => OpenDrawer(Anchor.Bottom))">Bottom</MudButton>
 
-<MudDrawer @bind-Open="@open" Anchor="@anchor" Elevation="1" Variant="@DrawerVariant.Temporary">
+<MudDrawer @bind-Open="@_open" Anchor="@_anchor" Elevation="1" Variant="@DrawerVariant.Temporary">
     <MudDrawerHeader>
         <MudText Typo="Typo.h6">My App</MudText>
     </MudDrawerHeader>
@@ -17,12 +17,12 @@
 </MudDrawer>
 
 @code{ 
-    bool open;
-    Anchor anchor;
-    
-    void OpenDrawer(Anchor anchor)
+    private bool _open;
+    private Anchor _anchor;
+
+    private void OpenDrawer(Anchor anchor)
     {
-        open = true;
-        this.anchor = anchor;
+        _open = true;
+        _anchor = anchor;
     }
 }

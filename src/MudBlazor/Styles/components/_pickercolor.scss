@@ -27,11 +27,11 @@
   height: 250px;
   position: relative;
   overflow: hidden;
+  touch-action: pinch-zoom;
 
   .mud-picker-color-overlay {
     width: 100%;
     height: 100%;
-
     /*Don't let the browser selection menu pop up from double clicking the svg*/
     user-select: none;
 
@@ -48,7 +48,6 @@
     position: absolute;
     top: -13px;
     left: -13px;
-
     /*Let the overlay handle the clicks*/
     pointer-events: none;
   }

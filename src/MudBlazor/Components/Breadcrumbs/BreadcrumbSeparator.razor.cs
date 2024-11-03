@@ -14,7 +14,7 @@ namespace MudBlazor;
 public partial class BreadcrumbSeparator
 {
     /// <summary>
-    /// Gets or sets the parent breadcrumb component.
+    /// The parent breadcrumb component.
     /// </summary>
     [CascadingParameter]
     public MudBreadcrumbs? Parent { get; set; }

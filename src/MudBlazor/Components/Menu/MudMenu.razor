@@ -15,8 +15,7 @@
             </div>
         </CascadingValue>
     }
-    else if (string.IsNullOrEmpty(Icon))
-    {
+    else if (string.IsNullOrEmpty(Icon)) {
         <MudButton StartIcon="@StartIcon"
                    EndIcon="@EndIcon"
                    IconColor="@IconColor"
@@ -31,13 +30,13 @@
             @Label
         </MudButton>
     }
-    else
-    {
+    else {
         <MudIconButton Variant="@Variant" Icon="@Icon" Color="@Color" Size="@Size" Disabled="@Disabled" Ripple="@Ripple" DropShadow="@DropShadow" @onclick="@ToggleMenuAsync"
                        aria-label="@AriaLabel" />
     }
     @* The portal has to include  the cascading values inside, because it's not able to teletransport the cascade *@
-    <MudPopover Open="@_isOpen" Class="@PopoverClass" MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" RelativeWidth="@FullWidth" Style="@_popoverStyle" @ontouchend:preventDefault>
+    <MudPopover Open="@_open" Class="@PopoverClass" MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" RelativeWidth="@FullWidth" Style="@_popoverStyle" @ontouchend:preventDefault
+                DropShadow="@DropShadow">
         <CascadingValue Value="@this">
             <MudList T="object" Class="@ListClass" Dense="@Dense"
                 @onmouseenter="@MouseEnterAsync"
@@ -46,5 +45,5 @@
             </MudList>
         </CascadingValue>
     </MudPopover>
-    <MudOverlay Visible="@(_isOpen && ActivationEvent != MouseEvent.MouseOver)" OnClick="@ToggleMenuAsync" LockScroll="LockScroll" />
+    <MudOverlay Visible="@(_open && ActivationEvent != MouseEvent.MouseOver)" OnClick="@ToggleMenuAsync" LockScroll="LockScroll" />
 </div>

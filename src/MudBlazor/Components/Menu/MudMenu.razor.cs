@@ -10,7 +10,7 @@ namespace MudBlazor
 #nullable enable
     public partial class MudMenu : MudComponentBase, IActivatable
     {
-        private bool _isOpen;
+        private bool _open;
         private string? _popoverStyle;
         private bool _isMouseOver = false;
 
@@ -192,18 +192,18 @@ namespace MudBlazor
         public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// Fired when the menu IsOpen property changes.
+        /// Fired when the menu <see cref="Open"/> property changes.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Menu.PopupBehavior)]
-        public EventCallback<bool> IsOpenChanged { get; set; }
+        public EventCallback<bool> OpenChanged { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether the menu is currently open or not.
         /// </summary>
-        public bool IsOpen
+        public bool Open
         {
-            get { return _isOpen; }
+            get { return _open; }
         }
 
         /// <summary>
@@ -211,12 +211,12 @@ namespace MudBlazor
         /// </summary>
         public Task CloseMenuAsync()
         {
-            _isOpen = false;
+            _open = false;
             _isMouseOver = false;
             _popoverStyle = null;
             StateHasChanged();
 
-            return IsOpenChanged.InvokeAsync(_isOpen);
+            return OpenChanged.InvokeAsync(_open);
         }
 
         /// <summary>
@@ -240,10 +240,10 @@ namespace MudBlazor
                 }
             }
 
-            _isOpen = true;
+            _open = true;
             StateHasChanged();
 
-            return IsOpenChanged.InvokeAsync(_isOpen);
+            return OpenChanged.InvokeAsync(_open);
         }
 
         /// <summary>
@@ -269,18 +269,18 @@ namespace MudBlazor
             // oncontextmenu turns a touch event into MouseEventArgs but with a button of -1.
             if (args is MouseEventArgs mouseEventArgs && mouseEventArgs.Button != -1)
             {
-                if (ActivationEvent == MouseEvent.LeftClick && mouseEventArgs.Button != 0 && !_isOpen)
+                if (ActivationEvent == MouseEvent.LeftClick && mouseEventArgs.Button != 0 && !_open)
                 {
                     return;
                 }
 
-                if (ActivationEvent == MouseEvent.RightClick && mouseEventArgs.Button != 2 && !_isOpen)
+                if (ActivationEvent == MouseEvent.RightClick && mouseEventArgs.Button != 2 && !_open)
                 {
                     return;
                 }
             }
 
-            if (_isOpen)
+            if (_open)
             {
                 await CloseMenuAsync();
             }

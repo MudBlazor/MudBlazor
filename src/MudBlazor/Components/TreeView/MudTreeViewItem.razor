@@ -11,7 +11,7 @@
         }
         else
         {
-            <MudTreeViewItemToggleButton Loading="_loading" Expanded="_expandedState.Value" ExpandedChanged="OnItemExpanded" Visible="@HasChildren()" ExpandedIcon="@ExpandButtonIcon" ExpandedIconColor="@ExpandButtonIconColor" LoadingIcon="@LoadingIcon" LoadingIconColor="LoadingIconColor"></MudTreeViewItemToggleButton>
+            <MudTreeViewItemToggleButton Disabled="@GetDisabled()" Loading="_loading" Expanded="_expandedState.Value" ExpandedChanged="OnItemExpanded" Visible="@HasChildren()" ExpandedIcon="@ExpandButtonIcon" ExpandedIconColor="@ExpandButtonIconColor" LoadingIcon="@LoadingIcon" LoadingIconColor="LoadingIconColor"></MudTreeViewItemToggleButton>
 
             @if (MultiSelection)
             {
@@ -22,7 +22,7 @@
             @if (HasIcon)
             {
                 <div class="mud-treeview-item-icon">
-                    <MudIcon Icon="@GetIcon()" Color="@IconColor" />
+                    <MudIcon Disabled="@GetDisabled()" Icon="@GetIcon()" Color="@IconColor" />
                 </div>
             }
 
@@ -46,7 +46,7 @@
                 @if (!string.IsNullOrEmpty(EndIcon))
                 {
                     <div class="mud-treeview-item-icon">
-                        <MudIcon Icon="@EndIcon" Color="@EndIconColor" />
+                        <MudIcon Disabled="@Disabled" Icon="@EndIcon" Color="@EndIconColor" />
                     </div>
                 }
             }

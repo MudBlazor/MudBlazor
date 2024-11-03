@@ -647,16 +647,16 @@ namespace MudBlazor.UnitTests.Components
             var mudTable = comp.Instance.MudTable;
 
             // All row checkbox states must be false.
-            mudTable.Context.Rows.Count(r => r.Value.IsChecked).Should().Be(0);
+            mudTable.Context.Rows.Count(r => r.Value.Checked).Should().Be(0);
 
             // All grouprow checkbox states must be false.
-            mudTable.Context.GroupRows.Count(r => r.IsChecked.HasValue && !r.IsChecked.Value).Should().Be(14);
+            mudTable.Context.GroupRows.Count(r => r.Checked.HasValue && !r.Checked.Value).Should().Be(14);
 
             // The headerrow checkbox state must be false.
-            mudTable.Context.HeaderRows.Count(r => r.IsChecked.HasValue && !r.IsChecked.Value).Should().Be(1);
+            mudTable.Context.HeaderRows.Count(r => r.Checked.HasValue && !r.Checked.Value).Should().Be(1);
 
             // The footerrow checkbox state must be false.
-            mudTable.Context.FooterRows.Count(r => r.IsChecked.HasValue && !r.IsChecked.Value).Should().Be(0);
+            mudTable.Context.FooterRows.Count(r => r.Checked.HasValue && !r.Checked.Value).Should().Be(0);
         }
 
         /// <summary>
@@ -2254,6 +2254,59 @@ namespace MudBlazor.UnitTests.Components
 
             // Make sure number of items has updated
             tableInstance.GetFilteredItemsCount().Should().Be(1);
+        }
+
+        /// <summary>
+        /// Tests that AllowEditItem is respected when clicking a row
+        /// </summary>
+        [Test]
+        [TestCase(TableEditTrigger.RowClick)]
+        [TestCase(TableEditTrigger.EditButton)]
+        public void AllowEditRowPreventsEdit(TableEditTrigger trigger)
+        {
+            var comp = Context.RenderComponent<TableNotEditableRowTest>(parameters => parameters.Add(x => x.EditTrigger, trigger));
+
+            // Get table instance
+            var tableInstance = comp.FindComponent<MudTable<int>>().Instance;
+
+            // Check number of filtered items
+            tableInstance.GetFilteredItemsCount().Should().Be(3);
+
+            var trs = comp.FindAll("tr");
+
+            if (trigger == TableEditTrigger.RowClick)
+            {
+                trs[0].InnerHtml.Contains("input").Should().BeFalse();
+                trs[1].InnerHtml.Contains("input").Should().BeFalse();
+
+                trs[0].Click();
+                tableInstance.SelectedItem.Should().Be(5);
+                tableInstance.Editing.Should().BeFalse();
+
+                trs[1].Click();
+                tableInstance.Editing.Should().BeTrue();
+                tableInstance.SelectedItem.Should().Be(10);
+
+
+                var trs2 = comp.FindAll("tr");
+                trs2[0].InnerHtml.Contains("input").Should().BeFalse();
+                trs2[1].InnerHtml.Contains("input").Should().BeTrue();
+            }
+            else
+            {
+                trs[0].InnerHtml.Contains("button").Should().BeFalse();
+                trs[1].InnerHtml.Contains("button").Should().BeTrue();
+                trs[2].InnerHtml.Contains("button").Should().BeTrue();
+                trs[1].InnerHtml.Contains("input").Should().BeFalse();
+
+                var buttons = comp.FindAll("button");
+                buttons[0].Click();
+
+                var trs2 = comp.FindAll("tr");
+                trs2[0].InnerHtml.Contains("input").Should().BeFalse();
+                trs2[1].InnerHtml.Contains("input").Should().BeTrue();
+                trs2[2].InnerHtml.Contains("input").Should().BeFalse();
+            }
         }
 
         /// Issue #3033

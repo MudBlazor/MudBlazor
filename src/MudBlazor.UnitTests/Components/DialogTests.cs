@@ -112,6 +112,40 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// https://github.com/MudBlazor/MudBlazor/issues/4098
+        /// https://github.com/MudBlazor/MudBlazor/issues/8746
+        /// </summary>
+        [Test]
+        public void InlineDialogShowMethodTest()
+        {
+            var comp = Context.RenderComponent<MudDialogProvider>();
+            comp.Markup.Trim().Should().BeEmpty();
+            var service = Context.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBe(null);
+
+            var comp1 = Context.RenderComponent<InlineDialogShowMethod>();
+
+            comp.Markup.Should().NotContain("Here be dragons");
+
+            // open the dialog
+            comp1.Find(".open-dialog-button").Click();
+            comp1.WaitForAssertion(() => comp.Find("div.mud-dialog-container").Should().NotBe(null));
+
+            comp.Markup.Should().Contain("Here be dragons");
+
+            // close the dialog
+            comp.Find(".close-dialog-button").Click();
+
+            // messagebox should have opened
+            comp.Markup.Should().Contain("dialog was successfully closed");
+
+            // close by click on ok button
+            comp.Find(".mud-message-box button").Click();
+
+            comp.Markup.Trim().Should().BeEmpty();
+        }
+
+        /// <summary>
         /// Nested dialogs should not appear unless manually shown
         /// </summary>
         [Test]
@@ -142,7 +176,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Click outside the dialog (or any other method) must update the IsVisible parameter two-way binding on close
+        /// Click outside the dialog (or any other method) must update the Visible parameter two-way binding on close
         /// </summary>
         /// <returns></returns>
         [Test]
@@ -878,7 +912,7 @@ namespace MudBlazor.UnitTests.Components
             var parameters = new DialogParameters<DialogWithContentClass>
             {
                 { x => x.ContentClass, contentClass },
-                { x => x.DisableSidePadding, disablePadding }
+                { x => x.Gutters, !disablePadding }
             };
 
             await comp.InvokeAsync(async () => dialogReference = await service!.ShowAsync<DialogWithContentClass>(string.Empty, parameters));

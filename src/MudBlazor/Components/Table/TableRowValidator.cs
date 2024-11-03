@@ -4,6 +4,7 @@ using MudBlazor.Interfaces;
 
 namespace MudBlazor
 {
+#nullable enable
     public class TableRowValidator : IForm
     {
         public bool IsValid
@@ -15,18 +16,13 @@ namespace MudBlazor
             }
         }
 
-        public string[] Errors
-        {
-            get => _errors.ToArray();
-        }
+        public string[] Errors => _errors.ToArray();
 
-#nullable enable
         public object? Model { get; set; }
-#nullable disable
 
         protected HashSet<string> _errors = new();
 
-        void IForm.FieldChanged(IFormComponent formControl, object newValue)
+        void IForm.FieldChanged(IFormComponent formControl, object? newValue)
         {
             //implement in future for table
         }

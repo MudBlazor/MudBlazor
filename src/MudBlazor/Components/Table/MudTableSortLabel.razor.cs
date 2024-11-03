@@ -4,20 +4,26 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
-
 namespace MudBlazor
 {
+#nullable enable
     public partial class MudTableSortLabel<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] T> : MudComponentBase
     {
+        private SortDirection _direction = SortDirection.None;
+
         protected string Classname => new CssBuilder("mud-button-root mud-table-sort-label")
-            .AddClass(Class).Build();
+            .AddClass(Class)
+            .Build();
 
-        [CascadingParameter] public TableContext TableContext { get; set; }
+        [CascadingParameter]
+        public TableContext? TableContext { get; set; }
 
-        public MudTableBase Table => TableContext?.Table;
-        public TableContext<T> Context => TableContext as TableContext<T>;
+        public MudTableBase? Table => TableContext?.Table;
 
-        [Parameter] public RenderFragment ChildContent { get; set; }
+        public TableContext<T>? Context => TableContext as TableContext<T>;
+
+        [Parameter]
+        public RenderFragment? ChildContent { get; set; }
 
         [Parameter]
         public SortDirection InitialDirection { get; set; } = SortDirection.None;
@@ -29,16 +35,16 @@ namespace MudBlazor
         public bool Enabled { get; set; } = true;
 
         /// <summary>
-        /// The Icon used to display sortdirection.
+        /// The Icon used to display SortDirection.
         /// </summary>
-        [Parameter] public string SortIcon { get; set; } = Icons.Material.Filled.ArrowUpward;
+        [Parameter]
+        public string SortIcon { get; set; } = Icons.Material.Filled.ArrowUpward;
 
         /// <summary>
         /// If true the icon will be placed before the label text.
         /// </summary>
-        [Parameter] public bool AppendIcon { get; set; }
-
-        private SortDirection _direction = SortDirection.None;
+        [Parameter]
+        public bool AppendIcon { get; set; }
 
         [Parameter]
         public SortDirection SortDirection
@@ -47,7 +53,10 @@ namespace MudBlazor
             set
             {
                 if (_direction == value)
+                {
                     return;
+                }
+
                 _direction = value;
 
                 SortDirectionChanged.InvokeAsync(_direction);
@@ -57,39 +66,39 @@ namespace MudBlazor
         private Task UpdateSortDirectionAsync(SortDirection sortDirection)
         {
             SortDirection = sortDirection;
-            return Context?.SetSortFunc(this);
+            return Context?.SetSortFunc(this) ?? Task.CompletedTask;
         }
 
         [Parameter]
         public EventCallback<SortDirection> SortDirectionChanged { get; set; }
 
         [Parameter]
-        public Func<T, object> SortBy { get; set; } = null;
+        public Func<T, object>? SortBy { get; set; } = null;
 
-        [Parameter] public string SortLabel { get; set; }
+        [Parameter]
+        public string? SortLabel { get; set; }
 
         public Task ToggleSortDirection()
         {
             if (!Enabled)
-                return Task.CompletedTask;
-
-            switch (SortDirection)
             {
-                case SortDirection.None:
-                    return UpdateSortDirectionAsync(SortDirection.Ascending);
-
-                case SortDirection.Ascending:
-                    return UpdateSortDirectionAsync(SortDirection.Descending);
-
-                case SortDirection.Descending:
-                    return UpdateSortDirectionAsync(Table.AllowUnsorted ? SortDirection.None : SortDirection.Ascending);
+                return Task.CompletedTask;
             }
 
-            throw new NotImplementedException();
+            return SortDirection switch
+            {
+                SortDirection.None => UpdateSortDirectionAsync(SortDirection.Ascending),
+                SortDirection.Ascending => UpdateSortDirectionAsync(SortDirection.Descending),
+                SortDirection.Descending => UpdateSortDirectionAsync(Table?.AllowUnsorted ?? false
+                    ? SortDirection.None
+                    : SortDirection.Ascending),
+                _ => throw new NotImplementedException()
+            };
         }
 
         protected override void OnInitialized()
         {
+            base.OnInitialized();
             Context?.SortLabels.Add(this);
             Context?.InitializeSorting();
         }
@@ -112,16 +121,15 @@ namespace MudBlazor
         {
             if (_direction == SortDirection.Descending)
             {
-                return $"mud-table-sort-label-icon mud-direction-desc";
+                return "mud-table-sort-label-icon mud-direction-desc";
             }
-            else if (_direction == SortDirection.Ascending)
+
+            if (_direction == SortDirection.Ascending)
             {
-                return $"mud-table-sort-label-icon mud-direction-asc";
+                return "mud-table-sort-label-icon mud-direction-asc";
             }
-            else
-            {
-                return $"mud-table-sort-label-icon";
-            }
+
+            return "mud-table-sort-label-icon";
         }
     }
 }

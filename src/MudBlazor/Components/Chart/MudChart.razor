@@ -8,22 +8,21 @@
         {
             <Donut InputData="@InputData" @bind-SelectedIndex="@SelectedIndex" InputLabels="@InputLabels"></Donut>
         }
-        @if (ChartType == ChartType.Pie)
+        else if (ChartType == ChartType.Pie)
         {
             <Pie InputData="@InputData" @bind-SelectedIndex="@SelectedIndex" InputLabels="@InputLabels"></Pie>
         }
-        @if (ChartType == ChartType.Line)
+        else if (ChartType == ChartType.Line)
         {
             <Line ChartSeries="@ChartSeries" @bind-SelectedIndex="@SelectedIndex" XAxisLabels="@XAxisLabels"></Line>
         }
-        @if (ChartType == ChartType.Bar)
+        else if (ChartType == ChartType.Bar)
         {
             <Bar ChartSeries="@ChartSeries" @bind-SelectedIndex="@SelectedIndex" XAxisLabels="@XAxisLabels"></Bar>
         }
-        @if (ChartType == ChartType.StackedBar)
+        else if (ChartType == ChartType.StackedBar)
         {
             <StackedBar ChartSeries="@ChartSeries" @bind-SelectedIndex="@SelectedIndex" XAxisLabels="@XAxisLabels"></StackedBar>
         }
     </div>
 </CascadingValue>
-

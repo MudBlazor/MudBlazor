@@ -17,7 +17,7 @@ namespace MudBlazor.State;
 /// Instead, use the "MudComponentBase.RegisterParameter" method from within the component's constructor.
 /// </remarks>
 /// <typeparam name="T">The type of the component's property value.</typeparam>
-internal abstract class ParameterState<T>
+public abstract class ParameterState<T>
 {
     /// <summary>
     /// Gets the current value.

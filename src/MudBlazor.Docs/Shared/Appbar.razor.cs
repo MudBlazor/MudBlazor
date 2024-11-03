@@ -124,7 +124,7 @@ public partial class Appbar
     {
         NavigationManager.NavigateTo(entry.Link);
         await Task.Delay(1000);
-        await _searchAutocomplete.Clear();
+        await _searchAutocomplete.ClearAsync();
     }
 
     private string GetActiveClass(DocsBasePage page)

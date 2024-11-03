@@ -1,14 +1,12 @@
 ﻿
 #pragma warning disable CS1998 // async without await
 
-using System;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
-using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -49,6 +47,26 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => numeric.Instance.Value.Should().Be(0));
             await comp.InvokeAsync(() => badge.Instance.HandleBadgeClick(new MouseEventArgs()));
             comp.WaitForAssertion(() => numeric.Instance.Value.Should().Be(1));
+        }
+
+        [Test]
+        public async Task Badge_AccessibilityAttributes()
+        {
+            // Arrange
+            const string BadgeAriaLabel = "New notifications";
+
+            // Act
+            var cut = Context.RenderComponent<MudBadge>(parameters => parameters
+                .Add(p => p.BadgeAriaLabel, BadgeAriaLabel)
+                .Add(p => p.Visible, true)
+                .AddChildContent("Test Content")
+            );
+
+            // Assert
+            var badge = cut.Find(".mud-badge");
+            badge.GetAttribute("role").Should().Be("status");
+            badge.GetAttribute("aria-live").Should().Be("polite");
+            badge.GetAttribute("aria-label").Should().Be(BadgeAriaLabel);
         }
     }
 }

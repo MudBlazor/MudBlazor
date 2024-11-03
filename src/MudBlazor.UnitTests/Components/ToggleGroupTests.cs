@@ -8,10 +8,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using AngleSharp.Common;
 using AngleSharp.Dom;
+using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using MudBlazor.Docs.Examples;
 using MudBlazor.UnitTests.Mocks;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
@@ -107,106 +109,37 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task ToggleGroup_HorizontalItemPadding_Test()
+        [TestCase(Size.Small)]
+        [TestCase(Size.Medium)]
+        [TestCase(Size.Large)]
+        public void ToggleGroup_SizeClasses_Test(Size size)
         {
             var comp = Context.RenderComponent<MudToggleGroup<string>>(builder =>
             {
-                builder.Add(x => x.Dense, false);
-                builder.Add(x => x.Rounded, false);
+                builder.Add(x => x.Size, size);
                 builder.AddChildContent<MudToggleItem<string>>(item => item.Add(x => x.Value, "a"));
                 builder.AddChildContent<MudToggleItem<string>>(item => item.Add(x => x.Value, "b"));
                 builder.AddChildContent<MudToggleItem<string>>(item => item.Add(x => x.Value, "c"));
             });
-            foreach (var item in comp.FindAll("div.mud-toggle-item"))
-            {
-                item.ClassList.Should().Contain("px-2");
-                item.ClassList.Should().Contain("py-2");
-            }
-            await comp.InvokeAsync(() => comp.SetParam(x => x.Dense, true));
-            foreach (var item in comp.FindAll("div.mud-toggle-item"))
-            {
-                item.ClassList.Should().Contain("px-1");
-                item.ClassList.Should().Contain("py-1");
-            }
-            await comp.InvokeAsync(() => comp.SetParam(x => x.Rounded, true));
-            IElement Item1() => comp.FindAll("div.mud-toggle-item").GetItemByIndex(0);
-            IElement Item2() => comp.FindAll("div.mud-toggle-item").GetItemByIndex(1);
-            IElement Item3() => comp.FindAll("div.mud-toggle-item").GetItemByIndex(2);
-            // (x|_|_)
-            Item1().ClassList.Should().Contain("ps-2");
-            Item1().ClassList.Should().Contain("pe-1");
-            Item1().ClassList.Should().Contain("py-1");
-            // (_|X|_)
-            Item2().ClassList.Should().Contain("px-1");
-            Item2().ClassList.Should().Contain("py-1");
-            // (_|_|x)
-            Item3().ClassList.Should().Contain("pe-2");
-            Item3().ClassList.Should().Contain("ps-1");
-            Item3().ClassList.Should().Contain("py-1");
-            await comp.InvokeAsync(() => comp.SetParam(x => x.Dense, false));
-            // (x|_|_)
-            Item1().ClassList.Should().Contain("ps-3");
-            Item1().ClassList.Should().Contain("pe-2");
-            Item1().ClassList.Should().Contain("py-2");
-            // (_|X|_)
-            Item2().ClassList.Should().Contain("px-2");
-            Item2().ClassList.Should().Contain("py-2");
-            // (_|_|x)
-            Item3().ClassList.Should().Contain("pe-3");
-            Item3().ClassList.Should().Contain("ps-2");
-            Item3().ClassList.Should().Contain("py-2");
-        }
 
-        [Test]
-        public async Task ToggleGroup_VerticalItemPadding_Test()
-        {
-            var comp = Context.RenderComponent<MudToggleGroup<string>>(builder =>
+            switch (size)
             {
-                builder.Add(x => x.Dense, false);
-                builder.Add(x => x.Rounded, false);
-                builder.Add(x => x.Vertical, true);
-                builder.AddChildContent<MudToggleItem<string>>(item => item.Add(x => x.Value, "a"));
-                builder.AddChildContent<MudToggleItem<string>>(item => item.Add(x => x.Value, "b"));
-                builder.AddChildContent<MudToggleItem<string>>(item => item.Add(x => x.Value, "c"));
-            });
-            foreach (var item in comp.FindAll("div.mud-toggle-item"))
-            {
-                item.ClassList.Should().Contain("px-2");
-                item.ClassList.Should().Contain("py-2");
+                case Size.Small:
+                    comp.FindAll(".mud-toggle-group-size-small").Count.Should().Be(1);
+                    comp.FindAll(".mud-toggle-group-size-medium").Count.Should().Be(0);
+                    comp.FindAll(".mud-toggle-group-size-large").Count.Should().Be(0);
+                    break;
+                case Size.Medium:
+                    comp.FindAll(".mud-toggle-group-size-small").Count.Should().Be(0);
+                    comp.FindAll(".mud-toggle-group-size-medium").Count.Should().Be(1);
+                    comp.FindAll(".mud-toggle-group-size-large").Count.Should().Be(0);
+                    break;
+                case Size.Large:
+                    comp.FindAll(".mud-toggle-group-size-small").Count.Should().Be(0);
+                    comp.FindAll(".mud-toggle-group-size-medium").Count.Should().Be(0);
+                    comp.FindAll(".mud-toggle-group-size-large").Count.Should().Be(1);
+                    break;
             }
-            await comp.InvokeAsync(() => comp.SetParam(x => x.Dense, true));
-            foreach (var item in comp.FindAll("div.mud-toggle-item"))
-            {
-                item.ClassList.Should().Contain("px-1");
-                item.ClassList.Should().Contain("py-1");
-            }
-            await comp.InvokeAsync(() => comp.SetParam(x => x.Rounded, true));
-            IElement Item1() => comp.FindAll("div.mud-toggle-item").GetItemByIndex(0);
-            IElement Item2() => comp.FindAll("div.mud-toggle-item").GetItemByIndex(1);
-            IElement Item3() => comp.FindAll("div.mud-toggle-item").GetItemByIndex(2);
-            // top (x|_|_) bottom
-            Item1().ClassList.Should().Contain("pt-2");
-            Item1().ClassList.Should().Contain("pb-1");
-            Item1().ClassList.Should().Contain("px-1");
-            // top (_|X|_) bottom
-            Item2().ClassList.Should().Contain("px-1");
-            Item2().ClassList.Should().Contain("py-1");
-            // top (_|_|x) bottom
-            Item3().ClassList.Should().Contain("pb-2");
-            Item3().ClassList.Should().Contain("pt-1");
-            Item3().ClassList.Should().Contain("px-1");
-            await comp.InvokeAsync(() => comp.SetParam(x => x.Dense, false));
-            // top (x|_|_) bottom
-            Item1().ClassList.Should().Contain("pt-3");
-            Item1().ClassList.Should().Contain("pb-2");
-            Item1().ClassList.Should().Contain("px-2");
-            // top (_|X|_) bottom
-            Item2().ClassList.Should().Contain("px-2");
-            Item2().ClassList.Should().Contain("py-2");
-            // top (_|_|x) bottom
-            Item3().ClassList.Should().Contain("pb-3");
-            Item3().ClassList.Should().Contain("pt-2");
-            Item3().ClassList.Should().Contain("px-2");
         }
 
         [Test]
@@ -221,7 +154,6 @@ namespace MudBlazor.UnitTests.Components
             });
             var icon = comp.Find("svg");
             icon.ClassList.Should().Contain("c69");
-            icon.ClassList.Should().Contain("me-2"); // <--- the spacing between icon and text
             var text = comp.Find(".mud-typography");
             text.ClassList.Should().Contain("c42");
         }
@@ -242,7 +174,6 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudToggleGroup<string>>(builder =>
             {
-                builder.Add(x => x.Dense, false);
                 builder.Add(x => x.Rounded, false);
                 builder.AddChildContent<MudToggleItem<string>>(item => item.Add(x => x.Value, "a"));
                 builder.AddChildContent<MudToggleItem<string>>(item => item.Add(x => x.Value, "b"));

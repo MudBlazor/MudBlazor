@@ -2,7 +2,7 @@
 
 <MudDataGrid Items="@_items">
     <Columns>
-        <PropertyColumn Property="x => x.Name" CellStyleFunc="@_cellStyleFunc" />
+        <PropertyColumn Property="x => x.Name" CellStyleFunc="@_cellStyleFunc" HeaderStyleFunc="@_headerStyleFunc" HeaderClassFunc="@_headerClassFunc" />
     </Columns>
 </MudDataGrid>
 
@@ -24,6 +24,40 @@
             return "font-weight:bold";
 
         return "";
+    };
+    
+    // style the header according to the presence of elements.
+    private Func<IEnumerable<Item>, string> _headerStyleFunc => x =>
+    {
+        var style = "";
+        
+        foreach (var item in x)
+        {
+            switch (item.Name)
+            {
+                case "A":
+                    style += "background-color:#E5BDE5;";
+                    break;
+                case "B":
+                    style += "font-weight:bold;";
+                    break;
+            }
+        }
+
+        return style;
+    };
+    
+    // add classes to the header according to the presence of elements.
+    private Func<IEnumerable<Item>, string> _headerClassFunc => x =>
+    {
+        var classes = "";
+        
+        foreach (var item in x)
+        {
+            classes += "class-" + item.Name + " ";
+        }
+
+        return classes.ToLower().Trim();
     };
 
     public class Item

@@ -14,21 +14,21 @@ namespace MudBlazor
         where TChildComponent : MudComponentBase
     {
         /// <summary>
-        /// Gets or sets the items.
+        /// The alternate source of items if <c>Items</c> is not set.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.General.Data)]
         public IEnumerable<TData>? ItemsSource { get; set; }
 
         /// <summary>
-        /// Gets or sets the template used to display each item.
+        /// The template used to display each item.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.General.Appearance)]
         public RenderFragment<TData>? ItemTemplate { get; set; }
 
         /// <summary>
-        /// Gets the currently selected item.
+        /// The currently selected item.
         /// </summary>
         /// <remarks>
         /// This property will return either an item from the <c>Items</c> property, or an item from <see cref="ItemsSource"/> if <c>Items</c> is <c>null</c>.

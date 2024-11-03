@@ -17,14 +17,14 @@
             aria-label="@Localizer[nameof(LanguageResource.MudNavGroup_ToggleExpand), Title ?? _navigationContext.MenuId]">
         @if (!string.IsNullOrEmpty(Icon))
         {
-            <MudIcon Icon="@Icon" Color="@IconColor" Class="@IconClassname" />
+            <MudIcon Disabled="@Disabled" Icon="@Icon" Color="@IconColor" Class="@IconClassname" />
         }
         <div Class="mud-nav-link-text">
             @Title
         </div>
         @if (!HideExpandIcon)
         {
-            <MudIcon Icon="@ExpandIcon" Class="@ExpandIconClassname" />
+            <MudIcon Disabled="@Disabled" Icon="@ExpandIcon" Class="@ExpandIconClassname" />
         }
     </button>
     <MudCollapse aria-hidden="@((_navigationContext.Expanded is false).ToString().ToLowerInvariant())"

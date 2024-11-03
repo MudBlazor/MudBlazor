@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudDialog ContentClass="@ContentClass" DisableSidePadding="@DisableSidePadding">
+<MudDialog ContentClass="@ContentClass" Gutters="@Gutters">
     <DialogContent>
     </DialogContent>
 </MudDialog>
@@ -11,7 +11,7 @@
 
     [Parameter]
     public string ContentClass { get; set; } = string.Empty;
-    
+
     [Parameter]
-    public bool DisableSidePadding { get; set; }
+    public bool Gutters { get; set; } = true;
 }

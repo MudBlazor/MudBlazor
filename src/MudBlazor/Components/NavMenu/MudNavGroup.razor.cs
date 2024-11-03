@@ -8,22 +8,23 @@ namespace MudBlazor
 #nullable enable
     public partial class MudNavGroup : MudComponentBase
     {
-        private bool _expanded;
+        private readonly ParameterState<bool> _expandedState;
+        private readonly ParameterState<bool> _disabledState;
+        private readonly ParameterState<NavigationContext?> _parentNavigationContextState;
         private NavigationContext _navigationContext = new(false, true);
-        private ParameterState<bool> _disabledState;
-        private ParameterState<NavigationContext?> _parentNavigationContextState;
 
         public MudNavGroup()
         {
             using var registerScope = CreateRegisterScope();
-
             _disabledState = registerScope.RegisterParameter<bool>(nameof(Disabled))
                 .WithParameter(() => Disabled)
                 .WithChangeHandler(UpdateNavigationContext);
-
             _parentNavigationContextState = registerScope.RegisterParameter<NavigationContext?>(nameof(ParentNavigationContext))
                 .WithParameter(() => ParentNavigationContext)
                 .WithChangeHandler(UpdateNavigationContext);
+            _expandedState = registerScope.RegisterParameter<bool>(nameof(Expanded))
+                .WithParameter(() => Expanded)
+                .WithEventCallback(() => ExpandedChanged);
         }
 
         protected override void OnInitialized()
@@ -35,13 +36,13 @@ namespace MudBlazor
         protected string Classname =>
             new CssBuilder("mud-nav-group")
                 .AddClass(Class)
-                .AddClass("mud-nav-group-disabled", Disabled)
+                .AddClass("mud-nav-group-disabled", _disabledState.Value)
                 .Build();
 
         protected string ButtonClassname =>
             new CssBuilder("mud-nav-link")
                 .AddClass($"mud-ripple", Ripple)
-                .AddClass("mud-expanded", Expanded)
+                .AddClass("mud-expanded", _expandedState.Value)
                 .Build();
 
         protected string IconClassname =>
@@ -51,11 +52,11 @@ namespace MudBlazor
 
         protected string ExpandIconClassname =>
             new CssBuilder("mud-nav-link-expand-icon")
-                .AddClass("mud-transform", Expanded && Disabled is false)
-                .AddClass("mud-transform-disabled", Expanded && Disabled)
+                .AddClass("mud-transform", _expandedState.Value && _disabledState.Value is false)
+                .AddClass("mud-transform-disabled", _expandedState.Value && _disabledState.Value)
                 .Build();
 
-        protected int ButtonTabIndex => Disabled || _parentNavigationContextState.Value is { Disabled: true } or { Expanded: false } ? -1 : 0;
+        protected int ButtonTabIndex => _disabledState.Value || _parentNavigationContextState.Value is { Disabled: true } or { Expanded: false } ? -1 : 0;
 
         [CascadingParameter]
         private NavigationContext? ParentNavigationContext { get; set; }
@@ -98,18 +99,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.NavMenu.Behavior)]
-        public bool Expanded
-        {
-            get => _expanded;
-            set
-            {
-                if (_expanded == value)
-                    return;
-
-                _expanded = value;
-                ExpandedChanged.InvokeAsync(_expanded);
-            }
-        }
+        public bool Expanded { get; set; }
 
         /// <summary>
         /// If true, hides expand-icon at the end of the NavGroup.
@@ -139,19 +129,17 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<bool> ExpandedChanged { get; set; }
 
-        private Task ExpandedToggleAsync()
+        private async Task ExpandedToggleAsync()
         {
-            _expanded = !Expanded;
+            await _expandedState.SetValueAsync(!_expandedState.Value);
             UpdateNavigationContext();
-
-            return ExpandedChanged.InvokeAsync(_expanded);
         }
 
         private void UpdateNavigationContext()
             => _navigationContext = _navigationContext with
             {
-                Disabled = Disabled || _parentNavigationContextState.Value is { Disabled: true },
-                Expanded = _expanded
+                Disabled = _disabledState.Value || _parentNavigationContextState.Value is { Disabled: true },
+                Expanded = _expandedState.Value
                            && _parentNavigationContextState.Value is null or { Expanded: true }
             };
     }

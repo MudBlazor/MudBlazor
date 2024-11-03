@@ -35,8 +35,7 @@ jobs:
 
     - name: VERSION to job output
       id: output-version
-      run: |
-        echo "VERSION=${{ env.VERSION }}" >> $GITHUB_OUTPUT
+      run: echo "VERSION=${{ env.VERSION }}" >> $GITHUB_OUTPUT
 
   deploy-web-app:
     name: Deploy web app to mudblazor.com

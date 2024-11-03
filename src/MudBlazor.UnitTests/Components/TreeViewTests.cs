@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Bunit;
@@ -384,7 +385,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Unselected_Select_CheckSelected_Deselect_CheckDeselected()
         {
-            var comp = Context.RenderComponent<TreeViewTest1>();
+            var comp = Context.RenderComponent<TreeViewTest1>(self => self.Add(x => x.SelectionMode, SelectionMode.MultiSelection));
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(10);
             comp.Find("button").Click();
             comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(1);
@@ -394,7 +395,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Item1Selected.Should().BeTrue();
             comp.FindAll("input.mud-checkbox-input")[2].Change(false);
             comp.Instance.SubItemSelected.Should().BeFalse();
-            comp.Instance.Item1Selected.Should().BeTrue();
+            comp.Instance.Item1Selected.Should().BeFalse(); // <-- selecting child updates parent in multi-selection mode
         }
 
         [Test]
@@ -918,6 +919,23 @@ namespace MudBlazor.UnitTests.Components
             isExpanded("tasks.json").Should().Be(false);
             isExpanded("images").Should().Be(false);
             isExpanded("logo.png").Should().Be(false);
+        }
+        [Test]
+        public void TreeViewItem_SetParameters_ValueIsSetNull_WhenTextUnset_RootServerdataIsSet_Throw()
+        {
+            var exception = Assert.Throws<InvalidOperationException>(() =>
+            {
+                var comp = Context.RenderComponent<TreeViewTest8>();
+                comp.SetParametersAndRender();
+                comp.FindAll("li.mud-treeview-item").Count.Should().Be(4);
+            });
+
+#nullable enable 
+            MudTreeView<string>? nullInstanceTree = null;
+            MudTreeViewItem<string>? nullInstanceItem = null;
+#nullable disable
+
+            exception.Message.Should().Be($"'{nameof(MudTreeView<string>)}.{nameof(nullInstanceTree.ServerData)}' requires '{nameof(nullInstanceTree.ItemTemplate)}.{nameof(MudTreeViewItem<string>)}.{nameof(nullInstanceItem.Value)}' to be supplied.");
         }
     }
 }

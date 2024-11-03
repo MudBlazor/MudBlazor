@@ -1,0 +1,50 @@
+﻿
+<MudList T="string" Class="list-1" @bind-SelectedValues="SelectedValues" SelectionMode="SelectionMode.MultiSelection">
+    <MudListSubheader>
+        Select your favourite drinks:
+    </MudListSubheader>
+    <MudListItem Text="Milk" />
+    <MudListItem Text="Sparkling Water" Value='"Carbonated H²O"' />
+    <MudListItem Text="Teas">
+        <NestedList>
+            <MudListItem Text="English Tea" Value='"Earl Grey"' />
+            <MudListItem Text="Chinese Tea" Value='"Wu Long Cha"' />
+        </NestedList>
+    </MudListItem>
+    <MudListItem Text="Coffees">
+        <NestedList>
+            <MudListItem Text="Irish Coffee" />
+            <MudListItem Text="Double Espresso" />
+        </NestedList>
+    </MudListItem>
+</MudList>
+
+<MudList T="string" Class="list-2" @bind-SelectedValues="SelectedValues" SelectionMode="SelectionMode.MultiSelection">
+    <MudListSubheader>
+        Select your favourite drinks:
+    </MudListSubheader>
+    <MudListItem Text="Milk" />
+    <MudListItem Text="Sparkling Water" Value='"Carbonated H²O"' />
+    <MudListItem Text="Teas">
+        <NestedList>
+            <MudListItem Text="English Tea" Value='"Earl Grey"' />
+            <MudListItem Text="Chinese Tea" Value='"Wu Long Cha"' />
+        </NestedList>
+    </MudListItem>
+    <MudListItem Text="Coffees">
+        <NestedList>
+            <MudListItem Text="Irish Coffee" />
+            <MudListItem Text="Double Espresso" />
+        </NestedList>
+    </MudListItem>
+</MudList>
+
+<p class="selected-values">
+    @(string.Join(", ", (SelectedValues ?? Array.Empty<string>()).OrderBy(x=>x)))
+</p>
+
+@code
+{
+    [Parameter]
+    public IReadOnlyCollection<string> SelectedValues { get; set; }
+}

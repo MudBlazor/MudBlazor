@@ -25,12 +25,24 @@ namespace MudBlazor
         public bool Disabled { get; set; }
 
         /// <summary>
-        /// If set to a URL, clicking the button will open the referenced document. Use Target to specify where
+        /// If set to a URL, clicking the button will open the referenced document. Use <see cref="Target"/> to specify where
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Menu.ClickAction)]
         public string? Href { get; set; }
 
+        /// <summary>
+        /// The target attribute specifies where to open the link, if Href is specified.
+        /// Possible values: _blank | _self | _parent | _top | <i>framename</i>
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Button.ClickAction)]
+        public string? Target { get; set; }
+
+        [Parameter]
+        [Category(CategoryTypes.Menu.ClickAction)]
+
+        public bool ForceLoad { get; set; }
         /// <summary>
         /// Icon to be used for this menu entry
         /// </summary>
@@ -59,14 +71,6 @@ namespace MudBlazor
         [Category(CategoryTypes.Menu.ClickAction)]
         public bool AutoClose { get; set; } = true;
 
-        [Parameter]
-        [Category(CategoryTypes.Menu.ClickAction)]
-        public string? Target { get; set; }
-
-        [Parameter]
-        [Category(CategoryTypes.Menu.ClickAction)]
-        public bool ForceLoad { get; set; }
-
         /// <summary>
         /// Raised when the menu item is activated by either the mouse or touch.
         /// Won't be raised if Href is also set.
@@ -89,23 +93,9 @@ namespace MudBlazor
                 }
             }
 
-            if (Href != null)
+            if (OnClick.HasDelegate)
             {
-                if (string.IsNullOrWhiteSpace(Target))
-                {
-                    UriHelper.NavigateTo(Href, ForceLoad);
-                }
-                else
-                {
-                    await JsApiService.Open(Href, Target);
-                }
-            }
-            else
-            {
-                if (OnClick.HasDelegate)
-                {
-                    await OnClick.InvokeAsync(ev);
-                }
+                await OnClick.InvokeAsync(ev);
             }
         }
     }

@@ -15,8 +15,8 @@
                     To get or set the selected value use <CodeInline>@@bind-SelectedValue</CodeInline>.
 
                     <MudAlert Severity="Severity.Info" Class="my-3">
-                        Note: If you use the toggle selection and unselect all values the <CodeInline>SelectedValue</CodeInline> will become <CodeInline>default(T)</CodeInline>. If that 
-                        collides with a valid choice you should use a nullable type.
+                        Note: If you use the toggle selection and unselect the selected item the <CodeInline>SelectedValue</CodeInline> will become <CodeInline>default(T)</CodeInline>. If that
+                        collides with a valid choice (i.e. 0 for type <CodeInline>int</CodeInline>) you should use a nullable type (i.e. <CodeInline>T="int?"</CodeInline>).
                     </MudAlert>
 
                 </Description>
@@ -63,7 +63,7 @@
         <DocsPageSection>
             <SectionHeader Title="Binding chips in a selection">
                 <Description>
-                    You can bind a Chip's <CodeInline>IsSelected</CodeInline> parameter to manipulate the selection.
+                    You can bind a Chip's <CodeInline>@nameof(MudChip<T>.Selected)</CodeInline> parameter to manipulate the selection.
                 </Description>
             </SectionHeader>
             <SectionContent ShowCode="false" Code="@nameof(ChipSetChipBindingExample)" Block="true">

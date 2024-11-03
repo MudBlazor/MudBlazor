@@ -4,6 +4,7 @@
 using System.Linq;
 using Bunit;
 using FluentAssertions;
+using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
@@ -145,7 +146,7 @@ public class NavigationAccessibilityTests : BunitTest
                     .Find("button")
                     .GetAttribute("aria-expanded")
                     .Should()
-                    .Be(navGroup.Instance.Expanded.ToString().ToLowerInvariant()));
+                    .Be(navGroup.Instance.GetState(x => x.Expanded).ToString().ToLowerInvariant()));
     }
 
     /// <summary>

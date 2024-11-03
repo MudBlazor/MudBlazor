@@ -6,7 +6,17 @@
 
         <DocsPageSection>
             <SectionHeader Title="General">
-                <Description>MudBlazor's default font is Roboto and is not loaded automatically. The installation instructions include how to load the font. But in general, the fastest and easiest way is to load it from Google Fonts, as in the example below.</Description>
+                <Description>
+                    <p>
+                        MudBlazor's default font is Roboto which is not loaded automatically.
+                        The installation instructions include how to load the font, but generally the easiest way is to load it from Google Fonts, as in the example below.
+                    </p>
+                    <br />
+                    <p>
+                        The type of element that's created depends on the typo used and can be overridden with the <CodeInline>@nameof(MudText.HtmlTag)</CodeInline> property.
+                        Use Inspect to compare how the text below is rendered.
+                    </p>
+                </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(TextGeneralExample)" Block="true">
                 <TextGeneralExample />
@@ -15,7 +25,11 @@
 
         <DocsPageSection>
             <SectionHeader Title="Alignment">
-                <Description></Description>
+                <Description>
+                    This demonstrates the <CodeInline>@nameof(MudText.Align)</CodeInline> property.
+                    <br />
+                    <b>Note:</b> This will not work with an inline element like <CodeInline>span</CodeInline>.
+                </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(TextAlignmentExample)" Block="true" FullWidth="true">
                 <TextAlignmentExample />

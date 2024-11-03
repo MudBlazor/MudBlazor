@@ -5,7 +5,7 @@
 <MudButton OnClick="@(() => OpenDialogAsync(_maxWidth))">Open MaxWidth Dialog</MudButton>
 <MudButton OnClick="@(() => OpenDialogAsync(_closeButton))" Color="Color.Primary">Close Button Dialog</MudButton>
 <MudButton OnClick="@(() => OpenDialogAsync(_noHeader))" Color="Color.Secondary">No header Dialog</MudButton>
-<MudButton OnClick="@(() => OpenDialogAsync(_disableBackdropClick))" Color="Color.Tertiary">Disable backdrop dialog</MudButton>
+<MudButton OnClick="@(() => OpenDialogAsync(_backdropClick))" Color="Color.Tertiary">Disable backdrop dialog</MudButton>
 <MudButton OnClick="@(() => OpenDialogAsync(_fullScreen))" Color="Color.Info">Full Screen Dialog</MudButton>
 <MudButton OnClick="@(() => OpenDialogAsync(_topCenter))" Color="Color.Success">Top Center Dialog</MudButton>
 
@@ -14,7 +14,7 @@
     private readonly DialogOptions _maxWidth = new() { MaxWidth = MaxWidth.Medium, FullWidth = true };
     private readonly DialogOptions _closeButton = new() { CloseButton = true };
     private readonly DialogOptions _noHeader = new() { NoHeader = true };
-    private readonly DialogOptions _disableBackdropClick = new() { DisableBackdropClick = true };
+    private readonly DialogOptions _backdropClick = new() { BackdropClick = false };
     private readonly DialogOptions _fullScreen = new() { FullScreen = true, CloseButton = true };
     private readonly DialogOptions _topCenter = new() { Position = DialogPosition.TopCenter };
 

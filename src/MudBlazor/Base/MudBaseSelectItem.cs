@@ -14,28 +14,31 @@ namespace MudBlazor
         private NavigationManager UriHelper { get; set; } = null!;
 
         /// <summary>
-        /// Gets or sets whether the user can interact with this item.
+        /// Prevents the user from interacting with this item.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.General.Behavior)]
         public bool Disabled { get; set; }
 
         /// <summary>
-        /// Gets or sets whether to show a ripple effect when the user clicks the button. Default is true.
+        /// Shows a ripple effect when the user clicks the button.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.General.Appearance)]
         public bool Ripple { get; set; } = true;
 
         /// <summary>
-        /// Gets or sets the URL to navigate to when this item is clicked.
+        /// The URL to navigate to when this item is clicked.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.General.ClickAction)]
         public string? Href { get; set; }
 
         /// <summary>
-        /// Gets or sets whether a full page load occurs during navigation.
+        /// Performs a full page load during navigation.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>. When <c>true</c>, client-side routing is bypassed and the browser is forced to load the new page from the server.
@@ -45,7 +48,7 @@ namespace MudBlazor
         public bool ForceLoad { get; set; }
 
         /// <summary>
-        /// Gets or sets the content within this item.
+        /// The content within this item.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.General.Behavior)]

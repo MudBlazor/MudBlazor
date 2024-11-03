@@ -4,6 +4,7 @@
 
 namespace MudBlazor
 {
+#nullable enable
     public enum TableEditTrigger
     {
         RowClick,

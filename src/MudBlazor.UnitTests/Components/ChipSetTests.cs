@@ -373,7 +373,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(x => x.CloseIcon, Icons.Material.Filled.Plagiarism)
                 .Add(x => x.Ripple, false)
                 .Add(x => x.IconColor, Color.Error)
-                .Add(x => x.IsSelected, true)
+                .Add(x => x.Selected, true)
             ).Instance;
             await comp.InvokeAsync(() => chip.UpdateSelectionStateAsync(true));
             chip.ShowCheckMark.Should().Be(false); // because not in a chipset

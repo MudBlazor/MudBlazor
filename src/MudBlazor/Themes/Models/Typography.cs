@@ -62,6 +62,11 @@
         public Body2 Body2 { get; set; } = new();
 
         /// <summary>
+        /// Gets or sets the typography settings for Input.
+        /// </summary>
+        public Input Input { get; set; } = new();
+
+        /// <summary>
         /// Gets or sets the typography settings for Button.
         /// </summary>
         public Button Button { get; set; } = new();
@@ -262,6 +267,23 @@
             FontWeight = 400;
             LineHeight = 1.43;
             LetterSpacing = ".01071em";
+        }
+    }
+
+    /// <summary>
+    /// Represents the Input typography settings.
+    /// </summary>
+    public class Input : BaseTypography
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Input"/> class with default values.
+        /// </summary>
+        public Input()
+        {
+            FontSize = "1rem";
+            FontWeight = 400;
+            LineHeight = 1.1876;
+            LetterSpacing = ".00938em";
         }
     }
 

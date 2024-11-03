@@ -2,11 +2,11 @@
 
 <MudButton Variant="Variant.Filled" OnClick="()=>_visible=true">Open</MudButton>
 
-<MudDialog @bind-IsVisible="_visible">
+<MudDialog @bind-Visible="_visible">
     <DialogContent>
         <MudText>Scorpiany!</MudText>
         <MudButton Variant="Variant.Filled" OnClick="()=>_nestedVisible=true">Open Nested</MudButton>
-        <MudDialog @bind-IsVisible="_nestedVisible">
+        <MudDialog @bind-Visible="_nestedVisible">
             <DialogContent>
                 <MudText Class="nested">Nested dialog!</MudText>
             </DialogContent>

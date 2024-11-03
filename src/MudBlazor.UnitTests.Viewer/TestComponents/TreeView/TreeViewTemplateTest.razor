@@ -2,7 +2,7 @@
 
 <MudTreeView SelectionMode="SelectionMode.MultiSelection" Items="TreeItems" Style="width: 500px;">
     <ItemTemplate>
-        <MudTreeViewItem @bind-Selected="@context.IsSelected" @bind-Expanded="@context.Expanded" Icon="@context.Icon"
+        <MudTreeViewItem @bind-Selected="@context.Selected" @bind-Expanded="@context.Expanded" Icon="@context.Icon"
                          Text="@context.Title" EndText="@context.Number?.ToString()" EndTextTypo="@Typo.caption" Items="@context.TreeItems" />
     </ItemTemplate>
 </MudTreeView>
@@ -17,7 +17,7 @@
 
         public int? Number { get; set; } = null;
 
-        public bool IsSelected { get; set; }
+        public bool Selected { get; set; }
 
         public bool Expanded { get; set; }
 

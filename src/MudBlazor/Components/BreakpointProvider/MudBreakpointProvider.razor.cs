@@ -15,7 +15,7 @@ namespace MudBlazor
     public partial class MudBreakpointProvider : IBrowserViewportObserver, IAsyncDisposable
     {
         /// <summary>
-        /// Gets or sets the current breakpoint.
+        /// The current breakpoint.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Breakpoint.Always"/>.
@@ -32,7 +32,7 @@ namespace MudBlazor
         protected IBrowserViewportService BrowserViewportService { get; set; } = null!;
 
         /// <summary>
-        /// Gets or sets the content within this component.
+        /// The content within this component.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.BreakpointProvider.Behavior)]

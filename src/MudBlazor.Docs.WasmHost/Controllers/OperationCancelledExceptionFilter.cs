@@ -6,19 +6,18 @@ using System;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace MudBlazor.Docs.WasmHost.Controllers
-{
-    public class OperationCancelledExceptionFilter : ExceptionFilterAttribute
-    {
-        public override void OnException(ExceptionContext context)
-        {
-            if (context.Exception is not OperationCanceledException)
-            {
-                return;
-            }
+namespace MudBlazor.Docs.WasmHost.Controllers;
 
-            context.Result = new StatusCodeResult(499);
-            context.ExceptionHandled = true;
+public class OperationCancelledExceptionFilter : ExceptionFilterAttribute
+{
+    public override void OnException(ExceptionContext context)
+    {
+        if (context.Exception is not OperationCanceledException)
+        {
+            return;
         }
+
+        context.Result = new StatusCodeResult(499);
+        context.ExceptionHandled = true;
     }
 }

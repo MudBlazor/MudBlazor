@@ -194,7 +194,7 @@
                     If you need to customize the behavior, as well as rendering multiple header or footer rows, you can set the <CodeInline>CustomHeader</CodeInline> and <CodeInline>CustomFooter</CodeInline> attributes to true.<br />
                     Then setting a list of <CodeInline>&lt;MudTHeadRow></CodeInline> or <CodeInline>&lt;MudTFootRow></CodeInline> with their respective cells will render exactly what's required inside the table header and footer.
                     <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
-                        Note: Unless you specify the attribute <CodeInline>IsCheckable</CodeInline> for a specific row, MudTable won't render a checkbox in case of a multi-selection table.
+                        Note: Unless you specify the attribute <CodeInline>@nameof(MudTr.Checkable)</CodeInline> for a specific row, MudTable won't render a checkbox in case of a multi-selection table.
                         Attributes <CodeInline>IgnoreCheckbox</CodeInline> and <CodeInline>IgnoreEditable</CodeInline> won't render an empty cell either, requiring you to do it manually (for example for a colspan on the entire row).
                     </MudAlert>
                 </Description>

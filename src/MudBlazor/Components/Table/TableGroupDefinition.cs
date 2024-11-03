@@ -8,13 +8,19 @@ using System.Linq;
 
 namespace MudBlazor
 {
+#nullable enable
     public class TableGroupDefinition<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] T>
     {
+        private bool _expandable;
+        private bool _indentation;
+        private TableContext<T>? _context;
+        private TableGroupDefinition<T>? _innerGroup;
+
         public TableGroupDefinition()
         {
         }
 
-        public TableGroupDefinition(Func<T, object> selector, TableGroupDefinition<T> innerGroup = null)
+        public TableGroupDefinition(Func<T, object> selector, TableGroupDefinition<T>? innerGroup = null)
         {
             Selector = selector;
             InnerGroup = innerGroup;
@@ -23,20 +29,19 @@ namespace MudBlazor
         /// <summary>
         /// Gets or Sets the Group Name. It's useful for use on Header, for example.
         /// </summary>
-        public string GroupName { get; set; }
+        public string? GroupName { get; set; }
 
         /// <summary>
         /// The selector func to be used on .GroupBy() with LINQ.
         /// </summary>
-        public Func<T, object> Selector { get; set; }
+        public Func<T, object>? Selector { get; set; }
 
-        private TableGroupDefinition<T> _innerGroup;
-        public TableGroupDefinition<T> InnerGroup
+        public TableGroupDefinition<T>? InnerGroup
         {
             get => _innerGroup;
             set
             {
-                if (_innerGroup != null)
+                if (_innerGroup is not null)
                 {
                     _innerGroup.Parent = null;
                     _innerGroup.Context = null;
@@ -44,7 +49,7 @@ namespace MudBlazor
 
                 _innerGroup = value;
 
-                if (_innerGroup != null)
+                if (_innerGroup is not null)
                 {
                     _innerGroup.Parent = this;
                     _innerGroup.Indentation = Indentation;
@@ -53,9 +58,6 @@ namespace MudBlazor
             }
         }
 
-        internal TableGroupDefinition<T> Parent { get; private set; }
-
-        private bool _indentation;
         /// <summary>
         /// Gets or Sets if First Column cell must have Indentation.
         /// It must be set on First grouping level and works recursively.
@@ -66,13 +68,13 @@ namespace MudBlazor
             set
             {
                 _indentation = value;
-                if (InnerGroup != null)
+                if (InnerGroup is not null)
+                {
                     InnerGroup.Indentation = value;
+                }
             }
-
         }
 
-        private bool _expandable = false;
         /// <summary>
         /// Gets or Sets if group header can Expand and Collapse its children.
         /// </summary>
@@ -82,33 +84,30 @@ namespace MudBlazor
             set
             {
                 _expandable = value;
-                if (_expandable == false)
+                if (!_expandable)
+                {
                     Context?.GroupRows.Where(gr => gr.GroupDefinition == this).ToList().ForEach(gr => gr.Expanded = IsInitiallyExpanded);
+                }
             }
         }
 
-        private bool _isInitiallyExpanded = true;
         /// <summary>
         /// Gets or Sets if expandable group header is collapsed or expanded on initialization.
         /// </summary>
-        public bool IsInitiallyExpanded
-        {
-            get => _isInitiallyExpanded;
-            set
-            {
-                _isInitiallyExpanded = value;
-            }
+        public bool IsInitiallyExpanded { get; set; } = true;
 
-        }
+        internal TableGroupDefinition<T>? Parent { get; private set; }
 
         internal bool IsParentExpandable
         {
             get
             {
                 if (Parent?.Expandable ?? false)
+                {
                     return true;
-                else
-                    return Parent?.IsParentExpandable ?? false;
+                }
+
+                return Parent?.IsParentExpandable ?? false;
             }
         }
 
@@ -117,9 +116,11 @@ namespace MudBlazor
             get
             {
                 if (Expandable)
+                {
                     return Expandable;
-                else
-                    return Parent?.IsThisOrParentExpandable ?? false;
+                }
+
+                return Parent?.IsThisOrParentExpandable ?? false;
             }
         }
 
@@ -127,27 +128,26 @@ namespace MudBlazor
         {
             get
             {
-                if (Parent == null)
+                if (Parent is null)
+                {
                     return 1;
-                else
-                    return Parent.Level + 1;
+                }
+
+                return Parent.Level + 1;
             }
         }
 
-        private TableContext<T> _context;
-        internal TableContext<T> Context
+        internal TableContext<T>? Context
         {
             get => _context;
             set
             {
                 _context = value;
-                if (_innerGroup != null)
+                if (_innerGroup is not null)
                 {
                     _innerGroup.Context = _context;
                 }
-
             }
         }
-
     }
 }

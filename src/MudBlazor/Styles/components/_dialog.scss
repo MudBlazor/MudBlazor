@@ -97,28 +97,19 @@
     }
   }
 
-  & > .mud-focus-trap {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-
-    & > .mud-focus-trap-child-container {
-      display: flex;
-      flex-direction: column;
-      flex-grow: 1;
-    }
-  }
-
   & .mud-dialog-content {
     position: relative;
     flex: 1 1 auto;
-    padding: 8px 24px;
+    overflow: auto;
+    padding: 0px 24px;
+    margin: 8px 0px;
     -webkit-overflow-scrolling: touch;
     border-top-left-radius: var(--mud-default-borderradius);
     border-top-right-radius: var(--mud-default-borderradius);
 
     &.mud-dialog-no-side-padding {
-      padding: 12px 0px;
+      padding: 0px;
+      margin: 12px 0px;
     }
   }
 

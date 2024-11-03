@@ -4,7 +4,7 @@ using System.Numerics;
 
 namespace MudBlazor.Docs.Models
 {
-    public class T : INumber<T>
+    public struct T : INumber<T>
     {
         int IComparable.CompareTo(object obj) => 0;
 

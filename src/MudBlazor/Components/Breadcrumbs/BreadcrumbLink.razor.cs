@@ -15,13 +15,13 @@ namespace MudBlazor;
 public partial class BreadcrumbLink
 {
     /// <summary>
-    /// Gets or sets the item to display.
+    /// The item to display.
     /// </summary>
     [Parameter]
     public BreadcrumbItem? Item { get; set; }
 
     /// <summary>
-    /// Gets or sets the parent breadcrumb component.
+    /// The parent breadcrumb component.
     /// </summary>
     [CascadingParameter]
     public MudBreadcrumbs? Parent { get; set; }

@@ -10,33 +10,69 @@ using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 
-
 namespace MudBlazor
 {
+#nullable enable
     // note: the MudTable code is split. Everything depending on the type parameter T of MudTable<T> is here in MudTable<T>
-
     public partial class MudTable<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] T> : MudTableBase, IDisposable
     {
+        private T? _selectedItem;
+        private IEnumerable<T>? _items;
+        private IEnumerable<T>? _preEditSort;
+        private IEqualityComparer<T>? _comparer;
+        private TableGroupDefinition<T>? _groupBy;
+        private bool _currentRenderFilteredItemsCached;
+        private CancellationTokenSource? _cancellationTokenSrc;
+        private TableData<T> _serverData = new() { TotalItems = 0, Items = Array.Empty<T>() };
+
+        [MemberNotNullWhen(true, nameof(_preEditSort))]
+        private bool HasPreEditSort => _preEditSort is not null;
+
+        [MemberNotNullWhen(true, nameof(ServerData))]
+        internal override bool HasServerData => ServerData is not null;
+
         /// <summary>
         /// Defines how a table row looks like. Use MudTd to define the table cells and their content.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Rows)]
-        public RenderFragment<T> RowTemplate { get; set; }
+        public RenderFragment<T>? RowTemplate { get; set; }
 
         /// <summary>
         /// Row Child content of the component.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Rows)]
-        public RenderFragment<T> ChildRowContent { get; set; }
+        public RenderFragment<T>? ChildRowContent { get; set; }
 
         /// <summary>
         /// Defines how a table row looks like in edit mode (for selected row). Use MudTd to define the table cells and their content.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Editing)]
-        public RenderFragment<T> RowEditingTemplate { get; set; }
+        public RenderFragment<T>? RowEditingTemplate { get; set; }
+
+        /// <summary>
+        /// A function that returns whether or not an item should be editable. Use to remove editing for certain rows.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Table.Editing)]
+        public Func<T, bool>? RowEditableFunc { get; set; }
+
+        private bool IsItemEditable(T item)
+        {
+            if (!Editable)
+            {
+                return false;
+            }
+
+            if (RowEditableFunc == null)
+            {
+                return true;
+            }
+
+            return RowEditableFunc(item);
+        }
 
         #region Code for column based approach
         /// <summary>
@@ -44,30 +80,22 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Behavior)]
-        public RenderFragment<T> Columns { get; set; }
-        /// <summary>
-        /// Comma separated list of columns to show if there is no templates defined
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Table.Behavior)]
-        public string QuickColumns { get; set; }
+        public RenderFragment<T>? Columns { get; set; }
 
         // Workaround because "where T : new()" didn't work with Blazor components
         // T must have a default constructor, otherwise we cannot show headers when Items collection
         // is empty
-        protected T Def
+        protected T? Def
         {
             get
             {
-                T t1 = default;
+                T? t1 = default;
                 if (t1 == null)
                 {
                     return Activator.CreateInstance<T>();
                 }
-                else
-                {
-                    return default;
-                }
+
+                return default;
             }
         }
         /// <summary>
@@ -76,68 +104,25 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             if (HasServerData)
+            {
                 Loading = true;
-
-            if (Columns == null && RowTemplate == null && RowEditingTemplate == null)
-            {
-                string[] quickcolumnslist = null;
-                if (!QuickColumns.IsEmpty())
-                {
-                    quickcolumnslist = QuickColumns.Split(",");
-                }
-                // Create template from T
-                Columns = context => builder =>
-                {
-                    var myType = context.GetType();
-                    IList<PropertyInfo> propertylist = new List<PropertyInfo>(myType.GetProperties().Where(p => p.PropertyType.IsPublic));
-
-                    if (quickcolumnslist == null)
-                    {
-                        foreach (var propinfo in propertylist)
-                        {
-                            BuildMudColumnTemplateItem(context, builder, propinfo);
-                        }
-                    }
-                    else
-                    {
-                        foreach (var colname in quickcolumnslist)
-                        {
-                            var propinfo = propertylist.SingleOrDefault(pl => pl.Name == colname);
-                            if (propinfo != null)
-                            {
-                                BuildMudColumnTemplateItem(context, builder, propinfo);
-                            }
-                        }
-                    }
-
-                };
             }
         }
 
-        private static void BuildMudColumnTemplateItem(T context, RenderTreeBuilder builder, PropertyInfo propinfo)
-        {
-            if (propinfo.PropertyType.IsPrimitive || propinfo.PropertyType == typeof(string))
-            {
-                builder.OpenComponent<MudColumn<string>>(0);
-                builder.AddAttribute(1, "Value", propinfo.GetValue(context)?.ToString());
-                builder.AddAttribute(2, "HeaderText", propinfo.Name);
-                builder.CloseComponent();
-            }
-        }
         #endregion
         /// <summary>
         /// Defines the table body content when there are no matching records found
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Data)]
-        public RenderFragment NoRecordsContent { get; set; }
+        public RenderFragment? NoRecordsContent { get; set; }
 
         /// <summary>
         /// Defines the table body content  the table has no rows and is loading
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Data)]
-        public RenderFragment LoadingContent { get; set; }
+        public RenderFragment? LoadingContent { get; set; }
 
         /// <summary>
         /// Defines if the table has a horizontal scrollbar.
@@ -154,7 +139,7 @@ namespace MudBlazor
         /// 
         [Parameter]
         [Category(CategoryTypes.Table.Data)]
-        public IEnumerable<T> Items
+        public IEnumerable<T>? Items
         {
             get => _items;
             set
@@ -172,73 +157,61 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Filtering)]
-        public Func<T, bool> Filter { get; set; } = null;
+        public Func<T, bool>? Filter { get; set; } = null;
 
         /// <summary>
         /// Row click event.
         /// </summary>
-        [Parameter] public EventCallback<TableRowClickEventArgs<T>> OnRowClick { get; set; }
+        [Parameter]
+        public EventCallback<TableRowClickEventArgs<T>> OnRowClick { get; set; }
 
-        internal override async Task FireRowClickEventAsync(MouseEventArgs args, MudTr row, object o)
+        internal override async Task FireRowClickEventAsync(MouseEventArgs args, MudTr row, object? o)
         {
             var item = default(T);
             try
             {
-                item = (T)o;
+                item = (T?)o;
             }
             catch (Exception) { /*ignore*/}
-            await OnRowClick.InvokeAsync(new TableRowClickEventArgs<T>()
-            {
-                MouseEventArgs = args,
-                Row = row,
-                Item = item,
-            });
+            await OnRowClick.InvokeAsync(new TableRowClickEventArgs<T>(args, row, item));
         }
 
         /// <summary>
         /// Row hover start event.
         /// </summary>
-        [Parameter] public EventCallback<TableRowHoverEventArgs<T>> OnRowMouseEnter { get; set; }
+        [Parameter]
+        public EventCallback<TableRowHoverEventArgs<T>> OnRowMouseEnter { get; set; }
 
         internal override bool HasRowMouseEnterEventHandler => OnRowMouseEnter.HasDelegate;
 
-        internal override async Task FireRowMouseEnterEventAsync(MouseEventArgs args, MudTr row, object o)
+        internal override async Task FireRowMouseEnterEventAsync(MouseEventArgs args, MudTr row, object? o)
         {
             var item = default(T);
             try
             {
-                item = (T)o;
+                item = (T?)o;
             }
             catch (Exception) { /*ignore*/}
-            await OnRowMouseEnter.InvokeAsync(new TableRowHoverEventArgs<T>()
-            {
-                MouseEventArgs = args,
-                Row = row,
-                Item = item,
-            });
+            await OnRowMouseEnter.InvokeAsync(new TableRowHoverEventArgs<T>(args, row, item));
         }
 
         /// <summary>
         /// Row hover stop event.
         /// </summary>
-        [Parameter] public EventCallback<TableRowHoverEventArgs<T>> OnRowMouseLeave { get; set; }
+        [Parameter]
+        public EventCallback<TableRowHoverEventArgs<T>> OnRowMouseLeave { get; set; }
 
         internal override bool HasRowMouseLeaveEventHandler => OnRowMouseLeave.HasDelegate;
 
-        internal override async Task FireRowMouseLeaveEventAsync(MouseEventArgs args, MudTr row, object o)
+        internal override async Task FireRowMouseLeaveEventAsync(MouseEventArgs args, MudTr row, object? o)
         {
             var item = default(T);
             try
             {
-                item = (T)o;
+                item = (T?)o;
             }
             catch (Exception) { /*ignore*/}
-            await OnRowMouseLeave.InvokeAsync(new TableRowHoverEventArgs<T>()
-            {
-                MouseEventArgs = args,
-                Row = row,
-                Item = item,
-            });
+            await OnRowMouseLeave.InvokeAsync(new TableRowHoverEventArgs<T>(args, row, item));
         }
 
         /// <summary>
@@ -246,46 +219,46 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Rows)]
-        public Func<T, int, string> RowClassFunc { get; set; }
+        public Func<T, int, string>? RowClassFunc { get; set; }
 
         /// <summary>
         /// Returns the style that will get joined with RowStyle. Takes the current item and row index.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Rows)]
-        public Func<T, int, string> RowStyleFunc { get; set; }
+        public Func<T, int, string>? RowStyleFunc { get; set; }
 
         /// <summary>
         /// Returns the item which was last clicked on in single selection mode (that is, if MultiSelection is false)
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Selecting)]
-        public T SelectedItem
+        public T? SelectedItem
         {
             get => _selectedItem;
             set
             {
                 if (_comparer != null && _comparer.Equals(SelectedItem, value))
                     return;
-                else if (EqualityComparer<T>.Default.Equals(SelectedItem, value))
+                if (EqualityComparer<T>.Default.Equals(SelectedItem, value))
                     return;
                 _selectedItem = value;
                 SelectedItemChanged.InvokeAsync(value);
             }
         }
-        private T _selectedItem;
 
         /// <summary>
         /// Callback is called when a row has been clicked and returns the selected item.
         /// </summary>
-        [Parameter] public EventCallback<T> SelectedItemChanged { get; set; }
+        [Parameter]
+        public EventCallback<T> SelectedItemChanged { get; set; }
 
         /// <summary>
         /// If MultiSelection is true, this returns the currently selected items. You can bind this property and the initial content of the HashSet you bind it to will cause these rows to be selected initially.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Selecting)]
-        public HashSet<T> SelectedItems
+        public HashSet<T>? SelectedItems
         {
             get
             {
@@ -294,8 +267,8 @@ namespace MudBlazor
                         return new HashSet<T>(Array.Empty<T>(), _comparer);
                     else
                         return new HashSet<T>(new T[] { _selectedItem }, _comparer);
-                else
-                    return Context.Selection;
+
+                return Context.Selection;
             }
             set
             {
@@ -326,7 +299,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public IEqualityComparer<T> Comparer
+        public IEqualityComparer<T>? Comparer
         {
             get => _comparer;
             set
@@ -338,20 +311,18 @@ namespace MudBlazor
             }
         }
 
-        private IEqualityComparer<T> _comparer;
-
         /// <summary>
         /// Callback is called whenever items are selected or deselected in multi selection mode.
         /// </summary>
-        [Parameter] public EventCallback<HashSet<T>> SelectedItemsChanged { get; set; }
+        [Parameter]
+        public EventCallback<HashSet<T>> SelectedItemsChanged { get; set; }
 
-        private TableGroupDefinition<T> _groupBy;
         /// <summary>
         /// Defines data grouping parameters. It can has N hierarchical levels
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Grouping)]
-        public TableGroupDefinition<T> GroupBy
+        public TableGroupDefinition<T>? GroupBy
         {
             get => _groupBy;
             set
@@ -367,46 +338,42 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Grouping)]
-        public RenderFragment<TableGroupData<object, T>> GroupHeaderTemplate { get; set; }
+        public RenderFragment<TableGroupData<object, T>>? GroupHeaderTemplate { get; set; }
 
         /// <summary>
         /// Defines custom CSS classes for using on Group Header's MudTr.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Grouping)]
-        public string GroupHeaderClass { get; set; }
+        public string? GroupHeaderClass { get; set; }
 
         /// <summary>
         /// Defines custom styles for using on Group Header's MudTr.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Grouping)]
-        public string GroupHeaderStyle { get; set; }
+        public string? GroupHeaderStyle { get; set; }
 
         /// <summary>
         /// Defines custom CSS classes for using on Group Footer's MudTr.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Grouping)]
-        public string GroupFooterClass { get; set; }
+        public string? GroupFooterClass { get; set; }
 
         /// <summary>
         /// Defines custom styles for using on Group Footer's MudTr.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Grouping)]
-        public string GroupFooterStyle { get; set; }
+        public string? GroupFooterStyle { get; set; }
 
         /// <summary>
         /// Defines how a table grouping row footer looks like. It works only when GroupBy is not null. Use MudTd to define the table cells and their content.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Grouping)]
-        public RenderFragment<TableGroupData<object, T>> GroupFooterTemplate { get; set; }
-
-        private IEnumerable<T> _preEditSort;
-        private bool _currentRenderFilteredItemsCached;
-        private bool HasPreEditSort => _preEditSort != null;
+        public RenderFragment<TableGroupData<object, T>>? GroupFooterTemplate { get; set; }
 
         /// <summary>
         /// For unit testing the filtering cache mechanism.
@@ -417,19 +384,21 @@ namespace MudBlazor
         {
             get
             {
-                if (_currentRenderFilteredItemsCached) return _preEditSort;
-                if (IsEditing && HasPreEditSort)
+                if (_currentRenderFilteredItemsCached)
+                    return _preEditSort ?? Array.Empty<T>();
+                if (Editing && HasPreEditSort)
                     return _preEditSort;
                 if (HasServerData)
-                    _preEditSort = _server_data.Items?.ToList();
+                    _preEditSort = _serverData.Items?.ToList();
                 else if (Filter == null)
-                    _preEditSort = Context.Sort(Items).ToList();
+                    _preEditSort = Context.Sort(Items)?.ToList();
                 else
-                    _preEditSort = Context.Sort(Items.Where(Filter)).ToList();
+                    _preEditSort = Context.Sort(Items?.Where(Filter))?.ToList();
 
                 _currentRenderFilteredItemsCached = true;
                 unchecked { FilteringRunCount++; }
-                return _preEditSort;
+
+                return _preEditSort ?? Array.Empty<T>();
             }
         }
 
@@ -460,7 +429,7 @@ namespace MudBlazor
                 return Array.Empty<T>();
 
             if (HasServerData)
-                return _server_data.Items;
+                return _serverData.Items ?? Array.Empty<T>();
 
             return FilteredItems.Skip(n * pageSize).Take(pageSize);
         }
@@ -470,7 +439,7 @@ namespace MudBlazor
             get
             {
                 if (HasServerData)
-                    return (int)Math.Ceiling(_server_data.TotalItems / (double)RowsPerPage);
+                    return (int)Math.Ceiling(_serverData.TotalItems / (double)RowsPerPage);
 
                 return (int)Math.Ceiling(FilteredItems.Count() / (double)RowsPerPage);
             }
@@ -479,22 +448,22 @@ namespace MudBlazor
         public override int GetFilteredItemsCount()
         {
             if (HasServerData)
-                return _server_data.TotalItems;
+                return _serverData.TotalItems;
             return FilteredItems.Count();
         }
 
-        public override void SetSelectedItem(object item)
+        public override void SetSelectedItem(object? item)
         {
             SelectedItem = item.As<T>();
         }
 
-        public override void SetEditingItem(object item)
+        public override void SetEditingItem(object? item)
         {
             if (!ReferenceEquals(_editingItem, item))
                 _editingItem = item;
         }
 
-        public override bool ContainsItem(object item)
+        public override bool ContainsItem(object? item)
         {
             var t = item.As<T>();
             if (t is null)
@@ -515,7 +484,7 @@ namespace MudBlazor
         }
 
         // TableContext provides shared functionality between all table sub-components
-        public TableContext<T> Context { get; } = new TableContext<T>();
+        public TableContext<T> Context { get; } = new();
 
         private void OnRowCheckboxChanged(bool checkedState, T item)
         {
@@ -556,9 +525,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Data)]
-        public Func<TableState, CancellationToken, Task<TableData<T>>> ServerData { get; set; }
-
-        private CancellationTokenSource _cancellationTokenSrc;
+        public Func<TableState, CancellationToken, Task<TableData<T>>>? ServerData { get; set; }
 
         private void CancelToken()
         {
@@ -572,12 +539,6 @@ namespace MudBlazor
                 _cancellationTokenSrc = new CancellationTokenSource();
             }
         }
-
-
-        internal override bool HasServerData => ServerData != null;
-
-        TableData<T> _server_data = new() { TotalItems = 0, Items = Array.Empty<T>() };
-        private IEnumerable<T> _items;
 
         internal override async Task InvokeServerLoadFunc()
         {
@@ -600,9 +561,9 @@ namespace MudBlazor
             CancelToken();
 
             // Get data via the ServerData function
-            _server_data = await ServerData(state, _cancellationTokenSrc.Token);
+            _serverData = await ServerData(state, _cancellationTokenSrc!.Token);
 
-            if (CurrentPage * RowsPerPage > _server_data.TotalItems)
+            if (CurrentPage * RowsPerPage > _serverData.TotalItems)
                 CurrentPage = 0;
 
             Loading = false;
@@ -633,7 +594,7 @@ namespace MudBlazor
             return InvokeServerLoadFunc();
         }
 
-        internal override bool IsEditable { get => (RowEditingTemplate != null) || (Columns != null); }
+        internal override bool Editable { get => (RowEditingTemplate != null) || (Columns != null); }
 
         //GROUPING:
         private IEnumerable<IGrouping<object, T>> GroupItemsPage
@@ -644,12 +605,19 @@ namespace MudBlazor
             }
         }
 
-        internal IEnumerable<IGrouping<object, T>> GetItemsOfGroup(TableGroupDefinition<T> parent, IEnumerable<T> sourceList)
+        internal IEnumerable<IGrouping<object, T>> GetItemsOfGroup(TableGroupDefinition<T>? parent, IEnumerable<T>? sourceList)
         {
-            if (parent == null || sourceList == null)
+            if (parent is null || sourceList is null)
+            {
                 return new List<IGrouping<object, T>>();
+            }
 
-            return sourceList.GroupBy(parent.Selector).ToList();
+            if (parent.Selector is not null)
+            {
+                return sourceList.GroupBy(parent.Selector).ToList();
+            }
+
+            return new List<IGrouping<object, T>>();
         }
 
         internal void OnGroupHeaderCheckboxClicked(bool checkedState, IEnumerable<T> items)
@@ -705,7 +673,6 @@ namespace MudBlazor
             GC.SuppressFinalize(this);
         }
 
-        /// <inheritdoc />
         protected virtual void Dispose(bool disposing)
         {
             _cancellationTokenSrc?.Dispose();

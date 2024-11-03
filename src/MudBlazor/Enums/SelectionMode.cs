@@ -4,17 +4,28 @@
 
 using System.ComponentModel;
 
-namespace MudBlazor
+namespace MudBlazor;
+
+/// <summary>
+/// Indicates the types of selections allowed.
+/// </summary>
+public enum SelectionMode
 {
-    public enum SelectionMode
-    {
-        [Description("single-selection")]
-        SingleSelection,
+    /// <summary>
+    /// One selection is allowed at a time.
+    /// </summary>
+    [Description("single-selection")]
+    SingleSelection,
 
-        [Description("multi-selection")]
-        MultiSelection,
+    /// <summary>
+    /// More than one selection is allowed.
+    /// </summary>
+    [Description("multi-selection")]
+    MultiSelection,
 
-        [Description("toggle-selection")]
-        ToggleSelection
-    }
+    /// <summary>
+    /// One selection is toggled.
+    /// </summary>
+    [Description("toggle-selection")]
+    ToggleSelection
 }

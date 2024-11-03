@@ -25,7 +25,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.TimelinePosition.Should().Be(TimelinePosition.Alternate);
             comp.Instance.TimelineAlign.Should().Be(TimelineAlign.Default);
             comp.Instance.Reverse.Should().Be(false);
-            comp.Instance.DisableModifiers.Should().Be(false);
+            comp.Instance.Modifiers.Should().Be(true);
 
         }
 

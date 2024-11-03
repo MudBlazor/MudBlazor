@@ -98,7 +98,7 @@ namespace MudBlazor
         public SelectionMode SelectionMode { get; set; } = SelectionMode.SingleSelection;
 
         /// <summary>
-        /// If true, the checkboxes will use the undetermined state in MultiSelection if any children in the sub-tree
+        /// If true, the checkboxes will use the undetermined state in MultiSelection if any children in the subtree
         /// have a different selection value than the parent item.
         /// </summary>
         [Parameter]
@@ -355,6 +355,7 @@ namespace MudBlazor
                         _selection.Add(item.GetValue()!);
                     }
                 }
+                UpdateParentItem(clickedItem.Parent);
                 await _selectedValuesState.SetValueAsync(_selection.ToList()); // note: .ToList() is essential here!
                 await UpdateItemsAsync();
                 return;
@@ -368,6 +369,27 @@ namespace MudBlazor
             {
                 // SingleSelection
                 await SetSelectedValueAsync(clickedItem.GetValue());
+            }
+        }
+
+        /// <summary>
+        /// This changes the parent item's state based on the selection state of its children in multi-selection mode
+        /// But only if the items are clicked, not when the selection is modified via SelectedValues
+        /// </summary>
+        private void UpdateParentItem(MudTreeViewItem<T>? parentItem)
+        {
+            while (parentItem is not null)
+            {
+                var parentValue = parentItem.GetValue();
+                if (parentValue is not null)
+                {
+                    var parentSelected = parentItem.ChildItems.Select(x => x.GetValue()).Where(x => x is not null).All(x => _selection.Contains(x!));
+                    if (parentSelected)
+                        _selection.Add(parentValue);
+                    else
+                        _selection.Remove(parentValue);
+                }
+                parentItem = parentItem.Parent;
             }
         }
 

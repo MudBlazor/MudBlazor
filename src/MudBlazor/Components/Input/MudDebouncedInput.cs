@@ -103,7 +103,7 @@ namespace MudBlazor
 
         private void OnTimerTick(object sender, ElapsedEventArgs e)
         {
-            InvokeAsync(OnTimerTickGuiThread).AndForget();
+            InvokeAsync(OnTimerTickGuiThread).CatchAndLog();
         }
 
         private async Task OnTimerTickGuiThread()
@@ -122,7 +122,7 @@ namespace MudBlazor
             _timer.Dispose();
             _timer = null;
             if (wasEnabled && !suppressTick)
-                OnTimerTickGuiThread().AndForget();
+                OnTimerTickGuiThread().CatchAndLog();
         }
 
         protected override void Dispose(bool disposing)

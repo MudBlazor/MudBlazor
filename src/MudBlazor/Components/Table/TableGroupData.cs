@@ -6,17 +6,20 @@ using System.Collections.Generic;
 
 namespace MudBlazor
 {
+#nullable enable
     public class TableGroupData<TKey, TElement>
     {
-        public TableGroupData(string groupName, TKey key, IEnumerable<TElement> items)
+        public string? GroupName { get; }
+
+        public TKey? Key { get; }
+
+        public IEnumerable<TElement> Items { get; }
+
+        public TableGroupData(string? groupName, TKey? key, IEnumerable<TElement> items)
         {
             GroupName = groupName;
             Key = key;
             Items = items;
         }
-
-        public string GroupName { get; }
-        public TKey Key { get; }
-        public IEnumerable<TElement> Items { get; }
     }
 }

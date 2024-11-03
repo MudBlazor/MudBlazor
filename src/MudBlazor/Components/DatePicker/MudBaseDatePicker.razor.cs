@@ -243,13 +243,13 @@ namespace MudBlazor
                     PickerMonth = a;
                 }
             }
-            if (OpenTo == OpenTo.Date && FixDay.HasValue)
-            {
-                OpenTo = OpenTo.Month;
-            }
             if (OpenTo == OpenTo.Date && FixDay.HasValue && FixMonth.HasValue)
             {
                 OpenTo = OpenTo.Year;
+            }
+            if (OpenTo == OpenTo.Date && FixDay.HasValue)
+            {
+                OpenTo = OpenTo.Month;
             }
             CurrentView = OpenTo;
             if (CurrentView == OpenTo.Year)
