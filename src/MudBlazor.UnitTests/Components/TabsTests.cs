@@ -1,7 +1,4 @@
-﻿
-#pragma warning disable CS1998 // async without await
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -12,7 +9,8 @@ using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Docs.Examples;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.Mocks;
-using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.Tabs;
+using MudBlazor.UnitTests.TestComponents.Tabs.KeepTabsAlive;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -27,7 +25,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task AddingAndRemovingTabPanels()
+        public void AddingAndRemovingTabPanels()
         {
             var comp = Context.RenderComponent<TabsAddingRemovingTabsTest>();
             comp.Find("div.mud-tabs-panels").InnerHtml.Trim().Should().BeEmpty();
@@ -80,7 +78,7 @@ namespace MudBlazor.UnitTests.Components
         /// a callback that is fired only when OnRenderAsync of the tab panel happens the first time (which outputs a message at the bottom).
         /// </summary>
         [Test]
-        public async Task KeepTabsAliveTest()
+        public void KeepTabsAliveTest()
         {
             var comp = Context.RenderComponent<TabsKeepAliveTest>();
             // all panels should be evident in the markup:
@@ -137,7 +135,7 @@ namespace MudBlazor.UnitTests.Components
         /// a callback that is fired only when OnRenderAsync of the tab panel happens the first time (which outputs a message at the bottom).
         /// </summary>
         [Test]
-        public async Task KeepTabs_Not_AliveTest()
+        public void KeepTabs_Not_AliveTest()
         {
             var comp = Context.RenderComponent<TabsKeepAliveTest>(ComponentParameter.CreateParameter("KeepPanelsAlive", false));
             // only one panel should be evident in the markup:
@@ -315,7 +313,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task Scroll_NotEnabled_EnoughSpace()
+        public void Scroll_NotEnabled_EnoughSpace()
         {
             var comp = Context.RenderComponent<ScrollableTabsTest>();
 
@@ -385,7 +383,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task ScrollNext()
+        public void ScrollNext()
         {
             var observer = new MockResizeObserver
             {
@@ -854,7 +852,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task ActivatePanels()
+        public void ActivatePanels()
         {
             var activator = new Action<IRenderedComponent<ActivateDisabledTabsTest>, ActivateDisabledTabsTest.TabBindingHelper>[] {
                (x,y) => x.Instance.ActivateTab(y.Index),
@@ -912,7 +910,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task ActivatePanels_EvenWhenDisabled()
+        public void ActivatePanels_EvenWhenDisabled()
         {
             var activator = new Action<IRenderedComponent<ActivateDisabledTabsTest>, ActivateDisabledTabsTest.TabBindingHelper>[] {
                (x,y) => x.Instance.ActivateTab(y.Index, true),
@@ -948,7 +946,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task SelectedIndex_Binding()
+        public void SelectedIndex_Binding()
         {
             //starting with index 1:
             var comp = Context.RenderComponent<SelectedIndexTabsTest>();
@@ -997,7 +995,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         [TestCase(TabHeaderPosition.After)]
         [TestCase(TabHeaderPosition.Before)]
-        public async Task RenderHeaderBasedOnPosition(TabHeaderPosition position)
+        public void RenderHeaderBasedOnPosition(TabHeaderPosition position)
         {
             var comp = Context.RenderComponent<TabsWithHeaderTest>();
             comp.SetParametersAndRender(x => x.Add(y => y.TabHeaderPosition, position));
@@ -1027,7 +1025,7 @@ namespace MudBlazor.UnitTests.Components
         /// If the header template is set, but the position is none, no header should be rendered
         /// </summary>
         [Test]
-        public async Task RenderHeaderBasedOnPosition_None()
+        public void RenderHeaderBasedOnPosition_None()
         {
             var comp = Context.RenderComponent<TabsWithHeaderTest>();
             comp.SetParametersAndRender(x => x.Add(y => y.TabHeaderPosition, TabHeaderPosition.None));
@@ -1043,7 +1041,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         [TestCase(TabHeaderPosition.After)]
         [TestCase(TabHeaderPosition.Before)]
-        public async Task RenderHeaderPanelBasedOnPosition(TabHeaderPosition position)
+        public void RenderHeaderPanelBasedOnPosition(TabHeaderPosition position)
         {
             var comp = Context.RenderComponent<TabsWithHeaderTest>();
             comp.SetParametersAndRender(x => x.Add(y => y.TabHeaderPosition, TabHeaderPosition.None));
@@ -1078,7 +1076,7 @@ namespace MudBlazor.UnitTests.Components
         /// If the header template is set, but the position is none, no header should be rendered
         /// </summary>
         [Test]
-        public async Task RenderHeaderPanelBasedOnPosition_None()
+        public void RenderHeaderPanelBasedOnPosition_None()
         {
             var comp = Context.RenderComponent<TabsWithHeaderTest>();
             comp.SetParametersAndRender(x => x.Add(y => y.TabHeaderPosition, TabHeaderPosition.None));
@@ -1089,7 +1087,28 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task HtmlTextTabs()
+        public void TabPanelIconColorOverridesTabIconColor()
+        {
+            var comp = Context.RenderComponent<TabPanelIconColorTest>();
+            comp.SetParametersAndRender(x => x.Add(y => y.MudTabPanelIconColor, Color.Success));
+
+            var iconRef = comp.Find(".mud-icon-root.mud-svg-icon");
+            iconRef.ClassList.Should().Contain("mud-success-text");
+        }
+
+        [Test]
+        public void TabPanelIconColorOverridesTabIconColorExceptWhenDisabled()
+        {
+            var comp = Context.RenderComponent<TabPanelIconColorTest>();
+            comp.SetParam("DisableTab", true);
+            comp.SetParametersAndRender(x => x.Add(y => y.MudTabPanelIconColor, Color.Success));
+
+            var iconRef = comp.Find(".mud-icon-root.mud-svg-icon");
+            iconRef.ClassList.Should().NotContain("mud-success-text");
+        }
+
+        [Test]
+        public void HtmlTextTabs()
         {
             // get the tab panels, we must have 2 tabs, one with html text and one without
             var comp = Context.RenderComponent<HtmlTextTabsTest>();
@@ -1109,7 +1128,7 @@ namespace MudBlazor.UnitTests.Components
         ///  Depending on the SliderAnimation parameter, it should toggle the transition style attribute
         /// </summary>
         [Test]
-        public async Task ToggleTabsSliderAnimation()
+        public void ToggleTabsSliderAnimation()
         {
             //The first tab should be active because for the rest the slider position is calculated by JS
             //and before the calculation the slider is hidden to avoid movement on first load
@@ -1133,7 +1152,7 @@ namespace MudBlazor.UnitTests.Components
         ///  Specifying a custom minimum width should add a min-width style to each tab
         /// </summary>
         [Test]
-        public async Task MinimumTabWidth()
+        public void MinimumTabWidth()
         {
             var comp = Context.RenderComponent<MinimumWidthTabs>();
 
@@ -1147,7 +1166,7 @@ namespace MudBlazor.UnitTests.Components
         /// See: https://github.com/MudBlazor/MudBlazor/issues/2976
         /// </summary>
         [Test]
-        public async Task MenuInHeaderPanelCloseOnClickOutside()
+        public void MenuInHeaderPanelCloseOnClickOutside()
         {
             var comp = Context.RenderComponent<TabsWithMenuInHeader>();
 
@@ -1165,7 +1184,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task PrePanelContent()
+        public void PrePanelContent()
         {
             var comp = Context.RenderComponent<TabsWithPrePanelContent>(p => p.Add(x => x.SelectedIndex, 0));
 
@@ -1187,7 +1206,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task CancelPanelActivation()
+        public void CancelPanelActivation()
         {
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
 
@@ -1218,7 +1237,7 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
-        public async Task DynamicTabs_CollectionRenderSyncTest()
+        public void DynamicTabs_CollectionRenderSyncTest()
         {
             var comp = Context.RenderComponent<DynamicTabsSimpleExample>();
 
@@ -1259,7 +1278,7 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
-        public async Task TabPanel_ShowCloseIconTest()
+        public void TabPanel_ShowCloseIconTest()
         {
             var comp = Context.RenderComponent<DynamicTabsSimpleExample>();
             var tabs = comp.FindAll("div.mud-tab");

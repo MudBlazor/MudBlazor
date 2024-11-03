@@ -1,12 +1,9 @@
-@namespace MudBlazor.UnitTests.TestComponents
-@using System.Collections.ObjectModel
-
 <MudDataGrid @ref="_dataGrid"
-    Items="@_elements"
-    Filterable="true"
-    Hideable="true"
-    Groupable="true"
-    GroupExpanded="false">
+             Items="@_elements"
+             Filterable="true"
+             Hideable="true"
+             Groupable="true"
+             GroupExpanded="false">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Elements</MudText>
         <MudSpacer />
@@ -26,20 +23,7 @@
 </div>
 
 @code {
-    public class Element
-    {
-        public string Name { get; set; }
-        public int Position { get; set; }
-        public string Group { get; set; }
-
-        public Element(string group, int position, string name)
-        {
-            Position = position;
-            Group = group;
-            Name = name;
-        }
-    }
-    
+    private MudDataGrid<Element> _dataGrid = null!;
     private IEnumerable<Element> _elements = new List<Element>()
     {
         new("Alkaline Earth Metal (s)",0,"Caesium"),
@@ -132,8 +116,6 @@
         new("Transition Metal (d)",3,"Zirconium")
     };
 
-    private MudDataGrid<Element> _dataGrid;
-
     public void RefreshList()
     {
         _elements = _elements.Select(x => new Element(x.Group, x.Position, x.Name)).ToList();
@@ -141,11 +123,20 @@
 
     public void ExpandAllGroups()
     {
-        _dataGrid?.ExpandAllGroups();
+        _dataGrid.ExpandAllGroups();
     }
 
     public void CollapseAllGroups()
     {
-        _dataGrid?.CollapseAllGroups();
+        _dataGrid.CollapseAllGroups();
+    }
+
+    public class Element(string group, int position, string name)
+    {
+        public string Name { get; set; } = name;
+
+        public int Position { get; set; } = position;
+
+        public string Group { get; set; } = group;
     }
 }

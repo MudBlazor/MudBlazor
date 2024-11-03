@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.Interfaces;
 using MudBlazor.State;
 using MudBlazor.Utilities;
@@ -10,6 +6,16 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
+
+    /// <summary>
+    /// A scrollable list for displaying text, avatars, and icons.
+    /// </summary>
+    /// <remarks>
+    /// This component contains an optional <see cref="MudListSubheader"/> and one or more <see cref="MudListItem{T}"/>.
+    /// </remarks>
+    /// <typeparam name="T">The type of item being listed.</typeparam>
+    /// <seealso cref="MudListItem{T}"/>
+    /// <seealso cref="MudListSubheader"/>
     public partial class MudList<T> : MudComponentBase, IDisposable
     {
         public MudList()
@@ -61,113 +67,159 @@ namespace MudBlazor
         protected MudList<T>? ParentList { get; set; }
 
         /// <summary>
-        /// The color of the selected List Item.
+        /// The color of the selected list item.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Color.Primary"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public Color Color { get; set; } = Color.Primary;
 
         /// <summary>
-        /// Check box color if multiselection is used.
+        /// The color of checkboxes when <see cref="SelectionMode"/> is <see cref="SelectionMode.MultiSelection"/>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Color.Default"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Selecting)]
         public Color CheckBoxColor { get; set; } = Color.Default;
 
         /// <summary>
-        /// Child content of component.
+        /// The content within this list.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
         public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// If true, the list items will not be clickable and the selected item can not be changed by the user.
+        /// Prevents list items from being selected.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Selecting)]
         public bool ReadOnly { get; set; }
 
         /// <summary>
-        /// If true, vertical padding will be applied to the list.
+        /// Applies vertical padding to this list.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public bool Padding { get; set; }
 
         /// <summary>
-        /// If true, list items will take up less vertical space.
+        /// Uses less vertical space for list items.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public bool Dense { get; set; }
 
         /// <summary>
-        /// If true, left and right padding is added to all list items. Default is true.
+        /// Applies left and right padding to all list items.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public bool Gutters { get; set; } = true;
 
         /// <summary>
-        /// If true, will disable the list item if it has onclick.
+        /// Prevents any list item from being clicked.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
         public bool Disabled { get; set; }
 
         /// <summary>
-        /// The selection mode determines whether only a single item (SingleSelection or ToggleSelection) or multiple items
-        /// can be selected (MultiSelection). The difference between SingleSelection and ToggleSelection is whether the selected
-        /// item can be toggled off by clicking a second time.
+        /// Controls how list items are selected.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="SelectionMode.SingleSelection"/>.<br />
+        /// Use <see cref="SelectionMode.SingleSelection"/> to select one list item at a time.<br />
+        /// Use <see cref="SelectionMode.MultiSelection"/> to allow selecting multiple list items.<br />
+        /// Use <see cref="SelectionMode.ToggleSelection"/> to toggle selections on and off when clicked.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Selecting)]
         public SelectionMode SelectionMode { get; set; } = SelectionMode.SingleSelection;
 
         /// <summary>
-        /// The current selected value.
+        /// The currently selected value.
         /// </summary>
+        /// <remarks>
+        /// This value is updated when <see cref="SelectionMode"/> is <see cref="SelectionMode.SingleSelection"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Selecting)]
         public T? SelectedValue { get; set; }
 
         /// <summary>
-        /// Called whenever the selection changed
+        /// Occurs when <see cref="SelectedValue"/> has changed.
         /// </summary>
+        /// <remarks>
+        /// This event occurs when <see cref="SelectionMode"/> is <see cref="SelectionMode.SingleSelection"/>.
+        /// </remarks>
         [Parameter]
         public EventCallback<T?> SelectedValueChanged { get; set; }
 
         /// <summary>
-        /// The current selected value.
+        /// The currently selected values.
         /// </summary>
+        /// <remarks>
+        /// This value is updated when <see cref="SelectionMode"/> is <see cref="SelectionMode.MultiSelection"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Selecting)]
         public IReadOnlyCollection<T>? SelectedValues { get; set; }
 
         /// <summary>
-        /// Called whenever the selection changed
+        /// Occurs when <see cref="SelectedValues"/> has changed.
         /// </summary>
+        /// <remarks>
+        /// This event occurs when <see cref="SelectionMode"/> is <see cref="SelectionMode.MultiSelection"/>.
+        /// </remarks>
         [Parameter]
         public EventCallback<IReadOnlyCollection<T>?> SelectedValuesChanged { get; set; }
 
         /// <summary>
-        /// Comparer is used to check if two tree items are equal
+        /// The comparer used to see if two list items are equal.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="EqualityComparer{T}.Default"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Selecting)]
         public IEqualityComparer<T?> Comparer { get; set; } = EqualityComparer<T?>.Default;
 
         /// <summary>
-        /// Custom checked icon.
+        /// The icon to use for checked checkboxes when <see cref="SelectionMode"/> is <see cref="SelectionMode.MultiSelection"/>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.CheckBox"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Selecting)]
         public string CheckedIcon { get; set; } = Icons.Material.Filled.CheckBox;
 
         /// <summary>
-        /// Custom unchecked icon.
+        /// The icon to use for unchecked checkboxes when <see cref="SelectionMode"/> is <see cref="SelectionMode.MultiSelection"/>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.CheckBoxOutlineBlank"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Selecting)]
         public string UncheckedIcon { get; set; } = Icons.Material.Filled.CheckBoxOutlineBlank;
@@ -345,6 +397,9 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// Releases resources used by this component.
+        /// </summary>
         public void Dispose()
         {
             ParentList?.Unregister(this);

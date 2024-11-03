@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace MudBlazor.Docs.Models
 {
-    // this is needed for the api docs 
+    [Obsolete("This has been replaced by the ApiDocumentation class.")]
     public static partial class DocStrings
     {
         /* To speed up the method, run it in this way:

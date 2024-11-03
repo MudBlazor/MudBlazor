@@ -4,6 +4,7 @@
 
 namespace MudBlazor;
 
+#nullable enable
 public class TabInteractionEventArgs
 {
     public int PanelIndex { get; set; }

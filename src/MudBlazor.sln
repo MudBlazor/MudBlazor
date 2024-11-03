@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31423.177
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MudBlazor.SourceCodeGenerator", "MudBlazor.SourceCodeGenerator\MudBlazor.SourceCodeGenerator.csproj", "{CDE02174-96AB-4E97-AFA8-391C0FF98225}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MudBlazor.SourceGenerator", "MudBlazor.SourceGenerator\MudBlazor.SourceGenerator.csproj", "{CDE02174-96AB-4E97-AFA8-391C0FF98225}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MudBlazor", "MudBlazor\MudBlazor.csproj", "{FE5531F3-55F6-403D-BF48-3C904089B91D}"
 EndProject
@@ -23,11 +23,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		Directory.Build.props = Directory.Build.props
+		Directory.Build.targets = Directory.Build.targets
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MudBlazor.Examples.Data", "MudBlazor.Examples.Data\MudBlazor.Examples.Data.csproj", "{D9290286-6DD8-478C-A902-23660C554A1C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MudBlazor.Docs.Server", "MudBlazor.Docs.Server\MudBlazor.Docs.Server.csproj", "{90B6D51A-133A-4744-A5FE-FF398F0D6BAA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MudBlazor.Analyzers", "MudBlazor.Analyzers\MudBlazor.Analyzers.csproj", "{3B3527C8-84FA-4CFB-B8CF-405920D82A27}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MudBlazor.Analyzers.TestComponents", "MudBlazor.Analyzers.TestComponents\MudBlazor.Analyzers.TestComponents.csproj", "{2A91AF0A-67C6-411F-AFEC-5C30F17E6A4E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -75,6 +80,14 @@ Global
 		{90B6D51A-133A-4744-A5FE-FF398F0D6BAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{90B6D51A-133A-4744-A5FE-FF398F0D6BAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{90B6D51A-133A-4744-A5FE-FF398F0D6BAA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B3527C8-84FA-4CFB-B8CF-405920D82A27}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B3527C8-84FA-4CFB-B8CF-405920D82A27}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B3527C8-84FA-4CFB-B8CF-405920D82A27}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B3527C8-84FA-4CFB-B8CF-405920D82A27}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A91AF0A-67C6-411F-AFEC-5C30F17E6A4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A91AF0A-67C6-411F-AFEC-5C30F17E6A4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A91AF0A-67C6-411F-AFEC-5C30F17E6A4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A91AF0A-67C6-411F-AFEC-5C30F17E6A4E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

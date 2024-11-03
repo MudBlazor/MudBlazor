@@ -18,10 +18,10 @@ namespace MudBlazor
             .Build();
 
         /// <summary>
-        /// The title of the media.
+        /// Text for the <c>title</c> attribute which provides a basic tooltip.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>null</c>.  This property can improve accessibility by describing the media in the <see cref="Image"/> property.
+        /// Defaults to <c>null</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Card.Behavior)]

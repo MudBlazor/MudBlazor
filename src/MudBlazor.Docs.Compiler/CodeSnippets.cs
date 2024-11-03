@@ -10,14 +10,13 @@ namespace MudBlazor.Docs.Compiler
     {
         public bool Execute()
         {
-            var paths = new Paths();
             var success = true;
             try
             {
                 var currentCode = string.Empty;
-                if (File.Exists(paths.SnippetsFilePath))
+                if (File.Exists(Paths.SnippetsFilePath))
                 {
-                    currentCode = File.ReadAllText(paths.SnippetsFilePath);
+                    currentCode = File.ReadAllText(Paths.SnippetsFilePath);
                 }
 
                 var cb = new CodeBuilder();
@@ -30,7 +29,7 @@ namespace MudBlazor.Docs.Compiler
                 cb.AddLine("{");
                 cb.IndentLevel++;
 
-                foreach (var entry in Directory.EnumerateFiles(paths.DocsDirPath, "*.razor", SearchOption.AllDirectories)
+                foreach (var entry in Directory.EnumerateFiles(Paths.DocsDirPath, "*.razor", SearchOption.AllDirectories)
                     .OrderBy(e => e.Replace("\\", "/"), StringComparer.Ordinal))
                 {
                     var filename = Path.GetFileName(entry);
@@ -47,12 +46,12 @@ namespace MudBlazor.Docs.Compiler
 
                 if (currentCode != cb.ToString())
                 {
-                    File.WriteAllText(paths.SnippetsFilePath, cb.ToString());
+                    File.WriteAllText(Paths.SnippetsFilePath, cb.ToString());
                 }
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Error generating {paths.SnippetsFilePath} : {e.Message}");
+                Console.WriteLine($"Error generating {Paths.SnippetsFilePath} : {e.Message}");
                 success = false;
             }
 

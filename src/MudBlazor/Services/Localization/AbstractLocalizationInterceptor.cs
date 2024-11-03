@@ -14,12 +14,12 @@ public abstract class AbstractLocalizationInterceptor : ILocalizationInterceptor
     /// <summary>
     /// Gets the <see cref="IStringLocalizer"/> for internal translations.
     /// </summary>
-    protected IStringLocalizer Localizer { get; }
+    protected internal IStringLocalizer Localizer { get; }
 
     /// <summary>
     /// Gets the custom <see cref="MudBlazor.MudLocalizer"/> for additional translations, if provided.
     /// </summary>
-    protected MudLocalizer? MudLocalizer { get; }
+    protected internal MudLocalizer? MudLocalizer { get; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AbstractLocalizationInterceptor"/> class.
@@ -49,7 +49,7 @@ public abstract class AbstractLocalizationInterceptor : ILocalizationInterceptor
     /// <inheritdoc />
     public abstract LocalizedString Handle(string key, params object[] arguments);
 
-    private static IStringLocalizer DefaultLanguageResourceReader(ILoggerFactory loggerFactory)
+    internal static IStringLocalizer DefaultLanguageResourceReader(ILoggerFactory loggerFactory)
     {
         var options = Options.Create(new LocalizationOptions());
         var factory = new ResourceManagerStringLocalizerFactory(options, loggerFactory);

@@ -463,8 +463,8 @@
 
     .graphic-wrapper {
       position: absolute;
-      top: 0;
-      right: 0;
+      top: 12px;
+      right: -12px;
     }
   }
 
@@ -564,8 +564,8 @@
 
   .world-map {
     position: absolute;
-    top: 0;
-    left: 0;
+    top: 12px;
+    left: 12px;
     height: 100%;
     width: 100%;
     z-index: -1;
@@ -808,9 +808,9 @@
 
   .mudblazor-landingpage .top-section .graphic-wrapper {
     position: absolute;
-    top: 0;
+    top: 12px;
     right: unset;
-    left: 0;
+    left: 12px;
 
     .lp-device.phone, .lp-effect.phone-shadow {
       top: 128px;

@@ -1,4 +1,7 @@
 ﻿@page "/features/colors"
+@page "/components/color"
+@page "/components/MudColor"
+
 @using System.Reflection
 @using System.Text.RegularExpressions
 
@@ -68,7 +71,7 @@
                     <SectionHeader Title="List of Material Colors">
                         <Description>Below is a list of the Material design color palette grouped by primary color</Description>
                     </SectionHeader>
-                    <MudGrid Spacing="4">
+                    <MudGrid Spacing="8">
                         @foreach (var color in MaterialColors)
                         {
                             <MudItem md="6" lg="4" xs="12">

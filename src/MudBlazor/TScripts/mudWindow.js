@@ -30,12 +30,6 @@ class MudWindow {
     open (args) {
         window.open(args);
     }
+}
 
-    click (id) {
-        const element = document.getElementById(id);
-        if (element) {
-            element.click();
-        }
-    }
-};
 window.mudWindow = new MudWindow();

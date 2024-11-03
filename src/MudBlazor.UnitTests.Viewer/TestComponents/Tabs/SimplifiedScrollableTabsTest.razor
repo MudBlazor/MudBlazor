@@ -1,21 +1,20 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudTabs Elevation="1" @ref="_tabElement" AlwaysShowScrollButtons="false" Position="Position.Top">
+﻿<MudTabs Elevation="1" AlwaysShowScrollButtons="false" Position="Position.Top">
     @foreach (var tab in _tabs)
     {
-<MudTabPanel @key="tab" Text="@tab">
-    <MudText>@tab</MudText>
-</MudTabPanel>}
+        <MudTabPanel @key="tab" Text="@tab">
+        <MudText>@tab</MudText>
+        </MudTabPanel>
+    }
 </MudTabs>
 
 @code
 { 
-    private MudTabs _tabElement;
-
     public static string __description__ = "scrolling should work";
 
+    private readonly List<string> _tabs = [];
+
     [Parameter]
-    public Int32 StartAmount { get; set; } = 0;
+    public int StartAmount { get; set; } = 0;
 
     protected override void OnParametersSet()
     {
@@ -27,18 +26,15 @@
         }
     }
 
-    private List<string> _tabs = new();
-
-    public async Task AddPanel()
+    public Task AddPanel()
     {
         _tabs.Add($"new item {_tabs.Count+1}");
-        await InvokeAsync(StateHasChanged);
+        return InvokeAsync(StateHasChanged);
     }
 
-    public async Task RemoveLastPanel()
+    public Task RemoveLastPanel()
     {
         _tabs.RemoveAt(_tabs.Count-1);
-        await InvokeAsync(StateHasChanged);
+        return InvokeAsync(StateHasChanged);
     }
-
 }

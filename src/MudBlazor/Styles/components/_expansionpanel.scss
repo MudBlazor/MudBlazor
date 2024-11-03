@@ -98,13 +98,13 @@
   }
 
   & .mud-expand-panel-content {
-    padding: 0 24px 16px;
+    padding-bottom: 16px;
     flex: 1 1 auto;
     max-width: 100%;
 
-    &.mud-expand-panel-disable-gutters {
-      padding-left: 0px;
-      padding-right: 0px;
+    &.mud-expand-panel-gutters {
+      padding-left: 24px;
+      padding-right: 24px;
     }
 
     &.mud-expand-panel-dense {

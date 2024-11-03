@@ -3,6 +3,12 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
+/// <summary>
+/// Represents the toolbar content of a <see cref="MudPicker{T}"/>.
+/// </summary>
+/// <seealso cref="MudPicker{T}" />
+/// <seealso cref="MudPickerContent" />
+#nullable enable
 public partial class MudPickerToolbar : MudComponentBase
 {
     protected string Classname =>
@@ -14,37 +20,40 @@ public partial class MudPickerToolbar : MudComponentBase
             .Build();
 
     /// <summary>
-    /// If true, show toolbar
+    /// Shows the toolbar.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <c>true</c>.
+    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Picker.Behavior)]
     public bool ShowToolbar { get; set; } = true;
 
     /// <summary>
-    /// Sets the orientation of the toolbar
+    /// The display orientation of this toolbar.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Picker.Appearance)]
     public Orientation Orientation { get; set; }
 
     /// <summary>
-    /// Picker container option
+    /// The display variant for this toolbar.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Picker.Appearance)]
     public PickerVariant PickerVariant { get; set; }
 
     /// <summary>
-    /// The color of the toolbar, selected and active. It supports the theme colors
+    /// The color of the toolbar, selected, and active values.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Picker.Appearance)]
     public Color Color { get; set; }
 
     /// <summary>
-    /// Child content of toolbar
+    /// The content within this toolbar.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Picker.Behavior)]
-    public RenderFragment ChildContent { get; set; }
+    public RenderFragment? ChildContent { get; set; }
 }

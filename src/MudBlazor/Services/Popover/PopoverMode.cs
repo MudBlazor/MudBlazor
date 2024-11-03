@@ -15,12 +15,4 @@ public enum PopoverMode
     /// The default popover mode that uses the <see cref="IPopoverService"/>.
     /// </summary>
     Default = 0,
-
-    /// <summary>
-    /// The legacy popover mode used for backward compatibility, which utilizes the old <see cref="IMudPopoverService"/> instead of <see cref="IPopoverService"/>.
-    /// </summary>
-    /// <remarks>
-    /// This property is only for backward compatibility with old behaviour. This will be removed in v7. 
-    /// </remarks>
-    Legacy = 1,
 }

@@ -1,0 +1,33 @@
+﻿@inject IDialogService DialogService
+
+<MudDialog>
+    <TitleContent>
+        Dialog Title
+    </TitleContent>
+    <DialogContent>
+        <MudButton id="show_messagebox_btn" @onclick="DoSomething" Variant="Variant.Filled" Color="Color.Primary">
+            Do Something
+        </MudButton>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; } = null!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var newOptions = MudDialog.Options with { CloseOnEscapeKey = true, CloseButton = true };
+        await MudDialog.SetOptionsAsync(newOptions);
+
+        await base.OnInitializedAsync();
+    }
+
+    private void Submit() => MudDialog.Close(DialogResult.Ok(true));
+
+    private Task DoSomething() => DialogService.ShowMessageBox("Warning", "Are you sure you wish to do something?", yesText: "Do it", cancelText: "Cancel");
+}

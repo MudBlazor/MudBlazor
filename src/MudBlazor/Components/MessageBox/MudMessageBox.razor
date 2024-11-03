@@ -1,18 +1,23 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
+@{
+#nullable enable
+}
+
 <MudDialog @attributes="UserAttributes" Class="@Classname">
     <TitleContent>
         @if (TitleContent is null)
         {
-            <MudText Typo="Typo.h6">@Title</MudText> }
+            <MudText Typo="Typo.h6">@Title</MudText>
+        }
         else
         {
             @TitleContent
         }
     </TitleContent>
     <DialogContent>
-        @if(MessageContent is not null)
+        @if (MessageContent is not null)
         {
             @MessageContent
         }
@@ -23,7 +28,7 @@
         }
     </DialogContent>
     <DialogActions>
-        <div tabindex="-1" @onkeydown="HandleKeyDown">
+        <div tabindex="-1">
             <MudFocusTrap DefaultFocus="DefaultFocus.LastChild">
                 @if (CancelButton is not null)
                 {
@@ -33,7 +38,7 @@
                 }
                 else if (!string.IsNullOrWhiteSpace(CancelText))
                 {
-                    <MudButton OnClick="OnCancelClicked">@CancelText</MudButton>
+                    <MudButton Class="mud-message-box__cancel-button" OnClick="OnCancelClicked">@CancelText</MudButton>
                 }
                 @if (NoButton is not null)
                 {
@@ -43,7 +48,7 @@
                 }
                 else if (!string.IsNullOrWhiteSpace(NoText))
                 {
-                    <MudButton OnClick="OnNoClicked">@NoText</MudButton>
+                    <MudButton Class="mud-message-box__no-button" OnClick="OnNoClicked">@NoText</MudButton>
                 }
                 @if (YesButton is not null)
                 {
@@ -53,10 +58,10 @@
                 }
                 else if (!string.IsNullOrWhiteSpace(YesText))
                 {
-                    <MudButton Color="Color.Primary" OnClick="OnYesClicked">@YesText</MudButton>
+                    <MudButton Class="mud-message-box__yes-button" Color="Color.Primary" OnClick="OnYesClicked">@YesText</MudButton>
                 }
             </MudFocusTrap>
         </div>
-        
+
     </DialogActions>
 </MudDialog>

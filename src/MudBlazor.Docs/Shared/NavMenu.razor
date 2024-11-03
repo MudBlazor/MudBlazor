@@ -2,7 +2,7 @@
 @using System.Text.RegularExpressions
 @using MudBlazor.Docs.Extensions
 
-<MudNavGroup Title="Getting Started" Expanded="@(_section == "getting-started")">
+<MudNavGroup Title="Getting Started" Expanded="@(_section == "getting-started")" ExpandIcon="@Icons.Material.Filled.ExpandMore">
     <MudNavLink Href="/getting-started/installation">Installation</MudNavLink>
     <MudNavLink Href="/getting-started/layouts">Layouts</MudNavLink>
     <MudNavLink Href="/getting-started/usage">Usage</MudNavLink>
@@ -33,6 +33,7 @@
 </MudNavGroup>
 
 <MudNavGroup Title="Component API" Expanded="@(_section == "api")" ExpandIcon="@Icons.Material.Filled.ExpandMore">
+    <MudNavLink Href="/api" Match="NavLinkMatch.All">API Index</MudNavLink>
     @foreach (var item in MenuService.Api.OrderBy(x => x.Name))
     {
         <MudNavLink Href="@ApiLink.GetApiLinkFor(item.Type)">@item.Name</MudNavLink>
@@ -67,7 +68,7 @@
     }
 </MudNavGroup>
 
-<MudNavGroup Title="Learn More" Expanded="@(_section == "mud")">
+    <MudNavGroup Title="Learn More" Expanded="@(_section == "mud")" ExpandIcon="@Icons.Material.Filled.ExpandMore">
     <MudNavLink Href="/mud/introduction">What is MudBlazor?</MudNavLink>
     <MudNavLink Href="/mud/announcements">Announcements</MudNavLink>
     <MudNavLink Href="/mud/community/getting-help">Getting Help</MudNavLink>

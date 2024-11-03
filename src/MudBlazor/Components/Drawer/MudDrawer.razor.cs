@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.Interfaces;
 using MudBlazor.Services;
 using MudBlazor.State;
@@ -13,21 +10,26 @@ namespace MudBlazor
     /// <summary>
     /// Represents a navigation panel docked to the side of the page.
     /// </summary>
-    public partial class MudDrawer : MudComponentBase, INavigationEventReceiver, IBrowserViewportObserver, IDisposable
+    /// <seealso cref="MudDrawerContainer"/>
+    /// <seealso cref="MudDrawerHeader"/>
+    public partial class MudDrawer : MudComponentBase, INavigationEventReceiver, IBrowserViewportObserver, IAsyncDisposable
     {
         private double _height;
-        private int _disposeCount;
+        private bool _disposed;
         private readonly ParameterState<bool> _rtlState;
         private readonly ParameterState<bool> _openState;
         private readonly ParameterState<Breakpoint> _breakpointState;
         private readonly ParameterState<DrawerClipMode> _clipModeState;
         private ElementReference _contentRef;
-        private bool _closeOnMouseLeave = false;
+        private bool _closeOnPointerLeave = false;
         private bool _isRendered;
         private bool _initial = true;
         private bool _keepInitialState;
         private Breakpoint _lastUpdatedBreakpoint = Breakpoint.None;
 
+        /// <summary>
+        /// Creates a new instance.
+        /// </summary>
         public MudDrawer()
         {
             using var registerScope = CreateRegisterScope();
@@ -104,7 +106,7 @@ namespace MudBlazor
         /// The size of the drop shadow.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>4</c>.  A higher number creates a heavier drop shadow.  Use a value of <c>0</c> for no shadow.
+        /// Defaults to <c>1</c>.  A higher number creates a heavier drop shadow.  Use a value of <c>0</c> for no shadow.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Drawer.Appearance)]
@@ -124,21 +126,24 @@ namespace MudBlazor
         /// The color of the drawer.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Color.Default"/>.  Theme colors are supported.
+        /// Defaults to <see cref="Color.Default"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Drawer.Appearance)]
         public Color Color { get; set; } = Color.Default;
 
         /// <summary>
-        /// Variant of the drawer. It specifies how the drawer will be displayed.
+        /// The display variant of this drawer.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="DrawerVariant.Responsive"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Drawer.Behavior)]
         public DrawerVariant Variant { get; set; } = DrawerVariant.Responsive;
 
         /// <summary>
-        /// The content within this component.
+        /// The content within this drawer.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Drawer.Behavior)]
@@ -155,7 +160,20 @@ namespace MudBlazor
         public bool Overlay { get; set; } = true;
 
         /// <summary>
-        /// For mini drawers, opens this drawer when the mouse hovers over it.
+        /// Sets a value indicating whether the overlay should automatically close when clicked.
+        /// </summary>
+        /// <remarks>
+        /// If the <see cref="Variant"/> is set to <see cref="DrawerVariant.Temporary"/>, an overlay will be displayed. 
+        /// When this property is <c>true</c>, clicking on the overlay will close it automatically. 
+        /// When this property is <c>false</c>, the overlay will not close automatically.
+        /// Defaults to <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Drawer.Behavior)]
+        public bool OverlayAutoClose { get; set; } = true;
+
+        /// <summary>
+        /// For mini drawers, opens this drawer when the pointer hovers over it.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  Applies when <see cref="Variant" /> is set to <see cref="DrawerVariant.Mini" />.
@@ -188,7 +206,12 @@ namespace MudBlazor
         /// <item><description><see cref="Breakpoint.LgAndUp"/>: Aliases to <see cref="Breakpoint.Lg"/></description></item> 
         /// <item><description><see cref="Breakpoint.XlAndUp"/>: Aliases to <see cref="Breakpoint.Xl"/></description></item> 
         /// </list> 
-        /// Setting the value to <see cref="Breakpoint.None"/> will always close the drawer, while <see cref="Breakpoint.Always"/> will always keep it open. 
+        /// <para>
+        /// Setting the value to <see cref="Breakpoint.None"/> will always close the drawer, while <see cref="Breakpoint.Always"/> will always keep it open.
+        /// </para>
+        /// <para>
+        /// Applies when <see cref="Variant" /> is set to <see cref="DrawerVariant.Responsive"/> or <see cref="DrawerVariant.Mini" />.
+        /// </para>
         /// </remarks> 
         [Parameter]
         [Category(CategoryTypes.Drawer.Behavior)]
@@ -261,7 +284,10 @@ namespace MudBlazor
             if (firstRender)
             {
                 await UpdateHeightAsync();
-                await BrowserViewportService.SubscribeAsync(this, fireImmediately: true);
+                if (!_disposed)
+                {
+                    await BrowserViewportService.SubscribeAsync(this, fireImmediately: true);
+                }
 
                 _isRendered = true;
                 if (string.IsNullOrWhiteSpace(Height) && Anchor is Anchor.Bottom or Anchor.Top)
@@ -273,24 +299,17 @@ namespace MudBlazor
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        public void Dispose()
+        public async ValueTask DisposeAsync()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        public virtual void Dispose(bool disposing)
-        {
-            if (Interlocked.Increment(ref _disposeCount) == 1)
+            if (!_disposed)
             {
-                if (disposing)
-                {
-                    DrawerContainer?.Remove(this);
+                _disposed = true;
 
-                    if (IsJSRuntimeAvailable)
-                    {
-                        BrowserViewportService.UnsubscribeAsync(this).CatchAndLog();
-                    }
+                DrawerContainer?.Remove(this);
+
+                if (IsJSRuntimeAvailable)
+                {
+                    await BrowserViewportService.UnsubscribeAsync(this);
                 }
             }
         }
@@ -400,20 +419,20 @@ namespace MudBlazor
 
         internal bool IsFixed => Fixed && DrawerContainer is MudLayout;
 
-        private async Task OnMouseEnterAsync()
+        private async Task OnPointerEnterAsync()
         {
             if (Variant == DrawerVariant.Mini && !_openState.Value && OpenMiniOnHover)
             {
-                _closeOnMouseLeave = true;
+                _closeOnPointerLeave = true;
                 await _openState.SetValueAsync(true);
             }
         }
 
-        private async Task OnMouseLeaveAsync()
+        private async Task OnPointerLeaveAsync()
         {
-            if (Variant == DrawerVariant.Mini && _openState.Value && _closeOnMouseLeave)
+            if (Variant == DrawerVariant.Mini && _openState.Value && _closeOnPointerLeave)
             {
-                _closeOnMouseLeave = false;
+                _closeOnPointerLeave = false;
                 await _openState.SetValueAsync(false);
             }
         }
@@ -440,6 +459,11 @@ namespace MudBlazor
             if (browserViewportEventArgs.IsImmediate)
             {
                 _lastUpdatedBreakpoint = browserViewportEventArgs.Breakpoint;
+                if (!IsResponsiveOrMini())
+                {
+                    return;
+                }
+
                 if (HandleBreakpointNone())
                 {
                     await InitialOpenState(false);

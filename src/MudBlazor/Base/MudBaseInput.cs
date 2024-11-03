@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.State;
@@ -28,15 +24,19 @@ namespace MudBlazor
         protected bool _isFocused;
         protected bool _forceTextUpdate;
 
-        private string? _userAttributesId = $"mudinput-{Guid.NewGuid()}";
-        private readonly string _componentId = $"mudinput-{Guid.NewGuid()}";
-        internal readonly ParameterState<string?> InputIdState;
+        /// <summary>
+        /// The resolved input element ID.
+        /// </summary>
+        protected string? InputElementId => _inputIdState.Value;
+        private string? _userAttributesId = Identifier.Create("mudinput");
+        private readonly string _componentId = Identifier.Create("mudinput");
+        private readonly ParameterState<string?> _inputIdState;
 
         protected MudBaseInput()
             : base(new DefaultConverter<T>())
         {
             using var registerScope = CreateRegisterScope();
-            InputIdState = registerScope.RegisterParameter<string?>(nameof(InputId))
+            _inputIdState = registerScope.RegisterParameter<string?>(nameof(InputId))
                 .WithParameter(() => InputId)
                 .WithChangeHandler(UpdateInputIdStateAsync);
         }
@@ -98,6 +98,16 @@ namespace MudBlazor
         public bool Underline { get; set; } = true;
 
         /// <summary>
+        /// The ID of the helper element, for use by <c>aria-describedby</c>.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  When set it is appended to the <c>aria-describedby</c> attribute to improve accessibility for users. This ID takes precedence over the helper element rendered when <see cref="HelperText"/> is provided.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public string? HelperId { get; set; }
+
+        /// <summary>
         /// The text displayed below the text field.
         /// </summary>
         /// <remarks>
@@ -141,7 +151,7 @@ namespace MudBlazor
         /// The location of the adornment icon or text.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Adornment.None"/>.  Then set to <c>Start</c> or <c>End</c>, the <see cref="AdornmentText"/> will be displayed, or <see cref="AdornmentIcon"/> if no adornment text is specified.  
+        /// Defaults to <see cref="Adornment.None"/>.  When set to <c>Start</c> or <c>End</c>, the <see cref="AdornmentText"/> will be displayed, or <see cref="AdornmentIcon"/> if no adornment text is specified.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
@@ -168,14 +178,14 @@ namespace MudBlazor
         public Color AdornmentColor { get; set; } = Color.Default;
 
         /// <summary>
-        /// The ARIA label of the adornment.
+        /// The <c>aria-label</c> for the adornment.
         /// </summary>
         /// <remarks>
-        /// Defaults to an empty string.  This property controls the value set for the <c>aria-label</c> attribute.
+        /// Defaults to <c>null</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public string AdornmentAriaLabel { get; set; } = string.Empty;
+        public string? AdornmentAriaLabel { get; set; }
 
         /// <summary>
         /// The size of the icon.
@@ -201,7 +211,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public Variant Variant { get; set; } = Variant.Text;
+        public Variant Variant { get; set; } = MudGlobal.InputDefaults.Variant;
 
         /// <summary>
         /// The amount of vertical spacing for this input.
@@ -211,14 +221,14 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public Margin Margin { get; set; } = Margin.None;
+        public Margin Margin { get; set; } = MudGlobal.InputDefaults.Margin;
 
         /// <summary>
         /// Typography for the input text.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public Typo Typo { get; set; } = Typo.input;
+        public Typo Typo { get; set; } = Typo.subtitle1;
 
         /// <summary>
         /// The text displayed in the input if no <see cref="Value"/> is specified.
@@ -408,6 +418,12 @@ namespace MudBlazor
             set => SetFormat(value);
         }
 
+        /// <summary>
+        /// The ID of the input element.
+        /// </summary>
+        /// <remarks>
+        /// When set takes precedence over any internally generated IDs.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public string? InputId { get; set; }
@@ -701,6 +717,34 @@ namespace MudBlazor
             await base.ResetValueAsync();
         }
 
+        protected string? GetHelperId()
+        {
+            if (HelperId is not null)
+            {
+                return HelperId;
+            }
+
+            // error text replaces helper text in MudInputControl, so if the user does not provide a custom helper id, we have no valid helper element
+            if (HasErrors)
+            {
+                return null;
+            }
+
+            return HelperText is not null
+                ? $"{_inputIdState.Value}-helper-text"
+                : null;
+        }
+
+        protected string? GetAriaDescribedByString()
+        {
+            var errorId = HasErrors ? ErrorId : null;
+            var helperId = GetHelperId();
+
+            return errorId is not null && helperId is not null
+                ? $"{errorId} {helperId}"
+                : errorId ?? helperId ?? null;
+        }
+
         /// <summary>
         /// The type of input received by this component.
         /// </summary>
@@ -718,11 +762,11 @@ namespace MudBlazor
 
             if (_userAttributesId is not null)
             {
-                await InputIdState.SetValueAsync(_userAttributesId);
+                await _inputIdState.SetValueAsync(_userAttributesId);
                 return;
             }
 
-            await InputIdState.SetValueAsync(_componentId);
+            await _inputIdState.SetValueAsync(_componentId);
         }
     }
 }

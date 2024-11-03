@@ -1,20 +1,25 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
-namespace MudBlazor
-{
-    public partial class MudPickerContent : MudComponentBase
-    {
-        protected string Classname =>
-            new CssBuilder("mud-picker-content")
-                .AddClass(Class)
-                .Build();
+namespace MudBlazor;
 
-        /// <summary>
-        /// Child content of component.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Picker.Behavior)]
-        public RenderFragment ChildContent { get; set; }
-    }
+/// <summary>
+/// Represents the content within a <see cref="MudPicker{T}"/>.
+/// </summary>
+/// <seealso cref="MudPicker{T}" />
+/// <seealso cref="MudPickerToolbar" />
+#nullable enable
+public partial class MudPickerContent : MudComponentBase
+{
+    protected string Classname =>
+        new CssBuilder("mud-picker-content")
+            .AddClass(Class)
+            .Build();
+
+    /// <summary>
+    /// The content to display.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Picker.Behavior)]
+    public RenderFragment? ChildContent { get; set; }
 }

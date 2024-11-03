@@ -3,7 +3,7 @@
 @namespace MudBlazor.Docs.Examples
 
 <MudDatePicker Label="Current UI Culture" @bind-Date="_date" />
-<MudDatePicker Label="Persian" @bind-Date="_date" Culture="@GetPersianCulture()" UseShortNames="false" TitleDateFormat="dddd, dd MMMM"/>
+<MudDatePicker Label="Persian" @bind-Date="_date" Culture="@GetPersianCulture()" TitleDateFormat="dddd, dd MMMM"/>
 <MudDatePicker Label="Chinese" @bind-Date="_date" Culture="@CultureInfo.GetCultureInfo("zh-Hans")" TitleDateFormat="dddd, dd MMMM"/>
 
 @code {

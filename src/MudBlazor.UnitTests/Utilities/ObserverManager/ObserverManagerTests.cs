@@ -2,11 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -27,6 +23,16 @@ public class ObserverManagerTests
     {
         //Reset on each test
         _observerManager = new ObserverManager<int, string>(NullLogger<ObserverManager<int, string>>.Instance);
+    }
+
+    [Test]
+    public void Constructor_ThrowsException()
+    {
+        // Arrange & Act
+        var construct = () => new ObserverManager<int, string>(null!);
+
+        // Assert
+        construct.Should().Throw<ArgumentNullException>();
     }
 
     [Test]
@@ -223,11 +229,11 @@ public class ObserverManagerTests
 
 
     [Test]
-    public void Unsubscribe_Subscribe_UpdateSubscribe_DebugLogEnabled_LogsDebugInformation()
+    public void Unsubscribe_Subscribe_UpdateSubscribe_TraceLogEnabled_LogsDebugInformation()
     {
         // Arrange
         var loggerMock = new Mock<ILogger>();
-        loggerMock.Setup(x => x.IsEnabled(LogLevel.Debug)).Returns(true);
+        loggerMock.Setup(x => x.IsEnabled(LogLevel.Trace)).Returns(true);
 
         var observerManager = new ObserverManager<int, string>(loggerMock.Object);
 
@@ -241,17 +247,17 @@ public class ObserverManagerTests
 
         // Assert
         loggerMock
-            .VerifyLogging($"Adding entry for {Id}/{Observer}. 1 total observers after add.")
-            .VerifyLogging($"Updating entry for {Id}/{Observer}. 1 total observers.")
-            .VerifyLogging($"Removed entry for {Id}. 0 total observers after remove.");
+            .VerifyLogging($"Adding entry for {Id}/{Observer}. 1 total observers after add.", LogLevel.Trace)
+            .VerifyLogging($"Updating entry for {Id}/{Observer}. 1 total observers.", LogLevel.Trace)
+            .VerifyLogging($"Removed entry for {Id}. 0 total observers after remove.", LogLevel.Trace);
     }
 
     [Test]
-    public async Task NotifyAsync_DefunctObserver_LogsDebugInformation()
+    public async Task NotifyAsync_DefunctObserver_LogsTraceInformation()
     {
         // Arrange
         var loggerMock = new Mock<ILogger>();
-        loggerMock.Setup(x => x.IsEnabled(LogLevel.Debug)).Returns(true);
+        loggerMock.Setup(x => x.IsEnabled(LogLevel.Trace)).Returns(true);
 
         var observerManager = new ObserverManager<int, string>(loggerMock.Object);
 
@@ -273,8 +279,8 @@ public class ObserverManagerTests
 
         // Assert
         loggerMock
-            .VerifyLogging($"Adding entry for {DefunctObserverId}/{DefunctObserver}. 1 total observers after add.")
-            .VerifyLogging($"Removing defunct entry for {DefunctObserverId}. 0 total observers after remove.");
+            .VerifyLogging($"Adding entry for {DefunctObserverId}/{DefunctObserver}. 1 total observers after add.", LogLevel.Trace)
+            .VerifyLogging($"Removing defunct entry for {DefunctObserverId}. 0 total observers after remove.", LogLevel.Trace);
     }
 
     [Test]

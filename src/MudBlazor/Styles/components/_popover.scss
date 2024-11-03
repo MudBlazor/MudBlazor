@@ -3,10 +3,7 @@
   z-index: calc(var(--mud-zindex-popover) + 1);
   position: absolute;
   opacity: 0;
-
-  * {
-    touch-action: pinch-zoom;
-  }
+  overflow: hidden;
 
   &.mud-popover-fixed {
     position: fixed;
@@ -26,6 +23,10 @@
     transition-duration: 0ms !important;
     transition-delay: 0ms !important;
   }
+}
+
+.mud-popover .mud-popover {
+  z-index: auto; // javascript will handle nested z-indexes
 }
 
 .mud-appbar {
@@ -52,6 +53,13 @@
   .mud-popover-cascading-value {
     z-index: calc(var(--mud-zindex-dialog) + 3);
   }
+}
+
+.mud-select {
+    .mud-popover-cascading-value {
+    z-index: calc(var(--mud-zindex-select) + 5);
+  }
+
 }
 
 .mud-popover {

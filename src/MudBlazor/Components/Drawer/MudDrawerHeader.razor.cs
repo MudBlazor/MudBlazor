@@ -12,6 +12,8 @@ namespace MudBlazor;
 /// <summary>
 /// Represents content at the top of a <see cref="MudDrawer"/>.
 /// </summary>
+/// <seealso cref="MudDrawer"/>
+/// <seealso cref="MudDrawerContainer"/>
 public partial class MudDrawerHeader
 {
     protected string Classname =>

@@ -1,11 +1,13 @@
 ﻿@namespace MudBlazor
-@inherits MudComponentBase
 @using Microsoft.AspNetCore.Components.Routing
+@using MudBlazor.Resources
+@inherits MudComponentBase
+@inject InternalMudLocalizer Localizer
 
 <div class="@GetPanelClass()" @attributes="UserAttributes">
     @if (_sections.Count > 1)
     {
-        <MudNavMenu Class="pl-4" aria-label="Table of Contents">
+        <MudNavMenu Class="pl-4" aria-label="@Localizer[LanguageResource.MudPageContentNavigation_NavMenu]">
             <MudText Typo="Typo.subtitle1" Class="title" GutterBottom="true">
                 @Headline
             </MudText>

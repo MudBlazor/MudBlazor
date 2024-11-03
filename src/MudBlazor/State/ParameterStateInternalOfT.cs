@@ -2,10 +2,8 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State.Comparer;
 using MudBlazor.State.Rule;
@@ -22,6 +20,7 @@ namespace MudBlazor.State;
 /// Instead, use the "MudComponentBase.RegisterParameter" method from within the component's constructor.
 /// </remarks>
 /// <typeparam name="T">The type of the component's property value.</typeparam>
+[DebuggerDisplay("ParameterName = {Metadata.ParameterName}, Value = {_value}")]
 internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponentLifeCycle, IEquatable<ParameterStateInternal<T>>
 {
     private T? _value;

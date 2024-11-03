@@ -17,6 +17,7 @@ namespace MudBlazor.UnitTests
             {
                 options.SnackbarConfiguration.ShowTransitionDuration = 0;
                 options.SnackbarConfiguration.HideTransitionDuration = 0;
+                options.PopoverOptions.CheckForPopoverProvider = false;
             });
             ctx.Services.AddScoped(sp => new HttpClient());
             ctx.Services.AddOptions();

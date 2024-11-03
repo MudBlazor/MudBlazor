@@ -1,6 +1,4 @@
-﻿using System;
-using System.Net.Http;
-using Bunit;
+﻿using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Docs.Services;
@@ -20,6 +18,7 @@ namespace MudBlazor.UnitTests.Components
         {
             ctx = new Bunit.TestContext();
             ctx.JSInterop.Mode = JSRuntimeMode.Loose;
+            ctx.Services.AddSingleton(TimeProvider.System);
             ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
             ctx.Services.AddSingleton<IDialogService>(new DialogService());
             ctx.Services.AddSingleton<ISnackbar, SnackbarService>();
@@ -31,16 +30,13 @@ namespace MudBlazor.UnitTests.Components
             ctx.Services.AddTransient<IResizeObserverFactory, MockResizeObserverFactory>();
             ctx.Services.AddTransient<IEventListenerFactory, MockEventListenerFactory>();
             ctx.Services.AddTransient<IEventListener, MockEventListener>();
-            ctx.Services.AddTransient<IKeyInterceptorFactory, MockKeyInterceptorServiceFactory>();
+            ctx.Services.AddSingleton<IKeyInterceptorService, MockKeyInterceptorService>();
             ctx.Services.AddTransient<IJsEventFactory, MockJsEventFactory>();
-#pragma warning disable CS0618
-            //TODO: Remove in v7
-            ctx.Services.AddSingleton<IMudPopoverService, MockPopoverService>();
-#pragma warning restore CS0618
-            ctx.Services.AddSingleton<IPopoverService, MockPopoverServiceV2>();
+            ctx.Services.AddSingleton<IPopoverService, MockPopoverService>();
             ctx.Services.AddScoped<IRenderQueueService, RenderQueueService>();
             ctx.Services.AddTransient<ILocalizationInterceptor, DefaultLocalizationInterceptor>();
             ctx.Services.AddTransient<InternalMudLocalizer>();
+            ctx.Services.AddTransient<ILocalizationEnumInterceptor, DefaultLocalizationEnumInterceptor>();
             ctx.Services.AddOptions();
             ctx.Services.AddScoped(sp =>
                 new HttpClient(new MockDocsMessageHandler()) { BaseAddress = new Uri("https://localhost/") });

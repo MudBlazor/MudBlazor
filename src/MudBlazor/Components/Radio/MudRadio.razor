@@ -1,23 +1,24 @@
 ﻿@namespace MudBlazor
 @typeparam T
-@inherits MudComponentBase
+@inherits MudBooleanInput<T>
 
-<label class="@Classname" style="@Style" id="@_elementId" @onkeydown="@HandleKeyDownAsync">
-    <span tabindex="0" class="@ButtonClassname">
-        <span class="mud-radio-button">
-            <input tabindex="-1" @attributes="UserAttributes" aria-checked="@(Checked.ToString().ToLower())" aria-disabled="@(GetDisabled().ToString().ToLower())" role="radio" type="radio" class="mud-radio-input" name="@MudRadioGroup?.Name" disabled="@GetDisabled()" @onclick="OnClickAsync" />
-            <span class="@RadioIconsClassNames">
-                <svg class="@IconClassName" focusable="false" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"></path>
-                </svg>
-                <svg class="@CheckedIconClassName" focusable="false" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M8.465 8.465C9.37 7.56 10.62 7 12 7C14.76 7 17 9.24 17 12C17 13.38 16.44 14.63 15.535 15.535C14.63 16.44 13.38 17 12 17C9.24 17 7 14.76 7 12C7 10.62 7.56 9.37 8.465 8.465Z"></path>
-                </svg>
+<MudInputControl Class="@Classname" Style="@Style" Error="@HasErrors" ErrorText="@GetErrorText()" Required="@Required">
+    <InputContent>
+        <label class="@LabelClassname" style="@Style" id="@_elementId" @onkeydown="@HandleKeyDownAsync" @onclick:stopPropagation="@StopClickPropagation">
+            <span tabindex="0" class="@IconClassname">
+                <input tabindex="-1" @attributes="UserAttributes" type="radio" class="mud-radio-input" aria-checked="@(BoolValue.ToString().ToLower())" aria-disabled="@(GetDisabledState().ToString().ToLower())" checked="@Checked" role="radio" name="@MudRadioGroup?.Name" disabled="@GetDisabledState()" @onclick:preventDefault="@GetReadOnlyState()" @onclick="OnClickAsync" />
+                <MudIcon Disabled="@Disabled" Icon="@GetIcon()" Color="HasErrors ? Color.Error : Color.Inherit" Size="@Size" />
             </span>
-        </span>
-    </span>
-    @if (ChildContent is not null)
-    {
-        <span class="@ChildSpanClassName">@ChildContent</span>
-    }
-</label>
+            @if (!string.IsNullOrEmpty(Label))
+            {
+                <MudText Color="HasErrors ? Color.Error : Color.Inherit">@Label</MudText>
+            }
+            @if (ChildContent is not null)
+            {
+                <MudText Color="HasErrors ? Color.Error : Color.Inherit">
+                    @ChildContent
+                </MudText>
+            }
+        </label>
+    </InputContent>
+</MudInputControl>

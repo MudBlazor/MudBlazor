@@ -1,7 +1,4 @@
-﻿@using System.Threading
-@namespace MudBlazor.UnitTests.TestComponents
-
-<MudTable T="int" ServerDataWithCancel="@(new Func<TableState, CancellationToken, Task<TableData<int>>>(ServerReload))">
+﻿<MudTable T="int" ServerData="@(new Func<TableState, CancellationToken, Task<TableData<int>>>(ServerReload))">
     <HeaderContent>
         <MudTh><MudTableSortLabel SortLabel="No." T="int">Nr</MudTableSortLabel></MudTh>
     </HeaderContent>
@@ -16,15 +13,15 @@
     /// <summary>
     /// Reloads the data from the server, with support for cancellation.
     /// </summary>
-    private async Task<TableData<int>> ServerReload(TableState state, CancellationToken token)
+    private static async Task<TableData<int>> ServerReload(TableState state, CancellationToken token)
     {
         // Simulate "loading data" for two seconds
         await Task.Delay(2000, token);
 
         // Make some test data to return
-        IEnumerable<int> data = new List<int>() { 1, 2, 3 };
+        var data = new List<int> { 1, 2, 3 };
 
         // Return the data
-        return new TableData<int>() { TotalItems = data.Count(), Items = data.ToArray() };
+        return new TableData<int> { TotalItems = data.Count, Items = data.ToArray() };
     }
 }

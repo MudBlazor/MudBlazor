@@ -1,6 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudTable @ref="Table" T="string" Items="items" EditTrigger="TableEditTrigger.EditButton" EditButtonPosition="EditButtonPosition" ApplyButtonPosition="ApplyButtonPosition">
+﻿<MudTable T="string" Items="_items" EditTrigger="TableEditTrigger.EditButton" EditButtonPosition="EditButtonPosition" ApplyButtonPosition="ApplyButtonPosition">
     <HeaderContent>
         <MudTh>#</MudTh>
     </HeaderContent>
@@ -23,10 +21,12 @@
 
 @code {
     public static string __description__ = "Inline Edit Table: Custom edit button content";
-    string[] items = new string[] { "A", "B", "C" };
+
+    private readonly string[] _items = ["A", "B", "C"];
+
     [Parameter]
     public TableApplyButtonPosition ApplyButtonPosition { get; set; } = TableApplyButtonPosition.End;
+
     [Parameter]
     public TableEditButtonPosition EditButtonPosition { get; set; } = TableEditButtonPosition.End;
-    public MudTable<string> Table { get; private set; }
 }

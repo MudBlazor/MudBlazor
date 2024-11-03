@@ -22,7 +22,7 @@
     private bool _loading;
 
     [CascadingParameter]
-    private MudDialogInstance MudDialog { get; set; }
+    private IMudDialogInstance MudDialog { get; set; }
 
     [Inject]
     private HttpClient HttpClient { get; set; }

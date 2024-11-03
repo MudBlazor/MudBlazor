@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using FluentAssertions;
@@ -62,7 +61,6 @@ namespace MudBlazor.UnitTests.Other
                 typeof(MudPageContentNavigation),
                 typeof(MudSnackbarElement),
                 typeof(MudBlazor.Charts.Legend),
-                typeof(MudSparkLine),
 
                 typeof(MudRatingItem),  // TODO: remove it later; see also: https://github.com/MudBlazor/MudBlazor/discussions/3452
             };

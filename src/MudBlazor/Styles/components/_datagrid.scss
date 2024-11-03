@@ -139,6 +139,10 @@
       width: 8px;
       cursor: col-resize;
       user-select: none;
+      .mud-application-layout-rtl & {
+        right: auto;
+        left: 0;
+      }
     }
 
     @media(hover: hover) and (pointer: fine) {

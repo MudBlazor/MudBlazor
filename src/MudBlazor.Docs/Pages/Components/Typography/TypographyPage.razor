@@ -1,4 +1,5 @@
 ﻿@page "/components/typography"
+@page "/components/MudText"
 
 <DocsPage>
     <DocsPageHeader Title="Typography" ComponentLink="components/typography" SubTitle="Use MudText to present your design and content as clearly and efficiently as possible." />
@@ -33,6 +34,17 @@
             </SectionHeader>
             <SectionContent Code="@nameof(TextAlignmentExample)" Block="true" FullWidth="true">
                 <TextAlignmentExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Inline">
+                <Description>
+                    This demonstrates the <CodeInline>@nameof(MudText.Inline)</CodeInline> property.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TextInlineExample)" Block="true" FullWidth="true">
+                <TextInlineExample />
             </SectionContent>
         </DocsPageSection>
 

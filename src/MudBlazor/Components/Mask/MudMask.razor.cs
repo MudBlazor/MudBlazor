@@ -2,39 +2,41 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.Extensions;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+    /// <summary>
+    /// A text input which conforms user input to a specific format while typing. 
+    /// <remarks>
+    /// Note that MudMask is recommended to be used in WASM projects only because it has known problems
+    /// in BSS, especially with high network latency.
+    /// </remarks>
+    /// </summary>
     public partial class MudMask : MudBaseInput<string>
     {
-        public MudMask()
-        {
-            TextUpdateSuppression = false;
-        }
+        private ElementReference _elementReference;
+        private ElementReference _elementReference1;
+        private IJsEvent _jsEvent;
+        private string _elementId = Identifier.Create("mask");
+        private IMask _mask = new PatternMask("** **-** **");
 
         protected string Classname =>
             new CssBuilder("mud-input")
                 .AddClass($"mud-input-{Variant.ToDescriptionString()}")
                 .AddClass($"mud-input-{Variant.ToDescriptionString()}-with-label", !string.IsNullOrEmpty(Label))
                 .AddClass($"mud-input-adorned-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
-                .AddClass($"mud-input-margin-{Margin.ToDescriptionString()}", when: () => Margin != Margin.None)
-                .AddClass("mud-input-underline", when: () => Underline && Variant != Variant.Outlined)
-                .AddClass("mud-shrink",
-                    when: () => !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start ||
-                                !string.IsNullOrWhiteSpace(Placeholder))
+                .AddClass($"mud-input-margin-{Margin.ToDescriptionString()}", () => Margin != Margin.None)
+                .AddClass("mud-input-underline", () => Underline && Variant != Variant.Outlined)
+                .AddClass("mud-shrink", () => !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start || !string.IsNullOrWhiteSpace(Placeholder) || ShrinkLabel)
                 .AddClass("mud-disabled", GetDisabledState())
                 .AddClass("mud-input-error", HasErrors)
                 .AddClass("mud-ltr", GetInputType() == InputType.Email || GetInputType() == InputType.Telephone)
+                .AddClass($"mud-typography-{Typo.ToDescriptionString()}")
                 .AddClass(Class)
                 .Build();
 
@@ -43,12 +45,12 @@ namespace MudBlazor
                 .AddClass("mud-input-root")
                 .AddClass($"mud-input-root-{Variant.ToDescriptionString()}")
                 .AddClass($"mud-input-root-adorned-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
-                .AddClass($"mud-input-root-margin-{Margin.ToDescriptionString()}", when: () => Margin != Margin.None)
+                .AddClass($"mud-input-root-margin-{Margin.ToDescriptionString()}", () => Margin != Margin.None)
                 .AddClass(Class)
                 .Build();
 
         protected string AdornmentClassname =>
-            new CssBuilder("mud-input-adornment")
+            new CssBuilder()
                 .AddClass($"mud-input-adornment-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
                 .AddClass($"mud-text", !string.IsNullOrEmpty(AdornmentText))
                 .AddClass($"mud-input-root-filled-shrink", Variant == Variant.Filled)
@@ -56,38 +58,36 @@ namespace MudBlazor
                 .Build();
 
         protected string ClearButtonClassname =>
-            new CssBuilder()
+            new CssBuilder("mud-input-clear-button")
                 // .AddClass("me-n1", Adornment == Adornment.End && HideSpinButtons == false)
                 .AddClass("mud-icon-button-edge-end", Adornment == Adornment.End)
                 // .AddClass("me-6", Adornment != Adornment.End && HideSpinButtons == false)
                 .AddClass("mud-icon-button-edge-margin-end", Adornment != Adornment.End)
                 .Build();
 
-
-        private ElementReference _elementReference;
-        private ElementReference _elementReference1;
-        private IJsEvent _jsEvent;
-        private IKeyInterceptor _keyInterceptor;
-
-        [Inject] private IKeyInterceptorFactory _keyInterceptorFactory { get; set; }
+        [Inject]
+        private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
         [Inject] private IJsEventFactory _jsEventFactory { get; set; }
         [Inject] private IJsApiService _jsApiService { get; set; }
 
-        private string _elementId = "mask_" + Guid.NewGuid().ToString().Substring(0, 8);
-
-        private IMask _mask = new PatternMask("** **-** **");
-
         /// <summary>
-        /// ChildContent will only be displayed if InputType.Hidden and if its not null. Required for Select
+        /// The content within this input.
         /// </summary>
+        /// <remarks>
+        /// Only displays when <see cref="InputType"/> is <see cref="InputType.Hidden"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.General.Appearance)]
         public RenderFragment ChildContent { get; set; }
 
         /// <summary>
-        /// Provide a masking object. Built-in masks are PatternMask, MultiMask, RegexMask and BlockMask
+        /// The mask to apply to text values.
         /// </summary>
+        /// <remarks>
+        /// Typically set to common masks such as <see cref="PatternMask"/>, <see cref="MultiMask"/>, <see cref="RegexMask"/>, and <see cref="BlockMask"/>.
+        /// When set, some properties will be ignored such as <see cref="MudInput{T}.MaxLines"/>, <see cref="MudInput{T}.AutoGrow"/>, and <see cref="MudInput{T}.HideSpinButtons"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.General.Data)]
         public IMask Mask
@@ -97,14 +97,17 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Type of the input element. It should be a valid HTML5 input type.
+        /// The type of the underlying input. 
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="InputType.Text"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListAppearance)]
         public InputType InputType { get; set; } = InputType.Text;
 
         /// <summary>
-        /// Show clear button.
+        /// Shows the clear button.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
@@ -115,23 +118,32 @@ namespace MudBlazor
         private void UpdateClearable(object value)
         {
             var showClearable = Clearable && !string.IsNullOrWhiteSpace(Text);
+
             if (_showClearable != showClearable)
+            {
                 _showClearable = showClearable;
+                StateHasChanged();
+            }
         }
 
         /// <summary>
-        /// Button click event for clear button. Called after text and value has been cleared.
+        /// Occurs when the clear button is clicked.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListAppearance)]
         public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
 
         /// <summary>
-        /// Custom clear icon.
+        /// The icon displayed when <see cref="Clearable" /> is <c>true</c>.
         /// </summary>
         [Parameter]
-        [Category(CategoryTypes.General.Appearance)]
+        [Category(CategoryTypes.FormComponent.Appearance)]
         public string ClearIcon { get; set; } = Icons.Material.Filled.Clear;
+
+        public MudMask()
+        {
+            TextUpdateSuppression = false;
+        }
 
         protected override async Task OnInitializedAsync()
         {
@@ -157,39 +169,35 @@ namespace MudBlazor
                 _jsEvent.Paste += OnPaste;
                 _jsEvent.Select += OnSelect;
 
-                _keyInterceptor = _keyInterceptorFactory.Create();
+                var options = new KeyInterceptorOptions(
+                    "mud-input-slot",
+                    [
+                        // prevent scrolling page, toggle open/close
+                        new(" ", preventDown: "key+none"),
+                        // prevent scrolling page, instead increment
+                        new("ArrowUp", preventDown: "key+none"),
+                        // prevent scrolling page, instead decrement
+                        new("ArrowDown", preventDown: "key+none"),
+                        // prevent scrolling page
+                        new("PageUp", preventDown: "key+none"),
+                        // prevent scrolling page
+                        new("PageDown", preventDown: "key+none"),
+                        // prevent input of all other characters except allowed, like [0-9.,-+]
+                        new(@"/^.$/", preventDown: "key+none|key+shift"),
+                        // subscribe to all key down events
+                        new("/./", subscribeDown: true),
+                        // prevent backspace key
+                        new("Backspace", preventDown: "key+none"),
+                        // prevent delete key
+                        new("Delete", preventDown: "key+none")
+                    ]);
 
-                await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
-                {
-                    //EnableLogging = true,
-                    TargetClass = "mud-input-slot",
-                    Keys =
-                    {
-                        new KeyOptions
-                        {
-                            Key = " ", PreventDown = "key+none"
-                        }, //prevent scrolling page, toggle open/close
-                        new KeyOptions { Key = "ArrowUp", PreventDown = "key+none" }, // prevent scrolling page
-                        new KeyOptions { Key = "ArrowDown", PreventDown = "key+none" }, // prevent scrolling page
-                        new KeyOptions { Key = "PageUp", PreventDown = "key+none" }, // prevent scrolling page
-                        new KeyOptions { Key = "PageDown", PreventDown = "key+none" }, // prevent scrolling page
-                        new KeyOptions { Key = @"/^.$/", PreventDown = "key+none|key+shift" },
-                        new KeyOptions { Key = "/./", SubscribeDown = true },
-                        new KeyOptions { Key = "Backspace", PreventDown = "key+none" },
-                        new KeyOptions { Key = "Delete", PreventDown = "key+none" },
-                    },
-                });
-                _keyInterceptor.KeyDown += HandleKeyDownInternally;
+                await KeyInterceptorService.SubscribeAsync(_elementId, options, keyDown: HandleKeyDown);
             }
 
             if (_isFocused && Mask.Selection == null)
                 await SetCaretPositionAsync(Mask.CaretPos, _selection, render: false);
             await base.OnAfterRenderAsync(firstRender);
-        }
-
-        private async void HandleKeyDownInternally(KeyboardEventArgs args)
-        {
-            await HandleKeyDown(args);
         }
 
         protected internal async Task HandleKeyDown(KeyboardEventArgs e)
@@ -207,6 +215,7 @@ namespace MudBlazor
                             await UpdateAsync();
                             return;
                         }
+
                         Mask.Backspace();
                         await UpdateAsync();
                         return;
@@ -301,26 +310,43 @@ namespace MudBlazor
                 ? (string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}")
                 : ((string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") + $" / {Counter}"));
 
+        private bool ShowClearButton()
+        {
+            if (SubscribeToParentForm)
+                return _showClearable && !GetReadOnlyState() && !GetDisabledState();
+            return _showClearable && !GetDisabledState();
+        }
+
         /// <summary>
-        /// Clear the text field. 
+        /// Clears the text and value for this input.
         /// </summary>
-        /// <returns></returns>
         public Task Clear()
         {
             Mask.Clear();
             return UpdateAsync();
         }
 
+        /// <summary>
+        /// Sets the cursor to this input.
+        /// </summary>
         public override ValueTask FocusAsync()
         {
             return _elementReference.FocusAsync();
         }
 
+        /// <summary>
+        /// Selects the text in this input.
+        /// </summary>
         public override ValueTask SelectAsync()
         {
             return _elementReference.MudSelectAsync();
         }
 
+        /// <summary>
+        /// Selects a range of characters in this input.
+        /// </summary>
+        /// <param name="pos1">The index of the first character to select.</param>
+        /// <param name="pos2">The index of the last character to select.</param>
         public override ValueTask SelectRangeAsync(int pos1, int pos2)
         {
             return _elementReference.MudSelectRangeAsync(pos1, pos2);
@@ -333,6 +359,7 @@ namespace MudBlazor
             {
                 (_, text, _) = BaseMask.SplitSelection(text, Mask.Selection.Value);
             }
+
             _jsApiService.CopyToClipboardAsync(text);
         }
 
@@ -340,10 +367,16 @@ namespace MudBlazor
         {
             if (text == null || GetReadOnlyState())
                 return;
+
             Mask.Insert(text);
             await UpdateAsync();
         }
 
+        /// <summary>
+        /// Occurs when the selected characters have changed.
+        /// </summary>
+        /// <param name="start">The index of the first selected character.</param>
+        /// <param name="end">The index of the last selected character.</param>
         public void OnSelect(int start, int end)
         {
             Mask.Selection = _selection = (start, end);
@@ -431,21 +464,20 @@ namespace MudBlazor
             await UpdateAsync();
         }
 
-        protected override void Dispose(bool disposing)
+        /// <inheritdoc />
+        protected override async ValueTask DisposeAsyncCore()
         {
-            base.Dispose(disposing);
+            await base.DisposeAsyncCore();
 
-            if (disposing)
+            if (IsJSRuntimeAvailable)
             {
-                if (_keyInterceptor != null)
+                await KeyInterceptorService.UnsubscribeAsync(_elementId);
+                if (_jsEvent is not null)
                 {
-                    _keyInterceptor.KeyDown -= HandleKeyDownInternally;
-                }
-
-                if (IsJSRuntimeAvailable)
-                {
-                    _jsEvent?.Dispose();
-                    _keyInterceptor?.Dispose();
+                    _jsEvent.CaretPositionChanged -= OnCaretPositionChanged;
+                    _jsEvent.Paste -= OnPaste;
+                    _jsEvent.Select -= OnSelect;
+                    await _jsEvent.DisposeAsync();
                 }
             }
         }

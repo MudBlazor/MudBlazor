@@ -5,9 +5,24 @@
 namespace MudBlazor;
 
 #nullable enable
+
+/// <summary>
+/// Indicates the position of the commit button during inline edits to a <see cref="MudTable{T}"/>.
+/// </summary>
 public enum TableApplyButtonPosition
 {
+    /// <summary>
+    /// The commit button is at the start of the row.
+    /// </summary>
     Start,
+
+    /// <summary>
+    /// The commit button is at the end of the row.
+    /// </summary>
     End,
+
+    /// <summary>
+    /// The commit button is at both the start and end of the row.
+    /// </summary>
     StartAndEnd,
 }

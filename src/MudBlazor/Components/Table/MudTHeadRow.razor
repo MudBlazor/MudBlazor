@@ -16,13 +16,13 @@
 			}
 			@if (Checkable)
 			{
-				<MudCheckBox @bind-Value="Checked" Class="mud-table-cell-checkbox" />
+				<MudCheckBox @bind-Value="Checked" ReadOnly="!SelectionChangeable" Disabled="!SelectionChangeable" Class="mud-table-cell-checkbox" />
 			}
 		</MudTh>
 	}
 	@ChildContent
-    @if (Context.DisplayApplyButtonAtEnd(IgnoreEditable) || Context.DisplayEditButtonAtEnd(IgnoreEditable))
-    {
+	@if (Context.DisplayApplyButtonAtEnd(IgnoreEditable) || Context.DisplayEditButtonAtEnd(IgnoreEditable))
+	{
 		<MudTh />
 	}
 </tr>

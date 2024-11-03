@@ -9,6 +9,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.Chip;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -68,8 +69,9 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => chip.Instance.OnClickAsync(new MouseEventArgs()));
 
             comp.WaitForAssertion(() => comp.Find("#chip-click-test-expected-value").InnerHtml.Should().Be(""));
-#pragma warning disable BL0005
+#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
             await comp.InvokeAsync(() => chip.Instance.Target = "_blank");
+#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
             await comp.InvokeAsync(() => chip.Instance.OnClickAsync(new MouseEventArgs()));
 
             comp.WaitForAssertion(() => comp.Find("#chip-click-test-expected-value").InnerHtml.Should().Be(""));

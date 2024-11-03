@@ -6,6 +6,17 @@ body:
     attributes:
       value: |
         Thanks for taking the time to fill out this bug report for [MudBlazor](https://mudblazor.com). Note: this template is only for bug reports; Please use [GitHub Discussions](https://github.com/MudBlazor/MudBlazor/discussions) or [Discord](https://discord.gg/mudblazor) for any questions.
+  - type: checkboxes
+    id: preconditions
+    attributes:
+      label: Things to check
+      options:
+        - label: I have searched the **existing issues** for this bug
+          required: true
+        - label: To rule out a caching problem I made sure the bug also happens in an **incognito tab**
+          required: true
+    validations:
+      required: true          
   - type: dropdown
     id: bug-type
     attributes:
@@ -69,8 +80,8 @@ body:
     id: bug-version
     attributes:
       label: Version (bug)
-      description: With which version are you experiencing the issue?
-      placeholder: 6.x.x
+      description: With which version are you experiencing the issue? Note that v6 is no longer actively maintained and most bug fixes will be reserved for v7.
+      placeholder: 7.x.x
     validations:
       required: true
   - type: input

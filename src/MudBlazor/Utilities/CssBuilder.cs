@@ -2,8 +2,7 @@
 // License: MIT
 // See https://github.com/EdCharbeneau
 
-using System;
-using System.Collections.Generic;
+using System.Text;
 
 namespace MudBlazor.Utilities
 {
@@ -13,7 +12,7 @@ namespace MudBlazor.Utilities
     /// </summary>
     public struct CssBuilder
     {
-        private string? _stringBuffer;
+        private StringBuilder? _stringBuilder;
 
         /// <summary>
         /// Creates a new instance of CssBuilder with the specified initial value.
@@ -35,6 +34,18 @@ namespace MudBlazor.Utilities
         public static CssBuilder Empty() => new();
 
         /// <summary>
+        /// Creates an empty instance of CssBuilder.
+        /// </summary>
+        /// <remarks>
+        /// Call <see cref="Build"/> to return the completed CSS classes as a string. 
+        /// </remarks>
+        /// <returns>The <see cref="CssBuilder"/> instance.</returns>
+        public CssBuilder()
+        {
+            _stringBuilder = EnsureCreated();
+        }
+
+        /// <summary>
         /// Initializes a new instance of the CssBuilder class with the specified initial value.
         /// </summary>
         /// <remarks>
@@ -42,7 +53,13 @@ namespace MudBlazor.Utilities
         /// </remarks>
         /// <param name="value">The initial CSS class value.</param>
         /// <returns>The <see cref="CssBuilder"/> instance.</returns>
-        public CssBuilder(string? value) => _stringBuffer = value;
+        public CssBuilder(string? value) : this()
+        {
+            if (value is not null)
+            {
+                EnsureCreated().Append(value);
+            }
+        }
 
         /// <summary>
         /// Adds a raw string to the builder that will be concatenated with the next class or value added to the builder.
@@ -51,7 +68,10 @@ namespace MudBlazor.Utilities
         /// <returns>The <see cref="CssBuilder"/> instance.</returns>
         public CssBuilder AddValue(string? value)
         {
-            _stringBuffer += value;
+            if (value is not null)
+            {
+                EnsureCreated().Append(value);
+            }
             return this;
         }
 
@@ -60,7 +80,12 @@ namespace MudBlazor.Utilities
         /// </summary>
         /// <param name="value">The CSS class to add.</param>
         /// <returns>The <see cref="CssBuilder"/> instance.</returns>
-        public CssBuilder AddClass(string? value) => AddValue(" " + value);
+        public CssBuilder AddClass(string? value)
+        {
+            AddValue(" ");
+            AddValue(value);
+            return this;
+        }
 
         /// <summary>
         /// Adds a conditional CSS class to the builder with a space separator.
@@ -137,14 +162,13 @@ namespace MudBlazor.Utilities
         /// Finalizes the completed CSS classes as a string.
         /// </summary>
         /// <returns>The string representation of the CSS classes.</returns>
-        public string Build()
-        {
-            // String buffer finalization code
-            return _stringBuffer is not null ? _stringBuffer.Trim() : string.Empty;
-        }
+        public string Build() => StringBuilderCache.GetStringAndRelease(EnsureCreated()).Trim();
 
         // ToString should only and always call Build to finalize the rendered string.
         /// <inheritdoc />
         public override string ToString() => Build();
+
+        // TODO: v8, remove that and declare CssBuilder as readonly struct, improve documentation to avoid default(StringBuilder), add Breaking Change notes.
+        private StringBuilder EnsureCreated() => _stringBuilder ??= StringBuilderCache.Acquire();
     }
 }

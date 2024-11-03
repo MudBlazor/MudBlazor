@@ -1,7 +1,6 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-<MudPopoverProvider></MudPopoverProvider>
+﻿<MudPopoverProvider />
 
-<MudSelect IsPreRendered @bind-Value="value" Strict="true">
+<MudSelect @bind-Value="_value" Strict="true">
     <MudSelectItem T="int" Value="1"/>
     <MudSelectItem T="int" Value="2"/>
     <MudSelectItem T="int" Value="3"/>
@@ -10,5 +9,5 @@
 @code {
     public static string __description__ = "Don't show initial value which is not in list because of Strict=true.";
 
-    int value=17;
+    private int _value = 17;
 }

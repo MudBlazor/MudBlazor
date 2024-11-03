@@ -1,0 +1,32 @@
+﻿<MudTable T="DocumentedType" @ref="Table" ServerData="@GetData" Elevation="0" Class="ma-0 mud-width-full" Hover="true" Dense="true" AllowUnsorted="false">
+    <ToolBarContent>
+        <MudGrid Class="pa-0">
+            <MudItem xs="12">
+                <MudTextField T="string"
+                              Value="Keyword"
+                              ValueChanged="OnKeywordChanged"
+                              Adornment="Adornment.Start"
+                              AdornmentIcon="@Icons.Material.Filled.Search"
+                              Placeholder="Search"
+                              Immediate="true"
+                              DebounceInterval="300" />
+            </MudItem>
+        </MudGrid>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh Style="max-width:34%;"><MudTableSortLabel T="DocumentedType" SortLabel="Name" InitialDirection="SortDirection.Ascending">Name</MudTableSortLabel></MudTh>
+        <MudTh Style="max-width:66%;"><MudTableSortLabel T="DocumentedType" SortLabel="Description">Description</MudTableSortLabel></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd Class="docs-content-api-cell" DataLabel="Name">
+            <ApiTypeLink Type="@context" TypeName="@context.NameFriendly" ShowTooltip="false" />
+        </MudTd>
+        <MudTd id="@context.Name" Class="docs-content-api-cell docs-content-api-description" DataLabel="Description">
+            <ApiText Text="@(context.Summary + " " + context.Remarks)" />
+        </MudTd>
+    </RowTemplate>
+    <GroupFooterTemplate></GroupFooterTemplate>
+    <NoRecordsContent>
+        <MudAlert Severity="Severity.Info">No types match the current filters.</MudAlert>
+    </NoRecordsContent>
+</MudTable>

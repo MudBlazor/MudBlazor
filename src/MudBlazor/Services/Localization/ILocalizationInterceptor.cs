@@ -9,7 +9,7 @@ namespace MudBlazor;
 /// incorporating features such as logging missing translations or completely redefining the localization selection process.
 /// Users can register custom implementations using the syntax:
 /// <para/>
-/// <see cref="ServiceCollectionExtensions.AddLocalizationInterceptor{TInterceptor}(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Func{System.IServiceProvider,TInterceptor})"/>
+/// <see cref="ServiceCollectionExtensions.AddLocalizationInterceptor{TInterceptor}(Microsoft.Extensions.DependencyInjection.IServiceCollection,Func{IServiceProvider,TInterceptor})"/>
 /// <para/>
 /// <see cref="ServiceCollectionExtensions.AddLocalizationInterceptor{TInterceptor}(Microsoft.Extensions.DependencyInjection.IServiceCollection)"/>.
 /// </summary>

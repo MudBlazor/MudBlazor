@@ -1,20 +1,21 @@
 ﻿@namespace MudBlazor
+@using MudBlazor.Internal
+@using MudBlazor.Resources
 @typeparam T
 @inherits MudBaseInput<T>
-@using MudBlazor.Internal
+@inject InternalMudLocalizer Localizer
 
 <div class="@Classname" style="@Style">
     @if (Adornment == Adornment.Start)
     {
         <MudInputAdornment Class="@AdornmentClassname"
-                Icon="@AdornmentIcon"
-                Color="@AdornmentColor"
-                Size="@IconSize"
-                Text="@AdornmentText"
-                Edge="@Edge.Start"
-                AdornmentClick="@OnAdornmentClick"
-                AriaLabel="@AdornmentAriaLabel"
-        />
+                           Icon="@AdornmentIcon"
+                           Color="@AdornmentColor"
+                           Size="@IconSize"
+                           Text="@AdornmentText"
+                           Placement="@Adornment.Start"
+                           AdornmentClick="@OnAdornmentClick"
+                           AriaLabel="@AdornmentAriaLabel" />
     }
 
     @if (AutoGrow || Lines > 1)
@@ -23,12 +24,12 @@
                 @ref="ElementReference"
                 rows="@Lines"
                 @attributes="UserAttributes"
-                id="@InputIdState.Value"
+                id="@InputElementId"
                 type="@InputTypeString"
                 placeholder="@Placeholder"
                 disabled=@GetDisabledState()
                 readonly="@GetReadOnlyState()"
-                inputmode="@InputMode.ToString()"
+                inputmode="@InputMode.ToDescriptionString()"
                 @oninput="OnInput"
                 @onchange="OnChange"
                 @onblur="@OnBlurredAsync"
@@ -41,9 +42,9 @@
                 @onkeyup:preventDefault="@KeyUpPreventDefault"
                 @onmousewheel="@OnMouseWheel"
                 @onwheel="@OnMouseWheel"
+                aria-describedby="@GetAriaDescribedByString()"
+                aria-invalid="@Error.ToString().ToLowerInvariant()"
                 required="@Required"
-                aria-invalid="@Error.ToString().ToLower()"
-                aria-describedby="@ErrorId"
                 aria-required="@Required.ToString().ToLowerInvariant()">
             @Text
         </textarea>
@@ -55,7 +56,7 @@
         <input class="@InputClassname"
                 @ref="ElementReference"
                 @attributes="UserAttributes"
-                id="@InputIdState.Value"
+                id="@InputElementId"
                 type="@InputTypeString"
                 value="@_internalText"
                 @oninput="OnInput"
@@ -64,7 +65,7 @@
                 disabled=@GetDisabledState()
                 readonly="@GetReadOnlyState()"
                 @onblur="@OnBlurredAsync"
-                inputmode="@InputMode.ToString()"
+                inputmode="@InputMode.ToDescriptionString()"
                 pattern="@Pattern"
                 @onkeydown="@InvokeKeyDownAsync"
                 @onkeyup="@InvokeKeyUpAsync"
@@ -73,10 +74,10 @@
                 @onkeyup:preventDefault="@KeyUpPreventDefault"
                 @onmousewheel="@OnMouseWheel"
                 @onwheel="@OnMouseWheel"
+                aria-describedby="@GetAriaDescribedByString()"
+                aria-invalid="@Error.ToString().ToLowerInvariant()"
                 required="@Required"
-                aria-invalid="@Error.ToString().ToLower()"
-                aria-describedby="@ErrorId"
-                aria-required="@Required.ToString().ToLowerInvariant()" />
+                aria-required="@Required.ToString().ToLowerInvariant()">
 
         @*Note: double mouse wheel handlers needed for Firefox because it doesn't know onmousewheel*@
 
@@ -104,29 +105,27 @@
         }
     }
 
-    @if (GetClearable() && !GetDisabledState())
+    @if (ShowClearButton())
     {
         <MudIconButton Class="@ClearButtonClassname"
-                    Color="@Color.Default"
-                    Icon="@ClearIcon"
-                    Size="@Size.Small"
-                    OnClick="@ClearButtonClickHandlerAsync"
-                    aria-label="Clear"
-                    tabindex="-1"
-                />
+                       Color="@Color.Default"
+                       Icon="@ClearIcon"
+                       Size="@Size.Small"
+                       OnClick="@HandleClearButtonAsync"
+                       aria-label="@Localizer[LanguageResource.MudInput_Clear]"
+                       tabindex="-1" />
     }
 
     @if (Adornment == Adornment.End)
     {
         <MudInputAdornment Class="@AdornmentClassname"
-                Icon="@AdornmentIcon"
-                Color="@AdornmentColor"
-                Size="@IconSize"
-                Text="@AdornmentText"
-                Edge="@Edge.End"
-                AdornmentClick="@OnAdornmentClick"
-                AriaLabel="@AdornmentAriaLabel"
-        />
+                           Icon="@AdornmentIcon"
+                           Color="@AdornmentColor"
+                           Size="@IconSize"
+                           Text="@AdornmentText"
+                           Placement="@Adornment.End"
+                           AdornmentClick="@OnAdornmentClick"
+                           AriaLabel="@AdornmentAriaLabel" />
     }
 
     @if (Variant == Variant.Outlined)
@@ -137,11 +136,20 @@
     @if (!HideSpinButtons)
     {
         <div class="mud-input-numeric-spin">
-            <MudButton Variant="Variant.Text" @onclick="OnIncrement" Disabled="@(GetDisabledState() || GetReadOnlyState())" tabindex="-1">
-                <MudIcon aria-label="Increment" Icon="@NumericUpIcon" Size="@GetButtonSize()" />
+            <MudButton Variant="Variant.Text"
+                       @onclick="OnIncrement"
+                       Disabled="@(GetDisabledState() || GetReadOnlyState())"
+                       tabindex="-1"
+                       aria-label="@Localizer[LanguageResource.MudInput_Increment]">
+                <MudIcon Icon="@NumericUpIcon" Size="@GetButtonSize()" />
             </MudButton>
-            <MudButton Variant="Variant.Text" @onclick="OnDecrement" Disabled="@(GetDisabledState() || GetReadOnlyState())" tabindex="-1">
-                <MudIcon aria-label="Decrement" Icon="@NumericDownIcon" Size="@GetButtonSize()" />
+
+            <MudButton Variant="Variant.Text"
+                       @onclick="OnDecrement"
+                       Disabled="@(GetDisabledState() || GetReadOnlyState())"
+                       tabindex="-1"
+                       aria-label="@Localizer[LanguageResource.MudInput_Decrement]">
+                <MudIcon Icon="@NumericDownIcon" Size="@GetButtonSize()" />
             </MudButton>
         </div>
     }

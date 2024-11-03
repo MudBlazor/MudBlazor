@@ -1,15 +1,18 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
 #nullable enable
-
     /// <summary>
-    ///  Represents a floating action button.
+    /// Represents a floating action button.
     /// </summary>
-    public partial class MudFab : MudBaseButton, IHandleEvent
+    /// <remarks>
+    /// Creates a <see href="https://developer.mozilla.org/docs/Web/HTML/Element/Button">button</see> element,
+    /// or <see href="https://developer.mozilla.org/docs/Web/HTML/Element/a">anchor</see> if <c>Href</c> is set.<br/>
+    /// You can directly add attributes like <c>title</c> or <c>aria-label</c>.
+    /// </remarks>
+    public partial class MudFab : MudBaseButton
     {
         protected string Classname => new CssBuilder("mud-button-root mud-fab")
             .AddClass($"mud-fab-extended", !string.IsNullOrEmpty(Label))
@@ -89,13 +92,5 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
         public string? Label { get; set; }
-
-        /// <inheritdoc/>
-        /// <remarks>
-        /// See: https://github.com/MudBlazor/MudBlazor/issues/8365
-        /// <para/>
-        /// Since <see cref="MudFab"/> implements only single <see cref="EventCallback"/> <see cref="MudBaseButton.OnClick"/> this is safe to disable globally within the component.
-        /// </remarks>
-        Task IHandleEvent.HandleEventAsync(EventCallbackWorkItem callback, object? arg) => callback.InvokeAsync(arg);
     }
 }

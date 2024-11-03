@@ -1,30 +1,36 @@
 # MudBlazor Roadmap
 
-MudBlazor is stable, with a significant reduction in the number of bugs. We remain committed to maintaining and improving the project, but as a non-commercial project we rely heavily on community contributions. We try to review and merge important bug fixes as soon as possible, so if your bug-fix pull request (PR) is overlooked, please tag a team member.
+MudBlazor continues to thrive with over 11M downloads on [NuGet](https://www.nuget.org/packages/MudBlazor/) and thousands of members on [Discord](https://discord.gg/mudblazor).
 
-## Future .NET Versions
+With the release of v7, we've made significant progress in ensuring the library remains healthy and robust.
+We've not only introduced numerous new features and bug fixes, but also built a more stable foundation for future development.
+This groundwork positions us to continue moving the project forward to meet the needs of the community.
 
-We fully support both .NET 7 and .NET 8, and our top priority is to continue supporting upcoming .NET versions.
+## Migration From An Older Version
 
-## Upcoming Breaking Changes
+The release of v7 addressed several long-standing needs for breaking changes and removed all obsolete APIs from v6.
+This was a significant step forward and our primary goal for v8 is to build on that success while minimizing breaking changes to ensure a smoother transition for everyone.
 
-We have put off breaking changes for a very long time and are now finally in the process of merging several of them and removing all obsolete APIs as we move to v7.
-Don't panic, we'll announce a release date for when we feel confident that we can hold it.
+Each major release is accompanied by a migration guide to help you adjust with as little disruption as possible.
+For more details, please refer to the [v7.0.0 Migration Guide](https://github.com/MudBlazor/MudBlazor/issues/8447) and upcoming [v8.0.0 Migration Guide](https://github.com/MudBlazor/MudBlazor/issues/9953).
+In addition we have a [built-in analyzer](https://mudblazor.com/features/analyzers) that identifies parameters that have been removed or renamed.
 
-Please view the [v7.0.0 Migration Guide](https://github.com/MudBlazor/MudBlazor/issues/8447) to get an idea of what changes you will have to make.
+To align with Microsoft's .NET support policies, we've officially dropped support for .NET 6 and .NET 7.
+Going forward, MudBlazor will focus on supporting .NET 8 and .NET 9.
 
-For those unable to upgrade their projects to v7: We will maintain v6.x for some time, largely relying on community contributions for bug fixes and backports.
+For users who aren't ready to upgrade, we will continue to support v6.x and v7.x for a while longer with the help of community contributions.
 
 ## Looking Ahead
 
-Understand that our team members contribute to this project during their personal free time, so please don't expect the team to fix bugs for you. It's not feasible for us to offer free support to everyone, but we do our best to review and merge your PRs.
+You can expect v8 to be production-ready by the end of the year and regular preview releases will allow the community to provide feedback and stay updated on our progress.
 
-That being said, we feel responsible for MudBlazor and intend to keep it going for the foreseeable future at a sustainable cost of free time by merging important bug fixes and new features if they enhance the project.
+We are passionate about improving the library but can't make firm promises about release timelines or specific features as the MudBlazor team is made up of volunteers who contribute to the project in their personal time.
 
-After we've released v7 for general availability we will start planning toward v8.
-There is no ETA currently, but we aim to have quicker major releases with less breaking changes in the future.
-Please keep giving us your ideas so we can consider them for upcoming versions!
+Our goal is to keep MudBlazor stable, performant, and evolving with thoughtful enhancements, but the pace of development depends on the availability of contributors.
+We appreciate your support as we continue to work on keeping MudBlazor the premiere UI library for Blazor.
 
 ## Get Involved
 
-Contributions from the community are what makes MudBlazor successful. If you are proficient in technologies such as C#, Blazor, JavaScript, or CSS, and you wish to give something back, please contact the team [on Discord](https://discord.gg/mudblazor)! You can join our Contribution Team channel and discuss with other team members what you want to do to help and start making a difference on this very roadmap.
+MudBlazor thrives thanks to the contributions of our amazing community. Whether you specialize in C#, Blazor, JavaScript, CSS, documentation, testing, or design, your help is always welcome in improving this project.
+
+If you’re interested in contributing, please check out our [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines to get started. You can also open an issue, start a discussion, or tag a member of the team in relevant GitHub issues to collaborate with us.

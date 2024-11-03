@@ -2,7 +2,14 @@
 @using MudBlazor.Extensions
 @inherits MudComponentBase
 
-<div @attributes="UserAttributes" class="@DivClassname" style="@Style" role="progressbar" aria-valuenow="@_valueState.Value.ToInvariantString()" aria-valuemin="@_minState.Value.ToInvariantString()" aria-valuemax="@_maxState.Value.ToInvariantString()">
+<div role="progressbar"
+     aria-valuenow="@_valueState.Value.ToInvariantString()"
+     aria-valuemin="@_minState.Value.ToInvariantString()"
+     aria-valuemax="@_maxState.Value.ToInvariantString()"
+     aria-live="@((Indeterminate ? null : "polite"))"
+     class="@Classname" 
+     style="@Style" 
+     @attributes="UserAttributes">
     <div class="mud-progress-linear-bars">
         @if (Indeterminate)
         {
@@ -20,7 +27,8 @@
             <div class="mud-progress-linear-bar" style="@GetStyledBar1Transform()"></div>
         }
     </div>
-    @if(ChildContent is not null)
+
+    @if (ChildContent is not null)
     {
         <div class="mud-progress-linear-content">
             @ChildContent

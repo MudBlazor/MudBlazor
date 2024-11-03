@@ -142,7 +142,7 @@ namespace MudBlazor
         public string[]? TickMarkLabels { get; set; }
 
         /// <summary>
-        /// Labels for tick marks, will attempt to map the labels to each step in index order.
+        /// Size of the slider.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Slider.Appearance)]

@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Docs.Models;
 using MudBlazor.Docs.Services;
-using MudBlazor.Docs.Services.UserPreferences;
 
 namespace MudBlazor.Docs.Shared
 {
     public partial class MainLayout : LayoutComponentBase, IDisposable
     {
-        [Inject] private LayoutService LayoutService { get; set; }
+        [Inject]
+        private LayoutService LayoutService { get; set; }
 
         private MudThemeProvider _mudThemeProvider;
 

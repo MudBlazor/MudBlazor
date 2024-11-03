@@ -45,9 +45,10 @@
     public async void OpenOverlay()
     {
         visible = true;
+        dataLoaded = false;
         await Task.Delay(3000);
-        visible = false;
         dataLoaded = true;
+        visible = false;
         StateHasChanged();
     }
 

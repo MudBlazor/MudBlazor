@@ -7,7 +7,7 @@
     </MudAppBar>
     <MudDrawer @bind-Open="@_drawerOpen" Elevation="25" Variant="@DrawerVariant.Temporary" aria-label="Navigation Drawer">
         <MudToolBar Dense="true" Gutters="false" Class="px-1 docs-gray-bg">
-            <MudIconButton Icon="@Icons.Material.Rounded.Close" Color="Color.Inherit" OnClick="@ToggleDrawer" />
+            <MudIconButton Icon="@Icons.Material.Rounded.Close" Color="Color.Inherit" OnClick="@ToggleDrawer" aria-label="Toggle drawer" />
             <MudSpacer/>
             <AppbarButtons/>
         </MudToolBar>

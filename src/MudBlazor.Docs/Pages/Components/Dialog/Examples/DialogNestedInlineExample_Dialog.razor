@@ -24,7 +24,7 @@
     private bool _nestedVisible;
 
     [CascadingParameter]
-    private MudDialogInstance MudDialog { get; set; }
+    private IMudDialogInstance MudDialog { get; set; }
 
     private void OpenNested() => _nestedVisible = true;
 

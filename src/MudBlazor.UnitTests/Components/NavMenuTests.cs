@@ -1,6 +1,7 @@
 ﻿using Bunit;
 using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.NavMenu;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -8,11 +9,10 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class NavMenuTests : BunitTest
     {
-
-        [Test]
         /// <summary>
         /// Change all styling parameters so that all default values have the correct classes.
         /// </summary>
+        [Test]
         public void NavMenuTests_DefaultValues()
         {
             var comp = Context.RenderComponent<MudNavMenu>();
@@ -30,10 +30,10 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("mud-navmenu-rounded").Count.Should().Be(0);
         }
 
-        [Test]
         /// <summary>
         /// Change all styling parameters from its default values and check that the correct classes are added.
         /// </summary>
+        [Test]
         public void NavMenuTests_CheckAllStyling()
         {
             var comp = Context.RenderComponent<MudNavMenu>(x =>
@@ -52,12 +52,11 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Should().Contain("mud-navmenu-rounded");
         }
 
-
-        [Test]
         /// <summary>
-        /// This component is initially Expanded with the property Expand set to imutable true <c>Expand=true</c>
+        /// This component is initially Expanded with the property Expand set to immutable true <c>Expand=true</c>
         /// And even so, he changes when clicked
         /// </summary>
+        [Test]
         public void One_Way_Bindable()
         {
             var comp = Context.RenderComponent<NavMenuOneWay>();
@@ -81,13 +80,13 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<NavMenuTwoWay>();
             comp.Markup.Should().NotContain("mud-expanded");
             comp.Markup.Should().Contain("aria-hidden=\"true\"");
-            var expanded = comp.Instance._expanded;
+            var expanded = comp.Instance.Expanded;
             expanded.Should().BeFalse();
 
             var navgroup = comp.Find(".mud-nav-group>button");
             navgroup.Click();
 
-            expanded = comp.Instance._expanded;
+            expanded = comp.Instance.Expanded;
             expanded.Should().BeTrue();
             comp.Markup.Should().Contain("mud-expanded");
             comp.Markup.Should().Contain("aria-hidden=\"false\"");

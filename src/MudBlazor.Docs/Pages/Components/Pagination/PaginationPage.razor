@@ -1,4 +1,7 @@
 ﻿@page "/components/pagination"
+@page "/components/MudPageContentNavigation"
+@page "/components/MudPageContentSection"
+@page "/components/MudPagination"
 
 <DocsPage>
     <DocsPageHeader Title="Pagination" SubTitle="">
@@ -11,7 +14,7 @@
         <DocsPageSection>
             <SectionHeader Title="Usage">
                 <Description>
-                    Pagination displays the number of pages based on the <CodeInline>Count</CodeInline> prop, with prev and next buttons surrounding it.<br /> The selected index can be binded with <CodeInline>Selected</CodeInline> prop.
+                    Pagination displays the number of pages based on the <CodeInline>Count</CodeInline> property, with prev and next buttons surrounding it.<br /> The selected index can be binded with <CodeInline>Selected</CodeInline> property.
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(PaginationSimpleExample)" Block="true">
@@ -44,7 +47,7 @@
         <DocsPageSection>
             <SectionHeader Title="Disabled">
                 <Description>
-                    Pagination can be disabled with the <CodeInline>Disabled</CodeInline> prop.
+                    Pagination can be disabled with the <CodeInline>Disabled</CodeInline> property.
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(PaginationDisabledExample)">
@@ -78,9 +81,20 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Hide pages">
+                <Description>
+                    Page numbers can be hidden with the <CodeInline>ShowPageButtons</CodeInline> property.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(PaginationHidePagesExample)">
+                <PaginationHidePagesExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Item count">
                 <Description>
-                    The parameter <CodeInline>BoundaryCount</CodeInline> and <CodeInline>MiddleCount</CodeInline> specify the number of items displayed before, between and after the ellipsis.
+                    The parameter <CodeInline>BoundaryCount</CodeInline> and <CodeInline>MiddleCount</CodeInline> specify the number of items displayed before, between, and after the ellipsis.
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(PaginationItemCountExample)">

@@ -245,5 +245,12 @@ namespace MudBlazor.UnitTests.Components
             comp.SetParametersAndRender(parameters => parameters.Add(p => p.Ripple, false));
             comp.FindAll("div.mud-ripple").Count.Should().Be(0);
         }
+
+        [Test]
+        public void ListItemTabIndexTest()
+        {
+            var comp = Context.RenderComponent<ListItemTabIndexTest>();
+            comp.FindAll("div")[1].GetAttribute("tabindex").Should().Be("-1");
+        }
     }
 }

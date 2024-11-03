@@ -286,6 +286,36 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void AggregateDefinition_NumberFormat_Test()
+        {
+            Expression<Func<AccountingNullableModel, decimal?>> propertyExpression = model => model.Salary;
+
+            var aggregateDefinitionAverage = AggregateDefinition<AccountingNullableModel>.SimpleAvg("C", CultureInfo.CurrentUICulture);
+            var aggregateDefinitionMin = AggregateDefinition<AccountingNullableModel>.SimpleMin("F", new CultureInfo("en-US"));
+            var aggregateDefinitionMax = AggregateDefinition<AccountingNullableModel>.SimpleMax("P", new CultureInfo("zh-CN"));
+            var aggregateDefinitionCount = AggregateDefinition<AccountingNullableModel>.SimpleCount("N", CultureInfo.InvariantCulture);
+            var aggregateDefinitionSum = AggregateDefinition<AccountingNullableModel>.SimpleSum("000000:00.00", new CultureInfo("da-DK"));
+
+            var valueAverage = aggregateDefinitionAverage.GetValue(propertyExpression, _accountingNullableModels);
+            var valueMin = aggregateDefinitionMin.GetValue(propertyExpression, _accountingNullableModels);
+            var valueMax = aggregateDefinitionMax.GetValue(propertyExpression, _accountingNullableModels);
+            var valueCount = aggregateDefinitionCount.GetValue(propertyExpression, _accountingNullableModels);
+            var valueSum = aggregateDefinitionSum.GetValue(propertyExpression, _accountingNullableModels);
+
+            var expectedAverage = _accountingNullableModels.Select(x => x.Salary).Average();
+            var expectedMin = _accountingNullableModels.Select(x => x.Salary).Min();
+            var expectedMax = _accountingNullableModels.Select(x => x.Salary).Max();
+            var expectedCount = _accountingNullableModels.Select(x => x.Salary).Count();
+            var expectedSum = _accountingNullableModels.Select(x => x.Salary).Sum();
+
+            valueAverage.Should().Be($"Average {expectedAverage!.Value.ToString("C", CultureInfo.CurrentUICulture)}");
+            valueMin.Should().Be($"Min {expectedMin!.Value.ToString("F", new CultureInfo("en-US"))}");
+            valueMax.Should().Be($"Max {expectedMax!.Value.ToString("P", new CultureInfo("zh-CN"))}");
+            valueCount.Should().Be($"Total {expectedCount.ToString("N", CultureInfo.InvariantCulture)}");
+            valueSum.Should().Be($"Sum {expectedSum!.Value.ToString("000000:00.00", new CultureInfo("da-DK"))}");
+        }
+
+        [Test]
         public void AggregateDefinition_Custom_Test()
         {
             var aggregateDefinitionAverage = new AggregateDefinition<AccountingModel>

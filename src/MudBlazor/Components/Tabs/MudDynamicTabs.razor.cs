@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 
+#nullable enable
 namespace MudBlazor
 {
     public partial class MudDynamicTabs : MudTabs

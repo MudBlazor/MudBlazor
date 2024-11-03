@@ -1,5 +1,5 @@
 ﻿@page "/components/messagebox"
-
+@page "/components/MudMessageBox"
 
 <DocsPage>
     <DocsPageHeader Title="Message Box" SubTitle="Message box is used for quick user confirmation actions" />
@@ -48,6 +48,19 @@
             </SectionHeader>
             <SectionContent Code="@nameof(MessageBoxMarkupContentExample)">
                 <MessageBoxMarkupContentExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Message Box With DialogOptions">
+                <Description>
+                    You can also pass in custom DialogOptions to override default or global configurations. For example, allowing the message box to close on escape.
+                    <br />
+                    This example shows how a MessageBox can pass in custom DialogOptions to customize behavior or appearance.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(MessageBoxOptionsExample)">
+                <MessageBoxOptionsExample />
             </SectionContent>
         </DocsPageSection>
 

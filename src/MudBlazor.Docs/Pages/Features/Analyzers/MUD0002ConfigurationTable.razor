@@ -1,0 +1,43 @@
+﻿<div class="mud-codeblock">
+    <div class="html">
+<pre>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">PropertyGroup Condition=" '$(Configuration)' == 'Debug' "</span><span class="htmlTagDelimiter">&gt;</span>
+        <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudAllowedAttributePattern</span><span class="htmlTagDelimiter">&gt;</span>LowerCase<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudAllowedAttributePattern</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">PropertyGroup</span><span class="htmlTagDelimiter">&gt;</span>
+</pre>
+    </div>
+</div>
+
+
+<MudSimpleTable Elevation="0" Hover="true">
+    <thead>
+    <tr>
+            <th>Option</th>
+        <th>Description</th>
+        <th>Default</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td><CodeInline>LowerCase</CodeInline></td>
+        <td>Only allow lower case attributes</td>
+        <td><CodeInline>true</CodeInline></td>
+    </tr>
+    <tr>
+        <td><CodeInline>DataAndAria</CodeInline></td>
+        <td>Only allow data-* and aria-* attributes</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td><CodeInline>None</CodeInline></td>
+        <td>Don't allow any additional attributes</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td><CodeInline>Any</CodeInline></td>
+        <td>Allows any extra attributes</td>
+        <td></td>
+    </tr>
+    
+    </tbody>
+</MudSimpleTable>

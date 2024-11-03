@@ -7,6 +7,13 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
+
+    /// <summary>
+    /// A component which prevents the keyboard focus from cycling out of its child content.
+    /// </summary>
+    /// <remarks>
+    /// Typically used within dialogs and other overlays.
+    /// </remarks>
     public partial class MudFocusTrap : IDisposable
     {
         private bool _shiftDown;
@@ -26,15 +33,18 @@ namespace MudBlazor
         protected ElementReference _root;
 
         /// <summary>
-        /// Child content of the component.
+        /// The content within this focus trap.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FocusTrap.Behavior)]
         public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// If true, the focus will no longer loop inside the component.
+        /// Prevents the user from interacting with this focus trap.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FocusTrap.Behavior)]
         public bool Disabled
@@ -51,9 +61,11 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Defines on which element to set the focus when the component is created or enabled.
-        /// When DefaultFocus.Element is used, the focus will be set to the FocusTrap itself, so the user will have to press TAB key once to focus the first tabbable element.
+        /// The element which receives focus when this focus trap is created or enabled.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="DefaultFocus.FirstChild"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FocusTrap.Behavior)]
         public DefaultFocus DefaultFocus { get; set; } = DefaultFocus.FirstChild;
@@ -167,6 +179,9 @@ namespace MudBlazor
             return false;
         }
 
+        /// <summary>
+        /// Releases resources used by this focus trap.
+        /// </summary>
         public void Dispose()
         {
             if (!_disabled)

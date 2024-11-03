@@ -8,7 +8,12 @@ namespace MudBlazor
     /// <summary>
     /// Represents a button consisting of an icon.
     /// </summary>
-    public partial class MudIconButton : MudBaseButton, IHandleEvent
+    /// <remarks>
+    /// Creates a <see href="https://developer.mozilla.org/docs/Web/HTML/Element/Button">button</see> element,
+    /// or <see href="https://developer.mozilla.org/docs/Web/HTML/Element/a">anchor</see> if <c>Href</c> is set.<br/>
+    /// You can directly add attributes like <c>title</c> or <c>aria-label</c>.
+    /// </remarks>
+    public partial class MudIconButton : MudBaseButton
     {
         protected string Classname => new CssBuilder("mud-button-root mud-icon-button")
             .AddClass("mud-button", when: AsButton)
@@ -85,13 +90,5 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
         public RenderFragment? ChildContent { get; set; }
-
-        /// <inheritdoc/>
-        /// <remarks>
-        /// See: https://github.com/MudBlazor/MudBlazor/issues/8365
-        /// <para/>
-        /// Since <see cref="MudIconButton"/> implements only single <see cref="EventCallback"/> <see cref="MudBaseButton.OnClick"/> this is safe to disable globally within the component.
-        /// </remarks>
-        Task IHandleEvent.HandleEventAsync(EventCallbackWorkItem callback, object? arg) => callback.InvokeAsync(arg);
     }
 }

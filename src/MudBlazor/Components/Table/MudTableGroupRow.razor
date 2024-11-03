@@ -24,7 +24,7 @@
                 }
                 @if (Checkable)
                 {
-                    <MudCheckBox T="bool?" @bind-Value="Checked" Class="mud-table-cell-checkbox"/>
+                    <MudCheckBox T="bool?" @bind-Value="Checked" ReadOnly="!SelectionChangeable" Disabled="!SelectionChangeable" Class="mud-table-cell-checkbox"/>
                 }
             </div>
         </MudTd>
@@ -50,7 +50,7 @@ else
     {
         @foreach (var group in _innerGroupItems)
         {
-            <MudTableGroupRow GroupDefinition="GroupDefinition.InnerGroup" Items="@group" Checkable="@Checkable"
+            <MudTableGroupRow GroupDefinition="GroupDefinition.InnerGroup" Items="@group" Checkable="@Checkable" SelectionChangeable="SelectionChangeable"
                               HeaderClass="@HeaderClass" HeaderStyle="@HeaderStyle"
                               FooterClass="@FooterClass" FooterStyle="@FooterStyle"
                               HeaderTemplate="@HeaderTemplate" FooterTemplate="@FooterTemplate" T="T" @attributes="@UserAttributes" />

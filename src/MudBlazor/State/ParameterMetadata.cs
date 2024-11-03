@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System.Diagnostics;
+using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor.State;
 
@@ -6,6 +7,7 @@ namespace MudBlazor.State;
 /// <summary>
 /// Represents information about a parameter.
 /// </summary>
+[DebuggerDisplay("ParameterName = {ParameterName}")]
 internal class ParameterMetadata
 {
     /// <summary>
@@ -13,6 +15,9 @@ internal class ParameterMetadata
     /// </summary>
     public string ParameterName { get; }
 
+    /// <summary>
+    /// Gets the associated comparer parameter name of the component's <see cref="ParameterAttribute"/>.
+    /// </summary>
     public string? ComparerParameterName { get; }
 
     /// <summary>
@@ -41,7 +46,7 @@ internal class ParameterMetadata
     /// </summary>
     /// <param name="parameterName">The name of the parameter, passed using nameof(...).</param>
     /// <param name="handlerName">The handler's name.</param>
-    /// <param name="comparerParameterName"></param>
+    /// <param name="comparerParameterName">The name of the comparer parameter.</param>
     public ParameterMetadata(string parameterName, string? handlerName, string? comparerParameterName)
         : this(parameterName, handlerName)
     {
@@ -56,4 +61,7 @@ internal class ParameterMetadata
         : this(parameterName, null)
     {
     }
+
+    /// <inheritdoc />
+    public override string ToString() => ParameterName;
 }

@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using MudBlazor.Charts;
+﻿using MudBlazor.Charts;
 using MudBlazor.Docs.Models;
+
 
 namespace MudBlazor.Docs.Services
 {
@@ -42,7 +40,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("Nav Menu", typeof(MudNavMenu), typeof(MudNavLink), typeof(MudNavGroup))
             .AddItem("Tabs", typeof(MudTabs), typeof(MudTabPanel), typeof(MudDynamicTabs))
             .AddItem("Progress", typeof(MudProgressCircular), typeof(MudProgressLinear))
-            .AddItem("Dialog", typeof(MudDialog), typeof(MudDialogInstance), typeof(MudDialogProvider))
+            .AddItem("Dialog", typeof(MudDialog), typeof(MudDialogContainer), typeof(MudDialogProvider))
             .AddItem("Snackbar", typeof(MudSnackbarProvider))
             .AddItem("Avatar", typeof(MudAvatar), typeof(MudAvatarGroup))
             .AddItem("Alert", typeof(MudAlert))
@@ -76,6 +74,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("Stack", typeof(MudStack))
             .AddItem("Spacer", typeof(MudSpacer))
             .AddItem("Collapse", typeof(MudCollapse))
+            .AddItem("Stepper", typeof(MudStepper), typeof(MudStep))
 
             //GROUPS
 
@@ -120,6 +119,7 @@ namespace MudBlazor.Docs.Services
                 .AddItem("Pie Chart", typeof(Pie))
                 .AddItem("Bar Chart", typeof(Bar))
                 .AddItem("Stacked Bar Chart", typeof(StackedBar))
+                .AddItem("Time Series Chart", typeof(TimeSeries))
             )
             // this must be last!
             .GetComponentsSortedByName();
@@ -136,7 +136,8 @@ namespace MudBlazor.Docs.Services
                 new DocsLink {Title = "Icon Reference", Href = "features/icons"}, // <-- note: title changed from "Icons" to "Icon Reference" to avoid confusion in Search box with the MudIcon page which is also called "Icons"
                 new DocsLink {Title = "Masking", Href = "features/masking"},
                 new DocsLink {Title = "RTL Languages", Href = "features/rtl-languages"},
-                new DocsLink {Title = "Localization", Href = "features/localization"}
+                new DocsLink {Title = "Localization", Href = "features/localization"},
+                new DocsLink {Title = "Analyzers", Href = "features/analyzers"}
             }.OrderBy(x => x.Title);
 
         /// <summary>
@@ -237,6 +238,30 @@ namespace MudBlazor.Docs.Services
             return _componentLookup.TryGetValue(type, out var component)
                 ? component
                 : _parents.GetValueOrDefault(type);
+        }
+
+        /// <inheritdoc />
+        public string? GetComponentName(string typeName)
+        {
+            var cleanName = typeName.Replace("`1", "<T>").Replace("`2", "<T, U>");
+            foreach (var component in _docsComponents)
+            {
+                if (component.ComponentName != null && component.ComponentName.Equals(cleanName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return component.Name;
+                }
+                if (component.GroupComponents != null)
+                {
+                    foreach (var groupComponent in component.GroupComponents)
+                    {
+                        if (groupComponent.ComponentName.Equals(cleanName, StringComparison.OrdinalIgnoreCase))
+                        {
+                            return groupComponent.Name;
+                        }
+                    }
+                }
+            }
+            return null;
         }
 
         /// <summary>

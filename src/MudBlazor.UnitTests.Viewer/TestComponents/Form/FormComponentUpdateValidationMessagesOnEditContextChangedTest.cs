@@ -5,35 +5,42 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 
-namespace MudBlazor.UnitTests.TestComponents.Form
+namespace MudBlazor.UnitTests.TestComponents.Form;
+
+public class FormComponentUpdateValidationMessagesModel
 {
-    public class FormComponentUpdateValidationMessagesModel
+    public string? Name { get; set; }
+}
+
+public class FormComponentUpdateValidationMessagesValidator : ComponentBase
+{
+    private ValidationMessageStore? _messageStore;
+
+    [CascadingParameter]
+    private EditContext? CurrentEditContext { get; set; }
+
+    protected override void OnInitialized()
     {
-        public string Name;
+        if (CurrentEditContext is not null)
+        {
+            _messageStore = new(CurrentEditContext);
+        }
     }
 
-    public class FormComponentUpdateValidationMessagesValidator : ComponentBase
+    public void AddError(string field, string error)
     {
-        private ValidationMessageStore messageStore;
-
-        [CascadingParameter]
-        private EditContext CurrentEditContext { get; set; }
-
-        protected override void OnInitialized()
+        if (CurrentEditContext is null)
         {
-            messageStore = new(CurrentEditContext);
+            return;
         }
 
-        public void AddError(string @field, string error)
-        {
-            messageStore.Add(CurrentEditContext.Field(@field), error);
-            CurrentEditContext?.NotifyValidationStateChanged();
-        }
+        _messageStore?.Add(CurrentEditContext.Field(field), error);
+        CurrentEditContext.NotifyValidationStateChanged();
+    }
 
-        public void ClearErrors()
-        {
-            messageStore?.Clear();
-            CurrentEditContext?.NotifyValidationStateChanged();
-        }
+    public void ClearErrors()
+    {
+        _messageStore?.Clear();
+        CurrentEditContext?.NotifyValidationStateChanged();
     }
 }

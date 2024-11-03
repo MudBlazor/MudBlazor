@@ -6,7 +6,7 @@
 <MudDataGrid Items="@Elements"
              ReadOnly="@_isReadOnly" EditMode="@DataGridEditMode.Cell">
     <Columns>
-        <HierarchyColumn T="Element" ButtonDisabledFunc="@(x => x.Sign == "He")" />
+        <HierarchyColumn T="Element" ButtonDisabledFunc="@(x => x.Sign == "He")" InitiallyExpandedFunc="@(x => x.Sign == "Li")" />
         <PropertyColumn Property="x => x.Number" Title="Nr" />
         <PropertyColumn Property="x => x.Sign" />
         <PropertyColumn Property="x => x.Name" />
@@ -43,7 +43,6 @@
     {
         Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
     }
-
-        private bool _isReadOnly = true;
-
+    
+    private bool _isReadOnly = true;
 }

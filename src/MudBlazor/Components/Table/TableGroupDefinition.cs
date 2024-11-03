@@ -9,6 +9,11 @@ using System.Linq;
 namespace MudBlazor
 {
 #nullable enable
+
+    /// <summary>
+    /// A definition of a group within a <see cref="MudTable{T}"/>.
+    /// </summary>
+    /// <typeparam name="T">The type of item being grouped.</typeparam>
     public class TableGroupDefinition<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] T>
     {
         private bool _expandable;
@@ -16,10 +21,18 @@ namespace MudBlazor
         private TableContext<T>? _context;
         private TableGroupDefinition<T>? _innerGroup;
 
+        /// <summary>
+        /// Creates a new instance.
+        /// </summary>
         public TableGroupDefinition()
         {
         }
 
+        /// <summary>
+        /// Creates a new instance.
+        /// </summary>
+        /// <param name="selector">The function which selects items for this group.</param>
+        /// <param name="innerGroup">The group nested within this group.</param>
         public TableGroupDefinition(Func<T, object> selector, TableGroupDefinition<T>? innerGroup = null)
         {
             Selector = selector;
@@ -27,15 +40,21 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Gets or Sets the Group Name. It's useful for use on Header, for example.
+        /// The label for this group.
         /// </summary>
         public string? GroupName { get; set; }
 
         /// <summary>
-        /// The selector func to be used on .GroupBy() with LINQ.
+        /// The function which selects items for this group.
         /// </summary>
+        /// <remarks>
+        /// Typically used during a LINQ <c>GroupBy()</c> call to group items.
+        /// </remarks>
         public Func<T, object>? Selector { get; set; }
 
+        /// <summary>
+        /// The group definition within this definition.
+        /// </summary>
         public TableGroupDefinition<T>? InnerGroup
         {
             get => _innerGroup;
@@ -59,9 +78,11 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Gets or Sets if First Column cell must have Indentation.
-        /// It must be set on First grouping level and works recursively.
+        /// Indents the first column cell for this group and child groups.
         /// </summary>
+        /// <remarks>
+        /// When set, all child group definitions are also updated.  Must be set for the first grouping level.
+        /// </remarks>
         public bool Indentation
         {
             get => _indentation;
@@ -76,7 +97,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Gets or Sets if group header can Expand and Collapse its children.
+        /// Allows this group to show or hide data rows.
         /// </summary>
         public bool Expandable
         {
@@ -92,8 +113,11 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Gets or Sets if expandable group header is collapsed or expanded on initialization.
+        /// Shows data rows for this group when the table is first displayed.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
         public bool IsInitiallyExpanded { get; set; } = true;
 
         internal TableGroupDefinition<T>? Parent { get; private set; }

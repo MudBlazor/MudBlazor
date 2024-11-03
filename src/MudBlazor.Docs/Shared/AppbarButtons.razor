@@ -1,7 +1,7 @@
 ﻿@using MudBlazor.Docs.Enums
 <MudTooltip Delay="1000" Text="Notifications">
     <MudBadge Color="Color.Secondary" Dot="true" Overlap="true" Visible="_newNotificationsAvailable">
-        <MudMenu Icon="@Icons.Material.Outlined.Notifications" Color="Color.Inherit" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopCenter" PopoverClass="docs-layout-menu-shadow" ListClass="pa-2 docs-menu-list" LockScroll="true">
+        <MudMenu Icon="@Icons.Material.Outlined.Notifications" Color="Color.Inherit" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopCenter" PopoverClass="docs-layout-menu-shadow" ListClass="pa-2 docs-menu-list" LockScroll="true" AriaLabel="Notifications">
             <div class="d-flex justify-space-between align-center px-2">
                 <MudText Typo="Typo.subtitle2">Notifications</MudText>
                 <MudButton Disabled="@(_newNotificationsAvailable == false)" OnClick="MarkNotificationAsRead" StartIcon="@Icons.Material.Filled.DoneAll" Variant="Variant.Text" Color="Color.Primary" Class="ml-16 mr-n2">Mark as read</MudButton>
@@ -28,8 +28,8 @@
     </MudBadge>
 </MudTooltip>
 <MudTooltip Delay="1000" Text="@(LayoutService.IsRTL ? "Left-to-right" : "Right-to-left")">
-    <MudIconButton Icon="@(LayoutService.IsRTL ? @Icons.Material.Filled.FormatTextdirectionLToR : @Icons.Material.Filled.FormatTextdirectionRToL)" OnClick="@LayoutService.ToggleRightToLeft" Color="Color.Inherit" />
+    <MudIconButton Icon="@(LayoutService.IsRTL ? @Icons.Material.Filled.FormatTextdirectionLToR : @Icons.Material.Filled.FormatTextdirectionRToL)" OnClick="@LayoutService.ToggleRightToLeft" Color="Color.Inherit" aria-label="@(LayoutService.IsRTL ? "Left-to-right" : "Right-to-left")" />
 </MudTooltip>
 <MudTooltip Delay="1000" Text="@(DarkLightModeButtonText)">
-    <MudIconButton Icon="@(DarkLightModeButtonIcon)" Color="Color.Inherit" OnClick="@LayoutService.CycleDarkLightModeAsync" />
+    <MudIconButton Icon="@(DarkLightModeButtonIcon)" Color="Color.Inherit" OnClick="@LayoutService.CycleDarkLightModeAsync" aria-label="@(DarkLightModeButtonText)" />
 </MudTooltip>
