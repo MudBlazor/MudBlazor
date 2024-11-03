@@ -12,19 +12,19 @@ namespace MudBlazor;
 public enum OverflowBehavior
 {
     /// <summary>
-    /// No special behavior will occur as the browser is scrolled.
+    /// Prevents any adjustment of the component, even if it would overflow the container.
     /// </summary>
     [Description("flip-never")]
     FlipNever,
 
     /// <summary>
-    /// The component will display on-screen when opened.
+    /// Flips the component if it would overflow its container, but only when it first opens.  Does not update dynamically if overflow changes afterwards.
     /// </summary>
     [Description("flip-onopen")]
     FlipOnOpen,
 
     /// <summary>
-    /// The component will remain visible even when the browser is scrolled.
+    /// Flips the component if it would overflow its container, dynamically adjusting as necessary to prevent overflow.
     /// </summary>
     [Description("flip-always")]
     FlipAlways,
