@@ -575,7 +575,7 @@ namespace MudBlazor
 
             if (ResetValueOnEmptyText && string.IsNullOrWhiteSpace(Text))
                 await SetValueAsync(default(T), updateText);
-            else if(Immediate)
+            else if (Immediate)
                 await CoerceValueToTextAsync();
 
             if (DebounceInterval <= 0)
