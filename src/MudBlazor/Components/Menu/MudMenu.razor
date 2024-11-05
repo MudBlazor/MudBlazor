@@ -1,4 +1,5 @@
 @namespace MudBlazor
+@using Microsoft.AspNetCore.Components.Sections
 @using MudBlazor.Interfaces
 @inherits MudComponentBase
 
@@ -69,5 +70,14 @@
         </CascadingValue>
     </MudPopover>
 
-    <MudOverlay Visible="Open && !_isTemporary" AutoClose OnClosed="CloseMenuAsync" LockScroll="LockScroll" />
+    @if (string.IsNullOrWhiteSpace(OverlaySection))
+    {
+        <MudOverlay Visible="Open && !_isTemporary" AutoClose OnClosed="CloseMenuAsync" LockScroll="LockScroll" />
+    }
+    else
+    {
+        <SectionContent SectionName="@OverlaySection">
+            <MudOverlay Visible="Open && !_isTemporary" AutoClose OnClosed="CloseMenuAsync" LockScroll="LockScroll" />
+        </SectionContent>
+    }
 </div>

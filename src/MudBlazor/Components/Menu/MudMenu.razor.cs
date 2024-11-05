@@ -38,6 +38,13 @@ namespace MudBlazor
                 .Build();
 
         /// <summary>
+        /// The style of the popover when <see cref="PositionAtCursor"/> is <c>true</c>.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Menu.PopupAppearance)]
+        public string? OverlaySection { get; set; }
+
+        /// <summary>
         /// The text shown for this menu.
         /// </summary>
         [Parameter]

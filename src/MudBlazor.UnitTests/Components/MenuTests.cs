@@ -545,5 +545,29 @@ namespace MudBlazor.UnitTests.Components
 
             await Context.Renderer.Dispatcher.InvokeAsync(mudMenuContext.CloseMenuAsync);
         }
+
+        [Test]
+        public async Task CloseMenuWithCssTransform_Overlay()
+        {
+            var comp = Context.RenderComponent<MenuTestCloseWithCssTransform>();
+            var menuComponent = comp.FindComponent<MudMenu>();
+            var mudMenuContext = menuComponent.Instance;
+            mudMenuContext.Should().NotBeNull();
+
+            // open menu
+            await Context.Renderer.Dispatcher.InvokeAsync(() => mudMenuContext.OpenMenuAsync(new MouseEventArgs()));
+
+            // find mud-overlay
+            var overlay = comp.Find("div.mud-overlay");
+            var menuOverlay = menuComponent.FindAll("div.mud-overlay").FirstOrDefault();
+
+            // Assert
+            overlay.ClassList.Should().Contain("mud-overlay");
+            menuOverlay.Should().BeNull();
+
+            overlay.Click();
+            // menu shoud be closed
+            comp.WaitForAssertion(() => menuComponent.Instance.Open.Should().BeFalse());
+        }
     }
 }

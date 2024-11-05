@@ -1,0 +1,19 @@
+@using Microsoft.AspNetCore.Components.Sections
+
+<MudPopoverProvider />
+
+<SectionOutlet SectionName="Overlay" />
+
+<div style="transform:translate(0px,0px);">
+    <MudMenu OverlaySection="Overlay">
+        <MudMenuItem>
+            Save
+        </MudMenuItem>
+        <MudMenuItem>
+            Export
+        </MudMenuItem>
+        <MudMenuItem>
+            Print
+        </MudMenuItem>
+    </MudMenu>
+</div>
