@@ -19,7 +19,7 @@
                          Disabled="@GetDisabledState()"
                          Required="@Required"
                          ForId="@InputElementId"
-                         @onclick="@ToggleMenu">
+                         @onpointerdown="@ToggleMenu">
             <InputContent>
                 <MudInput @ref="_elementReference"
                           InputType="@(CanRenderValue || (Strict && !IsValueInList) ? InputType.Hidden : InputType.Text)"
