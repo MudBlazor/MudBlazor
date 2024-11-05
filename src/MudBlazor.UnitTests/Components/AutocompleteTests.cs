@@ -1649,10 +1649,10 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find("input").Input("Lorem");
             comp.WaitForAssertion(() => count.Should().Be(1));
-            
+
             comp.Find("input").Input("ip");
             comp.WaitForAssertion(() => count.Should().Be(2));
-            
+
             comp.Find("input").Input("wtf");
             comp.WaitForAssertion(() => count.Should().Be(0));
         }
