@@ -2,6 +2,8 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+#if NET8_0
+
 namespace MudBlazor;
 
 #nullable enable
@@ -112,3 +114,5 @@ internal static class CollectionExtensions
         return list.Count > 0 ? list[0] : default;
     }
 }
+
+#endif

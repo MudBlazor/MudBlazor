@@ -833,11 +833,29 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Generate parameters for the test of `ResetAsync`.
+        /// </summary>
+        /// <remarks>
+        /// `ResetAsync` has the same behavior, regardless of the component's parameters.
+        /// So this method generates all parameter combinations.
+        /// </remarks>
+        private static IEnumerable<bool[]> ResetAsyncParameters()
+        {
+            const int NbParameters = 4;
+            var max = (int)Math.Pow(2, NbParameters);
+            for (var i = 0; i < max; i++)
+            {
+                var bits = new System.Collections.BitArray(new int[] { i });
+                yield return bits.Cast<bool>().Take(NbParameters).ToArray();
+            }
+        }
+
+        /// <summary>
         /// When calling ResetAsync() without debounce,
         /// so menu should be closed, Text empty and Value null.
         /// </summary>
-        [Test]
-        public async Task ResetAsync_WithoutDebounce_SoTextEmptyAndValueNull()
+        [TestCaseSource(nameof(ResetAsyncParameters))]
+        public async Task ResetAsync_WithoutDebounce_SoTextEmptyAndValueNull(bool resetValueOnEmptyText, bool coerceText, bool coerceValue, bool immediate)
         {
             // Arrange
 
@@ -854,6 +872,47 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.Open.Should().BeFalse();
             autocomplete.Value.Should().BeNull();
             autocomplete.Text.Should().BeNull();
+            comp.Instance.SearchFuncCallCount.Should().Be(0);
+
+            // Act : Call ResetAsync()
+
+            await comp.InvokeAsync(autocomplete.ResetAsync);
+
+            // Assert : menu closed, text empty and value null
+
+            comp.Markup.Should().NotContain("mud-popover-open");
+            autocomplete.Value.Should().BeNull();
+            autocomplete.Text.Should().BeEmpty();
+            comp.Instance.SearchFuncCallCount.Should().Be(0);
+        }
+
+        /// <summary>
+        /// When calling ResetAsync() with value and without debounce,
+        /// so menu should be closed, Text empty and Value null.
+        /// </summary>
+        [TestCaseSource(nameof(ResetAsyncParameters))]
+        public async Task ResetAsync_WithValueAndWithoutDebounce_SoTextEmptyAndValueNull(bool resetValueOnEmptyText, bool coerceText, bool coerceValue, bool immediate)
+        {
+            // Arrange
+
+            var comp = Context.RenderComponent<AutocompleteStates>(parameters =>
+            {
+                parameters.Add(a => a.Value, "Idaho");
+                parameters.Add(a => a.ResetValueOnEmptyText, resetValueOnEmptyText);
+                parameters.Add(a => a.DebounceInterval, 0);
+                parameters.Add(a => a.CoerceText, coerceText);
+                parameters.Add(a => a.CoerceValue, coerceValue);
+                parameters.Add(a => a.Immediate, immediate);
+            });
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+            var autocomplete = autocompletecomp.Instance;
+
+            // Assert : initial state, menu closed and text/value null
+
+            comp.Markup.Should().NotContain("mud-popover-open");
+            autocomplete.Open.Should().BeFalse();
+            autocomplete.Value.Should().Be("Idaho");
+            autocomplete.Text.Should().Be("Idaho");
             comp.Instance.SearchFuncCallCount.Should().Be(0);
 
             // Act : Call ResetAsync()

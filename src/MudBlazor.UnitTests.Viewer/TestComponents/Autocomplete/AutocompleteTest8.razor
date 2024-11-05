@@ -5,6 +5,7 @@
     <AutoCompleteContainer @bind-HasBeenDisposed="@HasBeenDisposed"></AutoCompleteContainer>
 }
 @code {
-    public bool MustBeShown = true;
-    public bool HasBeenDisposed;
+    public bool MustBeShown { get; set; } = true;
+
+    public bool HasBeenDisposed { get; private set; }
 }

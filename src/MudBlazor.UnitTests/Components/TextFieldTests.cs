@@ -179,6 +179,20 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Setting ShrinkLabel should apply mud-shrink class.
+        /// </summary>
+        [Test]
+        public void LabelShouldShrinkWhenShrinkLabelIsSet()
+        {
+            var comp = Context.RenderComponent<TextFieldShrinkLabelTest>();
+            var noMask = comp.FindComponents<MudTextField<string>>()[0];
+            var masked = comp.FindComponents<MudTextField<string>>()[1];
+
+            noMask.Markup.Should().Contain("mud-shrink");
+            masked.Markup.Should().Contain("mud-shrink");
+        }
+
+        /// <summary>
         /// A glue class to make it easy to define validation rules for single values using FluentValidation
         /// </summary>
         /// <typeparam name="T"></typeparam>

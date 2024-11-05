@@ -14,13 +14,13 @@
     public static string __description__ = "Based on a bug report. Selecting a value should not trigger the validation error message.";
     private MudForm _form = null!;
     private string? _value;
-    private readonly string[] states = ["Alabama", "Alaska", "American Samoa", "Arizona"];
+    private readonly string[] _states = ["Alabama", "Alaska", "American Samoa", "Arizona"];
 
     private Task<IEnumerable<string>> Search(string value, CancellationToken token)
     {
         // if text is null or empty, show complete list
         if (string.IsNullOrEmpty(value))
-            return Task.FromResult<IEnumerable<string>>(states);
-        return Task.FromResult(states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase)));
+            return Task.FromResult<IEnumerable<string>>(_states);
+        return Task.FromResult(_states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase)));
     }
 }

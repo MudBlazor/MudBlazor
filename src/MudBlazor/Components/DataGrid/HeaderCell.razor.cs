@@ -2,10 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
@@ -19,6 +15,11 @@ namespace MudBlazor
     /// <typeparam name="T">The kind of item managed by the grid.</typeparam>
     public partial class HeaderCell<T> : MudComponentBase, IDisposable
     {
+        private bool _selected;
+        private bool _isResizing;
+        private double? _resizerHeight;
+        private bool _filtersMenuVisible;
+        private ElementReference _headerElement;
         private string _id = Identifier.Create();
 
         /// <summary>
@@ -48,9 +49,6 @@ namespace MudBlazor
         [Parameter]
         public RenderFragment ChildContent { get; set; }
 
-        private SortDirection _initialDirection;
-        private bool _selected;
-
         /// <summary>
         /// The direction to sort values in this column.
         /// </summary>
@@ -58,23 +56,16 @@ namespace MudBlazor
         /// Defaults to <see cref="SortDirection.None"/>.
         /// </remarks>
         [Parameter]
-        public SortDirection SortDirection
-        {
-            get => _initialDirection;
-            set
-            {
-                _initialDirection = value;
-            }
-        }
+        public SortDirection SortDirection { get; set; }
 
-        private string _classname =>
+        private string Classname =>
             new CssBuilder(Column?.HeaderClass)
                 .AddClass(Column?.HeaderClassFunc?.Invoke(DataGrid?.CurrentPageItems ?? Enumerable.Empty<T>()))
-                .AddClass(Column?.headerClassname)
+                .AddClass(Column?.HeaderClassname)
                 .AddClass(Class)
                 .Build();
 
-        private string _style =>
+        private string Stylename =>
             new StyleBuilder()
                 .AddStyle(Column?.HeaderStyleFunc?.Invoke(DataGrid?.CurrentPageItems ?? Enumerable.Empty<T>()))
                 .AddStyle(Column?.HeaderStyle)
@@ -82,31 +73,29 @@ namespace MudBlazor
                 .AddStyle(Style)
                 .Build();
 
-        private string _resizerStyle =>
+        private string ResizerStyle =>
             new StyleBuilder()
                 .AddStyle("height", _resizerHeight?.ToPx() ?? "100%")
                 .AddStyle(Style)
                 .Build();
 
-        private string _resizerClass =>
+        private string ResizerClass =>
             new CssBuilder()
                 .AddClass("mud-resizing", when: _isResizing)
                 .AddClass("mud-resizer")
                 .Build();
 
-        private string _sortHeaderClass =>
+        private string SortHeaderClass =>
             new CssBuilder()
                 .AddClass("sortable-column-header")
                 .AddClass("cursor-pointer", when: !_isResizing)
                 .Build();
 
-        private string _optionsClass =>
+        private string OptionsClass =>
             new CssBuilder()
                 .AddClass("column-options")
                 .AddClass("cursor-pointer", when: !_isResizing)
                 .Build();
-
-        private ElementReference _headerElement;
 
         /// <summary>
         /// The width for this header cell, in pixels.
@@ -116,9 +105,6 @@ namespace MudBlazor
         /// </remarks>
         public double? Width { get; internal set; }
 
-        private double? _resizerHeight;
-        private bool _isResizing;
-        private bool _filtersMenuVisible;
 
         #region Computed Properties and Functions
 
@@ -198,7 +184,7 @@ namespace MudBlazor
         {
             get
             {
-                return _initialDirection switch
+                return SortDirection switch
                 {
                     SortDirection.Descending => "sort-direction-icon mud-direction-desc",
                     SortDirection.Ascending => "sort-direction-icon mud-direction-asc",
@@ -237,12 +223,12 @@ namespace MudBlazor
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
-            _initialDirection = Column?.InitialDirection ?? SortDirection.None;
+            SortDirection = Column?.InitialDirection ?? SortDirection.None;
 
-            if (_initialDirection != SortDirection.None)
+            if (SortDirection != SortDirection.None)
             {
                 // set initial sort
-                await InvokeAsync(() => DataGrid.ExtendSortAsync(Column.PropertyName, _initialDirection, Column.GetLocalSortFunc()));
+                await InvokeAsync(() => DataGrid.ExtendSortAsync(Column.PropertyName, SortDirection, Column.GetLocalSortFunc()));
             }
 
             if (DataGrid != null)
@@ -347,13 +333,13 @@ namespace MudBlazor
         {
             if (args.AltKey)
             {
-                if (_initialDirection != SortDirection.None)
+                if (SortDirection != SortDirection.None)
                     await RemoveSortAsync();
 
                 return;
             }
 
-            _initialDirection = _initialDirection switch
+            SortDirection = SortDirection switch
             {
                 SortDirection.Ascending => SortDirection.Descending,
                 _ => SortDirection.Ascending
@@ -362,9 +348,9 @@ namespace MudBlazor
             DataGrid.DropContainerHasChanged();
 
             if (args.CtrlKey && DataGrid.SortMode == SortMode.Multiple)
-                await InvokeAsync(() => DataGrid.ExtendSortAsync(Column.PropertyName, _initialDirection, Column.GetLocalSortFunc(), Column.Comparer));
+                await InvokeAsync(() => DataGrid.ExtendSortAsync(Column.PropertyName, SortDirection, Column.GetLocalSortFunc(), Column.Comparer));
             else
-                await InvokeAsync(() => DataGrid.SetSortAsync(Column.PropertyName, _initialDirection, Column.GetLocalSortFunc(), Column.Comparer));
+                await InvokeAsync(() => DataGrid.SetSortAsync(Column.PropertyName, SortDirection, Column.GetLocalSortFunc(), Column.Comparer));
         }
 
         internal async Task RemoveSortAsync()
@@ -528,7 +514,7 @@ namespace MudBlazor
 
         private void MarkAsUnsorted()
         {
-            _initialDirection = SortDirection.None;
+            SortDirection = SortDirection.None;
             Column.SortIndex = -1;
         }
 

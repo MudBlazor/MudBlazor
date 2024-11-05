@@ -538,6 +538,28 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridCustomComparerTest()
+        {
+            var comp = Context.RenderComponent<DataGridSelectionComparerTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSelectionComparerTest.Person>>();
+
+            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+
+            // click the first row
+            dataGrid.FindAll("td")[1].Click();
+            dataGrid.Instance.SelectedItems.Count.Should().Be(1);
+            dataGrid.Instance.Selection.Comparer.Should().BeOfType<DataGridSelectionComparerTest.IdComparer>();
+
+            //select a chip
+            var chipSet = comp.FindComponent<MudChipSet<string>>();
+
+            chipSet.FindAll(".mud-chip")[2].Click();
+            dataGrid.Instance.SelectedItems.Count.Should().Be(1); //only 1 item is set
+            dataGrid.FindAll("input[type=checkbox]").Where(checkbox => checkbox.IsChecked()).ToArray().Length.Should().Be(2); //two items are checked
+            dataGrid.Instance.Selection.Comparer.Should().BeOfType<DataGridSelectionComparerTest.RoleComparer>();
+        }
+
+        [Test]
         public async Task DataGridSingleSelectionTest()
         {
             var comp = Context.RenderComponent<DataGridSingleSelectionTest>();
@@ -1120,7 +1142,7 @@ namespace MudBlazor.UnitTests.Components
 
             // open form dialog
             dataGrid.Find("tbody tr button").Click();
-            dataGrid.Instance.isEditFormOpen.Should().BeTrue();
+            dataGrid.Instance._isEditFormOpen.Should().BeTrue();
 
             var field = comp.FindComponents<MudTextField<string>>()[2];
 
@@ -1139,7 +1161,7 @@ namespace MudBlazor.UnitTests.Components
 
             // dialog should still be open and the items data should not have been updated
             using AssertionScope scope = new();
-            dataGrid.Instance.isEditFormOpen.Should().BeTrue();
+            dataGrid.Instance._isEditFormOpen.Should().BeTrue();
             comp.Instance.Items[0].Email.Should().Be("Augusta_Homenick26@mud.com");
         }
 
@@ -2792,6 +2814,13 @@ namespace MudBlazor.UnitTests.Components
             item = dataGrid.Instance.Items.FirstOrDefault(x => x.Name == "Anders");
 
             dataGrid.Instance._openHierarchies.Should().Contain(item);
+
+            comp.Markup.Should().Contain("uid = Ira|27|Success|");
+            comp.Markup.Should().Contain("uid = Anders|24|Error|");
+
+            comp.Markup.Should().NotContain("uid = Sam|56|Normal|");
+            comp.Markup.Should().NotContain("uid = Alicia|54|Info|");
+            comp.Markup.Should().NotContain("uid = John|32|Warning|");
         }
 
         [Test]

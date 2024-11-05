@@ -6,8 +6,8 @@
 
 @code {
     public static string __description__ = "Autocomplete should show 'Assam'.";
-    private IEnumerable<State> _stateList = [];
     private State? _stateDetails;
+    private IEnumerable<State> _stateList = [];
 
     protected override void OnInitialized()
     {
@@ -67,7 +67,7 @@
         _stateList = new List<State> { s1, s2, s3, s4, s5, s6, s7 };
     }
 
-    public async Task<IEnumerable<State>> SearchStateAsync(string value, CancellationToken token)
+    public async Task<IEnumerable<State?>> SearchStateAsync(string value, CancellationToken token)
     {
         // In real life use an asynchronous function for fetching data from an api.
         await Task.Delay(5, token);
