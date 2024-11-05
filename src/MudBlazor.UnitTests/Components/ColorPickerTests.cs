@@ -1,17 +1,11 @@
-﻿#pragma warning disable CS1998 // async without await
-#pragma warning disable IDE1006 // leading underscore
+﻿#pragma warning disable IDE1006 // leading underscore
 
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.ColorPicker;
 using MudBlazor.Utilities;
 using NUnit.Framework;
@@ -147,7 +141,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task Default()
+        public void Default()
         {
             var comp = Context.RenderComponent<MudColorPicker>();
 

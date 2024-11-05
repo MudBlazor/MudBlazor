@@ -1,19 +1,10 @@
-﻿#pragma warning disable CS1998 // async without await
-#pragma warning disable IDE1006 // leading underscore
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Bunit;
+﻿using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.Dummy;
-using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.Select;
 using NUnit.Framework;
 using static MudBlazor.UnitTests.TestComponents.Select.SelectWithEnumTest;
-
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -163,7 +154,7 @@ namespace MudBlazor.UnitTests.Components
         /// After clicking the second item, the render fragment should update
         /// </summary>
         [Test]
-        public async Task SelectWithEnumTest()
+        public void SelectWithEnumTest()
         {
             var comp = Context.RenderComponent<SelectWithEnumTest>();
             // select elements needed for the test
@@ -434,9 +425,9 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task MultiSelect_ShouldCallValidationFunc()
+        public void MultiSelect_ShouldCallValidationFunc()
         {
-            await ImproveChanceOfSuccess(async () =>
+            ImproveChanceOfSuccess(() =>
             {
                 var comp = Context.RenderComponent<MultiSelectTest1>();
                 // print the generated html
@@ -619,9 +610,8 @@ namespace MudBlazor.UnitTests.Components
         /// We filled the multiselect with initial selected values, that must
         /// show in the value of the input as a comma separated list of strings
         /// </summary>
-        /// <returns></returns>
         [Test]
-        public async Task MultiSelect_Initial_Values()
+        public void MultiSelect_Initial_Values()
         {
             var comp = Context.RenderComponent<MultiSelectWithInitialValues>();
             // print the generated html
@@ -629,7 +619,7 @@ namespace MudBlazor.UnitTests.Components
             // select the input of the select
             var input = comp.Find("input");
             //the value of the input
-            var value = input.Attributes.Where(a => a.LocalName == "value").First().Value;
+            var value = input.Attributes.First(a => a.LocalName == "value").Value;
             value.Should().Be("FirstA, SecondA");
         }
 
@@ -637,9 +627,8 @@ namespace MudBlazor.UnitTests.Components
         /// We filled the multiselect with initial selected values.
         /// Then the returned text in the selection is customized.
         /// </summary>
-        /// <returns></returns>
         [Test]
-        public async Task MultiSelectCustomizedTextTest()
+        public void MultiSelectCustomizedTextTest()
         {
             var comp = Context.RenderComponent<MultiSelectCustomizedTextTest>();
 
@@ -647,14 +636,14 @@ namespace MudBlazor.UnitTests.Components
             var input = comp.Find("input");
 
             // The value of the input
-            var value = input.Attributes.Where(a => a.LocalName == "value").First().Value;
+            var value = input.Attributes.First(a => a.LocalName == "value").Value;
 
             // Value is equal to the customized values returned by the method
             value.Should().Be("Selected values: FirstA, SecondA");
         }
 
         [Test]
-        public async Task SelectClearableTest()
+        public void SelectClearableTest()
         {
             var comp = Context.RenderComponent<SelectClearableTest>();
             var select = comp.FindComponent<MudSelect<string>>();
@@ -834,7 +823,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task Select_Should_AllowReloadingItems()
+        public void Select_Should_AllowReloadingItems()
         {
             var comp = Context.RenderComponent<ReloadSelectItemsTest>();
             var select = comp.FindComponent<MudSelect<string>>();
@@ -1035,7 +1024,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task SelectTest_KeyboardNavigation_MultiSelect_Focus()
+        public void SelectTest_KeyboardNavigation_MultiSelect_Focus()
         {
             var comp = Context.RenderComponent<MultiSelectTest6>();
             var select = comp.FindComponent<MudSelect<string>>();
