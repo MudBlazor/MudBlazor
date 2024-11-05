@@ -1,0 +1,29 @@
+@implements IDisposable
+@namespace MudBlazor
+
+@ChildContent
+
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [CascadingParameter] public MudRenderQueue RenderQueue { get; set; }
+    public bool shouldRender;
+    protected override void OnInitialized()
+    {
+        RenderQueue.AddRender(this);
+        base.OnInitialized();
+    }
+    protected override bool ShouldRender()
+    {
+        return shouldRender;
+    }
+    public async Task RenderAsync()
+    {
+        shouldRender = true;
+        await InvokeAsync(StateHasChanged);
+        shouldRender = false;
+    }
+    void IDisposable.Dispose()
+    {
+        RenderQueue.RemoveRender(this);
+    }
+}

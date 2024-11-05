@@ -1,0 +1,29 @@
+@namespace MudBlazor
+
+<CascadingValue Value="this" IsFixed>
+    @ChildContent
+</CascadingValue>
+
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public int DelayPerItem { get; set; } = 100;
+    private List<MudRenderQueueItem> QueueItems = new();
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        foreach (var queueItem in QueueItems)
+        {
+            await Task.Delay(DelayPerItem);
+            await queueItem.RenderAsync();
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
+    public void AddRender(MudRenderQueueItem item)
+    {
+        QueueItems.Add(item);
+    }
+
+    public void RemoveRender(MudRenderQueueItem item)
+    {
+        QueueItems.Remove(item);
+    }
+}
