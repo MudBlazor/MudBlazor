@@ -421,12 +421,16 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudAutocomplete<string>>((a) =>
             {
                 a.Add(x => x.DebounceInterval, 0);
-                a.Add(x => x.SearchFunc, new Func<string, CancellationToken, Task<IEnumerable<string>>>((s, token) => Task.FromResult<IEnumerable<string>>(null))); // <--- searchfunc returns null instead of sequence
+                a.Add(x => x.SearchFunc, (_, _) => Task.FromResult<IEnumerable<string>>(null)); // <--- searchfunc returns null instead of sequence
             });
             // enter a text so the search func will return null, and it shouldn't throw an exception
-            comp.SetParam(a => a.Text, "Do not throw");
-            comp.SetParam(x => x.SearchFunc, new Func<string, CancellationToken, Task<IEnumerable<string>>>((s, token) => null)); // <-- search func returns null instead of task!
-            comp.SetParam(a => a.Text, "Don't throw here neither");
+            var setText1 = () => comp.SetParam(a => a.Text, "Do not throw");
+            var setSearchFunc = () => comp.SetParam(x => x.SearchFunc, new Func<string, CancellationToken, Task<IEnumerable<string>>>((_, _) => null)); // <-- search func returns null instead of task!
+            var setText2 = () => comp.SetParam(a => a.Text, "Don't throw here neither");
+
+            setText1.Should().NotThrow();
+            setSearchFunc.Should().NotThrow();
+            setText2.Should().NotThrow();
         }
 
         [Test]

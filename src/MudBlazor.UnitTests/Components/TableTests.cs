@@ -1353,7 +1353,11 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TableServerSideDataNull()
         {
-            _ = Context.RenderComponent<TableServerSideDataTest6>();
+            // Arrange & Act
+            var renderComponent = () => Context.RenderComponent<TableServerSideDataTest6>();
+
+            // Assert
+            renderComponent.Should().NotThrow();
         }
 
         /// <summary>

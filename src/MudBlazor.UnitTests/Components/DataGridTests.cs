@@ -3514,10 +3514,13 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DataGridSequenceContainsNoElementsTest()
         {
-            var comp = Context.RenderComponent<DataGridSequenceContainsNoElementsTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSequenceContainsNoElementsTest.Model>>();
+            // Arrange & Act
+            var component = Context.RenderComponent<DataGridSequenceContainsNoElementsTest>();
+            var dataGridComponent = () => component.FindComponent<MudDataGrid<DataGridSequenceContainsNoElementsTest.Model>>();
 
             // This test will result in an error if the 'sequence contains no elements' issue is present.
+            // Assert
+            dataGridComponent.Should().NotThrow();
         }
 
         [Test]

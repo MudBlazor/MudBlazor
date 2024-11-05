@@ -322,7 +322,11 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DebouncedTextField_ShouldNot_ThrowException()
         {
-            Context.RenderComponent<DebouncedTextFieldTest>();
+            // Arrange & Act
+            var renderComponent = () => Context.RenderComponent<DebouncedTextFieldTest>();
+
+            // Assert
+            renderComponent.Should().NotThrow();
         }
 
         [Test]
