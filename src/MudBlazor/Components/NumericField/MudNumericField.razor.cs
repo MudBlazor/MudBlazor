@@ -438,10 +438,10 @@ namespace MudBlazor
         /// The regular expression used to constrain values.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>[0-9,.\-]</c>, which will show a numerical keyboard on Safari.  Must be a valid JavaScript regular expression.  To allow only numbers (with no signs or commas), you can use <c>[0-9.]</c>.
+        /// Defaults to <c>null</c>, which will show a numerical keyboard on Safari.  Must be a valid JavaScript regular expression.  To allow only numbers (with no signs or commas), you can use <c>[0-9.]</c>.
         /// </remarks>
         [Parameter]
-        public override string Pattern { get; set; } = @"[0-9,.\-]";
+        public override string Pattern { get; set; } = null;
 
         private string GetCounterText() => Counter == null ? string.Empty : (Counter == 0 ? (string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") : ((string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") + $" / {Counter}"));
 
