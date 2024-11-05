@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
@@ -7,7 +11,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a common form component for selecting date, time, and color values.
+    /// A component for selecting date, time, and color values.
     /// </summary>
     /// <typeparam name="T">The type of value being chosen.</typeparam>
     /// <seealso cref="MudPickerContent" />
@@ -21,9 +25,6 @@ namespace MudBlazor
         private bool _keyInterceptorObserving = false;
         private string _elementId = Identifier.Create("picker");
 
-        /// <summary>
-        /// Creates a new instance.
-        /// </summary>
         public MudPicker() : base(new Converter<T, string>()) { }
 
         protected MudPicker(Converter<T, string> converter) : base(converter) { }

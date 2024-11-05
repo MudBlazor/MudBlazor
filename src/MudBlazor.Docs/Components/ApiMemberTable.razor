@@ -1,7 +1,7 @@
 ﻿<MudTable T="DocumentedMember" @ref="Table" ServerData="@GetData"
           Breakpoint="@Breakpoint.Sm"
-          Elevation="0" Class="mud-width-full " Hover="true" Dense="true"
-          AllowUnsorted="false" GroupBy="@CurrentGroups">   
+          Elevation="0" Class="docs-content-api-table" Hover="true" Dense="true"
+          AllowUnsorted="false" GroupBy="@CurrentGroups">
     <GroupHeaderTemplate>
         @if (Grouping == ApiMemberGrouping.Inheritance)
         {
@@ -22,32 +22,38 @@
         <MudTh>Description</MudTh>
     </HeaderContent>
     <ToolBarContent>
-        <MudGrid Class="pa-0">
-            <MudItem xs="12" md="6" Class="py-0">
-                <MudButtonGroup OverrideStyles="false">
-                    <MudButton Size="Size.Small" Color="Color.Primary" Variant="@GetGroupingVariant(ApiMemberGrouping.None)" OnClick="@(() => OnGroupingChangedAsync(ApiMemberGrouping.None))">None</MudButton>
-                    <MudButton Size="Size.Small" Color="Color.Primary" Variant="@GetGroupingVariant(ApiMemberGrouping.Categories)" OnClick="@(() => OnGroupingChangedAsync(ApiMemberGrouping.Categories))">Category</MudButton>
-                    <MudButton Size="Size.Small" Color="Color.Primary" Variant="@GetGroupingVariant(ApiMemberGrouping.Inheritance)" OnClick="@(() => OnGroupingChangedAsync(ApiMemberGrouping.Inheritance))">Inheritance</MudButton>
-                </MudButtonGroup>
-            </MudItem>
-            @if (HasProtected())
-            {
-                @* There are protected members.  Show a "Show Protected" switch *@
-                <MudItem xs="6" md="3" Class="py-0">
-                    <MudTextField T="string" Value="@Keyword" ValueChanged="OnKeywordChangedAsync" DebounceInterval="300" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" />
-                </MudItem>
-                <MudItem xs="6" md="3" Class="py-0">
-                    <MudSwitch T="bool" Size="Size.Small" Color="Color.Primary" Value="@ShowProtected" ValueChanged="OnShowProtectedChangedAsync">Show Protected</MudSwitch>
-                </MudItem>
-            }
-            else
-            {
-                @* There are no protected members to hide *@
-                <MudItem xs="12" md="6" Class="py-0">
-                    <MudTextField T="string" Value="@Keyword" ValueChanged="OnKeywordChangedAsync" DebounceInterval="300" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" />
-                </MudItem>
-            }
-        </MudGrid>
+        <div class="docs-content-api-table-toolbar-container">
+            <MudTextField T="string"
+                          Value="@Keyword"
+                          ValueChanged="OnKeywordChangedAsync"
+                          DebounceInterval="300"
+                          Adornment="Adornment.Start"
+                          AdornmentIcon="@Icons.Material.Filled.Search"
+                          Placeholder="Search members" />
+
+            <div class="docs-content-api-table-toolbar-configuration-container">
+                @if (true || HasProtected())
+                {
+                    @* There are protected members.  Show a "Show Protected" switch *@
+                    <MudSwitch T="bool"
+                               Value="@ShowProtected"
+                               ValueChanged="OnShowProtectedChangedAsync"
+                               Size="Size.Small"
+                               Color="Color.Primary">Show Protected</MudSwitch>
+                }
+
+                <MudToggleGroup Class="docs-content-api-grouping"
+                                T="ApiMemberGrouping"
+                                Value="Grouping"
+                                ValueChanged="OnGroupingChangedAsync"
+                                Size="Size.Small"
+                                Rounded="true">
+                    <MudToggleItem Value="ApiMemberGrouping.None">None</MudToggleItem>
+                    <MudToggleItem Value="ApiMemberGrouping.Categories">Category</MudToggleItem>
+                    <MudToggleItem Value="ApiMemberGrouping.Inheritance">Inheritance</MudToggleItem>
+                </MudToggleGroup>
+            </div>
+        </div>
     </ToolBarContent>
     <RowTemplate>
         <MudTd id="@context.Name" DataLabel="Name" Class="docs-content-api-cell">
