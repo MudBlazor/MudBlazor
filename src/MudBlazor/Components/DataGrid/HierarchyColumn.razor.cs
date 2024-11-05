@@ -14,6 +14,7 @@ namespace MudBlazor;
 public partial class HierarchyColumn<T> : MudComponentBase
 {
     private bool _finishedInitialExpanded;
+    private readonly HashSet<CellContext<T>> _initiallyExpandedItems = [];
 
     /// <summary>
     /// The icon to display for the close button.
@@ -90,12 +91,18 @@ public partial class HierarchyColumn<T> : MudComponentBase
     public Func<T, bool> InitiallyExpandedFunc { get; set; } = _ => false;
 
     /// <inheritdoc/>
-    protected override void OnAfterRender(bool firstRender)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        base.OnAfterRender(firstRender);
+        await base.OnAfterRenderAsync(firstRender);
+
         if (firstRender)
         {
             _finishedInitialExpanded = true;
+
+            foreach (var context in _initiallyExpandedItems)
+            {
+                await context.Actions.ToggleHierarchyVisibilityForItemAsync.Invoke();
+            }
         }
     }
 }

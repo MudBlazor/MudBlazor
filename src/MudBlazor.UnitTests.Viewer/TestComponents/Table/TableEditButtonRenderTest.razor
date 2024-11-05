@@ -1,4 +1,4 @@
-﻿<MudTable T="string" Items="_items" EditTrigger="TableEditTrigger.EditButton" EditButtonPosition="EditButtonPosition" ApplyButtonPosition="ApplyButtonPosition" IsEditRowSwitchingBlocked="BlockRowSwitching" OnRowClick="RowClicked">
+﻿<MudTable T="string" Items="_items" EditTrigger="TableEditTrigger.EditButton" EditButtonPosition="EditButtonPosition" ApplyButtonPosition="ApplyButtonPosition" IsEditRowSwitchingBlocked="BlockRowSwitching" OnRowClick="OnRowClicked">
     <HeaderContent>
         <MudTh>#</MudTh>
     </HeaderContent>
@@ -32,4 +32,6 @@
 
     [Parameter]
     public Action? RowClicked { get; set; }
+
+    private void OnRowClicked() => RowClicked?.Invoke();
 }

@@ -60,7 +60,7 @@ namespace MudBlazor
         /// The icon to display when items are collapsed.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>Icons.Material.Filled.SettingsEthernet</c>.  Displays when <see cref="Collapsed"/> and the number of items exceeds <see cref="MaxItems"/>.
+        /// Defaults to <see cref="Icons.Material.Filled.SettingsEthernet" />.  Displays when <see cref="Collapsed"/> and the number of items exceeds <see cref="MaxItems"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Breadcrumbs.Appearance)]

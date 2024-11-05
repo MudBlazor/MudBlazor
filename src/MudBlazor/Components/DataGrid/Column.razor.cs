@@ -2,12 +2,8 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Interfaces;
 using MudBlazor.State;
@@ -230,11 +226,7 @@ namespace MudBlazor
         /// The comparison used for values in this column.
         /// </summary>
         [Parameter]
-        public IComparer<object> Comparer
-        {
-            get => _comparer;
-            set => _comparer = value;
-        }
+        public IComparer<object> Comparer { get; set; } = null;
 
         /// <summary>
         /// The function used to sort values in this column.
@@ -434,12 +426,7 @@ namespace MudBlazor
 
         #endregion
 
-        /// <summary>
-        /// Occurs when this column's state has changed.
-        /// </summary>
-        public Action ColumnStateHasChanged { get; set; }
-
-        internal string headerClassname =>
+        internal string HeaderClassname =>
             new CssBuilder("mud-table-cell")
                 .AddClass("mud-table-cell-hide", HideSmall)
                 .AddClass("sticky-left", StickyLeft)
@@ -447,7 +434,7 @@ namespace MudBlazor
                 .AddClass(Class)
                 .Build();
 
-        internal string footerClassname =>
+        internal string FooterClassname =>
             new CssBuilder("mud-table-cell")
                 .AddClass("mud-table-cell-hide", HideSmall)
                 .AddClass(Class)
@@ -508,7 +495,6 @@ namespace MudBlazor
         internal int SortIndex { get; set; } = -1;
         internal HeaderCell<T> HeaderCell { get; set; }
 
-        private IComparer<object> _comparer = null;
         private Func<T, object> _sortBy;
         internal Func<T, object> groupBy;
         internal HeaderContext<T> headerContext;

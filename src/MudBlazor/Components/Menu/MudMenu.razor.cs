@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
@@ -6,7 +10,6 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
-
     /// <summary>
     /// A list of choices displayed after clicking an element.
     /// </summary>
@@ -21,6 +24,12 @@ namespace MudBlazor
         protected string Classname =>
             new CssBuilder("mud-menu")
                 .AddClass(Class)
+                .Build();
+
+        protected string PopoverClassname =>
+            new CssBuilder()
+                .AddClass(PopoverClass)
+                .AddClass("mud-popover-position-override", PositionAtCursor)
                 .Build();
 
         protected string ActivatorClassname =>
@@ -339,8 +348,7 @@ namespace MudBlazor
         /// </summary>
         private void SetPopoverStyle(MouseEventArgs args)
         {
-            AnchorOrigin = Origin.TopLeft;
-            _popoverStyle = $"margin-top: {args?.OffsetY.ToPx()}; margin-left: {args?.OffsetX.ToPx()};";
+            _popoverStyle = $"top: {args.PageY.ToPx()}; left: {args.PageX.ToPx()}";
         }
 
         /// <summary>
@@ -366,19 +374,14 @@ namespace MudBlazor
                 }
             }
 
-            if (Open)
-            {
-                return CloseMenuAsync();
-            }
-            else
-            {
-                return OpenMenuAsync(args);
-            }
+            return Open
+                ? CloseMenuAsync()
+                : OpenMenuAsync(args);
         }
 
         private async Task PointerEnterAsync(PointerEventArgs args)
         {
-            // The Enter event will be interfere with the Click event on devices that can't hover.
+            // The Enter event will be interfered with the Click event on devices that can't hover.
             if (args.PointerType is "touch" or "pen")
             {
                 return;
@@ -418,7 +421,7 @@ namespace MudBlazor
             {
                 menu._isPointerOver = false;
                 menu = menu.ParentMenu;
-            } while (menu != null);
+            } while (menu is not null);
 
             if (_isTemporary && ActivationEvent == MouseEvent.MouseOver)
             {

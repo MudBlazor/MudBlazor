@@ -1,11 +1,12 @@
-﻿using System;
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.Menu;
 using NUnit.Framework;
 
@@ -519,6 +520,30 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => mudMenus[0].Instance.Open.Should().BeFalse());
             comp.WaitForAssertion(() => mudMenus[1].Instance.Open.Should().BeTrue());
             await cancellationTokenSource.CancelAsync();
+        }
+
+        [Test]
+        public async Task OpenMenuAsync_Should_Set_FixedPosition()
+        {
+            // Arrange
+            var comp = Context.RenderComponent<MenuPositionAtCursorTest>();
+            var menuComponent = comp.FindComponent<MudMenu>();
+            var mudMenuContext = menuComponent.Instance;
+            mudMenuContext.Should().NotBeNull();
+
+            // Act
+            await Context.Renderer.Dispatcher.InvokeAsync(() => mudMenuContext.OpenMenuAsync(new MouseEventArgs()));
+
+            // find popover element
+            var popover = comp.Find("div.mud-popover");
+
+            // Assert
+            popover.ClassList.Should().Contain("mud-popover-anchor-top-left");
+            popover.ClassList.Should().Contain("mud-popover-position-override");
+
+            popover.OuterHtml.Contains("top: 0px; left: 0px;").Should().BeTrue();
+
+            await Context.Renderer.Dispatcher.InvokeAsync(mudMenuContext.CloseMenuAsync);
         }
     }
 }

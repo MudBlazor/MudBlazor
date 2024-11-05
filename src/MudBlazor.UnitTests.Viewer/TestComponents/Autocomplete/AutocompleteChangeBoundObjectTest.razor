@@ -15,11 +15,11 @@
     private readonly bool _coerceText = true;
     private readonly bool _coerceValue = true;
 
-    private readonly StringHolder _stringHolder1 = new StringHolder() { StringValue = "Florida" };
-    private readonly StringHolder _stringHolder2 = new StringHolder() { StringValue = "Georgia" };
+    private readonly StringHolder _stringHolder1 = new() { StringValue = "Florida" };
+    private readonly StringHolder _stringHolder2 = new() { StringValue = "Georgia" };
     private StringHolder _activeStringHolder = null!;
     private readonly string[] _states =
-    {
+    [
         "Alabama", "Alaska", "American Samoa", "Arizona",
         "Arkansas", "California", "Colorado", "Connecticut",
         "Delaware", "District of Columbia", "Federated States of Micronesia",
@@ -33,8 +33,8 @@
         "Oklahoma", "Oregon", "Palau", "Pennsylvania", "Puerto Rico",
         "Rhode Island", "South Carolina", "South Dakota", "Tennessee",
         "Texas", "Utah", "Vermont", "Virgin Island", "Virginia",
-        "Washington", "West Virginia", "Wisconsin", "Wyoming",
-    };
+        "Washington", "West Virginia", "Wisconsin", "Wyoming"
+    ];
 
     private sealed class StringHolder
     {

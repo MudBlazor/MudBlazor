@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Diagnostics;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using LoxSmoke.DocXml;
@@ -274,11 +275,13 @@ public partial class ApiDocumentationBuilder()
         properties.AddRange(type.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic));
         // Remove properties we don't want on the site
         properties.RemoveAll(property =>
-            property.GetMethod.IsPrivate        // Remove private properties
-            || property.GetMethod.IsAssembly    // Remove internal properties
-            || IsExcluded(property));           // Remove properties from the manually maintained list
+            property.GetMethod.IsPrivate                // Remove private properties
+            || property.GetMethod.IsAssembly            // Remove internal properties
+            || property.GetMethod.IsFamilyOrAssembly    // Remove overridden internal properties
+            || IsExcluded(property));                   // Remove properties from the manually maintained list
         // Remove duplicates
         properties = properties.DistinctBy(property => property.Name).ToList();
+
         // Go through each property
         foreach (var property in properties)
         {
@@ -360,7 +363,8 @@ public partial class ApiDocumentationBuilder()
             || field.Name == "value__"
             || field.Name.StartsWith('_')
             || field.IsPrivate                        // Remove private fields            
-            || field.IsAssembly                       // Remove internal fields            
+            || field.IsAssembly                       // Remove internal fields
+            || field.IsFamilyOrAssembly               // Remove overridden internal fields
             || IsExcluded(field));                    // Remove fields the team doesn't want shown
         // Remove duplicates
         fields = fields.DistinctBy(property => property.Name).ToList();
@@ -408,8 +412,9 @@ public partial class ApiDocumentationBuilder()
         events.AddRange(type.GetEvents(BindingFlags.Instance | BindingFlags.NonPublic));
         // Remove unwanted events
         events.RemoveAll(eventItem =>
-            eventItem.AddMethod.IsPrivate           // Remove private events
-            || eventItem.AddMethod.IsAssembly);     // Remove internal events
+            eventItem.AddMethod.IsPrivate               // Remove private events
+            || eventItem.AddMethod.IsAssembly           // Remove internal events
+            || eventItem.AddMethod.IsFamilyOrAssembly); // Remove overridden internal fields
         // Remove duplicates
         events = events.DistinctBy(property => property.Name).ToList();
         // Go through each property
@@ -600,6 +605,7 @@ public partial class ApiDocumentationBuilder()
         // Remove methods we don't want on the site
         methods.RemoveAll(method => method.IsPrivate // Remove private methods
             || method.IsAssembly                     // Remove internal methods
+            || method.IsFamilyOrAssembly             // Remove overridden internal methods
             || IsExcluded(method)                    // Remove some internal methods
             || method.Name.StartsWith("add_")        // Remove event subscribers
             || method.Name.StartsWith("remove_")     // Remove event unsubscribers 

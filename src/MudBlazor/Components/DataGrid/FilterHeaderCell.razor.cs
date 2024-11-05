@@ -36,14 +36,14 @@ namespace MudBlazor
         [Parameter]
         public RenderFragment ChildContent { get; set; }
 
-        private string _classname =>
+        private string Classname =>
             new CssBuilder(Column?.HeaderClass)
-                .AddClass(Column?.headerClassname)
+                .AddClass(Column?.HeaderClassname)
                 .AddClass(Class)
                 .AddClass("filter-header-cell")
                 .Build();
 
-        private string _style =>
+        private string Stylename =>
             new StyleBuilder()
                 .AddStyle(Column?.HeaderStyle)
                 .AddStyle(Style)

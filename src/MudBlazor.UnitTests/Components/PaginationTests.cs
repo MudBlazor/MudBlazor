@@ -1,8 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
-using AngleSharp.Dom;
+﻿using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
+using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.Pagination;
 using NUnit.Framework;
 
@@ -11,12 +10,12 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class Pagination : BunitTest
     {
-
         /// <summary>
         /// Tests the clicking on control buttons
         /// </summary>
         /// <param name="controlButton">The type of the control button. Page.First for the navigate-to-first-page button.</param>
         /// <param name="numberOfClicks">The number of times the control button is clicked.</param>
+        /// <param name="initiallySelectedPage">The index of initially selected page.</param>
         /// <param name="expectedSelectedPage">The expected selected page after clicking numberOfClicks times on the button.</param>
         /// <param name="expectedDisabled">The expected disabled state after clicking numberOfClicks times on the button.</param>
         [TestCase(Page.First, 1, 6, 1, true)]
@@ -26,14 +25,13 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Page.Next, 7, 6, 11, true)]
         [TestCase(Page.Last, 1, 6, 11, true)]
         [Test]
-        public async Task PaginationControlButtonClickTest(Page controlButton, int numberOfClicks,
-            int initiallySelectedPage, int expectedSelectedPage, bool expectedDisabled)
+        public async Task PaginationControlButtonClickTest(Page controlButton, int numberOfClicks, int initiallySelectedPage, int expectedSelectedPage, bool expectedDisabled)
         {
             var comp = Context.RenderComponent<PaginationButtonTest>();
 
             var pagination = comp.FindComponent<MudPagination>().Instance;
             //navigate to the specified page
-            await comp.InvokeAsync(() => { pagination.NavigateTo(initiallySelectedPage - 1); });
+            await comp.InvokeAsync(async () => { await pagination.NavigateToAsync(initiallySelectedPage - 1); });
 
             //Click numberOfClicks times on the control button
             for (var i = 0; i < numberOfClicks; i++)
@@ -43,7 +41,7 @@ namespace MudBlazor.UnitTests.Components
             }
 
             //Expected values
-            pagination.Selected.Should().Be(expectedSelectedPage);
+            pagination.GetState(x => x.Selected).Should().Be(expectedSelectedPage);
             FindControlButton(comp, controlButton).IsDisabled().Should().Be(expectedDisabled);
             comp.Find("#mud-pagination-test-selected").TextContent.Should()
                 .Be("Selected: " + expectedSelectedPage);
@@ -144,13 +142,13 @@ namespace MudBlazor.UnitTests.Components
 
             var pagination = comp.FindComponent<MudPagination>().Instance;
             //navigate to the specified page
-            await comp.InvokeAsync(() => { pagination.NavigateTo(initiallySelectedPage - 1); });
+            await comp.InvokeAsync(async () => { await pagination.NavigateToAsync(initiallySelectedPage - 1); });
 
             //Click on the page button, +2 because of the first two control buttons
             comp.FindAll(".mud-pagination-item button")[clickIndexPage + 2].Click();
 
             //Expected values
-            pagination.Selected.Should().Be(expectedSelectedPage);
+            pagination.GetState(x => x.Selected).Should().Be(expectedSelectedPage);
             comp.Find("#mud-pagination-test-selected").TextContent.Should()
                 .Be("Selected: " + expectedSelectedPage);
         }
@@ -166,7 +164,7 @@ namespace MudBlazor.UnitTests.Components
                 Page.Next => buttons[^2],
                 Page.Last => buttons[^1],
                 _ => throw new ArgumentOutOfRangeException(nameof(controlButton), controlButton,
-                    "This control button type is not supported!")
+                    @"This control button type is not supported!")
             };
             return button;
         }
@@ -180,6 +178,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Page.Previous, 5)]
         [TestCase(Page.Next, 7)]
         [TestCase(Page.Last, 11)]
+        [TestCase((Page)50, 6)]
         [Test]
         public async Task PaginationNavigateToPageTest(Page page, int expectedSelectedPage)
         {
@@ -188,14 +187,13 @@ namespace MudBlazor.UnitTests.Components
             var pagination = comp.FindComponent<MudPagination>().Instance;
 
             //navigate to the specified page
-            await comp.InvokeAsync(() => { pagination.NavigateTo(page); });
+            await comp.InvokeAsync(async () => { await pagination.NavigateToAsync(page); });
 
             //Expected values
-            pagination.Selected.Should().Be(expectedSelectedPage);
+            pagination.GetState(x => x.Selected).Should().Be(expectedSelectedPage);
             comp.Find("#mud-pagination-test-selected").TextContent.Should()
                 .Be("Selected: " + expectedSelectedPage);
         }
-
 
         /// <summary>
         /// Tests the NavigateTo(int) method
@@ -214,10 +212,10 @@ namespace MudBlazor.UnitTests.Components
             var pagination = comp.FindComponent<MudPagination>().Instance;
 
             //navigate to the specified page
-            await comp.InvokeAsync(() => { pagination.NavigateTo(page - 1); });
+            await comp.InvokeAsync(async () => { await pagination.NavigateToAsync(page - 1); });
 
             //Expected values
-            pagination.Selected.Should().Be(expectedSelectedPage);
+            pagination.GetState(x => x.Selected).Should().Be(expectedSelectedPage);
             comp.Find("#mud-pagination-test-selected").TextContent.Should()
                 .Be("Selected: " + expectedSelectedPage);
         }
@@ -243,8 +241,8 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".mud-pagination-test-boundary-count input").Change(boundaryCount.ToString());
 
             //Expected values
-            pagination.MiddleCount.Should().Be(Math.Max(1, middleCount));
-            pagination.BoundaryCount.Should().Be(Math.Max(1, boundaryCount));
+            pagination.GetState(x => x.MiddleCount).Should().Be(Math.Max(1, middleCount));
+            pagination.GetState(x => x.BoundaryCount).Should().Be(Math.Max(1, boundaryCount));
 
             for (var i = 1; i <= count; i++)
             {
@@ -290,7 +288,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".mud-pagination-test-boundary-count input").Change(boundaryCount.ToString());
 
             //navigate to the specified page
-            await comp.InvokeAsync(() => { pagination.NavigateTo(selectedPage - 1); });
+            await comp.InvokeAsync(async () => { await pagination.NavigateToAsync(selectedPage - 1); });
 
             //Expected values
             var items = comp.FindAll(".mud-pagination-item");

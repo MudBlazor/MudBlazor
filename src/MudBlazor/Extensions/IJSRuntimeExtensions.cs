@@ -289,10 +289,14 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Checks if the IJSRuntime instance is of type UnsupportedJavaScriptRuntime.
+        /// Checks if the IJSRuntime instance is of type UnsupportedJavaScriptRuntime or RemoteJSRuntime.
         /// </summary>
         /// <param name="jsRuntime">The IJSRuntime instance to check.</param>
-        /// <returns>True if the instance is of type UnsupportedJavaScriptRuntime; otherwise, false.</returns>
-        private static bool IsUnsupportedJavaScriptRuntime(this IJSRuntime jsRuntime) => jsRuntime.GetType().Name == "UnsupportedJavaScriptRuntime";
+        /// <returns>True if the instance is of type UnsupportedJavaScriptRuntime or RemoteJSRuntime; otherwise, false.</returns>
+        private static bool IsUnsupportedJavaScriptRuntime(this IJSRuntime jsRuntime)
+        {
+            return jsRuntime.GetType().Name == "RemoteJSRuntime" ||
+                   jsRuntime.GetType().Name == "UnsupportedJavaScriptRuntime";
+        }
     }
 }

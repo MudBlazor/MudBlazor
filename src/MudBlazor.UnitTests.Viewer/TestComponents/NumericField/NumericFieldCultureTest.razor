@@ -7,12 +7,12 @@
 <MudNumericField @ref="FieldNotImmediate" T="double?" @bind-Value="_value2" Label="German" Format="N2" Culture="_german"/>
 
 @code {
-    public CultureInfo _german = CultureInfo.GetCultureInfo("de-DE");
-    public CultureInfo _english = CultureInfo.GetCultureInfo("en-US");
+    private double? _value;
+    private double? _value2;
+    private readonly CultureInfo _german = CultureInfo.GetCultureInfo("de-DE");
+    private readonly CultureInfo _english = CultureInfo.GetCultureInfo("en-US");
 
-    public double? _value { get; set; }
-    public double? _value2 { get; set; }
+    public MudNumericField<double?> FieldImmediate { get; private set; } = null!;
 
-    public MudNumericField<double?> FieldImmediate { get; set; }
-    public MudNumericField<double?> FieldNotImmediate { get; set; }
+    public MudNumericField<double?> FieldNotImmediate { get; private set; } = null!;
 }
