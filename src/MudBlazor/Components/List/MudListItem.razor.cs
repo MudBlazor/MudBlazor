@@ -31,7 +31,7 @@ namespace MudBlazor
         protected string Classname =>
             new CssBuilder("mud-list-item")
                 .AddClass("mud-list-item-dense", GetDense())
-                .AddClass("mud-list-item-gutters", Gutters ?? TopLevelList?.Gutters == true)
+                .AddClass("mud-list-item-gutters", GetGutters())
                 .AddClass("mud-list-item-clickable", GetClickable())
                 .AddClass("mud-ripple", Ripple && GetClickable())
                 .AddClass($"mud-selected-item mud-{MudList?.Color.ToDescriptionString()}-text", !MultiSelection && _selected && !GetDisabled())
@@ -210,10 +210,10 @@ namespace MudBlazor
         public bool? Dense { get; set; }
 
         /// <summary>
-        /// Applies left and right padding to all list items.
+        /// Applies left and right padding to this list items.
         /// </summary>
         /// <remarks>
-        /// Defaults to the value of the parent <see cref="MudList{T}.Gutters"/>.
+        /// Defaults to the value of the parent <see cref="MudList{T}.Gutters"/>. When set, it overrides the list's setting.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
@@ -358,6 +358,8 @@ namespace MudBlazor
         private bool GetReadOnly() => MudList?.ReadOnly == true || TopLevelList?.GetReadOnly() == true;
 
         private bool GetDense() => Dense ?? MudList?.Dense == true;
+
+        private bool GetGutters() => Gutters ?? MudList?.Gutters ?? true;
 
         private bool? GetCheckBoxState() => _selected;
 
