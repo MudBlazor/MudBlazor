@@ -116,6 +116,8 @@ namespace MudBlazor
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
+        private bool IsNumberMode => InputMode == InputMode.numeric || InputMode == InputMode.@decimal;
+
         private string _elementId = Identifier.Create("numericField");
 
         private MudInput<string> _elementReference;
