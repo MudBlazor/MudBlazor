@@ -79,14 +79,15 @@
 {
     <MudCollapse Expanded="@_expandedState.Value">
         <MudList T="T"
-                 Class="mud-nested-list"
-                 Comparer="@Comparer"
-                 SelectionMode="@SelectionMode"
-                 ReadOnly="@ReadOnly"
-                 Color="@(MudList?.Color ?? Color.Primary)"
-                 Padding="false"
-                 Disabled="@GetDisabled()"
-                 Dense="@GetDense()">
+                Class="mud-nested-list"
+                Comparer="@Comparer"
+                SelectionMode="@SelectionMode"
+                ReadOnly="@ReadOnly"
+                Color="@(MudList?.Color ?? Color.Primary)"
+                Padding="false"
+                Disabled="@GetDisabled()"
+                Dense="@GetDense()"
+                Gutters="@(MudList?.Gutters ?? true)">
             @NestedList
         </MudList>
     </MudCollapse>

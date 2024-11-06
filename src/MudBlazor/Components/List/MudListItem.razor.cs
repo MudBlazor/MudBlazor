@@ -31,7 +31,7 @@ namespace MudBlazor
         protected string Classname =>
             new CssBuilder("mud-list-item")
                 .AddClass("mud-list-item-dense", GetDense())
-                .AddClass("mud-list-item-gutters", Gutters || MudList?.Gutters == true)
+                .AddClass("mud-list-item-gutters", Gutters ?? TopLevelList?.Gutters == true)
                 .AddClass("mud-list-item-clickable", GetClickable())
                 .AddClass("mud-ripple", Ripple && GetClickable())
                 .AddClass($"mud-selected-item mud-{MudList?.Color.ToDescriptionString()}-text", !MultiSelection && _selected && !GetDisabled())
@@ -213,11 +213,11 @@ namespace MudBlazor
         /// Applies left and right padding to all list items.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>true</c>.  Can be overridden by <see cref="MudList{T}.Gutters"/>.
+        /// Defaults to the value of the parent <see cref="MudList{T}.Gutters"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
-        public bool Gutters { get; set; } = true;
+        public bool? Gutters { get; set; }
 
         /// <summary>
         /// Expand or collapse nested list. Two-way bindable. Note: if you directly set this to
