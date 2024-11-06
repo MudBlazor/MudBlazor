@@ -24,7 +24,7 @@
                 <MudInput T="string"
                           @ref="@_elementReference"
                           @attributes="@UserAttributes"
-                          InputType="@(Pattern == null && InputMode == InputMode.numeric ? InputType.Number : InputType.Text)"
+                          InputType="@(Pattern == null && IsNumberMode ? InputType.Number : InputType.Text)"
                           Style="@Style"
                           Variant="@Variant"
                           Typo="@Typo"
@@ -71,3 +71,7 @@
         </InputContent>
     </MudInputControl>
 </CascadingValue>
+
+@code {
+    private bool IsNumberMode => InputMode == InputMode.numeric || InputMode == InputMode.@decimal;
+}

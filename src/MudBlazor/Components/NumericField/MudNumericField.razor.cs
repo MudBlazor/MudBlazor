@@ -270,18 +270,23 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                var options = new KeyInterceptorOptions(
-                    "mud-input-slot",
-                    [
-                        // prevent scrolling page, instead increment
-                        new("ArrowUp", preventDown: "key+none"),
-                        // prevent scrolling page, instead decrement
-                        new("ArrowDown", preventDown: "key+none"),
-                        // prevent dead keys like ^ ` ´ etc
-                        new("Dead", preventDown: "key+any"),
-                        // prevent input of all other characters except allowed, like [0-9.,-+]
-                        new($"/^(?!{(Pattern ?? "[0-9]").TrimEnd('*')}).$/", preventDown: "key+none|key+shift|key+alt")
-                    ]);
+                var keyOptions = new List<KeyOptions>
+                {
+                    // prevent scrolling page, instead increment
+                    new("ArrowUp", preventDown: "key+none"),
+                    // prevent scrolling page, instead decrement
+                    new("ArrowDown", preventDown: "key+none"),
+                     // prevent dead keys like ^ ` ´ etc
+                    new("Dead", preventDown: "key+any"),
+                };
+
+                if (Pattern != null)
+                {
+                    //prevent inputs that do not match the pattern
+                    keyOptions.Add(new($"/^(?!{Pattern.TrimEnd('*')}).$/", preventDown: "key+none|key+shift|key+alt"));
+                }
+
+                var options = new KeyInterceptorOptions("mud-input-slot", keyOptions.ToArray());
 
                 await KeyInterceptorService.SubscribeAsync(_elementId, options, KeyObserver.KeyDownIgnore(), KeyObserver.KeyUpIgnore());
             }
