@@ -1005,6 +1005,22 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void Should_render_appropriate_type()
+        {
+            var comp = Context.RenderComponent<NumericFieldRenderTest>();
+            var field = comp.Find("#num-field-id");
+
+            comp.Markup.Should().NotContain("pattern");
+            field.GetAttribute("type").Should().Be("number");
+
+            var usePattern = Parameter(nameof(NumericFieldRenderTest.UsePattern), true);
+
+            comp.SetParametersAndRender(usePattern);
+            comp.Markup.Should().Contain("pattern");
+            field.GetAttribute("type").Should().Be("text");
+        }
+
+        [Test]
         public void Should_render_conversion_error_message()
         {
             var comp = Context.RenderComponent<MudNumericField<int>>(parameters => parameters
