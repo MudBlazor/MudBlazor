@@ -24,7 +24,7 @@
     /// </summary>
     private Task<TableData<TestModel>> ServerReload(TableState state, CancellationToken token)
     {
-        IEnumerable<TestModel> data = new List<TestModel>()
+        IEnumerable<TestModel> data = new List<TestModel>
         {
             new() { A = 1, B = 3 },
             new() { A = 2, B = 2 },

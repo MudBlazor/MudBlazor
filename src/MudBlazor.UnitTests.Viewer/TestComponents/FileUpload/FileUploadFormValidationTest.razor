@@ -1,22 +1,17 @@
 ﻿@using FluentValidation
 
 <MudForm Model="@Model" @ref="@Form" Validation="@(_validationRules.ValidateValue)" ValidationDelay="0">
-    <MudFileUpload T="IBrowserFile" For="@(() => Model.File)" @bind-Files="Model.File" />
-    <MudFileUpload T="IReadOnlyList<IBrowserFile>" For="@(() => Model.Files)" @bind-Files="Model.Files" />
+    <MudFileUpload T="IBrowserFile?" For="@(() => Model.File)" @bind-Files="Model.File" />
+    <MudFileUpload T="IReadOnlyList<IBrowserFile>?" For="@(() => Model.Files)" @bind-Files="Model.Files" />
 </MudForm>
 
-<MudButton OnClick="(() => Form.Validate())">Submit</MudButton>
-@code
-{
-    public MudForm Form = null!;
-    public FileModel Model = new();
+<MudButton OnClick="() => Form.Validate()">Submit</MudButton>
+@code {
     private readonly FileModelFluentValidator _validationRules = new();
 
-    public class FileModel
-    {
-        public IBrowserFile? File { get; set; }
-        public IReadOnlyList<IBrowserFile>? Files { get; set; }
-    }
+    public MudForm Form { get; private set; } = null!;
+
+    public FileModel Model { get; } = new();
 
     /// <summary>
     /// A standard AbstractValidator which contains multiple rules and can be shared with the back end API
@@ -40,5 +35,12 @@
                 return Array.Empty<string>();
             return result.Errors.Select(e => e.ErrorMessage);
         };
+    }
+
+    public class FileModel
+    {
+        public IBrowserFile? File { get; set; }
+
+        public IReadOnlyList<IBrowserFile>? Files { get; set; }
     }
 }

@@ -275,6 +275,139 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void TreeViewFilterFunc_FindTopElement()
+        {
+            // Arrange and act
+            var searchPhrase = "Trash";
+            var comp = Context.RenderComponent<TreeViewFilterFuncTest>(element =>
+            {
+                element.Add(x => x.SearchPhrase, searchPhrase);
+                element.Add(x => x.FilterFunc, (e) =>
+                {
+                    if (string.IsNullOrEmpty(e.Text))
+                    {
+                        return Task.FromResult(false);
+                    }
+
+                    return Task.FromResult(e.Text.Contains(searchPhrase, StringComparison.OrdinalIgnoreCase));
+                });
+            });
+
+            // Assert that the element "Trash" is visible
+            comp.Instance.Items.Should().Contain(e => e.Text.Equals("Trash") && e.Visible);
+
+            // Assert that the element "Categories" is invisible
+            comp.Instance.Items.Should().Contain(e => e.Text.Equals("Categories") && !e.Visible);
+
+            // Assert that the element "Social" is invisible
+            var categoriesNode = comp.Instance.Items.ElementAt(1);
+            categoriesNode.Children.Should().Contain(e => e.Text.Equals("Social") && !e.Visible);
+        }
+
+        [Test]
+        public void TreeViewFilterFunc_FindExpandableAndChildrenElements()
+        {
+            // Arrange and act
+            var searchPhrase = "Categories";
+            var comp = Context.RenderComponent<TreeViewFilterFuncTest>(element =>
+            {
+                element.Add(x => x.SearchPhrase, searchPhrase);
+                element.Add(x => x.FilterFunc, (e) =>
+                {
+                    if (string.IsNullOrEmpty(e.Text))
+                    {
+                        return Task.FromResult(false);
+                    }
+
+                    return Task.FromResult(e.Text.Contains(searchPhrase, StringComparison.OrdinalIgnoreCase));
+                });
+            });
+
+            // Assert that the element "Trash" is invisible
+            comp.Instance.Items.Should().Contain(e => e.Text.Equals("Trash") && !e.Visible);
+
+            // Assert that the element "Categories" is visible
+            comp.Instance.Items.Should().Contain(e => e.Text.Equals("Categories") && e.Visible);
+
+            // Assert that the element "Social" is invisible
+            var categoriesNode = comp.Instance.Items.ElementAt(1);
+            categoriesNode.Children.Should().Contain(e => e.Text.Equals("Social") && !e.Visible);
+        }
+
+        [Test]
+        public void TreeViewFilterFunc_FindChildElement()
+        {
+            // Arrange and act
+            var searchPhrase = "Social";
+            var comp = Context.RenderComponent<TreeViewFilterFuncTest>(element =>
+            {
+                element.Add(x => x.SearchPhrase, searchPhrase);
+                element.Add(x => x.FilterFunc, (e) =>
+                {
+                    if (string.IsNullOrEmpty(e.Text))
+                    {
+                        return Task.FromResult(false);
+                    }
+
+                    return Task.FromResult(e.Text.Contains(searchPhrase, StringComparison.OrdinalIgnoreCase));
+                });
+            });
+
+            // Assert that the element "Trash" is invisible
+            comp.Instance.Items.Should().Contain(e => e.Text.Equals("Trash") && !e.Visible);
+
+            // Assert that the element "Categories" is visible
+            comp.Instance.Items.Should().Contain(e => e.Text.Equals("Categories") && e.Visible);
+
+            // Assert that the element "Social" is visible
+            var categoriesNode = comp.Instance.Items.ElementAt(1);
+            categoriesNode.Children.Should().Contain(e => e.Text.Equals("Social") && e.Visible);
+        }
+
+        [Test]
+        public void TreeViewFilterFunc_ItemsAreNull()
+        {
+            // Arrange and act
+            var searchPhrase = "Social";
+            var comp = Context.RenderComponent<TreeViewFilterFuncTest>(element =>
+            {
+                element.Add(x => x.SearchPhrase, "Social");
+                element.Add(x => x.AreItemsPopulated, false);
+                element.Add(x => x.FilterFunc, (e) =>
+                {
+                    if (string.IsNullOrEmpty(e.Text))
+                    {
+                        return Task.FromResult(false);
+                    }
+
+                    return Task.FromResult(e.Text.Contains(searchPhrase, StringComparison.OrdinalIgnoreCase));
+                });
+            });
+
+            // Assert that the items are null
+            comp.Instance.Items.Should().BeNull();
+        }
+
+        [Test]
+        public void TreeViewFilterFunc_FilterFuncIsNull()
+        {
+            var comp = Context.RenderComponent<TreeViewFilterFuncTest>(element =>
+            {
+                element.Add(x => x.SearchPhrase, "Social");
+            });
+
+            // Assert that the element "Trash" is visible
+            comp.Instance.Items.Should().Contain(e => e.Text.Equals("Trash") && e.Visible);
+
+            // Assert that the element "Categories" is visible
+            comp.Instance.Items.Should().Contain(e => e.Text.Equals("Categories") && e.Visible);
+
+            // Assert that the element "Social" is visible
+            var categoriesNode = comp.Instance.Items.ElementAt(1);
+            categoriesNode.Children.Should().Contain(e => e.Text.Equals("Social") && e.Visible);
+        }
+
+        [Test]
         public void InitialValueOfTreeViewItemSelected_Should_InfluenceSelectedValue_MultiSelection()
         {
             var comp = Context.RenderComponent<TreeViewItemSelectedBindingTest>(self => self

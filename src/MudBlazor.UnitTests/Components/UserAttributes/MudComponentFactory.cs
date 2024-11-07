@@ -20,9 +20,9 @@ namespace MudBlazor.UnitTests.UserAttributes
         public MudComponentFactory()
         {
             // Add a custom create function for components that cannot be created automatically.
-            // These include components that require certain attributes/preriquisites to be set before rendering anything.
+            // These include components that require certain attributes/prerequisites to be set before rendering anything.
             RegisterCustomFactoryFor<MudBreadcrumbs>(builder => builder
-                .Add(x => x.Items, new List<BreadcrumbItem> { new("text", "href") }));
+                .Add(x => x.Items, [new("text", "href")]));
 
             RegisterCustomFactoryFor<MudCarouselItem>((builder, testContext) => builder
                 .Add(x => x.Parent, testContext.RenderComponent<MudCarousel<string>>(attributes => attributes

@@ -1,12 +1,10 @@
-﻿#pragma warning disable CS1998 // async without await
-#pragma warning disable BL0005 // Set parameter outside component
+﻿#pragma warning disable BL0005 // Set parameter outside component
 
 using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.Table;
 using NUnit.Framework;
 
@@ -430,7 +428,7 @@ namespace MudBlazor.UnitTests.Components
         /// page size option initial value test. Initial value should not be 10 since PageSizeOption is set to be new int[]{8, 16, 32}
         /// </summary>
         [Test]
-        public async Task TablePageSizeOptions()
+        public void TablePageSizeOptions()
         {
             var comp = Context.RenderComponent<TablePageSizeOptionsTest>();
             // print the generated html
@@ -548,7 +546,7 @@ namespace MudBlazor.UnitTests.Components
         /// simple filter with pager
         /// </summary>
         [Test]
-        public async Task TablePagingFilter()
+        public void TablePagingFilter()
         {
             var comp = Context.RenderComponent<TablePagingTest1>();
             var searchString = comp.Find("#searchString");
@@ -566,7 +564,7 @@ namespace MudBlazor.UnitTests.Components
         /// adjust current page when filtereditems.count is less than the current page start item index
         /// </summary>
         [Test]
-        public async Task TablePagingFilterAdjustCurrentPage()
+        public void TablePagingFilterAdjustCurrentPage()
         {
             var comp = Context.RenderComponent<TablePagingTest1>();
             // print the generated html
@@ -1147,7 +1145,7 @@ namespace MudBlazor.UnitTests.Components
         /// Even without a MudTablePager the table should call ServerReload to get the items on start.
         /// </summary>
         [Test]
-        public async Task TableServerSideDataTest1()
+        public void TableServerSideDataTest1()
         {
             var comp = Context.RenderComponent<TableServerSideDataTest1>();
             comp.FindAll("tr").Count.Should().Be(4); // three rows + header row
@@ -1160,7 +1158,7 @@ namespace MudBlazor.UnitTests.Components
         /// The table should call ServerReload to get the items for the current page according to MudTablePager
         /// </summary>
         [Test]
-        public async Task TableServerSideDataTest2()
+        public void TableServerSideDataTest2()
         {
             var comp = Context.RenderComponent<TableServerSideDataTest2>();
             comp.FindAll("tr").Count.Should().Be(4); // three rows + header row
@@ -1186,7 +1184,7 @@ namespace MudBlazor.UnitTests.Components
         /// In this case, the items should be sorted with descending order.
         /// </summary>
         [Test]
-        public async Task TableServerSideDataTest3()
+        public void TableServerSideDataTest3()
         {
             var comp = Context.RenderComponent<TableServerSideDataTest3>();
             comp.FindAll("tr").Count.Should().Be(4); // three rows + header row
@@ -1208,14 +1206,14 @@ namespace MudBlazor.UnitTests.Components
         /// (IEnumerable variation).
         /// </summary>
         [Test]
-        public async Task TableServerSideDataTest4()
+        public void TableServerSideDataTest4()
         {
             var comp = Context.RenderComponent<TableServerSideDataTest4>();
             comp.WaitForAssertion(() => comp.FindAll("tr").Count.Should().Be(4)); // three rows + header row
             comp.WaitForAssertion(() => comp.FindAll("td")[0].TextContent.Trim().Should().Be("1"));
             comp.WaitForAssertion(() => comp.FindAll("td")[2].TextContent.Trim().Should().Be("2"));
             comp.WaitForAssertion(() => comp.FindAll("td")[4].TextContent.Trim().Should().Be("3"));
-            comp.FindAll("div.mud-select-input")[0].Click(); // mobile sort drop down
+            comp.FindAll("div.mud-select-input")[0].PointerDown(); // mobile sort drop down
             comp.FindAll("div.mud-list-item-clickable")[1].Click(); // sort b column
             comp.WaitForAssertion(() => comp.FindAll("td")[0].TextContent.Trim().Should().Be("3"));
             comp.WaitForAssertion(() => comp.FindAll("td")[2].TextContent.Trim().Should().Be("2"));
@@ -1227,14 +1225,14 @@ namespace MudBlazor.UnitTests.Components
         /// (IQueryable variation).
         /// </summary>
         [Test]
-        public async Task TableServerSideDataTest4b()
+        public void TableServerSideDataTest4b()
         {
             var comp = Context.RenderComponent<TableServerSideDataTest4b>();
             comp.FindAll("tr").Count.Should().Be(4); // three rows + header row
             comp.FindAll("td")[0].TextContent.Trim().Should().Be("1");
             comp.FindAll("td")[2].TextContent.Trim().Should().Be("2");
             comp.FindAll("td")[4].TextContent.Trim().Should().Be("3");
-            comp.FindAll("div.mud-select-input")[0].Click(); // mobile sort drop down
+            comp.FindAll("div.mud-select-input")[0].PointerDown(); // mobile sort drop down
             comp.FindAll("div.mud-list-item-clickable")[1].Click(); // sort b column
             comp.WaitForAssertion(() => comp.FindAll("td")[0].TextContent.Trim().Should().Be("3"));
             comp.WaitForAssertion(() => comp.FindAll("td")[2].TextContent.Trim().Should().Be("2"));
@@ -1245,7 +1243,7 @@ namespace MudBlazor.UnitTests.Components
         /// The server-side load callback should be called only once per page change
         /// </summary>
         [Test]
-        public async Task TableServerSideDataTest5()
+        public void TableServerSideDataTest5()
         {
             var comp = Context.RenderComponent<TableServerSideDataTest5>();
             comp.Find("#counter").TextContent.Should().Be("1"); //initial counter
@@ -1294,7 +1292,7 @@ namespace MudBlazor.UnitTests.Components
         /// The server-side load callback should be called only once per sort change
         /// </summary>
         [Test]
-        public async Task TableServerSideDataTest6()
+        public void TableServerSideDataTest6()
         {
             var comp = Context.RenderComponent<TableServerSideDataTest5>();
             comp.Find("#counter").TextContent.Should().Be("1"); //initial counter
@@ -1353,9 +1351,13 @@ namespace MudBlazor.UnitTests.Components
         /// The table should not crash if its ServerData Items are null
         /// </summary>
         [Test]
-        public async Task TableServerSideDataNull()
+        public void TableServerSideDataNull()
         {
-            var comp = Context.RenderComponent<TableServerSideDataTest6>();
+            // Arrange & Act
+            var renderComponent = () => Context.RenderComponent<TableServerSideDataTest6>();
+
+            // Assert
+            renderComponent.Should().NotThrow();
         }
 
         /// <summary>
@@ -1376,7 +1378,7 @@ namespace MudBlazor.UnitTests.Components
         /// The table should not render its NoContent fragment prior to loading server data
         /// </summary>
         [Test]
-        public async Task TableServerDataLoadingTest()
+        public void TableServerDataLoadingTest()
         {
             var comp = Context.RenderComponent<TableServerDataLoadingTest>();
             comp.Instance.NoRecordsHasRendered.Should().BeFalse();
@@ -1435,7 +1437,7 @@ namespace MudBlazor.UnitTests.Components
         /// The table should render the classes and style to the tr using the RowStyleFunc and RowClassFunc parameters
         /// </summary>
         [Test]
-        public async Task TableRowClassStyleTest()
+        public void TableRowClassStyleTest()
         {
             var comp = Context.RenderComponent<TableRowClassStyleTest>();
             var trs = comp.FindAll("tr");
@@ -1464,7 +1466,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task TableInlineEdit_SetValidatorModel()
+        public void TableInlineEdit_SetValidatorModel()
         {
             var comp = Context.RenderComponent<TableInlineEditTest>();
             var validator = comp.Instance.Table.Validator;
@@ -1481,7 +1483,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task TableInlineEdit_TableRowValidator()
+        public void TableInlineEdit_TableRowValidator()
         {
             var comp = Context.RenderComponent<TableInlineEditTest>();
             var validator = new TableRowValidatorTest();
@@ -1503,7 +1505,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(TableApplyButtonPosition.StartAndEnd)]
         [TestCase(TableApplyButtonPosition.Start)]
         [TestCase(TableApplyButtonPosition.End)]
-        public async Task TableInlineEdit_ApplyButtonPosition(TableApplyButtonPosition position)
+        public void TableInlineEdit_ApplyButtonPosition(TableApplyButtonPosition position)
         {
             var comp = Context.RenderComponent<TableInlineEditTestApplyButtons>(
                 p => p.Add(x => x.ApplyButtonPosition, position));
@@ -1550,7 +1552,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task TableInlineEdit_RowSwitching()
+        public void TableInlineEdit_RowSwitching()
         {
             var comp = Context.RenderComponent<TableInlineEditTest>();
 
@@ -1571,7 +1573,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task TableInlineEdit_RowSwitchingBlocked()
+        public void TableInlineEdit_RowSwitchingBlocked()
         {
             var comp = Context.RenderComponent<TableInlineEditRowBlockingTest>();
 
@@ -1640,7 +1642,7 @@ namespace MudBlazor.UnitTests.Components
         /// This test validates the processing of the Commit and Cancel buttons for an inline editing table.
         /// </summary>
         [Test]
-        public async Task TableInlineEditCancelTest()
+        public void TableInlineEditCancelTest()
         {
             var comp = Context.RenderComponent<TableInlineEditCancelTest>();
 
@@ -1679,7 +1681,7 @@ namespace MudBlazor.UnitTests.Components
         /// This test validates the processing of the Commit and Cancel buttons for an inline editing table.
         /// </summary>
         [Test]
-        public async Task TableInlineEditCancel2Test()
+        public void TableInlineEditCancel2Test()
         {
             var comp = Context.RenderComponent<TableInlineEditCancelTest>();
 
@@ -1711,7 +1713,7 @@ namespace MudBlazor.UnitTests.Components
         /// This test validates the behavior of RowEditPreview. It should run after SelectedItem has been updated.
         /// </summary>
         [Test]
-        public async Task TableInlineEditCancel3Test()
+        public void TableInlineEditCancel3Test()
         {
             var comp = Context.RenderComponent<TableInlineEditCancelTest>();
             var taskCompletionSource = new TaskCompletionSource<bool>();
@@ -1760,7 +1762,7 @@ namespace MudBlazor.UnitTests.Components
         /// by clicking on another row, the previous row is no longer editable. Meaning there are always only 2 buttons
         /// </summary>
         [Test]
-        public async Task TableInlineEditCancel4Test()
+        public void TableInlineEditCancel4Test()
         {
             // Get access to the test table
             var comp = Context.RenderComponent<TableInlineEditCancelNoSelectedItemTest>();
@@ -1797,7 +1799,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(false, TableApplyButtonPosition.Start, TableEditButtonPosition.Start)]
         [TestCase(false, TableApplyButtonPosition.StartAndEnd, TableEditButtonPosition.StartAndEnd)]
         [TestCase(false, TableApplyButtonPosition.End, TableEditButtonPosition.End)]
-        public async Task TableEditButtonRenderTest(bool customButton, TableApplyButtonPosition buttonApplyPosition, TableEditButtonPosition buttonEditPosition)
+        public void TableEditButtonRenderTest(bool customButton, TableApplyButtonPosition buttonApplyPosition, TableEditButtonPosition buttonEditPosition)
         {
             IRenderedComponent<ComponentBase> comp;
             if (customButton)
@@ -1854,7 +1856,7 @@ namespace MudBlazor.UnitTests.Components
         /// Tests the trigger of the edit button
         /// </summary>
         [Test]
-        public async Task TableEditButtonTriggerTest()
+        public void TableEditButtonTriggerTest()
         {
             var comp = Context.RenderComponent<TableEditButtonRenderTest>();
             var trs = comp.FindAll("tr");
@@ -1876,7 +1878,7 @@ namespace MudBlazor.UnitTests.Components
         /// Tests the trigger of the custom edit button
         /// </summary>
         [Test]
-        public async Task TableCustomEditButtonTriggerTest()
+        public void TableCustomEditButtonTriggerTest()
         {
             var comp = Context.RenderComponent<TableCustomEditButtonRenderTest>();
             var trs = comp.FindAll("tr");
@@ -1898,7 +1900,7 @@ namespace MudBlazor.UnitTests.Components
         /// Row item data should be passed to EditButtonContext
         /// </summary>
         [Test]
-        public async Task TableCustomEditButtonItemContext()
+        public void TableCustomEditButtonItemContext()
         {
             var comp = Context.RenderComponent<TableCustomEditButtonItemContextRenderTest>();
 
@@ -1917,7 +1919,7 @@ namespace MudBlazor.UnitTests.Components
         /// Ensures clicking a different button does not switch the row
         /// </summary>
         [Test]
-        public async Task TableEditButtonRowSwitchBlockTest()
+        public void TableEditButtonRowSwitchBlockTest()
         {
             var comp = Context.RenderComponent<TableEditButtonRenderTest>(parameters => parameters
                     .Add(p => p.BlockRowSwitching, true));
@@ -1940,7 +1942,7 @@ namespace MudBlazor.UnitTests.Components
         /// Clicking the edit button should not trigger the row click event
         /// </summary>
         [Test]
-        public async Task TableEditButtonNoRowTrigger()
+        public void TableEditButtonNoRowTrigger()
         {
             var timesClicked = 0;
             void OnRowClick()
@@ -1967,7 +1969,7 @@ namespace MudBlazor.UnitTests.Components
         /// </summary>
         /// <returns></returns>
         [Test]
-        public async Task TableGroupingTest()
+        public void TableGroupingTest()
         {
             // without grouping, to ensure that anything was broken:
             var comp = Context.RenderComponent<TableGroupingTest>();
@@ -2084,24 +2086,24 @@ namespace MudBlazor.UnitTests.Components
             comp.Render();
 
             table.SelectedItems.Count.Should().Be(0);
-            Inputs().Where(x => x.IsChecked()).Count().Should().Be(0);
+            Inputs().Count(x => x.IsChecked()).Should().Be(0);
 
             Inputs()[1].Change(true); // LMP1
             table.SelectedItems.Count.Should().Be(2);
 
-            Inputs().Where(x => x.IsChecked()).Count().Should().Be(5);
+            Inputs().Count(x => x.IsChecked()).Should().Be(5);
 
             Buttons()[0].Click(); //collapse
             Buttons()[0].Click(); //expand
             //selected item should persist
             table.SelectedItems.Count.Should().Be(2);
 
-            Inputs().Where(x => x.IsChecked()).Count().Should().Be(5);
+            Inputs().Count(x => x.IsChecked()).Should().Be(5);
 
             Inputs()[1].Change(false);
             table.SelectedItems.Count.Should().Be(0);
 
-            Inputs().Where(x => x.IsChecked()).Count().Should().Be(0);
+            Inputs().Count(x => x.IsChecked()).Should().Be(0);
 
         }
 
@@ -2110,7 +2112,7 @@ namespace MudBlazor.UnitTests.Components
         /// </summary>
         /// <returns></returns>
         [Test]
-        public async Task TableGroupingAndPaginationTest()
+        public void TableGroupingAndPaginationTest()
         {
             // without grouping, to ensure that anything was broken:
             var comp = Context.RenderComponent<TableGroupingTest2>();
@@ -2147,7 +2149,6 @@ namespace MudBlazor.UnitTests.Components
             table.Context.Rows.Count.Should().Be(1);
             tr = comp.FindAll("tr").ToArray();
             tr.Length.Should().Be(6); // 01 Table header + 02 Group Headers + 02 Group Footers + 01 Entries
-
         }
 
 
@@ -2156,7 +2157,7 @@ namespace MudBlazor.UnitTests.Components
         /// </summary>
         /// <returns></returns>
         [Test]
-        public async Task TableGroupIsInitiallyExpandedTest()
+        public void TableGroupIsInitiallyExpandedTest()
         {
             // group by Racing Category and collapse groups as default:
             var comp = Context.RenderComponent<TableGroupingTest>();
@@ -2174,7 +2175,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ExpandAndCollapsAllGroupsTest()
+        public void ExpandAndCollapseAllGroupsTest()
         {
             var comp = Context.RenderComponent<TableGroupingTest>();
             var table = comp.Instance.TableInstance;
@@ -2199,9 +2200,8 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// Tests the correct output when filter does not return any matching elements
         /// </summary>
-        /// <returns>The awaitable <see cref="Task"/></returns>
         [Test]
-        public async Task TablePagerInfoTextTest()
+        public void TablePagerInfoTextTest()
         {
             // create the component
             var tableComponent = Context.RenderComponent<TablePagerInfoTextTest>();
@@ -2266,7 +2266,7 @@ namespace MudBlazor.UnitTests.Components
         /// Tests checks that RowsPerPage Parameter is two-way bindable
         /// </summary>
         [Test]
-        public async Task RowsPerPageParameterTwoWayBinding()
+        public void RowsPerPageParameterTwoWayBinding()
         {
             var rowsPerPage = 5;
             var newRowsPerPage = 25;
@@ -2282,7 +2282,7 @@ namespace MudBlazor.UnitTests.Components
             int.Parse(t).Should().Be(rowsPerPage, "The component rendered correctly");
             //open the menu
             var menuItem = comp.Find("div.mud-input-control");
-            menuItem.Click();
+            menuItem.PointerDown();
 
             //Now select the 25 and check it
             var items = comp.FindAll("div.mud-list-item").ToArray();
@@ -2369,12 +2369,12 @@ namespace MudBlazor.UnitTests.Components
             }
         }
 
+        /// <summary>
         /// Issue #3033
         /// Tests changing RowsPerPage Parameter from code - Table should re-render new RowsPerPage parameter and parameter value should be set
         /// </summary>
-        /// <returns></returns>
         [Test]
-        public async Task RowsPerPageChangeValueFromCode()
+        public void RowsPerPageChangeValueFromCode()
         {
             var testComponent = Context.RenderComponent<TablePagerChangeRowsPerPageTest>();
             var table = testComponent.FindComponent<MudTable<string>>().Instance;
@@ -2391,9 +2391,8 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// Tests whether record type table items are kept track of when edited
         /// </summary>
-        /// <returns></returns>
         [Test]
-        public async Task TableRecordEditingMultiSelectTest()
+        public void TableRecordEditingMultiSelectTest()
         {
             var comp = Context.RenderComponent<TableRecordComparerTest>();
             var table = comp.FindComponent<MudTable<TableRecordComparerTest.Element>>().Instance;
@@ -2433,7 +2432,6 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// Setting a comparer should be reflected in all layers of the table
         /// </summary>
-        /// <returns></returns>
         [Test]
         public async Task TableComparerContextTest()
         {
@@ -2457,9 +2455,8 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// Using a virtualized table with multiselection must preserve checked items
         /// </summary>
-        /// <returns></returns>
         [Test]
-        public async Task TestVirtualizedTableWithMultiSelection()
+        public void TestVirtualizedTableWithMultiSelection()
         {
             var comp = Context.RenderComponent<TableMultiSelectionVirtualizedTest>();
             var table = comp.FindComponent<MudTable<TableMultiSelectionVirtualizedTest.TestItem>>();
@@ -2489,7 +2486,7 @@ namespace MudBlazor.UnitTests.Components
         /// Selecting the 'Select All' checkbox should trigger the 'SelectedItemsChanged' event only once
         /// </summary>
         [Test]
-        public async Task TestSelectedItemsChanedWithMultiSelection()
+        public void TestSelectedItemsChangedWithMultiSelection()
         {
             var comp = Context.RenderComponent<TableMultiSelectionSelectedItemsChangedTest>();
             var selectAllCheckbox = comp.Find("input");

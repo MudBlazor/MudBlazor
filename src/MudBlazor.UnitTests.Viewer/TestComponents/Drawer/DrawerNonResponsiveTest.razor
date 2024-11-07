@@ -13,7 +13,7 @@
 @code{
     private bool _open;
 
-    public MudDrawer Drawer { get; set; } = null!;
+    public MudDrawer Drawer { get; private set; } = null!;
     
     [Parameter]
     public bool InitialOpenState { get; set; }
@@ -24,5 +24,5 @@
         base.OnInitialized();
     }
 
-    public void ToggleDrawer() => _open = !_open;
+    private void ToggleDrawer() => _open = !_open;
 }

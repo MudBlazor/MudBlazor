@@ -9,7 +9,7 @@
 
     public static readonly string[] Items = ["One", "Two", "Three"];
 
-    private Task<IEnumerable<string>> Search(string text, CancellationToken token)
+    private static Task<IEnumerable<string>> Search(string text, CancellationToken token)
     {
         var result = string.IsNullOrWhiteSpace(text)
             ? Items

@@ -1,0 +1,44 @@
+﻿<div style="height: 200px;" />
+<MudDataGrid Items="@_users" HorizontalScrollbar="true" Bordered="true" Dense="true" FixedHeader="true" Height="400px">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" StickyLeft="true" />
+        <PropertyColumn Property="x => x.Age" />
+        <PropertyColumn Property="x => x.FillerColumn" HeaderStyle="white-space:nowrap">
+            <HeaderTemplate>
+                @((MarkupString)$"This is a really long column{string.Join("", Enumerable.Repeat("&nbsp;", 1000))}...")
+            </HeaderTemplate>
+        </PropertyColumn>
+        <PropertyColumn Property="x => x.Salary" />
+        <TemplateColumn StickyRight="true">
+            <CellTemplate>
+                <MudIconButton Icon="@Icons.Material.Outlined.Edit" Size="@Size.Small" />
+            </CellTemplate>
+        </TemplateColumn>
+    </Columns>
+</MudDataGrid>
+
+@code {
+    public static string __description__ = "Covers setting sticky for Table/DataGrid and showing the header and row stay sticky.";
+
+    private readonly IEnumerable<User> _users = new List<User>
+    {
+        new User("Sam", 56, "...", 50_000.00M),
+        new User("Alicia", 54, "...", 75_000.00M),
+        new User("Ira", 27, "...", 102_000.00M),
+        new User("John", 32, "...", 132_000.00M),
+        new User("Sam", 56, "...", 50_000.00M),
+        new User("Alicia", 54, "...", 75_000.00M),
+        new User("Ira", 27, "...", 102_000.00M),
+        new User("John", 32, "...", 132_000.00M),
+        new User("Sam", 56, "...", 50_000.00M),
+        new User("Alicia", 54, "...", 75_000.00M),
+        new User("Ira", 27, "...", 102_000.00M),
+        new User("John", 32, "...", 132_000.00M),
+        new User("Sam", 56, "...", 50_000.00M),
+        new User("Alicia", 54, "...", 75_000.00M),
+        new User("Ira", 27, "...", 102_000.00M),
+        new User("John", 32, "...", 132_000.00M),
+    };
+
+    public record User(string Name, int Age, string FillerColumn, decimal Salary);
+}
