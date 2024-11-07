@@ -169,6 +169,11 @@ class MudKeyInterceptor {
 
     onKeyDown(args) {
         var self = this.mudKeyInterceptor; // func is invoked with this == child
+        if (!args.key) {
+            self.logger('[MudBlazor | KeyInterceptor] key is undefined', args);
+            return;
+        }
+
         var key = args.key.toLowerCase();
         self.logger('[MudBlazor | KeyInterceptor] down "' + key + '"', args);
         var invoke = false;
@@ -203,6 +208,11 @@ class MudKeyInterceptor {
 
     onKeyUp(args) {
         var self = this.mudKeyInterceptor; // func is invoked with this == child
+        if (!args.key) {
+            self.logger('[MudBlazor | KeyInterceptor] key is undefined', args);
+            return;
+        }
+
         var key = args.key.toLowerCase();
         self.logger('[MudBlazor | KeyInterceptor] up "' + key + '"', args);
         var invoke = false;
