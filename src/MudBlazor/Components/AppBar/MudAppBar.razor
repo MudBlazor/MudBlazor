@@ -5,45 +5,45 @@
 
 @if (Bottom)
 {
-    @if(Contextual)
+    @if (Contextual)
     {
         <SectionOutlet SectionId="MudAppBar.ContextualActionBar" />
         <SectionContent SectionId="MudAppBar.ContextualActionBar">
-            <footer @attributes="UserAttributes" class="@Classname" style="@Style">
-                <MudToolBar Dense="@Dense" Gutters="@Gutters" Class="@ToolBarClassname" WrapContent="@WrapContent">
-                    @ChildContent
-                </MudToolBar>
-            </footer>    
+            @Footer
         </SectionContent>
     }
     else
     {
-        <footer @attributes="UserAttributes" class="@Classname" style="@Style">
-            <MudToolBar Dense="@Dense" Gutters="@Gutters" Class="@ToolBarClassname" WrapContent="@WrapContent">
-                @ChildContent
-            </MudToolBar>
-        </footer>  
+        @Footer
     }
 }
 else
 {
-    @if(Contextual)
+    @if (Contextual)
     {
         <SectionOutlet SectionId="MudAppBar.ContextualActionBar" />
         <SectionContent SectionId="MudAppBar.ContextualActionBar">
-            <header @attributes="UserAttributes" class="@Classname" style="@Style">
-                <MudToolBar Dense="@Dense" Gutters="@Gutters" Class="@ToolBarClassname" WrapContent="@WrapContent">
-                    @ChildContent
-                </MudToolBar>
-            </header>    
+            @Header
         </SectionContent>
     }
     else
     {
-        <header @attributes="UserAttributes" class="@Classname" style="@Style">
+        @Header
+    }
+}
+
+@code {
+    private RenderFragment Header =>
+        @<header @attributes="@UserAttributes" class="@Classname" style="@Style">
             <MudToolBar Dense="@Dense" Gutters="@Gutters" Class="@ToolBarClassname" WrapContent="@WrapContent">
                 @ChildContent
             </MudToolBar>
-        </header>  
-    }
+        </header>;
+
+    private RenderFragment Footer =>
+        @<footer @attributes="@UserAttributes" class="@Classname" style="@Style">
+            <MudToolBar Dense="@Dense" Gutters="@Gutters" Class="@ToolBarClassname" WrapContent="@WrapContent">
+                @ChildContent
+            </MudToolBar>
+        </footer>;
 }
