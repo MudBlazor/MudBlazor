@@ -1378,7 +1378,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void SelectTestRelativeWidth()
+        public void SelectFullWidthTest()
         {
             var comp = Context.RenderComponent<SelectPopoverRelativeWidthTest>();
 
