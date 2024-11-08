@@ -11,8 +11,6 @@ namespace MudBlazor;
 
 public partial class MudContextualActionBar : MudAppBar
 {
-    private readonly ParameterState<bool> _visibleState;
-
     private new bool Contextual { get; set; }
 
     private RenderFragment ContextualContent => base.BuildRenderTree;
@@ -27,21 +25,4 @@ public partial class MudContextualActionBar : MudAppBar
     [EditorRequired]
     [Category(CategoryTypes.Overlay.Behavior)]
     public bool Visible { get; set; }
-
-    /// <summary>
-    /// Occurs when <see cref="Visible"/> changes.
-    /// </summary>
-    /// <remarks>
-    /// This event is triggered when the visibility of the action bar changes.
-    /// </remarks>
-    [Parameter]
-    public EventCallback<bool> VisibleChanged { get; set; }
-
-    public MudContextualActionBar()
-    {
-        using var registerScope = CreateRegisterScope();
-        _visibleState = registerScope.RegisterParameter<bool>(nameof(Visible))
-            .WithParameter(() => Visible)
-            .WithEventCallback(() => VisibleChanged);
-    }
 }
