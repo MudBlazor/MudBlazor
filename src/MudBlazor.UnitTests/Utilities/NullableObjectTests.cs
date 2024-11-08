@@ -70,7 +70,7 @@ public class NullableObjectTests
     }
 
     [Test]
-    public void Equals_WithSameItem_ShouldReturnTrue()
+    public void EqualsT_WithSameItem_ShouldReturnTrue()
     {
         // Arrange
         var obj = new NullableObject<string>("test");
@@ -84,7 +84,7 @@ public class NullableObjectTests
     }
 
     [Test]
-    public void Equals_WithDifferentItem_ShouldReturnFalse()
+    public void EqualsT_WithDifferentItem_ShouldReturnFalse()
     {
         // Arrange
         var obj = new NullableObject<string>("test1");
@@ -98,7 +98,7 @@ public class NullableObjectTests
     }
 
     [Test]
-    public void Equals_WithNullItem_ShouldReturnTrue()
+    public void EqualsT_WithNullItem_ShouldReturnTrue()
     {
         // Arrange
         var obj = NullableObject<string>.Null;
@@ -109,6 +109,20 @@ public class NullableObjectTests
 
         // Assert
         result.Should().BeTrue();
+    }
+
+    [Test]
+    public void EqualsT_WithNullableAndNonNullObject_ShouldReturnFalse()
+    {
+        // Arrange
+        var nullableObj = NullableObject<object>.Null;
+        var obj = new object();
+
+        // Act
+        var result = nullableObj.Equals(obj);
+
+        // Assert
+        result.Should().BeFalse();
     }
 
     [Test]
@@ -126,7 +140,7 @@ public class NullableObjectTests
     }
 
     [Test]
-    public void Equals_WithNonNullableObject_ShouldReturnFalse()
+    public void EqualsObject_WithNonNullableDifferentTypeObject_ShouldReturnFalse()
     {
         // Arrange
         var obj = new NullableObject<string>("test");
@@ -137,6 +151,20 @@ public class NullableObjectTests
 
         // Assert
         result.Should().BeFalse();
+    }
+
+    [Test]
+    public void EqualsObject_WithSameNullableObject_ShouldReturnTrue()
+    {
+        // Arrange
+        var obj = new NullableObject<string>("test");
+        object nonNullableObj = "test";
+
+        // Act
+        var result = obj.Equals(nonNullableObj);
+
+        // Assert
+        result.Should().BeTrue();
     }
 
     [Test]
@@ -153,6 +181,20 @@ public class NullableObjectTests
         // Assert
         result1.Should().BeFalse();
         result2.Should().BeFalse();
+    }
+
+    [Test]
+    public void EqualsObject_WithSameNonNullableObject_ShouldReturnTrue()
+    {
+        // Arrange
+        object obj1 = new NullableObject<string>("test");
+        object obj2 = new NullableObject<string>("test");
+
+        // Act
+        var result = obj1.Equals(obj2);
+
+        // Assert
+        result.Should().BeTrue();
     }
 
     [Test]
@@ -232,12 +274,22 @@ public class NullableObjectTests
         // Arrange
         var obj1 = new NullableObject<string>("test");
         var obj2 = new NullableObject<string>("test");
+        var obj3 = obj1;
+        var obj4 = obj2;
         var nullObj1 = NullableObject<string>.Null;
         var nullObj2 = NullableObject<string>.Null;
 
         // Act & Assert
         (obj1 == obj2).Should().BeTrue();
+        (obj2 == obj1).Should().BeTrue();
+        (obj1 == obj3).Should().BeTrue();
+        (obj3 == obj1).Should().BeTrue();
+        (obj1 == obj4).Should().BeTrue();
+        (obj4 == obj1).Should().BeTrue();
+        (obj3 == obj4).Should().BeTrue();
+        (obj4 == obj3).Should().BeTrue();
         (nullObj1 == nullObj2).Should().BeTrue();
+        (nullObj2 == nullObj1).Should().BeTrue();
     }
 
     [Test]
