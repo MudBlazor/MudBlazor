@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace MudBlazor.Utilities;
 
@@ -10,6 +9,9 @@ namespace MudBlazor.Utilities;
 /// <typeparam name="T">The type of the object.</typeparam>
 public readonly struct NullableObject<T> : IEquatable<NullableObject<T>>, IEquatable<T>
 {
+    // A trick to support `default`, structs will have booleans initialized to false
+    private readonly bool _isNotNull;
+
     /// <summary>
     /// Gets the wrapped item.
     /// </summary>
@@ -18,9 +20,8 @@ public readonly struct NullableObject<T> : IEquatable<NullableObject<T>>, IEquat
     /// <summary>
     /// Gets a value indicating whether the wrapped item is null.
     /// </summary>
-    [field: DefaultValue(true)]
     [MemberNotNullWhen(false, nameof(Item))]
-    public bool IsNull { get; }
+    public bool IsNull => !_isNotNull;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="NullableObject{T}"/> struct.
@@ -29,7 +30,7 @@ public readonly struct NullableObject<T> : IEquatable<NullableObject<T>>, IEquat
     /// <param name="isnull">A value indicating whether the item is null.</param>
     private NullableObject(T? item, bool isnull)
     {
-        IsNull = isnull;
+        _isNotNull = !isnull;
         Item = item;
     }
 

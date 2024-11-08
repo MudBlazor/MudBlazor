@@ -18,12 +18,15 @@ public class NullableObjectTests
         // Arrange & Act
         var obj = new NullableObject<string>("test");
         var nullObj = NullableObject<string>.Null;
+        NullableObject<string> defaultObj = default;
 
         // Assert
         obj.Item.Should().Be("test");
         obj.IsNull.Should().BeFalse();
         nullObj.Item.Should().BeNull();
         nullObj.IsNull.Should().BeTrue();
+        defaultObj.Item.Should().BeNull();
+        defaultObj.IsNull.Should().BeTrue();
     }
 
     [Test]
