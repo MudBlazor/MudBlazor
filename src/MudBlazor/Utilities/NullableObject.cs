@@ -97,6 +97,11 @@ public readonly struct NullableObject<T> : IEquatable<NullableObject<T>>, IEquat
     /// Determines whether the specified object is equal to the current object.
     /// </summary>
     /// <param name="obj">The object to compare with the current object.</param>
+    /// <remarks>
+    /// If you compare two <see cref="NullableObject{T}"/> instances with different generic types and both are null, 
+    /// the <see cref="Equals(object?)"/> method will return false because they are considered two different null values.
+    /// There is a type match check.
+    /// </remarks>
     /// <returns>true if the specified object is equal to the current object; otherwise, false.</returns>
     public override bool Equals(object? obj)
     {
