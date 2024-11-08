@@ -1,18 +1,49 @@
+@using Microsoft.AspNetCore.Components.Sections;
+
 @namespace MudBlazor
 @inherits MudComponentBase
+
 @if (Bottom)
 {
-<footer @attributes="UserAttributes" class="@Classname" style="@Style">
-    <MudToolBar Dense="@Dense" Gutters="@Gutters" Class="@ToolBarClassname" WrapContent="@WrapContent">
-        @ChildContent
-    </MudToolBar>
-</footer>
+    @if(Contextual)
+    {
+        <SectionOutlet SectionId="MudAppBar.ContextualActionBar" />
+        <SectionContent SectionId="MudAppBar.ContextualActionBar">
+            <footer @attributes="UserAttributes" class="@Classname" style="@Style">
+                <MudToolBar Dense="@Dense" Gutters="@Gutters" Class="@ToolBarClassname" WrapContent="@WrapContent">
+                    @ChildContent
+                </MudToolBar>
+            </footer>    
+        </SectionContent>
+    }
+    else
+    {
+        <footer @attributes="UserAttributes" class="@Classname" style="@Style">
+            <MudToolBar Dense="@Dense" Gutters="@Gutters" Class="@ToolBarClassname" WrapContent="@WrapContent">
+                @ChildContent
+            </MudToolBar>
+        </footer>  
+    }
 }
 else
 {
-<header @attributes="UserAttributes" class="@Classname" style="@Style">
-    <MudToolBar Dense="@Dense" Gutters="@Gutters" Class="@ToolBarClassname" WrapContent="@WrapContent">
-        @ChildContent
-    </MudToolBar>
-</header>
+    @if(Contextual)
+    {
+        <SectionOutlet SectionId="MudAppBar.ContextualActionBar" />
+        <SectionContent SectionId="MudAppBar.ContextualActionBar">
+            <header @attributes="UserAttributes" class="@Classname" style="@Style">
+                <MudToolBar Dense="@Dense" Gutters="@Gutters" Class="@ToolBarClassname" WrapContent="@WrapContent">
+                    @ChildContent
+                </MudToolBar>
+            </header>    
+        </SectionContent>
+    }
+    else
+    {
+        <header @attributes="UserAttributes" class="@Classname" style="@Style">
+            <MudToolBar Dense="@Dense" Gutters="@Gutters" Class="@ToolBarClassname" WrapContent="@WrapContent">
+                @ChildContent
+            </MudToolBar>
+        </header>  
+    }
 }
