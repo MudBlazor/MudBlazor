@@ -455,8 +455,8 @@ namespace MudBlazor
         /// </summary>
         public IReadOnlyList<MudSelectItem<T>> Items => _items;
 
-        protected Dictionary<NullObject<T?>, MudSelectItem<T>> _valueLookup = new();
-        protected Dictionary<NullObject<T?>, MudSelectItem<T>> _shadowLookup = new();
+        protected Dictionary<NullableObject<T?>, MudSelectItem<T>> _valueLookup = new();
+        protected Dictionary<NullableObject<T?>, MudSelectItem<T>> _shadowLookup = new();
 
         internal bool Add(MudSelectItem<T>? item)
         {

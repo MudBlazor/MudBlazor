@@ -8,7 +8,7 @@ namespace MudBlazor.Utilities;
 /// Represents a wrapper for an object that can be null.
 /// </summary>
 /// <typeparam name="T">The type of the object.</typeparam>
-public readonly struct NullObject<T> : IEquatable<NullObject<T?>>, IEquatable<T?>
+public readonly struct NullableObject<T> : IEquatable<NullableObject<T>>, IEquatable<T>
 {
     /// <summary>
     /// Gets the wrapped item.
@@ -23,21 +23,21 @@ public readonly struct NullObject<T> : IEquatable<NullObject<T?>>, IEquatable<T?
     public bool IsNull { get; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="NullObject{T}"/> struct.
+    /// Initializes a new instance of the <see cref="NullableObject{T}"/> struct.
     /// </summary>
     /// <param name="item">The item to wrap.</param>
     /// <param name="isnull">A value indicating whether the item is null.</param>
-    private NullObject(T? item, bool isnull)
+    private NullableObject(T? item, bool isnull)
     {
         IsNull = isnull;
         Item = item;
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="NullObject{T}"/> struct.
+    /// Initializes a new instance of the <see cref="NullableObject{T}"/> struct.
     /// </summary>
     /// <param name="item">The item to wrap.</param>
-    public NullObject(T? item)
+    public NullableObject(T? item)
         : this(item, item is null)
     {
     }
@@ -58,7 +58,7 @@ public readonly struct NullObject<T> : IEquatable<NullObject<T?>>, IEquatable<T?
     /// </summary>
     /// <param name="other">An object to compare with this object.</param>
     /// <returns>true if the current object is equal to the <paramref name="other"/> parameter; otherwise, false.</returns>
-    public bool Equals(NullObject<T?> other)
+    public bool Equals(NullableObject<T> other)
     {
         if (other.IsNull)
         {
@@ -102,7 +102,7 @@ public readonly struct NullObject<T> : IEquatable<NullObject<T?>>, IEquatable<T?
     {
         return obj switch
         {
-            NullObject<T?> nullObject => Equals(nullObject),
+            NullableObject<T> nullObject => Equals(nullObject),
             T item => Equals(item),
             _ => false
         };
@@ -120,35 +120,35 @@ public readonly struct NullObject<T> : IEquatable<NullObject<T?>>, IEquatable<T?
     }
 
     /// <summary>
-    /// Determines whether two specified instances of <see cref="NullObject{T}"/> are equal.
+    /// Determines whether two specified instances of <see cref="NullableObject{T}"/> are equal.
     /// </summary>
     /// <param name="left">The first object to compare.</param>
     /// <param name="right">The second object to compare.</param>
     /// <returns>true if the left and right parameters are equal; otherwise, false.</returns>
-    public static bool operator ==(NullObject<T?> left, NullObject<T?> right) => left.Equals(right);
+    public static bool operator ==(NullableObject<T> left, NullableObject<T> right) => left.Equals(right);
 
     /// <summary>
-    /// Determines whether two specified instances of <see cref="NullObject{T}"/> are not equal.
+    /// Determines whether two specified instances of <see cref="NullableObject{T}"/> are not equal.
     /// </summary>
     /// <param name="left">The first object to compare.</param>
     /// <param name="right">The second object to compare.</param>
     /// <returns>true if the left and right parameters are not equal; otherwise, false.</returns>
-    public static bool operator !=(NullObject<T?> left, NullObject<T?> right) => !(left == right);
+    public static bool operator !=(NullableObject<T> left, NullableObject<T> right) => !(left == right);
 
     /// <summary>
-    /// Performs an implicit conversion from <see cref="NullObject{T}"/> to <typeparamref name="T"/>.
+    /// Performs an implicit conversion from <see cref="NullableObject{T}"/> to <typeparamref name="T"/>.
     /// </summary>
-    /// <param name="nullObject">The <see cref="NullObject{T}"/> to convert.</param>
-    public static implicit operator T?(NullObject<T?> nullObject) => nullObject.Item;
+    /// <param name="nullObject">The <see cref="NullableObject{T}"/> to convert.</param>
+    public static implicit operator T?(NullableObject<T?> nullObject) => nullObject.Item;
 
     /// <summary>
-    /// Performs an implicit conversion from <typeparamref name="T"/> to <see cref="NullObject{T}"/>.
+    /// Performs an implicit conversion from <typeparamref name="T"/> to <see cref="NullableObject{T}"/>.
     /// </summary>
     /// <param name="item">The item to convert.</param>
-    public static implicit operator NullObject<T?>(T? item) => new(item);
+    public static implicit operator NullableObject<T?>(T? item) => new(item);
 
     /// <summary>
-    /// Gets a <see cref="NullObject{T}"/> that represents a null value.
+    /// Gets a <see cref="NullableObject{T}"/> that represents a null value.
     /// </summary>
-    public static NullObject<T?> Null { get; } = new(default, true);
+    public static NullableObject<T?> Null { get; } = new(default, true);
 }
