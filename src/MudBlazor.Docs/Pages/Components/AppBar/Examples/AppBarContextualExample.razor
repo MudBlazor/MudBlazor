@@ -25,7 +25,7 @@
 </MudLayout>
 
 <MudContextualActionBar Color="Color.Tertiary" Fixed="false" Visible="ShowContext">
-    <MudIconButton Icon="@Icons.Material.Filled.Close" Color="Color.Inherit" Edge="Edge.Start" OnClick="@(() => _selected.Clear())" />
+    <MudIconButton Icon="@Icons.Material.Filled.Close" Color="Color.Inherit" Edge="Edge.Start" OnClick="UnselectItems" />
     <MudText Class="pl-8" Typo="Typo.h6">@($"{_selected.Count} Selected") </MudText>
     <MudSpacer />
     <MudIconButton Icon="@Icons.Material.Filled.Share" Color="Color.Inherit" />
@@ -51,6 +51,21 @@
             _selected.Remove(image);
         else
             _selected.Add(_images[index]);
+    }
+
+    private void UnselectItems()
+    {
+        for (int index = 0; index < _images.Length; index++)
+        {
+            var image = _images[index];
+
+            if (_selected.Contains(image))
+            {
+                _images[index] = image with { Width = 200, Height = 150 };
+            }
+        }
+
+        _selected.Clear();
     }
 
     private void DeleteSelectedItems()
