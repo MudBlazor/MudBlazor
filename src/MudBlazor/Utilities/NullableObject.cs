@@ -139,16 +139,16 @@ public readonly struct NullableObject<T> : IEquatable<NullableObject<T>>, IEquat
     /// Performs an implicit conversion from <see cref="NullableObject{T}"/> to <typeparamref name="T"/>.
     /// </summary>
     /// <param name="nullObject">The <see cref="NullableObject{T}"/> to convert.</param>
-    public static implicit operator T?(NullableObject<T?> nullObject) => nullObject.Item;
+    public static implicit operator T?(NullableObject<T> nullObject) => nullObject.Item;
 
     /// <summary>
     /// Performs an implicit conversion from <typeparamref name="T"/> to <see cref="NullableObject{T}"/>.
     /// </summary>
     /// <param name="item">The item to convert.</param>
-    public static implicit operator NullableObject<T?>(T? item) => new(item);
+    public static implicit operator NullableObject<T>(T? item) => new(item);
 
     /// <summary>
     /// Gets a <see cref="NullableObject{T}"/> that represents a null value.
     /// </summary>
-    public static NullableObject<T?> Null { get; } = new(default, true);
+    public static NullableObject<T> Null { get; } = new(default, true);
 }
