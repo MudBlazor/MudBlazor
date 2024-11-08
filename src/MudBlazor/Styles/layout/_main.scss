@@ -1,15 +1,27 @@
-@import '../abstracts/variables';
+﻿@import '../abstracts/variables';
 
 .mud-main-content {
   margin: 0;
   flex: 1 1 auto;
-  padding-top: var(--mud-appbar-height);
+  padding-top: calc(var(--mud-appbar-height) - var(--mud-appbar-height) / 8);
   transition: margin 225ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
+}
+
+@media (min-width:$breakpoint-xs) and (orientation: landscape) {
+  .mud-main-content {
+    padding-top: calc(var(--mud-appbar-height) - var(--mud-appbar-height) / 4);
+  }
+}
+
+@media (min-width:$breakpoint-sm) {
+  .mud-main-content {
+    padding-top: var(--mud-appbar-height);
+  }
 }
 
 .mud-appbar-dense {
   ~ .mud-main-content {
-    padding-top: var(--mud-appbar-dense-height);
+    padding-top: calc(var(--mud-appbar-height) - var(--mud-appbar-height) / 4);
   }
 }
 

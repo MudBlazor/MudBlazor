@@ -330,7 +330,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
             $"--{LayoutProperties}-drawer-width-mini-left: {_theme.LayoutProperties.DrawerMiniWidthLeft};");
         theme.AppendLine(
             $"--{LayoutProperties}-drawer-width-mini-right: {_theme.LayoutProperties.DrawerMiniWidthRight};");
-        theme.AppendLine($"--{LayoutProperties}-appbar-base-height: {_theme.LayoutProperties.AppbarBaseHeight};");
+        theme.AppendLine($"--{LayoutProperties}-appbar-height: {_theme.LayoutProperties.AppbarHeight};");
 
         //Breakpoint
         //theme.AppendLine($"--{Breakpoint}-xs: {Theme.Breakpoints.xs};");

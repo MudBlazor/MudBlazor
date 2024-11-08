@@ -1,4 +1,4 @@
-$mud-palette-colors: primary, secondary, tertiary, info, success, warning, error, dark;
+﻿$mud-palette-colors: primary, secondary, tertiary, info, success, warning, error, dark;
 
 $mud-sizes: small, medium, large;
 
@@ -11,20 +11,3 @@ $breakpoint-xxl: 2560px;
 
 $breakpoints: ( xs: $breakpoint-xs, sm: $breakpoint-sm, md: $breakpoint-md, lg: $breakpoint-lg, xl: $breakpoint-xl, xxl: $breakpoint-xxl );
 $breakpoints-css-utilities-only: ( sm: $breakpoint-sm, md: $breakpoint-md, lg: $breakpoint-lg, xl: $breakpoint-xl, xxl: $breakpoint-xxl );
-
-:root {
-  --mud-appbar-height: calc(var(--mud-appbar-base-height) - var(--mud-appbar-base-height) / 8);
-  --mud-appbar-dense-height: calc(var(--mud-appbar-base-height) - var(--mud-appbar-base-height) / 4);
-}
-
-@media (min-width:$breakpoint-xs) and (orientation: landscape) {
-  :root {
-    --mud-appbar-height: calc(var(--mud-appbar-base-height) - var(--mud-appbar-base-height) / 4);
-  }
-}
-
-@media (min-width:$breakpoint-sm) {
-  :root {
-    --mud-appbar-height: var(--mud-appbar-base-height);
-  }
-}
