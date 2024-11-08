@@ -14,7 +14,7 @@ namespace MudBlazor;
 /// </remarks>
 public partial class MudAppBar : MudComponentBase
 {
-    internal static SectionOutlet ContextualActionBar = new();
+    internal static SectionOutlet ContextualActionBar { get; } = new();
 
     protected string Classname =>
         new CssBuilder("mud-appbar")
