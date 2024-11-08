@@ -39,31 +39,104 @@ public class NullableObjectTests
     }
 
     [Test]
-    public void Equals_ShouldReturnTrueForEqualObjects()
+    public void Equals_WithSameNullableObject_ShouldReturnTrue()
     {
         // Arrange
         var obj1 = new NullableObject<string>("test");
         var obj2 = new NullableObject<string>("test");
-        var nullObj1 = new NullableObject<string>(null);
-        var nullObj2 = new NullableObject<string>(null);
 
-        // Act & Assert
-        obj1.Equals(obj2).Should().BeTrue();
-        nullObj1.Equals(nullObj2).Should().BeTrue();
+        // Act
+        var result = obj1.Equals(obj2);
+
+        // Assert
+        result.Should().BeTrue();
     }
 
     [Test]
-    public void Equals_ShouldReturnFalseForDifferentObjects()
+    public void Equals_WithDifferentNullableObject_ShouldReturnFalse()
     {
         // Arrange
         var obj1 = new NullableObject<string>("test1");
         var obj2 = new NullableObject<string>("test2");
-        var obj = new NullableObject<string>("test");
-        var nullObj = new NullableObject<string>(null);
+        var obj3 = new NullableObject<string>(null);
 
-        // Act & Assert
-        obj1.Equals(obj2).Should().BeFalse();
-        obj.Equals(nullObj).Should().BeFalse();
+        // Act
+        var result1 = obj1.Equals(obj2);
+        var result2 = obj1.Equals(obj3);
+
+        // Assert
+        result1.Should().BeFalse();
+        result2.Should().BeFalse();
+    }
+
+    [Test]
+    public void Equals_WithSameItem_ShouldReturnTrue()
+    {
+        // Arrange
+        var obj = new NullableObject<string>("test");
+        const string Item = "test";
+
+        // Act
+        var result = obj.Equals(Item);
+
+        // Assert
+        result.Should().BeTrue();
+    }
+
+    [Test]
+    public void Equals_WithDifferentItem_ShouldReturnFalse()
+    {
+        // Arrange
+        var obj = new NullableObject<string>("test1");
+        const string Item = "test2";
+
+        // Act
+        var result = obj.Equals(Item);
+
+        // Assert
+        result.Should().BeFalse();
+    }
+
+    [Test]
+    public void Equals_WithNullItem_ShouldReturnTrue()
+    {
+        // Arrange
+        var obj = new NullableObject<string>(null);
+        string? item = null;
+
+        // Act
+        var result = obj.Equals(item);
+
+        // Assert
+        result.Should().BeTrue();
+    }
+
+    [Test]
+    public void Equals_WithNullObject_ShouldReturnTrue()
+    {
+        // Arrange
+        var obj1 = new NullableObject<string>(null);
+        var obj2 = new NullableObject<string>(null);
+
+        // Act
+        var result = obj1.Equals(obj2);
+
+        // Assert
+        result.Should().BeTrue();
+    }
+
+    [Test]
+    public void Equals_WithNonNullableObject_ShouldReturnFalse()
+    {
+        // Arrange
+        var obj = new NullableObject<string>("test");
+        var nonNullableObj = new object();
+
+        // Act
+        var result = obj.Equals(nonNullableObj);
+
+        // Assert
+        result.Should().BeFalse();
     }
 
     [Test]
