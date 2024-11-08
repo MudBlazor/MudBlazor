@@ -1,0 +1,154 @@
+﻿using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
+
+namespace MudBlazor.Utilities;
+
+#nullable enable
+/// <summary>
+/// Represents a wrapper for an object that can be null.
+/// </summary>
+/// <typeparam name="T">The type of the object.</typeparam>
+public readonly struct NullObject<T> : IEquatable<NullObject<T?>>, IEquatable<T?>
+{
+    /// <summary>
+    /// Gets the wrapped item.
+    /// </summary>
+    public T? Item { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether the wrapped item is null.
+    /// </summary>
+    [field: DefaultValue(true)]
+    [MemberNotNullWhen(false, nameof(Item))]
+    public bool IsNull { get; }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NullObject{T}"/> struct.
+    /// </summary>
+    /// <param name="item">The item to wrap.</param>
+    /// <param name="isnull">A value indicating whether the item is null.</param>
+    private NullObject(T? item, bool isnull)
+    {
+        IsNull = isnull;
+        Item = item;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NullObject{T}"/> struct.
+    /// </summary>
+    /// <param name="item">The item to wrap.</param>
+    public NullObject(T? item)
+        : this(item, item is null)
+    {
+    }
+
+    /// <summary>
+    /// Returns a string that represents the current object.
+    /// </summary>
+    /// <returns>A string that represents the current object.</returns>
+    public override string? ToString()
+    {
+        return Item is not null
+            ? Item.ToString()
+            : "NULL";
+    }
+
+    /// <summary>
+    /// Indicates whether the current object is equal to another object of the same type.
+    /// </summary>
+    /// <param name="other">An object to compare with this object.</param>
+    /// <returns>true if the current object is equal to the <paramref name="other"/> parameter; otherwise, false.</returns>
+    public bool Equals(NullObject<T?> other)
+    {
+        if (other.IsNull)
+        {
+            return IsNull;
+        }
+
+        if (IsNull)
+        {
+            return false;
+        }
+
+        return EqualityComparer<T?>.Default.Equals(Item, other.Item);
+    }
+
+    /// <summary>
+    /// Indicates whether the current object is equal to another object of the same type.
+    /// </summary>
+    /// <param name="other">An object to compare with this object.</param>
+    /// <returns>true if the current object is equal to the <paramref name="other"/> parameter; otherwise, false.</returns>
+    public bool Equals(T? other)
+    {
+        if (other is null)
+        {
+            return IsNull;
+        }
+
+        if (IsNull)
+        {
+            return false;
+        }
+
+        return EqualityComparer<T?>.Default.Equals(Item, other);
+    }
+
+    /// <summary>
+    /// Determines whether the specified object is equal to the current object.
+    /// </summary>
+    /// <param name="obj">The object to compare with the current object.</param>
+    /// <returns>true if the specified object is equal to the current object; otherwise, false.</returns>
+    public override bool Equals(object? obj)
+    {
+        return obj switch
+        {
+            NullObject<T?> nullObject => Equals(nullObject),
+            T item => Equals(item),
+            _ => false
+        };
+    }
+
+    /// <summary>
+    /// Serves as the default hash function.
+    /// </summary>
+    /// <returns>A hash code for the current object.</returns>
+    public override int GetHashCode()
+    {
+        return IsNull
+            ? 0
+            : EqualityComparer<T>.Default.GetHashCode(Item);
+    }
+
+    /// <summary>
+    /// Determines whether two specified instances of <see cref="NullObject{T}"/> are equal.
+    /// </summary>
+    /// <param name="left">The first object to compare.</param>
+    /// <param name="right">The second object to compare.</param>
+    /// <returns>true if the left and right parameters are equal; otherwise, false.</returns>
+    public static bool operator ==(NullObject<T?> left, NullObject<T?> right) => left.Equals(right);
+
+    /// <summary>
+    /// Determines whether two specified instances of <see cref="NullObject{T}"/> are not equal.
+    /// </summary>
+    /// <param name="left">The first object to compare.</param>
+    /// <param name="right">The second object to compare.</param>
+    /// <returns>true if the left and right parameters are not equal; otherwise, false.</returns>
+    public static bool operator !=(NullObject<T?> left, NullObject<T?> right) => !(left == right);
+
+    /// <summary>
+    /// Performs an implicit conversion from <see cref="NullObject{T}"/> to <typeparamref name="T"/>.
+    /// </summary>
+    /// <param name="nullObject">The <see cref="NullObject{T}"/> to convert.</param>
+    public static implicit operator T?(NullObject<T?> nullObject) => nullObject.Item;
+
+    /// <summary>
+    /// Performs an implicit conversion from <typeparamref name="T"/> to <see cref="NullObject{T}"/>.
+    /// </summary>
+    /// <param name="item">The item to convert.</param>
+    public static implicit operator NullObject<T?>(T? item) => new(item);
+
+    /// <summary>
+    /// Gets a <see cref="NullObject{T}"/> that represents a null value.
+    /// </summary>
+    public static NullObject<T?> Null { get; } = new(default, true);
+}
