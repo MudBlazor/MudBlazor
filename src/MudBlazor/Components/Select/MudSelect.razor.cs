@@ -201,6 +201,16 @@ namespace MudBlazor
         public bool Dense { get; set; }
 
         /// <summary>
+        /// Restricts the select items (popover) to have the same width as the parent container.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>. When <c>false</c>, the select items may extend beyond the parent container.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
+        public bool RelativeWidth { get; set; } = true;
+
+        /// <summary>
         /// The Open Select Icon
         /// </summary>
         [Parameter]
