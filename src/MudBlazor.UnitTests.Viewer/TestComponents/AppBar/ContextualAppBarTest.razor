@@ -16,12 +16,11 @@
 
 <MudSwitch Class="pt-8" @bind-Value="_visible" />
 
-@code
-{
+@code {
     public static string __description__ = "App bar should change when toggled";
+
+    private bool _visible;
 
     [Parameter]
     public bool IsContextual { get; set; } = true;
-
-    private bool _visible;
 }

@@ -8,7 +8,7 @@
     </MudAppBar>
     <MudMainContent Class="pt-4">
         <div class="d-flex flex-wrap gap-4">
-            @for(int i = 0; i < _images.Length; i++) 
+            @for (int i = 0; i < _images.Length; i++)
             {
                 var index = i;
 
@@ -17,7 +17,7 @@
                 <MudPaper Width="200px" Height="150px" Elevation="0" Class="d-flex align-center justify-center" Style="background-color:inherit">
                     <MudImage Src="@($"images/{_images[index].Title}.jpg")" Width="@_images[index].Width" Height="@_images[index].Height"
                               Elevation="25" ObjectFit="ObjectFit.Cover" Class="rounded-lg"
-                              @onclick="@(() => SelectImage(index))" />
+                              @onclick="@(() => SelectImage(index))"/>
                 </MudPaper>
             }
         </div>
@@ -38,7 +38,7 @@
 
     private readonly HashSet<Image> _selected = [];
     private int Deleted => _images.Count(x => x.IsDeleted);
-    private readonly Image[] _images = [ new Image("sweden"), new Image("iceland"), new Image("castle"), new Image("tractor"), new Image("door"), new Image("pilars") ];
+    private readonly Image[] _images = [ new Image("sweden"), new Image("iceland"), new Image("castle"), new Image("tractor"), new Image("door"), new Image("pillars") ];
 
     private void SelectImage(int index)
     {
