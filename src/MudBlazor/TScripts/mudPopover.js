@@ -305,7 +305,8 @@ window.mudpopoverHelper = {
 
                     // if it contains a mud-list set that mud-list max-height to be the remaining size on screen
                     const list = popoverContentNode.querySelector('.mud-list');
-                    const listMaxHeight = (window.innerHeight - top - offsetY);
+                    const listPadding = 8;
+                    const listMaxHeight = (window.innerHeight - top - offsetY) - listPadding;
                     // is list defined and does the list calculated height exceed the listmaxheight
                     if (list && list.offsetHeight > listMaxHeight) {
                         list.style.maxHeight = listMaxHeight + 'px';
