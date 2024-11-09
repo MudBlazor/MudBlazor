@@ -25,7 +25,7 @@ namespace MudBlazor
         internal int? _rowsPerPage;
         private int _currentPage = 0;
         private IEnumerable<T> _items;
-        private MudVirtualize<T> _mudVirtualize;
+        private MudVirtualize<IndexBag> _mudVirtualize;
         private bool _isFirstRendered = false;
         private bool _filtersMenuVisible = false;
         private bool _columnsPanelVisible = false;
@@ -1132,7 +1132,7 @@ namespace MudBlazor
         /// Defines the ItemsProviderDelegate property, which is necessary for implementing the ServerData methodology with Virtualization.
         /// This property is used to populate items virtually from the server.
         /// </summary>
-        internal ItemsProviderDelegate<T> VirtualItemsProvider { get; set; }
+        internal ItemsProviderDelegate<IndexBag> VirtualItemsProvider { get; set; }
 
         /// <summary>
         /// For unit testing the filtering cache mechanism.
@@ -1773,18 +1773,10 @@ namespace MudBlazor
                     request.CancellationToken
                 );
 
-                if (request.StartIndex > 0 && _serverData.TotalItems < request.StartIndex + request.Count)
-                {
-                    _serverData = await VirtualizeServerData(
-                        stateFunc(0, request.Count),
-                        request.CancellationToken
-                    );
-                }
-
                 _currentRenderFilteredItemsCache = null;
 
-                return new ItemsProviderResult<T>(
-                    _serverData.Items,
+                return new ItemsProviderResult<IndexBag>(
+                    _serverData.Items.Select((x, index) => new IndexBag { Index = request.StartIndex + index, Item = x }),
                     _serverData.TotalItems);
             };
         }
@@ -2105,6 +2097,25 @@ namespace MudBlazor
             _serverDataCancellationTokenSource?.Dispose();
             // TODO: Use IAsyncDisposable for MudDataGrid
             _resizeService?.DisposeAsync().CatchAndLog();
+        }
+
+        /// <summary>
+        /// Keeping correct index with virtualize component
+        /// </summary>
+        /// <remarks>
+        /// Until blazor virtualization component did not provide row index, we need to keep it
+        /// it can be remove when it'll be provided : https://github.com/dotnet/aspnetcore/issues/26943
+        /// </remarks>
+        internal struct IndexBag
+        {
+            /// <summary>
+            /// Virtualized row index
+            /// </summary>
+            public required int Index { get; init; }
+            /// <summary>
+            /// User item
+            /// </summary>
+            public required T Item { get; init; }
         }
     }
 }

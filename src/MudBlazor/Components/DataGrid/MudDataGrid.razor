@@ -202,7 +202,7 @@
                             </tr>
                         }
 
-                        @{var resolvedPageItems = CurrentPageItems.ToList();}
+                        @{var resolvedPageItems = CurrentPageItems.Select((x, index)=> new IndexBag{Index = index, Item = x} ).ToList();}
                         @if (resolvedPageItems is { Count: > 0 })
                         {
                             if (GroupedColumn != null)
@@ -228,11 +228,10 @@
                                             }
                                         </td>
                                     </tr>
-                                    var rowIndex = 0;
 
                                     @if (g.Expanded)
                                     {
-                                        <MudVirtualize @ref="_mudVirtualize" ItemsProvider="@VirtualItemsProvider" Enabled="@Virtualize" Items="@g.Grouping.ToList()" OverscanCount="@OverscanCount" ItemSize="@ItemSize" Context="item">
+                                        <MudVirtualize @ref="_mudVirtualize" ItemsProvider="@VirtualItemsProvider" Enabled="@Virtualize" Items="@g.Grouping.Select((x, index)=> new IndexBag{Index = index, Item = x} ).ToList()" OverscanCount="@OverscanCount" ItemSize="@ItemSize" Context="itemBag">
                                             <Placeholder>
                                                 @if (RowLoadingContent != null)
                                                 {
@@ -249,32 +248,30 @@
                                             </Placeholder>
                                             
                                             <ChildContent>
-                                                @{ var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build(); }
-                                                @{ var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build(); }
-                                                @{ var tmpRowIndex = rowIndex; }
-                                                <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="item" 
-                                                    @onclick="@((args) => OnRowClickedAsync(args, item, tmpRowIndex))" 
-                                                    @oncontextmenu="@((args) => OnContextMenuClickedAsync(args, item, tmpRowIndex))"
+                                                @{ var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(itemBag.Item, itemBag.Index)).Build(); }
+                                                @{ var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(itemBag.Item, itemBag.Index)).Build(); }
+                                                <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="itemBag.Index"
+                                                    @onclick="@((args) => OnRowClickedAsync(args, itemBag.Item, itemBag.Index))"
+                                                    @oncontextmenu="@((args) => OnContextMenuClickedAsync(args, itemBag.Item, itemBag.Index))"
                                                     @oncontextmenu:preventDefault="@(RowContextMenuClick.HasDelegate ? true : false)">
                                                     <CascadingValue Value="@Validator" IsFixed="true">
                                                         @foreach (var column in RenderedColumns)
                                                         {
                                                             if (!column.HiddenState.Value)
                                                             {
-                                                                @Cell(column, item)
+                                                                @Cell(column, itemBag.Item)
                                                             }
                                                         }
                                                     </CascadingValue>
                                                 </tr>
-                                                @if (ChildRowContent != null && (_openHierarchies.Contains(item) || !HasHierarchyColumn))
+                                                @if (ChildRowContent != null && (_openHierarchies.Contains(itemBag.Item) || !HasHierarchyColumn))
                                                 {
                                                     <tr class="mud-table-row">
                                                         <td class="mud-table-cell" colspan="1000">
-                                                            @ChildRowContent(new CellContext<T>(this, item))
+                                                            @ChildRowContent(new CellContext<T>(this, itemBag.Item))
                                                         </td>
                                                     </tr>
                                                 }
-                                                @{ rowIndex++; }
                                             </ChildContent>
                                         </MudVirtualize>
                                         @*Group Footer*@
@@ -286,8 +283,7 @@
                             }
                             else
                             {
-                                var rowIndex = 0;
-                                <MudVirtualize @ref="_mudVirtualize" ItemsProvider="@VirtualItemsProvider" Enabled="@Virtualize" Items="@resolvedPageItems" OverscanCount="@OverscanCount" ItemSize="@ItemSize" Context="item">
+                                <MudVirtualize @ref="_mudVirtualize" ItemsProvider="@VirtualItemsProvider" Enabled="@Virtualize" Items="@resolvedPageItems" OverscanCount="@OverscanCount" ItemSize="@ItemSize" Context="itemBag">
                                     <Placeholder>
                                         @if (RowLoadingContent != null)
                                         {
@@ -304,32 +300,30 @@
                                     </Placeholder>
 
                                     <ChildContent>
-                                        @{ var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build(); }
-                                        @{ var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build(); }
-                                        @{ var tmpRowIndex = rowIndex; }
-                                        <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="item" 
-                                            @onclick="@((args) => OnRowClickedAsync(args, item, tmpRowIndex))" 
-                                            @oncontextmenu="@((args) => OnContextMenuClickedAsync(args, item, tmpRowIndex))"
+                                        @{ var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(itemBag.Item, itemBag.Index)).Build(); }
+                                        @{ var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(itemBag.Item, itemBag.Index)).Build(); }
+                                        <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="itemBag.Index" 
+                                            @onclick="@((args) => OnRowClickedAsync(args, itemBag.Item, itemBag.Index))" 
+                                            @oncontextmenu="@((args) => OnContextMenuClickedAsync(args, itemBag.Item, itemBag.Index))"
                                             @oncontextmenu:preventDefault="@(RowContextMenuClick.HasDelegate ? true : false)">
                                             <CascadingValue Value="@Validator" IsFixed="true">
                                                 @foreach (var column in RenderedColumns)
                                                 {
                                                     if (!column.HiddenState.Value)
                                                     {
-                                                        @Cell(column, item)
+                                                        @Cell(column, itemBag.Item)
                                                     }
                                                 }
                                             </CascadingValue>
                                         </tr>
-                                        @if (ChildRowContent != null && (_openHierarchies.Contains(item) || !HasHierarchyColumn))
+                                        @if (ChildRowContent != null && (_openHierarchies.Contains(itemBag.Item) || !HasHierarchyColumn))
                                         {
                                             <tr class="mud-table-row">
                                                 <td class="mud-table-cell" colspan="1000">
-                                                    @ChildRowContent(new CellContext<T>(this, item))
+                                                    @ChildRowContent(new CellContext<T>(this, itemBag.Item))
                                                 </td>
                                             </tr>
                                         }
-                                        @{ rowIndex++; }
                                     </ChildContent>
                                 </MudVirtualize>
                             }
@@ -354,7 +348,7 @@
                     </tbody>
                     <tfoot class="@FootClassname">
                         <tr class="mud-table-row">
-                            @FooterCells(resolvedPageItems)
+                            @FooterCells(resolvedPageItems.Select(x=>x.Item))
                         </tr>
                     </tfoot>
                 </table>
