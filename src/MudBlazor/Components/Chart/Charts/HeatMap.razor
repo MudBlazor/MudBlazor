@@ -2,52 +2,46 @@
 @using System.Globalization;
 @inherits MudCategoryChartBase
 
-<svg @attributes="UserAttributes" class="mud-chart-heatmap mud-ltr" width="@MudChartParent?.Width" height="@MudChartParent?.Height" viewBox="0 0 650 350">
-    <g class="mud-charts-grid">
-        <g class="mud-charts-gridlines-yaxis">
-            @foreach (var horizontalLine in _horizontalLines)
-            {
-                <path stroke="#e0e0e0" stroke-width="0.3" d="@horizontalLine.Data"></path>
-            }
+<svg width="@BoundWidth" height="@BoundHeight">
+    <!-- Loop through each row in the heatmap -->
+    @for (int row = 0; row < _series.Count; row++)
+    {
+        var rowLabel = _series[row].Name; // Row label for the current series
+        var y = row * (BoundHeight / _series.Count) + VerticalStartSpace;
+
+        <!-- Row Label -->
+        <g transform="translate(0, @y)">
+            <rect x="0" y="0" width="30" height="20" fill="lightgray" />
+            <text x="5" y="15" fill="black" font-size="12">@rowLabel</text>
         </g>
-        @if (MudChartParent?.ChartOptions.XAxisLines == true)
+
+        <!-- Loop through each cell in the row -->
+        @for (int col = 0; col < _series[row].Data.Length; col++)
         {
-            <g class="mud-charts-gridlines-xaxis-lines">
-                @foreach (var verticalLine in _verticalLines)
-                {
-                    <path stroke="gray" stroke-width="0.3" d="@verticalLine.Data"></path>
-                }
+            var cell = _heatmapCells.FirstOrDefault(c => c.Row == row && c.Column == col);
+            var cellColor = GetColorForValue(cell?.Value);
+            var cellWidth = BoundWidth / _series[row].Data.Length;
+            var cellHeight = BoundHeight / _series.Count;
+            var x = col * cellWidth + HorizontalStartSpace;
+
+            <!-- Draw each heatmap cell as a colored rectangle -->
+            <rect x="@x" y="@y" width="@cellWidth" height="@cellHeight" fill="@cellColor" />
+        }
+    }
+
+    <!-- Optional Column Labels -->
+    @if (_options?.ShowLegend ?? false)
+    {
+        @for (int col = 0; col < XAxisLabels.Length; col++)
+        {
+            var colLabel = XAxisLabels[col];
+            var x = col * (BoundWidth / _verticalValues.Count) + HorizontalStartSpace;
+
+            <!-- Draw column label -->
+            <g transform="translate(@x, @BoundHeight)">
+                <rect x="0" y="0" width="30" height="20" fill="lightgray" />
+                <text x="5" y="15" fill="black" font-size="12" text-anchor="middle">@colLabel</text>
             </g>
         }
-    </g>
-
-    <!-- Y-axis labels -->
-    <g class="mud-charts-yaxis">
-        @foreach (var horizontalLineValue in _horizontalValues)
-        {
-            @((MarkupString)$"<text x='{horizontalLineValue.X.ToString(CultureInfo.InvariantCulture)}' y='{horizontalLineValue.Y.ToString(CultureInfo.InvariantCulture)}' font-size='12px' text-anchor='end' dominant-baseline='auto'>{horizontalLineValue.Value?.ToString(CultureInfo.InvariantCulture)}</text>")
-        }
-    </g>
-
-    <!-- X-axis labels -->
-    <g class="mud-charts-xaxis">
-        @foreach (var verticalLineValue in _verticalValues)
-        {
-            @((MarkupString)$"<text x='{verticalLineValue.X.ToString(CultureInfo.InvariantCulture)}' y='{verticalLineValue.Y.ToString(CultureInfo.InvariantCulture)}' font-size='12px' text-anchor='middle'>{verticalLineValue.Value?.ToString(CultureInfo.InvariantCulture)}</text>")
-        }
-    </g>
-
-    <!-- Heatmap Cells -->
-    <g class="mud-charts-heatmap-series">
-        @foreach (var cell in _heatmapCells)
-        {
-            <rect x="@cell.X" y="@cell.Y" width="@cell.Width" height="@cell.Height"
-                  fill="@GetColorForValue(cell.Value)"
-                  stroke="none">
-            </rect>
-        }
-    </g>
-
-    @MudChartParent?.CustomGraphics
+    }
 </svg>
-<Legend Data="@_legends" />

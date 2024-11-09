@@ -22,6 +22,8 @@ namespace MudBlazor.Charts
         [CascadingParameter]
         public MudChart? MudChartParent { get; set; }
 
+        private ChartOptions? _options;
+
         private List<SvgPath> _horizontalLines = [];
         private List<SvgText> _horizontalValues = [];
 
@@ -32,13 +34,18 @@ namespace MudBlazor.Charts
         private List<ChartSeries> _series = [];
 
         private List<HeatMapCell> _heatmapCells = [];
+        private int _minValue = 0;
+        private int _maxValue = 0;
 
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
 
             if (MudChartParent != null)
+            {
+                _options = MudChartParent.ChartOptions;
                 _series = MudChartParent.ChartSeries;
+            }
 
             InitializeHeatmap();
         }
@@ -48,8 +55,10 @@ namespace MudBlazor.Charts
             // Populate _heatmapCells based on data, e.g., matrix of values
             _heatmapCells = [];
 
-            var rows = 10; // Adjust according to data
-            var cols = 10; // Adjust according to data
+            var rows = _series.Count; // # of rows
+            // cols should be the max number of data[] in all series
+            var cols = _series.Max(series => series.Data.Length);
+
             double cellWidth = 650 / cols;
             double cellHeight = 350 / rows;
 
@@ -60,27 +69,61 @@ namespace MudBlazor.Charts
                     var value = GetDataValue(row, col); // Method to retrieve the value for each cell
                     _heatmapCells.Add(new HeatMapCell
                     {
-                        X = col * cellWidth,
-                        Y = row * cellHeight,
-                        Width = cellWidth,
-                        Height = cellHeight,
-                        Value = value
+                        Row = row,
+                        Column = col,
+                        Value = value,
                     });
                 }
             }
         }
 
-        private string GetColorForValue(double value)
+        private double? GetDataValue(int row, int col)
         {
-            // Map the value to a color based on intensity. You might want to use a gradient for this.
-            // For example, lower values could be light blue, and higher values could be dark red.
-            return value < 0.5 ? "#ADD8E6" : "#FF4500"; // Example color mapping logic
+            // need to ensure column index exists in case there is no data for a column in a series
+            if (col >= _series[row].Data.Length)
+            {
+                return null;            
+            }
+            return _series[row].Data[col];
         }
 
-        private double GetDataValue(int row, int col)
+        private string GetColorForValue(double? value)
         {
-            // Replace this with the actual logic to get data values
-            return new Random().NextDouble(); // Placeholder for demonstration
+            if (value == null)
+            {
+                return "#fff"; // Default color for missing data
+            }
+
+            if (_options?.EnableSmoothGradient ?? false)
+            {
+                // set _options.ChartPalette values for index 0 and 1 if they don't exist
+                if (_options.ChartPalette == null || _options.ChartPalette.Length < 2)
+                {
+                    _options.ChartPalette = new string[2]
+                    {
+                        "#ADD8E6",
+                        "#FF4500"
+                    };
+                }
+                // Apply gradient based on value range (e.g., from 0 to 100)
+                double normalizedValue = Math.Clamp((value.Value - _minValue) / (_maxValue - _minValue), 0, 1);
+                return InterpolateColor(_options.ChartPalette[0], _options.ChartPalette[1], normalizedValue);
+            }
+
+            // Default color mapping
+            return value < 50 ? "#ADD8E6" : "#FF4500";
         }
+
+        private string InterpolateColor(string colorStart, string colorEnd, double t)
+        {
+            // Interpolate between colorStart and colorEnd based on t (0 to 1)
+            // Use RGB channel interpolation logic here
+            // Example: linear interpolation for each RGB component
+            var r = (int)(colorStart[0] + (colorEnd[0] - colorStart[0]) * t);
+            var g = (int)(colorStart[1] + (colorEnd[1] - colorStart[1]) * t);
+            var b = (int)(colorStart[2] + (colorEnd[2] - colorStart[2]) * t);
+            return $"rgb({r}, {g}, {b})";
+        }
+
     }
 }

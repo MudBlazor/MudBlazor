@@ -6,10 +6,9 @@ namespace MudBlazor.Charts
 {
     public class HeatMapCell
     {
-        public double X { get; set; }
-        public double Y { get; set; }
-        public double Width { get; set; }
-        public double Height { get; set; }
-        public double Value { get; set; }
+        public int Row { get; set; }
+        public int Column { get; set; }
+        public double? Value { get; set; }
     }
+
 }

@@ -1,0 +1,46 @@
+﻿
+<MudChart ChartType="ChartType.HeatMap" ChartSeries="@Series" ChartOptions="@options"></MudChart>
+<MudButton @onclick="RandomizeData" Variant="Variant.Filled">Randomize Data</MudButton>
+@code {
+        private ChartOptions options = new ChartOptions();
+        private Random random = new Random();
+
+        public List<ChartSeries> Series = new List<ChartSeries>()
+    {
+        new ChartSeries() { Name = "Mo", Data = new double[] { 90, 79, 72, 69, 62, 62, 55, 65, 70 } },
+        new ChartSeries() { Name = "Te", Data = new double[] { 35, 41, 35, 51, 49, 62, 69, 91, 148 } },
+        new ChartSeries() { Name = "We", Data = new double[] { 22, 90, 62, 32, 05, 42, 63, 43, 155 } },
+        new ChartSeries() { Name = "Th", Data = new double[] { 35, 41, 35, 51, 49, 62, 69, 91, 148 } },
+        new ChartSeries() { Name = "Fr", Data = new double[] { 22, 90, 62, 32, 05, 42, 63, 43, 155 } },
+        new ChartSeries() { Name = "Sa", Data = new double[] { 35, 41, 35, 51, 49, 62, 69, 91, 148 } },
+        new ChartSeries() { Name = "Su", Data = new double[] { 22, 90, 62, 32, 05, 42, 63, 43, 155 } },
+    };
+
+        public string[] XAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
+
+        public void RandomizeData()
+        {
+            var new_series = new List<ChartSeries>()
+        {
+            new ChartSeries() { Name = "Mo", Data = new double[9] },
+            new ChartSeries() { Name = "Te", Data = new double[9] },
+            new ChartSeries() { Name = "We", Data = new double[9] },
+            new ChartSeries() { Name = "Th", Data = new double[9] },
+            new ChartSeries() { Name = "Fr", Data = new double[9] },
+            new ChartSeries() { Name = "Sa", Data = new double[9] },
+            new ChartSeries() { Name = "Su", Data = new double[9] },
+        };
+            for (int i = 0; i < 9; i++)
+            {
+                new_series[0].Data[i] = random.NextDouble() * 100;
+                new_series[1].Data[i] = random.NextDouble() * 100;
+                new_series[2].Data[i] = random.NextDouble() * 100;
+                new_series[3].Data[i] = random.NextDouble() * 100;
+                new_series[4].Data[i] = random.NextDouble() * 100;
+                new_series[5].Data[i] = random.NextDouble() * 100;
+                new_series[6].Data[i] = random.NextDouble() * 100;
+            }
+        Series = new_series;
+        StateHasChanged();
+    }
+}
