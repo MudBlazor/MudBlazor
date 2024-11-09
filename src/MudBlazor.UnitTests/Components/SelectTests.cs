@@ -1376,6 +1376,31 @@ namespace MudBlazor.UnitTests.Components
             comp.SetParametersAndRender(p => p.Add(x => x.ReadOnly, true)); //no clear button when readonly
             comp.FindAll(".mud-input-clear-button").Count.Should().Be(0);
         }
+
+        [Test]
+        public async Task SelectFullWidthTest()
+        {
+            var comp = Context.RenderComponent<SelectPopoverRelativeWidthTest>();
+
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+
+            //Open restricted popover
+            await comp.Find("#restricted-select").PointerDownAsync(new PointerEventArgs());
+
+            //confirm relative width class
+            comp.Find(".restricted").ClassList.Should().Contain("mud-popover-open").And.Contain("mud-popover-relative-width");
+
+            //close popover
+            await comp.Find("#restricted-select").PointerDownAsync(new PointerEventArgs());
+
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+
+            //Open expanded popover
+            await comp.Find("#expanded-select").PointerDownAsync(new PointerEventArgs());
+
+            //confirm relative width class not applied
+            comp.Find(".expanded").ClassList.Should().Contain("mud-popover-open").And.NotContain("mud-popover-relative-width");
+        }
 #nullable disable
     }
 }

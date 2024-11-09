@@ -347,6 +347,7 @@ namespace MudBlazor
 
                 Rerender();
                 StateHasChanged();
+                ActivatePanel(ActivePanelIndex);
 
                 _isRendered = true;
             }

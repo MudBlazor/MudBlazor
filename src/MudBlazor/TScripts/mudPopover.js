@@ -169,6 +169,9 @@ window.mudpopoverHelper = {
             if (classList.contains('mud-popover-relative-width')) {
                 popoverContentNode.style['max-width'] = (boundingRect.width) + 'px';
             }
+            else {
+                popoverContentNode.style['min-width'] = (boundingRect.width) + 'px';
+            }
 
             const selfRect = popoverContentNode.getBoundingClientRect();            
             const classListArray = Array.from(classList);
