@@ -19,6 +19,9 @@ public class NullableObjectTests
         var obj = new NullableObject<string>("test");
         var nullObj = NullableObject<string>.Null;
         NullableObject<string> defaultObj = default;
+        NullableObject<int> defaultStructObj = default;
+        var nullStructObject = NullableObject<int>.Null;
+        NullableObject<int?> defaultNullableStructObj = default;
 
         // Assert
         obj.Item.Should().Be("test");
@@ -27,6 +30,12 @@ public class NullableObjectTests
         nullObj.IsNull.Should().BeTrue();
         defaultObj.Item.Should().BeNull();
         defaultObj.IsNull.Should().BeTrue();
+        defaultStructObj.Item.Should().Be(0);
+        defaultStructObj.IsNull.Should().BeFalse();
+        nullStructObject.Item.Should().Be(0, because: "Structs cannot be null");
+        nullStructObject.IsNull.Should().BeFalse(because: "Structs cannot be null");
+        defaultNullableStructObj.Item.Should().BeNull();
+        defaultNullableStructObj.IsNull.Should().BeTrue();
     }
 
     [Test]
@@ -250,6 +259,9 @@ public class NullableObjectTests
         string? item = obj;
         NullableObject<string> nullObj = null;
         string? nullItem = nullObj;
+        NullableObject<int> structObj = 5;
+        int structItem = structObj;
+        int? structNullItem = structObj;
 
         // Assert
         obj.Item.Should().Be("test");
@@ -258,6 +270,10 @@ public class NullableObjectTests
         nullObj.Item.Should().BeNull();
         nullObj.IsNull.Should().BeTrue();
         nullItem.Should().BeNull();
+        structObj.Item.Should().Be(5);
+        structObj.IsNull.Should().BeFalse();
+        structItem.Should().Be(5);
+        structNullItem.Should().Be(5);
     }
 
     [Test]

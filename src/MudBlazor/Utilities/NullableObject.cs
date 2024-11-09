@@ -9,9 +9,6 @@ namespace MudBlazor.Utilities;
 /// <typeparam name="T">The type of the object.</typeparam>
 public readonly struct NullableObject<T> : IEquatable<NullableObject<T>>, IEquatable<T>
 {
-    // A trick to support `default`, structs will have booleans initialized to false
-    private readonly bool _isNotNull;
-
     /// <summary>
     /// Gets the wrapped item.
     /// </summary>
@@ -21,26 +18,15 @@ public readonly struct NullableObject<T> : IEquatable<NullableObject<T>>, IEquat
     /// Gets a value indicating whether the wrapped item is null.
     /// </summary>
     [MemberNotNullWhen(false, nameof(Item))]
-    public bool IsNull => !_isNotNull;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="NullableObject{T}"/> struct.
-    /// </summary>
-    /// <param name="item">The item to wrap.</param>
-    /// <param name="isnull">A value indicating whether the item is null.</param>
-    private NullableObject(T? item, bool isnull)
-    {
-        _isNotNull = !isnull;
-        Item = item;
-    }
+    public bool IsNull => Item is null;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="NullableObject{T}"/> struct.
     /// </summary>
     /// <param name="item">The item to wrap.</param>
     public NullableObject(T? item)
-        : this(item, item is null)
     {
+        Item = item;
     }
 
     /// <summary>
@@ -158,5 +144,10 @@ public readonly struct NullableObject<T> : IEquatable<NullableObject<T>>, IEquat
     /// <summary>
     /// Gets a <see cref="NullableObject{T}"/> that represents a null value.
     /// </summary>
-    public static NullableObject<T> Null { get; } = new(default, true);
+    /// <remarks>
+    /// If <typeparamref name="T"/> is a struct that is not wrapped in <see cref="Nullable{T}"/>, 
+    /// this property will return a <see cref="NullableObject{T}"/> with a non-null default value 
+    /// because structs cannot be null unless wrapped in <see cref="Nullable{T}"/>.
+    /// </remarks>
+    public static NullableObject<T> Null { get; } = new(default);
 }
