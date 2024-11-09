@@ -68,6 +68,7 @@ public readonly struct NullableObject<T> : IEquatable<NullableObject<T>>, IEquat
 
         if (IsNull)
         {
+            // other is not null and this is null, therefore they are not equal
             return false;
         }
 
@@ -88,6 +89,7 @@ public readonly struct NullableObject<T> : IEquatable<NullableObject<T>>, IEquat
 
         if (IsNull)
         {
+            // other is not null and this is null, therefore they are not equal
             return false;
         }
 
