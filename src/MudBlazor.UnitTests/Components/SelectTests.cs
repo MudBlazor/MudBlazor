@@ -1378,25 +1378,25 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void SelectFullWidthTest()
+        public async Task SelectFullWidthTest()
         {
             var comp = Context.RenderComponent<SelectPopoverRelativeWidthTest>();
 
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
 
             //Open restricted popover
-            comp.Find("#restricted-select").PointerDown();
+            await comp.Find("#restricted-select").PointerDownAsync(new PointerEventArgs());
 
             //confirm relative width class
             comp.Find(".restricted").ClassList.Should().Contain("mud-popover-open").And.Contain("mud-popover-relative-width");
 
             //close popover
-            comp.Find("#restricted-select").PointerDown();
+            await comp.Find("#restricted-select").PointerDownAsync(new PointerEventArgs());
 
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
 
             //Open expanded popover
-            comp.Find("#expanded-select").PointerDown();
+            await comp.Find("#expanded-select").PointerDownAsync(new PointerEventArgs());
 
             //confirm relative width class not applied
             comp.Find(".expanded").ClassList.Should().Contain("mud-popover-open").And.NotContain("mud-popover-relative-width");
