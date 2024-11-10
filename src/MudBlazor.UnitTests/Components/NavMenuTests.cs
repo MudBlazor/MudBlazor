@@ -1,6 +1,5 @@
 ﻿using Bunit;
 using FluentAssertions;
-using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.NavMenu;
 using NUnit.Framework;
 
@@ -22,12 +21,14 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Dense.Should().Be(false);
             comp.Instance.Margin.Should().Be(Margin.None);
             comp.Instance.Rounded.Should().Be(false);
+            comp.Instance.Horizontal.Should().Be(false);
 
             comp.FindAll("mud-navmenu-bordered").Count.Should().Be(0);
             comp.FindAll("mud-navmenu-success").Count.Should().Be(0);
             comp.FindAll("mud-navmenu-dense").Count.Should().Be(0);
             comp.FindAll("mud-navmenu-margin-dense").Count.Should().Be(0);
             comp.FindAll("mud-navmenu-rounded").Count.Should().Be(0);
+            comp.FindAll("mud-navmenu-horizontal").Count.Should().Be(0);
         }
 
         /// <summary>
@@ -43,6 +44,7 @@ namespace MudBlazor.UnitTests.Components
                 x.Add(p => p.Dense, true);
                 x.Add(p => p.Margin, Margin.Dense);
                 x.Add(p => p.Rounded, true);
+                x.Add(p => p.Horizontal, true);
             });
 
             comp.Markup.Should().Contain("mud-navmenu-bordered");
@@ -50,6 +52,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Should().Contain("mud-navmenu-dense");
             comp.Markup.Should().Contain("mud-navmenu-margin-dense");
             comp.Markup.Should().Contain("mud-navmenu-rounded");
+            comp.Markup.Should().Contain("mud-navmenu-horizontal");
         }
 
         /// <summary>

@@ -22,12 +22,16 @@ namespace MudBlazor
                 .AddClass($"mud-navmenu-margin-{Margin.ToDescriptionString()}")
                 .AddClass("mud-navmenu-dense", Dense)
                 .AddClass("mud-navmenu-rounded", Rounded)
+                .AddClass("mud-navmenu-horizontal", Horizontal)
                 .AddClass($"mud-navmenu-bordered mud-border-{Color.ToDescriptionString()}", Bordered)
                 .AddClass(Class)
                 .Build();
 
         [CascadingParameter]
         private NavigationContext? NavigationContext { get; set; }
+
+        [CascadingParameter]
+        private MudNavMenu? ParentNavMenu { get; set; }
 
         /// <summary>
         /// The color of the active <see cref="MudNavLink" />.
@@ -81,6 +85,16 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.NavMenu.Appearance)]
         public bool Dense { get; set; }
+
+        /// <summary>
+        /// Displays the navigation menu items horizontally.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.NavMenu.Appearance)]
+        public bool Horizontal { get; set; }
 
         /// <summary>
         /// The content within this menu.

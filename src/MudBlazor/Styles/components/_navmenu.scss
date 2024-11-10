@@ -119,6 +119,41 @@
 
 .mud-navmenu {
 
+  &.mud-navmenu-horizontal {
+    width: 100%;
+    display: flex;
+    align-items: center;
+
+    .mud-nav-item {
+      width: fit-content;
+    }
+
+    &.mud-navmenu-margin-normal {
+      .mud-nav-link {
+        margin: 0 4px;
+      }
+    }
+
+    &.mud-navmenu-margin-dense {
+      .mud-nav-link {
+        margin: 0 2px;
+      }
+    }
+
+    &.mud-navmenu-bordered {
+      .mud-nav-link {
+        &.active:not(.mud-nav-link-disabled) {
+          border-bottom-style: solid;
+          border-bottom-width: 2px;
+        }
+      }
+    }
+
+    .mud-nav-group {
+      width: fit-content;
+    }
+  }
+
   &.mud-navmenu-dense {
     .mud-nav-link {
       padding: 4px 16px 4px 16px;
@@ -143,7 +178,7 @@
     }
   }
 
-  &.mud-navmenu-bordered {
+  &.mud-navmenu-bordered:not(.mud-navmenu-horizontal) {
     .mud-nav-link {
       &.active:not(.mud-nav-link-disabled) {
         border-inline-end-style: solid;
@@ -202,78 +237,69 @@
   }
 }
 
-.mud-nav-group * .mud-navmenu > .mud-nav-group {
-  & .mud-nav-link {
-    padding-left: 36px;
-    padding-inline-start: 36px;
-    padding-inline-end: 16px;
-  }
-
-  & * .mud-navmenu .mud-nav-item .mud-nav-link {
-    padding-left: 48px;
-    padding-inline-start: 48px;
-  }
-
-  & * .mud-navmenu > .mud-nav-group {
+  .mud-nav-group * .mud-navmenu > .mud-nav-group {
     & .mud-nav-link {
-      padding-left: 48px;
-      padding-inline-start: 48px;
+      padding-left: 36px;
+      padding-inline-start: 36px;
       padding-inline-end: 16px;
     }
 
     & * .mud-navmenu .mud-nav-item .mud-nav-link {
-      padding-left: 60px;
-      padding-inline-start: 60px;
-      padding-inline-end: 0;
+      padding-left: 48px;
+      padding-inline-start: 48px;
     }
 
     & * .mud-navmenu > .mud-nav-group {
       & .mud-nav-link {
-        padding-left: 60px;
-        padding-inline-start: 60px;
+        padding-left: 48px;
+        padding-inline-start: 48px;
         padding-inline-end: 16px;
       }
 
       & * .mud-navmenu .mud-nav-item .mud-nav-link {
-        padding-left: 72px;
-        padding-inline-start: 72px;
+        padding-left: 60px;
+        padding-inline-start: 60px;
         padding-inline-end: 0;
+      }
+
+      & * .mud-navmenu > .mud-nav-group {
+        & .mud-nav-link {
+          padding-left: 60px;
+          padding-inline-start: 60px;
+          padding-inline-end: 16px;
+        }
+
+        & * .mud-navmenu .mud-nav-item .mud-nav-link {
+          padding-left: 72px;
+          padding-inline-start: 72px;
+          padding-inline-end: 0;
+        }
       }
     }
   }
-}
 
-.mud-drawer-mini {
-  .mud-nav-link {
-    line-height: 1;
-    display: flex;
-    align-items: center;
-  }
-}
-
-.mud-drawer--closed.mud-drawer-mini {
-  & > .mud-drawer-content > .mud-navmenu {
-    & .mud-nav-link .mud-icon-root:first-child + .mud-nav-link-text {
-      display: none;
+  .mud-drawer-mini {
+    .mud-nav-link {
+      line-height: 1;
+      display: flex;
+      align-items: center;
     }
   }
 
-  .mud-nav-group {
-    & * .mud-navmenu .mud-nav-item .mud-nav-link {
-      padding: 8px 16px 8px 16px;
-    }
-  }
-
-  .mud-nav-group * .mud-navmenu > .mud-nav-group {
-    & .mud-nav-link {
-      padding: 8px 16px 8px 16px;
+  .mud-drawer--closed.mud-drawer-mini {
+    & > .mud-drawer-content > .mud-navmenu {
+      & .mud-nav-link .mud-icon-root:first-child + .mud-nav-link-text {
+        display: none;
+      }
     }
 
-    & * .mud-navmenu .mud-nav-item .mud-nav-link {
-      padding: 8px 16px 8px 16px;
+    .mud-nav-group {
+      & * .mud-navmenu .mud-nav-item .mud-nav-link {
+        padding: 8px 16px 8px 16px;
+      }
     }
 
-    & * .mud-navmenu > .mud-nav-group {
+    .mud-nav-group * .mud-navmenu > .mud-nav-group {
       & .mud-nav-link {
         padding: 8px 16px 8px 16px;
       }
@@ -290,7 +316,16 @@
         & * .mud-navmenu .mud-nav-item .mud-nav-link {
           padding: 8px 16px 8px 16px;
         }
+
+        & * .mud-navmenu > .mud-nav-group {
+          & .mud-nav-link {
+            padding: 8px 16px 8px 16px;
+          }
+
+          & * .mud-navmenu .mud-nav-item .mud-nav-link {
+            padding: 8px 16px 8px 16px;
+          }
+        }
       }
     }
   }
-}

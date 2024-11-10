@@ -6,6 +6,8 @@
      class="@Classname"
      style="@Style">
     <CascadingValue Value="@NavigationContext">
-        @ChildContent
+        <CascadingValue Value="@(ParentNavMenu ?? this)" IsFixed="true">
+            @ChildContent
+        </CascadingValue>
     </CascadingValue>
 </nav>
