@@ -442,7 +442,7 @@ namespace MudBlazor
         /// Defaults to <c>null</c>, which will show a numerical keyboard on Safari.  Must be a valid JavaScript regular expression.  To allow only numbers (with no signs or commas), you can use <c>[0-9.]</c>.
         /// </remarks>
         [Parameter]
-        public override string Pattern { get; set; } = null;
+        public override string? Pattern { get; set; } = null;
 
         private string GetCounterText() => Counter switch
         {
