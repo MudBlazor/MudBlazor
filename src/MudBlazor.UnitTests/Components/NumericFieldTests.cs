@@ -426,38 +426,38 @@ namespace MudBlazor.UnitTests.Components
             var numericField = comp.Instance;
 
             //MouseWheel up
-            comp.Find("input").MouseWheel(new WheelEventArgs() { DeltaY = -1, ShiftKey = true });
+            comp.Find("input").WheelAsync(new WheelEventArgs() { DeltaY = -1, ShiftKey = true });
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1235.56));
 
             //MouseWheel down
-            comp.Find("input").MouseWheel(new WheelEventArgs() { DeltaY = 1, ShiftKey = true });
+            comp.Find("input").WheelAsync(new WheelEventArgs() { DeltaY = 1, ShiftKey = true });
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.56));
 
             //Invert MouseWheel
             numericField.InvertMouseWheel = true;
 
             //MouseWheel up
-            comp.Find("input").MouseWheel(new WheelEventArgs() { DeltaY = -1, ShiftKey = true });
+            comp.Find("input").WheelAsync(new WheelEventArgs() { DeltaY = -1, ShiftKey = true });
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1233.56));
 
             //MouseWheel down
-            comp.Find("input").MouseWheel(new WheelEventArgs() { DeltaY = 1, ShiftKey = true });
+            comp.Find("input").WheelAsync(new WheelEventArgs() { DeltaY = 1, ShiftKey = true });
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.56));
 
             //Try with different step
             numericField.Step = 0.5;
 
             //MouseWheel up
-            comp.Find("input").MouseWheel(new WheelEventArgs() { DeltaY = -1, ShiftKey = true });
+            comp.Find("input").WheelAsync(new WheelEventArgs() { DeltaY = -1, ShiftKey = true });
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.06));
 
             //MouseWheel down
-            comp.Find("input").MouseWheel(new WheelEventArgs() { DeltaY = 1, ShiftKey = true });
+            comp.Find("input").WheelAsync(new WheelEventArgs() { DeltaY = 1, ShiftKey = true });
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.56));
 
             //MouseWheel without Shift doesn't do anything
-            comp.Find("input").MouseWheel(new WheelEventArgs() { DeltaY = 77, ShiftKey = false });
-            comp.Find("input").MouseWheel(new WheelEventArgs() { DeltaY = -17, ShiftKey = false });
+            comp.Find("input").WheelAsync(new WheelEventArgs() { DeltaY = 77, ShiftKey = false });
+            comp.Find("input").WheelAsync(new WheelEventArgs() { DeltaY = -17, ShiftKey = false });
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.56));
         }
 

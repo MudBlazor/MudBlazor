@@ -201,7 +201,12 @@ class MudJsEvent {
             //self.logger('[MudBlazor | JsEvent] paste (preventing default and stopping propagation)');
             e.preventDefault();
             e.stopPropagation();
-            const text = (e.originalEvent || e).clipboardData.getData('text/plain');
+            const clipboardData = ((e.originalEvent || e).clipboardData || window.clipboardData);
+            if (!clipboardData) {
+                self.logger('[MudBlazor | JsEvent] clipboardData is null', e);
+                return;
+            }
+            const text = clipboardData.getData('text/plain');
             self._dotNetRef.invokeMethodAsync('OnPaste', text);
         }
     }

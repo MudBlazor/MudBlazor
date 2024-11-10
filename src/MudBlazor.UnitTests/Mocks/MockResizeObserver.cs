@@ -1,9 +1,4 @@
-﻿
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.Interop;
 using MudBlazor.Services;
 
@@ -29,7 +24,7 @@ namespace MudBlazor.UnitTests.Mocks
 
     public class MockResizeObserver : IResizeObserver
     {
-        private Dictionary<ElementReference, BoundingClientRect> _cachedValues = new();
+        private readonly Dictionary<ElementReference, BoundingClientRect> _cachedValues = new();
 
         public bool IsVertical { get; set; } = false;
 
@@ -48,9 +43,7 @@ namespace MudBlazor.UnitTests.Mocks
                 entry.Value.Height = newSize;
             }
 
-            OnResized?.Invoke(new Dictionary<ElementReference, BoundingClientRect> {
-                    { entry.Key, entry.Value  },
-                });
+            OnResized?.Invoke(new Dictionary<ElementReference, BoundingClientRect> { { entry.Key, entry.Value }, });
         }
 
         public void UpdatePanelSize(int index, double newSize)
@@ -66,9 +59,7 @@ namespace MudBlazor.UnitTests.Mocks
                 entry.Value.Height = newSize;
             }
 
-            OnResized?.Invoke(new Dictionary<ElementReference, BoundingClientRect> {
-                    { entry.Key, entry.Value  },
-                });
+            OnResized?.Invoke(new Dictionary<ElementReference, BoundingClientRect> { { entry.Key, entry.Value }, });
         }
 
         public double PanelSize { get; set; } = 250;
@@ -115,12 +106,7 @@ namespace MudBlazor.UnitTests.Mocks
 
         public BoundingClientRect GetSizeInfo(ElementReference reference)
         {
-            if (_cachedValues.ContainsKey(reference) == false)
-            {
-                return null;
-            }
-
-            return _cachedValues[reference];
+            return _cachedValues.GetValueOrDefault(reference);
         }
         public double GetHeight(ElementReference reference) => GetSizeInfo(reference)?.Height ?? 0.0;
         public double GetWidth(ElementReference reference) => GetSizeInfo(reference)?.Width ?? 0.0;

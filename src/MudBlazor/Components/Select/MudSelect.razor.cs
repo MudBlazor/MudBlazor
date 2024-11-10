@@ -370,7 +370,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Returns whether or not the Value can be found in items. If not, the Select will display it as a string.
+        /// Returns whether the Value can be found in items. If not, the Select will display it as a string.
         /// </summary>
         protected bool CanRenderValue
         {
@@ -455,10 +455,8 @@ namespace MudBlazor
         /// </summary>
         public IReadOnlyList<MudSelectItem<T>> Items => _items;
 
-#nullable disable
-        protected Dictionary<T, MudSelectItem<T>> _valueLookup = new();
-        protected Dictionary<T, MudSelectItem<T>> _shadowLookup = new();
-#nullable enable
+        protected Dictionary<NullableObject<T?>, MudSelectItem<T>> _valueLookup = new();
+        protected Dictionary<NullableObject<T?>, MudSelectItem<T>> _shadowLookup = new();
 
         internal bool Add(MudSelectItem<T>? item)
         {
@@ -469,7 +467,7 @@ namespace MudBlazor
             {
                 _items.Add(item);
 
-                if (item.Value != null)
+                if (item.Value is not null)
                 {
                     _valueLookup[item.Value] = item;
                     if (item.Value.Equals(Value) && !MultiSelection)
@@ -487,8 +485,10 @@ namespace MudBlazor
         internal void Remove(MudSelectItem<T> item)
         {
             _items.Remove(item);
-            if (item.Value != null)
+            if (item.Value is not null)
+            {
                 _valueLookup.Remove(item.Value);
+            }
         }
 
         /// <summary>
