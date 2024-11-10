@@ -7,8 +7,8 @@
 {
     @if (Contextual)
     {
-        <SectionOutlet SectionId="MudAppBar.ContextualActionBar" />
-        <SectionContent SectionId="MudAppBar.ContextualActionBar">
+        <SectionOutlet SectionId="@ContextualActionBar" />
+        <SectionContent SectionId="@ContextualActionBar">
             @Footer
         </SectionContent>
     }
@@ -21,8 +21,8 @@ else
 {
     @if (Contextual)
     {
-        <SectionOutlet SectionId="MudAppBar.ContextualActionBar" />
-        <SectionContent SectionId="MudAppBar.ContextualActionBar">
+        <SectionOutlet SectionId="@ContextualActionBar" />
+        <SectionContent SectionId="@ContextualActionBar">
             @Header
         </SectionContent>
     }
