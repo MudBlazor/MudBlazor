@@ -103,6 +103,7 @@ namespace MudBlazor
                 _minDefault = (T)(object)float.MinValue;
                 _maxDefault = (T)(object)float.MaxValue;
                 _stepDefault = (T)(object)1.0f;
+                InputMode = InputMode.@decimal;
             }
             // double
             else if (typeof(T) == typeof(double) || typeof(T) == typeof(double?))
@@ -110,6 +111,7 @@ namespace MudBlazor
                 _minDefault = (T)(object)double.MinValue;
                 _maxDefault = (T)(object)double.MaxValue;
                 _stepDefault = (T)(object)1.0;
+                InputMode = InputMode.@decimal;
             }
             // decimal
             else if (typeof(T) == typeof(decimal) || typeof(T) == typeof(decimal?))
@@ -117,6 +119,7 @@ namespace MudBlazor
                 _minDefault = (T)(object)decimal.MinValue;
                 _maxDefault = (T)(object)decimal.MaxValue;
                 _stepDefault = (T)(object)1M;
+                InputMode = InputMode.@decimal;
             }
 
             #endregion parameters default depending on T

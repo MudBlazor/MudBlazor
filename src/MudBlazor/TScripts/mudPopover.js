@@ -306,6 +306,14 @@ window.mudpopoverHelper = {
                         offsetY = 0;
                     }
 
+                    // if it contains a mud-list set that mud-list max-height to be the remaining size on screen
+                    const list = popoverContentNode.querySelector('.mud-list');
+                    const listPadding = 24;
+                    const listMaxHeight = (window.innerHeight - top - offsetY);
+                    // is list defined and does the list calculated height exceed the listmaxheight
+                    if (list && list.offsetHeight > listMaxHeight) {
+                        list.style.maxHeight = (listMaxHeight - listPadding) + 'px';
+                    }
                     popoverContentNode.removeAttribute('data-mudpopover-flip');
                 }
 
