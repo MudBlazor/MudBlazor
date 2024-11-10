@@ -3,33 +3,16 @@
 @namespace MudBlazor
 @inherits MudComponentBase
 
-@if (Bottom)
+@if (Contextual)
 {
-    @if (Contextual)
-    {
-        <SectionOutlet SectionId="@ContextualActionBar" />
-        <SectionContent SectionId="@ContextualActionBar">
-            @Footer
-        </SectionContent>
-    }
-    else
-    {
-        @Footer
-    }
+    <SectionOutlet SectionId="@ContextualActionBar" />
+    <SectionContent SectionId="@ContextualActionBar">
+        @(Bottom ? Footer : Header)
+    </SectionContent>
 }
 else
 {
-    @if (Contextual)
-    {
-        <SectionOutlet SectionId="@ContextualActionBar" />
-        <SectionContent SectionId="@ContextualActionBar">
-            @Header
-        </SectionContent>
-    }
-    else
-    {
-        @Header
-    }
+    @(Bottom ? Footer : Header)
 }
 
 @code {
