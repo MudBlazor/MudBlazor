@@ -1202,7 +1202,7 @@ namespace MudBlazor
         {
             get
             {
-                return RenderedColumns.Any(x => !x.HiddenState.Value && (x.FooterTemplate != null || x.AggregateDefinition != null));
+                return RenderedColumns.Any(IsFooterCellDisplayable);
             }
         }
 
@@ -1263,6 +1263,16 @@ namespace MudBlazor
         }
 
         #region Methods
+
+        /// <summary>
+        /// Check if a specific Footer cell is displayable
+        /// </summary>
+        /// <param name="column"></param>
+        /// <returns><see langword="true"/> when the cell can be displayed</returns>
+        private static bool IsFooterCellDisplayable(Column<T> column)
+        {
+            return !column.HiddenState.Value && (column.FooterTemplate != null || column.AggregateDefinition != null);
+        }
 
         protected IEnumerable<T> GetItemsOfPage(int page, int pageSize)
         {

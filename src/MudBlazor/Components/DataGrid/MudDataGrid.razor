@@ -202,8 +202,16 @@
                             </tr>
                         }
 
-                        @{var resolvedPageItems = CurrentPageItems.Select((x, index)=> new IndexBag{Index = index, Item = x} ).ToList();}
-                        @if (resolvedPageItems is { Count: > 0 })
+                        @{
+                            List<IndexBag> resolvedPageItems = new List<IndexBag>(0);
+                            // resolve the page items only when used
+                            if (!Virtualize || HasFooter)
+                            {
+                                resolvedPageItems = CurrentPageItems.Select((x, index) => new IndexBag{Index = index, Item = x})
+                                                                    .ToList();
+                            }
+                        }
+                        @if (Virtualize || resolvedPageItems is { Count: > 0 })
                         {
                             if (GroupedColumn != null)
                             {
@@ -426,15 +434,9 @@
         @<text>
             @if (currentItems is not null)
             {
-                foreach (var column in RenderedColumns)
+                foreach (var column in RenderedColumns.Where(IsFooterCellDisplayable))
                 {
-                    if (!column.HiddenState.Value)
-                    {
-                        if (column.AggregateDefinition is not null || column.FooterTemplate is not null || HasFooter)
-                        {
-                            <FooterCell T="T" Column="@column" CurrentItems="@currentItems"></FooterCell>
-                        }
-                    }
+                    <FooterCell T="T" Column="@column" CurrentItems="@currentItems"></FooterCell>
                 }
             }
          </text>;
