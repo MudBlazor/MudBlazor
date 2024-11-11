@@ -3,6 +3,7 @@
 // See https://github.com/Blazored
 // Copyright (c) 2020 - Adapted by MudBlazor Contributors
 
+using System.Collections.Concurrent;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
 
@@ -24,7 +25,7 @@ namespace MudBlazor
     public partial class MudDialogProvider : IDisposable
     {
         private DialogOptions _globalDialogOptions = new();
-        private readonly List<IDialogReference> _dialogs = [];
+        private readonly ConcurrentDictionary<Guid, IDialogReference> _dialogs = [];
 
         [Inject]
         private IDialogService DialogService { get; set; } = null!;
@@ -134,7 +135,7 @@ namespace MudBlazor
         {
             if (!firstRender)
             {
-                foreach (var dialogReference in _dialogs.Where(x => !x.Result.IsCompleted))
+                foreach (var dialogReference in _dialogs.Values.Where(x => !x.Result.IsCompleted))
                 {
                     dialogReference.RenderCompleteTaskCompletionSource.TrySetResult(true);
                 }
@@ -152,8 +153,8 @@ namespace MudBlazor
 
         private Task AddInstanceAsync(IDialogReference dialog)
         {
-            _dialogs.Add(dialog);
-
+            if (!_dialogs.TryAdd(dialog.Id, dialog))
+                throw new InvalidOperationException("Guid dialog already exists.");
             return InvokeAsync(StateHasChanged);
         }
 
@@ -162,7 +163,10 @@ namespace MudBlazor
         /// </summary>
         public void DismissAll()
         {
-            _dialogs.ToList().ForEach(r => DismissInstance(r, DialogResult.Cancel()));
+            foreach (var dialog in _dialogs.Values)
+            {
+                DismissInstance(dialog, DialogResult.Cancel());
+            }
             StateHasChanged();
         }
 
@@ -170,13 +174,13 @@ namespace MudBlazor
         {
             if (!dialog.Dismiss(result)) return;
 
-            _dialogs.Remove(dialog);
+            _dialogs.Remove(dialog.Id, out var _);
             StateHasChanged();
         }
 
         private IDialogReference? GetDialogReference(Guid id)
         {
-            return _dialogs.FirstOrDefault(x => x.Id == id);
+            return _dialogs.GetValueOrDefault(id);
         }
 
         private void LocationChanged(object? sender, LocationChangedEventArgs args)
