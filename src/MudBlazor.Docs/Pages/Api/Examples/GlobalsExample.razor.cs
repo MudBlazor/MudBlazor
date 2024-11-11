@@ -2,13 +2,11 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-namespace MudBlazor.Docs.Pages.Api;
-
-#nullable enable
+namespace MudBlazor.Docs.Pages.Api.Examples;
 
 /// <summary>
-/// Represents a list of all MudBlazor components and related types.
+/// An example demonstrating how to use the <see cref="MudGlobal"/> class.
 /// </summary>
-public partial class Index
+public partial class GlobalsExample
 {
 }

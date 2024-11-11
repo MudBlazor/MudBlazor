@@ -1,0 +1,18 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudButton>Button 1 with new defaults</MudButton>
+<MudButton>Button 2 with new defaults</MudButton>
+<MudButton>Button 3 with new defaults</MudButton>
+
+@code
+{
+    protected override void OnInitialized()
+    {
+        // Make all buttons use the secondary color by default
+        MudGlobal.ButtonDefaults.Color = Color.Secondary;
+        // Make all buttons a large size by default.
+        MudGlobal.ButtonDefaults.Size = Size.Large;
+        // Make all buttons filled by default
+        MudGlobal.ButtonDefaults.Variant = Variant.Filled;
+    }
+}

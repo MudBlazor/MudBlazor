@@ -34,6 +34,7 @@
 
 <MudNavGroup Title="Component API" Expanded="@(_section == "api")" ExpandIcon="@Icons.Material.Filled.ExpandMore">
     <MudNavLink Href="/api" Match="NavLinkMatch.All">API Index</MudNavLink>
+    <MudNavLink Href="/api/globals" Match="NavLinkMatch.All">Globals</MudNavLink>
     @foreach (var item in MenuService.Api.OrderBy(x => x.Name))
     {
         <MudNavLink Href="@ApiLink.GetApiLinkFor(item.Type)">@item.Name</MudNavLink>
@@ -68,7 +69,7 @@
     }
 </MudNavGroup>
 
-    <MudNavGroup Title="Learn More" Expanded="@(_section == "mud")" ExpandIcon="@Icons.Material.Filled.ExpandMore">
+<MudNavGroup Title="Learn More" Expanded="@(_section == "mud")" ExpandIcon="@Icons.Material.Filled.ExpandMore">
     <MudNavLink Href="/mud/introduction">What is MudBlazor?</MudNavLink>
     <MudNavLink Href="/mud/announcements">Announcements</MudNavLink>
     <MudNavLink Href="/mud/community/getting-help">Getting Help</MudNavLink>

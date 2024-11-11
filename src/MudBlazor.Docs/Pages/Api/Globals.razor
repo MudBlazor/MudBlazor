@@ -1,0 +1,34 @@
+﻿@page "/api/globals"
+@using MudBlazor.Docs.Components
+@using MudBlazor.Docs.Pages.Api.Examples
+@namespace MudBlazor.Docs.Pages.Api
+
+<DocsPage>
+    <DocsPageHeader Title="Globals" SubTitle="A list of all MudBlazor components and related types." />
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader Title="Introduction">
+                <Description>
+                    The static <ApiTypeLink TypeName="MudGlobals" /> class contains default settings which can override the default settings for MudBlazor components.
+                    The following example changes all <ApiTypeLink TypeName="MudButton" /> components use a large size, secondary color, and filled variant by default.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(MudBlazor.Docs.Pages.Api.Examples.GlobalsExample)">
+                <GlobalsExample />
+            </SectionContent>
+        </DocsPageSection>
+        @foreach (var type in TypesWithGlobals)
+        {
+            <DocsPageSection>
+                <SectionHeader Title="@($"{type.NameFriendly} Globals")">
+                    <Description>
+                        These settings control the default behaviors and appearance of the <ApiTypeLink TypeName="@type.NameFriendly" /> class.
+                    </Description>
+                </SectionHeader>
+                <SectionContent Outlined="true" IsApiSection="true">
+                    <ApiMemberTable Type="@type" Mode="ApiMemberTableMode.Globals" />
+                </SectionContent>
+            </DocsPageSection>
+        }
+    </DocsPageContent>
+</DocsPage>
