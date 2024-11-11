@@ -1,4 +1,6 @@
-<MudDataGrid T="Model" Virtualize="true" VirtualizeServerData="ServerDataFunc"
+<MudDataGrid T="Model"
+             Virtualize="true"
+             VirtualizeServerData="ServerDataFunc"
              RowClick="RowClicked"
              RowClassFunc="RowClassSelected"
              FixedHeader="true"
@@ -14,11 +16,11 @@
         {
             <MudText Typo="@Typo.body2">@message</MudText>
         }
-        @if(_events.Count > 0) 
+        @if (_events.Count > 0)
         {
             <div class="d-flex">
                 <MudButton Class="mt-3" ButtonType="ButtonType.Button" Variant="Variant.Filled" OnClick="@StateHasChanged">Update</MudButton>
-                <MudSpacer/>
+                <MudSpacer />
                 <MudButton Class="mt-3" ButtonType="ButtonType.Button" Variant="Variant.Filled" OnClick="@(() => _events.Clear())">Clear</MudButton>
             </div>
         }
@@ -32,7 +34,6 @@
 
 @code {
     public record Model(int Index, string Column2);
-
     private List<string> _events = new();
     int selectedIndex;
 
@@ -53,17 +54,21 @@
             await Task.Delay(500, token);
 
             IEnumerable<Model> data = Elements;
-
+            
             data = data
                 .Skip(state.StartIndex)
                 .Take(state.Count)
                 .ToList();
 
             // Return the data
-            return new GridData<Model>() { TotalItems = Elements.Count(), Items = data.ToArray() };
+            var result = new GridData<Model>() { TotalItems = Elements.Count(), Items = data.ToArray() };
+            _events.Add($"ServerDataFunc index : {state.StartIndex} (TotalItems : {result.TotalItems})");
+
+            return result;
         }
         catch (Exception ex) when (ex is TaskCanceledException)
         {
+            _events.Add($"ServerDataFunc index : {state.StartIndex} (Cancelled)");
             return new GridData<Model>
                 {
                     Items = [],
