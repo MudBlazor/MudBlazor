@@ -26,8 +26,6 @@ public partial class DocsPageSection
 
     public int Level { get; private set; }
 
-    public string Id { get; set; } = Guid.NewGuid().ToString();
-
     protected override void OnInitialized()
     {
         base.OnInitialized();
