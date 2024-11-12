@@ -92,6 +92,31 @@ namespace MudBlazor
         /// Enables smooth color transitions for heatmap cells.
         /// </summary>
         public bool EnableSmoothGradient { get; set; } = false;
+
+        /// <summary>
+        /// The position of the X axis labels as either top or bottom in a <see cref="ChartType.HeatMap"/>.
+        /// </summary>
+        public XAxisLabelPosition XAxisLabelPosition { get; set; } = XAxisLabelPosition.Bottom;
+
+        /// <summary>
+        /// Enables tooltips for series in HeatMaps.
+        /// </summary>
+        public bool ShowToolTips { get; set; } = true;
+    }
+
+    /// <summary>
+    /// Indicates the position of the X axis labels as either top or bottom in a <see cref="ChartType.HeatMap"/>
+    /// </summary>
+    public enum XAxisLabelPosition
+    {
+        /// <summary>
+        /// The X axis labels are displayed at the top of the chart centered horizontally.
+        /// </summary>
+        Top,
+        /// <summary>
+        /// The X axis labels are displayed at the bottom of the chart centered horizontally.
+        /// </summary>
+        Bottom,
     }
 
     /// <summary>
