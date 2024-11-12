@@ -2,13 +2,14 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
 
 namespace MudBlazor
 {
 #nullable enable
-    internal sealed class DataGridColumnResizeService<T> : IAsyncDisposable
+    internal sealed class DataGridColumnResizeService<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : IAsyncDisposable
     {
         private const string EventPointerMove = "pointermove";
         private const string EventPointerUp = "pointerup";

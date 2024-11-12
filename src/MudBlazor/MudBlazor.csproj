@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
-    <TargetFrameworks>net8.0</TargetFrameworks>
+    <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -16,6 +16,7 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/MudBlazor/MudBlazor</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
   </PropertyGroup>
   
   <PropertyGroup>
@@ -74,6 +75,11 @@
     <PackageReference Include="Microsoft.AspNetCore.Components" Version="8.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.8" />
     <PackageReference Include="Microsoft.Extensions.Localization" Version="8.0.8" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net9.0' ">
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="9.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Localization" Version="9.0.0" />
   </ItemGroup>
 
   <PropertyGroup>

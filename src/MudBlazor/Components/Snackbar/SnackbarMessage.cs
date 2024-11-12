@@ -10,6 +10,7 @@ namespace MudBlazor.Components.Snackbar;
 
 internal class SnackbarMessage
 {
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
     internal Type ComponentType { get; }
     internal Dictionary<string, object>? ComponentParameters { get; }
     internal string? Key { get; }
