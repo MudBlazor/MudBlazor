@@ -1,0 +1,48 @@
+﻿@page "/customization/globals"
+
+<DocsPage>
+    <DocsPageHeader Title="Globals" SubTitle="A list of settings which affect the default behavior and appearance of MudBlazor components." />
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader Title="Global Defaults">
+                <Description>
+                    <MudText Typo="Typo.body1" Class="mb-4">
+                        The static <ApiTypeLink TypeName="MudGlobals" /> class contains default settings which can override the default settings for MudBlazor components.
+                        The following example changes all <ApiTypeLink TypeName="MudButton" /> components use a large size, secondary color, and filled variant by default.
+                    </MudText>
+
+                    <MudAlert Severity="Severity.Warning">Defaults should be set when your application initializes, such as when adding MudBlazor services.</MudAlert>
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(ButtonGlobalsStartupExample)">
+                <ButtonGlobalsExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Global Exception Handler">
+                <Description>
+                    <MudText Typo="Typo.body1" Class="mb-4">
+                        A global exception handler is available via the <CodeInline>MudGlobal.UnhandledExceptionHandler</CodeInline> property.
+                    </MudText>
+
+                    <MudAlert Severity="Severity.Warning">Defaults should be set when your application initializes, such as when adding MudBlazor services.</MudAlert>
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(GlobalExceptionHandlerExample)" />
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>
+
+@code
+{
+    private List<DocumentedType> TypesWithGlobals { get; set; }
+
+    protected override void OnInitialized()
+    {
+        // Find the types which have global settings
+        TypesWithGlobals = [.. ApiDocumentation.Types.Where(pair => pair.Value.GlobalSettings.Count > 0).Select(pair => pair.Value).OrderBy(type => type.NameFriendly)];
+        base.OnInitialized();
+    }
+}
