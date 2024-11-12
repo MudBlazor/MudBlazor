@@ -154,7 +154,7 @@ namespace MudBlazor
         private Task AddInstanceAsync(IDialogReference dialog)
         {
             if (!_dialogs.TryAdd(dialog.Id, dialog))
-                throw new InvalidOperationException("Guid dialog already exists.");
+                throw new InvalidOperationException("A dialog with this id already exists");
             return InvokeAsync(StateHasChanged);
         }
 
