@@ -8,7 +8,7 @@ on:
 jobs:
   build-test:
     name: Build and test mudblazor projects
-    uses: MudBlazor/Workflows/.github/workflows/template-build-test.yml@main
+    uses: xC0dex/Workflows/.github/workflows/template-build-test.yml@build/dotnet-9
     secrets: inherit
     with:
       check-eslint: 'MudBlazor/TScripts'
