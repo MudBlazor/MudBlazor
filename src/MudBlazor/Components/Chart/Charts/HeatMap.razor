@@ -1,47 +1,150 @@
 ﻿@namespace MudBlazor.Charts
 @using System.Globalization;
 @inherits MudCategoryChartBase
+<svg @attributes="UserAttributes" class="mud-chart-heat mud-ltr" width="@MudChartParent?.Width" height="@MudChartParent?.Height" viewBox="0 0 650 350">
+    @if (_options?.EnableSmoothGradient ?? false)
+    {
+        <defs>
+            @* Horizontal gradients *@
+            @for (int row = 0; row < _series.Count; row++)
+            {
+                @for (int col = 0; col < _series[row].Data.Length - 1; col++)
+                {
+                    var cell = _heatmapCells.FirstOrDefault(c => c.Row == row && c.Column == col);
+                    var nextCell = _heatmapCells.FirstOrDefault(c => c.Row == row && c.Column == col + 1);
+                    var currentColor = GetColorForValue(cell?.Value);
+                    var nextColor = GetColorForValue(nextCell?.Value);
 
-<svg width="@BoundWidth" height="@BoundHeight">
-    <!-- Loop through each row in the heatmap -->
+                    <linearGradient id="horizontal-gradient-@row-@col" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" style="stop-color:@currentColor" />
+                        <stop offset="100%" style="stop-color:@nextColor" />
+                    </linearGradient>
+                }
+            }
+
+            @* Vertical gradients *@
+            @for (int row = 0; row < _series.Count - 1; row++)
+            {
+                @for (int col = 0; col < _series[row].Data.Length; col++)
+                {
+                    var cell = _heatmapCells.FirstOrDefault(c => c.Row == row && c.Column == col);
+                    var nextCell = _heatmapCells.FirstOrDefault(c => c.Row == row + 1 && c.Column == col);
+                    var currentColor = GetColorForValue(cell?.Value);
+                    var nextColor = GetColorForValue(nextCell?.Value);
+
+                    <linearGradient id="vertical-gradient-@row-@col" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style="stop-color:@currentColor" />
+                        <stop offset="100%" style="stop-color:@nextColor" />
+                    </linearGradient>
+                }
+            }
+        </defs>
+    }
+
     @for (int row = 0; row < _series.Count; row++)
     {
-        var rowLabel = _series[row].Name; // Row label for the current series
-        var y = row * (BoundHeight / _series.Count) + VerticalStartSpace;
+        var padding = PaddingAll;
+        if (_options?.EnableSmoothGradient ?? false)
+        {
+            padding = 0;
+        }
+        if (!_series[row].Visible) continue;
+        var rowLabel = _series[row].Name;
+        var rowHeight = Math.Max(MinSize, 
+            (BoundHeight - VerticalStartSpace - VerticalEndSpace - (padding * (RowCount - 1))) 
+            / 
+            (RowCount + (_options?.ShowLegend == true ? 1 : 0)));
+        var y = (row * (rowHeight + padding)) + VerticalStartSpace;
 
-        <!-- Row Label -->
-        <g transform="translate(0, @y)">
-            <rect x="0" y="0" width="30" height="20" fill="lightgray" />
-            <text x="5" y="15" fill="black" font-size="12">@rowLabel</text>
+        <g transform="translate(5, @(y + rowHeight / 2))">
+            <text x="0" y="0" dominant-baseline="middle" fill="black" font-size="12">@rowLabel</text>
         </g>
 
-        <!-- Loop through each cell in the row -->
         @for (int col = 0; col < _series[row].Data.Length; col++)
         {
             var cell = _heatmapCells.FirstOrDefault(c => c.Row == row && c.Column == col);
-            var cellColor = GetColorForValue(cell?.Value);
-            var cellWidth = BoundWidth / _series[row].Data.Length;
-            var cellHeight = BoundHeight / _series.Count;
-            var x = col * cellWidth + HorizontalStartSpace;
+            var cellWidth = Math.Max(MinSize, (BoundWidth - HorizontalStartSpace - HorizontalEndSpace - padding * (SeriesLength - 1)) / SeriesLength);
+            var x = (col * (cellWidth + padding)) + HorizontalStartSpace;
 
-            <!-- Draw each heatmap cell as a colored rectangle -->
-            <rect x="@x" y="@y" width="@cellWidth" height="@cellHeight" fill="@cellColor" />
+            @if (_options?.EnableSmoothGradient ?? false)
+            {
+                // Base cell with solid color
+                <rect x="@x" y="@y" width="@cellWidth" height="@rowHeight"
+                      fill="@GetColorForValue(cell?.Value)">
+                    @if (_options?.ShowToolTips ?? false && cell?.Value != null)
+                    {
+                        <title>@cell.Value.ToString()</title>
+                    }
+                </rect>
+
+                // Horizontal gradient overlay
+                @if (col < _series[row].Data.Length - 1)
+                {
+                    <rect x="@x" y="@y" width="@cellWidth" height="@rowHeight"
+                          fill="url(#horizontal-gradient-@row-@col)"
+                          opacity="0.5">
+                        @if (_options?.ShowToolTips ?? false && cell?.Value != null)
+                        {
+                            <title>@cell.Value.ToString()</title>
+                        }
+                    </rect>
+                }
+
+                // Vertical gradient overlay
+                @if (row < _series.Count - 1)
+                {
+                    <rect x="@x" y="@y" width="@cellWidth" height="@rowHeight"
+                          fill="url(#vertical-gradient-@row-@col)"
+                          opacity="0.5">
+                        @if (_options?.ShowToolTips ?? false && cell?.Value != null)
+                        {
+                            <title>@cell.Value.ToString()</title>
+                        }
+                    </rect>
+                }
+            }
+            else
+            {
+                <rect x="@x" y="@y" width="@cellWidth" height="@rowHeight"
+                      fill="@GetColorForValue(cell?.Value)">
+                    @if (_options?.ShowToolTips ?? false && cell?.Value != null)
+                    {
+                        <title>@cell.Value.ToString()</title>
+                    }
+                </rect>
+            }
+
+            @if (row == 0 && _options?.XAxisLabelPosition == XAxisLabelPosition.Top && col < XAxisLabels.Length)
+            {
+                <g transform="translate(@(x + cellWidth / 2), @(y - 15))">
+                    <text x="0" y="0" text-anchor="middle" fill="black" font-size="12">@XAxisLabels[col]</text>
+                </g>
+            }
+            else if (row == RowCount - 1 && _options?.XAxisLabelPosition == XAxisLabelPosition.Bottom && col < XAxisLabels.Length)
+            {
+                <g transform="translate(@(x + cellWidth / 2), @(y + rowHeight + 15))">
+                    <text x="0" y="0" text-anchor="middle" fill="black" font-size="12">@XAxisLabels[col]</text>
+                </g>
+            }
         }
     }
-
-    <!-- Optional Column Labels -->
     @if (_options?.ShowLegend ?? false)
     {
-        @for (int col = 0; col < XAxisLabels.Length; col++)
-        {
-            var colLabel = XAxisLabels[col];
-            var x = col * (BoundWidth / _verticalValues.Count) + HorizontalStartSpace;
-
-            <!-- Draw column label -->
-            <g transform="translate(@x, @BoundHeight)">
-                <rect x="0" y="0" width="30" height="20" fill="lightgray" />
-                <text x="5" y="15" fill="black" font-size="12" text-anchor="middle">@colLabel</text>
-            </g>
-        }
+        <g transform="translate(480, 330)">
+            <text x="0" y="0" dominant-baseline="middle" fill="black" font-size="7.2">Less&nbsp;&nbsp;</text> 
+            @for (int i = 0; i < _legends.Count; i++)
+            {
+                var x = 16 + (i * 13); 
+                <g>
+                    <title>@_legends[i].value</title>
+                    <rect x="@x" y="-8" width="12" height="12" fill="@_legends[i].color" /> 
+                </g>
+            }
+            <text x="@(16 + (_legends.Count * 13) + 8)" y="0" dominant-baseline="middle" fill="black" font-size="7.2">More</text>
+        </g>
     }
 </svg>
+<br/>
+RowCount: @RowCount
+<br />
+SeriesLength: @SeriesLength
