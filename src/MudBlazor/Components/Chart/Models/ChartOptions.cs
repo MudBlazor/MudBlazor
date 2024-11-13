@@ -120,7 +120,7 @@ namespace MudBlazor
         /// The format applied to labels for every box in HeatMaps. 
         /// Defaults to "F2"
         /// </summary>
-        public string ShowLabelFormatString { get; set; } = "F2";
+        public string ValueFormatString { get; set; } = "F2";
     }
 
     /// <summary>

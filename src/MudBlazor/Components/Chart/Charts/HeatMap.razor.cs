@@ -219,9 +219,15 @@ namespace MudBlazor.Charts
             if (value == null)
                 return string.Empty;
 
-            var formatString = _options?.ShowLabelFormatString ?? "G";
+            var formatString = _options?.ValueFormatString ?? "G";
 
             return value.Value.ToString(formatString, CultureInfo.InvariantCulture);
+        }
+
+        private string FormatValueForDisplay(string? strValue)
+        {
+            var value = double.TryParse(strValue, out var parsedValue) ? parsedValue : (double?)null;
+            return FormatValueForDisplay(value);
         }
     }
 }

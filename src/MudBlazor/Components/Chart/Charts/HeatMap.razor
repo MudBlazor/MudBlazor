@@ -66,17 +66,19 @@
             var cellWidth = Math.Max(MinSize, (BoundWidth - HorizontalStartSpace - HorizontalEndSpace - padding * (SeriesLength - 1)) / SeriesLength);
             var x = (col * (cellWidth + padding)) + HorizontalStartSpace;
 
+            // Base cell with solid color
+            <rect x="@x" y="@y" width="@cellWidth" height="@rowHeight"
+                  fill="@GetColorForValue(cell?.Value)">                
+                @if (_options?.ShowToolTips ?? false && cell?.Value != null)
+                {
+                        // Tooltips
+                    <title>@cell.Value.ToString()</title>
+                }
+            </rect>
+
+            // Gradient Overlays
             @if (_options?.EnableSmoothGradient ?? false)
             {
-                // Base cell with solid color
-                <rect x="@x" y="@y" width="@cellWidth" height="@rowHeight"
-                      fill="@GetColorForValue(cell?.Value)">
-                    @if (_options?.ShowToolTips ?? false && cell?.Value != null)
-                    {
-                        <title>@cell.Value.ToString()</title>                        
-                    }
-                </rect>
-
                 // Horizontal gradient overlay
                 @if (col < _series[row].Data.Length - 1)
                 {
@@ -103,15 +105,15 @@
                     </rect>
                 }
             }
-            else
+
+            // Value as text over cell
+            @if (_options?.ShowLabels ?? false)
             {
-                <rect x="@x" y="@y" width="@cellWidth" height="@rowHeight"
-                      fill="@GetColorForValue(cell?.Value)">
-                    @if (_options?.ShowToolTips ?? false && cell?.Value != null)
-                    {
-                        <title>@cell.Value.ToString()</title>
-                    }
-                </rect>
+                <g transform="translate(@(x + cellWidth/2), @(y + rowHeight/2))">
+                    <text x="0" y="0" dominant-baseline="middle" text-anchor="middle" fill="black" font-size="12">
+                        @(FormatValueForDisplay(cell?.Value))
+                    </text>
+                </g>
             }
 
             @if (row == 0 && _options?.XAxisLabelPosition == XAxisLabelPosition.Top && col < XAxisLabels.Length)
@@ -137,7 +139,15 @@
                 var x = 16 + (i * 13); 
                 <g>
                     <title>@_legends[i].value</title>
-                    <rect x="@x" y="-8" width="12" height="12" fill="@_legends[i].color" /> 
+                    <rect x="@x" y="-8" width="12" height="12" fill="@_legends[i].color" />
+                    @if (_options?.ShowLabels ?? false)
+                    {
+                        <g transform="translate(@x, 0)">
+                            <text x="0" y="0" dominant-baseline="middle" text-anchor="middle" fill="black" font-size="7.2">
+                                @(FormatValueForDisplay(_legends[i].value))
+                            </text>
+                        </g>
+                    }
                 </g>
             }
             <text x="@(16 + (_legends.Count * 13) + 8)" y="0" dominant-baseline="middle" fill="black" font-size="7.2">More</text>

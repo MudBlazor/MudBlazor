@@ -2,17 +2,17 @@
 <MudChart ChartType="ChartType.HeatMap" ChartSeries="@Series" XAxisLabels="@XAxisLabels" ChartOptions="@options"></MudChart>
 <MudGrid>
     <MudItem xs="6">
-        <MudItem xs="3">
+        <MudItem xs="6">
             <MudButton OnClick="@RandomizeData" Variant="Variant.Filled">Randomize Data</MudButton>
         </MudItem>
-        <MudItem xs="3">
+        <MudItem xs="6">
             <MudButton OnClick="@SwapGradient" Variant="Variant.Filled">Swap Gradient</MudButton>
         </MudItem>
-        <MudItem xs="3">
+        <MudItem xs="6">
             <MudButton OnClick="@SwapXaxisLabel" Variant="Variant.Filled">Swap XAxis Label Position</MudButton>
         </MudItem>
-        <MudItem xs="3">
-
+        <MudItem xs="6">
+            <MudButton OnClick="@SwapValueLabels" Variant="Variant.Filled">Swap Value Labels</MudButton>
         </MudItem>
     </MudItem>
     <br/>
@@ -28,7 +28,8 @@
     private Random random = new Random();
     private List<ChartSeries> Series = new List<ChartSeries>();
     private XAxisLabelPosition XAxisLabelPosition = XAxisLabelPosition.Bottom;
-    private bool EnableGradient = false;
+    private bool _enableGradient = false;
+    private bool _showValueLabels = true;
     private int _colorCount = 5;
     private string[] _colors = ["#007AFF","#5AC8FA","#34C759","#FFCC00","#FF9500", "#FF3B30"];
 
@@ -45,12 +46,20 @@
         StateHasChanged();
     }
 
+    private void SwapValueLabels()
+    {
+        _showValueLabels = !_showValueLabels;
+        BuildOptions();
+        StateHasChanged();
+    }
+
     private void BuildOptions()
     {
         options = new ChartOptions();
         options.XAxisLabelPosition = XAxisLabelPosition;
-        options.EnableSmoothGradient = EnableGradient;
+        options.EnableSmoothGradient = _enableGradient;
         options.ChartPalette = _colors.Take(_colorCount).ToArray();
+        options.ShowLabels = _showValueLabels;
     }
 
     public List<ChartSeries> HeatMapSeries = new List<ChartSeries>()
@@ -78,7 +87,7 @@
 
     private void SwapGradient()
     {
-        EnableGradient = !EnableGradient;
+        _enableGradient = !_enableGradient;
         BuildOptions();
         StateHasChanged();
     }    
