@@ -1,4 +1,8 @@
-﻿#nullable enable
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+#nullable enable
 namespace MudBlazor
 {
     /// <summary>
@@ -89,19 +93,34 @@ namespace MudBlazor
         public double LineStrokeWidth { get; set; } = 3;
 
         /// <summary>
-        /// Enables smooth color transitions for heatmap cells.
+        /// Enables smooth color transitions for heatmap cells and removes all padding between cells.
+        /// Defaults to false
         /// </summary>
         public bool EnableSmoothGradient { get; set; } = false;
 
         /// <summary>
         /// The position of the X axis labels as either top or bottom in a <see cref="ChartType.HeatMap"/>.
+        /// Defaults to <see cref="XAxisLabelPosition.Bottom"/>
         /// </summary>
         public XAxisLabelPosition XAxisLabelPosition { get; set; } = XAxisLabelPosition.Bottom;
 
         /// <summary>
         /// Enables tooltips for series in HeatMaps.
+        /// Defaults to true
         /// </summary>
         public bool ShowToolTips { get; set; } = true;
+
+        /// <summary>
+        /// Enables labels for every box in HeatMaps.
+        /// Defaults to false
+        /// </summary>
+        public bool ShowLabels { get; set; } = true;
+
+        /// <summary>
+        /// The format applied to labels for every box in HeatMaps. 
+        /// Defaults to "F2"
+        /// </summary>
+        public string ShowLabelFormatString { get; set; } = "F2";
     }
 
     /// <summary>

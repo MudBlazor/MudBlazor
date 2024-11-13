@@ -45,7 +45,7 @@ namespace MudBlazor.Charts
                 if (_options == null || _options != MudChartParent.ChartOptions)
                 {
                     _options = MudChartParent.ChartOptions;
-                    //colorPalette = _options.ChartPalette ?? colorPalette;
+                    colorPalette = _options.ChartPalette ?? colorPalette;
                 }
                 if (_series.Count == 0 ||
                     (MudChartParent.ChartSeries.Count > 0 &&
@@ -62,14 +62,17 @@ namespace MudBlazor.Charts
         private void InitializeHeatmap()
         {
             // Populate _heatmapCells based on data, e.g., matrix of values
-            _heatmapCells = [];
+            _heatmapCells.Clear();
+            _minValue = 0;
+            _maxValue = 1;
 
-            var rows = _series.Count; // # of rows
+            // # of rows
+            var rows = _series.Count;
             // cols should be the max number of data[] in all series
             var cols = _series.Max(series => series.Data.Length);
 
-            double cellWidth = 650 / cols;
-            double cellHeight = 350 / rows;
+            var cellWidth = BoundWidth / cols;
+            var cellHeight = BoundHeight / rows;
 
             for (var row = 0; row < rows; row++)
             {
@@ -89,6 +92,21 @@ namespace MudBlazor.Charts
                     }
                 }
             }
+
+            BuildLegends();
+        }
+
+        private void BuildLegends()
+        {
+            _legends.Clear();
+            var colors = GetEqualizedColorPalette(5); // Always generate 5 shades
+
+            for (var i = 0; i < colors.Length; i++)
+            {
+                var t = i / (double)(colors.Length - 1);
+                var value = _minValue + t * (_maxValue - _minValue);
+                _legends.Add((value.ToString("F2", CultureInfo.InvariantCulture), colors[i]));
+            }
         }
 
         private double? GetDataValue(int row, int col)
@@ -107,44 +125,40 @@ namespace MudBlazor.Charts
             {
                 return "#fff"; // Default color for missing data
             }
-            _legends.Clear();
-            var colors = GetEqualizedColorPalette(5); // Always generate 5 shades
 
-            // Determine index based on normalized value
+            // Find the closest matching color in the legends
             var normalizedValue = Math.Clamp((value.Value - _minValue) / (_maxValue - _minValue), 0, 1);
-            var index = (int)Math.Floor(normalizedValue * (colors.Length - 1));
-            return colors[Math.Clamp(index, 0, colors.Length - 1)];
+            var legendIndex = (int)Math.Floor(normalizedValue * (_legends.Count - 1));
+            return _legends[Math.Clamp(legendIndex, 0, _legends.Count - 1)].color;
         }
 
         private string[] GetEqualizedColorPalette(int shadeCount)
         {
+            // Equalizes between 1 and 5 user colors supplied
             string[] baseColors = colorPalette;
             var colorCount = baseColors.Length;
 
             var interpolatedColors = new string[shadeCount];
-            if (_legends.Count == 0) // if legend doesn't exist, create it
+            for (var i = 0; i < shadeCount; i++)
             {
-                for (var i = 0; i < shadeCount; i++)
+                var t = i / (double)(shadeCount - 1); // Normalized between 0 and 1
+
+                if (colorCount == 1)
                 {
-                    var t = i / (double)(shadeCount - 1); // Normalized between 0 and 1
+                    // When there's only one color, vary the alpha or lightness
+                    // we don't allow a 0 here instead moving it to a .1 lightness at the minimum
+                    var tValue = t == 0 ? .1 : t;
+                    var color = AdjustAlpha(baseColors[0], tValue);
+                    interpolatedColors[i] = color;
+                }
+                else
+                {
+                    // For multiple colors, interpolate as before
+                    var colorIndex = (int)Math.Floor(t * (colorCount - 1));
+                    var nextColorIndex = Math.Min(colorIndex + 1, colorCount - 1);
 
-                    if (colorCount == 1)
-                    {
-                        // When there's only one color, vary the alpha or lightness
-                        var color = AdjustAlpha(baseColors[0], t == 0 ? .1 : t);
-                        interpolatedColors[i] = color;
-                        _legends.Add((value: (_minValue + t * (_maxValue - _minValue)).ToString("F2", CultureInfo.InvariantCulture), color: color));
-                    }
-                    else
-                    {
-                        // For multiple colors, interpolate as before
-                        var colorIndex = (int)Math.Floor(t * (colorCount - 1));
-                        var nextColorIndex = Math.Min(colorIndex + 1, colorCount - 1);
-
-                        var color = InterpolateColor(baseColors[colorIndex], baseColors[nextColorIndex], t);
-                        interpolatedColors[i] = color;
-                        _legends.Add((value: (_minValue + t * (_maxValue - _minValue)).ToString("F2", CultureInfo.InvariantCulture), color: color));
-                    }
+                    var color = InterpolateColor(baseColors[colorIndex], baseColors[nextColorIndex], t);
+                    interpolatedColors[i] = color;
                 }
             }
             return interpolatedColors;
@@ -200,6 +214,14 @@ namespace MudBlazor.Charts
             var b = int.Parse(values[2]);
             return (r, g, b);
         }
+        private string FormatValueForDisplay(double? value)
+        {
+            if (value == null)
+                return string.Empty;
 
+            var formatString = _options?.ShowLabelFormatString ?? "G";
+
+            return value.Value.ToString(formatString, CultureInfo.InvariantCulture);
+        }
     }
 }

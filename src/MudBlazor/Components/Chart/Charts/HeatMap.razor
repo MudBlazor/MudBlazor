@@ -73,7 +73,7 @@
                       fill="@GetColorForValue(cell?.Value)">
                     @if (_options?.ShowToolTips ?? false && cell?.Value != null)
                     {
-                        <title>@cell.Value.ToString()</title>
+                        <title>@cell.Value.ToString()</title>                        
                     }
                 </rect>
 
@@ -131,7 +131,7 @@
     @if (_options?.ShowLegend ?? false)
     {
         <g transform="translate(480, 330)">
-            <text x="0" y="0" dominant-baseline="middle" fill="black" font-size="7.2">Less&nbsp;&nbsp;</text> 
+            <text x="0" y="0" dx="-8" dominant-baseline="middle" fill="black" font-size="7.2">Less</text> 
             @for (int i = 0; i < _legends.Count; i++)
             {
                 var x = 16 + (i * 13); 
