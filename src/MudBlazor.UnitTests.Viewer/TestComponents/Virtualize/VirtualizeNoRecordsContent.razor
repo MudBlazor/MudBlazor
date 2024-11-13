@@ -1,0 +1,110 @@
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+<MudGrid>
+    <MudItem xs="6">
+        <MudText Typo="Typo.h6">Item provider</MudText>
+        <MudVirtualize Enabled="true"
+                       ItemsProvider="ServerDataFunc"
+                       Context="itemBag">
+            <Placeholder>
+                <tr class="mud-table-row">
+                    <td class="mud-table-cell" colspan="1000">
+                        Loading...
+                    </td>
+                </tr>
+            </Placeholder>
+
+            <ChildContent>
+                <tr class="mud-table-row">
+                    <td class="mud-table-cell" colspan="1000">
+                        [Content]
+                    </td>
+                </tr>
+            </ChildContent>
+            <NoRecordsContent>
+                <tr class="mud-table-row">
+                    <td class="mud-table-cell" colspan="1000">
+                        No data
+                    </td>
+                </tr>
+            </NoRecordsContent>
+        </MudVirtualize>
+    </MudItem>
+    <MudItem xs="6">
+        <MudText Typo="Typo.h6">Items virtualized</MudText>
+        <MudVirtualize Enabled="true"
+                       Items="_emptyList"
+                       Context="itemBag">
+            <Placeholder>
+                <tr class="mud-table-row">
+                    <td class="mud-table-cell" colspan="1000">
+                        Loading...
+                    </td>
+                </tr>
+            </Placeholder>
+
+            <ChildContent>
+                <tr class="mud-table-row">
+                    <td class="mud-table-cell" colspan="1000">
+                        [Content]
+                    </td>
+                </tr>
+            </ChildContent>
+            <NoRecordsContent>
+                <tr class="mud-table-row">
+                    <td class="mud-table-cell" colspan="1000">
+                        No data
+                    </td>
+                </tr>
+            </NoRecordsContent>
+        </MudVirtualize>
+    </MudItem>
+    <MudItem xs="6">
+        <MudText Typo="Typo.h6">Items row</MudText>
+        <MudVirtualize Enabled="false"
+                       Items="_emptyList"
+                       Context="itemBag">
+            <Placeholder>
+                <tr class="mud-table-row">
+                    <td class="mud-table-cell" colspan="1000">
+                        Loading...
+                    </td>
+                </tr>
+            </Placeholder>
+
+            <ChildContent>
+                <tr class="mud-table-row">
+                    <td class="mud-table-cell" colspan="1000">
+                        [Content]
+                    </td>
+                </tr>
+            </ChildContent>
+            <NoRecordsContent>
+                <tr class="mud-table-row">
+                    <td class="mud-table-cell" colspan="1000">
+                        No data
+                    </td>
+                </tr>
+            </NoRecordsContent>
+        </MudVirtualize>
+    </MudItem>
+</MudGrid>
+
+@code {
+    public static string __description__ = @"The Virtualize component must show 'No data'.";
+
+    public record VirtualizeModel(int Index, string Column2);
+
+    List<VirtualizeModel> _emptyList = new List<VirtualizeModel>();
+
+    /// <summary>
+    /// Reloads the data from the server, with support for cancellation.
+    /// </summary>
+    private async ValueTask<ItemsProviderResult<VirtualizeModel>> ServerDataFunc(ItemsProviderRequest request)
+    {
+        await Task.Delay(500, request.CancellationToken)
+            //Do not throw
+            .ContinueWith(x=>Task.CompletedTask);
+
+        return new ItemsProviderResult<VirtualizeModel>([], 0);
+    }
+}

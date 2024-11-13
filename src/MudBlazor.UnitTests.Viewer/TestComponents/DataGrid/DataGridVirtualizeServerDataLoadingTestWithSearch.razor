@@ -18,7 +18,7 @@
             <NoRecordsContent>
                 <tr class="mud-table-row">
                     <td class="mud-table-cell" colspan="1000">
-                        No content
+                        No data
                     </td>
                 </tr>
             </NoRecordsContent>
@@ -62,6 +62,13 @@
                                     </td>
                                 </tr>
                             </Placeholder>
+                            <EmptyContent>
+                                <tr class="mud-table-row">
+                                    <td class="mud-table-cell" colspan="1000">
+                                        No data
+                                    </td>
+                                </tr>
+                            </EmptyContent>
                         </Virtualize>
                     </tbody>
                 </table>
@@ -103,7 +110,7 @@
     private IEnumerable<Model> _sourceElements;
     private IEnumerable<Model> Elements;
 
-    public static string __description__ = @"The data grid should reload data correctly when using VirtualizeServerData with external filter";
+    public static string __description__ = @"The data grid should reload data correctly when using VirtualizeServerData with external filter. Empty result must show 'No data'.";
 
     public DataGridVirtualizeServerDataLoadingTestWithSearch()
     {
