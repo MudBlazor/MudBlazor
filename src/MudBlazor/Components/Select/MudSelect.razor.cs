@@ -23,6 +23,12 @@ namespace MudBlazor
         protected internal List<MudSelectItem<T>> _items = new();
         private string _elementId = Identifier.Create("select");
 
+        protected string PopoverClassname => 
+            new CssBuilder()
+                .AddClass("mud-popover-adaptive-width", !FullWidth)
+                .AddClass(PopoverClass)
+                .Build();
+
         protected string OuterClassname =>
             new CssBuilder("mud-select")
                 .AddClass(OuterClass)
