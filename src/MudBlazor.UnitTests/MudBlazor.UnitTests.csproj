@@ -41,7 +41,7 @@
     </PackageReference>
     <PackageReference Include="FluentAssertions" Version="6.12.2" />
     <PackageReference Include="FluentValidation" Version="11.10.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Razor.Language" Version="6.0.33" />
+    <PackageReference Include="Microsoft.AspNetCore.Razor.Language" Version="6.0.36" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.11.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="4.11.0" />
     <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" Version="8.10.0" />
