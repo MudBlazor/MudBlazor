@@ -69,12 +69,12 @@ namespace MudBlazor
         /// Defaults to an array of <c>20</c> colors.
         /// </remarks>
         public string[] ChartPalette { get; set; } =
-        {
+        [
             Colors.Blue.Accent3, Colors.Teal.Accent3, Colors.Amber.Accent3, Colors.Orange.Accent3, Colors.Red.Accent3,
             Colors.DeepPurple.Accent3, Colors.Green.Accent3, Colors.LightBlue.Accent3, Colors.Teal.Lighten1, Colors.Amber.Lighten1,
             Colors.Orange.Lighten1, Colors.Red.Lighten1, Colors.DeepPurple.Lighten1, Colors.Green.Lighten1, Colors.LightBlue.Lighten1,
             Colors.Amber.Darken2, Colors.Orange.Darken2, Colors.Red.Darken2, Colors.DeepPurple.Darken2, Colors.Gray.Darken2
-        };
+        ];
 
         /// <summary>
         /// The technique used to smooth lines.
@@ -93,7 +93,13 @@ namespace MudBlazor
         public double LineStrokeWidth { get; set; } = 3;
 
         /// <summary>
-        /// Enables smooth color transitions for heatmap cells and removes all padding between cells.
+        /// The position of the legend in a <see cref="ChartType.HeatMap"/>.
+        /// Defaults to <see cref="ShowLegendPosition.Bottom"/>
+        /// </summary>
+        public ShowLegendPosition ShowLegendPosition { get; set; } = ShowLegendPosition.Bottom;
+
+        /// <summary>
+        /// Enables smooth color transitions for heatmap cells and removes all padding between cells in a <see cref="ChartType.HeatMap"/>
         /// Defaults to false
         /// </summary>
         public bool EnableSmoothGradient { get; set; } = false;
@@ -105,22 +111,39 @@ namespace MudBlazor
         public XAxisLabelPosition XAxisLabelPosition { get; set; } = XAxisLabelPosition.Bottom;
 
         /// <summary>
-        /// Enables tooltips for series in HeatMaps.
+        /// The position of the Y axis labels as either left or right in a <see cref="ChartType.HeatMap"/>.
+        /// Defaults to <see cref="YAxisLabelPosition.Left"/>
+        /// </summary>
+        public YAxisLabelPosition YAxisLabelPosition { get; set; } = YAxisLabelPosition.Left;
+
+        /// <summary>
+        /// Enables tooltips for series in a <see cref="ChartType.HeatMap"/>
         /// Defaults to true
         /// </summary>
         public bool ShowToolTips { get; set; } = true;
 
         /// <summary>
-        /// Enables labels for every box in HeatMaps.
+        /// Enables labels for every box in a <see cref="ChartType.HeatMap"/>
         /// Defaults to false
         /// </summary>
         public bool ShowLabels { get; set; } = true;
 
         /// <summary>
-        /// The format applied to labels for every box in HeatMaps. 
+        /// The format applied to labels for every box in a <see cref="ChartType.HeatMap"/>
         /// Defaults to "F2"
         /// </summary>
         public string ValueFormatString { get; set; } = "F2";
+    }
+
+    /// <summary>
+    /// Indicates the position of the legend in a <see cref="ChartType.HeatMap"/>.
+    /// </summary>
+    public enum ShowLegendPosition
+    {
+        Top,
+        Bottom,
+        Left,
+        Right,
     }
 
     /// <summary>
@@ -136,6 +159,21 @@ namespace MudBlazor
         /// The X axis labels are displayed at the bottom of the chart centered horizontally.
         /// </summary>
         Bottom,
+    }
+
+    /// <summary>
+    /// Indicates the position of the Y axis labels as either left or right in a <see cref="ChartType.HeatMap"/>
+    /// </summary>
+    public enum YAxisLabelPosition
+    {
+        /// <summary>
+        /// The Y axis labels are displayed at the left of the chart
+        /// </summary>
+        Left,
+        /// <summary>
+        /// The Y Axis labels are displayed at the right of the chart
+        /// </summary>
+        Right,
     }
 
     /// <summary>

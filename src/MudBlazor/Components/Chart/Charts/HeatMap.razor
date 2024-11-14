@@ -1,6 +1,7 @@
 ﻿@namespace MudBlazor.Charts
 @using System.Globalization;
 @inherits MudCategoryChartBase
+
 <svg @attributes="UserAttributes" class="mud-chart-heat mud-ltr" width="@MudChartParent?.Width" height="@MudChartParent?.Height" viewBox="0 0 650 350">
     @if (_options?.EnableSmoothGradient ?? false)
     {
@@ -48,15 +49,24 @@
         }
         if (!_series[row].Visible) continue;
         var rowLabel = _series[row].Name;
-        var rowHeight = Math.Max(MinSize, 
-            (BoundHeight - VerticalStartSpace - VerticalEndSpace - (padding * (RowCount - 1))) 
-            / 
-            (RowCount + (_options?.ShowLegend == true ? 1 : 0)));
+        var rowHeight = Math.Max(MinSize,
+        (BoundHeight - VerticalStartSpace - VerticalEndSpace - (padding * (RowCount - 1)))
+        /
+        (RowCount));
         var y = (row * (rowHeight + padding)) + VerticalStartSpace;
 
-        <g transform="translate(5, @(y + rowHeight / 2))">
-            <text x="0" y="0" dominant-baseline="middle" fill="black" font-size="12">@rowLabel</text>
-        </g>
+        @if (_options?.YAxisLabelPosition == YAxisLabelPosition.Left)
+        {
+            <g transform="translate(@(HorizontalStartSpace - 15), @(y + rowHeight / 2))">
+                <text x="0" y="0" dominant-baseline="middle" text-anchor="end" fill="black" font-size="12">@rowLabel</text>
+            </g>
+        }
+        else
+        {
+            <g transform="translate(@(HorizontalStartSpace + HeatmapWidth + 15), @(y + rowHeight / 2))">
+                <text x="0" y="0" dominant-baseline="middle" text-anchor="start" fill="black" font-size="12">@rowLabel</text>
+            </g>
+        }
 
         @for (int col = 0; col < _series[row].Data.Length; col++)
         {
@@ -76,8 +86,8 @@
 
             // Cell with solid background, text label if needed and tooltip if needed
             <g>
-                <rect x="@x" y="@y" width="@cellWidth" height="@rowHeight" 
-                    fill="@(_options?.EnableSmoothGradient ?? false ? "transparent" : GetColorForValue(cell?.Value))" />
+                <rect x="@x" y="@y" width="@cellWidth" height="@rowHeight"
+                      fill="@(_options?.EnableSmoothGradient ?? false ? "transparent" : GetColorForValue(cell?.Value))" />
 
                 @if (_options?.ShowToolTips ?? false && cell?.Value != null)
                 {
@@ -104,31 +114,126 @@
             }
         }
     }
+
     @if (_options?.ShowLegend ?? false)
     {
-        <g transform="translate(480, 330)">
-            <text x="0" y="0" dx="-8" dominant-baseline="middle" fill="black" font-size="7.2">Less</text> 
-            @for (int i = 0; i < _legends.Count; i++)
-            {
-                var x = 16 + (i * 13); 
-                <g>
-                    <title>@_legends[i].value</title>
-                    <rect x="@x" y="-8" width="12" height="12" fill="@_legends[i].color" />
-                    @if (_options?.ShowLabels ?? false)
-                    {
-                        <g transform="translate(@x, 0)">
-                            <text x="0" y="0" dominant-baseline="middle" text-anchor="middle" fill="black" font-size="7.2">
-                                @(FormatValueForDisplay(_legends[i].value))
-                            </text>
-                        </g>
-                    }
-                </g>
-            }
-            <text x="@(16 + (_legends.Count * 13) + 8)" y="0" dominant-baseline="middle" fill="black" font-size="7.2">More</text>
-        </g>
+        var (legendX, legendY) = GetLegendPosition();
+        @switch (_options?.ShowLegendPosition)
+        {
+            case ShowLegendPosition.Top:
+                {
+                    var totalWidth = (_legends.Count * 30) + 35; // Increased spacing between boxes
+                    var offsetX = -totalWidth / 2; // Center horizontally
+                    <g transform="translate(@(legendX + offsetX), @legendY)">
+                        <text x="-25" y="0" dominant-baseline="middle" text-anchor="end" fill="black" font-size="8">Less</text>
+                        @for (int i = 0; i < _legends.Count; i++)
+                        {
+                            var x = i * 30;
+                            <g transform="translate(@x, 0)">
+                                <rect x="0" y="-9" width="18" height="18" fill="@_legends[i].color">
+                                    @if (_options?.ShowToolTips ?? false)
+                                    {
+                                        <title>@_legends[i].value</title>
+                                    }
+                                </rect>
+                                @if (_options?.ShowLabels ?? false)
+                                {
+                                    <line x1="9" y1="-9" x2="9" y2="-11" stroke="black" stroke-width="1" />
+                                    @((MarkupString)GetLegendLabel(9, -19, "middle", _legends[i].value))
+                                }
+                            </g>
+                        }
+                        <text x="@(_legends.Count * 30 + 10)" y="0" dominant-baseline="middle" text-anchor="start" fill="black" font-size="8">More</text>
+                    </g>
+                }
+                break;
+            case ShowLegendPosition.Right:
+                {
+                    var totalHeight = (_legends.Count * 30) + 35; // Increased spacing between boxes
+                    var offsetY = -totalHeight / 2; // Center vertically
+                    <g transform="translate(@legendX, @(legendY + offsetY))">
+                        <text x="9" y="-25" dominant-baseline="middle" text-anchor="middle" fill="black" font-size="8">Less</text>
+                        @for (int i = 0; i < _legends.Count; i++)
+                        {
+                            var y = i * 30;
+                            <g transform="translate(0, @y)">
+                                <rect x="0" y="-9" width="18" height="18" fill="@_legends[i].color">
+                                    @if (_options?.ShowToolTips ?? false)
+                                    {
+                                        <title>@_legends[i].value</title>
+                                    }
+                                </rect>
+                                @if (_options?.ShowLabels ?? false)
+                                {
+                                    <line x1="18" y1="0" x2="17" y2="0" stroke="black" stroke-width="1" />
+                                    @((MarkupString)GetLegendLabel(22, 0, "start", _legends[i].value))
+                                }
+                            </g>
+                        }
+                        <text x="9" y="@(_legends.Count * 30 + 10)" dominant-baseline="middle" text-anchor="middle" fill="black" font-size="8">More</text>
+                    </g>
+                }
+                break;
+            case ShowLegendPosition.Bottom:
+                {
+                    var totalWidth = (_legends.Count * 30) + 35; // Increased spacing between boxes
+                    var offsetX = -totalWidth / 2; // Center horizontally
+                    <g transform="translate(@(legendX + offsetX), @legendY)">
+                        <text x="-25" y="0" dominant-baseline="middle" text-anchor="end" fill="black" font-size="8">Less</text>
+                        @for (int i = 0; i < _legends.Count; i++)
+                        {
+                            var x = i * 30;
+                            <g transform="translate(@x, 0)">
+                                <rect x="0" y="-9" width="18" height="18" fill="@_legends[i].color">
+                                    @if (_options?.ShowToolTips ?? false)
+                                    {
+                                        <title>@_legends[i].value</title>
+                                    }
+                                </rect>
+                                @if (_options?.ShowLabels ?? false)
+                                {
+                                    <line x1="9" y1="9" x2="9" y2="11" stroke="black" stroke-width="1" />
+                                    @((MarkupString)GetLegendLabel(9, 19, "middle", _legends[i].value))
+                                }
+                            </g>
+                        }
+                        <text x="@(_legends.Count * 30 + 10)" y="0" dominant-baseline="middle" text-anchor="start" fill="black" font-size="8">More</text>
+                    </g>
+                }
+                break;
+            case ShowLegendPosition.Left:
+                {
+                    var totalHeight = (_legends.Count * 30) + 35; // Increased spacing between boxes
+                    var offsetY = -totalHeight / 2; // Center vertically
+                    <g transform="translate(@legendX, @(legendY + offsetY))">
+                        <text x="9" y="-25" dominant-baseline="middle" text-anchor="middle" fill="black" font-size="8">Less</text>
+                        @for (int i = 0; i < _legends.Count; i++)
+                        {
+                            var y = i * 30;
+                            <g transform="translate(0, @y)">
+                                <rect x="0" y="-9" width="18" height="18" fill="@_legends[i].color">
+                                    @if (_options?.ShowToolTips ?? false)
+                                    {
+                                        <title>@_legends[i].value</title>
+                                    }
+                                </rect>
+                                @if (_options?.ShowLabels ?? false)
+                                {
+                                    <line x1="0" y1="0" x2="-8" y2="0" stroke="black" stroke-width="1" />
+                                    @((MarkupString)GetLegendLabel(-13, 0, "end", _legends[i].value))
+                                }
+                            </g>
+                        }
+                        <text x="9" y="@(_legends.Count * 30 + 10)" dominant-baseline="middle" text-anchor="middle" fill="black" font-size="8">More</text>
+                    </g>
+                }
+                break;
+            default:
+                break;
+        }
     }
 </svg>
-<br/>
+<br />
 RowCount: @RowCount
 <br />
 SeriesLength: @SeriesLength

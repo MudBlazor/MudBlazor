@@ -1,37 +1,103 @@
 ﻿
-<MudChart ChartType="ChartType.HeatMap" ChartSeries="@Series" XAxisLabels="@XAxisLabels" ChartOptions="@options"></MudChart>
 <MudGrid>
-    <MudItem xs="6">
-        <MudItem xs="6">
-            <MudButton OnClick="@RandomizeData" Variant="Variant.Filled">Randomize Data</MudButton>
-        </MudItem>
-        <MudItem xs="6">
-            <MudButton OnClick="@SwapGradient" Variant="Variant.Filled">Swap Gradient</MudButton>
-        </MudItem>
-        <MudItem xs="6">
-            <MudButton OnClick="@SwapXaxisLabel" Variant="Variant.Filled">Swap XAxis Label Position</MudButton>
-        </MudItem>
-        <MudItem xs="6">
-            <MudButton OnClick="@SwapValueLabels" Variant="Variant.Filled">Swap Value Labels</MudButton>
-        </MudItem>
+    <MudItem xs="2" Class="d-flex align-center">
+        <MudRadioGroup T="ShowLegendPosition" Value="_showLegendPosition" ValueChanged="@((ShowLegendPosition value) => ShowLegendPositionChanged(value))" Class="d-flex flex-column align-center justify-center">
+
+            <!-- Top Radio -->
+            <MudItem xs="12" Class="d-flex justify-center align-center">
+                <MudRadio Color="Color.Primary" Value="ShowLegendPosition.Top" Dense>Top</MudRadio>
+            </MudItem>
+
+            <MudItem xs="12" Class="d-flex justify-center py-2">
+                <MudGrid Class="align-center justify-center">
+                    <!-- Left Radio -->
+                    <MudItem xs="4" Class="d-flex align-center justify-center">
+                        <MudRadio Color="Color.Primary" Value="ShowLegendPosition.Left" Dense>Left</MudRadio>
+                    </MudItem>
+
+                    <!-- Center Badge -->
+                    <MudItem xs="4" Class="d-flex align-center justify-center">
+                        <MudBadge Origin="@_anchorOrigin" Color="Color.Primary" Dot="true" Overlap Elevation="4" BadgeClass="ma-2">
+                            <MudPaper Elevation="0" Outlined="true" Class="pa-6">
+                                <MudText Align="Align.Center">Heat Map</MudText>
+                            </MudPaper>
+                        </MudBadge>
+                    </MudItem>
+
+                    <!-- Right Radio -->
+                    <MudItem xs="4" Class="d-flex align-center justify-center">
+                        <MudRadio Color="Color.Primary" Value="ShowLegendPosition.Right" Dense>Right</MudRadio>
+                    </MudItem>
+                </MudGrid>
+            </MudItem>
+
+            <!-- Bottom Radio -->
+            <MudItem xs="12" Class="d-flex justify-center align-center">
+                <MudRadio Color="Color.Primary" Value="ShowLegendPosition.Bottom" Dense>Bottom</MudRadio>
+            </MudItem>
+
+        </MudRadioGroup>
     </MudItem>
-    <br/>
-    <MudItem xs="4">
-        <MudNumericField Label="Number of Colors Used" Value="_colorCount" ValueChanged="@((int value) => ColorCountChanged(value))" Min="1" Max="5" Step="1" />
+    <MudItem xs="10">
+        <MudChart ChartType="ChartType.HeatMap" ChartSeries="@Series" XAxisLabels="@XAxisLabels" ChartOptions="@options"></MudChart>
     </MudItem>
 </MudGrid>
-
-
+<MudGrid>
+    <MudItem xs="2">
+        <MudButton OnClick="@RandomizeData" Variant="Variant.Filled">Randomize Data</MudButton>
+    </MudItem>
+    <MudItem xs="2">
+        <MudCheckBox T="bool" Value="@_enableGradient" ValueChanged="@((bool value) => SwapGradient())" Color="Color.Primary">
+            Smooth Gradient
+        </MudCheckBox>
+    </MudItem>
+    <MudItem xs="3">
+        <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center">
+            <MudText Class="pr-1">YAxis Labels Left</MudText>
+            <MudSwitch T="bool" Value="@(_YAxisLabelPosition == YAxisLabelPosition.Left ? false : true)" ValueChanged="SwapYaxisLabel" Color="Color.Primary">
+                Right
+            </MudSwitch>
+        </MudStack>
+    </MudItem>
+    <MudItem xs="3">
+        <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center">
+            <MudText Class="pr-1">XAxis Labels Top</MudText>
+            <MudSwitch T="bool" Value="@(_XAxisLabelPosition == XAxisLabelPosition.Top ? false : true)" ValueChanged="SwapXaxisLabel" Color="Color.Primary">
+                Bottom
+            </MudSwitch>
+        </MudStack>
+    </MudItem>
+    <MudItem xs="2"></MudItem>
+    <MudItem xs="2">
+        <MudNumericField Label="Number of Colors Used" Value="_colorCount" ValueChanged="@((int value) => ColorCountChanged(value))" Min="1" Max="5" Step="1" />
+    </MudItem>
+    <MudItem xs="2">
+        <MudCheckBox T="bool" Value="@_legendVisible" ValueChanged="@((bool value) => SwapLegendVisible(value))" Color="Color.Primary">
+            Show Legend
+        </MudCheckBox>
+    </MudItem>
+    <MudItem xs="2">
+        <MudCheckBox T="bool" Value="@_showValueLabels" ValueChanged="@((bool value) => SwapValueLabels())" Color="Color.Primary">
+            Show Values
+        </MudCheckBox>
+    </MudItem>
+   <MudItem xs="6"></MudItem>
+</MudGrid>
 
 @code {
+    public static string __description__ = "HeatMap Demo";
     private ChartOptions options = new ChartOptions();
     private Random random = new Random();
     private List<ChartSeries> Series = new List<ChartSeries>();
-    private XAxisLabelPosition XAxisLabelPosition = XAxisLabelPosition.Bottom;
+    private XAxisLabelPosition _XAxisLabelPosition = XAxisLabelPosition.Bottom;
+    private YAxisLabelPosition _YAxisLabelPosition = YAxisLabelPosition.Left;
     private bool _enableGradient = false;
     private bool _showValueLabels = true;
+    private bool _legendVisible = true;
+    private ShowLegendPosition _showLegendPosition = ShowLegendPosition.Top;
+    private Origin _anchorOrigin = Origin.TopCenter;
     private int _colorCount = 5;
-    private string[] _colors = ["#007AFF","#5AC8FA","#34C759","#FFCC00","#FF9500", "#FF3B30"];
+    private string[] _colors = ["#007AFF", "#5AC8FA", "#34C759", "#FFCC00", "#FF9500", "#FF3B30"];
 
     protected override void OnInitialized()
     {
@@ -46,6 +112,30 @@
         StateHasChanged();
     }
 
+    private void ShowLegendPositionChanged(ShowLegendPosition value)
+    {
+        _showLegendPosition = value;
+        switch (value)
+        {
+            case ShowLegendPosition.Top:
+                _anchorOrigin = Origin.TopCenter;
+                break;
+            case ShowLegendPosition.Left:
+                _anchorOrigin = Origin.CenterLeft;
+                break;
+            case ShowLegendPosition.Right:
+                _anchorOrigin = Origin.CenterRight;
+                break;
+            case ShowLegendPosition.Bottom:
+                _anchorOrigin = Origin.BottomCenter;
+                break;
+            default:
+                break;
+        }
+        BuildOptions();
+        StateHasChanged();
+    }
+
     private void SwapValueLabels()
     {
         _showValueLabels = !_showValueLabels;
@@ -53,13 +143,23 @@
         StateHasChanged();
     }
 
+    private void SwapLegendVisible(bool value)
+    {
+        _legendVisible = value;
+        BuildOptions();
+        StateHasChanged();
+    }
+
     private void BuildOptions()
     {
         options = new ChartOptions();
-        options.XAxisLabelPosition = XAxisLabelPosition;
+        options.XAxisLabelPosition = _XAxisLabelPosition;
+        options.YAxisLabelPosition = _YAxisLabelPosition;
         options.EnableSmoothGradient = _enableGradient;
         options.ChartPalette = _colors.Take(_colorCount).ToArray();
         options.ShowLabels = _showValueLabels;
+        options.ShowLegend = _legendVisible;
+        options.ShowLegendPosition = _showLegendPosition;
     }
 
     public List<ChartSeries> HeatMapSeries = new List<ChartSeries>()
@@ -77,10 +177,20 @@
 
     public void SwapXaxisLabel()
     {
-        XAxisLabelPosition = 
-            XAxisLabelPosition == XAxisLabelPosition.Top ?
+        _XAxisLabelPosition =
+            _XAxisLabelPosition == XAxisLabelPosition.Top ?
                 XAxisLabelPosition.Bottom :
                 XAxisLabelPosition.Top;
+        BuildOptions();
+        StateHasChanged();
+    }
+
+    public void SwapYaxisLabel()
+    {
+        _YAxisLabelPosition =
+            _YAxisLabelPosition == YAxisLabelPosition.Left ?
+                YAxisLabelPosition.Right :
+                YAxisLabelPosition.Left;
         BuildOptions();
         StateHasChanged();
     }
@@ -90,7 +200,7 @@
         _enableGradient = !_enableGradient;
         BuildOptions();
         StateHasChanged();
-    }    
+    }
 
     private void RandomizeData()
     {
