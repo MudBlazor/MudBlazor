@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq.Expressions;
 using Microsoft.AspNetCore.Components;
@@ -15,7 +16,7 @@ namespace MudBlazor
     /// Represents a vertical set of values.
     /// </summary>
     /// <typeparam name="T">The kind of item for this column.</typeparam>
-    public abstract partial class Column<T> : MudComponentBase, IDisposable
+    public abstract partial class Column<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase, IDisposable
     {
         private static readonly RenderFragment<CellContext<T>> EmptyChildContent = _ => builder => { };
         internal ParameterState<bool> HiddenState { get; }

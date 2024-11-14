@@ -2,13 +2,14 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
 #nullable enable
-    internal class Cell<T>
+    internal class Cell<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>
     {
         private readonly MudDataGrid<T> _dataGrid;
         private readonly Column<T> _column;
