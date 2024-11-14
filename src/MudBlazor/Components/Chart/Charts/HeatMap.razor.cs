@@ -14,11 +14,17 @@ namespace MudBlazor.Charts
         private const double BoundHeight = 350.0;
         private const double BaseHorizontalSpace = 40.0;
         private const double BaseVerticalSpace = 25.0;
-        private const int PaddingAll = 5;
-        private const int MinSize = 8;
+        private const int CellPadding = 5;
+        private const int CellMinSize = 8;
+        private const int LegendValuesYAxis = 24;
+        private const int LegendValuesXAxis = 35;
+        private const int LegendYAxis = 18;
+        private const int LegendXAxis = 18;
+
         private const int LegendSpace = 50;
         private const int XAxisLabelHeight = 15;
         private const int YAxisLabelWidth = 25;
+
         private double _minValue = 0.0;
         private double _maxValue = 1.0;
         private string[] _colorPalette = ["#587934"];
@@ -290,12 +296,12 @@ namespace MudBlazor.Charts
 
             var y = _options?.ShowLegendPosition switch
             {
-                ShowLegendPosition.Top => _options?.XAxisLabelPosition == XAxisLabelPosition.Top ? 
-                    BaseVerticalSpace : 
+                ShowLegendPosition.Top => _options?.XAxisLabelPosition == XAxisLabelPosition.Top ?
+                    BaseVerticalSpace :
                     BaseVerticalSpace + XAxisLabelHeight,
                 ShowLegendPosition.Right or ShowLegendPosition.Left => VerticalStartSpace + (HeatmapHeight / 2),
-                ShowLegendPosition.Bottom => _options?.XAxisLabelPosition == XAxisLabelPosition.Bottom ? 
-                    BoundHeight - BaseVerticalSpace - XAxisLabelHeight : 
+                ShowLegendPosition.Bottom => _options?.XAxisLabelPosition == XAxisLabelPosition.Bottom ?
+                    BoundHeight - BaseVerticalSpace - XAxisLabelHeight :
                     BoundHeight - BaseVerticalSpace,
                 _ => 0
             };

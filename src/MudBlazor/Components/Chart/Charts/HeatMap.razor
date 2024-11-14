@@ -42,14 +42,14 @@
 
     @for (int row = 0; row < _series.Count; row++)
     {
-        var padding = PaddingAll;
+        var padding = CellPadding;
         if (_options?.EnableSmoothGradient ?? false)
         {
             padding = 0;
         }
         if (!_series[row].Visible) continue;
         var rowLabel = _series[row].Name;
-        var rowHeight = Math.Max(MinSize,
+        var rowHeight = Math.Max(CellMinSize,
         (BoundHeight - VerticalStartSpace - VerticalEndSpace - (padding * (RowCount - 1)))
         /
         (RowCount));
@@ -71,7 +71,7 @@
         @for (int col = 0; col < _series[row].Data.Length; col++)
         {
             var cell = _heatmapCells.FirstOrDefault(c => c.Row == row && c.Column == col);
-            var cellWidth = Math.Max(MinSize, (BoundWidth - HorizontalStartSpace - HorizontalEndSpace - padding * (SeriesLength - 1)) / SeriesLength);
+            var cellWidth = Math.Max(CellMinSize, (BoundWidth - HorizontalStartSpace - HorizontalEndSpace - padding * (SeriesLength - 1)) / SeriesLength);
             var x = (col * (cellWidth + padding)) + HorizontalStartSpace;
 
             // Gradient Overlays
