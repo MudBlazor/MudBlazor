@@ -84,17 +84,17 @@
   width: 30px;
   font-size: 1.125rem;
 
-  //&.mud-icon-button-edge-start {
-  //  margin-left: -3px;
-  //  margin-inline-start: -3px;
-  //  margin-inline-end: unset;
-  //}
+  &.mud-icon-button-edge-start {
+    margin-left: -3px;
+    margin-inline-start: -3px;
+    margin-inline-end: unset;
+  }
 
-  //&.mud-icon-button-edge-end {
-  //  margin-right: -3px;
-  //  margin-inline-end: -3px;
-  //  margin-inline-start: unset;
-  //}
+  &.mud-icon-button-edge-end {
+    margin-right: -3px;
+    margin-inline-end: -3px;
+    margin-inline-start: unset;
+  }
 }
 
 .mud-icon-button-size-large.mud-button > .mud-icon-button-label > .mud-icon-size-large {

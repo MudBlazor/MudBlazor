@@ -33,6 +33,7 @@
 
 .mud-button {
   padding: 0 16px;
+  height: 36.5px;
   font-family: var(--mud-typography-button-family);
   font-size: var(--mud-typography-button-size);
   font-weight: var(--mud-typography-button-weight);
@@ -55,6 +56,16 @@
   &:focus-visible, &:active {
     background-color: var(--mud-palette-action-default-hover);
   }
+}
+
+.mud-button-small {
+  height: 30.75px;
+  font-size: 0.8125rem;
+}
+
+.mud-button-large {
+  height: 42.25px;
+  font-size: 0.9375rem;
 }
 
 .mud-button-label {
@@ -220,52 +231,6 @@
   border-color: currentColor;
 }
 
-.mud-button-text-size-small {
-  padding: 4px 5px;
-  font-size: 0.8125rem;
-}
-
-.mud-button-text-size-large {
-  padding: 8px 11px;
-  font-size: 0.9375rem;
-}
-
-.mud-button-outlined-size-small {
-  padding: 3px 9px;
-  font-size: 0.8125rem;
-
-  &.mud-icon-button {
-    padding: 4px;
-  }
-}
-
-.mud-button-outlined-size-large {
-  padding: 7px 21px;
-  font-size: 0.9375rem;
-
-  &.mud-icon-button {
-    padding: 4px;
-  }
-}
-
-.mud-button-filled-size-small {
-  padding: 4px 10px;
-  font-size: 0.8125rem;
-
-  &.mud-icon-button {
-    padding: 5px;
-  }
-}
-
-.mud-button-filled-size-large {
-  padding: 8px 22px;
-  font-size: 0.9375rem;
-
-  &.mud-icon-button {
-    padding: 5px;
-  }
-}
-
 .mud-button-full-width {
   width: 100%;
 }
@@ -299,10 +264,6 @@
     }
   }
 }
-
-
-
-
 
 .mud-button-icon-size-small > *:first-child {
   font-size: 18px;
