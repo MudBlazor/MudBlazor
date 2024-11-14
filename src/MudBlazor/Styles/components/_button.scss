@@ -58,12 +58,12 @@
   }
 }
 
-.mud-button-small {
+.mud-button-size-small {
   height: 30.75px;
   font-size: 0.8125rem;
 }
 
-.mud-button-large {
+.mud-button-size-large {
   height: 42.25px;
   font-size: 0.9375rem;
 }
@@ -114,13 +114,13 @@
     padding: 5px;
   }
 
-  &.mud-button-small {
+  &.mud-button-size-small {
     &.mud-icon-button {
       padding: 4px;
     }
   }
 
-  &.mud-button-large {
+  &.mud-button-size-large {
     &.mud-icon-button {
       padding: 4px;
     }
@@ -172,13 +172,13 @@
     padding: 6px;
   }
 
-  &.mud-button-small {
+  &.mud-button-size-small {
     &.mud-icon-button {
       padding: 5px;
     }
   }
 
-  &.mud-button-large {
+  &.mud-button-size-large {
     &.mud-icon-button {
       padding: 5px;
     }
