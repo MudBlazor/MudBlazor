@@ -5,36 +5,34 @@
     @if (_options?.EnableSmoothGradient ?? false)
     {
         <defs>
-            @* Horizontal gradients *@
+            @* 4-point gradients for each cell *@
             @for (int row = 0; row < _series.Count; row++)
             {
-                @for (int col = 0; col < _series[row].Data.Length - 1; col++)
+                for (int col = 0; col < _series[row].Data.Length; col++)
                 {
                     var cell = _heatmapCells.FirstOrDefault(c => c.Row == row && c.Column == col);
-                    var nextCell = _heatmapCells.FirstOrDefault(c => c.Row == row && c.Column == col + 1);
-                    var currentColor = GetColorForValue(cell?.Value);
-                    var nextColor = GetColorForValue(nextCell?.Value);
+                    var color = GetColorForValue(cell?.Value);
 
-                    <linearGradient id="horizontal-gradient-@row-@col" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" style="stop-color:@currentColor" />
-                        <stop offset="100%" style="stop-color:@nextColor" />
+                    // Define each gradient for 4 directions
+
+                    <linearGradient id="gradient-topcenter-@row-@col" x1="50%" y1="0%" x2="50%" y2="50%">
+                        <stop offset="0%" style="stop-color:@GetColorForValue(GetNeighborValue(row - 1, col))" />
+                        <stop offset="100%" style="stop-color:@color" />
                     </linearGradient>
-                }
-            }
 
-            @* Vertical gradients *@
-            @for (int row = 0; row < _series.Count - 1; row++)
-            {
-                @for (int col = 0; col < _series[row].Data.Length; col++)
-                {
-                    var cell = _heatmapCells.FirstOrDefault(c => c.Row == row && c.Column == col);
-                    var nextCell = _heatmapCells.FirstOrDefault(c => c.Row == row + 1 && c.Column == col);
-                    var currentColor = GetColorForValue(cell?.Value);
-                    var nextColor = GetColorForValue(nextCell?.Value);
+                    <linearGradient id="gradient-right-@row-@col" x1="100%" y1="50%" x2="50%" y2="50%">
+                        <stop offset="0%" style="stop-color:@GetColorForValue(GetNeighborValue(row, col + 1))" />
+                        <stop offset="100%" style="stop-color:@color" />
+                    </linearGradient>
 
-                    <linearGradient id="vertical-gradient-@row-@col" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" style="stop-color:@currentColor" />
-                        <stop offset="100%" style="stop-color:@nextColor" />
+                    <linearGradient id="gradient-bottomcenter-@row-@col" x1="50%" y1="100%" x2="50%" y2="50%">
+                        <stop offset="0%" style="stop-color:@GetColorForValue(GetNeighborValue(row + 1, col))" />
+                        <stop offset="100%" style="stop-color:@color" />
+                    </linearGradient>
+
+                    <linearGradient id="gradient-left-@row-@col" x1="0%" y1="50%" x2="50%" y2="50%">
+                        <stop offset="0%" style="stop-color:@GetColorForValue(GetNeighborValue(row, col - 1))" />
+                        <stop offset="100%" style="stop-color:@color" />
                     </linearGradient>
                 }
             }
@@ -66,55 +64,31 @@
             var cellWidth = Math.Max(MinSize, (BoundWidth - HorizontalStartSpace - HorizontalEndSpace - padding * (SeriesLength - 1)) / SeriesLength);
             var x = (col * (cellWidth + padding)) + HorizontalStartSpace;
 
-            // Base cell with solid color
-            <rect x="@x" y="@y" width="@cellWidth" height="@rowHeight"
-                  fill="@GetColorForValue(cell?.Value)">                
-                @if (_options?.ShowToolTips ?? false && cell?.Value != null)
-                {
-                        // Tooltips
-                    <title>@cell.Value.ToString()</title>
-                }
-            </rect>
-
             // Gradient Overlays
             @if (_options?.EnableSmoothGradient ?? false)
             {
-                // Horizontal gradient overlay
-                @if (col < _series[row].Data.Length - 1)
-                {
-                    <rect x="@x" y="@y" width="@cellWidth" height="@rowHeight"
-                          fill="url(#horizontal-gradient-@row-@col)"
-                          opacity="0.5">
-                        @if (_options?.ShowToolTips ?? false && cell?.Value != null)
-                        {
-                            <title>@cell.Value.ToString()</title>
-                        }
-                    </rect>
-                }
-
-                // Vertical gradient overlay
-                @if (row < _series.Count - 1)
-                {
-                    <rect x="@x" y="@y" width="@cellWidth" height="@rowHeight"
-                          fill="url(#vertical-gradient-@row-@col)"
-                          opacity="0.5">
-                        @if (_options?.ShowToolTips ?? false && cell?.Value != null)
-                        {
-                            <title>@cell.Value.ToString()</title>
-                        }
-                    </rect>
-                }
+                // Apply the 4 gradient overlays with partial opacity
+                <rect x="@x" y="@y" width="@cellWidth" height="@rowHeight" fill="url(#gradient-topcenter-@row-@col)" opacity="0.25" />
+                <rect x="@x" y="@y" width="@cellWidth" height="@rowHeight" fill="url(#gradient-right-@row-@col)" opacity="0.25" />
+                <rect x="@x" y="@y" width="@cellWidth" height="@rowHeight" fill="url(#gradient-bottomcenter-@row-@col)" opacity="0.25" />
+                <rect x="@x" y="@y" width="@cellWidth" height="@rowHeight" fill="url(#gradient-left-@row-@col)" opacity="0.25" />
             }
 
-            // Value as text over cell
-            @if (_options?.ShowLabels ?? false)
-            {
-                <g transform="translate(@(x + cellWidth/2), @(y + rowHeight/2))">
-                    <text x="0" y="0" dominant-baseline="middle" text-anchor="middle" fill="black" font-size="12">
-                        @(FormatValueForDisplay(cell?.Value))
-                    </text>
-                </g>
-            }
+            // Cell with solid background, text label if needed and tooltip if needed
+            <g>
+                <rect x="@x" y="@y" width="@cellWidth" height="@rowHeight" 
+                    fill="@(_options?.EnableSmoothGradient ?? false ? "transparent" : GetColorForValue(cell?.Value))" />
+
+                @if (_options?.ShowToolTips ?? false && cell?.Value != null)
+                {
+                    <title>@cell.Value.ToString()</title>
+                }
+
+                @if (_options?.ShowLabels ?? false && cell?.Value != null)
+                {
+                    @((MarkupString)GetTextLabel(x + cellWidth / 2, y + rowHeight / 2, cell?.Value))
+                }
+            </g>
 
             @if (row == 0 && _options?.XAxisLabelPosition == XAxisLabelPosition.Top && col < XAxisLabels.Length)
             {

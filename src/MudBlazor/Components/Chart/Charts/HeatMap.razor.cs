@@ -111,12 +111,22 @@ namespace MudBlazor.Charts
 
         private double? GetDataValue(int row, int col)
         {
+            // need to ensure row index exists in case there is no data for a row in a series
+            if (row < 0 || row >= _series.Count)
+            {
+                return null;
+            }
             // need to ensure column index exists in case there is no data for a column in a series
-            if (col >= _series[row].Data.Length)
+            if (col < 0 || col >= _series[row].Data.Length)
             {
                 return null;
             }
             return _series[row].Data[col];
+        }
+
+        private double? GetNeighborValue(int row, int col)
+        {
+            return GetDataValue(row, col);
         }
 
         private string GetColorForValue(double? value)
@@ -229,5 +239,12 @@ namespace MudBlazor.Charts
             var value = double.TryParse(strValue, out var parsedValue) ? parsedValue : (double?)null;
             return FormatValueForDisplay(value);
         }
+        private string GetTextLabel(double x, double y, double? value)
+        {
+            return @$"<text x=""{x}"" y=""{y}"" dominant-baseline=""middle"" text-anchor=""middle"" fill=""black"" font-size=""12"">
+                {FormatValueForDisplay(value)}
+             </text>";
+        }
+
     }
 }
