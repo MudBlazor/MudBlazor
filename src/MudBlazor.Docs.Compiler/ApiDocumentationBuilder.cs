@@ -766,7 +766,7 @@ public partial class ApiDocumentationBuilder()
                 if (Types.TryGetValue(typeName, out var documentedType))
                 {
                     // Yes.  Link it to this global if it is not already linked
-                    if (!documentedType.GlobalSettings.Any(pair => globalProperty.Key == globalProperty.Key))
+                    if (!documentedType.GlobalSettings.Any(pair => pair.Value.Name == globalProperty.Value.Name))
                     {
                         documentedType.GlobalSettings.Add(globalProperty.Key, globalProperty.Value);
                     }
@@ -774,7 +774,7 @@ public partial class ApiDocumentationBuilder()
                     foreach (var descendant in Types.Where(type => type.Value.BaseType != null && type.Value.BaseType.Name == documentedType.Type.Name))
                     {
                         // Link it to this global as well if it is not already linked
-                        if (!descendant.Value.GlobalSettings.Any(pair => globalProperty.Key == globalProperty.Key))
+                        if (!descendant.Value.GlobalSettings.Any(pair => pair.Value.Name == globalProperty.Value.Name))
                         {
                             descendant.Value.GlobalSettings.Add(globalProperty.Key, globalProperty.Value);
                         }
