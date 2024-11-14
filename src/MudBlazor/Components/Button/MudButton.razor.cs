@@ -17,6 +17,7 @@ namespace MudBlazor
         protected string Classname => new CssBuilder("mud-button-root mud-button")
             .AddClass($"mud-button-{Variant.ToDescriptionString()}")
             .AddClass($"mud-button-{Variant.ToDescriptionString()}-{Color.ToDescriptionString()}")
+            .AddClass($"mud-button-{Variant.ToDescriptionString()}-size-{Size.ToDescriptionString()}")
             .AddClass($"mud-button-{Size.ToDescriptionString()}")
             .AddClass($"mud-width-full", GetRealFullWith())
             .AddClass($"mud-ripple", Ripple)

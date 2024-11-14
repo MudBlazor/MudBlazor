@@ -20,6 +20,7 @@ namespace MudBlazor
             .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", !AsButton && Color != Color.Default)
             .AddClass($"mud-button-{Variant.ToDescriptionString()}", AsButton)
             .AddClass($"mud-button-{Variant.ToDescriptionString()}-{Color.ToDescriptionString()}", AsButton)
+            .AddClass($"mud-button-{Variant.ToDescriptionString()}-size-{Size.ToDescriptionString()}")
             .AddClass($"mud-button-{Size.ToDescriptionString()}", AsButton)
             .AddClass($"mud-ripple", Ripple)
             .AddClass($"mud-ripple-icon", Ripple && !AsButton)
