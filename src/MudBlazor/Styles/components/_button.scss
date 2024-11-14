@@ -114,6 +114,18 @@
     padding: 5px;
   }
 
+  &.mud-button-small {
+    &.mud-icon-button {
+      padding: 4px;
+    }
+  }
+
+  &.mud-button-large {
+    &.mud-icon-button {
+      padding: 4px;
+    }
+  }
+
   @media(hover: hover) and (pointer: fine) {
     &:hover {
       background-color: var(--mud-palette-action-default-hover);
@@ -158,6 +170,18 @@
 
   &.mud-icon-button {
     padding: 6px;
+  }
+
+  &.mud-button-small {
+    &.mud-icon-button {
+      padding: 5px;
+    }
+  }
+
+  &.mud-button-large {
+    &.mud-icon-button {
+      padding: 5px;
+    }
   }
 
   @media(hover: hover) and (pointer: fine) {
