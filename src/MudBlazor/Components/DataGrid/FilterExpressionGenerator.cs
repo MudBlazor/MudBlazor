@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 
 namespace MudBlazor;
@@ -20,7 +21,7 @@ public static class FilterExpressionGenerator
     /// <param name="filter">The filter definition used to generate the expression.</param>
     /// <param name="filterOptions">Any options to apply such as case sensitivity.</param>
     /// <returns>An expression which can be executed to perform a filter.</returns>
-    public static Expression<Func<T, bool>> GenerateExpression<T>(IFilterDefinition<T> filter, FilterOptions? filterOptions)
+    public static Expression<Func<T, bool>> GenerateExpression<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(IFilterDefinition<T> filter, FilterOptions? filterOptions)
     {
         filterOptions ??= FilterOptions.Default; //Default if null
         var propertyExpression = filter.Column?.PropertyExpression;
