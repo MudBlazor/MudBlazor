@@ -97,6 +97,18 @@ namespace MudBlazor
                 .AddStyle("left", "0px", when: HasStickyColumns)
                 .Build();
 
+        protected string GroupClassname(GroupDefinition<T> group) => 
+            new CssBuilder(GroupClass)
+                .AddClass(GroupClassFunc?.Invoke(group))
+                .AddClass("sticky-left", when: GroupHeaderStickyLeft)
+                .Build();
+
+        protected string GroupStylename(GroupDefinition<T> group) =>
+            new StyleBuilder()
+                .AddStyle(GroupStyle)
+                .AddStyle(GroupStyleFunc?.Invoke(group))
+                .Build();
+
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
@@ -1083,6 +1095,12 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         public IEqualityComparer<T> Comparer { get; set; } = EqualityComparer<T>.Default;
+
+        /// <summary>
+        /// The parameter to determine if the group header is sticky to the left while scrolling
+        /// </summary>
+        [Parameter]
+        public bool GroupHeaderStickyLeft { get; set; } = false;
 
         #endregion
 
