@@ -3,13 +3,14 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace MudBlazor
 {
 #nullable enable
-    internal class Filter<T>
+    internal class Filter<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>
     {
         private readonly MudDataGrid<T> _dataGrid;
         private readonly IFilterDefinition<T> _filterDefinition;

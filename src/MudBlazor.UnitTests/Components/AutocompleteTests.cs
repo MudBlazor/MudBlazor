@@ -202,6 +202,101 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task OnTextChanged_WithCoerceValueAndNotCoerceTextAndImmediateNotDebounce_SetValueAndOpenMenuImmediately()
+        {
+            // Arrange
+
+            var valueChangedCount = 0;
+            var comp = Context.RenderComponent<AutocompleteStates>(parameters =>
+            {
+                parameters.Add(p => p.DebounceInterval, 0);
+                parameters.Add(p => p.CoerceText, false);
+                parameters.Add(p => p.CoerceValue, true);
+                parameters.Add(p => p.Immediate, true);
+                parameters.Add(p => p.ValueChanged, v => valueChangedCount++);
+            });
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+            var autocomplete = autocompletecomp.Instance;
+
+            // Assert : initial state, menu closed and text/value null
+
+            comp.Markup.Should().NotContain("mud-popover-open");
+            autocomplete.Open.Should().BeFalse();
+            autocomplete.Value.Should().BeNull();
+            autocomplete.Text.Should().BeNull();
+            comp.Instance.SearchFuncCallCount.Should().Be(0);
+            valueChangedCount.Should().Be(0);
+
+            // Act
+
+            await comp.Find("input").InputAsync(new ChangeEventArgs { Value = "Al" });
+
+            // Assert : debounce disable, so menu is opened immediately
+
+            autocomplete.Open.Should().BeTrue();
+            comp.Markup.Should().Contain("mud-popover-open");
+
+            // Assert : CoercedValue and immediate enabled, so value is set immediately on text input
+
+            autocompletecomp.Instance.Text.Should().Be("Al");
+            autocompletecomp.Instance.Value.Should().Be("Al");
+            valueChangedCount.Should().Be(1);
+        }
+
+        [Test]
+        public async Task OnTextChanged_CoerceValueAndNotCoerceTextAndImmediateAndDebounce_SetValueImmediatelyButDelaysMenuOpening()
+        {
+            // Arrange
+
+            var valueChangedCount = 0;
+            var comp = Context.RenderComponent<AutocompleteStates>(parameters =>
+            {
+                parameters.Add(p => p.DebounceInterval, 500);
+                parameters.Add(p => p.CoerceText, false);
+                parameters.Add(p => p.CoerceValue, true);
+                parameters.Add(p => p.Immediate, true);
+                parameters.Add(p => p.ValueChanged, v => valueChangedCount++);
+            });
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+            var autocomplete = autocompletecomp.Instance;
+
+            // Assert : initial state, menu closed and text/value null
+
+            comp.Markup.Should().NotContain("mud-popover-open");
+            autocomplete.Open.Should().BeFalse();
+            autocomplete.Value.Should().BeNull();
+            autocomplete.Text.Should().BeNull();
+            comp.Instance.SearchFuncCallCount.Should().Be(0);
+            valueChangedCount.Should().Be(0);
+
+            // Act
+
+            await comp.Find("input").InputAsync(new ChangeEventArgs { Value = "Al" });
+
+            // Assert : debounce enable, so menu is not opened immediately
+
+            autocomplete.Open.Should().BeFalse();
+            comp.Markup.Should().NotContain("mud-popover-open");
+
+            // Assert : CoercedValue and immediate enabled, so value is set immediately on text input
+
+            autocompletecomp.Instance.Text.Should().Be("Al");
+            autocompletecomp.Instance.Value.Should().Be("Al");
+            valueChangedCount.Should().Be(1);
+
+            // Act : Wait the debounce timer that open the menu
+
+            autocompletecomp.WaitForAssertion(() => autocomplete.Open.Should().BeTrue());
+            autocompletecomp.WaitForAssertion(() => comp.Markup.Should().Contain("mud-popover-open"));
+
+            // Assert : value and text unchanged
+
+            autocompletecomp.Instance.Text.Should().Be("Al");
+            autocompletecomp.Instance.Value.Should().Be("Al");
+            valueChangedCount.Should().Be(1);
+        }
+
+        [Test]
         public void CoerceValueAndNotCoerceTextAndNotImmediate_ValueSetOnBlur()
         {
             // Arrange

@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
@@ -13,7 +14,7 @@ namespace MudBlazor
     /// Represents a cell displayed at the top of a <see cref="MudDataGrid{T}"/> column.
     /// </summary>
     /// <typeparam name="T">The kind of item managed by the grid.</typeparam>
-    public partial class HeaderCell<T> : MudComponentBase, IDisposable
+    public partial class HeaderCell<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase, IDisposable
     {
         private bool _selected;
         private bool _isResizing;
