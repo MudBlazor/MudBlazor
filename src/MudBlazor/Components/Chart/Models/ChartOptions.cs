@@ -93,12 +93,6 @@ namespace MudBlazor
         public double LineStrokeWidth { get; set; } = 3;
 
         /// <summary>
-        /// The position of the legend in a <see cref="ChartType.HeatMap"/>.
-        /// Defaults to <see cref="ShowLegendPosition.Bottom"/>
-        /// </summary>
-        public ShowLegendPosition ShowLegendPosition { get; set; } = ShowLegendPosition.Bottom;
-
-        /// <summary>
         /// Enables smooth color transitions for heatmap cells and removes all padding between cells in a <see cref="ChartType.HeatMap"/>
         /// Defaults to false
         /// </summary>
@@ -136,17 +130,6 @@ namespace MudBlazor
     }
 
     /// <summary>
-    /// Indicates the position of the legend in a <see cref="ChartType.HeatMap"/>.
-    /// </summary>
-    public enum ShowLegendPosition
-    {
-        Top,
-        Bottom,
-        Left,
-        Right,
-    }
-
-    /// <summary>
     /// Indicates the position of the X axis labels as either top or bottom in a <see cref="ChartType.HeatMap"/>
     /// </summary>
     public enum XAxisLabelPosition
@@ -159,6 +142,10 @@ namespace MudBlazor
         /// The X axis labels are displayed at the bottom of the chart centered horizontally.
         /// </summary>
         Bottom,
+        /// <summary>
+        /// Do not include X axis labels
+        /// </summary>
+        None,
     }
 
     /// <summary>
@@ -174,6 +161,10 @@ namespace MudBlazor
         /// The Y Axis labels are displayed at the right of the chart
         /// </summary>
         Right,
+        /// <summary>
+        /// Do not include Y axis labels
+        /// </summary>
+        None,
     }
 
     /// <summary>

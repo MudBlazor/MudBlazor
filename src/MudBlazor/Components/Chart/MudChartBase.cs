@@ -1,4 +1,8 @@
-﻿using System.Globalization;
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
@@ -25,7 +29,7 @@ public abstract class MudChartBase : MudComponentBase
     public RenderFragment? CustomGraphics { get; set; }
 
     protected string Classname => new CssBuilder("mud-chart")
-        .AddClass($"mud-chart-legend-{ConvertLegendPosition(LegendPosition).ToDescriptionString()}")
+        .AddClass($"mud-chart-legend-{ConvertLegendPosition(LegendPosition).ToDescriptionString()}", ChartType != ChartType.HeatMap)
         .AddClass(Class)
         .Build();
 

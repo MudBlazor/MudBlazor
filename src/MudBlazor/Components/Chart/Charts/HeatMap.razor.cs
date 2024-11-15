@@ -12,44 +12,42 @@ namespace MudBlazor.Charts
     {
         private const double BoundWidth = 650.0;
         private const double BoundHeight = 350.0;
-        private const double BaseHorizontalSpace = 40.0;
-        private const double BaseVerticalSpace = 25.0;
-        private const int CellPadding = 5;
+        private Position _legendPosition = Position.Bottom;
+        // the minimum size a cell can shrink to (height and width)
         private const int CellMinSize = 8;
-        private const int LegendValuesYAxis = 24;
-        private const int LegendValuesXAxis = 35;
-        private const int LegendYAxis = 18;
-        private const int LegendXAxis = 18;
+        // the width and height of a legend color box
+        private const int LegendBox = 18;
+        // the minimum padding between cells and line length on legend labels
+        private const int CellPadding = 5;
+        // the heatmap outside padding
+        private const int HeatMapPadding = 15;
+        private const int LegendFontSize = 12;
+        // approximate width of YAxis Labels
+        private const int LabelFontSize = 12;
+        private const double AverageCharWidthMultiplier = 0.6;
+        private double YAxisLabelWidth = 0;
 
-        private const int LegendSpace = 50;
-        private const int XAxisLabelHeight = 15;
-        private const int YAxisLabelWidth = 25;
+        // padding or legend area for each side of the heatmap
+        private double HorizontalStartSpace = HeatMapPadding;
+        private double HorizontalEndSpace = HeatMapPadding;
+        private double VerticalStartSpace = HeatMapPadding;
+        private double VerticalEndSpace = HeatMapPadding;
 
+        // the minimum value in all series
         private double _minValue = 0.0;
+        // the maximum value in all series
         private double _maxValue = 1.0;
         private string[] _colorPalette = ["#587934"];
+        // The maximum number of cells in a series
         private int SeriesLength => _series.Max(s => s.Data.Length);
+        // The number of rows visible
         private int RowCount => _series.Where(s => s.Visible).Count();
-
-        private double HorizontalStartSpace => (_options?.ShowLegend ?? false) && _options?.ShowLegendPosition == ShowLegendPosition.Left
-            ? BaseHorizontalSpace + LegendSpace + (_options?.YAxisLabelPosition == YAxisLabelPosition.Left ? YAxisLabelWidth + 10 : 0)
-            : BaseHorizontalSpace + (_options?.YAxisLabelPosition == YAxisLabelPosition.Left ? YAxisLabelWidth : 0);
-
-        private double HorizontalEndSpace => (_options?.ShowLegend ?? false) && _options?.ShowLegendPosition == ShowLegendPosition.Right
-            ? BaseHorizontalSpace + LegendSpace + (_options?.YAxisLabelPosition == YAxisLabelPosition.Right ? YAxisLabelWidth : 0)
-            : BaseHorizontalSpace + (_options?.YAxisLabelPosition == YAxisLabelPosition.Right ? YAxisLabelWidth : 0);
-
-        private double VerticalStartSpace => (_options?.ShowLegend ?? false) && _options?.ShowLegendPosition == ShowLegendPosition.Top
-            ? BaseVerticalSpace + LegendSpace
-            : BaseVerticalSpace;
-
-        private double VerticalEndSpace => (_options?.ShowLegend ?? false) && _options?.ShowLegendPosition == ShowLegendPosition.Bottom
-            ? BaseVerticalSpace + LegendSpace
-            : BaseVerticalSpace;
-
+        // the amount of pixels a legend extends horizontally when it's on left/right
+        private int LegendValuesYAxis = 0;
+        // the amount of pixels a legend extends vertically when it's on the top/bottom
+        private int LegendValuesXAxis = 0;
         // Calculate the actual width of the heatmap cells area
         private double HeatmapWidth => BoundWidth - HorizontalStartSpace - HorizontalEndSpace;
-
         // Calculate the actual height of the heatmap cells area
         private double HeatmapHeight => BoundHeight - VerticalStartSpace - VerticalEndSpace;
 
@@ -75,6 +73,13 @@ namespace MudBlazor.Charts
                 {
                     _options = MudChartParent.ChartOptions;
                     _colorPalette = _options.ChartPalette ?? _colorPalette;
+                    _legendPosition = MudChartParent.LegendPosition switch
+                    {
+                        Position.Center => Position.Bottom,
+                        Position.Start => Position.Left,
+                        Position.End => Position.Right,
+                        _ => MudChartParent.LegendPosition
+                    };
                 }
                 if (_series.Count == 0 ||
                     (MudChartParent.ChartSeries.Count > 0 &&
@@ -121,8 +126,56 @@ namespace MudBlazor.Charts
                     }
                 }
             }
-
+            CalculateLegendAreas();
             BuildLegends();
+        }
+
+        private void CalculateLegendAreas()
+        {
+            // Defaults
+            VerticalStartSpace = VerticalEndSpace = HorizontalStartSpace = HorizontalEndSpace = HeatMapPadding;
+            YAxisLabelWidth = (_series?.Max(x => x.Name.Length) ?? 1) * LabelFontSize * AverageCharWidthMultiplier;
+            LegendValuesYAxis = (_options?.ShowLabels ?? false) ? (24 + CellPadding) : 0;
+            LegendValuesXAxis = (_options?.ShowLabels ?? false) ? (24 + CellPadding) : 0;
+            // make room for X and Y Axis Labels
+            if (_options?.YAxisLabelPosition == YAxisLabelPosition.Left)
+            {
+                HorizontalStartSpace += CellPadding + YAxisLabelWidth + CellPadding;
+            }
+            if (_options?.YAxisLabelPosition == YAxisLabelPosition.Right)
+            {
+                HorizontalEndSpace += CellPadding + YAxisLabelWidth + CellPadding;
+            }
+            if (_options?.XAxisLabelPosition == XAxisLabelPosition.Top)
+            {
+                VerticalStartSpace += CellPadding + LegendFontSize + CellPadding;
+            }
+            if (_options?.XAxisLabelPosition == XAxisLabelPosition.Bottom)
+            {
+                VerticalEndSpace += CellPadding + LegendFontSize + CellPadding;
+            }
+            // Make Room for Legend (if Any)
+            if (_options?.ShowLegend ?? false)
+            {
+                switch (_legendPosition)
+                {
+                    case Position.Bottom:
+                        VerticalEndSpace += LegendValuesXAxis + LegendBox;
+                        break;
+                    case Position.Top:
+                        VerticalStartSpace += LegendValuesXAxis + LegendBox;
+                        break;
+                    case Position.Left:
+                        HorizontalStartSpace += LegendValuesYAxis + LegendBox;
+                        break;
+                    case Position.Right:
+                        HorizontalEndSpace += LegendValuesYAxis + LegendBox;
+                        break;
+                    default:
+                        break;
+                }
+            }
+
         }
 
         private void BuildLegends()
@@ -272,37 +325,27 @@ namespace MudBlazor.Charts
             return FormatValueForDisplay(value);
         }
 
-        private string GetTextLabel(double x, double y, double? value)
-        {
-            return @$"<text x=""{x}"" y=""{y}"" dominant-baseline=""middle"" text-anchor=""middle"" fill=""black"" font-size=""12"">
-                {FormatValueForDisplay(value)}
-             </text>";
-        }
-
-        private string GetLegendLabel(double x, double y, string pos, string? value)
-        {
-            return $@"<text x=""{x}"" y=""{y}"" dominant-baseline=""middle"" text-anchor=""{pos}"" fill=""black"" font-size=""8"">{FormatValueForDisplay(value)}</text>";
-        }
-
         private (double x, double y) GetLegendPosition()
         {
-            var x = _options?.ShowLegendPosition switch
+            var x = _legendPosition switch
             {
-                ShowLegendPosition.Top or ShowLegendPosition.Bottom => HorizontalStartSpace + (HeatmapWidth / 2),
-                ShowLegendPosition.Right => BoundWidth - BaseHorizontalSpace - (_options?.YAxisLabelPosition == YAxisLabelPosition.Right ? YAxisLabelWidth + 10 : 0),
-                ShowLegendPosition.Left => BaseHorizontalSpace + (_options?.YAxisLabelPosition == YAxisLabelPosition.Left ? YAxisLabelWidth + 10 : 0),
+                Position.Top or Position.Bottom =>
+                    (HorizontalStartSpace + HeatmapWidth + HorizontalEndSpace) / 2,
+                Position.Right =>
+                    HorizontalStartSpace + HeatmapWidth + HeatMapPadding + LegendValuesYAxis,
+                Position.Left =>
+                    HeatMapPadding,
                 _ => 0
             };
 
-            var y = _options?.ShowLegendPosition switch
+            var y = _legendPosition switch
             {
-                ShowLegendPosition.Top => _options?.XAxisLabelPosition == XAxisLabelPosition.Top ?
-                    BaseVerticalSpace :
-                    BaseVerticalSpace + XAxisLabelHeight,
-                ShowLegendPosition.Right or ShowLegendPosition.Left => VerticalStartSpace + (HeatmapHeight / 2),
-                ShowLegendPosition.Bottom => _options?.XAxisLabelPosition == XAxisLabelPosition.Bottom ?
-                    BoundHeight - BaseVerticalSpace - XAxisLabelHeight :
-                    BoundHeight - BaseVerticalSpace,
+                Position.Right or Position.Left =>
+                    (VerticalStartSpace + HeatmapHeight + VerticalEndSpace) / 2,
+                Position.Bottom =>
+                    VerticalStartSpace + HeatmapHeight + HeatMapPadding,
+                Position.Top =>
+                    HeatMapPadding,
                 _ => 0
             };
 
