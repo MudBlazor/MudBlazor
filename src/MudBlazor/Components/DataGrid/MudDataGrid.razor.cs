@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Specialized;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
 using Microsoft.AspNetCore.Components;
@@ -18,7 +19,7 @@ namespace MudBlazor
     /// </summary>
     /// <typeparam name="T">The type of data represented by each row in this grid.</typeparam>
     [CascadingTypeParameter(nameof(T))]
-    public partial class MudDataGrid<T> : MudComponentBase, IDisposable
+    public partial class MudDataGrid<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase, IDisposable
     {
         private T _selectedItem;
         private MudForm _editForm;
@@ -36,7 +37,7 @@ namespace MudBlazor
         private PropertyInfo[] _properties = typeof(T).GetProperties();
         private CancellationTokenSource _serverDataCancellationTokenSource;
         private IEnumerable<T> _currentRenderFilteredItemsCache = null;
-        internal Dictionary<object, bool> _groupExpansionsDict = new();
+        internal Dictionary<NullableObject<object>, bool> _groupExpansionsDict = new();
         private List<GroupDefinition<T>> _currentPageGroups = [];
         private List<GroupDefinition<T>> _allGroups = [];
         private GridData<T> _serverData = new() { TotalItems = 0, Items = Array.Empty<T>() };

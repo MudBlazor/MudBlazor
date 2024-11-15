@@ -1,0 +1,64 @@
+﻿<MudPopoverProvider />
+
+<MudStack Row>
+    <div class="pa-4 d-inline-block" style="width:125px;">
+        <MudSelect @bind-Value="@_selected" Variant="Variant.Outlined" FullWidth Dense id="restricted-select" PopoverClass="restricted">
+            @foreach (var value in _values)
+            {
+                <MudSelectItem T="string" Value="@value">@value</MudSelectItem>
+            }
+        </MudSelect>
+    </div>
+
+    <div class="pa-4 d-inline-block" style="width:125px;">
+        <MudSelect @bind-Value=_selected Variant="Variant.Outlined" Dense id="expanded-select" PopoverClass="expanded">
+            @foreach (var value in _values)
+            {
+                <MudSelectItem T="string" Value="@value">@value</MudSelectItem>
+            }
+        </MudSelect>
+    </div>
+</MudStack>
+
+<MudStack>
+    <div class="pa-4 d-inline-block" style="width:400px;">
+        <MudSelect @bind-Value="@_selected" Variant="Variant.Outlined" FullWidth Dense id="select-fit-1" PopoverClass="fit1">
+            @foreach (var value in _values)
+            {
+                <MudSelectItem T="string" Value="@value">@value</MudSelectItem>
+            }
+        </MudSelect>
+    </div>
+
+    <div class="pa-4 d-inline-block" style="width:400px;">
+        <MudSelect @bind-Value="@_selected" Variant="Variant.Outlined" Dense id="select-fit-2" PopoverClass="fit2">
+            @foreach (var value in _values)
+            {
+                <MudSelectItem T="string" Value="@value">@value</MudSelectItem>
+            }
+        </MudSelect>
+    </div>
+</MudStack>
+
+@code {
+    public static string __description__ =  @"Row 1 - limited size field - (1) Match parent & (2) Expanded |
+                                              Row 2 & 3 - Oversized field - (1) Match parent & (2) Match parent";
+
+    private string? _selected;
+    private readonly string[] _values =
+    [
+        "Sun",
+        "Moon",
+        "Stars",
+        "Galaxy",
+        "Cometary",
+        "Nebulous",
+        "Planetary",
+        "Extraterrestrial",
+        "Constellate",
+        "Interstellar",
+        "Cosmic Dust Cloud",
+        "Gravitationally",
+        "Astrophotography"
+    ];
+}

@@ -1,8 +1,8 @@
 <MudPopoverProvider />
 
-<MudAutocomplete id="autocompleteLabelTest" T="string" Label="US States"
-                 @bind-Value="Value" ResetValueOnEmptyText="ResetValueOnEmptyText"
-                 SearchFunc="@SearchStates" DebounceInterval="DebounceInterval" 
+<MudAutocomplete id="autocompleteLabelTest" T="string?" Label="US States"
+                 @bind-Value:get="Value" @bind-Value:set="ValueChanged" ResetValueOnEmptyText="ResetValueOnEmptyText"
+                 SearchFunc="@SearchStates" DebounceInterval="DebounceInterval"
                  CoerceText="CoerceText" CoerceValue="CoerceValue" Immediate="Immediate"/>
 
 @code {
@@ -10,6 +10,9 @@
 
     [Parameter]
     public string? Value { get; set; }
+
+    [Parameter]
+    public EventCallback<string?> ValueChanged { get; set; }
 
     [Parameter]
     public bool ResetValueOnEmptyText { get; set; }
