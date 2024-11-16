@@ -25,7 +25,9 @@ namespace MudBlazor
     public partial class MudDialogProvider : IDisposable
     {
         private DialogOptions _globalDialogOptions = new();
-        private readonly ConcurrentDictionary<Guid, IDialogReference> _dialogs = [];
+        private readonly List<IDialogReference> _dialogs = [];
+
+        public int DialogsCount => _dialogs.Count;
 
         [Inject]
         private IDialogService DialogService { get; set; } = null!;
@@ -135,7 +137,7 @@ namespace MudBlazor
         {
             if (!firstRender)
             {
-                foreach (var dialogReference in _dialogs.Values.Where(x => !x.Result.IsCompleted))
+                foreach (var dialogReference in _dialogs.ToArray().Where(x => !x.Result.IsCompleted))
                 {
                     dialogReference.RenderCompleteTaskCompletionSource.TrySetResult(true);
                 }
@@ -153,8 +155,7 @@ namespace MudBlazor
 
         private Task AddInstanceAsync(IDialogReference dialog)
         {
-            if (!_dialogs.TryAdd(dialog.Id, dialog))
-                throw new InvalidOperationException("A dialog with this id already exists");
+            _dialogs.Add(dialog);
             return InvokeAsync(StateHasChanged);
         }
 
@@ -163,7 +164,7 @@ namespace MudBlazor
         /// </summary>
         public void DismissAll()
         {
-            foreach (var dialog in _dialogs.Values)
+            foreach (var dialog in _dialogs.ToList())
             {
                 DismissInstance(dialog, DialogResult.Cancel());
             }
@@ -174,13 +175,13 @@ namespace MudBlazor
         {
             if (!dialog.Dismiss(result)) return;
 
-            _dialogs.Remove(dialog.Id, out var _);
+            _dialogs.Remove(dialog);
             StateHasChanged();
         }
 
         private IDialogReference? GetDialogReference(Guid id)
         {
-            return _dialogs.GetValueOrDefault(id);
+            return _dialogs.ToArray().FirstOrDefault(d => d.Id == id);
         }
 
         private void LocationChanged(object? sender, LocationChangedEventArgs args)
