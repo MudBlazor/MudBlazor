@@ -306,6 +306,12 @@ namespace MudBlazor
         public RenderFragment<FilterContext<T>> FilterTemplate { get; set; }
 
         /// <summary>
+        /// The operators to use for this column's filter.
+        /// </summary>
+        [Parameter]
+        public HashSet<string> FilterOperators { get; set; } = [];
+
+        /// <summary>
         /// The unique identifier for this column.
         /// </summary>
         public string Identifier { get; set; }
@@ -512,10 +518,18 @@ namespace MudBlazor
                 // Make sure that when we access filterContext properties, they have been defined...
                 if (filterContext.FilterDefinition == null)
                 {
-                    var operators = FilterOperator.GetOperatorByDataType(PropertyType);
+                    var defaultOperators = FilterOperator.GetOperatorByDataType(PropertyType);
+                    var invalidOperators = FilterOperators.Where(@operator => !defaultOperators.Contains(@operator)).ToArray();
+
+                    if (invalidOperators.Length > 0)
+                    {
+                        throw new Exception($"Invalid filter operators for {Title} {PropertyType.Name}: {string.Join(", ", invalidOperators)}");
+                    }
+
+                    var operators = FilterOperators.Count > 0 ? [.. FilterOperators] : defaultOperators;
                     var filterDefinition = DataGrid.CreateFilterDefinitionInstance();
                     filterDefinition.Title = Title;
-                    filterDefinition.Operator = operators.FirstOrDefault();
+                    filterDefinition.Operator =  operators.FirstOrDefault();
                     filterDefinition.Column = this;
                     filterContext.FilterDefinition = filterDefinition;
                 }
@@ -578,6 +592,18 @@ namespace MudBlazor
 
             // Add the FooterContext
             footerContext = new FooterContext<T>(DataGrid);
+        }
+
+        internal string[] GetFilterOperators(FieldType fieldType)
+        {
+            if (FilterOperators.Count == 0)
+            {
+                return FilterOperator.GetOperatorByDataType(fieldType);
+            }
+            else
+            {
+                return [.. FilterOperators];
+            }
         }
 
         internal Func<T, object> GetLocalSortFunc()

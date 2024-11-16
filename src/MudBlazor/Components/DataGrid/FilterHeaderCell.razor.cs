@@ -66,7 +66,7 @@ namespace MudBlazor
         {
             get
             {
-                return FilterOperator.GetOperatorByDataType(dataType);
+                return Column.GetFilterOperators(FieldType.Identify(dataType));
             }
         }
 
