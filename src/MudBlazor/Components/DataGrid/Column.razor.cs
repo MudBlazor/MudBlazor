@@ -529,7 +529,7 @@ namespace MudBlazor
                     var operators = FilterOperators.Count > 0 ? [.. FilterOperators] : defaultOperators;
                     var filterDefinition = DataGrid.CreateFilterDefinitionInstance();
                     filterDefinition.Title = Title;
-                    filterDefinition.Operator =  operators.FirstOrDefault();
+                    filterDefinition.Operator = operators.FirstOrDefault();
                     filterDefinition.Column = this;
                     filterContext.FilterDefinition = filterDefinition;
                 }
