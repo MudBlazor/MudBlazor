@@ -20,7 +20,7 @@ public class VirtualizeTests : BunitTest
     }
 
     [Test]
-    public async Task VirtualizeNoRecordTest()
+    public void VirtualizeNoRecordTest()
     {
         var comp = Context.RenderComponent<VirtualizeNoRecordsContentTest>();
 
