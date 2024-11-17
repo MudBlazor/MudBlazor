@@ -1,8 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-
-namespace MudBlazor.Docs.Compiler
+﻿namespace MudBlazor.Docs.Compiler
 {
     public class TestsForExamples
     {
@@ -45,7 +41,7 @@ namespace MudBlazor.Docs.Compiler
                     var componentName = Path.GetFileNameWithoutExtension(filename);
                     if (!filename.Contains(Paths.ExampleDiscriminator))
                         continue;
-                    // skip over table/data grid virutalization since it takes too long.
+                    // skip over table/data grid virtualization since it takes too long.
                     if (filename == "TableVirtualizationExample.razor" || filename == "DataGridVirtualizationExample.razor")
                         continue;
                     cb.AddLine("[Test]");
@@ -69,7 +65,7 @@ namespace MudBlazor.Docs.Compiler
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Error generating {Paths.ComponentTestsFilePath} : {e.Message}");
+                Console.WriteLine(@$"Error generating {Paths.ComponentTestsFilePath} : {e.Message}");
                 success = false;
             }
 

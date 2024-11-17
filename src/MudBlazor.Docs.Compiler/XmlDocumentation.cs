@@ -3,10 +3,6 @@
 // License MIT
 // Minor adaptations by Meinrad Recheis
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -15,7 +11,6 @@ namespace MudBlazor.Docs.Compiler
 {
     public static partial class XmlDocumentation
     {
-
         #region System.Reflection.Assembly
 
         /// <summary>Enumerates through all the events with a custom attribute.</summary>
@@ -27,11 +22,7 @@ namespace MudBlazor.Docs.Compiler
         {
             foreach (var type in assembly.GetTypes())
             {
-                foreach (var eventInfo in type.GetEvents(
-                    BindingFlags.Instance |
-                    BindingFlags.Static |
-                    BindingFlags.Public |
-                    BindingFlags.NonPublic))
+                foreach (var eventInfo in type.GetEvents(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))
                 {
                     if (eventInfo.GetCustomAttributes(typeof(AttributeType), true).Length > 0)
                     {
@@ -50,10 +41,7 @@ namespace MudBlazor.Docs.Compiler
         {
             foreach (var type in assembly.GetTypes())
             {
-                foreach (var constructorInfo in type.GetConstructors(
-                    BindingFlags.Instance |
-                    BindingFlags.Public |
-                    BindingFlags.NonPublic))
+                foreach (var constructorInfo in type.GetConstructors(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
                 {
                     if (constructorInfo.GetCustomAttributes(typeof(AttributeType), true).Length > 0)
                     {
@@ -72,11 +60,7 @@ namespace MudBlazor.Docs.Compiler
         {
             foreach (var type in assembly.GetTypes())
             {
-                foreach (var propertyInfo in type.GetProperties(
-                    BindingFlags.Instance |
-                    BindingFlags.Static |
-                    BindingFlags.Public |
-                    BindingFlags.NonPublic))
+                foreach (var propertyInfo in type.GetProperties(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))
                 {
                     if (propertyInfo.GetCustomAttributes(typeof(AttributeType), true).Length > 0)
                     {
@@ -89,11 +73,7 @@ namespace MudBlazor.Docs.Compiler
         public static IEnumerable<PropertyInfo> GetPropertyInfosWithAttribute<AttributeType>(this Type type)
             where AttributeType : Attribute
         {
-            foreach (var propertyInfo in type.GetProperties(
-                BindingFlags.Instance |
-                BindingFlags.Static |
-                BindingFlags.Public |
-                BindingFlags.NonPublic))
+            foreach (var propertyInfo in type.GetProperties(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))
             {
                 if (propertyInfo.GetCustomAttributes(typeof(AttributeType), true).Length > 0)
                 {
@@ -111,11 +91,7 @@ namespace MudBlazor.Docs.Compiler
         {
             foreach (var type in assembly.GetTypes())
             {
-                foreach (var fieldInfo in type.GetFields(
-                    BindingFlags.Instance |
-                    BindingFlags.Static |
-                    BindingFlags.Public |
-                    BindingFlags.NonPublic))
+                foreach (var fieldInfo in type.GetFields(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))
                 {
                     if (fieldInfo.GetCustomAttributes(typeof(AttributeType), true).Length > 0)
                     {
@@ -134,11 +110,7 @@ namespace MudBlazor.Docs.Compiler
         {
             foreach (var type in assembly.GetTypes())
             {
-                foreach (var methodInfo in type.GetMethods(
-                    BindingFlags.Instance |
-                    BindingFlags.Static |
-                    BindingFlags.Public |
-                    BindingFlags.NonPublic))
+                foreach (var methodInfo in type.GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))
                 {
                     if (methodInfo.GetCustomAttributes(typeof(AttributeType), true).Length > 0)
                     {
@@ -253,7 +225,7 @@ namespace MudBlazor.Docs.Compiler
                 LoadXmlDocumentation(streamReader);
             }
             // currently marking assembly as loaded even if the XML file was not found
-            // may want to adjust in future, but I think this is good for now
+            // may want to adjust in the future, but I think this is good for now
             LoadedAssemblies.Add(assembly);
         }
 
@@ -272,10 +244,10 @@ namespace MudBlazor.Docs.Compiler
             using var xmlReader = XmlReader.Create(textReader);
             while (xmlReader.Read())
             {
-                if (xmlReader.NodeType == XmlNodeType.Element && xmlReader.Name == "member")
+                if (xmlReader is { NodeType: XmlNodeType.Element, Name: "member" })
                 {
-                    var raw_name = xmlReader["name"];
-                    LoadedXmlDocumentation[raw_name] = xmlReader.ReadInnerXml();
+                    var rawName = xmlReader["name"];
+                    LoadedXmlDocumentation[rawName] = xmlReader.ReadInnerXml();
                 }
             }
         }
@@ -512,48 +484,39 @@ namespace MudBlazor.Docs.Compiler
         /// <remarks>The XML documentation must be loaded into memory for this function to work.</remarks>
         public static string GetDocumentation(this MemberInfo memberInfo)
         {
-            if (memberInfo is FieldInfo fieldInfo)
+            switch (memberInfo)
             {
-                return fieldInfo.GetDocumentation();
+                case FieldInfo fieldInfo:
+                    return fieldInfo.GetDocumentation();
+                case PropertyInfo propertyInfo:
+                    return propertyInfo.GetDocumentation();
+                case EventInfo eventInfo:
+                    return eventInfo.GetDocumentation();
+                case ConstructorInfo constructorInfo:
+                    return constructorInfo.GetDocumentation();
+                case MethodInfo methodInfo:
+                    return methodInfo.GetDocumentation();
+                // + TypeInfo
+                case Type type:
+                    return type.GetDocumentation();
             }
-            else if (memberInfo is PropertyInfo propertyInfo)
-            {
-                return propertyInfo.GetDocumentation();
-            }
-            else if (memberInfo is EventInfo eventInfo)
-            {
-                return eventInfo.GetDocumentation();
-            }
-            else if (memberInfo is ConstructorInfo constructorInfo)
-            {
-                return constructorInfo.GetDocumentation();
-            }
-            else if (memberInfo is MethodInfo methodInfo)
-            {
-                return methodInfo.GetDocumentation();
-            }
-            else if (memberInfo is Type type) // + TypeInfo
-            {
-                return type.GetDocumentation();
-            }
-            else if (memberInfo.MemberType.HasFlag(MemberTypes.Custom))
+
+            if (memberInfo.MemberType.HasFlag(MemberTypes.Custom))
             {
                 // This represents a custom type that is not part of
                 // the standard .NET languages as far as I'm aware.
                 // This will never be supported so return null.
                 return null;
             }
-            else
-            {
-                // Hopefully this will never hit. At the time of writing
-                // this code, I am only aware of the following Member types:
-                // FieldInfo, PropertyInfo, EventInfo, ConstructorInfo,
-                // MethodInfo, and Type.
-                throw new Exception(nameof(GetDocumentation) +
-                    " encountered an unhandled type [" + memberInfo.GetType().FullName + "]. " +
-                    "Please submit this issue to the Towel GitHub repository. " +
-                    "https://github.com/ZacharyPatten/Towel/issues/new/choose");
-            }
+
+            // Hopefully this will never hit. At the time of writing
+            // this code, I am only aware of the following Member types:
+            // FieldInfo, PropertyInfo, EventInfo, ConstructorInfo,
+            // MethodInfo, and Type.
+            throw new Exception(nameof(GetDocumentation) +
+                                " encountered an unhandled type [" + memberInfo.GetType().FullName + "]. " +
+                                "Please submit this issue to the Towel GitHub repository. " +
+                                "https://github.com/ZacharyPatten/Towel/issues/new/choose");
         }
 
         /// <summary>Gets the XML documentation for a parameter.</summary>
@@ -588,6 +551,5 @@ namespace MudBlazor.Docs.Compiler
         private static partial Regex DocumentationKeyRegularExpression();
 
         #endregion
-
     }
 }

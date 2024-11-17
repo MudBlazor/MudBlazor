@@ -2,14 +2,13 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Diagnostics;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using LoxSmoke.DocXml;
 using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor.Docs.Compiler;
 
+#nullable enable
 /// <summary>
 /// Represents a generator of HTML documentation based on XML documentation files.
 /// </summary>
@@ -21,52 +20,52 @@ namespace MudBlazor.Docs.Compiler;
 /// <see cref="DocumentedEvent"/>, and <see cref="DocumentedField"/>, in a strongly typed manner. 
 /// </para>
 /// </remarks>
-public partial class ApiDocumentationBuilder()
+public partial class ApiDocumentationBuilder
 {
-    /// <summary>
-    /// The assembly to document.
-    /// </summary>
-    public List<Assembly> Assemblies { get; private set; } = [typeof(_Imports).Assembly];
-
     /// <summary>
     /// The reader for XML documentation.
     /// </summary>
-    private DocXmlReader _xmlDocs;
+    private readonly Lazy<DocXmlReader> _xmlDocs;
+
+    /// <summary>
+    /// The assembly to document.
+    /// </summary>
+    public List<Assembly> Assemblies { get; } = [typeof(_Imports).Assembly];
 
     /// <summary>
     /// The types in the assembly.
     /// </summary>
-    public SortedDictionary<string, Type> PublicTypes { get; private set; } = [];
+    public SortedDictionary<string, Type> PublicTypes { get; } = [];
 
     /// <summary>
     /// The generated documentation for events.
     /// </summary>
-    public SortedDictionary<string, DocumentedEvent> Events { get; private set; } = [];
+    public SortedDictionary<string, DocumentedEvent> Events { get; } = [];
 
     /// <summary>
     /// The generated documentation for fields.
     /// </summary>
-    public SortedDictionary<string, DocumentedField> Fields { get; private set; } = [];
+    public SortedDictionary<string, DocumentedField> Fields { get; } = [];
 
     /// <summary>
     /// The generated documentation for types.
     /// </summary>
-    public SortedDictionary<string, DocumentedType> Types { get; private set; } = [];
+    public SortedDictionary<string, DocumentedType> Types { get; } = [];
 
     /// <summary>
     /// The generated documentation for properties.
     /// </summary>
-    public SortedDictionary<string, DocumentedProperty> Properties { get; private set; } = [];
+    public SortedDictionary<string, DocumentedProperty> Properties { get; } = [];
 
     /// <summary>
     /// The generated documentation for methods.
     /// </summary>
-    public SortedDictionary<string, DocumentedMethod> Methods { get; private set; } = [];
+    public SortedDictionary<string, DocumentedMethod> Methods { get; } = [];
 
     /// <summary>
     /// Any types to exclude from documentation.
     /// </summary>
-    public static List<string> ExcludedTypes { get; private set; } =
+    public static List<string> ExcludedTypes { get; } =
     [
         "ActivatableCallback",
         "AbstractLocalizationInterceptor",
@@ -89,7 +88,7 @@ public partial class ApiDocumentationBuilder()
     /// <summary>
     /// Any methods to exclude from documentation.
     /// </summary>
-    public static List<string> ExcludedMembers { get; private set; } =
+    public static List<string> ExcludedMembers { get; } =
     [
         // Object methods
         "ToString",
@@ -129,6 +128,11 @@ public partial class ApiDocumentationBuilder()
         "Finalize",
     ];
 
+    public ApiDocumentationBuilder()
+    {
+        _xmlDocs = new Lazy<DocXmlReader>(() => new DocXmlReader(Assemblies));
+    }
+
     /// <summary>
     /// Gets whether a type is excluded from documentation.
     /// </summary>
@@ -144,7 +148,7 @@ public partial class ApiDocumentationBuilder()
         {
             return true;
         }
-        if (type.FullName != null && ExcludedTypes.Any(excludedType => type.FullName.StartsWith(excludedType)))
+        if (type.FullName != null && ExcludedTypes.Any(type.FullName.StartsWith))
         {
             return true;
         }
@@ -172,7 +176,6 @@ public partial class ApiDocumentationBuilder()
     /// </summary>
     public bool Execute()
     {
-        _xmlDocs = new(Assemblies);
         AddTypesToDocument();
         FindDeclaringTypes();
         AddGlobalsToDocument();
@@ -220,13 +223,13 @@ public partial class ApiDocumentationBuilder()
     /// Adds the specified type and any related public types.
     /// </summary>
     /// <param name="type">The type to add.</param>
-    public DocumentedType AddTypeToDocument(Type type)
+    public void AddTypeToDocument(Type type)
     {
         // Is the type already documented?
-        if (!Types.TryGetValue(type.FullName, out var documentedType))
+        if (type.FullName is not null && !Types.TryGetValue(type.FullName, out var documentedType))
         {
             // Look up the XML documentation
-            var typeXmlDocs = _xmlDocs.GetTypeComments(type);
+            var typeXmlDocs = _xmlDocs.Value.GetTypeComments(type);
 
             // No.  Add it
             documentedType = new DocumentedType()
@@ -259,14 +262,13 @@ public partial class ApiDocumentationBuilder()
                 AddTypeToDocument(nestedType);
             }
         }
-
-        return documentedType;
     }
 
     /// <summary>
     /// Adds public properties for the specified type.
     /// </summary>
     /// <param name="type"></param>
+    /// <param name="documentedType">The document type.</param>
     public void AddPropertiesToDocument(Type type, DocumentedType documentedType)
     {
         // Look for public properties 
@@ -274,11 +276,11 @@ public partial class ApiDocumentationBuilder()
         // Add protected methods
         properties.AddRange(type.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic));
         // Remove properties we don't want on the site
-        properties.RemoveAll(property =>
-            property.GetMethod.IsPrivate                // Remove private properties
-            || property.GetMethod.IsAssembly            // Remove internal properties
-            || property.GetMethod.IsFamilyOrAssembly    // Remove overridden internal properties
-            || IsExcluded(property));                   // Remove properties from the manually maintained list
+        properties.RemoveAll(property => property.GetMethod is not null
+                                         && (property.GetMethod.IsPrivate // Remove private properties
+                                             || property.GetMethod.IsAssembly // Remove internal properties
+                                             || property.GetMethod.IsFamilyOrAssembly // Remove overridden internal properties
+                                             || IsExcluded(property)));                   // Remove properties from the manually maintained list
         // Remove duplicates
         properties = properties.DistinctBy(property => property.Name).ToList();
 
@@ -289,6 +291,11 @@ public partial class ApiDocumentationBuilder()
             var blazorParameter = property.GetCustomAttribute<ParameterAttribute>();
             var key = GetPropertyFullName(property);
 
+            if (string.IsNullOrEmpty(key))
+            {
+                continue;
+            }
+
             // Is this an event?
             if (property.PropertyType.Name.StartsWith("EventCallback"))
             {
@@ -296,18 +303,18 @@ public partial class ApiDocumentationBuilder()
                 if (!Events.TryGetValue(key, out var documentedEvent))
                 {
                     // No.  Get the XML documentation
-                    var xmlDocs = _xmlDocs.GetMemberComments(property);
+                    var xmlDocs = _xmlDocs.Value.GetMemberComments(property);
 
                     // Record this event
-                    documentedEvent = new DocumentedEvent()
+                    documentedEvent = new DocumentedEvent
                     {
                         Category = category?.Name,
                         DeclaringType = property.DeclaringType,
-                        IsProtected = property.GetMethod.IsFamily,
+                        IsProtected = property.GetMethod?.IsFamily ?? false,
                         IsParameter = blazorParameter != null,
                         Key = key,
                         Name = property.Name,
-                        Order = category == null ? int.MaxValue : category.Order,
+                        Order = category?.Order ?? int.MaxValue,
                         Remarks = xmlDocs.Remarks?.Replace("\r\n", "").Trim(),
                         Summary = xmlDocs.Summary?.Replace("\r\n", "").Trim(),
                         Type = property.PropertyType,
@@ -323,18 +330,18 @@ public partial class ApiDocumentationBuilder()
                 if (!Properties.TryGetValue(key, out var documentedProperty))
                 {
                     // No.  Get the XML documentation
-                    var xmlDocs = _xmlDocs.GetMemberComments(property);
+                    var xmlDocs = _xmlDocs.Value.GetMemberComments(property);
 
                     // Record this property                
                     documentedProperty = new DocumentedProperty()
                     {
                         Category = category?.Name,
                         DeclaringType = property.DeclaringType,
-                        IsProtected = property.GetMethod.IsFamily,
-                        IsParameter = blazorParameter != null,
+                        IsProtected = property.GetMethod?.IsFamily ?? false,
+                        IsParameter = blazorParameter is not null,
                         Key = key,
                         Name = property.Name,
-                        Order = category == null ? int.MaxValue : category.Order,
+                        Order = category?.Order ?? int.MaxValue,
                         Remarks = xmlDocs.Remarks?.Replace("\r\n", "").Trim(),
                         Summary = xmlDocs.Summary?.Replace("\r\n", "").Trim(),
                         Type = property.PropertyType,
@@ -351,6 +358,7 @@ public partial class ApiDocumentationBuilder()
     /// Adds fields for the specified type.
     /// </summary>
     /// <param name="type">The type to examine.</param>
+    /// <param name="documentedType">The document type.</param>
     public void AddFieldsToDocument(Type type, DocumentedType documentedType)
     {
         // Look for public properties 
@@ -374,21 +382,26 @@ public partial class ApiDocumentationBuilder()
             var category = field.GetCustomAttribute<CategoryAttribute>();
             var key = GetFieldFullName(field);
 
+            if (string.IsNullOrEmpty(key))
+            {
+                continue;
+            }
+
             // Has this property been documented before?
             if (!Fields.TryGetValue(key, out var documentedField))
             {
                 // No.  Get the XML documentation
-                var xmlDocs = _xmlDocs.GetMemberComments(field);
+                var xmlDocs = _xmlDocs.Value.GetMemberComments(field);
 
                 // Record this property
-                documentedField = new DocumentedField()
+                documentedField = new DocumentedField
                 {
                     Category = category?.Name,
                     DeclaringType = field.DeclaringType,
                     IsProtected = field.IsFamily,
                     Key = key,
                     Name = field.Name,
-                    Order = category == null ? int.MaxValue : category.Order,
+                    Order = category?.Order ?? int.MaxValue,
                     Remarks = xmlDocs.Remarks?.Replace("\r\n", "").Trim(),
                     Summary = xmlDocs.Summary?.Replace("\r\n", "").Trim(),
                     Type = field.FieldType,
@@ -404,6 +417,7 @@ public partial class ApiDocumentationBuilder()
     /// Adds events for the specified type.
     /// </summary>
     /// <param name="type">The type to examine.</param>
+    /// <param name="documentedType">The document type.</param>
     public void AddEventsToDocument(Type type, DocumentedType documentedType)
     {
         // Look for public properties 
@@ -412,9 +426,10 @@ public partial class ApiDocumentationBuilder()
         events.AddRange(type.GetEvents(BindingFlags.Instance | BindingFlags.NonPublic));
         // Remove unwanted events
         events.RemoveAll(eventItem =>
-            eventItem.AddMethod.IsPrivate               // Remove private events
-            || eventItem.AddMethod.IsAssembly           // Remove internal events
-            || eventItem.AddMethod.IsFamilyOrAssembly); // Remove overridden internal fields
+            eventItem.AddMethod is not null
+            && (eventItem.AddMethod.IsPrivate // Remove private events
+                || eventItem.AddMethod.IsAssembly // Remove internal events
+                || eventItem.AddMethod.IsFamilyOrAssembly)); // Remove overridden internal fields
         // Remove duplicates
         events = events.DistinctBy(property => property.Name).ToList();
         // Go through each property
@@ -422,19 +437,19 @@ public partial class ApiDocumentationBuilder()
         {
             var category = eventItem.GetCustomAttribute<CategoryAttribute>();
             var blazorParameter = eventItem.GetCustomAttribute<ParameterAttribute>();
-            var key = $"{eventItem.DeclaringType.FullName}.{eventItem.Name}";
+            var key = $"{eventItem.DeclaringType?.FullName}.{eventItem.Name}";
 
             // Has this property been documented before?
             if (!Events.TryGetValue(key, out var documentedEvent))
             {
                 // No.
-                documentedEvent = new DocumentedEvent()
+                documentedEvent = new DocumentedEvent
                 {
                     Category = category?.Name,
                     DeclaringType = eventItem.DeclaringType,
                     Key = key,
                     Name = eventItem.Name,
-                    Order = category == null ? int.MaxValue : category.Order,
+                    Order = category?.Order ?? int.MaxValue,
                     Type = eventItem.EventHandlerType,
                 };
                 Events.Add(key, documentedEvent);
@@ -469,32 +484,21 @@ public partial class ApiDocumentationBuilder()
     /// </summary>
     public void FindDeclaringTypes()
     {
-        foreach (var property in Properties)
+        AssignDeclaringDocumentedType(Properties);
+        AssignDeclaringDocumentedType(Fields);
+        AssignDeclaringDocumentedType(Methods);
+        AssignDeclaringDocumentedType(Events);
+        return;
+
+        void AssignDeclaringDocumentedType<T>(IEnumerable<KeyValuePair<string, T>> items) where T : DocumentedMember
         {
-            if (Types.TryGetValue(GetTypeFullName(property.Value.DeclaringType), out var documentedType))
+            foreach (var item in items)
             {
-                property.Value.DeclaringDocumentedType = documentedType;
-            }
-        }
-        foreach (var field in Fields)
-        {
-            if (Types.TryGetValue(GetTypeFullName(field.Value.DeclaringType), out var documentedType))
-            {
-                field.Value.DeclaringDocumentedType = documentedType;
-            }
-        }
-        foreach (var method in Methods)
-        {
-            if (Types.TryGetValue(GetTypeFullName(method.Value.DeclaringType), out var documentedType))
-            {
-                method.Value.DeclaringDocumentedType = documentedType;
-            }
-        }
-        foreach (var eventItem in Events)
-        {
-            if (Types.TryGetValue(GetTypeFullName(eventItem.Value.DeclaringType), out var documentedType))
-            {
-                eventItem.Value.DeclaringDocumentedType = documentedType;
+                var fullName = GetTypeFullName(item.Value.DeclaringType);
+                if (fullName is not null && Types.TryGetValue(fullName, out var documentedType))
+                {
+                    item.Value.DeclaringDocumentedType = documentedType;
+                }
             }
         }
     }
@@ -504,91 +508,104 @@ public partial class ApiDocumentationBuilder()
     /// </summary>
     /// <param name="type"></param>
     /// <returns></returns>
-    public string GetTypeFullName(Type type)
+    public string? GetTypeFullName(Type? type)
     {
+        if (type is null)
+        {
+            return null;
+        }
+
         // Is a full name already given?
-        if (type.FullName != null)
+        if (type.FullName is not null)
         {
             return $"{type.FullName}";
         }
         // Is there a type by name?
-        else if (PublicTypes.TryGetValue(type.Name, out var publicType))
+
+        if (PublicTypes.TryGetValue(type.Name, out var publicType))
         {
             return $"{publicType.FullName}";
         }
-        else
-        {
-            return null;
-        }
+
+        return null;
     }
 
     /// <summary>
     /// Gets the full name of the property's declaring type.
     /// </summary>
     /// <param name="property"></param>
-    /// <returns></returns>
-    public string GetPropertyFullName(PropertyInfo property)
+    public string? GetPropertyFullName(PropertyInfo? property)
     {
-        // Is a full name already given?
-        if (property.DeclaringType.FullName != null)
-        {
-            return $"{property.DeclaringType.FullName}.{property.Name}";
-        }
-        // Is there a type by name?
-        else if (PublicTypes.TryGetValue(property.DeclaringType.Name, out var type))
-        {
-            return $"{type.FullName}.{property.Name}";
-        }
-        else
+        if (property?.DeclaringType is null)
         {
             return null;
         }
+
+        // Is a full name already given?
+        if (property.DeclaringType.FullName is not null)
+        {
+            return $"{property.DeclaringType.FullName}.{property.Name}";
+        }
+
+        // Is there a type by name?
+        if (PublicTypes.TryGetValue(property.DeclaringType.Name, out var type))
+        {
+            return $"{type.FullName}.{property.Name}";
+        }
+
+        return null;
     }
 
     /// <summary>
     /// Gets the full name of the field's declaring type.
     /// </summary>
     /// <param name="field"></param>
-    /// <returns></returns>
-    public string GetFieldFullName(FieldInfo field)
+    public string? GetFieldFullName(FieldInfo? field)
     {
-        // Is a full name already given?
-        if (field.DeclaringType.FullName != null)
-        {
-            return $"{field.DeclaringType.FullName}.{field.Name}";
-        }
-        // Is there a type by name?
-        else if (PublicTypes.TryGetValue(field.DeclaringType.Name, out var type))
-        {
-            return $"{type.FullName}.{field.Name}";
-        }
-        else
+        if (field?.DeclaringType is null)
         {
             return null;
         }
+
+        // Is a full name already given?
+        if (field.DeclaringType.FullName is not null)
+        {
+            return $"{field.DeclaringType.FullName}.{field.Name}";
+        }
+
+        // Is there a type by name?
+        if (PublicTypes.TryGetValue(field.DeclaringType.Name, out var type))
+        {
+            return $"{type.FullName}.{field.Name}";
+        }
+
+        return null;
     }
 
     /// <summary>
     /// Gets the full name of the property's declaring type.
     /// </summary>
     /// <param name="method"></param>
-    /// <returns></returns>
-    public string GetMethodFullName(MethodInfo method)
+    public string? GetMethodFullName(MethodInfo? method)
     {
+        if (method?.DeclaringType is null)
+        {
+            return null;
+        }
+
         // Is a full name already given?
         if (method.DeclaringType.FullName != null)
         {
             return $"{method.DeclaringType.FullName}.{method.Name}";
         }
+
         // Is there a type by name?
-        else if (PublicTypes.TryGetValue(method.DeclaringType.Name, out var type))
+        if (PublicTypes.TryGetValue(method.DeclaringType.Name, out var type))
         {
             return $"{type.FullName}.{method.Name}";
         }
-        else
-        {
-            return null;
-        }
+
+        return null;
     }
 
     /// <summary>
@@ -620,15 +637,18 @@ public partial class ApiDocumentationBuilder()
         {
             // Get the key for this method
             var key = GetMethodFullName(method);
-
+            if (string.IsNullOrEmpty(key))
+            {
+                continue;
+            }
             // Has this been documented before?
             if (!Methods.TryGetValue(key, out var documentedMethod))
             {
                 // No.  Get the XML documentation
-                var xmlDocs = _xmlDocs.GetMethodComments(method);
+                var xmlDocs = _xmlDocs.Value.GetMethodComments(method);
 
                 // Record this property          
-                documentedMethod = new DocumentedMethod()
+                documentedMethod = new DocumentedMethod
                 {
                     DeclaringType = method.DeclaringType,
                     IsProtected = method.IsFamily,
@@ -642,8 +662,8 @@ public partial class ApiDocumentationBuilder()
                 // Reach out and document types mentioned in these methods
                 foreach (var parameter in method.GetParameters())
                 {
-                    var (name, text) = xmlDocs.Parameters.SingleOrDefault(docParameter => docParameter.Name == parameter.Name);
-                    var documentedParameter = new DocumentedParameter()
+                    var (_, text) = xmlDocs.Parameters.SingleOrDefault(docParameter => docParameter.Name == parameter.Name);
+                    var documentedParameter = new DocumentedParameter
                     {
                         Name = parameter.Name,
                         Type = parameter.ParameterType,
@@ -657,35 +677,6 @@ public partial class ApiDocumentationBuilder()
             // Add the method to the type
             documentedType.Methods.Add(documentedMethod.Key, documentedMethod);
         }
-    }
-
-    /// <summary>
-    /// Gets the name of a method without its parameters.
-    /// </summary>
-    /// <param name="xmlMethodName"></param>
-    /// <returns></returns>
-    public static string GetMethodFullName(string xmlMethodName)
-    {
-        // Are there parenthesis?
-        var parenthesis = xmlMethodName.IndexOf('(');
-        if (parenthesis == -1)
-        {
-            return xmlMethodName;
-        }
-        else
-        {
-            return xmlMethodName.Substring(0, parenthesis);
-        }
-    }
-
-    /// <summary>
-    /// Gets the name of a method from the full name.
-    /// </summary>
-    /// <param name="xmlMethodName"></param>
-    /// <returns></returns>
-    public static string GetMethodName(string xmlMethodName)
-    {
-        return xmlMethodName.Substring(xmlMethodName.LastIndexOf('.') + 1);
     }
 
     /// <summary>
@@ -729,13 +720,13 @@ public partial class ApiDocumentationBuilder()
         var fieldCoverage = wellDocumentedFields / (double)Fields.Count;
         var eventCoverage = wellDocumentedEvents / (double)Events.Count;
 
-        Console.WriteLine("XML Documentation Coverage for MudBlazor:");
+        Console.WriteLine(@"XML Documentation Coverage for MudBlazor:");
         Console.WriteLine();
-        Console.WriteLine($"Types:      {wellDocumentedTypes} of {Types.Count} ({typeCoverage:P0}) types");
-        Console.WriteLine($"Properties: {wellDocumentedProperties} of {Properties.Count} ({propertyCoverage:P0}) properties");
-        Console.WriteLine($"Methods:    {wellDocumentedMethods} of {Methods.Count} ({methodCoverage:P0}) methods");
-        Console.WriteLine($"Fields:     {wellDocumentedFields} of {Fields.Count} ({fieldCoverage:P0}) fields");
-        Console.WriteLine($"Events:     {wellDocumentedEvents} of {Events.Count} ({eventCoverage:P0}) events/EventCallback");
+        Console.WriteLine(@$"Types:      {wellDocumentedTypes} of {Types.Count} ({typeCoverage:P0}) types");
+        Console.WriteLine(@$"Properties: {wellDocumentedProperties} of {Properties.Count} ({propertyCoverage:P0}) properties");
+        Console.WriteLine(@$"Methods:    {wellDocumentedMethods} of {Methods.Count} ({methodCoverage:P0}) methods");
+        Console.WriteLine(@$"Fields:     {wellDocumentedFields} of {Fields.Count} ({fieldCoverage:P0}) fields");
+        Console.WriteLine(@$"Events:     {wellDocumentedEvents} of {Events.Count} ({eventCoverage:P0}) events/EventCallback");
         Console.WriteLine();
     }
 
@@ -744,7 +735,7 @@ public partial class ApiDocumentationBuilder()
     /// </summary>
     public void AddGlobalsToDocument()
     {
-        // Find all of the "MudGlobal" properties
+        // Find all the "MudGlobal" properties
         var globalProperties = Properties.Where(property => property.Key.StartsWith("MudBlazor.MudGlobal+")).ToList();
         foreach (var globalProperty in globalProperties)
         {
@@ -752,6 +743,11 @@ public partial class ApiDocumentationBuilder()
              * <see cref=""> tag in the summary.  Let's use this to tie a global property with its 
              * component.  Also, let's link this global to any of the component's descendants.
              */
+
+            if (globalProperty.Value.Summary is null)
+            {
+                continue;
+            }
 
             // Does the summary mention the type?
             var start = globalProperty.Value.Summary.IndexOf("<see cref=\"T:", StringComparison.OrdinalIgnoreCase);
@@ -766,15 +762,15 @@ public partial class ApiDocumentationBuilder()
                 if (Types.TryGetValue(typeName, out var documentedType))
                 {
                     // Yes.  Link it to this global if it is not already linked
-                    if (!documentedType.GlobalSettings.Any(pair => pair.Value.Name == globalProperty.Value.Name))
+                    if (documentedType.GlobalSettings.All(pair => pair.Value.Name != globalProperty.Value.Name))
                     {
                         documentedType.GlobalSettings.Add(globalProperty.Key, globalProperty.Value);
                     }
                     // Also link descendants of this type
-                    foreach (var descendant in Types.Where(type => type.Value.BaseType != null && type.Value.BaseType.Name == documentedType.Type.Name))
+                    foreach (var descendant in Types.Where(type => type.Value.BaseType is not null && type.Value.BaseType.Name == documentedType.Type.Name))
                     {
                         // Link it to this global as well if it is not already linked
-                        if (!descendant.Value.GlobalSettings.Any(pair => pair.Value.Name == globalProperty.Value.Name))
+                        if (descendant.Value.GlobalSettings.All(pair => pair.Value.Name != globalProperty.Value.Name))
                         {
                             descendant.Value.GlobalSettings.Add(globalProperty.Key, globalProperty.Value);
                         }
