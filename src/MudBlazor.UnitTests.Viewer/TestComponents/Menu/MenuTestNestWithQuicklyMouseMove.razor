@@ -1,0 +1,17 @@
+﻿<MudPopoverProvider />
+
+<MudMenu Label="Test" ActivationEvent="MouseEvent.MouseOver">
+    @for (var i = 0; i < 10; i++)
+    {
+        <MudMenuItem>
+            <MudMenu Label="TestTestTestTestTestTest" ActivationEvent="MouseEvent.MouseOver" AnchorOrigin="Origin.CenterRight" TransformOrigin="Origin.CenterLeft">
+                @for (var i = 0; i < 10; i++)
+                {
+                    <MudMenuItem>
+                        <MudButton>TEST</MudButton>
+                    </MudMenuItem>
+                }
+            </MudMenu>
+        </MudMenuItem>
+    }
+</MudMenu>

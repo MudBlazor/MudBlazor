@@ -5,40 +5,48 @@
 
 @if (Enabled)
 {
-    if (ItemsProvider != null)
+    if (ItemsProvider is not null)
     {
-        <Virtualize @ref="@_virtualizeContainerReference" ItemsProvider="@ItemsProvider" Context="item" OverscanCount="@OverscanCount" ItemSize="@ItemSize" SpacerElement="@SpacerElement">
+        <Virtualize TItem="T" @ref="@_virtualizeContainerReference" ItemsProvider="@ItemsProvider" Context="item" OverscanCount="@OverscanCount" ItemSize="@ItemSize" SpacerElement="@SpacerElement">
             <ChildContent>
                 @if (ChildContent is not null)
                 {
                     @ChildContent(item)
                 }
             </ChildContent>
-
             <Placeholder>
                 @Placeholder
             </Placeholder>
+            <EmptyContent>
+                @NoRecordsContent
+            </EmptyContent>
         </Virtualize>
     }
     else
     {
-        <Virtualize @ref="@_virtualizeContainerReference" Items="@Items" Context="item" OverscanCount="@OverscanCount" ItemSize="@ItemSize" SpacerElement="@SpacerElement">
+        <Virtualize TItem="T" @ref="@_virtualizeContainerReference" Items="@Items" Context="item" OverscanCount="@OverscanCount" ItemSize="@ItemSize" SpacerElement="@SpacerElement">
             <ChildContent>
                 @if (ChildContent is not null)
                 {
                     @ChildContent(item)
                 }
             </ChildContent>
-
             <Placeholder>
                 @Placeholder
             </Placeholder>
+            <EmptyContent>
+                @NoRecordsContent
+            </EmptyContent>
         </Virtualize>
     }
 }
+else if (Items?.Any() != true)
+{
+    @NoRecordsContent
+}
 else
 {
-    @foreach (var item in Items ?? Array.Empty<T>())
+    @foreach (var item in Items)
     {
         if (ChildContent is not null)
         {

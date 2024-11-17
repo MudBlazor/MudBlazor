@@ -1,0 +1,202 @@
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+<MudGrid>
+    <MudItem xs="6">
+        <MudDataGrid T="Model"
+                     @ref="_gridComponentReference"
+                     Virtualize="true"
+                     VirtualizeServerData="ServerDataFunc"
+                     RowClick="RowClicked"
+                     RowClassFunc="RowClassSelected"
+                     FixedHeader="true"
+                     Height="350px">
+            <ToolBarContent>
+                <MudText Typo="Typo.h6">MudBlazor grid</MudText>
+                <MudSpacer />
+                <MudTextField T="string?" @bind-Value:get="_searchString" @bind-Value:set="SetSearchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                              AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
+            </ToolBarContent>
+            <NoRecordsContent>
+                <tr class="mud-table-row">
+                    <td class="mud-table-cell" colspan="1000">
+                        No data
+                    </td>
+                </tr>
+            </NoRecordsContent>
+            <Columns>
+                <PropertyColumn Property="x => x.Index" />
+                <PropertyColumn Property="x => x.Column2" />
+            </Columns>
+        </MudDataGrid>
+    </MudItem>
+    <MudItem xs="6">
+        <MudText Typo="Typo.h6">Row html grid</MudText>
+        <div class="mud-table-container" style="height: 350px; overflow-anchor: none;">
+            <div class="mud-drop-container">
+                <table class="mud-table-root">
+                    <thead class="mud-table-head">
+                        <tr class="mud-table-row">
+                            <th scope="col" class="mud-table-cell">
+                                @nameof(Model.Index)
+                            </th>
+                            <th scope="col" class="mud-table-cell">
+                                @nameof(Model.Column2)
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="mud-table-body">
+                        <Virtualize @ref="_nativeVirtualizeComponent" Context="item" ItemsProvider="NativeServerDataFunc">
+                            <ChildContent>
+                                <tr class="mud-table-row">
+                                    <td scope="col" class="mud-table-cell">
+                                        @item.Index
+                                    </td>
+                                    <td scope="col" class="mud-table-cell">
+                                        @item.Column2
+                                    </td>
+                                </tr>
+                            </ChildContent>
+                            <Placeholder>
+                                <tr class="mud-table-row">
+                                    <td class="mud-table-cell" colspan="1000">
+                                        Loading...
+                                    </td>
+                                </tr>
+                            </Placeholder>
+                            <EmptyContent>
+                                <tr class="mud-table-row">
+                                    <td class="mud-table-cell" colspan="1000">
+                                        No data
+                                    </td>
+                                </tr>
+                            </EmptyContent>
+                        </Virtualize>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </MudItem>
+</MudGrid>
+<MudExpansionPanels Style="flex:1">
+    <MudExpansionPanel Text="Show Events">
+        @foreach (var message in _events)
+        {
+            <MudText Typo="@Typo.body2">@message</MudText>
+        }
+        @if (_events.Count > 0)
+        {
+            <div class="d-flex">
+                <MudButton Class="mt-3" ButtonType="ButtonType.Button" Variant="Variant.Filled" OnClick="@StateHasChanged">Update</MudButton>
+                <MudSpacer />
+                <MudButton Class="mt-3" ButtonType="ButtonType.Button" Variant="Variant.Filled" OnClick="@(() => _events.Clear())">Clear</MudButton>
+            </div>
+        }
+    </MudExpansionPanel>
+</MudExpansionPanels>
+<style>
+    .mud-table-row-selected {
+        background-color: rgb(from var(--mud-palette-primary) r g b / 0.25) !important;
+    }
+</style>
+
+@code {
+    public static string __description__ = @"The data grid should reload data correctly when using VirtualizeServerData with external filter. Empty result must show 'No data'.";
+
+    private readonly List<string> _events = [];
+    private int _selectedIndex;
+    private string? _searchString;
+    private MudDataGrid<Model>? _gridComponentReference;
+    private Virtualize<Model>? _nativeVirtualizeComponent;
+
+    private readonly IEnumerable<Model> _sourceElements;
+    private IEnumerable<Model> _elements;
+
+    public DataGridVirtualizeServerDataLoadingWithSearchTest()
+    {
+        _sourceElements = Enumerable.Range(0, 100)
+            .Select(i => new Model(i, $"Value_{i}"))
+            .ToArray();
+        _elements = _sourceElements;
+    }
+
+    /// <summary>
+    /// Reloads the data from the server, with support for cancellation.
+    /// </summary>
+    private async Task<GridData<Model>> ServerDataFunc(GridStateVirtualize<Model> state, CancellationToken token)
+    {
+        try
+        {
+            // Simulate "loading data"
+            await Task.Delay(500, token);
+
+            IEnumerable<Model> data = _elements;
+
+            data = data
+                .Skip(state.StartIndex)
+                .Take(state.Count)
+                .ToList();
+
+            // Return the data
+            var result = new GridData<Model>() { TotalItems = _elements.Count(), Items = data.ToArray() };
+            _events.Add($"ServerDataFunc index : {state.StartIndex} (TotalItems : {result.TotalItems})");
+
+            return result;
+        }
+        catch (Exception ex) when (ex is TaskCanceledException)
+        {
+            _events.Add($"ServerDataFunc index : {state.StartIndex} (Cancelled)");
+            return new GridData<Model>
+            {
+                Items = [],
+                TotalItems = 0,
+            };
+        }
+    }
+
+    private void RowClicked(DataGridRowClickEventArgs<Model> args)
+    {
+        // Virtualization didn't work well with storing item, because this item is recreated then the reference is different => use index instead or item discrimination
+        _selectedIndex = args.RowIndex;
+        _events.Add($"RowClicked index : {args.RowIndex}");
+    }
+
+    private string RowClassSelected(Model line, int index) =>
+        _selectedIndex == index
+            ?"mud-table-row-selected"
+            : string.Empty;
+
+    private async Task SetSearchString(string? searchValue)
+    {
+        _searchString = searchValue;
+        if (string.IsNullOrEmpty(searchValue))
+        {
+            _elements = _sourceElements;
+        }
+        else
+        {
+            _elements = _sourceElements.Where(x =>
+                    x.Index.ToString() == searchValue
+                    || (x.Column2?.Contains(searchValue, StringComparison.OrdinalIgnoreCase) ?? false)
+                );
+        }
+        await (_gridComponentReference?.ReloadServerData() ?? Task.CompletedTask);
+        await (_nativeVirtualizeComponent?.RefreshDataAsync() ?? Task.CompletedTask);
+        StateHasChanged();
+    }
+
+    /// <summary>
+    /// Native virtualize component ItemsProvider
+    /// </summary>
+    private async ValueTask<ItemsProviderResult<Model>> NativeServerDataFunc(ItemsProviderRequest request)
+    {
+        var state = new GridStateVirtualize<Model>
+        {
+            StartIndex = request.StartIndex,
+            Count = request.Count,
+        };
+        var result = await ServerDataFunc(state, request.CancellationToken);
+
+        return new ItemsProviderResult<Model>(result.Items, result.TotalItems);
+    }
+
+    public record Model(int Index, string Column2);
+}

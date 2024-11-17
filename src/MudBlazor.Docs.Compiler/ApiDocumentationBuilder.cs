@@ -745,26 +745,46 @@ public partial class ApiDocumentationBuilder()
     public void AddGlobalsToDocument()
     {
         // Find all of the "MudGlobal" properties
-        var globalProperties = Properties.Where(property => property.Value.Key.StartsWith("MudBlazor.MudGlobal")).ToList();
+        var globalProperties = Properties.Where(property => property.Key.StartsWith("MudBlazor.MudGlobal+")).ToList();
         foreach (var globalProperty in globalProperties)
         {
-            // TODO: Make a more explicit way of doing this without string parsing, like an attribute
-            // or making each global a static property in the component it affects.
+            /* MudGlobal properties thankfully mention the component they are for, by way of a
+             * <see cref=""> tag in the summary.  Let's use this to tie a global property with its 
+             * component.  Also, let's link this global to any of the component's descendants.
+             */
 
-            // Calculate the class this property links to
-            var relatedTypeName = "MudBlazor.Mud" + GlobalComponentNameRegEx().Match(globalProperty.Key).Groups[1].Value;
-
-            // Look up the related type
-            if (Types.TryGetValue(relatedTypeName, out var type))
+            // Does the summary mention the type?
+            var start = globalProperty.Value.Summary.IndexOf("<see cref=\"T:", StringComparison.OrdinalIgnoreCase);
+            if (start != -1)
             {
-                type.GlobalSettings.Add(globalProperty.Key, globalProperty.Value);
+                // Yes.   Move up to the type  (i.e. "MudBlazor.___")
+                start += 13;
+                var end = start == -1 ? -1 : globalProperty.Value.Summary.IndexOf('\"', start);
+                var typeName = globalProperty.Value.Summary.Substring(start, end - start);
+
+                // Does the mentioned type exist?
+                if (Types.TryGetValue(typeName, out var documentedType))
+                {
+                    // Yes.  Link it to this global if it is not already linked
+                    if (!documentedType.GlobalSettings.Any(pair => pair.Value.Name == globalProperty.Value.Name))
+                    {
+                        documentedType.GlobalSettings.Add(globalProperty.Key, globalProperty.Value);
+                    }
+                    // Also link descendants of this type
+                    foreach (var descendant in Types.Where(type => type.Value.BaseType != null && type.Value.BaseType.Name == documentedType.Type.Name))
+                    {
+                        // Link it to this global as well if it is not already linked
+                        if (!descendant.Value.GlobalSettings.Any(pair => pair.Value.Name == globalProperty.Value.Name))
+                        {
+                            descendant.Value.GlobalSettings.Add(globalProperty.Key, globalProperty.Value);
+                        }
+                    }
+                }
+                else
+                {
+                    // A global is missing the docs necessary to link it to a type.                      
+                }
             }
         }
     }
-
-    /// <summary>
-    /// The regular expression used to extract XML documentation summaries.
-    /// </summary>
-    [GeneratedRegex(@"MudBlazor\.MudGlobal\+([ \S]*)Defaults\.")]
-    private static partial Regex GlobalComponentNameRegEx();
 }

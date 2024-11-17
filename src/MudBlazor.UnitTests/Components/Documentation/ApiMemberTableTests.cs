@@ -156,4 +156,36 @@ public sealed class ApiMemberTableTests : BunitTest
         // There should NOT be a message saying no members are found  
         comp.Markup.Should().NotContain("<div class=\"mud-alert-message\">No members match the current filters.</div>");
     }
+
+    /// <summary>
+    /// Ensures that a mode of <see cref="ApiMemberTableMode.Globals"/> renders properly for a type with globals.
+    /// </summary>
+    /// <remarks>
+    /// At the time of writing this test, there are globals for <see cref="MudButton"/>.
+    /// </remarks>
+    [Test]
+    public void ApiMemberTable_RenderGlobals_WhenExisting()
+    {
+        // Get a type with protected methods
+        var mudButton = ApiDocumentation.GetType("MudBlazor.MudButton");
+        using var comp = Context.RenderComponent<ApiMemberTable>(Parameter("Type", mudButton), Parameter("Mode", ApiMemberTableMode.Globals));
+        // There should NOT be a message saying no members are found  
+        comp.Markup.Should().NotContain("<div class=\"mud-alert-message\">No members match the current filters.</div>");
+    }
+
+    /// <summary>
+    /// Ensures that a mode of <see cref="ApiMemberTableMode.Globals"/> renders properly for a type WITHOUT globals.
+    /// </summary>
+    /// <remarks>
+    /// At the time of writing this test, there are NO globals for <see cref="MudAlert"/>.
+    /// </remarks>
+    [Test]
+    public void ApiMemberTable_RenderGlobals_WhenNotExisting()
+    {
+        // Get a type with protected methods
+        var mudAlert = ApiDocumentation.GetType("MudBlazor.MudAlert");
+        using var comp = Context.RenderComponent<ApiMemberTable>(Parameter("Type", mudAlert), Parameter("Mode", ApiMemberTableMode.Globals));
+        // There should be a message saying no members are found  
+        comp.Markup.Should().Contain("<div class=\"mud-alert-message\">No members match the current filters.</div>");
+    }
 }
