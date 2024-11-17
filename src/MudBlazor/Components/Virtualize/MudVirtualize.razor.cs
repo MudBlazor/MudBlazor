@@ -75,12 +75,11 @@ namespace MudBlazor
         /// <summary>
         /// Refreshes the data in the Virtualize component asynchronously.
         /// </summary>
-        public async Task RefreshDataAsync()
+        public Task RefreshDataAsync()
         {
-            if (_virtualizeContainerReference != null)
-            {
-                await _virtualizeContainerReference.RefreshDataAsync();
-            }
+            return _virtualizeContainerReference is null
+                ? Task.CompletedTask
+                : _virtualizeContainerReference.RefreshDataAsync();
         }
     }
 }

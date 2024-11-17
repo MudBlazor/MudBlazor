@@ -6,26 +6,13 @@
                        ItemsProvider="ServerDataFunc"
                        Context="itemBag">
             <Placeholder>
-                <tr class="mud-table-row">
-                    <td class="mud-table-cell" colspan="1000">
-                        Loading...
-                    </td>
-                </tr>
+                <div id="item_provider_placeholder">Loading...</div>
             </Placeholder>
-
             <ChildContent>
-                <tr class="mud-table-row">
-                    <td class="mud-table-cell" colspan="1000">
-                        [Content]
-                    </td>
-                </tr>
+                <div id="item_provider_content">[Content]</div>
             </ChildContent>
             <NoRecordsContent>
-                <tr class="mud-table-row">
-                    <td class="mud-table-cell" colspan="1000">
-                        No data
-                    </td>
-                </tr>
+                <div id="item_provider_nodata">No data</div>
             </NoRecordsContent>
         </MudVirtualize>
     </MudItem>
@@ -35,55 +22,29 @@
                        Items="_emptyList"
                        Context="itemBag">
             <Placeholder>
-                <tr class="mud-table-row">
-                    <td class="mud-table-cell" colspan="1000">
-                        Loading...
-                    </td>
-                </tr>
+                <div id="items_virtualized_placeholder">Loading...</div>
             </Placeholder>
-
             <ChildContent>
-                <tr class="mud-table-row">
-                    <td class="mud-table-cell" colspan="1000">
-                        [Content]
-                    </td>
-                </tr>
+                <div id="items_virtualized_content">[Content]</div>
             </ChildContent>
             <NoRecordsContent>
-                <tr class="mud-table-row">
-                    <td class="mud-table-cell" colspan="1000">
-                        No data
-                    </td>
-                </tr>
+                <div id="items_virtualized_nodata">No data</div>
             </NoRecordsContent>
         </MudVirtualize>
     </MudItem>
     <MudItem xs="6">
-        <MudText Typo="Typo.h6">Items row</MudText>
+        <MudText Typo="Typo.h6">Items</MudText>
         <MudVirtualize Enabled="false"
                        Items="_emptyList"
                        Context="itemBag">
             <Placeholder>
-                <tr class="mud-table-row">
-                    <td class="mud-table-cell" colspan="1000">
-                        Loading...
-                    </td>
-                </tr>
+                <div id="items_placeholder">Loading...</div>
             </Placeholder>
-
             <ChildContent>
-                <tr class="mud-table-row">
-                    <td class="mud-table-cell" colspan="1000">
-                        [Content]
-                    </td>
-                </tr>
+                <div id="items_content">[Content]</div>
             </ChildContent>
             <NoRecordsContent>
-                <tr class="mud-table-row">
-                    <td class="mud-table-cell" colspan="1000">
-                        No data
-                    </td>
-                </tr>
+                <div id="items_nodata">No data</div>
             </NoRecordsContent>
         </MudVirtualize>
     </MudItem>
@@ -92,16 +53,21 @@
 @code {
     public static string __description__ = @"The Virtualize component must show 'No data'.";
 
+    private readonly TaskCompletionSource _taskCompletionSource = new();
     private readonly List<VirtualizeModel> _emptyList = [];
+
+    public Task CompleteServerDataFunc => _taskCompletionSource.Task;
 
     /// <summary>
     /// Reloads the data from the server, with support for cancellation.
     /// </summary>
-    private static async ValueTask<ItemsProviderResult<VirtualizeModel>> ServerDataFunc(ItemsProviderRequest request)
+    private async ValueTask<ItemsProviderResult<VirtualizeModel>> ServerDataFunc(ItemsProviderRequest request)
     {
         await Task.Delay(500, request.CancellationToken)
             //Do not throw
-            .ContinueWith(x=>Task.CompletedTask);
+            .ContinueWith(_ => Task.CompletedTask);
+
+        _taskCompletionSource.TrySetResult();
 
         return new ItemsProviderResult<VirtualizeModel>([], 0);
     }
