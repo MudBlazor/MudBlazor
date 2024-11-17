@@ -1,4 +1,5 @@
-﻿using Bunit;
+﻿using AngleSharp.Dom;
+using Bunit;
 using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents.Virtualize;
 using NUnit.Framework;
@@ -24,12 +25,12 @@ public class VirtualizeTests : BunitTest
         var comp = Context.RenderComponent<VirtualizeNoRecordsContentTest>();
         await comp.Instance.CompleteServerDataFunc;
 
-        var itemNoData = comp.Find("#items_nodata");
-        var itemProviderNoData = comp.Find("#item_provider_nodata");
-        var itemVirtualizedNoData = comp.Find("#items_virtualized_nodata");
+        IElement ItemNoData() => comp.Find("#items_nodata");
+        IElement ItemVirtualizedNoData() => comp.Find("#items_virtualized_nodata");
+        IElement ItemProviderNoData() => comp.Find("#item_provider_nodata");
 
-        itemNoData.InnerHtml.Should().Be("No data");
-        itemProviderNoData.InnerHtml.Should().Be("No data");
-        itemVirtualizedNoData.InnerHtml.Should().Be("No data");
+        ItemNoData().InnerHtml.Should().Be("No data");
+        ItemVirtualizedNoData().InnerHtml.Should().Be("No data");
+        ItemProviderNoData().InnerHtml.Should().Be("No data");
     }
 }

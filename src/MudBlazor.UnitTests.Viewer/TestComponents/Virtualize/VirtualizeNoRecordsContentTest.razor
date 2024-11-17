@@ -61,20 +61,9 @@
     /// <summary>
     /// Reloads the data from the server, with support for cancellation.
     /// </summary>
-    private async ValueTask<ItemsProviderResult<VirtualizeModel>> ServerDataFunc(ItemsProviderRequest request)
+    private static ValueTask<ItemsProviderResult<VirtualizeModel>> ServerDataFunc(ItemsProviderRequest request)
     {
-        try
-        {
-            await Task.Delay(500, request.CancellationToken)
-                //Do not throw
-                .ContinueWith(_ => Task.CompletedTask);
-
-            return new ItemsProviderResult<VirtualizeModel>([], 0);
-        }
-        finally
-        {
-            _taskCompletionSource.TrySetResult();
-        }
+        return ValueTask.FromResult(new ItemsProviderResult<VirtualizeModel>([], 0));
     }
 
     public record VirtualizeModel(int Index, string Column2);
