@@ -23,7 +23,6 @@ public class VirtualizeTests : BunitTest
     public async Task VirtualizeNoRecordTest()
     {
         var comp = Context.RenderComponent<VirtualizeNoRecordsContentTest>();
-        await comp.Instance.CompleteServerDataFunc;
 
         IElement ItemNoData() => comp.Find("#items_nodata");
         IElement ItemVirtualizedNoData() => comp.Find("#items_virtualized_nodata");

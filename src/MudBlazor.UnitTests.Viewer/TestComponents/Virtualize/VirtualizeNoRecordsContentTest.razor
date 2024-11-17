@@ -53,10 +53,7 @@
 @code {
     public static string __description__ = @"The Virtualize component must show 'No data'.";
 
-    private readonly TaskCompletionSource _taskCompletionSource = new();
     private readonly List<VirtualizeModel> _emptyList = [];
-
-    public Task CompleteServerDataFunc => _taskCompletionSource.Task;
 
     /// <summary>
     /// Reloads the data from the server, with support for cancellation.
