@@ -3,7 +3,6 @@
 // See https://github.com/Blazored
 // Copyright (c) 2020 - Adapted by MudBlazor Contributors
 
-using System.Collections.Concurrent;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
 
