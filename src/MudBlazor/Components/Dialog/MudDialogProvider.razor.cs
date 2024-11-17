@@ -27,8 +27,6 @@ namespace MudBlazor
         private DialogOptions _globalDialogOptions = new();
         private readonly List<IDialogReference> _dialogs = [];
 
-        public int DialogsCount => _dialogs.Count;
-
         [Inject]
         private IDialogService DialogService { get; set; } = null!;
 
@@ -164,7 +162,7 @@ namespace MudBlazor
         /// </summary>
         public void DismissAll()
         {
-            foreach (var dialog in _dialogs.ToList())
+            foreach (var dialog in _dialogs.ToArray())
             {
                 DismissInstance(dialog, DialogResult.Cancel());
             }
