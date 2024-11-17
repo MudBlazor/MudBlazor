@@ -2639,9 +2639,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DataGridInvalidFilterPerColumnTest()
         {
-            var exception = Assert.Throws<Exception>(() => Context.RenderComponent<DataGridFilterPerColumnTest>(parameters => parameters.Add(x => x.AddInvalid, true)));
+            var exception = Assert.Throws<ArgumentException>(() => Context.RenderComponent<DataGridFilterPerColumnTest>(parameters => parameters.Add(x => x.AddInvalid, true)));
 
-            exception.Message.Should().Be("Invalid filter operators for Status Severity: <");
+            exception.Message.Should().Be("Invalid filter operators for Severity: <");
         }
 
         [Test]

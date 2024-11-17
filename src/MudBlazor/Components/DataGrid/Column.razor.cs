@@ -553,7 +553,7 @@ namespace MudBlazor
             }
         }
 
-        protected override void OnParametersSet()
+        protected override void OnInitialized()
         {
             if (FilterOperators.Count > 0)
             {
@@ -562,16 +562,12 @@ namespace MudBlazor
 
                 if (invalidOperators.Length > 0)
                 {
-                    throw new ArgumentException($"Invalid filter operators for {Title} {PropertyType.Name}: {string.Join(", ", invalidOperators)}");
+                    throw new ArgumentException($"Invalid filter operators for {PropertyType.Name}: {string.Join(", ", invalidOperators)}");
                 }
             }
 
-            base.OnParametersSet();
-        }
-
-        protected override void OnInitialized()
-        {
             base.OnInitialized();
+            
             groupBy = GroupBy;
 
             if (DataGrid != null)
