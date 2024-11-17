@@ -2,6 +2,8 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace MudBlazor
 {
 #nullable enable
@@ -9,7 +11,7 @@ namespace MudBlazor
     /// Represents the current state of a cell in a <see cref="MudDataGrid{T}"/>.
     /// </summary>
     /// <typeparam name="T">The type of item displayed in the cell.</typeparam>
-    public class CellContext<T>
+    public class CellContext<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>
     {
         private readonly HashSet<T> _selection;
 

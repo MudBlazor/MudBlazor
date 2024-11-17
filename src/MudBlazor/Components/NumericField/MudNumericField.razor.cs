@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
 
+#nullable enable
 namespace MudBlazor
 {
     /// <summary>
@@ -18,7 +19,22 @@ namespace MudBlazor
     /// <typeparam name="T">The type of number being collected.</typeparam>
     public partial class MudNumericField<T> : MudDebouncedInput<T>
     {
+        private T? _step;
+        private T? _max;
+        private T? _min;
+        private T? _minDefault;
+        private T? _maxDefault;
+        private T? _stepDefault;
+        private bool _maxHasValue = false;
+        private bool _minHasValue = false;
+        private bool _stepHasValue = false;
+        private MudInput<string> _elementReference = null!;
+        private string _elementId = Identifier.Create("numericField");
+
         private Comparer _comparer = new(CultureInfo.InvariantCulture);
+
+        [Inject]
+        private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
         public MudNumericField()
         {
@@ -87,6 +103,7 @@ namespace MudBlazor
                 _minDefault = (T)(object)float.MinValue;
                 _maxDefault = (T)(object)float.MaxValue;
                 _stepDefault = (T)(object)1.0f;
+                InputMode = InputMode.@decimal;
             }
             // double
             else if (typeof(T) == typeof(double) || typeof(T) == typeof(double?))
@@ -94,6 +111,7 @@ namespace MudBlazor
                 _minDefault = (T)(object)double.MinValue;
                 _maxDefault = (T)(object)double.MaxValue;
                 _stepDefault = (T)(object)1.0;
+                InputMode = InputMode.@decimal;
             }
             // decimal
             else if (typeof(T) == typeof(decimal) || typeof(T) == typeof(decimal?))
@@ -101,6 +119,7 @@ namespace MudBlazor
                 _minDefault = (T)(object)decimal.MinValue;
                 _maxDefault = (T)(object)decimal.MaxValue;
                 _stepDefault = (T)(object)1M;
+                InputMode = InputMode.@decimal;
             }
 
             #endregion parameters default depending on T
@@ -111,14 +130,6 @@ namespace MudBlazor
                 .AddClass(HideSpinButtons ? "mud-input-nospin" : "mud-input-showspin")
                 .AddClass(Class)
                 .Build();
-
-
-        [Inject]
-        private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
-
-        private string _elementId = Identifier.Create("numericField");
-
-        private MudInput<string> _elementReference;
 
         /// <inheritdoc />
         [ExcludeFromCodeCoverage]
@@ -149,11 +160,10 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
-        protected override Task SetValueAsync(T value, bool updateText = true, bool force = false)
+        protected override Task SetValueAsync(T? value, bool updateText = true, bool force = false)
         {
-            bool valueChanged;
-            (value, valueChanged) = ConstrainBoundaries(value);
-            return base.SetValueAsync(value, valueChanged || updateText);
+            (value, var valueChanged) = ConstrainBoundaries(value);
+            return base.SetValueAsync(value, valueChanged || updateText, force);
         }
 
         /// <inheritdoc />
@@ -161,14 +171,12 @@ namespace MudBlazor
         {
             await base.OnBlurredAsync(obj);
             await UpdateValuePropertyAsync(true); //Required to set the value after a blur before the debounce period has elapsed
-            await UpdateTextPropertyAsync(false); //Required to update the string formatting after a blur before the debouce period has elapsed
+            await UpdateTextPropertyAsync(false); //Required to update the string formatting after a blur before the debounce period has elapsed
         }
 
-        /// <inheritdoc />
-        protected async Task<bool> ValidateInput(T value)
+        protected async Task<bool> ValidateInput(T? value)
         {
-            bool valueChanged;
-            (value, valueChanged) = ConstrainBoundaries(value);
+            (value, var valueChanged) = ConstrainBoundaries(value);
             if (valueChanged)
                 await SetValueAsync(value, true);
             return true; //Don't show errors
@@ -215,12 +223,12 @@ namespace MudBlazor
             }
             catch (OverflowException)
             {
-                // if next value overflows the primitive type, lets set it to Min or Max depending if factor is positive or negative
+                // if next value overflows the primitive type, lets set it to Min or Max depending on if factor is positive or negative
                 await SetValueAsync(factor > 0 ? Max : Min, true);
             }
         }
 
-        private T GetNextValue(double factor)
+        private T? GetNextValue(double factor)
         {
             if (typeof(T) == typeof(decimal) || typeof(T) == typeof(decimal?))
                 return (T)(object)Convert.ToDecimal(FromDecimal(Value) + (FromDecimal(Step) * (decimal)factor));
@@ -246,7 +254,7 @@ namespace MudBlazor
         /// </summary>
         /// <param name="value">Value to check.</param>
         /// <returns>Returns a valid value and if it has been changed.</returns>
-        protected (T value, bool changed) ConstrainBoundaries(T value)
+        protected (T? value, bool changed) ConstrainBoundaries(T? value)
         {
             if (value == null)
                 return (default(T), false);
@@ -261,7 +269,7 @@ namespace MudBlazor
                 // check if value is lower than defined MIN, if so take the defined MIN value instead
                 if (_comparer.Compare(value, Min) < 0)
                     return (Min, true);
-            };
+            }
 
             return (value, false);
         }
@@ -335,8 +343,6 @@ namespace MudBlazor
             }
         }
 
-        private bool _minHasValue = false;
-
         /// <summary>
         /// Reverses the mouse wheel direction.
         /// </summary>
@@ -348,10 +354,6 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool InvertMouseWheel { get; set; } = false;
 
-        private T _minDefault;
-
-        private T _min;
-
         /// <summary>
         /// The minimum allowed value.
         /// </summary>
@@ -360,7 +362,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]
-        public T Min
+        public T? Min
         {
             get => _minHasValue ? _min : _minDefault;
             set
@@ -370,10 +372,6 @@ namespace MudBlazor
             }
         }
 
-        private bool _maxHasValue = false;
-        private T _maxDefault;
-        private T _max;
-
         /// <summary>
         /// The maximum allowed value.
         /// </summary>
@@ -382,7 +380,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]
-        public T Max
+        public T? Max
         {
             get => _maxHasValue ? _max : _maxDefault;
             set
@@ -391,10 +389,6 @@ namespace MudBlazor
                 _max = value;
             }
         }
-
-        private bool _stepHasValue = false;
-        private T _stepDefault;
-        private T _step;
 
         /// <summary>
         /// The amount added or subtracted when changing values.
@@ -405,7 +399,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public T Step
+        public T? Step
         {
             get => _stepHasValue ? _step : _stepDefault;
             set
@@ -441,9 +435,14 @@ namespace MudBlazor
         /// Defaults to <c>[0-9,.\-]</c>, which will show a numerical keyboard on Safari.  Must be a valid JavaScript regular expression.  To allow only numbers (with no signs or commas), you can use <c>[0-9.]</c>.
         /// </remarks>
         [Parameter]
-        public override string Pattern { get; set; } = @"[0-9,.\-]";
+        public override string? Pattern { get; set; } = @"[0-9,.\-]";
 
-        private string GetCounterText() => Counter == null ? string.Empty : (Counter == 0 ? (string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") : ((string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") + $" / {Counter}"));
+        private string GetCounterText() => Counter switch
+        {
+            null => string.Empty,
+            0 => string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}",
+            _ => (string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") + $" / {Counter}"
+        };
 
         private Task OnInputValueChanged(string text)
         {
@@ -454,20 +453,18 @@ namespace MudBlazor
         //https://stackoverflow.com/questions/1546113/double-to-string-conversion-without-scientific-notation
         private const string TagFormat = "0.###################################################################################################################################################################################################################################################################################################################################################";
 
-        private string FormatParam(T value)
+        private static string? FormatParam(T value)
         {
             if (value is IFormattable f)
                 return f.ToString(TagFormat, CultureInfo.InvariantCulture.NumberFormat);
-            else
-                return null;
+            return null;
         }
 
-        private decimal FromDecimal(T v)
-            => Convert.ToDecimal((decimal?)(object)v);
-        private long FromInt64(T v)
-            => Convert.ToInt64((long?)(object)v);
-        private ulong FromUInt64(T v)
-            => Convert.ToUInt64((ulong?)(object)v);
+        private static decimal FromDecimal(T? v) => Convert.ToDecimal((decimal?)(object?)v);
+
+        private static long FromInt64(T? v) => Convert.ToInt64((long?)(object?)v);
+
+        private static ulong FromUInt64(T? v) => Convert.ToUInt64((ulong?)(object?)v);
 
         /// <inheritdoc />
         protected override async ValueTask DisposeAsyncCore()
