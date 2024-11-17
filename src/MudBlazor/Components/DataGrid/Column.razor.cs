@@ -567,11 +567,10 @@ namespace MudBlazor
             }
 
             base.OnInitialized();
-            
+
             groupBy = GroupBy;
 
-            if (DataGrid != null)
-                DataGrid.AddColumn(this);
+            DataGrid?.AddColumn(this);
 
             // Add the HeaderContext
             headerContext = new HeaderContext<T>(DataGrid);
