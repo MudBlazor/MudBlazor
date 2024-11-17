@@ -26,7 +26,7 @@ namespace MudBlazor
         internal int? _rowsPerPage;
         private int _currentPage = 0;
         private IEnumerable<T> _items;
-        private MudVirtualize<IndexBag> _mudVirtualize;
+        private MudVirtualize<IndexBag<T>> _mudVirtualize;
         private bool _isFirstRendered = false;
         private bool _filtersMenuVisible = false;
         private bool _columnsPanelVisible = false;
@@ -1133,7 +1133,7 @@ namespace MudBlazor
         /// Defines the ItemsProviderDelegate property, which is necessary for implementing the ServerData methodology with Virtualization.
         /// This property is used to populate items virtually from the server.
         /// </summary>
-        internal ItemsProviderDelegate<IndexBag> VirtualItemsProvider { get; set; }
+        internal ItemsProviderDelegate<IndexBag<T>> VirtualItemsProvider { get; set; }
 
         /// <summary>
         /// For unit testing the filtering cache mechanism.
@@ -1786,8 +1786,8 @@ namespace MudBlazor
 
                 _currentRenderFilteredItemsCache = null;
 
-                return new ItemsProviderResult<IndexBag>(
-                    _serverData.Items.Select((x, index) => new IndexBag { Index = request.StartIndex + index, Item = x }),
+                return new ItemsProviderResult<IndexBag<T>>(
+                    _serverData.Items.Select((item, index) => new IndexBag<T>(request.StartIndex + index, item)),
                     _serverData.TotalItems);
             };
         }
@@ -2108,25 +2108,6 @@ namespace MudBlazor
             _serverDataCancellationTokenSource?.Dispose();
             // TODO: Use IAsyncDisposable for MudDataGrid
             _resizeService?.DisposeAsync().CatchAndLog();
-        }
-
-        /// <summary>
-        /// Keeping correct index with virtualize component
-        /// </summary>
-        /// <remarks>
-        /// Until blazor virtualization component did not provide row index, we need to keep it
-        /// it can be remove when it'll be provided : https://github.com/dotnet/aspnetcore/issues/26943
-        /// </remarks>
-        internal struct IndexBag
-        {
-            /// <summary>
-            /// Virtualized row index
-            /// </summary>
-            public required int Index { get; init; }
-            /// <summary>
-            /// User item
-            /// </summary>
-            public required T Item { get; init; }
         }
     }
 }

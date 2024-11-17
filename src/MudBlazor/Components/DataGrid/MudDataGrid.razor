@@ -200,12 +200,12 @@
                         }
 
                         @{
-                            List<IndexBag> resolvedPageItems = new List<IndexBag>(0);
+                            var resolvedPageItems = new List<IndexBag<T>>(0);
                             // resolve the page items only when used
                             if (!Virtualize || HasFooter)
                             {
-                                resolvedPageItems = CurrentPageItems.Select((x, index) => new IndexBag{Index = index, Item = x})
-                                                                    .ToList();
+                                resolvedPageItems = CurrentPageItems.Select((item, index) => new IndexBag<T>(index, item))
+                                    .ToList();
                             }
                         }
                         @if (Virtualize || resolvedPageItems is { Count: > 0 })
@@ -236,7 +236,7 @@
 
                                     @if (g.Expanded)
                                     {
-                                        <MudVirtualize @ref="_mudVirtualize" ItemsProvider="@VirtualItemsProvider" Enabled="@Virtualize" Items="@g.Grouping.Select((x, index)=> new IndexBag{Index = index, Item = x} ).ToList()" OverscanCount="@OverscanCount" ItemSize="@ItemSize" Context="itemBag">
+                                        <MudVirtualize @ref="_mudVirtualize" ItemsProvider="@VirtualItemsProvider" Enabled="@Virtualize" Items="@g.Grouping.Select((item, index) => new IndexBag<T>(index, item)).ToList()" OverscanCount="@OverscanCount" ItemSize="@ItemSize" Context="itemBag">
                                             <Placeholder>
                                                 @if (RowLoadingContent != null)
                                                 {
@@ -258,7 +258,7 @@
                                                 <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="itemBag.Index"
                                                     @onclick="@((args) => OnRowClickedAsync(args, itemBag.Item, itemBag.Index))"
                                                     @oncontextmenu="@((args) => OnContextMenuClickedAsync(args, itemBag.Item, itemBag.Index))"
-                                                    @oncontextmenu:preventDefault="@(RowContextMenuClick.HasDelegate ? true : false)">
+                                                    @oncontextmenu:preventDefault="@(RowContextMenuClick.HasDelegate)">
                                                     <CascadingValue Value="@Validator" IsFixed="true">
                                                         @foreach (var column in RenderedColumns)
                                                         {
