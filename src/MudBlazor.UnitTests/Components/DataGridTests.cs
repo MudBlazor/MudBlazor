@@ -745,7 +745,7 @@ namespace MudBlazor.UnitTests.Components
         /// </summary>
         /// <returns>A <see cref="Task"/> object.</returns>
         [Test]
-        public async Task DataGridVirtualizeServerDataLoadingTestWithCancel()
+        public async Task DataGridVirtualizeServerDataLoadingWithCancelTest()
         {
             var comp = Context.RenderComponent<DataGridVirtualizeServerDataLoadingWithCancelTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<int>>();
@@ -757,7 +757,7 @@ namespace MudBlazor.UnitTests.Components
             // Set the ServerData function
             dataGrid.SetParam(p =>
                 p.VirtualizeServerData,
-                new Func<GridStateVirtualize<int>, CancellationToken, Task<GridData<int>>>((s, cancellationToken) =>
+                new Func<GridStateVirtualize<int>, CancellationToken, Task<GridData<int>>>((_, cancellationToken) =>
                 {
                     // Remember the cancellation token
                     cancelToken = cancellationToken;
@@ -823,7 +823,6 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => dataGrid.Instance.NavigateTo(Page.First));
             dataGrid.Instance.CurrentPage.Should().Be(0);
         }
-
 
         [Test]
         public void DataGridPaginationPageSizeDropDownTest()

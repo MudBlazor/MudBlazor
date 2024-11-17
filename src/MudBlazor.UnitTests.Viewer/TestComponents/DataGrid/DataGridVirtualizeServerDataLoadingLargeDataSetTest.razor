@@ -33,6 +33,7 @@
 </style>
 
 @code {
+
     public static string __description__ = @"The data grid should return correct line index when using VirtualizeServerData.";
 
     private int _selectedIndex;
@@ -52,16 +53,15 @@
             await Task.Delay(500, token);
 
             IEnumerable<Model> data = _elements;
-            
+
             data = data
                 .Skip(state.StartIndex)
                 .Take(state.Count)
                 .ToList();
 
             // Return the data
-            var result = new GridData<Model>() { TotalItems = _elements.Count(), Items = data.ToArray() };
+            var result = new GridData<Model> { TotalItems = _elements.Count(), Items = data.ToArray() };
             _events.Add($"ServerDataFunc index : {state.StartIndex} (TotalItems : {result.TotalItems})");
-
             return result;
         }
         catch (Exception ex) when (ex is TaskCanceledException)
