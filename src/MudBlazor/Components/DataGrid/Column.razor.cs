@@ -518,15 +518,7 @@ namespace MudBlazor
                 // Make sure that when we access filterContext properties, they have been defined...
                 if (filterContext.FilterDefinition == null)
                 {
-                    var defaultOperators = FilterOperator.GetOperatorByDataType(PropertyType);
-                    var invalidOperators = FilterOperators.Where(@operator => !defaultOperators.Contains(@operator)).ToArray();
-
-                    if (invalidOperators.Length > 0)
-                    {
-                        throw new Exception($"Invalid filter operators for {Title} {PropertyType.Name}: {string.Join(", ", invalidOperators)}");
-                    }
-
-                    var operators = FilterOperators.Count > 0 ? [.. FilterOperators] : defaultOperators;
+                    var operators = FilterOperators.Count > 0 ? [.. FilterOperators] : FilterOperator.GetOperatorByDataType(PropertyType);
                     var filterDefinition = DataGrid.CreateFilterDefinitionInstance();
                     filterDefinition.Title = Title;
                     filterDefinition.Operator = operators.FirstOrDefault();
@@ -559,6 +551,22 @@ namespace MudBlazor
                     await DataGrid.ChangedGrouping(this);
                 }
             }
+        }
+
+        protected override void OnParametersSet()
+        {
+            if (FilterOperators.Count > 0)
+            {
+                var defaultOperators = FilterOperator.GetOperatorByDataType(PropertyType);
+                var invalidOperators = FilterOperators.Where(@operator => !defaultOperators.Contains(@operator)).ToArray();
+
+                if (invalidOperators.Length > 0)
+                {
+                    throw new ArgumentException($"Invalid filter operators for {Title} {PropertyType.Name}: {string.Join(", ", invalidOperators)}");
+                }
+            }
+
+            base.OnParametersSet();
         }
 
         protected override void OnInitialized()
