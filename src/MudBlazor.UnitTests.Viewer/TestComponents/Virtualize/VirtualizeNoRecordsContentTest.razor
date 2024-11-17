@@ -92,14 +92,12 @@
 @code {
     public static string __description__ = @"The Virtualize component must show 'No data'.";
 
-    public record VirtualizeModel(int Index, string Column2);
-
-    List<VirtualizeModel> _emptyList = new List<VirtualizeModel>();
+    private readonly List<VirtualizeModel> _emptyList = [];
 
     /// <summary>
     /// Reloads the data from the server, with support for cancellation.
     /// </summary>
-    private async ValueTask<ItemsProviderResult<VirtualizeModel>> ServerDataFunc(ItemsProviderRequest request)
+    private static async ValueTask<ItemsProviderResult<VirtualizeModel>> ServerDataFunc(ItemsProviderRequest request)
     {
         await Task.Delay(500, request.CancellationToken)
             //Do not throw
@@ -107,4 +105,6 @@
 
         return new ItemsProviderResult<VirtualizeModel>([], 0);
     }
+
+    public record VirtualizeModel(int Index, string Column2);
 }

@@ -33,15 +33,13 @@
 </style>
 
 @code {
-    public record Model(int Index, string Column2);
-    private List<string> _events = new();
-    int selectedIndex;
+    public static string __description__ = @"The data grid should return correct line index when using VirtualizeServerData.";
 
-    private IEnumerable<Model> Elements = Enumerable.Range(0, 20_000)
+    private int _selectedIndex;
+    private readonly List<string> _events = [];
+    private readonly IEnumerable<Model> _elements = Enumerable.Range(0, 20_000)
         .Select(i => new Model(i, $"Value_{i}"))
         .ToArray();
-
-    public static string __description__ = @"The data grid should return correct line index when using VirtualizeServerData.";
 
     /// <summary>
     /// Reloads the data from the server, with support for cancellation.
@@ -53,7 +51,7 @@
             // Simulate "loading data"
             await Task.Delay(500, token);
 
-            IEnumerable<Model> data = Elements;
+            IEnumerable<Model> data = _elements;
             
             data = data
                 .Skip(state.StartIndex)
@@ -61,7 +59,7 @@
                 .ToList();
 
             // Return the data
-            var result = new GridData<Model>() { TotalItems = Elements.Count(), Items = data.ToArray() };
+            var result = new GridData<Model>() { TotalItems = _elements.Count(), Items = data.ToArray() };
             _events.Add($"ServerDataFunc index : {state.StartIndex} (TotalItems : {result.TotalItems})");
 
             return result;
@@ -70,27 +68,23 @@
         {
             _events.Add($"ServerDataFunc index : {state.StartIndex} (Cancelled)");
             return new GridData<Model>
-                {
-                    Items = [],
-                    TotalItems = 0,
-                };
+            {
+                Items = [],
+                TotalItems = 0,
+            };
         }
     }
 
     private void RowClicked(DataGridRowClickEventArgs<Model> args)
     {
-        // Virtualisation didn't work well with storing item, because this item is recreated then the reference is different => use index instead or item discrimination
-        selectedIndex = args.RowIndex;
+        // Virtualization didn't work well with storing item, because this item is recreated then the reference is different => use index instead or item discrimination
+        _selectedIndex = args.RowIndex;
         _events.Add($"RowClicked index : {args.RowIndex}");
     }
 
-    private string RowClassSelected(Model line, int index)
-    {
-        //_events.Add($"RowClass index : {index}");
-        if (selectedIndex == index)
-        {
-            return "mud-table-row-selected";
-        }
-        return string.Empty;
-    }
+    private string RowClassSelected(Model line, int index) => _selectedIndex == index
+        ? "mud-table-row-selected"
+        : string.Empty;
+
+    public record Model(int Index, string Column2);
 }

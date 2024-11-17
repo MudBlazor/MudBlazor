@@ -747,7 +747,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DataGridVirtualizeServerDataLoadingTestWithCancel()
         {
-            var comp = Context.RenderComponent<DataGridVirtualizeServerDataLoadingTestWithCancel>();
+            var comp = Context.RenderComponent<DataGridVirtualizeServerDataLoadingWithCancelTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<int>>();
 
             // Make a cancellation token we can monitor
@@ -777,11 +777,7 @@ namespace MudBlazor.UnitTests.Components
             // Set the VirtualizeServerData function to a new method...
             dataGrid.SetParam(p =>
                 p.VirtualizeServerData,
-                new Func<GridStateVirtualize<int>, CancellationToken, Task<GridData<int>>>((s, cancellationToken) =>
-                {
-                    // ... which returns the second task.
-                    return second.Task;
-                }));
+                new Func<GridStateVirtualize<int>, CancellationToken, Task<GridData<int>>>((_, _) => second.Task));
 
             await Task.Delay(20);
 

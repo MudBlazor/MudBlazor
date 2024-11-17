@@ -99,25 +99,23 @@
 </style>
 
 @code {
-    public record Model(int Index, string Column2);
-
-    private List<string> _events = new();
-    int selectedIndex;
-    string? _searchString;
-    MudDataGrid<Model>? _gridComponentReference;
-    Virtualize<Model>? _nativeVirtualizeComponent;
-
-    private IEnumerable<Model> _sourceElements;
-    private IEnumerable<Model> Elements;
-
     public static string __description__ = @"The data grid should reload data correctly when using VirtualizeServerData with external filter. Empty result must show 'No data'.";
+
+    private readonly List<string> _events = [];
+    private int _selectedIndex;
+    private string? _searchString;
+    private MudDataGrid<Model>? _gridComponentReference;
+    private Virtualize<Model>? _nativeVirtualizeComponent;
+
+    private readonly IEnumerable<Model> _sourceElements;
+    private IEnumerable<Model> _elements;
 
     public DataGridVirtualizeServerDataLoadingTestWithSearch()
     {
         _sourceElements = Enumerable.Range(0, 100)
             .Select(i => new Model(i, $"Value_{i}"))
             .ToArray();
-        Elements = _sourceElements;
+        _elements = _sourceElements;
     }
 
     /// <summary>
@@ -130,7 +128,7 @@
             // Simulate "loading data"
             await Task.Delay(500, token);
 
-            IEnumerable<Model> data = Elements;
+            IEnumerable<Model> data = _elements;
 
             data = data
                 .Skip(state.StartIndex)
@@ -138,7 +136,7 @@
                 .ToList();
 
             // Return the data
-            var result = new GridData<Model>() { TotalItems = Elements.Count(), Items = data.ToArray() };
+            var result = new GridData<Model>() { TotalItems = _elements.Count(), Items = data.ToArray() };
             _events.Add($"ServerDataFunc index : {state.StartIndex} (TotalItems : {result.TotalItems})");
 
             return result;
@@ -147,40 +145,35 @@
         {
             _events.Add($"ServerDataFunc index : {state.StartIndex} (Cancelled)");
             return new GridData<Model>
-                {
-                    Items = [],
-                    TotalItems = 0,
-                };
+            {
+                Items = [],
+                TotalItems = 0,
+            };
         }
     }
 
     private void RowClicked(DataGridRowClickEventArgs<Model> args)
     {
-        // Virtualisation didn't work well with storing item, because this item is recreated then the reference is different => use index instead or item discrimination
-        selectedIndex = args.RowIndex;
+        // Virtualization didn't work well with storing item, because this item is recreated then the reference is different => use index instead or item discrimination
+        _selectedIndex = args.RowIndex;
         _events.Add($"RowClicked index : {args.RowIndex}");
     }
 
-    private string RowClassSelected(Model line, int index)
-    {
-        //_events.Add($"RowClass index : {index}");
-        if (selectedIndex == index)
-        {
-            return "mud-table-row-selected";
-        }
-        return string.Empty;
-    }
+    private string RowClassSelected(Model line, int index) =>
+        _selectedIndex == index
+            ?"mud-table-row-selected"
+            : string.Empty;
 
     private async Task SetSearchString(string? searchValue)
     {
         _searchString = searchValue;
         if (string.IsNullOrEmpty(searchValue))
         {
-            Elements = _sourceElements;
+            _elements = _sourceElements;
         }
         else
         {
-            Elements = _sourceElements.Where(x =>
+            _elements = _sourceElements.Where(x =>
                     x.Index.ToString() == searchValue
                     || (x.Column2?.Contains(searchValue, StringComparison.OrdinalIgnoreCase) ?? false)
                 );
@@ -196,15 +189,14 @@
     private async ValueTask<ItemsProviderResult<Model>> NativeServerDataFunc(ItemsProviderRequest request)
     {
         var state = new GridStateVirtualize<Model>
-            {
-                StartIndex = request.StartIndex,
-                Count = request.Count,
-                //SortDefinitions = SortDefinitions.Values.OrderBy(sd => sd.Index).ToList(),
-                // Additional ToList() here to decouple clients from internal list avoiding runtime issues
-                //FilterDefinitions = FilterDefinitions.ToList()
-            };
+        {
+            StartIndex = request.StartIndex,
+            Count = request.Count,
+        };
         var result = await ServerDataFunc(state, request.CancellationToken);
 
         return new ItemsProviderResult<Model>(result.Items, result.TotalItems);
     }
+
+    public record Model(int Index, string Column2);
 }
