@@ -6,24 +6,31 @@ namespace MudBlazor;
 
 #nullable enable
 /// <summary>
-/// Keeping correct index with virtualize component
+/// Represents a container that holds an item and its corresponding index in a virtualized list.
 /// </summary>
+/// <typeparam name="T">The type of the item.</typeparam>
 /// <remarks>
-/// Until blazor virtualization component did not provide row index, we need to keep it
-/// it can be remove when it'll be provided : https://github.com/dotnet/aspnetcore/issues/26943
+/// This struct is used to maintain the correct index of items in a virtualized component.
+/// It can be removed once the Blazor virtualization component provides row index support.
+/// See: <see href="https://github.com/dotnet/aspnetcore/issues/26943"/>
 /// </remarks>
 internal readonly struct IndexBag<T>
 {
     /// <summary>
-    /// Virtualized row index
+    /// Gets the virtualized row index.
     /// </summary>
     public int Index { get; }
 
     /// <summary>
-    /// User item
+    /// Gets the user item.
     /// </summary>
     public T Item { get; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="IndexBag{T}"/> struct.
+    /// </summary>
+    /// <param name="index">The virtualized row index.</param>
+    /// <param name="item">The user item.</param>
     public IndexBag(int index, T item)
     {
         Index = index;
