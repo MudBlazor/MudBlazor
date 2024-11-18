@@ -53,6 +53,7 @@ namespace MudBlazor
             new CssBuilder("mud-nav-link")
                 .AddClass($"mud-ripple", Ripple)
                 .AddClass("mud-expanded", _expandedState.Value)
+                .AddClass(TitleClass)
                 .Build();
 
         protected string IconClassname =>
@@ -70,6 +71,26 @@ namespace MudBlazor
 
         [CascadingParameter]
         private NavigationContext? ParentNavigationContext { get; set; }
+
+        /// <summary>
+        /// The CSS classes applied to this nav group title.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  You can use spaces to separate multiple classes.  Use the <see cref="TitleStyle"/> property to apply custom CSS styles.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.NavMenu.Appearance)]
+        public string? TitleClass { get; set; }
+
+        /// <summary>
+        /// The CSS styles applied to this nav group title.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  Use the <see cref="TitleClass"/> property to apply CSS classes.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.NavMenu.Appearance)]
+        public string? TitleStyle { get; set; }
 
         /// <summary>
         /// The content within the title area.
