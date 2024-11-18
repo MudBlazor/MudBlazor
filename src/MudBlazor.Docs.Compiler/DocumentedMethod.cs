@@ -5,7 +5,6 @@
 namespace MudBlazor.Docs.Compiler;
 
 #nullable enable
-
 /// <summary>
 /// Represents documentation for a method.
 /// </summary>
