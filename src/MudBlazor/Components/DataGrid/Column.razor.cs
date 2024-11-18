@@ -518,7 +518,7 @@ namespace MudBlazor
                 // Make sure that when we access filterContext properties, they have been defined...
                 if (filterContext.FilterDefinition == null)
                 {
-                    var operators = FilterOperators.Count > 0 ? [.. FilterOperators] : FilterOperator.GetOperatorByDataType(PropertyType);
+                    var operators = GetFilterOperators(FieldType.Identify(PropertyType))
                     var filterDefinition = DataGrid.CreateFilterDefinitionInstance();
                     filterDefinition.Title = Title;
                     filterDefinition.Operator = operators.FirstOrDefault();
