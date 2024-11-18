@@ -60,10 +60,10 @@ namespace MudBlazor.Charts
         private string[] _colorPalette = ["#587934"];
 
         // The maximum number of cells in a series
-        private int SeriesLength => _series.Max(s => s.Data.Length);
+        private int SeriesLength => _series.Any() ? _series.Max(s => s.Data.Length) : 0;
 
         // The number of rows visible
-        private int RowCount => _series.Count(s => s.Visible);
+        private int RowCount => _series.Any() ? _series.Count(s => s.Visible) : 0;
 
         // the amount of pixels a legend extends horizontally when it's on left/right
         private int _legendLabelsYAxis = 0;
@@ -83,7 +83,7 @@ namespace MudBlazor.Charts
 
         private List<(string value, string color)> _legends = [];
 
-        private List<HeatMapCell> _heatmapCells = [];
+        private List<HeatMapCell> _heatMapCells = [];
 
         /// <summary>
         /// The chart, if any, containing this component.
@@ -124,21 +124,21 @@ namespace MudBlazor.Charts
         private void InitializeHeatmap()
         {
             // Populate _heatmapCells based on data, e.g., matrix of values
-            _heatmapCells.Clear();
+            _heatMapCells.Clear();
             _minValue = 0;
             _maxValue = 1;
 
             // # of rows
             var rows = _series.Count;
             // cols should be the max number of data[] in all series
-            var cols = _series.Max(series => series.Data.Length);
+            var cols = _series.Any() ? _series.Max(series => series.Data.Length) : 0;
 
             for (var row = 0; row < rows; row++)
             {
                 for (var col = 0; col < cols; col++)
                 {
                     var value = GetDataValue(row, col); // Method to retrieve the value for each cell
-                    _heatmapCells.Add(new HeatMapCell
+                    _heatMapCells.Add(new HeatMapCell
                     {
                         Row = row,
                         Column = col,
@@ -159,7 +159,7 @@ namespace MudBlazor.Charts
         {
             // Defaults each side gets some space around the heatmap
             _verticalStartSpace = _verticalEndSpace = _horizontalStartSpace = _horizontalEndSpace = HeatMapPadding;
-            _yAxisLabelWidth = (_series?.Max(x => x.Name.Length) ?? 1) * LabelFontSize * AverageCharWidthMultiplier;
+            _yAxisLabelWidth = (_series.Any() ? _series?.Max(x => x.Name.Length) ?? 1 : 1) * LabelFontSize * AverageCharWidthMultiplier;
             var defaultCharsWidth = 5 * LegendFontSize * AverageCharWidthMultiplier;
             _legendLabelsYAxis = (int)Math.Ceiling(_options is { ShowLegendLabels: true }
                 ? (defaultCharsWidth + LegendLineLength) : 0);

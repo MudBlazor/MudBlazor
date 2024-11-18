@@ -1,4 +1,7 @@
-﻿
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
 using Bunit;
 using FluentAssertions;
 using MudBlazor.Docs.Examples;
@@ -177,6 +180,74 @@ namespace MudBlazor.UnitTests.Components
 
             //Checks if the innerHtml of the added text element matches the text parameter
             comp.Find("text.text-ref").InnerHtml.Should().Be(text);
+        }
+
+        [Test]
+        public void HeatMap_ShouldInitializeCorrectly()
+        {
+            var series = new List<ChartSeries>
+            {
+                new ChartSeries { Name = "Series 1", Data = [1, 2, 3] },
+                new ChartSeries { Name = "Series 2", Data = [4, 5, 6] }
+            };
+            var options = new ChartOptions { ShowLegend = true, ShowLegendLabels = true };
+
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.HeatMap)
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, options)
+            );
+
+            comp.Instance.Should().NotBeNull();
+            comp.Instance.ChartSeries.Count.Should().Be(2);
+            comp.Instance.ChartOptions.Should().NotBeNull();
+        }
+
+        [Test]
+        public void HeatMap_ShouldBuildLegendsCorrectly()
+        {
+            var series = new List<ChartSeries>
+            {
+                new ChartSeries { Name = "Series 1", Data = new double[] { 1, 2, 3 } },
+                new ChartSeries { Name = "Series 2", Data = new double[] { 4, 5, 6 } }
+            };
+            var options = new ChartOptions() { ShowLegend = true };
+
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.HeatMap)
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, options)
+            );
+
+            var legends = comp.FindAll(".mud-chart-heatmap-legend");
+            legends.Count.Should().Be(5);
+        }
+
+        [Test]
+        public void HeatMap_ShouldFormatValueForDisplayCorrectly()
+        {
+            var series = new List<ChartSeries>
+            {
+                new ChartSeries { Name = "Series 1", Data = [ 1.176, 2, 3 ] },
+                new ChartSeries { Name = "Series 2", Data = [ 4.152, 5, 6 ] }
+            };
+
+            var options = new ChartOptions() { ValueFormatString = "F2" };
+
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.HeatMap)
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, options)
+            );
+
+            var formattedValues = comp.FindAll(".mud-chart-cell");
+
+            formattedValues.Count.Should().Be(6);
+
+            var cellTexts = formattedValues.Select(cell => cell.QuerySelector("text")?.TextContent?.Trim()).ToList();
+
+            cellTexts[0].Should().Be("1.18");
+            cellTexts[3].Should().Be("4.15");
         }
     }
 }
