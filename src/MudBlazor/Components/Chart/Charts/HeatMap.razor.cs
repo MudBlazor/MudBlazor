@@ -12,59 +12,83 @@ namespace MudBlazor.Charts
     partial class HeatMap : MudCategoryChartBase
     {
         private const double BoundWidth = 650.0;
+
         private const double BoundHeight = 350.0;
+
         private Position _legendPosition = Position.Bottom;
+
         // the minimum size a cell can shrink to (height and width)
         private const int CellMinSize = 8;
+
         // the width and height of a legend color box
         private const int LegendBox = 18;
+
         // the minimum padding between cells and line length on legend labels
         private const int CellPadding = 5;
+
         // the line length on legend labels
         private const int LegendLineLength = 5;
+
         // the heatmap outside padding
         private const int HeatMapPadding = 15;
+
         private const int LegendFontSize = 10;
+
         // approximate width of YAxis Labels
         private const int LabelFontSize = 10;
+
         private const double AverageCharWidthMultiplier = 0.6;
+
         private double _yAxisLabelWidth = 0;
 
         // padding or legend area for each side of the heatmap
         private double _horizontalStartSpace = HeatMapPadding;
+
         private double _horizontalEndSpace = HeatMapPadding;
+
         private double _verticalStartSpace = HeatMapPadding;
+
         private double _verticalEndSpace = HeatMapPadding;
 
         // the minimum value in all series
         private double _minValue = 0.0;
+
         // the maximum value in all series
         private double _maxValue = 1.0;
+
         private string[] _colorPalette = ["#587934"];
+
         // The maximum number of cells in a series
         private int SeriesLength => _series.Max(s => s.Data.Length);
+
         // The number of rows visible
         private int RowCount => _series.Where(s => s.Visible).Count();
+
         // the amount of pixels a legend extends horizontally when it's on left/right
         private int _legendLabelsYAxis = 0;
+
         // the amount of pixels a legend extends vertically when it's on the top/bottom
         private int _legendLabelsXAxis = 0;
+
         // Calculate the actual width of the heatmap cells area
         private double HeatmapWidth => BoundWidth - _horizontalStartSpace - _horizontalEndSpace;
+
         // Calculate the actual height of the heatmap cells area
         private double HeatmapHeight => BoundHeight - _verticalStartSpace - _verticalEndSpace;
+
+        private ChartOptions? _options;
+
+        private List<ChartSeries> _series = [];
+
+        private List<(string value, string color)> _legends = [];
+
+        private List<HeatMapCell> _heatmapCells = [];
 
         /// <summary>
         /// The chart, if any, containing this component.
         /// </summary>
         [CascadingParameter]
         public MudChart? MudChartParent { get; set; }
-
-        private ChartOptions? _options;
-
-        private List<ChartSeries> _series = [];
-        private List<(string value, string color)> _legends = [];
-        private List<HeatMapCell> _heatmapCells = [];
 
         protected override void OnParametersSet()
         {
@@ -283,7 +307,6 @@ namespace MudBlazor.Charts
             return $"rgb({r}, {g}, {b})";
         }
 
-        #region Razor Assist Methods
         private string FormatValueForDisplay(double? value)
         {
             if (value == null)
@@ -338,6 +361,6 @@ namespace MudBlazor.Charts
 
             return (x, y);
         }
-        #endregion
+
     }
 }
