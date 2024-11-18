@@ -16,9 +16,9 @@
         await Task.Delay(2000, token);
 
         // Make some test data to return
-        IEnumerable<int> data = new List<int>() { 1, 2, 3 };
+        IEnumerable<int> data = new List<int> { 1, 2, 3 };
 
         // Return the data
-        return new GridData<int>() { TotalItems = data.Count(), Items = data.ToArray() };
+        return new GridData<int> { TotalItems = data.Count(), Items = data.ToArray() };
     }
 }
