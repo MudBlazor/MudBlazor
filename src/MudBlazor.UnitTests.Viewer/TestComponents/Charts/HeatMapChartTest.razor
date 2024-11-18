@@ -52,20 +52,20 @@
             Smooth Gradient
         </MudCheckBox>
     </MudItem>
-    <MudItem xs="3" Class="d-flex align-center">
+    <MudItem xs="3">
         <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center">
             <MudText Class="pr-1">YAxis Labels</MudText>
-            <MudSelect T="YAxisLabelPosition" @bind-Value="@_YAxisLabelPosition" @bind-Value:after="BuildOptions">
+            <MudSelect T="YAxisLabelPosition" @bind-Value="@_YAxisLabelPosition" @bind-Value:after="BuildOptions" FullWidth="true">
                 <MudSelectItem Value="YAxisLabelPosition.Left">Left</MudSelectItem>
                 <MudSelectItem Value="YAxisLabelPosition.Right">Right</MudSelectItem>
                 <MudSelectItem Value="YAxisLabelPosition.None">None</MudSelectItem>
             </MudSelect>
         </MudStack>
     </MudItem>
-    <MudItem xs="3" Class="d-flex align-center">
+    <MudItem xs="3">
         <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center">
             <MudText Class="pr-1">XAxis Labels</MudText>
-            <MudSelect T="XAxisLabelPosition" @bind-Value="@_XAxisLabelPosition" @bind-Value:after="BuildOptions">
+            <MudSelect T="XAxisLabelPosition" @bind-Value="@_XAxisLabelPosition" @bind-Value:after="BuildOptions" FullWidth="true">
                 <MudSelectItem Value="XAxisLabelPosition.Top">Top</MudSelectItem>
                 <MudSelectItem Value="XAxisLabelPosition.Bottom">Bottom</MudSelectItem>
                 <MudSelectItem Value="XAxisLabelPosition.None">None</MudSelectItem>

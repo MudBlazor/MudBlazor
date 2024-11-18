@@ -128,7 +128,7 @@ namespace MudBlazor
         /// Defaults to true
         /// </summary>
         /// 
-        public bool ShowLegendLabels { get; set; } = true;
+        public bool ShowLegendLabels { get; set; } = false;
 
         /// <summary>
         /// The format applied to labels for every box in a <see cref="ChartType.HeatMap"/>

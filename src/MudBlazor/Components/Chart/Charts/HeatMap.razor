@@ -85,7 +85,8 @@
                           fill="@(_options is { EnableSmoothGradient: true } ? "transparent" : GetColorForValue(cell?.Value))" />
                     @if (_options is { ShowLabels: true } && cell is { Value: not null })
                     {
-                        @((MarkupString)@$"<text fill='black' font-size='8' x='{x + cellWidth / 2}' y='{y + cellHeight / 2}' dominant-baseline='middle' text-anchor='middle'>{FormatValueForDisplay(cell?.Value)}</text>")
+                        var fontSize = CalculateFontSize(cellWidth, cellHeight, 8);
+                        @((MarkupString)@$"<text fill='black' font-size='{fontSize}' x='{x + cellWidth / 2}' y='{y + cellHeight / 2}' dominant-baseline='middle' text-anchor='middle'>{FormatValueForDisplay(cell?.Value)}</text>")
                     }
                 </g>
 

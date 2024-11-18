@@ -100,7 +100,7 @@ namespace MudBlazor.Charts
                 if (_options == null || _options != MudChartParent.ChartOptions)
                 {
                     _options = MudChartParent.ChartOptions;
-                    _colorPalette = _options.ChartPalette ?? _colorPalette;
+                    _colorPalette = _options.ChartPalette.Any() ? _options.ChartPalette : _colorPalette;
                     _legendPosition = MudChartParent.LegendPosition switch
                     {
                         Position.Center => Position.Bottom,
@@ -272,6 +272,11 @@ namespace MudBlazor.Charts
                     var color = AdjustAlpha(baseColors[0], tValue);
                     interpolatedColors[i] = color;
                 }
+                else if (colorCount == 5)
+                {
+                    // each color is static
+                    interpolatedColors[i] = baseColors[i];
+                }
                 else
                 {
                     // For multiple colors, interpolate as before
@@ -319,6 +324,12 @@ namespace MudBlazor.Charts
         {
             var value = double.TryParse(strValue, out var parsedValue) ? parsedValue : (double?)null;
             return FormatValueForDisplay(value);
+        }
+
+        private double CalculateFontSize(double cellWidth, double cellHeight, int defaultSize)
+        {
+            var minDimension = Math.Min(cellWidth, cellHeight);
+            return Math.Max(defaultSize, minDimension * 0.4);
         }
 
         private (double x, double y) GetLegendPosition()
