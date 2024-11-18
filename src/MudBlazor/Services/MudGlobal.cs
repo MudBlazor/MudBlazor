@@ -501,12 +501,12 @@ public static class MudGlobal
         /// Gets or sets the default elevation level for <see cref="MudPaper"/>.
         /// </summary>
         public static int Elevation { get; set; } = 1;
-        
+
         /// <summary>
         /// Gets or sets the default square setting for <see cref="MudPaper"/>.
         /// </summary>
         public static bool Square { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the default square setting for <see cref="MudPaper"/>.
         /// </summary>
