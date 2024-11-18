@@ -493,6 +493,27 @@ public static class MudGlobal
     }
 
     /// <summary>
+    /// Defaults for the <see cref="MudPaper"/> component.
+    /// </summary>
+    public static class PaperDefaults
+    {
+        /// <summary>
+        /// Gets or sets the default elevation level for <see cref="MudPaper"/>.
+        /// </summary>
+        public static int Elevation { get; set; } = 1;
+
+        /// <summary>
+        /// Gets or sets the default square setting for <see cref="MudPaper"/>.
+        /// </summary>
+        public static bool Square { get; set; }
+
+        /// <summary>
+        /// Gets or sets the default square setting for <see cref="MudPaper"/>.
+        /// </summary>
+        public static bool Outlined { get; set; }
+    }
+
+    /// <summary>
     /// The handler for unhandled MudBlazor component exceptions.
     /// </summary>
     /// <remarks>
