@@ -15,8 +15,6 @@ namespace MudBlazor.Docs.Components;
 /// </summary>
 public sealed partial class DocsPageHeader
 {
-    private string keywords;
-
     /// <summary>
     /// The service for navigating to other pages.
     /// </summary>
@@ -60,19 +58,6 @@ public sealed partial class DocsPageHeader
     /// </summary>
     [Parameter]
     public string SubTitle { get; set; }
-
-    /// <summary>
-    /// The keywords for this page.
-    /// </summary>
-    [Parameter]
-    public string Keywords
-    {
-        get => keywords;
-        set
-        {
-            keywords = value;
-        }
-    }
 
     /// <summary>
     /// 
@@ -126,6 +111,10 @@ public sealed partial class DocsPageHeader
     /// </summary>
     private string GetTitle() => $"{Title} - MudBlazor";
 
+    /// <summary>
+    /// Gets the subtitle for this page.
+    /// </summary>
+    /// <returns></returns>
     private string GetSubTitle()
     {
         if (string.IsNullOrEmpty(SubTitle))
@@ -133,21 +122,29 @@ public sealed partial class DocsPageHeader
         return SubTitle.TrimEnd('.') + ".";
     }
 
+    /// <summary>
+    /// Gets the keywords for this page.
+    /// </summary>
+    /// <returns></returns>
     private string GetKeywords()
     {
-        var keywords = new HashSet<string>(Regex.Split(Keywords ?? "", @",\s"));
-        keywords.Add(Title);
-        keywords.Add(Component);
-        keywords.Add(Component?.Replace("Mud", ""));
-        keywords.Add("mudblazor");
-        keywords.Add("blazor");
-        keywords.Add("component");
-        keywords.Add("material design");
-        keywords.Remove("");
-        keywords.Remove(null);
+        var keywords = new HashSet<string>
+        {
+            Title,
+            Component,
+            Component?.Replace("Mud", ""),
+            "mudblazor",
+            "blazor",
+            "component",
+            "material design"
+        };
         return string.Join(", ", keywords);
     }
 
+    /// <summary>
+    /// Gets the canonical URL for this page.
+    /// </summary>
+    /// <returns></returns>
     private string GetCanonicalUri()
     {
         return NavigationManager.Uri.Replace(NavigationManager.BaseUri, "https://mudblazor.com/");
