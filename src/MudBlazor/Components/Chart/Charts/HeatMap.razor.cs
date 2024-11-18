@@ -163,10 +163,10 @@ namespace MudBlazor.Charts
             _verticalStartSpace = _verticalEndSpace = _horizontalStartSpace = _horizontalEndSpace = HeatMapPadding;
             _yAxisLabelWidth = (_series?.Max(x => x.Name.Length) ?? 1) * LabelFontSize * AverageCharWidthMultiplier;
             var defaultCharsWidth = 5 * LegendFontSize * AverageCharWidthMultiplier;
-            _legendLabelsYAxis = (int)Math.Ceiling((_options?.ShowLabels ?? false)
+            _legendLabelsYAxis = (int)Math.Ceiling((_options?.ShowLegendLabels ?? false)
                 ? (defaultCharsWidth + LegendLineLength)
                 : 0);
-            _legendLabelsXAxis = (_options?.ShowLabels ?? false)
+            _legendLabelsXAxis = (_options?.ShowLegendLabels ?? false)
                 ? (LegendFontSize + LegendLineLength)
                 : 0;
 

@@ -89,23 +89,24 @@
             }
 
             // Cell with solid background, text label if needed and tooltip if needed
-            <g>
-                <rect x="@x" y="@y" width="@cellWidth" height="@cellHeight"
-                      fill="@(_options?.EnableSmoothGradient ?? false ? "transparent" : GetColorForValue(cell?.Value))" />
-
+            <rect x="@x" y="@y" width="@cellWidth" height="@cellHeight"
+                  fill="@(_options?.EnableSmoothGradient ?? false ? "transparent" : GetColorForValue(cell?.Value))">
                 @if (_options?.ShowToolTips ?? false && cell?.Value != null)
                 {
                     <title>@cell.Value.ToString()</title>
                 }
+            </rect>
+            @if (_options?.ShowLabels ?? false && cell?.Value != null)
+            {
+                <g transform="translate(@x, @y)">
+                    <svg width="@cellWidth" height="@cellHeight">
+                        <text x="50%" y="50%" font-size="8" alignment-baseline="middle" text-anchor="middle">
+                            @FormatValueForDisplay(cell?.Value)
+                        </text>
+                    </svg>
+                </g>
+            }
 
-                @if (_options?.ShowLabels ?? false && cell?.Value != null)
-                {
-                    @(
-                        (MarkupString)
-                        @$"<text fill='black' font-size='8' x='{x + cellWidth / 2}' y='{y + cellHeight / 2}'  dominant-baseline='middle' text-anchor='middle'>{FormatValueForDisplay(cell?.Value)}</text>"
-                        )
-                }
-            </g>
 
             @if (row == 0 && _options?.XAxisLabelPosition == XAxisLabelPosition.Top && col < XAxisLabels.Length)
             {
@@ -135,10 +136,10 @@
                     var textWidth = (totalChars * LegendFontSize * AverageCharWidthMultiplier) + (CellPadding * 2);
                     var totalWidth = (_legends.Count * (LegendBox + legendPadding)) - legendPadding + textWidth;
                     var offsetX = -totalWidth / 2; // Center horizontally
-                    
+
                     <g transform="translate(@(legendX + offsetX), @legendY)">
                         <!-- "Less" label -->
-                        <text x="0" y="0" dominant-baseline="middle" text-anchor="start" fill="black" font-size="@LegendFontSize">Less</text>                        
+                        <text x="0" y="0" dominant-baseline="middle" text-anchor="start" fill="black" font-size="@LegendFontSize">Less</text>
                         @for (int i = 0; i < _legends.Count; i++)
                         {
                             var x = (textWidth / 2) + (i * (LegendBox + legendPadding));
@@ -151,7 +152,7 @@
                                 </rect>
                                 @if (_options?.ShowLegendLabels ?? false)
                                 {
-                                    
+
                                     double x1 = LegendBox / 2, x2 = x1, y1 = _legendPosition == Position.Top ? -LegendBox / 2 : LegendBox / 2;
                                     double y2 = _legendPosition == Position.Top ? -LegendBox / 2 - LegendLineLength : LegendBox / 2 + LegendLineLength;
 
@@ -200,7 +201,7 @@
                                     @(
                                         (MarkupString)
                                         @$"<text x='{x3} y='0' dominant-baseline='middle' text-anchor='{(_legendPosition == Position.Right ? "start" : "end")}' fill='black' font-size='{labelFontSize}'>{FormatValueForDisplay(_legends[i].value)}</text>"
-                                     )
+                                        )
                                 }
                             </g>
                         }
