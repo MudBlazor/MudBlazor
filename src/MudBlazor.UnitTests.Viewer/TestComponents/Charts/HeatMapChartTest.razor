@@ -156,7 +156,7 @@
         StateHasChanged();
     }
 
-    public List<ChartSeries> HeatMapSeries = new List<ChartSeries>()
+    public readonly List<ChartSeries> HeatMapSeries = new List<ChartSeries>()
     {
         new ChartSeries() { Name = "Mo", Data = new double[] { 90, 79, 72, 69, 62, 62, 55, 65, 70 } },
         new ChartSeries() { Name = "Te", Data = new double[] { 35, 41, 35, 51, 49, 62, 69, 91, 148 } },
@@ -171,7 +171,7 @@
 
     private void RandomizeData()
     {
-        var new_series = new List<ChartSeries>();
+        var newSeries = new List<ChartSeries>();
         string[] days = { "Mo", "Te", "We", "Th", "Fr", "Sa", "Su" };
         int dataPoints = 9;
 
@@ -182,10 +182,10 @@
             {
                 data[i] = Random.Shared.NextDouble() * 100;
             }
-            new_series.Add(new ChartSeries() { Name = day, Data = data });
+            newSeries.Add(new ChartSeries() { Name = day, Data = data });
         }
 
-        Series = new_series;
+        Series = newSeries;
     }
 
 }
