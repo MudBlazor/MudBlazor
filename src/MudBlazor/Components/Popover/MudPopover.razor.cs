@@ -21,7 +21,8 @@ namespace MudBlazor
                 .AddClass($"mud-popover-{TransformOrigin.ToDescriptionString()}")
                 .AddClass($"mud-popover-anchor-{AnchorOrigin.ToDescriptionString()}")
                 .AddClass($"mud-popover-overflow-{OverflowBehavior.ToDescriptionString()}")
-                .AddClass($"mud-popover-relative-width", RelativeWidth)
+                .AddClass($"mud-popover-relative-width", RelativeWidth is true)
+                .AddClass($"mud-popover-adaptive-width", RelativeWidth is false)
                 .AddClass($"mud-paper", Paper)
                 .AddClass($"mud-paper-square", Paper && Square)
                 .AddClass($"mud-elevation-{Elevation}", Paper && DropShadow)
@@ -164,13 +165,15 @@ namespace MudBlazor
         public OverflowBehavior OverflowBehavior { get; set; } = OverflowBehavior.FlipOnOpen;
 
         /// <summary>
-        /// Expands this popover to have the same width as the parent container.
+        /// Determines the width of this popover in relation the parent container.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.
+        /// <para>Defaults to <c>null</c>. </para>
+        /// <para>When <c>true</c>, restricts the max-width of the component to the width of the parent container</para>
+        /// <para>When <c>false</c>, restricts the min-width of the component to the width of the parent container</para>
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
-        public bool RelativeWidth { get; set; } = false;
+        public bool? RelativeWidth { get; set; }
     }
 }
