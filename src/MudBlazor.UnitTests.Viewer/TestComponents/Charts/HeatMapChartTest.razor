@@ -44,15 +44,15 @@
     </MudItem>
 </MudGrid>
 <MudGrid>
-    <MudItem xs="2">
+    <MudItem xs="2" Class="d-flex align-center">
         <MudButton OnClick="@RandomizeData" Variant="Variant.Filled">Randomize Data</MudButton>
     </MudItem>
-    <MudItem xs="2">
+    <MudItem xs="2" Class="d-flex align-center">
         <MudCheckBox T="bool" @bind-Value="_enableGradient" @bind-Value:after="BuildOptions" Color="Color.Primary">
             Smooth Gradient
         </MudCheckBox>
     </MudItem>
-    <MudItem xs="3">
+    <MudItem xs="3" Class="d-flex align-center">
         <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center">
             <MudText Class="pr-1">YAxis Labels</MudText>
             <MudSelect T="YAxisLabelPosition" @bind-Value="@_YAxisLabelPosition" @bind-Value:after="BuildOptions">
@@ -62,7 +62,7 @@
             </MudSelect>
         </MudStack>
     </MudItem>
-    <MudItem xs="3">
+    <MudItem xs="3" Class="d-flex align-center">
         <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center">
             <MudText Class="pr-1">XAxis Labels</MudText>
             <MudSelect T="XAxisLabelPosition" @bind-Value="@_XAxisLabelPosition" @bind-Value:after="BuildOptions">
@@ -72,21 +72,26 @@
             </MudSelect>
         </MudStack>
     </MudItem>
-    <MudItem xs="2"></MudItem>
-    <MudItem xs="2">
+    <MudItem xs="2" Class="d-flex align-center"></MudItem>
+    <MudItem xs="2" Class="d-flex align-center">
         <MudNumericField Label="Number of Colors Used" @bind-Value="_colorCount" @bind-Value:after="BuildOptions" Min="1" Max="5" Step="1" />
     </MudItem>
-    <MudItem xs="2">
+    <MudItem xs="2" Class="d-flex align-center">
         <MudCheckBox T="bool" @bind-Value="@_legendVisible" @bind-Value:after="BuildOptions" Color="Color.Primary">
             Show Legend
         </MudCheckBox>
     </MudItem>
-    <MudItem xs="2">
+    <MudItem xs="3" Class="d-flex align-center">
+        <MudCheckBox T="bool" @bind-Value="@_showLegendValues" @bind-Value:after="BuildOptions" Color="Color.Primary">
+            Show Legend Values
+        </MudCheckBox>
+    </MudItem>
+    <MudItem xs="2" Class="d-flex align-center">
         <MudCheckBox T="bool" @bind-Value="@_showValueLabels" @bind-Value:after="BuildOptions" Color="Color.Primary">
             Show Values
         </MudCheckBox>
     </MudItem>
-    <MudItem xs="3">
+    <MudItem xs="3" Class="d-flex align-center">
         <MudCheckBox T="bool" @bind-Value="@_showValueToolTips" @bind-Value:after="BuildOptions" Color="Color.Primary">
             Show Value Tooltips
         </MudCheckBox>
@@ -102,6 +107,7 @@
     private YAxisLabelPosition _YAxisLabelPosition = YAxisLabelPosition.Left;
     private bool _enableGradient = false;
     private bool _showValueLabels = true;
+    private bool _showLegendValues = true;
     private bool _showValueToolTips = true;
     private bool _legendVisible = true;
     private Position _showLegendPosition = Position.Bottom;
@@ -147,6 +153,7 @@
         options.ChartPalette = _colors.Take(_colorCount).ToArray();
         options.ShowLabels = _showValueLabels;
         options.ShowLegend = _legendVisible;
+        options.ShowLegendLabels = _showLegendValues;
         StateHasChanged();
     }
 

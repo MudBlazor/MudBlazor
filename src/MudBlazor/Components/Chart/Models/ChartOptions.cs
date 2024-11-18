@@ -111,7 +111,7 @@ namespace MudBlazor
         public YAxisLabelPosition YAxisLabelPosition { get; set; } = YAxisLabelPosition.Left;
 
         /// <summary>
-        /// Enables tooltips for series in a <see cref="ChartType.HeatMap"/>
+        /// Enables tooltips for values in a <see cref="ChartType.HeatMap"/>
         /// Defaults to true
         /// </summary>
         public bool ShowToolTips { get; set; } = true;
@@ -121,7 +121,11 @@ namespace MudBlazor
         /// Defaults to false
         /// </summary>
         public bool ShowLabels { get; set; } = true;
-
+        /// <summary>
+        /// Enables label values for the legend boxes in a <see cref="ChartType.HeatMap"/>
+        /// Defaults to true
+        /// </summary>
+        public bool ShowLegendLabels { get; set; } = true;
         /// <summary>
         /// The format applied to labels for every box in a <see cref="ChartType.HeatMap"/>
         /// Defaults to "F2"

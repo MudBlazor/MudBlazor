@@ -23,7 +23,7 @@ namespace MudBlazor.Charts
         private const int LegendLineLength = 5;
         // the heatmap outside padding
         private const int HeatMapPadding = 15;
-        private const int LegendFontSize = 12;
+        private const int LegendFontSize = 10;
         // approximate width of YAxis Labels
         private const int LabelFontSize = 10;
         private const double AverageCharWidthMultiplier = 0.6;
@@ -148,19 +148,19 @@ namespace MudBlazor.Charts
             // make room for X and Y Axis Labels
             if (_options?.YAxisLabelPosition == YAxisLabelPosition.Left)
             {
-                _horizontalStartSpace += CellPadding + _yAxisLabelWidth + CellPadding;
+                _horizontalStartSpace += _yAxisLabelWidth + CellPadding;
             }
             if (_options?.YAxisLabelPosition == YAxisLabelPosition.Right)
             {
-                _horizontalEndSpace += CellPadding + _yAxisLabelWidth + CellPadding;
+                _horizontalEndSpace += _yAxisLabelWidth + CellPadding;
             }
             if (_options?.XAxisLabelPosition == XAxisLabelPosition.Top)
             {
-                _verticalStartSpace += CellPadding + LegendFontSize + CellPadding;
+                _verticalStartSpace += LegendFontSize + CellPadding;
             }
             if (_options?.XAxisLabelPosition == XAxisLabelPosition.Bottom)
             {
-                _verticalEndSpace += CellPadding + LegendFontSize + CellPadding;
+                _verticalEndSpace += LegendFontSize + CellPadding;
             }
             // Make Room for Legend (if Any)
             if (_options?.ShowLegend ?? false)
@@ -340,22 +340,32 @@ namespace MudBlazor.Charts
             var x = _legendPosition switch
             {
                 Position.Top or Position.Bottom =>
-                    (_horizontalStartSpace + HeatmapWidth + _horizontalEndSpace) / 2,
+                    // Center horizontally, accounting for start and end spaces
+                    _horizontalStartSpace + (HeatmapWidth / 2),
                 Position.Right =>
-                    _horizontalStartSpace + HeatmapWidth + HeatMapPadding + _legendLabelsYAxis,
+                    // Right side, accounting for heatmap width, start space, and yaxis labels
+                    _horizontalStartSpace + HeatmapWidth + HeatMapPadding + CellPadding +
+                    (_options?.YAxisLabelPosition == YAxisLabelPosition.Right ? _yAxisLabelWidth : 0),
                 Position.Left =>
-                    HeatMapPadding,
+                    // Left side, accounting for start space and yaxis labels
+                    _horizontalStartSpace - HeatMapPadding - LegendBox - CellPadding -
+                    (_options?.YAxisLabelPosition == YAxisLabelPosition.Left ? _yAxisLabelWidth : 0),
                 _ => 0
             };
 
             var y = _legendPosition switch
             {
                 Position.Right or Position.Left =>
-                    (_verticalStartSpace + HeatmapHeight + _verticalEndSpace) / 2,
+                    // Vertically center, accounting for start and end spaces
+                    _verticalStartSpace + (HeatmapHeight / 2),
                 Position.Bottom =>
-                    _verticalStartSpace + HeatmapHeight + HeatMapPadding,
+                    // Bottom, accounting for heatmap height, start space, and xaxis labels + LegendBox
+                    _verticalStartSpace + HeatmapHeight + LegendBox + CellPadding +
+                        (_options?.XAxisLabelPosition == XAxisLabelPosition.Bottom ? LabelFontSize + CellPadding : 0),
                 Position.Top =>
-                    HeatMapPadding,
+                    // Top, accounting for start space and xaxis labels and height of legendbox
+                    _verticalStartSpace - CellPadding - LegendBox - CellPadding -
+                        (_options?.XAxisLabelPosition == XAxisLabelPosition.Top ? LabelFontSize + CellPadding : 0),
                 _ => 0
             };
 

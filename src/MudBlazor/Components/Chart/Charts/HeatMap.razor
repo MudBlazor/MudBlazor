@@ -124,21 +124,24 @@
     @if (_options?.ShowLegend ?? false)
     {
         var (legendX, legendY) = GetLegendPosition();
+        var labelFontSize = LegendFontSize - 2;
         @switch (_legendPosition)
         {
             case Position.Top or Position.Bottom:
                 {
-                    var textWidth = (8 * LegendFontSize * AverageCharWidthMultiplier) + (CellPadding * 4);
-                    var totalWidth = (_legends.Count * (LegendBox + CellPadding)) - CellPadding + textWidth;
+                    var legendPadding = _options?.ShowLabels ?? false ? CellPadding * 2 : CellPadding;
+                    var totalChars = 8;
+                    // width is horizontal, cellpadding between the word Less and the middle section and the last word
+                    var textWidth = (totalChars * LegendFontSize * AverageCharWidthMultiplier) + (CellPadding * 2);
+                    var totalWidth = (_legends.Count * (LegendBox + legendPadding)) - legendPadding + textWidth;
                     var offsetX = -totalWidth / 2; // Center horizontally
-
+                    
                     <g transform="translate(@(legendX + offsetX), @legendY)">
                         <!-- "Less" label -->
-                        <text x="CellPadding" y="0" dominant-baseline="middle" text-anchor="start" fill="black" font-size="@LegendFontSize">Less</text>
-
+                        <text x="0" y="0" dominant-baseline="middle" text-anchor="start" fill="black" font-size="@LegendFontSize">Less</text>                        
                         @for (int i = 0; i < _legends.Count; i++)
                         {
-                            var x = (textWidth / 2) + (i * (LegendBox + CellPadding));
+                            var x = (textWidth / 2) + (i * (LegendBox + legendPadding));
                             <g transform="translate(@x, 0)">
                                 <rect x="0" y="@(-LegendBox / 2)" width="@LegendBox" height="@LegendBox" fill="@_legends[i].color">
                                     @if (_options?.ShowToolTips ?? false)
@@ -146,35 +149,37 @@
                                         <title>@_legends[i].value</title>
                                     }
                                 </rect>
-                                @if (_options?.ShowLabels ?? false)
+                                @if (_options?.ShowLegendLabels ?? false)
                                 {
+                                    
                                     double x1 = LegendBox / 2, x2 = x1, y1 = _legendPosition == Position.Top ? -LegendBox / 2 : LegendBox / 2;
                                     double y2 = _legendPosition == Position.Top ? -LegendBox / 2 - LegendLineLength : LegendBox / 2 + LegendLineLength;
 
                                     <line x1="@x1" y1="@y1" x2="@x2" y2="@y2" stroke="black" stroke-width="1" />
+                                    var y3 = y2 + (_legendPosition == Position.Top ? -LegendLineLength : LegendLineLength);
                                     @(
                                         (MarkupString)
-                                        @$"<text x='0' y='{y2}' dominant-baseline='middle' text-anchor='middle' fill='black' font-size='{LegendFontSize}'>{FormatValueForDisplay(_legends[i].value)}</text>"
+                                        @$"<text x='0' y='{y3}' dominant-baseline='middle' text-anchor='start' fill='black' font-size='{labelFontSize}'>{FormatValueForDisplay(_legends[i].value)}</text>"
                                         )
                                 }
                             </g>
                         }
 
                         <!-- "More" label -->
-                        <text x="@((textWidth / 2) + ((_legends.Count) * (LegendBox + CellPadding)))" y="0" dominant-baseline="middle" text-anchor="start" fill="black" font-size="@LegendFontSize">More</text>
+                        <text x="@((textWidth / 2) + ((_legends.Count) * (LegendBox + legendPadding)))" y="0" dominant-baseline="middle" text-anchor="start" fill="black" font-size="@LegendFontSize">More</text>
                     </g>
                 }
                 break;
 
             case Position.Right or Position.Left:
                 {
-                    var textHeight = (8 * LegendFontSize) + (CellPadding * 4);
+                    var textHeight = (8 * LegendFontSize) + (CellPadding * 2);
                     var totalHeight = (_legends.Count * (LegendBox + CellPadding)) - CellPadding + textHeight;
                     var offsetY = -totalHeight / 2; // Center vertically
 
                     <g transform="translate(@legendX, @(legendY + offsetY))">
                         <!-- "Less" label -->
-                        <text x="0" y="@CellPadding" dominant-baseline="middle" text-anchor="middle" fill="black" font-size="@LegendFontSize">Less</text>
+                        <text x="0" y="@((textHeight / 2) - CellPadding - LegendBox)" dominant-baseline="middle" text-anchor="start" fill="black" font-size="@LegendFontSize">Less</text>
 
                         @for (int i = 0; i < _legends.Count; i++)
                         {
@@ -186,22 +191,22 @@
                                         <title>@_legends[i].value</title>
                                     }
                                 </rect>
-                                @if (_options?.ShowLabels ?? false)
+                                @if (_options?.ShowLegendLabels ?? false)
                                 {
                                     double y1 = 0, y2 = 0, x1 = _legendPosition == Position.Right ? LegendBox : 0;
                                     double x2 = _legendPosition == Position.Right ? LegendBox + LegendLineLength : -LegendLineLength;
-
+                                    var x3 = x2 + (_legendPosition == Position.Right ? CellPadding : -CellPadding);
                                     <line x1="@x1" y1="@y1" x2="@x2" y2="@y2" stroke="black" stroke-width="1" />
                                     @(
                                         (MarkupString)
-                                        @$"<text x='{x2}' y='0' dominant-baseline='middle' text-anchor='{(_legendPosition == Position.Right ? "start" : "end")}' fill='black' font-size='{LegendFontSize}'>{FormatValueForDisplay(_legends[i].value)}</text>"
+                                        @$"<text x='{x3} y='0' dominant-baseline='middle' text-anchor='{(_legendPosition == Position.Right ? "start" : "end")}' fill='black' font-size='{labelFontSize}'>{FormatValueForDisplay(_legends[i].value)}</text>"
                                      )
                                 }
                             </g>
                         }
 
                         <!-- "More" label -->
-                        <text x="0" y="@((textHeight / 2) + ((_legends.Count) * (LegendBox + CellPadding)))" dominant-baseline="middle" text-anchor="middle" fill="black" font-size="@LegendFontSize">More</text>
+                        <text x="0" y="@((textHeight / 2) + ((_legends.Count) * (LegendBox + CellPadding)))" dominant-baseline="middle" text-anchor="start" fill="black" font-size="@LegendFontSize">More</text>
                     </g>
                 }
                 break;
