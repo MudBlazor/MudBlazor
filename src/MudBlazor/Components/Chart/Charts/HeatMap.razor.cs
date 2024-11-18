@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
 #nullable enable
+
 namespace MudBlazor.Charts
 {
     partial class HeatMap : MudCategoryChartBase
@@ -62,7 +63,7 @@ namespace MudBlazor.Charts
         private int SeriesLength => _series.Max(s => s.Data.Length);
 
         // The number of rows visible
-        private int RowCount => _series.Where(s => s.Visible).Count();
+        private int RowCount => _series.Count(s => s.Visible);
 
         // the amount of pixels a legend extends horizontally when it's on left/right
         private int _legendLabelsYAxis = 0;
@@ -132,9 +133,6 @@ namespace MudBlazor.Charts
             // cols should be the max number of data[] in all series
             var cols = _series.Max(series => series.Data.Length);
 
-            var cellWidth = BoundWidth / cols;
-            var cellHeight = BoundHeight / rows;
-
             for (var row = 0; row < rows; row++)
             {
                 for (var col = 0; col < cols; col++)
@@ -163,10 +161,9 @@ namespace MudBlazor.Charts
             _verticalStartSpace = _verticalEndSpace = _horizontalStartSpace = _horizontalEndSpace = HeatMapPadding;
             _yAxisLabelWidth = (_series?.Max(x => x.Name.Length) ?? 1) * LabelFontSize * AverageCharWidthMultiplier;
             var defaultCharsWidth = 5 * LegendFontSize * AverageCharWidthMultiplier;
-            _legendLabelsYAxis = (int)Math.Ceiling((_options?.ShowLegendLabels ?? false)
-                ? (defaultCharsWidth + LegendLineLength)
-                : 0);
-            _legendLabelsXAxis = (_options?.ShowLegendLabels ?? false)
+            _legendLabelsYAxis = (int)Math.Ceiling(_options is { ShowLegendLabels: true }
+                ? (defaultCharsWidth + LegendLineLength) : 0);
+            _legendLabelsXAxis = _options is { ShowLegendLabels: true }
                 ? (LegendFontSize + LegendLineLength)
                 : 0;
 
@@ -188,7 +185,7 @@ namespace MudBlazor.Charts
                 _verticalEndSpace += LegendFontSize + CellPadding;
             }
             // Make Room for Legend (if Any)
-            if (_options?.ShowLegend ?? false)
+            if (_options is { ShowLegend: true })
             {
                 switch (_legendPosition)
                 {
@@ -267,12 +264,11 @@ namespace MudBlazor.Charts
             for (var i = 0; i < shadeCount; i++)
             {
                 var t = i / (double)(shadeCount - 1); // Normalized between 0 and 1
+                // we don't want a 0 alpha so we change that to .1 when necessary
+                var tValue = (i == 0 ? .1 : t);
 
                 if (colorCount == 1)
                 {
-                    // When there's only one color, vary the alpha or lightness
-                    // we don't allow a 0 here instead moving it to a .1 lightness at the minimum
-                    var tValue = t == 0 ? .1 : t;
                     var color = AdjustAlpha(baseColors[0], tValue);
                     interpolatedColors[i] = color;
                 }

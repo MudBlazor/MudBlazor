@@ -1,9 +1,8 @@
 ﻿@namespace MudBlazor.Charts
-@using System.Globalization;
 @inherits MudCategoryChartBase
 
-<svg @attributes="UserAttributes" style="border: 2px solid black;" class="mud-chart-heat mud-ltr" width="@MudChartParent?.Width" height="@MudChartParent?.Height" viewBox="0 0 650 350">
-    @if (_options?.EnableSmoothGradient ?? false)
+<svg @attributes="UserAttributes" class="mud-chart-heat mud-ltr" width="@MudChartParent?.Width" height="@MudChartParent?.Height" viewBox="0 0 650 350">
+    @if (_options is {EnableSmoothGradient: true })
     {
         <defs>
             @* 4-point gradients for each cell *@
@@ -42,7 +41,7 @@
 
     @for (int row = 0; row < _series.Count; row++)
     {
-        var padding = (_options?.EnableSmoothGradient ?? false) ? 0 : CellPadding;
+        var padding = _options is {EnableSmoothGradient: true } ? 0 : CellPadding;
 
         if (!_series[row].Visible) continue;
         var rowLabel = _series[row].Name;
@@ -70,7 +69,7 @@
             var x = (col * (cellWidth + padding)) + _horizontalStartSpace;
 
             // Gradient Overlays
-            @if (_options?.EnableSmoothGradient ?? false)
+            @if (_options is {EnableSmoothGradient: true })
             {
                 // Apply the 4 gradient overlays with partial opacity
                 <rect x="@x" y="@y" width="@cellWidth" height="@cellHeight" fill="url(#gradient-topcenter-@row-@col)" opacity="0.25" />
@@ -83,15 +82,15 @@
                 <!-- Group containing both the rectangle and the text -->
                 <g>
                     <rect x="@x" y="@y" width="@cellWidth" height="@cellHeight"
-                          fill="@(_options?.EnableSmoothGradient ?? false ? "transparent" : GetColorForValue(cell?.Value))" />
-                    @if (_options?.ShowLabels ?? false && cell?.Value != null)
+                          fill="@(_options is { EnableSmoothGradient: true } ? "transparent" : GetColorForValue(cell?.Value))" />
+                    @if (_options is { ShowLabels: true } && cell is { Value: not null })
                     {
                         @((MarkupString)@$"<text fill='black' font-size='8' x='{x + cellWidth / 2}' y='{y + cellHeight / 2}' dominant-baseline='middle' text-anchor='middle'>{FormatValueForDisplay(cell?.Value)}</text>")
                     }
                 </g>
 
                 <!-- Tooltip applied to the group -->
-                @if (_options?.ShowToolTips ?? false && cell?.Value != null)
+                @if (_options is {ShowToolTips: true } && cell is { Value: not null })
                 {
                     <title>@cell.Value.ToString()</title>
                 }
@@ -112,7 +111,7 @@
             }
         }
     }
-    @if (_options?.ShowLegend ?? false)
+    @if (_options is {ShowLegend: true })
     {
         var (legendX, legendY) = GetLegendPosition();
         var labelFontSize = LegendFontSize - 2;
@@ -120,7 +119,7 @@
         {
             case Position.Top or Position.Bottom:
                 {
-                    var legendPadding = _options?.ShowLabels ?? false ? CellPadding * 2 : CellPadding;
+                    var legendPadding = _options is {ShowLabels: true } ? CellPadding * 2 : CellPadding;
                     var totalChars = 8;
                     // width is horizontal, cellpadding between the word Less and the middle section and the last word
                     var textWidth = (totalChars * LegendFontSize * AverageCharWidthMultiplier) + (CellPadding * 2);
@@ -135,15 +134,15 @@
                             var x = (textWidth / 2) + (i * (LegendBox + legendPadding));
                             <g transform="translate(@x, 0)">
                                 <rect x="0" y="@(-LegendBox / 2)" width="@LegendBox" height="@LegendBox" fill="@_legends[i].color">
-                                    @if (_options?.ShowToolTips ?? false)
+                                    @if (_options is {ShowToolTips: true })
                                     {
                                         <title>@_legends[i].value</title>
                                     }
                                 </rect>
-                                @if (_options?.ShowLegendLabels ?? false)
+                                @if (_options is {ShowLegendLabels: true })
                                 {
 
-                                    double x1 = LegendBox / 2, x2 = x1, y1 = _legendPosition == Position.Top ? -LegendBox / 2 : LegendBox / 2;
+                                    double x1 = (double)LegendBox / 2, x2 = x1, y1 = _legendPosition == Position.Top ? -LegendBox / 2 : LegendBox / 2;
                                     double y2 = _legendPosition == Position.Top ? -LegendBox / 2 - LegendLineLength : LegendBox / 2 + LegendLineLength;
 
                                     <line x1="@x1" y1="@y1" x2="@x2" y2="@y2" stroke="black" stroke-width="1" />
@@ -174,12 +173,12 @@
                             var y = (textHeight / 2) + (i * (LegendBox + CellPadding));
                             <g transform="translate(0, @y)">
                                 <rect x="0" y="@(-LegendBox / 2)" width="@LegendBox" height="@LegendBox" fill="@_legends[i].color">
-                                    @if (_options?.ShowToolTips ?? false)
+                                    @if (_options is {ShowToolTips: true })
                                     {
                                         <title>@_legends[i].value</title>
                                     }
                                 </rect>
-                                @if (_options?.ShowLegendLabels ?? false)
+                                @if (_options is {ShowLegendLabels: true })
                                 {
                                     double y1 = 0, y2 = 0, x1 = _legendPosition == Position.Right ? LegendBox : 0;
                                     double x2 = _legendPosition == Position.Right ? LegendBox + LegendLineLength : -LegendLineLength;
