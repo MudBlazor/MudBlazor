@@ -6,7 +6,7 @@
     <meta Name="twitter:title" Content="@GetTitle()" />
     @if (!string.IsNullOrEmpty(SubTitle))
     {
-        <meta Name="description" Content="@(SubTitle)" />
+        <meta Name="description" Content="@SubTitle" />
         <meta Property="og:description" Content="@SubTitle" />
         <meta Name="twitter:description" Content="@SubTitle" />
     }
@@ -30,7 +30,7 @@ else
     </div>
 }
 
-@if (!IsApi && Component != null && !DisableApiHeader)
+@if (!IsApi && !string.IsNullOrEmpty(Component))
 {
     <DocsPageSection api-link-section>
         <SectionHeader Title="API" />
