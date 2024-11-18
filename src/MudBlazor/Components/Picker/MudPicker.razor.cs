@@ -36,7 +36,7 @@ namespace MudBlazor
                 .AddClass("mud-picker-inline", PickerVariant != PickerVariant.Static)
                 .AddClass("mud-picker-static", PickerVariant == PickerVariant.Static)
                 .AddClass("mud-rounded", PickerVariant == PickerVariant.Static && !_pickerSquare)
-                .AddClass($"mud-elevation-{Elevation ?? 0}", PickerVariant == PickerVariant.Static)
+                .AddClass($"mud-elevation-{Elevation ?? 0}", PickerVariant != PickerVariant.Inline)
                 .AddClass("mud-picker-input-button", !Editable && PickerVariant != PickerVariant.Static)
                 .AddClass("mud-picker-input-text", Editable && PickerVariant != PickerVariant.Static)
                 .AddClass("mud-disabled", GetDisabledState() && PickerVariant != PickerVariant.Static)
