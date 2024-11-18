@@ -1,0 +1,7 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+// Add MudBlazor services
+Services.AddMudServices();
+
+// Send all exceptions to the console
+MudGlobal.UnhandledExceptionHandler = (exception) => Console.WriteLine(exception);
