@@ -4,10 +4,13 @@
 
 namespace MudBlazor.Charts
 {
+#nullable enable
     public class HeatMapCell
     {
         public int Row { get; set; }
+
         public int Column { get; set; }
+
         public double? Value { get; set; }
     }
 

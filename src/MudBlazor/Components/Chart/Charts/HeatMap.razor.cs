@@ -4,6 +4,7 @@
 
 using System.Globalization;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Utilities;
 
 #nullable enable
 namespace MudBlazor.Charts
@@ -138,8 +139,8 @@ namespace MudBlazor.Charts
             _verticalStartSpace = _verticalEndSpace = _horizontalStartSpace = _horizontalEndSpace = HeatMapPadding;
             _yAxisLabelWidth = (_series?.Max(x => x.Name.Length) ?? 1) * LabelFontSize * AverageCharWidthMultiplier;
             var defaultCharsWidth = 5 * LegendFontSize * AverageCharWidthMultiplier;
-            _legendLabelsYAxis = (int)Math.Ceiling((_options?.ShowLabels ?? false) 
-                ? (defaultCharsWidth + LegendLineLength) 
+            _legendLabelsYAxis = (int)Math.Ceiling((_options?.ShowLabels ?? false)
+                ? (defaultCharsWidth + LegendLineLength)
                 : 0);
             _legendLabelsXAxis = (_options?.ShowLabels ?? false)
                 ? (LegendFontSize + LegendLineLength)
@@ -232,7 +233,6 @@ namespace MudBlazor.Charts
             return _legends[Math.Clamp(legendIndex, 0, _legends.Count - 1)].color;
         }
 
-        #region Color Methods
         private string[] GetEqualizedColorPalette(int shadeCount)
         {
             // Equalizes between 1 and 5 user colors supplied
@@ -267,54 +267,21 @@ namespace MudBlazor.Charts
 
         private static string AdjustAlpha(string color, double alpha)
         {
-            (var r, var g, var b) = ParseColor(color);
-            return $"rgba({r}, {g}, {b}, {alpha.ToString("F2", CultureInfo.InvariantCulture)})";
+            var mudColor = new MudColor(color);
+            return $"rgba({mudColor.R}, {mudColor.G}, {mudColor.B}, {alpha.ToString("F2", CultureInfo.InvariantCulture)})";
         }
 
         private static string InterpolateColor(string colorStart, string colorEnd, double t)
         {
-            (var r1, var g1, var b1) = ParseColor(colorStart);
-            (var r2, var g2, var b2) = ParseColor(colorEnd);
+            var mudColorStart = new MudColor(colorStart);
+            var mudColorEnd = new MudColor(colorEnd);
 
-            var r = (int)(r1 + (r2 - r1) * t);
-            var g = (int)(g1 + (g2 - g1) * t);
-            var b = (int)(b1 + (b2 - b1) * t);
+            var r = (int)(mudColorStart.R + (mudColorEnd.R - mudColorStart.R) * t);
+            var g = (int)(mudColorStart.G + (mudColorEnd.G - mudColorStart.G) * t);
+            var b = (int)(mudColorStart.B + (mudColorEnd.B - mudColorStart.B) * t);
 
             return $"rgb({r}, {g}, {b})";
         }
-
-        private static (int, int, int) ParseColor(string color)
-        {
-            if (color.StartsWith('#'))
-            {
-                return HexToRgb(color);
-            }
-            else if (color.StartsWith("rgba") || color.StartsWith("rgb"))
-            {
-                return RgbaToRgb(color);
-            }
-            throw new FormatException($"Unsupported color format: {color}");
-        }
-
-        private static (int, int, int) HexToRgb(string hex)
-        {
-            hex = hex.TrimStart('#');
-            var r = Convert.ToInt32(hex.Substring(0, 2), 16);
-            var g = Convert.ToInt32(hex.Substring(2, 2), 16);
-            var b = Convert.ToInt32(hex.Substring(4, 2), 16);
-            return (r, g, b);
-        }
-
-        private static (int, int, int) RgbaToRgb(string rgba)
-        {
-            var values = rgba.TrimStart("rgba(".ToCharArray()).TrimEnd(')').Split(',');
-            var r = int.Parse(values[0]);
-            var g = int.Parse(values[1]);
-            var b = int.Parse(values[2]);
-            return (r, g, b);
-        }
-
-        #endregion
 
         #region Razor Assist Methods
         private string FormatValueForDisplay(double? value)

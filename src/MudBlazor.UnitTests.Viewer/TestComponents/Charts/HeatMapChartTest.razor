@@ -101,7 +101,6 @@
 @code {
     public static string __description__ = "HeatMap Demo";
     private ChartOptions options = new ChartOptions();
-    private Random random = new Random();
     private List<ChartSeries> Series = new List<ChartSeries>();
     private XAxisLabelPosition _XAxisLabelPosition = XAxisLabelPosition.Bottom;
     private YAxisLabelPosition _YAxisLabelPosition = YAxisLabelPosition.Left;
@@ -113,7 +112,7 @@
     private Position _showLegendPosition = Position.Bottom;
     private Origin _anchorOrigin = Origin.BottomCenter;
     private int _colorCount = 5;
-    private string[] _colors = ["#007AFF", "#5AC8FA", "#34C759", "#FFCC00", "#FF9500", "#FF3B30"];
+    private readonly string[] _colors = ["#007AFF", "#5AC8FA", "#34C759", "#FFCC00", "#FF9500", "#FF3B30"];
 
     protected override void OnInitialized()
     {
@@ -181,13 +180,12 @@
             var data = new double[dataPoints];
             for (int i = 0; i < dataPoints; i++)
             {
-                data[i] = random.NextDouble() * 100;
+                data[i] = Random.Shared.NextDouble() * 100;
             }
             new_series.Add(new ChartSeries() { Name = day, Data = data });
         }
 
         Series = new_series;
-        StateHasChanged();
     }
 
 }
