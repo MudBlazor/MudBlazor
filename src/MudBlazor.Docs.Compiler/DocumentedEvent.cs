@@ -5,7 +5,6 @@
 namespace MudBlazor.Docs.Compiler;
 
 #nullable enable
-
 /// <summary>
 /// Represents a documented event (including EventCallback properties).
 /// </summary>
@@ -15,7 +14,7 @@ public class DocumentedEvent : DocumentedMember
     /// Whether this property is a parameter.
     /// </summary>
     /// <remarks>
-    /// When <c>true</c>, the <see cref="ParameterAttribute"/> is applied to this property.
+    /// When <c>true</c>, the <see cref="Microsoft.AspNetCore.Components.ParameterAttribute"/> is applied to this property.
     /// </remarks>
     public bool IsParameter { get; set; }
 
