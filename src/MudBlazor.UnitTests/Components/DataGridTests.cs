@@ -33,26 +33,26 @@ namespace MudBlazor.UnitTests.Components
     public class DataGridTests : BunitTest
     {
         [Test]
-        [SetCulture("en-US")]
-        [SetUICulture("en-US")]
+        [SetCulture("")]
+        [SetUICulture("")]
         public void DataGridPropertyNullCheck()
         {
             var comp = Context.RenderComponent<DataGridPropertyColumnNullCheckTest>();
             var cells = comp.FindAll("td").ToArray();
 
             // First Row
-            cells[0].TextContent.Should().Be("1/1/0001 12:00:00 AM");
+            cells[0].TextContent.Should().Be("01/01/0001 00:00:00");
             cells[1].TextContent.Should().BeEmpty();
-            cells[2].TextContent.Should().Be("1/1/0001 12:00:00 AM");
+            cells[2].TextContent.Should().Be("01/01/0001 00:00:00");
             cells[3].TextContent.Should().BeEmpty();
             cells[4].TextContent.Should().BeEmpty();
             cells[5].TextContent.Should().BeEmpty();
 
             // Second Row
-            cells[6].TextContent.Should().Be("1/1/0001 12:00:00 AM");
-            cells[7].TextContent.Should().Be("1/1/0001 12:00:00 AM +00:00");
-            cells[8].TextContent.Should().Be("1/1/0001 12:00:00 AM");
-            cells[9].TextContent.Should().Be("1/1/0001 12:00:00 AM");
+            cells[6].TextContent.Should().Be("01/01/0001 00:00:00");
+            cells[7].TextContent.Should().Be("01/01/0001 00:00:00 +00:00");
+            cells[8].TextContent.Should().Be("01/01/0001 00:00:00");
+            cells[9].TextContent.Should().Be("01/01/0001 00:00:00");
             cells[10].TextContent.Should().Be("some text");
             cells[11].TextContent.Should().BeEmpty();
         }
