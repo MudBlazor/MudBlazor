@@ -37,7 +37,7 @@ namespace MudBlazor.Charts
 
         private const int LegendFontSize = 10;
 
-        private double? _dynamicFontSize;
+        private double _dynamicFontSize = 8;
 
         private double _yAxisLabelWidth = 0;
 
@@ -59,7 +59,7 @@ namespace MudBlazor.Charts
         private string[] _colorPalette = ["#587934"];
 
         // The maximum number of cells in a series
-        private int SeriesLength => _series.Any() ? _series.Max(s => s.Data.Length) : 0;
+        private int SeriesLength => _series.Any() ? _series.Where(s => s.Data != null).Max(s => s.Data.Length) : 0;
 
         // The number of rows visible
         private int RowCount => _series.Any() ? _series.Count(s => s.Visible) : 0;
@@ -130,7 +130,7 @@ namespace MudBlazor.Charts
             // # of rows
             var rows = _series.Count;
             // cols should be the max number of data[] in all series
-            var cols = _series.Any() ? _series.Max(series => series.Data.Length) : 0;
+            var cols = SeriesLength;
 
             for (var row = 0; row < rows; row++)
             {
@@ -158,7 +158,15 @@ namespace MudBlazor.Charts
         {
             // Defaults each side gets some space around the heatmap
             _verticalStartSpace = _verticalEndSpace = _horizontalStartSpace = _horizontalEndSpace = HeatMapPadding;
-            _yAxisLabelWidth = (_series.Any() ? _series?.Max(x => x.Name.Length) ?? 1 : 1) * 14 * AverageCharWidthMultiplier;
+            //cellWidth = Math.Max(CellMinSize, (BoundWidth - _horizontalStartSpace - _horizontalEndSpace - padding * (SeriesLength - 1)) / SeriesLength);
+            var estimatedCellWidth = Math.Max(CellMinSize, (BoundWidth - (6 * HeatMapPadding) - CellPadding) / Math.Max(1, SeriesLength));
+            //var cellHeight = Math.Max(CellMinSize, (BoundHeight - _verticalStartSpace - _verticalEndSpace - (padding * (RowCount - 1)));
+            var estimatedCellHeight = (BoundHeight - (6 * HeatMapPadding)) / Math.Max(1, RowCount);
+            _dynamicFontSize = CalculateFontSize(estimatedCellWidth, estimatedCellHeight, 8) - 2;
+
+            // Calculate Y-axis label width based on dynamic font size
+            _yAxisLabelWidth = (_series.Any() ? _series?.Max(x => x.Name.Length) ?? 1 : 1) * _dynamicFontSize * AverageCharWidthMultiplier;
+
             var defaultCharsWidth = 5 * LegendFontSize * AverageCharWidthMultiplier;
             _legendLabelsYAxis = (int)Math.Ceiling(_options is { ShowLegendLabels: true }
                 ? (defaultCharsWidth + LegendLineLength) : 0);
@@ -169,19 +177,19 @@ namespace MudBlazor.Charts
             // make room for X and Y Axis Labels
             if (_options?.YAxisLabelPosition == YAxisLabelPosition.Left)
             {
-                _horizontalStartSpace += _yAxisLabelWidth + CellPadding;
+                _horizontalStartSpace += CellPadding + _yAxisLabelWidth + CellPadding;
             }
             if (_options?.YAxisLabelPosition == YAxisLabelPosition.Right)
             {
-                _horizontalEndSpace += _yAxisLabelWidth + CellPadding;
+                _horizontalEndSpace += CellPadding + _yAxisLabelWidth + CellPadding;
             }
             if (_options?.XAxisLabelPosition == XAxisLabelPosition.Top)
             {
-                _verticalStartSpace += LegendFontSize + CellPadding;
+                _verticalStartSpace += CellPadding + _dynamicFontSize + CellPadding;
             }
             if (_options?.XAxisLabelPosition == XAxisLabelPosition.Bottom)
             {
-                _verticalEndSpace += LegendFontSize + CellPadding;
+                _verticalEndSpace += CellPadding + _dynamicFontSize + CellPadding;
             }
             // Make Room for Legend (if Any)
             if (_options is { ShowLegend: true })
@@ -204,7 +212,6 @@ namespace MudBlazor.Charts
                         break;
                 }
             }
-
         }
 
         private void BuildLegends()
@@ -228,7 +235,7 @@ namespace MudBlazor.Charts
                 return null;
             }
             // need to ensure column index exists in case there is no data for a column in a series
-            if (col < 0 || col >= _series[row].Data.Length)
+            if (col < 0 || _series[row].Data == null || col >= _series[row].Data.Length)
             {
                 return null;
             }
@@ -307,7 +314,7 @@ namespace MudBlazor.Charts
             return formattedValue.Length > 5 ? formattedValue.Substring(0, 5) : formattedValue;
         }
 
-        private double CalculateFontSize(double cellWidth, double cellHeight, int defaultSize)
+        private static double CalculateFontSize(double cellWidth, double cellHeight, int defaultSize)
         {
             var minDimension = Math.Min(cellWidth, cellHeight);
             return Math.Max(defaultSize, minDimension * 0.4);
@@ -339,16 +346,15 @@ namespace MudBlazor.Charts
                 Position.Bottom =>
                     // Bottom, accounting for heatmap height, start space, and xaxis labels + LegendBox
                     _verticalStartSpace + HeatmapHeight + LegendBox + CellPadding +
-                        (_options?.XAxisLabelPosition == XAxisLabelPosition.Bottom ? 14 + CellPadding : 0),
+                        (_options?.XAxisLabelPosition == XAxisLabelPosition.Bottom ? _dynamicFontSize + CellPadding : 0),
                 Position.Top =>
                     // Top, accounting for start space and xaxis labels and height of legendbox
                     _verticalStartSpace - CellPadding - LegendBox - CellPadding -
-                        (_options?.XAxisLabelPosition == XAxisLabelPosition.Top ? 14 + CellPadding : 0),
+                        (_options?.XAxisLabelPosition == XAxisLabelPosition.Top ? _dynamicFontSize + CellPadding : 0),
                 _ => 0
             };
 
             return (x, y);
         }
-
     }
 }

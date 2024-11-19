@@ -48,11 +48,15 @@
         // how tall each cell should be
         var cellHeight = Math.Max(CellMinSize, (BoundHeight - _verticalStartSpace - _verticalEndSpace - (padding * (RowCount - 1))) / RowCount);
         var y = (row * (cellHeight + padding)) + _verticalStartSpace;
-
-        @for (int col = 0; col < _series[row].Data.Length; col++)
+        var cellWidth = 0.0;
+        var seriesLength = _series[row].Data != null ? _series[row].Data.Length : 0; // protect from a null array
+        @for (int col = 0; col < seriesLength; col++)
         {
             var cell = _heatMapCells.FirstOrDefault(c => c.Row == row && c.Column == col);
-            var cellWidth = Math.Max(CellMinSize, (BoundWidth - _horizontalStartSpace - _horizontalEndSpace - padding * (SeriesLength - 1)) / SeriesLength);
+            if (cellWidth == 0.0)
+            {
+                cellWidth = Math.Max(CellMinSize, (BoundWidth - _horizontalStartSpace - _horizontalEndSpace - padding * (SeriesLength - 1)) / SeriesLength);
+            }            
             var x = (col * (cellWidth + padding)) + _horizontalStartSpace;
 
             // Gradient Overlays
@@ -72,10 +76,6 @@
                           fill="@(_options is { EnableSmoothGradient: true } ? "transparent" : GetColorForValue(cell?.Value))" />
                     @if (_options is { ShowLabels: true } && cell is { Value: not null })
                     {
-                        if (_dynamicFontSize is null)
-                        {
-                            _dynamicFontSize = CalculateFontSize(cellWidth, cellHeight, 8);
-                        }
                         @((MarkupString)@$"<text fill='black' font-size='{_dynamicFontSize}' x='{x + cellWidth / 2}' y='{y + cellHeight / 2}' dominant-baseline='middle' text-anchor='middle'>{FormatValueForDisplay(cell?.Value)}</text>")
                     }
                 </g>
@@ -87,24 +87,25 @@
                 }
             </g>
 
-
+            // XAxis Labels
             @if (row == 0 && _options?.XAxisLabelPosition == XAxisLabelPosition.Top && col < XAxisLabels.Length)
             {
-                <g class="mud-charts-xaxis" transform="translate(@(x + cellWidth / 2), @(y - _dynamicFontSize))">
+                <g class="mud-charts-xaxis" transform="translate(@(x + cellWidth / 2), @(y - CellPadding))">
                     <text x="0" y="0" text-anchor="middle" font-size="@_dynamicFontSize">@XAxisLabels[col]</text>
                 </g>
             }
             else if (row == RowCount - 1 && _options?.XAxisLabelPosition == XAxisLabelPosition.Bottom && col < XAxisLabels.Length)
             {
-                <g class="mud-charts-xaxis" transform="translate(@(x + cellWidth / 2), @(y + cellHeight + _dynamicFontSize + CellPadding))">
+                <g class="mud-charts-xaxis" transform="translate(@(x + cellWidth / 2), @(y + cellHeight + _dynamicFontSize))">
                     <text x="0" y="0" text-anchor="middle" fill="black" font-size="@_dynamicFontSize">@XAxisLabels[col]</text>
                 </g>
             }
         }
 
+        // YAxis Labels
         @if (_options?.YAxisLabelPosition == YAxisLabelPosition.Left)
         {
-            <g class='mud-charts-yaxis' transform="translate(@(_horizontalStartSpace - _yAxisLabelWidth + CellPadding), @(y + cellHeight / 2))">
+            <g class='mud-charts-yaxis' transform="translate(@(_horizontalStartSpace - CellPadding), @(y + cellHeight / 2))">
                 @((MarkupString)@$"<text x='0' y='0' dominant-baseline='middle' text-anchor='end' font-size='{@_dynamicFontSize}'>{@rowLabel}</text>")
             </g>
         }
@@ -123,7 +124,7 @@
         {
             case Position.Top or Position.Bottom:
                 {
-                    var legendPadding = _options is {ShowLabels: true } ? CellPadding * 2 : CellPadding;
+                    var legendPadding = _options is {ShowLegendLabels: true } ? CellPadding * 2 : CellPadding;
                     var totalChars = 8;
                     // width is horizontal, cellpadding between the word Less and the middle section and the last word
                     var textWidth = (totalChars * LegendFontSize * AverageCharWidthMultiplier) + (CellPadding * 2);

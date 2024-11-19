@@ -249,5 +249,179 @@ namespace MudBlazor.UnitTests.Components
             cellTexts[0].Should().Be("1.18");
             cellTexts[3].Should().Be("4.15");
         }
+
+        [Test]
+        public void HeatMap_ShouldHandleEmptyAndNullData()
+        {
+            var series = new List<ChartSeries>
+            {
+                new ChartSeries { Name = "Empty Series", Data = Array.Empty<double>() },
+                new ChartSeries { Name = "Null Series", Data = null },
+                new ChartSeries { Name = "Valid Series", Data = [1.0, 2.0] }
+            };
+
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.HeatMap)
+                .Add(p => p.ChartSeries, series)
+            );
+
+            // Should render without errors and only show cells for valid data
+            var cells = comp.FindAll(".mud-chart-cell");
+            cells.Count.Should().Be(2); // Only the valid series should render cells
+        }
+
+        [Test]
+        public void HeatMap_ShouldHandleSeriesVisibility()
+        {
+            var series = new List<ChartSeries>
+            {
+                new ChartSeries { Name = "Series 1", Data = [1, 2], Visible = false },
+                new ChartSeries { Name = "Series 2", Data = [3, 4], Visible = true }
+            };
+
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.HeatMap)
+                .Add(p => p.ChartSeries, series)
+            );
+
+            var cells = comp.FindAll(".mud-chart-cell");
+            cells.Count.Should().Be(2); // Only visible series should render
+        }
+
+        [Test]
+        [TestCase(Position.Top)]
+        [TestCase(Position.Bottom)]
+        [TestCase(Position.Left)]
+        [TestCase(Position.Right)]
+        public void HeatMap_ShouldRenderLegendInCorrectPosition(Position position)
+        {
+            var series = new List<ChartSeries>
+            {
+                new ChartSeries { Name = "Series 1", Data = [1, 2, 3] }
+            };
+
+            var options = new ChartOptions 
+            { 
+                ShowLegend = true,
+                ShowLegendLabels = true
+            };
+
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.HeatMap)
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, options)
+                .Add(p => p.LegendPosition, position)
+            );
+
+            // Verify legend exists and is positioned correctly
+            var legends = comp.FindAll(".mud-chart-heatmap-legend");
+            legends.Should().NotBeEmpty();
+
+            // Verify "Less" and "More" labels are present
+            comp.Markup.Should().Contain("Less");
+            comp.Markup.Should().Contain("More");
+        }
+
+        [Test]
+        public void HeatMap_ShouldHandleSmoothGradients()
+        {
+            var series = new List<ChartSeries>
+            {
+                new ChartSeries { Name = "Series 1", Data = [1, 2, 3] },
+                new ChartSeries { Name = "Series 2", Data = [4, 5, 6] }
+            };
+
+            var options = new ChartOptions { EnableSmoothGradient = true };
+
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.HeatMap)
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, options)
+            );
+
+            // Verify gradient definitions exist
+            comp.Markup.Should().Contain("linearGradient");
+            
+            // Check for gradient overlays
+            var gradientRects = comp.FindAll("rect[fill^='url(#gradient-']");
+            gradientRects.Should().NotBeEmpty();
+        }
+
+        [Test]
+        [TestCase(XAxisLabelPosition.Top)]
+        [TestCase(XAxisLabelPosition.Bottom)]
+        [TestCase(YAxisLabelPosition.Left)]
+        [TestCase(YAxisLabelPosition.Right)]
+        public void HeatMap_ShouldRenderAxisLabelsInCorrectPosition(Enum position)
+        {
+            var series = new List<ChartSeries>
+            {
+                new ChartSeries { Name = "Series 1", Data = [1, 2] }
+            };
+            var xAxisLabels = new[] { "Label 1", "Label 2" };
+
+            var options = new ChartOptions();
+            if (position is XAxisLabelPosition xPos)
+                options.XAxisLabelPosition = xPos;
+            else if (position is YAxisLabelPosition yPos)
+                options.YAxisLabelPosition = yPos;
+
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.HeatMap)
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.XAxisLabels, xAxisLabels)
+                .Add(p => p.ChartOptions, options)
+            );
+
+            // Verify axis labels exist
+            var axisLabels = comp.FindAll("g.mud-charts-xaxis, g.mud-charts-yaxis");
+            axisLabels.Should().NotBeEmpty();
+        }
+
+        [Test]
+        public void HeatMap_ShouldShowTooltipsWhenEnabled()
+        {
+            var series = new List<ChartSeries>
+            {
+                new ChartSeries { Name = "Series 1", Data = [1, 2] }
+            };
+
+            var options = new ChartOptions { ShowToolTips = true };
+
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.HeatMap)
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, options)
+            );
+
+            // Check for title elements (tooltips)
+            var tooltips = comp.FindAll("title");
+            tooltips.Should().NotBeEmpty();
+            tooltips[0].TextContent.Should().Be("1"); // First cell value
+        }
+
+        [Test]
+        public void HeatMap_ShouldCalculateDynamicFontSize()
+        {
+            var series = new List<ChartSeries>
+            {
+                new ChartSeries { Name = "Series 1", Data = [1] }
+            };
+
+            // Test with different dimensions
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.HeatMap)
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.Width, "200px") // Smaller width to test font size adaptation
+                .Add(p => p.Height, "200px")
+            );
+
+            var cellText = comp.Find(".mud-chart-cell text");
+            var fontSize = cellText.GetAttribute("font-size");
+            
+            // Font size should be calculated based on cell dimensions
+            fontSize.Should().NotBeNull();
+            double.Parse(fontSize).Should().BeGreaterThan(0);
+        }
     }
 }

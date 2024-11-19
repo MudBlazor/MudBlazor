@@ -5,25 +5,17 @@
               XAxisLabels="@_xLabels" Width="100%" Height="350px"></MudChart>
 </MudPaper>
 <MudPaper Class="pa-4 mt-2 d-flex justify-center">
-    <MudButton OnClick="AddColor" Disabled="@(_colorCount >= 5)" Variant="Variant.Filled" Color="Color.Primary">Add Color</MudButton>
+    <MudItem xs="4" Class="d-flex align-center">
+        <MudCheckBox T="bool" @bind-Value="_enableSmoothGradient" @bind-Value:after="BuildOptions" Color="Color.Primary">
+            Smooth Gradient
+        </MudCheckBox>
+    </MudItem>
     <MudButton @onclick="RandomizeData" Variant="Variant.Filled" Class="mx-4">Randomize</MudButton>
-    <MudButton OnClick="RemoveColor" Disabled="@(_colorCount <= 1)" Variant="Variant.Filled" Color="Color.Secondary">Remove Color</MudButton>
 </MudPaper>
 
-<MudStack Row Justify="Justify.Center">
-    @for (int i = 0; i < _colors.Length; i++)
-    {
-        <MudPaper Class="pa-2 mx-1" onclick="@(() => SetColorCount(i + 1))"
-                  Style="@($"background-color: {_colors[i]}; width: 50px; height: 50px;{(i > _colorCount -1 ? string.Empty : "border: 2px solid black;" )}")">
-        </MudPaper>
-    }
-</MudStack>
-
-<MudText Align="Align.Center" Typo="Typo.h6">Number of Colors Selected: @_colorCount</MudText>
-
 @code {
-    private int _colorCount = 1;
-    private readonly string[] _colors = ["#5AC8FA", "#34C759", "#007AFF", "#FFCC00", "#e03131"];
+    private bool _enableSmoothGradient = true;
+    private readonly string[] _colors = ["#5AC8FA", "#34C759", "#007AFF"];
     private List<ChartSeries> Series = [];
     private ChartOptions Options = new ChartOptions();
     private string[] _xLabels = [];
@@ -35,28 +27,11 @@
         RandomizeData();
     }
 
-    private void SetColorCount(int value)
-    {
-        _colorCount = value;
-        BuildOptions();
-    }
-
-    private void AddColor()
-    {
-        _colorCount++;
-        BuildOptions();
-    }
-
-    private void RemoveColor()
-    {
-        _colorCount--;
-        BuildOptions();
-    }
-
     private void BuildOptions()
     {
         var options = new ChartOptions();
-        options.ChartPalette = _colors.Take(_colorCount).ToArray();
+        options.ChartPalette = _colors;
+        options.EnableSmoothGradient = _enableSmoothGradient;
         Options = options;
     }
 
