@@ -595,24 +595,38 @@ namespace MudBlazor.Utilities
         public static IReadOnlyList<MudColor> GeneratePalette(MudColor baseColor, int numberOfColors = 5, double tintStep = 0.075, double shadeStep = 0.075)
         {
             var palette = new List<MudColor> { baseColor };
-            var halfColors = numberOfColors / 2;
 
-            for (var i = 1; i <= halfColors; i++)
+            if (tintStep > 0 && shadeStep > 0)
             {
-                if (tintStep > 0)
+                int halfColors = (numberOfColors - 1) / 2; // Half of the colors (rounded down) will be lighter or darker
+                int lighterColors = halfColors + (numberOfColors % 2 == 0 ? 0 : 1); // If number is odd, add 1 extra lighter color
+                int darkerColors = halfColors;
+
+                // Generate lighter colors
+                for (int i = 1; i <= lighterColors; i++)
                 {
                     palette.Insert(0, baseColor.ColorLighten(i * tintStep));
                 }
 
-                if (shadeStep > 0)
+                // Generate darker colors
+                for (int i = 1; i <= darkerColors; i++)
                 {
                     palette.Add(baseColor.ColorDarken(i * shadeStep));
                 }
             }
-
-            while (palette.Count > numberOfColors)
+            else if (tintStep > 0) // Only lighter colors
             {
-                palette.RemoveAt(palette.Count - 1);
+                for (int i = 1; i < numberOfColors; i++)
+                {
+                    palette.Insert(0, baseColor.ColorLighten(i * tintStep));
+                }
+            }
+            else if (shadeStep > 0) // Only darker colors
+            {
+                for (int i = 1; i < numberOfColors; i++)
+                {
+                    palette.Add(baseColor.ColorDarken(i * shadeStep));
+                }
             }
 
             return palette;
