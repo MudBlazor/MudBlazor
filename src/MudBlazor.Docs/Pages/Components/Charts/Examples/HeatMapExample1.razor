@@ -13,7 +13,7 @@
 <MudStack Row Justify="Justify.Center">
     @for (int i = 0; i < _colors.Length; i++)
     {
-        <MudPaper Class="pa-2 mx-1" onclick="@(() => SetColorCount(i + 1))"
+    <MudPaper Class="pa-2 mx-1"
                   Style="@($"background-color: {_colors[i]}; width: 50px; height: 50px;{(i > _colorCount -1 ? string.Empty : "border: 2px solid black;" )}")">
         </MudPaper>
     }
@@ -33,12 +33,6 @@
         base.OnInitialized();
         BuildOptions();
         RandomizeData();
-    }
-
-    private void SetColorCount(int value)
-    {
-        _colorCount = value;
-        BuildOptions();
     }
 
     private void AddColor()

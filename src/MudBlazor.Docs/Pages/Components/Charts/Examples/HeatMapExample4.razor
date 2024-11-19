@@ -6,7 +6,7 @@
 
             <!-- Top Radio -->
             <MudItem xs="12" Class="d-flex justify-center align-center">
-                <MudRadio Color="Color.Primary" Value="Position.Top" Dense>Top</MudRadio>
+                <MudRadio Color="Color.Primary" Value="Position.Top" LabelPlacement="Placement.Top" Dense>Top</MudRadio>
             </MudItem>
 
             <MudItem xs="12" Class="d-flex justify-center py-2">
@@ -34,7 +34,7 @@
 
             <!-- Bottom Radio -->
             <MudItem xs="12" Class="d-flex justify-center align-center">
-                <MudRadio Color="Color.Primary" Value="Position.Bottom" Dense>Bottom</MudRadio>
+                <MudRadio Color="Color.Primary" Value="Position.Bottom" LabelPlacement="Placement.Bottom" Dense>Bottom</MudRadio>
             </MudItem>
 
         </MudRadioGroup>
@@ -44,7 +44,7 @@
                   XAxisLabels="@XAxisLabels" ChartOptions="@options" LegendPosition="_showLegendPosition"></MudChart>
     </MudItem>
 </MudGrid>
-<MudGrid>
+<MudGrid Spacing="2" Class="d-flex">
     <MudItem xs="2" Class="d-flex align-center">
         <MudButton OnClick="@RandomizeData" Variant="Variant.Filled">Randomize Data</MudButton>
     </MudItem>
@@ -53,30 +53,24 @@
             Smooth Gradient
         </MudCheckBox>
     </MudItem>
-    <MudItem xs="3" Class="d-flex align-center justify-center">
-        <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center">
-            <MudText Class="pr-1">YAxis Labels</MudText>
-            <MudSelect T="YAxisLabelPosition" @bind-Value="@_YAxisLabelPosition" @bind-Value:after="BuildOptions" FullWidth="true">
-                <MudSelectItem Value="YAxisLabelPosition.Left">Left</MudSelectItem>
-                <MudSelectItem Value="YAxisLabelPosition.Right">Right</MudSelectItem>
-                <MudSelectItem Value="YAxisLabelPosition.None">None</MudSelectItem>
-            </MudSelect>
-        </MudStack>
+    <MudItem xs="2" Class="d-flex align-center justify-left">
+        <MudSelect T="YAxisLabelPosition" @bind-Value="@_YAxisLabelPosition" @bind-Value:after="BuildOptions" FullWidth="true" Label="YAxis Labels">
+            <MudSelectItem Value="YAxisLabelPosition.Left">Left</MudSelectItem>
+            <MudSelectItem Value="YAxisLabelPosition.Right">Right</MudSelectItem>
+            <MudSelectItem Value="YAxisLabelPosition.None">None</MudSelectItem>
+        </MudSelect>
     </MudItem>
-    <MudItem xs="3" Class="d-flex align-center justify-center">
-        <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center">
-            <MudText Class="pr-1">XAxis Labels</MudText>
-            <MudSelect T="XAxisLabelPosition" @bind-Value="@_XAxisLabelPosition" @bind-Value:after="BuildOptions" FullWidth="true">
-                <MudSelectItem Value="XAxisLabelPosition.Top">Top</MudSelectItem>
-                <MudSelectItem Value="XAxisLabelPosition.Bottom">Bottom</MudSelectItem>
-                <MudSelectItem Value="XAxisLabelPosition.None">None</MudSelectItem>
-            </MudSelect>
-        </MudStack>
+    <MudItem xs="2" Class="d-flex align-center justify-left">
+        <MudSelect T="XAxisLabelPosition" @bind-Value="@_XAxisLabelPosition" @bind-Value:after="BuildOptions" FullWidth="true" Label="XAxis Labels">
+            <MudSelectItem Value="XAxisLabelPosition.Top">Top</MudSelectItem>
+            <MudSelectItem Value="XAxisLabelPosition.Bottom">Bottom</MudSelectItem>
+            <MudSelectItem Value="XAxisLabelPosition.None">None</MudSelectItem>
+        </MudSelect>
     </MudItem>
-    <MudItem xs="2" Class="d-flex align-center"></MudItem>
     <MudItem xs="2" Class="d-flex align-center">
         <MudNumericField Label="Number of Colors Used" @bind-Value="_colorCount" @bind-Value:after="BuildOptions" Min="1" Max="5" Step="1" />
     </MudItem>
+    <MudItem xs="2"></MudItem>
     <MudItem xs="2" Class="d-flex align-center">
         <MudCheckBox T="bool" @bind-Value="@_legendVisible" @bind-Value:after="BuildOptions" Color="Color.Primary">
             Show Legend
