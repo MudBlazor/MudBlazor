@@ -82,7 +82,7 @@ namespace MudBlazor.Utilities
         /// Gets the alpha component value as a percentage (0.0 to 1.0) of the color.
         /// </summary>
         [JsonIgnore]
-        public double APercentage => Math.Round(A / 255.0, 2);
+        public double APercentage => NormalizeAlpha(A);
 
         /// <summary>
         /// Gets the hue component value of the color.
@@ -570,7 +570,7 @@ namespace MudBlazor.Utilities
             var g = color1.G + color2.G;
             var b = color1.B + color2.B;
             var a = color1.A + color2.A;
-            var aPercentage = Math.Round(a / 255.0, 2);
+            var aPercentage = NormalizeAlpha(a);
             // Using alpha as a percentage ensures more accurate alpha blending. 
             // Creating a MudColor from an alpha byte or integer can result in fractional alpha values (e.g., 0.996078431372549), 
             // which makes it difficult to compare two colors accurately in real-world scenarios.
@@ -589,7 +589,7 @@ namespace MudBlazor.Utilities
             var g = color1.G - color2.G;
             var b = color1.B - color2.B;
             var a = color1.A - color2.A;
-            var aPercentage = Math.Round(a / 255.0, 2);
+            var aPercentage = NormalizeAlpha(a);
             // Using alpha as a percentage ensures more accurate alpha blending. 
             // Creating a MudColor from an alpha byte or integer can result in fractional alpha values (e.g., 0.996078431372549), 
             // which makes it difficult to compare two colors accurately in real-world scenarios.
@@ -608,7 +608,7 @@ namespace MudBlazor.Utilities
             var g = (int)(color.G * scalar);
             var b = (int)(color.B * scalar);
             var a = (int)(color.A * scalar);
-            var aPercentage = Math.Round(a / 255.0, 2);
+            var aPercentage = NormalizeAlpha(a);
             // Using alpha as a percentage ensures more accurate alpha blending. 
             // Creating a MudColor from an alpha byte or integer can result in fractional alpha values (e.g., 0.996078431372549), 
             // which makes it difficult to compare two colors accurately in real-world scenarios.
@@ -637,6 +637,10 @@ namespace MudBlazor.Utilities
         {
             return colorStart * (1.0f - t) + colorEnd * t;
         }
+
+        private static double NormalizeAlpha(byte a) => Math.Round(a / 255.0, 2);
+
+        private static double NormalizeAlpha(int a) => Math.Round(a / 255.0, 2);
 
         private static byte GetByteFromValuePart(string input, int index) => byte.Parse(new string(new[] { input[index], input[index + 1] }), NumberStyles.HexNumber);
 
