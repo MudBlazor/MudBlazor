@@ -53,7 +53,7 @@
         @for (int col = 0; col < seriesLength; col++)
         {
             var cell = _heatMapCells.FirstOrDefault(c => c.Row == row && c.Column == col);
-            if (cellWidth == 0.0)
+            if (cellWidth < CellMinSize)
             {
                 cellWidth = Math.Max(CellMinSize, (BoundWidth - _horizontalStartSpace - _horizontalEndSpace - padding * (SeriesLength - 1)) / SeriesLength);
             }            

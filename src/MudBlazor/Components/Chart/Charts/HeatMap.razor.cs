@@ -158,9 +158,7 @@ namespace MudBlazor.Charts
         {
             // Defaults each side gets some space around the heatmap
             _verticalStartSpace = _verticalEndSpace = _horizontalStartSpace = _horizontalEndSpace = HeatMapPadding;
-            //cellWidth = Math.Max(CellMinSize, (BoundWidth - _horizontalStartSpace - _horizontalEndSpace - padding * (SeriesLength - 1)) / SeriesLength);
             var estimatedCellWidth = Math.Max(CellMinSize, (BoundWidth - (6 * HeatMapPadding) - CellPadding) / Math.Max(1, SeriesLength));
-            //var cellHeight = Math.Max(CellMinSize, (BoundHeight - _verticalStartSpace - _verticalEndSpace - (padding * (RowCount - 1)));
             var estimatedCellHeight = (BoundHeight - (6 * HeatMapPadding)) / Math.Max(1, RowCount);
             _dynamicFontSize = CalculateFontSize(estimatedCellWidth, estimatedCellHeight, 8) - 2;
 
