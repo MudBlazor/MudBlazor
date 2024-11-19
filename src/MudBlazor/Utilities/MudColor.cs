@@ -2,7 +2,6 @@
 //// https://stackoverflow.com/questions/4087581/creating-a-c-sharp-color-from-hsl-values/4087601#4087601
 //// Stripped and adapted by Meinrad Recheis and Benjamin Kappel for MudBlazor
 
-using System;
 using System.Globalization;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
@@ -255,7 +254,7 @@ namespace MudBlazor.Utilities
         /// <param name="b">The blue component value (0 to 255).</param>
         /// <param name="alpha">The alpha component value (0.0 to 1.0).</param>
         public MudColor(int r, int g, int b, double alpha)
-            : this(r, g, b, (byte)((alpha * 255.0).EnsureRange(255)))
+            : this(r, g, b, (byte)(alpha * 255.0).EnsureRange(255))
         {
         }
 
@@ -525,7 +524,7 @@ namespace MudBlazor.Utilities
             MudColorOutputFormats.Hex => Value.Substring(0, 7),
             MudColorOutputFormats.HexA => Value,
             MudColorOutputFormats.RGB => $"rgb({R},{G},{B})",
-            MudColorOutputFormats.RGBA => $"rgba({R},{G},{B},{(A / 255.0).ToString(CultureInfo.InvariantCulture)})",
+            MudColorOutputFormats.RGBA => $"rgba({R},{G},{B},{APercentage.ToString(CultureInfo.InvariantCulture)})",
             MudColorOutputFormats.ColorElements => $"{R},{G},{B}",
             _ => Value,
         };
@@ -558,6 +557,86 @@ namespace MudBlazor.Utilities
         /// <param name="mudColor">The MudColor instance to convert.</param>
         /// <returns>The 32-bit unsigned integer representation of the color.</returns>
         public static explicit operator uint(MudColor mudColor) => mudColor.UInt32;
+
+        /// <summary>
+        /// Adds two <see cref="MudColor"/> instances together.
+        /// </summary>
+        /// <param name="color1">The first <see cref="MudColor"/> instance.</param>
+        /// <param name="color2">The second <see cref="MudColor"/> instance.</param>
+        /// <returns>A new <see cref="MudColor"/> instance that is the sum of the two colors.</returns>
+        public static MudColor operator +(MudColor color1, MudColor color2)
+        {
+            var r = color1.R + color2.R;
+            var g = color1.G + color2.G;
+            var b = color1.B + color2.B;
+            var a = color1.A + color2.A;
+            var aPercentage = Math.Round(a / 255.0, 2);
+            // Using alpha as a percentage ensures more accurate alpha blending. 
+            // Creating a MudColor from an alpha byte or integer can result in fractional alpha values (e.g., 0.996078431372549), 
+            // which makes it difficult to compare two colors accurately in real-world scenarios.
+            return new MudColor(r, g, b, alpha: aPercentage);
+        }
+
+        /// <summary>
+        /// Subtracts one <see cref="MudColor"/> instance from another.
+        /// </summary>
+        /// <param name="color1">The <see cref="MudColor"/> instance to subtract from.</param>
+        /// <param name="color2">The <see cref="MudColor"/> instance to subtract.</param>
+        /// <returns>A new <see cref="MudColor"/> instance that is the result of the subtraction.</returns>
+        public static MudColor operator -(MudColor color1, MudColor color2)
+        {
+            var r = color1.R - color2.R;
+            var g = color1.G - color2.G;
+            var b = color1.B - color2.B;
+            var a = color1.A - color2.A;
+            var aPercentage = Math.Round(a / 255.0, 2);
+            // Using alpha as a percentage ensures more accurate alpha blending. 
+            // Creating a MudColor from an alpha byte or integer can result in fractional alpha values (e.g., 0.996078431372549), 
+            // which makes it difficult to compare two colors accurately in real-world scenarios.
+            return new MudColor(r, g, b, alpha: aPercentage);
+        }
+
+        /// <summary>
+        /// Multiplies a <see cref="MudColor"/> instance by a scalar value.
+        /// </summary>
+        /// <param name="color">The <see cref="MudColor"/> instance.</param>
+        /// <param name="scalar">The scalar value.</param>
+        /// <returns>A new <see cref="MudColor"/> instance that is the result of the multiplication.</returns>
+        public static MudColor operator *(MudColor color, float scalar)
+        {
+            var r = (int)(color.R * scalar);
+            var g = (int)(color.G * scalar);
+            var b = (int)(color.B * scalar);
+            var a = (int)(color.A * scalar);
+            var aPercentage = Math.Round(a / 255.0, 2);
+            // Using alpha as a percentage ensures more accurate alpha blending. 
+            // Creating a MudColor from an alpha byte or integer can result in fractional alpha values (e.g., 0.996078431372549), 
+            // which makes it difficult to compare two colors accurately in real-world scenarios.
+            return new MudColor(r, g, b, alpha: aPercentage);
+        }
+
+        /// <summary>
+        /// Multiplies a scalar value by a <see cref="MudColor"/> instance.
+        /// </summary>
+        /// <param name="scalar">The scalar value.</param>
+        /// <param name="color">The <see cref="MudColor"/> instance.</param>
+        /// <returns>A new <see cref="MudColor"/> instance that is the result of the multiplication.</returns>
+        public static MudColor operator *(float scalar, MudColor color)
+        {
+            return color * scalar;
+        }
+
+        /// <summary>
+        /// Linearly interpolates between two <see cref="MudColor"/> instances.
+        /// </summary>
+        /// <param name="colorStart">The starting <see cref="MudColor"/> instance.</param>
+        /// <param name="colorEnd">The ending <see cref="MudColor"/> instance.</param>
+        /// <param name="t">The interpolation factor (0.0 to 1.0).</param>
+        /// <returns>A new <see cref="MudColor"/> instance that is the result of the interpolation.</returns>
+        public static MudColor Lerp(MudColor colorStart, MudColor colorEnd, float t)
+        {
+            return colorStart * (1.0f - t) + colorEnd * t;
+        }
 
         private static byte GetByteFromValuePart(string input, int index) => byte.Parse(new string(new[] { input[index], input[index + 1] }), NumberStyles.HexNumber);
 
