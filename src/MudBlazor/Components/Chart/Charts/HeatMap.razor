@@ -16,22 +16,22 @@
                     // Define each gradient for 4 directions
 
                     <linearGradient id="gradient-topcenter-@row-@col" x1="50%" y1="0%" x2="50%" y2="50%">
-                        <stop offset="0%" style="stop-color:@GetColorForValue(GetNeighborValue(row - 1, col))" />
+                        <stop offset="0%" style="stop-color:@GetColorForValue(GetDataValue(row - 1, col))" />
                         <stop offset="100%" style="stop-color:@color" />
                     </linearGradient>
 
                     <linearGradient id="gradient-right-@row-@col" x1="100%" y1="50%" x2="50%" y2="50%">
-                        <stop offset="0%" style="stop-color:@GetColorForValue(GetNeighborValue(row, col + 1))" />
+                        <stop offset="0%" style="stop-color:@GetColorForValue(GetDataValue(row, col + 1))" />
                         <stop offset="100%" style="stop-color:@color" />
                     </linearGradient>
 
                     <linearGradient id="gradient-bottomcenter-@row-@col" x1="50%" y1="100%" x2="50%" y2="50%">
-                        <stop offset="0%" style="stop-color:@GetColorForValue(GetNeighborValue(row + 1, col))" />
+                        <stop offset="0%" style="stop-color:@GetColorForValue(GetDataValue(row + 1, col))" />
                         <stop offset="100%" style="stop-color:@color" />
                     </linearGradient>
 
                     <linearGradient id="gradient-left-@row-@col" x1="0%" y1="50%" x2="50%" y2="50%">
-                        <stop offset="0%" style="stop-color:@GetColorForValue(GetNeighborValue(row, col - 1))" />
+                        <stop offset="0%" style="stop-color:@GetColorForValue(GetDataValue(row, col - 1))" />
                         <stop offset="100%" style="stop-color:@color" />
                     </linearGradient>
                 }
@@ -48,19 +48,6 @@
         // how tall each cell should be
         var cellHeight = Math.Max(CellMinSize, (BoundHeight - _verticalStartSpace - _verticalEndSpace - (padding * (RowCount - 1))) / RowCount);
         var y = (row * (cellHeight + padding)) + _verticalStartSpace;
-
-        @if (_options?.YAxisLabelPosition == YAxisLabelPosition.Left)
-        {
-            <g class='mud-charts-yaxis' transform="translate(@(_horizontalStartSpace - _yAxisLabelWidth + CellPadding), @(y + cellHeight / 2))">
-                @((MarkupString)@$"<text x='0' y='0' dominant-baseline='middle' text-anchor='end' font-size='{@LabelFontSize}'>{@rowLabel}</text>")
-            </g>
-        }
-        else if (_options?.YAxisLabelPosition == YAxisLabelPosition.Right)
-        {
-            <g style="border: 2px solid black;" class='mud-charts-yaxis' transform="translate(@(_horizontalStartSpace + HeatmapWidth + CellPadding), @(y + cellHeight / 2))">
-                @((MarkupString)@$"<text x='0' y='0' dominant-baseline='middle' text-anchor='start' font-size='{@LabelFontSize}'>{@rowLabel}</text>")
-            </g>
-        }
 
         @for (int col = 0; col < _series[row].Data.Length; col++)
         {
@@ -85,8 +72,11 @@
                           fill="@(_options is { EnableSmoothGradient: true } ? "transparent" : GetColorForValue(cell?.Value))" />
                     @if (_options is { ShowLabels: true } && cell is { Value: not null })
                     {
-                        var fontSize = CalculateFontSize(cellWidth, cellHeight, 8);
-                        @((MarkupString)@$"<text fill='black' font-size='{fontSize}' x='{x + cellWidth / 2}' y='{y + cellHeight / 2}' dominant-baseline='middle' text-anchor='middle'>{FormatValueForDisplay(cell?.Value)}</text>")
+                        if (_dynamicFontSize is null)
+                        {
+                            _dynamicFontSize = CalculateFontSize(cellWidth, cellHeight, 8);
+                        }
+                        @((MarkupString)@$"<text fill='black' font-size='{_dynamicFontSize}' x='{x + cellWidth / 2}' y='{y + cellHeight / 2}' dominant-baseline='middle' text-anchor='middle'>{FormatValueForDisplay(cell?.Value)}</text>")
                     }
                 </g>
 
@@ -100,16 +90,29 @@
 
             @if (row == 0 && _options?.XAxisLabelPosition == XAxisLabelPosition.Top && col < XAxisLabels.Length)
             {
-                <g class="mud-charts-xaxis" transform="translate(@(x + cellWidth / 2), @(y - LabelFontSize))">
-                    <text x="0" y="0" text-anchor="middle" font-size="@LabelFontSize">@XAxisLabels[col]</text>
+                <g class="mud-charts-xaxis" transform="translate(@(x + cellWidth / 2), @(y - _dynamicFontSize))">
+                    <text x="0" y="0" text-anchor="middle" font-size="@_dynamicFontSize">@XAxisLabels[col]</text>
                 </g>
             }
             else if (row == RowCount - 1 && _options?.XAxisLabelPosition == XAxisLabelPosition.Bottom && col < XAxisLabels.Length)
             {
-                <g class="mud-charts-xaxis" transform="translate(@(x + cellWidth / 2), @(y + cellHeight + LabelFontSize + CellPadding))">
-                    <text x="0" y="0" text-anchor="middle" fill="black" font-size="@LabelFontSize">@XAxisLabels[col]</text>
+                <g class="mud-charts-xaxis" transform="translate(@(x + cellWidth / 2), @(y + cellHeight + _dynamicFontSize + CellPadding))">
+                    <text x="0" y="0" text-anchor="middle" fill="black" font-size="@_dynamicFontSize">@XAxisLabels[col]</text>
                 </g>
             }
+        }
+
+        @if (_options?.YAxisLabelPosition == YAxisLabelPosition.Left)
+        {
+            <g class='mud-charts-yaxis' transform="translate(@(_horizontalStartSpace - _yAxisLabelWidth + CellPadding), @(y + cellHeight / 2))">
+                @((MarkupString)@$"<text x='0' y='0' dominant-baseline='middle' text-anchor='end' font-size='{@_dynamicFontSize}'>{@rowLabel}</text>")
+            </g>
+        }
+        else if (_options?.YAxisLabelPosition == YAxisLabelPosition.Right)
+        {
+            <g class='mud-charts-yaxis' transform="translate(@(_horizontalStartSpace + HeatmapWidth + CellPadding), @(y + cellHeight / 2))">
+                @((MarkupString)@$"<text x='0' y='0' dominant-baseline='middle' text-anchor='start' font-size='{@_dynamicFontSize}'>{@rowLabel}</text>")
+            </g>
         }
     }
     @if (_options is {ShowLegend: true })

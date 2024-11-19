@@ -33,12 +33,11 @@ namespace MudBlazor.Charts
         // the heatmap outside padding
         private const int HeatMapPadding = 15;
 
+        private const double AverageCharWidthMultiplier = 0.6;
+
         private const int LegendFontSize = 10;
 
-        // approximate width of YAxis Labels
-        private const int LabelFontSize = 10;
-
-        private const double AverageCharWidthMultiplier = 0.6;
+        private double? _dynamicFontSize;
 
         private double _yAxisLabelWidth = 0;
 
@@ -81,7 +80,7 @@ namespace MudBlazor.Charts
 
         private List<ChartSeries> _series = [];
 
-        private List<(string value, string color)> _legends = [];
+        private List<(double value, string color)> _legends = [];
 
         private List<HeatMapCell> _heatMapCells = [];
 
@@ -159,7 +158,7 @@ namespace MudBlazor.Charts
         {
             // Defaults each side gets some space around the heatmap
             _verticalStartSpace = _verticalEndSpace = _horizontalStartSpace = _horizontalEndSpace = HeatMapPadding;
-            _yAxisLabelWidth = (_series.Any() ? _series?.Max(x => x.Name.Length) ?? 1 : 1) * LabelFontSize * AverageCharWidthMultiplier;
+            _yAxisLabelWidth = (_series.Any() ? _series?.Max(x => x.Name.Length) ?? 1 : 1) * 14 * AverageCharWidthMultiplier;
             var defaultCharsWidth = 5 * LegendFontSize * AverageCharWidthMultiplier;
             _legendLabelsYAxis = (int)Math.Ceiling(_options is { ShowLegendLabels: true }
                 ? (defaultCharsWidth + LegendLineLength) : 0);
@@ -217,7 +216,7 @@ namespace MudBlazor.Charts
             {
                 var t = i / (double)(colors.Length - 1);
                 var value = _minValue + t * (_maxValue - _minValue);
-                _legends.Add((value.ToString("F2", CultureInfo.InvariantCulture), colors[i]));
+                _legends.Add((value, colors[i]));
             }
         }
 
@@ -234,11 +233,6 @@ namespace MudBlazor.Charts
                 return null;
             }
             return _series[row].Data[col];
-        }
-
-        private double? GetNeighborValue(int row, int col)
-        {
-            return GetDataValue(row, col);
         }
 
         private string GetColorForValue(double? value)
@@ -264,13 +258,12 @@ namespace MudBlazor.Charts
             for (var i = 0; i < shadeCount; i++)
             {
                 var t = i / (double)(shadeCount - 1); // Normalized between 0 and 1
-                // we don't want a 0 alpha so we change that to .1 when necessary
-                var tValue = (i == 0 ? .1 : t);
 
                 if (colorCount == 1)
                 {
-                    var color = AdjustAlpha(baseColors[0], tValue);
-                    interpolatedColors[i] = color;
+                    // we don't want a 0 alpha so we change that to .1 when necessary
+                    var color = new MudColor(baseColors[0]).SetAlpha((i == 0 ? .1 : t));
+                    interpolatedColors[i] = color.ToString(MudColorOutputFormats.RGBA);
                 }
                 else if (colorCount == 5)
                 {
@@ -279,7 +272,7 @@ namespace MudBlazor.Charts
                 }
                 else
                 {
-                    // For multiple colors, interpolate as before
+                    // For multiple colors that aren't 1 or 5, interpolate as before
                     var colorIndex = (int)Math.Floor(t * (colorCount - 1));
                     var nextColorIndex = Math.Min(colorIndex + 1, colorCount - 1);
 
@@ -290,20 +283,14 @@ namespace MudBlazor.Charts
             return interpolatedColors;
         }
 
-        private static string AdjustAlpha(string color, double alpha)
-        {
-            var mudColor = new MudColor(color);
-            return $"rgba({mudColor.R}, {mudColor.G}, {mudColor.B}, {alpha.ToString("F2", CultureInfo.InvariantCulture)})";
-        }
-
         private static string InterpolateColor(string colorStart, string colorEnd, double t)
         {
             var mudColorStart = new MudColor(colorStart);
             var mudColorEnd = new MudColor(colorEnd);
 
-            var r = (int)(mudColorStart.R + (mudColorEnd.R - mudColorStart.R) * t);
-            var g = (int)(mudColorStart.G + (mudColorEnd.G - mudColorStart.G) * t);
-            var b = (int)(mudColorStart.B + (mudColorEnd.B - mudColorStart.B) * t);
+            var r = (mudColorStart.R + (mudColorEnd.R - mudColorStart.R) * t);
+            var g = (mudColorStart.G + (mudColorEnd.G - mudColorStart.G) * t);
+            var b = (mudColorStart.B + (mudColorEnd.B - mudColorStart.B) * t);
 
             return $"rgb({r}, {g}, {b})";
         }
@@ -318,12 +305,6 @@ namespace MudBlazor.Charts
             var formattedValue = value.Value.ToString(formatString, CultureInfo.InvariantCulture);
 
             return formattedValue.Length > 5 ? formattedValue.Substring(0, 5) : formattedValue;
-        }
-
-        private string FormatValueForDisplay(string? strValue)
-        {
-            var value = double.TryParse(strValue, out var parsedValue) ? parsedValue : (double?)null;
-            return FormatValueForDisplay(value);
         }
 
         private double CalculateFontSize(double cellWidth, double cellHeight, int defaultSize)
@@ -358,11 +339,11 @@ namespace MudBlazor.Charts
                 Position.Bottom =>
                     // Bottom, accounting for heatmap height, start space, and xaxis labels + LegendBox
                     _verticalStartSpace + HeatmapHeight + LegendBox + CellPadding +
-                        (_options?.XAxisLabelPosition == XAxisLabelPosition.Bottom ? LabelFontSize + CellPadding : 0),
+                        (_options?.XAxisLabelPosition == XAxisLabelPosition.Bottom ? 14 + CellPadding : 0),
                 Position.Top =>
                     // Top, accounting for start space and xaxis labels and height of legendbox
                     _verticalStartSpace - CellPadding - LegendBox - CellPadding -
-                        (_options?.XAxisLabelPosition == XAxisLabelPosition.Top ? LabelFontSize + CellPadding : 0),
+                        (_options?.XAxisLabelPosition == XAxisLabelPosition.Top ? 14 + CellPadding : 0),
                 _ => 0
             };
 
