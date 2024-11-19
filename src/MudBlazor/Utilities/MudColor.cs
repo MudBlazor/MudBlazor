@@ -580,9 +580,47 @@ namespace MudBlazor.Utilities
             int InterpolateValue(byte start, byte end) => (int)(start * (1.0f - t) + end * t);
         }
 
-        private static double NormalizeAlpha(byte a) => Math.Round(a / 255.0, 2);
+        /// <summary>
+        /// Generates a palette of colors by lightening and darkening the base color.
+        /// </summary>
+        /// <param name="baseColor">The base color to generate the palette from.</param>
+        /// <param name="numberOfColors">The total number of colors in the palette.</param>
+        /// <param name="tintStep">The step value for lightening the color.</param>
+        /// <param name="shadeStep">The step value for darkening the color.</param>
+        /// <returns>A read-only list of <see cref="MudColor"/> representing the generated palette.</returns>
+        /// <remarks>
+        /// If <paramref name="tintStep"/> is <c>0</c>, no lighter colors will be added to the palette.
+        /// If <paramref name="shadeStep"/> is <c>0</c>, no darker colors will be added to the palette.
+        /// </remarks>
+        public static IReadOnlyList<MudColor> GeneratePalette(MudColor baseColor, int numberOfColors = 5, double tintStep = 0.075, double shadeStep = 0.075)
+        {
+            var palette = new List<MudColor> { baseColor };
+            var halfColors = numberOfColors / 2;
 
-        private static double NormalizeAlpha(int a) => Math.Round(a / 255.0, 2);
+            for (var i = 1; i <= halfColors; i++)
+            {
+                if (tintStep > 0)
+                {
+                    palette.Insert(0, baseColor.ColorLighten(i * tintStep));
+                }
+
+                if (shadeStep > 0)
+                {
+                    palette.Add(baseColor.ColorDarken(i * shadeStep));
+                }
+            }
+
+            while (palette.Count > numberOfColors)
+            {
+                palette.RemoveAt(palette.Count - 1);
+            }
+
+            return palette;
+        }
+
+        private static double NormalizeAlpha(byte a) => Math.Round(a / 255.0, 3);
+
+        private static double NormalizeAlpha(int a) => Math.Round(a / 255.0, 3);
 
         private static byte GetByteFromValuePart(string input, int index) => byte.Parse(new string(new[] { input[index], input[index + 1] }), NumberStyles.HexNumber);
 
