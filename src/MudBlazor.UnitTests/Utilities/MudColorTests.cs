@@ -625,54 +625,6 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
-        [TestCaseSource(nameof(_additionTestCases))]
-        public void AdditionOperator_ShouldAddColorsCorrectly(MudColor color1, MudColor color2, MudColor expectedColor)
-        {
-            // Act
-            var result = color1 + color2;
-
-            // Assert
-            result.R.Should().Be(expectedColor.R);
-            result.G.Should().Be(expectedColor.G);
-            result.B.Should().Be(expectedColor.B);
-            result.A.Should().Be(expectedColor.A);
-        }
-
-        [Test]
-        [TestCaseSource(nameof(_subtractionTestCases))]
-        public void SubtractionOperator_ShouldSubtractColorsCorrectly(MudColor color1, MudColor color2, MudColor expectedColor)
-        {
-            // Act
-            var result = color1 - color2;
-
-            // Assert
-            result.R.Should().Be(expectedColor.R);
-            result.G.Should().Be(expectedColor.G);
-            result.B.Should().Be(expectedColor.B);
-            result.A.Should().Be(expectedColor.A);
-        }
-
-        [Test]
-        [TestCaseSource(nameof(_multiplicationTestCases))]
-        public void MultiplicationOperator_ShouldMultiplyColorByScalarCorrectly(MudColor color, float scalar, MudColor expectedColor)
-        {
-            // Act
-            var result1 = color * scalar;
-            var result2 = scalar * color;
-
-            // Assert
-            result1.R.Should().Be(expectedColor.R);
-            result1.G.Should().Be(expectedColor.G);
-            result1.B.Should().Be(expectedColor.B);
-            result1.A.Should().Be(expectedColor.A);
-            result2.R.Should().Be(expectedColor.R);
-            result2.G.Should().Be(expectedColor.G);
-            result2.B.Should().Be(expectedColor.B);
-            result2.A.Should().Be(expectedColor.A);
-            result1.Should().Be(result2);
-        }
-
-        [Test]
         [TestCaseSource(nameof(_lerpTestCases))]
         public void Lerp_ShouldInterpolateCorrectly(MudColor colorStart, MudColor colorEnd, float t, MudColor expectedColor)
         {
@@ -841,32 +793,15 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
 
-        private static readonly object[] _additionTestCases =
-        [
-            new object[] { new MudColor(100, 150, 200, 128), new MudColor(50, 50, 50, 64), new MudColor(150, 200, 250, 0.75) },
-            new object[] { new MudColor(255, 255, 255, 255), new MudColor(0, 0, 0, 0), new MudColor(255, 255, 255, 1.0) }
-        ];
-
-        private static readonly object[] _subtractionTestCases =
-        [
-            new object[] { new MudColor(100, 150, 200, 128), new MudColor(50, 50, 50, 64), new MudColor(50, 100, 150, 0.25) },
-            new object[] { new MudColor(255, 255, 255, 255), new MudColor(255, 255, 255, 255), new MudColor(0, 0, 0, 0.0) }
-        ];
-
-        private static readonly object[] _multiplicationTestCases =
-        [
-            new object[] { new MudColor(100, 150, 200, 128), 0.5f, new MudColor(50, 75, 100, 0.25) },
-            new object[] { new MudColor(255, 255, 255, 255), 1.0f, new MudColor(255, 255, 255, 1.0) }
-        ];
-
         private static readonly object[] _lerpTestCases =
         [
+            // Tested expected also with https://www.colourblender.io/
             new object[] { new MudColor(255, 0, 0, 255), new MudColor(0, 0, 255, 255), 0.0f, new MudColor(255, 0, 0, 255) }, // t = 0, should return start color
             new object[] { new MudColor(255, 0, 0, 255), new MudColor(0, 0, 255, 255), 1.0f, new MudColor(0, 0, 255, 255) }, // t = 1, should return end color
             new object[] { new MudColor(255, 0, 0, 255), new MudColor(0, 0, 255, 255), 0.5f, new MudColor(127, 0, 127, 255) }, // t = 0.5, should interpolate between colors
             new object[] { new MudColor(255, 0, 0, 128), new MudColor(0, 0, 255, 64), 0.5f, new MudColor(127, 0, 127, 96) }, // t = 0.5, with alpha interpolation
-            new object[] { new MudColor(0, 64, 128, 0), new MudColor(254, 0, 203, 0), 0.3f, new MudColor(76, 44, 149, 0) },
-            new object[] { new MudColor(255, 255, 255, 0), new MudColor(254, 0, 203, 0), 0.15f, new MudColor(254, 216, 246, 0) }
+            new object[] { new MudColor(0, 64, 128, 0), new MudColor(254, 0, 203, 0), 0.3f, new MudColor(76, 44, 150, 0) },
+            new object[] { new MudColor(255, 255, 255, 0), new MudColor(254, 0, 203, 0), 0.15f, new MudColor(254, 216, 247, 0) }
         ];
     }
 }

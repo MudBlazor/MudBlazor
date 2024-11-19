@@ -559,78 +559,26 @@ namespace MudBlazor.Utilities
         public static explicit operator uint(MudColor mudColor) => mudColor.UInt32;
 
         /// <summary>
-        /// Adds two <see cref="MudColor"/> instances together.
-        /// </summary>
-        /// <param name="color1">The first <see cref="MudColor"/> instance.</param>
-        /// <param name="color2">The second <see cref="MudColor"/> instance.</param>
-        /// <returns>A new <see cref="MudColor"/> instance that is the sum of the two colors.</returns>
-        public static MudColor operator +(MudColor color1, MudColor color2)
-        {
-            var r = color1.R + color2.R;
-            var g = color1.G + color2.G;
-            var b = color1.B + color2.B;
-            var a = color1.A + color2.A;
-            var aPercentage = NormalizeAlpha(a);
-            // Using alpha as a percentage ensures more accurate alpha blending. 
-            // Creating a MudColor from an alpha byte or integer can result in fractional alpha values (e.g., 0.996078431372549), 
-            // which makes it difficult to compare two colors accurately in real-world scenarios.
-            return new MudColor(r, g, b, alpha: aPercentage);
-        }
-
-        /// <summary>
-        /// Subtracts one <see cref="MudColor"/> instance from another.
-        /// </summary>
-        /// <param name="color1">The <see cref="MudColor"/> instance to subtract from.</param>
-        /// <param name="color2">The <see cref="MudColor"/> instance to subtract.</param>
-        /// <returns>A new <see cref="MudColor"/> instance that is the result of the subtraction.</returns>
-        public static MudColor operator -(MudColor color1, MudColor color2)
-        {
-            var r = color1.R - color2.R;
-            var g = color1.G - color2.G;
-            var b = color1.B - color2.B;
-            var a = color1.A - color2.A;
-            var aPercentage = NormalizeAlpha(a);
-            // Using alpha as a percentage ensures more accurate alpha blending. 
-            // Creating a MudColor from an alpha byte or integer can result in fractional alpha values (e.g., 0.996078431372549), 
-            // which makes it difficult to compare two colors accurately in real-world scenarios.
-            return new MudColor(r, g, b, alpha: aPercentage);
-        }
-
-        /// <summary>
-        /// Multiplies a <see cref="MudColor"/> instance by a scalar value.
-        /// </summary>
-        /// <param name="color">The <see cref="MudColor"/> instance.</param>
-        /// <param name="scalar">The scalar value.</param>
-        /// <returns>A new <see cref="MudColor"/> instance that is the result of the multiplication.</returns>
-        public static MudColor operator *(MudColor color, float scalar)
-        {
-            var r = (int)(color.R * scalar);
-            var g = (int)(color.G * scalar);
-            var b = (int)(color.B * scalar);
-            var a = (int)(color.A * scalar);
-            var aPercentage = NormalizeAlpha(a);
-            // Using alpha as a percentage ensures more accurate alpha blending. 
-            // Creating a MudColor from an alpha byte or integer can result in fractional alpha values (e.g., 0.996078431372549), 
-            // which makes it difficult to compare two colors accurately in real-world scenarios.
-            return new MudColor(r, g, b, alpha: aPercentage);
-        }
-
-        /// <summary>
-        /// Multiplies a scalar value by a <see cref="MudColor"/> instance.
-        /// </summary>
-        /// <param name="scalar">The scalar value.</param>
-        /// <param name="color">The <see cref="MudColor"/> instance.</param>
-        /// <returns>A new <see cref="MudColor"/> instance that is the result of the multiplication.</returns>
-        public static MudColor operator *(float scalar, MudColor color) => color * scalar;
-
-        /// <summary>
         /// Linearly interpolates between two <see cref="MudColor"/> instances.
         /// </summary>
         /// <param name="colorStart">The starting <see cref="MudColor"/> instance.</param>
         /// <param name="colorEnd">The ending <see cref="MudColor"/> instance.</param>
         /// <param name="t">The interpolation factor (0.0 to 1.0).</param>
         /// <returns>A new <see cref="MudColor"/> instance that is the result of the interpolation.</returns>
-        public static MudColor Lerp(MudColor colorStart, MudColor colorEnd, float t) => colorStart * (1.0f - t) + colorEnd * t;
+        public static MudColor Lerp(MudColor colorStart, MudColor colorEnd, float t)
+        {
+            var r = InterpolateValue(colorStart.R, colorEnd.R);
+            var g = InterpolateValue(colorStart.G, colorEnd.G);
+            var b = InterpolateValue(colorStart.B, colorEnd.B);
+            var a = InterpolateValue(colorStart.A, colorEnd.A);
+            var aPercentage = NormalizeAlpha(a);
+            // Using alpha as a percentage ensures more accurate alpha blending. 
+            // Creating a MudColor from an alpha byte or integer can result in fractional alpha values (e.g., 0.996078431372549), 
+            // which makes it difficult to compare two colors accurately in real-world scenarios.
+            return new MudColor(r, g, b, alpha: aPercentage);
+
+            int InterpolateValue(byte start, byte end) => (int)(start * (1.0f - t) + end * t);
+        }
 
         private static double NormalizeAlpha(byte a) => Math.Round(a / 255.0, 2);
 
