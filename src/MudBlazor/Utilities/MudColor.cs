@@ -621,10 +621,7 @@ namespace MudBlazor.Utilities
         /// <param name="scalar">The scalar value.</param>
         /// <param name="color">The <see cref="MudColor"/> instance.</param>
         /// <returns>A new <see cref="MudColor"/> instance that is the result of the multiplication.</returns>
-        public static MudColor operator *(float scalar, MudColor color)
-        {
-            return color * scalar;
-        }
+        public static MudColor operator *(float scalar, MudColor color) => color * scalar;
 
         /// <summary>
         /// Linearly interpolates between two <see cref="MudColor"/> instances.
@@ -633,10 +630,7 @@ namespace MudBlazor.Utilities
         /// <param name="colorEnd">The ending <see cref="MudColor"/> instance.</param>
         /// <param name="t">The interpolation factor (0.0 to 1.0).</param>
         /// <returns>A new <see cref="MudColor"/> instance that is the result of the interpolation.</returns>
-        public static MudColor Lerp(MudColor colorStart, MudColor colorEnd, float t)
-        {
-            return colorStart * (1.0f - t) + colorEnd * t;
-        }
+        public static MudColor Lerp(MudColor colorStart, MudColor colorEnd, float t) => colorStart * (1.0f - t) + colorEnd * t;
 
         private static double NormalizeAlpha(byte a) => Math.Round(a / 255.0, 2);
 
