@@ -105,10 +105,20 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AspNetCore.SassCompiler" Version="1.72.0">
+    <PackageReference Include="AspNetCore.SassCompiler" Version="1.80.6">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>
+
+  <!-- Always include MudBlazorDocs.min.css see https://github.com/koenvzeijl/AspNetCore.SassCompiler/issues/178-->
+  <Target Name="Include MudBlazorDocsCss" BeforeTargets="Build;ResolveScopedCssInputs;BundleMinify;ResolveProjectStaticWebAssets" Condition="'$(DesignTimeBuild)' != 'true'">
+    <ItemGroup>
+      <None Remove="wwwroot\MudBlazorDocs.min.css" />
+      <!-- Fix to only include files that were newly generated as to not have duplicate Content items. -->
+      <_NewCompiledMudBlazorDocsCss Include="wwwroot\MudBlazorDocs.min.css" Exclude="@(Content)" />
+      <Content Include="@(_NewCompiledMudBlazorDocsCss)" />
+    </ItemGroup>
+  </Target>
 
   <!--Dont Include in build output-->
   <ItemGroup>
