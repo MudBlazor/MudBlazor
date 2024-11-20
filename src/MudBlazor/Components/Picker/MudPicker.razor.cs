@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
@@ -7,7 +11,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a common form component for selecting date, time, and color values.
+    /// A component for selecting date, time, and color values.
     /// </summary>
     /// <typeparam name="T">The type of value being chosen.</typeparam>
     /// <seealso cref="MudPickerContent" />
@@ -16,14 +20,10 @@ namespace MudBlazor
     {
         private string? _text;
         private bool _pickerSquare;
-        private int _pickerElevation;
         private ElementReference _pickerInlineRef;
         private bool _keyInterceptorObserving = false;
         private string _elementId = Identifier.Create("picker");
 
-        /// <summary>
-        /// Creates a new instance.
-        /// </summary>
         public MudPicker() : base(new Converter<T, string>()) { }
 
         protected MudPicker(Converter<T, string> converter) : base(converter) { }
@@ -36,7 +36,7 @@ namespace MudBlazor
                 .AddClass("mud-picker-inline", PickerVariant != PickerVariant.Static)
                 .AddClass("mud-picker-static", PickerVariant == PickerVariant.Static)
                 .AddClass("mud-rounded", PickerVariant == PickerVariant.Static && !_pickerSquare)
-                .AddClass($"mud-elevation-{_pickerElevation}", PickerVariant == PickerVariant.Static)
+                .AddClass($"mud-elevation-{Elevation ?? 0}", PickerVariant != PickerVariant.Inline)
                 .AddClass("mud-picker-input-button", !Editable && PickerVariant != PickerVariant.Static)
                 .AddClass("mud-picker-input-text", Editable && PickerVariant != PickerVariant.Static)
                 .AddClass("mud-disabled", GetDisabledState() && PickerVariant != PickerVariant.Static)
@@ -73,6 +73,12 @@ namespace MudBlazor
         protected string PickerInputClassname =>
             new CssBuilder("mud-input-input-control")
                 .AddClass(Class)
+                .Build();
+
+        protected string PopoverClassname =>
+            new CssBuilder("mud-picker-popover")
+                // We can't use the Elevation parameter because it requires Paper=true; Instead we define the class explicitly.
+                .AddClass($"mud-elevation-{Elevation ?? MudGlobal.PopoverDefaults.Elevation}")
                 .Build();
 
         protected string ActionsClassname =>
@@ -142,12 +148,12 @@ namespace MudBlazor
         /// The size of the drop shadow.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>8</c>.<br />
+        /// Defaults to <c>8</c> for inline pickers; otherwise <c>0</c>.<br />
         /// A higher number creates a heavier drop shadow.  Use a value of <c>0</c> for no shadow.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerAppearance)]
-        public int Elevation { set; get; } = 8;
+        public int? Elevation { set; get; }
 
         /// <summary>
         /// Disables rounded corners.
@@ -551,14 +557,6 @@ namespace MudBlazor
             if (PickerVariant == PickerVariant.Static)
             {
                 Open = true;
-                if (Elevation == 8)
-                {
-                    _pickerElevation = 0;
-                }
-                else
-                {
-                    _pickerElevation = Elevation;
-                }
 
                 if (!Rounded)
                 {
@@ -568,7 +566,6 @@ namespace MudBlazor
             else
             {
                 _pickerSquare = Square;
-                _pickerElevation = Elevation;
             }
 
             if (Label == null && For != null)

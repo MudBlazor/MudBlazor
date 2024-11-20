@@ -2,8 +2,11 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace MudBlazor.Docs.Compiler;
 
+#nullable enable
 /// <summary>
 /// Represents a writer for generated API documentation.
 /// </summary>
@@ -157,14 +160,14 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     /// Formats a string for use in C# code.
     /// </summary>
     /// <param name="code"></param>
-    /// <returns></returns>
-    public static string Escape(string code) => code?.Replace("\"", "\"\"");
+    [return: NotNullIfNotNull(nameof(code))]
+    public static string? Escape(string? code) => code?.Replace("\"", "\"\"");
 
     /// <summary>
     /// Writes the category for the member.
     /// </summary>
     /// <param name="category">The category (derived from <see cref="CategoryAttribute"/>).</param>
-    public void WriteCategory(string category)
+    public void WriteCategory(string? category)
     {
         if (!string.IsNullOrEmpty(category))
         {
@@ -189,7 +192,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     /// Serializes an XML summary for a member.
     /// </summary>
     /// <param name="summary"></param>
-    public void WriteSummary(string summary)
+    public void WriteSummary(string? summary)
     {
         if (!string.IsNullOrEmpty(summary))
         {
@@ -201,7 +204,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     /// Serializes an XML summary for a member.
     /// </summary>
     /// <param name="summary"></param>
-    public void WriteSummaryIndented(string summary)
+    public void WriteSummaryIndented(string? summary)
     {
         if (!string.IsNullOrEmpty(summary))
         {
@@ -213,7 +216,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     /// Serializes an XML remarks for a member.
     /// </summary>
     /// <param name="remarks"></param>
-    public void WriteRemarks(string remarks)
+    public void WriteRemarks(string? remarks)
     {
         if (!string.IsNullOrEmpty(remarks))
         {
@@ -225,7 +228,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     /// Serializes an XML remarks for a member.
     /// </summary>
     /// <param name="remarks"></param>
-    public void WriteLineRemarks(string remarks)
+    public void WriteLineRemarks(string? remarks)
     {
         if (!string.IsNullOrEmpty(remarks))
         {
@@ -237,7 +240,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     /// Serializes the XML remarks for a member.
     /// </summary>
     /// <param name="remarks"></param>
-    public void WriteRemarksIndented(string remarks)
+    public void WriteRemarksIndented(string? remarks)
     {
         if (!string.IsNullOrEmpty(remarks))
         {
@@ -249,7 +252,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     /// Serializes the XML remarks for a method return value.
     /// </summary>
     /// <param name="returns">The XML docs for the method's return value.</param>
-    public void WriteReturns(string returns)
+    public void WriteReturns(string? returns)
     {
         if (!string.IsNullOrEmpty(returns))
         {
@@ -258,7 +261,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     }
 
     /// <summary>
-    /// Serializes all of the specified types.
+    /// Serializes all the specified types.
     /// </summary>
     /// <param name="types">The types to serialize.</param>
     public void WriteTypes(IDictionary<string, DocumentedType> types)
@@ -296,7 +299,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
             else
             {
                 // For external .NET types like ComponentBase, just set the name
-                WriteLineIndented($"Properties[\"{property.Key}\"].DeclaringTypeName = \"{property.Value.DeclaringType.Name}\";");
+                WriteLineIndented($"Properties[\"{property.Key}\"].DeclaringTypeName = \"{property.Value.DeclaringType?.Name}\";");
             }
             if (property.Value.ChangeEvent != null)
             {
@@ -323,7 +326,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
             else
             {
                 // For external .NET types like ComponentBase, just set the name
-                WriteLineIndented($"Fields[\"{field.Key}\"].DeclaringTypeName = \"{field.Value.DeclaringType.Name}\";");
+                WriteLineIndented($"Fields[\"{field.Key}\"].DeclaringTypeName = \"{field.Value.DeclaringType?.Name}\";");
             }
         }
 
@@ -346,7 +349,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
             else
             {
                 // For external .NET types like ComponentBase, just set the name
-                WriteLineIndented($"Events[\"{eventItem.Key}\"].DeclaringTypeName = \"{eventItem.Value.DeclaringType.Name}\";");
+                WriteLineIndented($"Events[\"{eventItem.Key}\"].DeclaringTypeName = \"{eventItem.Value.DeclaringType?.Name}\";");
             }
             if (eventItem.Value.Property != null)
             {
@@ -373,7 +376,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
             else
             {
                 // For external .NET types like ComponentBase, just set the name
-                WriteLineIndented($"Methods[\"{method.Key}\"].DeclaringTypeName = \"{method.Value.DeclaringType.Name}\";");
+                WriteLineIndented($"Methods[\"{method.Key}\"].DeclaringTypeName = \"{method.Value.DeclaringType?.Name}\";");
             }
         }
 
@@ -438,8 +441,8 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
         Write($"\"{documentedEvent.Key}\", new()");
         Write(" { ");
         Write($"Name = \"{documentedEvent.Name}\", ");
-        Write($"TypeName = \"{documentedEvent.Type.FullName}\", ");
-        Write($"TypeFriendlyName = \"{documentedEvent.Type.GetFriendlyName()}\", ");
+        Write($"TypeName = \"{documentedEvent.Type?.FullName}\", ");
+        Write($"TypeFriendlyName = \"{documentedEvent.Type?.GetFriendlyName()}\", ");
         WriteCategory(documentedEvent.Category);
         WriteOrder(documentedEvent.Order);
         WriteIsParameter(documentedEvent.IsParameter);
@@ -482,8 +485,8 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
         Write($"\"{field.Key}\", new()");
         Write(" { ");
         Write($"Name = \"{field.Name}\", ");
-        Write($"TypeName = \"{field.Type.FullName}\", ");
-        Write($"TypeFriendlyName = \"{field.Type.GetFriendlyName()}\", ");
+        Write($"TypeName = \"{field.Type?.FullName}\", ");
+        Write($"TypeFriendlyName = \"{field.Type?.GetFriendlyName()}\", ");
         WriteCategory(field.Category);
         WriteIsProtected(field.IsProtected);
         WriteOrder(field.Order);
@@ -525,8 +528,8 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
         Write($"\"{property.Key}\", new()");
         Write(" { ");
         Write($"Name = \"{property.Name}\", ");
-        Write($"TypeName = \"{property.Type.FullName}\", ");
-        Write($"TypeFriendlyName = \"{property.Type.GetFriendlyName()}\", ");
+        Write($"TypeName = \"{property.Type?.FullName}\", ");
+        Write($"TypeFriendlyName = \"{property.Type?.GetFriendlyName()}\", ");
         WriteCategory(property.Category);
         WriteIsParameter(property.IsParameter);
         WriteIsProtected(property.IsProtected);
@@ -540,7 +543,6 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     /// <summary>
     /// Serializes the parameters of methods.
     /// </summary>
-    /// <param name="method"></param>
     public void WriteMethodParameters(List<DocumentedParameter> parameters)
     {
         if (parameters.Count == 0)
@@ -671,7 +673,6 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     /// <summary>
     /// Serializes the specified method.
     /// </summary>
-    /// <param name="type">The current type being serialized.</param>
     /// <param name="method">The method to serialize.</param>
     public void WriteTypeMethod(DocumentedMethod method)
     {
@@ -705,7 +706,6 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     /// Serializes the specified methods.
     /// </summary>
     /// <param name="type">The type containing the methods.</param>
-    /// <param name="properties">The methods to serialize.</param>
     public void WriteMethods(DocumentedType type)
     {
         /* Example:
@@ -782,19 +782,18 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
         if (isComponent)
         {
             WriteIndent();
-            WriteLine($"IsComponent = true, ");
+            WriteLine("IsComponent = true, ");
         }
     }
 
     /// <summary>
     /// Writes the type in which the property was declared, if it's another type.
     /// </summary>
-    /// <param name="type">The type containing the property.</param>
     /// <param name="method">The property being described.</param>
     public void WriteReturnType(DocumentedMethod method)
     {
-        Write($"TypeName = \"{Escape(method.Type.Name)}\", ");
-        Write($"TypeFriendlyName = \"{method.Type.GetFriendlyName()}\", ");
+        Write($"TypeName = \"{Escape(method.Type?.Name)}\", ");
+        Write($"TypeFriendlyName = \"{method.Type?.GetFriendlyName()}\", ");
     }
 
     /// <summary>
@@ -805,7 +804,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     {
         if (isParameter)
         {
-            Write($"IsParameter = true, ");
+            Write("IsParameter = true, ");
         }
     }
 
@@ -817,7 +816,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     {
         if (isProtected)
         {
-            Write($"IsProtected = true, ");
+            Write("IsProtected = true, ");
         }
     }
 
@@ -825,9 +824,9 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
     /// Writes the name of the given base type.
     /// </summary>
     /// <param name="baseType"></param>
-    public void WriteBaseTypeIndented(Type baseType)
+    public void WriteBaseTypeIndented(Type? baseType)
     {
-        if (baseType != null)
+        if (baseType is not null)
         {
             WriteLineIndented($"BaseTypeName = \"{baseType.Name}\", ");
         }
@@ -878,5 +877,4 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
         Outdent();
         WriteLineIndented("},");
     }
-
 }

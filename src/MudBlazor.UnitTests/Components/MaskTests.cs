@@ -2,15 +2,9 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-#pragma warning disable CS1998 // async without await
-
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.Mask;
 using NUnit.Framework;
 
@@ -22,7 +16,6 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// Test all IsMatch variants: letter, digit and symbols.
         /// </summary>
-        /// <returns></returns>
         [Test]
         public async Task MaskTest_Fundamentals1()
         {
@@ -744,7 +737,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.SetParam(p => p.ReadOnly, false);
             // paste
-            await comp.InvokeAsync(async () =>
+            await comp.InvokeAsync(() =>
             {
                 mask.OnSelect(0, mask.Text.Length);
                 mask.OnPaste("2222 2222 2222 2222");
@@ -763,7 +756,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DifferentMaskImplementationTests()
+        public void DifferentMaskImplementationTests()
         {
             // arrange
             var comp = Context.RenderComponent<DifferentMaskImplementationTest>();

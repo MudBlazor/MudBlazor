@@ -84,6 +84,7 @@ public partial class ApiMemberTable
             ApiMemberTableMode.Methods => Type!.Methods.Any(property => property.Value.IsProtected),
             ApiMemberTableMode.Events => Type!.Events.Any(property => property.Value.IsProtected),
             ApiMemberTableMode.Fields => Type!.Fields.Any(property => property.Value.IsProtected),
+            ApiMemberTableMode.Globals => false,
             _ => false,
         };
     }
@@ -108,6 +109,7 @@ public partial class ApiMemberTable
             ApiMemberTableMode.Fields => Type.Fields.Values.AsQueryable(),
             ApiMemberTableMode.Methods => Type.Methods.Values.AsQueryable(),
             ApiMemberTableMode.Properties => Type.Properties.Values.AsQueryable(),
+            ApiMemberTableMode.Globals => Type.GlobalSettings.Values.AsQueryable(),
             _ => new List<DocumentedMember>().AsQueryable(),
         };
 
@@ -255,7 +257,7 @@ public partial class ApiMemberTable
     /// </summary>
     /// <param name="member">The member to examine.</param>
     /// <returns></returns>
-    public DocumentedType GetDeclaringType(DocumentedMember member)
+    public static DocumentedType GetDeclaringType(DocumentedMember member)
     {
         if (member.DeclaringType != null)
         {
@@ -274,7 +276,7 @@ public partial class ApiMemberTable
     /// In these cases, we won't have a <see cref="DocumentedType"/> set, but we can still calculate the 
     /// type from the type's name.
     /// </remarks>
-    public string GetDeclaringTypeName(DocumentedMember member)
+    public static string GetDeclaringTypeName(DocumentedMember member)
     {
         var declaringType = GetDeclaringType(member);
         return declaringType == null ? member.DeclaringTypeName! : declaringType.NameFriendly;
@@ -287,12 +289,19 @@ public partial class ApiMemberTable
     {
         get
         {
-            return Grouping switch
+            if (Mode == ApiMemberTableMode.Globals)
             {
-                ApiMemberGrouping.Categories => new() { Selector = (property) => property.Category ?? "" },
-                ApiMemberGrouping.Inheritance => new() { Selector = (property) => (property.DeclaringType is not null && property.DeclaringType == this.Type) ? "" : $"Inherited from {GetDeclaringTypeName(property)}" },
-                _ => null
-            };
+                return new() { Selector = (property) => (property.DeclaringType is not null && property.DeclaringType == this.Type) ? "" : $"MudGlobal.{GetDeclaringTypeName(property)}" };
+            }
+            else
+            {
+                return Grouping switch
+                {
+                    ApiMemberGrouping.Categories => new() { Selector = (property) => property.Category ?? "" },
+                    ApiMemberGrouping.Inheritance => new() { Selector = (property) => (property.DeclaringType is not null && property.DeclaringType == this.Type) ? "" : $"Inherited from {GetDeclaringTypeName(property)}" },
+                    _ => null
+                };
+            }
         }
     }
 

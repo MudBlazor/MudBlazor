@@ -61,5 +61,19 @@ namespace MudBlazor.UnitTests.Components
             }
             await testAction();
         }
+
+        protected void ImproveChanceOfSuccess(Action testAction)
+        {
+            for (var i = 0; i < 10; i++)
+            {
+                try
+                {
+                    testAction();
+                    return;
+                }
+                catch (Exception) { /*we don't care here*/ }
+            }
+            testAction();
+        }
     }
 }

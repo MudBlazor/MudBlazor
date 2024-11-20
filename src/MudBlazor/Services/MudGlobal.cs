@@ -4,8 +4,14 @@
 
 namespace MudBlazor;
 
+/// <summary>
+/// Settings which control the default behavior and appearance of MudBlazor components.
+/// </summary>
 public static class MudGlobal
 {
+    /// <summary>
+    /// Defaults for the <see cref="MudButton"/> component.
+    /// </summary>
     public static class ButtonDefaults
     {
         /// <summary>
@@ -33,11 +39,17 @@ public static class MudGlobal
         public static Variant Variant { get; set; } = Variant.Text;
     }
 
+    /// <summary>
+    /// Defaults for the <see cref="MudCard"/> component.
+    /// </summary>
     public static class CardDefaults
     {
         /// <summary>
         /// The default elevation level for <see cref="MudCard"/>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>1</c>.
+        /// </remarks>
         public static int Elevation { get; set; } = 1;
 
         /// <summary>
@@ -57,11 +69,17 @@ public static class MudGlobal
         public static bool Outlined { get; set; }
     }
 
+    /// <summary>
+    /// Defaults for the <see cref="MudDataGrid{T}"/> component.
+    /// </summary>
     public static class DataGridDefaults
     {
         /// <summary>
         /// The default elevation level for <see cref="MudDataGrid{T}"/>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>1</c>.
+        /// </remarks>
         public static int Elevation { set; get; } = 1;
 
         /// <summary>
@@ -137,10 +155,13 @@ public static class MudGlobal
         public static bool Virtualize { get; set; }
     }
 
+    /// <summary>
+    /// Defaults for the <see cref="MudDialog"/> component.
+    /// </summary>
     public static class DialogDefaults
     {
         /// <summary>
-        /// The default <see cref="MudDialog.DefaultFocus"/>.
+        /// The default focus for <see cref="MudDialog"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="DefaultFocus.Element"/>.
@@ -148,23 +169,28 @@ public static class MudGlobal
         public static DefaultFocus DefaultFocus { get; set; } = DefaultFocus.Element;
     }
 
+    /// <summary>
+    /// Defaults for the <see cref="MudGrid"/> component.
+    /// </summary>
     public static class GridDefaults
     {
         /// <summary>
-        /// The default spacing between items for <see cref="MudGrid"/>, measured in increments of <c>4px</c>.
-        /// <br/>
-        /// Maximum is 20.
+        /// The default spacing between items in a <see cref="MudGrid"/>, measured in increments of <c>4px</c>.
         /// </summary>
         /// <remarks>
-        /// Defaults to 6.
+        /// Defaults to <c>6</c> (24px).  
+        /// Maximum is <c>20</c> (80px).
         /// </remarks>
         public static int Spacing { set; get; } = 6;
     }
 
+    /// <summary>
+    /// Defaults for the <see cref="MudBaseInput{T}"/> component.
+    /// </summary>
     public static class InputDefaults
     {
         /// <summary>
-        /// Shows the label inside the input if no <see cref="MudBaseInput{T}.Value"/> is specified.
+        /// The default label shrink setting for <see cref="MudBaseInput{T}"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>. When <c>true</c>, the label will not move into the input when the input is empty.
@@ -172,7 +198,7 @@ public static class MudGlobal
         public static bool ShrinkLabel { get; set; }
 
         /// <summary>
-        /// The default variant for <see cref="MudBaseInput{T}.Value"/>.
+        /// The default variant for <see cref="MudBaseInput{T}"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Variant.Text"/>.
@@ -180,7 +206,7 @@ public static class MudGlobal
         public static Variant Variant { get; set; } = Variant.Text;
 
         /// <summary>
-        /// The default margin for <see cref="MudBaseInput{T}.Value"/>.
+        /// The default margin for <see cref="MudBaseInput{T}"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Margin.None"/>.
@@ -188,6 +214,9 @@ public static class MudGlobal
         public static Margin Margin { get; set; } = Margin.None;
     }
 
+    /// <summary>
+    /// Defaults for the <see cref="MudLink"/> component.
+    /// </summary>
     public static class LinkDefaults
     {
         /// <summary>
@@ -215,40 +244,84 @@ public static class MudGlobal
         public static Underline Underline { get; set; } = Underline.Hover;
     }
 
+    /// <summary>
+    /// Defaults for the <see cref="MudMenu"/> component.
+    /// </summary>
+    public static class MenuDefaults
+    {
+        /// <summary>
+        /// Indicate the default delay time before starting to close after a leave event.
+        /// Unit : ms
+        /// </summary>
+        public static int HoverDelay { get; set; } = 100;
+
+        /// <summary>
+        /// Indicate the default waiting time to prevent closing if a mouse enter event occurs.
+        /// </summary>
+        public static int PreventCloseWaitingTime { get; set; } = 50;
+    }
+
+    /// <summary>
+    /// Defaults for the <see cref="MudOverlay"/> component.
+    /// </summary>
     public static class OverlayDefaults
     {
         /// <summary>
-        /// The default transition delay for <see cref="MudOverlay"/> and <see cref="MudPicker{T}"/>.
+        /// The default transition delay for <see cref="MudOverlay"/>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="TransitionDefaults.Delay"/>.
+        /// </remarks>
         public static TimeSpan Delay { get; set; } = TransitionDefaults.Delay;
 
         /// <summary>
-        /// The default transition time for components like <see cref="MudTooltip"/>, <see cref="MudOverlay"/>, <see cref="MudPicker{T}"/>.
+        /// The default transition time for <see cref="MudOverlay"/>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="TransitionDefaults.Duration"/>.
+        /// </remarks>
         public static TimeSpan Duration { get; set; } = TransitionDefaults.Duration;
     }
 
+    /// <summary>
+    /// Defaults for the <see cref="MudPicker{T}"/> component.
+    /// </summary>
     public static class PickerDefaults
     {
         /// <summary>
-        /// The default transition delay for <see cref="MudOverlay"/> and <see cref="MudPicker{T}"/>.
+        /// The default transition delay for <see cref="MudPicker{T}"/>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="TransitionDefaults.Delay"/>.
+        /// </remarks>
         public static TimeSpan Delay { get; set; } = TransitionDefaults.Delay;
 
         /// <summary>
-        /// The default transition time for components like <see cref="MudTooltip"/>, <see cref="MudOverlay"/>, <see cref="MudPicker{T}"/>.
+        /// The default transition time for <see cref="MudPicker{T}"/>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="TransitionDefaults.Duration"/>.
+        /// </remarks>
         public static TimeSpan Duration { get; set; } = TransitionDefaults.Duration;
     }
 
+    /// <summary>
+    /// Defaults for the <see cref="MudPopover"/> component.
+    /// </summary>
     public static class PopoverDefaults
     {
         /// <summary>
         /// The default elevation level for <see cref="MudPopover"/>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>8</c>.
+        /// </remarks>
         public static int Elevation { get; set; } = 8;
     }
 
+    /// <summary>
+    /// Defaults for the <see cref="MudStack"/> component.
+    /// </summary>
     public static class StackDefaults
     {
         /// <summary>
@@ -277,6 +350,9 @@ public static class MudGlobal
         public static int Spacing { get; set; } = 3;
     }
 
+    /// <summary>
+    /// Defaults for the <see cref="MudTabs"/> component.
+    /// </summary>
     public static class TabDefaults
     {
         /// <summary>
@@ -331,7 +407,7 @@ public static class MudGlobal
         /// The default maximum tab height setting for <see cref="MudTabs"/>.
         /// </summary>
         /// <remarks>
-        /// Defaults to no maximum height.
+        /// Defaults to <c>null</c> (no maximum height).
         /// </remarks>
         public static int? MaxHeight { get; set; } = null;
 
@@ -339,7 +415,7 @@ public static class MudGlobal
         /// The default minimum tab width setting for <see cref="MudTabs"/>.
         /// </summary>
         /// <remarks>
-        /// Defaults to 160px.
+        /// Defaults to <c>160px</c>.
         /// </remarks>
         public static string MinimumTabWidth { get; set; } = "160px";
 
@@ -370,6 +446,9 @@ public static class MudGlobal
         /// <summary>
         /// The default elevation setting for <see cref="MudTabs"/>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>0</c>.
+        /// </remarks>
         public static int Elevation { set; get; } = 0;
 
         /// <summary>
@@ -381,46 +460,66 @@ public static class MudGlobal
         public static bool ApplyEffectsToContainer { get; set; }
     }
 
+    /// <summary>
+    /// Defaults for the <see cref="MudTooltip"/> component.
+    /// </summary>
     public static class TooltipDefaults
     {
         /// <summary>
-        /// The default transition delay for <see cref="MudOverlay"/> and <see cref="MudPicker{T}"/>.
+        /// The default transition delay for <see cref="MudTooltip"/>.
         /// </summary>
         public static TimeSpan Delay { get; set; } = TransitionDefaults.Delay;
 
         /// <summary>
-        /// The default transition time for components like <see cref="MudTooltip"/>, <see cref="MudOverlay"/>, <see cref="MudPicker{T}"/>.
+        /// The default transition time for <see cref="MudTooltip"/>.
         /// </summary>
         public static TimeSpan Duration { get; set; } = TransitionDefaults.Duration;
     }
 
+    /// <summary>
+    /// Defaults for MudBlazor components which use transitions.
+    /// </summary>
     public static class TransitionDefaults
     {
         /// <summary>
-        /// The default transition delay for <see cref="MudOverlay"/> and <see cref="MudPicker{T}"/>.
+        /// The default transition delay for <see cref="MudOverlay"/>, <see cref="MudPicker{T}"/>, <see cref="MudPopover"/>, and <see cref="MudTooltip"/>.
         /// </summary>
         public static TimeSpan Delay { get; set; } = TimeSpan.Zero;
 
         /// <summary>
-        /// The default transition time for components like <see cref="MudTooltip"/>, <see cref="MudOverlay"/>, <see cref="MudPicker{T}"/>.
+        /// The default transition time for components like <see cref="MudOverlay"/>, <see cref="MudPicker{T}"/>, <see cref="MudPopover"/>, and <see cref="MudTooltip"/>.
         /// </summary>
         public static TimeSpan Duration { get; set; } = TimeSpan.FromMilliseconds(251);
     }
 
     /// <summary>
-    /// Global unhandled exception handler for such exceptions which can not be bubbled up. Note: this is not a global catch-all.
-    /// It just allows the user to handle such exceptions which were suppressed inside MudBlazor using Task.AndForget() in places
-    /// where it is impossible to await the task. Exceptions in user code or in razor files will still crash your app if you are not carefully
-    /// handling everything with <ErrorBoundary></ErrorBoundary>.
+    /// Defaults for the <see cref="MudPaper"/> component.
     /// </summary>
-    public static Action<Exception> UnhandledExceptionHandler { get; set; } = OnDefaultExceptionHandler;
+    public static class PaperDefaults
+    {
+        /// <summary>
+        /// Gets or sets the default elevation level for <see cref="MudPaper"/>.
+        /// </summary>
+        public static int Elevation { get; set; } = 1;
+
+        /// <summary>
+        /// Gets or sets the default square setting for <see cref="MudPaper"/>.
+        /// </summary>
+        public static bool Square { get; set; }
+
+        /// <summary>
+        /// Gets or sets the default square setting for <see cref="MudPaper"/>.
+        /// </summary>
+        public static bool Outlined { get; set; }
+    }
 
     /// <summary>
-    /// Note: the user can overwrite this default handler with their own implementation. The default implementation
-    /// makes sure that the unhandled exceptions don't go unnoticed
+    /// The handler for unhandled MudBlazor component exceptions.
     /// </summary>
-    private static void OnDefaultExceptionHandler(Exception ex)
-    {
-        Console.Write(ex);
-    }
+    /// <remarks>
+    /// Exceptions which use this handler are typically rare, such as errors which occur during a "fire-and-forget" <see cref="Task"/> which cannot be awaited.<br />
+    /// By default, exceptions are logged to the console via <see cref="Console.Write(object?)"/>.<br />
+    /// To handle all .NET exceptions, see: <see href="https://learn.microsoft.com/aspnet/core/fundamentals/error-handling">Handle errors in ASP.NET Core</see>.
+    /// </remarks>
+    public static Action<Exception> UnhandledExceptionHandler { get; set; } = (exception) => Console.Write(exception);
 }

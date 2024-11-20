@@ -49,7 +49,7 @@ namespace MudBlazor.UnitTests.UserAttributes
             // these components do not need to have user attributes
             var excludedComponents = new HashSet<string>()
             {
-                nameof(MudPopover), nameof(MudStep),
+                nameof(MudPopover), nameof(MudStep), nameof(MudContextualActionBar),
                 "Column`1", "FooterCell`1", "HeaderCell`1", "FilterHeaderCell`1", "SelectColumn`1",
                 "HierarchyColumn`1", "PropertyColumn`2", "TemplateColumn`1",
             };

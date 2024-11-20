@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
@@ -6,6 +10,12 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
+
+    /// <summary>
+    /// An option from a set of mutually exclusive options, often as part of a <see cref="MudRadioGroup{T}"/>.
+    /// </summary>
+    /// <typeparam name="T">The type of value being selected, often a <c>bool</c>.</typeparam>
+    /// <seealso cref="MudRadioGroup{T}" />
     public partial class MudRadio<T> : MudBooleanInput<T>
     {
         private IMudRadioGroup? _parent;
@@ -53,21 +63,27 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// The base color of the component in its none active/unchecked state. It supports the theme colors.
+        /// The color to use when in an unchecked state.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Radio.Appearance)]
         public Color? UncheckedColor { get; set; } = null;
 
         /// <summary>
-        /// If true, compact padding will be applied.
+        /// Uses compact vertical padding.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Radio.Appearance)]
         public bool Dense { get; set; }
 
         /// <summary>
-        /// The icon to display for a checked state.
+        /// The icon displayed when in a checked state.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Icons.Material.Filled.RadioButtonChecked"/>.
@@ -77,7 +93,7 @@ namespace MudBlazor
         public string CheckedIcon { get; set; } = Icons.Material.Filled.RadioButtonChecked;
 
         /// <summary>
-        /// The icon to display for an unchecked state.
+        /// The icon displayed when in an unchecked state.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Icons.Material.Filled.RadioButtonUnchecked"/>.
@@ -118,6 +134,12 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// Checks this radio button.
+        /// </summary>
+        /// <remarks>
+        /// When part of a <see cref="MudRadioGroup{T}"/>, other values will be unchecked.
+        /// </remarks>
         public Task SelectAsync()
         {
             if (MudRadioGroup is not null)
@@ -167,6 +189,7 @@ namespace MudBlazor
             }
         }
 
+        /// <inheritdoc />
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
@@ -177,6 +200,7 @@ namespace MudBlazor
             }
         }
 
+        /// <inheritdoc />
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
@@ -197,6 +221,7 @@ namespace MudBlazor
             await base.OnAfterRenderAsync(firstRender);
         }
 
+        /// <inheritdoc />
         protected override async ValueTask DisposeAsyncCore()
         {
             await base.DisposeAsyncCore();

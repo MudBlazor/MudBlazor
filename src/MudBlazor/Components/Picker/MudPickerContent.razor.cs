@@ -1,10 +1,14 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
 /// <summary>
-/// Represents the content within a <see cref="MudPicker{T}"/>.
+/// The content within a <see cref="MudPicker{T}"/>.
 /// </summary>
 /// <seealso cref="MudPicker{T}" />
 /// <seealso cref="MudPickerToolbar" />

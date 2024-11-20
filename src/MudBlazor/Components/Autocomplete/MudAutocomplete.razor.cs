@@ -575,6 +575,8 @@ namespace MudBlazor
 
             if (ResetValueOnEmptyText && string.IsNullOrWhiteSpace(Text))
                 await SetValueAsync(default(T), updateText);
+            else if (Immediate)
+                await CoerceValueToTextAsync();
 
             if (DebounceInterval <= 0)
                 await OpenMenuAsync();
@@ -712,18 +714,6 @@ namespace MudBlazor
                 Open = true;
             }
 
-            if (Immediate && _items?.Length == 0)
-            {
-                await CoerceValueToTextAsync();
-                StateHasChanged();
-                return;
-            }
-
-            if (Immediate && !CoerceText)
-            {
-                await CoerceValueToTextAsync();
-            }
-
             StateHasChanged();
         }
 
@@ -789,8 +779,7 @@ namespace MudBlazor
                 case "ArrowDown":
                     if (Open)
                     {
-                        var increment = _enabledItemIndices.ElementAtOrDefault(_enabledItemIndices.IndexOf(_selectedListItemIndex) + 1) - _selectedListItemIndex;
-                        await SelectNextItemAsync(increment < 0 ? 1 : increment);
+                        await SelectAdjacentItemAsync(+1);
                     }
                     else
                     {
@@ -808,8 +797,7 @@ namespace MudBlazor
                     }
                     else
                     {
-                        var decrement = _selectedListItemIndex - _enabledItemIndices.ElementAtOrDefault(_enabledItemIndices.IndexOf(_selectedListItemIndex) - 1);
-                        await SelectNextItemAsync(-(decrement < 0 ? 1 : decrement));
+                        await SelectAdjacentItemAsync(-1);
                     }
                     break;
             }
@@ -846,29 +834,50 @@ namespace MudBlazor
             await base.InvokeKeyUpAsync(args);
         }
 
-        private ValueTask SelectNextItemAsync(int increment)
+        /// <summary>
+        /// Selects the next or previous enabled item in the list and scrolls to it.
+        /// </summary>
+        /// <param name="direction">The direction to move, positive for down, negative for up.</param>
+        private ValueTask SelectAdjacentItemAsync(int direction)
         {
-            if (increment == 0 || _items == null || _items.Length == 0 || !_enabledItemIndices.Any())
+            if (_items == null || _items.Length == 0 || !_enabledItemIndices.Any())
                 return ValueTask.CompletedTask;
 
-            // if we are at the end, or the beginning we just do an rollover
-            _selectedListItemIndex = Math.Clamp(value: ((10 * _items.Length) + _selectedListItemIndex + increment) % _items.Length, min: 0, max: _items.Length - 1);
-            return ScrollToListItemAsync(_selectedListItemIndex);
+            // Get the current index among enabled items
+            var currentEnabledIndex = _enabledItemIndices.IndexOf(_selectedListItemIndex);
+
+            // Determine the new index based on the direction
+            var newEnabledIndex = currentEnabledIndex + direction;
+
+            // Ensure new index is within bounds
+            if (newEnabledIndex >= 0 && newEnabledIndex < _enabledItemIndices.Count)
+            {
+                _selectedListItemIndex = _enabledItemIndices[newEnabledIndex];
+                return SelectItemAsync(_selectedListItemIndex);
+            }
+
+            return ValueTask.CompletedTask;
         }
 
         /// <summary>
-        /// Scrolls the list of items to the item at the specified index.
+        /// Selects the item in the list at the specified index and scrolls to it.
         /// </summary>
-        /// <param name="index">The index of the item to scroll to.</param>
-        public ValueTask ScrollToListItemAsync(int index)
+        /// <param name="index">The index of the item to scroll to. If it's out of range then nothing will happen.</param>
+        private ValueTask SelectItemAsync(int index)
         {
+            if (_items == null || _items.Length == 0 || !_enabledItemIndices.Any() || index < 0 || index > _enabledItemIndices.Count - 1)
+                return ValueTask.CompletedTask;
+
+            _selectedListItemIndex = index;
+
             var id = GetListItemId(index);
 
-            //id of the scrolled element
             return ScrollManager.ScrollToListItemAsync(id);
         }
 
-        //This restores the scroll position after closing the menu and element being 0
+        /// <summary>
+        /// This restores the scroll position after closing the menu and element being 0
+        /// </summary>
         private ValueTask RestoreScrollPositionAsync()
         {
             if (_selectedListItemIndex != 0)

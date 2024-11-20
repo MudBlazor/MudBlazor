@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
 
+#nullable enable
 namespace MudBlazor
 {
     /// <summary>
@@ -19,11 +20,15 @@ namespace MudBlazor
     /// </summary>
     public partial class MudMask : MudBaseInput<string>
     {
+        private int _caret;
+        private bool _updating;
+        private IJsEvent? _jsEvent;
+        private bool _showClearable;
+        private (int, int)? _selection;
         private ElementReference _elementReference;
         private ElementReference _elementReference1;
-        private IJsEvent _jsEvent;
-        private string _elementId = Identifier.Create("mask");
         private IMask _mask = new PatternMask("** **-** **");
+        private string _elementId = Identifier.Create("mask");
 
         protected string Classname =>
             new CssBuilder("mud-input")
@@ -68,8 +73,11 @@ namespace MudBlazor
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
-        [Inject] private IJsEventFactory _jsEventFactory { get; set; }
-        [Inject] private IJsApiService _jsApiService { get; set; }
+        [Inject]
+        private IJsEventFactory JsEventFactory { get; set; } = null!;
+
+        [Inject]
+        private IJsApiService JsApiService { get; set; } = null!;
 
         /// <summary>
         /// The content within this input.
@@ -79,7 +87,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.General.Appearance)]
-        public RenderFragment ChildContent { get; set; }
+        public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
         /// The mask to apply to text values.
@@ -113,19 +121,6 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.ListBehavior)]
         public bool Clearable { get; set; } = false;
 
-        private bool _showClearable;
-
-        private void UpdateClearable(object value)
-        {
-            var showClearable = Clearable && !string.IsNullOrWhiteSpace(Text);
-
-            if (_showClearable != showClearable)
-            {
-                _showClearable = showClearable;
-                StateHasChanged();
-            }
-        }
-
         /// <summary>
         /// Occurs when the clear button is clicked.
         /// </summary>
@@ -156,7 +151,7 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                _jsEvent = _jsEventFactory.Create();
+                _jsEvent = JsEventFactory.Create();
 
                 await _jsEvent.Connect(_elementId,
                     new JsEventOptions
@@ -238,7 +233,16 @@ namespace MudBlazor
             }
         }
 
-        private bool _updating;
+        private void UpdateClearable()
+        {
+            var showClearable = Clearable && !string.IsNullOrWhiteSpace(Text);
+
+            if (_showClearable != showClearable)
+            {
+                _showClearable = showClearable;
+                StateHasChanged();
+            }
+        }
 
         private async Task UpdateAsync()
         {
@@ -251,7 +255,7 @@ namespace MudBlazor
             {
                 await base.SetTextAsync(text, updateValue: false);
                 if (Clearable)
-                    UpdateClearable(Text);
+                    UpdateClearable();
                 var v = Converter.Get(cleanText);
                 Value = v;
                 await ValueChanged.InvokeAsync(v);
@@ -304,11 +308,12 @@ namespace MudBlazor
 
         internal override InputType GetInputType() => InputType;
 
-        private string GetCounterText() => Counter == null
-            ? string.Empty
-            : (Counter == 0
-                ? (string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}")
-                : ((string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") + $" / {Counter}"));
+        private string GetCounterText() => Counter switch
+        {
+            null => string.Empty,
+            0 => string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}",
+            _ => (string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") + $" / {Counter}"
+        };
 
         private bool ShowClearButton()
         {
@@ -360,10 +365,10 @@ namespace MudBlazor
                 (_, text, _) = BaseMask.SplitSelection(text, Mask.Selection.Value);
             }
 
-            _jsApiService.CopyToClipboardAsync(text);
+            JsApiService.CopyToClipboardAsync(text);
         }
 
-        internal async void OnPaste(string text)
+        internal async void OnPaste(string? text)
         {
             if (text == null || GetReadOnlyState())
                 return;
@@ -392,9 +397,6 @@ namespace MudBlazor
             await base.OnBlurredAsync(obj);
             _isFocused = false;
         }
-
-        private int _caret;
-        private (int, int)? _selection;
 
         private async Task SetCaretPositionAsync(int caret, (int, int)? selection = null, bool render = true)
         {
@@ -432,7 +434,7 @@ namespace MudBlazor
             Mask.CaretPos = pos;
         }
 
-        private void SetMask(IMask other)
+        private void SetMask(IMask? other)
         {
             if (other == null)
             {

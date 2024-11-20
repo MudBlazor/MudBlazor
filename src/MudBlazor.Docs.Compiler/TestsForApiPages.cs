@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
 namespace MudBlazor.Docs.Compiler
 {
@@ -12,7 +8,7 @@ namespace MudBlazor.Docs.Compiler
         /// <summary>
         /// The current production links to API documentation.
         /// </summary>
-        public string[] LegacyApiAddresses = [
+        private readonly string[] _legacyApiAddresses = [
             // available from the main menu in "API" group
             "api/alert",
             "api/appbar",
@@ -246,7 +242,7 @@ namespace MudBlazor.Docs.Compiler
         /// </summary>
         public void WriteLegacyApiLinkTests(CodeBuilder cb)
         {
-            foreach (var url in LegacyApiAddresses)
+            foreach (var url in _legacyApiAddresses)
             {
                 var component = url.Replace("api/", "");
 

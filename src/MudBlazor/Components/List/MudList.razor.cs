@@ -47,6 +47,9 @@ namespace MudBlazor
             registerScope.RegisterParameter<bool>(nameof(ReadOnly))
                 .WithParameter(() => ReadOnly)
                 .WithChangeHandler(Update);
+            registerScope.RegisterParameter<bool>(nameof(Gutters))
+                .WithParameter(() => Gutters)
+                .WithChangeHandler(Update);
         }
 
         private ParameterState<T?> _selectedValueState;

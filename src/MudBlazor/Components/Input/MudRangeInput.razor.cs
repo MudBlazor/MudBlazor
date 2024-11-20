@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
 
+#nullable enable
 namespace MudBlazor
 {
     /// <summary>
@@ -10,7 +11,10 @@ namespace MudBlazor
     /// <typeparam name="T">The type of object managed by this input.</typeparam>
     public partial class MudRangeInput<T> : MudBaseInput<Range<T>>
     {
-        private string _textStart, _textEnd;
+        private string? _textStart;
+        private string? _textEnd;
+        private ElementReference _elementReferenceStart;
+        private ElementReference _elementReferenceEnd;
 
         /// <summary>
         /// Creates a new instance.
@@ -24,15 +28,6 @@ namespace MudBlazor
         protected string Classname => MudInputCssHelper.GetClassname(this,
             () => !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start || !string.IsNullOrWhiteSpace(PlaceholderStart) || !string.IsNullOrWhiteSpace(PlaceholderEnd));
 
-        /// <summary>
-        /// The type of input collected by this component.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="InputType.Text"/>.  Represents a valid HTML5 input type.
-        /// </remarks>
-        [Parameter]
-        public InputType InputType { get; set; } = InputType.Text;
-
         internal override InputType GetInputType() => InputType;
 
         protected string InputClassname => MudInputCssHelper.GetInputClassname(this);
@@ -45,25 +40,25 @@ namespace MudBlazor
                 .Build();
 
         /// <summary>
+        /// The type of input collected by this component.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="InputType.Text"/>.  Represents a valid HTML5 input type.
+        /// </remarks>
+        [Parameter]
+        public InputType InputType { get; set; } = InputType.Text;
+
+        /// <summary>
         /// The hint displayed before the user enters a starting value.
         /// </summary>
         [Parameter]
-        public string PlaceholderStart { get; set; }
+        public string? PlaceholderStart { get; set; }
 
         /// <summary>
         /// The hint displayed before the user enters an ending value.
         /// </summary>
         [Parameter]
-        public string PlaceholderEnd { get; set; }
-
-        protected bool IsClearable() => Clearable && Value != null;
-
-        protected virtual async Task ClearButtonClickHandlerAsync(MouseEventArgs e)
-        {
-            await SetTextAsync(string.Empty, updateValue: true);
-            await _elementReferenceStart.FocusAsync();
-            await OnClearButtonClick.InvokeAsync(e);
-        }
+        public string? PlaceholderEnd { get; set; }
 
         /// <summary>
         /// Occurs when the Clear button is clicked.
@@ -83,8 +78,6 @@ namespace MudBlazor
         [Parameter]
         public bool Clearable { get; set; }
 
-        protected string InputTypeString => InputType.ToDescriptionString();
-
         /// <summary>
         /// The content within this input component.
         /// </summary>
@@ -92,9 +85,7 @@ namespace MudBlazor
         /// Will only display if <see cref="InputType"/> is <see cref="InputType.Hidden"/>.
         /// </remarks>
         [Parameter]
-        public RenderFragment ChildContent { get; set; }
-
-        private ElementReference _elementReferenceStart, _elementReferenceEnd;
+        public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
         /// The icon shown in between start and end values.
@@ -142,7 +133,7 @@ namespace MudBlazor
         /// <summary>
         /// The text of the start of the range.
         /// </summary>
-        public string TextStart
+        public string? TextStart
         {
             get => _textStart;
             set
@@ -157,7 +148,7 @@ namespace MudBlazor
         /// <summary>
         /// The text of the end of the range.
         /// </summary>
-        public string TextEnd
+        public string? TextEnd
         {
             get => _textEnd;
             set
@@ -168,6 +159,10 @@ namespace MudBlazor
                 SetTextAsync(RangeConverter<T>.Join(_textStart, _textEnd)).CatchAndLog();
             }
         }
+
+        protected string InputTypeString => InputType.ToDescriptionString();
+
+        protected bool IsClearable() => Clearable && Value is not null;
 
         protected override async Task UpdateTextPropertyAsync(bool updateValue)
         {
@@ -181,6 +176,13 @@ namespace MudBlazor
             await base.UpdateValuePropertyAsync(updateText);
 
             RangeConverter<T>.Split(Text, out _textStart, out _textEnd);
+        }
+
+        protected virtual async Task ClearButtonClickHandlerAsync(MouseEventArgs e)
+        {
+            await SetTextAsync(string.Empty, updateValue: true);
+            await _elementReferenceStart.FocusAsync();
+            await OnClearButtonClick.InvokeAsync(e);
         }
     }
 }

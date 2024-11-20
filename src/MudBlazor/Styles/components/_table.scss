@@ -265,6 +265,12 @@
         z-index: 2;
         top: 0;
       }
+
+      & * .mud-table-cell.sticky-left,
+      & * .mud-table-cell.sticky-right {
+        z-index: 3;
+        background-color: var(--mud-palette-background-gray);
+      }
     }
   }
 }

@@ -1,15 +1,15 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudMenu Label="Open Menu" Variant="Variant.Filled" Color="Color.Primary" AnchorOrigin="Origin.CenterCenter" TransformOrigin="Origin.TopLeft" Dense>
+<MudMenu Label="Open Menu" Variant="Variant.Filled" Color="Color.Primary" Dense>
     <MudMenuItem>
         <MudMenu ActivationEvent="MouseEvent.MouseOver" AnchorOrigin="Origin.TopRight" TransformOrigin="Origin.TopLeft" Dense>
             <ActivatorContent>
-                <MudMenuItem> Item 1 </MudMenuItem>
+                <MudMenuItem>Item 1</MudMenuItem>
             </ActivatorContent>
 
             <ChildContent>
-                <MudMenuItem Href="https://mudblazor.com" Target="_blank"> Open https://mudblazor.com in new tab </MudMenuItem>
-                <MudMenuItem Href="/" Disabled="true"> Disabled Item 1.2 with navigation </MudMenuItem>
+                <MudMenuItem Href="https://mudblazor.com" Target="_blank">Open mudblazor.com in new tab</MudMenuItem>
+                <MudMenuItem Href="/" Disabled="true">Disabled Item 1.2 with navigation </MudMenuItem>
             </ChildContent>
         </MudMenu>
     </MudMenuItem>
@@ -17,12 +17,12 @@
     <MudMenuItem>
         <MudMenu ActivationEvent="MouseEvent.MouseOver" AnchorOrigin="Origin.TopRight" TransformOrigin="Origin.TopLeft" Dense>
             <ActivatorContent>
-                <MudMenuItem Href="/">Item 2</MudMenuItem>
+                <MudMenuItem>Item 2</MudMenuItem>
             </ActivatorContent>
 
             <ChildContent>
-                <MudMenuItem Href="/docs/overview"> Item 2.1 Docs Overview</MudMenuItem>
-                <MudMenuItem > Item 2.2 </MudMenuItem>
+                <MudMenuItem Href="/docs/overview">Item 2.1 Docs Overview</MudMenuItem>
+                <MudMenuItem>Item 2.2 </MudMenuItem>
             </ChildContent>
         </MudMenu>
     </MudMenuItem>

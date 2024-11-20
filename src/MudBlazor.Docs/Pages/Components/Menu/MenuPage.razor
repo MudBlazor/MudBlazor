@@ -3,7 +3,7 @@
 @page "/components/MudMenuItem"
 
 <DocsPage>
-    <DocsPageHeader Title="Menus" SubTitle="The component shows a menu at the position of the element used to activate it">
+    <DocsPageHeader Title="Menus" SubTitle="The menu shows a list of options at the position of the element used to activate it">
         <Description>
             <MudAlert Class="mt-4" Severity="Severity.Warning">
                 Note: Blazor static rendering is not supported.
@@ -24,28 +24,55 @@
 
         <DocsPageSection>
             <SectionHeader Title="Customization">
-                <Description>The menu button gives you all the options a regular button would do.</Description>
             </SectionHeader>
-            <SectionContent Code="@nameof(MenuCustomizationExample)" ShowCode="false">
-                <MenuCustomizationExample />
-            </SectionContent>
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="Menu">
+                        <Description>The menu button gives you all the options a regular button would.</Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(MenuCustomizationExample)" ShowCode="false">
+                        <MenuCustomizationExample />
+                    </SectionContent>
+                </DocsPageSection>
+
+                <DocsPageSection>
+                    <SectionHeader Title="Menu Items">
+                        <Description>Use the <CodeInline>Icon</CodeInline> property to show an icon. The <CodeInline>IconSize</CodeInline> and <CodeInline>IconColor</CodeInline> can also be set.</Description>
+                    </SectionHeader>
+                     <SectionContent Code="@nameof(MenuItemCustomizationExample)" ShowCode="false">
+                        <MenuItemCustomizationExample />
+                    </SectionContent>
+                </DocsPageSection>
+
+                <DocsPageSection>
+                    <SectionHeader Title="Icon Buttons">
+                        <Description>If an Icon is supplied through the <CodeInline>Icon</CodeInline> property, the menu button will display as an <CodeInline>IconButton</CodeInline>.</Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(MenuIconButtonsExample)" ShowCode="false">
+                        <MenuIconButtonsExample />
+                    </SectionContent>
+                </DocsPageSection>
+
+                <DocsPageSection>
+                    <SectionHeader Title="Custom Activator">
+                        <Description>Using <CodeInline>ActivatorContent</CodeInline>, you can use any user interface element to activate the menu on click. You can place a completely customized button or any other element there.</Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(MenuActivatorExample1)" ShowCode="false">
+                        <MenuActivatorExample1 />
+                    </SectionContent>
+                </DocsPageSection>
+            </SectionSubGroups>
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Menu Item Customization">
-                <Description>Use the <CodeInline>Icon</CodeInline> property to show an Icon, the <CodeInline>IconSize</CodeInline> and <CodeInline>IconColor</CodeInline> can also be set.</Description>
+            <SectionHeader Title="Nested Menu">
+                <Description>
+                    Multiple menus can be nested.
+                    With the <CodeInline>ActivationEvent="MouseEvent.MouseOver"</CodeInline> property, a <CodeInline>MudMenu</CodeInline> component can be used inside of a <CodeInline>MudMenuItem</CodeInline> component to create a simple nested menu.
+                </Description>
             </SectionHeader>
-             <SectionContent Code="@nameof(MenuItemCustomizationExample)" ShowCode="false">
-                <MenuItemCustomizationExample />
-            </SectionContent>
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader Title="Menu Width">
-                <Description>The default width of the menu popover is determined by the width of the content. You can override this with the <CodeInline>FullWidth</CodeInline> property to make it as wide as the parent.</Description>
-            </SectionHeader>
-            <SectionContent Code="@nameof(MenuWithExample)" ShowCode="false">
-                <MenuWithExample />
+            <SectionContent Code="@nameof(MenuWithNestingExample)" ShowCode="true">
+                <MenuWithNestingExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -59,21 +86,8 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Icon Buttons">
-                <Description>If an Icon is supplied through the <CodeInline>Icon</CodeInline> property, the menu button will display as an <CodeInline>IconButton</CodeInline>.</Description>
+            <SectionHeader Title="Interaction">
             </SectionHeader>
-            <SectionContent Code="@nameof(MenuIconButtonsExample)" ShowCode="false">
-                <MenuIconButtonsExample />
-            </SectionContent>
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader Title="Custom Activator">
-                <Description>Using <CodeInline>ActivatorContent</CodeInline>, you can use any user interface element to activate the menu on click. You can place a completely customized button or any other element there.</Description>
-            </SectionHeader>
-            <SectionContent Code="@nameof(MenuActivatorExample1)" ShowCode="false">
-                <MenuActivatorExample1 />
-            </SectionContent>
             <SectionSubGroups>
                 <DocsPageSection>
                     <SectionHeader Title="Mouse Events">
@@ -92,31 +106,19 @@
                     </SectionContent>
                 </DocsPageSection>
             </SectionSubGroups>
-        </DocsPageSection>
 
-        <DocsPageSection>
-            <SectionHeader Title="Placement">
-                <Description>
-                    The component uses <MudLink Href="/components/popover">MudPopover</MudLink> to place it's menu. It can be controlled with <CodeInline>AnchorOrigin</CodeInline> and <CodeInline>TransformOrigin</CodeInline><br />
-                    To learn and see all posibile examples of how you can position the popover check out <MudLink Color="Color.Secondary" Href="/components/popover">popover's documentation page.</MudLink>
-                </Description>
-            </SectionHeader>
-             <SectionContent Code="@nameof(MenuAdvancedPopoverExample)" ShowCode="false">
-                <MenuAdvancedPopoverExample />
-            </SectionContent>
+            <DocsPageSection>
+                <SectionHeader Title="Placement">
+                    <Description>
+                        The component uses <MudLink Href="/components/popover">MudPopover</MudLink> to place its menu, which can be controlled with <CodeInline>AnchorOrigin</CodeInline> and <CodeInline>TransformOrigin</CodeInline>.<br />
+                        To learn and see all possible examples of how you can position the popover check out <MudLink Color="Color.Secondary" Href="/components/popover">its documentation page.</MudLink>
+                    </Description>
+                </SectionHeader>
+                 <SectionContent Code="@nameof(MenuAdvancedPopoverExample)" ShowCode="false">
+                    <MenuAdvancedPopoverExample />
+                </SectionContent>
+            </DocsPageSection>
         </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader Title="Nested Menu">
-                <Description>
-                    Multiple menus can be nested. With the <CodeInline>ActivationEvent="MouseEvent.MouseOver"</CodeInline> property, a <CodeInline>MudMenu</CodeInline> component can be used inside of a <CodeInline>MudMenuItem</CodeInline> component to create a simple nested menu.
-                </Description>
-            </SectionHeader>
-            <SectionContent Code="@nameof(MenuWithNestingExample)" ShowCode="true">
-                <MenuWithNestingExample />
-            </SectionContent>
-        </DocsPageSection>
-
     </DocsPageContent>
 </DocsPage>
 
