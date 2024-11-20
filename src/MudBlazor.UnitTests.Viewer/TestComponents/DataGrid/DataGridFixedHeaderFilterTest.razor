@@ -1,0 +1,46 @@
+﻿<MudCard Style="height:300px">
+</MudCard>
+
+
+<MudDataGrid Items="@_persons" T="Person"
+Filterable FixedHeader Height="350px">
+    <Columns>
+        <PropertyColumn Property="x => x.Id" Title="Id" />
+        <PropertyColumn Property="x => x.Name" Title="Name" />
+
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="Person" SetRowsPerPage="new int[] {10, 1000}" />
+    </PagerContent>
+</MudDataGrid>
+
+@code {
+    public static string __description__ = " Filter popover positioning when DataGrid FixedHeader is true ";
+    List<Person> _persons = [];
+
+    protected override void OnInitialized()
+    {
+        for (int i = 0; i < 100; i++)
+        {
+            _persons.Add(new() { Id = i, Name = $"Name{i}" });
+        }
+    }
+
+    private async Task<GridData<Person>> ServerReload(GridState<Person> state)
+    {
+        await Task.CompletedTask;
+
+        return new GridData<Person>
+            {
+                TotalItems = _persons.Count,
+                Items = _persons
+            };
+    }
+
+    public class Person
+    {
+        public int Id { get; set; }
+
+        public string Name { get; set; } = default!;
+    }
+}
