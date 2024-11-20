@@ -8,12 +8,12 @@
         <MudNavLink Href="/dashboard">Dashboard</MudNavLink>
         <MudNavLink Href="/servers">Servers</MudNavLink>
         <MudNavLink Href="/billing" Disabled="true">Billing</MudNavLink>
-        <MudNavGroup Title="Settings" TitleStyle="color:red;" Expanded="true">
+        <MudNavGroup Title="Settings" HeaderClass="settings-error" Expanded="true">
             <TitleContent>
                 <MudBadge Icon="@Icons.Material.Filled.ErrorOutline" 
-                          Color="Color.Error" 
-                          Origin="@(RightToLeft ? Origin.CenterLeft : Origin.CenterRight)" 
-                          BadgeClass="mx-2">
+                Color="Color.Error" 
+                Origin="@(RightToLeft ? Origin.CenterLeft : Origin.CenterRight)" 
+                BadgeClass="mx-2">
                     Settings
                 </MudBadge>
             </TitleContent>
@@ -21,9 +21,9 @@
                 <MudNavLink Href="/users">Users</MudNavLink>
                 <MudNavLink Href="/security">
                     <MudBadge Content="3" 
-                              Color="Color.Error" 
-                              Origin="@(RightToLeft ? Origin.CenterLeft : Origin.CenterRight)" 
-                              BadgeClass="mx-2">
+                    Color="Color.Error" 
+                    Origin="@(RightToLeft ? Origin.CenterLeft : Origin.CenterRight)" 
+                    BadgeClass="mx-2">
                         Security
                     </MudBadge>
                 </MudNavLink>
@@ -34,5 +34,12 @@
 </MudPaper>
 
 @code {
+
     [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
 }
+
+<style>    
+    .settings-error {
+        color: red;
+    }
+</style>

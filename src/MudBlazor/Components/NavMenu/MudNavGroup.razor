@@ -12,7 +12,6 @@
     <button @onclick="ExpandedToggleAsync"
             tabindex="@ButtonTabIndex"
             class="@ButtonClassname"
-            style="@TitleStyle"
             aria-controls="@_navigationContext.MenuId"
             aria-expanded="@_navigationContext.Expanded.ToString().ToLowerInvariant()"
             aria-label="@Localizer[LanguageResource.MudNavGroup_ToggleExpand, Title ?? _navigationContext.MenuId]">
