@@ -12,21 +12,8 @@
     {
         <ApiBreadcrumbs Type="@DocumentedType" />
 
-        <DocsPageHeader Title="@Title" />
+        <DocsPageHeader Title="@Title" IsApi="true" Component="@TypeName" />
         <DocsPageContent>
-
-            @if (DocumentedType.Summary != null)
-            {
-                <ApiText Typo="Typo.subtitle1" Text="@DocumentedType.Summary" />
-            }
-
-            @if (DocumentedType.IsComponent)
-            {
-                <MudAlert Severity="Severity.Info" Class="mt-6">
-                    For examples and details on the usage of this component, visit the example page: <br />
-                    <MudLink Href="@DocumentedType.ComponentUrl" Typo="Typo.inherit">@(ComponentName ?? DocumentedType.NameFriendly)</MudLink>
-                </MudAlert>
-            }
 
             @if (ShowInheritance)
             {
