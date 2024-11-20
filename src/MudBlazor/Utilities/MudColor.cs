@@ -524,7 +524,7 @@ namespace MudBlazor.Utilities
             MudColorOutputFormats.Hex => Value.Substring(0, 7),
             MudColorOutputFormats.HexA => Value,
             MudColorOutputFormats.RGB => $"rgb({R},{G},{B})",
-            MudColorOutputFormats.RGBA => $"rgba({R},{G},{B},{APercentage.ToString(CultureInfo.InvariantCulture)})",
+            MudColorOutputFormats.RGBA => $"rgba({R},{G},{B},{(A / 255.0).ToString(CultureInfo.InvariantCulture)})",
             MudColorOutputFormats.ColorElements => $"{R},{G},{B}",
             _ => Value,
         };
@@ -571,7 +571,7 @@ namespace MudBlazor.Utilities
             var g = InterpolateValue(colorStart.G, colorEnd.G);
             var b = InterpolateValue(colorStart.B, colorEnd.B);
             var a = InterpolateValue(colorStart.A, colorEnd.A);
-            var aPercentage = NormalizeAlpha(a);
+            var aPercentage = NormalizeAlpha(a, 3);
             // Using alpha as a percentage ensures more accurate alpha blending. 
             // Creating a MudColor from an alpha byte or integer can result in fractional alpha values (e.g., 0.996078431372549), 
             // which makes it difficult to compare two colors accurately in real-world scenarios.
@@ -580,9 +580,9 @@ namespace MudBlazor.Utilities
             int InterpolateValue(byte start, byte end) => (int)(start * (1.0f - t) + end * t);
         }
 
-        private static double NormalizeAlpha(byte a) => Math.Round(a / 255.0, 3);
+        private static double NormalizeAlpha(byte a, int digit = 2) => Math.Round(a / 255.0, digit);
 
-        private static double NormalizeAlpha(int a) => Math.Round(a / 255.0, 3);
+        private static double NormalizeAlpha(int a, int digit = 2) => Math.Round(a / 255.0, digit);
 
         private static byte GetByteFromValuePart(string input, int index) => byte.Parse(new string(new[] { input[index], input[index + 1] }), NumberStyles.HexNumber);
 
