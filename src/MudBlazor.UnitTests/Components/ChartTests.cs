@@ -74,8 +74,8 @@ namespace MudBlazor.UnitTests.Components
             var options = new ChartOptions();
             var series = new List<ChartSeries>()
             {
-                new ChartSeries() { Name = "Series 1", Data = new double[] { 90, 79, 72, 69, 62, 62, 55, 65, 70 } },
-                new ChartSeries() { Name = "Series 2", Data = new double[] { 10, 41, 35, 51, 49, 62, 69, 91, 148 } },
+                new() { Name = "Series 1", Data = [90, 79, 72, 69, 62, 62, 55, 65, 70] },
+                new() { Name = "Series 2", Data = [10, 41, 35, 51, 49, 62, 69, 91, 148] },
             };
             var xAxis = new string[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
             var width = "100%";
@@ -187,8 +187,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var series = new List<ChartSeries>
             {
-                new ChartSeries { Name = "Series 1", Data = [1, 2, 3] },
-                new ChartSeries { Name = "Series 2", Data = [4, 5, 6] }
+                new() { Name = "Series 1", Data = [1, 2, 3] },
+                new() { Name = "Series 2", Data = [4, 5, 6] }
             };
             var options = new ChartOptions { ShowLegend = true, ShowLegendLabels = true };
 
@@ -208,8 +208,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var series = new List<ChartSeries>
             {
-                new ChartSeries { Name = "Series 1", Data = new double[] { 1, 2, 3 } },
-                new ChartSeries { Name = "Series 2", Data = new double[] { 4, 5, 6 } }
+                new() { Name = "Series 1", Data = [1, 2, 3] },
+                new() { Name = "Series 2", Data = [4, 5, 6] }
             };
             var options = new ChartOptions() { ShowLegend = true };
 
@@ -228,8 +228,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var series = new List<ChartSeries>
             {
-                new ChartSeries { Name = "Series 1", Data = [ 1.176, 2, 3 ] },
-                new ChartSeries { Name = "Series 2", Data = [ 4.152, 5, 6 ] }
+                new() { Name = "Series 1", Data = [ 1.176, 2, 3 ] },
+                new() { Name = "Series 2", Data = [ 4.152, 5, 6 ] }
             };
 
             var options = new ChartOptions() { ValueFormatString = "F2" };
@@ -255,9 +255,9 @@ namespace MudBlazor.UnitTests.Components
         {
             var series = new List<ChartSeries>
             {
-                new ChartSeries { Name = "Empty Series", Data = Array.Empty<double>() },
-                new ChartSeries { Name = "Null Series", Data = null },
-                new ChartSeries { Name = "Valid Series", Data = [1.0, 2.0] }
+                new() { Name = "Empty Series", Data = [] },
+                new() { Name = "Null Series", Data = null },
+                new() { Name = "Valid Series", Data = [1.0, 2.0] }
             };
 
             var comp = Context.RenderComponent<MudChart>(parameters => parameters
@@ -275,8 +275,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var series = new List<ChartSeries>
             {
-                new ChartSeries { Name = "Series 1", Data = [1, 2], Visible = false },
-                new ChartSeries { Name = "Series 2", Data = [3, 4], Visible = true }
+                new() { Name = "Series 1", Data = [1, 2], Visible = false },
+                new() { Name = "Series 2", Data = [3, 4], Visible = true }
             };
 
             var comp = Context.RenderComponent<MudChart>(parameters => parameters
@@ -297,11 +297,11 @@ namespace MudBlazor.UnitTests.Components
         {
             var series = new List<ChartSeries>
             {
-                new ChartSeries { Name = "Series 1", Data = [1, 2, 3] }
+                new() { Name = "Series 1", Data = [1, 2, 3] }
             };
 
-            var options = new ChartOptions 
-            { 
+            var options = new ChartOptions
+            {
                 ShowLegend = true,
                 ShowLegendLabels = true
             };
@@ -327,8 +327,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var series = new List<ChartSeries>
             {
-                new ChartSeries { Name = "Series 1", Data = [1, 2, 3] },
-                new ChartSeries { Name = "Series 2", Data = [4, 5, 6] }
+                new() { Name = "Series 1", Data = [1, 2, 3] },
+                new() { Name = "Series 2", Data = [4, 5, 6] }
             };
 
             var options = new ChartOptions { EnableSmoothGradient = true };
@@ -341,7 +341,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Verify gradient definitions exist
             comp.Markup.Should().Contain("linearGradient");
-            
+
             // Check for gradient overlays
             var gradientRects = comp.FindAll("rect[fill^='url(#gradient-']");
             gradientRects.Should().NotBeEmpty();
@@ -356,7 +356,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var series = new List<ChartSeries>
             {
-                new ChartSeries { Name = "Series 1", Data = [1, 2] }
+                new() { Name = "Series 1", Data = [1, 2] }
             };
             var xAxisLabels = new[] { "Label 1", "Label 2" };
 
@@ -383,7 +383,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var series = new List<ChartSeries>
             {
-                new ChartSeries { Name = "Series 1", Data = [1, 2] }
+                new() { Name = "Series 1", Data = [1, 2] }
             };
 
             var options = new ChartOptions { ShowToolTips = true };
@@ -405,7 +405,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var series = new List<ChartSeries>
             {
-                new ChartSeries { Name = "Series 1", Data = [1] }
+                new() { Name = "Series 1", Data = [1] }
             };
 
             // Test with different dimensions
@@ -418,7 +418,7 @@ namespace MudBlazor.UnitTests.Components
 
             var cellText = comp.Find(".mud-chart-cell text");
             var fontSize = cellText.GetAttribute("font-size");
-            
+
             // Font size should be calculated based on cell dimensions
             fontSize.Should().NotBeNull();
             double.Parse(fontSize).Should().BeGreaterThan(0);
