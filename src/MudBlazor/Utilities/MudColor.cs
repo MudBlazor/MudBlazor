@@ -580,58 +580,6 @@ namespace MudBlazor.Utilities
             int InterpolateValue(byte start, byte end) => (int)(start * (1.0f - t) + end * t);
         }
 
-        /// <summary>
-        /// Generates a palette of colors by lightening and darkening the base color.
-        /// </summary>
-        /// <param name="baseColor">The base color to generate the palette from.</param>
-        /// <param name="numberOfColors">The total number of colors in the palette.</param>
-        /// <param name="tintStep">The step value for lightening the color.</param>
-        /// <param name="shadeStep">The step value for darkening the color.</param>
-        /// <returns>A read-only list of <see cref="MudColor"/> representing the generated palette.</returns>
-        /// <remarks>
-        /// If <paramref name="tintStep"/> is <c>0</c>, no lighter colors will be added to the palette.
-        /// If <paramref name="shadeStep"/> is <c>0</c>, no darker colors will be added to the palette.
-        /// </remarks>
-        public static IReadOnlyList<MudColor> GeneratePalette(MudColor baseColor, int numberOfColors = 5, double tintStep = 0.075, double shadeStep = 0.075)
-        {
-            var palette = new List<MudColor> { baseColor };
-
-            if (tintStep > 0 && shadeStep > 0)
-            {
-                int halfColors = (numberOfColors - 1) / 2; // Half of the colors (rounded down) will be lighter or darker
-                int lighterColors = halfColors + (numberOfColors % 2 == 0 ? 0 : 1); // If number is odd, add 1 extra lighter color
-                int darkerColors = halfColors;
-
-                // Generate lighter colors
-                for (int i = 1; i <= lighterColors; i++)
-                {
-                    palette.Insert(0, baseColor.ColorLighten(i * tintStep));
-                }
-
-                // Generate darker colors
-                for (int i = 1; i <= darkerColors; i++)
-                {
-                    palette.Add(baseColor.ColorDarken(i * shadeStep));
-                }
-            }
-            else if (tintStep > 0) // Only lighter colors
-            {
-                for (int i = 1; i < numberOfColors; i++)
-                {
-                    palette.Insert(0, baseColor.ColorLighten(i * tintStep));
-                }
-            }
-            else if (shadeStep > 0) // Only darker colors
-            {
-                for (int i = 1; i < numberOfColors; i++)
-                {
-                    palette.Add(baseColor.ColorDarken(i * shadeStep));
-                }
-            }
-
-            return palette;
-        }
-
         private static double NormalizeAlpha(byte a) => Math.Round(a / 255.0, 3);
 
         private static double NormalizeAlpha(int a) => Math.Round(a / 255.0, 3);
