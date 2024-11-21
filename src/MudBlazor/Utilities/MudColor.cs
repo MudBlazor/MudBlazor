@@ -534,7 +534,8 @@ namespace MudBlazor.Utilities
         {
             if (string.IsNullOrEmpty(format))
             {
-                // Default to parameterless ToString, otherwise it will break as if the framework has choice between ToString(string) and ToString(string, IFormatProvider) it mostly choose the latter.
+                // Default to parameterless ToString behaviour, otherwise it will break and return incorrect format _ => Value
+                // if the framework has choice between ToString(string) and ToString(string, IFormatProvider) it will choose the latter.
                 return ToString();
             }
 
