@@ -66,6 +66,7 @@
       <FilesToClean Include="./wwwroot/MudBlazor.min.js" />
       <FilesToClean Include="./wwwroot/MudBlazor.min.css" />
       <FilesToClean Include="./wwwroot/MudBlazor.css" />
+      <FilesToClean Include="./wwwroot/css/MudBlazor.css" />
     </ItemGroup>
     <Delete Files="@(FilesToClean)" />
   </Target>
@@ -86,7 +87,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AspNetCore.SassCompiler" Version="1.72.0">
+    <PackageReference Include="AspNetCore.SassCompiler" Version="1.80.6">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.CodeAnalysis.ResxSourceGenerator" Version="3.11.0-beta1.24415.1">
@@ -121,6 +122,7 @@
     <Content Remove="compilerconfig.json" />
     <Content Remove="sasscompiler.json" />
     <Content Remove="wwwroot/DoNotRemove.txt" />
+    <Content Remove="wwwroot/css/MudBlazor.css" />
     <!--macOS hidden file (causes problems with dotnet pack)-->
     <Content Remove="**/*/.DS_Store" />
   </ItemGroup>
