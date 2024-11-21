@@ -655,6 +655,7 @@ namespace MudBlazor.UnitTests.Utilities
             var color = new MudColor(130, 150, 240, 170);
 
             // Act
+            var normal = color.ToString(null, null);
             var rgb = $"{color:RGB}";
             var rgba = $"{color:RGBA}";
             var hex = $"{color:HEX}";
@@ -663,6 +664,7 @@ namespace MudBlazor.UnitTests.Utilities
             var unknown = $"{color:F2}";
 
             // Assert
+            normal.Should().Be("rgba(130,150,240,0.6666666666666666)");
             rgb.Should().Be("rgb(130,150,240)");
             rgba.Should().Be("rgba(130,150,240,0.6666666666666666)");
             hex.Should().Be("#8296f0");
