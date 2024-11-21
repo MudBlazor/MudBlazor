@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
-using NUnit.Framework;
 using MudBlazor.Docs.Compiler;
+using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Docs.Utilities
 {
