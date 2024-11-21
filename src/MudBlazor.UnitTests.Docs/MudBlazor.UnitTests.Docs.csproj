@@ -61,7 +61,6 @@
     <ProjectReference Include="..\MudBlazor.Docs\MudBlazor.Docs.csproj" />
     <ProjectReference Include="..\MudBlazor.Docs.Compiler\MudBlazor.Docs.Compiler.csproj" />
     <ProjectReference Include="..\MudBlazor.UnitTests.Shared\MudBlazor.UnitTests.Shared.csproj" />
-    <ProjectReference Include="..\MudBlazor\MudBlazor.csproj" />
   </ItemGroup>
 
   <Target Name="GenerateHtmlCoverageReport" AfterTargets="GenerateCoverageResultAfterTest" Condition="'@(CoverletReport-&gt;Count())' != 0">
