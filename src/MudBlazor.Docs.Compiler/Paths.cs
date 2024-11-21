@@ -4,7 +4,7 @@
     public static class Paths
     {
         private const string DocsDirectory = "MudBlazor.Docs";
-        private const string TestDirectory = "MudBlazor.UnitTests";
+        private const string TestDirectory = "MudBlazor.UnitTests.Docs";
         private const string SnippetsFile = "Snippets.generated.cs";
         private const string ApiDocumentationFile = "ApiDocumentation.generated.cs";
         private const string DocStringsFile = "DocStrings.generated.cs";

@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Resources;
 
-namespace MudBlazor.Docs.Extensions;
+namespace MudBlazor.UnitTests;
 
 #nullable enable
 public static class ResourceSetExtensions
