@@ -343,16 +343,6 @@ window.mudpopoverHelper = {
             popoverContentNode.style['left'] = (left + offsetX) + 'px';
             popoverContentNode.style['top'] = (top + offsetY) + 'px';
 
-            if (classList.contains('filters-panel')) {
-                const table = popoverNode.closest('.mud-table-root');
-                const firstCell = table?.querySelector('.mud-table-head .mud-table-row .mud-table-cell');
-                const triggerRect = firstCell?.getBoundingClientRect();
-                if (triggerRect) {
-                    popoverContentNode.style['left'] = (triggerRect.left + offsetX) + 'px';
-                    popoverContentNode.style['top'] = (triggerRect.bottom + offsetY) + 'px';
-                }
-            }
-
             // update z-index by sending the calling popover to update z-index,
             // and the parentnode of the calling popover (not content parent)
             //console.log(popoverContentNode, popoverNode.parentNode);
