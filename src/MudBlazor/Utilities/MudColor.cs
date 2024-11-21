@@ -41,7 +41,7 @@ namespace MudBlazor.Utilities
     /// Represents a color with methods to manipulate color values.
     /// </summary>
     [Serializable]
-    public class MudColor : ISerializable, IEquatable<MudColor>
+    public class MudColor : ISerializable, IEquatable<MudColor>, IFormattable
     {
         private const double Epsilon = 0.000000000000001;
         private readonly byte[] _valuesAsByte;
@@ -528,6 +528,20 @@ namespace MudBlazor.Utilities
             MudColorOutputFormats.ColorElements => $"{R},{G},{B}",
             _ => Value,
         };
+
+        /// <inheritdoc />
+        public string ToString(string? format, IFormatProvider? formatProvider)
+        {
+            return format?.ToLowerInvariant() switch
+            {
+                "rgb" => ToString(MudColorOutputFormats.RGB),
+                "rgba" => ToString(MudColorOutputFormats.RGBA),
+                "hex" => ToString(MudColorOutputFormats.Hex),
+                "hexa" => ToString(MudColorOutputFormats.HexA),
+                "colorelements" => ToString(MudColorOutputFormats.ColorElements),
+                _ => Value
+            };
+        }
 
         /// <summary>
         /// Determines whether two <see cref="MudColor"/> instances are not equal.
