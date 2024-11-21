@@ -262,7 +262,7 @@ namespace MudBlazor.Charts
             var interpolatedColors = new string[shadeCount];
             for (var i = 0; i < shadeCount; i++)
             {
-                var t = i / (double)(shadeCount - 1); // Normalized between 0 and 1
+                var t = i / (float)(shadeCount - 1); // Normalized between 0 and 1
 
                 if (colorCount == 1)
                 {
@@ -281,23 +281,11 @@ namespace MudBlazor.Charts
                     var colorIndex = (int)Math.Floor(t * (colorCount - 1));
                     var nextColorIndex = Math.Min(colorIndex + 1, colorCount - 1);
 
-                    var color = InterpolateColor(baseColors[colorIndex], baseColors[nextColorIndex], t);
+                    var color = MudColor.Lerp(new MudColor(baseColors[colorIndex]), new MudColor(baseColors[nextColorIndex]), t).ToString(MudColorOutputFormats.RGB);
                     interpolatedColors[i] = color;
                 }
             }
             return interpolatedColors;
-        }
-
-        private static string InterpolateColor(string colorStart, string colorEnd, double t)
-        {
-            var mudColorStart = new MudColor(colorStart);
-            var mudColorEnd = new MudColor(colorEnd);
-
-            var r = (mudColorStart.R + (mudColorEnd.R - mudColorStart.R) * t);
-            var g = (mudColorStart.G + (mudColorEnd.G - mudColorStart.G) * t);
-            var b = (mudColorStart.B + (mudColorEnd.B - mudColorStart.B) * t);
-
-            return $"rgb({r}, {g}, {b})";
         }
 
         private string FormatValueForDisplay(double? value)
