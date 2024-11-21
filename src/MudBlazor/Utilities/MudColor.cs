@@ -530,6 +530,31 @@ namespace MudBlazor.Utilities
         };
 
         /// <inheritdoc />
+        /// <remarks>
+        /// The following formats are available:
+        /// <list type="bullet">
+        /// <item>
+        /// <term>rgb</term>
+        /// <description>Outputs the color in the format "rgb(r,g,b)".</description>
+        /// </item>
+        /// <item>
+        /// <term>rgba</term>
+        /// <description>Outputs the color in the format "rgba(r,g,b,a)".</description>
+        /// </item>
+        /// <item>
+        /// <term>hex</term>
+        /// <description>Outputs the color in the hexadecimal format "#rrggbb".</description>
+        /// </item>
+        /// <item>
+        /// <term>hexa</term>
+        /// <description>Outputs the color in the hexadecimal format with alpha "#rrggbbaa".</description>
+        /// </item>
+        /// <item>
+        /// <term>colorelements</term>
+        /// <description>Outputs the color elements without any decorator "r,g,b".</description>
+        /// </item>
+        /// </list>
+        /// </remarks>
         public string ToString(string? format, IFormatProvider? formatProvider)
         {
             if (string.IsNullOrEmpty(format))
