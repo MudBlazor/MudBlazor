@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -16,7 +17,7 @@ namespace MudBlazor
     /// Represents a column filter shown when <see cref="MudDataGrid{T}.FilterMode"/> is <see cref="DataGridFilterMode.ColumnFilterRow"/>.
     /// </summary>
     /// <typeparam name="T">The type of value managed by the <see cref="MudDataGrid{T}"/></typeparam>
-    public partial class FilterHeaderCell<T> : MudComponentBase
+    public partial class FilterHeaderCell<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase
     {
         /// <summary>
         /// The <see cref="MudDataGrid{T}"/> containing this filter cell.

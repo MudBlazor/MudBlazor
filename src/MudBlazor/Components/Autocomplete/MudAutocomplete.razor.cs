@@ -575,6 +575,8 @@ namespace MudBlazor
 
             if (ResetValueOnEmptyText && string.IsNullOrWhiteSpace(Text))
                 await SetValueAsync(default(T), updateText);
+            else if (Immediate)
+                await CoerceValueToTextAsync();
 
             if (DebounceInterval <= 0)
                 await OpenMenuAsync();
@@ -710,18 +712,6 @@ namespace MudBlazor
             {
                 // Open after the search has finished if we're still focused (UI), or were never focused in the first place (programmatically).
                 Open = true;
-            }
-
-            if (Immediate && _items?.Length == 0)
-            {
-                await CoerceValueToTextAsync();
-                StateHasChanged();
-                return;
-            }
-
-            if (Immediate && !CoerceText)
-            {
-                await CoerceValueToTextAsync();
             }
 
             StateHasChanged();

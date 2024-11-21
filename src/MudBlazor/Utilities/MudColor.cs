@@ -2,7 +2,6 @@
 //// https://stackoverflow.com/questions/4087581/creating-a-c-sharp-color-from-hsl-values/4087601#4087601
 //// Stripped and adapted by Meinrad Recheis and Benjamin Kappel for MudBlazor
 
-using System;
 using System.Globalization;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
@@ -83,7 +82,7 @@ namespace MudBlazor.Utilities
         /// Gets the alpha component value as a percentage (0.0 to 1.0) of the color.
         /// </summary>
         [JsonIgnore]
-        public double APercentage => Math.Round(A / 255.0, 2);
+        public double APercentage => NormalizeAlpha(A);
 
         /// <summary>
         /// Gets the hue component value of the color.
@@ -255,7 +254,7 @@ namespace MudBlazor.Utilities
         /// <param name="b">The blue component value (0 to 255).</param>
         /// <param name="alpha">The alpha component value (0.0 to 1.0).</param>
         public MudColor(int r, int g, int b, double alpha)
-            : this(r, g, b, (byte)((alpha * 255.0).EnsureRange(255)))
+            : this(r, g, b, (byte)(alpha * 255.0).EnsureRange(255))
         {
         }
 
@@ -558,6 +557,32 @@ namespace MudBlazor.Utilities
         /// <param name="mudColor">The MudColor instance to convert.</param>
         /// <returns>The 32-bit unsigned integer representation of the color.</returns>
         public static explicit operator uint(MudColor mudColor) => mudColor.UInt32;
+
+        /// <summary>
+        /// Linearly interpolates between two <see cref="MudColor"/> instances.
+        /// </summary>
+        /// <param name="colorStart">The starting <see cref="MudColor"/> instance.</param>
+        /// <param name="colorEnd">The ending <see cref="MudColor"/> instance.</param>
+        /// <param name="t">The interpolation factor (0.0 to 1.0).</param>
+        /// <returns>A new <see cref="MudColor"/> instance that is the result of the interpolation.</returns>
+        public static MudColor Lerp(MudColor colorStart, MudColor colorEnd, float t)
+        {
+            var r = InterpolateValue(colorStart.R, colorEnd.R);
+            var g = InterpolateValue(colorStart.G, colorEnd.G);
+            var b = InterpolateValue(colorStart.B, colorEnd.B);
+            var a = InterpolateValue(colorStart.A, colorEnd.A);
+            var aPercentage = NormalizeAlpha(a, 3);
+            // Using alpha as a percentage ensures more accurate alpha blending. 
+            // Creating a MudColor from an alpha byte or integer can result in fractional alpha values (e.g., 0.996078431372549), 
+            // which makes it difficult to compare two colors accurately in real-world scenarios.
+            return new MudColor(r, g, b, alpha: aPercentage);
+
+            int InterpolateValue(byte start, byte end) => (int)(start * (1.0f - t) + end * t);
+        }
+
+        private static double NormalizeAlpha(byte a, int digit = 2) => Math.Round(a / 255.0, digit);
+
+        private static double NormalizeAlpha(int a, int digit = 2) => Math.Round(a / 255.0, digit);
 
         private static byte GetByteFromValuePart(string input, int index) => byte.Parse(new string(new[] { input[index], input[index + 1] }), NumberStyles.HexNumber);
 

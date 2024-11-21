@@ -32,26 +32,26 @@ namespace MudBlazor.UnitTests.Components
     public class DataGridTests : BunitTest
     {
         [Test]
-        [SetCulture("en-US")]
-        [SetUICulture("en-US")]
+        [SetCulture("")]
+        [SetUICulture("")]
         public void DataGridPropertyNullCheck()
         {
             var comp = Context.RenderComponent<DataGridPropertyColumnNullCheckTest>();
             var cells = comp.FindAll("td").ToArray();
 
             // First Row
-            cells[0].TextContent.Should().Be("1/1/0001 12:00:00 AM");
+            cells[0].TextContent.Should().Be("01/01/0001 00:00:00");
             cells[1].TextContent.Should().BeEmpty();
-            cells[2].TextContent.Should().Be("1/1/0001 12:00:00 AM");
+            cells[2].TextContent.Should().Be("01/01/0001 00:00:00");
             cells[3].TextContent.Should().BeEmpty();
             cells[4].TextContent.Should().BeEmpty();
             cells[5].TextContent.Should().BeEmpty();
 
             // Second Row
-            cells[6].TextContent.Should().Be("1/1/0001 12:00:00 AM");
-            cells[7].TextContent.Should().Be("1/1/0001 12:00:00 AM +00:00");
-            cells[8].TextContent.Should().Be("1/1/0001 12:00:00 AM");
-            cells[9].TextContent.Should().Be("1/1/0001 12:00:00 AM");
+            cells[6].TextContent.Should().Be("01/01/0001 00:00:00");
+            cells[7].TextContent.Should().Be("01/01/0001 00:00:00 +00:00");
+            cells[8].TextContent.Should().Be("01/01/0001 00:00:00");
+            cells[9].TextContent.Should().Be("01/01/0001 00:00:00");
             cells[10].TextContent.Should().Be("some text");
             cells[11].TextContent.Should().BeEmpty();
         }
@@ -745,9 +745,9 @@ namespace MudBlazor.UnitTests.Components
         /// </summary>
         /// <returns>A <see cref="Task"/> object.</returns>
         [Test]
-        public async Task DataGridVirtualizeServerDataLoadingTestWithCancel()
+        public async Task DataGridVirtualizeServerDataLoadingWithCancelTest()
         {
-            var comp = Context.RenderComponent<DataGridVirtualizeServerDataLoadingTestWithCancel>();
+            var comp = Context.RenderComponent<DataGridVirtualizeServerDataLoadingWithCancelTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<int>>();
 
             // Make a cancellation token we can monitor
@@ -757,7 +757,7 @@ namespace MudBlazor.UnitTests.Components
             // Set the ServerData function
             dataGrid.SetParam(p =>
                 p.VirtualizeServerData,
-                new Func<GridStateVirtualize<int>, CancellationToken, Task<GridData<int>>>((s, cancellationToken) =>
+                new Func<GridStateVirtualize<int>, CancellationToken, Task<GridData<int>>>((_, cancellationToken) =>
                 {
                     // Remember the cancellation token
                     cancelToken = cancellationToken;
@@ -777,11 +777,7 @@ namespace MudBlazor.UnitTests.Components
             // Set the VirtualizeServerData function to a new method...
             dataGrid.SetParam(p =>
                 p.VirtualizeServerData,
-                new Func<GridStateVirtualize<int>, CancellationToken, Task<GridData<int>>>((s, cancellationToken) =>
-                {
-                    // ... which returns the second task.
-                    return second.Task;
-                }));
+                new Func<GridStateVirtualize<int>, CancellationToken, Task<GridData<int>>>((_, _) => second.Task));
 
             await Task.Delay(20);
 
@@ -827,7 +823,6 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => dataGrid.Instance.NavigateTo(Page.First));
             dataGrid.Instance.CurrentPage.Should().Be(0);
         }
-
 
         [Test]
         public void DataGridPaginationPageSizeDropDownTest()
@@ -4391,23 +4386,56 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnGroupingTest.Model>>();
             var popoverProvider = comp.FindComponent<MudPopoverProvider>();
 
+            IRefreshableElementCollection<IElement> Rows() => dataGrid.FindAll("tr");
+            IRefreshableElementCollection<IElement> Cells() => dataGrid.FindAll("td");
+
             // Assert that initially, before any user interaction, IsGenderGrouped and IsAgeGrouped should be false
+            // The default grouping is by name
             comp.Instance.IsGenderGrouped.Should().Be(false);
             comp.Instance.IsAgeGrouped.Should().Be(false);
+            comp.Instance.IsProfessionGrouped.Should().Be(false);
+
+            var nameCells = Cells();
+            nameCells.Count.Should().Be(4, because: "4 data rows");
+            nameCells[0].TextContent.Should().Be("Name: John");
+            nameCells[1].TextContent.Should().Be("Name: Johanna");
+            nameCells[2].TextContent.Should().Be("Name: Steve");
+            nameCells[3].TextContent.Should().Be("Name: Alice");
+            Rows().Count.Should().Be(6, because: "1 header row + 4 data rows + 1 footer row");
 
             var ageGrouping = comp.Find(".GroupByAge");
             ageGrouping.Click();
             comp.Instance.IsAgeGrouped.Should().Be(true);
             comp.Instance.IsGenderGrouped.Should().Be(false);
-            var rows = dataGrid.FindAll("tr");
-            rows.Count.Should().Be(5, because: "1 header row + 3 data rows + 1 footer row");
+            comp.Instance.IsProfessionGrouped.Should().Be(false);
+            var ageCells = Cells();
+            ageCells.Count.Should().Be(3, because: "3 data rows");
+            ageCells[0].TextContent.Should().Be("Age: 45");
+            ageCells[1].TextContent.Should().Be("Age: 23");
+            ageCells[2].TextContent.Should().Be("Age: 32");
+            Rows().Count.Should().Be(5, because: "1 header row + 3 data rows + 1 footer row");
 
             var genderGrouping = comp.Find(".GroupByGender");
             genderGrouping.Click();
             comp.Instance.IsGenderGrouped.Should().Be(true);
             comp.Instance.IsAgeGrouped.Should().Be(true, because: "Age is not bound");
-            rows = dataGrid.FindAll("tr");
-            rows.Count.Should().Be(4, because: "1 header row + 2 data rows + 1 footer row");
+            comp.Instance.IsProfessionGrouped.Should().Be(false);
+            var genderCells = Cells();
+            genderCells.Count.Should().Be(2, because: "2 data rows");
+            genderCells[0].TextContent.Should().Be("Gender: Male");
+            genderCells[1].TextContent.Should().Be("Gender: Female");
+            Rows().Count.Should().Be(4, because: "1 header row + 2 data rows + 1 footer row");
+
+            var professionGrouping = comp.Find(".GroupByProfession");
+            professionGrouping.Click();
+            comp.Instance.IsGenderGrouped.Should().Be(false);
+            comp.Instance.IsAgeGrouped.Should().Be(true, because: "Age is not bound");
+            comp.Instance.IsProfessionGrouped.Should().Be(true);
+            var professionCells = Cells();
+            professionCells.Count.Should().Be(2, because: "2 data rows");
+            professionCells[0].TextContent.Should().Be("Profession: Cook");
+            professionCells[1].TextContent.Should().Be("Profession: (None)");
+            Rows().Count.Should().Be(4, because: "1 header row + 2 data rows + 1 footer row");
 
             //click age grouping in grid
             var headerOption = comp.Find("th.age .mud-menu button");
@@ -4418,8 +4446,8 @@ namespace MudBlazor.UnitTests.Components
             clickablePopover.Click();
             comp.Instance.IsAgeGrouped.Should().Be(true);
             comp.Instance.IsGenderGrouped.Should().Be(false);
-            rows = dataGrid.FindAll("tr");
-            rows.Count.Should().Be(5, because: "1 header row + 3 data rows + 1 footer row");
+            comp.Instance.IsProfessionGrouped.Should().Be(false);
+            Rows().Count.Should().Be(5, because: "1 header row + 3 data rows + 1 footer row");
 
             //click gender grouping in grid
             headerOption = comp.Find("th.gender .mud-menu button");
@@ -4430,8 +4458,8 @@ namespace MudBlazor.UnitTests.Components
             clickablePopover.Click();
             comp.Instance.IsGenderGrouped.Should().Be(true);
             comp.Instance.IsAgeGrouped.Should().Be(true, because: "Age is not bound");
-            rows = dataGrid.FindAll("tr");
-            rows.Count.Should().Be(4, because: "1 header row + 2 data rows + 1 footer row");
+            comp.Instance.IsProfessionGrouped.Should().Be(false);
+            Rows().Count.Should().Be(4, because: "1 header row + 2 data rows + 1 footer row");
 
             //click Name grouping in grid
             headerOption = comp.Find("th.name .mud-menu button");
@@ -4442,8 +4470,20 @@ namespace MudBlazor.UnitTests.Components
             clickablePopover.Click();
             comp.Instance.IsGenderGrouped.Should().Be(false);
             comp.Instance.IsAgeGrouped.Should().Be(true, because: "Age is not bound");
-            rows = dataGrid.FindAll("tr");
-            rows.Count.Should().Be(6, because: "1 header row + 4 data rows + 1 footer row");
+            comp.Instance.IsProfessionGrouped.Should().Be(false);
+            Rows().Count.Should().Be(6, because: "1 header row + 4 data rows + 1 footer row");
+
+            //click profession grouping in grid
+            headerOption = comp.Find("th.profession .mud-menu button");
+            headerOption.Click();
+            listItems = popoverProvider.FindComponents<MudListItem<object>>();
+            listItems.Count.Should().Be(2);
+            clickablePopover = listItems[1].Find(".mud-list-item");
+            clickablePopover.Click();
+            comp.Instance.IsGenderGrouped.Should().Be(false);
+            comp.Instance.IsAgeGrouped.Should().Be(true, because: "Age is not bound");
+            comp.Instance.IsProfessionGrouped.Should().Be(true);
+            Rows().Count.Should().Be(4, because: "1 header row + 2 data rows + 1 footer row");
         }
 
         [Test]

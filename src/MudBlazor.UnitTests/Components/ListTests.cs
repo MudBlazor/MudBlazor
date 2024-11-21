@@ -266,7 +266,6 @@ namespace MudBlazor.UnitTests.Components
                 .Add(x => x.ListGutters, listGutters)
                 .Add(x => x.ItemGutters, itemGutters)
             );
-            Console.WriteLine(comp.Markup);
             (comp.FindAll("div.mud-list-item-gutters").Count > 0).Should().Be(resultingGutters);
         }
     }

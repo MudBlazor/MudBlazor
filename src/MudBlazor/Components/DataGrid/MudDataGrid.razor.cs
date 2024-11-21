@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Specialized;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
 using Microsoft.AspNetCore.Components;
@@ -18,14 +19,14 @@ namespace MudBlazor
     /// </summary>
     /// <typeparam name="T">The type of data represented by each row in this grid.</typeparam>
     [CascadingTypeParameter(nameof(T))]
-    public partial class MudDataGrid<T> : MudComponentBase, IDisposable
+    public partial class MudDataGrid<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase, IDisposable
     {
         private T _selectedItem;
         private MudForm _editForm;
         internal int? _rowsPerPage;
         private int _currentPage = 0;
         private IEnumerable<T> _items;
-        private MudVirtualize<T> _mudVirtualize;
+        private MudVirtualize<IndexBag<T>> _mudVirtualize;
         private bool _isFirstRendered = false;
         private bool _filtersMenuVisible = false;
         private bool _columnsPanelVisible = false;
@@ -36,7 +37,7 @@ namespace MudBlazor
         private PropertyInfo[] _properties = typeof(T).GetProperties();
         private CancellationTokenSource _serverDataCancellationTokenSource;
         private IEnumerable<T> _currentRenderFilteredItemsCache = null;
-        internal Dictionary<object, bool> _groupExpansionsDict = new();
+        internal Dictionary<NullableObject<object>, bool> _groupExpansionsDict = new();
         private List<GroupDefinition<T>> _currentPageGroups = [];
         private List<GroupDefinition<T>> _allGroups = [];
         private GridData<T> _serverData = new() { TotalItems = 0, Items = Array.Empty<T>() };
@@ -1132,7 +1133,7 @@ namespace MudBlazor
         /// Defines the ItemsProviderDelegate property, which is necessary for implementing the ServerData methodology with Virtualization.
         /// This property is used to populate items virtually from the server.
         /// </summary>
-        internal ItemsProviderDelegate<T> VirtualItemsProvider { get; set; }
+        internal ItemsProviderDelegate<IndexBag<T>> VirtualItemsProvider { get; set; }
 
         /// <summary>
         /// For unit testing the filtering cache mechanism.
@@ -1202,7 +1203,7 @@ namespace MudBlazor
         {
             get
             {
-                return RenderedColumns.Any(x => !x.HiddenState.Value && (x.FooterTemplate != null || x.AggregateDefinition != null));
+                return RenderedColumns.Any(IsFooterCellDisplayable);
             }
         }
 
@@ -1263,6 +1264,16 @@ namespace MudBlazor
         }
 
         #region Methods
+
+        /// <summary>
+        /// Check if a specific Footer cell is displayable
+        /// </summary>
+        /// <param name="column"></param>
+        /// <returns><see langword="true"/> when the cell can be displayed</returns>
+        private static bool IsFooterCellDisplayable(Column<T> column)
+        {
+            return !column.HiddenState.Value && (column.FooterTemplate != null || column.AggregateDefinition != null);
+        }
 
         protected IEnumerable<T> GetItemsOfPage(int page, int pageSize)
         {
@@ -1773,18 +1784,10 @@ namespace MudBlazor
                     request.CancellationToken
                 );
 
-                if (request.StartIndex > 0 && _serverData.TotalItems < request.StartIndex + request.Count)
-                {
-                    _serverData = await VirtualizeServerData(
-                        stateFunc(0, request.Count),
-                        request.CancellationToken
-                    );
-                }
-
                 _currentRenderFilteredItemsCache = null;
 
-                return new ItemsProviderResult<T>(
-                    _serverData.Items,
+                return new ItemsProviderResult<IndexBag<T>>(
+                    _serverData.Items.Select((item, index) => new IndexBag<T>(request.StartIndex + index, item)),
                     _serverData.TotalItems);
             };
         }

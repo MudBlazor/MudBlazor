@@ -51,6 +51,7 @@ jobs:
       with:
         dotnet-version: |
           8.0.x
+          9.0.x
     - name: Pack nuget package
       run: dotnet pack -c Release --output nupkgs /p:Version=${{ needs.get-version.outputs.VERSION }}
       working-directory: ./src/MudBlazor
