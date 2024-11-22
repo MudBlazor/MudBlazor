@@ -66,14 +66,15 @@
       <FilesToClean Include="./wwwroot/MudBlazor.min.js" />
       <FilesToClean Include="./wwwroot/MudBlazor.min.css" />
       <FilesToClean Include="./wwwroot/MudBlazor.css" />
+      <FilesToClean Include="./wwwroot/css/MudBlazor.css" />
     </ItemGroup>
     <Delete Files="@(FilesToClean)" />
   </Target>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net8.0' ">
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="8.0.8" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.8" />
-    <PackageReference Include="Microsoft.Extensions.Localization" Version="8.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="8.0.11" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.11" />
+    <PackageReference Include="Microsoft.Extensions.Localization" Version="8.0.11" />
   </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'net9.0' ">
     <PackageReference Include="Microsoft.AspNetCore.Components" Version="9.0.0" />
@@ -86,10 +87,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AspNetCore.SassCompiler" Version="1.72.0">
+    <PackageReference Include="AspNetCore.SassCompiler" Version="1.80.6">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.CodeAnalysis.ResxSourceGenerator" Version="3.11.0-beta1.24415.1">
+    <PackageReference Include="Microsoft.CodeAnalysis.ResxSourceGenerator" Version="3.11.0-beta1.24508.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -121,13 +122,16 @@
     <Content Remove="compilerconfig.json" />
     <Content Remove="sasscompiler.json" />
     <Content Remove="wwwroot/DoNotRemove.txt" />
+    <Content Remove="wwwroot/css/MudBlazor.css" />
     <!--macOS hidden file (causes problems with dotnet pack)-->
     <Content Remove="**/*/.DS_Store" />
   </ItemGroup>
 
   <ItemGroup>
     <InternalsVisibleTo Include="MudBlazor.Docs" />
+    <InternalsVisibleTo Include="MudBlazor.UnitTests.Shared" />
     <InternalsVisibleTo Include="MudBlazor.UnitTests" />
+    <InternalsVisibleTo Include="MudBlazor.UnitTests.Docs" />
     <InternalsVisibleTo Include="MudBlazor.UnitTests.Viewer" />
     <!--We need to make internal types to be visible for mocking-->
     <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />

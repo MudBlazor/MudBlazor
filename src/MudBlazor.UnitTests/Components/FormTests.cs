@@ -507,7 +507,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudFormExampleTest()
         {
-            var comp = Context.RenderComponent<MudFormExample>();
+            var comp = Context.RenderComponent<FormValidationTest4>();
             var form = comp.FindComponent<MudForm>().Instance;
             comp.FindComponent<MudForm>().SetParam(x => x.ValidationDelay, 0);
             comp.WaitForAssertion(() => form.IsValid.Should().BeFalse(because: "it contains required fields that are not filled out"));
@@ -1023,7 +1023,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void EditFormExample_EmptyValidation()
         {
-            var comp = Context.RenderComponent<EditFormExample>();
+            var comp = Context.RenderComponent<FormValidationTest3>();
             // same effect as clicking the validate button
             comp.Find("form").Submit();
             var textfields = comp.FindComponents<MudTextField<string>>();
@@ -1043,7 +1043,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void EditFormExample_FillInValues()
         {
-            var comp = Context.RenderComponent<EditFormExample>();
+            var comp = Context.RenderComponent<FormValidationTest3>();
             comp.FindAll("input")[0].Change("Rick Sanchez");
             comp.FindAll("input")[0].Blur();
             comp.FindAll("input")[1].Change("rick.sanchez@citadel-of-ricks.com");
@@ -1093,7 +1093,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MudForm_MustNot_ValidateOnInitialRender()
         {
-            var comp = Context.RenderComponent<MudFormExample>();
+            var comp = Context.RenderComponent<FormValidationTest4>();
             await Task.Delay(100);
             var form = comp.FindComponent<MudForm>().Instance;
             form.Errors.Should().BeEmpty();
@@ -1106,7 +1106,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MudFormExample_FillInValuesRootForm()
         {
-            var comp = Context.RenderComponent<FluentValidationComplexExample>();
+            var comp = Context.RenderComponent<FormValidationTest5>();
             comp.FindAll("input")[0].Input("Rick Sanchez");
             comp.FindAll("input")[0].Blur();
             comp.FindAll("input")[1].Input("rick.sanchez@citadel-of-ricks.com");
@@ -1157,7 +1157,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MudFormExample_FillInValuesNestedForm()
         {
-            var comp = Context.RenderComponent<FluentValidationComplexExample>();
+            var comp = Context.RenderComponent<FormValidationTest5>();
             comp.FindAll("input")[8].Change("SomeWork");
             comp.FindAll("input")[8].Blur();
             comp.FindAll("input")[9].Change("99");
@@ -1202,7 +1202,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MudFormExample_FillInValues()
         {
-            var comp = Context.RenderComponent<FluentValidationComplexExample>();
+            var comp = Context.RenderComponent<FormValidationTest5>();
             comp.FindAll("input")[0].Input("Rick Sanchez");
             comp.FindAll("input")[0].Blur();
             comp.FindAll("input")[1].Input("rick.sanchez@citadel-of-ricks.com");

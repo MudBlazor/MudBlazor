@@ -32,26 +32,26 @@ namespace MudBlazor.UnitTests.Components
     public class DataGridTests : BunitTest
     {
         [Test]
-        [SetCulture("en-US")]
-        [SetUICulture("en-US")]
+        [SetCulture("")]
+        [SetUICulture("")]
         public void DataGridPropertyNullCheck()
         {
             var comp = Context.RenderComponent<DataGridPropertyColumnNullCheckTest>();
             var cells = comp.FindAll("td").ToArray();
 
             // First Row
-            cells[0].TextContent.Should().Be("1/1/0001 12:00:00 AM");
+            cells[0].TextContent.Should().Be("01/01/0001 00:00:00");
             cells[1].TextContent.Should().BeEmpty();
-            cells[2].TextContent.Should().Be("1/1/0001 12:00:00 AM");
+            cells[2].TextContent.Should().Be("01/01/0001 00:00:00");
             cells[3].TextContent.Should().BeEmpty();
             cells[4].TextContent.Should().BeEmpty();
             cells[5].TextContent.Should().BeEmpty();
 
             // Second Row
-            cells[6].TextContent.Should().Be("1/1/0001 12:00:00 AM");
-            cells[7].TextContent.Should().Be("1/1/0001 12:00:00 AM +00:00");
-            cells[8].TextContent.Should().Be("1/1/0001 12:00:00 AM");
-            cells[9].TextContent.Should().Be("1/1/0001 12:00:00 AM");
+            cells[6].TextContent.Should().Be("01/01/0001 00:00:00");
+            cells[7].TextContent.Should().Be("01/01/0001 00:00:00 +00:00");
+            cells[8].TextContent.Should().Be("01/01/0001 00:00:00");
+            cells[9].TextContent.Should().Be("01/01/0001 00:00:00");
             cells[10].TextContent.Should().Be("some text");
             cells[11].TextContent.Should().BeEmpty();
         }
@@ -745,9 +745,9 @@ namespace MudBlazor.UnitTests.Components
         /// </summary>
         /// <returns>A <see cref="Task"/> object.</returns>
         [Test]
-        public async Task DataGridVirtualizeServerDataLoadingTestWithCancel()
+        public async Task DataGridVirtualizeServerDataLoadingWithCancelTest()
         {
-            var comp = Context.RenderComponent<DataGridVirtualizeServerDataLoadingTestWithCancel>();
+            var comp = Context.RenderComponent<DataGridVirtualizeServerDataLoadingWithCancelTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<int>>();
 
             // Make a cancellation token we can monitor
@@ -757,7 +757,7 @@ namespace MudBlazor.UnitTests.Components
             // Set the ServerData function
             dataGrid.SetParam(p =>
                 p.VirtualizeServerData,
-                new Func<GridStateVirtualize<int>, CancellationToken, Task<GridData<int>>>((s, cancellationToken) =>
+                new Func<GridStateVirtualize<int>, CancellationToken, Task<GridData<int>>>((_, cancellationToken) =>
                 {
                     // Remember the cancellation token
                     cancelToken = cancellationToken;
@@ -777,11 +777,7 @@ namespace MudBlazor.UnitTests.Components
             // Set the VirtualizeServerData function to a new method...
             dataGrid.SetParam(p =>
                 p.VirtualizeServerData,
-                new Func<GridStateVirtualize<int>, CancellationToken, Task<GridData<int>>>((s, cancellationToken) =>
-                {
-                    // ... which returns the second task.
-                    return second.Task;
-                }));
+                new Func<GridStateVirtualize<int>, CancellationToken, Task<GridData<int>>>((_, _) => second.Task));
 
             await Task.Delay(20);
 
@@ -827,7 +823,6 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => dataGrid.Instance.NavigateTo(Page.First));
             dataGrid.Instance.CurrentPage.Should().Be(0);
         }
-
 
         [Test]
         public void DataGridPaginationPageSizeDropDownTest()
