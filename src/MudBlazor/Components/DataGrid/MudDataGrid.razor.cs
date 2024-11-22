@@ -98,7 +98,7 @@ namespace MudBlazor
                 .AddStyle("left", "0px", when: HasStickyColumns)
                 .Build();
 
-        protected string GroupClassname(GroupDefinition<T> group) => 
+        protected string GroupClassname(GroupDefinition<T> group) =>
             new CssBuilder(GroupClass)
                 .AddClass(GroupClassFunc?.Invoke(group))
                 .AddClass("sticky-left", when: GroupHeaderStickyLeft)
