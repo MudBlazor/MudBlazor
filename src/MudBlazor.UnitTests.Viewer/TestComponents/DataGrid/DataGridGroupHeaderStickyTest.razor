@@ -19,8 +19,6 @@
                 <PropertyColumn Property="x => x.Property6" Title="Property6" />
                 <PropertyColumn Property="x => x.Property7" Title="Property7" />
                 <PropertyColumn Property="x => x.Property8" Title="Property8" />
-                <PropertyColumn Property="x => x.Property9" Title="Property9" />
-                <PropertyColumn Property="x => x.Property10" Title="Property10" />
             </Columns>
         </MudDataGrid>
     </MudItem>
@@ -37,7 +35,7 @@
     private string GenerateRandomString(int length)
     {
         Random random = new Random();
-        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        const string chars = "ABC";
 
         return new string(Enumerable.Repeat(chars, length).Select(s => s[random.Next(s.Length)]).ToArray());
     }
@@ -46,7 +44,7 @@
     {
         List<Model> models = new List<Model>();
 
-        char[] letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
+        char[] letters = "ABC".ToCharArray();
 
         for (int i = 0; i < 100; i++)
         {
@@ -62,8 +60,6 @@
                     Property6 = GenerateRandomString(8),
                     Property7 = GenerateRandomString(8),
                     Property8 = GenerateRandomString(8),
-                    Property9 = GenerateRandomString(8),
-                    Property10 = GenerateRandomString(8)
                 };
 
             models.Add(model);
@@ -82,7 +78,5 @@
         public string Property6 { get; set; } = string.Empty;
         public string Property7 { get; set; } = string.Empty;
         public string Property8 { get; set; } = string.Empty;
-        public string Property9 { get; set; } = string.Empty;
-        public string Property10 { get; set; } = string.Empty;
     }
 }

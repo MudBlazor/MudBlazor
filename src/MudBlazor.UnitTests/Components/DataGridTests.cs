@@ -4746,5 +4746,16 @@ namespace MudBlazor.UnitTests.Components
             form.IsTouched.Should().BeTrue();
             form.IsValid.Should().BeFalse();
         }
+
+        [Test]
+        public void DataGridGroupHeaderStickyTest()
+        {
+            var comp = Context.RenderComponent<DataGridGroupHeaderStickyTest>();
+            var cells = comp.FindAll("td.mud-table-grouper.sticky-left");
+            var rows = comp.FindAll("tr.mud-table-row");
+
+            cells.Count.Should().Be(3);
+            rows.Count.Should().Be(108);
+        }
     }
 }
