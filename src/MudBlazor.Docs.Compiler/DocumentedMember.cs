@@ -7,7 +7,6 @@ using System.Diagnostics;
 namespace MudBlazor.Docs.Compiler;
 
 #nullable enable
-
 /// <summary>
 /// Represents a base class for designing documented members.
 /// </summary>
@@ -20,12 +19,12 @@ public abstract class DocumentedMember
     /// <remarks>
     /// This value comes from the <see cref="CategoryAttribute"/> applied to the member.
     /// </remarks>
-    public string? Category { get; set; }
+    public string? Category { get; init; }
 
     /// <summary>
     /// The type which defines this member.
     /// </summary>
-    public Type? DeclaringType { get; set; }
+    public Type? DeclaringType { get; init; }
 
     /// <summary>
     /// The type which defines this member.
@@ -35,35 +34,35 @@ public abstract class DocumentedMember
     /// <summary>
     /// Whether this member is only visible to inheritors.
     /// </summary>
-    public bool IsProtected { get; set; }
+    public bool IsProtected { get; init; }
 
     /// <summary>
     /// The name of this member.
     /// </summary>
-    public string? Name { get; set; }
+    public required string Name { get; init; }
 
     /// <summary>
     /// The order of this member relative to other members.
     /// </summary>
-    public int Order { get; set; } = int.MaxValue;
+    public int Order { get; init; } = int.MaxValue;
 
     /// <summary>
     /// The unique key for this member in dictionaries.
     /// </summary>
-    public string? Key { get; set; }
+    public required string Key { get; init; }
 
     /// <summary>
     /// The detailed description for this member, and any related information.
     /// </summary>
-    public string? Summary { get; set; }
+    public string? Summary { get; init; }
 
     /// <summary>
     /// The brief summary of this member.
     /// </summary>
-    public string? Remarks { get; set; }
+    public string? Remarks { get; init; }
 
     /// <summary>
     /// The type of this member.
     /// </summary>
-    public Type? Type { get; set; }
+    public Type? Type { get; init; }
 }

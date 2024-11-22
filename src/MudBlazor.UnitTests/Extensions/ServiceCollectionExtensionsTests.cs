@@ -483,6 +483,8 @@ public class ServiceCollectionExtensionsTests
             options.SnackbarConfiguration.RequireInteraction = true;
             options.SnackbarConfiguration.BackgroundBlurred = true;
             options.SnackbarConfiguration.SnackbarVariant = Variant.Outlined;
+            options.SnackbarConfiguration.SuccessIcon = @Icons.Material.Outlined.CheckCircleOutline;
+            options.SnackbarConfiguration.WarningIcon = @Icons.Material.Outlined.WarningAmber;
 
             // ResizeOptions
             options.ResizeOptions.BreakpointDefinitions = new Dictionary<Breakpoint, int>
@@ -590,5 +592,11 @@ public class ServiceCollectionExtensionsTests
         actualSnackBarOptions.RequireInteraction.Should().Be(expectedOptions.SnackbarConfiguration.RequireInteraction);
         actualSnackBarOptions.BackgroundBlurred.Should().Be(expectedOptions.SnackbarConfiguration.BackgroundBlurred);
         actualSnackBarOptions.SnackbarVariant.Should().Be(expectedOptions.SnackbarConfiguration.SnackbarVariant);
+        actualSnackBarOptions.IconSize.Should().Be(expectedOptions.SnackbarConfiguration.IconSize);
+        actualSnackBarOptions.NormalIcon.Should().Be(expectedOptions.SnackbarConfiguration.NormalIcon);
+        actualSnackBarOptions.InfoIcon.Should().Be(expectedOptions.SnackbarConfiguration.InfoIcon);
+        actualSnackBarOptions.SuccessIcon.Should().Be(expectedOptions.SnackbarConfiguration.SuccessIcon);
+        actualSnackBarOptions.WarningIcon.Should().Be(expectedOptions.SnackbarConfiguration.WarningIcon);
+        actualSnackBarOptions.ErrorIcon.Should().Be(expectedOptions.SnackbarConfiguration.ErrorIcon);
     }
 }

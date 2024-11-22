@@ -2,9 +2,7 @@
 @page "/components/MudDatePicker"
 
 <DocsPage>
-    <DocsPageHeader Title="Date Picker">
-        <Description>Provides the user with a simple way to select a date.</Description>
-    </DocsPageHeader>
+    <DocsPageHeader Title="Date Picker" Component="@nameof(MudDatePicker)" />
     <DocsPageContent>
 
         <DocsPageSection>
@@ -121,7 +119,7 @@
 
         <DocsPageSection>
             <SectionHeader Title="Elevation">
-                <Description>You can change the elevation with the <CodeInline>Elevation</CodeInline> parameter. The default value is 0 for static and 8 for inline.</Description>
+                <Description>You can change the elevation with the <CodeInline>Elevation</CodeInline> parameter. The default level is 8 for Inline, and 0 for Static or Dialog.</Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(DatePickerElevationExample)">
                 <DatePickerElevationExample/>

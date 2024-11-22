@@ -240,6 +240,22 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void SnackbarIconConfigurationTest()
+        {
+            var testComponent = Context.RenderComponent<SnackbarIconConfiguationTest>();
+
+            testComponent.Find("button").Click();
+
+            _provider.WaitForAssertion(() =>
+                _provider.Find("div.mud-snackbar-content-message").Should().NotBe(null)
+            );
+
+            var svg = _provider.Find("#mud-snackbar-container .mud-snackbar").FirstElementChild.FirstElementChild;
+            svg.ClassName.Should().Contain("mud-icon-size-large");
+            svg.InnerHtml.Should().Contain("M15.73,3H8.27L3,8.27v7.46L8.27,21h7.46L21,15.73V8.27L15.73,3z M19,14.9L14.9,19H9.1L5,14.9V9.1L9.1,5h5.8L19,9.1V14.9z");
+        }
+
+        [Test]
         public async Task IconTest()
         {
             await _provider.InvokeAsync(() => _service.Add("Boom, big reveal. Im a pickle!"));

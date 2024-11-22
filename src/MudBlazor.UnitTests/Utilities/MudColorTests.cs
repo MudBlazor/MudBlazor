@@ -624,6 +624,66 @@ namespace MudBlazor.UnitTests.Utilities
             }
         }
 
+
+        [Test]
+        public void ToStringFormat()
+        {
+            // Arrange
+            var color = new MudColor(130, 150, 240, 170);
+
+            // Act
+            var rgb = color.ToString(MudColorOutputFormats.RGB);
+            var rgba = color.ToString(MudColorOutputFormats.RGBA);
+            var hex = color.ToString(MudColorOutputFormats.Hex);
+            var hexA = color.ToString(MudColorOutputFormats.HexA);
+            var colorElements = color.ToString(MudColorOutputFormats.ColorElements);
+            var unknown = color.ToString((MudColorOutputFormats)9999);
+
+            // Assert
+            rgb.Should().Be("rgb(130,150,240)");
+            rgba.Should().Be("rgba(130,150,240,0.6666666666666666)");
+            hex.Should().Be("#8296f0");
+            hexA.Should().Be("#8296f0aa");
+            colorElements.Should().Be("130,150,240");
+            unknown.Should().Be("#8296f0aa");
+        }
+
+        [Test]
+        public void ToStringFormatProvider()
+        {
+            // Arrange
+            var color = new MudColor(130, 150, 240, 170);
+
+            // Act
+            var normal = color.ToString(null, null);
+            var rgb = $"{color:RGB}";
+            var rgba = $"{color:RGBA}";
+            var hex = $"{color:HEX}";
+            var hexA = $"{color:HEXA}";
+            var colorElements = $"{color:COLORELEMENTS}";
+            var unknown = $"{color:F2}";
+
+            // Assert
+            normal.Should().Be("rgba(130,150,240,0.6666666666666666)");
+            rgb.Should().Be("rgb(130,150,240)");
+            rgba.Should().Be("rgba(130,150,240,0.6666666666666666)");
+            hex.Should().Be("#8296f0");
+            hexA.Should().Be("#8296f0aa");
+            colorElements.Should().Be("130,150,240");
+            unknown.Should().Be("#8296f0aa");
+        }
+
+        [Test]
+        [TestCaseSource(nameof(_lerpTestCases))]
+        public void Lerp_ShouldInterpolateCorrectly(MudColor colorStart, MudColor colorEnd, float t, MudColor expectedColor)
+        {
+            // Arrange & Act
+            var result = MudColor.Lerp(colorStart, colorEnd, t);
+
+            // Assert
+            result.Should().Be(expectedColor);
+        }
+
 #pragma warning disable CS1718 // Comparison made to same variable
 
         [Test]
@@ -780,5 +840,17 @@ namespace MudBlazor.UnitTests.Utilities
             actualUint.Should().Be(expectedUint);
             mudColor.UInt32.Should().Be(mudColor.UInt32);
         }
+
+
+        private static readonly object[] _lerpTestCases =
+        [
+            // Tested expected also with https://www.colourblender.io/
+            new object[] { new MudColor(255, 0, 0, 255), new MudColor(0, 0, 255, 255), 0.0f, new MudColor(255, 0, 0, 255) }, // t = 0, should return start color
+            new object[] { new MudColor(255, 0, 0, 255), new MudColor(0, 0, 255, 255), 1.0f, new MudColor(0, 0, 255, 255) }, // t = 1, should return end color
+            new object[] { new MudColor(255, 0, 0, 255), new MudColor(0, 0, 255, 255), 0.5f, new MudColor(127, 0, 127, 255) }, // t = 0.5, should interpolate between colors
+            new object[] { new MudColor(255, 0, 0, 128), new MudColor(0, 0, 255, 64), 0.5f, new MudColor(127, 0, 127, 95) }, // t = 0.5, with alpha interpolation
+            new object[] { new MudColor(0, 64, 128, 0), new MudColor(254, 0, 203, 0), 0.3f, new MudColor(76, 44, 150, 0) },
+            new object[] { new MudColor(255, 255, 255, 0), new MudColor(254, 0, 203, 0), 0.15f, new MudColor(254, 216, 247, 0) }
+        ];
     }
 }

@@ -1,0 +1,29 @@
+﻿<MudGrid>
+    <MudItem sm="12" md="6">
+        <MudRadioGroup @bind-Value="_selectedOption1" ReadOnly="_readOnly">
+            <MudRadio Value="@("Radio 1")">Radio 1</MudRadio>
+            <MudRadio Value="@("Radio 2")">Radio 2</MudRadio>
+            <MudRadio Value="@("Radio 3")">Radio 3</MudRadio>
+            <MudRadio Value="@("Radio 4")">Radio 4</MudRadio>
+        </MudRadioGroup>
+        <MudSwitch @bind-Value="_readOnly" Color="Color.Primary" Label="ReadOnly" />
+        <MudText>Selected Option 1: @_selectedOption1</MudText>
+    </MudItem>
+    <MudItem sm="12" md="6">
+        <MudRadioGroup @bind-Value="_selectedOption2" Disabled="_disabled">
+            <MudRadio Value="@("Radio 1")">Radio 1</MudRadio>
+            <MudRadio Value="@("Radio 2")">Radio 2</MudRadio>
+            <MudRadio Value="@("Radio 3")">Radio 3</MudRadio>
+            <MudRadio Value="@("Radio 4")">Radio 4</MudRadio>
+        </MudRadioGroup>
+        <MudSwitch @bind-Value="_disabled" Color="Color.Primary" Label="Disabled" />
+        <MudText>Selected Option 2: @_selectedOption2</MudText>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private string? _selectedOption1;
+    private string? _selectedOption2;
+    private bool _disabled;
+    private bool _readOnly;
+}
