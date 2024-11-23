@@ -73,14 +73,20 @@ public partial class ApiTypeTable
             _ => state.SortDirection == SortDirection.Ascending ? types.OrderBy(type => type.Name) : types.OrderByDescending(type => type.Name),
         };
 
+        // Get the total count
+        var count = types.Count();
+
         // Make the final results
-        var results = types.ToList();
+        var results = types
+            .Skip(state.Page * state.PageSize)
+            .Take(state.PageSize)
+            .ToList();
 
         // What categories are selected?
         return Task.FromResult(new TableData<DocumentedType>()
         {
             Items = results,
-            TotalItems = results.Count,
+            TotalItems = count,
         });
     }
 }

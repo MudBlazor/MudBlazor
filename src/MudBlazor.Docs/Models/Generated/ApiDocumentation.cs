@@ -64,6 +64,9 @@ public static partial class ApiDocumentation
     /// <param name="name">The name of the type to find.</param>
     public static DocumentedType GetType(string name)
     {
+        // Fix the escaped backtick for generics (`)
+        name = name.Replace("%60", "`");
+
         // Anything to do?
         if (string.IsNullOrEmpty(name))
         {

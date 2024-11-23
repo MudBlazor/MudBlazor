@@ -25,7 +25,9 @@
             <ApiText Text="@(context.Summary + " " + context.Remarks)" />
         </MudTd>
     </RowTemplate>
-    <GroupFooterTemplate></GroupFooterTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
     <NoRecordsContent>
         <MudAlert Severity="Severity.Info">No types match the current filters.</MudAlert>
     </NoRecordsContent>

@@ -2,9 +2,8 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Text.RegularExpressions;
+using System.Reflection.Metadata;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Docs.Extensions;
 using MudBlazor.Docs.Models;
 using MudBlazor.Docs.Services;
 
@@ -16,6 +15,12 @@ namespace MudBlazor.Docs.Components;
 public sealed partial class DocsPageHeader
 {
     /// <summary>
+    /// The parent documentation page.
+    /// </summary>
+    [CascadingParameter]
+    public DocsPage Page { get; set; }
+
+    /// <summary>
     /// The service for navigating to other pages.
     /// </summary>
     [Inject]
@@ -26,26 +31,6 @@ public sealed partial class DocsPageHeader
     /// </summary>
     [Inject]
     public IMenuService MenuService { get; set; }
-
-    /// <summary>
-    /// The name of the component associated with this page.
-    /// </summary>
-    /// <remarks>
-    /// Should be the name of a component, such as <c>nameof(MudAlert)</c>.  When set, the
-    /// <see cref="DocumentedType"/> property will contain all the documentation for this 
-    /// component.
-    /// </remarks>
-    [Parameter]
-    public string Component { get; set; }
-
-    /// <summary>
-    /// Whether this page shows API documentation.
-    /// </summary>
-    /// <remarks>
-    /// Defaults to <c>false</c>.
-    /// </remarks>
-    [Parameter]
-    public bool IsApi { get; set; }
 
     /// <summary>
     /// The title of this page.
@@ -71,11 +56,6 @@ public sealed partial class DocsPageHeader
     [Parameter]
     public RenderFragment SpecialHeaderContent { get; set; }
 
-    /// <summary>
-    /// The documentation for this page's component.
-    /// </summary>
-    public DocumentedType DocumentedType { get; set; }
-
     // Will be replaced by DocumentedType
     public MudComponent _component;
 
@@ -84,16 +64,10 @@ public sealed partial class DocsPageHeader
     {
         base.OnParametersSet();
 
-        // Has the page changed?  Or is this the first render?
-        if (Component != null && (DocumentedType == null || DocumentedType.Name != Component))
+        // If there is no subtitle set, but we have a component summary, use the component summary
+        if (string.IsNullOrEmpty(SubTitle) && Page.Type != null && !string.IsNullOrEmpty(Page.Type.Summary))
         {
-            // Get the documentation for this component
-            DocumentedType = ApiDocumentation.GetType(Component);
-            // If there is no subtitle set, but we have a component summary, use the component summary
-            if (string.IsNullOrEmpty(SubTitle) && !string.IsNullOrEmpty(DocumentedType.Summary))
-            {
-                SubTitle = DocumentedType.Summary;
-            }
+            SubTitle = Page.Type.Summary;
         }
     }
 
@@ -122,13 +96,16 @@ public sealed partial class DocsPageHeader
         var keywords = new HashSet<string>
         {
             Title,
-            Component,
-            Component?.Replace("Mud", ""),
             "mudblazor",
             "blazor",
             "component",
             "material design"
         };
+        if (Page.Type != null)
+        {
+            keywords.Add(Page.Type.Name);
+            keywords.Add(Page.Type.Name?.Replace("Mud", ""));
+        }
         return string.Join(", ", keywords);
     }
 
@@ -139,5 +116,15 @@ public sealed partial class DocsPageHeader
     private string GetCanonicalUri()
     {
         return NavigationManager.Uri.Replace(NavigationManager.BaseUri, "https://mudblazor.com/");
+    }
+
+    /// <summary>
+    /// Gets whether this page has an associated example page.
+    /// </summary>
+    /// <returns>When <c>true</c>, a menu item exists for this type.</returns>
+    public bool HasExamplePage()
+    {
+        return MenuService.Components.Any(menu => menu.GroupComponents == null && menu.Link == Page.TypeName)
+            || MenuService.Components.Any(menu => menu.GroupComponents != null && menu.GroupComponents.Any(subMenu => subMenu.Link == Page.TypeName));
     }
 }

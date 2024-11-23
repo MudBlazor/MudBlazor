@@ -3,16 +3,19 @@
 @namespace MudBlazor.Docs.Pages.Api
 
 <style>
-    .mud-table-toolbar { height: auto; }
-    [id] { scroll-margin-top: 65px; }
+    .mud-table-toolbar {
+        height: auto;
+    }
+
+    [id] {
+        scroll-margin-top: 65px;
+    }
 </style>
 
-<DocsPage>
+<DocsPage TypeName="@TypeName">
     @if (DocumentedType != null)
     {
-        <ApiBreadcrumbs Type="@DocumentedType" />
-
-        <DocsPageHeader Title="@Title" IsApi="true" Component="@TypeName" />
+        <DocsPageHeader Title="@Title" />
         <DocsPageContent>
 
             @if (ShowInheritance)
@@ -99,6 +102,16 @@
                 </DocsPageSection>
             }
 
+            @if (DocumentedType.Links.Count > 0)
+            {
+                <DocsPageSection>
+                    <SectionHeader Title="See Also" />
+                    <SectionContent Outlined="true" IsApiSection="true">
+                        <ApiSeeAlsoLinks Type="@DocumentedType" />
+                    </SectionContent>
+                </DocsPageSection>
+            }
+
             @if (DocumentedType.GlobalSettings.Count > 0)
             {
                 <DocsPageSection>
@@ -111,7 +124,7 @@
                         </MudGrid>
                     </SectionContent>
                 </DocsPageSection>
-            }          
+            }
         </DocsPageContent>
     }
     else

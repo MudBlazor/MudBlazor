@@ -12,7 +12,7 @@ namespace MudBlazor.Docs.Components;
 /// <summary>
 /// Represents a set of links for a documented type's base classes.
 /// </summary>
-public partial class ApiBreadcrumbs
+public partial class ComponentBreadcrumbs
 {
     private DocumentedType? type;
     private string? typeName;
@@ -70,7 +70,7 @@ public partial class ApiBreadcrumbs
     protected void OnTypeChanged(DocumentedType? type)
     {
         // Start with the top-level link
-        Items = [new("Index", "/api")];
+        Items = [new("Explore", "/docs/overview")];
         // Is there a type to examine?
         if (type == null)
         {
@@ -78,13 +78,5 @@ public partial class ApiBreadcrumbs
         }
         // Add the type breadcrumb
         Items.Add(new(Title ?? type!.NameFriendly, null));
-        // Go to the parent...
-        var parent = type.BaseType;
-        // ... and keep going up the hierarchy to add base type breadcrumbs
-        while (parent != null)
-        {
-            Items.Insert(1, new(parent.NameFriendly, parent.ApiUrl));
-            parent = parent.BaseType;
-        }
     }
 }

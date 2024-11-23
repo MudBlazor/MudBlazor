@@ -13,6 +13,18 @@
     <link rel="canonical" href="@GetCanonicalUri()" />
 </HeadContent>
 
+@if (Page.Type != null)
+{
+    @if (Page.IsApi)
+    {
+        <ApiBreadcrumbs Title="@Title" Type="@Page.Type" />
+    }
+    else
+    {
+        <ComponentBreadcrumbs Title="@Title" Type="@Page.Type" />
+    }
+}
+
 @if (SpecialHeaderContent != null)
 {
     <div class="docs-page-header my-16">
@@ -30,44 +42,22 @@ else
     </div>
 }
 
-@if (!IsApi && !string.IsNullOrEmpty(Component))
+@if (Page.Type != null)
 {
-    <DocsPageSection api-link-section>
-        <SectionHeader Title="API" />
-        <div class="docs-page-apilinks">
-            <ul class="my-2">
-                <li>
-                    <MudLink Href="@($"api/{Component}")">
-                        <CodeInline>@($"<{Component}>")</CodeInline>
-                    </MudLink>
-                </li>
-                @if (_component != null && _component.ChildTypes != null)
+    <MudGrid>
+        <MudItem xs="4">
+            @if(Page.IsApi)
+            {
+                @if (HasExamplePage())
                 {
-                    @foreach (var childType in _component.ChildTypes)
-                    {
-                        <li>
-                            <MudLink Href="@($"api/{childType.Name}")" Class="ms-1">
-                                - <CodeInline>@($"<{childType.Name.Replace("`1", "")}>")</CodeInline>
-                            </MudLink>
-                        </li>
-                    }
+                    <MudButton Color="Color.Primary" Variant="Variant.Outlined" Href="@Page.Type.ComponentUrl">Examples</MudButton>
                 }
-            </ul>
-        </div>
-    </DocsPageSection>
-}
-@if (IsApi && DocumentedType != null && DocumentedType.IsComponent)
-{
-    <DocsPageSection api-link-section>
-        <SectionHeader Title="Pages" />
-
-        @if (DocumentedType.IsComponent)
-        {
-            <MudAlert Severity="Severity.Info" Class="mt-6">
-                For examples and details on the usage of this component, visit the example page: <br />
-                <MudLink Href="@DocumentedType.ComponentUrl" Typo="Typo.inherit">@DocumentedType.NameFriendly</MudLink>
-            </MudAlert>
-        }
-
-    </DocsPageSection>
+            }
+            else
+            {
+                <MudButton Color="Color.Primary" Variant="Variant.Outlined" Href="@Page.Type.ApiUrl">Documentation</MudButton>
+            }
+        </MudItem>
+        <MudItem xs="8"></MudItem>
+    </MudGrid>
 }

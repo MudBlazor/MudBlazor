@@ -25,8 +25,6 @@ namespace MudBlazor.Docs.Components
         private NavigationSection _section;
         private Stopwatch _stopwatch = Stopwatch.StartNew();
         private string _anchor = null;
-        private bool _displayView;
-        private string _componentName;
         private bool _renderAds;
         [Inject] NavigationManager NavigationManager { get; set; }
 
@@ -37,6 +35,53 @@ namespace MudBlazor.Docs.Components
         private bool _contentDrawerOpen = true;
         public event Action<Stopwatch> Rendered;
         private Dictionary<DocsPageSection, MudPageContentSection> _sectionMapper = new();
+        private string _typeName;
+        private DocumentedType _type;
+
+        /// <summary>
+        /// Whether this page shows API documentation.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        public bool IsApi { get; set; }
+
+        /// <summary>
+        /// The documentation related to this page.
+        /// </summary>
+        /// <remarks>
+        /// Can also be set via <see cref="TypeName"/>.  Contains all of the XML documentation related to this page.
+        /// </remarks>
+        [Parameter]
+        public DocumentedType Type
+        {
+            get => _type;
+            set
+            {
+                _type = value;
+                _typeName = value == null ? null : _type!.Name;
+                StateHasChanged();
+            }
+        }
+
+        /// <summary>
+        /// The name of the type related to this page.
+        /// </summary>
+        /// <remarks>
+        /// Can also be set via <see cref="Type"/>.  When set, all of the XML documentation related to this page is available via <see cref="Type"/>.
+        /// </remarks>
+        [Parameter]
+        public string TypeName
+        {
+            get => _typeName;
+            set
+            {
+                _typeName = value?.Replace("%601", "`1");
+                _type = value == null ? null : ApiDocumentation.GetType(_typeName);
+                StateHasChanged();
+            }
+        }
 
         private int _sectionCount;
 
@@ -73,17 +118,8 @@ namespace MudBlazor.Docs.Components
             _previous = DocsService.Previous;
             _next = DocsService.Next;
             _section = DocsService.Section;
-
-            /*for after this release is done*/
-            _displayView = false;
-            _componentName = "temp";
-            /*if (NavigationManager.Uri.ToString().Contains("/api/") ||
-                NavigationManager.Uri.ToString().Contains("/components/"))
-            {
-                _componentName = NavigationManager.Uri.ToString().Split('/', StringSplitOptions.RemoveEmptyEntries)
-                    .LastOrDefault();
-                _displayView = true;
-            }*/
+            IsApi = NavigationManager.Uri.ToString().Contains("/api/");
+            TypeName = NavigationManager.Uri.ToString().Split('/', StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
         }
 
         protected override void OnAfterRender(bool firstRender)

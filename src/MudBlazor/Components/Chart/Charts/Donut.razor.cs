@@ -7,6 +7,11 @@ namespace MudBlazor.Charts
     /// <summary>
     /// Represents a chart which displays values as ring shape.
     /// </summary>
+    /// <seealso cref="Bar"/>
+    /// <seealso cref="Line"/>
+    /// <seealso cref="Pie"/>
+    /// <seealso cref="StackedBar"/>
+    /// <seealso cref="TimeSeries"/>
     partial class Donut : MudCategoryChartBase
     {
         /// <summary>
