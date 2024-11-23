@@ -88,7 +88,7 @@ public sealed class DocumentedLink
         {
             return Event.Name;
         }
-        else if(!string.IsNullOrEmpty(Href))
+        else if (!string.IsNullOrEmpty(Href))
         {
             return Href;
         }

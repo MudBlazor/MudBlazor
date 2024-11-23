@@ -54,7 +54,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("Rating", typeof(MudRating), typeof(MudRatingItem))
             .AddItem("Skeleton", typeof(MudSkeleton))
             .AddItem("Table", typeof(MudTable<T>), typeof(MudTablePager))
-            .AddItem("Data Grid", typeof(MudDataGrid<T>))
+            .AddItem("Data Grid", typeof(MudDataGrid<T>), typeof(Column<T>), typeof(FilterHeaderCell<T>), typeof(FooterCell<T>), typeof(HeaderCell<T>), typeof(HierarchyColumn<T>), typeof(MudDataGridPager<T>))
             .AddItem("Simple Table", typeof(MudSimpleTable))
             .AddItem("Tooltip", typeof(MudTooltip))
             .AddItem("Typography", typeof(MudText))
@@ -115,7 +115,7 @@ namespace MudBlazor.Docs.Services
             .AddNavGroup("Charts", false, new DocsComponents()
                 //.AddItem("Options", typeof(ChartOptions)) // <-- this does not work because ChartOptions is not a component!
                 .AddItem("Donut Chart", typeof(Donut))
-                .AddItem("Line Chart", typeof(Line))
+                .AddItem("Line Chart", typeof(Line), typeof(Legend))
                 .AddItem("Pie Chart", typeof(Pie))
                 .AddItem("Bar Chart", typeof(Bar))
                 .AddItem("Stacked Bar Chart", typeof(StackedBar))
