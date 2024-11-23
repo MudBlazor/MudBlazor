@@ -206,8 +206,6 @@ namespace MudBlazor.Charts
                     case Position.Right:
                         _horizontalEndSpace += CellPadding + _legendLabelsYAxis + LegendBox + CellPadding;
                         break;
-                    default:
-                        break;
                 }
             }
         }
@@ -242,7 +240,7 @@ namespace MudBlazor.Charts
 
         private string GetColorForValue(double? value)
         {
-            if (value == null)
+            if (value is null)
             {
                 return "#fff"; // Default color for missing data
             }
@@ -255,36 +253,41 @@ namespace MudBlazor.Charts
 
         private string[] GetEqualizedColorPalette(int shadeCount)
         {
-            // Equalizes between 1 and 5 user colors supplied
             var baseColors = _colorPalette;
             var colorCount = baseColors.Length;
-
             var interpolatedColors = new string[shadeCount];
-            for (var i = 0; i < shadeCount; i++)
-            {
-                var t = i / (float)(shadeCount - 1); // Normalized between 0 and 1
 
-                if (colorCount == 1)
+            // Handle special case when colorCount is 1
+            if (colorCount == 1)
+            {
+                var baseColor = new MudColor(baseColors[0]);
+                for (var i = 0; i < shadeCount; i++)
                 {
-                    // we don't want a 0 alpha so we change that to .1 when necessary
-                    var color = new MudColor(baseColors[0]).SetAlpha((i == 0 ? .1 : t));
+                    var alpha = i == 0 ? 0.1f : i / (float)(shadeCount - 1);
+                    var color = baseColor.SetAlpha(alpha);
                     interpolatedColors[i] = color.ToString(MudColorOutputFormats.RGBA);
                 }
-                else if (colorCount == 5)
-                {
-                    // each color is static
-                    interpolatedColors[i] = baseColors[i];
-                }
-                else
-                {
-                    // For multiple colors that aren't 1 or 5, interpolate as before
-                    var colorIndex = (int)Math.Floor(t * (colorCount - 1));
-                    var nextColorIndex = Math.Min(colorIndex + 1, colorCount - 1);
-
-                    var color = MudColor.Lerp(new MudColor(baseColors[colorIndex]), new MudColor(baseColors[nextColorIndex]), t).ToString(MudColorOutputFormats.RGB);
-                    interpolatedColors[i] = color;
-                }
+                return interpolatedColors;
             }
+
+            // Handle case when colorCount is 5 (no interpolation needed)
+            if (colorCount == 5)
+            {
+                Array.Copy(baseColors, interpolatedColors, shadeCount);
+                return interpolatedColors;
+            }
+
+            // Default case: interpolate between colors
+            for (var i = 0; i < shadeCount; i++)
+            {
+                var t = i / (float)(shadeCount - 1);
+                var colorIndex = (int)Math.Floor(t * (colorCount - 1));
+                var nextColorIndex = Math.Min(colorIndex + 1, colorCount - 1);
+
+                var color = MudColor.Lerp(new MudColor(baseColors[colorIndex]), new MudColor(baseColors[nextColorIndex]), t);
+                interpolatedColors[i] = color.ToString(MudColorOutputFormats.RGB);
+            }
+
             return interpolatedColors;
         }
 
@@ -294,7 +297,7 @@ namespace MudBlazor.Charts
                 return string.Empty;
 
             var formatString = _options?.ValueFormatString ?? "G";
-            // Format the value and truncate to 5 characters or less
+            // Format the value and truncate to 5 characters or fewer
             var formattedValue = value.Value.ToString(formatString, CultureInfo.InvariantCulture);
 
             return formattedValue.Length > 5 ? formattedValue.Substring(0, 5) : formattedValue;
@@ -308,39 +311,45 @@ namespace MudBlazor.Charts
 
         private (double x, double y) GetLegendPosition()
         {
+            // Determine the horizontal position based on the legend's position.
             var x = _legendPosition switch
             {
-                Position.Top or Position.Bottom =>
-                    // Center horizontally, accounting for start and end spaces
-                    _horizontalStartSpace + (HeatmapWidth / 2),
-                Position.Right =>
-                    // Right side, accounting for heatmap width, start space, and yaxis labels
-                    _horizontalStartSpace + HeatmapWidth + HeatMapPadding + CellPadding +
-                    (_options?.YAxisLabelPosition == YAxisLabelPosition.Right ? _yAxisLabelWidth : 0),
-                Position.Left =>
-                    // Left side, accounting for start space and yaxis labels
-                    _horizontalStartSpace - HeatMapPadding - LegendBox - CellPadding -
-                    (_options?.YAxisLabelPosition == YAxisLabelPosition.Left ? _yAxisLabelWidth : 0),
+                Position.Top or Position.Bottom => _horizontalStartSpace + (HeatmapWidth / 2),
+                Position.Right => GetRightPosition(),
+                Position.Left => GetLeftPosition(),
                 _ => 0
             };
 
+            // Determine the vertical position based on the legend's position.
             var y = _legendPosition switch
             {
-                Position.Right or Position.Left =>
-                    // Vertically center, accounting for start and end spaces
-                    _verticalStartSpace + (HeatmapHeight / 2),
-                Position.Bottom =>
-                    // Bottom, accounting for heatmap height, start space, and xaxis labels + LegendBox
-                    _verticalStartSpace + HeatmapHeight + LegendBox + CellPadding +
-                        (_options?.XAxisLabelPosition == XAxisLabelPosition.Bottom ? _dynamicFontSize + CellPadding : 0),
-                Position.Top =>
-                    // Top, accounting for start space and xaxis labels and height of legendbox
-                    _verticalStartSpace - CellPadding - LegendBox - CellPadding -
-                        (_options?.XAxisLabelPosition == XAxisLabelPosition.Top ? _dynamicFontSize + CellPadding : 0),
+                Position.Right or Position.Left => _verticalStartSpace + (HeatmapHeight / 2),
+                Position.Bottom => GetBottomPosition(),
+                Position.Top => GetTopPosition(),
                 _ => 0
             };
 
             return (x, y);
+
+            // Calculates the horizontal position for the legend when it is placed on the right.
+            double GetRightPosition() =>
+                _horizontalStartSpace + HeatmapWidth + HeatMapPadding + CellPadding +
+                (_options?.YAxisLabelPosition == YAxisLabelPosition.Right ? _yAxisLabelWidth : 0);
+
+            // Calculates the horizontal position for the legend when it is placed on the left.
+            double GetLeftPosition() =>
+                _horizontalStartSpace - HeatMapPadding - LegendBox - CellPadding -
+                (_options?.YAxisLabelPosition == YAxisLabelPosition.Left ? _yAxisLabelWidth : 0);
+
+            // Calculates the vertical position for the legend when it is placed at the bottom.
+            double GetBottomPosition() =>
+                _verticalStartSpace + HeatmapHeight + LegendBox + CellPadding +
+                (_options?.XAxisLabelPosition == XAxisLabelPosition.Bottom ? _dynamicFontSize + CellPadding : 0);
+
+            // Calculates the vertical position for the legend when it is placed at the top.
+            double GetTopPosition() =>
+                _verticalStartSpace - CellPadding - LegendBox - CellPadding -
+                (_options?.XAxisLabelPosition == XAxisLabelPosition.Top ? _dynamicFontSize + CellPadding : 0);
         }
     }
 }
