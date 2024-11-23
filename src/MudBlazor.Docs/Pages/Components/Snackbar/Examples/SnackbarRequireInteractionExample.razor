@@ -29,7 +29,7 @@
         {
             config.RequireInteraction = true;
             config.ShowCloseIcon = false;
-            config.Onclick = snackbar =>
+            config.OnClick = snackbar =>
             {
                 UpdateTemperature();
                 return Task.CompletedTask;

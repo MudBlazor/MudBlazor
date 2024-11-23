@@ -1,0 +1,24 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+@inject ISnackbar Snackbar
+
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Show">
+    Do something on close
+</MudButton>
+
+@code {
+    private void Show()
+    {
+        Snackbar.Add("Close me using the close button.", Severity.Normal, config =>
+        {
+            config.RequireInteraction = true;
+            config.CloseButtonClickFunc = SayGoodbye;
+        });
+    }
+
+    private Task SayGoodbye(Snackbar snackbar)
+    {
+        Snackbar.Add("Sorry to see you go!");
+        return Task.CompletedTask;
+    }
+}

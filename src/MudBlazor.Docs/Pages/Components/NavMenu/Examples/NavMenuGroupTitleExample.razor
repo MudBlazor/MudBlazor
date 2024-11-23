@@ -8,7 +8,7 @@
         <MudNavLink Href="/dashboard">Dashboard</MudNavLink>
         <MudNavLink Href="/servers">Servers</MudNavLink>
         <MudNavLink Href="/billing" Disabled="true">Billing</MudNavLink>
-        <MudNavGroup Title="Settings" Expanded="true">
+        <MudNavGroup Title="Settings" HeaderClass="settings-error" Expanded="true">
             <TitleContent>
                 <MudBadge Icon="@Icons.Material.Filled.ErrorOutline" 
                           Color="Color.Error" 
@@ -36,3 +36,9 @@
 @code {
     [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
 }
+
+<style>    
+    .settings-error {
+        color: red;
+    }
+</style>

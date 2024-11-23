@@ -3,7 +3,6 @@
 // Changes and improvements Copyright (c) The MudBlazor Team
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Components.Snackbar;
-using static System.String;
 
 namespace MudBlazor
 {
@@ -44,7 +43,9 @@ namespace MudBlazor
         private void SnackbarClicked()
         {
             if (!ShowActionButton)
+            {
                 Snackbar?.Clicked(false);
+            }
         }
 
         private void SnackbarUpdated()
@@ -63,7 +64,7 @@ namespace MudBlazor
                 {
                     var transitionClass = Snackbar.State.TransitionClass;
 
-                    if (!IsNullOrWhiteSpace(transitionClass))
+                    if (!string.IsNullOrWhiteSpace(transitionClass))
                     {
                         builder.OpenElement(1, "style");
                         builder.AddContent(2, transitionClass);
@@ -88,7 +89,9 @@ namespace MudBlazor
         public void Dispose()
         {
             if (Snackbar != null)
+            {
                 Snackbar.OnUpdate -= SnackbarUpdated;
+            }
         }
     }
 }

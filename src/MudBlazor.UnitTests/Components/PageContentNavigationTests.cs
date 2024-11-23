@@ -6,6 +6,7 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Interfaces;
 using MudBlazor.UnitTests.Mocks;
+using MudBlazor.UnitTests.Shared.Mocks;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components

@@ -146,18 +146,15 @@ namespace MudBlazor.Docs.Compiler
                 var cb = new CodeBuilder();
 
                 cb.AddHeader();
-                cb.AddLine("using System.Linq;");
-                cb.AddLine("using System.Threading.Tasks;");
                 cb.AddLine("using Bunit;");
                 cb.AddLine("using FluentAssertions;");
                 cb.AddLine("using Microsoft.AspNetCore.Components;");
                 cb.AddLine("using Microsoft.Extensions.DependencyInjection;");
                 cb.AddLine("using MudBlazor.Docs.Pages.Api;");
                 cb.AddLine("using MudBlazor.Docs.Services;");
-                cb.AddLine("using MudBlazor.UnitTests.Mocks;");
                 cb.AddLine("using NUnit.Framework;");
                 cb.AddLine();
-                cb.AddLine("namespace MudBlazor.UnitTests.Components");
+                cb.AddLine("namespace MudBlazor.UnitTests.Docs.Generated");
                 cb.AddLine("{");
                 cb.IndentLevel++;
                 cb.AddLine("// These tests just check all the API pages to see if they throw any exceptions");
