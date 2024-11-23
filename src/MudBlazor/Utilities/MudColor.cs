@@ -41,7 +41,7 @@ namespace MudBlazor.Utilities
     /// Represents a color with methods to manipulate color values.
     /// </summary>
     [Serializable]
-    public class MudColor : ISerializable, IEquatable<MudColor>, IFormattable
+    public partial class MudColor : ISerializable, IEquatable<MudColor>, IFormattable
     {
         private const double Epsilon = 0.000000000000001;
         private readonly byte[] _valuesAsByte;
@@ -603,28 +603,6 @@ namespace MudBlazor.Utilities
         /// <param name="mudColor">The MudColor instance to convert.</param>
         /// <returns>The 32-bit unsigned integer representation of the color.</returns>
         public static explicit operator uint(MudColor mudColor) => mudColor.UInt32;
-
-        /// <summary>
-        /// Linearly interpolates between two <see cref="MudColor"/> instances.
-        /// </summary>
-        /// <param name="colorStart">The starting <see cref="MudColor"/> instance.</param>
-        /// <param name="colorEnd">The ending <see cref="MudColor"/> instance.</param>
-        /// <param name="t">The interpolation factor (0.0 to 1.0).</param>
-        /// <returns>A new <see cref="MudColor"/> instance that is the result of the interpolation.</returns>
-        public static MudColor Lerp(MudColor colorStart, MudColor colorEnd, float t)
-        {
-            var r = InterpolateValue(colorStart.R, colorEnd.R);
-            var g = InterpolateValue(colorStart.G, colorEnd.G);
-            var b = InterpolateValue(colorStart.B, colorEnd.B);
-            var a = InterpolateValue(colorStart.A, colorEnd.A);
-            var aPercentage = NormalizeAlpha(a, 3);
-            // Using alpha as a percentage ensures more accurate alpha blending. 
-            // Creating a MudColor from an alpha byte or integer can result in fractional alpha values (e.g., 0.996078431372549), 
-            // which makes it difficult to compare two colors accurately in real-world scenarios.
-            return new MudColor(r, g, b, alpha: aPercentage);
-
-            int InterpolateValue(byte start, byte end) => (int)(start * (1.0f - t) + end * t);
-        }
 
         private static double NormalizeAlpha(byte a, int digit = 2) => Math.Round(a / 255.0, digit);
 

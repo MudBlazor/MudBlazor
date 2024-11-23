@@ -674,6 +674,75 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
+        public void GenerateGradientPalette_ShouldGenerateCorrectGradient()
+        {
+            // Arrange
+            var startColor = new MudColor("#FF0000FF"); // Red
+            var endColor = new MudColor("#0000FFFF"); // Blue
+            IReadOnlyList<MudColor> expectedColors = ["#FF0000FF", "#BF003FFF", "#7F007FFF", "#3F00BFFF", "#0000FFFF"];
+
+            // Act
+            var gradientPalette = MudColor.GenerateGradientPalette(startColor, endColor).ToList();
+
+            // Assert
+            gradientPalette.Should().HaveCount(5);
+            gradientPalette.Should().Equal(expectedColors);
+        }
+
+        [Test]
+        public void GenerateAnalogousPalette_ShouldGenerateCorrectAnalogousColors()
+        {
+            // Arrange
+            var baseColor = new MudColor("#FF0000FF"); // Red
+            IReadOnlyList<MudColor> expectedColors = ["#FF0000FF", "#FFFF00FF", "#00FF00FF", "#00FFFFFF", "#0000FFFF"];
+
+            // Act
+            var analogousPalette = MudColor.GenerateAnalogousPalette(baseColor, angle: 60).ToList();
+
+            // Assert
+            analogousPalette.Should().HaveCount(5);
+            analogousPalette.Should().Equal(expectedColors);
+        }
+
+        [Test]
+        public void GenerateTintShadePalette_ShouldGenerateCorrectTintsAndShades()
+        {
+            // Arrange
+            var baseColor = new MudColor("#808080FF"); // Gray
+
+            // Only tints
+            IReadOnlyList<MudColor> expectedTints = ["#808080FF", "#999999FF", "#B3B3B3FF", "#CCCCCCFF", "#E6E6E6FF"];
+
+            // Only shades
+            IReadOnlyList<MudColor> expectedShades = ["#808080FF", "#666666FF", "#4D4D4DFF", "#333333FF", "#1A1A1AFF"];
+
+            // Both tints and shades (odd number of colors)
+            IReadOnlyList<MudColor> expectedBothOdd = ["#CCCCCCFF", "#B3B3B3FF", "#999999FF", "#808080FF", "#666666FF", "#4D4D4DFF", "#333333FF"];
+
+            // Both tints and shades (even number of colors)
+            IReadOnlyList<MudColor> expectedBothEven = ["#CCCCCCFF", "#B3B3B3FF", "#999999FF", "#808080FF", "#666666FF", "#4D4D4DFF"];
+
+            // Act
+            var tintsPalette = MudColor.GenerateTintShadePalette(baseColor, tintStep: 0.1, shadeStep: 0).ToList();
+            var shadesPalette = MudColor.GenerateTintShadePalette(baseColor, tintStep: 0, shadeStep: 0.1).ToList();
+            var bothPaletteOdd = MudColor.GenerateTintShadePalette(baseColor, 7, tintStep: 0.1, shadeStep: 0.1).ToList();
+            var bothPaletteEven = MudColor.GenerateTintShadePalette(baseColor, 6, tintStep: 0.1, shadeStep: 0.1).ToList();
+
+            // Assert
+            tintsPalette.Should().HaveCount(5);
+            tintsPalette.Should().Equal(expectedTints);
+
+            shadesPalette.Should().HaveCount(5);
+            shadesPalette.Should().Equal(expectedShades);
+
+            bothPaletteOdd.Should().HaveCount(7);
+            bothPaletteOdd.Should().Equal(expectedBothOdd);
+
+            bothPaletteEven.Should().HaveCount(6);
+            bothPaletteEven.Should().Equal(expectedBothEven);
+        }
+
+        [Test]
         [TestCaseSource(nameof(_lerpTestCases))]
         public void Lerp_ShouldInterpolateCorrectly(MudColor colorStart, MudColor colorEnd, float t, MudColor expectedColor)
         {
