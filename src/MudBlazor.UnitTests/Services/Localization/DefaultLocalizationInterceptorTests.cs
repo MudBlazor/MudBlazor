@@ -3,7 +3,6 @@ using FluentAssertions;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
-using MudBlazor.Docs.Extensions;
 using MudBlazor.Resources;
 using NUnit.Framework;
 

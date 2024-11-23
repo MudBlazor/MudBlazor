@@ -278,7 +278,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void RadioDisabledTest()
         {
-            var comp = Context.RenderComponent<RadioGroupExample>();
+            var comp = Context.RenderComponent<RadioGroupTest7>();
             comp.Instance.SelectedOption.Should().BeNull();
 
             comp.FindAll("input")[2].Click(); //click enabled radio
@@ -295,7 +295,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void RadioGroupDisabledTest()
         {
-            var comp = Context.RenderComponent<RadioReadOnlyDisabledExample>();
+            var comp = Context.RenderComponent<RadioReadOnlyDisabledTest>();
             var radioGroup = comp.FindComponents<MudRadioGroup<string>>()[1];
 
             var radios = radioGroup.FindComponents<MudRadio<string>>();
@@ -312,7 +312,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void RadioGroupReadOnlyTest()
         {
-            var comp = Context.RenderComponent<RadioReadOnlyDisabledExample>();
+            var comp = Context.RenderComponent<RadioReadOnlyDisabledTest>();
             var radioGroup = comp.FindComponents<MudRadioGroup<string>>()[0];
 
             var radios = radioGroup.FindComponents<MudRadio<string>>();

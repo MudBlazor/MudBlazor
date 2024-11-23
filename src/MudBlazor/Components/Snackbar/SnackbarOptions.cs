@@ -26,34 +26,7 @@ namespace MudBlazor
 
         public Color IconColor { get; set; } = Color.Inherit;
 
-        public Size IconSize { get; set; } = Size.Medium;
-
         public SnackbarDuplicatesBehavior DuplicatesBehavior { get; set; } = SnackbarDuplicatesBehavior.GlobalDefault;
-
-        /// <summary>
-        /// Custom normal icon.
-        /// </summary>
-        public string NormalIcon { get; set; } = Icons.Material.Outlined.EventNote;
-
-        /// <summary>
-        /// Custom info icon.
-        /// </summary>
-        public string InfoIcon { get; set; } = Icons.Material.Outlined.Info;
-
-        /// <summary>
-        /// Custom success icon.
-        /// </summary>
-        public string SuccessIcon { get; set; } = Icons.Custom.Uncategorized.AlertSuccess;
-
-        /// <summary>
-        /// Custom warning icon.
-        /// </summary>
-        public string WarningIcon { get; set; } = Icons.Material.Outlined.ReportProblem;
-
-        /// <summary>
-        /// Custom error icon.
-        /// </summary>
-        public string ErrorIcon { get; set; } = Icons.Material.Filled.ErrorOutline;
 
         public SnackbarOptions(Severity severity, CommonSnackbarOptions options) : base(options)
         {

@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Globalization;
 using Bunit;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using MudBlazor.Docs.Examples;
 using MudBlazor.Services;
-using MudBlazor.UnitTests.Mocks;
 using MudBlazor.UnitTests.TestComponents.Tabs;
 using MudBlazor.UnitTests.TestComponents.Tabs.KeepTabsAlive;
 using NUnit.Framework;
@@ -1267,7 +1261,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DynamicTabs_CollectionRenderSyncTest()
         {
-            var comp = Context.RenderComponent<DynamicTabsSimpleExample>();
+            var comp = Context.RenderComponent<DynamicTabsSimpleTest>();
 
             var userTabs = comp.Instance.UserTabs;
             var mudTabs = comp.Instance.DynamicTabs;
@@ -1308,7 +1302,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TabPanel_ShowCloseIconTest()
         {
-            var comp = Context.RenderComponent<DynamicTabsSimpleExample>();
+            var comp = Context.RenderComponent<DynamicTabsSimpleTest>();
             var tabs = comp.FindAll("div.mud-tab");
             tabs[0].InnerHtml.Contains("mud-icon-root mud-svg-icon").Should().BeTrue();
             tabs[1].InnerHtml.Contains("mud-icon-root mud-svg-icon").Should().BeFalse(); // The close icon is not shown.

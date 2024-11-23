@@ -1,10 +1,9 @@
-﻿// Copyright (c) MudBlazor 2021
+// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
 using Bunit;
 using FluentAssertions;
-using MudBlazor.Docs.Examples;
 using MudBlazor.UnitTests.TestComponents.Charts;
 using NUnit.Framework;
 
@@ -19,7 +18,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void PieChartSelectionTest()
         {
-            var comp = Context.RenderComponent<PieExample1>();
+            var comp = Context.RenderComponent<PieChartSelectionTest>();
             // print the generated html
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: -1");
             // now click something and see that the selected index changes:
@@ -32,7 +31,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DonutChartSelectionTest()
         {
-            var comp = Context.RenderComponent<DonutExample1>();
+            var comp = Context.RenderComponent<DonutChartSelectionTest>();
             // print the generated html
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: -1");
             // now click something and see that the selected index changes:
@@ -58,7 +57,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void BarChartSelectionTest()
         {
-            var comp = Context.RenderComponent<BarExample1>();
+            var comp = Context.RenderComponent<BarChartSelectionTest>();
             // print the generated html
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: -1");
             // now click something and see that the selected index changes:

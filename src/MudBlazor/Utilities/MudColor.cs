@@ -41,7 +41,7 @@ namespace MudBlazor.Utilities
     /// Represents a color with methods to manipulate color values.
     /// </summary>
     [Serializable]
-    public class MudColor : ISerializable, IEquatable<MudColor>
+    public class MudColor : ISerializable, IEquatable<MudColor>, IFormattable
     {
         private const double Epsilon = 0.000000000000001;
         private readonly byte[] _valuesAsByte;
@@ -528,6 +528,52 @@ namespace MudBlazor.Utilities
             MudColorOutputFormats.ColorElements => $"{R},{G},{B}",
             _ => Value,
         };
+
+        /// <inheritdoc />
+        /// <remarks>
+        /// The following formats are available:
+        /// <list type="bullet">
+        /// <item>
+        /// <term>rgb</term>
+        /// <description>Outputs the color in the format "rgb(r,g,b)".</description>
+        /// </item>
+        /// <item>
+        /// <term>rgba</term>
+        /// <description>Outputs the color in the format "rgba(r,g,b,a)".</description>
+        /// </item>
+        /// <item>
+        /// <term>hex</term>
+        /// <description>Outputs the color in the hexadecimal format "#rrggbb".</description>
+        /// </item>
+        /// <item>
+        /// <term>hexa</term>
+        /// <description>Outputs the color in the hexadecimal format with alpha "#rrggbbaa".</description>
+        /// </item>
+        /// <item>
+        /// <term>colorelements</term>
+        /// <description>Outputs the color elements without any decorator "r,g,b".</description>
+        /// </item>
+        /// </list>
+        /// </remarks>
+        public string ToString(string? format, IFormatProvider? formatProvider)
+        {
+            if (string.IsNullOrEmpty(format))
+            {
+                // Default to parameterless ToString behaviour, otherwise it will break and return incorrect format _ => Value
+                // if the framework has choice between ToString(string) and ToString(string, IFormatProvider) it will choose the latter.
+                return ToString();
+            }
+
+            return format.ToLowerInvariant() switch
+            {
+                "rgb" => ToString(MudColorOutputFormats.RGB),
+                "rgba" => ToString(MudColorOutputFormats.RGBA),
+                "hex" => ToString(MudColorOutputFormats.Hex),
+                "hexa" => ToString(MudColorOutputFormats.HexA),
+                "colorelements" => ToString(MudColorOutputFormats.ColorElements),
+                _ => Value
+            };
+        }
 
         /// <summary>
         /// Determines whether two <see cref="MudColor"/> instances are not equal.
