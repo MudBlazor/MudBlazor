@@ -14,73 +14,32 @@ namespace MudBlazor.Docs.Components;
 /// </summary>
 public partial class ApiBreadcrumbs
 {
-    private DocumentedType? type;
-    private string? typeName;
-
-    /// <summary>
-    /// The title of the item representing the current page.
-    /// </summary>
-    /// <remarks>
-    /// Defaults to <c>null</c>.  When <c>null</c>, the name of the current <see cref="Type"/> is used.
-    /// </remarks>
-    [Parameter]
-    public string? Title { get; set; }
-
     /// <summary>
     /// The type to display links for.
     /// </summary>
     [Parameter]
-    public DocumentedType? Type
-    {
-        get => type;
-        set
-        {
-            type = value;
-            typeName = value == null ? null : type!.Name;
-            OnTypeChanged(type);
-            StateHasChanged();
-        }
-    }
-
-    /// <summary>
-    /// The name of the type to display links for.
-    /// </summary>
-    [Parameter]
-    public string? TypeName
-    {
-        get => typeName;
-        set
-        {
-            typeName = value;
-            type = value == null ? null : ApiDocumentation.GetType(typeName);
-            OnTypeChanged(type);
-            StateHasChanged();
-        }
-    }
+    public DocumentedType? Type { get; set; }
 
     /// <summary>
     /// Gets the breadcrumb items.
     /// </summary>
     public List<BreadcrumbItem> Items { get; set; } = [];
 
-    /// <summary>
-    /// Occurs when <see cref="Type"/> or <see cref="TypeName"/> has changed.
-    /// </summary>
-    /// <param name="type"></param>
-    protected void OnTypeChanged(DocumentedType? type)
+    /// <inheritdoc />
+    protected override void OnParametersSet()
     {
         // Start with the top-level link
         Items = [new("Index", "/api")];
-        // Is there a type to examine?
-        if (type == null)
+
+        if (Type == null)
         {
             return;
         }
+
         // Add the type breadcrumb
-        Items.Add(new(Title ?? type!.NameFriendly, null));
-        // Go to the parent...
-        var parent = type.BaseType;
-        // ... and keep going up the hierarchy to add base type breadcrumbs
+        Items.Add(new(Type.NameFriendly, Type.ApiUrl));
+        var parent = Type.BaseType;
+        // Walk up the hierarchy and add base type breadcrumbs
         while (parent != null)
         {
             Items.Insert(1, new(parent.NameFriendly, parent.ApiUrl));

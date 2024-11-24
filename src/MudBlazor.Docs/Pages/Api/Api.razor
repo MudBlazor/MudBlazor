@@ -3,19 +3,16 @@
 @namespace MudBlazor.Docs.Pages.Api
 
 <style>
-    .mud-table-toolbar {
-        height: auto;
-    }
-
-    [id] {
-        scroll-margin-top: 65px;
-    }
+    .mud-table-toolbar { height: auto; }
+    [id] { scroll-margin-top: 65px; }
 </style>
 
-<DocsPage TypeName="@TypeName">
+<DocsPage>
     @if (DocumentedType != null)
     {
-        <DocsPageHeader Title="@Title" />
+        <ApiBreadcrumbs Type="@DocumentedType" />
+
+        <DocsPageHeader Title="@Title" IsApi="true" Component="@TypeName" />
         <DocsPageContent>
 
             @if (ShowInheritance)
