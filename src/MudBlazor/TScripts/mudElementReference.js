@@ -112,9 +112,13 @@ class MudElementReference {
     }
 
     addDefaultPreventingHandler(element, eventName) {
-        let listener = function(e) {
-            e.preventDefault();
-        }
+        let listener = function (e) {
+            // Only prevent default if not already prevented
+            if (!e.defaultPrevented) {
+                e.preventDefault();
+            }
+        };
+
         element.addEventListener(eventName, listener, { passive: false });
         this.eventListeners[++this.listenerId] = listener;
         return this.listenerId;
