@@ -62,7 +62,7 @@ namespace MudBlazor
 
         private FieldType fieldType => FieldType.Identify(dataType);
 
-        private string[] operators
+        private IReadOnlyCollection<string> operators
         {
             get
             {
