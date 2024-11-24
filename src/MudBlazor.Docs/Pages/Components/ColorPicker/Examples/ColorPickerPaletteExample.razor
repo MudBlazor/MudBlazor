@@ -8,7 +8,8 @@
     {
         MudColor.GenerateTintShadePalette("#DC143C", shadeStep: 0),
         MudColor.GenerateTintShadePalette("#1E90FF", tintStep: 0),
-        MudColor.GenerateTintShadePalette("#8E24AA"),
+        // Reverse for illustrative purposes
+        MudColor.GenerateTintShadePalette("#8E24AA").Reverse(),
         MudColor.GenerateAnalogousPalette("#40E0D0"),
         MudColor.GenerateGradientPalette("#1E90FF", "#32CD32"),
     }.SelectMany(palette => palette);

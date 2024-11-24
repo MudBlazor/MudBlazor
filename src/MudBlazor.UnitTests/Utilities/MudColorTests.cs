@@ -674,18 +674,14 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
-        public void GenerateGradientPalette_ShouldGenerateCorrectGradient()
+        [TestCaseSource(nameof(_gradientTestCases))]
+        public void GenerateGradientPalette_ShouldGenerateCorrectGradient(MudColor startColor, MudColor endColor, int numberOfColors, MudColor[] expectedColors)
         {
-            // Arrange
-            var startColor = new MudColor("#FF0000FF"); // Red
-            var endColor = new MudColor("#0000FFFF"); // Blue
-            IReadOnlyList<MudColor> expectedColors = ["#FF0000FF", "#BF003FFF", "#7F007FFF", "#3F00BFFF", "#0000FFFF"];
-
-            // Act
-            var gradientPalette = MudColor.GenerateGradientPalette(startColor, endColor).ToList();
+            // Arrange & Act
+            var gradientPalette = MudColor.GenerateGradientPalette(startColor, endColor, numberOfColors).ToList();
 
             // Assert
-            gradientPalette.Should().HaveCount(5);
+            gradientPalette.Should().HaveCount(numberOfColors);
             gradientPalette.Should().Equal(expectedColors);
         }
 
@@ -910,6 +906,15 @@ namespace MudBlazor.UnitTests.Utilities
             mudColor.UInt32.Should().Be(mudColor.UInt32);
         }
 
+        private static readonly object[] _gradientTestCases =
+        [
+            // Should just lerp between two colors when numbers of colors is 1
+            new object[] { new MudColor("#FF0000FF"), new MudColor("#0000FFFF"), 1, new MudColor[] { "#7F007FFF" } },
+            // Should return start and end colors when numbers of colors is 2
+            new object[] { new MudColor("#FF0000FF"), new MudColor("#0000FFFF"), 2, new MudColor[] { "#FF0000FF", "#0000FFFF" }},
+            // Should return start, then evenly lerped colors, and end color when numbers of colors are more than 3
+            new object[] { new MudColor("#FF0000FF"), new MudColor("#0000FFFF"), 5, new MudColor[] { "#FF0000FF", "#BF003FFF", "#7F007FFF", "#3F00BFFF", "#0000FFFF" }},
+        ];
 
         private static readonly object[] _lerpTestCases =
         [

@@ -39,6 +39,14 @@ public partial class MudColor
     public static IEnumerable<MudColor> GenerateGradientPalette(MudColor startColor, MudColor endColor, int numberOfColors = 5)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(numberOfColors);
+
+        // Special case for a single numberOfColors, otherwise "t" will be NaN, so we just lerp between the two colors
+        if (numberOfColors == 1)
+        {
+            yield return Lerp(startColor, endColor, 0.5f);
+            yield break;
+        }
+
         for (var i = 0; i < numberOfColors; i++)
         {
             var t = i / (float)(numberOfColors - 1);
@@ -83,7 +91,7 @@ public partial class MudColor
             var lighterColors = halfColors + (numberOfColors % 2 == 0 ? 1 : 0);
             var darkerColors = halfColors;
 
-            // lighter colors
+            // Lighter colors
             for (var i = lighterColors; i > 0; i--)
             {
                 yield return baseColor.ColorLighten(i * tintStep);
@@ -92,7 +100,7 @@ public partial class MudColor
             // Yield the base color
             yield return baseColor;
 
-            // darker colors
+            // Darker colors
             for (var i = 1; i <= darkerColors; i++)
             {
                 yield return baseColor.ColorDarken(i * shadeStep);
