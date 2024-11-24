@@ -115,7 +115,7 @@
                                             <MudSlider Class="mud-picker-color-slider hue"
                                                        dir="ltr"
                                                        T="int"
-                                                       Value="(int)_value?.H"
+                                                       Value="(int)_value.H"
                                                        ValueChanged="@UpdateBaseColorSlider"
                                                        Step="1"
                                                        Min="0"
@@ -125,7 +125,7 @@
                                         @if (ShowAlpha)
                                         {
                                             <MudSlider Class="mud-picker-color-slider alpha"
-                                                       Value="(int)_value?.A"
+                                                       Value="(int)_value.A"
                                                        ValueChanged="@SetAlpha"
                                                        T="int"
                                                        Min="0"
@@ -158,7 +158,7 @@
                                     {
                                         case ColorPickerMode.RGB:
                                             <MudNumericField T="int"
-                                                             Value="(int)_value.R"
+                                                             Value="@_value.R"
                                                              ValueChanged="SetR"
                                                              Class="mud-picker-color-inputfield"
                                                              HelperText="R"
@@ -168,7 +168,7 @@
                                                              HideSpinButtons="true"
                                                              Required="@Required" />
                                             <MudNumericField T="int"
-                                                             Value="(int)_value.G"
+                                                             Value="@_value.G"
                                                              ValueChanged="SetG"
                                                              Class="mud-picker-color-inputfield"
                                                              HelperText="G"
@@ -178,7 +178,7 @@
                                                              HideSpinButtons="true"
                                                              Required="@Required" />
                                             <MudNumericField T="int"
-                                                             Value="(int)_value.B"
+                                                             Value="@_value.B"
                                                              ValueChanged="@SetB"
                                                              Class="mud-picker-color-inputfield"
                                                              HelperText="B"
@@ -190,7 +190,7 @@
                                             break;
                                         case ColorPickerMode.HSL:
                                             <MudNumericField T="double"
-                                                             Value="_value.H"
+                                                             Value="@_value.H"
                                                              ValueChanged="@SetH"
                                                              Class="mud-picker-color-inputfield"
                                                              HelperText="H"
@@ -201,7 +201,7 @@
                                                              HideSpinButtons="true"
                                                              Required="@Required" />
                                             <MudNumericField T="double"
-                                                             Value="_value.S"
+                                                             Value="@_value.S"
                                                              ValueChanged="@SetS"
                                                              Class="mud-picker-color-inputfield"
                                                              HelperText="S"
@@ -212,7 +212,7 @@
                                                              HideSpinButtons="true"
                                                              Required="@Required" />
                                             <MudNumericField T="double"
-                                                             Value="_value.L"
+                                                             Value="@_value.L"
                                                              ValueChanged="@SetL"
                                                              Class="mud-picker-color-inputfield"
                                                              HelperText="L"
