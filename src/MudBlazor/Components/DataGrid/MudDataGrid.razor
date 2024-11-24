@@ -534,7 +534,7 @@
                     <MudItem xs="3">
                         <MudSelect @bind-Value="filterDefinition.Operator" FullWidth="true" Label="@Localizer[LanguageResource.MudDataGrid_Operator]" Dense="true" Margin="@Margin.Dense"
                                    Class="filter-operator">
-                            @foreach (var fieldOperator in FilterOperator.GetOperatorByDataType(fieldType))
+                            @foreach (var fieldOperator in filterDefinition.Column.GetFilterOperators(fieldType))
                             {
                                 <MudSelectItem Value="@fieldOperator">@Localizer[FilterOperator.GetTranslationKeyByOperatorName(fieldOperator)]</MudSelectItem>
                             }
@@ -597,7 +597,7 @@
                     <MudItem xs="12">
                         <MudSelect @bind-Value="filterDefinition.Operator" FullWidth="true" Dense="true" Margin="@Margin.Dense"
                                    Class="filter-operator">
-                            @foreach (var o in FilterOperator.GetOperatorByDataType(fieldType))
+                            @foreach (var o in column.GetFilterOperators(fieldType))
                             {
                                 <MudSelectItem Value="@o">@Localizer[FilterOperator.GetTranslationKeyByOperatorName(o)]</MudSelectItem>
                             }

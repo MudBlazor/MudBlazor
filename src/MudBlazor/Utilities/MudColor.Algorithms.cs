@@ -36,13 +36,63 @@ public partial class MudColor
     /// <param name="endColor">The ending color of the gradient.</param>
     /// <param name="numberOfColors">The total number of colors in the gradient palette.</param>
     /// <returns>An enumerable collection of <see cref="MudColor"/> representing the gradient palette.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="numberOfColors"/> is less than or equal to zero.</exception>
     public static IEnumerable<MudColor> GenerateGradientPalette(MudColor startColor, MudColor endColor, int numberOfColors = 5)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(numberOfColors);
+
+        // Special case for a single numberOfColors, otherwise "t" will be NaN, so we just lerp between the two colors
+        if (numberOfColors == 1)
+        {
+            yield return Lerp(startColor, endColor, 0.5f);
+            yield break;
+        }
+
         for (var i = 0; i < numberOfColors; i++)
         {
             var t = i / (float)(numberOfColors - 1);
             yield return Lerp(startColor, endColor, t);
+        }
+    }
+
+    /// <summary>
+    /// Generates a multi-gradient palette of colors between multiple specified colors.
+    /// </summary>
+    /// <param name="colors">The list of colors to generate the multi-gradient palette from. Must contain at least two colors.</param>
+    /// <param name="numberOfColors">The total number of colors in the multi-gradient palette.</param>
+    /// <returns>An enumerable collection of <see cref="MudColor"/> representing the multi-gradient palette.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="numberOfColors"/> is less than or equal to zero.</exception>
+    /// <exception cref="ArgumentException">Thrown when the <paramref name="colors"/> collection contains fewer than two colors.</exception>
+    public static IEnumerable<MudColor> GenerateMultiGradientPalette(IReadOnlyList<MudColor> colors, int numberOfColors = 5)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(numberOfColors);
+        if (colors.Count < 2)
+        {
+            throw new ArgumentException(@"The colors collection must contain at least two colors.", nameof(colors));
+        }
+
+        if (colors.Count == numberOfColors)
+        {
+            foreach (var color in colors)
+            {
+                yield return color;
+            }
+            yield break;
+        }
+
+        var segments = colors.Count - 1;
+        var colorsPerSegment = (numberOfColors - 1) / segments;
+        var remainder = (numberOfColors - 1) % segments;
+
+        for (var i = 0; i < segments; i++)
+        {
+            var startColor = colors[i];
+            var endColor = colors[i + 1];
+            var segmentColors = colorsPerSegment + (i < remainder ? 1 : 0);
+            foreach (var color in GenerateGradientPalette(startColor, endColor, segmentColors + 1).Skip(i == 0 ? 0 : 1))
+            {
+                yield return color;
+            }
         }
     }
 
@@ -53,6 +103,7 @@ public partial class MudColor
     /// <param name="numberOfColors">The total number of colors in the analogous palette.</param>
     /// <param name="angle">The angle between each color in the analogous palette.</param>
     /// <returns>An enumerable collection of <see cref="MudColor"/> representing the analogous palette.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="numberOfColors"/> is less than or equal to zero.</exception>
     public static IEnumerable<MudColor> GenerateAnalogousPalette(MudColor baseColor, int numberOfColors = 5, double angle = 30)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(numberOfColors);
@@ -71,6 +122,9 @@ public partial class MudColor
     /// <param name="tintStep">The step value for lightening the color. If <paramref name="tintStep"/> is <c>0</c>, no lighter colors will be added to the palette.</param>
     /// <param name="shadeStep">The step value for darkening the color. If <paramref name="shadeStep"/> is <c>0</c>, no darker colors will be added to the palette.</param>
     /// <returns>A read-only list of <see cref="MudColor"/> representing the generated palette.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="numberOfColors"/> is less than or equal to zero.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="tintStep"/> is negative.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="shadeStep"/> is negative.</exception>
     public static IEnumerable<MudColor> GenerateTintShadePalette(MudColor baseColor, int numberOfColors = 5, double tintStep = 0.075, double shadeStep = 0.075)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(numberOfColors);
@@ -83,7 +137,7 @@ public partial class MudColor
             var lighterColors = halfColors + (numberOfColors % 2 == 0 ? 1 : 0);
             var darkerColors = halfColors;
 
-            // lighter colors
+            // Lighter colors
             for (var i = lighterColors; i > 0; i--)
             {
                 yield return baseColor.ColorLighten(i * tintStep);
@@ -92,7 +146,7 @@ public partial class MudColor
             // Yield the base color
             yield return baseColor;
 
-            // darker colors
+            // Darker colors
             for (var i = 1; i <= darkerColors; i++)
             {
                 yield return baseColor.ColorDarken(i * shadeStep);
