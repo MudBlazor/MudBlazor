@@ -146,8 +146,7 @@
                                 </rect>
                                 @if (_options is {ShowLegendLabels: true })
                                 {
-
-                                    double x1 = (double)LegendBox / 2, x2 = x1, y1 = _legendPosition == Position.Top ? -LegendBox / 2 : LegendBox / 2;
+                                    double x1 = LegendBox / 2, x2 = x1, y1 = _legendPosition == Position.Top ? -LegendBox / 2 : LegendBox / 2;
                                     double y2 = _legendPosition == Position.Top ? -LegendBox / 2 - LegendLineLength : LegendBox / 2 + LegendLineLength;
 
                                     <line x1="@x1" y1="@y1" x2="@x2" y2="@y2" stroke="black" stroke-width="1" />

@@ -122,7 +122,7 @@ namespace MudBlazor.Docs.Services
                 .AddItem("Line Chart", typeof(Line))
                 .AddItem("Pie Chart", typeof(Pie))
                 .AddItem("Bar Chart", typeof(Bar))
-                .AddItem("HeatMap Chart", typeof(HeatMap))
+                .AddItem("Heat Map Chart", typeof(HeatMap))
                 .AddItem("Stacked Bar Chart", typeof(StackedBar))
                 .AddItem("Time Series Chart", typeof(TimeSeries))
             )

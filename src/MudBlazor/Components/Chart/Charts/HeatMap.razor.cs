@@ -22,7 +22,7 @@ namespace MudBlazor.Charts
         private const int CellMinSize = 8;
 
         // the width and height of a legend color box
-        private const int LegendBox = 18;
+        private const double LegendBox = 18;
 
         // the minimum padding between cells and line length on legend labels
         private const int CellPadding = 5;
@@ -219,7 +219,7 @@ namespace MudBlazor.Charts
             {
                 var t = i / (double)(colors.Length - 1);
                 var value = _minValue + t * (_maxValue - _minValue);
-                _legends.Add((value, colors[i]));
+                _legends.Add((value, colors[i].ToString(MudColorOutputFormats.RGB)));
             }
         }
 
@@ -251,44 +251,23 @@ namespace MudBlazor.Charts
             return _legends[Math.Clamp(legendIndex, 0, _legends.Count - 1)].color;
         }
 
-        private string[] GetEqualizedColorPalette(int shadeCount)
+        private MudColor[] GetEqualizedColorPalette(int shadeCount)
         {
-            var baseColors = _colorPalette;
+            var baseColors = _colorPalette.Select(x => new MudColor(x)).ToArray();
             var colorCount = baseColors.Length;
-            var interpolatedColors = new string[shadeCount];
 
-            // Handle special case when colorCount is 1
             if (colorCount == 1)
             {
-                var baseColor = new MudColor(baseColors[0]);
-                for (var i = 0; i < shadeCount; i++)
-                {
-                    var alpha = i == 0 ? 0.1f : i / (float)(shadeCount - 1);
-                    var color = baseColor.SetAlpha(alpha);
-                    interpolatedColors[i] = color.ToString(MudColorOutputFormats.RGBA);
-                }
-                return interpolatedColors;
+                return MudColor.GenerateTintShadePalette(baseColors[0]).ToArray();
             }
-
-            // Handle case when colorCount is 5 (no interpolation needed)
-            if (colorCount == 5)
+            else if (colorCount != 5)
             {
-                Array.Copy(baseColors, interpolatedColors, shadeCount);
-                return interpolatedColors;
+                return MudColor.GenerateMultiGradientPalette(baseColors, shadeCount).ToArray();
             }
-
-            // Default case: interpolate between colors
-            for (var i = 0; i < shadeCount; i++)
+            else
             {
-                var t = i / (float)(shadeCount - 1);
-                var colorIndex = (int)Math.Floor(t * (colorCount - 1));
-                var nextColorIndex = Math.Min(colorIndex + 1, colorCount - 1);
-
-                var color = MudColor.Lerp(new MudColor(baseColors[colorIndex]), new MudColor(baseColors[nextColorIndex]), t);
-                interpolatedColors[i] = color.ToString(MudColorOutputFormats.RGB);
+                return baseColors;
             }
-
-            return interpolatedColors;
         }
 
         private string FormatValueForDisplay(double? value)
