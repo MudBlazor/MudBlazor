@@ -358,6 +358,12 @@ namespace MudBlazor.Services
                     snackBarConfiguration.RequireInteraction = options.SnackbarConfiguration.RequireInteraction;
                     snackBarConfiguration.BackgroundBlurred = options.SnackbarConfiguration.BackgroundBlurred;
                     snackBarConfiguration.SnackbarVariant = options.SnackbarConfiguration.SnackbarVariant;
+                    snackBarConfiguration.IconSize = options.SnackbarConfiguration.IconSize;
+                    snackBarConfiguration.NormalIcon = options.SnackbarConfiguration.NormalIcon;
+                    snackBarConfiguration.InfoIcon = options.SnackbarConfiguration.InfoIcon;
+                    snackBarConfiguration.SuccessIcon = options.SnackbarConfiguration.SuccessIcon;
+                    snackBarConfiguration.WarningIcon = options.SnackbarConfiguration.WarningIcon;
+                    snackBarConfiguration.ErrorIcon = options.SnackbarConfiguration.ErrorIcon;
                 })
                 .AddMudBlazorResizeListener(resizeOptions =>
                 {

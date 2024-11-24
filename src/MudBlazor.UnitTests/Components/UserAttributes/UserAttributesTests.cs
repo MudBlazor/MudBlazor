@@ -2,15 +2,11 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
 using Bunit;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Services;
-using MudBlazor.UnitTests.Mocks;
 using NUnit.Framework;
 using TestContext = Bunit.TestContext;
 

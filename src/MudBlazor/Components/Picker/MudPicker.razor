@@ -60,9 +60,9 @@
                 }
                 @if (PickerVariant == PickerVariant.Inline)
                 {
-                    <MudPopover Open="@Open" Fixed="true" AnchorOrigin="@(AnchorOrigin)" TransformOrigin="@(TransformOrigin)" OverflowBehavior="@(OverflowBehavior)" Paper="false">
+                    <MudPopover Class="@PopoverClassname" Open="@Open" Fixed="true" AnchorOrigin="@(AnchorOrigin)" TransformOrigin="@(TransformOrigin)" OverflowBehavior="@(OverflowBehavior)" Paper="false">
                         <div @ref="_pickerInlineRef" class="@PickerInlineClassname">
-                            <MudPaper @attributes="UserAttributes" Class="@PickerPaperClassname" Style="@PickerPaperStylename" Elevation="@_pickerElevation" Square="@_pickerSquare">
+                            <MudPaper @attributes="UserAttributes" Class="@PickerPaperClassname" Style="@PickerPaperStylename" Square="@_pickerSquare">
                                 <div class="@PickerContainerClassname">
                                     @if (PickerContent != null)
                                     {
@@ -81,7 +81,7 @@
                 }
                 else if (PickerVariant == PickerVariant.Static)
                 {
-                    <MudPaper @attributes="UserAttributes" Class="@PickerPaperClassname" Style="@PickerPaperStylename" Elevation="@_pickerElevation" Square="@_pickerSquare">
+                    <MudPaper @attributes="UserAttributes" Class="@PickerPaperClassname" Style="@PickerPaperStylename" Square="@_pickerSquare">
                         <div class="@PickerContainerClassname">
                             @if (PickerContent != null)
                             {
@@ -99,7 +99,7 @@
                 else if (Open && PickerVariant == PickerVariant.Dialog)
                 {
                     <MudOverlay Visible="@Open" OnClick="CloseOverlayAsync" DarkBackground="true" Class="mud-overlay-dialog">
-                        <MudPaper @attributes="UserAttributes" Class="@PickerPaperClassname" Style="@PickerPaperStylename" Elevation="@_pickerElevation" Square="@_pickerSquare">
+                        <MudPaper @attributes="UserAttributes" Class="@PickerPaperClassname" Style="@PickerPaperStylename" Square="@_pickerSquare">
                             <div class="@PickerContainerClassname">
                                 @if (PickerContent != null)
                                 {

@@ -22,12 +22,6 @@
                 "Microsoft.CodeAnalysis.CSharp"
             ],
             "enabled": false
-        },
-        {
-            "matchPackageNames": [
-                "AspNetCore.SassCompiler"
-            ],
-            "enabled": false
         }
     ]
 }

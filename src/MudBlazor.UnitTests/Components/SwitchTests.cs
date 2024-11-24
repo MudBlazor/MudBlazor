@@ -72,14 +72,14 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void SwitchDisabledTest()
         {
-            var comp = Context.RenderComponent<SwitchWithLabelExample>();
+            var comp = Context.RenderComponent<SwitchWithLabelTest>();
             comp.FindAll("label.mud-switch")[3].ClassList.Should().Contain("mud-disabled"); // 4rd switch
         }
 
         [Test]
         public void SwitchLabelPlacementTest()
         {
-            var comp = Context.RenderComponent<SwitchWithLabelExample>();
+            var comp = Context.RenderComponent<SwitchWithLabelTest>();
 
             comp.FindAll("label.mud-switch")[0].ClassList.Should().Contain("mud-input-content-placement-end"); // 1st switch: (default) Placement.End
             comp.FindAll("label.mud-switch")[2].ClassList.Should().Contain("mud-input-content-placement-start"); // 3rd switch: Placement.Start
