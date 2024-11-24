@@ -343,7 +343,7 @@ namespace MudBlazor
         /// Occurs when <see cref="Text"/> has changed.
         /// </summary>
         [Parameter]
-        public EventCallback<string> TextChanged { get; set; }
+        public EventCallback<string?> TextChanged { get; set; }
 
         /// <summary>
         /// Updates <see cref="Text"/> immediately upon typing when <see cref="Editable"/> is <c>true</c>.
@@ -367,7 +367,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Data)]
-        public string? Text
+        public virtual string? Text
         {
             get => _text;
             set => SetTextAsync(value, true).CatchAndLog();
@@ -442,7 +442,7 @@ namespace MudBlazor
 
         protected bool GetReadOnlyState() => ReadOnly || ParentReadOnly;
 
-        protected async Task SetTextAsync(string? value, bool callback)
+        protected virtual async Task SetTextAsync(string? value, bool callback)
         {
             if (_text != value)
             {
@@ -659,6 +659,20 @@ namespace MudBlazor
 
         protected virtual Task OnPickerClosedAsync() => PickerClosed.InvokeAsync(this);
 
+        // A proxy for components that will utilize ParameterState
+        // Since for ParameterState we don't want to read directly from the Text property, but we have other components that inherit from MudPicker
+        // In future when all Pickers will use ParameterState, we can remove this.
+        protected virtual string? ReadText => Text;
+
+        // A proxy for components that will utilize ParameterState
+        // Since for ParameterState we don't want to write directly from the Text property, but we have other components that inherit from MudPicker
+        // In future when all Pickers will use ParameterState, we can remove this.
+        protected virtual Task WriteTextAsync(string? value)
+        {
+            Text = value;
+            return Task.CompletedTask;
+        }
+
         protected internal virtual async Task OnHandleKeyDownAsync(KeyboardEventArgs args)
         {
             if (GetDisabledState() || GetReadOnlyState())
@@ -669,7 +683,7 @@ namespace MudBlazor
                     if (args.CtrlKey && args.ShiftKey)
                     {
                         await ClearAsync();
-                        _value = default;
+                        await WriteValueAsync(default);
                         await ResetAsync();
                     }
 
