@@ -96,7 +96,6 @@ public partial class MudColor
         }
     }
 
-
     /// <summary>
     /// Generates an analogous palette of colors based on a specified base color.
     /// </summary>
