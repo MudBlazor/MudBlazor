@@ -581,7 +581,7 @@ namespace MudBlazor.Utilities
         /// <param name="lhs">The first <see cref="MudColor"/> instance to compare.</param>
         /// <param name="rhs">The second <see cref="MudColor"/> instance to compare.</param>
         /// <returns>True if the instances are not equal; otherwise, false.</returns>
-        public static bool operator !=(MudColor lhs, MudColor rhs) => !(lhs == rhs);
+        public static bool operator !=(MudColor? lhs, MudColor? rhs) => !(lhs == rhs);
 
         /// <summary>
         /// Converts a string representation of a color to a <see cref="MudColor"/> instance.
