@@ -674,6 +674,99 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
+        public void GenerateMultiGradientPalette_ShouldThrowArgumentException_WhenColorsCollectionContainsOnlyOneColor()
+        {
+            // Arrange
+            IReadOnlyList<MudColor> colors = ["#FF0000"];
+
+            // Act
+            var act = () =>
+            {
+                _ = MudColor.GenerateMultiGradientPalette(colors).ToList();
+            };
+
+            // Assert
+            act.Should().Throw<ArgumentException>().WithMessage("The colors collection must contain at least two colors. (Parameter 'colors')");
+        }
+
+        [Test]
+        [TestCaseSource(nameof(_multiGradientTestCases))]
+        public void GenerateMultiGradientPalette_ShouldGenerateCorrectGradient(MudColor[] colors, int numberOfColors, MudColor[] expectedColors)
+        {
+            // Arrange & Act
+            var multiGradientPalette = MudColor.GenerateMultiGradientPalette(colors, numberOfColors).ToList();
+
+            // Assert
+            multiGradientPalette.Should().HaveCount(numberOfColors);
+            multiGradientPalette.Should().Equal(expectedColors);
+        }
+
+        [Test]
+        [TestCaseSource(nameof(_gradientTestCases))]
+        public void GenerateGradientPalette_ShouldGenerateCorrectGradient(MudColor startColor, MudColor endColor, int numberOfColors, MudColor[] expectedColors)
+        {
+            // Arrange & Act
+            var gradientPalette = MudColor.GenerateGradientPalette(startColor, endColor, numberOfColors).ToList();
+
+            // Assert
+            gradientPalette.Should().HaveCount(numberOfColors);
+            gradientPalette.Should().Equal(expectedColors);
+        }
+
+        [Test]
+        public void GenerateAnalogousPalette_ShouldGenerateCorrectAnalogousColors()
+        {
+            // Arrange
+            var baseColor = new MudColor("#FF0000FF"); // Red
+            IReadOnlyList<MudColor> expectedColors = ["#FF0000FF", "#FFFF00FF", "#00FF00FF", "#00FFFFFF", "#0000FFFF"];
+
+            // Act
+            var analogousPalette = MudColor.GenerateAnalogousPalette(baseColor, angle: 60).ToList();
+
+            // Assert
+            analogousPalette.Should().HaveCount(5);
+            analogousPalette.Should().Equal(expectedColors);
+        }
+
+        [Test]
+        public void GenerateTintShadePalette_ShouldGenerateCorrectTintsAndShades()
+        {
+            // Arrange
+            var baseColor = new MudColor("#808080FF"); // Gray
+
+            // Only tints
+            IReadOnlyList<MudColor> expectedTints = ["#808080FF", "#999999FF", "#B3B3B3FF", "#CCCCCCFF", "#E6E6E6FF"];
+
+            // Only shades
+            IReadOnlyList<MudColor> expectedShades = ["#808080FF", "#666666FF", "#4D4D4DFF", "#333333FF", "#1A1A1AFF"];
+
+            // Both tints and shades (odd number of colors)
+            IReadOnlyList<MudColor> expectedBothOdd = ["#CCCCCCFF", "#B3B3B3FF", "#999999FF", "#808080FF", "#666666FF", "#4D4D4DFF", "#333333FF"];
+
+            // Both tints and shades (even number of colors)
+            IReadOnlyList<MudColor> expectedBothEven = ["#CCCCCCFF", "#B3B3B3FF", "#999999FF", "#808080FF", "#666666FF", "#4D4D4DFF"];
+
+            // Act
+            var tintsPalette = MudColor.GenerateTintShadePalette(baseColor, tintStep: 0.1, shadeStep: 0).ToList();
+            var shadesPalette = MudColor.GenerateTintShadePalette(baseColor, tintStep: 0, shadeStep: 0.1).ToList();
+            var bothPaletteOdd = MudColor.GenerateTintShadePalette(baseColor, 7, tintStep: 0.1, shadeStep: 0.1).ToList();
+            var bothPaletteEven = MudColor.GenerateTintShadePalette(baseColor, 6, tintStep: 0.1, shadeStep: 0.1).ToList();
+
+            // Assert
+            tintsPalette.Should().HaveCount(5);
+            tintsPalette.Should().Equal(expectedTints);
+
+            shadesPalette.Should().HaveCount(5);
+            shadesPalette.Should().Equal(expectedShades);
+
+            bothPaletteOdd.Should().HaveCount(7);
+            bothPaletteOdd.Should().Equal(expectedBothOdd);
+
+            bothPaletteEven.Should().HaveCount(6);
+            bothPaletteEven.Should().Equal(expectedBothEven);
+        }
+
+        [Test]
         [TestCaseSource(nameof(_lerpTestCases))]
         public void Lerp_ShouldInterpolateCorrectly(MudColor colorStart, MudColor colorEnd, float t, MudColor expectedColor)
         {
@@ -841,6 +934,31 @@ namespace MudBlazor.UnitTests.Utilities
             mudColor.UInt32.Should().Be(mudColor.UInt32);
         }
 
+        private static readonly object[] _multiGradientTestCases =
+        [
+            // Should return the same colors when list colors count is same as number of colors
+            new object[] { new MudColor[] { "#FF4500FF", "#FFD700FF", "#32CD32FF", "#1E90FFFF", "#8A2BE2FF" }, 5, new MudColor[] { "#FF4500FF", "#FFD700FF", "#32CD32FF", "#1E90FFFF", "#8A2BE2FF" } },
+            // Should act as "MudColor.GenerateGradientPalette" when there are only two colors (end and start), testing with odd number of colors
+            new object[] { new MudColor[] { "#FF0000FF", "#0000FFFF" }, 5, new MudColor[] { "#FF0000FF", "#BF003FFF", "#7F007FFF", "#3F00BFFF", "#0000FFFF" } },
+            // Should act as "MudColor.GenerateGradientPalette" when there are only two colors (end and start), testing with even number of colors
+            new object[] { new MudColor[] { "#FF0000FF", "#0000FFFF" }, 6, new MudColor[] { "#FF0000FF", "#CC0033FF", "#990066FF", "#650099FF", "#3200CCFF", "#0000FFFF" } },
+            // Should return first color, then lerp between first and middle one, then middle one, then lerp between middle and last one, and last one
+            new object[] { new MudColor[] { "#FF0000FF", "#7F007FFF", "#0000FFFF" }, 5, new MudColor[] { "#FF0000FF", "#BF003FFF", "#7F007FFF", "#3F00BFFF", "#0000FFFF" } },
+            new object[] { new MudColor[] { "#FF4500FF", "#32CD32FF", "#8A2BE2FF" }, 5, new MudColor[] { "#FF4500FF", "#988919FF", "#32CD32FF", "#5E7C8AFF", "#8A2BE2FF" } },
+            new object[] { new MudColor[] { "#FF4500FF", "#32CD32FF", "#8A2BE2FF" }, 6, new MudColor[] { "#FF4500FF", "BA7210FD", "769F21FF", "32CD32FF", "5E7C8AFF", "#8A2BE2FF" } }
+        ];
+
+        private static readonly object[] _gradientTestCases =
+        [
+            // Should just lerp between two colors when numbers of colors is 1
+            new object[] { new MudColor("#FF0000FF"), new MudColor("#0000FFFF"), 1, new MudColor[] { "#7F007FFF" } },
+            // Should return start and end colors when numbers of colors is 2
+            new object[] { new MudColor("#FF0000FF"), new MudColor("#0000FFFF"), 2, new MudColor[] { "#FF0000FF", "#0000FFFF" }},
+            // Should return start, then evenly lerped colors, and end color when numbers of colors are more than 3, testing with odd number of colors
+            new object[] { new MudColor("#FF0000FF"), new MudColor("#0000FFFF"), 5, new MudColor[] { "#FF0000FF", "#BF003FFF", "#7F007FFF", "#3F00BFFF", "#0000FFFF" }},
+            // Should return start, then evenly lerped colors, testing with even number of colors
+            new object[] { new MudColor("#FF0000FF"), new MudColor("#0000FFFF"), 6, new MudColor[] { "#FF0000FF", "#CC0033FF", "#990066FF", "#650099FF", "#3200CCFF", "#0000FFFF" }},
+        ];
 
         private static readonly object[] _lerpTestCases =
         [
