@@ -597,7 +597,7 @@ namespace MudBlazor
             footerContext = new FooterContext<T>(DataGrid);
         }
 
-        internal string[] GetFilterOperators(FieldType fieldType)
+        internal IReadOnlyCollection<string> GetFilterOperators(FieldType fieldType)
         {
             if (FilterOperators.Count == 0)
             {
@@ -605,7 +605,7 @@ namespace MudBlazor
             }
             else
             {
-                return [.. FilterOperators];
+                return FilterOperators;
             }
         }
 
