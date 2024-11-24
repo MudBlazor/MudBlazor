@@ -54,6 +54,40 @@ public partial class MudColor
         }
     }
 
+    public static IEnumerable<MudColor> GenerateMultiGradientPalette(IReadOnlyList<MudColor> colors, int numberOfColors = 5)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(numberOfColors);
+        if (colors.Count < 2)
+        {
+            throw new ArgumentException(@"The colors collection must contain at least two colors.", nameof(colors));
+        }
+
+        if (colors.Count == numberOfColors)
+        {
+            foreach (var color in colors)
+            {
+                yield return color;
+            }
+            yield break;
+        }
+
+        var segments = colors.Count - 1;
+        var colorsPerSegment = (numberOfColors - 1) / segments;
+        var remainder = (numberOfColors - 1) % segments;
+
+        for (var i = 0; i < segments; i++)
+        {
+            var startColor = colors[i];
+            var endColor = colors[i + 1];
+            var segmentColors = colorsPerSegment + (i < remainder ? 1 : 0);
+            foreach (var color in GenerateGradientPalette(startColor, endColor, segmentColors + 1).Skip(i == 0 ? 0 : 1))
+            {
+                yield return color;
+            }
+        }
+    }
+
+
     /// <summary>
     /// Generates an analogous palette of colors based on a specified base color.
     /// </summary>
