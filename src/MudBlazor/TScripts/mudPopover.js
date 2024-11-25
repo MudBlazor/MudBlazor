@@ -361,14 +361,14 @@ window.mudpopoverHelper = {
     popoverScrollListener: function (node) {
         let currentNode = node.parentNode;
         while (currentNode) {
-            console.log(currentNode);
+            //console.log(currentNode);
             const isScrollable = 
                 (currentNode.scrollHeight > currentNode.clientHeight) || // Vertical scroll
                 (currentNode.scrollWidth > currentNode.clientWidth);    // Horizontal scroll
             if (isScrollable) {
-                console.log("scrollable");
+                //console.log("scrollable");
                 currentNode.addEventListener('scroll', () => {
-                    console.log("scrolled");
+                    //console.log("scrolled");
                     window.mudpopoverHelper.placePopoverByClassSelector('mud-popover-fixed');
                     window.mudpopoverHelper.placePopoverByClassSelector('mud-popover-overflow-flip-always');
                 });
