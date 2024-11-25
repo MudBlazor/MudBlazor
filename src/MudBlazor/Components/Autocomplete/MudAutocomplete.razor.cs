@@ -192,7 +192,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool ShowProgressIndicator { get; set; } = false;
+        public bool ShowProgressIndicator { get; set; }
 
         /// <summary>
         /// The color of the progress indicator.
@@ -393,7 +393,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool Fixed { get; set; } = false;
+        public bool Fixed { get; set; }
 
         /// <summary>
         /// The behavior applied when there is not enough space for this dropdown to be visible.

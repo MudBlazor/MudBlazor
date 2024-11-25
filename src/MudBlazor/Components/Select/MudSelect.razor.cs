@@ -152,7 +152,7 @@ namespace MudBlazor
         /// </remarks>
         [Category(CategoryTypes.FormComponent.Appearance)]
         [Parameter]
-        public bool Fixed { get; set; } = false;
+        public bool Fixed { get; set; }
 
         /// <summary>
         /// The behavior applied when there is not enough space for this dropdown to be visible.
