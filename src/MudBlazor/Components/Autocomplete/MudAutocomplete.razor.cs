@@ -396,6 +396,16 @@ namespace MudBlazor
         public bool Fixed { get; set; } = false;
 
         /// <summary>
+        /// The behavior applied when there is not enough space for this dropdown to be visible.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="OverflowBehavior.FlipOnOpen"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Popover.Appearance)]
+        public OverflowBehavior OverflowBehavior { get; set; } = OverflowBehavior.FlipOnOpen;
+
+        /// <summary>
         /// The function used to determine if an item should be disabled.
         /// </summary>
         /// <remarks>
