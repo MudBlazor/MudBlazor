@@ -145,6 +145,16 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// Displays this selectitems in a fixed position, even through scrolling.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>False</c>.
+        /// </remarks>
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        [Parameter]
+        public bool Fixed { get; set; } = false;
+
+        /// <summary>
         /// The outer div's classnames, separated by space.
         /// </summary>
         [Category(CategoryTypes.FormComponent.Appearance)]

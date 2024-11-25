@@ -386,6 +386,16 @@ namespace MudBlazor
         public bool CoerceValue { get; set; }
 
         /// <summary>
+        /// Displays the autocomplete popover in a fixed position, even through scrolling.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>False</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool Fixed { get; set; } = false;
+
+        /// <summary>
         /// The function used to determine if an item should be disabled.
         /// </summary>
         /// <remarks>
