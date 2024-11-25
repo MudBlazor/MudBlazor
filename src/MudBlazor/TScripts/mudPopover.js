@@ -324,7 +324,7 @@ window.mudpopoverHelper = {
                 }
             }
 
-            if (classList.contains('mud-popover-fixed')) {
+            if (classList.contains('mud-popover-fixed')) {                
             }
             else if (window.getComputedStyle(popoverNode).position == 'fixed') {
                 popoverContentNode.style['position'] = 'fixed';
@@ -355,6 +355,29 @@ window.mudpopoverHelper = {
         }
         else {
             //console.log(`popoverNode: ${popoverNode} ${popoverNode ? popoverNode.parentNode : ""}`);
+        }
+    },
+
+    popoverScrollListener: function (node) {
+        let currentNode = node.parentNode;
+        while (currentNode) {
+            console.log(currentNode);
+            const isScrollable = 
+                (currentNode.scrollHeight > currentNode.clientHeight) || // Vertical scroll
+                (currentNode.scrollWidth > currentNode.clientWidth);    // Horizontal scroll
+            if (isScrollable) {
+                console.log("scrollable");
+                currentNode.addEventListener('scroll', () => {
+                    console.log("scrolled");
+                    window.mudpopoverHelper.placePopoverByClassSelector('mud-popover-fixed');
+                    window.mudpopoverHelper.placePopoverByClassSelector('mud-popover-overflow-flip-always');
+                });
+            }
+            // Stop if we reach the body, or head
+            if (currentNode.tagName === "BODY") {
+                break;
+            }
+            currentNode = currentNode.parentNode;
         }
     },
 
@@ -538,6 +561,7 @@ class MudPopover {
         this.initialize(this.mainContainerClass);
 
         const popoverNode = document.getElementById('popover-' + id);
+        mudpopoverHelper.popoverScrollListener(popoverNode);
         const popoverContentNode = document.getElementById('popovercontent-' + id);
         if (popoverNode && popoverNode.parentNode && popoverContentNode) {
 
