@@ -373,7 +373,7 @@ namespace MudBlazor.UnitTests.Components
             );
 
             // Verify axis labels exist
-            var axisLabels = comp.FindAll("g.mud-charts-xaxis, g.mud-charts-yaxis");
+            var axisLabels = comp.FindAll("g text.mud-charts-xaxis, g text.mud-charts-yaxis");
             axisLabels.Should().NotBeEmpty();
         }
 
