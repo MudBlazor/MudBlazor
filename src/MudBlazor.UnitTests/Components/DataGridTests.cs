@@ -2600,6 +2600,46 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void DataGridFilterPerColumnTest()
+        {
+            var comp = Context.RenderComponent<DataGridFilterPerColumnTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFilterPerColumnTest.Model>>();
+
+            IElement FirstnameFilterButton() => dataGrid.FindAll(".filter-button")[0];
+
+            // click on the filter button
+            FirstnameFilterButton().Click();
+
+            // check the number of filters displayed in the filters panel is 1
+            comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(1);
+
+            // get select menus
+            var selects = comp.FindAll(".filters-panel .mud-grid-item .mud-input-control.mud-select");
+            selects.Count.Should().Be(2);
+
+            // open operator menu
+            selects[1].PointerDown();
+
+            //check available operators
+            var items = comp.FindAll("div.mud-list-item");
+
+            items.Count.Should().Be(4);
+            items.ToMarkup()
+                 .Should().Contain("starts with")
+                 .And.Contain("ends with")
+                 .And.Contain("equals")
+                 .And.Contain("contains");
+        }
+
+        [Test]
+        public void DataGridInvalidFilterPerColumnTest()
+        {
+            var exception = Assert.Throws<ArgumentException>(() => Context.RenderComponent<DataGridFilterPerColumnTest>(parameters => parameters.Add(x => x.AddInvalid, true)));
+
+            exception.Message.Should().Be("Invalid filter operators for Severity: <");
+        }
+
+        [Test]
         public async Task DataGridIDictionaryFiltersTest()
         {
             var comp = Context.RenderComponent<DataGridIDictionaryFiltersTest>();

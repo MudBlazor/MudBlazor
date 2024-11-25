@@ -22,6 +22,33 @@ public abstract class CommonSnackbarOptions
 
     public Variant SnackbarVariant { get; set; } = Variant.Filled;
 
+    public Size IconSize { get; set; } = Size.Medium;
+
+    /// <summary>
+    /// Custom normal icon.
+    /// </summary>
+    public string NormalIcon { get; set; } = Icons.Material.Outlined.EventNote;
+
+    /// <summary>
+    /// Custom info icon.
+    /// </summary>
+    public string InfoIcon { get; set; } = Icons.Material.Outlined.Info;
+
+    /// <summary>
+    /// Custom success icon.
+    /// </summary>
+    public string SuccessIcon { get; set; } = Icons.Custom.Uncategorized.AlertSuccess;
+
+    /// <summary>
+    /// Custom warning icon.
+    /// </summary>
+    public string WarningIcon { get; set; } = Icons.Material.Outlined.ReportProblem;
+
+    /// <summary>
+    /// Custom error icon.
+    /// </summary>
+    public string ErrorIcon { get; set; } = Icons.Material.Filled.ErrorOutline;
+
     protected CommonSnackbarOptions() { }
 
     protected CommonSnackbarOptions(CommonSnackbarOptions options)
@@ -34,5 +61,11 @@ public abstract class CommonSnackbarOptions
         RequireInteraction = options.RequireInteraction;
         BackgroundBlurred = options.BackgroundBlurred;
         SnackbarVariant = options.SnackbarVariant;
+        IconSize = options.IconSize;
+        NormalIcon = options.NormalIcon;
+        InfoIcon = options.InfoIcon;
+        SuccessIcon = options.SuccessIcon;
+        WarningIcon = options.WarningIcon;
+        ErrorIcon = options.ErrorIcon;
     }
 }
