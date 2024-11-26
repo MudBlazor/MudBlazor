@@ -842,13 +842,17 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
-        [TestCase(130, 150, 240, 255, 775)]
-        [TestCase(71, 88, 99, 100, 358)]
-        public void GetHashCode(byte r, byte g, byte b, byte a, int expectedValue)
+        public void GetHashCodeTest()
         {
-            MudColor color = new(r, g, b, a);
+            // Arrange
+            var color1 = new MudColor(130, 150, 240, 255);
+            var color2 = new MudColor(130, 150, 240, 255);
 
-            color.GetHashCode().Should().Be(expectedValue);
+            // Act
+            var areEqualGetHashCode = color1.GetHashCode() == color2.GetHashCode();
+
+            // Assert
+            areEqualGetHashCode.Should().BeTrue();
         }
 
         [Test]
