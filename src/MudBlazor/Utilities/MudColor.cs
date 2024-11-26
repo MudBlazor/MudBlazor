@@ -152,50 +152,11 @@ namespace MudBlazor.Utilities
             l = Math.Round(l.EnsureRange(1), 2);
             a = a.EnsureRange(255);
 
-            // achromatic argb (gray scale)
-            if (Math.Abs(s) < Epsilon)
-            {
-                _valuesAsByte[0] = (byte)Math.Max(0, Math.Min(255, (int)Math.Ceiling(l * 255D)));
-                _valuesAsByte[1] = (byte)Math.Max(0, Math.Min(255, (int)Math.Ceiling(l * 255D)));
-                _valuesAsByte[2] = (byte)Math.Max(0, Math.Min(255, (int)Math.Ceiling(l * 255D)));
-                _valuesAsByte[3] = (byte)a;
-            }
-            else
-            {
-
-                var q = l < .5D
-                        ? l * (1D + s)
-                        : (l + s) - (l * s);
-                var p = (2D * l) - q;
-
-                var hk = h / 360D;
-                var t = new double[3];
-                t[0] = hk + (1D / 3D); // Tr
-                t[1] = hk; // Tb
-                t[2] = hk - (1D / 3D); // Tg
-
-                for (var i = 0; i < 3; i++)
-                {
-                    if (t[i] < 0D)
-                        t[i] += 1D;
-                    if (t[i] > 1D)
-                        t[i] -= 1D;
-
-                    if ((t[i] * 6D) < 1D)
-                        t[i] = p + ((q - p) * 6D * t[i]);
-                    else if ((t[i] * 2D) < 1)
-                        t[i] = q;
-                    else if ((t[i] * 3D) < 2)
-                        t[i] = p + ((q - p) * ((2D / 3D) - t[i]) * 6D);
-                    else
-                        t[i] = p;
-                }
-
-                _valuesAsByte[0] = ((int)Math.Round(t[0] * 255D)).EnsureRangeToByte();
-                _valuesAsByte[1] = ((int)Math.Round(t[1] * 255D)).EnsureRangeToByte();
-                _valuesAsByte[2] = ((int)Math.Round(t[2] * 255D)).EnsureRangeToByte();
-                _valuesAsByte[3] = (byte)a;
-            }
+            var (r, g, b) = HslToRgb(h, s, l);
+            _valuesAsByte[0] = r;
+            _valuesAsByte[1] = g;
+            _valuesAsByte[2] = b;
+            _valuesAsByte[3] = (byte)a;
 
             H = Math.Round(h, 0);
             S = Math.Round(s, 2);
@@ -609,6 +570,46 @@ namespace MudBlazor.Utilities
         private static double NormalizeAlpha(int a, int digit = 2) => Math.Round(a / 255.0, digit);
 
         private static byte GetByteFromValuePart(string input, int index) => byte.Parse(new string(new[] { input[index], input[index + 1] }), NumberStyles.HexNumber);
+
+        private static (byte r, byte g, byte b) HslToRgb(double h, double s, double l)
+        {
+            // Achromatic (gray scale)
+            if (Math.Abs(s) < Epsilon)
+            {
+                var gray = (byte)Math.Max(0, Math.Min(255, (int)Math.Ceiling(l * 255d)));
+                return (gray, gray, gray);
+            }
+
+            var hNormalized = h / 360d;
+            var t2 = l <= 0.5d
+                ? l * (1.0d + s)
+                : l + s - l * s;
+            var t1 = 2.0d * l - t2;
+
+            var tr = HueToRgb(t1, t2, hNormalized + 1.0d / 3.0d);
+            var tg = HueToRgb(t1, t2, hNormalized);
+            var tb = HueToRgb(t1, t2, hNormalized - 1.0d / 3.0d);
+
+                
+            var r = ((int)Math.Round(tr * 255d)).EnsureRangeToByte();
+            var g = ((int)Math.Round(tg * 255d)).EnsureRangeToByte();
+            var b = ((int)Math.Round(tb * 255d)).EnsureRangeToByte();
+                
+            return (r, g, b);
+        }
+
+        private static double HueToRgb(double t1, double t2, double hueNormalized)
+        {
+            if (hueNormalized < 0.0d) hueNormalized += 1.0d;
+            if (hueNormalized > 1.0d) hueNormalized -= 1.0d;
+            return hueNormalized switch
+            {
+                < 1.0d / 6.0d => t1 + (t2 - t1) * 6.0d * hueNormalized,
+                < 1.0d / 2.0d => t2,
+                < 2.0d / 3.0d => t1 + (t2 - t1) * (2.0d / 3.0d - hueNormalized) * 6.0d,
+                _ => t1
+            };
+        }
 
         private static string[] SplitInputIntoParts(string value)
         {
