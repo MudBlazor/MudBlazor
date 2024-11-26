@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace MudBlazor.Docs.Compiler
 {
@@ -128,6 +129,44 @@ namespace MudBlazor.Docs.Compiler
         ];
 
         /// <summary>
+        /// A list of types which don't have "/component/*" page to link to.
+        /// </summary>
+        public List<string> TypesWithoutExamples =
+        [
+            // TODO: Figure out a way to link XML docs to examples
+
+            "MudBaseBindableItemsControl`2",
+            "MudBaseButton",
+            "MudBaseDatePicker",
+            "MudBaseInput`1",
+            "MudBaseItemsControl`1",
+            "MudBooleanInput`1",
+            "MudCategoryChartBase",
+            "MudChart",
+            "MudChartBase",
+            "MudContextualActionBar",
+            "MudDebouncedInput`1",
+            "MudFlexBreak",
+            "MudFormComponent`2",
+            "MudInput`1",
+            "MudInputControl",
+            "MudInputLabel",
+            "MudInputString",
+            "MudLayout",
+            "MudMainContent",
+            "MudMask",
+            "MudPageContentNavigation",
+            "MudPicker`1",
+            "MudPickerContent",
+            "MudPickerToolbar",
+            "MudPopoverBase",
+            "MudRangeInput`1",
+            "MudRTLProvider",
+            "MudTableBase",
+            "PropertyColumn`2",
+        ];
+
+        /// <summary>
         /// Ensures that an API page is available for each MudBlazor component.
         /// </summary>
         public bool Execute()
@@ -221,9 +260,9 @@ namespace MudBlazor.Docs.Compiler
                 cb.AddLine(@$"var comp = ctx.RenderComponent<Api>(ComponentParameter.CreateParameter(""TypeName"", ""{type.Name}""));");
                 cb.AddLine(@$"await ctx.Services.GetService<IRenderQueueService>().WaitUntilEmpty();");
                 // Make sure docs for the type were actually found
-                cb.AddLine(@$"comp.Markup.Should().NotContain(""Sorry, the type {type} was not found"");");
+                cb.AddLine(@$"comp.Markup.Should().NotContain(""Sorry, the type {type.Name} was not found"");");
                 // Is this a component?
-                if (type.IsSubclassOf(typeof(MudComponentBase)))
+                if (type.IsSubclassOf(typeof(MudComponentBase)) && !TypesWithoutExamples.Contains(type.Name))
                 {
                     // Yes.  Check for the example link
                     cb.AddLine(@$"var exampleLink = comp.FindComponents<MudLink>().FirstOrDefault(link => link.Instance.Href != null && link.Instance.Href.StartsWith(""/component""));");

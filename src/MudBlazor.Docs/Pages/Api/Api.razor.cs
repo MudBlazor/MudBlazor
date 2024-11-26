@@ -72,8 +72,7 @@ public partial class Api
             else
             {
                 Title = DocumentedType.NameFriendly + " Class";
-            }
-
+            }            
         }
     }
 }

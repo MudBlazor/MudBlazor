@@ -41,7 +41,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("Tabs", typeof(MudTabs), typeof(MudTabPanel), typeof(MudDynamicTabs))
             .AddItem("Progress", typeof(MudProgressCircular), typeof(MudProgressLinear))
             .AddItem("Dialog", typeof(MudDialog), typeof(MudDialogContainer), typeof(MudDialogProvider))
-            .AddItem("Snackbar", typeof(SnackbarService), typeof(MudSnackbarProvider))
+            .AddItem("Snackbar", typeof(SnackbarService), typeof(MudSnackbarProvider), typeof(MudSnackbarElement))
             .AddItem("Avatar", typeof(MudAvatar), typeof(MudAvatarGroup))
             .AddItem("Alert", typeof(MudAlert))
             .AddItem("Card", typeof(MudCard), typeof(MudCardActions), typeof(MudCardContent), typeof(MudCardHeader), typeof(MudCardMedia))
@@ -53,8 +53,8 @@ namespace MudBlazor.Docs.Services
             .AddItem("Paper", typeof(MudPaper))
             .AddItem("Rating", typeof(MudRating), typeof(MudRatingItem))
             .AddItem("Skeleton", typeof(MudSkeleton))
-            .AddItem("Table", typeof(MudTable<T>), typeof(MudTablePager))
-            .AddItem("Data Grid", typeof(MudDataGrid<T>), typeof(Column<T>), typeof(FilterHeaderCell<T>), typeof(FooterCell<T>), typeof(HeaderCell<T>), typeof(HierarchyColumn<T>), typeof(MudDataGridPager<T>))
+            .AddItem("Table", typeof(MudTableBase), typeof(MudTable<T>), typeof(MudTablePager), typeof(MudTableGroupRow<T>), typeof(MudTableSortLabel<T>), typeof(MudTd),  typeof(MudTh), typeof(MudTr), typeof(MudTFootRow), typeof(MudTHeadRow))
+            .AddItem("Data Grid", typeof(MudDataGrid<T>), typeof(Column<T>), typeof(FilterHeaderCell<T>), typeof(FooterCell<T>), typeof(HeaderCell<T>), typeof(HierarchyColumn<T>), typeof(MudDataGridPager<T>), typeof(TemplateColumn<T>))
             .AddItem("Simple Table", typeof(MudSimpleTable))
             .AddItem("Tooltip", typeof(MudTooltip))
             .AddItem("Typography", typeof(MudText))
@@ -119,7 +119,7 @@ namespace MudBlazor.Docs.Services
                 .AddItem("Pie Chart", typeof(Pie))
                 .AddItem("Bar Chart", typeof(Bar))
                 .AddItem("Stacked Bar Chart", typeof(StackedBar))
-                .AddItem("Time Series Chart", typeof(TimeSeries))
+                .AddItem("Time Series Chart", typeof(TimeSeries), typeof(MudTimeSeriesChartBase), typeof(MudTimeSeriesChart))
             )
             // this must be last!
             .GetComponentsSortedByName();
@@ -296,6 +296,21 @@ namespace MudBlazor.Docs.Services
 
                 return _docsComponentsApi;
             }
+        }
+
+        /// <inheritdoc />
+        public MudComponent? GetExample(DocumentedType type)
+        {
+            return Components.FirstOrDefault(menu =>
+                // Find links matching the menu name...
+                (!menu.IsNavGroup && menu.ChildTypes == null && menu.Link == type.Name)
+                // ... or child links matching the name
+                || (!menu.IsNavGroup && menu.ChildTypes != null && menu.ChildTypes.Any(childType => childType.Name == type.Name))
+                // ... or links in sub-menus
+                || (menu.IsNavGroup && menu.GroupComponents.Any(subMenu => subMenu.ChildTypes == null && subMenu.Name == type.Name))
+                // ... or links in the children of sub-menus
+                || (menu.IsNavGroup && menu.GroupComponents.Any(subMenu => subMenu.ChildTypes.Any(childType => childType.Name == type.Name)))
+            );
         }
     }
 }

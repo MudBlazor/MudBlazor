@@ -76,8 +76,10 @@ public sealed partial class DocsPageHeader
     /// </summary>
     public DocumentedType DocumentedType { get; set; }
 
-    // Will be replaced by DocumentedType
-    public MudComponent _component;
+    /// <summary>
+    /// The example page for this type.
+    /// </summary>
+    public MudComponent Example { get; set; }
 
     /// <inheritdoc />
     protected override void OnParametersSet()
@@ -89,6 +91,8 @@ public sealed partial class DocsPageHeader
         {
             // Get the documentation for this component
             DocumentedType = ApiDocumentation.GetType(Component);
+            // Look for an example page for this type
+            Example = DocumentedType == null ? null : MenuService.GetExample(DocumentedType);
             // If there is no subtitle set, but we have a component summary, use the component summary
             if (string.IsNullOrEmpty(SubTitle) && !string.IsNullOrEmpty(DocumentedType.Summary))
             {
@@ -139,16 +143,5 @@ public sealed partial class DocsPageHeader
     private string GetCanonicalUri()
     {
         return NavigationManager.Uri.Replace(NavigationManager.BaseUri, "https://mudblazor.com/");
-    }
-
-    /// <summary>
-    /// Gets whether a type has an example page.
-    /// </summary>
-    /// <param name="type">The type to examine.</param>
-    /// <returns>When <c>true</c>, the menu service has a record of this type.</returns>
-    public bool HasExample(DocumentedType type)
-    {
-        return MenuService.Components.Any(menu => !menu.IsNavGroup && menu.Link == type.Name)
-            || MenuService.Components.Any(menu => menu.IsNavGroup && menu.GroupComponents.Any(subMenu => subMenu.Link == type.Name));
     }
 }
