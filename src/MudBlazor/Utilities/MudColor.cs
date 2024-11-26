@@ -625,11 +625,10 @@ namespace MudBlazor.Utilities
             var tg = HueToRgb(t1, t2, hNormalized);
             var tb = HueToRgb(t1, t2, hNormalized - 1.0d / 3.0d);
 
-                
             var r = ((int)Math.Round(tr * 255d)).EnsureRangeToByte();
             var g = ((int)Math.Round(tg * 255d)).EnsureRangeToByte();
             var b = ((int)Math.Round(tb * 255d)).EnsureRangeToByte();
-                
+
             return (r, g, b);
         }
 

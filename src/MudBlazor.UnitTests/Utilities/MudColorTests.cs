@@ -938,7 +938,7 @@ namespace MudBlazor.UnitTests.Utilities
         [TestCase("rgb(130,150,240)", 130, 150, 240, 255)]
         [TestCase("rgb(71,88,99)", 71, 88, 99, 255)]
         [TestCase("#8296f0ff", 130, 150, 240, 255)]
-        [TestCase( "#475863", 71, 88, 99, 255)]
+        [TestCase("#475863", 71, 88, 99, 255)]
         public void ParseTest(string value, byte r, byte g, byte b, byte a)
         {
             // Arrange
