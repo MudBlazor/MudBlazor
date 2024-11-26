@@ -379,7 +379,7 @@ namespace MudBlazor.Utilities
         }
 
         /// <inheritdoc />
-        public override int GetHashCode() => _valuesAsByte[0] + _valuesAsByte[1] + _valuesAsByte[2] + _valuesAsByte[3];
+        public override int GetHashCode() => HashCode.Combine(R, G, B, A);
 
         /// <inheritdoc />
         public override string ToString() => ToString(MudColorOutputFormats.RGBA);
