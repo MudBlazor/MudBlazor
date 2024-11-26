@@ -14,12 +14,12 @@ namespace MudBlazor.UnitTests.Components
     public class MaskTests : BunitTest
     {
         public static object[] TextFieldWithMask_SetValueParameterUpdateText_Parameters = [
-    new object[] { "PatternMask", new PatternMask("""0000"""), "1111", "2222" },
-    new object[] { "RegexMask", new RegexMask("""^\d*$"""), "1111", "2222" },
-    new object[] { "MultiMask", new MultiMask("""0000"""), "1111", "2222" },
-    new object[] { "BlockMask", new BlockMask(new Block('0', 1, 4)), "1111", "2222" },
-    new object[] { "DateMask", new DateMask("""MM/dd/yyyy"""), "01/01/2024", "02/03/2025" }
-];
+            new object[] { "PatternMask", new PatternMask("""0000"""), "1111", "2222" },
+            new object[] { "RegexMask", new RegexMask("""^\d*$"""), "1111", "2222" },
+            new object[] { "MultiMask", new MultiMask("""0000"""), "1111", "2222" },
+            new object[] { "BlockMask", new BlockMask(new Block('0', 1, 4)), "1111", "2222" },
+            new object[] { "DateMask", new DateMask("""MM/dd/yyyy"""), "01/01/2024", "02/03/2025" }
+        ];
 
         [TestCaseSource(nameof(TextFieldWithMask_SetValueParameterUpdateText_Parameters))]
         public void TextFieldWithMask_SetValueParameterUpdateText(string testName, IMask mask, string initialValue, string setValue)
