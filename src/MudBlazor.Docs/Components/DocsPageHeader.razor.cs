@@ -140,4 +140,15 @@ public sealed partial class DocsPageHeader
     {
         return NavigationManager.Uri.Replace(NavigationManager.BaseUri, "https://mudblazor.com/");
     }
+
+    /// <summary>
+    /// Gets whether a type has an example page.
+    /// </summary>
+    /// <param name="type">The type to examine.</param>
+    /// <returns>When <c>true</c>, the menu service has a record of this type.</returns>
+    public bool HasExample(DocumentedType type)
+    {
+        return MenuService.Components.Any(menu => !menu.IsNavGroup && menu.Link == type.Name)
+            || MenuService.Components.Any(menu => menu.IsNavGroup && menu.GroupComponents.Any(subMenu => subMenu.Link == type.Name));
+    }
 }

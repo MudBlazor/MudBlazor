@@ -56,18 +56,13 @@ else
         </div>
     </DocsPageSection>
 }
-@if (IsApi && DocumentedType != null && DocumentedType.IsComponent)
+@if (IsApi && DocumentedType != null && HasExample(DocumentedType))
 {
     <DocsPageSection api-link-section>
         <SectionHeader Title="Pages" />
-
-        @if (DocumentedType.IsComponent)
-        {
-            <MudAlert Severity="Severity.Info" Class="mt-6">
-                For examples and details on the usage of this component, visit the example page: <br />
-                <MudLink Href="@DocumentedType.ComponentUrl" Typo="Typo.inherit">@DocumentedType.NameFriendly</MudLink>
-            </MudAlert>
-        }
-
+        <MudAlert Severity="Severity.Info" Class="mt-6">
+            For examples and details on the usage of this component, visit the example page: <br />
+            <MudLink Href="@DocumentedType.ComponentUrl" Typo="Typo.inherit">@DocumentedType.NameFriendly</MudLink>
+        </MudAlert>
     </DocsPageSection>
 }
