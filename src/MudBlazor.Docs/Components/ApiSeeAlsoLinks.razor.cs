@@ -27,6 +27,7 @@ public partial class ApiSeeAlsoLinks
         set
         {
             _type = value;
+            Table?.ReloadServerData();
         }
     }
 
