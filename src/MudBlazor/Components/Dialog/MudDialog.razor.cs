@@ -20,6 +20,7 @@ namespace MudBlazor
     /// <seealso cref="DialogParameters{T}"/>
     /// <seealso cref="DialogReference"/>
     /// <seealso cref="MudBlazor.DialogService"/>
+    /// <seealso cref="MudMessageBox" />
     public partial class MudDialog : MudComponentBase
     {
         private IDialogReference? _reference;

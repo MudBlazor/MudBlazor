@@ -13,6 +13,7 @@ namespace MudBlazor
     /// <summary>
     /// A pop-up dialog with a simple message and button choices.
     /// </summary>
+    /// <seealso cref="MudDialog" />
     public partial class MudMessageBox : MudComponentBase
     {
         private readonly ParameterState<bool> _visibleState;
