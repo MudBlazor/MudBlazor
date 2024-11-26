@@ -939,7 +939,7 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
-        [TestCase("rgb(130,150,240)", 130, 150, 240, 255)]
+        [TestCase("rgba(130,150,240,0.52)", 130, 150, 240, 132)]
         [TestCase("rgb(71,88,99)", 71, 88, 99, 255)]
         [TestCase("#8296f0ff", 130, 150, 240, 255)]
         [TestCase("#475863", 71, 88, 99, 255)]
@@ -956,8 +956,8 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
-        [TestCase("rgb(130,150,240, 63)")]
-        [TestCase("rgb(71,88,99, 63)")]
+        [TestCase("rgba(130,150,240,0.52,50)")]
+        [TestCase("rgb(71,88,99,63)")]
         [TestCase("#8296f0ffff")]
         public void ParseIncorrectFormatTest(string value)
         {
@@ -969,7 +969,7 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
-        [TestCase("rgb(130,150,240)", 130, 150, 240, 255)]
+        [TestCase("rgba(130,150,240,0.52)", 130, 150, 240, 132)]
         [TestCase("rgb(71,88,99)", 71, 88, 99, 255)]
         [TestCase("#8296f0ff", 130, 150, 240, 255)]
         [TestCase("#475863", 71, 88, 99, 255)]
@@ -987,7 +987,7 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
-        [TestCase("rgb(130,150,240, 63)")]
+        [TestCase("rgba(130,150,240,0.52,50)")]
         [TestCase("rgb(71,88,99, 63)")]
         [TestCase("#8296f0ffff")]
         public void TryParseIncorrectFormatTest(string value)
