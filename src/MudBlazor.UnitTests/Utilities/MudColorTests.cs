@@ -216,13 +216,6 @@ namespace MudBlazor.UnitTests.Utilities
                 darkenColor.R.Should().Be(darkenColorFromRgb.R);
                 darkenColor.G.Should().Be(darkenColorFromRgb.G);
                 darkenColor.B.Should().Be(darkenColorFromRgb.B);
-
-                //MudColor implicitCasted = input;
-
-                //implicitCasted.R.Should().Be(r);
-                //implicitCasted.G.Should().Be(g);
-                //implicitCasted.B.Should().Be(b);
-                //implicitCasted.A.Should().Be(alpha);
             }
         }
 
@@ -1027,6 +1020,21 @@ namespace MudBlazor.UnitTests.Utilities
             r2.Should().Be(255);
             g2.Should().Be(128);
             b2.Should().Be(64);
+        }
+
+        [Test]
+        public void ExplicitMudColorToStringCastTest()
+        {
+            // Arrange
+            var mudColor1 = new MudColor(71, 88, 99, 1);
+
+            // Act
+            var result1 = (string)mudColor1;
+            var result2 = (string)(MudColor)null;
+
+            // Act & Assert
+            result1.Should().Be("#47586301");
+            result2.Should().Be(string.Empty);
         }
 
         private static readonly object[] _multiGradientTestCases =
