@@ -956,6 +956,19 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
+        [TestCase("rgb(130,150,240, 63)")]
+        [TestCase("rgb(71,88,99, 63)")]
+        [TestCase("#8296f0ffff")]
+        public void ParseIncorrectFormatTest(string value)
+        {
+            // Act & Arrange
+            var act = () => MudColor.Parse(value);
+
+            // Assert
+            act.Should().Throw<ArgumentException>();
+        }
+
+        [Test]
         public void DeconstructTest()
         {
             // Arrange
