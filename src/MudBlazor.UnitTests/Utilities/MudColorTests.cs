@@ -934,6 +934,43 @@ namespace MudBlazor.UnitTests.Utilities
             mudColor.UInt32.Should().Be(mudColor.UInt32);
         }
 
+        [Test]
+        [TestCase("rgb(130,150,240)", 130, 150, 240, 255)]
+        [TestCase("rgb(71,88,99)", 71, 88, 99, 255)]
+        [TestCase("#8296f0ff", 130, 150, 240, 255)]
+        [TestCase( "#475863", 71, 88, 99, 255)]
+        public void ParseTest(string value, byte r, byte g, byte b, byte a)
+        {
+            // Arrange
+            var expected = new MudColor(r, g, b, a);
+
+            // Act
+            var result = MudColor.Parse(value);
+
+            // Assert
+            result.Should().Be(expected);
+        }
+
+        [Test]
+        public void DeconstructTest()
+        {
+            // Arrange
+            var mudColor = new MudColor(255, 128, 64, 192);
+
+            // Act
+            var (r, g, b, a) = mudColor;
+            var (r2, g2, b2) = mudColor;
+
+            // Assert
+            r.Should().Be(255);
+            g.Should().Be(128);
+            b.Should().Be(64);
+            a.Should().Be(192);
+            r2.Should().Be(255);
+            g2.Should().Be(128);
+            b2.Should().Be(64);
+        }
+
         private static readonly object[] _multiGradientTestCases =
         [
             // Should return the same colors when list colors count is same as number of colors

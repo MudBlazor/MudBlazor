@@ -2,6 +2,7 @@
 //// https://stackoverflow.com/questions/4087581/creating-a-c-sharp-color-from-hsl-values/4087601#4087601
 //// Stripped and adapted by Meinrad Recheis and Benjamin Kappel for MudBlazor
 
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
@@ -41,7 +42,7 @@ namespace MudBlazor.Utilities
     /// Represents a color with methods to manipulate color values.
     /// </summary>
     [Serializable]
-    public partial class MudColor : ISerializable, IEquatable<MudColor>, IFormattable
+    public partial class MudColor : ISerializable, IEquatable<MudColor>, IParsable<MudColor>, IFormattable
     {
         private const double Epsilon = 0.000000000000001;
         private readonly byte[] _valuesAsByte;
@@ -180,7 +181,7 @@ namespace MudBlazor.Utilities
             _valuesAsByte[2] = b;
             _valuesAsByte[3] = a;
 
-            var (h, s, l) = CalculateHsl();
+            var (h, s, l) = RgbToHsl(r, g, b);
             H = h;
             S = s;
             L = l;
@@ -246,75 +247,9 @@ namespace MudBlazor.Utilities
         {
             ArgumentException.ThrowIfNullOrEmpty(value);
 
-            value = value.Trim().ToLowerInvariant();
-
-            if (value.StartsWith("rgba"))
-            {
-                var parts = SplitInputIntoParts(value);
-                if (parts.Length != 4)
-                {
-                    throw new ArgumentException("Invalid color format.");
-                }
-
-                _valuesAsByte = new[]
-                {
-                    byte.Parse(parts[0], CultureInfo.InvariantCulture),
-                    byte.Parse(parts[1], CultureInfo.InvariantCulture),
-                    byte.Parse(parts[2], CultureInfo.InvariantCulture),
-                    (byte)Math.Max(0, Math.Min(255, 255 * double.Parse(parts[3], CultureInfo.InvariantCulture))),
-                };
-            }
-            else if (value.StartsWith("rgb"))
-            {
-                var parts = SplitInputIntoParts(value);
-                if (parts.Length != 3)
-                {
-                    throw new ArgumentException("Invalid color format.");
-                }
-
-                _valuesAsByte = new[]
-                {
-                    byte.Parse(parts[0], CultureInfo.InvariantCulture),
-                    byte.Parse(parts[1], CultureInfo.InvariantCulture),
-                    byte.Parse(parts[2], CultureInfo.InvariantCulture),
-                    byte.MaxValue
-                };
-            }
-            else
-            {
-
-                if (value.StartsWith('#'))
-                {
-                    value = value.Substring(1);
-                }
-
-                switch (value.Length)
-                {
-                    case 3:
-                        value = new string(new[] { value[0], value[0], value[1], value[1], value[2], value[2], 'F', 'F' });
-                        break;
-                    case 4:
-                        value = new string(new[] { value[0], value[0], value[1], value[1], value[2], value[2], value[3], value[3] });
-                        break;
-                    case 6:
-                        value += "FF";
-                        break;
-                    case 8:
-                        break;
-                    default:
-                        throw new ArgumentException(@"Not a valid color.", nameof(value));
-                }
-
-                _valuesAsByte = new[]
-                {
-                    GetByteFromValuePart(value,0),
-                    GetByteFromValuePart(value,2),
-                    GetByteFromValuePart(value,4),
-                    GetByteFromValuePart(value,6),
-                };
-            }
-
-            var (h, s, l) = CalculateHsl();
+            var (r, g, b, a) = ParseStringColorCore(value);
+            var (h, s, l) = RgbToHsl(r, g, b);
+            _valuesAsByte = [r, g, b, a];
             H = h;
             S = s;
             L = l;
@@ -443,32 +378,6 @@ namespace MudBlazor.Utilities
                 _valuesAsByte[3] == other._valuesAsByte[3];
         }
 
-        /// <summary>
-        /// Determines whether two <see cref="MudColor"/> instances are equal.
-        /// </summary>
-        /// <param name="lhs">The first <see cref="MudColor"/> instance to compare.</param>
-        /// <param name="rhs">The second <see cref="MudColor"/> instance to compare.</param>
-        /// <returns>True if the instances are equal; otherwise, false.</returns>
-        public static bool operator ==(MudColor? lhs, MudColor? rhs)
-        {
-            if (lhs is null && rhs is null)
-            {
-                return true;
-            }
-
-            if (ReferenceEquals(lhs, rhs))
-            {
-                return true;
-            }
-
-            if (lhs is null || rhs is null)
-            {
-                return false;
-            }
-
-            return lhs.Equals(rhs);
-        }
-
         /// <inheritdoc />
         public override int GetHashCode() => _valuesAsByte[0] + _valuesAsByte[1] + _valuesAsByte[2] + _valuesAsByte[3];
 
@@ -537,6 +446,34 @@ namespace MudBlazor.Utilities
         }
 
         /// <summary>
+        /// Deconstructs the <see cref="MudColor"/> into its red, green, and blue components.
+        /// </summary>
+        /// <param name="r">The red component value (0 to 255).</param>
+        /// <param name="g">The green component value (0 to 255).</param>
+        /// <param name="b">The blue component value (0 to 255).</param>
+        public void Deconstruct(out byte r, out byte g, out byte b)
+        {
+            r = R;
+            g = G;
+            b = B;
+        }
+
+        /// <summary>
+        /// Deconstructs the <see cref="MudColor"/> into its red, green, blue, and alpha components.
+        /// </summary>
+        /// <param name="r">The red component value (0 to 255).</param>
+        /// <param name="g">The green component value (0 to 255).</param>
+        /// <param name="b">The blue component value (0 to 255).</param>
+        /// <param name="a">The alpha component value (0 to 255).</param>
+        public void Deconstruct(out byte r, out byte g, out byte b, out byte a)
+        {
+            r = R;
+            g = G;
+            b = B;
+            a = A;
+        }
+
+        /// <summary>
         /// Determines whether two <see cref="MudColor"/> instances are not equal.
         /// </summary>
         /// <param name="lhs">The first <see cref="MudColor"/> instance to compare.</param>
@@ -545,11 +482,37 @@ namespace MudBlazor.Utilities
         public static bool operator !=(MudColor? lhs, MudColor? rhs) => !(lhs == rhs);
 
         /// <summary>
+        /// Determines whether two <see cref="MudColor"/> instances are equal.
+        /// </summary>
+        /// <param name="lhs">The first <see cref="MudColor"/> instance to compare.</param>
+        /// <param name="rhs">The second <see cref="MudColor"/> instance to compare.</param>
+        /// <returns>True if the instances are equal; otherwise, false.</returns>
+        public static bool operator ==(MudColor? lhs, MudColor? rhs)
+        {
+            if (lhs is null && rhs is null)
+            {
+                return true;
+            }
+
+            if (ReferenceEquals(lhs, rhs))
+            {
+                return true;
+            }
+
+            if (lhs is null || rhs is null)
+            {
+                return false;
+            }
+
+            return lhs.Equals(rhs);
+        }
+
+        /// <summary>
         /// Converts a string representation of a color to a <see cref="MudColor"/> instance.
         /// </summary>
         /// <param name="input">The string representation of the color.</param>
         /// <returns>A new <see cref="MudColor"/> instance representing the color.</returns>
-        public static implicit operator MudColor(string input) => new(input);
+        public static implicit operator MudColor(string input) => Parse(input);
 
         /// <summary>
         /// Converts a <see cref="MudColor"/> instance to its string representation.
@@ -564,6 +527,78 @@ namespace MudBlazor.Utilities
         /// <param name="mudColor">The MudColor instance to convert.</param>
         /// <returns>The 32-bit unsigned integer representation of the color.</returns>
         public static explicit operator uint(MudColor mudColor) => mudColor.UInt32;
+
+        /// <summary>
+        /// Parses a string representation of a color to a <see cref="MudColor"/> instance.
+        /// </summary>
+        /// <param name="s">The string representation of the color.</param>
+        /// <param name="provider">An optional format provider.</param>
+        /// <remarks>
+        /// The color can be represented in various formats, including hexadecimal (with or without alpha), RGB, and RGBA.
+        /// Examples of valid color strings:
+        /// - Hexadecimal format: "#ab2a3d", "#ab2a3dff"
+        /// - RGB format: "rgb(12,15,40)"
+        /// - RGBA format: "rgba(12,15,40,0.42)"
+        /// </remarks>
+        /// <returns>A new <see cref="MudColor"/> instance representing the color.</returns>
+        /// <exception cref="ArgumentException">Thrown when the input string is null, empty or invalid color format.</exception>
+        public static MudColor Parse(string s, IFormatProvider? provider = null)
+        {
+            ArgumentException.ThrowIfNullOrEmpty(s);
+            var (r, g, b, a) = ParseStringColorCore(s);
+
+            return new MudColor(r, g, b, a);
+        }
+
+        /// <summary>
+        /// Tries to parse a string representation of a color to a <see cref="MudColor"/> instance.
+        /// </summary>
+        /// <param name="s">The string representation of the color.</param>
+        /// <param name="provider">An optional format provider.</param>
+        /// <param name="result">When this method returns, contains the <see cref="MudColor"/> instance equivalent to the color contained in <paramref name="s"/>, if the conversion succeeded, or <c>null</c> if the conversion failed.</param>
+        /// <remarks>
+        /// The color can be represented in various formats, including hexadecimal (with or without alpha), RGB, and RGBA.
+        /// Examples of valid color strings:
+        /// - Hexadecimal format: "#ab2a3d", "#ab2a3dff"
+        /// - RGB format: "rgb(12,15,40)"
+        /// - RGBA format: "rgba(12,15,40,0.42)"
+        /// </remarks>
+        /// <returns><c>true</c> if the string was successfully parsed; otherwise, <c>false</c>.</returns>
+        public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out MudColor result)
+        {
+            if (string.IsNullOrEmpty(s))
+            {
+                result = null;
+                return false;
+            }
+
+            try
+            {
+                var mudColor = Parse(s, provider);
+                result = mudColor;
+                return true;
+            }
+            catch (Exception)
+            {
+                result = null;
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Tries to parse a string representation of a color to a <see cref="MudColor"/> instance.
+        /// </summary>
+        /// <param name="s">The string representation of the color.</param>
+        /// <param name="result">When this method returns, contains the <see cref="MudColor"/> instance equivalent to the color contained in <paramref name="s"/>, if the conversion succeeded, or <c>null</c> if the conversion failed.</param>
+        /// <remarks>
+        /// The color can be represented in various formats, including hexadecimal (with or without alpha), RGB, and RGBA.
+        /// Examples of valid color strings:
+        /// - Hexadecimal format: "#ab2a3d", "#ab2a3dff"
+        /// - RGB format: "rgb(12,15,40)"
+        /// - RGBA format: "rgba(12,15,40,0.42)"
+        /// </remarks>
+        /// <returns><c>true</c> if the string was successfully parsed; otherwise, <c>false</c>.</returns>
+        public static bool TryParse([NotNullWhen(true)] string? s, [MaybeNullWhen(false)] out MudColor result) => TryParse(s, null, out result);
 
         private static double NormalizeAlpha(byte a, int digit = 2) => Math.Round(a / 255.0, digit);
 
@@ -611,6 +646,73 @@ namespace MudBlazor.Utilities
             };
         }
 
+        private static (byte r, byte g, byte b, byte a) ParseStringColorCore(string value)
+        {
+            value = value.Trim().ToLowerInvariant();
+
+            return value switch
+            {
+                _ when value.StartsWith("rgba") => ParseStringRgbaToRgba(value),
+                _ when value.StartsWith("rgb") => ParseStringRgbToRgba(value),
+                _ => ParseStringHexToRgba(value),
+            };
+        }
+
+        private static (byte r, byte g, byte b, byte a) ParseStringRgbaToRgba(string value)
+        {
+            var parts = SplitInputIntoParts(value);
+            if (parts.Length != 4)
+            {
+                throw new ArgumentException("Invalid color format.");
+            }
+
+            var r = byte.Parse(parts[0], CultureInfo.InvariantCulture);
+            var g = byte.Parse(parts[1], CultureInfo.InvariantCulture);
+            var b = byte.Parse(parts[2], CultureInfo.InvariantCulture);
+            var a = (byte)Math.Max(0, Math.Min(255, 255 * double.Parse(parts[3], CultureInfo.InvariantCulture)));
+
+            return (r, g, b, a);
+        }
+
+        private static (byte r, byte g, byte b, byte a) ParseStringRgbToRgba(string value)
+        {
+            var parts = SplitInputIntoParts(value);
+            if (parts.Length != 3)
+            {
+                throw new ArgumentException("Invalid color format.");
+            }
+
+            var r = byte.Parse(parts[0], CultureInfo.InvariantCulture);
+            var g = byte.Parse(parts[1], CultureInfo.InvariantCulture);
+            var b = byte.Parse(parts[2], CultureInfo.InvariantCulture);
+            return (r, g, b, byte.MaxValue);
+        }
+
+        private static (byte r, byte g, byte b, byte a) ParseStringHexToRgba(string value)
+        {
+            if (value.StartsWith('#'))
+            {
+                value = value.Substring(1);
+            }
+            switch (value.Length)
+            {
+                case 3:
+                    value = new string(new[] { value[0], value[0], value[1], value[1], value[2], value[2], 'F', 'F' });
+                    break;
+                case 4:
+                    value = new string(new[] { value[0], value[0], value[1], value[1], value[2], value[2], value[3], value[3] });
+                    break;
+                case 6:
+                    value += "FF";
+                    break;
+                case 8:
+                    break;
+                default:
+                    throw new ArgumentException(@"Not a valid color.", nameof(value));
+            }
+            return (GetByteFromValuePart(value, 0), GetByteFromValuePart(value, 2), GetByteFromValuePart(value, 4), GetByteFromValuePart(value, 6));
+        }
+
         private static string[] SplitInputIntoParts(string value)
         {
             var startIndex = value.IndexOf('(');
@@ -625,39 +727,39 @@ namespace MudBlazor.Utilities
             return parts;
         }
 
-        private (double h, double s, double l) CalculateHsl()
+        private static (double h, double s, double l) RgbToHsl(byte r, byte g, byte b)
         {
             var h = 0D;
             var s = 0D;
 
             // normalize red, green, blue values
-            var r = R / 255D;
-            var g = G / 255D;
-            var b = B / 255D;
+            var rNormalized = r / 255D;
+            var gNormalized = g / 255D;
+            var bNormalized = b / 255D;
 
-            var max = Math.Max(r, Math.Max(g, b));
-            var min = Math.Min(r, Math.Min(g, b));
+            var max = Math.Max(rNormalized, Math.Max(gNormalized, bNormalized));
+            var min = Math.Min(rNormalized, Math.Min(gNormalized, bNormalized));
 
             // hue
             if (Math.Abs(max - min) < Epsilon)
             {
                 h = 0D; // undefined
             }
-            else if ((Math.Abs(max - r) < Epsilon) && (g >= b))
+            else if ((Math.Abs(max - rNormalized) < Epsilon) && (gNormalized >= bNormalized))
             {
-                h = (60D * (g - b)) / (max - min);
+                h = (60D * (gNormalized - bNormalized)) / (max - min);
             }
-            else if ((Math.Abs(max - r) < Epsilon) && (g < b))
+            else if ((Math.Abs(max - rNormalized) < Epsilon) && (gNormalized < bNormalized))
             {
-                h = ((60D * (g - b)) / (max - min)) + 360D;
+                h = ((60D * (gNormalized - bNormalized)) / (max - min)) + 360D;
             }
-            else if (Math.Abs(max - g) < Epsilon)
+            else if (Math.Abs(max - gNormalized) < Epsilon)
             {
-                h = ((60D * (b - r)) / (max - min)) + 120D;
+                h = ((60D * (bNormalized - rNormalized)) / (max - min)) + 120D;
             }
-            else if (Math.Abs(max - b) < Epsilon)
+            else if (Math.Abs(max - bNormalized) < Epsilon)
             {
-                h = ((60D * (r - g)) / (max - min)) + 240D;
+                h = ((60D * (rNormalized - gNormalized)) / (max - min)) + 240D;
             }
 
             // lightness
