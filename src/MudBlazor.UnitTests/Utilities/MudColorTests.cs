@@ -969,6 +969,38 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
+        [TestCase("rgb(130,150,240)", 130, 150, 240, 255)]
+        [TestCase("rgb(71,88,99)", 71, 88, 99, 255)]
+        [TestCase("#8296f0ff", 130, 150, 240, 255)]
+        [TestCase("#475863", 71, 88, 99, 255)]
+        public void TryParseTest(string value, byte r, byte g, byte b, byte a)
+        {
+            // Arrange
+            var expected = new MudColor(r, g, b, a);
+
+            // Act
+            var success = MudColor.TryParse(value, out var result);
+
+            // Assert
+            success.Should().BeTrue();
+            result.Should().Be(expected);
+        }
+
+        [Test]
+        [TestCase("rgb(130,150,240, 63)")]
+        [TestCase("rgb(71,88,99, 63)")]
+        [TestCase("#8296f0ffff")]
+        public void TryParseIncorrectFormatTest(string value)
+        {
+            // Act
+            var success = MudColor.TryParse(value, out var result);
+
+            // Assert
+            success.Should().BeFalse();
+            result.Should().BeNull();
+        }
+
+        [Test]
         public void DeconstructTest()
         {
             // Arrange
