@@ -210,12 +210,12 @@ namespace MudBlazor.UnitTests.Utilities
                 var darkenColor = color.ColorRgbDarken();
 
                 //use as reference
-                var colorFromRGB = new MudColor(color.R, color.G, color.B, color.A);
-                var darkenColorFromRGB = colorFromRGB.ColorRgbDarken();
+                var colorFromRgb = new MudColor(color.R, color.G, color.B, color.A);
+                var darkenColorFromRgb = colorFromRgb.ColorRgbDarken();
 
-                darkenColor.R.Should().Be(darkenColorFromRGB.R);
-                darkenColor.G.Should().Be(darkenColorFromRGB.G);
-                darkenColor.B.Should().Be(darkenColorFromRGB.B);
+                darkenColor.R.Should().Be(darkenColorFromRgb.R);
+                darkenColor.G.Should().Be(darkenColorFromRgb.G);
+                darkenColor.B.Should().Be(darkenColorFromRgb.B);
 
                 //MudColor implicitCasted = input;
 
@@ -837,8 +837,15 @@ namespace MudBlazor.UnitTests.Utilities
         [Test]
         public void Equals_DifferentObjectType()
         {
+            // Arrange
             MudColor color1 = new(10, 20, 50, 255);
-            color1.Equals(124).Should().BeFalse();
+            object obj = 124;
+
+            // Act
+            var equals = color1.Equals(obj);
+
+            // Assert
+            equals.Should().BeFalse();
         }
 
         [Test]
@@ -990,6 +997,8 @@ namespace MudBlazor.UnitTests.Utilities
         [TestCase("rgba(130,150,240,0.52,50)")]
         [TestCase("rgb(71,88,99, 63)")]
         [TestCase("#8296f0ffff")]
+        [TestCase("")]
+        [TestCase(null)]
         public void TryParseIncorrectFormatTest(string value)
         {
             // Act
