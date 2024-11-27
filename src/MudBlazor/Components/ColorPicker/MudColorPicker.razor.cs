@@ -370,8 +370,8 @@ namespace MudBlazor
                 return;
             }
 
-            var rgbChanged = value != _value;
-            var hslChanged = _value != null && value.HslChanged(_value);
+            var rgbChanged = !value.Equals(_value);
+            var hslChanged = !value.HslEquals(_value);
             var shouldUpdateBinding = _value != null
                                       && (rgbChanged || (UpdateBindingIfOnlyHSLChanged && hslChanged));
             _value = value;
