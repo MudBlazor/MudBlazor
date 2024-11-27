@@ -10,7 +10,7 @@
             {
                 for (int col = 0; col < _series[row].Data.Length; col++)
                 {
-                    var cell = _heatMapCells.FirstOrDefault(c => c.Row == row && c.Column == col);
+                    var cell = HeatMapCells.FirstOrDefault(c => c.Row == row && c.Column == col);
                     var color = GetColorForValue(cell?.Value);
 
                     // Define each gradient for 4 directions
@@ -52,7 +52,7 @@
         var seriesLength = _series[row].Data != null ? _series[row].Data.Length : 0; // protect from a null array
         @for (int col = 0; col < seriesLength; col++)
         {
-            var cell = _heatMapCells.FirstOrDefault(c => c.Row == row && c.Column == col);
+            var cell = HeatMapCells.FirstOrDefault(c => c.Row == row && c.Column == col);
             if (cellWidth < CellMinSize)
             {
                 cellWidth = Math.Max(CellMinSize, (BoundWidth - _horizontalStartSpace - _horizontalEndSpace - padding * (SeriesLength - 1)) / SeriesLength);
@@ -73,10 +73,17 @@
                 <!-- Group containing both the rectangle and the text -->
                 <g>
                     <rect x="@x" y="@y" width="@cellWidth" height="@cellHeight"
-                          fill="@(_options is { EnableSmoothGradient: true } ? "transparent" : GetColorForValue(cell?.Value))" />
-                    @if (_options is { ShowLabels: true } && cell is { Value: not null })
+                    fill="@(_options is { EnableSmoothGradient: true } ? "transparent" : GetColorForValue(cell?.Value))" />
+                    @if (_options is { ShowLabels: true } && cell is { Value: not null } && cell is { CustomFragment: null })
                     {
                         @((MarkupString)@$"<text font-size='{_dynamicFontSize}' x='{x + cellWidth / 2}' y='{y + cellHeight / 2}' dominant-baseline='middle' text-anchor='middle'>{FormatValueForDisplay(cell?.Value)}</text>")
+                    }
+                    else if (cell is { CustomFragment: not null })
+                    {
+                        <svg x="@(x)" y="@(y)" width="@(cellWidth)" height="@(cellHeight)"
+                             preserveAspectRatio="xMidYMid meet">
+                            @cell.CustomFragment
+                        </svg>
                     }
                 </g>
 

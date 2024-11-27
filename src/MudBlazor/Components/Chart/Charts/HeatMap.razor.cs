@@ -82,13 +82,15 @@ namespace MudBlazor.Charts
 
         private List<(double value, string color)> _legends = [];
 
-        private List<HeatMapCell> _heatMapCells = [];
+        internal List<MudHeatMapCell> _customHeatMapCells = [];
 
         /// <summary>
         /// The chart, if any, containing this component.
         /// </summary>
         [CascadingParameter]
         public MudChart? MudChartParent { get; set; }
+
+        public List<HeatMapCell> HeatMapCells = [];
 
         protected override void OnParametersSet()
         {
@@ -115,6 +117,13 @@ namespace MudBlazor.Charts
                     _series.Clear();
                     _series = MudChartParent.ChartSeries;
                 }
+                if (_customHeatMapCells.Count == 0 ||
+                    (MudChartParent.MudHeatMapCells.Count > 0 &&
+                    _customHeatMapCells != MudChartParent.MudHeatMapCells))
+                {
+                    _customHeatMapCells.Clear();
+                    _customHeatMapCells = MudChartParent.MudHeatMapCells;
+                }
             }
 
             InitializeHeatmap();
@@ -123,7 +132,7 @@ namespace MudBlazor.Charts
         private void InitializeHeatmap()
         {
             // Populate _heatmapCells based on data, e.g., matrix of values
-            _heatMapCells.Clear();
+            HeatMapCells.Clear();
             _minValue = 0;
             _maxValue = 1;
 
@@ -137,11 +146,13 @@ namespace MudBlazor.Charts
                 for (var col = 0; col < cols; col++)
                 {
                     var value = GetDataValue(row, col); // Method to retrieve the value for each cell
-                    _heatMapCells.Add(new HeatMapCell
+                    var mudHeatMapOverride = _customHeatMapCells.FirstOrDefault(x => x.Row == row && x.Column == col);
+                    HeatMapCells.Add(new HeatMapCell
                     {
                         Row = row,
                         Column = col,
                         Value = value,
+                        CustomFragment = mudHeatMapOverride?.ChildContent,
                     });
                     if (value != null)
                     {

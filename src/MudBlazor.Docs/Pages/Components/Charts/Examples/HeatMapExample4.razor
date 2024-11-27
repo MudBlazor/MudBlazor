@@ -41,7 +41,29 @@
     </MudItem>
     <MudItem xs="10">
         <MudChart ChartType="ChartType.HeatMap" ChartSeries="@Series"
-                  XAxisLabels="@XAxisLabels" ChartOptions="@options" LegendPosition="_showLegendPosition"></MudChart>
+                  XAxisLabels="@XAxisLabels" ChartOptions="@options" LegendPosition="_showLegendPosition">
+            <MudHeatMapCell Row="0" Column="0">
+                <svg>@((MarkupString)Icons.Material.Rounded.Face)</svg>
+            </MudHeatMapCell>
+            <MudHeatMapCell Row="1" Column="0">
+                <text dominant-baseline="middle" text-anchor="middle" fill="black" font-family="Helvetica" font-size="14">N/A</text>
+            </MudHeatMapCell>
+            <MudHeatMapCell Row="2" Column="0">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                    <!-- Face Circle -->
+                    <circle cx="50" cy="50" r="48" stroke="black" stroke-width="2" fill="#FFD700" />
+
+                    <!-- Left Eye -->
+                    <circle cx="35" cy="40" r="5" fill="black" />
+
+                    <!-- Right Eye -->
+                    <circle cx="65" cy="40" r="5" fill="black" />
+
+                    <!-- Smile -->
+                    <path d="M30,60 Q50,80 70,60" stroke="black" stroke-width="3" fill="none" />
+                </svg>
+            </MudHeatMapCell>
+        </MudChart>
     </MudItem>
 </MudGrid>
 <MudGrid Spacing="2" Class="d-flex">

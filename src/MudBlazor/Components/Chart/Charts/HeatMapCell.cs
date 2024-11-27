@@ -2,6 +2,8 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using Microsoft.AspNetCore.Components;
+
 namespace MudBlazor.Charts
 {
 #nullable enable
@@ -12,6 +14,7 @@ namespace MudBlazor.Charts
         public int Column { get; set; }
 
         public double? Value { get; set; }
-    }
 
+        public RenderFragment? CustomFragment { get; set; }
+    }
 }
