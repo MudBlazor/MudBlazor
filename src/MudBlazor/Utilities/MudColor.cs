@@ -146,17 +146,15 @@ namespace MudBlazor.Utilities
         /// <param name="a">The alpha component value (0 to 255).</param>
         public MudColor(double h, double s, double l, int a)
         {
-            //_valuesAsByte = new byte[4];
-
             h = Math.Round(h.EnsureRange(360), 0);
             s = Math.Round(s.EnsureRange(1), 2);
             l = Math.Round(l.EnsureRange(1), 2);
             a = a.EnsureRange(255);
 
-            var (r, g, b) = HslToRgb(new HSL(h, s, l));
+            var hsl = new HSL(h, s, l);
+            var (r, g, b) = HslToRgb(in hsl);
             _rgba = new RGBA(r, g, b, (byte)a);
-
-            _hsl = new HSL(Math.Round(h, 0), Math.Round(s, 2), Math.Round(l, 2));
+            _hsl = hsl;
         }
 
         /// <summary>
@@ -587,7 +585,7 @@ namespace MudBlazor.Utilities
 
         private static byte GetByteFromValuePart(string input, int index) => byte.Parse(new string(new[] { input[index], input[index + 1] }), NumberStyles.HexNumber);
 
-        private static (byte r, byte g, byte b) HslToRgb(HSL hsl)
+        private static (byte r, byte g, byte b) HslToRgb(in HSL hsl)
         {
             // Achromatic (gray scale)
             if (Math.Abs(hsl.S) < Epsilon)
