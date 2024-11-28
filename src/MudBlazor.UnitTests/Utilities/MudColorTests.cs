@@ -837,7 +837,7 @@ namespace MudBlazor.UnitTests.Utilities
 #pragma warning restore CS1718 // Comparison made to same variable
 
         [Test]
-        public void Equals_null()
+        public void Equals_Null()
         {
             MudColor color1 = new(10, 20, 50, 255);
             (color1 == null).Should().BeFalse();
@@ -864,31 +864,21 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
-        public void GetHashCode_SameRgba()
+        public void Equals_SameRgba_DifferentHsl()
         {
             // Arrange
-            var color1 = new MudColor(130, 150, 240, 255);
-            var color2 = new MudColor(130, 150, 240, 255);
+            var color1 = new MudColor(245, 0.34, 0.95, 1);
+            var color2 = new MudColor(245, 0.35, 0.95, 1);
 
             // Act
-            var areEqualGetHashCode = color1.GetHashCode() == color2.GetHashCode();
+            var equals = color1.Equals(color2);
+            var hslEquals = color1.HslEquals(color2);
+            var rgbaEquals = color1.RgbaEquals(color2);
 
             // Assert
-            areEqualGetHashCode.Should().BeTrue();
-        }
-
-        [Test]
-        public void GetHasCode_DifferentRgba()
-        {
-            // Arrange
-            var color1 = new MudColor(130, 150, 240, 255);
-            var color2 = new MudColor(131, 150, 240, 255);
-
-            // Act
-            var areEqualGetHashCode = color1.GetHashCode() == color2.GetHashCode();
-
-            // Assert
-            areEqualGetHashCode.Should().BeFalse();
+            equals.Should().BeFalse();
+            hslEquals.Should().BeFalse();
+            rgbaEquals.Should().BeTrue();
         }
 
         [Test]
@@ -951,6 +941,48 @@ namespace MudBlazor.UnitTests.Utilities
 
             // Assert
             result.Should().Be(expected);
+        }
+
+        [Test]
+        public void GetHashCode_SameRgba()
+        {
+            // Arrange
+            var color1 = new MudColor(130, 150, 240, 255);
+            var color2 = new MudColor(130, 150, 240, 255);
+
+            // Act
+            var areEqualGetHashCode = color1.GetHashCode() == color2.GetHashCode();
+
+            // Assert
+            areEqualGetHashCode.Should().BeTrue();
+        }
+
+        [Test]
+        public void GetHasCode_DifferentRgba()
+        {
+            // Arrange
+            var color1 = new MudColor(130, 150, 240, 255);
+            var color2 = new MudColor(131, 150, 240, 255);
+
+            // Act
+            var areEqualGetHashCode = color1.GetHashCode() == color2.GetHashCode();
+
+            // Assert
+            areEqualGetHashCode.Should().BeFalse();
+        }
+
+        [Test]
+        public void GetHasCode_SameRgba_DifferentHsl()
+        {
+            // Arrange
+            var color1 = new MudColor(245, 0.34, 0.95, 1);
+            var color2 = new MudColor(245, 0.35, 0.95, 1);
+
+            // Act
+            var getHashCodeEquals = color1.GetHashCode() == color2.GetHashCode();
+
+            // Assert
+            getHashCodeEquals.Should().BeFalse();
         }
 
         [Test]
