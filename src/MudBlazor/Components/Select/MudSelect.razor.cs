@@ -145,24 +145,14 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Displays this selectitems in a fixed position, even through scrolling.
+        /// The behavior of the dropdown popover menu
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>False</c>.
-        /// </remarks>
-        [Category(CategoryTypes.FormComponent.Appearance)]
-        [Parameter]
-        public bool Fixed { get; set; }
-
-        /// <summary>
-        /// The behavior applied when there is not enough space for this dropdown to be visible.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="OverflowBehavior.FlipOnOpen"/>.
+        /// Defaults to <see cref="DropdownBehavior.Fixed" /> false
+        /// Defaults to <see cref="DropdownBehavior.OverflowBehavior" /> <see cref="OverflowBehavior.FlipOnOpen" />
         /// </remarks>
         [Parameter]
-        [Category(CategoryTypes.Popover.Appearance)]
-        public OverflowBehavior OverflowBehavior { get; set; } = OverflowBehavior.FlipOnOpen;
+        public DropdownBehavior DropdownBehavior { get; set; }
 
         /// <summary>
         /// The outer div's classnames, separated by space.

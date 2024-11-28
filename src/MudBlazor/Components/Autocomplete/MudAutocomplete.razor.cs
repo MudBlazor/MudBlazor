@@ -386,24 +386,14 @@ namespace MudBlazor
         public bool CoerceValue { get; set; }
 
         /// <summary>
-        /// Displays the autocomplete popover in a fixed position, even through scrolling.
+        /// The behavior of the dropdown popover menu
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>False</c>.
+        /// Defaults to <see cref="DropdownBehavior.Fixed" /> false
+        /// Defaults to <see cref="DropdownBehavior.OverflowBehavior" /> <see cref="OverflowBehavior.FlipOnOpen" />
         /// </remarks>
         [Parameter]
-        [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool Fixed { get; set; }
-
-        /// <summary>
-        /// The behavior applied when there is not enough space for this dropdown to be visible.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="OverflowBehavior.FlipOnOpen"/>.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.Popover.Appearance)]
-        public OverflowBehavior OverflowBehavior { get; set; } = OverflowBehavior.FlipOnOpen;
+        public DropdownBehavior DropdownBehavior { get; set; }
 
         /// <summary>
         /// The function used to determine if an item should be disabled.
