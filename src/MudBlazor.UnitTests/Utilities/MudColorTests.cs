@@ -374,7 +374,7 @@ namespace MudBlazor.UnitTests.Utilities
         [Test]
         [TestCase(130, 150, 240, 130, 229, 0.79, 0.73)]
         [TestCase(71, 88, 99, 222, 204, 0.16, 0.33)]
-        public void TransformHLSFromRGB(byte r, byte g, byte b, byte a, double expectedH, double expectedS, double expectedL)
+        public void TransformHlsFromRgb(byte r, byte g, byte b, byte a, double expectedH, double expectedS, double expectedL)
         {
             MudColor color = new(r, g, b, a);
 
@@ -892,63 +892,65 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
-        public void HslEquals_Hue()
+        public void HslEquals_Null_Test()
         {
             // Arrange
-            MudColor first = new(120, 0.5, 0.4, 1);
-            MudColor second = new(121, 0.5, 0.4, 1);
+            MudColor color = new(120, 0.5, 0.4, 1);
 
             // Act
-            var result1 = first.HslEquals(second);
-            var result2 = second.HslEquals(first);
-            var result3 = first.HslEquals(first);
-            var result4 = second.HslEquals(second);
+            var equals = color.HslEquals(null);
 
             // Assert
-            result1.Should().BeFalse();
-            result2.Should().BeFalse();
-            result3.Should().BeTrue();
-            result4.Should().BeTrue();
+            equals.Should().BeFalse();
         }
 
         [Test]
-        public void HslEquals_Saturation()
+        [TestCase(120, 0.5, 0.4, 1, 121, 0.5, 0.4, 1, false)] // Hue differs
+        [TestCase(120, 0.5, 0.4, 1, 120, 0.51, 0.4, 1, false)] // Saturation differs
+        [TestCase(120, 0.5, 0.4, 1, 120, 0.5, 0.41, 1, false)] // Lightness differs
+        public void HslEquals_Test(double h1, double s1, double l1, double a1, double h2, double s2, double l2, double a2, bool expected)
         {
             // Arrange
-            MudColor first = new(120, 0.5, 0.4, 1);
-            MudColor second = new(120, 0.51, 0.4, 1);
+            MudColor first = new(h1, s1, l1, a1);
+            MudColor second = new(h2, s2, l2, a2);
 
             // Act
-            var result1 = first.HslEquals(second);
-            var result2 = second.HslEquals(first);
-            var result3 = first.HslEquals(first);
-            var result4 = second.HslEquals(second);
+            var result = first.HslEquals(second);
 
             // Assert
-            result1.Should().BeFalse();
-            result2.Should().BeFalse();
-            result3.Should().BeTrue();
-            result4.Should().BeTrue();
+            result.Should().Be(expected);
         }
 
         [Test]
-        public void HslEquals_Lightness()
+        public void RgbaEquals_Null_Test()
         {
             // Arrange
-            MudColor first = new(120, 0.5, 0.4, 1);
-            MudColor second = new(120, 0.5, 0.41, 1);
+            MudColor color = new(10, 20, 30, 255);
 
             // Act
-            var result1 = first.HslEquals(second);
-            var result2 = second.HslEquals(first);
-            var result3 = first.HslEquals(first);
-            var result4 = second.HslEquals(second);
+            var equals = color.RgbaEquals(null);
 
             // Assert
-            result1.Should().BeFalse();
-            result2.Should().BeFalse();
-            result3.Should().BeTrue();
-            result4.Should().BeTrue();
+            equals.Should().BeFalse();
+        }
+
+        [Test]
+        [TestCase(10, 20, 30, 255, 10, 20, 30, 254, false)] // Alpha differs
+        [TestCase(10, 20, 30, 255, 10, 20, 31, 255, false)] // Blue differs
+        [TestCase(10, 20, 30, 255, 10, 21, 30, 255, false)] // Green differs
+        [TestCase(10, 20, 30, 255, 11, 20, 30, 255, false)] // Red differs
+        [TestCase(10, 20, 30, 255, 10, 20, 30, 255, true)]  // All equal
+        public void RgbaEquals_Test(byte r1, byte g1, byte b1, byte a1, byte r2, byte g2, byte b2, byte a2, bool expected)
+        {
+            // Arrange
+            MudColor first = new(r1, g1, b1, a1);
+            MudColor second = new(r2, g2, b2, a2);
+
+            // Act
+            var result = first.RgbaEquals(second);
+
+            // Assert
+            result.Should().Be(expected);
         }
 
         [Test]
