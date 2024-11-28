@@ -21,7 +21,7 @@ public partial class Appbar
     private string _badgeTextSoon = "coming soon";
     private MudAutocomplete<ApiLinkServiceEntry> _searchAutocomplete = null!;
     private DialogOptions _dialogOptions = new() { Position = DialogPosition.TopCenter, NoHeader = true };
-    private DropdownBehavior _dropdownBehavior = new() { Fixed = true, OverflowBehavior = OverflowBehavior.FlipOnOpen };
+    private DropDownSettings _dropdownBehavior = new() { Fixed = true, OverflowBehavior = OverflowBehavior.FlipOnOpen };
     private readonly List<ApiLinkServiceEntry> _apiLinkServiceEntries =
     [
         new ApiLinkServiceEntry

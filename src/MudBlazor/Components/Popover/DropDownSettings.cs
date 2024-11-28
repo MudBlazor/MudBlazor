@@ -14,7 +14,7 @@ namespace MudBlazor
     /// <summary>
     /// Configures the behavior of a dropdown popover, specifically the Fixed and OverflowBehavior properties.  
     /// </summary>
-    public struct DropdownBehavior
+    public struct DropDownSettings
     {
         /// <summary>
         /// Displays the dropdown popover in a fixed position, even through scrolling.
@@ -36,6 +36,6 @@ namespace MudBlazor
         [Category(CategoryTypes.Popover.Appearance)]
         public OverflowBehavior OverflowBehavior { get; set; } = OverflowBehavior.FlipOnOpen;
 
-        public DropdownBehavior() { }
+        public DropDownSettings() { }
     }
 }

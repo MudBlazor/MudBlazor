@@ -148,11 +148,11 @@ namespace MudBlazor
         /// The behavior of the dropdown popover menu
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="DropdownBehavior.Fixed" /> false
-        /// Defaults to <see cref="DropdownBehavior.OverflowBehavior" /> <see cref="OverflowBehavior.FlipOnOpen" />
+        /// Defaults to <see cref="DropDownSettings.Fixed" /> false
+        /// Defaults to <see cref="DropDownSettings.OverflowBehavior" /> <see cref="OverflowBehavior.FlipOnOpen" />
         /// </remarks>
         [Parameter]
-        public DropdownBehavior DropdownBehavior { get; set; }
+        public DropDownSettings DropDownSettings { get; set; }
 
         /// <summary>
         /// The outer div's classnames, separated by space.
