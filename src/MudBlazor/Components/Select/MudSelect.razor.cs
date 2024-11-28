@@ -151,6 +151,7 @@ namespace MudBlazor
         /// Defaults to <see cref="DropDownSettings.Fixed" /> false
         /// Defaults to <see cref="DropDownSettings.OverflowBehavior" /> <see cref="OverflowBehavior.FlipOnOpen" />
         /// </remarks>
+        [Category(CategoryTypes.Popover.Behavior)]
         [Parameter]
         public DropDownSettings DropDownSettings { get; set; }
 
