@@ -9,15 +9,15 @@
 <div class="parent-div">
     Parent Component
     <MudButton id="parentBtn" OnClick="OnClickParentAsync">Click Child</MudButton>
-    <ParameterStateChildComp @bind-Counter="_counter" />
+    <ParameterStateChildComp @bind-Counter="Counter" />
 </div>
 
 @code {
-    private int _counter = 1;
+    public int Counter { get; internal set; } = 1;
 
     private Task OnClickParentAsync()
     {
-        _counter++;
+        Counter++;
         return Task.CompletedTask;
     }
 }
