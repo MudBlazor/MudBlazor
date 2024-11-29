@@ -2061,7 +2061,7 @@ namespace MudBlazor
         {
             foreach (var group in _allGroups)
             {
-                if(!UniqueGroups && group.RowCount == 1) continue;
+                if (!UniqueGroups && group.RowCount == 1) continue;
 
                 group.Expanded = true;
                 _groupExpansionsDict[group.Grouping.Key] = true;
