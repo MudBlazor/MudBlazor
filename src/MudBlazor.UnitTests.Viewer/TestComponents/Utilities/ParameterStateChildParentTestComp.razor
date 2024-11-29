@@ -1,0 +1,23 @@
+﻿<style>
+    .parent-div {
+      background-color: #3498db;
+      padding: 20px;
+      color: white;
+    }
+</style>
+
+<div class="parent-div">
+    Parent Component
+    <MudButton id="parentBtn" OnClick="OnClickParentAsync">Click Child</MudButton>
+    <ParameterStateChildComp @bind-Counter="_counter" />
+</div>
+
+@code {
+    private int _counter = 1;
+
+    private Task OnClickParentAsync()
+    {
+        _counter++;
+        return Task.CompletedTask;
+    }
+}
