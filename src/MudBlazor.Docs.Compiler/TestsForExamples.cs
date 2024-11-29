@@ -23,7 +23,7 @@
                 cb.AddLine("using NUnit.Framework;");
                 cb.AddLine();
 
-                cb.AddLine("namespace MudBlazor.UnitTests.Components");
+                cb.AddLine("namespace MudBlazor.UnitTests.Docs.Generated");
                 cb.AddLine("{");
                 cb.IndentLevel++;
                 cb.AddLine("// These tests just check if all the examples from the doc page render without errors");

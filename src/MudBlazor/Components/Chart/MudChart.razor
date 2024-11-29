@@ -25,6 +25,10 @@
             {
                 <StackedBar ChartSeries="@ChartSeries" @bind-SelectedIndex="@SelectedIndex" XAxisLabels="@XAxisLabels"></StackedBar>
             }
+            @if (ChartType == ChartType.HeatMap)
+            {
+                <HeatMap ChartSeries="@ChartSeries" @bind-SelectedIndex="@SelectedIndex" XAxisLabels="@XAxisLabels"></HeatMap>
+            }
         </div>
     </CascadingValue>
 </CascadingValue>

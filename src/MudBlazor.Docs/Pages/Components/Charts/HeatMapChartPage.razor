@@ -1,0 +1,85 @@
+﻿@page "/components/heatmapchart"
+@page "/components/heatmap"
+@page "/components/chart-types/heatmapchart"
+
+<DocsPage>
+    <DocsPageHeader Title="HeatMap Chart" SubTitle="A chart that displays a HeatMap" Component="@nameof(MudBlazor.Charts.HeatMap)">
+        <Description>
+            <DocsPageSection>
+                <MudAlert Class="mt-4" Severity="Severity.Warning">
+                    <b>Warning:</b> This component is currently under development.
+                    <br />
+                    <br />
+                    Breaking changes such as updates to the API, look and feel, or CSS classes, may occur even in minor patch releases.
+                    Please use it only if you are prepared to adapt your code accordingly and provide feedback or contribute code.
+                </MudAlert>
+            </DocsPageSection>
+        </Description>
+    </DocsPageHeader>
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Basic HeatMap">
+                <Description>
+                    The basic HeatMap Chart will take from 1 to 5 colors and create a heat map based on the <CodeInline>ChartSeries</CodeInline> data you provide. Colors will be interpolated if more than 1.
+                    Colors can be provided via <CodeInline>ChartOptions</CodeInline> and XAxisLabels are provided via the <CodeInline>XAxisLabel</CodeInline> Option. These values will be used in order and if you wanted to skip a 
+                    column just adding <CodeInline>string.Empty</CodeInline> would work.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(HeatMapExample1)" ShowCode="false" Block="true">
+                <HeatMapExample1 />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="X and Y Axis Label Positioning">
+                <Description>
+                    Both the X and Y Axis allow deep customization for positioning. In <CodeInline>ChartOptions</CodeInline> you can select if the YAxis Labels show on the Left, Right, or None. 
+                    The XAxis Label options are Top, Bottom, or none. X Axis Labels are generated from the <CodeInline>XAxisLabel</CodeInline> field and will generate in order. If you want one skipped just 
+                    supply a <CodeInline>string.Empty</CodeInline> to that field. The Y Axis Labels are generated from the <CodeInline>ChartSeries.Name</CodeInline> tag, and would also be skipped if supplied as <CodeInline>string.Empty</CodeInline>. 
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(HeatMapExample2)" ShowCode="false" Block="true">
+                <HeatMapExample2 />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Enable Smooth Gradient">
+                <Description>
+                    By default the heatmap is rendered with 5px of padding between cells that are created and sized dynamically to be a solid color. If you set 
+                    <CodeInline>EnableSmoothGradient</CodeInline> to <CodeInline>true</CodeInline> the padding is removed and all cells are blended top/bottom/left/right to ensure a smooth transition. 
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(HeatMapExample3)" ShowCode="false" Block="true">
+                <HeatMapExample3 />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Display Values">
+                <Description>
+                    By default values are shown both on the cell and as a tooltip to the cell based on the <CodeInline>ChartSeries</CodeInline> data you supplied. The font size is dynamically
+                    generated to be 2 smaller than the largest that would fit or 8 whichever is greater. Both Value Display and Tooltip are valid options. Values may be
+                    formatted using the <CodeInline>ChartOptions.ValueFormatString</CodeInline> which defaults to F2. Tooltips are always shown in full value. 
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(HeatMapExample5)" ShowCode="false" Block="true">
+                <HeatMapExample5 />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Legend Display">
+                <Description>
+                    By default the Legend is displayed at the bottom of a HeatMap without the Label Values being displayed. You can customize it using the <CodeInline>MudChart.LegendPosition</CodeInline> 
+                    and <CodeInline>ChartOptions.ShowLegendLabels</CodeInline>. A Myriad of customization options allow for the HeatMap of your choice.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(HeatMapExample4)" ShowCode="false" Block="true">
+                <HeatMapExample4 />
+            </SectionContent>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>
