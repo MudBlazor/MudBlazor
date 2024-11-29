@@ -1,4 +1,8 @@
-﻿using MudBlazor.Charts;
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using MudBlazor.Charts;
 using MudBlazor.Docs.Models;
 
 
@@ -118,6 +122,7 @@ namespace MudBlazor.Docs.Services
                 .AddItem("Line Chart", typeof(Line))
                 .AddItem("Pie Chart", typeof(Pie))
                 .AddItem("Bar Chart", typeof(Bar))
+                .AddItem("Heat Map Chart", typeof(HeatMap))
                 .AddItem("Stacked Bar Chart", typeof(StackedBar))
                 .AddItem("Time Series Chart", typeof(TimeSeries))
             )

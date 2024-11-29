@@ -88,6 +88,18 @@ public static partial class ApiDocumentation
             return match;
         }
 
+        // Look for a component with a generic
+        if (Types.TryGetValue("MudBlazor." + name + "`1", out match))
+        {
+            return match;
+        }
+
+        // Look for a component with two generics
+        if (Types.TryGetValue("MudBlazor." + name + "`2", out match))
+        {
+            return match;
+        }
+
         // Look for legacy links like "api/bar"
         if (LegacyToModernTypeNames.TryGetValue(name.ToLowerInvariant(), out var newTypeName) && Types.TryGetValue(newTypeName, out match))
         {
@@ -95,7 +107,11 @@ public static partial class ApiDocumentation
         }
 
         // Try to match just on the name
-        var looseMatch = Types.FirstOrDefault(type => type.Value.Name.Equals(name, StringComparison.OrdinalIgnoreCase) || type.Value.NameFriendly.Equals(name, StringComparison.OrdinalIgnoreCase)).Value;
+        var looseMatch = Types.FirstOrDefault(type =>
+            // Look for a match on just the name
+            type.Value.Name.Equals(name, StringComparison.OrdinalIgnoreCase)
+            // .. or the friendly name
+            || type.Value.NameFriendly.Equals(name, StringComparison.OrdinalIgnoreCase)).Value;
         if (looseMatch != null)
         {
             return looseMatch;
