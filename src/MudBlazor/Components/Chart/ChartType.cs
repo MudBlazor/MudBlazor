@@ -1,4 +1,8 @@
-﻿#nullable enable
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+#nullable enable
 namespace MudBlazor;
 
 /// <summary>
@@ -29,5 +33,9 @@ public enum ChartType
     /// <summary>
     /// Data is displayed as connecting lines or as areas.
     /// </summary>
-    Timeseries
+    Timeseries,
+    /// <summary>
+    /// Data is displayed as a heatmap. Similar to how github works.
+    /// </summary>
+    HeatMap,
 }

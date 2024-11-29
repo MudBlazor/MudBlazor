@@ -1,0 +1,185 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudGrid>
+    <MudItem xs="2" Class="d-flex align-center">
+        <MudRadioGroup T="Position" Value="_showLegendPosition" ValueChanged="@((Position value) => ShowLegendPositionChanged(value))" Class="d-flex flex-column align-center justify-center">
+
+            <!-- Top Radio -->
+            <MudItem xs="12" Class="d-flex justify-center align-center">
+                <MudRadio Color="Color.Primary" Value="Position.Top" LabelPlacement="Placement.Top" Dense>Top</MudRadio>
+            </MudItem>
+
+            <MudItem xs="12" Class="d-flex justify-center py-2">
+                <MudGrid Class="align-center justify-center">
+                    <!-- Left Radio -->
+                    <MudItem xs="4" Class="d-flex align-center justify-center">
+                        <MudRadio Color="Color.Primary" Value="Position.Left" LabelPlacement="Placement.Left" Dense>L</MudRadio>
+                    </MudItem>
+
+                    <!-- Center Badge -->
+                    <MudItem xs="4" Class="d-flex align-center justify-center">
+                        <MudBadge Origin="@_anchorOrigin" Color="Color.Primary" Dot="true" Overlap Elevation="4" BadgeClass="ma-2">
+                            <MudPaper Elevation="0" Outlined="true" Class="pa-6">
+                                <MudText Align="Align.Center">Heat Map</MudText>
+                            </MudPaper>
+                        </MudBadge>
+                    </MudItem>
+
+                    <!-- Right Radio -->
+                    <MudItem xs="4" Class="d-flex align-center justify-center">
+                        <MudRadio Color="Color.Primary" Value="Position.Right" Dense>R</MudRadio>
+                    </MudItem>
+                </MudGrid>
+            </MudItem>
+
+            <!-- Bottom Radio -->
+            <MudItem xs="12" Class="d-flex justify-center align-center">
+                <MudRadio Color="Color.Primary" Value="Position.Bottom" LabelPlacement="Placement.Bottom" Dense>Bottom</MudRadio>
+            </MudItem>
+
+        </MudRadioGroup>
+    </MudItem>
+    <MudItem xs="10">
+        <MudChart ChartType="ChartType.HeatMap" ChartSeries="@Series"
+                  XAxisLabels="@XAxisLabels" ChartOptions="@options" LegendPosition="_showLegendPosition"></MudChart>
+    </MudItem>
+</MudGrid>
+<MudGrid Spacing="2" Class="d-flex">
+    <MudItem xs="2" Class="d-flex align-center">
+        <MudButton OnClick="@RandomizeData" Variant="Variant.Filled">Randomize Data</MudButton>
+    </MudItem>
+    <MudItem xs="2" Class="d-flex align-center">
+        <MudCheckBox T="bool" @bind-Value="_enableGradient" @bind-Value:after="BuildOptions" Color="Color.Primary">
+            Smooth Gradient
+        </MudCheckBox>
+    </MudItem>
+    <MudItem xs="2" Class="d-flex align-center justify-left">
+        <MudSelect T="YAxisLabelPosition" @bind-Value="@_YAxisLabelPosition" @bind-Value:after="BuildOptions" FullWidth="true" Label="YAxis Labels">
+            <MudSelectItem Value="YAxisLabelPosition.Left">Left</MudSelectItem>
+            <MudSelectItem Value="YAxisLabelPosition.Right">Right</MudSelectItem>
+            <MudSelectItem Value="YAxisLabelPosition.None">None</MudSelectItem>
+        </MudSelect>
+    </MudItem>
+    <MudItem xs="2" Class="d-flex align-center justify-left">
+        <MudSelect T="XAxisLabelPosition" @bind-Value="@_XAxisLabelPosition" @bind-Value:after="BuildOptions" FullWidth="true" Label="XAxis Labels">
+            <MudSelectItem Value="XAxisLabelPosition.Top">Top</MudSelectItem>
+            <MudSelectItem Value="XAxisLabelPosition.Bottom">Bottom</MudSelectItem>
+            <MudSelectItem Value="XAxisLabelPosition.None">None</MudSelectItem>
+        </MudSelect>
+    </MudItem>
+    <MudItem xs="2" Class="d-flex align-center">
+        <MudNumericField Label="Number of Colors Used" @bind-Value="_colorCount" @bind-Value:after="BuildOptions" Min="1" Max="5" Step="1" />
+    </MudItem>
+    <MudItem xs="2"></MudItem>
+    <MudItem xs="2" Class="d-flex align-center">
+        <MudCheckBox T="bool" @bind-Value="@_legendVisible" @bind-Value:after="BuildOptions" Color="Color.Primary">
+            Show Legend
+        </MudCheckBox>
+    </MudItem>
+    <MudItem xs="3" Class="d-flex align-center">
+        <MudCheckBox T="bool" @bind-Value="@_showLegendValues" @bind-Value:after="BuildOptions" Color="Color.Primary">
+            Show Legend Values
+        </MudCheckBox>
+    </MudItem>
+    <MudItem xs="2" Class="d-flex align-center">
+        <MudCheckBox T="bool" @bind-Value="@_showValueLabels" @bind-Value:after="BuildOptions" Color="Color.Primary">
+            Show Values
+        </MudCheckBox>
+    </MudItem>
+    <MudItem xs="3" Class="d-flex align-center">
+        <MudCheckBox T="bool" @bind-Value="@_showValueToolTips" @bind-Value:after="BuildOptions" Color="Color.Primary">
+            Show Value Tooltips
+        </MudCheckBox>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private ChartOptions options = new ChartOptions();
+    private List<ChartSeries> Series = new List<ChartSeries>();
+    private XAxisLabelPosition _XAxisLabelPosition = XAxisLabelPosition.Bottom;
+    private YAxisLabelPosition _YAxisLabelPosition = YAxisLabelPosition.Left;
+    private bool _enableGradient = false;
+    private bool _showValueLabels = true;
+    private bool _showLegendValues = true;
+    private bool _showValueToolTips = true;
+    private bool _legendVisible = true;
+    private Position _showLegendPosition = Position.Bottom;
+    private Origin _anchorOrigin = Origin.BottomCenter;
+    private int _colorCount = 5;
+    private readonly string[] _colors = ["#5AC8FA", "#34C759", "#007AFF", "#FFCC00", "#e03131"];
+
+    protected override void OnInitialized()
+    {
+        Series = HeatMapSeries;
+        BuildOptions();
+    }
+
+    private void ShowLegendPositionChanged(Position value)
+    {
+        _showLegendPosition = value;
+        switch (value)
+        {
+            case Position.Top:
+                _anchorOrigin = Origin.TopCenter;
+                break;
+            case Position.Left:
+                _anchorOrigin = Origin.CenterLeft;
+                break;
+            case Position.Right:
+                _anchorOrigin = Origin.CenterRight;
+                break;
+            case Position.Bottom:
+                _anchorOrigin = Origin.BottomCenter;
+                break;
+            default:
+                break;
+        }
+        BuildOptions();
+    }
+
+    private void BuildOptions()
+    {
+        options = new ChartOptions();
+        options.XAxisLabelPosition = _XAxisLabelPosition;
+        options.YAxisLabelPosition = _YAxisLabelPosition;
+        options.EnableSmoothGradient = _enableGradient;
+        options.ChartPalette = _colors.Take(_colorCount).ToArray();
+        options.ShowLabels = _showValueLabels;
+        options.ShowLegend = _legendVisible;
+        options.ShowLegendLabels = _showLegendValues;
+        StateHasChanged();
+    }
+
+    public readonly List<ChartSeries> HeatMapSeries = new List<ChartSeries>()
+    {
+        new ChartSeries() { Name = "Mo", Data = new double[] { 90, 79, 72, 69, 62, 62, 55, 65, 70 } },
+        new ChartSeries() { Name = "Te", Data = new double[] { 35, 41, 35, 51, 49, 62, 69, 91, 148 } },
+        new ChartSeries() { Name = "We", Data = new double[] { 22, 90, 62, 32, 05, 42, 63, 43, 155 } },
+        new ChartSeries() { Name = "Th", Data = new double[] { 35, 41, 35, 51, 49, 62, 69, 91, 148 } },
+        new ChartSeries() { Name = "Fr", Data = new double[] { 22, 90, 62, 32, 05, 42, 63, 43, 155 } },
+        new ChartSeries() { Name = "Sa", Data = new double[] { 35, 41, 35, 51, 49, 62, 69, 91, 148 } },
+        new ChartSeries() { Name = "Su", Data = new double[] { 22, 90, 62, 32, 05, 42, 63, 43, 155 } },
+    };
+
+    public string[] XAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
+
+    private void RandomizeData()
+    {
+        var newSeries = new List<ChartSeries>();
+        string[] days = { "Mo", "Te", "We", "Th", "Fr", "Sa", "Su" };
+        int dataPoints = 9;
+
+        foreach (var day in days)
+        {
+            var data = new double[dataPoints];
+            for (int i = 0; i < dataPoints; i++)
+            {
+                data[i] = Random.Shared.NextDouble() * 100;
+            }
+            newSeries.Add(new ChartSeries() { Name = day, Data = data });
+        }
+
+        Series = newSeries;
+    }
+
+}

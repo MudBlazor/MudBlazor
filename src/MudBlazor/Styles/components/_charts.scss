@@ -1,4 +1,4 @@
-﻿.mud-chart {
+.mud-chart {
   display: flex;
 
   &.mud-chart-legend-bottom {
@@ -135,4 +135,16 @@
 
 .mud-chart-marker-color-4 {
   background-color: #594ae2;
+}
+
+.mud-chart-cell text {
+  fill: black;
+}
+
+.mud-chart-heatmap-legend line {
+  stroke: var(--mud-palette-text-primary);
+}
+
+.mud-chart-heatmap-legend text {
+  fill: var(--mud-palette-text-primary);
 }

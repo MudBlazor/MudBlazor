@@ -1,0 +1,77 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudPaper Class="pa-4">
+    <MudChart ChartType="ChartType.HeatMap" ChartSeries="@Series" ChartOptions="@Options"
+              XAxisLabels="@_xLabels" Width="100%" Height="350px"></MudChart>
+</MudPaper>
+<MudPaper Class="pa-4 mt-2 d-flex justify-center">
+    <MudGrid Spacing="2" Class="d-flex">
+        <MudItem xs="4">
+            <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center">
+                <MudText Class="pr-1">YAxis Labels</MudText>
+                <MudSelect T="YAxisLabelPosition" @bind-Value="@_YAxisLabelPosition" @bind-Value:after="BuildOptions" FullWidth="true">
+                    <MudSelectItem Value="YAxisLabelPosition.Left">Left</MudSelectItem>
+                    <MudSelectItem Value="YAxisLabelPosition.Right">Right</MudSelectItem>
+                    <MudSelectItem Value="YAxisLabelPosition.None">None</MudSelectItem>
+                </MudSelect>
+            </MudStack>
+        </MudItem>
+        <MudItem xs="4" Class="d-flex align-center justify-center">
+            <MudButton @onclick="RandomizeData" Variant="Variant.Filled" Class="mx-4">Randomize</MudButton>
+        </MudItem>
+        <MudItem xs="4">
+            <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center">
+                <MudText Class="pr-1">XAxis Labels</MudText>
+                <MudSelect T="XAxisLabelPosition" @bind-Value="@_XAxisLabelPosition" @bind-Value:after="BuildOptions" FullWidth="true">
+                    <MudSelectItem Value="XAxisLabelPosition.Top">Top</MudSelectItem>
+                    <MudSelectItem Value="XAxisLabelPosition.Bottom">Bottom</MudSelectItem>
+                    <MudSelectItem Value="XAxisLabelPosition.None">None</MudSelectItem>
+                </MudSelect>
+            </MudStack>
+        </MudItem>
+    </MudGrid>
+</MudPaper>
+
+@code {
+    private readonly string[] _colors = ["#5AC8FA", "#34C759", "#007AFF"];
+    private List<ChartSeries> Series = [];
+    private ChartOptions Options = new ChartOptions();
+    private XAxisLabelPosition _XAxisLabelPosition = XAxisLabelPosition.Top;
+    private YAxisLabelPosition _YAxisLabelPosition = YAxisLabelPosition.Left;
+    private string[] _xLabels = [];
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        BuildOptions();
+        RandomizeData();
+    }
+
+    private void BuildOptions()
+    {
+        var options = new ChartOptions();
+        options.ChartPalette = _colors;
+        options.XAxisLabelPosition = _XAxisLabelPosition;
+        options.YAxisLabelPosition = _YAxisLabelPosition;
+        Options = options;
+    }
+
+    private void RandomizeData()
+    {
+        string[] xaxis = ["A", "B", "C",];
+        var heatMapSeries = new List<ChartSeries>();
+        int dataPoints = xaxis.Length;
+        foreach (var x in xaxis)
+        {
+            var data = new double[dataPoints];
+            for (int i = 0; i < dataPoints; i++)
+            {
+                data[i] = Math.Round(Random.Shared.NextDouble() * 100, 2);
+            }
+            heatMapSeries.Add(new ChartSeries { Name = x, Data = data });
+        }
+        _xLabels = xaxis;
+        Series = heatMapSeries;
+        BuildOptions();
+    }
+}
