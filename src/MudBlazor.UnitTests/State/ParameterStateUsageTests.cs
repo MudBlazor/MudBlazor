@@ -4,8 +4,6 @@ using Bunit.Rendering;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
-using MudBlazor.UnitTests.Components;
-using MudBlazor.UnitTests.TestComponents.Utilities;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.State;
