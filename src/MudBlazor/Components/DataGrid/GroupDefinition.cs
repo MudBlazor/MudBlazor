@@ -25,13 +25,20 @@ public class GroupDefinition<T>
     public bool Expanded { get; set; }
 
     /// <summary>
+    /// The count of rows in this group.
+    /// </summary>
+    public int RowCount { get; set; }
+
+    /// <summary>
     /// Creates a new instance.
     /// </summary>
     /// <param name="grouping">The LINQ definition of the grouping.</param>
     /// <param name="expanded">Expands this group.</param>
-    public GroupDefinition(IGrouping<object?, T> grouping, bool expanded)
+    /// <param name="rowCount">The count of rows in this group.</param>
+    public GroupDefinition(IGrouping<object?, T> grouping, bool expanded, int rowCount)
     {
         Grouping = grouping;
         Expanded = expanded;
+        RowCount = rowCount;
     }
 }

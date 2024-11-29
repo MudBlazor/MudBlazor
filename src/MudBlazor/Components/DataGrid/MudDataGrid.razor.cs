@@ -1032,6 +1032,16 @@ namespace MudBlazor
         public bool GroupExpanded { get; set; }
 
         /// <summary>
+        /// Ensures a group is created even if it contains only a single item.
+        /// </summary>
+        /// <remarks>
+        /// The default value is <c>true</c>.  Applies when <see cref="Groupable"/> is <c>true</c>.<para/>
+        /// When <c>false</c>, ungrouped items are displayed at the top of the <see cref="MudDataGrid{T}"/>
+        /// </remarks>
+        [Parameter]
+        public bool UniqueGroups { get; set; } = true;
+
+        /// <summary>
         /// The CSS classes applied to column groups.
         /// </summary>
         /// <remarks>
@@ -1153,6 +1163,12 @@ namespace MudBlazor
                     ? _serverData.Items
                     : Items;
 
+                if (!UniqueGroups)
+                {
+                    //prioritize single items (place at the top of the list)
+                    items = PrioritizeUniqueGroups(items);
+                }
+
                 // Quick filtering
                 if (QuickFilter != null)
                 {
@@ -1264,6 +1280,9 @@ namespace MudBlazor
         }
 
         #region Methods
+        private IEnumerable<T> PrioritizeUniqueGroups(IEnumerable<T> items) => items.GroupBy(GroupedColumn.groupBy)
+                 .OrderByDescending(group => group.Count() == 1)
+                 .SelectMany(group => group);
 
         /// <summary>
         /// Check if a specific Footer cell is displayable
@@ -1545,6 +1564,9 @@ namespace MudBlazor
                     orderedEnumerable = sortDefinition.Descending ? orderedEnumerable.ThenByDescending(item => sortDefinition.SortFunc(item), sortDefinition.Comparer)
                         : orderedEnumerable.ThenBy(item => sortDefinition.SortFunc(item), sortDefinition.Comparer);
             }
+
+            if (!UniqueGroups && orderedEnumerable is not null)
+                return PrioritizeUniqueGroups(orderedEnumerable);
 
             return orderedEnumerable ?? items;
         }
@@ -1988,16 +2010,21 @@ namespace MudBlazor
             {
                 foreach (var group in allGroupings)
                 {
-                    _groupExpansionsDict.TryAdd(group.Key, GroupExpanded);
+                    var forceExpand = !UniqueGroups && group.Count() == 1;
+
+                    if (forceExpand)
+                        _groupExpansionsDict[group.Key] = forceExpand;
+                    else
+                        _groupExpansionsDict.TryAdd(group.Key, GroupExpanded);
                 }
             }
 
             // construct the groups
             _currentPageGroups = currentPageGroupings.Select(x => new GroupDefinition<T>(x,
-                _groupExpansionsDict[x.Key])).ToList();
+                _groupExpansionsDict[x.Key], x.Count())).ToList();
 
             _allGroups = allGroupings.Select(x => new GroupDefinition<T>(x,
-                _groupExpansionsDict[x.Key])).ToList();
+                _groupExpansionsDict[x.Key], x.Count())).ToList();
 
             if ((_isFirstRendered || HasServerData) && !noStateChange)
                 StateHasChanged();
@@ -2034,6 +2061,8 @@ namespace MudBlazor
         {
             foreach (var group in _allGroups)
             {
+                if(!UniqueGroups && group.RowCount == 1) continue;
+
                 group.Expanded = true;
                 _groupExpansionsDict[group.Grouping.Key] = true;
             }
@@ -2050,6 +2079,8 @@ namespace MudBlazor
         {
             foreach (var group in _allGroups)
             {
+                if (!UniqueGroups && group.RowCount == 1) continue;
+
                 group.Expanded = false;
                 _groupExpansionsDict[group.Grouping.Key] = false;
             }
