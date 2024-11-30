@@ -1,0 +1,13 @@
+﻿<MudInput T="string" Value="@Value" ValueChanged="OnValueChanged" Immediate="@Immediate" />
+
+@code {
+    [Parameter]
+    public bool Immediate { get; set; }
+
+    public string? Value { get; private set; }
+
+    private void OnValueChanged(string newValue)
+    {
+        Value = newValue.ToUpper();
+    }
+}
