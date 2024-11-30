@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Utilities;
 
 namespace MudBlazor.Charts
 {
@@ -14,6 +15,12 @@ namespace MudBlazor.Charts
         public int Column { get; set; }
 
         public double? Value { get; set; }
+
+        public MudColor? MudColor { get; set; }
+
+        public int? Width { get; set; }
+
+        public int? Height { get; set; }
 
         public RenderFragment? CustomFragment { get; set; }
     }

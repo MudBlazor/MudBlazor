@@ -145,14 +145,18 @@ namespace MudBlazor.Charts
             {
                 for (var col = 0; col < cols; col++)
                 {
-                    var value = GetDataValue(row, col); // Method to retrieve the value for each cell
                     var mudHeatMapOverride = _customHeatMapCells.FirstOrDefault(x => x.Row == row && x.Column == col);
+                    var value = mudHeatMapOverride?.Value 
+                        ?? GetDataValue(row, col); // Method to retrieve the value for each cell                    
                     HeatMapCells.Add(new HeatMapCell
                     {
                         Row = row,
                         Column = col,
                         Value = value,
                         CustomFragment = mudHeatMapOverride?.ChildContent,
+                        Width = mudHeatMapOverride?.Width,
+                        Height = mudHeatMapOverride?.Height,
+                        MudColor = mudHeatMapOverride?.MudColor,
                     });
                     if (value != null)
                     {

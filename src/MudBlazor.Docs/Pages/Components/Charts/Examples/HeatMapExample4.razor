@@ -1,5 +1,7 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+
 <MudGrid>
     <MudItem xs="2" Class="d-flex align-center">
         <MudRadioGroup T="Position" Value="_showLegendPosition" ValueChanged="@((Position value) => ShowLegendPositionChanged(value))" Class="d-flex flex-column align-center justify-center">
@@ -43,26 +45,33 @@
         <MudChart ChartType="ChartType.HeatMap" ChartSeries="@Series"
                   XAxisLabels="@XAxisLabels" ChartOptions="@options" LegendPosition="_showLegendPosition">
             <MudHeatMapCell Row="0" Column="0">
-                <svg>@((MarkupString)Icons.Material.Rounded.Face)</svg>
+                <!-- Font Icons act differently and should resize dynamically without specifying width/height -->
+                <MudIcon Icon="material-symbols-outlined/database" Color="Color.Primary" />
             </MudHeatMapCell>
-            <MudHeatMapCell Row="1" Column="0">
+            <MudHeatMapCell Row="1" Column="0" Value="72.192304983">
+                <!-- text tag doesn't need resized so no width/height -->
                 <text dominant-baseline="middle" text-anchor="middle" fill="black" font-family="Helvetica" font-size="14">N/A</text>
             </MudHeatMapCell>
-            <MudHeatMapCell Row="2" Column="0">
+            <MudHeatMapCell Row="2" Column="0" Width="24" Height="24">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                     <!-- Face Circle -->
-                    <circle cx="50" cy="50" r="48" stroke="black" stroke-width="2" fill="#FFD700" />
-
+                    <circle cx="12" cy="12" r="11" stroke="black" stroke-width="1" fill="#FFD700" />
                     <!-- Left Eye -->
-                    <circle cx="35" cy="40" r="5" fill="black" />
-
+                    <circle cx="8" cy="9" r="1.5" fill="black" />
                     <!-- Right Eye -->
-                    <circle cx="65" cy="40" r="5" fill="black" />
-
+                    <circle cx="16" cy="9" r="1.5" fill="black" />
                     <!-- Smile -->
-                    <path d="M30,60 Q50,80 70,60" stroke="black" stroke-width="3" fill="none" />
+                    <path d="M7,14 Q12,17 17,14" stroke="black" stroke-width="1" fill="none" />
                 </svg>
             </MudHeatMapCell>
+            <MudHeatMapCell Row="3" Column="0" Width="24" Height="24">
+                <MudIcon Icon="@Icons.Material.Filled.Face" Color="Color.Secondary" />
+            </MudHeatMapCell>
+            <MudHeatMapCell Row="4" Column="0" Value="33.912384" />
+            <MudHeatMapCell Row="5" Column="0">
+                NO
+            </MudHeatMapCell>
+            <MudHeatMapCell Row="6" Column="0" MudColor="@(new Utilities.MudColor("#FF5733"))" />
         </MudChart>
     </MudItem>
 </MudGrid>
