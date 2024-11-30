@@ -433,9 +433,9 @@ namespace MudBlazor.UnitTests.Components
             var singleColorComp = Context.RenderComponent<MudChart>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.HeatMap)
                 .Add(p => p.ChartOptions, singleColorOptions)
-                .Add(p => p.ChartSeries, new List<ChartSeries> {
+                .Add(p => p.ChartSeries, [
                     new() { Name = "Series 1", Data = [1, 2, 3] }
-                })
+                ])
             );
 
             var singleColorPalette = singleColorComp.Instance.ChartOptions.ChartPalette;
@@ -447,9 +447,9 @@ namespace MudBlazor.UnitTests.Components
             var multiColorComp = Context.RenderComponent<MudChart>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.HeatMap)
                 .Add(p => p.ChartOptions, multiColorOptions)
-                .Add(p => p.ChartSeries, new List<ChartSeries> {
+                .Add(p => p.ChartSeries, [
                     new() { Name = "Series 1", Data = [1, 2, 3] }
-                })
+                ])
             );
 
             var multiColorPalette = multiColorComp.Instance.ChartOptions.ChartPalette;

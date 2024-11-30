@@ -146,7 +146,7 @@ namespace MudBlazor.Charts
                 for (var col = 0; col < cols; col++)
                 {
                     var mudHeatMapOverride = _customHeatMapCells.FirstOrDefault(x => x.Row == row && x.Column == col);
-                    var value = mudHeatMapOverride?.Value 
+                    var value = mudHeatMapOverride?.Value
                         ?? GetDataValue(row, col); // Method to retrieve the value for each cell                    
                     HeatMapCells.Add(new HeatMapCell
                     {
