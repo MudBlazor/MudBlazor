@@ -7,12 +7,12 @@ using MudBlazor.State;
 
 namespace MudBlazor.UnitTests;
 
-public partial class ParameterStateChildComp : MudComponentBase
+public partial class ParameterStateChildComp1 : MudComponentBase
 {
     private readonly ParameterState<int> _counterState;
     private readonly List<ParameterChangedEventArgs<int>> _parameterChangedEvents = [];
 
-    public ParameterStateChildComp()
+    public ParameterStateChildComp1()
     {
         using var registerScope = CreateRegisterScope();
         _counterState = registerScope.RegisterParameter<int>(nameof(Counter))
@@ -32,5 +32,5 @@ public partial class ParameterStateChildComp : MudComponentBase
         _parameterChangedEvents.Add(args);
     }
 
-    private Task OnClickChildAsync() => _counterState.SetValueAsync(_counterState.Value + 1);
+    private Task OnClickChild1Async() => _counterState.SetValueAsync(_counterState.Value + 1);
 }
