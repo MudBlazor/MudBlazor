@@ -440,6 +440,6 @@ It performs the following checks.
 - Builds the project.
 - Runs the test suite.
 - Checks the code coverage.
-- Chekcs the code quality.
+- Checks the code quality.
 
 We generally require all these checks to pass before merging contributions.
