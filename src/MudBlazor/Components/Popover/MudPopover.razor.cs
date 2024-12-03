@@ -105,7 +105,7 @@ namespace MudBlazor
         public bool Square { get; set; }
 
         /// <summary>
-        /// Displays this popover in a fixed position.
+        /// Displays this popover in a fixed position, even through scrolling.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>False</c>.

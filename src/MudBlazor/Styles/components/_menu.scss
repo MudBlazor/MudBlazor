@@ -20,3 +20,8 @@
     user-select: none;
   }
 }
+
+.mud-menu-button-hidden {
+  /* this ensures that the menu div doesn't use any space in the layout */
+  position: absolute;
+}
