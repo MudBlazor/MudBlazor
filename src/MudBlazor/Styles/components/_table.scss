@@ -90,6 +90,9 @@
 }
 
 .mud-table-toolbar {
+  right: 0;
+  position: sticky;
+  justify-self: end;
   padding-left: 16px;
   padding-right: 8px;
   padding-inline-start: 16px;
@@ -404,6 +407,9 @@
   overflow: auto;
   font-size: 0.875rem;
   display: initial;
+  position: sticky;
+  justify-self: end;
+  right: 0;
 }
 
 .mud-table-pagination:last-child {

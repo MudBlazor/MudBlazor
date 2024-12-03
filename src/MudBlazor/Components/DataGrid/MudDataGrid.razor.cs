@@ -67,6 +67,7 @@ namespace MudBlazor
             new StyleBuilder()
                 .AddStyle("overflow-x", "auto", when: HorizontalScrollbar || ColumnResizeMode == ResizeMode.Container)
                 .AddStyle("position", "relative", when: HasStickyColumns)
+                .AddStyle("display", "grid")
                 .AddStyle(Style)
                 .Build();
 
