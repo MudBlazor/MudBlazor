@@ -34,6 +34,7 @@ namespace MudBlazor
 
         protected string Classname =>
             new CssBuilder("mud-menu")
+                .AddClass("mud-menu-button-hidden", ActivatorHidden)
                 .AddClass(Class)
                 .Build();
 
@@ -296,6 +297,8 @@ namespace MudBlazor
 
         [CascadingParameter]
         private MudMenu? ParentMenu { get; set; }
+
+        private bool ActivatorHidden => ActivatorContent is null && string.IsNullOrWhiteSpace(Label) && string.IsNullOrWhiteSpace(Icon);
 
         /// <summary>
         /// Closes this menu.
