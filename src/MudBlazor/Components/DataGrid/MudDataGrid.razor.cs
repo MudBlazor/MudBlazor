@@ -1801,19 +1801,27 @@ namespace MudBlazor
         /// </remarks>
         public async Task SetSelectedItemAsync(T item)
         {
-            if (MultiSelection && SelectOnRowClick)
-            {
-                if (Selection.Contains(item))
-                {
-                    Selection.Remove(item);
-                }
-                else
-                {
-                    Selection.Add(item);
-                }
+            if (!SelectOnRowClick)
+                return;
 
+            if (!Selection.Remove(item))
+            {
+                Selection.Add(item);
+            }
+            else if (!MultiSelection)
+            {
+                SelectedItem = default;
+                return;
+            }
+
+            if (MultiSelection)
+            {
                 SelectedItemsChangedEvent?.Invoke(SelectedItems);
                 await SelectedItemsChanged.InvokeAsync(SelectedItems);
+            }
+            else
+            {
+                Selection.Remove(SelectedItem);
             }
 
             SelectedItem = item;
