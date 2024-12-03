@@ -117,11 +117,10 @@ namespace MudBlazor.Docs.Services
 
             //Charts
             .AddNavGroup("Charts", false, new DocsComponents()
-                //.AddItem("Options", typeof(ChartOptions)) // <-- this does not work because ChartOptions is not a component!
                 .AddItem("Donut Chart", typeof(Donut))
                 .AddItem("Line Chart", typeof(Line), typeof(Legend))
                 .AddItem("Pie Chart", typeof(Pie))
-                .AddItem("Bar Chart", typeof(Bar))
+                .AddItem("Bar Chart", typeof(Bar), typeof(ChartOptions))
                 .AddItem("Heat Map Chart", typeof(HeatMap))
                 .AddItem("Stacked Bar Chart", typeof(StackedBar))
                 .AddItem("Time Series Chart", typeof(TimeSeries), typeof(MudTimeSeriesChartBase), typeof(MudTimeSeriesChart))
@@ -306,16 +305,48 @@ namespace MudBlazor.Docs.Services
         /// <inheritdoc />
         public MudComponent? GetExample(DocumentedType type)
         {
-            return Components.FirstOrDefault(menu =>
-                // Find links matching the menu name...
-                (!menu.IsNavGroup && menu.ChildTypes == null && menu.Link == type.Name)
-                // ... or child links matching the name
-                || (!menu.IsNavGroup && menu.ChildTypes != null && menu.ChildTypes.Any(childType => childType.Name == type.Name))
-                // ... or links in sub-menus
-                || (menu.IsNavGroup && menu.GroupComponents.Any(subMenu => subMenu.ChildTypes == null && subMenu.Name == type.Name))
-                // ... or links in the children of sub-menus
-                || (menu.IsNavGroup && menu.GroupComponents.Any(subMenu => subMenu.ChildTypes.Any(childType => childType.Name == type.Name)))
-            );
+            foreach (var menu in Components)
+            {
+                var component = GetExample(menu, type);
+                if (component != null)
+                {
+                    return component;
+                }
+            }
+            return null;
+        }
+
+        public MudComponent? GetExample(MudComponent parent, DocumentedType type)
+        {
+            if (parent.Link == type.Name)
+            {
+                return parent;
+            }
+
+            if (parent.ChildTypes != null)
+            {
+                foreach (var childType in parent.ChildTypes)
+                {
+                    if (childType.Name == type.Name)
+                    {
+                        return parent;
+                    }
+                }
+            }
+
+            if (parent.IsNavGroup && parent.GroupComponents != null)
+            {
+                foreach (var subMenu in parent.GroupComponents)
+                {
+                    var component = GetExample(subMenu, type);
+                    if (component != null)
+                    {
+                        return component;
+                    }
+                }
+            }
+
+            return null;
         }
     }
 }
