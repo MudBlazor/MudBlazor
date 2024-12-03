@@ -302,11 +302,18 @@ namespace MudBlazor.Docs.Services
             }
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Gets the sub-menu, if any, matching the specified type.
+        /// </summary>
+        /// <param name="parent">The parent to start searching from.</param>
+        /// <param name="type">The type to find.</param>
+        /// <returns>The menu whose link, child type, or group component matches the type.</returns>
         public MudComponent? GetExample(DocumentedType type)
         {
+            // Go through each menu...
             foreach (var menu in Components)
             {
+                // Is there a menu for this type?  If so, return it.
                 var component = GetExample(menu, type);
                 if (component != null)
                 {
@@ -316,28 +323,37 @@ namespace MudBlazor.Docs.Services
             return null;
         }
 
-        public MudComponent? GetExample(MudComponent parent, DocumentedType type)
+        /// <summary>
+        /// Gets the sub-menu, if any, matching the specified type.
+        /// </summary>
+        /// <param name="parent">The parent to start searching from.</param>
+        /// <param name="type">The type to find.</param>
+        /// <returns>The menu whose link, child type, or group component matches the type.</returns>
+        public static MudComponent? GetExample(MudComponent parent, DocumentedType type)
         {
+            // Does the name match the menu link?
             if (parent.Link == type.Name)
             {
                 return parent;
             }
-
+            // Are there child types to search?
             if (parent.ChildTypes != null)
             {
                 foreach (var childType in parent.ChildTypes)
                 {
+                    // Does the child type's name match?
                     if (childType.Name == type.Name)
                     {
                         return parent;
                     }
                 }
             }
-
+            // Are there sub-menus to search?
             if (parent.IsNavGroup && parent.GroupComponents != null)
             {
                 foreach (var subMenu in parent.GroupComponents)
                 {
+                    // Search one level deeper
                     var component = GetExample(subMenu, type);
                     if (component != null)
                     {
@@ -345,7 +361,6 @@ namespace MudBlazor.Docs.Services
                     }
                 }
             }
-
             return null;
         }
     }
