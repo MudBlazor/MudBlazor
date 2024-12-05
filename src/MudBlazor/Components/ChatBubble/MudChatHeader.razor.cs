@@ -26,5 +26,12 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Chat.Appearance)]
         public string? Time { get; set; }
+
+        /// <summary>
+        /// Child content of component.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Chat.Behavior)]
+        public RenderFragment? ChildContent { get; set; }
     }
 }

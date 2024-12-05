@@ -1,23 +1,46 @@
 @namespace MudBlazor.Docs.Examples
 
-<MudChat ChatPosition="ChatBubblePosition.Start">
-  <MudChatHeader Name="Obi-Wan Kenobi" Time="12:45" />
-  <MudChatAvatar>
+<MudGrid>
+    <MudItem Class="justify-center" xs="4">
+        <MudCheckBox Label="Dense" @bind-Value="_dense" />
+    </MudItem>
+    <MudItem xs="4" Class="justify-center">
+        <MudNumericField Label="Elevation" @bind-Value="_elevation" Step="1" Min="0" Max="25" FullWidth="false" Style="width: 100px;" />
+    </MudItem>
+    <MudItem xs="4" Class="justify-center">
+    <MudRadioGroup @bind-Value="_variant">
+        <MudRadio Value="@Variant.Text" Label="Text" />
+        <MudRadio Value="@Variant.Outlined" Label="Outlined" />
+        <MudRadio Value="@Variant.Filled" Label="Filled" />
+    </MudRadioGroup>
+    </MudItem>
+</MudGrid>
+
+<MudChat Dense="@_dense" Elevation="@_elevation" Variant="@_variant" ChatPosition="ChatBubblePosition.Start">
+    <MudChatHeader Name="Anakin" Time="12:46" />
     <MudAvatar>
-      <MudImage Src="images/jonny.jpg"/>
+        <MudImage Src="images/toiletvisit.jpg" />
     </MudAvatar>
-  </MudChatAvatar>
-  <MudChatBubble>You were the Chosen One!</MudChatBubble>
-  <MudChatFooter Text="Delivered" />
+    <MudChatBubble Color="Color.Primary">What kind of nonsense is this</MudChatBubble>
+    <MudChatBubble Color="Color.Secondary">Put me on the Council and not make me a Master!??</MudChatBubble>
+    <MudChatBubble Color="Color.Tertiary">That's never been done in the history of the Jedi. It's insulting!</MudChatBubble>
+    <MudChatFooter Text="Seen at 12:46" />
 </MudChat>
 
 <MudChat ChatPosition="ChatBubblePosition.End">
-  <MudChatHeader Name="Anakin" Time="12:46" />
-  <MudChatAvatar>
+    <MudChatHeader Name="Obi-Wan Kenobi" Time="12:45" />
     <MudAvatar>
-      <MudImage Src="images/toiletvisit.jpg"/>
+        <MudImage Src="images/jonny.jpg" />
     </MudAvatar>
-  </MudChatAvatar>
-  <MudChatBubble>I hate you!</MudChatBubble>
-  <MudChatFooter Text="Seen at 12:46" />
+    <MudChatBubble Color="Color.Info">Calm down, Anakin.</MudChatBubble>
+    <MudChatBubble Color="Color.Success">You have been given a great honor.</MudChatBubble>
+    <MudChatBubble Color="Color.Warning">To be on the Council at your age.</MudChatBubble>
+    <MudChatBubble Color="Color.Error">It's never happened before.</MudChatBubble>
+    <MudChatFooter Text="Delivered" />
 </MudChat>
+
+    @code {
+        private bool _dense = true;
+        private int _elevation = 5;
+        private Variant _variant = Variant.Filled;
+    }

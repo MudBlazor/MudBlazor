@@ -2,8 +2,7 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   column-gap: .75rem;
-  padding-top: .25rem;
-  padding-bottom: .25rem;
+  padding: .25rem;
 
   &-bubble {
     position: relative;
@@ -16,6 +15,11 @@
     border-radius: var(--mud-default-borderradius);
     min-width: 2.75rem;
     min-height: 2.75rem;
+
+    &.mud-dense {
+      min-height: 2rem;
+      padding: .25rem 1rem;
+    }
 
     &-default {
       color: var(--mud-palette-dark-text);
@@ -33,10 +37,19 @@
       mask-repeat: no-repeat;
       mask-position: center;
     }
-  }
 
-  .mud-chat-bubble + .mud-chat-bubble { // adds margin if a mud-chat-bubble is above it
-    margin-top: .5rem;
+    & + .mud-chat-bubble {
+      // adds margin if a mud-chat-bubble is above it
+      margin-top: .5rem;
+      & .mud-dense {
+          margin-top: .25rem;
+      }
+    }
+
+    & + .mud-chat-bubble:before {
+      // removes content arrow if it's not the first mud-chat-bubble
+      content: none;
+    }
   }
 
   &-header {
@@ -60,9 +73,11 @@
     grid-row: span 2 / span 2;
     align-self: flex-start;
     grid-row-start: 1;
+    margin-left: .25rem;
   }
 
   &:has(.mud-chat-header) .mud-chat-image {
+    // start row 2 if there is a mud-chat-header
     grid-row-start: 2;
   }
 
