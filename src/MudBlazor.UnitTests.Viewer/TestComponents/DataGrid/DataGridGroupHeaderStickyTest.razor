@@ -1,6 +1,6 @@
 ﻿<MudPopoverProvider />
 
-<MudGrid Spacing="5" Class="ml-2 mt-2" >
+<MudGrid Spacing="5" Class="ml-2 mt-2">
     <MudItem lg="4" md="6" sm="8" xs="12">
         <MudText Typo="Typo.h5">Models</MudText>
 
@@ -25,47 +25,28 @@
 </MudGrid>
 
 @code {
-    protected override void OnInitialized()
+    private readonly List<Model> _models = Enumerable.Range(0, 100).Select(i =>
     {
-        _models = GenerateModels();
-    }
+        var property1Value = "ABC"[i / 5 % 3];
 
-    private List<Model> _models = new();
+        return new Model
+            {
+                Property1 = property1Value.ToString(),
+                Property2 = GenerateRandomString(8),
+                Property3 = GenerateRandomString(8),
+                Property4 = GenerateRandomString(8),
+                Property5 = GenerateRandomString(8),
+                Property6 = GenerateRandomString(8),
+                Property7 = GenerateRandomString(8),
+                Property8 = GenerateRandomString(8),
+            };
+    }).ToList();
 
-    private string GenerateRandomString(int length)
+    private static string GenerateRandomString(int length)
     {
-        Random random = new Random();
         const string chars = "ABC";
 
-        return new string(Enumerable.Repeat(chars, length).Select(s => s[random.Next(s.Length)]).ToArray());
-    }
-
-    private List<Model> GenerateModels()
-    {
-        List<Model> models = new List<Model>();
-
-        char[] letters = "ABC".ToCharArray();
-
-        for (int i = 0; i < 100; i++)
-        {
-            string property1Value = letters[i / 5 % letters.Length].ToString();
-
-            Model model = new Model
-                {
-                    Property1 = property1Value,
-                    Property2 = GenerateRandomString(8),
-                    Property3 = GenerateRandomString(8),
-                    Property4 = GenerateRandomString(8),
-                    Property5 = GenerateRandomString(8),
-                    Property6 = GenerateRandomString(8),
-                    Property7 = GenerateRandomString(8),
-                    Property8 = GenerateRandomString(8),
-                };
-
-            models.Add(model);
-        }
-
-        return models;
+        return new string(Enumerable.Repeat(chars, length).Select(s => s[Random.Shared.Next(s.Length)]).ToArray());
     }
 
     public class Model

@@ -101,12 +101,15 @@ namespace MudBlazor
         protected string GroupClassname(GroupDefinition<T> group) =>
             new CssBuilder(GroupClass)
                 .AddClass(GroupClassFunc?.Invoke(group))
+                .AddClass("mud-table-grouper")
+                .AddClass("mud-table-cell")
                 .AddClass("sticky-left", when: GroupHeaderStickyLeft)
                 .Build();
 
         protected string GroupStylename(GroupDefinition<T> group) =>
             new StyleBuilder()
                 .AddStyle(GroupStyle)
+                .AddStyle("background-color:var(--mud-palette-background-gray)")
                 .AddStyle(GroupStyleFunc?.Invoke(group))
                 .Build();
 
@@ -1101,7 +1104,7 @@ namespace MudBlazor
         /// The parameter to determine if the group header is sticky to the left while scrolling
         /// </summary>
         [Parameter]
-        public bool GroupHeaderStickyLeft { get; set; } = false;
+        public bool GroupHeaderStickyLeft { get; set; }
 
         #endregion
 
