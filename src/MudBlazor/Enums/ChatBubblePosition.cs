@@ -4,9 +4,9 @@ namespace MudBlazor
 {
     public enum ChatBubblePosition
     {
-        [Description("start")]
-        Start,
-        [Description("end")]
-        End
+        [Description("left")]
+        Left,
+        [Description("right")]
+        Right
     }
 }

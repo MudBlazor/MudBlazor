@@ -57,7 +57,7 @@
     align-self: flex-end;
   }
 
-  &-start {
+  &-left {
     place-items: start;
     grid-template-columns: auto 1fr;
 
@@ -80,7 +80,7 @@
     }
   }
 
-  &-end {
+  &-right {
     place-items: end;
     grid-template-columns: 1fr auto;
 
