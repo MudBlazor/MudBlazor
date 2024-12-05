@@ -432,7 +432,7 @@ public class ApiDocumentationWriter : StringWriter
         WriteLineIndented($"Name = \"{type.Name}\", ");
         WriteLineIndented($"NameFriendly = \"{type.Type.GetFriendlyName()}\", ");
         WriteBaseTypeIndented(type.BaseType);
-        WriteIsComponentIndented(type.Type.IsSubclassOf(typeof(MudComponentBase)));
+        WriteIsComponentIndented(type.Type.IsComponent());
         WriteSummaryIndented(type.Summary);
         WriteRemarksIndented(type.Remarks);
         WriteProperties(type);

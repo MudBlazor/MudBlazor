@@ -29,7 +29,7 @@ public class ApiDocumentationBuilder
     /// <summary>
     /// The assembly to document.
     /// </summary>
-    public List<Assembly> Assemblies { get; } = [typeof(_Imports).Assembly];
+    public List<Assembly> Assemblies { get; } = [];
 
     /// <summary>
     /// The types in the assembly.
@@ -173,8 +173,10 @@ public class ApiDocumentationBuilder
     /// <summary>
     /// Generates documentation for all types.
     /// </summary>
-    public bool Execute()
+    public bool Execute(string mudBlazorDllPath)
     {
+        var assembly = Assembly.LoadFrom(mudBlazorDllPath);
+        Assemblies.Add(assembly);
         AddTypesToDocument();
         ResolveSeeAlsoLinks();
         FindDeclaringTypes();
@@ -293,7 +295,7 @@ public class ApiDocumentationBuilder
         // Go through each property
         foreach (var property in properties)
         {
-            var category = property.GetCustomAttribute<CategoryAttribute>();
+            var (categoryName, categoryOrder) = property.GetCategoryAttribute();
             var blazorParameter = property.GetCustomAttribute<ParameterAttribute>();
             var key = GetPropertyFullName(property);
 
@@ -314,13 +316,13 @@ public class ApiDocumentationBuilder
                     // Record this event
                     documentedEvent = new DocumentedEvent
                     {
-                        Category = category?.Name,
+                        Category = categoryName,
                         DeclaringType = property.DeclaringType,
                         IsProtected = property.GetMethod?.IsFamily ?? false,
                         IsParameter = blazorParameter != null,
                         Key = key,
                         Name = property.Name,
-                        Order = category?.Order ?? int.MaxValue,
+                        Order = categoryOrder ?? int.MaxValue,
                         Remarks = xmlDocs.Remarks?.Replace("\r\n", "").Trim(),
                         Summary = xmlDocs.Summary?.Replace("\r\n", "").Trim(),
                         Type = property.PropertyType,
@@ -341,13 +343,13 @@ public class ApiDocumentationBuilder
                     // Record this property                
                     documentedProperty = new DocumentedProperty()
                     {
-                        Category = category?.Name,
+                        Category = categoryName,
                         DeclaringType = property.DeclaringType,
                         IsProtected = property.GetMethod?.IsFamily ?? false,
                         IsParameter = blazorParameter is not null,
                         Key = key,
                         Name = property.Name,
-                        Order = category?.Order ?? int.MaxValue,
+                        Order = categoryOrder ?? int.MaxValue,
                         Remarks = xmlDocs.Remarks?.Replace("\r\n", "").Trim(),
                         Summary = xmlDocs.Summary?.Replace("\r\n", "").Trim(),
                         Type = property.PropertyType,
@@ -385,7 +387,7 @@ public class ApiDocumentationBuilder
         // Go through each property
         foreach (var field in fields)
         {
-            var category = field.GetCustomAttribute<CategoryAttribute>();
+            var (categoryName, categoryOrder) = field.GetCategoryAttribute();
             var key = GetFieldFullName(field);
 
             if (string.IsNullOrEmpty(key))
@@ -402,12 +404,12 @@ public class ApiDocumentationBuilder
                 // Record this property
                 documentedField = new DocumentedField
                 {
-                    Category = category?.Name,
+                    Category = categoryName,
                     DeclaringType = field.DeclaringType,
                     IsProtected = field.IsFamily,
                     Key = key,
                     Name = field.Name,
-                    Order = category?.Order ?? int.MaxValue,
+                    Order = categoryOrder ?? int.MaxValue,
                     Remarks = xmlDocs.Remarks?.Replace("\r\n", "").Trim(),
                     Summary = xmlDocs.Summary?.Replace("\r\n", "").Trim(),
                     Type = field.FieldType,
@@ -441,7 +443,7 @@ public class ApiDocumentationBuilder
         // Go through each property
         foreach (var eventItem in events)
         {
-            var category = eventItem.GetCustomAttribute<CategoryAttribute>();
+            var (categoryName, categoryOrder) = eventItem.GetCategoryAttribute();
             var blazorParameter = eventItem.GetCustomAttribute<ParameterAttribute>();
             var key = $"{eventItem.DeclaringType?.FullName}.{eventItem.Name}";
 
@@ -451,11 +453,11 @@ public class ApiDocumentationBuilder
                 // No.
                 documentedEvent = new DocumentedEvent
                 {
-                    Category = category?.Name,
+                    Category = categoryName,
                     DeclaringType = eventItem.DeclaringType,
                     Key = key,
                     Name = eventItem.Name,
-                    Order = category?.Order ?? int.MaxValue,
+                    Order = categoryOrder ?? int.MaxValue,
                     Type = eventItem.EventHandlerType,
                 };
                 Events.Add(key, documentedEvent);

@@ -70,6 +70,21 @@ public static partial class TypeExtensions
         return name;
     }
 
+
+    public static bool IsComponent(this Type type)
+    {
+        Type? p = type;
+        if (p.Name == "MudComponentBase")
+            return false;
+        while (p is not null && p.Name != null)
+        {
+            if (p.Name == "MudComponentBase")
+                return true;
+            p = p.BaseType;
+        }
+        return false;
+    }
+
     /// <summary>
     /// The regular expression for <see cref="Nullable{T}"/>
     /// </summary>

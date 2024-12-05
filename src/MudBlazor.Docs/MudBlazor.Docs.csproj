@@ -22,7 +22,7 @@
   <Target Name="GenerateDocs" AfterTargets="ResolveProjectReferences" Condition="'$(DesignTimeBuild)' != 'true'">
     <!--Command-line for the code generator-->
     <Message Text="Generating Docs" Importance="high" />
-    <Exec Command="dotnet run --configuration Release --project &quot;$(SolutionDir)MudBlazor.Docs.Compiler/MudBlazor.Docs.Compiler.csproj&quot;" />
+    <Exec Command="dotnet run --configuration Release --project &quot;$(SolutionDir)MudBlazor.Docs.Compiler/MudBlazor.Docs.Compiler.csproj&quot; -- &quot;$(SolutionDir)MudBlazor/bin/$(Configuration)/net9.0//MudBlazor.dll&quot;" />
   </Target>
 
   <!--Add Content that is being generated as part of the build cycle-->
