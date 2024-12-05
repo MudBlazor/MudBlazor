@@ -35,6 +35,10 @@
     }
   }
 
+  .mud-chat-bubble + .mud-chat-bubble { // adds margin if a mud-chat-bubble is above it
+    margin-top: .5rem;
+  }
+
   &-header {
     grid-row-start: 1;
     font-size: .875rem;
@@ -54,7 +58,12 @@
 
   &-image {
     grid-row: span 2 / span 2;
-    align-self: flex-end;
+    align-self: flex-start;
+    grid-row-start: 1;
+  }
+
+  &:has(.mud-chat-header) .mud-chat-image {
+    grid-row-start: 2;
   }
 
   &-start {
