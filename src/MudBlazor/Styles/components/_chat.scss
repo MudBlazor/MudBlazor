@@ -57,7 +57,7 @@
     align-self: flex-end;
   }
 
-  &-left {
+  &-start {
     place-items: start;
     grid-template-columns: auto 1fr;
 
@@ -80,7 +80,7 @@
     }
   }
 
-  &-right {
+  &-end {
     place-items: end;
     grid-template-columns: 1fr auto;
 
@@ -102,5 +102,22 @@
       }
     }
   }
-}
 
+  &.mud-chat-rtl {
+    &.mud-chat-start {
+      .mud-chat-bubble {
+        &:before {
+          mask-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0nMycgaGVpZ2h0PSczJyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnPjxwYXRoIGZpbGw9J2JsYWNrJyBkPSdtIDAgMyBMIDEgMyBMIDMgMyBDIDIgMyAwIDEgMCAwJy8+PC9zdmc+);
+        }
+      }
+    }
+
+    &.mud-chat-end {
+      .mud-chat-bubble {
+        &:before {
+          mask-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0nMycgaGVpZ2h0PSczJyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnPjxwYXRoIGZpbGw9J2JsYWNrJyBkPSdtIDAgMyBMIDMgMyBMIDMgMCBDIDMgMSAxIDMgMCAzJy8+PC9zdmc+);
+        }
+      }
+    }
+  }
+}

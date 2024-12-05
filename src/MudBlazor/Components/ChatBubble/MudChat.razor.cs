@@ -12,48 +12,19 @@ namespace MudBlazor
     {
         protected string Classname => new CssBuilder("mud-chat")
             .AddClass($"mud-chat-{ChatPosition.ToDescriptionString()}")
-            .AddClass($"justify-sm-{ConvertHorizontalAlignment(ContentAlignment).ToDescriptionString()}")
+            .AddClass($"mud-chat-rtl", RightToLeft)
             .AddClass(RootClass)
             .Build();
 
-        /// <summary>
-        /// Gets the horizontal alignment to use based on the current right-to-left setting.
-        /// </summary>
-        /// <param name="contentAlignment">
-        /// A <see cref="HorizontalAlignment"/> value.  The alignment to adjust.
-        /// </param>
-        /// <returns>
-        /// A <see cref="HorizontalAlignment"/> value.  The adjusted alignment.
-        /// </returns>
-        private HorizontalAlignment ConvertHorizontalAlignment(HorizontalAlignment contentAlignment)
-        {
-            return contentAlignment switch
-            {
-                HorizontalAlignment.Right => RightToLeft ? HorizontalAlignment.Start : HorizontalAlignment.End,
-                HorizontalAlignment.Left => RightToLeft ? HorizontalAlignment.End : HorizontalAlignment.Start,
-                _ => contentAlignment
-            };
-        }
-
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
-
-        /// <summary>
-        /// Gets or sets the position of the text to the start (Left in LTR and right in RTL).
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="HorizontalAlignment.Left"/>.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.Alert.Appearance)]
-        public HorizontalAlignment ContentAlignment { get; set; } = HorizontalAlignment.Left;
 
         /// <summary>
         /// Chat bubble position.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Chat.Appearance)]
-        public ChatBubblePosition ChatPosition { get; set; } = ChatBubblePosition.Left;
+        public ChatBubblePosition ChatPosition { get; set; } = ChatBubblePosition.Start;
 
         /// <summary>
         /// Child content of component.
