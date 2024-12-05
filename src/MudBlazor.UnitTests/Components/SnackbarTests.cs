@@ -3,7 +3,6 @@ using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Web;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
@@ -434,7 +433,7 @@ namespace MudBlazor.UnitTests.Components
                     c.ShowTransitionDuration = 0;
                     c.HideTransitionDuration = 0;
                     c.VisibleStateDuration = int.MaxValue;
-                    c.Onclick = _ => Task.CompletedTask;
+                    c.OnClick = _ => Task.CompletedTask;
                 })
             );
             _provider.FindAll(".mud-snackbar").Count.Should().Be(1);
@@ -472,6 +471,34 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task CloseButtonInvokesCustomTask()
+        {
+            var counter = 0;
+            Task Count(Snackbar s)
+            {
+                counter++;
+                return Task.CompletedTask;
+            }
+            // Set up the snackbar.
+            await _provider.InvokeAsync(() =>
+                _service.Add("ah, ah, ah, ah, stayin' alive", Severity.Normal, c =>
+                {
+                    c.CloseButtonClickFunc = Count;
+                    c.RequireInteraction = true;
+                })
+            );
+
+            _provider.FindAll(".mud-snackbar").Count.Should().Be(1);
+
+            counter.Should().Be(0);
+
+            _provider.FindAll(".mud-snackbar-close-button").Single().Click();
+
+            counter.Should().Be(1);
+            _provider.WaitForAssertion(() => _provider.FindAll(".mud-snackbar").Count.Should().Be(0));
+        }
+
+        [Test]
         public async Task ActionButtonClosesWithPointerOver()
         {
             // Set up the snackbar.
@@ -482,7 +509,7 @@ namespace MudBlazor.UnitTests.Components
                     c.HideTransitionDuration = 0;
                     c.VisibleStateDuration = int.MaxValue;
                     c.Action = "Close";
-                    c.Onclick = _ => Task.CompletedTask;
+                    c.OnClick = _ => Task.CompletedTask;
                 })
             );
 
@@ -707,7 +734,7 @@ namespace MudBlazor.UnitTests.Components
                     c.HideTransitionDuration = 300;
                     c.VisibleStateDuration = int.MaxValue;
                     c.Action = "Click me";
-                    c.Onclick = _ =>
+                    c.OnClick = _ =>
                     {
                         successfulClicks++;
                         return Task.CompletedTask;
@@ -753,7 +780,7 @@ namespace MudBlazor.UnitTests.Components
                     c.ShowTransitionDuration = 0;
                     c.HideTransitionDuration = 300;
                     c.VisibleStateDuration = int.MaxValue;
-                    c.Onclick = _ =>
+                    c.OnClick = _ =>
                     {
                         successfulClicks++;
                         return Task.CompletedTask;

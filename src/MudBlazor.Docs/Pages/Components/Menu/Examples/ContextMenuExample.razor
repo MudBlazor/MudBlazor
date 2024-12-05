@@ -1,0 +1,33 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudCard>
+    <MudCardHeader>
+        <CardHeaderContent>
+            <MudText Typo="Typo.body1">Istra Croatia</MudText>
+            <MudText Typo="Typo.body2">Peninsula in Europe</MudText>
+        </CardHeaderContent>
+    </MudCardHeader>
+    <div @onclick="@(OpenContextMenu)" @oncontextmenu="@(OpenContextMenu)" @oncontextmenu:preventDefault>
+        <MudCardMedia Image="images/pilars.jpg" Height="250"/>
+    </div>
+    <MudCardContent>
+        <MudText Typo="Typo.body2">Try left clicking or right clicking the image to open the menu.</MudText>
+    </MudCardContent>
+</MudCard>
+
+<MudMenu Dense PositionAtCursor @ref="_contextMenu">
+    <MudMenuItem>Cut</MudMenuItem>
+    <MudMenuItem>Copy</MudMenuItem>
+    <MudMenuItem>Paste</MudMenuItem>
+    <MudMenuItem>Delete</MudMenuItem>
+</MudMenu>
+
+@code {
+#nullable enable
+    private MudMenu _contextMenu = null!;
+
+    private async Task OpenContextMenu(MouseEventArgs args)
+    {
+        await _contextMenu.OpenMenuAsync(args);
+    }
+}

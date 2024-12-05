@@ -2,7 +2,7 @@
 
 @inject ISnackbar Snackbar
 
-<MudDataGrid @ref="_dataGrid" T="ClientInfo" Items="Clients" Filterable="true"
+<MudDataGrid T="ClientInfo" Items="Clients" Filterable="true"
              RowContextMenuClick="@((_rightClick ? OpenMenuContent : null)!)"
              RowClick="@((!_rightClick ? OpenMenuContent : null)!)">
     <Columns>
@@ -23,18 +23,18 @@
 </MudDataGrid>
 <MudMenu PositionAtCursor="true" @ref="_contextMenu" id="_contextMenu">
     <MudMenuItem Icon="@Icons.Material.Filled.Block">
-        Ban @_contextRow.Username
+        Ban @_contextRow?.Username
     </MudMenuItem>
     <MudMenuItem Icon="@Icons.Material.Filled.Info" OnClick="@ShowHiddenInfo">
-        View Details for @_contextRow.HwId
+        View Details for @_contextRow?.HwId
     </MudMenuItem>
 </MudMenu>
 
 @code {
+#nullable enable
+    private ClientInfo? _contextRow;
     private bool _rightClick = true;
-    private MudMenu _contextMenu;
-    private ClientInfo _contextRow;
-    private MudDataGrid<ClientInfo> _dataGrid;
+    private MudMenu _contextMenu = null!;
 
     public List<ClientInfo> Clients =
     [

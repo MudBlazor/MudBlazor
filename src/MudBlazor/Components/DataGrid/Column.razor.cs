@@ -306,6 +306,12 @@ namespace MudBlazor
         public RenderFragment<FilterContext<T>> FilterTemplate { get; set; }
 
         /// <summary>
+        /// The operators to use for this column's filter.
+        /// </summary>
+        [Parameter]
+        public HashSet<string> FilterOperators { get; set; } = [];
+
+        /// <summary>
         /// The unique identifier for this column.
         /// </summary>
         public string Identifier { get; set; }
@@ -512,7 +518,7 @@ namespace MudBlazor
                 // Make sure that when we access filterContext properties, they have been defined...
                 if (filterContext.FilterDefinition == null)
                 {
-                    var operators = FilterOperator.GetOperatorByDataType(PropertyType);
+                    var operators = GetFilterOperators(FieldType.Identify(PropertyType));
                     var filterDefinition = DataGrid.CreateFilterDefinitionInstance();
                     filterDefinition.Title = Title;
                     filterDefinition.Operator = operators.FirstOrDefault();
@@ -549,11 +555,22 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
+            if (FilterOperators.Count > 0)
+            {
+                var defaultOperators = FilterOperator.GetOperatorByDataType(PropertyType);
+                var invalidOperators = FilterOperators.Where(@operator => !defaultOperators.Contains(@operator)).ToArray();
+
+                if (invalidOperators.Length > 0)
+                {
+                    throw new ArgumentException($"Invalid filter operators for {PropertyType.Name}: {string.Join(", ", invalidOperators)}");
+                }
+            }
+
             base.OnInitialized();
+
             groupBy = GroupBy;
 
-            if (DataGrid != null)
-                DataGrid.AddColumn(this);
+            DataGrid?.AddColumn(this);
 
             // Add the HeaderContext
             headerContext = new HeaderContext<T>(DataGrid);
@@ -578,6 +595,18 @@ namespace MudBlazor
 
             // Add the FooterContext
             footerContext = new FooterContext<T>(DataGrid);
+        }
+
+        internal IReadOnlyCollection<string> GetFilterOperators(FieldType fieldType)
+        {
+            if (FilterOperators.Count == 0)
+            {
+                return FilterOperator.GetOperatorByDataType(fieldType);
+            }
+            else
+            {
+                return FilterOperators;
+            }
         }
 
         internal Func<T, object> GetLocalSortFunc()

@@ -61,7 +61,7 @@ namespace MudBlazor
         internal void FieldChanged(Column<T> column)
         {
             _filterDefinition.Column = column;
-            var operators = FilterOperator.GetOperatorByDataType(column.PropertyType);
+            var operators = column.GetFilterOperators(FieldType.Identify(column.PropertyType));
             _filterDefinition.Operator = operators.FirstOrDefault();
             _filterDefinition.Title = column.Title;
             _filterDefinition.Value = null;

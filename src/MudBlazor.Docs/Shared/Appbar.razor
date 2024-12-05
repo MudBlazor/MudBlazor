@@ -90,7 +90,7 @@
 
 <MudDialog @bind-Visible="IsSearchDialogOpen" Options="_dialogOptions" Class="docs-gray-bg" ContentClass="docs-mobile-dialog-search d-flex flex-column" DefaultFocus="DefaultFocus.FirstChild">
     <DialogContent>
-        <MudAutocomplete @ref="_searchAutocomplete" T="ApiLinkServiceEntry" PopoverClass="docs-mobile-dialog-search-popover"
+        <MudAutocomplete @ref="_searchAutocomplete" T="ApiLinkServiceEntry" PopoverClass="docs-mobile-dialog-search-popover" DropdownSettings="@_dropdownBehavior"
                          AutoFocus="true" Placeholder="Search" Clearable="true" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search"
                          SearchFunc="async (text, token) => await Search(text, token)" DebounceInterval="0"
                          ValueChanged="OnSearchResult" OpenChanged="o => _searchDialogAutocompleteOpen = o" ReturnedItemsCountChanged="c => _searchDialogReturnedItemsCount = c">

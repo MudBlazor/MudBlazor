@@ -395,7 +395,7 @@ namespace MudBlazor.UnitTests.Components
             dialogReference.Should().NotBe(null);
             dialogReference.Should().BeAssignableTo(typeof(CustomDialogReference));
 
-            //After above checks have passed, we can safely cast the generic reference into our specific implementation  
+            //After above checks have passed, we can safely cast the generic reference into our specific implementation
             var customDialogReference = (CustomDialogReference)dialogReference;
             //The custom property should be false by default otherwise the rest of the test logic would be incorrect
             customDialogReference.AllowDismiss.Should().BeFalse();
@@ -584,6 +584,24 @@ namespace MudBlazor.UnitTests.Components
             DialogRender.OnInitializedCount.Should().Be(2);
             //Reset global value
             DialogRender.OnInitializedCount = 0;
+        }
+
+        /// <summary>
+        /// Reproduce bug from the GitHub issue #10180 :
+        /// https://github.com/MudBlazor/MudBlazor/issues/10180
+        /// </summary>
+        [Test]
+        public void OpenAndCloseImmediately()
+        {
+            // Arrange
+
+            var comp = Context.RenderComponent<ComponentThatOpensAndClosesDialog>();
+            var service = Context.Services.GetRequiredService<IDialogService>();
+            service.Should().NotBeNull();
+
+            // Act : Open and close immediately
+
+            comp.Render();
         }
 
         /// <summary>
@@ -776,7 +794,7 @@ namespace MudBlazor.UnitTests.Components
             dialogReference.Should().NotBe(null);
             dialogReference.Should().BeAssignableTo(typeof(CustomDialogReference));
 
-            //After above checks have passed, we can safely cast the generic reference into our specific implementation  
+            //After above checks have passed, we can safely cast the generic reference into our specific implementation
             var customDialogReference = (CustomDialogReference)dialogReference;
             //The custom property should be false by default otherwise the rest of the test logic would be incorrect
             customDialogReference.AllowDismiss.Should().BeFalse();
@@ -948,7 +966,7 @@ namespace MudBlazor.UnitTests.Components
             var provider = Context.RenderComponent<MudDialogProvider>();
             var service = Context.Services.GetRequiredService<IDialogService>();
 
-            // Act 
+            // Act
             await provider.InvokeAsync(() => service.Show<DialogOkCancel>("Custom title"));
             var dialogInstance = provider.FindComponent<MudDialogContainer>();
 
@@ -972,7 +990,7 @@ namespace MudBlazor.UnitTests.Components
             var provider = Context.RenderComponent<MudDialogProvider>();
             var service = Context.Services.GetRequiredService<IDialogService>();
 
-            // Act 
+            // Act
             await provider.InvokeAsync(() => service.Show<DialogOkCancel>("Custom title", new DialogOptions { CloseButton = true }));
             var dialogInstance = provider.FindComponent<MudDialogContainer>();
 
@@ -988,7 +1006,7 @@ namespace MudBlazor.UnitTests.Components
             var provider = Context.RenderComponent<MudDialogProvider>();
             var service = Context.Services.GetRequiredService<IDialogService>();
 
-            // Act 
+            // Act
             await provider.InvokeAsync(() => service.Show(typeof(DialogOkCancel)));
 
             // Assert
@@ -1003,7 +1021,7 @@ namespace MudBlazor.UnitTests.Components
             var provider = Context.RenderComponent<MudDialogProvider>();
             var service = Context.Services.GetRequiredService<IDialogService>();
 
-            // Act 
+            // Act
             await provider.InvokeAsync(() => service.Show(typeof(DialogOkCancel), "Custom title"));
             var dialogInstance = provider.FindComponent<MudDialogContainer>();
 
@@ -1027,7 +1045,7 @@ namespace MudBlazor.UnitTests.Components
             var provider = Context.RenderComponent<MudDialogProvider>();
             var service = Context.Services.GetRequiredService<IDialogService>();
 
-            // Act 
+            // Act
             await provider.InvokeAsync(() => service.Show(typeof(DialogOkCancel), "Custom title", new DialogOptions { CloseButton = true }));
             var dialogInstance = provider.FindComponent<MudDialogContainer>();
 
@@ -1043,7 +1061,7 @@ namespace MudBlazor.UnitTests.Components
             var provider = Context.RenderComponent<MudDialogProvider>();
             var service = Context.Services.GetRequiredService<IDialogService>();
 
-            // Act 
+            // Act
             await provider.InvokeAsync(() =>
                 service.Show(typeof(DialogWithActionsClass), "Custom title", new DialogParameters<DialogWithActionsClass> { { x => x.ActionsClass, "custom-class" } }));
 
@@ -1060,7 +1078,7 @@ namespace MudBlazor.UnitTests.Components
             var provider = Context.RenderComponent<MudDialogProvider>();
             var service = Context.Services.GetRequiredService<IDialogService>();
 
-            // Act 
+            // Act
             await provider.InvokeAsync(() => service.ShowAsync<DialogOkCancel>("Custom title"));
             var dialogInstance = provider.FindComponent<MudDialogContainer>();
 
@@ -1083,7 +1101,7 @@ namespace MudBlazor.UnitTests.Components
             var provider = Context.RenderComponent<MudDialogProvider>();
             var service = Context.Services.GetRequiredService<IDialogService>();
 
-            // Act 
+            // Act
             await provider.InvokeAsync(() => service.ShowAsync<DialogOkCancel>("Custom title", new DialogOptions { CloseButton = true }));
             var dialogInstance = provider.FindComponent<MudDialogContainer>();
 
@@ -1106,7 +1124,7 @@ namespace MudBlazor.UnitTests.Components
                 type = result.DataType;
             };
 
-            // Act 
+            // Act
             await provider.InvokeAsync(() => service.Close(reference));
 
             // Assert
@@ -1128,7 +1146,7 @@ namespace MudBlazor.UnitTests.Components
                 return Task.CompletedTask;
             };
 
-            // Act 
+            // Act
             await Task.Factory.StartNew(() => service.ShowAsync(typeof(DialogOkCancel))).ConfigureAwait(false);
 
             // Assert
@@ -1142,7 +1160,7 @@ namespace MudBlazor.UnitTests.Components
             var provider = Context.RenderComponent<MudDialogProvider>();
             var service = Context.Services.GetRequiredService<IDialogService>();
 
-            // Act 
+            // Act
             await provider.InvokeAsync(() => service.ShowAsync(typeof(DialogOkCancel)));
             var dialogInstance = provider.FindComponent<MudDialogContainer>();
 
@@ -1164,7 +1182,7 @@ namespace MudBlazor.UnitTests.Components
             var provider = Context.RenderComponent<MudDialogProvider>();
             var service = Context.Services.GetRequiredService<IDialogService>();
 
-            // Act 
+            // Act
             await provider.InvokeAsync(() => service.ShowAsync(typeof(DialogOkCancel), "Custom title"));
             var dialogInstance = provider.FindComponent<MudDialogContainer>();
 
@@ -1187,7 +1205,7 @@ namespace MudBlazor.UnitTests.Components
             var provider = Context.RenderComponent<MudDialogProvider>();
             var service = Context.Services.GetRequiredService<IDialogService>();
 
-            // Act 
+            // Act
             await provider.InvokeAsync(() => service.ShowAsync(typeof(DialogOkCancel), "Custom title", new DialogOptions { CloseButton = true }));
             var dialogInstance = provider.FindComponent<MudDialogContainer>();
 
@@ -1202,7 +1220,7 @@ namespace MudBlazor.UnitTests.Components
             var provider = Context.RenderComponent<MudDialogProvider>();
             var service = Context.Services.GetRequiredService<IDialogService>();
 
-            // Act 
+            // Act
             await provider.InvokeAsync(() =>
                 service.ShowAsync(typeof(DialogWithActionsClass), "Custom title", new DialogParameters<DialogWithActionsClass> { { x => x.ActionsClass, "custom-class" } }));
 
