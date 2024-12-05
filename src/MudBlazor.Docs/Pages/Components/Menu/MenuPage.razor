@@ -105,19 +105,31 @@
                         <MenuActivatorOnMouseExample/>
                     </SectionContent>
                 </DocsPageSection>
+                <DocsPageSection>
+                    <SectionHeader Title="Context Menu">
+                        <Description>
+                            It is possible to open a menu using custom logic. This is useful when implementing context menus.
+                            When <CodeInline>Label</CodeInline>, <CodeInline>Icon</CodeInline> and <CodeInline>ActivatorContent</CodeInline> are unset, no 
+                            button is rendered and the menu can only be opened programmatically.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(ContextMenuExample)" ShowCode="false">
+                        <ContextMenuExample/>
+                    </SectionContent>
+                </DocsPageSection>
             </SectionSubGroups>
-
-            <DocsPageSection>
-                <SectionHeader Title="Placement">
-                    <Description>
-                        The component uses <MudLink Href="/components/popover">MudPopover</MudLink> to place its menu, which can be controlled with <CodeInline>AnchorOrigin</CodeInline> and <CodeInline>TransformOrigin</CodeInline>.<br />
-                        To learn and see all possible examples of how you can position the popover check out <MudLink Color="Color.Secondary" Href="/components/popover">its documentation page.</MudLink>
-                    </Description>
-                </SectionHeader>
-                 <SectionContent Code="@nameof(MenuAdvancedPopoverExample)" ShowCode="false">
-                    <MenuAdvancedPopoverExample />
-                </SectionContent>
-            </DocsPageSection>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Placement">
+                <Description>
+                    The component uses <MudLink Href="/components/popover">MudPopover</MudLink> to place its menu, which can be controlled with <CodeInline>AnchorOrigin</CodeInline> and <CodeInline>TransformOrigin</CodeInline>.<br />
+                    To learn and see all possible examples of how you can position the popover check out <MudLink Color="Color.Secondary" Href="/components/popover">its documentation page.</MudLink>
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(MenuAdvancedPopoverExample)" ShowCode="false">
+                <MenuAdvancedPopoverExample />
+            </SectionContent>
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>
