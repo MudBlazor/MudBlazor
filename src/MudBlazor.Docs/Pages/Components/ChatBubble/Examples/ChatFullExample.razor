@@ -11,7 +11,12 @@
         <MudNumericField Label="Elevation" @bind-Value="_elevation" Step="1" Min="0" Max="25" FullWidth="false" Style="width: 100px;" />
     </MudItem>
     <MudItem xs="2" Class="justify-center">
-        <MudText>Color Select</MudText>
+        <MudSelect T="MudBlazor.Color" Label="Chat Color" @bind-Value="_selectedColor">
+            @foreach (MudBlazor.Color color in Enum.GetValues(typeof(MudBlazor.Color)))
+            {
+                <MudSelectItem Value="@color">@color.ToString()</MudSelectItem>
+            }
+        </MudSelect>
     </MudItem>
     <MudItem xs="4" Class="justify-center">
     <MudRadioGroup @bind-Value="_variant">
@@ -22,26 +27,26 @@
     </MudItem>
 </MudGrid>
 
-<MudChat Dense="@_dense" Elevation="@_elevation" Variant="@_variant" Square="_square" ChatPosition="ChatBubblePosition.Start">
+<MudChat Color="_selectedColor" Dense="@_dense" Elevation="@_elevation" Variant="@_variant" Square="_square" ChatPosition="ChatBubblePosition.Start">
     <MudChatHeader Name="Anakin" Time="12:46" />
-    <MudAvatar>
+    <MudAvatar Size="@(_dense ? Size.Small : Size.Medium)">
         <MudImage Src="images/toiletvisit.jpg" />
     </MudAvatar>
-    <MudChatBubble Color="Color.Primary">What kind of nonsense is this</MudChatBubble>
-    <MudChatBubble Color="Color.Secondary">Put me on the Council and not make me a Master!??</MudChatBubble>
-    <MudChatBubble Color="Color.Tertiary">That's never been done in the history of the Jedi. It's insulting!</MudChatBubble>
+    <MudChatBubble>What kind of nonsense is this</MudChatBubble>
+    <MudChatBubble>Put me on the Council and not make me a Master!??</MudChatBubble>
+    <MudChatBubble>That's never been done in the history of the Jedi. It's insulting!</MudChatBubble>
     <MudChatFooter Text="Seen at 12:46" />
 </MudChat>
 
-<MudChat Dense="@_dense" Elevation="@_elevation" Variant="@_variant" Square="_square" ChatPosition="ChatBubblePosition.End">
+<MudChat Color="_selectedColor" Dense="@_dense" Elevation="@_elevation" Variant="@_variant" Square="_square" ChatPosition="ChatBubblePosition.End">
     <MudChatHeader Name="Obi-Wan Kenobi" Time="12:45" />
-    <MudAvatar>
+    <MudAvatar Size="@(_dense ? Size.Small : Size.Medium)">
         <MudImage Src="images/jonny.jpg" />
     </MudAvatar>
-    <MudChatBubble Color="Color.Info">Calm down, Anakin.</MudChatBubble>
-    <MudChatBubble Color="Color.Success">You have been given a great honor.</MudChatBubble>
-    <MudChatBubble Color="Color.Warning">To be on the Council at your age.</MudChatBubble>
-    <MudChatBubble Color="Color.Error">It's never happened before.</MudChatBubble>
+    <MudChatBubble>Calm down, Anakin.</MudChatBubble>
+    <MudChatBubble>You have been given a great honor.</MudChatBubble>
+    <MudChatBubble>To be on the Council at your age.</MudChatBubble>
+    <MudChatBubble Color="Color.Primary">It's never happened before.</MudChatBubble>
     <MudChatFooter Text="Delivered" />
 </MudChat>
 
@@ -49,5 +54,6 @@
         private bool _dense = true;
         private bool _square = false;
         private int _elevation = 5;
-        private Variant _variant = Variant.Filled;
+        private Variant _variant = Variant.Text;
+        private Color _selectedColor = Color.Default;
     }

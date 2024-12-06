@@ -2,7 +2,7 @@
 @page "/components/MudChat"
 
 <DocsPage>
-    <DocsPageHeader Title="Chat" Component="@nameof(MudChat)" SubTitle="The MudChat component is used to house one or more MudChatBubble components, with optional components such as MudChatAvatar, MudChatHeader, and MudChatFooter." />
+    <DocsPageHeader Title="Chat" Component="@nameof(MudChat)" SubTitle="The MudChat component is used to house one or more MudChatBubble components, with optional components such as MudAvatar, MudChatHeader, and MudChatFooter." />
     <DocsPageContent>
 
         <DocsPageSection>
@@ -41,7 +41,15 @@
         <DocsPageSection>
             <SectionHeader Title="Additional Chat Bubble Options">
                 <Description>
-                    Chat bubbles can be customized with the <CodeInline>Color</CodeInline> property, marked as dense using the <CodeInline>Dense</CodeInline> property (to reduce vertical margins), or modified using the <CodeInline>Variant</CodeInline> property, with the default variant being Filled.
+                    <CodeInline>MudChat</CodeInline> can be customized with the following properties:
+                    <ul class="ml-3">
+                        <li><CodeInline>Dense</CodeInline>: Reduces the vertical margins of the chat bubbles.</li>
+                        <li><CodeInline>Square</CodeInline>: Makes the chat bubbles square.</li>
+                        <li><CodeInline>Elevation</CodeInline>: The elevation of the chat bubbles. Defaults to 0.</li>
+                        <li>*<CodeInline>Color</CodeInline>: The color of the chat bubbles. Defaults to <CodeInline>Color.Default</CodeInline>.</li>
+                        <li>*<CodeInline>Variant</CodeInline>: The variant of the chat bubbles. Defaults to <CodeInline>Variant.Text</CodeInline>.</li>
+                    </ul>
+                    * These properties are passed down to the <CodeInline>MudChatBubble</CodeInline> components, and can be overridden individually.
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(ChatFullExample)" Block="true" FullWidth="true" ShowCode="false">

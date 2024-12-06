@@ -2,10 +2,15 @@
 
 .mud-chat {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  /*  grid-template-columns: repeat(2, minmax(0, 1fr));*/
   column-gap: .75rem;
   padding: .25rem;
   border-radius: var(--mud-default-borderradius);
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  grid-template: auto;
+  justify-self: stretch;
 
   &.mud-dense {
     .mud-chat-bubble {
@@ -82,27 +87,27 @@
     opacity: .5;
   }
 
-  &-image {
+  .mud-avatar {
     grid-row: span 2 / span 2;
     align-self: flex-start;
     grid-row-start: 1;
     margin-left: .25rem;
   }
 
-  &:has(.mud-chat-header) .mud-chat-image {
+  &:has(.mud-chat-header) .mud-avatar {
     // start row 2 if there is a mud-chat-header
     grid-row-start: 2;
   }
 
   &-start {
     place-items: start;
-    grid-template-columns: auto 1fr;
+    grid-template-columns: min-content auto;
 
     .mud-chat-header, .mud-chat-footer {
       grid-column-start: 2;
     }
 
-    .mud-chat-image {
+    .mud-avatar {
       grid-column-start: 1;
     }
 
@@ -119,13 +124,13 @@
 
   &-end {
     place-items: end;
-    grid-template-columns: 1fr auto;
+    grid-template-columns: auto min-content;
 
     .mud-chat-header, .mud-chat-footer {
       grid-column-start: 1;
     }
 
-    .mud-chat-image {
+    .mud-avatar {
       grid-column-start: 2;
     }
 
@@ -135,7 +140,7 @@
 
       &:before {
         mask-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0nMycgaGVpZ2h0PSczJyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnPjxwYXRoIGZpbGw9J2JsYWNrJyBkPSdtIDAgMyBMIDEgMyBMIDMgMyBDIDIgMyAwIDEgMCAwJy8+PC9zdmc+);
-        inset-inline-start: 99.9%;
+        inset-inline-start: 100%;
       }
     }
   }
@@ -176,6 +181,10 @@
   &-default {
     color: var(--mud-palette-text-primary);
     border: 1px solid var(--mud-palette-text-primary);
+
+    &:before {
+      background-color: var(--mud-palette-text-primary);
+    }
   }
 
   @each $color in $mud-palette-colors {
@@ -184,14 +193,14 @@
       border: 1px solid var(--mud-palette-#{$color});
 
       &:before {
-        background-color: var(--mud-palette-#{$color}-hover);
+        background-color: var(--mud-palette-#{$color}-darken);
       }
     }
   }
 }
 
 .mud-chat-filled {
-  &-normal {
+  &-default {
     color: var(--mud-palette-dark-text);
     font-weight: 500;
     background-color: var(--mud-palette-dark);
