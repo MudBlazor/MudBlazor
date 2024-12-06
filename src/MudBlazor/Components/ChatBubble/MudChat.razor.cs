@@ -16,7 +16,7 @@ namespace MudBlazor
             .AddClass($"mud-chat-rtl", RightToLeft)
             .AddClass($"mud-dense", Dense)
             .AddClass($"mud-elevation-{Elevation}")
-            .AddClass(RootClass)
+            .AddClass(Class)
             .Build();
 
         [CascadingParameter(Name = "RightToLeft")]
@@ -42,20 +42,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Chat.Behavior)]
         public RenderFragment? ChildContent { get; set; }
-
-        /// <summary>
-        /// Styles applied directly to root component of the chat bubble
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Chat.Appearance)]
-        public string? RootStyle { get; set; }
-
-        /// <summary>
-        /// Classes applied directly to root component of the chat bubble
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Chat.Appearance)]
-        public string? RootClass { get; set; }
 
         /// <summary>
         /// Gets or sets the size of the drop shadow.

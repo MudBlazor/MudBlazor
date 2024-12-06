@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -43,5 +44,51 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Chat.Behavior)]
         public RenderFragment? ChildContent { get; set; }
+
+        /// <summary>
+        /// Occurs when the chat bubble has been clicked.
+        /// </summary>
+        [Parameter]
+        public EventCallback<MouseEventArgs> OnClick { get; set; }
+
+        /// <summary>
+        /// Occurs when the chat bubble has been right-clicked.
+        /// </summary>
+        [Parameter]
+        public EventCallback<MouseEventArgs> OnContextClick { get; set; }
+
+        /// <summary>
+        /// Occurs when the chat bubble has been clicked.
+        /// </summary>
+        /// <param name="mouseEventArgs">
+        /// A <see cref="MouseEventArgs"/> object.  The mouse coordinates related to this click.
+        /// </param>
+        /// <returns>
+        /// A <see cref="Task"/> object.
+        /// </returns>
+        internal async Task OnClickHandler(MouseEventArgs mouseEventArgs)
+        {
+            if (OnClick.HasDelegate)
+            {
+                await OnClick.InvokeAsync(mouseEventArgs);
+            }
+        }
+
+        /// <summary>
+        /// Occurs when the chat bubble has been right-clicked.
+        /// </summary>
+        /// <param name="mouseEventArgs">
+        /// A <see cref="MouseEventArgs"/> object.  The mouse coordinates related to this click.
+        /// </param>
+        /// <returns>
+        /// A <see cref="Task"/> object.
+        /// </returns>
+        internal async Task OnContextHandler(MouseEventArgs mouseEventArgs)
+        {
+            if (OnContextClick.HasDelegate)
+            {
+                await OnContextClick.InvokeAsync(mouseEventArgs);
+            }
+        }
     }
 }
