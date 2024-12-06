@@ -1,8 +1,11 @@
+@import '../abstracts/variables';
+
 .mud-chat {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   column-gap: .75rem;
   padding: .25rem;
+  border-radius: var(--mud-default-borderradius);
 
   &.mud-dense {
     .mud-chat-bubble {
@@ -21,6 +24,10 @@
 
   &.mud-square {
     border-radius: 0px;
+
+    & .mud-chat-bubble {
+      border-radius: 0px;
+    }
   }
 
   &-bubble {
@@ -34,11 +41,6 @@
     border-radius: var(--mud-default-borderradius);
     min-width: 2.75rem;
     min-height: 2.75rem;
-
-    &-default {
-      color: var(--mud-palette-dark-text);
-      background-color: var(--mud-palette-gray-darker);
-    }
 
     &:before {
       position: absolute;
@@ -153,6 +155,53 @@
           mask-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0nMycgaGVpZ2h0PSczJyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnPjxwYXRoIGZpbGw9J2JsYWNrJyBkPSdtIDAgMyBMIDMgMyBMIDMgMCBDIDMgMSAxIDMgMCAzJy8+PC9zdmc+);
         }
       }
+    }
+  }
+}
+.mud-chat-text {
+  &-default {
+    color: var(--mud-palette-text-primary);
+    background-color: var(--mud-palette-dark-hover);
+  }
+
+  @each $color in $mud-palette-colors {
+    &-#{$color} {
+      color: var(--mud-palette-#{$color}-darken);
+      background-color: var(--mud-palette-#{$color}-hover);
+    }
+  }
+}
+
+.mud-chat-outlined {
+  &-default {
+    color: var(--mud-palette-text-primary);
+    border: 1px solid var(--mud-palette-text-primary);
+  }
+
+  @each $color in $mud-palette-colors {
+    &-#{$color} {
+      color: var(--mud-palette-#{$color}-darken);
+      border: 1px solid var(--mud-palette-#{$color});
+
+      &:before {
+        background-color: var(--mud-palette-#{$color}-hover);
+      }
+    }
+  }
+}
+
+.mud-chat-filled {
+  &-normal {
+    color: var(--mud-palette-dark-text);
+    font-weight: 500;
+    background-color: var(--mud-palette-dark);
+  }
+
+  @each $color in $mud-palette-colors {
+    &-#{$color} {
+      color: var(--mud-palette-#{$color}-text);
+      font-weight: 500;
+      background-color: var(--mud-palette-#{$color});
     }
   }
 }

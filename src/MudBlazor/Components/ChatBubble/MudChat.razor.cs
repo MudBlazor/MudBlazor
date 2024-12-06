@@ -12,7 +12,7 @@ namespace MudBlazor
     {
         protected string Classname => new CssBuilder("mud-chat")
             .AddClass($"mud-chat-{ChatPosition.ToDescriptionString()}")
-            .AddClass($"mud-chat-{Variant.ToDescriptionString()}")
+            .AddClass($"mud-square", Square)
             .AddClass($"mud-chat-rtl", RightToLeft)
             .AddClass($"mud-dense", Dense)
             .AddClass($"mud-elevation-{Elevation}")
@@ -20,7 +20,14 @@ namespace MudBlazor
             .Build();
 
         [CascadingParameter(Name = "RightToLeft")]
-        public bool RightToLeft { get; set; }
+        public bool RightToLeft { get; private set; }
+
+        /// <summary>
+        /// Child chat bubbles default color, can be overridden by bubble.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Chat.Appearance)]
+        public Color Color { get; set; } = Color.Default;
 
         /// <summary>
         /// Chat bubble position.
@@ -59,6 +66,16 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Alert.Appearance)]
         public int Elevation { set; get; } = 0;
+
+        /// <summary>
+        /// Gets or sets whether rounded corners are disabled.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Alert.Appearance)]
+        public bool Square { get; set; }
 
         /// <summary>
         /// Gets or sets whether compact padding will be used.

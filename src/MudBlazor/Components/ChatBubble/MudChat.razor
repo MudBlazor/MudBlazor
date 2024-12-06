@@ -2,8 +2,12 @@
 @inherits MudComponentBase
 
 <div @attributes="UserAttributes" class="@Classname" style="@RootStyle">
-  @if (ChildContent is not null)
-  {
-    @ChildContent
-  }
+    @if (ChildContent is not null)
+    {
+        <CascadingValue Name="MudChatBubbleVariant" Value="@Variant">
+            <CascadingValue Name="MudChatBubbleColor" Value="@Color">
+                @ChildContent
+            </CascadingValue>            
+        </CascadingValue>    
+    }
 </div>
