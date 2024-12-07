@@ -30,44 +30,12 @@ else
     </div>
 }
 
-@if (!IsApi && !string.IsNullOrEmpty(Component))
-{
-    <DocsPageSection api-link-section>
-        <SectionHeader Title="API" />
-        <div class="docs-page-apilinks">
-            <ul class="my-2">
-                <li>
-                    <MudLink Href="@($"api/{Component}")">
-                        <CodeInline>@($"<{Component}>")</CodeInline>
-                    </MudLink>
-                </li>
-                @if (_component != null && _component.ChildTypes != null)
-                {
-                    @foreach (var childType in _component.ChildTypes)
-                    {
-                        <li>
-                            <MudLink Href="@($"api/{childType.Name}")" Class="ms-1">
-                                - <CodeInline>@($"<{childType.Name.Replace("`1", "")}>")</CodeInline>
-                            </MudLink>
-                        </li>
-                    }
-                }
-            </ul>
-        </div>
-    </DocsPageSection>
-}
-@if (IsApi && DocumentedType != null && DocumentedType.IsComponent)
+@if (IsApi && Example != null)
 {
     <DocsPageSection api-link-section>
         <SectionHeader Title="Pages" />
-
-        @if (DocumentedType.IsComponent)
-        {
-            <MudAlert Severity="Severity.Info" Class="mt-6">
-                For examples and details on the usage of this component, visit the example page: <br />
-                <MudLink Href="@DocumentedType.ComponentUrl" Typo="Typo.inherit">@DocumentedType.NameFriendly</MudLink>
-            </MudAlert>
-        }
-
+        <MudAlert Severity="Severity.Info" Class="mt-6">
+            For examples and details on the usage of this component, visit the <MudLink Href="@($"/components/{Example.Link}")" Typo="Typo.inherit">@Example.Name</MudLink> page.
+        </MudAlert>
     </DocsPageSection>
 }

@@ -6,6 +6,11 @@ namespace MudBlazor.Charts
     /// <summary>
     /// Represents a chart which displays series values as rectangular bars.
     /// </summary>
+    /// <seealso cref="Donut"/>
+    /// <seealso cref="Line"/>
+    /// <seealso cref="Pie"/>
+    /// <seealso cref="StackedBar"/>
+    /// <seealso cref="TimeSeries"/>
     partial class Bar : MudCategoryChartBase
     {
         private const double BoundWidth = 650.0;

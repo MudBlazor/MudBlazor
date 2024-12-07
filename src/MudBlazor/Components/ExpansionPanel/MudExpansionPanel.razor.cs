@@ -14,6 +14,8 @@ namespace MudBlazor
     /// <remarks>
     /// This component is always inside a <see cref="MudExpansionPanels"/> component.
     /// </remarks>
+    /// <seealso cref="MudExpansionPanels"/>
+    /// <seealso cref="MudCollapse"/>
     public partial class MudExpansionPanel : MudComponentBase, IDisposable
     {
         internal readonly ParameterState<bool> _expandedState;

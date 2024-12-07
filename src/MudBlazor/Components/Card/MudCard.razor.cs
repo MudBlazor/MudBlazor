@@ -7,6 +7,10 @@ namespace MudBlazor
     /// <summary>
     /// Represents a block of content which can include a header, image, content, and actions.
     /// </summary>
+    /// <seealso cref="MudCardActions" />
+    /// <seealso cref="MudCardContent" />
+    /// <seealso cref="MudCardHeader" />
+    /// <seealso cref="MudCardMedia" />
     public partial class MudCard : MudComponentBase
     {
         protected string Classname => new CssBuilder("mud-card")

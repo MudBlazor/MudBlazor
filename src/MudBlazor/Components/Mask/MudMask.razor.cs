@@ -12,7 +12,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// A text input which conforms user input to a specific format while typing. 
+    /// A text input which conforms user input to a specific format while typing.
     /// <remarks>
     /// Note that MudMask is recommended to be used in WASM projects only because it has known problems
     /// in BSS, especially with high network latency.
@@ -105,7 +105,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// The type of the underlying input. 
+        /// The type of the underlying input.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="InputType.Text"/>.
@@ -282,13 +282,19 @@ namespace MudBlazor
                 return;
             var text = Converter.Set(Value);
             var cleanText = Mask.GetCleanText();
-            if (cleanText == text || string.IsNullOrEmpty(cleanText) && string.IsNullOrEmpty(text))
+            if (string.IsNullOrEmpty(cleanText) && string.IsNullOrEmpty(text))
                 return;
-            var maskText = Mask.Text;
-            Mask.SetText(text);
-            if (maskText == Mask.Text)
-                return; // no change, stop update loop
-            await UpdateAsync();
+
+            if (cleanText != text)
+            {
+                var maskText = Mask.Text;
+                Mask.SetText(text);
+                if (maskText == Mask.Text)
+                    return;
+            }
+
+            if (Text != Mask.Text)
+                await UpdateAsync();
         }
 
         protected override async Task UpdateValuePropertyAsync(bool updateText)
@@ -417,7 +423,7 @@ namespace MudBlazor
             }
         }
 
-        // from JS event     
+        // from JS event
         internal void OnCaretPositionChanged(int pos)
         {
             if (Mask.Selection != null)

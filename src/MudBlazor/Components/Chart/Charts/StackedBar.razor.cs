@@ -6,6 +6,11 @@ namespace MudBlazor.Charts
     /// <summary>
     /// Represents a chart which displays series values as portions of vertical rectangles.
     /// </summary>
+    /// <seealso cref="Bar"/>
+    /// <seealso cref="Donut"/>
+    /// <seealso cref="Line"/>
+    /// <seealso cref="Pie"/>
+    /// <seealso cref="TimeSeries"/>
     partial class StackedBar : MudCategoryChartBase
     {
         /// <summary>
