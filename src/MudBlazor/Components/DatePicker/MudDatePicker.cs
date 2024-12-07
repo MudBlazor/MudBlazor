@@ -8,6 +8,7 @@ namespace MudBlazor
     /// <summary>
     /// Represents a picker for dates.
     /// </summary>
+    /// <seealso cref="MudDateRangePicker"/>
     public class MudDatePicker : MudBaseDatePicker
     {
         private DateTime? _selectedDate;

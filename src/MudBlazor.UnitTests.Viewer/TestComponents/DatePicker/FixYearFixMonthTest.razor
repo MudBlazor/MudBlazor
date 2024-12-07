@@ -1,0 +1,7 @@
+﻿<MudPopoverProvider />
+<MudDatePicker Label="Day Picker (Fixed Year and Month)" HelperText="@_day?.ToShortDateString()" @bind-Date="_day"
+               FixYear="2022" FixMonth="10" DateFormat="dd"/>
+
+@code {
+    private DateTime? _day;
+}

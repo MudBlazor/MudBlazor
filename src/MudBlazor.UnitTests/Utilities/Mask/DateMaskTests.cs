@@ -106,6 +106,24 @@ public class DateMaskTests
         mask.ToString().Should().Be("0[3]/31/2000");
         mask.Insert("4");
         mask.ToString().Should().Be("04/|30/2000");
+        // set not leap year once and then remove year, 29th must allow again
+        mask.Clear();
+        mask.Insert("02 29 2001");
+        mask.ToString().Should().Be("02/28/2001|");
+        mask.SetText("02/2");
+        mask.Insert("9");
+        mask.Text.Should().Be("02/29/");
+    }
+
+    [Test]
+    public void DateMaskWithWrongYearPattern()
+    {
+        var mask = new DateMask("MM-dd-y");
+        mask.Clear();
+        mask.Insert("2292001");
+        // 2/29 is allowed to be entered when the year pattern is incorrect
+        // because the year cannot be converted properly.
+        mask.Text.Should().Be("02-29-2");
     }
 
     [Test]

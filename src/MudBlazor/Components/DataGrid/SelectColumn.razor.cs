@@ -11,6 +11,7 @@ namespace MudBlazor;
 /// Represents a checkbox column used to select rows in a <see cref="MudDataGrid{T}"/>.
 /// </summary>
 /// <typeparam name="T">The type of item to select.</typeparam>
+/// <seealso cref="MudDataGrid{T}"/>
 public partial class SelectColumn<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>
 {
     /// <summary>
