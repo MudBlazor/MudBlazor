@@ -11,6 +11,8 @@ namespace MudBlazor
     /// <summary>
     /// A container which manages <see cref="MudExpansionPanel"/> components such that when one panel is expanded the others are collapsed automatically.
     /// </summary>
+    /// <seealso cref="MudExpansionPanel"/>
+    /// <seealso cref="MudCollapse"/>
     public partial class MudExpansionPanels : MudComponentBase
     {
         private List<MudExpansionPanel> _panels = new();

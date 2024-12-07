@@ -4,6 +4,14 @@ using Microsoft.AspNetCore.Components;
 #nullable enable
 namespace MudBlazor.Charts
 {
+    /// <summary>
+    /// A chart which displays values over time.
+    /// </summary>
+    /// <seealso cref="Bar"/>
+    /// <seealso cref="Donut"/>
+    /// <seealso cref="Line"/>
+    /// <seealso cref="Pie"/>
+    /// <seealso cref="StackedBar"/>
     partial class TimeSeries : MudTimeSeriesChartBase
     {
         private const double BoundWidth = 800.0;

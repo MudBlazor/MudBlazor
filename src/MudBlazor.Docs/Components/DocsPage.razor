@@ -1,4 +1,4 @@
-﻿@using System.Runtime.Versioning
+﻿﻿@using System.Runtime.Versioning
 
 <MudMainContent Class="mudblazor-main-content">
     <MudContainer MaxWidth="MaxWidth.Large">
@@ -17,12 +17,13 @@
             <Footer />
         </MudContainer>
     }
-    else {
+    else
+    {
         // Just show copyright and version
         <MudContainer MaxWidth="MaxWidth.Large">
             <MudToolBar Gutters="false" Dense="true">
                 <MudText Typo="Typo.body1">Copyright © 2020-@DateTime.Now.Year MudBlazor</MudText>
-                <MudSpacer/>
+                <MudSpacer />
                 <MudText Typo="Typo.body1">Powered by .NET @Environment.Version.ToString()</MudText>
             </MudToolBar>
         </MudContainer>
@@ -38,11 +39,10 @@
                 <NavLink class="mode-links ml-2" href="@($"api/{_componentName}")" Match="NavLinkMatch.All">API</NavLink>
             </div>
         }
-        <MudPageContentNavigation SectionClassSelector="docs-section-anchor" @ref="_contentNavigation" ActivateFirstSectionAsDefault="true"/>
+        <MudPageContentNavigation SectionClassSelector="docs-section-anchor" @ref="_contentNavigation" ActivateFirstSectionAsDefault="true" />
         @if (_renderAds)
         {
             <MudElement HtmlTag="script" async type="text/javascript" src="//cdn.carbonads.com/carbon.js?serve=CESDLK3E&placement=mudblazorcom" id="_carbonads_js" data-consent-category="carbon"></MudElement>
         }
     </MudDrawer>
 </MudMainContent>
-

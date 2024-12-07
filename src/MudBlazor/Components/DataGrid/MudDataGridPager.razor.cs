@@ -17,6 +17,7 @@ namespace MudBlazor
     /// Represents a pager for navigating pages of a <see cref="MudDataGrid{T}"/>.
     /// </summary>
     /// <typeparam name="T">The kind of data displayed in the grid.</typeparam>
+    /// <seealso cref="MudDataGrid{T}"/>
     public partial class MudDataGridPager<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase, IDisposable
     {
         /// <summary>

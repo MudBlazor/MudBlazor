@@ -266,6 +266,10 @@
         top: 0;
       }
 
+      & * .mud-filter-panel-cell {
+          top: 58px;
+      }
+
       & * .mud-table-cell.sticky-left,
       & * .mud-table-cell.sticky-right {
         z-index: 3;

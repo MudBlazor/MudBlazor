@@ -58,7 +58,36 @@
                             <HeaderCell SortDirection="@(GetColumnSortDirection(column.PropertyName))" T="T" Column="@column"></HeaderCell>
                         }
                         </tr>
-                        
+                                @if (_filtersMenuVisible && FilterMode == DataGridFilterMode.Simple)
+                                {
+                                    <MudOverlay ZIndex="12" @bind-Visible="@_filtersMenuVisible" AutoClose OnClosed="@CloseFilters"></MudOverlay>
+                                    <tr class="mud-table-row" style="visibility: collapse; opacity: 0;overflow: hidden;">
+                                        <th colspan="@RenderedColumns.Count" class="mud-table-cell mud-filter-panel-cell">
+                                            <MudPopover Open="@_filtersMenuVisible" Paper="true" Class="filters-panel pa-2" OverflowBehavior="OverflowBehavior.FlipAlways" AnchorOrigin="Origin.TopLeft"
+                                                        TransformOrigin="Origin.TopLeft" Elevation="4" Style="width:700px;max-width:700px;z-index:13;" MaxHeight="400">
+                                                @if (FilterTemplate == null)
+                                                {
+                                                    <MudStack>
+                                                        @foreach (var f in FilterDefinitions)
+                                                        {
+                                                            @Filter(f, null)
+                                                        }
+                                                    </MudStack>
+                                                    <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@AddFilter" Color="@Color.Primary">@Localizer[LanguageResource.MudDataGrid_AddFilter]</MudButton>
+                                                    @if (HasServerData)
+                                                    {
+                                                        <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@ApplyFiltersAsync" Color="@Color.Primary">@Localizer[LanguageResource.MudDataGrid_Apply]</MudButton>
+                                                    }
+                                                    <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Remove" OnClick="@ClearFiltersAsync" Color="@Color.Primary">@Localizer[LanguageResource.MudDataGrid_Clear]</MudButton>
+                                                }
+                                                else
+                                                {
+                                                    @FilterTemplate(this)
+                                                }
+                                            </MudPopover>
+                                        </th>
+                                    </tr>
+                                }                        
                         @if (Filterable && FilterMode == DataGridFilterMode.ColumnFilterRow)
                         {
                             <tr class="mud-table-row">
@@ -162,32 +191,6 @@
                                     <MudButton OnClick="@HideAllColumnsAsync" Color="@Color.Primary">@Localizer[LanguageResource.MudDataGrid_HideAll]</MudButton>
                                     <MudButton OnClick="@ShowAllColumnsAsync" Color="@Color.Primary">@Localizer[LanguageResource.MudDataGrid_ShowAll]</MudButton>
                                 </MudStack>
-                            </MudPopover>
-                        }
-                        @if (_filtersMenuVisible && FilterMode == DataGridFilterMode.Simple)
-                        {
-                            <MudOverlay ZIndex="12" @bind-Visible="@_filtersMenuVisible" AutoClose OnClosed="@CloseFilters"></MudOverlay>
-                            <MudPopover Open="@_filtersMenuVisible" Paper="true" Class="filters-panel pa-2" OverflowBehavior="OverflowBehavior.FlipAlways" AnchorOrigin="Origin.TopLeft"
-                                        TransformOrigin="Origin.TopLeft" Elevation="4" Style="width:700px;max-width:700px;z-index:13;" MaxHeight="400">
-                                @if (FilterTemplate == null)
-                                {
-                                    <MudStack>
-                                        @foreach (var f in FilterDefinitions)
-                                        {
-                                            @Filter(f, null)
-                                        }
-                                    </MudStack>
-                                    <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@AddFilter" Color="@Color.Primary">@Localizer[LanguageResource.MudDataGrid_AddFilter]</MudButton>
-                                    @if (HasServerData)
-                                    {
-                                        <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@ApplyFiltersAsync" Color="@Color.Primary">@Localizer[LanguageResource.MudDataGrid_Apply]</MudButton>
-                                    }
-                                    <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Remove" OnClick="@ClearFiltersAsync" Color="@Color.Primary">@Localizer[LanguageResource.MudDataGrid_Clear]</MudButton>
-                                }
-                                else
-                                {
-                                    @FilterTemplate(this)
-                                }
                             </MudPopover>
                         }
                         @if (Loading)

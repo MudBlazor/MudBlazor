@@ -1,0 +1,56 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudPaper Class="pa-4">
+    <MudChart ChartType="ChartType.HeatMap" ChartSeries="@Series" ChartOptions="@Options"
+              XAxisLabels="@_xLabels" Width="100%" Height="350px"></MudChart>
+</MudPaper>
+<MudPaper Class="pa-4 mt-2 d-flex justify-center">
+    <MudItem xs="4" Class="d-flex align-center">
+        <MudCheckBox T="bool" @bind-Value="_enableSmoothGradient" @bind-Value:after="BuildOptions" Color="Color.Primary">
+            Smooth Gradient
+        </MudCheckBox>
+    </MudItem>
+    <MudButton @onclick="RandomizeData" Variant="Variant.Filled" Class="mx-4">Randomize</MudButton>
+</MudPaper>
+
+@code {
+    private bool _enableSmoothGradient = true;
+    private readonly string[] _colors = ["#5AC8FA", "#34C759", "#007AFF"];
+    private List<ChartSeries> Series = [];
+    private ChartOptions Options = new ChartOptions();
+    private string[] _xLabels = [];
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        BuildOptions();
+        RandomizeData();
+    }
+
+    private void BuildOptions()
+    {
+        var options = new ChartOptions();
+        options.ChartPalette = _colors;
+        options.EnableSmoothGradient = _enableSmoothGradient;
+        Options = options;
+    }
+
+    private void RandomizeData()
+    {
+        string[] xaxis = ["A", string.Empty, "C",];
+        var heatMapSeries = new List<ChartSeries>();
+        int dataPoints = xaxis.Length;
+        foreach (var x in xaxis)
+        {
+            var data = new double[dataPoints];
+            for (int i = 0; i < dataPoints; i++)
+            {
+                data[i] = Math.Round(Random.Shared.NextDouble() * 100, 2);
+            }
+            heatMapSeries.Add(new ChartSeries { Name = x, Data = data });
+        }
+        _xLabels = xaxis;
+        Series = heatMapSeries;
+        BuildOptions();
+    }
+}

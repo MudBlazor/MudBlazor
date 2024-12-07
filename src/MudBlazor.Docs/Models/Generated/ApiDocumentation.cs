@@ -70,6 +70,9 @@ public static partial class ApiDocumentation
             return null;
         }
 
+        // Fix the escaped backtick for generics (`)
+        name = name.Replace("%60", "`");
+
         // Is this an external member?
         if (name.StartsWith("System", StringComparison.OrdinalIgnoreCase) || name.StartsWith("Microsoft", StringComparison.OrdinalIgnoreCase))
         {

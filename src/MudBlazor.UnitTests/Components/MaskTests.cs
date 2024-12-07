@@ -13,6 +13,46 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class MaskTests : BunitTest
     {
+        public static object[] TextFieldWithMask_SetValueParameterUpdateText_Parameters = [
+            new object[] { "PatternMask", new PatternMask("""0000"""), "1111", "2222" },
+            new object[] { "RegexMask", new RegexMask("""^\d*$"""), "1111", "2222" },
+            new object[] { "MultiMask", new MultiMask("""0000"""), "1111", "2222" },
+            new object[] { "BlockMask", new BlockMask(new Block('0', 1, 4)), "1111", "2222" },
+            new object[] { "DateMask", new DateMask("""MM/dd/yyyy"""), "01/01/2024", "02/03/2025" }
+        ];
+
+        [TestCaseSource(nameof(TextFieldWithMask_SetValueParameterUpdateText_Parameters))]
+        public void TextFieldWithMask_SetValueParameterUpdateText(string testName, IMask mask, string initialValue, string setValue)
+        {
+            // Arrange
+
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters =>
+            {
+                parameters.Add(m => m.Mask, mask);
+                parameters.Add(m => m.Value, initialValue);
+            });
+            var textField = comp.Instance;
+            var maskField = comp.FindComponent<MudMask>().Instance;
+
+            // Assert : Initial state
+
+            textField.Value.Should().Be(initialValue);
+            textField.Text.Should().Be(initialValue);
+            maskField.Value.Should().Be(initialValue);
+            maskField.Text.Should().Be(initialValue);
+
+            // Act
+
+            comp.SetParam(m => m.Value, setValue);
+
+            // Assert
+
+            textField.Value.Should().Be(setValue);
+            textField.Text.Should().Be(setValue);
+            maskField.Value.Should().Be(setValue);
+            maskField.Text.Should().Be(setValue);
+        }
+
         /// <summary>
         /// Test all IsMatch variants: letter, digit and symbols.
         /// </summary>

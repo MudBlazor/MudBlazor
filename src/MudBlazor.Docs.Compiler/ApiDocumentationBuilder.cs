@@ -177,6 +177,7 @@ public partial class ApiDocumentationBuilder
     public bool Execute()
     {
         AddTypesToDocument();
+        ResolveSeeAlsoLinks();
         FindDeclaringTypes();
         AddGlobalsToDocument();
         ExportApiDocumentation();
@@ -242,6 +243,12 @@ public partial class ApiDocumentationBuilder
                 Remarks = typeXmlDocs.Remarks?.Replace("\r\n", "").Trim(),
                 Summary = typeXmlDocs.Summary?.Replace("\r\n", "").Trim(),
                 Type = type,
+                Links = typeXmlDocs.SeeAlso.Select(seealso => new DocumentedLink()
+                {
+                    Cref = seealso.Cref,
+                    Href = seealso.Href,
+                    Text = seealso.Text,
+                }).ToList()
             };
 
             // Add the root-level type
@@ -698,6 +705,7 @@ public partial class ApiDocumentationBuilder
         writer.LinkDocumentedTypes(Methods);
         writer.LinkDocumentedTypes(Fields);
         writer.LinkDocumentedTypes(Events);
+        writer.WriteSeeAlsoLinks(Types);
         writer.WriteConstructorEnd();
         writer.WriteClassEnd();
     }
@@ -779,6 +787,64 @@ public partial class ApiDocumentationBuilder
                 else
                 {
                     // A global is missing the docs necessary to link it to a type.                      
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Resolves XML references like "T:MudBlazor.MudAlert" into a <see cref="DocumentedType"/> or <see cref="DocumentedMember"/>.
+    /// </summary>
+    public void ResolveSeeAlsoLinks()
+    {
+        // Find the types which have see-also links
+        foreach (var type in Types.Where(type => type.Value.Links.Count > 0))
+        {
+            // Go through each link
+            foreach (var link in type.Value.Links)
+            {
+                // Is this a CREF link?  (e.g. "T:MudBlazor.MudAlert")
+                if (!string.IsNullOrEmpty(link.Cref))
+                {
+                    // Split the type and link
+                    var values = link.Cref.Split(":");
+                    var linkType = values[0];
+                    var cref = values[1];
+                    switch (linkType)
+                    {
+                        case "T":
+                            if (Types.TryGetValue(cref, out var existingType))
+                            {
+                                link.Type = existingType;
+                            }
+                            break;
+                        case "P":
+                            if (Properties.TryGetValue(cref, out var existingProperty))
+                            {
+                                link.Property = existingProperty;
+                            }
+                            break;
+                        case "F":
+                            if (Fields.TryGetValue(cref, out var existingField))
+                            {
+                                link.Field = existingField;
+                            }
+                            break;
+                        case "M":
+                            if (Methods.TryGetValue(cref, out var existingMethod))
+                            {
+                                link.Method = existingMethod;
+                            }
+                            break;
+                        case "E":
+                            if (Events.TryGetValue(cref, out var existingEvent))
+                            {
+                                link.Event = existingEvent;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
         }

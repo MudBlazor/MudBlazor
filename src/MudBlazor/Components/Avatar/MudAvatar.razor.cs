@@ -8,6 +8,7 @@ namespace MudBlazor
     /// <summary>
     /// Represents a component which displays circular user profile pictures, icons or text.
     /// </summary>
+    /// <seealso cref="MudAvatarGroup" />
     partial class MudAvatar : MudComponentBase, IDisposable
     {
         [CascadingParameter]
