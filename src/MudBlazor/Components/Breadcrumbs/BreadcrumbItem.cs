@@ -5,6 +5,9 @@
 /// <summary>
 /// Represents a portion of a list of breadcrumbs.
 /// </summary>
+/// <seealso cref="MudBreadcrumbs" />
+/// <seealso cref="BreadcrumbLink" />
+/// <seealso cref="BreadcrumbSeparator" />
 public record BreadcrumbItem
 {
     /// <summary>
