@@ -4082,6 +4082,10 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroups());
             comp.Render();
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(16);
+
+            //ungrouped items remain at top after sorting
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Descending, x => { return x.Name; }));
+            comp.FindAll("tbody.mud-table-body td")[0].TextContent.Should().Be("Livermorium");
         }
 
         [Test]
