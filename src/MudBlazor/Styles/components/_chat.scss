@@ -32,7 +32,8 @@
 
   &-bubble {
     position: relative;
-    display: block;
+    /*display: block;*/
+    text-align: start;
     align-content: center;
     width: fit-content;
     padding: .5rem 1rem;
@@ -135,6 +136,7 @@
     .mud-chat-bubble {
       grid-column-start: 1;
       border-end-end-radius: 0;
+      text-align: end;
 
       &:before {
         mask-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0nMycgaGVpZ2h0PSczJyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnPjxwYXRoIGZpbGw9J2JsYWNrJyBkPSdtIDAgMyBMIDEgMyBMIDMgMyBDIDIgMyAwIDEgMCAwJy8+PC9zdmc+);
@@ -146,6 +148,8 @@
   &.mud-chat-rtl {
     &.mud-chat-start {
       .mud-chat-bubble {
+        text-align: end;
+
         &:before {
           mask-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0nMycgaGVpZ2h0PSczJyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnPjxwYXRoIGZpbGw9J2JsYWNrJyBkPSdtIDAgMyBMIDEgMyBMIDMgMyBDIDIgMyAwIDEgMCAwJy8+PC9zdmc+);
         }

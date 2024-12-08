@@ -60,6 +60,14 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void MudChatBubble_HasElementReference()
+        {
+            var comp = Context.RenderComponent<MudChatBubble>();
+            var elementRef = comp.Instance.ElementReference;
+            elementRef.Should().NotBeNull();
+        }
+
+        [Test]
         public void MudChatBubble_OverridesParentValues()
         {
             var comp = Context.RenderComponent<MudChat>(parameters => parameters

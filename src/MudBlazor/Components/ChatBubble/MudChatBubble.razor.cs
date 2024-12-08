@@ -18,6 +18,11 @@ namespace MudBlazor
             .AddClass(Class)
             .Build();
 
+        /// <summary>
+        /// The containing div Element Reference
+        /// </summary>
+        public ElementReference ElementReference {  get; private set; }
+
         [CascadingParameter(Name = "MudChatBubbleVariant")]
         public Variant ParentVariant { get; private set; }
 
@@ -49,12 +54,14 @@ namespace MudBlazor
         /// Occurs when the chat bubble has been clicked.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.Chat.Behavior)]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
 
         /// <summary>
         /// Occurs when the chat bubble has been right-clicked.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.Chat.Behavior)]
         public EventCallback<MouseEventArgs> OnContextClick { get; set; }
 
         /// <summary>
