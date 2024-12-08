@@ -21,7 +21,7 @@ namespace MudBlazor
         /// <summary>
         /// The containing div Element Reference
         /// </summary>
-        public ElementReference ElementReference {  get; private set; }
+        public ElementReference ElementReference { get; private set; }
 
         [CascadingParameter(Name = "MudChatBubbleVariant")]
         public Variant ParentVariant { get; private set; }
