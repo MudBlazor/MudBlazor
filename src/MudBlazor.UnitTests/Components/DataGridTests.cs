@@ -4075,6 +4075,13 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.RefreshList();
             comp.Render();
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
+            
+            comp.Instance.UniqueGroups = false;
+            comp.Render();
+            comp.FindAll("tbody .mud-table-row").Count.Should().Be(9);
+            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroups());
+            comp.Render();
+            comp.FindAll("tbody .mud-table-row").Count.Should().Be(16);
         }
 
         [Test]

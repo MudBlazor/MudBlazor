@@ -1280,9 +1280,48 @@ namespace MudBlazor
         }
 
         #region Methods
-        private IEnumerable<T> PrioritizeUniqueGroups(IEnumerable<T> items) => items.GroupBy(GroupedColumn.groupBy)
-                 .OrderByDescending(group => group.Count() == 1)
-                 .SelectMany(group => group);
+
+        private IEnumerable<T> PrioritizeUniqueGroups(IEnumerable<T> items)
+        {
+            var groups = new Dictionary<object, List<T>>();
+            foreach (var item in items)
+            {
+                var key = GroupedColumn.groupBy(item);
+                if (!groups.TryGetValue(key, out var group))
+                {
+                    group = new List<T>();
+                    groups[key] = group;
+                }
+                group.Add(item);
+            }
+
+            var uniqueGroups = new List<List<T>>();
+            var nonUniqueGroups = new List<List<T>>();
+
+            foreach (var group in groups.Values)
+            {
+                if (group.Count == 1)
+                    uniqueGroups.Add(group);
+                else
+                    nonUniqueGroups.Add(group);
+            }
+
+            foreach (var group in uniqueGroups)
+            {
+                foreach (var item in group)
+                {
+                    yield return item;
+                }
+            }
+
+            foreach (var group in nonUniqueGroups)
+            {
+                foreach (var item in group)
+                {
+                    yield return item;
+                }
+            }
+        }
 
         /// <summary>
         /// Check if a specific Footer cell is displayable
