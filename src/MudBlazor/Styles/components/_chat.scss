@@ -31,15 +31,6 @@
   }
 
   &-bubble {
-    position: relative;
-    text-align: start;
-    align-content: center;
-    width: fit-content;
-    padding: .5rem 1rem;
-    max-width: 90%;
-    border-radius: var(--mud-default-borderradius);
-    min-width: 2.75rem;
-    min-height: 2.75rem;
 
     &:before {
       position: absolute;
@@ -86,8 +77,7 @@
   }
 
   .mud-avatar {
-    grid-row: span 2 / span 2;
-    align-self: flex-start;
+    align-self: center;
     grid-row-start: 1;
     margin-left: .25rem;
   }
@@ -163,6 +153,18 @@
       }
     }
   }
+}
+
+.mud-chat-bubble {
+  position: relative;
+  text-align: start;
+  align-content: center;
+  width: fit-content;
+  padding: .5rem 1rem;
+  max-width: 90%;
+  border-radius: var(--mud-default-borderradius);
+  min-width: 2.75rem;
+  min-height: 2.75rem;
 }
 
 .mud-chat-text {
