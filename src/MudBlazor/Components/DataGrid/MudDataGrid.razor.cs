@@ -1586,28 +1586,42 @@ namespace MudBlazor
 
         internal IEnumerable<T> Sort(IEnumerable<T> items)
         {
-            if (null == items || !items.Any())
+            if (items is null || !items.Any())
                 return items;
 
-            if (null == SortDefinitions || 0 == SortDefinitions.Count)
+            if (SortDefinitions is null || SortDefinitions.Count == 0)
                 return items;
 
-            IOrderedEnumerable<T> orderedEnumerable = null;
+            var validSortDefinitions = SortDefinitions.Values
+                .Where(sd => sd.SortFunc != null)
+                .OrderBy(sd => sd.Index)
+                .ToArray();
 
-            foreach (var sortDefinition in SortDefinitions.Values.Where(sd => sd.SortFunc != null).OrderBy(sd => sd.Index))
+            var orderedEnumerable = ApplySorting(items, validSortDefinitions);
+
+            return !UniqueGroups && orderedEnumerable is not null
+                ? PrioritizeUniqueGroups(orderedEnumerable)
+                : orderedEnumerable ?? items;
+        }
+
+        private static IOrderedEnumerable<T> ApplySorting(IEnumerable<T> items, IEnumerable<SortDefinition<T>> sortDefinitions)
+        {
+            if (!sortDefinitions.Any())
+                return null;
+
+            var firstDefinition = sortDefinitions.First();
+            var orderedEnumerable = firstDefinition.Descending
+                ? items.OrderByDescending(item => firstDefinition.SortFunc(item), firstDefinition.Comparer)
+                : items.OrderBy(item => firstDefinition.SortFunc(item), firstDefinition.Comparer);
+
+            foreach (var sortDefinition in sortDefinitions.Skip(1))
             {
-                if (null == orderedEnumerable)
-                    orderedEnumerable = sortDefinition.Descending ? items.OrderByDescending(item => sortDefinition.SortFunc(item), sortDefinition.Comparer)
-                        : items.OrderBy(item => sortDefinition.SortFunc(item), sortDefinition.Comparer);
-                else
-                    orderedEnumerable = sortDefinition.Descending ? orderedEnumerable.ThenByDescending(item => sortDefinition.SortFunc(item), sortDefinition.Comparer)
-                        : orderedEnumerable.ThenBy(item => sortDefinition.SortFunc(item), sortDefinition.Comparer);
+                orderedEnumerable = sortDefinition.Descending
+                    ? orderedEnumerable.ThenByDescending(item => sortDefinition.SortFunc(item), sortDefinition.Comparer)
+                    : orderedEnumerable.ThenBy(item => sortDefinition.SortFunc(item), sortDefinition.Comparer);
             }
 
-            if (!UniqueGroups && orderedEnumerable is not null)
-                return PrioritizeUniqueGroups(orderedEnumerable);
-
-            return orderedEnumerable ?? items;
+            return orderedEnumerable;
         }
 
         internal void ClearEditingItem()
@@ -2033,41 +2047,50 @@ namespace MudBlazor
 
             if (GroupedColumn?.groupBy == null)
             {
-                _currentPageGroups = new List<GroupDefinition<T>>();
-                _allGroups = new List<GroupDefinition<T>>();
-                if (_isFirstRendered && !noStateChange)
-                    StateHasChanged();
+                ResetGroups(noStateChange);
                 return;
             }
 
             var currentPageGroupings = CurrentPageItems.GroupBy(GroupedColumn.groupBy);
-
-            // Maybe group Items to keep groups expanded after clearing a filter?
             var allGroupings = FilteredItems.GroupBy(GroupedColumn.groupBy).ToArray();
 
-            if (GetFilteredItemsCount() > 0)
-            {
-                foreach (var group in allGroupings)
-                {
-                    var forceExpand = !UniqueGroups && group.Count() == 1;
+            UpdateGroupExpansions(allGroupings);
 
-                    if (forceExpand)
-                        _groupExpansionsDict[group.Key] = forceExpand;
-                    else
-                        _groupExpansionsDict.TryAdd(group.Key, GroupExpanded);
-                }
-            }
+            _currentPageGroups = currentPageGroupings.Select(CreateGroupDefinition).ToList();
+            _allGroups = allGroupings.Select(CreateGroupDefinition).ToList();
 
-            // construct the groups
-            _currentPageGroups = currentPageGroupings.Select(x => new GroupDefinition<T>(x,
-                _groupExpansionsDict[x.Key], x.Count())).ToList();
-
-            _allGroups = allGroupings.Select(x => new GroupDefinition<T>(x,
-                _groupExpansionsDict[x.Key], x.Count())).ToList();
-
-            if ((_isFirstRendered || HasServerData) && !noStateChange)
+            if (ShouldTriggerStateChange(noStateChange))
                 StateHasChanged();
         }
+
+        private void ResetGroups(bool noStateChange)
+        {
+            _currentPageGroups = [];
+            _allGroups = [];
+
+            if (_isFirstRendered && !noStateChange)
+                StateHasChanged();
+        }
+
+        private void UpdateGroupExpansions(IGrouping<object, T>[] allGroupings)
+        {
+            if (GetFilteredItemsCount() <= 0)
+                return;
+
+            foreach (var group in allGroupings)
+            {
+                var forceExpand = !UniqueGroups && group.Count() == 1;
+
+                if (forceExpand)
+                    _groupExpansionsDict[group.Key] = true;
+                else
+                    _groupExpansionsDict.TryAdd(group.Key, GroupExpanded);
+            }
+        }
+
+        private GroupDefinition<T> CreateGroupDefinition(IGrouping<object, T> group) => new(group, _groupExpansionsDict[group.Key], group.Count());
+
+        private bool ShouldTriggerStateChange(bool noStateChange) => (_isFirstRendered || HasServerData) && !noStateChange;
 
         internal async Task ChangedGrouping(Column<T> column)
         {
