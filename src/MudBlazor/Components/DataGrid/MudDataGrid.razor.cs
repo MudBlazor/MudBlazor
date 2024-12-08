@@ -1599,15 +1599,15 @@ namespace MudBlazor
 
             var orderedEnumerable = ApplySorting(items, validSortDefinitions);
 
-            return !UniqueGroups && orderedEnumerable is not null
+            return !UniqueGroups && orderedEnumerable.Any()
                 ? PrioritizeUniqueGroups(orderedEnumerable)
                 : orderedEnumerable ?? items;
         }
 
-        private static IOrderedEnumerable<T> ApplySorting(IEnumerable<T> items, IEnumerable<SortDefinition<T>> sortDefinitions)
+        private static IEnumerable<T> ApplySorting(IEnumerable<T> items, IEnumerable<SortDefinition<T>> sortDefinitions)
         {
             if (!sortDefinitions.Any())
-                return null;
+                return [];
 
             var firstDefinition = sortDefinitions.First();
             var orderedEnumerable = firstDefinition.Descending
