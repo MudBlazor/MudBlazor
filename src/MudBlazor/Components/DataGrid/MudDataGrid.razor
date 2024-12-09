@@ -205,7 +205,7 @@
                         @{
                             var resolvedPageItems = new List<IndexBag<T>>(0);
                             // resolve the page items only when used
-                            if (!Virtualize || HasFooter)
+                            if (!Virtualize || !HasServerData || HasFooter)
                             {
                                 resolvedPageItems = CurrentPageItems.Select((item, index) => new IndexBag<T>(index, item))
                                     .ToList();

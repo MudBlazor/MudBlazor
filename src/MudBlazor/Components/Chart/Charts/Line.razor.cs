@@ -8,6 +8,11 @@ namespace MudBlazor.Charts
     /// <summary>
     /// Represents a chart which displays series values as connected lines.
     /// </summary>
+    /// <seealso cref="Bar"/>
+    /// <seealso cref="Donut"/>
+    /// <seealso cref="Pie"/>
+    /// <seealso cref="StackedBar"/>
+    /// <seealso cref="TimeSeries"/>
     partial class Line : MudCategoryChartBase
     {
         private const double BoundWidth = 650.0;

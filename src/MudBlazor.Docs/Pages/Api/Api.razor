@@ -99,6 +99,16 @@
                 </DocsPageSection>
             }
 
+            @if (DocumentedType.Links.Count > 0)
+            {
+                <DocsPageSection>
+                    <SectionHeader Title="See Also" />
+                    <SectionContent Outlined="true" IsApiSection="true">
+                        <ApiSeeAlsoLinks Type="@DocumentedType" />
+                    </SectionContent>
+                </DocsPageSection>
+            }
+
             @if (DocumentedType.GlobalSettings.Count > 0)
             {
                 <DocsPageSection>
@@ -111,7 +121,7 @@
                         </MudGrid>
                     </SectionContent>
                 </DocsPageSection>
-            }          
+            }
         </DocsPageContent>
     }
     else

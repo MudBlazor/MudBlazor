@@ -7,6 +7,10 @@ namespace MudBlazor
     /// <summary>
     /// Represents a set of buttons displayed as part of a <see cref="MudCard"/>.
     /// </summary>
+    /// <seealso cref="MudCard" />
+    /// <seealso cref="MudCardContent" />
+    /// <seealso cref="MudCardHeader" />
+    /// <seealso cref="MudCardMedia" />
     public partial class MudCardActions : MudComponentBase
     {
         protected string Classname => new CssBuilder("mud-card-actions")

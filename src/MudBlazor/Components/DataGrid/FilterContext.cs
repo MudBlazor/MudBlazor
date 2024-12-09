@@ -14,6 +14,7 @@ namespace MudBlazor
     /// Represents the current state of a filter in a <see cref="MudDataGrid{T}"/>.
     /// </summary>
     /// <typeparam name="T">The type of item managed by the <see cref="MudDataGrid{T}"/>.</typeparam>
+    /// <seealso cref="MudDataGrid{T}"/>
     public class FilterContext<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>
     {
         private readonly MudDataGrid<T> _dataGrid;
