@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using MudBlazor.Resources;
 
 namespace MudBlazor
 {
@@ -43,7 +44,7 @@ namespace MudBlazor
             catch (Exception e)
             {
                 SetError = true;
-                SetErrorMessage = Localizer?["Converter_ConversionFailed", [typeof(T).Name, typeof(U).Name, e.Message]] ?? $"Conversion from {typeof(T).Name} to {typeof(U).Name} failed: {e.Message}";
+                SetErrorMessage = Localizer?[LanguageResource.Converter_ConversionFailed, [typeof(T).Name, typeof(U).Name, e.Message]] ?? $"Conversion from {typeof(T).Name} to {typeof(U).Name} failed: {e.Message}";
             }
             return default(U);
         }
@@ -61,7 +62,7 @@ namespace MudBlazor
             catch (Exception e)
             {
                 GetError = true;
-                GetErrorMessage = Localizer?["Converter_ConversionFailed", [typeof(T).Name, typeof(U).Name, e.Message]] ?? $"Conversion from {typeof(U).Name} to {typeof(T).Name} failed: {e.Message}";
+                GetErrorMessage = Localizer?[LanguageResource.Converter_ConversionFailed, [typeof(T).Name, typeof(U).Name, e.Message]] ?? $"Conversion from {typeof(U).Name} to {typeof(T).Name} failed: {e.Message}";
             }
             return default(T);
         }
