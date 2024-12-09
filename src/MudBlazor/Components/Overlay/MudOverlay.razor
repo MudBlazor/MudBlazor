@@ -1,24 +1,47 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
+@using Microsoft.AspNetCore.Components.Sections
 
 @if (_visibleState.Value)
 {
-    <div @attributes="UserAttributes"
-         class="@Classname"
-         style="@Styles"
-         @onclick="OnClickHandlerAsync"
-         @onclick:stopPropagation>
-
-        @if (LightBackground || DarkBackground)
-        {
-            <div class="@ScrimClassname"></div>
-        }
-
-        @if (ChildContent is not null)
-        {
-            <div class="mud-overlay-content">
-                @ChildContent
-            </div>
-        }
-    </div>
+    if (_renderOutsideOfSection)
+    {
+                <div @attributes="UserAttributes"
+                     class="@Classname"
+                     style="@Styles"
+                     @onclick="OnClickHandlerAsync"
+        @onclick:stopPropagation>
+            @if (LightBackground || DarkBackground)
+            {
+                    <div class="@ScrimClassname"></div>
+            }
+            @if (ChildContent is not null)
+            {
+                        <div class="mud-overlay-content">
+                    @ChildContent
+                        </div>
+            }
+                </div>   
+    }    
+    else
+    {
+                <SectionContent SectionName="mud-overlay-to-popover-provider">
+                    <div @attributes="UserAttributes"
+                         class="@Classname"
+                         style="@Styles"
+                         @onclick="OnClickHandlerAsync"
+            @onclick:stopPropagation>
+                @if (LightBackground || DarkBackground)
+                {
+                            <div class="@ScrimClassname"></div>
+                }
+                @if (ChildContent is not null)
+                {
+                            <div class="mud-overlay-content">
+                        @ChildContent
+                            </div>
+                }
+                    </div>
+                </SectionContent>     
+    }
 }

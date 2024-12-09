@@ -126,6 +126,7 @@ window.mudpopoverHelper = {
 
     baseTooltipZIndex: parseInt(getComputedStyle(document.documentElement)
         .getPropertyValue('--mud-zindex-tooltip')) || 1600,
+
     getPositionForFlippedPopver: function (inputArray, selector, boundingRect, selfRect) {
         const classList = [];
         for (var i = 0; i < inputArray.length; i++) {
@@ -350,6 +351,17 @@ window.mudpopoverHelper = {
                 popoverContentNode.style['z-index'] = window.getComputedStyle(popoverNode).getPropertyValue('z-index');
                 popoverContentNode.skipZIndex = true;
             }
+
+            // set any associated overlay to equal z-index
+            const provider = popoverContentNode.closest('.mud-popover-provider');
+            if (provider) {
+                const overlay = provider.querySelector('.mud-overlay');
+                console.log(popoverContentNode);
+                console.log(overlay);
+                if (overlay) {
+                    overlay.style['z-index'] = popoverContentNode.style['z-index'] - 1;
+                }
+            }
         }
         else {
             //console.log(`popoverNode: ${popoverNode} ${popoverNode ? popoverNode.parentNode : ""}`);
@@ -451,7 +463,7 @@ window.mudpopoverHelper = {
         // if popoverContentNode.style['z-index'] is not set or set lower than minimum set it to default popover zIndex
         else if (!contentZIndex || parseInt(contentZIndex) < 1) {
             popoverContentNode.style['z-index'] = newZIndex;
-        }
+        }        
     },
 }
 

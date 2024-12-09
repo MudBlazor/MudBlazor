@@ -18,6 +18,8 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
 {
     private readonly ParameterState<bool> _visibleState;
 
+    private bool _renderOutsideOfSection => Absolute || (Class?.Contains("mud-overlay-dialog") ?? false);
+
     protected string Classname =>
         new CssBuilder("mud-overlay")
             .AddClass("mud-overlay-absolute", Absolute)

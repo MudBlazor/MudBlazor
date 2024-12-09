@@ -1,8 +1,10 @@
 ﻿@namespace MudBlazor
+@using Microsoft.AspNetCore.Components.Sections
 
 @if (Enabled)
-{
+{    
     <div class="mud-popover-provider">
+        <SectionOutlet SectionName="mud-overlay-to-popover-provider" />
         @foreach (var handler in PopoverService.ActivePopovers)
         {
             <MudRender @ref="handler.ElementReference" @key="handler.Id">
