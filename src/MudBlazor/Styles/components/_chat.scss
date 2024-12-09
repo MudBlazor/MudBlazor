@@ -95,6 +95,14 @@
 
   &-bubble {
     position: relative;
+    text-align: start;
+    align-content: center;
+    width: fit-content;
+    padding: 0.5rem 1rem;
+    max-width: 90%;
+    border-radius: var(--mud-default-borderradius);
+    min-width: 2.75rem;
+    min-height: 2.75rem;
 
     &:before {
       position: absolute;
@@ -196,18 +204,6 @@
   }
 }
 
-.mud-chat-bubble {
-  position: relative;
-  text-align: start;
-  align-content: center;
-  width: fit-content;
-  padding: 0.5rem 1rem;
-  max-width: 90%;
-  border-radius: var(--mud-default-borderradius);
-  min-width: 2.75rem;
-  min-height: 2.75rem;
-}
-
 .mud-chat-text {
   &-default {
     color: var(--mud-palette-text-primary);
@@ -239,7 +235,7 @@
 
     &.mud-chat-arrow-bottom {
       &:before {
-        bottom: -0.02rem !important;
+        bottom: -0.07rem !important;
       }
     }
   }
