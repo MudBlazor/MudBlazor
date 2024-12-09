@@ -26,6 +26,9 @@ namespace MudBlazor
     /// <typeparam name="U">The value type managed by this input.</typeparam>
     public abstract class MudFormComponent<T, U> : MudComponentBase, IFormComponent, IAsyncDisposable
     {
+        [Inject]
+        private InternalMudLocalizer? Localizer { get; set; }
+
         private Converter<T, U> _converter;
 
         protected MudFormComponent(Converter<T, U> converter)
@@ -764,6 +767,7 @@ namespace MudBlazor
         protected override Task OnInitializedAsync()
         {
             RegisterAsFormComponent();
+            _converter.Localizer = Localizer;
             return base.OnInitializedAsync();
         }
 

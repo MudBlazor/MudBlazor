@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
@@ -375,6 +376,7 @@ namespace MudBlazor
                 }
             }
             await base.OnInitializedAsync();
+            _converter.Localizer = Localizer;
         }
 
         private Task OnSelectedParameterChangedAsync(ParameterChangedEventArgs<bool> arg)
