@@ -355,11 +355,12 @@ window.mudpopoverHelper = {
             // set any associated overlay to equal z-index
             const provider = popoverContentNode.closest('.mud-popover-provider');
             if (provider) {
-                const overlay = provider.querySelector('.mud-overlay');
-                console.log(popoverContentNode);
-                console.log(overlay);
-                if (overlay) {
-                    overlay.style['z-index'] = popoverContentNode.style['z-index'] - 1;
+                const parent = provider.parentElement;
+                if (parent) {
+                    const overlay = parent.querySelector('.mud-overlay');
+                    if (overlay) {
+                        overlay.style['z-index'] = popoverContentNode.style['z-index'] - 1;
+                    }
                 }
             }
         }
