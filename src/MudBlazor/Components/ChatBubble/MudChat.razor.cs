@@ -12,6 +12,7 @@ namespace MudBlazor
     {
         protected string Classname => new CssBuilder("mud-chat")
             .AddClass($"mud-chat-{ChatPosition.ToDescriptionString()}")
+            .AddClass($"mud-chat-arrow-{ArrowPosition.ToDescriptionString()}")
             .AddClass($"mud-square", Square)
             .AddClass($"mud-chat-rtl", RightToLeft)
             .AddClass($"mud-dense", Dense)
@@ -30,11 +31,29 @@ namespace MudBlazor
         public Color Color { get; set; } = Color.Default;
 
         /// <summary>
+        /// Gets or sets the display variant to use.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Variant.Text" />. The variant changes the appearance of the chat bubbles, such as <c>Text</c>, <c>Outlined</c>, or <c>Filled</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Alert.Appearance)]
+        public Variant Variant { get; set; } = Variant.Text;
+
+        /// <summary>
         /// Chat bubble position.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Chat.Appearance)]
         public ChatBubblePosition ChatPosition { get; set; } = ChatBubblePosition.Start;
+
+        /// <summary>
+        /// The Chat Bubble Arrow Position.
+        /// </summary>
+        /// <remarks>Defaults to Top</remarks>
+        [Parameter]
+        [Category(CategoryTypes.Chat.Appearance)]
+        public ChatArrowPosition ArrowPosition { get; set; } = ChatArrowPosition.Top;
 
         /// <summary>
         /// Child content of component.
@@ -72,15 +91,5 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Alert.Appearance)]
         public bool Dense { get; set; }
-
-        /// <summary>
-        /// Gets or sets the display variant to use.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="Variant.Filled" />. The variant changes the appearance of the alert, such as <c>Text</c>, <c>Outlined</c>, or <c>Filled</c>.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.Alert.Appearance)]
-        public Variant Variant { get; set; } = Variant.Text;
     }
 }

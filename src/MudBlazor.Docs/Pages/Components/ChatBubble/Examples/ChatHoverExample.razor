@@ -17,14 +17,13 @@
             <MudChatHeader Name="@group.Key" Time="@group.First().Time" />
             @foreach (var message in group.OrderByDescending(m => m.Time))
             {
-                <MudChatBubble @ref=_messageBubbleRefs[message] 
-                OnClick="(MouseEventArgs args) => ClickMessage(args, message)" 
-                OnContextClick="(MouseEventArgs args) => RightClickMessage(args, message)"
-                @onmouseenter="@((MouseEventArgs args) => HoverStart(args, _messageBubbleRefs[message], message))"
-                @onmouseleave="@HoverStop">
+                <MudChatBubble @ref="_messageBubbleRefs[message]"
+                OnClick="@((args) => ClickMessage(args, message))"
+                OnContextClick="@((args) => RightClickMessage(args, message))"
+                @onmouseenter="@((args) => HoverStart(args, _messageBubbleRefs[message], message))"
+                @onmouseleave="@(() => HoverStop("bubble"))">
                     @message.Text
                 </MudChatBubble>
-                i++;
             }
         </MudChat>
     }
@@ -39,19 +38,20 @@
     </MudMenuItem>
 </MudMenu>
 
-<!-- Create a MudPaper with a hoverarea class, the class will set it's position based on MouseEventArgs so it floats where I want it to -->
-@if (_hovering)
-{    
-    <MudPaper Class="hoverarea d-flex" 
-    Style="@HoverStyle">
-        <span class="emoji" @onclick="@(() => MessageAction("liked"))">👍</span> <!-- Like -->
-        <span class="emoji" @onclick="@(() => MessageAction("cried"))">😭</span> <!-- Cry -->
-        <span class="emoji" @onclick="@(() => MessageAction("angered"))">👿</span> <!-- Angry -->
+@if (Hovering)
+{
+    <MudPaper Class="hoverarea d-flex"
+    Style="@HoverStyle"
+    @onmouseenter="@(() => _paperHovering = true)"
+    @onmouseleave="@(() => HoverStop("paper"))">
+        <span class="emoji" @onclick="@(() => MessageAction("liked"))">👍</span>
+        <span class="emoji" @onclick="@(() => MessageAction("cried"))">😭</span>
+        <span class="emoji" @onclick="@(() => MessageAction("angered"))">👿</span>
         <MudDivider Class="mx-1" Vertical="true" FlexItem="true" />
         <MudTooltip Text="Reply">
-            <span class="emoji" @onclick="@Reply">↩️</span> <!-- Reply -->
-        </MudTooltip>        
-    </MudPaper>    
+            <span class="emoji" @onclick="@Reply">↩️</span>
+        </MudTooltip>
+    </MudPaper>
 }
 
 <style>
@@ -64,30 +64,30 @@
     opacity: .8;
     }
 
-    <!-- make emojis larger -->
     span.emoji {
     font-size: 12px;
     padding: 0px 1px;
     align-self: center;
     }
-
 </style>
 
 @code {
-
     #nullable enable
     private List<Message> messages = new();
     private Message? _selectedMessage;
     private MudMenu? _contextMenu;
-    private Dictionary<Message, MudChatBubble> _messageBubbleRefs = [];
+    private Dictionary<Message, MudChatBubble> _messageBubbleRefs = new();
 
-    private bool _hovering;
-    private bool _hoverStarted;
+    private bool Hovering => _paperHovering || _bubbleHovering;
+    private CancellationTokenSource? _hoverStopCts;
+    private bool _bubbleHovering;
+    private bool _paperHovering;
+
     private Message? _hoverMessage;
     private double _top;
     private double _left;
 
-    private string HoverStyle => $"top: {_top}px;left: {_left}px"; 
+    private string HoverStyle => $"top: {_top}px;left: {_left}px";
 
     protected override void OnInitialized()
     {
@@ -98,7 +98,7 @@
 
     private async Task HoverStart(MouseEventArgs args, MudChatBubble? _bubble, Message message)
     {
-        _hoverStarted = true;
+        _bubbleHovering = true;
         if (_bubble != null)
         {
             var boundingRect = await _bubble.ElementReference.MudGetBoundingClientRectAsync();
@@ -110,19 +110,30 @@
             _top = args.ClientY;
             _left = args.ClientX;
         }
-        _hovering = true;
         _hoverMessage = message;
     }
 
-    private async Task HoverStop()
+    private async Task HoverStop(string typeOfStop)
     {
-        _hoverStarted = false;
-        await Task.Delay(3000);
-        if (!_hoverStarted)
+        _hoverStopCts?.Cancel();
+        _hoverStopCts = new CancellationTokenSource();
+        var token = _hoverStopCts.Token;
+        try
         {
-            _hovering = false;
-            _hoverMessage = null;
+            await Task.Delay(300, token);
+            switch (typeOfStop)
+            {
+                case "paper":
+                    _paperHovering = false;
+                    break;
+                case "bubble":
+                    _bubbleHovering = false;
+                    break;
+                default:
+                    break;
+            }
         }
+        catch { }
     }
 
     private void MessageAction(string actionType)
@@ -172,7 +183,6 @@
         Console.WriteLine($"Message clicked: {message.Text}");
         await Task.CompletedTask;
     }
-
 
     private record Message(string Name, string Initials, string Text, string Time);
 }

@@ -29,6 +29,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudChat>(parameters => parameters
                 .Add(p => p.ChatPosition, ChatBubblePosition.End)
+                .Add(p => p.ArrowPosition, ChatArrowPosition.Middle)
                 .Add(p => p.Square, true)
                 .Add(p => p.Dense, true)
                 .Add(p => p.Elevation, 2)
@@ -39,6 +40,19 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Should().Contain("mud-dense");
             comp.Markup.Should().Contain("mud-elevation-2");
             comp.Markup.Should().Contain("custom-class");
+            comp.Markup.Should().Contain("mud-chat-arrow-middle");
+        }
+
+        [Test]
+        public void MudChatBubble_CssClasses()
+        {
+            var comp = Context.RenderComponent<MudChatBubble>(parameters => parameters
+                 .Add(p => p.Color, Color.Success)
+                 .Add(p => p.Variant, Variant.Outlined));
+
+            comp.Markup.Should().Contain("mud-chat-bubble");
+            comp.Markup.Should().Contain("mud-chat-outlined-success");
+            comp.Markup.Should().Contain("mud-chat-arrow-none");
         }
 
         [Test]
@@ -47,6 +61,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudChat>(parameters => parameters
                 .Add(p => p.Color, Color.Primary)
                 .Add(p => p.Variant, Variant.Filled)
+                .Add(p => p.ArrowPosition, ChatArrowPosition.Middle)
                 .Add(p => p.ChildContent, builder =>
                 {
                     builder.OpenComponent<MudChatBubble>(0);
@@ -56,6 +71,7 @@ namespace MudBlazor.UnitTests.Components
             var bubble = comp.FindComponent<MudChatBubble>();
             bubble.Instance.ParentColor.Should().Be(Color.Primary);
             bubble.Instance.ParentVariant.Should().Be(Variant.Filled);
+            bubble.Instance.ParentArrowPosition.Should().Be(ChatArrowPosition.Middle);
             bubble.Markup.Should().Contain("mud-chat-filled-primary");
         }
 

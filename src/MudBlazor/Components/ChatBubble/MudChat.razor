@@ -6,7 +6,9 @@
     {
         <CascadingValue Name="MudChatBubbleVariant" Value="@Variant">
             <CascadingValue Name="MudChatBubbleColor" Value="@Color">
-                @ChildContent
+                <CascadingValue Name="MudChatArrowPosition" Value="@ArrowPosition">
+                    @ChildContent
+                </CascadingValue>                
             </CascadingValue>            
         </CascadingValue>    
     }

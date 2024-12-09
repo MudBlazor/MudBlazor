@@ -15,6 +15,7 @@ namespace MudBlazor
 
         protected string Classname => new CssBuilder("mud-chat-bubble")
             .AddClass($"mud-chat-{GetBubbleVariant.ToDescriptionString()}-{GetBubbleColor.ToDescriptionString()}")
+            .AddClass($"mud-chat-arrow-{ParentArrowPosition.ToDescriptionString()}")
             .AddClass(Class)
             .Build();
 
@@ -28,6 +29,9 @@ namespace MudBlazor
 
         [CascadingParameter(Name = "MudChatBubbleColor")]
         public Color ParentColor { get; private set; }
+
+        [CascadingParameter(Name = "MudChatArrowPosition")]
+        public ChatArrowPosition ParentArrowPosition { get; private set; } = ChatArrowPosition.None;
 
         /// <summary>
         /// The color of the component. It supports the theme colors.
