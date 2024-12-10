@@ -2,10 +2,14 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
 using System.Drawing;
 using System.Globalization;
 using System.Text.Json;
 using FluentAssertions;
+using Microsoft.Extensions.Logging.Abstractions;
+using Moq;
+using MudBlazor.Resources;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Utilities
@@ -393,86 +397,549 @@ namespace MudBlazor.UnitTests.Utilities
         [Test]
         public void ErrorCheckingTest()
         {
+            // boolean format exception
+            string booleanErrorMessage = "Not a valid boolean";
+            var b1 = new DefaultConverter<bool>();
+            b1.Get("a-z").Should().Be(default);
+            b1.GetErrorMessage.Should().Be(booleanErrorMessage);
+            var bn1 = new DefaultConverter<bool?>();
+            bn1.Get("a-z").Should().Be(default);
+            bn1.GetErrorMessage.Should().Be(booleanErrorMessage);
+
             // datetime format exception
+            string dtErrorMessage = "Not a valid date time";
             var dt1 = new DefaultConverter<DateTime>();
             dt1.Get("12/34/56").Should().Be(default);
+            dt1.GetErrorMessage.Should().Be(dtErrorMessage);
             var dtn1 = new DefaultConverter<DateTime?>();
             dtn1.Get("12/34/56").Should().Be(null);
+            dtn1.GetErrorMessage.Should().Be(dtErrorMessage);
 
             // timespan format exception
+            string tmErrorMessage = "Not a valid time span";
             var tm1 = new DefaultConverter<TimeSpan>();
             tm1.Get("12:o1").Should().Be(default);
-            tm1.GetErrorMessage.Should().Be("Not a valid time span");
+            tm1.GetErrorMessage.Should().Be(tmErrorMessage);
             var tmn1 = new DefaultConverter<TimeSpan?>();
             tmn1.Get("12:o1").Should().Be(null);
-            tmn1.GetErrorMessage.Should().Be("Not a valid time span");
+            tmn1.GetErrorMessage.Should().Be(tmErrorMessage);
 
             // timespan overflow exception
             var tm2 = new DefaultConverter<TimeSpan>();
             tm2.Get("25:00").Should().Be(default);
-            tm2.GetErrorMessage.Should().Be("Not a valid time span");
+            tm2.GetErrorMessage.Should().Be(tmErrorMessage);
             var tmn2 = new DefaultConverter<TimeSpan?>();
             tmn2.Get("25:00").Should().Be(null);
-            tmn2.GetErrorMessage.Should().Be("Not a valid time span");
+            tmn2.GetErrorMessage.Should().Be(tmErrorMessage);
 
             // not a valid number
+            string numberErrorMessage = "Not a valid number";
             var c1 = new DefaultConverter<sbyte>();
             c1.Get("a-z").Should().Be(default);
+            c1.GetErrorMessage.Should().Be(numberErrorMessage);
             var cn1 = new DefaultConverter<sbyte?>();
             cn1.Get("a-z").Should().Be(null);
+            cn1.GetErrorMessage.Should().Be(numberErrorMessage);
             var c2 = new DefaultConverter<byte>();
             c2.Get("a-z").Should().Be(default);
+            c2.GetErrorMessage.Should().Be(numberErrorMessage);
             var cn2 = new DefaultConverter<byte?>();
             cn2.Get("a-z").Should().Be(null);
+            cn2.GetErrorMessage.Should().Be(numberErrorMessage);
             var c3 = new DefaultConverter<short>();
             c3.Get("a-z").Should().Be(default);
-            var c3n = new DefaultConverter<short?>();
-            c3n.Get("a-z").Should().Be(null);
+            c3.GetErrorMessage.Should().Be(numberErrorMessage);
+            var cn3 = new DefaultConverter<short?>();
+            cn3.Get("a-z").Should().Be(null);
+            cn3.GetErrorMessage.Should().Be(numberErrorMessage);
             var c4 = new DefaultConverter<ushort>();
             c4.Get("a-z").Should().Be(default);
-            var c4n = new DefaultConverter<ushort?>();
-            c4n.Get("a-z").Should().Be(null);
+            c4.GetErrorMessage.Should().Be(numberErrorMessage);
+            var cn4 = new DefaultConverter<ushort?>();
+            cn4.Get("a-z").Should().Be(null);
+            cn4.GetErrorMessage.Should().Be(numberErrorMessage);
             var c5 = new DefaultConverter<int>();
             c5.Get("a-z").Should().Be(default);
-            var c5n = new DefaultConverter<int?>();
-            c5n.Get("a-z").Should().Be(null);
+            c5.GetErrorMessage.Should().Be(numberErrorMessage);
+            var cn5 = new DefaultConverter<int?>();
+            cn5.Get("a-z").Should().Be(null);
+            cn5.GetErrorMessage.Should().Be(numberErrorMessage);
             var c6 = new DefaultConverter<uint>();
             c6.Get("a-z").Should().Be(default);
-            var c6n = new DefaultConverter<uint?>();
-            c6n.Get("a-z").Should().Be(null);
+            c6.GetErrorMessage.Should().Be(numberErrorMessage);
+            var cn6 = new DefaultConverter<uint?>();
+            cn6.Get("a-z").Should().Be(null);
+            cn6.GetErrorMessage.Should().Be(numberErrorMessage);
             var c7 = new DefaultConverter<long>();
             c7.Get("a-z").Should().Be(default);
-            var c7n = new DefaultConverter<long?>();
-            c7n.Get("a-z").Should().Be(null);
+            c7.GetErrorMessage.Should().Be(numberErrorMessage);
+            var cn7 = new DefaultConverter<long?>();
+            cn7.Get("a-z").Should().Be(null);
+            cn7.GetErrorMessage.Should().Be(numberErrorMessage);
             var c8 = new DefaultConverter<ulong>();
             c8.Get("a-z").Should().Be(default);
-            var c8n = new DefaultConverter<ulong?>();
-            c8n.Get("a-z").Should().Be(null);
+            c8.GetErrorMessage.Should().Be(numberErrorMessage);
+            var cn8 = new DefaultConverter<ulong?>();
+            cn8.Get("a-z").Should().Be(null);
+            cn8.GetErrorMessage.Should().Be(numberErrorMessage);
             var c9 = new DefaultConverter<float>();
             c9.Get("a-z").Should().Be(default);
-            var c9n = new DefaultConverter<float?>();
-            c9n.Get("a-z").Should().Be(null);
+            c9.GetErrorMessage.Should().Be(numberErrorMessage);
+            var cn9 = new DefaultConverter<float?>();
+            cn9.Get("a-z").Should().Be(null);
+            cn9.GetErrorMessage.Should().Be(numberErrorMessage);
             var c10 = new DefaultConverter<double>();
             c10.Get("a-z").Should().Be(default);
-            var c10n = new DefaultConverter<double?>();
-            c10n.Get("a-z").Should().Be(null);
+            c10.GetErrorMessage.Should().Be(numberErrorMessage);
+            var cn10 = new DefaultConverter<double?>();
+            cn10.Get("a-z").Should().Be(null);
+            cn10.GetErrorMessage.Should().Be(numberErrorMessage);
             var c11 = new DefaultConverter<decimal>();
             c11.Get("a-z").Should().Be(default);
-            var c11n = new DefaultConverter<decimal?>();
-            c11n.Get("a-z").Should().Be(null);
+            c11.GetErrorMessage.Should().Be(numberErrorMessage);
+            var cn11 = new DefaultConverter<decimal?>();
+            cn11.Get("a-z").Should().Be(null);
+            cn11.GetErrorMessage.Should().Be(numberErrorMessage);
+
+            // not a valid GUID
+            string guidErrorMessage = "Not a valid GUID";
             var c12 = new DefaultConverter<Guid>();
             c12.Get("a-z").Should().Be(Guid.Empty);
-            var c12n = new DefaultConverter<Guid?>();
-            c12n.Get("a-z").Should().Be(null);
+            c12.GetErrorMessage.Should().Be(guidErrorMessage);
+            var cn12 = new DefaultConverter<Guid?>();
+            cn12.Get("a-z").Should().Be(null);
+            cn12.GetErrorMessage.Should().Be(guidErrorMessage);
+
+            // not a valid enum
+            string enumErrorMessage = $"Not a value of {typeof(YesNoMaybe).Name}";
             var c13 = new DefaultConverter<YesNoMaybe>();
             c13.Get("a-z").Should().Be(YesNoMaybe.Maybe);
-            var c14 = new DefaultConverter<YesNoMaybe?>();
-            c14.Get("a-z").Should().Be(null);
+            c13.GetErrorMessage.Should().Be(enumErrorMessage);
+            var cn13 = new DefaultConverter<YesNoMaybe?>();
+            cn13.Get("a-z").Should().Be(null);
+            cn13.GetErrorMessage.Should().Be(enumErrorMessage);
 
             // invalid format for type supplied
             var c16 = new DefaultConverter<int?>();
             c16.Format = "dd/mm/yy";
             c16.Get(c16.Set(22)).Should().Be(null);
+            c16.GetErrorMessage.Should().Be(numberErrorMessage);
+
+            // invalid type
+            DefaultConverter<object>.GlobalSetFunc = (input) =>
+            {
+                throw new FormatException("Invalid input.");
+            };
+            var c17 = new DefaultConverter<object>();
+            c17.Get("a-z").Should().Be(null);
+            c17.GetErrorMessage.Should().Be($"Not a valid {typeof(object).Name}");
+            DefaultConverter<object>.GlobalSetFunc = null;
+
+            // no conversion
+            var c18 = new DefaultConverter<object>();
+            c18.Get("a-z").Should().Be(null);
+            c18.GetErrorMessage.Should().Be($"Conversion to type {typeof(object)} not implemented");
+
+            string c19Exception = "test";
+            var c19 = new DefaultConverter<object>();
+            c19.OnError = (msg) =>
+            {
+                // The goal is to trigger the catch block in DefaultConverter without propagating the exception to the Converter.Get method.
+                if (msg == $"Conversion to type System.Object not implemented")
+                {
+                    throw new Exception(c19Exception);
+                }
+            };
+            c19.Get("a-z").Should().Be(null);
+            c19.GetErrorMessage.Should().Be($"Conversion error: {c19Exception}");
+
+            var c20Exception = "Invalid input.";
+            DefaultConverter<object>.GlobalGetFunc = (input) =>
+            {
+                throw new FormatException(c20Exception);
+            };
+            var c20ErrorMessage = $"Conversion error: {c20Exception}";
+            var c20 = new DefaultConverter<object>();
+            c20.Set("a-z").Should().Be(null);
+            c20.SetErrorMessage.Should().Be(c20ErrorMessage);
+            DefaultConverter<object>.GlobalGetFunc = null;
+
+            var c21Exception = "Conversion failed.";
+            var c21 = new Converter<object>
+            {
+                GetFunc = (value) => { throw new Exception(c21Exception); },
+                SetFunc = (value) => { throw new Exception(c21Exception); }
+            };
+            c21.Get("a-z").Should().Be(null);
+            c21.GetErrorMessage.Should().Be($"Conversion from {typeof(string).Name} to {typeof(object).Name} failed: {c21Exception}");
+            c21.Set("a-z").Should().Be(null);
+            c21.SetErrorMessage.Should().Be($"Conversion from {typeof(object).Name} to {typeof(string).Name} failed: {c21Exception}");
+        }
+
+        [Test]
+        public void ErrorCheckingWithInternalMudLocalizerTest()
+        {
+            var defaultLocalizationInterceptor = new Mock<AbstractLocalizationInterceptor>(NullLoggerFactory.Instance, null);
+            var internalMudLocalizer = new InternalMudLocalizer(defaultLocalizationInterceptor.Object);
+
+            // boolean format exception
+            string booleanErrorMessage = LanguageResource.DefaultConverter_InvalidBoolean;
+            var b1 = new DefaultConverter<bool>
+            {
+                Localizer = internalMudLocalizer
+            };
+            b1.Get("a-z").Should().Be(default);
+            b1.GetErrorMessage.Should().NotBeEmpty();
+            defaultLocalizationInterceptor.Verify(_ => _.Handle(booleanErrorMessage, It.IsAny<object[]>()), Times.Once);
+            defaultLocalizationInterceptor.Invocations.Clear();
+            var bn1 = new DefaultConverter<bool?>
+            {
+                Localizer = internalMudLocalizer
+            };
+            bn1.Get("a-z").Should().Be(default);
+            bn1.GetErrorMessage.Should().NotBeEmpty();
+            defaultLocalizationInterceptor.Verify(_ => _.Handle(booleanErrorMessage, It.IsAny<object[]>()), Times.Once);
+            defaultLocalizationInterceptor.Invocations.Clear();
+            
+            // datetime format exception
+            string dtErrorMessage = LanguageResource.DefaultConverter_InvalidDateTime;
+            var dt1 = new DefaultConverter<DateTime>
+            {
+                Localizer = internalMudLocalizer
+            };
+            dt1.Get("12/34/56").Should().Be(default);
+            dt1.GetErrorMessage.Should().NotBeEmpty();
+            defaultLocalizationInterceptor.Verify(_ => _.Handle(dtErrorMessage, It.IsAny<object[]>()), Times.Once);
+            defaultLocalizationInterceptor.Invocations.Clear();
+            var dtn1 = new DefaultConverter<DateTime?>
+            {
+                Localizer = internalMudLocalizer
+            };
+            dtn1.Get("12/34/56").Should().Be(null);
+            dtn1.GetErrorMessage.Should().NotBeEmpty();
+            defaultLocalizationInterceptor.Verify(_ => _.Handle(dtErrorMessage, It.IsAny<object[]>()), Times.Once);
+            defaultLocalizationInterceptor.Invocations.Clear();
+
+            // timespan format exception
+            string tmErrorMessage = LanguageResource.DefaultConverter_InvalidTimeSpan;
+            var tm1 = new DefaultConverter<TimeSpan>
+            {
+                Localizer = internalMudLocalizer
+            };
+            tm1.Get("12:o1").Should().Be(default);
+            tm1.GetErrorMessage.Should().NotBeEmpty();
+            defaultLocalizationInterceptor.Verify(_ => _.Handle(tmErrorMessage, It.IsAny<object[]>()), Times.Once);
+            defaultLocalizationInterceptor.Invocations.Clear();
+            var tmn1 = new DefaultConverter<TimeSpan?>
+            {
+                Localizer = internalMudLocalizer
+            };
+            tmn1.Get("12:o1").Should().Be(null);
+            tmn1.GetErrorMessage.Should().NotBeEmpty();
+            defaultLocalizationInterceptor.Verify(_ => _.Handle(tmErrorMessage, It.IsAny<object[]>()), Times.Once);
+            defaultLocalizationInterceptor.Invocations.Clear();
+
+            // timespan overflow exception
+            var tm2 = new DefaultConverter<TimeSpan>
+            {
+                Localizer = internalMudLocalizer
+            };
+            tm2.Get("25:00").Should().Be(default);
+            tm2.GetErrorMessage.Should().NotBeEmpty();
+            defaultLocalizationInterceptor.Verify(_ => _.Handle(tmErrorMessage, It.IsAny<object[]>()), Times.Once);
+            defaultLocalizationInterceptor.Invocations.Clear();
+            var tmn2 = new DefaultConverter<TimeSpan?>
+            {
+                Localizer = internalMudLocalizer
+            };
+            tmn2.Get("25:00").Should().Be(null);
+            tmn2.GetErrorMessage.Should().NotBeEmpty();
+            defaultLocalizationInterceptor.Verify(_ => _.Handle(tmErrorMessage, It.IsAny<object[]>()), Times.Once);
+            defaultLocalizationInterceptor.Invocations.Clear();
+
+            // not a valid number
+            string numberErrorMessage = LanguageResource.DefaultConverter_InvalidNumber;
+            var c1 = new DefaultConverter<sbyte>
+            {
+                Localizer = internalMudLocalizer
+            };
+            c1.Get("a-z").Should().Be(default);
+            c1.GetErrorMessage.Should().NotBeEmpty();
+            defaultLocalizationInterceptor.Verify(_ => _.Handle(numberErrorMessage, It.IsAny<object[]>()), Times.Once);
+            defaultLocalizationInterceptor.Invocations.Clear();
+            var cn1 = new DefaultConverter<sbyte?>
+            {
+                Localizer = internalMudLocalizer
+            };
+            cn1.Get("a-z").Should().Be(null);
+            cn1.GetErrorMessage.Should().NotBeEmpty();
+            defaultLocalizationInterceptor.Verify(_ => _.Handle(numberErrorMessage, It.IsAny<object[]>()), Times.Once);
+            defaultLocalizationInterceptor.Invocations.Clear();
+            var c2 = new DefaultConverter<byte>
+            {
+                Localizer = internalMudLocalizer
+            };
+            c2.Get("a-z").Should().Be(default);
+            c2.GetErrorMessage.Should().NotBeEmpty();
+            defaultLocalizationInterceptor.Verify(_ => _.Handle(numberErrorMessage, It.IsAny<object[]>()), Times.Once);
+            defaultLocalizationInterceptor.Invocations.Clear();
+            var cn2 = new DefaultConverter<byte?>
+            {
+                Localizer = internalMudLocalizer
+            };
+            cn2.Get("a-z").Should().Be(null);
+            cn2.GetErrorMessage.Should().NotBeEmpty();
+            defaultLocalizationInterceptor.Verify(_ => _.Handle(numberErrorMessage, It.IsAny<object[]>()), Times.Once);
+            defaultLocalizationInterceptor.Invocations.Clear();
+            var c3 = new DefaultConverter<short>
+            {
+                Localizer = internalMudLocalizer
+            };
+            c3.Get("a-z").Should().Be(default);
+            c3.GetErrorMessage.Should().NotBeEmpty();
+            defaultLocalizationInterceptor.Verify(_ => _.Handle(numberErrorMessage, It.IsAny<object[]>()), Times.Once);
+            defaultLocalizationInterceptor.Invocations.Clear();
+            var cn3 = new DefaultConverter<short?>
+            {
+                Localizer = internalMudLocalizer
+            };
+            cn3.Get("a-z").Should().Be(null);
+            cn3.GetErrorMessage.Should().NotBeEmpty();
+            defaultLocalizationInterceptor.Verify(_ => _.Handle(numberErrorMessage, It.IsAny<object[]>()), Times.Once);
+            defaultLocalizationInterceptor.Invocations.Clear();
+            var c4 = new DefaultConverter<ushort>
+            {
+                Localizer = internalMudLocalizer
+            };
+            c4.Get("a-z").Should().Be(default);
+            c4.GetErrorMessage.Should().NotBeEmpty();
+            defaultLocalizationInterceptor.Verify(_ => _.Handle(numberErrorMessage, It.IsAny<object[]>()), Times.Once);
+            defaultLocalizationInterceptor.Invocations.Clear();
+            var cn4 = new DefaultConverter<ushort?>
+            {
+                Localizer = internalMudLocalizer
+            };
+            cn4.Get("a-z").Should().Be(null);
+            cn4.GetErrorMessage.Should().NotBeEmpty();
+            defaultLocalizationInterceptor.Verify(_ => _.Handle(numberErrorMessage, It.IsAny<object[]>()), Times.Once);
+            defaultLocalizationInterceptor.Invocations.Clear();
+            var c5 = new DefaultConverter<int>
+            {
+                Localizer = internalMudLocalizer
+            };
+            c5.Get("a-z").Should().Be(default);
+            c5.GetErrorMessage.Should().NotBeEmpty();
+            defaultLocalizationInterceptor.Verify(_ => _.Handle(numberErrorMessage, It.IsAny<object[]>()), Times.Once);
+            defaultLocalizationInterceptor.Invocations.Clear();
+            var cn5 = new DefaultConverter<int?>
+            {
+                Localizer = internalMudLocalizer
+            };
+            cn5.Get("a-z").Should().Be(null);
+            cn5.GetErrorMessage.Should().NotBeEmpty();
+            defaultLocalizationInterceptor.Verify(_ => _.Handle(numberErrorMessage, It.IsAny<object[]>()), Times.Once);
+            defaultLocalizationInterceptor.Invocations.Clear();
+            var c6 = new DefaultConverter<uint>
+            {
+                Localizer = internalMudLocalizer
+            };
+            c6.Get("a-z").Should().Be(default);
+            c6.GetErrorMessage.Should().NotBeEmpty();
+            defaultLocalizationInterceptor.Verify(_ => _.Handle(numberErrorMessage, It.IsAny<object[]>()), Times.Once);
+            defaultLocalizationInterceptor.Invocations.Clear();
+            var cn6 = new DefaultConverter<uint?>
+            {
+                Localizer = internalMudLocalizer
+            };
+            cn6.Get("a-z").Should().Be(null);
+            cn6.GetErrorMessage.Should().NotBeEmpty();
+            defaultLocalizationInterceptor.Verify(_ => _.Handle(numberErrorMessage, It.IsAny<object[]>()), Times.Once);
+            defaultLocalizationInterceptor.Invocations.Clear();
+            var c7 = new DefaultConverter<long>
+            {
+                Localizer = internalMudLocalizer
+            };
+            c7.Get("a-z").Should().Be(default);
+            c7.GetErrorMessage.Should().NotBeEmpty();
+            defaultLocalizationInterceptor.Verify(_ => _.Handle(numberErrorMessage, It.IsAny<object[]>()), Times.Once);
+            defaultLocalizationInterceptor.Invocations.Clear();
+            var cn7 = new DefaultConverter<long?>
+            {
+                Localizer = internalMudLocalizer
+            };
+            cn7.Get("a-z").Should().Be(null);
+            cn7.GetErrorMessage.Should().NotBeEmpty();
+            defaultLocalizationInterceptor.Verify(_ => _.Handle(numberErrorMessage, It.IsAny<object[]>()), Times.Once);
+            defaultLocalizationInterceptor.Invocations.Clear();
+            var c8 = new DefaultConverter<ulong>
+            {
+                Localizer = internalMudLocalizer
+            };
+            c8.Get("a-z").Should().Be(default);
+            c8.GetErrorMessage.Should().NotBeEmpty();
+            defaultLocalizationInterceptor.Verify(_ => _.Handle(numberErrorMessage, It.IsAny<object[]>()), Times.Once);
+            defaultLocalizationInterceptor.Invocations.Clear();
+            var cn8 = new DefaultConverter<ulong?>
+            {
+                Localizer = internalMudLocalizer
+            };
+            cn8.Get("a-z").Should().Be(null);
+            cn8.GetErrorMessage.Should().NotBeEmpty();
+            defaultLocalizationInterceptor.Verify(_ => _.Handle(numberErrorMessage, It.IsAny<object[]>()), Times.Once);
+            defaultLocalizationInterceptor.Invocations.Clear();
+            var c9 = new DefaultConverter<float>
+            {
+                Localizer = internalMudLocalizer
+            };
+            c9.Get("a-z").Should().Be(default);
+            c9.GetErrorMessage.Should().NotBeEmpty();
+            defaultLocalizationInterceptor.Verify(_ => _.Handle(numberErrorMessage, It.IsAny<object[]>()), Times.Once);
+            defaultLocalizationInterceptor.Invocations.Clear();
+            var cn9 = new DefaultConverter<float?>
+            {
+                Localizer = internalMudLocalizer
+            };
+            cn9.Get("a-z").Should().Be(null);
+            cn9.GetErrorMessage.Should().NotBeEmpty();
+            defaultLocalizationInterceptor.Verify(_ => _.Handle(numberErrorMessage, It.IsAny<object[]>()), Times.Once);
+            defaultLocalizationInterceptor.Invocations.Clear();
+            var c10 = new DefaultConverter<double>
+            {
+                Localizer = internalMudLocalizer
+            };
+            c10.Get("a-z").Should().Be(default);
+            c10.GetErrorMessage.Should().NotBeEmpty();
+            defaultLocalizationInterceptor.Verify(_ => _.Handle(numberErrorMessage, It.IsAny<object[]>()), Times.Once);
+            defaultLocalizationInterceptor.Invocations.Clear();
+            var cn10 = new DefaultConverter<double?>
+            {
+                Localizer = internalMudLocalizer
+            };
+            cn10.Get("a-z").Should().Be(null);
+            cn10.GetErrorMessage.Should().NotBeEmpty();
+            defaultLocalizationInterceptor.Verify(_ => _.Handle(numberErrorMessage, It.IsAny<object[]>()), Times.Once);
+            defaultLocalizationInterceptor.Invocations.Clear();
+            var c11 = new DefaultConverter<decimal>
+            {
+                Localizer = internalMudLocalizer
+            };
+            c11.Get("a-z").Should().Be(default);
+            c11.GetErrorMessage.Should().NotBeEmpty();
+            defaultLocalizationInterceptor.Verify(_ => _.Handle(numberErrorMessage, It.IsAny<object[]>()), Times.Once);
+            defaultLocalizationInterceptor.Invocations.Clear();
+            var cn11 = new DefaultConverter<decimal?>
+            {
+                Localizer = internalMudLocalizer
+            };
+            cn11.Get("a-z").Should().Be(null);
+            cn11.GetErrorMessage.Should().NotBeEmpty();
+            defaultLocalizationInterceptor.Verify(_ => _.Handle(numberErrorMessage, It.IsAny<object[]>()), Times.Once);
+            defaultLocalizationInterceptor.Invocations.Clear();
+
+            // not a valid GUID
+            string guidErrorMessage = LanguageResource.DefaultConverter_InvalidGUID;
+            var c12 = new DefaultConverter<Guid>
+            {
+                Localizer = internalMudLocalizer
+            };
+            c12.Get("a-z").Should().Be(Guid.Empty);
+            c12.GetErrorMessage.Should().NotBeEmpty();
+            defaultLocalizationInterceptor.Verify(_ => _.Handle(guidErrorMessage, It.IsAny<object[]>()), Times.Once);
+            defaultLocalizationInterceptor.Invocations.Clear();
+            var cn12 = new DefaultConverter<Guid?>
+            {
+                Localizer = internalMudLocalizer
+            };
+            cn12.Get("a-z").Should().Be(null);
+            cn12.GetErrorMessage.Should().NotBeEmpty();
+            defaultLocalizationInterceptor.Verify(_ => _.Handle(guidErrorMessage, It.IsAny<object[]>()), Times.Once);
+            defaultLocalizationInterceptor.Invocations.Clear();
+
+            // not a valid enum
+            string enumErrorMessage = LanguageResource.DefaultConverter_NotValueOf;
+            var c13 = new DefaultConverter<YesNoMaybe>
+            {
+                Localizer = internalMudLocalizer
+            };
+            c13.Get("a-z").Should().Be(YesNoMaybe.Maybe);
+            c13.GetErrorMessage.Should().NotBeEmpty();
+            defaultLocalizationInterceptor.Verify(_ => _.Handle(enumErrorMessage, typeof(YesNoMaybe).Name), Times.Once);
+            defaultLocalizationInterceptor.Invocations.Clear();
+            var cn13 = new DefaultConverter<YesNoMaybe?>
+            {
+                Localizer = internalMudLocalizer
+            };
+            cn13.Get("a-z").Should().Be(null);
+            cn13.GetErrorMessage.Should().NotBeEmpty();
+            defaultLocalizationInterceptor.Verify(_ => _.Handle(enumErrorMessage, typeof(YesNoMaybe).Name), Times.Once);
+            defaultLocalizationInterceptor.Invocations.Clear();
+
+            // invalid format for type supplied
+            var c16 = new DefaultConverter<int?>
+            {
+                Localizer = internalMudLocalizer
+            };
+            c16.Format = "dd/mm/yy";
+            c16.Get(c16.Set(22)).Should().Be(null);
+            c16.GetErrorMessage.Should().NotBeEmpty();
+            defaultLocalizationInterceptor.Verify(_ => _.Handle(numberErrorMessage, It.IsAny<object[]>()), Times.Once);
+            defaultLocalizationInterceptor.Invocations.Clear();
+
+            // invalid type
+            DefaultConverter<object>.GlobalSetFunc = (input) =>
+            {
+                throw new FormatException("Invalid input.");
+            };
+            var c17 = new DefaultConverter<object>
+            {
+                Localizer = internalMudLocalizer
+            };
+            c17.Get("a-z").Should().Be(null);
+            c17.GetErrorMessage.Should().NotBeEmpty();
+            defaultLocalizationInterceptor.Verify(_ => _.Handle(LanguageResource.DefaultConverter_InvalidType, typeof(object).Name), Times.Once);
+            defaultLocalizationInterceptor.Invocations.Clear();
+            DefaultConverter<object>.GlobalSetFunc = null;
+
+            // no conversion
+            var c18 = new DefaultConverter<object>
+            {
+                Localizer = internalMudLocalizer
+            };
+            c18.Get("a-z").Should().Be(null);
+            c18.GetErrorMessage.Should().NotBeEmpty();
+            defaultLocalizationInterceptor.Verify(_ => _.Handle(LanguageResource.DefaultConverter_ConversionNotImplemented, typeof(object)), Times.Once);
+            defaultLocalizationInterceptor.Invocations.Clear();
+
+            var c20Exception = "Invalid input.";
+            DefaultConverter<object>.GlobalGetFunc = (input) =>
+            {
+                throw new FormatException(c20Exception);
+            };
+            var c20 = new DefaultConverter<object>
+            {
+                Localizer = internalMudLocalizer
+            };
+            c20.Set("a-z").Should().Be(null);
+            c20.SetErrorMessage.Should().NotBeEmpty();
+            defaultLocalizationInterceptor.Verify(_ => _.Handle(LanguageResource.DefaultConverter_ConversionError, c20Exception), Times.Once);
+            defaultLocalizationInterceptor.Invocations.Clear();
+            DefaultConverter<object>.GlobalGetFunc = null;
+
+            var c21Exception = "Conversion failed.";
+            var c21 = new Converter<object>
+            {
+                Localizer = internalMudLocalizer,
+                GetFunc = (value) => { throw new Exception(c21Exception); },
+                SetFunc = (value) => { throw new Exception(c21Exception); }
+            };
+            c21.Get("a-z").Should().Be(null);
+            c21.GetErrorMessage.Should().NotBeEmpty();
+            defaultLocalizationInterceptor.Verify(_ => _.Handle(LanguageResource.Converter_ConversionFailed, new object[] { typeof(string).Name, typeof(object).Name, c21Exception }), Times.Once);
+            defaultLocalizationInterceptor.Invocations.Clear();
+            c21.Set("a-z").Should().Be(null);
+            c21.SetErrorMessage.Should().NotBeEmpty();
+            defaultLocalizationInterceptor.Verify(_ => _.Handle(LanguageResource.Converter_ConversionFailed, new object[] { typeof(object).Name, typeof(string).Name, c21Exception }), Times.Once);
+            defaultLocalizationInterceptor.Invocations.Clear();
         }
 
         [Test]
