@@ -16,6 +16,7 @@ namespace MudBlazor
     /// Represents a vertical set of values.
     /// </summary>
     /// <typeparam name="T">The kind of item for this column.</typeparam>
+    /// <seealso cref="MudDataGrid{T}"/>
     public abstract partial class Column<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase, IDisposable
     {
         private static readonly RenderFragment<CellContext<T>> EmptyChildContent = _ => builder => { };

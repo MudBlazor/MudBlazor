@@ -28,6 +28,7 @@ public partial class ApiBreadcrumbs
     /// <inheritdoc />
     protected override void OnParametersSet()
     {
+        // Start with the top-level link
         Items = [new("Index", "/api")];
 
         if (Type == null)

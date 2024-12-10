@@ -374,7 +374,7 @@ namespace MudBlazor.UnitTests.Utilities
         [Test]
         [TestCase(130, 150, 240, 130, 229, 0.79, 0.73)]
         [TestCase(71, 88, 99, 222, 204, 0.16, 0.33)]
-        public void TransformHLSFromRGB(byte r, byte g, byte b, byte a, double expectedH, double expectedS, double expectedL)
+        public void TransformHlsFromRgb(byte r, byte g, byte b, byte a, double expectedH, double expectedS, double expectedL)
         {
             MudColor color = new(r, g, b, a);
 
@@ -775,47 +775,69 @@ namespace MudBlazor.UnitTests.Utilities
         [Test]
         public void Equals_SameType()
         {
+            // Arrange
             MudColor color1 = new(10, 20, 50, 255);
             MudColor color2 = new(10, 20, 50, 255);
             MudColor color3 = null;
             MudColor color4 = null;
 
-            (color1 == color1).Should().BeTrue();
-            (color2 == color2).Should().BeTrue();
-            (color1 == color2).Should().BeTrue();
-            (color2 == color1).Should().BeTrue();
-            (color3 == color4).Should().BeTrue();
-
+            // Act & Assert
+            // Self-comparison
             color1.Equals(color1).Should().BeTrue();
             color2.Equals(color2).Should().BeTrue();
+
+            // Comparison with another instance with the same values
             color1.Equals(color2).Should().BeTrue();
             color2.Equals(color1).Should().BeTrue();
+
+            // Null comparisons
+            (color3 == color4).Should().BeTrue();
             Equals(color3, color4).Should().BeTrue();
+
+            // Operator overloads
+            (color1 == color2).Should().BeTrue();
+            (color2 == color1).Should().BeTrue();
+            (color1 != color3).Should().BeTrue();
+            (color3 != color1).Should().BeTrue();
         }
 
         [Test]
         public void NotEquals_SameType()
         {
+            // Arrange
             MudColor color1 = new(10, 20, 50, 255);
             MudColor color2 = new(10, 20, 50, 10);
             MudColor color3 = null;
 
-            (color1 != color2).Should().BeTrue();
-            (color2 != color1).Should().BeTrue();
-            (color2 != color3).Should().BeTrue();
-            (color3 != color2).Should().BeTrue();
+            // Act
+            var result1 = color1 != color2;
+            var result2 = color2 != color1;
+            var result3 = color2 != color3;
+            var result4 = color3 != color2;
 
-            color1.Equals(color2).Should().BeFalse();
-            color2.Equals(color1).Should().BeFalse();
-            color2.Equals(color3).Should().BeFalse();
-            Equals(color3, color2).Should().BeFalse();
-            Equals(color2, color3).Should().BeFalse();
+            var equalsResult1 = color1.Equals(color2);
+            var equalsResult2 = color2.Equals(color1);
+            var equalsResult3 = color2.Equals(color3);
+            var equalsResult4 = Equals(color3, color2);
+            var equalsResult5 = Equals(color2, color3);
+
+            // Assert
+            result1.Should().BeTrue();
+            result2.Should().BeTrue();
+            result3.Should().BeTrue();
+            result4.Should().BeTrue();
+
+            equalsResult1.Should().BeFalse();
+            equalsResult2.Should().BeFalse();
+            equalsResult3.Should().BeFalse();
+            equalsResult4.Should().BeFalse();
+            equalsResult5.Should().BeFalse();
         }
 
 #pragma warning restore CS1718 // Comparison made to same variable
 
         [Test]
-        public void Equals_null()
+        public void Equals_Null()
         {
             MudColor color1 = new(10, 20, 50, 255);
             (color1 == null).Should().BeFalse();
@@ -842,7 +864,87 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
-        public void GetHashCodeTest()
+        public void Equals_SameRgba_DifferentHsl()
+        {
+            // Arrange
+            var color1 = new MudColor(245, 0.34, 0.95, 1);
+            var color2 = new MudColor(245, 0.35, 0.95, 1);
+
+            // Act
+            var equals = color1.Equals(color2);
+            var hslEquals = color1.HslEquals(color2);
+            var rgbaEquals = color1.RgbaEquals(color2);
+
+            // Assert
+            equals.Should().BeFalse();
+            hslEquals.Should().BeFalse();
+            rgbaEquals.Should().BeTrue();
+        }
+
+        [Test]
+        public void HslEquals_Null_Test()
+        {
+            // Arrange
+            MudColor color = new(120, 0.5, 0.4, 1);
+
+            // Act
+            var equals = color.HslEquals(null);
+
+            // Assert
+            equals.Should().BeFalse();
+        }
+
+        [Test]
+        [TestCase(120, 0.5, 0.4, 1, 121, 0.5, 0.4, 1, false)] // Hue differs
+        [TestCase(120, 0.5, 0.4, 1, 120, 0.51, 0.4, 1, false)] // Saturation differs
+        [TestCase(120, 0.5, 0.4, 1, 120, 0.5, 0.41, 1, false)] // Lightness differs
+        public void HslEquals_Test(double h1, double s1, double l1, double a1, double h2, double s2, double l2, double a2, bool expected)
+        {
+            // Arrange
+            MudColor first = new(h1, s1, l1, a1);
+            MudColor second = new(h2, s2, l2, a2);
+
+            // Act
+            var result = first.HslEquals(second);
+
+            // Assert
+            result.Should().Be(expected);
+        }
+
+        [Test]
+        public void RgbaEquals_Null_Test()
+        {
+            // Arrange
+            MudColor color = new(10, 20, 30, 255);
+
+            // Act
+            var equals = color.RgbaEquals(null);
+
+            // Assert
+            equals.Should().BeFalse();
+        }
+
+        [Test]
+        [TestCase(10, 20, 30, 255, 10, 20, 30, 254, false)] // Alpha differs
+        [TestCase(10, 20, 30, 255, 10, 20, 31, 255, false)] // Blue differs
+        [TestCase(10, 20, 30, 255, 10, 21, 30, 255, false)] // Green differs
+        [TestCase(10, 20, 30, 255, 11, 20, 30, 255, false)] // Red differs
+        [TestCase(10, 20, 30, 255, 10, 20, 30, 255, true)]  // All equal
+        public void RgbaEquals_Test(byte r1, byte g1, byte b1, byte a1, byte r2, byte g2, byte b2, byte a2, bool expected)
+        {
+            // Arrange
+            MudColor first = new(r1, g1, b1, a1);
+            MudColor second = new(r2, g2, b2, a2);
+
+            // Act
+            var result = first.RgbaEquals(second);
+
+            // Assert
+            result.Should().Be(expected);
+        }
+
+        [Test]
+        public void GetHashCode_SameRgba()
         {
             // Arrange
             var color1 = new MudColor(130, 150, 240, 255);
@@ -856,42 +958,31 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
-        public void HLSChanged_HChanged()
+        public void GetHasCode_DifferentRgba()
         {
-            MudColor first = new(120, 0.5, 0.4, 1);
-            MudColor second = new(121, 0.5, 0.4, 1);
+            // Arrange
+            var color1 = new MudColor(130, 150, 240, 255);
+            var color2 = new MudColor(131, 150, 240, 255);
 
-            first.HslChanged(second).Should().BeTrue();
-            second.HslChanged(first).Should().BeTrue();
+            // Act
+            var areEqualGetHashCode = color1.GetHashCode() == color2.GetHashCode();
 
-            first.HslChanged(first).Should().BeFalse();
-            second.HslChanged(second).Should().BeFalse();
+            // Assert
+            areEqualGetHashCode.Should().BeFalse();
         }
 
         [Test]
-        public void HLSChanged_SChanged()
+        public void GetHasCode_SameRgba_DifferentHsl()
         {
-            MudColor first = new(120, 0.5, 0.4, 1);
-            MudColor second = new(120, 0.51, 0.4, 1);
+            // Arrange
+            var color1 = new MudColor(245, 0.34, 0.95, 1);
+            var color2 = new MudColor(245, 0.35, 0.95, 1);
 
-            first.HslChanged(second).Should().BeTrue();
-            second.HslChanged(first).Should().BeTrue();
+            // Act
+            var getHashCodeEquals = color1.GetHashCode() == color2.GetHashCode();
 
-            first.HslChanged(first).Should().BeFalse();
-            second.HslChanged(second).Should().BeFalse();
-        }
-
-        [Test]
-        public void HLSChanged_LChanged()
-        {
-            MudColor first = new(120, 0.5, 0.4, 1);
-            MudColor second = new(120, 0.5, 0.41, 1);
-
-            first.HslChanged(second).Should().BeTrue();
-            second.HslChanged(first).Should().BeTrue();
-
-            first.HslChanged(first).Should().BeFalse();
-            second.HslChanged(second).Should().BeFalse();
+            // Assert
+            getHashCodeEquals.Should().BeFalse();
         }
 
         [Test]
@@ -1032,7 +1123,7 @@ namespace MudBlazor.UnitTests.Utilities
             var result1 = (string)mudColor1;
             var result2 = (string)(MudColor)null;
 
-            // Act & Assert
+            // Assert
             result1.Should().Be("#47586301");
             result2.Should().Be(string.Empty);
         }

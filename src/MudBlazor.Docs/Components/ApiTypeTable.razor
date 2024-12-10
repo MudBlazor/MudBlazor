@@ -1,4 +1,4 @@
-﻿<MudTable T="DocumentedType" @ref="Table" ServerData="@GetData" Elevation="0" Class="ma-0 mud-width-full" Hover="true" Dense="true" AllowUnsorted="false">
+﻿<MudTable T="DocumentedType" @ref="Table" ServerData="@GetData" Elevation="0" Class="ma-0 mud-width-full" RowsPerPage="25" Hover="true" Dense="true" AllowUnsorted="false">
     <ToolBarContent>
         <MudGrid Class="pa-0">
             <MudItem xs="12">
@@ -25,7 +25,9 @@
             <ApiText Text="@(context.Summary + " " + context.Remarks)" />
         </MudTd>
     </RowTemplate>
-    <GroupFooterTemplate></GroupFooterTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
     <NoRecordsContent>
         <MudAlert Severity="Severity.Info">No types match the current filters.</MudAlert>
     </NoRecordsContent>

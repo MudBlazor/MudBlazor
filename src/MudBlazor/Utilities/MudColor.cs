@@ -44,8 +44,12 @@ namespace MudBlazor.Utilities
     [Serializable]
     public partial class MudColor : ISerializable, IEquatable<MudColor>, IParsable<MudColor>, IFormattable
     {
+        private readonly record struct HSL(double H, double S, double L);
+        private readonly record struct RGBA(byte R, byte G, byte B, byte A);
+
         private const double Epsilon = 0.000000000000001;
-        private readonly byte[] _valuesAsByte;
+        private readonly HSL _hsl;
+        private readonly RGBA _rgba;
 
         /// <summary>
         /// Gets the hexadecimal representation of the color.
@@ -62,22 +66,22 @@ namespace MudBlazor.Utilities
         /// <summary>
         /// Gets the red component value of the color.
         /// </summary>
-        public byte R => _valuesAsByte[0];
+        public byte R => _rgba.R;
 
         /// <summary>
         /// Gets the green component value of the color.
         /// </summary>
-        public byte G => _valuesAsByte[1];
+        public byte G => _rgba.G;
 
         /// <summary>
         /// Gets the blue component value of the color.
         /// </summary>
-        public byte B => _valuesAsByte[2];
+        public byte B => _rgba.B;
 
         /// <summary>
         /// Gets the alpha component value of the color.
         /// </summary>
-        public byte A => _valuesAsByte[3];
+        public byte A => _rgba.A;
 
         /// <summary>
         /// Gets the alpha component value as a percentage (0.0 to 1.0) of the color.
@@ -89,19 +93,19 @@ namespace MudBlazor.Utilities
         /// Gets the hue component value of the color.
         /// </summary>
         [JsonIgnore]
-        public double H { get; }
+        public double H => _hsl.H;
 
         /// <summary>
         /// Gets the lightness component value of the color.
         /// </summary>
         [JsonIgnore]
-        public double L { get; }
+        public double L => _hsl.L;
 
         /// <summary>
         /// Gets the saturation component value of the color.
         /// </summary>
         [JsonIgnore]
-        public double S { get; }
+        public double S => _hsl.S;
 
         /// <summary>
         /// Deserialization constructor for <see cref="MudColor"/>.
@@ -118,11 +122,7 @@ namespace MudBlazor.Utilities
         /// </summary>
         public MudColor()
         {
-            _valuesAsByte = new byte[4];
-            _valuesAsByte[0] = 0;
-            _valuesAsByte[1] = 0;
-            _valuesAsByte[2] = 0;
-            _valuesAsByte[3] = 255;
+            _rgba = new RGBA(0, 0, 0, 255);
         }
 
         /// <summary>
@@ -146,22 +146,15 @@ namespace MudBlazor.Utilities
         /// <param name="a">The alpha component value (0 to 255).</param>
         public MudColor(double h, double s, double l, int a)
         {
-            _valuesAsByte = new byte[4];
-
             h = Math.Round(h.EnsureRange(360), 0);
             s = Math.Round(s.EnsureRange(1), 2);
             l = Math.Round(l.EnsureRange(1), 2);
             a = a.EnsureRange(255);
 
-            var (r, g, b) = HslToRgb(h, s, l);
-            _valuesAsByte[0] = r;
-            _valuesAsByte[1] = g;
-            _valuesAsByte[2] = b;
-            _valuesAsByte[3] = (byte)a;
-
-            H = Math.Round(h, 0);
-            S = Math.Round(s, 2);
-            L = Math.Round(l, 2);
+            var hsl = new HSL(h, s, l);
+            var (r, g, b) = HslToRgb(in hsl);
+            _rgba = new RGBA(r, g, b, (byte)a);
+            _hsl = hsl;
         }
 
         /// <summary>
@@ -174,17 +167,8 @@ namespace MudBlazor.Utilities
         [JsonConstructor]
         public MudColor(byte r, byte g, byte b, byte a)
         {
-            _valuesAsByte = new byte[4];
-
-            _valuesAsByte[0] = r;
-            _valuesAsByte[1] = g;
-            _valuesAsByte[2] = b;
-            _valuesAsByte[3] = a;
-
-            var (h, s, l) = RgbToHsl(r, g, b);
-            H = h;
-            S = s;
-            L = l;
+            _rgba = new RGBA(r, g, b, a);
+            _hsl = RgbToHsl(r, g, b);
         }
 
         /// <summary>
@@ -205,7 +189,7 @@ namespace MudBlazor.Utilities
         /// <param name="color">The existing color to copy the hue value from.</param>
         public MudColor(byte r, byte g, byte b, MudColor color) : this(r, g, b, color.A)
         {
-            H = color.H;
+            _hsl = _hsl with { H = color.H };
         }
 
         /// <summary>
@@ -248,11 +232,8 @@ namespace MudBlazor.Utilities
             ArgumentException.ThrowIfNullOrEmpty(value);
 
             var (r, g, b, a) = ParseStringColorCore(value);
-            var (h, s, l) = RgbToHsl(r, g, b);
-            _valuesAsByte = [r, g, b, a];
-            H = h;
-            S = s;
-            L = l;
+            _rgba = new RGBA(r, g, b, a);
+            _hsl = RgbToHsl(r, g, b);
         }
 
         /// <summary>
@@ -345,16 +326,18 @@ namespace MudBlazor.Utilities
         public MudColor ColorRgbDarken() => ColorDarken(0.075);
 
         /// <summary>
-        /// Checks whether the HSL (Hue, Saturation, lightness) values of this <see cref="MudColor"/> instance have changed compared to another <see cref="MudColor"/> instance.
+        /// Checks whether the HSL (Hue, Saturation, Lightness) values of this <see cref="MudColor"/> instance are equal compared to another <see cref="MudColor"/> instance.
         /// </summary>
-        /// <param name="value">The <see cref="MudColor"/> instance to compare HSL values with.</param>
-        /// <returns>True if the HSL values have changed; otherwise, false.</returns>
-        public bool HslChanged(MudColor value)
-        {
-            var comparer = DoubleEpsilonEqualityComparer.Default;
+        /// <param name="other">The <see cref="MudColor"/> instance to compare HSL values with.</param>
+        /// <returns>True if the HSL are equal; otherwise, false.</returns>
+        public bool HslEquals(MudColor? other) => other is not null && _hsl.Equals(other._hsl);
 
-            return !comparer.Equals(H, value.H) || !comparer.Equals(S, value.S) || !comparer.Equals(L, value.L);
-        }
+        /// <summary>
+        /// Checks whether the RGBA (Red, Green, Blue, Alpha) values of this <see cref="MudColor"/> instance are equal compared to another <see cref="MudColor"/> instance.
+        /// </summary>
+        /// <param name="other">The <see cref="MudColor"/> instance to compare HSL values with.</param>
+        /// <returns>True if the RGBA are equal; otherwise, false.</returns>
+        public bool RgbaEquals(MudColor? other) => other is not null && _rgba.Equals(other._rgba);
 
         /// <inheritdoc />
         public override bool Equals(object? obj) => obj is MudColor color && Equals(color);
@@ -371,15 +354,11 @@ namespace MudBlazor.Utilities
                 return false;
             }
 
-            return
-                _valuesAsByte[0] == other._valuesAsByte[0] &&
-                _valuesAsByte[1] == other._valuesAsByte[1] &&
-                _valuesAsByte[2] == other._valuesAsByte[2] &&
-                _valuesAsByte[3] == other._valuesAsByte[3];
+            return RgbaEquals(other) && HslEquals(other);
         }
 
         /// <inheritdoc />
-        public override int GetHashCode() => HashCode.Combine(R, G, B, A);
+        public override int GetHashCode() => HashCode.Combine(_rgba, _hsl);
 
         /// <inheritdoc />
         public override string ToString() => ToString(MudColorOutputFormats.RGBA);
@@ -606,20 +585,20 @@ namespace MudBlazor.Utilities
 
         private static byte GetByteFromValuePart(string input, int index) => byte.Parse(new string(new[] { input[index], input[index + 1] }), NumberStyles.HexNumber);
 
-        private static (byte r, byte g, byte b) HslToRgb(double h, double s, double l)
+        private static (byte r, byte g, byte b) HslToRgb(in HSL hsl)
         {
             // Achromatic (gray scale)
-            if (Math.Abs(s) < Epsilon)
+            if (Math.Abs(hsl.S) < Epsilon)
             {
-                var gray = (byte)Math.Max(0, Math.Min(255, (int)Math.Ceiling(l * 255d)));
+                var gray = (byte)Math.Max(0, Math.Min(255, (int)Math.Ceiling(hsl.L * 255d)));
                 return (gray, gray, gray);
             }
 
-            var hNormalized = h / 360d;
-            var t2 = l <= 0.5d
-                ? l * (1.0d + s)
-                : l + s - l * s;
-            var t1 = 2.0d * l - t2;
+            var hNormalized = hsl.H / 360d;
+            var t2 = hsl.L <= 0.5d
+                ? hsl.L * (1.0d + hsl.S)
+                : hsl.L + hsl.S - hsl.L * hsl.S;
+            var t1 = 2.0d * hsl.L - t2;
 
             var tr = HueToRgb(t1, t2, hNormalized + 1.0d / 3.0d);
             var tg = HueToRgb(t1, t2, hNormalized);
@@ -645,7 +624,7 @@ namespace MudBlazor.Utilities
             };
         }
 
-        private static (byte r, byte g, byte b, byte a) ParseStringColorCore(string value)
+        private static RGBA ParseStringColorCore(string value)
         {
             value = value.Trim().ToLowerInvariant();
 
@@ -657,7 +636,7 @@ namespace MudBlazor.Utilities
             };
         }
 
-        private static (byte r, byte g, byte b, byte a) ParseStringRgbaToRgba(string value)
+        private static RGBA ParseStringRgbaToRgba(string value)
         {
             var parts = SplitInputIntoParts(value);
             if (parts.Length != 4)
@@ -670,10 +649,10 @@ namespace MudBlazor.Utilities
             var b = byte.Parse(parts[2], CultureInfo.InvariantCulture);
             var a = (byte)Math.Max(0, Math.Min(255, 255 * double.Parse(parts[3], CultureInfo.InvariantCulture)));
 
-            return (r, g, b, a);
+            return new RGBA(r, g, b, a);
         }
 
-        private static (byte r, byte g, byte b, byte a) ParseStringRgbToRgba(string value)
+        private static RGBA ParseStringRgbToRgba(string value)
         {
             var parts = SplitInputIntoParts(value);
             if (parts.Length != 3)
@@ -684,10 +663,10 @@ namespace MudBlazor.Utilities
             var r = byte.Parse(parts[0], CultureInfo.InvariantCulture);
             var g = byte.Parse(parts[1], CultureInfo.InvariantCulture);
             var b = byte.Parse(parts[2], CultureInfo.InvariantCulture);
-            return (r, g, b, byte.MaxValue);
+            return new RGBA(r, g, b, byte.MaxValue);
         }
 
-        private static (byte r, byte g, byte b, byte a) ParseStringHexToRgba(string value)
+        private static RGBA ParseStringHexToRgba(string value)
         {
             if (value.StartsWith('#'))
             {
@@ -709,7 +688,7 @@ namespace MudBlazor.Utilities
                 default:
                     throw new ArgumentException(@"Not a valid color.", nameof(value));
             }
-            return (GetByteFromValuePart(value, 0), GetByteFromValuePart(value, 2), GetByteFromValuePart(value, 4), GetByteFromValuePart(value, 6));
+            return new RGBA(GetByteFromValuePart(value, 0), GetByteFromValuePart(value, 2), GetByteFromValuePart(value, 4), GetByteFromValuePart(value, 6));
         }
 
         private static string[] SplitInputIntoParts(string value)
@@ -726,7 +705,7 @@ namespace MudBlazor.Utilities
             return parts;
         }
 
-        private static (double h, double s, double l) RgbToHsl(byte r, byte g, byte b)
+        private static HSL RgbToHsl(byte r, byte g, byte b)
         {
             var h = 0D;
             var s = 0D;
@@ -778,7 +757,7 @@ namespace MudBlazor.Utilities
                 s = (max - min) / (2D - (max + min)); //(max-min > 0)?
             }
 
-            return (Math.Round(h.EnsureRange(360), 0), Math.Round(s.EnsureRange(1), 2), Math.Round(l.EnsureRange(1), 2));
+            return new HSL(Math.Round(h.EnsureRange(360), 0), Math.Round(s.EnsureRange(1), 2), Math.Round(l.EnsureRange(1), 2));
         }
 
         /// <inheritdoc />

@@ -12,6 +12,10 @@ namespace MudBlazor
     /// or <see href="https://developer.mozilla.org/docs/Web/HTML/Element/a">anchor</see> if <c>Href</c> is set.<br/>
     /// You can directly add attributes like <c>title</c> or <c>aria-label</c>.
     /// </remarks>
+    /// <seealso cref="MudButtonGroup" />
+    /// <seealso cref="MudFab" />
+    /// <seealso cref="MudIconButton" />
+    /// <seealso cref="MudToggleIconButton" />
     public partial class MudButton : MudBaseButton, IDisposable
     {
         protected string Classname => new CssBuilder("mud-button-root mud-button")

@@ -61,7 +61,9 @@
                             MaxHeight="@MaxHeight"
                             AnchorOrigin="@AnchorOrigin"
                             TransformOrigin="@TransformOrigin"
+                            OverflowBehavior="@DropdownSettings.OverflowBehavior"
                             Class="@PopoverClass"
+                            Fixed="@DropdownSettings.Fixed"
                             RelativeWidth="@FullWidth">
                     <CascadingValue Value="@((IMudSelect)this)" IsFixed="true">
                         <MudList T="string"

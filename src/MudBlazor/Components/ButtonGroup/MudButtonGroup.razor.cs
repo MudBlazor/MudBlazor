@@ -7,6 +7,7 @@ namespace MudBlazor
     /// <summary>
     /// Represents a group of connected <see cref="MudButton"/> components.
     /// </summary>
+    /// <seealso cref="MudButton" />
     public partial class MudButtonGroup : MudComponentBase
     {
         protected string Classname => new CssBuilder("mud-button-group-root")

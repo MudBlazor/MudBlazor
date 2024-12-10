@@ -76,8 +76,10 @@ public sealed partial class DocsPageHeader
     /// </summary>
     public DocumentedType DocumentedType { get; set; }
 
-    // Will be replaced by DocumentedType
-    public MudComponent _component;
+    /// <summary>
+    /// The example page for this type.
+    /// </summary>
+    public MudComponent Example { get; set; }
 
     /// <inheritdoc />
     protected override void OnParametersSet()
@@ -89,6 +91,8 @@ public sealed partial class DocsPageHeader
         {
             // Get the documentation for this component
             DocumentedType = ApiDocumentation.GetType(Component);
+            // Look for an example page for this type
+            Example = DocumentedType == null ? null : MenuService.GetExample(DocumentedType);
             // If there is no subtitle set, but we have a component summary, use the component summary
             if (string.IsNullOrEmpty(SubTitle) && !string.IsNullOrEmpty(DocumentedType.Summary))
             {

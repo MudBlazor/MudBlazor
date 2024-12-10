@@ -18,6 +18,8 @@ namespace MudBlazor
     /// A location which can participate in a drag-and-drop operation.
     /// </summary>
     /// <typeparam name="T">The kind of item to drag.</typeparam>
+    /// <seealso cref="MudDropContainer{T}"/>
+    /// <seealso cref="MudDynamicDropItem{T}"/>
     public partial class MudDropZone<T> : MudComponentBase, IDisposable where T : notnull
     {
         private bool _containerIsInitialized = false;

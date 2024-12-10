@@ -25,7 +25,7 @@ namespace MudBlazor
             {
                 await jsRuntime.InvokeVoidAsync(identifier, args);
             }
-#if DEBUG
+#if !DEBUG
             catch (JSException)
             {
             }
