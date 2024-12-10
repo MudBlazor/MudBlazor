@@ -17,19 +17,12 @@
     <MudIllegalParameters>V7IgnoreCase</MudIllegalParameters>
     <MudDebugAnalyzer>false</MudDebugAnalyzer>
   </PropertyGroup>
-  
-  <!--Project path for code generator-->
-  <PropertyGroup>
-    <BinDocsCompiler>$(SolutionDir)MudBlazor.Docs.Compiler/bin/Debug/net9.0/MudBlazor.Docs.Compiler.dll</BinDocsCompiler>
-    <ProjectDocsCompiler>dotnet run --configuration Release --project "$(SolutionDir)MudBlazor.Docs.Compiler/MudBlazor.Docs.Compiler.csproj" -p:SassCompilerSassCompilerJson="$(SolutionDir)MudBlazor.Docs.Compiler/sasscompiler.json"</ProjectDocsCompiler>
-  </PropertyGroup>
 
   <!--Execute the code generator-->
-  <Target Name="CompileDocs" BeforeTargets="BeforeBuild">
+  <Target Name="CompileDocs" AfterTargets="ResolveProjectReferences" Condition="'$(DesignTimeBuild)' != 'true'">
     <!--Command-line for the code generator-->
     <Message Text="Generating Docs and Tests" Importance="high" />
-    <Exec Command="dotnet &quot;$(BinDocsCompiler)&quot;" Condition="Exists('$(BinDocsCompiler)')" />
-    <Exec Command="$(ProjectDocsCompiler)" Condition="!Exists('$(BinDocsCompiler)')" />
+    <Exec Command="dotnet run --configuration Release --project '$(SolutionDir)MudBlazor.Docs.Compiler/MudBlazor.Docs.Compiler.csproj'" />
   </Target>
 
   <!--This file contains any ExampleCode that is new and needs including in the build -->
@@ -44,7 +37,7 @@
 
   <!--Add Content that is being generated as part of the build cycle-->
   <!--We need to do this because the project is not yet aware of files that were generated after the build started-->
-  <Target Name="IncludeGeneratedFiles" BeforeTargets="BeforeBuild" DependsOnTargets="CompileDocs;ReadFromFile">
+  <Target Name="IncludeGeneratedFiles" AfterTargets="ResolveProjectReferences" DependsOnTargets="CompileDocs;ReadFromFile">
     <ItemGroup>
       <!--Include without duplication-->
       <_NewCompiledSnippets Include="Models\Snippets.generated.cs" Exclude="@(Compile)" />
