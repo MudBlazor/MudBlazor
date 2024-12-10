@@ -62,7 +62,7 @@ namespace MudBlazor
             catch (Exception e)
             {
                 GetError = true;
-                GetErrorMessage = Localizer?[LanguageResource.Converter_ConversionFailed, [typeof(T).Name, typeof(U).Name, e.Message]] ?? $"Conversion from {typeof(U).Name} to {typeof(T).Name} failed: {e.Message}";
+                GetErrorMessage = Localizer?[LanguageResource.Converter_ConversionFailed, [typeof(U).Name, typeof(T).Name, e.Message]] ?? $"Conversion from {typeof(U).Name} to {typeof(T).Name} failed: {e.Message}";
             }
             return default(T);
         }
