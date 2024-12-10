@@ -166,7 +166,7 @@
                 <Description>
                     The following text fields are bound against the properties of a POCO (Plain old C-Sharp Object). Edit them to see the model change. Reset the model and see the textfields change.
                     <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">Note: always use two-way bindings (<CodeInline>@("@bind-Value")</CodeInline>) with textfields.</MudAlert>
-                    <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">Note: only on BSS, the parameter <CodeInline>TextUpdateSuppression</CodeInline> prevents the text from being updated via a bound value. Defaults to <CodeInline>true</CodeInline>. When <CodeInline>false</CodeInline>, the input's text can be updated programmatically while the input has focus.</MudAlert>
+                    <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">Note: only on BSS, the parameter <CodeInline>TextUpdateSuppression</CodeInline> prevents the text from being updated via a bound value while the input is focused. Defaults to <CodeInline>true</CodeInline>.</MudAlert>
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(TextFieldBindingExample)" ShowCode="false">
