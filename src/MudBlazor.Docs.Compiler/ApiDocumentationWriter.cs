@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
 
 namespace MudBlazor.Docs.Compiler;
 
@@ -10,15 +11,8 @@ namespace MudBlazor.Docs.Compiler;
 /// <summary>
 /// Represents a writer for generated API documentation.
 /// </summary>
-public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File.Create(filePath))
+public class ApiDocumentationWriter : StringWriter
 {
-    /// <summary>
-    /// Creates a new instance with types and the default output path.
-    /// </summary>
-    public ApiDocumentationWriter() : this(Paths.ApiDocumentationFilePath)
-    {
-    }
-
     /// <summary>
     /// Indents generated code to be more readable.
     /// </summary>
@@ -88,7 +82,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
 
         for (var index = 0; index < IndentLevel; index++)
         {
-            Write("\t");
+            Write("    ");
         }
     }
 
