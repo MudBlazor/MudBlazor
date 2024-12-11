@@ -1,8 +1,6 @@
-﻿using System.Threading.Tasks;
-using AngleSharp.Dom;
+﻿using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
-using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.Overlay;
 using NUnit.Framework;
 
@@ -21,11 +19,12 @@ public class OverlayTests : BunitTest
     [Test]
     public void ShouldRenderWhenVisibleIsTrue()
     {
+        var providerComp = Context.RenderComponent<MudPopoverProvider>();
         var comp = Context.RenderComponent<MudOverlay>(parameters => parameters
             .Add(p => p.Visible, true)
         );
 
-        comp.Markup.Should().NotBeEmpty();
+        providerComp.Markup.Should().NotBeEmpty();
     }
 
     [Test]
@@ -33,20 +32,21 @@ public class OverlayTests : BunitTest
     [TestCase(false)]
     public async Task AutoClose_OnClick(bool autoClose)
     {
+        var providerComp = Context.RenderComponent<MudPopoverProvider>();
         var comp = Context.RenderComponent<MudOverlay>(parameters => parameters
             .Add(p => p.Visible, true)
             .Add(p => p.AutoClose, autoClose)
         );
 
-        await comp.Find("div.mud-overlay").ClickAsync(new());
+        await providerComp.Find("div.mud-overlay").ClickAsync(new());
 
         if (autoClose)
         {
-            comp.Markup.Should().BeEmpty();
+            providerComp.Markup.Should().BeEmpty();
         }
         else
         {
-            comp.Markup.Should().NotBeEmpty();
+            providerComp.Markup.Should().NotBeEmpty();
         }
     }
 
@@ -55,14 +55,14 @@ public class OverlayTests : BunitTest
     {
         var counter = 0;
         void CloseHandler() => counter++;
-
+        var providerComp = Context.RenderComponent<MudPopoverProvider>();
         var comp = Context.RenderComponent<MudOverlay>(parameters => parameters
             .Add(p => p.Visible, true)
             .Add(p => p.AutoClose, true)
             .Add(p => p.OnClosed, CloseHandler)
         );
 
-        await comp.Find("div.mud-overlay").ClickAsync(new());
+        await providerComp.Find("div.mud-overlay").ClickAsync(new());
         comp.Markup.Trim().Should().BeEmpty();
         counter.Should().Be(1);
     }
@@ -85,12 +85,13 @@ public class OverlayTests : BunitTest
     [Test]
     public void ShouldApplyCorrectZIndex()
     {
+        var providerComp = Context.RenderComponent<MudPopoverProvider>();
         var comp = Context.RenderComponent<MudOverlay>(parameters => parameters
             .Add(p => p.Visible, true)
             .Add(p => p.ZIndex, 10)
         );
 
-        comp.Find("div.mud-overlay").Attributes["style"].Value.Should().Contain("z-index:10");
+        providerComp.Find("div.mud-overlay").Attributes["style"].Value.Should().Contain("z-index:10");
     }
 
     [Test]
@@ -100,6 +101,7 @@ public class OverlayTests : BunitTest
     [TestCase(false, false)]
     public void ShouldApplyBackgroundColor(bool darkBackground, bool lightBackground)
     {
+        var providerComp = Context.RenderComponent<MudPopoverProvider>();
         var comp = Context.RenderComponent<MudOverlay>(parameters => parameters
             .Add(p => p.Visible, true)
             .Add(p => p.DarkBackground, darkBackground)
@@ -110,17 +112,17 @@ public class OverlayTests : BunitTest
         {
             if (darkBackground)
             {
-                comp.Find("div.mud-overlay-scrim").ClassList.Should().Contain("mud-overlay-dark");
+                providerComp.Find("div.mud-overlay-scrim").ClassList.Should().Contain("mud-overlay-dark");
             }
 
             if (lightBackground)
             {
-                comp.Find("div.mud-overlay-scrim").ClassList.Should().Contain("mud-overlay-light");
+                providerComp.Find("div.mud-overlay-scrim").ClassList.Should().Contain("mud-overlay-light");
             }
         }
         else
         {
-            comp.FindAll("div.mud-overlay-scrim").Count.Should().Be(0);
+            providerComp.FindAll("div.mud-overlay-scrim").Count.Should().Be(0);
         }
     }
 
@@ -129,6 +131,7 @@ public class OverlayTests : BunitTest
     [TestCase(false)]
     public void ShouldApplyAbsoluteClass(bool absolute)
     {
+        var providerComp = Context.RenderComponent<MudPopoverProvider>();
         var comp = Context.RenderComponent<MudOverlay>(parameters => parameters
             .Add(p => p.Visible, true)
             .Add(p => p.Absolute, absolute)
@@ -140,18 +143,19 @@ public class OverlayTests : BunitTest
         }
         else
         {
-            comp.Find("div.mud-overlay").ClassList.Should().NotContain("mud-overlay-absolute");
+            providerComp.Find("div.mud-overlay").ClassList.Should().NotContain("mud-overlay-absolute");
         }
     }
 
     [Test]
     public void ShouldRenderChildContent()
     {
+        var providerComp = Context.RenderComponent<MudPopoverProvider>();
         var comp = Context.RenderComponent<MudOverlay>(parameters => parameters
             .Add(p => p.Visible, true)
             .AddChildContent("<div class='child-content'>Hello World</div>")
         );
 
-        comp.Find("div.child-content").TextContent.Should().Be("Hello World");
+        providerComp.Find("div.child-content").TextContent.Should().Be("Hello World");
     }
 }

@@ -1,7 +1,6 @@
 ﻿using Bunit;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.Popover;
 using NUnit.Framework;
 
@@ -348,7 +347,7 @@ namespace MudBlazor.UnitTests.Components
             Assert.Throws<ElementNotFoundException>(() => comp.Find("#my-content"));
         }
 
-        [TestCase(false)]
+        //[TestCase(false)] always blocks duplicate provider with latest change
         [TestCase(true)]
         public async Task MudPopoverProvider_ThrowOnDuplicate(bool throwOnDuplicateProvider)
         {
