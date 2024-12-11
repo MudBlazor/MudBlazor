@@ -20,7 +20,7 @@
   
   <!--Project path for code generator-->
   <PropertyGroup>
-    <BinDocsCompiler>$(SolutionDir)MudBlazor.Docs.Compiler/bin/Release/net9.0/MudBlazor.Docs.Compiler.dll</BinDocsCompiler>
+    <BinDocsCompiler>$(SolutionDir)MudBlazor.Docs.Compiler/bin/Debug/net9.0/MudBlazor.Docs.Compiler.dll</BinDocsCompiler>
     <ProjectDocsCompiler>dotnet run --configuration Release --project "$(SolutionDir)MudBlazor.Docs.Compiler/MudBlazor.Docs.Compiler.csproj" -p:SassCompilerSassCompilerJson="$(SolutionDir)MudBlazor.Docs.Compiler/sasscompiler.json"</ProjectDocsCompiler>
   </PropertyGroup>
 
