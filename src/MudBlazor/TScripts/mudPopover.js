@@ -359,7 +359,10 @@ window.mudpopoverHelper = {
                 if (parent) {
                     const overlay = parent.querySelector('.mud-overlay');
                     if (overlay) {
-                        overlay.style['z-index'] = popoverContentNode.style['z-index'] - 1;
+                        // Only assign z-index if it doesn't already exist
+                        if (!overlay.style['z-index']) {
+                            overlay.style['z-index'] = popoverContentNode.style['z-index'];
+                        }
                     }
                 }
             }
