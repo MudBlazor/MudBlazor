@@ -1,9 +1,7 @@
-﻿using System.Diagnostics;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using MudBlazor.Charts;
 
 namespace MudBlazor.UnitTests.Docs.Generator;
-
 
 public partial class TestsForApiPages
 {
@@ -291,70 +289,7 @@ public partial class TestsForApiPages
         }
     }
 
-    public static bool IsObsolete(Type type)
-    {
-        var attributes = (ObsoleteAttribute[])type.GetCustomAttributes(typeof(ObsoleteAttribute), false);
-
-        return attributes is { Length: > 0 };
-    }
-
-    private static string SafeTypeName(Type type, bool removeT = false)
-    {
-        if (!type.IsGenericType)
-        {
-            return type.Name;
-        }
-
-        if (removeT)
-        {
-            return _genericTypeRegex.Replace(type.Name, string.Empty);
-        }
-
-        return _genericTypeRegex.Replace(type.Name, $"<{string.Join(',', GetGenericTypeArguments(type))}>");
-    }
-
-    private static IEnumerable<string> GetGenericTypeArguments(Type type)
-    {
-        if (!type.IsGenericType)
-        {
-            yield break;
-        }
-
-        if (_genericTypeIndexCache.TryGetValue(type.GetGenericTypeDefinition(), out var genericTypes))
-        {
-            foreach (var genericType in genericTypes)
-            {
-                yield return genericType;
-            }
-        }
-        else
-        {
-            for (var i = 0; i < type.GetGenericArguments().Length; i++)
-            {
-                yield return "string";
-            }
-        }
-    }
-
     /// <summary>
-    /// Regular expression to match generic number at the end of a type name.
-    /// example: for input MyType`2 it matches `2
-    /// </summary>
-    private static readonly Regex _genericTypeRegex = GenericTypeRegex();
-
-    /// <summary>
-    /// Cache for generic types that have a specific type for each generic argument.
-    /// </summary>
-    private static readonly Dictionary<Type, string[]> _genericTypeIndexCache = new()
-    {
-        { typeof(MudSlider<>), ["decimal"]},
-        { typeof(MudSwitch<>), ["bool"]}
-    };
-
-    [GeneratedRegex("`\\d?$", RegexOptions.Compiled)]
-    private static partial Regex GenericTypeRegex();
-
-        /// <summary>
     /// Gets whether a type is excluded from documentation.
     /// </summary>
     /// <param name="type">The type to check.</param>
