@@ -172,22 +172,22 @@ public class OverlayTests : BunitTest
             case 0:
                 countInProvider.Count.Should().Be(0);
                 countInComp.Count.Should().Be(1);
-                comp.Instance._renderOutsideOfSection.Should().BeTrue();
+                comp.Instance.RenderOutsideOfSection.Should().BeTrue();
                 break;
             case 1:
                 countInProvider.Count.Should().Be(1);
                 countInComp.Count.Should().Be(0);
-                comp.Instance._renderOutsideOfSection.Should().BeFalse();
+                comp.Instance.RenderOutsideOfSection.Should().BeFalse();
                 break;
             case 2:
                 countInProvider.Count.Should().Be(1);
                 countInComp.Count.Should().Be(0);
-                comp.Instance._renderOutsideOfSection.Should().BeFalse();
+                comp.Instance.RenderOutsideOfSection.Should().BeFalse();
                 break;
             case 3:
                 countInProvider.Count.Should().Be(0);
                 countInComp.Count.Should().Be(1);
-                comp.Instance._renderOutsideOfSection.Should().BeTrue();
+                comp.Instance.RenderOutsideOfSection.Should().BeTrue();
                 break;
         }
     }

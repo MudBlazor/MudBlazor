@@ -631,10 +631,10 @@ namespace MudBlazor.UnitTests.Components
         public void Autocomplete_OnBlurShouldBeCalled()
         {
             var calls = 0;
-            Action<FocusEventArgs> fn = (args) => calls++;
+            void Fn(FocusEventArgs args) => calls++;
             var comp = Context.RenderComponent<MudAutocomplete<string>>((a) =>
             {
-                a.Add(x => x.OnBlur, fn);
+                a.Add(x => x.OnBlur, Fn);
             });
             var input = comp.Find("input");
 
@@ -939,7 +939,7 @@ namespace MudBlazor.UnitTests.Components
             var max = (int)Math.Pow(2, NbParameters);
             for (var i = 0; i < max; i++)
             {
-                var bits = new System.Collections.BitArray(new int[] { i });
+                var bits = new System.Collections.BitArray([i]);
                 yield return bits.Cast<bool>().Take(NbParameters).ToArray();
             }
         }
