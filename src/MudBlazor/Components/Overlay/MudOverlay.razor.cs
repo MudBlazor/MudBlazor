@@ -18,7 +18,7 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
 {
     private readonly ParameterState<bool> _visibleState;
 
-    private bool _renderOutsideOfSection =>
+    internal bool _renderOutsideOfSection =>
             Absolute ||
             (Class?.Contains("mud-overlay-dialog") ?? false) ||
             (Class?.Contains("mud-drawer-overlay") ?? false) ||
