@@ -1,7 +1,5 @@
 ﻿namespace MudBlazor.UnitTests.Docs.Generator;
 
-#nullable enable
-
 public static class Paths
 {
     private const string DocsDirectory = "MudBlazor.Docs";

@@ -4,7 +4,7 @@ using MudBlazor.Charts;
 
 namespace MudBlazor.UnitTests.Docs.Generator;
 
-#nullable enable
+
 public partial class TestsForApiPages
 {
     /// <summary>

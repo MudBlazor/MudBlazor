@@ -2,7 +2,6 @@
 
 namespace MudBlazor.UnitTests.Docs.Generator;
 
-#nullable enable 
 public class Program
 {
     public static int Main()
