@@ -308,10 +308,10 @@ namespace MudBlazor
         public string Delimiter { get; set; } = ", ";
 
         /// <summary>
-        /// The debounce interval for accepting multiple search strings.
+        /// The delay interval for accepting multiple characters to search against.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>500</c>.  Supports multi-character quick search
+        /// Defaults to <c>500</c> milliseconds.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
