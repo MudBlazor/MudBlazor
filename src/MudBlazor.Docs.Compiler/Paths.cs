@@ -7,7 +7,6 @@
         private const string SnippetsFile = "Snippets.generated.cs";
         private const string ApiDocumentationFile = "ApiDocumentation.generated.cs";
         private const string DocStringsFile = "DocStrings.generated.cs";
-        private const string ComponentTestsFile = "ExampleDocsTests.generated.cs";
         private const string NewFilesToBuild = "NewFilesToBuild.txt";
 
         public const string ExampleDiscriminator = "Example"; // example components must contain this string
