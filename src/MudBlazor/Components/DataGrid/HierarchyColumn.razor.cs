@@ -12,6 +12,8 @@ namespace MudBlazor;
 /// Represents a column in a <see cref="MudDataGrid{T}"/> which can be expanded to show additional information.
 /// </summary>
 /// <typeparam name="T">The kind of item managed by the column.</typeparam>
+/// <seealso cref="Column{T}"/>
+/// <seealso cref="MudDataGrid{T}"/>
 public partial class HierarchyColumn<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase
 {
     private bool _finishedInitialExpanded;

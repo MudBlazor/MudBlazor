@@ -18,6 +18,8 @@ namespace MudBlazor
     /// A container of <see cref="MudDropZone{T}"/> components for drag-and-drop operations.
     /// </summary>
     /// <typeparam name="T">The type of item dragged and dropped within this container.</typeparam>
+    /// <seealso cref="MudDropZone{T}"/>
+    /// <seealso cref="MudDynamicDropItem{T}"/>
     public partial class MudDropContainer<T> : MudComponentBase where T : notnull
     {
         private MudDragAndDropItemTransaction<T>? _transaction;

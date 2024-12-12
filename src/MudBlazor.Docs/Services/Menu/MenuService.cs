@@ -45,7 +45,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("Tabs", typeof(MudTabs), typeof(MudTabPanel), typeof(MudDynamicTabs))
             .AddItem("Progress", typeof(MudProgressCircular), typeof(MudProgressLinear))
             .AddItem("Dialog", typeof(MudDialog), typeof(MudDialogContainer), typeof(MudDialogProvider))
-            .AddItem("Snackbar", typeof(MudSnackbarProvider))
+            .AddItem("Snackbar", typeof(SnackbarService), typeof(MudSnackbarProvider), typeof(MudSnackbarElement))
             .AddItem("Avatar", typeof(MudAvatar), typeof(MudAvatarGroup))
             .AddItem("Alert", typeof(MudAlert))
             .AddItem("Card", typeof(MudCard), typeof(MudCardActions), typeof(MudCardContent), typeof(MudCardHeader), typeof(MudCardMedia))
@@ -57,8 +57,8 @@ namespace MudBlazor.Docs.Services
             .AddItem("Paper", typeof(MudPaper))
             .AddItem("Rating", typeof(MudRating), typeof(MudRatingItem))
             .AddItem("Skeleton", typeof(MudSkeleton))
-            .AddItem("Table", typeof(MudTable<T>), typeof(MudTablePager))
-            .AddItem("Data Grid", typeof(MudDataGrid<T>))
+            .AddItem("Table", typeof(MudTableBase), typeof(MudTable<T>), typeof(MudTablePager), typeof(MudTableGroupRow<T>), typeof(MudTableSortLabel<T>), typeof(MudTd), typeof(MudTh), typeof(MudTr), typeof(MudTFootRow), typeof(MudTHeadRow))
+            .AddItem("Data Grid", typeof(MudDataGrid<T>), typeof(Column<T>), typeof(FilterHeaderCell<T>), typeof(FooterCell<T>), typeof(HeaderCell<T>), typeof(HierarchyColumn<T>), typeof(MudDataGridPager<T>), typeof(TemplateColumn<T>))
             .AddItem("Simple Table", typeof(MudSimpleTable))
             .AddItem("Tooltip", typeof(MudTooltip))
             .AddItem("Typography", typeof(MudText))
@@ -117,14 +117,13 @@ namespace MudBlazor.Docs.Services
 
             //Charts
             .AddNavGroup("Charts", false, new DocsComponents()
-                //.AddItem("Options", typeof(ChartOptions)) // <-- this does not work because ChartOptions is not a component!
                 .AddItem("Donut Chart", typeof(Donut))
-                .AddItem("Line Chart", typeof(Line))
+                .AddItem("Line Chart", typeof(Line), typeof(Legend))
                 .AddItem("Pie Chart", typeof(Pie))
-                .AddItem("Bar Chart", typeof(Bar))
+                .AddItem("Bar Chart", typeof(Bar), typeof(ChartOptions))
                 .AddItem("Heat Map Chart", typeof(HeatMap))
                 .AddItem("Stacked Bar Chart", typeof(StackedBar))
-                .AddItem("Time Series Chart", typeof(TimeSeries))
+                .AddItem("Time Series Chart", typeof(TimeSeries), typeof(MudTimeSeriesChartBase), typeof(MudTimeSeriesChart))
             )
             // this must be last!
             .GetComponentsSortedByName();
@@ -301,6 +300,68 @@ namespace MudBlazor.Docs.Services
 
                 return _docsComponentsApi;
             }
+        }
+
+        /// <summary>
+        /// Gets the sub-menu, if any, matching the specified type.
+        /// </summary>
+        /// <param name="parent">The parent to start searching from.</param>
+        /// <param name="type">The type to find.</param>
+        /// <returns>The menu whose link, child type, or group component matches the type.</returns>
+        public MudComponent? GetExample(DocumentedType type)
+        {
+            // Go through each menu...
+            foreach (var menu in Components)
+            {
+                // Is there a menu for this type?  If so, return it.
+                var component = GetExample(menu, type);
+                if (component != null)
+                {
+                    return component;
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Gets the sub-menu, if any, matching the specified type.
+        /// </summary>
+        /// <param name="parent">The parent to start searching from.</param>
+        /// <param name="type">The type to find.</param>
+        /// <returns>The menu whose link, child type, or group component matches the type.</returns>
+        public static MudComponent? GetExample(MudComponent parent, DocumentedType type)
+        {
+            // Does the name match the menu link?
+            if (parent.Link == type.Name)
+            {
+                return parent;
+            }
+            // Are there child types to search?
+            if (parent.ChildTypes != null)
+            {
+                foreach (var childType in parent.ChildTypes)
+                {
+                    // Does the child type's name match?
+                    if (childType.Name == type.Name)
+                    {
+                        return parent;
+                    }
+                }
+            }
+            // Are there sub-menus to search?
+            if (parent.IsNavGroup && parent.GroupComponents != null)
+            {
+                foreach (var subMenu in parent.GroupComponents)
+                {
+                    // Search one level deeper
+                    var component = GetExample(subMenu, type);
+                    if (component != null)
+                    {
+                        return component;
+                    }
+                }
+            }
+            return null;
         }
     }
 }

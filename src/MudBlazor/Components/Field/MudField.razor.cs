@@ -9,6 +9,7 @@ namespace MudBlazor
     /// <summary>
     /// A component similar to <see cref="MudTextField{T}"/> which supports custom content.
     /// </summary>
+    /// <seealso cref="MudTextField{T}"/>
     public partial class MudField : MudComponentBase
     {
         protected string Classname =>

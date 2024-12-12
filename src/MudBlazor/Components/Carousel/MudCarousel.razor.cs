@@ -11,6 +11,7 @@ namespace MudBlazor
     /// Represents a set of slides which transition after a delay.
     /// </summary>
     /// <typeparam name="TData">The kind of item to display.</typeparam>
+    /// <seealso cref="MudCarouselItem" />
     public partial class MudCarousel<TData> : MudBaseBindableItemsControl<MudCarouselItem, TData>, IAsyncDisposable
     {
         private Timer? _timer;

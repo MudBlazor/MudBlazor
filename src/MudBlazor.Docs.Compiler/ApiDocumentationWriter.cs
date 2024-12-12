@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
 
 namespace MudBlazor.Docs.Compiler;
 
@@ -10,15 +11,8 @@ namespace MudBlazor.Docs.Compiler;
 /// <summary>
 /// Represents a writer for generated API documentation.
 /// </summary>
-public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File.Create(filePath))
+public class ApiDocumentationWriter : StringWriter
 {
-    /// <summary>
-    /// Creates a new instance with types and the default output path.
-    /// </summary>
-    public ApiDocumentationWriter() : this(Paths.ApiDocumentationFilePath)
-    {
-    }
-
     /// <summary>
     /// Indents generated code to be more readable.
     /// </summary>
@@ -88,7 +82,7 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
 
         for (var index = 0; index < IndentLevel; index++)
         {
-            Write("\t");
+            Write("    ");
         }
     }
 
@@ -377,6 +371,50 @@ public partial class ApiDocumentationWriter(string filePath) : StreamWriter(File
             {
                 // For external .NET types like ComponentBase, just set the name
                 WriteLineIndented($"Methods[\"{method.Key}\"].DeclaringTypeName = \"{method.Value.DeclaringType?.Name}\";");
+            }
+        }
+
+        WriteLine();
+    }
+
+    /// <summary>
+    /// Links all see-also links to their referred types and members.
+    /// </summary>
+    public void WriteSeeAlsoLinks(IDictionary<string, DocumentedType> types)
+    {
+        WriteLineIndented("// Add see-also links for all types");
+
+        // Find the types with links
+        foreach (var type in types.Where(type => type.Value.Links.Count != 0))
+        {
+            // Go through each link
+            foreach (var link in type.Value.Links)
+            {
+                // Is this a type?  Or a member?  Or an actual web site URL?
+                if (link.Type != null)
+                {
+                    WriteLineIndented($"Types[\"{type.Key}\"].Links.Add(new() {{ Type = Types[\"{link.Type.Key}\"], Text = \"{link.Text}\" }});");
+                }
+                else if (link.Property != null)
+                {
+                    WriteLineIndented($"Types[\"{type.Key}\"].Links.Add(new() {{ Property = Properties[\"{link.Property.Key}\"], Text = \"{link.Text}\" }});");
+                }
+                else if (link.Field != null)
+                {
+                    WriteLineIndented($"Types[\"{type.Key}\"].Links.Add(new() {{ Field = Fields[\"{link.Field.Key}\"] , Text = \"{link.Text}\"}});");
+                }
+                else if (link.Method != null)
+                {
+                    WriteLineIndented($"Types[\"{type.Key}\"].Links.Add(new() {{ Method = Methods[\"{link.Method.Key}\"], Text = \"{link.Text}\" }});");
+                }
+                else if (link.Event != null)
+                {
+                    WriteLineIndented($"Types[\"{type.Key}\"].Links.Add(new() {{ Event = Events[\"{link.Event.Key}\"], Text = \"{link.Text}\" }});");
+                }
+                else if (!string.IsNullOrEmpty(link.Href))
+                {
+                    WriteLineIndented($"Types[\"{type.Key}\"].Links.Add(new() {{ Href = \"{link.Href}\", Text = \"{link.Text}\" }});");
+                }
             }
         }
 

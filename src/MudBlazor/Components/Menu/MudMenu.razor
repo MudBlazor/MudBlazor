@@ -10,8 +10,11 @@
      @onpointerleave="@PointerLeaveAsync"
      @oncontextmenu="@((ActivationEvent == MouseEvent.RightClick ? ToggleMenuAsync : null)!)"
      @oncontextmenu:preventDefault="@(ActivationEvent == MouseEvent.RightClick)">
-
-    @if (ActivatorContent != null)
+    @if (ActivatorHidden)
+    {
+        @* No need to render anything *@
+    }
+    else if (ActivatorContent != null)
     {
         <CascadingValue Value="@((IActivatable)this)" IsFixed="true">
             <div @onclick="ToggleMenuAsync" disabled="@Disabled" class="@ActivatorClassname">

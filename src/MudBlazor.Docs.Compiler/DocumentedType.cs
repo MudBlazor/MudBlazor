@@ -82,4 +82,9 @@ public class DocumentedType
     /// The global settings related to this type.
     /// </summary>
     public Dictionary<string, DocumentedProperty> GlobalSettings { get; } = [];
+
+    /// <summary>
+    /// The see-also links for this type.
+    /// </summary>
+    public List<DocumentedLink> Links { get; init; } = [];
 }
