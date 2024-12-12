@@ -146,7 +146,7 @@ namespace MudBlazor
 
             if (currentItem == null || !Converter.Set(currentItem.Value)?.ToLowerInvariant().StartsWith(_searchContext.SearchText) == true)
             {
-                return matchingItems.First();
+                return matchingItems[0];
             }
 
             var currentIndex = matchingItems.IndexOf(currentItem);
@@ -1149,7 +1149,7 @@ namespace MudBlazor
             }
         }
 
-        private class SearchContext
+        private sealed class SearchContext
         {
             public string SearchText { get; set; } = string.Empty;
             public DateTime LastSearchTime { get; set; } = DateTime.MinValue;
