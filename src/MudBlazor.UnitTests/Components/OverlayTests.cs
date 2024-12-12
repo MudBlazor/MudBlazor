@@ -151,18 +151,33 @@ public class OverlayTests : BunitTest
     }
 
     [Test]
-    [TestCase(true, "", 0)]
-    [TestCase(false, "mud-overlay-dialog", 1)]
-    [TestCase(false, "mud-drawer-overlay", 2)]
-    [TestCase(false, "", 3)]
-    public void ShouldRenderLocation(bool absolute, string expectedClass, int testNum)
+    [TestCase(true, "", false, 0)] // Absolute is true
+    [TestCase(false, "mud-overlay-dialog", false, 1)] // Dialog
+    [TestCase(false, "mud-drawer-overlay", false, 2)] // Overlay
+    [TestCase(false, "", true, 3)]  // Child content
+    [TestCase(false, "", false, 4)] // no exception
+    public void ShouldRender_SectionLocation(bool absolute, string expectedClass, bool hasChildContent, int testNum)
     {
+        var childContent = "<div class='child-content'>Hello World</div>";
         var providerComp = Context.RenderComponent<MudPopoverProvider>();
-        var comp = Context.RenderComponent<MudOverlay>(parameters => parameters
+        IRenderedComponent<MudOverlay> comp;
+        if (hasChildContent)
+        {
+            comp = Context.RenderComponent<MudOverlay>(parameters => parameters
+            .Add(p => p.Visible, true)
+            .Add(p => p.Class, expectedClass)
+            .Add(p => p.Absolute, absolute)
+            .AddChildContent(childContent)
+        );
+        }
+        else
+        {
+            comp = Context.RenderComponent<MudOverlay>(parameters => parameters
             .Add(p => p.Visible, true)
             .Add(p => p.Class, expectedClass)
             .Add(p => p.Absolute, absolute)
         );
+        }
 
         var countInProvider = providerComp.FindAll("div.mud-overlay");
         var countInComp = comp.FindAll("div.mud-overlay");
@@ -175,19 +190,25 @@ public class OverlayTests : BunitTest
                 comp.Instance.RenderOutsideOfSection.Should().BeTrue();
                 break;
             case 1:
-                countInProvider.Count.Should().Be(1);
-                countInComp.Count.Should().Be(0);
-                comp.Instance.RenderOutsideOfSection.Should().BeFalse();
+                countInProvider.Count.Should().Be(0);
+                countInComp.Count.Should().Be(1);
+                comp.Instance.RenderOutsideOfSection.Should().BeTrue();
                 break;
             case 2:
-                countInProvider.Count.Should().Be(1);
-                countInComp.Count.Should().Be(0);
-                comp.Instance.RenderOutsideOfSection.Should().BeFalse();
+                countInProvider.Count.Should().Be(0);
+                countInComp.Count.Should().Be(1);
+                comp.Instance.RenderOutsideOfSection.Should().BeTrue();
                 break;
             case 3:
                 countInProvider.Count.Should().Be(0);
                 countInComp.Count.Should().Be(1);
                 comp.Instance.RenderOutsideOfSection.Should().BeTrue();
+                comp.Find("div.child-content").TextContent.Should().Be("Hello World");
+                break;
+            case 4:
+                countInProvider.Count.Should().Be(1);
+                countInComp.Count.Should().Be(0);
+                comp.Instance.RenderOutsideOfSection.Should().BeFalse();
                 break;
         }
     }
@@ -195,12 +216,11 @@ public class OverlayTests : BunitTest
     [Test]
     public void ShouldRenderChildContent()
     {
-        var providerComp = Context.RenderComponent<MudPopoverProvider>();
         var comp = Context.RenderComponent<MudOverlay>(parameters => parameters
             .Add(p => p.Visible, true)
             .AddChildContent("<div class='child-content'>Hello World</div>")
         );
 
-        providerComp.Find("div.child-content").TextContent.Should().Be("Hello World");
+        comp.Find("div.child-content").TextContent.Should().Be("Hello World");
     }
 }
