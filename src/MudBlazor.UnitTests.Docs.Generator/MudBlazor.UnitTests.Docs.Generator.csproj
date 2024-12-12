@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net9.0</TargetFramework>
-    <NullableEnable>true</NullableEnable>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>

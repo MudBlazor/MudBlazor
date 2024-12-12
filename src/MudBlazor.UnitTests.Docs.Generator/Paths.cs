@@ -24,7 +24,7 @@ public static class Paths
         }
     }
 
-    public static string? DocsDirPath => Directory.EnumerateDirectories(SrcDirPath, DocsDirectory).FirstOrDefault();
+    public static string DocsDirPath => Directory.EnumerateDirectories(SrcDirPath, DocsDirectory).FirstOrDefault() ?? string.Empty;
 
     public static string TestDirPath => Path.Join(Directory.EnumerateDirectories(SrcDirPath, TestDirectory).FirstOrDefault(), "Generated");
 

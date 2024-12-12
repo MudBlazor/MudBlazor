@@ -2,7 +2,6 @@
 
 namespace MudBlazor.UnitTests.Docs.Generator;
 
-#nullable disable
 public class CodeBuilder
 {
     private readonly StringBuilder _code;
