@@ -28,7 +28,6 @@
 
         public static string? DocsDirPath => Directory.EnumerateDirectories(SrcDirPath, DocsDirectory).FirstOrDefault();
 
-
         public static string DocsStringSnippetsDirPath => Path.Join(DocsDirPath, "Models");
 
         public static string DocStringsFilePath => Path.Join(DocsStringSnippetsDirPath, DocStringsFile);
