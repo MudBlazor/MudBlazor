@@ -6,7 +6,6 @@
         private const string DocsDirectory = "MudBlazor.Docs";
         private const string SnippetsFile = "Snippets.generated.cs";
         private const string ApiDocumentationFile = "ApiDocumentation.generated.cs";
-        private const string DocStringsFile = "DocStrings.generated.cs";
         private const string NewFilesToBuild = "NewFilesToBuild.txt";
 
         public const string ExampleDiscriminator = "Example"; // example components must contain this string
@@ -29,8 +28,6 @@
         public static string? DocsDirPath => Directory.EnumerateDirectories(SrcDirPath, DocsDirectory).FirstOrDefault();
 
         public static string DocsStringSnippetsDirPath => Path.Join(DocsDirPath, "Models");
-
-        public static string DocStringsFilePath => Path.Join(DocsStringSnippetsDirPath, DocStringsFile);
 
         public static string SnippetsFilePath => Path.Join(DocsStringSnippetsDirPath, SnippetsFile);
 
