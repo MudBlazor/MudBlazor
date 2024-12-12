@@ -104,6 +104,12 @@ namespace MudBlazor
         public RenderFragment<GroupDefinition<T>> GroupTemplate { get; set; }
 
         /// <summary>
+        /// The template used to display this column's aggregate.
+        /// </summary>
+        [Parameter]
+        public RenderFragment<IEnumerable<T>> AggregateTemplate { get; set; }
+
+        /// <summary>
         /// The function which groups values in this column.
         /// </summary>
         [Parameter]
