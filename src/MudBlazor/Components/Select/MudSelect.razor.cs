@@ -22,6 +22,7 @@ namespace MudBlazor
         private HashSet<T?> _selectedValues = new HashSet<T?>();
         protected internal List<MudSelectItem<T>> _items = new();
         private string _elementId = Identifier.Create("select");
+        private SearchContext _searchContext = new SearchContext();
 
         protected string OuterClassname =>
             new CssBuilder("mud-select")
@@ -89,35 +90,82 @@ namespace MudBlazor
 
         private async Task SelectFirstItem(string? startChar = null)
         {
+            if (!_open)
+                await OpenMenu();
+
             if (_items.Count == 0)
                 return;
+
             var items = _items.Where(x => !x.Disabled);
+
             if (!string.IsNullOrWhiteSpace(startChar))
             {
-                // find first item that starts with the letter
-                var currentItem = items.FirstOrDefault(x => x.ItemId == _activeItemId);
-                if (currentItem != null &&
-                    Converter.Set(currentItem.Value)?.ToLowerInvariant().StartsWith(startChar) == true)
+                var searchItem = SelectItemBySearch(items, startChar);
+
+                if (searchItem != null)
                 {
-                    // this will step through all items that start with the same letter if pressed multiple times
-                    items = items.SkipWhile(x => x != currentItem).Skip(1);
+                    await SelectAndHighlightItem(searchItem);
+                    return;
                 }
-                items = items.Where(x => Converter.Set(x.Value)?.ToLowerInvariant().StartsWith(startChar) == true);
             }
-            var item = items.FirstOrDefault();
-            if (item == null)
+
+            // If no specific search or no matching items, select the first item
+            var firstItem = items.FirstOrDefault();
+            if (firstItem == null)
                 return;
+
+            await SelectAndHighlightItem(firstItem);
+        }
+
+        private MudSelectItem<T>? SelectItemBySearch(IEnumerable<MudSelectItem<T>> items, string inputChar)
+        {
+            var now = DateTime.UtcNow;
+
+            if (now - _searchContext.LastSearchTime > DebounceInterval)
+                _searchContext.SearchText = inputChar;
+            else
+                _searchContext.SearchText += inputChar;
+
+            _searchContext.LastSearchTime = now;
+
+            var matchingItems = items.Where(x => Converter.Set(x.Value)?.ToLowerInvariant().StartsWith(_searchContext.SearchText) == true)
+                                     .ToList();
+
+            if (matchingItems.Count == 0)
+            {
+                // If no matches, try falling back to first character matches
+                _searchContext.SearchText = _searchContext.SearchText.Substring(0, 1);
+                matchingItems = items.Where(x => Converter.Set(x.Value)?.ToLowerInvariant().StartsWith(_searchContext.SearchText) == true)
+                                .ToList();
+            }
+
+            if (matchingItems.Count == 0)
+                return null;
+
+            var currentItem = items.FirstOrDefault(x => x.ItemId == _activeItemId);
+
+            if (currentItem == null || !Converter.Set(currentItem.Value)?.ToLowerInvariant().StartsWith(_searchContext.SearchText) == true)
+            {
+                return matchingItems.First();
+            }
+
+            var currentIndex = matchingItems.IndexOf(currentItem);
+
+            var nextIndex = (currentIndex + 1) % matchingItems.Count;
+
+            return matchingItems[nextIndex];
+        }
+
+        private async Task SelectAndHighlightItem(MudSelectItem<T> item)
+        {
             if (!MultiSelection)
             {
                 _selectedValues.Clear();
                 _selectedValues.Add(item.Value);
                 await SetValueAsync(item.Value, updateText: true);
-                HighlightItem(item);
             }
-            else
-            {
-                HighlightItem(item);
-            }
+
+            HighlightItem(item);
             await _elementReference.SetText(Text);
             await ScrollToItemAsync(item);
         }
@@ -258,6 +306,16 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public string Delimiter { get; set; } = ", ";
+
+        /// <summary>
+        /// The debounce interval for accepting multiple search strings.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>500</c>.  Supports multi-character quick search
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public TimeSpan DebounceInterval { get; set; } = TimeSpan.FromMilliseconds(500);
 
         /// <summary>
         /// Set of selected values. If MultiSelection is false it will only ever contain a single value. This property is two-way bindable.
@@ -869,7 +927,7 @@ namespace MudBlazor
             if (GetDisabledState() || GetReadOnlyState())
                 return;
             var key = obj.Key.ToLowerInvariant();
-            if (_open && key.Length == 1 && key != " " && !(obj.CtrlKey || obj.ShiftKey || obj.AltKey || obj.MetaKey))
+            if (key.Length == 1 && key != " " && !(obj.CtrlKey || obj.ShiftKey || obj.AltKey || obj.MetaKey))
             {
                 await SelectFirstItem(key);
                 return;
@@ -1089,6 +1147,12 @@ namespace MudBlazor
             {
                 await SelectedValuesChanged.InvokeAsync(new HashSet<T?>(SelectedValues!, _comparer));
             }
+        }
+
+        private class SearchContext
+        {
+            public string SearchText { get; set; } = string.Empty;
+            public DateTime LastSearchTime { get; set; } = DateTime.MinValue;
         }
     }
 }
