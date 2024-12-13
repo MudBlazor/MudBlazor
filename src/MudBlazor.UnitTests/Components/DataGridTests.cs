@@ -2477,6 +2477,114 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridCloseFiltersTest()
+        {
+            var comp = Context.RenderComponent<DataGridFiltersTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
+            IElement FilterButton() => dataGrid.FindAll(".filter-button")[0];
+
+            // click on the filter button
+            FilterButton().Click();
+
+            // check the number of filters displayed in the filters panel is 1
+            comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(1);
+
+            await comp.Find(".filter-operator").PointerDownAsync(new PointerEventArgs());
+
+            //set operator to CONTAINS
+            comp.FindAll(".mud-list .mud-list-item")[0].Click();
+            comp.Find(".mud-overlay").Click();
+            comp.Render();
+
+            //should be removed since no value is provided
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(0);
+
+            //set operator to NOT CONTAINS
+            FilterButton().Click();
+
+            await comp.Find(".filter-operator").PointerDownAsync(new PointerEventArgs());
+
+            comp.FindAll(".mud-list .mud-list-item")[1].Click();
+            comp.Find(".mud-overlay").Click();
+            comp.Render();
+
+            //should be removed since no value is provided
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(0);
+
+            //set operator to EQUALS
+            FilterButton().Click();
+
+            await comp.Find(".filter-operator").PointerDownAsync(new PointerEventArgs());
+
+            comp.FindAll(".mud-list .mud-list-item")[2].Click();
+            comp.Find(".mud-overlay").Click();
+            comp.Render();
+
+            //should be removed since no value is provided
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(0);
+
+            //set operator to NOT EQUALS
+            FilterButton().Click();
+
+            await comp.Find(".filter-operator").PointerDownAsync(new PointerEventArgs());
+
+            comp.FindAll(".mud-list .mud-list-item")[3].Click();
+            comp.Find(".mud-overlay").Click();
+            comp.Render();
+
+            //should be removed since no value is provided
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(0);
+
+            //set operator to STARTS WITH
+            FilterButton().Click();
+
+            await comp.Find(".filter-operator").PointerDownAsync(new PointerEventArgs());
+
+            comp.FindAll(".mud-list .mud-list-item")[4].Click();
+            comp.Find(".mud-overlay").Click();
+            comp.Render();
+
+            //should be removed since no value is provided
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(0);
+
+            //set operator to ENDS WITH
+            FilterButton().Click();
+
+            await comp.Find(".filter-operator").PointerDownAsync(new PointerEventArgs());
+
+            comp.FindAll(".mud-list .mud-list-item")[5].Click();
+            comp.Find(".mud-overlay").Click();
+            comp.Render();
+
+            //should be removed since no value is provided
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(0);
+
+            //set operator to IS EMPTY
+            FilterButton().Click();
+
+            await comp.Find(".filter-operator").PointerDownAsync(new PointerEventArgs());
+
+            comp.FindAll(".mud-list .mud-list-item")[6].Click();
+            comp.Find(".mud-overlay").Click();
+            comp.Render();
+
+            //should maintain filter, no value is required
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
+
+            //set operator to IS NOT EMPTY
+            FilterButton().Click();
+
+            await comp.Find(".filter-operator").PointerDownAsync(new PointerEventArgs());
+
+            comp.FindAll(".mud-list .mud-list-item")[7].Click();
+            comp.Find(".mud-overlay").Click();
+            comp.Render();
+
+            //should maintain filter, no value is required
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
+        }
+
+        [Test]
         public async Task DataGridFiltersTest()
         {
             var comp = Context.RenderComponent<DataGridFiltersTest>();
