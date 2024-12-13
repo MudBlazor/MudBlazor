@@ -77,7 +77,7 @@ namespace MudBlazor
         public int MaxValue { get; set; } = 5;
 
         /// <summary>
-        /// The icon displayed for selected itemc.
+        /// The icon displayed for selected items.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Icons.Material.Filled.Star"/>.
