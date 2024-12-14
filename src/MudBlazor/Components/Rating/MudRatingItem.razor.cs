@@ -83,7 +83,7 @@ namespace MudBlazor
         public bool Disabled { get; set; }
 
         /// <summary>
-        /// Prevents the user from interacting with this item.
+        /// Prevents thid item from being changed.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.

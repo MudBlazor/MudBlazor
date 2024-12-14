@@ -25,7 +25,7 @@ namespace MudBlazor
                 .Build();
 
         /// <summary>
-        /// Gets or sets the size of the drop shadow.
+        /// The size of the drop shadow.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>1</c>.  A higher number creates a heavier drop shadow.  Use a value of <c>0</c> for no shadow.

@@ -47,7 +47,7 @@ namespace MudBlazor
         /// The CSS styles to apply to each <see cref="MudRatingItem"/>.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>null</c>>.
+        /// Defaults to <c>null</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Rating.Appearance)]
@@ -97,7 +97,7 @@ namespace MudBlazor
         /// The color of the <see cref="FullIcon"/> for selected items.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>null</c>>.
+        /// Defaults to <c>null</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Rating.Appearance)]
@@ -107,7 +107,7 @@ namespace MudBlazor
         /// The color of the <see cref="EmptyIcon"/> for unselected items.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>null</c>>.
+        /// Defaults to <c>null</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Rating.Appearance)]
@@ -117,7 +117,7 @@ namespace MudBlazor
         /// The color of each item.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Color.Default"/>.  Can be overridden by <see cref="MudRating.Color"/>.
+        /// Defaults to <see cref="Color.Default"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Rating.Appearance)]
@@ -144,7 +144,7 @@ namespace MudBlazor
         public bool Ripple { get; set; } = true;
 
         /// <summary>
-        /// Prevents the user from interacting with this component and shows a disabled color.
+        /// Prevents the user from interacting with this rating and shows a disabled color.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -154,7 +154,7 @@ namespace MudBlazor
         public bool Disabled { get; set; }
 
         /// <summary>
-        /// Prevents the rating from being changed.
+        /// Prevents this rating from being changed.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.

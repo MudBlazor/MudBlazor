@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Components;
-using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -26,7 +25,7 @@ namespace MudBlazor
                 .Build();
 
         /// <summary>
-        /// The width of this component.
+        /// The width of this skeleton.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  Values can be in pixels (e.g. <c>"300px"</c>) or percentages (e.g. <c>"30%"</c>).
@@ -36,7 +35,7 @@ namespace MudBlazor
         public string? Width { set; get; }
 
         /// <summary>
-        /// The height of this component.
+        /// The height of this skeleton.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  Values can be in pixels (e.g. <c>"300px"</c>) or percentages (e.g. <c>"30%"</c>).
@@ -46,7 +45,7 @@ namespace MudBlazor
         public string? Height { set; get; }
 
         /// <summary>
-        /// The shape of the skeleton.
+        /// The shape of this skeleton.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="SkeletonType.Text"/>.
