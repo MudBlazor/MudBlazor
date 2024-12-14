@@ -1,0 +1,26 @@
+<MudPopoverProvider/>
+<MudStack>
+    <MudDateRangePicker Class="hsx-daterange"
+                        @bind-DateRange="_dateRange"
+                        Clearable="true"
+                        PlaceholderStart="PlaceholderFrom"
+                        PlaceholderEnd="PlaceholderTo"
+                        ShowToolbar="false"
+                        Variant="Variant.Outlined"
+    />
+    <MudDateRangePicker Class="hsx-daterange"
+                        @bind-DateRange="_dateRange"
+                        Clearable="true"
+                        PlaceholderStart="PlaceholderFrom"
+                        PlaceholderEnd="PlaceholderTo"
+                        ShowToolbar="false"
+                        Variant="Variant.Outlined"
+                        DateFormat="dd-MMM-yyyy"
+    />
+    <MudSwitch @bind-Value="_autoClose" Color="Color.Secondary">AutoClose</MudSwitch>
+</MudStack>
+
+@code {
+    private DateRange? _dateRange;
+    private bool _autoClose;
+}
