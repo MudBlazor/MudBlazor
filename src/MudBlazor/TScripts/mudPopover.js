@@ -467,7 +467,7 @@ window.mudpopoverHelper = {
         // if popoverContentNode.style['z-index'] is not set or set lower than minimum set it to default popover zIndex
         else if (!contentZIndex || parseInt(contentZIndex) < 1) {
             popoverContentNode.style['z-index'] = newZIndex;
-        }        
+        }
     },
 }
 
