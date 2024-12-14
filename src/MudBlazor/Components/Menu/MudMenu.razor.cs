@@ -17,12 +17,12 @@ namespace MudBlazor
     /// <seealso cref="MudMenuItem" />
     public partial class MudMenu : MudComponentBase, IActivatable
     {
-        private string? _popoverStyle;
+        private (double Top, double Left) _cursorPosition;
         private bool _isTemporary;
         private bool _isPointerOver;
         private bool _isClosing;
-        private readonly Stopwatch _pointerEnterStopWatch = new();
         private bool _isClosingPending;
+        private readonly Stopwatch _pointerEnterStopWatch = new();
 
         /// <summary>
         /// Close previous child menus when this menu opens by new child menu
@@ -47,6 +47,13 @@ namespace MudBlazor
         protected string ActivatorClassname =>
             new CssBuilder("mud-menu-activator")
                 .AddClass("mud-disabled", Disabled)
+                .Build();
+
+        protected string Stylename =>
+            new StyleBuilder()
+                .AddStyle("top", $"{_cursorPosition.Top}", PositionAtCursor)
+                .AddStyle("left", $"{_cursorPosition.Left}", PositionAtCursor)
+                .AddStyle(Style)
                 .Build();
 
         /// <summary>
