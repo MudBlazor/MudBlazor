@@ -18,11 +18,8 @@ namespace MudBlazor
     public partial class MudMenu : MudComponentBase, IActivatable
     {
         private (double Top, double Left) _lastCursorPosition;
-        private bool _isTemporary;
+        private bool _isTransient;
         private bool _isPointerOver;
-        private bool _isClosing;
-        private bool _isClosingPending;
-        private event EventHandler? ChildClosing;
         private CancellationTokenSource _parentCts = new();
         private readonly Stopwatch _pointerEnterStopwatch = new();
 
@@ -306,12 +303,7 @@ namespace MudBlazor
         public async Task CloseMenuAsync()
         {
             Open = false;
-
-            // Disable pointer move event
-            // Avoid the issue where the menu can't close when the pointer moves, even though a menu item was clicked
-            _isClosing = true;
-            await PointerLeaveAsync();
-            _isClosing = false;
+            _isPointerOver = false;
             StateHasChanged();
 
             await OpenChanged.InvokeAsync(Open);
@@ -323,25 +315,25 @@ namespace MudBlazor
         /// <param name="args">The <see cref="MouseEventArgs"/> or <see cref="PointerEventArgs"/> of the location of the click.
         /// When <see cref="PositionAtCursor"/> is <c>true</c>, the menu will be positioned at these coordinates.
         /// </param>
-        /// <param name="temporary">
+        /// <param name="transient">
         /// Defaults to <c>false</c>.  When <c>true</c>, no overlay will be displayed.
         /// This is typically used for menus which only open while the cursor is over them.
         /// </param>
-        public Task OpenMenuAsync(EventArgs args, bool temporary = false)
+        public Task OpenMenuAsync(EventArgs args, bool transient = false)
         {
             if (Disabled)
             {
                 return Task.CompletedTask;
             }
 
-            _isTemporary = temporary;
+            _isTransient = transient;
 
             if (args is MouseEventArgs mouseEventArgs)
             {
                 _lastCursorPosition = (mouseEventArgs.PageY, mouseEventArgs.PageX);
             }
 
-            // Don't open if already open, but let the stuff above get updated.
+            // Don't open if already open. But let the stuff above get updated.
             if (Open)
             {
                 return Task.CompletedTask;
@@ -376,9 +368,14 @@ namespace MudBlazor
                 }
             }
 
-            return Open
-                ? CloseMenuAsync()
-                : OpenMenuAsync(args);
+            if (Open)
+            {
+                return CloseMenuAsync();
+            }
+            else
+            {
+                return OpenMenuAsync(args);
+            }
         }
 
         private async Task PointerEnterAsync(PointerEventArgs args)
@@ -437,7 +434,7 @@ namespace MudBlazor
             } while (menu is not null);
 
             // If the menu is temporary and activated by mouse over, handle closing
-            if (_isTemporary && ActivationEvent == MouseEvent.MouseOver)
+            if (_isTransient && ActivationEvent == MouseEvent.MouseOver)
             {
                 if (_isClosingPending)
                     return;
@@ -474,7 +471,7 @@ namespace MudBlazor
         private async Task CloseMenuIfPointerNotReentered()
         {
             var menu = this;
-            while (menu is { ActivationEvent: MouseEvent.MouseOver, _isPointerOver: false, _isTemporary: true })
+            while (menu is { ActivationEvent: MouseEvent.MouseOver, _isPointerOver: false, _isTransient: true })
             {
                 // If the parent menu is open again, then wait a bit to allow move event
                 // But do not wait if the parent menu is open by another child menu
