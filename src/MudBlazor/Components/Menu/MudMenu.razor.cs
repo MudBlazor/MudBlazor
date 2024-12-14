@@ -17,7 +17,7 @@ namespace MudBlazor
     /// <seealso cref="MudMenuItem" />
     public partial class MudMenu : MudComponentBase, IActivatable
     {
-        private (double Top, double Left) _cursorPosition;
+        private (double Top, double Left) _lastCursorPosition;
         private bool _isTemporary;
         private bool _isPointerOver;
         private bool _isClosing;
@@ -51,8 +51,8 @@ namespace MudBlazor
 
         protected string Stylename =>
             new StyleBuilder()
-                .AddStyle("top", $"{_cursorPosition.Top}", PositionAtCursor)
-                .AddStyle("left", $"{_cursorPosition.Left}", PositionAtCursor)
+                .AddStyle("top", _lastCursorPosition.Top.ToPx(), PositionAtCursor)
+                .AddStyle("left", _lastCursorPosition.Left.ToPx(), PositionAtCursor)
                 .AddStyle(Style)
                 .Build();
 
@@ -319,7 +319,6 @@ namespace MudBlazor
             _isClosing = true;
             await PointerLeaveAsync();
             _isClosing = false;
-            _popoverStyle = null;
             StateHasChanged();
 
             await OpenChanged.InvokeAsync(Open);
@@ -344,12 +343,9 @@ namespace MudBlazor
 
             _isTemporary = temporary;
 
-            if (PositionAtCursor)
+            if (args is MouseEventArgs mouseEventArgs)
             {
-                if (args is MouseEventArgs mouseEventArgs)
-                {
-                    SetPopoverStyle(mouseEventArgs);
-                }
+                _lastCursorPosition = (mouseEventArgs.PageY, mouseEventArgs.PageX);
             }
 
             // Don't open if already open, but let the stuff above get updated.
@@ -362,14 +358,6 @@ namespace MudBlazor
             StateHasChanged();
 
             return OpenChanged.InvokeAsync(Open);
-        }
-
-        /// <summary>
-        /// Sets the popover style ONLY when there is an activator.
-        /// </summary>
-        private void SetPopoverStyle(MouseEventArgs args)
-        {
-            _popoverStyle = $"top: {args.PageY.ToPx()}; left: {args.PageX.ToPx()}";
         }
 
         /// <summary>
