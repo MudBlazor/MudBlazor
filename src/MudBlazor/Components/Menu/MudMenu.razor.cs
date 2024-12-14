@@ -478,7 +478,9 @@ namespace MudBlazor
             {
                 // If the parent menu is open again, then wait a bit to allow move event
                 // But do not wait if the parent menu is open by another child menu
-                if (IsWaitingNeeded(menu))
+                var waitTime = MudGlobal.MenuDefaults.HoverDelay + MudGlobal.MenuDefaults.PreventCloseWaitingTime;
+                var isWaitingNeeded = menu._pointerEnterStopwatch.ElapsedMilliseconds <= waitTime && (menu != this || !_parentCts.Token.IsCancellationRequested);
+                if (isWaitingNeeded)
                 {
                     await Task.Delay(MudGlobal.MenuDefaults.PreventCloseWaitingTime, CancellationToken.None);
                     continue;
@@ -487,19 +489,6 @@ namespace MudBlazor
                 await menu.CloseMenuAsync();
                 menu = menu.ParentMenu;
             }
-        }
-
-        /// <summary>
-        /// Determines if waiting is needed before closing the menu.
-        /// If time elapsed since pointer enter is less than HoverDelay + PreventCloseWaitingTime, then waiting is needed.
-        /// Else, if menu item is this or close is requested by parent menu, then waiting is not needed.
-        /// </summary>
-        private bool IsWaitingNeeded(MudMenu menuItem)
-        {
-            var waitTime = MudGlobal.MenuDefaults.HoverDelay + MudGlobal.MenuDefaults.PreventCloseWaitingTime;
-
-            return menuItem._pointerEnterStopwatch.ElapsedMilliseconds <= waitTime &&
-                   (menuItem != this || !_parentCts.Token.IsCancellationRequested);
         }
 
         /// <summary>

@@ -122,12 +122,9 @@ namespace MudBlazor
                 return;
             }
 
-            if (AutoClose)
+            if (AutoClose && MudMenu is not null)
             {
-                if (MudMenu is not null)
-                {
-                    await MudMenu.CloseMenuAsync();
-                }
+                await MudMenu.CloseMenuAsync();
             }
 
             if (OnClick.HasDelegate)
