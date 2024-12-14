@@ -206,8 +206,8 @@
 
 .mud-chat-text {
   &-default {
-    color: var(--mud-palette-text-primary);
-    background-color: var(--mud-palette-dark-hover);
+    color: var(--mud-palette-dark-text);
+    background-color: var(--mud-palette-gray-darker);
   }
 
   @each $color in $mud-palette-colors {
@@ -220,11 +220,11 @@
 
 .mud-chat-outlined {
   &-default {
-    color: var(--mud-palette-text-primary);
-    border: 1px solid var(--mud-palette-text-primary);
+    color: var(--mud-palette-dark-text);
+    border: 1px solid var(--mud-palette-gray-darker);
 
     &:before {
-      background-color: var(--mud-palette-text-primary);
+      background-color: var(--mud-palette-gray-darker);
     }
 
     &.mud-chat-arrow-top {
@@ -268,7 +268,7 @@
   &-default {
     color: var(--mud-palette-dark-text);
     font-weight: 500;
-    background-color: var(--mud-palette-dark);
+    background-color: var(--mud-palette-gray-darker);
   }
 
   @each $color in $mud-palette-colors {
