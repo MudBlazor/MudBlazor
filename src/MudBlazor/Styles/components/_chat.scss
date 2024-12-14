@@ -104,6 +104,10 @@
     min-width: 2.75rem;
     min-height: 2.75rem;
 
+    &.mud-chat-bubble-clickable {
+      cursor: pointer;
+    }
+
     &:before {
       position: absolute;
       width: 0.75rem;
