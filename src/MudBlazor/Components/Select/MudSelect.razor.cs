@@ -387,7 +387,7 @@ namespace MudBlazor
         {
             get
             {
-                if (Value == null)
+                if (MultiSelection || Value == null)
                     return false;
                 if (!_shadowLookup.TryGetValue(Value, out var item))
                     return false;
