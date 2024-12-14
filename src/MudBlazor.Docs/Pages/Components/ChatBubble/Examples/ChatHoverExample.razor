@@ -1,5 +1,6 @@
 ﻿@namespace MudBlazor.Docs.Examples
 @inject ISnackbar Snackbar
+@inject IScrollListener ScrollListener
 
 @{
     var orderedGroups = messages
@@ -40,8 +41,8 @@
 
 @if (Hovering)
 {
-    <MudPaper Class="hoverarea d-flex"
-    Style="@HoverStyle"
+    <MudPaper Class="hoverarea d-flex" Style="@HoverStyle"
+    @onscroll="@(() => HoverStop("scroll"))"
     @onmouseenter="@(() => _paperHovering = true)"
     @onmouseleave="@(() => HoverStop("paper"))">
         <span class="emoji" @onclick="@(() => MessageAction("liked"))">👍</span>
@@ -58,9 +59,9 @@
     .hoverarea {
     position: fixed;
     z-index: var(--mud-zindex-popover);
+    cursor: pointer !important;
     background-color: var(--mud-palette-appbar-background);
     color: var(--mud-palette-appbar-text);
-    cursor: pointer;
     opacity: .8;
     }
 
@@ -72,6 +73,7 @@
 </style>
 
 @code {
+
     #nullable enable
     private List<Message> messages = new();
     private Message? _selectedMessage;
@@ -86,15 +88,22 @@
     private Message? _hoverMessage;
     private double _top;
     private double _left;
-
     private string HoverStyle => $"top: {_top}px;left: {_left}px";
 
     protected override void OnInitialized()
     {
+        ScrollListener.OnScroll += OnScrollAsync;
         messages.Add(new Message("Obi-Wan Kenobi", "OK", "You were my brother Anakin.", "2 hours ago"));
         messages.Add(new Message("Obi-Wan Kenobi", "OK", "I loved you.", "2 hours ago"));
         messages.Add(new Message("Anakin Skywalker", "AS", "I'm sorry.", "1 hour ago"));
     }
+
+    private void OnScrollAsync(object? sender, ScrollEventArgs e)
+    {
+        _ = HoverStop("scroll");
+    }
+
+    public void Dispose() => ScrollListener.OnScroll -= OnScrollAsync;
 
     private async Task HoverStart(MouseEventArgs args, MudChatBubble? _bubble, Message message)
     {
@@ -119,15 +128,21 @@
         _hoverStopCts = new CancellationTokenSource();
         var token = _hoverStopCts.Token;
         try
-        {
-            await Task.Delay(300, token);
+        {            
             switch (typeOfStop)
             {
                 case "paper":
+                    await Task.Delay(300, token);
                     _paperHovering = false;
                     break;
                 case "bubble":
+                    await Task.Delay(300, token);
                     _bubbleHovering = false;
+                    break;
+                case "scroll":
+                    _paperHovering = false;
+                    _bubbleHovering = false;
+                    StateHasChanged();
                     break;
                 default:
                     break;
