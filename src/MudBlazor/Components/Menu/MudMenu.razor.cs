@@ -17,7 +17,7 @@ namespace MudBlazor
     /// <seealso cref="MudMenuItem" />
     public partial class MudMenu : MudComponentBase, IActivatable
     {
-        private (double? Top, double? Left) _lastCursorPosition;
+        private (double Top, double Left) _lastCursorPosition;
         private bool _isTemporary;
         private bool _isPointerOver;
         private bool _isClosing;
@@ -45,8 +45,8 @@ namespace MudBlazor
 
         protected string Stylename =>
             new StyleBuilder()
-                .AddStyle("top", _lastCursorPosition.Top.ToPx(), PositionAtCursor && _lastCursorPosition.Top is not null)
-                .AddStyle("left", _lastCursorPosition.Left.ToPx(), PositionAtCursor && _lastCursorPosition.Top is not null)
+                .AddStyle("top", _lastCursorPosition.Top.ToPx(), PositionAtCursor)
+                .AddStyle("left", _lastCursorPosition.Left.ToPx(), PositionAtCursor)
                 .Build();
 
         /// <summary>
