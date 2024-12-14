@@ -1,16 +1,50 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
-  <Target Name="IncludeGeneratedFiles" BeforeTargets="BeforeBuild;BeforeRebuild">
-    <ItemGroup>
-      <Compile Include="Generated\ApiDocsTests.generated.cs" Condition="!Exists('Generated\ApiDocsTests.generated.cs')" />
-      <Compile Include="Generated\ExampleDocsTests.generated.cs" Condition="!Exists('Generated\ExampleDocsTests.generated.cs')" />
-    </ItemGroup>
-  </Target>
   
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
   </PropertyGroup>
+
+  <!--Outside Visual Studio SolutionDir is not available-->
+  <PropertyGroup>
+    <SolutionDir Condition=" '$(SolutionDir)' == '' ">$(MSBuildThisFileDirectory)../</SolutionDir>
+  </PropertyGroup>
   
+  <!--Execute the code generator-->
+  <Target Name="GenerateTests" AfterTargets="ResolveProjectReferences" Condition="'$(DesignTimeBuild)' != 'true'">
+    <!--Command-line for the code generator-->
+    <Message Text="Generating Tests" Importance="high" />
+    <Exec Command="dotnet run --configuration Release --project &quot;$(SolutionDir)MudBlazor.UnitTests.Docs.Generator/MudBlazor.UnitTests.Docs.Generator.csproj&quot;" />
+  </Target>
+
+  <!--Add Content that is being generated as part of the build cycle-->
+  <!--We need to do this because the project is not yet aware of files that were generated after the build started-->
+  <Target Name="IncludeGeneratedFiles" AfterTargets="ResolveProjectReferences" DependsOnTargets="GenerateTests">
+    <ItemGroup>
+      <!--Include without duplication (always at the end so that _GenerateCompileDependencyCache gives consistent results)-->
+      <!--This avoids full recompile after adding generated files-->
+      <!--See https://github.com/dotnet/msbuild/issues/6401-->
+      <Compile Remove="Generated\ApiDocsTests.generated.cs" />
+      <Compile Include="Generated\ApiDocsTests.generated.cs" />
+      <Compile Remove="Generated\ExampleDocsTests.generated.cs" />
+      <Compile Include="Generated\ExampleDocsTests.generated.cs" />
+    </ItemGroup>
+  </Target>
+
+  <!--Is this a rebuild - Dont clean generated files as this breaks rebuild behaviour-->
+  <Target Name="ShouldCleanGeneratedFiles" BeforeTargets="BeforeRebuild">
+    <PropertyGroup>
+      <CleanGeneratedFiles>false</CleanGeneratedFiles>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="CleanGeneratedFiles" BeforeTargets="Clean" Condition="'$(CleanGeneratedFiles)' != 'false'">
+    <ItemGroup>
+      <FilesToClean Include="Generated\ApiDocsTests.generated.cs" />
+      <FilesToClean Include="Generated\ExampleDocsTests.generated.cs" />
+    </ItemGroup>
+    <Delete Files="@(FilesToClean)" />
+  </Target>
+
   <ItemGroup>
     <Using Include="MudBlazor.UnitTests.Shared" />
     <Using Include="MudBlazor.UnitTests.Shared.Mocks" />
@@ -21,23 +55,6 @@
     <!--We need to make internal types to be visible for mocking-->
     <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
   </ItemGroup>
-
-  <!--Is this a rebuild - Dont clean generated files as this breaks rebuild behaviour-->
-  <Target Name="ShouldCleanGeneratedFiles" BeforeTargets="BeforeRebuild">
-    <PropertyGroup>
-      <CleanGeneratedFiles>false</CleanGeneratedFiles>
-    </PropertyGroup>
-  </Target>
-  
-  <!--Cleanup old ExampleCode files-->
-  <Target Name="CleanGeneratedFiles" BeforeTargets="Clean" Condition="'$(CleanGeneratedFiles)' != 'false'">
-    <ItemGroup>
-      <FilesToClean Include="./Generated/*.generated.cs" />
-      <FilesToClean Include="./Generated/_AllApiPages.cs" />
-      <FilesToClean Include="./Generated/_AllComponents.cs" /> 
-    </ItemGroup>
-    <Delete Files="@(FilesToClean)" />
-  </Target>
 
   <ItemGroup>
     <PackageReference Include="coverlet.msbuild" Version="6.0.2">
