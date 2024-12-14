@@ -1672,6 +1672,40 @@ namespace MudBlazor.UnitTests.Components
             comp.SetParametersAndRender(p => p.Add(x => x.ReadOnly, true)); //no clear button when readonly
             comp.FindAll(".mud-input-clear-button").Count.Should().Be(0);
         }
+
+        [Test]
+        public void OutlineLegendRenderTest()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Variant, Variant.Outlined)
+                .Add(p => p.Label, "Test Label"));
+            var elem = comp.Find("legend");
+            elem.InnerHtml.Should().Be("Test Label");
+
+            comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Variant, Variant.Outlined)
+                .Add(p => p.Label, ""));
+            Assert.Throws<ElementNotFoundException>(() =>
+            {
+                elem = comp.Find("legend");
+            });
+
+            comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Variant, Variant.Outlined)
+                .Add(p => p.Mask, new PatternMask("0000"))
+                .Add(p => p.Label, "test"));
+            elem = comp.Find("legend");
+            elem.InnerHtml.Should().Be("test");
+
+            comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Variant, Variant.Outlined)
+                .Add(p => p.Mask, new PatternMask("0000"))
+                .Add(p => p.Label, ""));
+            Assert.Throws<ElementNotFoundException>(() =>
+            {
+                elem = comp.Find("legend");
+            });
+        }
 #nullable disable
     }
 }
