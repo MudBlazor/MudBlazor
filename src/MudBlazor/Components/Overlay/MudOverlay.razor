@@ -1,24 +1,22 @@
-﻿@using Microsoft.AspNetCore.Components.Sections
-
-@namespace MudBlazor
+﻿@namespace MudBlazor
 @inherits MudComponentBase
 
 @if (_visibleState.Value)
 {
-	if (RenderOutsideOfSection)
-	{
-		@OverlayFragment
-	}
-	else
-	{
-		<SectionContent SectionName="mud-overlay-to-popover-provider">
-			@OverlayFragment
-		</SectionContent>
-	}
+    if (RenderOutsideOfSection)
+    {
+        @OverlayFragment
+    }
+    else
+    {
+        <SectionContent SectionName="mud-overlay-to-popover-provider">
+            @OverlayFragment
+        </SectionContent>
+    }
 }
 
 @code {
-	private RenderFragment OverlayFragment => 
+    private RenderFragment OverlayFragment => 
         @<div @attributes="UserAttributes"
               class="@Classname"
               style="@Styles"
