@@ -383,7 +383,7 @@ namespace MudBlazor
 
         private async Task PointerEnterAsync(PointerEventArgs args)
         {
-            // The Enter event will be interfered with the Click event on devices that can't hover.
+            // The Click event will interfere with the Enter event on devices that can't hover.
             if (args.PointerType is "touch" or "pen")
             {
                 return;
