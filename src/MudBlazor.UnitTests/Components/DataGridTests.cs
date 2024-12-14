@@ -4076,7 +4076,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Render();
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
 
-            comp.Instance.UniqueGroups = false;
+            comp.Instance.AllowSingleItemGroups = false;
             comp.Render();
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(9);
             await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroups());

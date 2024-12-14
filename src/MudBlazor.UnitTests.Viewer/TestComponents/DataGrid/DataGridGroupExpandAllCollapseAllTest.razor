@@ -3,7 +3,7 @@
              Filterable="true"
              Hideable="true"
              Groupable="true"
-             UniqueGroups="UniqueGroups"
+             AllowSingleItemGroups="AllowSingleItemGroups"
              GroupExpanded="false">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Elements</MudText>
@@ -19,14 +19,14 @@
     </PagerContent>
 </MudDataGrid>
 <div class="d-flex flex-wrap mt-4">
-    <MudSwitch LabelPlacement="Placement.Left" Color="Color.Primary" @bind-Value="UniqueGroups">Unique Groups</MudSwitch>
+    <MudSwitch LabelPlacement="Placement.Left" Color="Color.Primary" @bind-Value="AllowSingleItemGroups">Unique Groups</MudSwitch>
     <MudButton OnClick="@ExpandAllGroups" Color="@Color.Primary">Expand All</MudButton>
     <MudButton OnClick="@CollapseAllGroups" Color="@Color.Primary">Collapse All</MudButton>
 </div>
 
 @code {
 
-    public bool UniqueGroups { get; set; } = true;
+    public bool AllowSingleItemGroups { get; set; } = true;
     private MudDataGrid<Element> _dataGrid = null!;
     private IEnumerable<Element> _elements = new List<Element>()
     {

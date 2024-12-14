@@ -1039,7 +1039,7 @@ namespace MudBlazor
         /// When <c>false</c>, ungrouped items are displayed at the top of the <see cref="MudDataGrid{T}"/>
         /// </remarks>
         [Parameter]
-        public bool UniqueGroups { get; set; } = true;
+        public bool AllowSingleItemGroups { get; set; } = true;
 
         /// <summary>
         /// The CSS classes applied to column groups.
@@ -1163,7 +1163,7 @@ namespace MudBlazor
                     ? _serverData.Items
                     : Items;
 
-                if (!UniqueGroups)
+                if (!AllowSingleItemGroups)
                 {
                     //prioritize single items (place at the top of the list)
                     items = PrioritizeUniqueGroups(items);
@@ -1599,7 +1599,7 @@ namespace MudBlazor
 
             var orderedEnumerable = ApplySorting(items, validSortDefinitions);
 
-            return !UniqueGroups && orderedEnumerable.Any()
+            return !AllowSingleItemGroups && orderedEnumerable.Any()
                 ? PrioritizeUniqueGroups(orderedEnumerable)
                 : orderedEnumerable ?? items;
         }
@@ -2079,7 +2079,7 @@ namespace MudBlazor
 
             foreach (var group in allGroupings)
             {
-                var forceExpand = !UniqueGroups && group.Count() == 1;
+                var forceExpand = !AllowSingleItemGroups && group.Count() == 1;
 
                 if (forceExpand)
                     _groupExpansionsDict[group.Key] = true;
@@ -2123,7 +2123,7 @@ namespace MudBlazor
         {
             foreach (var group in _allGroups)
             {
-                if (!UniqueGroups && group.RowCount == 1) continue;
+                if (!AllowSingleItemGroups && group.RowCount == 1) continue;
 
                 group.Expanded = true;
                 _groupExpansionsDict[group.Grouping.Key] = true;
@@ -2141,7 +2141,7 @@ namespace MudBlazor
         {
             foreach (var group in _allGroups)
             {
-                if (!UniqueGroups && group.RowCount == 1) continue;
+                if (!AllowSingleItemGroups && group.RowCount == 1) continue;
 
                 group.Expanded = false;
                 _groupExpansionsDict[group.Grouping.Key] = false;

@@ -217,7 +217,7 @@
                             {
                                 foreach (var g in _currentPageGroups)
                                 {
-                                    if (UniqueGroups || g.RowCount > 1) 
+                                    if (AllowSingleItemGroups || g.RowCount > 1) 
                                     {
                                         <tr class="mud-table-row">
                                             @{ var groupClass = new CssBuilder(GroupClass).AddClass(GroupClassFunc?.Invoke(g)).Build(); }
