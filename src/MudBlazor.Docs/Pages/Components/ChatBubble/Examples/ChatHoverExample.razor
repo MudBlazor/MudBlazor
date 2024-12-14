@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.Docs.Examples
 @inject ISnackbar Snackbar
-@inject IScrollListener ScrollListener
+@inject IScrollListenerFactory ScrollListenerFactory
 
 @{
     var orderedGroups = messages
@@ -75,6 +75,7 @@
 @code {
 
     #nullable enable
+    private IScrollListener? _scrollListener;
     private List<Message> messages = new();
     private Message? _selectedMessage;
     private MudMenu? _contextMenu;
@@ -92,7 +93,8 @@
 
     protected override void OnInitialized()
     {
-        ScrollListener.OnScroll += OnScrollAsync;
+        _scrollListener = ScrollListenerFactory.Create(null);
+        _scrollListener.OnScroll += OnScrollAsync;
         messages.Add(new Message("Obi-Wan Kenobi", "OK", "You were my brother Anakin.", "2 hours ago"));
         messages.Add(new Message("Obi-Wan Kenobi", "OK", "I loved you.", "2 hours ago"));
         messages.Add(new Message("Anakin Skywalker", "AS", "I'm sorry.", "1 hour ago"));
@@ -103,7 +105,11 @@
         _ = HoverStop("scroll");
     }
 
-    public void Dispose() => ScrollListener.OnScroll -= OnScrollAsync;
+    public void Dispose()
+    {
+        if (_scrollListener != null)
+            _scrollListener.OnScroll -= OnScrollAsync;
+    }
 
     private async Task HoverStart(MouseEventArgs args, MudChatBubble? _bubble, Message message)
     {
