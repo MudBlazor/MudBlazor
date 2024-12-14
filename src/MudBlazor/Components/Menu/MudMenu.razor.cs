@@ -28,7 +28,7 @@ namespace MudBlazor
 
         protected string Classname =>
             new CssBuilder("mud-menu")
-                .AddClass("mud-menu-button-hidden", ActivatorHidden)
+                .AddClass("mud-menu-button-hidden", GetActivatorHidden())
                 .AddClass(Class)
                 .Build();
 
@@ -47,7 +47,6 @@ namespace MudBlazor
             new StyleBuilder()
                 .AddStyle("top", _lastCursorPosition.Top.ToPx(), PositionAtCursor)
                 .AddStyle("left", _lastCursorPosition.Left.ToPx(), PositionAtCursor)
-                .AddStyle(Style)
                 .Build();
 
         /// <summary>
@@ -297,9 +296,9 @@ namespace MudBlazor
         public bool Open { get; private set; }
 
         [CascadingParameter]
-        private MudMenu? ParentMenu { get; set; }
+        protected MudMenu? ParentMenu { get; set; }
 
-        private bool ActivatorHidden => ActivatorContent is null && string.IsNullOrWhiteSpace(Label) && string.IsNullOrWhiteSpace(Icon);
+        protected bool GetActivatorHidden() => ActivatorContent is null && string.IsNullOrWhiteSpace(Label) && string.IsNullOrWhiteSpace(Icon);
 
         /// <summary>
         /// Closes this menu.
