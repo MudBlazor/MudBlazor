@@ -8,7 +8,7 @@ namespace MudBlazor
 #nullable enable
 
     /// <summary>
-    /// A component for collecting and displaying user opinions for a product.
+    /// A component for collecting and displaying ratings.
     /// </summary>
     /// <seealso cref="MudRatingItem"/>
     public partial class MudRating : MudComponentBase
@@ -37,10 +37,7 @@ namespace MudBlazor
         /// The CSS classes to apply to each <see cref="MudRatingItem"/>.
         /// </summary>
         /// <remarks>
-        /// Multiple classes must be separated by spaces.
-        /// </remarks>
-        /// <remarks>
-        /// Defaults to <c>null</c>>.
+        /// Defaults to <c>null</c>. Multiple classes must be separated by spaces.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Rating.Appearance)]
@@ -117,10 +114,10 @@ namespace MudBlazor
         public Color? EmptyIconColor { get; set; }
 
         /// <summary>
-        /// The color of the component. It supports the theme colors.
+        /// The color of each item.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Color.Default"/>.
+        /// Defaults to <see cref="Color.Default"/>.  Can be overridden by <see cref="MudRating.Color"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Rating.Appearance)]
@@ -157,7 +154,7 @@ namespace MudBlazor
         public bool Disabled { get; set; }
 
         /// <summary>
-        /// Prevents the user from interacting with this component.
+        /// Prevents the rating from being changed.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.

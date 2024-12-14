@@ -983,7 +983,7 @@ namespace MudBlazor
         public string UncheckedIcon { get; set; } = Icons.Material.Filled.CheckBoxOutlineBlank;
 
         /// <summary>
-        /// The icon used for unselected items.
+        /// The icon used when at least one, but not all, items are selected.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Icons.Material.Filled.IndeterminateCheckBox"/>.  Only applies when <see cref="MultiSelection"/> is <c>true</c>.

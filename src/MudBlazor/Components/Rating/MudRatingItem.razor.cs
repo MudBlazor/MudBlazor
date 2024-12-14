@@ -47,7 +47,7 @@ namespace MudBlazor
         public int ItemValue { get; set; }
 
         /// <summary>
-        /// The size of the icon.
+        /// The size of this item.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Size.Medium"/>.  Can be overridden by <see cref="MudRating.Size"/>.

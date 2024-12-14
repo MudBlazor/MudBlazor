@@ -56,7 +56,7 @@ namespace MudBlazor
         public bool Visible { get; set; }
 
         /// <summary>
-        /// The CSS classes appled when <see cref="Visible"/> becomes <c>true</c>.
+        /// The CSS classes applied when <see cref="Visible"/> becomes <c>true</c>.
         /// </summary>
         /// <remarks>
         /// This is typically set to transition and animation CSS classes.  Multiple classes must be separated by spaces.
@@ -66,7 +66,7 @@ namespace MudBlazor
         public string? VisibleCssClass { get; set; }
 
         /// <summary>
-        /// The CSS classes appled when <see cref="Visible"/> becomes <c>false</c>.
+        /// The CSS classes applied when <see cref="Visible"/> becomes <c>false</c>.
         /// </summary>
         /// <remarks>
         /// This is typically set to transition and animation CSS classes.  Multiple classes must be separated by spaces.
