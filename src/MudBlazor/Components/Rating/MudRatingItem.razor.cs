@@ -11,6 +11,13 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
+    /// <summary>
+    /// This component can show a partially filled star. This is normally only used in ReadOnly mode because a
+    /// mouse click will set an integer value. When set to a non integer value, it uses the icons as follows:<br/>
+    /// 1.0 - 1.25 = 1 star<br/>
+    /// 1.26 - 1.75 = 1.5 stars<br/>
+    /// 1.76 - 2.25 = 2 stars
+    /// </summary>
     public partial class MudRatingItem : MudComponentBase
     {
         /// <summary>
@@ -31,7 +38,8 @@ namespace MudBlazor
         private MudRating? Rating { get; set; }
 
         /// <summary>
-        /// This rating item value.
+        /// This rating item value. This is the index of this item in the list of items displayed by the
+        /// parent Rating component.
         /// </summary>
         [Parameter]
         public int ItemValue { get; set; }
@@ -84,13 +92,61 @@ namespace MudBlazor
 
         internal bool Active { get; set; }
 
-        private bool Checked => ItemValue == Rating?.GetState<int>(nameof(Rating.SelectedValue));
+        private bool Checked
+        {
+            get
+            {
+                if (Rating is null)
+                {
+                    return false;
+                }
+                var value = Rating.GetState<decimal>(nameof(Rating.Value));
+                return ItemValue == (int)Math.Round(value);
+            }
+        }
 
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
             ItemIcon = SelectIcon();
             ItemColor = SelectIconColor();
+        }
+
+        /// <summary>
+        /// The icon to show for this icon based on the RatingValue.
+        /// </summary>
+        private enum IconState
+        {
+            /// <summary>
+            /// The full icon. Use if Rating.Value >= ItemValue - 0.25
+            /// </summary>
+            Full,
+            /// <summary>
+            /// The half icon. Use if Rating.Value > ItemValue - 0.75 &amp; Rating.Value &lt; ItemValue - 0.25
+            /// </summary>
+            Half,
+            /// <summary>
+            /// The empty icon. Use if Rating.Value &lt;= ItemValue - 0.75
+            /// </summary>
+            Empty
+        };
+
+        private IconState GetIconState()
+        {
+            if (Rating is null)
+            {
+                return IconState.Empty;
+            }
+            var ratingValue = Rating.GetState<decimal>(nameof(Rating.Value));
+            if (ratingValue >= ItemValue - 0.25m)
+            {
+                return IconState.Full;
+            }
+            if (ratingValue > ItemValue - 0.75m && ratingValue < ItemValue - 0.25m)
+            {
+                return IconState.Half;
+            }
+            return IconState.Empty;
         }
 
         internal string? SelectIcon()
@@ -100,27 +156,23 @@ namespace MudBlazor
                 return null;
             }
 
-            if (Rating.HoveredValue.HasValue && Rating.HoveredValue.Value >= ItemValue)
+            // hover is full/empty icons
+            if (Rating.HoveredValue.HasValue)
             {
                 // full icon when RatingItem hovered
-                return Rating.FullIcon;
+                if (Rating.HoveredValue.Value >= ItemValue)
+                    return Rating.FullIcon;
+                // empty icon when equal or higher RatingItem value clicked, but less value hovered
+                return Rating.EmptyIcon;
             }
 
-            var ratingSelectedValue = Rating.GetState<int>(nameof(Rating.SelectedValue));
-            if (ratingSelectedValue >= ItemValue)
+            return GetIconState() switch
             {
-                if (Rating.HoveredValue.HasValue && Rating.HoveredValue.Value < ItemValue)
-                {
-                    // empty icon when equal or higher RatingItem value clicked, but less value hovered
-                    return Rating.EmptyIcon;
-                }
-
-                // full icon when equal or higher RatingItem value clicked
-                return Rating.FullIcon;
-            }
-
-            // empty icon when this or higher RatingItem is not clicked and not hovered
-            return Rating.EmptyIcon;
+                IconState.Full => Rating.FullIcon,
+                IconState.Half => Rating.HalfIcon,
+                IconState.Empty => Rating.EmptyIcon,
+                _ => Rating.EmptyIcon
+            };
         }
 
         internal Color SelectIconColor()
@@ -130,32 +182,26 @@ namespace MudBlazor
                 return Color.Inherit;
             }
 
-            if (Rating.FullIconColor is null || Rating.EmptyIconColor is null)
+            // hover is full/empty icons
+            if (Rating.HoveredValue.HasValue)
             {
-                return Color.Inherit;
-            }
-
-            if (Rating.HoveredValue.HasValue && Rating.HoveredValue.Value >= ItemValue)
-            {
-                // full icon color when RatingItem hovered
-                return Rating.FullIconColor.Value;
-            }
-
-            var ratingSelectedValue = Rating.GetState<int>(nameof(Rating.SelectedValue));
-            if (ratingSelectedValue >= ItemValue)
-            {
-                if (Rating.HoveredValue.HasValue && Rating.HoveredValue.Value < ItemValue)
+                if (Rating.HoveredValue.Value >= ItemValue)
                 {
-                    // empty icon color when equal or higher RatingItem value clicked, but less value hovered
-                    return Rating.EmptyIconColor.Value;
+                    // full icon color when RatingItem hovered
+                    return Rating.FullIconColor ?? Color.Inherit;
                 }
 
-                // full icon color when equal or higher RatingItem value clicked
-                return Rating.FullIconColor.Value;
+                // empty icon color when equal or higher RatingItem value clicked, but less value hovered
+                return Rating.EmptyIconColor ?? Color.Inherit;
             }
 
-            // empty icon color when this or higher RatingItem is not clicked and not hovered
-            return Rating.EmptyIconColor.Value;
+            return GetIconState() switch
+            {
+                IconState.Full => Rating.FullIconColor ?? Color.Inherit,
+                IconState.Half => Rating.HalfIconColor ?? Color.Inherit,
+                IconState.Empty => Rating.EmptyIconColor ?? Color.Inherit,
+                _ => Color.Inherit
+            };
         }
 
         // rating item lose hover
@@ -190,10 +236,13 @@ namespace MudBlazor
                 return Task.CompletedTask;
             }
 
+            // this is a click so we use the int value.
             Active = false;
-            var ratingSelectedValue = Rating?.GetState<int>(nameof(Rating.SelectedValue));
+            var ratingValue = Rating?.GetState<decimal>(nameof(Rating.Value));
+            if (ratingValue is null)
+                return ItemClicked.InvokeAsync(ItemValue);
 
-            return ItemClicked.InvokeAsync(ratingSelectedValue == ItemValue ? 0 : ItemValue);
+            return ItemClicked.InvokeAsync((int)Math.Round(ratingValue.Value) == ItemValue ? 0 : ItemValue);
         }
     }
 }

@@ -2,13 +2,13 @@
 
 
 <div class="d-flex flex-column align-center">
-    <MudRating @bind-SelectedValue="selectedVal" HoveredValueChanged="HandleHoveredValueChanged" />
+    <MudRating @bind-Value="selectedVal" HoveredValueChanged="HandleHoveredValueChanged" />
     <MudText Typo="Typo.subtitle2" Class="deep-purple-text mt-2">@LabelText</MudText>
 </div>
 
 
 @code {
-    private int selectedVal = 0;
+    private decimal selectedVal = 0;
     private int? activeVal;
 
     private void HandleHoveredValueChanged(int? val) => activeVal = val;

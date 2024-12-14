@@ -10,15 +10,15 @@ namespace MudBlazor
 #nullable enable
     public partial class MudRating : MudComponentBase
     {
-        private readonly ParameterState<int> _selectedValueState;
+        private readonly ParameterState<decimal> _selectedDecimalValueState;
         private int? _hoveredValue = null;
 
         public MudRating()
         {
             using var registerScope = CreateRegisterScope();
-            _selectedValueState = registerScope.RegisterParameter<int>(nameof(SelectedValue))
-                .WithParameter(() => SelectedValue)
-                .WithEventCallback(() => SelectedValueChanged);
+            _selectedDecimalValueState = registerScope.RegisterParameter<decimal>(nameof(Value))
+                .WithParameter(() => Value)
+                .WithEventCallback(() => ValueChanged);
         }
 
         /// <summary>
@@ -66,6 +66,13 @@ namespace MudBlazor
         public string FullIcon { get; set; } = Icons.Material.Filled.Star;
 
         /// <summary>
+        /// Half filled icon. Default @Icons.Material.StarHalf.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Rating.Appearance)]
+        public string HalfIcon { get; set; } = Icons.Material.Filled.StarHalf;
+
+        /// <summary>
         /// Non-selected item icon. Default @Icons.Material.StarBorder.
         /// </summary>
         [Parameter]
@@ -78,6 +85,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Rating.Appearance)]
         public Color? FullIconColor { get; set; }
+
+        /// <summary>
+        /// Half filled icon color.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Rating.Appearance)]
+        public Color? HalfIconColor { get; set; }
 
         /// <summary>
         /// Non-selected item icon color.
@@ -122,17 +136,37 @@ namespace MudBlazor
         public bool ReadOnly { get; set; }
 
         /// <summary>
-        /// Fires when SelectedValue changes.
-        /// </summary>
-        [Parameter]
-        public EventCallback<int> SelectedValueChanged { get; set; }
-
-        /// <summary>
         /// Selected value. This property is two-way bindable.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Rating.Data)]
-        public int SelectedValue { get; set; } = 0;
+        public decimal Value { get; set; } = 0;
+
+        /// <summary>
+        /// Fires when Value changes. 
+        /// </summary>
+        [Parameter]
+        public EventCallback<decimal> ValueChanged { get; set; }
+
+        /// <summary>
+        /// Fires when Value or SelectedValue changes. 
+        /// Both ValueChanged and SelectedValueChanged fire when either Value or SelectedValue changes.
+        /// </summary>
+        [Parameter]
+        [Obsolete("Use ValueChanged instead.")]
+        public EventCallback<int> SelectedValueChanged { get; set; }
+
+        /// <summary>
+        /// Selected value rounded to the nearest integer.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Rating.Data)]
+        [Obsolete("Use Value property instead.")]
+        public int SelectedValue
+        {
+            get => (int)Math.Round(Value);
+            set => Value = value;
+        }
 
         /// <summary>
         /// Fires when hovered value changes. Value will be null if no rating item is hovered.
@@ -157,7 +191,15 @@ namespace MudBlazor
 
         private async Task HandleItemClickedAsync(int itemValue)
         {
-            await _selectedValueState.SetValueAsync(itemValue);
+            // to handle the original SelectedValueChanged event
+#pragma warning disable CS0618 // Type or member is obsolete
+            if (SelectedValueChanged.HasDelegate)
+            {
+                await SelectedValueChanged.InvokeAsync(SelectedValue);
+            }
+#pragma warning restore CS0618 // Type or member is obsolete
+
+            await _selectedDecimalValueState.SetValueAsync(itemValue);
 
             if (itemValue == 0)
             {
@@ -167,12 +209,13 @@ namespace MudBlazor
 
         internal Task HandleItemHoveredAsync(int? itemValue) => SetHoveredValueAsync(itemValue);
 
-        private async Task IncreaseValueAsync(int val)
+        private async Task IncreaseValueAsync(decimal val)
         {
-            if ((_selectedValueState.Value != MaxValue || val <= 0) && (_selectedValueState.Value != 0 || val >= 0))
+            if ((_selectedDecimalValueState.Value < MaxValue || val <= 0) && (_selectedDecimalValueState.Value > 0 || val >= 0))
             {
-                var value = _selectedValueState.Value + val;
-                await _selectedValueState.SetValueAsync(value);
+                var value = _selectedDecimalValueState.Value + val;
+                value = Math.Max(0, Math.Min(MaxValue, value));
+                await _selectedDecimalValueState.SetValueAsync(value);
             }
         }
 
@@ -186,13 +229,13 @@ namespace MudBlazor
             switch (keyboardEventArgs.Key)
             {
                 case "ArrowRight" when keyboardEventArgs.ShiftKey:
-                    await IncreaseValueAsync(MaxValue - _selectedValueState.Value);
+                    await IncreaseValueAsync(MaxValue - _selectedDecimalValueState.Value);
                     break;
                 case "ArrowRight":
                     await IncreaseValueAsync(1);
                     break;
                 case "ArrowLeft" when keyboardEventArgs.ShiftKey:
-                    await IncreaseValueAsync(-_selectedValueState.Value);
+                    await IncreaseValueAsync(-_selectedDecimalValueState.Value);
                     break;
                 case "ArrowLeft":
                     await IncreaseValueAsync(-1);
