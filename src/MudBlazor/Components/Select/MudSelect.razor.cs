@@ -640,7 +640,7 @@ namespace MudBlazor
         /// <remarks>
         /// If an <c>AdornmentIcon</c> is set, it is returned.  Otherwise, either <see cref="OpenIcon"/> or <see cref="CloseIcon"/> is returned depending on whether the drop-down is open.
         /// </remarks>
-        public string? _currentIcon { get; set; }
+        internal string? _currentIcon { get; set; }
 
         /// <summary>
         /// Selects the item at the specified index.
