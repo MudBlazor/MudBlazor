@@ -19,15 +19,15 @@
   </PropertyGroup>
 
   <!--Execute the code generator-->
-  <Target Name="CompileDocs" AfterTargets="ResolveProjectReferences" Condition="'$(DesignTimeBuild)' != 'true'">
+  <Target Name="GenerateDocs" AfterTargets="ResolveProjectReferences" Condition="'$(DesignTimeBuild)' != 'true'">
     <!--Command-line for the code generator-->
-    <Message Text="Generating Docs and Tests" Importance="high" />
+    <Message Text="Generating Docs" Importance="high" />
     <Exec Command="dotnet run --configuration Release --project &quot;$(SolutionDir)MudBlazor.Docs.Compiler/MudBlazor.Docs.Compiler.csproj&quot;" />
   </Target>
 
   <!--Add Content that is being generated as part of the build cycle-->
   <!--We need to do this because the project is not yet aware of files that were generated after the build started-->
-  <Target Name="IncludeGeneratedFiles" AfterTargets="ResolveProjectReferences" DependsOnTargets="CompileDocs">
+  <Target Name="IncludeGeneratedFiles" AfterTargets="ResolveProjectReferences" DependsOnTargets="GenerateDocs">
     <ItemGroup>
       <!--Include without duplication (always at the end so that _GenerateCompileDependencyCache gives consistent results)-->
       <!--This avoids full recompile after adding generated files-->
@@ -49,13 +49,12 @@
 
   <Target Name="CleanGeneratedFiles" BeforeTargets="Clean" Condition="'$(CleanGeneratedFiles)' != 'false'">
     <ItemGroup>
-      <FilesToClean Include="./Pages/**/*ExampleCode.*" />
-      <FilesToClean Include="./Pages/**/*Example_DialogCode.*" />
-      <FilesToClean Include="./NewFilesToBuild.txt" />
-      <FilesToClean Include="./Models/Snippets.generated.cs" />
-      <FilesToClean Include="./Models/Generated/ApiDocumentation.generated.cs" />
-      <FilesToClean Include="./wwwroot/MudBlazorDocs.css" />
-      <FilesToClean Include="./wwwroot/MudBlazorDocs.min.css" />
+      <FilesToClean Include="Pages/**/*ExampleCode.*" />
+      <FilesToClean Include="Pages/**/*Example_DialogCode.*" />
+      <FilesToClean Include="NewFilesToBuild.txt" />
+      <FilesToClean Include="**/*.generated.cs" />
+      <FilesToClean Include="wwwroot/MudBlazorDocs.css" />
+      <FilesToClean Include="wwwroot/MudBlazorDocs.min.css" />
     </ItemGroup>
     <Delete Files="@(FilesToClean)" />
   </Target>
@@ -77,7 +76,7 @@
     <ProjectReference Include="../MudBlazor/MudBlazor.csproj" />
     <ProjectReference Include="../MudBlazor.Examples.Data/MudBlazor.Examples.Data.csproj" />
     <ProjectReference Include="../MudBlazor.SourceGenerator/MudBlazor.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-    <ProjectReference Include="..\MudBlazor.Analyzers\MudBlazor.Analyzers.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
+    <ProjectReference Include="../MudBlazor.Analyzers/MudBlazor.Analyzers.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
   </ItemGroup>
 
   <PropertyGroup>

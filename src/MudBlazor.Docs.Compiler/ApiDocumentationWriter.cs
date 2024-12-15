@@ -3,11 +3,9 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Diagnostics.CodeAnalysis;
-using System.Text;
 
 namespace MudBlazor.Docs.Compiler;
 
-#nullable enable
 /// <summary>
 /// Represents a writer for generated API documentation.
 /// </summary>
