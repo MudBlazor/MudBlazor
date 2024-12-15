@@ -1,21 +1,27 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudAppBar Class="py-4" Color="Color.Default" Elevation="0" Fixed="false" Gutters>
+@inject ISnackbar Snackbar
+
+<MudAppBar Class="py-4" Color="Color.Default" Elevation="0" Fixed="false" Gutters Style="overflow:auto;">
+    <MudText Typo="Typo.h6" Class="px-4" Style="white-space:nowrap">My Application</MudText>
     <MudNavMenu Horizontal="true" Rounded="true" Color="Color.Info" Margin="Margin.Normal" Bordered>
-        <MudText Typo="Typo.h6" Class="px-4">My Application</MudText>
-        <MudNavLink Href="/dashboard" Icon="@Icons.Material.Filled.Home" IconColor="Color.Inherit">Home</MudNavLink>
-        <MudNavLink Href="/components/navmenu" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Storage" IconColor="Color.Inherit">Servers</MudNavLink>
-        <MudNavLink Href="/billing" Disabled="true">Billing</MudNavLink>
-        <MudSpacer />
-        <MudNavLink Href="/about">About</MudNavLink>
-        <MudNavGroup Icon="@Icons.Material.Filled.Settings" Class="gap-0">
-            <MudNavGroup Title="Level 1" Icon="@Icons.Material.Filled.AdminPanelSettings">
-                <MudNavGroup Title="Level 2" Icon="@Icons.Material.Filled.People">
-                    <MudNavGroup Title="Level 3" Icon="@Icons.Material.Filled.Lock">
-                        <MudNavLink Href="/delete" Icon="@Icons.Material.Filled.DeleteForever">Delete Password</MudNavLink>
-                    </MudNavGroup>
-                </MudNavGroup>
-            </MudNavGroup>
+        <MudNavLink Href="/api/MudNavMenu" Icon="@Icons.Material.Filled.Home" IconColor="Color.Inherit">Home</MudNavLink>
+        <MudNavLink Href="/components/mudnavmenu" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Storage" IconColor="Color.Inherit">Servers</MudNavLink>
+        <MudNavLink Href="/getting-started/wireframes/content2" Disabled="true">Billing</MudNavLink>
+        <MudNavGroup Title="Settings">
+            <MudNavLink OnClick="@(() => GoTo("Settings/Users"))">Users</MudNavLink>
+            <MudNavLink OnClick="@(() => GoTo("Settings/Security"))">Security</MudNavLink>
         </MudNavGroup>
     </MudNavMenu>
+    <MudSpacer />
+    <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" />
+    <MudMenu Icon="@Icons.Material.Filled.MoreVert" AriaLabel="Open user menu">
+        <MudMenuItem>Profile</MudMenuItem>
+        <MudMenuItem>My account</MudMenuItem>
+        <MudMenuItem>Logout</MudMenuItem>
+    </MudMenu>
 </MudAppBar>
+
+@code {
+    private void GoTo(string page) => Snackbar.Add($"Clicked {page}");
+}

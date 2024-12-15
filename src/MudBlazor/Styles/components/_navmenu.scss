@@ -117,6 +117,14 @@
   }
 }
 
+.mud-navmenu-horizontal .mud-nav-link .mud-nav-link-text {
+  margin-inline-start: 0px;
+}
+
+.mud-navmenu-horizontal .mud-nav-link .mud-nav-link-icon {
+  margin-inline-end: 12px;
+}
+
 .mud-navmenu {
 
   &.mud-navmenu-horizontal {
