@@ -1,0 +1,47 @@
+﻿<MudPopoverProvider />
+
+<MudMenu Label="Mouse Over" ActivationEvent="@MouseEvent.MouseOver">
+
+    <MudMenuItem>No action</MudMenuItem>
+
+    <MudMenuItem Href="https://www.test.com">Go to test.com</MudMenuItem>
+
+    <MudMenu AnchorOrigin="Origin.TopRight" ActivationEvent="@MouseEvent.MouseOver">
+        <ActivatorContent>
+            <MudMenuItem>Format ></MudMenuItem>
+        </ActivatorContent>
+
+        <ChildContent>
+            <MudMenu AnchorOrigin="Origin.TopRight" ActivationEvent="@MouseEvent.MouseOver">
+                <ActivatorContent>
+                    <MudMenuItem>Text ></MudMenuItem>
+                </ActivatorContent>
+
+                <ChildContent>
+                    <MudMenuItem>Bold</MudMenuItem>
+
+                    <MudMenuItem>Italic</MudMenuItem>
+
+                    <MudMenuItem>Underline</MudMenuItem>
+
+                    <MudMenu AnchorOrigin="Origin.TopRight" ActivationEvent="@MouseEvent.MouseOver">
+                        <ActivatorContent>
+                            <MudMenuItem>Size ></MudMenuItem>
+                        </ActivatorContent>
+
+                        <ChildContent>
+                            <MudMenuItem>Increase font size</MudMenuItem>
+
+                            <MudMenuItem>Decrease font size</MudMenuItem>
+                        </ChildContent>
+                    </MudMenu>
+                </ChildContent>
+            </MudMenu>
+
+            <MudMenuItem>Clear formatting</MudMenuItem>
+
+            <MudMenuItem>Headers and footers</MudMenuItem>
+        </ChildContent>
+    </MudMenu>
+
+</MudMenu>
