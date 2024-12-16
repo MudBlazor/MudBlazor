@@ -2,7 +2,6 @@
 
 namespace MudBlazor.Docs.Compiler;
 
-#nullable disable
 public class CodeBuilder
 {
     private readonly StringBuilder _code;

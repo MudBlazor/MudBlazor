@@ -6,7 +6,6 @@ using System.Diagnostics;
 
 namespace MudBlazor.Docs.Compiler;
 
-#nullable enable
 /// <summary>
 /// Represents a base class for designing documented members.
 /// </summary>
