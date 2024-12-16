@@ -32,6 +32,8 @@ namespace MudBlazor
         {
             try
             {
+                const string InvalidNumberError = "Not a valid number";
+
                 // string
                 if (typeof(T) == typeof(string))
                     return (T)(object)value;
@@ -59,77 +61,77 @@ namespace MudBlazor
                 {
                     if (sbyte.TryParse(value, NumberStyles.Integer | NumberStyles.AllowThousands, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
-                    UpdateGetError(Localizer?[LanguageResource.DefaultConverter_InvalidNumber] ?? "Not a valid number");
+                    UpdateGetError(Localizer?[LanguageResource.DefaultConverter_InvalidNumber] ?? InvalidNumberError);
                 }
                 // byte
                 else if (typeof(T) == typeof(byte) || typeof(T) == typeof(byte?))
                 {
                     if (byte.TryParse(value, NumberStyles.Integer | NumberStyles.AllowThousands, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
-                    UpdateGetError(Localizer?[LanguageResource.DefaultConverter_InvalidNumber] ?? "Not a valid number");
+                    UpdateGetError(Localizer?[LanguageResource.DefaultConverter_InvalidNumber] ?? InvalidNumberError);
                 }
                 // short
                 else if (typeof(T) == typeof(short) || typeof(T) == typeof(short?))
                 {
                     if (short.TryParse(value, NumberStyles.Integer | NumberStyles.AllowThousands, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
-                    UpdateGetError(Localizer?[LanguageResource.DefaultConverter_InvalidNumber] ?? "Not a valid number");
+                    UpdateGetError(Localizer?[LanguageResource.DefaultConverter_InvalidNumber] ?? InvalidNumberError);
                 }
                 // ushort
                 else if (typeof(T) == typeof(ushort) || typeof(T) == typeof(ushort?))
                 {
                     if (ushort.TryParse(value, NumberStyles.Integer | NumberStyles.AllowThousands, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
-                    UpdateGetError(Localizer?[LanguageResource.DefaultConverter_InvalidNumber] ?? "Not a valid number");
+                    UpdateGetError(Localizer?[LanguageResource.DefaultConverter_InvalidNumber] ?? InvalidNumberError);
                 }
                 // int
                 else if (typeof(T) == typeof(int) || typeof(T) == typeof(int?))
                 {
                     if (int.TryParse(value, NumberStyles.Integer | NumberStyles.AllowThousands, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
-                    UpdateGetError(Localizer?[LanguageResource.DefaultConverter_InvalidNumber] ?? "Not a valid number");
+                    UpdateGetError(Localizer?[LanguageResource.DefaultConverter_InvalidNumber] ?? InvalidNumberError);
                 }
                 // uint
                 else if (typeof(T) == typeof(uint) || typeof(T) == typeof(uint?))
                 {
                     if (uint.TryParse(value, NumberStyles.Integer | NumberStyles.AllowThousands, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
-                    UpdateGetError(Localizer?[LanguageResource.DefaultConverter_InvalidNumber] ?? "Not a valid number");
+                    UpdateGetError(Localizer?[LanguageResource.DefaultConverter_InvalidNumber] ?? InvalidNumberError);
                 }
                 // long
                 else if (typeof(T) == typeof(long) || typeof(T) == typeof(long?))
                 {
                     if (long.TryParse(value, NumberStyles.Integer | NumberStyles.AllowThousands, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
-                    UpdateGetError(Localizer?[LanguageResource.DefaultConverter_InvalidNumber] ?? "Not a valid number");
+                    UpdateGetError(Localizer?[LanguageResource.DefaultConverter_InvalidNumber] ?? InvalidNumberError);
                 }
                 // ulong
                 else if (typeof(T) == typeof(ulong) || typeof(T) == typeof(ulong?))
                 {
                     if (ulong.TryParse(value, NumberStyles.Integer | NumberStyles.AllowThousands, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
-                    UpdateGetError(Localizer?[LanguageResource.DefaultConverter_InvalidNumber] ?? "Not a valid number");
+                    UpdateGetError(Localizer?[LanguageResource.DefaultConverter_InvalidNumber] ?? InvalidNumberError);
                 }
                 // float
                 else if (typeof(T) == typeof(float) || typeof(T) == typeof(float?))
                 {
                     if (float.TryParse(value, NumberStyles.Any, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
-                    UpdateGetError(Localizer?[LanguageResource.DefaultConverter_InvalidNumber] ?? "Not a valid number");
+                    UpdateGetError(Localizer?[LanguageResource.DefaultConverter_InvalidNumber] ?? InvalidNumberError);
                 }
                 // double
                 else if (typeof(T) == typeof(double) || typeof(T) == typeof(double?))
                 {
                     if (double.TryParse(value, NumberStyles.Any, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
-                    UpdateGetError(Localizer?[LanguageResource.DefaultConverter_InvalidNumber] ?? "Not a valid number");
+                    UpdateGetError(Localizer?[LanguageResource.DefaultConverter_InvalidNumber] ?? InvalidNumberError);
                 }
                 // decimal
                 else if (typeof(T) == typeof(decimal) || typeof(T) == typeof(decimal?))
                 {
                     if (decimal.TryParse(value, NumberStyles.Any, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
-                    UpdateGetError(Localizer?[LanguageResource.DefaultConverter_InvalidNumber] ?? "Not a valid number");
+                    UpdateGetError(Localizer?[LanguageResource.DefaultConverter_InvalidNumber] ?? InvalidNumberError);
                 }
                 // guid
                 else if (typeof(T) == typeof(Guid) || typeof(T) == typeof(Guid?))

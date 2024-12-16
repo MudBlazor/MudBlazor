@@ -600,7 +600,7 @@ namespace MudBlazor.UnitTests.Utilities
             bn1.GetErrorMessage.Should().NotBeEmpty();
             defaultLocalizationInterceptor.Verify(_ => _.Handle(booleanErrorMessage, It.IsAny<object[]>()), Times.Once);
             defaultLocalizationInterceptor.Invocations.Clear();
-            
+
             // datetime format exception
             string dtErrorMessage = LanguageResource.DefaultConverter_InvalidDateTime;
             var dt1 = new DefaultConverter<DateTime>
