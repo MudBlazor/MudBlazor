@@ -1,10 +1,10 @@
 ﻿<MudPopoverProvider />
 
-<MudMenu Label="Mouse Over" ActivationEvent="@MouseEvent.MouseOver">
+<MudMenu Label="Open Nested Menu Example">
 
-    <MudMenuItem>No action</MudMenuItem>
+    <MudMenuItem>Add reaction</MudMenuItem>
 
-    <MudMenuItem Href="https://www.test.com">Go to test.com</MudMenuItem>
+    <MudMenuItem>Add bookmark</MudMenuItem>
 
     <MudMenu AnchorOrigin="Origin.TopRight" ActivationEvent="@MouseEvent.MouseOver">
         <ActivatorContent>
@@ -35,6 +35,30 @@
                             <MudMenuItem>Decrease font size</MudMenuItem>
                         </ChildContent>
                     </MudMenu>
+                </ChildContent>
+            </MudMenu>
+
+            <MudMenu AnchorOrigin="Origin.TopRight" ActivationEvent="@MouseEvent.MouseOver">
+                <ActivatorContent>
+                    <MudMenuItem>Points ></MudMenuItem>
+                </ActivatorContent>
+
+                <ChildContent>
+                    <MudMenuItem>Bullet</MudMenuItem>
+
+                    <MudMenuItem>Number</MudMenuItem>
+                </ChildContent>
+            </MudMenu>
+
+            <MudMenu AnchorOrigin="Origin.TopRight" ActivationEvent="@MouseEvent.MouseOver">
+                <ActivatorContent>
+                    <MudMenuItem>Alignment ></MudMenuItem>
+                </ActivatorContent>
+
+                <ChildContent>
+                    <MudMenuItem>Left</MudMenuItem>
+
+                    <MudMenuItem>Right</MudMenuItem>
                 </ChildContent>
             </MudMenu>
 
