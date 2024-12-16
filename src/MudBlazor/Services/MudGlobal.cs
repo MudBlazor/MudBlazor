@@ -252,7 +252,7 @@ public static class MudGlobal
         /// <summary>
         /// The time in milliseconds before the menu opens on pointer hover or closes on pointer leave.
         /// </summary>
-        public static int HoverDelay { get; set; } = 300;
+        public static int HoverDelay { get; set; } = 200;
     }
 
     /// <summary>
