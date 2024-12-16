@@ -112,6 +112,25 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task MouseOver_PointerLeave_ShouldClose()
+        {
+            var comp = Context.RenderComponent<MenuTestMouseOver>();
+            var pop = comp.FindComponent<MudPopover>();
+
+            // Briefly hover over the button which will open the popover while leaving a small delay to allow the user to move the pointer to the menu.
+            comp.FindAll("div.mud-menu")[0].PointerEnter();
+            comp.FindAll("div.mud-menu")[0].PointerLeave();
+
+            IElement List() => comp.FindAll("div.mud-list")[0];
+
+            await List().TriggerEventAsync("onpointerenter", new PointerEventArgs());
+            comp.WaitForAssertion(() => pop.Instance.Open.Should().BeTrue());
+
+            await List().TriggerEventAsync("onpointerleave", new PointerEventArgs());
+            comp.WaitForAssertion(() => pop.Instance.Open.Should().BeFalse());
+        }
+
+        [Test]
         public async Task MouseOver_Hover_ShouldOpenMenu()
         {
             var comp = Context.RenderComponent<MenuTestMouseOver>();
