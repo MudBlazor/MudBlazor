@@ -35,6 +35,11 @@ namespace MudBlazor
                 .AddClass("mud-popover-position-override", PositionAtCursor)
                 .Build();
 
+        protected string ListClassname =>
+            new CssBuilder("mud-menu-list")
+                .AddClass(ListClass)
+                .Build();
+
         protected string ActivatorClassname =>
             new CssBuilder("mud-menu-activator")
                 .AddClass("mud-disabled", Disabled)
@@ -328,6 +333,27 @@ namespace MudBlazor
             Open = false;
             StateHasChanged();
             await OpenChanged.InvokeAsync(Open);
+        }
+
+        /// <summary>
+        /// Closes all menus linked to this one, including parents, descendants, and itself.
+        /// </summary>
+        public async Task CloseAllMenusAsync()
+        {
+            var top = this;
+            while (true)
+            {
+                if (top.ParentMenu is null)
+                {
+                    break;
+                }
+                else
+                {
+                    top = top.ParentMenu;
+                }
+            }
+
+            await top.CloseMenuAsync();
         }
 
         /// <summary>
