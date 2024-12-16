@@ -28,7 +28,9 @@ namespace MudBlazor
         private HashSet<T?> _selectedValues = new HashSet<T?>();
         protected internal List<MudSelectItem<T>> _items = new();
         private string _elementId = Identifier.Create("select");
-        private SearchContext _searchContext = new SearchContext();
+        private string _searchText = string.Empty;
+        private string? _lastSelectedId = string.Empty;
+        private DateTime _lastSearchTime = DateTime.MinValue;
 
         protected string OuterClassname =>
             new CssBuilder("mud-select")
@@ -127,36 +129,36 @@ namespace MudBlazor
         {
             var now = DateTime.UtcNow;
 
-            if (now - _searchContext.LastSearchTime > DebounceInterval)
-                _searchContext.SearchText = inputChar;
+            if (now - _lastSearchTime > QuickSearchInterval)
+            {
+                _lastSelectedId = _activeItemId;
+                _searchText = inputChar;
+            }
             else
-                _searchContext.SearchText += inputChar;
-
-            _searchContext.LastSearchTime = now;
-
-            var matchingItems = items.Where(x => Converter.Set(x.Value)?.ToLowerInvariant().StartsWith(_searchContext.SearchText) == true)
-                                     .ToList();
-
-            if (matchingItems.Count == 0)
             {
-                // If no matches, try falling back to first character matches
-                _searchContext.SearchText = _searchContext.SearchText.Substring(0, 1);
-                matchingItems = items.Where(x => Converter.Set(x.Value)?.ToLowerInvariant().StartsWith(_searchContext.SearchText) == true)
-                                .ToList();
+                _searchText += inputChar;
             }
 
+            _lastSearchTime = now;
+
+            var mudSelectItems = items as MudSelectItem<T>[] ?? items.ToArray();
+
+            var matchingItems = mudSelectItems
+                .Where(x =>
+                    x.Value != null &&
+                    !x.Disabled &&
+                    Converter.Set(x.Value)?.StartsWith(_searchText, StringComparison.InvariantCultureIgnoreCase) == true)
+                .ToList();
+
             if (matchingItems.Count == 0)
-                return null;
+                return mudSelectItems.FirstOrDefault(x => x.ItemId == _activeItemId);
 
-            var currentItem = items.FirstOrDefault(x => x.ItemId == _activeItemId);
-
-            if (currentItem == null || !Converter.Set(currentItem.Value)?.ToLowerInvariant().StartsWith(_searchContext.SearchText) == true)
-            {
+            var currentItem = mudSelectItems.FirstOrDefault(x => x.ItemId == _activeItemId);
+            if (currentItem == null)
                 return matchingItems[0];
-            }
 
-            var currentIndex = matchingItems.IndexOf(currentItem);
-
+            var previousItem = mudSelectItems.First(x => x.ItemId == _lastSelectedId);
+            var currentIndex = matchingItems.IndexOf(previousItem);
             var nextIndex = (currentIndex + 1) % matchingItems.Count;
 
             return matchingItems[nextIndex];
@@ -346,14 +348,14 @@ namespace MudBlazor
         public string Delimiter { get; set; } = ", ";
 
         /// <summary>
-        /// The delay interval for accepting multiple characters to search against.
+        /// The timespan interval for accepting multiple characters to search against.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>500</c> milliseconds.
+        /// Defaults to <c>1</c> second.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public TimeSpan DebounceInterval { get; set; } = TimeSpan.FromMilliseconds(500);
+        public TimeSpan QuickSearchInterval { get; set; } = TimeSpan.FromSeconds(1);
 
         /// <summary>
         /// The currently selected values.
@@ -1301,12 +1303,6 @@ namespace MudBlazor
             {
                 await SelectedValuesChanged.InvokeAsync(new HashSet<T?>(SelectedValues!, _comparer));
             }
-        }
-
-        private sealed class SearchContext
-        {
-            public string SearchText { get; set; } = string.Empty;
-            public DateTime LastSearchTime { get; set; } = DateTime.MinValue;
         }
     }
 }

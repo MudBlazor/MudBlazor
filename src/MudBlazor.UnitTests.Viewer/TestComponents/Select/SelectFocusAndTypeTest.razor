@@ -1,6 +1,6 @@
 ﻿<MudPopoverProvider />
 
-<MudSelect @bind-Value="_value" DebounceInterval="@TimeSpan.FromMilliseconds(200)">
+<MudSelect @bind-Value="_value" QuickSearchInterval="@TimeSpan.FromMilliseconds(200)">
     @foreach (var state in _states)
     {
         <MudSelectItem Value="state">@state</MudSelectItem>
