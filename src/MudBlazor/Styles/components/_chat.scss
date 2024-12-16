@@ -159,6 +159,7 @@ $default-foreground: var(--mud-palette-text-primary);
     line-height: 1.25rem;
     margin-left: 0.25rem;
     margin-right: 0.25rem;
+    min-height: .5rem;
 
     time {
       margin-left: 0.5rem;
@@ -170,8 +171,11 @@ $default-foreground: var(--mud-palette-text-primary);
 
   &-footer {
     opacity: 0.5;
+    font-size: 0.875rem;
+    line-height: 1rem;
     margin-left: 0.25rem;
     margin-right: 0.25rem;
+    min-height: .5rem;
   }
 
   .mud-avatar {
