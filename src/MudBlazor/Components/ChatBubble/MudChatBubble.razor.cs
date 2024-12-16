@@ -17,6 +17,7 @@ namespace MudBlazor
             .AddClass($"mud-chat-{GetBubbleVariant.ToDescriptionString()}-{GetBubbleColor.ToDescriptionString()}")
             .AddClass($"mud-chat-arrow-{ParentArrowPosition.ToDescriptionString()}")
             .AddClass("mud-chat-bubble-clickable", OnClick.HasDelegate || OnContextClick.HasDelegate)
+            .AddClass("mud-ripple", OnClick.HasDelegate || OnContextClick.HasDelegate)
             .AddClass(Class)
             .Build();
 
