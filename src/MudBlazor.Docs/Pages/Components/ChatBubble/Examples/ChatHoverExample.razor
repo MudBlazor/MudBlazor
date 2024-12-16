@@ -18,13 +18,49 @@
             <MudChatHeader Name="@group.Key" Time="@group.First().Time" />
             @foreach (var message in group.OrderByDescending(m => m.Time))
             {
-                <MudChatBubble @ref="_messageBubbleRefs[message]"
-                OnClick="@((args) => ClickMessage(args, message))"
+                <MudChatBubble OnClick="@((args) => ClickMessage(args, message))"
                 OnContextClick="@((args) => RightClickMessage(args, message))"
-                @onmouseenter="@((args) => HoverStart(args, _messageBubbleRefs[message], message))"
+                @onmouseenter="@((args) => HoverStart(args, message))"
                 @onmouseleave="@(() => HoverStop("bubble"))">
                     @message.Text
+                    <MudPopover Open="@(Hovering && message.Equals(_hoverMessage))" Class="hoverarea"
+                    AnchorOrigin="Origin.CenterRight"
+                    TransformOrigin="Origin.BottomRight"
+                    @onscroll="@(() => HoverStop("scroll"))"
+                    @onmouseenter="@(() => _paperHovering = true)"
+                    @onmouseleave="@(() => HoverStop("paper"))">
+                        <div class="d-flex" style="width: 100%;" @onclick:stopPropagation="true" @onclick:preventDefault="true">
+                            <span class="emoji" @onclick="@(() => MessageAction("liked"))">👍</span>
+                            <span class="emoji" @onclick="@(() => MessageAction("cried"))">😭</span>
+                            <span class="emoji" @onclick="@(() => MessageAction("angered"))">👿</span>
+                            <MudDivider Class="mx-1" Vertical="true" FlexItem="true" />
+                            <MudTooltip Text="Reply">
+                                <span class="emoji" @onclick="@Reply">↩️</span>
+                            </MudTooltip>
+                        </div>
+                    </MudPopover>
                 </MudChatBubble>
+                <MudChatFooter>
+                    <MudPaper Class="actionarea" Elevation="0">
+                        <div class="d-flex" style="width: 100%;" @onclick:stopPropagation="true" @onclick:preventDefault="true">
+                            @if (message.Likes > 0)
+                            {
+                                <span class="emoji" @onclick="@(() => MessageAction("liked"))">👍</span>
+                                @message.Likes
+                            }
+                            @if (message.Cries > 0)
+                            {
+                                <span class="emoji" @onclick="@(() => MessageAction("cried"))">😭</span>
+                                @message.Cries
+                            }
+                            @if (message.Angers > 0)
+                            {
+                                <span class="emoji" @onclick="@(() => MessageAction("angered"))">👿</span>
+                                @message.Angers
+                            }
+                        </div>
+                    </MudPaper>
+                </MudChatFooter>
             }
         </MudChat>
     }
@@ -39,57 +75,43 @@
     </MudMenuItem>
 </MudMenu>
 
-@if (Hovering)
-{
-    <MudPaper Class="hoverarea d-flex" Style="@HoverStyle"
-    @onscroll="@(() => HoverStop("scroll"))"
-    @onmouseenter="@(() => _paperHovering = true)"
-    @onmouseleave="@(() => HoverStop("paper"))">
-        <span class="emoji" @onclick="@(() => MessageAction("liked"))">👍</span>
-        <span class="emoji" @onclick="@(() => MessageAction("cried"))">😭</span>
-        <span class="emoji" @onclick="@(() => MessageAction("angered"))">👿</span>
-        <MudDivider Class="mx-1" Vertical="true" FlexItem="true" />
-        <MudTooltip Text="Reply">
-            <span class="emoji" @onclick="@Reply">↩️</span>
-        </MudTooltip>
-    </MudPaper>
-}
-
 <style>
     .hoverarea {
-    position: fixed;
-    z-index: var(--mud-zindex-popover);
     cursor: pointer !important;
     background-color: var(--mud-palette-appbar-background);
     color: var(--mud-palette-appbar-text);
+    transition: opacity 0.3s ease;
     opacity: .8;
+    }
+
+    .actionarea {
+    background-color: var(--mud-palette-appbar-background);
+    color: var(--mud-palette-appbar-text);
+    }
+
+    .actionarea:focus {
+    opacity: 1; 
     }
 
     span.emoji {
     font-size: 12px;
-    padding: 0px 1px;
+    padding: 1px 1px;
     align-self: center;
     }
 </style>
 
 @code {
-
     #nullable enable
     private IScrollListener? _scrollListener;
     private List<Message> messages = new();
     private Message? _selectedMessage;
     private MudMenu? _contextMenu;
-    private Dictionary<Message, MudChatBubble> _messageBubbleRefs = new();
 
     private bool Hovering => _paperHovering || _bubbleHovering;
-    private CancellationTokenSource? _hoverStopCts;
     private bool _bubbleHovering;
     private bool _paperHovering;
 
     private Message? _hoverMessage;
-    private double _top;
-    private double _left;
-    private string HoverStyle => $"top: {_top}px;left: {_left}px";
 
     protected override void OnInitialized()
     {
@@ -111,38 +133,22 @@
             _scrollListener.OnScroll -= OnScrollAsync;
     }
 
-    private async Task HoverStart(MouseEventArgs args, MudChatBubble? _bubble, Message message)
+    private void HoverStart(MouseEventArgs args, Message message)
     {
         _bubbleHovering = true;
-        if (_bubble != null)
-        {
-            var boundingRect = await _bubble.ElementReference.MudGetBoundingClientRectAsync();
-            _top = boundingRect.Bottom - 18 - boundingRect.Height;
-            _left = boundingRect.Left + 6;
-        }
-        else
-        {
-            _top = args.ClientY;
-            _left = args.ClientX;
-        }
         _hoverMessage = message;
     }
 
-    private async Task HoverStop(string typeOfStop)
+    private void HoverStop(string typeOfStop)
     {
-        _hoverStopCts?.Cancel();
-        _hoverStopCts = new CancellationTokenSource();
-        var token = _hoverStopCts.Token;
         try
-        {            
+        {
             switch (typeOfStop)
             {
                 case "paper":
-                    await Task.Delay(300, token);
                     _paperHovering = false;
                     break;
                 case "bubble":
-                    await Task.Delay(300, token);
                     _bubbleHovering = false;
                     break;
                 case "scroll":
@@ -159,7 +165,20 @@
 
     private void MessageAction(string actionType)
     {
-        Snackbar.Add($"Message {actionType}");
+        switch (actionType)
+        {
+            case "liked":
+                _hoverMessage!.Likes++;
+                break;
+            case "cried":
+                _hoverMessage!.Cries++;
+                break;
+            case "angered":
+                _hoverMessage!.Angers++;
+                break;
+            default:
+                break;
+        }
     }
 
     private void Reply()
@@ -205,5 +224,18 @@
         await Task.CompletedTask;
     }
 
-    private record Message(string Name, string Initials, string Text, string Time);
+    private record Message(
+        string Name,
+        string Initials,
+        string Text,
+        string Time,
+        int Likes = 0,
+        int Cries = 0,
+        int Angers = 0)
+    {
+        public int Likes { get; set; } = Likes;
+        public int Cries { get; set; } = Cries;
+        public int Angers { get; set; } = Angers;
+    }
+
 }
