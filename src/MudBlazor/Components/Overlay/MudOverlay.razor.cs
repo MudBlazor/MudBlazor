@@ -18,12 +18,6 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
 {
     private readonly ParameterState<bool> _visibleState;
 
-    internal bool RenderOutsideOfSection =>
-            Absolute ||
-            (Class?.Contains("mud-overlay-dialog") ?? false) ||
-            (Class?.Contains("mud-drawer-overlay") ?? false) ||
-            ChildContent != null;
-
     protected string Classname =>
         new CssBuilder("mud-overlay")
             .AddClass("mud-overlay-absolute", Absolute)
@@ -162,6 +156,20 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
     /// </summary>
     [Parameter]
     public EventCallback OnClosed { get; set; }
+
+    /// <summary>
+    /// Determines whether the overlay should be rendered outside of the section. If it's false, the overlay will be rendered with the MudPopOverProvider.
+    /// If it's true it will be rendered as is where is (v7 and previous behavior)
+    /// </summary>
+    internal bool RenderOutsideOfSection =>
+        // If the user sets Absolute to true, the user intends for it to be part of his markup and not rendered by the MudPopoverProvider
+        Absolute ||
+        // Dialog's need the separation of the overlay for display purposes
+        (Class?.Contains("mud-overlay-dialog") ?? false) ||
+        // Drawer's need the separation of the overlay for display purposes. 
+        (Class?.Contains("mud-drawer-overlay") ?? false) ||
+        // If the user provides a child content, the user intends for it to be part of his markup and not rendered by the MudPopoverProvider
+        ChildContent != null;
 
     public MudOverlay()
     {
