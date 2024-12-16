@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor.Docs.Compiler;
 
-#nullable enable
 /// <summary>
 /// Represents a generator of HTML documentation based on XML documentation files.
 /// </summary>
@@ -20,7 +19,7 @@ namespace MudBlazor.Docs.Compiler;
 /// <see cref="DocumentedEvent"/>, and <see cref="DocumentedField"/>, in a strongly typed manner. 
 /// </para>
 /// </remarks>
-public partial class ApiDocumentationBuilder
+public class ApiDocumentationBuilder
 {
     /// <summary>
     /// The reader for XML documentation.
@@ -692,7 +691,7 @@ public partial class ApiDocumentationBuilder
     public void ExportApiDocumentation()
     {
         // Sort everything by category
-        using var writer = new ApiDocumentationWriter(Paths.ApiDocumentationFilePath);
+        using var writer = new ApiDocumentationWriter();
         writer.WriteHeader();
         writer.WriteClassStart();
         writer.WriteConstructorStart();
@@ -708,6 +707,15 @@ public partial class ApiDocumentationBuilder
         writer.WriteSeeAlsoLinks(Types);
         writer.WriteConstructorEnd();
         writer.WriteClassEnd();
+        var currentCode = string.Empty;
+        if (File.Exists(Paths.ApiDocumentationFilePath))
+        {
+            currentCode = File.ReadAllText(Paths.ApiDocumentationFilePath);
+        }
+        if (currentCode != writer.ToString())
+        {
+            File.WriteAllText(Paths.ApiDocumentationFilePath, writer.ToString());
+        }
     }
 
     /// <summary>

@@ -30,6 +30,32 @@ else
     </div>
 }
 
+@if (!IsApi && DocumentedType != null)
+{
+    <DocsPageSection api-link-section>
+        <SectionHeader Title="API" />
+        <div class="docs-page-apilinks">
+            <ul class="my-2">
+                <li>
+                    <MudLink Href="@(DocumentedType.ApiUrl)">
+                        <CodeInline>@($"<{Component}>")</CodeInline>
+                    </MudLink>
+                </li>
+                @if (Example != null && Example.ChildTypes != null)
+                {
+                    @foreach (var childType in Example.ChildTypes)
+                    {
+                        <li>
+                            <MudLink Href="@($"api/{childType.Name}")" Class="ms-1">
+                                - <CodeInline>@($"<{childType.Name.Replace("`1", "")}>")</CodeInline>
+                            </MudLink>
+                        </li>
+                    }
+                }
+            </ul>
+        </div>
+    </DocsPageSection>
+}
 @if (IsApi && Example != null)
 {
     <DocsPageSection api-link-section>

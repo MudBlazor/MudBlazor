@@ -106,7 +106,8 @@
                        Size="@Size.Small"
                        OnClick="@HandleClearButtonAsync"
                        aria-label="@Localizer[LanguageResource.MudInput_Clear]"
-                       tabindex="-1" />
+                       tabindex="-1"
+                       @onpointerdown:stopPropagation />
     }
 
     @if (Adornment == Adornment.End)
@@ -123,7 +124,12 @@
 
     @if (Variant == Variant.Outlined)
     {
-        <div class="mud-input-outlined-border"></div>
+        <fieldset class="mud-input-outlined-border">
+            @if(!string.IsNullOrEmpty(Label))
+            {
+                <legend>@Label</legend>
+            } 
+        </fieldset>
     }
 
     @if (!HideSpinButtons)

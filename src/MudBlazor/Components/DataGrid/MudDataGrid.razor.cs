@@ -1801,19 +1801,27 @@ namespace MudBlazor
         /// </remarks>
         public async Task SetSelectedItemAsync(T item)
         {
-            if (MultiSelection && SelectOnRowClick)
-            {
-                if (Selection.Contains(item))
-                {
-                    Selection.Remove(item);
-                }
-                else
-                {
-                    Selection.Add(item);
-                }
+            if (!SelectOnRowClick)
+                return;
 
+            if (!Selection.Remove(item))
+            {
+                Selection.Add(item);
+            }
+            else if (!MultiSelection)
+            {
+                SelectedItem = default;
+                return;
+            }
+
+            if (MultiSelection)
+            {
                 SelectedItemsChangedEvent?.Invoke(SelectedItems);
                 await SelectedItemsChanged.InvokeAsync(SelectedItems);
+            }
+            else
+            {
+                Selection.Remove(SelectedItem);
             }
 
             SelectedItem = item;
@@ -1875,11 +1883,13 @@ namespace MudBlazor
 
         internal void CloseFilters()
         {
-            FilterDefinitions.RemoveAll(p =>
-                p.Value == null
-                && (p.Operator != FilterOperator.String.Empty || p.Operator != FilterOperator.Number.Empty || p.Operator != FilterOperator.DateTime.Empty)
-            );
+            FilterDefinitions.RemoveAll(p => p.Value == null && ValueRequired(p));
         }
+
+        private static bool ValueRequired(IFilterDefinition<T> filterDefinition) => filterDefinition.Operator is not
+            FilterOperator.String.Empty and not FilterOperator.String.NotEmpty and not
+            FilterOperator.Number.Empty and not FilterOperator.Number.NotEmpty and not
+            FilterOperator.DateTime.Empty and not FilterOperator.DateTime.NotEmpty;
 
         internal async Task HideAllColumnsAsync()
         {
