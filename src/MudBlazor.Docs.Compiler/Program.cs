@@ -2,7 +2,6 @@
 
 namespace MudBlazor.Docs.Compiler;
 
-#nullable enable 
 public class Program
 {
     public static int Main()

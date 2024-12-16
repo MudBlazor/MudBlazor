@@ -6,8 +6,6 @@ using System.Diagnostics;
 
 namespace MudBlazor.Docs.Compiler;
 
-#nullable enable
-
 /// <summary>
 /// A cross-reference link from a type to another type.
 /// </summary>
