@@ -1,5 +1,8 @@
 @import '../abstracts/variables';
 
+$default-background: var(--mud-palette-action-default-hover);
+$default-foreground: var(--mud-palette-text-primary);
+
 .mud-chat {
   display: grid;
   column-gap: 0.75rem;
@@ -210,8 +213,8 @@
 
 .mud-chat-text {
   &-default {
-    color: var(--mud-palette-dark-text);
-    background-color: var(--mud-palette-gray-darker);
+    color: $default-foreground;
+    background-color: $default-background;
   }
 
   @each $color in $mud-palette-colors {
@@ -224,11 +227,11 @@
 
 .mud-chat-outlined {
   &-default {
-    color: var(--mud-palette-dark-text);
-    border: 1px solid var(--mud-palette-gray-darker);
+    color: $default-foreground;
+    border: 1px solid $default-background;
 
     &:before {
-      background-color: var(--mud-palette-gray-darker);
+      background-color: $default-background;
     }
 
     &.mud-chat-arrow-top {
@@ -270,9 +273,9 @@
 
 .mud-chat-filled {
   &-default {
-    color: var(--mud-palette-dark-text);
+    color: $default-foreground;
     font-weight: 500;
-    background-color: var(--mud-palette-gray-darker);
+    background-color: $default-background;
   }
 
   @each $color in $mud-palette-colors {
