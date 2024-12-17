@@ -250,15 +250,9 @@ public static class MudGlobal
     public static class MenuDefaults
     {
         /// <summary>
-        /// Indicate the default delay time before starting to close after a leave event.
-        /// Unit : ms
+        /// The time in milliseconds before the menu opens on pointer hover or closes on pointer leave.
         /// </summary>
-        public static int HoverDelay { get; set; } = 100;
-
-        /// <summary>
-        /// Indicate the default waiting time to prevent closing if a mouse enter event occurs.
-        /// </summary>
-        public static int PreventCloseWaitingTime { get; set; } = 50;
+        public static int HoverDelay { get; set; } = 300;
     }
 
     /// <summary>

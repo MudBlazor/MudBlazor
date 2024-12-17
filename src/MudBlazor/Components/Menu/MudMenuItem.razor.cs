@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
@@ -15,6 +16,11 @@ namespace MudBlazor
 
         [Inject]
         protected IJsApiService JsApiService { get; set; } = null!;
+
+        protected string Classname =>
+            new CssBuilder("mud-menu-item")
+                .AddClass(Class)
+                .Build();
 
         /// <summary>
         /// The <see cref="MudMenu"/> which contains this item.
@@ -124,7 +130,7 @@ namespace MudBlazor
 
             if (AutoClose && MudMenu is not null)
             {
-                await MudMenu.CloseMenuAsync();
+                await MudMenu.CloseAllMenusAsync();
             }
 
             if (OnClick.HasDelegate)

@@ -1133,9 +1133,9 @@ namespace MudBlazor.UnitTests.Components
             await comp.Instance.OpenPicker();
 
             var providerNode = comp.Find(".mud-popover-provider");
-            providerNode.Children.Should().ContainSingle();
+            providerNode.Children.Count().Should().Be(2);
 
-            var popoverNode = providerNode.Children[0];
+            var popoverNode = providerNode.Children[1];
 
             popoverNode.ClassList.Should().BeEquivalentTo(
             [

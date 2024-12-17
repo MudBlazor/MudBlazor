@@ -112,22 +112,18 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task MouseOver_PointerLeave_ShouldClose()
+        public void MouseOver_PointerLeave_ShouldClose()
         {
             var comp = Context.RenderComponent<MenuTestMouseOver>();
             var pop = comp.FindComponent<MudPopover>();
 
-            // Briefly hover over the button which will open the popover while leaving a small delay to allow the user to move the pointer to the menu.
-            comp.FindAll("div.mud-menu")[0].PointerEnter();
-            comp.FindAll("div.mud-menu")[0].PointerLeave();
+            // Briefly hover over the button and wait for it to open.
+            comp.Find("div.mud-menu").PointerEnter();
+            comp.WaitForState(() => pop.Instance.Open);
 
-            IElement List() => comp.FindAll("div.mud-list")[0];
-
-            await List().TriggerEventAsync("onpointerenter", new PointerEventArgs());
-            comp.WaitForAssertion(() => pop.Instance.Open.Should().BeTrue());
-
-            await List().TriggerEventAsync("onpointerleave", new PointerEventArgs());
-            comp.WaitForAssertion(() => pop.Instance.Open.Should().BeFalse());
+            // Close it again and wait for that to happen.
+            comp.Find("div.mud-menu").PointerLeave();
+            comp.WaitForState(() => !pop.Instance.Open);
         }
 
         [Test]
@@ -159,34 +155,34 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MenuTestMouseOver>();
             var pop = comp.FindComponent<MudPopover>();
 
-            // Enter opens the menu.
-            comp.FindAll("div.mud-menu")[0].PointerEnter();
+            // Enter opens the menu (after a delay).
+            comp.Find("div.mud-menu").PointerEnter();
+            comp.WaitForState(() => pop.Instance.Open);
 
             // Clicking the button should close the menu.
-            comp.FindAll("button.mud-button-root")[0].Click();
-            comp.WaitForAssertion(() => pop.Instance.Open.Should().BeFalse());
+            comp.Find("button.mud-button-root").Click();
+            comp.WaitForState(() => !pop.Instance.Open);
 
-            // Clicking the button again should open the menu permanently.
-            comp.FindAll("button.mud-button-root")[0].Click();
-            comp.WaitForAssertion(() => pop.Instance.Open.Should().BeTrue());
+            // Clicking the button again should open the menu indefinitely.
+            comp.Find("button.mud-button-root").Click();
+            comp.WaitForState(() => pop.Instance.Open);
 
-            // Leaving the menu should not close it.
-            comp.FindAll("div.mud-menu")[0].PointerLeave();
-            comp.WaitForAssertion(() => pop.Instance.Open.Should().BeTrue());
-
-            IElement List() => comp.FindAll("div.mud-list")[0];
+            // Leaving the menu shouldn't close it anymore.
+            comp.Find("div.mud-menu").PointerLeave();
+            await Task.Delay(1000);
+            pop.Instance.Open.Should().BeTrue();
 
             // Hover over the list shouldn't change anything.
-            await List().TriggerEventAsync("onpointerenter", new PointerEventArgs());
-            comp.WaitForAssertion(() => pop.Instance.Open.Should().BeTrue());
+            await comp.Find("div.mud-list").TriggerEventAsync("onpointerenter", new PointerEventArgs());
+            pop.Instance.Open.Should().BeTrue();
 
             // Leave the list shouldn't change anything.
-            await List().TriggerEventAsync("onpointerleave", new PointerEventArgs());
-            comp.WaitForAssertion(() => pop.Instance.Open.Should().BeTrue());
+            await comp.Find("div.mud-list").TriggerEventAsync("onpointerleave", new PointerEventArgs());
+            pop.Instance.Open.Should().BeTrue();
 
             // Clicking the button should now close the menu.
-            comp.FindAll("button.mud-button-root")[0].Click();
-            comp.WaitForAssertion(() => pop.Instance.Open.Should().BeFalse());
+            comp.Find("button.mud-button-root").Click();
+            comp.WaitForState(() => !pop.Instance.Open);
         }
 
         [Test]
@@ -428,118 +424,6 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.AriaLabel, ariaLabel));
 
             comp.Find("button").GetAttribute("aria-label").Should().Be(expectedAriaLabel);
-        }
-
-        [Test]
-        public async Task MultiNest_MenuPointerLeave_MenuPointerEnter_Closing()
-        {
-            var comp = Context.RenderComponent<MenuTestNestWithMouseOver>();
-            // open all sub menus
-            var mudMenus = comp.FindComponents<MudMenu>();
-            var menu = mudMenus[0].WaitForElement(".mud-menu");
-            comp.WaitForAssertion(() => mudMenus.Count.Should().Be(1));
-            await menu.TriggerEventAsync("onpointerenter", new PointerEventArgs());
-            comp.WaitForAssertion(() => mudMenus[0].Instance.Open.Should().BeTrue());
-            mudMenus = comp.FindComponents<MudMenu>();
-            comp.WaitForAssertion(() => mudMenus.Count.Should().Be(2));
-            menu = mudMenus[0].WaitForElement(".mud-menu");
-            await menu.TriggerEventAsync("onpointerenter", new PointerEventArgs());
-            comp.WaitForAssertion(() => mudMenus[0].Instance.Open.Should().BeTrue());
-            mudMenus = comp.FindComponents<MudMenu>();
-            comp.WaitForAssertion(() => mudMenus.Count.Should().Be(3));
-            menu = mudMenus[1].WaitForElement(".mud-menu");
-            await menu.TriggerEventAsync("onpointerenter", new PointerEventArgs());
-            await menu.TriggerEventAsync("onpointermove", new PointerEventArgs());
-            comp.WaitForAssertion(() => mudMenus[1].Instance.Open.Should().BeTrue());
-
-            // try to keep mouse enter
-            var cancellationTokenSource = new CancellationTokenSource();
-            var token = cancellationTokenSource.Token;
-
-            _ = Task.Run(async () =>
-            {
-                var menuItem = mudMenus[2].Find(".mud-menu");
-                while (!token.IsCancellationRequested)
-                {
-                    await menuItem.TriggerEventAsync("onpointermove", new PointerEventArgs());
-                    await Task.Delay(35, token);
-                }
-            }, token);
-            await Task.Delay(10, CancellationToken.None);
-            // click menu item
-            // all opened menu should be close
-            _ = mudMenus[1].InvokeAsync(() => mudMenus[1].Instance.CloseMenuAsync());
-            _ = cancellationTokenSource.CancelAsync();
-            await Task.Delay(200, CancellationToken.None);
-            mudMenus = comp.FindComponents<MudMenu>();
-            comp.WaitForAssertion(() => mudMenus.Count.Should().Be(1));
-            comp.WaitForAssertion(() => mudMenus[0].Instance.Open.Should().BeFalse());
-        }
-
-        [Test]
-        public async Task MultiNest_MenuPointerLeave_OpenNextSubMenuClosePreviousSubMenu()
-        {
-            var comp = Context.RenderComponent<MenuTestNestWithQuicklyMouseMove>();
-            // open all sub menus
-            var mudMenus = comp.FindComponents<MudMenu>();
-            var menu = mudMenus[0].WaitForElement(".mud-menu");
-            comp.WaitForAssertion(() => mudMenus.Count.Should().Be(1));
-            await menu.TriggerEventAsync("onpointerenter", new PointerEventArgs());
-            comp.WaitForAssertion(() => mudMenus[0].Instance.Open.Should().BeTrue());
-            mudMenus = comp.FindComponents<MudMenu>();
-            comp.WaitForAssertion(() => mudMenus.Count.Should().Be(11));
-            var menuA = mudMenus[0].WaitForElement(".mud-menu");
-            var menuB = mudMenus[1].WaitForElement(".mud-menu");
-            await menuA.TriggerEventAsync("onpointerenter", new PointerEventArgs());
-            _ = menuA.TriggerEventAsync("onpointerleave", new PointerEventArgs());
-            _ = menuB.TriggerEventAsync("onpointerenter", new PointerEventArgs());
-        }
-
-        [Test]
-        public async Task MultiNest_MenuPointerLeave_MenuPointerEnter_CheckOpenClose()
-        {
-            var comp = Context.RenderComponent<MenuTestNestWithMouseOver>();
-            // open all sub menus
-            var mudMenus = comp.FindComponents<MudMenu>();
-            var menu = mudMenus[0].WaitForElement(".mud-menu");
-            comp.WaitForAssertion(() => mudMenus.Count.Should().Be(1));
-            await menu.TriggerEventAsync("onpointerenter", new PointerEventArgs());
-            comp.WaitForAssertion(() => mudMenus[0].Instance.Open.Should().BeTrue());
-            mudMenus = comp.FindComponents<MudMenu>();
-            comp.WaitForAssertion(() => mudMenus.Count.Should().Be(2));
-            menu = mudMenus[0].WaitForElement(".mud-menu");
-            await menu.TriggerEventAsync("onpointerenter", new PointerEventArgs());
-            comp.WaitForAssertion(() => mudMenus[0].Instance.Open.Should().BeTrue());
-            mudMenus = comp.FindComponents<MudMenu>();
-            comp.WaitForAssertion(() => mudMenus.Count.Should().Be(3));
-            menu = mudMenus[1].WaitForElement(".mud-menu");
-            await menu.TriggerEventAsync("onpointerenter", new PointerEventArgs());
-            comp.WaitForAssertion(() => mudMenus[1].Instance.Open.Should().BeTrue());
-
-            mudMenus = comp.FindComponents<MudMenu>();
-
-            // keep the first menu open
-            var cancellationTokenSource = new CancellationTokenSource();
-            var token = cancellationTokenSource.Token;
-            _ = Task.Run(async () =>
-            {
-                var menuItem = mudMenus[2].Find(".mud-menu");
-                while (!token.IsCancellationRequested)
-                {
-                    await menuItem.TriggerEventAsync("onpointermove", new PointerEventArgs());
-                    await Task.Delay(10, token);
-                }
-            }, token);
-            // leave last sub menu , and then parent menu open will be false
-            // but the first menu should still be open
-            menu = mudMenus[1].WaitForElement(".mud-menu");
-            await menu.TriggerEventAsync("onpointerleave", new PointerEventArgs());
-            await Task.Delay(100, CancellationToken.None);
-            mudMenus = comp.FindComponents<MudMenu>();
-            comp.WaitForAssertion(() => mudMenus.Count.Should().Be(2));
-            comp.WaitForAssertion(() => mudMenus[0].Instance.Open.Should().BeFalse());
-            comp.WaitForAssertion(() => mudMenus[1].Instance.Open.Should().BeTrue());
-            await cancellationTokenSource.CancelAsync();
         }
 
         [Test]

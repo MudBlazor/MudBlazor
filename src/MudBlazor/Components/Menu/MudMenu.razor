@@ -5,7 +5,6 @@
 <div @attributes="UserAttributes"
      class="@Classname"
      style="@Style"
-     @onpointermove="@PointerMove"
      @onpointerenter="@PointerEnterAsync"
      @onpointerleave="@PointerLeaveAsync"
      @oncontextmenu="@((ActivationEvent == MouseEvent.RightClick ? ToggleMenuAsync : null)!)"
@@ -62,9 +61,8 @@
                 DropShadow="@DropShadow">
         <CascadingValue Value="@this">
             <MudList T="object"
-                     Class="@ListClass"
+                     Class="@ListClassname"
                      Dense="@Dense"
-                     @onpointermove="@PointerMove"
                      @onpointerenter="@PointerEnterAsync"
                      @onpointerleave="@PointerLeaveAsync">
                 @ChildContent
@@ -72,5 +70,5 @@
         </CascadingValue>
     </MudPopover>
 
-    <MudOverlay Visible="Open && !_isTemporary" AutoClose OnClosed="CloseMenuAsync" LockScroll="LockScroll" />
+    <MudOverlay Visible="Open && !_isTransient" AutoClose OnClosed="CloseMenuAsync" LockScroll="LockScroll" />
 </div>
