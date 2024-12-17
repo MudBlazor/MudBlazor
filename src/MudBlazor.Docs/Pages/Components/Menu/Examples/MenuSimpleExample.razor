@@ -1,13 +1,20 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudMenu Label="Open Menu">
-    <MudMenuItem>Enlist</MudMenuItem>
-    <MudMenuItem>Barracks</MudMenuItem>
-    <MudMenuItem>Armory</MudMenuItem>
-</MudMenu>
-
-<MudMenu Label="Open Dense Menu" Dense="true">
+<MudMenu Label="Open Dense Menu" Dense="true" Open="open">
     <MudMenuItem>Dense Stuff</MudMenuItem>
     <MudMenuItem>Stuff is Dense</MudMenuItem>
     <MudMenuItem>Soo Dense</MudMenuItem>
 </MudMenu>
+
+
+<MudButton OnClick="opend">open for 1 second via two way binding</MudButton>
+@code{
+    bool open;
+
+    async Task opend()
+    {
+        open = true;
+        await Task.Delay(1000);
+        open = false;
+    }
+}

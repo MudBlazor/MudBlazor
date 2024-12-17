@@ -488,5 +488,40 @@ namespace MudBlazor.UnitTests.Components
             menuComponent.Find("div.mud-menu").ClassList.Should().NotContain("mud-menu-button-hidden");
             menuComponent.Find("div#custom-activator").TextContent.Should().Be("Custom Activator Content");
         }
+
+        [Test]
+        public void Open_TwoWayBinding()
+        {
+            var comp = Context.RenderComponent<MenuTest1>();
+            var menu = comp.FindComponent<MudMenu>();
+
+            menu.Instance.Open.Should().BeFalse("The menu should be closed initially.");
+            comp.FindAll("div.mud-popover-open").Count.Should().Be(0, "No popovers should be visible.");
+
+            comp.Find("button.mud-button-root").Click();
+            menu.Instance.Open.Should().BeTrue("Clicking the button should open the menu.");
+            comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "One popover should be visible after opening.");
+
+            menu.SetParam(p => p.Open, false);
+            menu.Instance.Open.Should().BeFalse("Manually setting Open to false should close the menu.");
+            comp.FindAll("div.mud-popover-open").Count.Should().Be(0, "Popover should disappear after closing.");
+
+            comp.Find("button.mud-button-root").Click();
+            menu.Instance.Open.Should().BeTrue("Clicking the button again should open the menu.");
+            comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "Popover should reappear after reopening.");
+
+            menu.SetParam(p => p.Open, true);
+            menu.Instance.Open.Should().BeTrue("Setting Open to true again should not change the state.");
+            comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "Popover count should remain the same.");
+
+            comp.Find("button.mud-button-root").Click();
+            menu.Instance.Open.Should().BeFalse("Clicking the button should close the menu.");
+            comp.FindAll("div.mud-popover-open").Count.Should().Be(0, "Popover should no longer be visible.");
+
+            comp.Find("button.mud-button-root").Click();
+            menu.Instance.Open.Should().BeTrue("Clicking the button again should open the menu.");
+            comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "Popover should appear again.");
+        }
+
     }
 }
