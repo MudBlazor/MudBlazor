@@ -512,7 +512,9 @@ namespace MudBlazor
         {
             if (disposing)
             {
+                _hoverCts?.Cancel();
                 _hoverCts?.Dispose();
+                _leaveCts?.Cancel();
                 _leaveCts?.Dispose();
                 ParentMenu?.UnregisterChild(this);
             }
