@@ -294,7 +294,7 @@ namespace MudBlazor
         public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// Whether this menu is open.
+        /// Whether this menu is open and the menu items are visible.
         /// </summary>
         /// <remarks>
         /// When this property changes, <see cref="OpenChanged"/> occurs.
@@ -334,7 +334,9 @@ namespace MudBlazor
 
         protected Task OnOpenChanged(ParameterChangedEventArgs<bool> args)
         {
-            return args.Value ? OpenMenuAsync(EventArgs.Empty) : CloseMenuAsync();
+            return args.Value ?
+                OpenMenuAsync(EventArgs.Empty) :
+                CloseMenuAsync();
         }
 
         /// <summary>
