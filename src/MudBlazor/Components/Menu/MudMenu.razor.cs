@@ -472,6 +472,12 @@ namespace MudBlazor
         {
             _isPointerOver = false;
 
+            // We don't want to close the menu if it's not transient.
+            if (!_isTransient)
+            {
+                return;
+            }
+
             // Cancel any existing mouse hover delay
             _hoverCts?.Cancel();
 
