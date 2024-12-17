@@ -6,7 +6,6 @@ using System.Text.RegularExpressions;
 
 namespace MudBlazor.Docs.Compiler;
 
-#nullable enable
 /// <summary>
 /// Methods added to the <see cref="Type"/> class.
 /// </summary>

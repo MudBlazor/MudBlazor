@@ -39,7 +39,7 @@ namespace MudBlazor.Docs.Compiler
                         continue;
                     }
 
-                    var markupDir = Path.GetDirectoryName(markupPath);
+                    var markupDir = Path.GetDirectoryName(markupPath) ?? string.Empty;
                     if (!Directory.Exists(markupDir))
                     {
                         Directory.CreateDirectory(markupDir);

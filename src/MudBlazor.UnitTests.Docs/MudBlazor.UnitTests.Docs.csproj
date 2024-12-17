@@ -39,8 +39,7 @@
 
   <Target Name="CleanGeneratedFiles" BeforeTargets="Clean" Condition="'$(CleanGeneratedFiles)' != 'false'">
     <ItemGroup>
-      <FilesToClean Include="Generated\ApiDocsTests.generated.cs" />
-      <FilesToClean Include="Generated\ExampleDocsTests.generated.cs" />
+      <FilesToClean Include="**/*.generated.cs" />
     </ItemGroup>
     <Delete Files="@(FilesToClean)" />
   </Target>
