@@ -14,13 +14,11 @@
     <DocsPageContent>
 
         <DocsPageSection>
-            <SectionHeader Title="Two-way binding">
-                <Description>
-                    The <CodeInline>Open</CodeInline> parameter in <CodeInline>MudMenu</CodeInline> supports two-way binding, allowing you to control the visibility of the menu via a boolean property. Changes to the menu's open/close state will automatically update the bound property and vice versa.
-                </Description>
+            <SectionHeader Title="Simple Menu">
+                <Description></Description>
             </SectionHeader>
-            <SectionContent Code="@nameof(MenuTwoWayBindingExample)" ShowCode="true">
-                <MenuTwoWayBindingExample />
+            <SectionContent Code="@nameof(MenuSimpleExample)">
+                <MenuSimpleExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -83,6 +81,18 @@
             </SectionHeader>
             <SectionContent Code="@nameof(MenuWithNestingExample)" ShowCode="true">
                 <MenuWithNestingExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Two-way Binding">
+                <Description>
+                    The <CodeInline>Open</CodeInline> parameter in <CodeInline>MudMenu</CodeInline> supports two-way binding, allowing you to control the visibility of the menu via a boolean property.
+                    Changes to the menu's open/close state will automatically update the bound property and vice versa.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(MenuTwoWayBindingExample)" ShowCode="true">
+                <MenuTwoWayBindingExample />
             </SectionContent>
         </DocsPageSection>
 
