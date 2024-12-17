@@ -75,7 +75,6 @@
     {
         _selectedMessage = message;
         Snackbar.Add("Message clicked: " + message.Text, Severity.Info);
-        Console.WriteLine($"Message clicked: {message.Text}");
         await Task.CompletedTask;
     }
 

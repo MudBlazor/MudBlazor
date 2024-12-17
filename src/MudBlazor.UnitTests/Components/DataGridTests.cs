@@ -3128,8 +3128,6 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DataGridColumnHiddenTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnHiddenTest.Model>>();
 
-            //Console.WriteLine(dataGrid.FindAll(".mud-table-head th").ToMarkup());
-
             var popoverProvider = comp.FindComponent<MudPopoverProvider>();
             var popover = dataGrid.FindComponent<MudPopover>();
             popover.Instance.Open.Should().BeFalse("Should start as closed");

@@ -100,23 +100,6 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-input-error").Count.Should().Be(0);
         }
 
-        //This doesn't make any sense because you cannot set anything that's not a number
-        ///// <summary>
-        ///// Setting an invalid number should show the conversion error message
-        ///// </summary>
-        //[Test]
-        //public async Task NumericFieldConversionError()
-        //{
-        //    var comp = ctx.RenderComponent<MudNumericField<int?>>();
-        //    // print the generated html
-        //    //Console.WriteLine(comp.Markup);
-        //    comp.Find("input").Change("seventeen");
-        //    comp.Find("input").Blur();
-        //    //Console.WriteLine(comp.Markup);
-        //    comp.FindAll("p.mud-input-error").Count.Should().Be(1);
-        //    comp.Find("p.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
-        //}
-
         /// <summary>
         /// If Debounce Interval is null or 0, Value should change immediately
         /// </summary>
