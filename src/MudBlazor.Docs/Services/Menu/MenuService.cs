@@ -332,7 +332,7 @@ namespace MudBlazor.Docs.Services
         public static MudComponent? GetExample(MudComponent parent, DocumentedType type)
         {
             // Does the name match the menu link?
-            if (parent.ComponentName == type.NameFriendly)
+            if (parent.ComponentName == type.NameFriendly.Replace("<TData>", "<T>"))
             {
                 return parent;
             }
