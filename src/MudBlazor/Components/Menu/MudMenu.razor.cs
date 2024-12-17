@@ -512,6 +512,8 @@ namespace MudBlazor
         {
             if (disposing)
             {
+                _hoverCts?.Dispose();
+                _leaveCts?.Dispose();
                 ParentMenu?.UnregisterChild(this);
             }
         }
