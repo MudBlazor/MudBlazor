@@ -238,7 +238,7 @@ namespace MudBlazor
                 }
             }
         }
-        
+
         /// <summary>
         /// Occurs when <see cref="CurrentPage"/> has changed.
         /// </summary>
@@ -678,7 +678,7 @@ namespace MudBlazor
             {
                 CurrentPageChanged.InvokeAsync(_currentPage);
             }
-            
+
             if (_isFirstRendered)
             {
                 InvokeServerLoadFunc();

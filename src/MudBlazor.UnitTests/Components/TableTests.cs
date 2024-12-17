@@ -2504,16 +2504,16 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<TableCurrentPageParameterTwoWayBindingTest>();
             var table = comp.FindComponent<MudTable<int>>().Instance;
-            
+
             // Assert starting page index is 0 (default).
             comp.WaitForAssertion(() => table.CurrentPage.Should().Be(0));
             comp.WaitForAssertion(() => comp.Find(".mud-table-body .mud-table-row .mud-table-cell").TextContent.Should().Be("1"));
-            
+
             // Assert modification via code correctly renders the corresponding page.
             await comp.InvokeAsync(() => table.CurrentPage = 1);
             comp.WaitForAssertion(() => table.CurrentPage.Should().Be(1));
             comp.WaitForAssertion(() => comp.Find(".mud-table-body .mud-table-row .mud-table-cell").TextContent.Should().Be("2"));
-            
+
             // Assert user input correctly updates the CurrentPage parameter value by clicking the "Next Page" button in the pager.
             comp.FindAll(".mud-table-pagination-actions .mud-button-root")[2].Click();
             comp.WaitForAssertion(() => table.CurrentPage.Should().Be(2));
