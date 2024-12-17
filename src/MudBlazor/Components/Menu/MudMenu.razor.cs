@@ -25,6 +25,15 @@ namespace MudBlazor
         private CancellationTokenSource? _hoverCts;
         private CancellationTokenSource? _leaveCts;
 
+        public MudMenu()
+        {
+            using var registerScope = CreateRegisterScope();
+            _openState = registerScope.RegisterParameter<bool>(nameof(Open))
+                .WithParameter(() => Open)
+                .WithEventCallback(() => OpenChanged)
+                .WithChangeHandler(OnOpenChanged);
+        }
+
         protected string Classname =>
             new CssBuilder("mud-menu")
                 .AddClass("mud-menu-button-hidden", GetActivatorHidden())
@@ -322,15 +331,6 @@ namespace MudBlazor
             ParentMenu?.RegisterChild(this);
         }
 
-        public MudMenu()
-        {
-            using var registerScope = CreateRegisterScope();
-            _openState = registerScope.RegisterParameter<bool>(nameof(Open))
-                .WithParameter(() => Open)
-                .WithEventCallback(() => OpenChanged)
-                .WithChangeHandler(OnOpenChanged);
-        }
-
         protected Task OnOpenChanged(ParameterChangedEventArgs<bool> args)
         {
             return args.Value ? OpenMenuAsync(EventArgs.Empty) : CloseMenuAsync();
@@ -399,7 +399,7 @@ namespace MudBlazor
             }
 
             // Don't open if already open. But let the stuff above get updated.
-            if (Open)
+            if (_openState.Value)
             {
                 return;
             }
@@ -431,14 +431,9 @@ namespace MudBlazor
                 }
             }
 
-            if (Open)
-            {
-                return CloseMenuAsync();
-            }
-            else
-            {
-                return OpenMenuAsync(args);
-            }
+            return _openState.Value
+                ? CloseMenuAsync()
+                : OpenMenuAsync(args);
         }
 
         private async Task PointerEnterAsync(PointerEventArgs args)
@@ -463,7 +458,7 @@ namespace MudBlazor
                 return;
             }
 
-            if (Open || ActivationEvent != MouseEvent.MouseOver)
+            if (_openState.Value || ActivationEvent != MouseEvent.MouseOver)
             {
                 return;
             }

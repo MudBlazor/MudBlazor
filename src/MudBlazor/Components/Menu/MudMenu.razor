@@ -51,7 +51,7 @@
     }
 
     @* The portal has to include the cascading values inside because it's not able to teletransport the cascade *@
-    <MudPopover Open="@Open"
+    <MudPopover Open="@_openState.Value"
                 Class="@PopoverClassname"
                 Style="@Stylename"
                 MaxHeight="@MaxHeight"
@@ -70,5 +70,5 @@
         </CascadingValue>
     </MudPopover>
 
-    <MudOverlay Visible="Open && !_isTransient" AutoClose OnClosed="CloseMenuAsync" LockScroll="LockScroll" />
+    <MudOverlay Visible="_openState.Value && !_isTransient" AutoClose OnClosed="CloseMenuAsync" LockScroll="LockScroll" />
 </div>

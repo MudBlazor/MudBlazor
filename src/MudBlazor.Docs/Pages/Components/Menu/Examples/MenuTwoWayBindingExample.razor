@@ -1,0 +1,20 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudMenu Label="Open Dense Menu" Dense="true" @bind-Open="_open">
+    <MudMenuItem>Dense Stuff</MudMenuItem>
+    <MudMenuItem>Stuff is Dense</MudMenuItem>
+    <MudMenuItem>Soo Dense</MudMenuItem>
+</MudMenu>
+
+<MudButton Color="Color.Primary" OnClick="OnOpen">Open For 1 Second</MudButton>
+<MudSwitch Color="Color.Primary" @bind-Value="_open" Label="Open Menu Switch" />
+@code {
+    private bool _open;
+
+    private async Task OnOpen()
+    {
+        _open = true;
+        await Task.Delay(1000);
+        _open = false;
+    }
+}

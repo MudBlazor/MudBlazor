@@ -7,6 +7,7 @@ using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.Menu;
 using NUnit.Framework;
 
@@ -101,14 +102,14 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MenuTest1>();
             var menu = comp.FindComponent<MudMenu>().Instance;
-            menu.Open.Should().BeFalse();
+            menu.GetState(x => x.Open).Should().BeFalse();
 
             var args = new MouseEventArgs { OffsetX = 1.0, OffsetY = 1.0 };
             await comp.InvokeAsync(() => menu.OpenMenuAsync(args));
-            menu.Open.Should().BeTrue();
+            menu.GetState(x => x.Open).Should().BeTrue();
 
             await comp.InvokeAsync(() => menu.CloseMenuAsync());
-            menu.Open.Should().BeFalse();
+            menu.GetState(x => x.Open).Should().BeFalse();
         }
 
         [Test]
@@ -463,7 +464,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ContextMenu_WithLabel_Sould_HaveButton_And_BeVisible()
+        public void ContextMenu_WithLabel_Should_HaveButton_And_BeVisible()
         {
             // Arrange
             var comp = Context.RenderComponent<ContextMenuTest>(parameters
@@ -476,7 +477,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ContextMenu_WithActivatorContent_Sould_HaveActivatorContent_And_BeVisible()
+        public void ContextMenu_WithActivatorContent_Should_HaveActivatorContent_And_BeVisible()
         {
             // Arrange
             var comp = Context.RenderComponent<ContextMenuTest>(parameters
@@ -492,34 +493,41 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Open_TwoWayBinding()
         {
-            var comp = Context.RenderComponent<MenuTest1>();
+            var comp = Context.RenderComponent<MenuTwoWayTest>();
             var menu = comp.FindComponent<MudMenu>();
+            IElement SwitchElement() => comp.Find("#switch");
 
-            menu.Instance.Open.Should().BeFalse("The menu should be closed initially.");
+            menu.Instance.GetState(x => x.Open).Should().BeFalse("The menu should be closed initially.");
+            comp.Instance.Open.Should().BeFalse();
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0, "No popovers should be visible.");
 
             comp.Find("button.mud-button-root").Click();
-            menu.Instance.Open.Should().BeTrue("Clicking the button should open the menu.");
+            menu.Instance.GetState(x => x.Open).Should().BeTrue("Clicking the button should open the menu.");
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "One popover should be visible after opening.");
 
-            menu.SetParam(p => p.Open, false);
-            menu.Instance.Open.Should().BeFalse("Manually setting Open to false should close the menu.");
+            SwitchElement().Change(false);
+            menu.Instance.GetState(x => x.Open).Should().BeFalse("Manually setting Open to false should close the menu.");
+            comp.Instance.Open.Should().BeFalse();
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0, "Popover should disappear after closing.");
 
             comp.Find("button.mud-button-root").Click();
-            menu.Instance.Open.Should().BeTrue("Clicking the button again should open the menu.");
+            menu.Instance.GetState(x => x.Open).Should().BeTrue("Clicking the button again should open the menu.");
+            comp.Instance.Open.Should().BeTrue();
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "Popover should reappear after reopening.");
 
-            menu.SetParam(p => p.Open, true);
-            menu.Instance.Open.Should().BeTrue("Setting Open to true again should not change the state.");
+            SwitchElement().Change(true);
+            menu.Instance.GetState(x => x.Open).Should().BeTrue("Setting Open to true again should not change the state.");
+            comp.Instance.Open.Should().BeTrue();
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "Popover count should remain the same.");
 
             comp.Find("button.mud-button-root").Click();
-            menu.Instance.Open.Should().BeFalse("Clicking the button should close the menu.");
+            menu.Instance.GetState(x => x.Open).Should().BeFalse("Clicking the button should close the menu.");
+            comp.Instance.Open.Should().BeFalse();
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0, "Popover should no longer be visible.");
 
             comp.Find("button.mud-button-root").Click();
-            menu.Instance.Open.Should().BeTrue("Clicking the button again should open the menu.");
+            menu.Instance.GetState(x => x.Open).Should().BeTrue("Clicking the button again should open the menu.");
+            comp.Instance.Open.Should().BeTrue();
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "Popover should appear again.");
         }
 
