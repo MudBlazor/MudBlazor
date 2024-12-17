@@ -151,7 +151,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task MouseOver_Click_ShouldKeepOpen()
+        public async Task MouseOver_Click_ShouldKeepMenuOpen()
         {
             var comp = Context.RenderComponent<MenuTestMouseOver>();
             var pop = comp.FindComponent<MudPopover>();
@@ -161,19 +161,19 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForState(() => pop.Instance.Open);
 
             // Clicking the button should close the menu.
-            comp.Find("button.mud-button-root").Click();
+            await comp.InvokeAsync(() => comp.Find("button.mud-button-root").Click());
             comp.WaitForState(() => !pop.Instance.Open);
 
             // Clicking the button again should open the menu indefinitely.
-            comp.Find("button.mud-button-root").Click();
+            await comp.InvokeAsync(() => comp.Find("button.mud-button-root").Click());
             comp.WaitForState(() => pop.Instance.Open);
 
-            // Leaving the menu shouldn't close it anymore.
+            // Leaving the menu should no longer close it.
             comp.Find("div.mud-menu").PointerLeave();
             await Task.Delay(1000);
             pop.Instance.Open.Should().BeTrue();
 
-            // Hover over the list shouldn't change anything.
+            // Hover the list shouldn't change anything.
             await comp.Find("div.mud-list").TriggerEventAsync("onpointerenter", new PointerEventArgs());
             pop.Instance.Open.Should().BeTrue();
 
@@ -182,7 +182,7 @@ namespace MudBlazor.UnitTests.Components
             pop.Instance.Open.Should().BeTrue();
 
             // Clicking the button should now close the menu.
-            comp.Find("button.mud-button-root").Click();
+            await comp.InvokeAsync(() => comp.Find("button.mud-button-root").Click());
             comp.WaitForState(() => !pop.Instance.Open);
         }
 
