@@ -12,7 +12,7 @@ namespace MudBlazor
 {
 #nullable enable
     /// <summary>
-    /// A list of choices displayed after clicking an element.
+    /// An interactive menu that displays a list of options.
     /// </summary>
     /// <seealso cref="MudMenuItem" />
     public partial class MudMenu : MudComponentBase, IActivatable, IDisposable
@@ -34,28 +34,43 @@ namespace MudBlazor
                 .WithChangeHandler(OnOpenChanged);
         }
 
+        /// <summary>
+        /// The CSS class for the root menu container.
+        /// </summary>
         protected string Classname =>
             new CssBuilder("mud-menu")
                 .AddClass("mud-menu-button-hidden", GetActivatorHidden())
                 .AddClass(Class)
                 .Build();
 
+        /// <summary>
+        /// The CSS class for the menu's popover container.
+        /// </summary>
         protected string PopoverClassname =>
             new CssBuilder()
                 .AddClass(PopoverClass)
                 .AddClass("mud-popover-position-override", PositionAtCursor)
                 .Build();
 
+        /// <summary>
+        /// The CSS class for the list containing menu items.
+        /// </summary>
         protected string ListClassname =>
             new CssBuilder("mud-menu-list")
                 .AddClass(ListClass)
                 .Build();
 
+        /// <summary>
+        /// The CSS class for the activator element (button or custom content).
+        /// </summary>
         protected string ActivatorClassname =>
             new CssBuilder("mud-menu-activator")
                 .AddClass("mud-disabled", Disabled)
                 .Build();
 
+        /// <summary>
+        /// Inline styles for positioning the menu at the cursor's location.
+        /// </summary>
         protected string Stylename =>
             new StyleBuilder()
                 .AddStyle("top", _openPosition.Top.ToPx(), PositionAtCursor)
@@ -340,10 +355,11 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Closes this menu and all descendants.
+        /// Closes this menu and all its child menus.
         /// </summary>
         public async Task CloseMenuAsync()
         {
+            // Recursively close all child menus.
             foreach (var child in _children)
             {
                 await child.CloseMenuAsync();
@@ -354,10 +370,11 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Closes all menus linked to this one, including parents, descendants, and itself.
+        /// Closes all menus in the hierarchy, starting from the top-most parent.
         /// </summary>
         public async Task CloseAllMenusAsync()
         {
+            // Traverse up the menu hierarchy to find the top-most parent.
             var top = this;
             while (true)
             {
@@ -371,19 +388,18 @@ namespace MudBlazor
                 }
             }
 
+            // Close the top-most menu, which will cascade down to close all its children.
             await top.CloseMenuAsync();
         }
 
         /// <summary>
-        /// Opens this menu.
+        /// Opens the menu.
         /// </summary>
-        /// <param name="args">The <see cref="MouseEventArgs"/> or <see cref="PointerEventArgs"/> of the location of the click.
-        /// When <see cref="PositionAtCursor"/> is <c>true</c>, the menu will be positioned at these coordinates.
+        /// <param name="args">
+        /// <para>The event arguments for the activation event; <see cref="MouseEventArgs"/> or <see cref="TouchEventArgs"/>.</para>
+        /// <para>When <see cref="PositionAtCursor"/> is <c>true</c>, the menu will be positioned at these coordinates.</para>
         /// </param>
-        /// <param name="transient">
-        /// Defaults to <c>false</c>.  When <c>true</c>, no overlay will be displayed.
-        /// This is used for menus which only stay open while the cursor is over them and is not used for click events.
-        /// </param>
+        /// <param name="transient">If <c>true</c>, the menu will close automatically when the pointer leaves its bounds.</param>
         /// <remarks>
         /// Parents are not automatically opened when a child is opened.
         /// </remarks>
@@ -394,8 +410,10 @@ namespace MudBlazor
                 return;
             }
 
+            // Update the transient flag (used for hover-activated menus).
             _isTransient = transient;
 
+            // Set the menu position if the event has cursor coordinates.
             if (args is MouseEventArgs mouseEventArgs)
             {
                 _openPosition = (mouseEventArgs.PageY, mouseEventArgs.PageX);
@@ -412,9 +430,12 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Shows or hides this menu.
+        /// Toggles the menu's open or closed state.
         /// </summary>
-        /// <param name="args">The <see cref="MouseEventArgs"/> or <see cref="TouchEventArgs"/> with the location of the click.</param>
+        /// <param name="args">
+        /// <para>The event arguments for the activation event; <see cref="MouseEventArgs"/> or <see cref="TouchEventArgs"/>.</para>
+        /// <para>When <see cref="PositionAtCursor"/> is <c>true</c>, the menu will be positioned at these coordinates.</para>
+        /// </param>
         public Task ToggleMenuAsync(EventArgs args)
         {
             if (Disabled)
@@ -424,16 +445,18 @@ namespace MudBlazor
 
             if (args is MouseEventArgs mouseEventArgs)
             {
+                // Determine if the click matches the expected activation event.
                 var leftClick = ActivationEvent == MouseEvent.LeftClick && mouseEventArgs.Button == 0;
                 var rightClick = ActivationEvent == MouseEvent.RightClick && (mouseEventArgs.Button is -1 or 2); // oncontextmenu is -1, right click is 2.
 
-                // Only allow valid left or right conditions, except MouseOver activation which should always be allowed to toggle.
+                // For events other than MouseOver, ignore invalid click types.
                 if (!leftClick && !rightClick && ActivationEvent != MouseEvent.MouseOver)
                 {
                     return Task.CompletedTask;
                 }
             }
 
+            // Toggle the menu's state: close if open, open if closed.
             return _openState.Value
                 ? CloseMenuAsync()
                 : OpenMenuAsync(args);
@@ -443,10 +466,10 @@ namespace MudBlazor
         {
             _isPointerOver = true;
 
-            // Cancel any existing mouse leave delay
+            // Cancel any existing leave delay to prevent premature closure.
             _leaveCts?.Cancel();
 
-            // Start a new hover delay
+            // Start a new hover delay.
             _hoverCts?.Cancel();
             _hoverCts = new();
 
@@ -466,7 +489,7 @@ namespace MudBlazor
                 return;
             }
 
-            // The Click event will interfere with the Enter event on devices that can't hover.
+            // The click event will conflict with the Enter event on devices that can't hover.
             if (args.PointerType is "touch" or "pen")
             {
                 return;
@@ -475,24 +498,20 @@ namespace MudBlazor
             await OpenMenuAsync(args, true);
         }
 
-        /// <summary>
-        /// Handles the pointer leave event.
-        /// Closes the menu if the pointer leaves and does not re-enter within a specified delay.
-        /// </summary>
         private async Task PointerLeaveAsync()
         {
             _isPointerOver = false;
 
-            // We don't want to close the menu if it's not transient.
+            // Don't close if the menu isn't transient (hover-based menus).
             if (!_isTransient)
             {
                 return;
             }
 
-            // Cancel any existing mouse hover delay
+            // Cancel any existing mouse hover delay.
             _hoverCts?.Cancel();
 
-            // Start a new leave delay
+            // Start a leave delay to allow for re-entry.
             _leaveCts?.Cancel();
             _leaveCts = new();
 
@@ -507,8 +526,11 @@ namespace MudBlazor
                 return;
             }
 
+            // Close the menu only if no child menus are still active.
             if (!_children.Any(x => x._isPointerOver))
+            {
                 await CloseMenuAsync();
+            }
         }
 
         /// <summary>
@@ -519,18 +541,27 @@ namespace MudBlazor
             _ = ToggleMenuAsync(args);
         }
 
+        /// <summary>
+        /// Disposes managed and unmanaged resources.
+        /// </summary>
+        /// <param name="disposing">Indicates if managed resources should be disposed.</param>
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
             {
                 _hoverCts?.Cancel();
                 _hoverCts?.Dispose();
+
                 _leaveCts?.Cancel();
                 _leaveCts?.Dispose();
+
                 ParentMenu?.UnregisterChild(this);
             }
         }
 
+        /// <summary>
+        /// Releases resources used by the component.
+        /// </summary>
         public void Dispose()
         {
             Dispose(true);
