@@ -80,11 +80,8 @@ namespace MudBlazor
         public bool ForceLoad { get; set; }
 
         /// <summary>
-        /// The icon displayed for this menu item.
+        /// The icon displayed at the start of this menu item.  The size depends on whether or not the menu is using the dense variant.
         /// </summary>
-        /// <remarks>
-        /// When set, this menu will display a <see cref="MudIconButton" />.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
         public string? Icon { get; set; }
@@ -98,16 +95,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public Color IconColor { get; set; } = Color.Inherit;
-
-        /// <summary>
-        /// The size of the icon when <see cref="Icon"/> is set.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="Size.Medium"/>.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.List.Appearance)]
-        public Size IconSize { get; set; } = Size.Medium;
 
         /// <summary>
         /// Closes the menu when this item is clicked.
