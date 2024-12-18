@@ -466,9 +466,24 @@ namespace MudBlazor
                 : OpenMenuAsync(args);
         }
 
+        /// <summary>
+        /// Handles the pointer entering either the activator or the menu list.
+        /// </summary>
         private async Task PointerEnterAsync(PointerEventArgs args)
         {
             _isPointerOver = true;
+
+            // If hover isn't enabled then there's no work to be done.
+            if (ActivationEvent != MouseEvent.MouseOver)
+            {
+                return;
+            }
+
+            // The click event will conflict with this one on devices that can't hover so we'll return so we only handle one.
+            if (args.PointerType is "touch" or "pen")
+            {
+                return;
+            }
 
             // Cancel any existing leave delay to prevent premature closure.
             // ReSharper disable MethodHasAsyncOverload
@@ -477,39 +492,39 @@ namespace MudBlazor
             // Start a new hover delay.
             _hoverCts?.Cancel();
             // ReSharper restore MethodHasAsyncOverload
-            _hoverCts = new();
 
-            try
+            if (MudGlobal.MenuDefaults.HoverDelay > 0)
             {
-                // Wait a bit to allow the cursor to move over the activator if the user isn't trying to open it.
-                await Task.Delay(MudGlobal.MenuDefaults.HoverDelay, _hoverCts.Token);
-            }
-            catch (TaskCanceledException)
-            {
-                // Hover action was canceled.
-                return;
-            }
+                _hoverCts = new();
 
-            if (_openState.Value || ActivationEvent != MouseEvent.MouseOver)
-            {
-                return;
-            }
-
-            // The click event will conflict with the Enter event on devices that can't hover.
-            if (args.PointerType is "touch" or "pen")
-            {
-                return;
+                try
+                {
+                    // Wait a bit to allow the cursor to move over the activator if the user isn't trying to open it.
+                    await Task.Delay(MudGlobal.MenuDefaults.HoverDelay, _hoverCts.Token);
+                }
+                catch (TaskCanceledException)
+                {
+                    // Hover action was canceled.
+                    return;
+                }
             }
 
-            await OpenMenuAsync(args, true);
+            // Open the menu if it's not already open. We don't want to call the method and update the state if we don't have to.
+            if (!_openState.Value)
+            {
+                await OpenMenuAsync(args, true);
+            }
         }
 
+        /// <summary>
+        /// Handles the pointer leaving either the activator or the menu list.
+        /// </summary>
         private async Task PointerLeaveAsync()
         {
             _isPointerOver = false;
 
-            // Don't close if the menu isn't transient (hover-based menus).
-            if (!_isTransient)
+            // If it's not transient or hover isn't enabled then there's no work to be done.
+            if (!_isTransient || ActivationEvent != MouseEvent.MouseOver)
             {
                 return;
             }
@@ -521,17 +536,21 @@ namespace MudBlazor
             // Start a leave delay to allow for re-entry.
             _leaveCts?.Cancel();
             // ReSharper restore MethodHasAsyncOverload
-            _leaveCts = new();
 
-            try
+            if (MudGlobal.MenuDefaults.HoverDelay > 0)
             {
-                // Wait a bit to allow the cursor to move from the activator to the items popover.
-                await Task.Delay(MudGlobal.MenuDefaults.HoverDelay, _leaveCts.Token);
-            }
-            catch (TaskCanceledException)
-            {
-                // Leave action was canceled.
-                return;
+                _leaveCts = new();
+
+                try
+                {
+                    // Wait a bit to allow the cursor to move from the activator to the items popover.
+                    await Task.Delay(MudGlobal.MenuDefaults.HoverDelay, _leaveCts.Token);
+                }
+                catch (TaskCanceledException)
+                {
+                    // Leave action was canceled.
+                    return;
+                }
             }
 
             // Close the menu only if no child menus are still active.
