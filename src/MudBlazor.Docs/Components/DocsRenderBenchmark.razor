@@ -8,17 +8,17 @@
 }
 
 @code {
-
     [Inject] public NavigationManager NavMan { get; set; }
     [CascadingParameter] public DocsPage DocsPage { get; set; }
 
-    public bool IsTestEnvironment => NavMan.BaseUri.Contains("localhost") || NavMan.Uri.Contains("dev.mudblazor.com");
+    public bool IsTestEnvironment { get; set; }
 
     private double _renderMs;
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
+        IsTestEnvironment = NavMan.BaseUri.Contains("localhost") || NavMan.Uri.Contains("dev.mudblazor.com");
         if (DocsPage != null)
             DocsPage.Rendered += OnDocsPageRendered;
     }

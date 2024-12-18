@@ -1,57 +1,29 @@
-﻿@implements IDisposable
-@inject IRenderQueueService RenderQueue
+﻿@inject IRenderQueueService RenderQueue
 
-@if (_showContent || RenderImmediately)
+@if (Visible)
 {
     @ChildContent
 }
 
 @code {
-
+    private bool Visible { get; set; }
     [Parameter] public RenderFragment ChildContent { get; set; }
-    [Parameter] public bool RenderImmediately { get; set; }
-
-    private bool _showContent = false;
-    private bool _disposed = false;
-    public event Action<QueuedContent> Rendered;
-    public event Action<QueuedContent> Disposed;
 
     protected override void OnInitialized()
     {
-        base.OnInitialized();
-        if (!RenderImmediately)
-            RenderQueue.Enqueue(this);
+        RenderQueue.Enqueue(this);
     }
 
-    protected override void OnAfterRender(bool firstRender)
+    /// <summary>
+    /// Displays this section.
+    /// </summary>
+    /// <param name="token">The token for if rendering is canceled.</param>
+    public async Task ShowAsync(CancellationToken token = default)
     {
-        base.OnAfterRender(firstRender);
-        if (_disposed)
-            return;
-        if (_showContent && Rendered != null)
+        if (!Visible && !token.IsCancellationRequested)
         {
-            Rendered?.Invoke(this);
-            Rendered = null;
+            Visible = true;
+            await InvokeAsync(StateHasChanged);
         }
-    }
-
-    public void Render()
-    {
-        if (_disposed)
-            return;
-        _showContent = true;
-        InvokeAsync(StateHasChanged);
-    }
-
-    public bool IsDisposed => _disposed;
-    public bool IsRendered => _showContent;
-
-    public void Dispose()
-    {
-        _disposed = true;
-        Rendered = null;
-        if (!_showContent)
-            Disposed?.Invoke(this);
-        Disposed = null;
     }
 }

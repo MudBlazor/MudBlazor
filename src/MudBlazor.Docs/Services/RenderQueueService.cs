@@ -2,107 +2,110 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 using MudBlazor.Docs.Components;
 
-namespace MudBlazor.Docs.Services
+namespace MudBlazor.Docs.Services;
+
+/// <summary>
+/// Implements deferred rendering features for a service.
+/// </summary>
+public interface IRenderQueueService
 {
-    public interface IRenderQueueService
+    /// <summary>
+    /// Queues a component for rendering.
+    /// </summary>
+    /// <param name="component">The content to render.</param>
+    Task Enqueue(QueuedContent component);
+
+    /// <summary>
+    /// The number of sections rendered immediately before being deferred.
+    /// </summary>
+    int Capacity { get; }
+
+    /// <summary>
+    /// Waits for all pending content to finish rendering.
+    /// </summary>
+    Task WaitUntilEmpty();
+
+    /// <summary>
+    /// Clears all pending render operations.
+    /// </summary>
+    void Clear();
+}
+
+/// <summary>
+/// A service for rendering queued content.
+/// </summary>
+public class RenderQueueService : IRenderQueueService
+{
+    private CancellationTokenSource _cancelRenderSource = new();
+    private CancellationToken _cancelToken;
+    private Queue<QueuedContent> _components = [];
+    private Task _renderTask;
+    private int count;
+
+    /// <summary>
+    /// The number of sections rendered immediately before being deferred.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>2</c>.  Should be the number of sections guaranteed to fill the height of the browser.
+    /// </remarks>
+    public int Capacity { get; init; } = 2;
+
+    /// <inheritdoc />
+    public void Clear()
     {
-        int Capacity { get; }
-
-        void Enqueue(QueuedContent component);
-
-        Task WaitUntilEmpty();
-
-        void Clear();
+        // Cancel any pending renders
+        _cancelRenderSource.Cancel();
+        // Reset the queue
+        _components.Clear();
+        count = 0;
+        // Start a new token to cancel the next queue
+        _cancelRenderSource = new();
+        _cancelToken = _cancelRenderSource.Token;
     }
 
-    public class RenderQueueService : IRenderQueueService
+    /// <inheritdoc />
+    public async Task Enqueue(QueuedContent component)
     {
-        private TaskCompletionSource _tcs;
-        private readonly Queue<QueuedContent> _queue = new();
-
-        public int Capacity { get; init; }
-
-        public RenderQueueService()
+        count++;
+        // Should we defer rendering?
+        if (count <= Capacity)
         {
-            Capacity = 3;
+            // No. Show the content immediately
+            await component.ShowAsync(_cancelToken);
         }
-
-        public void Clear()
+        else
         {
-            lock (_queue)
+            // Is this the first deferred section?
+            if (_components.Count == 0)
             {
-                _queue.Clear();
-                _tcs?.TrySetResult();
-                _tcs = null;
+                // Yes.  Start processing the queue
+                _renderTask = BeginRenderAsync();
             }
-        }
-
-        void IRenderQueueService.Enqueue(QueuedContent component)
-        {
-            bool renderImmediately;
-            lock (_queue)
-            {
-                renderImmediately = _queue.Count == 0;
-                _queue.Enqueue(component);
-                component.Rendered += OnComponentRendered;
-                component.Disposed += OnComponentDisposed;
-            }
-            if (renderImmediately)
-                component.Render();
-        }
-
-        private async void RenderNext()
-        {
-            QueuedContent componentToRender = null;
-            lock (_queue)
-            {
-                while (_queue.Count > 0)
-                {
-                    var component = _queue.Dequeue();
-                    if (component.IsDisposed || component.IsRendered)
-                    {
-                        component.Rendered -= OnComponentRendered;
-                        component.Disposed -= OnComponentDisposed;
-                        continue;
-                    }
-                    componentToRender = component;
-                    break;
-                }
-                if (componentToRender == null)
-                {
-                    _tcs?.TrySetResult();
-                    _tcs = null;
-                    return;
-                }
-            }
-            await Task.Delay(1);
-            componentToRender.Render();
-        }
-
-        private void OnComponentRendered(QueuedContent component)
-        {
-            RenderNext();
-        }
-
-        private void OnComponentDisposed(QueuedContent component)
-        {
-            RenderNext();
-        }
-
-        public Task WaitUntilEmpty()
-        {
-            lock (_queue)
-            {
-                if (_queue.Count == 0)
-                    return Task.CompletedTask;
-                if (_tcs == null)
-                    _tcs = new TaskCompletionSource();
-                return _tcs.Task;
-            }
+            // Yes.  Render it later
+            _components.Enqueue(component);
         }
     }
+
+    /// <summary>
+    /// Begins displaying deferred sections.
+    /// </summary>
+    public async Task BeginRenderAsync()
+    {
+        // Let the first page render occur
+        await Task.Delay(500, _cancelToken);
+        // Now process all queued sections
+        while (_components.TryDequeue(out var component))
+        {
+            // Show the section
+            await component.ShowAsync(_cancelToken);
+            // Let the render occur for a moment
+            await Task.Delay(10, _cancelToken);
+        }
+    }
+
+    /// <inheritdoc />
+    public Task WaitUntilEmpty() => _renderTask;
 }

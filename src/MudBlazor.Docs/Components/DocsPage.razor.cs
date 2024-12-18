@@ -2,11 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Models;
 using MudBlazor.Docs.Services;
@@ -23,10 +19,8 @@ namespace MudBlazor.Docs.Components
         private NavigationFooterLink _previous;
         private NavigationFooterLink _next;
         private NavigationSection _section;
-        private Stopwatch _stopwatch = Stopwatch.StartNew();
+        private Stopwatch _stopwatch;
         private string _anchor = null;
-        private bool _displayView;
-        private string _componentName;
         private bool _renderAds;
         [Inject] NavigationManager NavigationManager { get; set; }
 
@@ -38,25 +32,9 @@ namespace MudBlazor.Docs.Components
         public event Action<Stopwatch> Rendered;
         private Dictionary<DocsPageSection, MudPageContentSection> _sectionMapper = new();
 
-        private int _sectionCount;
-
-        public int SectionCount
-        {
-            get
-            {
-                return _sectionCount;
-            }
-        }
-
-        public int IncrementSectionCount()
-        {
-            return Interlocked.Increment(ref _sectionCount);
-        }
-
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            RenderQueue.Clear();
             var relativePath = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
             if (relativePath.Contains('#'))
             {
@@ -67,21 +45,11 @@ namespace MudBlazor.Docs.Components
         protected override void OnParametersSet()
         {
             _stopwatch = Stopwatch.StartNew();
-            _sectionCount = 0;
             _previous = DocsService.Previous;
             _next = DocsService.Next;
             _section = DocsService.Section;
-
-            /*for after this release is done*/
-            _displayView = false;
-            _componentName = "temp";
-            /*if (NavigationManager.Uri.ToString().Contains("/api/") ||
-                NavigationManager.Uri.ToString().Contains("/components/"))
-            {
-                _componentName = NavigationManager.Uri.ToString().Split('/', StringSplitOptions.RemoveEmptyEntries)
-                    .LastOrDefault();
-                _displayView = true;
-            }*/
+            RenderQueue.Clear();
+            _bufferedSections.Clear();
         }
 
         protected override void OnAfterRender(bool firstRender)
