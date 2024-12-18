@@ -309,7 +309,9 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(false)]
         public void MenuItem_Should_RenderIcons(bool dense)
         {
-            var comp = Context.RenderComponent<MenuItemIconTest>();
+            var comp = Context.RenderComponent<MenuItemIconTest>(parameters => parameters
+                .Add(p => p.Dense, dense)
+            );
 
             comp.Find(".mud-menu-button-activator").Click();
             comp.WaitForElement("div.mud-popover-open");
@@ -327,9 +329,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MenuItem_Should_RenderIconColors()
         {
-            var comp = Context.RenderComponent<MenuItemIconTest>(parameters => parameters
-                .Add(p => p.Dense, false)
-            );
+            var comp = Context.RenderComponent<MenuItemIconTest>();
 
             comp.Find(".mud-menu-button-activator").Click();
             comp.WaitForElement("div.mud-popover-open");
@@ -337,9 +337,9 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-menu-item").Count.Should().Be(3);
             var items = comp.FindAll("div.mud-menu-item");
 
-            items[0].QuerySelector("svg").ClassList.Should().NotContainMatch("^mud-[a-z]+-text$");
-            items[1].QuerySelector("svg").ClassList.Should().Contain("mud-primary-text");
-            items[2].QuerySelector("svg").ClassList.Should().Contain("mud-secondary-text");
+            items[0].QuerySelector("svg").ClassList.Should().NotContainMatch("mud-*-text");
+            items[1].QuerySelector("svg").ClassList.Should().Contain("mud-secondary-text");
+            items[2].QuerySelector("svg").ClassList.Should().Contain("mud-tertiary-text");
         }
 
         /// <summary>
