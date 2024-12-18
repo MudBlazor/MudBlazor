@@ -41,7 +41,11 @@
         }
         else
         {
-            <MudMenuItem Class="mud-menu-sub-menu-activator">
+            <MudMenuItem Class="mud-menu-sub-menu-activator"
+                         Icon="@StartIcon"
+                         IconColor="@IconColor"
+                         Disabled="@Disabled"
+                         aria-label="@AriaLabel">
                 @Label
             </MudMenuItem>
         }
