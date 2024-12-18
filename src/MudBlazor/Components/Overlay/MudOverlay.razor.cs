@@ -27,7 +27,7 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
     protected string ScrimClassname =>
         new CssBuilder("mud-overlay-scrim")
             .AddClass("mud-overlay-dark", DarkBackground)
-            .AddClass("mud-overlay-light", LightBackground)
+            .AddClass("mud-overlay-light", LightBackground)            
             .Build();
 
     protected string Styles =>
@@ -166,8 +166,6 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
         Absolute ||
         // Dialog's need the separation of the overlay for display purposes
         (Class?.Contains("mud-overlay-dialog") ?? false) ||
-        // Drawer's need the separation of the overlay for display purposes. 
-        (Class?.Contains("mud-drawer-overlay") ?? false) ||
         // If the user provides a child content, the user intends for it to be part of his markup and not rendered by the MudPopoverProvider
         ChildContent != null;
 

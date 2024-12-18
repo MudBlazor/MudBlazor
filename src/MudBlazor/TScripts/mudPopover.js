@@ -358,7 +358,8 @@ window.mudpopoverHelper = {
                 const parent = provider.parentElement;
                 if (parent) {
                     const overlay = parent.querySelector('.mud-overlay');
-                    if (overlay) {
+                    // skip mud drawers
+                    if (overlay && !overlay.classList.contains('mud-drawer-overlay')) {
                         // Only assign z-index if it doesn't already exist
                         if (!overlay.style['z-index']) {
                             overlay.style['z-index'] = popoverContentNode.style['z-index'];
