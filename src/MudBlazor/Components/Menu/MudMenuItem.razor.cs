@@ -29,6 +29,13 @@ namespace MudBlazor
         public MudMenu? MudMenu { get; set; }
 
         /// <summary>
+        /// The text shown on this menu item if <see cref="ChildContent"/> is not set.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Menu.Behavior)]
+        public string? Label { get; set; }
+
+        /// <summary>
         /// The content within this menu item.
         /// </summary>
         [Parameter]

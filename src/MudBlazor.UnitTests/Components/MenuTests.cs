@@ -545,5 +545,18 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll(".mud-menu")[3].FirstElementChild.Click();
             comp.Find(".mud-popover-open > .mud-menu-list .mud-menu-item.mud-menu-sub-menu-activator").Should().NotBeNull();
         }
+
+        [Test]
+        public void Label()
+        {
+            var comp = Context.RenderComponent<MenuItemLabelTest>();
+
+            var childContent = comp.FindAll(".mud-menu-item")[0].InnerHtml;
+            var label = comp.FindAll(".mud-menu-item")[1].InnerHtml;
+            childContent.Should().BeEquivalentTo(label);
+
+            // ChildContent should override Label.
+            comp.FindAll(".mud-menu-item")[2].InnerHtml.Should().Contain("ContentText");
+        }
     }
 }

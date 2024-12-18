@@ -13,5 +13,12 @@
              Icon="@Icon"
              IconColor="@IconColor"
              IconSize="@IconSize">
-    @ChildContent
+    @if(ChildContent is null)
+    {
+        @Label
+    }
+    else
+    {
+        @ChildContent
+    }
 </MudListItem>

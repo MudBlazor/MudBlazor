@@ -1,32 +1,32 @@
 ﻿<MudPopoverProvider />
 
 <MudMenu Label="Open Nested Menu">
-    <MudMenuItem>Add reaction</MudMenuItem>
-    <MudMenuItem>Add bookmark</MudMenuItem>
+    <MudMenuItem Label="Add reaction" />
+    <MudMenuItem Label="Add bookmark" />
 
     <MudMenu Label="Format >" AnchorOrigin="Origin.TopRight" ActivationEvent="@MouseEvent.MouseOver">
         <MudMenu Label="Text >" AnchorOrigin="Origin.TopRight" ActivationEvent="@MouseEvent.MouseOver">
-            <MudMenuItem>Bold</MudMenuItem>
-            <MudMenuItem>Italic</MudMenuItem>
-            <MudMenuItem>Underline</MudMenuItem>
+            <MudMenuItem Label="Bold" />
+            <MudMenuItem Label="Italic" />
+            <MudMenuItem Label="Underline" />
 
             <MudMenu Label="Size >" AnchorOrigin="Origin.TopRight" ActivationEvent="@MouseEvent.MouseOver">
-                <MudMenuItem>Increase font size</MudMenuItem>
-                <MudMenuItem>Decrease font size</MudMenuItem>
+                <MudMenuItem Label="Increase font size" />
+                <MudMenuItem Label="Decrease font size" />
             </MudMenu>
         </MudMenu>
 
         <MudMenu Label="Points >" AnchorOrigin="Origin.TopRight" ActivationEvent="@MouseEvent.MouseOver">
-            <MudMenuItem>Bullet</MudMenuItem>
-            <MudMenuItem>Number</MudMenuItem>
+            <MudMenuItem Label="Bullet" />
+            <MudMenuItem Label="Number" />
         </MudMenu>
 
         <MudMenu Label="Alignment >" AnchorOrigin="Origin.TopRight" ActivationEvent="@MouseEvent.MouseOver">
-            <MudMenuItem>Left</MudMenuItem>
-            <MudMenuItem>Right</MudMenuItem>
+            <MudMenuItem Label="Left" />
+            <MudMenuItem Label="Right" />
         </MudMenu>
 
-        <MudMenuItem>Clear formatting</MudMenuItem>
-        <MudMenuItem>Headers and footers</MudMenuItem>
+        <MudMenuItem Label="Clear formatting" />
+        <MudMenuItem Label="Headers and footers" />
     </MudMenu>
 </MudMenu>
