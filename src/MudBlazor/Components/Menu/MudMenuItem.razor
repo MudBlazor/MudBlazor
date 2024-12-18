@@ -20,15 +20,15 @@
                  Disabled="GetDisabled()" />
     }
 
-    @if (ChildContent is null)
-    {
-        <MudText Class="mud-menu-item-text"
-                 Typo="GetTypo()">
+    <MudText Class="mud-menu-item-text"
+             Typo="GetTypo()">
+        @if (ChildContent is null)
+        {
             @Label
-        </MudText>
-    }
-    else
-    {
-        @ChildContent
-    }
+        }
+        else
+        {
+            @ChildContent
+        }
+    </MudText>
 </MudElement>
