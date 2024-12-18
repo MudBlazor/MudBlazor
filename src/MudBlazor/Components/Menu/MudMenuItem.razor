@@ -10,7 +10,7 @@
             PreventDefault="GetDisabled()"
             ClickPropagation="false"
             @attributes="UserAttributes"
-            @onclick="this.AsNonRenderingEventHandler<MouseEventArgs>(OnClickHandlerAsync)">
+            @onclick="OnClickHandlerAsync">
 
     @if (!string.IsNullOrWhiteSpace(Icon))
     {

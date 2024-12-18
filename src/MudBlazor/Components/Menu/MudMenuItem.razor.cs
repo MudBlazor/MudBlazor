@@ -115,9 +115,6 @@ namespace MudBlazor
         /// <summary>
         /// Occurs when this menu item is clicked.
         /// </summary>
-        /// <remarks>
-        /// This event will only fire if <see cref="Href"/> is not set.
-        /// </remarks>
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
 
@@ -148,7 +145,8 @@ namespace MudBlazor
             {
                 UriHelper.NavigateTo(Href, forceLoad: ForceLoad);
             }
-            else if (OnClick.HasDelegate)
+
+            if (OnClick.HasDelegate)
             {
                 await OnClick.InvokeAsync(ev);
             }
