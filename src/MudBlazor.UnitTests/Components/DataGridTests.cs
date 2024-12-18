@@ -3075,7 +3075,7 @@ namespace MudBlazor.UnitTests.Components
 
                 var listItems = popoverProvider.FindComponents<MudListItem<object>>();
                 listItems.Count.Should().Be(2);
-                var clickablePopover = listItems[1].Find(".mud-list-item");
+                var clickablePopover = listItems[1].Find(".mud-menu-item");
                 clickablePopover.Click();
 
                 //dataGrid.Instance._columns[0].Hide();
@@ -3090,7 +3090,7 @@ namespace MudBlazor.UnitTests.Components
                 popover.Instance.Open.Should().BeTrue("Should be open once clicked");
                 var listItems = popoverProvider.FindComponents<MudListItem<object>>();
                 listItems.Count.Should().Be(1);
-                var clickablePopover = listItems[0].Find(".mud-list-item");
+                var clickablePopover = listItems[0].Find(".mud-menu-item");
                 clickablePopover.Click();
 
                 var switches = comp.FindComponents<MudSwitch<bool>>();
@@ -3138,7 +3138,7 @@ namespace MudBlazor.UnitTests.Components
             popover.Instance.Open.Should().BeTrue("Should be open once clicked");
             var listItems = popoverProvider.FindComponents<MudListItem<object>>();
             listItems.Count.Should().Be(1);
-            var clickablePopover = listItems[0].Find(".mud-list-item");
+            var clickablePopover = listItems[0].Find(".mud-menu-item");
             clickablePopover.Click();
 
             // at this point, the column picker should be open
@@ -3226,7 +3226,7 @@ namespace MudBlazor.UnitTests.Components
         //    popover.Instance.Open.Should().BeTrue("Should be open once clicked");
         //    var listItems = popoverProvider.FindComponents<MudListItem>();
         //    listItems.Count.Should().Be(1);
-        //    var clickablePopover = listItems[0].Find(".mud-list-item");
+        //    var clickablePopover = listItems[0].Find(".mud-menu-item");
         //    clickablePopover.Click();
 
         //    // at this point, the column picker should be open
@@ -4447,7 +4447,7 @@ namespace MudBlazor.UnitTests.Components
             listItems.Count.Should().Be(2);
 
             // From the list items found, select the second one which is expected to be the clickable option for grouping.
-            var clickablePopover = listItems[1].Find(".mud-list-item");
+            var clickablePopover = listItems[1].Find(".mud-menu-item");
 
             // click on the grouping option to apply grouping to the data grid.
             clickablePopover.Click();
@@ -4522,7 +4522,7 @@ namespace MudBlazor.UnitTests.Components
             headerOption.Click();
             var listItems = popoverProvider.FindComponents<MudListItem<object>>();
             listItems.Count.Should().Be(4);
-            var clickablePopover = listItems[3].Find(".mud-list-item");
+            var clickablePopover = listItems[3].Find(".mud-menu-item");
             clickablePopover.Click();
             var cells = dataGrid.FindAll("td");
 
@@ -4544,7 +4544,7 @@ namespace MudBlazor.UnitTests.Components
             headerOption.Click();
             listItems = popoverProvider.FindComponents<MudListItem<object>>();
             listItems.Count.Should().Be(4);
-            clickablePopover = listItems[3].Find(".mud-list-item");
+            clickablePopover = listItems[3].Find(".mud-menu-item");
             clickablePopover.Click();
             cells = dataGrid.FindAll("td");
             // We do not need check all 10 rows as it's clear that it's ungrouped if first row pass
@@ -4620,7 +4620,7 @@ namespace MudBlazor.UnitTests.Components
             headerOption.Click();
             var listItems = popoverProvider.FindComponents<MudListItem<object>>();
             listItems.Count.Should().Be(2);
-            var clickablePopover = listItems[1].Find(".mud-list-item");
+            var clickablePopover = listItems[1].Find(".mud-menu-item");
             clickablePopover.Click();
             comp.Instance.IsAgeGrouped.Should().Be(true);
             comp.Instance.IsGenderGrouped.Should().Be(false);
@@ -4632,7 +4632,7 @@ namespace MudBlazor.UnitTests.Components
             headerOption.Click();
             listItems = popoverProvider.FindComponents<MudListItem<object>>();
             listItems.Count.Should().Be(2);
-            clickablePopover = listItems[1].Find(".mud-list-item");
+            clickablePopover = listItems[1].Find(".mud-menu-item");
             clickablePopover.Click();
             comp.Instance.IsGenderGrouped.Should().Be(true);
             comp.Instance.IsAgeGrouped.Should().Be(true, because: "Age is not bound");
@@ -4644,7 +4644,7 @@ namespace MudBlazor.UnitTests.Components
             headerOption.Click();
             listItems = popoverProvider.FindComponents<MudListItem<object>>();
             listItems.Count.Should().Be(2);
-            clickablePopover = listItems[1].Find(".mud-list-item");
+            clickablePopover = listItems[1].Find(".mud-menu-item");
             clickablePopover.Click();
             comp.Instance.IsGenderGrouped.Should().Be(false);
             comp.Instance.IsAgeGrouped.Should().Be(true, because: "Age is not bound");
@@ -4656,7 +4656,7 @@ namespace MudBlazor.UnitTests.Components
             headerOption.Click();
             listItems = popoverProvider.FindComponents<MudListItem<object>>();
             listItems.Count.Should().Be(2);
-            clickablePopover = listItems[1].Find(".mud-list-item");
+            clickablePopover = listItems[1].Find(".mud-menu-item");
             clickablePopover.Click();
             comp.Instance.IsGenderGrouped.Should().Be(false);
             comp.Instance.IsAgeGrouped.Should().Be(true, because: "Age is not bound");

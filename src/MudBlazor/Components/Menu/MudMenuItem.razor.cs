@@ -126,6 +126,8 @@ namespace MudBlazor
 
         protected Typo GetTypo() => GetDense() ? Typo.body2 : Typo.body1;
 
+        protected Size GetIconSize() => GetDense() ? Size.Small : Size.Medium;
+
         protected async Task OnClickHandlerAsync(MouseEventArgs ev)
         {
             if (GetDisabled())

@@ -314,7 +314,14 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".mud-menu-button-activator").Click();
             comp.WaitForElement("div.mud-popover-open");
 
-            comp.FindAll(".mud-menu-list div.mud-menu-item svg.mud-svg-icon.mud-menu-item-icon.mud-icon-size-medium").Count.Should().Be(3);
+            if (dense)
+            {
+                comp.FindAll(".mud-menu-list div.mud-menu-item svg.mud-svg-icon.mud-menu-item-icon.mud-icon-size-small").Count.Should().Be(3);
+            }
+            else
+            {
+                comp.FindAll(".mud-menu-list div.mud-menu-item svg.mud-svg-icon.mud-menu-item-icon.mud-icon-size-medium").Count.Should().Be(3);
+            }
         }
 
         [Test]
@@ -330,9 +337,9 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-menu-item").Count.Should().Be(3);
             var items = comp.FindAll("div.mud-menu-item");
 
-            items[0].ClassList.Should().NotContainMatch("^mud-[a-z]+-text$");
-            items[1].ClassList.Should().Contain("mud-primary-text");
-            items[2].ClassList.Should().Contain("mud-secondary-text");
+            items[0].QuerySelector("svg").ClassList.Should().NotContainMatch("^mud-[a-z]+-text$");
+            items[1].QuerySelector("svg").ClassList.Should().Contain("mud-primary-text");
+            items[2].QuerySelector("svg").ClassList.Should().Contain("mud-secondary-text");
         }
 
         /// <summary>
