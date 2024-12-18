@@ -57,6 +57,7 @@ namespace MudBlazor
         /// </summary>
         protected string ListClassname =>
             new CssBuilder("mud-menu-list")
+                .AddClass("mud-menu-dense", Dense)
                 .AddClass(ListClass)
                 .Build();
 

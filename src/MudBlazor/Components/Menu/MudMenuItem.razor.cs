@@ -19,6 +19,12 @@ namespace MudBlazor
 
         protected string Classname =>
             new CssBuilder("mud-menu-item")
+                .AddClass("mud-disabled", GetDisabled())
+                .AddClass("mud-ripple", !GetDisabled())
+                .AddClass("mud-list-item-clickable", !GetDisabled())
+                .AddClass("mud-menu-item-dense", GetDense())
+                //.AddClass($"mud-selected-item mud-{MudList?.Color.ToDescriptionString()}-text", !MultiSelection && _selected && !GetDisabled())
+                //.AddClass($"mud-{MudList?.Color.ToDescriptionString()}-hover", !MultiSelection && _selected && !GetDisabled())
                 .AddClass(Class)
                 .Build();
 
@@ -26,7 +32,7 @@ namespace MudBlazor
         /// The <see cref="MudMenu"/> which contains this item.
         /// </summary>
         [CascadingParameter]
-        public MudMenu? MudMenu { get; set; }
+        public MudMenu? ParentMenu { get; set; }
 
         /// <summary>
         /// The text shown on this menu item if <see cref="ChildContent"/> is not set.
@@ -110,24 +116,39 @@ namespace MudBlazor
         /// Occurs when this menu item is clicked.
         /// </summary>
         /// <remarks>
-        /// This event only occurs if <see cref="Href"/> is not set.
+        /// This event will only fire if <see cref="Href"/> is not set.
         /// </remarks>
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
 
+        protected string GetHtmlTag() => string.IsNullOrEmpty(Href) ? "div" : "a";
+
+        protected bool GetDisabled() => Disabled || ParentMenu?.Disabled == true;
+
+        protected bool GetDense() => ParentMenu?.Dense == true;
+
+        protected Typo GetTypo() => GetDense() ? Typo.body2 : Typo.body1;
+
         protected async Task OnClickHandlerAsync(MouseEventArgs ev)
         {
-            if (Disabled)
+            if (GetDisabled())
             {
                 return;
             }
 
-            if (AutoClose && MudMenu is not null)
+            if (AutoClose && ParentMenu is not null)
             {
-                await MudMenu.CloseAllMenusAsync();
+                await ParentMenu.CloseAllMenusAsync();
             }
 
-            if (OnClick.HasDelegate)
+            // the only case a manual Navigation is required, is when
+            // the target is empty, but a force reload is desired, all other cases are handled
+            // by the html anchor
+            if (ForceLoad && !string.IsNullOrEmpty(Href) && string.IsNullOrEmpty(Target))
+            {
+                UriHelper.NavigateTo(Href, forceLoad: ForceLoad);
+            }
+            else if (OnClick.HasDelegate)
             {
                 await OnClick.InvokeAsync(ev);
             }
