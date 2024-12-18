@@ -44,15 +44,13 @@ namespace MudBlazor.Docs.Components
         {
             get
             {
-                lock (this)
-                    return _sectionCount;
+                return _sectionCount;
             }
         }
 
         public int IncrementSectionCount()
         {
-            lock (this)
-                return _sectionCount++;
+            return Interlocked.Increment(ref _sectionCount);
         }
 
         protected override void OnInitialized()

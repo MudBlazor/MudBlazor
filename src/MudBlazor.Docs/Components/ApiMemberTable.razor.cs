@@ -36,8 +36,11 @@ public partial class ApiMemberTable
         get => _type;
         set
         {
-            _type = value;
-            Table?.ReloadServerData();
+            if (_type != value)
+            {
+                _type = value;
+                Table?.ReloadServerData();
+            }
         }
     }
 

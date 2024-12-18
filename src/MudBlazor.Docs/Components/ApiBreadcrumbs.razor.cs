@@ -14,11 +14,24 @@ namespace MudBlazor.Docs.Components;
 /// </summary>
 public partial class ApiBreadcrumbs
 {
+    private DocumentedType? _type;
+
     /// <summary>
     /// The type to display links for.
     /// </summary>
     [Parameter]
-    public DocumentedType? Type { get; set; }
+    public DocumentedType? Type
+    {
+        get => _type;
+        set
+        {
+            if (_type != value)
+            {
+                _type = value;
+                OnTypeChanged(_type);
+            }
+        }
+    }
 
     /// <summary>
     /// Gets the breadcrumb items.
@@ -26,7 +39,7 @@ public partial class ApiBreadcrumbs
     public List<BreadcrumbItem> Items { get; set; } = [];
 
     /// <inheritdoc />
-    protected override void OnParametersSet()
+    protected void OnTypeChanged(DocumentedType? type)
     {
         // Start with the top-level link
         Items = [new("Index", "/api")];

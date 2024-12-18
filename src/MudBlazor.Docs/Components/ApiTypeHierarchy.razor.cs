@@ -27,59 +27,62 @@ public sealed partial class ApiTypeHierarchy
         get => _type;
         set
         {
-            _type = value;
-            SelectedType = Type;
+            if (_type != value)
+            {
+                _type = value;
+                SelectedType = Type;
 
-            // Start with the current type
-            var primaryItem = new TreeItemData<DocumentedType>
-            {
-                Text = Type!.NameFriendly,
-                Selected = true,
-                Expanded = false,
-                Value = Type,
-                Children = [],
-            };
-            var root = new List<TreeItemData<DocumentedType>>() { primaryItem };
-            // Walk up the hierarchy to build the tree
-            var parent = Type!.BaseType;
-            while (parent != null)
-            {
-                root[0] = new TreeItemData<DocumentedType>()
+                // Start with the current type
+                var primaryItem = new TreeItemData<DocumentedType>
                 {
-                    Children = [root[0]],
-                    Expanded = true,
-                    Text = parent.NameFriendly,
-                    Value = parent
+                    Text = Type!.NameFriendly,
+                    Selected = true,
+                    Expanded = false,
+                    Value = Type,
+                    Children = [],
                 };
-                if (parent.BaseType != null)
-                {
-                    parent = parent.BaseType;
-                }
-                else
+                var root = new List<TreeItemData<DocumentedType>>() { primaryItem };
+                // Walk up the hierarchy to build the tree
+                var parent = Type!.BaseType;
+                while (parent != null)
                 {
                     root[0] = new TreeItemData<DocumentedType>()
                     {
                         Children = [root[0]],
                         Expanded = true,
-                        Text = parent.BaseTypeName,
-                        Value = new DocumentedType() { Name = "Root" }
+                        Text = parent.NameFriendly,
+                        Value = parent
                     };
-                    break;
+                    if (parent.BaseType != null)
+                    {
+                        parent = parent.BaseType;
+                    }
+                    else
+                    {
+                        root[0] = new TreeItemData<DocumentedType>()
+                        {
+                            Children = [root[0]],
+                            Expanded = true,
+                            Text = parent.BaseTypeName,
+                            Value = new DocumentedType() { Name = "Root" }
+                        };
+                        break;
+                    }
                 }
-            }
-            // Now check for types inheriting from this type
-            foreach (var descendant in ApiDocumentation.Types.Values.OrderBy(type => type.Name).Where(type => type.BaseTypeName == Type.Name))
-            {
-                primaryItem?.Children?.Add(new()
+                // Now check for types inheriting from this type
+                foreach (var descendant in ApiDocumentation.Types.Values.OrderBy(type => type.Name).Where(type => type.BaseTypeName == Type.Name))
                 {
-                    Children = [],
-                    Text = descendant.NameFriendly,
-                    Value = descendant
-                });
+                    primaryItem?.Children?.Add(new()
+                    {
+                        Children = [],
+                        Text = descendant.NameFriendly,
+                        Value = descendant
+                    });
+                }
+                // Set the items
+                Root = new ReadOnlyCollection<TreeItemData<DocumentedType>>(root);
+                StateHasChanged();
             }
-            // Set the items
-            Root = new ReadOnlyCollection<TreeItemData<DocumentedType>>(root);
-            StateHasChanged();
         }
     }
 
