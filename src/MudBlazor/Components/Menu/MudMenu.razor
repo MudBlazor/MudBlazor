@@ -13,7 +13,7 @@
     {
         @* No content was set so no need to render anything *@
     }
-    else if (ActivatorContent != null)
+    else if (ActivatorContent is not null)
     {
         <CascadingValue Value="@((IActivatable)this)" IsFixed="true">
             <div @onclick="ToggleMenuAsync" disabled="@Disabled" class="@ActivatorClassname">
@@ -25,7 +25,8 @@
     {
         if (ParentMenu is null)
         {
-            <MudButton StartIcon="@StartIcon"
+            <MudButton Class="mud-menu-button-activator"
+                       StartIcon="@StartIcon"
                        EndIcon="@EndIcon"
                        IconColor="@IconColor"
                        Color="@Color"
@@ -52,7 +53,8 @@
     }
     else
     {
-        <MudIconButton Variant="@Variant"
+        <MudIconButton Class="mud-menu-icon-button-activator"
+                       Variant="@Variant"
                        Icon="@Icon"
                        Color="@Color"
                        Size="@Size"

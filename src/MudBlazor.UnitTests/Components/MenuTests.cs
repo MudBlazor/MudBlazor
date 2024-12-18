@@ -531,5 +531,19 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "Popover should appear again.");
         }
 
+        [Test]
+        public void ActivatorClass()
+        {
+            var comp = Context.RenderComponent<MenuActivatorsTest>();
+
+            comp.FindAll(".mud-menu")[0].FirstElementChild.ClassName.Should().Contain("mud-menu-button-activator");
+
+            comp.FindAll(".mud-menu")[1].FirstElementChild.ClassName.Should().Contain("mud-menu-icon-button-activator");
+
+            comp.FindAll(".mud-menu")[2].FirstElementChild.ClassName.Should().Contain("mud-menu-activator");
+
+            comp.FindAll(".mud-menu")[3].FirstElementChild.Click();
+            comp.Find(".mud-popover-open > .mud-menu-list .mud-menu-item.mud-menu-sub-menu-activator").Should().NotBeNull();
+        }
     }
 }
