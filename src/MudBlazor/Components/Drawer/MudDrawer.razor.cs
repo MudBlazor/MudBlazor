@@ -72,6 +72,7 @@ namespace MudBlazor
                 .AddClass($"mud-drawer-overlay-{Variant.ToDescriptionString()}")
                 .AddClass($"mud-drawer-overlay-{_breakpointState.Value.ToDescriptionString()}")
                 .AddClass($"mud-drawer-overlay--initial", _initial)
+                .AddClass($"mud-skip-overlay-positioning")
                 .Build();
 
         protected string Stylename =>
