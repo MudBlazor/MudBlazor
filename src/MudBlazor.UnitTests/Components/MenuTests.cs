@@ -557,6 +557,7 @@ namespace MudBlazor.UnitTests.Components
 
             // ChildContent should override Label.
             comp.FindAll(".mud-menu-item")[2].InnerHtml.Should().Contain("ContentText");
+            comp.FindAll(".mud-menu-item")[2].InnerHtml.Should().NotContain("LabelText");
         }
     }
 }
