@@ -37,7 +37,7 @@ else
         <div class="docs-page-apilinks">
             <ul class="my-2">
                 <li>
-                    <MudLink Href="@(DocumentedType.ApiUrl)">
+                    <MudLink Href="@(DocumentedType.ApiUrl.ToLowerInvariant())">
                         <CodeInline>@($"<{Component}>")</CodeInline>
                     </MudLink>
                 </li>
@@ -46,7 +46,7 @@ else
                     @foreach (var childType in Example.ChildTypes)
                     {
                         <li>
-                            <MudLink Href="@($"api/{childType.Name}")" Class="ms-1">
+                            <MudLink Href="@($"api/{childType.Name.ToLowerInvariant()}")" Class="ms-1">
                                 - <CodeInline>@($"<{childType.Name.Replace("`1", "")}>")</CodeInline>
                             </MudLink>
                         </li>
@@ -61,7 +61,7 @@ else
     <DocsPageSection api-link-section>
         <SectionHeader Title="Pages" />
         <MudAlert Severity="Severity.Info" Class="mt-6">
-            For examples and details on the usage of this component, visit the <MudLink Href="@($"/components/{Example.Link}")" Typo="Typo.inherit">@Example.Name</MudLink> page.
+            For examples and details on the usage of this component, visit the <MudLink Href="@($"/components/{Example.Link.ToLowerInvariant()}")" Typo="Typo.inherit">@Example.Name</MudLink> page.
         </MudAlert>
     </DocsPageSection>
 }

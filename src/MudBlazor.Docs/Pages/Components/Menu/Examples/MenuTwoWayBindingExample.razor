@@ -1,0 +1,21 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudMenu Label="Open Menu" @bind-Open="_open">
+    <MudMenuItem>Enlist</MudMenuItem>
+    <MudMenuItem>Barracks</MudMenuItem>
+    <MudMenuItem>Armory</MudMenuItem>
+</MudMenu>
+
+<MudButton Color="Color.Primary" OnClick="OnOpen">Open for 1 Second</MudButton>
+<MudSwitch Color="Color.Primary" @bind-Value="_open" Label="Open Menu Switch" />
+
+@code {
+    private bool _open;
+
+    private async Task OnOpen()
+    {
+        _open = true;
+        await Task.Delay(1000);
+        _open = false;
+    }
+}

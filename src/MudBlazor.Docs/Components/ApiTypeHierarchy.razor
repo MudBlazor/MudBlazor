@@ -16,6 +16,10 @@
                         <MudIcon Icon="@Icons.Custom.Brands.MudBlazor" Color="Color.Primary" Class="mr-2" />
                         <MudText Typo="Typo.body2">@context.Text</MudText>
                     }
+                    else if(context.Text == "Enum")
+                    {
+                        <MudText Typo="Typo.body2">@context.Text</MudText>
+                    }
                     else if (!string.IsNullOrEmpty(context.Value.ApiUrl))
                     {
                         <MudLink Typo="Typo.body2" Href="@context.Value.ApiUrl">@context.Text</MudLink>

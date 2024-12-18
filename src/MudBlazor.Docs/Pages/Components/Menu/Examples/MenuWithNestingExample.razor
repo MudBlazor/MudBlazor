@@ -1,29 +1,71 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudMenu Label="Open Nested Menu" Variant="Variant.Filled" Color="Color.Primary" Dense>
-    <MudMenuItem>
-        <MudMenu ActivationEvent="MouseEvent.MouseOver" AnchorOrigin="Origin.TopRight" TransformOrigin="Origin.TopLeft" Dense>
-            <ActivatorContent>
-                <MudMenuItem>Item 1</MudMenuItem>
-            </ActivatorContent>
+<MudMenu Label="Open Nested Menu Example">
 
-            <ChildContent>
-                <MudMenuItem Href="https://mudblazor.com" Target="_blank">Open mudblazor.com in new tab</MudMenuItem>
-                <MudMenuItem Href="/" Disabled="true">Disabled Item 1.2 with navigation </MudMenuItem>
-            </ChildContent>
-        </MudMenu>
-    </MudMenuItem>
+    <MudMenuItem>Add reaction</MudMenuItem>
 
-    <MudMenuItem>
-        <MudMenu ActivationEvent="MouseEvent.MouseOver" AnchorOrigin="Origin.TopRight" TransformOrigin="Origin.TopLeft" Dense>
-            <ActivatorContent>
-                <MudMenuItem>Item 2</MudMenuItem>
-            </ActivatorContent>
+    <MudMenuItem>Add bookmark</MudMenuItem>
 
-            <ChildContent>
-                <MudMenuItem Href="/docs/overview">Item 2.1 Docs Overview</MudMenuItem>
-                <MudMenuItem>Item 2.2 </MudMenuItem>
-            </ChildContent>
-        </MudMenu>
-    </MudMenuItem>
+    <MudMenu AnchorOrigin="Origin.TopRight" ActivationEvent="@MouseEvent.MouseOver">
+        <ActivatorContent>
+            <MudMenuItem>Format ></MudMenuItem>
+        </ActivatorContent>
+
+        <ChildContent>
+            <MudMenu AnchorOrigin="Origin.TopRight" ActivationEvent="@MouseEvent.MouseOver">
+                <ActivatorContent>
+                    <MudMenuItem>Text ></MudMenuItem>
+                </ActivatorContent>
+
+                <ChildContent>
+                    <MudMenuItem>Bold</MudMenuItem>
+
+                    <MudMenuItem>Italic</MudMenuItem>
+
+                    <MudMenuItem>Underline</MudMenuItem>
+
+                    <MudMenu AnchorOrigin="Origin.TopRight" ActivationEvent="@MouseEvent.MouseOver">
+                        <ActivatorContent>
+                            <MudMenuItem>Size ></MudMenuItem>
+                        </ActivatorContent>
+
+                        <ChildContent>
+                            <MudMenuItem>Increase font size</MudMenuItem>
+
+                            <MudMenuItem>Decrease font size</MudMenuItem>
+                        </ChildContent>
+                    </MudMenu>
+                </ChildContent>
+            </MudMenu>
+
+            <MudMenu AnchorOrigin="Origin.TopRight" ActivationEvent="@MouseEvent.MouseOver">
+                <ActivatorContent>
+                    <MudMenuItem>Points ></MudMenuItem>
+                </ActivatorContent>
+
+                <ChildContent>
+                    <MudMenuItem>Bullet</MudMenuItem>
+
+                    <MudMenuItem>Number</MudMenuItem>
+                </ChildContent>
+            </MudMenu>
+
+            <MudMenu AnchorOrigin="Origin.TopRight" ActivationEvent="@MouseEvent.MouseOver">
+                <ActivatorContent>
+                    <MudMenuItem>Alignment ></MudMenuItem>
+                </ActivatorContent>
+
+                <ChildContent>
+                    <MudMenuItem>Left</MudMenuItem>
+
+                    <MudMenuItem>Right</MudMenuItem>
+                </ChildContent>
+            </MudMenu>
+
+            <MudMenuItem>Clear formatting</MudMenuItem>
+
+            <MudMenuItem>Headers and footers</MudMenuItem>
+        </ChildContent>
+    </MudMenu>
+
 </MudMenu>
