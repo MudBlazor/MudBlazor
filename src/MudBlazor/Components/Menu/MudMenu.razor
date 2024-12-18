@@ -23,19 +23,28 @@
     }
     else if (string.IsNullOrEmpty(Icon))
     {
-        <MudButton StartIcon="@StartIcon"
-                   EndIcon="@EndIcon"
-                   IconColor="@IconColor"
-                   Color="@Color"
-                   Size="@Size"
-                   Variant="@Variant"
-                   Disabled="@Disabled"
-                   Ripple="@Ripple"
-                   DropShadow="@DropShadow"
-                   OnClick="@ToggleMenuAsync"
-                   aria-label="@AriaLabel">
-            @Label
-        </MudButton>
+        if (ParentMenu is null)
+        {
+            <MudButton StartIcon="@StartIcon"
+                       EndIcon="@EndIcon"
+                       IconColor="@IconColor"
+                       Color="@Color"
+                       Size="@Size"
+                       Variant="@Variant"
+                       Disabled="@Disabled"
+                       Ripple="@Ripple"
+                       DropShadow="@DropShadow"
+                       OnClick="@ToggleMenuAsync"
+                       aria-label="@AriaLabel">
+                @Label
+            </MudButton>
+        }
+        else
+        {
+            <MudMenuItem Class="mud-menu-sub-menu-activator">
+                @Label
+            </MudMenuItem>
+        }
     }
     else
     {
