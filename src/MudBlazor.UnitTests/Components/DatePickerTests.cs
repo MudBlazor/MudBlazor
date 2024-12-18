@@ -1289,7 +1289,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("15")).Click();
 
-            ((IHtmlInputElement)comp.FindAll("input")[0]).Value.Should().Be(comp.Instance.Picker.Text);
+            comp.WaitForAssertion(() => ((IHtmlInputElement)comp.FindAll("input")[0]).Value.Should().Be(comp.Instance.Picker.Text));
         }
 
         /// <summary>
