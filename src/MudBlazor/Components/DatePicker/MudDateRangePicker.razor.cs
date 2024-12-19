@@ -10,6 +10,7 @@ namespace MudBlazor
     /// <summary>
     /// Represents a picker for a range of dates.
     /// </summary>
+    /// <seealso cref="MudDatePicker"/>
     public partial class MudDateRangePicker : MudBaseDatePicker
     {
         private DateTime? _firstDate = null, _secondDate;
@@ -109,7 +110,7 @@ namespace MudBlazor
                 if (updateValue)
                 {
                     Converter.GetError = false;
-                    if (_dateRange == null)
+                    if (_dateRange == null || (_dateRange.Start == null && _dateRange.End == null))
                     {
                         _rangeText = null;
                         await SetTextAsync(null, false);
@@ -182,9 +183,14 @@ namespace MudBlazor
         protected override Task DateFormatChangedAsync(string newFormat)
         {
             Touched = true;
-            _rangeText = new Range<string>(
-                Converter.Set(_dateRange?.Start),
-                Converter.Set(_dateRange?.End));
+            _rangeText = null;
+            if (_dateRange?.Start != null || _dateRange?.End != null)
+            {
+                _rangeText = new Range<string>(
+                    Converter.Set(_dateRange.Start),
+                    Converter.Set(_dateRange.End));
+            }
+
             return SetTextAsync(_dateRange?.ToString(Converter), false);
         }
 

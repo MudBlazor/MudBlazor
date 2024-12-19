@@ -7,7 +7,9 @@
     <td class="@Classname" style="@Stylename" colspan="@Column.FooterColSpan" @attributes="@UserAttributes">
         @if (Column.AggregateDefinition != null)
         {
-            @Column.AggregateDefinition?.GetValue(Column.PropertyExpression, items)
+            @(Column.AggregateTemplate is null 
+                ? builder => builder.AddContent(0, Column.AggregateDefinition?.GetValue(Column.PropertyExpression, items))
+                : Column.AggregateTemplate(items))
         }
         else if (Column.FooterTemplate != null)
         {

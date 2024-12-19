@@ -15,20 +15,6 @@
         <DocsPageHeader Title="@Title" IsApi="true" Component="@TypeName" />
         <DocsPageContent>
 
-            @if (ShowInheritance)
-            {
-                <DocsPageSection>
-                    <SectionHeader Title="Inheritance" />
-                    <SectionContent Outlined="true" IsApiSection="true">
-                        <MudGrid Class="pa-0">
-                            <MudItem xs="12">
-                                <ApiTypeHierarchy Type="@DocumentedType" />
-                            </MudItem>
-                        </MudGrid>
-                    </SectionContent>
-                </DocsPageSection>
-            }
-
             @if (DocumentedType.Properties.Count > 0)
             {
                 <DocsPageSection>
@@ -99,6 +85,16 @@
                 </DocsPageSection>
             }
 
+            @if (DocumentedType.Links.Count > 0)
+            {
+                <DocsPageSection>
+                    <SectionHeader Title="See Also" />
+                    <SectionContent Outlined="true" IsApiSection="true">
+                        <ApiSeeAlsoLinks Type="@DocumentedType" />
+                    </SectionContent>
+                </DocsPageSection>
+            }
+
             @if (DocumentedType.GlobalSettings.Count > 0)
             {
                 <DocsPageSection>
@@ -111,7 +107,22 @@
                         </MudGrid>
                     </SectionContent>
                 </DocsPageSection>
-            }          
+            }
+
+            @if (ShowInheritance)
+            {
+                <DocsPageSection>
+                    <SectionHeader Title="Inheritance" />
+                    <SectionContent Outlined="true" IsApiSection="true">
+                        <MudGrid Class="pa-0">
+                            <MudItem xs="12">
+                                <ApiTypeHierarchy Type="@DocumentedType" />
+                            </MudItem>
+                        </MudGrid>
+                    </SectionContent>
+                </DocsPageSection>
+            }
+
         </DocsPageContent>
     }
     else

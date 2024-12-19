@@ -6,7 +6,6 @@ using System.Diagnostics;
 
 namespace MudBlazor.Docs.Compiler;
 
-#nullable enable
 /// <summary>
 /// Represents documentation for a type.
 /// </summary>
@@ -82,4 +81,9 @@ public class DocumentedType
     /// The global settings related to this type.
     /// </summary>
     public Dictionary<string, DocumentedProperty> GlobalSettings { get; } = [];
+
+    /// <summary>
+    /// The see-also links for this type.
+    /// </summary>
+    public List<DocumentedLink> Links { get; init; } = [];
 }

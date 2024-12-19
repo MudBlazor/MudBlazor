@@ -8,10 +8,17 @@
              Target="@Target"
              ForceLoad="@ForceLoad"
              Disabled="@Disabled"
-             Class="@Class"
+             Class="@Classname"
              Style="@Style"
              Icon="@Icon"
              IconColor="@IconColor"
              IconSize="@IconSize">
-    @ChildContent
+    @if(ChildContent is null)
+    {
+        @Label
+    }
+    else
+    {
+        @ChildContent
+    }
 </MudListItem>

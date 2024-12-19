@@ -8,6 +8,11 @@ using MudBlazor.Utilities;
 namespace MudBlazor;
 
 #nullable enable
+
+/// <summary>
+/// A component for organizing the layout of page content.
+/// </summary>
+/// <seealso cref="MudItem"/>
 public partial class MudGrid : MudComponentBase
 {
     protected string Classname =>

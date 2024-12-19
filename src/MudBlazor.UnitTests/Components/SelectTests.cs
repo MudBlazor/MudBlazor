@@ -148,6 +148,26 @@ namespace MudBlazor.UnitTests.Components
             });
         }
 
+        [Test]
+        public async Task MultiSelectWithValueContainZeroTest()
+        {
+            var comp = Context.RenderComponent<MultiSelectWithValueContainZeroTest>();
+            var inputs = comp.FindAll("input");
+            inputs.Count.Should().Be(3);
+            inputs[1].GetAttribute("value").Should().Be("Value2");
+            await inputs[1].TriggerEventAsync("onpointerdown", new MouseEventArgs());
+            await Task.Delay(500);
+            var listItems = comp.FindAll(".mud-list-item");
+            foreach (var listItem in listItems)
+            {
+                await listItem.TriggerEventAsync("onclick", new MouseEventArgs());
+            }
+
+            inputs = comp.FindAll("input");
+            inputs[0].GetAttribute("value").Should().Be("Value3, Value1");
+            inputs[1].GetAttribute("value").Should().Be("Value3; Value1");
+        }
+
         /// <summary>
         /// Initial Text should be enums default value
         /// Initial render fragment in input should be the pre-selected value's items's render fragment.

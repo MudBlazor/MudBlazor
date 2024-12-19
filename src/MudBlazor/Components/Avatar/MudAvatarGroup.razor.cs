@@ -9,6 +9,7 @@ namespace MudBlazor
     /// <summary>
     /// Represents a grouping of multiple <see cref="MudAvatar"/> components.
     /// </summary>
+    /// <seealso cref="MudAvatar" />
     partial class MudAvatarGroup : MudComponentBase
     {
         private bool _childrenNeedUpdates = false;

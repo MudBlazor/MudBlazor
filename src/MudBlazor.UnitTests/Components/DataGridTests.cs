@@ -2477,6 +2477,114 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridCloseFiltersTest()
+        {
+            var comp = Context.RenderComponent<DataGridFiltersTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
+            IElement FilterButton() => dataGrid.FindAll(".filter-button")[0];
+
+            // click on the filter button
+            FilterButton().Click();
+
+            // check the number of filters displayed in the filters panel is 1
+            comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(1);
+
+            await comp.Find(".filter-operator").PointerDownAsync(new PointerEventArgs());
+
+            //set operator to CONTAINS
+            comp.FindAll(".mud-list .mud-list-item")[0].Click();
+            comp.Find(".mud-overlay").Click();
+            comp.Render();
+
+            //should be removed since no value is provided
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(0);
+
+            //set operator to NOT CONTAINS
+            FilterButton().Click();
+
+            await comp.Find(".filter-operator").PointerDownAsync(new PointerEventArgs());
+
+            comp.FindAll(".mud-list .mud-list-item")[1].Click();
+            comp.Find(".mud-overlay").Click();
+            comp.Render();
+
+            //should be removed since no value is provided
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(0);
+
+            //set operator to EQUALS
+            FilterButton().Click();
+
+            await comp.Find(".filter-operator").PointerDownAsync(new PointerEventArgs());
+
+            comp.FindAll(".mud-list .mud-list-item")[2].Click();
+            comp.Find(".mud-overlay").Click();
+            comp.Render();
+
+            //should be removed since no value is provided
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(0);
+
+            //set operator to NOT EQUALS
+            FilterButton().Click();
+
+            await comp.Find(".filter-operator").PointerDownAsync(new PointerEventArgs());
+
+            comp.FindAll(".mud-list .mud-list-item")[3].Click();
+            comp.Find(".mud-overlay").Click();
+            comp.Render();
+
+            //should be removed since no value is provided
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(0);
+
+            //set operator to STARTS WITH
+            FilterButton().Click();
+
+            await comp.Find(".filter-operator").PointerDownAsync(new PointerEventArgs());
+
+            comp.FindAll(".mud-list .mud-list-item")[4].Click();
+            comp.Find(".mud-overlay").Click();
+            comp.Render();
+
+            //should be removed since no value is provided
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(0);
+
+            //set operator to ENDS WITH
+            FilterButton().Click();
+
+            await comp.Find(".filter-operator").PointerDownAsync(new PointerEventArgs());
+
+            comp.FindAll(".mud-list .mud-list-item")[5].Click();
+            comp.Find(".mud-overlay").Click();
+            comp.Render();
+
+            //should be removed since no value is provided
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(0);
+
+            //set operator to IS EMPTY
+            FilterButton().Click();
+
+            await comp.Find(".filter-operator").PointerDownAsync(new PointerEventArgs());
+
+            comp.FindAll(".mud-list .mud-list-item")[6].Click();
+            comp.Find(".mud-overlay").Click();
+            comp.Render();
+
+            //should maintain filter, no value is required
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
+
+            //set operator to IS NOT EMPTY
+            FilterButton().Click();
+
+            await comp.Find(".filter-operator").PointerDownAsync(new PointerEventArgs());
+
+            comp.FindAll(".mud-list .mud-list-item")[7].Click();
+            comp.Find(".mud-overlay").Click();
+            comp.Render();
+
+            //should maintain filter, no value is required
+            dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
+        }
+
+        [Test]
         public async Task DataGridFiltersTest()
         {
             var comp = Context.RenderComponent<DataGridFiltersTest>();
@@ -3020,8 +3128,6 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DataGridColumnHiddenTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnHiddenTest.Model>>();
 
-            //Console.WriteLine(dataGrid.FindAll(".mud-table-head th").ToMarkup());
-
             var popoverProvider = comp.FindComponent<MudPopoverProvider>();
             var popover = dataGrid.FindComponent<MudPopover>();
             popover.Instance.Open.Should().BeFalse("Should start as closed");
@@ -3082,15 +3188,8 @@ namespace MudBlazor.UnitTests.Components
                 };
             });
 
-            comp = Context.RenderComponent<DataGridColumnHiddenTest>();
-            switches = comp.FindComponents<MudSwitch<bool>>();
-            switches.Count.Should().Be(6);
-            switches[0].Instance.Value.Should().BeTrue();
-            switches[1].Instance.Value.Should().BeTrue();
-            switches[2].Instance.Value.Should().BeTrue();
-            switches[3].Instance.Value.Should().BeTrue();
-            switches[4].Instance.Value.Should().BeTrue();
-            switches[5].Instance.Value.Should().BeTrue();
+            // cannot render the component again there can be only one mudpopoverprovider
+
             // 6 columns, 6 hidden
             dataGrid.FindAll(".mud-table-head th").Count.Should().Be(0);
 
@@ -3102,16 +3201,6 @@ namespace MudBlazor.UnitTests.Components
                     await column.HiddenState.SetValueAsync(false);
                 };
             });
-
-            comp = Context.RenderComponent<DataGridColumnHiddenTest>();
-            switches = comp.FindComponents<MudSwitch<bool>>();
-            switches.Count.Should().Be(6);
-            switches[0].Instance.Value.Should().BeFalse();
-            switches[1].Instance.Value.Should().BeFalse();
-            switches[2].Instance.Value.Should().BeFalse();
-            switches[3].Instance.Value.Should().BeFalse();
-            switches[4].Instance.Value.Should().BeFalse();
-            switches[5].Instance.Value.Should().BeFalse();
 
             // 6 columns, 0 hidden
             dataGrid.FindAll(".mud-table-head th").Count.Should().Be(6);
@@ -4139,7 +4228,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DataGridSelectOnRowClickTest()
+        public async Task DataGridMultiSelectOnRowClickTest()
         {
             var comp = Context.RenderComponent<DataGridMultiSelectionTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridMultiSelectionTest.Item>>();
@@ -4148,9 +4237,57 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance.SelectedItems.Count.Should().Be(0);
             dataGrid.FindAll("tbody.mud-table-body td")[1].Click();
             dataGrid.Instance.SelectedItems.Count.Should().Be(1);
+            dataGrid.FindAll(".mud-checkbox-true").Count.Should().Be(1); //ensure selection is rendered
+
+            // click on the second row
+            dataGrid.FindAll("tbody.mud-table-body td")[2].Click();
+            dataGrid.Instance.SelectedItems.Count.Should().Be(2);
+            dataGrid.FindAll(".mud-checkbox-true").Count.Should().Be(2);
 
             var parameters = new List<ComponentParameter>();
             parameters.Add(ComponentParameter.CreateParameter(nameof(dataGrid.Instance.SelectOnRowClick), false));
+            dataGrid.SetParametersAndRender(parameters.ToArray());
+
+            // deselect all programmatically
+            await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectAllAsync(false));
+            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.FindAll(".mud-checkbox-true").Count.Should().Be(0);
+
+            // click on the first row
+            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.FindAll("tbody.mud-table-body td")[1].Click();
+            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.FindAll(".mud-checkbox-true").Count.Should().Be(0);
+        }
+
+        [Test]
+        public async Task DataGridSingleSelectOnRowClickTest()
+        {
+            var comp = Context.RenderComponent<DataGridSingleSelectionTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSingleSelectionTest.Item>>();
+
+            // click on the first row
+            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.FindAll("tbody.mud-table-body td")[1].Click();
+            dataGrid.Instance.SelectedItems.Count.Should().Be(1);
+            dataGrid.FindAll(".mud-checkbox-true").Count.Should().Be(1); //ensure selection is rendered
+
+            // click on the second row
+            dataGrid.FindAll("tbody.mud-table-body td")[2].Click();
+            dataGrid.Instance.SelectedItems.Count.Should().Be(1);
+            dataGrid.FindAll(".mud-checkbox-true").Count.Should().Be(1);
+
+
+            // click on the second row
+            dataGrid.FindAll("tbody.mud-table-body td")[2].Click();
+            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.FindAll(".mud-checkbox-true").Count.Should().Be(0);
+
+            var parameters = new List<ComponentParameter>
+            {
+                ComponentParameter.CreateParameter(nameof(dataGrid.Instance.SelectOnRowClick), false)
+            };
+
             dataGrid.SetParametersAndRender(parameters.ToArray());
 
             // deselect all programmatically
@@ -4161,6 +4298,7 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance.SelectedItems.Count.Should().Be(0);
             dataGrid.FindAll("tbody.mud-table-body td")[1].Click();
             dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.FindAll(".mud-checkbox-true").Count.Should().Be(0);
         }
 
         [Test]
