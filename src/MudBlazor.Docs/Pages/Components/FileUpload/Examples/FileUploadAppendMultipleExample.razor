@@ -4,6 +4,7 @@
     <ActivatorContent>
         <MudButton Variant="Variant.Filled"
                    Color="Color.Primary"
+                   OnClick="@context.OpenFilePickerAsync"
                    StartIcon="@Icons.Material.Filled.CloudUpload">
             AppendMultipleFiles = true
         </MudButton>
@@ -26,7 +27,7 @@
 <MudFileUpload T="IReadOnlyList<IBrowserFile>" AppendMultipleFiles="false">
     <ActivatorContent>
         <MudButton Variant="Variant.Filled"
-                   Color="Color.Primary"
+                   Color="Color.Primary" OnClick="@context.OpenFilePickerAsync"
                    StartIcon="@Icons.Material.Filled.CloudUpload">
             AppendMultipleFiles = false
         </MudButton>

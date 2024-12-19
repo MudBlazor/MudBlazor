@@ -3,6 +3,7 @@
 <MudFileUpload T="IBrowserFile">
     <ActivatorContent>
         <MudButton Variant="Variant.Filled"
+                   OnClick="@context.OpenFilePickerAsync"
                    Color="Color.Primary">
             Single File
         </MudButton>
@@ -22,6 +23,7 @@
 <MudFileUpload T="IReadOnlyList<IBrowserFile>" multiple>
     <ActivatorContent>
         <MudButton Variant="Variant.Filled"
+                   OnClick="@context.OpenFilePickerAsync"
                    Color="Color.Secondary">
             Multiple Files
         </MudButton>

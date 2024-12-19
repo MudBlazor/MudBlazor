@@ -4,6 +4,7 @@
     <ActivatorContent>
         <MudButton Variant="Variant.Filled"
                    Color="Color.Primary"
+                   OnClick="@context.OpenFilePickerAsync"
                    StartIcon="@Icons.Material.Filled.CloudUpload">
             Upload Files
         </MudButton>
@@ -14,6 +15,7 @@
     <ActivatorContent>
         <MudFab Color="Color.Secondary"
                 StartIcon="@Icons.Material.Filled.Image"
+                OnClick="@context.OpenFilePickerAsync"
                 Label="Load picture" />
     </ActivatorContent>
 </MudFileUpload>
@@ -21,6 +23,7 @@
 <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles">
     <ActivatorContent>
         <MudFab Color="Color.Success"
+                OnClick="@context.OpenFilePickerAsync"
                 StartIcon="@Icons.Material.Filled.AttachFile" />
     </ActivatorContent>
 </MudFileUpload>
@@ -28,6 +31,7 @@
 <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles">
     <ActivatorContent>
         <MudIconButton Color="Color.Info"
+                       OnClick="@context.OpenFilePickerAsync"
                        Icon="@Icons.Material.Filled.PhotoCamera">
         </MudIconButton>
     </ActivatorContent>
@@ -36,6 +40,7 @@
 <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles" Disabled>
     <ActivatorContent>
         <MudButton Variant="Variant.Filled"
+                   OnClick="@context.OpenFilePickerAsync"
                    Color="Color.Primary">
             Disabled Button
         </MudButton>

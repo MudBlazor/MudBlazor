@@ -4,6 +4,7 @@
     <ActivatorContent>
         <MudButton Variant="Variant.Filled"
                    Color="Color.Primary"
+                   OnClick="@context.OpenFilePickerAsync"
                    StartIcon="@Icons.Material.Filled.CloudUpload">
             Upload using FileValueChanged
         </MudButton>
@@ -14,6 +15,7 @@
     <ActivatorContent>
         <MudButton Variant="Variant.Filled"
                    Color="Color.Primary"
+                   OnClick="@context.OpenFilePickerAsync"
                    StartIcon="@Icons.Material.Filled.CloudUpload">
             Upload using OnFilesChanged
         </MudButton>
