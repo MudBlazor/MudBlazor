@@ -68,9 +68,11 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         .AddClass(Class)
         .Build();
 
+    private bool IsAnchor => !string.IsNullOrWhiteSpace(Href);
+
     private bool IsClickable => GetDisabled() is false
                                 && GetReadonly() is false
-                                && (ChipSet is not null || OnClick.HasDelegate || !string.IsNullOrEmpty(Href));
+                                && (ChipSet is not null || OnClick.HasDelegate || IsAnchor);
 
     private bool IsClosable => OnClose.HasDelegate || ChipSet?.AllClosable == true;
 
@@ -351,15 +353,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         return Value;
     }
 
-    protected string GetHtmlTag()
-    {
-        if (!string.IsNullOrWhiteSpace(Href))
-        {
-            return "a";
-        }
-
-        return "div";
-    }
+    protected string GetHtmlTag() => !IsAnchor ? "div" : "a";
 
     protected string? GetRel()
     {
@@ -407,15 +401,8 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
             await SelectedState.SetValueAsync(!SelectedState.Value);
             await ChipSet.OnChipSelectedChangedAsync(this, SelectedState.Value);
         }
-        if (Href != null)
-        {
-            // TODO: use MudElement to render <a> and this code can be removed. we know that it has potential problems on iOS
-            if (string.IsNullOrWhiteSpace(Target))
-                UriHelper?.NavigateTo(Href, ForceLoad);
-            else if (JsApiService != null)
-                await JsApiService.Open(Href, Target);
-        }
-        else
+
+        if (!IsAnchor)
         {
             await OnClick.InvokeAsync(ev);
         }

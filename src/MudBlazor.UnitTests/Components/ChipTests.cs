@@ -79,7 +79,9 @@ namespace MudBlazor.UnitTests.Components
 
         [Test]
         [Combinatorial]
-        public void Chip_ShouldRenderAnchorIfLinkSet([Values("", "ASDF", "_blank")] string target, [Values(true, false)] bool disabled)
+        public void Chip_ShouldRenderAnchorIfLinkSet(
+            [Values("", "ASDF", "_blank")] string target,
+            [Values(true, false)] bool disabled)
         {
             var comp = Context.RenderComponent<MudChip<string>>(parameters => parameters
                 .Add(p => p.Href, "https://example.com")
