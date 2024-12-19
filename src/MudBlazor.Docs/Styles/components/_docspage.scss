@@ -1,5 +1,13 @@
-﻿.docs-page-content {
+.docs-page-content {
   min-height: calc(100vh - 600px);
+
+  &:has(.docs-alert-404) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4em;
+  }
 }
 
 .docs-page-content-navigation-drawer {

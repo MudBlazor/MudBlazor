@@ -3,8 +3,13 @@
 @namespace MudBlazor.Docs.Pages.Api
 
 <style>
-    .mud-table-toolbar { height: auto; }
-    [id] { scroll-margin-top: 65px; }
+    .mud-table-toolbar {
+        height: auto;
+    }
+
+    [id] {
+        scroll-margin-top: 65px;
+    }
 </style>
 
 <DocsPage>
@@ -102,7 +107,11 @@
     {
         <DocsPageHeader Title="404 Not Found" />
         <DocsPageContent>
-            <MudAlert Severity="Severity.Warning">Sorry, the type @TypeName was not found.</MudAlert>
+            <MudBlazorLogo Style="width: 25%; height: 25%" />
+
+            <MudAlert Class="docs-alert-404" Icon="@Icons.Material.Outlined.CloudOff">
+                Sorry, the type <CodeInline>@TypeName</CodeInline> was not found.
+            </MudAlert>
         </DocsPageContent>
     }
 </DocsPage>
