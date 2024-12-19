@@ -19,7 +19,7 @@ namespace MudBlazor
     /// A form component for uploading one or more files.  For <c>T</c>, use either <c>IBrowserFile</c> for a single file or <c>IReadOnlyList&lt;IBrowserFile&gt;</c> for multiple files.
     /// </summary>
     /// <typeparam name="T">Either <see cref="IBrowserFile"/> for a single file or <see cref="IReadOnlyList{IBrowserFile}">IReadOnlyList&lt;IBrowserFile&gt;</see> for multiple files.</typeparam>
-    public partial class MudFileUpload<T> : MudFormComponent<T, string>, IActivatable
+    public partial class MudFileUpload<T> : MudFormComponent<T, string>
     {
         private readonly ParameterState<T?> _filesState;
 
@@ -42,6 +42,12 @@ namespace MudBlazor
         protected string Classname =>
             new CssBuilder("mud-file-upload")
                 .AddClass(Class)
+                .Build();
+
+        protected string DragClass =>
+            new CssBuilder("mud-file-upload-dragarea")
+                .AddClass("relative rounded-lg border-2 border-dashed pa-4")
+                .AddClass("mud-border-primary", Dragging)
                 .Build();
 
         /// <summary>
@@ -84,7 +90,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FileUpload.Behavior)]
-        public RenderFragment? ActivatorContent { get; set; }
+        public RenderFragment<MudFileUpload<T>>? ActivatorContent { get; set; }
 
         /// <summary>
         /// The template used for selected files.
@@ -122,6 +128,27 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FileUpload.Appearance)]
         public bool Hidden { get; set; } = true;
+
+        /// <summary>
+        /// Enables a drag and drop zone inside the MudFileUpload        
+        /// </summary>
+        /// <remarks>
+        /// Defaults to false
+        /// Any click events will be intercepted by the input element, if you must have a button inside the MudFileUpload add the style pointer-events: auto
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FileUpload.Behavior)]
+        public bool DragandDrop { get; set; }
+
+        /// <summary>
+        /// Indicates whether the Drag Event has started for the built in drag and drop area to update the border
+        /// </summary>
+        /// <remarks>
+        /// Defaults to false
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FileUpload.Appearance)]
+        public bool Dragging { get; set; }
 
         /// <summary>
         /// The CSS classes applied to the internal <see cref="InputFile"/>.
@@ -169,6 +196,8 @@ namespace MudBlazor
         [CascadingParameter(Name = "ParentReadOnly")]
         private bool ParentReadOnly { get; set; }
 
+        internal string FullInputStyle => InputStyle + (DragandDrop ? "position: absolute;width: 100%;height: 100%;opacity: 0;top: 0;left: 0;" : "");
+
         protected bool GetDisabledState() => Disabled || ParentDisabled || ParentReadOnly;
 
         private int _numberOfActiveFileInputs = 1;
@@ -190,14 +219,6 @@ namespace MudBlazor
         /// </summary>
         public async Task OpenFilePickerAsync()
             => await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudFileUpload.openFilePicker", GetActiveInputId());
-
-        /// <summary>
-        /// Opens the file picker.
-        /// </summary>
-        /// <param name="activator">The object which raised the event.</param>
-        /// <param name="args">The coordinates of the mouse when clicked.</param>
-        public void Activate(object activator, MouseEventArgs args)
-            => _ = OpenFilePickerAsync();
 
         private async Task OnChangeAsync(InputFileChangeEventArgs args)
         {

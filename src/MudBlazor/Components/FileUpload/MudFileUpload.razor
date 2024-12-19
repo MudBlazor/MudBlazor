@@ -11,29 +11,48 @@
         {
             var localIndex = index;
             <InputFile @key="@localIndex"
-                       OnChange="OnChangeAsync"
-                       class="@GetInputClass(localIndex)"
-                       style="@InputStyle"
-                       hidden="@(Hidden ? "" : null)"
-                       multiple="@(typeof(T) == typeof(IReadOnlyList<IBrowserFile>) ? "" : null)"
-                       accept="@Accept"
-                       disabled="@(GetDisabledState())"
-                       @attributes="UserAttributes"
-                       id="@GetInputId(localIndex)"
-                       required="@Required"
-                       aria-required="@Required.ToString().ToLowerInvariant()" />
+            OnChange="OnChangeAsync"
+            class="@GetInputClass(localIndex)"
+            style="@FullInputStyle"
+            hidden="@(Hidden ? "" : null)"
+            multiple="@(typeof(T) == typeof(IReadOnlyList<IBrowserFile>) ? "" : null)"
+            accept="@Accept"
+            disabled="@(GetDisabledState())"
+            @attributes="UserAttributes"
+            id="@GetInputId(localIndex)"
+            required="@Required"
+            aria-required="@Required.ToString().ToLowerInvariant()" />
         }
-        @if (ActivatorContent != null)
+        @if (ActivatorContent == null)
         {
-            <CascadingValue Value="@((IActivatable)this)"
-                            IsFixed="true">
-                <CascadingValue Name="ParentDisabled"
-                                Value="GetDisabledState()">
-                    <div @onclick="OpenFilePickerAsync"
-                         disabled="@GetDisabledState()">
-                        @ActivatorContent
-                    </div>
-                </CascadingValue>
+            @if (DragandDrop)
+            {
+                <MudPaper Outlined="true"
+                          Height="100%"
+                          Width="100%"
+                          Class="@DragClass"
+                          Style="@DragStyle">
+                    Drag and drop files here or click
+                </MudPaper>
+            }
+            else
+            {
+                <MudButton Variant="Variant.Filled"
+                           StartIcon="@Icons.Material.Filled.CloudUpload"
+                           OnClick="@OpenFilePickerAsync">
+                    Click to Upload
+                </MudButton>
+            }
+
+        }
+        else
+        {
+            <CascadingValue Name="ParentDisabled"
+                            Value="GetDisabledState()">
+                <div @onclick="OpenFilePickerAsync"
+                     disabled="@GetDisabledState()">
+                    @ActivatorContent(this)
+                </div>
             </CascadingValue>
         }
         @if (SelectedTemplate != null)
