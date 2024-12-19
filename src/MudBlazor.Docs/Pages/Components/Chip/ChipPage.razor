@@ -86,5 +86,29 @@
             </SectionContent>
         </DocsPageSection>
 
+        <DocsPageSection>
+            <SectionHeader Title="Link Chip">
+                <Description>Set the <CodeInline>Href</CodeInline> parameter and the MudChip will render an anchor element. If you also set the <CodeInline>Target</CodeInline> parameter to <CodeInline>_blank</CodeInline>, the component will add <CodeInline>rel="noopener"</CodeInline> automatically.
+                    If you set the <CodeInline>Disabled</CodeInline> parameter to <CodeInline>true</CodeInline>, the component will render a chip with no <CodeInline>href</CodeInline> attribute.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(ChipLinkExample)" ShowCode="false">
+                <ChipLinkExample/>
+            </SectionContent>
+
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="Custom Rel Content">
+                        <Description>
+                            If you set a non-null string to <CodeInline>Rel</CodeInline> parameter, the component will add <CodeInline>rel</CodeInline> to the rendered chip with the value you specified. This overrides the automatic addition of <CodeInline>rel="noopener"</CodeInline> when setting <CodeInline>Target</CodeInline> to <CodeInline>_blank</CodeInline>. If you want to preserve <CodeInline>noopener</CodeInline>, add it manually along with your custom <CodeInline>Rel</CodeInline> value, for example <CodeInline>rel="nofollow noopener"</CodeInline>.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(ChipLinkRelExample)" ShowCode="false">
+                        <ChipLinkRelExample />
+                    </SectionContent>
+                </DocsPageSection>
+            </SectionSubGroups>
+        </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>

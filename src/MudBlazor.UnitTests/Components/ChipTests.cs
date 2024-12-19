@@ -77,18 +77,18 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => comp.Find("#chip-click-test-expected-value").InnerHtml.Should().Be(""));
         }
 
-        /// <summary>
-        /// If href set on chip pointer cursor should be visible
-        /// </summary>
         [Test]
-        public void Chip_Href_Cursor_Test()
+        [Combinatorial]
+        public void Chip_ShouldRenderAnchorIfLinkSet([Values("", "ASDF", "_blank")] string target, [Values(true, false)] bool disabled)
         {
-            var comp = Context.RenderComponent<ChipHrefCursorTest>();
+            var comp = Context.RenderComponent<MudChip<string>>(parameters => parameters
+                .Add(p => p.Href, "https://example.com")
+                .Add(p => p.Target, target)
+                .Add(p => p.Disabled, disabled)
+            );
 
-            // chip should have mud-clickable and mud-ripple classes
-            var chip = comp.Find("div.mud-chip");
-            chip.ClassName.Should().Contain("mud-clickable");
-            chip.ClassName.Should().Contain("mud-ripple");
+            // The chip should be rendered as an anchor tag if the href is set, regardless of the other parameters.
+            comp.Find(".mud-chip").TagName.Should().Be("A");
         }
 
         [Test]
@@ -97,6 +97,20 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<ChipAvatarContentTest>();
 
             comp.Find("div.mud-chip").InnerHtml.Should().Contain("mud-avatar");
+        }
+
+        [Test]
+        [TestCase(null, "_blank", "noopener")]
+        [TestCase("nofollow", "_blank", "nofollow")]
+        [TestCase(null, "_self", null)]
+        public void RelShouldBeExpectedValue(string rel, string target, string expected)
+        {
+            var comp = Context.RenderComponent<MudChip<string>>(parameters => parameters
+                .Add(p => p.Rel, rel)
+                .Add(p => p.Target, target)
+            );
+
+            comp.Find(".mud-chip").GetAttribute("rel").Should().Be(expected);
         }
     }
 }

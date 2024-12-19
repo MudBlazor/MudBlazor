@@ -7,12 +7,16 @@
 <div class="mud-chip-container"
      id="@_chipContainerId"
      @onkeydown="@HandleKeyDownAsync">
-    <div tabindex="@(IsClickable ? 0 : -1)"
-         role="@RoleAttribute"
-         @attributes="UserAttributes"
-         class="@Classname"
-         style="@Style"
-         @onclick="this.AsNonRenderingEventHandler<MouseEventArgs>(OnClickAsync)">
+    <MudElement HtmlTag="@GetHtmlTag()"
+                tabindex="@(IsClickable ? 0 : -1)"
+                role="@RoleAttribute"
+                href="@Href"
+                target="@Target"
+                rel="@GetRel()"
+                @attributes="UserAttributes"
+                Class="@Classname"
+                Style="@Style"
+                @onclick="this.AsNonRenderingEventHandler<MouseEventArgs>(OnClickAsync)">
         @{
             if (AvatarContent is not null)
             {
@@ -52,5 +56,5 @@
                                tabindex="-1"/>
             }
         </span>
-    </div>
+    </MudElement>
 </div>

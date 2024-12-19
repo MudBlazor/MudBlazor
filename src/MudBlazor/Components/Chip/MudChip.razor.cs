@@ -262,6 +262,16 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     public string? Target { get; set; }
 
     /// <summary>
+    /// The relationship between the current document and the linked document when <see cref="Href"/> is set.
+    /// </summary>
+    /// <remarks>
+    /// This property is typically used by web crawlers to get more information about a link.  Common values can be found here: <see href="https://www.w3schools.com/tags/att_a_rel.asp" />
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Chip.ClickAction)]
+    public string? Rel { get; set; }
+
+    /// <summary>
     /// The text label for the chip.
     /// </summary>
     /// <remarks>
@@ -339,6 +349,26 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         if (typeof(T) == typeof(string) && Value is null && Text is not null)
             return (T)(object)Text;
         return Value;
+    }
+
+    protected string GetHtmlTag()
+    {
+        if (!string.IsNullOrWhiteSpace(Href))
+        {
+            return "a";
+        }
+
+        return "div";
+    }
+
+    protected string? GetRel()
+    {
+        if (Rel is null && Target == "_blank")
+        {
+            return "noopener";
+        }
+
+        return Rel;
     }
 
     /// <inheritdoc />
