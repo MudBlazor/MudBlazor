@@ -16,7 +16,7 @@
     <ActivatorContent>
         <MudPaper Height="300px"
                   Outlined="true"
-                  Class="@_dragClass">
+                  Class="@_dragClass" @onclick="@context.OpenFilePickerAsync">
             <MudText Typo="Typo.h6">
                 Drag and drop files here or click
             </MudText>

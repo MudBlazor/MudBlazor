@@ -2,22 +2,14 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Threading;
-using System.Threading.Tasks;
-using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.Mocks;
-using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.FileUpload;
 using NUnit.Framework;
 
@@ -427,6 +419,128 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Instance.FilesChangedCount.Should().Be(2);
             comp.Instance.OnFilesChangedCount.Should().Be(2);
+        }
+
+        /// <summary>
+        /// Tests drag and drop functionality
+        /// </summary>
+        [Test]
+        public async Task FileUpload_DragAndDrop_Test()
+        {
+            var comp = Context.RenderComponent<MudFileUpload<IBrowserFile>>(parameters => parameters
+                .Add(x => x.DragandDrop, true));
+
+            // Verify drag area exists
+            comp.Find(".mud-file-upload-dragarea").Should().NotBeNull();
+
+            // Test drag enter
+            await comp.InvokeAsync(() => comp.Find(".mud-file-upload-dragarea").DragEnter());
+            comp.Find(".mud-file-upload-dragarea").ClassList.Should().Contain("mud-border-primary");
+
+            // Test drag leave
+            await comp.InvokeAsync(() => comp.Find("input").DragLeave());
+            comp.Find(".mud-file-upload-dragarea").ClassList.Should().NotContain("mud-border-primary");
+
+            // Test drag end
+            await comp.InvokeAsync(() => comp.Find("input").DragEnd());
+            comp.Find(".mud-file-upload-dragarea").ClassList.Should().NotContain("mud-border-primary");
+        }
+
+        /// <summary>
+        /// Tests RemoveFile functionality for single file
+        /// </summary>
+        [Test]
+        public async Task FileUpload_RemoveFile_SingleFile_Test()
+        {
+            var fileName = "test.txt";
+            var defaultFile = new DummyBrowserFile(fileName, DateTimeOffset.Now, 0, "text/plain", []);
+            var comp = Context.RenderComponent<MudFileUpload<IBrowserFile>>(parameters => parameters
+                .Add(x => x.Files, defaultFile));
+
+            // Verify initial state
+            comp.Instance.Files.Should().NotBeNull();
+            comp.Instance.Filenames.Should().ContainSingle(x => x == fileName);
+
+            // Remove file
+            await comp.InvokeAsync(() => comp.Instance.RemoveFile(fileName));
+
+            // Verify file was removed
+            comp.Instance.Files.Should().BeNull();
+            comp.Instance.Filenames.Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// Tests RemoveFile functionality for multiple files
+        /// </summary>
+        [Test]
+        public async Task FileUpload_RemoveFile_MultipleFiles_Test()
+        {
+            var files = new List<IBrowserFile>
+            {
+                new DummyBrowserFile("test1.txt", DateTimeOffset.Now, 0, "text/plain", []),
+                new DummyBrowserFile("test2.txt", DateTimeOffset.Now, 0, "text/plain", [])
+            };
+
+            var comp = Context.RenderComponent<MudFileUpload<IReadOnlyList<IBrowserFile>>>(parameters => parameters
+                .Add(x => x.Files, files));
+
+            // Verify initial state
+            comp.Instance.Files.Should().HaveCount(2);
+            comp.Instance.Filenames.Should().HaveCount(2);
+
+            // Remove one file
+            await comp.InvokeAsync(() => comp.Instance.RemoveFile("test1.txt"));
+
+            // Verify file was removed
+            comp.Instance.Files.Should().HaveCount(1);
+            comp.Instance.Filenames.Should().ContainSingle(x => x == "test2.txt");
+        }
+
+        /// <summary>
+        /// Tests SelectedTemplate rendering
+        /// </summary>
+        [Test]
+        public void FileUpload_SelectedTemplate_Test()
+        {
+            var files = new List<IBrowserFile>
+            {
+                new DummyBrowserFile("test1.txt", DateTimeOffset.Now, 0, "text/plain", []),
+                new DummyBrowserFile("test2.txt", DateTimeOffset.Now, 0, "text/plain", [])
+            };
+
+            var comp = Context.RenderComponent<MudFileUpload<IReadOnlyList<IBrowserFile>>>(parameters => parameters
+                .Add(x => x.Files, files)
+                .Add(x => x.SelectedTemplate, context => builder =>
+                {
+                    builder.AddContent(0, $"Selected files: {context?.Count ?? 0}");
+                }));
+
+            comp.Markup.Should().Contain("Selected files: 2");
+
+            // Test with null files
+            comp.SetParametersAndRender(parameters => parameters.Add(x => x.Files, null));
+            comp.Markup.Should().Contain("Selected files: 0");
+        }
+
+        /// <summary>
+        /// Tests SuppressOnChangeWhenInvalid behavior
+        /// </summary>
+        [Test]
+        public async Task FileUpload_SuppressOnChangeWhenInvalid_Test()
+        {
+            var onFilesChangedCount = 0;
+            var comp = Context.RenderComponent<MudFileUpload<IBrowserFile>>(parameters => parameters
+                .Add(x => x.Required, true)
+                .Add(x => x.SuppressOnChangeWhenInvalid, true)
+                .Add(x => x.OnFilesChanged, _ => onFilesChangedCount++));
+
+            // Upload empty file to trigger validation error
+            var emptyFile = new DummyBrowserFile("empty.txt", DateTimeOffset.Now, 0, "text/plain", []);
+            await comp.InvokeAsync(() => comp.FindComponent<InputFile>().Instance.OnChange.InvokeAsync(new InputFileChangeEventArgs([emptyFile])));
+
+            // Verify OnFilesChanged was not called due to validation error
+            onFilesChangedCount.Should().Be(0);
+            comp.Instance.Error.Should().BeTrue();
         }
     }
 }

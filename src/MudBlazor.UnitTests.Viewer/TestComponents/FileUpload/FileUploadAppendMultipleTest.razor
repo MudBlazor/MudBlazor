@@ -4,7 +4,7 @@
                @bind-Files="Files"
                @bind-Files:after="@OnFilesChangedAsync">
     <ActivatorContent>
-        <MudButton>
+        <MudButton OnClick="@context.OpenFilePickerAsync">
             Open file picker
         </MudButton>
     </ActivatorContent>

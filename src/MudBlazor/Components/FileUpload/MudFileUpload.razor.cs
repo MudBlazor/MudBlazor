@@ -244,7 +244,7 @@ namespace MudBlazor
         /// Removes a file from <see cref="Files"/> by its filename.
         /// </summary>
         /// <param name="filename">The name of the file to remove.</param>
-        private async Task RemoveFile(string filename)
+        public async Task RemoveFile(string filename)
         {
             switch (_filesState.Value)
             {
