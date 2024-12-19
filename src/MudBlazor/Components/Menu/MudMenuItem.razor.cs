@@ -23,8 +23,6 @@ namespace MudBlazor
                 .AddClass("mud-ripple", !GetDisabled())
                 .AddClass("mud-list-item-clickable", !GetDisabled())
                 .AddClass("mud-menu-item-dense", GetDense())
-                //.AddClass($"mud-selected-item mud-{MudList?.Color.ToDescriptionString()}-text", !MultiSelection && _selected && !GetDisabled())
-                //.AddClass($"mud-{MudList?.Color.ToDescriptionString()}-hover", !MultiSelection && _selected && !GetDisabled())
                 .AddClass(Class)
                 .Build();
 
@@ -140,9 +138,8 @@ namespace MudBlazor
                 await ParentMenu.CloseAllMenusAsync();
             }
 
-            // the only case a manual Navigation is required, is when
-            // the target is empty, but a force reload is desired, all other cases are handled
-            // by the html anchor
+            // Manual navigation is only required when the target is empty and a
+            // forced reload is necessary; all other scenarios are managed by the HTML anchor.
             if (ForceLoad && !string.IsNullOrEmpty(Href) && string.IsNullOrEmpty(Target))
             {
                 UriHelper.NavigateTo(Href, forceLoad: ForceLoad);
