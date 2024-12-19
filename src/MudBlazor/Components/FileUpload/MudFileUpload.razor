@@ -14,11 +14,14 @@
             OnChange="OnChangeAsync"
             class="@GetInputClass(localIndex)"
             style="@FullInputStyle"
-            hidden="@(Hidden ? "" : null)"
+            hidden="@(Hidden && !_dragging.Value ? "" : null)"
             multiple="@(typeof(T) == typeof(IReadOnlyList<IBrowserFile>) ? "" : null)"
             accept="@Accept"
             disabled="@(GetDisabledState())"
             @attributes="UserAttributes"
+            @ondrop="@(() => _dragging.SetValueAsync(false))"
+            @ondragleave="@(() => _dragging.SetValueAsync(false))"
+            @ondragend="@(() => _dragging.SetValueAsync(false))"
             id="@GetInputId(localIndex)"
             required="@Required"
             aria-required="@Required.ToString().ToLowerInvariant()" />
@@ -28,22 +31,22 @@
             @if (DragandDrop)
             {
                 <MudPaper Outlined="true"
-                          Height="100%"
-                          Width="100%"
-                          Class="@DragClass"
-                          Style="@DragStyle">
-                    Drag and drop files here or click
+                @onclick="@OpenFilePickerAsync"
+                @ondragenter="@(() => _dragging.SetValueAsync(true))"
+                Style="@DragStyle"
+                Class="@DragClass">
+                    <MudIcon Class="mb-2" Icon="@Icons.Material.Filled.Inbox" Color="Color.Primary" Size="Size.Large" />
+                    <MudText Color="Color.Primary">Drag and drop files here or click</MudText>
                 </MudPaper>
             }
             else
             {
-                <MudButton Variant="Variant.Filled"
-                           StartIcon="@Icons.Material.Filled.CloudUpload"
-                           OnClick="@OpenFilePickerAsync">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                StartIcon="@Icons.Material.Filled.CloudUpload"
+                OnClick="@OpenFilePickerAsync">
                     Click to Upload
                 </MudButton>
             }
-
         }
         else
         {
@@ -58,6 +61,23 @@
         @if (SelectedTemplate != null)
         {
             @SelectedTemplate(_filesState.Value)
+        }
+        else
+        {
+            <p class="mud-file-upload-filelist mt-1">
+                @foreach (var file in Filenames)
+                {
+                    <MudTooltip Text="">
+
+                    </MudTooltip>
+                    <MudChip T="string"
+                             Color="Color.Secondary"
+                             Text="@file"
+                             CloseIcon="@Icons.Material.Outlined.Delete"
+                             OnClose="@(() => RemoveFile(file))"
+                             tabindex="-1" />
+                }
+            </p>
         }
     </InputContent>
 </MudInputControl>

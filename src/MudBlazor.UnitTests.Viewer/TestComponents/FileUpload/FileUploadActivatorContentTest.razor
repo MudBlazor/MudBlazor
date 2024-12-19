@@ -1,0 +1,84 @@
+<style>
+    .mud-button-root:disabled {
+        pointer-events: auto;
+    }
+</style>
+
+-----------------
+
+<MudText>Blank FileUpload Drag False</MudText>
+<MudFileUpload T="IReadOnlyList<IBrowserFile>"
+               AppendMultipleFiles />
+
+-----------------
+
+<MudText>Blank FileUpload Drag True</MudText>
+<MudFileUpload T="IReadOnlyList<IBrowserFile>"
+               DragStyle="height: 300px;width: 300px;"
+               AppendMultipleFiles
+               DragAndDrop />
+
+
+----------------
+
+<MudText>File Upload with Activator Content</MudText>
+<MudFileUpload T="IReadOnlyList<IBrowserFile>"
+               @ref="@_fileUpload"
+               AppendMultipleFiles
+               DragandDrop="true"
+               tabindex="-1"
+               Dragging="@_dragging"
+               DraggingChanged="@ClearDragClass"
+               @ondragenter="@SetDragClass">
+    <ActivatorContent>
+        <MudPaper Height="300px"
+                  Outlined="true"
+                  @onclick="@context.OpenFilePickerAsync"
+                  Class="@_dragClass">
+            <MudText Typo="Typo.h6">
+                Drag and drop files here or click
+            </MudText>
+            @foreach (var file in context.Filenames)
+            {
+                <MudChip T="string"
+                         Color="Color.Dark"
+                         Text="@file"
+                         tabindex="-1" />
+            }
+            <MudToolBar Gutters="@false"
+                        Class="relative d-flex justify-end gap-4 z-11">
+                <MudButton Color="Color.Primary"
+                           OnClick="@context.OpenFilePickerAsync"
+                           Variant="Variant.Filled">
+                    Open file picker
+                </MudButton>
+                <MudButton Color="Color.Error"
+                           Disabled="@(!context.Filenames.Any())"
+                           OnClick="@context.ClearAsync"
+                           Variant="Variant.Filled">
+                    Clear
+                </MudButton>
+            </MudToolBar>
+        </MudPaper>
+    </ActivatorContent>
+    <SelectedTemplate></SelectedTemplate>
+</MudFileUpload>
+
+@code {
+
+#nullable enable
+    public static string __description__ = "A test for using components inside ActivatorContent that don't activate.";
+    private const string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full";
+    private string _dragClass = DefaultDragClass;
+
+    private bool _dragging = false;
+    private MudFileUpload<IReadOnlyList<IBrowserFile>>? _fileUpload;
+
+    private void SetDragClass()
+    {
+        _dragClass = $"{DefaultDragClass} mud-border-primary";
+    }
+
+    private void ClearDragClass()
+        => _dragClass = DefaultDragClass;
+}

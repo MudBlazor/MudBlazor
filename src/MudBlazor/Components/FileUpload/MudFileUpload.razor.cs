@@ -4,10 +4,8 @@
 
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
-using MudBlazor.Interfaces;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
@@ -22,6 +20,7 @@ namespace MudBlazor
     public partial class MudFileUpload<T> : MudFormComponent<T, string>
     {
         private readonly ParameterState<T?> _filesState;
+        private readonly ParameterState<bool> _dragging;
 
         [Inject]
         private IJSRuntime JsRuntime { get; set; } = null!;
@@ -35,6 +34,9 @@ namespace MudBlazor
             _filesState = registerScope.RegisterParameter<T?>(nameof(Files))
                 .WithParameter(() => Files)
                 .WithEventCallback(() => FilesChanged);
+            _dragging = registerScope.RegisterParameter<bool>(nameof(Dragging))
+                .WithParameter(() => Dragging)
+                .WithEventCallback(() => DraggingChanged);
         }
 
         private readonly string _id = Identifier.Create();
@@ -46,8 +48,8 @@ namespace MudBlazor
 
         protected string DragClass =>
             new CssBuilder("mud-file-upload-dragarea")
-                .AddClass("relative rounded-lg border-2 border-dashed pa-4")
-                .AddClass("mud-border-primary", Dragging)
+                .AddClass("relative d-flex rounded-lg border-2 border-dashed pa-4 mud-width-full mud-height-full justify-center align-center flex-column")
+                .AddClass("mud-border-primary", _dragging.Value)
                 .Build();
 
         /// <summary>
@@ -69,6 +71,13 @@ namespace MudBlazor
         public EventCallback<T?> FilesChanged { get; set; }
 
         /// <summary>
+        /// Occurs when <see cref="Dragging"/> has changed.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FileUpload.Behavior)]
+        public EventCallback<bool> DraggingChanged { get; set; }
+
+        /// <summary>
         /// Occurs when the internal files have changed.
         /// </summary>
         [Parameter]
@@ -86,7 +95,7 @@ namespace MudBlazor
         public bool AppendMultipleFiles { get; set; }
 
         /// <summary>
-        /// The custom content which, when clicked, opens the file picker.
+        /// The custom content which includes Context to Open the picker.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FileUpload.Behavior)]
@@ -141,13 +150,13 @@ namespace MudBlazor
         public bool DragandDrop { get; set; }
 
         /// <summary>
-        /// Indicates whether the Drag Event has started for the built in drag and drop area to update the border
+        /// Enables the input to be visible for the ondrop event.
         /// </summary>
         /// <remarks>
-        /// Defaults to false
+        /// Once the input is visible, ondrop, ondragleave, ondragend will turn Dragging to false, hiding the input again.
         /// </remarks>
         [Parameter]
-        [Category(CategoryTypes.FileUpload.Appearance)]
+        [Category(CategoryTypes.FileUpload.Behavior)]
         public bool Dragging { get; set; }
 
         /// <summary>
@@ -169,6 +178,16 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FileUpload.Appearance)]
         public string? InputStyle { get; set; }
+
+        /// <summary>
+        /// The CSS styles applied to the internal <see cref="MudPaper"/> drag and drop area.
+        /// </summary>
+        /// <remarks>
+        /// These styles apply when <see cref="DragandDrop"/> is <c>true</c> and no custom ActivatorContent has been created.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FileUpload.Appearance)]
+        public string? DragStyle { get; set; }
 
         /// <summary>
         /// The maximum number of files retrieved during a call to <see cref="InputFileChangeEventArgs.GetMultipleFiles(int)"/>.
@@ -196,7 +215,21 @@ namespace MudBlazor
         [CascadingParameter(Name = "ParentReadOnly")]
         private bool ParentReadOnly { get; set; }
 
-        internal string FullInputStyle => InputStyle + (DragandDrop ? "position: absolute;width: 100%;height: 100%;opacity: 0;top: 0;left: 0;" : "");
+        /// <summary>
+        /// The uploaded file or filenames.
+        /// </summary>
+        /// <remarks>
+        /// When <c>T</c> is <see cref="IBrowserFile" />, a single filename is returned.<br />
+        /// When <c>T</c> is <see cref="IReadOnlyList{IBrowserFile}">IReadOnlyList&lt;IBrowserFile&gt;</see>, multiple filenames are returned.
+        /// </remarks>
+        public IReadOnlyList<string> Filenames => _filesState.Value switch
+        {
+            IBrowserFile singleFile => [singleFile.Name],
+            IReadOnlyList<IBrowserFile> fileList => fileList.Select(f => f.Name).ToList(),
+            _ => []
+        };
+
+        internal string FullInputStyle => InputStyle + (DragandDrop ? "position: absolute;width: 100%;height: 100%;opacity: 0;top: 0;left: 0;z-index: 2;" : "");
 
         protected bool GetDisabledState() => Disabled || ParentDisabled || ParentReadOnly;
 
@@ -206,6 +239,30 @@ namespace MudBlazor
             : $"{InputClass} d-none";
         private string GetInputId(int fileInputIndex) => $"{_id}-{fileInputIndex}";
         private string GetActiveInputId() => $"{_id}-{_numberOfActiveFileInputs}";
+
+        /// <summary>
+        /// Removes a file from <see cref="Files"/> by its filename.
+        /// </summary>
+        /// <param name="filename">The name of the file to remove.</param>
+        private async Task RemoveFile(string filename)
+        {
+            switch (_filesState.Value)
+            {
+                case IBrowserFile singleFile when singleFile.Name == filename:
+                    await _filesState.SetValueAsync(default); // Remove the single file by setting Files to null/default
+                    break;
+
+                case IReadOnlyList<IBrowserFile> fileList:
+                    var updatedList = fileList.Where(file => file.Name != filename).ToList();
+                    await _filesState.SetValueAsync((T)(object)updatedList); // Cast to T to update Files
+                    break;
+
+                default:
+                    // Do nothing if Files is null or an unsupported type
+                    break;
+            }
+        }
+
 
         public async Task ClearAsync()
         {
