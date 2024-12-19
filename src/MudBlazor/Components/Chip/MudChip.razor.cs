@@ -353,7 +353,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         return Value;
     }
 
-    protected string GetHtmlTag() => !IsAnchor ? "div" : "a";
+    protected string GetHtmlTag() => IsAnchor ? "a" : "div";
 
     protected string? GetRel()
     {
