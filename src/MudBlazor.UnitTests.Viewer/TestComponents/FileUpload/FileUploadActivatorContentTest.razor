@@ -38,7 +38,7 @@
             <MudText Typo="Typo.h6">
                 Drag and drop files here or click
             </MudText>
-            @foreach (var file in context.Filenames)
+            @foreach (var file in context.GetFilenames)
             {
                 <MudChip T="string"
                          Color="Color.Dark"
@@ -53,7 +53,7 @@
                     Open file picker
                 </MudButton>
                 <MudButton Color="Color.Error"
-                           Disabled="@(!context.Filenames.Any())"
+                           Disabled="@(!context.GetFilenames.Any())"
                            OnClick="@context.ClearAsync"
                            Variant="Variant.Filled">
                     Clear

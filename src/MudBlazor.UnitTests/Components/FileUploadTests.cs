@@ -459,14 +459,14 @@ namespace MudBlazor.UnitTests.Components
 
             // Verify initial state
             comp.Instance.Files.Should().NotBeNull();
-            comp.Instance.Filenames.Should().ContainSingle(x => x == fileName);
+            comp.Instance.GetFilenames.Should().ContainSingle(x => x == fileName);
 
             // Remove file
             await comp.InvokeAsync(() => comp.Instance.RemoveFile(fileName));
 
             // Verify file was removed
             comp.Instance.Files.Should().BeNull();
-            comp.Instance.Filenames.Should().BeEmpty();
+            comp.Instance.GetFilenames.Should().BeEmpty();
         }
 
         /// <summary>
@@ -486,14 +486,14 @@ namespace MudBlazor.UnitTests.Components
 
             // Verify initial state
             comp.Instance.Files.Should().HaveCount(2);
-            comp.Instance.Filenames.Should().HaveCount(2);
+            comp.Instance.GetFilenames.Should().HaveCount(2);
 
             // Remove one file
             await comp.InvokeAsync(() => comp.Instance.RemoveFile("test1.txt"));
 
             // Verify file was removed
             comp.Instance.Files.Should().HaveCount(1);
-            comp.Instance.Filenames.Should().ContainSingle(x => x == "test2.txt");
+            comp.Instance.GetFilenames.Should().ContainSingle(x => x == "test2.txt");
         }
 
         /// <summary>

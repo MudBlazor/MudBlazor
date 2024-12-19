@@ -14,14 +14,14 @@
             OnChange="OnChangeAsync"
             class="@GetInputClass(localIndex)"
             style="@FullInputStyle"
-            hidden="@(Hidden && !_dragging.Value ? "" : null)"
+            hidden="@(Hidden && !_draggingState.Value ? "" : null)"
             multiple="@(typeof(T) == typeof(IReadOnlyList<IBrowserFile>) ? "" : null)"
             accept="@Accept"
             disabled="@(GetDisabledState())"
             @attributes="UserAttributes"
-            @ondrop="@(() => _dragging.SetValueAsync(false))"
-            @ondragleave="@(() => _dragging.SetValueAsync(false))"
-            @ondragend="@(() => _dragging.SetValueAsync(false))"
+            @ondrop="@(() => _draggingState.SetValueAsync(false))"
+            @ondragleave="@(() => _draggingState.SetValueAsync(false))"
+            @ondragend="@(() => _draggingState.SetValueAsync(false))"
             id="@GetInputId(localIndex)"
             required="@Required"
             aria-required="@Required.ToString().ToLowerInvariant()" />
@@ -32,7 +32,7 @@
             {
                 <MudPaper Outlined="true"
                 @onclick="@OpenFilePickerAsync"
-                @ondragenter="@(() => _dragging.SetValueAsync(true))"
+                @ondragenter="@(() => _draggingState.SetValueAsync(true))"
                 Style="@DragStyle"
                 Class="@DragClass">
                     <MudIcon Class="mb-2" Icon="@Icons.Material.Filled.Inbox" Color="Color.Primary" Size="Size.Large" />
@@ -48,7 +48,7 @@
                 </MudButton>
             }
             <p class="mud-file-upload-filelist mt-1">
-                @foreach (var file in Filenames)
+                @foreach (var file in GetFilenames)
                 {
                     <MudChip T="string"
                              Color="Color.Secondary"

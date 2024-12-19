@@ -20,7 +20,7 @@ namespace MudBlazor
     public partial class MudFileUpload<T> : MudFormComponent<T, string>
     {
         private readonly ParameterState<T?> _filesState;
-        private readonly ParameterState<bool> _dragging;
+        private readonly ParameterState<bool> _draggingState;
 
         [Inject]
         private IJSRuntime JsRuntime { get; set; } = null!;
@@ -34,7 +34,7 @@ namespace MudBlazor
             _filesState = registerScope.RegisterParameter<T?>(nameof(Files))
                 .WithParameter(() => Files)
                 .WithEventCallback(() => FilesChanged);
-            _dragging = registerScope.RegisterParameter<bool>(nameof(Dragging))
+            _draggingState = registerScope.RegisterParameter<bool>(nameof(Dragging))
                 .WithParameter(() => Dragging)
                 .WithEventCallback(() => DraggingChanged);
         }
@@ -49,7 +49,7 @@ namespace MudBlazor
         protected string DragClass =>
             new CssBuilder("mud-file-upload-dragarea")
                 .AddClass("relative d-flex rounded-lg border-2 border-dashed pa-4 mud-width-full mud-height-full justify-center align-center flex-column")
-                .AddClass("mud-border-primary", _dragging.Value)
+                .AddClass("mud-border-primary", _draggingState.Value)
                 .Build();
 
         /// <summary>
@@ -222,12 +222,15 @@ namespace MudBlazor
         /// When <c>T</c> is <see cref="IBrowserFile" />, a single filename is returned.<br />
         /// When <c>T</c> is <see cref="IReadOnlyList{IBrowserFile}">IReadOnlyList&lt;IBrowserFile&gt;</see>, multiple filenames are returned.
         /// </remarks>
-        public IReadOnlyList<string> Filenames => _filesState.Value switch
+        public IReadOnlyList<string> GetFilenames()
         {
-            IBrowserFile singleFile => [singleFile.Name],
-            IReadOnlyList<IBrowserFile> fileList => fileList.Select(f => f.Name).ToList(),
-            _ => []
-        };
+            return _filesState.Value switch
+            {
+                IBrowserFile singleFile => [singleFile.Name],
+                IReadOnlyList<IBrowserFile> fileList => fileList.Select(f => f.Name).ToList(),
+                _ => []
+            };
+        }
 
         internal string FullInputStyle => InputStyle + (DragandDrop ? "position: absolute;width: 100%;height: 100%;opacity: 0;top: 0;left: 0;z-index: 2;" : "");
 
@@ -241,7 +244,7 @@ namespace MudBlazor
         private string GetActiveInputId() => $"{_id}-{_numberOfActiveFileInputs}";
 
         /// <summary>
-        /// Removes a file from <see cref="Files"/> by its filename.
+        /// Removes a file from <see cref="Files"/> by its filename if T is an  <see cref="IBrowserFile" /> or <see cref="IReadOnlyList{IBrowserFile}">IReadOnlyList&lt;IBrowserFile&gt;</see>.
         /// </summary>
         /// <param name="filename">The name of the file to remove.</param>
         public async Task RemoveFile(string filename)
@@ -256,13 +259,8 @@ namespace MudBlazor
                     var updatedList = fileList.Where(file => file.Name != filename).ToList();
                     await _filesState.SetValueAsync((T)(object)updatedList); // Cast to T to update Files
                     break;
-
-                default:
-                    // Do nothing if Files is null or an unsupported type
-                    break;
             }
         }
-
 
         public async Task ClearAsync()
         {
