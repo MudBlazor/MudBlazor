@@ -1,10 +1,7 @@
 ﻿@page "/components/datepicker"
-@page "/components/MudDatePicker"
 
 <DocsPage>
-    <DocsPageHeader Title="Date Picker">
-        <Description>Provides the user with a simple way to select a date.</Description>
-    </DocsPageHeader>
+    <DocsPageHeader Title="Date Picker" Component="@nameof(MudDatePicker)" />
     <DocsPageContent>
 
         <DocsPageSection>
@@ -14,21 +11,21 @@
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(DatePickerBasicUsageExample)" ShowCode="false">
-                <DatePickerBasicUsageExample/>
+                <DatePickerBasicUsageExample />
             </SectionContent>
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Input Masking">
                 <Description>
-                    By setting the <CodeInline>Mask</CodeInline> parameter, an editable DatePicker can be used with any suitable 
+                    By setting the <CodeInline>Mask</CodeInline> parameter, an editable DatePicker can be used with any suitable
                     <MudLink Href="/features/masking">input mask</MudLink>, preferably a <CodeInline>DateMask</CodeInline> which
-                    has built-in date awareness. But other masks like <CodeInline>PatternMask</CodeInline> will work as well, even 
+                    has built-in date awareness. But other masks like <CodeInline>PatternMask</CodeInline> will work as well, even
                     if they allow to input invalid dates. Make sure the <CodeInline>DateFormat</CodeInline> fits the mask!
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(DatePickerMaskExample)" ShowCode="false">
-                <DatePickerMaskExample/>
+                <DatePickerMaskExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -43,13 +40,13 @@
                 <DatePickerTextParseExample />
             </SectionContent>
         </DocsPageSection>
-        
+
         <DocsPageSection>
             <SectionHeader Title="Read Only">
                 <Description>If <CodeInline>ReadOnly</CodeInline> is set to true, the DatePicker can be used but the value will remain unchanged regardless of the actions performed or the values entered.</Description>
             </SectionHeader>
             <SectionContent Code="@nameof(DatePickerReadOnlyExample)" ShowCode="false" FullWidth="false">
-                <DatePickerReadOnlyExample/>
+                <DatePickerReadOnlyExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -61,7 +58,7 @@
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(DatePickerDisableCustomizeDaysExample)" ShowCode="false" FullWidth="false">
-                <DatePickerDisableCustomizeDaysExample/>
+                <DatePickerDisableCustomizeDaysExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -70,7 +67,7 @@
                 <Description>You can add buttons by using the <CodeInline>PickerActions</CodeInline> render fragment. If <CodeInline>AutoClose</CodeInline> is set to true and PickerActions are defined, selecting a day will close the MudDatePicker.</Description>
             </SectionHeader>
             <SectionContent Code="@nameof(DatePickerActionButtonsExample)" ShowCode="false">
-                <DatePickerActionButtonsExample/>
+                <DatePickerActionButtonsExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -79,7 +76,7 @@
                 <Description>When you set the <CodeInline>Culture</CodeInline> parameter, the DatePicker will use culture-specific month names, weekday names and even different calendars.</Description>
             </SectionHeader>
             <SectionContent Code="@nameof(DatePickerInternationalizationExample)" ShowCode="false">
-                <DatePickerInternationalizationExample/>
+                <DatePickerInternationalizationExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -88,7 +85,7 @@
                 <Description></Description>
             </SectionHeader>
             <SectionContent Code="@nameof(DatePickerDialogExample)">
-                <DatePickerDialogExample/>
+                <DatePickerDialogExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -97,7 +94,7 @@
                 <Description></Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(DatePickerStaticExample)">
-                <DatePickerStaticExample/>
+                <DatePickerStaticExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -106,7 +103,7 @@
                 <Description>By default, it opens to Date, but can be set to Year or Month.</Description>
             </SectionHeader>
             <SectionContent Code="@nameof(DatePickerViewsExample)">
-                <DatePickerViewsExample/>
+                <DatePickerViewsExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -115,16 +112,16 @@
                 <Description></Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Class="demo-datetime-margin" Code="@nameof(DatePickerColorExample)">
-                <DatePickerColorExample/>
+                <DatePickerColorExample />
             </SectionContent>
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Elevation">
-                <Description>You can change the elevation with the <CodeInline>Elevation</CodeInline> parameter. The default value is 0 for static and 8 for inline.</Description>
+                <Description>You can change the elevation with the <CodeInline>Elevation</CodeInline> parameter. The default level is 8 for Inline, and 0 for Static or Dialog.</Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(DatePickerElevationExample)">
-                <DatePickerElevationExample/>
+                <DatePickerElevationExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -137,7 +134,7 @@
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(DatePickerGoToDateExample)" DarkenBackground="true" ShowCode="false">
-                <DatePickerGoToDateExample/>
+                <DatePickerGoToDateExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -150,7 +147,7 @@
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(DatePickerFixedValuesExample)" ShowCode="false">
-                <DatePickerFixedValuesExample/>
+                <DatePickerFixedValuesExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -159,7 +156,7 @@
                 <Description></Description>
             </SectionHeader>
             <SectionContent Code="@nameof(DateRangePickerUsageExample)" ShowCode="false">
-                <DateRangePickerUsageExample/>
+                <DateRangePickerUsageExample />
             </SectionContent>
         </DocsPageSection>
 

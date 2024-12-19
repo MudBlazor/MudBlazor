@@ -18,8 +18,8 @@
                          ErrorText="@GetErrorText()"
                          Disabled="@GetDisabledState()"
                          Required="@Required"
-                         ForId="@(InputElementId ?? string.Empty)"
-                         @onclick="@ToggleMenu">
+                         ForId="@InputElementId"
+                         @onpointerdown="@ToggleMenu">
             <InputContent>
                 <MudInput @ref="_elementReference"
                           InputType="@(CanRenderValue || (Strict && !IsValueInList) ? InputType.Hidden : InputType.Text)"
@@ -61,8 +61,10 @@
                             MaxHeight="@MaxHeight"
                             AnchorOrigin="@AnchorOrigin"
                             TransformOrigin="@TransformOrigin"
+                            OverflowBehavior="@DropdownSettings.OverflowBehavior"
                             Class="@PopoverClass"
-                            RelativeWidth="true">
+                            Fixed="@DropdownSettings.Fixed"
+                            RelativeWidth="@FullWidth">
                     <CascadingValue Value="@((IMudSelect)this)" IsFixed="true">
                         <MudList T="string"
                                  Class="@ListClass"

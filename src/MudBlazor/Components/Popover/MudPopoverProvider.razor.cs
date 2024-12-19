@@ -8,6 +8,16 @@ using MudBlazor.Interfaces;
 namespace MudBlazor
 {
 #nullable enable
+
+    /// <summary>
+    /// A required component which manages all MudBlazor popovers.
+    /// </summary>
+    /// <remarks>
+    /// This component is required for MudBlazor components to display popovers properly.  It is typically added to your main layout page.
+    /// </remarks>
+    /// <seealso cref="MudThemeProvider"/>
+    /// <seealso cref="MudDialogProvider"/>
+    /// <seealso cref="MudSnackbarProvider"/>
     public partial class MudPopoverProvider : IDisposable, IPopoverObserver
     {
         private bool _isConnectedToService = false;
@@ -16,17 +26,25 @@ namespace MudBlazor
         internal IPopoverService PopoverService { get; set; } = null!;
 
         /// <summary>
-        /// In some scenarios we need more than one ThemeProvider, but we must not have more than one
-        /// PopoverProvider. Set a cascading value with UsePopoverProvider=false to prevent it.
+        /// Controls whether this provider is enabled.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// If more than one <see cref="MudPopoverProvider"/> is detected, this property will be <c>false</c> to ensure only one instance is active.
+        /// Can be overridden by setting a cascading parameter of <c>UsePopoverProvider</c> to <c>false</c>.
+        /// </remarks>
         [CascadingParameter(Name = "UsePopoverProvider")]
         public bool Enabled { get; set; } = true;
 
+        /// <summary>
+        /// Releases resources used by this provider.
+        /// </summary>
         public void Dispose()
         {
             PopoverService.Unsubscribe(this);
         }
 
+        /// <inheritdoc />
         protected override void OnInitialized()
         {
             if (Enabled == false)
@@ -38,6 +56,7 @@ namespace MudBlazor
             _isConnectedToService = true;
         }
 
+        /// <inheritdoc />
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
@@ -58,6 +77,7 @@ namespace MudBlazor
             }
         }
 
+        /// <inheritdoc />
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender && Enabled && PopoverService.PopoverOptions.ThrowOnDuplicateProvider)

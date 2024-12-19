@@ -8,6 +8,8 @@ namespace MudBlazor
     /// <summary>
     /// Represents a container for content which can be collapsed and expanded.
     /// </summary>
+    /// <seealso cref="MudExpansionPanels"/>
+    /// <seealso cref="MudExpansionPanel"/>
     public partial class MudCollapse : MudComponentBase
     {
         private enum CollapseState

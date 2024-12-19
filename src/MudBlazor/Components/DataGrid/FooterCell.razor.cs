@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
@@ -11,7 +12,7 @@ namespace MudBlazor
     /// Represents a cell displayed at the bottom of a column.
     /// </summary>
     /// <typeparam name="T">The kind of data managed by this footer.</typeparam>
-    public partial class FooterCell<T> : MudComponentBase
+    public partial class FooterCell<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase
     {
         /// <summary>
         /// The <see cref="MudDataGrid{T}"/> which contains this footer cell.

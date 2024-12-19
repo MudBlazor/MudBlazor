@@ -252,5 +252,21 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<ListItemTabIndexTest>();
             comp.FindAll("div")[1].GetAttribute("tabindex").Should().Be("-1");
         }
+
+        [Test]
+        [TestCase(true, null, true)]
+        [TestCase(true, true, true)]
+        [TestCase(true, false, false)]
+        [TestCase(false, null, false)]
+        [TestCase(false, true, true)]
+        [TestCase(false, false, false)]
+        public void SettingGuttersOnList_Should_OverrideGuttersOnItemsWithoutGuttersSettingTest(bool listGutters, bool? itemGutters, bool resultingGutters)
+        {
+            var comp = Context.RenderComponent<ListItemGuttersTest>(self => self
+                .Add(x => x.ListGutters, listGutters)
+                .Add(x => x.ItemGutters, itemGutters)
+            );
+            (comp.FindAll("div.mud-list-item-gutters").Count > 0).Should().Be(resultingGutters);
+        }
     }
 }

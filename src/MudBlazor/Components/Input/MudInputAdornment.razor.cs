@@ -8,6 +8,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor.Internal;
 
+#nullable enable
 /// <summary>
 /// An icon displayed within an input component.
 /// </summary>
@@ -25,19 +26,19 @@ public partial class MudInputAdornment
     /// Multiple classes must be separate by spaces.
     /// </remarks>
     [Parameter]
-    public string Class { get; set; }
+    public string? Class { get; set; }
 
     /// <summary>
     /// The text for this adornment.
     /// </summary>
     [Parameter]
-    public string Text { get; set; }
+    public string? Text { get; set; }
 
     /// <summary>
     /// The icon for this adornment.
     /// </summary>
     [Parameter]
-    public string Icon { get; set; }
+    public string? Icon { get; set; }
 
     /// <summary>
     /// Specifies the position of the adornment within the field.
@@ -73,7 +74,7 @@ public partial class MudInputAdornment
     /// More information on accessible names can be found <see href="https://developer.mozilla.org/docs/Glossary/Accessible_name">here</see>.
     /// </remarks>
     [Parameter]
-    public string AriaLabel { get; set; }
+    public string? AriaLabel { get; set; }
 
     /// <summary>
     /// Occurs when this adornment is clicked.

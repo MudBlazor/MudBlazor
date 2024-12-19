@@ -21,7 +21,8 @@
                            Size="@Size"
                            Color="@Color"
                            aria-label="@AriaLabel"
-                           tabindex="-1" />
+                           tabindex="-1"
+                           @onpointerdown:stopPropagation />
         }
         else
         {

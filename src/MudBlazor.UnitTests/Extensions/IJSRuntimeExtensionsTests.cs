@@ -166,5 +166,37 @@ namespace MudBlazor.UnitTests
             result2.success.Should().BeFalse();
             result2.value.Should().Be("fallback2");
         }
+
+#if DEBUG
+        [Test]
+        public async Task InvokeAsyncIgnoreErrors_ShouldThrow_WhenDebugJSException()
+        {
+            // Arrange
+            var jsRuntime1 = new ExceptionJavascriptRuntime();
+
+            // Act
+            var act1 = async () => await jsRuntime1.InvokeVoidAsyncIgnoreErrors("myMethod");
+            var act2 = async () => await jsRuntime1.InvokeVoidAsyncIgnoreErrors("myMethod", CancellationToken.None);
+
+            // Assert
+            await act1.Should().ThrowAsync<JSException>();
+            await act2.Should().ThrowAsync<JSException>();
+        }
+#else
+        [Test]
+        public async Task InvokeAsyncIgnoreErrors_ShouldSucceed_WhenReleaseJSException()
+        {
+            // Arrange
+            var jsRuntime1 = new ExceptionJavascriptRuntime();
+
+            // Act
+            var act1 = async () => await jsRuntime1.InvokeVoidAsyncIgnoreErrors("myMethod");
+            var act2 = async () => await jsRuntime1.InvokeVoidAsyncIgnoreErrors("myMethod", CancellationToken.None);
+
+            // Assert
+            await act1.Should().NotThrowAsync();
+            await act2.Should().NotThrowAsync();
+        }
+#endif
     }
 }

@@ -2,15 +2,11 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
 using Bunit;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Services;
-using MudBlazor.UnitTests.Mocks;
 using NUnit.Framework;
 using TestContext = Bunit.TestContext;
 
@@ -26,6 +22,7 @@ namespace MudBlazor.UnitTests.UserAttributes
             Exclude(typeof(MudBreakpointProvider)); // just exposing a cascading value, no layout implications
             Exclude(typeof(MudPicker<>));       // Internal component, skip
             Exclude(typeof(MudRadioGroup<>));   // Wrapping component, skip
+            Exclude(typeof(MudOverlay));        // Sectioned component, skip
         }
 
         [Test]
@@ -49,7 +46,7 @@ namespace MudBlazor.UnitTests.UserAttributes
             // these components do not need to have user attributes
             var excludedComponents = new HashSet<string>()
             {
-                nameof(MudPopover), nameof(MudStep),
+                nameof(MudPopover), nameof(MudStep), nameof(MudContextualActionBar),
                 "Column`1", "FooterCell`1", "HeaderCell`1", "FilterHeaderCell`1", "SelectColumn`1",
                 "HierarchyColumn`1", "PropertyColumn`2", "TemplateColumn`1",
             };

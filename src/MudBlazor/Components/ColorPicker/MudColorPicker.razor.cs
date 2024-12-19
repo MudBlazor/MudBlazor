@@ -2,10 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
@@ -15,12 +12,41 @@ using MudBlazor.Utilities.Throttle;
 
 namespace MudBlazor
 {
+#nullable enable
     /// <summary>
     /// Represents a sophisticated and customizable pop-up for choosing a color.
     /// </summary>
     public partial class MudColorPicker : MudPicker<MudColor>
     {
+        private const double MaxY = 250;
+        private const double MaxX = 312;
+        private const double SelectorSize = 26.0;
+
+        private double _selectorX;
+        private double _selectorY;
+        private bool _skipFeedback;
+        private bool _alpha = true;
+        private MudColor? _baseColor;
+        private bool _collectionOpen;
+        private readonly string _id = Identifier.Create();
+        private ThrottleDispatcher? _throttleDispatcher;
         private readonly ParameterState<int> _throttleIntervalState;
+        private ColorPickerView _colorPickerView = ColorPickerView.Spectrum;
+        private ColorPickerView _activeColorPickerView = ColorPickerView.Spectrum;
+
+        private readonly IEnumerable<MudColor> _gridList = new MudColor[]
+        {
+            "#FFFFFF","#ebebeb","#d6d6d6","#c2c2c2","#adadad","#999999","#858586","#707070","#5c5c5c","#474747","#333333","#000000",
+            "#133648","#071d53","#0f0638","#2a093b","#370c1b","#541107","#532009","#53350d","#523e0f","#65611b","#505518","#2b3d16",
+            "#1e4c63","#0f2e76","#180b4e","#3f1256","#4e1629","#781e0e","#722f10","#734c16","#73591a","#8c8629","#707625","#3f5623",
+            "#2e6c8c","#1841a3","#280c72","#591e77","#6f223d","#a62c17","#a0451a","#a06b23","#9f7d28","#c3bc3c","#9da436","#587934",
+            "#3c8ab0","#2155ce","#331c8e","#702898","#8d2e4f","#d03a20","#ca5a24","#c8862e","#c99f35","#f3ec4e","#c6d047","#729b44",
+            "#479fd3","#2660f5","#4725ab","#8c33b5","#aa395d","#eb512e","#ed732e","#f3ae3d","#f5c944","#fefb67","#ddeb5c","#86b953",
+            "#59c4f7","#4e85f6","#5733e2","#af43eb","#d44a7a","#ed6c59","#ef8c56","#f3b757","#f6cd5b","#fef881","#e6ee7a","#a3d16e",
+            "#78d3f8","#7fa6f8","#7e52f5","#c45ff6","#de789d","#f09286","#f2a984","#f6c983","#f9da85","#fef9a1","#ebf29b","#badc94",
+            "#a5e1fa","#adc5fa","#ab8df7","#d696f8","#e8a7bf","#f4b8b1","#f6c7af","#f9daae","#fae5af","#fefbc0","#f3f7be","#d2e7ba",
+            "#d2effd","#d6e1fc","#d6c9fa","#e9cbfb","#f3d4df","#f9dcd9","#fae3d8","#fcecd7","#fdf2d8","#fefce0","#f7fade","#e3edd6"
+        };
 
         public MudColorPicker() : base(new DefaultConverter<MudColor>())
         {
@@ -35,7 +61,6 @@ namespace MudBlazor
                 .WithChangeHandler(OnThrottleIntervalParameterChanged);
         }
 
-        #region Fields
 
         private static Dictionary<int, (Func<int, int> r, Func<int, int> g, Func<int, int> b, string dominantColorPart)> _rgbToHueMapper = new()
         {
@@ -47,30 +72,9 @@ namespace MudBlazor
             { 5, ((x) => 255, x => 0, x => 255 - x, "rg") },
         };
 
-        private const double _maxY = 250;
-        private const double _maxX = 312;
-        private const double _selectorSize = 26.0;
-
-        private double _selectorX;
-        private double _selectorY;
-        private bool _skipFeedback;
-
-        private MudColor _baseColor;
-
-        private bool _collectionOpen;
-
-        private readonly string _id = Identifier.Create();
-
-        private ThrottleDispatcher _throttleDispatcher;
-
-        #endregion
-
-        #region Parameters
 
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
-
-        private bool _alpha = true;
 
         /// <summary>
         /// Shows alpha transparency options.
@@ -91,7 +95,7 @@ namespace MudBlazor
 
                     if (!_alpha)
                     {
-                        Value = Value.SetAlpha(1.0);
+                        Value = Value?.SetAlpha(1.0);
                     }
 
                     Text = GetColorTextValue();
@@ -159,9 +163,6 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public ColorPickerMode ColorPickerMode { get; set; } = ColorPickerMode.RGB;
 
-        private ColorPickerView _colorPickerView = ColorPickerView.Spectrum;
-        private ColorPickerView _activeColorPickerView = ColorPickerView.Spectrum;
-
         /// <summary>
         /// The initial view.
         /// </summary>
@@ -201,7 +202,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Data)]
-        public MudColor Value
+        public MudColor? Value
         {
             get => _value;
             set => SetColorAsync(value).CatchAndLog();
@@ -229,20 +230,6 @@ namespace MudBlazor
           "#858791", "#0989c2", "#1bbd66", "#ebb323", "#fe6800",
           "#585b62", "#17698e", "#17a258", "#d9980d", "#dc3f11",
           "#353940", "#113b53", "#127942", "#bf7d11", "#aa0000"
-        };
-
-        private IEnumerable<MudColor> _gridList = new MudColor[]
-        {
-            "#FFFFFF","#ebebeb","#d6d6d6","#c2c2c2","#adadad","#999999","#858586","#707070","#5c5c5c","#474747","#333333","#000000",
-            "#133648","#071d53","#0f0638","#2a093b","#370c1b","#541107","#532009","#53350d","#523e0f","#65611b","#505518","#2b3d16",
-            "#1e4c63","#0f2e76","#180b4e","#3f1256","#4e1629","#781e0e","#722f10","#734c16","#73591a","#8c8629","#707625","#3f5623",
-            "#2e6c8c","#1841a3","#280c72","#591e77","#6f223d","#a62c17","#a0451a","#a06b23","#9f7d28","#c3bc3c","#9da436","#587934",
-            "#3c8ab0","#2155ce","#331c8e","#702898","#8d2e4f","#d03a20","#ca5a24","#c8862e","#c99f35","#f3ec4e","#c6d047","#729b44",
-            "#479fd3","#2660f5","#4725ab","#8c33b5","#aa395d","#eb512e","#ed732e","#f3ae3d","#f5c944","#fefb67","#ddeb5c","#86b953",
-            "#59c4f7","#4e85f6","#5733e2","#af43eb","#d44a7a","#ed6c59","#ef8c56","#f3b757","#f6cd5b","#fef881","#e6ee7a","#a3d16e",
-            "#78d3f8","#7fa6f8","#7e52f5","#c45ff6","#de789d","#f09286","#f2a984","#f6c983","#f9da85","#fef9a1","#ebf29b","#badc94",
-            "#a5e1fa","#adc5fa","#ab8df7","#d696f8","#e8a7bf","#f4b8b1","#f6c7af","#f9daae","#fae5af","#fefbc0","#f3f7be","#d2e7ba",
-            "#d2effd","#d6e1fc","#d6c9fa","#e9cbfb","#f3d4df","#f9dcd9","#fae3d8","#fcecd7","#fdf2d8","#fefce0","#f7fade","#e3edd6"
         };
 
         /// <summary>
@@ -315,8 +302,6 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public int ThrottleInterval { get; set; } = 300;
 
-        #endregion
-
         /// <inheritdoc />
         protected override void OnInitialized()
         {
@@ -346,8 +331,7 @@ namespace MudBlazor
             Value = color;
             _collectionOpen = false;
 
-            if (
-                IsAnyControlVisible() == false || _activeColorPickerView is ColorPickerView.GridCompact or ColorPickerView.Palette)
+            if (IsAnyControlVisible() == false || _activeColorPickerView is ColorPickerView.GridCompact or ColorPickerView.Palette)
             {
                 await CloseAsync();
             }
@@ -356,7 +340,8 @@ namespace MudBlazor
         /// <summary>
         /// Refreshes the current color change mode.
         /// </summary>
-        public void ChangeMode() =>
+        public void ChangeMode()
+        {
             ColorPickerMode = ColorPickerMode switch
             {
                 ColorPickerMode.RGB => ColorPickerMode.HSL,
@@ -364,6 +349,7 @@ namespace MudBlazor
                 ColorPickerMode.HEX => ColorPickerMode.RGB,
                 _ => ColorPickerMode.RGB,
             };
+        }
 
         /// <summary>
         /// Changes to the specified color selection view.
@@ -377,20 +363,20 @@ namespace MudBlazor
             Text = GetColorTextValue();
         }
 
-        private async Task SetColorAsync(MudColor value)
+        private async Task SetColorAsync(MudColor? value)
         {
-            if (value == null)
+            if (value is null)
             {
                 return;
             }
 
-            var rgbChanged = value != _value;
-            var hslChanged = _value != null && value.HslChanged(_value);
+            var changed = !value.Equals(_value);
+            var hslChanged = !value.HslEquals(_value);
             var shouldUpdateBinding = _value != null
-                                      && (rgbChanged || (UpdateBindingIfOnlyHSLChanged && hslChanged));
+                                      && (changed || (UpdateBindingIfOnlyHSLChanged && hslChanged));
             _value = value;
 
-            if (rgbChanged && _skipFeedback == false)
+            if (changed && _skipFeedback == false)
             {
                 UpdateBaseColor();
                 UpdateColorSelectorBasedOnRgb();
@@ -408,6 +394,10 @@ namespace MudBlazor
 
         private void UpdateBaseColorSlider(int value)
         {
+            if (Value is null)
+            {
+                return;
+            }
             var diff = Math.Abs(value - (int)Value.H);
             if (diff == 0)
             {
@@ -419,6 +409,10 @@ namespace MudBlazor
 
         private void UpdateBaseColor()
         {
+            if (_value is null)
+            {
+                return;
+            }
             var index = (int)_value.H / 60;
             if (index == 6)
             {
@@ -434,26 +428,37 @@ namespace MudBlazor
 
         private void UpdateColorBaseOnSelection()
         {
-            var x = _selectorX / _maxX;
+            if (_baseColor is null)
+            {
+                return;
+            }
+            var x = _selectorX / MaxX;
+            var rX = 255 - (int)((255 - _baseColor.R) * x);
+            var gX = 255 - (int)((255 - _baseColor.G) * x);
+            var bX = 255 - (int)((255 - _baseColor.B) * x);
 
-            var r_x = 255 - (int)((255 - _baseColor.R) * x);
-            var g_x = 255 - (int)((255 - _baseColor.G) * x);
-            var b_x = 255 - (int)((255 - _baseColor.B) * x);
+            var y = 1.0 - _selectorY / MaxY;
 
-            var y = 1.0 - (_selectorY / _maxY);
-
-            var r = r_x * y;
-            var g = g_x * y;
-            var b = b_x * y;
+            var r = rX * y;
+            var g = gX * y;
+            var b = bX * y;
 
             _skipFeedback = true;
             //in this mode, H is expected to be stable, so copy H value
-            Value = new MudColor((byte)r, (byte)g, (byte)b, _value);
+            if (_value != null)
+            {
+                Value = new MudColor((byte)r, (byte)g, (byte)b, _value);
+            }
+
             _skipFeedback = false;
         }
 
         private void UpdateColorSelectorBasedOnRgb()
         {
+            if (_value is null)
+            {
+                return;
+            }
             var hueValue = (int)MathExtensions.Map(0, 360, 0, 6 * 255, _value.H);
             var index = hueValue / 255;
             if (index == 6)
@@ -477,16 +482,13 @@ namespace MudBlazor
             var primaryDiff = 255 - colorValues.Item1;
             var primaryDiffDelta = colorValues.Item1 / 255.0;
 
-            _selectorY = MathExtensions.Map(0, 255, 0, _maxY, primaryDiff);
+            _selectorY = MathExtensions.Map(0, 255, 0, MaxY, primaryDiff);
 
             var secondaryColorX = colorValues.Item2 * (1.0 / primaryDiffDelta);
             var relation = (255 - secondaryColorX) / 255.0;
 
-            _selectorX = relation * _maxX;
+            _selectorX = relation * MaxX;
         }
-
-        #region mouse interactions
-
         private async Task HandleColorOverlayClickedAsync()
         {
             UpdateColorBaseOnSelection();
@@ -524,13 +526,9 @@ namespace MudBlazor
 
         private void SetSelectorBasedOnPointerEvents(PointerEventArgs e, bool offsetIsAbsolute)
         {
-            _selectorX = (offsetIsAbsolute ? e.OffsetX : e.OffsetX - (_selectorSize / 2.0) + _selectorX).EnsureRange(_maxX);
-            _selectorY = (offsetIsAbsolute ? e.OffsetY : e.OffsetY - (_selectorSize / 2.0) + _selectorY).EnsureRange(_maxY);
+            _selectorX = (offsetIsAbsolute ? e.OffsetX : e.OffsetX - (SelectorSize / 2.0) + _selectorX).EnsureRange(MaxX);
+            _selectorY = (offsetIsAbsolute ? e.OffsetY : e.OffsetY - (SelectorSize / 2.0) + _selectorY).EnsureRange(MaxY);
         }
-
-        #endregion
-
-        #region updating inputs
 
         /// <summary>
         /// Sets the red channel of the selected color.
@@ -541,7 +539,7 @@ namespace MudBlazor
         /// <remarks>
         /// Often used with <see cref="SetG(int)"/> and <see cref="SetB(int)"/>.
         /// </remarks>
-        public void SetR(int value) => Value = Value.SetR(value);
+        public void SetR(int value) => Value = Value?.SetR(value);
 
         /// <summary>
         /// Sets the green channel of the selected color.
@@ -552,7 +550,7 @@ namespace MudBlazor
         /// <remarks>
         /// Often used with <see cref="SetR(int)"/> and <see cref="SetB(int)"/>.
         /// </remarks>
-        public void SetG(int value) => Value = Value.SetG(value);
+        public void SetG(int value) => Value = Value?.SetG(value);
 
         /// <summary>
         /// Sets the blue channel of the selected color.
@@ -563,7 +561,7 @@ namespace MudBlazor
         /// <remarks>
         /// Often used with <see cref="SetR(int)"/> and <see cref="SetG(int)"/>.
         /// </remarks>
-        public void SetB(int value) => Value = Value.SetB(value);
+        public void SetB(int value) => Value = Value?.SetB(value);
 
         /// <summary>
         /// Sets the hue channel of the selected color.
@@ -574,7 +572,7 @@ namespace MudBlazor
         /// <remarks>
         /// Often used with <see cref="SetS(double)"/> and <see cref="SetL(double)"/>.
         /// </remarks>
-        public void SetH(double value) => Value = Value.SetH(value);
+        public void SetH(double value) => Value = Value?.SetH(value);
 
         /// <summary>
         /// Sets the saturation channel of the selected color.
@@ -585,7 +583,7 @@ namespace MudBlazor
         /// <remarks>
         /// Often used with <see cref="SetH(double)"/> and <see cref="SetL(double)"/>.
         /// </remarks>
-        public void SetS(double value) => Value = Value.SetS(value);
+        public void SetS(double value) => Value = Value?.SetS(value);
 
         /// <summary>
         /// Sets the lightness channel of the selected color.
@@ -596,7 +594,7 @@ namespace MudBlazor
         /// <remarks>
         /// Often used with <see cref="SetH(double)"/> and <see cref="SetS(double)"/>.
         /// </remarks>
-        public void SetL(double value) => Value = Value.SetL(value);
+        public void SetL(double value) => Value = Value?.SetL(value);
 
         /// <summary>
         /// Sets the transparency channel of the selected color.
@@ -604,14 +602,14 @@ namespace MudBlazor
         /// <param name="value">
         /// A value between <c>0.0</c> (fully transparent) and <c>1.0</c> (solid).
         /// </param>
-        public void SetAlpha(double value) => Value = Value.SetAlpha(value);
+        public void SetAlpha(double value) => Value = Value?.SetAlpha(value);
 
         /// <summary>
         /// Sets the transparency channel of the selected color.
         /// </summary>
         /// <param name="value">
         /// A value between <c>0</c> (fully transparent) and <c>1</c> (solid).</param>
-        public void SetAlpha(int value) => Value = Value.SetAlpha(value);
+        public void SetAlpha(int value) => Value = Value?.SetAlpha(value);
 
         /// <summary>
         /// Sets the selected color to the specified value.
@@ -619,8 +617,12 @@ namespace MudBlazor
         /// <param name="input">
         /// A string value formatted as hexadecimal (<c>#FF0000</c>), RGB (<c>rgb(255,0,0)</c>), or RGBA (<c>rgba(255,0,0,255)</c>.
         /// </param>
-        public void SetInputString(string input)
+        public void SetInputString(string? input)
         {
+            if (string.IsNullOrEmpty(input))
+            {
+                return;
+            }
             MudColor color;
             try
             {
@@ -634,18 +636,14 @@ namespace MudBlazor
             Value = color;
         }
 
-        protected override Task StringValueChangedAsync(string value)
+        protected override Task StringValueChangedAsync(string? value)
         {
             SetInputString(value);
             return Task.CompletedTask;
         }
 
-        #endregion
-
-        #region helper
-
         private string GetSelectorLocation() => $"translate({Math.Round(_selectorX, 2).ToString(CultureInfo.InvariantCulture)}px, {Math.Round(_selectorY, 2).ToString(CultureInfo.InvariantCulture)}px);";
-        private string GetColorTextValue() => (!ShowAlpha || _activeColorPickerView is ColorPickerView.Palette or ColorPickerView.GridCompact) ? _value.ToString(MudColorOutputFormats.Hex) : _value.ToString(MudColorOutputFormats.HexA);
+        private string? GetColorTextValue() => (!ShowAlpha || _activeColorPickerView is ColorPickerView.Palette or ColorPickerView.GridCompact) ? _value?.ToString(MudColorOutputFormats.Hex) : _value?.ToString(MudColorOutputFormats.HexA);
         private int GetHexColorInputMaxLength() => !ShowAlpha ? 7 : 9;
 
         private EventCallback<MouseEventArgs> GetEventCallback() => EventCallback.Factory.Create<MouseEventArgs>(this, () => CloseAsync());
@@ -654,8 +652,8 @@ namespace MudBlazor
 
         private Color GetButtonColor(ColorPickerView view) => _activeColorPickerView == view ? Color.Primary : Color.Inherit;
         private string GetColorDotClass(MudColor color) => new CssBuilder("mud-picker-color-dot").AddClass("selected", color == Value).ToString();
-        private string AlphaSliderStyle => new StyleBuilder().AddStyle($"background-image: linear-gradient(to {(RightToLeft ? "left" : "right")}, transparent, {_value.ToString(MudColorOutputFormats.RGB)})").Build();
-
-        #endregion
+        private string AlphaSliderStyle => new StyleBuilder()
+            .AddStyle($"background-image: linear-gradient(to {(RightToLeft ? "left" : "right")}, transparent, {_value?.ToString(MudColorOutputFormats.RGB)})")
+            .Build();
     }
 }

@@ -9,21 +9,21 @@ namespace MudBlazor.Docs.Compiler;
 /// <summary>
 /// A parameter for a method.
 /// </summary>
-[DebuggerDisplay("({Type.Name}) {Name}: {Text}")]
+[DebuggerDisplay("({Type.Name}) {Name}: {Summary}")]
 public sealed class DocumentedParameter
 {
     /// <summary>
     /// The name of this parameter.
     /// </summary>
-    public string Name { get; set; } = "";
+    public required string? Name { get; init; }
 
     /// <summary>
     /// The type of this member.
     /// </summary>
-    public Type Type { get; set; }
+    public required Type Type { get; init; }
 
     /// <summary>
     /// The XML documentation for this parameter.
     /// </summary>
-    public string Summary { get; set; } = "";
+    public required string Summary { get; init; } = string.Empty;
 }

@@ -1,7 +1,6 @@
 ﻿using Bunit;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.Popover;
 using NUnit.Framework;
 
@@ -111,7 +110,7 @@ namespace MudBlazor.UnitTests.Components
             popover.Fixed.Should().BeFalse();
             popover.AnchorOrigin.Should().Be(Origin.TopLeft);
             popover.TransformOrigin.Should().Be(Origin.TopLeft);
-            popover.RelativeWidth.Should().BeFalse();
+            popover.RelativeWidth.Should().BeNull();
             popover.OverflowBehavior.Should().Be(OverflowBehavior.FlipOnOpen);
             popover.Duration.Should().Be(251);
         }
@@ -348,7 +347,7 @@ namespace MudBlazor.UnitTests.Components
             Assert.Throws<ElementNotFoundException>(() => comp.Find("#my-content"));
         }
 
-        [TestCase(false)]
+        //[TestCase(false)] always blocks duplicate provider with latest change
         [TestCase(true)]
         public async Task MudPopoverProvider_ThrowOnDuplicate(bool throwOnDuplicateProvider)
         {
@@ -371,6 +370,33 @@ namespace MudBlazor.UnitTests.Components
                 await comp.Instance.Open();
                 await comp.Instance.Close();
             }
+        }
+
+        [Test]
+        public void MudPopoverProvider_DropdownSettings_SetsDefaultValues()
+        {
+            var settings = new DropdownSettings();
+
+            settings.Fixed.Should().BeFalse();
+            settings.OverflowBehavior.Should().Be(OverflowBehavior.FlipOnOpen);
+        }
+
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public void MudPopoverProvider_DropdownSettings_Fixed_CanBeSetCorrectly(bool fixedValue)
+        {
+            var settings = new DropdownSettings { Fixed = fixedValue };
+
+            settings.Fixed.Should().Be(fixedValue);
+        }
+
+        [Test]
+        public void MudPopoverProvider_DropdownSettings_OverflowBehavior_CanBeSetCorrectly()
+        {
+            var settings = new DropdownSettings { OverflowBehavior = OverflowBehavior.FlipAlways };
+
+            settings.OverflowBehavior.Should().Be(OverflowBehavior.FlipAlways);
         }
     }
 }

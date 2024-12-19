@@ -6,7 +6,7 @@
 
 @code {
     public static string __description__ = "Autocomplete should show 'Assam' even without a ToStringFunc.";
-    public IEnumerable<State> StateList { get; set; } = [];
+
     public State StateDetails { get; set; } = new() { StateName = "Assam"};
 
     public async Task<IEnumerable<State>> SearchStateAsync(string value, CancellationToken token)

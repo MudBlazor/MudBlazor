@@ -134,7 +134,7 @@ namespace MudBlazor
         {
             if (!firstRender)
             {
-                foreach (var dialogReference in _dialogs.Where(x => !x.Result.IsCompleted))
+                foreach (var dialogReference in _dialogs.ToArray().Where(x => !x.Result.IsCompleted))
                 {
                     dialogReference.RenderCompleteTaskCompletionSource.TrySetResult(true);
                 }
@@ -153,7 +153,6 @@ namespace MudBlazor
         private Task AddInstanceAsync(IDialogReference dialog)
         {
             _dialogs.Add(dialog);
-
             return InvokeAsync(StateHasChanged);
         }
 
@@ -162,7 +161,10 @@ namespace MudBlazor
         /// </summary>
         public void DismissAll()
         {
-            _dialogs.ToList().ForEach(r => DismissInstance(r, DialogResult.Cancel()));
+            foreach (var dialog in _dialogs.ToArray())
+            {
+                DismissInstance(dialog, DialogResult.Cancel());
+            }
             StateHasChanged();
         }
 
@@ -176,7 +178,7 @@ namespace MudBlazor
 
         private IDialogReference? GetDialogReference(Guid id)
         {
-            return _dialogs.FirstOrDefault(x => x.Id == id);
+            return _dialogs.ToArray().FirstOrDefault(d => d.Id == id);
         }
 
         private void LocationChanged(object? sender, LocationChangedEventArgs args)

@@ -1,9 +1,7 @@
 ﻿@page "/components/switch"
-@page "/components/MudSwitch"
-@page "/components/MudSwitch`1"
 
 <DocsPage>
-    <DocsPageHeader Title="Switch" SubTitle="Similar to a checkbox but visually different, the switch lets the user switch between two values with the tap of a button." />
+    <DocsPageHeader Title="Switch" Component="@nameof(MudSwitch<T>)" SubTitle="Similar to a checkbox but visually different, the switch lets the user switch between two values with the tap of a button." />
     <DocsPageContent>
 
         <DocsPageSection>
@@ -93,7 +91,7 @@
         <DocsPageSection>
             <SectionHeader Title="Size">
                 <Description>
-                    <MudText>MudSwitch size can be changed with the <CodeInline>Size</CodeInline> parameter.</MudText>          
+                    <MudText>MudSwitch size can be changed with the <CodeInline>Size</CodeInline> parameter.</MudText>
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(SwitchSizeExample)" ShowCode="false">

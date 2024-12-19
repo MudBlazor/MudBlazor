@@ -55,9 +55,7 @@ public partial class DateMask : PatternMask
     {
         if (alignedText.IsEmpty())
             return;
-        var y = ExtractYear(mask, alignedText, maskOffset);
-        if (y >= 0)
-            _year = y;
+        _year = ExtractYear(mask, alignedText, maskOffset);
         MonthLogic(mask, text, maskOffset, ref textIndex, ref maskIndex, ref alignedText);
         DayLogic(mask, text, maskOffset, ref textIndex, ref maskIndex, ref alignedText);
     }
@@ -70,7 +68,7 @@ public partial class DateMask : PatternMask
         {
             var (yearString, _) = Extract(yyyy, mask, maskOffset, alignedText);
             if (yearString == null || yearString.Length < 4)
-                return -1;
+                return 0;
             if (int.TryParse(yearString, out var year))
                 return year;
         }
@@ -78,11 +76,11 @@ public partial class DateMask : PatternMask
         {
             var (yearString, _) = Extract(yy, mask, maskOffset, alignedText);
             if (yearString == null || yearString.Length < 2)
-                return -1;
+                return 0;
             if (int.TryParse(yearString, out var y))
                 return (DateTime.Today.Year / 100 * 100) + y; // this code will still work in 2100 until 2900. I guess in a thousand years we'll have to update this line ;)
         }
-        return -1;
+        return 0;
     }
 
     private void MonthLogic(string mask, string text, int maskOffset, ref int textIndex, ref int maskIndex, ref string alignedText)
@@ -171,8 +169,6 @@ public partial class DateMask : PatternMask
             int.TryParse(monthString ?? "", out var m);
             if (!maskHasYear)
                 y = 0;
-            if (y < 0)
-                y = _year;
             if (maskHasMonth && (monthFound || monthComplete))
             {
                 var m1 = FixMonth(m);

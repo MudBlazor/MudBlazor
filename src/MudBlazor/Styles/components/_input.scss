@@ -157,6 +157,17 @@
       border-width: 1px;
       border-style: solid;
       transition: border-width,border-color 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+
+      legend {
+        visibility: hidden;
+        font-size: 1rem * 0.75;
+        font-weight: inherit;
+        width: 0;
+        height: 0;
+        margin: 0 0 0 11px;
+        padding: 0;
+        position: relative;
+      }
     }
 
     @media(hover: hover) and (pointer: fine) {
@@ -165,7 +176,19 @@
       }
     }
 
-    &:focus-within .mud-input-outlined-border {
+    &.mud-shrink .mud-input-outlined-border {
+      & legend {
+        width: auto;
+        padding: 0 5px;
+      }
+    }
+
+    &:focus-within .mud-input-outlined-border, &:focus-within .mud-shrink .mud-input-outlined-border {
+      & legend {
+        width: auto;
+        padding: 0 5px;
+      }
+
       border-width: 2px;
       border-color: var(--mud-palette-primary);
     }
@@ -365,11 +388,20 @@
     }
 
     &.mud-input-root-filled {
-      margin: 27px 12px 10px;
+      box-sizing: border-box;
+      margin-top: 0;
+      margin-bottom: 0;
+      padding: 27px 12px 10px;
+      mask-image: linear-gradient(to bottom,
+        transparent 27px,
+        black 27px);
 
       &.mud-input-root-margin-dense {
-        margin-top: 23px;
-        margin-bottom: 6px;
+        padding-top: 23px;
+        padding-bottom: 6px;
+        mask-image: linear-gradient(to bottom,
+          transparent 23px,
+          black 23px);
       }
 
       &:-webkit-autofill {
@@ -378,12 +410,18 @@
       }
 
       &.mud-input-root-hidden-label {
-        margin-top: 18px;
-        margin-bottom: 19px;
+        padding-top: 18px;
+        padding-bottom: 19px;
+        mask-image: linear-gradient(to bottom,
+          transparent 18px,
+          black 18px);
 
         &.mud-input-root-margin-dense {
-          margin-top: 10px;
-          margin-bottom: 11px;
+          padding-top: 10px;
+          padding-bottom: 11px;
+          mask-image: linear-gradient(to bottom,
+            transparent 10px,
+            black 10px);
         }
       }
 
@@ -418,16 +456,24 @@
   }
 
   &.mud-input-root-outlined {
-    margin: 18.5px 14px;
-
+    box-sizing: border-box;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 18.5px 14px;
+    mask-image: linear-gradient(to bottom,
+      transparent 18.5px,
+      black 18.5px);
 
     &.mud-input-root:-webkit-autofill {
       border-radius: inherit;
     }
 
     &.mud-input-root-margin-dense {
-      margin-top: 10.5px;
-      margin-bottom: 10.5px;
+      padding-top: 10.5px;
+      padding-bottom: 10.5px;
+      mask-image: linear-gradient(to bottom,
+        transparent 10.5px,
+        black 10.5px);
     }
 
     &.mud-input-root-adorned-start {

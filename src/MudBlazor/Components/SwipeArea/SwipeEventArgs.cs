@@ -15,7 +15,7 @@ namespace MudBlazor
         /// <summary>
         /// Gets information about a touch event that is being raised.
         /// </summary>
-        public TouchEventArgs TouchEventArgs { get; }
+        public PointerEventArgs TouchEventArgs { get; }
 
         /// <summary>
         /// Gets the swipe delta value indicating the distance of the swipe movement.
@@ -39,7 +39,7 @@ namespace MudBlazor
         /// <param name="swipeDirection">The direction of the swipe.</param>
         /// <param name="swipeDelta">The swipe delta value indicating the distance of the swipe movement.</param>
         /// <param name="sender">The sender of the swipe event.</param>
-        public SwipeEventArgs(TouchEventArgs touchEventArgs, SwipeDirection swipeDirection, double? swipeDelta, MudSwipeArea sender)
+        public SwipeEventArgs(PointerEventArgs touchEventArgs, SwipeDirection swipeDirection, double? swipeDelta, MudSwipeArea sender)
         {
             TouchEventArgs = touchEventArgs;
             SwipeDirection = swipeDirection;

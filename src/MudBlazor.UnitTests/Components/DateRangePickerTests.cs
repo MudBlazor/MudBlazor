@@ -5,9 +5,12 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using AngleSharp.Css.Dom;
+using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.DatePicker;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
@@ -907,6 +910,36 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Instance.DateRange.Should().Be(range);
             wasEventCallbackCalled.Should().BeTrue();
+        }
+
+        [Test]
+        public async Task TestDateRangeClearableWithFormat()
+        {
+            var comp = Context.RenderComponent<DateRangePickerClearableTest>();
+            var picker = comp.FindComponents<MudDateRangePicker>();
+            picker.Count.Should().Be(2);
+            var openBtn = picker[0].FindComponents<MudIconButton>();
+            openBtn.Count.Should().Be(1);
+            var openBtnElement = openBtn[0].Find("button");
+            await openBtnElement.TriggerEventAsync("onclick", new MouseEventArgs());
+            await Task.Delay(500);
+            IElement DayButton(string dayNumber) =>
+                comp.FindAll("button")
+                    .SingleOrDefault(x => x.GetStyle().GetPropertyValue("--day-id") == dayNumber);
+            await DayButton("5").TriggerEventAsync("onclick", new MouseEventArgs());
+            await Task.Delay(200);
+            await DayButton("7").TriggerEventAsync("onclick", new MouseEventArgs());
+            await Task.Delay(200);
+
+            IReadOnlyList<IRenderedComponent<MudIconButton>> IconButtons(int index) =>
+                picker[index].FindComponents<MudIconButton>();
+
+            IconButtons(0).Count.Should().Be(2);
+            IconButtons(1).Count.Should().Be(2);
+            IconButtons(0)[0].Find("button").Click();
+            IconButtons(1)[0].Find("button").Click();
+            IconButtons(0).Count.Should().Be(1);
+            IconButtons(1).Count.Should().Be(1);
         }
     }
 }

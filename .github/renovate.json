@@ -4,7 +4,8 @@
         "config:recommended"
     ],
     "ignorePresets": [
-        ":ignoreModulesAndTests"
+        ":ignoreModulesAndTests",
+        "mergeConfidence:all-badges"
     ],
     "labels": [
         "dependency"
@@ -19,12 +20,6 @@
         {
             "matchPackageNames": [
                 "Microsoft.CodeAnalysis.CSharp"
-            ],
-            "enabled": false
-        },
-        {
-            "matchPackageNames": [
-                "AspNetCore.SassCompiler"
             ],
             "enabled": false
         }

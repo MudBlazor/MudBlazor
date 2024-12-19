@@ -1,29 +1,32 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudMenu Label="Open Menu" Variant="Variant.Filled" Color="Color.Primary" AnchorOrigin="Origin.CenterCenter" TransformOrigin="Origin.TopLeft" Dense>
-    <MudMenuItem>
-        <MudMenu ActivationEvent="MouseEvent.MouseOver" AnchorOrigin="Origin.TopRight" TransformOrigin="Origin.TopLeft" Dense>
-            <ActivatorContent>
-                <MudMenuItem> Item 1 </MudMenuItem>
-            </ActivatorContent>
+<MudMenu Label="Open Nested Menu">
+    <MudMenuItem Label="Add reaction" />
+    <MudMenuItem Label="Add bookmark" />
 
-            <ChildContent>
-                <MudMenuItem Href="https://mudblazor.com" Target="_blank"> Open https://mudblazor.com in new tab </MudMenuItem>
-                <MudMenuItem Href="/" Disabled="true"> Disabled Item 1.2 with navigation </MudMenuItem>
-            </ChildContent>
+    <MudMenu Label="Format >" AnchorOrigin="Origin.TopRight" ActivationEvent="@MouseEvent.MouseOver">
+        <MudMenu Label="Text >" AnchorOrigin="Origin.TopRight" ActivationEvent="@MouseEvent.MouseOver">
+            <MudMenuItem Label="Bold" />
+            <MudMenuItem Label="Italic" />
+            <MudMenuItem Label="Underline" />
+
+            <MudMenu Label="Size >" AnchorOrigin="Origin.TopRight" ActivationEvent="@MouseEvent.MouseOver">
+                <MudMenuItem Label="Increase font size" />
+                <MudMenuItem Label="Decrease font size" />
+            </MudMenu>
         </MudMenu>
-    </MudMenuItem>
 
-    <MudMenuItem>
-        <MudMenu ActivationEvent="MouseEvent.MouseOver" AnchorOrigin="Origin.TopRight" TransformOrigin="Origin.TopLeft" Dense>
-            <ActivatorContent>
-                <MudMenuItem Href="/">Item 2</MudMenuItem>
-            </ActivatorContent>
-
-            <ChildContent>
-                <MudMenuItem Href="/docs/overview"> Item 2.1 Docs Overview</MudMenuItem>
-                <MudMenuItem > Item 2.2 </MudMenuItem>
-            </ChildContent>
+        <MudMenu Label="Points >" AnchorOrigin="Origin.TopRight" ActivationEvent="@MouseEvent.MouseOver">
+            <MudMenuItem Label="Bullet" />
+            <MudMenuItem Label="Number" />
         </MudMenu>
-    </MudMenuItem>
+
+        <MudMenu Label="Alignment >" AnchorOrigin="Origin.TopRight" ActivationEvent="@MouseEvent.MouseOver">
+            <MudMenuItem Label="Left" />
+            <MudMenuItem Label="Right" />
+        </MudMenu>
+
+        <MudMenuItem Label="Clear formatting" />
+        <MudMenuItem Label="Headers and footers" />
+    </MudMenu>
 </MudMenu>

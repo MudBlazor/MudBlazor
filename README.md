@@ -9,6 +9,7 @@
 # Material Design components for Blazor
 ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/mudblazor/mudblazor/build-test-mudblazor.yml?branch=dev&logo=github&style=flat-square)
 [![Codecov](https://img.shields.io/codecov/c/github/MudBlazor/MudBlazor)](https://app.codecov.io/github/MudBlazor/MudBlazor)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=MudBlazor_MudBlazor&metric=alert_status)](https://sonarcloud.io/summary/overall?id=MudBlazor_MudBlazor)
 [![GitHub](https://img.shields.io/github/license/mudblazor/mudblazor?color=594ae2&logo=github&style=flat-square)](https://github.com/mudblazor/MudBlazor/blob/master/LICENSE)
 [![GitHub Repo stars](https://img.shields.io/github/stars/mudblazor/mudblazor?color=594ae2&style=flat-square&logo=github)](https://github.com/mudblazor/MudBlazor/stargazers)
 [![GitHub last commit](https://img.shields.io/github/last-commit/mudblazor/mudblazor?color=594ae2&style=flat-square&logo=github)](https://github.com/mudblazor/mudblazor)
@@ -40,14 +41,14 @@ MudBlazor is an ambitious Material Design component framework for Blazor with an
 | :--- | :---: | :---: |
 | 1.x.x - 2.0.x | .NET 3.1 | Ended 03/2021 |
 | 5.x.x | .NET 5 | Ended 01/2022 |
-| 6.x.x | [.NET 6](https://dotnet.microsoft.com/download/dotnet/6.0), [.NET 7](https://dotnet.microsoft.com/download/dotnet/7.0), [.NET 8](https://dotnet.microsoft.com/download/dotnet/8.0) | :heavy_check_mark: |
+| 6.x.x | [.NET 6](https://dotnet.microsoft.com/download/dotnet/6.0), [.NET 7](https://dotnet.microsoft.com/download/dotnet/7.0), [.NET 8](https://dotnet.microsoft.com/download/dotnet/8.0) | Ended 01/2025 |
 | 7.x.x | [.NET 7](https://dotnet.microsoft.com/download/dotnet/7.0), [.NET 8](https://dotnet.microsoft.com/download/dotnet/8.0) | :heavy_check_mark: |
+| 8.x.x | [.NET 8](https://dotnet.microsoft.com/download/dotnet/8.0), [.NET 9](https://dotnet.microsoft.com/download/dotnet/9.0) | :heavy_check_mark: |
 
-:information_source: Currently only interactive rendering modes are supported - [Learn more](https://learn.microsoft.com/aspnet/core/blazor/components/render-modes).
+\* Static rendering is not supported - [Learn more](https://learn.microsoft.com/aspnet/core/blazor/components/render-modes).
 
-:warning: Blazor only supports [current browser versions](https://learn.microsoft.com/aspnet/core/blazor/supported-platforms).
-To ensure a seamless experience with MudBlazor, please use an up-to-date web browser.
-If a browser version is no longer maintained by its publisher, we cannot guarantee compatibility with MudBlazor.
+\** We cannot guarantee compatibility with browsers no longer maintained by their publishers.
+For the best experience, use an up-to-date browser - See [Blazor supported platforms](https://learn.microsoft.com/aspnet/core/blazor/supported-platforms).
 
 ## Stats
 ![Alt](https://repobeats.axiom.co/api/embed/db53a44092e88fc34a4c0f37db12773b6787ec7e.svg "Repobeats analytics image")

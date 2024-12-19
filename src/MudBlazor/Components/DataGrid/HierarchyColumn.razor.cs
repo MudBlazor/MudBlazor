@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor;
@@ -11,7 +12,9 @@ namespace MudBlazor;
 /// Represents a column in a <see cref="MudDataGrid{T}"/> which can be expanded to show additional information.
 /// </summary>
 /// <typeparam name="T">The kind of item managed by the column.</typeparam>
-public partial class HierarchyColumn<T> : MudComponentBase
+/// <seealso cref="Column{T}"/>
+/// <seealso cref="MudDataGrid{T}"/>
+public partial class HierarchyColumn<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase
 {
     private bool _finishedInitialExpanded;
     private readonly HashSet<CellContext<T>> _initiallyExpandedItems = [];
