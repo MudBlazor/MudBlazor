@@ -10,7 +10,7 @@
             {
                 for (int col = 0; col < _series[row].Data.Length; col++)
                 {
-                    var cell = HeatMapCells.FirstOrDefault(c => c.Row == row && c.Column == col);
+                    var cell = _heatMapCells.FirstOrDefault(c => c.Row == row && c.Column == col);
                     var color = GetColorForValue(cell?.Value);
 
                     // Define each gradient for 4 directions
@@ -52,7 +52,7 @@
         var seriesLength = _series[row].Data != null ? _series[row].Data.Length : 0; // protect from a null array
         @for (int col = 0; col < seriesLength; col++)
         {
-            var cell = HeatMapCells.FirstOrDefault(c => c.Row == row && c.Column == col);
+            var cell = _heatMapCells.FirstOrDefault(c => c.Row == row && c.Column == col);
             if (cellWidth < CellMinSize)
             {
                 cellWidth = Math.Max(CellMinSize, (BoundWidth - _horizontalStartSpace - _horizontalEndSpace - padding * (SeriesLength - 1)) / SeriesLength);

@@ -12,6 +12,8 @@ namespace MudBlazor.Charts
 {
     partial class HeatMap : MudCategoryChartBase
     {
+        private readonly List<HeatMapCell> _heatMapCells = [];
+
         private const double BoundWidth = 650.0;
 
         private const double BoundHeight = 350.0;
@@ -90,49 +92,63 @@ namespace MudBlazor.Charts
         [CascadingParameter]
         public MudChart? MudChartParent { get; set; }
 
-        public List<HeatMapCell> HeatMapCells = [];
-
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
 
             if (MudChartParent != null)
             {
-                if (_options == null || _options != MudChartParent.ChartOptions)
+                _legendPosition = MudChartParent.LegendPosition switch
                 {
-                    _options = MudChartParent.ChartOptions;
-                    _colorPalette = _options.ChartPalette.Any() ? _options.ChartPalette : _colorPalette;
-                    _legendPosition = MudChartParent.LegendPosition switch
-                    {
-                        Position.Center => Position.Bottom,
-                        Position.Start => Position.Left,
-                        Position.End => Position.Right,
-                        _ => MudChartParent.LegendPosition
-                    };
-                }
-                if (_series.Count == 0 ||
-                    (MudChartParent.ChartSeries.Count > 0 &&
-                    _series != MudChartParent.ChartSeries))
-                {
-                    _series.Clear();
-                    _series = MudChartParent.ChartSeries;
-                }
-                if (_customHeatMapCells.Count == 0 ||
-                    (MudChartParent.MudHeatMapCells.Count > 0 &&
-                    _customHeatMapCells != MudChartParent.MudHeatMapCells))
-                {
-                    _customHeatMapCells.Clear();
-                    _customHeatMapCells = MudChartParent.MudHeatMapCells;
-                }
+                    Position.Center => Position.Bottom,
+                    Position.Start => Position.Left,
+                    Position.End => Position.Right,
+                    _ => MudChartParent.LegendPosition
+                };
+                UpdateChartOptions(MudChartParent.ChartOptions);
+                UpdateChartSeries(MudChartParent.ChartSeries);
+                UpdateHeatMapCells(MudChartParent.MudHeatMapCells);
             }
 
             InitializeHeatmap();
         }
 
+        private void UpdateChartOptions(ChartOptions chartOptions)
+        {
+            if (_options == null || _options != chartOptions)
+            {
+                _options = chartOptions;
+                _colorPalette = _options.ChartPalette.Any() ? _options.ChartPalette : _colorPalette;
+            }
+        }
+
+        private void UpdateChartSeries(List<ChartSeries> chartSeriesList)
+        {
+            if (_series.Count == 0 ||
+                (chartSeriesList.Count > 0 &&
+                _series != chartSeriesList))
+            {
+                _series.Clear();
+                _series = chartSeriesList;
+            }
+        }
+
+        private void UpdateHeatMapCells(List<MudHeatMapCell> mudHeatMapCellsList)
+        {
+            if (_customHeatMapCells.Count == 0 ||
+                (mudHeatMapCellsList.Count > 0 &&
+                _customHeatMapCells != mudHeatMapCellsList))
+            {
+                _customHeatMapCells.Clear();
+                _customHeatMapCells = mudHeatMapCellsList;
+            }
+        }
+
+
         private void InitializeHeatmap()
         {
             // Populate _heatmapCells based on data, e.g., matrix of values
-            HeatMapCells.Clear();
+            _heatMapCells.Clear();
             _minValue = 0;
             _maxValue = 1;
 
@@ -148,7 +164,7 @@ namespace MudBlazor.Charts
                     var mudHeatMapOverride = _customHeatMapCells.FirstOrDefault(x => x.Row == row && x.Column == col);
                     var value = mudHeatMapOverride?.Value
                         ?? GetDataValue(row, col); // Method to retrieve the value for each cell                    
-                    HeatMapCells.Add(new HeatMapCell
+                    _heatMapCells.Add(new HeatMapCell
                     {
                         Row = row,
                         Column = col,

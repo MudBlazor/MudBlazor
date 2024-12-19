@@ -15,7 +15,8 @@ namespace MudBlazor
     /// </summary>
     public class MudHeatMapCell : MudComponentBase
     {
-        [CascadingParameter] internal MudChart? Parent { get; set; }
+        [CascadingParameter]
+        internal MudChart? Parent { get; set; }
 
         /// <summary>
         /// The row of the cell you want to modify. Rows use a 0 based index.
@@ -39,28 +40,28 @@ namespace MudBlazor
         public double? Value { get; set; }
 
         /// <summary>
-        /// Optional- Override the color of the cell
+        /// Optional, Override the color of the cell
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Chart.Appearance)]
         public MudColor? MudColor { get; set; }
 
         /// <summary>
-        /// Optional- The width of the custom svg element you want to include. Please note the custom svg elements you provide are resized according to this value if supplied.
+        /// Optional, The width of the custom svg element you want to include. Please note the custom svg elements you provide are resized according to this value if supplied.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Chart.Appearance)]
         public int? Width { get; set; }
 
         /// <summary>
-        /// Optional- The height of the custom svg element you want to include. Please note the custom svg elements you provide are resized according to this value if supplied.
+        /// Optional, The height of the custom svg element you want to include. Please note the custom svg elements you provide are resized according to this value if supplied.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Chart.Appearance)]
         public int? Height { get; set; }
 
         /// <summary>
-        /// Optional- The custom svg element you want to include
+        /// Optional, The custom svg element you want to include
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Chart.Appearance)]

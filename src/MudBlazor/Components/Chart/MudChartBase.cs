@@ -143,7 +143,7 @@ public abstract class MudChartBase : MudComponentBase
     [Category(CategoryTypes.Chart.Behavior)]
     public bool CanHideSeries { get; set; } = false;
 
-    internal List<MudHeatMapCell> MudHeatMapCells { get; private set; } = [];
+    internal List<MudHeatMapCell> MudHeatMapCells { get; set; } = [];
 
     internal void AddCell(MudHeatMapCell cell)
     {
