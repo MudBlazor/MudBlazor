@@ -32,29 +32,31 @@ else
 
 @if (!IsApi && DocumentedType != null)
 {
-    <DocsPageSection api-link-section>
-        <SectionHeader Title="API" />
-        <div class="docs-page-apilinks">
-            <ul class="my-2">
-                <li>
-                    <MudLink Href="@(DocumentedType.ApiUrl.ToLowerInvariant())">
-                        <CodeInline>@($"<{Component}>")</CodeInline>
-                    </MudLink>
-                </li>
-                @if (Example != null && Example.ChildTypes != null)
+    <div class="docs-page-apilinks">
+        <MudChipSet T="string" Variant="Variant.Outlined" Size="Size.Small">
+            <MudChip T="string" Icon="@Icons.Material.Outlined.Api" Color="Color.Primary" Href="@(DocumentedType.ApiUrl.ToLowerInvariant())">
+                @Component
+            </MudChip>
+                
+            @if (Example != null && Example.ChildTypes != null)
+            {
+                @foreach (var childType in Example.ChildTypes)
                 {
-                    @foreach (var childType in Example.ChildTypes)
-                    {
-                        <li>
-                            <MudLink Href="@($"api/{childType.Name.ToLowerInvariant()}")" Class="ms-1">
-                                - <CodeInline>@($"<{childType.Name.Replace("`1", "")}>")</CodeInline>
-                            </MudLink>
-                        </li>
-                    }
+                    <MudChip T="string" Icon="@Icons.Material.Outlined.AccountTree" Color="Color.Secondary" Href="@($"api/{childType.Name.ToLowerInvariant()}")">
+                        @childType.Name.Replace("`1", "")
+                    </MudChip>
                 }
-            </ul>
-        </div>
-    </DocsPageSection>
+            }
+
+            <MudChip T="string" Icon="@Icons.Custom.Brands.GitHub" Href="https://github.com/MudBlazor/MudBlazor">
+                Source
+            </MudChip>
+
+            <MudChip T="string" Icon="@Icons.Material.Outlined.Feedback" Href="https://github.com/MudBlazor/MudBlazor/issues">
+                Feedback
+            </MudChip>
+        </MudChipSet>
+    </div>
 }
 @if (IsApi && Example != null)
 {
