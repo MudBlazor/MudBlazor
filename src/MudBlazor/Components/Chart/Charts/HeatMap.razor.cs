@@ -18,7 +18,7 @@ namespace MudBlazor.Charts
 
         private const double BoundHeight = 350.0;
 
-        private Position _legendPosition = Position.Bottom;
+        internal Position _legendPosition = Position.Bottom;
 
         // the minimum size a cell can shrink to (height and width)
         private const int CellMinSize = 8;
@@ -98,19 +98,24 @@ namespace MudBlazor.Charts
 
             if (MudChartParent != null)
             {
-                _legendPosition = MudChartParent.LegendPosition switch
-                {
-                    Position.Center => Position.Bottom,
-                    Position.Start => Position.Left,
-                    Position.End => Position.Right,
-                    _ => MudChartParent.LegendPosition
-                };
+                UpdateLegendPosition(MudChartParent.LegendPosition);
                 UpdateChartOptions(MudChartParent.ChartOptions);
                 UpdateChartSeries(MudChartParent.ChartSeries);
                 UpdateHeatMapCells(MudChartParent.MudHeatMapCells);
             }
 
             InitializeHeatmap();
+        }
+
+        private void UpdateLegendPosition(Position position)
+        {
+            _legendPosition = position switch
+            {
+                Position.Center => Position.Bottom,
+                Position.Start => Position.Left,
+                Position.End => Position.Right,
+                _ => position
+            };
         }
 
         private void UpdateChartOptions(ChartOptions chartOptions)

@@ -5,6 +5,7 @@
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Charts;
 using MudBlazor.UnitTests.TestComponents.Charts;
 using MudBlazor.Utilities;
 using NUnit.Framework;
@@ -531,5 +532,43 @@ namespace MudBlazor.UnitTests.Components
             var customValue = comp.Find(".mud-chart-cell title");
             customValue.TextContent.Trim().Should().Be("10.05");
         }
+
+        [Test]
+        public void MudHeatMapCell_ShouldThrowExceptionIfNotInMudChart()
+        {
+            // Attempt to render MudHeatMapCell outside of MudChart
+            var exception = Assert.Throws<InvalidOperationException>(() =>
+                Context.RenderComponent<MudHeatMapCell>(parameters => parameters
+                    .Add(p => p.Row, 0)
+                    .Add(p => p.Column, 0)
+                )
+            );
+
+            // Verify that the exception message is appropriate
+            exception.Message.Should().Contain("MudHeatMapCell must be used inside a MudChart component.");
+        }
+
+        [TestCase(Position.Top)]
+        [TestCase(Position.Bottom)]
+        [TestCase(Position.Left)]
+        [TestCase(Position.Right)]
+        [TestCase(Position.Start)]
+        [TestCase(Position.End)]
+        [TestCase(Position.Center)]
+        [Test]
+        public void HeatMap_ShouldCorrectBadPositions(Position pos)
+        {
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.HeatMap)
+                .Add(p => p.LegendPosition, pos)
+                .Add(p => p.ChartSeries, [
+                    new() { Name = "Series 1", Data = [1, 2, 3] }
+                ])
+            );
+
+            var heatMap = comp.FindComponent<HeatMap>();
+            heatMap.Instance._legendPosition.Should().BeOneOf(Position.Top, Position.Bottom, Position.Left, Position.Right);
+        }
+
     }
 }
