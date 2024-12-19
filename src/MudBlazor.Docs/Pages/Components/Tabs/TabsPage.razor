@@ -12,17 +12,6 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Tabs Position">
-                <Description>
-                    The position of the tab bar can be changed with the <CodeInline>Position</CodeInline> property.
-                </Description>
-            </SectionHeader>
-            <SectionContent Code="@nameof(TabsPositionExample)" ShowCode="false" Block="true" FullWidth="true">
-                <TabsPositionExample />
-            </SectionContent>
-        </DocsPageSection>
-
-        <DocsPageSection>
             <SectionHeader Title="Icon Tabs">
                 <Description>
                     Icons can be added alongside text in the tabs to enhance visuals.
@@ -56,14 +45,26 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Centered">
+            <SectionHeader Title="Tabs Position">
                 <Description>
-                    The <CodeInline>Centered</CodeInline> property aligns the tabs in the middle of the container.
+                    The position of the tab bar can be changed with the <CodeInline>Position</CodeInline> property.
                 </Description>
             </SectionHeader>
-            <SectionContent Code="@nameof(TabsCenteredExample)" ShowCode="false" Block="true" FullWidth="true">
-                <TabsCenteredExample />
+            <SectionContent Code="@nameof(TabsPositionExample)" ShowCode="false" Block="true" FullWidth="true">
+                <TabsPositionExample />
             </SectionContent>
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="Centered">
+                        <Description>
+                            The <CodeInline>Centered</CodeInline> property aligns the tabs in the middle of the container.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(TabsCenteredExample)" ShowCode="false" Block="true" FullWidth="true">
+                        <TabsCenteredExample />
+                    </SectionContent>
+                </DocsPageSection>
+            </SectionSubGroups>
         </DocsPageSection>
 
         <DocsPageSection>
@@ -89,7 +90,7 @@
             </SectionContent>
             <SectionSubGroups>
                 <DocsPageSection>
-                    <SectionHeader Title="Icons">
+                    <SectionHeader Title="Scroll Icons">
                         <Description>
                             The scroll icons can be customized using the <CodeInline>PrevIcon</CodeInline> and <CodeInline>NextIcon</CodeInline> properties.
                         </Description>
@@ -125,7 +126,7 @@
             </SectionContent>
             <SectionSubGroups>
                 <DocsPageSection>
-                    <SectionHeader Title="Binding">
+                    <SectionHeader Title="Binding Active Panel">
                         <Description>
                             Two-way synchronization of the selected panel is possible using bindings.
                         </Description>
