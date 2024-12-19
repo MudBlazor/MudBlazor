@@ -2,7 +2,7 @@
 
 <MudMenu FullWidth="true">
     <ActivatorContent>
-        <MudButton Variant="Variant.Filled" Color="Color.Primary">I am a button</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="context.OpenMenuAsync">I am a button</MudButton>
     </ActivatorContent>
     <ChildContent>
         <MudMenuItem Label="Profile" />
@@ -14,7 +14,7 @@
 
 <MudMenu FullWidth="true">
     <ActivatorContent>
-        <MudChip T="string" Icon="@Icons.Material.Filled.Person" Color="Color.Primary">Account</MudChip>
+        <MudChip T="string" Icon="@Icons.Material.Filled.Person" Color="Color.Primary" OnClick="context.OpenMenuAsync">Account</MudChip>
     </ActivatorContent>
     <ChildContent>
         <MudMenuItem Label="Profile" />
@@ -26,7 +26,7 @@
 
 <MudMenu FullWidth="true" Disabled="true">
     <ActivatorContent>
-        <MudChip T="string" Icon="@Icons.Material.Filled.Person" Disabled="true" Color="Color.Primary">Disabled</MudChip>
+        <MudChip T="string" Icon="@Icons.Material.Filled.Person" Disabled="true" Color="Color.Primary" OnClick="context.OpenMenuAsync">Disabled</MudChip>
     </ActivatorContent>
     <ChildContent>
         <MudMenuItem Label="Profile" />
@@ -39,7 +39,7 @@
 <MudMenu>
     <ActivatorContent>
         <MudAvatar>
-            <MudImage Src="images/toiletvisit.jpg" />
+            <MudImage Src="images/toiletvisit.jpg" @onclick="context.OpenMenuAsync" />
         </MudAvatar>
     </ActivatorContent>
     <ChildContent>
@@ -52,7 +52,7 @@
 
 <MudMenu FullWidth="true">
     <ActivatorContent>
-        <MudAlert Severity="Severity.Error" Variant="Variant.Filled" Dense="true">Dense Error</MudAlert>
+        <MudAlert Severity="Severity.Error" Variant="Variant.Filled" Dense="true" OnClick="context.OpenMenuAsync">Dense Error</MudAlert>
     </ActivatorContent>
     <ChildContent>
         <MudMenuItem Label="Profile" />

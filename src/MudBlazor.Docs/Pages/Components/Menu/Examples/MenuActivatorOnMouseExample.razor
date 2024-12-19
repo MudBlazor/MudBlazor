@@ -1,9 +1,8 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-
 <MudMenu PositionAtCursor="true">
     <ActivatorContent>
-        <MudCard>
+        <MudCard @onclick="context.OpenMenuAsync">
             <MudCardMedia Image="images/door.jpg" Height="200" />
             <MudCardContent>
                 <MudText Typo="Typo.h5">Old Paint</MudText>
@@ -19,8 +18,3 @@
         <MudMenuItem Label="Delete" />
     </ChildContent>
 </MudMenu>
-
-
-
-
-

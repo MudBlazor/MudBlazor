@@ -4,7 +4,6 @@
 
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.Interfaces;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
@@ -15,7 +14,7 @@ namespace MudBlazor
     /// An interactive menu that displays a list of options.
     /// </summary>
     /// <seealso cref="MudMenuItem" />
-    public partial class MudMenu : MudComponentBase, IActivatable, IDisposable
+    public partial class MudMenu : MudComponentBase, IDisposable
     {
         private readonly ParameterState<bool> _openState;
         private readonly List<MudMenu> _children = [];
@@ -229,7 +228,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Menu.Behavior)]
-        public RenderFragment? ActivatorContent { get; set; }
+        public RenderFragment<MenuContext>? ActivatorContent { get; set; }
 
         /// <summary>
         /// The action which opens the menu, when <see cref="ActivatorContent"/> is set.
@@ -558,14 +557,6 @@ namespace MudBlazor
             {
                 await CloseMenuAsync();
             }
-        }
-
-        /// <summary>
-        /// Implementation of IActivatable.Activate, toggles the menu.
-        /// </summary>
-        void IActivatable.Activate(object activator, MouseEventArgs args)
-        {
-            _ = ToggleMenuAsync(args);
         }
 
         /// <summary>

@@ -1,5 +1,4 @@
 @namespace MudBlazor
-@using MudBlazor.Interfaces
 @inherits MudComponentBase
 
 <div @attributes="UserAttributes"
@@ -15,11 +14,9 @@
     }
     else if (ActivatorContent is not null)
     {
-        <CascadingValue Value="@((IActivatable)this)" IsFixed="true">
-            <div @onclick="ToggleMenuAsync" disabled="@Disabled" class="@ActivatorClassname">
-                @ActivatorContent
-            </div>
-        </CascadingValue>
+        <div disabled="@Disabled" class="@ActivatorClassname">
+            @ActivatorContent(new MenuContext(this))
+        </div>
     }
     else if (string.IsNullOrEmpty(Icon))
     {

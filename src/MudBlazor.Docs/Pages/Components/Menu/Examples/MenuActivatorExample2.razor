@@ -3,7 +3,7 @@
 
 <MudMenu FullWidth="true" ActivationEvent="@MouseEvent.LeftClick">
     <ActivatorContent>
-        <MudChip T="string" Icon="@Icons.Material.Filled.Mouse" Color="Color.Primary">Left click</MudChip>
+        <MudChip T="string" Icon="@Icons.Material.Filled.Mouse" Color="Color.Primary" OnClick="context.OpenMenuAsync">Left click</MudChip>
     </ActivatorContent>
     <ChildContent>
         <MudMenuItem Label="Profile" />

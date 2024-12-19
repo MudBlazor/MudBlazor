@@ -247,7 +247,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MenuTest_LeftAndRightClick_CheckClosed()
         {
-            //Standart button menu -- left click
+            //Standard button menu -- left click
             var comp = Context.RenderComponent<MenuTestVariants>();
             comp.FindAll("button.mud-button-root")[0].Click();
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1);
@@ -257,7 +257,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
             comp.FindAll("button.mud-button-root")[0].Click(new MouseEventArgs() { Button = 2 });
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
-            //Standart button menu -- right click
+            //Standard button menu -- right click
             comp.FindAll("button.mud-button-root")[1].Click(new MouseEventArgs() { Button = 2 });
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1);
             comp.FindAll("div.mud-list-item").Count.Should().Be(1);
