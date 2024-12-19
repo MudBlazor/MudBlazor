@@ -394,7 +394,6 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         var options = new KeyInterceptorOptions(
             "mud-chip",
             [
-                new("Enter", preventDown: "key+none"),
                 new(" ", preventDown: "key+none", preventUp: "key+none"),
                 new("Backspace", preventDown: "key+none"),
                 new("Delete", preventDown: "key+none")
