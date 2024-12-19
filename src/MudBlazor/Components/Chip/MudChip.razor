@@ -9,7 +9,7 @@
      @onkeydown="@HandleKeyDownAsync">
     <MudElement HtmlTag="@GetHtmlTag()"
                 tabindex="@(IsClickable ? 0 : -1)"
-                role="@RoleAttribute"
+                role="@GetRole()"
                 href="@Href"
                 target="@Target"
                 rel="@GetRel()"

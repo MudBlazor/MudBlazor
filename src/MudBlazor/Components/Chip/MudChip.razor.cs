@@ -76,7 +76,32 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
 
     private bool IsClosable => OnClose.HasDelegate || ChipSet?.AllClosable == true;
 
-    private string? RoleAttribute => IsClickable ? "button" : null;
+    protected string GetHtmlTag() => IsAnchor ? "a" : "div";
+
+    private string? GetRole()
+    {
+        if (IsClickable)
+        {
+            return "button";
+        }
+
+        if (IsAnchor)
+        {
+            return "link";
+        }
+
+        return null;
+    }
+
+    protected string? GetRel()
+    {
+        if (Rel is null && Target == "_blank")
+        {
+            return "noopener";
+        }
+
+        return Rel;
+    }
 
     internal Variant GetVariant()
     {
@@ -351,18 +376,6 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         if (typeof(T) == typeof(string) && Value is null && Text is not null)
             return (T)(object)Text;
         return Value;
-    }
-
-    protected string GetHtmlTag() => IsAnchor ? "a" : "div";
-
-    protected string? GetRel()
-    {
-        if (Rel is null && Target == "_blank")
-        {
-            return "noopener";
-        }
-
-        return Rel;
     }
 
     /// <inheritdoc />
