@@ -4919,7 +4919,7 @@ namespace MudBlazor.UnitTests.Components
             form.IsTouched.Should().BeTrue();
             form.IsValid.Should().BeFalse();
         }
-        
+
         /// <summary>
         /// Tests two-way binding on the CurrentPage parameter.
         /// The table should re-render with the newly provided value as the CurrentPage.
