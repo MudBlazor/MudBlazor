@@ -48,7 +48,7 @@
                 </MudButton>
             }
             <p class="mud-file-upload-filelist mt-1">
-                @foreach (var file in GetFilenames)
+                @foreach (var file in GetFilenames())
                 {
                     <MudChip T="string"
                              Color="Color.Secondary"

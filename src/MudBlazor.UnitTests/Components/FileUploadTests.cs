@@ -8,6 +8,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using MudBlazor.Extensions;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.Mocks;
 using MudBlazor.UnitTests.TestComponents.FileUpload;
@@ -181,10 +182,10 @@ namespace MudBlazor.UnitTests.Components
         public async Task FileUpload_FileValueChangedTest()
         {
             InputFileContent[] fileContent =
-            {
+            [
                 InputFileContent.CreateFromText("Garderoben is a farmer!", "upload.txt"),
                 InputFileContent.CreateFromText("A Balrog, servant of Morgoth", "upload2.txt")
-            };
+            ];
 
             var comp = Context.RenderComponent<FileUploadFormValidationTest>();
 
@@ -216,10 +217,10 @@ namespace MudBlazor.UnitTests.Components
         public async Task FileUpload_ValidationTest()
         {
             InputFileContent[] fileContent =
-            {
+            [
                 InputFileContent.CreateFromText("Garderoben is a farmer!", "upload.txt"),
                 InputFileContent.CreateFromText("A Balrog, servant of Morgoth", "upload2.txt")
-            };
+            ];
 
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture; //<<< rework this!
             Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
@@ -266,19 +267,19 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void FileUpload_MaximumFileCountTest()
         {
-            List<InputFileContent> Files = new();
+            List<InputFileContent> files = [];
             for (var i = 0; i < 11; i++)
             {
-                Files.Add(InputFileContent.CreateFromText("Garderoben is a farmer!", $"upload{i}.txt"));
+                files.Add(InputFileContent.CreateFromText("Garderoben is a farmer!", $"upload{i}.txt"));
             }
 
-            Files.Count.Should().Be(11); //ensure there are 11 files
+            files.Count.Should().Be(11); //ensure there are 11 files
 
             var comp = Context.RenderComponent<FileUploadMultipleFilesTest>();
 
             var multiple = comp.FindComponent<MudFileUpload<IReadOnlyList<IBrowserFile>>>();
             var multipleInput = multiple.FindComponent<InputFile>();
-            multipleInput.UploadFiles(Files.ToArray()); //upload second files
+            multipleInput.UploadFiles([.. files]); //upload second files
 
             comp.Instance.Files.Count.Should()
                 .Be(11); //if no error occurs, we have successfully uploaded more than 10 files
@@ -322,7 +323,7 @@ namespace MudBlazor.UnitTests.Components
             input.UploadFiles(GenerateFile());
             comp.Instance.Files.Count.Should().Be(appendMultiple ? 4 : 1);
 
-            InputFileContent GenerateFile()
+            static InputFileContent GenerateFile()
             {
                 return InputFileContent.CreateFromText("snakex64 is Canadian", $"{Guid.NewGuid()}.txt");
             }
@@ -459,14 +460,14 @@ namespace MudBlazor.UnitTests.Components
 
             // Verify initial state
             comp.Instance.Files.Should().NotBeNull();
-            comp.Instance.GetFilenames.Should().ContainSingle(x => x == fileName);
+            comp.Instance.GetFilenames().Should().ContainSingle(x => x == fileName);
 
             // Remove file
             await comp.InvokeAsync(() => comp.Instance.RemoveFile(fileName));
 
             // Verify file was removed
-            comp.Instance.Files.Should().BeNull();
-            comp.Instance.GetFilenames.Should().BeEmpty();
+            comp.Instance.GetState(x => x.Files).Should().BeNull();
+            comp.Instance.GetFilenames().Should().BeEmpty();
         }
 
         /// <summary>
@@ -486,14 +487,14 @@ namespace MudBlazor.UnitTests.Components
 
             // Verify initial state
             comp.Instance.Files.Should().HaveCount(2);
-            comp.Instance.GetFilenames.Should().HaveCount(2);
+            comp.Instance.GetFilenames().Should().HaveCount(2);
 
             // Remove one file
             await comp.InvokeAsync(() => comp.Instance.RemoveFile("test1.txt"));
 
             // Verify file was removed
-            comp.Instance.Files.Should().HaveCount(1);
-            comp.Instance.GetFilenames.Should().ContainSingle(x => x == "test2.txt");
+            comp.Instance.GetState(x => x.Files).Should().HaveCount(1);
+            comp.Instance.GetFilenames().Should().ContainSingle(x => x == "test2.txt");
         }
 
         /// <summary>
@@ -523,24 +524,37 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Tests SuppressOnChangeWhenInvalid behavior
+        /// Tests the SuppressOnChangeWhenInvalid behavior in the FileUpload component
         /// </summary>
         [Test]
-        public async Task FileUpload_SuppressOnChangeWhenInvalid_Test()
+        public async Task FileUpload_SuppressOnChangeWhenInvalidTest()
         {
-            var onFilesChangedCount = 0;
-            var comp = Context.RenderComponent<MudFileUpload<IBrowserFile>>(parameters => parameters
-                .Add(x => x.Required, true)
-                .Add(x => x.SuppressOnChangeWhenInvalid, true)
-                .Add(x => x.OnFilesChanged, _ => onFilesChangedCount++));
+            // Arrange
+            var suppressOnChangeWhenInvalid = true;
+            var files = new List<IBrowserFile>
+            {
+                new DummyBrowserFile("valid.txt", DateTimeOffset.Now, 1024, "text/plain", []),
+                new DummyBrowserFile("invalid.txt", DateTimeOffset.Now, 10485761, "text/plain", [])
+            };
 
-            // Upload empty file to trigger validation error
-            var emptyFile = new DummyBrowserFile("empty.txt", DateTimeOffset.Now, 0, "text/plain", []);
-            await comp.InvokeAsync(() => comp.FindComponent<InputFile>().Instance.OnChange.InvokeAsync(new InputFileChangeEventArgs([emptyFile])));
+            var comp = Context.RenderComponent<FileUploadFormValidationTest>(parameters => parameters
+                .Add(p => p.SuppressOnChangeWhenInvalid, suppressOnChangeWhenInvalid));
 
-            // Verify OnFilesChanged was not called due to validation error
-            onFilesChangedCount.Should().Be(0);
-            comp.Instance.Error.Should().BeTrue();
+            // Act 1: Upload a valid file
+            await comp.InvokeAsync(() => comp.FindComponents<InputFile>()[0].Instance.OnChange.InvokeAsync(new InputFileChangeEventArgs([files[0]])));
+
+            // Assert: The valid file should trigger OnFilesChanged
+            comp.Instance.Model.File.Should().NotBeNull();
+            comp.Instance.Model.File.Name.Should().Be("valid.txt");
+            comp.Instance.OnFilesChangedCount.Should().Be(1);
+
+            // Act 2: Upload an invalid file
+            await comp.InvokeAsync(() => comp.FindComponents<InputFile>()[0].Instance.OnChange.InvokeAsync(new InputFileChangeEventArgs([files[1]])));
+
+            // Assert: The invalid file should NOT trigger OnFilesChanged
+            comp.Instance.Model.File.Should().NotBeNull();
+            comp.Instance.Model.File.Name.Should().Be("invalid.txt");
+            comp.Instance.OnFilesChangedCount.Should().Be(1);
         }
     }
 }

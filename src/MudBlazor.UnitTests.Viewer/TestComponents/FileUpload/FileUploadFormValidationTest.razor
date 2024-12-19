@@ -1,12 +1,20 @@
 ﻿@using FluentValidation
 
 <MudForm Model="@Model" @ref="@Form" Validation="@(_validationRules.ValidateValue)" ValidationDelay="0">
-    <MudFileUpload T="IBrowserFile?" For="@(() => Model.File)" @bind-Files="Model.File" />
+    <MudFileUpload T="IBrowserFile?" For="@(() => Model.File)" @bind-Files="Model.File" SuppressOnChangeWhenInvalid="@SuppressOnChangeWhenInvalid" OnFilesChanged="@(() => OnFilesChangedCount++)" />
     <MudFileUpload T="IReadOnlyList<IBrowserFile>?" For="@(() => Model.Files)" @bind-Files="Model.Files" />
 </MudForm>
 
 <MudButton OnClick="() => Form.Validate()">Submit</MudButton>
 @code {
+
+
+
+    [Parameter]
+    public bool SuppressOnChangeWhenInvalid { get; set; }
+
+    public int OnFilesChangedCount { get; set; }
+
     private readonly FileModelFluentValidator _validationRules = new();
 
     public MudForm Form { get; private set; } = null!;
