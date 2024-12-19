@@ -1,14 +1,12 @@
-﻿<MudTreeView T="DocumentedType" Items="@Root" SelectionMode="SelectionMode.SingleSelection" @bind-SelectedValue="@SelectedType">
+﻿<MudTreeView Class="api-type-hierarchy" T="DocumentedType" Items="@Root" SelectionMode="SelectionMode.SingleSelection" @bind-SelectedValue="@SelectedType">
     <ItemTemplate>
         <MudTreeViewItem T="DocumentedType" Expanded="@context.Expanded" Text="@context.Text" Items="@context.Children" ReadOnly>
             <Content>
-                <div class="d-flex gap-1">
-                    <MudIcon Icon="@GetIcon(context)" Size="Size.Small" />
+                <MudIcon Icon="@GetIcon(context)" Size="Size.Small" />
 
-                    <MudLink Href="@context.Value.ApiUrl" Disabled="GetReadOnly(context)" Style="flex-grow: 1; color: unset !important;">
-                        @context.Text
-                    </MudLink>
-                </div>
+                <MudLink Href="@context.Value.ApiUrl" Disabled="GetReadOnly(context)">
+                    @context.Text
+                </MudLink>
             </Content>
         </MudTreeViewItem>
     </ItemTemplate>
