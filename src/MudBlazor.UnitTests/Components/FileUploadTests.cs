@@ -503,24 +503,31 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void FileUpload_SelectedTemplate_Test()
         {
+            // Arrange
             var files = new List<IBrowserFile>
             {
                 new DummyBrowserFile("test1.txt", DateTimeOffset.Now, 0, "text/plain", []),
                 new DummyBrowserFile("test2.txt", DateTimeOffset.Now, 0, "text/plain", [])
             };
 
+            // Create the component with initial template
             var comp = Context.RenderComponent<MudFileUpload<IReadOnlyList<IBrowserFile>>>(parameters => parameters
-                .Add(x => x.Files, files)
                 .Add(x => x.SelectedTemplate, context => builder =>
                 {
                     builder.AddContent(0, $"Selected files: {context?.Count ?? 0}");
                 }));
 
-            comp.Markup.Should().Contain("Selected files: 2");
-
-            // Test with null files
-            comp.SetParametersAndRender(parameters => parameters.Add(x => x.Files, null));
+            // Initial state should show 0 files
             comp.Markup.Should().Contain("Selected files: 0");
+
+            // Simulate file upload by triggering OnChange
+            var inputFile = comp.FindComponent<InputFile>();
+            inputFile.InvokeAsync(() => inputFile.Instance.OnChange.InvokeAsync(
+                new InputFileChangeEventArgs(files)));
+
+            // Re-render and verify
+            comp.Render();
+            comp.Markup.Should().Contain("Selected files: 2");
         }
 
         /// <summary>

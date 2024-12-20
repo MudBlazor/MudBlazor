@@ -224,7 +224,7 @@ namespace MudBlazor
         /// </remarks>
         public IReadOnlyList<string> GetFilenames()
         {
-            if (_filesState.Value == null)
+            if (EqualityComparer<T>.Default.Equals(_filesState.Value, default))
             {
                 return [];
             }
