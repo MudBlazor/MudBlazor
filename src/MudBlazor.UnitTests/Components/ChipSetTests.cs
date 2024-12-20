@@ -203,7 +203,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-ripple").Count.Should().Be(0);
 
             //Click test
-            comp.FindAll("button.mud-chip")[0].Click();
+            comp.FindAll(".mud-chip")[0].TagName.Should().Be("DIV");
 
             //Should not throw an error because it won't click
             comp.FindAll("button.mud-chip-close-button")[0].Click();
