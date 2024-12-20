@@ -60,8 +60,8 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         .AddClass($"mud-chip-{GetVariant().ToDescriptionString()}")
         .AddClass($"mud-chip-size-{GetSize().ToDescriptionString()}")
         .AddClass($"mud-chip-color-{GetColor().ToDescriptionString()}")
-        .AddClass("mud-clickable", IsClickable)
-        .AddClass("mud-ripple", IsClickable && GetRipple())
+        .AddClass("mud-clickable", IsButton || IsAnchor)
+        .AddClass("mud-ripple", IsButton && GetRipple())
         .AddClass("mud-chip-label", GetLabel())
         .AddClass("mud-disabled", GetDisabled())
         .AddClass("mud-chip-selected", SelectedState.Value)
@@ -70,9 +70,9 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
 
     private bool IsAnchor => !string.IsNullOrWhiteSpace(Href);
 
-    private bool IsClickable => GetDisabled() is false
-                                && GetReadonly() is false
-                                && (ChipSet is not null || OnClick.HasDelegate || IsAnchor);
+    private bool IsButton => GetDisabled() is false
+                             && GetReadonly() is false
+                             && (ChipSet is not null || OnClick.HasDelegate);
 
     private bool IsClosable => OnClose.HasDelegate || ChipSet?.AllClosable == true;
 
@@ -80,7 +80,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
 
     private string? GetRole()
     {
-        if (IsClickable)
+        if (IsButton)
         {
             return "button";
         }
@@ -414,10 +414,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
             await ChipSet.OnChipSelectedChangedAsync(this, SelectedState.Value);
         }
 
-        if (!IsAnchor)
-        {
-            await OnClick.InvokeAsync(ev);
-        }
+        await OnClick.InvokeAsync(ev);
     }
 
     protected async Task OnCloseAsync(MouseEventArgs ev)
