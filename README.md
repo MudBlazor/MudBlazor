@@ -115,11 +115,11 @@ builder.Services.AddMudServices();
 </MudButton>
 
 @code {
-    public string Text { get; set; } = "????";
-    public string ButtonText { get; set; } = "Click Me";
-    public int ClickCount { get; set; }
+    string Text { get; set; } = "????";
+    string ButtonText { get; set; } = "Click Me";
+    int ClickCount { get; set; }
 
-    private void ButtonOnClick()
+    void ButtonOnClick()
     {
         ClickCount += 1;
         Text = $"Awesome x {ClickCount}";
