@@ -3,39 +3,16 @@
 <MudChip T="string"
          Href="https://github.com/MudBlazor/MudBlazor"
          Target="_blank"
-         Variant="Variant.Filled"
          Icon="@Icons.Custom.Brands.GitHub"
-         Color="Color.Primary"
-         Disabled="_disabled">
+         Color="Color.Primary">
     GitHub Link
 </MudChip>
 
 <MudChip T="string"
          Href="https://github.com/MudBlazor/MudBlazor"
          Target="_blank"
-         Variant="Variant.Filled"
          Icon="@Icons.Custom.Brands.GitHub"
          Color="Color.Primary"
-         Disabled="_disabled">
-    <AvatarContent>
-        <MudAvatar>GH</MudAvatar>
-    </AvatarContent>
-    <ChildContent>Avatar</ChildContent>
+         Disabled="true">
+    GitHub Link (Disabled)
 </MudChip>
-
-<MudChip T="string"
-         Href="https://github.com/MudBlazor/MudBlazor"
-         Target="_blank"
-         Icon="@Icons.Custom.Brands.GitHub"
-         Disabled="_disabled"
-         OnClose="() => {}">
-    Closable
-</MudChip>
-
-<br />
-
-<MudSwitch Color="Color.Primary" @bind-Value="_disabled" Label="Disable" />
-
-@code {
-    bool _disabled = false;
-}

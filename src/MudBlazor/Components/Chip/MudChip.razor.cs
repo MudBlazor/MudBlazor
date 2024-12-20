@@ -71,7 +71,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     private bool IsAnchor => !string.IsNullOrWhiteSpace(Href);
 
     private bool IsButton => GetDisabled() is false
-                             && GetReadonly() is false
+                             && GetReadOnly() is false
                              && (ChipSet is not null || OnClick.HasDelegate);
 
     private bool IsClosable => OnClose.HasDelegate || ChipSet?.AllClosable == true;
@@ -160,7 +160,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
 
     private bool GetDisabled() => Disabled || (ChipSet?.Disabled ?? false);
 
-    private bool GetReadonly() => ChipSet?.ReadOnly ?? false;
+    private bool GetReadOnly() => ChipSet?.ReadOnly ?? false;
 
     private bool GetRipple() => Ripple ?? ChipSet?.Ripple ?? true;
 
@@ -445,7 +445,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
 
     protected async Task OnCloseAsync(MouseEventArgs ev)
     {
-        if (GetReadonly() || IsClosable is false)
+        if (GetReadOnly() || IsClosable is false)
         {
             return;
         }
@@ -460,7 +460,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
 
     private async Task HandleKeyDownAsync(KeyboardEventArgs args)
     {
-        if (GetDisabled() || GetReadonly())
+        if (GetDisabled() || GetReadOnly())
         {
             return;
         }
