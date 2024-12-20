@@ -76,9 +76,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
 
     private bool IsClosable => OnClose.HasDelegate || ChipSet?.AllClosable == true;
 
-    protected string GetHtmlTag() => IsAnchor ? "a" : "div";
-
-    private string? GetRole()
+    protected string GetHtmlTag()
     {
         if (IsButton)
         {
@@ -87,10 +85,10 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
 
         if (IsAnchor)
         {
-            return "link";
+            return "a";
         }
 
-        return null;
+        return "div";
     }
 
     protected string? GetRel()

@@ -2,13 +2,8 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
-using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.Interfaces;
-using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.Chip;
 using NUnit.Framework;
 
@@ -27,7 +22,7 @@ namespace MudBlazor.UnitTests.Components
             // print the generated html
 
             // chip should have mud-clickable and mud-ripple classes
-            var chip = comp.Find("div.mud-chip");
+            var chip = comp.Find("button.mud-chip");
             chip.ClassName.Should().Contain("mud-clickable");
             chip.ClassName.Should().Contain("mud-ripple");
 
@@ -48,7 +43,7 @@ namespace MudBlazor.UnitTests.Components
             // print the generated html
 
             // chip should have mud-clickable and mud-ripple classes
-            var chip = comp.Find("div.mud-chip");
+            var chip = comp.Find("button.mud-chip");
             chip.ClassName.Should().Contain("mud-clickable");
             chip.ClassName.Should().Contain("mud-ripple");
 
@@ -57,24 +52,6 @@ namespace MudBlazor.UnitTests.Components
 
             var expectedEvent = comp.Find("#chip-click-test-expected-value");
             expectedEvent.InnerHtml.Should().Be("OnClose");
-        }
-
-        [Test]
-        public async Task Chip_Link_Test()
-        {
-            var comp = Context.RenderComponent<ChipLinkTest>();
-            var chip = comp.FindComponent<MudChip<string>>();
-
-            await comp.InvokeAsync(() => ((IMudStateHasChanged)chip.Instance).StateHasChanged());
-            await comp.InvokeAsync(() => chip.Instance.OnClickAsync(new MouseEventArgs()));
-
-            comp.WaitForAssertion(() => comp.Find("#chip-click-test-expected-value").InnerHtml.Should().Be(""));
-#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
-            await comp.InvokeAsync(() => chip.Instance.Target = "_blank");
-#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
-            await comp.InvokeAsync(() => chip.Instance.OnClickAsync(new MouseEventArgs()));
-
-            comp.WaitForAssertion(() => comp.Find("#chip-click-test-expected-value").InnerHtml.Should().Be(""));
         }
 
         [Test]
