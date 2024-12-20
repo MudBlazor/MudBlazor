@@ -224,6 +224,10 @@ namespace MudBlazor
         /// </remarks>
         public IReadOnlyList<string> GetFilenames()
         {
+            if (_filesState.Value == null)
+            {
+                return [];
+            }
             return _filesState.Value switch
             {
                 IBrowserFile singleFile => [singleFile.Name],

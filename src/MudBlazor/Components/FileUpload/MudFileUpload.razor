@@ -28,56 +28,57 @@
         }
         @if (ActivatorContent == null)
         {
-            @if (DragandDrop)
-            {
-                <MudPaper Outlined="true"
-                @onclick="@OpenFilePickerAsync"
-                @ondragenter="@(() => _draggingState.SetValueAsync(true))"
-                Style="@DragStyle"
-                Class="@DragClass">
-                    <MudIcon Class="mb-2" Icon="@Icons.Material.Filled.Inbox" Color="Color.Primary" Size="Size.Large" />
-                    <MudText Color="Color.Primary">Drag and drop files here or click</MudText>
-                </MudPaper>
-            }
-            else
-            {
-                <MudButton Variant="Variant.Filled" Color="Color.Primary"
-                StartIcon="@Icons.Material.Filled.CloudUpload"
-                OnClick="@OpenFilePickerAsync">
-                    Click to Upload
-                </MudButton>
-            }
-            if (SelectedTemplate == null)
-            {
-                <p class="mud-file-upload-filelist mt-1">
-                    @foreach (var file in GetFilenames())
-                    {
-                        <MudChip T="string"
-                        Color="Color.Secondary"
-                        Text="@file"
-                        CloseIcon="@Icons.Material.Outlined.Delete"
-                        OnClose="@(async () => await RemoveFile(file))"
-                        tabindex="-1" />
-                    }
-                </p>
-            }
-            else
-            {
-                @SelectedTemplate(_filesState.Value)
-            }
+            <div disabled="@GetDisabledState()">           
+                @if (DragandDrop)
+                {
+                    <MudPaper Outlined="true" 
+                    @onclick="@OpenFilePickerAsync"
+                    @ondragenter="@(() => _draggingState.SetValueAsync(true))"
+                    Style="@DragStyle"
+                    Class="@DragClass">
+                        <MudIcon Class="mb-2" Icon="@Icons.Material.Filled.Inbox" Color="Color.Primary" Size="Size.Large" />
+                        <MudText Color="Color.Primary">Drag and drop files here or click</MudText>
+                    </MudPaper>
+                }
+                else
+                {
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                    StartIcon="@Icons.Material.Filled.CloudUpload"
+                    OnClick="@OpenFilePickerAsync">
+                        Click to Upload
+                    </MudButton>
+                }
+            </div>
         }
         else
         {
             <CascadingValue Name="ParentDisabled"
-                            Value="GetDisabledState()">
+            Value="GetDisabledState()">
                 <div disabled="@GetDisabledState()">
                     @ActivatorContent(this)
                 </div>
             </CascadingValue>
         }
-        @if (SelectedTemplate != null)
+        @if (_filesState.Value != null)
         {
-            @SelectedTemplate(_filesState.Value)
+            @if (SelectedTemplate == null)
+            {
+                <div class="mud-file-upload-filelist mt-1">                        
+                    @foreach (var file in GetFilenames())
+                    {
+                        <MudChip T="string"
+                                 Color="Color.Secondary"
+                                 Text="@file"
+                                 CloseIcon="@Icons.Material.Outlined.Close"
+                                 OnClose="@(async () => await RemoveFile(file))"
+                                 tabindex="-1" />
+                    }
+                </div>
+            }
+            else
+            {
+                @SelectedTemplate(_filesState.Value)
+            }            
         }
     </InputContent>
 </MudInputControl>

@@ -556,5 +556,27 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Model.File.Name.Should().Be("invalid.txt");
             comp.Instance.OnFilesChangedCount.Should().Be(1);
         }
+
+        [Test]
+        [TestCase(typeof(IBrowserFile))]
+        [TestCase(typeof(IReadOnlyList<IBrowserFile>))]
+        [TestCase(null)]
+        public void GetFileNames_ShouldNotThrow_ForDifferentTypes(Type type)
+        {
+            // Arrange
+            var actualType = type ?? typeof(object);
+            var componentType = typeof(MudFileUpload<>).MakeGenericType(actualType);
+
+            var renderMethod = Context.GetType()
+                .GetMethod("RenderComponent", [typeof(ComponentParameter[])])
+                .MakeGenericMethod(componentType);
+
+            var comp = renderMethod.Invoke(Context, [Array.Empty<ComponentParameter>()]);
+            var instance = comp.GetType().GetProperty("Instance").GetValue(comp);
+
+            // Act & Assert
+            Action action = () => instance.GetType().GetMethod("GetFilenames").Invoke(instance, null);
+            action.Should().NotThrow();
+        }
     }
 }
