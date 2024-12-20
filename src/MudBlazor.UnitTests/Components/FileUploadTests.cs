@@ -429,7 +429,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task FileUpload_DragAndDrop_Test()
         {
             var comp = Context.RenderComponent<MudFileUpload<IBrowserFile>>(parameters => parameters
-                .Add(x => x.DragandDrop, true));
+                .Add(x => x.DragAndDrop, true));
 
             // Verify drag area exists
             comp.Find(".mud-file-upload-dragarea").Should().NotBeNull();

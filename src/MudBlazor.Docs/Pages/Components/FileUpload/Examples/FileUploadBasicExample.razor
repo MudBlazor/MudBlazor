@@ -1,0 +1,32 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudGrid>
+    <MudItem md="6">
+            <MudText Typo="Typo.h6">Default Button</MudText>
+            <MudFileUpload T="IBrowserFile"
+                           Disabled="@_disabled" />
+    </MudItem>
+    <MudItem md="6">
+            <MudText Typo="Typo.h6">Drag and Drop</MudText>
+            <MudFileUpload T="IBrowserFile" 
+                           DragAndDrop="true"
+                           Disabled="@_disabled" />
+    </MudItem>
+    <MudItem md="12" Class="d-flex justify-center">
+            <MudText Typo="Typo.h6">Drag and Drop with set Width and Height</MudText>
+    </MudItem>
+    <MudItem md="12" Class="d-flex justify-center">
+            <MudFileUpload T="IBrowserFile"
+                           DragStyle="width: 300px; height: 300px;" 
+                           DragAndDrop="true"
+                           Disabled="@_disabled" />
+    </MudItem>
+    <MudItem md="12" Class="d-flex justify-center">
+        <MudSwitch T="bool" @bind-Value="@_disabled" Label="Disabled" LabelPlacement="Placement.Right" />
+    </MudItem>
+</MudGrid>
+
+@code
+{
+    private bool _disabled = false;
+}

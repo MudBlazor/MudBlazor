@@ -52,6 +52,11 @@ namespace MudBlazor
                 .AddClass("mud-border-primary", _draggingState.Value)
                 .Build();
 
+        protected string InputClasses =>
+            new CssBuilder(InputClass)
+                .AddClass("mud-file-upload-draggover", DragAndDrop)
+                .Build();
+
         /// <summary>
         /// The uploaded file or files.
         /// </summary>
@@ -143,14 +148,13 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to false
-        /// Any click events will be intercepted by the input element, if you must have a button inside the MudFileUpload add the style pointer-events: auto
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FileUpload.Behavior)]
-        public bool DragandDrop { get; set; }
+        public bool DragAndDrop { get; set; }
 
         /// <summary>
-        /// Enables the input to be visible for the ondrop event.
+        /// Enables the file input to be visible for the ondrop event.
         /// </summary>
         /// <remarks>
         /// Once the input is visible, ondrop, ondragleave, ondragend will turn Dragging to false, hiding the input again.
@@ -183,7 +187,7 @@ namespace MudBlazor
         /// The CSS styles applied to the internal <see cref="MudPaper"/> drag and drop area.
         /// </summary>
         /// <remarks>
-        /// These styles apply when <see cref="DragandDrop"/> is <c>true</c> and no custom ActivatorContent has been created.
+        /// These styles apply when <see cref="DragAndDrop"/> is <c>true</c> and no custom ActivatorContent has been created.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FileUpload.Appearance)]
@@ -236,14 +240,12 @@ namespace MudBlazor
             };
         }
 
-        internal string FullInputStyle => InputStyle + (DragandDrop ? "position: absolute;width: 100%;height: 100%;opacity: 0;top: 0;left: 0;z-index: 2;" : "");
-
         protected bool GetDisabledState() => Disabled || ParentDisabled || ParentReadOnly;
 
         private int _numberOfActiveFileInputs = 1;
         private string? GetInputClass(int fileInputIndex) => fileInputIndex == _numberOfActiveFileInputs
-            ? InputClass
-            : $"{InputClass} d-none";
+            ? InputClasses
+            : $"{InputClasses} d-none";
         private string GetInputId(int fileInputIndex) => $"{_id}-{fileInputIndex}";
         private string GetActiveInputId() => $"{_id}-{_numberOfActiveFileInputs}";
 

@@ -1,17 +1,14 @@
-﻿@page "/components/fileupload"
-@page "/components/fileuploader"
-
+﻿
 <DocsPage>
     <DocsPageHeader Title="File Upload" Component="@nameof(MudFileUpload<T>)">
         <Description>
             <MudText Typo="@Typo.body1" Class="mt-4">
-                To create a file upload button, two elements are needed: 1) Configure the component. 2) Implement the Upload method
+                To create a file upload button, two elements are needed: an activator (using the <CodeInline>ActivatorContent</CodeInline> parameter) and an <CodeInline>input</CodeInline>.
             </MudText>
             <br />
             <MudText Typo="@Typo.body1">
-                The <CodeInline>MudFileUpload</CodeInline> component provides a default implementation for an upload button and drag and drop area. It also provides a built in 
-                <CodeInline>SelectedTemplate</CodeInline> to display files. For advanced usage you can use the <CodeInline>ActivatorContent</CodeInline> which provides a context
-                for public <CodeInline>ClearAsync</CodeInline> and <CodeInline>OpenFilePickerAsync</CodeInline> methods that can be used as <CodeInline>OnClick</CodeInline> events.
+                The <CodeInline>MudFileUpload</CodeInline> component provides public <CodeInline>ClearAsync</CodeInline> and <CodeInline>OpenFilePickerAsync</CodeInline>
+                methods that can be used as <CodeInline>OnClick</CodeInline> events for buttons.
             </MudText>
             <br />
             <MudText Typo="@Typo.body1">
@@ -23,19 +20,6 @@
         </Description>
     </DocsPageHeader>
     <DocsPageContent>
-
-        <DocsPageSection>
-            <SectionHeader Title="Basic Usage (Single Button or Drag and Drop)">
-                <Description>
-                    Use a <CodeInline>MudFileUpload</CodeInline>, set <CodeInline>T</CodeInline> and any options you want. For DragAndDrop functionality, set <CodeInline>DragAndDrop</CodeInline>
-                    to true and optionally set a <CodeInline>DragStyle</CodeInline> to set the bounds. By default it will use the full width and height of the parent.
-                    A <CodeInline>MudFileUpload</CodeInline> can be <CodeInline>Disabled</CodeInline> and it will disable its children automatically.
-                </Description>
-            </SectionHeader>
-            <SectionContent DarkenBackground="true" ShowCode="false" Code="@nameof(FileUploadBasicExample)">
-                <FileUploadBasicExample />
-            </SectionContent>
-        </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Use any type of MudButton">
