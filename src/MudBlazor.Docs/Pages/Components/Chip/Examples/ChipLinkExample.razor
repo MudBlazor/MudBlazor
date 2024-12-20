@@ -6,34 +6,35 @@
          Variant="Variant.Filled"
          Icon="@Icons.Custom.Brands.GitHub"
          Color="Color.Primary"
-         Disabled=@_disabled>
+         Disabled="_disabled">
     GitHub Link
 </MudChip>
 
 <MudChip T="string"
          Href="https://github.com/MudBlazor/MudBlazor"
          Target="_blank"
-         Variant="Variant.Text"
+         Variant="Variant.Filled"
          Icon="@Icons.Custom.Brands.GitHub"
-         Color="Color.Secondary"
-         Style="text-transform:none"
-         Disabled=@_disabled>
-    GitHub Link
+         Color="Color.Primary"
+         Disabled="_disabled">
+    <AvatarContent>
+        <MudAvatar>GH</MudAvatar>
+    </AvatarContent>
+    <ChildContent>Avatar</ChildContent>
 </MudChip>
 
 <MudChip T="string"
          Href="https://github.com/MudBlazor/MudBlazor"
          Target="_blank"
-         Variant="Variant.Outlined"
          Icon="@Icons.Custom.Brands.GitHub"
-         Color="Color.Tertiary"
-         Disabled=@_disabled>
-    GitHub Link
+         Disabled="_disabled"
+         OnClose="() => {}">
+    Closable
 </MudChip>
 
 <br />
 
-<MudSwitch Color="Color.Primary" @bind-Value=@(_disabled) Label="Disable" />
+<MudSwitch Color="Color.Primary" @bind-Value="_disabled" Label="Disable" />
 
 @code {
     bool _disabled = false;
