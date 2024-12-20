@@ -8,14 +8,9 @@
      id="@_chipContainerId"
      @onkeydown="@HandleKeyDownAsync">
     <MudElement HtmlTag="@GetHtmlTag()"
-                tabindex="@(IsButton || IsAnchor ? 0 : -1)"
-                href="@Href"
-                target="@Target"
-                rel="@GetRel()"
-                type="@(IsButton ? "button" : null)"
-                @attributes="UserAttributes"
                 Class="@Classname"
                 Style="@Style"
+                @attributes="GetAttributes()"
                 @onclick="@(IsButton ? this.AsNonRenderingEventHandler<MouseEventArgs>(OnClickAsync) : null)">
         @{
             if (AvatarContent is not null)

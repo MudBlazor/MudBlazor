@@ -82,8 +82,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         {
             return "button";
         }
-
-        if (IsAnchor)
+        else if (IsAnchor)
         {
             return "a";
         }
@@ -91,14 +90,43 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         return "div";
     }
 
-    protected string? GetRel()
+    protected Dictionary<string, object?> GetAttributes()
     {
-        if (Rel is null && Target == "_blank")
+        var attributes = new Dictionary<string, object?>();
+
+        if (IsButton)
         {
-            return "noopener";
+            attributes.Add("tabindex", 0);
+            attributes.Add("type", "button");
+        }
+        else if (IsAnchor)
+        {
+            attributes.Add("tabindex", 0);
+
+            attributes.Add("href", Href);
+            attributes.Add("target", Target);
+
+            if (Rel is null && Target == "_blank")
+            {
+                attributes.Add("rel", "noopener");
+            }
+            else
+            {
+                attributes.Add("rel", Rel);
+            }
+        }
+        else
+        {
+            attributes.Add("tabindex", -1);
         }
 
-        return Rel;
+        // User-defined attributes always take priority.
+        foreach (var attribute in UserAttributes)
+        {
+            attributes[attribute.Key] = attribute.Value;
+        }
+
+        return attributes;
     }
 
     internal Variant GetVariant()
