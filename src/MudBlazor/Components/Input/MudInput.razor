@@ -63,7 +63,7 @@
                 disabled=@GetDisabledState()
                 readonly="@GetReadOnlyState()"
                 @onblur="@OnBlurredAsync"
-                inputmode="@InputMode.ToDescriptionString()"
+                inputmode="@(InputType == InputType.Number ? null : InputMode.ToDescriptionString())"
                 pattern="@Pattern"
                 @onkeydown="@InvokeKeyDownAsync"
                 @onkeyup="@InvokeKeyUpAsync"

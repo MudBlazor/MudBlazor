@@ -12,6 +12,11 @@ namespace MudBlazor.Docs.Shared
 
         private MudThemeProvider _mudThemeProvider;
 
+        static MainLayout()
+        {
+            MudGlobal.TooltipDefaults.Delay = TimeSpan.FromMilliseconds(500);
+        }
+
         protected override void OnInitialized()
         {
             LayoutService.MajorUpdateOccurred += LayoutServiceOnMajorUpdateOccured;
