@@ -467,9 +467,6 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
 
         switch (args.Key)
         {
-            case "Enter" or "NumpadEnter" or " ":
-                await OnClickAsync(new MouseEventArgs());
-                break;
             case "Backspace" or "Delete":
                 await OnCloseAsync(new MouseEventArgs());
                 break;
