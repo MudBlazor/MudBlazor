@@ -47,24 +47,30 @@
                     Click to Upload
                 </MudButton>
             }
-            <p class="mud-file-upload-filelist mt-1">
-                @foreach (var file in GetFilenames())
-                {
-                    <MudChip T="string"
-                             Color="Color.Secondary"
-                             Text="@file"
-                             CloseIcon="@Icons.Material.Outlined.Delete"
-                             OnClose="@(async () => await RemoveFile(file))"
-                             tabindex="-1" />
-                }
-            </p>
+            if (SelectedTemplate == null)
+            {
+                <p class="mud-file-upload-filelist mt-1">
+                    @foreach (var file in GetFilenames())
+                    {
+                        <MudChip T="string"
+                        Color="Color.Secondary"
+                        Text="@file"
+                        CloseIcon="@Icons.Material.Outlined.Delete"
+                        OnClose="@(async () => await RemoveFile(file))"
+                        tabindex="-1" />
+                    }
+                </p>
+            }
+            else
+            {
+                @SelectedTemplate(_filesState.Value)
+            }
         }
         else
         {
             <CascadingValue Name="ParentDisabled"
                             Value="GetDisabledState()">
-                <div @onclick="OpenFilePickerAsync"
-                     disabled="@GetDisabledState()">
+                <div disabled="@GetDisabledState()">
                     @ActivatorContent(this)
                 </div>
             </CascadingValue>
