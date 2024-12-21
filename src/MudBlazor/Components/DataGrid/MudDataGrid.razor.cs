@@ -1481,6 +1481,11 @@ namespace MudBlazor
         {
             if (value)
             {
+                if (!MultiSelection)
+                {
+                    Selection.Remove(SelectedItem);
+                }
+
                 Selection.Add(item);
                 SelectedItem = item;
             }
@@ -1503,8 +1508,12 @@ namespace MudBlazor
                 }
             }
 
-            await InvokeAsync(() => SelectedItemsChangedEvent.Invoke(SelectedItems));
-            await SelectedItemsChanged.InvokeAsync(SelectedItems);
+            if (MultiSelection)
+            {
+                await InvokeAsync(() => SelectedItemsChangedEvent.Invoke(SelectedItems));
+                await SelectedItemsChanged.InvokeAsync(SelectedItems);
+            }
+
             await InvokeAsync(StateHasChanged);
         }
 

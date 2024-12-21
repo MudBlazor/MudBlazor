@@ -5,7 +5,6 @@
 <div @attributes="UserAttributes"
      class="@Classname"
      style="@Style"
-     @onpointermove="@PointerMove"
      @onpointerenter="@PointerEnterAsync"
      @onpointerleave="@PointerLeaveAsync"
      @oncontextmenu="@((ActivationEvent == MouseEvent.RightClick ? ToggleMenuAsync : null)!)"
@@ -14,7 +13,7 @@
     {
         @* No content was set so no need to render anything *@
     }
-    else if (ActivatorContent != null)
+    else if (ActivatorContent is not null)
     {
         <CascadingValue Value="@((IActivatable)this)" IsFixed="true">
             <div @onclick="ToggleMenuAsync" disabled="@Disabled" class="@ActivatorClassname">
@@ -24,23 +23,38 @@
     }
     else if (string.IsNullOrEmpty(Icon))
     {
-        <MudButton StartIcon="@StartIcon"
-                   EndIcon="@EndIcon"
-                   IconColor="@IconColor"
-                   Color="@Color"
-                   Size="@Size"
-                   Variant="@Variant"
-                   Disabled="@Disabled"
-                   Ripple="@Ripple"
-                   DropShadow="@DropShadow"
-                   OnClick="@ToggleMenuAsync"
-                   aria-label="@AriaLabel">
-            @Label
-        </MudButton>
+        if (ParentMenu is null)
+        {
+            <MudButton Class="mud-menu-button-activator"
+                       StartIcon="@StartIcon"
+                       EndIcon="@EndIcon"
+                       IconColor="@IconColor"
+                       Color="@Color"
+                       Size="@Size"
+                       Variant="@Variant"
+                       Disabled="@Disabled"
+                       Ripple="@Ripple"
+                       DropShadow="@DropShadow"
+                       OnClick="@ToggleMenuAsync"
+                       aria-label="@AriaLabel">
+                @Label
+            </MudButton>
+        }
+        else
+        {
+            <MudMenuItem Class="mud-menu-sub-menu-activator"
+                         Icon="@StartIcon"
+                         IconColor="@IconColor"
+                         Disabled="@Disabled"
+                         aria-label="@AriaLabel">
+                @Label
+            </MudMenuItem>
+        }
     }
     else
     {
-        <MudIconButton Variant="@Variant"
+        <MudIconButton Class="mud-menu-icon-button-activator"
+                       Variant="@Variant"
                        Icon="@Icon"
                        Color="@Color"
                        Size="@Size"
@@ -52,7 +66,7 @@
     }
 
     @* The portal has to include the cascading values inside because it's not able to teletransport the cascade *@
-    <MudPopover Open="@Open"
+    <MudPopover Open="@_openState.Value"
                 Class="@PopoverClassname"
                 Style="@Stylename"
                 MaxHeight="@MaxHeight"
@@ -62,9 +76,8 @@
                 DropShadow="@DropShadow">
         <CascadingValue Value="@this">
             <MudList T="object"
-                     Class="@ListClass"
+                     Class="@ListClassname"
                      Dense="@Dense"
-                     @onpointermove="@PointerMove"
                      @onpointerenter="@PointerEnterAsync"
                      @onpointerleave="@PointerLeaveAsync">
                 @ChildContent
@@ -72,5 +85,5 @@
         </CascadingValue>
     </MudPopover>
 
-    <MudOverlay Visible="Open && !_isTemporary" AutoClose OnClosed="CloseMenuAsync" LockScroll="LockScroll" />
+    <MudOverlay Visible="_openState.Value && !_isTransient" AutoClose OnClosed="CloseMenuAsync" LockScroll="LockScroll" />
 </div>

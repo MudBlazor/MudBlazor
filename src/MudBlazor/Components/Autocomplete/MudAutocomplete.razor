@@ -18,6 +18,8 @@
                          ErrorId="@ErrorId"
                          Disabled="@GetDisabledState()"
                          Required="@Required"
+                         @onclick="@OnInputClickedAsync"
+                         @onfocus="@OnInputFocusedAsync"
                          ForId="@InputElementId">
             <InputContent>
                 <MudInput @ref="_elementReference" @key="_elementKey" InputType="InputType.Text"
@@ -33,7 +35,7 @@
                           ErrorId="@ErrorId"
                           HelperId="@GetHelperId()"
                           HelperText="@HelperText"
-                          OnAdornmentClick="@AdornmentClickHandlerAsync" AdornmentIcon="@CurrentIcon" Adornment="@Adornment" AdornmentColor="@AdornmentColor" IconSize="@IconSize" AdornmentText="@AdornmentText"
+                          AdornmentIcon="@CurrentIcon" Adornment="@Adornment" AdornmentColor="@AdornmentColor" IconSize="@IconSize" AdornmentText="@AdornmentText"
                           AdornmentAriaLabel="@AdornmentAriaLabel"
                           Clearable="@(Clearable && !GetReadOnlyState())"
                           OnClearButtonClick="@OnClearButtonClick"
@@ -42,8 +44,7 @@
                           autocomplete="@GetAutocomplete()"
                           @attributes="UserAttributes"
                           TextChanged="OnTextChangedAsync"
-                          @onclick="@OnInputClickedAsync"
-                          @onfocus="@OnInputFocusedAsync" OnBlur="OnInputBlurredAsync"
+                          OnBlur="OnInputBlurredAsync"
                           OnKeyDown="@OnInputKeyDownAsync"
                           OnKeyUp="@OnInputKeyUpAsync" KeyUpPreventDefault="KeyUpPreventDefault"
                           Placeholder="@Placeholder" Immediate="true"

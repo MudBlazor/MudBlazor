@@ -8,12 +8,16 @@
 @Body
 
 @code {
-
     private readonly MudTheme _customTheme = new()
     {
         LayoutProperties = new LayoutProperties
         {
-            DrawerWidthLeft = "350px"
+            DrawerWidthLeft = "400px"
         }
     };
+
+    static MainLayout()
+    {
+        MudGlobal.TooltipDefaults.Delay = TimeSpan.FromMilliseconds(500);
+    }
 }
