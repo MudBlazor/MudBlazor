@@ -46,6 +46,7 @@
                           @attributes="UserAttributes"
                           TextChanged="OnTextChangedAsync"
                           OnBlur="OnInputBlurredAsync"
+                          @onfocus="@OnInputFocusedAsync"
                           OnKeyDown="@OnInputKeyDownAsync"
                           OnKeyUp="@OnInputKeyUpAsync" KeyUpPreventDefault="KeyUpPreventDefault"
                           Placeholder="@Placeholder" Immediate="true"

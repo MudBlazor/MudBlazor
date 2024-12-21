@@ -953,9 +953,15 @@ namespace MudBlazor
 
         private async Task AdornmentClickHandlerAsync()
         {
-            await ToggleMenuAsync();
-
-            await OnAdornmentClick.InvokeAsync();
+            if (OnAdornmentClick.HasDelegate)
+            {
+                await FocusAsync();
+                await OnAdornmentClick.InvokeAsync();
+            }
+            else
+            {
+                await ToggleMenuAsync();
+            }
         }
 
         private Task OnInputBlurredAsync(FocusEventArgs args)
