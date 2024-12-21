@@ -345,16 +345,6 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     public T? Value { get; set; }
 
     /// <summary>
-    /// Performs a full page refresh when navigating to the URL in <see cref="Href"/>.
-    /// </summary>
-    /// <remarks>
-    /// Defaults to <c>false</c>.  When <c>true</c>, client-side routing is bypassed and a full page reload occurs.
-    /// </remarks>
-    [Parameter]
-    [Category(CategoryTypes.Chip.ClickAction)]
-    public bool ForceLoad { get; set; }
-
-    /// <summary>
     /// Selects this chip by default when part of a <see cref="MudChipSet{T}"/>.
     /// </summary>
     /// <remarks>
