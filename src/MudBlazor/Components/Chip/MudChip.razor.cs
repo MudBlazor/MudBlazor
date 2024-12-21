@@ -20,6 +20,8 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
 
     private string _chipContainerId = $"chip-container-{Guid.NewGuid()}";
 
+    internal readonly ParameterState<bool> SelectedState;
+
     public MudChip()
     {
         using var registerScope = CreateRegisterScope();
@@ -41,8 +43,6 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         await SelectedState.SetValueAsync(selected);
         StateHasChanged();
     }
-
-    internal readonly ParameterState<bool> SelectedState;
 
     /// <summary>
     /// The service used to navigate the browser to another URL.
@@ -169,6 +169,8 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     private string GetCheckedIcon() => CheckedIcon ?? ChipSet?.CheckedIcon ?? Icons.Material.Filled.Check;
 
     private string GetCloseIcon() => CloseIcon ?? ChipSet?.CloseIcon ?? Icons.Material.Filled.Cancel;
+
+    internal bool ShowCheckMark => SelectedState.Value && ChipSet?.CheckMark == true;
 
     [CascadingParameter]
     private MudChipSet<T>? ChipSet { get; set; }
@@ -369,8 +371,6 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     [Parameter]
     public EventCallback<MudChip<T>> OnClose { get; set; }
 
-    internal bool ShowCheckMark => SelectedState.Value && ChipSet?.CheckMark == true;
-
     /// <summary>
     /// Selects this chip.
     /// </summary>
@@ -391,6 +391,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     {
         if (typeof(T) == typeof(string) && Value is null && Text is not null)
             return (T)(object)Text;
+
         return Value;
     }
 
@@ -398,9 +399,11 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        if (ChipSet is null)
-            return;
-        await ChipSet.AddAsync(this);
+
+        if (ChipSet is not null)
+        {
+            await ChipSet.AddAsync(this);
+        }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -473,9 +476,10 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     {
         try
         {
-            if (ChipSet is null)
-                return;
-            await ChipSet.RemoveAsync(this);
+            if (ChipSet is not null)
+            {
+                await ChipSet.RemoveAsync(this);
+            }
 
             if (IsJSRuntimeAvailable)
             {
