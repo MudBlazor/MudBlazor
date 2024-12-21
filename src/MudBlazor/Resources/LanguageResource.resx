@@ -417,4 +417,10 @@
   <data name="MudDataGrid_ShowColumnOptions" xml:space="preserve">
     <value>Show Column Options</value>
   </data>
+  <data name="HeatMap_Less" xml:space="preserve">
+    <value>Less</value>
+  </data>
+  <data name="HeatMap_More" xml:space="preserve">
+    <value>More</value>
+  </data>
 </root>

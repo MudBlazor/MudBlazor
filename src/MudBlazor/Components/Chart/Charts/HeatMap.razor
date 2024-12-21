@@ -1,5 +1,6 @@
 ﻿@namespace MudBlazor.Charts
 @inherits MudCategoryChartBase
+@inject InternalMudLocalizer Localizer
 
 <svg @attributes="UserAttributes" class="mud-chart-heat mud-ltr" width="@MudChartParent?.Width" height="@MudChartParent?.Height" viewBox="0 0 650 350">
     @if (_options is { EnableSmoothGradient: true })
@@ -165,7 +166,7 @@
 
                     <g transform="translate(@(legendX + offsetX), @legendY)">
                         <!-- "Less" label -->
-                        <text class="mud-charts-xaxis" x="0" y="0" dominant-baseline="middle" text-anchor="start" font-size="@LegendFontSize">Less</text>
+                        <text class="mud-charts-xaxis" x="0" y="0" dominant-baseline="middle" text-anchor="start" font-size="@LegendFontSize">@Localizer[Resources.LanguageResource.HeatMap_Less]</text>
                         @for (int i = 0; i < _legends.Count; i++)
                         {
                             var x = (textWidth / 2) + (i * (LegendBox + legendPadding));
@@ -189,7 +190,7 @@
                         }
 
                         <!-- "More" label -->
-                        <text class="mud-charts-xaxis" x="@((textWidth / 2) + ((_legends.Count) * (LegendBox + legendPadding)))" y="0" dominant-baseline="middle" text-anchor="start" font-size="@LegendFontSize">More</text>
+                        <text class="mud-charts-xaxis" x="@((textWidth / 2) + ((_legends.Count) * (LegendBox + legendPadding)))" y="0" dominant-baseline="middle" text-anchor="start" font-size="@LegendFontSize">@Localizer[Resources.LanguageResource.HeatMap_More]</text>
                     </g>
                 }
                 break;
@@ -202,7 +203,7 @@
 
                     <g transform="translate(@legendX, @(legendY + offsetY))">
                         <!-- "Less" label -->
-                        <text class="mud-charts-xaxis" x="0" y="@((textHeight / 2) - CellPadding - LegendBox)" dominant-baseline="middle" text-anchor="start" font-size="@LegendFontSize">Less</text>
+                        <text class="mud-charts-xaxis" x="0" y="@((textHeight / 2) - CellPadding - LegendBox)" dominant-baseline="middle" text-anchor="start" font-size="@LegendFontSize">@Localizer[Resources.LanguageResource.HeatMap_Less]</text>
 
                         @for (int i = 0; i < _legends.Count; i++)
                         {
@@ -226,7 +227,7 @@
                         }
 
                         <!-- "More" label -->
-                        <text class="mud-charts-xaxis" x="0" y="@((textHeight / 2) + ((_legends.Count) * (LegendBox + CellPadding)))" dominant-baseline="middle" text-anchor="start" font-size="@LegendFontSize">More</text>
+                        <text class="mud-charts-xaxis" x="0" y="@((textHeight / 2) + ((_legends.Count) * (LegendBox + CellPadding)))" dominant-baseline="middle" text-anchor="start" font-size="@LegendFontSize">@Localizer[Resources.LanguageResource.HeatMap_More]</text>
                     </g>
                 }
                 break;
