@@ -951,7 +951,7 @@ namespace MudBlazor
             }
         }
 
-        private async Task AdornmentClickHandlerAsync()
+        internal async Task AdornmentClickHandlerAsync()
         {
             if (OnAdornmentClick.HasDelegate)
             {
