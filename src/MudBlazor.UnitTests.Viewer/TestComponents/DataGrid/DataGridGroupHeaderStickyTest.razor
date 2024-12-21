@@ -1,0 +1,63 @@
+﻿<MudPopoverProvider />
+
+<MudGrid Spacing="5" Class="ml-2 mt-2">
+    <MudItem lg="4" md="6" sm="8" xs="12">
+        <MudText Typo="Typo.h5">Models</MudText>
+
+        <MudDataGrid GroupHeaderStickyLeft="true" T="Model" Items="_models" SortMode="SortMode.None" Filterable="false" Height="500px;" Class="mt-2" GroupExpanded="true" HorizontalScrollbar="true">
+            <Columns>
+                <PropertyColumn Property="x => x.Property1" Title="Property1" Groupable="true" Grouping StickyLeft="true">
+                    <GroupTemplate>
+                        <span style="font-weight:bold">@context.Grouping.Key</span>
+                    </GroupTemplate>
+                </PropertyColumn>
+
+                <PropertyColumn Property="x => x.Property2" Title="Property2" />
+                <PropertyColumn Property="x => x.Property3" Title="Property3" />
+                <PropertyColumn Property="x => x.Property4" Title="Property4" />
+                <PropertyColumn Property="x => x.Property5" Title="Property5" />
+                <PropertyColumn Property="x => x.Property6" Title="Property6" />
+                <PropertyColumn Property="x => x.Property7" Title="Property7" />
+                <PropertyColumn Property="x => x.Property8" Title="Property8" />
+            </Columns>
+        </MudDataGrid>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private readonly List<Model> _models = Enumerable.Range(0, 100).Select(i =>
+    {
+        var property1Value = "ABC"[i / 5 % 3];
+
+        return new Model
+            {
+                Property1 = property1Value.ToString(),
+                Property2 = GenerateRandomString(8),
+                Property3 = GenerateRandomString(8),
+                Property4 = GenerateRandomString(8),
+                Property5 = GenerateRandomString(8),
+                Property6 = GenerateRandomString(8),
+                Property7 = GenerateRandomString(8),
+                Property8 = GenerateRandomString(8),
+            };
+    }).ToList();
+
+    private static string GenerateRandomString(int length)
+    {
+        const string chars = "ABC";
+
+        return new string(Enumerable.Repeat(chars, length).Select(s => s[Random.Shared.Next(s.Length)]).ToArray());
+    }
+
+    public class Model
+    {
+        public string Property1 { get; set; } = string.Empty;
+        public string Property2 { get; set; } = string.Empty;
+        public string Property3 { get; set; } = string.Empty;
+        public string Property4 { get; set; } = string.Empty;
+        public string Property5 { get; set; } = string.Empty;
+        public string Property6 { get; set; } = string.Empty;
+        public string Property7 { get; set; } = string.Empty;
+        public string Property8 { get; set; } = string.Empty;
+    }
+}

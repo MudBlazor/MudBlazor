@@ -217,14 +217,11 @@
                             {
                                 foreach (var g in _currentPageGroups)
                                 {
-                                    <tr class="mud-table-row">
-                                        @{ var groupClass = new CssBuilder(GroupClass).AddClass(GroupClassFunc?.Invoke(g)).Build(); }
-                                        @{ var groupStyle = new StyleBuilder().AddStyle(GroupStyle).AddStyle(GroupStyleFunc?.Invoke(g)).Build(); }
-
-                                        <td class="mud-table-cell @groupClass" colspan="1000" style="background-color:var(--mud-palette-background-gray);@groupStyle">
+                                    <tr class="mud-table-row"  style="background-color:var(--mud-palette-background-gray); z-index:auto">
+                                        <td class="@GroupClassname(g)" style="@GroupStylename(g)" colspan="@(GroupHeaderStickyLeft ? "1" : "1000")">
                                             <MudIconButton Class="mud-table-row-expander"
-                                           Icon="@(g.Expanded ? Icons.Material.Filled.ExpandMore : Icons.Material.Filled.ChevronRight)"
-                                           OnClick="@(() => ToggleGroupExpansion(g))" aria-label="@Localizer[LanguageResource.MudDataGrid_ToggleGroupExpansion]" />
+                                                Icon="@(g.Expanded ? Icons.Material.Filled.ExpandMore : Icons.Material.Filled.ChevronRight)"
+                                                OnClick="@(() => ToggleGroupExpansion(g))" aria-label="@Localizer[LanguageResource.MudDataGrid_ToggleGroupExpansion]" />
 
                                             @if (GroupedColumn.GroupTemplate == null)
                                             {
@@ -235,6 +232,10 @@
                                                 @GroupedColumn.GroupTemplate(@g)
                                             }
                                         </td>
+                                        @if (@GroupHeaderStickyLeft) 
+                                        {
+                                            <td colspan="1000" class="mud-table-cell" style="background-color:var(--mud-palette-background-gray); z-index:auto"/>
+                                        }
                                     </tr>
 
                                     @if (g.Expanded)
