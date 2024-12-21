@@ -1,18 +1,39 @@
 ﻿@namespace MudBlazor.Docs.Examples
+@inject ISnackbar Snackbar
 
 <MudChip T="string"
          Href="https://github.com/MudBlazor/MudBlazor"
          Target="_blank"
+         Variant="Variant.Filled"
          Icon="@Icons.Custom.Brands.GitHub"
-         Color="Color.Primary">
-    GitHub Link
+         Disabled="_disabled">
+    GitHub Icon
 </MudChip>
 
 <MudChip T="string"
          Href="https://github.com/MudBlazor/MudBlazor"
          Target="_blank"
+         Variant="Variant.Filled"
          Icon="@Icons.Custom.Brands.GitHub"
-         Color="Color.Primary"
-         Disabled="true">
-    GitHub Link (Disabled)
+         Disabled="_disabled">
+    <AvatarContent>
+        <MudAvatar>GH</MudAvatar>
+    </AvatarContent>
+    <ChildContent>Avatar</ChildContent>
 </MudChip>
+
+<MudChip T="string"
+         Href="https://github.com/MudBlazor/MudBlazor"
+         Target="_blank"
+         Disabled="_disabled"
+         OnClose="@(() => Snackbar.Add($"Close button was clicked"))">
+    Closable
+</MudChip>
+
+<br />
+
+<MudSwitch Color="Color.Primary" @bind-Value="_disabled" Label="Disable" />
+
+@code {
+    bool _disabled = false;
+}
