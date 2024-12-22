@@ -70,7 +70,7 @@
                 Class="@PopoverClassname"
                 Style="@Stylename"
                 MaxHeight="@MaxHeight"
-                AnchorOrigin="@(PositionAtCursor ? Origin.TopLeft : AnchorOrigin)"
+                AnchorOrigin="@GetAnchorOrigin()"
                 TransformOrigin="@TransformOrigin"
                 RelativeWidth="@FullWidth"
                 DropShadow="@DropShadow">
