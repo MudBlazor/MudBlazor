@@ -109,11 +109,6 @@ public sealed partial class ApiTypeHierarchy
             return Icons.Material.Filled.Home;
         }
 
-        if (context.Value!.NameFriendly == Type?.NameFriendly)
-        {
-            return Icons.Material.Filled.Api;
-        }
-
         return Icons.Custom.Uncategorized.Empty;
     }
 

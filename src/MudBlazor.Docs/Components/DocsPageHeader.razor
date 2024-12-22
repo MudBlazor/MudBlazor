@@ -34,7 +34,7 @@ else
 {
     <div class="docs-page-apilinks">
         <MudChipSet T="string" Variant="Variant.Outlined" Size="Size.Small">
-            <MudChip T="string" Icon="@Icons.Material.Outlined.Api" Color="Color.Primary" Href="@(DocumentedType.ApiUrl.ToLowerInvariant())">
+            <MudChip T="string" Icon="@Icons.Material.Outlined.DataObject" Color="Color.Primary" Href="@(DocumentedType.ApiUrl.ToLowerInvariant())">
                 @Component
             </MudChip>
                 
@@ -42,7 +42,7 @@ else
             {
                 @foreach (var childType in Example.ChildTypes)
                 {
-                    <MudChip T="string" Icon="@Icons.Material.Outlined.AccountTree" Color="Color.Secondary" Href="@($"api/{childType.Name.ToLowerInvariant()}")">
+                    <MudChip T="string" Icon="@Icons.Material.Outlined.DataObject" Color="Color.Secondary" Href="@($"api/{childType.Name.ToLowerInvariant()}")">
                         @childType.Name.Replace("`1", "")
                     </MudChip>
                 }
