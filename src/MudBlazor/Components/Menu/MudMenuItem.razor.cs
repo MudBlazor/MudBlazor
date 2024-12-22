@@ -91,16 +91,6 @@ namespace MudBlazor
         public string? Icon { get; set; }
 
         /// <summary>
-        /// The icon displayed at the end of this menu item if it's a sub menu activator.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="Icons.Material.Filled.ChevronRight"/>.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.List.Behavior)]
-        public string? ChevronIcon { get; set; } = Icons.Material.Filled.ChevronRight;
-
-        /// <summary>
         /// The color of the icon when <see cref="Icon"/> is set.
         /// </summary>
         /// <remarks>
