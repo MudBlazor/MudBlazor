@@ -16,13 +16,6 @@ public static class MudGlobal
         public static Variant Variant { get; set; } = Variant.Text;
     }
 
-    public static class CardDefaults
-    {
-        public static int Elevation { get; set; } = 1;
-        public static bool Square { get; set; }
-        public static bool Outlined { get; set; }
-    }
-
     public static class DialogDefaults
     {
         public static DefaultFocus DefaultFocus { get; set; } = DefaultFocus.Element;
@@ -49,6 +42,10 @@ public static class MudGlobal
 
     public static class MenuDefaults
     {
+        /// <summary>
+        /// The time in milliseconds before a menu is activated by the cursor hovering over it
+        /// or before it is hidden after the cursor leaves the menu.
+        /// </summary>
         public static int HoverDelay { get; set; } = 300;
     }
 
@@ -70,7 +67,14 @@ public static class MudGlobal
 
     public static class TransitionDefaults
     {
+        /// <summary>
+        /// The length of time that the opening transition takes to complete.
+        /// </summary>
         public static TimeSpan Delay { get; set; } = TimeSpan.Zero;
+
+        /// <summary>
+        /// The amount of time in milliseconds to wait from opening the popover before beginning to perform the transition. 
+        /// </summary>
         public static TimeSpan Duration { get; set; } = TimeSpan.FromMilliseconds(251);
     }
 

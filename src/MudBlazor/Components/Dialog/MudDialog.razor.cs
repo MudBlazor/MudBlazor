@@ -179,7 +179,7 @@ namespace MudBlazor
         /// The element which will receive focus when this dialog is shown.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="MudGlobal.DialogDefaults.DefaultFocus"/>.        
+        /// Defaults to <see cref="DefaultFocus.Element"/> in <see cref="MudGlobal.DialogDefaults.DefaultFocus"/>.        
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Dialog.Behavior)]

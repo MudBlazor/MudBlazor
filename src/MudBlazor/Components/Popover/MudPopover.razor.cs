@@ -88,7 +88,7 @@ namespace MudBlazor
         /// The amount of drop shadow to apply.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="MudGlobal.PopoverDefaults.Elevation"/>.
+        /// Defaults to 8 in <see cref="MudGlobal.PopoverDefaults.Elevation"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
@@ -118,7 +118,7 @@ namespace MudBlazor
         /// The length of time that the opening transition takes to complete.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="MudGlobal.TransitionDefaults.Duration"/>.
+        /// Defaults to 251ms in <see cref="MudGlobal.TransitionDefaults.Duration"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
@@ -128,7 +128,7 @@ namespace MudBlazor
         /// The amount of time, in milliseconds, from opening the popover to beginning the transition. 
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="MudGlobal.TransitionDefaults.Delay"/>.
+        /// Defaults to 0ms in <see cref="MudGlobal.TransitionDefaults.Delay"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]

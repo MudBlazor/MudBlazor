@@ -39,8 +39,8 @@ public partial class MudStack : MudComponentBase
     /// The gap between items, measured in increments of <c>4px</c>.
     /// </summary>
     /// <remarks>
-    /// Default is <c>3</c>.
-    /// Maximum is <c>20</c>.
+    /// <para>Defaults to 3 in <see cref="MudGlobal.StackDefaults.Spacing"/>.</para>
+    /// <para>Maximum is 20.</para>
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Stack.Behavior)]

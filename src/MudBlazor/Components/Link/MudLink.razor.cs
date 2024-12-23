@@ -58,7 +58,7 @@ public partial class MudLink : MudComponentBase
     /// The color of the link.
     /// </summary>
     /// <remarks>
-    /// Defaults to <see cref="Color.Primary"/>.
+    /// Defaults to <see cref="Color.Primary"/> in <see cref="MudGlobal.LinkDefaults.Color"/>.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Link.Appearance)]
@@ -68,7 +68,7 @@ public partial class MudLink : MudComponentBase
     /// The typography variant to use.
     /// </summary>
     /// <remarks>
-    /// Defaults to <see cref="Typo.body1"/>.
+    /// Defaults to <see cref="Typo.body1"/> in <see cref="MudGlobal.LinkDefaults.Typo"/>.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Link.Appearance)]
@@ -78,7 +78,7 @@ public partial class MudLink : MudComponentBase
     /// Applies an underline to the link.
     /// </summary>
     /// <remarks>
-    /// Defaults to <see cref="Underline.Hover"/>.
+    /// Defaults to <see cref="Underline.Hover"/> in <see cref="MudGlobal.LinkDefaults.Underline"/>.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Link.Appearance)]
