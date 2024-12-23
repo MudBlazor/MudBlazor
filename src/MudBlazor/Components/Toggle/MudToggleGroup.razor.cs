@@ -147,9 +147,12 @@ namespace MudBlazor
         /// <summary>
         /// If true, the first and last item will be rounded.
         /// </summary>
+        /// <remarks>
+        /// Defaults to false in <see cref="MudGlobal.Rounded"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
-        public bool Rounded { get; set; }
+        public bool Rounded { get; set; } = MudGlobal.Rounded;
 
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }

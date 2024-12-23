@@ -49,9 +49,12 @@ namespace MudBlazor
         /// <summary>
         /// If true, sets the border-radius to theme default.
         /// </summary>
+        /// <remarks>
+        /// Defaults to false in <see cref="MudGlobal.Rounded"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
-        public bool Rounded { get; set; }
+        public bool Rounded { get; set; } = MudGlobal.Rounded;
 
         /// <summary>
         /// If true, sets a border between the content and the tabHeader depending on the position.

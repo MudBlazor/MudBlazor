@@ -98,11 +98,13 @@ namespace MudBlazor
         /// Displays square borders around this popover.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  When <c>true</c>, the CSS <c>border-radius</c> is set to <c>0</c>.
+        /// Defaults to <c>false</c>.
+        /// Can be overridden by <see cref="MudGlobal.Rounded"/>.
+        /// When <c>true</c>, the CSS <c>border-radius</c> is set to <c>0</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
-        public bool Square { get; set; }
+        public bool Square { get; set; } = MudGlobal.Rounded == false;
 
         /// <summary>
         /// Displays this popover in a fixed position, even through scrolling.

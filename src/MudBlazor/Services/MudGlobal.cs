@@ -78,7 +78,10 @@ public static class MudGlobal
         public static TimeSpan Duration { get; set; } = TimeSpan.FromMilliseconds(251);
     }
 
-    public static bool Rounded { get; set; }
+    /// <summary>
+    /// Rounds the corners of components by default using the theme's border radius, or squares them if set to false.
+    /// </summary>
+    public static bool? Rounded { get; set; }
 
     /// <summary>
     /// The handler for unhandled component exceptions.
