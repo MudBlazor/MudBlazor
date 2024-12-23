@@ -3,7 +3,7 @@
 @using Severity = MudBlazor.Severity
 @inject ISnackbar Snackbar
 
-<MudCard>
+<MudCard Style="width: 600px;">
     <MudForm Model="@model" @ref="@form" Validation="@(ValidationRules.ValidateValue)" ValidationDelay="0">
         <MudCardContent>
             <MudStack>
@@ -21,14 +21,15 @@
                                        @bind-Files="model.File"
                                        OnFilesChanged="UploadFiles"
                                        SuppressOnChangeWhenInvalid="SuppressOnChangeWhenInvalid">
-                            <ActivatorContent>
+                            <CustomContent>
                                 <MudButton Variant="Variant.Filled"
                                            Color="Color.Primary"
                                            OnClick="@context.OpenFilePickerAsync"
                                            StartIcon="@Icons.Material.Filled.CloudUpload">
                                     Upload Files
                                 </MudButton>
-                            </ActivatorContent>
+                            </CustomContent>
+                            <SelectedTemplate />
                         </MudFileUpload>
                     </MudItem>
                     <MudItem>
@@ -43,7 +44,7 @@
             </MudStack>
         </MudCardContent>
         <MudCardActions>
-            <MudSwitch Color="Color.Primary" @bind-Value="SuppressOnChangeWhenInvalid">Suppress OnChange When Invalid</MudSwitch>
+            <MudSwitch Color="Color.Primary" @bind-Value="SuppressOnChangeWhenInvalid"><CodeInline Class="ml-n1">SuppressOnChangeWhenInvalid</CodeInline></MudSwitch>
             <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto" OnClick="@(async () => await Submit())">Submit</MudButton>
         </MudCardActions>
     </MudForm>

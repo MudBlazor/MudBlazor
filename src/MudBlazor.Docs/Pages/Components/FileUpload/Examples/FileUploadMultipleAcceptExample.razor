@@ -1,53 +1,66 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudFileUpload T="IReadOnlyList<IBrowserFile>" FilesChanged="UploadFiles">
-    <ActivatorContent>
-        <MudButton Variant="Variant.Filled"
-                   Color="Color.Primary"
-                   OnClick="@context.OpenFilePickerAsync"
-                   StartIcon="@Icons.Material.Filled.CloudUpload">
-            Multiple Files
-        </MudButton>
-    </ActivatorContent>
-</MudFileUpload>
-
-<MudFileUpload T="IBrowserFile" Accept=".pdf" FilesChanged="UploadFiles2" MaximumFileCount="100">
-    <ActivatorContent>
-        <MudButton Variant="Variant.Filled"
-                   Color="Color.Primary"
-                   OnClick="@context.OpenFilePickerAsync"
-                   StartIcon="@Icons.Material.Filled.CloudUpload">
-            Only .pdf files
-        </MudButton>
-    </ActivatorContent>
-</MudFileUpload>
-
-
-<MudFileUpload T="IBrowserFile" Accept=".png, .jpg" FilesChanged="UploadFiles2" MaximumFileCount="100">
-    <ActivatorContent>
-        <MudButton Variant="Variant.Filled"
-                   Color="Color.Primary"
-                   OnClick="@context.OpenFilePickerAsync"
-                   StartIcon="@Icons.Material.Filled.CloudUpload">
-            Only image files
-        </MudButton>
-    </ActivatorContent>
-</MudFileUpload>
-
-@if (files != null)
-{
-    <MudList T="string">
-        @foreach (var file in files)
-        {
-            <MudListItem Icon="@Icons.Material.Filled.AttachFile">
-                @file.Name <code>@file.Size bytes</code>
-            </MudListItem>
-        }
-    </MudList>
-}
+<MudGrid>
+    <MudItem md="4">
+        <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center">
+            <MudText Typo="Typo.h6">Multiple Files</MudText>
+            <MudFileUpload T="IReadOnlyList<IBrowserFile>" FilesChanged="UploadFiles" />
+        </MudStack>
+    </MudItem>
+    <MudItem md="4">
+        <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center">
+            <MudText Typo="Typo.h6">Only a single .pdf file</MudText>
+            <MudFileUpload T="IBrowserFile" Accept=".pdf" FilesChanged="UploadFiles2" />
+        </MudStack>
+    </MudItem>
+    <MudItem md="4">
+        <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center">
+            <MudText Typo="Typo.h6">Only image files</MudText>
+            <MudFileUpload @ref="@_fileUpload" T="IReadOnlyList<IBrowserFile>" Accept=".png, .jpg, .tiff" FilesChanged="UploadFiles" MaximumFileCount="100">
+                <CustomContent>
+                    <MudButton Variant="Variant.Filled"
+                    Color="Color.Primary"
+                    OnClick="@context.OpenFilePickerAsync"
+                    StartIcon="@Icons.Material.Filled.CloudUpload">
+                        Only image files
+                    </MudButton>
+                </CustomContent>
+                <SelectedTemplate Context="fileValues">
+                    @if (fileValues != null)
+                    {
+                        @foreach (var file in fileValues)
+                        {
+                            <MudTooltip Color="Color.Tertiary">
+                                <ChildContent>
+                                    <MudChip T="string"
+                                    Color="Color.Secondary"
+                                    Disabled="@(_fileUpload?.Disabled ?? false)"
+                                    Text="@file.Name"
+                                    CloseIcon="@Icons.Material.Outlined.Close"
+                                    OnClose="@(async () => await RemoveFile(file.Name))"
+                                    tabindex="-1" />
+                                </ChildContent>
+                                <TooltipContent>
+                                    <code>@file.Size bytes</code>
+                                </TooltipContent>
+                            </MudTooltip>
+                        }           
+                    }
+                </SelectedTemplate>
+            </MudFileUpload>
+        </MudStack>
+    </MudItem>    
+    @if (files != null)
+    {
+        <MudItem md="12" Class="d-flex justify-center">
+            <MudText Typo="@Typo.h6">Total Files: @files.Count()</MudText>
+        </MudItem>
+    }    
+</MudGrid>
 
 @code
 {
+    private MudFileUpload<IReadOnlyList<IBrowserFile>> _fileUpload;
     IList<IBrowserFile> files = new List<IBrowserFile>();
     private void UploadFiles(IReadOnlyList<IBrowserFile> files)
     {
@@ -56,6 +69,12 @@
             this.files.Add(file);
         }
         //TODO upload the files to the server
+    }
+
+    private async Task RemoveFile(string file)
+    {
+        files.Remove(files.FirstOrDefault(x => x.Name == file));
+        await _fileUpload?.RemoveFile(file);
     }
 
     private void UploadFiles2(IBrowserFile file)
