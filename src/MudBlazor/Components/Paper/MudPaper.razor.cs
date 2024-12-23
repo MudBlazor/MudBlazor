@@ -41,7 +41,7 @@ public partial class MudPaper : MudComponentBase
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Paper.Appearance)]
-    public int Elevation { set; get; } = MudGlobal.PaperDefaults.Elevation;
+    public int Elevation { set; get; } = 1;
 
     /// <summary>
     /// Displays a square shape.
@@ -51,7 +51,7 @@ public partial class MudPaper : MudComponentBase
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Paper.Appearance)]
-    public bool Square { get; set; } = MudGlobal.PaperDefaults.Square;
+    public bool Square { get; set; }
 
     /// <summary>
     /// Displays an outline around this component.
@@ -61,7 +61,7 @@ public partial class MudPaper : MudComponentBase
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Paper.Appearance)]
-    public bool Outlined { get; set; } = MudGlobal.PaperDefaults.Outlined;
+    public bool Outlined { get; set; }
 
     /// <summary>
     /// The height of this component.
