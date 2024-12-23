@@ -70,92 +70,6 @@ public static class MudGlobal
     }
 
     /// <summary>
-    /// Defaults for the <see cref="MudDataGrid{T}"/> component.
-    /// </summary>
-    public static class DataGridDefaults
-    {
-        /// <summary>
-        /// The default elevation level for <see cref="MudDataGrid{T}"/>.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>1</c>.
-        /// </remarks>
-        public static int Elevation { set; get; } = 1;
-
-        /// <summary>
-        /// The default square setting for <see cref="MudDataGrid{T}"/>.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>. When <c>true</c>, disables rounded corners.
-        /// </remarks>
-        public static bool Square { get; set; }
-
-        /// <summary>
-        /// The default outlined setting for <see cref="MudDataGrid{T}"/>.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>. When <c>true</c>, shows an outline around this grid.
-        /// </remarks>
-        public static bool Outlined { get; set; }
-
-        /// <summary>
-        /// The default bordered setting for <see cref="MudDataGrid{T}"/>.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>. When <c>true</c>, shows left and right borders for each column.
-        /// </remarks>
-        public static bool Bordered { get; set; }
-
-        /// <summary>
-        /// The default dense setting for <see cref="MudDataGrid{T}"/>.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>. When <c>true</c>, uses compact padding.
-        /// </remarks>
-        public static bool Dense { get; set; }
-
-        /// <summary>
-        /// The default hover setting for <see cref="MudDataGrid{T}"/>.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>. When <c>true</c>, highlights rows when hovering over them.
-        /// </remarks>
-        public static bool Hover { get; set; }
-
-        /// <summary>
-        /// The default striped setting for <see cref="MudDataGrid{T}"/>.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>. When <c>true</c>, shows alternating row styles.
-        /// </remarks>
-        public static bool Striped { get; set; }
-
-        /// <summary>
-        /// The default fixed header setting for <see cref="MudDataGrid{T}"/>.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>. When <c>true</c>, fixes the header in place even as the grid is scrolled.
-        /// </remarks>
-        public static bool FixedHeader { get; set; }
-
-        /// <summary>
-        /// The default fixed footer setting for <see cref="MudDataGrid{T}"/>.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>. When <c>true</c>, fixes the footer in place even as the grid is scrolled.
-        /// </remarks>
-        public static bool FixedFooter { get; set; }
-
-        /// <summary>
-        /// The default virtualize setting for <see cref="MudDataGrid{T}"/>.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>. When <c>true</c>, renders only visible items instead of all items.
-        /// </remarks>
-        public static bool Virtualize { get; set; }
-    }
-
-    /// <summary>
     /// Defaults for the <see cref="MudDialog"/> component.
     /// </summary>
     public static class DialogDefaults
@@ -256,50 +170,6 @@ public static class MudGlobal
     }
 
     /// <summary>
-    /// Defaults for the <see cref="MudOverlay"/> component.
-    /// </summary>
-    public static class OverlayDefaults
-    {
-        /// <summary>
-        /// The default transition delay for <see cref="MudOverlay"/>.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="TransitionDefaults.Delay"/>.
-        /// </remarks>
-        public static TimeSpan Delay { get; set; } = TransitionDefaults.Delay;
-
-        /// <summary>
-        /// The default transition time for <see cref="MudOverlay"/>.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="TransitionDefaults.Duration"/>.
-        /// </remarks>
-        public static TimeSpan Duration { get; set; } = TransitionDefaults.Duration;
-    }
-
-    /// <summary>
-    /// Defaults for the <see cref="MudPicker{T}"/> component.
-    /// </summary>
-    public static class PickerDefaults
-    {
-        /// <summary>
-        /// The default transition delay for <see cref="MudPicker{T}"/>.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="TransitionDefaults.Delay"/>.
-        /// </remarks>
-        public static TimeSpan Delay { get; set; } = TransitionDefaults.Delay;
-
-        /// <summary>
-        /// The default transition time for <see cref="MudPicker{T}"/>.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="TransitionDefaults.Duration"/>.
-        /// </remarks>
-        public static TimeSpan Duration { get; set; } = TransitionDefaults.Duration;
-    }
-
-    /// <summary>
     /// Defaults for the <see cref="MudPopover"/> component.
     /// </summary>
     public static class PopoverDefaults
@@ -319,22 +189,6 @@ public static class MudGlobal
     public static class StackDefaults
     {
         /// <summary>
-        /// The default justify setting for <see cref="MudStack"/>.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>. When <c>true</c>, items will be placed horizontally in a row instead of vertically.
-        /// </remarks>
-        public static bool Row { get; set; }
-
-        /// <summary>
-        /// The default reverse setting for <see cref="MudStack"/>.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>. When <c>true</c>, order of the items will be reversed.
-        /// </remarks>
-        public static bool Reverse { get; set; }
-
-        /// <summary>
         /// The default gap between items for <see cref="MudStack"/>, measured in increments of <c>4px</c>..
         /// </summary>
         /// <remarks>
@@ -345,116 +199,6 @@ public static class MudGlobal
     }
 
     /// <summary>
-    /// Defaults for the <see cref="MudTabs"/> component.
-    /// </summary>
-    public static class TabDefaults
-    {
-        /// <summary>
-        /// The default rounding setting for <see cref="MudTabs"/>.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>. When <c>true</c>, the tabs will be rounded.
-        /// </remarks>
-        public static bool Rounded { get; set; }
-
-        /// <summary>
-        /// The default border setting for <see cref="MudTabs"/>.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>. When <c>true</c>, sets a border between the content and the tab header depending on the position.
-        /// </remarks>
-        public static bool Border { get; set; }
-
-        /// <summary>
-        /// The default outlined setting for <see cref="MudTabs"/>.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>. When <c>true</c>, the tab header will be outlined.
-        /// </remarks>
-        public static bool Outlined { get; set; }
-
-        /// <summary>
-        /// The default centered setting for <see cref="MudTabs"/>.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>. When <c>true</c>, the tab items will be centered.
-        /// </remarks>
-        public static bool Centered { get; set; }
-
-        /// <summary>
-        /// The default hide slider setting for <see cref="MudTabs"/>.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>. When <c>true</c>, the slider will be hidden.
-        /// </remarks>
-        public static bool HideSlider { get; set; }
-
-        /// <summary>
-        /// The default show scroll buttons setting for <see cref="MudTabs"/>.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>. When <c>true</c>, the scroll buttons will always be shown.
-        /// </remarks>
-        public static bool AlwaysShowScrollButtons { get; set; }
-
-        /// <summary>
-        /// The default maximum tab height setting for <see cref="MudTabs"/>.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>null</c> (no maximum height).
-        /// </remarks>
-        public static int? MaxHeight { get; set; } = null;
-
-        /// <summary>
-        /// The default minimum tab width setting for <see cref="MudTabs"/>.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>160px</c>.
-        /// </remarks>
-        public static string MinimumTabWidth { get; set; } = "160px";
-
-        /// <summary>
-        /// The default position for <see cref="MudTabs"/>.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="Position.Top"/>.
-        /// </remarks>
-        public static Position Position { get; set; } = Position.Top;
-
-        /// <summary>
-        /// The default color for <see cref="MudTabs"/>.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref=" Color.Default"/>.
-        /// </remarks>
-        public static Color Color { get; set; } = Color.Default;
-
-        /// <summary>
-        /// The default slider color for <see cref="MudTabs"/>.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref=" Color.Inherit"/>.
-        /// </remarks>
-        public static Color SliderColor { get; set; } = Color.Inherit;
-
-        /// <summary>
-        /// The default elevation setting for <see cref="MudTabs"/>.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>0</c>.
-        /// </remarks>
-        public static int Elevation { set; get; } = 0;
-
-        /// <summary>
-        /// The default apply effects to container setting for <see cref="MudTabs"/>.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>. When <c>true</c>, the effects will be applied to the container as well.
-        /// </remarks>
-        public static bool ApplyEffectsToContainer { get; set; }
-    }
-
-    /// <summary>
     /// Defaults for the <see cref="MudTooltip"/> component.
     /// </summary>
     public static class TooltipDefaults
@@ -462,58 +206,39 @@ public static class MudGlobal
         /// <summary>
         /// The default transition delay for <see cref="MudTooltip"/>.
         /// </summary>
-        public static TimeSpan Delay { get; set; } = TransitionDefaults.Delay;
-
-        /// <summary>
-        /// The default transition time for <see cref="MudTooltip"/>.
-        /// </summary>
-        public static TimeSpan Duration { get; set; } = TransitionDefaults.Duration;
-    }
-
-    /// <summary>
-    /// Defaults for MudBlazor components which use transitions.
-    /// </summary>
-    public static class TransitionDefaults
-    {
-        /// <summary>
-        /// The default transition delay for <see cref="MudOverlay"/>, <see cref="MudPicker{T}"/>, <see cref="MudPopover"/>, and <see cref="MudTooltip"/>.
-        /// </summary>
         public static TimeSpan Delay { get; set; } = TimeSpan.Zero;
 
         /// <summary>
-        /// The default transition time for components like <see cref="MudOverlay"/>, <see cref="MudPicker{T}"/>, <see cref="MudPopover"/>, and <see cref="MudTooltip"/>.
+        /// The default transition time for <see cref="MudTooltip"/>.
         /// </summary>
         public static TimeSpan Duration { get; set; } = TimeSpan.FromMilliseconds(251);
     }
 
     /// <summary>
-    /// Defaults for the <see cref="MudPaper"/> component.
+    /// Defaults for components which use transitions.
     /// </summary>
-    public static class PaperDefaults
+    public static class TransitionDefaults
     {
         /// <summary>
-        /// Gets or sets the default elevation level for <see cref="MudPaper"/>.
+        /// The default transition delay for overlays, popovers, and pickers.
         /// </summary>
-        public static int Elevation { get; set; } = 1;
+        public static TimeSpan Delay { get; set; } = TimeSpan.Zero;
 
         /// <summary>
-        /// Gets or sets the default square setting for <see cref="MudPaper"/>.
+        /// The default transition time for overlays, popovers, and pickers.
         /// </summary>
-        public static bool Square { get; set; }
-
-        /// <summary>
-        /// Gets or sets the default square setting for <see cref="MudPaper"/>.
-        /// </summary>
-        public static bool Outlined { get; set; }
+        public static TimeSpan Duration { get; set; } = TimeSpan.FromMilliseconds(251);
     }
 
+    public static bool Rounded { get; set; }
+
     /// <summary>
-    /// The handler for unhandled MudBlazor component exceptions.
+    /// The handler for unhandled component exceptions.
     /// </summary>
     /// <remarks>
     /// Exceptions which use this handler are typically rare, such as errors which occur during a "fire-and-forget" <see cref="Task"/> which cannot be awaited.<br />
     /// By default, exceptions are logged to the console via <see cref="Console.Write(object?)"/>.<br />
     /// To handle all .NET exceptions, see: <see href="https://learn.microsoft.com/aspnet/core/fundamentals/error-handling">Handle errors in ASP.NET Core</see>.
     /// </remarks>
-    public static Action<Exception> UnhandledExceptionHandler { get; set; } = (exception) => Console.Write(exception);
+    public static Action<Exception> UnhandledExceptionHandler { get; set; } = Console.Write;
 }
