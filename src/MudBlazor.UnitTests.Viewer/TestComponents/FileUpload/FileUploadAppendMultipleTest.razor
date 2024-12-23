@@ -3,11 +3,11 @@
                AppendMultipleFiles="AppendMultipleFiles"
                @bind-Files="Files"
                @bind-Files:after="@OnFilesChangedAsync">
-    <ActivatorContent>
+    <CustomContent>
         <MudButton OnClick="@context.OpenFilePickerAsync">
             Open file picker
         </MudButton>
-    </ActivatorContent>
+    </CustomContent>
 </MudFileUpload>
 
 <MudButton OnClick="@ClearAsync">

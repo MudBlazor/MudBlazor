@@ -29,7 +29,7 @@ DragandDrop="true"
 tabindex="-1"
 @bind-Dragging="@_dragging"
 @bind-Dragging:after="@ClearDragClass">
-    <ActivatorContent>
+    <CustomContent>
         <MudPaper Height="300px"
         Outlined="true"
         @onclick="@context.OpenFilePickerAsync"
@@ -60,7 +60,7 @@ tabindex="-1"
                 </MudButton>
             </MudToolBar>
         </MudPaper>
-    </ActivatorContent>
+    </CustomContent>
     <SelectedTemplate />
 </MudFileUpload>
 
@@ -69,7 +69,7 @@ tabindex="-1"
 
 
     #nullable enable
-    public static string __description__ = "A test for using components inside ActivatorContent that don't activate.";
+    public static string __description__ = "A test for using components inside CustomContent that don't activate.";
     private const string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full";
     private string _dragClass = DefaultDragClass;
 

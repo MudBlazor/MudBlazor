@@ -13,7 +13,7 @@
                @ondragenter="@SetDragClass"
                @ondragleave="@ClearDragClass"
                @ondragend="@ClearDragClass">
-    <ActivatorContent>
+    <CustomContent>
         <MudPaper Height="300px"
                   Outlined="true"
                   Class="@_dragClass" @onclick="@context.OpenFilePickerAsync">
@@ -29,7 +29,7 @@
                       Height="200"
                       Src="@_imageSource" />
         </MudPaper>
-    </ActivatorContent>
+    </CustomContent>
 </MudFileUpload>
 <MudToolBar Gutters="@false"
             Class="relative d-flex justify-end gap-4">
