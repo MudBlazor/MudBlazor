@@ -12,7 +12,6 @@ public static class MudGlobal
     public static class ButtonDefaults
     {
         public static Color Color { get; set; } = Color.Default;
-        public static Size Size { get; set; } = Size.Medium;
         public static Variant Variant { get; set; } = Variant.Text;
     }
 

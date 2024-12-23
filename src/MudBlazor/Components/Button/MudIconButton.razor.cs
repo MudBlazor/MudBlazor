@@ -49,11 +49,11 @@ namespace MudBlazor
         /// The color of the button.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Color.Default"/>.  Theme colors are supported.
+        /// Defaults to <see cref="Color.Default"/> in <see cref="MudGlobal.ButtonDefaults.Color"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public Color Color { get; set; } = Color.Default;
+        public Color Color { get; set; } = MudGlobal.ButtonDefaults.Color;
 
         /// <summary>
         /// The size of the button.
@@ -76,14 +76,14 @@ namespace MudBlazor
         public Edge Edge { get; set; }
 
         /// <summary>
-        /// The variation to use.
+        /// The display variation to use.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Variant.Text"/>.  Other values include <see cref="Variant.Filled"/> and <see cref="Variant.Outlined"/>.
+        /// Defaults to <see cref="Variant.Text"/> in <see cref="MudGlobal.ButtonDefaults.Variant"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public Variant Variant { get; set; } = Variant.Text;
+        public Variant Variant { get; set; } = MudGlobal.ButtonDefaults.Variant;
 
         /// <summary>
         /// The custom content within this button.

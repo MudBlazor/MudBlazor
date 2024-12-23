@@ -108,12 +108,12 @@ namespace MudBlazor
         /// The size of the button.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Size.Medium"/> in <see cref="MudGlobal.ButtonDefaults.Size"/>.
+        /// Defaults to <see cref="Size.Medium"/>.
         /// Use the <see cref="IconSize"/> property to set the size of icons.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public Size Size { get; set; } = MudGlobal.ButtonDefaults.Size;
+        public Size Size { get; set; } = Size.Medium;
 
         /// <summary>
         /// The display variation to use.
