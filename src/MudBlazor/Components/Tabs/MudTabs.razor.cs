@@ -54,7 +54,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
-        public bool Rounded { get; set; } = MudGlobal.Rounded;
+        public bool Rounded { get; set; } = MudGlobal.Rounded == true;
 
         /// <summary>
         /// If true, sets a border between the content and the tabHeader depending on the position.

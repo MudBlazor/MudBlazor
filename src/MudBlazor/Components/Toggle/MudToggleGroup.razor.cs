@@ -152,7 +152,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
-        public bool Rounded { get; set; } = MudGlobal.Rounded;
+        public bool Rounded { get; set; } = MudGlobal.Rounded == true;
 
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }

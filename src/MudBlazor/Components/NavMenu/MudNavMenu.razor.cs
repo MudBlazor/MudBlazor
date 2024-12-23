@@ -59,7 +59,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.NavMenu.Appearance)]
-        public bool Rounded { get; set; } = MudGlobal.Rounded;
+        public bool Rounded { get; set; } = MudGlobal.Rounded == true;
 
         /// <summary>
         /// The vertical spacing between <see cref="MudNavLink" /> items.
