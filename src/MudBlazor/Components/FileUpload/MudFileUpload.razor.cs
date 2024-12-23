@@ -104,7 +104,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FileUpload.Behavior)]
-        public RenderFragment<MudFileUpload<T>>? ActivatorContent { get; set; }
+        public RenderFragment<MudFileUpload<T>>? CustomContent { get; set; }
 
         /// <summary>
         /// The template used for selected files.
@@ -182,16 +182,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FileUpload.Appearance)]
         public string? InputStyle { get; set; }
-
-        /// <summary>
-        /// The CSS styles applied to the internal <see cref="MudPaper"/> drag and drop area.
-        /// </summary>
-        /// <remarks>
-        /// These styles apply when <see cref="DragAndDrop"/> is <c>true</c> and no custom ActivatorContent has been created.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.FileUpload.Appearance)]
-        public string? DragStyle { get; set; }
 
         /// <summary>
         /// The maximum number of files retrieved during a call to <see cref="InputFileChangeEventArgs.GetMultipleFiles(int)"/>.

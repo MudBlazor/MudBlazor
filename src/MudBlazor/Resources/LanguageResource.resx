@@ -417,4 +417,10 @@
   <data name="MudDataGrid_ShowColumnOptions" xml:space="preserve">
     <value>Show Column Options</value>
   </data>
+  <data name="MudFileUpload_DragAndDrop" xml:space="preserve">
+    <value>Drag and drop file(s) here or click</value>
+  </data>
+  <data name="MudFileUpload_Button" xml:space="preserve">
+    <value>Click to Upload</value>
+  </data>
 </root>

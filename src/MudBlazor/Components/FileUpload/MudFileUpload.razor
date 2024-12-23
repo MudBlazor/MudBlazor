@@ -1,5 +1,5 @@
 ﻿@inherits MudFormComponent<T, string>
-
+@inject InternalMudLocalizer Localizer
 @typeparam T
 @namespace MudBlazor
 @using Microsoft.AspNetCore.Components.Forms
@@ -26,17 +26,16 @@
             required="@Required"
             aria-required="@Required.ToString().ToLowerInvariant()" />
         }
-        @if (ActivatorContent == null)
+        @if (CustomContent == null)
         {         
             @if (DragAndDrop)
             {
                 <MudPaper Outlined="true" 
                 @onclick="@(GetDisabledState() ? null : OpenFilePickerAsync)"
                 @ondragenter="@(GetDisabledState() ? null : () => _draggingState.SetValueAsync(true))"
-                Style="@DragStyle"
                 Class="@DragClass">
                     <MudIcon Disabled="GetDisabledState()" Class="mb-2" Icon="@Icons.Material.Filled.Inbox" Color="Color.Primary" Size="Size.Large" />
-                    <MudText Color="@(GetDisabledState() ? Color.Default : Color.Primary)">Drag and drop files here or click</MudText>
+                    <MudText Color="@(GetDisabledState() ? Color.Default : Color.Primary)">@Localizer[Resources.LanguageResource.MudFileUpload_DragAndDrop]</MudText>
                 </MudPaper>
             }
             else
@@ -46,7 +45,7 @@
                            StartIcon="@Icons.Material.Filled.CloudUpload"
                            Disabled="GetDisabledState()"
                            OnClick="@OpenFilePickerAsync">
-                    Click to Upload
+                    @Localizer[Resources.LanguageResource.MudFileUpload_Button]
                 </MudButton>
             }
         }
@@ -54,7 +53,7 @@
         {
             <CascadingValue Name="ParentDisabled" Value="GetDisabledState()">
                 <div disabled="@GetDisabledState()">
-                    @ActivatorContent(this)
+                    @CustomContent(this)
                 </div>
             </CascadingValue>
         }
@@ -68,7 +67,7 @@
                 <!-- Make sure there is at least one file -->
                 @if (!EqualityComparer<T>.Default.Equals(_filesState.Value, default))
                 {
-                    <div class="mud-file-upload-filelist">
+                    <span class="mud-file-upload-filelist">
                         @foreach (var file in GetFilenames())
                         {
                             <MudChip T="string"
@@ -79,7 +78,7 @@
                                      OnClose="@(GetDisabledState() ? null : async () => await RemoveFile(file))"
                                      tabindex="-1" />
                         }
-                    </div>
+                    </span>
                 }
             }
         </div>
