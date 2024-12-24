@@ -31,5 +31,36 @@ public struct DropdownSettings
     [Category(CategoryTypes.Popover.Appearance)]
     public OverflowBehavior OverflowBehavior { get; set; } = OverflowBehavior.FlipOnOpen;
 
+    /// <summary>
+    /// The behavior applied when the dropdown overlay is clicked. If <c>true</c>, the click event will be propogated to the parent element.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Popover.Behavior)]
+    public bool OverflowClickPropogation { get; set; }
+
+    /// <summary>
+    /// The location this popover will appear relative to its parent container.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c> and will not overwrite default settings
+    /// Use <see cref="TransformOrigin"/> to control the direction of the popover from this point.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Popover.Appearance)]
+    public Origin? AnchorOrigin { get; set; }
+
+    /// <summary>
+    /// The direction this popover will appear relative to the <see cref="AnchorOrigin"/>.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c> and will not overwrite default settings
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Popover.Appearance)]
+    public Origin? TransformOrigin { get; set; }
+
     public DropdownSettings() { }
 }
