@@ -62,5 +62,17 @@ public struct DropdownSettings
     [Category(CategoryTypes.Popover.Appearance)]
     public Origin? TransformOrigin { get; set; }
 
+    /// <summary>
+    /// Determines the width of this popover in relation the parent container.
+    /// </summary>
+    /// <remarks>
+    /// <para>Defaults to <c>null</c> and will not overwrite default settings</para>
+    /// <para>When <c>true</c>, restricts the max-width of the component to the width of the parent container</para>
+    /// <para>When <c>false</c>, restricts the min-width of the component to the width of the parent container</para>
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Popover.Appearance)]
+    public bool? RelativeWidth { get; set; }
+
     public DropdownSettings() { }
 }
