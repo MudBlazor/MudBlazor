@@ -44,8 +44,8 @@
         <DocsPageSection>
             <SectionHeader Title="Table with pagination and filtering">
                 <Description>
-                    The <CodeInline>&lt;MudTable></CodeInline> component supports pagination, sorting and filtering of rows, as well as single and multiple row selection. To tell the table how to render your data, define a <CodeInline>&lt;RowTemplate></CodeInline>
-                    containing a <CodeInline>&lt;MudTableCell></CodeInline> or a <CodeInline>&lt;td></CodeInline> for every column.
+                    The <CodeInline>MudTable</CodeInline> component supports pagination, sorting and filtering of rows, as well as single and multiple row selection. To tell the table how to render your data, define a <CodeInline>RowTemplate</CodeInline>
+                    containing a <CodeInline>MudTableCell</CodeInline> or a <CodeInline>td</CodeInline> for every column.
                     <br /><br />
                     Note: you can not fill this table in a conventional way, i.e. by defining multiple <CodeInline Code="<tr>" /> tags. See <MudLink Href="/components/simpletable">SimpleTable</MudLink> if you want that. Instead, you
                     pass the collection of items to be displayed to the table's <CodeInline>Items</CodeInline> parameter.
@@ -82,10 +82,10 @@
         <DocsPageSection>
             <SectionHeader Title="Sorting">
                     <Description>
-                        To enable sorting, add <CodeInline>&lt;MudTableSortLabel></CodeInline> to the header cells and define a function that simply returns the value which should be sorted by when sorting by the specific column.
-                        You can also specify whether default ordering direction should be ascending or descending by specifying the <CodeInline>&lt;InitialDirection></CodeInline> parameter of <CodeInline>&lt;MudTableSortLabel></CodeInline>.<br />
+                        To enable sorting, add <CodeInline>MudTableSortLabel</CodeInline> to the header cells and define a function that simply returns the value which should be sorted by when sorting by the specific column.
+                        You can also specify whether default ordering direction should be ascending or descending by specifying the <CodeInline>InitialDirection</CodeInline> parameter of <CodeInline>MudTableSortLabel</CodeInline>.<br />
                         Click on a header to sort the table by that column, then click to cycle through sorting directions.
-                        By default, sorting directions are ascending, descending and unsorted; if you want to cycle through ascending and descending only, you need to specify the <CodeInline>&lt;AllowUnsorted></CodeInline> parameter of the <CodeInline>&lt;MudTable></CodeInline>.
+                        By default, sorting directions are ascending, descending and unsorted; if you want to cycle through ascending and descending only, you need to specify the <CodeInline>AllowUnsorted</CodeInline> parameter of the <CodeInline>MudTable</CodeInline>.
                         Sorting can be allowed and disallowed on the column level with the property <CodeInline>Enabled</CodeInline>.
                     </Description>
             </SectionHeader>
@@ -191,9 +191,9 @@
         <DocsPageSection>
             <SectionHeader Title="Header and Footer">
                 <Description>
-                    By default, you can put a list of <CodeInline>&lt;MudTh></CodeInline> inside <CodeInline>&lt;HeaderContent></CodeInline> and <CodeInline>&lt;MudTd></CodeInline> inside <CodeInline>&lt;FooterContent></CodeInline>, MudTable will automatically manage the table row for you, including the select-all column and adding an empty column for editable tables.<br />
+                    By default, you can put a list of <CodeInline>MudTh</CodeInline> inside <CodeInline>HeaderContent</CodeInline> and <CodeInline>MudTd</CodeInline> inside <CodeInline>FooterContent</CodeInline>, MudTable will automatically manage the table row for you, including the select-all column and adding an empty column for editable tables.<br />
                     If you need to customize the behavior, as well as rendering multiple header or footer rows, you can set the <CodeInline>CustomHeader</CodeInline> and <CodeInline>CustomFooter</CodeInline> attributes to true.<br />
-                    Then setting a list of <CodeInline>&lt;MudTHeadRow></CodeInline> or <CodeInline>&lt;MudTFootRow></CodeInline> with their respective cells will render exactly what's required inside the table header and footer.
+                    Then setting a list of <CodeInline>MudTHeadRow</CodeInline> or <CodeInline>MudTFootRow</CodeInline> with their respective cells will render exactly what's required inside the table header and footer.
                     <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
                         Note: Unless you specify the attribute <CodeInline>@nameof(MudTr.Checkable)</CodeInline> for a specific row, MudTable won't render a checkbox in case of a multi-selection table.
                         Attributes <CodeInline>IgnoreCheckbox</CodeInline> and <CodeInline>IgnoreEditable</CodeInline> won't render an empty cell either, requiring you to do it manually (for example for a colspan on the entire row).
