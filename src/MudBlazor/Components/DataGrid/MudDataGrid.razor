@@ -205,7 +205,7 @@
                         @{
                             var resolvedPageItems = new List<IndexBag<T>>(0);
                             // resolve the page items only when used
-                            if (!Virtualize || !HasServerData || HasFooter)
+                            if (!Virtualize || VirtualizeServerData == null || HasFooter)
                             {
                                 resolvedPageItems = CurrentPageItems.Select((item, index) => new IndexBag<T>(index, item))
                                     .ToList();
@@ -440,9 +440,15 @@
         @<text>
             @if (currentItems is not null)
             {
-                foreach (var column in RenderedColumns.Where(IsFooterCellDisplayable))
+                foreach (var column in RenderedColumns)
                 {
-                    <FooterCell T="T" Column="@column" CurrentItems="@currentItems"></FooterCell>
+                    if (!column.HiddenState.Value)
+                    {
+                        if (column.AggregateDefinition is not null || column.FooterTemplate is not null || HasFooter)
+                        {
+                            <FooterCell T="T" Column="@column" CurrentItems="@currentItems"></FooterCell>
+                        }
+                    }
                 }
             }
          </text>;

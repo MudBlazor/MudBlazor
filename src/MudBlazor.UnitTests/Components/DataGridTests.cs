@@ -155,6 +155,26 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void DataGirdWithServerDataAndVirtualize()
+        {
+            var comp = Context.RenderComponent<DataGridServerDataWithVirtualizeTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerDataWithVirtualizeTest.Item>>();
+
+            // Count the number of rows including header.
+            var rows = dataGrid.FindAll("tr");
+            rows.Count.Should().Be(7, because: "1 header row + 5 data rows + 1 footer row");
+
+            var cells = dataGrid.FindAll("td");
+            cells.Count.Should().Be(5, because: "We have 5 data rows with one column");
+
+            cells[0].TextContent.Should().Be("Value_0");
+            cells[1].TextContent.Should().Be("Value_1");
+            cells[2].TextContent.Should().Be("Value_2");
+            cells[3].TextContent.Should().Be("Value_3");
+            cells[4].TextContent.Should().Be("Value_4");
+        }
+
+        [Test]
         public async Task DataGridSortableVirtualizeServerDataTest()
         {
             var comp = Context.RenderComponent<DataGridSortableVirtualizeServerDataTest>();
@@ -4918,6 +4938,31 @@ namespace MudBlazor.UnitTests.Components
 
             form.IsTouched.Should().BeTrue();
             form.IsValid.Should().BeFalse();
+        }
+
+        /// <summary>
+        /// Tests two-way binding on the CurrentPage parameter.
+        /// The table should re-render with the newly provided value as the CurrentPage.
+        /// </summary>
+        [Test]
+        public async Task TestCurrentPageParameterTwoWayBinding()
+        {
+            var comp = Context.RenderComponent<DataGridCurrentPageParameterTwoWayBindingTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<int>>().Instance;
+
+            // Assert starting page index is 0 (default).
+            comp.WaitForAssertion(() => dataGrid.CurrentPage.Should().Be(0));
+            comp.WaitForAssertion(() => comp.Find(".mud-table-body .mud-table-row .mud-table-cell").TextContent.Should().Be("1"));
+
+            // Assert modification via code correctly renders the corresponding page.
+            await comp.InvokeAsync(() => dataGrid.CurrentPage = 1);
+            comp.WaitForAssertion(() => dataGrid.CurrentPage.Should().Be(1));
+            comp.WaitForAssertion(() => comp.Find(".mud-table-body .mud-table-row .mud-table-cell").TextContent.Should().Be("2"));
+
+            // Assert user input correctly updates the CurrentPage parameter value by clicking the "Next Page" button in the pager.
+            comp.FindAll(".mud-table-pagination-actions .mud-button-root")[2].Click();
+            comp.WaitForAssertion(() => dataGrid.CurrentPage.Should().Be(2));
+            comp.WaitForAssertion(() => comp.Find(".mud-table-body .mud-table-row .mud-table-cell").TextContent.Should().Be("3"));
         }
     }
 }
