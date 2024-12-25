@@ -39,40 +39,40 @@ public struct DropdownSettings
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Popover.Behavior)]
-    public bool OverflowClickPropogation { get; set; }
+    public bool OverlayClickPropogation { get; set; }
 
     /// <summary>
     /// The location this popover will appear relative to its parent container.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>null</c> and will not overwrite default settings
+    /// Defaults to <c>Origin.BottomLeft</c>
     /// Use <see cref="TransformOrigin"/> to control the direction of the popover from this point.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Popover.Appearance)]
-    public Origin? AnchorOrigin { get; set; }
+    public Origin AnchorOrigin { get; set; }
 
     /// <summary>
     /// The direction this popover will appear relative to the <see cref="AnchorOrigin"/>.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>null</c> and will not overwrite default settings
+    /// Defaults to <c>Origin.TopLeft</c>
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Popover.Appearance)]
-    public Origin? TransformOrigin { get; set; }
+    public Origin TransformOrigin { get; set; }
 
     /// <summary>
     /// Determines the width of this popover in relation the parent container.
     /// </summary>
     /// <remarks>
-    /// <para>Defaults to <c>null</c> and will not overwrite default settings</para>
+    /// <para>Defaults to <c>true</c></para>
     /// <para>When <c>true</c>, restricts the max-width of the component to the width of the parent container</para>
     /// <para>When <c>false</c>, restricts the min-width of the component to the width of the parent container</para>
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Popover.Appearance)]
-    public bool? RelativeWidth { get; set; }
+    public bool RelativeWidth { get; set; } = true;
 
     public DropdownSettings() { }
 }
