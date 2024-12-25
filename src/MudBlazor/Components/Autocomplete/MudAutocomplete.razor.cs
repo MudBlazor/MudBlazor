@@ -101,26 +101,6 @@ namespace MudBlazor
         public string? ListItemClass { get; set; }
 
         /// <summary>
-        /// The location where the popover will open from.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="Origin.BottomLeft" />.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.ListAppearance)]
-        public Origin AnchorOrigin { get; set; } = Origin.BottomLeft;
-
-        /// <summary>
-        /// The transform origin point for the popover.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="Origin.TopLeft"/>.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.ListAppearance)]
-        public Origin TransformOrigin { get; set; } = Origin.TopLeft;
-
-        /// <summary>
         /// Uses compact padding.
         /// </summary>
         /// <remarks>
@@ -389,12 +369,16 @@ namespace MudBlazor
         /// The behavior of the dropdown popover menu
         /// </summary>
         /// <remarks>
+        /// Defaults to <see cref="DropdownSettings.RelativeWidth" /> true
+        /// Defaults to <see cref="DropdownSettings.AnchorOrigin" /> <see cref="Origin.BottomLeft" />
+        /// Defaults to <see cref="DropdownSettings.TransformOrigin" /> <see cref="Origin.TopLeft" />
         /// Defaults to <see cref="DropdownSettings.Fixed" /> false
         /// Defaults to <see cref="DropdownSettings.OverflowBehavior" /> <see cref="OverflowBehavior.FlipOnOpen" />
+        /// Defaults to <see cref="DropdownSettings.OverlayClickPropogation" /> false
         /// </remarks>
         [Category(CategoryTypes.Popover.Behavior)]
         [Parameter]
-        public DropdownSettings DropdownSettings { get; set; }
+        public DropdownSettings DropdownSettings { get; set; } = new DropdownSettings();
 
         /// <summary>
         /// The function used to determine if an item should be disabled.
