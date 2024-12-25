@@ -50,7 +50,7 @@ public struct DropdownSettings
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Popover.Appearance)]
-    public Origin AnchorOrigin { get; set; }
+    public Origin AnchorOrigin { get; set; } = Origin.BottomLeft;
 
     /// <summary>
     /// The direction this popover will appear relative to the <see cref="AnchorOrigin"/>.
@@ -60,7 +60,7 @@ public struct DropdownSettings
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Popover.Appearance)]
-    public Origin TransformOrigin { get; set; }
+    public Origin TransformOrigin { get; set; } = Origin.TopLeft;
 
     /// <summary>
     /// Determines the width of this popover in relation the parent container.
