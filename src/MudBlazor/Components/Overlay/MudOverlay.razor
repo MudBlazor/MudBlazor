@@ -20,8 +20,8 @@
         @<div @attributes="UserAttributes"
               class="@Classname"
               style="@Styles"
-              @onclick="OnClickHandlerAsync"
-              @onclick:stopPropagation>
+              @onclick="OnClickHandlerAsync"              
+              @onclick:stopPropagation=!ClickPropogation>
             @if (LightBackground || DarkBackground)
             {
                 <div class="@ScrimClassname"></div>

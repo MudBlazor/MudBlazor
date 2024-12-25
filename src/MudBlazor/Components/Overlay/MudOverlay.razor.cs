@@ -143,6 +143,18 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
     public int ZIndex { get; set; } = 5;
 
     /// <summary>
+    /// Whether or not clicks propogate through the Overlay
+    /// </summary>
+    /// <remarks>
+    /// <para>Defaults to <c>false</c></para>
+    /// <para>When <c>false</c> it will take two clicks to get to the below element</para>
+    /// <para>When <c>true</c> it will close the overlay and focus/click the below element</para>
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Overlay.Behavior)]
+    public bool ClickPropogation { get; set; } = false;
+
+    /// <summary>
     /// Occurs when the overlay is clicked.
     /// </summary>
     /// <remarks>
