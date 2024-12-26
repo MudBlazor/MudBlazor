@@ -11,7 +11,7 @@ namespace MudBlazor;
 public abstract class CommonSnackbarOptions
 {
     /// <summary>
-    /// The maximum opacity for each snackbar.
+    /// The maximum opacity for the snackbar.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>95</c>.  The maximum value is <c>100</c>.
@@ -19,7 +19,7 @@ public abstract class CommonSnackbarOptions
     public int MaximumOpacity { get; set; } = 95;
 
     /// <summary>
-    /// The time, in milliseconds, to animate showing each snackbar.
+    /// The time, in milliseconds, to animate showing the snackbar.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>1000</c> (one second).
@@ -27,7 +27,7 @@ public abstract class CommonSnackbarOptions
     public int ShowTransitionDuration { get; set; } = 1000;
 
     /// <summary>
-    /// The time, in milliseconds, to show each snackbar.
+    /// The time, in milliseconds, to show the snackbar.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>5000</c> (five seconds).
@@ -35,7 +35,7 @@ public abstract class CommonSnackbarOptions
     public int VisibleStateDuration { get; set; } = 5000;
 
     /// <summary>
-    /// The time, in milliseconds, to hide each snackbar.
+    /// The time, in milliseconds, to hide the snackbar.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>2000</c> (two seconds).
@@ -43,7 +43,7 @@ public abstract class CommonSnackbarOptions
     public int HideTransitionDuration { get; set; } = 2000;
 
     /// <summary>
-    /// Displays a close icon for each snackbar.
+    /// Displays a close icon for the snackbar.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>true</c>.
@@ -51,7 +51,7 @@ public abstract class CommonSnackbarOptions
     public bool ShowCloseIcon { get; set; } = true;
 
     /// <summary>
-    /// Shows each snackbar until a user manually closes them.
+    /// Shows the snackbar until a user manually closes them.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>false</c>.
@@ -59,7 +59,7 @@ public abstract class CommonSnackbarOptions
     public bool RequireInteraction { get; set; } = false;
 
     /// <summary>
-    /// Blurs the background of each snackbar.
+    /// Blurs the background of the snackbar.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>false</c>.
@@ -67,7 +67,7 @@ public abstract class CommonSnackbarOptions
     public bool BackgroundBlurred { get; set; } = false;
 
     /// <summary>
-    /// The default display variant for each snackbar.
+    /// The default display variant for the snackbar.
     /// </summary>
     /// <remarks>
     /// Defaults to <see cref="Variant.Filled"/>.
@@ -75,7 +75,7 @@ public abstract class CommonSnackbarOptions
     public Variant SnackbarVariant { get; set; } = Variant.Filled;
 
     /// <summary>
-    /// The default icon size for each snackbar.
+    /// The default icon size for the snackbar.
     /// </summary>
     /// <remarks>
     /// Defaults to <see cref="Size.Medium"/>.
