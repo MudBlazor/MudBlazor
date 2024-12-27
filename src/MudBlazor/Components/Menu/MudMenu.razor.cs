@@ -242,24 +242,18 @@ namespace MudBlazor
         public MouseEvent ActivationEvent { get; set; } = MouseEvent.LeftClick;
 
         /// <summary>
-        /// The point where the menu will open from.
+        /// The behavior of the dropdown popover menu
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Origin.BottomLeft"/>.
+        /// Defaults to <see cref="DropdownSettings.AnchorOrigin" /> <see cref="Origin.BottomLeft" />
+        /// Defaults to <see cref="DropdownSettings.TransformOrigin" /> <see cref="Origin.TopLeft" />
+        /// Defaults to <see cref="DropdownSettings.Fixed" /> false
+        /// Defaults to <see cref="DropdownSettings.OverflowBehavior" /> <see cref="OverflowBehavior.FlipOnOpen" />
+        /// Defaults to <see cref="DropdownSettings.OverlayClickPropogation" /> false
         /// </remarks>
+        [Category(CategoryTypes.Popover.Behavior)]
         [Parameter]
-        [Category(CategoryTypes.Menu.PopupAppearance)]
-        public Origin AnchorOrigin { get; set; } = Origin.BottomLeft;
-
-        /// <summary>
-        /// Sets the direction the menu will open from the anchor.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="Origin.TopLeft"/>.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.Menu.PopupAppearance)]
-        public Origin TransformOrigin { get; set; } = Origin.TopLeft;
+        public DropdownSettings DropdownSettings { get; set; } = new DropdownSettings();
 
         /// <summary>
         /// Prevents the page from scrolling while this menu is open.
