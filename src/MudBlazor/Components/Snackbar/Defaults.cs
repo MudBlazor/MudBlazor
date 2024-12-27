@@ -21,7 +21,7 @@ public static class Defaults
         public static class Position
         {
             /// <summary>
-            /// Snackbars will appear in the upper-left corner.
+            /// Snackbars will appear in the top-left corner.
             /// </summary>
             public const string TopLeft = "mud-snackbar-location-top-left";
 
@@ -31,7 +31,7 @@ public static class Defaults
             public const string TopCenter = "mud-snackbar-location-top-center";
 
             /// <summary>
-            /// Snackbars will appear in the upper-right corner.
+            /// Snackbars will appear in the top-right corner.
             /// </summary>
             public const string TopRight = "mud-snackbar-location-top-right";
 
