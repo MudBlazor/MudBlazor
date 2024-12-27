@@ -2,13 +2,13 @@
 
 <MudGrid>
     <MudItem md="4">
-        <MudSelect T="string" Label="Select" DropdownSettings="@_dropdownSettings" Variant="Variant.Outlined" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary">
+        <MudSelect T="string" Label="MudSelect" DropdownSettings="@_dropdownSettings" Variant="Variant.Outlined" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary">
             <MudSelectItem Value="@("foo")">Foo</MudSelectItem>
             <MudSelectItem Value="@("bar")">Bar</MudSelectItem>
         </MudSelect>
     </MudItem>
     <MudItem md="4" Class="d-flex justify-center align-center">
-        <MudMenu Label="Open Menu" Variant="Variant.Filled" Color="Color.Primary" DropdownSettings="@_dropdownSettings">
+        <MudMenu Label="MudMenu" Variant="Variant.Filled" Color="Color.Primary" DropdownSettings="@_dropdownSettings">
             <MudMenuItem Label="Enlist" />
             <MudMenuItem Label="Barracks" />
             <MudMenuItem Label="Armory" />
@@ -18,7 +18,7 @@
         <MudAutocomplete SearchFunc="Search"
                          DropdownSettings="@_dropdownSettings"
                          Variant="Variant.Outlined"
-                         Label="Autocomplete" />
+                         Label="MudAutocomplete" />
     </MudItem>
     <MudItem md="2" Class="d-flex align-center justify-center">
         <MudSwitch @bind-Value="@_fixed" Label="Fixed" LabelPlacement="Placement.Right" />
