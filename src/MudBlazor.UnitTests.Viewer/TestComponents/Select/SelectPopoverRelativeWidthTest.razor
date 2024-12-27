@@ -2,7 +2,7 @@
 
 <MudStack Row>
     <div class="pa-4 d-inline-block" style="width:125px;">
-        <MudSelect @bind-Value="@_selected" Variant="Variant.Outlined" FullWidth Dense id="restricted-select" PopoverClass="restricted">
+        <MudSelect @bind-Value="@_selected" Variant="Variant.Outlined" RelativeWidth Dense id="restricted-select" PopoverClass="restricted">
             @foreach (var value in _values)
             {
                 <MudSelectItem T="string" Value="@value">@value</MudSelectItem>
@@ -22,7 +22,7 @@
 
 <MudStack>
     <div class="pa-4 d-inline-block" style="width:400px;">
-        <MudSelect @bind-Value="@_selected" Variant="Variant.Outlined" FullWidth Dense id="select-fit-1" PopoverClass="fit1">
+        <MudSelect @bind-Value="@_selected" Variant="Variant.Outlined" RelativeWidth Dense id="select-fit-1" PopoverClass="fit1">
             @foreach (var value in _values)
             {
                 <MudSelectItem T="string" Value="@value">@value</MudSelectItem>

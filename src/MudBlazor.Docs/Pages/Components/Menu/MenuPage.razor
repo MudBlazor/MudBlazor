@@ -147,15 +147,22 @@
         </DocsPageSection>
         
         <DocsPageSection>
-            <SectionHeader Title="Placement">
+            <SectionHeader Title="DropdownSettings">
                 <Description>
-                    The component uses <MudLink Href="/components/popover">MudPopover</MudLink> to place its menu. Adjust the 
-                    <CodeInline>AnchorOrigin</CodeInline> and <CodeInline>TransformOrigin</CodeInline> properties to control the menu's position.
-                    For more details and examples, visit the <MudLink Color="Color.Secondary" Href="/components/popover">popover documentation page</MudLink>.
+                    The component uses <MudLink Href="/components/popover">MudPopover</MudLink> to place it's list of items in combination with <MudLink Href="/components/overlay">MudOverlay</MudLink>. Some of these
+                    settings can be controlled with <CodeInline>DropdownSettings</CodeInline> which contain defaults for the <CodeInline>MudPopover</CodeInline>
+                    appearance and behavior. Default settings for <CodeInline>DropdownSettings</CodeInline> are:
+                    <ul class="ml-2">
+                        <li><CodeInline>AnchorOrigin</CodeInline> = <CodeInline>Origin.BottomLeft</CodeInline> - The location this popover will appear relative to its parent container.</li>
+                        <li><CodeInline>TransformOrigin</CodeInline> = <CodeInline>Origin.TopLeft</CodeInline> - The direction this popover will appear relative to the <see cref="AnchorOrigin" />.</li>
+                        <li><CodeInline>Fixed</CodeInline> = <CodeInline>false</CodeInline> - Displays the dropdown popover in a fixed position, even while scrolling.</li>
+                        <li><CodeInline>OverflowBehavior</CodeInline> = <CodeInline>OverflowBehavior.FlipOnOpen</CodeInline> - The behavior applied when there is not enough space for the dropdown popover to be visible.</li>
+                    </ul>
+                    <MudLink Color="Color.Secondary" Href="/components/popover">Read more on popover's page.</MudLink>
                 </Description>
             </SectionHeader>
-            <SectionContent Code="@nameof(MenuAdvancedPopoverExample)" ShowCode="false">
-                <MenuAdvancedPopoverExample />
+            <SectionContent Code="@nameof(DropdownSettingsExample)" ShowCode="false">
+                <DropdownSettingsExample />
             </SectionContent>
         </DocsPageSection>
     </DocsPageContent>
