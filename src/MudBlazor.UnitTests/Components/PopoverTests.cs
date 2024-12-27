@@ -379,24 +379,8 @@ namespace MudBlazor.UnitTests.Components
 
             settings.Fixed.Should().BeFalse();
             settings.OverflowBehavior.Should().Be(OverflowBehavior.FlipOnOpen);
-        }
-
-        [Test]
-        [TestCase(true)]
-        [TestCase(false)]
-        public void MudPopoverProvider_DropdownSettings_Fixed_CanBeSetCorrectly(bool fixedValue)
-        {
-            var settings = new DropdownSettings { Fixed = fixedValue };
-
-            settings.Fixed.Should().Be(fixedValue);
-        }
-
-        [Test]
-        public void MudPopoverProvider_DropdownSettings_OverflowBehavior_CanBeSetCorrectly()
-        {
-            var settings = new DropdownSettings { OverflowBehavior = OverflowBehavior.FlipAlways };
-
-            settings.OverflowBehavior.Should().Be(OverflowBehavior.FlipAlways);
+            settings.AnchorOrigin.Should().Be(Origin.BottomLeft);
+            settings.TransformOrigin.Should().Be(Origin.TopLeft);
         }
     }
 }

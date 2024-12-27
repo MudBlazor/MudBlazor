@@ -255,6 +255,16 @@ namespace MudBlazor
         public DropdownSettings DropdownSettings { get; set; } = new DropdownSettings();
 
         /// <summary>
+        /// The origin point for the menu's anchor. If set, overrides <see cref="DropdownSettings.AnchorOrigin"/>, Nested Menus, and PositionatCursor Anchor points.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
+        [Category(CategoryTypes.Popover.Behavior)]
+        [Parameter]
+        public Origin? AnchorOrigin { get; set; }
+
+        /// <summary>
         /// Prevents the page from scrolling while this menu is open.
         /// </summary>
         /// <remarks>
@@ -340,7 +350,7 @@ namespace MudBlazor
                 return Origin.TopLeft;
             }
 
-            return Origin.BottomLeft;
+            return DropdownSettings.AnchorOrigin;
         }
 
         protected void RegisterChild(MudMenu child)
