@@ -378,6 +378,7 @@ namespace MudBlazor
         /// <summary>
         /// The behavior of the dropdown popover menu
         /// </summary>
+        /// <remarks>
         /// Defaults to <see cref="DropdownSettings.AnchorOrigin" /> <see cref="Origin.BottomLeft" />
         /// Defaults to <see cref="DropdownSettings.TransformOrigin" /> <see cref="Origin.TopLeft" />
         /// Defaults to <see cref="DropdownSettings.Fixed" /> false
