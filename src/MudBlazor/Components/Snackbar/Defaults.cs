@@ -46,7 +46,7 @@ public static class Defaults
             public const string TopEnd = "mud-snackbar-location-top-end";
 
             /// <summary>
-            /// Snackbars will appear in the lower-left corner.
+            /// Snackbars will appear in the bottom-left corner.
             /// </summary>
             public const string BottomLeft = "mud-snackbar-location-bottom-left";
 
@@ -56,7 +56,7 @@ public static class Defaults
             public const string BottomCenter = "mud-snackbar-location-bottom-center";
 
             /// <summary>
-            /// Snackbars will appear in the lower-right corner.
+            /// Snackbars will appear in the bottom-right corner.
             /// </summary>
             public const string BottomRight = "mud-snackbar-location-bottom-right";
 
