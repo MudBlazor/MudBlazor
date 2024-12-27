@@ -72,8 +72,8 @@
                 MaxHeight="@MaxHeight"
                 Fixed="@DropdownSettings.Fixed"
                 OverflowBehavior="@DropdownSettings.OverflowBehavior"
-                AnchorOrigin="@(PositionAtCursor ? Origin.TopLeft : DropdownSettings.AnchorOrigin)"
                 TransformOrigin="@DropdownSettings.TransformOrigin"
+                AnchorOrigin="@GetAnchorOrigin()"
                 RelativeWidth="@FullWidth"
                 DropShadow="@DropShadow">
         <CascadingValue Value="@this">

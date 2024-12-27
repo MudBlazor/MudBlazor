@@ -32,4 +32,12 @@
             @ChildContent
         }
     </MudText>
+
+    @if (ActivatesSubMenu)
+    {
+        <MudIcon Class="mud-menu-item-chevron"
+                 Icon="@Icons.Material.Filled.ArrowRight"
+                 Disabled="GetDisabled()"
+                 Size="GetIconSize()" />
+    }
 </MudElement>
