@@ -32,16 +32,6 @@ public struct DropdownSettings
     public OverflowBehavior OverflowBehavior { get; set; } = OverflowBehavior.FlipOnOpen;
 
     /// <summary>
-    /// The behavior applied when the dropdown overlay is clicked. If <c>true</c>, the click event will be propogated to the parent element.
-    /// </summary>
-    /// <remarks>
-    /// Defaults to <c>false</c>
-    /// </remarks>
-    [Parameter]
-    [Category(CategoryTypes.Popover.Behavior)]
-    public bool OverlayClickPropogation { get; set; }
-
-    /// <summary>
     /// The location this popover will appear relative to its parent container.
     /// </summary>
     /// <remarks>

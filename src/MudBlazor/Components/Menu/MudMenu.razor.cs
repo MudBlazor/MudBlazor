@@ -249,7 +249,6 @@ namespace MudBlazor
         /// Defaults to <see cref="DropdownSettings.TransformOrigin" /> <see cref="Origin.TopLeft" />
         /// Defaults to <see cref="DropdownSettings.Fixed" /> false
         /// Defaults to <see cref="DropdownSettings.OverflowBehavior" /> <see cref="OverflowBehavior.FlipOnOpen" />
-        /// Defaults to <see cref="DropdownSettings.OverlayClickPropogation" /> false
         /// </remarks>
         [Category(CategoryTypes.Popover.Behavior)]
         [Parameter]
