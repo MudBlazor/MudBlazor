@@ -51,7 +51,7 @@ public abstract class CommonSnackbarOptions
     public bool ShowCloseIcon { get; set; } = true;
 
     /// <summary>
-    /// Shows the snackbar until a user manually closes them.
+    /// Shows the snackbar until a user manually closes it.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>false</c>.

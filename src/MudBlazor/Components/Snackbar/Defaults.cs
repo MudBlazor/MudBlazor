@@ -36,12 +36,12 @@ public static class Defaults
             public const string TopRight = "mud-snackbar-location-top-right";
 
             /// <summary>
-            /// Snackbars will appear on the top, aligned based on Right-to-Left settings.
+            /// Snackbars will appear at the top, aligned based on Right-to-Left settings.
             /// </summary>
             public const string TopStart = "mud-snackbar-location-top-start";
 
             /// <summary>
-            /// Snackbars will appear on the top, aligned based on Right-to-Left settings.
+            /// Snackbars will appear at the top, aligned based on Right-to-Left settings.
             /// </summary>
             public const string TopEnd = "mud-snackbar-location-top-end";
 

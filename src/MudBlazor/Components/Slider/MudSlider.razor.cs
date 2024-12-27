@@ -8,7 +8,7 @@ namespace MudBlazor
 {
 #nullable enable
     /// <summary>
-    /// A component which users to select a value within a specified range.
+    /// A component which allows users to select a value within a specified range.
     /// </summary>
     /// <typeparam name="T">The type of the value the slider represents.</typeparam>
     public partial class MudSlider<T> : MudComponentBase where T : struct, INumber<T>
@@ -87,13 +87,13 @@ namespace MudBlazor
         public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// Occurs ehn <see cref="Value"/> has changed.
+        /// Occurs when <see cref="Value"/> has changed.
         /// </summary>
         [Parameter]
         public EventCallback<T> ValueChanged { get; set; }
 
         /// <summary>
-        /// Occurs when  Event callback invoked when the nullable value of the slider changes.
+        /// Occurs when <see cref="NullableValue" /> has changed.
         /// </summary>
         [Parameter]
         public EventCallback<T?> NullableValueChanged { get; set; }

@@ -20,7 +20,7 @@ public enum Justify
     Center,
 
     /// <summary>
-    /// Items are aligned to the start of the <see cref="MudStack"/>.
+    /// Items are aligned to the end of the <see cref="MudStack"/>.
     /// </summary>
     [Description("end")]
     FlexEnd,
