@@ -151,14 +151,28 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// The behavior of the drop-down menu.
+        /// Expands the popover to the same width as its parent.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="DropdownSettings.Fixed" /> = <c>false</c> and <see cref="DropdownSettings.OverflowBehavior" /> = <see cref="OverflowBehavior.FlipOnOpen" />.
+        /// Defaults to <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Menu.PopupAppearance)]
+        public bool RelativeWidth { get; set; } = true;
+
+        /// <summary>
+        /// The behavior of the dropdown popover menu
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="DropdownSettings.AnchorOrigin" /> <see cref="Origin.BottomLeft" />
+        /// Defaults to <see cref="DropdownSettings.TransformOrigin" /> <see cref="Origin.TopLeft" />
+        /// Defaults to <see cref="DropdownSettings.Fixed" /> false
+        /// Defaults to <see cref="DropdownSettings.OverflowBehavior" /> <see cref="OverflowBehavior.FlipOnOpen" />
+        /// Defaults to <see cref="DropdownSettings.OverlayClickPropogation" /> false
         /// </remarks>
         [Category(CategoryTypes.Popover.Behavior)]
         [Parameter]
-        public DropdownSettings DropdownSettings { get; set; }
+        public DropdownSettings DropdownSettings { get; set; } = new DropdownSettings();
 
         /// <summary>
         /// The CSS classes applied to the outer <c>div</c>.
@@ -562,26 +576,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListAppearance)]
         public int MaxHeight { get; set; } = 300;
-
-        /// <summary>
-        /// The location where the popover will open from.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="Origin.BottomLeft" />.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.ListAppearance)]
-        public Origin AnchorOrigin { get; set; } = Origin.BottomLeft;
-
-        /// <summary>
-        /// The transform origin point for the popover.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="Origin.TopLeft"/>.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.ListAppearance)]
-        public Origin TransformOrigin { get; set; } = Origin.TopLeft;
 
         /// <summary>
         /// Restricts the selected values to the ones defined in <see cref="MudSelectItem{T}"/> items.

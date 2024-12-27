@@ -366,10 +366,18 @@ namespace MudBlazor
         public bool CoerceValue { get; set; }
 
         /// <summary>
-        /// The behavior of the dropdown popover menu
+        /// Expands the popover to the same width as its parent.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="DropdownSettings.RelativeWidth" /> true
+        /// Defaults to <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Menu.PopupAppearance)]
+        public bool RelativeWidth { get; set; } = true;
+
+        /// <summary>
+        /// The behavior of the dropdown popover menu
+        /// </summary>
         /// Defaults to <see cref="DropdownSettings.AnchorOrigin" /> <see cref="Origin.BottomLeft" />
         /// Defaults to <see cref="DropdownSettings.TransformOrigin" /> <see cref="Origin.TopLeft" />
         /// Defaults to <see cref="DropdownSettings.Fixed" /> false
