@@ -15,7 +15,7 @@
         </MudRadioGroup>
     </MudItem>
     <MudItem xs="12" md="9" Class="d-flex align-center justify-center flex-column">
-        <MudMenu Label="Change Anchor Origin" Variant="Variant.Filled" Color="Color.Info" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin">
+        <MudMenu Label="Change Anchor Origin" Variant="Variant.Filled" Color="Color.Info" DropdownSettings="@(new DropdownSettings { AnchorOrigin=AnchorOrigin, TransformOrigin=TransformOrigin })">
             <MudMenuItem Label="1" />
             <MudMenuItem Label="2" />
             <MudMenuItem Label="3" />

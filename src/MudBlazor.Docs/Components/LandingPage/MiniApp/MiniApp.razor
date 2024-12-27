@@ -46,7 +46,7 @@
             <MudIconButton tabindex="-1" Icon="@Icons.Material.Outlined.Search" Color="Color.Inherit" />
             <MudSpacer />
             <MudIconButton tabindex="-1" Class="mud-text-secondary" Icon="@Icons.Material.Outlined.Notifications"/>
-            <MudMenu AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" PopoverClass="mudblazor-landingpage-scaled-menu mud-elevation-1">
+            <MudMenu DropdownSettings="@(new DropdownSettings { AnchorOrigin=Origin.BottomRight, TransformOrigin=Origin.TopRight })" PopoverClass="mudblazor-landingpage-scaled-menu mud-elevation-1">
                 <ActivatorContent>
                     <MiniAppAvatar />
                 </ActivatorContent>

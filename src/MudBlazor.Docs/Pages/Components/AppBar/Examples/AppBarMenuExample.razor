@@ -6,7 +6,7 @@
              Size=Size.Medium
              Color=Color.Inherit
              Icon=@Icons.Material.TwoTone.MoreVert
-             AnchorOrigin=Origin.CenterCenter TransformOrigin=Origin.TopRight>
+             DropdownSettings="@(new DropdownSettings { AnchorOrigin=Origin.CenterCenter, TransformOrigin=Origin.TopRight })">
 
         <!-- User Menu -->
         <MudMenu Dense
@@ -14,7 +14,7 @@
                  Size=Size.Medium
                  Color=Color.Inherit
                  Icon=@Icons.Material.TwoTone.MoreVert
-                 AnchorOrigin=Origin.CenterRight TransformOrigin=Origin.TopLeft
+                 DropdownSettings="@(new DropdownSettings { AnchorOrigin=Origin.CenterRight, TransformOrigin=Origin.TopLeft })"                 
                  ActivationEvent=MouseEvent.MouseOver>
 
             <!-- Settings -->

@@ -12,7 +12,7 @@
                     <MudTextField Immediate="true" DebounceInterval="1000" @bind-Value="SearchText" Variant="Variant.Outlined" Placeholder="Search icons..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" />
                 </MudItem>
                 <MudItem xs="12" sm="4" md="2">
-                    <MudSelect T="IconOrigin" Value="SelectedIconOrigin" ValueChanged="OnSelectedValue" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
+                    <MudSelect T="IconOrigin" Value="SelectedIconOrigin" ValueChanged="OnSelectedValue" Variant="Variant.Outlined" DropdownSettings="@(new DropdownSettings { AnchorOrigin=Origin.BottomCenter })">
                         <MudSelectItem Value="IconOrigin.Custom">Custom Icons</MudSelectItem>
                         <MudSelectItem Value="IconOrigin.Material">Material Icons</MudSelectItem>
                     </MudSelect>
