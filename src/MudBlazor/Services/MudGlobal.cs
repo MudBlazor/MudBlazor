@@ -12,6 +12,7 @@ public static class MudGlobal
     public static class ButtonDefaults
     {
         public static Color Color { get; set; } = Color.Default;
+
         public static Variant Variant { get; set; } = Variant.Text;
     }
 
@@ -28,14 +29,18 @@ public static class MudGlobal
     public static class InputDefaults
     {
         public static bool ShrinkLabel { get; set; }
+
         public static Variant Variant { get; set; } = Variant.Text;
+
         public static Margin Margin { get; set; } = Margin.None;
     }
 
     public static class LinkDefaults
     {
         public static Color Color { get; set; } = Color.Primary;
+
         public static Typo Typo { get; set; } = Typo.body1;
+
         public static Underline Underline { get; set; } = Underline.Hover;
     }
 
@@ -61,6 +66,7 @@ public static class MudGlobal
     public static class TooltipDefaults
     {
         public static TimeSpan Delay { get; set; } = TimeSpan.Zero;
+
         public static TimeSpan Duration { get; set; } = TimeSpan.FromMilliseconds(251);
     }
 
@@ -78,7 +84,7 @@ public static class MudGlobal
     }
 
     /// <summary>
-    /// Rounds the corners of components by default using the theme's border radius, or squares them if set to false.
+    /// Applies regular rounding by default, additional rounding if set to true, or squares them if set to false.
     /// </summary>
     public static bool? Rounded { get; set; }
 

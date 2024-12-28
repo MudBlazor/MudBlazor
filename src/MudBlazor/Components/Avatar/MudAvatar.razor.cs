@@ -52,16 +52,15 @@ namespace MudBlazor
         public bool Square { get; set; } = MudGlobal.Rounded == false;
 
         /// <summary>
-        /// Shows rounded corners.
+        /// Uses rounded corners instead of a circle.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
-        /// Can be overridden by <see cref="MudGlobal.Rounded"/>.
         /// When <c>true</c>, the <c>border-radius</c> style is set to the theme's default value.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Avatar.Appearance)]
-        public bool Rounded { get; set; } = MudGlobal.Rounded == true;
+        public bool Rounded { get; set; }
 
         /// <summary>
         /// The color of the avatar.
