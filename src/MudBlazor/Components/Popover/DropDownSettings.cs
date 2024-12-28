@@ -9,7 +9,7 @@ namespace MudBlazor;
 /// <summary>
 /// The behavior of a dropdown popover.
 /// </summary>
-public struct DropdownSettings
+public readonly struct DropdownSettings
 {
     /// <summary>
     /// Displays the dropdown popover in a fixed position, even while scrolling.
@@ -17,9 +17,8 @@ public struct DropdownSettings
     /// <remarks>
     /// Defaults to <c>false</c>.
     /// </remarks>
-    [Parameter]
     [Category(CategoryTypes.FormComponent.Behavior)]
-    public bool Fixed { get; set; }
+    public bool Fixed { get; init; }
 
     /// <summary>
     /// The behavior applied when there is not enough space for the dropdown popover to be visible.
@@ -27,9 +26,8 @@ public struct DropdownSettings
     /// <remarks>
     /// Defaults to <see cref="OverflowBehavior.FlipOnOpen"/>.
     /// </remarks>
-    [Parameter]
     [Category(CategoryTypes.Popover.Appearance)]
-    public OverflowBehavior OverflowBehavior { get; set; } = OverflowBehavior.FlipOnOpen;
+    public OverflowBehavior OverflowBehavior { get; init; } = OverflowBehavior.FlipOnOpen;
 
     /// <summary>
     /// The location this popover will appear relative to its parent container.
@@ -38,9 +36,8 @@ public struct DropdownSettings
     /// Defaults to <c>Origin.BottomLeft</c>
     /// Use <see cref="TransformOrigin"/> to control the direction of the popover from this point.
     /// </remarks>
-    [Parameter]
     [Category(CategoryTypes.Popover.Appearance)]
-    public Origin AnchorOrigin { get; set; } = Origin.BottomLeft;
+    public Origin AnchorOrigin { get; init; } = Origin.BottomLeft;
 
     /// <summary>
     /// The direction this popover will appear relative to the <see cref="AnchorOrigin"/>.
@@ -48,9 +45,8 @@ public struct DropdownSettings
     /// <remarks>
     /// Defaults to <c>Origin.TopLeft</c>
     /// </remarks>
-    [Parameter]
     [Category(CategoryTypes.Popover.Appearance)]
-    public Origin TransformOrigin { get; set; } = Origin.TopLeft;
+    public Origin TransformOrigin { get; init; } = Origin.TopLeft;
 
     public DropdownSettings() { }
 }
