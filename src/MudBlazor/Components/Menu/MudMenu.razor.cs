@@ -249,7 +249,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Menu.PopupAppearance)]
-        public Origin AnchorOrigin { get; set; } = Origin.BottomLeft;
+        public Origin? AnchorOrigin { get; set; }
 
         /// <summary>
         /// Sets the direction the menu will open from the anchor.
@@ -330,6 +330,25 @@ namespace MudBlazor
         public IReadOnlyList<MudMenu> GetChildren() => _children.AsReadOnly();
 
         protected bool GetActivatorHidden() => ActivatorContent is null && string.IsNullOrWhiteSpace(Label) && string.IsNullOrWhiteSpace(Icon);
+
+        protected Origin GetAnchorOrigin()
+        {
+            if (AnchorOrigin is not null)
+            {
+                return AnchorOrigin.Value;
+            }
+
+            if (ParentMenu is not null)
+            {
+                return Origin.TopRight;
+            }
+            else if (PositionAtCursor)
+            {
+                return Origin.TopLeft;
+            }
+
+            return Origin.BottomLeft;
+        }
 
         protected void RegisterChild(MudMenu child)
         {
