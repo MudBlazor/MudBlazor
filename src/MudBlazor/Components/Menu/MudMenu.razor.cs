@@ -508,7 +508,7 @@ namespace MudBlazor
         {
             _isPointerOver = true;
 
-            // If hover isn't enabled (including if it's a submenu) then there's no work to be done.
+            // If hover isn't enabled (and it's not a submenu) then there's no work to be done.
             if (ActivationEvent != MouseEvent.MouseOver && ParentMenu is null)
             {
                 return;
@@ -558,7 +558,7 @@ namespace MudBlazor
         {
             _isPointerOver = false;
 
-            // If it's not transient or hover isn't enabled (including if it's a submenu) then there's no work to be done.
+            // If it's not transient or hover isn't enabled (and it's not a submenu) then there's no work to be done.
             if (!_isTransient || (ActivationEvent != MouseEvent.MouseOver && ParentMenu is null))
             {
                 return;
