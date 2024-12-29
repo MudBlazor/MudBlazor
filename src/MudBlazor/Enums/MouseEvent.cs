@@ -4,7 +4,7 @@
 /// The mouse buttons or events that open a <see cref="MudMenu"/>.
 /// </summary>
 [Flags]
-public enum MouseEvent : long
+public enum MouseEvent
 {
     /// <summary>
     /// No button or uninitialized state.
@@ -25,9 +25,4 @@ public enum MouseEvent : long
     /// Hovering over the element.
     /// </summary>
     MouseOver = 1 << 2, // 4
-
-    /// <summary>
-    /// Represents any button combination.
-    /// </summary>
-    Any = LeftClick | RightClick | MouseOver
 }
