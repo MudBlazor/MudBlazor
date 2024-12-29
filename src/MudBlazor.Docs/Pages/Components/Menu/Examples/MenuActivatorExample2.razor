@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudMenu FullWidth="true" ActivationEvents="MouseEvent.LeftClick">
+<MudMenu FullWidth="true" ActivationEvent="MouseEvent.LeftClick">
     <ActivatorContent>
         <MudChip T="string" Icon="@Icons.Material.Filled.Mouse" Color="Color.Primary">Left Click</MudChip>
     </ActivatorContent>
@@ -8,11 +8,10 @@
         <MudMenuItem Label="Profile" />
         <MudMenuItem Label="Theme" />
         <MudMenuItem Label="Usage" />
-        <MudMenuItem Label="Sign Out" />
     </ChildContent>
 </MudMenu>
 
-<MudMenu ActivationEvents="MouseEvent.RightClick">
+<MudMenu ActivationEvent="MouseEvent.RightClick">
     <ActivatorContent>
         <MudChip T="string" Icon="@Icons.Material.Filled.Mouse" Color="Color.Primary">Right Click</MudChip>
     </ActivatorContent>
@@ -20,11 +19,10 @@
         <MudMenuItem Label="Profile" />
         <MudMenuItem Label="Theme" />
         <MudMenuItem Label="Usage" />
-        <MudMenuItem Label="Sign Out" />
     </ChildContent>
 </MudMenu>
 
-<MudMenu FullWidth="true" ActivationEvents="MouseEvent.MouseOver">
+<MudMenu FullWidth="true" ActivationEvent="MouseEvent.MouseOver">
     <ActivatorContent>
         <MudChip T="string" Icon="@Icons.Material.Filled.Mouse" Color="Color.Primary">Mouse Over</MudChip>
     </ActivatorContent>
@@ -32,19 +30,17 @@
         <MudMenuItem Label="Profile" />
         <MudMenuItem Label="Theme" />
         <MudMenuItem Label="Usage" />
-        <MudMenuItem Label="Sign Out" />
     </ChildContent>
 </MudMenu>
 
-<MudMenu FullWidth="true" ActivationEvents="MouseEvent.LeftClick | MouseEvent.MouseOver">
+<MudMenu FullWidth="true" ActivationEvent="MouseEvent.Any">
     <ActivatorContent>
-        <MudChip T="string" Icon="@Icons.Material.Filled.Mouse" Color="Color.Primary">Left Click or Mouse Over</MudChip>
+        <MudChip T="string" Icon="@Icons.Material.Filled.Mouse" Color="Color.Primary">Any</MudChip>
     </ActivatorContent>
     <ChildContent>
         <MudMenuItem Label="Profile" />
         <MudMenuItem Label="Theme" />
         <MudMenuItem Label="Usage" />
-        <MudMenuItem Label="Sign Out" />
     </ChildContent>
 </MudMenu>
 

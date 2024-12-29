@@ -7,8 +7,8 @@
      style="@Style"
      @onpointerenter="@PointerEnterAsync"
      @onpointerleave="@PointerLeaveAsync"
-     @oncontextmenu="@((ActivationEvents.HasFlag(MouseEvent.RightClick) ? ToggleMenuAsync : null)!)"
-     @oncontextmenu:preventDefault="@(ActivationEvents.HasFlag(MouseEvent.RightClick))">
+     @oncontextmenu="@((ActivationEvent.HasFlag(MouseEvent.RightClick) ? ToggleMenuAsync : null)!)"
+     @oncontextmenu:preventDefault="@(ActivationEvent.HasFlag(MouseEvent.RightClick))">
     @if (GetActivatorHidden())
     {
         @* No content was set so no need to render anything *@

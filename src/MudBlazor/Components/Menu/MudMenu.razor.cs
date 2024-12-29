@@ -239,7 +239,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Menu.Behavior)]
-        public MouseEvent ActivationEvents { get; set; }
+        public MouseEvent ActivationEvent { get; set; }
 
         /// <summary>
         /// The point where the menu will open from.
@@ -333,9 +333,9 @@ namespace MudBlazor
 
         protected MouseEvent GetActivationEvents()
         {
-            if (ActivationEvents != MouseEvent.Auto)
+            if (ActivationEvent != MouseEvent.Auto)
             {
-                return ActivationEvents;
+                return ActivationEvent;
             }
 
             if (ParentMenu is null)
@@ -528,7 +528,7 @@ namespace MudBlazor
             // Start a new hover delay.
             _hoverCts?.Cancel();
             // ReSharper restore MethodHasAsyncOverload
-            
+
             if (MudGlobal.MenuDefaults.HoverDelay > 0)
             {
                 _hoverCts = new();
