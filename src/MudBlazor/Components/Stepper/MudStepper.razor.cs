@@ -195,7 +195,7 @@ public partial class MudStepper : MudComponentBase
     /// Shows a button to start over at the first step.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>false</c>.
+    /// Defaults to <c>false</c>.  Clicking the reset button sets this stepper back to its initial state, discarding all progress and errors.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Link.Appearance)]
@@ -262,7 +262,7 @@ public partial class MudStepper : MudComponentBase
     /// Occurs when the user attempts to go to a step.
     /// </summary>
     /// <remarks>
-    /// Use this function to customize when the user can navigate to a step, such as when a form has been properly completed.
+    /// Use this function to customize when the user can navigate to a step, such as when a form has been properly completed.  The attempted navigation can be prevented by setting <see cref="StepperInteractionEventArgs.Cancel"/> to <c>true</c>.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Tabs.Behavior)]
@@ -271,6 +271,9 @@ public partial class MudStepper : MudComponentBase
     /// <summary>
     /// Whether the current step can be skipped.
     /// </summary>
+    /// <remarks>
+    /// Typically used to enable or disable a custon <c>Skip</c> button.
+    /// </remarks>
     public bool IsCurrentStepSkippable => _steps.Any() && ActiveStep is not null && ActiveStep.Skippable;
 
     private bool CanReset => _steps.Any(x => x.CompletedState || x.HasErrorState) || _activeIndex > 0;
@@ -278,6 +281,9 @@ public partial class MudStepper : MudComponentBase
     /// <summary>
     /// Whether the user can go to the next step.
     /// </summary>
+    /// <remarks>
+    /// Typically used to enable or disable a custon <c>Next</c> button.
+    /// </remarks>
     public bool CanGoToNextStep => _steps.Any() && _steps.SkipWhile(x => _steps.IndexOf(x) <= _activeIndex).Count(x => !x.DisabledState) > 0;
 
     /// <summary>
@@ -302,7 +308,7 @@ public partial class MudStepper : MudComponentBase
     /// The steps in this component.
     /// </summary>
     /// <remarks>
-    /// Typically a set of <see cref="MudStep"/> components.
+    /// Must be a set of <see cref="MudStep"/> components.  
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.List.Appearance)]
@@ -312,7 +318,7 @@ public partial class MudStepper : MudComponentBase
     /// The custom template for displaying each step's title.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>null</c>.
+    /// Defaults to <c>null</c>.  The current <see cref="MudStep"/> is passed as context for this render fragment.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.List.Appearance)]
@@ -534,7 +540,7 @@ public partial class MudStepper : MudComponentBase
     }
 
     /// <summary>
-    /// Resets the completed status of all steps and goes to the first step.
+    /// Resets the completed status of all steps and goes to the first step, resetting all progress and errors.
     /// </summary>
     public async Task ResetAsync(bool resetErrors = false)
     {

@@ -66,7 +66,7 @@ public class MudStep : MudComponentBase, IAsyncDisposable
     /// The content for this step.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>null</c>.
+    /// Defaults to <c>null</c>.  Only shown when this step is active.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.List.Appearance)]

@@ -9,6 +9,9 @@ namespace MudBlazor;
 /// <summary>
 /// The current state of a <see cref="MudSlider{T}"/> component, containing both the value and nullable value.
 /// </summary>
+/// <remarks>
+/// This state is a cascading parameter for <see cref="MudSlider{T}"/> components.
+/// </remarks>
 /// <typeparam name="T">The type of the value the slider represents.</typeparam>
 public class SliderContext<T> where T : struct
 {

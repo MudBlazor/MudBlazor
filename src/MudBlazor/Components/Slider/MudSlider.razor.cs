@@ -80,8 +80,11 @@ namespace MudBlazor
         public bool Disabled { get; set; } = false;
 
         /// <summary>
-        /// The content within this component.
+        /// The option content rendered above the slider.
         /// </summary>
+        /// <remarks>
+        /// Typically used for displaying text.   When the slider is vertical, content is displayed to the left of the slider.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Slider.Behavior)]
         public RenderFragment? ChildContent { get; set; }
@@ -144,7 +147,7 @@ namespace MudBlazor
         /// Displays this slider vertically.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.
+        /// Defaults to <c>false</c>.  When <c>true</c>, the slider is displayed like a horizontal slider, but rotated 90° counterclockwise.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Slider.Appearance)]
