@@ -232,14 +232,14 @@ namespace MudBlazor
         public RenderFragment? ActivatorContent { get; set; }
 
         /// <summary>
-        /// The action which opens the menu, when <see cref="ActivatorContent"/> is set.
+        /// The mouse buttons or events that open the menu.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="MouseEvent.LeftClick"/>.
+        /// Defaults to <see cref="MouseEvent.LeftClick"/> for a regular menu, or additionally <see cref="MouseEvent.MouseOver"/> for submenus.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Menu.Behavior)]
-        public MouseEvent ActivationEvent { get; set; } = MouseEvent.LeftClick;
+        public MouseEvent ActivationEvents { get; set; }
 
         /// <summary>
         /// The point where the menu will open from.
@@ -330,6 +330,23 @@ namespace MudBlazor
         public IReadOnlyList<MudMenu> GetChildren() => _children.AsReadOnly();
 
         protected bool GetActivatorHidden() => ActivatorContent is null && string.IsNullOrWhiteSpace(Label) && string.IsNullOrWhiteSpace(Icon);
+
+        protected MouseEvent GetActivationEvents()
+        {
+            if (ActivationEvents != MouseEvent.Auto)
+            {
+                return ActivationEvents;
+            }
+
+            if (ParentMenu is null)
+            {
+                return MouseEvent.LeftClick;
+            }
+            else
+            {
+                return MouseEvent.LeftClick | MouseEvent.MouseOver;
+            }
+        }
 
         protected Origin GetAnchorOrigin()
         {
@@ -469,11 +486,11 @@ namespace MudBlazor
             if (args is MouseEventArgs mouseEventArgs)
             {
                 // Determine if the click matches the expected activation event.
-                var leftClick = ActivationEvent == MouseEvent.LeftClick && mouseEventArgs.Button == 0;
-                var rightClick = ActivationEvent == MouseEvent.RightClick && (mouseEventArgs.Button is -1 or 2); // oncontextmenu is -1, right click is 2.
+                var leftClick = GetActivationEvents().HasFlag(MouseEvent.LeftClick) && mouseEventArgs.Button == 0;
+                var rightClick = GetActivationEvents().HasFlag(MouseEvent.RightClick) && (mouseEventArgs.Button is -1 or 2); // oncontextmenu is -1, right click is 2.
 
                 // For events other than MouseOver, ignore invalid click types.
-                if (!leftClick && !rightClick && ActivationEvent != MouseEvent.MouseOver)
+                if (!leftClick && !rightClick && !GetActivationEvents().HasFlag(MouseEvent.MouseOver))
                 {
                     return Task.CompletedTask;
                 }
@@ -493,7 +510,7 @@ namespace MudBlazor
             _isPointerOver = true;
 
             // If hover isn't enabled then there's no work to be done.
-            if (ActivationEvent != MouseEvent.MouseOver)
+            if (!GetActivationEvents().HasFlag(MouseEvent.MouseOver))
             {
                 return;
             }
@@ -511,7 +528,7 @@ namespace MudBlazor
             // Start a new hover delay.
             _hoverCts?.Cancel();
             // ReSharper restore MethodHasAsyncOverload
-
+            
             if (MudGlobal.MenuDefaults.HoverDelay > 0)
             {
                 _hoverCts = new();
@@ -543,7 +560,7 @@ namespace MudBlazor
             _isPointerOver = false;
 
             // If it's not transient or hover isn't enabled then there's no work to be done.
-            if (!_isTransient || ActivationEvent != MouseEvent.MouseOver)
+            if (!_isTransient || !GetActivationEvents().HasFlag(MouseEvent.MouseOver))
             {
                 return;
             }

@@ -1,9 +1,8 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-
-<MudMenu FullWidth="true" ActivationEvent="@MouseEvent.LeftClick">
+<MudMenu FullWidth="true" ActivationEvents="MouseEvent.LeftClick">
     <ActivatorContent>
-        <MudChip T="string" Icon="@Icons.Material.Filled.Mouse" Color="Color.Primary">Left click</MudChip>
+        <MudChip T="string" Icon="@Icons.Material.Filled.Mouse" Color="Color.Primary">Left Click</MudChip>
     </ActivatorContent>
     <ChildContent>
         <MudMenuItem Label="Profile" />
@@ -13,9 +12,9 @@
     </ChildContent>
 </MudMenu>
 
-<MudMenu ActivationEvent="@MouseEvent.RightClick">
+<MudMenu ActivationEvents="MouseEvent.RightClick">
     <ActivatorContent>
-        <MudChip T="string" Icon="@Icons.Material.Filled.Mouse" Color="Color.Primary">Right click</MudChip>
+        <MudChip T="string" Icon="@Icons.Material.Filled.Mouse" Color="Color.Primary">Right Click</MudChip>
     </ActivatorContent>
     <ChildContent>
         <MudMenuItem Label="Profile" />
@@ -25,9 +24,21 @@
     </ChildContent>
 </MudMenu>
 
-<MudMenu FullWidth="true" ActivationEvent="@MouseEvent.MouseOver" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter">
+<MudMenu FullWidth="true" ActivationEvents="MouseEvent.MouseOver">
     <ActivatorContent>
-        <MudChip T="string" Icon="@Icons.Material.Filled.Mouse" Color="Color.Primary">Mouse over</MudChip>
+        <MudChip T="string" Icon="@Icons.Material.Filled.Mouse" Color="Color.Primary">Mouse Over</MudChip>
+    </ActivatorContent>
+    <ChildContent>
+        <MudMenuItem Label="Profile" />
+        <MudMenuItem Label="Theme" />
+        <MudMenuItem Label="Usage" />
+        <MudMenuItem Label="Sign Out" />
+    </ChildContent>
+</MudMenu>
+
+<MudMenu FullWidth="true" ActivationEvents="MouseEvent.LeftClick | MouseEvent.MouseOver">
+    <ActivatorContent>
+        <MudChip T="string" Icon="@Icons.Material.Filled.Mouse" Color="Color.Primary">Left Click or Mouse Over</MudChip>
     </ActivatorContent>
     <ChildContent>
         <MudMenuItem Label="Profile" />

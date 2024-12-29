@@ -1,22 +1,33 @@
 ﻿namespace MudBlazor;
 
 /// <summary>
-/// Indicates the action which displays a <see cref="MudMenu"/>.
+/// The mouse buttons or events that open a <see cref="MudMenu"/>.
 /// </summary>
-public enum MouseEvent
+[Flags]
+public enum MouseEvent : long
 {
     /// <summary>
-    /// The left mouse button was clicked.
+    /// No button or uninitialized state.
     /// </summary>
-    LeftClick,
+    Auto = 0,
 
     /// <summary>
-    /// The right mouse button was clicked.
+    /// Primary button (typically the left button).
     /// </summary>
-    RightClick,
+    LeftClick = 1 << 0, // 1
 
     /// <summary>
-    /// The mouse is hovering over the activator.
+    /// Secondary button (typically the right button).
     /// </summary>
-    MouseOver
+    RightClick = 1 << 1, // 2
+
+    /// <summary>
+    /// Hovering over the element.
+    /// </summary>
+    MouseOver = 1 << 2, // 4
+
+    /// <summary>
+    /// Represents any button combination.
+    /// </summary>
+    Any = LeftClick | RightClick | MouseOver
 }
