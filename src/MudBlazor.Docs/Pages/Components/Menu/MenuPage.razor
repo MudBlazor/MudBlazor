@@ -23,14 +23,13 @@
             <SectionHeader Title="Activator">
                 <Description>
                     The activator is the element responsible for spawning the menu popover.
-                    It has extensive opportunites for customization.
                 </Description>
             </SectionHeader>
             <SectionSubGroups>
                 <DocsPageSection>
-                    <SectionHeader Title="Menu Button">
+                    <SectionHeader Title="Default Button">
                         <Description>
-                            The default menu button provides many of the same options and behavior as a standard button.
+                            The default menu button provides many of the same options as a standard button.
                         </Description>
                     </SectionHeader>
                     <SectionContent Code="@nameof(MenuCustomizationExample)" ShowCode="false">
@@ -52,8 +51,8 @@
                 <DocsPageSection>
                     <SectionHeader Title="Icon Button">
                         <Description>
-                            When an <CodeInline>Icon</CodeInline> is provided, the menu button is rendered as an <CodeInline>IconButton</CodeInline> instead of a <CodeInline>Button</CodeInline>.
-                            Note: This property is different from <CodeInline>@nameof(MudMenu.StartIcon)</CodeInline> and <CodeInline>@nameof(MudMenu.EndIcon)</CodeInline> which are used to add icons to the default button activator as seen above.
+                            When the <CodeInline>@nameof(MudMenu.Icon)</CodeInline> property is specified, the activator is rendered as a <CodeInline>MudIconButton</CodeInline> instead.
+                            Note: This is not the same as <CodeInline>@nameof(MudMenu.StartIcon)</CodeInline> or <CodeInline>@nameof(MudMenu.EndIcon)</CodeInline> which are used to add icons to the default button activator as seen above.
                         </Description>
                     </SectionHeader>
                     <SectionContent Code="@nameof(MenuIconButtonsExample)" ShowCode="false">
@@ -62,9 +61,9 @@
                 </DocsPageSection>
 
                 <DocsPageSection>
-                    <SectionHeader Title="Custom Element">
+                    <SectionHeader Title="Custom Activator">
                         <Description>
-                            Use the <CodeInline>ActivatorContent</CodeInline> render fragment to define a custom activator element for opening the menu if the regular customization is not enough.
+                            If the regular customization options are not enough, use the <CodeInline>ActivatorContent</CodeInline> render fragment to define a custom activator element for opening the menu.
                             In this example, a custom button, chip, and avatar are each used to open a menu.
                         </Description>
                     </SectionHeader>
@@ -105,7 +104,8 @@
                 <DocsPageSection>
                     <SectionHeader Title="Max Height">
                         <Description>
-                            Use the <CodeInline>MaxHeight</CodeInline> property to set a maximum height for the menu and enable scrolling.
+                            The menu's height is automatically restricted to the viewport if it gets too large,
+                            but if you need it to be a specific number of pixels you can use the <CodeInline>MaxHeight</CodeInline> property.
                         </Description>
                     </SectionHeader>
                     <SectionContent Code="@nameof(MenuMaxHeightExample)" ShowCode="false">
@@ -148,7 +148,7 @@
                     <SectionHeader Title="Mouse Events">
                         <Description>
                             Use the <CodeInline>ActivationEvent</CodeInline> property to specify which mouse event opens the menu.
-                            If the menu is a nested menu, the events may act differently.
+                            If the menu is a nested menu, this property may act differently.
                         </Description>
                     </SectionHeader>
                     <SectionContent Code="@nameof(MenuActivatorExample2)" ShowCode="false">
@@ -170,7 +170,7 @@
                 <DocsPageSection>
                     <SectionHeader Title="Context Menu">
                         <Description>
-                            The Cursor Position example can be extended to create a contextual menu.
+                            The previous example can be extended to create a contextual menu.
                             When <CodeInline>Label</CodeInline>, <CodeInline>Icon</CodeInline>, and <CodeInline>ActivatorContent</CodeInline> are unset, no button is rendered and the menu can only be opened programmatically.
                         </Description>
                     </SectionHeader>
