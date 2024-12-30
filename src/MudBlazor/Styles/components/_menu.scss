@@ -50,6 +50,9 @@
   padding: 8px 12px;
 
   .mud-menu-item-icon {
+    color: var(--mud-palette-action-default);
+    display: inline-flex;
+    flex-shrink: 0;
     margin-right: 12px;
   }
 
