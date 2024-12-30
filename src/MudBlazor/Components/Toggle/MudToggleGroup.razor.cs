@@ -262,11 +262,13 @@ namespace MudBlazor
 
         private void OnValueChanged()
         {
+            // perform Selection after user consumes Value Changed logic
             SetItemsSelected();
         }
 
         private void OnValuesChanged()
         {
+            // perform Selection after user consumes Values Changed logic
             SetItemsSelected();
         }
 
@@ -286,9 +288,9 @@ namespace MudBlazor
 
             if (SelectionMode == SelectionMode.MultiSelection)
             {
-                if (Values is not null)
+                if (_values.Value is not null)
                 {
-                    foreach (var item in _items.Where(x => Values.Contains(x.Value)).ToList())
+                    foreach (var item in _items.Where(x => _values.Value.Contains(x.Value)).ToList())
                     {
                         item.SetSelected(true);
                     }
@@ -296,9 +298,9 @@ namespace MudBlazor
             }
             else
             {
-                if (Value is not null)
+                if (_value.Value is not null)
                 {
-                    var selectedItem = _items.Find(x => Value.Equals(x.Value));
+                    var selectedItem = _items.Find(x => _value.Value.Equals(x.Value));
                     selectedItem?.SetSelected(true);
                 }
             }
@@ -319,6 +321,10 @@ namespace MudBlazor
                 }
 
                 await _values.SetValueAsync(selectedValues);
+                if (Values is null)
+                {
+                    SetItemsSelected();
+                }
             }
             else if (SelectionMode == SelectionMode.ToggleSelection)
             {
@@ -330,10 +336,18 @@ namespace MudBlazor
                 {
                     await _value.SetValueAsync(itemValue);
                 }
+                if (Value is null)
+                {
+                    SetItemsSelected();
+                }
             }
             else // SingleSelection
             {
                 await _value.SetValueAsync(itemValue);
+                if (Value is null)
+                {
+                    SetItemsSelected();
+                }
             }
         }
 
