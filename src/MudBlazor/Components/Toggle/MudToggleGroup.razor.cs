@@ -256,65 +256,18 @@ namespace MudBlazor
 
             if (firstRender)
             {
-                var multiSelection = SelectionMode == SelectionMode.MultiSelection;
-                var value = _value.Value;
-                var values = _values.Value;
-
-                // Handle single and toggle selection mode
-                if (value is not null && !multiSelection)
-                {
-                    var selectedItem = _items.Find(x => value.Equals(x.Value));
-                    selectedItem?.SetSelected(true);
-                }
-
-                // Handle multi-selection mode
-                if (values is not null && multiSelection)
-                {
-                    foreach (var item in _items.Where(x => values.Contains(x.Value)).ToList())
-                    {
-                        item.SetSelected(true);
-                    }
-                }
-
-                StateHasChanged();
+                SetItemsSelected();
             }
         }
 
         private void OnValueChanged()
         {
-            if (SelectionMode == SelectionMode.MultiSelection)
-            {
-                return;
-            }
-
-            // Handle single and toggle selection mode 
-            DeselectAllItems();
-
-            var value = _value.Value;
-            if (value is not null)
-            {
-                var selectedItem = _items.Find(x => value.Equals(x.Value));
-                selectedItem?.SetSelected(true);
-            }
+            SetItemsSelected();
         }
 
         private void OnValuesChanged()
         {
-            if (SelectionMode != SelectionMode.MultiSelection)
-            {
-                return;
-            }
-
-            // Handle multi-selection mode
-            DeselectAllItems();
-
-            if (Values is not null)
-            {
-                foreach (var item in _items.Where(x => Values.Contains(x.Value)).ToList())
-                {
-                    item.SetSelected(true);
-                }
-            }
+            SetItemsSelected();
         }
 
         private void OnParameterChanged()
@@ -327,43 +280,59 @@ namespace MudBlazor
             StateHasChanged();
         }
 
+        private void SetItemsSelected()
+        {
+            DeselectAllItems();
+
+            if (SelectionMode == SelectionMode.MultiSelection)
+            {
+                if (Values is not null)
+                {
+                    foreach (var item in _items.Where(x => Values.Contains(x.Value)).ToList())
+                    {
+                        item.SetSelected(true);
+                    }
+                }
+            }
+            else
+            {
+                if (Value is not null)
+                {
+                    var selectedItem = _items.Find(x => Value.Equals(x.Value));
+                    selectedItem?.SetSelected(true);
+                }
+            }
+
+            StateHasChanged();
+        }
+
         protected internal async Task ToggleItemAsync(MudToggleItem<T> item)
         {
             var itemValue = item.Value;
             if (SelectionMode == SelectionMode.MultiSelection)
             {
                 var selectedValues = new HashSet<T?>(_values.Value ?? Array.Empty<T?>());
-                item.SetSelected(!item.Selected);
 
-                if (item.Selected)
+                if (!selectedValues.Remove(itemValue))
                 {
                     selectedValues.Add(itemValue);
-                }
-                else
-                {
-                    selectedValues.Remove(itemValue);
                 }
 
                 await _values.SetValueAsync(selectedValues);
             }
             else if (SelectionMode == SelectionMode.ToggleSelection)
             {
-                if (item.Selected)
+                if (EqualityComparer<T>.Default.Equals(_value.Value, itemValue))
                 {
-                    item.SetSelected(false);
                     await _value.SetValueAsync(default);
                 }
                 else
                 {
-                    DeselectAllItems();
-                    item.SetSelected(true);
                     await _value.SetValueAsync(itemValue);
                 }
             }
             else // SingleSelection
             {
-                DeselectAllItems();
-                item.SetSelected(true);
                 await _value.SetValueAsync(itemValue);
             }
         }
