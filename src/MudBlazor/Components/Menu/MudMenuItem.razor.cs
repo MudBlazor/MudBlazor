@@ -124,8 +124,6 @@ namespace MudBlazor
 
         protected Typo GetTypo() => GetDense() ? Typo.body2 : Typo.body1;
 
-        protected Size GetIconSize() => GetDense() ? Size.Small : Size.Medium;
-
         /// <summary>
         /// The menu item is acting as the activator for a sub menu.
         /// </summary>
