@@ -506,6 +506,23 @@ namespace MudBlazor
                 : OpenMenuAsync(args);
         }
 
+        private bool IsHoverable(PointerEventArgs args)
+        {
+            // If hover isn't enabled (and it's not a submenu) then there's no work to be done.
+            if (ActivationEvent != MouseEvent.MouseOver && ParentMenu is null)
+            {
+                return false;
+            }
+
+            // The click event will conflict with this one on devices that can't hover so we'll return so we only handle one.
+            if (args.PointerType is "touch" or "pen")
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         /// <summary>
         /// Handles the pointer entering either the activator or the menu list.
         /// </summary>
@@ -513,14 +530,7 @@ namespace MudBlazor
         {
             _isPointerOver = true;
 
-            // If hover isn't enabled (and it's not a submenu) then there's no work to be done.
-            if (ActivationEvent != MouseEvent.MouseOver && ParentMenu is null)
-            {
-                return;
-            }
-
-            // The click event will conflict with this one on devices that can't hover so we'll return so we only handle one.
-            if (args.PointerType is "touch" or "pen")
+            if (!IsHoverable(args))
             {
                 return;
             }
@@ -559,12 +569,11 @@ namespace MudBlazor
         /// <summary>
         /// Handles the pointer leaving either the activator or the menu list.
         /// </summary>
-        private async Task PointerLeaveAsync()
+        private async Task PointerLeaveAsync(PointerEventArgs args)
         {
             _isPointerOver = false;
 
-            // If it's not transient or hover isn't enabled (and it's not a submenu) then there's no work to be done.
-            if (!_isTransient || (ActivationEvent != MouseEvent.MouseOver && ParentMenu is null))
+            if (!IsHoverable(args))
             {
                 return;
             }
