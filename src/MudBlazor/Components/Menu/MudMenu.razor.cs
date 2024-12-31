@@ -573,7 +573,7 @@ namespace MudBlazor
         {
             _isPointerOver = false;
 
-            if (!IsHoverable(args))
+            if (!_isTransient || !IsHoverable(args))
             {
                 return;
             }
