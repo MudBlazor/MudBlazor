@@ -329,6 +329,11 @@ namespace MudBlazor
 
         protected bool GetActivatorHidden() => ActivatorContent is null && string.IsNullOrWhiteSpace(Label) && string.IsNullOrWhiteSpace(Icon);
 
+        /// <summary>
+        /// Walk recursively up the menu hierarchy to determine if any parent menu is dense.
+        /// </summary>
+        internal bool GetDense() => Dense || ParentMenu?.GetDense() == true;
+
         protected Origin GetAnchorOrigin()
         {
             if (AnchorOrigin is not null)
@@ -547,7 +552,7 @@ namespace MudBlazor
             // Open the menu if it's not already open. We don't want to call the method and update the state if we don't have to.
             if (!_openState.Value)
             {
-                await OpenMenuAsync(args, true);
+                await OpenSubMenuAsync(args);
             }
         }
 

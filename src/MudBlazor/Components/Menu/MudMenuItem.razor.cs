@@ -120,7 +120,7 @@ namespace MudBlazor
 
         protected bool GetDisabled() => Disabled || ParentMenu?.Disabled == true;
 
-        protected bool GetDense() => ParentMenu?.Dense == true;
+        protected bool GetDense() => ParentMenu?.GetDense() == true;
 
         protected Typo GetTypo() => GetDense() ? Typo.body2 : Typo.body1;
 
