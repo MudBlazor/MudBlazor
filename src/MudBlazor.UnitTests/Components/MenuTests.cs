@@ -550,7 +550,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void OpenNestedMenu_CheckBothMenusOpen()
+        public void OpenNestedMenu()
         {
             var comp = Context.RenderComponent<MenuWithNestingTest>();
 
@@ -566,7 +566,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void OpenNestedMenu_ClickNonNestedItem_CheckAllClosed()
+        public void ClickingMenuItem_ClosesNestedMenu()
         {
             var comp = Context.RenderComponent<MenuWithNestingTest>();
 
