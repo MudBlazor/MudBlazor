@@ -18,7 +18,7 @@ namespace MudBlazor
     public partial class MudMenu : MudComponentBase, IActivatable, IDisposable
     {
         private readonly ParameterState<bool> _openState;
-        private readonly List<MudMenu> _children = [];
+        private readonly List<MudMenu> _subMenus = [];
         private (double Top, double Left) _openPosition;
         private bool _isPointerOver;
         private bool _isTransient;
@@ -249,7 +249,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Menu.PopupAppearance)]
-        public Origin AnchorOrigin { get; set; } = Origin.BottomLeft;
+        public Origin? AnchorOrigin { get; set; }
 
         /// <summary>
         /// Sets the direction the menu will open from the anchor.
@@ -327,18 +327,35 @@ namespace MudBlazor
         [CascadingParameter]
         protected MudMenu? ParentMenu { get; set; }
 
-        public IReadOnlyList<MudMenu> GetChildren() => _children.AsReadOnly();
-
         protected bool GetActivatorHidden() => ActivatorContent is null && string.IsNullOrWhiteSpace(Label) && string.IsNullOrWhiteSpace(Icon);
+
+        protected Origin GetAnchorOrigin()
+        {
+            if (AnchorOrigin is not null)
+            {
+                return AnchorOrigin.Value;
+            }
+
+            if (ParentMenu is not null)
+            {
+                return Origin.TopRight;
+            }
+            else if (PositionAtCursor)
+            {
+                return Origin.TopLeft;
+            }
+
+            return Origin.BottomLeft;
+        }
 
         protected void RegisterChild(MudMenu child)
         {
-            _children.Add(child);
+            _subMenus.Add(child);
         }
 
         protected void UnregisterChild(MudMenu child)
         {
-            _children.Remove(child);
+            _subMenus.Remove(child);
         }
 
         protected override void OnInitialized()
@@ -360,7 +377,7 @@ namespace MudBlazor
         public async Task CloseMenuAsync()
         {
             // Recursively close all child menus.
-            foreach (var child in _children)
+            foreach (var child in _subMenus)
             {
                 await child.CloseMenuAsync();
             }
@@ -434,6 +451,24 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// Closes siblings before opening this menu which will close automatically when the pointer leaves its bounds.
+        /// </summary>
+        protected async Task OpenSubMenuAsync(EventArgs args)
+        {
+            // Close siblings.
+            if (ParentMenu is not null)
+            {
+                foreach (var sibling in ParentMenu._subMenus)
+                {
+                    await sibling.CloseMenuAsync();
+                }
+            }
+
+            // Open this menu transiently.
+            await OpenMenuAsync(args, true);
+        }
+
+        /// <summary>
         /// Toggles the menu's open or closed state.
         /// </summary>
         /// <param name="args">
@@ -473,8 +508,8 @@ namespace MudBlazor
         {
             _isPointerOver = true;
 
-            // If hover isn't enabled then there's no work to be done.
-            if (ActivationEvent != MouseEvent.MouseOver)
+            // If hover isn't enabled (and it's not a submenu) then there's no work to be done.
+            if (ActivationEvent != MouseEvent.MouseOver && ParentMenu is null)
             {
                 return;
             }
@@ -523,8 +558,8 @@ namespace MudBlazor
         {
             _isPointerOver = false;
 
-            // If it's not transient or hover isn't enabled then there's no work to be done.
-            if (!_isTransient || ActivationEvent != MouseEvent.MouseOver)
+            // If it's not transient or hover isn't enabled (and it's not a submenu) then there's no work to be done.
+            if (!_isTransient || (ActivationEvent != MouseEvent.MouseOver && ParentMenu is null))
             {
                 return;
             }
@@ -554,10 +589,20 @@ namespace MudBlazor
             }
 
             // Close the menu only if no child menus are still active.
-            if (!_children.Any(x => x._isPointerOver))
+            if (!HasPointerOver(this))
             {
                 await CloseMenuAsync();
             }
+        }
+
+        protected bool HasPointerOver(MudMenu menu)
+        {
+            // Check if the current menu has pointer over.
+            if (menu._isPointerOver)
+                return true;
+
+            // Recursively check all child submenus.
+            return menu._subMenus.Any(HasPointerOver);
         }
 
         /// <summary>
