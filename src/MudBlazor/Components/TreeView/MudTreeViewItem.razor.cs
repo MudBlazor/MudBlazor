@@ -376,7 +376,6 @@ namespace MudBlazor
                 }
             }
             await base.OnInitializedAsync();
-            _converter.Localizer = Localizer;
         }
 
         private Task OnSelectedParameterChangedAsync(ParameterChangedEventArgs<bool> arg)

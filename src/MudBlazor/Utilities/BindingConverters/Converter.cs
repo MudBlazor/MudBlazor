@@ -17,7 +17,7 @@ namespace MudBlazor
         /// </summary>
         public CultureInfo Culture { get; set; } = Converters.DefaultCulture;
 
-        public Action<string>? OnError { get; set; }
+        public Action<string, object[]>? OnError { get; set; }
 
         [MemberNotNullWhen(true, nameof(SetErrorMessage))]
         public bool SetError { get; set; }
@@ -25,16 +25,14 @@ namespace MudBlazor
         [MemberNotNullWhen(true, nameof(GetErrorMessage))]
         public bool GetError { get; set; }
 
-        public string? SetErrorMessage { get; set; }
+        public (string, object[])? SetErrorMessage { get; set; }
 
-        public string? GetErrorMessage { get; set; }
-
-        internal InternalMudLocalizer? Localizer { get; set; }
+        public (string, object[])? GetErrorMessage { get; set; }
 
         public U? Set(T? value)
         {
             SetError = false;
-            SetErrorMessage = null;
+            SetErrorMessage = default;
             if (SetFunc == null)
                 return default(U);
             try
@@ -44,7 +42,7 @@ namespace MudBlazor
             catch (Exception e)
             {
                 SetError = true;
-                SetErrorMessage = Localizer?[LanguageResource.Converter_ConversionFailed, [typeof(T).Name, typeof(U).Name, e.Message]] ?? $"Conversion from {typeof(T).Name} to {typeof(U).Name} failed: {e.Message}";
+                SetErrorMessage = (LanguageResource.Converter_ConversionFailed, [typeof(T).Name, typeof(U).Name, e.Message]);
             }
             return default(U);
         }
@@ -52,7 +50,7 @@ namespace MudBlazor
         public T? Get(U? value)
         {
             GetError = false;
-            GetErrorMessage = null;
+            GetErrorMessage = default;
             if (GetFunc == null)
                 return default(T);
             try
@@ -62,23 +60,33 @@ namespace MudBlazor
             catch (Exception e)
             {
                 GetError = true;
-                GetErrorMessage = Localizer?[LanguageResource.Converter_ConversionFailed, [typeof(U).Name, typeof(T).Name, e.Message]] ?? $"Conversion from {typeof(U).Name} to {typeof(T).Name} failed: {e.Message}";
+                GetErrorMessage = (LanguageResource.Converter_ConversionFailed, [typeof(U).Name, typeof(T).Name, e.Message]);
             }
             return default(T);
         }
 
         protected void UpdateSetError(string msg)
         {
+            UpdateSetError(msg, []);
+        }
+
+        protected void UpdateSetError(string msg, object[] arguments)
+        {
             SetError = true;
-            SetErrorMessage = msg;
-            OnError?.Invoke(msg);
+            SetErrorMessage = (msg, arguments);
+            OnError?.Invoke(msg, arguments);
         }
 
         protected void UpdateGetError(string msg)
         {
+            UpdateGetError(msg, []);
+        }
+
+        protected void UpdateGetError(string msg, object[] arguments)
+        {
             GetError = true;
-            GetErrorMessage = msg;
-            OnError?.Invoke(msg);
+            GetErrorMessage = (msg, arguments);
+            OnError?.Invoke(msg, arguments);
         }
     }
 

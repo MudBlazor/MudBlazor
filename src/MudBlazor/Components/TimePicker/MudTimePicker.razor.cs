@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
+using MudBlazor.Resources;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -72,10 +73,10 @@ namespace MudBlazor
 
         private void HandleParsingError()
         {
-            const string ParsingErrorMessage = "Not a valid time span";
+            const string ParsingErrorMessage = LanguageResource.Converter_InvalidTimeSpan;
             Converter.GetError = true;
-            Converter.GetErrorMessage = ParsingErrorMessage;
-            Converter.OnError?.Invoke(ParsingErrorMessage);
+            Converter.GetErrorMessage = (ParsingErrorMessage, []);
+            Converter.OnError?.Invoke(ParsingErrorMessage, []);
         }
 
         private bool _amPm = false;

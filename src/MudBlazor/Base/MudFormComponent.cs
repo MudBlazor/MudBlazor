@@ -27,7 +27,7 @@ namespace MudBlazor
     public abstract class MudFormComponent<T, U> : MudComponentBase, IFormComponent, IAsyncDisposable
     {
         [Inject]
-        private InternalMudLocalizer? Localizer { get; set; }
+        private InternalMudLocalizer Localizer { get; set; } = null!;
 
         private Converter<T, U> _converter;
 
@@ -145,13 +145,13 @@ namespace MudBlazor
             return changed;
         }
 
-        private void OnConversionError(string error)
+        private void OnConversionError(string error, object[] arguments)
         {
             // note: we need to update the form here because the conversion error might lead to not updating the value
             // ... which leads to not updating the form
             Touched = true;
             Form?.Update(this);
-            OnConversionErrorOccurred(error);
+            OnConversionErrorOccurred(Localizer[error, arguments]);
         }
 
         protected virtual void OnConversionErrorOccurred(string error)
@@ -174,7 +174,19 @@ namespace MudBlazor
         /// <remarks>
         /// When set, returns the reason that the <see cref="Converter"/> was unable to convert values, usually due to invalid input.
         /// </remarks>
-        public string? ConversionErrorMessage => _converter.GetErrorMessage;
+        public string? ConversionErrorMessage
+        {
+            get
+            {
+                var getErrorMessage = _converter.GetErrorMessage;
+                if (!getErrorMessage.HasValue)
+                {
+                    return null;
+                }
+
+                return Localizer[getErrorMessage.Value.Item1, getErrorMessage.Value.Item2];
+            }
+        }
 
         /// <summary>
         /// Indicates any error, conversion error, or validation error with this input.
@@ -767,7 +779,6 @@ namespace MudBlazor
         protected override Task OnInitializedAsync()
         {
             RegisterAsFormComponent();
-            _converter.Localizer = Localizer;
             return base.OnInitializedAsync();
         }
 
