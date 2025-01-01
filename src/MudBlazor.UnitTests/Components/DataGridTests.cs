@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
 using MudBlazor.UnitTests.TestComponents.DataGrid;
+using MudBlazor.UnitTests.TestComponents.Table;
 using MudBlazor.Utilities.Clone;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
@@ -152,6 +153,26 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance.DropContainerHasChanged();
             // Since Sortable is now false, the click handler (and element holding it) should no longer exist.
             dataGrid.FindAll(".column-header .sortable-column-header").Should().BeEmpty();
+        }
+
+        [Test]
+        public void DataGirdWithServerDataAndVirtualize()
+        {
+            var comp = Context.RenderComponent<DataGridServerDataWithVirtualizeTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerDataWithVirtualizeTest.Item>>();
+
+            // Count the number of rows including header.
+            var rows = dataGrid.FindAll("tr");
+            rows.Count.Should().Be(7, because: "1 header row + 5 data rows + 1 footer row");
+
+            var cells = dataGrid.FindAll("td");
+            cells.Count.Should().Be(5, because: "We have 5 data rows with one column");
+
+            cells[0].TextContent.Should().Be("Value_0");
+            cells[1].TextContent.Should().Be("Value_1");
+            cells[2].TextContent.Should().Be("Value_2");
+            cells[3].TextContent.Should().Be("Value_3");
+            cells[4].TextContent.Should().Be("Value_4");
         }
 
         [Test]
@@ -2975,12 +2996,43 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGridLoadingTest()
+        public void DataGridLoadingContentTest()
         {
-            var comp = Context.RenderComponent<DataGridLoadingTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridLoadingTest.Model>>();
+            var comp = Context.RenderComponent<DataGridLoadingContentTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridLoadingContentTest.Model>>();
 
             dataGrid.Find("th.mud-table-empty-row div").TextContent.Trim().Should().Be("Data loading, please wait...");
+        }
+
+        /// <summary>
+        /// Verifies that enabling the loading switch adds a new row to the table header without altering the table body.
+        /// </summary>
+        [Test]
+        public void DataGridLoadingProgressTest()
+        {
+            // Render the component
+            var comp = Context.RenderComponent<DataGridLoadingProgressTest>();
+
+            // Initial count of header and body rows
+            var initialHeaderRows = comp.FindAll("thead tr");
+            var initialBodyRows = comp.FindAll("tbody tr");
+
+            // Verify initial state: 1 row in the header and 3 rows in the body
+            initialHeaderRows.Count.Should().Be(1);
+            initialBodyRows.Count.Should().Be(3);
+
+            // Toggle the loading switch to the 'loading' state
+            var loadingSwitch = comp.Find("#loadingSwitch");
+            loadingSwitch.Change(true);
+
+            // Count rows after toggling the switch
+            var updatedHeaderRows = comp.FindAll("thead tr");
+            var updatedBodyRows = comp.FindAll("tbody tr");
+
+            // Verify updated state:
+            // 2 rows in the header (original + loading row) and 3 rows in the body (unchanged)
+            updatedHeaderRows.Count.Should().Be(2);
+            updatedBodyRows.Count.Should().Be(3);
         }
 
         [Test]
@@ -4918,6 +4970,31 @@ namespace MudBlazor.UnitTests.Components
 
             form.IsTouched.Should().BeTrue();
             form.IsValid.Should().BeFalse();
+        }
+
+        /// <summary>
+        /// Tests two-way binding on the CurrentPage parameter.
+        /// The table should re-render with the newly provided value as the CurrentPage.
+        /// </summary>
+        [Test]
+        public async Task TestCurrentPageParameterTwoWayBinding()
+        {
+            var comp = Context.RenderComponent<DataGridCurrentPageParameterTwoWayBindingTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<int>>().Instance;
+
+            // Assert starting page index is 0 (default).
+            comp.WaitForAssertion(() => dataGrid.CurrentPage.Should().Be(0));
+            comp.WaitForAssertion(() => comp.Find(".mud-table-body .mud-table-row .mud-table-cell").TextContent.Should().Be("1"));
+
+            // Assert modification via code correctly renders the corresponding page.
+            await comp.InvokeAsync(() => dataGrid.CurrentPage = 1);
+            comp.WaitForAssertion(() => dataGrid.CurrentPage.Should().Be(1));
+            comp.WaitForAssertion(() => comp.Find(".mud-table-body .mud-table-row .mud-table-cell").TextContent.Should().Be("2"));
+
+            // Assert user input correctly updates the CurrentPage parameter value by clicking the "Next Page" button in the pager.
+            comp.FindAll(".mud-table-pagination-actions .mud-button-root")[2].Click();
+            comp.WaitForAssertion(() => dataGrid.CurrentPage.Should().Be(2));
+            comp.WaitForAssertion(() => comp.Find(".mud-table-body .mud-table-row .mud-table-cell").TextContent.Should().Be("3"));
         }
     }
 }

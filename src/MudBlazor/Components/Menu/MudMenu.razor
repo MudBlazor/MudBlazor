@@ -46,6 +46,8 @@
                          Icon="@StartIcon"
                          IconColor="@IconColor"
                          Disabled="@Disabled"
+                         OnClick="OpenSubMenuAsync"
+                         AutoClose="false"
                          aria-label="@AriaLabel">
                 @Label
             </MudMenuItem>
@@ -70,7 +72,7 @@
                 Class="@PopoverClassname"
                 Style="@Stylename"
                 MaxHeight="@MaxHeight"
-                AnchorOrigin="@(PositionAtCursor ? Origin.TopLeft : AnchorOrigin)"
+                AnchorOrigin="@GetAnchorOrigin()"
                 TransformOrigin="@TransformOrigin"
                 RelativeWidth="@FullWidth"
                 DropShadow="@DropShadow">

@@ -119,6 +119,7 @@ namespace MudBlazor
 
         protected string BackgroundClassname =>
             new CssBuilder("mud-overlay-dialog")
+                .AddClass("mud-skip-overlay-positioning") // popovers try to position the overlay by zindex, this skips that behavior if a user puts the dialog provider above the popover provider
                 .AddClass(GetDialogOptionsOrDefault.BackgroundClass)
                 .Build();
 

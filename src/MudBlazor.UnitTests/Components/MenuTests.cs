@@ -305,25 +305,14 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(true)]
-        [TestCase(false)]
-        public void MenuItem_Should_RenderIcons(bool dense)
+        public void MenuItem_Should_RenderIcons()
         {
-            var comp = Context.RenderComponent<MenuItemIconTest>(parameters => parameters
-                .Add(p => p.Dense, dense)
-            );
+            var comp = Context.RenderComponent<MenuItemIconTest>();
 
             comp.Find(".mud-menu-button-activator").Click();
             comp.WaitForElement("div.mud-popover-open");
 
-            if (dense)
-            {
-                comp.FindAll(".mud-menu-list div.mud-menu-item svg.mud-svg-icon.mud-menu-item-icon.mud-icon-size-small").Count.Should().Be(3);
-            }
-            else
-            {
-                comp.FindAll(".mud-menu-list div.mud-menu-item svg.mud-svg-icon.mud-menu-item-icon.mud-icon-size-medium").Count.Should().Be(3);
-            }
+            comp.FindAll(".mud-menu-list div.mud-menu-item svg.mud-svg-icon.mud-menu-item-icon.mud-icon-size-medium").Count.Should().Be(3);
         }
 
         [Test]

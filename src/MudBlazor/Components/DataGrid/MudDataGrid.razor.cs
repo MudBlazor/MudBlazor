@@ -920,11 +920,18 @@ namespace MudBlazor
                     return;
                 _currentPage = value;
                 InvokeAsync(StateHasChanged);
+                CurrentPageChanged.InvokeAsync(_currentPage);
 
                 if (_isFirstRendered)
                     InvokeAsync(InvokeServerLoadFunc);
             }
         }
+
+        /// <summary>
+        /// Occurs when <see cref="CurrentPage"/> has changed.
+        /// </summary>
+        [Parameter]
+        public EventCallback<int> CurrentPageChanged { get; set; }
 
         /// <summary>
         /// Prevents values from being edited.
@@ -1670,7 +1677,12 @@ namespace MudBlazor
             _rowsPerPage = size;
 
             if (resetPage)
+            {
+                var currentPageHasChanged = _currentPage != 0;
                 _currentPage = 0;
+                if (currentPageHasChanged)
+                    await CurrentPageChanged.InvokeAsync(_currentPage);
+            }
 
             await RowsPerPageChanged.InvokeAsync(_rowsPerPage.Value);
 

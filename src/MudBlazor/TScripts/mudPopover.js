@@ -354,11 +354,12 @@ window.mudpopoverHelper = {
 
             // set any associated overlay to equal z-index
             const provider = popoverContentNode.closest('.mud-popover-provider');
-            if (provider) {
+            if (provider && popoverContentNode.classList.contains(".mud-popover")) {
                 const parent = provider.parentElement;
                 if (parent) {
                     const overlay = parent.querySelector('.mud-overlay');
-                    if (overlay) {
+                    // skip any overlay marked with mud-skip-overlay
+                    if (overlay && !overlay.classList.contains('mud-skip-overlay-positioning')) {
                         // Only assign z-index if it doesn't already exist
                         if (!overlay.style['z-index']) {
                             overlay.style['z-index'] = popoverContentNode.style['z-index'];
