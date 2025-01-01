@@ -1,8 +1,8 @@
-﻿using MudBlazor.Resources;
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
+using MudBlazor.Resources;
 
 namespace MudBlazor
 {

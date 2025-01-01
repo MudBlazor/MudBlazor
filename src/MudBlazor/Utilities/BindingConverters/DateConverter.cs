@@ -1,5 +1,5 @@
-﻿using MudBlazor.Resources;
-using System;
+﻿using System;
+using MudBlazor.Resources;
 
 namespace MudBlazor
 {

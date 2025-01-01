@@ -609,7 +609,7 @@ namespace MudBlazor.UnitTests.Utilities
                 // The goal is to trigger the catch block in DefaultConverter without propagating the exception to the Converter.Get method.
                 OnError = (string msg, object[] arguments) =>
                 {
-                    if(toBeThrow)
+                    if (toBeThrow)
                     {
                         toBeThrow = false;
                         throw new FormatException(exception);
