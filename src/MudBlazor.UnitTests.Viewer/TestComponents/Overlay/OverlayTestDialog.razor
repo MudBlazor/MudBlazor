@@ -1,0 +1,34 @@
+﻿<MudDialog>
+    <DialogContent>
+        <MudMenu Label="Open Menu 1">
+            <MudMenuItem>Item 1</MudMenuItem>
+            <MudMenuItem>Item 2</MudMenuItem>
+            <MudMenuItem>Item 3</MudMenuItem>
+        </MudMenu>
+        <MudSelect @bind-Value="@FirstText" T="string" Label="First select">
+            <MudSelectItem Value='"First select 1"'>First select 1</MudSelectItem>
+            <MudSelectItem Value='"First select 2"'>First select 2</MudSelectItem>
+        </MudSelect>
+        <MudSelect @bind-Value="@SecondText" T="string" Label="Second select">
+            <MudSelectItem Value='"Second select 1"'>Second select 1</MudSelectItem>
+            <MudSelectItem Value='"Second select 2"'>Second select 2</MudSelectItem>
+        </MudSelect>
+        <MudSelect @bind-Value="@ThirdText" T="string" Label="Third select">
+            <MudSelectItem Value='"Third select 1"'>Third select 1</MudSelectItem>
+            <MudSelectItem Value='"Third select 2"'>Third select 2</MudSelectItem>
+        </MudSelect>
+        <MudMenu Label="Open Menu 2">
+            <MudMenuItem>Item 1</MudMenuItem>
+            <MudMenuItem>Item 2</MudMenuItem>
+            <MudMenuItem>Item 3</MudMenuItem>
+        </MudMenu>
+    </DialogContent>
+</MudDialog>
+
+@code {
+
+    public string FirstText { get; set; } = string.Empty;
+
+    public string SecondText { get; set; } = string.Empty;
+    public string ThirdText { get; set; } = string.Empty;
+}

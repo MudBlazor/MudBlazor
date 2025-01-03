@@ -162,6 +162,7 @@ window.mudpopoverHelper = {
 
             if (classSelector) {
                 if (classList.contains(classSelector) == false) {
+                    this.updatePopoverOverlay(popoverContentNode);
                     return;
                 }
             }
@@ -345,32 +346,17 @@ window.mudpopoverHelper = {
             // update z-index by sending the calling popover to update z-index,
             // and the parentnode of the calling popover (not content parent)
             //console.log(popoverContentNode, popoverNode.parentNode);
-            this.updatePopoverZIndex(popoverContentNode, popoverNode.parentNode);
+            this.updatePopoverZIndex(popoverContentNode, popoverNode.parentNode);            
 
             if (window.getComputedStyle(popoverNode).getPropertyValue('z-index') != 'auto') {
                 popoverContentNode.style['z-index'] = window.getComputedStyle(popoverNode).getPropertyValue('z-index');
                 popoverContentNode.skipZIndex = true;
             }
-
-            // set any associated overlay to equal z-index
-            const provider = popoverContentNode.closest('.mud-popover-provider');
-            if (provider && popoverContentNode.classList.contains(".mud-popover")) {
-                const parent = provider.parentElement;
-                if (parent) {
-                    const overlay = parent.querySelector('.mud-overlay');
-                    // skip any overlay marked with mud-skip-overlay
-                    if (overlay && !overlay.classList.contains('mud-skip-overlay-positioning')) {
-                        // Only assign z-index if it doesn't already exist
-                        if (!overlay.style['z-index']) {
-                            overlay.style['z-index'] = popoverContentNode.style['z-index'];
-                        }
-                    }
-                }
-            }
+            this.updatePopoverOverlay(popoverContentNode);
         }
         else {
             //console.log(`popoverNode: ${popoverNode} ${popoverNode ? popoverNode.parentNode : ""}`);
-        }
+        }        
     },
 
     popoverScrollListener: function (node) {
@@ -413,6 +399,24 @@ window.mudpopoverHelper = {
 
     countProviders: function () {
         return document.querySelectorAll(".mud-popover-provider").length;
+    },
+
+    updatePopoverOverlay: function (popoverContentNode) {
+        // set any associated overlay to equal z-index
+        const provider = popoverContentNode.closest('.mud-popover-provider');
+        if (provider && popoverContentNode.classList.contains("mud-popover")) {
+            const parent = provider.parentElement;
+            if (parent) {
+                const overlay = parent.querySelector('.mud-overlay');
+                // skip any overlay marked with mud-skip-overlay
+                if (overlay && !overlay.classList.contains('mud-skip-overlay-positioning')) {
+                    // Only assign z-index if it doesn't already exist
+                    if (!overlay.style['z-index']) {
+                        overlay.style['z-index'] = popoverContentNode.style['z-index'];
+                    }
+                }
+            }
+        }
     },
 
     updatePopoverZIndex: function (popoverContentNode, parentNode) {
