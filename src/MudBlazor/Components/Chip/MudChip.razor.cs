@@ -74,7 +74,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
                              && GetReadOnly() is false
                              && (ChipSet is not null || OnClick.HasDelegate);
 
-    private bool IsClosable => OnClose.HasDelegate || ChipSet?.AllClosable == true;
+    private bool IsClosable => (OnClose.HasDelegate || ChipSet?.AllClosable == true) && !IsAnchor;
 
     protected string GetHtmlTag()
     {
@@ -300,7 +300,8 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     /// The URL to navigate to when the chip is clicked.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>null</c>.  Use <see cref="Target"/> to control where the URL is opened.
+    /// <para>Defaults to <c>null</c>.  Use <see cref="Target"/> to control where the URL is opened.</para>
+    /// <para>Note: The close button cannot be enabled if this is set because <see href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#technical_summary">interactive content violates the HTML spec</see>.</para>
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Chip.ClickAction)]
@@ -366,7 +367,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     /// Occurs when this chip has been closed.
     /// </summary>
     /// <remarks>
-    /// When set, the close icon can be controlled via the <see cref="CloseIcon"/> property.
+    /// Subscribing to this event enables the close button, unless <see cref="Href"/> is also set.
     /// </remarks>
     [Parameter]
     public EventCallback<MudChip<T>> OnClose { get; set; }
