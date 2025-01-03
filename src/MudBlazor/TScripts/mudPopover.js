@@ -346,7 +346,7 @@ window.mudpopoverHelper = {
             // update z-index by sending the calling popover to update z-index,
             // and the parentnode of the calling popover (not content parent)
             //console.log(popoverContentNode, popoverNode.parentNode);
-            this.updatePopoverZIndex(popoverContentNode, popoverNode.parentNode);            
+            this.updatePopoverZIndex(popoverContentNode, popoverNode.parentNode);
 
             if (window.getComputedStyle(popoverNode).getPropertyValue('z-index') != 'auto') {
                 popoverContentNode.style['z-index'] = window.getComputedStyle(popoverNode).getPropertyValue('z-index');
@@ -356,7 +356,7 @@ window.mudpopoverHelper = {
         }
         else {
             //console.log(`popoverNode: ${popoverNode} ${popoverNode ? popoverNode.parentNode : ""}`);
-        }        
+        }
     },
 
     popoverScrollListener: function (node) {

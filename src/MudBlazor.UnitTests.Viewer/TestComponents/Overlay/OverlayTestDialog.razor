@@ -5,15 +5,15 @@
             <MudMenuItem>Item 2</MudMenuItem>
             <MudMenuItem>Item 3</MudMenuItem>
         </MudMenu>
-        <MudSelect @bind-Value="@FirstText" T="string" Label="First select">
+        <MudSelect @bind-Value="@_firstText" T="string" Label="First select">
             <MudSelectItem Value='"First select 1"'>First select 1</MudSelectItem>
             <MudSelectItem Value='"First select 2"'>First select 2</MudSelectItem>
         </MudSelect>
-        <MudSelect @bind-Value="@SecondText" T="string" Label="Second select">
+        <MudSelect @bind-Value="@_secondText" T="string" Label="Second select">
             <MudSelectItem Value='"Second select 1"'>Second select 1</MudSelectItem>
             <MudSelectItem Value='"Second select 2"'>Second select 2</MudSelectItem>
         </MudSelect>
-        <MudSelect @bind-Value="@ThirdText" T="string" Label="Third select">
+        <MudSelect @bind-Value="@_thirdText" T="string" Label="Third select">
             <MudSelectItem Value='"Third select 1"'>Third select 1</MudSelectItem>
             <MudSelectItem Value='"Third select 2"'>Third select 2</MudSelectItem>
         </MudSelect>
@@ -26,9 +26,7 @@
 </MudDialog>
 
 @code {
-
-    public string FirstText { get; set; } = string.Empty;
-
-    public string SecondText { get; set; } = string.Empty;
-    public string ThirdText { get; set; } = string.Empty;
+    private string _firstText = string.Empty;
+    private string _secondText = string.Empty;
+    private string _thirdText = string.Empty;
 }
