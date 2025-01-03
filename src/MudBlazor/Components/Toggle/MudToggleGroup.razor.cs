@@ -311,6 +311,10 @@ namespace MudBlazor
         protected internal async Task ToggleItemAsync(MudToggleItem<T> item)
         {
             var itemValue = item.Value;
+
+            var isValueBound = ValueChanged.HasDelegate;
+            var isSelectedValuesBound = ValuesChanged.HasDelegate;
+
             if (SelectionMode == SelectionMode.MultiSelection)
             {
                 var selectedValues = new HashSet<T?>(_values.Value ?? Array.Empty<T?>());
@@ -321,8 +325,9 @@ namespace MudBlazor
                 }
 
                 await _values.SetValueAsync(selectedValues);
-                if (Values is null)
+                if (isSelectedValuesBound)
                 {
+                    // if SelectedValuesBound we don't need to run this method twice
                     SetItemsSelected();
                 }
             }
@@ -336,16 +341,18 @@ namespace MudBlazor
                 {
                     await _value.SetValueAsync(itemValue);
                 }
-                if (Value is null)
+                if (isValueBound)
                 {
+                    // if ValueBound we don't need to run this method twice
                     SetItemsSelected();
                 }
             }
             else // SingleSelection
             {
                 await _value.SetValueAsync(itemValue);
-                if (Value is null)
+                if (isValueBound)
                 {
+                    // if ValueBound we don't need to run this method twice
                     SetItemsSelected();
                 }
             }
