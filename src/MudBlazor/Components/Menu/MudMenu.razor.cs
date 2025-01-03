@@ -384,7 +384,7 @@ namespace MudBlazor
             CancelPendingActions();
 
             // Recursively close all child menus.
-            foreach (var child in _subMenus.Where(m => m.Open))
+            foreach (var child in _subMenus.Where(m => m._openState.Value))
             {
                 await child.CloseMenuAsync();
             }
@@ -453,7 +453,7 @@ namespace MudBlazor
             // Close siblings (and self) first.
             if (ParentMenu is not null)
             {
-                foreach (var sibling in ParentMenu._subMenus.Where(m => m.Open))
+                foreach (var sibling in ParentMenu._subMenus.Where(m => m._openState.Value))
                 {
                     await sibling.CloseMenuAsync();
                 }
