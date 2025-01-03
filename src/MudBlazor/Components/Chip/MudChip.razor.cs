@@ -360,6 +360,9 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     /// <summary>
     /// Occurs when this chip is clicked.
     /// </summary>
+    /// <remarks>
+    /// If an <see cref="Href"/> is set, this callback will not be triggered and the browser will handle the click.
+    /// </remarks>
     [Parameter]
     public EventCallback<MouseEventArgs> OnClick { get; set; }
 
@@ -424,7 +427,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
 
     protected internal async Task OnClickAsync(MouseEventArgs ev)
     {
-        if (ChipSet?.ReadOnly == true)
+        if (ChipSet?.ReadOnly == true || IsAnchor)
         {
             return;
         }
