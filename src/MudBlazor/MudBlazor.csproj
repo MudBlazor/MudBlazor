@@ -11,7 +11,7 @@
     <Authors>Garderoben, Henon and Contributors</Authors>
     <Copyright>Copyright 2024 MudBlazor</Copyright>
     <PackageTags>Blazor, MudBlazor, Material, Material Design, Components, Blazor Components, Blazor Library</PackageTags>
-    <Description>A Blazor Component Library based on Material Design principles, focusing on ease of use. Written mainly in C# with minimal JavaScript, it allows .NET developers to easily understand and debug the code when needed.</Description>
+    <Description>Blazor Component Library based on Material Design principles with an emphasis on ease of use and extensibility</Description>
     <PackageProjectUrl>https://mudblazor.com/</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/MudBlazor/MudBlazor</RepositoryUrl>
