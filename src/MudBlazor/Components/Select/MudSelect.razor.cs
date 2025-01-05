@@ -31,6 +31,7 @@ namespace MudBlazor
 
         protected string OuterClassname =>
             new CssBuilder("mud-select")
+                .AddClass("mud-width-full", FullWidth)
                 .AddClass(OuterClass)
                 .Build();
 
@@ -151,14 +152,25 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// The behavior of the drop-down menu.
+        /// The behavior of the dropdown popover menu
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="DropdownSettings.Fixed" /> = <c>false</c> and <see cref="DropdownSettings.OverflowBehavior" /> = <see cref="OverflowBehavior.FlipOnOpen" />.
+        /// Defaults to <see cref="DropdownSettings.Fixed" /> false
+        /// Defaults to <see cref="DropdownSettings.OverflowBehavior" /> <see cref="OverflowBehavior.FlipOnOpen" />
         /// </remarks>
         [Category(CategoryTypes.Popover.Behavior)]
         [Parameter]
-        public DropdownSettings DropdownSettings { get; set; }
+        public DropdownSettings DropdownSettings { get; set; } = new DropdownSettings();
+
+        /// <summary>
+        /// Expands the popover to the same width as its parent.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Popover.Appearance)]
+        public bool RelativeWidth { get; set; } = true;
 
         /// <summary>
         /// The CSS classes applied to the outer <c>div</c>.

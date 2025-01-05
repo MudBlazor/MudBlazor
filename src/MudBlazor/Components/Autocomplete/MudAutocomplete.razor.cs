@@ -366,6 +366,16 @@ namespace MudBlazor
         public RenderFragment? ProgressIndicatorInPopoverTemplate { get; set; }
 
         /// <summary>
+        /// Expands the popover to the same width as its parent.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Popover.Appearance)]
+        public bool RelativeWidth { get; set; } = true;
+
+        /// <summary>
         /// Overrides the <c>Text</c> property when an item is selected.
         /// </summary>
         /// <remarks>
@@ -394,7 +404,7 @@ namespace MudBlazor
         /// </remarks>
         [Category(CategoryTypes.Popover.Behavior)]
         [Parameter]
-        public DropdownSettings DropdownSettings { get; set; }
+        public DropdownSettings DropdownSettings { get; set; } = new DropdownSettings();
 
         /// <summary>
         /// The function used to determine if an item should be disabled.

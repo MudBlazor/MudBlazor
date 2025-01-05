@@ -75,6 +75,8 @@
                 AnchorOrigin="@GetAnchorOrigin()"
                 TransformOrigin="@TransformOrigin"
                 RelativeWidth="@FullWidth"
+                Fixed="@DropdownSettings.Fixed"
+                OverflowBehavior="@DropdownSettings.OverflowBehavior"
                 DropShadow="@DropShadow"
                 Duration="@(GetDense() ? 0 : MudGlobal.TransitionDefaults.Duration.TotalMilliseconds)">
         <CascadingValue Value="@this">
