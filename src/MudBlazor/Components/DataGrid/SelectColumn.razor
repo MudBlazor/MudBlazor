@@ -7,11 +7,11 @@
     <HeaderTemplate>
         @if (ShowInHeader)
         {
-            <MudCheckBox T="bool?" Size="@Size" Value="@context.IsAllSelected" ValueChanged="@context.Actions.SetSelectAllAsync" />
+            <MudCheckBox T="bool?" Size="@Size" Value="@context.IsAllSelected" ValueChanged="@context.Actions.SetSelectAllAsync" Dense="GetDense()" />
         }
     </HeaderTemplate>
     <CellTemplate>
-        <MudCheckBox T="bool" Size="@Size" Value="@context.Selected" ValueChanged="@context.Actions.SetSelectedItemAsync" />
+        <MudCheckBox T="bool" Size="@Size" Value="@context.Selected" ValueChanged="@context.Actions.SetSelectedItemAsync" Dense="GetDense()" />
     </CellTemplate>
 </TemplateColumn>
 

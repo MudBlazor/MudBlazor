@@ -73,4 +73,9 @@ public partial class SelectColumn<[DynamicallyAccessedMembers(DynamicallyAccesse
     /// </summary>
     [Parameter]
     public EventCallback<bool> HiddenChanged { get; set; }
+
+    [CascadingParameter]
+    public MudDataGrid<T> DataGrid { get; set; }
+
+    protected bool GetDense() => DataGrid?.Dense == true;
 }
