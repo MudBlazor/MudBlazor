@@ -47,8 +47,22 @@
 					You can have any content within a popover like with any other Blazor component. The position of the popover is updated automatically
 				</Description>
 			</SectionHeader>
-            <SectionContent Codes="@(new[] {new CodeFile("Page.razor", "PopoverComplexContentExample"), new CodeFile("Component.razor", "PopoverDynamicContentExample")})">
+            <SectionContent Codes="@(new[] {new CodeFile("Page.razor", "PopoverComplexContentExample"), new CodeFile("Component.razor", "PopoverDynamicContentExample")})" ShowCode="false">
                 <PopoverComplexContentExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Popover RelativeWidth">
+                <Description>
+                    Popovers can be placed relative to their Activator or Parent. The <CodeInline>RelativeWidth</CodeInline> is an enum <CodeInline>DropdownWidth</CodeInline>,
+                    with a default value of <CodeInline>DropdownWidth.Ignore</CodeInline> which means the width is not associated to the Activator Width and can grow or shrink as needed. 
+                    Additional options are <CodeInline>DropdownWidth.Relative</CodeInline> which constrains the width of the popover to be the same size as the Activator Width and cannot grow.
+                    <CodeInline>DropdownWidth.Adaptive</CodeInline> which constrains the minimum width of the popover to be the same size as the Activator / Parent but can grow wider as needed.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(PopoverRelativeWidthExample)" ShowCode="false">
+                <PopoverRelativeWidthExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -58,7 +72,7 @@
 					Popovers can be placed within elements that are using popover for itself. Like tooltips that are placed inside a menu.
 				</Description>
 			</SectionHeader>
-			<SectionContent Code="@nameof(PopoverInceptionExampleExample)">
+			<SectionContent Code="@nameof(PopoverInceptionExampleExample)" ShowCode="false">
 				<PopoverInceptionExampleExample />
 			</SectionContent>
 		</DocsPageSection>

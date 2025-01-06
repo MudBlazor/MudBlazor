@@ -192,6 +192,35 @@
                 </DocsPageSection>
             </SectionSubGroups>
         </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="DropdownSettings">
+                <Description>
+                    This component uses <MudLink Href="/components/popover">MudPopover</MudLink> to place it's list of items in combination with <MudLink Href="/components/overlay">MudOverlay</MudLink>. Some of these
+                    settings can be controlled with <CodeInline>DropdownSettings</CodeInline> which contain defaults for the <CodeInline>MudPopover</CodeInline>
+                    appearance and behavior. Default settings for <CodeInline>DropdownSettings</CodeInline> are:
+                    <ul class="ml-2">
+                        <li><CodeInline>Fixed</CodeInline> = <CodeInline>false</CodeInline> - Displays the dropdown popover in a fixed position, even while scrolling.</li>
+                        <li><CodeInline>OverflowBehavior</CodeInline> = <CodeInline>OverflowBehavior.FlipOnOpen</CodeInline> - The behavior applied when there is not enough space for the dropdown popover to be visible.</li>
+                    </ul>
+                    <br/>Some settings reside on the <CodeInline>MudMenu</CodeInline> component itself due to differences between different types of dropdowns. <br />These settings and their defaults are:
+                    <ul class="ml-2">
+                        <li><CodeInline>RelativeWidth</CodeInline> = <CodeInline>DropdownWidth.Ignore</CodeInline> - The width of the dropdown popover is not dependent upon the Activator or Parent.</li>
+                        <li><CodeInline>AnchorOrigin</CodeInline> = <CodeInline>Origin.BottomLeft</CodeInline> - The location where the popover will open from.</li>
+                        <ul class="ml-4">
+                            <li><MudText Typo="Typo.caption">
+                                * AnchorOrigin and TransformOrigin do not have to be set, and if not set will have a default Nested behavior that can be overridden.
+                            </MudText></li>
+                        </ul>
+                        <li><CodeInline>TransformOrigin</CodeInline> = <CodeInline>Origin.TopLeft</CodeInline> - The transform origin point for the popover.</li>
+                    </ul>
+                    <MudLink Color="Color.Secondary" Href="/components/popover">Read more on popover's page.</MudLink>
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(DropdownSettingsExample)" ShowCode="false">
+                <DropdownSettingsExample />
+            </SectionContent>
+        </DocsPageSection>
     </DocsPageContent>
 </DocsPage>
 
