@@ -366,14 +366,16 @@ namespace MudBlazor
         public RenderFragment? ProgressIndicatorInPopoverTemplate { get; set; }
 
         /// <summary>
-        /// Expands the popover to the same width as its parent.
+        /// Determines the width of this Popover dropdown in relation to the parent container.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>true</c>.
+        /// <para>Defaults to <see cref="DropdownWidth.Relative" />. </para>
+        /// <para>When <see cref="DropdownWidth.Relative" />, restricts the max-width of the component to the width of the parent container</para>
+        /// <para>When <see cref="DropdownWidth.Adaptive" />, restricts the min-width of the component to the width of the parent container</para>
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
-        public bool RelativeWidth { get; set; } = true;
+        public DropdownWidth RelativeWidth { get; set; } = DropdownWidth.Relative;
 
         /// <summary>
         /// Overrides the <c>Text</c> property when an item is selected.
