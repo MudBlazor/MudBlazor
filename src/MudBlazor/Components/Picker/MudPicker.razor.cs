@@ -440,13 +440,13 @@ namespace MudBlazor
         /// Determines the width of the Popover dropdown in relation the parent container.
         /// </summary>
         /// <remarks>
-        /// <para>Defaults to <see cref="DropdownWidth.Adaptive" />. </para>
+        /// <para>Defaults to <see cref="DropdownWidth.Ignore" />. </para>
         /// <para>When <see cref="DropdownWidth.Relative" />, restricts the max-width of the component to the width of the parent container</para>
         /// <para>When <see cref="DropdownWidth.Adaptive" />, restricts the min-width of the component to the width of the parent container</para>
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
-        public DropdownWidth RelativeWidth { get; set; } = DropdownWidth.Adaptive;
+        public DropdownWidth RelativeWidth { get; set; } = DropdownWidth.Ignore;
 
         protected IMask? _mask = null;
 
