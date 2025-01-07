@@ -450,4 +450,10 @@
   <data name="Converter_UnableToConvert" xml:space="preserve">
     <value>Unable to convert to {0} from type {1}</value>
   </data>
+  <data name="HeatMap_Less" xml:space="preserve">
+    <value>Less</value>
+  </data>
+  <data name="HeatMap_More" xml:space="preserve">
+    <value>More</value>
+  </data>
 </root>
