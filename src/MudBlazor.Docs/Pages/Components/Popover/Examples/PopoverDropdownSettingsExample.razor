@@ -6,6 +6,7 @@
                    Variant="Variant.Outlined" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary">
             <MudSelectItem Value="@("foo")">Foo</MudSelectItem>
             <MudSelectItem Value="@("bar")">Bar</MudSelectItem>
+            <MudSelectItem Value="@("bar")">Lorem ipsum dolor sit amet, consectetur adipiscing elit</MudSelectItem>
         </MudSelect>
     </MudItem>
     <MudItem md="4" Class="d-flex justify-center align-center">
@@ -14,6 +15,7 @@
             <MudMenuItem Label="Enlist" />
             <MudMenuItem Label="Barracks" />
             <MudMenuItem Label="Armory" />
+            <MudMenuItem Label="The quick brown fox jumps over the lazy dog" />
         </MudMenu>
     </MudItem>
     <MudItem md="4">
@@ -59,15 +61,9 @@
     </MudItem>
     <MudItem md="2">
         <MudSelect T="DropdownWidth" Label="Dropdown Width" @bind-Value="@_dropdownWidth">
-            <MudTooltip Text="Relative - the width is equal to the Activator Width and cannot grow wider or smaller.">
-                <MudSelectItem Value="@DropdownWidth.Relative">Relative</MudSelectItem>
-            </MudTooltip>
-            <MudTooltip Text="Adaptive - the minimum width is equal to the Activator Width but can grow wider.">
-                <MudSelectItem Value="@DropdownWidth.Adaptive">Adaptive</MudSelectItem>
-            </MudTooltip>
-            <MudTooltip Text="Ignore - the width is not associated to the Activator Width and can grow or shrink as needed.">
-                <MudSelectItem Value="@DropdownWidth.Ignore">Ignore</MudSelectItem>
-            </MudTooltip>
+            <MudSelectItem Value="@DropdownWidth.Relative">Relative (equal to activator width)</MudSelectItem>
+            <MudSelectItem Value="@DropdownWidth.Adaptive">Adaptive (min = activator width)</MudSelectItem>
+            <MudSelectItem Value="@DropdownWidth.Ignore">Ignore (independent width)</MudSelectItem>
         </MudSelect>
     </MudItem>
 </MudGrid>
@@ -78,18 +74,16 @@
     private Origin _transform = Origin.TopLeft;
     private bool _fixed = false;
     private OverflowBehavior _overflowBehavior = OverflowBehavior.FlipOnOpen;
-
     private DropdownWidth _dropdownWidth = DropdownWidth.Relative;
 
-    private DropdownSettings _dropdownSettings =>
-            new DropdownSettings
-                {
-                    Fixed = _fixed,
-                    OverflowBehavior = _overflowBehavior,
-                };
+    private DropdownSettings _dropdownSettings => new()
+    {
+        Fixed = _fixed,
+        OverflowBehavior = _overflowBehavior,
+    };
 
     private string[] _states =
-    {
+        {
         "Alabama", "Alaska", "Arizona", "Arkansas", "California",
         "Colorado", "Connecticut", "Delaware", "Florida", "Georgia",
         "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas",
