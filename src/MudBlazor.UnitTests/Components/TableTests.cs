@@ -2493,5 +2493,31 @@ namespace MudBlazor.UnitTests.Components
             selectAllCheckbox.Change(true);
             comp.Find("#counter").TextContent.Should().Be("1");
         }
+
+        /// <summary>
+        /// Issue #3563, Issue #6260
+        /// Tests two-way binding on the CurrentPage parameter.
+        /// The table should re-render with the newly provided value as the CurrentPage.
+        /// </summary>
+        [Test]
+        public async Task TestCurrentPageParameterTwoWayBinding()
+        {
+            var comp = Context.RenderComponent<TableCurrentPageParameterTwoWayBindingTest>();
+            var table = comp.FindComponent<MudTable<int>>().Instance;
+
+            // Assert starting page index is 0 (default).
+            comp.WaitForAssertion(() => table.CurrentPage.Should().Be(0));
+            comp.WaitForAssertion(() => comp.Find(".mud-table-body .mud-table-row .mud-table-cell").TextContent.Should().Be("1"));
+
+            // Assert modification via code correctly renders the corresponding page.
+            await comp.InvokeAsync(() => table.CurrentPage = 1);
+            comp.WaitForAssertion(() => table.CurrentPage.Should().Be(1));
+            comp.WaitForAssertion(() => comp.Find(".mud-table-body .mud-table-row .mud-table-cell").TextContent.Should().Be("2"));
+
+            // Assert user input correctly updates the CurrentPage parameter value by clicking the "Next Page" button in the pager.
+            comp.FindAll(".mud-table-pagination-actions .mud-button-root")[2].Click();
+            comp.WaitForAssertion(() => table.CurrentPage.Should().Be(2));
+            comp.WaitForAssertion(() => comp.Find(".mud-table-body .mud-table-row .mud-table-cell").TextContent.Should().Be("3"));
+        }
     }
 }

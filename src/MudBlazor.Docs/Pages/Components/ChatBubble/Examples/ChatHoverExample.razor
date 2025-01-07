@@ -1,0 +1,240 @@
+﻿@namespace MudBlazor.Docs.Examples
+@inject ISnackbar Snackbar
+@inject IScrollListenerFactory ScrollListenerFactory
+
+@{
+    var orderedGroups = messages
+        .OrderByDescending(m => m.Time)
+        .GroupBy(m => m.Name)
+        .ToList();
+
+    for (int i = 0; i < orderedGroups.Count; i++)
+    {
+        var group = orderedGroups[i];
+        var position = i == 0 ? ChatBubblePosition.Start : ChatBubblePosition.End;
+
+        <MudChat ChatPosition="@position">
+            <MudAvatar>@group.First().Initials</MudAvatar>
+            <MudChatHeader Name="@group.Key" Time="@group.First().Time" />
+            @foreach (var message in group.OrderByDescending(m => m.Time))
+            {
+                <MudChatBubble OnClick="@((args) => ClickMessage(args, message))"
+                OnContextClick="@((args) => RightClickMessage(args, message))"
+                @onmouseenter="@((args) => HoverStart(args, message))"
+                @onmouseleave="@(() => HoverStop("bubble"))">
+                    @message.Text
+                    <MudPopover Open="@(Hovering && message.Equals(_hoverMessage))" Class="hoverarea"
+                    AnchorOrigin="Origin.CenterRight"
+                    TransformOrigin="Origin.BottomRight"
+                    @onscroll="@(() => HoverStop("scroll"))"
+                    @onmouseenter="@(() => _paperHovering = true)"
+                    @onmouseleave="@(() => HoverStop("paper"))">
+                        <div class="d-flex" style="width: 100%;" @onclick:stopPropagation="true" @onclick:preventDefault="true">
+                            <span class="emoji" @onclick="@(() => MessageAction("liked"))">👍</span>
+                            <span class="emoji" @onclick="@(() => MessageAction("cried"))">😭</span>
+                            <span class="emoji" @onclick="@(() => MessageAction("angered"))">👿</span>
+                            <MudDivider Class="mx-1" Vertical="true" FlexItem="true" />
+                            <MudTooltip Text="Reply">
+                                <span class="emoji" @onclick="@Reply">↩️</span>
+                            </MudTooltip>
+                        </div>
+                    </MudPopover>
+                </MudChatBubble>
+                <MudChatFooter>
+                    <MudPaper Class="actionarea" Elevation="0">
+                        <div class="d-flex" style="width: 100%;" @onclick:stopPropagation="true" @onclick:preventDefault="true">
+                            @if (message.Likes > 0)
+                            {
+                                <span class="emoji" @onclick="@(() => MessageAction("liked"))">👍</span>
+                                @message.Likes
+                            }
+                            @if (message.Cries > 0)
+                            {
+                                <span class="emoji" @onclick="@(() => MessageAction("cried"))">😭</span>
+                                @message.Cries
+                            }
+                            @if (message.Angers > 0)
+                            {
+                                <span class="emoji" @onclick="@(() => MessageAction("angered"))">👿</span>
+                                @message.Angers
+                            }
+                        </div>
+                    </MudPaper>
+                </MudChatFooter>
+            }
+        </MudChat>
+    }
+}
+
+<MudMenu PositionAtCursor="true" @ref="_contextMenu" id="_contextMenu">
+    <MudMenuItem Icon="@Icons.Material.Filled.Block" OnClick="@BanUser">
+        Ban @_selectedMessage?.Name
+    </MudMenuItem>
+    <MudMenuItem Icon="@Icons.Material.Filled.Info" OnClick="@ShowHiddenInfo">
+        View Details for @_selectedMessage?.Name
+    </MudMenuItem>
+</MudMenu>
+
+<style>
+    .hoverarea {
+    cursor: pointer !important;
+    background-color: var(--mud-palette-appbar-background);
+    color: var(--mud-palette-appbar-text);
+    transition: opacity 0.3s ease;
+    opacity: .8;
+    }
+
+    .actionarea {
+    background-color: var(--mud-palette-appbar-background);
+    color: var(--mud-palette-appbar-text);
+    }
+
+    .actionarea:focus {
+    opacity: 1; 
+    }
+
+    span.emoji {
+    font-size: 12px;
+    padding: 1px 1px;
+    align-self: center;
+    }
+</style>
+
+@code {
+    #nullable enable
+    private IScrollListener? _scrollListener;
+    private List<Message> messages = new();
+    private Message? _selectedMessage;
+    private MudMenu? _contextMenu;
+
+    private bool Hovering => _paperHovering || _bubbleHovering;
+    private bool _bubbleHovering;
+    private bool _paperHovering;
+
+    private Message? _hoverMessage;
+
+    protected override void OnInitialized()
+    {
+        _scrollListener = ScrollListenerFactory.Create(null);
+        _scrollListener.OnScroll += OnScrollAsync;
+        messages.Add(new Message("Obi-Wan Kenobi", "OK", "You were my brother Anakin.", "2 hours ago"));
+        messages.Add(new Message("Obi-Wan Kenobi", "OK", "I loved you.", "2 hours ago"));
+        messages.Add(new Message("Anakin Skywalker", "AS", "I'm sorry.", "1 hour ago"));
+    }
+
+    private void OnScrollAsync(object? sender, ScrollEventArgs e)
+    {
+        HoverStop("scroll");
+    }
+
+    public void Dispose()
+    {
+        if (_scrollListener != null)
+            _scrollListener.OnScroll -= OnScrollAsync;
+    }
+
+    private void HoverStart(MouseEventArgs args, Message message)
+    {
+        _bubbleHovering = true;
+        _hoverMessage = message;
+    }
+
+    private void HoverStop(string typeOfStop)
+    {
+        try
+        {
+            switch (typeOfStop)
+            {
+                case "paper":
+                    _paperHovering = false;
+                    break;
+                case "bubble":
+                    _bubbleHovering = false;
+                    break;
+                case "scroll":
+                    _paperHovering = false;
+                    _bubbleHovering = false;
+                    StateHasChanged();
+                    break;
+                default:
+                    break;
+            }
+        }
+        catch { }
+    }
+
+    private void MessageAction(string actionType)
+    {
+        switch (actionType)
+        {
+            case "liked":
+                _hoverMessage!.Likes++;
+                break;
+            case "cried":
+                _hoverMessage!.Cries++;
+                break;
+            case "angered":
+                _hoverMessage!.Angers++;
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void Reply()
+    {
+        if (_hoverMessage is null)
+        {
+            Snackbar.Add("No message available!", Severity.Warning);
+        }
+        else
+        {
+            Snackbar.Add($"Simulate Reply: To: {_hoverMessage.Name}", Severity.Success);
+        }
+    }
+
+    private void ShowHiddenInfo()
+    {
+        if (_selectedMessage is not null)
+        {
+            Snackbar.Add($"Hidden information for {_selectedMessage.Name}", Severity.Info);
+        }
+    }
+
+    private void BanUser()
+    {
+        if (_selectedMessage is not null)
+        {
+            Snackbar.Add($"{_selectedMessage.Name} has been banned!", Severity.Error);
+        }
+    }
+
+    private async Task RightClickMessage(MouseEventArgs args, Message message)
+    {
+        _selectedMessage = message;
+        if (_contextMenu != null)
+            await _contextMenu.OpenMenuAsync(args);
+    }
+
+    private async Task ClickMessage(MouseEventArgs args, Message message)
+    {
+        _selectedMessage = message;
+        Snackbar.Add("Message clicked: " + message.Text, Severity.Info);
+        await Task.CompletedTask;
+    }
+
+    private record Message(
+        string Name,
+        string Initials,
+        string Text,
+        string Time,
+        int Likes = 0,
+        int Cries = 0,
+        int Angers = 0)
+    {
+        public int Likes { get; set; } = Likes;
+        public int Cries { get; set; } = Cries;
+        public int Angers { get; set; } = Angers;
+    }
+
+}
