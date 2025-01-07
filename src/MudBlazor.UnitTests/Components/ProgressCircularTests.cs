@@ -13,16 +13,16 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DefaultValues()
         {
-            var linear = new MudProgressCircular();
+            var circular = new MudProgressCircular();
 
-            linear.Color.Should().Be(Color.Default);
-            linear.Size.Should().Be(Size.Medium);
-            linear.Indeterminate.Should().BeFalse();
-            linear.Rounded.Should().BeFalse();
-            linear.Min.Should().Be(0.0);
-            linear.Max.Should().Be(100.0);
-            linear.Value.Should().Be(0.0);
-            linear.StrokeWidth.Should().Be(3);
+            circular.Color.Should().Be(Color.Default);
+            circular.Size.Should().Be(Size.Medium);
+            circular.Indeterminate.Should().BeFalse();
+            circular.Rounded.Should().BeFalse();
+            circular.Min.Should().Be(0.0);
+            circular.Max.Should().Be(100.0);
+            circular.Value.Should().Be(0.0);
+            circular.StrokeWidth.Should().Be(3);
         }
 
         [Test]
