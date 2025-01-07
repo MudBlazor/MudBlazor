@@ -49,16 +49,22 @@
   text-decoration: none;
   padding: 8px 12px;
 
-  .mud-menu-item-icon {
+  > .mud-icon-root {
     color: var(--mud-palette-action-default);
+  }
+
+  .mud-menu-item-icon {
     display: inline-flex;
     flex-shrink: 0;
-    margin-right: 12px;
+    margin-inline-end: 12px;
   }
 
   .mud-menu-item-text {
     flex: 1 1 auto;
     margin: 4px 0;
+  }
+
+  .mud-menu-submenu-icon {
   }
 
   &.mud-menu-item-dense {
@@ -74,4 +80,9 @@
       color: var(--mud-palette-action-disabled) !important;
     }
   }
+}
+
+// If any menu item has an icon, then give the other ones the same gutters.
+.mud-menu-list:has(.mud-menu-item-icon) .mud-menu-item:not(:has(.mud-menu-item-icon)) .mud-menu-item-text {
+  margin-inline-start: 36px;
 }

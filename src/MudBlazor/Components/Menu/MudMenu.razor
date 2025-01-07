@@ -75,7 +75,8 @@
                 AnchorOrigin="@GetAnchorOrigin()"
                 TransformOrigin="@TransformOrigin"
                 RelativeWidth="@FullWidth"
-                DropShadow="@DropShadow">
+                DropShadow="@DropShadow"
+                Duration="@(GetDense() ? 0 : MudGlobal.TransitionDefaults.Duration.TotalMilliseconds)">
         <CascadingValue Value="@this">
             <MudList T="object"
                      Class="@ListClassname"

@@ -330,6 +330,7 @@ public partial class MudStepper : MudComponentBase
                     var nextStep = GetNextStep(index);
                     if (nextStep is not null)
                         index = _steps.IndexOf(nextStep);
+                    await SetActiveIndexAsync(index);
                     break;
                 }
             case StepAction.Skip:
@@ -337,11 +338,17 @@ public partial class MudStepper : MudComponentBase
                     var nextStep = GetNextStep(index);
                     if (nextStep is not null)
                         index = _steps.IndexOf(nextStep);
+                    await SetActiveIndexAsync(index);
                 }
                 break;
+            case StepAction.Reset:
+                break;
+            default:
+                {
+                    await SetActiveIndexAsync(index);
+                    break;
+                }
         }
-
-        await SetActiveIndexAsync(index);
 
         await (ActiveStep?.OnClick.InvokeAsync(ev) ?? Task.CompletedTask);
     }
@@ -455,6 +462,7 @@ public partial class MudStepper : MudComponentBase
             {
                 await step.SetHasErrorAsync(false, refreshParent: false);
             }
+            await UpdateStepAsync(step, new MouseEventArgs(), StepAction.Reset);
         }
 
         await UpdateStepAsync(_steps[0], new MouseEventArgs(), StepAction.Activate);
