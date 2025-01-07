@@ -98,13 +98,15 @@ namespace MudBlazor
 
         private async Task SelectFirstItem(string? startChar = null)
         {
-            if (!_open)
-                await OpenMenu();
+            var selectList = _items;
 
-            if (_items.Count == 0)
+            if (!_open)
+                selectList = _shadowLookup.Values.ToList();
+
+            if (selectList.Count == 0)
                 return;
 
-            var items = _items.Where(x => !x.Disabled);
+            var items = selectList.Where(x => !x.Disabled);
 
             if (!string.IsNullOrWhiteSpace(startChar))
             {
@@ -144,10 +146,7 @@ namespace MudBlazor
             var mudSelectItems = items as MudSelectItem<T>[] ?? items.ToArray();
 
             var matchingItems = mudSelectItems
-                .Where(x =>
-                    x.Value != null &&
-                    !x.Disabled &&
-                    Converter.Set(x.Value)?.StartsWith(_searchText, StringComparison.InvariantCultureIgnoreCase) == true)
+                .Where(x => !x.Disabled && Converter.Set(x.Value)?.StartsWith(_searchText, StringComparison.InvariantCultureIgnoreCase) == true)
                 .ToList();
 
             if (matchingItems.Count == 0)
@@ -348,14 +347,15 @@ namespace MudBlazor
         public string Delimiter { get; set; } = ", ";
 
         /// <summary>
-        /// The timespan interval for accepting multiple characters to search against.
+        /// The <see cref="TimeSpan"/> interval for accepting characters for search input.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>1</c> second.
+        /// Defaults to <see cref="TimeSpan.Zero"/> for single-character searches. <br/>
+        /// Set to a value greater than zero to enable multi-character searches within the specified interval.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public TimeSpan QuickSearchInterval { get; set; } = TimeSpan.FromSeconds(1);
+        public TimeSpan QuickSearchInterval { get; set; } = TimeSpan.Zero;
 
         /// <summary>
         /// The currently selected values.
@@ -1074,6 +1074,7 @@ namespace MudBlazor
             if (key.Length == 1 && key != " " && !(obj.CtrlKey || obj.ShiftKey || obj.AltKey || obj.MetaKey))
             {
                 await SelectFirstItem(key);
+                await FocusAsync();
                 return;
             }
             switch (obj.Key)
