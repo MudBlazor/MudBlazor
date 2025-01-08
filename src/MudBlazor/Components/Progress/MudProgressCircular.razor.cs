@@ -74,7 +74,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ProgressLinear.Appearance)]
-        public bool Rounded { get; set; } = false;
+        public bool Rounded { get; set; }
 
         /// <summary>
         /// The lowest possible value.
