@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
@@ -104,7 +101,9 @@ namespace MudBlazor
 
                 Touched = true;
 
-                PickerMonth ??= range.Start;
+                if (range.Start is not null)
+                    PickerMonth = new DateTime(Culture.Calendar.GetYear(range.Start.Value), Culture.Calendar.GetMonth(range.Start.Value), 1, Culture.Calendar);
+
                 _dateRange = range;
                 _value = range?.End;
 
