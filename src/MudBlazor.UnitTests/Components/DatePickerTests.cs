@@ -447,8 +447,14 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DatePickerStaticTest>();
             var picker = comp.FindComponent<MudDatePicker>();
+
+            picker.Markup.Should().Contain("mud-selected"); //confirm selected date is shown
+
             comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("23")).Click();
-            picker.Instance.Date.Should().Be(new DateTime(DateTime.Now.Year, DateTime.Now.Month, 23));
+
+            var date = DateTime.Today.Subtract(TimeSpan.FromDays(60));
+            
+            picker.Instance.Date.Should().Be(new DateTime(date.Year, date.Month, 23));
         }
 
         [Test]

@@ -68,7 +68,9 @@ namespace MudBlazor
                     return;
                 }
 
+                PickerMonth ??= date;
                 _value = date;
+
                 if (updateValue)
                 {
                     Converter.GetError = false;

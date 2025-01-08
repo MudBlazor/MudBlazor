@@ -104,6 +104,7 @@ namespace MudBlazor
 
                 Touched = true;
 
+                PickerMonth ??= range.Start;
                 _dateRange = range;
                 _value = range?.End;
 
