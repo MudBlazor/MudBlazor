@@ -11,36 +11,66 @@ public static class MudGlobal
 {
     public static class ButtonDefaults
     {
+        /// <summary>
+        /// The color of the button.
+        /// </summary>
         public static Color Color { get; set; } = Color.Default;
 
+        /// <summary>
+        /// The display variation to use.
+        /// </summary>
         public static Variant Variant { get; set; } = Variant.Text;
     }
 
     public static class DialogDefaults
     {
+        /// <summary>
+        /// The element which will receive focus when this dialog is shown.
+        /// </summary>
         public static DefaultFocus DefaultFocus { get; set; } = DefaultFocus.Element;
     }
 
     public static class GridDefaults
     {
+        /// <summary>
+        /// The gap between items, measured in increments of <c>4px</c>.
+        /// </summary>
         public static int Spacing { set; get; } = 6;
     }
 
     public static class InputDefaults
     {
+        /// <summary>
+        /// Shows the label inside the input if no <c>Value</c> is specified.
+        /// </summary>
         public static bool ShrinkLabel { get; set; }
 
+        /// <summary>
+        /// The appearance variation to use.
+        /// </summary>
         public static Variant Variant { get; set; } = Variant.Text;
 
+        /// <summary>
+        /// The amount of vertical spacing for this input.
+        /// </summary>
         public static Margin Margin { get; set; } = Margin.None;
     }
 
     public static class LinkDefaults
     {
+        /// <summary>
+        /// The color of the link.
+        /// </summary>
         public static Color Color { get; set; } = Color.Primary;
 
+        /// <summary>
+        /// The typography variant to use.
+        /// </summary>
         public static Typo Typo { get; set; } = Typo.body1;
 
+        /// <summary>
+        /// Applies an underline to the link.
+        /// </summary>
         public static Underline Underline { get; set; } = Underline.Hover;
     }
 
@@ -55,18 +85,30 @@ public static class MudGlobal
 
     public static class PopoverDefaults
     {
+        /// <summary>
+        /// The amount of drop shadow to apply.
+        /// </summary>
         public static int Elevation { get; set; } = 8;
     }
 
     public static class StackDefaults
     {
+        /// <summary>
+        /// The gap between items, measured in increments of <c>4px</c>.
+        /// </summary>
         public static int Spacing { get; set; } = 3;
     }
 
     public static class TooltipDefaults
     {
+        /// <summary>
+        /// The amount of time in milliseconds to wait from opening the popover before beginning to perform the transition. 
+        /// </summary>
         public static TimeSpan Delay { get; set; } = TimeSpan.Zero;
 
+        /// <summary>
+        /// The length of time that the opening transition takes to complete.
+        /// </summary>
         public static TimeSpan Duration { get; set; } = TimeSpan.FromMilliseconds(251);
     }
 
@@ -84,17 +126,17 @@ public static class MudGlobal
     }
 
     /// <summary>
-    /// Applies regular rounding by default, additional rounding if set to true, or squares them if set to false.
+    /// Applies regular rounding by default; additional rounding if set to true; or squares them if set to false.
     /// </summary>
     public static bool? Rounded { get; set; }
 
     /// <summary>
-    /// The handler for unhandled component exceptions.
+    /// The handler for unhandled MudBlazor component exceptions.
     /// </summary>
     /// <remarks>
     /// Exceptions which use this handler are typically rare, such as errors which occur during a "fire-and-forget" <see cref="Task"/> which cannot be awaited.<br />
     /// By default, exceptions are logged to the console via <see cref="Console.Write(object?)"/>.<br />
     /// To handle all .NET exceptions, see: <see href="https://learn.microsoft.com/aspnet/core/fundamentals/error-handling">Handle errors in ASP.NET Core</see>.
     /// </remarks>
-    public static Action<Exception> UnhandledExceptionHandler { get; set; } = Console.Write;
+    public static Action<Exception> UnhandledExceptionHandler { get; set; } = (exception) => Console.Write(exception);
 }
