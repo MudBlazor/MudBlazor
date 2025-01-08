@@ -41,17 +41,17 @@ public static class MudGlobal
     public static class InputDefaults
     {
         /// <summary>
-        /// Shows the label inside the <see cref="MudInput"/> if no <c>Value</c> is specified.
+        /// Shows the label inside the input if no <c>Value</c> is specified.
         /// </summary>
         public static bool ShrinkLabel { get; set; }
 
         /// <summary>
-        /// The appearance variation to use for <see cref="MudInput"/>.
+        /// The appearance variation to use.
         /// </summary>
         public static Variant Variant { get; set; } = Variant.Text;
 
         /// <summary>
-        /// The amount of vertical spacing for this <see cref="MudInput"/>.
+        /// The amount of vertical spacing for this input.
         /// </summary>
         public static Margin Margin { get; set; } = Margin.None;
     }
@@ -115,12 +115,12 @@ public static class MudGlobal
     public static class TransitionDefaults
     {
         /// <summary>
-        /// The length of time that the opening transition for <see cref="MudTransition"/> takes to complete.
+        /// The length of time that the opening transition takes to complete.
         /// </summary>
         public static TimeSpan Delay { get; set; } = TimeSpan.Zero;
 
         /// <summary>
-        /// The amount of time in milliseconds to wait from opening the <see cref="MudTransition"/> before beginning to perform the transition. 
+        /// The amount of time in milliseconds to wait from opening the popover before beginning to perform the transition. 
         /// </summary>
         public static TimeSpan Duration { get; set; } = TimeSpan.FromMilliseconds(251);
     }
