@@ -267,13 +267,23 @@
       }
 
       & * .mud-filter-panel-cell {
-          top: 58px;
+        top: 58px;
       }
 
       & * .mud-table-cell.sticky-left,
       & * .mud-table-cell.sticky-right {
         z-index: 3;
         background-color: var(--mud-palette-background-gray);
+      }
+    }
+  }
+}
+
+.mud-table-sticky-header.mud-table-dense {
+  & * .mud-table-root {
+    .mud-table-head {
+      & * .mud-filter-panel-cell {
+        top: 39px;
       }
     }
   }
