@@ -417,6 +417,39 @@
   <data name="MudDataGrid_ShowColumnOptions" xml:space="preserve">
     <value>Show Column Options</value>
   </data>
+  <data name="Converter_InvalidBoolean" xml:space="preserve">
+    <value>Not a valid boolean</value>
+  </data>
+  <data name="Converter_InvalidNumber" xml:space="preserve">
+    <value>Not a valid number</value>
+  </data>
+  <data name="Converter_InvalidGUID" xml:space="preserve">
+    <value>Not a valid GUID</value>
+  </data>
+  <data name="Converter_NotValueOf" xml:space="preserve">
+    <value>Not a value of {0}</value>
+  </data>
+  <data name="Converter_InvalidDateTime" xml:space="preserve">
+    <value>Not a valid date time</value>
+  </data>
+  <data name="Converter_InvalidTimeSpan" xml:space="preserve">
+    <value>Not a valid time span</value>
+  </data>
+  <data name="Converter_InvalidType" xml:space="preserve">
+    <value>Not a valid {0}</value>
+  </data>
+  <data name="Converter_ConversionNotImplemented" xml:space="preserve">
+    <value>Conversion to type {0} not implemented</value>
+  </data>
+  <data name="Converter_ConversionError" xml:space="preserve">
+    <value>Conversion error: {0}</value>
+  </data>
+  <data name="Converter_ConversionFailed" xml:space="preserve">
+    <value>Conversion from {0} to {1} failed: {2}</value>
+  </data>
+  <data name="Converter_UnableToConvert" xml:space="preserve">
+    <value>Unable to convert to {0} from type {1}</value>
+  </data>
   <data name="HeatMap_Less" xml:space="preserve">
     <value>Less</value>
   </data>
