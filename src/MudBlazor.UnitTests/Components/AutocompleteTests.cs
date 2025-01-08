@@ -1423,7 +1423,7 @@ namespace MudBlazor.UnitTests.Components
             first.SetCanceled();
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ToMarkup().Should().NotContain("Foo"));
 
-            second.SetResult(new List<string> { "Bar" });
+            second.SetResult(["Bar"]);
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ToMarkup().Should().Contain("Bar"));
         }
 
@@ -1896,7 +1896,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.AdornmentIcon, Icons.Material.Filled.Accessibility)
                 .Add(p => p.AdornmentAriaLabel, ariaLabel));
 
-            comp.Find(".mud-input-adornment-icon").Attributes.GetNamedItem("aria-label")!.Value.Should().Be(ariaLabel);
+            comp.Find(".mud-input-adornment-icon-button").Attributes.GetNamedItem("aria-label")!.Value.Should().Be(ariaLabel);
         }
 
 #nullable enable
@@ -2072,6 +2072,36 @@ namespace MudBlazor.UnitTests.Components
             await autocompleteComponent.Find("input").KeyDownAsync(arrowUpKeyboardEventArgs);
             var noWrapToLastIndex = (int)selectedItemIndexPropertyInfo.GetValue(autocompleteInstance);
             component.WaitForAssertion(() => noWrapToLastIndex.Should().Be(0, "ArrowUp should not wrap around past the first item"));
+        }
+
+        [Test]
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task AutoComplete_ShouldHaveOnAdornmentClickBehavior(bool attachDelegate)
+        {
+            var eventCallbackFactory = new EventCallbackFactory();
+            var _delegate = attachDelegate ?
+                eventCallbackFactory.Create<MouseEventArgs>(this, (e) => { }) : default;
+
+            var comp = Context.RenderComponent<MudAutocomplete<string>>(parameters => parameters
+                .Add(p => p.OnAdornmentClick, _delegate));
+
+            var autocompleteInstance = comp.Instance;
+            autocompleteInstance.OnAdornmentClick.HasDelegate.Should().Be(attachDelegate);
+            await comp.InvokeAsync(async () => await autocompleteInstance.AdornmentClickHandlerAsync());
+            autocompleteInstance.Open.Should().Be(!attachDelegate);
+        }
+
+        [Test]
+        [TestCase(false)]
+        [TestCase(true)]
+        public void Autocomplete_OpenOnFocusShouldWork(bool openOnFocus)
+        {
+            var comp = Context.RenderComponent<MudAutocomplete<string>>(parameters => parameters
+                .Add(p => p.OpenOnFocus, openOnFocus));
+            comp.Find("input").Focus();
+
+            comp.WaitForAssertion(() => comp.Instance.Open.Should().Be(openOnFocus, $"OpenOnFocus should set Open to {openOnFocus} after input Focus"));
         }
     }
 }

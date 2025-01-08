@@ -1,0 +1,26 @@
+﻿<MudDataGrid T="Item" ServerData="@ServerData" Virtualize="true">
+    <NoRecordsContent>No records</NoRecordsContent>
+    <PagerContent><MudDataGridPager PageSizeOptions="new []{ 10, 25, 50}" /></PagerContent>
+    <Columns>
+        <PropertyColumn Property="x => x.Text" Title="test" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    public static string __description__ = @"The data grid should load data correctly when using ServerData with Virtualize flag";
+
+    private readonly List<Item> _items = Enumerable.Range(0, 5)
+        .Select(i => new Item($"Value_{i}"))
+        .ToList();
+
+    private Task<GridData<Item>> ServerData(GridState<Item> arg)
+    {
+        return Task.FromResult(new GridData<Item>
+        {
+            TotalItems = _items.Count,
+            Items = _items
+        });
+    }
+
+    public record Item(string Text);
+}

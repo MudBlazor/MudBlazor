@@ -70,9 +70,24 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="MudHeatMapCell">
+                <Description>
+                    <CodeInline>MudHeatMapCell</CodeInline> allows you to customize many aspects of each individual heat map. 
+                    <CodeInline>MudHeatMapCell</CodeInline> can be used to display beautiful and comprehensive Heat Map charts. 
+                    You must set the Row and Column and all other values are optional. Any child content you add should either be sized appropriately by html or you should specify 
+                    the Width and Height of <CodeInline>MudHeatMapCell</CodeInline>. You can also override the Value and/or Color. Child Content can contain almost any type of html 
+                    element but if it's any type of image ensure to provide the Width and Height so it can be resized dynamically.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(HeatMapExample6)" ShowCode="false" Block="true">
+                <HeatMapExample6 />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Legend Display">
                 <Description>
-                    By default the Legend is displayed at the bottom of a HeatMap without the Label Values being displayed. You can customize it using the <CodeInline>MudChart.LegendPosition</CodeInline> 
+                    By default, the Legend is displayed at the bottom of a HeatMap without the Label Values being displayed. You can customize it using the <CodeInline>MudChart.LegendPosition</CodeInline> 
                     and <CodeInline>ChartOptions.ShowLegendLabels</CodeInline>. A Myriad of customization options allow for the HeatMap of your choice.
                 </Description>
             </SectionHeader>

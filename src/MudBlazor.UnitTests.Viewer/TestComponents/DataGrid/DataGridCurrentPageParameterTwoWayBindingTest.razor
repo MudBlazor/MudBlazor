@@ -1,0 +1,15 @@
+﻿<MudDataGrid Items="_items" @bind-CurrentPage="_currentPage">
+    <Columns>
+        <PropertyColumn Property="x => x" Title="Item" />
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="int" PageSizeOptions="[1]" />
+    </PagerContent>
+</MudDataGrid>
+
+@code {
+    public static string __description__ = "CurrentPage parameter should be two-way bindable.";
+
+    private readonly int[] _items = [1, 2, 3];
+    private int _currentPage;
+}

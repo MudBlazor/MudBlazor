@@ -12,7 +12,9 @@ using MudBlazor.Components.Snackbar.InternalComponents;
 
 namespace MudBlazor
 {
-    /// <inheritdoc />
+    /// <summary>
+    /// A service for managing snackbars.
+    /// </summary>
     public class SnackbarService : ISnackbar
     {
         private readonly List<Snackbar> _snackBarList;
@@ -34,6 +36,7 @@ namespace MudBlazor
             _snackBarList = new List<Snackbar>();
         }
 
+        /// <inheritdoc />
         public IEnumerable<Snackbar> ShownSnackbars
         {
             get

@@ -26,7 +26,7 @@ MudBlazor is an ambitious Material Design component framework for Blazor with an
 - [MudBlazor.com](https://mudblazor.com)
 - [Try.MudBlazor.com](https://try.mudblazor.com/)
 
-### Why is MudBlazor so successful?
+## Why is MudBlazor so successful?
 - Clean and aesthetic graphic design based on Material Design.
 - Clear and easy to understand structure.
 - Good documentation with many examples and source snippets.
@@ -45,9 +45,9 @@ MudBlazor is an ambitious Material Design component framework for Blazor with an
 | 7.x.x | [.NET 7](https://dotnet.microsoft.com/download/dotnet/7.0), [.NET 8](https://dotnet.microsoft.com/download/dotnet/8.0) | :heavy_check_mark: |
 | 8.x.x | [.NET 8](https://dotnet.microsoft.com/download/dotnet/8.0), [.NET 9](https://dotnet.microsoft.com/download/dotnet/9.0) | :heavy_check_mark: |
 
-\* Static rendering is not supported - [Learn more](https://learn.microsoft.com/aspnet/core/blazor/components/render-modes).
-
-\** We cannot guarantee compatibility with browsers no longer maintained by their publishers.
+> [!WARNING]
+> 1. Static rendering is not supported - [Learn more](https://learn.microsoft.com/aspnet/core/blazor/components/render-modes).
+> 2. We cannot guarantee compatibility with browsers no longer maintained by their publishers.
 For the best experience, use an up-to-date browser - See [Blazor supported platforms](https://learn.microsoft.com/aspnet/core/blazor/supported-platforms).
 
 ## Stats
@@ -64,8 +64,9 @@ Please note there is no guarantee your PR will be merged, so if you want to be s
 Check out the [contribution guidelines](/CONTRIBUTING.md) to understand our goals and learn more about the internals of the project.
 
 ## Getting Started
-Full installation instructions can be found [on our website](https://mudblazor.com/getting-started/installation).  
-Alternatively use one of our templates from the [MudBlazor.Templates](https://github.com/mudblazor/Templates) repo.
+We have premade templates available at the [MudBlazor.Templates](https://github.com/mudblazor/Templates) repository.
+
+Full installation instructions can be found [on our website](https://mudblazor.com/getting-started/installation).
 
 ### Quick Installation Guide
 Install Package
@@ -103,19 +104,26 @@ builder.Services.AddMudServices();
 
 ### Usage
 ```razor
-<MudText Typo="Typo.h6">MudBlazor is @Text</MudText>
-<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ButtonOnClick">@ButtonText</MudButton>
+<MudText Typo="Typo.h6">
+    MudBlazor is @Text
+</MudText>
+
+<MudButton Variant="Variant.Filled" 
+           Color="Color.Primary" 
+           OnClick="ButtonOnClick">
+    @ButtonText
+</MudButton>
 
 @code {
-  public string Text { get; set; } = "????";
-  public string ButtonText { get; set; } = "Click Me";
-  public int ButtonClicked { get; set; }
+    string Text { get; set; } = "????";
+    string ButtonText { get; set; } = "Click Me";
+    int ClickCount { get; set; }
 
-  void ButtonOnClick()
-  {
-      ButtonClicked += 1;
-      Text = $"Awesome x {ButtonClicked}";
-      ButtonText = "Click Me Again";
-  }
+    void ButtonOnClick()
+    {
+        ClickCount += 1;
+        Text = $"Awesome x {ClickCount}";
+        ButtonText = "Click Me Again";
+    }
 }
 ```

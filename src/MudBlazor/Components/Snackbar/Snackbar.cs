@@ -7,6 +7,9 @@ using MudBlazor.Components.Snackbar;
 
 namespace MudBlazor
 {
+    /// <summary>
+    /// The service used to display snackbar messages.
+    /// </summary>
     public class Snackbar : IDisposable
     {
         private bool _paused = false;
@@ -14,10 +17,27 @@ namespace MudBlazor
         private bool _hideOnResume = false;
         private Timer Timer { get; }
         internal SnackBarMessageState State { get; }
+
+        /// <summary>
+        /// The message to display.
+        /// </summary>
         public string? Message => SnackbarMessage.Text;
+
         internal SnackbarMessage SnackbarMessage { get; }
+
+        /// <summary>
+        /// Occurs when a snackbar is closed.
+        /// </summary>
         public event Action<Snackbar>? OnClose;
+
+        /// <summary>
+        /// Occurs when a snackbar changes.
+        /// </summary>
         public event Action? OnUpdate;
+
+        /// <summary>
+        /// The severity of the snackbar message.
+        /// </summary>
         public Severity Severity => State.Options.Severity;
 
         internal Snackbar(SnackbarMessage message, SnackbarOptions options)
@@ -62,7 +82,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Forcibly close the snackbar without performing any animations.
+        /// Forcibly closes the snackbar without performing any animations.
         /// </summary>
         public void ForceClose()
         {

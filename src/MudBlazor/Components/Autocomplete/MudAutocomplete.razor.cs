@@ -951,6 +951,19 @@ namespace MudBlazor
             }
         }
 
+        internal async Task AdornmentClickHandlerAsync()
+        {
+            if (OnAdornmentClick.HasDelegate)
+            {
+                await FocusAsync();
+                await OnAdornmentClick.InvokeAsync();
+            }
+            else
+            {
+                await ToggleMenuAsync();
+            }
+        }
+
         private Task OnInputBlurredAsync(FocusEventArgs args)
         {
             _isFocused = false;

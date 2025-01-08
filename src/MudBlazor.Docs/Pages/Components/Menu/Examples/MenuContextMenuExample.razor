@@ -15,11 +15,13 @@
     </MudCardContent>
 </MudCard>
 
-<MudMenu Dense PositionAtCursor @ref="_contextMenu">
-    <MudMenuItem>Cut</MudMenuItem>
-    <MudMenuItem>Copy</MudMenuItem>
-    <MudMenuItem>Paste</MudMenuItem>
-    <MudMenuItem>Delete</MudMenuItem>
+<MudMenu PositionAtCursor @ref="_contextMenu">
+    <MudMenuItem Label="Undo" />
+    <MudMenuItem Label="Redo" Disabled />
+    <MudDivider />
+    <MudMenuItem Label="Cut" />
+    <MudMenuItem Label="Copy" />
+    <MudMenuItem Label="Paste" />
 </MudMenu>
 
 @code {

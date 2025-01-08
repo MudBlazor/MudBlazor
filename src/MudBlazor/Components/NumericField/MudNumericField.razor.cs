@@ -8,6 +8,7 @@ using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Services;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 #nullable enable
@@ -28,16 +29,23 @@ namespace MudBlazor
         private bool _maxHasValue = false;
         private bool _minHasValue = false;
         private bool _stepHasValue = false;
+        private bool _cultureHasValue = false;
         private MudInput<string> _elementReference = null!;
         private string _elementId = Identifier.Create("numericField");
 
         private Comparer _comparer = new(CultureInfo.InvariantCulture);
+        private readonly ParameterState<CultureInfo> _cultureInfo;
 
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
         public MudNumericField()
         {
+            using var registerScope = CreateRegisterScope();
+            _cultureInfo = registerScope.RegisterParameter<CultureInfo>(nameof(Culture))
+                .WithParameter(() => Culture)
+                .WithChangeHandler((x) => _cultureHasValue = x.Value is not null);
+
             Validation = new Func<T, Task<bool>>(ValidateInput);
             #region parameters default depending on T
 
@@ -130,6 +138,9 @@ namespace MudBlazor
                 .AddClass(HideSpinButtons ? "mud-input-nospin" : "mud-input-showspin")
                 .AddClass(Class)
                 .Build();
+
+        private bool IsNumberMode => InputMode == InputMode.numeric || InputMode == InputMode.@decimal;
+        private bool IsFormatted => Pattern is not null || Format is not null || _cultureHasValue;
 
         /// <inheritdoc />
         [ExcludeFromCodeCoverage]
@@ -278,18 +289,23 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                var options = new KeyInterceptorOptions(
-                    "mud-input-slot",
-                    [
-                        // prevent scrolling page, instead increment
-                        new("ArrowUp", preventDown: "key+none"),
-                        // prevent scrolling page, instead decrement
-                        new("ArrowDown", preventDown: "key+none"),
-                        // prevent dead keys like ^ ` ´ etc
-                        new("Dead", preventDown: "key+any"),
-                        // prevent input of all other characters except allowed, like [0-9.,-+]
-                        new($"/^(?!{(Pattern ?? "[0-9]").TrimEnd('*')}).$/", preventDown: "key+none|key+shift|key+alt")
-                    ]);
+                var keyOptions = new List<KeyOptions>
+                {
+                    // prevent scrolling page, instead increment
+                    new("ArrowUp", preventDown: "key+none"),
+                    // prevent scrolling page, instead decrement
+                    new("ArrowDown", preventDown: "key+none"),
+                     // prevent dead keys like ^ ` ´ etc
+                    new("Dead", preventDown: "key+any"),
+                };
+
+                if (Pattern != null)
+                {
+                    //prevent inputs that do not match the pattern
+                    keyOptions.Add(new($"/^(?!{Pattern.TrimEnd('*')}).$/", preventDown: "key+none|key+shift|key+alt"));
+                }
+
+                var options = new KeyInterceptorOptions("mud-input-slot", keyOptions.ToArray());
 
                 await KeyInterceptorService.SubscribeAsync(_elementId, options, KeyObserver.KeyDownIgnore(), KeyObserver.KeyUpIgnore());
             }
@@ -432,10 +448,10 @@ namespace MudBlazor
         /// The regular expression used to constrain values.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>[0-9,.\-]</c>, which will show a numerical keyboard on Safari.  Must be a valid JavaScript regular expression.  To allow only numbers (with no signs or commas), you can use <c>[0-9.]</c>.
+        /// Defaults to <c>null</c>, which will show a numerical keyboard on Safari.  Must be a valid JavaScript regular expression.  To allow only numbers (with no signs or commas), you can use <c>[0-9.]</c>.
         /// </remarks>
         [Parameter]
-        public override string? Pattern { get; set; } = @"[0-9,.\-]";
+        public override string? Pattern { get; set; } = null;
 
         private string GetCounterText() => Counter switch
         {

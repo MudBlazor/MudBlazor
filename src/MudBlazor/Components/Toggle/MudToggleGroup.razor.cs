@@ -42,9 +42,6 @@ namespace MudBlazor
             _size = registerScope.RegisterParameter<Size>(nameof(Size))
                 .WithParameter(() => Size)
                 .WithChangeHandler(OnParameterChanged);
-            _rounded = registerScope.RegisterParameter<bool>(nameof(Rounded))
-                .WithParameter(() => Rounded).
-                WithChangeHandler(OnParameterChanged);
             _checkMark = registerScope.RegisterParameter<bool>(nameof(CheckMark))
                 .WithParameter(() => CheckMark)
                 .WithChangeHandler(OnParameterChanged);
@@ -64,7 +61,6 @@ namespace MudBlazor
         private readonly ParameterState<bool> _delimiters;
         private readonly ParameterState<bool> _rtl;
         private readonly ParameterState<Size> _size;
-        private readonly ParameterState<bool> _rounded;
         private readonly ParameterState<bool> _checkMark;
         private readonly ParameterState<bool> _fixedContent;
         private readonly ParameterState<bool> _disabled;
@@ -74,8 +70,6 @@ namespace MudBlazor
             .AddClass("mud-toggle-group-horizontal", !Vertical)
             .AddClass("mud-toggle-group-vertical", Vertical)
             .AddClass($"mud-toggle-group-size-{Size.ToDescriptionString()}")
-            .AddClass("rounded", !Rounded)
-            .AddClass("rounded-xl", Rounded)
             .AddClass("mud-toggle-group-rtl", RightToLeft)
             .AddClass($"border mud-border-{Color.ToDescriptionString()} border-solid", Outlined)
             .AddClass("mud-disabled", Disabled)
@@ -143,13 +137,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public bool Vertical { get; set; }
-
-        /// <summary>
-        /// If true, the first and last item will be rounded.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.List.Appearance)]
-        public bool Rounded { get; set; }
 
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }

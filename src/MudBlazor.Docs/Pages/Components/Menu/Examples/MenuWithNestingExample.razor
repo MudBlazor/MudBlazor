@@ -1,71 +1,32 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudMenu Label="Open Nested Menu Example">
+<MudMenu Label="Open Nested Menu" Dense>
+    <MudMenuItem Label="Add reaction" />
+    <MudMenuItem Label="Add bookmark" />
 
-    <MudMenuItem>Add reaction</MudMenuItem>
+    <MudMenu Label="Format">
+        <MudMenu Label="Text" StartIcon="@Icons.Material.Filled.FormatBold">
+            <MudMenuItem Label="Bold" Icon="@Icons.Material.Filled.FormatBold" />
+            <MudMenuItem Label="Italic" Icon="@Icons.Material.Filled.FormatItalic" />
+            <MudMenuItem Label="Underline" Icon="@Icons.Material.Filled.FormatUnderlined" />
 
-    <MudMenuItem>Add bookmark</MudMenuItem>
-
-    <MudMenu AnchorOrigin="Origin.TopRight" ActivationEvent="@MouseEvent.MouseOver">
-        <ActivatorContent>
-            <MudMenuItem>Format ></MudMenuItem>
-        </ActivatorContent>
-
-        <ChildContent>
-            <MudMenu AnchorOrigin="Origin.TopRight" ActivationEvent="@MouseEvent.MouseOver">
-                <ActivatorContent>
-                    <MudMenuItem>Text ></MudMenuItem>
-                </ActivatorContent>
-
-                <ChildContent>
-                    <MudMenuItem>Bold</MudMenuItem>
-
-                    <MudMenuItem>Italic</MudMenuItem>
-
-                    <MudMenuItem>Underline</MudMenuItem>
-
-                    <MudMenu AnchorOrigin="Origin.TopRight" ActivationEvent="@MouseEvent.MouseOver">
-                        <ActivatorContent>
-                            <MudMenuItem>Size ></MudMenuItem>
-                        </ActivatorContent>
-
-                        <ChildContent>
-                            <MudMenuItem>Increase font size</MudMenuItem>
-
-                            <MudMenuItem>Decrease font size</MudMenuItem>
-                        </ChildContent>
-                    </MudMenu>
-                </ChildContent>
+            <MudMenu Label="Size">
+                <MudMenuItem Label="Increase font size" />
+                <MudMenuItem Label="Decrease font size" />
             </MudMenu>
+        </MudMenu>
 
-            <MudMenu AnchorOrigin="Origin.TopRight" ActivationEvent="@MouseEvent.MouseOver">
-                <ActivatorContent>
-                    <MudMenuItem>Points ></MudMenuItem>
-                </ActivatorContent>
+        <MudMenu Label="Points">
+            <MudMenuItem Label="Bullet" Icon="@Icons.Material.Filled.FormatListBulleted" IconColor="Color.Secondary" />
+            <MudMenuItem Label="Number" Icon="@Icons.Material.Filled.FormatListNumbered" IconColor="Color.Secondary" />
+        </MudMenu>
 
-                <ChildContent>
-                    <MudMenuItem>Bullet</MudMenuItem>
+        <MudMenu Label="Alignment">
+            <MudMenuItem Label="Left" Icon="@Icons.Material.Filled.FormatAlignLeft" IconColor="Color.Tertiary" />
+            <MudMenuItem Label="Right" Icon="@Icons.Material.Filled.FormatAlignRight" IconColor="Color.Tertiary" />
+        </MudMenu>
 
-                    <MudMenuItem>Number</MudMenuItem>
-                </ChildContent>
-            </MudMenu>
-
-            <MudMenu AnchorOrigin="Origin.TopRight" ActivationEvent="@MouseEvent.MouseOver">
-                <ActivatorContent>
-                    <MudMenuItem>Alignment ></MudMenuItem>
-                </ActivatorContent>
-
-                <ChildContent>
-                    <MudMenuItem>Left</MudMenuItem>
-
-                    <MudMenuItem>Right</MudMenuItem>
-                </ChildContent>
-            </MudMenu>
-
-            <MudMenuItem>Clear formatting</MudMenuItem>
-
-            <MudMenuItem>Headers and footers</MudMenuItem>
-        </ChildContent>
+        <MudMenuItem Label="Clear formatting" />
+        <MudMenuItem Label="Headers and footers" />
     </MudMenu>
-
 </MudMenu>

@@ -13,7 +13,7 @@
     {
         @* No content was set so no need to render anything *@
     }
-    else if (ActivatorContent != null)
+    else if (ActivatorContent is not null)
     {
         <CascadingValue Value="@((IActivatable)this)" IsFixed="true">
             <div @onclick="ToggleMenuAsync" disabled="@Disabled" class="@ActivatorClassname">
@@ -23,23 +23,40 @@
     }
     else if (string.IsNullOrEmpty(Icon))
     {
-        <MudButton StartIcon="@StartIcon"
-                   EndIcon="@EndIcon"
-                   IconColor="@IconColor"
-                   Color="@Color"
-                   Size="@Size"
-                   Variant="@Variant"
-                   Disabled="@Disabled"
-                   Ripple="@Ripple"
-                   DropShadow="@DropShadow"
-                   OnClick="@ToggleMenuAsync"
-                   aria-label="@AriaLabel">
-            @Label
-        </MudButton>
+        if (ParentMenu is null)
+        {
+            <MudButton Class="mud-menu-button-activator"
+                       StartIcon="@StartIcon"
+                       EndIcon="@EndIcon"
+                       IconColor="@IconColor"
+                       Color="@Color"
+                       Size="@Size"
+                       Variant="@Variant"
+                       Disabled="@Disabled"
+                       Ripple="@Ripple"
+                       DropShadow="@DropShadow"
+                       OnClick="@ToggleMenuAsync"
+                       aria-label="@AriaLabel">
+                @Label
+            </MudButton>
+        }
+        else
+        {
+            <MudMenuItem Class="mud-menu-sub-menu-activator"
+                         Icon="@StartIcon"
+                         IconColor="@IconColor"
+                         Disabled="@Disabled"
+                         OnClick="OpenSubMenuAsync"
+                         AutoClose="false"
+                         aria-label="@AriaLabel">
+                @Label
+            </MudMenuItem>
+        }
     }
     else
     {
-        <MudIconButton Variant="@Variant"
+        <MudIconButton Class="mud-menu-icon-button-activator"
+                       Variant="@Variant"
                        Icon="@Icon"
                        Color="@Color"
                        Size="@Size"
@@ -55,10 +72,11 @@
                 Class="@PopoverClassname"
                 Style="@Stylename"
                 MaxHeight="@MaxHeight"
-                AnchorOrigin="@(PositionAtCursor ? Origin.TopLeft : AnchorOrigin)"
+                AnchorOrigin="@GetAnchorOrigin()"
                 TransformOrigin="@TransformOrigin"
                 RelativeWidth="@FullWidth"
-                DropShadow="@DropShadow">
+                DropShadow="@DropShadow"
+                Duration="@(GetDense() ? 0 : MudGlobal.TransitionDefaults.Duration.TotalMilliseconds)">
         <CascadingValue Value="@this">
             <MudList T="object"
                      Class="@ListClassname"
