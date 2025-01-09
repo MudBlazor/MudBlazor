@@ -1,0 +1,39 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudChip T="string"
+         Href="https://github.com/MudBlazor/MudBlazor"
+         Target="_blank"
+         Variant="Variant.Filled"
+         Icon="@Icons.Custom.Brands.GitHub"
+         Disabled="_disabled">
+    GitHub
+</MudChip>
+
+<MudChip T="string"
+         Href="https://github.com/MudBlazor/MudBlazor"
+         Target="_blank"
+         Variant="Variant.Filled"
+         Icon="@Icons.Custom.Brands.GitHub"
+         Disabled="_disabled">
+    With Icon
+</MudChip>
+
+<MudChip T="string"
+         Href="https://github.com/MudBlazor/MudBlazor"
+         Target="_blank"
+         Variant="Variant.Filled"
+         Icon="@Icons.Custom.Brands.GitHub"
+         Disabled="_disabled">
+    <AvatarContent>
+        <MudAvatar>GH</MudAvatar>
+    </AvatarContent>
+    <ChildContent>With Avatar</ChildContent>
+</MudChip>
+
+<br />
+
+<MudSwitch Color="Color.Primary" @bind-Value="_disabled" Label="Disable" />
+
+@code {
+    bool _disabled = false;
+}

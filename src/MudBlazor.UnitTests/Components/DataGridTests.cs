@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
 using MudBlazor.UnitTests.TestComponents.DataGrid;
+using MudBlazor.UnitTests.TestComponents.Table;
 using MudBlazor.Utilities.Clone;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
@@ -2995,12 +2996,43 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGridLoadingTest()
+        public void DataGridLoadingContentTest()
         {
-            var comp = Context.RenderComponent<DataGridLoadingTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridLoadingTest.Model>>();
+            var comp = Context.RenderComponent<DataGridLoadingContentTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridLoadingContentTest.Model>>();
 
             dataGrid.Find("th.mud-table-empty-row div").TextContent.Trim().Should().Be("Data loading, please wait...");
+        }
+
+        /// <summary>
+        /// Verifies that enabling the loading switch adds a new row to the table header without altering the table body.
+        /// </summary>
+        [Test]
+        public void DataGridLoadingProgressTest()
+        {
+            // Render the component
+            var comp = Context.RenderComponent<DataGridLoadingProgressTest>();
+
+            // Initial count of header and body rows
+            var initialHeaderRows = comp.FindAll("thead tr");
+            var initialBodyRows = comp.FindAll("tbody tr");
+
+            // Verify initial state: 1 row in the header and 3 rows in the body
+            initialHeaderRows.Count.Should().Be(1);
+            initialBodyRows.Count.Should().Be(3);
+
+            // Toggle the loading switch to the 'loading' state
+            var loadingSwitch = comp.Find("#loadingSwitch");
+            loadingSwitch.Change(true);
+
+            // Count rows after toggling the switch
+            var updatedHeaderRows = comp.FindAll("thead tr");
+            var updatedBodyRows = comp.FindAll("tbody tr");
+
+            // Verify updated state:
+            // 2 rows in the header (original + loading row) and 3 rows in the body (unchanged)
+            updatedHeaderRows.Count.Should().Be(2);
+            updatedBodyRows.Count.Should().Be(3);
         }
 
         [Test]

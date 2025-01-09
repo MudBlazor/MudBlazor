@@ -4,7 +4,10 @@
 
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components;
+using MudBlazor.Charts;
 using MudBlazor.UnitTests.TestComponents.Charts;
+using MudBlazor.Utilities;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -422,5 +425,150 @@ namespace MudBlazor.UnitTests.Components
             fontSize.Should().NotBeNull();
             double.Parse(fontSize).Should().BeGreaterThan(0);
         }
+
+        [Test]
+        public void HeatMap_ShouldGenerateCorrectColorPaletteForDifferentInputs()
+        {
+            // Single color palette
+            var singleColorOptions = new ChartOptions { ChartPalette = ["#587934"] };
+            var singleColorComp = Context.RenderComponent<MudChart>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.HeatMap)
+                .Add(p => p.ChartOptions, singleColorOptions)
+                .Add(p => p.ChartSeries, [
+                    new() { Name = "Series 1", Data = [1, 2, 3] }
+                ])
+            );
+
+            var singleColorPalette = singleColorComp.Instance.ChartOptions.ChartPalette;
+            singleColorPalette.Should().HaveCount(1);
+            singleColorPalette.Should().AllBeOfType<string>();
+
+            // Multi-color palette
+            var multiColorOptions = new ChartOptions { ChartPalette = ["#587934", "#FF0000", "#00FF00"] };
+            var multiColorComp = Context.RenderComponent<MudChart>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.HeatMap)
+                .Add(p => p.ChartOptions, multiColorOptions)
+                .Add(p => p.ChartSeries, [
+                    new() { Name = "Series 1", Data = [1, 2, 3] }
+                ])
+            );
+
+            var multiColorPalette = multiColorComp.Instance.ChartOptions.ChartPalette;
+            multiColorPalette.Should().HaveCount(3);
+            multiColorPalette.Should().AllBeOfType<string>();
+        }
+
+        [Test]
+        [TestCase(null, "")]
+        [TestCase(0, "0")]
+        [TestCase(1.23456, "1.234")]
+        [TestCase(1000.123, "1000.")]
+        public void HeatMap_ShouldFormatValuesCorrectly(double? input, string expected)
+        {
+            var series = new List<ChartSeries>
+            {
+                new() { Name = "Series 1", Data = input.HasValue ? [input.Value] : [] }
+            };
+
+            var options = new ChartOptions { ValueFormatString = "G" };
+
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.HeatMap)
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, options)
+            );
+
+            var cellTexts = comp.FindAll(".mud-chart-cell text");
+
+            if (input.HasValue)
+            {
+                cellTexts.Should().NotBeEmpty();
+                cellTexts[0].TextContent.Trim().Should().Be(expected);
+            }
+            else
+            {
+                cellTexts.Should().BeEmpty();
+            }
+        }
+
+        [Test]
+        public void HeatMap_ShouldHandleCustomHeatMapCellOverrides()
+        {
+            static void CellFragment(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder builder)
+            {
+                builder.OpenComponent<MudHeatMapCell>(0);
+                builder.AddAttribute(1, "Row", 0);
+                builder.AddAttribute(2, "Column", 0);
+                builder.AddAttribute(3, "Value", 10.05);
+                builder.AddAttribute(6, "MudColor", new MudColor("#FF5733"));
+                builder.AddAttribute(7, "ChildContent", (RenderFragment)(childBuilder =>
+                {
+                    childBuilder.AddContent(0, "Custom Content");
+                }));
+                builder.CloseComponent();
+            }
+
+            var series = new List<ChartSeries>
+            {
+                new() { Name = "Series 1", Data = [1, 2, 3] },
+                new() { Name = "Series 2", Data = [4, 5, 6] }
+            };
+
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.HeatMap)
+                .Add(p => p.ChartSeries, series)
+                .AddChildContent(CellFragment) // Add custom cells as child content
+            );
+
+            // Verify that the custom cell content is rendered
+            var customContent = comp.Find(".mud-chart-cell div");
+            customContent.TextContent.Trim().Should().Be("Custom Content");
+
+            // Verify that the custom cell has the correct color
+            var customCell = comp.Find(".mud-chart-cell rect");
+            customCell.GetAttribute("fill").Should().Contain(new MudColor("#FF5733").ToString(MudColorOutputFormats.RGBA));
+
+            // Verify custom value override
+            var customValue = comp.Find(".mud-chart-cell title");
+            customValue.TextContent.Trim().Should().Be("10.05");
+        }
+
+        [Test]
+        public void MudHeatMapCell_ShouldThrowExceptionIfNotInMudChart()
+        {
+            // Attempt to render MudHeatMapCell outside of MudChart
+            var exception = Assert.Throws<InvalidOperationException>(() =>
+                Context.RenderComponent<MudHeatMapCell>(parameters => parameters
+                    .Add(p => p.Row, 0)
+                    .Add(p => p.Column, 0)
+                )
+            );
+
+            // Verify that the exception message is appropriate
+            exception.Message.Should().Contain("MudHeatMapCell must be used inside a MudChart component.");
+        }
+
+        [TestCase(Position.Top)]
+        [TestCase(Position.Bottom)]
+        [TestCase(Position.Left)]
+        [TestCase(Position.Right)]
+        [TestCase(Position.Start)]
+        [TestCase(Position.End)]
+        [TestCase(Position.Center)]
+        [Test]
+        public void HeatMap_ShouldCorrectBadPositions(Position pos)
+        {
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.HeatMap)
+                .Add(p => p.LegendPosition, pos)
+                .Add(p => p.ChartSeries, [
+                    new() { Name = "Series 1", Data = [1, 2, 3] }
+                ])
+            );
+
+            var heatMap = comp.FindComponent<HeatMap>();
+            heatMap.Instance._legendPosition.Should().BeOneOf(Position.Top, Position.Bottom, Position.Left, Position.Right);
+        }
+
     }
 }

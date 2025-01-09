@@ -27,14 +27,14 @@
 }
 
 .mud-menu-list {
-  /*padding: 8px 0;*/
-
-  &.mud-menu-list-dense {
-    /*padding: 0;*/
-  }
+  padding: 4px 0;
 
   > .mud-menu {
     width: 100%;
+  }
+
+  > .mud-divider {
+    margin: 4px 0;
   }
 }
 
@@ -45,26 +45,30 @@
   box-sizing: border-box;
   text-align: start;
   align-items: center;
-  padding: 8px 16px;
   justify-content: flex-start;
   text-decoration: none;
+  padding: 8px 12px;
+
+  > .mud-icon-root {
+    color: var(--mud-palette-action-default);
+  }
 
   .mud-menu-item-icon {
-    color: var(--mud-palette-action-default);
     display: inline-flex;
     flex-shrink: 0;
-    margin: 0 20px 0 8px;
+    margin-inline-end: 12px;
   }
 
   .mud-menu-item-text {
     flex: 1 1 auto;
-    min-width: 0;
-    margin-top: 4px;
-    margin-bottom: 4px;
+    margin: 4px 0;
+  }
+
+  .mud-menu-submenu-icon {
   }
 
   &.mud-menu-item-dense {
-    padding: 4px 16px;
+    padding: 2px 12px;
   }
 
   &.mud-disabled {
@@ -76,4 +80,9 @@
       color: var(--mud-palette-action-disabled) !important;
     }
   }
+}
+
+// If any menu item has an icon, then give the other ones the same gutters.
+.mud-menu-list:has(.mud-menu-item-icon) .mud-menu-item:not(:has(.mud-menu-item-icon)) .mud-menu-item-text {
+  margin-inline-start: 36px;
 }

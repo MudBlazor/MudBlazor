@@ -229,3 +229,24 @@
   width: 100%;
   margin: 0 !important;
 }
+
+.api-type-hierarchy {
+  .mud-link {
+    flex-grow: 1;
+    color: unset !important;
+  }
+
+  .mud-treeview-group {
+    border-left: 1px solid var(--mud-palette-text-primary);
+  }
+
+  .mud-treeview-item-content {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .mud-treeview .mud-treeview-item {
+    margin-left: 8px;
+  }
+}

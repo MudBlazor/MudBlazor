@@ -97,6 +97,14 @@
                                 }
                             </tr>
                         }
+                        @if (Loading)
+                        {
+                            <tr>
+                                <th colspan="1000" class="mud-table-loading">
+                                    <MudProgressLinear Color="@LoadingProgressColor" Class="mud-table-loading-progress" Indeterminate="true" />
+                                </th>
+                            </tr>
+                        }
                     </thead>
                     <tbody class="mud-table-body">
                         @if (_columnsPanelVisible)
@@ -192,14 +200,6 @@
                                     <MudButton OnClick="@ShowAllColumnsAsync" Color="@Color.Primary">@Localizer[LanguageResource.MudDataGrid_ShowAll]</MudButton>
                                 </MudStack>
                             </MudPopover>
-                        }
-                        @if (Loading)
-                        {
-                            <tr>
-                                <td colspan="1000" class="mud-table-loading">
-                                    <MudProgressLinear Color="@LoadingProgressColor" Class="mud-table-loading-progress" Indeterminate="true" />
-                                </td>
-                            </tr>
                         }
 
                         @{
