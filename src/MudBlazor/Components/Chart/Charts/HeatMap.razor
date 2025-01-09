@@ -1,8 +1,9 @@
 ﻿@namespace MudBlazor.Charts
 @inherits MudCategoryChartBase
+@inject InternalMudLocalizer Localizer
 
 <svg @attributes="UserAttributes" class="mud-chart-heat mud-ltr" width="@MudChartParent?.Width" height="@MudChartParent?.Height" viewBox="0 0 650 350">
-    @if (_options is {EnableSmoothGradient: true })
+    @if (_options is { EnableSmoothGradient: true })
     {
         <defs>
             @* 4-point gradients for each cell *@
@@ -41,7 +42,7 @@
 
     @for (int row = 0; row < _series.Count; row++)
     {
-        var padding = _options is {EnableSmoothGradient: true } ? 0 : CellPadding;
+        var padding = _options is { EnableSmoothGradient: true } ? 0 : CellPadding;
 
         if (!_series[row].Visible) continue;
         var rowLabel = _series[row].Name;
@@ -56,11 +57,11 @@
             if (cellWidth < CellMinSize)
             {
                 cellWidth = Math.Max(CellMinSize, (BoundWidth - _horizontalStartSpace - _horizontalEndSpace - padding * (SeriesLength - 1)) / SeriesLength);
-            }            
+            }
             var x = (col * (cellWidth + padding)) + _horizontalStartSpace;
 
             // Gradient Overlays
-            @if (_options is {EnableSmoothGradient: true })
+            @if (_options is { EnableSmoothGradient: true })
             {
                 // Apply the 4 gradient overlays with partial opacity
                 <rect x="@x" y="@y" width="@cellWidth" height="@cellHeight" fill="url(#gradient-topcenter-@row-@col)" opacity="0.25" />
@@ -69,19 +70,51 @@
                 <rect x="@x" y="@y" width="@cellWidth" height="@cellHeight" fill="url(#gradient-left-@row-@col)" opacity="0.25" />
             }
 
+
             <g class="mud-chart-cell">
                 <!-- Group containing both the rectangle and the text -->
                 <g>
-                    <rect x="@x" y="@y" width="@cellWidth" height="@cellHeight"
-                          fill="@(_options is { EnableSmoothGradient: true } ? "transparent" : GetColorForValue(cell?.Value))" />
-                    @if (_options is { ShowLabels: true } && cell is { Value: not null })
+                    @{
+
+                        var cellColor = _options is { EnableSmoothGradient: true }
+                                ? "transparent"
+                                : cell?.MudColor?.ToString(Utilities.MudColorOutputFormats.RGBA) 
+                                    ?? GetColorForValue(cell?.Value);
+                    }
+                    <rect x="@x" y="@y" width="@cellWidth" height="@cellHeight"                          
+                          fill="@(cellColor)" />
+                    @if (_options is { ShowLabels: true } && cell is { Value: not null } && cell is { CustomFragment: null })
                     {
                         @((MarkupString)@$"<text font-size='{_dynamicFontSize}' x='{x + cellWidth / 2}' y='{y + cellHeight / 2}' dominant-baseline='middle' text-anchor='middle'>{FormatValueForDisplay(cell?.Value)}</text>")
+                    }
+                    else if (cell is { CustomFragment: not null })
+                    {
+                        @if (cell.Width.HasValue || cell.Height.HasValue)
+                        {
+                            // If specific width/height are provided, scale to cell dimensions
+                            var tempWidth = cell.Width ?? cellWidth;
+                            var tempHeight = cell.Height ?? cellHeight;
+
+                            <svg x="@(x)" y="@(y)" width="@(cellWidth)" height="@(cellHeight)"
+                                 viewBox="0 0 @(tempWidth) @(tempHeight)"
+                                 preserveAspectRatio="xMidYMid meet">
+                                @cell.CustomFragment
+                            </svg>
+                        }
+                        else
+                        {
+                            // If no specific width/height, use cell dimensions with padding
+                            <foreignObject x="@x" y="@y" width="@cellWidth" height="@cellHeight">
+                                <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%; height:100%;display:flex; align-items:center; justify-content:center;">
+                                    @cell.CustomFragment
+                                </div>
+                            </foreignObject>
+                        }
                     }
                 </g>
 
                 <!-- Tooltip applied to the group -->
-                @if (_options is {ShowToolTips: true } && cell is { Value: not null })
+                @if (_options is { ShowToolTips: true } && cell is { Value: not null })
                 {
                     <title>@cell.Value.ToString()</title>
                 }
@@ -116,7 +149,7 @@
             </g>
         }
     }
-    @if (_options is {ShowLegend: true })
+    @if (_options is { ShowLegend: true })
     {
         var (legendX, legendY) = GetLegendPosition();
         var labelFontSize = LegendFontSize - 2;
@@ -124,7 +157,7 @@
         {
             case Position.Top or Position.Bottom:
                 {
-                    var legendPadding = _options is {ShowLegendLabels: true } ? CellPadding * 2 : CellPadding;
+                    var legendPadding = _options is { ShowLegendLabels: true } ? CellPadding * 2 : CellPadding;
                     var totalChars = 8;
                     // width is horizontal, cellpadding between the word Less and the middle section and the last word
                     var textWidth = (totalChars * LegendFontSize * AverageCharWidthMultiplier) + (CellPadding * 2);
@@ -133,18 +166,18 @@
 
                     <g transform="translate(@(legendX + offsetX), @legendY)">
                         <!-- "Less" label -->
-                        <text class="mud-charts-xaxis" x="0" y="0" dominant-baseline="middle" text-anchor="start" font-size="@LegendFontSize">Less</text>
+                        <text class="mud-charts-xaxis" x="0" y="0" dominant-baseline="middle" text-anchor="start" font-size="@LegendFontSize">@Localizer[Resources.LanguageResource.HeatMap_Less]</text>
                         @for (int i = 0; i < _legends.Count; i++)
                         {
                             var x = (textWidth / 2) + (i * (LegendBox + legendPadding));
                             <g transform="translate(@x, 0)" class="mud-chart-heatmap-legend">
                                 <rect x="0" y="@(-LegendBox / 2)" width="@LegendBox" height="@LegendBox" fill="@_legends[i].color">
-                                    @if (_options is {ShowToolTips: true })
+                                    @if (_options is { ShowToolTips: true })
                                     {
                                         <title>@_legends[i].value</title>
                                     }
                                 </rect>
-                                @if (_options is {ShowLegendLabels: true })
+                                @if (_options is { ShowLegendLabels: true })
                                 {
                                     double x1 = LegendBox / 2, x2 = x1, y1 = _legendPosition == Position.Top ? -LegendBox / 2 : LegendBox / 2;
                                     double y2 = _legendPosition == Position.Top ? -LegendBox / 2 - LegendLineLength : LegendBox / 2 + LegendLineLength;
@@ -157,7 +190,7 @@
                         }
 
                         <!-- "More" label -->
-                        <text class="mud-charts-xaxis" x="@((textWidth / 2) + ((_legends.Count) * (LegendBox + legendPadding)))" y="0" dominant-baseline="middle" text-anchor="start" font-size="@LegendFontSize">More</text>
+                        <text class="mud-charts-xaxis" x="@((textWidth / 2) + ((_legends.Count) * (LegendBox + legendPadding)))" y="0" dominant-baseline="middle" text-anchor="start" font-size="@LegendFontSize">@Localizer[Resources.LanguageResource.HeatMap_More]</text>
                     </g>
                 }
                 break;
@@ -170,19 +203,19 @@
 
                     <g transform="translate(@legendX, @(legendY + offsetY))">
                         <!-- "Less" label -->
-                        <text class="mud-charts-xaxis" x="0" y="@((textHeight / 2) - CellPadding - LegendBox)" dominant-baseline="middle" text-anchor="start" font-size="@LegendFontSize">Less</text>
+                        <text class="mud-charts-xaxis" x="0" y="@((textHeight / 2) - CellPadding - LegendBox)" dominant-baseline="middle" text-anchor="start" font-size="@LegendFontSize">@Localizer[Resources.LanguageResource.HeatMap_Less]</text>
 
                         @for (int i = 0; i < _legends.Count; i++)
                         {
                             var y = (textHeight / 2) + (i * (LegendBox + CellPadding));
                             <g transform="translate(0, @y)" class="mud-chart-heatmap-legend">
                                 <rect x="0" y="@(-LegendBox / 2)" width="@LegendBox" height="@LegendBox" fill="@_legends[i].color">
-                                    @if (_options is {ShowToolTips: true })
+                                    @if (_options is { ShowToolTips: true })
                                     {
                                         <title>@_legends[i].value</title>
                                     }
                                 </rect>
-                                @if (_options is {ShowLegendLabels: true })
+                                @if (_options is { ShowLegendLabels: true })
                                 {
                                     double y1 = 0, y2 = 0, x1 = _legendPosition == Position.Right ? LegendBox : 0;
                                     double x2 = _legendPosition == Position.Right ? LegendBox + LegendLineLength : -LegendLineLength;
@@ -194,7 +227,7 @@
                         }
 
                         <!-- "More" label -->
-                        <text class="mud-charts-xaxis" x="0" y="@((textHeight / 2) + ((_legends.Count) * (LegendBox + CellPadding)))" dominant-baseline="middle" text-anchor="start" font-size="@LegendFontSize">More</text>
+                        <text class="mud-charts-xaxis" x="0" y="@((textHeight / 2) + ((_legends.Count) * (LegendBox + CellPadding)))" dominant-baseline="middle" text-anchor="start" font-size="@LegendFontSize">@Localizer[Resources.LanguageResource.HeatMap_More]</text>
                     </g>
                 }
                 break;

@@ -1,6 +1,4 @@
 ﻿@page "/components/progress"
-@page "/components/MudProgressCircular"
-@page "/components/MudProgressLinear"
 
 <DocsPage>
     <DocsPageHeader Title="Progress" Component="@nameof(MudProgressCircular)" SubTitle="Progress indicators that either show the length of a process or unspecified wait time, also known as indeterminate state. The animation is done with SVGs and CSS.">
@@ -59,6 +57,15 @@
                     </SectionHeader>
                     <SectionContent Code="@nameof(ProgressCircularSizesExample)">
                         <ProgressCircularSizesExample />
+                    </SectionContent>
+                </DocsPageSection>
+
+                <DocsPageSection>
+                    <SectionHeader Title="Rounded">
+                        <Description></Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(ProgressCircularRoundedExample)" ShowCode="false">
+                        <ProgressCircularRoundedExample />
                     </SectionContent>
                 </DocsPageSection>
 

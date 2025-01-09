@@ -100,23 +100,6 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-input-error").Count.Should().Be(0);
         }
 
-        //This doesn't make any sense because you cannot set anything that's not a number
-        ///// <summary>
-        ///// Setting an invalid number should show the conversion error message
-        ///// </summary>
-        //[Test]
-        //public async Task NumericFieldConversionError()
-        //{
-        //    var comp = ctx.RenderComponent<MudNumericField<int?>>();
-        //    // print the generated html
-        //    //Console.WriteLine(comp.Markup);
-        //    comp.Find("input").Change("seventeen");
-        //    comp.Find("input").Blur();
-        //    //Console.WriteLine(comp.Markup);
-        //    comp.FindAll("p.mud-input-error").Count.Should().Be(1);
-        //    comp.Find("p.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
-        //}
-
         /// <summary>
         /// If Debounce Interval is null or 0, Value should change immediately
         /// </summary>
@@ -522,6 +505,7 @@ namespace MudBlazor.UnitTests.Components
             notImmediate.Blur();
             comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Text.Should().Be("1.234,00"));
             comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Value.Should().Be(1234.0));
+            comp.Markup.Should().Contain("type=\"text\" value=\"1.234,00\""); //ensure the numeric field continues to displays the value after blur
             notImmediate.Change("0");
             notImmediate.Blur();
             comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Text.Should().Be("0,00"));
@@ -535,6 +519,7 @@ namespace MudBlazor.UnitTests.Components
             immediate.Blur();
             comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Text.Should().Be("1,234.00"));
             comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Value.Should().Be(1234.0));
+            comp.Markup.Should().Contain("type=\"text\" value=\"1,234.00\""); //ensure the numeric field continues to displays the value after blur
             immediate.Input("0");
             immediate.Blur();
             comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Text.Should().Be("0.00"));
@@ -1002,6 +987,22 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find("input").HasAttribute("required").Should().BeTrue();
             comp.Find("input").GetAttribute("aria-required").Should().Be("true");
+        }
+
+        [Test]
+        public void Should_render_appropriate_type()
+        {
+            var comp = Context.RenderComponent<NumericFieldRenderTest>();
+            var field = comp.Find("#num-field-id");
+
+            comp.Markup.Should().NotContain("pattern");
+            field.GetAttribute("type").Should().Be("number");
+
+            var usePattern = Parameter(nameof(NumericFieldRenderTest.UsePattern), true);
+
+            comp.SetParametersAndRender(usePattern);
+            comp.Markup.Should().Contain("pattern");
+            field.GetAttribute("type").Should().Be("text");
         }
 
         [Test]

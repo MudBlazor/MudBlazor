@@ -1,7 +1,6 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
@@ -38,6 +37,11 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.SwipeArea.Behavior)]
         public bool PreventDefault { get; set; }
+
+        protected string Classname =>
+            new CssBuilder("mud-swipearea")
+                .AddClass(Class)
+                .Build();
 
         /// <inheritdoc />
         public override async Task SetParametersAsync(ParameterView parameters)

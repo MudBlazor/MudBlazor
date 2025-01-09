@@ -1,6 +1,5 @@
 ﻿@inherits LayoutComponentBase
 
-<MudThemeProvider Theme="@_customTheme"/>
 <MudPopoverProvider/>
 <MudDialogProvider/>
 <MudSnackbarProvider/>
@@ -8,12 +7,8 @@
 @Body
 
 @code {
-
-    private readonly MudTheme _customTheme = new()
+    static MainLayout()
     {
-        LayoutProperties = new LayoutProperties
-        {
-            DrawerWidthLeft = "350px"
-        }
-    };
+        MudGlobal.TooltipDefaults.Delay = TimeSpan.FromMilliseconds(500);
+    }
 }

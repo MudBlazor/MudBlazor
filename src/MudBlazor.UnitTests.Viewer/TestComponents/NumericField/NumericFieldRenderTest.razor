@@ -1,0 +1,16 @@
+﻿<MudNumericField id="num-field-id"
+                 Step="0.1M"
+                 Label="Numeric Input"
+                 Variant="Variant.Outlined"
+                 Margin="Margin.Dense"
+                 Clearable="true"
+                 Pattern="@(UsePattern ? "[0-9,.\\-]" : null)"/>
+
+<MudSwitch @bind-Value="@UsePattern" Label="Use Pattern"/>
+
+@code {
+    public static string __description__ = "Render as Type Number or Text";
+
+    [Parameter]
+    public bool UsePattern { get; set; }
+}

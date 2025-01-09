@@ -1,0 +1,100 @@
+﻿@using System.Threading
+@using MudBlazor
+
+<MudAppBar Color="Color.Primary" Fixed="false">
+    <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" />
+    <MudSpacer />
+    <MudMenu Label="Open AutoComplete Menu">
+        <ActivatorContent>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary">I am a button</MudButton>
+        </ActivatorContent>
+        <ChildContent>
+            <MudMenuItem AutoClose="false">
+                <MudAutocomplete @bind-Value="_value" SearchFunc="Search" />
+            </MudMenuItem>
+            <MudMenuItem Label="Usage" />
+            <MudMenuItem Label="Sign out" />
+        </ChildContent>
+    </MudMenu>
+    <MudMenu Label="Open AutoComplete Menu">
+        <ActivatorContent>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary">I am a button</MudButton>
+        </ActivatorContent>
+        <ChildContent>
+            <MudMenuItem AutoClose="false">
+                <MudSelect @bind-Value="_value">
+                    @foreach (var state in _states)
+                    {
+                        <MudSelectItem Value="state">@state</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudMenuItem>
+            <MudMenuItem Label="Usage" />
+            <MudMenuItem Label="Sign out" />
+        </ChildContent>
+    </MudMenu>
+</MudAppBar>
+
+<MudMenu Label="Open AutoComplete Menu">
+    <ActivatorContent>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary">I am a button</MudButton>
+    </ActivatorContent>
+    <ChildContent>
+        <MudMenuItem AutoClose="false">
+            <MudAutocomplete @bind-Value="_value" SearchFunc="Search" />
+        </MudMenuItem>
+        <MudMenuItem Label="Usage" />
+        <MudMenuItem Label="Sign out" />
+    </ChildContent>
+</MudMenu>
+
+<MudMenu Label="Open Select Menu">
+    <ActivatorContent>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary">I am a button</MudButton>
+    </ActivatorContent>
+    <ChildContent>
+        <MudMenuItem AutoClose="false">
+            <MudSelect @bind-Value="_value" >
+                @foreach (var state in _states)
+                {
+                    <MudSelectItem Value="state">@state</MudSelectItem>
+                }
+            </MudSelect>
+        </MudMenuItem>
+        <MudMenuItem Label="Usage" />
+        <MudMenuItem Label="Sign out" />
+    </ChildContent>
+</MudMenu>
+
+<MudAutocomplete @bind-Value="_value" SearchFunc="Search" />
+
+@code {
+    public static string __description__ = "Testing MudOverlay impact on MudAutoComplete when by itself, nested in mudmenu and nested in mudmenu in mudappbar";
+    string _value = string.Empty;
+    private string[] _states =
+    {
+        "Alabama", "Alaska", "Arizona", "Arkansas", "California",
+        "Colorado", "Connecticut", "Delaware", "Florida", "Georgia",
+        "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas",
+        "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts",
+        "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana",
+        "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico",
+        "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma",
+        "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota",
+        "Tennessee", "Texas", "Utah", "Vermont", "Virginia",
+        "Washington", "West Virginia", "Wisconsin", "Wyoming"
+    };
+
+    private async Task<IEnumerable<string>> Search(string value, CancellationToken token)
+    {
+        // In real life use an asynchronous function for fetching data from an API.
+        await Task.Delay(5, token);
+
+        // If text is null or empty, show complete list
+        if (string.IsNullOrEmpty(value))
+            return _states;
+
+        // Filter the states
+        return _states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+}

@@ -28,6 +28,13 @@ public abstract class MudChartBase : MudComponentBase
     [Category(CategoryTypes.Chart.Appearance)]
     public RenderFragment? CustomGraphics { get; set; }
 
+    /// <summary>
+    /// ChildContent for this component
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Chart.Appearance)]
+    public RenderFragment? ChildContent { get; set; }
+
     protected string Classname => new CssBuilder("mud-chart")
         .AddClass($"mud-chart-legend-{ConvertLegendPosition(LegendPosition).ToDescriptionString()}", ChartType != ChartType.HeatMap)
         .AddClass(Class)
@@ -106,7 +113,6 @@ public abstract class MudChartBase : MudComponentBase
             }
         }
     }
-
     internal void SetSelectedIndex(int index)
     {
         SelectedIndex = index;
@@ -136,4 +142,11 @@ public abstract class MudChartBase : MudComponentBase
     [Parameter]
     [Category(CategoryTypes.Chart.Behavior)]
     public bool CanHideSeries { get; set; } = false;
+
+    internal List<MudHeatMapCell> MudHeatMapCells { get; set; } = [];
+
+    internal void AddCell(MudHeatMapCell cell)
+    {
+        MudHeatMapCells.Add(cell);
+    }
 }

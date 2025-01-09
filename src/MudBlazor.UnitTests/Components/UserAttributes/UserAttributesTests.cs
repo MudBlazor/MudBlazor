@@ -22,6 +22,7 @@ namespace MudBlazor.UnitTests.UserAttributes
             Exclude(typeof(MudBreakpointProvider)); // just exposing a cascading value, no layout implications
             Exclude(typeof(MudPicker<>));       // Internal component, skip
             Exclude(typeof(MudRadioGroup<>));   // Wrapping component, skip
+            Exclude(typeof(MudOverlay));        // Sectioned component, skip
         }
 
         [Test]
@@ -45,7 +46,7 @@ namespace MudBlazor.UnitTests.UserAttributes
             // these components do not need to have user attributes
             var excludedComponents = new HashSet<string>()
             {
-                nameof(MudPopover), nameof(MudStep), nameof(MudContextualActionBar),
+                nameof(MudPopover), nameof(MudStep), nameof(MudContextualActionBar), nameof(MudHeatMapCell),
                 "Column`1", "FooterCell`1", "HeaderCell`1", "FilterHeaderCell`1", "SelectColumn`1",
                 "HierarchyColumn`1", "PropertyColumn`2", "TemplateColumn`1",
             };
@@ -74,7 +75,7 @@ namespace MudBlazor.UnitTests.UserAttributes
                 .ToArray();
         }
 
-        private static ConcurrentBag<Type> _excludedComponents = new();
+        private static ConcurrentBag<Type> _excludedComponents = [];
         private static void Exclude(Type componentType) => _excludedComponents.Add(componentType);
     }
 }

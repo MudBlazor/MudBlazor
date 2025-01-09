@@ -5,6 +5,7 @@
   overflow: hidden;
   box-sizing: border-box;
   border-width: 0;
+  border-radius: var(--mud-default-borderradius);
 
   & > .mud-toggle-item {
     box-shadow: none;

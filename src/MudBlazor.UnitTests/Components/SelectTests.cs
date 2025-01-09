@@ -88,6 +88,46 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => @switch.Instance.Value.Should().Be(false));
         }
 
+        [Test]
+        public async Task SelectTest_KeyDown_WhileClosed()
+        {
+            var comp = Context.RenderComponent<SelectFocusAndTypeTest>();
+            var select = comp.FindComponent<MudSelect<string>>();
+
+            //open menu on keydown
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "t", Type = "keydown" }));
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+            comp.WaitForAssertion(() => select.Instance.Value.Should().Be("Tennessee"));
+
+            //cycle through matching results
+            await Task.Delay(210);
+            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "t", Type = "keydown" }));
+            comp.WaitForAssertion(() => select.Instance.Value.Should().Be("Texas"));
+            await Task.Delay(210);
+            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "t", Type = "keydown" }));
+            comp.WaitForAssertion(() => select.Instance.Value.Should().Be("Tennessee"));
+
+            //multi-string search
+            await Task.Delay(210);
+            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "c", Type = "keydown" }));
+            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "o", Type = "keydown" }));
+            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "l", Type = "keydown" }));
+            comp.WaitForAssertion(() => select.Instance.Value.Should().Be("Colorado"));
+
+            //paused search
+            await Task.Delay(210);
+            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "i", Type = "keydown" }));
+            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "o", Type = "keydown" }));
+            comp.WaitForAssertion(() => select.Instance.Value.Should().Be("Iowa"));
+
+            await Task.Delay(210);
+            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "i", Type = "keydown" }));
+            await Task.Delay(210);
+            await comp.InvokeAsync(() => select.Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "o", Type = "keydown" }));
+            comp.WaitForAssertion(() => select.Instance.Value.Should().Be("Ohio"));
+        }
+
         /// <summary>
         /// Click should not close the menu and selecting multiple values should update the bindable value with a comma separated list.
         /// </summary>

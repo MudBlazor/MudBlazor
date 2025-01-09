@@ -49,6 +49,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("Avatar", typeof(MudAvatar), typeof(MudAvatarGroup))
             .AddItem("Alert", typeof(MudAlert))
             .AddItem("Card", typeof(MudCard), typeof(MudCardActions), typeof(MudCardContent), typeof(MudCardHeader), typeof(MudCardMedia))
+            .AddItem("Chat", typeof(MudChat), typeof(MudChatHeader), typeof(MudChatBubble), typeof(MudChatFooter))
             .AddItem("Divider", typeof(MudDivider))
             .AddItem("Expansion Panels", typeof(MudExpansionPanels), typeof(MudExpansionPanel))
             .AddItem("Image", typeof(MudImage))
@@ -57,7 +58,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("Paper", typeof(MudPaper))
             .AddItem("Rating", typeof(MudRating), typeof(MudRatingItem))
             .AddItem("Skeleton", typeof(MudSkeleton))
-            .AddItem("Table", typeof(MudTableBase), typeof(MudTable<T>), typeof(MudTablePager), typeof(MudTableGroupRow<T>), typeof(MudTableSortLabel<T>), typeof(MudTd), typeof(MudTh), typeof(MudTr), typeof(MudTFootRow), typeof(MudTHeadRow))
+            .AddItem("Table", typeof(MudTable<T>), typeof(MudTableBase), typeof(MudTablePager), typeof(MudTableGroupRow<T>), typeof(MudTableSortLabel<T>), typeof(MudTd), typeof(MudTh), typeof(MudTr), typeof(MudTFootRow), typeof(MudTHeadRow))
             .AddItem("Data Grid", typeof(MudDataGrid<T>), typeof(Column<T>), typeof(FilterHeaderCell<T>), typeof(FooterCell<T>), typeof(HeaderCell<T>), typeof(HierarchyColumn<T>), typeof(MudDataGridPager<T>), typeof(TemplateColumn<T>))
             .AddItem("Simple Table", typeof(MudSimpleTable))
             .AddItem("Tooltip", typeof(MudTooltip))
@@ -332,7 +333,7 @@ namespace MudBlazor.Docs.Services
         public static MudComponent? GetExample(MudComponent parent, DocumentedType type)
         {
             // Does the name match the menu link?
-            if (parent.Link == type.Name)
+            if (parent.ComponentName == type.NameFriendly.Replace("<TData>", "<T>"))
             {
                 return parent;
             }

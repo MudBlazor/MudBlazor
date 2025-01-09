@@ -33,6 +33,7 @@ namespace MudBlazor
             new CssBuilder("mud-progress-circular-circle")
                 .AddClass("mud-progress-indeterminate", Indeterminate)
                 .AddClass("mud-progress-static", !Indeterminate)
+                .AddClass("mud-progress-circular-circle-rounded", Rounded)
                 .Build();
 
         /// <summary>
@@ -64,6 +65,16 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.ProgressCircular.Behavior)]
         public bool Indeterminate { get; set; }
+
+        /// <summary>
+        /// Displays a rounded border.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  When <c>true</c>, the CSS <c>stroke-linecap</c> is set to <c>round</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.ProgressLinear.Appearance)]
+        public bool Rounded { get; set; }
 
         /// <summary>
         /// The lowest possible value.

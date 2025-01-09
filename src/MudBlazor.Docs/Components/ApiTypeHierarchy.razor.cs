@@ -40,6 +40,7 @@ public sealed partial class ApiTypeHierarchy
                 Children = [],
             };
             var root = new List<TreeItemData<DocumentedType>>() { primaryItem };
+
             // Walk up the hierarchy to build the tree
             var parent = Type!.BaseType;
             while (parent != null)
@@ -67,6 +68,7 @@ public sealed partial class ApiTypeHierarchy
                     break;
                 }
             }
+
             // Now check for types inheriting from this type
             foreach (var descendant in ApiDocumentation.Types.Values.OrderBy(type => type.Name).Where(type => type.BaseTypeName == Type.Name))
             {
@@ -77,6 +79,7 @@ public sealed partial class ApiTypeHierarchy
                     Value = descendant
                 });
             }
+
             // Set the items
             Root = new ReadOnlyCollection<TreeItemData<DocumentedType>>(root);
             StateHasChanged();
@@ -99,15 +102,18 @@ public sealed partial class ApiTypeHierarchy
     [Inject]
     private NavigationManager? Browser { get; set; }
 
-    /// <summary>
-    /// Occurs when a type has been clicked.
-    /// </summary>
-    /// <param name="item"></param>
-    public void OnTypeClicked(TreeItemData<DocumentedType> item)
+    private string GetIcon(TreeItemData<DocumentedType> context)
     {
-        if (item.Value != null && !string.IsNullOrEmpty(item.Value.ApiUrl) && item.Value.Name != "Root")
+        if (context.Value!.Name == "Root")
         {
-            Browser?.NavigateTo(item.Value.ApiUrl);
+            return Icons.Material.Filled.Home;
         }
+
+        return Icons.Custom.Uncategorized.Empty;
+    }
+
+    private bool GetReadOnly(TreeItemData<DocumentedType> context)
+    {
+        return context.Value!.Name == "Root" || context.Value.NameFriendly == Type?.NameFriendly || string.IsNullOrEmpty(context.Value.ApiUrl);
     }
 }

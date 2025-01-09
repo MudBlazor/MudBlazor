@@ -1,0 +1,98 @@
+@page "/components/chat"
+@page "/components/MudChat"
+
+<DocsPage>
+    <DocsPageHeader Title="Chat" Component="@nameof(MudChat)" SubTitle="The MudChat component is used to house one or more MudChatBubble components, with optional components such as MudAvatar, MudChatHeader, and MudChatFooter.">
+        <Description>
+            <DocsPageSection>
+                <MudAlert Class="mt-4" Severity="Severity.Warning">
+                    <b>Warning:</b> This component is currently under development.
+                    <br />
+                    <br />
+                    Breaking changes such as updates to the API, look and feel, or CSS classes, may occur even in minor patch releases.
+                    Please use it only if you are prepared to adapt your code accordingly and provide feedback or contribute code.
+                </MudAlert>
+            </DocsPageSection>
+        </Description>
+    </DocsPageHeader>
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Basic">
+                <Description>
+                    MudChat can be used to display one or more <CodeInline>MudChatBubble</CodeInline> components. The bubbles can be aligned at the start (left for Left-to-Right, right for Right-to-Left) or at the end.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(ChatBasicExample)" Block="true" FullWidth="true">
+                <ChatBasicExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="With Avatar">
+                <Description>
+                    MudChat can include an avatar, which works seamlessly with the <CodeInline>MudAvatar</CodeInline> component. The avatar will always appear on the first <CodeInline>MudChatBubble</CodeInline> inside a MudChat.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(ChatAvatarExample)" Block="true" FullWidth="true" ShowCode="false">
+                <ChatAvatarExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="With Header and Footer">
+                <Description>
+                    In addition to an avatar, MudChat can include both a header and a footer. The header can contain optional properties such as Name and Time, or you can nest Child Content. The header is aligned at the top row and will not support multiple headers. 
+                    The footer can include an optional Text property or nested Child Content, additionally you can include any number of <CodeInline>MudChatFooter</CodeInline> components within a single <CodeInline>MudChat</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(ChatHeaderFooterExample)" Block="true" FullWidth="true" ShowCode="false">
+                <ChatHeaderFooterExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="ChatBubble OnClick Parameter">
+                <Description>
+                    You can define the OnClick and/or OnContextClick parameter for the <CodeInline>MudChatBubble</CodeInline> component to handle click events. 
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(ChatClickExample)" Block="true" FullWidth="true" ShowCode="false">
+                <ChatClickExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Additional Chat Bubble Options">
+                <Description>
+                    <CodeInline>MudChat</CodeInline> can be customized with the following properties:
+                    <ul class="ml-3">
+                        <li><CodeInline>Dense</CodeInline>: Reduces the vertical margins of the chat bubbles.</li>
+                        <li><CodeInline>Square</CodeInline>: Makes the chat bubbles square.</li>
+                        <li><CodeInline>Elevation</CodeInline>: The elevation of the chat bubbles. Defaults to 0.</li>
+                        <li><CodeInline>ArrowPosition</CodeInline>: The position of the arrow on the first chat bubble. Defaults to Top.</li>
+                        <li>*<CodeInline>Color</CodeInline>: The color of the chat bubbles. Defaults to <CodeInline>Color.Default</CodeInline>.</li>
+                        <li>*<CodeInline>Variant</CodeInline>: The variant of the chat bubbles. Defaults to <CodeInline>Variant.Text</CodeInline>.</li>
+                    </ul>
+                    * These properties are passed down to the <CodeInline>MudChatBubble</CodeInline> components, and can be overridden individually.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(ChatFullExample)" Block="true" FullWidth="true" ShowCode="false">
+                <ChatFullExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Adding a Hover Event">
+                <Description>
+                    <CodeInline>MudChat</CodeInline> and <CodeInline>MudChatBubble</CodeInline> can be customized with any html classes, styles, and normal events.
+                    Here is an example of adding a hovering like/reply center.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(ChatHoverExample)" Block="true" FullWidth="true" ShowCode="false">
+                <ChatHoverExample />
+            </SectionContent>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>
