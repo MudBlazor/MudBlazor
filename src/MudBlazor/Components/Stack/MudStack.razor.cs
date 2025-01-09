@@ -29,7 +29,7 @@ public partial class MudStack : MudComponentBase
     /// Displays items horizontally.
     /// </summary>
     /// <remarks>
-    /// Defaults to <see cref="MudGlobal.StackDefaults.Row"/>.  
+    /// Defaults to <c>false</c>.  
     /// When <c>true</c>, items will be displayed horizontally.  When <c>false</c>, items are displayed vertically.
     /// </remarks>
     [Parameter]
@@ -40,7 +40,7 @@ public partial class MudStack : MudComponentBase
     /// Reverses the order of items.
     /// </summary>
     /// <remarks>
-    /// Defaults to <see cref="MudGlobal.StackDefaults.Reverse"/>.  
+    /// Defaults to <c>false</c>.  
     /// When <c>true</c>, items will be reversed.
     /// </remarks>
     [Parameter]
