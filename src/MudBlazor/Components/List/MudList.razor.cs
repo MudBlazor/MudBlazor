@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
+using MudBlazor.Services;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
@@ -18,6 +20,12 @@ namespace MudBlazor
     /// <seealso cref="MudListSubheader"/>
     public partial class MudList<T> : MudComponentBase, IDisposable
     {
+        [Inject]
+        private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
+
+        private string _elementId = Identifier.Create("list");
+        private string? _activeItemId;
+
         public MudList()
         {
             TopLevelList = this;
@@ -227,6 +235,18 @@ namespace MudBlazor
         [Category(CategoryTypes.TreeView.Selecting)]
         public string UncheckedIcon { get; set; } = Icons.Material.Filled.CheckBoxOutlineBlank;
 
+        /// <summary>
+        /// Occurs when a key has been pressed down.
+        /// </summary>
+        [Parameter]
+        public EventCallback<KeyboardEventArgs> OnKeyDown { get; set; }
+
+        /// <summary>
+        /// Occurs when a pressed key has been released.
+        /// </summary>
+        [Parameter]
+        public EventCallback<KeyboardEventArgs> OnKeyUp { get; set; }
+
         protected override void OnInitialized()
         {
             base.OnInitialized();
@@ -237,8 +257,34 @@ namespace MudBlazor
             }
         }
 
-        protected override void OnAfterRender(bool firstRender)
+        protected override async Task OnAfterRenderAsync(bool firstRender)
         {
+            // setup key interceptor    
+            if (firstRender)
+            {
+                var options = new KeyInterceptorOptions(
+                    "mud-list-item", true,
+                    [
+                        // prevent scrolling page, toggle open/close
+                        new(" ", preventDown: "key+none"),
+                        // prevent scrolling page, instead highlight previous item
+                        new("ArrowUp", preventDown: "key+none"),
+                        // prevent scrolling page, instead highlight next item
+                        new("ArrowDown", preventDown: "key+none"),
+                        new("Home", preventDown: "key+none"),
+                        new("End", preventDown: "key+none"),
+                        new("Enter", preventDown: "key+none"),
+                        new("NumpadEnter", preventDown: "key+none"),
+                        // select all items instead of all page text
+                        new("a", preventDown: "key+ctrl"),
+                        // select all items instead of all page text
+                        new("A", preventDown: "key+ctrl"),
+                        // for our users
+                        new("/./", subscribeDown: true, subscribeUp: true)
+                    ]);
+
+                await KeyInterceptorService.SubscribeAsync(_elementId, options, keyDown: HandleKeyDownAsync, keyUp: HandleKeyUpAsync);
+            }
             base.OnAfterRender(firstRender);
             if (firstRender && TopLevelList == this)
             {
@@ -251,6 +297,57 @@ namespace MudBlazor
                     UpdateSelectedItem(_selectedValueState);
                 }
             }
+        }
+
+        private async Task HandleKeyDownAsync(KeyboardEventArgs args)
+        {
+            if (GetDisabled() || GetReadOnly())
+                return;
+
+            var key = args.Key.ToLowerInvariant();
+            if (string.IsNullOrWhiteSpace(key) == false
+                && key.Length == 1
+                && char.IsLetterOrDigit(key[0]))
+            {
+                await FocusFirstItemAsync(key);
+                return;
+            }
+
+            switch (args.Key)
+            {
+                case "ArrowDown":
+                    await FocusNextItemAsync();
+                    break;
+                case "ArrowUp":
+                    await FocusPreviousItemAsync();
+                    break;
+                case "Home":
+                    await FocusFirstItemAsync();
+                    break;
+                case "End":
+                    await FocusLastItemAsync();
+                    break;
+                case "Enter":
+                case "NumpadEnter":
+                case " ":
+                    {
+                        if (_activeItemId is not null)
+                        {
+                            var item = _items.FirstOrDefault(x => x.ItemId == _activeItemId);
+                            item?.OnItemClickAsync();
+                        }
+
+                        break;
+                    }
+                default:
+                    await OnKeyDown.InvokeAsync(args);
+                    break;
+            }
+        }
+
+        private Task HandleKeyUpAsync(KeyboardEventArgs args)
+        {
+            return OnKeyUp.InvokeAsync(args);
         }
 
         internal void Update()
@@ -331,6 +428,11 @@ namespace MudBlazor
             UpdateSelectedItem(value);
         }
 
+        internal void SetFocusedItem(T? value)
+        {
+            _activeItemId = _items.FirstOrDefault(x => Comparer.Equals(x.GetValue(), value))?.ItemId ?? string.Empty;
+        }
+
         internal async Task SelectValueAsync(T? value)
         {
             if (SelectionMode != SelectionMode.MultiSelection || value is null)
@@ -376,6 +478,11 @@ namespace MudBlazor
             {
                 var selected = value is not null && Comparer.Equals(value, item.GetValue());
                 item.SetSelected(selected);
+
+                if (selected)
+                {
+                    _activeItemId = item.ItemId;
+                }
             }
             foreach (var childList in _childLists.ToArray())
             {
@@ -407,5 +514,93 @@ namespace MudBlazor
         {
             ParentList?.Unregister(this);
         }
+
+        /// <summary>
+        /// gets the role of the MudList
+        /// </summary>
+        /// <returns>the role of the MudList</returns>
+        /// <remarks>
+        /// If <see crew="readonly"/> is true, the role is "list". Otherwise, the role is "listbox".
+        ///     </remarks>
+        private string GetRole()
+        {
+            return GetReadOnly() ? "list" : "listbox";
+        }
+
+        private string GetAriaMultiselectableValue() => SelectionMode == SelectionMode.MultiSelection ? "true" : "false";
+
+        private async Task FocusAdjacentItemAsync(int direction)
+        {
+            if (_items.Count == 0)
+                return;
+
+            var itemList = _items.ToList();
+            var index = itemList.FindIndex(x => x.ItemId == _activeItemId);
+            if (direction < 0 && index < 0)
+                index = 0;
+            MudListItem<T>? item = null;
+            // the loop allows us to jump over disabled items until we reach the next non-disabled one
+            for (var i = 0; i < itemList.Count; i++)
+            {
+                index += direction;
+                if (index < 0)
+                    index = 0;
+                if (index >= itemList.Count)
+                    index = itemList.Count - 1;
+                if (itemList[index].Disabled)
+                    continue;
+                item = itemList[index];
+                await item.OnFocusAsync();
+                _activeItemId = item.ItemId;
+                break;
+            }
+        }
+
+        private async Task FocusPreviousItemAsync() => await FocusAdjacentItemAsync(-1);
+
+        private async Task FocusNextItemAsync() => await FocusAdjacentItemAsync(1);
+
+        private async Task FocusFirstItemAsync(string? startChar = null)
+        {
+            if (_items.Count == 0)
+                return;
+
+            var items = _items.Where(x => !x.Disabled);
+
+            if (!string.IsNullOrWhiteSpace(startChar))
+            {
+                // Find first item that starts with the letter
+                var currentItem = items.FirstOrDefault(x => x.ItemId == _activeItemId);
+                if (currentItem is not null &&
+                    currentItem.Text?.ToLowerInvariant().StartsWith(startChar) == true)
+                {
+                    // Step through items starting with the same letter
+                    items = items.SkipWhile(x => x != currentItem).Skip(1);
+                }
+                items = items.Where(x => x.Text?.ToLowerInvariant().StartsWith(startChar) == true);
+            }
+
+            var item = items.FirstOrDefault();
+            if (item is null)
+                return;
+
+            await item.OnFocusAsync();
+        }
+
+        private async Task FocusLastItemAsync()
+        {
+            if (_items.Count == 0)
+                return;
+            var item = _items.LastOrDefault(x => !x.Disabled);
+            if (item is null)
+                return;
+
+            await item.OnFocusAsync();
+        }
+
+        internal int GetItemCount() => _items.Count;
+
+        internal int GetIndexOfItemById(string itemId) => _items.ToList().FindIndex(x => x.ItemId == itemId);
+
     }
 }

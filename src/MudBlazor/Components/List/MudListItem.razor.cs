@@ -20,6 +20,10 @@ namespace MudBlazor
 
         private ParameterState<bool> _expandedState;
 
+        internal string ItemId = Identifier.Create("list-item-");
+
+        private ElementReference _elementReference = new();
+
         public MudListItem()
         {
             using var registerScope = CreateRegisterScope();
@@ -334,6 +338,27 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// handles if a user focuses this item with the keyboard.
+        /// </summary>
+        internal async Task OnFocusAsync()
+        {
+            if (GetDisabled())
+            {
+                return;
+            }
+            if (TopLevelList is not null && GetReadOnly() == false)
+            {
+                if (SelectionMode == SelectionMode.SingleSelection)
+                {
+                    await TopLevelList.SetSelectedValueAsync(GetValue());
+                }
+                await _elementReference.FocusAsync(false);
+                MudList?.SetFocusedItem(GetValue());
+                StateHasChanged();
+            }
+        }
+
         internal void SetSelected(bool selected)
         {
             if (GetDisabled() || _selected == selected)
@@ -414,6 +439,76 @@ namespace MudBlazor
                 MudList.Unregister(this);
             }
             catch (Exception) { /*ignore*/ }
+        }
+
+        /// <summary>
+        /// Gets the role of the list item.
+        /// </summary>
+        /// <returns>The role of the list item.</returns>
+        /// <remarks>
+        /// If <see cref="ReadOnly"/> is <c>true</c>, the role is <c>listitem</c>. Otherwise, the role is <c>option</c>.
+        /// </remarks>
+        private string GetRole()
+        {
+            return ReadOnly ? "listitem" : "option";
+        }
+
+        private string GetAriaSelectedValue()
+        {
+            return _selected ? "true" : "false";
+        }
+
+        private string GetAriaCheckedValue()
+        {
+            if (MultiSelection)
+            {
+                return _selected ? "true" : "false";
+            }
+            return "undefined";
+        }
+
+        private string GetAriaHasPopupValue()
+        {
+            return NestedList != null ? "true" : "false";
+        }
+
+        private string GetAriaExpandedValue()
+        {
+            if (NestedList == null)
+            {
+                return "undefined";
+            }
+            return Expanded ? "true" : "false";
+        }
+
+        private string GetAriaSizeValue()
+        {
+            if (MudList is null)
+            {
+                return "-1";
+            }
+
+            return MudList.GetItemCount().ToString();
+        }
+
+        private string GetAriaPosInSet()
+        {
+            if (MudList is null)
+            {
+                return "-1";
+            }
+
+            var index = MudList.GetIndexOfItemById(ItemId);
+            return (index + 1).ToString();
+        }
+
+        internal async Task OnItemClickAsync()
+        {
+            if (GetDisabled())
+            {
+                return;
+            }
+            await OnClickHandlerAsync(new MouseEventArgs());
         }
     }
 }

@@ -6,12 +6,20 @@
             Class="@Classname"
             Style="@Style"
             tabindex="0"
+            role="@GetRole()"
             @attributes="UserAttributes"
             @onclick="OnClickHandlerAsync"
             href="@Href"
             target="@Target"
             PreventDefault="@GetPreventDefault()"
-            ClickPropagation="@GetClickPropagation()">
+            ClickPropagation="@GetClickPropagation()"
+            @bind-Ref="_elementReference"
+            aria-expanded="@GetAriaExpandedValue()"
+            aria-haspopup="@GetAriaHasPopupValue()"
+            aria-selected="@GetAriaSelectedValue()"
+            aria-checked="@GetAriaCheckedValue()"
+            aria-setsize="@GetAriaSizeValue()"
+            aria-posinset="@GetAriaPosInSet()">
 
     @if (AvatarContent is not null)
     {
