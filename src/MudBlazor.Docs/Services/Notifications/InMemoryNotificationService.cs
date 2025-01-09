@@ -88,6 +88,18 @@ public class InMemoryNotificationService : INotificationService
     public void Preload()
     {
         _messages.Add(new NotificationMessage(
+            "mudblazor-here-to-stay",
+            "MudBlazor is here to stay",
+            "We are paving the way for the future of Blazor",
+            "Announcement",
+            new DateTime(2022, 01, 13),
+            "_content/MudBlazor.Docs/images/announcements/mudblazor_heretostay.png",
+            [
+                new NotificationAuthor("Jonny Larsson",
+                    "https://avatars.githubusercontent.com/u/10367109?v=4")
+            ], typeof(Announcement_MudBlazorIsHereToStay)));
+
+        _messages.Add(new NotificationMessage(
             typeof(Announcement_v7_GA).Name,
             "v7 Is Here!",
             "Learn about the new major version",
