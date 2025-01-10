@@ -69,7 +69,14 @@
                     }
                 }
 
-                <MudPopover Fixed="@DropdownSettings.Fixed" Open="@Open" MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Class="@PopoverClass" RelativeWidth="true" OverflowBehavior="@DropdownSettings.OverflowBehavior">
+                <MudPopover Open="@Open" 
+                            Class="@PopoverClass"
+                            MaxHeight="@MaxHeight"
+                            RelativeWidth="@RelativeWidth"
+                            AnchorOrigin="@AnchorOrigin" 
+                            TransformOrigin="@TransformOrigin"                                                          
+                            Fixed="@DropdownSettings.Fixed"
+                            OverflowBehavior="@DropdownSettings.OverflowBehavior">
                     @if (ProgressIndicatorInPopoverTemplate is not null && IsLoading)
                     {
                         @ProgressIndicatorInPopoverTemplate
