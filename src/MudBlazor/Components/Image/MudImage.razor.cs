@@ -44,6 +44,13 @@ public partial class MudImage : MudComponentBase
     public string? Src { get; set; }
 
     /// <summary>
+    /// The fallback image path to use if <see cref="Src"/> fails to load.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Image.Behavior)]
+    public string? FallbackSrc { get; set; }
+
+    /// <summary>
     /// The alternate text for this image.
     /// </summary>
     [Parameter]
@@ -99,4 +106,15 @@ public partial class MudImage : MudComponentBase
     [Parameter]
     [Category(CategoryTypes.Image.Appearance)]
     public ObjectPosition ObjectPosition { set; get; } = ObjectPosition.Center;
+
+    /// <summary>
+    /// Handles the image error event and sets the fallback image source.
+    /// </summary>
+    private void OnError()
+    {
+        if (!string.IsNullOrEmpty(FallbackSrc) && Src != FallbackSrc)
+        {
+            Src = FallbackSrc;
+        }
+    }
 }

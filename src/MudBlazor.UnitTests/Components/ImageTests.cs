@@ -95,6 +95,25 @@ namespace MudBlazor.UnitTests.Components
             var img = comp.Find("img");
             img.ClassList.Should().Contain(new[] { "mud-image", $"object-{expectedClass}" });
         }
+
+        [Test]
+        public void SwitchesToFallbackSrcOnError()
+        {
+            var initialSrc = "primary-image.jpg";
+            var fallbackSrc = "fallback-image.jpg";
+
+            var comp = Context.RenderComponent<MudImage>(parameters => parameters
+                .Add(p => p.Src, initialSrc)
+                .Add(p => p.FallbackSrc, fallbackSrc)
+            );
+
+            // Trigger the `onerror` event
+            comp.Find("img").TriggerEvent("onerror", new EventArgs());
+
+            var img = comp.Find("img");
+
+            img.GetAttribute("src").Should().Be(fallbackSrc);
+        }
     }
 }
 
