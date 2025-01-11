@@ -167,7 +167,9 @@ window.mudpopoverHelper = {
                 }
             }
             let boundingRect = popoverNode.parentNode.getBoundingClientRect();
-
+            // allow them to be changed after initial creation
+            popoverContentNode.style['max-width'] = 'none';
+            popoverContentNode.style['min-width'] = 'none';
             if (classList.contains('mud-popover-relative-width')) {
                 popoverContentNode.style['max-width'] = (boundingRect.width) + 'px';
             }

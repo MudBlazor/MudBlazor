@@ -242,13 +242,13 @@ namespace MudBlazor
         public MouseEvent ActivationEvent { get; set; } = MouseEvent.LeftClick;
 
         /// <summary>
-        /// The point where the menu will open from.
+        /// The origin point for the menu's anchor. If set, overrides Nested Menus, and PositionatCursor Anchor points.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Origin.BottomLeft"/>.
+        /// Defaults to <c>null</c>.
         /// </remarks>
+        [Category(CategoryTypes.Popover.Behavior)]
         [Parameter]
-        [Category(CategoryTypes.Menu.PopupAppearance)]
         public Origin? AnchorOrigin { get; set; }
 
         /// <summary>
@@ -260,6 +260,29 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Menu.PopupAppearance)]
         public Origin TransformOrigin { get; set; } = Origin.TopLeft;
+
+        /// <summary>
+        /// The behavior of the dropdown popover menu
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="DropdownSettings.Fixed" /> false
+        /// Defaults to <see cref="DropdownSettings.OverflowBehavior" /> <see cref="OverflowBehavior.FlipOnOpen" />
+        /// </remarks>
+        [Category(CategoryTypes.Popover.Behavior)]
+        [Parameter]
+        public DropdownSettings DropdownSettings { get; set; } = new DropdownSettings();
+
+        /// <summary>
+        /// Determines the width of the Popover dropdown in relation the parent container.
+        /// </summary>
+        /// <remarks>
+        /// <para>Defaults to <see cref="DropdownWidth.Ignore" />. </para>
+        /// <para>When <see cref="DropdownWidth.Relative" />, restricts the max-width of the component to the width of the parent container</para>
+        /// <para>When <see cref="DropdownWidth.Adaptive" />, restricts the min-width of the component to the width of the parent container</para>
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Popover.Appearance)]
+        public DropdownWidth RelativeWidth { get; set; } = DropdownWidth.Ignore;
 
         /// <summary>
         /// Prevents the page from scrolling while this menu is open.
