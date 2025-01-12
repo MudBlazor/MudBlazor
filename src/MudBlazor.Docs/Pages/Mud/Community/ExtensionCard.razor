@@ -1,14 +1,12 @@
-﻿<MudCard>
+﻿<MudCard Style="width: 100%;">
     <MudCardHeader>
         <CardHeaderAvatar>
             <MudAvatar Style="background: transparent" Square="true">
-                <MudImage Src="@Extension.AvatarImageSrc" Alt="Avatar" />
+                <MudImage Src="@Extension.AvatarImageSrc" Alt="@_avatarAlt" />
             </MudAvatar>
         </CardHeaderAvatar>
         <CardHeaderContent>
-            <div class="docs-extensions-container">
-                <MudText Class="docs-extensions-clamp" Typo="Typo.h6">@Extension.Name</MudText>
-            </div>
+            <MudText Class="docs-extensions-clamp" role="heading" Typo="Typo.h6">@Extension.Name</MudText>          
         </CardHeaderContent>
     </MudCardHeader>
     <MudCardContent>
@@ -19,22 +17,27 @@
     </MudCardContent>
     <MudCardActions>
         <MudButton Variant="Variant.Text" Color="Color.Primary" EndIcon="@Icons.Material.Filled.ArrowForward"
-                   FullWidth="false" Style="max-width: 65%;" Target="_blank" Href="@Extension.Link">
-            <div class="docs-extensions-ellipsis">
-                @Extension.Name
-            </div>
+        FullWidth="false" Target="_blank" Href="@Extension.Link" aria-label="@_ariaDetailsButton">
+            Details
         </MudButton>
         <MudSpacer />
         <MudButton Href="@Extension.GitHubLink" Target="_blank">        
-            <MudImage alt="GitHub Repo Stars" Src="@($"https://img.shields.io/github/stars/{Extension.GitHubUserPath}/{Extension.GitHubRepoPath}")" />
+            <MudImage alt="@_gitHubAlt" Src="@($"https://img.shields.io/github/stars/{Extension.GitHubUserPath}/{Extension.GitHubRepoPath}")" />
         </MudButton>
     </MudCardActions>
 </MudCard>
 
 @code {
+
+
+
     [Parameter]
     public CommunityExtension Extension { get; set; }
 
     [Parameter]
     public string CategoryName { get; set; }
+
+    private string _avatarAlt => $"Avatar for {Extension.Name}";
+    private string _ariaDetailsButton => $"Visit the {Extension.Name} official website.";
+    private string _gitHubAlt => $"GitHub Repo Stars for {Extension.Name}";
 }
