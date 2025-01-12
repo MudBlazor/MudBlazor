@@ -44,17 +44,17 @@
 </DocsPage>
 
 @code {
-        private string jsonFilePath = string.Empty;
-        private List<CommunityExtension> _jsonExtensions;
+    private readonly List<CommunityExtension> _jsonExtensions = [];
 
-        public CommunityExtensions()
+    public CommunityExtensions()
+    {
+        var jsonFilePath = Path.Combine(AppContext.BaseDirectory, "CommunityExtensions.json");
+
+        if (File.Exists(jsonFilePath))
         {
-            jsonFilePath = Path.Combine(AppContext.BaseDirectory, "CommunityExtensions.json");
-
-            if (File.Exists(jsonFilePath))
-            {
-                string jsonString = File.ReadAllText(jsonFilePath);
-                _jsonExtensions = (JsonSerializer.Deserialize<List<CommunityExtension>>(jsonString) ?? []).OrderBy(x => x.Name).ToList();
-            }
+            string jsonString = File.ReadAllText(jsonFilePath);
+            _jsonExtensions = (JsonSerializer.Deserialize<List<CommunityExtension>>(jsonString) ?? []).OrderBy(x => x.Name).ToList();
         }
+    }
+
 }
