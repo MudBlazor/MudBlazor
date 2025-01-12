@@ -1,0 +1,27 @@
+.docs-extensions-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.docs-extensions-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  text-align: center;
+}
+
+.docs-extensions-clamp {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.5;
+  min-height: calc(1.5em * 2);
+  max-height: calc(1.5em * 2);
+  white-space: normal;
+}

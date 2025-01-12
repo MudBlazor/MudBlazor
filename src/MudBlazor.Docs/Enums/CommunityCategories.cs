@@ -1,0 +1,27 @@
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace MudBlazor.Docs.Enums
+{
+    public enum CommunityCategories
+    {
+        [Description("Parent")]
+        Parent,
+        [Description("Custom Components")]
+        Components,
+        [Description("Utility Extensions")]
+        Utility,
+        [Description("Styling & Theming")]
+        Style,
+        [Description("Other Extensions")]
+        Other,
+    }
+}

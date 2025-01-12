@@ -1,0 +1,41 @@
+﻿
+<MudCard>
+    <MudCardHeader>
+        <CardHeaderAvatar>
+            <MudAvatar Style="background: transparent">
+                <MudImage Src="@Extension.AvatarImageSrc" Alt="Avatar" />
+            </MudAvatar>
+        </CardHeaderAvatar>
+        <CardHeaderContent>
+            <div class="docs-extensions-container">
+                <MudText Class="docs-extensions-clamp" Typo="Typo.h6">@Extension.Name</MudText>
+            </div>
+        </CardHeaderContent>
+    </MudCardHeader>
+    <MudCardContent>
+        <MudText Typo="Typo.button" Class="mud-text-disabled">@CategoryName</MudText>
+        <MudPaper Height="250px" Class="d-flex justify-center pa-2" Elevation="0">
+            <MudText Typo="Typo.body2">@Extension.Description</MudText>
+        </MudPaper>        
+    </MudCardContent>
+    <MudCardActions>
+        <MudButton Variant="Variant.Text" Color="Color.Primary" EndIcon="@Icons.Material.Filled.ArrowForward"
+                   FullWidth="false" Style="max-width: 65%;" Target="_blank" Href="@Extension.Link">
+            <div class="docs-extensions-ellipsis">
+                @Extension.Name
+            </div>
+        </MudButton>
+        <MudSpacer />
+        <MudButton Href="@Extension.GitHubLink" Target="_blank">        
+            <MudImage alt="GitHub Repo Stars" Src="@($"https://img.shields.io/github/stars/{Extension.GitHubUserPath}/{Extension.GitHubRepoPath}")" />
+        </MudButton>
+    </MudCardActions>
+</MudCard>
+
+@code {
+    [Parameter]
+    public CommunityExtension Extension { get; set; }
+
+    [Parameter]
+    public string CategoryName { get; set; }
+}
