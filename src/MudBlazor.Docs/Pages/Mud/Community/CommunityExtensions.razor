@@ -1,6 +1,8 @@
 ﻿@page "/mud/community/extensions"
+@using System.Net.Http.Json
 @using MudBlazor.Docs.Enums
-@using System.Text.Json
+
+@inject HttpClient HttpClient
 
 <DocsPage DisplayFooter="true">
     <MudContainer Class="announcement-container" MaxWidth="MaxWidth.Medium">
@@ -44,17 +46,12 @@
 </DocsPage>
 
 @code {
-    private readonly List<CommunityExtension> _jsonExtensions = [];
+    private List<CommunityExtension> _jsonExtensions = [];
+    private const string JsonFilePath = "_content/MudBlazor.Docs/CommunityExtensions.json";
 
-    public CommunityExtensions()
+    protected override async Task OnInitializedAsync()
     {
-        var jsonFilePath = Path.Combine(AppContext.BaseDirectory, "CommunityExtensions.json");
-
-        if (File.Exists(jsonFilePath))
-        {
-            string jsonString = File.ReadAllText(jsonFilePath);
-            _jsonExtensions = (JsonSerializer.Deserialize<List<CommunityExtension>>(jsonString) ?? []).OrderBy(x => x.Name).ToList();
-        }
+        _jsonExtensions = await HttpClient.GetFromJsonAsync<List<CommunityExtension>>(JsonFilePath);
+        StateHasChanged();
     }
-
 }
