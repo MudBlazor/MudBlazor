@@ -19,6 +19,15 @@
     "GitHubRepoPath": "MudBlazor"
   },
   {
+    "AvatarImageSrc": "https://mudblazor.com/_content/MudBlazor.Docs/images/logo.png",
+    "Category": "Parent",
+    "Name": "MudBlazor Translations",
+    "Description": "Crowdsourced translations for the MudBlazor component library.",
+    "Link": "https://github.com/MudBlazor/Translations",
+    "GitHubUserPath": "MudBlazor",
+    "GitHubRepoPath": "Translations"
+  },
+  {
     "AvatarImageSrc": "https://themes.arctechonline.tech/ThemeCreator.png",
     "Category": "Style",
     "Name": "Theme Creator",

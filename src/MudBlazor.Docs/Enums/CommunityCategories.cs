@@ -2,26 +2,24 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace MudBlazor.Docs.Enums
+namespace MudBlazor.Docs.Enums;
+
+public enum CommunityCategories
 {
-    public enum CommunityCategories
-    {
-        [Description("Parent")]
-        Parent,
-        [Description("Custom Components")]
-        Components,
-        [Description("Utility Extensions")]
-        Utility,
-        [Description("Styling & Theming")]
-        Style,
-        [Description("Other Extensions")]
-        Other,
-    }
+    [Description("Parent")]
+    Parent = 0,
+
+    [Description("Custom Components")]
+    Components = 1,
+
+    [Description("Utility Extensions")]
+    Utility = 2,
+
+    [Description("Styling & Theming")]
+    Style = 3,
+
+    [Description("Other Extensions")]
+    Other = 4,
 }

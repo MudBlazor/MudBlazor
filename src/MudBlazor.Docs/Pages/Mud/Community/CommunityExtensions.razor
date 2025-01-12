@@ -58,7 +58,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _jsonExtensions = await HttpClient.GetFromJsonAsync<List<CommunityExtension>>(JsonFilePath, _jsonSerializerOptions);
+        var content = await HttpClient.GetFromJsonAsync<List<CommunityExtension>>(JsonFilePath, _jsonSerializerOptions);
+        _jsonExtensions = content.OrderBy(x => x.Name).ToList();
         StateHasChanged();
     }
 }
