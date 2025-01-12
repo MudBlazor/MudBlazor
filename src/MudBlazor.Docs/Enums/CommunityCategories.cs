@@ -21,5 +21,5 @@ public enum CommunityCategories
     Style = 3,
 
     [Description("Other Extensions")]
-    Other = 4,
+    Other = 4
 }

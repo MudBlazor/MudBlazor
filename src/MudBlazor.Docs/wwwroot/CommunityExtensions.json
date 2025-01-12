@@ -1,5 +1,6 @@
 [
   {
+    "CategoryComment": "// Valid Categories are Parent, Components, Utility, Style, Other,",
     "AvatarImageSrc": "a link to an image file for the Avatar area",
     "Category": "Invalid selections are ignored, Valid options are: Parent, Components, Utility, Style, or Other",
     "Name": "The name of your extension, avoid super long names if possible.",
@@ -9,7 +10,6 @@
     "GitHubRepoPath": "Your github repo"
   },
   {
-    "CategoryComment": "// Valid Categories are Parent, Components, Utility, Style, Other,",
     "AvatarImageSrc": "https://mudblazor.com/_content/MudBlazor.Docs/images/logo.png",
     "Category": "Parent",
     "Name": "MudBlazor",
@@ -26,6 +26,15 @@
     "Link": "https://github.com/MudBlazor/Translations",
     "GitHubUserPath": "MudBlazor",
     "GitHubRepoPath": "Translations"
+  },
+  {
+    "AvatarImageSrc": "https://mudblazor.com/_content/MudBlazor.Docs/images/logo.png",
+    "Category": "Parent",
+    "Name": "MudBlazor Icons",
+    "Description": "Official Material Icon & Symbols pack for MudBlazor.",
+    "Link": "https://github.com/MudBlazor/MudBlazor.Icons",
+    "GitHubUserPath": "MudBlazor",
+    "GitHubRepoPath": "MudBlazor.Icons"
   },
   {
     "AvatarImageSrc": "https://themes.arctechonline.tech/ThemeCreator.png",

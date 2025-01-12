@@ -7,6 +7,4 @@ using System.Text.Json.Serialization;
 namespace MudBlazor.Docs.Models.Context;
 
 [JsonSerializable(typeof(List<CommunityExtension>))]
-public sealed partial class CommunityApiJsonSerializerContext : JsonSerializerContext
-{
-}
+public sealed partial class CommunityApiJsonSerializerContext : JsonSerializerContext;
