@@ -1,6 +1,9 @@
 ﻿@page "/mud/community/extensions"
 @using System.Net.Http.Json
+@using System.Text.Json
+@using System.Text.Json.Serialization.Metadata
 @using MudBlazor.Docs.Enums
+@using MudBlazor.Docs.Models.Context
 
 @inject HttpClient HttpClient
 
@@ -47,11 +50,15 @@
 
 @code {
     private List<CommunityExtension> _jsonExtensions = [];
+    private readonly JsonSerializerOptions _jsonSerializerOptions = new()
+    {
+        TypeInfoResolver = JsonTypeInfoResolver.Combine(CommunityApiJsonSerializerContext.Default)
+    };
     private const string JsonFilePath = "_content/MudBlazor.Docs/CommunityExtensions.json";
 
     protected override async Task OnInitializedAsync()
     {
-        _jsonExtensions = await HttpClient.GetFromJsonAsync<List<CommunityExtension>>(JsonFilePath);
+        _jsonExtensions = await HttpClient.GetFromJsonAsync<List<CommunityExtension>>(JsonFilePath, _jsonSerializerOptions);
         StateHasChanged();
     }
 }
