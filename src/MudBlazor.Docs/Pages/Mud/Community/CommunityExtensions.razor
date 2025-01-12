@@ -49,7 +49,7 @@
 </DocsPage>
 
 @code {
-    private List<CommunityExtension> _jsonExtensions = [];
+    private IReadOnlyList<CommunityExtension> _jsonExtensions = [];
     private readonly JsonSerializerOptions _jsonSerializerOptions = new()
     {
         TypeInfoResolver = JsonTypeInfoResolver.Combine(CommunityApiJsonSerializerContext.Default)
@@ -58,8 +58,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var content = await HttpClient.GetFromJsonAsync<List<CommunityExtension>>(JsonFilePath, _jsonSerializerOptions);
-        _jsonExtensions = content.OrderBy(x => x.Name).ToList();
+        var content = await HttpClient.GetFromJsonAsync<IReadOnlyList<CommunityExtension>>(JsonFilePath, _jsonSerializerOptions);
+        _jsonExtensions = content.OrderBy(x => x.Name).ToArray();
         StateHasChanged();
     }
 }
