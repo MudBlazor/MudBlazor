@@ -1,4 +1,4 @@
-﻿<MudCard Style="width: 100%;">
+﻿<MudCard Class="docs-extensions-card">
     <MudCardHeader>
         <CardHeaderAvatar>
             <MudAvatar Style="background: transparent" Square="true">
@@ -11,7 +11,7 @@
     </MudCardHeader>
     <MudCardContent>
         <MudText Typo="Typo.button" Class="mud-text-disabled">@CategoryName</MudText>
-        <MudPaper Height="250px" Class="d-flex justify-center pa-2" Elevation="0">
+        <MudPaper Class="d-flex justify-center pa-2 docs-extensions-paper" Elevation="0">
             <MudText Typo="Typo.body2">@Extension.Description</MudText>
         </MudPaper>        
     </MudCardContent>
@@ -28,9 +28,6 @@
 </MudCard>
 
 @code {
-
-
-
     [Parameter]
     public CommunityExtension Extension { get; set; }
 

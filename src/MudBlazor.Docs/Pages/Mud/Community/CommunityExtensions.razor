@@ -41,19 +41,19 @@
                 </SectionHeader>
             </DocsPageSection>
 
-            <MudContainer Class="py-4 py-sm-6 py-md-8 py-lg-8 py-xl-8">
-                <MudGrid>
-                    @foreach (CommunityCategories category in Enum.GetValues(typeof(CommunityCategories)))
-                    {
-                        @foreach (var json in _jsonExtensions.Where(x => x.Category.Equals(category.ToString(), StringComparison.InvariantCultureIgnoreCase)))
+                <MudContainer Class="py-4 py-sm-6 py-md-8 py-lg-8 py-xl-8">
+                    <MudGrid>
+                        @foreach (CommunityCategories category in Enum.GetValues(typeof(CommunityCategories)))
                         {
-                            <MudItem xs="12" sm="6" md="4">
-                                <ExtensionCard Extension="@json" CategoryName="@category.ToDescriptionString()" />
-                            </MudItem>
+                            @foreach (var json in _jsonExtensions.Where(x => x.Category.Equals(category.ToString(), StringComparison.InvariantCultureIgnoreCase)))
+                            {
+                                <MudItem xs="12" sm="6" lg="4">
+                                    <ExtensionCard Extension="@json" CategoryName="@category.ToDescriptionString()" />
+                                </MudItem>
+                            }
                         }
-                    }
-                </MudGrid>
-            </MudContainer>
+                    </MudGrid>
+                </MudContainer>
 
         </DocsPageContent>
     </MudContainer>
