@@ -1,0 +1,111 @@
+[
+  {
+    "CategoryComment": "// Valid Categories are Parent, Components, Utility, Style, Other,",
+    "AvatarImageSrc": "a link to an image file for the Avatar area",
+    "Category": "Invalid selections are ignored, Valid options are: Parent, Components, Utility, Style, or Other",
+    "Name": "The name of your extension, avoid super long names if possible.",
+    "Description": "A brief description of what the extension does for MudBlazor users",
+    "Link": "Your preferred landing page, users will have this link and a link to github automatically generated",
+    "GitHubUserPath": "Your github user",
+    "GitHubRepoPath": "Your github repo"
+  },
+  {
+    "AvatarImageSrc": "https://mudblazor.com/_content/MudBlazor.Docs/images/logo.png",
+    "Category": "Parent",
+    "Name": "MudBlazor",
+    "Description": "With millions of downloads, from hobby developers to large enterprises, MudBlazor enables you to rapidly build amazing web applications without leaving your beloved C# language and toolchain.",
+    "Link": "https://mudblazor.com",
+    "GitHubUserPath": "MudBlazor",
+    "GitHubRepoPath": "MudBlazor"
+  },
+  {
+    "AvatarImageSrc": "https://mudblazor.com/_content/MudBlazor.Docs/images/logo.png",
+    "Category": "Parent",
+    "Name": "MudBlazor Translations",
+    "Description": "Crowdsourced translations for the MudBlazor component library.",
+    "Link": "https://github.com/MudBlazor/Translations",
+    "GitHubUserPath": "MudBlazor",
+    "GitHubRepoPath": "Translations"
+  },
+  {
+    "AvatarImageSrc": "https://mudblazor.com/_content/MudBlazor.Docs/images/logo.png",
+    "Category": "Parent",
+    "Name": "MudBlazor Icons",
+    "Description": "Official Material Icon & Symbols pack for MudBlazor.",
+    "Link": "https://github.com/MudBlazor/MudBlazor.Icons",
+    "GitHubUserPath": "MudBlazor",
+    "GitHubRepoPath": "MudBlazor.Icons"
+  },
+  {
+    "AvatarImageSrc": "https://themes.arctechonline.tech/ThemeCreator.png",
+    "Category": "Style",
+    "Name": "Theme Creator",
+    "Description": "Blazor Theme Creator site for MudBlazor library. This app is designed to be used to create and manage themes for MudBlazor, not as part of your application.",
+    "Link": "https://themes.arctechonline.tech",
+    "GitHubUserPath": "versile2",
+    "GitHubRepoPath": "ThemeCreatorMudBlazor"
+  },
+  {
+    "AvatarImageSrc": "https://avatars.githubusercontent.com/u/65362616?s=48&amp;v=4",
+    "Category": "Components",
+    "Name": "MudBlazor Markdown",
+    "Description": "A Markdown Component for MudBlazor.",
+    "Link": "https://github.com/MyNihongo/MudBlazor.Markdown",
+    "GitHubUserPath": "MyNihongo",
+    "GitHubRepoPath": "MudBlazor.Markdown"
+  },
+  {
+    "AvatarImageSrc": "https://avatars.githubusercontent.com/u/105243816?s=48&amp;v=4",
+    "Category": "Components",
+    "Name": "CodeBeam MudBlazor Extensions",
+    "Description": "MudExtensions has 30+ components and utilities from the core library contributors. There are both unique and extended components that add additional features on current Mud components.",
+    "Link": "https://codebeam-mudextensions.pages.dev/",
+    "GitHubUserPath": "CodeBeamOrg",
+    "GitHubRepoPath": "CodeBeam.MudBlazor.Extensions"
+  },
+  {
+    "AvatarImageSrc": "https://raw.githubusercontent.com/fgilde/MudBlazor.Extensions/main/MudExtension.png",
+    "Category": "Components",
+    "Name": "Fgilde MudBlazor Extensions",
+    "Description": "MudBlazor.Extensions is a convenient package that extends the capabilities of the MudBlazor component library. There are both unique and extended components and utilities that add additional features on current Mud components.",
+    "Link": "https://mudblazor-extensions.pages.dev/",
+    "GitHubUserPath": "fgilde",
+    "GitHubRepoPath": "MudBlazor.Extensions"
+  },
+  {
+    "AvatarImageSrc": "https://raw.githubusercontent.com/fgilde/MudBlazor.Extensions/main/MudExtension.png",
+    "Category": "Components",
+    "Name": "Fgilde MudEx RichTextEditor",
+    "Description": "MudExRichTextEditor is a custom reusable control that allows us to easily consume Quill combining in a MudBlazor project Features with MudBlazor Theme Support. This compnent also works without a MudBlazor Project.",
+    "Link": "https://github.com/fgilde/MudExRichTextEditor",
+    "GitHubUserPath": "fgilde",
+    "GitHubRepoPath": "MudExRichTextEditor"
+  },
+  {
+    "AvatarImageSrc": "https://avatars.githubusercontent.com/u/88168386?s=48&amp;v=4",
+    "Category": "Components",
+    "Name": "Static Input (for SSR)",
+    "Description": "Tailored specifically for Static Server-Side Rendered (static SSR) pages. It offers seamless integration for some of MudBlazor's Component design into your static application pages. Focusing particularly on components designed for forms and edit forms, in situations where interactive components are not feasible.",
+    "Link": "https://github.com/0phois/MudBlazor.StaticInput",
+    "GitHubUserPath": "0phois",
+    "GitHubRepoPath": "MudBlazor.StaticInput"
+  },
+  {
+    "AvatarImageSrc": "https://avatars.githubusercontent.com/u/51314385?s=48&amp;v=4",
+    "Category": "Components",
+    "Name": "Heron MudCalendar",
+    "Description": "A simple but powerful calendar component for MudBlazor. Calendar includes multiple views (month, week, work week, and day), customizable events, and easy integration with your existing MudBlazor project.",
+    "Link": "https://github.com/danheron/Heron.MudCalendar",
+    "GitHubUserPath": "danheron",
+    "GitHubRepoPath": "Heron.MudCalendar"
+  },
+  {
+    "AvatarImageSrc": "https://mudblocks.cc/assets/images/logo/favicon-512.png",
+    "Category": "Style",
+    "Name": "MudBlocks",
+    "Description": "A collection of MudBlazor blocks. Predefined, reusable UI elements or layouts designed to simplify development by combining multiple components into cohesive sections; such as headers, footers, forms, cards, or dashboards.",
+    "Link": "https://mudblocks.cc/",
+    "GitHubUserPath": "mouse0270",
+    "GitHubRepoPath": "mudblocks"
+  }
+]

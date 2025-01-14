@@ -1,0 +1,25 @@
+
+.docs-extensions-clamp {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-height: 1.5;
+  min-height: calc(1.5em * 2);
+}
+
+.docs-extensions-card {
+  width: 100%;
+}
+
+@media(min-width: 600px) {
+  .docs-extensions-card {
+    height: 100%;
+  }
+
+  .docs-extensions-paper {
+    height: 250px;
+    overflow-y: auto;
+  }
+}
