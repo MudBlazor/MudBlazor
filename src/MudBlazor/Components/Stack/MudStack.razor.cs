@@ -29,29 +29,30 @@ public partial class MudStack : MudComponentBase
     /// Displays items horizontally.
     /// </summary>
     /// <remarks>
-    /// Defaults to <see cref="MudGlobal.StackDefaults.Row"/>.  
+    /// Defaults to <c>false</c>.  
     /// When <c>true</c>, items will be displayed horizontally.  When <c>false</c>, items are displayed vertically.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Stack.Behavior)]
-    public bool Row { get; set; } = MudGlobal.StackDefaults.Row;
+    public bool Row { get; set; }
 
     /// <summary>
     /// Reverses the order of items.
     /// </summary>
     /// <remarks>
-    /// Defaults to <see cref="MudGlobal.StackDefaults.Reverse"/>.  
+    /// Defaults to <c>false</c>.  
     /// When <c>true</c>, items will be reversed.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Stack.Behavior)]
-    public bool Reverse { get; set; } = MudGlobal.StackDefaults.Reverse;
+    public bool Reverse { get; set; }
 
     /// <summary>
     /// The gap between items in increments of <c>4px</c>.
     /// </summary>
     /// <remarks>
-    /// Defaults to <see cref="MudGlobal.StackDefaults.Spacing"/>.  Maximum is <c>20</c> (<c>80px</c>).
+    /// <para>Defaults to 3 in <see cref="MudGlobal.StackDefaults.Spacing"/>.</para>
+    /// <para>Maximum is 20 (<c>80px</c>).</para>
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Stack.Behavior)]

@@ -79,11 +79,12 @@ namespace MudBlazor
         /// Displays a rounded border.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  When <c>true</c>, the CSS <c>border-radius</c> is set to the theme's default value.
+        /// Defaults to <c>false</c> in <see cref="MudGlobal.Rounded"/>.
+        /// When <c>true</c>, the CSS <c>border-radius</c> is set to the theme's default value.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ProgressLinear.Appearance)]
-        public bool Rounded { get; set; } = false;
+        public bool Rounded { get; set; }
 
         /// <summary>
         /// Displays animated stripes for the value portion of this progress bar.

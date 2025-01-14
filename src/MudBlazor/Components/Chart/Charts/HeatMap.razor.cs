@@ -348,22 +348,22 @@ namespace MudBlazor.Charts
 
             // Calculates the horizontal position for the legend when it is placed on the right.
             double GetRightPosition() =>
-                _horizontalStartSpace + HeatmapWidth + HeatMapPadding + CellPadding +
-                (_options?.YAxisLabelPosition == YAxisLabelPosition.Right ? _yAxisLabelWidth : 0);
+                _horizontalStartSpace + HeatmapWidth + HeatMapPadding +
+                (_options?.YAxisLabelPosition == YAxisLabelPosition.Right ? _yAxisLabelWidth + CellPadding : 0);
 
             // Calculates the horizontal position for the legend when it is placed on the left.
             double GetLeftPosition() =>
-                _horizontalStartSpace - HeatMapPadding - LegendBox - CellPadding -
-                (_options?.YAxisLabelPosition == YAxisLabelPosition.Left ? _yAxisLabelWidth : 0);
+                _horizontalStartSpace - HeatMapPadding - LegendBox -
+                (_options?.YAxisLabelPosition == YAxisLabelPosition.Left ? _yAxisLabelWidth + CellPadding : 0);
 
             // Calculates the vertical position for the legend when it is placed at the bottom.
             double GetBottomPosition() =>
-                _verticalStartSpace + HeatmapHeight + LegendBox + CellPadding +
-                (_options?.XAxisLabelPosition == XAxisLabelPosition.Bottom ? _dynamicFontSize + CellPadding : 0);
+                _verticalStartSpace + HeatmapHeight + HeatMapPadding + CellPadding + CellPadding +
+                (_options?.XAxisLabelPosition == XAxisLabelPosition.Bottom ? _dynamicFontSize : 0);
 
             // Calculates the vertical position for the legend when it is placed at the top.
             double GetTopPosition() =>
-                _verticalStartSpace - CellPadding - LegendBox - CellPadding -
+                _verticalStartSpace - CellPadding - LegendBox -
                 (_options?.XAxisLabelPosition == XAxisLabelPosition.Top ? _dynamicFontSize + CellPadding : 0);
         }
     }

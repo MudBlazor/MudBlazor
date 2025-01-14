@@ -25,17 +25,18 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Card.Appearance)]
-        public int Elevation { set; get; } = MudGlobal.CardDefaults.Elevation;
+        public int Elevation { set; get; } = 1;
 
         /// <summary>
         /// Disables rounded corners.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
+        /// Can be overridden by <see cref="MudGlobal.Rounded"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Card.Appearance)]
-        public bool Square { get; set; } = MudGlobal.CardDefaults.Square;
+        public bool Square { get; set; } = MudGlobal.Rounded == false;
 
         /// <summary>
         /// Displays an outline.
@@ -45,7 +46,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Card.Appearance)]
-        public bool Outlined { get; set; } = MudGlobal.CardDefaults.Outlined;
+        public bool Outlined { get; set; }
 
         /// <summary>
         /// The content within this component.

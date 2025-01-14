@@ -49,16 +49,19 @@ namespace MudBlazor
         /// <summary>
         /// If true, sets the border-radius to theme default.
         /// </summary>
+        /// <remarks>
+        /// Defaults to false in <see cref="MudGlobal.Rounded"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
-        public bool Rounded { get; set; } = MudGlobal.TabDefaults.Rounded;
+        public bool Rounded { get; set; } = MudGlobal.Rounded == true;
 
         /// <summary>
         /// If true, sets a border between the content and the tabHeader depending on the position.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
-        public bool Border { get; set; } = MudGlobal.TabDefaults.Border;
+        public bool Border { get; set; }
 
         /// <summary>
         /// If true, tabHeader will be outlined.
@@ -72,14 +75,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
-        public bool Centered { get; set; } = MudGlobal.TabDefaults.Centered;
+        public bool Centered { get; set; }
 
         /// <summary>
         /// Hides the active tab slider.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
-        public bool HideSlider { get; set; } = MudGlobal.TabDefaults.HideSlider;
+        public bool HideSlider { get; set; }
 
         /// <summary>
         /// Icon to use for left pagination.
@@ -100,42 +103,42 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
-        public bool AlwaysShowScrollButtons { get; set; } = MudGlobal.TabDefaults.AlwaysShowScrollButtons;
+        public bool AlwaysShowScrollButtons { get; set; }
 
         /// <summary>
         /// Sets the maxheight the component can have.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
-        public int? MaxHeight { get; set; } = MudGlobal.TabDefaults.MaxHeight;
+        public int? MaxHeight { get; set; } = null;
 
         /// <summary>
         /// Sets the min-wdth of the tabs. 160px by default.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
-        public string MinimumTabWidth { get; set; } = MudGlobal.TabDefaults.MinimumTabWidth;
+        public string MinimumTabWidth { get; set; } = "160px";
 
         /// <summary>
         /// Sets the position of the tabs itself.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tabs.Behavior)]
-        public Position Position { get; set; } = MudGlobal.TabDefaults.Position;
+        public Position Position { get; set; } = Position.Top;
 
         /// <summary>
         /// The color of the component. It supports the theme colors.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
-        public Color Color { get; set; } = MudGlobal.TabDefaults.Color;
+        public Color Color { get; set; } = Color.Default;
 
         /// <summary>
         /// The color of the tab slider. It supports the theme colors.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
-        public Color SliderColor { get; set; } = MudGlobal.TabDefaults.SliderColor;
+        public Color SliderColor { get; set; } = Color.Inherit;
 
         /// <summary>
         /// The color of the icon. It supports the theme colors.
@@ -156,14 +159,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
-        public int Elevation { set; get; } = MudGlobal.TabDefaults.Elevation;
+        public int Elevation { set; get; } = 0;
 
         /// <summary>
         /// If true, will apply elevation, rounded, outlined effects to the whole tab component instead of just tabHeader.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
-        public bool ApplyEffectsToContainer { get; set; } = MudGlobal.TabDefaults.ApplyEffectsToContainer;
+        public bool ApplyEffectsToContainer { get; set; }
 
         /// <summary>
         /// Gets or sets whether to show a ripple effect when the user clicks the button. Default is true.
