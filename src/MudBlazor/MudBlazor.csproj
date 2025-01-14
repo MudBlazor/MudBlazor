@@ -72,14 +72,14 @@
   </Target>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net8.0' ">
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="8.0.11" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.11" />
-    <PackageReference Include="Microsoft.Extensions.Localization" Version="8.0.11" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="8.0.12" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.12" />
+    <PackageReference Include="Microsoft.Extensions.Localization" Version="8.0.12" />
   </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'net9.0' ">
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="9.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Localization" Version="9.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="9.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Localization" Version="9.0.1" />
   </ItemGroup>
 
   <PropertyGroup>

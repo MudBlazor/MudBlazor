@@ -65,9 +65,9 @@
     <PackageReference Include="BytexDigital.Blazor.Components.CookieConsent" Version="1.2.1" />
     <PackageReference Include="FluentValidation" Version="11.11.0" />
     <PackageReference Include="FuzzySharp" Version="2.0.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="9.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="9.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="9.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="9.0.1" />
     <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
   </ItemGroup>
 
