@@ -59,12 +59,12 @@
                 </MudInput>
                 <MudPopover Open=@(_open)
                             MaxHeight="@MaxHeight"
+                            Class="@PopoverClass"
                             AnchorOrigin="@AnchorOrigin"
                             TransformOrigin="@TransformOrigin"
-                            OverflowBehavior="@DropdownSettings.OverflowBehavior"
-                            Class="@PopoverClass"
                             Fixed="@DropdownSettings.Fixed"
-                            RelativeWidth="@FullWidth">
+                            OverflowBehavior="@DropdownSettings.OverflowBehavior"
+                            RelativeWidth="@RelativeWidth">
                     <CascadingValue Value="@((IMudSelect)this)" IsFixed="true">
                         <MudList T="string"
                                  Class="@ListClass"

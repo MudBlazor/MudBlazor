@@ -53,13 +53,13 @@ namespace MudBlazor
         /// Shows a rounded border for all <see cref="MudNavLink" /> items.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  
+        /// Defaults to <c>false</c> in <see cref="MudGlobal.Rounded"/>.  
         /// When <c>true</c>, the theme <c>border-radius</c> value will be used. 
         /// Only takes affect if <see cref="Bordered"/> is <c>true</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.NavMenu.Appearance)]
-        public bool Rounded { get; set; }
+        public bool Rounded { get; set; } = MudGlobal.Rounded == true;
 
         /// <summary>
         /// The vertical spacing between <see cref="MudNavLink" /> items.

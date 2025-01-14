@@ -110,7 +110,7 @@ namespace MudBlazor.UnitTests.Components
             popover.Fixed.Should().BeFalse();
             popover.AnchorOrigin.Should().Be(Origin.TopLeft);
             popover.TransformOrigin.Should().Be(Origin.TopLeft);
-            popover.RelativeWidth.Should().BeNull();
+            popover.RelativeWidth.Should().Be(DropdownWidth.Ignore);
             popover.OverflowBehavior.Should().Be(OverflowBehavior.FlipOnOpen);
             popover.Duration.Should().Be(251);
         }

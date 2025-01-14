@@ -160,21 +160,23 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
+        /// Can be overridden by <see cref="MudGlobal.Rounded"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerAppearance)]
-        public bool Square { get; set; }
+        public bool Square { get; set; } = MudGlobal.Rounded == false;
 
         /// <summary>
         /// Shows rounded corners.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.<br />
+        /// Defaults to <c>false</c>.
+        /// Can be overridden by <see cref="MudGlobal.Rounded"/>.
         /// When <c>true</c>, the <c>border-radius</c> style is set to the theme's default value.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerAppearance)]
-        public bool Rounded { get; set; }
+        public bool Rounded { get; set; } = MudGlobal.Rounded == true;
 
         /// <summary>
         /// The text displayed below the text field.
@@ -435,6 +437,18 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
         public OverflowBehavior OverflowBehavior { get; set; } = OverflowBehavior.FlipOnOpen;
+
+        /// <summary>
+        /// Determines the width of the Popover dropdown in relation the parent container.
+        /// </summary>
+        /// <remarks>
+        /// <para>Defaults to <see cref="DropdownWidth.Ignore" />. </para>
+        /// <para>When <see cref="DropdownWidth.Relative" />, restricts the max-width of the component to the width of the parent container</para>
+        /// <para>When <see cref="DropdownWidth.Adaptive" />, restricts the min-width of the component to the width of the parent container</para>
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Popover.Appearance)]
+        public DropdownWidth RelativeWidth { get; set; } = DropdownWidth.Ignore;
 
         protected IMask? _mask = null;
 
