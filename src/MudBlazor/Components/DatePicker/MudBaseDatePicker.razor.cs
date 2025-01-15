@@ -674,7 +674,7 @@ namespace MudBlazor
 
             if (Culture.Calendar.GetMonth(month) == Culture.Calendar.GetMonth(selectedMonth))
                 return Typo.h5;
-            
+
             return Typo.subtitle1;
         }
         protected override void OnInitialized()
