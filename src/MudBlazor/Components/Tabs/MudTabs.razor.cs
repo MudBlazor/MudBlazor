@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.Extensions;
 using MudBlazor.Interop;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
@@ -13,6 +8,9 @@ using MudBlazor.Utilities;
 #nullable enable
 namespace MudBlazor
 {
+    /// <summary>
+    /// A set of views organized into one or more <see cref="MudTabPanel" /> components.
+    /// </summary>
     public partial class MudTabs : MudComponentBase, IAsyncDisposable
     {
         private bool _isDisposed;
@@ -33,6 +31,12 @@ namespace MudBlazor
 
         private IResizeObserver? _resizeObserver = null;
 
+        /// <summary>
+        /// Displays text right-to-left.
+        /// </summary>
+        /// <remarks>
+        /// Controlled via the <see cref="MudRTLProvider"/> component.
+        /// </remarks>
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
 
@@ -40,151 +44,216 @@ namespace MudBlazor
         private IResizeObserverFactory _resizeObserverFactory { get; set; } = null!;
 
         /// <summary>
-        /// If true, render all tabs and hide (display:none) every non-active.
+        /// Persists the content of tabs when they are not visible.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.<br />
+        /// When <c>false</c>, selecting a tab will initialize its content each time the tab is visited.<br />
+        /// When <c>true</c>, a tab's content is initialized only once and is hidden via <c>display:none</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Behavior)]
         public bool KeepPanelsAlive { get; set; } = false;
 
         /// <summary>
-        /// If true, sets the border-radius to theme default.
+        /// Uses rounded corners on the tab's edges.
         /// </summary>
         /// <remarks>
-        /// Defaults to false in <see cref="MudGlobal.Rounded"/>.
+        /// Defaults to <see cref="MudGlobal.Rounded" />.
+        /// When <c>true</c>, the <c>border-radius</c> style is set to the theme's default value.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
         public bool Rounded { get; set; } = MudGlobal.Rounded == true;
 
         /// <summary>
-        /// If true, sets a border between the content and the tabHeader depending on the position.
+        /// Shows a border between the tab content and tab header.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
         public bool Border { get; set; }
 
         /// <summary>
-        /// If true, tabHeader will be outlined.
+        /// Shows an outline around the tab header.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
         public bool Outlined { get; set; } = false;
 
         /// <summary>
-        /// If true, centers the tabitems.
+        /// Centers tabs horizontally in the tab header.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
         public bool Centered { get; set; }
 
         /// <summary>
-        /// Hides the active tab slider.
+        /// Hides the slider underneath the tab header.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
         public bool HideSlider { get; set; }
 
         /// <summary>
-        /// Icon to use for left pagination.
+        /// The icon for scrolling to the previous page of tabs.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.ChevronLeft"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
         public string PrevIcon { get; set; } = Icons.Material.Filled.ChevronLeft;
 
         /// <summary>
-        /// Icon to use for right pagination.
+        /// The icon for scrolling to the next page of tabs.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.ChevronRight"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
         public string NextIcon { get; set; } = Icons.Material.Filled.ChevronRight;
 
         /// <summary>
-        /// If true, always display the scroll buttons even if the tabs are smaller than the required with, buttons will be disabled if there is nothing to scroll.
+        /// Shows the scroll buttons even if all tabs are visible.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
         public bool AlwaysShowScrollButtons { get; set; }
 
         /// <summary>
-        /// Sets the maxheight the component can have.
+        /// The maximum height for this component, in pixels.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
         public int? MaxHeight { get; set; } = null;
 
         /// <summary>
-        /// Sets the min-wdth of the tabs. 160px by default.
+        /// The minimum width of each tab panel.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>160px</c>.  Can be a CSS width or a percentage.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
         public string MinimumTabWidth { get; set; } = "160px";
 
         /// <summary>
-        /// Sets the position of the tabs itself.
+        /// The location of the tab header.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Position.Top"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Behavior)]
         public Position Position { get; set; } = Position.Top;
 
         /// <summary>
-        /// The color of the component. It supports the theme colors.
+        /// The color of the tab header.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Color.Default" />.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
         public Color Color { get; set; } = Color.Default;
 
         /// <summary>
-        /// The color of the tab slider. It supports the theme colors.
+        /// The color of the tab slider.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Color.Inherit" />.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
         public Color SliderColor { get; set; } = Color.Inherit;
 
         /// <summary>
-        /// The color of the icon. It supports the theme colors.
+        /// The color of each tab panel's icon.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Color.Inherit" />.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
         public Color IconColor { get; set; } = Color.Inherit;
 
         /// <summary>
-        /// The color of the next/prev icons. It supports the theme colors.
+        /// The color of the scroll icon buttons.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Color.Inherit" />.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
         public Color ScrollIconColor { get; set; } = Color.Inherit;
 
         /// <summary>
-        /// The higher the number, the heavier the drop-shadow, applies around the whole component.
+        /// The size of the drop shadow.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>0</c>.  Use a higher number for a larger drop shadow.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
         public int Elevation { set; get; } = 0;
 
         /// <summary>
-        /// If true, will apply elevation, rounded, outlined effects to the whole tab component instead of just tabHeader.
+        /// Applies the <see cref="Elevation"/>, <see cref="Rounded"/> and <see cref="Outlined"/> effects to the tab panel.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.<br />
+        /// When <c>false</c>, effects are only applied to the header.<br />
+        /// When <c>true</c>, effects are applied to both the tab header and panel.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
         public bool ApplyEffectsToContainer { get; set; }
 
         /// <summary>
-        /// Gets or sets whether to show a ripple effect when the user clicks the button. Default is true.
+        /// Shows a ripple effect when a tab is clicked.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
         public bool Ripple { get; set; } = true;
 
         /// <summary>
-        /// If true, displays slider animation
+        /// Shows an animated line which slides to the selected tab.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
         public bool SliderAnimation { get; set; } = true;
 
         /// <summary>
-        /// Child content of component.
+        /// The content within this component.
         /// </summary>
+        /// <remarks>
+        /// Typically a set of <see cref="MudTabPanel"/> components.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Behavior)]
         public RenderFragment? ChildContent { get; set; }
@@ -197,6 +266,8 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Tabs.Behavior)]
         public RenderFragment<MudTabPanel>? PrePanelContent { get; set; }
+
+        // JP: Documented up to here
 
         /// <summary>
         /// Custom class/classes for TabPanel
