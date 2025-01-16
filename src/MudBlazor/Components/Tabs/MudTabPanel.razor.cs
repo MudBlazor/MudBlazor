@@ -16,7 +16,7 @@ public partial class MudTabPanel
 {
     private Boolean _disposed;
 
-    [CascadingParameter] 
+    [CascadingParameter]
     private MudTabs? Parent { get; set; }
 
     /// <summary>
