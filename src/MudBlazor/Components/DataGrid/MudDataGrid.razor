@@ -215,6 +215,16 @@
                         {
                             if (GroupedColumn != null)
                             {
+                                if (_currentPageGroups is { Count: 0 })
+                                {
+                                    <tr>
+                                        <th colspan="1000" class="mud-table-empty-row">
+                                            <div Class="my-3">
+                                                @NoRecordsContent
+                                            </div>
+                                        </th>
+                                    </tr>
+                                }
                                 foreach (var g in _currentPageGroups)
                                 {
                                     <tr class="mud-table-row">
@@ -282,7 +292,13 @@
                                                 }
                                             </ChildContent>
                                             <NoRecordsContent>
-                                                @NoRecordsContent
+                                                <tr>
+                                                    <th colspan="1000" class="mud-table-empty-row">
+                                                        <div Class="my-3">
+                                                            @NoRecordsContent
+                                                        </div>
+                                                    </th>
+                                                </tr>
                                             </NoRecordsContent>
                                         </MudVirtualize>
                                         @*Group Footer*@
@@ -337,7 +353,13 @@
                                         }
                                     </ChildContent>
                                     <NoRecordsContent>
-                                        @NoRecordsContent
+                                        <tr>
+                                            <th colspan="1000" class="mud-table-empty-row">
+                                                <div Class="my-3">
+                                                    @NoRecordsContent
+                                                </div>
+                                            </th>
+                                        </tr>
                                     </NoRecordsContent>
                                 </MudVirtualize>
                             }

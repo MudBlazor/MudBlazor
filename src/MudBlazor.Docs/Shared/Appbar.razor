@@ -20,10 +20,10 @@
     <MudButton Href="/getting-started/installation" Color="Color.Inherit" Variant="Variant.Text" Class="@GetActiveClass(DocsBasePage.GettingStarted)">Get Started</MudButton>
     <MudButton Href="/docs/overview" Color="Color.Inherit" Variant="Variant.Text" Class="@GetActiveClass(DocsBasePage.Docs)">Docs</MudButton>
     <MudButton Href="/mud/introduction" Color="Color.Inherit" Variant="Variant.Text" Class="@GetActiveClass(DocsBasePage.DiscoverMore)">Learn More</MudButton>
-    <MudMenu Color="Color.Inherit" Variant="Variant.Text" Class="mx-1 px-3" PopoverClass="docs-layout-menu-shadow" ListClass="d-flex px-4 pb-2 docs-appbar-special-menu" LockScroll="true" Label="Products" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter">
+    <MudMenu Color="Color.Inherit" Variant="Variant.Text" Class="mx-1 px-3" PopoverClass="docs-layout-menu-shadow" ListClass="d-flex px-4 pb-2 docs-appbar-special-menu" LockScroll="true" Label="Projects" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter">
         <MudList T="string">
             <MudListSubheader>
-                Products
+                Official
             </MudListSubheader>
             <MudListItem Href="https://mudblazor.com/">
                 <div class="d-flex">
@@ -52,14 +52,13 @@
         </MudList>
         <MudList T="string" Class="relative">
             <MudListSubheader>
-                Other
-            </MudListSubheader>
-            <MudOverlay Visible="true" LightBackground="true" Absolute="true" Class="docs-menu-overlay" />
-            <MudListItem>
-                <MudBadge Class="d-flex mr-16" Content="@_badgeTextSoon" Color="Color.Info" Overlap="true">
-                    <MudText>Mud</MudText><MudText Color="Color.Warning">Extensions</MudText>
-                </MudBadge>
-                <MudText Typo="Typo.body2">Official and Community Extensions</MudText>
+                Community
+            </MudListSubheader>            
+            <MudListItem Href="/mud/community/extensions">
+                <div class="d-flex">
+                    <MudText>Community</MudText> <MudText Color="Color.Warning">Extensions</MudText>
+                </div>                
+                <MudText Typo="Typo.body2">Links and Github Repositories</MudText>
             </MudListItem>
         </MudList>
     </MudMenu>
