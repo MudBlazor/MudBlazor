@@ -116,6 +116,14 @@
       <TfmSpecificPackageFile Include="..\Directory.Build.targets" Pack="true" PackagePath="build\$(PackageId).targets" />
     </ItemGroup>
   </Target>
+
+  <Target Name="AlwaysIncludeCss"
+          BeforeTargets="Build;ResolveScopedCssInputs;BundleMinify;ResolveProjectStaticWebAssets" AfterTargets="Compile Sass">
+    <ItemGroup>
+      <Content Remove="wwwroot/MudBlazor.min.css" />
+      <Content Include="wwwroot/MudBlazor.min.css" />
+    </ItemGroup>
+  </Target>
   
   <!--Dont Include in build output-->
   <ItemGroup>
