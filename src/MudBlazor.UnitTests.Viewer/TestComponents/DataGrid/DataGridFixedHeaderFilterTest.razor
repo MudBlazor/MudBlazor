@@ -3,7 +3,7 @@
 
 
 <MudDataGrid Items="@_persons" T="Person"
-Filterable FixedHeader Height="350px">
+Filterable Dense="@_dense" FixedHeader ShowMenuIcon Height="350px">
     <Columns>
         <PropertyColumn Property="x => x.Id" Title="Id" />
         <PropertyColumn Property="x => x.Name" Title="Name" />
@@ -14,7 +14,10 @@ Filterable FixedHeader Height="350px">
     </PagerContent>
 </MudDataGrid>
 
+<MudSwitch @bind-Value="@_dense" Label="Dense" />
+
 @code {
+    private bool _dense = false;
     public static string __description__ = " Filter popover positioning when DataGrid FixedHeader is true ";
     List<Person> _persons = [];
 

@@ -8,6 +8,7 @@ namespace MudBlazor.Analyzers
     {
         Any,
         LowerCase,
+        HTMLAttributes,
         DataAndAria,
         None
     }

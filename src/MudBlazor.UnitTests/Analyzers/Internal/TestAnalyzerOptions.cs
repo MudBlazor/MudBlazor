@@ -13,17 +13,24 @@ namespace MudBlazor.UnitTests.Analyzers.Internal
         private TestAnalyzerOptions(Dictionary<string, string> values) => _values = values ?? [];
 
         internal static AnalyzerOptions Create(
-            IllegalParameters illegalParameters,
             AllowedAttributePattern attributeProviderAttribute,
-             ImmutableArray<AdditionalText> additionalText)
+             ImmutableArray<AdditionalText> additionalText, string? attributeList = null)
         {
-            var tmp = new AnalyzerOptions(additionalText, new TestAnalyzerOptions(new Dictionary<string, string>()
+            if (attributeList is null)
             {
-                [MudComponentUnknownParametersAnalyzer.IllegalParametersProperty] = illegalParameters.ToString(),
-                [MudComponentUnknownParametersAnalyzer.AllowedAttributePatternProperty] = attributeProviderAttribute.ToString()!
-            }));
-
-            return tmp;
+                return new AnalyzerOptions(additionalText, new TestAnalyzerOptions(new Dictionary<string, string>()
+                {
+                    [MudComponentUnknownParametersAnalyzer.AllowedAttributePatternProperty] = attributeProviderAttribute.ToString()!
+                }));
+            }
+            else
+            {
+                return new AnalyzerOptions(additionalText, new TestAnalyzerOptions(new Dictionary<string, string>()
+                {
+                    [MudComponentUnknownParametersAnalyzer.AllowedAttributePatternProperty] = attributeProviderAttribute.ToString()!,
+                    [MudComponentUnknownParametersAnalyzer.AllowedAttributeListProperty] = attributeList
+                }));
+            }
         }
 
         private readonly Dictionary<string, string> _values;

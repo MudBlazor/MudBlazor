@@ -14,7 +14,6 @@
   <!--Analyzer Config-->
   <PropertyGroup>
     <MudAllowedAttributePattern>LowerCase</MudAllowedAttributePattern>
-    <MudIllegalParameters>V7IgnoreCase</MudIllegalParameters>
     <MudDebugAnalyzer>false</MudDebugAnalyzer>
   </PropertyGroup>
 
