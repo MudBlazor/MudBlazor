@@ -76,7 +76,7 @@ namespace MudBlazor
         /// The color of the thumb icon.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Color.Default"/>.  Only applies when <see cref="ThumbIcon"/> is set.
+        /// Defaults to <see cref="Color.Default"/>. Only applies when <see cref="ThumbIcon"/> is set.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]

@@ -46,7 +46,7 @@ namespace MudBlazor
         /// The CSS classes applied to the "Add" button.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>null</c>.  Multiple classes must be separated by spaces.
+        /// Defaults to <c>null</c>. Multiple classes must be separated by spaces.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
@@ -66,7 +66,7 @@ namespace MudBlazor
         /// The CSS classes applied to the "Close" button.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>null</c>.  Multiple classes must be separated by spaces.
+        /// Defaults to <c>null</c>. Multiple classes must be separated by spaces.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
@@ -86,7 +86,7 @@ namespace MudBlazor
         /// The text shown when the user hovers over the "Add" button.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>""</c>.  When <c>null</c> or empty, no tooltip will be shown.
+        /// Defaults to <c>""</c>. When <c>null</c> or empty, no tooltip will be shown.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Behavior)]
@@ -96,7 +96,7 @@ namespace MudBlazor
         /// The text shown when the user hovers over the "Close" button.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>""</c>.  When <c>null</c> or empty, no tooltip will be shown.
+        /// Defaults to <c>""</c>. When <c>null</c> or empty, no tooltip will be shown.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Behavior)]

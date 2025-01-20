@@ -154,7 +154,7 @@ namespace MudBlazor
         /// The minimum width of each tab panel.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>160px</c>.  Can be a CSS width or a percentage.
+        /// Defaults to <c>160px</c>. Can be a CSS width or a percentage (e.g. <c>30%</c>).
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
@@ -214,7 +214,7 @@ namespace MudBlazor
         /// The size of the drop shadow.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>0</c>.  Use a higher number for a larger drop shadow.
+        /// Defaults to <c>0</c>. Use a higher number for a larger drop shadow.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
@@ -275,7 +275,7 @@ namespace MudBlazor
         /// The CSS classes applied to tab panels.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>null</c>.  Multiple classes must be separated by spaces.
+        /// Defaults to <c>null</c>. Multiple classes must be separated by spaces.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
@@ -285,7 +285,8 @@ namespace MudBlazor
         /// The CSS classes applied to the tab header.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>null</c>.  Multiple classes must be separated by spaces.  The "header" is the set of tab names which users click on to change the active tab.
+        /// Defaults to <c>null</c>. Multiple classes must be separated by spaces.<br />
+        /// The "header" is the set of tab names which users click on to change the active tab.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
@@ -295,7 +296,7 @@ namespace MudBlazor
         /// The CSS classes applied to the currently selected tab.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>null</c>.  Multiple classes must be separated by spaces.
+        /// Defaults to <c>null</c>. Multiple classes must be separated by spaces.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
@@ -305,7 +306,7 @@ namespace MudBlazor
         /// The CSS classes applied to all tab panels.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>null</c>.  Multiple classes must be separated by spaces.
+        /// Defaults to <c>null</c>. Multiple classes must be separated by spaces.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
@@ -402,7 +403,8 @@ namespace MudBlazor
         /// Occurs before a panel is activated.
         /// </summary>
         /// <remarks>
-        /// Set <see cref="TabInteractionEventArgs.Cancel"/> to <c>true</c> to prevent the tab from being activated.   The returned <c>Task</c> will be awaited.
+        /// Set <see cref="TabInteractionEventArgs.Cancel"/> to <c>true</c> to prevent the tab from being activated.<br />
+        /// The returned <c>Task</c> will be awaited.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Behavior)]
