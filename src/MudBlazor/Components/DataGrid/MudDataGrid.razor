@@ -87,8 +87,105 @@
                                             </MudPopover>
                                         </th>
                                     </tr>
-                                }                        
-                        @if (Filterable && FilterMode == DataGridFilterMode.ColumnFilterRow)
+                                }
+                                @if (_columnsPanelVisible)
+                                {
+                                    <MudOverlay ZIndex="12" @bind-Visible="_columnsPanelVisible" AutoClose></MudOverlay>
+                                    <tr class="mud-table-row" style="visibility: collapse; opacity: 0; overflow: hidden;">
+                                        <th colspan="@RenderedColumns.Count" class="mud-table-cell mud-filter-panel-cell">
+                                            <MudPopover Open="@_columnsPanelVisible" Paper="true" Class="mud-data-grid-columns-panel px-2" OverflowBehavior="OverflowBehavior.FlipAlways"
+                                                        AnchorOrigin="Origin.TopLeft"
+                                                        TransformOrigin="Origin.TopLeft" Elevation="4"
+                                                        Style="max-width:700px;z-index:11;" MaxHeight="400">
+                                                <MudStack Row="true" Justify="Justify.FlexEnd">
+                                                    <div style="min-width:250px">
+                                                        <MudTextField DebounceInterval="500" @bind-Value="@_columnsPanelSearch" OnDebounceIntervalElapsed="@(() => _columnsPanelDropContainer?.Refresh())"
+                                                                      Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" Margin="Margin.Dense" FullWidth="true" />
+                                                    </div>
+                                                </MudStack>
+
+                                                <MudDropContainer @ref="_columnsPanelDropContainer" T="Column<T>" Items="@RenderedColumns" ItemsSelector="(item, dropzone) => true"
+                                                                  ItemDisabled="@((item) => !this.ColumnsPanelReordering)" ItemDropped="ColumnOrderUpdated">
+                                                    <ChildContent>
+                                                        <MudDropZone T="Column<T>" Class="flex-grow-1" AllowReorder=this.ColumnsPanelReordering />
+                                                    </ChildContent>
+                                                    <ItemRenderer>
+                                                        @if (string.IsNullOrEmpty(_columnsPanelSearch) || context.Title?.Contains(_columnsPanelSearch, StringComparison.InvariantCultureIgnoreCase) == true)
+                                                        {
+                                                            <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center" Style="border-bottom: 1px solid var(--mud-palette-table-lines);">
+                                                                @if (ColumnsPanelReordering)
+                                                                {
+                                                                    <MudStack Spacing="0">
+                                                                        @if (RenderedColumns.IndexOf(context) != 0)
+                                                                        {
+                                                                            <MudIconButton Ripple="false" Icon="@Icons.Material.Filled.ArrowDropUp" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_MoveUp] Disabled="@(RenderedColumns.IndexOf(context) == 0)" OnClick="@(e => ColumnUp(context))"></MudIconButton>
+                                                                        }
+                                                                        @if (RenderedColumns.IndexOf(context) != RenderedColumns.Count - 1)
+                                                                        {
+                                                                            <MudIconButton Ripple="false" Icon="@Icons.Material.Filled.ArrowDropDown" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_MoveDown] Disabled="@(RenderedColumns.IndexOf(context) == RenderedColumns.Count - 1)" OnClick="@(e => ColumnDown(context))"></MudIconButton>
+                                                                        }
+                                                                    </MudStack>
+                                                                }
+
+                                                                @if (context?.GroupingState.Value ?? false)
+                                                                {
+                                                                    <MudIconButton Ripple="false" Icon="@Icons.Material.Filled.AccountTree" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_Ungroup] Disabled="!context.groupable" OnClick="@(e => context?.HeaderCell.UngroupColumnAsync())"></MudIconButton>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <MudIconButton Ripple="false" Icon="@Icons.Material.Filled.TableRows" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_Group] Disabled="!context.groupable" OnClick="@(e => context?.HeaderCell.GroupColumnAsync())"></MudIconButton>
+                                                                }
+                                                                <MudSwitch T="bool" Ripple="false" Class="flex-grow-1" Color="Color.Primary" Disabled="@(!context.hideable)" Value="@context.HiddenState.Value" ValueChanged="@context.ToggleAsync" Converter="_oppositeBoolConverter" Label="@context.Title" />
+                                                                <MudSpacer />
+
+                                                                <div>
+                                                                    <MudIconButton Ripple="false" Icon="@context.SortIcon" Class="@context.HeaderCell.sortIconClass" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_Sort] Disabled="!context.sortable" OnClick="@(e => context?.HeaderCell.SortChangedAsync(e))"></MudIconButton>
+                                                                    @if (context.DataGrid.SortMode == SortMode.Multiple)
+                                                                    {
+                                                                        if (context.SortIndex < 0)
+                                                                        {
+                                                                            <span class="mud-sort-index mud-text-disabled invisible">@(context.SortIndex + 1)</span>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <span class="mud-sort-index mud-text-disabled">@(context.SortIndex + 1)</span>
+                                                                        }
+                                                                    }
+                                                                </div>
+
+                                                                @if (context.HeaderCell.hasFilter)
+                                                                {
+                                                                    <MudIconButton Ripple="false" Class="filter-button filtered" Icon="@Icons.Material.Filled.FilterAlt" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_Filter] Disabled="!context.filterable" OnClick="@(e => context?.HeaderCell.OpenFilters())"></MudIconButton>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <MudIconButton Ripple="false" Class="filter-button" Icon="@Icons.Material.Outlined.FilterAlt" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_Filter] Disabled="!context.filterable" OnClick="@(e => context?.HeaderCell.AddFilter())"></MudIconButton>
+                                                                }
+
+                                                                @if (ColumnsPanelReordering)
+                                                                {
+                                                                    <MudIconButton Ripple="false" Icon="@context.DataGrid.DragIndicatorIcon" Size="@Size.Small" Class="drag-icon-options"></MudIconButton>
+                                                                }
+                                                            </MudStack>
+                                                        }
+                                                    </ItemRenderer>
+                                                </MudDropContainer>
+                                                <MudStack Row="true">
+                                                    @if (Groupable)
+                                                    {
+                                                        <MudButton OnClick="@CollapseAllGroups" Color="@Color.Primary">@Localizer[LanguageResource.MudDataGrid_CollapseAllGroups]</MudButton>
+                                                        <MudButton OnClick="@ExpandAllGroups" Color="@Color.Primary">@Localizer[LanguageResource.MudDataGrid_ExpandAllGroups]</MudButton>
+                                                    }
+                                                    <MudSpacer />
+
+                                                    <MudButton OnClick="@HideAllColumnsAsync" Color="@Color.Primary">@Localizer[LanguageResource.MudDataGrid_HideAll]</MudButton>
+                                                    <MudButton OnClick="@ShowAllColumnsAsync" Color="@Color.Primary">@Localizer[LanguageResource.MudDataGrid_ShowAll]</MudButton>
+                                                </MudStack>
+                                            </MudPopover>
+                                        </th>
+                                    </tr>
+                                }
+                                @if (Filterable && FilterMode == DataGridFilterMode.ColumnFilterRow)
                         {
                             <tr class="mud-table-row">
                                 @foreach (var column in RenderedColumns)
@@ -107,101 +204,6 @@
                         }
                     </thead>
                     <tbody class="mud-table-body">
-                        @if (_columnsPanelVisible)
-                        {
-                            <MudOverlay ZIndex="10" @bind-Visible="_columnsPanelVisible" AutoClose></MudOverlay>
-
-                            <MudPopover Open="@_columnsPanelVisible" Paper="true" Class="mud-data-grid-columns-panel px-2" OverflowBehavior="OverflowBehavior.FlipAlways"
-                                        AnchorOrigin="Origin.TopLeft"
-                                        TransformOrigin="Origin.TopLeft" Elevation="4"
-                                        Style="max-width:700px;z-index:11;" MaxHeight="400">
-                                <MudStack Row="true" Justify="Justify.FlexEnd">
-                                    <div style="min-width:250px">
-                                        <MudTextField DebounceInterval="500" @bind-Value="@_columnsPanelSearch" OnDebounceIntervalElapsed="@(() => _columnsPanelDropContainer?.Refresh())"
-                                                        Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" Margin="Margin.Dense" FullWidth="true" />
-                                    </div>
-                                </MudStack>
-
-                                <MudDropContainer @ref="_columnsPanelDropContainer" T="Column<T>" Items="@RenderedColumns" ItemsSelector="(item, dropzone) => true" 
-                                    ItemDisabled="@((item) => !this.ColumnsPanelReordering)" ItemDropped="ColumnOrderUpdated">
-                                    <ChildContent>
-                                        <MudDropZone T="Column<T>" Class="flex-grow-1" AllowReorder=this.ColumnsPanelReordering />
-                                    </ChildContent>
-                                    <ItemRenderer>
-                                        @if (string.IsNullOrEmpty(_columnsPanelSearch) || context.Title?.Contains(_columnsPanelSearch, StringComparison.InvariantCultureIgnoreCase) == true)
-                                        {
-                                            <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center" Style="border-bottom: 1px solid var(--mud-palette-table-lines);">
-                                                @if (ColumnsPanelReordering)
-                                                {
-                                                    <MudStack Spacing="0">
-                                                        @if (RenderedColumns.IndexOf(context) != 0)
-                                                        {
-                                                            <MudIconButton Ripple="false" Icon="@Icons.Material.Filled.ArrowDropUp" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_MoveUp] Disabled="@(RenderedColumns.IndexOf(context) == 0)" OnClick="@(e => ColumnUp(context))"></MudIconButton>
-                                                        }
-                                                        @if (RenderedColumns.IndexOf(context) != RenderedColumns.Count - 1)
-                                                        {
-                                                            <MudIconButton Ripple="false" Icon="@Icons.Material.Filled.ArrowDropDown" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_MoveDown] Disabled="@(RenderedColumns.IndexOf(context) == RenderedColumns.Count - 1)" OnClick="@(e => ColumnDown(context))"></MudIconButton>
-                                                        }
-                                                    </MudStack>
-                                                }
-
-                                                @if (context?.GroupingState.Value ?? false)
-                                                {
-                                                    <MudIconButton Ripple="false" Icon="@Icons.Material.Filled.AccountTree" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_Ungroup] Disabled="!context.groupable" OnClick="@(e => context?.HeaderCell.UngroupColumnAsync())"></MudIconButton>
-                                                }
-                                                else
-                                                {
-                                                    <MudIconButton Ripple="false" Icon="@Icons.Material.Filled.TableRows" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_Group] Disabled="!context.groupable" OnClick="@(e => context?.HeaderCell.GroupColumnAsync())"></MudIconButton>
-                                                }
-                                                <MudSwitch T="bool" Ripple="false" Class="flex-grow-1" Color="Color.Primary" Disabled="@(!context.hideable)" Value="@context.HiddenState.Value" ValueChanged="@context.ToggleAsync" Converter="_oppositeBoolConverter" Label="@context.Title" />
-                                                <MudSpacer />
-
-                                                <div>
-                                                    <MudIconButton Ripple="false" Icon="@context.SortIcon" Class="@context.HeaderCell.sortIconClass" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_Sort] Disabled="!context.sortable" OnClick="@(e => context?.HeaderCell.SortChangedAsync(e))"></MudIconButton>
-                                                    @if (context.DataGrid.SortMode == SortMode.Multiple)
-                                                    {
-                                                        if (context.SortIndex < 0)
-                                                        {
-                                                            <span class="mud-sort-index mud-text-disabled invisible">@(context.SortIndex + 1)</span>
-                                                        }
-                                                        else
-                                                        {
-                                                            <span class="mud-sort-index mud-text-disabled">@(context.SortIndex + 1)</span>
-                                                        }
-                                                    }
-                                                </div>
-
-                                                @if (context.HeaderCell.hasFilter)
-                                                {
-                                                    <MudIconButton Ripple="false" Class="filter-button filtered" Icon="@Icons.Material.Filled.FilterAlt" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_Filter] Disabled="!context.filterable" OnClick="@(e => context?.HeaderCell.OpenFilters())"></MudIconButton>
-                                                }
-                                                else
-                                                {
-                                                    <MudIconButton Ripple="false" Class="filter-button" Icon="@Icons.Material.Outlined.FilterAlt" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_Filter] Disabled="!context.filterable" OnClick="@(e => context?.HeaderCell.AddFilter())"></MudIconButton>
-                                                }
-
-                                                @if (ColumnsPanelReordering)
-                                                {
-                                                    <MudIconButton Ripple="false" Icon="@context.DataGrid.DragIndicatorIcon" Size="@Size.Small" Class="drag-icon-options"></MudIconButton>
-                                                }
-                                            </MudStack>
-                                        }
-                                    </ItemRenderer>
-                                </MudDropContainer>
-                                <MudStack Row="true">
-                                    @if (Groupable)
-                                    {
-                                        <MudButton OnClick="@CollapseAllGroups" Color="@Color.Primary">@Localizer[LanguageResource.MudDataGrid_CollapseAllGroups]</MudButton>
-                                        <MudButton OnClick="@ExpandAllGroups" Color="@Color.Primary">@Localizer[LanguageResource.MudDataGrid_ExpandAllGroups]</MudButton>
-                                    }
-                                    <MudSpacer />
-
-                                    <MudButton OnClick="@HideAllColumnsAsync" Color="@Color.Primary">@Localizer[LanguageResource.MudDataGrid_HideAll]</MudButton>
-                                    <MudButton OnClick="@ShowAllColumnsAsync" Color="@Color.Primary">@Localizer[LanguageResource.MudDataGrid_ShowAll]</MudButton>
-                                </MudStack>
-                            </MudPopover>
-                        }
-
                         @{
                             var resolvedPageItems = new List<IndexBag<T>>(0);
                             // resolve the page items only when used

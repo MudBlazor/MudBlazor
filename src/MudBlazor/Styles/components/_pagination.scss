@@ -1,4 +1,4 @@
-﻿@import '../abstracts/variables';
+@import '../abstracts/variables';
 
 .mud-pagination {
   display: inline-flex;
@@ -6,6 +6,7 @@
   gap: 6px;
   align-items: center;
   margin: 0;
+  list-style: none;
 
   .mud-pagination-item {
     & > * {
