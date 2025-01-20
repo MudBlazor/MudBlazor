@@ -1,4 +1,8 @@
-﻿using System.Globalization;
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interop;
@@ -267,41 +271,57 @@ namespace MudBlazor
         [Category(CategoryTypes.Tabs.Behavior)]
         public RenderFragment<MudTabPanel>? PrePanelContent { get; set; }
 
-        // JP: Documented up to here
-
         /// <summary>
-        /// Custom class/classes for TabPanel
+        /// The CSS classes applied to tab panels.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  Multiple classes must be separated by spaces.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
         public string? TabPanelClass { get; set; }
 
         /// <summary>
-        /// Custom class/classes for TabHeader
+        /// The CSS classes applied to the tab header.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  Multiple classes must be separated by spaces.  The "header" is the set of tab names which users click on to change the active tab.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
         public string? TabHeaderClass { get; set; }
 
         /// <summary>
-        /// Custom class/classes for the active tab
+        /// The CSS classes applied to the currently selected tab.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  Multiple classes must be separated by spaces.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
         public string? ActiveTabClass { get; set; }
 
         /// <summary>
-        /// Custom class/classes for Selected Content Panel
+        /// The CSS classes applied to all tab panels.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  Multiple classes must be separated by spaces.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
         public string? PanelClass { get; set; }
 
+        /// <summary>
+        /// The currently selected tab panel.
+        /// </summary>
         public MudTabPanel? ActivePanel { get; private set; }
 
         /// <summary>
-        /// The current active panel index. Also with Bidirectional Binding
+        /// The index of the currently selected tab panel.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>0</c> (the first tab). When this value changes, <see cref="ActivePanelIndexChanged"/> occurs.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Behavior)]
         public int ActivePanelIndex
@@ -326,49 +346,64 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Fired when ActivePanelIndex changes.
+        /// Occurs when <see cref="ActivePanelIndex"/> has changed.
         /// </summary>
         [Parameter]
         public EventCallback<int> ActivePanelIndexChanged { get; set; }
 
         /// <summary>
-        /// A readonly list of the current panels. Panels should be added or removed through the RenderTree use this collection to get informations about the current panels
+        /// A read-only list of the panels within this component. 
         /// </summary>
+        /// <remarks>
+        /// Tab panels are controlled by either adding more <see cref="MudTabPanel"/> components in the Razor page, or by using the <see cref="MudDynamicTabs"/> component instead.
+        /// </remarks>
         public IReadOnlyList<MudTabPanel> Panels { get; private set; }
 
         private List<MudTabPanel> _panels;
 
         /// <summary>
-        /// A render fragment that is added before or after (based on the value of HeaderPosition) the tabs inside the header panel of the tab control
+        /// The custom content added before or after the list of tabs.
         /// </summary>
+        /// <remarks>
+        /// The location of this header is controlled via the <see cref="HeaderPosition"/> parameter.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Behavior)]
         public RenderFragment<MudTabs>? Header { get; set; }
 
         /// <summary>
-        /// Additional content specified by Header is placed either before the tabs, after or not at all
+        /// The location of custom header content provided in <see cref="Header"/>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="TabHeaderPosition.After"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Behavior)]
         public TabHeaderPosition HeaderPosition { get; set; } = TabHeaderPosition.After;
 
         /// <summary>
-        /// A render fragment that is added before or after (based on the value of HeaderPosition) inside each tab panel
+        /// Custom content added before or after each tab panel.
         /// </summary>
+        /// <remarks>
+        /// The location of this header is controlled via the <see cref="TabPanelHeaderPosition"/> parameter.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Behavior)]
         public RenderFragment<MudTabPanel>? TabPanelHeader { get; set; }
 
         /// <summary>
-        /// Additional content specified by Header is placed either before the tabs, after or not at all
+        /// The location of custom tab panel content provided in <see cref="TabPanelHeader"/>.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tabs.Behavior)]
         public TabHeaderPosition TabPanelHeaderPosition { get; set; } = TabHeaderPosition.After;
 
         /// <summary>
-        /// Fired when a panel gets activated. Returned Task will be awaited.
+        /// Occurs before a panel is activated.
         /// </summary>
+        /// <remarks>
+        /// Set <see cref="TabInteractionEventArgs.Cancel"/> to <c>true</c> to prevent the tab from being activated.   The returned <c>Task</c> will be awaited.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Behavior)]
         public Func<TabInteractionEventArgs, Task>? OnPreviewInteraction { get; set; }
@@ -427,6 +462,9 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// Releases resources used by this component.
+        /// </summary>
         public async ValueTask DisposeAsync()
         {
             if (_isDisposed)
@@ -495,18 +533,33 @@ namespace MudBlazor
             StateHasChanged();
         }
 
+        /// <summary>
+        /// Sets the active panel.
+        /// </summary>
+        /// <param name="panel">The panel to activate.</param>
+        /// <param name="ignoreDisabledState">When <c>true</c>, the panel will be activated even if it is disabled.</param>
         public void ActivatePanel(MudTabPanel? panel, bool ignoreDisabledState = false)
         {
             if (panel is not null && _panels.IndexOf(panel) > -1)
                 ActivatePanel(panel, null, ignoreDisabledState);
         }
 
+        /// <summary>
+        /// Sets the active panel.
+        /// </summary>
+        /// <param name="index">The index of the panel to activate.</param>
+        /// <param name="ignoreDisabledState">When <c>true</c>, the panel will be activated even if it is disabled.</param>
         public void ActivatePanel(int index, bool ignoreDisabledState = false)
         {
             if (index > -1 && index <= _panels.Count - 1)
                 ActivatePanel(_panels[index], null, ignoreDisabledState);
         }
 
+        /// <summary>
+        /// Sets the active panel.
+        /// </summary>
+        /// <param name="id">The unique ID of the panel to activate.</param>
+        /// <param name="ignoreDisabledState">When <c>true</c>, the panel will be activated even if it is disabled.</param>
         public void ActivatePanel(object id, bool ignoreDisabledState = false)
         {
             var panel = _panels.FirstOrDefault(p => Equals(p.ID, id));
