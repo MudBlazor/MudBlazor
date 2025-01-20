@@ -477,7 +477,7 @@ namespace MudBlazor.UnitTests.Components
             var styleNodes = comp.Nodes.OfType<IHtmlStyleElement>().ToArray();
 
             var rootStyleNode = styleNodes[2];
-            rootStyleNode.ClassName.Should().Be("mudThemeProvider");
+            rootStyleNode.ClassName.Should().Be("mud-theme-provider");
         }
     }
 }
