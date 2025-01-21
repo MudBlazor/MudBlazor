@@ -87,7 +87,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AspNetCore.SassCompiler" Version="1.83.1">
+    <PackageReference Include="AspNetCore.SassCompiler" Version="1.83.4">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.CodeAnalysis.ResxSourceGenerator" Version="3.11.0-beta1.24605.2">
@@ -117,6 +117,7 @@
     </ItemGroup>
   </Target>
 
+  <!--Mitigation for https://github.com/koenvzeijl/AspNetCore.SassCompiler/issues/224-->
   <Target Name="AlwaysIncludeCss"
           BeforeTargets="Build;ResolveScopedCssInputs;BundleMinify;ResolveProjectStaticWebAssets" AfterTargets="Compile Sass">
     <ItemGroup>
