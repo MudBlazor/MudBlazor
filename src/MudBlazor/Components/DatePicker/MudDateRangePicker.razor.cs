@@ -297,14 +297,21 @@ namespace MudBlazor
 
         protected override async Task OnDayClickedAsync(DateTime dateTime)
         {
-            if (_firstDate == null || _firstDate > dateTime || _secondDate != null)
+            if (_firstDate == null || _secondDate != null)
             {
                 _secondDate = null;
                 _firstDate = dateTime;
                 return;
             }
-
-            _secondDate = dateTime;
+            if (_firstDate > dateTime)
+            {
+                _secondDate = _firstDate;
+                _firstDate = dateTime;
+            }
+            else
+            {
+                _secondDate = dateTime;
+            }
             if (PickerActions == null || AutoClose)
             {
                 await SubmitAsync();
