@@ -254,7 +254,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Open_SelectEndDateLowerThanStart_CheckNotClosed_SelectRange_CheckClosed()
+        public void Open_SelectEndDateLowerThanStart_CheckClosed()
         {
             var comp = OpenPicker();
             // clicking a day buttons to select a range and close
@@ -263,12 +263,10 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button.mud-picker-calendar-day")
                 .Where(x => x.TrimmedText().Equals("8")).First().Click();
             comp.FindAll("div.mud-picker-open").Count.Should().Be(1);
-            comp.Instance.DateRange.Should().BeNull();
-
-            comp.FindAll("button.mud-picker-calendar-day")
-                .Where(x => x.TrimmedText().Equals("23")).First().Click();
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0), TimeSpan.FromSeconds(5));
             comp.Instance.DateRange.Should().NotBeNull();
+            comp.Instance.DateRange.Start.Should().Be(new DateTime(DateTime.Now.Year, DateTime.Now.Month, 8));
+            comp.Instance.DateRange.End.Should().Be(new DateTime(DateTime.Now.Year, DateTime.Now.Month, 10));
         }
 
         [Test]
