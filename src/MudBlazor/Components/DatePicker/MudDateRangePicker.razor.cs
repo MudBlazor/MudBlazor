@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -13,7 +14,8 @@ namespace MudBlazor
     /// <seealso cref="MudDatePicker"/>
     public partial class MudDateRangePicker : MudBaseDatePicker
     {
-        private DateTime? _firstDate = null, _secondDate;
+        private readonly ParameterState<bool> _allowDisabledDatesInCountState;
+        private DateTime? _firstDate = null, _secondDate, _minValidDate, _maxValidDate;
         private DateRange _dateRange;
         private Range<string> _rangeText;
 
@@ -24,9 +26,45 @@ namespace MudBlazor
         /// </summary>
         public MudDateRangePicker()
         {
+            using var registerScope = CreateRegisterScope();
+            _allowDisabledDatesInCountState = registerScope.RegisterParameter<bool>(nameof(AllowDisabledDatesInCount))
+                .WithParameter(() => AllowDisabledDatesInCount)
+                .WithChangeHandler(RecalculateValidDays);
+
             DisplayMonths = 2;
             AdornmentAriaLabel = "Open Date Range Picker";
         }
+
+        /// <summary>
+        /// The maximum number of selectable days.
+        /// </summary>
+        /// <remarks>
+        /// Inclusive of the selected date.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public double? MaxDays { get; set; }
+
+        /// <summary>
+        /// The minimum number of selectable days.
+        /// </summary>
+        /// <remarks>
+        /// Inclusive of the selected date.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public double? MinDays { get; set; }
+
+        /// <summary>
+        /// Include disabled dates within the valdi min/max days range.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>. Disabled days will be included in the min/max count. 
+        /// This parameter will take effect when <see cref="MinDays"/> or <see cref="MaxDays"/> is set.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public bool AllowDisabledDatesInCount { get; set; } = true;
 
         /// <summary>
         /// The text displayed in the start input if no date is specified.
@@ -203,6 +241,61 @@ namespace MudBlazor
 
         protected override bool HasValue(DateTime? value) => value is not null;
 
+        protected override bool IsDayDisabled(DateTime date)
+        {
+            var isOutOfRange = false;
+
+            if (_firstDate is not null && _secondDate is null)
+            {
+                var selectedDate = _firstDate.Value;
+                var minValidDate = MinDays is null
+                    ? selectedDate
+                    : AllowDisabledDatesInCount ? selectedDate.Date.AddDays(MinDays.Value - 1) : _minValidDate;
+                var maxValidDate = MaxDays is null
+                    ? DateTime.MaxValue
+                    : AllowDisabledDatesInCount ? selectedDate.Date.AddDays(MaxDays.Value - 1) : _maxValidDate;
+
+                isOutOfRange = date > selectedDate && (date < minValidDate || date > maxValidDate);
+            }
+
+            return base.IsDayDisabled(date) || isOutOfRange;
+        }
+
+        private DateTime GetMaxSelectableDate(DateTime startDate, double maxDays)
+        {
+            var validDayCount = 1;
+            var maxDate = startDate.AddDays(1);
+
+            while (validDayCount < maxDays)
+            {
+                if (!IsDateDisabledFunc(maxDate))
+                    validDayCount++;
+
+                if (validDayCount == maxDays)
+                    break;
+
+                maxDate = maxDate.AddDays(1);
+            }
+
+            return maxDate;
+        }
+
+        /// <summary>
+        /// Recalculate the valid days in relation to the <see cref="MinDays"/> and <see cref="MaxDays"/> allowed
+        /// </summary>
+        public void RecalculateValidDays()
+        {
+            if (_firstDate is null) return;
+
+            if (MinDays is not null)
+                _minValidDate = GetMaxSelectableDate(_firstDate.Value, MinDays.Value);
+
+            if (MaxDays is not null)
+                _maxValidDate = GetMaxSelectableDate(_firstDate.Value, MaxDays.Value);
+
+            StateHasChanged();
+        }
+
         private DateRange ParseDateRangeValue(string value)
         {
             return DateRange.TryParse(value, Converter, out var dateRange) ? dateRange : null;
@@ -301,6 +394,9 @@ namespace MudBlazor
             {
                 _secondDate = null;
                 _firstDate = dateTime;
+
+                RecalculateValidDays();
+
                 return;
             }
 

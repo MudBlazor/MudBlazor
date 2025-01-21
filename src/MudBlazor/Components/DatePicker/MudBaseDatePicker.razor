@@ -125,7 +125,7 @@
                                                         @onclick="(async () => { var d = selectedDay; await OnDayClickedAsync(d); })"
                                                         @onclick:stopPropagation="true"
                                                         onpointerover="@(async () => await HandleMouseoverOnPickerCalendarDayButton(!firstMonthFirstYear ? tempId : tempId + 1))"
-                                                        disabled="@((selectedDay < MinDate) || (selectedDay > MaxDate) || IsDateDisabledFunc(selectedDay))">
+                                                        disabled="@IsDayDisabled(selectedDay)">
                                                     <p class="mud-typography mud-typography-body2 mud-inherit-text">@GetCalendarDayOfMonth(selectedDay)</p>
                                                 </button>
                                             }

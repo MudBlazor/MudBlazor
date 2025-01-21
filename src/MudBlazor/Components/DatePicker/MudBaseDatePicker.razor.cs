@@ -407,6 +407,13 @@ namespace MudBlazor
             }
         }
 
+        protected virtual bool IsDayDisabled(DateTime selectedDay)
+        {
+            return selectedDay < MinDate ||
+                   selectedDay > MaxDate ||
+                   IsDateDisabledFunc(selectedDay);
+        }
+
         protected abstract string GetDayClasses(int month, DateTime day);
 
         /// <summary>
