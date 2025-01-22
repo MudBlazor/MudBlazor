@@ -479,7 +479,7 @@ namespace MudBlazor
         {
             if (_itemsState.Value is not null)
             {
-                await _itemsState.SetValueAsync( Array.Empty<TreeItemData<T?>>());
+                await _itemsState.SetValueAsync(Array.Empty<TreeItemData<T?>>());
             }
             await TryInvokeServerLoadFunc();
 
