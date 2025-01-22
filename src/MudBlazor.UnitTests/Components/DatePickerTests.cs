@@ -447,8 +447,46 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DatePickerStaticTest>();
             var picker = comp.FindComponent<MudDatePicker>();
+
+            picker.Markup.Should().Contain("mud-selected"); //confirm selected date is shown
+
             comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("23")).Click();
-            picker.Instance.Date.Should().Be(new DateTime(DateTime.Now.Year, DateTime.Now.Month, 23));
+
+            var date = DateTime.Today.Subtract(TimeSpan.FromDays(60));
+
+            picker.Instance.Date.Should().Be(new DateTime(date.Year, date.Month, 23));
+        }
+
+        [Test]
+        public void DatePickerBindingTest()
+        {
+            var comp = Context.RenderComponent<DatePickerBindingTest>();
+
+            comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
+            comp.Find(".mud-input-adornment button").Click();
+            comp.FindAll("div.mud-picker-open").Count.Should().Be(1);
+
+            var picker = comp.FindComponent<MudDatePicker>();
+
+            comp.Markup.Should().Contain("mud-selected");
+
+            picker.Instance.Date.Should().Be(comp.Instance.ExpiresOn);
+
+            comp.Find(".mud-overlay").Click();
+            comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
+
+            var currentDate = comp.Instance.ExpiresOn;
+
+            comp.Find(".mud-button").Click();
+
+            comp.Instance.ExpiresOn.Should().Be(currentDate!.Value.AddMonths(10));
+
+            comp.Find(".mud-input-adornment button").Click();
+            comp.FindAll("div.mud-picker-open").Count.Should().Be(1);
+
+            comp.Markup.Should().Contain("mud-selected");
+
+            picker.Instance.Date.Should().Be(comp.Instance.ExpiresOn);
         }
 
         [Test]
@@ -1091,7 +1129,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => comp.Find("input").Change("10/10/2020"));
             comp.WaitForAssertion(() => datePicker.Date.Should().Be(new DateTime(2020, 10, 10)));
-            comp.WaitForAssertion(() => datePicker.PickerMonth.Should().Be(null));
+            comp.WaitForAssertion(() => datePicker.PickerMonth.Should().Be(new DateTime(2020, 10, 1)));
 
             await comp.InvokeAsync(datePicker.OpenAsync);
             comp.WaitForAssertion(() => datePicker.PickerMonth.Should().Be(new DateTime(2020, 10, 01)));

@@ -68,7 +68,11 @@ namespace MudBlazor
                     return;
                 }
 
+                if (date is not null)
+                    PickerMonth = new DateTime(Culture.Calendar.GetYear(date.Value), Culture.Calendar.GetMonth(date.Value), 1, Culture.Calendar);
+
                 _value = date;
+
                 if (updateValue)
                 {
                     Converter.GetError = false;

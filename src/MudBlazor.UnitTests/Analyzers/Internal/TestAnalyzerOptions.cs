@@ -16,21 +16,11 @@ namespace MudBlazor.UnitTests.Analyzers.Internal
             AllowedAttributePattern attributeProviderAttribute,
              ImmutableArray<AdditionalText> additionalText, string? attributeList = null)
         {
-            if (attributeList is null)
+            return new AnalyzerOptions(additionalText, new TestAnalyzerOptions(new Dictionary<string, string>()
             {
-                return new AnalyzerOptions(additionalText, new TestAnalyzerOptions(new Dictionary<string, string>()
-                {
-                    [MudComponentUnknownParametersAnalyzer.AllowedAttributePatternProperty] = attributeProviderAttribute.ToString()!
-                }));
-            }
-            else
-            {
-                return new AnalyzerOptions(additionalText, new TestAnalyzerOptions(new Dictionary<string, string>()
-                {
-                    [MudComponentUnknownParametersAnalyzer.AllowedAttributePatternProperty] = attributeProviderAttribute.ToString()!,
-                    [MudComponentUnknownParametersAnalyzer.AllowedAttributeListProperty] = attributeList
-                }));
-            }
+                [MudComponentUnknownParametersAnalyzer.AllowedAttributePatternProperty] = attributeProviderAttribute.ToString()!,
+                [MudComponentUnknownParametersAnalyzer.AllowedAttributeListProperty] = attributeList ?? string.Empty
+            }));
         }
 
         private readonly Dictionary<string, string> _values;

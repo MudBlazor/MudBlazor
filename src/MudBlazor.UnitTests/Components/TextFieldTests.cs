@@ -1385,6 +1385,29 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Bug : https://github.com/MudBlazor/MudBlazor/issues/10606
+        /// When the user inputs a single space, the required text field should show an error.
+        /// </summary>
+        [Test]
+        public void RequiredTextField_WhenInputOneSpace_ShowError()
+        {
+            // Arrange
+
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters =>
+                parameters.Add(p => p.Required, true)
+            );
+            var textfield = comp.Instance;
+
+            // Act
+
+            comp.Find("input").Change(" ");
+
+            // Assert
+
+            textfield.Error.Should().BeTrue();
+        }
+
+        /// <summary>
         /// Required and aria-required TextField attributes should be dynamic.
         /// </summary>
         [Test]
