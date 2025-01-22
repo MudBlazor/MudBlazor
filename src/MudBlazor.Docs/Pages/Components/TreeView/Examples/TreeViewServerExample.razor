@@ -39,7 +39,7 @@
 
     public async Task<IReadOnlyCollection<TreeItemData<string>>> LoadServerData(string parentValue)
     {
-        // wait 500ms to simulate a server load, then recursively search through our tree to find the child items for the given value
+        // wait 500ms to simulate a server load
         await Task.Delay(500);
         // normally you would use the parentValue to query your server for the children of the given parent
         // but for the sake of this example we will just return some hardcoded children
