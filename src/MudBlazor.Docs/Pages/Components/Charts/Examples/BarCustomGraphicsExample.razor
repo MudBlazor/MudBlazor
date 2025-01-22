@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudChart ChartType="ChartType.Bar" ChartSeries="@Series" XAxisLabels="@XAxisLabels" Width="100%" Height="350px">
+<MudChart ChartType="ChartType.Bar" ChartSeries="@Series" XAxisLabels="@XAxisLabels" Width="100%" Height="350px" ChartOptions="@BarChartOptions">
 	<CustomGraphics>
 		<style>
 			.heavy { font: bold 30px Helvetica; }
@@ -19,5 +19,10 @@
         new ChartSeries() { Name = "Germany", Data = new double[] { 19, 24, 35, 13, 28, 15, 13, 16, 31 } },
         new ChartSeries() { Name = "Sweden", Data = new double[] { 8, 6, 11, 13, 4, 16, 10, 16, 18 } },
     };
+
+    public ChartOptions BarChartOptions = new ChartOptions
+        {
+            BarStrokeWidth = 10
+        };
     public string[] XAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
 }

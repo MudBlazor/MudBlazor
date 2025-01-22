@@ -147,6 +147,8 @@ namespace MudBlazor.Charts
         {
             _legends.Clear();
             _bars.Clear();
+            double barWidth = MudChartParent?.ChartOptions.BarStrokeWidth ?? ChartOptions.BarStrokeWidth;
+            double barSpacing = barWidth * 0.115;
 
             for (var i = 0; i < _series.Count; i++)
             {
@@ -154,7 +156,7 @@ namespace MudBlazor.Charts
 
                 for (var j = 0; j < data.Length; j++)
                 {
-                    var gridValueX = HorizontalStartSpace + (i * 10) + (j * horizontalSpace);
+                    var gridValueX = HorizontalStartSpace + (i * 10 * barSpacing) + (j * horizontalSpace);
                     var gridValueY = BoundHeight - VerticalStartSpace + (lowestHorizontalLine * verticalSpace);
                     var dataValue = ((data[j] / gridYUnits) - lowestHorizontalLine) * verticalSpace;
                     var gridValue = BoundHeight - VerticalStartSpace - dataValue;
