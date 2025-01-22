@@ -15,6 +15,7 @@ namespace MudBlazor
         private bool _isServerLoaded;
         private readonly ParameterState<bool> _selectedState;
         private readonly ParameterState<bool> _expandedState;
+        private readonly ParameterState<IReadOnlyCollection<TreeItemData<T?>>?> _itemsState;
         private Converter<T> _converter = new DefaultConverter<T>();
         private readonly HashSet<MudTreeViewItem<T>> _childItems = new();
 
@@ -28,6 +29,9 @@ namespace MudBlazor
                 .WithParameter(() => Selected)
                 .WithEventCallback(() => SelectedChanged)
                 .WithChangeHandler(OnSelectedParameterChangedAsync);
+            _itemsState = registerScope.RegisterParameter<IReadOnlyCollection<TreeItemData<T?>>?>(nameof(Items))
+                .WithParameter(() => Items)
+                .WithEventCallback(() => ItemsChanged);
         }
 
         protected string Classname =>
@@ -163,6 +167,12 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.TreeView.Data)]
         public IReadOnlyCollection<TreeItemData<T?>>? Items { get; set; }
+
+        /// <summary>
+        /// Called whenever children were loaded from the server
+        /// </summary>
+        [Parameter]
+        public EventCallback<IReadOnlyCollection<TreeItemData<T?>>?> ItemsChanged { get; set; }
 
         /// <summary>
         /// Expand or collapse TreeView item when it has children. Two-way bindable. Note: if you directly set this to
@@ -510,7 +520,8 @@ namespace MudBlazor
             StateHasChanged();
             try
             {
-                Items = await MudTreeRoot.ServerData(GetValue());
+                var items = await MudTreeRoot.ServerData(GetValue());
+                await _itemsState.SetValueAsync(items);
             }
             finally
             {
