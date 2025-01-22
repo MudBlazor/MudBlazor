@@ -288,11 +288,18 @@ namespace MudBlazor
         private bool HasChildren()
         {
             return ChildContent != null
-                || (MudTreeRoot != null && Items != null && Items.Count != 0)
-                || (MudTreeRoot?.ServerData != null && CanExpand && !_isServerLoaded && (Items == null || Items.Count == 0));
+                || (MudTreeRoot != null && GetItems().Count != 0)
+                || (MudTreeRoot?.ServerData != null && CanExpand && !_isServerLoaded && GetItems().Count == 0);
         }
 
-        private bool AreChildrenVisible() => Items is null || Items.Any(i => i.Visible);
+        private bool AreChildrenVisible() => _itemsState.Value is null || _itemsState.Value.Any(i => i.Visible);
+
+        private IReadOnlyCollection<TreeItemData<T>> GetItems()
+        {
+            if (_itemsState.Value == null)
+                return Array.Empty<TreeItemData<T>>();
+            return _itemsState.Value!;
+        }
 
         internal T? GetValue()
         {
@@ -470,9 +477,9 @@ namespace MudBlazor
         /// </summary>
         public async Task ReloadAsync()
         {
-            if (Items is not null)
+            if (_itemsState.Value is not null)
             {
-                Items = Array.Empty<TreeItemData<T?>>();
+                await _itemsState.SetValueAsync( Array.Empty<TreeItemData<T?>>());
             }
             await TryInvokeServerLoadFunc();
 
@@ -514,7 +521,7 @@ namespace MudBlazor
 
         internal async Task TryInvokeServerLoadFunc()
         {
-            if ((Items != null && Items.Count != 0) || !CanExpand || MudTreeRoot?.ServerData == null)
+            if (GetItems().Count != 0 || !CanExpand || MudTreeRoot?.ServerData == null)
                 return;
             _loading = true;
             StateHasChanged();

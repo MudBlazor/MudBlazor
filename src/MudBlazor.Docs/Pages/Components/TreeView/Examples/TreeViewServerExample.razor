@@ -4,12 +4,15 @@
 <MudPaper Width="300px" Elevation="0">
     <MudTreeView ServerData="@LoadServerData" Items="@InitialTreeItems">
         <ItemTemplate>
-            <MudTreeViewItem Value="@context.Value" 
-            Items="@context.Children" 
-            ItemsChanged="@(new Action<IReadOnlyCollection<TreeItemData<string>>>((items) => OnItemsLoaded(context, items)))" 
-            Icon="@context.Icon" 
-            LoadingIconColor="Color.Info" 
-            CanExpand="@context.Expandable"/>
+            <MudTreeViewItem 
+                Value="@context.Value" 
+                Items="@context.Children" 
+                ItemsChanged="@(new Action<IReadOnlyCollection<TreeItemData<string>>>((items) => OnItemsLoaded(context, items)))" 
+                @bind-Expanded="@context.Expanded"
+                CanExpand="@context.Expandable"
+                Icon="@context.Icon" 
+                LoadingIconColor="Color.Info" 
+                />
         </ItemTemplate>
     </MudTreeView>
 </MudPaper>
