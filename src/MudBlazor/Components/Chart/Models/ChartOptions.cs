@@ -94,14 +94,6 @@ namespace MudBlazor
         public double LineStrokeWidth { get; set; } = 3;
         
         /// <summary>
-        /// The width of bar, in pixels.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>8</c> for eight pixels.  Only takes effect when the <see cref="MudChart"/> type is <see cref="ChartType.Bar"/>.
-        /// </remarks>
-        public double BarStrokeWidth { get; set; } = 8;
-
-        /// <summary>
         /// Enables smooth color transitions for heatmap cells and removes all padding between cells in a <see cref="ChartType.HeatMap"/>
         /// Defaults to false
         /// </summary>
@@ -143,5 +135,13 @@ namespace MudBlazor
         /// Defaults to "F2"
         /// </summary>
         public string ValueFormatString { get; set; } = "F2";
+
+        /// <summary>
+        /// The width of bar, in pixels.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>8</c> for eight pixels.  Only takes effect when the <see cref="MudChart"/> type is <see cref="ChartType.Bar"/>.
+        /// </remarks>
+        public double BarStrokeWidth { get; set; } = 8;
     }
 }
