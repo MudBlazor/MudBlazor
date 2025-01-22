@@ -2,27 +2,31 @@
 
 <MudGrid>
     <MudItem xs="12" Class="justify-center">
-        <MudStack Row>
-            <MudCheckBox Label="Dense" @bind-Value="_dense" />
-            <MudCheckBox Label="Square" @bind-Value="_square" />
-            <MudNumericField Label="Elevation" @bind-Value="_elevation" Step="1" Min="0" Max="25" FullWidth="false" Style="width: 100px;"/>
-            <MudSelect Class="mr-1" T="MudBlazor.Color" Label="Chat Color" @bind-Value="_selectedColor">
-                @foreach (MudBlazor.Color color in Enum.GetValues(typeof(MudBlazor.Color)))
-                {
-                    <MudSelectItem Value="@color">@color.ToString()</MudSelectItem>
-                }
-            </MudSelect>
-            <MudSelect T="MudBlazor.ChatArrowPosition" Label="Chat Arrow" @bind-Value="_selectedArrowPosition">
-                @foreach (MudBlazor.ChatArrowPosition pos in Enum.GetValues(typeof(MudBlazor.ChatArrowPosition)))
-                {
-                    <MudSelectItem Value="@pos">@pos.ToString()</MudSelectItem>
-                }
-            </MudSelect>
+        <MudStack>
+            <MudStack Row>
+                <MudCheckBox Label="Dense" @bind-Value="_dense" />
+                <MudCheckBox Label="Square" @bind-Value="_square" />
+            </MudStack>
             <MudRadioGroup @bind-Value="_variant">
                 <MudRadio Value="@Variant.Text" Label="Text" />
                 <MudRadio Value="@Variant.Outlined" Label="Outlined" />
                 <MudRadio Value="@Variant.Filled" Label="Filled" />
             </MudRadioGroup>
+            <MudStack Row Class="ml-4" Style="max-width:600px;">
+                <MudSelect Class="mr-1" T="MudBlazor.Color" Label="Chat Color" @bind-Value="_selectedColor">
+                    @foreach (MudBlazor.Color color in Enum.GetValues(typeof(MudBlazor.Color)))
+                    {
+                        <MudSelectItem Value="@color">@color.ToString()</MudSelectItem>
+                    }
+                </MudSelect>
+                <MudSelect T="MudBlazor.ChatArrowPosition" Label="Chat Arrow" @bind-Value="_selectedArrowPosition">
+                    @foreach (MudBlazor.ChatArrowPosition pos in Enum.GetValues(typeof(MudBlazor.ChatArrowPosition)))
+                    {
+                        <MudSelectItem Value="@pos">@pos.ToString()</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudStack>
+            <MudSlider @bind-Value="_elevation" Min="0" Max="25" Color="Color.Info" Class="ml-4 mb-6" Style="max-width:600px;">Elevation: @_elevation.ToString()</MudSlider>
         </MudStack>
     </MudItem>
 </MudGrid>

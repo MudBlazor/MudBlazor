@@ -10,5 +10,5 @@
 
 @code {
     private MudDatePicker _picker = null!;
-    private DateTime? _date = DateTime.Today;
+    private DateTime? _date = DateTime.Today.Subtract(TimeSpan.FromDays(60));
 }
