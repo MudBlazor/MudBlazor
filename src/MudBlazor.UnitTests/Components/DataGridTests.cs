@@ -17,7 +17,6 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
 using MudBlazor.UnitTests.TestComponents.DataGrid;
-using MudBlazor.UnitTests.TestComponents.Table;
 using MudBlazor.Utilities.Clone;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
@@ -3045,6 +3044,15 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void DataGridNoRecordsContentVirtualizeTest()
+        {
+            var comp = Context.RenderComponent<DataGridNoRecordsContentVirtualizeTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridNoRecordsContentVirtualizeTest.Model>>();
+
+            dataGrid.Find("th.mud-table-empty-row div").TextContent.Trim().Should().Be("There are no records to view.");
+        }
+
+        [Test]
         public void DataGridFooterTemplateTest()
         {
             var comp = Context.RenderComponent<DataGridFooterTemplateTest>();
@@ -3155,13 +3163,13 @@ namespace MudBlazor.UnitTests.Components
                 var buttons = comp.FindComponents<MudButton>();
                 // this is the show all button
                 buttons[1].Find("button").Click();
-                // 2 columns, 0 hidden
-                comp.FindAll(".mud-table-head th").Count.Should().Be(6);
+                // 2 columns, 1 hidden
+                comp.FindAll(".mud-table-head th").Count.Should().Be(7);
 
                 //dataGrid.Instance._columns[0].Hide();
                 ((IMudStateHasChanged)dataGrid.Instance).StateHasChanged();
             });
-            comp.FindAll(".mud-table-head th").Count.Should().Be(6);
+            comp.FindAll(".mud-table-head th").Count.Should().Be(7);
 
             await comp.InvokeAsync(() => dataGrid.Instance.ShowColumnsPanel());
             comp.FindAll(".mud-data-grid-columns-panel").Count.Should().Be(1);
@@ -3216,8 +3224,8 @@ namespace MudBlazor.UnitTests.Components
             switches[4].Instance.Value.Should().BeFalse();
             switches[5].Instance.Value.Should().BeFalse();
 
-            // 6 columns, 3 hidden
-            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(3);
+            // 6 columns, 3 hidden (+ already collapsed)
+            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(4);
 
             // this is the show all button
             buttons[1].Find("button").Click();
@@ -3228,8 +3236,8 @@ namespace MudBlazor.UnitTests.Components
             switches[4].Instance.Value.Should().BeFalse();
             switches[5].Instance.Value.Should().BeFalse();
 
-            // 6 columns, 0 hidden
-            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(6);
+            // 6 columns, 0 hidden (1 permanently collapsed)
+            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(7);
 
             //programatically changing the hidden which overrides hideable
             await dataGrid.InvokeAsync(async () =>
@@ -3242,8 +3250,8 @@ namespace MudBlazor.UnitTests.Components
 
             // cannot render the component again there can be only one mudpopoverprovider
 
-            // 6 columns, 6 hidden
-            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(0);
+            // 6 columns, 6 hidden (1 permanently collapsed)
+            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(1);
 
             //programatically changing the hidden which overrides hideable
             await dataGrid.InvokeAsync(async () =>
@@ -3254,8 +3262,8 @@ namespace MudBlazor.UnitTests.Components
                 };
             });
 
-            // 6 columns, 0 hidden
-            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(6);
+            // 6 columns, 0 hidden (1 permanently hidden)
+            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(7);
         }
 
         // This is not easily convertable to the new property expression.

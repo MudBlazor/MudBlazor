@@ -1,4 +1,6 @@
-﻿<MudDataGrid Items="@_items">
+﻿
+
+<MudDataGrid Items="@_items" Virtualize>
     <Columns>
         <PropertyColumn Property="x => x.Name" />
         <PropertyColumn Property="x => x.Age" />
@@ -10,7 +12,7 @@
 </MudDataGrid>
 
 @code {
-    private readonly IEnumerable<Model> _items = new List<Model>();
+    private IEnumerable<Model> _items = new List<Model>();
 
     public record Model (string Name, int Age, Severity Status);
 }

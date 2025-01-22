@@ -10,7 +10,7 @@
 
 @code {
     [Parameter]
-    public DateTime? Date { get; set; } = DateTime.Today;
+    public DateTime? Date { get; set; } = DateTime.Today.Subtract(TimeSpan.FromDays(60));
 
     public MudDatePicker PickerReference { get; set; } = null!;
 }
