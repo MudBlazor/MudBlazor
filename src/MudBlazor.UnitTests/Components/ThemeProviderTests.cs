@@ -451,5 +451,33 @@ namespace MudBlazor.UnitTests.Components
             // Assert
             Context.JSInterop.VerifyInvoke("watchDarkThemeMedia");
         }
+
+        [Test]
+        public void ThemeProvider_ShouldHave_ClassName()
+        {
+            const string Scope = ":root";
+            var mudTheme = new MudTheme
+            {
+                PaletteDark = new PaletteDark
+                {
+                    Primary = Colors.Green.Darken1,
+                },
+                PseudoCss = new PseudoCss
+                {
+                    Scope = Scope
+                }
+            };
+            var comp = Context.RenderComponent<MudThemeProvider>(
+                parameters =>
+                    parameters.Add(p => p.Theme, mudTheme)
+                        .Add(p => p.IsDarkMode, true)
+            );
+            comp.Should().NotBeNull();
+
+            var styleNodes = comp.Nodes.OfType<IHtmlStyleElement>().ToArray();
+
+            var rootStyleNode = styleNodes[2];
+            rootStyleNode.ClassName.Should().Be("mud-theme-provider");
+        }
     }
 }

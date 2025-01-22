@@ -168,7 +168,7 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
     /// </remarks>
     internal bool RenderOutsideOfSection =>
         Absolute ||
-        (Class?.Contains("mud-overlay-dialog") ?? false) ||
+        (Class?.Contains("mud-skip-overlay-section") ?? false) ||
         ChildContent != null;
 
     public MudOverlay()

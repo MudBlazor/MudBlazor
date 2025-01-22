@@ -287,7 +287,7 @@
                                                 @if (ChildRowContent != null && (_openHierarchies.Contains(itemBag.Item) || !HasHierarchyColumn))
                                                 {
                                                     <tr class="mud-table-row">
-                                                        <td class="mud-table-cell" colspan="1000">
+                                                        <td class="mud-table-cell mud-table-child-content" colspan="1000">
                                                             @ChildRowContent(new CellContext<T>(this, itemBag.Item))
                                                         </td>
                                                     </tr>
@@ -348,7 +348,7 @@
                                         @if (ChildRowContent != null && (_openHierarchies.Contains(itemBag.Item) || !HasHierarchyColumn))
                                         {
                                             <tr class="mud-table-row">
-                                                <td class="mud-table-cell" colspan="1000">
+                                                <td class="mud-table-cell mud-table-child-content" colspan="1000">
                                                     @ChildRowContent(new CellContext<T>(this, itemBag.Item))
                                                 </td>
                                             </tr>
