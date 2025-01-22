@@ -12,7 +12,7 @@ namespace MudBlazor;
 public class TabInteractionEventArgs
 {
     /// <summary>
-    /// The index of the index being activated.
+    /// The index of the panel being activated.
     /// </summary>
     public int PanelIndex { get; set; }
 

@@ -85,7 +85,7 @@ namespace MudBlazor
         /// <summary>
         /// Occurs when a key is pressed.
         /// </summary>
-        /// <param name="obj">The information about which key was pressed.</param>
+        /// <param name="obj">Information about which key was pressed.</param>
         /// <remarks>
         /// Supported keys are:<br />
         /// <c>ArrowLeft</c> or <c>Delete</c> to uncheck the switch.<br />
