@@ -608,7 +608,8 @@ namespace MudBlazor
         {
             var tabStyle = new StyleBuilder()
                 .AddStyle("min-width", MinimumTabWidth)
-                .AddStyle(IsVerticalTabs() ? "height" : "width", _stretchedTabSize.ToPx(), StretchSize)
+                .AddStyle("width", _stretchedTabSize.ToPx(), !IsVerticalTabs() && StretchSize)
+                .AddStyle("height", _stretchedTabSize.ToPx(), IsVerticalTabs() && StretchSize)
                 .AddStyle(panel.Style)
                 .Build();
 

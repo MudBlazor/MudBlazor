@@ -1188,6 +1188,16 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void StretchSize_TotalTabSize100Percent()
         {
+            const int TotalSize = 6000;
+
+            var observer = new MockResizeObserver
+            {
+                PanelTotalSize = TotalSize,
+            };
+
+            var factory = new MockResizeObserverFactory(observer);
+            Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserverFactory), factory));
+
             static double GetWidthFromStyle(string style)
             {
                 var result = Regex.Match(style, @".*width:\s*(\d+)px.*");
@@ -1198,9 +1208,9 @@ namespace MudBlazor.UnitTests.Components
                 return double.Parse(result.Groups[1].Value);
             }
 
-            var comp = Context.RenderComponent<MudTabs>(parameters => {
+            var comp = Context.RenderComponent<MudTabs>(parameters =>
+            {
                 parameters.Add(p => p.StretchSize, true);
-                parameters.Add(p => p.Style, "width: 3000px;");
                 parameters.AddChildContent<MudTabPanel>(p => p.AddChildContent("Tab 1"));
                 parameters.AddChildContent<MudTabPanel>(p => p.AddChildContent("Tab 2"));
                 parameters.AddChildContent<MudTabPanel>(p => p.AddChildContent("Tab 3"));
@@ -1213,7 +1223,7 @@ namespace MudBlazor.UnitTests.Components
             var totalWidth = tabs
                 .Sum(tab => GetWidthFromStyle(tab.GetAttribute("style")));
 
-            totalWidth.Should().BeApproximately(1000, 1);
+            totalWidth.Should().BeApproximately(TotalSize, 1);
         }
 
         /// <summary>
