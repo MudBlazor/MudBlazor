@@ -46,7 +46,7 @@ namespace MudBlazor
         /// The CSS classes applied to the "Add" button.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>null</c>. Multiple classes must be separated by spaces.
+        /// Defaults to <c>""</c>. Multiple classes must be separated by spaces.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
@@ -66,7 +66,7 @@ namespace MudBlazor
         /// The CSS classes applied to the "Close" button.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>null</c>. Multiple classes must be separated by spaces.
+        /// Defaults to <c>""</c>. Multiple classes must be separated by spaces.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]

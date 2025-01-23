@@ -8,7 +8,7 @@ namespace MudBlazor
 {
 #nullable enable
     /// <summary>
-    /// Information about a swipe even when <see cref="MudSwipeArea.OnSwipeEnd"/> occurs.
+    /// Information about a swipe event when <see cref="MudSwipeArea.OnSwipeEnd"/> occurs.
     /// </summary>
     public class SwipeEventArgs
     {
