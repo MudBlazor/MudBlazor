@@ -85,6 +85,13 @@ public partial class MudTabPanel
     public object? BadgeData { get; set; }
 
     /// <summary>
+    /// Optional icon to be showed into a badge
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Tabs.Behavior)]
+    public string? BadgeIcon { get; set; }
+
+    /// <summary>
     /// Shows a dot instead of text for the badge.
     /// </summary>
     /// <remarks>
