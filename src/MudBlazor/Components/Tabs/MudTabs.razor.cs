@@ -20,16 +20,19 @@ namespace MudBlazor
         private int _activePanelIndex = 0;
         private int _scrollIndex = 0;
 
+        private ElementReference _tabBar;
+        private ElementReference _tabBarContent;
         private bool _isRendered = false;
         private bool _prevButtonDisabled;
         private bool _nextButtonDisabled;
         private bool _showScrollButtons;
-        private ElementReference _tabsContentSize;
         private double _sliderSize;
         private double _sliderPosition;
+        private double _tabBarSize;
         private double _tabBarContentSize;
         private double _allTabsSize;
         private double _scrollPosition;
+        private double _stretchedTabSize;
 
         private IResizeObserver? _resizeObserver = null;
 
@@ -183,6 +186,13 @@ namespace MudBlazor
         public bool SliderAnimation { get; set; } = true;
 
         /// <summary>
+        /// If true, stretches size of all tabs to fill the entire available space.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Appearance)]
+        public bool StretchSize { get; set; } = false;
+
+        /// <summary>
         /// Child content of component.
         /// </summary>
         [Parameter]
@@ -190,7 +200,7 @@ namespace MudBlazor
         public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// This fragment is placed between tabHeader and panels. 
+        /// This fragment is placed between tabHeader and panels.
         /// It can be used to display additional content like an address line in a browser.
         /// The active tab will be the content of this RenderFragement
         /// </summary>
@@ -339,7 +349,8 @@ namespace MudBlazor
             if (firstRender)
             {
                 var items = _panels.Select(x => x.PanelRef).ToList();
-                items.Add(_tabsContentSize);
+                items.Add(_tabBarContent);
+                items.Add(_tabBar);
 
                 if (_activePanelIndex != -1 && _panels.Count > 0)
                     ActivePanel = _panels[_activePanelIndex];
@@ -494,6 +505,7 @@ namespace MudBlazor
             new CssBuilder("mud-tabs-tabbar")
                 .AddClass($"mud-tabs-rounded", !ApplyEffectsToContainer && Rounded)
                 .AddClass($"mud-tabs-vertical", IsVerticalTabs())
+                .AddClass($"mud-tabs-stretch", StretchSize)
                 .AddClass($"mud-tabs-tabbar-{Color.ToDescriptionString()}", Color != Color.Default)
                 .AddClass($"mud-tabs-border-{ConvertPosition(Position).ToDescriptionString()}", Border)
                 .AddClass($"mud-paper-outlined", !ApplyEffectsToContainer && Outlined)
@@ -595,9 +607,10 @@ namespace MudBlazor
         string GetTabStyle(MudTabPanel panel)
         {
             var tabStyle = new StyleBuilder()
-            .AddStyle("min-width", MinimumTabWidth)
-            .AddStyle(panel.Style)
-            .Build();
+                .AddStyle("min-width", MinimumTabWidth)
+                .AddStyle(IsVerticalTabs() ? "height" : "width", _stretchedTabSize.ToPx(), StretchSize)
+                .AddStyle(panel.Style)
+                .Build();
 
             return tabStyle;
         }
@@ -618,7 +631,7 @@ namespace MudBlazor
             _nextIcon = RightToLeft ? PrevIcon : NextIcon;
             _prevIcon = RightToLeft ? NextIcon : PrevIcon;
 
-            GetTabBarContentSize();
+            GetTabBarSizes();
             GetAllTabsSize();
             SetScrollButtonVisibility();
             SetSliderState();
@@ -639,13 +652,18 @@ namespace MudBlazor
             }
 
             _sliderPosition = GetLengthOfPanelItems(ActivePanel);
-            _sliderSize = GetRelevantSize(ActivePanel.PanelRef);
+            _sliderSize = StretchSize && !_showScrollButtons ? _stretchedTabSize : GetRelevantSize(ActivePanel.PanelRef);
         }
 
         private bool IsSliderPositionDetermined => _activePanelIndex > 0 && _sliderPosition > 0 ||
                                                    _activePanelIndex <= 0;
 
-        private void GetTabBarContentSize() => _tabBarContentSize = GetRelevantSize(_tabsContentSize);
+        private void GetTabBarSizes()
+        {
+            _tabBarSize = GetRelevantSize(_tabBar);
+            _tabBarContentSize = GetRelevantSize(_tabBarContent);
+            _stretchedTabSize = _tabBarSize / _panels.Count;
+        }
 
         private void GetAllTabsSize()
         {
@@ -695,7 +713,7 @@ namespace MudBlazor
 
         private void SetScrollButtonVisibility()
         {
-            _showScrollButtons = AlwaysShowScrollButtons || _allTabsSize > _tabBarContentSize || _scrollIndex != 0;
+            _showScrollButtons = AlwaysShowScrollButtons || IsNearlyGreaterThan(_allTabsSize, _tabBarSize, 0.1) || _scrollIndex != 0;
         }
 
         private void ScrollPrev()
@@ -724,7 +742,7 @@ namespace MudBlazor
             var x = 0D;
             var count = 0;
 
-            var toolbarContentSize = GetRelevantSize(_tabsContentSize);
+            var toolbarContentSize = GetRelevantSize(_tabBarContent);
 
             foreach (var panel in _panels)
             {
@@ -837,7 +855,7 @@ namespace MudBlazor
 
         private void SetScrollabilityStates()
         {
-            var isEnoughSpace = _allTabsSize <= _tabBarContentSize;
+            var isEnoughSpace = !IsNearlyGreaterThan(_allTabsSize, _tabBarSize, 0.1);
 
             if (isEnoughSpace)
             {
@@ -852,6 +870,7 @@ namespace MudBlazor
             }
         }
 
+        private static bool IsNearlyGreaterThan(double value1, double value2, double tolerance) => value1 > value2 + tolerance;
         #endregion
     }
 }

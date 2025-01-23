@@ -4,7 +4,7 @@
 <div @attributes="UserAttributes" class="@TabsClassnames" style="@Style">
     <CascadingValue Value="this" IsFixed="true">
         <div class="@TabBarClassnames">
-            <div class="mud-tabs-tabbar-inner" style="@MaxHeightStyles">
+            <div @ref="_tabBar" class="mud-tabs-tabbar-inner" style="@MaxHeightStyles">
                 @if (HeaderPosition == TabHeaderPosition.Before && Header != null)
                 {
                     <div class="mud-tabs-header mud-tabs-header-before">
@@ -17,7 +17,7 @@
                         <MudIconButton Icon="@_prevIcon" Color="@ScrollIconColor" OnClick="@((e) => ScrollPrev())" Disabled="@_prevButtonDisabled" />
                     </div>
                 }
-                <div @ref="@_tabsContentSize" class="mud-tabs-tabbar-content">
+                <div @ref="@_tabBarContent" class="mud-tabs-tabbar-content">
                     <div class="@WrapperClassnames" style="@WrapperScrollStyle">
                         @foreach (MudTabPanel panel in _panels)
                         {
@@ -30,7 +30,7 @@
                             else
                             {
                                 <div class="d-inline-block" style="width: fit-content;" @key="@panel">
-                                    @if (panel.TabWrapperContent is null) 
+                                    @if (panel.TabWrapperContent is null)
                                     {
                                         @RenderTab(panel)
                                     }

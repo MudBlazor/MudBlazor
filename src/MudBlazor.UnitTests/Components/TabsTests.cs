@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Text.RegularExpressions;
 using Bunit;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -96,7 +97,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-tabs-panels > div")[0].GetAttribute("style").Should().Be("display:none;");
             comp.FindAll("div.mud-tabs-panels > div")[1].GetAttribute("style").Should().Be("display:contents;");
             comp.FindAll("div.mud-tabs-panels > div")[2].GetAttribute("style").Should().Be("display:none;");
-            // click second button twice and show button click counters. the click of the first button should still be evident 
+            // click second button twice and show button click counters. the click of the first button should still be evident
             comp.FindAll("button")[1].Click();
             comp.FindAll("button")[1].Click();
             comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 1=1");
@@ -1182,6 +1183,37 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".mud-tab").GetAttribute("style").Contains("min-width").Should().BeTrue();
             comp.Find(".mud-tab").GetAttribute("style").Contains("20px").Should().BeTrue();
 
+        }
+
+        [Test]
+        public void StretchSize_TotalTabSize100Percent()
+        {
+            static double GetWidthFromStyle(string style)
+            {
+                var result = Regex.Match(style, @".*width:\s*(\d+)px.*");
+
+                if (!result.Success)
+                    throw new InvalidDataException();
+
+                return double.Parse(result.Groups[1].Value);
+            }
+
+            var comp = Context.RenderComponent<MudTabs>(parameters => {
+                parameters.Add(p => p.StretchSize, true);
+                parameters.Add(p => p.Style, "width: 3000px;");
+                parameters.AddChildContent<MudTabPanel>(p => p.AddChildContent("Tab 1"));
+                parameters.AddChildContent<MudTabPanel>(p => p.AddChildContent("Tab 2"));
+                parameters.AddChildContent<MudTabPanel>(p => p.AddChildContent("Tab 3"));
+            });
+
+            comp.Render();
+
+            // Act
+            var tabs = comp.FindAll(".mud-tab");
+            var totalWidth = tabs
+                .Sum(tab => GetWidthFromStyle(tab.GetAttribute("style")));
+
+            totalWidth.Should().BeApproximately(1000, 1);
         }
 
         /// <summary>

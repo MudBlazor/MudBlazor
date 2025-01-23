@@ -1,0 +1,18 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudSwitch Label="Stretch Tab Size" @bind-Value="_stretchSize" />
+<MudSwitch Label="Vertical Tabs" @bind-Value="_verticalTabs" />
+
+<MudTabs Color="Color.Primary" StretchSize="_stretchSize" Style="@GetStyle()" Position="GetPosition()">
+    <MudTabPanel Text="One" />
+    <MudTabPanel Text="Two" />
+    <MudTabPanel Text="Three" />
+</MudTabs>
+
+@code {
+    private string GetStyle() => _verticalTabs ? "height: 400px;" : "";
+    private Position GetPosition() => _verticalTabs ? Position.Left : Position.Top;
+
+    private bool _verticalTabs = false;
+    private bool _stretchSize = true;
+}

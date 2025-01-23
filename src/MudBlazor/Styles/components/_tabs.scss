@@ -67,6 +67,12 @@
   }
 
   &.mud-tabs-vertical {
+    &.mud-tabs-stretch {
+      .mud-tabs-tabbar-inner {
+        height: 100%;
+      }
+    }
+
     .mud-tabs-tabbar-inner {
       flex-direction: column;
 
