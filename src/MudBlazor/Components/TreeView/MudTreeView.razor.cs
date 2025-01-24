@@ -66,7 +66,6 @@ namespace MudBlazor
                 .AddStyle(Style)
                 .Build();
 
-
         [CascadingParameter]
         private MudTreeView<T> MudTreeRoot { get; set; }
 

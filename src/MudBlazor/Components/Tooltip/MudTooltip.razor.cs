@@ -63,11 +63,11 @@ namespace MudBlazor
         /// The length of time that the opening transition takes to complete.
         /// </summary>
         /// <remarks>
-        /// Defaults to 251ms in <see cref="MudGlobal.TransitionDefaults.Duration"/>.
+        /// Defaults to 251ms in <see cref="MudGlobal.TooltipDefaults.Duration"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tooltip.Appearance)]
-        public double Duration { get; set; } = MudGlobal.TransitionDefaults.Duration.TotalMilliseconds;
+        public double Duration { get; set; } = MudGlobal.TooltipDefaults.Duration.TotalMilliseconds;
 
         /// <summary>
         /// The amount of time in milliseconds to wait from opening the popover before beginning to perform the transition. 
