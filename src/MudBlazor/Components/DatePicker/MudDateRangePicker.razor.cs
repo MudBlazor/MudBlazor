@@ -106,7 +106,7 @@ namespace MudBlazor
 
                 _dateRange = range;
                 _value = range?.End;
-                FocusedDate = range?.Start;
+                HighlightedDate = range?.Start;
 
                 if (updateValue)
                 {

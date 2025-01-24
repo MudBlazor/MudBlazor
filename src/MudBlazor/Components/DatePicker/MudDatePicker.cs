@@ -59,7 +59,7 @@ namespace MudBlazor
             {
                 Touched = true;
 
-                FocusedDate = date;
+                HighlightedDate = date;
 
                 if (date is not null && IsDateDisabledFunc(date.Value.Date))
                 {

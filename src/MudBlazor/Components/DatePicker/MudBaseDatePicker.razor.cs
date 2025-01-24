@@ -134,7 +134,14 @@ namespace MudBlazor
         }
 
         private DateTime? _picker_month;
-        protected DateTime? FocusedDate { get; set; }
+
+        /// <summary>
+        /// Represents the currently selected date
+        /// </summary>
+        /// <remarks>
+        /// This date is highlighted in the UI
+        /// </remarks>
+        protected DateTime? HighlightedDate { get; set; }
 
         /// <summary>
         /// Occurs when <see cref="PickerMonth"/> has changed.
@@ -517,7 +524,7 @@ namespace MudBlazor
 
         protected string GetFormattedYearString()
         {
-            var selectedYear = FocusedDate ?? GetMonthStart(0);
+            var selectedYear = HighlightedDate ?? GetMonthStart(0);
 
             return selectedYear.ToString("yyyy", Culture);
         }
@@ -559,7 +566,7 @@ namespace MudBlazor
 
         private void GoToSelectedYear()
         {
-            PickerMonth = FocusedDate;
+            PickerMonth = HighlightedDate;
             OnYearClick();
         }
 
@@ -600,7 +607,7 @@ namespace MudBlazor
 
         private string GetYearClasses(int year)
         {
-            var selectedYear = FocusedDate ?? GetMonthStart(0);
+            var selectedYear = HighlightedDate ?? GetMonthStart(0);
 
             if (year == Culture.Calendar.GetYear(selectedYear))
                 return $"mud-picker-year-selected mud-{Color.ToDescriptionString()}-text";
@@ -617,7 +624,7 @@ namespace MudBlazor
 
         private Typo GetYearTypo(int year)
         {
-            var selectedYear = FocusedDate ?? GetMonthStart(0);
+            var selectedYear = HighlightedDate ?? GetMonthStart(0);
 
             if (year == Culture.Calendar.GetYear(selectedYear))
                 return Typo.h5;
@@ -654,7 +661,7 @@ namespace MudBlazor
 
         private string GetMonthClasses(DateTime month)
         {
-            var selectedMonth = FocusedDate ?? GetMonthStart(0);
+            var selectedMonth = HighlightedDate ?? GetMonthStart(0);
 
             if (Culture.Calendar.GetYear(month) != Culture.Calendar.GetYear(selectedMonth))
                 return null;
@@ -667,7 +674,7 @@ namespace MudBlazor
 
         private Typo GetMonthTypo(DateTime month)
         {
-            var selectedMonth = FocusedDate ?? GetMonthStart(0);
+            var selectedMonth = HighlightedDate ?? GetMonthStart(0);
 
             if (Culture.Calendar.GetYear(month) != Culture.Calendar.GetYear(selectedMonth))
                 return Typo.subtitle1;
@@ -682,7 +689,7 @@ namespace MudBlazor
             base.OnInitialized();
             CurrentView = OpenTo;
 
-            if (FocusedDate is not null) return;
+            if (HighlightedDate is not null) return;
 
             var today = TimeProvider.GetLocalNow().Date;
 
@@ -690,7 +697,7 @@ namespace MudBlazor
             var month = FixMonth ?? (year == today.Year ? today.Month : 1);
             var day = FixDay ?? 1;
 
-            FocusedDate = new DateTime(year, month, day);
+            HighlightedDate = new DateTime(year, month, day);
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
