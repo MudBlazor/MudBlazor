@@ -26,9 +26,14 @@ namespace MudBlazor
             _mudPickerCalendarContentElementId = Identifier.Create();
         }
 
-        [Inject] protected IScrollManager ScrollManager { get; set; }
+        [Inject]
+        protected IScrollManager ScrollManager { get; set; }
 
-        [Inject] private IJsApiService JsApiService { get; set; }
+        [Inject]
+        private IJsApiService JsApiService { get; set; }
+
+        [Inject]
+        protected TimeProvider TimeProvider { get; set; }
 
         /// <summary>
         /// The maximum selectable date.
@@ -129,6 +134,14 @@ namespace MudBlazor
         }
 
         private DateTime? _picker_month;
+
+        /// <summary>
+        /// Represents the currently selected date
+        /// </summary>
+        /// <remarks>
+        /// This date is highlighted in the UI
+        /// </remarks>
+        protected DateTime? HighlightedDate { get; set; }
 
         /// <summary>
         /// Occurs when <see cref="PickerMonth"/> has changed.
@@ -511,7 +524,9 @@ namespace MudBlazor
 
         protected string GetFormattedYearString()
         {
-            return GetMonthStart(0).ToString("yyyy", Culture);
+            var selectedYear = HighlightedDate ?? GetMonthStart(0);
+
+            return selectedYear.ToString("yyyy", Culture);
         }
 
         private void OnPreviousMonthClick()
@@ -547,6 +562,12 @@ namespace MudBlazor
                 StateHasChanged();
                 _scrollToYearAfterRender = true;
             }
+        }
+
+        private void GoToSelectedYear()
+        {
+            PickerMonth = HighlightedDate;
+            OnYearClick();
         }
 
         /// <summary>
@@ -586,7 +607,9 @@ namespace MudBlazor
 
         private string GetYearClasses(int year)
         {
-            if (year == Culture.Calendar.GetYear(GetMonthStart(0)))
+            var selectedYear = HighlightedDate ?? GetMonthStart(0);
+
+            if (year == Culture.Calendar.GetYear(selectedYear))
                 return $"mud-picker-year-selected mud-{Color.ToDescriptionString()}-text";
             return null;
         }
@@ -601,8 +624,11 @@ namespace MudBlazor
 
         private Typo GetYearTypo(int year)
         {
-            if (year == Culture.Calendar.GetYear(GetMonthStart(0)))
+            var selectedYear = HighlightedDate ?? GetMonthStart(0);
+
+            if (year == Culture.Calendar.GetYear(selectedYear))
                 return Typo.h5;
+
             return Typo.subtitle1;
         }
 
@@ -635,21 +661,43 @@ namespace MudBlazor
 
         private string GetMonthClasses(DateTime month)
         {
-            if (Culture.Calendar.GetMonth(GetMonthStart(0)) == Culture.Calendar.GetMonth(month) && !IsMonthDisabled(month))
+            var selectedMonth = HighlightedDate ?? GetMonthStart(0);
+
+            if (Culture.Calendar.GetYear(month) != Culture.Calendar.GetYear(selectedMonth))
+                return null;
+
+            if (Culture.Calendar.GetMonth(month) == Culture.Calendar.GetMonth(selectedMonth) && !IsMonthDisabled(selectedMonth))
                 return $"mud-picker-month-selected mud-{Color.ToDescriptionString()}-text";
+
             return null;
         }
 
         private Typo GetMonthTypo(DateTime month)
         {
-            if (Culture.Calendar.GetMonth(GetMonthStart(0)) == Culture.Calendar.GetMonth(month))
+            var selectedMonth = HighlightedDate ?? GetMonthStart(0);
+
+            if (Culture.Calendar.GetYear(month) != Culture.Calendar.GetYear(selectedMonth))
+                return Typo.subtitle1;
+
+            if (Culture.Calendar.GetMonth(month) == Culture.Calendar.GetMonth(selectedMonth))
                 return Typo.h5;
+
             return Typo.subtitle1;
         }
         protected override void OnInitialized()
         {
             base.OnInitialized();
             CurrentView = OpenTo;
+
+            if (HighlightedDate is not null) return;
+
+            var today = TimeProvider.GetLocalNow().Date;
+
+            var year = FixYear ?? today.Year;
+            var month = FixMonth ?? (year == today.Year ? today.Month : 1);
+            var day = FixDay ?? 1;
+
+            HighlightedDate = new DateTime(year, month, day);
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)

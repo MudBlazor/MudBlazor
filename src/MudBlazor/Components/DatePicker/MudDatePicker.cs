@@ -13,9 +13,6 @@ namespace MudBlazor
     {
         private DateTime? _selectedDate;
 
-        [Inject]
-        protected TimeProvider TimeProvider { get; set; }
-
         /// <summary>
         /// Occurs when the <see cref="Date"/> has changed.
         /// </summary>
@@ -61,6 +58,8 @@ namespace MudBlazor
             if (_value != date || (date is null && Text != null))
             {
                 Touched = true;
+
+                HighlightedDate = date;
 
                 if (date is not null && IsDateDisabledFunc(date.Value.Date))
                 {
