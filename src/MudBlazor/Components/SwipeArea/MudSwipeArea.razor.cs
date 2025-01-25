@@ -5,6 +5,10 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
+
+    /// <summary>
+    /// An area which receives swipe events for devices where touch events are supported.
+    /// </summary>
     public partial class MudSwipeArea : MudComponentBase
     {
         private static readonly string[] _preventDefaultEventNames = ["onpointerdown", "onpointerup", "onpointercancel"];
@@ -15,25 +19,36 @@ namespace MudBlazor
         private bool _preventDefaultChanged;
         private ElementReference _componentRef;
 
+        /// <summary>
+        /// The content within this swipe area.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.SwipeArea.Behavior)]
         public RenderFragment? ChildContent { get; set; }
 
+        /// <summary>
+        /// Occurs when a swipe has ended.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.SwipeArea.Behavior)]
         public EventCallback<SwipeEventArgs> OnSwipeEnd { get; set; }
 
         /// <summary>
-        /// Swipe threshold in pixels. If SwipeDelta is below Sensitivity then OnSwipe is not called.
+        /// The amount of pixels which must be swiped to raise the <see cref="OnSwipeEnd"/> event.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>100</c> (100 pixels).
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.SwipeArea.Behavior)]
         public int Sensitivity { get; set; } = 100;
 
         /// <summary>
-        /// Prevents default behavior of the browser when swiping.
-        /// Usable especially when swiping up/down - this will prevent the whole page from scrolling up/down.
+        /// Prevents the default behavior of the browser when swiping.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>. Typically <c>true</c> when swiping up or down, which will prevent the whole page from scrolling.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.SwipeArea.Behavior)]
         public bool PreventDefault { get; set; }

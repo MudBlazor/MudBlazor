@@ -492,6 +492,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [SetCulture("en-US")]
         public void HeatMap_ShouldHandleCustomHeatMapCellOverrides()
         {
             static void CellFragment(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder builder)

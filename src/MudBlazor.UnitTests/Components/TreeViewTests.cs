@@ -1,4 +1,5 @@
-﻿using Bunit;
+﻿using System.Linq;
+using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -660,14 +661,20 @@ namespace MudBlazor.UnitTests.Components
         public void TreeViewServerTest()
         {
             var comp = Context.RenderComponent<TreeViewServerTest>();
-            comp.FindAll("li.mud-treeview-item").Count.Should().Be(4);
+            string.Join('|', comp.FindAll("div.mud-treeview-item-content").Select(x => x.TextContent)).Should()
+                .Be("All Mail|Categories|Social|Updates|Trash");
+            comp.FindAll("li.mud-treeview-item").Count.Should().Be(5);
+            comp.FindAll("div.mud-treeview-item-content")[4].Click();
+            comp.FindAll("li.mud-treeview-item").Count.Should().Be(5); // <-- nothing loaded as it's not expandable
             comp.FindAll("div.mud-treeview-item-content")[0].Click();
-            comp.FindAll("li.mud-treeview-item").Count.Should().Be(4);
-            comp.FindAll("div.mud-treeview-item-content")[3]
-                .GetElementsByClassName("mud-treeview-item-arrow")[0]
-                .ChildElementCount.Should().Be(0);
-            comp.FindAll("div.mud-treeview-item-content")[2].Click();
-            comp.FindAll("li.mud-treeview-item").Count.Should().Be(8);
+            comp.FindAll("li.mud-treeview-item").Count.Should().Be(6); // <- loaded one more from server
+            comp.FindAll("div.mud-treeview-item-content")[3].Click();
+            comp.FindAll("li.mud-treeview-item").Count.Should().Be(7); // <- loaded another one from server
+            // now loading a child of a server loaded item
+            comp.FindAll("div.mud-treeview-item-content")[1].Click();
+            comp.FindAll("li.mud-treeview-item").Count.Should().Be(8); // <- loaded another one from server
+            string.Join('|', comp.FindAll("div.mud-treeview-item-content").Select(x => x.TextContent)).Should()
+                .Be("All Mail|Loaded 1|Loaded 3|Categories|Social|Loaded 2|Updates|Trash");
         }
 
         [Test]

@@ -83,7 +83,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AspNetCore.SassCompiler" Version="1.83.0">
+    <PackageReference Include="AspNetCore.SassCompiler" Version="1.83.4">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>

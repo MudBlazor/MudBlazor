@@ -31,6 +31,10 @@
       color: var(--mud-palette-text-primary);
       font-weight: 500;
       line-height: 1.5rem;
+
+      & .mud-button-root {
+          user-select: auto;
+      }
     }
   }
 

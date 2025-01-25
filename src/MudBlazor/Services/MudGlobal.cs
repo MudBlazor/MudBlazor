@@ -104,12 +104,12 @@ public static class MudGlobal
         /// <summary>
         /// The amount of time in milliseconds to wait from opening the <see cref="MudTooltip"/> before beginning to perform the transition. 
         /// </summary>
-        public static TimeSpan Delay { get; set; } = TimeSpan.Zero;
+        public static TimeSpan Delay { get; set; } = TransitionDefaults.Delay;
 
         /// <summary>
         /// The length of time that the opening transition for <see cref="MudTooltip"/> takes to complete.
         /// </summary>
-        public static TimeSpan Duration { get; set; } = TimeSpan.FromMilliseconds(251);
+        public static TimeSpan Duration { get; set; } = TransitionDefaults.Duration;
     }
 
     public static class TransitionDefaults
