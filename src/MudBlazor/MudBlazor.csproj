@@ -120,8 +120,11 @@
   <Target Name="AlwaysIncludeCss"
           BeforeTargets="Build;ResolveScopedCssInputs;BundleMinify;ResolveProjectStaticWebAssets" AfterTargets="Compile Sass">
     <ItemGroup>
-      <Content Remove="wwwroot/MudBlazor.min.css" />
-      <Content Include="wwwroot/MudBlazor.min.css" />
+      <None Remove="wwwroot/MudBlazor.min.css" />
+
+      <!-- Fix to only include files that were newly generated as to not have duplicate Content items. -->
+      <_NewCompiledCssFiles Include="wwwroot/MudBlazor.min.css" Exclude="@(Content)" />
+      <Content Include="@(_NewCompiledCssFiles)" />
     </ItemGroup>
   </Target>
   
