@@ -86,7 +86,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AspNetCore.SassCompiler" Version="1.83.4">
+    <PackageReference Include="AspNetCore.SassCompiler" Version="1.83.0">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.CodeAnalysis.ResxSourceGenerator" Version="3.11.0-beta1.24605.2">
@@ -113,15 +113,6 @@
       <TfmSpecificPackageFile Include="$(OutputPath)\$(AssemblyName).Analyzers.dll" PackagePath="analyzers/dotnet/cs" />
       <!-- Add compiler visible properties to nuget for analyzers -->
       <TfmSpecificPackageFile Include="..\Directory.Build.targets" Pack="true" PackagePath="build\$(PackageId).targets" />
-    </ItemGroup>
-  </Target>
-
-  <!--Mitigation for https://github.com/koenvzeijl/AspNetCore.SassCompiler/issues/224-->
-  <Target Name="AlwaysIncludeCss"
-          BeforeTargets="Build;ResolveScopedCssInputs;BundleMinify;ResolveProjectStaticWebAssets" AfterTargets="Compile Sass">
-    <ItemGroup>
-      <Content Remove="wwwroot/MudBlazor.min.css" />
-      <Content Include="wwwroot/MudBlazor.min.css" />
     </ItemGroup>
   </Target>
   
