@@ -893,8 +893,14 @@ namespace MudBlazor
 
             _selectedListItemIndex = index;
 
+            return ScrollToListItemAsync(index);
+        }
+
+        public ValueTask ScrollToListItemAsync(int index)
+        {
             var id = GetListItemId(index);
 
+            //id of the scrolled element
             return ScrollManager.ScrollToListItemAsync(id);
         }
 
