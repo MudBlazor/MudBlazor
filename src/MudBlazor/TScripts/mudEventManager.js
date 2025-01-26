@@ -102,7 +102,7 @@ class MudThrottledEventManager {
             if (propertyValue == null) {
                 eventEntry[propertyName] = propertyValue;
             }
-            else if (propertyValue instanceof TouchList) {
+            else if (["touchstart", "touchmove", "touchend", "touchcancel"].includes(event.type) && ["touches", "changedTouches", "targetTouches"].includes(propertyName)) {
                 // Convert TouchList to a regular array for JSON serialization
                 eventEntry[propertyName] = Array.from(propertyValue, touchPoint =>({
                     identifier: touchPoint.identifier,
