@@ -3394,7 +3394,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".filter-button").Click();
             comp.FindAll(".filters-panel").Count.Should().Be(1);
 
-            comp.FindAll("div.mud-input-control")[0].PointerDown();
+            comp.FindAll("div.mud-input-control")[0].Click();
             comp.FindAll("div.mud-list-item").Count.Should().Be(3);
         }
 
@@ -4944,7 +4944,7 @@ namespace MudBlazor.UnitTests.Components
             FilterButton().Click();
 
             IElement SelectElement() => comp.Find("div.mud-select.filter-input");
-            SelectElement().PointerDown();
+            SelectElement().Click();
 
             var items = comp.FindAll("div.mud-list-item").ToArray();
 

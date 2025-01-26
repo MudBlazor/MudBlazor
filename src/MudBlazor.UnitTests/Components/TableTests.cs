@@ -1213,7 +1213,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => comp.FindAll("td")[0].TextContent.Trim().Should().Be("1"));
             comp.WaitForAssertion(() => comp.FindAll("td")[2].TextContent.Trim().Should().Be("2"));
             comp.WaitForAssertion(() => comp.FindAll("td")[4].TextContent.Trim().Should().Be("3"));
-            comp.FindAll("div.mud-select-input")[0].PointerDown(); // mobile sort drop down
+            comp.FindAll("div.mud-select-input")[0].Click(); // mobile sort drop down
             comp.FindAll("div.mud-list-item-clickable")[1].Click(); // sort b column
             comp.WaitForAssertion(() => comp.FindAll("td")[0].TextContent.Trim().Should().Be("3"));
             comp.WaitForAssertion(() => comp.FindAll("td")[2].TextContent.Trim().Should().Be("2"));
@@ -1232,7 +1232,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("td")[0].TextContent.Trim().Should().Be("1");
             comp.FindAll("td")[2].TextContent.Trim().Should().Be("2");
             comp.FindAll("td")[4].TextContent.Trim().Should().Be("3");
-            comp.FindAll("div.mud-select-input")[0].PointerDown(); // mobile sort drop down
+            comp.FindAll("div.mud-select-input")[0].Click(); // mobile sort drop down
             comp.FindAll("div.mud-list-item-clickable")[1].Click(); // sort b column
             comp.WaitForAssertion(() => comp.FindAll("td")[0].TextContent.Trim().Should().Be("3"));
             comp.WaitForAssertion(() => comp.FindAll("td")[2].TextContent.Trim().Should().Be("2"));
@@ -2282,7 +2282,7 @@ namespace MudBlazor.UnitTests.Components
             int.Parse(t).Should().Be(rowsPerPage, "The component rendered correctly");
             //open the menu
             var menuItem = comp.Find("div.mud-input-control");
-            menuItem.PointerDown();
+            menuItem.Click();
 
             //Now select the 25 and check it
             var items = comp.FindAll("div.mud-list-item").ToArray();
