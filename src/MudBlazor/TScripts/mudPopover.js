@@ -351,8 +351,8 @@ window.mudpopoverHelper = {
             this.updatePopoverZIndex(popoverContentNode, popoverNode.parentNode);
 
             if (window.getComputedStyle(popoverNode).getPropertyValue('z-index') != 'auto') {
-                popoverContentNode.style['z-index'] = window.getComputedStyle(popoverNode).getPropertyValue('z-index');
-                popoverContentNode.skipZIndex = true;
+                popoverContentNode.style['z-index'] = Math.max(window.getComputedStyle(popoverNode).getPropertyValue('z-index'), popoverContentNode.style['z-index']);
+                popoverContentNode.skipZIndex = true;             
             }
             this.updatePopoverOverlay(popoverContentNode);
         }
