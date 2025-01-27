@@ -498,7 +498,7 @@ class MudPopover {
                 }
                 else if (mutation.attributeName == 'data-ticks') {
                     // data-ticks are important for Direction and Location, it doesn't reposition
-                    // if they aren't there                    
+                    // if they aren't there     
                     const tickAttribute = target.getAttribute('data-ticks');
 
                     const tickValues = [];
@@ -523,11 +523,21 @@ class MudPopover {
                         }
                     }
 
+                    // Iterate over the items in this.map to reset any open overlays
+                    for (const [key, item] of Object.entries(this.map)) {
+                        const popoverContentNode = item.popoverContentNode; // Access the popover node
+                        const tickValue = parseInt(popoverContentNode.getAttribute('data-ticks')); // Use popoverNode instead of childNode
+                        if (tickValue == 0) {
+                            continue;
+                        }
+                        window.mudpopoverHelper.updatePopoverOverlay(popoverContentNode); // Update the popover overlay
+                    }
+
                     if (tickValues.length == 0) {
                         continue;
                     }
 
-                    const sortedTickValues = tickValues.sort((x, y) => x - y);
+                    const sortedTickValues = tickValues.sort((x, y) => x - y);                    
                     // z-index calculation not used here
                     continue;
                     for (let i = 0; i < parent.children.length; i++) {
@@ -618,7 +628,6 @@ class MudPopover {
             contentNodeObserver.observe(popoverContentNode);
 
             this.map[id] = {
-                popoverNode: popoverNode,
                 popoverContentNode: popoverContentNode,
                 mutationObserver: observer,
                 resizeObserver: resizeObserver,
@@ -636,15 +645,6 @@ class MudPopover {
             item.contentNodeObserver.disconnect();
 
             delete this.map[id];
-        }
-        // Iterate over the items in this.map to reset any open overlays
-        for (const [key, item] of Object.entries(this.map)) {
-            const popoverNode = item.popoverNode; // Access the popover node
-            const tickValue = parseInt(popoverNode.getAttribute('data-ticks')); // Use popoverNode instead of childNode
-            if (tickValue == 0) {
-                continue;
-            }
-            window.mudpopoverHelper.updatePopoverOverlay(popoverNode); // Update the popover overlay
         }
     }
 
