@@ -524,13 +524,13 @@ class MudPopover {
                     }
 
                     // Iterate over the items in this.map to reset any open overlays
-                    for (const [key, item] of Object.entries(this.map)) {
-                        const popoverContentNode = item.popoverContentNode; // Access the popover node
-                        const tickValue = parseInt(popoverContentNode.getAttribute('data-ticks')); // Use popoverNode instead of childNode
+                    for (const item of Object.entries(this.map)) {
+                        const popoverContentNode = item.popoverContentNode; // Access the popover content node (in mud-popover-provider)
+                        const tickValue = parseInt(popoverContentNode.getAttribute('data-ticks')); // get data-ticks property
                         if (tickValue == 0) {
                             continue;
                         }
-                        window.mudpopoverHelper.updatePopoverOverlay(popoverContentNode); // Update the popover overlay
+                        window.mudpopoverHelper.updatePopoverOverlay(popoverContentNode); // Update the popover overlay for an active popover
                     }
 
                     if (tickValues.length == 0) {

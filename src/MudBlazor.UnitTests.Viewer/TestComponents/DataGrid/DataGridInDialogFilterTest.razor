@@ -19,8 +19,9 @@
 </MudDialog>
 
 @code {
+#nullable enable
     public static string __description__ = " Datagrid inside a Dialog making sure Filter popover shows and goes away properly. ";
-
+    
     public record Model(string Column1, string Column2, string Column3, string Column4, string Column5);
 
     private List<Model> _items = new List<Model>();
