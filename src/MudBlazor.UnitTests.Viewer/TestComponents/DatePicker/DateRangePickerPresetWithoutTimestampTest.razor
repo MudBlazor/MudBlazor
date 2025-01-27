@@ -4,7 +4,7 @@
     public static string __description__ = "DateTime range without a timestamp";
 
     [Parameter]
-    public DateRange? DateRange { get; set; } = new DateRange(DateTime.Now.Subtract(TimeSpan.FromDays(35)).Date, DateTime.Now.AddDays(5).Date);
+    public DateRange? DateRange { get; set; } = new DateRange(DateTime.Now.AddMonths(-1).Date, DateTime.Now.Date);
 
     public MudDateRangePicker? PickerReference;
 }

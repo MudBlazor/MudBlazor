@@ -106,7 +106,8 @@
                        Size="@Size.Small"
                        OnClick="@HandleClearButtonAsync"
                        aria-label="@Localizer[LanguageResource.MudInput_Clear]"
-                       tabindex="-1" />
+                       tabindex="-1"
+                       @onmousedown:stopPropagation />
     }
 
     @if (Adornment == Adornment.End)
