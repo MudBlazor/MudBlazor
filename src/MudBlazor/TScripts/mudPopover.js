@@ -618,6 +618,8 @@ class MudPopover {
             contentNodeObserver.observe(popoverContentNode);
 
             this.map[id] = {
+                popoverNode: popoverNode,
+                popoverContentNode: popoverContentNode,
                 mutationObserver: observer,
                 resizeObserver: resizeObserver,
                 contentNodeObserver: contentNodeObserver
@@ -634,6 +636,15 @@ class MudPopover {
             item.contentNodeObserver.disconnect();
 
             delete this.map[id];
+        }
+        // Iterate over the items in this.map to reset any open overlays
+        for (const [key, item] of Object.entries(this.map)) {
+            const popoverNode = item.popoverNode; // Access the popover node
+            const tickValue = parseInt(popoverNode.getAttribute('data-ticks')); // Use popoverNode instead of childNode
+            if (tickValue == 0) {
+                continue;
+            }
+            window.mudpopoverHelper.updatePopoverOverlay(popoverNode); // Update the popover overlay
         }
     }
 
