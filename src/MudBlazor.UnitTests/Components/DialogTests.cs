@@ -148,7 +148,7 @@ namespace MudBlazor.UnitTests.Components
             // close by click on ok button
             comp.Find(".mud-message-box button").Click();
 
-            comp.Markup.Trim().Should().BeEmpty();
+            comp.WaitForAssertion(() => comp.Markup.Trim().Should().BeEmpty());
         }
 
         /// <summary>
