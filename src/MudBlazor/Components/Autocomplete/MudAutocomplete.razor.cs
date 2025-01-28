@@ -980,16 +980,17 @@ namespace MudBlazor
             }
         }
 
-        internal async Task HandleClearButtonClicked()
+        internal async ValueTask HandleClearButtonClicked(MouseEventArgs e)
         {
+            // clear button clicked, let's make sure text is cleared
+            await ClearAsync();
+            await BeginValidateAsync();
 
             if (OnClearButtonClick.HasDelegate)
             {
-                await OnClearButtonClick.InvokeAsync();
+                await OnClearButtonClick.InvokeAsync(e);
             }
-            
-            // clear button clicked, let's make sure text is cleared
-            await this.ClearAsync();
+            Open = false;
         }
 
         internal async Task AdornmentClickHandlerAsync()
