@@ -39,7 +39,7 @@
                           OnAdornmentClick="@AdornmentClickHandlerAsync"
                           AdornmentAriaLabel="@AdornmentAriaLabel"
                           Clearable="@(Clearable && !GetReadOnlyState())"
-                          OnClearButtonClick="(async (e) => await HandleClearButtonAsync(e))"
+                          OnClearButtonClick="@HandleClearButtonAsync"
                           ClearIcon="@ClearIcon"
                           MaxLength="@MaxLength"
                           autocomplete="@GetAutocomplete()"
