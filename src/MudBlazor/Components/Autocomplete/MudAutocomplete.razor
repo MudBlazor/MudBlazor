@@ -39,7 +39,7 @@
                           OnAdornmentClick="@AdornmentClickHandlerAsync"
                           AdornmentAriaLabel="@AdornmentAriaLabel"
                           Clearable="@(Clearable && !GetReadOnlyState())"
-                          OnClearButtonClick="@OnClearButtonClick"
+                          OnClearButtonClick="@HandleClearButtonClicked"
                           ClearIcon="@ClearIcon"
                           MaxLength="@MaxLength"
                           autocomplete="@GetAutocomplete()"
