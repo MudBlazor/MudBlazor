@@ -33,12 +33,11 @@ Class="mt-18">
     T="string"
     Value="_workaroundValue"
     ValueChanged="OpenMessageBoxWorkaround"
-    Label="Workaround Autocomplete"
+    Label="OpenOnFocus set to False Autocomplete"
     SearchFunc="Search"
     Class="mt-18"
     Clearable="true"
-    OpenOnFocus="false"
-    AutoFocus="false" />
+    OpenOnFocus="false"  />
     <MudText>@($"Text: {_workaroundAutocomplete?.Text} Value: {_workaroundAutocomplete?.Value} Local Value: {_workaroundValue}")</MudText>
     <MudMessageBox @ref="_msgBox"
     Title="Warning"
