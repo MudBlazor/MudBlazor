@@ -9,20 +9,20 @@
 </MudPaper>
 
 <MudAutocomplete T="string" @ref=autocomp1
-Value="_messageBoxValue"
-ValueChanged="OpenMessageBox"
-Label="Opens Message Box"
-SearchFunc="Search"
-Class="mt-18"
-Clearable="true" />
+                 Value="_messageBoxValue"
+                 ValueChanged="OpenMessageBox"
+                 Label="Opens Message Box"
+                 SearchFunc="Search"
+                 Class="mt-18"
+                 Clearable="true" />
 <MudText>@($"Text: {autocomp1?.Text} Value: {autocomp1?.Value} Local Value: {_messageBoxValue}")</MudText>
 
 <MudSelect T="string" @ref=select1
-Value="_dialogValue"
-ValueChanged="OpenDialog"
-Label="MudSelect"
-Clearable="true"
-Class="mt-18">
+           Value="_dialogValue"
+           ValueChanged="OpenDialog"
+           Label="MudSelect"
+           Clearable="true"
+           Class="mt-18">
     @foreach (string s in _states)
     {
         <MudSelectItem Value="@s" />
@@ -30,24 +30,24 @@ Class="mt-18">
     </MudSelect>
     <MudText>@($"Text: {select1?.Text} Value: {select1?.Value} Local Value: {_dialogValue}")</MudText>
     <MudAutocomplete @ref="_workaroundAutocomplete"
-    T="string"
-    Value="_workaroundValue"
-    ValueChanged="OpenMessageBoxWorkaround"
-    Label="OpenOnFocus set to False Autocomplete"
-    SearchFunc="Search"
-    Class="mt-18"
-    Clearable="true"
-    OpenOnFocus="false"  />
+                     T="string"
+                     Value="_workaroundValue"
+                     ValueChanged="OpenMessageBoxWorkaround"
+                     Label="OpenOnFocus set to False Autocomplete"
+                     SearchFunc="Search"
+                     Class="mt-18"
+                     Clearable="true"
+                     OpenOnFocus="false" />
     <MudText>@($"Text: {_workaroundAutocomplete?.Text} Value: {_workaroundAutocomplete?.Value} Local Value: {_workaroundValue}")</MudText>
     <MudMessageBox @ref="_msgBox"
-    Title="Warning"
-    CancelText="Cancel">
+                   Title="Warning"
+                   CancelText="Cancel">
         <MessageContent>
             This is a message box
         </MessageContent>
         <YesButton>
             <MudButton Variant="Variant.Filled"
-            Color="Color.Error">
+                       Color="Color.Error">
                 Close
             </MudButton>
         </YesButton>
@@ -118,7 +118,7 @@ Class="mt-18">
     {
         _messageBoxValue = value;
         if (!string.IsNullOrEmpty(value))
-        {            
+        {
             await _msgBox.ShowAsync();
         }
     }
@@ -127,7 +127,7 @@ Class="mt-18">
     {
         _dialogValue = value;
         if (!string.IsNullOrEmpty(value))
-        {            
+        {
             _dialogVisible = true;
             await Task.CompletedTask;
         }
@@ -137,7 +137,7 @@ Class="mt-18">
     {
         _workaroundValue = value;
         if (!string.IsNullOrEmpty(value))
-        {            
+        {
             await _workaroundAutocomplete.CloseMenuAsync();
             await _msgBox.ShowAsync();
         }
