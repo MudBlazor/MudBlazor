@@ -8,25 +8,27 @@
     </MudText>
 </MudPaper>
 
-<MudAutocomplete T="string"
+<MudAutocomplete T="string" @ref=autocomp1
 Value="_messageBoxValue"
 ValueChanged="OpenMessageBox"
 Label="Opens Message Box"
 SearchFunc="Search"
 Class="mt-18"
 Clearable="true" />
+<MudText>@($"Text: {autocomp1?.Text} Value: {autocomp1?.Value} Local Value: {_messageBoxValue}")</MudText>
 
-<MudSelect T="string"
+<MudSelect T="string" @ref=select1
 Value="_dialogValue"
 ValueChanged="OpenDialog"
 Label="MudSelect"
+Clearable="true"
 Class="mt-18">
     @foreach (string s in _states)
     {
         <MudSelectItem Value="@s" />
     }
     </MudSelect>
-
+    <MudText>@($"Text: {select1?.Text} Value: {select1?.Value} Local Value: {_dialogValue}")</MudText>
     <MudAutocomplete @ref="_workaroundAutocomplete"
     T="string"
     Value="_workaroundValue"
@@ -37,7 +39,7 @@ Class="mt-18">
     Clearable="true"
     OpenOnFocus="false"
     AutoFocus="false" />
-
+    <MudText>@($"Text: {_workaroundAutocomplete?.Text} Value: {_workaroundAutocomplete?.Value} Local Value: {_workaroundValue}")</MudText>
     <MudMessageBox @ref="_msgBox"
     Title="Warning"
     CancelText="Cancel">
@@ -68,13 +70,17 @@ Class="mt-18">
     </MudDialog>
 
     @code {
+
+
+
     public static string __description__ = " Test Autocomplete retaining focus and not closing properly. ";
     private string _messageBoxValue = string.Empty;
     private string _dialogValue = string.Empty;
     private string _workaroundValue = string.Empty;
 
-    private MudMessageBox _msgBox = new();
-
+    private MudAutocomplete<string> autocomp1 = default!;
+    private MudSelect<string> select1 = default!;
+    private MudMessageBox _msgBox = default!;
     private MudAutocomplete<string> _workaroundAutocomplete = new();
 
     private bool _dialogVisible;
@@ -111,30 +117,30 @@ Class="mt-18">
 
     private async Task OpenMessageBox(string value)
     {
+        _messageBoxValue = value;
         if (!string.IsNullOrEmpty(value))
-        {
-            _messageBoxValue = value;
+        {            
             await _msgBox.ShowAsync();
         }
     }
 
     private async Task OpenDialog(string value)
     {
+        _dialogValue = value;
         if (!string.IsNullOrEmpty(value))
-        {
-            _dialogValue = value;
+        {            
             _dialogVisible = true;
-            await Task.CompletedTask;            
+            await Task.CompletedTask;
         }
     }
 
     private async Task OpenMessageBoxWorkaround(string value)
     {
+        _workaroundValue = value;
         if (!string.IsNullOrEmpty(value))
-        {
-            _workaroundValue = value;
+        {            
             await _workaroundAutocomplete.CloseMenuAsync();
-            await _msgBox.ShowAsync();            
+            await _msgBox.ShowAsync();
         }
     }
 }
