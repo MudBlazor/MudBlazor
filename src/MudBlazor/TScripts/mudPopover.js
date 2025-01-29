@@ -352,7 +352,7 @@ window.mudpopoverHelper = {
 
             if (window.getComputedStyle(popoverNode).getPropertyValue('z-index') != 'auto') {
                 popoverContentNode.style['z-index'] = Math.max(window.getComputedStyle(popoverNode).getPropertyValue('z-index'), popoverContentNode.style['z-index']);
-                popoverContentNode.skipZIndex = true;             
+                popoverContentNode.skipZIndex = true;
             }
             this.updatePopoverOverlay(popoverContentNode);
         }
