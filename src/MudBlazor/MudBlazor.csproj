@@ -93,7 +93,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="MudBlazor.JSCompiler" Version="1.0.16">
+    <PackageReference Include="MudBlazor.JSCompiler" Version="1.0.17">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>
