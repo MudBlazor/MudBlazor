@@ -982,8 +982,9 @@ namespace MudBlazor
 
         internal async Task HandleClearButtonAsync(MouseEventArgs e)
         {
-            // clear button clicked, let's make sure text is cleared
-            Open = false;
+            // clear button clicked, let's make sure text is cleared and the menu has focus
+            Open = true;
+            _isFocused = true;
             await SetValueAsync(default, false);
             await SetTextAsync(default, false);
             _selectedListItemIndex = default;
