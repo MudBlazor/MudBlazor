@@ -7,7 +7,7 @@
             <MudText Typo="Typo.body2">Peninsula in Europe</MudText>
         </CardHeaderContent>
     </MudCardHeader>
-    <div @onclick="@(OpenContextMenu)" @oncontextmenu="@(OpenContextMenu)" @oncontextmenu:preventDefault>
+    <div @onclick="@(OpenContextMenu)" @oncontextmenu="@(OpenContextMenu)" @oncontextmenu:preventDefault @oncontextmenu:stopPropagation>
         <MudCardMedia Image="images/pilars.jpg" Height="250"/>
     </div>
     <MudCardContent>
