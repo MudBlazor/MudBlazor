@@ -3,7 +3,7 @@
 @typeparam T
 
 <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
-    <div class="@AutocompleteClassname">
+    <div class="@AutocompleteClassname" @onfocus="@OnInputFocusedAsync">
         <MudInputControl Label="@Label"
                          Variant="@Variant"
                          HelperId="@GetHelperId()"
@@ -18,8 +18,7 @@
                          ErrorId="@ErrorId"
                          Disabled="@GetDisabledState()"
                          Required="@Required"
-                         @onclick="@OnInputClickedAsync"
-                         @onfocus="@OnInputFocusedAsync"
+                         @onclick="@OnInputClickedAsync"                         
                          ForId="@InputElementId">
             <InputContent>
                 <MudInput @ref="_elementReference" @key="_elementKey" InputType="InputType.Text"
@@ -42,11 +41,10 @@
                           OnClearButtonClick="@HandleClearButtonAsync"
                           ClearIcon="@ClearIcon"
                           MaxLength="@MaxLength"
-                          autocomplete="@GetAutocomplete()"
+                          autocomplete="@GetAutocomplete()"                          
                           @attributes="UserAttributes"
                           TextChanged="OnTextChangedAsync"
                           OnBlur="OnInputBlurredAsync"
-                          @onfocus="@OnInputFocusedAsync"
                           OnKeyDown="@OnInputKeyDownAsync"
                           OnKeyUp="@OnInputKeyUpAsync" KeyUpPreventDefault="KeyUpPreventDefault"
                           Placeholder="@Placeholder" Immediate="true"
