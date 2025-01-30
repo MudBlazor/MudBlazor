@@ -92,7 +92,7 @@ public partial class MudTabPanel
     public string? BadgeIcon { get; set; }
 
     /// <summary>
-    /// Shows a dot instead of text for the badge.
+    /// Shows a dot instead of text or icon for the badge.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>false</c>. When <c>true</c>, a dot instead of <see cref="BadgeData"/> is displayed.
