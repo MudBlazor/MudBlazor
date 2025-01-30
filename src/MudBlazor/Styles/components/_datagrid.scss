@@ -65,8 +65,10 @@
       right: 0px;
     }
 
-    .mud-input-text {
-      margin-top: 0 !important;
+    &:not(.mud-table-child-content) {
+      .mud-input-text {
+        margin-top: 0 !important;
+      }
     }
 
     .column-header {

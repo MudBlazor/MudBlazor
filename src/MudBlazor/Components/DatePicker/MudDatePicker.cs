@@ -13,9 +13,6 @@ namespace MudBlazor
     {
         private DateTime? _selectedDate;
 
-        [Inject]
-        protected TimeProvider TimeProvider { get; set; }
-
         /// <summary>
         /// Occurs when the <see cref="Date"/> has changed.
         /// </summary>
@@ -62,13 +59,19 @@ namespace MudBlazor
             {
                 Touched = true;
 
+                HighlightedDate = date;
+
                 if (date is not null && IsDateDisabledFunc(date.Value.Date))
                 {
                     await SetTextAsync(null, false);
                     return;
                 }
 
+                if (date is not null)
+                    PickerMonth = new DateTime(Culture.Calendar.GetYear(date.Value), Culture.Calendar.GetMonth(date.Value), 1, Culture.Calendar);
+
                 _value = date;
+
                 if (updateValue)
                 {
                     Converter.GetError = false;

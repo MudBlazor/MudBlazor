@@ -31,6 +31,10 @@
       color: var(--mud-palette-text-primary);
       font-weight: 500;
       line-height: 1.5rem;
+
+      & .mud-button-root {
+          user-select: auto;
+      }
     }
   }
 
@@ -512,7 +516,10 @@
 }
 
 .mud-table-row-expander {
-  margin: -12px -2px -12px -12px;
+  margin-top: -12px;
+  margin-bottom: -12px;
+  margin-inline-start: -12px;
+  margin-inline-end: -2px;
 }
 
 @mixin table-display-smalldevices ($breakpoint) {

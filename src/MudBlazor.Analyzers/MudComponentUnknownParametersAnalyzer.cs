@@ -50,7 +50,7 @@ namespace MudBlazor.Analyzers
                 }
 
                 if (!global.TryGetValue(AllowedAttributePatternProperty, out var allowPattern)
-                   || !Enum.TryParse<AllowedAttributePattern>(allowPattern, out var allowedAttributePattern))
+                   || !Enum.TryParse<AllowedAttributePattern>(allowPattern, true, out var allowedAttributePattern))
                 {
                     allowedAttributePattern = AllowedAttributePattern.LowerCase;
                 }
@@ -58,7 +58,8 @@ namespace MudBlazor.Analyzers
                 if (allowedAttributePattern == AllowedAttributePattern.Any)
                     return;
 
-                if (!global.TryGetValue(AllowedAttributeListProperty, out var allowedAttributes))
+                if (!global.TryGetValue(AllowedAttributeListProperty, out var allowedAttributes)
+                    || string.IsNullOrEmpty(allowedAttributes))
                 {
                     allowedAttributes = HTMLAttributes.DefaultAttributes;
                 }

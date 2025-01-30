@@ -440,7 +440,7 @@ namespace MudBlazor
                 Text = text;
                 _validated = false;
 
-                if (!string.IsNullOrWhiteSpace(Text))
+                if (!string.IsNullOrEmpty(Text))
                 {
                     Touched = true;
                 }

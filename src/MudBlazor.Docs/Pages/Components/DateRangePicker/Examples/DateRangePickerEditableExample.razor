@@ -2,7 +2,7 @@
 
 <MudStack>
     <MudDateRangePicker @bind-DateRange="@_dateRange" Margin="Margin.Dense" ReadOnly="@(!_editable)" Clearable="@_clearable" 
-                        PlaceholderStart="Start Date" PlaceholderEnd="End Date"/>
+                        PlaceholderStart="Start Date" PlaceholderEnd="End Date" Label="Range"/>
 
     <MudStack Row="true">
         <MudSwitch @bind-Value="_editable" Color="Color.Secondary">Editable</MudSwitch>

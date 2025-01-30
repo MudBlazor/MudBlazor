@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.State;
 using MudBlazor.Utilities;
@@ -142,8 +139,12 @@ namespace MudBlazor
 
                 Touched = true;
 
+                if (range?.Start is not null)
+                    PickerMonth = new DateTime(Culture.Calendar.GetYear(range.Start.Value), Culture.Calendar.GetMonth(range.Start.Value), 1, Culture.Calendar);
+
                 _dateRange = range;
                 _value = range?.End;
+                HighlightedDate = range?.Start;
 
                 if (updateValue)
                 {
@@ -390,7 +391,7 @@ namespace MudBlazor
 
         protected override async Task OnDayClickedAsync(DateTime dateTime)
         {
-            if (_firstDate == null || _firstDate > dateTime || _secondDate != null)
+            if (_firstDate == null || _secondDate != null)
             {
                 _secondDate = null;
                 _firstDate = dateTime;
@@ -399,8 +400,15 @@ namespace MudBlazor
 
                 return;
             }
-
-            _secondDate = dateTime;
+            if (_firstDate > dateTime)
+            {
+                _secondDate = _firstDate;
+                _firstDate = dateTime;
+            }
+            else
+            {
+                _secondDate = dateTime;
+            }
             if (PickerActions == null || AutoClose)
             {
                 await SubmitAsync();
