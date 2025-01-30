@@ -27,51 +27,48 @@
     {
         <MudSelectItem Value="@s" />
     }
-    </MudSelect>
-    <MudText>@($"Text: {select1?.Text} Value: {select1?.Value} Local Value: {_dialogValue}")</MudText>
-    <MudAutocomplete @ref="_workaroundAutocomplete"
-                     T="string"
-                     Value="_workaroundValue"
-                     ValueChanged="OpenMessageBoxWorkaround"
-                     Label="OpenOnFocus set to False Autocomplete"
-                     SearchFunc="Search"
-                     Class="mt-18"
-                     Clearable="true"
-                     OpenOnFocus="false" />
-    <MudText>@($"Text: {_workaroundAutocomplete?.Text} Value: {_workaroundAutocomplete?.Value} Local Value: {_workaroundValue}")</MudText>
-    <MudMessageBox @ref="_msgBox"
-                   Title="Warning"
-                   CancelText="Cancel">
-        <MessageContent>
-            This is a message box
-        </MessageContent>
-        <YesButton>
-            <MudButton Variant="Variant.Filled"
-                       Color="Color.Error">
-                Close
-            </MudButton>
-        </YesButton>
-    </MudMessageBox>
+</MudSelect>
+<MudText>@($"Text: {select1?.Text} Value: {select1?.Value} Local Value: {_dialogValue}")</MudText>
+<MudAutocomplete @ref="_workaroundAutocomplete"
+                    T="string"
+                    Value="_workaroundValue"
+                    ValueChanged="OpenMessageBoxWorkaround"
+                    Label="OpenOnFocus set to False Autocomplete"
+                    SearchFunc="Search"
+                    Class="mt-18"
+                    Clearable="true"
+                    OpenOnFocus="false" />
+<MudText>@($"Text: {_workaroundAutocomplete?.Text} Value: {_workaroundAutocomplete?.Value} Local Value: {_workaroundValue}")</MudText>
+<MudMessageBox @ref="_msgBox"
+                Title="Warning"
+                CancelText="Cancel">
+    <MessageContent>
+        This is a message box
+    </MessageContent>
+    <YesButton>
+        <MudButton Variant="Variant.Filled"
+                    Color="Color.Error">
+            Close
+        </MudButton>
+    </YesButton>
+</MudMessageBox>
 
-    <MudDialog @bind-Visible="_dialogVisible" Options="_dialogOptions">
-        <TitleContent>
-            <MudText Typo="Typo.h6">
-                <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-3" /> Edit rating
-            </MudText>
-        </TitleContent>
-        <DialogContent>
-            <p>How awesome are inline dialogs?</p>
-            <MudRating @bind-SelectedValue="_rating" Class="mt-3" />
-        </DialogContent>
-        <DialogActions>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Class="px-10">Close</MudButton>
-        </DialogActions>
-    </MudDialog>
+<MudDialog @bind-Visible="_dialogVisible" Options="_dialogOptions">
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-3" /> Edit rating
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <p>How awesome are inline dialogs?</p>
+        <MudRating @bind-SelectedValue="_rating" Class="mt-3" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Class="px-10">Close</MudButton>
+    </DialogActions>
+</MudDialog>
 
-    @code {
-
-
-
+@code {
     public static string __description__ = " Test Autocomplete retaining focus and not closing properly. ";
     private string _messageBoxValue = string.Empty;
     private string _dialogValue = string.Empty;
