@@ -344,8 +344,15 @@ namespace MudBlazor
             SortDirection = SortDirection switch
             {
                 SortDirection.Ascending => SortDirection.Descending,
+                SortDirection.Descending => SortDirection.None,
                 _ => SortDirection.Ascending
             };
+
+            if (SortDirection == SortDirection.None)
+            {
+                await RemoveSortAsync();
+                return;
+            }
 
             DataGrid.DropContainerHasChanged();
 

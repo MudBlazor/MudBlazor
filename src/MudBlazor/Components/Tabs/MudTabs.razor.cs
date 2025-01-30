@@ -821,7 +821,7 @@ namespace MudBlazor
 
         private void SetScrollButtonVisibility()
         {
-            _showScrollButtons = AlwaysShowScrollButtons || _allTabsSize > _tabBarContentSize || _scrollIndex != 0;
+            _showScrollButtons = AlwaysShowScrollButtons || (int)_allTabsSize > (int)_tabBarContentSize || _scrollIndex != 0;
         }
 
         private void ScrollPrev()

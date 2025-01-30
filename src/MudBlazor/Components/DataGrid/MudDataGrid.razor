@@ -234,9 +234,8 @@
                                         @{ var groupStyle = new StyleBuilder().AddStyle(GroupStyle).AddStyle(GroupStyleFunc?.Invoke(g)).Build(); }
 
                                         <td class="mud-table-cell @groupClass" colspan="1000" style="background-color:var(--mud-palette-background-gray);@groupStyle">
-                                            <MudIconButton Class="mud-table-row-expander"
-                                           Icon="@(g.Expanded ? Icons.Material.Filled.ExpandMore : Icons.Material.Filled.ChevronRight)"
-                                           OnClick="@(() => ToggleGroupExpansion(g))" aria-label="@Localizer[LanguageResource.MudDataGrid_ToggleGroupExpansion]" />
+                                            <MudIconButton Class="mud-table-row-expander" Icon="@GetGroupIcon(g.Expanded, this.RightToLeft)"
+                                                           OnClick="@(() => ToggleGroupExpansion(g))" aria-label="@Localizer[LanguageResource.MudDataGrid_ToggleGroupExpansion]" />
 
                                             @if (GroupedColumn.GroupTemplate == null)
                                             {
