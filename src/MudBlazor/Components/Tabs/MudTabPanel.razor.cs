@@ -85,7 +85,14 @@ public partial class MudTabPanel
     public object? BadgeData { get; set; }
 
     /// <summary>
-    /// Shows a dot instead of text for the badge.
+    /// Optional icon to be shown in the badge instead of text.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Tabs.Behavior)]
+    public string? BadgeIcon { get; set; }
+
+    /// <summary>
+    /// Shows a dot instead of text or icon for the badge.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>false</c>. When <c>true</c>, a dot instead of <see cref="BadgeData"/> is displayed.

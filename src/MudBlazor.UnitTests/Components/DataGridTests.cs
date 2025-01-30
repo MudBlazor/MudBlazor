@@ -5004,5 +5004,19 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => dataGrid.CurrentPage.Should().Be(2));
             comp.WaitForAssertion(() => comp.Find(".mud-table-body .mud-table-row .mud-table-cell").TextContent.Should().Be("3"));
         }
+
+        [Test]
+        [TestCase(true, true)]
+        [TestCase(true, false)]
+        [TestCase(false, true)]
+        [TestCase(false, false)]
+        public void TestRtlGroupIconMethod(bool isRightToLeft, bool isExpanded)
+        {
+            var test = new MudDataGrid<int>();
+            if (isExpanded)
+                test.GetGroupIcon(isExpanded, isRightToLeft).Should().Be(Icons.Material.Filled.ExpandMore);
+            else
+                test.GetGroupIcon(isExpanded, isRightToLeft).Should().Be(isRightToLeft ? Icons.Material.Filled.ChevronLeft : Icons.Material.Filled.ChevronRight);
+        }
     }
 }
