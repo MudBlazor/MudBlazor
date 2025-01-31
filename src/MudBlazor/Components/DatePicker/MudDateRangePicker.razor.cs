@@ -40,7 +40,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public double? MaxDays { get; set; }
+        public int? MaxDays { get; set; }
 
         /// <summary>
         /// The minimum number of selectable days.
@@ -50,7 +50,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public double? MinDays { get; set; }
+        public int? MinDays { get; set; }
 
         /// <summary>
         /// Include disabled dates within the valdi min/max days range.
@@ -262,7 +262,7 @@ namespace MudBlazor
             return base.IsDayDisabled(date) || isOutOfRange;
         }
 
-        private DateTime GetMaxSelectableDate(DateTime startDate, double maxDays)
+        private DateTime GetMaxSelectableDate(DateTime startDate, int maxDays)
         {
             var validDayCount = 1;
             var maxDate = startDate.AddDays(1);
