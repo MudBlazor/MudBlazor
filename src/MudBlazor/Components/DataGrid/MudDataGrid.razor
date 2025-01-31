@@ -60,7 +60,7 @@
                         </tr>
                                 @if (_filtersMenuVisible && FilterMode == DataGridFilterMode.Simple)
                                 {
-                                    <MudOverlay ZIndex="12" @bind-Visible="@_filtersMenuVisible" AutoClose OnClosed="@CloseFilters"></MudOverlay>
+                                    <MudOverlay @bind-Visible="@_filtersMenuVisible" AutoClose OnClosed="@CloseFilters"></MudOverlay>
                                     <tr class="mud-table-row" style="visibility: collapse; opacity: 0;overflow: hidden;">
                                         <th colspan="@RenderedColumns.Count" class="mud-table-cell mud-filter-panel-cell">
                                             <MudPopover Open="@_filtersMenuVisible" Paper="true" Class="filters-panel pa-2" OverflowBehavior="OverflowBehavior.FlipAlways" AnchorOrigin="Origin.TopLeft"
@@ -90,7 +90,7 @@
                                 }
                                 @if (_columnsPanelVisible)
                                 {
-                                    <MudOverlay ZIndex="12" @bind-Visible="_columnsPanelVisible" AutoClose></MudOverlay>
+                                    <MudOverlay @bind-Visible="_columnsPanelVisible" AutoClose></MudOverlay>
                                     <tr class="mud-table-row" style="visibility: collapse; opacity: 0; overflow: hidden;">
                                         <th colspan="@RenderedColumns.Count" class="mud-table-cell mud-filter-panel-cell">
                                             <MudPopover Open="@_columnsPanelVisible" Paper="true" Class="mud-data-grid-columns-panel px-2" OverflowBehavior="OverflowBehavior.FlipAlways"

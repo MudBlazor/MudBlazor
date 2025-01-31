@@ -532,7 +532,7 @@ namespace MudBlazor.UnitTests.Components
         public void Autocomplete_ReadOnly_Should_Not_Open()
         {
             var comp = Context.RenderComponent<AutocompleteTest5>();
-            comp.FindAll(".mud-input-control")[0].Click();
+            comp.FindAll(".mud-input-control")[0].MouseDown();
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(0));
         }
 
@@ -1722,7 +1722,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-input-control").Focus(); // Browser would focus first.
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
 
-            comp.Find("input.mud-input-root").Click();
+            comp.Find("input.mud-input-root").MouseDown();
 
             // OpenOnFocus=false isn't respected by clicks. It added after the fact to allow opting in to v6 behavior.
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));

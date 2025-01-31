@@ -525,7 +525,13 @@ namespace MudBlazor
             _isProcessingValue = true;
             try
             {
+                // needs to close before SetValueAsync so that whatever the user puts in ValueChanged can run without the popover being in front of it
+                Open = false;
+
                 await SetValueAsync(value);
+
+                // needs to be open to run the rest of the code
+                Open = true;
 
                 if (_items != null)
                     _selectedListItemIndex = Array.IndexOf(_items, value);
@@ -545,10 +551,11 @@ namespace MudBlazor
                 }
 
                 await FocusAsync();
-
+                // We want focus with a closed popover
                 Open = false;
-
+                // And update
                 StateHasChanged();
+
             }
             finally
             {
@@ -971,6 +978,20 @@ namespace MudBlazor
             {
                 await OpenMenuAsync();
             }
+        }
+
+        internal async Task HandleClearButtonAsync(MouseEventArgs e)
+        {
+            // clear button clicked, let's make sure text is cleared and the menu has focus
+            Open = true;
+            _isFocused = true;
+            await SetValueAsync(default, false);
+            await SetTextAsync(default, false);
+            _selectedListItemIndex = default;
+            await CloseMenuAsync();
+            StateHasChanged();
+            await OnClearButtonClick.InvokeAsync(e);
+            await BeginValidateAsync();
         }
 
         internal async Task AdornmentClickHandlerAsync()
