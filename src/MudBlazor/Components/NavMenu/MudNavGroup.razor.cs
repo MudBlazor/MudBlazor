@@ -93,11 +93,28 @@ namespace MudBlazor
         public RenderFragment? TitleContent { get; set; }
 
         /// <summary>
+        /// The content within the icon area.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  When set, overrides the <see cref="Icon"/> property.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.NavMenu.Behavior)]
+        public RenderFragment? IconContent { get; set; }
+
+        /// <summary>
         /// The text shown for this group.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.NavMenu.Behavior)]
         public string? Title { get; set; }
+
+        /// <summary>
+        /// The sub text shown for this group.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.NavMenu.Behavior)]
+        public string? SubTitle { get; set; }
 
         /// <summary>
         /// The icon displayed next to the <see cref="Title"/>.
@@ -208,5 +225,20 @@ namespace MudBlazor
                 Expanded = _expandedState.Value
                            && _parentNavigationContextState.Value is null or { Expanded: true }
             };
+
+        /// <summary>
+        /// Gets first 2 letters from title, for icon generate
+        /// </summary>
+        protected string GetInitials()
+        {
+            if (string.IsNullOrWhiteSpace(Title))
+                return string.Empty;
+
+            string result = string.Empty;
+            foreach (var s in Title.Split(" "))
+                if (s.Length > 3)
+                    result += s[0];
+            return result;
+        }
     }
 }

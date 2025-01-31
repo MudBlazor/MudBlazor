@@ -114,6 +114,31 @@
     margin-inline-start: 12px;
     margin-inline-end: unset;
     letter-spacing: 0;
+    /* sufficit */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+/* sufficit */
+.mud-nav-link-text {
+  & .mud-nav-link-title {
+    white-space: nowrap;
+    line-height: var(--mud-typography-subtitle2-lineheight);
+  }
+
+  & .mud-nav-link-subtitle {
+    white-space: nowrap;
+    display: block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    font-size: var(--mud-typography-caption-size);
+    font-family: var(--mud-typography-caption-family);
+    font-weight: var(--mud-typography-caption-weight);
+    line-height: var(--mud-typography-caption-lineheight);
+    letter-spacing: var(--mud-typography-caption-letterspacing);
+    text-transform: var(--mud-typography-caption-text-transform);
   }
 }
 
@@ -253,8 +278,15 @@
 
 .mud-drawer--closed.mud-drawer-mini {
   & > .mud-drawer-content > .mud-navmenu {
+    /* sufficit */
+    & .mud-nav-link .mud-nav-link-text {
+      display: unset;
+      visibility: collapse;
+    }
+
     & .mud-nav-link .mud-icon-root:first-child + .mud-nav-link-text {
-      display: none;
+      display: unset;
+      visibility: collapse;
     }
   }
 
