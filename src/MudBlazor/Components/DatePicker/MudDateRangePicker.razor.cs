@@ -244,22 +244,42 @@ namespace MudBlazor
 
         protected override bool IsDayDisabled(DateTime date)
         {
-            var isOutOfRange = false;
-
-            if (_firstDate is not null && _secondDate is null)
+            if (_firstDate is null || _secondDate is not null)
             {
-                var selectedDate = _firstDate.Value;
-                var minValidDate = MinDays is null
-                    ? selectedDate
-                    : AllowDisabledDatesInCount ? selectedDate.Date.AddDays(MinDays.Value - 1) : _minValidDate;
-                var maxValidDate = MaxDays is null
-                    ? DateTime.MaxValue
-                    : AllowDisabledDatesInCount ? selectedDate.Date.AddDays(MaxDays.Value - 1) : _maxValidDate;
-
-                isOutOfRange = (date < selectedDate || date > selectedDate) && (date < minValidDate || date > maxValidDate);
+                return base.IsDayDisabled(date);
             }
 
-            return base.IsDayDisabled(date) || isOutOfRange;
+            var selectedDate = _firstDate.Value;
+            var validDateRange = GetValidDateRange(selectedDate);
+
+            return base.IsDayDisabled(date) || MudDateRangePicker.IsDateOutOfRange(date, selectedDate, validDateRange);
+        }
+
+        private DateRange GetValidDateRange(DateTime selectedDate)
+        {
+            var start = MinDays switch
+            {
+                null => selectedDate,
+                _ when _allowDisabledDatesInCountState.Value => selectedDate.Date.AddDays(MinDays.Value - 1),
+                _ => _minValidDate
+            };
+
+            var end = MaxDays switch
+            {
+                null => DateTime.MaxValue,
+                _ when _allowDisabledDatesInCountState.Value => selectedDate.Date.AddDays(MaxDays.Value - 1),
+                _ => _maxValidDate
+            };
+
+            return new DateRange(start, end);
+        }
+
+        private static bool IsDateOutOfRange(DateTime date, DateTime selectedDate, DateRange validRange)
+        {
+            var isNotSelectedDate = date < selectedDate || date > selectedDate;
+            var isOutsideValidRange = date < validRange.Start || date > validRange.End;
+
+            return isNotSelectedDate && isOutsideValidRange;
         }
 
         private DateTime GetMaxSelectableDate(DateTime startDate, int maxDays)
