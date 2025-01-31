@@ -1207,6 +1207,15 @@ namespace MudBlazor
 
         #region Computed Properties
 
+        internal string GetGroupIcon(bool isExpanded, bool rtl)
+        {
+            if (isExpanded)
+            {
+                return Icons.Material.Filled.ExpandMore;
+            }
+            return rtl ? Icons.Material.Filled.ChevronLeft : Icons.Material.Filled.ChevronRight;
+        }
+
         private bool HasFooter
         {
             get
