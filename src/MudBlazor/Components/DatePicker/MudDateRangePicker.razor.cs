@@ -256,7 +256,7 @@ namespace MudBlazor
                     ? DateTime.MaxValue
                     : AllowDisabledDatesInCount ? selectedDate.Date.AddDays(MaxDays.Value - 1) : _maxValidDate;
 
-                isOutOfRange = date > selectedDate && (date < minValidDate || date > maxValidDate);
+                isOutOfRange = (date < selectedDate || date > selectedDate) && (date < minValidDate || date > maxValidDate);
             }
 
             return base.IsDayDisabled(date) || isOutOfRange;
