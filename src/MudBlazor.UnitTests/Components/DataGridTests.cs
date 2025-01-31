@@ -2509,7 +2509,7 @@ namespace MudBlazor.UnitTests.Components
             // check the number of filters displayed in the filters panel is 1
             comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(1);
 
-            await comp.Find(".filter-operator").ClickAsync(new MouseEventArgs());
+            await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
 
             //set operator to CONTAINS
             comp.FindAll(".mud-list .mud-list-item")[0].Click();
@@ -2522,7 +2522,7 @@ namespace MudBlazor.UnitTests.Components
             //set operator to NOT CONTAINS
             FilterButton().Click();
 
-            await comp.Find(".filter-operator").ClickAsync(new MouseEventArgs());
+            await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
 
             comp.FindAll(".mud-list .mud-list-item")[1].Click();
             comp.Find(".mud-overlay").Click();
@@ -2534,7 +2534,7 @@ namespace MudBlazor.UnitTests.Components
             //set operator to EQUALS
             FilterButton().Click();
 
-            await comp.Find(".filter-operator").ClickAsync(new MouseEventArgs());
+            await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
 
             comp.FindAll(".mud-list .mud-list-item")[2].Click();
             comp.Find(".mud-overlay").Click();
@@ -2546,7 +2546,7 @@ namespace MudBlazor.UnitTests.Components
             //set operator to NOT EQUALS
             FilterButton().Click();
 
-            await comp.Find(".filter-operator").ClickAsync(new MouseEventArgs());
+            await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
 
             comp.FindAll(".mud-list .mud-list-item")[3].Click();
             comp.Find(".mud-overlay").Click();
@@ -2558,7 +2558,7 @@ namespace MudBlazor.UnitTests.Components
             //set operator to STARTS WITH
             FilterButton().Click();
 
-            await comp.Find(".filter-operator").ClickAsync(new MouseEventArgs());
+            await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
 
             comp.FindAll(".mud-list .mud-list-item")[4].Click();
             comp.Find(".mud-overlay").Click();
@@ -2570,7 +2570,7 @@ namespace MudBlazor.UnitTests.Components
             //set operator to ENDS WITH
             FilterButton().Click();
 
-            await comp.Find(".filter-operator").ClickAsync(new MouseEventArgs());
+            await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
 
             comp.FindAll(".mud-list .mud-list-item")[5].Click();
             comp.Find(".mud-overlay").Click();
@@ -2582,7 +2582,7 @@ namespace MudBlazor.UnitTests.Components
             //set operator to IS EMPTY
             FilterButton().Click();
 
-            await comp.Find(".filter-operator").ClickAsync(new MouseEventArgs());
+            await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
 
             comp.FindAll(".mud-list .mud-list-item")[6].Click();
             comp.Find(".mud-overlay").Click();
@@ -2594,7 +2594,7 @@ namespace MudBlazor.UnitTests.Components
             //set operator to IS NOT EMPTY
             FilterButton().Click();
 
-            await comp.Find(".filter-operator").ClickAsync(new MouseEventArgs());
+            await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
 
             comp.FindAll(".mud-list .mud-list-item")[7].Click();
             comp.Find(".mud-overlay").Click();
@@ -2746,7 +2746,7 @@ namespace MudBlazor.UnitTests.Components
             selects.Count.Should().Be(2);
 
             // open operator menu
-            selects[1].Click();
+            selects[1].MouseDown();
 
             //check available operators
             var items = comp.FindAll("div.mud-list-item");
@@ -3394,7 +3394,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".filter-button").Click();
             comp.FindAll(".filters-panel").Count.Should().Be(1);
 
-            comp.FindAll("div.mud-input-control")[0].Click();
+            comp.FindAll("div.mud-input-control")[0].MouseDown();
             comp.FindAll("div.mud-list-item").Count.Should().Be(3);
         }
 
@@ -4944,7 +4944,7 @@ namespace MudBlazor.UnitTests.Components
             FilterButton().Click();
 
             IElement SelectElement() => comp.Find("div.mud-select.filter-input");
-            SelectElement().Click();
+            SelectElement().MouseDown();
 
             var items = comp.FindAll("div.mud-list-item").ToArray();
 
