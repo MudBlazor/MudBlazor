@@ -23,9 +23,19 @@
         <td>Only allow lower case attributes</td>
         <td><CodeInline>true</CodeInline></td>
     </tr>
+        <tr>
+            <td><CodeInline>HTMLAttributes</CodeInline></td>
+            <td>
+                Only allow a list of valid case sensitive HTML attributes and events including data-*, aria-* and role.
+                The default list of attributes were mainly obtained from
+                <MudLink Href="https://www.w3schools.com/tags/ref_attributes.asp">https://www.w3schools.com/tags/ref_attributes.asp</MudLink> 
+                and <MudLink Href="https://www.w3schools.com/jsref/dom_obj_event.asp">https://www.w3schools.com/jsref/dom_obj_event.asp</MudLink> 
+            </td>
+            <td></td>
+        </tr>
     <tr>
         <td><CodeInline>DataAndAria</CodeInline></td>
-        <td>Only allow data-* and aria-* attributes</td>
+            <td>Only allow case sensitive data-*, aria-* and role attributes</td>
         <td></td>
     </tr>
     <tr>
@@ -35,7 +45,7 @@
     </tr>
     <tr>
         <td><CodeInline>Any</CodeInline></td>
-        <td>Allows any extra attributes</td>
+        <td>Allows any extra attributes in any case</td>
         <td></td>
     </tr>
     

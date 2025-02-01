@@ -1,6 +1,4 @@
 ﻿@page "/components/menu"
-@page "/components/MudMenu"
-@page "/components/MudMenuItem"
 
 <DocsPage>
     <DocsPageHeader Title="Menus" Component="@nameof(MudMenu)">
@@ -14,8 +12,7 @@
     <DocsPageContent>
 
         <DocsPageSection>
-            <SectionHeader Title="Simple Menu">
-                <Description></Description>
+            <SectionHeader Title="Basic Usage">
             </SectionHeader>
             <SectionContent Code="@nameof(MenuSimpleExample)">
                 <MenuSimpleExample />
@@ -23,12 +20,28 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Customization">
+            <SectionHeader Title="Dense Menu">
+                <Description>
+                    Dense menus are more compact than regular menus and open instantly, suitable for desktop platforms.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(MenuDenseExample)">
+                <MenuDenseExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Activator">
+                <Description>
+                    The activator is the element responsible for spawning the menu popover.
+                </Description>
             </SectionHeader>
             <SectionSubGroups>
                 <DocsPageSection>
-                    <SectionHeader Title="Menu">
-                        <Description>The menu button gives you all the options a regular button would.</Description>
+                    <SectionHeader Title="Default Button">
+                        <Description>
+                            The default menu button provides many of the same options as a standard button.
+                        </Description>
                     </SectionHeader>
                     <SectionContent Code="@nameof(MenuCustomizationExample)" ShowCode="false">
                         <MenuCustomizationExample />
@@ -36,17 +49,11 @@
                 </DocsPageSection>
 
                 <DocsPageSection>
-                    <SectionHeader Title="Menu Items">
-                        <Description>Use the <CodeInline>Icon</CodeInline> property on a menu item to show an icon. The <CodeInline>IconSize</CodeInline> and <CodeInline>IconColor</CodeInline> can also be set.</Description>
-                    </SectionHeader>
-                    <SectionContent Code="@nameof(MenuItemCustomizationExample)" ShowCode="false">
-                        <MenuItemCustomizationExample />
-                    </SectionContent>
-                </DocsPageSection>
-
-                <DocsPageSection>
-                    <SectionHeader Title="Icon Buttons">
-                        <Description>If an icon is supplied through the <CodeInline>Icon</CodeInline> property, the menu button will display as an <CodeInline>IconButton</CodeInline>.</Description>
+                    <SectionHeader Title="Icon Button">
+                        <Description>
+                            When the <CodeInline>@nameof(MudMenu.Icon)</CodeInline> property is specified, the activator is rendered as a <CodeInline>MudIconButton</CodeInline> instead.
+                            Note: This is not the same as <CodeInline>@nameof(MudMenu.StartIcon)</CodeInline> or <CodeInline>@nameof(MudMenu.EndIcon)</CodeInline> which are used to add icons to the default button activator as seen above.
+                        </Description>
                     </SectionHeader>
                     <SectionContent Code="@nameof(MenuIconButtonsExample)" ShowCode="false">
                         <MenuIconButtonsExample />
@@ -55,16 +62,51 @@
 
                 <DocsPageSection>
                     <SectionHeader Title="Custom Activator">
-                        <Description>You can customize the element that opens the menu with the <CodeInline>ActivatorContent</CodeInline> render fragment.</Description>
+                        <Description>
+                            If the regular customization options are not enough, use the <CodeInline>ActivatorContent</CodeInline> render fragment to define a custom activator element for opening the menu.
+                            In this example, a custom button, chip, and avatar are each used to open a menu.
+                        </Description>
                     </SectionHeader>
                     <SectionContent Code="@nameof(MenuActivatorExample1)" ShowCode="false">
                         <MenuActivatorExample1 />
                     </SectionContent>
                 </DocsPageSection>
 
+            </SectionSubGroups>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Menu Content">
+            </SectionHeader>
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="Item Icons">
+                        <Description>
+                            Use the <CodeInline>Icon</CodeInline> property on a menu item to show an icon and <CodeInline>IconColor</CodeInline> to change its color.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(MenuItemCustomizationExample)" ShowCode="false">
+                        <MenuItemCustomizationExample />
+                    </SectionContent>
+                </DocsPageSection>
+
+                <DocsPageSection>
+                    <SectionHeader Title="Divider">
+                        <Description>
+                            You can insert a <CodeInline>MudDivider</CodeInline> between menu items to separate them.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(MenuDividerExample)" ShowCode="false">
+                        <MenuDividerExample />
+                    </SectionContent>
+                </DocsPageSection>
+
                 <DocsPageSection>
                     <SectionHeader Title="Max Height">
-                        <Description>If you have a long list, you can use the <CodeInline>MaxHeight</CodeInline> property to set the maximum height and enable scrolling instead.</Description>
+                        <Description>
+                            The menu's height is automatically restricted to the viewport if it gets too large,
+                            but if you need it to be a specific number of pixels you can use the <CodeInline>MaxHeight</CodeInline> property.
+                        </Description>
                     </SectionHeader>
                     <SectionContent Code="@nameof(MenuMaxHeightExample)" ShowCode="false">
                         <MenuMaxHeightExample />
@@ -74,62 +116,95 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Nested Menu">
+            <SectionHeader Title="Nested Menu (Desktop)">
                 <Description>
-                    Multiple menus can be nested using the pattern shown below.
+                    Cascading menus, also known as nested menus, allow users to navigate a wide range of options by presenting menus with multiple levels of hierarchy.
+                    Click or hover your mouse over submenus (denoted by an arrow icon) to open them.
                 </Description>
             </SectionHeader>
-            <SectionContent Code="@nameof(MenuWithNestingExample)" ShowCode="true">
+            <SectionContent Code="@nameof(MenuWithNestingExample)" ShowCode="false">
                 <MenuWithNestingExample />
             </SectionContent>
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Interaction">
+            <SectionHeader Title="Advanced Usage">
             </SectionHeader>
             <SectionSubGroups>
                 <DocsPageSection>
+                    <SectionHeader Title="Two-way Binding">
+                        <Description>
+                            The <CodeInline>Open</CodeInline> parameter supports two-way binding,
+                            allowing you to control the menu's visibility programmatically and synchronize its state with a boolean property.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(MenuTwoWayBindingExample)" ShowCode="false">
+                        <MenuTwoWayBindingExample />
+                    </SectionContent>
+                </DocsPageSection>
+
+                <DocsPageSection>
                     <SectionHeader Title="Mouse Events">
-                        <Description>The property <CodeInline>ActivationEvent</CodeInline> lets you choose which mouse event to open the menu on.</Description>
+                        <Description>
+                            Use the <CodeInline>ActivationEvent</CodeInline> property to specify which mouse event opens the menu.
+                            If the menu is a nested menu, this property may act differently.
+                        </Description>
                     </SectionHeader>
                     <SectionContent Code="@nameof(MenuActivatorExample2)" ShowCode="false">
                         <MenuActivatorExample2 />
                     </SectionContent>
                 </DocsPageSection>
+
                 <DocsPageSection>
                     <SectionHeader Title="Cursor Position">
-                        <Description>With the property <CodeInline>PositionAtCursor</CodeInline>, the menu will open at the location of the click.</Description>
+                        <Description>
+                            Enable the <CodeInline>PositionAtCursor</CodeInline> property to open the menu at the cursor's location.
+                        </Description>
                     </SectionHeader>
                     <SectionContent Code="@nameof(MenuActivatorOnMouseExample)" ShowCode="false">
                         <MenuActivatorOnMouseExample />
                     </SectionContent>
                 </DocsPageSection>
+
                 <DocsPageSection>
                     <SectionHeader Title="Context Menu">
                         <Description>
-                            It is possible to open a menu using custom logic. This is useful when implementing context menus.
-                            When <CodeInline>Label</CodeInline>, <CodeInline>Icon</CodeInline> and <CodeInline>ActivatorContent</CodeInline> are unset, no 
-                            button is rendered and the menu can only be opened programmatically.
+                            The previous example can be extended to create a contextual menu.
+                            When <CodeInline>Label</CodeInline>, <CodeInline>Icon</CodeInline>, and <CodeInline>ActivatorContent</CodeInline> are unset, no button is rendered and the menu can only be opened programmatically.
                         </Description>
                     </SectionHeader>
-                    <SectionContent Code="@nameof(ContextMenuExample)" ShowCode="false">
-                        <ContextMenuExample/>
+                    <SectionContent Code="@nameof(MenuContextMenuExample)" ShowCode="false">
+                        <MenuContextMenuExample />
                     </SectionContent>
+                </DocsPageSection>
+
+                <DocsPageSection>
+                    <SectionHeader Title="Placement">
+                        <Description>
+                            The component uses <MudLink Href="/components/popover">MudPopover</MudLink> to place its menu. Adjust the
+                            <CodeInline>AnchorOrigin</CodeInline> and <CodeInline>TransformOrigin</CodeInline> properties to control the menu's position.
+                            For more details and examples, visit the <MudLink Color="Color.Secondary" Href="/components/popover">popover documentation page</MudLink>.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(MenuAdvancedPopoverExample)" ShowCode="false">
+                        <MenuAdvancedPopoverExample />
+                    </SectionContent>
+                </DocsPageSection>
+
+                <DocsPageSection>
+                    <SectionHeader Title="DropdownSettings">
+                        <Description>
+                            This component uses <MudLink Href="/components/popover">MudPopover</MudLink>
+                            to place its list of items in combination with <MudLink Href="/components/overlay">MudOverlay</MudLink>.
+                            Some of these settings can be controlled with <CodeInline>DropdownSettings</CodeInline>,
+                            which contain defaults for the <CodeInline>MudPopover</CodeInline> appearance and behavior.
+                            <MudLink Color="Color.Secondary" Href="/components/popover#dropdownsettings">
+                                Read more on popover's page.
+                            </MudLink>
+                        </Description>
+                    </SectionHeader>
                 </DocsPageSection>
             </SectionSubGroups>
         </DocsPageSection>
-        
-        <DocsPageSection>
-            <SectionHeader Title="Placement">
-                <Description>
-                    The component uses <MudLink Href="/components/popover">MudPopover</MudLink> to place its menu, which can be controlled with <CodeInline>AnchorOrigin</CodeInline> and <CodeInline>TransformOrigin</CodeInline>.<br />
-                    To learn and see all possible examples of how you can position the popover check out its <MudLink Color="Color.Secondary" Href="/components/popover">documentation page.</MudLink>
-                </Description>
-            </SectionHeader>
-            <SectionContent Code="@nameof(MenuAdvancedPopoverExample)" ShowCode="false">
-                <MenuAdvancedPopoverExample />
-            </SectionContent>
-        </DocsPageSection>
     </DocsPageContent>
 </DocsPage>
-

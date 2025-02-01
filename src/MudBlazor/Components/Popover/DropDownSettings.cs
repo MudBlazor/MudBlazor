@@ -9,7 +9,7 @@ namespace MudBlazor;
 /// <summary>
 /// The behavior of a dropdown popover.
 /// </summary>
-public struct DropdownSettings
+public readonly struct DropdownSettings
 {
     /// <summary>
     /// Displays the dropdown popover in a fixed position, even while scrolling.
@@ -17,9 +17,7 @@ public struct DropdownSettings
     /// <remarks>
     /// Defaults to <c>false</c>.
     /// </remarks>
-    [Parameter]
-    [Category(CategoryTypes.FormComponent.Behavior)]
-    public bool Fixed { get; set; }
+    public bool Fixed { get; init; }
 
     /// <summary>
     /// The behavior applied when there is not enough space for the dropdown popover to be visible.
@@ -27,9 +25,7 @@ public struct DropdownSettings
     /// <remarks>
     /// Defaults to <see cref="OverflowBehavior.FlipOnOpen"/>.
     /// </remarks>
-    [Parameter]
-    [Category(CategoryTypes.Popover.Appearance)]
-    public OverflowBehavior OverflowBehavior { get; set; } = OverflowBehavior.FlipOnOpen;
+    public OverflowBehavior OverflowBehavior { get; init; } = OverflowBehavior.FlipOnOpen;
 
     public DropdownSettings() { }
 }

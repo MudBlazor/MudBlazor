@@ -1,0 +1,142 @@
+﻿@using MudBlazor
+@using System.Threading
+
+<MudPaper Height="100px">
+    <MudText>
+        This is only here to push the autocompletes lower on the page to demonstrate the behaviour where
+        they draw over a message box.
+    </MudText>
+</MudPaper>
+
+<MudAutocomplete T="string" @ref=autocomp1
+                 Value="_messageBoxValue"
+                 ValueChanged="OpenMessageBox"
+                 Label="Opens Message Box"
+                 SearchFunc="Search"
+                 Class="mt-18"
+                 Clearable="true" />
+<MudText>@($"Text: {autocomp1?.Text} Value: {autocomp1?.Value} Local Value: {_messageBoxValue}")</MudText>
+
+<MudSelect T="string" @ref=select1
+           Value="_dialogValue"
+           ValueChanged="OpenDialog"
+           Label="MudSelect"
+           Clearable="true"
+           Class="mt-18">
+    @foreach (string s in _states)
+    {
+        <MudSelectItem Value="@s" />
+    }
+</MudSelect>
+<MudText>@($"Text: {select1?.Text} Value: {select1?.Value} Local Value: {_dialogValue}")</MudText>
+<MudAutocomplete @ref="_workaroundAutocomplete"
+                    T="string"
+                    Value="_workaroundValue"
+                    ValueChanged="OpenMessageBoxWorkaround"
+                    Label="OpenOnFocus set to False Autocomplete"
+                    SearchFunc="Search"
+                    Class="mt-18"
+                    Clearable="true"
+                    OpenOnFocus="false" />
+<MudText>@($"Text: {_workaroundAutocomplete?.Text} Value: {_workaroundAutocomplete?.Value} Local Value: {_workaroundValue}")</MudText>
+<MudMessageBox @ref="_msgBox"
+                Title="Warning"
+                CancelText="Cancel">
+    <MessageContent>
+        This is a message box
+    </MessageContent>
+    <YesButton>
+        <MudButton Variant="Variant.Filled"
+                    Color="Color.Error">
+            Close
+        </MudButton>
+    </YesButton>
+</MudMessageBox>
+
+<MudDialog @bind-Visible="_dialogVisible" Options="_dialogOptions">
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-3" /> Edit rating
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <p>How awesome are inline dialogs?</p>
+        <MudRating @bind-SelectedValue="_rating" Class="mt-3" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Class="px-10">Close</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    public static string __description__ = " Test Autocomplete retaining focus and not closing properly. ";
+    private string _messageBoxValue = string.Empty;
+    private string _dialogValue = string.Empty;
+    private string _workaroundValue = string.Empty;
+
+    private MudAutocomplete<string> autocomp1 = default!;
+    private MudSelect<string> select1 = default!;
+    private MudMessageBox _msgBox = default!;
+    private MudAutocomplete<string> _workaroundAutocomplete = new();
+
+    private bool _dialogVisible;
+    private int _rating;
+    private readonly DialogOptions _dialogOptions = new() { FullWidth = true };
+    private void OpenDialog() => _dialogVisible = true;
+    private void Submit() => _dialogVisible = false;
+
+    private string[] _states =
+    {
+        "Alabama", "Alaska", "Arizona", "Arkansas", "California",
+        "Colorado", "Connecticut", "Delaware", "Florida", "Georgia",
+        "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas",
+        "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts",
+        "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana",
+        "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico",
+        "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma",
+        "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota",
+        "Tennessee", "Texas", "Utah", "Vermont", "Virginia",
+        "Washington", "West Virginia", "Wisconsin", "Wyoming"
+    };
+
+    private async Task<IEnumerable<string>> Search(string value, CancellationToken token)
+    {
+        // In real life use an asynchronous function for fetching data from an api.
+        await Task.Delay(5, token);
+
+        // if text is null or empty, show complete list
+        if (string.IsNullOrEmpty(value))
+            return _states;
+
+        return _states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    private async Task OpenMessageBox(string value)
+    {
+        _messageBoxValue = value;
+        if (!string.IsNullOrEmpty(value))
+        {
+            await _msgBox.ShowAsync();
+        }
+    }
+
+    private async Task OpenDialog(string value)
+    {
+        _dialogValue = value;
+        if (!string.IsNullOrEmpty(value))
+        {
+            _dialogVisible = true;
+            await Task.CompletedTask;
+        }
+    }
+
+    private async Task OpenMessageBoxWorkaround(string value)
+    {
+        _workaroundValue = value;
+        if (!string.IsNullOrEmpty(value))
+        {
+            await _workaroundAutocomplete.CloseMenuAsync();
+            await _msgBox.ShowAsync();
+        }
+    }
+}

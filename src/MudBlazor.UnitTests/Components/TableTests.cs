@@ -1213,7 +1213,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => comp.FindAll("td")[0].TextContent.Trim().Should().Be("1"));
             comp.WaitForAssertion(() => comp.FindAll("td")[2].TextContent.Trim().Should().Be("2"));
             comp.WaitForAssertion(() => comp.FindAll("td")[4].TextContent.Trim().Should().Be("3"));
-            comp.FindAll("div.mud-select-input")[0].PointerDown(); // mobile sort drop down
+            comp.FindAll("div.mud-select-input")[0].MouseDown(); // mobile sort drop down
             comp.FindAll("div.mud-list-item-clickable")[1].Click(); // sort b column
             comp.WaitForAssertion(() => comp.FindAll("td")[0].TextContent.Trim().Should().Be("3"));
             comp.WaitForAssertion(() => comp.FindAll("td")[2].TextContent.Trim().Should().Be("2"));
@@ -1232,7 +1232,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("td")[0].TextContent.Trim().Should().Be("1");
             comp.FindAll("td")[2].TextContent.Trim().Should().Be("2");
             comp.FindAll("td")[4].TextContent.Trim().Should().Be("3");
-            comp.FindAll("div.mud-select-input")[0].PointerDown(); // mobile sort drop down
+            comp.FindAll("div.mud-select-input")[0].MouseDown(); // mobile sort drop down
             comp.FindAll("div.mud-list-item-clickable")[1].Click(); // sort b column
             comp.WaitForAssertion(() => comp.FindAll("td")[0].TextContent.Trim().Should().Be("3"));
             comp.WaitForAssertion(() => comp.FindAll("td")[2].TextContent.Trim().Should().Be("2"));
@@ -2282,7 +2282,7 @@ namespace MudBlazor.UnitTests.Components
             int.Parse(t).Should().Be(rowsPerPage, "The component rendered correctly");
             //open the menu
             var menuItem = comp.Find("div.mud-input-control");
-            menuItem.PointerDown();
+            menuItem.MouseDown();
 
             //Now select the 25 and check it
             var items = comp.FindAll("div.mud-list-item").ToArray();
@@ -2492,6 +2492,32 @@ namespace MudBlazor.UnitTests.Components
             var selectAllCheckbox = comp.Find("input");
             selectAllCheckbox.Change(true);
             comp.Find("#counter").TextContent.Should().Be("1");
+        }
+
+        /// <summary>
+        /// Issue #3563, Issue #6260
+        /// Tests two-way binding on the CurrentPage parameter.
+        /// The table should re-render with the newly provided value as the CurrentPage.
+        /// </summary>
+        [Test]
+        public async Task TestCurrentPageParameterTwoWayBinding()
+        {
+            var comp = Context.RenderComponent<TableCurrentPageParameterTwoWayBindingTest>();
+            var table = comp.FindComponent<MudTable<int>>().Instance;
+
+            // Assert starting page index is 0 (default).
+            comp.WaitForAssertion(() => table.CurrentPage.Should().Be(0));
+            comp.WaitForAssertion(() => comp.Find(".mud-table-body .mud-table-row .mud-table-cell").TextContent.Should().Be("1"));
+
+            // Assert modification via code correctly renders the corresponding page.
+            await comp.InvokeAsync(() => table.CurrentPage = 1);
+            comp.WaitForAssertion(() => table.CurrentPage.Should().Be(1));
+            comp.WaitForAssertion(() => comp.Find(".mud-table-body .mud-table-row .mud-table-cell").TextContent.Should().Be("2"));
+
+            // Assert user input correctly updates the CurrentPage parameter value by clicking the "Next Page" button in the pager.
+            comp.FindAll(".mud-table-pagination-actions .mud-button-root")[2].Click();
+            comp.WaitForAssertion(() => table.CurrentPage.Should().Be(2));
+            comp.WaitForAssertion(() => comp.Find(".mud-table-body .mud-table-row .mud-table-cell").TextContent.Should().Be("3"));
         }
     }
 }

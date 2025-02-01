@@ -23,23 +23,23 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<ChipSetSingleSelectionTest>();
             // initially nothing is selected
-            comp.FindAll("div.mud-chip").Count.Should().Be(7);
+            comp.FindAll(".mud-chip").Count.Should().Be(7);
             comp.Find("div.selected-value").TrimmedText().Should().Be("");
             comp.Find("div.selected-values").TrimmedText().Should().Be("Nothing selected");
             // select cornflakes
-            comp.FindAll("div.mud-chip")[3].Click();
+            comp.FindAll("button.mud-chip")[3].Click();
             comp.Find("div.selected-value").TrimmedText().Should().Be("Corn flakes");
             comp.Find("div.selected-values").TrimmedText().Should().Be("Nothing selected");
             // de-select cornflakes by clicking again
-            comp.FindAll("div.mud-chip")[3].Click();
+            comp.FindAll("button.mud-chip")[3].Click();
             comp.Find("div.selected-value").TrimmedText().Should().Be("");
             comp.Find("div.selected-values").TrimmedText().Should().Be("Nothing selected");
             // select cornflakes
-            comp.FindAll("div.mud-chip")[3].Click();
+            comp.FindAll("button.mud-chip")[3].Click();
             comp.Find("div.selected-value").TrimmedText().Should().Be("Corn flakes");
             comp.Find("div.selected-values").TrimmedText().Should().Be("Nothing selected");
             // select milk
-            comp.FindAll("div.mud-chip")[0].Click();
+            comp.FindAll("button.mud-chip")[0].Click();
             comp.Find("div.selected-value").TrimmedText().Should().Be("Milk");
             comp.Find("div.selected-values").TrimmedText().Should().Be("Nothing selected");
         }
@@ -63,23 +63,23 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.SelectionMode, SelectionMode.SingleSelection)
             );
             // initially nothing is selected
-            comp.FindAll("div.mud-chip").Count.Should().Be(7);
+            comp.FindAll(".mud-chip").Count.Should().Be(7);
             comp.Find("div.selected-value").TrimmedText().Should().Be("");
             comp.Find("div.selected-values").TrimmedText().Should().Be("Nothing selected");
             // select cornflakes
-            comp.FindAll("div.mud-chip")[3].Click();
+            comp.FindAll("button.mud-chip")[3].Click();
             comp.Find("div.selected-value").TrimmedText().Should().Be("Corn flakes");
             comp.Find("div.selected-values").TrimmedText().Should().Be("Nothing selected");
             // de-select cornflakes by clicking again
-            comp.FindAll("div.mud-chip")[3].Click();
+            comp.FindAll("button.mud-chip")[3].Click();
             comp.Find("div.selected-value").TrimmedText().Should().Be("Corn flakes");
             comp.Find("div.selected-values").TrimmedText().Should().Be("Nothing selected");
             // select cornflakes
-            comp.FindAll("div.mud-chip")[3].Click();
+            comp.FindAll("button.mud-chip")[3].Click();
             comp.Find("div.selected-value").TrimmedText().Should().Be("Corn flakes");
             comp.Find("div.selected-values").TrimmedText().Should().Be("Nothing selected");
             // select milk
-            comp.FindAll("div.mud-chip")[0].Click();
+            comp.FindAll("button.mud-chip")[0].Click();
             comp.Find("div.selected-value").TrimmedText().Should().Be("Milk");
             comp.Find("div.selected-values").TrimmedText().Should().Be("Nothing selected");
         }
@@ -89,31 +89,31 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<ChipSetMultiSelectionTest>();
             // select elements needed for the test
-            comp.FindAll("div.mud-chip").Count.Should().Be(7);
+            comp.FindAll(".mud-chip").Count.Should().Be(7);
             comp.Find("div.selected-value").TrimmedText().Should().Be("");
             comp.Find("div.selected-values").TrimmedText().Should().Be("Nothing selected");
             // select cornflakes
-            comp.FindAll("div.mud-chip")[3].Click();
+            comp.FindAll("button.mud-chip")[3].Click();
             comp.Find("div.selected-value").TrimmedText().Should().Be("");
             comp.Find("div.selected-values").TrimmedText().Should().Be("Corn flakes");
             // de-select cornflakes by clicking again
-            comp.FindAll("div.mud-chip")[3].Click();
+            comp.FindAll("button.mud-chip")[3].Click();
             comp.Find("div.selected-value").TrimmedText().Should().Be("");
             comp.Find("div.selected-values").TrimmedText().Should().Be("Nothing selected");
             // select cornflakes
-            comp.FindAll("div.mud-chip")[3].Click();
+            comp.FindAll("button.mud-chip")[3].Click();
             comp.Find("div.selected-value").TrimmedText().Should().Be("");
             comp.Find("div.selected-values").TrimmedText().Should().Be("Corn flakes");
             // select milk
-            comp.FindAll("div.mud-chip")[0].Click();
+            comp.FindAll("button.mud-chip")[0].Click();
             comp.Find("div.selected-value").TrimmedText().Should().Be("");
             comp.Find("div.selected-values").TrimmedText().Should().Be("Corn flakes, Milk");
             // select red wine
-            comp.FindAll("div.mud-chip")[6].Click();
+            comp.FindAll("button.mud-chip")[6].Click();
             comp.Find("div.selected-value").TrimmedText().Should().Be("");
             comp.Find("div.selected-values").TrimmedText().Should().Be("Corn flakes, Milk, Red wine");
             // de-select milk
-            comp.FindAll("div.mud-chip")[0].Click();
+            comp.FindAll("button.mud-chip")[0].Click();
             comp.Find("div.selected-value").TrimmedText().Should().Be("");
             comp.Find("div.selected-values").TrimmedText().Should().Be("Corn flakes, Red wine");
         }
@@ -126,7 +126,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.selected-value").TrimmedText().Should().Be("");
             comp.Find("div.selected-values").TrimmedText().Should().Be("Corn flakes, Milk, Red wine");
             // de-select milk
-            comp.FindAll("div.mud-chip")[0].Click();
+            comp.FindAll("button.mud-chip")[0].Click();
             comp.Find("div.selected-value").TrimmedText().Should().Be("");
             comp.Find("div.selected-values").TrimmedText().Should().Be("Corn flakes, Red wine");
         }
@@ -139,7 +139,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<ChipSetDefaultChipsTest>();
             // select elements needed for the test
-            comp.FindAll("div.mud-chip").Count.Should().Be(7);
+            comp.FindAll(".mud-chip").Count.Should().Be(7);
             comp.Find(".selected-value").TrimmedText().Should().Be("Corn flakes");
         }
 
@@ -147,13 +147,13 @@ namespace MudBlazor.UnitTests.Components
         public void ChipSet_MultiSelection_DefaultChipsShouldBeInitiallySelected()
         {
             var comp = Context.RenderComponent<ChipSetDefaultChipsTest>(p => p.Add(x => x.SelectionMode, SelectionMode.MultiSelection));
-            comp.FindAll("div.mud-chip").Count.Should().Be(7);
+            comp.FindAll(".mud-chip").Count.Should().Be(7);
             comp.Find(".selected-values").TrimmedText().Should().Be("Corn flakes, Milk");
             // de-select cornflakes
-            comp.FindAll("div.mud-chip")[3].Click();
+            comp.FindAll("button.mud-chip")[3].Click();
             comp.Find(".selected-values").TrimmedText().Should().Be("Milk");
             // select eggs
-            comp.FindAll("div.mud-chip")[1].Click();
+            comp.FindAll("button.mud-chip")[1].Click();
             comp.Find(".selected-values").TrimmedText().Should().Be("Eggs, Milk");
         }
 
@@ -164,13 +164,13 @@ namespace MudBlazor.UnitTests.Components
                 .Add(x => x.SelectionMode, SelectionMode.MultiSelection)
                 .Add(x => x.InitialValues, ["Eggs", "Soap"])
             );
-            comp.FindAll("div.mud-chip").Count.Should().Be(7);
+            comp.FindAll(".mud-chip").Count.Should().Be(7);
             comp.Find(".selected-values").TrimmedText().Should().Be("Corn flakes, Eggs, Milk");
             // de-select cornflakes
-            comp.FindAll("div.mud-chip")[3].Click();
+            comp.FindAll("button.mud-chip")[3].Click();
             comp.Find(".selected-values").TrimmedText().Should().Be("Eggs, Milk");
             // select soap
-            comp.FindAll("div.mud-chip")[2].Click();
+            comp.FindAll("button.mud-chip")[2].Click();
             comp.Find(".selected-values").TrimmedText().Should().Be("Eggs, Milk, Soap");
         }
 
@@ -179,12 +179,12 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<ChipSetLateDefaultTest>();
             // check that only one item is present
-            comp.FindAll("div.mud-chip").Count.Should().Be(1);
+            comp.FindAll(".mud-chip").Count.Should().Be(1);
             comp.FindAll("p")[0].TrimmedText().Should().Be("Primary");
             // select extra item
-            comp.FindAll("button")[0].Click();
+            comp.Find("#enable-button").Click();
             // check that extra item is selected
-            comp.FindAll("div.mud-chip").Count.Should().Be(2);
+            comp.FindAll(".mud-chip").Count.Should().Be(2);
             comp.FindAll("p")[0].TrimmedText().Should().Be("Extra Chip, Primary");
         }
 
@@ -203,9 +203,9 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-ripple").Count.Should().Be(0);
 
             //Click test
-            comp.FindAll("div.mud-chip")[0].Click();
+            comp.FindAll(".mud-chip")[0].TagName.Should().Be("DIV");
 
-            //Should not throw an error
+            //Should not throw an error because it won't click
             comp.FindAll("button.mud-chip-close-button")[0].Click();
 
             chipset.Instance.SelectedValue.Should().Be(null);
@@ -221,36 +221,36 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<ChipSetSelectionTwoWayBindingTest>();
             // initial values check
             comp.Find("p.set").TrimmedText().Should().Be("Selection: 1");
-            comp.FindComponents<MudChip<int>>()[0].Find("div.mud-chip").ClassList.Should().Contain("mud-chip-selected");
-            comp.FindComponents<MudChip<int>>()[1].Find("div.mud-chip").ClassList.Should().NotContain("mud-chip-selected");
-            comp.FindComponents<MudChip<int>>()[2].Find("div.mud-chip").ClassList.Should().Contain("mud-chip-selected");
-            comp.FindComponents<MudChip<int>>()[3].Find("div.mud-chip").ClassList.Should().NotContain("mud-chip-selected");
+            comp.FindComponents<MudChip<int>>()[0].Find(".mud-chip").ClassList.Should().Contain("mud-chip-selected");
+            comp.FindComponents<MudChip<int>>()[1].Find(".mud-chip").ClassList.Should().NotContain("mud-chip-selected");
+            comp.FindComponents<MudChip<int>>()[2].Find(".mud-chip").ClassList.Should().Contain("mud-chip-selected");
+            comp.FindComponents<MudChip<int>>()[3].Find(".mud-chip").ClassList.Should().NotContain("mud-chip-selected");
 
             // change selection and check state of both sets
-            comp.FindAll("div.mud-chip")[0].Click();
+            comp.FindAll("button.mud-chip")[0].Click();
             comp.Find("p.set").TrimmedText().Should().Be("Selection:");
-            comp.FindComponents<MudChip<int>>()[0].Find("div.mud-chip").ClassList.Should().NotContain("mud-chip-selected");
-            comp.FindComponents<MudChip<int>>()[1].Find("div.mud-chip").ClassList.Should().NotContain("mud-chip-selected");
-            comp.FindComponents<MudChip<int>>()[2].Find("div.mud-chip").ClassList.Should().NotContain("mud-chip-selected");
-            comp.FindComponents<MudChip<int>>()[3].Find("div.mud-chip").ClassList.Should().NotContain("mud-chip-selected");
-            comp.FindAll("div.mud-chip")[1].Click();
+            comp.FindComponents<MudChip<int>>()[0].Find(".mud-chip").ClassList.Should().NotContain("mud-chip-selected");
+            comp.FindComponents<MudChip<int>>()[1].Find(".mud-chip").ClassList.Should().NotContain("mud-chip-selected");
+            comp.FindComponents<MudChip<int>>()[2].Find(".mud-chip").ClassList.Should().NotContain("mud-chip-selected");
+            comp.FindComponents<MudChip<int>>()[3].Find(".mud-chip").ClassList.Should().NotContain("mud-chip-selected");
+            comp.FindAll("button.mud-chip")[1].Click();
             comp.Find("p.set").TrimmedText().Should().Be("Selection: 2");
-            comp.FindComponents<MudChip<int>>()[0].Find("div.mud-chip").ClassList.Should().NotContain("mud-chip-selected");
-            comp.FindComponents<MudChip<int>>()[1].Find("div.mud-chip").ClassList.Should().Contain("mud-chip-selected");
-            comp.FindComponents<MudChip<int>>()[2].Find("div.mud-chip").ClassList.Should().NotContain("mud-chip-selected");
-            comp.FindComponents<MudChip<int>>()[3].Find("div.mud-chip").ClassList.Should().Contain("mud-chip-selected");
-            comp.FindAll("div.mud-chip")[2].Click();
+            comp.FindComponents<MudChip<int>>()[0].Find(".mud-chip").ClassList.Should().NotContain("mud-chip-selected");
+            comp.FindComponents<MudChip<int>>()[1].Find(".mud-chip").ClassList.Should().Contain("mud-chip-selected");
+            comp.FindComponents<MudChip<int>>()[2].Find(".mud-chip").ClassList.Should().NotContain("mud-chip-selected");
+            comp.FindComponents<MudChip<int>>()[3].Find(".mud-chip").ClassList.Should().Contain("mud-chip-selected");
+            comp.FindAll("button.mud-chip")[2].Click();
             comp.Find("p.set").TrimmedText().Should().Be("Selection: 1, 2");
-            comp.FindComponents<MudChip<int>>()[0].Find("div.mud-chip").ClassList.Should().Contain("mud-chip-selected");
-            comp.FindComponents<MudChip<int>>()[1].Find("div.mud-chip").ClassList.Should().Contain("mud-chip-selected");
-            comp.FindComponents<MudChip<int>>()[2].Find("div.mud-chip").ClassList.Should().Contain("mud-chip-selected");
-            comp.FindComponents<MudChip<int>>()[3].Find("div.mud-chip").ClassList.Should().Contain("mud-chip-selected");
-            comp.FindAll("div.mud-chip")[3].Click();
+            comp.FindComponents<MudChip<int>>()[0].Find(".mud-chip").ClassList.Should().Contain("mud-chip-selected");
+            comp.FindComponents<MudChip<int>>()[1].Find(".mud-chip").ClassList.Should().Contain("mud-chip-selected");
+            comp.FindComponents<MudChip<int>>()[2].Find(".mud-chip").ClassList.Should().Contain("mud-chip-selected");
+            comp.FindComponents<MudChip<int>>()[3].Find(".mud-chip").ClassList.Should().Contain("mud-chip-selected");
+            comp.FindAll("button.mud-chip")[3].Click();
             comp.Find("p.set").TrimmedText().Should().Be("Selection: 1");
-            comp.FindComponents<MudChip<int>>()[0].Find("div.mud-chip").ClassList.Should().Contain("mud-chip-selected");
-            comp.FindComponents<MudChip<int>>()[1].Find("div.mud-chip").ClassList.Should().NotContain("mud-chip-selected");
-            comp.FindComponents<MudChip<int>>()[2].Find("div.mud-chip").ClassList.Should().Contain("mud-chip-selected");
-            comp.FindComponents<MudChip<int>>()[3].Find("div.mud-chip").ClassList.Should().NotContain("mud-chip-selected");
+            comp.FindComponents<MudChip<int>>()[0].Find(".mud-chip").ClassList.Should().Contain("mud-chip-selected");
+            comp.FindComponents<MudChip<int>>()[1].Find(".mud-chip").ClassList.Should().NotContain("mud-chip-selected");
+            comp.FindComponents<MudChip<int>>()[2].Find(".mud-chip").ClassList.Should().Contain("mud-chip-selected");
+            comp.FindComponents<MudChip<int>>()[3].Find(".mud-chip").ClassList.Should().NotContain("mud-chip-selected");
         }
 
         [Test]
@@ -261,7 +261,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("p.sel").TrimmedText().Should().Be("Selection:");
 
             // change selection and check state
-            comp.FindAll("div.mud-chip")[0].Click();
+            comp.FindAll("button.mud-chip")[0].Click();
             comp.Find("p.sel").TrimmedText().Should().Be("Selection: Cappuccino");
 
             // set new selection and see if the comparer works correctly
@@ -269,11 +269,11 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("p.sel").TrimmedText().Should().Be("Selection: Cafe Latte!, Espresso!");
 
             // change selection and check state
-            comp.FindAll("div.mud-chip")[0].Click();
+            comp.FindAll("button.mud-chip")[0].Click();
             comp.Find("p.sel").TrimmedText().Should().Be("Selection: Cafe Latte!, Cappuccino, Espresso!");
 
             // change selection and check state
-            comp.FindAll("div.mud-chip")[1].Click();
+            comp.FindAll("button.mud-chip")[1].Click();
             comp.Find("p.sel").TrimmedText().Should().Be("Selection: Cappuccino, Espresso!");
         }
 
@@ -284,7 +284,7 @@ namespace MudBlazor.UnitTests.Components
             var chipSet = comp.FindComponent<MudChipSet<string>>();
 
             // Select one chip
-            comp.FindAll("div.mud-chip")[0].Click();
+            comp.FindAll("button.mud-chip")[0].Click();
 
             comp.WaitForAssertion(() => chipSet.Instance.SelectedValues.Count.Should().Be(1));
             comp.FindAll("p")[0].TrimmedText().Should().Be("Milk");
@@ -296,7 +296,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("p")[0].TrimmedText().Should().Be("Nothing selected.");
 
             // Select same chip again
-            comp.FindAll("div.mud-chip")[0].Click();
+            comp.FindAll("button.mud-chip")[0].Click();
 
             comp.WaitForAssertion(() => chipSet.Instance.SelectedValues.Count.Should().Be(1));
             comp.FindAll("p")[0].TrimmedText().Should().Be("Milk");
@@ -309,19 +309,19 @@ namespace MudBlazor.UnitTests.Components
             var chipSet = comp.FindComponent<MudChipSet<string>>();
 
             // Select one chip
-            comp.FindAll("div.mud-chip")[0].Click();
+            comp.FindAll("button.mud-chip")[0].Click();
 
             comp.WaitForAssertion(() => chipSet.Instance.SelectedValues.Count.Should().Be(1));
             comp.FindAll("p")[0].TrimmedText().Should().Be("Milk");
 
             // Set chip array to empty
-            comp.FindAll("button")[1].Click();
+            comp.Find("#set-empty").Click();
 
             comp.WaitForAssertion(() => chipSet.Instance.SelectedValues.Count.Should().Be(0));
             comp.FindAll("p")[0].TrimmedText().Should().Be("Nothing selected.");
 
             // Select same chip again
-            comp.FindAll("div.mud-chip")[0].Click();
+            comp.FindAll("button.mud-chip")[0].Click();
 
             comp.WaitForAssertion(() => chipSet.Instance.SelectedValues.Count.Should().Be(1));
             comp.FindAll("p")[0].TrimmedText().Should().Be("Milk");
@@ -418,9 +418,9 @@ namespace MudBlazor.UnitTests.Components
                 .AddChildContent<MudChip<object>>(chip => chip.Add(x => x.Value, b))
                 .AddChildContent<MudChip<object>>(chip => chip.Add(x => x.Value, c))
             );
-            comp.FindAll("div.mud-chip")[1].Click();
+            comp.FindAll("button.mud-chip")[1].Click();
             selectedValues.Should().Contain(a).And.Contain(b);
-            comp.FindAll("div.mud-chip")[0].Click();
+            comp.FindAll("button.mud-chip")[0].Click();
             selectedValues.Should().NotContain(a).And.Contain(b);
         }
 
@@ -430,32 +430,32 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<ChipSetChipBindingTest>();
             comp.Find("div.selection").TrimmedText().Should().Be("Add ingredients to your cocktail.");
             // initial state
-            comp.FindAll("div.mud-chip")[0].ClassList.Should().NotContain("mud-chip-selected");
-            comp.FindAll("div.mud-chip")[2].ClassList.Should().NotContain("mud-chip-selected");
+            comp.FindAll(".mud-chip")[0].ClassList.Should().NotContain("mud-chip-selected");
+            comp.FindAll(".mud-chip")[2].ClassList.Should().NotContain("mud-chip-selected");
             comp.FindAll(".mud-checkbox span")[0].ClassList.Should().Contain("mud-checkbox-false");
             comp.FindAll(".mud-checkbox span")[2].ClassList.Should().Contain("mud-checkbox-false");
 
             // click Vodka chip
-            comp.FindAll("div.mud-chip")[0].Click();
+            comp.FindAll("button.mud-chip")[0].Click();
             comp.Find("div.selection").TrimmedText().Should().Be("Vodka");
-            comp.FindAll("div.mud-chip")[0].ClassList.Should().Contain("mud-chip-selected");
-            comp.FindAll("div.mud-chip")[2].ClassList.Should().NotContain("mud-chip-selected");
+            comp.FindAll(".mud-chip")[0].ClassList.Should().Contain("mud-chip-selected");
+            comp.FindAll(".mud-chip")[2].ClassList.Should().NotContain("mud-chip-selected");
             comp.FindAll(".mud-checkbox span")[0].ClassList.Should().Contain("mud-checkbox-true");
             comp.FindAll(".mud-checkbox span")[2].ClassList.Should().Contain("mud-checkbox-false");
 
             // click Olive checkbox
             comp.FindAll("input.mud-checkbox-input")[2].Change(true);
             comp.Find("div.selection").TrimmedText().Should().Be("Olive, Vodka");
-            comp.FindAll("div.mud-chip")[0].ClassList.Should().Contain("mud-chip-selected");
-            comp.FindAll("div.mud-chip")[2].ClassList.Should().Contain("mud-chip-selected");
+            comp.FindAll(".mud-chip")[0].ClassList.Should().Contain("mud-chip-selected");
+            comp.FindAll(".mud-chip")[2].ClassList.Should().Contain("mud-chip-selected");
             comp.FindAll(".mud-checkbox span")[0].ClassList.Should().Contain("mud-checkbox-true");
             comp.FindAll(".mud-checkbox span")[2].ClassList.Should().Contain("mud-checkbox-true");
 
             // click Vodka checkbox
             comp.FindAll("input.mud-checkbox-input")[0].Change(false);
             comp.Find("div.selection").TrimmedText().Should().Be("Olive");
-            comp.FindAll("div.mud-chip")[0].ClassList.Should().NotContain("mud-chip-selected");
-            comp.FindAll("div.mud-chip")[2].ClassList.Should().Contain("mud-chip-selected");
+            comp.FindAll(".mud-chip")[0].ClassList.Should().NotContain("mud-chip-selected");
+            comp.FindAll(".mud-chip")[2].ClassList.Should().Contain("mud-chip-selected");
             comp.FindAll(".mud-checkbox span")[0].ClassList.Should().Contain("mud-checkbox-false");
             comp.FindAll(".mud-checkbox span")[2].ClassList.Should().Contain("mud-checkbox-true");
         }
@@ -477,7 +477,8 @@ namespace MudBlazor.UnitTests.Components
 
             // pressing a chip using Space or Enter should toggle their state
             comp.Find("#chip-1").KeyDown(" ");
-            comp.Find("#chip-2").KeyDown("Enter");
+            //comp.Find("#chip-2").KeyDown("Enter");
+            comp.Find("#chip-2").Click(); // https://github.com/MudBlazor/MudBlazor/pull/10488#issuecomment-2558409773
             comp.FindComponent<MudChipSet<string>>().Instance.SelectedValues.Should().HaveCount(2);
 
             // pressing the Delete or Backspace keys should have no impact when the chips are not closable
@@ -488,14 +489,16 @@ namespace MudBlazor.UnitTests.Components
 
             // re-pressing a chip with Space or Enter should un-toggle their state
             comp.Find("#chip-1").KeyDown(" ");
-            comp.Find("#chip-2").KeyDown("Enter");
+            //comp.Find("#chip-2").KeyDown("Enter");
+            comp.Find("#chip-2").Click(); // https://github.com/MudBlazor/MudBlazor/pull/10488#issuecomment-2558409773
             comp.FindComponent<MudChipSet<string>>().Instance.SelectedValues.Should().BeNullOrEmpty();
 
             // toggle the chips again, then delete them (the chipset should no longer consider them part of its group, and remove them from selected values)
             comp.SetParametersAndRender(parameters => parameters
                 .Add(p => p.AreChipsClosable, true));
             comp.Find("#chip-1").KeyDown(" ");
-            comp.Find("#chip-2").KeyDown("Enter");
+            //comp.Find("#chip-2").KeyDown("Enter");
+            comp.Find("#chip-2").Click(); // https://github.com/MudBlazor/MudBlazor/pull/10488#issuecomment-2558409773
             comp.FindComponent<MudChipSet<string>>().Instance.SelectedValues.Should().HaveCount(2);
 
             // pressing the Delete or Backspace keys should remove the chips from the chipset now that they are closable

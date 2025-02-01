@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
@@ -16,11 +17,27 @@ namespace MudBlazor
         [Inject]
         protected IJsApiService JsApiService { get; set; } = null!;
 
+        protected string Classname =>
+            new CssBuilder("mud-menu-item")
+                .AddClass("mud-disabled", GetDisabled())
+                .AddClass("mud-ripple", !GetDisabled())
+                .AddClass("mud-list-item-clickable", !GetDisabled())
+                .AddClass("mud-menu-item-dense", GetDense())
+                .AddClass(Class)
+                .Build();
+
         /// <summary>
         /// The <see cref="MudMenu"/> which contains this item.
         /// </summary>
         [CascadingParameter]
-        public MudMenu? MudMenu { get; set; }
+        public MudMenu? ParentMenu { get; set; }
+
+        /// <summary>
+        /// The text shown on this menu item if <see cref="ChildContent"/> is not set.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Menu.Behavior)]
+        public string? Label { get; set; }
 
         /// <summary>
         /// The content within this menu item.
@@ -67,11 +84,8 @@ namespace MudBlazor
         public bool ForceLoad { get; set; }
 
         /// <summary>
-        /// The icon displayed for this menu item.
+        /// The icon displayed at the start of this menu item.  The size depends on whether or not the menu is using the dense variant.
         /// </summary>
-        /// <remarks>
-        /// When set, this menu will display a <see cref="MudIconButton" />.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
         public string? Icon { get; set; }
@@ -87,16 +101,6 @@ namespace MudBlazor
         public Color IconColor { get; set; } = Color.Inherit;
 
         /// <summary>
-        /// The size of the icon when <see cref="Icon"/> is set.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="Size.Medium"/>.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.List.Appearance)]
-        public Size IconSize { get; set; } = Size.Medium;
-
-        /// <summary>
         /// Closes the menu when this item is clicked.
         /// </summary>
         /// <remarks>
@@ -109,22 +113,39 @@ namespace MudBlazor
         /// <summary>
         /// Occurs when this menu item is clicked.
         /// </summary>
-        /// <remarks>
-        /// This event only occurs if <see cref="Href"/> is not set.
-        /// </remarks>
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
 
+        protected string GetHtmlTag() => string.IsNullOrEmpty(Href) ? "div" : "a";
+
+        protected bool GetDisabled() => Disabled || ParentMenu?.Disabled == true;
+
+        protected bool GetDense() => ParentMenu?.GetDense() == true;
+
+        protected Typo GetTypo() => GetDense() ? Typo.body2 : Typo.body1;
+
+        /// <summary>
+        /// The menu item is acting as the activator for a sub menu.
+        /// </summary>
+        protected bool ActivatesSubMenu => Class?.Contains("mud-menu-sub-menu-activator") == true;
+
         protected async Task OnClickHandlerAsync(MouseEventArgs ev)
         {
-            if (Disabled)
+            if (GetDisabled())
             {
                 return;
             }
 
-            if (AutoClose && MudMenu is not null)
+            if (AutoClose && ParentMenu is not null)
             {
-                await MudMenu.CloseMenuAsync();
+                await ParentMenu.CloseAllMenusAsync();
+            }
+
+            // Manual navigation is only required when the target is empty and a
+            // forced reload is necessary; all other scenarios are managed by the HTML anchor.
+            if (ForceLoad && !string.IsNullOrEmpty(Href) && string.IsNullOrEmpty(Target))
+            {
+                UriHelper.NavigateTo(Href, forceLoad: ForceLoad);
             }
 
             if (OnClick.HasDelegate)

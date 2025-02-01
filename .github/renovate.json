@@ -22,6 +22,12 @@
                 "Microsoft.CodeAnalysis.CSharp"
             ],
             "enabled": false
+        },
+        {
+            "matchPackageNames": [
+                "FluentAssertions"
+            ],
+            "allowedVersions": "< 8.0.0"
         }
     ]
 }

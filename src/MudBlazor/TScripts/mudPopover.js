@@ -126,6 +126,7 @@ window.mudpopoverHelper = {
 
     baseTooltipZIndex: parseInt(getComputedStyle(document.documentElement)
         .getPropertyValue('--mud-zindex-tooltip')) || 1600,
+
     getPositionForFlippedPopver: function (inputArray, selector, boundingRect, selfRect) {
         const classList = [];
         for (var i = 0; i < inputArray.length; i++) {
@@ -161,11 +162,14 @@ window.mudpopoverHelper = {
 
             if (classSelector) {
                 if (classList.contains(classSelector) == false) {
+                    this.updatePopoverOverlay(popoverContentNode);
                     return;
                 }
             }
             let boundingRect = popoverNode.parentNode.getBoundingClientRect();
-
+            // allow them to be changed after initial creation
+            popoverContentNode.style['max-width'] = 'none';
+            popoverContentNode.style['min-width'] = 'none';
             if (classList.contains('mud-popover-relative-width')) {
                 popoverContentNode.style['max-width'] = (boundingRect.width) + 'px';
             }
@@ -347,9 +351,10 @@ window.mudpopoverHelper = {
             this.updatePopoverZIndex(popoverContentNode, popoverNode.parentNode);
 
             if (window.getComputedStyle(popoverNode).getPropertyValue('z-index') != 'auto') {
-                popoverContentNode.style['z-index'] = window.getComputedStyle(popoverNode).getPropertyValue('z-index');
+                popoverContentNode.style['z-index'] = Math.max(window.getComputedStyle(popoverNode).getPropertyValue('z-index'), popoverContentNode.style['z-index']);
                 popoverContentNode.skipZIndex = true;
             }
+            this.updatePopoverOverlay(popoverContentNode);
         }
         else {
             //console.log(`popoverNode: ${popoverNode} ${popoverNode ? popoverNode.parentNode : ""}`);
@@ -396,6 +401,21 @@ window.mudpopoverHelper = {
 
     countProviders: function () {
         return document.querySelectorAll(".mud-popover-provider").length;
+    },
+
+    updatePopoverOverlay: function (popoverContentNode) {
+        // set any associated overlay to equal z-index
+        const provider = popoverContentNode.closest('.mud-popover-provider');
+        if (provider && popoverContentNode.classList.contains("mud-popover")) {
+            const overlay = provider.querySelector('.mud-overlay');
+            // skip any overlay marked with mud-skip-overlay
+            if (overlay && !overlay.classList.contains('mud-skip-overlay-positioning')) {
+                // Only assign z-index if it doesn't already exist
+                if (!overlay.style['z-index']) {
+                    overlay.style['z-index'] = popoverContentNode.style['z-index'];
+                }
+            }
+        }
     },
 
     updatePopoverZIndex: function (popoverContentNode, parentNode) {
@@ -478,7 +498,7 @@ class MudPopover {
                 }
                 else if (mutation.attributeName == 'data-ticks') {
                     // data-ticks are important for Direction and Location, it doesn't reposition
-                    // if they aren't there                    
+                    // if they aren't there     
                     const tickAttribute = target.getAttribute('data-ticks');
 
                     const tickValues = [];
@@ -500,6 +520,19 @@ class MudPopover {
                             if (tickValue > max) {
                                 max = tickValue;
                             }
+                        }
+                    }
+
+                    // Iterate over the items in this.map to reset any open overlays
+                    for (const mapItem of Object.entries(this.map)) {
+                        const item = mapItem.length > 1 ? mapItem[1] : mapItem;
+                        const popoverContentNode = item.popoverContentNode; // Access the popover content node (in mud-popover-provider)
+                        if (popoverContentNode) {
+                            const tickValue = parseInt(popoverContentNode.getAttribute('data-ticks')); // get data-ticks property
+                            if (tickValue == 0) {
+                                continue;
+                            }
+                            window.mudpopoverHelper.updatePopoverOverlay(popoverContentNode); // Update the popover overlay for an active popover                            
                         }
                     }
 
@@ -598,6 +631,7 @@ class MudPopover {
             contentNodeObserver.observe(popoverContentNode);
 
             this.map[id] = {
+                popoverContentNode: popoverContentNode,
                 mutationObserver: observer,
                 resizeObserver: resizeObserver,
                 contentNodeObserver: contentNodeObserver

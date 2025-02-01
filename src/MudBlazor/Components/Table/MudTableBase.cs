@@ -73,10 +73,11 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
+        /// Can be overridden by <see cref="MudGlobal.Rounded"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Appearance)]
-        public bool Square { get; set; }
+        public bool Square { get; set; } = MudGlobal.Rounded == false;
 
         /// <summary>
         /// Shows borders around the table.
@@ -231,12 +232,19 @@ namespace MudBlazor
 
                 _currentPage = value;
                 InvokeAsync(StateHasChanged);
+                CurrentPageChanged.InvokeAsync(_currentPage);
                 if (_isFirstRendered)
                 {
                     InvokeServerLoadFunc();
                 }
             }
         }
+
+        /// <summary>
+        /// Occurs when <see cref="CurrentPage"/> has changed.
+        /// </summary>
+        [Parameter]
+        public EventCallback<int> CurrentPageChanged { get; set; }
 
         /// <summary>
         /// Allows multiple rows to be selected with checkboxes.
@@ -661,10 +669,17 @@ namespace MudBlazor
                 return;
             }
 
+            var currentPageHasChanged = _currentPage != 0;
             _rowsPerPage = size;
             _currentPage = 0;
             StateHasChanged();
             RowsPerPageChanged.InvokeAsync(_rowsPerPage.Value);
+
+            if (currentPageHasChanged)
+            {
+                CurrentPageChanged.InvokeAsync(_currentPage);
+            }
+
             if (_isFirstRendered)
             {
                 InvokeServerLoadFunc();

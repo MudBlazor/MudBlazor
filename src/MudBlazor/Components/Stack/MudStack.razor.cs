@@ -8,6 +8,10 @@ using MudBlazor.Utilities;
 namespace MudBlazor;
 
 #nullable enable
+
+/// <summary>
+/// A component for aligning child items horizontally or vertically.
+/// </summary>
 public partial class MudStack : MudComponentBase
 {
     protected string Classname =>
@@ -22,40 +26,54 @@ public partial class MudStack : MudComponentBase
             .Build();
 
     /// <summary>
-    /// If true, items will be placed horizontally in a row instead of vertically.
-    /// </summary>
-    [Parameter]
-    [Category(CategoryTypes.Stack.Behavior)]
-    public bool Row { get; set; } = MudGlobal.StackDefaults.Row;
-
-    /// <summary>
-    /// Reverses the order of its items.
-    /// </summary>
-    [Parameter]
-    [Category(CategoryTypes.Stack.Behavior)]
-    public bool Reverse { get; set; } = MudGlobal.StackDefaults.Reverse;
-
-    /// <summary>
-    /// The gap between items, measured in increments of <c>4px</c>.
+    /// Displays items horizontally.
     /// </summary>
     /// <remarks>
-    /// Default is <c>3</c>.
-    /// Maximum is <c>20</c>.
+    /// Defaults to <c>false</c>.  
+    /// When <c>true</c>, items will be displayed horizontally.  When <c>false</c>, items are displayed vertically.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Stack.Behavior)]
+    public bool Row { get; set; }
+
+    /// <summary>
+    /// Reverses the order of items.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.  
+    /// When <c>true</c>, items will be reversed.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Stack.Behavior)]
+    public bool Reverse { get; set; }
+
+    /// <summary>
+    /// The gap between items in increments of <c>4px</c>.
+    /// </summary>
+    /// <remarks>
+    /// <para>Defaults to 3 in <see cref="MudGlobal.StackDefaults.Spacing"/>.</para>
+    /// <para>Maximum is 20 (<c>80px</c>).</para>
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Stack.Behavior)]
     public int Spacing { get; set; } = MudGlobal.StackDefaults.Spacing;
 
     /// <summary>
-    /// Defines the distribution of children along the main axis within a <see cref="MudStack"/> component.
+    /// Defines the distribution of child items.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.
+    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Stack.Behavior)]
     public Justify? Justify { get; set; }
 
     /// <summary>
-    /// Defines the alignment of children along the cross axis within a <see cref="MudStack"/> component.
+    /// Defines the vertical alignment of child items.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.
+    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Stack.Behavior)]
     public AlignItems? AlignItems { get; set; }
@@ -64,25 +82,24 @@ public partial class MudStack : MudComponentBase
     /// Defines the stretching behaviour of children along the main axis within a <see cref="MudStack"/> component.
     /// </summary>
     /// <remarks>
-    /// Note: This property affects children of the <see cref="MudStack"/> component.
-    /// If there is only one child, <see cref="StretchItems.Start"/> and <see cref="StretchItems.End"/>
-    /// will have the same effect, and the child will be stretched.
-    /// <see cref="StretchItems.Middle"/> stretches all children except the first and last child.
-    /// If there are two or fewer elements, <see cref="StretchItems.Middle"/> will have no effect.
+    /// Defaults to <c>null</c>.  
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Stack.Behavior)]
     public StretchItems? StretchItems { get; set; }
 
     /// <summary>
-    /// Defines the flexbox wrapping behavior of its items.
+    /// Controls how items are wrapped.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.
+    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Stack.Behavior)]
     public Wrap? Wrap { get; set; }
 
     /// <summary>
-    /// Child content of the component.
+    /// The content within this component.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Stack.Behavior)]

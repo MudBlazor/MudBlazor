@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
-	<Nullable>enable</Nullable>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
@@ -10,7 +10,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="bunit" Version="1.36.0" />
+    <PackageReference Include="bunit" Version="1.38.5" />
     <PackageReference Include="nunit" Version="4.2.2" />
   </ItemGroup>
 

@@ -155,6 +155,26 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void DataGirdWithServerDataAndVirtualize()
+        {
+            var comp = Context.RenderComponent<DataGridServerDataWithVirtualizeTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerDataWithVirtualizeTest.Item>>();
+
+            // Count the number of rows including header.
+            var rows = dataGrid.FindAll("tr");
+            rows.Count.Should().Be(7, because: "1 header row + 5 data rows + 1 footer row");
+
+            var cells = dataGrid.FindAll("td");
+            cells.Count.Should().Be(5, because: "We have 5 data rows with one column");
+
+            cells[0].TextContent.Should().Be("Value_0");
+            cells[1].TextContent.Should().Be("Value_1");
+            cells[2].TextContent.Should().Be("Value_2");
+            cells[3].TextContent.Should().Be("Value_3");
+            cells[4].TextContent.Should().Be("Value_4");
+        }
+
+        [Test]
         public async Task DataGridSortableVirtualizeServerDataTest()
         {
             var comp = Context.RenderComponent<DataGridSortableVirtualizeServerDataTest>();
@@ -2489,7 +2509,7 @@ namespace MudBlazor.UnitTests.Components
             // check the number of filters displayed in the filters panel is 1
             comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(1);
 
-            await comp.Find(".filter-operator").PointerDownAsync(new PointerEventArgs());
+            await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
 
             //set operator to CONTAINS
             comp.FindAll(".mud-list .mud-list-item")[0].Click();
@@ -2502,7 +2522,7 @@ namespace MudBlazor.UnitTests.Components
             //set operator to NOT CONTAINS
             FilterButton().Click();
 
-            await comp.Find(".filter-operator").PointerDownAsync(new PointerEventArgs());
+            await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
 
             comp.FindAll(".mud-list .mud-list-item")[1].Click();
             comp.Find(".mud-overlay").Click();
@@ -2514,7 +2534,7 @@ namespace MudBlazor.UnitTests.Components
             //set operator to EQUALS
             FilterButton().Click();
 
-            await comp.Find(".filter-operator").PointerDownAsync(new PointerEventArgs());
+            await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
 
             comp.FindAll(".mud-list .mud-list-item")[2].Click();
             comp.Find(".mud-overlay").Click();
@@ -2526,7 +2546,7 @@ namespace MudBlazor.UnitTests.Components
             //set operator to NOT EQUALS
             FilterButton().Click();
 
-            await comp.Find(".filter-operator").PointerDownAsync(new PointerEventArgs());
+            await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
 
             comp.FindAll(".mud-list .mud-list-item")[3].Click();
             comp.Find(".mud-overlay").Click();
@@ -2538,7 +2558,7 @@ namespace MudBlazor.UnitTests.Components
             //set operator to STARTS WITH
             FilterButton().Click();
 
-            await comp.Find(".filter-operator").PointerDownAsync(new PointerEventArgs());
+            await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
 
             comp.FindAll(".mud-list .mud-list-item")[4].Click();
             comp.Find(".mud-overlay").Click();
@@ -2550,7 +2570,7 @@ namespace MudBlazor.UnitTests.Components
             //set operator to ENDS WITH
             FilterButton().Click();
 
-            await comp.Find(".filter-operator").PointerDownAsync(new PointerEventArgs());
+            await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
 
             comp.FindAll(".mud-list .mud-list-item")[5].Click();
             comp.Find(".mud-overlay").Click();
@@ -2562,7 +2582,7 @@ namespace MudBlazor.UnitTests.Components
             //set operator to IS EMPTY
             FilterButton().Click();
 
-            await comp.Find(".filter-operator").PointerDownAsync(new PointerEventArgs());
+            await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
 
             comp.FindAll(".mud-list .mud-list-item")[6].Click();
             comp.Find(".mud-overlay").Click();
@@ -2574,7 +2594,7 @@ namespace MudBlazor.UnitTests.Components
             //set operator to IS NOT EMPTY
             FilterButton().Click();
 
-            await comp.Find(".filter-operator").PointerDownAsync(new PointerEventArgs());
+            await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
 
             comp.FindAll(".mud-list .mud-list-item")[7].Click();
             comp.Find(".mud-overlay").Click();
@@ -2726,7 +2746,7 @@ namespace MudBlazor.UnitTests.Components
             selects.Count.Should().Be(2);
 
             // open operator menu
-            selects[1].PointerDown();
+            selects[1].MouseDown();
 
             //check available operators
             var items = comp.FindAll("div.mud-list-item");
@@ -2975,12 +2995,43 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGridLoadingTest()
+        public void DataGridLoadingContentTest()
         {
-            var comp = Context.RenderComponent<DataGridLoadingTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridLoadingTest.Model>>();
+            var comp = Context.RenderComponent<DataGridLoadingContentTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridLoadingContentTest.Model>>();
 
             dataGrid.Find("th.mud-table-empty-row div").TextContent.Trim().Should().Be("Data loading, please wait...");
+        }
+
+        /// <summary>
+        /// Verifies that enabling the loading switch adds a new row to the table header without altering the table body.
+        /// </summary>
+        [Test]
+        public void DataGridLoadingProgressTest()
+        {
+            // Render the component
+            var comp = Context.RenderComponent<DataGridLoadingProgressTest>();
+
+            // Initial count of header and body rows
+            var initialHeaderRows = comp.FindAll("thead tr");
+            var initialBodyRows = comp.FindAll("tbody tr");
+
+            // Verify initial state: 1 row in the header and 3 rows in the body
+            initialHeaderRows.Count.Should().Be(1);
+            initialBodyRows.Count.Should().Be(3);
+
+            // Toggle the loading switch to the 'loading' state
+            var loadingSwitch = comp.Find("#loadingSwitch");
+            loadingSwitch.Change(true);
+
+            // Count rows after toggling the switch
+            var updatedHeaderRows = comp.FindAll("thead tr");
+            var updatedBodyRows = comp.FindAll("tbody tr");
+
+            // Verify updated state:
+            // 2 rows in the header (original + loading row) and 3 rows in the body (unchanged)
+            updatedHeaderRows.Count.Should().Be(2);
+            updatedBodyRows.Count.Should().Be(3);
         }
 
         [Test]
@@ -2988,6 +3039,15 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DataGridNoRecordsContentTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridNoRecordsContentTest.Model>>();
+
+            dataGrid.Find("th.mud-table-empty-row div").TextContent.Trim().Should().Be("There are no records to view.");
+        }
+
+        [Test]
+        public void DataGridNoRecordsContentVirtualizeTest()
+        {
+            var comp = Context.RenderComponent<DataGridNoRecordsContentVirtualizeTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridNoRecordsContentVirtualizeTest.Model>>();
 
             dataGrid.Find("th.mud-table-empty-row div").TextContent.Trim().Should().Be("There are no records to view.");
         }
@@ -3073,9 +3133,9 @@ namespace MudBlazor.UnitTests.Components
                 var columnHamburger = dataGrid.FindAll("button.mud-button-root.mud-icon-button.mud-ripple.mud-ripple-icon.mud-icon-button-size-small");
                 columnHamburger[2].Click();
 
-                var listItems = popoverProvider.FindComponents<MudListItem<object>>();
+                var listItems = popoverProvider.FindComponents<MudMenuItem>();
                 listItems.Count.Should().Be(2);
-                var clickablePopover = listItems[1].Find(".mud-list-item");
+                var clickablePopover = listItems[1].Find(".mud-menu-item");
                 clickablePopover.Click();
 
                 //dataGrid.Instance._columns[0].Hide();
@@ -3088,9 +3148,9 @@ namespace MudBlazor.UnitTests.Components
                 columnsButton.Click();
 
                 popover.Instance.Open.Should().BeTrue("Should be open once clicked");
-                var listItems = popoverProvider.FindComponents<MudListItem<object>>();
+                var listItems = popoverProvider.FindComponents<MudMenuItem>();
                 listItems.Count.Should().Be(1);
-                var clickablePopover = listItems[0].Find(".mud-list-item");
+                var clickablePopover = listItems[0].Find(".mud-menu-item");
                 clickablePopover.Click();
 
                 var switches = comp.FindComponents<MudSwitch<bool>>();
@@ -3103,13 +3163,13 @@ namespace MudBlazor.UnitTests.Components
                 var buttons = comp.FindComponents<MudButton>();
                 // this is the show all button
                 buttons[1].Find("button").Click();
-                // 2 columns, 0 hidden
-                comp.FindAll(".mud-table-head th").Count.Should().Be(6);
+                // 2 columns, 1 hidden
+                comp.FindAll(".mud-table-head th").Count.Should().Be(7);
 
                 //dataGrid.Instance._columns[0].Hide();
                 ((IMudStateHasChanged)dataGrid.Instance).StateHasChanged();
             });
-            comp.FindAll(".mud-table-head th").Count.Should().Be(6);
+            comp.FindAll(".mud-table-head th").Count.Should().Be(7);
 
             await comp.InvokeAsync(() => dataGrid.Instance.ShowColumnsPanel());
             comp.FindAll(".mud-data-grid-columns-panel").Count.Should().Be(1);
@@ -3128,8 +3188,6 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DataGridColumnHiddenTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnHiddenTest.Model>>();
 
-            //Console.WriteLine(dataGrid.FindAll(".mud-table-head th").ToMarkup());
-
             var popoverProvider = comp.FindComponent<MudPopoverProvider>();
             var popover = dataGrid.FindComponent<MudPopover>();
             popover.Instance.Open.Should().BeFalse("Should start as closed");
@@ -3138,9 +3196,9 @@ namespace MudBlazor.UnitTests.Components
             columnsButton.Click();
 
             popover.Instance.Open.Should().BeTrue("Should be open once clicked");
-            var listItems = popoverProvider.FindComponents<MudListItem<object>>();
+            var listItems = popoverProvider.FindComponents<MudMenuItem>();
             listItems.Count.Should().Be(1);
-            var clickablePopover = listItems[0].Find(".mud-list-item");
+            var clickablePopover = listItems[0].Find(".mud-menu-item");
             clickablePopover.Click();
 
             // at this point, the column picker should be open
@@ -3166,8 +3224,8 @@ namespace MudBlazor.UnitTests.Components
             switches[4].Instance.Value.Should().BeFalse();
             switches[5].Instance.Value.Should().BeFalse();
 
-            // 6 columns, 3 hidden
-            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(3);
+            // 6 columns, 3 hidden (+ already collapsed)
+            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(4);
 
             // this is the show all button
             buttons[1].Find("button").Click();
@@ -3178,8 +3236,8 @@ namespace MudBlazor.UnitTests.Components
             switches[4].Instance.Value.Should().BeFalse();
             switches[5].Instance.Value.Should().BeFalse();
 
-            // 6 columns, 0 hidden
-            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(6);
+            // 6 columns, 0 hidden (1 permanently collapsed)
+            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(7);
 
             //programatically changing the hidden which overrides hideable
             await dataGrid.InvokeAsync(async () =>
@@ -3190,17 +3248,10 @@ namespace MudBlazor.UnitTests.Components
                 };
             });
 
-            comp = Context.RenderComponent<DataGridColumnHiddenTest>();
-            switches = comp.FindComponents<MudSwitch<bool>>();
-            switches.Count.Should().Be(6);
-            switches[0].Instance.Value.Should().BeTrue();
-            switches[1].Instance.Value.Should().BeTrue();
-            switches[2].Instance.Value.Should().BeTrue();
-            switches[3].Instance.Value.Should().BeTrue();
-            switches[4].Instance.Value.Should().BeTrue();
-            switches[5].Instance.Value.Should().BeTrue();
-            // 6 columns, 6 hidden
-            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(0);
+            // cannot render the component again there can be only one mudpopoverprovider
+
+            // 6 columns, 6 hidden (1 permanently collapsed)
+            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(1);
 
             //programatically changing the hidden which overrides hideable
             await dataGrid.InvokeAsync(async () =>
@@ -3211,18 +3262,8 @@ namespace MudBlazor.UnitTests.Components
                 };
             });
 
-            comp = Context.RenderComponent<DataGridColumnHiddenTest>();
-            switches = comp.FindComponents<MudSwitch<bool>>();
-            switches.Count.Should().Be(6);
-            switches[0].Instance.Value.Should().BeFalse();
-            switches[1].Instance.Value.Should().BeFalse();
-            switches[2].Instance.Value.Should().BeFalse();
-            switches[3].Instance.Value.Should().BeFalse();
-            switches[4].Instance.Value.Should().BeFalse();
-            switches[5].Instance.Value.Should().BeFalse();
-
-            // 6 columns, 0 hidden
-            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(6);
+            // 6 columns, 0 hidden (1 permanently hidden)
+            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(7);
         }
 
         // This is not easily convertable to the new property expression.
@@ -3245,7 +3286,7 @@ namespace MudBlazor.UnitTests.Components
         //    popover.Instance.Open.Should().BeTrue("Should be open once clicked");
         //    var listItems = popoverProvider.FindComponents<MudListItem>();
         //    listItems.Count.Should().Be(1);
-        //    var clickablePopover = listItems[0].Find(".mud-list-item");
+        //    var clickablePopover = listItems[0].Find(".mud-menu-item");
         //    clickablePopover.Click();
 
         //    // at this point, the column picker should be open
@@ -3353,7 +3394,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".filter-button").Click();
             comp.FindAll(".filters-panel").Count.Should().Be(1);
 
-            comp.FindAll("div.mud-input-control")[0].PointerDown();
+            comp.FindAll("div.mud-input-control")[0].MouseDown();
             comp.FindAll("div.mud-list-item").Count.Should().Be(3);
         }
 
@@ -3836,7 +3877,7 @@ namespace MudBlazor.UnitTests.Components
             var amountHeader = dataGrid.FindAll("th .mud-menu button")[2];
             amountHeader.Click();
 
-            var filterAmount = comp.FindAll(".mud-list-item")[1];
+            var filterAmount = comp.FindAll(".mud-menu-item")[1];
             filterAmount.Click();
 
             var filterField = comp.Find(".filters-panel .filter-field .mud-select-input");
@@ -3854,7 +3895,7 @@ namespace MudBlazor.UnitTests.Components
             // total with es-ES culture (decimals separated by comma)
             var totalHeader = dataGrid.FindAll("th .mud-menu button")[3];
             totalHeader.Click();
-            var filterTotal = comp.FindAll(".mud-list-item")[1];
+            var filterTotal = comp.FindAll(".mud-menu-item")[1];
             filterTotal.Click();
 
             var filterTotalField = comp.Find(".filters-panel .filter-field .mud-select-input");
@@ -4460,13 +4501,13 @@ namespace MudBlazor.UnitTests.Components
 
             // Find all MudListItem components within the popoverProvider.
             // These list items represent the individual options within the grouping popover.
-            var listItems = popoverProvider.FindComponents<MudListItem<object>>();
+            var listItems = popoverProvider.FindComponents<MudMenuItem>();
 
             // Assert that there are exactly 2 list items (options) available in the popover.
             listItems.Count.Should().Be(2);
 
             // From the list items found, select the second one which is expected to be the clickable option for grouping.
-            var clickablePopover = listItems[1].Find(".mud-list-item");
+            var clickablePopover = listItems[1].Find(".mud-menu-item");
 
             // click on the grouping option to apply grouping to the data grid.
             clickablePopover.Click();
@@ -4539,9 +4580,9 @@ namespace MudBlazor.UnitTests.Components
             //click name grouping in grid
             var headerOption = comp.Find("th.name .mud-menu button");
             headerOption.Click();
-            var listItems = popoverProvider.FindComponents<MudListItem<object>>();
+            var listItems = popoverProvider.FindComponents<MudMenuItem>();
             listItems.Count.Should().Be(4);
-            var clickablePopover = listItems[3].Find(".mud-list-item");
+            var clickablePopover = listItems[3].Find(".mud-menu-item");
             clickablePopover.Click();
             var cells = dataGrid.FindAll("td");
 
@@ -4561,9 +4602,9 @@ namespace MudBlazor.UnitTests.Components
             //click name ungrouping in grid
             headerOption = comp.Find("th.name .mud-menu button");
             headerOption.Click();
-            listItems = popoverProvider.FindComponents<MudListItem<object>>();
+            listItems = popoverProvider.FindComponents<MudMenuItem>();
             listItems.Count.Should().Be(4);
-            clickablePopover = listItems[3].Find(".mud-list-item");
+            clickablePopover = listItems[3].Find(".mud-menu-item");
             clickablePopover.Click();
             cells = dataGrid.FindAll("td");
             // We do not need check all 10 rows as it's clear that it's ungrouped if first row pass
@@ -4637,9 +4678,9 @@ namespace MudBlazor.UnitTests.Components
             //click age grouping in grid
             var headerOption = comp.Find("th.age .mud-menu button");
             headerOption.Click();
-            var listItems = popoverProvider.FindComponents<MudListItem<object>>();
+            var listItems = popoverProvider.FindComponents<MudMenuItem>();
             listItems.Count.Should().Be(2);
-            var clickablePopover = listItems[1].Find(".mud-list-item");
+            var clickablePopover = listItems[1].Find(".mud-menu-item");
             clickablePopover.Click();
             comp.Instance.IsAgeGrouped.Should().Be(true);
             comp.Instance.IsGenderGrouped.Should().Be(false);
@@ -4649,9 +4690,9 @@ namespace MudBlazor.UnitTests.Components
             //click gender grouping in grid
             headerOption = comp.Find("th.gender .mud-menu button");
             headerOption.Click();
-            listItems = popoverProvider.FindComponents<MudListItem<object>>();
+            listItems = popoverProvider.FindComponents<MudMenuItem>();
             listItems.Count.Should().Be(2);
-            clickablePopover = listItems[1].Find(".mud-list-item");
+            clickablePopover = listItems[1].Find(".mud-menu-item");
             clickablePopover.Click();
             comp.Instance.IsGenderGrouped.Should().Be(true);
             comp.Instance.IsAgeGrouped.Should().Be(true, because: "Age is not bound");
@@ -4661,9 +4702,9 @@ namespace MudBlazor.UnitTests.Components
             //click Name grouping in grid
             headerOption = comp.Find("th.name .mud-menu button");
             headerOption.Click();
-            listItems = popoverProvider.FindComponents<MudListItem<object>>();
+            listItems = popoverProvider.FindComponents<MudMenuItem>();
             listItems.Count.Should().Be(2);
-            clickablePopover = listItems[1].Find(".mud-list-item");
+            clickablePopover = listItems[1].Find(".mud-menu-item");
             clickablePopover.Click();
             comp.Instance.IsGenderGrouped.Should().Be(false);
             comp.Instance.IsAgeGrouped.Should().Be(true, because: "Age is not bound");
@@ -4673,9 +4714,9 @@ namespace MudBlazor.UnitTests.Components
             //click profession grouping in grid
             headerOption = comp.Find("th.profession .mud-menu button");
             headerOption.Click();
-            listItems = popoverProvider.FindComponents<MudListItem<object>>();
+            listItems = popoverProvider.FindComponents<MudMenuItem>();
             listItems.Count.Should().Be(2);
-            clickablePopover = listItems[1].Find(".mud-list-item");
+            clickablePopover = listItems[1].Find(".mud-menu-item");
             clickablePopover.Click();
             comp.Instance.IsGenderGrouped.Should().Be(false);
             comp.Instance.IsAgeGrouped.Should().Be(true, because: "Age is not bound");
@@ -4793,8 +4834,8 @@ namespace MudBlazor.UnitTests.Components
             columnMenu.Click();
 
             // Click on the menu item 'Hide'
-            comp.WaitForAssertion(() => comp.FindAll(".mud-list-item").ElementAt(1));
-            var hideMenuItem = comp.FindAll(".mud-list-item").ElementAt(1);
+            comp.WaitForAssertion(() => comp.FindAll(".mud-menu-item").ElementAt(1));
+            var hideMenuItem = comp.FindAll(".mud-menu-item").ElementAt(1);
             hideMenuItem.Click();
 
             // Mock mudElementRef.getBoundingClientRect for DataGrid and visible columns
@@ -4903,7 +4944,7 @@ namespace MudBlazor.UnitTests.Components
             FilterButton().Click();
 
             IElement SelectElement() => comp.Find("div.mud-select.filter-input");
-            SelectElement().PointerDown();
+            SelectElement().MouseDown();
 
             var items = comp.FindAll("div.mud-list-item").ToArray();
 
@@ -4937,6 +4978,45 @@ namespace MudBlazor.UnitTests.Components
 
             form.IsTouched.Should().BeTrue();
             form.IsValid.Should().BeFalse();
+        }
+
+        /// <summary>
+        /// Tests two-way binding on the CurrentPage parameter.
+        /// The table should re-render with the newly provided value as the CurrentPage.
+        /// </summary>
+        [Test]
+        public async Task TestCurrentPageParameterTwoWayBinding()
+        {
+            var comp = Context.RenderComponent<DataGridCurrentPageParameterTwoWayBindingTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<int>>().Instance;
+
+            // Assert starting page index is 0 (default).
+            comp.WaitForAssertion(() => dataGrid.CurrentPage.Should().Be(0));
+            comp.WaitForAssertion(() => comp.Find(".mud-table-body .mud-table-row .mud-table-cell").TextContent.Should().Be("1"));
+
+            // Assert modification via code correctly renders the corresponding page.
+            await comp.InvokeAsync(() => dataGrid.CurrentPage = 1);
+            comp.WaitForAssertion(() => dataGrid.CurrentPage.Should().Be(1));
+            comp.WaitForAssertion(() => comp.Find(".mud-table-body .mud-table-row .mud-table-cell").TextContent.Should().Be("2"));
+
+            // Assert user input correctly updates the CurrentPage parameter value by clicking the "Next Page" button in the pager.
+            comp.FindAll(".mud-table-pagination-actions .mud-button-root")[2].Click();
+            comp.WaitForAssertion(() => dataGrid.CurrentPage.Should().Be(2));
+            comp.WaitForAssertion(() => comp.Find(".mud-table-body .mud-table-row .mud-table-cell").TextContent.Should().Be("3"));
+        }
+
+        [Test]
+        [TestCase(true, true)]
+        [TestCase(true, false)]
+        [TestCase(false, true)]
+        [TestCase(false, false)]
+        public void TestRtlGroupIconMethod(bool isRightToLeft, bool isExpanded)
+        {
+            var test = new MudDataGrid<int>();
+            if (isExpanded)
+                test.GetGroupIcon(isExpanded, isRightToLeft).Should().Be(Icons.Material.Filled.ExpandMore);
+            else
+                test.GetGroupIcon(isExpanded, isRightToLeft).Should().Be(isRightToLeft ? Icons.Material.Filled.ChevronLeft : Icons.Material.Filled.ChevronRight);
         }
     }
 }

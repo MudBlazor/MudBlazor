@@ -39,8 +39,7 @@
 
   <Target Name="CleanGeneratedFiles" BeforeTargets="Clean" Condition="'$(CleanGeneratedFiles)' != 'false'">
     <ItemGroup>
-      <FilesToClean Include="Generated\ApiDocsTests.generated.cs" />
-      <FilesToClean Include="Generated\ExampleDocsTests.generated.cs" />
+      <FilesToClean Include="**/*.generated.cs" />
     </ItemGroup>
     <Delete Files="@(FilesToClean)" />
   </Target>
@@ -57,18 +56,18 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="coverlet.msbuild" Version="6.0.2">
+    <PackageReference Include="coverlet.msbuild" Version="6.0.4">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="FluentAssertions" Version="7.0.0" />
+    <PackageReference Include="AwesomeAssertions" Version="7.1.0" />
     <PackageReference Include="FluentValidation" Version="11.11.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.12.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="4.12.0" />
     <PackageReference Include="Moq" Version="4.20.71" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
-    <PackageReference Include="ReportGenerator" Version="5.4.1" />
+    <PackageReference Include="ReportGenerator" Version="5.4.3" />
     <PackageReference Include="RichardSzalay.MockHttp" Version="7.0.0" />
   </ItemGroup>
 

@@ -70,9 +70,6 @@ public static partial class ApiDocumentation
             return null;
         }
 
-        // Fix the escaped backtick for generics (`)
-        name = name.Replace("%60", "`");
-
         // Is this an external member?
         if (name.StartsWith("System", StringComparison.OrdinalIgnoreCase) || name.StartsWith("Microsoft", StringComparison.OrdinalIgnoreCase))
         {
@@ -113,6 +110,10 @@ public static partial class ApiDocumentation
         var looseMatch = Types.FirstOrDefault(type =>
             // Look for a match on just the name
             type.Value.Name.Equals(name, StringComparison.OrdinalIgnoreCase)
+            // Look for a match on the name with a generic
+            || type.Value.Name.Equals(name + "`1", StringComparison.OrdinalIgnoreCase)
+            // Look for a match on the name with two generics
+            || type.Value.Name.Equals(name + "`2", StringComparison.OrdinalIgnoreCase)
             // .. or the friendly name
             || type.Value.NameFriendly.Equals(name, StringComparison.OrdinalIgnoreCase)).Value;
         if (looseMatch != null)

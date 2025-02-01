@@ -1,10 +1,12 @@
 ﻿@page "/"
 @using System.Reflection
 
+<MudThemeProvider Theme="@_customTheme" IsDarkMode="@_isDarkMode"  />
+
 <MudLayout>
     <MudRTLProvider RightToLeft="_rightToLeft">
         <MudAppBar Elevation="0">
-            <MudTooltip Delay="500" Text="Toggle drawer">
+            <MudTooltip Text="Toggle drawer">
                 <MudIconButton Icon="@Icons.Material.Filled.Menu" Edge="Edge.Start" OnClick="DocsDrawerToggle" aria-label="Toggle drawer" />
             </MudTooltip>
             <MudSpacer />
@@ -14,7 +16,10 @@
                 </ItemTemplate>
             </MudAutocomplete>
             <MudSpacer />
-            <MudTooltip Delay="500" Text="@(_rightToLeft ? "Left-to-right" : "Right-to-left")">
+            <MudTooltip Text="@ThemeLabel">
+                <MudIconButton Icon="@ThemeIcon" OnClick="ToggleTheme" aria-label="@ThemeLabel" />
+            </MudTooltip>
+            <MudTooltip Text="@(_rightToLeft ? "Left-to-right" : "Right-to-left")">
                 <MudIconButton Icon="@(_rightToLeft ? @Icons.Material.Filled.FormatTextdirectionLToR : @Icons.Material.Filled.FormatTextdirectionRToL)" OnClick="() => _rightToLeft = !_rightToLeft" aria-label="@(_rightToLeft ? "Left-to-right" : "Right-to-left")" />
             </MudTooltip>
         </MudAppBar>
@@ -40,7 +45,7 @@
                     <MudTextField T="string" @bind-Value="@_currentSearchText" Immediate="true" FullWidth="true"
                                   Typo="Typo.subtitle1" Placeholder="Search by component" Clearable DebounceInterval="200" />
 
-                    <MudTooltip Delay="500" Text="@(_expandedState ? "Collapse all" : "Expand all")">
+                    <MudTooltip Text="@(_expandedState ? "Collapse all" : "Expand all")">
                         <MudIconButton Icon="@(_expandedState ? CollapseAllIcon : ExpandAllIcon)" Size="Size.Small"
                                        OnClick="@(() => ToggleExpanded())" />
                     </MudTooltip>
@@ -99,10 +104,6 @@
     </MudRTLProvider>
 </MudLayout>
 <style>
-    :root {
-        --mud-drawer-width-left: 400px;
-    }
-
     .docs-search-bar .mud-input {
         height: 42px;
     }
@@ -114,9 +115,9 @@
         border-radius: var(--mud-default-borderradius);
     }
 
-        .docs-search-bar.mud-input-control .mud-input-root, .docs-search-bar.mud-input-control .mud-icon-default {
-            color: #fafafa;
-        }
+    .docs-search-bar.mud-input-control .mud-input-root, .docs-search-bar.mud-input-control .mud-icon-default {
+        color: #fafafa;
+    }
 
     .docs-search-bar .mud-input.mud-input-outlined .mud-input-outlined-border {
         border: none;
@@ -125,7 +126,7 @@
 
     .mode-links.active {
         color: var(--mud-palette-primary);
-        background-color: var(--mud-palette-primary-hover)
+        background-color: var(--mud-palette-primary-hover);
     }
 
     .mud-nav-link {
@@ -155,8 +156,22 @@
     private string _currentSearchText = string.Empty;
     private Dictionary<Type, string>? _typeDirectories;
     private MudAutocomplete<Type> _autocomplete = null!;
+    private bool _isDarkMode;
+    private readonly MudTheme _customTheme = new()
+    {
+        LayoutProperties = new LayoutProperties
+        {
+            DrawerWidthLeft = "400px"
+        }
+    };
 
     private bool ShouldFilter => !string.IsNullOrWhiteSpace(_currentSearchText) && _currentSearchText.Length > 2;
+
+    private void ToggleTheme() => _isDarkMode = !_isDarkMode;
+
+    private string ThemeIcon => _isDarkMode ? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode;
+
+    private string ThemeLabel => _isDarkMode ? "Switch to light theme" : "Switch to dark theme";
 
     private void DocsDrawerToggle() => _drawerOpen = !_drawerOpen;
 

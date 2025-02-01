@@ -1,4 +1,4 @@
-﻿@import 'core/_base';
+@import 'core/_base';
 @import 'core/_carbon';
 @import 'core/_markdown';
 
@@ -10,6 +10,7 @@
 @import 'pages/_roadmap';
 @import 'pages/_overview';
 @import 'pages/_announcement';
+@import 'pages/_extensions.scss';
 
 @import 'components/_docspage';
 @import 'components/_docssection';

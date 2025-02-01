@@ -72,6 +72,8 @@ namespace MudBlazor
                 .AddClass($"mud-drawer-overlay-{Variant.ToDescriptionString()}")
                 .AddClass($"mud-drawer-overlay-{_breakpointState.Value.ToDescriptionString()}")
                 .AddClass($"mud-drawer-overlay--initial", _initial)
+                .AddClass($"mud-skip-overlay-positioning") // popovers try to position the overlay by zindex, this skips that behavior
+                .AddClass($"mud-skip-overlay-section") // drawer overlay remains outside of Section
                 .Build();
 
         protected string Stylename =>
