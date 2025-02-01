@@ -42,8 +42,11 @@ MudBlazor is an ambitious Material Design component framework for Blazor with an
 | 1.x.x - 2.0.x | .NET 3.1 | Ended 03/2021 |
 | 5.x.x | .NET 5 | Ended 01/2022 |
 | 6.x.x | [.NET 6](https://dotnet.microsoft.com/download/dotnet/6.0), [.NET 7](https://dotnet.microsoft.com/download/dotnet/7.0), [.NET 8](https://dotnet.microsoft.com/download/dotnet/8.0) | Ended 01/2025 |
-| 7.x.x | [.NET 7](https://dotnet.microsoft.com/download/dotnet/7.0), [.NET 8](https://dotnet.microsoft.com/download/dotnet/8.0) | :heavy_check_mark: |
+| 7.x.x | [.NET 7](https://dotnet.microsoft.com/download/dotnet/7.0), [.NET 8](https://dotnet.microsoft.com/download/dotnet/8.0) | Limited |
 | 8.x.x | [.NET 8](https://dotnet.microsoft.com/download/dotnet/8.0), [.NET 9](https://dotnet.microsoft.com/download/dotnet/9.0) | :heavy_check_mark: |
+
+> [!TIP]
+> If you're updating to a newer version of MudBlazor, make sure to check out the [Migration Guide](https://github.com/MudBlazor/MudBlazor/blob/dev/MIGRATION.md) for detailed instructions on handling breaking changes and new features.  
 
 > [!WARNING]
 > 1. Static rendering is not supported - [Learn more](https://learn.microsoft.com/aspnet/core/blazor/components/render-modes).

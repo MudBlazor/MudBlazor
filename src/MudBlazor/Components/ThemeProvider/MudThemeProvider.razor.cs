@@ -144,7 +144,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
     {
         _theme = Theme ?? new MudTheme();
         var theme = new StringBuilder();
-        theme.AppendLine("<style>");
+        theme.AppendLine("<style class='mud-theme-provider'>");
         theme.Append(_theme.PseudoCss.Scope);
         theme.AppendLine("{");
         GenerateTheme(theme);

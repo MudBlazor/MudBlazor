@@ -1,7 +1,5 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Numerics;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
 using MudBlazor.Utilities;
@@ -10,7 +8,7 @@ namespace MudBlazor
 {
 #nullable enable
     /// <summary>
-    /// Represents a slider component, allowing users to select a value within a specified range.
+    /// A component which allows users to select a value within a specified range.
     /// </summary>
     /// <typeparam name="T">The type of the value the slider represents.</typeparam>
     public partial class MudSlider<T> : MudComponentBase where T : struct, INumber<T>
@@ -42,115 +40,155 @@ namespace MudBlazor
                 .Build();
 
         /// <summary>
-        /// The minimum allowed value of the slider. Should not be equal to max.
+        /// The minimum allowed value.
         /// </summary>
+        /// <remarks>
+        /// Defauls to <c>0</c>.  Must be less than <see cref="Max"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Slider.Validation)]
         public T Min { get; set; } = T.Zero;
 
         /// <summary>
-        /// The maximum allowed value of the slider. Should not be equal to min.
+        /// The maximum allowed value.
         /// </summary>
-        /// 
+        /// <remarks>
+        /// Defaults to <c>100</c>.  Must be greater than <see cref="Min"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Slider.Validation)]
         public T Max { get; set; } = T.CreateTruncating(100);
 
         /// <summary>
-        /// How many steps the slider should take on each move.
+        /// How much the value changes on each move.
         /// </summary>
-        /// 
+        /// <remarks>
+        /// Defaults to <c>1</c>.  
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Slider.Validation)]
         public T Step { get; set; } = T.One;
 
         /// <summary>
-        /// If true, the slider will be disabled.
+        /// Prevents the user from interacting with this slider.
         /// </summary>
-        /// 
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Slider.Behavior)]
         public bool Disabled { get; set; } = false;
 
         /// <summary>
-        /// Child content of component.
+        /// The option content rendered above the slider.
         /// </summary>
+        /// <remarks>
+        /// Typically used for displaying text.   When the slider is vertical, content is displayed to the left of the slider.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Slider.Behavior)]
         public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// Event callback invoked when the value of the slider changes.
+        /// Occurs when <see cref="Value"/> has changed.
         /// </summary>
         [Parameter]
         public EventCallback<T> ValueChanged { get; set; }
 
         /// <summary>
-        /// Event callback invoked when the nullable value of the slider changes.
+        /// Occurs when <see cref="NullableValue" /> has changed.
         /// </summary>
         [Parameter]
         public EventCallback<T?> NullableValueChanged { get; set; }
 
         /// <summary>
-        /// The value of the slider.
+        /// The value of this slider.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>0</c>.  When this value changes, <see cref="ValueChanged"/> occurs.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Slider.Data)]
         public T Value { get; set; } = T.Zero;
 
         /// <summary>
-        /// The nullable value of the slider.
+        /// The nullable value of this slider.
         /// </summary>
+        /// <remarks>
+        /// When this value changes, <see cref="NullableValueChanged"/> occurs.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Slider.Data)]
         public T? NullableValue { get; set; } = default;
 
         /// <summary>
-        /// The color of the component. It supports the Primary, Secondary and Tertiary theme colors.
+        /// The color of this slider.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Color.Primary"/>.  <c>Primary</c>, <c>Secondary</c> and <c>Tertiary</c> colors are supported.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Slider.Appearance)]
         public Color Color { get; set; } = Color.Primary;
 
         /// <summary>
-        /// If true, the dragging the slider will update the Value immediately.
-        /// If false, the Value is updated only on releasing the handle.
+        /// Controls when the value is updated.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.<br />
+        /// When <c>true</c>, dragging the slider changes <see cref="Value"/> (or <see cref="NullableValue"/>) immediately.<br />
+        /// When <c>false</c>, <see cref="Value"/> (or <see cref="NullableValue"/>) changes when releasing the handle.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Slider.Behavior)]
         public bool Immediate { get; set; } = true;
 
         /// <summary>
-        /// If true, displays the slider vertical.
+        /// Displays this slider vertically.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  When <c>true</c>, the slider is displayed like a horizontal slider, but rotated 90° counterclockwise.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Slider.Appearance)]
         public bool Vertical { get; set; } = false;
 
         /// <summary>
-        /// If true, displays tick marks on the track.
+        /// Displays tick marks along the track.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Slider.Appearance)]
         public bool TickMarks { get; set; } = false;
 
         /// <summary>
-        /// Labels for tick marks, will attempt to map the labels to each step in index order.
+        /// The tick mark labels for each step.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  Only applies when <see cref="TickMarks"/> is <c>true</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Slider.Appearance)]
         public string[]? TickMarkLabels { get; set; }
 
         /// <summary>
-        /// Size of the slider.
+        /// The size of this slider.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Size.Small"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Slider.Appearance)]
         public Size Size { get; set; } = Size.Small;
 
         /// <summary>
-        /// The variant to use.
+        /// The display variant to use.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Variant.Text"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
         public Variant Variant { get; set; } = Variant.Text;
@@ -158,29 +196,41 @@ namespace MudBlazor
         /// <summary>
         /// Displays the value over the slider thumb.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
         public bool ValueLabel { get; set; }
 
         /// <summary>
-        /// Sets the culture information used for ValueLabel. Default is <see cref="CultureInfo.InvariantCulture"/>.
+        /// The culture used to format the value label.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="CultureInfo.InvariantCulture"/>.  Only applied when <see cref="ValueLabel"/> is <c>true</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
         public CultureInfo Culture { get; set; } = CultureInfo.InvariantCulture;
 
         /// <summary>
-        /// Sets the formatting information used for ValueLabel. Default is no formatting.
+        /// The format of the value label.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  
+        /// Only applies when <see cref="ValueLabelContent"/> is not set.<br />
+        /// See: <see href="https://learn.microsoft.com/dotnet/standard/base-types/standard-numeric-format-strings">Standard Numeric Format Strings</see>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
         public string? ValueLabelFormat { get; set; }
 
         /// <summary>
-        /// Sets custom RenderFragment for ValueLabel.
+        /// The custom content for value labels.
         /// </summary>
         /// <remarks>
-        /// Keep in mind that for this RenderFragment to show the <see cref="ValueLabel"/> needs to be <c>true</c>.
+        /// Use the supplied context to access the current value.<br />
+        /// Only applies when <see cref="ValueLabel"/> is <c>true</c> and <see cref="ValueLabelFormat"/> is not set.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]

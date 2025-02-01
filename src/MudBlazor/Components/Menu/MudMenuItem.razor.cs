@@ -120,11 +120,14 @@ namespace MudBlazor
 
         protected bool GetDisabled() => Disabled || ParentMenu?.Disabled == true;
 
-        protected bool GetDense() => ParentMenu?.Dense == true;
+        protected bool GetDense() => ParentMenu?.GetDense() == true;
 
         protected Typo GetTypo() => GetDense() ? Typo.body2 : Typo.body1;
 
-        protected Size GetIconSize() => GetDense() ? Size.Small : Size.Medium;
+        /// <summary>
+        /// The menu item is acting as the activator for a sub menu.
+        /// </summary>
+        protected bool ActivatesSubMenu => Class?.Contains("mud-menu-sub-menu-activator") == true;
 
         protected async Task OnClickHandlerAsync(MouseEventArgs ev)
         {

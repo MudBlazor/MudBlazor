@@ -366,6 +366,18 @@ namespace MudBlazor
         public RenderFragment? ProgressIndicatorInPopoverTemplate { get; set; }
 
         /// <summary>
+        /// Determines the width of this Popover dropdown in relation to the parent container.
+        /// </summary>
+        /// <remarks>
+        /// <para>Defaults to <see cref="DropdownWidth.Relative" />. </para>
+        /// <para>When <see cref="DropdownWidth.Relative" />, restricts the max-width of the component to the width of the parent container</para>
+        /// <para>When <see cref="DropdownWidth.Adaptive" />, restricts the min-width of the component to the width of the parent container</para>
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Popover.Appearance)]
+        public DropdownWidth RelativeWidth { get; set; } = DropdownWidth.Relative;
+
+        /// <summary>
         /// Overrides the <c>Text</c> property when an item is selected.
         /// </summary>
         /// <remarks>
@@ -394,7 +406,7 @@ namespace MudBlazor
         /// </remarks>
         [Category(CategoryTypes.Popover.Behavior)]
         [Parameter]
-        public DropdownSettings DropdownSettings { get; set; }
+        public DropdownSettings DropdownSettings { get; set; } = new DropdownSettings();
 
         /// <summary>
         /// The function used to determine if an item should be disabled.
@@ -513,7 +525,13 @@ namespace MudBlazor
             _isProcessingValue = true;
             try
             {
+                // needs to close before SetValueAsync so that whatever the user puts in ValueChanged can run without the popover being in front of it
+                Open = false;
+
                 await SetValueAsync(value);
+
+                // needs to be open to run the rest of the code
+                Open = true;
 
                 if (_items != null)
                     _selectedListItemIndex = Array.IndexOf(_items, value);
@@ -533,10 +551,11 @@ namespace MudBlazor
                 }
 
                 await FocusAsync();
-
+                // We want focus with a closed popover
                 Open = false;
-
+                // And update
                 StateHasChanged();
+
             }
             finally
             {
@@ -881,8 +900,18 @@ namespace MudBlazor
 
             _selectedListItemIndex = index;
 
+            return ScrollToListItemAsync(index);
+        }
+
+        /// <summary>
+        /// Scrolls the list of items to the item at the specified index.
+        /// </summary>
+        /// <param name="index">The index of the item to scroll to.</param>
+        public ValueTask ScrollToListItemAsync(int index)
+        {
             var id = GetListItemId(index);
 
+            //id of the scrolled element
             return ScrollManager.ScrollToListItemAsync(id);
         }
 
@@ -949,6 +978,20 @@ namespace MudBlazor
             {
                 await OpenMenuAsync();
             }
+        }
+
+        internal async Task HandleClearButtonAsync(MouseEventArgs e)
+        {
+            // clear button clicked, let's make sure text is cleared and the menu has focus
+            Open = true;
+            _isFocused = true;
+            await SetValueAsync(default, false);
+            await SetTextAsync(default, false);
+            _selectedListItemIndex = default;
+            await CloseMenuAsync();
+            StateHasChanged();
+            await OnClearButtonClick.InvokeAsync(e);
+            await BeginValidateAsync();
         }
 
         internal async Task AdornmentClickHandlerAsync()

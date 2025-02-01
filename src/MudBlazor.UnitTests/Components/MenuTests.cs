@@ -2,7 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Text.RegularExpressions;
 using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
@@ -305,25 +304,14 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [TestCase(true)]
-        [TestCase(false)]
-        public void MenuItem_Should_RenderIcons(bool dense)
+        public void MenuItem_Should_RenderIcons()
         {
-            var comp = Context.RenderComponent<MenuItemIconTest>(parameters => parameters
-                .Add(p => p.Dense, dense)
-            );
+            var comp = Context.RenderComponent<MenuItemIconTest>();
 
             comp.Find(".mud-menu-button-activator").Click();
             comp.WaitForElement("div.mud-popover-open");
 
-            if (dense)
-            {
-                comp.FindAll(".mud-menu-list div.mud-menu-item svg.mud-svg-icon.mud-menu-item-icon.mud-icon-size-small").Count.Should().Be(3);
-            }
-            else
-            {
-                comp.FindAll(".mud-menu-list div.mud-menu-item svg.mud-svg-icon.mud-menu-item-icon.mud-icon-size-medium").Count.Should().Be(3);
-            }
+            comp.FindAll(".mud-menu-list div.mud-menu-item svg.mud-svg-icon.mud-menu-item-icon.mud-icon-size-medium").Count.Should().Be(3);
         }
 
         [Test]
@@ -559,6 +547,42 @@ namespace MudBlazor.UnitTests.Components
             // ChildContent should override Label.
             comp.FindAll(".mud-menu-item")[2].InnerHtml.Should().Contain("ContentText");
             comp.FindAll(".mud-menu-item")[2].InnerHtml.Should().NotContain("LabelText");
+        }
+
+        [Test]
+        public void OpenNestedMenu()
+        {
+            var comp = Context.RenderComponent<MenuWithNestingTest>();
+
+            // Open the first menu.
+            comp.Find("button:contains('1')").Click();
+            comp.FindAll("div.mud-popover-open").Count.Should().Be(1);
+
+            // Click the nested menu item to open the nested menu.
+            comp.Find("div.mud-menu-item:contains('1.3')").Click();
+
+            // Ensure both the main menu and the nested menu are open
+            comp.FindAll("div.mud-popover-open").Count.Should().Be(2);
+        }
+
+        [Test]
+        public void ClickingMenuItem_ClosesNestedMenu()
+        {
+            var comp = Context.RenderComponent<MenuWithNestingTest>();
+
+            // Open the first menu.
+            comp.Find("button:contains('1')").Click();
+            comp.FindAll("div.mud-popover-open").Count.Should().Be(1);
+
+            // Click the nested menu item to open the nested menu.
+            comp.Find("div.mud-menu-item:contains('1.3')").Click();
+            comp.FindAll("div.mud-popover-open").Count.Should().Be(2);
+
+            // Click a non-nested menu item inside the nested menu.
+            comp.Find("div.mud-menu-item:contains('2.2')").Click();
+
+            // Ensure all popovers are closed.
+            comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
         }
     }
 }

@@ -2509,7 +2509,7 @@ namespace MudBlazor.UnitTests.Components
             // check the number of filters displayed in the filters panel is 1
             comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(1);
 
-            await comp.Find(".filter-operator").PointerDownAsync(new PointerEventArgs());
+            await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
 
             //set operator to CONTAINS
             comp.FindAll(".mud-list .mud-list-item")[0].Click();
@@ -2522,7 +2522,7 @@ namespace MudBlazor.UnitTests.Components
             //set operator to NOT CONTAINS
             FilterButton().Click();
 
-            await comp.Find(".filter-operator").PointerDownAsync(new PointerEventArgs());
+            await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
 
             comp.FindAll(".mud-list .mud-list-item")[1].Click();
             comp.Find(".mud-overlay").Click();
@@ -2534,7 +2534,7 @@ namespace MudBlazor.UnitTests.Components
             //set operator to EQUALS
             FilterButton().Click();
 
-            await comp.Find(".filter-operator").PointerDownAsync(new PointerEventArgs());
+            await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
 
             comp.FindAll(".mud-list .mud-list-item")[2].Click();
             comp.Find(".mud-overlay").Click();
@@ -2546,7 +2546,7 @@ namespace MudBlazor.UnitTests.Components
             //set operator to NOT EQUALS
             FilterButton().Click();
 
-            await comp.Find(".filter-operator").PointerDownAsync(new PointerEventArgs());
+            await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
 
             comp.FindAll(".mud-list .mud-list-item")[3].Click();
             comp.Find(".mud-overlay").Click();
@@ -2558,7 +2558,7 @@ namespace MudBlazor.UnitTests.Components
             //set operator to STARTS WITH
             FilterButton().Click();
 
-            await comp.Find(".filter-operator").PointerDownAsync(new PointerEventArgs());
+            await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
 
             comp.FindAll(".mud-list .mud-list-item")[4].Click();
             comp.Find(".mud-overlay").Click();
@@ -2570,7 +2570,7 @@ namespace MudBlazor.UnitTests.Components
             //set operator to ENDS WITH
             FilterButton().Click();
 
-            await comp.Find(".filter-operator").PointerDownAsync(new PointerEventArgs());
+            await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
 
             comp.FindAll(".mud-list .mud-list-item")[5].Click();
             comp.Find(".mud-overlay").Click();
@@ -2582,7 +2582,7 @@ namespace MudBlazor.UnitTests.Components
             //set operator to IS EMPTY
             FilterButton().Click();
 
-            await comp.Find(".filter-operator").PointerDownAsync(new PointerEventArgs());
+            await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
 
             comp.FindAll(".mud-list .mud-list-item")[6].Click();
             comp.Find(".mud-overlay").Click();
@@ -2594,7 +2594,7 @@ namespace MudBlazor.UnitTests.Components
             //set operator to IS NOT EMPTY
             FilterButton().Click();
 
-            await comp.Find(".filter-operator").PointerDownAsync(new PointerEventArgs());
+            await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
 
             comp.FindAll(".mud-list .mud-list-item")[7].Click();
             comp.Find(".mud-overlay").Click();
@@ -2746,7 +2746,7 @@ namespace MudBlazor.UnitTests.Components
             selects.Count.Should().Be(2);
 
             // open operator menu
-            selects[1].PointerDown();
+            selects[1].MouseDown();
 
             //check available operators
             var items = comp.FindAll("div.mud-list-item");
@@ -2995,12 +2995,43 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGridLoadingTest()
+        public void DataGridLoadingContentTest()
         {
-            var comp = Context.RenderComponent<DataGridLoadingTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridLoadingTest.Model>>();
+            var comp = Context.RenderComponent<DataGridLoadingContentTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridLoadingContentTest.Model>>();
 
             dataGrid.Find("th.mud-table-empty-row div").TextContent.Trim().Should().Be("Data loading, please wait...");
+        }
+
+        /// <summary>
+        /// Verifies that enabling the loading switch adds a new row to the table header without altering the table body.
+        /// </summary>
+        [Test]
+        public void DataGridLoadingProgressTest()
+        {
+            // Render the component
+            var comp = Context.RenderComponent<DataGridLoadingProgressTest>();
+
+            // Initial count of header and body rows
+            var initialHeaderRows = comp.FindAll("thead tr");
+            var initialBodyRows = comp.FindAll("tbody tr");
+
+            // Verify initial state: 1 row in the header and 3 rows in the body
+            initialHeaderRows.Count.Should().Be(1);
+            initialBodyRows.Count.Should().Be(3);
+
+            // Toggle the loading switch to the 'loading' state
+            var loadingSwitch = comp.Find("#loadingSwitch");
+            loadingSwitch.Change(true);
+
+            // Count rows after toggling the switch
+            var updatedHeaderRows = comp.FindAll("thead tr");
+            var updatedBodyRows = comp.FindAll("tbody tr");
+
+            // Verify updated state:
+            // 2 rows in the header (original + loading row) and 3 rows in the body (unchanged)
+            updatedHeaderRows.Count.Should().Be(2);
+            updatedBodyRows.Count.Should().Be(3);
         }
 
         [Test]
@@ -3008,6 +3039,15 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DataGridNoRecordsContentTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridNoRecordsContentTest.Model>>();
+
+            dataGrid.Find("th.mud-table-empty-row div").TextContent.Trim().Should().Be("There are no records to view.");
+        }
+
+        [Test]
+        public void DataGridNoRecordsContentVirtualizeTest()
+        {
+            var comp = Context.RenderComponent<DataGridNoRecordsContentVirtualizeTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridNoRecordsContentVirtualizeTest.Model>>();
 
             dataGrid.Find("th.mud-table-empty-row div").TextContent.Trim().Should().Be("There are no records to view.");
         }
@@ -3123,13 +3163,13 @@ namespace MudBlazor.UnitTests.Components
                 var buttons = comp.FindComponents<MudButton>();
                 // this is the show all button
                 buttons[1].Find("button").Click();
-                // 2 columns, 0 hidden
-                comp.FindAll(".mud-table-head th").Count.Should().Be(6);
+                // 2 columns, 1 hidden
+                comp.FindAll(".mud-table-head th").Count.Should().Be(7);
 
                 //dataGrid.Instance._columns[0].Hide();
                 ((IMudStateHasChanged)dataGrid.Instance).StateHasChanged();
             });
-            comp.FindAll(".mud-table-head th").Count.Should().Be(6);
+            comp.FindAll(".mud-table-head th").Count.Should().Be(7);
 
             await comp.InvokeAsync(() => dataGrid.Instance.ShowColumnsPanel());
             comp.FindAll(".mud-data-grid-columns-panel").Count.Should().Be(1);
@@ -3184,8 +3224,8 @@ namespace MudBlazor.UnitTests.Components
             switches[4].Instance.Value.Should().BeFalse();
             switches[5].Instance.Value.Should().BeFalse();
 
-            // 6 columns, 3 hidden
-            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(3);
+            // 6 columns, 3 hidden (+ already collapsed)
+            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(4);
 
             // this is the show all button
             buttons[1].Find("button").Click();
@@ -3196,8 +3236,8 @@ namespace MudBlazor.UnitTests.Components
             switches[4].Instance.Value.Should().BeFalse();
             switches[5].Instance.Value.Should().BeFalse();
 
-            // 6 columns, 0 hidden
-            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(6);
+            // 6 columns, 0 hidden (1 permanently collapsed)
+            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(7);
 
             //programatically changing the hidden which overrides hideable
             await dataGrid.InvokeAsync(async () =>
@@ -3210,8 +3250,8 @@ namespace MudBlazor.UnitTests.Components
 
             // cannot render the component again there can be only one mudpopoverprovider
 
-            // 6 columns, 6 hidden
-            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(0);
+            // 6 columns, 6 hidden (1 permanently collapsed)
+            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(1);
 
             //programatically changing the hidden which overrides hideable
             await dataGrid.InvokeAsync(async () =>
@@ -3222,8 +3262,8 @@ namespace MudBlazor.UnitTests.Components
                 };
             });
 
-            // 6 columns, 0 hidden
-            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(6);
+            // 6 columns, 0 hidden (1 permanently hidden)
+            dataGrid.FindAll(".mud-table-head th").Count.Should().Be(7);
         }
 
         // This is not easily convertable to the new property expression.
@@ -3354,7 +3394,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".filter-button").Click();
             comp.FindAll(".filters-panel").Count.Should().Be(1);
 
-            comp.FindAll("div.mud-input-control")[0].PointerDown();
+            comp.FindAll("div.mud-input-control")[0].MouseDown();
             comp.FindAll("div.mud-list-item").Count.Should().Be(3);
         }
 
@@ -4904,7 +4944,7 @@ namespace MudBlazor.UnitTests.Components
             FilterButton().Click();
 
             IElement SelectElement() => comp.Find("div.mud-select.filter-input");
-            SelectElement().PointerDown();
+            SelectElement().MouseDown();
 
             var items = comp.FindAll("div.mud-list-item").ToArray();
 
@@ -4963,6 +5003,20 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll(".mud-table-pagination-actions .mud-button-root")[2].Click();
             comp.WaitForAssertion(() => dataGrid.CurrentPage.Should().Be(2));
             comp.WaitForAssertion(() => comp.Find(".mud-table-body .mud-table-row .mud-table-cell").TextContent.Should().Be("3"));
+        }
+
+        [Test]
+        [TestCase(true, true)]
+        [TestCase(true, false)]
+        [TestCase(false, true)]
+        [TestCase(false, false)]
+        public void TestRtlGroupIconMethod(bool isRightToLeft, bool isExpanded)
+        {
+            var test = new MudDataGrid<int>();
+            if (isExpanded)
+                test.GetGroupIcon(isExpanded, isRightToLeft).Should().Be(Icons.Material.Filled.ExpandMore);
+            else
+                test.GetGroupIcon(isExpanded, isRightToLeft).Should().Be(isRightToLeft ? Icons.Material.Filled.ChevronLeft : Icons.Material.Filled.ChevronRight);
         }
     }
 }

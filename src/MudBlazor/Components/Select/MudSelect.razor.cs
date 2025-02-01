@@ -28,9 +28,13 @@ namespace MudBlazor
         private HashSet<T?> _selectedValues = new HashSet<T?>();
         protected internal List<MudSelectItem<T>> _items = new();
         private string _elementId = Identifier.Create("select");
+        private string _searchText = string.Empty;
+        private string? _lastSelectedId = string.Empty;
+        private DateTime _lastSearchTime = DateTime.MinValue;
 
         protected string OuterClassname =>
             new CssBuilder("mud-select")
+                .AddClass("mud-width-full", FullWidth)
                 .AddClass(OuterClass)
                 .Build();
 
@@ -95,35 +99,81 @@ namespace MudBlazor
 
         private async Task SelectFirstItem(string? startChar = null)
         {
-            if (_items.Count == 0)
+            var selectList = _items;
+
+            if (!_open)
+                selectList = _shadowLookup.Values.ToList();
+
+            if (selectList.Count == 0)
                 return;
-            var items = _items.Where(x => !x.Disabled);
+
+            var items = selectList.Where(x => !x.Disabled);
+
             if (!string.IsNullOrWhiteSpace(startChar))
             {
-                // find first item that starts with the letter
-                var currentItem = items.FirstOrDefault(x => x.ItemId == _activeItemId);
-                if (currentItem != null &&
-                    Converter.Set(currentItem.Value)?.ToLowerInvariant().StartsWith(startChar) == true)
+                var searchItem = SelectItemBySearch(items, startChar);
+
+                if (searchItem != null)
                 {
-                    // this will step through all items that start with the same letter if pressed multiple times
-                    items = items.SkipWhile(x => x != currentItem).Skip(1);
+                    await SelectAndHighlightItem(searchItem);
+                    return;
                 }
-                items = items.Where(x => Converter.Set(x.Value)?.ToLowerInvariant().StartsWith(startChar) == true);
             }
-            var item = items.FirstOrDefault();
-            if (item == null)
+
+            // If no specific search or no matching items, select the first item
+            var firstItem = items.FirstOrDefault();
+            if (firstItem == null)
                 return;
+
+            await SelectAndHighlightItem(firstItem);
+        }
+
+        private MudSelectItem<T>? SelectItemBySearch(IEnumerable<MudSelectItem<T>> items, string inputChar)
+        {
+            var now = DateTime.UtcNow;
+
+            if (now - _lastSearchTime > QuickSearchInterval)
+            {
+                _lastSelectedId = _activeItemId;
+                _searchText = inputChar;
+            }
+            else
+            {
+                _searchText += inputChar;
+            }
+
+            _lastSearchTime = now;
+
+            var mudSelectItems = items as MudSelectItem<T>[] ?? items.ToArray();
+
+            var matchingItems = mudSelectItems
+                .Where(x => !x.Disabled && Converter.Set(x.Value)?.StartsWith(_searchText, StringComparison.InvariantCultureIgnoreCase) == true)
+                .ToList();
+
+            if (matchingItems.Count == 0)
+                return mudSelectItems.FirstOrDefault(x => x.ItemId == _activeItemId);
+
+            var currentItem = mudSelectItems.FirstOrDefault(x => x.ItemId == _activeItemId);
+            if (currentItem == null)
+                return matchingItems[0];
+
+            var previousItem = mudSelectItems.First(x => x.ItemId == _lastSelectedId);
+            var currentIndex = matchingItems.IndexOf(previousItem);
+            var nextIndex = (currentIndex + 1) % matchingItems.Count;
+
+            return matchingItems[nextIndex];
+        }
+
+        private async Task SelectAndHighlightItem(MudSelectItem<T> item)
+        {
             if (!MultiSelection)
             {
                 _selectedValues.Clear();
                 _selectedValues.Add(item.Value);
                 await SetValueAsync(item.Value, updateText: true);
-                HighlightItem(item);
             }
-            else
-            {
-                HighlightItem(item);
-            }
+
+            HighlightItem(item);
             await _elementReference.SetText(Text);
             await ScrollToItemAsync(item);
         }
@@ -151,14 +201,27 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// The behavior of the drop-down menu.
+        /// The behavior of the dropdown popover menu
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="DropdownSettings.Fixed" /> = <c>false</c> and <see cref="DropdownSettings.OverflowBehavior" /> = <see cref="OverflowBehavior.FlipOnOpen" />.
+        /// Defaults to <see cref="DropdownSettings.Fixed" /> false
+        /// Defaults to <see cref="DropdownSettings.OverflowBehavior" /> <see cref="OverflowBehavior.FlipOnOpen" />
         /// </remarks>
         [Category(CategoryTypes.Popover.Behavior)]
         [Parameter]
-        public DropdownSettings DropdownSettings { get; set; }
+        public DropdownSettings DropdownSettings { get; set; } = new DropdownSettings();
+
+        /// <summary>
+        /// Determines the width of this Popover dropdown in relation to the parent container.
+        /// </summary>
+        /// <remarks>
+        /// <para>Defaults to <see cref="DropdownWidth.Relative" />. </para>
+        /// <para>When <see cref="DropdownWidth.Relative" />, restricts the max-width of the component to the width of the parent container</para>
+        /// <para>When <see cref="DropdownWidth.Adaptive" />, restricts the min-width of the component to the width of the parent container</para>
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Popover.Appearance)]
+        public DropdownWidth RelativeWidth { get; set; } = DropdownWidth.Relative;
 
         /// <summary>
         /// The CSS classes applied to the outer <c>div</c>.
@@ -296,6 +359,17 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public string Delimiter { get; set; } = ", ";
+
+        /// <summary>
+        /// The <see cref="TimeSpan"/> interval for accepting characters for search input.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="TimeSpan.Zero"/> for single-character searches. <br/>
+        /// Set to a value greater than zero to enable multi-character searches within the specified interval.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public TimeSpan QuickSearchInterval { get; set; } = TimeSpan.Zero;
 
         /// <summary>
         /// The currently selected values.
@@ -1011,9 +1085,10 @@ namespace MudBlazor
             if (GetDisabledState() || GetReadOnlyState())
                 return;
             var key = obj.Key.ToLowerInvariant();
-            if (_open && key.Length == 1 && key != " " && !(obj.CtrlKey || obj.ShiftKey || obj.AltKey || obj.MetaKey))
+            if (key.Length == 1 && key != " " && !(obj.CtrlKey || obj.ShiftKey || obj.AltKey || obj.MetaKey))
             {
                 await SelectFirstItem(key);
+                await FocusAsync();
                 return;
             }
             switch (obj.Key)

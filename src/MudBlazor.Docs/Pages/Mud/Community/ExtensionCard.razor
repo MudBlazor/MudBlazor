@@ -1,0 +1,40 @@
+﻿<MudCard Class="docs-extensions-card">
+    <MudCardHeader>
+        <CardHeaderAvatar>
+            <MudAvatar Style="background: transparent" Square="true">
+                <MudImage Src="@Extension.AvatarImageSrc" Alt="@_avatarAlt" />
+            </MudAvatar>
+        </CardHeaderAvatar>
+        <CardHeaderContent>
+            <MudText Class="docs-extensions-clamp" role="heading" Typo="Typo.h6">@Extension.Name</MudText>          
+        </CardHeaderContent>
+    </MudCardHeader>
+    <MudCardContent>
+        <MudText Typo="Typo.button" Class="mud-text-disabled">@CategoryName</MudText>
+        <MudPaper Class="d-flex justify-center pa-2 docs-extensions-paper" Elevation="0">
+            <MudText Typo="Typo.body2">@Extension.Description</MudText>
+        </MudPaper>        
+    </MudCardContent>
+    <MudCardActions>
+        <MudButton Variant="Variant.Text" Color="Color.Primary" EndIcon="@Icons.Material.Filled.ArrowForward"
+        FullWidth="false" Target="_blank" Href="@Extension.Link" aria-label="@_ariaDetailsButton">
+            Details
+        </MudButton>
+        <MudSpacer />
+        <MudButton Href="@Extension.GitHubLink" Target="_blank">        
+            <MudImage alt="@_gitHubAlt" Src="@($"https://img.shields.io/github/stars/{Extension.GitHubUserPath}/{Extension.GitHubRepoPath}")" />
+        </MudButton>
+    </MudCardActions>
+</MudCard>
+
+@code {
+    [Parameter]
+    public CommunityExtension Extension { get; set; }
+
+    [Parameter]
+    public string CategoryName { get; set; }
+
+    private string _avatarAlt => $"Avatar for {Extension.Name}";
+    private string _ariaDetailsButton => $"Visit the {Extension.Name} official website.";
+    private string _gitHubAlt => $"GitHub Repo Stars for {Extension.Name}";
+}

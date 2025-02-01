@@ -1,4 +1,4 @@
-﻿@*illegal parameter OffserX with value *@
+﻿@*illegal parameter OffsetX with value *@
 <MudAutocomplete T="string" OffsetX="5" />
 @*illegal parameter icon different case *@
 <MudFab icon="dd"></MudFab>
@@ -39,8 +39,23 @@
 @*attribute casing*@
 <MudProgressCircular lowerCase UpperCase />
 
-@*attribute dataandaria*@
-<MudRadio T="string" data-animation="a" aria-disabled="false" />
+@*attribute data aria and role*@
+<MudRadio T="string" data-animation="a" aria-disabled="false" role="test" />
+
+@*unknown html attribute*@
+<MudRadio T="string" unknownAttribute="false" />
+
+@*known html attribute*@
+<MudRadio T="string" hidden />
+
+@*known html attribute cased*@
+<MudRadio T="string" Inert />
+
+@*custom html attribute *@
+<MudRadio T="string" customattribute />
+
+@*custom html attribute cased *@
+<MudRadio T="string" customAttribute2 />
 
 @code
 {

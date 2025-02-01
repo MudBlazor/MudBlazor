@@ -17,8 +17,7 @@
         <MudIcon Class="mud-menu-item-icon"
                  Icon="@Icon"
                  Color="IconColor"
-                 Disabled="GetDisabled()"
-                 Size="GetIconSize()" />
+                 Disabled="GetDisabled()" />
     }
 
     <MudText Class="mud-menu-item-text"
@@ -32,4 +31,11 @@
             @ChildContent
         }
     </MudText>
+
+    @if (ActivatesSubMenu)
+    {
+        <MudIcon Class="mud-menu-submenu-icon"
+                 Icon="@Icons.Material.Filled.ArrowRight"
+                 Disabled="GetDisabled()" />
+    }
 </MudElement>

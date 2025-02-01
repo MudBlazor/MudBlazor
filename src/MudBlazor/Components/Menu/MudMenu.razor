@@ -8,7 +8,8 @@
      @onpointerenter="@PointerEnterAsync"
      @onpointerleave="@PointerLeaveAsync"
      @oncontextmenu="@((ActivationEvent == MouseEvent.RightClick ? ToggleMenuAsync : null)!)"
-     @oncontextmenu:preventDefault="@(ActivationEvent == MouseEvent.RightClick)">
+     @oncontextmenu:preventDefault="@(ActivationEvent == MouseEvent.RightClick)"
+     @oncontextmenu:stopPropagation="@(ActivationEvent == MouseEvent.RightClick)">
     @if (GetActivatorHidden())
     {
         @* No content was set so no need to render anything *@
@@ -46,6 +47,8 @@
                          Icon="@StartIcon"
                          IconColor="@IconColor"
                          Disabled="@Disabled"
+                         OnClick="OpenSubMenuAsync"
+                         AutoClose="false"
                          aria-label="@AriaLabel">
                 @Label
             </MudMenuItem>
@@ -70,10 +73,13 @@
                 Class="@PopoverClassname"
                 Style="@Stylename"
                 MaxHeight="@MaxHeight"
-                AnchorOrigin="@(PositionAtCursor ? Origin.TopLeft : AnchorOrigin)"
+                AnchorOrigin="@GetAnchorOrigin()"
                 TransformOrigin="@TransformOrigin"
-                RelativeWidth="@FullWidth"
-                DropShadow="@DropShadow">
+                RelativeWidth="@RelativeWidth"
+                Fixed="@DropdownSettings.Fixed"
+                OverflowBehavior="@DropdownSettings.OverflowBehavior"
+                DropShadow="@DropShadow"
+                Duration="@(GetDense() ? 0 : MudGlobal.TransitionDefaults.Duration.TotalMilliseconds)">
         <CascadingValue Value="@this">
             <MudList T="object"
                      Class="@ListClassname"
