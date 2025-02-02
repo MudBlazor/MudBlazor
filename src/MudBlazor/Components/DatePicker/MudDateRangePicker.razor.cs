@@ -253,6 +253,13 @@ namespace MudBlazor
                     .Build();
             }
 
+            if (_firstDate?.Date == day && _secondDate?.Date == day)
+            {
+                return b.AddClass("mud-selected")
+                    .AddClass($"mud-theme-{Color.ToDescriptionString()}")
+                    .Build();
+            }
+
             if (_firstDate?.Date == day || CheckDateRange(day, compareStart: isEqualTo, compareEnd: isNotEqualTo))
             {
                 return b.AddClass("mud-selected")

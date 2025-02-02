@@ -1,4 +1,4 @@
-﻿
+
 .mud-progress-linear {
   position: relative;
 
@@ -118,7 +118,7 @@
       .mud-progress-linear-bar:first-child {
         background-size: 10px 10px;
         background-image: radial-gradient(var(--mud-palette-action-disabled) 0%, var(--mud-palette-action-disabled) 16%, transparent 42%);
-        background-position: 0 -23px;
+        background-position: 0 50%;
       }
 
       .mud-progress-linear-bar:nth-child(2) {
@@ -161,7 +161,7 @@
         .mud-progress-linear-bar:first-child {
           background-size: 10px 10px;
           background-image: radial-gradient(var(--mud-palette-#{$color}) 0%, var(--mud-palette-#{$color}) 16%, transparent 42%);
-          background-position: 0 -23px;
+          background-position: 0 50%;
         }
 
         .mud-progress-linear-bar:nth-child(2) {
