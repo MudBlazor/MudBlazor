@@ -5,6 +5,88 @@
   position: relative;
   list-style: none;
   overscroll-behavior-y: contain;
+
+  &.mud-navmenu-dense {
+    .mud-nav-link {
+      padding: 4px 16px 4px 16px;
+    }
+  }
+
+  &.mud-navmenu-margin-dense {
+    .mud-nav-link {
+      margin: 2px 0;
+    }
+  }
+
+  &.mud-navmenu-margin-normal {
+    .mud-nav-link {
+      margin: 4px 0;
+    }
+  }
+
+  &.mud-navmenu-rounded {
+    .mud-nav-link {
+      border-radius: var(--mud-default-borderradius);
+    }
+  }
+
+  &.mud-navmenu-bordered {
+    .mud-nav-link {
+      &.active:not(.mud-nav-link-disabled) {
+        border-inline-end-style: solid;
+        border-inline-end-width: 2px;
+      }
+    }
+  }
+
+  &.mud-navmenu-default {
+    .mud-nav-link.active:not(.mud-nav-link-disabled) {
+      color: var(--mud-palette-primary);
+      background-color: var(--mud-palette-action-default-hover);
+
+      @media(hover: hover) and (pointer: fine) {
+        &:hover:not(.mud-nav-link-disabled) {
+          background-color: var(--mud-palette-action-default-hover);
+        }
+      }
+
+      &:focus-visible:not(.mud-nav-link-disabled), &:active:not(.mud-nav-link-disabled) {
+        background-color: var(--mud-palette-action-default-hover);
+      }
+    }
+
+    .mud-nav-link-expand-icon.mud-transform {
+      fill: var(--mud-palette-primary);
+    }
+  }
+
+  @each $color in $mud-palette-colors {
+    &.mud-navmenu-#{$color} {
+      .mud-nav-link.active:not(.mud-nav-link-disabled) {
+        color: var(--mud-palette-#{$color});
+        --mud-ripple-color: var(--mud-palette-#{$color});
+        background-color: var(--mud-palette-#{$color}-hover);
+
+        @media(hover: hover) and (pointer: fine) {
+          &:hover:not(.mud-nav-link-disabled) {
+            background-color: rgba(var(--mud-palette-#{$color}-rgb), 0.12);
+          }
+        }
+
+        &:focus-visible:not(.mud-nav-link-disabled), &:active:not(.mud-nav-link-disabled) {
+          background-color: rgba(var(--mud-palette-#{$color}-rgb), 0.12);
+        }
+
+        .mud-nav-link-icon {
+          color: var(--mud-palette-#{$color});
+        }
+      }
+
+      .mud-nav-link-expand-icon.mud-transform {
+        fill: var(--mud-palette-#{$color});
+      }
+    }
+  }
 }
 
 .mud-nav-group {
@@ -20,9 +102,7 @@
     & > .mud-nav-link > .mud-nav-link-text {
       font-weight: 400;
     }
-  }
 
-  & * .mud-nav-group {
     & > .mud-nav-link.mud-expanded > .mud-nav-link-text {
       font-weight: 500;
     }
@@ -57,7 +137,6 @@
   color: inherit;
   line-height: 1.75;
   display: inline-flex;
-  align-items: center;
   justify-content: flex-start;
   text-transform: inherit;
   background-color: transparent;

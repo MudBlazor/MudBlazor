@@ -706,6 +706,10 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DisableCalendarMonthButtonsWhenFixDayOutOfRange()
         {
+            var timeProvider = new FakeTimeProvider();
+            Context.Services.AddSingleton<TimeProvider>(timeProvider);
+            timeProvider.SetUtcNow(new DateTime(2024, 2, 1, 0, 0, 0, DateTimeKind.Utc));
+
             var comp = OpenPicker(new[]
             {
                 Parameter(nameof(MudDatePicker.OpenTo), OpenTo.Month),
