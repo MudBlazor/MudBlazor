@@ -72,8 +72,6 @@ namespace MudBlazor
         [CascadingParameter]
         private NavigationContext? ParentNavigationContext { get; set; }
 
-        [CascadingParameter]
-        private MudNavMenu? ParentNavMenu { get; set; }
 
         /// <summary>
         /// The CSS classes applied to this nav group title.

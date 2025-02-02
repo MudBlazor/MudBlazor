@@ -2,26 +2,40 @@
 
 @inject ISnackbar Snackbar
 
-<MudAppBar Class="py-4" Color="Color.Default" Elevation="0" Fixed="false" Gutters Style="overflow:auto;">
-    <MudText Typo="Typo.h6" Class="px-4" Style="white-space:nowrap">My Application</MudText>
-    <MudNavMenu Horizontal="true" Rounded="true" Color="Color.Info" Margin="Margin.Normal" Bordered>
-        <MudNavLink Href="/api/MudNavMenu" Icon="@Icons.Material.Filled.Home" IconColor="Color.Inherit">Home</MudNavLink>
-        <MudNavLink Href="/components/navmenu" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Storage" IconColor="Color.Inherit">Servers</MudNavLink>
-        <MudNavLink Href="/getting-started/wireframes/content2" Disabled="true">Billing</MudNavLink>
-        <MudNavGroup Title="Settings">
-            <MudNavLink OnClick="@(() => GoTo("Settings/Users"))">Users</MudNavLink>
-            <MudNavLink OnClick="@(() => GoTo("Settings/Security"))">Security</MudNavLink>
-        </MudNavGroup>
-    </MudNavMenu>
-    <MudSpacer />
-    <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" />
-    <MudMenu Icon="@Icons.Material.Filled.MoreVert" AriaLabel="Open user menu">
-        <MudMenuItem>Profile</MudMenuItem>
-        <MudMenuItem>My account</MudMenuItem>
-        <MudMenuItem>Logout</MudMenuItem>
-    </MudMenu>
-</MudAppBar>
+<MudLayout>
+    <MudAppBar Class="py-4" Color="Color.Default" Elevation="3" Fixed="false">
+        <MudText Typo="Typo.h6" Class="px-4" Style="white-space:nowrap">My App</MudText>
+        <MudNavMenu Horizontal="true" Color="Color.Info" Margin="Margin.Normal" Bordered Rounded>
+            <MudNavLink Href="/api/MudNavMenu" Icon="@Icons.Material.Filled.Home" IconColor="Color.Inherit" Class="@_desktopView">Home</MudNavLink>
+            <MudNavLink Href="/components/navmenu" Icon="@Icons.Material.Filled.Storage" IconColor="Color.Inherit" Class="@_desktopView">Servers</MudNavLink>
+            <MudNavLink Href="/getting-started/wireframes/content2" Class="@_desktopView" Disabled>Billing</MudNavLink>
+            <MudNavGroup Title="Settings" Class="@_desktopView">
+                <MudNavLink OnClick="@(() => GoTo("Settings/Users"))">Users</MudNavLink>
+                <MudNavLink OnClick="@(() => GoTo("Settings/Security"))">Security</MudNavLink>
+            </MudNavGroup>
+
+            <MudNavLink Href="/api/MudNavMenu" Icon="@Icons.Material.Filled.Home" IconColor="Color.Inherit" Class="@_mobileView" />
+            <MudNavLink Href="/components/navmenu" Icon="@Icons.Material.Filled.Storage" IconColor="Color.Inherit" Class="@_mobileView" />
+        </MudNavMenu>
+        <MudSpacer />
+        <MudMenu Icon="@Icons.Material.Filled.Settings" Class="@_mobileView" AriaLabel="Settings">
+            <MudMenuItem OnClick="@(() => GoTo("Settings/Users"))">Users</MudMenuItem>
+            <MudMenuItem OnClick="@(() => GoTo("Settings/Security"))">Security</MudMenuItem>
+        </MudMenu>
+        <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Class="d-md-none d-lg-flex" />
+        <MudMenu Icon="@Icons.Material.Filled.MoreVert" AriaLabel="Open user menu">
+            <MudMenuItem>Profile</MudMenuItem>
+            <MudMenuItem>My account</MudMenuItem>
+            <MudMenuItem>Logout</MudMenuItem>
+        </MudMenu>
+    </MudAppBar>
+    <MudMainContent Class="pt-4" Style="height:100px;"/>
+</MudLayout>
+
 
 @code {
+    private string _desktopView = "d-none d-sm-none d-md-flex";
+    private string _mobileView = "d-flex d-sm-flex d-md-none";
+
     private void GoTo(string page) => Snackbar.Add($"Clicked {page}");
 }

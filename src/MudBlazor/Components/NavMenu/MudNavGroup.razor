@@ -34,38 +34,14 @@
             <MudIcon Disabled="@Disabled" Icon="@ExpandIcon" Class="@ExpandIconClassname" />
         }
     </button>
-    @if (ParentNavMenu is not null && ParentNavMenu.Horizontal)
-    {
-        <MudPopover Open="_navigationContext.Expanded"
+    <MudCollapse aria-hidden="@((_navigationContext.Expanded is false).ToString().ToLowerInvariant())"
+                    Expanded="@_navigationContext.Expanded"
                     MaxHeight="@MaxHeight"
-                    AnchorOrigin="@Origin.BottomCenter"
-                    TransformOrigin="@Origin.TopLeft"
-                    OverflowBehavior="OverflowBehavior.FlipAlways">
-            <CascadingValue Value="@_navigationContext">
-                <CascadingValue Value="@ParentNavMenu" IsFixed="true">
-                    <MudNavMenu>
-                        @ChildContent
-                    </MudNavMenu>
-                </CascadingValue>
-            </CascadingValue>
-        </MudPopover>
-
-        if (ParentNavigationContext is null)
-        {
-            <MudOverlay Visible="@_navigationContext.Expanded" AutoClose OnClosed="ExpandedToggleAsync" LockScroll="false" />
-        }
-    }
-    else
-    {
-        <MudCollapse aria-hidden="@((_navigationContext.Expanded is false).ToString().ToLowerInvariant())"
-                     Expanded="@_navigationContext.Expanded"
-                     MaxHeight="@MaxHeight"
-                     Class="mud-navgroup-collapse">
-            <CascadingValue Value="@_navigationContext">
+                    Class="mud-navgroup-collapse">
+        <CascadingValue Value="@_navigationContext">
                 <MudNavMenu>
                     @ChildContent
                 </MudNavMenu>
             </CascadingValue>
-        </MudCollapse>
-    }
+    </MudCollapse>
 </nav>
