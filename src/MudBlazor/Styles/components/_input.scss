@@ -359,7 +359,6 @@
     box-sizing: content-box;
     letter-spacing: inherit;
     -webkit-tap-highlight-color: transparent;
-    height: auto;
     resize: none;
     cursor: auto;
 
@@ -502,15 +501,13 @@
 }
 
 .mud-input-adornment-start {
-  &.mud-input-root-filled-shrink {
-    margin-top: 16px;
-  }
-}
-
-.mud-input-adornment-start {
   margin-right: 8px;
   margin-inline-end: 8px;
   margin-inline-start: unset;
+
+  &.mud-input-root-filled-shrink {
+    margin-top: 16px;
+  }
 }
 
 .mud-input-adornment-end {
