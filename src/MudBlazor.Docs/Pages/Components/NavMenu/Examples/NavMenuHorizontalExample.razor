@@ -5,7 +5,7 @@
 <MudLayout>
     <MudAppBar Class="py-4" Color="Color.Default" Elevation="3" Fixed="false">
         <MudText Typo="Typo.h6" Class="px-4" Style="white-space:nowrap">My App</MudText>
-        <MudNavMenu Horizontal="true" Color="Color.Info" Margin="Margin.Normal" Bordered Rounded>
+        <MudNavMenu Horizontal="true" Color="Color.Info" Margin="@(_dense ? Margin.Dense : Margin.Normal)" Bordered="@_bordered" Rounded="@_rounded" Dense="@_dense">
             <MudNavLink Href="/api/MudNavMenu" Icon="@Icons.Material.Filled.Home" IconColor="Color.Inherit" Class="@_desktopView">Home</MudNavLink>
             <MudNavLink Href="/components/navmenu" Icon="@Icons.Material.Filled.Storage" IconColor="Color.Inherit" Class="@_desktopView">Servers</MudNavLink>
             <MudNavLink Href="/getting-started/wireframes/content2" Class="@_desktopView" Disabled>Billing</MudNavLink>
@@ -29,13 +29,23 @@
             <MudMenuItem>Logout</MudMenuItem>
         </MudMenu>
     </MudAppBar>
-    <MudMainContent Class="pt-4" Style="height:100px;"/>
+    <MudMainContent Class="pt-4" Style="height:100px;">
+        <MudStack Row>
+            <MudSwitch @bind-Value="_dense" Color="Color.Secondary">Dense</MudSwitch>
+            <MudSwitch @bind-Value="_rounded" Color="Color.Secondary">Rounded</MudSwitch>
+            <MudSwitch @bind-Value="_bordered" Color="Color.Secondary">Bordered</MudSwitch>
+        </MudStack>
+    </MudMainContent>
 </MudLayout>
 
 
 @code {
     private string _desktopView = "d-none d-sm-none d-md-flex";
     private string _mobileView = "d-flex d-sm-flex d-md-none";
+
+    private bool _dense;
+    private bool _rounded;
+    private bool _bordered;
 
     private void GoTo(string page) => Snackbar.Add($"Clicked {page}");
 }
