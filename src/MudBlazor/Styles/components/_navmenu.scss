@@ -30,6 +30,54 @@
     }
   }
 
+  &.mud-navmenu-horizontal {
+    width: 100%;
+    display: flex;
+    align-items: center;
+
+    .mud-nav-item {
+      width: fit-content;
+    }
+
+    .mud-collapse-wrapper-inner .mud-nav-item {
+      width: 100%;
+
+      .mud-nav-link {
+        margin: 0 4px;
+      }
+    }
+
+    &.mud-navmenu-margin-normal {
+      .mud-nav-link {
+        margin: 0 4px;
+      }
+    }
+
+    &.mud-navmenu-margin-dense {
+      .mud-nav-link {
+        margin: 0 2px;
+      }
+    }
+
+    &.mud-navmenu-bordered {
+      .mud-nav-link {
+        &.active:not(.mud-nav-link-disabled) {
+          border-bottom-style: solid;
+          border-bottom-width: 2px;
+        }
+      }
+    }
+
+    .mud-nav-group {
+      width: fit-content;
+
+      & * .mud-navmenu .mud-nav-item .mud-nav-link {
+        padding-inline-start: 36px;
+        padding-inline-end: 16px;
+      }
+    }
+  }
+
   &.mud-navmenu-bordered:not(.mud-navmenu-horizontal) {
     .mud-nav-link {
       &.active:not(.mud-nav-link-disabled) {
@@ -229,56 +277,6 @@
 .mud-navmenu-horizontal .mud-navgroup-collapse.mud-collapse-entered {
   display: grid;
   transform: translate(4px);
-}
-
-.mud-navmenu {
-  &.mud-navmenu-horizontal {
-    width: 100%;
-    display: flex;
-    align-items: center;
-
-    .mud-nav-item {
-      width: fit-content;
-    }
-
-    .mud-collapse-wrapper-inner .mud-nav-item {
-      width: 100%;
-
-      .mud-nav-link {
-        margin: 0 4px;
-      }
-    }
-
-    &.mud-navmenu-margin-normal {
-      .mud-nav-link {
-        margin: 0 4px;
-      }
-    }
-
-    &.mud-navmenu-margin-dense {
-      .mud-nav-link {
-        margin: 0 2px;
-      }
-    }
-
-    &.mud-navmenu-bordered {
-      .mud-nav-link {
-        &.active:not(.mud-nav-link-disabled) {
-          border-bottom-style: solid;
-          border-bottom-width: 2px;
-        }
-      }
-    }
-
-    .mud-nav-group {
-      width: fit-content;
-
-      & * .mud-navmenu .mud-nav-item .mud-nav-link {
-        padding-inline-start: 36px;
-        padding-inline-end: 16px;
-      }
-    }
-  }
 }
 
 .mud-nav-group * .mud-navmenu > .mud-nav-group {
