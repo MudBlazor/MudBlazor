@@ -4,7 +4,7 @@
 
 @if (Parent?.KeepPanelsAlive == true)
 {
-    <div @attributes="UserAttributes" class="@Class" style="display:@(Parent?.ActivePanel == this ? "contents" : "none");@Style">
+    <div @attributes="UserAttributes" class="@Classname" style="@Stylename">
         @ChildContent
     </div>
 }
