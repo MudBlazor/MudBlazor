@@ -54,7 +54,7 @@ namespace MudBlazor
 
         protected string InputClasses =>
             new CssBuilder(InputClass)
-                .AddClass("mud-file-upload-draggover", DragAndDrop)
+                .AddClass("mud-file-upload-dragover", DragAndDrop)
                 .Build();
 
         /// <summary>
