@@ -21,8 +21,6 @@
 
   .mud-table-cell {
     &.edit-mode-cell {
-      //padding: 0 !important;
-
       .mud-input-control {
         margin: 0 !important;
       }
@@ -104,7 +102,6 @@
       .sort-direction-icon {
         font-size: 18px;
         margin-left: 4px;
-        margin-left: 4px;
         margin-inline-start: 4px;
         margin-inline-end: unset;
         user-select: none;
@@ -127,9 +124,7 @@
       }
 
       .column-options .mud-menu .mud-icon-button-label {
-        /*font-size: 18px;*/
         user-select: none;
-        /*margin-right: 4px;*/
         transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,transform 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
         opacity: 0;
       }
@@ -178,7 +173,6 @@
 
   .sort-direction-icon {
     font-size: 18px;
-    margin-left: 4px;
     margin-left: 4px;
     margin-inline-start: 4px;
     margin-inline-end: unset;
