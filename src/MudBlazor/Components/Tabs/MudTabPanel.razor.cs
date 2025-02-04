@@ -25,7 +25,7 @@ public partial class MudTabPanel
 
     internal string Classname =>
         new CssBuilder("mud-tab-panel")
-            .AddClass("d-none", !Visible)
+            .AddClass("mud-tab-panel-hidden", !Visible)
             .AddClass(Class)
             .Build();
 

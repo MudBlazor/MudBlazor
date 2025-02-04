@@ -288,6 +288,10 @@
   }
 }
 
+.mud-tab-panel-hidden {
+  display: none !important;
+}
+
 .mud-tabs-header {
   &.mud-tabs-header-before {
     display: inherit;
