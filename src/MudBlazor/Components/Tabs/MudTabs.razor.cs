@@ -637,7 +637,7 @@ namespace MudBlazor
                 return SortComparer.Compare(a, b);
 
             var dir = SortDirection is SortDirection.Ascending ? 1 : -1;
-            return Comparer.Default.Compare( GetTabSortKey( a ), GetTabSortKey( b ) ) * dir;
+            return Comparer.Default.Compare(GetTabSortKey(a), GetTabSortKey(b)) * dir;
         }
         private static string? GetTabSortKey(MudTabPanel panel)
             => panel.SortKey ?? panel.Text;
