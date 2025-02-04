@@ -514,6 +514,14 @@ namespace MudBlazor
             }
         }
 
+        protected internal virtual async Task OnFocusedOutAsync(FocusEventArgs obj)
+        {
+            if (_isFocused)
+            {
+                await OnBlurredAsync(obj);
+            }
+        }
+
         protected virtual Task InvokeKeyDownAsync(KeyboardEventArgs obj)
         {
             _isFocused = true;
