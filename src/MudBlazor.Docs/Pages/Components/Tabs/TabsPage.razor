@@ -46,6 +46,44 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Tab Sorting">
+                <Description>
+                    TabPanels appear in the order they are processed by the RenderTreeBuilder, which can be affected by component nesting in complex scenarios.
+                    Use the <CodeInline>SortDirection</CodeInline> property to sort lexicographically by <CodeInline>Text</CodeInline>.<br />
+                    <br />
+                    Note that sorting is applied during initial rendering, when TabPanels are being added to the parent Tabs. Sorting is not re-evaluated
+                    if properties are changed at runtime.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TabsSortByTextExample)" ShowCode="false" Block="true" FullWidth="true">
+                <TabsSortByTextExample />
+            </SectionContent>
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="Sort Keys">
+                        <Description>
+                            The TabPanel's <CodeInline>SortKey</CodeInline> property is used in preference to the <CodeInline>Text</CodeInline> property, if set.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(TabsSortBySortKeyExample)" ShowCode="false" Block="true" FullWidth="true">
+                        <TabsSortBySortKeyExample />
+                    </SectionContent>
+                </DocsPageSection>
+                <DocsPageSection>
+                    <SectionHeader Title="Custom Sorting">
+                        <Description>
+                            Specify a custom <CodeInline>SortComparer</CodeInline> which implements <CodeInline>IComparer&lt;MudTabPanel&gt;</CodeInline> to
+                            override the default sorting behaviour. In this scenario, sort direction must be handled by the custom SortComparer.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(TabsSortByComparerExample)" ShowCode="false" Block="true" FullWidth="true">
+                        <TabsSortByComparerExample />
+                    </SectionContent>
+                </DocsPageSection>
+            </SectionSubGroups>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Tab Width">
                 <Description>
                     The <CodeInline>MinimumTabWidth</CodeInline> property defines a minimum width for each tab.
