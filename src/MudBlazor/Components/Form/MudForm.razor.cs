@@ -241,7 +241,13 @@ namespace MudBlazor
                 SetIsValid(valid);
                 await ErrorsChanged.InvokeAsync(Errors);
                 if (oldTouched != _touched)
+                {
                     await IsTouchedChanged.InvokeAsync(_touched);
+                    if (ParentMudForm != null)
+                    {
+                        await ParentMudForm.IsTouchedChanged.InvokeAsync(_touched);
+                    }
+                }
             }
             finally
             {
