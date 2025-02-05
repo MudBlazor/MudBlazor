@@ -1,24 +1,22 @@
 ﻿<MudForm @bind-IsValid="_parentIsValid" IsTouchedChanged="@ParentTouchChanged"
-ValidationDelay="0"
-Class="parent-form">
+         ValidationDelay="0"
+         Class="parent-form">
     <MudText>Parent Valid: @(_parentIsValid.ToString())</MudText>
     <MudTextField Label="Text in Parent"
-    Required="true"
-    T="string"
-    Class="parent-text-field"
-    />
+                  Required="true"
+                  T="string"
+                  Class="parent-text-field" />
     <MudText HtmlTag="span"><MudSwitch @bind-Value="@_showChildForm" Color="Color.Primary" /> Display child form</MudText>
     @if (_showChildForm)
     {
         <MudForm @bind-IsValid="_childIsValid" IsTouchedChanged="@ChildTouchChanged"
-        ValidationDelay="0"
-        Class="child-form">
+                 ValidationDelay="0"
+                 Class="child-form">
             <MudText>Child Valid: @(_childIsValid.ToString())</MudText>
             <MudTextField Label="Text in Child"
-            Required="true"
-            T="string"
-            Class="child-text-field"
-            />
+                          Required="true"
+                          T="string"
+                          Class="child-text-field" />
         </MudForm>
     }
     </MudForm>
