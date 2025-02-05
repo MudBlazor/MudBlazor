@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
@@ -211,10 +212,28 @@ namespace MudBlazor
             T? value;
             if (typeof(T) == typeof(IReadOnlyList<IBrowserFile>))
             {
-                var newFiles = args.GetMultipleFiles(MaximumFileCount);
+                IReadOnlyList<IBrowserFile> newFiles;
+                try
+                {
+                    newFiles = args.GetMultipleFiles(MaximumFileCount);
+                }
+                catch (Exception ex)
+                {
+                    Error = true;
+                    ErrorText = ex.Message;
+                    return;
+                }
+
                 if (AppendMultipleFiles && _filesState.Value is IReadOnlyList<IBrowserFile> oldFiles)
                 {
                     var allFiles = oldFiles.Concat(newFiles).ToList();
+                    if (allFiles.Count > MaximumFileCount)
+                    {
+                        Error = true;
+                        ErrorText = $"The maximum number of total files accepted is: {MaximumFileCount}";
+                        return;
+                    }
+
                     value = (T)(object)allFiles.AsReadOnly();
                 }
                 else
