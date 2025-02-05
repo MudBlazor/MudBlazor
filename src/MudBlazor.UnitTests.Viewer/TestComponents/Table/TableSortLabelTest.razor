@@ -1,0 +1,27 @@
+﻿<MudTable Items="_data" T="string">
+    <HeaderContent>
+        <MudTh><MudTableSortLabel Enabled="_sortEnabled" SortBy="new Func<string, object>(x => x)">Sortable Header</MudTableSortLabel></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Sortable Header">@context</MudTd>
+    </RowTemplate>
+</MudTable>
+
+<MudSwitch @bind-Value="_sortEnabled">Sort Enabled</MudSwitch>
+
+@code {
+    public static string __description__ = "Table sortable header styles should not be applied when sorting is disabled.";
+
+    private string[] _data = ["A", "B", "C"];
+    private bool _sortEnabled;
+
+    [Parameter]
+    public bool SortEnabled { get; set; } = true;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        _sortEnabled = SortEnabled;
+    }
+}

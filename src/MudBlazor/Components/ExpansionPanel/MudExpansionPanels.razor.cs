@@ -91,6 +91,14 @@ namespace MudBlazor
         [Category(CategoryTypes.ExpansionPanel.Behavior)]
         public RenderFragment? ChildContent { get; set; }
 
+        /// <summary>
+        /// A read-only list of the panels within this component. 
+        /// </summary>
+        /// <remarks>
+        /// Expansion panels are controlled by adding more <see cref="MudExpansionPanel"/> components in the Razor page.
+        /// </remarks>
+        public IReadOnlyList<MudExpansionPanel> Panels => _panels.AsReadOnly();
+
         internal async Task AddPanelAsync(MudExpansionPanel panel)
         {
             if (!MultiExpansion && _panels.Any(p => p._expandedState.Value))

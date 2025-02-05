@@ -115,6 +115,24 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("td")[2].TextContent.Trim().Should().Be("A");
         }
 
+        [Theory]
+        [TestCase(true)]
+        [TestCase(false)]
+        public void TableSortLabel(bool sortEnabled)
+        {
+            // Arrange
+            var comp = Context.RenderComponent<TableSortLabelTest>(
+                parameters => parameters.Add(x => x.SortEnabled, sortEnabled));
+            var tableSortLabel = comp.FindComponent<MudTableSortLabel<string>>();
+
+            // Assert
+            tableSortLabel
+                .Find("span")
+                .GetAttribute("class")
+                .Contains("mud-button-root")
+                .Should().Be(sortEnabled);
+        }
+
         /// <summary>
         /// Check if the loading parameter is adding a supplementary row.
         /// </summary>

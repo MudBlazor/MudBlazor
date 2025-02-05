@@ -697,7 +697,10 @@ namespace MudBlazor
             var month = FixMonth ?? (year == today.Year ? today.Month : 1);
             var day = FixDay ?? 1;
 
-            HighlightedDate = new DateTime(year, month, day);
+            if (DateTime.TryParseExact($"{year}-{month}-{day}", "yyyy-M-d", Culture, DateTimeStyles.None, out var date))
+            {
+                HighlightedDate = date;
+            }
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
