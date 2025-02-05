@@ -9,6 +9,7 @@ using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 using MudBlazor.Utilities.Clone;
 
@@ -21,7 +22,6 @@ namespace MudBlazor
     [CascadingTypeParameter(nameof(T))]
     public partial class MudDataGrid<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase, IDisposable
     {
-        private T _selectedItem;
         private MudForm _editForm;
         internal int? _rowsPerPage;
         private int _currentPage = 0;
@@ -42,6 +42,23 @@ namespace MudBlazor
         private List<GroupDefinition<T>> _allGroups = [];
         private GridData<T> _serverData = new() { TotalItems = 0, Items = Array.Empty<T>() };
         private Func<IFilterDefinition<T>> _defaultFilterDefinitionFactory = () => new FilterDefinition<T>();
+
+        private readonly ParameterState<T> _selectedItemState;
+        private readonly ParameterState<HashSet<T>> _selectedItemsState;
+
+        public MudDataGrid()
+        {
+            using var registerScope = CreateRegisterScope();
+            _selectedItemState = registerScope.RegisterParameter<T>(nameof(SelectedItem))
+                .WithParameter(() => SelectedItem)
+                .WithEventCallback(() => SelectedItemChanged)
+                .WithChangeHandler(OnSelectedItemChanged);
+
+            _selectedItemsState = registerScope.RegisterParameter<HashSet<T>>(nameof(SelectedItems))
+                .WithParameter(() => SelectedItems)
+                .WithEventCallback(() => SelectedItemsChanged)
+                .WithChangeHandler(OnSelectedItemsChanged);
+        }
 
         protected string Classname =>
             new CssBuilder("mud-table")
@@ -950,35 +967,7 @@ namespace MudBlazor
         /// This property can be bound (<c>@bind-SelectedItems</c>) to initially select rows.  Use <see cref="SelectedItem"/> when <see cref="MultiSelection"/> is <c>false</c>.
         /// </remarks>
         [Parameter]
-        public HashSet<T> SelectedItems
-        {
-            get
-            {
-                if (!MultiSelection)
-                    if (_selectedItem is null)
-                        return new HashSet<T>(Array.Empty<T>());
-                    else
-                        return new HashSet<T>(new T[] { _selectedItem });
-                else
-                    return Selection;
-            }
-            set
-            {
-                if (value == Selection)
-                    return;
-                if (value == null)
-                {
-                    if (Selection.Count == 0)
-                        return;
-                    Selection = new HashSet<T>(Comparer);
-                }
-                else
-                    Selection = value;
-                SelectedItemsChangedEvent?.Invoke(Selection);
-                SelectedItemsChanged.InvokeAsync(Selection);
-                InvokeAsync(StateHasChanged);
-            }
-        }
+        public HashSet<T> SelectedItems { get; set; }
 
         /// <summary>
         /// The currently selected row when <see cref="MultiSelection"/> is <c>false</c>.
@@ -987,17 +976,7 @@ namespace MudBlazor
         /// This property can be bound (<c>@bind-SelectedItem</c>) to initially select a row.  Use <see cref="SelectedItems"/> when <see cref="MultiSelection"/> is <c>true</c>.
         /// </remarks>
         [Parameter]
-        public T SelectedItem
-        {
-            get => _selectedItem;
-            set
-            {
-                if (EqualityComparer<T>.Default.Equals(SelectedItem, value))
-                    return;
-                _selectedItem = value;
-                SelectedItemChanged.InvokeAsync(value);
-            }
-        }
+        public T SelectedItem { get; set; }
 
         /// <summary>
         /// Allows grouping of columns in this grid.
@@ -1280,6 +1259,26 @@ namespace MudBlazor
                 await ClearCurrentSortings();
         }
 
+        private void OnSelectedItemChanged(ParameterChangedEventArgs<T> args)
+        {
+            if (!MultiSelection)
+            {
+                Selection.Clear();
+            }
+
+            // add new item to Selection
+            if (!Selection.Remove(args.Value))
+            {
+                Selection.Add(args.Value);
+            }
+        }
+
+        private void OnSelectedItemsChanged(ParameterChangedEventArgs<HashSet<T>> args)
+        {
+            SelectedItemsChangedEvent?.Invoke(args.Value);
+            StateHasChanged();
+        }
+
         #region Methods
 
         /// <summary>
@@ -1500,35 +1499,35 @@ namespace MudBlazor
             {
                 if (!MultiSelection)
                 {
-                    Selection.Remove(SelectedItem);
+                    Selection.Remove(_selectedItemState.Value);
                 }
 
                 Selection.Add(item);
-                SelectedItem = item;
+                await _selectedItemState.SetValueAsync(item);
             }
             else
             {
                 Selection.Remove(item);
                 if (Comparer != null)
                 {
-                    if (Comparer.Equals(item, SelectedItem))
+                    if (Comparer.Equals(item, _selectedItemState.Value))
                     {
-                        SelectedItem = default;
+                        await _selectedItemState.SetValueAsync(default);
                     }
                 }
                 else
                 {
-                    if (item.Equals(SelectedItem))
+                    if (item.Equals(_selectedItemState.Value))
                     {
-                        SelectedItem = default;
+                        await _selectedItemState.SetValueAsync(default);
                     }
                 }
             }
 
             if (MultiSelection)
             {
-                await InvokeAsync(() => SelectedItemsChangedEvent.Invoke(SelectedItems));
-                await SelectedItemsChanged.InvokeAsync(SelectedItems);
+                await _selectedItemsState.SetValueAsync(Selection);
+                await InvokeAsync(() => SelectedItemsChangedEvent?.Invoke(_selectedItemsState.Value));
             }
 
             await InvokeAsync(StateHasChanged);
@@ -1545,11 +1544,9 @@ namespace MudBlazor
             else
                 Selection.Clear();
 
-            SelectedItemsChangedEvent?.Invoke(SelectedItems);
+            await _selectedItemsState.SetValueAsync(Selection);
+            SelectedItemsChangedEvent?.Invoke(_selectedItemsState.Value);
             SelectedAllItemsChangedEvent?.Invoke(value);
-            await SelectedItemsChanged.InvokeAsync(SelectedItems);
-
-            StateHasChanged();
         }
 
         internal IEnumerable<T> Sort(IEnumerable<T> items)
@@ -1839,27 +1836,28 @@ namespace MudBlazor
             if (!SelectOnRowClick)
                 return;
 
+            // this is toggle logic (unselect if selected)
             if (!Selection.Remove(item))
             {
                 Selection.Add(item);
             }
             else if (!MultiSelection)
             {
-                SelectedItem = default;
+                await _selectedItemsState.SetValueAsync(default);
                 return;
             }
 
             if (MultiSelection)
             {
-                SelectedItemsChangedEvent?.Invoke(SelectedItems);
-                await SelectedItemsChanged.InvokeAsync(SelectedItems);
+                await _selectedItemsState.SetValueAsync(Selection);
+                SelectedItemsChangedEvent?.Invoke(_selectedItemsState.Value);
             }
             else
             {
-                Selection.Remove(SelectedItem);
+                Selection.Remove(_selectedItemState.Value);
             }
 
-            SelectedItem = item;
+            await _selectedItemState.SetValueAsync(item);
         }
 
         /// <summary>
