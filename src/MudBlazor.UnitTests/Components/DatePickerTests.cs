@@ -32,6 +32,7 @@ namespace MudBlazor.UnitTests.Components
             picker.FirstDayOfWeek.Should().Be(null);
             picker.ClosingDelay.Should().Be(100);
             picker.DisplayMonths.Should().Be(1);
+            picker.ISOWeek.Should().BeFalse();
             picker.MaxMonthColumns.Should().Be(null);
             picker.StartMonth.Should().Be(null);
             picker.ShowWeekNumbers.Should().BeFalse();
@@ -1565,6 +1566,46 @@ namespace MudBlazor.UnitTests.Components
 
             picker.PickerReference.PickerMonth!.Value.Year.Should().Be(2025);
             comp.FindAll("div.mud-picker-year").First(x => x.TrimmedText().Equals("2025")).ToMarkup().Should().Contain("mud-picker-year-selected");
+        }
+
+        /// <summary>
+        /// .NET default week number implementation specifies January 2th 2016 as week number 53
+        /// </summary>
+        [Test]
+        [SetCulture("da-DK")]
+        public void DatePicker_WeekNumberTest()
+        {
+            var timeProvider = new FakeTimeProvider(new DateTime(2026, 1, 2, 0, 0, 0, DateTimeKind.Utc));
+
+            Context.Services.AddSingleton<TimeProvider>(timeProvider);
+
+            var comp = Context.RenderComponent<WeekNumberTest>();
+
+            // click to open menu
+            comp.Find("input").Click();
+
+            // 2016-01-02 is week number 53 according to Calendar.GetWeekOfYear() which _is not_ ISO 8601 compliant
+            comp.FindAll(".mud-picker-calendar-week-text")[1].InnerHtml.Should().Contain("53");
+        }
+
+        /// <summary>
+        /// According to ISO-8601 January 2th 2016 is week number 1
+        /// </summary>
+        [Test]
+        [SetCulture("da-DK")]
+        public void DatePicker_WeekNumberTestUseIsoWeek()
+        {
+            var timeProvider = new FakeTimeProvider(new DateTime(2026, 1, 2, 0, 0, 0, DateTimeKind.Utc));
+
+            Context.Services.AddSingleton<TimeProvider>(timeProvider);
+
+            var comp = Context.RenderComponent<WeekNumberTest>(Parameter(nameof(WeekNumberTest.IsoWeek), true));
+
+            // click to open menu
+            comp.Find("input").Click();
+
+            // 2016-01-02 is week number 1 according to ISOWeek.GetWeekOfYear() which _is_ ISO 8601 compliant
+            comp.FindAll(".mud-picker-calendar-week-text")[1].InnerHtml.Should().Contain("1");
         }
     }
 }
