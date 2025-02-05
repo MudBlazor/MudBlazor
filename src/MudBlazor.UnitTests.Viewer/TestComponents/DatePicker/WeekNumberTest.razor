@@ -1,7 +1,11 @@
 ﻿<MudPopoverProvider />
-<MudDatePicker ISOWeek="IsoWeek" ShowWeekNumbers="true" />
+<MudDatePicker ISOWeek="IsoWeek" ShowWeekNumbers="true" FirstDayOfWeek="FirstDayOfWeek" />
 
 @code {
     [Parameter]
     public bool IsoWeek { get; set; }
+
+    [Parameter]
+    public DayOfWeek? FirstDayOfWeek { get; set; }
+    
 }

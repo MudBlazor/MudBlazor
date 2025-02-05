@@ -1569,43 +1569,69 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// .NET default week number implementation specifies January 2th 2016 as week number 53
+        /// .NET default week number implementation specifies 2025-12-30 as week number 53
         /// </summary>
         [Test]
-        [SetCulture("da-DK")]
         public void DatePicker_WeekNumberTest()
         {
-            var timeProvider = new FakeTimeProvider(new DateTime(2026, 1, 2, 0, 0, 0, DateTimeKind.Utc));
+            var timeProvider = new FakeTimeProvider(new DateTime(2025, 12, 30, 0, 0, 0, DateTimeKind.Utc));
 
             Context.Services.AddSingleton<TimeProvider>(timeProvider);
 
-            var comp = Context.RenderComponent<WeekNumberTest>();
+            var comp = Context.RenderComponent<WeekNumberTest>(
+                Parameter(nameof(WeekNumberTest.IsoWeek), false),
+                Parameter(nameof(WeekNumberTest.FirstDayOfWeek), DayOfWeek.Monday));
 
             // click to open menu
             comp.Find("input").Click();
 
-            // 2016-01-02 is week number 53 according to Calendar.GetWeekOfYear() which _is not_ ISO 8601 compliant
-            comp.FindAll(".mud-picker-calendar-week-text")[1].InnerHtml.Should().Contain("53");
+            // 2025-12-30 is week number 53 according to Calendar.GetWeekOfYear() which _is not_ ISO 8601 compliant
+            comp.FindAll(".mud-picker-calendar-week-text")[5].InnerHtml.Should().Contain("53");
         }
 
         /// <summary>
-        /// According to ISO-8601 January 2th 2016 is week number 1
+        /// IsoWeek parameter is ignored when FirstDayOfWeek is not monday
         /// </summary>
         [Test]
-        [SetCulture("da-DK")]
-        public void DatePicker_WeekNumberTestUseIsoWeek()
+        public void DatePicker_WeekNumberTestIgnoreUseIsoWeekWhenFirstWeekdaySunday()
         {
-            var timeProvider = new FakeTimeProvider(new DateTime(2026, 1, 2, 0, 0, 0, DateTimeKind.Utc));
+            var timeProvider = new FakeTimeProvider(new DateTime(2025, 12, 30, 0, 0, 0, DateTimeKind.Utc));
 
             Context.Services.AddSingleton<TimeProvider>(timeProvider);
 
-            var comp = Context.RenderComponent<WeekNumberTest>(Parameter(nameof(WeekNumberTest.IsoWeek), true));
+            var comp = Context.RenderComponent<WeekNumberTest>(
+                Parameter(nameof(WeekNumberTest.IsoWeek), true), // ignored when not monday
+                Parameter(nameof(WeekNumberTest.FirstDayOfWeek), DayOfWeek.Sunday)
+            );
 
             // click to open menu
             comp.Find("input").Click();
 
-            // 2016-01-02 is week number 1 according to ISOWeek.GetWeekOfYear() which _is_ ISO 8601 compliant
-            comp.FindAll(".mud-picker-calendar-week-text")[1].InnerHtml.Should().Contain("1");
+            // 2025-12-30 is week number 1 according to ISOWeek.GetWeekOfYear() which _is_ ISO 8601 compliant
+            // but we use en-US with first weekday set to sunday, so isoweek is ignored in this instance
+            comp.FindAll(".mud-picker-calendar-week-text")[5].InnerHtml.Should().Contain("53");
+        }
+
+        /// <summary>
+        /// According to ISO-8601 2025-12-30 is week number 1
+        /// </summary>
+        [Test]
+        public void DatePicker_WeekNumberTestUseIsoWeek()
+        {
+            var timeProvider = new FakeTimeProvider(new DateTime(2025, 12, 30, 0, 0, 0, DateTimeKind.Utc));
+
+            Context.Services.AddSingleton<TimeProvider>(timeProvider);
+
+            var comp = Context.RenderComponent<WeekNumberTest>(
+                Parameter(nameof(WeekNumberTest.IsoWeek), true),
+                Parameter(nameof(WeekNumberTest.FirstDayOfWeek), DayOfWeek.Monday)
+                );
+
+            // click to open menu
+            comp.Find("input").Click();
+
+            // 2025-12-30 is week number 1 according to ISOWeek.GetWeekOfYear() which _is_ ISO 8601 compliant
+            comp.FindAll(".mud-picker-calendar-week-text")[5].InnerHtml.Should().Contain("1");
         }
     }
 }
