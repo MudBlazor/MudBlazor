@@ -15,6 +15,7 @@ using FluentAssertions;
 using FluentAssertions.Execution;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Extensions;
 using MudBlazor.Interfaces;
 using MudBlazor.UnitTests.TestComponents.DataGrid;
 using MudBlazor.Utilities.Clone;
@@ -584,28 +585,28 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DataGridSingleSelectionTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridSingleSelectionTest.Item>>();
 
-            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0);
 
             // select first item programmatically
             var firstItem = dataGrid.Instance.Items.ElementAt(0);
             await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectedItemAsync(true, firstItem));
-            dataGrid.Instance.SelectedItems.Count.Should().Be(1);
-            dataGrid.Instance.SelectedItem.Should().Be(firstItem);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(1);
+            dataGrid.Instance.GetState(x => x.SelectedItem).Should().Be(firstItem);
 
             // select second item programmatically (still should be only one item selected)
             var secondItem = dataGrid.Instance.Items.ElementAt(1);
             await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectedItemAsync(true, secondItem));
-            dataGrid.Instance.SelectedItems.Count.Should().Be(1);
-            dataGrid.Instance.SelectedItem.Should().Be(secondItem);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(1);
+            dataGrid.Instance.GetState(x => x.SelectedItem).Should().Be(secondItem);
 
             // deselect an item programmatically
             await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectedItemAsync(false, secondItem));
-            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
-            dataGrid.Instance.SelectedItem.Should().BeNull();
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0);
+            dataGrid.Instance.GetState(x => x.SelectedItem).Should().BeNull();
 
             // nothing should happen as the "select all" shouldn't do anything in single selection mode
             dataGrid.FindAll("input")[0].Change(true);
-            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0);
         }
 
         [Test]
@@ -730,15 +731,16 @@ namespace MudBlazor.UnitTests.Components
             //test that changing header sets all items selected
             dataGrid.Instance.SelectedItems.Count.Should().Be(0);
             dataGrid.FindAll("input.mud-checkbox-input")[0].Change(true);
-            dataGrid.Instance.SelectedItems.Count.Should().Be(dataGrid.Instance.Items.Count());
+            comp.Render();
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(dataGrid.Instance.Items.Count());
             //test that changing footer unselects all items
             dataGrid.FindAll("input.mud-checkbox-input")[^1].Change(false);
-            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0);
             //test that changing value in each row selects an item in grid
             for (var i = 1; i < dataGrid.Instance.Items.Count(); i++)
             {
                 dataGrid.FindAll("input.mud-checkbox-input")[i].Change(true);
-                dataGrid.Instance.SelectedItems.Count.Should().Be(i);
+                dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(i);
             }
         }
 
@@ -4294,14 +4296,14 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridMultiSelectionTest.Item>>();
 
             // click on the first row
-            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0);
             dataGrid.FindAll("tbody.mud-table-body td")[1].Click();
-            dataGrid.Instance.SelectedItems.Count.Should().Be(1);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(1);
             dataGrid.FindAll(".mud-checkbox-true").Count.Should().Be(1); //ensure selection is rendered
 
             // click on the second row
             dataGrid.FindAll("tbody.mud-table-body td")[2].Click();
-            dataGrid.Instance.SelectedItems.Count.Should().Be(2);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(2);
             dataGrid.FindAll(".mud-checkbox-true").Count.Should().Be(2);
 
             var parameters = new List<ComponentParameter>();
@@ -4310,13 +4312,13 @@ namespace MudBlazor.UnitTests.Components
 
             // deselect all programmatically
             await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectAllAsync(false));
-            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0);
             dataGrid.FindAll(".mud-checkbox-true").Count.Should().Be(0);
 
             // click on the first row
-            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0);
             dataGrid.FindAll("tbody.mud-table-body td")[1].Click();
-            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0);
             dataGrid.FindAll(".mud-checkbox-true").Count.Should().Be(0);
         }
 
@@ -4327,20 +4329,20 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridSingleSelectionTest.Item>>();
 
             // click on the first row
-            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0);
             dataGrid.FindAll("tbody.mud-table-body td")[1].Click();
-            dataGrid.Instance.SelectedItems.Count.Should().Be(1);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(1);
             dataGrid.FindAll(".mud-checkbox-true").Count.Should().Be(1); //ensure selection is rendered
 
             // click on the second row
             dataGrid.FindAll("tbody.mud-table-body td")[2].Click();
-            dataGrid.Instance.SelectedItems.Count.Should().Be(1);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(1);
             dataGrid.FindAll(".mud-checkbox-true").Count.Should().Be(1);
 
 
             // click on the second row
             dataGrid.FindAll("tbody.mud-table-body td")[2].Click();
-            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0);
             dataGrid.FindAll(".mud-checkbox-true").Count.Should().Be(0);
 
             var parameters = new List<ComponentParameter>
@@ -4352,12 +4354,12 @@ namespace MudBlazor.UnitTests.Components
 
             // deselect all programmatically
             await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectAllAsync(false));
-            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0);
 
             // click on the first row
-            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0);
             dataGrid.FindAll("tbody.mud-table-body td")[1].Click();
-            dataGrid.Instance.SelectedItems.Count.Should().Be(0);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0);
             dataGrid.FindAll(".mud-checkbox-true").Count.Should().Be(0);
         }
 
@@ -5017,6 +5019,44 @@ namespace MudBlazor.UnitTests.Components
                 test.GetGroupIcon(isExpanded, isRightToLeft).Should().Be(Icons.Material.Filled.ExpandMore);
             else
                 test.GetGroupIcon(isExpanded, isRightToLeft).Should().Be(isRightToLeft ? Icons.Material.Filled.ChevronLeft : Icons.Material.Filled.ChevronRight);
+        }
+
+        [Test]
+        public async Task DataGrid_TwoWayBind_SelectedItem_SelectedItems()
+        {
+            int selectedItem = 3;
+            var items = new List<int> { 1, 2, 3, 4, 5 };
+            HashSet<int> selectedItems = new HashSet<int> { selectedItem };
+            var comp = Context.RenderComponent<MudDataGrid<int>>(parameters =>
+            {
+                parameters.Add(x => x.Items, items);
+                parameters.Bind(x => x.SelectedItem, selectedItem, x => selectedItem = x);
+                parameters.Bind(x => x.SelectedItems, selectedItems, x => selectedItems = x);
+                parameters.Add(x => x.MultiSelection, false);
+            });
+
+            comp.Instance.Items.Count().Should().Be(items.Count);
+            comp.Instance.GetState(x => x.SelectedItem).Should().Be(selectedItem);
+            comp.Instance.GetState(x => x.SelectedItems).Should().Contain(selectedItem);
+
+            // in single selection toggle selection using row click method
+            await comp.Instance.SetSelectedItemAsync(5);
+
+            // two way binding should have updated
+            selectedItems.Should().Contain(5);
+            selectedItems.Count().Should().Be(1);
+            selectedItem.Should().Be(5);
+
+            // in multi selection toggle selection using row click method
+            comp.SetParam(x => x.MultiSelection, true);
+            comp.Render();
+            await comp.Instance.SetSelectedItemAsync(4);
+
+            // two way binding should have updated
+            selectedItems.Should().Contain(4);
+            selectedItems.Should().Contain(5);
+            selectedItems.Count().Should().Be(2);
+            selectedItem.Should().Be(4);
         }
     }
 }
