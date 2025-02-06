@@ -142,6 +142,6 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>8</c> for eight pixels.  Only takes effect when the <see cref="MudChart"/> type is <see cref="ChartType.Bar"/>.
         /// </remarks>
-        public double BarStrokeWidth { get; set; } = 8;
+        public double BarWidth { get; set; } = 8;
     }
 }

@@ -147,7 +147,7 @@ namespace MudBlazor.Charts
         {
             _legends.Clear();
             _bars.Clear();
-            double barWidth = MudChartParent?.ChartOptions.BarStrokeWidth ?? ChartOptions.BarStrokeWidth;
+            double barWidth = MudChartParent?.ChartOptions.BarWidth ?? ChartOptions.BarWidth;
             double barSpacing = barWidth * 0.115;
 
             for (var i = 0; i < _series.Count; i++)
