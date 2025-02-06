@@ -5,6 +5,7 @@ using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Examples.Data.Models;
 using MudBlazor.UnitTests.TestComponents.Table;
 using NUnit.Framework;
 
@@ -435,6 +436,19 @@ namespace MudBlazor.UnitTests.Components
             // select elements needed for the test
             var pager = comp.FindComponent<MudSelect<int>>().Instance;
             pager.Value.Should().Be(8);
+        }
+
+        /// <summary>
+        /// test that pager appears at top of table
+        /// </summary>
+        [Test]
+        public void TablePagerAtTop()
+        {
+            var comp = Context.RenderComponent<TablePagerAtTopTest>();
+            // print the generated html
+            // select elements needed for the test
+            var tablePager = comp.FindComponent<MudTable<int>>().Instance;
+            tablePager.PagerAtTop.Should().Be(true);
         }
 
         /// <summary>

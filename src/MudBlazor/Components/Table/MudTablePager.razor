@@ -5,7 +5,7 @@
 
 <MudToolBar @attributes="UserAttributes" Class="@Classname" Style="@Style">
     @if (HorizontalAlignment == HorizontalAlignment.End ||
-   (HorizontalAlignment == HorizontalAlignment.Right && !RightToLeft) ||
+   (HorizontalAlignment == HorizontalAlignment.Right && !RightToLeft) ||// for languages read left to right
    (HorizontalAlignment == HorizontalAlignment.Left && RightToLeft) ||
     HorizontalAlignment == HorizontalAlignment.Center)
     {

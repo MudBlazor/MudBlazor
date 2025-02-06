@@ -1,0 +1,23 @@
+﻿<MudText>SelectedItems { @string.Join(", ", _selectedItems) }</MudText>
+<MudTable T="int" Items="items" @bind-SelectedItems="_selectedItems" MultiSelection="true"
+PagerAtTop="true">
+    <HeaderContent>
+        <MudTh>#</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+
+@code
+{
+
+    public static string __description__ = "allowing the user to put the table paginator at the top of the table or below it.";
+
+    private int[] items = [1];
+
+    private HashSet<int> _selectedItems = [];
+}

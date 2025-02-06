@@ -407,6 +407,20 @@ namespace MudBlazor
         public RenderFragment? PagerContent { get; set; }
 
         /// <summary>
+        /// The custom pagination content for this table.
+        /// Allowing the programmer to dictate the position of the pager.
+        /// Options are on top of table or below table
+        /// A boolean value: true for top, false for bottom
+        /// </summary>
+        /// <remarks>
+        /// Add a <see cref="MudTablePager"/> here to navigate multiple pages of data.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Table.Pagination)]
+        public bool PagerAtTop { get; set; } = false;
+
+
+        /// <summary>
         /// Prevents rows from being edited inline.
         /// </summary>
         /// <remarks>
