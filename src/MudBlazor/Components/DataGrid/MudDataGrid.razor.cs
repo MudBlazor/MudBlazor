@@ -1228,11 +1228,6 @@ namespace MudBlazor
 
         #endregion
 
-        protected override void OnInitialized()
-        {
-            base.OnInitialized();
-        }
-
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
