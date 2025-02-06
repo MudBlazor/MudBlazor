@@ -1226,12 +1226,7 @@ namespace MudBlazor
         [Obsolete("Use ClearAsync instead")]
         public async Task Clear()
         {
-            await SetValueAsync(default, false);
-            await SetTextAsync(default, false);
-            _selectedValues.Clear();
-            await BeginValidateAsync();
-            StateHasChanged();
-            await SelectedValuesChanged.InvokeAsync(_selectedValues);
+            await ClearAsync();
         }
 
         private async Task SelectAllClickAsync()
