@@ -48,6 +48,8 @@ namespace MudBlazor
 
         public MudDataGrid()
         {
+            Selection = new HashSet<T>(Comparer);
+            SelectedItems = Selection;
             using var registerScope = CreateRegisterScope();
             _selectedItemState = registerScope.RegisterParameter<T>(nameof(SelectedItem))
                 .WithParameter(() => SelectedItem)
@@ -1228,7 +1230,6 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
-            Selection = new HashSet<T>(Comparer);
             base.OnInitialized();
         }
 
@@ -1271,12 +1272,20 @@ namespace MudBlazor
             {
                 Selection.Add(args.Value);
             }
+
+            _selectedItemsState.SetValueAsync(Selection);
         }
 
         private void OnSelectedItemsChanged(ParameterChangedEventArgs<HashSet<T>> args)
         {
-            SelectedItemsChangedEvent?.Invoke(args.Value);
-            StateHasChanged();
+            if (args.Value == null)
+            {
+                Selection.Clear();
+            }
+            else
+            {
+                Selection = args.Value;
+            }
         }
 
         #region Methods
@@ -1499,7 +1508,7 @@ namespace MudBlazor
             {
                 if (!MultiSelection)
                 {
-                    Selection.Remove(_selectedItemState.Value);
+                    Selection.Clear();
                 }
 
                 Selection.Add(item);
@@ -1524,17 +1533,18 @@ namespace MudBlazor
                 }
             }
 
-            if (MultiSelection)
-            {
-                await _selectedItemsState.SetValueAsync(Selection);
-                await InvokeAsync(() => SelectedItemsChangedEvent?.Invoke(_selectedItemsState.Value));
-            }
+            await _selectedItemsState.SetValueAsync(Selection);
+            await InvokeAsync(() => SelectedItemsChangedEvent?.Invoke(Selection));
 
             await InvokeAsync(StateHasChanged);
         }
 
         internal async Task SetSelectAllAsync(bool value)
         {
+            // nothing should happen if multiselection is false
+            if (!MultiSelection)
+                return;
+
             var items = HasServerData
                     ? ServerItems
                     : FilteredItems;
@@ -1544,9 +1554,11 @@ namespace MudBlazor
             else
                 Selection.Clear();
 
-            await _selectedItemsState.SetValueAsync(Selection);
-            SelectedItemsChangedEvent?.Invoke(_selectedItemsState.Value);
-            SelectedAllItemsChangedEvent?.Invoke(value);
+            await InvokeAsync(async () => await _selectedItemsState.SetValueAsync(Selection));
+            await InvokeAsync(() => SelectedItemsChangedEvent?.Invoke(Selection));
+            await InvokeAsync(() => SelectedAllItemsChangedEvent?.Invoke(value));
+
+            await InvokeAsync(StateHasChanged);
         }
 
         internal IEnumerable<T> Sort(IEnumerable<T> items)
@@ -1843,14 +1855,14 @@ namespace MudBlazor
             }
             else if (!MultiSelection)
             {
-                await _selectedItemsState.SetValueAsync(default);
+                await _selectedItemState.SetValueAsync(default);
                 return;
             }
 
             if (MultiSelection)
             {
                 await _selectedItemsState.SetValueAsync(Selection);
-                SelectedItemsChangedEvent?.Invoke(_selectedItemsState.Value);
+                SelectedItemsChangedEvent?.Invoke(Selection);
             }
             else
             {
@@ -1858,6 +1870,7 @@ namespace MudBlazor
             }
 
             await _selectedItemState.SetValueAsync(item);
+            await _selectedItemsState.SetValueAsync(Selection);
         }
 
         /// <summary>
