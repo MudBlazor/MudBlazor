@@ -4,6 +4,7 @@
 
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
@@ -15,6 +16,18 @@ namespace MudBlazor;
 public partial class MudTabPanel
 {
     private Boolean _disposed;
+
+    protected string Stylename =>
+        new StyleBuilder()
+            .AddStyle("display", Parent?.ActivePanel == this ? "contents" : "none", Parent?.KeepPanelsAlive == true)
+            .AddStyle(Style)
+            .Build();
+
+    internal string Classname =>
+        new CssBuilder("mud-tab-panel")
+            .AddClass("mud-tab-panel-hidden", !Visible)
+            .AddClass(Class)
+            .Build();
 
     [CascadingParameter]
     private MudTabs? Parent { get; set; }
@@ -63,6 +76,16 @@ public partial class MudTabPanel
     [Parameter]
     [Category(CategoryTypes.Tabs.Behavior)]
     public bool Disabled { get; set; }
+
+    /// <summary>
+    /// Shows the tab.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>true</c>.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.FormComponent.Behavior)]
+    public bool Visible { get; set; } = true;
 
     /// <summary>
     /// For dynamic tabs, shows a "Close" icon for this tab.

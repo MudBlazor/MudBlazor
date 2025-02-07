@@ -16,7 +16,8 @@ namespace MudBlazor
     {
         private SortDirection _direction = SortDirection.None;
 
-        protected string Classname => new CssBuilder("mud-button-root mud-table-sort-label")
+        protected string Classname => new CssBuilder("mud-table-sort-label")
+            .AddClass("mud-button-root", Enabled)
             .AddClass(Class)
             .Build();
 

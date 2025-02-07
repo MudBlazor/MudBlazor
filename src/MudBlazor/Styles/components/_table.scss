@@ -33,7 +33,15 @@
       line-height: 1.5rem;
 
       & .mud-button-root {
-          user-select: auto;
+        @media(hover: hover) and (pointer: fine) {
+          &:hover {
+            color: var(--mud-palette-action-default);
+
+            .mud-table-sort-label-icon {
+              opacity: 0.8;
+            }
+          }
+        }
       }
     }
   }
@@ -57,21 +65,11 @@
 }
 
 .mud-table-sort-label {
-  cursor: pointer;
+  user-select: auto;
   display: inline-flex;
   align-items: center;
   flex-direction: inherit;
   justify-content: flex-start;
-
-  @media(hover: hover) and (pointer: fine) {
-    &:hover {
-      color: var(--mud-palette-action-default);
-
-      .mud-table-sort-label-icon {
-        opacity: 0.8;
-      }
-    }
-  }
 
   .mud-table-sort-label-icon {
     font-size: 18px;
