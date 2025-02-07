@@ -78,7 +78,7 @@ public partial class MudTabPanel
     public bool Disabled { get; set; }
 
     /// <summary>
-    /// Indicates whether the TabPanel is visible.
+    /// Shows the tab.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>true</c>.

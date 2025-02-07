@@ -1,0 +1,13 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudTabs>
+    <MudTabPanel Text="Item One"/>
+    <MudTabPanel Text="Item Two" Visible="@_visible" />
+    <MudTabPanel Text="Item Three" />
+</MudTabs>
+
+<MudSwitch @bind-Value="_visible" Label="Tab Two Visible" />
+
+@code {
+    private bool _visible = true;
+}

@@ -2,13 +2,7 @@
 
 <MudTabs>
     <MudTabPanel Text="Item One" ToolTip="ToolTip One" />
-    <MudTabPanel Text="Item Two" ToolTip="ToolTip Two" Visible="@isVisible" />
+    <MudTabPanel Text="Item Two" ToolTip="ToolTip Two" />
     <MudTabPanel Text="Item Three" ToolTip="ToolTip Three" />
     <MudTabPanel Text="Item Disabled" ToolTip="ToolTip Disabled" Disabled="true" />
 </MudTabs>
-
-<MudCheckBox @bind-Value="isVisible" Label="Tab Two visible" />
-
-@code{
-    private bool isVisible = true;
-}
