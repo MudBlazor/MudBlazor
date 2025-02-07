@@ -1,14 +1,14 @@
 ﻿@using System.Threading
 
 <MudAutocomplete T="string"
-Variant="Variant.Outlined"
-Value="@_value"
-Label="Values"
-SearchFunc="SearchValues"
-ResetValueOnEmptyText="true"
-Adornment="Adornment.End"
-AdornmentIcon="@Icons.Material.Filled.Add"
-OnAdornmentClick="OpenDialog" />
+                 Variant="Variant.Outlined"
+                 Value="@_value"
+                 Label="Values"
+                 SearchFunc="SearchValues"
+                 ResetValueOnEmptyText="true"
+                 Adornment="Adornment.End"
+                 AdornmentIcon="@Icons.Material.Filled.Add"
+                 OnAdornmentClick="OpenDialog" />
 
 <MudDialog @bind-Visible="_dialogVisible">
     <TitleContent>
