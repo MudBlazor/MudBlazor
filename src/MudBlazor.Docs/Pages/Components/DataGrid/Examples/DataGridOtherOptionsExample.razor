@@ -22,15 +22,9 @@
 @code {
     private bool _dense = false;
     private bool _loading = true;
-    List<Person> _persons = [];
-
-    protected override void OnInitialized()
-    {
-        for (int i = 0; i < 100; i++)
-        {
-            _persons.Add(new() { Id = i, Name = $"Name{i}" });
-        }
-    }
+    List<Person> _persons = Enumerable.Repeat(0, 100)
+                .Select((_, i) => new Person { Id = i, Name = $"Name{i}" })
+                .ToList();
 
     private async Task<GridData<Person>> ServerReload(GridState<Person> state)
     {
