@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.State;
@@ -211,28 +207,28 @@ namespace MudBlazor
         /// The appearance variation to use.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Variant.Text"/>.  Other options are <c>Outlined</c> and <c>Filled</c>.
+        /// Defaults to <see cref="Variant.Text"/> in <see cref="MudGlobal.InputDefaults.Variant"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public Variant Variant { get; set; } = Variant.Text;
+        public Variant Variant { get; set; } = MudGlobal.InputDefaults.Variant;
 
         /// <summary>
         /// The amount of vertical spacing for this input.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Margin.None"/>.
+        /// Defaults to <see cref="Margin.None"/> in <see cref="MudGlobal.InputDefaults.Margin"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public Margin Margin { get; set; } = Margin.None;
+        public Margin Margin { get; set; } = MudGlobal.InputDefaults.Margin;
 
         /// <summary>
         /// Typography for the input text.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public Typo Typo { get; set; } = Typo.input;
+        public Typo Typo { get; set; } = Typo.subtitle1;
 
         /// <summary>
         /// The text displayed in the input if no <see cref="Value"/> is specified.
@@ -332,7 +328,8 @@ namespace MudBlazor
         /// Shows the label inside the input if no <see cref="Value"/> is specified.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  When <c>true</c>, the label will not move into the input when the input is empty.
+        /// Defaults to <c>false</c> in <see cref="MudGlobal.InputDefaults.ShrinkLabel"/>.
+        /// When <c>true</c>, the label will not move into the input when the input is empty.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
@@ -443,7 +440,7 @@ namespace MudBlazor
                 Text = text;
                 _validated = false;
 
-                if (!string.IsNullOrWhiteSpace(Text))
+                if (!string.IsNullOrEmpty(Text))
                 {
                     Touched = true;
                 }

@@ -5,13 +5,14 @@ using Timer = System.Timers.Timer;
 
 namespace MudBlazor
 {
+#nullable enable
     /// <summary>
     /// A base class for designing input components which update after a delay.
     /// </summary>
     /// <typeparam name="T">The type of object managed by this input.</typeparam>
     public abstract class MudDebouncedInput<T> : MudBaseInput<T>
     {
-        private Timer _timer;
+        private Timer? _timer;
         private readonly ParameterState<double> _debounceIntervalState;
 
         protected MudDebouncedInput()
@@ -106,14 +107,14 @@ namespace MudBlazor
         {
             if (_timer == null)
             {
-                _timer = new System.Timers.Timer();
+                _timer = new Timer();
                 _timer.Elapsed += OnTimerTick;
                 _timer.AutoReset = false;
             }
             _timer.Interval = _debounceIntervalState.Value;
         }
 
-        private void OnTimerTick(object sender, ElapsedEventArgs e)
+        private void OnTimerTick(object? sender, ElapsedEventArgs e)
         {
             InvokeAsync(OnTimerTickGuiThread).CatchAndLog();
         }
@@ -137,9 +138,10 @@ namespace MudBlazor
                 OnTimerTickGuiThread().CatchAndLog();
         }
 
-        protected override void Dispose(bool disposing)
+        /// <inheritdoc />
+        protected override async ValueTask DisposeAsyncCore()
         {
-            base.Dispose(disposing);
+            await base.DisposeAsyncCore();
             ClearTimer(suppressTick: true);
         }
     }

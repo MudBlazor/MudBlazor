@@ -1,13 +1,9 @@
 ﻿// Copyright (c) 2019 Blazored (https://github.com/Blazored)
-// Copyright (c) 2020 Jonny Larsson (https://github.com/MudBlazor/MudBlazor)
-// Copyright (c) 2021 improvements by Meinrad Recheis
 // See https://github.com/Blazored
 // License: MIT
+// Copyright (c) 2020 Adapted by MudBlazor
 
-using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
 #nullable enable
@@ -20,7 +16,7 @@ namespace MudBlazor
     /// This service requires a <see cref="MudDialogProvider"/> in your layout page.
     /// </remarks>
     /// <seealso cref="MudDialog"/>
-    /// <seealso cref="MudDialogInstance"/>
+    /// <seealso cref="MudDialogContainer"/>
     /// <seealso cref="MudDialogProvider"/>
     /// <seealso cref="DialogOptions"/>
     /// <seealso cref="DialogParameters{T}"/>
@@ -30,6 +26,7 @@ namespace MudBlazor
         /// <summary>
         /// This internal wrapper components prevents overwriting parameters of once
         /// instantiated dialog instances
+        /// See: https://github.com/MudBlazor/MudBlazor/issues/10659#issuecomment-2602911059
         /// </summary>
         private class DialogHelperComponent : IComponent
         {
@@ -50,17 +47,13 @@ namespace MudBlazor
             }
 
             public static RenderFragment Wrap(RenderFragment renderFragment)
-                => new(builder =>
+                => builder =>
                 {
                     builder.OpenComponent<DialogHelperComponent>(1);
                     builder.AddAttribute(2, ChildContent, renderFragment);
                     builder.CloseComponent();
-                });
+                };
         }
-
-        /// <inheritdoc />
-        [Obsolete($"Please use {nameof(DialogInstanceAddedAsync)} instead!")]
-        public event Action<IDialogReference>? OnDialogInstanceAdded;
 
         /// <inheritdoc />
         public event Func<IDialogReference, Task>? DialogInstanceAddedAsync;
@@ -69,30 +62,35 @@ namespace MudBlazor
         public event Action<IDialogReference, DialogResult?>? OnDialogCloseRequested;
 
         /// <inheritdoc />
+        [Obsolete("Use ShowAsync instead. This will be removed in future major version.")]
         public IDialogReference Show<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>() where T : IComponent
         {
             return Show<T>(string.Empty, DialogParameters.Default, DialogOptions.Default);
         }
 
         /// <inheritdoc />
+        [Obsolete("Use ShowAsync instead. This will be removed in future major version.")]
         public IDialogReference Show<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>(string? title) where T : IComponent
         {
             return Show<T>(title, DialogParameters.Default, DialogOptions.Default);
         }
 
         /// <inheritdoc />
+        [Obsolete("Use ShowAsync instead. This will be removed in future major version.")]
         public IDialogReference Show<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>(string? title, DialogOptions options) where T : IComponent
         {
             return Show<T>(title, DialogParameters.Default, options);
         }
 
         /// <inheritdoc />
+        [Obsolete("Use ShowAsync instead. This will be removed in future major version.")]
         public IDialogReference Show<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>(string? title, DialogParameters parameters) where T : IComponent
         {
             return Show<T>(title, parameters, DialogOptions.Default);
         }
 
         /// <inheritdoc />
+        [Obsolete("Use ShowAsync instead. This will be removed in future major version.")]
         public IDialogReference Show<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>(string? title, DialogParameters parameters, DialogOptions? options)
             where T : IComponent
         {
@@ -100,41 +98,46 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
+        [Obsolete("Use ShowAsync instead. This will be removed in future major version.")]
         public IDialogReference Show([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type contentComponent)
         {
             return Show(contentComponent, string.Empty, DialogParameters.Default, DialogOptions.Default);
         }
 
         /// <inheritdoc />
+        [Obsolete("Use ShowAsync instead. This will be removed in future major version.")]
         public IDialogReference Show([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type contentComponent, string? title)
         {
             return Show(contentComponent, title, DialogParameters.Default, DialogOptions.Default);
         }
 
         /// <inheritdoc />
+        [Obsolete("Use ShowAsync instead. This will be removed in future major version.")]
         public IDialogReference Show([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type contentComponent, string? title, DialogOptions options)
         {
             return Show(contentComponent, title, DialogParameters.Default, options);
         }
 
         /// <inheritdoc />
+        [Obsolete("Use ShowAsync instead. This will be removed in future major version.")]
         public IDialogReference Show([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type contentComponent, string? title, DialogParameters parameters)
         {
             return Show(contentComponent, title, parameters, DialogOptions.Default);
         }
 
         /// <inheritdoc />
+        [Obsolete("Use ShowAsync instead. This will be removed in future major version.")]
         public IDialogReference Show([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type contentComponent, string? title, DialogParameters parameters,
             DialogOptions options)
         {
             if (!typeof(IComponent).IsAssignableFrom(contentComponent))
             {
-                throw new ArgumentException($"{contentComponent?.FullName} must be a Blazor IComponent");
+                throw new ArgumentException($"{contentComponent.FullName} must be a Blazor IComponent");
             }
 
             var dialogReference = CreateReference();
 
-            var dialogContent = DialogHelperComponent.Wrap(new RenderFragment(builder =>
+            var dialogContent = DialogHelperComponent.Wrap(builder =>
             {
                 var i = 0;
                 builder.OpenComponent(i++, contentComponent);
@@ -143,22 +146,20 @@ namespace MudBlazor
                     builder.AddAttribute(i++, parameter.Key, parameter.Value);
                 }
 
-                builder.AddComponentReferenceCapture(i++, inst => { dialogReference.InjectDialog(inst); });
+                builder.AddComponentReferenceCapture(i, inst => { dialogReference.InjectDialog(inst); });
                 builder.CloseComponent();
-            }));
+            });
             var dialogInstance = new RenderFragment(builder =>
             {
-                builder.OpenComponent<MudDialogInstance>(0);
+                builder.OpenComponent<MudDialogContainer>(0);
                 builder.SetKey(dialogReference.Id);
-                builder.AddAttribute(1, nameof(MudDialogInstance.Options), options);
-                builder.AddAttribute(2, nameof(MudDialogInstance.Title), title);
-                builder.AddAttribute(3, nameof(MudDialogInstance.Content), dialogContent);
-                builder.AddAttribute(4, nameof(MudDialogInstance.Id), dialogReference.Id);
+                builder.AddComponentParameter(1, nameof(MudDialogContainer.Options), options);
+                builder.AddComponentParameter(2, nameof(MudDialogContainer.Title), title);
+                builder.AddComponentParameter(3, nameof(MudDialogContainer.Content), dialogContent);
+                builder.AddComponentParameter(4, nameof(MudDialogContainer.Id), dialogReference.Id);
                 builder.CloseComponent();
             });
             dialogReference.InjectRenderFragment(dialogInstance);
-            OnDialogInstanceAdded?.Invoke(dialogReference);
-            //TODO: drop sync Show as it was planned in future and make this awaitable;
             DialogInstanceAddedAsync?.Invoke(dialogReference);
 
             return dialogReference;
@@ -223,7 +224,7 @@ namespace MudBlazor
         public async Task<IDialogReference> ShowAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type contentComponent, string? title,
             DialogParameters parameters, DialogOptions options)
         {
-            var dialogReference = Show(contentComponent, title, parameters, options);
+            var dialogReference = await ShowCoreAsync(contentComponent, title, parameters, options);
 
             //Do not wait forever, what if render fails because of some internal exception and we will never release the method.
             var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
@@ -267,7 +268,7 @@ namespace MudBlazor
         /// <inheritdoc />
         public async Task<bool?> ShowMessageBox(MessageBoxOptions messageBoxOptions, DialogOptions? options = null)
         {
-            var parameters = new DialogParameters()
+            var parameters = new DialogParameters
             {
                 [nameof(MessageBoxOptions.Title)] = messageBoxOptions.Title,
                 [nameof(MessageBoxOptions.Message)] = messageBoxOptions.Message,
@@ -309,51 +310,48 @@ namespace MudBlazor
         {
             return new DialogReference(Guid.NewGuid(), this);
         }
-    }
 
-    /// <summary>
-    /// Represents options which are used during calls to show a simple <see cref="MudDialog"/>.
-    /// </summary>
-    [ExcludeFromCodeCoverage]
-    public class MessageBoxOptions
-    {
-        /// <summary>
-        /// The text at the top of the message box.
-        /// </summary>
-        public string? Title { get; set; }
+        private async Task<IDialogReference> ShowCoreAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type contentComponent, string? title, DialogParameters parameters,
+            DialogOptions options)
+        {
+            if (!typeof(IComponent).IsAssignableFrom(contentComponent))
+            {
+                throw new ArgumentException($"{contentComponent.FullName} must be a Blazor IComponent");
+            }
 
-        /// <summary>
-        /// The main content of the message box.
-        /// </summary>
-        public string? Message { get; set; }
+            var dialogReference = CreateReference();
 
-        /// <summary>
-        /// The main HTML content of the message box.
-        /// </summary>
-        public MarkupString MarkupMessage { get; set; }
+            var dialogContent = DialogHelperComponent.Wrap(builder =>
+            {
+                var i = 0;
+                builder.OpenComponent(i++, contentComponent);
+                foreach (var parameter in parameters)
+                {
+                    builder.AddAttribute(i++, parameter.Key, parameter.Value);
+                }
 
-        /// <summary>
-        /// The default label of the Yes button.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>OK</c>.  When <c>null</c>, this button will be hidden.
-        /// </remarks>
-        public string YesText { get; set; } = "OK";
+                builder.AddComponentReferenceCapture(i, inst => { dialogReference.InjectDialog(inst); });
+                builder.CloseComponent();
+            });
+            var dialogInstance = new RenderFragment(builder =>
+            {
+                builder.OpenComponent<MudDialogContainer>(0);
+                builder.SetKey(dialogReference.Id);
+                builder.AddComponentParameter(1, nameof(MudDialogContainer.Options), options);
+                builder.AddComponentParameter(2, nameof(MudDialogContainer.Title), title);
+                builder.AddComponentParameter(3, nameof(MudDialogContainer.Content), dialogContent);
+                builder.AddComponentParameter(4, nameof(MudDialogContainer.Id), dialogReference.Id);
+                builder.CloseComponent();
+            });
+            dialogReference.InjectRenderFragment(dialogInstance);
 
-        /// <summary>
-        /// The default label of the No button.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>null</c>.  When <c>null</c>, this button will be hidden.
-        /// </remarks>
-        public string? NoText { get; set; }
+            var dialogInstanceAddedAsync = DialogInstanceAddedAsync;
+            if (dialogInstanceAddedAsync is not null)
+            {
+                await dialogInstanceAddedAsync(dialogReference);
+            }
 
-        /// <summary>
-        /// The default label of the cancel button.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>null</c>.  When <c>null</c>, this button will be hidden.
-        /// </remarks>
-        public string? CancelText { get; set; }
+            return dialogReference;
+        }
     }
 }

@@ -1,0 +1,64 @@
+<MudPopoverProvider />
+
+<MudAutocomplete id="autocompleteLabelTest" T="string?" Label="US States"
+                 @bind-Value:get="Value" @bind-Value:set="ValueChanged" ResetValueOnEmptyText="ResetValueOnEmptyText"
+                 SearchFunc="@SearchStates" DebounceInterval="DebounceInterval"
+                 CoerceText="CoerceText" CoerceValue="CoerceValue" Immediate="Immediate"/>
+
+@code {
+    public static string __description__ = "Autocomplete to input a US state";
+
+    [Parameter]
+    public string? Value { get; set; }
+
+    [Parameter]
+    public EventCallback<string?> ValueChanged { get; set; }
+
+    [Parameter]
+    public bool ResetValueOnEmptyText { get; set; }
+
+    [Parameter]
+    public int DebounceInterval { get; set; }
+
+    [Parameter]
+    public bool CoerceText { get; set; }
+
+    [Parameter]
+    public bool CoerceValue { get; set; }
+
+    [Parameter]
+    public bool Immediate { get; set; }
+
+    public int SearchFuncCallCount { get; private set; }
+
+    private readonly string[] _states =
+    {
+        "Alabama", "Alaska", "American Samoa", "Arizona",
+        "Arkansas", "California", "Colorado", "Connecticut",
+        "Delaware", "District of Columbia", "Federated States of Micronesia",
+        "Florida", "Georgia", "Guam", "Hawaii", "Idaho",
+        "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky",
+        "Louisiana", "Maine", "Marshall Islands", "Maryland",
+        "Massachusetts", "Michigan", "Minnesota", "Mississippi",
+        "Missouri", "Montana", "Nebraska", "Nevada",
+        "New Hampshire", "New Jersey", "New Mexico", "New York",
+        "North Carolina", "North Dakota", "Northern Mariana Islands", "Ohio",
+        "Oklahoma", "Oregon", "Palau", "Pennsylvania", "Puerto Rico",
+        "Rhode Island", "South Carolina", "South Dakota", "Tennessee",
+        "Texas", "Utah", "Vermont", "Virgin Island", "Virginia",
+        "Washington", "West Virginia", "Wisconsin", "Wyoming",
+    };
+
+    private async Task<IEnumerable<string>> SearchStates(string value, CancellationToken token)
+    {
+        SearchFuncCallCount++;
+
+        // In real life use an asynchronous function for fetching data from an api.
+        await Task.Delay(50, token);
+
+        // if text is null or empty, show complete list
+        if (string.IsNullOrEmpty(value))
+            return _states;
+        return _states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+}

@@ -76,12 +76,6 @@ public enum Typo
     body2,
 
     /// <summary>
-    /// Applies the input typography style, using the <c>span</c> HTML tag.
-    /// </summary>
-    [Description("input")]
-    input,
-
-    /// <summary>
     /// Applies the button typography style, using the <c>span</c> HTML tag.
     /// </summary>
     [Description("button")]

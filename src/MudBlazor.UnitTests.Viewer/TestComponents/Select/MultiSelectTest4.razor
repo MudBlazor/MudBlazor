@@ -1,11 +1,10 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-<MudPopoverProvider></MudPopoverProvider>
+﻿<MudPopoverProvider />
 
 <MudGrid>
     <MudItem xs="12" md="12">
         <MudSelect T="string" Label="Felines" HelperText="Pick your favorite feline"
                    MultiSelection="true" SelectAll="true" SelectAllText="Select all felines"
-                   @bind-Value="value" @bind-SelectedValues="options" AdornmentIcon="@Icons.Material.Filled.Search"
+                   @bind-Value="_value" @bind-SelectedValues="_options" AdornmentIcon="@Icons.Material.Filled.Search"
                    MultiSelectionTextFunc="@(new Func<List<string>, string>(GetMultiSelectionText))">
             @foreach (var feline in felines)
             {
@@ -14,20 +13,20 @@
         </MudSelect>
     </MudItem>
     <MudItem xs="12" md="6">
-        <MudText Typo="Typo.body2">MudSelect.Value: "@value"</MudText>
+        <MudText Typo="Typo.body2">MudSelect.Value: "@_value"</MudText>
     </MudItem>
 </MudGrid>
 
 @code {
-    private string value { get; set; } = "Nothing selected";
-    private IEnumerable<string> options { get; set; }
+    private string _value  = "Nothing selected";
+    private IEnumerable<string> _options = [];
 
-    private string[] felines =
-    {
+    private readonly string[] felines =
+    [
         "Jaguar", "Leopard", "Lion", "Lynx", "Panther", "Puma", "Tiger"
-    };
+    ];
 
-    private string GetMultiSelectionText(List<string> selectedValues)
+    private static string GetMultiSelectionText(List<string> selectedValues)
     {
         return $"{selectedValues.Count} feline{(selectedValues.Count > 1 ? "s have" : " has")} been selected";
     }

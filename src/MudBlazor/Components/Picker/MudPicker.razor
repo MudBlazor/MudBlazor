@@ -4,110 +4,121 @@
 
 @code
 {
-    protected virtual RenderFragment InputContent =>
+#nullable enable
+    protected virtual RenderFragment? InputContent =>
         // note: Mask needs to remain before Text!
-        @<MudTextField 
-             T="string" 
-             @ref="_inputReference" 
-             @attributes="UserAttributes" 
+        @<MudTextField
+             T="string"
+             @ref="_inputReference"
+             @attributes="UserAttributes"
              Style="@Style"
-             Label="@Label" 
+             Label="@Label"
              Mask="@_mask"
              @bind-Value="@Text"
              Immediate="@(ImmediateText && Editable)"
              Placeholder="@Placeholder"
-             HelperText="@HelperText" 
-             HelperTextOnFocus="@HelperTextOnFocus" 
-             Variant="@Variant" 
-             ReadOnly="@(!Editable || GetReadOnlyState())" 
+             HelperText="@HelperText"
+             HelperTextOnFocus="@HelperTextOnFocus"
+             Variant="@Variant"
+             ReadOnly="@(!Editable || GetReadOnlyState())"
              Disabled="@GetDisabledState()"
              Underline="@Underline"
-             OnAdornmentClick="ToggleStateAsync" 
+             OnAdornmentClick="ToggleStateAsync"
              Adornment="@Adornment"
-             AdornmentIcon="@AdornmentIcon" 
-             AdornmentColor="@AdornmentColor" 
+             AdornmentIcon="@AdornmentIcon"
+             AdornmentColor="@AdornmentColor"
              AdornmentAriaLabel="@AdornmentAriaLabel"
-             IconSize="@IconSize" 
-             Margin="@Margin" 
-             Required="@Required" 
-             RequiredError="@RequiredError" 
-             Error="@Error" 
+             IconSize="@IconSize"
+             Margin="@Margin"
+             Required="@Required"
+             RequiredError="@RequiredError"
+             Error="@Error"
              ErrorText="@ErrorText"
-             Clearable="@(GetReadOnlyState() ? false : Clearable)"
+             Clearable="@(Clearable && !GetReadOnlyState())"
              OnClearButtonClick="@(async () => await ClearAsync())"
-             @onclick="OnClickAsync" />;
+             @onclick="OnClickAsync"/>;
 
-    protected virtual RenderFragment PickerContent => null;
+#nullable enable
+    /// <summary>
+    /// Gets the content to be rendered inside the picker.
+    /// Override this property to provide custom content for the picker.
+    /// </summary>
+    protected virtual RenderFragment? PickerContent => null;
 
-    protected virtual RenderFragment Render =>
-    @<CascadingValue Value="@this" IsFixed="true">
-        <div class="@PickerClassname" id="@_elementId">
-            @if (PickerVariant != PickerVariant.Static)
-            {
-                <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
-					@if(InputContent != null) {    
-						@InputContent
-					}
-                </CascadingValue>
-            }
-            @if (PickerVariant == PickerVariant.Inline)
-            {
-				<MudPopover Open="@Open" Fixed="true" AnchorOrigin="@(AnchorOrigin)" TransformOrigin="@(TransformOrigin)" OverflowBehavior="@(OverflowBehavior)" Paper="false">
-				   <div @ref="_pickerInlineRef" class="@PickerInlineClassname">
-					   <MudPaper @attributes="UserAttributes" Class="@PickerPaperClassname" Style="@PickerPaperStylename" Elevation="@_pickerElevation" Square="@_pickerSquare">
-						   <div class="@PickerContainerClassname">
-							   @if(PickerContent != null){
-								   @PickerContent
-							   }
-						   </div>
-							@if (PickerActions != null)
-							{
-								<div class="@ActionsClassname">
-									@PickerActions(this)
-								</div>
-							}
-					   </MudPaper>
-				   </div>
-			   </MudPopover>
-            }
-            else if (PickerVariant == PickerVariant.Static)
-            {
-               <MudPaper @attributes="UserAttributes" Class="@PickerPaperClassname" Style="@PickerPaperStylename" Elevation="@_pickerElevation" Square="@_pickerSquare">
-                   <div class="@PickerContainerClassname">
-					   @if(PickerContent != null){
-						   @PickerContent
-					   }
-                   </div>
-                    @if (PickerActions != null)
-                    {
-                        <div class="@ActionsClassname">
-                            @PickerActions(this)
+#nullable enable
+    protected virtual RenderFragment? Render =>
+        @<CascadingValue Value="@this" IsFixed="true">
+            <div class="@PickerClassname" id="@_elementId">
+                @if (PickerVariant != PickerVariant.Static)
+                {
+                    <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
+                        @if (InputContent != null)
+                        {
+                            @InputContent
+                        }
+                    </CascadingValue>
+                }
+                @if (PickerVariant == PickerVariant.Inline)
+                {
+                    <MudPopover Class="@PopoverClassname" Open="@Open" Fixed="true" AnchorOrigin="@(AnchorOrigin)" TransformOrigin="@(TransformOrigin)" OverflowBehavior="@(OverflowBehavior)" RelativeWidth="@(RelativeWidth)" Paper="false">
+                        <div @ref="_pickerInlineRef" class="@PickerInlineClassname">
+                            <MudPaper @attributes="UserAttributes" Class="@PickerPaperClassname" Style="@PickerPaperStylename" Square="@_pickerSquare">
+                                <div class="@PickerContainerClassname">
+                                    @if (PickerContent != null)
+                                    {
+                                        @PickerContent
+                                    }
+                                </div>
+                                @if (PickerActions != null)
+                                {
+                                    <div class="@ActionsClassname">
+                                        @PickerActions(this)
+                                    </div>
+                                }
+                            </MudPaper>
                         </div>
-                    }
-               </MudPaper>
-            }
-            else if(Open && PickerVariant == PickerVariant.Dialog)
-            {
-               <MudOverlay Visible="@Open" OnClick="CloseOverlayAsync" DarkBackground="true" Class="mud-overlay-dialog">
-                   <MudPaper @attributes="UserAttributes" Class="@PickerPaperClassname" Style="@PickerPaperStylename" Elevation="@_pickerElevation" Square="@_pickerSquare">
-                       <div class="@PickerContainerClassname">
-							@if(PickerContent != null){
-								@PickerContent
-							}
-                       </div>
+                    </MudPopover>
+                }
+                else if (PickerVariant == PickerVariant.Static)
+                {
+                    <MudPaper @attributes="UserAttributes" Class="@PickerPaperClassname" Style="@PickerPaperStylename" Square="@_pickerSquare">
+                        <div class="@PickerContainerClassname">
+                            @if (PickerContent != null)
+                            {
+                                @PickerContent
+                            }
+                        </div>
                         @if (PickerActions != null)
                         {
                             <div class="@ActionsClassname">
                                 @PickerActions(this)
                             </div>
                         }
-                   </MudPaper>
-               </MudOverlay>
+                    </MudPaper>
+                }
+                else if (Open && PickerVariant == PickerVariant.Dialog)
+                {
+                    <MudOverlay Visible="@Open" OnClick="CloseOverlayAsync" DarkBackground="true" Class="mud-overlay-dialog">
+                        <MudPaper @attributes="UserAttributes" Class="@PickerPaperClassname" Style="@PickerPaperStylename" Square="@_pickerSquare">
+                            <div class="@PickerContainerClassname">
+                                @if (PickerContent != null)
+                                {
+                                    @PickerContent
+                                }
+                            </div>
+                            @if (PickerActions != null)
+                            {
+                                <div class="@ActionsClassname">
+                                    @PickerActions(this)
+                                </div>
+                            }
+                        </MudPaper>
+                    </MudOverlay>
+                }
+            </div>
+            @if (PickerVariant == PickerVariant.Inline)
+            {
+                <MudOverlay Visible="@Open" OnClick="CloseOverlayAsync" LockScroll="false"/>
             }
-        </div>
-        @if (PickerVariant == PickerVariant.Inline)
-        {
-            <MudOverlay Visible="@Open" OnClick="CloseOverlayAsync" LockScroll="false" />
-        }
-    </CascadingValue>;
+        </CascadingValue>;
 }

@@ -1,0 +1,27 @@
+﻿<MudForm @ref="_form" ValidationDelay="0">
+    <MudDataGrid Items="@_items" Validator="_form">
+        <Columns>
+            <TemplateColumn>
+                <CellTemplate>
+                    <MudTextField @bind-Value="context.Item!.Name" Immediate="true" Required />
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+    </MudDataGrid>
+</MudForm>"
+
+@code {
+    public static string __description__ = "Changing the text field to a non-empty string should set form IsTouched=true and IsValid=true";
+
+    private MudForm _form = null!;
+
+    private readonly Item[] _items =
+    [
+        new()
+    ];
+
+    public class Item
+    {
+        public string? Name { get; set; }
+    }
+}

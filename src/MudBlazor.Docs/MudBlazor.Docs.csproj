@@ -3,7 +3,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
   </PropertyGroup>
 
   <!--Outside Visual Studio SolutionDir is not available-->
@@ -14,51 +14,30 @@
   <!--Analyzer Config-->
   <PropertyGroup>
     <MudAllowedAttributePattern>LowerCase</MudAllowedAttributePattern>
-    <MudIllegalParameters>V7IgnoreCase</MudIllegalParameters>
     <MudDebugAnalyzer>false</MudDebugAnalyzer>
-  </PropertyGroup>
-  
-  <!--Project path for code generator-->
-  <PropertyGroup>
-    <BinDocsCompiler>$(SolutionDir)MudBlazor.Docs.Compiler/bin/Debug/net8.0/MudBlazor.Docs.Compiler.dll</BinDocsCompiler>
-    <ProjectDocsCompiler>dotnet run --configuration release --project "$(SolutionDir)MudBlazor.Docs.Compiler/MudBlazor.Docs.Compiler.csproj"</ProjectDocsCompiler>
   </PropertyGroup>
 
   <!--Execute the code generator-->
-  <Target Name="CompileDocs" BeforeTargets="BeforeBuild">
+  <Target Name="GenerateDocs" AfterTargets="ResolveProjectReferences" Condition="'$(DesignTimeBuild)' != 'true'">
     <!--Command-line for the code generator-->
-    <Message Text="Generating Docs and Tests" Importance="high" />
-    <Exec Command="dotnet &quot;$(BinDocsCompiler)&quot;" Condition="Exists('$(BinDocsCompiler)')" />
-    <Exec Command="$(ProjectDocsCompiler)" Condition="!Exists('$(BinDocsCompiler)')" />
-  </Target>
-
-  <!--This file contains any ExampleCode that is new and needs including in the build -->
-  <Target Name="ReadFromFile" DependsOnTargets="CompileDocs">
-    <ItemGroup>
-      <NewFiles Include="NewFilesToBuild.txt" />
-    </ItemGroup>
-    <ReadLinesFromFile File="@(NewFiles)">
-      <Output TaskParameter="Lines" ItemName="NewExampleCodeToBuild" />
-    </ReadLinesFromFile>
+    <Message Text="Generating Docs" Importance="high" />
+    <Exec Command="dotnet run --configuration Release --project &quot;$(SolutionDir)MudBlazor.Docs.Compiler/MudBlazor.Docs.Compiler.csproj&quot;" />
   </Target>
 
   <!--Add Content that is being generated as part of the build cycle-->
   <!--We need to do this because the project is not yet aware of files that were generated after the build started-->
-  <Target Name="IncludeGeneratedFiles" BeforeTargets="BeforeBuild" DependsOnTargets="CompileDocs;ReadFromFile">
+  <Target Name="IncludeGeneratedFiles" AfterTargets="ResolveProjectReferences" DependsOnTargets="GenerateDocs">
     <ItemGroup>
-      <!--Include without duplication-->
-      <_NewCompiledSnippets Include="Models\Snippets.generated.cs" Exclude="@(Compile)" />
-      <_NewCompiledDocsStrings Include="Models\Generated\ApiDocumentation.generated.cs" Exclude="@(Compile)" />
-      <Compile Include="@(_NewCompiledSnippets)" />
-      <Compile Include="@(_NewCompiledDocsStrings)" />
-      <EmbeddedResource Include="@(NewExampleCodeToBuild)" Condition="@(NewExampleCodeToBuild-&gt;Count()) != 0" />
+      <!--Include without duplication (always at the end so that _GenerateCompileDependencyCache gives consistent results)-->
+      <!--This avoids full recompile after adding generated files-->
+      <!--See https://github.com/dotnet/msbuild/issues/6401-->
+      <Compile Remove="Models\Snippets.generated.cs" />
+      <Compile Include="Models\Snippets.generated.cs" />
+      <Compile Remove="Models\Generated\ApiDocumentation.generated.cs" />
+      <Compile Include="Models\Generated\ApiDocumentation.generated.cs" />
+      <EmbeddedResource Include="Pages\**\*.html" />
     </ItemGroup>
   </Target>
-
-  <!--Update ExampleCode-->
-  <ItemGroup>
-    <EmbeddedResource Include="Pages\**\*.html" />
-  </ItemGroup>
 
   <!--Is this a rebuild - Dont clean generated files as this breaks rebuild behaviour-->
   <Target Name="ShouldCleanGeneratedFiles" BeforeTargets="BeforeRebuild">
@@ -69,13 +48,12 @@
 
   <Target Name="CleanGeneratedFiles" BeforeTargets="Clean" Condition="'$(CleanGeneratedFiles)' != 'false'">
     <ItemGroup>
-      <FilesToClean Include="./Pages/**/*ExampleCode.*" />
-      <FilesToClean Include="./Pages/**/*Example_DialogCode.*" />
-      <FilesToClean Include="./NewFilesToBuild.txt" />
-      <FilesToClean Include="./Models/Snippets.generated.cs" />
-      <FilesToClean Include="./Models/Generated/ApiDocumentation.generated.cs" />
-      <FilesToClean Include="./wwwroot/MudBlazorDocs.css" />
-      <FilesToClean Include="./wwwroot/MudBlazorDocs.min.css" />
+      <FilesToClean Include="Pages/**/*ExampleCode.*" />
+      <FilesToClean Include="Pages/**/*Example_DialogCode.*" />
+      <FilesToClean Include="NewFilesToBuild.txt" />
+      <FilesToClean Include="**/*.generated.cs" />
+      <FilesToClean Include="wwwroot/MudBlazorDocs.css" />
+      <FilesToClean Include="wwwroot/MudBlazorDocs.min.css" />
     </ItemGroup>
     <Delete Files="@(FilesToClean)" />
   </Target>
@@ -84,11 +62,11 @@
   <ItemGroup>
     <PackageReference Include="Blazor-Analytics" Version="3.12.0" />
     <PackageReference Include="BytexDigital.Blazor.Components.CookieConsent" Version="1.2.1" />
-    <PackageReference Include="FluentValidation" Version="11.9.2" />
+    <PackageReference Include="FluentValidation" Version="11.11.0" />
     <PackageReference Include="FuzzySharp" Version="2.0.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="8.0.8" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.8" />
-    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="8.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="9.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="9.0.1" />
     <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
   </ItemGroup>
 
@@ -97,7 +75,7 @@
     <ProjectReference Include="../MudBlazor/MudBlazor.csproj" />
     <ProjectReference Include="../MudBlazor.Examples.Data/MudBlazor.Examples.Data.csproj" />
     <ProjectReference Include="../MudBlazor.SourceGenerator/MudBlazor.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-    <ProjectReference Include="..\MudBlazor.Analyzers\MudBlazor.Analyzers.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
+    <ProjectReference Include="../MudBlazor.Analyzers/MudBlazor.Analyzers.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -105,7 +83,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AspNetCore.SassCompiler" Version="1.72.0">
+    <PackageReference Include="MudBlazor.SassCompiler" Version="2.0.7">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>

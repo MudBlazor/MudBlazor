@@ -17,6 +17,7 @@ namespace MudBlazor
     /// Represents a function which calculates aggregate values such as counts, sums, averages, and custom functions.
     /// </summary>
     /// <typeparam name="T">The type of object to aggregate.</typeparam>
+    /// <seealso cref="MudDataGrid{T}"/>
     public class AggregateDefinition<T>
     {
         private readonly AggregateDefinitionExpressionCache _expressionCache = new();

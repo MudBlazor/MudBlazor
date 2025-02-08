@@ -1,9 +1,7 @@
 ﻿@page "/components/progress"
-@page "/components/MudProgressCircular"
-@page "/components/MudProgressLinear"
 
 <DocsPage>
-    <DocsPageHeader Title="Progress" SubTitle="Progress indicators that either show the length of a process or unspecified wait time, also known as indeterminate state. The animation is done with SVGs and CSS.">
+    <DocsPageHeader Title="Progress" Component="@nameof(MudProgressCircular)" SubTitle="Progress indicators that either show the length of a process or unspecified wait time, also known as indeterminate state. The animation is done with SVGs and CSS.">
         <Description>
             <div class="mt-6">
                 Progress indicators inform users about the status of ongoing processes, such as loading an app, submitting a form, or saving updates. They communicate an app's state and indicate available actions, such as whether users can navigate away from the current screen.
@@ -31,16 +29,16 @@
 
         <DocsPageSection>
             <SectionHeader Title="Circular Progress">
-                
+
             </SectionHeader>
             <SectionSubGroups>
-                
+
                 <DocsPageSection>
                     <SectionHeader Title="Indeterminate">
                         <Description></Description>
                     </SectionHeader>
                     <SectionContent Code="@nameof(ProgressCircularInterminateExample)">
-                        <ProgressCircularInterminateExample/>
+                        <ProgressCircularInterminateExample />
                     </SectionContent>
                 </DocsPageSection>
 
@@ -49,7 +47,7 @@
                         <Description></Description>
                     </SectionHeader>
                     <SectionContent Code="@nameof(ProgressCircularDeterminateExample)" ShowCode="false">
-                        <ProgressCircularDeterminateExample/>
+                        <ProgressCircularDeterminateExample />
                     </SectionContent>
                 </DocsPageSection>
 
@@ -61,23 +59,32 @@
                         <ProgressCircularSizesExample />
                     </SectionContent>
                 </DocsPageSection>
-                
+
+                <DocsPageSection>
+                    <SectionHeader Title="Rounded">
+                        <Description></Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(ProgressCircularRoundedExample)" ShowCode="false">
+                        <ProgressCircularRoundedExample />
+                    </SectionContent>
+                </DocsPageSection>
+
             </SectionSubGroups>
         </DocsPageSection>
-        
+
         <DocsPageSection>
             <SectionHeader Title="Linear Progress" />
             <SectionSubGroups>
-                
+
                 <DocsPageSection>
                     <SectionHeader Title="Indeterminate">
                         <Description></Description>
                     </SectionHeader>
                     <SectionContent Code="@nameof(ProgressLinearInterminateExample)">
-                        <ProgressLinearInterminateExample/>
+                        <ProgressLinearInterminateExample />
                     </SectionContent>
                 </DocsPageSection>
-                
+
                 <DocsPageSection>
                     <SectionHeader Title="Determinate">
                         <Description></Description>
@@ -86,7 +93,7 @@
                         <ProgressLinearDeterminateExample />
                     </SectionContent>
                 </DocsPageSection>
-                
+
                 <DocsPageSection>
                     <SectionHeader Title="Sizes">
                         <Description></Description>
@@ -95,7 +102,7 @@
                         <ProgressLinearSizeExample />
                     </SectionContent>
                 </DocsPageSection>
-                
+
                 <DocsPageSection>
                     <SectionHeader Title="Min Max">
                         <Description>
@@ -106,7 +113,7 @@
                         <ProgressLinearMinMaxExample />
                     </SectionContent>
                 </DocsPageSection>
-                
+
                 <DocsPageSection>
                     <SectionHeader Title="Buffer">
                         <Description>
@@ -117,7 +124,7 @@
                         <ProgressLinearBufferExample />
                     </SectionContent>
                 </DocsPageSection>
-                
+
                 <DocsPageSection>
                     <SectionHeader Title="Rounded">
                         <Description>Sets the border radius on the progress linear to the set theme value.</Description>
@@ -126,7 +133,7 @@
                         <ProgressLinearRoundedExample />
                     </SectionContent>
                 </DocsPageSection>
-                
+
                 <DocsPageSection>
                     <SectionHeader Title="Striped">
                         <Description>Applies a striped background over the progress bar.</Description>
@@ -135,7 +142,7 @@
                         <ProgressLinearStripedExample />
                     </SectionContent>
                 </DocsPageSection>
-        
+
                 <DocsPageSection>
                     <SectionHeader Title="Labels">
                         <Description>While using the <CodeInline>ChildContent</CodeInline> of the component you can add a text to display current value.</Description>
@@ -144,7 +151,7 @@
                         <ProgressLinearLabelsExample />
                     </SectionContent>
                 </DocsPageSection>
-        
+
                 <DocsPageSection>
                     <SectionHeader Title="Vertical">
                         <Description>Vertical progress bars works exactly the same way as the default horizontal ones.</Description>

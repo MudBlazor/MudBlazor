@@ -1,11 +1,7 @@
 ﻿@page "/components/datagrid"
-@page "/components/MudDataGrid"
-@page "/components/MudDataGrid`1"
-@page "/components/MudDataGridPager"
-@page "/components/MudDataGridPager`1"
 
 <DocsPage>
-    <DocsPageHeader Title="DataGrid" SubTitle="A sortable, filterable data grid with multiselection and pagination"/>
+    <DocsPageHeader Title="DataGrid" Component="@nameof(MudDataGrid<T>)" />
     <DocsPageContent>
 
         <DocsPageSection>
@@ -346,5 +342,50 @@
                 <DataGridColumnsPanelExample />
             </SectionContent>
         </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Context Menu">
+                <Description>
+                    A context menu can be added to increase the flexibility and efficiency that the <CodeInline>&lt;MudDataGrid></CodeInline> offers.
+                    There are several scenarios where a context menu can be beneficial such as performing row level actions,
+                    accessing additional information, or just providing a more intuitive user experience.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(DataGridContextMenuExample)" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridContextMenuExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Validator">
+                <Description>
+                    When a <CodeInline>&lt;MudDataGrid></CodeInline> is used as part of a <CodeInline>MudForm</CodeInline> you might want to
+                    bind the <CodeInline>Validator</CodeInline> property to the outer <CodeInline>MudForm</CodeInline> so that validation
+                    and <CodeInline>IsTouched</CodeInline> states are reflected in/propagated to the outer <CodeInline>MudForm</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(DataGridValidatorExample)" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridValidatorExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Other Options">
+                <Description>
+                    There are many options available for the <CodeInline>&lt;MudDataGrid></CodeInline> that are not covered in the examples above.
+                    The <CodeInline>&lt;ColGroup></CodeInline> component allows you to apply a span or style property to multiple columns. However, 
+                    the available styles are limited to a few CSS properties, including width, visibility, background, and border. Additionally, the 
+                    `span` property enables a column to extend across multiple columns. The <CodeInline>Loading</CodeInline> property displays a loading 
+                    indicator while the data grid is retrieving data. You can bind this attribute to a `bool` variable set to `true` when initializing 
+                    the page and toggle it once the data has loaded. The <CodeInline>FixedHeader</CodeInline> property ensures that the header remains
+                    fixed at the top of the grid, even when scrolling. These are just a few of the many available options. For a complete list and 
+                    additional details, refer to the <MudLink Href="components/datagrid#api">API</MudLink> documentation above.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(DataGridOtherOptionsExample)" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridOtherOptionsExample />
+            </SectionContent>
+        </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>

@@ -1,4 +1,5 @@
-﻿using Bunit;
+﻿using System.Linq;
+using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -275,6 +276,139 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void TreeViewFilterFunc_FindTopElement()
+        {
+            // Arrange and act
+            var searchPhrase = "Trash";
+            var comp = Context.RenderComponent<TreeViewFilterFuncTest>(element =>
+            {
+                element.Add(x => x.SearchPhrase, searchPhrase);
+                element.Add(x => x.FilterFunc, (e) =>
+                {
+                    if (string.IsNullOrEmpty(e.Text))
+                    {
+                        return Task.FromResult(false);
+                    }
+
+                    return Task.FromResult(e.Text.Contains(searchPhrase, StringComparison.OrdinalIgnoreCase));
+                });
+            });
+
+            // Assert that the element "Trash" is visible
+            comp.Instance.Items.Should().Contain(e => e.Text.Equals("Trash") && e.Visible);
+
+            // Assert that the element "Categories" is invisible
+            comp.Instance.Items.Should().Contain(e => e.Text.Equals("Categories") && !e.Visible);
+
+            // Assert that the element "Social" is invisible
+            var categoriesNode = comp.Instance.Items.ElementAt(1);
+            categoriesNode.Children.Should().Contain(e => e.Text.Equals("Social") && !e.Visible);
+        }
+
+        [Test]
+        public void TreeViewFilterFunc_FindExpandableAndChildrenElements()
+        {
+            // Arrange and act
+            var searchPhrase = "Categories";
+            var comp = Context.RenderComponent<TreeViewFilterFuncTest>(element =>
+            {
+                element.Add(x => x.SearchPhrase, searchPhrase);
+                element.Add(x => x.FilterFunc, (e) =>
+                {
+                    if (string.IsNullOrEmpty(e.Text))
+                    {
+                        return Task.FromResult(false);
+                    }
+
+                    return Task.FromResult(e.Text.Contains(searchPhrase, StringComparison.OrdinalIgnoreCase));
+                });
+            });
+
+            // Assert that the element "Trash" is invisible
+            comp.Instance.Items.Should().Contain(e => e.Text.Equals("Trash") && !e.Visible);
+
+            // Assert that the element "Categories" is visible
+            comp.Instance.Items.Should().Contain(e => e.Text.Equals("Categories") && e.Visible);
+
+            // Assert that the element "Social" is invisible
+            var categoriesNode = comp.Instance.Items.ElementAt(1);
+            categoriesNode.Children.Should().Contain(e => e.Text.Equals("Social") && !e.Visible);
+        }
+
+        [Test]
+        public void TreeViewFilterFunc_FindChildElement()
+        {
+            // Arrange and act
+            var searchPhrase = "Social";
+            var comp = Context.RenderComponent<TreeViewFilterFuncTest>(element =>
+            {
+                element.Add(x => x.SearchPhrase, searchPhrase);
+                element.Add(x => x.FilterFunc, (e) =>
+                {
+                    if (string.IsNullOrEmpty(e.Text))
+                    {
+                        return Task.FromResult(false);
+                    }
+
+                    return Task.FromResult(e.Text.Contains(searchPhrase, StringComparison.OrdinalIgnoreCase));
+                });
+            });
+
+            // Assert that the element "Trash" is invisible
+            comp.Instance.Items.Should().Contain(e => e.Text.Equals("Trash") && !e.Visible);
+
+            // Assert that the element "Categories" is visible
+            comp.Instance.Items.Should().Contain(e => e.Text.Equals("Categories") && e.Visible);
+
+            // Assert that the element "Social" is visible
+            var categoriesNode = comp.Instance.Items.ElementAt(1);
+            categoriesNode.Children.Should().Contain(e => e.Text.Equals("Social") && e.Visible);
+        }
+
+        [Test]
+        public void TreeViewFilterFunc_ItemsAreNull()
+        {
+            // Arrange and act
+            var searchPhrase = "Social";
+            var comp = Context.RenderComponent<TreeViewFilterFuncTest>(element =>
+            {
+                element.Add(x => x.SearchPhrase, "Social");
+                element.Add(x => x.AreItemsPopulated, false);
+                element.Add(x => x.FilterFunc, (e) =>
+                {
+                    if (string.IsNullOrEmpty(e.Text))
+                    {
+                        return Task.FromResult(false);
+                    }
+
+                    return Task.FromResult(e.Text.Contains(searchPhrase, StringComparison.OrdinalIgnoreCase));
+                });
+            });
+
+            // Assert that the items are null
+            comp.Instance.Items.Should().BeNull();
+        }
+
+        [Test]
+        public void TreeViewFilterFunc_FilterFuncIsNull()
+        {
+            var comp = Context.RenderComponent<TreeViewFilterFuncTest>(element =>
+            {
+                element.Add(x => x.SearchPhrase, "Social");
+            });
+
+            // Assert that the element "Trash" is visible
+            comp.Instance.Items.Should().Contain(e => e.Text.Equals("Trash") && e.Visible);
+
+            // Assert that the element "Categories" is visible
+            comp.Instance.Items.Should().Contain(e => e.Text.Equals("Categories") && e.Visible);
+
+            // Assert that the element "Social" is visible
+            var categoriesNode = comp.Instance.Items.ElementAt(1);
+            categoriesNode.Children.Should().Contain(e => e.Text.Equals("Social") && e.Visible);
+        }
+
+        [Test]
         public void InitialValueOfTreeViewItemSelected_Should_InfluenceSelectedValue_MultiSelection()
         {
             var comp = Context.RenderComponent<TreeViewItemSelectedBindingTest>(self => self
@@ -288,7 +422,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Note: in this test the trees are synchronized solely via their item's Selected parameter 
+        /// Note: in this test the trees are synchronized solely via their item's Selected parameter
         /// </summary>
         [Test]
         public void TreeViewItem_Selected_TwoWayBindingTest_SingleSelection()
@@ -527,14 +661,20 @@ namespace MudBlazor.UnitTests.Components
         public void TreeViewServerTest()
         {
             var comp = Context.RenderComponent<TreeViewServerTest>();
-            comp.FindAll("li.mud-treeview-item").Count.Should().Be(4);
+            string.Join('|', comp.FindAll("div.mud-treeview-item-content").Select(x => x.TextContent)).Should()
+                .Be("All Mail|Categories|Social|Updates|Trash");
+            comp.FindAll("li.mud-treeview-item").Count.Should().Be(5);
+            comp.FindAll("div.mud-treeview-item-content")[4].Click();
+            comp.FindAll("li.mud-treeview-item").Count.Should().Be(5); // <-- nothing loaded as it's not expandable
             comp.FindAll("div.mud-treeview-item-content")[0].Click();
-            comp.FindAll("li.mud-treeview-item").Count.Should().Be(4);
-            comp.FindAll("div.mud-treeview-item-content")[3]
-                .GetElementsByClassName("mud-treeview-item-arrow")[0]
-                .ChildElementCount.Should().Be(0);
-            comp.FindAll("div.mud-treeview-item-content")[2].Click();
-            comp.FindAll("li.mud-treeview-item").Count.Should().Be(8);
+            comp.FindAll("li.mud-treeview-item").Count.Should().Be(6); // <- loaded one more from server
+            comp.FindAll("div.mud-treeview-item-content")[3].Click();
+            comp.FindAll("li.mud-treeview-item").Count.Should().Be(7); // <- loaded another one from server
+            // now loading a child of a server loaded item
+            comp.FindAll("div.mud-treeview-item-content")[1].Click();
+            comp.FindAll("li.mud-treeview-item").Count.Should().Be(8); // <- loaded another one from server
+            string.Join('|', comp.FindAll("div.mud-treeview-item-content").Select(x => x.TextContent)).Should()
+                .Be("All Mail|Loaded 1|Loaded 3|Categories|Social|Loaded 2|Updates|Trash");
         }
 
         [Test]
@@ -646,13 +786,13 @@ namespace MudBlazor.UnitTests.Components
             var treeView = comp.FindComponent<MudTreeView<string>>();
 
             await comp.InvokeAsync(() => comp.Instance.ClickFirst());
-            comp.WaitForAssertion(() => comp.Instance.selectedValue.Should().Be("content"));
+            comp.WaitForAssertion(() => comp.Instance.SelectedValue.Should().Be("content"));
 
             await comp.InvokeAsync(() => comp.Instance.ClickSecond());
-            comp.WaitForAssertion(() => comp.Instance.selectedValue.Should().Be("src"));
+            comp.WaitForAssertion(() => comp.Instance.SelectedValue.Should().Be("src"));
 
             await comp.InvokeAsync(() => comp.Instance.ClickSecond());
-            comp.WaitForAssertion(() => comp.Instance.selectedValue.Should().Be(null));
+            comp.WaitForAssertion(() => comp.Instance.SelectedValue.Should().Be(null));
         }
 
 
@@ -769,7 +909,7 @@ namespace MudBlazor.UnitTests.Components
 
         /// <summary>
         /// This test checks that when multiple values are selected and the compare parameter is updated,
-        /// selected values are updated correctly. 
+        /// selected values are updated correctly.
         /// </summary>
         [Test]
         public void TreeView_SelectedValues_ShouldUseComparer()
@@ -932,7 +1072,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<TreeViewAutoExpandTest>(self => self.Add(x => x.AutoExpand, true));
             var isExpanded = (string value) => comp.FindComponents<MudTreeViewItem<string>>()
                 .FirstOrDefault(x => x.Instance.Value == value)?.Instance.GetState<bool>(nameof(MudTreeViewItem<string>.Expanded));
-            var select = (string value) => comp.FindComponents<MudChip<string>>().FirstOrDefault(x => x.Instance.Text == value)?.Find("div").Click();
+            var select = (string value) => comp.FindComponents<MudChip<string>>().FirstOrDefault(x => x.Instance.Text == value)?.Find("button.mud-chip").Click();
             isExpanded("C:").Should().Be(false);
             isExpanded("config").Should().Be(false);
             isExpanded("launch.json").Should().Be(false);
@@ -972,7 +1112,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<TreeViewAutoExpandTest>(self => self.Add(x => x.AutoExpand, true).Add(x => x.ConfigCanExpand, false));
             var isExpanded = (string value) => comp.FindComponents<MudTreeViewItem<string>>()
                 .FirstOrDefault(x => x.Instance.Value == value)?.Instance.GetState<bool>(nameof(MudTreeViewItem<string>.Expanded));
-            var select = (string value) => comp.FindComponents<MudChip<string>>().FirstOrDefault(x => x.Instance.Text == value)?.Find("div").Click();
+            var select = (string value) => comp.FindComponents<MudChip<string>>().FirstOrDefault(x => x.Instance.Text == value)?.Find("button.mud-chip").Click();
             isExpanded("C:").Should().Be(false);
             isExpanded("config").Should().Be(false);
             isExpanded("launch.json").Should().Be(false);
@@ -1072,7 +1212,7 @@ namespace MudBlazor.UnitTests.Components
                 comp.FindAll("li.mud-treeview-item").Count.Should().Be(4);
             });
 
-#nullable enable 
+#nullable enable
             MudTreeView<string>? nullInstanceTree = null;
             MudTreeViewItem<string>? nullInstanceItem = null;
 #nullable disable

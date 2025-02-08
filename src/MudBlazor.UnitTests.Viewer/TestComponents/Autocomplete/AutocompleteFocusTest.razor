@@ -1,11 +1,8 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-@using System.Threading
-
-<MudPopoverProvider></MudPopoverProvider>
+﻿<MudPopoverProvider />
 
 <MudAutocomplete T="string"
                  Label="US States"
-                 @bind-Value="value"
+                 @bind-Value="_value"
                  SearchFunc="@Search1"
                  PopoverClass="autocomplete-popover-class"
                  OpenOnFocus="@OpenOnFocus" />
@@ -13,13 +10,13 @@
 @code {
     public static string __description__ = "Initial value should be shown and popup should not open.";
 
-    private string value = "Alabama";
+    private string _value = "Alabama";
 
-    private readonly string[] states =
-    {
+    private readonly string[] _states =
+    [
         "Alabama", "Alaska", "American Samoa", "Arizona",
-        "Arkansas", "California", "Colorado", "Connecticut",
-    };
+        "Arkansas", "California", "Colorado", "Connecticut"
+    ];
 
     [Parameter]
     public bool OpenOnFocus { get; set; } = true;
@@ -31,7 +28,7 @@
 
         // if text is null or empty, show complete list
         if (string.IsNullOrEmpty(value))
-            return states;
-        return states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+            return _states;
+        return _states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
     }
 }

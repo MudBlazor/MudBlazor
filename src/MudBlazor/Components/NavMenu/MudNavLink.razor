@@ -1,12 +1,12 @@
 ﻿@namespace MudBlazor
-@inherits MudBaseSelectItem
+@inherits MudComponentBase
 @using Microsoft.AspNetCore.Components.Routing
 
 <div @attributes="UserAttributes" class="@Classname" disabled="@Disabled" style="@Style">
     @{
         if (!OnClick.HasDelegate)
         {
-            <NavLink @onclick="HandleNavigation"
+            <NavLink @onclick="this.AsNonRenderingEventHandler(HandleNavigation)"
                     class="@LinkClassname"
                     @attributes="@Attributes"
                     tabindex="@TabIndex"
@@ -23,7 +23,7 @@
         }
         else
         {
-            <div @onclick="OnClickHandler"
+            <div @onclick="this.AsNonRenderingEventHandler<MouseEventArgs>(OnClickHandler)"
                  class="@LinkClassname"
                  tabindex="@TabIndex">
                 @if (!string.IsNullOrEmpty(Icon))

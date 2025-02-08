@@ -1,12 +1,9 @@
 ﻿@page "/components/autocomplete"
-@page "/components/MudAutoComplete"
-@page "/components/MudAutoComplete`1"
 
 <DocsPage>
-    <DocsPageHeader Title="Autocomplete"
-        SubTitle="The Autocomplete component offers simple and flexible type-ahead functionality.">
+    <DocsPageHeader Title="Autocomplete" Component="@nameof(MudAutocomplete<T>)">
         <Description>
-            It is great for searching a value from a long list of options. In comparison to a Select, the Autocomplete doesn't need to know the complete item list, 
+            It is great for searching a value from a long list of options. In comparison to a Select, the Autocomplete doesn't need to know the complete item list,
             it only calls a search function which will return matching items. The search function can even run asynchronously, i.e. for database queries.
             <MudAlert Class="mt-4" Severity="Severity.Warning">
                 Note: Blazor static rendering is not supported.
@@ -52,7 +49,7 @@
                 <AutocompleteClrObjectsExample />
             </SectionContent>
         </DocsPageSection>
-        
+
         <DocsPageSection>
             <SectionHeader Title="Presentation Extras">
                 <Description>
@@ -132,17 +129,30 @@
             </SectionContent>
         </DocsPageSection>
 
-		<DocsPageSection>
-			<SectionHeader Title="Cancellation Token">
-				<Description>
-					<MudText>Autocomplete can cancel request if the user types new input</MudText>
-				</Description>
-			</SectionHeader>
-			<SectionContent ShowCode="false" Code="@nameof(AutocompleteCancellationTokenExample)">
-				<AutocompleteCancellationTokenExample />
-			</SectionContent>
-		</DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Cancellation Token">
+                <Description>
+                    <MudText>Autocomplete can cancel request if the user types new input</MudText>
+                </Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="@nameof(AutocompleteCancellationTokenExample)">
+                <AutocompleteCancellationTokenExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="DropdownSettings">
+                <Description>
+                    This component uses <MudLink Href="/components/popover">MudPopover</MudLink>
+                    to place its list of items in combination with <MudLink Href="/components/overlay">MudOverlay</MudLink>.
+                    Some of these settings can be controlled with <CodeInline>DropdownSettings</CodeInline>,
+                    which contain defaults for the <CodeInline>MudPopover</CodeInline> appearance and behavior.
+                    <MudLink Color="Color.Secondary" Href="/components/popover#dropdownsettings">
+                        Read more on popover's page.
+                    </MudLink>
+                </Description>
+            </SectionHeader>
+        </DocsPageSection>
 
     </DocsPageContent>
 </DocsPage>
-

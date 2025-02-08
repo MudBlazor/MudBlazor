@@ -12,7 +12,7 @@
                            Color="@AdornmentColor"
                            Size="@IconSize"
                            Text="@AdornmentText"
-                           Edge="@Edge.Start"
+                           Placement="@Adornment.Start"
                            AdornmentClick="@OnAdornmentClick"
                            AriaLabel="@AdornmentAriaLabel" />
     }
@@ -85,14 +85,16 @@
     }
 
 
-    @if (_showClearable && !GetDisabledState())
+    @if (ShowClearButton())
     {
         <MudIconButton Class="@ClearButtonClassname"
                        Color="@Color.Default"
                        Icon="@ClearIcon"
                        Size="@Size.Small"
                        OnClick="@HandleClearButtonAsync"
-                       aria-label="@Localizer[LanguageResource.MudInput_Clear]" />
+                       aria-label="@Localizer[LanguageResource.MudInput_Clear]"
+                       tabindex="-1"
+                       @onmousedown:stopPropagation />
     }
 
     @if (Adornment == Adornment.End)
@@ -102,14 +104,19 @@
                            Color="@AdornmentColor"
                            Size="@IconSize"
                            Text="@AdornmentText"
-                           Edge="@Edge.End"
+                           Placement="@Adornment.End"
                            AdornmentClick="@OnAdornmentClick"
                            AriaLabel="@AdornmentAriaLabel" />
     }
 
     @if (Variant == Variant.Outlined)
     {
-        <div class="mud-input-outlined-border"></div>
+        <fieldset class="mud-input-outlined-border">
+            @if (!string.IsNullOrEmpty(Label))
+            {
+                <legend>@Label</legend>
+            }
+        </fieldset>
     }
 
 </div>

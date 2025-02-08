@@ -1,14 +1,8 @@
-﻿
-#pragma warning disable CS1998 // async without await
-
-using System;
-using System.Threading.Tasks;
-using AngleSharp.Dom;
+﻿using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.UnitTests.TestComponents;
-using MudBlazor.UnitTests.TestComponents.Link;
+using MudBlazor.UnitTests.TestComponents.NavLink;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
 
@@ -27,7 +21,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase("_parent", "noopener noreferrer")]
         [TestCase("_top", "noopener noreferrer")]
         [TestCase("myFrameName", "noopener noreferrer")]
-        public async Task NavLink_CheckRelAttribute(string target, string expectedRel)
+        public void NavLink_CheckRelAttribute(string target, string expectedRel)
         {
             var comp = Context.RenderComponent<MudNavLink>(Parameter(nameof(MudNavLink.Target), target));
             // print the generated html
@@ -36,7 +30,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task NavLink_CheckOnClickEvent()
+        public void NavLink_CheckOnClickEvent()
         {
             var clicked = false;
             var comp = Context.RenderComponent<MudNavLink>(EventCallback(nameof(MudNavLink.OnClick), (MouseEventArgs args) => { clicked = true; }));
@@ -47,7 +41,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task NavLink_Active()
+        public void NavLink_Active()
         {
             const string activeClass = "Custom__nav_active_css";
             var comp = Context.RenderComponent<MudNavLink>(Parameter(nameof(MudNavLink.ActiveClass), activeClass));
@@ -56,7 +50,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task NavLink_Enabled_CheckNavigation()
+        public void NavLink_Enabled_CheckNavigation()
         {
             var comp = Context.RenderComponent<NavLinkDisabledTest>(Parameter(nameof(NavLinkDisabledTest.Disabled), false));
             comp.Find("a").Click();
@@ -64,7 +58,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task NavLink_Disabled_CheckNoNavigation()
+        public void NavLink_Disabled_CheckNoNavigation()
         {
             var comp = Context.RenderComponent<NavLinkDisabledTest>(Parameter(nameof(NavLinkDisabledTest.Disabled), true));
             comp.Find("a").Click();

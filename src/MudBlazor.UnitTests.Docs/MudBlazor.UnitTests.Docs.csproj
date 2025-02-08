@@ -1,0 +1,84 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+  </PropertyGroup>
+
+  <!--Outside Visual Studio SolutionDir is not available-->
+  <PropertyGroup>
+    <SolutionDir Condition=" '$(SolutionDir)' == '' ">$(MSBuildThisFileDirectory)../</SolutionDir>
+  </PropertyGroup>
+  
+  <!--Execute the code generator-->
+  <Target Name="GenerateTests" AfterTargets="ResolveProjectReferences" Condition="'$(DesignTimeBuild)' != 'true'">
+    <!--Command-line for the code generator-->
+    <Message Text="Generating Tests" Importance="high" />
+    <Exec Command="dotnet run --configuration Release --project &quot;$(SolutionDir)MudBlazor.UnitTests.Docs.Generator/MudBlazor.UnitTests.Docs.Generator.csproj&quot;" />
+  </Target>
+
+  <!--Add Content that is being generated as part of the build cycle-->
+  <!--We need to do this because the project is not yet aware of files that were generated after the build started-->
+  <Target Name="IncludeGeneratedFiles" AfterTargets="ResolveProjectReferences" DependsOnTargets="GenerateTests">
+    <ItemGroup>
+      <!--Include without duplication (always at the end so that _GenerateCompileDependencyCache gives consistent results)-->
+      <!--This avoids full recompile after adding generated files-->
+      <!--See https://github.com/dotnet/msbuild/issues/6401-->
+      <Compile Remove="Generated\ApiDocsTests.generated.cs" />
+      <Compile Include="Generated\ApiDocsTests.generated.cs" />
+      <Compile Remove="Generated\ExampleDocsTests.generated.cs" />
+      <Compile Include="Generated\ExampleDocsTests.generated.cs" />
+    </ItemGroup>
+  </Target>
+
+  <!--Is this a rebuild - Dont clean generated files as this breaks rebuild behaviour-->
+  <Target Name="ShouldCleanGeneratedFiles" BeforeTargets="BeforeRebuild">
+    <PropertyGroup>
+      <CleanGeneratedFiles>false</CleanGeneratedFiles>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="CleanGeneratedFiles" BeforeTargets="Clean" Condition="'$(CleanGeneratedFiles)' != 'false'">
+    <ItemGroup>
+      <FilesToClean Include="**/*.generated.cs" />
+    </ItemGroup>
+    <Delete Files="@(FilesToClean)" />
+  </Target>
+
+  <ItemGroup>
+    <Using Include="MudBlazor.UnitTests.Shared" />
+    <Using Include="MudBlazor.UnitTests.Shared.Mocks" />
+    <Using Include="MudBlazor.UnitTests.Shared.Extensions" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <!--We need to make internal types to be visible for mocking-->
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.msbuild" Version="6.0.4">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="AwesomeAssertions" Version="7.1.0" />
+    <PackageReference Include="FluentValidation" Version="11.11.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.12.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="4.12.0" />
+    <PackageReference Include="Moq" Version="4.20.71" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageReference Include="ReportGenerator" Version="5.4.3" />
+    <PackageReference Include="RichardSzalay.MockHttp" Version="7.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MudBlazor.Docs\MudBlazor.Docs.csproj" />
+    <ProjectReference Include="..\MudBlazor.Docs.Compiler\MudBlazor.Docs.Compiler.csproj" />
+    <ProjectReference Include="..\MudBlazor.UnitTests.Shared\MudBlazor.UnitTests.Shared.csproj" />
+  </ItemGroup>
+
+  <Target Name="GenerateHtmlCoverageReport" AfterTargets="GenerateCoverageResultAfterTest" Condition="'@(CoverletReport-&gt;Count())' != 0">
+    <ReportGenerator ReportFiles="@(CoverletReport)" TargetDirectory="./TestResults/Report" HistoryDirectory="./TestResults/ReportHistory" />
+  </Target>
+
+</Project>

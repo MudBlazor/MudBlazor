@@ -4,6 +4,7 @@
 
 <CascadingValue Value="@this" IsFixed="true">
     <CascadingValue Value="@((MudChartBase)this)" IsFixed="true">
+        @ChildContent
         <div @attributes="UserAttributes" class="@Classname" style="@Style" dir="ltr">
             @if (ChartType == ChartType.Donut)
             {
@@ -24,6 +25,10 @@
             @if (ChartType == ChartType.StackedBar)
             {
                 <StackedBar ChartSeries="@ChartSeries" @bind-SelectedIndex="@SelectedIndex" XAxisLabels="@XAxisLabels"></StackedBar>
+            }
+            @if (ChartType == ChartType.HeatMap)
+            {
+                <HeatMap ChartSeries="@ChartSeries" @bind-SelectedIndex="@SelectedIndex" XAxisLabels="@XAxisLabels"></HeatMap>
             }
         </div>
     </CascadingValue>

@@ -16,6 +16,7 @@ namespace MudBlazor
                 .AddClass($"mud-input-control-margin-{Margin.ToDescriptionString()}", when: () => Margin != Margin.None)
                 .AddClass("mud-input-control-full-width", FullWidth)
                 .AddClass("mud-input-error", Error)
+                .AddClass($"mud-input-{Variant.ToDescriptionString()}-with-label", !string.IsNullOrEmpty(Label))
                 .AddClass(Class)
                 .Build();
 
@@ -158,6 +159,6 @@ namespace MudBlazor
         /// The ID of the input component related to the label specified in <see cref="Label"/>.
         /// </summary>
         [Parameter]
-        public string ForId { get; set; } = string.Empty;
+        public string? ForId { get; set; } = string.Empty;
     }
 }

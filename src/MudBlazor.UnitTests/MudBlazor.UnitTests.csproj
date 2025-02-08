@@ -1,63 +1,41 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <Target Name="IncludeGeneratedFiles" BeforeTargets="BeforeBuild;BeforeRebuild">
-    <ItemGroup>
-      <Compile Include="Generated\ApiDocsTests.generated.cs" Condition="!Exists('Generated\ApiDocsTests.generated.cs')" />
-      <Compile Include="Generated\ExampleDocsTests.generated.cs" Condition="!Exists('Generated\ExampleDocsTests.generated.cs')" />
-    </ItemGroup>
-  </Target>
-
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
   </PropertyGroup>
+  
+  <ItemGroup>
+    <Using Include="MudBlazor.UnitTests.Shared" />
+    <Using Include="MudBlazor.UnitTests.Shared.Mocks" />
+    <Using Include="MudBlazor.UnitTests.Shared.Extensions" />
+  </ItemGroup>
   
   <ItemGroup>
     <!--We need to make internal types to be visible for mocking-->
     <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
   </ItemGroup>
 
-  <!--Is this a rebuild - Dont clean generated files as this breaks rebuild behaviour-->
-  <Target Name="ShouldCleanGeneratedFiles" BeforeTargets="BeforeRebuild">
-    <PropertyGroup>
-      <CleanGeneratedFiles>false</CleanGeneratedFiles>
-    </PropertyGroup>
-  </Target>
-  
-  <!--Cleanup old ExampleCode files-->
-  <Target Name="CleanGeneratedFiles" BeforeTargets="Clean" Condition="'$(CleanGeneratedFiles)' != 'false'">
-    <ItemGroup>
-      <FilesToClean Include="./Generated/*.generated.cs" />
-      <FilesToClean Include="./Generated/_AllApiPages.cs" />
-      <FilesToClean Include="./Generated/_AllComponents.cs" /> 
-    </ItemGroup>
-    <Delete Files="@(FilesToClean)" />
-  </Target>
-
   <ItemGroup>
-    <PackageReference Include="bunit" Version="1.31.3" />
-    <PackageReference Include="coverlet.msbuild" Version="6.0.2">
+    <PackageReference Include="coverlet.msbuild" Version="6.0.4">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="FluentAssertions" Version="6.12.1" />
-    <PackageReference Include="FluentValidation" Version="11.9.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Razor.Language" Version="6.0.33" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.11.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="4.11.0" />
+    <PackageReference Include="AwesomeAssertions" Version="7.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Razor.Language" Version="6.0.36" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.12.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="4.12.0" />
+    <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" Version="8.10.0" />
     <PackageReference Include="Moq" Version="4.20.71" />
-    <PackageReference Include="nunit" Version="4.2.2" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
-    <PackageReference Include="ReportGenerator" Version="5.3.9" />
-    <PackageReference Include="RichardSzalay.MockHttp" Version="7.0.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageReference Include="ReportGenerator" Version="5.4.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\MudBlazor.Analyzers.TestComponents\MudBlazor.Analyzers.TestComponents.csproj" />
     <ProjectReference Include="..\MudBlazor.Analyzers\MudBlazor.Analyzers.csproj" />
-    <ProjectReference Include="..\MudBlazor.Docs\MudBlazor.Docs.csproj" />
-    <ProjectReference Include="..\MudBlazor.Docs.Compiler\MudBlazor.Docs.Compiler.csproj" />
     <ProjectReference Include="..\MudBlazor.SourceGenerator\MudBlazor.SourceGenerator.csproj" />
+    <ProjectReference Include="..\MudBlazor.UnitTests.Shared\MudBlazor.UnitTests.Shared.csproj" />
     <ProjectReference Include="..\MudBlazor.UnitTests.Viewer\MudBlazor.UnitTests.Viewer.csproj" />
     <ProjectReference Include="..\MudBlazor\MudBlazor.csproj" />
   </ItemGroup>

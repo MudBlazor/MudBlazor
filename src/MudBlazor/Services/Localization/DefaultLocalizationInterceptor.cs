@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Microsoft.Extensions.Localization;
+﻿using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 
 namespace MudBlazor;
@@ -41,19 +40,6 @@ public class DefaultLocalizationInterceptor : AbstractLocalizationInterceptor
 
         return TranslationWithFallback(key, arguments);
     }
-
-    /// <summary>
-    /// Gets the string resource with the given name.
-    /// </summary>
-    /// <param name="key">The name of the string resource</param>
-    /// <returns>The string resource as a <see cref="LocalizedString" />.</returns>
-    /// <remarks>
-    /// This method is called when the default English translation is ignored or unavailable, and a custom MudLocalizer service implementation is registered.
-    /// It attempts to use user-provided languages, falling back to the internal English translation if MudLocalizer is missing or no resource is found.
-    /// </remarks>
-    [ExcludeFromCodeCoverage]
-    [Obsolete("Use TranslationWithFallback(string key, params object[] arguments) overload instead! Will be removed in v8.", true)]
-    protected virtual LocalizedString TranslationFallback(string key) => TranslationWithFallback(key, Array.Empty<object>());
 
     /// <summary>
     /// Gets the string resource with the given name.

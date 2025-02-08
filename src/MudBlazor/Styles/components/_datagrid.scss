@@ -21,8 +21,6 @@
 
   .mud-table-cell {
     &.edit-mode-cell {
-      //padding: 0 !important;
-
       .mud-input-control {
         margin: 0 !important;
       }
@@ -50,22 +48,25 @@
       padding-inline-end: 24px;
     }
 
-    &.sticky-left {
-      left: 0px;
+    &.sticky-left,
+    &.sticky-right {
       position: sticky;
       background-color: var(--mud-palette-background-gray);
       z-index: 1;
+    }
+
+    &.sticky-left {
+      left: 0px;
     }
 
     &.sticky-right {
       right: 0px;
-      position: sticky;
-      background-color: var(--mud-palette-background-gray);
-      z-index: 1;
     }
 
-    .mud-input-text {
-      margin-top: 0 !important;
+    &:not(.mud-table-child-content) {
+      .mud-input-text {
+        margin-top: 0 !important;
+      }
     }
 
     .column-header {
@@ -101,7 +102,6 @@
       .sort-direction-icon {
         font-size: 18px;
         margin-left: 4px;
-        margin-left: 4px;
         margin-inline-start: 4px;
         margin-inline-end: unset;
         user-select: none;
@@ -124,9 +124,7 @@
       }
 
       .column-options .mud-menu .mud-icon-button-label {
-        /*font-size: 18px;*/
         user-select: none;
-        /*margin-right: 4px;*/
         transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,transform 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
         opacity: 0;
       }
@@ -139,6 +137,7 @@
       width: 8px;
       cursor: col-resize;
       user-select: none;
+
       .mud-application-layout-rtl & {
         right: auto;
         left: 0;
@@ -174,7 +173,6 @@
 
   .sort-direction-icon {
     font-size: 18px;
-    margin-left: 4px;
     margin-left: 4px;
     margin-inline-start: 4px;
     margin-inline-end: unset;

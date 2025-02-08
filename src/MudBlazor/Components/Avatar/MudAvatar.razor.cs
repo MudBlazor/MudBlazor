@@ -8,6 +8,7 @@ namespace MudBlazor
     /// <summary>
     /// Represents a component which displays circular user profile pictures, icons or text.
     /// </summary>
+    /// <seealso cref="MudAvatarGroup" />
     partial class MudAvatar : MudComponentBase, IDisposable
     {
         [CascadingParameter]
@@ -44,16 +45,18 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
+        /// Can be overridden by <see cref="MudGlobal.Rounded"/>
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Avatar.Appearance)]
-        public bool Square { get; set; }
+        public bool Square { get; set; } = MudGlobal.Rounded == false;
 
         /// <summary>
-        /// Shows rounded corners.
+        /// Uses rounded corners instead of a circle.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  When <c>true</c>, the <c>border-radius</c> style is set to the theme's default value.
+        /// Defaults to <c>false</c>.
+        /// When <c>true</c>, the <c>border-radius</c> style is set to the theme's default value.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Avatar.Appearance)]

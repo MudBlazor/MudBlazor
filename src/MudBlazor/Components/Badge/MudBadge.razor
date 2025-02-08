@@ -6,7 +6,7 @@
     @if (Visible)
     {
         <span class="@WrapperClass">
-            <span role="status" aria-live="polite" aria-label="@BadgeAriaLabel" class="@BadgeClassname" @onclick="EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(HandleBadgeClick)">
+            <span role="status" aria-live="polite" aria-label="@BadgeAriaLabel" class="@BadgeClassname" @onclick="this.AsNonRenderingEventHandler<MouseEventArgs>(HandleBadgeClick)">
                 @if (!Dot)
                 {
                     @if (!string.IsNullOrEmpty(Icon))

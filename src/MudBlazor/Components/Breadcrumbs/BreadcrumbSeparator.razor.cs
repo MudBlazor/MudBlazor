@@ -11,6 +11,9 @@ namespace MudBlazor;
 /// <summary>
 /// Represents a divider between breadcrumb items.
 /// </summary>
+/// <seealso cref="MudBreadcrumbs" />
+/// <seealso cref="BreadcrumbItem" />
+/// <seealso cref="BreadcrumbLink" />
 public partial class BreadcrumbSeparator
 {
     /// <summary>

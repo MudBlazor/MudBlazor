@@ -72,6 +72,7 @@
 </div>
 
 @code {
+#nullable enable
     RenderFragment RenderTab(MudTabPanel panel) => @<div @ref="panel.PanelRef" class="@GetTabClass(panel)" style="@GetTabStyle(panel)" @onclick=@( e => ActivatePanel(panel, e, false) )>
         @if (TabPanelHeaderPosition == TabHeaderPosition.Before && TabPanelHeader != null)
             {
@@ -96,9 +97,9 @@
                 <MudIcon Icon="@panel.Icon" Color="@GetPanelIconColor(panel)" Class="mud-tab-icon-text" />
                 @panel.Text
             }
-            @if (panel.BadgeData != null || panel.BadgeDot)
+            @if (panel.BadgeData != null || panel.BadgeIcon != null || panel.BadgeDot)
             {
-                <MudBadge Dot="@panel.BadgeDot" Content="@panel.BadgeData" Color="@panel.BadgeColor" Class="mud-tab-badge" />
+                <MudBadge Dot="@panel.BadgeDot" Content="@panel.BadgeData" Icon="@panel.BadgeIcon" Color="@panel.BadgeColor" Class="mud-tab-badge" />
             }
             @if (TabPanelHeaderPosition == TabHeaderPosition.After && TabPanelHeader != null)
             {

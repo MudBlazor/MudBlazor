@@ -1,12 +1,10 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-@using System.Threading
-<MudPopoverProvider></MudPopoverProvider>
-
-@if (mustBeShown)
+﻿
+@if (MustBeShown)
 {
     <AutoCompleteContainer @bind-HasBeenDisposed="@HasBeenDisposed"></AutoCompleteContainer>
 }
 @code {
-    public bool mustBeShown = true;
-    public bool HasBeenDisposed;
+    public bool MustBeShown { get; set; } = true;
+
+    public bool HasBeenDisposed { get; private set; }
 }

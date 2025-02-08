@@ -87,7 +87,6 @@
 
 .mud-picker-view {
   display: none;
-  margin-top: 20px;
 
   &.mud-picker-open {
     display: block;
@@ -96,7 +95,6 @@
 
 .mud-picker-content {
   display: flex;
-  //max-width: 325px;
   max-width: 100%;
   min-width: 310px;
   min-height: 305px;

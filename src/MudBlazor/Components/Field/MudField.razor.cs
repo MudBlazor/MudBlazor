@@ -5,11 +5,11 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
-    //TODO Maybe can inherit from MudBaseInput?
-
+    // TODO: Maybe can inherit from MudBaseInput?
     /// <summary>
     /// A component similar to <see cref="MudTextField{T}"/> which supports custom content.
     /// </summary>
+    /// <seealso cref="MudTextField{T}"/>
     public partial class MudField : MudComponentBase
     {
         protected string Classname =>
@@ -17,9 +17,9 @@ namespace MudBlazor
                 .AddClass($"mud-input-{Variant.ToDescriptionString()}")
                 .AddClass($"mud-input-{Variant.ToDescriptionString()}-with-label", !string.IsNullOrEmpty(Label))
                 .AddClass($"mud-input-adorned-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
-                .AddClass($"mud-input-margin-{Margin.ToDescriptionString()}", when: () => Margin != Margin.None)
-                .AddClass("mud-input-underline", when: () => Underline && Variant != Variant.Outlined)
-                .AddClass("mud-shrink", when: () => !string.IsNullOrWhiteSpace(ChildContent?.ToString()) || Adornment == Adornment.Start)
+                .AddClass($"mud-input-margin-{Margin.ToDescriptionString()}", () => Margin != Margin.None)
+                .AddClass("mud-input-underline", () => Underline && Variant != Variant.Outlined)
+                .AddClass("mud-shrink", () => !string.IsNullOrWhiteSpace(ChildContent?.ToString()) || Adornment == Adornment.Start)
                 .AddClass("mud-disabled", Disabled)
                 .AddClass("mud-input-error", Error && !string.IsNullOrEmpty(ErrorText))
                 .AddClass($"mud-typography-{Typo.ToDescriptionString()}")
@@ -28,14 +28,14 @@ namespace MudBlazor
         protected string InnerClassname =>
             new CssBuilder("mud-input-slot")
                 .AddClass("mud-input-root")
-                .AddClass("mud-input-slot-nopadding", when: () => InnerPadding == false)
+                .AddClass("mud-input-slot-nopadding", () => InnerPadding == false)
                 .AddClass($"mud-input-root-{Variant.ToDescriptionString()}")
                 .AddClass($"mud-input-adorned-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
-                .AddClass($"mud-input-root-margin-{Margin.ToDescriptionString()}", when: () => Margin != Margin.None)
+                .AddClass($"mud-input-root-margin-{Margin.ToDescriptionString()}", () => Margin != Margin.None)
                 .Build();
 
         protected string AdornmentClassname =>
-            new CssBuilder("mud-input-adornment")
+            new CssBuilder()
                 .AddClass($"mud-input-adornment-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
                 .AddClass($"mud-text", !string.IsNullOrEmpty(AdornmentText))
                 .AddClass($"mud-input-root-filled-shrink", Variant == Variant.Filled)
@@ -43,7 +43,6 @@ namespace MudBlazor
 
         protected string InputControlClassname =>
             new CssBuilder("mud-field")
-                .AddClass($"mud-input-{Variant.ToDescriptionString()}-with-label", !string.IsNullOrEmpty(Label))
                 .AddClass(Class)
                 .Build();
 
@@ -69,7 +68,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Field.Appearance)]
-        public Typo Typo { get; set; } = Typo.input;
+        public Typo Typo { get; set; } = Typo.subtitle1;
 
         /// <summary>
         /// Displays the error in <see cref="ErrorText"/>.

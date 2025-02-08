@@ -1,12 +1,19 @@
-﻿@page "/components/NumericField"
-@page "/components/MudNumericField"
-@page "/components/MudNumericField`1"
+﻿@page "/components/numericfield"
 
 <DocsPage>
-	<DocsPageHeader Title="Numeric Field" SubTitle="Numeric field components are used for receiving user provided numbers." />
+    <DocsPageHeader Title="Numeric Field" Component="@nameof(MudNumericField<T>)" />
     <DocsPageContent>
 
         <DocsPageSection>
+            <MudAlert Severity="Severity.Warning" Dense="true" Class="mt-3">
+                By default, the following rules are enforced:
+                <ul style="list-style:inside;">
+                    <li><strong>Decimal Separator:</strong> Always uses a dot (.) as the decimal separator, regardless of the user's culture.</li>
+                    <li><strong>Thousands Separator:</strong> Does not support thousands separators (e.g., no commas or spaces for grouping digits).</li>
+                    <li><strong>Input Format:</strong> The expected format is [-]digits[.digits], which is language-neutral and not localized.</li>
+                </ul>
+                Define your preferred <CodeInline>Culture</CodeInline> or <CodeInline>Format</CodeInline> for alternative input options
+            </MudAlert>
             <SectionHeader Title="Basic Numeric Fields">
                 <Description>
                     Numeric fields are just like <MudLink Href="/components/textfield">text fields</MudLink> but work well with numeric values of any type. The input is automatically restricted to numeric values and it works regardless of the browser locale settings for decimal types.<br/>

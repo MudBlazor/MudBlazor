@@ -1,21 +1,18 @@
 ﻿@page "/components/carousel"
-@page "/components/MudCarousel"
-@page "/components/MudCarousel`1"
-@page "/components/MudCarouselItem"
 
 <DocsPage>
-	<DocsPageHeader Title="Carousel" SubTitle="It's used to display large numbers of visual content on a rotating timer" />
+    <DocsPageHeader Title="Carousel" Component="@nameof(MudCarousel<T>)" />
     <DocsPageContent>
-        
+
         <DocsPageSection>
             <SectionHeader Title="Example">
                 <Description>Default implementation.</Description>
             </SectionHeader>
             <SectionContent Code="@nameof(CarouselExample)" Block="true" FullWidth="true">
-                <CarouselExample/>
+                <CarouselExample />
             </SectionContent>
         </DocsPageSection>
-        
+
         <DocsPageSection>
             <SectionHeader Title="DataBinding">
                 <Description>
@@ -27,7 +24,7 @@
                 <CarouselBindingExample />
             </SectionContent>
         </DocsPageSection>
-        
+
         <DocsPageSection>
             <SectionHeader Title="Custom Transition">
                 <Description>You can use your own classes for items transition.</Description>
@@ -36,7 +33,7 @@
                 <CarouselCustomTransitionExample />
             </SectionContent>
         </DocsPageSection>
-        
+
         <DocsPageSection>
             <SectionHeader Title="Transitions per page">
                 <Description>Transitions are set per page.</Description>
@@ -45,7 +42,7 @@
                 <CarouselPerPageTransitionExample />
             </SectionContent>
         </DocsPageSection>
-        
+
         <DocsPageSection>
             <SectionHeader Title="Elements Templates">
                 <Description>Custom arrows or bullets templates:</Description>
@@ -54,6 +51,6 @@
                 <CarouselTemplatesExample />
             </SectionContent>
         </DocsPageSection>
-        
+
     </DocsPageContent>
 </DocsPage>

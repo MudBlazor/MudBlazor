@@ -18,8 +18,8 @@
                          ErrorText="@GetErrorText()"
                          Disabled="@GetDisabledState()"
                          Required="@Required"
-                         ForId="@(InputElementId ?? string.Empty)"
-                         @onclick="@ToggleMenu">
+                         ForId="@InputElementId"
+                         @onmousedown="@ToggleMenu">
             <InputContent>
                 <MudInput @ref="_elementReference"
                           InputType="@(CanRenderValue || (Strict && !IsValueInList) ? InputType.Hidden : InputType.Text)"
@@ -45,7 +45,7 @@
                           IconSize="@IconSize"
                           AdornmentAriaLabel="@AdornmentAriaLabel"
                           OnAdornmentClick="@OnAdornmentClick"
-                          Clearable="@Clearable"
+                          Clearable="@(Clearable && !GetReadOnlyState())"
                           ClearIcon="@ClearIcon"
                           OnClearButtonClick="@(async (e) => await SelectClearButtonClickHandlerAsync(e))"
                           @attributes="UserAttributes"
@@ -59,10 +59,12 @@
                 </MudInput>
                 <MudPopover Open=@(_open)
                             MaxHeight="@MaxHeight"
+                            Class="@PopoverClass"
                             AnchorOrigin="@AnchorOrigin"
                             TransformOrigin="@TransformOrigin"
-                            Class="@PopoverClass"
-                            RelativeWidth="true">
+                            Fixed="@DropdownSettings.Fixed"
+                            OverflowBehavior="@DropdownSettings.OverflowBehavior"
+                            RelativeWidth="@RelativeWidth">
                     <CascadingValue Value="@((IMudSelect)this)" IsFixed="true">
                         <MudList T="string"
                                  Class="@ListClass"

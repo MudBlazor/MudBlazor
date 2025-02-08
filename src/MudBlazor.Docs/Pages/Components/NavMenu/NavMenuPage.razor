@@ -1,10 +1,7 @@
 ﻿@page "/components/navmenu"
-@page "/components/MudNavGroup"
-@page "/components/MudNavLink"
-@page "/components/MudNavMenu"
 
 <DocsPage>
-    <DocsPageHeader Title="Navigation Menu" />
+    <DocsPageHeader Title="Navigation Menu" Component="@nameof(MudNavMenu)" />
     <DocsPageContent>
         
         <DocsPageSection>
@@ -90,6 +87,15 @@
             </SectionContent>
         </DocsPageSection>
 
+        <DocsPageSection>
+            <SectionHeader Title="Customizing the Group Title">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(NavMenuGroupTitleExample)" DarkenBackground="true" ShowCode="false">
+                <NavMenuGroupTitleExample />
+            </SectionContent>
+        </DocsPageSection>
+        
         <DocsPageSection>
             <SectionHeader Title="OnClick">
                 <Description>

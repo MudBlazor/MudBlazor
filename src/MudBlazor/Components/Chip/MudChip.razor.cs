@@ -1,7 +1,6 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Services;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
@@ -13,8 +12,16 @@ namespace MudBlazor;
 /// Represents a compact element used to enter information, select a choice, filter content, or trigger an action.
 /// </summary>
 /// <typeparam name="T">The type of item managed by this component.</typeparam>
+/// <seealso cref="MudChipSet{T}"/>
 public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
 {
+    [Inject]
+    private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
+
+    private string _chipContainerId = $"chip-container-{Guid.NewGuid()}";
+
+    internal readonly ParameterState<bool> SelectedState;
+
     public MudChip()
     {
         using var registerScope = CreateRegisterScope();
@@ -37,8 +44,6 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         StateHasChanged();
     }
 
-    internal readonly ParameterState<bool> SelectedState;
-
     /// <summary>
     /// The service used to navigate the browser to another URL.
     /// </summary>
@@ -55,17 +60,74 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         .AddClass($"mud-chip-{GetVariant().ToDescriptionString()}")
         .AddClass($"mud-chip-size-{GetSize().ToDescriptionString()}")
         .AddClass($"mud-chip-color-{GetColor().ToDescriptionString()}")
-        .AddClass("mud-clickable", IsClickable)
-        .AddClass("mud-ripple", IsClickable && GetRipple())
+        .AddClass("mud-clickable", IsButton || IsAnchor)
+        .AddClass("mud-ripple", IsButton && GetRipple())
         .AddClass("mud-chip-label", GetLabel())
         .AddClass("mud-disabled", GetDisabled())
         .AddClass("mud-chip-selected", SelectedState.Value)
         .AddClass(Class)
         .Build();
 
-    private bool IsClickable => !ChipSet?.ReadOnly ?? (OnClick.HasDelegate || !string.IsNullOrEmpty(Href));
+    private bool IsAnchor => !string.IsNullOrWhiteSpace(Href);
 
-    private string? RoleAttribute => IsClickable ? "button" : null;
+    private bool IsButton => GetDisabled() is false
+                             && GetReadOnly() is false
+                             && (ChipSet is not null || OnClick.HasDelegate);
+
+    private bool IsClosable => (OnClose.HasDelegate || ChipSet?.AllClosable == true) && !IsAnchor;
+
+    protected string GetHtmlTag()
+    {
+        if (IsButton)
+        {
+            return "button";
+        }
+        else if (IsAnchor)
+        {
+            return "a";
+        }
+
+        return "div";
+    }
+
+    protected Dictionary<string, object?> GetAttributes()
+    {
+        var attributes = new Dictionary<string, object?>();
+
+        if (IsButton)
+        {
+            attributes.Add("tabindex", 0);
+            attributes.Add("type", "button");
+        }
+        else if (IsAnchor)
+        {
+            attributes.Add("tabindex", 0);
+
+            attributes.Add("href", Href);
+            attributes.Add("target", Target);
+
+            if (Rel is null && Target == "_blank")
+            {
+                attributes.Add("rel", "noopener");
+            }
+            else
+            {
+                attributes.Add("rel", Rel);
+            }
+        }
+        else
+        {
+            attributes.Add("tabindex", -1);
+        }
+
+        // User-defined attributes always take priority.
+        foreach (var attribute in UserAttributes)
+        {
+            attributes[attribute.Key] = attribute.Value;
+        }
+
+        return attributes;
+    }
 
     internal Variant GetVariant()
     {
@@ -98,6 +160,8 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
 
     private bool GetDisabled() => Disabled || (ChipSet?.Disabled ?? false);
 
+    private bool GetReadOnly() => ChipSet?.ReadOnly ?? false;
+
     private bool GetRipple() => Ripple ?? ChipSet?.Ripple ?? true;
 
     private bool GetLabel() => Label ?? ChipSet?.Label ?? false;
@@ -105,6 +169,8 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     private string GetCheckedIcon() => CheckedIcon ?? ChipSet?.CheckedIcon ?? Icons.Material.Filled.Check;
 
     private string GetCloseIcon() => CloseIcon ?? ChipSet?.CloseIcon ?? Icons.Material.Filled.Cancel;
+
+    internal bool ShowCheckMark => SelectedState.Value && ChipSet?.CheckMark == true;
 
     [CascadingParameter]
     private MudChipSet<T>? ChipSet { get; set; }
@@ -234,7 +300,8 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     /// The URL to navigate to when the chip is clicked.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>null</c>.  Use <see cref="Target"/> to control where the URL is opened.
+    /// <para>Defaults to <c>null</c>.  Use <see cref="Target"/> to control where the URL is opened.</para>
+    /// <para>Note: The close button cannot be enabled if this is set because <see href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#technical_summary">interactive content violates the HTML spec</see>.</para>
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Chip.ClickAction)]
@@ -249,6 +316,16 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     [Parameter]
     [Category(CategoryTypes.Chip.ClickAction)]
     public string? Target { get; set; }
+
+    /// <summary>
+    /// The relationship between the current document and the linked document when <see cref="Href"/> is set.
+    /// </summary>
+    /// <remarks>
+    /// This property is typically used by web crawlers to get more information about a link.  Common values can be found here: <see href="https://www.w3schools.com/tags/att_a_rel.asp" />
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Chip.ClickAction)]
+    public string? Rel { get; set; }
 
     /// <summary>
     /// The text label for the chip.
@@ -271,16 +348,6 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     public T? Value { get; set; }
 
     /// <summary>
-    /// Performs a full page refresh when navigating to the URL in <see cref="Href"/>.
-    /// </summary>
-    /// <remarks>
-    /// Defaults to <c>false</c>.  When <c>true</c>, client-side routing is bypassed and a full page reload occurs.
-    /// </remarks>
-    [Parameter]
-    [Category(CategoryTypes.Chip.ClickAction)]
-    public bool ForceLoad { get; set; }
-
-    /// <summary>
     /// Selects this chip by default when part of a <see cref="MudChipSet{T}"/>.
     /// </summary>
     /// <remarks>
@@ -293,6 +360,9 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     /// <summary>
     /// Occurs when this chip is clicked.
     /// </summary>
+    /// <remarks>
+    /// If an <see cref="Href"/> is set, this callback will not be triggered and the browser will handle the click.
+    /// </remarks>
     [Parameter]
     public EventCallback<MouseEventArgs> OnClick { get; set; }
 
@@ -300,12 +370,10 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     /// Occurs when this chip has been closed.
     /// </summary>
     /// <remarks>
-    /// When set, the close icon can be controlled via the <see cref="CloseIcon"/> property.
+    /// Subscribing to this event enables the close button, unless <see cref="Href"/> is also set.
     /// </remarks>
     [Parameter]
     public EventCallback<MudChip<T>> OnClose { get; set; }
-
-    internal bool ShowCheckMark => SelectedState.Value && ChipSet?.CheckMark == true;
 
     /// <summary>
     /// Selects this chip.
@@ -327,6 +395,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     {
         if (typeof(T) == typeof(string) && Value is null && Text is not null)
             return (T)(object)Text;
+
         return Value;
     }
 
@@ -334,14 +403,31 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        if (ChipSet is null)
-            return;
-        await ChipSet.AddAsync(this);
+
+        if (ChipSet is not null)
+        {
+            await ChipSet.AddAsync(this);
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        var options = new KeyInterceptorOptions(
+            "mud-chip",
+            [
+                new(" ", preventDown: "key+none", preventUp: "key+none"),
+                new("Backspace", preventDown: "key+none"),
+                new("Delete", preventDown: "key+none")
+            ]);
+
+        await KeyInterceptorService.SubscribeAsync(_chipContainerId, options, keyDown: HandleKeyDownAsync);
     }
 
     protected internal async Task OnClickAsync(MouseEventArgs ev)
     {
-        if (ChipSet?.ReadOnly == true)
+        if (ChipSet?.ReadOnly == true || IsAnchor)
         {
             return;
         }
@@ -350,23 +436,13 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
             await SelectedState.SetValueAsync(!SelectedState.Value);
             await ChipSet.OnChipSelectedChangedAsync(this, SelectedState.Value);
         }
-        if (Href != null)
-        {
-            // TODO: use MudElement to render <a> and this code can be removed. we know that it has potential problems on iOS
-            if (string.IsNullOrWhiteSpace(Target))
-                UriHelper?.NavigateTo(Href, ForceLoad);
-            else if (JsApiService != null)
-                await JsApiService.Open(Href, Target);
-        }
-        else
-        {
-            await OnClick.InvokeAsync(ev);
-        }
+
+        await OnClick.InvokeAsync(ev);
     }
 
     protected async Task OnCloseAsync(MouseEventArgs ev)
     {
-        if (ChipSet?.ReadOnly == true)
+        if (GetReadOnly() || IsClosable is false)
         {
             return;
         }
@@ -379,6 +455,24 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         StateHasChanged();
     }
 
+    private async Task HandleKeyDownAsync(KeyboardEventArgs args)
+    {
+        if (GetDisabled() || GetReadOnly())
+        {
+            return;
+        }
+
+        switch (args.Key)
+        {
+            case " ":
+                await OnClickAsync(new MouseEventArgs());
+                break;
+            case "Backspace" or "Delete":
+                await OnCloseAsync(new MouseEventArgs());
+                break;
+        }
+    }
+
     /// <summary>
     /// Releases unused resources.
     /// </summary>
@@ -386,9 +480,15 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     {
         try
         {
-            if (ChipSet is null)
-                return;
-            await ChipSet.RemoveAsync(this);
+            if (ChipSet is not null)
+            {
+                await ChipSet.RemoveAsync(this);
+            }
+
+            if (IsJSRuntimeAvailable)
+            {
+                await KeyInterceptorService.UnsubscribeAsync(_chipContainerId);
+            }
         }
         catch (Exception)
         {

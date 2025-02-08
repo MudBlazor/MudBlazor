@@ -11,6 +11,7 @@ namespace MudBlazor
     /// Represents a set of slides which transition after a delay.
     /// </summary>
     /// <typeparam name="TData">The kind of item to display.</typeparam>
+    /// <seealso cref="MudCarouselItem" />
     public partial class MudCarousel<TData> : MudBaseBindableItemsControl<MudCarouselItem, TData>, IAsyncDisposable
     {
         private Timer? _timer;
@@ -337,27 +338,22 @@ namespace MudBlazor
             }
         }
 
-        /// <summary>
-        /// Releases resources used by this component.
-        /// </summary>
+        /// <inheritdoc />
         public async ValueTask DisposeAsync()
         {
-            await DisposeAsync(true);
+            await DisposeAsyncCore();
             GC.SuppressFinalize(this);
         }
 
-        protected virtual async ValueTask DisposeAsync(bool disposing)
+        protected virtual async ValueTask DisposeAsyncCore()
         {
-            if (disposing)
-            {
-                await StopTimerAsync();
+            await StopTimerAsync();
 
-                var timer = _timer;
-                if (timer != null)
-                {
-                    _timer = null;
-                    await timer.DisposeAsync();
-                }
+            var timer = _timer;
+            if (timer != null)
+            {
+                _timer = null;
+                await timer.DisposeAsync();
             }
         }
     }

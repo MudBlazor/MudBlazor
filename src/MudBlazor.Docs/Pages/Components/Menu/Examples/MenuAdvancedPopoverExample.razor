@@ -18,9 +18,9 @@
     <MudItem xs="6" Class="d-flex justify-center align-center">
         <MudBadge Origin="@AnchorOrigin" Color="Color.Primary" Icon="@GetIcon()" Overlap="true" Elevation="4">
             <MudMenu Label="Advanced Placement" Variant="Variant.Filled" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Color="Color.Default" Size="Size.Large">
-                <MudMenuItem>Enlist</MudMenuItem>
-                <MudMenuItem>Barracks</MudMenuItem>
-                <MudMenuItem>Armory</MudMenuItem>
+                <MudMenuItem Label="Enlist" />
+                <MudMenuItem Label="Barracks" />
+                <MudMenuItem Label="Armory" />
             </MudMenu>
         </MudBadge>
     </MudItem>
@@ -115,5 +115,4 @@
 
         return $"absolute mud-height-full mud-width-full d-flex ma-n3 {align} {justify}";
     }
-    
 }

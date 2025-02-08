@@ -9,14 +9,13 @@
     @if (Adornment == Adornment.Start)
     {
         <MudInputAdornment Class="@AdornmentClassname"
-                Icon="@AdornmentIcon"
-                Color="@AdornmentColor"
-                Size="@IconSize"
-                Text="@AdornmentText"
-                Edge="@Edge.Start"
-                AdornmentClick="@OnAdornmentClick"
-                AriaLabel="@AdornmentAriaLabel"
-        />
+                           Icon="@AdornmentIcon"
+                           Color="@AdornmentColor"
+                           Size="@IconSize"
+                           Text="@AdornmentText"
+                           Placement="@Adornment.Start"
+                           AdornmentClick="@OnAdornmentClick"
+                           AriaLabel="@AdornmentAriaLabel" />
     }
 
     @if (AutoGrow || Lines > 1)
@@ -41,7 +40,6 @@
                 maxlength="@MaxLength"
                 @onkeydown:preventDefault="@KeyDownPreventDefault"
                 @onkeyup:preventDefault="@KeyUpPreventDefault"
-                @onmousewheel="@OnMouseWheel"
                 @onwheel="@OnMouseWheel"
                 aria-describedby="@GetAriaDescribedByString()"
                 aria-invalid="@Error.ToString().ToLowerInvariant()"
@@ -49,7 +47,6 @@
                 aria-required="@Required.ToString().ToLowerInvariant()">
             @Text
         </textarea>
-        @*Note: double mouse wheel handlers needed for Firefox because it doesn't know onmousewheel*@
         @*note: the value="@_internalText" is absolutely essential here. the inner html @Text is needed by tests checking it*@
     }
     else
@@ -66,21 +63,18 @@
                 disabled=@GetDisabledState()
                 readonly="@GetReadOnlyState()"
                 @onblur="@OnBlurredAsync"
-                inputmode="@InputMode.ToDescriptionString()"
+                inputmode="@(InputType == InputType.Number ? null : InputMode.ToDescriptionString())"
                 pattern="@Pattern"
                 @onkeydown="@InvokeKeyDownAsync"
                 @onkeyup="@InvokeKeyUpAsync"
                 maxlength="@MaxLength"
                 @onkeydown:preventDefault="KeyDownPreventDefault"
                 @onkeyup:preventDefault="@KeyUpPreventDefault"
-                @onmousewheel="@OnMouseWheel"
                 @onwheel="@OnMouseWheel"
                 aria-describedby="@GetAriaDescribedByString()"
                 aria-invalid="@Error.ToString().ToLowerInvariant()"
                 required="@Required"
                 aria-required="@Required.ToString().ToLowerInvariant()">
-
-        @*Note: double mouse wheel handlers needed for Firefox because it doesn't know onmousewheel*@
 
          @if (GetDisabledState()) {
              @*Note: this div must always be there to avoid crashes in WASM, but it is hidden most of the time except if ChildContent should be shown.
@@ -88,8 +82,7 @@
              *@
             <div class="@InputClassname"
                 style="@("display:"+(InputType == InputType.Hidden && ChildContent != null ? "inline" : "none"))"
-                @onblur="@OnBlurredAsync" @ref="@_elementReference1"
-            >
+                @onblur="@OnBlurredAsync" @ref="@_elementReference1">
                 @ChildContent
             </div>
         }
@@ -99,41 +92,44 @@
             <div class="@InputClassname"
                  style="@("display:"+(InputType == InputType.Hidden && ChildContent != null ? "inline" : "none"))"
                  tabindex="@(InputType == InputType.Hidden && ChildContent != null ? 0 : -1)"
-                 @onblur="@OnBlurredAsync" @ref="@_elementReference1"
-            >
+                 @onblur="@OnBlurredAsync" @ref="@_elementReference1">
                 @ChildContent
             </div>
         }
     }
 
-    @if (GetClearable() && !GetDisabledState())
+    @if (ShowClearButton())
     {
         <MudIconButton Class="@ClearButtonClassname"
-                    Color="@Color.Default"
-                    Icon="@ClearIcon"
-                    Size="@Size.Small"
-                    OnClick="@ClearButtonClickHandlerAsync"
-                    aria-label="@Localizer[LanguageResource.MudInput_Clear]"
-                    tabindex="-1"
-                />
+                       Color="@Color.Default"
+                       Icon="@ClearIcon"
+                       Size="@Size.Small"
+                       OnClick="@HandleClearButtonAsync"
+                       aria-label="@Localizer[LanguageResource.MudInput_Clear]"
+                       tabindex="-1"
+                       @onmousedown:stopPropagation />
     }
 
     @if (Adornment == Adornment.End)
     {
         <MudInputAdornment Class="@AdornmentClassname"
-                Icon="@AdornmentIcon"
-                Color="@AdornmentColor"
-                Size="@IconSize"
-                Text="@AdornmentText"
-                Edge="@Edge.End"
-                AdornmentClick="@OnAdornmentClick"
-                AriaLabel="@AdornmentAriaLabel"
-        />
+                           Icon="@AdornmentIcon"
+                           Color="@AdornmentColor"
+                           Size="@IconSize"
+                           Text="@AdornmentText"
+                           Placement="@Adornment.End"
+                           AdornmentClick="@OnAdornmentClick"
+                           AriaLabel="@AdornmentAriaLabel" />
     }
 
     @if (Variant == Variant.Outlined)
     {
-        <div class="mud-input-outlined-border"></div>
+        <fieldset class="mud-input-outlined-border">
+            @if(!string.IsNullOrEmpty(Label))
+            {
+                <legend>@Label</legend>
+            } 
+        </fieldset>
     }
 
     @if (!HideSpinButtons)

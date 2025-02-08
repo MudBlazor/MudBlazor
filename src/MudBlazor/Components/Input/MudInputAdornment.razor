@@ -1,19 +1,37 @@
 ﻿@namespace MudBlazor.Internal
+@using MudBlazor.Extensions
 
-<div class="@Class">
+<div class="@Classname">
     @if (!string.IsNullOrWhiteSpace(Text))
     {
-        <MudText Color="@Color" tabindex="-1">@Text</MudText>
+        <MudText Class="mud-input-adornment-text"
+                 Color="@Color"
+                 tabindex="-1">
+            @Text
+        </MudText>
     }
     else if (!string.IsNullOrWhiteSpace(Icon))
     {
         @if (AdornmentClick.HasDelegate)
         {
-            <MudIconButton Class="mud-input-adornment-icon-button" Icon="@Icon" OnClick="@AdornmentClick" Edge="@Edge" Size="@Size" Color="@Color" aria-label="@AriaLabel" tabindex="-1" />
+            <MudIconButton Class="mud-input-adornment-icon-button"
+                           Icon="@Icon"
+                           OnClick="@AdornmentClick"
+                           Edge="@(Placement.ToEdge())"
+                           Size="@Size"
+                           Color="@Color"
+                           aria-label="@AriaLabel"
+                           tabindex="-1"
+                           @onmousedown:stopPropagation />
         }
         else
         {
-            <MudIcon Class="mud-input-adornment-icon" Icon="@Icon" Size="@Size" Color="@Color" aria-label="@AriaLabel" tabindex="-1" />
+            <MudIcon Class="mud-input-adornment-icon"
+                     Icon="@Icon"
+                     Size="@Size"
+                     Color="@Color"
+                     aria-label="@AriaLabel"
+                     tabindex="-1" />
         }
     }
 </div>

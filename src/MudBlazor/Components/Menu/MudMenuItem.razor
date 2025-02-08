@@ -1,17 +1,41 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<MudListItem T="object"
-             @attributes="UserAttributes"
-             @onclick="EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(OnClickHandlerAsync)"
-             Href="@Href"
-             Target="@Target"
-             ForceLoad="@ForceLoad"
-             Disabled="@Disabled"
-             Class="@Class"
-             Style="@Style"
-             Icon="@Icon"
-             IconColor="@IconColor"
-             IconSize="@IconSize">
-    @ChildContent
-</MudListItem>
+<MudElement HtmlTag="@GetHtmlTag()"
+            Class="@Classname"
+            Style="@Style"
+            tabindex="0"
+            href="@Href"
+            target="@Target"
+            PreventDefault="GetDisabled()"
+            ClickPropagation="false"
+            @attributes="UserAttributes"
+            @onclick="OnClickHandlerAsync">
+
+    @if (!string.IsNullOrWhiteSpace(Icon))
+    {
+        <MudIcon Class="mud-menu-item-icon"
+                 Icon="@Icon"
+                 Color="IconColor"
+                 Disabled="GetDisabled()" />
+    }
+
+    <MudText Class="mud-menu-item-text"
+             Typo="GetTypo()">
+        @if (ChildContent is null)
+        {
+            @Label
+        }
+        else
+        {
+            @ChildContent
+        }
+    </MudText>
+
+    @if (ActivatesSubMenu)
+    {
+        <MudIcon Class="mud-menu-submenu-icon"
+                 Icon="@Icons.Material.Filled.ArrowRight"
+                 Disabled="GetDisabled()" />
+    }
+</MudElement>

@@ -1,4 +1,4 @@
-﻿.mud-select {
+.mud-select {
   display: flex;
   flex-grow: 1;
   position: relative;
@@ -24,6 +24,7 @@
       padding-right: 4.5rem !important;
     }
 
+    // If autocomplete has a progress indicator, the adornment should be hidden when loading
     & .mud-select-input .mud-icon-button {
       display: none !important;
     }
@@ -39,10 +40,6 @@
       padding-top: 0.25rem;
       padding-bottom: 0.25rem;
       padding-right: 1rem;
-    }
-
-    & .progress-indicator-circular--with-adornment {
-      padding-right: 3rem;
     }
 
     & .mud-progress-linear {
@@ -77,6 +74,19 @@
   }
 }
 
+// Adds spacing to right/left depending on the direction of the application layout
+.mud-rtl-provider {
+  & .mud-select .progress-indicator-circular--with-adornment {
+    padding-right: 1rem;
+  }
+
+  &.mud-application-layout-rtl {
+    & .mud-select .progress-indicator-circular--with-adornment {
+      padding-right: 0rem !important;
+      padding-left: 1rem !important;
+    }
+  }
+}
 
 .mud-select > .mud-form-helpertext {
   margin-top: -21px;

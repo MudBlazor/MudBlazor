@@ -1,11 +1,7 @@
 ﻿@page "/components/select"
-@page "/components/MudSelect"
-@page "/components/MudSelect`1"
-@page "/components/MudSelectItem"
-@page "/components/MudSelectItem`1"
 
 <DocsPage>
-    <DocsPageHeader Title="Select" SubTitle="Select fields allow users to provide information from a list of options.">
+    <DocsPageHeader Title="Select" Component="@nameof(MudSelect<T>)" SubTitle="Select fields allow users to provide information from a list of options.">
         <Description>
             <MudAlert Class="mt-4" Severity="Severity.Warning">
                 Note: Blazor static rendering is not supported.
@@ -65,6 +61,17 @@
                     </SectionHeader>
                     <SectionContent ShowCode="false" Code="@nameof(MultiSelectSelectAllExample)">
                         <MultiSelectSelectAllExample />
+                    </SectionContent>
+                </DocsPageSection>
+                <DocsPageSection>
+                    <SectionHeader Title="Complex Object">
+                        <Description>
+                            To handle complex objects, you should implement either <CodeInline>IEquatable</CodeInline> on a type or <CodeInline>IEqualityComparer</CodeInline> and pass it to the <CodeInline>Comparer</CodeInline> parameter.
+                            For displaying the selected values, you can override the <CodeInline>ToString</CodeInline> method or use the <CodeInline>ToStringFunc</CodeInline> parameter.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent ShowCode="false" Code="@nameof(MultiSelectComplexExample)">
+                        <MultiSelectComplexExample />
                     </SectionContent>
                 </DocsPageSection>
             </SectionSubGroups>
@@ -145,6 +152,19 @@
             </SectionContent>
         </DocsPageSection>
 
+        <DocsPageSection>
+            <SectionHeader Title="DropdownSettings">
+                <Description>
+                    This component uses <MudLink Href="/components/popover">MudPopover</MudLink>
+                    to place its list of items in combination with <MudLink Href="/components/overlay">MudOverlay</MudLink>.
+                    Some of these settings can be controlled with <CodeInline>DropdownSettings</CodeInline>,
+                    which contain defaults for the <CodeInline>MudPopover</CodeInline> appearance and behavior.
+                    <MudLink Color="Color.Secondary" Href="/components/popover#dropdownsettings">
+                        Read more on popover's page.
+                    </MudLink>
+                </Description>
+            </SectionHeader>
+        </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>
-

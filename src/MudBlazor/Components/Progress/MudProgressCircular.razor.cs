@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
 using MudBlazor.Utilities;
@@ -6,6 +9,11 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
+
+    /// <summary>
+    /// A circle-shaped indicator of progress for an ongoing operation.
+    /// </summary>
+    /// <seealso cref="MudProgressLinear"/>
     public partial class MudProgressCircular : MudComponentBase
     {
         private int _svgValue;
@@ -25,41 +33,85 @@ namespace MudBlazor
             new CssBuilder("mud-progress-circular-circle")
                 .AddClass("mud-progress-indeterminate", Indeterminate)
                 .AddClass("mud-progress-static", !Indeterminate)
+                .AddClass("mud-progress-circular-circle-rounded", Rounded)
                 .Build();
 
         /// <summary>
-        /// The color of the component. It supports the theme colors.
+        /// The color of this component.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Color.Default"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ProgressCircular.Appearance)]
         public Color Color { get; set; } = Color.Default;
 
         /// <summary>
-        /// The size of the component.
+        /// The size of this component.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Size.Medium"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ProgressCircular.Appearance)]
         public Size Size { get; set; } = Size.Medium;
 
         /// <summary>
-        /// Constantly animates, does not follow any value.
+        /// Displays a constant animation without any value.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  When <c>true</c>, the <see cref="Value"/> will be ignored.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ProgressCircular.Behavior)]
         public bool Indeterminate { get; set; }
 
+        /// <summary>
+        /// Displays a rounded border.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  When <c>true</c>, the CSS <c>stroke-linecap</c> is set to <c>round</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.ProgressLinear.Appearance)]
+        public bool Rounded { get; set; }
+
+        /// <summary>
+        /// The lowest possible value.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>0.0</c>.  Usually a percentage.  Should be lower than <see cref="Max"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ProgressCircular.Behavior)]
         public double Min { get; set; } = 0.0;
 
+        /// <summary>
+        /// The highest possible value.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>100.0</c>.  Usually a percentage.  Should be higher than <see cref="Min"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ProgressCircular.Behavior)]
         public double Max { get; set; } = 100.0;
 
+        /// <summary>
+        /// The current progress amount.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>0</c>.  Only applies when <see cref="Indeterminate"/> is <c>False</c>.  Should be between <see cref="Min"/> and <see cref="Max"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ProgressCircular.Behavior)]
         public double Value { get; set; }
 
+        /// <summary>
+        /// The thickness of the circle.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>3</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ProgressCircular.Appearance)]
         public int StrokeWidth { get; set; } = 3;
@@ -79,6 +131,7 @@ namespace MudBlazor
             StateHasChanged();
         }
 
+        /// <inheritdoc />
         protected override void OnInitialized()
         {
             base.OnInitialized();

@@ -1,6 +1,7 @@
 ﻿using Bunit;
 using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.NavMenu;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -79,13 +80,13 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<NavMenuTwoWay>();
             comp.Markup.Should().NotContain("mud-expanded");
             comp.Markup.Should().Contain("aria-hidden=\"true\"");
-            var expanded = comp.Instance._expanded;
+            var expanded = comp.Instance.Expanded;
             expanded.Should().BeFalse();
 
             var navgroup = comp.Find(".mud-nav-group>button");
             navgroup.Click();
 
-            expanded = comp.Instance._expanded;
+            expanded = comp.Instance.Expanded;
             expanded.Should().BeTrue();
             comp.Markup.Should().Contain("mud-expanded");
             comp.Markup.Should().Contain("aria-hidden=\"false\"");

@@ -1,8 +1,7 @@
 ﻿@page "/components/appbar"
-@page "/components/MudAppBar"
 
 <DocsPage>
-    <DocsPageHeader Title="App Bar" SubTitle="An app bar is used to display actions, branding, navigation and screen titles.">
+    <DocsPageHeader Title="App Bar" Component="@nameof(MudAppBar)">
         <Description>
             Keeping the app bar persistent while browsing different pages will ease navigation and access to actions for your users.
         </Description>
@@ -43,5 +42,28 @@
                 </iframe>
             </SectionContent>
         </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="App Bar with Menu">
+                <Description>
+                    <MudText>You can attach MudMenu's to the appbar, allowing for a myriad of appbar options.</MudText>
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(AppBarMenuExample)" ShowCode="false">
+                <AppBarMenuExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Contextual App Bar">
+                <Description>
+                    <MudText>You can conditionally transform the app bar into a contextual action bar with page specific action buttons.</MudText>
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(AppBarContextualExample)" ShowCode="false">
+                <AppBarContextualExample />
+            </SectionContent>
+        </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>

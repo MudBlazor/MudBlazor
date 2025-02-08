@@ -3,7 +3,7 @@ using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Docs.Examples;
-using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.CheckBox;
 using MudBlazor.UnitTests.Utilities;
 using NUnit.Framework;
 
@@ -330,16 +330,16 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void CheckBoxDisabledTest()
         {
-            var comp = Context.RenderComponent<CheckboxLabelExample>();
+            var comp = Context.RenderComponent<CheckboxLabelTest>();
             comp.FindAll("label.mud-checkbox")[3].ClassList.Should().Contain("mud-disabled"); // 4rd checkbox
         }
 
         [Test]
-        public void CheckBoxLabelPositionTest()
+        public void CheckBoxLabelPlacementTest()
         {
-            var comp = Context.RenderComponent<CheckboxLabelExample>();
+            var comp = Context.RenderComponent<CheckboxLabelTest>();
 
-            comp.FindAll("label.mud-checkbox")[2].ClassList.Should().Contain("flex-row-reverse"); // 3rd checkbox: LabelPosition.Start
+            comp.FindAll("label.mud-checkbox")[2].ClassList.Should().Contain("mud-input-content-placement-start"); // 3rd checkbox: Placement.Start
         }
 
         [Test]

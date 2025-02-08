@@ -31,6 +31,18 @@
       color: var(--mud-palette-text-primary);
       font-weight: 500;
       line-height: 1.5rem;
+
+      & .mud-button-root {
+        @media(hover: hover) and (pointer: fine) {
+          &:hover {
+            color: var(--mud-palette-action-default);
+
+            .mud-table-sort-label-icon {
+              opacity: 0.8;
+            }
+          }
+        }
+      }
     }
   }
 
@@ -53,21 +65,11 @@
 }
 
 .mud-table-sort-label {
-  cursor: pointer;
+  user-select: auto;
   display: inline-flex;
   align-items: center;
   flex-direction: inherit;
   justify-content: flex-start;
-
-  @media(hover: hover) and (pointer: fine) {
-    &:hover {
-      color: var(--mud-palette-action-default);
-
-      .mud-table-sort-label-icon {
-        opacity: 0.8;
-      }
-    }
-  }
 
   .mud-table-sort-label-icon {
     font-size: 18px;
@@ -90,6 +92,8 @@
 }
 
 .mud-table-toolbar {
+  left: 0;
+  position: sticky;
   padding-left: 16px;
   padding-right: 8px;
   padding-inline-start: 16px;
@@ -110,7 +114,31 @@
   vertical-align: inherit;
 
   & .mud-checkbox {
-    margin: -12px;
+    margin: -4px;
+
+    > .mud-icon-button {
+      padding: 4px;
+    }
+  }
+
+  & > .mud-input-control {
+    & > div.mud-input.mud-input-text {
+      color: var(--mud-theme-on-surface);
+      font-size: 0.875rem;
+      margin-top: -14px;
+      margin-bottom: -8px;
+    }
+  }
+
+  & > .mud-select {
+    & > .mud-input-control {
+      & > div.mud-input.mud-input-text {
+        color: var(--mud-theme-on-surface);
+        font-size: 0.875rem;
+        margin-top: -14px;
+        margin-bottom: -8px;
+      }
+    }
   }
 }
 
@@ -175,25 +203,11 @@
   & .mud-table-bordered {
     & .mud-table-container .mud-table-root .mud-table-body {
       & .mud-table-row {
-        .mud-table-cell:last-child {
-          border-right: 1px solid var(--mud-palette-table-lines);
-          border-top-right-radius: 0px;
-        }
-      }
-    }
-
-    & .mud-table-container .mud-table-root .mud-table-body {
-      & .mud-table-row {
         .mud-table-cell:first-child {
           border-right: none;
           border-top-right-radius: 0px;
         }
-      }
-    }
 
-
-    & .mud-table-container .mud-table-root .mud-table-head.table-head-bordered {
-      & .mud-table-row {
         .mud-table-cell:last-child {
           border-right: 1px solid var(--mud-palette-table-lines);
           border-top-right-radius: 0px;
@@ -203,13 +217,17 @@
 
     & .mud-table-container .mud-table-root .mud-table-head.table-head-bordered {
       & .mud-table-row {
+        .mud-table-cell:last-child {
+          border-right: 1px solid var(--mud-palette-table-lines);
+          border-top-right-radius: 0px;
+        }
+
         .mud-table-cell:only-child {
           border-right: none;
           border-top-right-radius: var(--mud-default-borderradius);
         }
       }
     }
-
 
     & .mud-table-container .mud-table-root .mud-table-head {
       & .mud-table-row {
@@ -260,6 +278,46 @@
         position: sticky;
         z-index: 2;
         top: 0;
+      }
+
+      & * .mud-table-loading {
+        background-color: var(--mud-palette-surface);
+        position: sticky;
+        z-index: 2;
+        top: 59px;
+      }
+
+      & * .mud-filter-panel-cell {
+        top: 59px;
+      }
+      // If .mud-table-loading exists, move .mud-filter-panel-cell down
+      table:has(.mud-table-loading) & * .mud-filter-panel-cell {
+        top: 63px;
+      }
+
+      & * .mud-table-cell.sticky-left,
+      & * .mud-table-cell.sticky-right {
+        z-index: 3;
+        background-color: var(--mud-palette-background-gray);
+      }
+    }
+  }
+}
+
+.mud-table-sticky-header.mud-table-dense {
+  & * .mud-table-root {
+    .mud-table-head {
+
+      & * .mud-table-loading {
+        top: 39px;
+      }
+
+      & * .mud-filter-panel-cell {
+        top: 39px;
+      }
+
+      table:has(.mud-table-loading) & * .mud-filter-panel-cell {
+        top: 43px;
       }
     }
   }
@@ -320,29 +378,6 @@
   }
 }
 
-
-.mud-table-cell {
-  & > .mud-input-control {
-    & > div.mud-input.mud-input-text {
-      color: var(--mud-theme-on-surface);
-      font-size: 0.875rem;
-      margin-top: -14px;
-      margin-bottom: -8px;
-    }
-  }
-
-  & > .mud-select {
-    & > .mud-input-control {
-      & > div.mud-input.mud-input-text {
-        color: var(--mud-theme-on-surface);
-        font-size: 0.875rem;
-        margin-top: -14px;
-        margin-bottom: -8px;
-      }
-    }
-  }
-}
-
 .mud-table-cell-align {
   &-left {
     text-align: left;
@@ -390,6 +425,8 @@
   overflow: auto;
   font-size: 0.875rem;
   display: initial;
+  position: sticky;
+  left: 0;
 }
 
 .mud-table-pagination:last-child {
@@ -484,7 +521,10 @@
 }
 
 .mud-table-row-expander {
-  margin: -12px -2px -12px -12px;
+  margin-top: -12px;
+  margin-bottom: -12px;
+  margin-inline-start: -12px;
+  margin-inline-end: -2px;
 }
 
 @mixin table-display-smalldevices ($breakpoint) {
@@ -576,9 +616,7 @@
           }
         }
       }
-    }
 
-    &.mud-table-bordered {
       & .mud-table-container .mud-table-root .mud-table-body {
         & .mud-table-row {
           .mud-table-cell {

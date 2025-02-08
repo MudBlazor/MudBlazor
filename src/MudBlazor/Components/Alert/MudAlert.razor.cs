@@ -12,19 +12,20 @@ namespace MudBlazor
     /// <summary>
     /// Represents an alert used to display an important message which is statically embedded in the page content.
     /// </summary>
+    /// <seealso cref="SnackbarService"/>
     public partial class MudAlert : MudComponentBase
     {
         protected string Classname => new CssBuilder("mud-alert")
-          .AddClass($"mud-alert-{Variant.ToDescriptionString()}-{Severity.ToDescriptionString()}")
-          .AddClass($"mud-dense", Dense)
-          .AddClass($"mud-square", Square)
-          .AddClass($"mud-elevation-{Elevation}")
-          .AddClass(Class)
-          .Build();
+            .AddClass($"mud-alert-{Variant.ToDescriptionString()}-{Severity.ToDescriptionString()}")
+            .AddClass($"mud-dense", Dense)
+            .AddClass($"mud-square", Square)
+            .AddClass($"mud-elevation-{Elevation}")
+            .AddClass(Class)
+            .Build();
 
         protected string ClassPosition => new CssBuilder("mud-alert-position")
-          .AddClass($"justify-sm-{ConvertHorizontalAlignment(ContentAlignment).ToDescriptionString()}")
-          .Build();
+            .AddClass($"justify-sm-{ConvertHorizontalAlignment(ContentAlignment).ToDescriptionString()}")
+            .Build();
 
         /// <summary>
         /// Gets the horizontal alignment to use based on the current right-to-left setting.
@@ -99,10 +100,11 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
+        /// Can be overridden by <see cref="MudGlobal.Rounded"/>
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Alert.Appearance)]
-        public bool Square { get; set; }
+        public bool Square { get; set; } = MudGlobal.Rounded == false;
 
         /// <summary>
         /// Gets or sets whether compact padding will be used.

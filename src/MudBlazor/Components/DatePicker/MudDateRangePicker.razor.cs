@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
@@ -10,6 +7,7 @@ namespace MudBlazor
     /// <summary>
     /// Represents a picker for a range of dates.
     /// </summary>
+    /// <seealso cref="MudDatePicker"/>
     public partial class MudDateRangePicker : MudBaseDatePicker
     {
         private DateTime? _firstDate = null, _secondDate;
@@ -103,13 +101,17 @@ namespace MudBlazor
 
                 Touched = true;
 
+                if (range?.Start is not null)
+                    PickerMonth = new DateTime(Culture.Calendar.GetYear(range.Start.Value), Culture.Calendar.GetMonth(range.Start.Value), 1, Culture.Calendar);
+
                 _dateRange = range;
                 _value = range?.End;
+                HighlightedDate = range?.Start;
 
                 if (updateValue)
                 {
                     Converter.GetError = false;
-                    if (_dateRange == null)
+                    if (_dateRange == null || (_dateRange.Start == null && _dateRange.End == null))
                     {
                         _rangeText = null;
                         await SetTextAsync(null, false);
@@ -182,9 +184,14 @@ namespace MudBlazor
         protected override Task DateFormatChangedAsync(string newFormat)
         {
             Touched = true;
-            _rangeText = new Range<string>(
-                Converter.Set(_dateRange?.Start),
-                Converter.Set(_dateRange?.End));
+            _rangeText = null;
+            if (_dateRange?.Start != null || _dateRange?.End != null)
+            {
+                _rangeText = new Range<string>(
+                    Converter.Set(_dateRange.Start),
+                    Converter.Set(_dateRange.End));
+            }
+
             return SetTextAsync(_dateRange?.ToString(Converter), false);
         }
 
@@ -246,6 +253,13 @@ namespace MudBlazor
                     .Build();
             }
 
+            if (_firstDate?.Date == day && _secondDate?.Date == day)
+            {
+                return b.AddClass("mud-selected")
+                    .AddClass($"mud-theme-{Color.ToDescriptionString()}")
+                    .Build();
+            }
+
             if (_firstDate?.Date == day || CheckDateRange(day, compareStart: isEqualTo, compareEnd: isNotEqualTo))
             {
                 return b.AddClass("mud-selected")
@@ -291,14 +305,21 @@ namespace MudBlazor
 
         protected override async Task OnDayClickedAsync(DateTime dateTime)
         {
-            if (_firstDate == null || _firstDate > dateTime || _secondDate != null)
+            if (_firstDate == null || _secondDate != null)
             {
                 _secondDate = null;
                 _firstDate = dateTime;
                 return;
             }
-
-            _secondDate = dateTime;
+            if (_firstDate > dateTime)
+            {
+                _secondDate = _firstDate;
+                _firstDate = dateTime;
+            }
+            else
+            {
+                _secondDate = dateTime;
+            }
             if (PickerActions == null || AutoClose)
             {
                 await SubmitAsync();

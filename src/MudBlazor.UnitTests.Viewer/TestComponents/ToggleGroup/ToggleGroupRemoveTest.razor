@@ -1,0 +1,22 @@
+﻿<MudToggleGroup T="string" SelectionMode="SelectionMode.MultiSelection" Color="Color.Secondary" CheckMark>
+    @foreach (var item in _items)
+    {
+        <MudToggleItem Value="@item" UnselectedIcon="@Icons.Material.Filled.CheckBoxOutlineBlank" SelectedIcon="@Icons.Material.Filled.CheckBox" />
+    }
+</MudToggleGroup>
+<br />
+<MudButton id="remove_btn" Variant="Variant.Filled" Color="Color.Primary" OnClick="@RemoveToggle">Remove</MudButton>
+
+@code {
+
+    private readonly List<string> _items = ["Croissant", "Danish", "Eclair", "Macaron", "Muffin", "Cannoli", "Baklava", "Scone"];
+
+    private void RemoveToggle()
+    {
+        if (_items.Count > 0)
+        {
+            _items.RemoveAt(_items.Count - 1);
+            StateHasChanged();
+        }
+    }
+}

@@ -22,6 +22,15 @@
     transition-duration: 0ms !important;
     transition-delay: 0ms !important;
   }
+
+  .mud-list {
+    max-height: inherit;
+    overflow-y: auto;
+  }
+}
+
+.mud-popover .mud-popover {
+  z-index: auto; // javascript will handle nested z-indexes
 }
 
 .mud-appbar {
@@ -50,9 +59,8 @@
   }
 }
 
-.mud-popover {
-  .mud-list {
-    max-height: inherit;
-    overflow-y: auto;
+.mud-select {
+    .mud-popover-cascading-value {
+    z-index: calc(var(--mud-zindex-select) + 5);
   }
 }

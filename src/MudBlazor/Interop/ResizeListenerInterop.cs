@@ -2,9 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Threading.Tasks;
 using Microsoft.JSInterop;
 using MudBlazor.Services;
 
@@ -20,36 +18,37 @@ internal class ResizeListenerInterop
         _jsRuntime = jsRuntime;
     }
 
-    public async ValueTask<bool> MatchMedia(string mediaQuery)
+    public async ValueTask<bool> MatchMedia(string mediaQuery, CancellationToken cancellationToken = default)
     {
-        var (success, value) = await _jsRuntime.InvokeAsyncWithErrorHandling(false, "mudResizeListener.matchMedia", mediaQuery);
+        var (success, value) = await _jsRuntime.InvokeAsyncWithErrorHandling(false, "mudResizeListener.matchMedia", cancellationToken, mediaQuery);
 
         return value;
     }
 
-    public ValueTask<bool> ListenForResize<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods)] T>(DotNetObjectReference<T> dotNetObjectReference, ResizeOptions options, Guid javaScriptListerId) where T : class
+    public ValueTask<bool> ListenForResize<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods)] T>(DotNetObjectReference<T> dotNetObjectReference, ResizeOptions options, Guid javaScriptListerId, CancellationToken cancellationToken = default) where T : class
     {
-        return _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudResizeListenerFactory.listenForResize", dotNetObjectReference, options, javaScriptListerId);
+        return _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudResizeListenerFactory.listenForResize", cancellationToken, dotNetObjectReference, options, javaScriptListerId);
     }
 
-    public ValueTask<bool> CancelListener(Guid javaScriptListerId)
+    public ValueTask<bool> CancelListener(Guid javaScriptListerId, CancellationToken cancellationToken = default)
     {
-        return _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudResizeListenerFactory.cancelListener", javaScriptListerId);
+        return _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudResizeListenerFactory.cancelListener", cancellationToken, javaScriptListerId);
     }
 
-    public ValueTask<bool> CancelListeners(Guid[] jsListenerIds)
+    [ExcludeFromCodeCoverage(Justification = "Not used in the core for now.")]
+    public ValueTask<bool> CancelListeners(Guid[] jsListenerIds, CancellationToken cancellationToken = default)
     {
-        return _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudResizeListenerFactory.cancelListeners", jsListenerIds);
+        return _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudResizeListenerFactory.cancelListeners", cancellationToken, jsListenerIds);
     }
 
-    public ValueTask Dispose()
+    public ValueTask Dispose(CancellationToken cancellationToken = default)
     {
-        return _jsRuntime.InvokeVoidAsyncIgnoreErrors("mudResizeListenerFactory.dispose");
+        return _jsRuntime.InvokeVoidAsyncIgnoreErrors("mudResizeListenerFactory.dispose", cancellationToken);
     }
 
-    public async ValueTask<BrowserWindowSize> GetBrowserWindowSize()
+    public async ValueTask<BrowserWindowSize> GetBrowserWindowSize(CancellationToken cancellationToken = default)
     {
-        var (success, value) = await _jsRuntime.InvokeAsyncWithErrorHandling(new BrowserWindowSize(), "mudResizeListener.getBrowserWindowSize");
+        var (success, value) = await _jsRuntime.InvokeAsyncWithErrorHandling(new BrowserWindowSize(), "mudResizeListener.getBrowserWindowSize", cancellationToken);
 
         return value;
     }

@@ -2,10 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Models;
 
@@ -34,29 +30,14 @@ public partial class ApiTypeTable
     /// </summary>
     public string Keyword { get; set; } = "";
 
-    /// <inheritdoc />
-    protected override async Task OnParametersSetAsync()
-    {
-        await base.OnParametersSetAsync();
-        if (Table != null)
-        {
-            await Table.ReloadServerData();
-            StateHasChanged();
-        }
-    }
-
     /// <summary>
     /// Occurs when <see cref="Keyword"/> has changed.
     /// </summary>
     /// <param name="keyword">The text to search for.</param>
-    public async Task OnKeywordChanged(string keyword)
+    public Task OnKeywordChanged(string keyword)
     {
         Keyword = keyword;
-        if (Table != null)
-        {
-            await Table.ReloadServerData();
-            StateHasChanged();
-        }
+        return Table!.ReloadServerData();
     }
 
     /// <summary>
@@ -92,14 +73,20 @@ public partial class ApiTypeTable
             _ => state.SortDirection == SortDirection.Ascending ? types.OrderBy(type => type.Name) : types.OrderByDescending(type => type.Name),
         };
 
+        // Get the total count
+        var count = types.Count();
+
         // Make the final results
-        var results = types.ToList();
+        var results = types
+            .Skip(state.Page * state.PageSize)
+            .Take(state.PageSize)
+            .ToList();
 
         // What categories are selected?
         return Task.FromResult(new TableData<DocumentedType>()
         {
             Items = results,
-            TotalItems = results.Count,
+            TotalItems = count,
         });
     }
 }

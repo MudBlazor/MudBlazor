@@ -18,10 +18,12 @@
                          ErrorId="@ErrorId"
                          Disabled="@GetDisabledState()"
                          Required="@Required"
+                         @onmousedown="@OnInputClickedAsync"
+                         @onfocus="@OnInputFocusedAsync"
                          ForId="@InputElementId">
             <InputContent>
                 <MudInput @ref="_elementReference" @key="_elementKey" InputType="InputType.Text"
-                          Class="mud-select-input" Margin="@Margin"
+                          Class="@InputClassname" Margin="@Margin"
                           Variant="@Variant"
                           Typo="@Typo"
                           Label="@Label"
@@ -33,16 +35,18 @@
                           ErrorId="@ErrorId"
                           HelperId="@GetHelperId()"
                           HelperText="@HelperText"
-                          OnAdornmentClick="@AdornmentClickHandlerAsync" AdornmentIcon="@CurrentIcon" Adornment="@Adornment" AdornmentColor="@AdornmentColor" IconSize="@IconSize" AdornmentText="@AdornmentText"
+                          AdornmentIcon="@CurrentIcon" Adornment="@Adornment" AdornmentColor="@AdornmentColor" IconSize="@IconSize" AdornmentText="@AdornmentText"
+                          OnAdornmentClick="@AdornmentClickHandlerAsync"
                           AdornmentAriaLabel="@AdornmentAriaLabel"
-                          Clearable="@(!GetReadOnlyState() && Clearable)" OnClearButtonClick="@OnClearButtonClick"
+                          Clearable="@(Clearable && !GetReadOnlyState())"
+                          OnClearButtonClick="@HandleClearButtonAsync"
                           ClearIcon="@ClearIcon"
                           MaxLength="@MaxLength"
                           autocomplete="@GetAutocomplete()"
                           @attributes="UserAttributes"
-                          TextChanged="OnTextChangedAsync"
-                          @onclick="@OnInputClickedAsync"
-                          @onfocus="@OnInputFocusedAsync" OnBlur="OnInputBlurredAsync"
+                          TextChanged="OnTextChangedAsync"                          
+                          @onfocus="@OnInputFocusedAsync"
+                          OnBlur="OnInputBlurredAsync"
                           OnKeyDown="@OnInputKeyDownAsync"
                           OnKeyUp="@OnInputKeyUpAsync" KeyUpPreventDefault="KeyUpPreventDefault"
                           Placeholder="@Placeholder" Immediate="true"
@@ -53,7 +57,7 @@
 
                 @if (ShowProgressIndicator && IsLoading)
                 {
-                    @if (ProgressIndicatorTemplate != null)
+                    @if (ProgressIndicatorTemplate is not null)
                     {
                         @ProgressIndicatorTemplate
                     }
@@ -65,15 +69,22 @@
                     }
                 }
 
-                <MudPopover Open="@Open" MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Class="@PopoverClass" RelativeWidth="true">
-                    @if (ProgressIndicatorInPopoverTemplate != null && IsLoading)
+                <MudPopover Open="@Open"
+                            Class="@PopoverClass"
+                            MaxHeight="@MaxHeight"
+                            RelativeWidth="@RelativeWidth"
+                            AnchorOrigin="@AnchorOrigin"
+                            TransformOrigin="@TransformOrigin"
+                            Fixed="@DropdownSettings.Fixed"
+                            OverflowBehavior="@DropdownSettings.OverflowBehavior">
+                    @if (ProgressIndicatorInPopoverTemplate is not null && IsLoading)
                     {
                         @ProgressIndicatorInPopoverTemplate
                     }
                     else if (_items != null && _items.Length != 0)
                     {
                         <MudList T="T" Class="@ListClass" Dense="@Dense">
-                            @if (BeforeItemsTemplate != null)
+                            @if (BeforeItemsTemplate is not null)
                             {
                                 <div class="mud-autocomplete-before-items pa-1">
                                     @BeforeItemsTemplate
@@ -84,32 +95,35 @@
                                 var item = _items[index];
                                 bool isSelected = index == _selectedListItemIndex;
                                 bool isDisabled = !_enabledItemIndices.Contains(index);
-                                bool showSelectedTemplate = isSelected && ItemSelectedTemplate != null;
-                                bool showDisabledTemplate = isDisabled && ItemDisabledTemplate != null;
+                                bool showSelectedTemplate = ItemSelectedTemplate is not null && isSelected;
+                                bool showDisabledTemplate = ItemDisabledTemplate is not null && isDisabled;
                                 var captureIndex = index;
                                 <MudListItem T="T" Value="@item" @key="@item" id="@GetListItemId(captureIndex)" Disabled="@(isDisabled)" OnClick="@(async () => await ListItemOnClickAsync(item))" OnClickPreventDefault="true" Class="@GetListItemClassname(isSelected)">
-                                     @if (showDisabledTemplate)
-                                     {
-                                         @ItemDisabledTemplate(item)
-                                     } else if (showSelectedTemplate)
-                                     {
-                                         @ItemSelectedTemplate(item)
-                                     } else if (ItemTemplate != null)
-                                     {
-                                         @ItemTemplate(item)
-                                     } else
-                                     {
-                                         @GetItemString(item)
-                                     }
+                                    @if (showDisabledTemplate)
+                                    {
+                                        @ItemDisabledTemplate!(item)
+                                    }
+                                    else if (showSelectedTemplate)
+                                    {
+                                        @ItemSelectedTemplate!(item)
+                                    }
+                                    else if (ItemTemplate is not null)
+                                    {
+                                        @ItemTemplate(item)
+                                    }
+                                    else
+                                    {
+                                        @GetItemString(item)
+                                    }
                                 </MudListItem>
                             }
-                            @if (MoreItemsTemplate != null && _returnedItemsCount > MaxItems)
+                            @if (MoreItemsTemplate is not null && _returnedItemsCount > MaxItems)
                             {
                                 <div class="mud-autocomplete-more-items pa-1">
                                     @MoreItemsTemplate
                                 </div>
                             }
-                            @if (AfterItemsTemplate != null)
+                            @if (AfterItemsTemplate is not null)
                             {
                                 <div class="mud-autocomplete-after-items pa-1">
                                     @AfterItemsTemplate
@@ -117,7 +131,7 @@
                             }
                         </MudList>
                     }
-                    else if (NoItemsTemplate != null)
+                    else if (NoItemsTemplate is not null)
                     {
                         <div class="mud-autocomplete-no-items pa-1">
                             @NoItemsTemplate

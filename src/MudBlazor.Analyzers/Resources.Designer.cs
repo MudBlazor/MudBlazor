@@ -63,36 +63,9 @@ namespace MudBlazor.Analyzers {
         /// <summary>
         ///   Looks up a localized string similar to This is not a component parameter, it could be an attribute..
         /// </summary>
-        internal static string MUD0001Description {
+        internal static string MUD0002Description {
             get {
-                return ResourceManager.GetString("MUD0001Description", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Illegal Parameter &apos;{0}&apos; on &apos;{1}&apos; using &apos;{2}&apos; source location &apos;{3}&apos;.
-        /// </summary>
-        internal static string MUD0001MessageFormat {
-            get {
-                return ResourceManager.GetString("MUD0001MessageFormat", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Unknown MudBlazor attribute/parameter.
-        /// </summary>
-        internal static string MUD0001Title {
-            get {
-                return ResourceManager.GetString("MUD0001Title", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to https://mudblazor.com/features/analyzers.
-        /// </summary>
-        internal static string MUD0001Url {
-            get {
-                return ResourceManager.GetString("MUD0001Url", resourceCulture);
+                return ResourceManager.GetString("MUD0002Description", resourceCulture);
             }
         }
         
@@ -102,6 +75,24 @@ namespace MudBlazor.Analyzers {
         internal static string MUD0002MessageFormat {
             get {
                 return ResourceManager.GetString("MUD0002MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown MudBlazor attribute/parameter.
+        /// </summary>
+        internal static string MUD0002Title {
+            get {
+                return ResourceManager.GetString("MUD0002Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to https://mudblazor.com/features/analyzers.
+        /// </summary>
+        internal static string MUD0002Url {
+            get {
+                return ResourceManager.GetString("MUD0002Url", resourceCulture);
             }
         }
     }

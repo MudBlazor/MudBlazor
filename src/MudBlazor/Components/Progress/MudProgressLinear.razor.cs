@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
 using MudBlazor.Utilities;
@@ -6,6 +9,11 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
+
+    /// <summary>
+    /// A line-shaped indicator of progress for an ongoing operation.
+    /// </summary>
+    /// <seealso cref="MudProgressCircular"/>
     public partial class MudProgressLinear : MudComponentBase
     {
         private readonly ParameterState<double> _minState;
@@ -28,82 +36,119 @@ namespace MudBlazor
                 .Build();
 
         /// <summary>
-        /// The color of the component. It supports the theme colors.
+        /// The color of this component.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Color.Default"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ProgressLinear.Appearance)]
         public Color Color { get; set; } = Color.Default;
 
         /// <summary>
-        /// The size of the component.
+        /// The size of this component.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Size.Medium"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ProgressLinear.Appearance)]
         public Size Size { get; set; } = Size.Small;
 
         /// <summary>
-        /// Constantly animates, does not follow any value.
+        /// Displays a constant animation without any value.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  When <c>true</c>, the <see cref="Value"/> will be ignored.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ProgressLinear.Behavior)]
         public bool Indeterminate { get; set; } = false;
 
         /// <summary>
-        /// If true, the buffer value will be used.
+        /// Displays an additional value ahead of <see cref="Value" />.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  When <c>true</c>, the value of <see cref="BufferValue"/> is displayed.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ProgressLinear.Behavior)]
         public bool Buffer { get; set; } = false;
 
         /// <summary>
-        /// If true, border-radius is set to the themes default value.
+        /// Displays a rounded border.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c> in <see cref="MudGlobal.Rounded"/>.
+        /// When <c>true</c>, the CSS <c>border-radius</c> is set to the theme's default value.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ProgressLinear.Appearance)]
-        public bool Rounded { get; set; } = false;
+        public bool Rounded { get; set; }
 
         /// <summary>
-        /// Adds stripes to the filled part of the linear progress.
+        /// Displays animated stripes for the value portion of this progress bar.
         /// </summary>
+        /// <remarks>
+        /// Default to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ProgressLinear.Appearance)]
         public bool Striped { get; set; } = false;
 
         /// <summary>
-        /// If true, the progress bar  will be displayed vertically.
+        /// Displays this progress bar vertically.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ProgressLinear.Appearance)]
         public bool Vertical { get; set; } = false;
 
         /// <summary>
-        /// Child content of component.
+        /// The content within this progress bar.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.ProgressLinear.Behavior)]
         public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// The minimum allowed value of the linear progress. Should not be equal to max.
+        /// The lowest possible value.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>0.0</c>.  Usually a percentage.  Should be lower than <see cref="Max"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ProgressLinear.Behavior)]
         public double Min { get; set; } = 0.0;
 
         /// <summary>
-        /// The maximum allowed value of the linear progress. Should not be equal to min.
+        /// The highest possible value.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>100.0</c>.  Usually a percentage.  Should be higher than <see cref="Min"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ProgressLinear.Behavior)]
         public double Max { get; set; } = 100.0;
 
         /// <summary>
-        /// The current value of the linear progress. Should be between min and max.
+        /// The current progress amount.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>0</c>.  Only applies when <see cref="Indeterminate"/> is <c>false</c>.  Should be between <see cref="Min"/> and <see cref="Max"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ProgressLinear.Behavior)]
         public double Value { get; set; }
 
+        /// <summary>
+        /// The amount to display ahead of the value.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>0</c>.  Only shows when <see cref="Buffer"/> is <c>true</c> and <see cref="Indeterminate"/> is <c>false</c>.  Typically a value greater than <see cref="Value"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ProgressLinear.Behavior)]
         public double BufferValue { get; set; }
@@ -153,15 +198,31 @@ namespace MudBlazor
             return value / total * 100.0;
         }
 
+        /// <summary>
+        /// The calculated value percentage based on <see cref="Min"/>, <see cref="Max"/>, and <see cref="Value"/>.
+        /// </summary>
+        /// <returns>A value between <c>0.0</c> and <c>100.0</c>.</returns>
         public double GetValuePercent() => GetPercentage(_valueState.Value);
 
+        /// <summary>
+        /// The calculated buffer value percentage based on <see cref="Min"/>, <see cref="Max"/>, and <see cref="BufferValue"/>.
+        /// </summary>
+        /// <returns>A value between <c>0.0</c> and <c>100.0</c>.</returns>
         public double GetBufferPercent() => GetPercentage(_bufferValueState.Value);
 
         private string GetStyleBarTransform(double input) =>
             Vertical ? $"transform: translateY({(int)Math.Round(100 - input)}%);" : $"transform: translateX(-{(int)Math.Round(100 - input)}%);";
 
+        /// <summary>
+        /// Gets the CSS transform to apply based on the current value percentage.
+        /// </summary>
+        /// <returns>A CSS transform.</returns>
         public string GetStyledBar1Transform() => GetStyleBarTransform(ValuePercent);
 
+        /// <summary>
+        /// Gets the CSS transform to apply based on the current buffer value percentage.
+        /// </summary>
+        /// <returns>A CSS transform.</returns>
         public string GetStyledBar2Transform() => GetStyleBarTransform(BufferPercent);
     }
 }

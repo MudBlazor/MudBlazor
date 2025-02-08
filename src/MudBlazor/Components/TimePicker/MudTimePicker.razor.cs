@@ -2,19 +2,18 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
+using MudBlazor.Resources;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudTimePicker : MudPicker<TimeSpan?>, IAsyncDisposable
+    public partial class MudTimePicker : MudPicker<TimeSpan?>
     {
         private const string Format24Hours = "HH:mm";
         private const string Format12Hours = "hh:mm tt";
@@ -74,10 +73,10 @@ namespace MudBlazor
 
         private void HandleParsingError()
         {
-            const string ParsingErrorMessage = "Not a valid time span";
+            const string ParsingErrorMessage = LanguageResource.Converter_InvalidTimeSpan;
             Converter.GetError = true;
-            Converter.GetErrorMessage = ParsingErrorMessage;
-            Converter.OnError?.Invoke(ParsingErrorMessage);
+            Converter.GetErrorMessage = (ParsingErrorMessage, []);
+            Converter.OnError?.Invoke(ParsingErrorMessage, []);
         }
 
         private bool _amPm = false;
@@ -520,8 +519,11 @@ namespace MudBlazor
             }
         }
 
-        public async ValueTask DisposeAsync()
+        /// <inheritdoc />
+        protected override async ValueTask DisposeAsyncCore()
         {
+            await base.DisposeAsyncCore();
+
             if (IsJSRuntimeAvailable)
             {
                 await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudTimePicker.destroyPointerEvents", ClockElementReference);

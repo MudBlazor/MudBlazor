@@ -8,7 +8,7 @@
 
 @if (Column != null && !Column.HiddenState.Value)
 {
-    <th scope="col" class="@_classname" style="@_style" colspan="@Column?.HeaderColSpan" @attributes="@UserAttributes">
+    <th scope="col" class="@Classname" style="@Stylename" colspan="@Column?.HeaderColSpan" @attributes="@UserAttributes">
         @if (Column.filterable && Column.FilterTemplate != null)
         {
             @Column.FilterTemplate(Column.FilterContext)
@@ -30,7 +30,7 @@
                         <MudSelectItem T="Enum" Value="@(null)"></MudSelectItem>
                         @foreach (var item in EnumExtensions.GetSafeEnumValues(fieldType.InnerType))
                         {
-                            <MudSelectItem T="Enum" Value="@((Enum)item)">@item</MudSelectItem>
+                            <MudSelectItem T="Enum" Value="@item">@Localizer[item]</MudSelectItem>
                         }
                     </MudSelect>
                 }
@@ -62,7 +62,7 @@
                         }
                     }
                 </MudMenu>
-                <MudIconButton Class="align-self-center" Icon="@Icons.Material.Filled.FilterAltOff" Size="@Size.Small" OnClick="@ClearFilterAsync"></MudIconButton>
+                <MudIconButton Class="align-self-center" Icon="@Icons.Material.Filled.FilterAltOff" Size="@Size.Small" OnClick="@ClearFilterAsync" aria-label="@Localizer[LanguageResource.MudDataGrid_ClearFilter]"></MudIconButton>
             </MudStack>
         }
     </th>

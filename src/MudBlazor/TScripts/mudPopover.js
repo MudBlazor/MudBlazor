@@ -121,6 +121,12 @@ window.mudpopoverHelper = {
 
     flipMargin: 0,
 
+    basePopoverZIndex: parseInt(getComputedStyle(document.documentElement)
+        .getPropertyValue('--mud-zindex-popover')) || 1200,
+
+    baseTooltipZIndex: parseInt(getComputedStyle(document.documentElement)
+        .getPropertyValue('--mud-zindex-tooltip')) || 1600,
+
     getPositionForFlippedPopver: function (inputArray, selector, boundingRect, selfRect) {
         const classList = [];
         for (var i = 0; i < inputArray.length; i++) {
@@ -138,6 +144,8 @@ window.mudpopoverHelper = {
     },
 
     placePopover: function (popoverNode, classSelector) {
+        // parentNode is the calling element, mudmenu/tooltip/etc not the parent popover if it's a child popover
+        // this happens at page load unless it's popover inside a popover, then it happens when you activate the parent
 
         if (popoverNode && popoverNode.parentNode) {
             const id = popoverNode.id.substr(8);
@@ -146,32 +154,55 @@ window.mudpopoverHelper = {
             if (!popoverContentNode) {
                 return;
             }
+            const classList = popoverContentNode.classList;
 
-            if (popoverContentNode.classList.contains('mud-popover-open') == false) {
+            if (classList.contains('mud-popover-open') == false) {
                 return;
             }
 
             if (classSelector) {
-                if (popoverContentNode.classList.contains(classSelector) == false) {
+                if (classList.contains(classSelector) == false) {
+                    this.updatePopoverOverlay(popoverContentNode);
                     return;
                 }
             }
-            const boundingRect = popoverNode.parentNode.getBoundingClientRect();
-
-            if (popoverContentNode.classList.contains('mud-popover-relative-width')) {
+            let boundingRect = popoverNode.parentNode.getBoundingClientRect();
+            // allow them to be changed after initial creation
+            popoverContentNode.style['max-width'] = 'none';
+            popoverContentNode.style['min-width'] = 'none';
+            if (classList.contains('mud-popover-relative-width')) {
                 popoverContentNode.style['max-width'] = (boundingRect.width) + 'px';
+            }
+            else if (classList.contains('mud-popover-adaptive-width')) {
+                popoverContentNode.style['min-width'] = (boundingRect.width) + 'px';
             }
 
             const selfRect = popoverContentNode.getBoundingClientRect();
-            const classList = popoverContentNode.classList;
-            const classListArray = Array.from(popoverContentNode.classList);
+            const classListArray = Array.from(classList);
 
             const postion = window.mudpopoverHelper.calculatePopoverPosition(classListArray, boundingRect, selfRect);
             let left = postion.left;
             let top = postion.top;
             let offsetX = postion.offsetX;
             let offsetY = postion.offsetY;
-
+            // get the top/left/ from popoverContentNode if the popover has been hardcoded for position
+            if (classList.contains('mud-popover-position-override')) {
+                left = parseInt(popoverContentNode.style['left']) || left;
+                top = parseInt(popoverContentNode.style['top']) || top;
+                // no offset when hardcoded 
+                offsetX = 0;
+                offsetY = 0;
+                // bounding rect for flipping
+                boundingRect = {
+                    left: left,
+                    top: top,
+                    right: left + selfRect.width,
+                    bottom: top + selfRect.height,
+                    width: selfRect.width,
+                    height: selfRect.height
+                };
+            }
+            // flipping logic
             if (classList.contains('mud-popover-overflow-flip-onopen') || classList.contains('mud-popover-overflow-flip-always')) {
 
                 const appBarElements = document.getElementsByClassName("mud-appbar mud-appbar-fixed-top");
@@ -253,10 +284,40 @@ window.mudpopoverHelper = {
                     top = newPosition.top;
                     offsetX = newPosition.offsetX;
                     offsetY = newPosition.offsetY;
-
                     popoverContentNode.setAttribute('data-mudpopover-flip', 'flipped');
                 }
                 else {
+                    // did not flip, ensure the left and top are inside bounds
+                    // appbaroffset is another section
+                    if (left + offsetX < 0 && // it's starting left of the screen
+                        Math.abs(left + offsetX) < selfRect.width) { // it's not starting so far left the entire box would be hidden
+                        left = Math.max(0, left + offsetX);
+                        // set offsetX to 0 to avoid double offset
+                        offsetX = 0;
+                    }
+
+                    // will be covered by appbar so adjust zindex with appbar as parent
+                    if (top + offsetY < appBarOffset &&
+                        appBarElements.length > 0) {
+                        this.updatePopoverZIndex(popoverContentNode, appBarElements[0]);
+                        //console.log(`top: ${top} | offsetY: ${offsetY} | total: ${top + offsetY} | appBarOffset: ${appBarOffset}`);
+                    }
+
+                    if (top + offsetY < 0 && // it's starting above the screen
+                        Math.abs(top + offsetY) < selfRect.height) { // it's not starting so far above the entire box would be hidden
+                        top = Math.max(0, top + offsetY);
+                        // set offsetY to 0 to avoid double offset
+                        offsetY = 0;
+                    }
+
+                    // if it contains a mud-list set that mud-list max-height to be the remaining size on screen
+                    const list = popoverContentNode.querySelector('.mud-list');
+                    const listPadding = 24;
+                    const listMaxHeight = (window.innerHeight - top - offsetY);
+                    // is list defined and does the list calculated height exceed the listmaxheight
+                    if (list && list.offsetHeight > listMaxHeight) {
+                        list.style.maxHeight = (listMaxHeight - listPadding) + 'px';
+                    }
                     popoverContentNode.removeAttribute('data-mudpopover-flip');
                 }
 
@@ -267,23 +328,59 @@ window.mudpopoverHelper = {
                 }
             }
 
-            if (popoverContentNode.classList.contains('mud-popover-fixed')) {
-            }
-            else if (window.getComputedStyle(popoverNode).position == 'fixed') {
+            if (window.getComputedStyle(popoverNode).position == 'fixed') {
                 popoverContentNode.style['position'] = 'fixed';
             }
-            else {
+            else if (!classList.contains('mud-popover-fixed')) {
                 offsetX += window.scrollX;
                 offsetY += window.scrollY
+            }
+
+            if (classList.contains('mud-popover-position-override')) {
+                // no offset if popover position is hardcoded
+                offsetX = 0;
+                offsetY = 0;
             }
 
             popoverContentNode.style['left'] = (left + offsetX) + 'px';
             popoverContentNode.style['top'] = (top + offsetY) + 'px';
 
+            // update z-index by sending the calling popover to update z-index,
+            // and the parentnode of the calling popover (not content parent)
+            //console.log(popoverContentNode, popoverNode.parentNode);
+            this.updatePopoverZIndex(popoverContentNode, popoverNode.parentNode);
+
             if (window.getComputedStyle(popoverNode).getPropertyValue('z-index') != 'auto') {
-                popoverContentNode.style['z-index'] = window.getComputedStyle(popoverNode).getPropertyValue('z-index');
+                popoverContentNode.style['z-index'] = Math.max(window.getComputedStyle(popoverNode).getPropertyValue('z-index'), popoverContentNode.style['z-index']);
                 popoverContentNode.skipZIndex = true;
             }
+            this.updatePopoverOverlay(popoverContentNode);
+        }
+        else {
+            //console.log(`popoverNode: ${popoverNode} ${popoverNode ? popoverNode.parentNode : ""}`);
+        }
+    },
+
+    popoverScrollListener: function (node) {
+        let currentNode = node.parentNode;
+        while (currentNode) {
+            //console.log(currentNode);
+            const isScrollable =
+                (currentNode.scrollHeight > currentNode.clientHeight) || // Vertical scroll
+                (currentNode.scrollWidth > currentNode.clientWidth);    // Horizontal scroll
+            if (isScrollable) {
+                //console.log("scrollable");
+                currentNode.addEventListener('scroll', () => {
+                    //console.log("scrolled");
+                    window.mudpopoverHelper.placePopoverByClassSelector('mud-popover-fixed');
+                    window.mudpopoverHelper.placePopoverByClassSelector('mud-popover-overflow-flip-always');
+                });
+            }
+            // Stop if we reach the body, or head
+            if (currentNode.tagName === "BODY") {
+                break;
+            }
+            currentNode = currentNode.parentNode;
         }
     },
 
@@ -304,7 +401,78 @@ window.mudpopoverHelper = {
 
     countProviders: function () {
         return document.querySelectorAll(".mud-popover-provider").length;
-    }
+    },
+
+    updatePopoverOverlay: function (popoverContentNode) {
+        // set any associated overlay to equal z-index
+        const provider = popoverContentNode.closest('.mud-popover-provider');
+        if (provider && popoverContentNode.classList.contains("mud-popover")) {
+            const overlay = provider.querySelector('.mud-overlay');
+            // skip any overlay marked with mud-skip-overlay
+            if (overlay && !overlay.classList.contains('mud-skip-overlay-positioning')) {
+                // Only assign z-index if it doesn't already exist
+                if (!overlay.style['z-index']) {
+                    overlay.style['z-index'] = popoverContentNode.style['z-index'];
+                }
+            }
+        }
+    },
+
+    updatePopoverZIndex: function (popoverContentNode, parentNode) {
+        // find the first parent mud-popover if it exists
+        const parentPopover = parentNode.closest('.mud-popover');
+        const parentOfPopover = popoverContentNode.parentNode;
+        // get --mud-zindex-popover from root
+        let newZIndex = window.mudpopoverHelper.basePopoverZIndex + 1;
+        const origZIndex = parseInt(popoverContentNode.style['z-index']) || 1;
+        const contentZIndex = popoverContentNode.style['z-index'];
+        // normal nested position update
+        if (parentPopover) {
+            // get parent popover z-index
+            const computedStyle = window.getComputedStyle(parentPopover);
+            const parentZIndexValue = computedStyle.getPropertyValue('z-index');
+            if (parentZIndexValue !== 'auto') {
+                // parentpopovers will never be auto zindex due to css rules
+                // children are set "auto" z-index in css and therefore need updated
+                // set new z-index 1 above parent
+                newZIndex = parseInt(parentZIndexValue) + 1;
+            }
+            popoverContentNode.style['z-index'] = newZIndex;
+        }
+        // nested popover inside any other child element
+        else if (parentOfPopover) {
+            const computedStyle = window.getComputedStyle(parentOfPopover);
+            const tooltipZIndexValue = computedStyle.getPropertyValue('z-index');
+            if (tooltipZIndexValue !== 'auto') {
+                newZIndex = parseInt(tooltipZIndexValue) + 1;
+            }
+            popoverContentNode.style['z-index'] = Math.max(newZIndex, window.mudpopoverHelper.baseTooltipZIndex + 1, origZIndex);
+        }
+        // tooltip container update 
+        // (it's not technically a nested popover but when nested inside popover components it doesn't set zindex properly)
+        else if (parentNode && parentNode.classList.contains("mud-tooltip-root")) {
+            const computedStyle = window.getComputedStyle(parentNode);
+            const tooltipZIndexValue = computedStyle.getPropertyValue('z-index');
+            if (tooltipZIndexValue !== 'auto') {
+                newZIndex = parseInt(tooltipZIndexValue) + 1;
+            }
+            popoverContentNode.style['z-index'] = Math.max(newZIndex, window.mudpopoverHelper.baseTooltipZIndex + 1);
+        }
+        // specific appbar interference update
+        else if (parentNode && parentNode.classList.contains("mud-appbar")) {
+            // adjust zindex to top of appbar if it's underneath
+            const computedStyle = window.getComputedStyle(parentNode);
+            const appBarZIndexValue = computedStyle.getPropertyValue('z-index');
+            if (appBarZIndexValue !== 'auto') {
+                newZIndex = parseInt(appBarZIndexValue) + 1;
+            }
+            popoverContentNode.style['z-index'] = newZIndex;
+        }
+        // if popoverContentNode.style['z-index'] is not set or set lower than minimum set it to default popover zIndex
+        else if (!contentZIndex || parseInt(contentZIndex) < 1) {
+            popoverContentNode.style['z-index'] = newZIndex;
+        }
+    },
 }
 
 class MudPopover {
@@ -314,7 +482,7 @@ class MudPopover {
         this.contentObserver = null;
         this.mainContainerClass = null;
     }
-    
+
     callback(id, mutationsList, observer) {
         for (const mutation of mutationsList) {
             if (mutation.type === 'attributes') {
@@ -329,12 +497,13 @@ class MudPopover {
                     window.mudpopoverHelper.placePopoverByNode(target);
                 }
                 else if (mutation.attributeName == 'data-ticks') {
+                    // data-ticks are important for Direction and Location, it doesn't reposition
+                    // if they aren't there     
                     const tickAttribute = target.getAttribute('data-ticks');
 
-                    const parent = target.parentElement;
                     const tickValues = [];
                     let max = -1;
-                    if (parent) {
+                    if (parent && parent.children) {
                         for (let i = 0; i < parent.children.length; i++) {
                             const childNode = parent.children[i];
                             const tickValue = parseInt(childNode.getAttribute('data-ticks'));
@@ -354,12 +523,26 @@ class MudPopover {
                         }
                     }
 
+                    // Iterate over the items in this.map to reset any open overlays
+                    for (const mapItem of Object.entries(this.map)) {
+                        const item = mapItem.length > 1 ? mapItem[1] : mapItem;
+                        const popoverContentNode = item.popoverContentNode; // Access the popover content node (in mud-popover-provider)
+                        if (popoverContentNode) {
+                            const tickValue = parseInt(popoverContentNode.getAttribute('data-ticks')); // get data-ticks property
+                            if (tickValue == 0) {
+                                continue;
+                            }
+                            window.mudpopoverHelper.updatePopoverOverlay(popoverContentNode); // Update the popover overlay for an active popover                            
+                        }
+                    }
+
                     if (tickValues.length == 0) {
                         continue;
                     }
 
                     const sortedTickValues = tickValues.sort((x, y) => x - y);
-
+                    // z-index calculation not used here
+                    continue;
                     for (let i = 0; i < parent.children.length; i++) {
                         const childNode = parent.children[i];
                         const tickValue = parseInt(childNode.getAttribute('data-ticks'));
@@ -370,8 +553,8 @@ class MudPopover {
                         if (childNode.skipZIndex == true) {
                             continue;
                         }
-
-                        childNode.style['z-index'] = 'calc(var(--mud-zindex-popover) + ' + (sortedTickValues.indexOf(tickValue) + 3).toString() + ')';
+                        const newIndex = window.mudpopoverHelper.basePopoverZIndex + sortedTickValues.indexOf(tickValue) + 3;
+                        childNode.style['z-index'] = newIndex;
                     }
                 }
             }
@@ -409,6 +592,7 @@ class MudPopover {
         this.initialize(this.mainContainerClass);
 
         const popoverNode = document.getElementById('popover-' + id);
+        mudpopoverHelper.popoverScrollListener(popoverNode);
         const popoverContentNode = document.getElementById('popovercontent-' + id);
         if (popoverNode && popoverNode.parentNode && popoverContentNode) {
 
@@ -447,6 +631,7 @@ class MudPopover {
             contentNodeObserver.observe(popoverContentNode);
 
             this.map[id] = {
+                popoverContentNode: popoverContentNode,
                 mutationObserver: observer,
                 resizeObserver: resizeObserver,
                 contentNodeObserver: contentNodeObserver

@@ -1,27 +1,29 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
     /// <summary>
     /// An input for collecting text values.
     /// </summary>
     /// <typeparam name="T">The type of object managed by this input.</typeparam>
     public partial class MudTextField<T> : MudDebouncedInput<T>
     {
+        private IMask? _mask = null;
+        private MudMask? _maskReference = null;
+
         protected string Classname =>
            new CssBuilder("mud-input-input-control")
-               .AddClass($"mud-input-{Variant.ToDescriptionString()}-with-label", !string.IsNullOrEmpty(Label))
                .AddClass(Class)
                .Build();
 
         /// <summary>
         /// The reference to the underlying <see cref="MudInput{T}"/> component.
         /// </summary>
-        public MudInput<string> InputReference { get; private set; }
-
-        private MudMask _maskReference;
+        public MudInput<string>? InputReference { get; private set; }
 
         /// <summary>
         /// The type of input collected by this component.
@@ -32,10 +34,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public InputType InputType { get; set; } = InputType.Text;
-
-        internal override InputType GetInputType() => InputType;
-
-        private string GetCounterText() => Counter == null ? string.Empty : (Counter == 0 ? (string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") : ((string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") + $" / {Counter}"));
 
         /// <summary>
         /// Shows a button to clear this input's value.
@@ -66,81 +64,6 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
 
-        /// <inheritdoc />
-        public override ValueTask FocusAsync()
-        {
-            if (_mask == null)
-                return InputReference.FocusAsync();
-            else
-                return _maskReference.FocusAsync();
-        }
-
-        /// <inheritdoc />
-        public override ValueTask BlurAsync()
-        {
-            if (_mask == null)
-                return InputReference.BlurAsync();
-            else
-                return _maskReference.BlurAsync();
-        }
-
-        /// <inheritdoc />
-        public override ValueTask SelectAsync()
-        {
-            if (_mask == null)
-                return InputReference.SelectAsync();
-            else
-                return _maskReference.SelectAsync();
-        }
-
-        /// <inheritdoc />
-        public override ValueTask SelectRangeAsync(int pos1, int pos2)
-        {
-            if (_mask == null)
-                return InputReference.SelectRangeAsync(pos1, pos2);
-            else
-                return _maskReference.SelectRangeAsync(pos1, pos2);
-        }
-
-        /// <inheritdoc />
-        protected override async Task ResetValueAsync()
-        {
-            if (_mask == null)
-                await InputReference.ResetAsync();
-            else
-                await _maskReference.ResetAsync();
-            await base.ResetValueAsync();
-        }
-
-        /// <summary>
-        /// Clears the <see cref="MudBaseInput{T}.Text"/> and sets <see cref="MudBaseInput{T}.Value"/> to <c>default(T)</c>.
-        /// </summary>
-        public Task Clear()
-        {
-            if (_mask == null)
-                return InputReference.SetText(null);
-            else
-                return _maskReference.Clear();
-        }
-
-        /// <summary>
-        /// Sets the <see cref="MudBaseInput{T}.Text"/> to the specified value.
-        /// </summary>
-        /// <param name="text">The new text value to use.</param>
-        public async Task SetText(string text)
-        {
-            if (_mask == null)
-            {
-                if (InputReference != null)
-                    await InputReference.SetText(text);
-                return;
-            }
-            await _maskReference.Clear();
-            _maskReference.OnPaste(text);
-        }
-
-        private IMask _mask = null;
-
         /// <summary>
         /// The mask to apply to text values.
         /// </summary>
@@ -150,41 +73,10 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.General.Data)]
-        public IMask Mask
+        public IMask? Mask
         {
             get => _maskReference?.Mask ?? _mask; // this might look strange, but it is absolutely necessary due to how MudMask works.
-            set
-            {
-                _mask = value;
-            }
-        }
-
-        protected override Task SetValueAsync(T value, bool updateText = true, bool force = false)
-        {
-            if (_mask != null)
-            {
-                var textValue = Converter.Set(value);
-                _mask.SetText(textValue);
-                textValue = Mask.GetCleanText();
-                value = Converter.Get(textValue);
-            }
-
-            return base.SetValueAsync(value, updateText);
-        }
-
-        protected override Task SetTextAsync(string text, bool updateValue = true)
-        {
-            if (_mask != null)
-            {
-                _mask.SetText(text);
-                text = _mask.Text;
-            }
-            return base.SetTextAsync(text, updateValue);
-        }
-
-        private async Task OnMaskedValueChanged(string s)
-        {
-            await SetTextAsync(s);
+            set => _mask = value;
         }
 
         /// <summary>
@@ -206,5 +98,139 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.General.Behavior)]
         public int MaxLines { get; set; }
+
+        [MemberNotNullWhen(false, nameof(InputReference))]
+        [MemberNotNullWhen(true, nameof(_mask), nameof(Mask), nameof(_maskReference))]
+        private bool HasMask => _mask is not null;
+
+        /// <inheritdoc />
+        public override ValueTask FocusAsync()
+        {
+            if (!HasMask)
+            {
+                return InputReference.FocusAsync();
+            }
+
+            return _maskReference.FocusAsync();
+        }
+
+        /// <inheritdoc />
+        public override ValueTask BlurAsync()
+        {
+            if (!HasMask)
+            {
+                return InputReference.BlurAsync();
+            }
+
+            return _maskReference.BlurAsync();
+        }
+
+        /// <inheritdoc />
+        public override ValueTask SelectAsync()
+        {
+            if (!HasMask)
+            {
+                return InputReference.SelectAsync();
+            }
+
+            return _maskReference.SelectAsync();
+        }
+
+        /// <inheritdoc />
+        public override ValueTask SelectRangeAsync(int pos1, int pos2)
+        {
+            if (!HasMask)
+            {
+                return InputReference.SelectRangeAsync(pos1, pos2);
+            }
+
+            return _maskReference.SelectRangeAsync(pos1, pos2);
+        }
+
+        /// <inheritdoc />
+        protected override async Task ResetValueAsync()
+        {
+            if (!HasMask)
+            {
+                await InputReference.ResetAsync();
+            }
+            else
+            {
+                await _maskReference.ResetAsync();
+            }
+
+            await base.ResetValueAsync();
+        }
+
+        /// <summary>
+        /// Clears the <see cref="MudBaseInput{T}.Text"/> and sets <see cref="MudBaseInput{T}.Value"/> to <c>default(T)</c>.
+        /// </summary>
+        public Task Clear()
+        {
+            if (!HasMask)
+            {
+                return InputReference.SetText(null);
+            }
+
+            return _maskReference.Clear();
+        }
+
+        /// <summary>
+        /// Sets the <see cref="MudBaseInput{T}.Text"/> to the specified value.
+        /// </summary>
+        /// <param name="text">The new text value to use.</param>
+        public async Task SetText(string text)
+        {
+            if (!HasMask)
+            {
+                await InputReference.SetText(text);
+                return;
+            }
+
+            await _maskReference.Clear();
+            _maskReference.OnPaste(text);
+        }
+
+        protected override Task SetValueAsync(T? value, bool updateText = true, bool force = false)
+        {
+            if (HasMask)
+            {
+                var textValue = Converter.Set(value);
+                _mask.SetText(textValue);
+                textValue = Mask.GetCleanText();
+                value = Converter.Get(textValue);
+            }
+
+            return base.SetValueAsync(value, updateText, force);
+        }
+
+        protected override Task SetTextAsync(string? text, bool updateValue = true)
+        {
+            if (HasMask)
+            {
+                _mask.SetText(text);
+                text = _mask.Text;
+            }
+
+            return base.SetTextAsync(text, updateValue);
+        }
+
+        internal override InputType GetInputType() => InputType;
+
+        private bool ShowClearButton()
+        {
+            if (SubscribeToParentForm)
+                return Clearable && !GetReadOnlyState() && !GetDisabledState();
+            return Clearable && !GetDisabledState();
+        }
+
+        private Task OnMaskedValueChanged(string s) => SetTextAsync(s);
+
+        private string GetCounterText() => Counter switch
+        {
+            null => string.Empty,
+            0 => (string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}"),
+            _ => (string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") + $" / {Counter}"
+        };
     }
 }

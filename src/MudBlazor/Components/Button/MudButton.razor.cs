@@ -12,7 +12,11 @@ namespace MudBlazor
     /// or <see href="https://developer.mozilla.org/docs/Web/HTML/Element/a">anchor</see> if <c>Href</c> is set.<br/>
     /// You can directly add attributes like <c>title</c> or <c>aria-label</c>.
     /// </remarks>
-    public partial class MudButton : MudBaseButton, IHandleEvent, IDisposable
+    /// <seealso cref="MudButtonGroup" />
+    /// <seealso cref="MudFab" />
+    /// <seealso cref="MudIconButton" />
+    /// <seealso cref="MudToggleIconButton" />
+    public partial class MudButton : MudBaseButton, IDisposable
     {
         protected string Classname => new CssBuilder("mud-button-root mud-button")
             .AddClass($"mud-button-{Variant.ToDescriptionString()}")
@@ -94,17 +98,18 @@ namespace MudBlazor
         /// The color of the button.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Color.Default"/>.  Theme colors are supported.
+        /// Defaults to <see cref="Color.Default"/> in <see cref="MudGlobal.ButtonDefaults.Color"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public Color Color { get; set; } = Color.Default;
+        public Color Color { get; set; } = MudGlobal.ButtonDefaults.Color;
 
         /// <summary>
         /// The size of the button.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Size.Medium"/>.   Use the <see cref="IconSize"/> property to set the size of icons.
+        /// Defaults to <see cref="Size.Medium"/>.
+        /// Use the <see cref="IconSize"/> property to set the size of icons.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
@@ -114,11 +119,11 @@ namespace MudBlazor
         /// The display variation to use.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Variant.Text"/>.
+        /// Defaults to <see cref="Variant.Text"/> in <see cref="MudGlobal.ButtonDefaults.Variant"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public Variant Variant { get; set; } = Variant.Text;
+        public Variant Variant { get; set; } = MudGlobal.ButtonDefaults.Variant;
 
         /// <summary>
         /// Expands the button to 100% of the container width.
@@ -172,13 +177,5 @@ namespace MudBlazor
             // See https://github.com/MudBlazor/MudBlazor/issues/9710
             return ButtonGroup != null && ButtonGroup.FullWidth && ButtonGroup.NoneButtonIsStreched();
         }
-
-        /// <inheritdoc/>
-        /// <remarks>
-        /// See: https://github.com/MudBlazor/MudBlazor/issues/8365
-        /// <para/>
-        /// Since <see cref="MudButton"/> implements only single <see cref="EventCallback"/> <see cref="MudBaseButton.OnClick"/> this is safe to disable globally within the component.
-        /// </remarks>
-        Task IHandleEvent.HandleEventAsync(EventCallbackWorkItem callback, object? arg) => callback.InvokeAsync(arg);
     }
 }

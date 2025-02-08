@@ -1,5 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-@inject IDialogService DialogService
+﻿@inject IDialogService DialogService
 
 <MudButton Variant="Variant.Filled" OnClick="()=>_visible=true">Open</MudButton>
 
@@ -21,7 +20,7 @@
     private int _rating;
     private readonly DialogOptions _inlineOptions = new() { FullWidth = true };
 
-    Task CloseAndOpen()
+    private Task CloseAndOpen()
     {
         _visible = false;
 

@@ -4,66 +4,58 @@
 <MudPaper Width="300px" Elevation="0">
     <MudTreeView ServerData="@LoadServerData" Items="@InitialTreeItems">
         <ItemTemplate>
-            <MudTreeViewItem Value="@context.Value" Icon="@context.Icon" LoadingIconColor="Color.Info" CanExpand="@context.Expandable"/>
+            <MudTreeViewItem 
+                Value="@context.Value" 
+                Items="@context.Children" 
+                ItemsChanged="@(new Action<IReadOnlyCollection<TreeItemData<string>>>(items => OnItemsLoaded(context, items)))" 
+                @bind-Expanded="@context.Expanded"
+                CanExpand="@context.Expandable"
+                Icon="@context.Icon" 
+                LoadingIconColor="Color.Info" 
+                />
         </ItemTemplate>
     </MudTreeView>
 </MudPaper>
 
 @code {
+
     private List<TreeItemData<string>> InitialTreeItems { get; set; } = new();
-    private List<TreeItemData<string>> ServerTreeItems { get; set; } = new();
+    private int _idCounter=1; // <- the counter makes sure the generated items are unique
 
     protected override void OnInitialized()
     {
         // MudTreeView initially only gets these top-level items
-        InitialTreeItems.Add(new TreeItemData<string> { Value = "All Mail", Icon = Icons.Material.Filled.Label, });
+        InitialTreeItems.Add(new TreeItemData<string> {
+            Value = "All Mail", Icon = Icons.Material.Filled.Label,
+            Expanded = true,
+            Children = [
+                new TreeItemData<string> { Value = "Promotions", Icon = Icons.Material.Filled.Group, },
+                new TreeItemData<string> { Value = "Updates", Icon = Icons.Material.Filled.Info, },
+                new TreeItemData<string> { Value = "Forums", Icon = Icons.Material.Filled.QuestionAnswer, Expandable = false },
+                new TreeItemData<string> { Value = "Social", Icon = Icons.Material.Filled.LocalOffer, Expandable = false }
+            ] });
         InitialTreeItems.Add(new TreeItemData<string> { Value = "Trash", Icon = Icons.Material.Filled.Delete });
-
-        // LoadServerData will load from this hierarchy
-        ServerTreeItems.Add(new TreeItemData<string> {
-                Value = "All Mail", Icon = Icons.Material.Filled.Label,
-                Children = [
-                        new TreeItemData<string> { Value = "Promotions", Icon = Icons.Material.Filled.Group, 
-                                Children = [
-                                    new TreeItemData<string> { Value = "L.E.D Door Mats", Icon = Icons.Material.Outlined.Lightbulb, Expandable = false },
-                                    new TreeItemData<string> { Value = "Car Beauty Salon", Icon = Icons.Material.Filled.CarRepair, Expandable = false },
-                                    new TreeItemData<string> { Value = "Fakedoors.com", Icon = Icons.Material.Outlined.DoorFront, Expandable = false },
-                                    new TreeItemData<string> { Value = "Bluetooth Toilet", Icon = Icons.Material.Filled.Wc, Expandable = false }
-                                ]},
-                    new TreeItemData<string> { Value = "Updates", Icon = Icons.Material.Filled.Info, Expandable = false },
-                    new TreeItemData<string> { Value = "Forums", Icon = Icons.Material.Filled.QuestionAnswer, Expandable = false },
-                    new TreeItemData<string> { Value = "Social", Icon = Icons.Material.Filled.LocalOffer, Expandable = false }
-                ]});
     }
 
     public async Task<IReadOnlyCollection<TreeItemData<string>>> LoadServerData(string parentValue)
     {
-        // wait 500ms to simulate a server load, then recursively search through our tree to find the child items for the given value
+        // wait 500ms to simulate a server load
         await Task.Delay(500);
-        foreach (var item in ServerTreeItems) {
-            if (item.Value == parentValue)
-                return item.Children;
-            if (!item.HasChildren)
-                continue;
-            var descendentItem = FindTreeItemData(parentValue, item);
-            if (descendentItem != null)
-                return descendentItem.Children;
-        }
-        return null;
+        // normally you would use the parentValue to query your server for the children of the given parent
+        // but for the sake of this example we will just return some hardcoded children
+        return [
+            new TreeItemData<string> { Value = $"More Spam ({_idCounter++})", Icon = Icons.Material.Filled.Group, },
+            new TreeItemData<string> { Value = $"L.E.D Door Mats ({_idCounter++})", Icon = Icons.Material.Outlined.Lightbulb, Expandable = false },
+            new TreeItemData<string> { Value = $"Car Beauty Salon ({_idCounter++})", Icon = Icons.Material.Filled.CarRepair, Expandable = false },
+            new TreeItemData<string> { Value = $"Fakedoors.com ({_idCounter++})", Icon = Icons.Material.Outlined.DoorFront, Expandable = false },
+            new TreeItemData<string> { Value = $"Bluetooth Toilet ({_idCounter++})", Icon = Icons.Material.Filled.Wc, Expandable = false }
+        ];        
     }
 
-    private TreeItemData<string> FindTreeItemData(string value, TreeItemData<string> parent)
+    private void OnItemsLoaded(TreeItemData<string> treeItemData, IReadOnlyCollection<TreeItemData<string>> children)
     {
-        foreach (var child in parent.Children) {
-            if (child.Value == value)
-                return child;
-            if (!child.HasChildren)
-                continue;
-            var descendentItem = FindTreeItemData(value, child);
-            if (descendentItem != null)
-                return descendentItem;
-        }
-        return null;
+        // here we store the server-loaded children in the treeItemData so that they are available in the InitialTreeItems
+        // if you don't do this you loose already loaded children on next render update
+        treeItemData.Children = children?.ToList();
     }
-
 }

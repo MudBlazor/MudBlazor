@@ -2,11 +2,8 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State.Comparer;
 using MudBlazor.State.Rule;
@@ -28,6 +25,7 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
 {
     private T? _value;
     private T? _lastValue;
+    private bool _isChildOriginatedChange;
     private ParameterChangedEventArgs<T>? _parameterChangedEventArgs;
 
     private readonly Func<T> _getParameterValueFunc;
@@ -104,6 +102,7 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
         var currentParameterValue = _getParameterValueFunc();
         if (!_comparer.Equals(_lastValue, currentParameterValue))
         {
+            _isChildOriginatedChange = _comparer.Equals(_value, currentParameterValue);
             _value = currentParameterValue;
             _lastValue = currentParameterValue;
         }
@@ -119,7 +118,7 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
                 // Since the ParameterSet lifecycles control all operations, it is acceptable to trigger the handler only when
                 // HasParameterChanged has been invoked and stored the ParameterChangedEventArgs.
                 // Direct invocation of this method by external callers is discouraged, so we shouldn't worry about it.
-                return _parameterChangedHandler.HandleAsync(_parameterChangedEventArgs);
+                return _parameterChangedHandler.HandleAsync(_parameterChangedEventArgs.ChildOriginated(_isChildOriginatedChange));
             }
         }
 

@@ -1,36 +1,48 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using MudBlazor.Utilities;
 
+#nullable enable
 namespace MudBlazor
 {
     /// <summary>
     /// A component for collecting an input value.
     /// </summary>
     /// <typeparam name="T">The type of object managed by this input.</typeparam>
-    public partial class MudInput<T> : MudBaseInput<T>, IAsyncDisposable
+    public partial class MudInput<T> : MudBaseInput<T>
     {
+        private string? _internalText;
+        private string? _oldText = null;
+        private bool _shouldInitAutoGrow;
+        private ElementReference _elementReference1;
+
         protected string Classname =>
-           new CssBuilder(
-               MudInputCssHelper.GetClassname(this,
-                   () => HasNativeHtmlPlaceholder() || !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start || !string.IsNullOrWhiteSpace(Placeholder) || ShrinkLabel))
-            .AddClass("mud-input-auto-grow", when: () => AutoGrow)
-            .Build();
+            new CssBuilder(
+                    MudInputCssHelper.GetClassname(this,
+                        () => HasNativeHtmlPlaceholder() ||
+                              !string.IsNullOrEmpty(Text) ||
+                              Adornment == Adornment.Start ||
+                              !string.IsNullOrWhiteSpace(Placeholder) ||
+                              ShrinkLabel))
+                .AddClass("mud-input-auto-grow", () => AutoGrow)
+                .Build();
 
         protected string InputClassname => MudInputCssHelper.GetInputClassname(this);
 
         protected string AdornmentClassname => MudInputCssHelper.GetAdornmentClassname(this);
 
         protected string ClearButtonClassname =>
-                    new CssBuilder("mud-input-clear-button")
-                    .AddClass("me-n1", Adornment == Adornment.End && HideSpinButtons == false)
-                    .AddClass("mud-icon-button-edge-end", Adornment == Adornment.End && HideSpinButtons)
-                    .AddClass("me-6", Adornment != Adornment.End && HideSpinButtons == false)
-                    .AddClass("mud-icon-button-edge-margin-end", Adornment != Adornment.End && HideSpinButtons)
-                    .Build();
+            new CssBuilder("mud-input-clear-button")
+                .AddClass("me-n1", Adornment == Adornment.End && HideSpinButtons == false)
+                .AddClass("mud-icon-button-edge-end", Adornment == Adornment.End && HideSpinButtons)
+                .AddClass("me-6", Adornment != Adornment.End && HideSpinButtons == false)
+                .AddClass("mud-icon-button-edge-margin-end", Adornment != Adornment.End && HideSpinButtons)
+                .Build();
+
+        internal override InputType GetInputType() => InputType;
+
+        protected string InputTypeString => InputType.ToDescriptionString();
 
         /// <summary>
         /// The type of input collected by this component.
@@ -41,36 +53,6 @@ namespace MudBlazor
         [Parameter]
         public InputType InputType { get; set; } = InputType.Text;
 
-        internal override InputType GetInputType() => InputType;
-
-        protected string InputTypeString => InputType.ToDescriptionString();
-
-        protected Task OnInput(ChangeEventArgs args)
-        {
-            if (!Immediate)
-                return Task.CompletedTask;
-            _isFocused = true;
-            return SetTextAsync(args?.Value as string);
-        }
-
-        protected async Task OnChange(ChangeEventArgs args)
-        {
-            _internalText = args?.Value as string;
-            await OnInternalInputChanged.InvokeAsync(args);
-            if (!Immediate)
-            {
-                await SetTextAsync(args?.Value as string);
-            }
-        }
-
-        /// <summary>
-        /// Paste hook for descendants.
-        /// </summary>
-        protected virtual Task OnPaste(ClipboardEventArgs args)
-        {
-            return Task.CompletedTask;
-        }
-
         /// <summary>
         /// The content within this input component.
         /// </summary>
@@ -78,48 +60,12 @@ namespace MudBlazor
         /// Will only display if <see cref="InputType"/> is <see cref="InputType.Hidden"/>.
         /// </remarks>
         [Parameter]
-        public RenderFragment ChildContent { get; set; }
+        public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
         /// The reference to the HTML element for this component.
         /// </summary>
         public ElementReference ElementReference { get; private set; }
-
-        private ElementReference _elementReference1;
-
-        /// <inheritdoc />
-        public override async ValueTask FocusAsync()
-        {
-            try
-            {
-                if (InputType == InputType.Hidden && ChildContent != null)
-                    await _elementReference1.FocusAsync();
-                else
-                    await ElementReference.FocusAsync();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("MudInput.FocusAsync: " + e.Message);
-            }
-        }
-
-        /// <inheritdoc />
-        public override ValueTask BlurAsync()
-        {
-            return ElementReference.MudBlurAsync();
-        }
-
-        /// <inheritdoc />
-        public override ValueTask SelectAsync()
-        {
-            return ElementReference.MudSelectAsync();
-        }
-
-        /// <inheritdoc />
-        public override ValueTask SelectRangeAsync(int pos1, int pos2)
-        {
-            return ElementReference.MudSelectRangeAsync(pos1, pos2);
-        }
 
         /// <summary>
         /// Occurs when the <c>Up</c> arrow button is clicked.
@@ -217,23 +163,104 @@ namespace MudBlazor
         [Parameter]
         public int MaxLines { get; set; }
 
+        protected Task OnInput(ChangeEventArgs? args)
+        {
+            if (!Immediate)
+                return Task.CompletedTask;
+            _isFocused = true;
+            return SetTextAsync(args?.Value as string);
+        }
+
+        protected async Task OnChange(ChangeEventArgs? args)
+        {
+            _internalText = args?.Value as string;
+            await OnInternalInputChanged.InvokeAsync(args);
+            if (!Immediate)
+            {
+                await SetTextAsync(args?.Value as string);
+            }
+        }
+
+        /// <summary>
+        /// Paste hook for descendants.
+        /// </summary>
+        protected virtual Task OnPaste(ClipboardEventArgs args)
+        {
+            return Task.CompletedTask;
+        }
+
+        /// <inheritdoc />
+        public override async ValueTask FocusAsync()
+        {
+            try
+            {
+                if (InputType == InputType.Hidden && ChildContent != null)
+                    await _elementReference1.FocusAsync();
+                else
+                    await ElementReference.FocusAsync();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($@"MudInput.FocusAsync: {e.Message}");
+            }
+        }
+
+        /// <inheritdoc />
+        public override ValueTask BlurAsync()
+        {
+            return ElementReference.MudBlurAsync();
+        }
+
+        /// <inheritdoc />
+        public override ValueTask SelectAsync()
+        {
+            return ElementReference.MudSelectAsync();
+        }
+
+        /// <inheritdoc />
+        public override ValueTask SelectRangeAsync(int pos1, int pos2)
+        {
+            return ElementReference.MudSelectRangeAsync(pos1, pos2);
+        }
+
         private Size GetButtonSize() => Margin == Margin.Dense ? Size.Small : Size.Medium;
 
         /// <summary>
-        /// If true, Clearable is true and there is a non null value (non-string for string values)
+        /// Determine whether to show the clear button when Clearable==true.
+        /// Of course the clear button won't show up if the text field is empty
         /// </summary>
-        private bool GetClearable() => Clearable && ((Value is string stringValue && !string.IsNullOrWhiteSpace(stringValue)) || (Value is not string && Value is not null));
+        private bool ShowClearButton()
+        {
+            if (GetDisabledState())
+            {
+                return false;
+            }
 
-        protected virtual async Task ClearButtonClickHandlerAsync(MouseEventArgs e)
+            if (!Clearable)
+            {
+                return false;
+            }
+
+            // If this is a standalone input it will not be clearable when read-only
+            if (SubscribeToParentForm && GetReadOnlyState())
+            {
+                return false;
+            }
+
+            if (Value is string stringValue)
+            {
+                return !string.IsNullOrWhiteSpace(stringValue);
+            }
+
+            return Value is not string and not null;
+        }
+
+        protected virtual async Task HandleClearButtonAsync(MouseEventArgs e)
         {
             await SetTextAsync(string.Empty, updateValue: true);
             await ElementReference.FocusAsync();
             await OnClearButtonClick.InvokeAsync(e);
         }
-
-        private string _oldText = null;
-        private string _internalText;
-        private bool _shouldInitAutoGrow;
 
         /// <inheritdoc />
         public override async Task SetParametersAsync(ParameterView parameters)
@@ -284,7 +311,8 @@ namespace MudBlazor
             }
         }
 
-        [Inject] private IJSRuntime JsRuntime { get; set; } = null!;
+        [Inject]
+        private IJSRuntime JsRuntime { get; set; } = null!;
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -310,7 +338,7 @@ namespace MudBlazor
         /// Set the <see cref="MudBaseInput{T}.Text"/> to the specified value.
         /// </summary>
         /// <param name="text">The new value.</param>
-        public Task SetText(string text)
+        public Task SetText(string? text)
         {
             _internalText = text;
             return SetTextAsync(text);
@@ -319,20 +347,24 @@ namespace MudBlazor
         // Certain HTML5 inputs (dates and color) have a native placeholder
         private bool HasNativeHtmlPlaceholder()
         {
-            return GetInputType() is InputType.Color or InputType.Date or InputType.DateTimeLocal or InputType.Month
-                or InputType.Time or InputType.Week;
+            return GetInputType()
+                is InputType.Color
+                or InputType.Date
+                or InputType.DateTimeLocal
+                or InputType.Month
+                or InputType.Time
+                or InputType.Week;
         }
 
-        /// <summary>
-        /// Releases resources used by this component.
-        /// </summary>
-        /// <returns></returns>
-        public async ValueTask DisposeAsync()
+        /// <inheritdoc />
+        protected override async ValueTask DisposeAsyncCore()
         {
             if (AutoGrow && IsJSRuntimeAvailable)
             {
                 await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputAutoGrow.destroy", ElementReference);
             }
+
+            await base.DisposeAsyncCore();
         }
     }
 

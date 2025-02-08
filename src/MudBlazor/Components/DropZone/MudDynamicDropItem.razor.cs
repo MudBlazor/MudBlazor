@@ -272,9 +272,16 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
     #endregion
 
     protected string Classname =>
-    new CssBuilder("mud-drop-item")
-        .AddClass(DraggingClass, _dragOperationIsInProgress)
-        .AddClass(DisabledClass, Disabled)
-        .AddClass(Class)
-        .Build();
+        new CssBuilder("mud-drop-item")
+            .AddClass(DraggingClass, _dragOperationIsInProgress)
+            .AddClass(DisabledClass, Disabled)
+            .AddClass(Class)
+            .Build();
+
+    protected string Stylename =>
+        new StyleBuilder()
+            .AddStyle("touch-action", "none", !Disabled)
+            .AddStyle("transform", "translate3d(0px, 0px, 0px)")
+            .AddStyle(Style)
+            .Build();
 }

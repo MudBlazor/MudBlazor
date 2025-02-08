@@ -1,8 +1,7 @@
 ﻿@page "/components/timepicker"
-@page "/components/MudTimePicker"
 
 <DocsPage>
-    <DocsPageHeader Title="Time Picker">
+    <DocsPageHeader Title="Time Picker" Component="@nameof(MudTimePicker)">
         <Description>Provides the user with a simple way to select time.</Description>
     </DocsPageHeader>
     <DocsPageContent>
@@ -83,7 +82,7 @@
 
         <DocsPageSection>
             <SectionHeader Title="Elevation">
-                <Description>You can change the elevation with the <CodeInline>Elevation</CodeInline> parameter. The default value is 0 for static and 8 for inline.</Description>
+                <Description>You can change the elevation with the <CodeInline>Elevation</CodeInline> parameter. The default level is 8 for Inline, and 0 for Static or Dialog.</Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Class="demo-datetime-margin" Code="@nameof(TimePickerElevationExample)" ShowCode="false">
                 <TimePickerElevationExample />

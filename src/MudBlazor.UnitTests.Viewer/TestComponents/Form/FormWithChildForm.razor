@@ -1,5 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-<MudForm @bind-IsValid="_parentIsValid"
+﻿<MudForm @bind-IsValid="_parentIsValid"
          ValidationDelay="0"
          Class="parent-form">
     <MudText>Parent Valid: @(_parentIsValid.ToString())</MudText>
@@ -24,6 +23,9 @@
     }
 </MudForm>
 @code {
-    private bool _parentIsValid, _childIsValid, _showChildForm;
     public static string __description__ = "Based on issue #7066. Removing the child form should no longer influence the parent form.";
+
+    private bool _parentIsValid;
+    private bool _childIsValid;
+    private bool _showChildForm;
 }

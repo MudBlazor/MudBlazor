@@ -37,13 +37,21 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-dialog-container").Should().NotBe(null);
             comp.Find("div.mud-dialog-title").TrimmedText().Should().Contain("Boom!");
             comp.Find("div.mud-dialog-content").TrimmedText().Should().Contain("pickle");
-            comp.FindAll("button").Count.Should().Be(3);
-            comp.Find(".mud-message-box__cancel-button").TrimmedText().Should().Be("Go away!");
-            comp.Find(".mud-message-box__no-button").TrimmedText().Should().Be("Whatever");
-            comp.Find(".mud-message-box__yes-button").TrimmedText().Should().Be("Great");
+
+            // Assert there are exactly 3 buttons
+            var buttons = comp.FindAll(".mud-dialog-actions button");
+            buttons.Count.Should().Be(3);
+
+            // Verify each button's text and class and that they are in the correct order
+            buttons[0].TrimmedText().Should().Be("Go away!"); // First button (Cancel)
+            buttons[0].ClassList.Should().Contain("mud-message-box__cancel-button");
+            buttons[1].TrimmedText().Should().Be("Whatever"); // Second button (No)
+            buttons[1].ClassList.Should().Contain("mud-message-box__no-button");
+            buttons[2].TrimmedText().Should().Be("Great");    // Third button (Yes)
+            buttons[2].ClassList.Should().Contain("mud-message-box__yes-button");
 
             // close message box by clicking on Great.
-            comp.FindAll("button")[clickButtonIndex].Click();
+            comp.FindAll(".mud-dialog-actions button")[clickButtonIndex].Click();
             comp.Markup.Trim().Should().BeEmpty();
             yesNoCancel.Result.Should().Be(expectedResult);
         }
@@ -75,13 +83,21 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-dialog-container").Should().NotBe(null);
             comp.Find("div.mud-dialog-title").TrimmedText().Should().Contain("Boom!");
             comp.Find("div.mud-dialog-content").TrimmedText().Should().Contain("pickle");
-            comp.FindAll("button").Count.Should().Be(3);
-            comp.Find(".mud-message-box__cancel-button").TrimmedText().Should().Be("Go away!");
-            comp.Find(".mud-message-box__no-button").TrimmedText().Should().Be("Whatever");
-            comp.Find(".mud-message-box__yes-button").TrimmedText().Should().Be("Great");
+
+            // Assert there are exactly 3 buttons
+            var buttons = comp.FindAll(".mud-dialog-actions button");
+            buttons.Count.Should().Be(3);
+
+            // Verify each button's text and class and that they are in the correct order
+            buttons[0].TrimmedText().Should().Be("Go away!"); // First button (Cancel)
+            buttons[0].ClassList.Should().Contain("mud-message-box__cancel-button");
+            buttons[1].TrimmedText().Should().Be("Whatever"); // Second button (No)
+            buttons[1].ClassList.Should().Contain("mud-message-box__no-button");
+            buttons[2].TrimmedText().Should().Be("Great");    // Third button (Yes)
+            buttons[2].ClassList.Should().Contain("mud-message-box__yes-button");
 
             // close message box by clicking on Great.
-            comp.FindAll("button")[clickButtonIndex].Click();
+            comp.FindAll(".mud-dialog-actions button")[clickButtonIndex].Click();
             comp.Markup.Trim().Should().BeEmpty();
             yesNoCancel.Result.Should().Be(expectedResult);
         }
@@ -132,17 +148,26 @@ namespace MudBlazor.UnitTests.Components
             dialogReference.Should().NotBeNull();
             // this component has an instance of MudDialog as a cascading parameter allowing us to access HandleKeyDown
             var dialog = (MudMessageBox)dialogReference.Dialog!;
+            var dialogInstance = dialog.DialogInstance.GetDialogContainer();
             // just the same as the above test method 
             comp.Find("div.mud-message-box").Should().NotBe(null);
             comp.Find("div.mud-dialog-container").Should().NotBe(null);
             comp.Find("div.mud-dialog-title").TrimmedText().Should().Contain("Boom!");
             comp.Find("div.mud-dialog-content").TrimmedText().Should().Contain("pickle");
-            comp.FindAll("button").Count.Should().Be(3);
-            comp.Find(".mud-message-box__cancel-button").TrimmedText().Should().Be("Go away!");
-            comp.Find(".mud-message-box__no-button").TrimmedText().Should().Be("Whatever");
-            comp.Find(".mud-message-box__yes-button").TrimmedText().Should().Be("Great");
 
-            await comp.InvokeAsync(() => dialog.DialogInstance?.HandleKeyDown(new KeyboardEventArgs { Key = "Escape" }));
+            // Assert there are exactly 3 buttons
+            var buttons = comp.FindAll(".mud-dialog-actions button");
+            buttons.Count.Should().Be(3);
+
+            // Verify each button's text and class and that they are in the correct order
+            buttons[0].TrimmedText().Should().Be("Go away!"); // First button (Cancel)
+            buttons[0].ClassList.Should().Contain("mud-message-box__cancel-button");
+            buttons[1].TrimmedText().Should().Be("Whatever"); // Second button (No)
+            buttons[1].ClassList.Should().Contain("mud-message-box__no-button");
+            buttons[2].TrimmedText().Should().Be("Great");    // Third button (Yes)
+            buttons[2].ClassList.Should().Contain("mud-message-box__yes-button");
+
+            await comp.InvokeAsync(() => dialogInstance.HandleKeyDownAsync(new KeyboardEventArgs { Key = "Escape" }));
 
             comp.FindAll("button").Count.Should().Be(3);
 
@@ -197,17 +222,26 @@ namespace MudBlazor.UnitTests.Components
             dialogReference.Should().NotBeNull();
             // this component has an instance of MudDialog as a cascading parameter allowing us to access HandleKeyDown
             var dialog = (MudMessageBox)dialogReference.Dialog!;
+            var dialogInstance = dialog.DialogInstance.GetDialogContainer();
             // just the same as the above test method 
             comp.Find("div.mud-message-box").Should().NotBe(null);
             comp.Find("div.mud-dialog-container").Should().NotBe(null);
             comp.Find("div.mud-dialog-title").TrimmedText().Should().Contain("Boom!");
             comp.Find("div.mud-dialog-content").TrimmedText().Should().Contain("pickle");
-            comp.FindAll("button").Count.Should().Be(3);
-            comp.Find(".mud-message-box__cancel-button").TrimmedText().Should().Be("Go away!");
-            comp.Find(".mud-message-box__no-button").TrimmedText().Should().Be("Whatever");
-            comp.Find(".mud-message-box__yes-button").TrimmedText().Should().Be("Great");
 
-            await comp.InvokeAsync(() => dialog.DialogInstance?.HandleKeyDown(new KeyboardEventArgs { Key = "Escape" }));
+            // Assert there are exactly 3 buttons
+            var buttons = comp.FindAll(".mud-dialog-actions button");
+            buttons.Count.Should().Be(3);
+
+            // Verify each button's text and class and that they are in the correct order
+            buttons[0].TrimmedText().Should().Be("Go away!"); // First button (Cancel)
+            buttons[0].ClassList.Should().Contain("mud-message-box__cancel-button");
+            buttons[1].TrimmedText().Should().Be("Whatever"); // Second button (No)
+            buttons[1].ClassList.Should().Contain("mud-message-box__no-button");
+            buttons[2].TrimmedText().Should().Be("Great");    // Third button (Yes)
+            buttons[2].ClassList.Should().Contain("mud-message-box__yes-button");
+
+            await comp.InvokeAsync(() => dialogInstance.HandleKeyDownAsync(new KeyboardEventArgs { Key = "Escape" }));
 
             comp.FindAll("button").Should().BeEmpty();
 
@@ -256,18 +290,27 @@ namespace MudBlazor.UnitTests.Components
             });
             dialogReference.Should().NotBeNull();
             // this component has an instance of MudDialog as a cascading parameter allowing us to access HandleKeyDown
-            var dialog = (MudMessageBox)dialogReference.Dialog;
+            var dialog = (MudMessageBox)dialogReference.Dialog!;
+            var dialogInstance = dialog.DialogInstance.GetDialogContainer();
             // just the same as the above test method 
             comp.Find("div.mud-message-box").Should().NotBe(null);
             comp.Find("div.mud-dialog-container").Should().NotBe(null);
             comp.Find("div.mud-dialog-title").TrimmedText().Should().Contain("Boom!");
             comp.Find("div.mud-dialog-content").TrimmedText().Should().Contain("pickle");
-            comp.FindAll("button").Count.Should().Be(3);
-            comp.Find(".mud-message-box__cancel-button").TrimmedText().Should().Be("Go away!");
-            comp.Find(".mud-message-box__no-button").TrimmedText().Should().Be("Whatever");
-            comp.Find(".mud-message-box__yes-button").TrimmedText().Should().Be("Great");
 
-            await comp.InvokeAsync(() => dialog.DialogInstance.HandleKeyDown(new KeyboardEventArgs() { Key = "Escape" }));
+            // Assert there are exactly 3 buttons
+            var buttons = comp.FindAll(".mud-dialog-actions button");
+            buttons.Count.Should().Be(3);
+
+            // Verify each button's text and class and that they are in the correct order
+            buttons[0].TrimmedText().Should().Be("Go away!"); // First button (Cancel)
+            buttons[0].ClassList.Should().Contain("mud-message-box__cancel-button");
+            buttons[1].TrimmedText().Should().Be("Whatever"); // Second button (No)
+            buttons[1].ClassList.Should().Contain("mud-message-box__no-button");
+            buttons[2].TrimmedText().Should().Be("Great");    // Third button (Yes)
+            buttons[2].ClassList.Should().Contain("mud-message-box__yes-button");
+
+            await comp.InvokeAsync(() => dialogInstance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Escape" }));
 
             comp.FindAll("button").Should().BeEmpty();
 

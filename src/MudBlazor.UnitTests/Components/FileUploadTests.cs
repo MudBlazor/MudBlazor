@@ -7,8 +7,10 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
+using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,6 +18,7 @@ using Microsoft.Extensions.Logging;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.Mocks;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.FileUpload;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -374,6 +377,56 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find("input").HasAttribute("required").Should().BeTrue();
             comp.Find("input").GetAttribute("aria-required").Should().Be("true");
+        }
+
+        /// <summary>
+        /// FileUpload should generate new InputFile on file change.
+        /// </summary>
+        [Test]
+        public async Task Generate_new_InputFile_on_file_change()
+        {
+            var comp = Context.RenderComponent<MudFileUpload<IBrowserFile>>();
+
+            // only 1 input element should be present
+            comp.FindAll("input").Should().HaveCount(1);
+
+            // trigger an OnChange on the internal InputFile
+            var defaultFile = new DummyBrowserFile("filename.jpg", DateTimeOffset.Now, 0, "image/jpeg", []);
+            await comp.InvokeAsync(() => comp.FindComponent<InputFile>().Instance.OnChange.InvokeAsync(new InputFileChangeEventArgs([defaultFile])));
+
+            // 2 input elements should now be present
+            // one should be visible
+            comp.FindAll("input:not(.d-none)").Should().HaveCount(1);
+            // and the other should no longer be visible
+            comp.FindAll("input.d-none").Should().HaveCount(1);
+        }
+
+        /// <summary>
+        /// FileUpload should trigger the FilesChanged and OnFilesChanged callbacks when appropriate.
+        /// </summary>
+        [Test]
+        public async Task Should_trigger_file_change_callbacks_as_expected()
+        {
+            var comp = Context.RenderComponent<FileUploadChangeCountTests>();
+
+            // first file change should trigger both callbacks
+            var fileContent = new byte[5];
+            // fill file content with random bytes
+            new Random().NextBytes(fileContent);
+            var firstFile = new DummyBrowserFile("filename.jpg", DateTimeOffset.Now, 0, "image/jpeg", fileContent);
+            await comp.InvokeAsync(() => comp.FindComponents<InputFile>()[0].Instance.OnChange.InvokeAsync(new InputFileChangeEventArgs([firstFile])));
+
+            comp.Instance.FilesChangedCount.Should().Be(1);
+            comp.Instance.OnFilesChangedCount.Should().Be(1);
+
+            // since a new InputFile is generated with each upload, we can get the last InputFile in the render chain to emulate a new upload
+            // so when a new file reference is uploaded, both file change callbacks should be triggered
+            new Random().NextBytes(fileContent);
+            var secondFile = new DummyBrowserFile("filename.jpg", DateTimeOffset.Now, 0, "image/jpeg", fileContent);
+            await comp.InvokeAsync(() => comp.FindComponents<InputFile>()[^1].Instance.OnChange.InvokeAsync(new InputFileChangeEventArgs([secondFile])));
+
+            comp.Instance.FilesChangedCount.Should().Be(2);
+            comp.Instance.OnFilesChangedCount.Should().Be(2);
         }
     }
 }

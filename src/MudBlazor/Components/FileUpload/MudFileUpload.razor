@@ -7,17 +7,22 @@
 
 <MudInputControl Class="@Classname" Style="@Style" Error="HasErrors" ErrorText="@GetErrorText()" Required="@Required">
     <InputContent>
-        <InputFile OnChange="OnChangeAsync"
-                   id="@_id"
-                   class="@InputClass"
-                   style="@InputStyle"
-                   hidden="@(Hidden ? "" : null)"
-                   multiple="@(typeof(T) == typeof(IReadOnlyList<IBrowserFile>) ? "" : null)"
-                   accept="@Accept"
-                   disabled="@(GetDisabledState())"
-                   @attributes="UserAttributes"
-                   required="@Required"
-                   aria-required="@Required.ToString().ToLowerInvariant()"/>
+        @for (var index = 1; index <= _numberOfActiveFileInputs; index++)
+        {
+            var localIndex = index;
+            <InputFile @key="@localIndex"
+                       OnChange="OnChangeAsync"
+                       class="@GetInputClass(localIndex)"
+                       style="@InputStyle"
+                       hidden="@(Hidden ? "" : null)"
+                       multiple="@(typeof(T) == typeof(IReadOnlyList<IBrowserFile>) ? "" : null)"
+                       accept="@Accept"
+                       disabled="@(GetDisabledState())"
+                       @attributes="UserAttributes"
+                       id="@GetInputId(localIndex)"
+                       required="@Required"
+                       aria-required="@Required.ToString().ToLowerInvariant()" />
+        }
         @if (ActivatorContent != null)
         {
             <CascadingValue Value="@((IActivatable)this)"

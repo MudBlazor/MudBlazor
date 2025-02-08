@@ -8,7 +8,14 @@
 <div class="@Classname" style="@Style">
     @if (Adornment == Adornment.Start)
     {
-        <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Color="@AdornmentColor" Size="@IconSize" Text="@AdornmentText" Edge="@Edge.Start" AdornmentClick="@OnAdornmentClick" AriaLabel="@AdornmentAriaLabel" />
+        <MudInputAdornment Class="@AdornmentClassname"
+                           Icon="@AdornmentIcon"
+                           Color="@AdornmentColor"
+                           Size="@IconSize"
+                           Text="@AdornmentText"
+                           Placement="@Adornment.Start"
+                           AdornmentClick="@OnAdornmentClick"
+                           AriaLabel="@AdornmentAriaLabel" />
     }
 
     @if (InputType == InputType.Hidden && ChildContent != null)
@@ -23,9 +30,9 @@
            type="@InputTypeString"
            class="@InputClassname"
            @bind-value="@TextStart"
-           @bind-value:event="@((Immediate ? "oninput" : "onchange"))"
+           @bind-value:event="@(Immediate ? "oninput" : "onchange")"
            placeholder="@PlaceholderStart"
-           disabled=@GetDisabledState()
+           disabled="@GetDisabledState()"
            readonly="@GetReadOnlyState()"
            @onblur="@OnBlurredAsync"
            @onkeydown="@InvokeKeyDownAsync"
@@ -40,11 +47,11 @@
            type="@InputTypeString"
            class="@InputClassname"
            @bind-value="@TextEnd"
-           @bind-value:event="@((Immediate ? "oninput" : "onchange"))"
+           @bind-value:event="@(Immediate ? "oninput" : "onchange")"
            inputmode="@InputMode.ToDescriptionString()"
            pattern="@Pattern"
            placeholder="@PlaceholderEnd"
-           disabled=@GetDisabledState()
+           disabled="@GetDisabledState()"
            readonly="@GetReadOnlyState()"
            @onblur="@OnBlurredAsync"
            @onkeydown="@InvokeKeyDownAsync"
@@ -54,7 +61,7 @@
 
     @if (IsClearable() && !GetDisabledState())
     {
-        <MudIconButton Class="@(Adornment is Adornment.Start ? "me-0" : "me-n4")" Style="z-index: 2"
+        <MudIconButton Class="@ClearButtonClassname" Style="z-index: 2"
                        Color="@Color.Default"
                        Icon="@Icons.Material.Filled.Clear"
                        Size="@Size.Small"
@@ -65,11 +72,23 @@
 
     @if (Adornment == Adornment.End)
     {
-        <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Color="@AdornmentColor" Size="@IconSize" Text="@AdornmentText" Edge="@Edge.End" AdornmentClick="@OnAdornmentClick" AriaLabel="@AdornmentAriaLabel" />
+        <MudInputAdornment Class="@AdornmentClassname"
+                           Icon="@AdornmentIcon"
+                           Color="@AdornmentColor"
+                           Size="@IconSize"
+                           Text="@AdornmentText"
+                           Placement="@Adornment.End"
+                           AdornmentClick="@OnAdornmentClick"
+                           AriaLabel="@AdornmentAriaLabel" />
     }
 
     @if (Variant == Variant.Outlined)
     {
-        <div class="mud-input-outlined-border"></div>
+        <fieldset class="mud-input-outlined-border">
+            @if (!string.IsNullOrEmpty(Label))
+            {
+                <legend>@Label</legend>
+            }
+        </fieldset>
     }
 </div>

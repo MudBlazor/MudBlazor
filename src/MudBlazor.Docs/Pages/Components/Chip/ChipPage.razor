@@ -1,9 +1,7 @@
 ﻿@page "/components/chips"
-@page "/components/MudChip"
-@page "/components/MudChip`1"
 
 <DocsPage>
-    <DocsPageHeader Title="Chips" SubTitle="Chips are compact elements that allow users to enter information, select a choice, filter content, or trigger an action.">
+    <DocsPageHeader Title="Chips" Component="@nameof(MudChip<T>)">
         <Description><br />See also: <MudLink Href="/components/chipset">ChipSet</MudLink></Description>
     </DocsPageHeader>
     <DocsPageContent>
@@ -62,7 +60,7 @@
                 <ChipIconExample />
             </SectionContent>
         </DocsPageSection>
-        
+
         <DocsPageSection>
             <SectionHeader Title="Avatars">
             </SectionHeader>
@@ -86,6 +84,33 @@
             <SectionContent ShowCode="false" Code="@nameof(ChipSizeExample)">
                 <ChipSizeExample />
             </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Link Chip">
+                <Description>
+                    Set the <CodeInline>Href</CodeInline> parameter to render the chip as an anchor element.
+                    <CodeInline>rel="noopener"</CodeInline> will be added automatically if <CodeInline>Target == "_blank"</CodeInline>.
+                    Link chips cannot use a close button or the <CodeInline>OnClick</CodeInline> event.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(ChipLinkExample)" ShowCode="false">
+                <ChipLinkExample/>
+            </SectionContent>
+
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="Custom Rel Content">
+                        <Description>
+                            The relationship between a linked resource and the current document can be defined using the <CodeInline>Rel</CodeInline> property.
+                            This overrides the automatic addition of <CodeInline>rel="noopener"</CodeInline> when setting <CodeInline>Target</CodeInline> to <CodeInline>_blank</CodeInline> and so you have to specify it manually if desired.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(ChipLinkRelExample)" ShowCode="false">
+                        <ChipLinkRelExample />
+                    </SectionContent>
+                </DocsPageSection>
+            </SectionSubGroups>
         </DocsPageSection>
 
     </DocsPageContent>

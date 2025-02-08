@@ -1,6 +1,4 @@
 @page "/customization/default-theme"
-@page "/components/MudTheme"
-@page "/components/MudThemeProvider"
 
 @using System.Reflection
 @using System.Text.RegularExpressions
@@ -332,6 +330,10 @@
         else if (value.Contains("TextTransform"))
         {
             return value.Replace("TextTransform", "-Text-Transform").ToLowerInvariant();
+        }
+        else if (value.Contains("BorderRadius"))
+        {
+            return value.Replace("BorderRadius", "-BorderRadius").ToLowerInvariant();
         }
         else
         {

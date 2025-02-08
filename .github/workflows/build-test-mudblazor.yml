@@ -9,6 +9,7 @@ jobs:
   build-test:
     name: Build and test mudblazor projects
     uses: MudBlazor/Workflows/.github/workflows/template-build-test.yml@main
+    secrets: inherit
     with:
       check-eslint: 'MudBlazor/TScripts'
       publish-coverage: true

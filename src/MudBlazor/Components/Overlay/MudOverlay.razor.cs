@@ -1,5 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.State;
@@ -8,6 +10,10 @@ using MudBlazor.Utilities;
 namespace MudBlazor;
 
 #nullable enable
+
+/// <summary>
+/// A layer which darkens a window, often as part of showing a <see cref="MudDialog" />.
+/// </summary>
 public partial class MudOverlay : MudComponentBase, IAsyncDisposable
 {
     private readonly ParameterState<bool> _visibleState;
@@ -30,6 +36,9 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
             .AddStyle(Style)
             .Build();
 
+    /// <summary>
+    /// The manager for scroll events.
+    /// </summary>
     [Inject]
     public IScrollManager ScrollManager { get; set; } = null!;
 
@@ -147,6 +156,20 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
     /// </summary>
     [Parameter]
     public EventCallback OnClosed { get; set; }
+
+    /// <summary>
+    /// Determines whether the overlay should be rendered outside of the section. If it's false, the overlay will be rendered with the MudPopOverProvider.
+    /// If it's true it will be rendered as is where is (v7 and previous behavior)
+    /// </summary>
+    /// <remarks>
+    /// If the user sets Absolute to true, the user intends for it to be part of his markup and not rendered by the MudPopoverProvider
+    /// Dialog's need the separation of the overlay for display purposes
+    /// If the user provides a child content, the user intends for it to be part of his markup and not rendered by the MudPopoverProvider
+    /// </remarks>
+    internal bool RenderOutsideOfSection =>
+        Absolute ||
+        (Class?.Contains("mud-skip-overlay-section") ?? false) ||
+        ChildContent != null;
 
     public MudOverlay()
     {

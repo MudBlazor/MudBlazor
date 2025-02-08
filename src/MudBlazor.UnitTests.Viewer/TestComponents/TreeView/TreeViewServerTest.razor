@@ -1,50 +1,51 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudTreeView ExpandOnClick="true" ServerData="LoadServerData" Items="TreeItems" Width="350px">
+﻿<MudTreeView ExpandOnClick="true" ServerData="LoadServerData" Items="_treeItems" Width="350px">
     <ItemTemplate>
-        <MudTreeViewItem Text="@context.Text" Value="@context.Value" Icon="@context.Icon" CanExpand="@context.Expandable"
-                EndText="@((context as TreeItemData).Number?.ToString())" EndTextTypo="@Typo.caption" />
+        <MudTreeViewItem 
+            Text="@context.Text"
+            Value="@context.Value"
+            Items="@context.Children"
+            ItemsChanged="@(new Action<IReadOnlyCollection<TreeItemData<string?>>?>(items =>  OnItemsLoaded(context, items)))"
+            Icon="@context.Icon"
+            CanExpand="@context.Expandable"
+            Expanded="@context.Expanded"
+            />
     </ItemTemplate>
 </MudTreeView>
 
-@code{
-    private List<TreeItemData> TreeItems { get; set; } = new();
+@code {
 
-    public class TreeItemData : TreeItemData<string>
-    {
-        public int? Number { get; set; }
-
-        public List<TreeItemData> TreeItems { get; set; }
-
-        public TreeItemData(string title, string icon, int? number = null, bool canExpand = true) : base(title)
-        {
-            Text = title;
-            Icon = icon;
-            Number = number;
-            Expandable = canExpand;
-        }
-    }
-
+    private readonly List<TreeItemData<string?>> _treeItems = [];
+    private int _idCounter = 1;
     protected override void OnInitialized()
     {
-        TreeItems.Add(new TreeItemData("All Mail", Icons.Material.Filled.Email));
-        TreeItems.Add(new TreeItemData("Trash", Icons.Material.Filled.Delete));
-        TreeItems.Add(new TreeItemData("Categories", Icons.Material.Filled.Label)
+        _treeItems.Add(new TreeItemData<string?> { Value = "All Mail", Icon = Icons.Material.Filled.Email });
+        _treeItems.Add(new TreeItemData<string?>
         {
-            Children = new()
+            Value = "Categories",
+            Icon = Icons.Material.Filled.Label,
+            Expanded = true,
+            Children = new List<TreeItemData<string?>>
             {
-                new TreeItemData("Social", Icons.Material.Filled.Group, 90),
-                new TreeItemData("Updates", Icons.Material.Filled.Info, 2294),
-                new TreeItemData("Forums", Icons.Material.Filled.QuestionAnswer, 3566),
-                new TreeItemData("Promotions", Icons.Material.Filled.LocalOffer, 733)
+                new() { Value = "Social", Icon = Icons.Material.Filled.Group, },
+                new() { Value = "Updates", Icon = Icons.Material.Filled.Info,  }
             }
         });
-        TreeItems.Add(new TreeItemData("History", Icons.Material.Filled.Label, null, false));
+        _treeItems.Add(new TreeItemData<string?> { Value = "Trash", Icon = Icons.Material.Filled.Delete, Expandable = false });
+        base.OnInitialized();
     }
 
-    public Task<IReadOnlyCollection<TreeItemData<string>>> LoadServerData(string parentValue)
+    public Task<IReadOnlyCollection<TreeItemData<string?>>?> LoadServerData(string? parentValue)
     {
-        var children = TreeItems.FirstOrDefault(x => x.Value == parentValue)?.Children;
-        return Task.FromResult((IReadOnlyCollection<TreeItemData<string>>)children);
+        return Task.FromResult<IReadOnlyCollection<TreeItemData<string?>>?>(new List<TreeItemData<string?>>
+        {
+            new() { Value = $"Loaded {_idCounter++}", Icon = Icons.Material.Filled.Web, Expandable  = true }
+        });
+    }
+
+    private void OnItemsLoaded(TreeItemData<string?> treeItemData, IReadOnlyCollection<TreeItemData<string?>>? children)
+    {
+        // here we store the server-loaded children in the treeItemData so that they are available in the InitialTreeItems
+        // if you don't do this you loose already loaded children on next render update
+        treeItemData.Children = children?.ToList();
     }
 }

@@ -5,6 +5,7 @@
 
 @{
 #nullable enable
+#pragma warning disable IL2111
 }
 
 @namespace MudBlazor
@@ -17,7 +18,7 @@
      aria-live="polite"
      class="@SnackbarClass"
      style="@AnimationStyle"
-     @onclick="EventUtil.AsNonRenderingEventHandler(SnackbarClicked)"
+     @onclick="this.AsNonRenderingEventHandler(SnackbarClicked)"
      @onpointerenter="InteractionStartHandler"
      @onpointerleave="InteractionEndHandler"
      @ontouchstart="InteractionStartHandler"

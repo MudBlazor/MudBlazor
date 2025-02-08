@@ -2,15 +2,9 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-#pragma warning disable CS1998 // async without await
-
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.Mask;
 using NUnit.Framework;
 
@@ -19,10 +13,49 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class MaskTests : BunitTest
     {
+        public static object[] TextFieldWithMask_SetValueParameterUpdateText_Parameters = [
+            new object[] { "PatternMask", new PatternMask("""0000"""), "1111", "2222" },
+            new object[] { "RegexMask", new RegexMask("""^\d*$"""), "1111", "2222" },
+            new object[] { "MultiMask", new MultiMask("""0000"""), "1111", "2222" },
+            new object[] { "BlockMask", new BlockMask(new Block('0', 1, 4)), "1111", "2222" },
+            new object[] { "DateMask", new DateMask("""MM/dd/yyyy"""), "01/01/2024", "02/03/2025" }
+        ];
+
+        [TestCaseSource(nameof(TextFieldWithMask_SetValueParameterUpdateText_Parameters))]
+        public void TextFieldWithMask_SetValueParameterUpdateText(string testName, IMask mask, string initialValue, string setValue)
+        {
+            // Arrange
+
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters =>
+            {
+                parameters.Add(m => m.Mask, mask);
+                parameters.Add(m => m.Value, initialValue);
+            });
+            var textField = comp.Instance;
+            var maskField = comp.FindComponent<MudMask>().Instance;
+
+            // Assert : Initial state
+
+            textField.Value.Should().Be(initialValue);
+            textField.Text.Should().Be(initialValue);
+            maskField.Value.Should().Be(initialValue);
+            maskField.Text.Should().Be(initialValue);
+
+            // Act
+
+            comp.SetParam(m => m.Value, setValue);
+
+            // Assert
+
+            textField.Value.Should().Be(setValue);
+            textField.Text.Should().Be(setValue);
+            maskField.Value.Should().Be(setValue);
+            maskField.Text.Should().Be(setValue);
+        }
+
         /// <summary>
         /// Test all IsMatch variants: letter, digit and symbols.
         /// </summary>
-        /// <returns></returns>
         [Test]
         public async Task MaskTest_Fundamentals1()
         {
@@ -744,7 +777,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.SetParam(p => p.ReadOnly, false);
             // paste
-            await comp.InvokeAsync(async () =>
+            await comp.InvokeAsync(() =>
             {
                 mask.OnSelect(0, mask.Text.Length);
                 mask.OnPaste("2222 2222 2222 2222");
@@ -763,7 +796,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DifferentMaskImplementationTests()
+        public void DifferentMaskImplementationTests()
         {
             // arrange
             var comp = Context.RenderComponent<DifferentMaskImplementationTest>();
@@ -891,6 +924,38 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find("textarea").HasAttribute("required").Should().BeTrue();
             comp.Find("textarea").GetAttribute("aria-required").Should().Be("true");
+        }
+
+        [Test]
+        public async Task ClearableReadOnlyMask_Should_NotHaveClearButton()
+        {
+            var comp = Context.RenderComponent<MudMask>();
+            var maskField = comp.Instance;
+            maskField.Clearable.Should().Be(false);
+            maskField.ReadOnly.Should().Be(false);
+            comp.SetParam(nameof(MudMask.Mask), new PatternMask("*00 000") { Placeholder = '_', CleanDelimiters = true });
+
+            // mask is not clearable, no clear button should show up
+            comp.FindAll(".mud-input-clear-button").Count.Should().Be(0);
+
+            comp.SetParam(nameof(MudMask.Clearable), true);
+            maskField.Clearable.Should().Be(true);
+
+            // mask is now clearable but contains no text so, no clear button should show up
+            comp.FindAll(".mud-input-clear-button").Count.Should().Be(0);
+
+            await comp.InvokeAsync(async () => await maskField.FocusAsync());
+            await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "1" }));
+            comp.WaitForAssertion(() => maskField.Text.Should().Be("1__ ___"));
+
+            // mask is clearable and contains text so the clear button should show up
+            comp.FindAll(".mud-input-clear-button").Count.Should().Be(1);
+
+            comp.SetParam(nameof(MudMask.ReadOnly), true);
+
+            // mask is clearable and contains text but is readonly so the clear button should not show up
+            comp.FindAll(".mud-input-clear-button").Count.Should().Be(0);
+
         }
     }
 }

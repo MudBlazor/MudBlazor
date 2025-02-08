@@ -1,5 +1,9 @@
 @import '../abstracts/variables';
 
+.mud-chip-container {
+  display: contents;
+}
+
 .mud-chip {
   border: none;
   display: inline-flex;
@@ -124,9 +128,13 @@
     }
 
     @media(hover: hover) and (pointer: fine) {
-      &:hover {
+      &:hover:not(.mud-disabled) {
         opacity: .70;
       }
+    }
+
+    &:focus-visible:not(.mud-disabled), &:active:not(.mud-disabled) {
+      opacity: .70;
     }
   }
 

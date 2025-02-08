@@ -3,7 +3,6 @@ using FluentAssertions;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
-using MudBlazor.Docs.Extensions;
 using MudBlazor.Resources;
 using NUnit.Framework;
 
@@ -21,6 +20,20 @@ public class InternalMudLocalizerTests
 
         // Act
         var construct = () => new InternalMudLocalizer(interceptor!);
+
+        // Assert
+        construct.Should().Throw<ArgumentNullException>();
+    }
+
+    [Test]
+    public void Constructor_WithNullEnumInterceptor_ShouldThrowArgumentNullException()
+    {
+        // Arrange
+        var interceptorMock = new Mock<ILocalizationInterceptor>();
+        ILocalizationEnumInterceptor? enumInterceptor = null;
+
+        // Act
+        var construct = () => new InternalMudLocalizer(interceptorMock.Object, enumInterceptor!);
 
         // Assert
         construct.Should().Throw<ArgumentNullException>();
@@ -129,70 +142,5 @@ public class InternalMudLocalizerTests
         internalMudLocalizer[LanguageResource.MudDataGrid_Contains].Should().BeEquivalentTo(new LocalizedString(LanguageResource.MudDataGrid_Contains, "contains", false, typeof(LanguageResource).FullName));
         internalMudLocalizer[LanguageResource.MudDataGrid_IsEmpty].Should().BeEquivalentTo(new LocalizedString(LanguageResource.MudDataGrid_IsEmpty, "XXX", false));
         internalMudLocalizer[LanguageResource.MudDataGrid_IsNotEmpty].Should().BeEquivalentTo(new LocalizedString(LanguageResource.MudDataGrid_IsNotEmpty, "is not empty", false, typeof(LanguageResource).FullName));
-    }
-
-    [Test]
-    [SetUICulture("en-US")]
-    public void RenamedKey_ShouldFallbackToLegacyKey()
-    {
-        // Arrange
-        var interceptorMock = new Mock<ILocalizationInterceptor>();
-        interceptorMock.Setup(mock => mock.Handle(LanguageResource.MudDataGrid_GreaterThanSign)).Returns(new LocalizedString(LanguageResource.MudDataGrid_GreaterThanSign, "", true));
-        interceptorMock.Setup(mock => mock.Handle("MudDataGrid.>")).Returns(new LocalizedString("MudDataGrid.>", ">", false));
-        var internalMudLocalizer = new InternalMudLocalizer(interceptorMock.Object);
-
-        // Act
-        var result = internalMudLocalizer[LanguageResource.MudDataGrid_GreaterThanSign];
-
-        // Assert
-        result.Should().BeEquivalentTo(new LocalizedString("MudDataGrid.>", ">", false));
-    }
-
-    [Test]
-    public void DefaultLocalizationInterceptor_IStringLocalizerThis()
-    {
-        // Arrange
-        var interceptorMock = new DefaultLocalizationInterceptor(NullLoggerFactory.Instance, mudLocalizer: null);
-        IStringLocalizer internalMudLocalizer = new InternalMudLocalizer(interceptorMock);
-
-        // Act
-        var result = internalMudLocalizer[LanguageResource.MudDataGrid_Clear];
-
-        // Assert
-        result.Should().BeEquivalentTo(new LocalizedString(LanguageResource.MudDataGrid_Clear, "Clear", false, typeof(LanguageResource).FullName));
-    }
-
-    [Test]
-    public void IStringLocalizerGetAllStrings_AbstractLocalizationInterceptor()
-    {
-        // Arrange
-        var interceptorMock = new DefaultLocalizationInterceptor(NullLoggerFactory.Instance, mudLocalizer: null);
-        IStringLocalizer internalMudLocalizer = new InternalMudLocalizer(interceptorMock);
-
-        // Act
-        var result = internalMudLocalizer.GetAllStrings(includeParentCultures: true).ToArray();
-
-        // Assert
-        LanguageResource.ResourceManager.GetResourceSet(CultureInfo.InvariantCulture, true, true)
-            .ToEnumerable()
-            .ToDictionary(x => (string)x.Key, x => x.Value?.ToString(), StringComparer.Ordinal)
-            .Should().BeEquivalentTo(result.ToDictionary(x => x.Name, x => x.Value, StringComparer.Ordinal));
-    }
-
-    [Test]
-    public void IStringLocalizerGetAllStrings_ReplacedInterceptor()
-    {
-        // Arrange
-        var interceptorMock = new Mock<ILocalizationInterceptor>();
-        IStringLocalizer internalMudLocalizer = new InternalMudLocalizer(interceptorMock.Object);
-
-        // Act
-        var result = internalMudLocalizer.GetAllStrings(includeParentCultures: true).ToArray();
-
-        // Assert
-        LanguageResource.ResourceManager.GetResourceSet(CultureInfo.InvariantCulture, true, true)
-            .ToEnumerable()
-            .ToDictionary(x => (string)x.Key, x => x.Value?.ToString(), StringComparer.Ordinal)
-            .Should().BeEquivalentTo(result.ToDictionary(x => x.Name, x => x.Value, StringComparer.Ordinal));
     }
 }

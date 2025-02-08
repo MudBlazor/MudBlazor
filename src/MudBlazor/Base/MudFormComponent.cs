@@ -24,8 +24,11 @@ namespace MudBlazor
     /// </summary>
     /// <typeparam name="T">The complex type managed by this input.</typeparam>
     /// <typeparam name="U">The value type managed by this input.</typeparam>
-    public abstract class MudFormComponent<T, U> : MudComponentBase, IFormComponent, IDisposable
+    public abstract class MudFormComponent<T, U> : MudComponentBase, IFormComponent, IAsyncDisposable
     {
+        [Inject]
+        private InternalMudLocalizer Localizer { get; set; } = null!;
+
         private Converter<T, U> _converter;
 
         protected MudFormComponent(Converter<T, U> converter)
@@ -142,13 +145,13 @@ namespace MudBlazor
             return changed;
         }
 
-        private void OnConversionError(string error)
+        private void OnConversionError(string error, object[] arguments)
         {
             // note: we need to update the form here because the conversion error might lead to not updating the value
             // ... which leads to not updating the form
             Touched = true;
             Form?.Update(this);
-            OnConversionErrorOccurred(error);
+            OnConversionErrorOccurred(Localizer[error, arguments]);
         }
 
         protected virtual void OnConversionErrorOccurred(string error)
@@ -171,7 +174,19 @@ namespace MudBlazor
         /// <remarks>
         /// When set, returns the reason that the <see cref="Converter"/> was unable to convert values, usually due to invalid input.
         /// </remarks>
-        public string? ConversionErrorMessage => _converter.GetErrorMessage;
+        public string? ConversionErrorMessage
+        {
+            get
+            {
+                var getErrorMessage = _converter.GetErrorMessage;
+                if (!getErrorMessage.HasValue)
+                {
+                    return null;
+                }
+
+                return Localizer[getErrorMessage.Value.Item1, getErrorMessage.Value.Item2];
+            }
+        }
 
         /// <summary>
         /// Indicates any error, conversion error, or validation error with this input.
@@ -787,21 +802,23 @@ namespace MudBlazor
         /// <summary>
         /// Called to dispose this instance.
         /// </summary>
-        /// <param name="disposing"><see langword="true"/> if called within <see cref="IDisposable.Dispose"/>.</param>
-        protected virtual void Dispose(bool disposing)
-        {
-        }
+        protected virtual ValueTask DisposeAsyncCore() => ValueTask.CompletedTask;
 
-        void IDisposable.Dispose()
+        /// <inheritdoc />
+        public async ValueTask DisposeAsync()
         {
             try
             {
                 Form?.Remove(this);
             }
-            catch { /* ignore */ }
+            catch
+            {
+                // ignored
+            }
 
             DetachValidationStateChangedListener();
-            Dispose(disposing: true);
+            await DisposeAsyncCore();
+            GC.SuppressFinalize(this);
         }
     }
 }
