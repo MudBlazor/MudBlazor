@@ -31,14 +31,12 @@
     string[] _values = ["Foo", "Bar", "Baz"];
     bool _dialogVisible = false;
 
-    private async Task<IEnumerable<string>> SearchValues(string value, CancellationToken token)
+    private Task<IEnumerable<string>> SearchValues(string value, CancellationToken token)
     {
         if (string.IsNullOrEmpty(value))
-            return _values;
+            return Task.FromResult<IEnumerable<string>>(_values);
 
-        await Task.CompletedTask;
-
-        return _values.Where(v => v.Contains(value, StringComparison.OrdinalIgnoreCase));
+        return Task.FromResult<IEnumerable<string>>(_values.Where(v => v.Contains(value, StringComparison.OrdinalIgnoreCase)));
     }
 
     private void OpenDialog()
