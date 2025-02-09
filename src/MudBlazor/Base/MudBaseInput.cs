@@ -498,18 +498,37 @@ namespace MudBlazor
                 return;
             }
 
-            _isFocused = false;
+            if (!_isFocused)
+                return;
 
+            // all the OnBlur parents (TextField, MudMask, NumericField, DateRange, etc) currently point to this method
+            // which causes this method to be fired repeatedly
+            // Console.WriteLine($"OnBlurredAsync fired, FocusedEventArgs from: {obj.Type} _isFocused: {_isFocused}");
+
+            _isFocused = false;
+            
             if (!OnlyValidateIfDirty || _isDirty)
             {
                 Touched = true;
                 if (_validated)
                 {
-                    await OnBlur.InvokeAsync(obj);
+                    if (OnBlur.HasDelegate)
+                    {
+                        obj.Type += ".additional";
+                        await OnBlur.InvokeAsync(obj);
+                    }
                 }
                 else
                 {
-                    await BeginValidationAfterAsync(OnBlur.InvokeAsync(obj));
+                    if (OnBlur.HasDelegate)
+                    {
+                        obj.Type += ".additional";
+                        await BeginValidationAfterAsync(OnBlur.InvokeAsync(obj));
+                    }
+                    else
+                    {
+                        await BeginValidateAsync();
+                    }
                 }
             }
         }

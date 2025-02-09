@@ -376,15 +376,12 @@ namespace MudBlazor
         [JSInvokable]
         public async Task CallOnBlurredAsync()
         {
-            if (OnBlur.HasDelegate)
-            {
-                // this should already be OnBlurredAsync but it is a valid property on MudBaseInput in case it is changed
-                await OnBlur.InvokeAsync(new FocusEventArgs { Type = "jsBlur.OnBlur.HasDelegate" });
-            }
-            else
-            {
-                await OnBlurredAsync(new FocusEventArgs { Type = "jsBlur.OnBlur.NoDelegate" });
-            }
+            //Console.WriteLine($"CallOnBlurredAsync fired, _isFocused: {_isFocused}");
+            // If onblurred already fired then cancel
+            if (!_isFocused)
+                return;
+
+            await OnBlurredAsync(new FocusEventArgs { Type = "jsBlur.OnBlur" });
         }
     }
 

@@ -30,6 +30,7 @@
                   disabled=@GetDisabledState()
                   readonly="@GetReadOnlyState()"
                   inputmode="@InputMode.ToDescriptionString()"
+                  @onblur="@OnBlurredAsync"
                   @oninput="OnInput"
                   @onchange="OnChange"
                   @onkeydown="@InvokeKeyDownAsync"
@@ -58,6 +59,7 @@
                value="@_internalText"
                @oninput="OnInput"
                @onchange="OnChange"
+               @onblur="@OnBlurredAsync"
                placeholder="@Placeholder"
                disabled=@GetDisabledState()
                readonly="@GetReadOnlyState()"
