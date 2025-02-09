@@ -1,10 +1,8 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudLayout>
+﻿<MudLayout>
     <MudAppBar Elevation="1">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
+        <MudIconButton id="toggle-drawer-button" Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
     </MudAppBar>
-    <MudDrawer @ref="@Drawer" @bind-Open="@open" Elevation="1" Breakpoint="@Breakpoint" ClipMode="@ClipMode" PreserveOpenState="@PreserveOpenState">
+    <MudDrawer @ref="@Drawer" @bind-Open="@_open" Elevation="1" Breakpoint="@Breakpoint" ClipMode="@ClipMode">
     </MudDrawer>
     <MudMainContent Class="pt-16 px-16">
         <MudContainer Class="mt-6">
@@ -12,14 +10,10 @@
     </MudMainContent>
 </MudLayout>
 
-
 @code{ 
-    bool open = false;
+    private bool _open;
 
-    public MudDrawer Drawer { get; set; }
-
-    [Parameter]
-    public bool PreserveOpenState { get; set; }
+    public MudDrawer Drawer { get; private set; } = null!;
 
     [Parameter]
     public Breakpoint Breakpoint { get; set; } = Breakpoint.Md;
@@ -27,8 +21,5 @@
     [Parameter]
     public DrawerClipMode ClipMode { get; set; }
 
-    void ToggleDrawer()
-    {
-        open = !open;
-    }
+    private void ToggleDrawer() => _open = !_open;
 }

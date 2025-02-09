@@ -1,12 +1,11 @@
 ﻿@namespace MudBlazor.Charts
-@using System.Globalization
-@inherits MudChartBase
+@inherits MudCategoryChartBase
 
 <svg @attributes="UserAttributes" class="mud-chart-pie" width="@MudChartParent?.Width" height="@MudChartParent?.Height" viewBox="-1 -1 2 2" style="transform: rotate(-90deg);">
     <Filters />
-    @foreach (var item in _paths.ToList())
+    @foreach (var item in _paths)
     {
-		<path @onclick="() => SelectedIndex = item.Index" class="mud-chart-serie" fill="@(MudChartParent.ChartOptions.ChartPalette.GetValue(item.Index % ChartOptions.ChartPalette.Count()))" d="@item.Data"></path>
+        <path @onclick="() => SelectedIndex = item.Index" class="mud-chart-serie" fill="@MudChartParent?.ChartOptions.ChartPalette.GetValue(item.Index % MudChartParent.ChartOptions.ChartPalette.Length)" d="@item.Data"></path>
 	}
 
 	@MudChartParent?.CustomGraphics

@@ -3,10 +3,10 @@
 <MudDialog>
     <DialogContent>
         <div class="d-flex flex-column py-1">
-            <MudButton OnClick="ChangeTitle">Change Title</MudButton>
-            <MudButton OnClick="ToggleCloseButton">Toggle Close Button</MudButton>
-            <MudButton OnClick="ToggleFullWidth">Toggle Full Width</MudButton>
-            <MudButton OnClick="ToggleHeader">Toggle Header</MudButton>
+            <MudButton OnClick="ChangeTitleAsync">Change Title</MudButton>
+            <MudButton OnClick="ToggleCloseButtonAsync">Toggle Close Button</MudButton>
+            <MudButton OnClick="ToggleFullWidthAsync">Toggle Full Width</MudButton>
+            <MudButton OnClick="ToggleHeaderAsync">Toggle Header</MudButton>
         </div>
     </DialogContent>
     <DialogActions>
@@ -15,30 +15,40 @@
 </MudDialog>
 
 @code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; }
 
-    void Close() => MudDialog.Close(DialogResult.Ok(true));
+    private void Close() => MudDialog.Close(DialogResult.Ok(true));
 
-    void ChangeTitle()
+    private Task ChangeTitleAsync() => MudDialog.SetTitleAsync($"Current time is: {DateTime.Now}");
+
+    private Task ToggleCloseButtonAsync()
     {
-        MudDialog.SetTitle("Current time is: " + DateTime.Now);
+        var options = MudDialog.Options with
+        {
+            CloseButton = !(MudDialog.Options.CloseButton ?? false)
+        };
+
+        return MudDialog.SetOptionsAsync(options);
     }
 
-    void ToggleCloseButton()
+    private Task ToggleFullWidthAsync()
     {
-        MudDialog.Options.CloseButton = !(MudDialog.Options.CloseButton ?? false);
-        MudDialog.SetOptions(MudDialog.Options);
+        var options = MudDialog.Options with
+        {
+            FullWidth = !(MudDialog.Options.FullWidth ?? true)
+        };
+
+        return MudDialog.SetOptionsAsync(options);
     }
 
-    void ToggleFullWidth()
+    private Task ToggleHeaderAsync()
     {
-        MudDialog.Options.FullWidth = !(MudDialog.Options.FullWidth ?? true);
-        MudDialog.SetOptions(MudDialog.Options);
-    }
+        var options = MudDialog.Options with
+        {
+            NoHeader = !(MudDialog.Options.NoHeader ?? false)
+        };
 
-    void ToggleHeader()
-    {
-        MudDialog.Options.NoHeader = !(MudDialog.Options.NoHeader ?? false);
-        MudDialog.SetOptions(MudDialog.Options);
+        return MudDialog.SetOptionsAsync(options);
     }
 }

@@ -1,19 +1,14 @@
-﻿#pragma warning disable CS1998 // async without await
-#pragma warning disable BL0005 // Set parameter outside component
+﻿#pragma warning disable BL0005 // Set parameter outside component
 
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using FluentValidation;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents.Field;
 using MudBlazor.UnitTests.TestComponents.Form;
 using MudBlazor.UnitTests.TestComponents.TextField;
@@ -35,19 +30,19 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<FormIsValidTest3>();
             var label = comp.FindAll(".mud-input-label");
             label[0].Attributes.GetNamedItem("for")?.Value.Should().Be("textFieldLabelTest");
-            label[1].Attributes.GetNamedItem("for")?.Value.Should().StartWith("mudinput-");
+            label[1].Attributes.GetNamedItem("for")?.Value.Should().StartWith("mudinput");
         }
 
         /// <summary>
         /// Initial Text for double should be 0, with F1 format it should be 0.0
         /// </summary>
         [Test]
-        public async Task TextFieldLabelFor()
+        public void TextFieldLabelFor()
         {
             var comp = Context.RenderComponent<FieldTest>();
             var label = comp.FindAll(".mud-input-label");
-            label[0].Attributes.GetNamedItem("for")?.Value.Should().StartWith("mudinput-");
-            label[1].Attributes.GetNamedItem("for")?.Value.Should().StartWith("mudinput-");
+            label[0].Attributes.GetNamedItem("for")?.Value.Should().StartWith("mudinput");
+            label[1].Attributes.GetNamedItem("for")?.Value.Should().StartWith("mudinput");
             label[2].Attributes.GetNamedItem("for")?.Value.Should().Be("fieldLabelTest");
         }
 
@@ -92,7 +87,7 @@ namespace MudBlazor.UnitTests.Components
         /// Setting the value to null should not cause a validation error
         /// </summary>
         [Test]
-        public async Task TextFieldWithNullableTypes()
+        public void TextFieldWithNullableTypes()
         {
             var comp = Context.RenderComponent<MudTextField<int?>>(ComponentParameter.CreateParameter("Value", 17));
             // print the generated html
@@ -108,13 +103,13 @@ namespace MudBlazor.UnitTests.Components
         /// Setting an invalid number should show the conversion error message
         /// </summary>
         [Test]
-        public async Task TextFieldConversionError()
+        public void TextFieldConversionError()
         {
             var comp = Context.RenderComponent<MudTextField<int?>>();
             // print the generated html
             comp.Find("input").Change("seventeen");
             comp.Find("input").Blur();
-            comp.FindAll("div.mud-input-error").Count.Should().Be(2);
+            comp.FindAll("div.mud-input-error").Count.Should().Be(3);
             comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
         }
 
@@ -136,7 +131,6 @@ namespace MudBlazor.UnitTests.Components
             //input value has changed, DebounceInterval is 0, so Value should change in TextField immediately
             textField.Value.Should().Be("Some Value");
         }
-
 
         /// <summary>
         /// Value should not change immediately. Should respect the Debounce Interval
@@ -171,15 +165,28 @@ namespace MudBlazor.UnitTests.Components
         public void LabelShouldShrinkWhenPlaceholderIsSet()
         {
             //Arrange
-            using var ctx = new Bunit.TestContext();
             var label = Parameter(nameof(MudTextField<string>.Label), "label");
             var placeholder = Parameter(nameof(MudTextField<string>.Placeholder), "placeholder");
             //with no placeholder, label is not shrinked
-            var comp = ctx.RenderComponent<MudTextField<string>>(label);
+            var comp = Context.RenderComponent<MudTextField<string>>(label);
             comp.Markup.Should().NotContain("shrink");
             //with placeholder label is shrinked
             comp.SetParametersAndRender(placeholder);
             comp.Markup.Should().Contain("shrink");
+        }
+
+        /// <summary>
+        /// Setting ShrinkLabel should apply mud-shrink class.
+        /// </summary>
+        [Test]
+        public void LabelShouldShrinkWhenShrinkLabelIsSet()
+        {
+            var comp = Context.RenderComponent<TextFieldShrinkLabelTest>();
+            var noMask = comp.FindComponents<MudTextField<string>>()[0];
+            var masked = comp.FindComponents<MudTextField<string>>()[1];
+
+            noMask.Markup.Should().Contain("mud-shrink");
+            masked.Markup.Should().Contain("mud-shrink");
         }
 
         /// <summary>
@@ -208,7 +215,7 @@ namespace MudBlazor.UnitTests.Components
         /// FluentValidation rules can be used for validating a TextFields
         /// </summary>
         [Test]
-        public async Task TextFieldFluentValidationTest1()
+        public void TextFieldFluentValidationTest1()
         {
             var validator = new FluentValueValidator<string>(x => x.Cascade(CascadeMode.Stop)
                 .NotEmpty()
@@ -230,8 +237,8 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// An unstable converter should not cause an infinite update loop. This test must complete in under 1 sec!
         /// </summary>
-        [Test, Timeout(1000)]
-        public async Task TextFieldUpdateLoopProtectionTest()
+        [Test, CancelAfter(1000)]
+        public void TextFieldUpdateLoopProtectionTest()
         {
             var comp = Context.RenderComponent<MudTextField<string>>();
             // these conversion funcs are nonsense of course, but they are designed this way to
@@ -248,7 +255,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task TextField_Should_FireValueChangedOnTextParameterChange()
+        public void TextField_Should_FireValueChangedOnTextParameterChange()
         {
             string changed_value = null;
             var comp = Context.RenderComponent<MudTextField<string>>(EventCallback<string>("ValueChanged", x => changed_value = x));
@@ -257,7 +264,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task TextField_Should_FireTextChangedOnValueParameterChange()
+        public void TextField_Should_FireTextChangedOnValueParameterChange()
         {
             string changed_text = null;
             var comp = Context.RenderComponent<MudTextField<string>>(EventCallback<string>("TextChanged", x => changed_text = x));
@@ -266,7 +273,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task TextField_Should_FireTextAndValueChangedOnTextInput()
+        public void TextField_Should_FireTextAndValueChangedOnTextInput()
         {
             string changed_value = null;
             string changed_text = null;
@@ -283,9 +290,8 @@ namespace MudBlazor.UnitTests.Components
         /// Instead of RequiredError it should show the conversion error, because typing something (even if not a number) should
         /// already fulfill the requirement of Required="true". If it is a valid value is a different question.
         /// </summary>
-        /// <returns></returns>
         [Test]
-        public async Task TextField_ShouldNot_ShowRequiredErrorWhenThereIsAConversionError()
+        public void TextField_ShouldNot_ShowRequiredErrorWhenThereIsAConversionError()
         {
             var comp = Context.RenderComponent<MudTextField<int?>>(ComponentParameter.CreateParameter("Required", true));
             var textfield = comp.Instance;
@@ -300,9 +306,8 @@ namespace MudBlazor.UnitTests.Components
         /// Instead of RequiredError it should show the conversion error, because typing something (even if not a number) should
         /// already fulfill the requirement of Required="true". If it is a valid value is a different question.
         /// </summary>
-        /// <returns></returns>
         [Test]
-        public async Task TextField_ShouldNot_ShowRequiredErrorWhenInitialTextIsEmpty()
+        public void TextField_ShouldNot_ShowRequiredErrorWhenInitialTextIsEmpty()
         {
             var comp = Context.RenderComponent<TextFieldRequiredTest>();
             var textfield = comp.FindComponent<MudTextField<string>>().Instance;
@@ -315,13 +320,17 @@ namespace MudBlazor.UnitTests.Components
         /// This is based on a bug reported by a user
         /// </summary>
         [Test]
-        public async Task DebouncedTextField_ShouldNot_ThrowException()
+        public void DebouncedTextField_ShouldNot_ThrowException()
         {
-            Context.RenderComponent<DebouncedTextFieldTest>();
+            // Arrange & Act
+            var renderComponent = () => Context.RenderComponent<DebouncedTextFieldTest>();
+
+            // Assert
+            renderComponent.Should().NotThrow();
         }
 
         [Test]
-        public async Task TextFieldMultiline_CheckRenderedText()
+        public void TextFieldMultiline_CheckRenderedText()
         {
             var text = "Hello world!";
             var comp = Context.RenderComponent<MudTextField<string>>(
@@ -329,7 +338,6 @@ namespace MudBlazor.UnitTests.Components
                 Parameter(nameof(MudTextField<string>.Lines), 2));
             // print the generated html
             // select elements needed for the test
-            var textfield = comp.Instance;
             comp.Find("textarea").InnerHtml.Should().Be(text);
         }
 
@@ -339,7 +347,7 @@ namespace MudBlazor.UnitTests.Components
         /// </summary>
         /// <returns></returns>
         [Test]
-        public async Task TextFieldMultilineWithMask_CheckRendered()
+        public void TextFieldMultilineWithMask_CheckRendered()
         {
             var comp = Context.RenderComponent<MudTextField<string>>(
                 Parameter(nameof(MudTextField<string>.Mask), new RegexMask(@"\d")),
@@ -348,7 +356,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task MultilineTextField_Should_UpdateTextOnInput()
+        public void MultilineTextField_Should_UpdateTextOnInput()
         {
             var comp = Context.RenderComponent<MudTextField<string>>();
             var textfield = comp.Instance;
@@ -364,12 +372,11 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// This is based on a bug reported by a user
-        ///
-        /// After editing the second (multi-line) tf it would not accept any updates from the first tf.
+        /// <para>This is based on a bug reported by a user</para>
+        /// <para>After editing the second (multi-line) tf it would not accept any updates from the first tf.</para>
         /// </summary>
         [Test]
-        public async Task MultiLineTextField_ShouldBe_TwoWayBindable()
+        public void MultiLineTextField_ShouldBe_TwoWayBindable()
         {
             var comp = Context.RenderComponent<MultilineTextfieldBindingTest>();
             // print the generated html
@@ -393,7 +400,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task AutoGrowTextField_Should_InvokeJavaScriptInitOnRender()
+        public void AutoGrowTextField_Should_InvokeJavaScriptInitOnRender()
         {
             var comp = Context.RenderComponent<MudTextField<string>>(
                 Parameter(nameof(MudTextField<string>.AutoGrow), true),
@@ -416,19 +423,19 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task TextFieldClearableTest()
+        public void TextFieldClearableTest()
         {
             var comp = Context.RenderComponent<TextFieldClearableTest>();
             var textField = comp.FindComponent<MudTextField<string>>();
             // No button when initialized
-            comp.FindAll("button").Should().BeEmpty();
+            comp.FindAll(".mud-input-clear-button").Should().BeEmpty();
 
             // Button shows after entering text
             comp.Find("input").Change("text");
             textField.Instance.Value.Should().Be("text");
-            comp.Find("button").Should().NotBeNull();
+            comp.Find(".mud-input-clear-button").Should().NotBeNull();
             // Text cleared and button removed after clicking clear button
-            comp.Find("button").Click();
+            comp.Find(".mud-input-clear-button").Click();
             textField.Instance.Value.Should().BeNullOrEmpty();
             comp.FindAll("button").Should().BeEmpty();
             // Clear button click handler should have been invoked
@@ -437,14 +444,14 @@ namespace MudBlazor.UnitTests.Components
             // Button shows again after entering text
             comp.Find("input").Change("text");
             textField.Instance.Value.Should().Be("text");
-            comp.Find("button").Should().NotBeNull();
+            comp.Find(".mud-input-clear-button").Should().NotBeNull();
             // Button removed after clearing text by typing
             comp.Find("input").Change(string.Empty);
-            comp.FindAll("button").Should().BeEmpty();
+            comp.FindAll(".mud-input-clear-button").Should().BeEmpty();
         }
 
         [Test]
-        public async Task TextField_ClearButton_TabIndex_Test()
+        public void TextField_ClearButton_TabIndex_Test()
         {
             var comp = Context.RenderComponent<MudTextField<string>>(
                 Parameter(nameof(MudTextField<string>.Clearable), true),
@@ -452,7 +459,7 @@ namespace MudBlazor.UnitTests.Components
             );
 
             // Button should have tabindex -1
-            comp.Find("button").GetAttribute("tabindex").Should().Be("-1");
+            comp.Find(".mud-input-clear-button").GetAttribute("tabindex").Should().Be("-1");
         }
 
         #region ValidationAttribute support
@@ -665,7 +672,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task TextField_Should_UpdateOnBoundValueChange_WhenFocused_WithTextUpdateSuppressionOff()
+        public void TextField_Should_UpdateOnBoundValueChange_WhenFocused_WithTextUpdateSuppressionOff()
         {
             var comp = Context.RenderComponent<TextFieldUpdateViaBindingTest>();
             var input = comp.FindComponent<MudInput<string>>();
@@ -685,15 +692,15 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task TextField_ElementReferenceId_ShouldNot_BeEmpty()
+        public void TextField_ElementReferenceId_ShouldNot_BeEmpty()
         {
             var comp = Context.RenderComponent<MudTextField<string>>();
             var inputId = comp.Instance.InputReference.ElementReference.Id;
 
-            Assert.IsNotEmpty(inputId);
+            inputId.Should().NotBeEmpty();
         }
 
-        class TestDataAnnotationModel
+        private class TestDataAnnotationModel
         {
             [Required(ErrorMessage = "The {0} field is required.")]
             public string Foo1 { get; set; }
@@ -765,7 +772,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task InputMode_DefaultValue_IsText()
+        public void InputMode_DefaultValue_IsText()
         {
             var comp = Context.RenderComponent<MudTextField<string>>();
 
@@ -780,7 +787,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task InputMode_DefaultValueWithMask_IsText()
+        public void InputMode_DefaultValueWithMask_IsText()
         {
             var mask = new PatternMask("0000");
             var comp = Context.RenderComponent<MudTextField<string>>(
@@ -797,7 +804,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task InputMode_ChangedValue_IsPropagated()
+        public void InputMode_ChangedValue_IsPropagated()
         {
             var comp = Context.RenderComponent<MudTextField<string>>(
                 x => x.Add(x => x.InputMode, InputMode.numeric));
@@ -813,7 +820,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task InputMode_ChangedValueWithMask_IsPropagated()
+        public void InputMode_ChangedValueWithMask_IsPropagated()
         {
             var mask = new PatternMask("0000");
             var comp = Context.RenderComponent<MudTextField<string>>(
@@ -846,12 +853,12 @@ namespace MudBlazor.UnitTests.Components
             // user puts in a invalid integer value
             comp.Find("input").Change("invalid");
             comp.Find("input").Blur();
-            comp.FindAll("div.mud-input-error").Count.Should().Be(1);
+            comp.FindAll("div.mud-input-error").Count.Should().Be(2);
             comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
 
             // user does not change invalid input value but changes focus
             comp.Find("input").Blur();
-            comp.FindAll("div.mud-input-error").Count.Should().Be(1);
+            comp.FindAll("div.mud-input-error").Count.Should().Be(2);
             comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
 
             // reset (must reset dirty state)
@@ -865,7 +872,7 @@ namespace MudBlazor.UnitTests.Components
             // user puts in a invalid integer value
             comp.Find("input").Change("invalid");
             comp.Find("input").Blur();
-            comp.FindAll("div.mud-input-error").Count.Should().Be(1);
+            comp.FindAll("div.mud-input-error").Count.Should().Be(2);
             comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
 
             // user corrects input
@@ -884,13 +891,13 @@ namespace MudBlazor.UnitTests.Components
 
             // user does not change input value but changes focus
             comp.Find("input").Blur();
-            comp.FindAll("div.mud-input-error").Count.Should().Be(2);
+            comp.FindAll("div.mud-input-error").Count.Should().Be(3);
             comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Required");
 
             // user puts in a invalid integer value
             comp.Find("input").Change("invalid");
             comp.Find("input").Blur();
-            comp.FindAll("div.mud-input-error").Count.Should().Be(2);
+            comp.FindAll("div.mud-input-error").Count.Should().Be(3);
             comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
 
             // reset
@@ -899,7 +906,7 @@ namespace MudBlazor.UnitTests.Components
 
             // user does not change input value but changes focus
             comp.Find("input").Blur();
-            comp.FindAll("div.mud-input-error").Count.Should().Be(2);
+            comp.FindAll("div.mud-input-error").Count.Should().Be(3);
             comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Required");
 
             // user corrects input
@@ -924,7 +931,7 @@ namespace MudBlazor.UnitTests.Components
         /// ReadOnly TextFields should not validate when blurred
         /// </summary>
         [Test]
-        public async Task ReadOnlyTextFieldShouldNotValidate()
+        public void ReadOnlyTextFieldShouldNotValidate()
         {
             var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
             .Add(p => p.ReadOnly, true)
@@ -947,6 +954,62 @@ namespace MudBlazor.UnitTests.Components
             text.InnerHtml.Should().Be("Oh my! We caught an error and handled it!");
         }
 
+        /// <summary>
+        /// Reproduce https://github.com/MudBlazor/MudBlazor/issues/7034
+        /// </summary>
+        [Test]
+        public void OnBlurWithModifiedValueTriggerValidationOnce1()
+        {
+            var callCounter = 0;
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Validation, (string value) => { callCounter++; return true; })
+            );
+            comp.Find("input").Change("A");
+            callCounter.Should().Be(1);
+            comp.Find("input").Blur();
+            callCounter.Should().Be(1);
+        }
+
+        /// <summary>
+        /// Reproduce https://github.com/MudBlazor/MudBlazor/issues/7034
+        /// </summary>
+        [Test]
+        public void OnBlurWithModifiedValueTriggerValidationOnce2()
+        {
+            var callCounter = 0;
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(p => p.OnlyValidateIfDirty, true)
+                .Add(p => p.Validation, (string value) => { callCounter++; return true; })
+            );
+            comp.Find("input").Change("A");
+            callCounter.Should().Be(1);
+            comp.Find("input").Blur();
+            callCounter.Should().Be(1);
+        }
+
+        /// <summary>
+        /// Reproduce https://github.com/MudBlazor/MudBlazor/issues/7034
+        /// </summary>
+        [Test]
+        public async Task OnBlurWithModifiedValueTriggerValidationOnce3()
+        {
+            var callCounter = 0;
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(p => p.OnlyValidateIfDirty, true)
+                .Add(p => p.Validation, async (string value) =>
+                {
+                    callCounter++;
+                    await Task.Delay(TimeSpan.FromMilliseconds(100));
+                    return true;
+                })
+            );
+            comp.Find("input").Change("A");
+            comp.WaitForAssertion(() => callCounter.Should().Be(1));
+            comp.Find("input").Blur();
+            await Task.Delay(TimeSpan.FromMilliseconds(200));
+            callCounter.Should().Be(1);
+        }
+
         [Test]
         public async Task OnKeyDownErrorContentCaughtException()
         {
@@ -966,7 +1029,7 @@ namespace MudBlazor.UnitTests.Components
             var text = mudAlert.Find("div.mud-alert-message");
             text.InnerHtml.Should().Be("Oh my! We caught an error and handled it!");
         }
-        
+
         /// <summary>
         /// Validate that a re-render of a debounced text field does not cause a loss of uncommitted text.
         /// </summary>
@@ -979,7 +1042,7 @@ namespace MudBlazor.UnitTests.Components
             // trigger first value change
             await Task.Delay(comp.Instance.DebounceInterval);
             // trigger delayed re-render
-            comp.Find("button").Click();
+            comp.Find("#re-render-button").Click();
             // imitate "typing in progress" by extending the debounce interval until component re-renders
             var elapsedTime = 0;
             var currentText = "test";
@@ -991,14 +1054,14 @@ namespace MudBlazor.UnitTests.Components
                 await Task.Delay(delay);
                 elapsedTime += delay;
             }
-            // after the final debounce, the value should be updated without swallowing any user input 
+            // after the final debounce, the value should be updated without swallowing any user input
             await Task.Delay(comp.Instance.DebounceInterval);
             textField.Value.Should().Be(currentText);
             textField.Text.Should().Be(currentText);
         }
-        
+
         [Test]
-        public async Task DebouncedTextField_Should_RenderDefaultValueTextOnFirstRender()
+        public void DebouncedTextField_Should_RenderDefaultValueTextOnFirstRender()
         {
             var defaultValue = "test";
             var comp = Context.RenderComponent<DebouncedTextFieldRerenderTest>(
@@ -1006,7 +1069,7 @@ namespace MudBlazor.UnitTests.Components
             var textfield = comp.FindComponent<MudTextField<string>>().Instance;
             textfield.Text.Should().Be(defaultValue);
         }
-        
+
         /// <summary>
         /// Validate that a re-render of a debounced text field does not cause a loss of uncommitted text while changing format.
         /// </summary>
@@ -1016,10 +1079,10 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DebouncedTextFieldFormatChangeRerenderTest>();
             var textField = comp.FindComponent<MudTextField<DateTime>>().Instance;
             DateTime expectedFinalDateTime = default;
-            // ensure text is updated on initialize 
+            // ensure text is updated on initialize
             textField.Text.Should().Be(comp.Instance.Date.Date.ToString(comp.Instance.Format, CultureInfo.InvariantCulture));
             // trigger the format change
-            comp.Find("button").Click();
+            comp.Find("#format-change-button").Click();
             // imitate "typing in progress" by extending the debounce interval until component re-renders
             var elapsedTime = 0;
             var currentText = comp.Instance.Date.Date.ToString(comp.Instance.Format, CultureInfo.InvariantCulture);
@@ -1039,5 +1102,633 @@ namespace MudBlazor.UnitTests.Components
             textField.Value.Should().Be(expectedFinalDateTime);
             textField.Text.Should().Be(expectedFinalDateTime.ToString(comp.Instance.Format, CultureInfo.InvariantCulture));
         }
+
+        /// <summary>
+        /// A text field with AutoGrow enabled should contain a special class.
+        /// </summary>
+        [Test]
+        public void TextFieldAutoGrowHasClass()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+            .Add(p => p.AutoGrow, true));
+
+            comp.Find("div.mud-input").ClassList.Should().Contain("mud-input-auto-grow");
+        }
+
+        /// <summary>
+        /// A text field with a label should auto-generate an id and use that id on the input element and the label's for attribute.
+        /// </summary>
+        [Test]
+        public void TextFieldWithLabel_Should_GenerateIdForInputAndAccompanyingLabel()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters
+                => parameters.Add(p => p.Label, "Test Label"));
+
+            comp.Find("input").Id.Should().NotBeNullOrEmpty();
+            comp.Find("label").Attributes.GetNamedItem("for").Should().NotBeNull();
+            comp.Find("label").Attributes.GetNamedItem("for")!.Value.Should().Be(comp.Find("input").Id);
+        }
+
+        /// <summary>
+        /// A text field with a label and UserAttributesId should use the UserAttributesId on the input element and the label's for attribute.
+        /// </summary>
+        [Test]
+        public void TextFieldWithLabelAndUserAttributesId_Should_UseUserAttributesIdForInputAndAccompanyingLabel()
+        {
+            var expectedId = "userattributes-id";
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters
+                => parameters
+                    .Add(p => p.Label, "Test Label")
+                    .Add(p => p.UserAttributes, new Dictionary<string, object>
+                    {
+                        { "Id", expectedId }
+                    }));
+
+            comp.Find("input").Id.Should().Be(expectedId);
+            comp.Find("label").Attributes.GetNamedItem("for").Should().NotBeNull();
+            comp.Find("label").Attributes.GetNamedItem("for")!.Value.Should().Be(expectedId);
+        }
+
+        /// <summary>
+        /// A text field with a label, a UserAttributesId, and an InputId should use the InputId on the input element and the label's for attribute.
+        /// </summary>
+        [Test]
+        public void TextFieldWithLabelAndUserAttributesIdAndInputId_Should_UseInputIdForInputAndAccompanyingLabel()
+        {
+            var expectedId = "input-id";
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters
+                => parameters
+                    .Add(p => p.Label, "Test Label")
+                    .Add(p => p.UserAttributes, new Dictionary<string, object>
+                    {
+                        { "Id", "userattributes-id" }
+                    })
+                    .Add(p => p.InputId, "input-id"));
+
+            comp.Find("input").Id.Should().Be(expectedId);
+            comp.Find("label").Attributes.GetNamedItem("for").Should().NotBeNull();
+            comp.Find("label").Attributes.GetNamedItem("for")!.Value.Should().Be(expectedId);
+        }
+
+        /// <summary>
+        /// A text field with a mask and a label should auto-generate an id and use that id on the input element and the label's for attribute.
+        /// </summary>
+        [Test]
+        public void TextFieldWithMultipleLinesAndLabel_Should_GenerateIdForInputAndAccompanyingLabel()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters
+                => parameters
+                    .Add(p => p.Label, "Test Label")
+                    .Add(p => p.Lines, 5));
+
+            comp.Find("textarea").Id.Should().NotBeNullOrEmpty();
+            comp.Find("label").Attributes.GetNamedItem("for").Should().NotBeNull();
+            comp.Find("label").Attributes.GetNamedItem("for")!.Value.Should().Be(comp.Find("textarea").Id);
+        }
+
+        /// <summary>
+        /// A text field with multiple lines, a label, and UserAttributesId should use the UserAttributesId on the input element and the label's for attribute.
+        /// </summary>
+        [Test]
+        public void TextFieldWithMultipleLinesAndLabelAndUserAttributesId_Should_UseUserAttributesIdForInputAndAccompanyingLabel()
+        {
+            var expectedId = "userattributes-id";
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters
+                => parameters
+                    .Add(p => p.Label, "Test Label")
+                    .Add(p => p.UserAttributes, new Dictionary<string, object>
+                    {
+                        { "Id", expectedId }
+                    })
+                    .Add(p => p.Lines, 5));
+
+            comp.Find("textarea").Id.Should().Be(expectedId);
+            comp.Find("label").Attributes.GetNamedItem("for").Should().NotBeNull();
+            comp.Find("label").Attributes.GetNamedItem("for")!.Value.Should().Be(expectedId);
+        }
+
+        /// <summary>
+        /// A text field with multiple lines, a label, a UserAttributesId, and an InputId should use the InputId on the input element and the label's for attribute.
+        /// </summary>
+        [Test]
+        public void TextFieldWithMultipleLinesAndLabelAndUserAttributesIdAndInputId_Should_UseInputIdForInputAndAccompanyingLabel()
+        {
+            var expectedId = "input-id";
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters
+                => parameters
+                    .Add(p => p.Label, "Test Label")
+                    .Add(p => p.UserAttributes, new Dictionary<string, object>
+                    {
+                        { "Id", "userattributes-id" }
+                    })
+                    .Add(p => p.InputId, "input-id")
+                    .Add(p => p.Lines, 5));
+
+            comp.Find("textarea").Id.Should().Be(expectedId);
+            comp.Find("label").Attributes.GetNamedItem("for").Should().NotBeNull();
+            comp.Find("label").Attributes.GetNamedItem("for")!.Value.Should().Be(expectedId);
+        }
+
+        /// <summary>
+        /// A text field with a mask and a label should auto-generate an id and use that id on the input element and the label's for attribute.
+        /// </summary>
+        [Test]
+        public void TextFieldWithMaskAndLabel_Should_GenerateIdForInputAndAccompanyingLabel()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters
+                => parameters
+                    .Add(p => p.Label, "Test Label")
+                    .Add(p => p.Mask, new PatternMask("0000")));
+
+            comp.Find("input").Id.Should().NotBeNullOrEmpty();
+            comp.Find("label").Attributes.GetNamedItem("for").Should().NotBeNull();
+            comp.Find("label").Attributes.GetNamedItem("for")!.Value.Should().Be(comp.Find("input").Id);
+        }
+
+        /// <summary>
+        /// A text field with a mask, a label, and UserAttributesId should use the UserAttributesId on the input element and the label's for attribute.
+        /// </summary>
+        [Test]
+        public void TextFieldWithMaskAndLabelAndUserAttributesId_Should_UseUserAttributesIdForInputAndAccompanyingLabel()
+        {
+            var expectedId = "userattributes-id";
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters
+                => parameters
+                    .Add(p => p.Label, "Test Label")
+
+                    .Add(p => p.UserAttributes, new Dictionary<string, object>
+                    {
+                        {
+                            "Id", expectedId
+                        }
+                    })
+                    .Add(p => p.Mask, new PatternMask("0000")));
+
+            comp.Find("input").Id.Should().Be(expectedId);
+            comp.Find("label").Attributes.GetNamedItem("for").Should().NotBeNull();
+            comp.Find("label").Attributes.GetNamedItem("for")!.Value.Should().Be(expectedId);
+        }
+
+        /// <summary>
+        /// A text field with a mask, a label, a UserAttributesId, and an InputId should use the InputId on the input element and the label's for attribute.
+        /// </summary>
+        [Test]
+        public void TextFieldWithMaskAndLabelAndUserAttributesIdAndInputId_Should_UseInputIdForInputAndAccompanyingLabel()
+        {
+            var expectedId = "input-id";
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters
+                => parameters
+                    .Add(p => p.Label, "Test Label")
+                    .Add(p => p.UserAttributes, new Dictionary<string, object>
+                    {
+                        {
+                            "Id", "userattributes-id"
+                        }
+                    })
+                    .Add(p => p.InputId, expectedId)
+                    .Add(p => p.Mask, new PatternMask("0000")));
+
+            comp.Find("input").Id.Should().Be(expectedId);
+            comp.Find("label").Attributes.GetNamedItem("for").Should().NotBeNull();
+            comp.Find("label").Attributes.GetNamedItem("for")!.Value.Should().Be(expectedId);
+        }
+
+        /// <summary>
+        /// A text field with a mask, multiple lines, and a label should auto-generate an id and use that id on the input element and the label's for attribute.
+        /// </summary>
+        [Test]
+        public void TextFieldWithMaskAndMultipleLinesAndLabel_Should_GenerateIdForInputAndAccompanyingLabel()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters
+                => parameters
+                    .Add(p => p.Label, "Test Label")
+                    .Add(p => p.Mask, new PatternMask("0000"))
+                    .Add(p => p.Lines, 5));
+
+            comp.Find("textarea").Id.Should().NotBeNullOrEmpty();
+            comp.Find("label").Attributes.GetNamedItem("for").Should().NotBeNull();
+            comp.Find("label").Attributes.GetNamedItem("for")!.Value.Should().Be(comp.Find("textarea").Id);
+        }
+
+        /// <summary>
+        /// A text field with a mask, multiple lines, a label, and UserAttributesId should use the UserAttributesId on the input element and the label's for attribute.
+        /// </summary>
+        [Test]
+        public void TextFieldWithMaskAndMultipleLinesAndLabelAndUserAttributesId_Should_UseUserAttributesIdForInputAndAccompanyingLabel()
+        {
+            var expectedId = "userattributes-id";
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters
+                => parameters
+                    .Add(p => p.Label, "Test Label")
+                    .Add(p => p.UserAttributes, new Dictionary<string, object>
+                    {
+                        {
+                            "Id", expectedId
+                        }
+                    })
+                    .Add(p => p.Mask, new PatternMask("0000"))
+                    .Add(p => p.Lines, 5));
+
+            comp.Find("textarea").Id.Should().Be(expectedId);
+            comp.Find("label").Attributes.GetNamedItem("for").Should().NotBeNull();
+            comp.Find("label").Attributes.GetNamedItem("for")!.Value.Should().Be(expectedId);
+        }
+
+        /// <summary>
+        /// A text field with a mask, multiple lines, a label, a UserAttributesId, and an InputId should use the InputId on the input element and the label's for attribute.
+        /// </summary>
+        [Test]
+        public void TextFieldWithMaskAndMultipleLinesAndLabelAndUserAttributesIdAndInputId_Should_UseInputIdForInputAndAccompanyingLabel()
+        {
+            var expectedId = "input-id";
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters
+                => parameters
+                    .Add(p => p.Label, "Test Label")
+                    .Add(p => p.UserAttributes, new Dictionary<string, object>
+                    {
+                        {
+                            "Id", "userattributes-id"
+                        }
+                    })
+                    .Add(p => p.InputId, expectedId)
+                    .Add(p => p.Mask, new PatternMask("0000"))
+                    .Add(p => p.Lines, 5));
+
+            comp.Find("textarea").Id.Should().Be(expectedId);
+            comp.Find("label").Attributes.GetNamedItem("for").Should().NotBeNull();
+            comp.Find("label").Attributes.GetNamedItem("for")!.Value.Should().Be(expectedId);
+        }
+
+        /// <summary>
+        /// Optional TextField should not have required attribute and aria-required should be false.
+        /// </summary>
+        [Test]
+        public void OptionalTextField_Should_NotHaveRequiredAttributeAndAriaRequiredShouldBeFalse()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>();
+
+            comp.Find("input").HasAttribute("required").Should().BeFalse();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("false");
+        }
+
+        /// <summary>
+        /// Required TextField should have required and aria-required attributes.
+        /// </summary>
+        [Test]
+        public void RequiredTextField_Should_HaveRequiredAndAriaRequiredAttributes()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Required, true));
+
+            comp.Find("input").HasAttribute("required").Should().BeTrue();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("true");
+        }
+
+        /// <summary>
+        /// Bug : https://github.com/MudBlazor/MudBlazor/issues/10606
+        /// When the user inputs a single space, the required text field should show an error.
+        /// </summary>
+        [Test]
+        public void RequiredTextField_WhenInputOneSpace_ShowError()
+        {
+            // Arrange
+
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters =>
+                parameters.Add(p => p.Required, true)
+            );
+            var textfield = comp.Instance;
+
+            // Act
+
+            comp.Find("input").Change(" ");
+
+            // Assert
+
+            textfield.Error.Should().BeTrue();
+        }
+
+        /// <summary>
+        /// Required and aria-required TextField attributes should be dynamic.
+        /// </summary>
+        [Test]
+        public void RequiredAndAriaRequiredTextFieldAttributes_Should_BeDynamic()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>();
+
+            comp.Find("input").HasAttribute("required").Should().BeFalse();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("false");
+
+            comp.SetParametersAndRender(parameters => parameters
+                .Add(p => p.Required, true));
+
+            comp.Find("input").HasAttribute("required").Should().BeTrue();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("true");
+        }
+
+        /// <summary>
+        /// Optional TextField with AutoGrow should not have required attribute and aria-required should be false.
+        /// </summary>
+        [Test]
+        public void OptionalTextFieldWithAutoGrow_Should_NotHaveRequiredAttributeAndAriaRequiredShouldBeFalse()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(p => p.AutoGrow, true));
+
+            comp.Find("textarea").HasAttribute("required").Should().BeFalse();
+            comp.Find("textarea").GetAttribute("aria-required").Should().Be("false");
+        }
+
+        /// <summary>
+        /// Required TextField with AutoGrow should have required and aria-required attributes.
+        /// </summary>
+        [Test]
+        public void RequiredTextFieldWithAutoGrow_Should_HaveRequiredAndAriaRequiredAttributes()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Required, true)
+                .Add(p => p.AutoGrow, true));
+
+            comp.Find("textarea").HasAttribute("required").Should().BeTrue();
+            comp.Find("textarea").GetAttribute("aria-required").Should().Be("true");
+        }
+
+        /// <summary>
+        /// Required and aria-required TextField with AutoGrow attributes should be dynamic.
+        /// </summary>
+        [Test]
+        public void RequiredAndAriaRequiredTextFieldWithAutoGrowAttributes_Should_BeDynamic()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(p => p.AutoGrow, true));
+
+            comp.Find("textarea").HasAttribute("required").Should().BeFalse();
+            comp.Find("textarea").GetAttribute("aria-required").Should().Be("false");
+
+            comp.SetParametersAndRender(parameters => parameters
+                .Add(p => p.Required, true));
+
+            comp.Find("textarea").HasAttribute("required").Should().BeTrue();
+            comp.Find("textarea").GetAttribute("aria-required").Should().Be("true");
+        }
+
+        /// <summary>
+        /// Optional TextField with Mask should not have required attribute and aria-required should be false.
+        /// </summary>
+        [Test]
+        public void OptionalTextFieldWithMask_Should_NotHaveRequiredAttributeAndAriaRequiredShouldBeFalse()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Mask, new PatternMask("0000")));
+
+            comp.Find("input").HasAttribute("required").Should().BeFalse();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("false");
+        }
+
+        /// <summary>
+        /// Required TextField with Mask should have required and aria-required attributes.
+        /// </summary>
+        [Test]
+        public void RequiredTextFieldWithMask_Should_HaveRequiredAndAriaRequiredAttributes()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Required, true)
+                .Add(p => p.Mask, new PatternMask("0000")));
+
+            comp.Find("input").HasAttribute("required").Should().BeTrue();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("true");
+        }
+
+        /// <summary>
+        /// Required and aria-required TextField with Mask should be dynamic.
+        /// </summary>
+        [Test]
+        public void RequiredAndAriaRequiredTextFieldWithMask_Should_BeDynamic()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Mask, new PatternMask("0000")));
+
+            comp.Find("input").HasAttribute("required").Should().BeFalse();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("false");
+
+            comp.SetParametersAndRender(parameters => parameters
+                .Add(p => p.Required, true));
+
+            comp.Find("input").HasAttribute("required").Should().BeTrue();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("true");
+        }
+
+        /// <summary>
+        /// Optional TextField with Mask and multiple lines should not have required attribute and aria-required should be false.
+        /// </summary>
+        [Test]
+        public void OptionalTextFieldWithMaskAndMultipleLines_Should_NotHaveRequiredAttributeAndAriaRequiredShouldBeFalse()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Lines, 5)
+                .Add(p => p.Mask, new PatternMask("0000")));
+
+            comp.Find("textarea").HasAttribute("required").Should().BeFalse();
+            comp.Find("textarea").GetAttribute("aria-required").Should().Be("false");
+        }
+
+        /// <summary>
+        /// Required TextField with Mask and multiple lines should have required and aria-required attributes.
+        /// </summary>
+        [Test]
+        public void RequiredTextFieldWithMaskAndMultipleLines_Should_HaveRequiredAndAriaRequiredAttributes()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Lines, 5)
+                .Add(p => p.Required, true)
+                .Add(p => p.Mask, new PatternMask("0000")));
+
+            comp.Find("textarea").HasAttribute("required").Should().BeTrue();
+            comp.Find("textarea").GetAttribute("aria-required").Should().Be("true");
+        }
+
+        /// <summary>
+        /// Required and aria-required TextField with Mask and multiple lines should be dynamic.
+        /// </summary>
+        [Test]
+        public void RequiredAndAriaRequiredTextFieldWithMaskAndMultipleLines_Should_BeDynamic()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Lines, 5)
+                .Add(p => p.Mask, new PatternMask("0000")));
+
+            comp.Find("textarea").HasAttribute("required").Should().BeFalse();
+            comp.Find("textarea").GetAttribute("aria-required").Should().Be("false");
+
+            comp.SetParametersAndRender(parameters => parameters
+                .Add(p => p.Required, true));
+
+            comp.Find("textarea").HasAttribute("required").Should().BeTrue();
+            comp.Find("textarea").GetAttribute("aria-required").Should().Be("true");
+        }
+
+        [Test]
+        public void Should_render_conversion_error_message()
+        {
+            var comp = Context.RenderComponent<MudTextField<int>>(parameters => parameters
+                .Add(p => p.ErrorId, "error-id")
+                .Add(p => p.Text, "not a number")
+                .Add(p => p.Converter, new DummyErrorConverter()));
+
+            comp.Instance.ConversionErrorMessage.Should().NotBeNullOrEmpty();
+            comp.Find("#error-id").InnerHtml.Should().Be(comp.Instance.ConversionErrorMessage);
+        }
+
+        [TestCase(Adornment.Start, false, false)]
+        [TestCase(Adornment.Start, false, true)]
+        [TestCase(Adornment.Start, true, false)]
+        [TestCase(Adornment.Start, true, true)]
+        [TestCase(Adornment.End, false, false)]
+        [TestCase(Adornment.End, false, true)]
+        [TestCase(Adornment.End, true, false)]
+        [TestCase(Adornment.End, true, true)]
+        public void Should_render_aria_label_for_adornment_if_provided(Adornment adornment, bool withMultipleLines, bool withMask)
+        {
+            var ariaLabel = "the aria label";
+            var lines = withMultipleLines ? 5 : 1;
+            var mask = withMask ? new PatternMask("0000") : null;
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Adornment, adornment)
+                .Add(p => p.AdornmentIcon, Icons.Material.Filled.Accessibility)
+                .Add(p => p.AdornmentAriaLabel, ariaLabel)
+                .Add(p => p.Lines, lines)
+                .Add(p => p.Mask, mask));
+
+            comp.Find(".mud-input-adornment-icon").Attributes.GetNamedItem("aria-label")!.Value.Should().Be(ariaLabel);
+        }
+
+#nullable enable
+        /// <summary>
+        /// Verifies that a text field with various configurations renders the expected <c>aria-describedby</c> attribute.
+        /// </summary>
+        // no helpers, validates error id is present when error is present
+        [TestCase(false, false, false, false)]
+        [TestCase(false, false, false, true)]
+        [TestCase(false, false, true, false)]
+        [TestCase(false, false, true, true)]
+        // with helper text, helper element should only be present when there is no error
+        [TestCase(false, true, false, false)]
+        [TestCase(false, true, false, true)]
+        [TestCase(false, true, true, false)]
+        [TestCase(false, true, true, true)]
+        // with user helper id, helper id should always be present
+        [TestCase(true, false, false, false)]
+        [TestCase(true, false, false, true)]
+        [TestCase(true, false, true, false)]
+        [TestCase(true, false, true, true)]
+        // with user helper id and helper text, should always favour user helper id
+        [TestCase(true, true, false, false)]
+        [TestCase(true, true, false, true)]
+        [TestCase(true, true, true, false)]
+        [TestCase(true, true, true, true)]
+        public void Should_pass_various_aria_describedby_tests(
+            bool withUserHelperId,
+            bool withHelperText,
+            bool withMultipleLines,
+            bool withMask)
+        {
+            var inputId = "input-id";
+            var helperId = withUserHelperId ? "user-helper-id" : null;
+            var helperText = withHelperText ? "helper text" : null;
+            var lines = withMultipleLines ? 5 : 1;
+            var mask = withMask ? new PatternMask("0000") : null;
+            var errorId = "error-id";
+            var errorText = "error text";
+            var inputSelector = withMultipleLines ? "textarea" : "input";
+            var firstExpectedAriaDescribedBy = withUserHelperId
+                ? helperId
+                : withHelperText
+                    ? $"{inputId}-helper-text"
+                    : null;
+
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(p => p.InputId, inputId)
+                .Add(p => p.HelperId, helperId)
+                .Add(p => p.HelperText, helperText)
+                .Add(p => p.Error, false)
+                .Add(p => p.ErrorId, errorId)
+                .Add(p => p.ErrorText, errorText)
+                .Add(p => p.Lines, lines)
+                .Add(p => p.Mask, mask));
+
+            // verify helper text is rendered
+            if (withUserHelperId is false && withHelperText)
+            {
+                var action = () => comp.Find($"#{inputId}-helper-text");
+                action.Should().NotThrow();
+            }
+
+            if (firstExpectedAriaDescribedBy is null)
+            {
+                comp.Find(inputSelector).HasAttribute("aria-describedby").Should().BeFalse();
+            }
+            else
+            {
+                comp.Find(inputSelector).GetAttribute("aria-describedby").Should().Be(firstExpectedAriaDescribedBy);
+            }
+
+            comp.SetParametersAndRender(parameters => parameters
+                .Add(p => p.Error, true));
+            var secondExpectedAriaDescribedBy = withUserHelperId ? $"{errorId} {helperId}" : errorId;
+
+            // verify error text is rendered
+            var errorAction = () => comp.Find($"#{errorId}");
+            errorAction.Should().NotThrow();
+
+            comp.Find(inputSelector).GetAttribute("aria-describedby").Should().Be(secondExpectedAriaDescribedBy);
+        }
+
+        [Test]
+        public void ReadOnlyShouldNotHaveClearButton()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>(p => p
+                .Add(x => x.Text, "some value")
+                .Add(x => x.Clearable, true)
+                .Add(x => x.ReadOnly, false));
+
+            comp.FindAll(".mud-input-clear-button").Count.Should().Be(1);
+
+            comp.SetParametersAndRender(p => p.Add(x => x.ReadOnly, true)); //no clear button when readonly
+            comp.FindAll(".mud-input-clear-button").Count.Should().Be(0);
+        }
+
+        [Test]
+        public void OutlineLegendRenderTest()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Variant, Variant.Outlined)
+                .Add(p => p.Label, "Test Label"));
+            var elem = comp.Find("legend");
+            elem.InnerHtml.Should().Be("Test Label");
+
+            comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Variant, Variant.Outlined)
+                .Add(p => p.Label, ""));
+            Assert.Throws<ElementNotFoundException>(() =>
+            {
+                elem = comp.Find("legend");
+            });
+
+            comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Variant, Variant.Outlined)
+                .Add(p => p.Mask, new PatternMask("0000"))
+                .Add(p => p.Label, "test"));
+            elem = comp.Find("legend");
+            elem.InnerHtml.Should().Be("test");
+
+            comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Variant, Variant.Outlined)
+                .Add(p => p.Mask, new PatternMask("0000"))
+                .Add(p => p.Label, ""));
+            Assert.Throws<ElementNotFoundException>(() =>
+            {
+                elem = comp.Find("legend");
+            });
+        }
+#nullable disable
     }
 }

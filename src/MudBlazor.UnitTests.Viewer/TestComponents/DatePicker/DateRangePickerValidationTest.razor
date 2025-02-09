@@ -1,5 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-<MudPopoverProvider></MudPopoverProvider>
+﻿<MudPopoverProvider />
 
 <MudForm @ref="_form" IsValidChanged="@(HandleFormValidChanged)">
     <MudPaper>
@@ -8,9 +7,9 @@
     
     <MudDateRangePicker id="dateRangeLabelTest" @ref="@(_picker)" @bind-DateRange="@(_dateRange)" Label="Select Date Range" Required="true" RequiredError="This field is required!">
         <PickerActions>
-            <MudButton Class="mr-auto align-self-start" OnClick="@(() => _picker.Clear())">Clear</MudButton>
-            <MudButton OnClick="@(() => _picker.Close(false))">Cancel</MudButton>
-            <MudButton Color="Color.Primary" OnClick="@(() => _picker.Close())">Ok</MudButton>
+            <MudButton Class="mr-auto align-self-start" OnClick="@(() => _picker.ClearAsync())">Clear</MudButton>
+            <MudButton OnClick="@(() => _picker.CloseAsync(false))">Cancel</MudButton>
+            <MudButton Color="Color.Primary" OnClick="@(() => _picker.CloseAsync())">Ok</MudButton>
         </PickerActions>
     </MudDateRangePicker>
 
@@ -20,14 +19,13 @@
 @code {
     public static string __description__ = $"The {nameof(MudDateRangePicker)} should shown an error when clicking validate without any data but this should disappear when a value has been set.";
 
-    private MudForm _form;
-    private MudDateRangePicker _picker;
-    private string _submitStatus;
-    private DateRange _dateRange; // = new(DateTime.Now, DateTime.Now.AddDays(2));
+    private MudForm _form = null!;
+    private MudDateRangePicker _picker = null!;
+    private string? _submitStatus;
+    private DateRange? _dateRange; // = new(DateTime.Now, DateTime.Now.AddDays(2));
 
     private void HandleFormValidChanged(bool isValid)
     {
         _submitStatus = $"Form is {(isValid ? string.Empty : "in")}valid";
     }
-
 }

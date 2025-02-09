@@ -4,31 +4,31 @@
 @* https://try.mudblazor.com/snippet/GawPEdvszHioVvlw *@
 @* https://github.com/MudBlazor/MudBlazor/issues/1229 *@
 
-<EditForm Model="Model">
+<EditForm Model="_model">
     <DataAnnotationsValidator></DataAnnotationsValidator>
-    <MudTextField @bind-Value="Model.SomeString" For="@(() => Model.SomeString)" Label="1"></MudTextField>
+    <MudTextField @bind-Value="_model.SomeString" For="@(() => _model.SomeString)" Label="1"></MudTextField>
     <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled">Submit</MudButton>
 </EditForm>
 
 @code {
-    public Test Model = new Test();
+    private readonly Test _model = new();
+
+    public class TestAttribute : ValidationAttribute
+    {
+        public static IList<ValidationContext> ValidationContextOnCall { get; } = new List<ValidationContext>();
+
+        protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
+        {
+            ValidationContextOnCall.Add(validationContext);
+            _ = validationContext.ObjectType.GetProperty(""); //error will show up here. The validationContext is null after the control loses focus
+
+            return ValidationResult.Success;
+        }
+    }
 
     public class Test
     {
         [Test]
-        public string SomeString { get; set; }
-    }
-
-    public class TestAttribute : ValidationAttribute
-    {
-        public static IList<ValidationContext> ValidationContextOnCall { get; private set; } = new List<ValidationContext>();
-
-        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
-        {
-            ValidationContextOnCall.Add(validationContext);
-            var propertyTestedInfo = validationContext.ObjectType.GetProperty(""); //error will show up here. The validationContext is null after the control loses focus
-
-            return ValidationResult.Success;
-        }
+        public string? SomeString { get; set; }
     }
 }

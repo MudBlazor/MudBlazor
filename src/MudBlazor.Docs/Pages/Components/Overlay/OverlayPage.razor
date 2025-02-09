@@ -1,59 +1,50 @@
 ﻿@page "/components/overlay"
 
 <DocsPage>
-    <DocsPageHeader Title="Overlay" SubTitle="Provides a window which can have an arbitrary number of overlay views that will sit above the root view of the window." />
+    <DocsPageHeader Title="Overlay" Component="@nameof(MudOverlay)" />
     <DocsPageContent>
 
         <DocsPageSection>
-            <SectionHeader Title="Usage">
-                <Description></Description>
+            <SectionHeader Title="AutoClose">
+                <Description>The <CodeInline>AutoClose</CodeInline> property is used to let users close the overlay by clicking it.</Description>
             </SectionHeader>
-            <SectionContent Code="OverlayUsageExample">
+            <SectionContent Code="@nameof(OverlayUsageExample)">
                 <OverlayUsageExample />
             </SectionContent>
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Absolute">
-                <Description>The overlay can be contained inside its parent using the <CodeInline>Absolute</CodeInline> property and css <CodeInline>Style="position: relative;"</CodeInline>.</Description>
+                <Description>The overlay can be contained inside its parent using the <CodeInline>Absolute</CodeInline> property and CSS <CodeInline>Style="position: relative;"</CodeInline>.</Description>
             </SectionHeader>
-            <SectionContent Code="OverlayAbsoluteExample" ShowCode="false">
+            <SectionContent Code="@nameof(OverlayAbsoluteExample)" ShowCode="false">
                 <OverlayAbsoluteExample />
             </SectionContent>
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Z Index">
-                <Description>With the <CodeInline>ZIndex</CodeInline> property you can control the stack order of the component.</Description>
+            <SectionHeader Title="Color">
+                <Description>The overlay is <CodeInline>transparent</CodeInline> by default but can be changed with <CodeInline>DarkBackground</CodeInline> or <CodeInline>LightBackground</CodeInline>.</Description>
             </SectionHeader>
-            <SectionContent Code="OverlayZIndexExample" ShowCode="false">
-                <OverlayZIndexExample />
-            </SectionContent>
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader Title="On Click">
-                <Description>The component has an onclick handler that can be used for various purposes.</Description>
-            </SectionHeader>
-            <SectionContent Code="OverlayOnClickExample" ShowCode="false">
-                <OverlayOnClickExample />
-            </SectionContent>
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader Title="Colors">
-                <Description>By default, the overlay is <CodeInline>transparent</CodeInline> but can be changed with <CodeInline>DarkBackground</CodeInline> and <CodeInline>LightBackground</CodeInline>.</Description>
-            </SectionHeader>
-            <SectionContent Code="OverlayColorsExample" ShowCode="false">
+            <SectionContent Code="@nameof(OverlayColorsExample)" ShowCode="false">
                 <OverlayColorsExample />
             </SectionContent>
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Loader">
-                <Description>The Overlay component can take any childitem but here, for example, we are using it to display loading or progress time.</Description>
+            <SectionHeader Title="Z-index">
+                <Description>With the <CodeInline>ZIndex</CodeInline> property you can control the stack order of the component.</Description>
             </SectionHeader>
-            <SectionContent Code="OverlayLoaderExample" ShowCode="false" Block="true">
+            <SectionContent Code="@nameof(OverlayZIndexExample)" ShowCode="false">
+                <OverlayZIndexExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Loader">
+                <Description>The Overlay component can take any child content but here we are using it to display loading progress.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(OverlayLoaderExample)" ShowCode="false" Block="true">
                 <OverlayLoaderExample />
             </SectionContent>
         </DocsPageSection>

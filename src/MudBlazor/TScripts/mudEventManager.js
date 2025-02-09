@@ -96,7 +96,27 @@ class MudThrottledEventManager {
 
         const eventEntry = {};
         for (var i = 0; i < entry.properties.length; i++) {
-            eventEntry[entry.properties[i]] = event[entry.properties[i]];
+            const propertyName = entry.properties[i];
+            const propertyValue = event[entry.properties[i]];
+
+            if (propertyValue == null) {
+                eventEntry[propertyName] = propertyValue;
+            }
+            else if (["touchstart", "touchmove", "touchend", "touchcancel"].includes(event.type) && ["touches", "changedTouches", "targetTouches"].includes(propertyName)) {
+                // Convert TouchList to a regular array for JSON serialization
+                eventEntry[propertyName] = Array.from(propertyValue, touchPoint =>({
+                    identifier: touchPoint.identifier,
+                    screenX: touchPoint.screenX,
+                    screenY: touchPoint.screenY,
+                    clientX: touchPoint.clientX,
+                    clientY: touchPoint.clientY,
+                    pageX: touchPoint.pageX,
+                    pageY: touchPoint.pageY,
+                }));
+            }
+            else {
+                eventEntry[propertyName] = propertyValue;
+            }
         }
 
         if (entry.projection) {

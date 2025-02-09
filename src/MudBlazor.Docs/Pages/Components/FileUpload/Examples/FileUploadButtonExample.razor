@@ -1,62 +1,52 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles">
-    <ButtonTemplate>
-        <MudButton HtmlTag="label"
-                   Variant="Variant.Filled"
+    <ActivatorContent>
+        <MudButton Variant="Variant.Filled"
                    Color="Color.Primary"
-                   StartIcon="@Icons.Material.Filled.CloudUpload"
-                   for="@context">
+                   StartIcon="@Icons.Material.Filled.CloudUpload">
             Upload Files
         </MudButton>
-    </ButtonTemplate>
+    </ActivatorContent>
 </MudFileUpload>
 
 <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles">
-    <ButtonTemplate>
-        <MudFab HtmlTag="label"
-                Color="Color.Secondary"
-                Icon="@Icons.Material.Filled.Image"
-                Label="Load picture"
-                for="@context" />
-    </ButtonTemplate>
+    <ActivatorContent>
+        <MudFab Color="Color.Secondary"
+                StartIcon="@Icons.Material.Filled.Image"
+                Label="Load picture" />
+    </ActivatorContent>
 </MudFileUpload>
 
 <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles">
-    <ButtonTemplate>
-        <MudFab HtmlTag="label"
-                Color="Color.Success"
-                Icon="@Icons.Material.Filled.AttachFile"
-                for="@context" />
-    </ButtonTemplate>
+    <ActivatorContent>
+        <MudFab Color="Color.Success"
+                StartIcon="@Icons.Material.Filled.AttachFile" />
+    </ActivatorContent>
 </MudFileUpload>
 
 <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles">
-    <ButtonTemplate>
-        <MudIconButton HtmlTag="label"
-                       Color="Color.Info"
-                       Icon="@Icons.Material.Filled.PhotoCamera"
-                       for="@context">
+    <ActivatorContent>
+        <MudIconButton Color="Color.Info"
+                       Icon="@Icons.Material.Filled.PhotoCamera">
         </MudIconButton>
-    </ButtonTemplate>
+    </ActivatorContent>
 </MudFileUpload>
 
 <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles" Disabled>
-    <ButtonTemplate>
-        <MudButton HtmlTag="label"
-                   Variant="Variant.Filled"
-                   Color="Color.Primary"
-                   for="@context">
+    <ActivatorContent>
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary">
             Disabled Button
         </MudButton>
-    </ButtonTemplate>
+    </ActivatorContent>
 </MudFileUpload>
 
-@if (files != null)
+@if (_files != null)
 {
-    <MudText Typo="@Typo.h6">@files.Count() File@(files.Count() == 1 ? "" : "s"):</MudText>
-    <MudList>
-        @foreach (var file in files)
+    <MudText Typo="@Typo.h6">@_files.Count() File@(_files.Count() == 1 ? "" : "s"):</MudText>
+    <MudList T="string">
+        @foreach (var file in _files)
         {
             <MudListItem Icon="@Icons.Material.Filled.AttachFile" @key="@file">
                 @file.Name <code>@file.Size bytes</code>
@@ -67,10 +57,10 @@
 
 @code
 {
-    IList<IBrowserFile> files = new List<IBrowserFile>();
+    IList<IBrowserFile> _files = new List<IBrowserFile>();
     private void UploadFiles(IBrowserFile file)
     {
-        files.Add(file);
+        _files.Add(file);
         //TODO upload the files to the server
     }
 }

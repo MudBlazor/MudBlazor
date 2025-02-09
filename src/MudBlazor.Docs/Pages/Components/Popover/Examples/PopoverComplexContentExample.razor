@@ -2,9 +2,9 @@
 
 <div class="d-flex">
 	<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@ToggleOpen">
-		@(_isOpen? "Close" : "Open")
+		@(_open? "Close" : "Open")
 	</MudButton>
-	<MudPopover Open="@_isOpen" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter">
+	<MudPopover Open="@_open" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter">
 		<div class="d-flex flex-column pa-1">
 			<PopoverDynamicContentExample />
 		</div>
@@ -13,13 +13,13 @@
 
 @code {
 
-	public bool _isOpen;
+	public bool _open;
 
 	public void ToggleOpen()
 	{
-		if (_isOpen)
-			_isOpen = false;
+		if (_open)
+			_open = false;
 		else
-			_isOpen = true;
+			_open = true;
 	}
 }

@@ -1,17 +1,15 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
+﻿<MudPopoverProvider />
 
-<MudPopoverProvider></MudPopoverProvider>
-
-<MudAutocomplete @bind-Value="value" SearchFunc="@Search" Label="RequiredTest" Required="true"/>
+<MudAutocomplete @bind-Value="_value" SearchFunc="@Search" Label="RequiredTest" Required="true"/>
 
 @code
 {
     public static string __description__ = "The Autocomplete should not show required-error initially. The first (empty) item should.";
 
-    string value = null;
+    private string? _value;
 
-    private string[] states =
-{
+    private readonly string[] _states =
+    [
         string.Empty,
         "Alabama", "Alaska", "American Samoa", "Arizona",
         "Arkansas", "California", "Colorado", "Connecticut",
@@ -26,12 +24,13 @@
         "Oklahoma", "Oregon", "Palau", "Pennsylvania", "Puerto Rico",
         "Rhode Island", "South Carolina", "South Dakota", "Tennessee",
         "Texas", "Utah", "Vermont", "Virgin Island", "Virginia",
-        "Washington", "West Virginia", "Wisconsin", "Wyoming",
-    };
+        "Washington", "West Virginia", "Wisconsin", "Wyoming"
+    ];
 
-    private Task<IEnumerable<string>> Search(string value)
+    private Task<IEnumerable<string?>> Search(string value, CancellationToken token)
     {
-        var result = string.IsNullOrEmpty(value) ? states : states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
-        return Task.FromResult(result);
+        var result = string.IsNullOrEmpty(value) ? _states : _states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+
+        return Task.FromResult<IEnumerable<string?>>(result);
     }
 }

@@ -1,13 +1,11 @@
-﻿#pragma warning disable BL0005 // Set parameter outside component
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.Carousel;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -100,7 +98,9 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.fake-class-item3").Count.Should().Be(1);
             //// Forcing SelectedIndex value by setter (for binding purposes)
             last = carousel.SelectedContainer;
+#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
             await comp.InvokeAsync(() => carousel.SelectedIndex = 0);
+#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
             carousel.SelectedIndex.Should().Be(0);
             carousel.SelectedContainer.Should().Be(carousel.Items[0]);
             carousel.SelectedItem.Should().Be(carousel.Items[0]);
@@ -111,10 +111,8 @@ namespace MudBlazor.UnitTests.Components
             ////Swipe from right to left
             last = carousel.SelectedContainer;
             var swipe = comp.Find("div.mud-carousel-swipe");
-            TouchPoint[] _startPoints = { new() { ClientY = 0, ClientX = 150 } };
-            swipe.TouchStart(0, _startPoints);
-            TouchPoint[] _endPoints = { new() { ClientY = 0, ClientX = 20 } };
-            swipe.TouchEnd(0, null, null, _endPoints);
+            await swipe.PointerDownAsync(new PointerEventArgs { ClientY = 0, ClientX = 150 });
+            await swipe.PointerUpAsync(new PointerEventArgs { ClientY = 0, ClientX = 20 });
             carousel.SelectedIndex.Should().Be(1);
             carousel.SelectedContainer.Should().Be(carousel.Items[1]);
             carousel.SelectedItem.Should().Be(carousel.Items[1]);
@@ -124,10 +122,8 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.fake-class-item3").Count.Should().Be(0);
             ////Swipe from left to right
             last = carousel.SelectedContainer;
-            _startPoints[0].ClientX = 20;
-            swipe.TouchStart(0, _startPoints);
-            _endPoints[0].ClientX = 150;
-            swipe.TouchEnd(0, null, null, _endPoints);
+            await swipe.PointerDownAsync(new PointerEventArgs { ClientY = 0, ClientX = 20 });
+            await swipe.PointerUpAsync(new PointerEventArgs { ClientY = 0, ClientX = 150 });
             carousel.SelectedIndex.Should().Be(0);
             carousel.SelectedContainer.Should().Be(carousel.Items[0]);
             carousel.SelectedItem.Should().Be(carousel.Items[0]);
@@ -241,22 +237,26 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudCarousel<object>>();
 
             //Add some pages
-            comp.Instance.Items.Add(new());
-            comp.Instance.Items.Add(new());
-            comp.Instance.Items.Add(new());
+            comp.Instance.Items.Add(new MudCarouselItem());
+            comp.Instance.Items.Add(new MudCarouselItem());
+            comp.Instance.Items.Add(new MudCarouselItem());
 
             //Move the SelectedIndex from -1 to 0
             await comp.InvokeAsync(() => comp.Instance.MoveTo(0));
 
             var mudSwipeArea = comp.FindComponent<MudSwipeArea>().Instance;
 
+#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
             comp.Instance.EnableSwipeGesture = false;
-            await comp.InvokeAsync(() => mudSwipeArea.OnSwipe(SwipeDirection.RightToLeft));
+            await comp.InvokeAsync(() => mudSwipeArea.OnPointerDown(new PointerEventArgs { ClientX = 200, ClientY = 0 }));
+            await comp.InvokeAsync(async () => await mudSwipeArea.OnPointerUp(new PointerEventArgs { ClientX = 100, ClientY = 0 }));
             comp.Instance.SelectedIndex.Should().Be(0);
 
             comp.Instance.EnableSwipeGesture = true;
-            await comp.InvokeAsync(() => mudSwipeArea.OnSwipe(SwipeDirection.RightToLeft));
+            await comp.InvokeAsync(() => mudSwipeArea.OnPointerDown(new PointerEventArgs { ClientX = 200, ClientY = 0 }));
+            await comp.InvokeAsync(async () => await mudSwipeArea.OnPointerUp(new PointerEventArgs { ClientX = 100, ClientY = 0 }));
             comp.Instance.SelectedIndex.Should().Be(1);
+#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
         }
 
         /// <summary>

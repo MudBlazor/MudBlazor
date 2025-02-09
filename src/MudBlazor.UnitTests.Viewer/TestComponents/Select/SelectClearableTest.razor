@@ -1,7 +1,6 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-<MudPopoverProvider></MudPopoverProvider>
+﻿<MudPopoverProvider />
 
-<MudSelect IsPreRendered  @bind-Value="value" Clearable="true" OnClearButtonClick="@ClearButtonClickHandler">
+<MudSelect @bind-Value="_value" Clearable="true" OnClearButtonClick="@ClearButtonClickHandler">
     <MudSelectItem Value="@("1")" />
     <MudSelectItem Value="@("2")" />
     <MudSelectItem Value="@("3")" />
@@ -10,9 +9,9 @@
 @code {
     public static string __description__ = "Initially hidden clear button should show when item is selected.";
 
-    string value = null;
+    private string? _value;
 
-    public bool ClearButtonClicked { get; set; }
+    public bool ClearButtonClicked { get; private set; }
 
     private void ClearButtonClickHandler(MouseEventArgs e)
     {

@@ -1,7 +1,5 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudText>SelectedItems { @string.Join(", ", selectedItems) }</MudText>
-<MudTable Items="items" @bind-SelectedItems="selectedItems" MultiSelection="true" CustomFooter="true">
+﻿<MudText>SelectedItems { @string.Join(", ", _selectedItems) }</MudText>
+<MudTable Items="_items" @bind-SelectedItems="_selectedItems" MultiSelection="true" CustomFooter="true">
     <HeaderContent>
         <MudTh>#</MudTh>
     </HeaderContent>
@@ -9,7 +7,7 @@
         <MudTd>@context</MudTd>
     </RowTemplate>
     <FooterContent>
-        <MudTFootRow IsCheckable="true">
+        <MudTFootRow Checkable="true">
             <MudTd>F</MudTd>
         </MudTFootRow>
     </FooterContent>
@@ -18,6 +16,6 @@
 @code {
     public static string __description__ = "the selected items (check-box click or row click) should be represented in SelectedItems.";
 
-    int[] items = new int[]{0,1,2};
-    HashSet<int> selectedItems=new HashSet<int>();
+    private readonly int[] _items = [0, 1, 2];
+    private HashSet<int> _selectedItems = [];
 }

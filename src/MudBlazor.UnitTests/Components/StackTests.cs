@@ -26,6 +26,7 @@ namespace MudBlazor.UnitTests.Components
             stack.Spacing.Should().Be(3);
             stack.Justify.Should().BeNull();
             stack.AlignItems.Should().BeNull();
+            stack.StretchItems.Should().BeNull();
         }
 
         [Test]
@@ -108,6 +109,42 @@ namespace MudBlazor.UnitTests.Components
 
             var stackClass = stack.Find(".d-flex");
             stackClass.ClassList.Should().ContainInOrder(new[] { "d-flex", "flex-column", $"align-{expectedClass}", "gap-3" });
+        }
+
+
+        [Test]
+        [TestCase(StretchItems.Start, "start")]
+        [TestCase(StretchItems.End, "end")]
+        [TestCase(StretchItems.StartAndEnd, "start-and-end")]
+        [TestCase(StretchItems.Middle, "middle")]
+        [TestCase(StretchItems.All, "all")]
+        public void CheckStretchItemsClass(StretchItems stretch, string expectedClass)
+        {
+            var stack = Context.RenderComponent<MudStack>(x => x.Add(c => c.StretchItems, stretch));
+
+            var stackClass = stack.Find(".d-flex");
+            stackClass.ClassList.Should().Contain(["d-flex", $"flex-grow-{expectedClass}"]);
+        }
+
+        [Test]
+        public void CheckStretchItemsNoneClass()
+        {
+            var stack = Context.RenderComponent<MudStack>(x => x.Add(c => c.StretchItems, StretchItems.None));
+
+            var stackClass = stack.Find(".d-flex");
+            stackClass.ClassList.Should().NotContain(["flex-grow-start", "flex-grow-end", "flex-grow-start-and-end", "flex-grow-all"]);
+        }
+
+        [Test]
+        [TestCase(Wrap.NoWrap, "nowrap")]
+        [TestCase(Wrap.Wrap, "wrap")]
+        [TestCase(Wrap.WrapReverse, "wrap-reverse")]
+        public void CheckWrapClass(Wrap wrap, string expectedClass)
+        {
+            var stack = Context.RenderComponent<MudStack>(x => x.Add(c => c.Wrap, wrap));
+
+            var stackClass = stack.Find(".d-flex");
+            stackClass.ClassList.Should().ContainInOrder(new[] { "d-flex", "flex-column", $"flex-{expectedClass}", "gap-3" });
         }
     }
 }

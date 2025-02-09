@@ -1,14 +1,14 @@
 ﻿@page "/components/tooltip"
 
 <DocsPage>
-    <DocsPageHeader Title="Tooltip"/>
+    <DocsPageHeader Title="Tooltip" Component="@nameof(MudTooltip)" SubTitle="A small popup which provides more information." />
     <DocsPageContent>
 
         <DocsPageSection>
             <SectionHeader Title="Simple Tooltips">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Code="TooltipSimpleExample">
+            <SectionContent Code="@nameof(TooltipSimpleExample)">
                 <TooltipSimpleExample />
             </SectionContent>
         </DocsPageSection>
@@ -17,7 +17,7 @@
             <SectionHeader Title="Arrow Tooltips">
                 <Description>The tooltip can display arrows pointing to its activator, set the <CodeInline>Arrow</CodeInline> property to true to show them.</Description>
             </SectionHeader>
-            <SectionContent Code="TooltipArrowExample" ShowCode="false">
+            <SectionContent Code="@nameof(TooltipArrowExample)" ShowCode="false">
                 <TooltipArrowExample />
             </SectionContent>
         </DocsPageSection>
@@ -26,7 +26,7 @@
             <SectionHeader Title="Colored Tooltips">
                 <Description>Tooltips can be displayed in different colors with the <CodeInline>Color</CodeInline> property.</Description>
             </SectionHeader>
-            <SectionContent Code="TooltipColorExample">
+            <SectionContent Code="@nameof(TooltipColorExample)">
                 <TooltipColorExample />
             </SectionContent>
         </DocsPageSection>
@@ -35,7 +35,7 @@
             <SectionHeader Title="HTML Tooltips">
                 <Description>With the <CodeInline>TooltipContent</CodeInline> render fragment, you can specify custom HTML content for your tooltip.</Description>
             </SectionHeader>
-            <SectionContent Code="TooltipHtmlExample">
+            <SectionContent Code="@nameof(TooltipHtmlExample)">
                 <TooltipHtmlExample />
             </SectionContent>
         </DocsPageSection>
@@ -44,7 +44,7 @@
             <SectionHeader Title="Transitions">
                 <Description>The tooltip's default delay can be set with <CodeInline>Delay</CodeInline> as a double in milliseconds.</Description>
             </SectionHeader>
-            <SectionContent Code="TooltipTransitionsExample" ShowCode="false">
+            <SectionContent Code="@nameof(TooltipTransitionsExample)" ShowCode="false">
                 <TooltipTransitionsExample />
             </SectionContent>
         </DocsPageSection>
@@ -55,7 +55,7 @@
                     With the <CodeInline>ShowOnHover</CodeInline>, <CodeInline>ShowOnFocus</CodeInline> and <CodeInline>ShowOnClick</CodeInline> parameters, it is possible to choose which events activate and deactivate the tooltip.
                 </Description>
             </SectionHeader>
-            <SectionContent Code="TooltipActivationExample" FullWidth="true" ShowCode="false">
+            <SectionContent Code="@nameof(TooltipActivationExample)" FullWidth="true" ShowCode="false">
                 <TooltipActivationExample />
             </SectionContent>
         </DocsPageSection>

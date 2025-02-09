@@ -11,30 +11,34 @@
 <MudProgressCircular Color="Color.Info" Value="@Value" />
 
 @code {
-	public int Value { get; set; }
+    private bool _disposed;
 
-	public async void SimulateProgress()
-	{
-		Value = 0;
-		do
-		{
-			if (_disposed)
-			{
-				return;
-			}
+    public int Value { get; set; }
 
-			Value += 4;
-			StateHasChanged();
-			await Task.Delay(500);
+    public async Task SimulateProgressAsync()
+    {
+        Value = 0;
+        do
+        {
+            if (_disposed)
+            {
+                return;
+            }
 
-		} while (Value < 100);
+            Value += 4;
+            StateHasChanged();
+            await Task.Delay(500);
 
-		SimulateProgress();
-	}
+        } while (Value < 100);
 
-	protected override void OnInitialized() => SimulateProgress();
+        await SimulateProgressAsync();
+    }
 
-	bool _disposed;
-	public void Dispose() => _disposed = true;
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        await SimulateProgressAsync();
+    }
 
+    public void Dispose() => _disposed = true;
 }

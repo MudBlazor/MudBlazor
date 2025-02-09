@@ -6,7 +6,7 @@
 .AddClass("mud-dark-palette-example-light-mode", !_darkMode)
 .Build();}
 <MudPaper Width="500px" Class="@DarkModeClass">
-<MudSwitch Color="Color.Primary" Class="ma-4" T="bool" @bind-Checked="_darkMode" Label="Toggle Light/Dark Mode"/>
+<MudSwitch Color="Color.Primary" Class="ma-4" T="bool" @bind-Value="_darkMode" Label="Toggle Light/Dark Mode"/>
     <MudText Class="ma-4">This is an example text!</MudText>
 </MudPaper>
 

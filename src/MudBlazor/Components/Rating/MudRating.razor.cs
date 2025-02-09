@@ -1,167 +1,244 @@
-﻿using System;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
 #nullable enable
+
+    /// <summary>
+    /// A component for collecting and displaying ratings.
+    /// </summary>
+    /// <seealso cref="MudRatingItem"/>
     public partial class MudRating : MudComponentBase
     {
-        private int _selectedValue = 0;
+        private readonly ParameterState<int> _selectedValueState;
         private int? _hoveredValue = null;
 
+        public MudRating()
+        {
+            using var registerScope = CreateRegisterScope();
+            _selectedValueState = registerScope.RegisterParameter<int>(nameof(SelectedValue))
+                .WithParameter(() => SelectedValue)
+                .WithEventCallback(() => SelectedValueChanged);
+        }
+
         /// <summary>
-        /// Space separated class names
+        /// The CSS classes applied to this component.
         /// </summary>
         protected string ClassName =>
-            new CssBuilder("")
-                .AddClass($"mud-rating-root")
+            new CssBuilder("mud-rating-root")
+                .AddClass("mud-disabled", Disabled)
                 .AddClass(Class)
                 .Build();
 
         /// <summary>
-        /// User class names for RatingItems, separated by space
+        /// The CSS classes to apply to each <see cref="MudRatingItem"/>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>. Multiple classes must be separated by spaces.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Rating.Appearance)]
         public string? RatingItemsClass { get; set; }
 
         /// <summary>
-        /// User styles for RatingItems.
+        /// The CSS styles to apply to each <see cref="MudRatingItem"/>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Rating.Appearance)]
         public string? RatingItemsStyle { get; set; }
 
         /// <summary>
-        /// Input name. If not initialized, name will be random guid.
+        /// The name of this input.
         /// </summary>
+        /// <remarks>
+        /// Defaults to a new <see cref="Guid"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Rating.Behavior)]
         public string Name { get; set; } = Guid.NewGuid().ToString();
 
         /// <summary>
-        /// Max value and how many elements to click will be generated. Default: 5
+        /// The number of <see cref="MudRatingItem"/> items to display.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>5</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Rating.Behavior)]
         public int MaxValue { get; set; } = 5;
 
         /// <summary>
-        /// Selected or hovered icon. Default @Icons.Material.Star
+        /// The icon displayed for selected items.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.Star"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Rating.Appearance)]
         public string FullIcon { get; set; } = Icons.Material.Filled.Star;
 
         /// <summary>
-        /// Non selected item icon. Default @Icons.Material.StarBorder
+        /// The icon displayed for unselected items.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.StarBorder"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Rating.Appearance)]
         public string EmptyIcon { get; set; } = Icons.Material.Filled.StarBorder;
 
         /// <summary>
-        /// The color of the component. It supports the theme colors.
+        /// The color of the <see cref="FullIcon"/> for selected items.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Rating.Appearance)]
+        public Color? FullIconColor { get; set; }
+
+        /// <summary>
+        /// The color of the <see cref="EmptyIcon"/> for unselected items.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Rating.Appearance)]
+        public Color? EmptyIconColor { get; set; }
+
+        /// <summary>
+        /// The color of each item.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Color.Default"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Rating.Appearance)]
         public Color Color { get; set; } = Color.Default;
+
         /// <summary>
-        /// The Size of the icons.
+        /// The size of the <see cref="FullIcon"/> and <see cref="EmptyIcon"/> icons.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Size.Medium"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Rating.Appearance)]
         public Size Size { get; set; } = Size.Medium;
+
         /// <summary>
-        /// If true, disables ripple effect.
+        /// Shows a ripple effect when an item is clicked.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Rating.Appearance)]
-        public bool DisableRipple { get; set; }
+        public bool Ripple { get; set; } = true;
+
         /// <summary>
-        /// If true, the controls will be disabled.
+        /// Prevents the user from interacting with this rating and shows a disabled color.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Rating.Behavior)]
         public bool Disabled { get; set; }
+
         /// <summary>
-        /// If true, the ratings will show without interactions.
+        /// Prevents this rating from being changed.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Rating.Behavior)]
         public bool ReadOnly { get; set; }
 
         /// <summary>
-        /// Fires when SelectedValue changes.
+        /// Occurs when <see cref="SelectedValue"/> has changed.
         /// </summary>
         [Parameter]
         public EventCallback<int> SelectedValueChanged { get; set; }
 
         /// <summary>
-        /// Selected value. This property is two-way bindable.
+        /// The currently selected value.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>0</c>.  Must be equal or less than <see cref="MaxValue"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Rating.Data)]
-        public int SelectedValue
-        {
-            get => _selectedValue;
-            set
-            {
-                if (_selectedValue == value)
-                    return;
-
-                _selectedValue = value;
-
-                SelectedValueChanged.InvokeAsync(_selectedValue);
-            }
-        }
+        public int SelectedValue { get; set; } = 0;
 
         /// <summary>
-        /// Fires when hovered value change. Value will be null if no rating item is hovered.
+        /// Occurs when <see cref="HoveredValue"/> has changed.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
         [Parameter]
         public EventCallback<int?> HoveredValueChanged { get; set; }
 
-        internal int? HoveredValue
-        {
-            get => _hoveredValue;
-            set
-            {
-                if (_hoveredValue == value)
-                {
-                    return;
-                }
+        /// <summary>
+        /// The value the user is hovering over.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  When the value is selected, <see cref="SelectedValue"/> will change.
+        /// </remarks>
+        internal int? HoveredValue => _hoveredValue;
 
-                _hoveredValue = value;
-                HoveredValueChanged.InvokeAsync(value);
+        internal Task SetHoveredValueAsync(int? hoveredValue)
+        {
+            if (_hoveredValue == hoveredValue)
+            {
+                return Task.CompletedTask;
             }
+
+            _hoveredValue = hoveredValue;
+            return HoveredValueChanged.InvokeAsync(hoveredValue);
         }
 
         internal bool IsRatingHover => HoveredValue.HasValue;
 
-        private void HandleItemClicked(int itemValue)
+        private async Task HandleItemClickedAsync(int itemValue)
         {
-            SelectedValue = itemValue;
+            await _selectedValueState.SetValueAsync(itemValue);
 
             if (itemValue == 0)
             {
-                HoveredValue = null;
+                await SetHoveredValueAsync(null);
             }
         }
 
-        internal void HandleItemHovered(int? itemValue) => HoveredValue = itemValue;
+        internal Task HandleItemHoveredAsync(int? itemValue) => SetHoveredValueAsync(itemValue);
 
-        private void IncreaseValue(int val)
+        private async Task IncreaseValueAsync(int val)
         {
-            if ((SelectedValue != MaxValue || val <= 0) && (SelectedValue != 0 || val >= 0))
+            if ((_selectedValueState.Value != MaxValue || val <= 0) && (_selectedValueState.Value != 0 || val >= 0))
             {
-                SelectedValue += val;
+                var value = _selectedValueState.Value + val;
+                await _selectedValueState.SetValueAsync(value);
             }
         }
 
-        protected internal void HandleKeyDown(KeyboardEventArgs keyboardEventArgs)
+        /// <summary>
+        /// Occurs when a key is pressed.
+        /// </summary>
+        /// <param name="keyboardEventArgs">The pressed key information.</param>
+        /// <remarks>
+        /// Has no effect if <see cref="Disabled"/> or <see cref="ReadOnly"/> is <c>true</c>.  
+        /// The supported keyboard keys are: <c>ArrowRight</c> (increase value) and <c>ArrowLeft</c> (decrease value).
+        /// </remarks>
+        protected internal async Task HandleKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
         {
             if (Disabled || ReadOnly)
             {
@@ -171,16 +248,16 @@ namespace MudBlazor
             switch (keyboardEventArgs.Key)
             {
                 case "ArrowRight" when keyboardEventArgs.ShiftKey:
-                    IncreaseValue(MaxValue - SelectedValue);
+                    await IncreaseValueAsync(MaxValue - _selectedValueState.Value);
                     break;
                 case "ArrowRight":
-                    IncreaseValue(1);
+                    await IncreaseValueAsync(1);
                     break;
                 case "ArrowLeft" when keyboardEventArgs.ShiftKey:
-                    IncreaseValue(-SelectedValue);
+                    await IncreaseValueAsync(-_selectedValueState.Value);
                     break;
                 case "ArrowLeft":
-                    IncreaseValue(-1);
+                    await IncreaseValueAsync(-1);
                     break;
             }
         }

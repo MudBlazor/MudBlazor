@@ -1,59 +1,30 @@
 ﻿@page "/components/select"
 
-
 <DocsPage>
-    <DocsPageHeader Title="Select" SubTitle="Select fields allow users to provide information from a list of options." />
+    <DocsPageHeader Title="Select" Component="@nameof(MudSelect<T>)" SubTitle="Select fields allow users to provide information from a list of options.">
+        <Description>
+            <MudAlert Class="mt-4" Severity="Severity.Warning">
+                Note: Blazor static rendering is not supported.
+                <MudLink Href="/getting-started/installation#manual-install-add-components" Target="_blank">See install guide for more info</MudLink>.
+            </MudAlert>
+        </Description>
+    </DocsPageHeader>
     <DocsPageContent>
 
         <DocsPageSection>
-            <SectionHeader Title="Variants">
-                <Description>
-                    Select comes in the variants Text, Filled and Outline. Select is generic, meaning you can use values of any type with it. See the example code how that works.<br />
-                    <br />
-                    <MudAlert Severity="Severity.Info">
-                        <b>Note:</b> If you use custom types as values, make sure they override <CodeInline>Equals</CodeInline> and <CodeInline>GetHashCode</CodeInline> as well as <CodeInline>ToString</CodeInline>. See the example below.
-                    </MudAlert>
-                    <br />
-                    <br />
-                </Description>
+            <SectionHeader Title="Visual Playground">
+                <Description></Description>
             </SectionHeader>
-            <SectionContent ShowCode="false" Code="SelectVariantsExample">
-                <SelectVariantsExample />
+            <SectionContent ShowCode="false" Code="@nameof(SelectPlaygroundExample)">
+                <SelectPlaygroundExample />
             </SectionContent>
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader Title="Props">
-                <Description>Select behaves and looks a lot like a regular textfield and takes all of the textfields different form props.</Description>
-            </SectionHeader>
-            <SectionContent Code="SelectPropsExample" ShowCode="false">
-                <SelectPropsExample />
-            </SectionContent>
-            <SectionSubGroups>
-                <DocsPageSection>
-                    <SectionHeader Title="Margin">
-                        <Description>With the <CodeInline>Margin</CodeInline> prop you can reduce the height of the component.</Description>
-                    </SectionHeader>
-                    <SectionContent Code="SelectMarginExample" ShowCode="false">
-                        <SelectMarginExample />
-                    </SectionContent>
-                </DocsPageSection>
-                <DocsPageSection>
-                    <SectionHeader Title="Dense">
-                        <Description>The <CodeInline>Dense</CodeInline> prop set to true the select list will be displayed with dense vertical padding.</Description>
-                    </SectionHeader>
-                    <SectionContent Code="SelectDenseExample" ShowCode="false">
-                        <SelectDenseExample />
-                    </SectionContent>
-                </DocsPageSection>
-            </SectionSubGroups>
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Using Select">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent ShowCode="false" Code="SelectUsageExample">
+            <SectionContent ShowCode="false" Code="@nameof(SelectUsageExample)">
                 <SelectUsageExample />
             </SectionContent>
         </DocsPageSection>
@@ -66,7 +37,7 @@
                     can be modified with the <CodeInline>Delimiter</CodeInline> parameter.
                 </Description>
             </SectionHeader>
-            <SectionContent ShowCode="false" Code="MultiSelectExample">
+            <SectionContent ShowCode="false" Code="@nameof(MultiSelectExample)">
                 <MultiSelectExample />
             </SectionContent>
             <SectionSubGroups>
@@ -77,7 +48,7 @@
                             By defining the <CodeInline>MultiSelectionTextFunc</CodeInline> method, the returned selection can be fully customized.
                         </Description>
                     </SectionHeader>
-                    <SectionContent ShowCode="false" Code="MultiSelectCustomizedExample">
+                    <SectionContent ShowCode="false" Code="@nameof(MultiSelectCustomizedExample)">
                         <MultiSelectCustomizedExample />
                     </SectionContent>
                 </DocsPageSection>
@@ -88,8 +59,19 @@
                             It is added at the top of the list of items. The text for this option can be customized by the <CodeInline>SelectAllText</CodeInline> parameter.
                         </Description>
                     </SectionHeader>
-                    <SectionContent ShowCode="false" Code="MultiSelectSelectAllExample">
+                    <SectionContent ShowCode="false" Code="@nameof(MultiSelectSelectAllExample)">
                         <MultiSelectSelectAllExample />
+                    </SectionContent>
+                </DocsPageSection>
+                <DocsPageSection>
+                    <SectionHeader Title="Complex Object">
+                        <Description>
+                            To handle complex objects, you should implement either <CodeInline>IEquatable</CodeInline> on a type or <CodeInline>IEqualityComparer</CodeInline> and pass it to the <CodeInline>Comparer</CodeInline> parameter.
+                            For displaying the selected values, you can override the <CodeInline>ToString</CodeInline> method or use the <CodeInline>ToStringFunc</CodeInline> parameter.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent ShowCode="false" Code="@nameof(MultiSelectComplexExample)">
+                        <MultiSelectComplexExample />
                     </SectionContent>
                 </DocsPageSection>
             </SectionSubGroups>
@@ -102,7 +84,7 @@
                     but the value that has been set is not in the list, it will also be displayed as text.
                 </Description>
             </SectionHeader>
-            <SectionContent ShowCode="false" Code="SelectPresentationExample">
+            <SectionContent ShowCode="false" Code="@nameof(SelectPresentationExample)">
                 <SelectPresentationExample />
             </SectionContent>
         </DocsPageSection>
@@ -116,7 +98,7 @@
                     specify a render fragment.
                 </Description>
             </SectionHeader>
-            <SectionContent ShowCode="false" Code="SelectCustomConverterExample">
+            <SectionContent ShowCode="false" Code="@nameof(SelectCustomConverterExample)">
                 <SelectCustomConverterExample />
             </SectionContent>
         </DocsPageSection>
@@ -129,7 +111,7 @@
                     for the <CodeInline>Required</CodeInline> property to behave as expected.
                 </Description>
             </SectionHeader>
-            <SectionContent ShowCode="false" Code="SelectNumericCollectionExample">
+            <SectionContent ShowCode="false" Code="@nameof(SelectNumericCollectionExample)">
                 <SelectNumericCollectionExample />
             </SectionContent>
         </DocsPageSection>
@@ -141,7 +123,7 @@
                     To change where the popover should start from you only need to change the <CodeInline>AnchorOrigin</CodeInline>. <MudLink Color="Color.Secondary" Href="/components/popover">Read more on popover's page.</MudLink>
                 </Description>
             </SectionHeader>
-            <SectionContent Code="SelectAdvancedPopoverExample" ShowCode="false">
+            <SectionContent Code="@nameof(SelectAdvancedPopoverExample)" ShowCode="false">
                 <SelectAdvancedPopoverExample />
             </SectionContent>
         </DocsPageSection>
@@ -165,11 +147,24 @@
                     <MudText>*Disabled items cannot be selected by keys.</MudText>
                 </Description>
             </SectionHeader>
-            <SectionContent ShowCode="false" Code="SelectKeyboardNavigationExample">
+            <SectionContent ShowCode="false" Code="@nameof(SelectKeyboardNavigationExample)">
                 <SelectKeyboardNavigationExample />
             </SectionContent>
         </DocsPageSection>
 
+        <DocsPageSection>
+            <SectionHeader Title="DropdownSettings">
+                <Description>
+                    This component uses <MudLink Href="/components/popover">MudPopover</MudLink>
+                    to place its list of items in combination with <MudLink Href="/components/overlay">MudOverlay</MudLink>.
+                    Some of these settings can be controlled with <CodeInline>DropdownSettings</CodeInline>,
+                    which contain defaults for the <CodeInline>MudPopover</CodeInline> appearance and behavior.
+                    <MudLink Color="Color.Secondary" Href="/components/popover#dropdownsettings">
+                        Read more on popover's page.
+                    </MudLink>
+                </Description>
+            </SectionHeader>
+        </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>
-

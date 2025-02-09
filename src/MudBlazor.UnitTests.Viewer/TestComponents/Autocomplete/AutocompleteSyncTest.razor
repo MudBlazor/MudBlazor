@@ -1,6 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudPopoverProvider />
+﻿<MudPopoverProvider />
 
 <MudAutocomplete T="@string" SearchFunc="@Search" Label="Item" Class="@AutocompleteClass" />
 
@@ -9,9 +7,9 @@
 
     public const string AutocompleteClass = "autocomplete-test";
 
-    public static readonly string[] Items = { "One", "Two", "Three" };
+    public static readonly string[] Items = ["One", "Two", "Three"];
 
-    private Task<IEnumerable<string>> Search(string text)
+    private static Task<IEnumerable<string>> Search(string text, CancellationToken token)
     {
         var result = string.IsNullOrWhiteSpace(text)
             ? Items

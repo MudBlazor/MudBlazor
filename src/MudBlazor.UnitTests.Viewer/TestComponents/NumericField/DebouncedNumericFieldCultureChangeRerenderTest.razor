@@ -25,21 +25,26 @@
  
 @code {
     public static string __description__ = "Test user input retention on component refresh before debounce with changed culture.";
-    
-    public int DebounceInterval = 500;
-    public int RerenderDelay = 2000;
-    public double Value { get; set; } = 1.0;
-    public CultureInfo Culture = new("en-US");
-    public string Format = "N2";
-    
+
     private int _renderCount;
+
+    public double Value { get; private set; } = 1.0;
+
+    public CultureInfo Culture { get; private set; } = new("en-US");
+
+    public string Format => "N2";
+
+    public int DebounceInterval => 500;
+
+    public int RerenderDelay => 2000;
     
     protected override void OnAfterRender(bool firstRender)
     {
         _renderCount++;
+        base.OnAfterRender(firstRender);
     }
 
-    async Task LaunchDelayedCultureChange()
+    private async Task LaunchDelayedCultureChange()
     {
         await Task.Delay(RerenderDelay);
         Culture = new CultureInfo("de-DE");

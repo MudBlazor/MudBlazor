@@ -1,0 +1,17 @@
+﻿
+
+<MudPopoverProvider />
+
+<MudDataGrid T="Model" Items="@_items" Dense ColumnResizeMode="ResizeMode.Column" Hideable>
+    <Columns>
+        <PropertyColumn Property="x => x.Column1" />
+        <PropertyColumn Property="x => x.Column2" />
+        <PropertyColumn Property="x => x.Column3" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private IEnumerable<Model> _items = new List<Model>();
+
+    public record Model(string Column1, string Column2, string Column3);
+}

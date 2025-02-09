@@ -1,6 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudDialog>
+﻿<MudDialog>
     <DialogContent>
         <MudText>Journey of life</MudText>
     </DialogContent>
@@ -11,16 +9,19 @@
 </MudDialog>
 
 @code {
-    public static int OnInitializedCount = 0;
-    public static int OnParametersSetCount = 0;
+    public static int OnInitializedCount;
+    public static int OnParametersSetCount;
 
-    [CascadingParameter] public MudDialogInstance MudDialog { get; set; }
+    [CascadingParameter]
+    public IMudDialogInstance MudDialog { get; set; } = null!;
 
-    void Submit() => MudDialog.Close(DialogResult.Ok(true));
-    void Cancel() => MudDialog.Cancel();    
+    private void Submit() => MudDialog.Close(DialogResult.Ok(true));
+    private void Cancel() => MudDialog.Cancel();
 
     protected override async Task OnInitializedAsync()
     {
+        await base.OnInitializedAsync();
+
         await Task.Delay(10);
 
         OnInitializedCount++;
@@ -28,6 +29,8 @@
 
     protected override async Task OnParametersSetAsync()
     {
+        await base.OnParametersSetAsync();
+
         await Task.Delay(10);
 
         OnParametersSetCount++;
@@ -35,8 +38,12 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        await base.OnAfterRenderAsync(firstRender);
+
         if (firstRender)
+        {
             return;
+        }
 
         await Task.Delay(10);
 

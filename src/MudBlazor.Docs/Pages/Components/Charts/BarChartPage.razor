@@ -1,28 +1,26 @@
 ﻿@page "/components/barchart"
 @page "/components/chart-types/barchart"
+@page "/components/bar"
 
 <DocsPage>
-    <DocsPageHeader Title="Bar Chart" />
-    
-    <DocsPageContent>
+    <DocsPageHeader Title="Bar Chart" Component="@nameof(MudBlazor.Charts.Bar)" />
 
+    <DocsPageContent>
         <DocsPageSection>
             <SectionHeader>
                 <Description></Description>
             </SectionHeader>
-            <SectionContent ShowCode="false" Code="BarExample1">
+            <SectionContent ShowCode="false" Code="@nameof(BarExample1)">
                 <BarExample1 />
             </SectionContent>
         </DocsPageSection>
-        
+
         <DocsPageSection>
-            <SectionHeader Title="Custom SVG Content">
-                <Description></Description>
-            </SectionHeader>
-            <SectionContent Code="BarCustomGraphicsExample">
-                <BarCustomGraphicsExample/>
+            <SectionHeader Title="Custom SVG Content" />
+            <SectionContent Code="@nameof(BarCustomGraphicsExample)">
+                <BarCustomGraphicsExample />
             </SectionContent>
         </DocsPageSection>
-        
+
     </DocsPageContent>
 </DocsPage>

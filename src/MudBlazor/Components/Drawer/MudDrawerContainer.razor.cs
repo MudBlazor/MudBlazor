@@ -1,11 +1,16 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
+using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
 #nullable enable
+
+    /// <summary>
+    /// A container for a <see cref="MudDrawer"/> component.
+    /// </summary>
+    /// <seealso cref="MudDrawer"/>
+    /// <seealso cref="MudDrawerHeader"/>
     public partial class MudDrawerContainer : MudComponentBase
     {
         protected bool Fixed { get; set; } = false;
@@ -30,15 +35,16 @@ namespace MudBlazor
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
 
+        /// <summary>
+        /// The custom content inside this drawer.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.Drawer.Behavior)]
         public RenderFragment? ChildContent { get; set; }
 
-        internal void FireDrawersChanged() => StateHasChanged();
-
         internal void Add(MudDrawer drawer)
         {
-            if (Fixed && !drawer.Fixed)
+            if (Fixed && !drawer.IsFixed)
                 return;
 
             _drawers.Add(drawer);
@@ -58,10 +64,10 @@ namespace MudBlazor
                 return string.Empty;
             }
 
-            var className = $"mud-drawer-{(drawer.Open ? "open" : "close")}-{drawer.Variant.ToDescriptionString()}";
+            var className = $"mud-drawer-{(drawer.GetState<bool>(nameof(MudDrawer.Open)) ? "open" : "close")}-{drawer.Variant.ToDescriptionString()}";
             if (drawer.Variant is DrawerVariant.Responsive or DrawerVariant.Mini)
             {
-                className += $"-{drawer.Breakpoint.ToDescriptionString()}";
+                className += $"-{drawer.GetState<Breakpoint>(nameof(MudDrawer.Breakpoint)).ToDescriptionString()}";
             }
             className += $"-{drawer.GetPosition()}";
 

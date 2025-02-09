@@ -1,14 +1,27 @@
 ﻿using System.ComponentModel;
 
-namespace MudBlazor
+namespace MudBlazor;
+
+/// <summary>
+/// Indicates the amount of spacing to apply.
+/// </summary>
+public enum Margin
 {
-    public enum Margin
-    {
-        [Description("none")]
-        None,
-        [Description("dense")]
-        Dense,
-        [Description("normal")]
-        Normal
-    }
+    /// <summary>
+    /// No spacing is applied.
+    /// </summary>
+    [Description("none")]
+    None,
+
+    /// <summary>
+    /// Compact spacing is applied.
+    /// </summary>
+    [Description("dense")]
+    Dense,
+
+    /// <summary>
+    /// Normal spacing is applied.
+    /// </summary>
+    [Description("normal")]
+    Normal,
 }

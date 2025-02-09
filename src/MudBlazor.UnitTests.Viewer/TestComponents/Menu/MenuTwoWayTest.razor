@@ -1,0 +1,13 @@
+﻿<MudPopoverProvider />
+
+<MudMenu @bind-Open="@Open" Label="Full Menu Width" Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" PopoverClass="menu-popover-class">
+    <MudMenuItem Class="test-class">1</MudMenuItem>
+    <MudMenuItem Href="https://www.test.com">2</MudMenuItem>
+    <MudMenuItem Href="https://www.test.com" Target="_blank">3</MudMenuItem>
+    <MudMenuItem AutoClose="false">4 (AutoClose is false)</MudMenuItem>
+</MudMenu>
+
+<MudSwitch id="switch" Color="Color.Primary" @bind-Value="Open" Label="Open Menu Switch" />
+@code {
+    public bool Open { get; private set; }
+}

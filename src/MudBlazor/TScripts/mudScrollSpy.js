@@ -6,18 +6,16 @@
 class MudScrollSpy {
 
     constructor() {
-        this.scrollToSectionRequested = null;
         this.lastKnowElement = null;
         //needed as variable to remove the event listeners
         this.handlerRef = null;
     }
 
     // subscribe to relevant events 
-    spying(dotnetReference, selector) {
-        this.scrollToSectionRequested = null;
+    spying(dotnetReference, containerSelector, sectionClassSelector) {
         this.lastKnowElement = null;
 
-        this.handlerRef = this.handleScroll.bind(this, selector, dotnetReference);
+        this.handlerRef = this.handleScroll.bind(this, dotnetReference, containerSelector, sectionClassSelector);
 
         // add the event for scroll. In case of zooming this event is also fired 
         document.addEventListener('scroll', this.handlerRef, true);
@@ -27,23 +25,40 @@ class MudScrollSpy {
     }
 
     // handle the document scroll event and if needed, fires the .NET event
-    handleScroll(dotnetReference, selector, event) {
+    handleScroll(dotnetReference, containerSelector, sectionClassSelector, event) {
+        const container = document.querySelector(containerSelector);
+        if (container === null) {
+            return;
+        }
 
-        const elements = document.getElementsByClassName(selector);
+        const elements = document.getElementsByClassName(sectionClassSelector);
         if (elements.length === 0) {
             return;
         }
 
-        const center = window.innerHeight / 2.0;
+        const containerTop = container.tagName === 'HTML' ? 0 : container.getBoundingClientRect().top;
+        const containerHeight = container.clientHeight;
+        const center = containerTop + containerHeight / 2.0;
 
         let minDifference = Number.MAX_SAFE_INTEGER;
+        let foundAbove = false;
         let elementId = '';
         for (let i = 0; i < elements.length; i++) {
             const element = elements[i];
 
             const rect = element.getBoundingClientRect();
-
             const diff = Math.abs(rect.top - center);
+
+            if (!foundAbove && rect.top < center) {
+                foundAbove = true;
+                minDifference = diff;
+                elementId = element.id;
+                continue;
+            }
+
+            if (foundAbove && rect.top >= center) {
+                continue;
+            }
 
             if (diff < minDifference) {
                 minDifference = diff;
@@ -51,24 +66,7 @@ class MudScrollSpy {
             }
         }
 
-        if (document.getElementById(elementId).getBoundingClientRect().top < window.innerHeight * 0.8 === false) {
-            return;
-        }
-
-        if (this.scrollToSectionRequested != null) {
-            if (this.scrollToSectionRequested == ' ' && window.scrollY == 0) {
-                this.scrollToSectionRequested = null;
-            }
-            else {
-                if (elementId === this.scrollToSectionRequested) {
-                    this.scrollToSectionRequested = null;
-                }
-            }
-
-            return;
-        }
-
-        if (elementId != this.lastKnowElement) {
+        if (elementId !== this.lastKnowElement) {
             this.lastKnowElement = elementId;
             history.replaceState(null, '', window.location.pathname + "#" + elementId);
             dotnetReference.invokeMethodAsync('SectionChangeOccured', elementId);
@@ -87,15 +85,11 @@ class MudScrollSpy {
         if (sectionId) {
             let element = document.getElementById(sectionId);
             if (element) {
-                this.scrollToSectionRequested = sectionId;
-
                 element.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'start' });
             }
         }
         else {
             window.scrollTo({ top: 0, behavior: 'smooth' });
-
-            this.scrollToSectionRequested = ' ';
         }
     }
 

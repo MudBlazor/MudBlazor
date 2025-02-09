@@ -2,19 +2,18 @@
 
 @inject ISnackbar Snackbar
 
-<MudButton @onclick="@(() => ChangeVariant("Text Snackbar", Variant.Text))" Color="Color.Primary">Open Text Snackbar Variants</MudButton>
-<MudButton @onclick="@(() => ChangeVariant("Filled Snackbar", Variant.Filled))" Color="Color.Secondary">Open Filled Snackbar Variants</MudButton>
-<MudButton @onclick="@(() => ChangeVariant("Outlined Snackbar", Variant.Outlined))" Color="Color.Tertiary">Open Outlined Snackbar Variants</MudButton>
+<MudButton @onclick="@(() => ShowVariant("Text Snackbar", Variant.Text))" Color="Color.Primary">Open Text Snackbar Variants</MudButton>
+<MudButton @onclick="@(() => ShowVariant("Filled Snackbar", Variant.Filled))" Color="Color.Secondary">Open Filled Snackbar Variants</MudButton>
+<MudButton @onclick="@(() => ShowVariant("Outlined Snackbar", Variant.Outlined))" Color="Color.Tertiary">Open Outlined Snackbar Variants</MudButton>
 
 @code {
-    void ChangeVariant(string message, Variant variant)
+    void ShowVariant(string message, Variant variant)
     {
-        Snackbar.Configuration.SnackbarVariant = variant;
         Snackbar.Configuration.MaxDisplayedSnackbars = 10;
-        Snackbar.Add($"Normal {message}", Severity.Normal);
-        Snackbar.Add($"Info {message}", Severity.Info);
-        Snackbar.Add($"Success {message}", Severity.Success);
-        Snackbar.Add($"Warning {message}", Severity.Warning);
-        Snackbar.Add($"Error {message}", Severity.Error);
+        Snackbar.Add($"Normal {message}", Severity.Normal, c => c.SnackbarVariant = variant);
+        Snackbar.Add($"Info {message}", Severity.Info, c => c.SnackbarVariant = variant);
+        Snackbar.Add($"Success {message}", Severity.Success, c => c.SnackbarVariant = variant);
+        Snackbar.Add($"Warning {message}", Severity.Warning, c => c.SnackbarVariant = variant);
+        Snackbar.Add($"Error {message}", Severity.Error, c => c.SnackbarVariant = variant);
     }
 }

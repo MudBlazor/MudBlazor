@@ -1,22 +1,18 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-<MudPopoverProvider></MudPopoverProvider>
+﻿<MudPopoverProvider />
 
 <div>
-    <MudSelect T="string" Variant="Variant.Text"
-               @bind-Value="fruit"
-               Direction="Direction.Bottom" Dense="true"
-               SelectedValuesChanged="@(() => FruitChanged(null))">
-
+    <MudSelect T="string" Variant="Variant.Text" @bind-Value="_fruit" Dense SelectedValuesChanged="@(() => FruitChanged(null))">
         <MudSelectItem Value="@("Apple")">Apple</MudSelectItem>
         <MudSelectItem Value="@("Orange")">Orange</MudSelectItem>
     </MudSelect>
 </div>
 
 @code{
-    string fruit = "Apple";
+    private string _fruit = "Apple";
+
     public int ChangeCount { get; private set; }
 
-    void FruitChanged(IEnumerable<string> fruits)
+    private void FruitChanged(IEnumerable<string>? fruits)
     {
         ChangeCount++;
     }

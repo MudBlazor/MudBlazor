@@ -1,0 +1,10 @@
+﻿@namespace MudBlazor
+@attribute [CascadingTypeParameter(nameof(T))]
+@inherits MudComponentBase
+@typeparam T
+
+<CascadingValue Value="this" IsFixed="true">
+    <div role="group" class="@Classname" style="@Stylename" @attributes="UserAttributes">
+        @ChildContent
+    </div>
+</CascadingValue>

@@ -33,8 +33,12 @@ namespace MudBlazor
         public static string GetLabelString<T>(this Expression<Func<T>> expression)
         {
             var memberExpression = (MemberExpression)expression.Body;
-            var propertyInfo = memberExpression.Expression?.Type.GetProperty(memberExpression.Member.Name);
 
+            // Currently we have no solution for this which is trimming incompatible
+            // A possible solution is to use source gen
+#pragma warning disable IL2075
+            var propertyInfo = memberExpression.Expression?.Type.GetProperty(memberExpression.Member.Name);
+#pragma warning restore IL2075
             return propertyInfo?.GetCustomAttributes(typeof(LabelAttribute), true).Cast<LabelAttribute>().FirstOrDefault()?.Name ?? string.Empty;
         }
     }

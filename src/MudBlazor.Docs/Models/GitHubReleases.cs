@@ -63,7 +63,7 @@ public class GitHubReleases
 
     [JsonPropertyName("body")]
     public string Body { get; set; }
-    
+
     public class GitHubAuthor
     {
         [JsonPropertyName("login")]

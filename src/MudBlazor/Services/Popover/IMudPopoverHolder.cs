@@ -2,15 +2,13 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor;
 
 #nullable enable
 /// <summary>
-/// This interface serves as a container for the values of an <see cref="IPopover"/> and is used by the <see cref="MudPopoverProvider"/> to render the popover.
+/// This interface serves as a container for the values of a <see cref="IPopover"/> and is used by the <see cref="MudPopoverProvider"/> to render the popover.
 /// </summary>
 public interface IMudPopoverHolder
 {

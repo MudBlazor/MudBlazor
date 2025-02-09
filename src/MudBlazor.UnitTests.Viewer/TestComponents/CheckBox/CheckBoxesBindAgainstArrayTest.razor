@@ -1,28 +1,19 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudGrid>
-    @for (int i = 0; i < amenities.Length; i++)
+﻿<MudGrid>
+    @for (int i = 0; i < _amenities.Length; i++)
     {
         var local = i;
         <MudItem xs="6" md="6">
-            <MudCheckBox @bind-Checked="@values[local]" Color="Color.Tertiary">@amenities[local]</MudCheckBox>
+            <MudCheckBox @bind-Value="@_values[local]" Color="Color.Tertiary">@_amenities[local]</MudCheckBox>
         </MudItem>
     }
-    <p>@selected</p>
+    <p>@Selected</p>
 </MudGrid>
 
 @code {
     public static string __description__ = "Binding checkboxes two-way against an array of bools";
-    private string[] amenities =
-    {
-        "A", "B", "C", "D", "E"
-    };
 
-    private bool[] values =
-    {
-        true, false, true, false, true
-    };
+    private readonly string[] _amenities = ["A", "B", "C", "D", "E"];
+    private readonly bool[] _values = [true, false, true, false, true];
 
-    string selected => string.Join(", ", amenities.Zip(values, (a, b)=>$"{a}={b}"));
-
+    private string Selected => string.Join(", ", _amenities.Zip(_values, (a, b)=>$"{a}={b}"));
 }

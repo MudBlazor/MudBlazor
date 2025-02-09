@@ -2,27 +2,33 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 
-namespace MudBlazor
+namespace MudBlazor;
+
+#nullable enable
+/// <summary>
+/// Factory class for creating instances of <see cref="IScrollSpy"/>.
+/// </summary>
+internal sealed class ScrollSpyFactory : IScrollSpyFactory
 {
-    public interface IScrollSpyFactory
+    private readonly IServiceProvider _provider;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScrollSpyFactory"/> class with the specified service provider.
+    /// </summary>
+    /// <param name="provider">The service provider.</param>
+    public ScrollSpyFactory(IServiceProvider provider)
     {
-        IScrollSpy Create();
+        _provider = provider;
     }
 
-    public class ScrollSpyFactory : IScrollSpyFactory
+    /// <inheritdoc />
+    public IScrollSpy Create()
     {
-        private readonly IServiceProvider _provider;
+        var jsRuntime = _provider.GetRequiredService<IJSRuntime>();
 
-        public ScrollSpyFactory(IServiceProvider provider)
-        {
-            _provider = provider;
-        }
-
-        public IScrollSpy Create() =>
-            new ScrollSpy(_provider.GetRequiredService<IJSRuntime>());
+        return new ScrollSpy(jsRuntime);
     }
 }

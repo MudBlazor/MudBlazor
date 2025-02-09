@@ -10,165 +10,357 @@ using NUnit.Framework;
 
 namespace UtilityTests
 {
+#nullable enable
+    [TestFixture]
     public class CssBuilderTests
     {
         [Test]
-        public void ShouldConstructWithDefaultValue()
+        public void Default_Returns_Instance_With_Prop_And_Value()
         {
-            //arrange
-            var classToRender = CssBuilder.Default("item-one").Build();
+            // Arrange
+            var prop = "color";
+            var value = "red";
 
-            //assert
-            classToRender.Should().Be("item-one");
+            // Act
+            var styleBuilder = StyleBuilder.Default(prop, value).Build();
+
+            // Assert
+            styleBuilder.Should().Be("color:red;");
         }
 
+        [Test]
+        public void Default_Returns_Instance_With_Value()
+        {
+            // Arrange
+            var value = "test-class";
+
+            // Act
+            var cssBuilder = CssBuilder.Default(value).Build();
+
+            // Assert
+            cssBuilder.Should().Be("test-class");
+        }
 
         [Test]
-        public void ShouldConstructWithEmpty()
+        public void CssBuilder_And_StyleBuilder_Used_Together_Do_Not_Interfere()
         {
-            //arrange
+            // Arrange
+            var cssValue = "test-class";
+            var stylsProp = "color";
+            var styleValue = "red";
+
+            // Act
+            var cssBuilder = new CssBuilder();
+            var styleBuilder = new StyleBuilder();
+            cssBuilder.AddClass(cssValue);
+            styleBuilder.AddStyle(stylsProp, styleValue);
+            var css = cssBuilder.Build();
+            var style = styleBuilder.Build();
+
+            // Assert
+            style.Should().Be("color:red;");
+            css.Should().Be("test-class");
+        }
+
+        [Test]
+        public void Empty_Returns_Instance_With_Empty_Value()
+        {
+            // Act
+            var cssBuilder = CssBuilder.Empty();
+
+            // Assert
+            cssBuilder.Build().Should().BeEmpty();
+        }
+
+        [Test]
+        public void Empty_Returns_Instance_With_Null_Value()
+        {
+            // Act
             var classToRender = CssBuilder.Empty().NullIfEmpty();
 
-            //assert
+            // Assert
             classToRender.Should().BeNull();
         }
 
         [Test]
-        public void ShouldBuildConditionalCssClasses()
+        public void AddClass_Adds_Class_Correctly()
         {
-            //arrange
-            var hasTwo = false;
-            var hasThree = true;
-            Func<bool> hasFive = () => false;
+            // Arrange
+            var cssBuilder = new CssBuilder();
 
-            //act
+            // Act
+            cssBuilder.AddClass("class1");
+            cssBuilder.AddClass("class2");
+            cssBuilder.AddClass("class3");
+
+            // Assert
+            cssBuilder.Build().Should().Be("class1 class2 class3");
+        }
+
+        [Test]
+        public void AddClass_With_Condition_Adds_Class_Correctly()
+        {
+            // Arrange
+            const bool HasTwo = false;
+            const bool HasThree = true;
+            static bool HasFive() => false;
+
+            // Act
             var classToRender = new CssBuilder("item-one")
-                            .AddClass("item-two", when: hasTwo)
-                            .AddClass("item-three", when: hasThree)
+                            .AddClass("item-two", when: HasTwo)
+                            .AddClass("item-three", when: HasThree)
                             .AddClass("item-four")
-                            .AddClass("item-five", when: hasFive)
+                            .AddClass("item-five", when: HasFive)
                             .Build();
-            //assert
+
+
+            // Assert
             classToRender.Should().Be("item-one item-three item-four");
         }
-        [Test]
-        public void ShouldBuildConditionalCssBuilderClasses()
-        {
-            //arrange
-            var hasTwo = false;
-            var hasThree = true;
-            Func<bool> hasFive = () => false;
 
-            //act
-            var classToRender = new CssBuilder("item-one")
-                            .AddClass("item-two", when: hasTwo)
+        [Test]
+        public void AddClass_With_Condition_Func_Adds_Class_Correctly()
+        {
+            // Arrange
+            var cssBuilder = new CssBuilder();
+            static bool Condition1() => true;
+            static bool Condition2() => false;
+
+            // Act
+            cssBuilder.AddClass("class1", Condition1);
+            cssBuilder.AddClass("class2", Condition2);
+            cssBuilder.AddClass("class3", Condition1);
+
+            // Assert
+            cssBuilder.Build().Should().Be("class1 class3");
+        }
+
+        [Test]
+        public void AddClass_With_Value_And_Condition_Func_Adds_Class_Correctly()
+        {
+            // Arrange
+            const bool ConditionResult = true;
+
+            // Act
+            var cssBuilder = new CssBuilder()
+                .AddClass("class1", () => ConditionResult)
+                .AddClass("class2", () => !ConditionResult)
+                .AddClass("class3", () => ConditionResult);
+
+            // Assert
+            cssBuilder.Build().Should().Be("class1 class3");
+        }
+
+        [Test]
+        public void AddClass_With_Value_Function_And_Condition_Func_Adds_Class_Correctly()
+        {
+            // Arrange
+            const bool ConditionResult = true;
+            Func<string?> valueFunction = () => "class1";
+
+            // Act
+            var cssBuilder = new CssBuilder()
+                .AddClass(valueFunction, () => ConditionResult)
+                .AddClass(valueFunction, () => !ConditionResult);
+
+            // Assert
+            cssBuilder.Build().Should().Be("class1");
+        }
+
+        [Test]
+        public void AddClass_With_CssBuilder_And_Condition_Func_Adds_Class_Correctly()
+        {
+            // Arrange
+            const bool ConditionResult = true;
+            var nestedBuilder = new CssBuilder().AddClass("nested-class");
+
+            // Act
+            var cssBuilder = new CssBuilder()
+                .AddClass(nestedBuilder, () => ConditionResult)
+                .AddClass(nestedBuilder, () => !ConditionResult);
+
+            // Assert
+            cssBuilder.Build().Should().Be("nested-class");
+        }
+
+        [Test]
+        public void AddClass_With_Value_Function_When_Null()
+        {
+            // Arrange
+            string? ValueFunction() => "class1";
+
+            // Act
+            var cssBuilder = new CssBuilder()
+                .AddClass(ValueFunction, null);
+
+            // Assert
+            cssBuilder.Build().Should().BeEmpty();
+        }
+
+        [Test]
+        public void AddClass_With_CssBuilder_When_Null()
+        {
+            // Arrange
+            var nestedBuilder = new CssBuilder().AddClass("nested-class");
+
+            // Act
+            var cssBuilder = new CssBuilder()
+                .AddClass(nestedBuilder, null);
+
+            // Assert
+            cssBuilder.Build().Should().BeEmpty();
+        }
+
+        [Test]
+        public void AddClassFromAttributes_With_Null_Dictionary()
+        {
+            // Act
+            var cssBuilder = new CssBuilder().AddClassFromAttributes(null);
+
+            // Assert
+            cssBuilder.Build().Should().BeEmpty();
+        }
+
+        [Test]
+        public void Should_Build_Conditional_CssBuilder_Classes()
+        {
+            // Arrange
+            const bool HasTwo = false;
+            const bool HasThree = true;
+            static bool HasFive() => false;
+
+            // Act
+            var cssBuilder = new CssBuilder("item-one")
+                            .AddClass("item-two", when: HasTwo)
                             .AddClass(new CssBuilder("item-three")
                                             .AddClass("item-foo", false)
                                             .AddClass("item-sub-three"),
-                                            when: hasThree)
+                                            when: HasThree)
                             .AddClass("item-four")
-                            .AddClass("item-five", when: hasFive)
+                            .AddClass("item-five", when: HasFive)
                             .Build();
-            //assert
-            classToRender.Should().Be("item-one item-three item-sub-three item-four");
-        }
-        [Test]
-        public void ShouldBuildEmptyClasses()
-        {
-            //arrange
-            var shouldShow = false;
 
-            //act
-            var classToRender = new CssBuilder()
-                            .AddClass("some-class", shouldShow)
+            // Assert
+            cssBuilder.Should().Be("item-one item-three item-sub-three item-four");
+        }
+
+        [Test]
+        public void Should_Build_Empty_Classes()
+        {
+            // Arrange
+            const bool ShouldShow = false;
+
+            // Act
+            var cssBuilder = new CssBuilder()
+                            .AddClass("some-class", ShouldShow)
                             .Build();
-            //assert
-            classToRender.Should().Be(string.Empty);
+
+            // Assert
+            cssBuilder.Should().Be(string.Empty);
         }
 
         [Test]
-        public void ShouldBuildClassesWithFunc()
+        public void Should_Build_Classes_WithFunc()
         {
-            {
-                //arrange
-                // Simulates Razor Components attribute splatting feature
-                IReadOnlyDictionary<string, object> attributes = new Dictionary<string, object> { { "class", "my-custom-class-1" } };
+            // Arrange
+            // Simulates Razor Components attribute splatting feature
+            IReadOnlyDictionary<string, object> attributes = new Dictionary<string, object> { { "class", "my-custom-class-1" } };
 
-                //act
-                var classToRender = new CssBuilder("item-one")
-                                .AddClass(() => attributes["class"].ToString(), when: attributes.ContainsKey("class"))
-                                .Build();
-                //assert
-                classToRender.Should().Be("item-one my-custom-class-1");
-            }
+            // Act
+            var cssBuilder = new CssBuilder("item-one")
+                .AddClass(() => attributes["class"].ToString(), when: attributes.ContainsKey("class"))
+                .Build();
+
+            // Assert
+            cssBuilder.Should().Be("item-one my-custom-class-1");
         }
 
         [Test]
-        public void ShouldBuildClassesFromAttributes()
+        public void Should_Build_Classes_FromAttributes()
         {
-            {
-                //arrange
-                // Simulates Razor Components attribute splatting feature
-                IReadOnlyDictionary<string, object> attributes = new Dictionary<string, object> { { "class", "my-custom-class-1" } };
+            // Arrange
+            // Simulates Razor Components attribute splatting feature
+            IReadOnlyDictionary<string, object> attributes = new Dictionary<string, object> { { "class", "my-custom-class-1" } };
 
-                //act
-                var classToRender = new CssBuilder("item-one")
-                                .AddClassFromAttributes(attributes)
-                                .Build();
-                //assert
-                classToRender.Should().Be("item-one my-custom-class-1");
-            }
+            // Act
+            var cssBuilder = new CssBuilder("item-one")
+                .AddClassFromAttributes(attributes)
+                .Build();
+
+            // Assert
+            cssBuilder.Should().Be("item-one my-custom-class-1");
         }
 
         [Test]
-        public void ShouldNotThrowWhenNullFor_BuildClassesFromAttributes()
+        public void Should_NotThrow_WhenNull_For_BuildClasses_FromAttributes()
         {
-            {
-                //arrange
-                // Simulates Razor Components attribute splatting feature
-                IReadOnlyDictionary<string, object> attributes = null;
+            // Arrange
+            // Simulates Razor Components attribute splatting feature
+            IReadOnlyDictionary<string, object>? attributes = null;
 
-                //act
-                var classToRender = new CssBuilder("item-one")
-                                .AddClassFromAttributes(attributes)
-                                .Build();
-                //assert
-                classToRender.Should().Be("item-one");
-            }
+            // Act
+            var cssBuilder = new CssBuilder("item-one")
+                .AddClassFromAttributes(attributes)
+                .Build();
+
+            // Assert
+            cssBuilder.Should().Be("item-one");
         }
 
         [Test]
         public void ForceNullForWhitespace_BuildClassesFromAttributes()
         {
-            {
-                //arrange
-                // Simulates Razor Components attribute splatting feature
-                IReadOnlyDictionary<string, object> attributes = null;
+            // Arrange
+            // Simulates Razor Components attribute splatting feature
+            IReadOnlyDictionary<string, object>? attributes = null;
 
-                //act
-                var classToRender = new CssBuilder()
-                                .AddClassFromAttributes(attributes)
-                                .NullIfEmpty();
-                //assert
-                classToRender.Should().BeNull();
-            }
+            // Act
+            var cssBuilder = new CssBuilder()
+                .AddClassFromAttributes(attributes)
+                .NullIfEmpty();
+
+            // Assert
+            cssBuilder.Should().BeNull();
         }
 
         [Test]
-        public void ShouldNotThrowNoKeyExceptionWithDictionary()
+        public void Should_NotThrowNoKeyException_WithDictionary()
         {
-            {
-                //arrange
-                // Simulates Razor Components attribute splatting feature
-                IReadOnlyDictionary<string, object> attributes = new Dictionary<string, object> { { "foo", "bar" } };
+            // Arrange
+            // Simulates Razor Components attribute splatting feature
+            IReadOnlyDictionary<string, object> attributes = new Dictionary<string, object> { { "foo", "bar" } };
 
-                //act
-                var classToRender = new CssBuilder("item-one")
-                                .AddClass(() => attributes["string"].ToString(), when: attributes.ContainsKey("class"))
-                                .Build();
-                //assert
-                classToRender.Should().Be("item-one");
-            }
+            // Act
+            var classToRender = new CssBuilder("item-one")
+                .AddClass(() => attributes["string"].ToString(), when: attributes.ContainsKey("class"))
+                .Build();
+
+            // Assert
+            classToRender.Should().Be("item-one");
+        }
+
+        [Test]
+        public void AddClass_ShouldNotBeNullWithDefaultStruct()
+        {
+            // Arrange
+            var cssBuilder = default(CssBuilder);
+
+            // Act
+            cssBuilder.AddClass("test-class");
+            cssBuilder.AddClass("test-class-2");
+
+            // Assert
+            cssBuilder.Build().Should().Be("test-class test-class-2");
+        }
+
+        [Test]
+        public void Build_ShouldNotBeNullWithDefaultStruct()
+        {
+            // Arrange
+            var cssBuilder = default(CssBuilder);
+
+            // Assert
+            cssBuilder.Build().Should().Be("");
         }
     }
 }

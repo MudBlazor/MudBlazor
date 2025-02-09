@@ -3,10 +3,10 @@
 <MudBreadcrumbs Items="_items"></MudBreadcrumbs>
 
 @code {
-    private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
-    {
-        new BreadcrumbItem("Home", href: "#", icon: Icons.Material.Filled.Home),
-        new BreadcrumbItem("Videos", href: "#", icon: Icons.Material.Filled.VideoLibrary),
-        new BreadcrumbItem("Create", href: null, disabled: true, icon: Icons.Material.Filled.Create)
-    };
-} 
+    private List<BreadcrumbItem> _items =
+    [
+        new("Home", href: "#", icon: Icons.Material.Filled.Home),
+        new("Videos", href: "#", icon: Icons.Material.Filled.VideoLibrary),
+        new("Create", href: null, disabled: true, icon: Icons.Material.Filled.Create)
+    ];
+}

@@ -1,40 +1,49 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
 using MudBlazor.Examples.Data.Models;
 
-namespace MudBlazor.Examples.Data
+namespace MudBlazor.Examples.Data;
+
+public class PeriodicTableService : IPeriodicTableService
 {
-    public class PeriodicTableService : IPeriodicTableService
+    private static readonly Table? _table;
+    private static readonly JsonSerializerOptions _serializerOptions = new() { PropertyNameCaseInsensitive = true };
+
+    static PeriodicTableService()
     {
-        public Task<IEnumerable<Element>> GetElements()
+        var key = GetResourceKey(typeof(PeriodicTableService).Assembly, "Elements.json");
+        if (key is not null)
         {
-            return GetElements(string.Empty);
-        }
-
-        public async Task<IEnumerable<Element>> GetElements(string search = "")
-        {
-            var elements = new List<Element>();
-            var key = GetResourceKey(typeof(PeriodicTableService).Assembly, "Elements.json");
             using var stream = typeof(PeriodicTableService).Assembly.GetManifestResourceStream(key);
-            var table = await JsonSerializer.DeserializeAsync<Table>(stream, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
-            foreach (var elementGroup in table.ElementGroups)
+            if (stream is not null)
             {
-                elements = elements.Concat(elementGroup.Elements).ToList();
+                _table = JsonSerializer.Deserialize<Table>(stream, _serializerOptions);
             }
-
-            if (search == string.Empty)
-                return elements;
-            else
-                return elements.Where(elm => (elm.Sign + elm.Name).Contains(search, StringComparison.InvariantCultureIgnoreCase));
         }
+    }
 
-        public static string GetResourceKey(Assembly assembly, string embeddedFile)
+    public static string? GetResourceKey(Assembly assembly, string embeddedFile) => assembly.GetManifestResourceNames().FirstOrDefault(x => x.Contains(embeddedFile));
+
+    public Task<IEnumerable<Element>> GetElements() => GetElements(string.Empty);
+
+    public async Task<IEnumerable<Element>> GetElements(string search)
+    {
+        var elements = new List<Element>();
+        foreach (var elementGroup in _table?.ElementGroups ?? ReadOnlyCollection<ElementGroup>.Empty)
         {
-            return assembly.GetManifestResourceNames().FirstOrDefault(x => x.Contains(embeddedFile));
+            elements = [.. elements, .. elementGroup.Elements ?? ReadOnlyCollection<Element>.Empty];
         }
+
+        if (string.IsNullOrEmpty(search))
+        {
+            return await Task.FromResult(elements);
+        }
+
+        return elements.Where(elm => (elm.Sign + elm.Name).Contains(search, StringComparison.InvariantCultureIgnoreCase));
     }
 }

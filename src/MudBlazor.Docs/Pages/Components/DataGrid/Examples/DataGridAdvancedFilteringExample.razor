@@ -13,12 +13,12 @@
                 <MudPopover Open="@_filterOpen" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter"
                     Style="width:150px">
 		           <MudStack Spacing="0">
-                       <MudCheckBox T="bool" Label="Select All" Size="@Size.Small" Checked="@_selectAll" CheckedChanged="@SelectAll" />
+                       <MudCheckBox T="bool" Label="Select All" Size="@Size.Small" Value="@_selectAll" ValueChanged="@SelectAll" />
                        <MudStack Spacing="0" Style="overflow-y:auto;max-height:250px">
                            @foreach (var item in context.Items)
                            {
-                               <MudCheckBox T="bool" Label="@($"{item.Sign}")" Size="@Size.Small" Checked="@(_selectedItems.Contains(item))"
-                                   CheckedChanged="@((value) => SelectedChanged(value, item))" />
+                                <MudCheckBox T="bool" Label="@($"{item.Sign}")" Size="@Size.Small" Value="@(_selectedItems.Contains(item))"
+                                             ValueChanged="@((value) => SelectedChanged(value, item))" />
                            }
                        </MudStack>
                        <MudStack Row="true">

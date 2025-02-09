@@ -1,21 +1,14 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
+﻿<MudPopoverProvider />
 
-<MudPopoverProvider></MudPopoverProvider>
-
-<MudDynamicTabs 
-		CloseIconClass="my-close-icon-class" CloseIconStyle="propertyA: 4px" CloseTabIcon="@Icons.Material.Filled.RestoreFromTrash" CloseIconToolTip="close here"
-		AddIconClass="my-add-icon-class" AddIconStyle="propertyB: 6px"  AddTabIcon="@Icons.Material.Filled.AddAlarm" AddIconToolTip="add here" >
-	<MudTabPanel Text="Tab A">
-		Content A
-	</MudTabPanel>
-	<MudTabPanel Text="Tab B">
-		Content A
-	</MudTabPanel>
-	<MudTabPanel Text="Tab C">
-		Content A
-	</MudTabPanel>
+<MudDynamicTabs CloseIconClass="my-close-icon-class" CloseIconStyle="propertyA: 4px" CloseTabIcon="@Icons.Material.Filled.RestoreFromTrash" CloseIconToolTip="close here"
+                AddIconClass="my-add-icon-class" AddIconStyle="propertyB: 6px" AddTabIcon="@Icons.Material.Filled.AddAlarm" AddIconToolTip="add here">
+    <MudTabPanel Text="Tab A">
+        Content A
+    </MudTabPanel>
+    <MudTabPanel Text="Tab B">
+        Content A
+    </MudTabPanel>
+    <MudTabPanel Text="Tab C">
+        Content A
+    </MudTabPanel>
 </MudDynamicTabs>
-
-@code {
-
-}

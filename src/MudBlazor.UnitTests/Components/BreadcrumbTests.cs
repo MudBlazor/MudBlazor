@@ -1,7 +1,4 @@
-﻿
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Bunit;
+﻿using Bunit;
 using FluentAssertions;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
@@ -16,9 +13,9 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudBreadcrumbs>(Parameter("Items", new List<BreadcrumbItem>
             {
-                new BreadcrumbItem("Link 1", "link1"),
-                new BreadcrumbItem("Link 2", "link2"),
-                new BreadcrumbItem("Link 3", "link3", disabled: true)
+                new("Link 1", "link1"),
+                new("Link 2", "link2"),
+                new("Link 3", "link3", disabled: true)
             }));
 
             comp.FindAll("li.mud-breadcrumb-item").Should().HaveCount(3);
@@ -30,9 +27,9 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudBreadcrumbs>(Parameter("Items", new List<BreadcrumbItem>
             {
-                new BreadcrumbItem("Link 1", "link1", icon: Icons.Material.Filled.Home),
-                new BreadcrumbItem("Link 2", "link2", icon: Icons.Material.Filled.List),
-                new BreadcrumbItem("Link 3", "link3", disabled: true, icon: Icons.Material.Filled.Create)
+                new("Link 1", "link1", icon: Icons.Material.Filled.Home),
+                new("Link 2", "link2", icon: Icons.Material.Filled.List),
+                new("Link 3", "link3", disabled: true, icon: Icons.Material.Filled.Create)
             }));
 
             comp.FindAll("li>a>svg").Should().HaveCount(3);
@@ -43,11 +40,11 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudBreadcrumbs>(Parameter("MaxItems", (byte)4), Parameter("Items", new List<BreadcrumbItem>
             {
-                new BreadcrumbItem("Link 1", "link1"),
-                new BreadcrumbItem("Link 2", "link2"),
-                new BreadcrumbItem("Link 3", "link3"),
-                new BreadcrumbItem("Link 4", "link4"),
-                new BreadcrumbItem("Link 5", "link5", disabled: true)
+                new("Link 1", "link1"),
+                new("Link 2", "link2"),
+                new("Link 3", "link3"),
+                new("Link 4", "link4"),
+                new("Link 5", "link5", disabled: true)
             }));
 
             comp.FindAll("li.mud-breadcrumb-item").Should().HaveCount(2);
@@ -60,11 +57,11 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudBreadcrumbs>(Parameter("MaxItems", (byte)4), Parameter("Items", new List<BreadcrumbItem>
             {
-                new BreadcrumbItem("Link 1", "link1"),
-                new BreadcrumbItem("Link 2", "link2"),
-                new BreadcrumbItem("Link 3", "link3"),
-                new BreadcrumbItem("Link 4", "link4"),
-                new BreadcrumbItem("Link 5", "link5", disabled: true)
+                new("Link 1", "link1"),
+                new("Link 2", "link2"),
+                new("Link 3", "link3"),
+                new("Link 4", "link4"),
+                new("Link 5", "link5", disabled: true)
             }));
 
             comp.WaitForAssertion(() => comp.Instance.Collapsed.Should().BeTrue());

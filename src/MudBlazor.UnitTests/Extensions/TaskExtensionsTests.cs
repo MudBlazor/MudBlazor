@@ -1,12 +1,6 @@
-﻿using FluentAssertions;
-using MudBlazor;
+﻿using System.Diagnostics;
+using FluentAssertions;
 using NUnit.Framework;
-using System.Linq.Expressions;
-using System;
-using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
-using System.Threading.Tasks;
-using MudBlazor.Docs.Models;
 
 namespace MudBlazor.UnitTests.Extensions
 {
@@ -38,7 +32,7 @@ namespace MudBlazor.UnitTests.Extensions
             string errorMessage = null;
             MudGlobal.UnhandledExceptionHandler = ex => errorMessage = ex.Message;
             var task = AsyncTaskExceptionGenerator("Something bad is about to happen ...");
-            task.AndForget();
+            task.CatchAndLog();
             var t = Stopwatch.StartNew();
             while (errorMessage == null)
             {
@@ -55,7 +49,7 @@ namespace MudBlazor.UnitTests.Extensions
             string errorMessage = null;
             MudGlobal.UnhandledExceptionHandler = ex => errorMessage = ex.Message;
             var task = AsyncValueTaskExceptionGenerator("Something bad is about to happen ...");
-            task.AndForget();
+            task.CatchAndLog();
             var t = Stopwatch.StartNew();
             while (errorMessage == null)
             {
@@ -72,7 +66,7 @@ namespace MudBlazor.UnitTests.Extensions
             string errorMessage = null;
             MudGlobal.UnhandledExceptionHandler = ex => errorMessage = ex.Message;
             var task = AsyncValueTaskExceptionGenerator<bool>("Something bad is about to happen ...");
-            task.AndForget();
+            task.CatchAndLog();
             var t = Stopwatch.StartNew();
             while (errorMessage == null)
             {
@@ -88,7 +82,7 @@ namespace MudBlazor.UnitTests.Extensions
         {
             MudGlobal.UnhandledExceptionHandler = null;
             var task = AsyncTaskExceptionGenerator("Something bad is about to happen ...");
-            task.AndForget();
+            task.CatchAndLog();
             var t = Stopwatch.StartNew();
             while (!(task.IsCompleted || task.IsCanceled || task.IsFaulted))
             {

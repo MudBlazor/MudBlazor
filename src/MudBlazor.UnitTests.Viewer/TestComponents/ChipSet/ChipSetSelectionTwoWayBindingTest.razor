@@ -1,26 +1,20 @@
-﻿<MudChipSet MultiSelection="true" Filter="true" Mandatory="false" @bind-SelectedChips="selectedChips1" @bind-SelectedValues="selectedValues">
-    <MudChip Text="Set1 Chip1" Default="true" Variant="Variant.Outlined" Color="Color.Success" Value="1"></MudChip>
-    <MudChip Text="Set1 Chip2" Default="false" Variant="Variant.Outlined" Color="Color.Error" Value="2"></MudChip>
+﻿<MudChipSet T="int" SelectionMode="SelectionMode.MultiSelection" CheckMark @bind-SelectedValues="_selectedValues">
+    <MudChip Text="Set1 Chip1" Variant="Variant.Outlined" Color="Color.Success" Value="1"/>
+    <MudChip Text="Set1 Chip2" Variant="Variant.Outlined" Color="Color.Error" Value="2"/>
 </MudChipSet>
 
-<MudChipSet MultiSelection="true" Filter="true" Mandatory="false" @bind-SelectedChips="selectedChips2" @bind-SelectedValues="selectedValues">
-    <MudChip Text="Set2 Chip1" Default="true" Variant="Variant.Outlined" Color="Color.Success" Value="1"></MudChip>
-    <MudChip Text="Set2 Chip2" Default="false" Variant="Variant.Outlined" Color="Color.Error" Value="2"></MudChip>
+<MudChipSet T="int" SelectionMode="SelectionMode.MultiSelection" CheckMark @bind-SelectedValues="_selectedValues">
+    <MudChip Text="Set2 Chip1" Variant="Variant.Outlined" Color="Color.Success" Value="1"/>
+    <MudChip Text="Set2 Chip2" Variant="Variant.Outlined" Color="Color.Error" Value="2"/>
 </MudChipSet>
 
 <br />
-<p class="set1">
-    Set1 Selection: @(string.Join(", ", (selectedChips1??new MudChip[0]).OrderBy(chip=> chip.Text).Select(chip=> chip.Text)))
-</p>
-<br />
-<p class="set2">
-    Set2 Selection: @(string.Join(", ", (selectedChips2??new MudChip[0]).OrderBy(chip=> chip.Text).Select(chip=> chip.Text)))
+<p class="set">
+    Selection: @(string.Join(", ", _selectedValues.OrderBy(x => x)))
 </p>
 
 @code {
     public static string __description__ = "The chipsets should mirror their respective selections";
-    MudChip[] selectedChips1;
-    MudChip[] selectedChips2;
-    ICollection<object> selectedValues;
 
+    private IReadOnlyCollection<int> _selectedValues = [ 1 ];
 }

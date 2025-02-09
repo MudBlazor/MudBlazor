@@ -1,19 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Components;
-using MudBlazor.Charts.SVG.Models;
+﻿using Microsoft.AspNetCore.Components;
 
+#nullable enable
 namespace MudBlazor.Charts
 {
-    partial class Pie : MudChartBase
+    /// <summary>
+    /// Represents a chart which displays values as a percentage of a circle.
+    /// </summary>
+    /// <seealso cref="Bar"/>
+    /// <seealso cref="Donut"/>
+    /// <seealso cref="Line"/>
+    /// <seealso cref="StackedBar"/>
+    /// <seealso cref="TimeSeries"/>
+    partial class Pie : MudCategoryChartBase
     {
-        [CascadingParameter] public MudChart MudChartParent { get; set; }
+        /// <summary>
+        /// The chart, if any, containing this component.
+        /// </summary>
+        [CascadingParameter]
+        public MudChart? MudChartParent { get; set; }
 
-        private List<SvgPath> _paths = new();
-        private List<SvgLegend> _legends = new();
+        private List<SvgPath> _paths = [];
+        private List<SvgLegend> _legends = [];
 
         protected override void OnParametersSet()
         {
+            base.OnParametersSet();
+
             _paths.Clear();
             _legends.Clear();
 

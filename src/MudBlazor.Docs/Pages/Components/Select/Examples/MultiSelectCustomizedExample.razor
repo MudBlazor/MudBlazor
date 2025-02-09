@@ -1,14 +1,14 @@
 ﻿@namespace MudBlazor.Docs.Examples
 @using System.Linq
 
-<MudSelect MultiSelectionTextFunc="@(new Func<List<string>, string>(GetMultiSelectionText))" MultiSelection="true" @bind-Value="value" @bind-SelectedValues="options" T="string" Label="US States" AdornmentIcon="@Icons.Material.Filled.Search" AnchorOrigin="Origin.BottomCenter">
+<MudSelect MultiSelectionTextFunc="@(new Func<List<string>, string>(GetMultiSelectionText))" MultiSelection="true" @bind-Value="value" @bind-SelectedValues="options" T="string" Label="US States" AdornmentIcon="@Icons.Material.Filled.Search">
     @foreach (var state in states)
     {
         <MudSelectItem T="string" Value="@state">@state</MudSelectItem>
     }
 </MudSelect>
 
-<MudSwitch @bind-Checked="multiselectionTextChoice" Class="mud-width-full" Color="Color.Primary">MultiSelection Text choice</MudSwitch>  
+<MudSwitch @bind-Value="multiselectionTextChoice" Class="mud-width-full" Color="Color.Primary">MultiSelection Text choice</MudSwitch>  
 
 <MudGrid Class="mt-3 px-4">
     <MudItem xs="6">

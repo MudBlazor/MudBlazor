@@ -1,7 +1,7 @@
 ﻿<MudDialog>
     <DialogContent>
         Dialog Content
-        <MudTextField T="string" Immediate TextChanged="@(text=>OnTextChanged(text))"/>
+        <MudTextField T="string" Immediate TextChanged="@OnTextChangedAsync" />
         <div @onclick="OnClick">
             Click here!
         </div>
@@ -12,17 +12,19 @@
     </DialogActions>
 </MudDialog>
 
-
 @code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; } = null!;
 
-    [Parameter] public EventCallback<string> OnSearch { get; set; }
-    [Parameter] public EventCallback OnClick { get; set; }
+    [Parameter]
+    public EventCallback<string> OnSearch { get; set; }
 
-    void Submit() => MudDialog.Close(DialogResult.Ok(true));
-    void Cancel() => MudDialog.Cancel();
+    [Parameter]
+    public EventCallback OnClick { get; set; }
 
-    async void OnTextChanged(string text) {
-        await OnSearch.InvokeAsync(text);
-    }
+    private void Submit() => MudDialog.Close(DialogResult.Ok(true));
+
+    private void Cancel() => MudDialog.Cancel();
+
+    private Task OnTextChangedAsync(string text) => OnSearch.InvokeAsync(text);
 }

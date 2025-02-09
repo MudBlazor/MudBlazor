@@ -1,0 +1,28 @@
+﻿@namespace MudBlazor.Docs.Examples
+<MudPaper Style="width: 800px">
+    <MudStepper @bind-ActiveIndex="_index" ShowResetButton>
+        <MudStep Title="Select campaign settings" HasError="_error">Select campaign settings content</MudStep>
+        <MudStep Title="Create an ad group" @bind-Completed="_completed">Create an ad group content</MudStep>
+        <MudStep Title="Create an ad" Disabled="_disabled">Create an ad content</MudStep>
+    </MudStepper>
+</MudPaper>
+
+<MudDivider/>
+
+<p>_index: @_index</p>
+
+<MudDivider/>
+
+<MudSwitch @bind-Value="@_error" Color="Color.Primary" Label="Step 1 error"></MudSwitch>
+<MudSwitch @bind-Value="@_completed" Color="Color.Primary" Label="Step 2 completed"></MudSwitch>
+<MudSwitch @bind-Value="@_disabled" Color="Color.Primary" Label="Step 3 disabled" />
+
+<MudNumericField @bind-Value="_index" Label="Current index" Variant="Variant.Text" Min="0" Max="5" />
+
+@code {
+    private bool _error;
+    private bool _completed;
+    private bool _disabled;
+
+    private int _index;
+}

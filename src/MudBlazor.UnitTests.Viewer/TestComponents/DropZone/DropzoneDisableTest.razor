@@ -1,13 +1,11 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudDropContainer T="SimpleDropItem"
+﻿<MudDropContainer T="SimpleDropItem"
 				  Items="_items" ItemsSelector="@((item,dropzone) => item.ZoneIdentifier == dropzone)"
 				  Class="d-flex"
-				  DisabledClass="my-custom-disabled-class-from-container" ItemIsDisabled="@( (item) => item.Name == "First Item" || item.Name == "Third Item")"
+				  DisabledClass="my-custom-disabled-class-from-container" ItemDisabled="@( (item) => item.Name == "First Item" || item.Name == "Third Item")"
 				  ItemDropped="ItemUpdated">
 	<ChildContent>
 		<MudDropZone T="SimpleDropItem" Identifier="Column 1" Class="first-drop-zone"
-					 ItemIsDisabled="@( (item) => item.Name == "Fourth Item")" DisabledClass="my-zone-based-custom-disabled">
+					 ItemDisabled="@( (item) => item.Name == "Fourth Item")" DisabledClass="my-zone-based-custom-disabled">
 			<MudText Typo="Typo.h6" Class="mb-4">Drop Zone 1</MudText>
 		</MudDropZone>
 		<MudDropZone T="SimpleDropItem" Identifier="Column 2" Class="second-drop-zone">
@@ -20,30 +18,28 @@
 </MudDropContainer>
 
 @code {
-	public class SimpleDropItem
-	{
-		public string Name { get; set; }
-		public string ZoneIdentifier { get; set; }
+    private readonly IEnumerable<SimpleDropItem> _items =
+    [
+        new("First Item", "Column 1"),
+        new("Second Item", "Column 2"),
+        new("Third Item", "Column 2"),
+        new("Fourth Item", "Column 1")
+    ];
 
-		public SimpleDropItem(string name, string zoneIdentifier)
-		{
-			Name = name;
-			ZoneIdentifier = zoneIdentifier;
-		}
-	}
+	private static void ItemUpdated(MudItemDropInfo<SimpleDropItem> dropItem)
+    {
+        if (dropItem.Item is null)
+        {
+            return;
+        }
 
-	private void ItemUpdated(MudItemDropInfo<SimpleDropItem> dropItem)
-	{
-		dropItem.Item.ZoneIdentifier = dropItem.DropzoneIdentifier;
-	}
+        dropItem.Item.ZoneIdentifier = dropItem.DropzoneIdentifier;
+    }
 
-	private IEnumerable<SimpleDropItem> _items = new[]
-			{
-		new SimpleDropItem("First Item", "Column 1"),
-		new SimpleDropItem("Second Item", "Column 2"),
-		new SimpleDropItem("Third Item", "Column 2"),
-		new SimpleDropItem("Fourth Item", "Column 1"),
+    public class SimpleDropItem(string name, string zoneIdentifier)
+    {
+        public string Name { get; set; } = name;
 
-	};
-
+        public string ZoneIdentifier { get; set; } = zoneIdentifier;
+    }
 }

@@ -16,6 +16,6 @@ public interface INotificationService
     Task MarkNotificationsAsRead(string id);
 
     Task<NotificationMessage> GetMessageById(string id);
-    Task<IDictionary<NotificationMessage,bool>> GetNotifications();
+    Task<IDictionary<NotificationMessage, bool>> GetNotifications();
     Task AddNotification(NotificationMessage message);
 }

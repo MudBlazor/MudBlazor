@@ -1,9 +1,4 @@
-﻿
-#pragma warning disable CS1998 // async without await
-
-using System;
-using System.Threading.Tasks;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
@@ -11,7 +6,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.Mocks;
-using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.Tabs;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -26,7 +21,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DefaultValues()
+        public void DefaultValues()
         {
             var comp = Context.RenderComponent<MudDynamicTabs>();
             var tabs = comp.Instance;
@@ -55,7 +50,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task BasicParameters()
+        public void BasicParameters()
         {
             var comp = Context.RenderComponent<SimpleDynamicTabsTest>();
 
@@ -102,7 +97,7 @@ namespace MudBlazor.UnitTests.Components
             foreach (var item in closeButtons)
             {
                 item.GetAttribute("style").Should().Be("propertyA: 4px");
-                item.ClassList.Should().StartWith(new string[] { "mud-button-root" });
+                item.ClassList.Should().StartWith(["mud-button-root"]);
 
                 var actual = XElement.Parse($"<test>{item.Children[0].Children[0].InnerHtml}</test>");
                 var expected = XElement.Parse($"<test>{Icons.Material.Filled.RestoreFromTrash}</test>");
@@ -112,15 +107,15 @@ namespace MudBlazor.UnitTests.Components
                 var parent = (IHtmlElement)item.Parent;
                 parent.Children.Should().HaveCount(2, because: "the button and the empty popover hint");
 
-                await item.ParentElement.TriggerEventAsync("onmouseenter", new MouseEventArgs());
+                await item.ParentElement.TriggerEventAsync("onpointerenter", new PointerEventArgs());
                 var popoverId = parent.Children[1].Id.Substring(8);
 
                 var toolTip = comp.Find($"#popovercontent-{popoverId}");
 
-                toolTip.ClassList.Should().Contain(new string[] { "mud-tooltip" });
+                toolTip.ClassList.Should().Contain(["mud-tooltip"]);
                 toolTip.TextContent.Should().Be("close here");
 
-                await item.ParentElement.TriggerEventAsync("onmouseleave", new MouseEventArgs());
+                await item.ParentElement.TriggerEventAsync("onpointerleave", new PointerEventArgs());
 
             }
 
@@ -130,7 +125,7 @@ namespace MudBlazor.UnitTests.Components
             foreach (var item in addButtons)
             {
                 item.GetAttribute("style").Should().Be("propertyB: 6px");
-                item.ClassList.Should().StartWith(new string[] { "mud-button-root" });
+                item.ClassList.Should().StartWith(["mud-button-root"]);
 
                 var actual = XElement.Parse($"<test>{item.Children[0].Children[0].InnerHtml}</test>");
                 var expected = XElement.Parse($"<test>{Icons.Material.Filled.AddAlarm}</test>");
@@ -140,15 +135,15 @@ namespace MudBlazor.UnitTests.Components
                 var parent = (IHtmlElement)item.Parent;
                 parent.Children.Should().HaveCount(2, because: "the button and the empty popover hint"); ;
 
-                await item.ParentElement.TriggerEventAsync("onmouseenter", new MouseEventArgs());
+                await item.ParentElement.TriggerEventAsync("onpointerenter", new PointerEventArgs());
                 var popoverId = parent.Children[1].Id.Substring(8);
 
                 var toolTip = comp.Find($"#popovercontent-{popoverId}");
 
-                toolTip.ClassList.Should().Contain(new string[] { "mud-tooltip" });
+                toolTip.ClassList.Should().Contain(["mud-tooltip"]);
                 toolTip.TextContent.Should().Be("add here");
 
-                await item.ParentElement.TriggerEventAsync("onmouseleave", new MouseEventArgs());
+                await item.ParentElement.TriggerEventAsync("onpointerleave", new PointerEventArgs());
             }
         }
 
@@ -178,7 +173,6 @@ namespace MudBlazor.UnitTests.Components
 
                 comp.Instance.CloseClicked.Should().HaveCount(i + 1);
             }
-
         }
     }
 }

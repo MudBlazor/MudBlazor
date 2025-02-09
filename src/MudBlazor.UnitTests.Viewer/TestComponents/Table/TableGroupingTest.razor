@@ -1,9 +1,6 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-
-<MudTable Items="@Cars" Hover="true" @ref="tableInstance"
-          GroupHeaderStyle="background-color:var(--mud-palette-background-grey)"
-          GroupFooterStyle="background-color:var(--mud-palette-background-grey)"
+﻿<MudTable Items="@_cars" Hover="true" @ref="TableInstance"
+          GroupHeaderStyle="background-color:var(--mud-palette-background-gray)"
+          GroupFooterStyle="background-color:var(--mud-palette-background-gray)"
           MultiSelection="true">
     <HeaderContent>
         <MudTh>Model:</MudTh>
@@ -20,42 +17,35 @@
 </MudTable>
 
 @code {
-    public MudTable<RacingCar> tableInstance;
-    private IEnumerable<RacingCar> Cars;
+    private IEnumerable<RacingCar> _cars = [];
+
+    public MudTable<RacingCar> TableInstance { get; private set; } = null!;
 
     protected override Task OnInitializedAsync()
     {
-        Cars = new List<RacingCar>()
-    {
+        _cars = new List<RacingCar>
+        {
             new("919 Hybrid", "Porsche", "LMP1"),
             new("911 RSR", "Porsche", "GTE"),
             new("911 RS", "Porsche", "GT3"),
             new("R18 e-tron quattor", "Audi", "LMP1"),
             new("R8 LMS", "Audi", "GT3"),
-            new ("F488", "Ferrari", "GTE"),
-            new ("SF-1000", "Ferrari", "Formula 1"),
-            new ("Vantage", "Aston Martin", "GTE"),
-            new ("AMR21", "Aston Martin", "Formula 1"),
+            new("F488", "Ferrari", "GTE"),
+            new("SF-1000", "Ferrari", "Formula 1"),
+            new("Vantage", "Aston Martin", "GTE"),
+            new("AMR21", "Aston Martin", "Formula 1"),
         };
         return base.OnInitializedAsync();
     }
 
-    public class RacingCar
+    public class RacingCar(string name, string brand, string category)
     {
-        public RacingCar(string name, string brand, string category)
-        {
-            Name = name;
-            Brand = brand;
-            Category = category;
-        }
+        public string Name { get; set; } = name;
 
-        public string Name { get; set; }
-        public string Brand { get; set; }
-        public string Category { get; set; }
+        public string Brand { get; set; } = brand;
 
-        public override string ToString()
-        {
-            return $"({Category}) {Brand} {Name}";
-        }
+        public string Category { get; set; } = category;
+
+        public override string ToString() => $"({Category}) {Brand} {Name}";
     }
 }

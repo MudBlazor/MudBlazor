@@ -1,0 +1,37 @@
+﻿<MudPopoverProvider />
+
+<MudButton OnClick="@(() => _isOpen = !_isOpen)" Variant="Variant.Filled" Color="Color.Primary">
+    Open Dialog with DataGrid
+</MudButton>
+
+<MudDialog Visible="@_isOpen">
+    <TitleContent>
+        <MudText Typo="Typo.h6">Dialog with DataGrid</MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudDataGrid Items="@_items" Filterable="true">
+            <Columns>
+                <PropertyColumn Property="x => x.Name" />
+            </Columns>
+        </MudDataGrid>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    public static string __description__ = "Popover Datagrid in Dialog with Filter Select";
+
+    private bool _isOpen;
+
+    private readonly IEnumerable<Item> _items = new List<Item>
+    {
+        new("B"),
+        new("A"),
+        new("C"),
+        new("C")
+    };
+
+    public class Item(string name)
+    {
+        public string Name { get; set; } = name;
+    }
+}

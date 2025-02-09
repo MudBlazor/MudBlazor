@@ -3,13 +3,30 @@
 // See the LICENSE file in the project root for more information.
 
 using Microsoft.AspNetCore.Components;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
 #nullable enable
+
+/// <summary>
+/// A simple component that displays an image.
+/// </summary>
+/// <remarks>
+/// This component is equivalent to the <c>img</c> HTML tag.
+/// </remarks>
 public partial class MudImage : MudComponentBase
 {
+    private readonly ParameterState<string?> _srcState;
+
+    public MudImage()
+    {
+        using var registerScope = CreateRegisterScope();
+        _srcState = registerScope.RegisterParameter<string?>(nameof(Src))
+            .WithParameter(() => Src);
+    }
+
     protected string Classname =>
         new CssBuilder("mud-image")
             .AddClass("fluid", Fluid)
@@ -20,58 +37,96 @@ public partial class MudImage : MudComponentBase
             .Build();
 
     /// <summary>
-    /// Applies the fluid class so the image scales with the parent width.
+    /// Scales this image to the parent container.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.
+    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Image.Behavior)]
     public bool Fluid { get; set; }
 
     /// <summary>
-    /// Specifies the path to the image.
+    /// The path to the image.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Image.Behavior)]
     public string? Src { get; set; }
 
     /// <summary>
-    /// Specifies an alternate text for the image.
+    /// The fallback image path to use if <see cref="Src"/> fails to load.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Image.Behavior)]
+    public string? FallbackSrc { get; set; }
+
+    /// <summary>
+    /// The alternate text for this image.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Image.Behavior)]
     public string? Alt { get; set; }
 
     /// <summary>
-    /// Specifies the height of the image in px.
+    /// The height of this image, in pixels.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.
+    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Image.Appearance)]
     public int? Height { get; set; }
 
     /// <summary>
-    /// Specifies the width of the image in px.
+    /// The width of this image, in pixels.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.
+    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Image.Appearance)]
     public int? Width { get; set; }
 
     /// <summary>
-    /// The higher the number, the heavier the drop-shadow.
+    /// The size of the drop shadow for this image.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <c>0</c>.  
+    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Image.Appearance)]
     public int Elevation { set; get; }
 
     /// <summary>
-    /// Controls how the image should be resized.
+    /// Controls how this image is resized.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <see cref="ObjectFit.Fill"/>.
+    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Image.Appearance)]
     public ObjectFit ObjectFit { set; get; } = ObjectFit.Fill;
 
     /// <summary>
-    /// Controls how the image should positioned within its container.
+    /// Controls how this image is positioned within its container.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <see cref="ObjectPosition.Center"/>.
+    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Image.Appearance)]
     public ObjectPosition ObjectPosition { set; get; } = ObjectPosition.Center;
+
+    /// <summary>
+    /// Handles the image error event and sets the fallback image source.
+    /// </summary>
+    private Task OnErrorAsync()
+    {
+        if (!string.IsNullOrEmpty(FallbackSrc) && _srcState.Value != FallbackSrc)
+        {
+            return _srcState.SetValueAsync(FallbackSrc);
+        }
+
+        return Task.CompletedTask;
+    }
 }

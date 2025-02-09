@@ -1,185 +1,235 @@
-﻿using System;
-using System.Threading.Tasks;
-using System.Windows.Input;
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
-namespace MudBlazor
-{
+namespace MudBlazor;
+
 #nullable enable
-    public partial class MudOverlay : MudComponentBase, IAsyncDisposable
+
+/// <summary>
+/// A layer which darkens a window, often as part of showing a <see cref="MudDialog" />.
+/// </summary>
+public partial class MudOverlay : MudComponentBase, IAsyncDisposable
+{
+    private readonly ParameterState<bool> _visibleState;
+
+    protected string Classname =>
+        new CssBuilder("mud-overlay")
+            .AddClass("mud-overlay-absolute", Absolute)
+            .AddClass(Class)
+            .Build();
+
+    protected string ScrimClassname =>
+        new CssBuilder("mud-overlay-scrim")
+            .AddClass("mud-overlay-dark", DarkBackground)
+            .AddClass("mud-overlay-light", LightBackground)
+            .Build();
+
+    protected string Styles =>
+        new StyleBuilder()
+            .AddStyle("z-index", $"{ZIndex}", ZIndex != 5)
+            .AddStyle(Style)
+            .Build();
+
+    /// <summary>
+    /// The manager for scroll events.
+    /// </summary>
+    [Inject]
+    public IScrollManager ScrollManager { get; set; } = null!;
+
+    /// <summary>
+    /// Child content of the component.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Overlay.Behavior)]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>
+    /// Makes the overlay visible.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Overlay.Behavior)]
+    public bool Visible { get; set; }
+
+    /// <summary>
+    /// Occurs when <see cref="Visible"/> changes.
+    /// </summary>
+    /// <remarks>
+    /// This event is triggered when the visibility of the overlay changes.
+    /// </remarks>
+    [Parameter]
+    public EventCallback<bool> VisibleChanged { get; set; }
+
+    /// <summary>
+    /// Sets <see cref="Visible"/> to <c>false</c> when the overlay is clicked and calls <see cref="OnClosed"/>.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.
+    /// This is preferred over the previously used <c>OnClick</c> event.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Overlay.ClickAction)]
+    public bool AutoClose { get; set; }
+
+    /// <summary>
+    /// Prevents the <c>Document.body</c> element from scrolling.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>true</c>.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Overlay.Behavior)]
+    public bool LockScroll { get; set; } = true;
+
+    /// <summary>
+    /// The css class that will be added to body if lockscroll is used.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>"scroll-locked"</c>.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Overlay.Behavior)]
+    public string LockScrollClass { get; set; } = "scroll-locked";
+
+    /// <summary>
+    /// Applies the theme's dark overlay color.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Overlay.Appearance)]
+    public bool DarkBackground { get; set; }
+
+    /// <summary>
+    /// Applies the theme's light overlay color.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Overlay.Appearance)]
+    public bool LightBackground { get; set; }
+
+    /// <summary>
+    /// Uses absolute positioning for the overlay.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Overlay.Behavior)]
+    public bool Absolute { get; set; }
+
+    /// <summary>
+    /// Sets the z-index of the overlay.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>5</c>.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Overlay.Behavior)]
+    public int ZIndex { get; set; } = 5;
+
+    /// <summary>
+    /// Occurs when the overlay is clicked.
+    /// </summary>
+    /// <remarks>
+    /// If you need to close the overlay automatically, you can use <see cref="AutoClose"/> and <see cref="OnClosed"/> instead. 
+    /// </remarks>
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnClick { get; set; }
+
+    /// <summary>
+    /// Occurs when the overlay is closed due to <see cref="AutoClose"/>.
+    /// </summary>
+    [Parameter]
+    public EventCallback OnClosed { get; set; }
+
+    /// <summary>
+    /// Determines whether the overlay should be rendered outside of the section. If it's false, the overlay will be rendered with the MudPopOverProvider.
+    /// If it's true it will be rendered as is where is (v7 and previous behavior)
+    /// </summary>
+    /// <remarks>
+    /// If the user sets Absolute to true, the user intends for it to be part of his markup and not rendered by the MudPopoverProvider
+    /// Dialog's need the separation of the overlay for display purposes
+    /// If the user provides a child content, the user intends for it to be part of his markup and not rendered by the MudPopoverProvider
+    /// </remarks>
+    internal bool RenderOutsideOfSection =>
+        Absolute ||
+        (Class?.Contains("mud-skip-overlay-section") ?? false) ||
+        ChildContent != null;
+
+    public MudOverlay()
     {
-        private bool _visible;
+        using var registerScope = CreateRegisterScope();
+        _visibleState = registerScope.RegisterParameter<bool>(nameof(Visible))
+            .WithParameter(() => Visible)
+            .WithEventCallback(() => VisibleChanged);
+    }
 
-        protected string Classname =>
-            new CssBuilder("mud-overlay")
-                .AddClass("mud-overlay-absolute", Absolute)
-                .AddClass(Class)
-                .Build();
-
-        protected string ScrimClassname =>
-            new CssBuilder("mud-overlay-scrim")
-                .AddClass("mud-overlay-dark", DarkBackground)
-                .AddClass("mud-overlay-light", LightBackground)
-                .Build();
-
-        protected string Styles =>
-            new StyleBuilder()
-                .AddStyle("z-index", $"{ZIndex}", ZIndex != 5)
-                .AddStyle(Style)
-                .Build();
-
-        [Inject]
-        public IScrollManager ScrollManager { get; set; } = null!;
-
-        /// <summary>
-        /// Child content of the component.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Overlay.Behavior)]
-        public RenderFragment? ChildContent { get; set; }
-
-        /// <summary>
-        /// Fires when Visible changes
-        /// </summary>
-        [Parameter]
-        public EventCallback<bool> VisibleChanged { get; set; }
-
-        /// <summary>
-        /// If true overlay will be visible. Two-way bindable.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Overlay.Behavior)]
-        public bool Visible
+    protected override async Task OnAfterRenderAsync(bool firstTime)
+    {
+        if (!LockScroll || Absolute)
         {
-            get => _visible;
-            set
-            {
-                if (_visible == value)
-                    return;
-                _visible = value;
-                VisibleChanged.InvokeAsync(_visible);
-            }
+            return;
         }
 
-        /// <summary>
-        /// If true overlay will set Visible false on click.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Overlay.ClickAction)]
-        public bool AutoClose { get; set; }
-
-        /// <summary>
-        /// If true (default), the Document.body element will not be able to scroll
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Overlay.Behavior)]
-        public bool LockScroll { get; set; } = true;
-
-        /// <summary>
-        /// The css class that will be added to body if lockscroll is used.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Overlay.Behavior)]
-        public string LockScrollClass { get; set; } = "scroll-locked";
-
-        /// <summary>
-        /// If true applies the themes dark overlay color.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Overlay.Behavior)]
-        public bool DarkBackground { get; set; }
-
-        /// <summary>
-        /// If true applies the themes light overlay color.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Overlay.Behavior)]
-        public bool LightBackground { get; set; }
-
-        /// <summary>
-        /// If true, use absolute positioning for the overlay.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Overlay.Behavior)]
-        public bool Absolute { get; set; }
-
-        /// <summary>
-        /// Sets the z-index of the overlay.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Overlay.Behavior)]
-        public int ZIndex { get; set; } = 5;
-
-        /// <summary>
-        /// Command parameter.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Overlay.ClickAction)]
-        [Obsolete($"This will be removed in v7.")]
-        public object? CommandParameter { get; set; }
-
-        /// <summary>
-        /// Command executed when the user clicks on an element.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Overlay.ClickAction)]
-        [Obsolete($"Use {nameof(OnClick)} instead. This will be removed in v7.")]
-        public ICommand? Command { get; set; }
-
-        /// <summary>
-        /// Fired when the overlay is clicked
-        /// </summary>
-        [Parameter]
-        public EventCallback<MouseEventArgs> OnClick { get; set; }
-
-        protected internal async Task OnClickHandlerAsync(MouseEventArgs ev)
+        if (Visible)
         {
-            if (AutoClose)
-                Visible = false;
-            await OnClick.InvokeAsync(ev);
-#pragma warning disable CS0618
-            if (Command?.CanExecute(CommandParameter) ?? false)
-            {
-                Command.Execute(CommandParameter);
-            }
-#pragma warning restore CS0618
+            await BlockScrollAsync();
+        }
+        else
+        {
+            await UnblockScrollAsync();
+        }
+    }
+
+    protected internal async Task OnClickHandlerAsync(MouseEventArgs ev)
+    {
+        if (AutoClose)
+        {
+            await _visibleState.SetValueAsync(false);
+            await OnClosed.InvokeAsync();
         }
 
-        //if not visible or CSS `position:absolute`, don't lock scroll
-        protected override async Task OnAfterRenderAsync(bool firstTime)
-        {
-            if (!LockScroll || Absolute)
-                return;
+        await OnClick.InvokeAsync(ev);
+    }
 
-            if (Visible)
-                await BlockScrollAsync();
-            else
-                await UnblockScrollAsync();
+    /// <summary>
+    /// Locks the scroll by attaching a CSS class to the specified element, in this case the body.
+    /// </summary>
+    private ValueTask BlockScrollAsync()
+    {
+        return ScrollManager.LockScrollAsync("body", LockScrollClass);
+    }
+
+    /// <summary>
+    /// Removes the CSS class that prevented scrolling.
+    /// </summary>
+    private ValueTask UnblockScrollAsync()
+    {
+        return ScrollManager.UnlockScrollAsync("body", LockScrollClass);
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        if (IsJSRuntimeAvailable)
+        {
+            return UnblockScrollAsync();
         }
 
-        //locks the scroll attaching a CSS class to the specified element, in this case the body
-        private ValueTask BlockScrollAsync()
-        {
-            return ScrollManager.LockScrollAsync("body", LockScrollClass);
-        }
-
-        //removes the CSS class that prevented scrolling
-        private ValueTask UnblockScrollAsync()
-        {
-            return ScrollManager.UnlockScrollAsync("body", LockScrollClass);
-        }
-
-        //When disposing the overlay, remove the class that prevented scrolling
-        public ValueTask DisposeAsync()
-        {
-            if (IsJSRuntimeAvailable)
-            {
-                return UnblockScrollAsync();
-            }
-
-            return ValueTask.CompletedTask;
-        }
+        return ValueTask.CompletedTask;
     }
 }
