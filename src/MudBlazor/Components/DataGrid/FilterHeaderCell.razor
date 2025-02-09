@@ -55,7 +55,7 @@
                 }
                 @if (!Column.ShowFilterIcon.HasValue || Column.ShowFilterIcon.Value)
                 {
-                    <MudMenu Icon="@Icons.Material.Filled.FilterAlt" Size="@Size.Small" Dense="true">
+                    <MudMenu Class="column-filter-menu" Icon="@Icons.Material.Filled.FilterAlt" Size="@Size.Small" Dense="true">
                         @foreach (var o in operators)
                         {
                             if (!string.IsNullOrWhiteSpace(o))

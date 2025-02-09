@@ -3360,6 +3360,17 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void DataGridColumnShowFilterIconsTest()
+        {
+            var comp = Context.RenderComponent<DataGridColumnShowFilterIconsTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnShowFilterIconsTest.Model>>();
+
+            // Should have 5 columns, but only two with filter icons
+            dataGrid.FindComponents<Column<DataGridColumnShowFilterIconsTest.Model>>().Should().HaveCount(5);
+            dataGrid.FindAll(".column-filter-menu").Should().HaveCount(2);
+        }
+
+        [Test]
         public async Task DataGridColumnPopupFilteringEmptyTest()
         {
             var comp = Context.RenderComponent<DataGridColumnPopupFilteringTest>();
