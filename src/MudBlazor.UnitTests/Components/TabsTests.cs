@@ -1,4 +1,4 @@
-using System.Globalization;
+﻿using System.Globalization;
 using Bunit;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
