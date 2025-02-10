@@ -21,14 +21,14 @@ namespace MudBlazor
                 ? Snackbars.ShownSnackbars.Reverse()
                 : Snackbars.ShownSnackbars;
 
-        protected string Classname =>
+        protected string GetClassname(string? snackbarPositionClass) =>
             new CssBuilder(Class)
-                .AddClass(GetPositionClass())
+                .AddClass(GetPositionClass(snackbarPositionClass))
                 .Build();
 
-        private string GetPositionClass()
+        private string GetPositionClass(string? snackbarPositionClass)
         {
-            var positionClass = Snackbars.Configuration.PositionClass;
+            var positionClass = snackbarPositionClass ?? Snackbars.Configuration.PositionClass;
             return positionClass switch
             {
                 Defaults.Classes.Position.BottomStart => RightToLeft ? Defaults.Classes.Position.BottomRight : Defaults.Classes.Position.BottomLeft,

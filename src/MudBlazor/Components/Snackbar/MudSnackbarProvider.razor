@@ -10,9 +10,12 @@
     #nullable enable
 }
 
-<div @attributes="UserAttributes" id="mud-snackbar-container" class="@Classname" style="@Style">
-    @foreach (var snackbar in Snackbar)
-    {
-        <MudSnackbarElement @key="snackbar" Snackbar="@snackbar"></MudSnackbarElement>
-    }
-</div>
+@foreach(var position in Snackbar.Select(x => x.PositionClass).Distinct())
+{
+    <div @attributes="UserAttributes" id="mud-snackbar-container" class="@GetClassname(position)" style="@Style">
+        @foreach (var snackbar in Snackbar.Where(x => x.PositionClass == position))
+        {
+            <MudSnackbarElement @key="snackbar" Snackbar="@snackbar"></MudSnackbarElement>
+        }
+    </div>
+}

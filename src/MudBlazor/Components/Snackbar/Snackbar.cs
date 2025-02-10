@@ -40,6 +40,8 @@ namespace MudBlazor
         /// </summary>
         public Severity Severity => State.Options.Severity;
 
+        public string? PositionClass => State.Options.PositionClass;
+
         internal Snackbar(SnackbarMessage message, SnackbarOptions options)
         {
             SnackbarMessage = message;

@@ -101,6 +101,14 @@ namespace MudBlazor
         public SnackbarDuplicatesBehavior DuplicatesBehavior { get; set; } = SnackbarDuplicatesBehavior.GlobalDefault;
 
         /// <summary>
+        /// The Position Class for the snackbar. When null the positon from <see cref="SnackbarConfiguration.PositionClass"/> is used.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
+        public string? PositionClass { get; set; }
+
+        /// <summary>
         /// Creates new options for a snackbar.
         /// </summary>
         /// <param name="severity">The severity of the snackbar to display.</param>
