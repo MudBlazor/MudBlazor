@@ -7,19 +7,17 @@ namespace MudBlazor
 {
     public partial class MudComboBox<T> : MudComponentBase
     {
-        private bool _searchDisabled;
         private int _selectedComboBoxIndex = -1;
-        private bool _openItemList;
 
         private ParameterState<string?> _comboBoxValueState;
         private ParameterState<T?> _selectedItemState;
         private ParameterState<HashSet<T>> _selectedItemsState;
+        private ParameterState<bool> _openItemListState;
 
         private MudTextField<string>? _searchField;
 
         public MudComboBox()
         {
-            SelectedItems = new HashSet<T>();
             using var registerScope = CreateRegisterScope();
             _comboBoxValueState = registerScope.RegisterParameter<string?>(nameof(ComboBoxValue))
                 .WithParameter(() => ComboBoxValue)
@@ -30,6 +28,9 @@ namespace MudBlazor
             _selectedItemsState = registerScope.RegisterParameter<HashSet<T>>(nameof(SelectedItems))
                 .WithParameter(() => SelectedItems)
                 .WithEventCallback(() => SelectedItemsChanged);
+            _openItemListState = registerScope.RegisterParameter<bool>(nameof(OpenItemList))
+                .WithParameter(() => OpenItemList)
+                .WithEventCallback(() => OpenItemListChanged);
         }
 
         protected string Classname => new CssBuilder("mud-combobox")
@@ -104,6 +105,20 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         public int MaxHeight { get; set; } = 300;
+
+        [Parameter]
+        public bool ReadOnly { get; set; }
+
+        [Parameter]
+        public bool Disabled { get; set; }
+
+        /// <summary>
+        /// Changes the <see cref="ComboBoxValue"/> as soon as input is received.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.  When <c>true</c>, the <see cref="ComboBoxValue"/> property will be updated any time user input occurs.  Otherwise, <see cref="ComboBoxValue"/> is updated when the user presses <c>Enter</c> or the input loses focus.
+        /// </remarks>
+        public bool Immediate { get; set; } = true;
 
         /// <summary>
         /// The function used to get the display text for each item.
@@ -194,6 +209,15 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.ListBehavior)]
         public RenderFragment<T>? ItemTemplate { get; set; }
 
+        [Parameter]
+        public RenderFragment? BeforeItemsTemplate { get; set; }
+
+        /// <summary>
+        /// What is displayed when there are no AutoCompleteItems
+        /// </summary>
+        [Parameter]
+        public RenderFragment? NoRecords { get; set; }
+
         /// <summary>
         /// Determines the width of this Popover dropdown in relation to the parent container.
         /// </summary>
@@ -262,13 +286,13 @@ namespace MudBlazor
         /// Whether a user can select multiple items
         /// </summary>
         [Parameter]
-        public bool MultiSelection { get; set; }
+        public SelectionMode MultiSelection { get; set; }
 
         /// <summary>
         /// The currently selected ComboBox items
         /// </summary>
         [Parameter]
-        public HashSet<T> SelectedItems { get; set; }
+        public HashSet<T> SelectedItems { get; set; } = [];
 
         /// <summary>
         /// Event is fired when the selected items change
@@ -283,12 +307,6 @@ namespace MudBlazor
         [Parameter]
         public ComboBoxFilterType FilterType { get; set; } = ComboBoxFilterType.Client;
 
-        /// <summary>
-        /// What is displayed when there are no AutoCompleteItems
-        /// </summary>
-        [Parameter]
-        public RenderFragment? NoRecords { get; set; }
-
         [Parameter]
         public string? PlaceHolder { get; set; }
 
@@ -300,6 +318,12 @@ namespace MudBlazor
 
         [Parameter]
         public string? HelperText { get; set; }
+
+        [Parameter]
+        public bool OpenItemList { get; set; }
+
+        [Parameter]
+        public EventCallback<bool> OpenItemListChanged { get; set; }
 
         [Parameter]
         public string? ComboBoxValue { get; set; }
@@ -347,7 +371,7 @@ namespace MudBlazor
         {
             if (eventArgs.Key.Equals("Esc"))
             {
-                _openItemList = false;
+                await _openItemListState.SetValueAsync(false);
                 if (_searchField != null)
                 {
                     await _searchField.ResetAsync();
@@ -355,7 +379,7 @@ namespace MudBlazor
                 }
                 return;
             }
-            _openItemList = true;
+            await _openItemListState.SetValueAsync(false);
             if (eventArgs.Key.Equals("Enter"))
             {
                 if (FilteredItems.Count > 0)
@@ -391,23 +415,45 @@ namespace MudBlazor
             }
         }
 
-        private async Task ComboBoxSelectItem(T item)
+        public async Task ComboBoxToggleItem(T item)
         {
-            await _comboBoxValueState.SetValueAsync(item?.ToString() ?? FilteredItems[0]?.ToString());
-            _openItemList = false;
-            SelectedItem = item;
+            if (item == null)
+                return;
+
+            // Toggle SelectedItem 
+            var selectedItem = _selectedItemState.Value;
+            if (item.Equals(selectedItem))
+            {
+                await _selectedItemState.SetValueAsync(default);
+            }
+            else
+            {
+                await _selectedItemState.SetValueAsync(item);
+            }
+
+            // Toggle SelectedItems to Add if it doesn't exist, remove it if it does.
+            var selectedItems = _selectedItemsState.Value ?? [];
+            if (!selectedItems.Remove(item))
+            {
+                selectedItems.Add(item);
+            }
         }
 
-        private void FocusOnEnter()
+        private async Task FocusOnEnterAsync()
         {
             if (OpenOnEnter)
-                _openItemList = true;
+                await _openItemListState.SetValueAsync(true);
+        }
+
+        private async Task BlurredAsync()
+        {
+            await _openItemListState.SetValueAsync(false);
         }
 
         private async Task ComboBoxValueClear()
         {
             await _comboBoxValueState.SetValueAsync(default);
-            _openItemList = false;
+            await _openItemListState.SetValueAsync(false);
             FilteredItems = Items;
         }
 
@@ -416,7 +462,7 @@ namespace MudBlazor
             await _comboBoxValueState.SetValueAsync(value);
             if (_comboBoxValueState.Value?.Length > 0)
             {
-                _openItemList = true;
+                await _openItemListState.SetValueAsync(true);
             }
             _selectedComboBoxIndex = -1;
             if (FilterType == ComboBoxFilterType.Client)
@@ -431,5 +477,6 @@ namespace MudBlazor
             _selectedComboBoxIndex = SelectedItem != null ? FilteredItems.IndexOf(SelectedItem) : -1;
             await InvokeAsync(StateHasChanged);
         }
+
     }
 }

@@ -3,72 +3,57 @@
 @typeparam T
 
 <MudTextField @ref="_searchField"
-			  Disabled="@_searchDisabled"
-			  ValueChanged="@((string v) => ComboBoxValueChanged(v))"
-			  Value="@_comboBoxValue"              
-			  Style="@(GetStyle)"
+			  Disabled="@Disabled"
+              ReadOnly="@ReadOnly"
+			  ValueChanged="ComboBoxValueChanged"
+			  Value="@_comboBoxValueState.Value"
 			  Variant="@Variant"
 			  Immediate="true"
-			  @onfocus="@FocusOnEnter"
-			  @onblur="@(() => _openItemList = false)"
+			  @onfocus="@FocusOnEnterAsync"
+			  @onblur="@(BlurredAsync)"
 			  Placeholder="@PlaceHolder"
 			  Label="@Label"
 			  FullWidth="false"
               Margin="@(Dense ? Margin.Dense : MudGlobal.InputDefaults.Margin)"
 			  OnKeyDown="@KeyDown"
 			  HelperText="@HelperText"
-			  @ondblclick="@(() => _openItemList = !_openItemList)"
 			  Adornment="Adornment.End"
-			  AdornmentIcon="@(_comboBoxValue.Length > 1 ? Icons.Material.Filled.Clear : string.Empty)"
+			  AdornmentIcon="@(_comboBoxValueState.Value.Length > 0 ? Icons.Material.Filled.Clear : string.Empty)"
 			  OnAdornmentClick="@ComboBoxValueClear" />
 
-@if (_openItemList)
+@if (_openItemListState)
 {
-    <MudPopover Open="_openItemList" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Class="@PopoverClass"
-                Fixed="DropdownSettings.Fixed" OverflowBehavior="DropdownSettings.OverflowBehavior" RelativeWidth="@RelativeWidth">
-
+    <MudPopover Open="_openItemListState" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Class="@PopoverClass"
+    Fixed="DropdownSettings.Fixed" OverflowBehavior="DropdownSettings.OverflowBehavior" RelativeWidth="@RelativeWidth">
+        <CascadingValue Value="this">
+            @if (BeforeItemsTemplate is not null)
+            {
+                <div class="mud-combobox-before-items pa-1">
+                    @BeforeItemsTemplate;
+                </div>
+            }
+            <MudList Class="mud-combobox-list" T="T" Dense="@Dense" SelectionMode="@MultiSelection">
+                @if (FilteredItems.Count > 0)
+                {
+                    @foreach (var item in FilteredItems)
+                    {
+                        @if (ItemTemplate != null)
+                        {
+                            @ItemTemplate(item);
+                        }
+                        <MudListItem OnClick="@(() =>ComboBoxToggleItem(@item))" 
+                        Text="@item!.ToString()" />
+                    }
+                }
+            </MudList>
+            @if (NoRecords != null)
+            {
+                @NoRecords
+            }
+        </CascadingValue>
     </MudPopover>
     @if (Overlay)
     {
-                <MudOverlay Visible="@_openItemList" AutoClose="true" OnClick="@(() => _openItemList = false)"></MudOverlay>
+        <MudOverlay Visible="@_openItemListState.Value" AutoClose="true" OnClick="@(async () => await _openItemListState.SetValueAsync(false))"></MudOverlay>
     }
-    <MudList Class="autocomplete-list" T="T" @bind-SelectedValue="@SelectedAutoCompleteItem" SelectionMode="SelectionMode.SingleSelection">
-		@if (FilteredItems.Count > 0)
-		{
-			@foreach (var item in FilteredItems)
-			{
-				<MudListItem OnClick="@(() =>ComboBoxSelectItem(@item))" Text="@item!.ToString()" />
-			}
-		}
-		else if (NoRecords != null)
-		{
-			@NoRecords
-		}
-	</MudList>
 }
-
-<style>
-	.mud-list-item-text > .mud-typography {
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		max-width: 100%;
-	}
-
-	.autocomplete-list {
-		position: absolute;
-		max-height: 500px;
-		color: var(--mud-palette-drawer-text);
-		background-color: var(--mud-palette-drawer-background);
-		z-index: 1000;
-		box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-		border: 1px solid var(--mud-palette-drawer-icon);
-		border-radius: var(--mud-default-borderradius);
-	}
-
-	.style-chip {
-		width: 20px;
-		height: 20px;
-		border: 2px solid var(--mud-palette-drawer-icon);
-	}
-</style>
