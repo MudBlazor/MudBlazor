@@ -187,7 +187,6 @@ window.mudpopoverHelper = {
 
             if (classSelector) {
                 if (classList.contains(classSelector) == false) {
-                    //this.updatePopoverOverlay(popoverContentNode);
                     return;
                 }
             }
@@ -379,7 +378,6 @@ window.mudpopoverHelper = {
                 popoverContentNode.style['z-index'] = Math.max(window.getComputedStyle(popoverNode).getPropertyValue('z-index'), popoverContentNode.style['z-index']);
                 popoverContentNode.skipZIndex = true;
             }
-            //this.updatePopoverOverlay(popoverContentNode);
         }
         else {
             //console.log(`popoverNode: ${popoverNode} ${popoverNode ? popoverNode.parentNode : ""}`);
