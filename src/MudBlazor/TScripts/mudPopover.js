@@ -634,7 +634,7 @@ class MudPopover {
                 for (let entry of entries) {
                     const target = entry.target;
                     for (let childNode of target.childNodes) {
-                        if (childNode.id?.startsWith('popover-')) {
+                        if (childNode.id && childNode.id.startsWith('popover-')) {
                             window.mudpopoverHelper.placePopover(childNode);
                         }
                     }
