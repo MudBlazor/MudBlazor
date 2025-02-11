@@ -1,10 +1,7 @@
 ﻿#pragma warning disable BL0005 // Set parameter outside component
 
-using System;
 using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
 using AngleSharp.Css.Dom;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
@@ -681,6 +678,8 @@ namespace MudBlazor.UnitTests.Components
 
             // Open the date range picker
             comp.Find("input").Click();
+            // verify open
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(1));
 
             // Clicking day buttons to select a date range
             comp.FindAll("button.mud-picker-calendar-day")
@@ -694,7 +693,6 @@ namespace MudBlazor.UnitTests.Components
                 new DateTime(DateTime.Now.Year, DateTime.Now.Month, 10),
                   new DateTime(DateTime.Now.Year, DateTime.Now.Month, 11)));
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(0));
-            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover").Count.Should().Be(1));
         }
 
         [Test]
@@ -892,7 +890,7 @@ namespace MudBlazor.UnitTests.Components
             if (closeOnClear)
             {
                 // Check that the component is closed
-                comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+                comp.WaitForAssertion(() => comp.Markup.Should().NotContain("mud-popover-open"));
             }
             else
             {

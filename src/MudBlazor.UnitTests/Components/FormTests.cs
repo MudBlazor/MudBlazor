@@ -4,7 +4,6 @@ using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
-using MudBlazor.Docs.Examples;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents.Form;
 using MudBlazor.Utilities;
@@ -779,7 +778,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("11")).Click());
             // wait for picker to close
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(0));
-            comp.WaitForAssertion(() => comp.FindAll("div.mud-popover").Count.Should().Be(1));
+
             form.IsTouched.Should().Be(true);
             form.IsValid.Should().Be(true);
             form.Errors.Length.Should().Be(0);

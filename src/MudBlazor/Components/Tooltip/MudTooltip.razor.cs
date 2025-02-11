@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
@@ -159,6 +158,16 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool Disabled { get; set; }
+
+        /// <summary>
+        /// Register and Show the Popover for the tooltip if it is not disabled, set to be visible, the content or Text is not empty or null
+        /// </summary>
+        private bool ShowToolTip()
+        {
+            if (_anchorOrigin == Origin.TopLeft || _transformOrigin == Origin.TopLeft)
+                ConvertPlacement();
+            return !Disabled && _visibleState.Value && (TooltipContent is not null || !string.IsNullOrEmpty(Text));
+        }
 
         private Task HandlePointerEnterAsync()
         {

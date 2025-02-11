@@ -1,11 +1,8 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using AngleSharp.Html.Dom;
+﻿using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
-using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.Tooltip;
 using NUnit.Framework;
 
@@ -45,16 +42,8 @@ namespace MudBlazor.UnitTests.Components
 
             button.ParentElement.ClassList.Should().Contain("mud-tooltip-root");
 
-            //the button [0] and [1] the popover npde
-            button.ParentElement.Children.Should().HaveCount(2);
-
-            var popoverNode = button.ParentElement.Children[1];
-            popoverNode.Id.Should().StartWith("popover-");
-
-            var popoverContentNode = comp.Find($"#popovercontent-{popoverNode.Id.Substring(8)}");
-
-            //no content for the popover node
-            popoverContentNode.Children.Should().BeEmpty();
+            //the button [0] and the popover node doesn't exist yet
+            button.ParentElement.Children.Should().HaveCount(1);
 
             //not visible by default
             tooltipComp.GetState(x => x.Visible).Should().BeFalse();
@@ -64,6 +53,10 @@ namespace MudBlazor.UnitTests.Components
             await button.ParentElement.TriggerEventAsync("onpointerenter", new PointerEventArgs());
 
             //content should be visible
+            var popoverNode = button.ParentElement.Children[1];
+            popoverNode.Id.Should().StartWith("popover-");
+
+            var popoverContentNode = comp.Find($"#popovercontent-{popoverNode.Id.Substring(8)}");
             popoverContentNode.TextContent.Should().Be("my tooltip content text");
             popoverContentNode.ClassList.Should().Contain("d-flex");
 
@@ -79,7 +72,9 @@ namespace MudBlazor.UnitTests.Components
                 button.ParentElement.FocusOut();
             }
             //no content should be visible
-            popoverContentNode.Children.Should().BeEmpty();
+            comp.Markup.Should().NotContain("my tooltip content text");
+            //the button [0] and the popover node doesn't exist again
+            button.ParentElement.Children.Should().HaveCount(1);
 
             tooltipComp.GetState(x => x.Visible).Should().BeFalse();
         }
@@ -115,19 +110,16 @@ namespace MudBlazor.UnitTests.Components
             button.ParentElement.ClassList.Should().Contain("mud-tooltip-root");
 
             //the button [0] and [1] the popover node
-            button.ParentElement.Children.Should().HaveCount(2);
+            button.ParentElement.Children.Should().HaveCount(1);
+
+            //trigger pointerover
+
+            await button.ParentElement.TriggerEventAsync("onpointerenter", new PointerEventArgs());
 
             var popoverNode = button.ParentElement.Children[1];
             popoverNode.Id.Should().StartWith("popover-");
 
             var popoverContentNode = comp.Find($"#popovercontent-{popoverNode.Id.Substring(8)}");
-
-            //no content for the popover node
-            popoverContentNode.Children.Should().BeEmpty();
-
-            //trigger pointerover
-
-            await button.ParentElement.TriggerEventAsync("onpointerenter", new PointerEventArgs());
 
             //content should be visible
             popoverContentNode.ClassList.Should().Contain("mud-tooltip");
@@ -145,7 +137,9 @@ namespace MudBlazor.UnitTests.Components
                 button.ParentElement.FocusOut();
             }
             //no content should be visible
-            popoverContentNode.Children.Should().BeEmpty();
+            comp.Markup.Should().NotContain("My content");
+            //the button [0] and the popover node doesn't exist again
+            button.ParentElement.Children.Should().HaveCount(1);
         }
 
         [Test]
