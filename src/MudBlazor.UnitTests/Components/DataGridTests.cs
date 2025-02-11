@@ -3245,7 +3245,7 @@ namespace MudBlazor.UnitTests.Components
                 foreach (var column in dataGrid.Instance.RenderedColumns)
                 {
                     await column.HiddenState.SetValueAsync(true);
-                };
+                }
             });
 
             // cannot render the component again there can be only one mudpopoverprovider
@@ -3259,7 +3259,7 @@ namespace MudBlazor.UnitTests.Components
                 foreach (var column in dataGrid.Instance.RenderedColumns)
                 {
                     await column.HiddenState.SetValueAsync(false);
-                };
+                }
             });
 
             // 6 columns, 0 hidden (1 permanently hidden)
