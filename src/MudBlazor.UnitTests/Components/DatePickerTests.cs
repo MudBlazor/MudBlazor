@@ -657,6 +657,23 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task PersianCalendarDefaultTest()
+        {
+            var timeProvider = new FakeTimeProvider();
+            Context.Services.AddSingleton<TimeProvider>(timeProvider);
+            timeProvider.SetUtcNow(new DateTime(2025, 2, 1, 0, 0, 0, DateTimeKind.Utc));
+
+            var comp = Context.RenderComponent<PersianDatePickerTest>(paramter => paramter.Add(p => p.Date, null));
+            var datePicker = comp.FindComponent<MudDatePicker>().Instance;
+            await comp.InvokeAsync(() => datePicker.OpenAsync());
+
+            datePicker.Text.Should().BeNull();
+            comp.Find("button.mud-button-year").TrimmedText().Equals("1403");
+            comp.Find("button.mud-button-month").TrimmedText().Should().Contain("1403");
+            comp.Find("button.mud-button-date").TrimmedText().Should().BeNullOrEmpty();
+        }
+
+        [Test]
         public void SetPickerValue_CheckText()
         {
             var date = DateTime.Now;
