@@ -18,7 +18,7 @@
                          ErrorId="@ErrorId"
                          Disabled="@GetDisabledState()"
                          Required="@Required"
-                         @onclick="@OnInputClickedAsync"
+                         @onmousedown="@OnInputClickedAsync"
                          @onfocus="@OnInputFocusedAsync"
                          ForId="@InputElementId">
             <InputContent>
@@ -39,14 +39,14 @@
                           OnAdornmentClick="@AdornmentClickHandlerAsync"
                           AdornmentAriaLabel="@AdornmentAriaLabel"
                           Clearable="@(Clearable && !GetReadOnlyState())"
-                          OnClearButtonClick="@OnClearButtonClick"
+                          OnClearButtonClick="@HandleClearButtonAsync"
                           ClearIcon="@ClearIcon"
                           MaxLength="@MaxLength"
                           autocomplete="@GetAutocomplete()"
                           @attributes="UserAttributes"
-                          TextChanged="OnTextChangedAsync"
-                          OnBlur="OnInputBlurredAsync"
+                          TextChanged="OnTextChangedAsync"                          
                           @onfocus="@OnInputFocusedAsync"
+                          OnBlur="OnInputBlurredAsync"
                           OnKeyDown="@OnInputKeyDownAsync"
                           OnKeyUp="@OnInputKeyUpAsync" KeyUpPreventDefault="KeyUpPreventDefault"
                           Placeholder="@Placeholder" Immediate="true"
@@ -69,12 +69,12 @@
                     }
                 }
 
-                <MudPopover Open="@Open" 
+                <MudPopover Open="@Open"
                             Class="@PopoverClass"
                             MaxHeight="@MaxHeight"
                             RelativeWidth="@RelativeWidth"
-                            AnchorOrigin="@AnchorOrigin" 
-                            TransformOrigin="@TransformOrigin"                                                          
+                            AnchorOrigin="@AnchorOrigin"
+                            TransformOrigin="@TransformOrigin"
                             Fixed="@DropdownSettings.Fixed"
                             OverflowBehavior="@DropdownSettings.OverflowBehavior">
                     @if (ProgressIndicatorInPopoverTemplate is not null && IsLoading)
@@ -99,22 +99,22 @@
                                 bool showDisabledTemplate = ItemDisabledTemplate is not null && isDisabled;
                                 var captureIndex = index;
                                 <MudListItem T="T" Value="@item" @key="@item" id="@GetListItemId(captureIndex)" Disabled="@(isDisabled)" OnClick="@(async () => await ListItemOnClickAsync(item))" OnClickPreventDefault="true" Class="@GetListItemClassname(isSelected)">
-                                     @if (showDisabledTemplate)
-                                     {
-                                         @ItemDisabledTemplate!(item)
-                                     }
-                                     else if (showSelectedTemplate)
-                                     {
-                                         @ItemSelectedTemplate!(item)
-                                     }
-                                     else if (ItemTemplate is not null)
-                                     {
-                                         @ItemTemplate(item)
-                                     }
-                                     else
-                                     {
-                                         @GetItemString(item)
-                                     }
+                                    @if (showDisabledTemplate)
+                                    {
+                                        @ItemDisabledTemplate!(item)
+                                    }
+                                    else if (showSelectedTemplate)
+                                    {
+                                        @ItemSelectedTemplate!(item)
+                                    }
+                                    else if (ItemTemplate is not null)
+                                    {
+                                        @ItemTemplate(item)
+                                    }
+                                    else
+                                    {
+                                        @GetItemString(item)
+                                    }
                                 </MudListItem>
                             }
                             @if (MoreItemsTemplate is not null && _returnedItemsCount > MaxItems)

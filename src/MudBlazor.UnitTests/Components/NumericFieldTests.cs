@@ -1006,6 +1006,106 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [SetUICulture("ru-RU")]
+        public void Should_ignore_default_culture()
+        {
+            var comp = Context.RenderComponent<NumericFieldRenderTest>();
+
+            comp.Find("input").Change("123.45");
+            comp.Find("input").Blur();
+
+            comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(123.45M));
+            comp.Instance.NumericField.Text.Should().Be("123.45");
+            comp.Instance.NumericField.Culture.Name.Should().Be("");
+        }
+
+        [Test]
+        [SetUICulture("ru-RU")]
+        public void Format_should_use_default_culture()
+        {
+            var comp = Context.RenderComponent<MudNumericField<decimal>>(parameters => parameters
+                                .Add(p => p.Format, "N3"));
+
+            comp.Find("input").Change("123,45");
+            comp.Find("input").Blur();
+
+            comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(123.45M));
+            comp.Instance.Text.Should().Be("123,450");
+            comp.Instance.Culture.Name.Should().Be("ru-RU");
+        }
+
+        [Test]
+        [SetUICulture("ru-RU")]
+        public void Pattern_should_use_default_culture()
+        {
+            var comp = Context.RenderComponent<MudNumericField<decimal>>(parameters => parameters
+                                .Add(p => p.Pattern, "[0-9,.\\-]"));
+
+            comp.Find("input").Change("123,45");
+            comp.Find("input").Blur();
+
+            comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(123.45M));
+            comp.Instance.Text.Should().Be("123,45");
+            comp.Instance.Culture.Name.Should().Be("ru-RU");
+        }
+
+        [Test]
+        [SetUICulture("ru-RU")]
+        public void Should_apply_defined_culture()
+        {
+            var comp = Context.RenderComponent<NumericFieldCultureTest>();
+            var inputs = comp.FindAll("input");
+            var immediate = inputs.First();
+            var notImmediate = inputs.Last();
+
+            //german
+            notImmediate.Change("1.234,56");
+            notImmediate.Blur();
+            comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Text.Should().Be("1.234,56"));
+            comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Value.Should().Be(1234.56));
+            comp.Instance.FieldNotImmediate.Culture.Name.Should().Be("de-DE");
+
+            // English
+            immediate.Input("1234.56");
+            immediate.Blur();
+            comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Text.Should().Be("1,234.56"));
+            comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Value.Should().Be(1234.56));
+            comp.Instance.FieldImmediate.Culture.Name.Should().Be("en-US");
+        }
+
+        [Test]
+        [SetUICulture("ru-RU")]
+        public void Format_should_use_defined_culture()
+        {
+            var comp = Context.RenderComponent<MudNumericField<decimal>>(parameters => parameters
+                                .Add(p => p.Format, "N3")
+                                .Add(p => p.Culture, CultureInfo.GetCultureInfo("en-US")));
+
+            comp.Find("input").Change("123.45");
+            comp.Find("input").Blur();
+
+            comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(123.45M));
+            comp.Instance.Text.Should().Be("123.450");
+            comp.Instance.Culture.Name.Should().Be("en-US");
+        }
+
+        [Test]
+        [SetUICulture("ru-RU")]
+        public void Pattern_should_use_defined_culture()
+        {
+            var comp = Context.RenderComponent<MudNumericField<decimal>>(parameters => parameters
+                                .Add(p => p.Pattern, "[0-9,.\\-]")
+                                .Add(p => p.Culture, CultureInfo.GetCultureInfo("en-US")));
+
+            comp.Find("input").Change("123.45");
+            comp.Find("input").Blur();
+
+            comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(123.45M));
+            comp.Instance.Text.Should().Be("123.45");
+            comp.Instance.Culture.Name.Should().Be("en-US");
+        }
+
+        [Test]
         public void Should_render_conversion_error_message()
         {
             var comp = Context.RenderComponent<MudNumericField<int>>(parameters => parameters

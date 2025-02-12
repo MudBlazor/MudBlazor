@@ -30,6 +30,97 @@
       }
     }
   }
+
+  &.mud-button-group-text-size-small .mud-button-root {
+    padding: 4px 5px;
+    font-size: 0.8125rem;
+
+    &.mud-icon-button .mud-icon-root {
+      font-size: 1.422rem;
+    }
+  }
+
+  &.mud-button-group-text-size-large .mud-button-root {
+    padding: 8px 11px;
+    font-size: 0.9375rem;
+
+    &.mud-icon-button .mud-icon-root {
+      font-size: 1.641rem;
+    }
+  }
+
+  &.mud-button-group-outlined-size-small .mud-button-root {
+    padding: 3px 9px;
+    font-size: 0.8125rem;
+
+    &.mud-icon-button {
+      padding: 3px 9px;
+
+      .mud-icon-root {
+        font-size: 1.422rem;
+      }
+    }
+  }
+
+  &.mud-button-group-outlined-size-large .mud-button-root {
+    padding: 7px 21px;
+    font-size: 0.9375rem;
+
+    &.mud-icon-button {
+      padding: 7px 15px;
+
+      .mud-icon-root {
+        font-size: 1.641rem;
+      }
+    }
+  }
+
+  &.mud-button-group-filled-size-small .mud-button-root {
+    padding: 4px 10px;
+    font-size: 0.8125rem;
+
+    &.mud-icon-button {
+      padding: 4px 10px;
+
+      .mud-icon-root {
+        font-size: 1.422rem;
+      }
+    }
+  }
+
+  &.mud-button-group-filled-size-large .mud-button-root {
+    padding: 8px 22px;
+    font-size: 0.9375rem;
+
+    &.mud-icon-button {
+      padding: 8px 16px;
+
+      .mud-icon-root {
+        font-size: 1.641rem;
+      }
+    }
+  }
+
+  .mud-button-root.mud-icon-button {
+    padding-right: 12px;
+    padding-left: 12px;
+
+    .mud-icon-root {
+      font-size: 1.516rem;
+    }
+
+    &.mud-ripple-icon {
+      &:after {
+        transform: scale(10,10);
+      }
+
+      &:active:after {
+        transform: scale(0,0);
+        opacity: 0.1;
+        transition: 0s;
+      }
+    }
+  }
 }
 
 .mud-button-group-horizontal {
@@ -261,99 +352,4 @@
 
 .mud-button-group-disable-elevation {
   box-shadow: none;
-}
-
-.mud-button-group-root {
-  &.mud-button-group-text-size-small .mud-button-root {
-    padding: 4px 5px;
-    font-size: 0.8125rem;
-
-    &.mud-icon-button .mud-icon-root {
-      font-size: 1.422rem;
-    }
-  }
-
-  &.mud-button-group-text-size-large .mud-button-root {
-    padding: 8px 11px;
-    font-size: 0.9375rem;
-
-    &.mud-icon-button .mud-icon-root {
-      font-size: 1.641rem;
-    }
-  }
-
-  &.mud-button-group-outlined-size-small .mud-button-root {
-    padding: 3px 9px;
-    font-size: 0.8125rem;
-
-    &.mud-icon-button {
-      padding: 3px 9px;
-
-      .mud-icon-root {
-        font-size: 1.422rem;
-      }
-    }
-  }
-
-  &.mud-button-group-outlined-size-large .mud-button-root {
-    padding: 7px 21px;
-    font-size: 0.9375rem;
-
-    &.mud-icon-button {
-      padding: 7px 15px;
-
-      .mud-icon-root {
-        font-size: 1.641rem;
-      }
-    }
-  }
-
-  &.mud-button-group-filled-size-small .mud-button-root {
-    padding: 4px 10px;
-    font-size: 0.8125rem;
-
-    &.mud-icon-button {
-      padding: 4px 10px;
-
-      .mud-icon-root {
-        font-size: 1.422rem;
-      }
-    }
-  }
-
-  &.mud-button-group-filled-size-large .mud-button-root {
-    padding: 8px 22px;
-    font-size: 0.9375rem;
-
-    &.mud-icon-button {
-      padding: 8px 16px;
-
-      .mud-icon-root {
-        font-size: 1.641rem;
-      }
-    }
-  }
-}
-
-.mud-button-group-root {
-  .mud-button-root.mud-icon-button {
-    padding-right: 12px;
-    padding-left: 12px;
-
-    .mud-icon-root {
-      font-size: 1.516rem;
-    }
-
-    &.mud-ripple-icon {
-      &:after {
-        transform: scale(10,10);
-      }
-
-      &:active:after {
-        transform: scale(0,0);
-        opacity: 0.1;
-        transition: 0s;
-      }
-    }
-  }
 }

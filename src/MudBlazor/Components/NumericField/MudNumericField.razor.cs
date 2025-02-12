@@ -142,6 +142,24 @@ namespace MudBlazor
         private bool IsNumberMode => InputMode == InputMode.numeric || InputMode == InputMode.@decimal;
         private bool IsFormatted => Pattern is not null || Format is not null || _cultureHasValue;
 
+        protected override void OnAfterRender(bool firstRender)
+        {
+            if (!firstRender)
+            {
+                return;
+            }
+
+            // Overrides the browser's culture since <input type="number"> does not consider culture.
+            // If a specific Culture, Pattern, or Format is defined, <input type="text"> will be used 
+            // with the corresponding attributes applied.
+            if (!IsFormatted)
+            {
+                SetCulture(CultureInfo.InvariantCulture);
+            }
+
+            base.OnAfterRender(firstRender);
+        }
+
         /// <inheritdoc />
         [ExcludeFromCodeCoverage]
         public override ValueTask FocusAsync()

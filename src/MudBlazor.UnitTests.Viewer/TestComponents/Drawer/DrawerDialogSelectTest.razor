@@ -1,0 +1,36 @@
+﻿<MudButton @onclick="@(() => dialog_open = !dialog_open)" Variant="Variant.Filled" Color="Color.Primary">
+    Open Simple Dialog
+</MudButton>
+
+<MudDialog @bind-Visible="dialog_open" Style="width: 80%; height: 80%;">
+    <DialogContent>
+        <MudButton Variant="Variant.Text" OnClick="@(() => OpenDrawer(Anchor.End))">Open Drawer</MudButton>
+        <MudDrawer @bind-Open="@_open" Anchor="@_anchor" Elevation="1" Variant="@DrawerVariant.Temporary" OverlayAutoClose="@_overlayAutoClose">
+            <MudDrawerHeader>
+                <MudText Typo="Typo.h6">My App</MudText>
+            </MudDrawerHeader>
+            <MudSelect T="int" Label="Label">
+                <MudSelectItem T="int" Value="1">1</MudSelectItem>
+                <MudSelectItem T="int" Value="2">2</MudSelectItem>
+                <MudSelectItem T="int" Value="3">3</MudSelectItem>
+                <MudSelectItem T="int" Value="4">4</MudSelectItem>
+                <MudSelectItem T="int" Value="5">5</MudSelectItem>
+            </MudSelect>
+        </MudDrawer>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    #nullable enable
+    public static string __description__ = " Drawer inside a Dialog with a Select inside the Drawer make sure z-index is not overridden by css. ";
+    private bool dialog_open;
+    private bool _open;
+    private Anchor _anchor;
+    private bool _overlayAutoClose = true;
+
+    private void OpenDrawer(Anchor anchor)
+    {
+        _open = true;
+        _anchor = anchor;
+    }
+}

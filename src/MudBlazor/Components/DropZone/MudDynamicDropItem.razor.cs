@@ -277,4 +277,11 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
             .AddClass(DisabledClass, Disabled)
             .AddClass(Class)
             .Build();
+
+    protected string Stylename =>
+        new StyleBuilder()
+            .AddStyle("touch-action", "none", !Disabled)
+            .AddStyle("transform", "translate3d(0px, 0px, 0px)")
+            .AddStyle(Style)
+            .Build();
 }
