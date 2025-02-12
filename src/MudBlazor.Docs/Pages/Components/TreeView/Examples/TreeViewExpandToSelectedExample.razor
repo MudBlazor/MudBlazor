@@ -1,0 +1,86 @@
+﻿@using System.Collections.ObjectModel
+@using System.Linq
+@namespace MudBlazor.Docs.Examples
+
+<MudPaper Width="300px" Elevation="0">
+    <MudTreeView ServerData="@LoadServerData" Items="@InitialTreeItems">
+        <ItemTemplate>
+            <MudTreeViewItem
+                Value="@context.Value"
+                Items="@context.Children"
+                ItemsChanged="@(new Action<IReadOnlyCollection<TreeItemData<string>>>(items => OnItemsLoaded(context, items)))"
+                @bind-Expanded="@context.Expanded"
+                CanExpand="@context.Expandable"
+                Icon="@context.Icon"
+                LoadingIconColor="Color.Info"
+                />
+        </ItemTemplate>
+    </MudTreeView>
+</MudPaper>
+
+@code {
+
+    private List<TreeItemData<string>> InitialTreeItems { get; set; } = new();
+    private int _idCounter=1; // <- The counter makes sure the generated non-selected items are unique.
+
+    protected override void OnInitialized()
+    {
+        // MudTreeView initially only gets these top-level items.
+        InitialTreeItems.Add(new TreeItemData<string> {
+            Value = "All Mail", Icon = Icons.Material.Filled.Label,
+            Expanded = true,
+            Children = [
+                new TreeItemData<string> { Value = "Promotions", Icon = Icons.Material.Filled.Group, },
+                new TreeItemData<string> { Value = "Updates", Icon = Icons.Material.Filled.Info, },
+                new TreeItemData<string> { Value = "Forums", Icon = Icons.Material.Filled.QuestionAnswer },
+                new TreeItemData<string> { Value = "Social", Icon = Icons.Material.Filled.LocalOffer, Expandable = false }
+            ] });
+        InitialTreeItems.Add(new TreeItemData<string> { Value = "Trash", Icon = Icons.Material.Filled.Delete });
+    }
+
+    public async Task<IReadOnlyCollection<TreeItemData<string>>> LoadServerData(string parentValue)
+    {
+        // Wait 500ms to simulate a server load.
+        await Task.Delay(500);
+        switch (parentValue) {
+            case "Forums":
+                return [
+                    new TreeItemData<string> { Value = $"More Spam ({_idCounter++})", Icon = Icons.Material.Filled.Group, },
+                    new TreeItemData<string> { Value = $"L.E.D Door Mats ({_idCounter++})", Icon = Icons.Material.Outlined.Lightbulb, Expandable = false },
+                    new TreeItemData<string> { Value = $"Car Beauty Salon ({_idCounter++})", Icon = Icons.Material.Filled.CarRepair, Expandable = false },
+                    new TreeItemData<string> { Value = $"Fakedoors.com ({_idCounter++})", Icon = Icons.Material.Outlined.DoorFront, Expandable = false },
+                    new TreeItemData<string> { Value = $"Bluetooth WC", Icon = Icons.Material.Filled.Wc }
+                ];
+            case "Bluetooth WC":
+                return [
+                    new TreeItemData<string> { Value = $"More Spam ({_idCounter++})", Icon = Icons.Material.Filled.Group, },
+                    new TreeItemData<string> { Value = $"L.E.D Door Mats ({_idCounter++})", Icon = Icons.Material.Outlined.Lightbulb, Expandable = false },
+                    new TreeItemData<string> { Value = $"Car Beauty Salon Selected", Icon = Icons.Material.Filled.CarRepair, Expandable = false, Selected = true },
+                    new TreeItemData<string> { Value = $"Fakedoors.com ({_idCounter++})", Icon = Icons.Material.Outlined.DoorFront, Expandable = false },
+                    new TreeItemData<string> { Value = $"Bluetooth Toilet ({_idCounter++})", Icon = Icons.Material.Filled.Wc, Expandable = false }
+                ];
+            default:
+                return [
+                    new TreeItemData<string> { Value = $"More Spam ({_idCounter++})", Icon = Icons.Material.Filled.Group, },
+                    new TreeItemData<string> { Value = $"L.E.D Door Mats ({_idCounter++})", Icon = Icons.Material.Outlined.Lightbulb, Expandable = false },
+                    new TreeItemData<string> { Value = $"Car Beauty Salon ({_idCounter++})", Icon = Icons.Material.Filled.CarRepair, Expandable = false },
+                    new TreeItemData<string> { Value = $"Fakedoors.com ({_idCounter++})", Icon = Icons.Material.Outlined.DoorFront, Expandable = false },
+                    new TreeItemData<string> { Value = $"Bluetooth Toilet ({_idCounter++})", Icon = Icons.Material.Filled.Wc, Expandable = false }
+                ];
+        }
+    }
+
+    private void OnItemsLoaded(TreeItemData<string> treeItemData, IReadOnlyCollection<TreeItemData<string>> children)
+    {
+        // Here we store the server-loaded children in the treeItemData so that they are available in the InitialTreeItems
+        // if you don't do this you loose already loaded children on next render update.
+        treeItemData.Children = children?.ToList();
+    }
+
+    public bool IsInExpandedPath(string value, int level) {
+        // The selected item is: Forums -> Bluetooth WC -> Car Beauty Salon Selected.
+        string[] path = ["Forums", "Bluetooth WC", "Car Beauty Salon Selected"];
+        return (path.Contains(value) == true);
+    } // IsInExpandedPath
+
+}
