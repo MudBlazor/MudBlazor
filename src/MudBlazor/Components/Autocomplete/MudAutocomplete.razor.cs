@@ -962,6 +962,9 @@ namespace MudBlazor
 
         private async Task OnInputActivationAsync(bool openMenu)
         {
+            if (_isFocused)
+                return;
+
             _isFocused = true;
 
             if (Open || GetDisabledState() || GetReadOnlyState())
