@@ -1405,7 +1405,7 @@ namespace MudBlazor.UnitTests.Components
             isSelected("Dog 3").Should().Be(null);
             isSelected("Dog 4").Should().Be(null);
             isSelected("Dog 5").Should().Be(null);
-        } // TreeView_ServerSideData_ExpandToSelected
-        
+        }
+
     }
 }
