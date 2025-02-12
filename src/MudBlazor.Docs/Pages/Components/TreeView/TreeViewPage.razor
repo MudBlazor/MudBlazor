@@ -1,4 +1,4 @@
-﻿@page "/components/treeview"
+@page "/components/treeview"
 
 <DocsPage>
     <DocsPageHeader Title="Tree View" Component="@nameof(MudTreeView<T>)">
@@ -84,8 +84,8 @@
         <DocsPageSection>
             <SectionHeader Title="Binding Items Directly">
                 <Description>
-                    You can also bind the parameters <CodeInline>Selected</CodeInline> and <CodeInline>Expanded</CodeInline> on individual <CodeInline Tag>MudTreeViewItems</CodeInline>. 
-                    Of course, manipulating the selection should typically happen via binding <CodeInline>SelectedValue</CodeInline> or <CodeInline>SelectedValues</CodeInline> on the 
+                    You can also bind the parameters <CodeInline>Selected</CodeInline> and <CodeInline>Expanded</CodeInline> on individual <CodeInline Tag>MudTreeViewItems</CodeInline>.
+                    Of course, manipulating the selection should typically happen via binding <CodeInline>SelectedValue</CodeInline> or <CodeInline>SelectedValues</CodeInline> on the
                     <CodeInline Tag>MudTreeView</CodeInline> but binding the item's parameters makes sense when using the item template (see next example).
                 </Description>
             </SectionHeader>
@@ -143,11 +143,11 @@
         <DocsPageSection>
             <SectionHeader Title="Custom Look and Behavior">
                 <Description>
-                    When the <CodeInline>Content</CodeInline> property is used, it will completely replace the default rendering of the <CodeInline>MudTreeViewItem</CodeInline> to use your own. 
+                    When the <CodeInline>Content</CodeInline> property is used, it will completely replace the default rendering of the <CodeInline>MudTreeViewItem</CodeInline> to use your own.
                     This gives you every opportunity to change the behavior of <CodeInline>MudTreeView</CodeInline> to anything you want. In this example we build our own non-standard multi selection behavior where
                     selecting the parent node does not automatically select the children and vice-versa. Also, note how only certain items can be selected.
                     <br /><br />
-                    By the way, to get nice scrolling behavior like in this example, you must constrain the container's <CodeInline>height</CodeInline> or <CodeInline>max-height</CodeInline> and set the container's 
+                    By the way, to get nice scrolling behavior like in this example, you must constrain the container's <CodeInline>height</CodeInline> or <CodeInline>max-height</CodeInline> and set the container's
                     <CodeInline>overflow-y</CodeInline> accordingly.
                 </Description>
             </SectionHeader>
@@ -168,6 +168,20 @@
             </SectionContent>
         </DocsPageSection>
 
+        <DocsPageSection>
+            <SectionHeader Title="Expand to Selected">
+                <Description>
+                    Set the <CodeInline Tag>IsInExpandedPath</CodeInline> property to enable the <CodeInline>MudTreeView</CodeInline>
+                    to expand all child items down to the selected child items.
+                    The <CodeInline>Func&lt;T, Int32, Boolean&gt;</CodeInline> delegate should return true, when
+                    the <CodeInline>T</CodeInline> is part of the path down to a selected child item, or is the selected
+                    child item, otherwise it should return false.
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" Code="@nameof(TreeViewExpandToSelectedExample)" ShowCode="false">
+                <TreeViewExpandToSelectedExample />
+            </SectionContent>
+        </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>
-
