@@ -173,6 +173,7 @@
                 <Description>
                     Set the <CodeInline Tag>IsInExpandedPath</CodeInline> property to enable the <CodeInline>MudTreeView</CodeInline>
                     to expand all child items down to the selected child items.
+                    This is different then <CodeInline Tag>AutoExpand</CodeInline>, because it can work with <CodeInline Tag>Server Side Data</CodeInline>.
                     The <CodeInline>Func&lt;T, Int32, Boolean&gt;</CodeInline> delegate should return true, when
                     the <CodeInline>T</CodeInline> is part of the path down to a selected child item, or is the selected
                     child item, otherwise it should return false.
