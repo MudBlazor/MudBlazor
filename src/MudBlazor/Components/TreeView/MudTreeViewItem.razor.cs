@@ -601,7 +601,7 @@ namespace MudBlazor
         }
 
 		internal async Task ExpandToSelectedAsync(Int32 level) {
-			if ((this.MudTreeRoot.IsInExpandedPath != null) && (this.Value is not null)) {
+			if ((this.MudTreeRoot != null) && (this.MudTreeRoot.IsInExpandedPath != null) && (this.Value is not null)) {
 				if (this.Selected == true) {
 					HashSet<T> selectedValues = new HashSet<T>();
 					selectedValues.Add(this.Value);
