@@ -1,5 +1,8 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
@@ -125,7 +128,7 @@ namespace MudBlazor
         public bool Disabled { get; set; }
 
         /// <summary>
-        /// If true, the MudTreeViewItem's selection can not be changed.  
+        /// If true, the MudTreeViewItem's selection can not be changed.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Behavior)]
@@ -596,5 +599,34 @@ namespace MudBlazor
             // only _selectedState.Value matters!
             return _selectedState ? CheckedIcon : UncheckedIcon;
         }
+
+		internal async Task ExpandToSelectedAsync(Int32 level) {
+			if ((this.MudTreeRoot.IsInExpandedPath != null) && (this.Value is not null)) {
+				if (this.Selected == true) {
+					HashSet<T> selectedValues = new HashSet<T>();
+					selectedValues.Add(this.Value);
+					await UpdateSelectionStateAsync(selectedValues);
+
+					// Stop iterating, when multiselection if off.
+					if (this.MudTreeRoot.MultiSelection == false) {
+						return;
+					}
+				}
+
+				// Try to expand this item, if it is in the path to a selected item.
+				if (this.MudTreeRoot.IsInExpandedPath(this.Value, level) == true) {
+					await _expandedState.SetValueAsync(true);
+					await this.TryInvokeServerLoadFunc();
+				}
+
+				// Iterate through all the child items.
+				if (this._childItems != null) {
+					foreach (MudTreeViewItem<T> childItem in this._childItems) {
+						await childItem.ExpandToSelectedAsync(level + 1);
+					}
+				}
+			}
+		} // ExpandToSelectedAsync
+
     }
 }
