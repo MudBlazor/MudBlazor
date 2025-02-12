@@ -619,7 +619,7 @@ namespace MudBlazor
 		/// </summary>
 		[Parameter]
 		[Category(CategoryTypes.TreeView.Behavior)]
-		public Func<T, Int32, Boolean> IsInExpandedPath { get; set; }
+		public Func<T, Int32, Boolean>? IsInExpandedPath { get; set; }
 
 		private async Task ExpandToSelectedAsync() {
 			foreach (MudTreeViewItem<T> childItem in this._childItems) {
