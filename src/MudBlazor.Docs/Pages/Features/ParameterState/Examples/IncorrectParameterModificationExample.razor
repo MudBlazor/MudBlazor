@@ -1,0 +1,26 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudContainer Class="mt-8" Style="justify-items: center">
+    <MudPaper Class="pa-4" MaxWidth="400px">
+        <MudStack Spacing="2">
+            <MudButton OnClick="Update">Expand</MudButton>
+            <MudDivider />
+
+            <MudCollapse @ref="_collapseRef">
+                This content is collapsible.
+            </MudCollapse>
+
+        </MudStack>
+    </MudPaper>
+</MudContainer>
+
+@code {
+    private MudCollapse _collapseRef = null!;
+
+#pragma warning disable BL0005
+    private void Update()
+    {
+        _collapseRef.Expanded = true; // ❌ Not recommended
+    }
+#pragma warning restore BL0005
+}

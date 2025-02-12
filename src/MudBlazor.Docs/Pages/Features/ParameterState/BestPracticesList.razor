@@ -1,0 +1,42 @@
+﻿<MudPaper Outlined Class="my-4">
+    <MudList T="string" @bind-SelectedValues="Dos" SelectionMode="SelectionMode.MultiSelection" CheckBoxColor="Color.Tertiary" ReadOnly>
+        <MudListSubheader>
+            Parameter Do's
+        </MudListSubheader>
+        @foreach (var item in Dos) 
+        {
+            <MudListItem Text="@item" />
+        }
+    </MudList>
+</MudPaper>
+
+<MudPaper Outlined Class="my-4">
+    <MudList T="string" @bind-SelectedValues="Donts" SelectionMode="SelectionMode.MultiSelection" CheckBoxColor="Color.Error" CheckedIcon="@Icons.Material.Filled.Dangerous" ReadOnly>
+        <MudListSubheader>
+            Parameter Don'ts
+        </MudListSubheader>
+        @foreach (var item in Donts)
+        {
+            <MudListItem Text="@item" />
+        }
+    </MudList>
+</MudPaper>
+
+@code
+{
+    public IReadOnlyCollection<string> Dos = [
+        "Store parameter values in a private field instead of modifying parameters directly",
+        "Use OnInitialized to set the initial value of a parameter.",
+        "Use OnParametersSet if the component needs to react to external parameter changes.",
+        "Implement two-way binding for parameters that should be updated both internally and externally.",
+        "Minimize unnecessary rerenders by avoiding direct parameter modifications.",
+    ];
+
+    public IReadOnlyCollection<string> Donts = [
+        "Don't modify a parameter directly inside the child component.",
+        "Don't assume that a parameter's value will persist after a parent component rerenders.",
+        "Don't forget that calling StateHasChanged in a parent component can reset child component parameters.",
+        "Don't store mutable objects (like RenderFragment) as parameters if you want to avoid unnecessary rerenders.",
+        "Don't expect the component to reflect new parameter values unless explicitly handled in OnParametersSet.",
+    ];
+}
