@@ -1,106 +1,106 @@
-﻿<MudTreeView ExpandOnClick="true" ServerData="LoadServerData" Items="_treeItems" IsInExpandedPath="this.IsInExpandedPath" Width="350px">
+<MudTreeView ServerData="@LoadServerData" Items="@InitialTreeItems" IsInExpandedPath="this.IsInExpandedPath">
     <ItemTemplate>
         <MudTreeViewItem
-            Text="@context.Text"
             Value="@context.Value"
-            Items="@context.Children"
+            Items="@context.Children?.AsReadOnly()"
             ItemsChanged="@(new Action<IReadOnlyCollection<TreeItemData<string?>>?>(items =>  OnItemsLoaded(context, items)))"
-            Icon="@context.Icon"
+            @bind-Expanded="@context.Expanded"
             CanExpand="@context.Expandable"
-            Expanded="@context.Expanded"
-            Selected="@context.Selected"
-            />
+            @bind-Selected="@context.Selected"
+            Icon="@context.Icon"
+            LoadingIconColor="Color.Info"
+        />
     </ItemTemplate>
 </MudTreeView>
 
 @code {
-    private List<TreeItemData<string>> InitialTreeItems { get; set; } = new();
+    private readonly List<TreeItemData<string?>> InitialTreeItems = [];
 
     protected override void OnInitialized()
     {
         // MudTreeView initially only gets these top-level items.
-        InitialTreeItems.Add(new TreeItemData<string> {
+        InitialTreeItems.Add(new TreeItemData<string?> {
             Value = "Root", Icon = Icons.Material.Filled.Label,
             Expanded = true,
             Children = [
-                new TreeItemData<string> { Value = "House 1", Icon = Icons.Material.Filled.Group, Expandable = false },
-                new TreeItemData<string> { Value = "House 2", Icon = Icons.Material.Filled.Info, },
-                new TreeItemData<string> { Value = "House 3", Icon = Icons.Material.Filled.QuestionAnswer },
-                new TreeItemData<string> { Value = "House 4", Icon = Icons.Material.Filled.LocalOffer, Expandable = false }
+                new TreeItemData<string?> { Value = "House 1", Icon = Icons.Material.Filled.Group, Expandable = false },
+                new TreeItemData<string?> { Value = "House 2", Icon = Icons.Material.Filled.Info, },
+                new TreeItemData<string?> { Value = "House 3", Icon = Icons.Material.Filled.QuestionAnswer },
+                new TreeItemData<string?> { Value = "House 4", Icon = Icons.Material.Filled.LocalOffer, Expandable = false }
             ] });
-        InitialTreeItems.Add(new TreeItemData<string> { Value = "Trash", Icon = Icons.Material.Filled.Delete });
+        InitialTreeItems.Add(new TreeItemData<string?> { Value = "Trash", Icon = Icons.Material.Filled.Delete });
     }
 
-    public async Task<IReadOnlyCollection<TreeItemData<string>>> LoadServerData(string parentValue)
+    public async Task<IReadOnlyCollection<TreeItemData<string?>>?> LoadServerData(string? parentValue)
     {
         // Wait 500ms to simulate a server load.
-        await Task.Delay(500);
+        await Task.Delay(1);
         switch (parentValue) {
 			// Level 1.
             case "House 2":
                 return [
-                    new TreeItemData<string> { Value = $"Car 1", Icon = Icons.Material.Filled.Group },
-                    new TreeItemData<string> { Value = $"Car 2", Icon = Icons.Material.Outlined.Lightbulb, Expandable = false },
-                    new TreeItemData<string> { Value = $"Car 3", Icon = Icons.Material.Filled.CarRepair, Expandable = false },
-                    new TreeItemData<string> { Value = $"Car 4", Icon = Icons.Material.Outlined.DoorFront, Expandable = false },
-                    new TreeItemData<string> { Value = $"Car 5", Icon = Icons.Material.Filled.Wc }
+                    new TreeItemData<string?> { Value = $"Car 1", Icon = Icons.Material.Filled.Group },
+                    new TreeItemData<string?> { Value = $"Car 2", Icon = Icons.Material.Outlined.Lightbulb, Expandable = false },
+                    new TreeItemData<string?> { Value = $"Car 3", Icon = Icons.Material.Filled.CarRepair, Expandable = false },
+                    new TreeItemData<string?> { Value = $"Car 4", Icon = Icons.Material.Outlined.DoorFront, Expandable = false },
+                    new TreeItemData<string?> { Value = $"Car 5", Icon = Icons.Material.Filled.Wc }
                 ];
             case "House 3":
                 return [
-                    new TreeItemData<string> { Value = $"Ship 1", Icon = Icons.Material.Filled.Group, Expandable = false },
-                    new TreeItemData<string> { Value = $"Ship 2", Icon = Icons.Material.Outlined.Lightbulb, Expandable = false },
-                    new TreeItemData<string> { Value = $"Ship 3", Icon = Icons.Material.Filled.CarRepair, Expandable = false },
-                    new TreeItemData<string> { Value = $"Ship 4", Icon = Icons.Material.Outlined.DoorFront, Expandable = false },
-                    new TreeItemData<string> { Value = $"Ship 5", Icon = Icons.Material.Filled.Wc, Expandable = false }
+                    new TreeItemData<string?> { Value = $"Ship 1", Icon = Icons.Material.Filled.Group, Expandable = false },
+                    new TreeItemData<string?> { Value = $"Ship 2", Icon = Icons.Material.Outlined.Lightbulb, Expandable = false },
+                    new TreeItemData<string?> { Value = $"Ship 3", Icon = Icons.Material.Filled.CarRepair, Expandable = false },
+                    new TreeItemData<string?> { Value = $"Ship 4", Icon = Icons.Material.Outlined.DoorFront, Expandable = false },
+                    new TreeItemData<string?> { Value = $"Ship 5", Icon = Icons.Material.Filled.Wc, Expandable = false }
                 ];
 			// Level 2.
             case "Car 1":
                 return [
-                    new TreeItemData<string> { Value = $"Ball 1", Icon = Icons.Material.Filled.Group, Expandable = false },
-                    new TreeItemData<string> { Value = $"Ball 2", Icon = Icons.Material.Outlined.Lightbulb, Expandable = false },
-                    new TreeItemData<string> { Value = $"Ball 3", Icon = Icons.Material.Filled.CarRepair, Expandable = false },
-                    new TreeItemData<string> { Value = $"Ball 4", Icon = Icons.Material.Outlined.DoorFront, Expandable = false },
-                    new TreeItemData<string> { Value = $"Ball 5", Icon = Icons.Material.Filled.Wc, Expandable = false }
+                    new TreeItemData<string?> { Value = $"Ball 1", Icon = Icons.Material.Filled.Group, Expandable = false },
+                    new TreeItemData<string?> { Value = $"Ball 2", Icon = Icons.Material.Outlined.Lightbulb, Expandable = false },
+                    new TreeItemData<string?> { Value = $"Ball 3", Icon = Icons.Material.Filled.CarRepair, Expandable = false },
+                    new TreeItemData<string?> { Value = $"Ball 4", Icon = Icons.Material.Outlined.DoorFront, Expandable = false },
+                    new TreeItemData<string?> { Value = $"Ball 5", Icon = Icons.Material.Filled.Wc, Expandable = false }
                 ];
             case "Car 5":
                 return [
-                    new TreeItemData<string> { Value = $"Computer 1", Icon = Icons.Material.Filled.Group, Expandable = false },
-                    new TreeItemData<string> { Value = $"Computer 2", Icon = Icons.Material.Outlined.Lightbulb },
-                    new TreeItemData<string> { Value = $"Computer 3", Icon = Icons.Material.Filled.CarRepair, Expandable = false },
-                    new TreeItemData<string> { Value = $"Computer 4", Icon = Icons.Material.Outlined.DoorFront, Expandable = false },
-                    new TreeItemData<string> { Value = $"Computer 5", Icon = Icons.Material.Filled.Wc, Expandable = false }
+                    new TreeItemData<string?> { Value = $"Computer 1", Icon = Icons.Material.Filled.Group, Expandable = false },
+                    new TreeItemData<string?> { Value = $"Computer 2", Icon = Icons.Material.Outlined.Lightbulb },
+                    new TreeItemData<string?> { Value = $"Computer 3", Icon = Icons.Material.Filled.CarRepair, Expandable = false },
+                    new TreeItemData<string?> { Value = $"Computer 4", Icon = Icons.Material.Outlined.DoorFront, Expandable = false },
+                    new TreeItemData<string?> { Value = $"Computer 5", Icon = Icons.Material.Filled.Wc, Expandable = false }
                 ];
 			// Level 3.
             case "Computer 2":
                 return [
-                    new TreeItemData<string> { Value = $"Girl 1", Icon = Icons.Material.Filled.Group, Expandable = false },
-                    new TreeItemData<string> { Value = $"Girl 2", Icon = Icons.Material.Outlined.Lightbulb },
-                    new TreeItemData<string> { Value = $"Girl 3", Icon = Icons.Material.Filled.CarRepair, Expandable = false },
-                    new TreeItemData<string> { Value = $"Girl 4", Icon = Icons.Material.Outlined.DoorFront, Expandable = false, Selected = true },
-                    new TreeItemData<string> { Value = $"Girl 5", Icon = Icons.Material.Filled.Wc, Expandable = false }
+                    new TreeItemData<string?> { Value = $"Girl 1", Icon = Icons.Material.Filled.Group, Expandable = false },
+                    new TreeItemData<string?> { Value = $"Girl 2", Icon = Icons.Material.Outlined.Lightbulb },
+                    new TreeItemData<string?> { Value = $"Girl 3", Icon = Icons.Material.Filled.CarRepair, Expandable = false },
+                    new TreeItemData<string?> { Value = $"Girl 4", Icon = Icons.Material.Outlined.DoorFront, Expandable = false, Selected = true },
+                    new TreeItemData<string?> { Value = $"Girl 5", Icon = Icons.Material.Filled.Wc, Expandable = false }
                 ];
 			// Level 4.
             case "Girl 2":
                 return [
-                    new TreeItemData<string> { Value = $"Dog 1", Icon = Icons.Material.Filled.Group, Expandable = false },
-                    new TreeItemData<string> { Value = $"Dog 2", Icon = Icons.Material.Outlined.Lightbulb, Expandable = false },
-                    new TreeItemData<string> { Value = $"Dog 3", Icon = Icons.Material.Filled.CarRepair, Expandable = false },
-                    new TreeItemData<string> { Value = $"Dog 4", Icon = Icons.Material.Outlined.DoorFront, Expandable = false },
-                    new TreeItemData<string> { Value = $"Dog 5", Icon = Icons.Material.Filled.Wc, Expandable = false }
+                    new TreeItemData<string?> { Value = $"Dog 1", Icon = Icons.Material.Filled.Group, Expandable = false },
+                    new TreeItemData<string?> { Value = $"Dog 2", Icon = Icons.Material.Outlined.Lightbulb, Expandable = false },
+                    new TreeItemData<string?> { Value = $"Dog 3", Icon = Icons.Material.Filled.CarRepair, Expandable = false },
+                    new TreeItemData<string?> { Value = $"Dog 4", Icon = Icons.Material.Outlined.DoorFront, Expandable = false },
+                    new TreeItemData<string?> { Value = $"Dog 5", Icon = Icons.Material.Filled.Wc, Expandable = false }
                 ];
 			default:
 				return [];
         }
     }
 
-    private void OnItemsLoaded(TreeItemData<string> treeItemData, IReadOnlyCollection<TreeItemData<string>> children)
+    private void OnItemsLoaded(TreeItemData<string?> treeItemData, IReadOnlyCollection<TreeItemData<string?>>? children)
     {
         // Here we store the server-loaded children in the treeItemData so that they are available in the InitialTreeItems
         // if you don't do this you loose already loaded children on next render update.
         treeItemData.Children = children?.ToList();
     }
 
-    public bool IsInExpandedPath(string value, int level)
+    public bool IsInExpandedPath(string? value, int level)
     {
         // The selected item path.
         string[] path = ["House 2", "Car 5", "Computer 2", "Girl 4"];
