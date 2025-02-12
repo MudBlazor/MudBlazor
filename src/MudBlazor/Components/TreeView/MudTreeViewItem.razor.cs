@@ -611,7 +611,8 @@ namespace MudBlazor
                     await UpdateSelectionStateAsync(selectedValues);
 
                     // Stop iterating, when multiselection if off.
-                    if (this.MudTreeRoot.MultiSelection == false) {
+                    if (this.MudTreeRoot.MultiSelection == false)
+                    {
                         return;
                     }
                 }
