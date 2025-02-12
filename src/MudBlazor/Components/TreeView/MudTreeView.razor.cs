@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Components;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.State;
 using MudBlazor.Utilities;
@@ -278,6 +282,7 @@ namespace MudBlazor
             {
                 _isFirstRender = false;
                 await UpdateItemsAsync();
+				await ExpandToSelectedAsync();
             }
 
             await base.OnAfterRenderAsync(firstRender);
@@ -521,7 +526,7 @@ namespace MudBlazor
 
         ///  <summary>
         ///  Sets the selected value of the tree view in Single- and ToggleSelection mode.
-        ///  If the value is found, the corresponding item is selected; 
+        ///  If the value is found, the corresponding item is selected;
         ///  otherwise, selected value is set default.
         ///  If the selected item is valid it sets the corresponding tree item to selected.
         ///  </summary>
@@ -603,6 +608,24 @@ namespace MudBlazor
 
             return values;
         }
+
+		/// <summary>
+		/// If set, the treeview will try to expand all child items down to the selected child items.
+		/// The parameters to this delegate are:
+		/// T childItemValue
+		/// Int32 treeLevel
+		/// The delegate should return true, when the childItemValue is in the path down to a selected child item, or is
+		/// the selected child item, otherwise it should return false.
+		/// </summary>
+		[Parameter]
+		[Category(CategoryTypes.TreeView.Behavior)]
+		public Func<T, Int32, Boolean> IsInExpandedPath { get; set; }
+
+		private async Task ExpandToSelectedAsync() {
+			foreach (MudTreeViewItem<T> childItem in this._childItems) {
+				await childItem.ExpandToSelectedAsync(0);
+			}
+		} // ExpandToSelectedAsync
 
     }
 }
