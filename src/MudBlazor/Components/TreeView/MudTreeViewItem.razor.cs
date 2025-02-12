@@ -600,39 +600,39 @@ namespace MudBlazor
             return _selectedState ? CheckedIcon : UncheckedIcon;
         }
 
-		internal async Task ExpandToSelectedAsync(Int32 level)
+        internal async Task ExpandToSelectedAsync(Int32 level)
         {
-			if ((this.MudTreeRoot != null) && (this.MudTreeRoot.IsInExpandedPath != null) && (this.Value is not null))
+            if ((this.MudTreeRoot != null) && (this.MudTreeRoot.IsInExpandedPath != null) && (this.Value is not null))
             {
-				if (this.Selected)
+                if (this.Selected)
                 {
-					HashSet<T> selectedValues = new HashSet<T>();
-					selectedValues.Add(this.Value);
-					await UpdateSelectionStateAsync(selectedValues);
+                    HashSet<T> selectedValues = new HashSet<T>();
+                    selectedValues.Add(this.Value);
+                    await UpdateSelectionStateAsync(selectedValues);
 
-					// Stop iterating, when multiselection if off.
-					if (this.MudTreeRoot.MultiSelection == false) {
-						return;
-					}
-				}
+                    // Stop iterating, when multiselection if off.
+                    if (this.MudTreeRoot.MultiSelection == false) {
+                        return;
+                    }
+                }
 
-				// Try to expand this item, if it is in the path to a selected item.
-				if (this.MudTreeRoot.IsInExpandedPath(this.Value, level))
+                // Try to expand this item, if it is in the path to a selected item.
+                if (this.MudTreeRoot.IsInExpandedPath(this.Value, level))
                 {
-					await _expandedState.SetValueAsync(true);
-					await this.TryInvokeServerLoadFunc();
-				}
+                    await _expandedState.SetValueAsync(true);
+                    await this.TryInvokeServerLoadFunc();
+                }
 
-				// Iterate through all the child items.
-				if (this._childItems != null)
+                // Iterate through all the child items.
+                if (this._childItems != null)
                 {
-					foreach (MudTreeViewItem<T> childItem in this._childItems)
+                    foreach (MudTreeViewItem<T> childItem in this._childItems)
                     {
-						await childItem.ExpandToSelectedAsync(level + 1);
-					}
-				}
-			}
-		} // ExpandToSelectedAsync
+                        await childItem.ExpandToSelectedAsync(level + 1);
+                    }
+                }
+            }
+        } // ExpandToSelectedAsync
 
     }
 }
