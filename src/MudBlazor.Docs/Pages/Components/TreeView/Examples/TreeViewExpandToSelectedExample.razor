@@ -1,9 +1,9 @@
-﻿@using System.Collections.ObjectModel
+@using System.Collections.ObjectModel
 @using System.Linq
 @namespace MudBlazor.Docs.Examples
 
 <MudPaper Width="300px" Elevation="0">
-    <MudTreeView ServerData="@LoadServerData" Items="@InitialTreeItems">
+    <MudTreeView ServerData="@LoadServerData" Items="@InitialTreeItems" IsInExpandedPath="this.IsInExpandedPath">
         <ItemTemplate>
             <MudTreeViewItem
                 Value="@context.Value"
@@ -11,6 +11,7 @@
                 ItemsChanged="@(new Action<IReadOnlyCollection<TreeItemData<string>>>(items => OnItemsLoaded(context, items)))"
                 @bind-Expanded="@context.Expanded"
                 CanExpand="@context.Expandable"
+                @bind-Selected="@context.Selected"
                 Icon="@context.Icon"
                 LoadingIconColor="Color.Info"
                 />
