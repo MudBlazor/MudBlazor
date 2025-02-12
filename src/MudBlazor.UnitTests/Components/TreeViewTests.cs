@@ -1286,5 +1286,126 @@ namespace MudBlazor.UnitTests.Components
             parentItemButton.Click();
             GetItemExpandedValue().Should().Be(false);
         }
+
+        [Test]
+        public void TreeView_ServerSideData_ExpandToSelected()
+        {
+            var comp = Context.RenderComponent<TreeViewExpandToSelectedTest>();
+
+            // Expanded.
+            var isExpanded = (string value) => comp.FindComponents<MudTreeViewItem<string>>()
+                .FirstOrDefault(x => x.Instance.Value == value)?.Instance.GetState<bool>(nameof(MudTreeViewItem<string>.Expanded));
+            // Level 0.
+            isExpanded("Root").Should().Be(true);
+
+            // Level 1.
+            // Expanded "Root".
+            isExpanded("House 1").Should().Be(false);
+            isExpanded("House 2").Should().Be(true);
+            isExpanded("House 3").Should().Be(false);
+            isExpanded("House 4").Should().Be(false);
+
+            // Level 2.
+            // Expanded "House 2".
+            isExpanded("Car 1").Should().Be(false);
+            isExpanded("Car 2").Should().Be(false);
+            isExpanded("Car 3").Should().Be(false);
+            isExpanded("Car 4").Should().Be(false);
+            isExpanded("Car 5").Should().Be(true);
+            // Unexpanded "House 3".
+            isExpanded("Ship 1").Should().Be(null);
+            isExpanded("Ship 2").Should().Be(null);
+            isExpanded("Ship 3").Should().Be(null);
+            isExpanded("Ship 4").Should().Be(null);
+            isExpanded("Ship 5").Should().Be(null);
+
+            // Level 3.
+            // Unexpanded "Car 1".
+            isExpanded("Ball 1").Should().Be(null);
+            isExpanded("Ball 2").Should().Be(null);
+            isExpanded("Ball 3").Should().Be(null);
+            isExpanded("Ball 4").Should().Be(null);
+            isExpanded("Ball 5").Should().Be(null);
+            // Expanded "Car 5".
+            isExpanded("Computer 1").Should().Be(false);
+            isExpanded("Computer 2").Should().Be(true);
+            isExpanded("Computer 3").Should().Be(false);
+            isExpanded("Computer 4").Should().Be(false);
+            isExpanded("Computer 5").Should().Be(false);
+
+            // Level 4.
+            // Expanded "Computer 2".
+            isExpanded("Girl 1").Should().Be(false);
+            isExpanded("Girl 2").Should().Be(false);
+            isExpanded("Girl 3").Should().Be(false);
+            isExpanded("Girl 4").Should().Be(false);        // Should be selected, but not expanded.
+            isExpanded("Girl 5").Should().Be(false);
+
+            // Level 5.
+            // Unexpanded "Girl 2".
+            isExpanded("Dog 1").Should().Be(null);
+            isExpanded("Dog 2").Should().Be(null);
+            isExpanded("Dog 3").Should().Be(null);
+            isExpanded("Dog 4").Should().Be(null);
+            isExpanded("Dog 5").Should().Be(null);
+
+            // Selected.
+            var isSelected = (string value) => comp.FindComponents<MudTreeViewItem<string>>()
+                .FirstOrDefault(x => x.Instance.Value == value)?.Instance.GetState<bool>(nameof(MudTreeViewItem<string>.Selected));
+            // Level 0.
+            isSelected("Root").Should().Be(false);
+
+            // Level 1.
+            // Expanded "Root".
+            isSelected("House 1").Should().Be(false);
+            isSelected("House 2").Should().Be(false);
+            isSelected("House 3").Should().Be(false);
+            isSelected("House 4").Should().Be(false);
+
+            // Level 2.
+            // Expanded "House 2".
+            isSelected("Car 1").Should().Be(false);
+            isSelected("Car 2").Should().Be(false);
+            isSelected("Car 3").Should().Be(false);
+            isSelected("Car 4").Should().Be(false);
+            isSelected("Car 5").Should().Be(false);
+            // Unexpanded "House 3".
+            isSelected("Ship 1").Should().Be(null);
+            isSelected("Ship 2").Should().Be(null);
+            isSelected("Ship 3").Should().Be(null);
+            isSelected("Ship 4").Should().Be(null);
+            isSelected("Ship 5").Should().Be(null);
+
+            // Level 3.
+            // Unexpanded "Car 1".
+            isSelected("Ball 1").Should().Be(null);
+            isSelected("Ball 2").Should().Be(null);
+            isSelected("Ball 3").Should().Be(null);
+            isSelected("Ball 4").Should().Be(null);
+            isSelected("Ball 5").Should().Be(null);
+            // Expanded "Car 5".
+            isSelected("Computer 1").Should().Be(false);
+            isSelected("Computer 2").Should().Be(false);
+            isSelected("Computer 3").Should().Be(false);
+            isSelected("Computer 4").Should().Be(false);
+            isSelected("Computer 5").Should().Be(false);
+
+            // Level 4.
+            // Expanded "Computer 2".
+            isSelected("Girl 1").Should().Be(false);
+            isSelected("Girl 2").Should().Be(false);
+            isSelected("Girl 3").Should().Be(false);
+            isSelected("Girl 4").Should().Be(true);        // Should be selected, but not expanded.
+            isSelected("Girl 5").Should().Be(false);
+
+            // Level 5.
+            // Unexpanded "Girl 2".
+            isSelected("Dog 1").Should().Be(null);
+            isSelected("Dog 2").Should().Be(null);
+            isSelected("Dog 3").Should().Be(null);
+            isSelected("Dog 4").Should().Be(null);
+            isSelected("Dog 5").Should().Be(null);
+        } // TreeView_ServerSideData_ExpandToSelected
+        
     }
 }
