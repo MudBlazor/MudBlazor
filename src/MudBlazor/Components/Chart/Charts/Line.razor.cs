@@ -72,6 +72,14 @@ namespace MudBlazor.Charts
             {
                 var minY = _series.SelectMany(series => series.Data).Min();
                 var maxY = _series.SelectMany(series => series.Data).Max();
+
+                var includeYAxisZeroPoint = MudChartParent?.ChartOptions.YAxisRequireZeroPoint ?? false;
+                if (includeYAxisZeroPoint)
+                {
+                    minY = Math.Min(minY, 0); // we want to include the 0 in the grid
+                    maxY = Math.Max(maxY, 0); // we want to include the 0 in the grid
+                }
+
                 lowestHorizontalLine = (int)Math.Floor(minY / gridYUnits);
                 var highestHorizontalLine = (int)Math.Ceiling(maxY / gridYUnits);
                 numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
