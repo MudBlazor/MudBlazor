@@ -3,10 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
@@ -28,9 +24,10 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(async () => await picker.Instance.SelectAsync());
             await comp.InvokeAsync(async () => await picker.Instance.SelectRangeAsync(0, 0));
-#pragma warning disable BL0005
+#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
             await comp.InvokeAsync(() => picker.Instance.Disabled = true);
-            await comp.InvokeAsync(() => picker.Instance.HandleKeyDown(new KeyboardEventArgs()));
+#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
+            await comp.InvokeAsync(() => picker.Instance.OnHandleKeyDownAsync(new KeyboardEventArgs()));
         }
 
         [Test]
@@ -43,6 +40,13 @@ namespace MudBlazor.UnitTests.Components
 
             var comp2 = Context.RenderComponent<MudPicker<DateTime?>>(x => x.Add(f => f.For, () => value.Date).Add(l => l.Label, "Label Parameter"));
             comp2.Instance.Label.Should().Be("Label Parameter"); //existing label should remain
+        }
+
+        [Test]
+        public void PickerHasImmediateText()
+        {
+            var comp = Context.RenderComponent<MudPicker<DateTime?>>(ComponentParameter.CreateParameter("ImmediateText", true));
+            comp.Instance.ImmediateText.Should().Be(true);
         }
     }
 }

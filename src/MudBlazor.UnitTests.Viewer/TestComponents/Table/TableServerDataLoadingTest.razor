@@ -1,0 +1,34 @@
+﻿<MudTable ServerData="ServerReload">
+    <HeaderContent>
+        <MudTh><MudTableSortLabel SortLabel="No." T="int">Nr</MudTableSortLabel></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Nr">@context</MudTd>
+    </RowTemplate>
+    <NoRecordsContent>
+        @{
+            NoRecordsHasRendered = true;
+        }
+    </NoRecordsContent>
+</MudTable>
+
+@code {
+    public static string __description__ = "The table should not render its NoContent fragment prior to loading server data.";
+
+    private int _totalItems;
+    private IEnumerable<int> _pagedData = [];
+
+    public bool NoRecordsHasRendered { get; private set; }
+
+    /// <summary>
+    /// Here we simulate getting the paged, filtered and ordered data from the server
+    /// </summary>
+    private Task<TableData<int>> ServerReload(TableState state, CancellationToken token)
+    {
+        var data = new List<int> { 1, 2, 3 };
+        _totalItems = data.Count;
+        _pagedData = data.ToArray();
+
+        return Task.FromResult(new TableData<int> { TotalItems = _totalItems, Items = _pagedData });
+    }
+}

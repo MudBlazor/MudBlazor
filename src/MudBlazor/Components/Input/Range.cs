@@ -1,27 +1,51 @@
-﻿namespace MudBlazor
+﻿#nullable enable
+namespace MudBlazor
 {
+    /// <summary>
+    /// A range of values.
+    /// </summary>
+    /// <typeparam name="T">The type of value for the range.</typeparam>
     public class Range<T>
     {
-        public T Start { get; set; }
+        /// <summary>
+        /// The minimum value.
+        /// </summary>
+        public T? Start { get; set; }
 
-        public T End { get; set; }
+        /// <summary>
+        /// The maximum value.
+        /// </summary>
+        public T? End { get; set; }
 
+        /// <summary>
+        /// Creates a new instance.
+        /// </summary>
         public Range()
         {
-
         }
 
+        /// <summary>
+        /// Creates a new instance.
+        /// </summary>
+        /// <param name="start">The minimum value.</param>
+        /// <param name="end">The maximum value.</param>
         public Range(T start, T end)
         {
             Start = start;
             End = end;
         }
 
-        public override bool Equals(object obj)
+        /// <inheritdoc />
+        public override bool Equals(object? obj)
         {
-            return obj is Range<T> r && null != r.Start && r.Start.Equals(Start) && null != r.End && r.End.Equals(End);
+            return obj is Range<T> r
+                && null != r.Start
+                && r.Start.Equals(Start)
+                && null != r.End
+                && r.End.Equals(End);
         }
 
+        /// <inheritdoc />
         public override int GetHashCode()
         {
             return base.GetHashCode();

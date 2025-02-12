@@ -11,7 +11,7 @@ namespace MudBlazor.Docs.Models
             var field = typeof(Snippets).GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.GetField)
                 .FirstOrDefault(f => f.Name == component);
             if (field == null)
-                return $"Snippet for component '{component}' not found!";
+                return null;
             return (string)field.GetValue(null);
         }
 

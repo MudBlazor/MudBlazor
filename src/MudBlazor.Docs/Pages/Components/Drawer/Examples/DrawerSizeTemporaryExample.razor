@@ -5,7 +5,7 @@
 <MudButton Variant="Variant.Text" OnClick="@(() => OpenDrawer(Anchor.Top))">Top</MudButton>
 <MudButton Variant="Variant.Text" OnClick="@(() => OpenDrawer(Anchor.Bottom))">Bottom</MudButton>
 
-<MudDrawer @bind-Open="@open" Width="@width" Height="@height" Anchor="@anchor" Elevation="1" Variant="@DrawerVariant.Temporary">
+<MudDrawer @bind-Open="@_open" Width="@_width" Height="@_height" Anchor="@_anchor" Elevation="1" Variant="@DrawerVariant.Temporary">
     <MudDrawerHeader>
         <MudText Typo="Typo.h6">My App</MudText>
     </MudDrawerHeader>
@@ -17,32 +17,32 @@
 </MudDrawer>
 
 @code{ 
-    bool open;
-    Anchor anchor;
-    string width, height;
+    private bool _open;
+    private Anchor _anchor;
+    private string _width, _height;
 
-    void OpenDrawer(Anchor anchor)
+    private void OpenDrawer(Anchor anchor)
     {
-        open = true;
-        this.anchor = anchor;
+        _open = true;
+        _anchor = anchor;
 
         switch (anchor)
         {
             case Anchor.Start:
-                width = "300px";
-                height = "100%";
+                _width = "300px";
+                _height = "100%";
                 break;
             case Anchor.End:
-                width = "400px";
-                height = "100%";
+                _width = "400px";
+                _height = "100%";
                 break;
             case Anchor.Bottom:
-                width = "100%";
-                height = "200px";
+                _width = "100%";
+                _height = "200px";
                 break;
             case Anchor.Top:
-                width = "100%";
-                height = "350px";
+                _width = "100%";
+                _height = "350px";
                 break;
         }
     }

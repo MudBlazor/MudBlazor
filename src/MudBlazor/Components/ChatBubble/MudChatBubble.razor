@@ -1,0 +1,8 @@
+@namespace MudBlazor
+@inherits MudComponentBase
+
+<div @ref="ElementReference" @attributes="UserAttributes" class="@Classname" style="@Style" @onclick="this.AsNonRenderingEventHandler<MouseEventArgs>(OnClickHandler)"
+     @oncontextmenu="this.AsNonRenderingEventHandler<MouseEventArgs>(OnContextHandler)" 
+     @oncontextmenu:preventDefault="@(OnContextClick.HasDelegate)">
+  @ChildContent
+</div>

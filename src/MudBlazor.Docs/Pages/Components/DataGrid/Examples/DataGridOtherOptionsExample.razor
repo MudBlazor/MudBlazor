@@ -1,0 +1,46 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudDataGrid Items="@_persons" T="Person" Loading="_loading"
+             Filterable Dense="@_dense" FixedHeader ShowMenuIcon Height="350px">
+    <ToolBarContent>
+        <MudSwitch Class="ml-auto" @bind-Value="@_dense" Label="Dense" />
+        <MudSwitch Class="ml-2 mr-auto" @bind-Value="@_loading" Label="Loading" /> 
+    </ToolBarContent>
+    <ColGroup>
+        <col style="width: 50px; background: var(--mud-palette-tertiary);" />
+        <col />
+    </ColGroup>
+    <Columns>
+        <PropertyColumn Property="x => x.Id" Title="Id" />
+        <PropertyColumn Property="x => x.Name" Title="Name" />
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="Person" PageSizeOptions="new int[] {10, 1000}" />
+    </PagerContent>
+</MudDataGrid>
+
+@code {
+    private bool _dense = false;
+    private bool _loading = true;
+    List<Person> _persons = Enumerable.Repeat(0, 100)
+                .Select((_, i) => new Person { Id = i, Name = $"Name{i}" })
+                .ToList();
+
+    private async Task<GridData<Person>> ServerReload(GridState<Person> state)
+    {
+        await Task.CompletedTask;
+
+        return new GridData<Person>
+            {
+                TotalItems = _persons.Count,
+                Items = _persons
+            };
+    }
+
+    public class Person
+    {
+        public int Id { get; set; }
+
+        public string Name { get; set; } = default!;
+    }
+}

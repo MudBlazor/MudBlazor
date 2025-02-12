@@ -1,6 +1,8 @@
 ﻿@namespace MudBlazor
-@inherits MudBaseInput<string>
 @using MudBlazor.Internal
+@using MudBlazor.Resources
+@inherits MudBaseInput<string>
+@inject InternalMudLocalizer Localizer
 
 <div id="@_elementId" class="@Classname" style="@Style">
     @if (Adornment == Adornment.Start)
@@ -10,24 +12,55 @@
                            Color="@AdornmentColor"
                            Size="@IconSize"
                            Text="@AdornmentText"
-                           Edge="@Edge.Start"
-                           AdornmentClick="@OnAdornmentClick"/>
+                           Placement="@Adornment.Start"
+                           AdornmentClick="@OnAdornmentClick"
+                           AriaLabel="@AdornmentAriaLabel" />
     }
 
-    <input class="@InputClassname"
-           @ref="_elementReference"
-           @attributes="UserAttributes"
-           type="@InputType.ToDescriptionString()"
-           value="@Text"
-           placeholder="@Placeholder"
-           disabled=@GetDisabledState()
-           readonly="@GetReadOnlyState()"
-           @onblur="@OnBlurred"
-           @onfocus="OnFocused"
-           @oncut="OnCut"
-           @oncopy="OnCopy"
-           inputmode="@InputMode.ToString()"
-           />
+    @if (Lines > 1)
+    {
+        <textarea class="@InputClassname"
+                  @ref="_elementReference"
+                  @attributes="UserAttributes"
+                  id="@InputElementId"
+                  type="@InputType.ToDescriptionString()"
+                  value="@Text"
+                  placeholder="@Placeholder"
+                  disabled=@GetDisabledState()
+                  readonly="@GetReadOnlyState()"
+                  @onblur="@OnBlurredAsync"
+                  @onfocus="OnFocused"
+                  @oncut="OnCut"
+                  @oncopy="OnCopy"
+                  inputmode="@InputMode.ToDescriptionString()"
+                  aria-describedby="@GetAriaDescribedByString()"
+                  aria-invalid="@Error.ToString().ToLowerInvariant()"
+                  required="@Required"
+                  aria-required="@Required.ToString().ToLowerInvariant()">
+            @Text
+        </textarea>
+    }
+    else
+    {
+        <input class="@InputClassname"
+               @ref="_elementReference"
+               @attributes="UserAttributes"
+               id="@InputElementId"
+               type="@InputType.ToDescriptionString()"
+               value="@Text"
+               placeholder="@Placeholder"
+               disabled=@GetDisabledState()
+               readonly="@GetReadOnlyState()"
+               @onblur="@OnBlurredAsync"
+               @onfocus="OnFocused"
+               @oncut="OnCut"
+               @oncopy="OnCopy"
+               inputmode="@InputMode.ToDescriptionString()"
+               aria-describedby="@GetAriaDescribedByString()"
+               aria-invalid="@Error.ToString().ToLowerInvariant()"
+               required="@Required"
+               aria-required="@Required.ToString().ToLowerInvariant()">
+    }
 
     @if (GetDisabledState())
     {
@@ -36,7 +69,7 @@
          *@
         <div class="@InputClassname"
              style="@("display:" + (InputType == InputType.Hidden && ChildContent != null ? "inline" : "none"))"
-             @onblur="@OnBlurred" @ref="@_elementReference1">
+             @onblur="@OnBlurredAsync" @ref="@_elementReference1">
             @ChildContent
         </div>
     }
@@ -46,19 +79,22 @@
         <div class="@InputClassname"
              style="@("display:" + (InputType == InputType.Hidden && ChildContent != null ? "inline" : "none"))"
              tabindex="@(InputType == InputType.Hidden && ChildContent != null ? 0 : -1)"
-             @onblur="@OnBlurred" @ref="@_elementReference1">
+             @onblur="@OnBlurredAsync" @ref="@_elementReference1">
             @ChildContent
         </div>
     }
 
 
-    @if (_showClearable && !GetDisabledState())
+    @if (ShowClearButton())
     {
         <MudIconButton Class="@ClearButtonClassname"
                        Color="@Color.Default"
                        Icon="@ClearIcon"
                        Size="@Size.Small"
-                       OnClick="@HandleClearButton"/>
+                       OnClick="@HandleClearButtonAsync"
+                       aria-label="@Localizer[LanguageResource.MudInput_Clear]"
+                       tabindex="-1"
+                       @onmousedown:stopPropagation />
     }
 
     @if (Adornment == Adornment.End)
@@ -68,13 +104,19 @@
                            Color="@AdornmentColor"
                            Size="@IconSize"
                            Text="@AdornmentText"
-                           Edge="@Edge.End"
-                           AdornmentClick="@OnAdornmentClick"/>
+                           Placement="@Adornment.End"
+                           AdornmentClick="@OnAdornmentClick"
+                           AriaLabel="@AdornmentAriaLabel" />
     }
 
     @if (Variant == Variant.Outlined)
     {
-        <div class="mud-input-outlined-border"></div>
+        <fieldset class="mud-input-outlined-border">
+            @if (!string.IsNullOrEmpty(Label))
+            {
+                <legend>@Label</legend>
+            }
+        </fieldset>
     }
 
 </div>

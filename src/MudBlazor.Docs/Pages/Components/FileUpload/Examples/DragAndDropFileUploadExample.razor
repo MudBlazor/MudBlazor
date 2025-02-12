@@ -1,0 +1,59 @@
+﻿@namespace MudBlazor.Docs.Examples
+@inject ISnackbar Snackbar
+
+<MudPaper @ondragenter="@SetDragClass" @ondragleave="@ClearDragClass" @ondragend="@ClearDragClass" Height="300px" Outlined="true" Class="@_dragClass">
+    @if (!_clearing) 
+    {
+        <InputFile OnChange="OnInputFileChanged" multiple class="absolute mud-width-full mud-height-full overflow-hidden z-2" style="opacity:0;" />
+    }
+    <MudText Typo="Typo.h6">Drag and drop files here or click</MudText>
+    @foreach (var file in _fileNames) 
+    {
+        <MudChip T="string" Color="Color.Dark" Text="@file" />
+    }
+</MudPaper>
+<MudToolBar Gutters="false" Class="gap-4">
+    <MudButton OnClick="Upload" Disabled="@(!_fileNames.Any())" Color="Color.Primary" Variant="Variant.Filled">Upload</MudButton>
+    <MudButton OnClick="ClearAsync" Disabled="@(!_fileNames.Any())" Color="Color.Error" Variant="Variant.Filled">Clear</MudButton>
+</MudToolBar>
+
+@code {
+    private bool _clearing = false;
+    private static string _defaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full";
+    private string _dragClass = _defaultDragClass;
+    private List<string> _fileNames = new List<string>();
+
+    private void OnInputFileChanged(InputFileChangeEventArgs e)
+    {
+        ClearDragClass();
+        var files = e.GetMultipleFiles();
+        foreach (var file in files) {
+            _fileNames.Add(file.Name);
+        }
+    }
+
+    private async Task ClearAsync()
+    {
+        _clearing = true;
+        _fileNames.Clear();
+        ClearDragClass();
+        await Task.Delay(100);
+        _clearing = false;
+    }
+    private void Upload()
+    {
+        //Upload the files here
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+        Snackbar.Add("TODO: Upload your files!", Severity.Normal);
+    }
+
+    private void SetDragClass()
+    {
+        _dragClass = $"{_defaultDragClass} mud-border-primary";
+    }
+
+    private void ClearDragClass()
+    {
+        _dragClass = _defaultDragClass;
+    }
+}

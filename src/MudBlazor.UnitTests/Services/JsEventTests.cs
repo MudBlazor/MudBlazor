@@ -2,22 +2,17 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.JSInterop;
 using Moq;
 using MudBlazor.Services;
 using NUnit.Framework;
 
-#pragma warning disable CS1998 // async without await
-
 namespace MudBlazor.UnitTests.Services
 {
     [TestFixture]
     public class JsEventTests
     {
-
         [Test]
         public async Task NoSubscriptionWithoutConnectTest()
         {
@@ -30,7 +25,7 @@ namespace MudBlazor.UnitTests.Services
             await jsevent.Unsubscribe("copy");
             await jsevent.Disconnect();
             await jsevent.UnsubscribeAll();
-            jsevent.Dispose();
+            await jsevent.DisposeAsync();
         }
 
         [Test]
@@ -97,9 +92,9 @@ namespace MudBlazor.UnitTests.Services
             jsevent.Select += selectHandler;
             jsevent.CaretPositionChanged += caretPositionChangedHandler;
             jsevent.Paste += pasteHandler;
-            jsevent.Dispose();
+            await jsevent.DisposeAsync(); ;
             // second dispose is ignored
-            jsevent.Dispose();
+            await jsevent.DisposeAsync();
             jsevent._subscribedEvents.Should().BeEmpty();
         }
     }

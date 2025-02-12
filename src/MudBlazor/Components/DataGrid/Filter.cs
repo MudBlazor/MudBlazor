@@ -3,15 +3,17 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MudBlazor
 {
 #nullable enable
-    internal class Filter<T>
+    internal class Filter<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>
     {
         private readonly MudDataGrid<T> _dataGrid;
-        private readonly FilterDefinition<T> _filterDefinition;
+        private readonly IFilterDefinition<T> _filterDefinition;
         private readonly Column<T>? _column;
 
         internal string? _valueString;
@@ -20,21 +22,18 @@ namespace MudBlazor
         internal bool? _valueBool;
         internal DateTime? _valueDate;
         internal TimeSpan? _valueTime;
-
-        internal bool IsNumber => TypeIdentifier.IsNumber(_filterDefinition.dataType);
-
-        internal bool IsEnum => TypeIdentifier.IsEnum(_filterDefinition.dataType);
+        internal Guid? _valueGuid;
 
         internal Column<T>? FilterColumn =>
             _column ?? (_dataGrid.RenderedColumns?.FirstOrDefault(c => c.PropertyName == _filterDefinition.Column?.PropertyName));
 
-        public Filter(MudDataGrid<T> dataGrid, FilterDefinition<T> filterDefinition, Column<T>? column)
+        public Filter(MudDataGrid<T> dataGrid, IFilterDefinition<T> filterDefinition, Column<T>? column)
         {
             _dataGrid = dataGrid;
             _filterDefinition = filterDefinition;
             _column = column;
 
-            var fieldType = FieldType.Identify(_filterDefinition.dataType);
+            var fieldType = _filterDefinition.FieldType;
 
             if (fieldType.IsString)
                 _valueString = _filterDefinition.Value?.ToString();
@@ -50,21 +49,21 @@ namespace MudBlazor
                 _valueDate = _filterDefinition.Value == null ? null : dateTime;
                 _valueTime = _filterDefinition.Value == null ? null : dateTime.TimeOfDay;
             }
+            else if (fieldType.IsGuid)
+                _valueGuid = _filterDefinition.Value as Guid?;
         }
 
-        internal void RemoveFilter()
+        internal async Task RemoveFilterAsync()
         {
-            _dataGrid.RemoveFilter(_filterDefinition.Id);
+            await _dataGrid.RemoveFilterAsync(_filterDefinition.Id);
         }
 
         internal void FieldChanged(Column<T> column)
         {
             _filterDefinition.Column = column;
-            //_filterDefinition.Field = column.PropertyName;
-            //_filterDefinition.FieldType = column.PropertyType;
-            _filterDefinition.PropertyExpression = column.PropertyExpression;
-            var operators = FilterOperator.GetOperatorByDataType(column.PropertyType);
+            var operators = column.GetFilterOperators(FieldType.Identify(column.PropertyType));
             _filterDefinition.Operator = operators.FirstOrDefault();
+            _filterDefinition.Title = column.Title;
             _filterDefinition.Value = null;
         }
 
@@ -135,6 +134,13 @@ namespace MudBlazor
                 _filterDefinition.Value = date;
             }
 
+            _dataGrid.GroupItems();
+        }
+
+        internal void GuidValueChanged(Guid? value)
+        {
+            _valueGuid = value;
+            _filterDefinition.Value = _valueGuid;
             _dataGrid.GroupItems();
         }
     }

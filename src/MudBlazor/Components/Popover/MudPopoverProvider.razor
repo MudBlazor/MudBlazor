@@ -1,18 +1,19 @@
 ﻿@namespace MudBlazor
 
-@if (IsEnabled)
+@if (Enabled)
 {
     <div class="mud-popover-provider">
-	    @foreach (var handler in Service.Handlers)
-	    {
+        <SectionOutlet SectionName="mud-overlay-to-popover-provider" />
+        @foreach (var handler in PopoverService.ActivePopovers)
+        {
             <MudRender @ref="handler.ElementReference" @key="handler.Id">
-		        <div id="@($"popovercontent-{handler.Id}")" data-ticks="@(handler.ActivationDate?.Ticks ?? 0)" @attributes="@handler.UserAttributes" class="@handler.Class" style="@handler.Style">
-			        @if (handler.ShowContent == true)
-			        {
-				        @handler.Fragment
-			        }
-		        </div>
+                <div id="@($"popovercontent-{handler.Id}")" data-ticks="@(handler.ActivationDate?.Ticks ?? 0)" @attributes="@handler.UserAttributes" class="@handler.Class" style="@handler.Style">
+                    @if (handler.ShowContent)
+                    {
+                        @handler.Fragment
+                    }
+                </div>
             </MudRender>
-	    }
+        }
     </div>
 }

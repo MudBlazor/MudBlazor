@@ -1,17 +1,27 @@
 ﻿@page "/components/toolbar"
 
 <DocsPage>
-    <DocsPageHeader Title="ToolBar" SubTitle="Guidance and suggestions for using toolbar with MudBlazor."/>
+    <DocsPageHeader Title="Tool Bar" Component="@nameof(MudToolBar)" SubTitle="Guidance and suggestions for using toolbar with MudBlazor." />
     <DocsPageContent>
 
         <DocsPageSection>
             <SectionHeader Title="ToolBar Example">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="ToolBarExample" Block="true" FullWidth="true">
+            <SectionContent DarkenBackground="true" Code="@nameof(ToolBarExample)" Block="true" FullWidth="true">
                 <ToolBarExample />
             </SectionContent>
         </DocsPageSection>
 
+        <DocsPageSection>
+            <SectionHeader Title="Wrap Content">
+                <Description>
+                    The <CodeInline>WrapContent</CodeInline> property grants the ability to wrap the content based on the available space. If the content within the ToolBar exceeds the width of the container, it will automatically wrap onto the next line to ensure optimal display and prevent overflow.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(ToolBarWrapContentExample)" Block="true">
+                <ToolBarWrapContentExample />
+            </SectionContent>
+        </DocsPageSection>
     </DocsPageContent>
 </DocsPage>

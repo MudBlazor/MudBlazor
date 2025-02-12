@@ -1,0 +1,42 @@
+<div class="mud-codeblock">
+<div class="csharp"><pre>
+<span class="keyword">using</span> System;
+<span class="keyword">using</span> System.Collections.Generic;
+<span class="keyword">using</span> System.Threading;
+<span class="keyword">using</span> Microsoft.Extensions.Localization;
+<span class="keyword">using</span> MudBlazor;
+
+<span class="keyword">internal</span> <span class="keyword">class</span> DictionaryMudLocalizer : MudLocalizer
+{
+    <span class="keyword">private</span> Dictionary&lt;<span class="keyword">string</span>, <span class="keyword">string</span>&gt; <span class="localVar">_localization</span>;
+
+    <span class="keyword">public</span> DictionaryMudLocalizer()
+    {
+        <span class="localVar">_localization</span> = <span class="keyword">new</span>()
+        {
+            { <span class="string">&quot;MudDataGrid_IsEmpty&quot;</span>, <span class="string">&quot;ist leer&quot;</span> },
+            { <span class="string">&quot;MudDataGrid_IsNotEmpty&quot;</span>, <span class="string">&quot;ist nicht leer&quot;</span> },
+            { <span class="string">&quot;MudDataGrid_Contains&quot;</span>, <span class="string">&quot;enth&#228;lt&quot;</span> },
+            { <span class="string">&quot;MudDataGrid_NotContains&quot;</span>, <span class="string">&quot;enth&#228;lt nicht&quot;</span> },
+        };
+    }
+    
+    <span class="keyword">public</span> <span class="keyword">override</span> LocalizedString <span class="keyword">this</span>[<span class="keyword">string</span> key]
+    {
+        get
+        {
+            <span class="keyword">var</span> <span class="localVar">currentCulture</span> = Thread.CurrentThread.CurrentUICulture.Parent.TwoLetterISOLanguageName;
+            if (<span class="localVar">currentCulture</span>.<span class="function">Equals</span>("de", StringComparison.InvariantCultureIgnoreCase)
+                && <span class="localVar">_localization</span>.<span class="function">TryGetValue</span>(key, <span class="keyword">out</span> <span class="keyword">var</span> res))
+            {
+                <span class="keyword">return</span> <span class="keyword">new</span>(key, res);
+            }
+            else
+            {
+                <span class="keyword">return</span> <span class="keyword">new</span>(key, key, <span class="keyword">true</span>);
+            }
+        }
+    }
+}
+</pre></div>
+</div>

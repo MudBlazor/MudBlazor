@@ -1,0 +1,16 @@
+﻿@namespace MudBlazor.Docs.Examples
+@inject ISnackbar Snackbar
+
+<MudPaper Width="250px" Class="py-3" Elevation="0">
+    <MudNavMenu Dense>
+        <MudNavGroup Title="Settings" Expanded="true">
+            <MudNavLink OnClick="@(() => GoTo("Settings/Users"))">Users</MudNavLink>
+            <MudNavLink OnClick="@(() => GoTo("Settings/Security"))">Security</MudNavLink>
+        </MudNavGroup>
+        <MudNavLink OnClick="@(() => GoTo("About"))">About</MudNavLink>
+    </MudNavMenu>
+</MudPaper>
+
+@code {
+    private void GoTo(string page) => Snackbar.Add($"Clicked {page}");
+}

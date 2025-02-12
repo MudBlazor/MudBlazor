@@ -1,0 +1,52 @@
+﻿<MudTreeView T="string" @ref="_treeView" Items="@Items" FilterFunc="@FilterFunc">
+    <ItemTemplate>
+        <MudTreeViewItem @bind-Expanded="@context.Expanded" Items="@context.Children" Value="@context.Value"
+                         Icon="@context.Icon" Text="@context.Text" Visible="@context.Visible" />
+    </ItemTemplate>
+</MudTreeView>
+
+@code {
+    [Parameter]
+    public string? SearchPhrase { get; set; }
+
+    [Parameter]
+    public Func<TreeItemData<string>, Task<bool>>? FilterFunc { get; set; }
+
+    [Parameter]
+    public bool AreItemsPopulated { get; set; } = true;
+
+    public List<TreeItemData>? Items { get; set; }
+
+    private MudTreeView<string> _treeView = null!;
+    
+    public sealed class TreeItemData : TreeItemData<string>
+    {
+        public TreeItemData(string title) : base(title)
+        {
+            Text = title;
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        if (AreItemsPopulated)
+        {
+            Items = 
+            [
+                new TreeItemData("Trash"),
+                new TreeItemData("Categories")
+                {
+                    Expanded = true,
+                    Children = [
+                        new TreeItemData("Social")
+                    ]
+                }
+            ];
+        }
+    }
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await _treeView.FilterAsync();
+    }
+}

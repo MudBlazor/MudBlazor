@@ -1,0 +1,32 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudMenu Label="Open Nested Menu" Dense>
+    <MudMenuItem Label="Add reaction" />
+    <MudMenuItem Label="Add bookmark" />
+
+    <MudMenu Label="Format">
+        <MudMenu Label="Text" StartIcon="@Icons.Material.Filled.FormatBold">
+            <MudMenuItem Label="Bold" Icon="@Icons.Material.Filled.FormatBold" />
+            <MudMenuItem Label="Italic" Icon="@Icons.Material.Filled.FormatItalic" />
+            <MudMenuItem Label="Underline" Icon="@Icons.Material.Filled.FormatUnderlined" />
+
+            <MudMenu Label="Size">
+                <MudMenuItem Label="Increase font size" />
+                <MudMenuItem Label="Decrease font size" />
+            </MudMenu>
+        </MudMenu>
+
+        <MudMenu Label="Points">
+            <MudMenuItem Label="Bullet" Icon="@Icons.Material.Filled.FormatListBulleted" IconColor="Color.Secondary" />
+            <MudMenuItem Label="Number" Icon="@Icons.Material.Filled.FormatListNumbered" IconColor="Color.Secondary" />
+        </MudMenu>
+
+        <MudMenu Label="Alignment">
+            <MudMenuItem Label="Left" Icon="@Icons.Material.Filled.FormatAlignLeft" IconColor="Color.Tertiary" />
+            <MudMenuItem Label="Right" Icon="@Icons.Material.Filled.FormatAlignRight" IconColor="Color.Tertiary" />
+        </MudMenu>
+
+        <MudMenuItem Label="Clear formatting" />
+        <MudMenuItem Label="Headers and footers" />
+    </MudMenu>
+</MudMenu>

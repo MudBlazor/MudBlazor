@@ -1,7 +1,6 @@
-﻿#nullable enable
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
@@ -9,20 +8,23 @@ using MudBlazor.Interop;
 
 namespace MudBlazor
 {
+#nullable enable
     [ExcludeFromCodeCoverage]
     public static class ElementReferenceExtensions
     {
-        private static readonly PropertyInfo? jsRuntimeProperty =
-            typeof(WebElementReferenceContext).GetProperty("JSRuntime", BindingFlags.Instance | BindingFlags.NonPublic);
+        [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "<JSRuntime>k__BackingField")]
+        private static extern ref IJSRuntime GetJsRuntime(WebElementReferenceContext context);
 
         internal static IJSRuntime? GetJSRuntime(this ElementReference elementReference)
         {
-            if (elementReference.Context is not WebElementReferenceContext context)
+            if (elementReference.Context is WebElementReferenceContext context)
             {
-                return null;
+                var jsRuntime = GetJsRuntime(context);
+
+                return jsRuntime;
             }
 
-            return (IJSRuntime?)jsRuntimeProperty?.GetValue(context);
+            return null;
         }
 
         public static ValueTask MudFocusFirstAsync(this ElementReference elementReference, int skip = 0, int min = 0) =>

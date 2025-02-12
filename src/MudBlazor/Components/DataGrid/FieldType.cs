@@ -7,24 +7,54 @@ using System;
 namespace MudBlazor
 {
 #nullable enable
+    /// <summary>
+    /// Represents a description of a <see cref="MudGrid"/> field.
+    /// </summary>
     public class FieldType
     {
-        public bool IsString { get; set; }
+        /// <summary>
+        /// The type to examine.
+        /// </summary>
+        public Type? InnerType { get; init; }
 
-        public bool IsNumber { get; set; }
+        /// <summary>
+        /// Whether the <see cref="InnerType"/> represents a string.
+        /// </summary>
+        public bool IsString { get; init; }
 
-        public bool IsEnum { get; set; }
+        /// <summary>
+        /// Whether the <see cref="InnerType"/> represents a number.
+        /// </summary>
+        public bool IsNumber { get; init; }
 
-        public bool IsDateTime { get; set; }
+        /// <summary>
+        /// Whether the <see cref="InnerType"/> represents an enumeration.
+        /// </summary>
+        public bool IsEnum { get; init; }
 
-        public bool IsBoolean { get; set; }
+        /// <summary>
+        /// Whether the <see cref="InnerType"/> represents a date and time.
+        /// </summary>
+        public bool IsDateTime { get; init; }
 
-        public bool IsGuid { get; set; }
+        /// <summary>
+        /// Whether the <see cref="InnerType"/> represents a true/false value.
+        /// </summary>
+        public bool IsBoolean { get; init; }
 
+        /// <summary>
+        /// Whether the <see cref="InnerType"/> represents a <see cref="Guid"/> value.
+        /// </summary>
+        public bool IsGuid { get; init; }
+
+        /// <summary>
+        /// Examines the <see cref="InnerType"/> to determine supported types.
+        /// </summary>
         public static FieldType Identify(Type? type)
         {
-            var filedType = new FieldType
+            var fieldType = new FieldType
             {
+                InnerType = type,
                 IsString = TypeIdentifier.IsString(type),
                 IsNumber = TypeIdentifier.IsNumber(type),
                 IsEnum = TypeIdentifier.IsEnum(type),
@@ -33,7 +63,7 @@ namespace MudBlazor
                 IsGuid = TypeIdentifier.IsGuid(type)
             };
 
-            return filedType;
+            return fieldType;
         }
     }
 }

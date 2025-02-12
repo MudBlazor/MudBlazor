@@ -1,10 +1,13 @@
+<MudPopoverProvider />
 
-@namespace MudBlazor.UnitTests.TestComponents
-
-<MudPopoverProvider></MudPopoverProvider>
-
-<MudMenu Label="Full Menu Width" Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" PopoverClass="menu-popover-class">
+<MudMenu Label="Full Menu Width" Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" PopoverClass="menu-popover-class" Disabled="DisableMenu">
     <MudMenuItem Class="test-class">1</MudMenuItem>
-    <MudMenuItem Link="https://www.test.com">2</MudMenuItem>
-    <MudMenuItem Link="https://www.test.com" Target="_blank">3</MudMenuItem>
+    <MudMenuItem Href="https://www.test.com">2</MudMenuItem>
+    <MudMenuItem Href="https://www.test.com" Target="_blank">3</MudMenuItem>
+    <MudMenuItem AutoClose="false">4 (AutoClose is false)</MudMenuItem>
 </MudMenu>
+
+@code {
+    [Parameter]
+    public bool DisableMenu { get; set; }
+}

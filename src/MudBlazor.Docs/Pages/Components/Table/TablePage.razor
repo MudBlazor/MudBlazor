@@ -1,7 +1,7 @@
 ﻿@page "/components/table"
 
 <DocsPage>
-    <DocsPageHeader Title="Table" SubTitle="A sortable, filterable table with multiselection and pagination" />
+    <DocsPageHeader Title="Table" Component="@nameof(MudTable<T>)" />
     <DocsPageContent>
 
         <DocsPageSection>
@@ -12,7 +12,7 @@
                     The table can be prevented from breaking into mobile layout by setting the <CodeInline>Breakpoint</CodeInline> to <CodeInline>Breakpoint.None</CodeInline>.<br />
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="TableBasicExample" ShowCode="false" Block="true" FullWidth="true">
+            <SectionContent DarkenBackground="true" Code="@nameof(TableBasicExample)" ShowCode="false" Block="true" FullWidth="true">
                 <TableBasicExample />
             </SectionContent>
         </DocsPageSection>
@@ -21,10 +21,23 @@
             <SectionHeader Title="Click Event and display for selected Row">
                 <Description>
                     The <CodeInline>RowClassFunc</CodeInline> function can be used to customize the display of the selected row. <CodeInline>RowClickEvent</CodeInline> is triggered each time the row is clicked. 
+                    In addition to that the <CodeInline>RowClass</CodeInline> can be used to apply a general row style independent of the selection state. In this example we show a pointer curser.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="TableRowClassFuncExample" ShowCode="false" Block="true" FullWidth="true">
+            <SectionContent DarkenBackground="true" Code="@nameof(TableRowClassFuncExample)" ShowCode="false" Block="true" FullWidth="true">
                 <TableRowClassFuncExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Hover Events">
+                <Description>
+                    <CodeInline>OnRowMouseEnter</CodeInline> is triggered when the row starts being hovered (onpointerenter event).
+                    <CodeInline>OnRowMouseLeave</CodeInline> is triggered when the row stops being hovered (onpointerleave event).
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(TableRowHoverEventsExample)" ShowCode="false" Block="true" FullWidth="true">
+                <TableRowHoverEventsExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -38,7 +51,7 @@
                     pass the collection of items to be displayed to the table's <CodeInline>Items</CodeInline> parameter.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="TableExample" ShowCode="false" Block="true" FullWidth="true">
+            <SectionContent DarkenBackground="true" Code="@nameof(TableExample)" ShowCode="false" Block="true" FullWidth="true">
                 <TableExample />
             </SectionContent>
         </DocsPageSection>
@@ -46,8 +59,12 @@
         <DocsPageSection>
             <SectionHeader Title="TablePager Customization">
                 <Description>
-                    By setting <CodeInline>HideRowsPerPage</CodeInline> property or the <CodeInline>HidePageNumber</CodeInline> property or the <CodeInline>HidePagination</CodeInline> property to <CodeInline>true</CodeInline>, the corresponding information is hidden in the <CodeInline>MudTablePager</CodeInline>.
-                    The pager's position can be defined with the <CodeInline>HorizontalAlignment</CodeInline> property.
+                    The <CodeInline>TablePager</CodeInline> has many properties to customize it.
+                    The property <CodeInline>HorizontalAlignment</CodeInline> can be used to define the position.
+                    The properties <CodeInline>RowsPerPageString</CodeInline>, <CodeInline>InfoFormat</CodeInline> and <CodeInline>AllItemsText</CodeInline> can be used to customize the displayed text.
+                    The properties <CodeInline>HideRowsPerPage</CodeInline>, <CodeInline>HidePageNumber</CodeInline> and <CodeInline>HidePagination</CodeInline> can be used to hide the corresponding information.
+                    <br /><br />
+                    See <MudLink Href="@ApiLink.GetApiLinkFor(typeof(MudTablePager))">TablePager API</MudLink> for more informations.
                     <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
                         <CodeInline>@("RowsPerPage")</CodeInline> parameter of MudTable is independent of <CodeInline>@("PageSizeOptions")</CodeInline> parameter of PagerContent. Therefore, the RowsPerPage value does not have
                         to be one of the values ​​in the PageSizeOptions list. If the table pager is shown you should make sure the value of RowsPerPage is also available in the PageSizeOptions list, otherwise the users can not go back to this RowsPerPage value once they have chosen another one.
@@ -57,20 +74,22 @@
                     </MudAlert>
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="TabPagerExample" ShowCode="false" Block="true" FullWidth="true">
-                <TabPagerExample />
+            <SectionContent DarkenBackground="true" Code="@nameof(TablePagerExample)" ShowCode="false" Block="true" FullWidth="true">
+                <TablePagerExample />
             </SectionContent>
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Sorting">
-                <Description>
-                    To enable sorting, add <CodeInline>&lt;MudTableSortLabel></CodeInline> to the header cells and define a function that simply returns the value which should be sorted by when sorting by the specific column.
-                    Click on a header to sort the table by that column, then click to cycle through sorting directions.
-                    Sorting can be allowed and disallowed on the column level with the property <CodeInline>Enabled</CodeInline>.
-                </Description>
+                    <Description>
+                        To enable sorting, add <CodeInline>&lt;MudTableSortLabel></CodeInline> to the header cells and define a function that simply returns the value which should be sorted by when sorting by the specific column.
+                        You can also specify whether default ordering direction should be ascending or descending by specifying the <CodeInline>&lt;InitialDirection></CodeInline> parameter of <CodeInline>&lt;MudTableSortLabel></CodeInline>.<br />
+                        Click on a header to sort the table by that column, then click to cycle through sorting directions.
+                        By default, sorting directions are ascending, descending and unsorted; if you want to cycle through ascending and descending only, you need to specify the <CodeInline>&lt;AllowUnsorted></CodeInline> parameter of the <CodeInline>&lt;MudTable></CodeInline>.
+                        Sorting can be allowed and disallowed on the column level with the property <CodeInline>Enabled</CodeInline>.
+                    </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="TableSortingExample" ShowCode="false" Block="true" FullWidth="true">
+            <SectionContent DarkenBackground="true" Code="@nameof(TableSortingExample)" ShowCode="false" Block="true" FullWidth="true">
                 <TableSortingExample />
             </SectionContent>
         </DocsPageSection>
@@ -79,10 +98,11 @@
             <SectionHeader Title="Multi-Selection">
                 <Description>
                     To enable multiselection of rows using checkboxes, set <CodeInline>MultiSelection="true"</CodeInline>.<br />
-                    To disable toggling the checkbox state on row-click, set <CodeInline>SelectOnRowClick="false"</CodeInline>.
+                    To disable toggling the checkbox state on row-click, set <CodeInline>SelectOnRowClick="false"</CodeInline>.<br />
+                    To prevent editing the current selection, set <CodeInline>SelectionChangeable="false"</CodeInline>.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="TableMultiSelectExample" ShowCode="false" Block="true" FullWidth="true">
+            <SectionContent DarkenBackground="true" Code="@nameof(TableMultiSelectExample)" ShowCode="false" Block="true" FullWidth="true">
                 <TableMultiSelectExample />
             </SectionContent>
         </DocsPageSection>
@@ -95,7 +115,7 @@
                     The table will scroll if you constrain its height using <CodeInline>Height="400px"</CodeInline>, for instance.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="TableFixedHeaderExample" ShowCode="false" Block="true" FullWidth="true">
+            <SectionContent DarkenBackground="true" Code="@nameof(TableFixedHeaderExample)" ShowCode="false" Block="true" FullWidth="true">
                 <TableFixedHeaderExample />
             </SectionContent>
         </DocsPageSection>
@@ -106,7 +126,7 @@
                     Specifies a group of one or more columns in a table for formatting.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="TableColGroupExample" ShowCode="false" Block="true" FullWidth="true">
+            <SectionContent DarkenBackground="true" Code="@nameof(TableColGroupExample)" ShowCode="false" Block="true" FullWidth="true">
                 <TableColGroupExample />
             </SectionContent>
         </DocsPageSection>
@@ -120,7 +140,7 @@
                     <CodeInline>RowEditCommit</CodeInline> method can be used to handle the commit of the item.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="TableInlineEditExample" ShowCode="false" Block="true" FullWidth="true">
+            <SectionContent DarkenBackground="true" Code="@nameof(TableInlineEditExample)" ShowCode="false" Block="true" FullWidth="true">
                 <TableInlineEditExample />
             </SectionContent>
         </DocsPageSection>
@@ -135,8 +155,23 @@
                     </MudAlert>
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="TableServerSidePaginateExample" ShowCode="false" Block="true" FullWidth="true">
+            <SectionContent DarkenBackground="true" Code="@nameof(TableServerSidePaginateExample)" ShowCode="false" Block="true" FullWidth="true">
                 <TableServerSidePaginateExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Server Side Data With Cancellation">
+                <Description>
+                    Use the <CodeInline>CancellationToken</CodeInline> to detect when a request for data has been superceded by a new request.  By forwarding the token to methods which support it,
+                    such as common <CodeInline>HttpClient</CodeInline> or <CodeInline>DbContent</CodeInline> methods, the table can perform well even with frequent updates.
+                    <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
+                        Note: When using <CodeInline>ServerData</CodeInline>, you don't need <CodeInline>Items</CodeInline> or <CodeInline>Filter</CodeInline>.
+                    </MudAlert>
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(TableServerSideCancellationTokenExample)" ShowCode="false" Block="true" FullWidth="true">
+                <TableServerSideCancellationTokenExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -148,7 +183,7 @@
                     The example below demonstrates multi-selection and paging while modifying a <CodeInline>record</CodeInline> type on <CodeInline>SelectedItemsChanged</CodeInline>.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="TableRecordComparerExample" ShowCode="false" Block="true" FullWidth="true">
+            <SectionContent DarkenBackground="true" Code="@nameof(TableRecordComparerExample)" ShowCode="false" Block="true" FullWidth="true">
                 <TableRecordComparerExample />
             </SectionContent>
         </DocsPageSection>
@@ -160,12 +195,12 @@
                     If you need to customize the behavior, as well as rendering multiple header or footer rows, you can set the <CodeInline>CustomHeader</CodeInline> and <CodeInline>CustomFooter</CodeInline> attributes to true.<br />
                     Then setting a list of <CodeInline>&lt;MudTHeadRow></CodeInline> or <CodeInline>&lt;MudTFootRow></CodeInline> with their respective cells will render exactly what's required inside the table header and footer.
                     <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
-                        Note: Unless you specify the attribute <CodeInline>IsCheckable</CodeInline> for a specific row, MudTable won't render a checkbox in case of a multi-selection table.
+                        Note: Unless you specify the attribute <CodeInline>@nameof(MudTr.Checkable)</CodeInline> for a specific row, MudTable won't render a checkbox in case of a multi-selection table.
                         Attributes <CodeInline>IgnoreCheckbox</CodeInline> and <CodeInline>IgnoreEditable</CodeInline> won't render an empty cell either, requiring you to do it manually (for example for a colspan on the entire row).
                     </MudAlert>
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="TableHeaderAndFooterExample" ShowCode="false" Block="true" FullWidth="true">
+            <SectionContent DarkenBackground="true" Code="@nameof(TableHeaderAndFooterExample)" ShowCode="false" Block="true" FullWidth="true">
                 <TableHeaderAndFooterExample />
             </SectionContent>
         </DocsPageSection>
@@ -176,7 +211,7 @@
                     Making use of the <CodeInline>&lt;ChildRowContent&gt;</CodeInline> allows more control over the layout for scenarios such as showing the related address data for each person below.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="TableRelationalExample" ShowCode="false" Block="true" FullWidth="true">
+            <SectionContent DarkenBackground="true" Code="@nameof(TableRelationalExample)" ShowCode="false" Block="true" FullWidth="true">
                 <TableRelationalExample />
             </SectionContent>
         </DocsPageSection>
@@ -187,7 +222,7 @@
                     If too many columns are displayed, setting <CodeInline>HorizontalScrollbar="true"</CodeInline> will allow the user to scroll the content horizontally.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="TableHorizontalScrollExample" ShowCode="false" Block="true" FullWidth="true">
+            <SectionContent DarkenBackground="true" Code="@nameof(TableHorizontalScrollExample)" ShowCode="false" Block="true" FullWidth="true">
                 <TableHorizontalScrollExample />
             </SectionContent>
         </DocsPageSection>
@@ -198,7 +233,7 @@
                     You can virtualize the results of a table to increase rendering speed.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="TableVirtualizationExample" ShowCode="false" Block="true" FullWidth="true">
+            <SectionContent DarkenBackground="true" Code="@nameof(TableVirtualizationExample)" ShowCode="false" Block="true" FullWidth="true">
                 <TableVirtualizationExample />
             </SectionContent>
         </DocsPageSection>
@@ -210,7 +245,7 @@
                     NOTE: Grouping and Virtualization should not be used together.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="TableBasicGroupingExample" ShowCode="false" Block="true" FullWidth="true">
+            <SectionContent DarkenBackground="true" Code="@nameof(TableBasicGroupingExample)" ShowCode="false" Block="true" FullWidth="true">
                 <TableBasicGroupingExample />
             </SectionContent>
         </DocsPageSection>
@@ -218,10 +253,11 @@
         <DocsPageSection>
             <SectionHeader Title="Grouping (Basic) - Initially collapsed">
                 <Description>
-                    Displays items in a grouped way, but the groups are all collapsed as default.
+                    Displays items in a grouped way, but the groups are all collapsed as default. <br />
+                    Groups can be expanded or collapsed all at once by calling <CodeInline>ExpandAllGroups()</CodeInline> or <CodeInline>CollapseAllGroups()</CodeInline>.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="TableBasicGroupingInitiallyCollapsedExample" ShowCode="false" Block="true" FullWidth="true">
+            <SectionContent DarkenBackground="true" Code="@nameof(TableBasicGroupingInitiallyCollapsedExample)" ShowCode="false" Block="true" FullWidth="true">
                 <TableBasicGroupingInitiallyCollapsedExample />
             </SectionContent>
         </DocsPageSection>
@@ -232,7 +268,7 @@
                     Displays items recursively grouped.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="TableMultiGroupingExample" ShowCode="false" Block="true" FullWidth="true">
+            <SectionContent DarkenBackground="true" Code="@nameof(TableMultiGroupingExample)" ShowCode="false" Block="true" FullWidth="true">
                 <TableMultiGroupingExample />
             </SectionContent>
         </DocsPageSection>

@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MudBlazor\MudBlazor.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="bunit" Version="1.38.5" />
+    <PackageReference Include="nunit" Version="4.2.2" />
+  </ItemGroup>
+
+</Project>

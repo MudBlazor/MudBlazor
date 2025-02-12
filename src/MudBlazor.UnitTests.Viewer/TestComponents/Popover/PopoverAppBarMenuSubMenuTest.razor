@@ -1,0 +1,95 @@
+﻿<MudPopoverProvider />
+
+<MudAppBar Color="Color.Primary" Fixed="false">
+    <MudMenu Dense
+             Variant="Variant.Text"
+             Size="Size.Medium"
+             Color="Color.Inherit"
+             Icon="@Icons.Material.TwoTone.MoreVert"
+             AnchorOrigin="Origin.CenterCenter" TransformOrigin="Origin.TopRight">
+
+        <!-- User Menu -->
+        <MudMenu Dense
+                 Variant="Variant.Text"
+                 Size="Size.Medium"
+                 Color="Color.Inherit"
+                 Icon="@Icons.Material.TwoTone.MoreVert"
+                 AnchorOrigin="Origin.CenterRight" TransformOrigin="Origin.TopLeft"
+                 ActivationEvent="MouseEvent.MouseOver">
+
+            <!-- Settings -->
+            <ActivatorContent>
+                <MudMenuItem Icon="@Icons.Material.TwoTone.Settings" IconColor="Color.Primary" IconSize="Size.Medium" AutoClose=@false>
+                    <MudText Class="ml-n5" Color="Color.Default">Settings</MudText>
+                </MudMenuItem>
+            </ActivatorContent>
+
+            <!-- Theme -->
+            <ChildContent>
+                <MudMenuItem Icon="@Icons.Material.TwoTone.DarkMode" IconColor="Color.Secondary" IconSize="Size.Medium">
+                    <MudText Class="ml-n5" Color="Color.Default">Dark Theme</MudText>
+                </MudMenuItem>
+            </ChildContent>
+        </MudMenu>
+
+        <MudDivider />
+
+        <!-- Sign In -->
+        <MudMenuItem Href="/" ForceLoad Icon="@Icons.Material.TwoTone.Login" IconColor="Color.Primary" IconSize="Size.Medium">
+            <MudText Class="ml-n5" Color="Color.Default">Sign In</MudText>
+        </MudMenuItem>
+        <!-- Sign Out -->
+        <MudMenuItem Href="/" ForceLoad Icon="@Icons.Material.TwoTone.Logout" IconColor="Color.Primary" IconSize="Size.Medium">
+            <MudText Class="ml-n5" Color="Color.Default">Sign Out</MudText>
+        </MudMenuItem>
+
+    </MudMenu>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@ToggleAppBarPopoverOpen">Open</MudButton>
+    <MudMenu FullWidth Label="Open Menu" Variant="Variant.Filled" Color="Color.Primary" AnchorOrigin="Origin.CenterCenter" TransformOrigin="Origin.TopLeft" Dense>
+        <MudMenuItem>
+            <MudMenu AnchorOrigin="Origin.TopRight" TransformOrigin="Origin.TopLeft" Dense>
+                <ActivatorContent>
+                    <MudMenuItem Label=" Item 1 " />
+                </ActivatorContent>
+
+                <ChildContent>
+                    <MudMenuItem Label=" Item 1.1 " />
+                    <MudMenuItem Label=" Item 1.2 " />
+                </ChildContent>
+            </MudMenu>
+        </MudMenuItem>
+
+        <MudMenuItem>
+            <MudMenu FullWidth ActivationEvent="MouseEvent.MouseOver" AnchorOrigin="Origin.TopRight" TransformOrigin="Origin.TopLeft" Dense>
+                <ActivatorContent>
+                    <MudMenuItem Label="Item 2" />
+                </ActivatorContent>
+
+                <ChildContent>
+                    <MudMenuItem Label=" Item 2.1 " />
+                    <MudMenuItem Label=" Item 2.2 " />
+                </ChildContent>
+            </MudMenu>
+        </MudMenuItem>
+    </MudMenu>
+    <MudPopover Open="@_appBarPopoverOpen" Fixed="true" Class="px-4 pt-4">
+        <div class="d-flex flex-column">
+            <MudTooltip Text="Tooltiptext: Text must be long or we won't even see it behind the popover.
+            I mean, looooooong.">
+                <MudText>Content of the popover can be anything.</MudText>
+                <MudIconButton Class="mx-2" Icon="@Icons.Material.Outlined.Info" />
+            </MudTooltip>
+            <MudButton OnClick="@ToggleAppBarPopoverOpen" Class="ml-auto mr-n3 mb-1" Color="Color.Error">Close</MudButton>
+        </div>
+    </MudPopover>
+    <MudSpacer />
+    <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" />
+</MudAppBar>
+
+@code {
+    public static string __description__ = "Appbar with Menu and SubMenu and a Tooltip Test";
+
+    private bool _appBarPopoverOpen;
+
+    private void ToggleAppBarPopoverOpen() => _appBarPopoverOpen = !_appBarPopoverOpen;
+}

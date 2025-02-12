@@ -1,0 +1,32 @@
+﻿<MudTable ServerData="ServerReload">
+    <HeaderContent>
+        <MudTh><MudTableSortLabel SortLabel="No." T="int">Nr</MudTableSortLabel></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Nr">@context</MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    public static string __description__ = "The server loading should be canceled when the Table is disposed.";
+    private IEnumerable<int> _pagedData = [];
+    private int _totalItems;
+
+    private async Task<TableData<int>> ServerReload(TableState state, CancellationToken token)
+    {
+        List<int> data = [];
+        try
+        {
+            await Task.Delay(1000, token);
+            data = new List<int> { 1, 2, 3 };
+        }
+        catch (TaskCanceledException)
+        {
+            // ignored
+        }
+        _totalItems = data.Count;
+        _pagedData = data.ToArray();
+
+        return new TableData<int> { TotalItems = _totalItems, Items = _pagedData };
+    }
+}

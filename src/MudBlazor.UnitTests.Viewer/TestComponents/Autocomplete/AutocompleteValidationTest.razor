@@ -1,31 +1,26 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-<MudPopoverProvider></MudPopoverProvider>
+﻿<MudPopoverProvider />
 
 <MudGrid>
     <MudItem xs="12" sm="6" md="4">
-        <MudForm @ref="form">
-            <MudAutocomplete T="string" Label="US States" @bind-Value="value" SearchFunc="@Search" Required="true" 
+        <MudForm @ref="_form">
+            <MudAutocomplete T="string" Label="US States" @bind-Value="_value" SearchFunc="@Search" Required="true" 
                              RequiredError="Very long error message. Very long error message. Very long error message. Very long error message. Very long error message. Very long error message. Very long error message. Very long error message. Very long error message. Very long error message. Very long error message. Very long error message. Very long error message." 
                              ResetValueOnEmptyText="true" />
         </MudForm>
-        <MudButton Variant="Variant.Filled" OnClick="@(()=>form.ResetValidation())">Reset Validation</MudButton>
+        <MudButton Variant="Variant.Filled" OnClick="@(()=>_form.ResetValidation())">Reset Validation</MudButton>
     </MudItem>
 </MudGrid>
 @code {
-#pragma warning disable CS1998 // async without await
     public static string __description__ = "Based on a bug report. Selecting a value should not trigger the validation error message.";
-    MudForm form;
-    string value;
-    private string[] states =
-    {
-        "Alabama", "Alaska", "American Samoa", "Arizona"
-    };
+    private MudForm _form = null!;
+    private string? _value;
+    private readonly string[] _states = ["Alabama", "Alaska", "American Samoa", "Arizona"];
 
-    private async Task<IEnumerable<string>> Search(string value)
+    private Task<IEnumerable<string>> Search(string value, CancellationToken token)
     {
         // if text is null or empty, show complete list
         if (string.IsNullOrEmpty(value))
-            return states;
-        return states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+            return Task.FromResult<IEnumerable<string>>(_states);
+        return Task.FromResult(_states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase)));
     }
 }

@@ -3,75 +3,165 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Resources;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudDataGridPager<T> : MudComponentBase, IDisposable
+    /// <summary>
+    /// Represents a pager for navigating pages of a <see cref="MudDataGrid{T}"/>.
+    /// </summary>
+    /// <typeparam name="T">The kind of data displayed in the grid.</typeparam>
+    /// <seealso cref="MudDataGrid{T}"/>
+    public partial class MudDataGridPager<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase, IDisposable
     {
-        [CascadingParameter] public MudDataGrid<T> DataGrid { get; set; }
+        /// <summary>
+        /// The grid which contains this pager.
+        /// </summary>
+        [CascadingParameter]
+        public MudDataGrid<T> DataGrid { get; set; }
 
         /// <summary>
-        /// Set true to hide the part of the pager which allows to change the page size.
+        /// Shows the page-size drop-down list.
         /// </summary>
-        [Parameter] public bool DisableRowsPerPage { get; set; }
+        /// <remarks>
+        /// Defaults to <c>true</c>.  Use <see cref="PageSizeOptions"/> to control the allowed page sizes.
+        /// </remarks>
+        [Parameter]
+        public bool PageSizeSelector { get; set; } = true;
 
         /// <summary>
-        /// Set true to disable user interaction with the backward/forward buttons
-        /// and the part of the pager which allows to change the page size.
+        /// Disables the back button, forward button, and page-size drop-down list.
         /// </summary>
-        [Parameter] public bool Disabled { get; set; }
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        public bool Disabled { get; set; }
 
         /// <summary>
-        /// Define a list of available page size options for the user to choose from
+        /// The allowed page sizes when <see cref="PageSizeSelector"/> is <c>true</c>.  Defaults to <c>10</c>, <c>25</c>, <c>50</c>, <c>100</c>.
         /// </summary>
-        [Parameter] public int[] PageSizeOptions { get; set; } = new int[] { 10, 25, 50, 100 };
+        [Parameter]
+        public int[] PageSizeOptions { get; set; } = new int[] { 10, 25, 50, 100 };
 
         /// <summary>
-        /// Format string for the display of the current page, which you can localize to your language. Available variables are:
-        /// {first_item}, {last_item} and {all_items} which will replaced with the indices of the page's first and last item, as well as the total number of items.
-        /// Default: "{first_item}-{last_item} of {all_items}" which is transformed into "0-25 of 77". 
+        /// The format for the first item, last item, and number of total items.
         /// </summary>
-        [Parameter] public string InfoFormat { get; set; } = "{first_item}-{last_item} of {all_items}";
+        /// <remarks>
+        /// Defaults to <c>{first_item}-{last_item} of {all_items}</c> (e.g. <c>0-25 of 77</c>).  Available values are <c>{first_item}</c>, <c>{last_item}</c>, and <c>{all_items}</c>.
+        /// </remarks>
+        [Parameter]
+        public string InfoFormat { get; set; } = string.Empty;
 
         /// <summary>
-        /// The localizable "Rows per page:" text.
+        /// The text to show for the "Rows per page:" label.
         /// </summary>
-        [Parameter] public string RowsPerPageString { get; set; } = "Rows per page:";
+        /// <remarks>
+        /// Defaults to <c>Rows per page:</c>.  Can be localized to other languages.
+        /// </remarks>
+        [Parameter]
+        public string RowsPerPageString { get; set; } = string.Empty;
 
-        private string Info => DataGrid == null ? "DataGrid==null" : InfoFormat
-            .Replace("{first_item}", $"{DataGrid?.CurrentPage * DataGrid.RowsPerPage + 1}")
-            .Replace("{last_item}", $"{Math.Min((DataGrid.CurrentPage + 1) * DataGrid.RowsPerPage, DataGrid.GetFilteredItemsCount())}")
-            .Replace("{all_items}", $"{DataGrid.GetFilteredItemsCount()}");
+        /// <summary>
+        /// Shows the pagination buttons.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        public bool ShowNavigation { get; set; } = true;
 
-        private bool BackButtonsDisabled => Disabled || (DataGrid == null ? false : DataGrid.CurrentPage == 0);
+        /// <summary>
+        /// Shows the current page number.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        public bool ShowPageNumber { get; set; } = true;
 
-        private bool ForwardButtonsDisabled => Disabled || (DataGrid == null ? false : (DataGrid.CurrentPage + 1) * DataGrid.RowsPerPage >= DataGrid.GetFilteredItemsCount());
+        /// <summary>
+        /// Defines the text shown in the items per page dropdown when a user provides int.MaxValue as an option
+        /// </summary>
+        [Parameter]
+        public string AllItemsText { get; set; } = string.Empty;
+
+        private string Info
+        {
+            get
+            {
+                if (DataGrid == null)
+                    return "DataGrid==null";
+                Debug.Assert(DataGrid != null);
+                var firstItem = DataGrid?.GetFilteredItemsCount() == 0 ? 0 : DataGrid.CurrentPage * DataGrid.RowsPerPage + 1;
+                var lastItem = Math.Min((DataGrid.CurrentPage + 1) * DataGrid.RowsPerPage, DataGrid.GetFilteredItemsCount());
+                var allItems = DataGrid?.GetFilteredItemsCount() ?? 0;
+
+                if (InfoFormat.Contains("{first_item}") || InfoFormat.Contains("{last_item}") || InfoFormat.Contains("{all_items}"))
+                {
+                    return InfoFormat
+                        .Replace("{first_item}", $"{firstItem}")
+                        .Replace("{last_item}", $"{lastItem}")
+                        .Replace("{all_items}", $"{allItems}");
+                }
+
+                return Localizer[LanguageResource.MudDataGridPager_InfoFormat, firstItem, lastItem, allItems];
+            }
+        }
+
+        private bool BackButtonsDisabled => Disabled || DataGrid is { CurrentPage: 0 };
+
+        private bool ForwardButtonsDisabled => Disabled || (DataGrid != null && (DataGrid.CurrentPage + 1) * DataGrid.RowsPerPage >= DataGrid.GetFilteredItemsCount());
 
         protected string Classname =>
             new CssBuilder("mud-table-pagination-toolbar")
-            .AddClass(Class)
-            .Build();
+                .AddClass(Class)
+                .Build();
 
-        private async Task SetRowsPerPageAsync(string size)
-        {
-            await DataGrid?.SetRowsPerPageAsync(int.Parse(size));
-        }
-
-        protected override async Task OnInitializedAsync()
+        private async Task SetRowsPerPageAsync(int size)
         {
             if (DataGrid != null)
             {
-                DataGrid.HasPager = true;
-                DataGrid.PagerStateHasChangedEvent += StateHasChanged;
-                var size = DataGrid._rowsPerPage ?? PageSizeOptions.First();
                 await DataGrid.SetRowsPerPageAsync(size);
             }
         }
 
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
+
+            if (string.IsNullOrEmpty(RowsPerPageString))
+            {
+                RowsPerPageString = Localizer[LanguageResource.MudDataGridPager_RowsPerPage];
+            }
+
+            if (string.IsNullOrEmpty(AllItemsText))
+            {
+                AllItemsText = Localizer[LanguageResource.MudDataGridPager_AllItems];
+            }
+        }
+
+        protected override async Task OnInitializedAsync()
+        {
+            await base.OnInitializedAsync();
+            if (DataGrid != null)
+            {
+                DataGrid.HasPager = true;
+                DataGrid.PagerStateHasChangedEvent += StateHasChanged;
+                var size = DataGrid._rowsPerPage ?? PageSizeOptions.FirstOrDefault();
+                await DataGrid.SetRowsPerPageAsync(size, false);
+            }
+        }
+
+        /// <summary>
+        /// Releases resources used by this pager.
+        /// </summary>
         public void Dispose()
         {
             if (DataGrid != null)

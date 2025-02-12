@@ -11,10 +11,10 @@
         <MudText Class="ml-4">2</MudText>
         <MudMenu Icon="@Icons.Material.Outlined.Mouse" ActivationEvent="@MouseEvent.MouseOver" Class="mx-2">
             <ChildContent>
-                <MudMenuItem>Profile</MudMenuItem>
-                <MudMenuItem>Theme</MudMenuItem>
-                <MudMenuItem>Usage</MudMenuItem>
-                <MudMenuItem>Sign Out</MudMenuItem>
+                <MudMenuItem Label="Profile" />
+                <MudMenuItem Label="Theme" />
+                <MudMenuItem Label="Usage" />
+                <MudMenuItem Label="Sign Out" />
             </ChildContent>
         </MudMenu>
         <MudTooltip Text="2 can be a better option">
@@ -28,11 +28,3 @@
         </MudTooltip>
     </div>
 </MudMenu>
-
-
-@code {
-	private bool _isOpen = false;
-
-	public void ToggleOpen() => _isOpen = !_isOpen;
-
-}

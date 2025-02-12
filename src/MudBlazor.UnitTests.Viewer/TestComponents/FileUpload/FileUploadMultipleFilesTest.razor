@@ -1,11 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-
-
-<MudFileUpload T="IReadOnlyList<IBrowserFile>" MaximumFileCount="100" @bind-Files="Files">
-    <ButtonTemplate>
-        <MudButton HtmlTag="label" for="@context">Upload</MudButton>
-    </ButtonTemplate>
+﻿<MudFileUpload T="IReadOnlyList<IBrowserFile>" MaximumFileCount="100" @bind-Files="Files">
     <SelectedTemplate>
         <div>
             Select Template
@@ -13,7 +6,6 @@
     </SelectedTemplate>
 </MudFileUpload>
 
-
 @code {
-    public IReadOnlyList<IBrowserFile> Files { get; set; }
+    public IReadOnlyList<IBrowserFile>? Files { get; private set; }
 }

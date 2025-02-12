@@ -1,155 +1,199 @@
-﻿using System.Threading.Tasks;
+﻿// Copyright (c) 2020 MudBlazor
+// License: MIT
+
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.State;
+using MudBlazor.Utilities;
 
+#nullable enable
 namespace MudBlazor
 {
+    /// <summary>
+    /// A pop-up dialog with a simple message and button choices.
+    /// </summary>
+    /// <seealso cref="MudDialog" />
     public partial class MudMessageBox : MudComponentBase
     {
-        [Inject] private IDialogService DialogService { get; set; }
+        private readonly ParameterState<bool> _visibleState;
+        private IDialogReference? _reference;
+        private ActivatableCallback? _yesCallback, _cancelCallback, _noCallback;
 
-        [CascadingParameter] private MudDialogInstance DialogInstance { get; set; }
+        protected string Classname =>
+            new CssBuilder("mud-message-box")
+                .Build();
+
+        public MudMessageBox()
+        {
+            using var registerScope = CreateRegisterScope();
+            _visibleState = registerScope.RegisterParameter<bool>(nameof(Visible))
+                .WithParameter(() => Visible)
+                .WithEventCallback(() => VisibleChanged)
+                .WithChangeHandler(OnVisibleChangedAsync);
+        }
+
+        [Inject]
+        private IDialogService DialogService { get; set; } = null!;
+
+        [CascadingParameter]
+        internal IMudDialogInstance? DialogInstance { get; set; }
 
         /// <summary>
-        /// The message box title. If null or empty, title will be hidden
+        /// The title of this message box.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  When <c>null</c>, the title will be hidden.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.MessageBox.Behavior)]
-        public string Title { get; set; }
+        public string? Title { get; set; }
 
         /// <summary>
-        /// Define the message box title as a renderfragment (overrides Title)
+        /// The custom content within the title.
         /// </summary>
+        /// <remarks>
+        /// When set, the <see cref="Title"/> property is ignored.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.MessageBox.Behavior)]
-        public RenderFragment TitleContent { get; set; }
+        public RenderFragment? TitleContent { get; set; }
 
         /// <summary>
-        /// The message box message as string.
+        /// The content within this message box.
         /// </summary>
+        /// <remarks>
+        /// When <see cref="MessageContent"/> is set, this property is ignored.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.MessageBox.Behavior)]
-        public string Message { get; set; }
+        public string? Message { get; set; }
 
         /// <summary>
-        /// The message box message as markup string.
+        /// The markup content within this message box.
         /// </summary>
+        /// <remarks>
+        /// When <see cref="MessageContent"/> is set, this property is ignored.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.MessageBox.Behavior)]
         public MarkupString MarkupMessage { get; set; }
 
         /// <summary>
-        /// Define the message box body as a renderfragment (overrides Message)
+        /// The custom content within this message box.
         /// </summary>
+        /// <remarks>
+        /// When set, <see cref="Message" /> and <see cref="MarkupMessage"/> are ignored.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.MessageBox.Behavior)]
-        public RenderFragment MessageContent { get; set; }
-
+        public RenderFragment? MessageContent { get; set; }
 
         /// <summary>
-        /// Text of the cancel button. Leave null to hide the button.
+        /// The text of the Cancel button.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  When <c>null</c>, the <c>Cancel</c> button will be hidden.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.MessageBox.Behavior)]
-        public string CancelText { get; set; }
+        public string? CancelText { get; set; }
 
         /// <summary>
-        /// Define the cancel button as a render fragment (overrides CancelText).
-        /// Must be a MudButton
+        /// The custom content for the Cancel button.
         /// </summary>
+        /// <remarks>
+        /// Must be a <see cref="MudButton"/>.  When set, <see cref="CancelText"/> is ignored.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.MessageBox.Behavior)]
-        public RenderFragment CancelButton { get; set; }
+        public RenderFragment? CancelButton { get; set; }
 
         /// <summary>
-        /// Text of the no button. Leave null to hide the button.
+        /// The text of the No button.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  When <c>null</c>, the <c>No</c> button will be hidden.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.MessageBox.Behavior)]
-        public string NoText { get; set; }
+        public string? NoText { get; set; }
 
         /// <summary>
-        /// Define the no button as a render fragment (overrides CancelText).
-        /// Must be a MudButton
+        /// The custom content for the No button.
         /// </summary>
+        /// <remarks>
+        /// Must be a <see cref="MudButton"/>.  When set, <see cref="NoText"/> is ignored.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.MessageBox.Behavior)]
-        public RenderFragment NoButton { get; set; }
+        public RenderFragment? NoButton { get; set; }
 
         /// <summary>
-        /// Text of the yes/OK button. Leave null to hide the button.
+        /// The text of the Yes/OK button.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>OK</c>.  When <c>null</c>, the <c>Yes</c> button will be hidden.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.MessageBox.Behavior)]
         public string YesText { get; set; } = "OK";
 
         /// <summary>
-        /// Define the cancel button as a render fragment (overrides CancelText).
-        /// Must be a MudButton
+        /// The custom content for the Yes button.
         /// </summary>
+        /// <remarks>
+        /// Must be a <see cref="MudButton"/>.  When set, <see cref="YesText"/> is ignored.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.MessageBox.Behavior)]
-        public RenderFragment YesButton { get; set; }
+        public RenderFragment? YesButton { get; set; }
 
         /// <summary>
-        /// Fired when the yes button is clicked
+        /// Occurs when the Yes button is clicked.
         /// </summary>
         [Parameter]
         public EventCallback<bool> OnYes { get; set; }
 
         /// <summary>
-        /// Fired when the no button is clicked
+        /// Occurs when the No button is clicked.
         /// </summary>
         [Parameter]
         public EventCallback<bool> OnNo { get; set; }
 
         /// <summary>
-        /// Fired when the cancel button is clicked or the msg box was closed via the X
+        /// Occurs when the Cancel button is clicked, or this message box is closed via the Close button.
         /// </summary>
         [Parameter]
         public EventCallback<bool> OnCancel { get; set; }
 
         /// <summary>
-        /// Bind this two-way to show and close an inlined message box. Has no effect on opened msg boxes
+        /// Shows this message box.
         /// </summary>
+        /// <remarks>
+        /// Can be bound via <c>@bind-Visible</c> to show and hide an inlined MessageBox.  Has no effect on previously opened message boxes.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.MessageBox.Behavior)]
-        public bool IsVisible
-        {
-            get => _isVisible;
-            set
-            {
-                if (_isVisible == value)
-                    return;
-                _isVisible = value;
-                if (IsInline)
-                {
-                    if (_isVisible)
-                        _ = Show();
-                    else
-                        Close();
-                }
-
-                IsVisibleChanged.InvokeAsync(value);
-            }
-        }
-
-        private bool _isVisible;
-        private bool IsInline => DialogInstance == null;
-
-        private IDialogReference _reference;
+        public bool Visible { get; set; }
 
         /// <summary>
-        /// Raised when the inline dialog's display status changes.
+        /// Occurs when <see cref="Visible"/> has changed.
         /// </summary>
         [Parameter]
-        public EventCallback<bool> IsVisibleChanged { get; set; }
+        public EventCallback<bool> VisibleChanged { get; set; }
 
-        public async Task<bool?> Show(DialogOptions options = null)
+        [MemberNotNullWhen(false, nameof(DialogInstance))]
+        private bool IsInline => DialogInstance is null;
+
+        /// <summary>
+        /// Shows this message box.
+        /// </summary>
+        /// <param name="options">The optional dialog options to use.</param>
+        /// <returns>When <c>true</c>, the Yes/OK button was clicked.  When <c>false</c>, the No button was clicked.  When <c>null</c>, the Cancel button was clicked or this message box was closed.</returns>
+        public async Task<bool?> ShowAsync(DialogOptions? options = null)
         {
-            if (DialogService == null)
-                return null;
-            var parameters = new DialogParameters()
+            var parameters = new DialogParameters
             {
                 [nameof(Title)] = Title,
                 [nameof(TitleContent)] = TitleContent,
@@ -163,29 +207,59 @@ namespace MudBlazor
                 [nameof(YesText)] = YesText,
                 [nameof(YesButton)] = YesButton,
             };
-            _reference = await DialogService.ShowAsync<MudMessageBox>(parameters: parameters, options: options, title: Title);
+            _reference = await DialogService.ShowAsync<MudMessageBox>(title: Title, parameters: parameters, options: options);
             var result = await _reference.Result;
-            if (result.Canceled || result.Data is not bool data)
+
+            if (result is null)
+            {
                 return null;
+            }
+
+            if (result.Canceled || result.Data is not bool data)
+            {
+                return null;
+            }
+
             return data;
         }
 
-        public void Close()
-        {
-            _reference?.Close();
-        }
-
-        private ActivatableCallback _yesCallback, _cancelCallback, _noCallback;
+        /// <summary>
+        /// Hides this message box.
+        /// </summary>
+        public void Close() => _reference?.Close();
 
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            if (YesButton != null)
-                _yesCallback = new ActivatableCallback() { ActivateCallback = OnYesActivated };
-            if (NoButton != null)
-                _noCallback = new ActivatableCallback() { ActivateCallback = OnNoActivated };
-            if (CancelButton != null)
-                _cancelCallback = new ActivatableCallback() { ActivateCallback = OnCancelActivated };
+            if (YesButton is not null)
+            {
+                _yesCallback = new ActivatableCallback { ActivateCallback = OnYesActivated };
+            }
+
+            if (NoButton is not null)
+            {
+                _noCallback = new ActivatableCallback { ActivateCallback = OnNoActivated };
+            }
+
+            if (CancelButton is not null)
+            {
+                _cancelCallback = new ActivatableCallback { ActivateCallback = OnCancelActivated };
+            }
+        }
+
+        private async Task OnVisibleChangedAsync(ParameterChangedEventArgs<bool> arg)
+        {
+            if (IsInline)
+            {
+                if (arg.Value)
+                {
+                    await ShowAsync();
+                }
+                else
+                {
+                    Close();
+                }
+            }
         }
 
         private void OnYesActivated(object arg1, MouseEventArgs arg2) => OnYesClicked();
@@ -194,19 +268,10 @@ namespace MudBlazor
 
         private void OnCancelActivated(object arg1, MouseEventArgs arg2) => OnCancelClicked();
 
-        private void OnYesClicked() => DialogInstance.Close(DialogResult.Ok(true));
+        private void OnYesClicked() => DialogInstance?.Close(DialogResult.Ok(true));
 
-        private void OnNoClicked() => DialogInstance.Close(DialogResult.Ok(false));
+        private void OnNoClicked() => DialogInstance?.Close(DialogResult.Ok(false));
 
-        private void OnCancelClicked() => DialogInstance.Close(DialogResult.Cancel());
-
-        private void HandleKeyDown(KeyboardEventArgs args)
-        {
-            if (args.Key == "Escape")
-            {
-                OnCancelClicked();
-            }
-        }
-
+        private void OnCancelClicked() => DialogInstance?.Close(DialogResult.Cancel());
     }
 }

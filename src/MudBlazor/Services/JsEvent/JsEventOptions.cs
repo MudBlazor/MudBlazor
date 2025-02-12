@@ -2,16 +2,13 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Collections.Generic;
-
 namespace MudBlazor.Services
 {
     public class JsEventOptions
     {
         /// <summary>
-        /// Class of the target node which should be observed for keyboard events
-        ///
-        /// Note: this must be a single class
+        /// <para>Class of the target node which should be observed for keyboard events</para>
+        /// <para>Note: this must be a single class</para>
         /// </summary>
         public string TargetClass { get; set; }
 

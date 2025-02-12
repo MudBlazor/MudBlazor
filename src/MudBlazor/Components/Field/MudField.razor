@@ -8,20 +8,36 @@
         <div class="@Classname">
             @if (Adornment == Adornment.Start)
             {
-                <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Size="@IconSize" Text="@AdornmentText" Edge="@Edge.Start" AdornmentClick="@OnAdornmentClick" Color="@AdornmentColor" />
+                <MudInputAdornment Class="@AdornmentClassname"
+                                   Icon="@AdornmentIcon"
+                                   Color="@AdornmentColor"
+                                   Size="@IconSize"
+                                   Text="@AdornmentText"
+                                   Placement="@Adornment.Start"
+                                   AdornmentClick="@OnAdornmentClick" />
             }
             <div class="@InnerClassname">
                 @ChildContent
             </div>
             @if (Adornment == Adornment.End)
             {
-                <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Size="@IconSize" Text="@AdornmentText" Edge="@Edge.End" AdornmentClick="@OnAdornmentClick"  Color="@AdornmentColor" />
+                <MudInputAdornment Class="@AdornmentClassname"
+                                   Icon="@AdornmentIcon"
+                                   Color="@AdornmentColor"
+                                   Size="@IconSize"
+                                   Text="@AdornmentText"
+                                   Placement="@Adornment.End"
+                                   AdornmentClick="@OnAdornmentClick" />
             }
             @if (Variant == Variant.Outlined)
             {
-                <div class="mud-input-outlined-border"></div>
+                <fieldset class="mud-input-outlined-border">
+                    @if(!string.IsNullOrEmpty(Label))
+                    {
+                        <legend>@Label</legend>
+                    }
+                </fieldset>
             }
         </div>
     </InputContent>
 </MudInputControl>
-

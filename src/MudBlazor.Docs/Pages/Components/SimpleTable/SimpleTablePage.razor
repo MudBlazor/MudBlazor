@@ -1,7 +1,7 @@
 ﻿@page "/components/simpletable"
 
 <DocsPage>
-    <DocsPageHeader Title="Simple Table" />
+    <DocsPageHeader Title="Simple Table" Component="@nameof(MudSimpleTable)" />
     <DocsPageContent>
 
         <DocsPageSection>
@@ -10,7 +10,7 @@
                     Inside the component, you can use all the regular table elements such as <CodeInline Code="<thead>" />, <CodeInline Code="<tbody>" />, <CodeInline Code="<tr>" />, <CodeInline Code="<th>" /> or <CodeInline Code="<td>" />.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="SimpleTableExample" ShowCode="false" Block="true" FullWidth="true">
+            <SectionContent DarkenBackground="true" Code="@nameof(SimpleTableExample)" ShowCode="false" Block="true" FullWidth="true">
                 <SimpleTableExample />
             </SectionContent>
         </DocsPageSection>
@@ -21,7 +21,7 @@
                     Simple Table also supports hover and dense options.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="SimpleTableHoverDenseExample" ShowCode="false" Block="true" FullWidth="true">
+            <SectionContent DarkenBackground="true" Code="@nameof(SimpleTableHoverDenseExample)" ShowCode="false" Block="true" FullWidth="true">
                 <SimpleTableHoverDenseExample />
             </SectionContent>
         </DocsPageSection>
@@ -32,7 +32,7 @@
                     Set <CodeInline>FixedHeader="true"</CodeInline> to make the header sticky when scrolling the table. The table will scroll if you set style to <CodeInline>height:300px;</CodeInline>, for instance.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="SimpleTableFixedHeaderExample" ShowCode="false" Block="true" FullWidth="true">
+            <SectionContent DarkenBackground="true" Code="@nameof(SimpleTableFixedHeaderExample)" ShowCode="false" Block="true" FullWidth="true">
                 <SimpleTableFixedHeaderExample />
             </SectionContent>
         </DocsPageSection>

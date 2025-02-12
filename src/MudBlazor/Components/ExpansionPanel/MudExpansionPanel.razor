@@ -2,9 +2,9 @@
 @inherits MudComponentBase
 
 <div @attributes="UserAttributes" class="@Classname" style="@Style">
-    <div class="mud-expand-panel-header" @onclick="ToggleExpansion">
+    <div class="@HeaderClassname" @onclick="ToggleExpansionAsync">
         <div class="mud-expand-panel-text">
-            @if (TitleContent != null)
+            @if (TitleContent is not null)
             {
                 @TitleContent
             }
@@ -15,10 +15,10 @@
         </div>
         @if (!HideIcon)
         {
-            <MudIcon Icon="@Icon" class="@(IsExpanded? "mud-expand-panel-icon mud-transform" : "mud-expand-panel-icon")" />
+            <MudIcon Icon="@Icon" class="@(_expandedState.Value? "mud-expand-panel-icon mud-transform" : "mud-expand-panel-icon")" />
         }
     </div>
-    <MudCollapse Expanded="@_collapseIsExpanded" MaxHeight="@MaxHeight">
+    <MudCollapse Expanded="_expandedState.Value" MaxHeight="@MaxHeight">
         <div class="@PanelContentClassname">
             @ChildContent
         </div>

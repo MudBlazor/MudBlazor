@@ -1,11 +1,7 @@
 ﻿@page "/components/image"
 
 <DocsPage>
-    <DocsPageHeader Title="Image" SubTitle="A simple component that represent the HTML img tag">
-        <Description>
-        </Description>
-    </DocsPageHeader>
-
+    <DocsPageHeader Title="Image" Component="@nameof(MudImage)" />
     <DocsPageContent>
 
         <DocsPageSection>
@@ -15,20 +11,31 @@
                     The component represent the <CodeInline>&#60;img&#62;</CodeInline> tag  and creates a holding space for the referenced image.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="ImageUsageExample">
+            <SectionContent DarkenBackground="true" Code="@nameof(ImageUsageExample)">
                 <ImageUsageExample />
             </SectionContent>
         </DocsPageSection>
-        
+
+        <DocsPageSection>
+            <SectionHeader Title="Fallback Image">
+                <Description>
+                    If the <CodeInline>Src</CodeInline> image fails to load, the <CodeInline>FallbackSrc</CodeInline> will be loaded.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(ImageFallbackExample)" Block="true">
+                <ImageFallbackExample />
+            </SectionContent>
+        </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Size">
                 <Description>Size can be directly set on the image with the <CodeInline>Width</CodeInline> and <CodeInline>Height</CodeInline> property, it can also be useful to set this even if you want a responsive image, setting them will make the image take up set space even before they are loaded which can be useful if your pictures takes long time to load.</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="ImageSizeExample">
+            <SectionContent DarkenBackground="true" Code="@nameof(ImageSizeExample)">
                 <ImageSizeExample />
             </SectionContent>
         </DocsPageSection>
-                
+
         <DocsPageSection>
             <SectionHeader Title="Responsive Images">
                 <Description>
@@ -36,7 +43,7 @@
                     Resize the example bellow to see how the image scales with the parents with.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="ImageResponsiveExample" Block="true" FullWidth="true">
+            <SectionContent DarkenBackground="true" Code="@nameof(ImageResponsiveExample)" Block="true" FullWidth="true">
                 <DocsImagePageResizer>
                     <ImageResponsiveExample/>
                 </DocsImagePageResizer>
@@ -49,7 +56,7 @@
                     Use <CodeInline>ObjectFit</CodeInline> to controll how a image should be resized.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="ImageFitExample" Block="true" ShowCode="false">
+            <SectionContent DarkenBackground="true" Code="@nameof(ImageFitExample)" Block="true" ShowCode="false">
                 <ImageFitExample />
             </SectionContent>
         </DocsPageSection>
@@ -60,20 +67,18 @@
                     With the <CodeInline>ObjectPosition</CodeInline> property you can specify how a image should be positioned within its container.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="ImagePositionExample" Block="true" ShowCode="false">
+            <SectionContent DarkenBackground="true" Code="@nameof(ImagePositionExample)" Block="true" ShowCode="false">
                 <ImagePositionExample />
             </SectionContent>
         </DocsPageSection>
- 
+
         <DocsPageSection>
             <SectionHeader Title="Playground">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="ImagePlaygroundExample" ShowCode="false">
+            <SectionContent DarkenBackground="true" Code="@nameof(ImagePlaygroundExample)" ShowCode="false">
                 <ImagePlaygroundExample />
             </SectionContent>
         </DocsPageSection>
-        
-
     </DocsPageContent>
 </DocsPage>

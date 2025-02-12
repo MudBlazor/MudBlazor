@@ -1,0 +1,31 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<div>
+    <MudChart ChartType="ChartType.StackedBar" ChartSeries="@Series" @bind-SelectedIndex="Index" LegendPosition="@LegendPosition" XAxisLabels="@XAxisLabels" Width="100%" Height="350px"></MudChart>
+</div>
+<MudText Typo="Typo.h6">Selected portion of the chart: @Index</MudText>
+
+<div>
+    <MudRadioGroup T="Position" @bind-Value="LegendPosition">
+        <MudRadio Value="@(Position.Bottom)" Color="Color.Primary">Bottom</MudRadio>
+        <MudRadio Value="@(Position.Top)" Color="Color.Primary">Top</MudRadio>
+        <MudRadio Value="@(Position.Left)" Color="Color.Primary">Left</MudRadio>
+        <MudRadio Value="@(Position.Right)" Color="Color.Primary">Right</MudRadio>
+        <MudRadio Value="@(Position.Start)" Color="Color.Primary">Start</MudRadio>
+        <MudRadio Value="@(Position.End)" Color="Color.Primary">End</MudRadio>
+    </MudRadioGroup>
+</div>
+
+@code {
+    private int Index = -1; //default value cannot be 0 -> first selectedindex is 0.
+
+    private Position LegendPosition = Position.Bottom;
+
+    public List<ChartSeries> Series = new List<ChartSeries>()
+    {
+        new ChartSeries() { Name = "United States", Data = new double[] { 40, 20, 25, 27, 46, 60, 48, 80, 15 } },
+        new ChartSeries() { Name = "Germany", Data = new double[] { 19, 24, 35, 13, 28, 15, 13, 16, 31 } },
+        new ChartSeries() { Name = "Sweden", Data = new double[] { 8, 6, 11, 13, 4, 16, 10, 16, 18 } },
+    };
+    public string[] XAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
+}

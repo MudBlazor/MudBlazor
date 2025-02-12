@@ -45,7 +45,7 @@ namespace MudBlazor.UnitTests.Utilities
             comp.Instance.ScreenX.Should().Be(0);
             comp.Instance.ScreenY.Should().Be(0);
             // now the EventUtil handler with render-suppression (with mouse args)
-            comp.Find("#btn3").Click(new MouseEventArgs(){ ScreenX = 17, ScreenY = 27 });
+            comp.Find("#btn3").Click(new MouseEventArgs() { ScreenX = 17, ScreenY = 27 });
             comp.RenderCount.Should().Be(2);
             comp.Find("#clicks").TrimmedText().Should().Be("Clicks: 1/0/0"); // no update to the component due render suppression
             comp.Instance.NumClicks1.Should().Be(1);

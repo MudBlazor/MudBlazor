@@ -1,0 +1,15 @@
+﻿<MudPaper Class="pa-4">
+    <MudStack Spacing="2">
+        <MudButton id="outside_btn" OnClick="OnExpandCollapseClick">@(_expanded ? "Collapse" : "Expand")</MudButton>
+        <MudDivider />
+        <MudCollapse @bind-Expanded="_expanded">
+            This content is collapsible
+        </MudCollapse>
+    </MudStack>
+</MudPaper>
+<MudSwitch T="bool" Label="Expanded" @bind-Value="_expanded" Color="Color.Primary" />
+@code {
+    private bool _expanded = true;
+
+    private void OnExpandCollapseClick() => _expanded = !_expanded;
+}

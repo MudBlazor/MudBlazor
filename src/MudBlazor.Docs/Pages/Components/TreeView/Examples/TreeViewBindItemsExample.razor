@@ -1,0 +1,29 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudPaper Width="300px" Elevation="0">
+    <MudTreeView T="string" Hover SelectionMode="@SelectionMode.ToggleSelection" Color="Color.Tertiary">
+        <MudTreeViewItem Text="config" @bind-Expanded="ConfigExpanded" Icon="@Icons.Custom.Uncategorized.Folder" IconExpanded="@Icons.Custom.Uncategorized.FolderOpen">
+            <MudTreeViewItem Text="launch.json" @bind-Selected="LaunchSelected"  Icon="@Icons.Custom.FileFormats.FileCode" />
+            <MudTreeViewItem Text="tasks.json" @bind-Selected="TasksSelected" Icon="@Icons.Custom.FileFormats.FileCode" />
+        </MudTreeViewItem>
+        <MudTreeViewItem Text="images" @bind-Expanded="ImagesExpanded" Icon="@Icons.Custom.Uncategorized.Folder" IconExpanded="@Icons.Custom.Uncategorized.FolderOpen">
+            <MudTreeViewItem Text="logo.png" @bind-Selected="LogoSelected" Icon="@Icons.Custom.FileFormats.FileImage" />
+        </MudTreeViewItem>
+    </MudTreeView>
+</MudPaper>
+
+<MudStack Row Justify="Justify.Center" AlignItems="AlignItems.Center" Style="width: 100%" Wrap="Wrap.Wrap">
+    <MudSwitch @bind-Value="ConfigExpanded" Color="Color.Tertiary">config</MudSwitch>
+    <MudSwitch @bind-Value="ImagesExpanded" Color="Color.Tertiary">images</MudSwitch>
+    <MudCheckBox @bind-Value="LaunchSelected" Color="Color.Tertiary">launch.json</MudCheckBox>
+    <MudCheckBox @bind-Value="TasksSelected" Color="Color.Tertiary">tasks.json</MudCheckBox>
+    <MudCheckBox @bind-Value="LogoSelected" Color="Color.Tertiary">logo.png</MudCheckBox>
+</MudStack>
+
+@code {
+    public bool ConfigExpanded;
+    public bool ImagesExpanded;
+    public bool LaunchSelected = true;
+    public bool TasksSelected;
+    public bool LogoSelected;
+}

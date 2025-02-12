@@ -1,8 +1,7 @@
 ﻿@page "/components/breadcrumbs"
 
 <DocsPage>
-    <DocsPageHeader Title="Breadcrumbs"
-                    SubTitle="A useful way to show the user's location.">
+    <DocsPageHeader Title="Breadcrumbs" Component="@nameof(MudBreadcrumbs)">
     </DocsPageHeader>
     <DocsPageContent>
 
@@ -10,7 +9,7 @@
             <SectionHeader Title="Basic Breadcrumbs">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Code="BreadcrumbsBasicExample">
+            <SectionContent Code="@nameof(BreadcrumbsBasicExample)">
                 <BreadcrumbsBasicExample />
             </SectionContent>
         </DocsPageSection>
@@ -19,7 +18,7 @@
             <SectionHeader Title="Custom Separator">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Code="BreadcrumbsSeparatorExample">
+            <SectionContent Code="@nameof(BreadcrumbsSeparatorExample)">
                 <BreadcrumbsSeparatorExample />
             </SectionContent>
         </DocsPageSection>
@@ -28,7 +27,7 @@
             <SectionHeader Title="Render Fragments">
                 <Description>It is also possible to provide a <CodeInline>RenderFragment</CodeInline> as a template.</Description>
             </SectionHeader>
-            <SectionContent Code="BreadcrumbsSeparatorTemplateExample">
+            <SectionContent Code="@nameof(BreadcrumbsSeparatorTemplateExample)">
                 <BreadcrumbsSeparatorTemplateExample />
             </SectionContent>
         </DocsPageSection>
@@ -37,7 +36,7 @@
             <SectionHeader Title="Item Icons">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Code="BreadcrumbsItemIconsExample">
+            <SectionContent Code="@nameof(BreadcrumbsItemIconsExample)">
                 <BreadcrumbsItemIconsExample />
             </SectionContent>
         </DocsPageSection>
@@ -46,7 +45,7 @@
             <SectionHeader Title="Item Template">
                 <Description>If you use the <CodeInline>ItemTemplate</CodeInline> parameter, MudBlazor doesn't wrap the content in anchors.</Description>
             </SectionHeader>
-            <SectionContent Code="BreadcrumbsItemTemplateExample">
+            <SectionContent Code="@nameof(BreadcrumbsItemTemplateExample)">
                 <BreadcrumbsItemTemplateExample />
             </SectionContent>
         </DocsPageSection>
@@ -55,7 +54,7 @@
             <SectionHeader Title="Collapsed">
                 <Description>You can set the <CodeInline>MaxItems</CodeInline> parameter in order to automatically collapse the breadcrumbs when it exceeds a number of items.</Description>
             </SectionHeader>
-            <SectionContent Code="BreadcrumbsCollapsedExample">
+            <SectionContent Code="@nameof(BreadcrumbsCollapsedExample)">
                 <BreadcrumbsCollapsedExample />
             </SectionContent>
         </DocsPageSection>

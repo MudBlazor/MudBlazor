@@ -2,19 +2,15 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-#pragma warning disable CS1998 // async without await
 #pragma warning disable BL0005 // Set parameter outside component
 
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using FluentValidation;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents.NumericField;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
@@ -92,7 +88,7 @@ namespace MudBlazor.UnitTests.Components
         /// Setting the value to null should not cause a validation error
         /// </summary>
         [TestCaseSource(nameof(TypeCases))]
-        public async Task NumericField_WithNullableTypes_ShouldAllowNulls<T>(T value) where T : struct
+        public void NumericField_WithNullableTypes_ShouldAllowNulls<T>(T value) where T : struct
         {
             var comp = Context.RenderComponent<MudNumericField<T?>>(ComponentParameter.CreateParameter("Value", value));
             // print the generated html
@@ -103,23 +99,6 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").Blur();
             comp.FindAll("div.mud-input-error").Count.Should().Be(0);
         }
-
-        //This doesn't make any sense because you cannot set anything that's not a number
-        ///// <summary>
-        ///// Setting an invalid number should show the conversion error message
-        ///// </summary>
-        //[Test]
-        //public async Task NumericFieldConversionError()
-        //{
-        //    var comp = ctx.RenderComponent<MudNumericField<int?>>();
-        //    // print the generated html
-        //    //Console.WriteLine(comp.Markup);
-        //    comp.Find("input").Change("seventeen");
-        //    comp.Find("input").Blur();
-        //    //Console.WriteLine(comp.Markup);
-        //    comp.FindAll("p.mud-input-error").Count.Should().Be(1);
-        //    comp.Find("p.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
-        //}
 
         /// <summary>
         /// If Debounce Interval is null or 0, Value should change immediately
@@ -213,7 +192,7 @@ namespace MudBlazor.UnitTests.Components
         /// FluentValidation rules can be used for validating a NumericFields
         /// </summary>
         [Test]
-        public async Task NumericFieldFluentValidationTest1()
+        public void NumericFieldFluentValidationTest1()
         {
             var validator = new FluentValueValidator<string>(x => x.Cascade(CascadeMode.Stop)
                 .NotEmpty()
@@ -235,7 +214,7 @@ namespace MudBlazor.UnitTests.Components
         /// Validate handling of decimal support & precision kept
         /// </summary>
         [Test]
-        public async Task NumericField_HandleDecimalPrecisionAndValues()
+        public void NumericField_HandleDecimalPrecisionAndValues()
         {
             var comp = Context.RenderComponent<MudNumericField<decimal>>();
             var numericField = comp.Instance;
@@ -254,8 +233,8 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// An unstable converter should not cause an infinite update loop. This test must complete in under 1 sec!
         /// </summary>
-        [Test, Timeout(1000)]
-        public async Task NumericFieldUpdateLoopProtectionTest()
+        [Test, CancelAfter(1000)]
+        public void NumericFieldUpdateLoopProtectionTest()
         {
             var comp = Context.RenderComponent<MudNumericField<int>>();
             // these conversion funcs are nonsense of course, but they are designed this way to
@@ -272,7 +251,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task NumericField_Should_FireValueChangedOnTextParameterChange()
+        public void NumericField_Should_FireValueChangedOnTextParameterChange()
         {
             var changed_value = 4;
             var comp = Context.RenderComponent<MudNumericField<int>>(EventCallback<int>("ValueChanged", x => changed_value = x));
@@ -281,7 +260,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task NumericField_Should_FireTextChangedOnValueParameterChange()
+        public void NumericField_Should_FireTextChangedOnValueParameterChange()
         {
             var changed_text = "4";
             var comp = Context.RenderComponent<MudNumericField<int>>(EventCallback<string>("TextChanged", x => changed_text = x));
@@ -290,7 +269,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task NumericField_Should_FireTextAndValueChangedOnTextInput()
+        public void NumericField_Should_FireTextAndValueChangedOnTextInput()
         {
             var changed_value = 4;
             string changed_text = null;
@@ -327,7 +306,7 @@ namespace MudBlazor.UnitTests.Components
         /// </summary>
         /// <returns></returns>
         [Test]
-        public async Task NumericField_ShouldNot_ShowRequiredErrorWhenInitialTextIsEmpty()
+        public void NumericField_ShouldNot_ShowRequiredErrorWhenInitialTextIsEmpty()
         {
             var comp = Context.RenderComponent<NumericFieldRequiredTest>();
             var numericField = comp.FindComponent<MudNumericField<int?>>().Instance;
@@ -344,7 +323,7 @@ namespace MudBlazor.UnitTests.Components
         /// <param name="value"></param>
         /// <returns></returns>
         [TestCaseSource(nameof(TypeCases))]
-        public async Task NumericField_OfAnyType_Should_Render<T>(T value)
+        public void NumericField_OfAnyType_Should_Render<T>(T value)
         {
             Assert.DoesNotThrow(() => Context.RenderComponent<MudNumericField<T>>(), $"{typeof(MudNumericField<>)}<{typeof(T)}> render failed.");
         }
@@ -353,7 +332,7 @@ namespace MudBlazor.UnitTests.Components
         /// Increment / Decrement via up / down keys should work
         /// </summary>
         [Test]
-        public async Task NumericFieldTest_KeyboardInput()
+        public void NumericFieldTest_KeyboardInput()
         {
             var comp = Context.RenderComponent<MudNumericField<double>>();
             comp.SetParam(x => x.Culture, CultureInfo.InvariantCulture);
@@ -382,10 +361,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Keydown disabled, should not do anything
+        /// KeyDown disabled, should not do anything
         /// </summary>
         [Test]
-        public async Task NumericFieldTest_KeyboardInput_Disabled()
+        public void NumericFieldTest_KeyboardInput_Disabled()
         {
             var comp = Context.RenderComponent<MudNumericField<double>>();
             comp.SetParam(x => x.Culture, CultureInfo.InvariantCulture);
@@ -401,10 +380,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Keydown readonly, should not do anything
+        /// KeyDown readonly, should not do anything
         /// </summary>
         [Test]
-        public async Task NumericFieldTest_KeyboardInput_Readonly()
+        public void NumericFieldTest_KeyboardInput_Readonly()
         {
             var comp = Context.RenderComponent<MudNumericField<double>>();
             comp.SetParam(x => x.Culture, CultureInfo.InvariantCulture);
@@ -423,45 +402,45 @@ namespace MudBlazor.UnitTests.Components
         /// MouseWheel actions should work
         /// </summary>
         [Test]
-        public async Task NumericFieldTest_MouseWheel()
+        public void NumericFieldTest_MouseWheel()
         {
             var comp = Context.RenderComponent<MudNumericField<double>>();
             comp.SetParam(x => x.Value, 1234.56);
             var numericField = comp.Instance;
 
             //MouseWheel up
-            comp.Find("input").MouseWheel(new WheelEventArgs() { DeltaY = -1, ShiftKey = true });
+            comp.Find("input").WheelAsync(new WheelEventArgs() { DeltaY = -1, ShiftKey = true });
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1235.56));
 
             //MouseWheel down
-            comp.Find("input").MouseWheel(new WheelEventArgs() { DeltaY = 1, ShiftKey = true });
+            comp.Find("input").WheelAsync(new WheelEventArgs() { DeltaY = 1, ShiftKey = true });
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.56));
 
             //Invert MouseWheel
             numericField.InvertMouseWheel = true;
 
             //MouseWheel up
-            comp.Find("input").MouseWheel(new WheelEventArgs() { DeltaY = -1, ShiftKey = true });
+            comp.Find("input").WheelAsync(new WheelEventArgs() { DeltaY = -1, ShiftKey = true });
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1233.56));
 
             //MouseWheel down
-            comp.Find("input").MouseWheel(new WheelEventArgs() { DeltaY = 1, ShiftKey = true });
+            comp.Find("input").WheelAsync(new WheelEventArgs() { DeltaY = 1, ShiftKey = true });
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.56));
 
             //Try with different step
             numericField.Step = 0.5;
 
             //MouseWheel up
-            comp.Find("input").MouseWheel(new WheelEventArgs() { DeltaY = -1, ShiftKey = true });
+            comp.Find("input").WheelAsync(new WheelEventArgs() { DeltaY = -1, ShiftKey = true });
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.06));
 
             //MouseWheel down
-            comp.Find("input").MouseWheel(new WheelEventArgs() { DeltaY = 1, ShiftKey = true });
+            comp.Find("input").WheelAsync(new WheelEventArgs() { DeltaY = 1, ShiftKey = true });
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.56));
 
             //MouseWheel without Shift doesn't do anything
-            comp.Find("input").MouseWheel(new WheelEventArgs() { DeltaY = 77, ShiftKey = false });
-            comp.Find("input").MouseWheel(new WheelEventArgs() { DeltaY = -17, ShiftKey = false });
+            comp.Find("input").WheelAsync(new WheelEventArgs() { DeltaY = 77, ShiftKey = false });
+            comp.Find("input").WheelAsync(new WheelEventArgs() { DeltaY = -17, ShiftKey = false });
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1234.56));
         }
 
@@ -469,7 +448,7 @@ namespace MudBlazor.UnitTests.Components
         /// MouseWheel actions should work on Firefox
         /// </summary>
         [Test]
-        public async Task NumericFieldTest_Wheel_Firefox()
+        public void NumericFieldTest_Wheel_Firefox()
         {
             var comp = Context.RenderComponent<MudNumericField<double>>();
             comp.SetParam(x => x.Value, 1234.56);
@@ -515,7 +494,7 @@ namespace MudBlazor.UnitTests.Components
         /// NumericalField Formats input according to culture
         /// </summary>
         [Test]
-        public async Task NumericFieldTestCultureFormat()
+        public void NumericFieldTestCultureFormat()
         {
             var comp = Context.RenderComponent<NumericFieldCultureTest>();
             var inputs = comp.FindAll("input");
@@ -526,6 +505,7 @@ namespace MudBlazor.UnitTests.Components
             notImmediate.Blur();
             comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Text.Should().Be("1.234,00"));
             comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Value.Should().Be(1234.0));
+            comp.Markup.Should().Contain("type=\"text\" value=\"1.234,00\""); //ensure the numeric field continues to displays the value after blur
             notImmediate.Change("0");
             notImmediate.Blur();
             comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Text.Should().Be("0,00"));
@@ -539,6 +519,7 @@ namespace MudBlazor.UnitTests.Components
             immediate.Blur();
             comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Text.Should().Be("1,234.00"));
             comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Value.Should().Be(1234.0));
+            comp.Markup.Should().Contain("type=\"text\" value=\"1,234.00\""); //ensure the numeric field continues to displays the value after blur
             immediate.Input("0");
             immediate.Blur();
             comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Text.Should().Be("0.00"));
@@ -553,7 +534,7 @@ namespace MudBlazor.UnitTests.Components
         /// NumericalField will not accept illegal chars
         /// </summary>
         [Test]
-        public async Task NumericField_should_RejectIllegalCharacters()
+        public void NumericField_should_RejectIllegalCharacters()
         {
             var comp = Context.RenderComponent<NumericFieldCultureTest>();
             //german
@@ -586,7 +567,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task NumericField_should_ReformatTextOnBlur()
+        public void NumericField_should_ReformatTextOnBlur()
         {
             var comp = Context.RenderComponent<NumericFieldCultureTest>();
             // english
@@ -626,7 +607,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [TestCaseSource(nameof(TypeCases))]
-        public async Task NumericFieldMinMax<T>(T value)
+        public void NumericFieldMinMax<T>(T value)
         {
             var min = (T)Convert.ChangeType(1, typeof(T));
             var max = (T)Convert.ChangeType(10, typeof(T));
@@ -646,7 +627,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [TestCaseSource(nameof(TypeCases))]
-        public async Task NumericFieldMinMaxNullable<T>(T value) where T : struct
+        public void NumericFieldMinMaxNullable<T>(T value) where T : struct
         {
             var min = (T)Convert.ChangeType(1, typeof(T));
             var max = (T)Convert.ChangeType(10, typeof(T));
@@ -708,6 +689,26 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [TestCaseSource(nameof(TypeCases))]
+        public async Task NumericFieldNullable_NoMinMax_Increment_Decrement<T>(T value) where T : struct
+        {
+            var comp = Context.RenderComponent<MudNumericField<T?>>();
+            comp.SetParam(x => x.Step, value);
+
+            await comp.InvokeAsync(() => comp.Instance.Increment().Wait());
+            comp.Instance.Value.Should().Be(value);
+
+            comp.Find("input").Change("");
+
+            if (typeof(T) == typeof(byte) || typeof(T) == typeof(ushort) || typeof(T) == typeof(uint) || typeof(T) == typeof(ulong))
+                value = Num.To<T>(0);
+            else
+                value = (T)Convert.ChangeType(-Convert.ToDouble(value), typeof(T));
+
+            await comp.InvokeAsync(() => comp.Instance.Decrement().Wait());
+            comp.Instance.Value.Should().Be(value);
+        }
+
+        [TestCaseSource(nameof(TypeCases))]
         public async Task NumericField_Increment_Decrement_OverflowHandled<T>(T value)
         {
             var comp = Context.RenderComponent<MudNumericField<T>>();
@@ -746,7 +747,7 @@ namespace MudBlazor.UnitTests.Components
         /// </summary>
         [TestCase(10, 20, 15)]
         [TestCase(-20, -10, -15)]
-        public async Task NumericFieldCanBeCleared(int min, int max, int value)
+        public void NumericFieldCanBeCleared(int min, int max, int value)
         {
             var comp = Context.RenderComponent<MudNumericField<int?>>();
             comp.SetParam(x => x.Min, min);
@@ -763,7 +764,7 @@ namespace MudBlazor.UnitTests.Components
         /// Special format with currency format should not result in error
         /// </summary>
         [Test]
-        public async Task NumericFieldWithCurrencyFormat()
+        public void NumericFieldWithCurrencyFormat()
         {
             var comp = Context.RenderComponent<MudNumericField<int?>>();
             comp.SetParam(x => x.Format, "€0");
@@ -790,7 +791,7 @@ namespace MudBlazor.UnitTests.Components
         /// Test that thousands separator is parsed properly
         /// </summary>
         [Test]
-        public async Task NumericFieldThousandsSeparator()
+        public void NumericFieldThousandsSeparator()
         {
             var comp = Context.RenderComponent<MudNumericField<int?>>();
             var numericField = comp.Instance;
@@ -812,5 +813,385 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => numericField.Text.Should().Be("1000"));
             comp.WaitForAssertion(() => numericField.Value.Should().Be(1000));
         }
+
+        /// <summary>
+        /// Validate that a re-render of a debounced numeric field does not cause a loss of uncommitted text.
+        /// </summary>
+        [Test]
+        public async Task DebouncedNumericFieldRerenderTest()
+        {
+            var comp = Context.RenderComponent<DebouncedNumericFieldRerenderTest>();
+            var numericField = comp.FindComponent<MudNumericField<int>>().Instance;
+            var delayedRerenderButton = comp.Find("button#re-render");
+            var converter = new DefaultConverter<int>();
+            comp.Find("input").Input(new ChangeEventArgs { Value = "1" });
+            // trigger first value change
+            await Task.Delay(comp.Instance.DebounceInterval);
+            // trigger delayed re-render
+            delayedRerenderButton.Click();
+            // imitate "typing in progress" by extending the debounce interval until component re-renders
+            var elapsedTime = 0;
+            var currentText = "1";
+            while (elapsedTime < comp.Instance.RerenderDelay)
+            {
+                var delay = comp.Instance.DebounceInterval / 2;
+                currentText += "2";
+                comp.Find("input").Input(new ChangeEventArgs { Value = currentText });
+                await Task.Delay(delay);
+                elapsedTime += delay;
+            }
+            // after the final debounce, the value should be updated without swallowing any user input
+            await Task.Delay(comp.Instance.DebounceInterval);
+            comp.Instance.Value.Should().Be(converter.Get(currentText));
+            numericField.Text.Should().Be(currentText);
+        }
+
+        [Test]
+        public void DebouncedNumericField_Should_RenderDefaultValueTextOnFirstRender()
+        {
+            var defaultValue = 1;
+            var converter = new DefaultConverter<int>();
+            var comp = Context.RenderComponent<DebouncedNumericFieldRerenderTest>(
+                Parameter(nameof(MudNumericField<int>.Value), defaultValue));
+            var textfield = comp.FindComponent<MudNumericField<int>>().Instance;
+            textfield.Text.Should().Be(converter.Set(defaultValue));
+        }
+
+        /// <summary>
+        /// Validate that a re-render of a debounced numeric field does not cause a loss of uncommitted text while changing culture.
+        /// </summary>
+        [Test]
+        public async Task DebouncedNumericFieldCultureChangeRerenderTest()
+        {
+            var comp = Context.RenderComponent<DebouncedNumericFieldCultureChangeRerenderTest>();
+            var numericField = comp.FindComponent<MudNumericField<double>>().Instance;
+            var delayedCultureChange = comp.Find("button#culture-change");
+            // ensure text is updated on initialize
+            numericField.Text.Should().Be(comp.Instance.Value.ToString(comp.Instance.Format, comp.Instance.Culture));
+            // trigger first value change
+            await Task.Delay(comp.Instance.DebounceInterval);
+            // trigger the culture change
+            delayedCultureChange.Click();
+            // imitate "typing in progress" by extending the debounce interval until component re-renders
+            var elapsedTime = 0;
+            var currentText = comp.Instance.Value.ToString(comp.Instance.Format, comp.Instance.Culture);
+            while (elapsedTime < comp.Instance.RerenderDelay)
+            {
+                var delay = comp.Instance.DebounceInterval / 2;
+                currentText += "2";
+                comp.Find("input").Input(new ChangeEventArgs { Value = currentText });
+                await Task.Delay(delay);
+                elapsedTime += delay;
+            }
+            // after the culture change delay has elapsed, the uncommitted text is retained (with the old culture)
+            numericField.Text.Should().Be(currentText);
+            // once debounce occurs, both value and text are translated into the new culture
+            // e.g. 1.00222222 (one comma something in en-US) turns into 100.222.222 (hundred million something in de-DE)
+            await Task.Delay(comp.Instance.DebounceInterval * 2);
+            numericField.Text.Should().Be(comp.Instance.Value.ToString(comp.Instance.Format, comp.Instance.Culture));
+        }
+
+        /// <summary>
+        /// A numeric field with a label should auto-generate an id and use that id on the input element and the label's for attribute.
+        /// </summary>
+        [Test]
+        public void NumericFieldWithLabel_Should_GenerateIdForInputAndAccompanyingLabel()
+        {
+            var comp = Context.RenderComponent<MudNumericField<int>>(parameters
+                => parameters.Add(p => p.Label, "Test Label"));
+
+            comp.Find("input").Id.Should().NotBeNullOrEmpty();
+            comp.Find("label").Attributes.GetNamedItem("for").Should().NotBeNull();
+            comp.Find("label").Attributes.GetNamedItem("for")!.Value.Should().Be(comp.Find("input").Id);
+        }
+
+        /// <summary>
+        /// A numeric field with a label and UserAttributesId should use the UserAttributesId on the input element and the label's for attribute.
+        /// </summary>
+        [Test]
+        public void NumericFieldWithLabelAndUserAttributesId_Should_UseUserAttributesIdForInputAndAccompanyingLabel()
+        {
+            var expectedId = "userattributes-id";
+            var comp = Context.RenderComponent<MudNumericField<int>>(parameters
+                => parameters
+                    .Add(p => p.Label, "Test Label")
+                    .Add(p => p.UserAttributes, new Dictionary<string, object>
+                    {
+                        { "Id", expectedId }
+                    }));
+
+            comp.Find("input").Id.Should().Be(expectedId);
+            comp.Find("label").Attributes.GetNamedItem("for").Should().NotBeNull();
+            comp.Find("label").Attributes.GetNamedItem("for")!.Value.Should().Be(expectedId);
+        }
+
+        /// <summary>
+        /// A numeric field with a label, a UserAttributesId, and an InputId should use the InputId on the input element and the label's for attribute.
+        /// </summary>
+        [Test]
+        public void NumericFieldWithLabelAndUserAttributesIdAndInputId_Should_UseInputIdForInputAndAccompanyingLabel()
+        {
+            var expectedId = "input-id";
+            var comp = Context.RenderComponent<MudNumericField<int>>(parameters
+                => parameters
+                    .Add(p => p.Label, "Test Label")
+                    .Add(p => p.UserAttributes, new Dictionary<string, object>
+                    {
+                        { "Id", "userattributes-id" }
+                    })
+                    .Add(p => p.InputId, expectedId));
+
+            comp.Find("input").Id.Should().Be(expectedId);
+            comp.Find("label").Attributes.GetNamedItem("for").Should().NotBeNull();
+            comp.Find("label").Attributes.GetNamedItem("for")!.Value.Should().Be(expectedId);
+        }
+
+        /// <summary>
+        /// Optional NumericField should not have required attribute and aria-required should be false.
+        /// </summary>
+        [Test]
+        public void OptionalNumericField_Should_NotHaveRequiredAttributeAndAriaRequiredShouldBeFalse()
+        {
+            var comp = Context.RenderComponent<MudNumericField<int>>();
+
+            comp.Find("input").HasAttribute("required").Should().BeFalse();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("false");
+        }
+
+        /// <summary>
+        /// Required NumericField should have required and aria-required attributes.
+        /// </summary>
+        [Test]
+        public void RequiredNumericField_Should_HaveRequiredAndAriaRequiredAttributes()
+        {
+            var comp = Context.RenderComponent<MudNumericField<int>>(parameters => parameters
+                .Add(p => p.Required, true));
+
+            comp.Find("input").HasAttribute("required").Should().BeTrue();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("true");
+        }
+
+        /// <summary>
+        /// Required and aria-required NumericField attributes should be dynamic.
+        /// </summary>
+        [Test]
+        public void RequiredAndAriaRequiredNumericFieldAttributes_Should_BeDynamic()
+        {
+            var comp = Context.RenderComponent<MudNumericField<int>>();
+
+            comp.Find("input").HasAttribute("required").Should().BeFalse();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("false");
+
+            comp.SetParametersAndRender(parameters => parameters
+                .Add(p => p.Required, true));
+
+            comp.Find("input").HasAttribute("required").Should().BeTrue();
+            comp.Find("input").GetAttribute("aria-required").Should().Be("true");
+        }
+
+        [Test]
+        public void Should_render_appropriate_type()
+        {
+            var comp = Context.RenderComponent<NumericFieldRenderTest>();
+            var field = comp.Find("#num-field-id");
+
+            comp.Markup.Should().NotContain("pattern");
+            field.GetAttribute("type").Should().Be("number");
+
+            var usePattern = Parameter(nameof(NumericFieldRenderTest.UsePattern), true);
+
+            comp.SetParametersAndRender(usePattern);
+            comp.Markup.Should().Contain("pattern");
+            field.GetAttribute("type").Should().Be("text");
+        }
+
+        [Test]
+        [SetUICulture("ru-RU")]
+        public void Should_ignore_default_culture()
+        {
+            var comp = Context.RenderComponent<NumericFieldRenderTest>();
+
+            comp.Find("input").Change("123.45");
+            comp.Find("input").Blur();
+
+            comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(123.45M));
+            comp.Instance.NumericField.Text.Should().Be("123.45");
+            comp.Instance.NumericField.Culture.Name.Should().Be("");
+        }
+
+        [Test]
+        [SetUICulture("ru-RU")]
+        public void Format_should_use_default_culture()
+        {
+            var comp = Context.RenderComponent<MudNumericField<decimal>>(parameters => parameters
+                                .Add(p => p.Format, "N3"));
+
+            comp.Find("input").Change("123,45");
+            comp.Find("input").Blur();
+
+            comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(123.45M));
+            comp.Instance.Text.Should().Be("123,450");
+            comp.Instance.Culture.Name.Should().Be("ru-RU");
+        }
+
+        [Test]
+        [SetUICulture("ru-RU")]
+        public void Pattern_should_use_default_culture()
+        {
+            var comp = Context.RenderComponent<MudNumericField<decimal>>(parameters => parameters
+                                .Add(p => p.Pattern, "[0-9,.\\-]"));
+
+            comp.Find("input").Change("123,45");
+            comp.Find("input").Blur();
+
+            comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(123.45M));
+            comp.Instance.Text.Should().Be("123,45");
+            comp.Instance.Culture.Name.Should().Be("ru-RU");
+        }
+
+        [Test]
+        [SetUICulture("ru-RU")]
+        public void Should_apply_defined_culture()
+        {
+            var comp = Context.RenderComponent<NumericFieldCultureTest>();
+            var inputs = comp.FindAll("input");
+            var immediate = inputs.First();
+            var notImmediate = inputs.Last();
+
+            //german
+            notImmediate.Change("1.234,56");
+            notImmediate.Blur();
+            comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Text.Should().Be("1.234,56"));
+            comp.WaitForAssertion(() => comp.Instance.FieldNotImmediate.Value.Should().Be(1234.56));
+            comp.Instance.FieldNotImmediate.Culture.Name.Should().Be("de-DE");
+
+            // English
+            immediate.Input("1234.56");
+            immediate.Blur();
+            comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Text.Should().Be("1,234.56"));
+            comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Value.Should().Be(1234.56));
+            comp.Instance.FieldImmediate.Culture.Name.Should().Be("en-US");
+        }
+
+        [Test]
+        [SetUICulture("ru-RU")]
+        public void Format_should_use_defined_culture()
+        {
+            var comp = Context.RenderComponent<MudNumericField<decimal>>(parameters => parameters
+                                .Add(p => p.Format, "N3")
+                                .Add(p => p.Culture, CultureInfo.GetCultureInfo("en-US")));
+
+            comp.Find("input").Change("123.45");
+            comp.Find("input").Blur();
+
+            comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(123.45M));
+            comp.Instance.Text.Should().Be("123.450");
+            comp.Instance.Culture.Name.Should().Be("en-US");
+        }
+
+        [Test]
+        [SetUICulture("ru-RU")]
+        public void Pattern_should_use_defined_culture()
+        {
+            var comp = Context.RenderComponent<MudNumericField<decimal>>(parameters => parameters
+                                .Add(p => p.Pattern, "[0-9,.\\-]")
+                                .Add(p => p.Culture, CultureInfo.GetCultureInfo("en-US")));
+
+            comp.Find("input").Change("123.45");
+            comp.Find("input").Blur();
+
+            comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(123.45M));
+            comp.Instance.Text.Should().Be("123.45");
+            comp.Instance.Culture.Name.Should().Be("en-US");
+        }
+
+        [Test]
+        public void Should_render_conversion_error_message()
+        {
+            var comp = Context.RenderComponent<MudNumericField<int>>(parameters => parameters
+                .Add(p => p.ErrorId, "error-id")
+                .Add(p => p.Text, "not a number")
+                .Add(p => p.Converter, new DummyErrorConverter()));
+
+            comp.Instance.ConversionErrorMessage.Should().NotBeNullOrEmpty();
+            comp.Find("#error-id").InnerHtml.Should().Be(comp.Instance.ConversionErrorMessage);
+        }
+
+        [TestCase(Adornment.Start)]
+        [TestCase(Adornment.End)]
+        public void Should_render_aria_label_for_adornment_if_provided(Adornment adornment)
+        {
+            var ariaLabel = "the aria label";
+            var comp = Context.RenderComponent<MudNumericField<int>>(parameters => parameters
+                .Add(p => p.Adornment, adornment)
+                .Add(p => p.AdornmentIcon, Icons.Material.Filled.Accessibility)
+                .Add(p => p.AdornmentAriaLabel, ariaLabel));
+
+            comp.Find(".mud-input-adornment-icon").Attributes.GetNamedItem("aria-label")!.Value.Should().Be(ariaLabel);
+        }
+
+#nullable enable
+        /// <summary>
+        /// Verifies that a numeric field with various configurations renders the expected <c>aria-describedby</c> attribute.
+        /// </summary>
+        // no helpers, validates error id is present when error is present
+        [TestCase(false, false)]
+        // with helper text, helper element should only be present when there is no error
+        [TestCase(false, true)]
+        // with user helper id, helper id should always be present
+        [TestCase(true, false)]
+        // with user helper id and helper text, should always favour user helper id
+        [TestCase(true, true)]
+        public void Should_pass_various_aria_describedby_tests(
+            bool withUserHelperId,
+            bool withHelperText)
+        {
+            var inputId = "input-id";
+            var helperId = withUserHelperId ? "user-helper-id" : null;
+            var helperText = withHelperText ? "helper text" : null;
+            var errorId = "error-id";
+            var errorText = "error text";
+            var inputSelector = "input";
+            var firstExpectedAriaDescribedBy = withUserHelperId
+                ? helperId
+                : withHelperText
+                    ? $"{inputId}-helper-text"
+                    : null;
+
+            var comp = Context.RenderComponent<MudNumericField<string>>(parameters => parameters
+                .Add(p => p.InputId, inputId)
+                .Add(p => p.HelperId, helperId)
+                .Add(p => p.HelperText, helperText)
+                .Add(p => p.Error, false)
+                .Add(p => p.ErrorId, errorId)
+                .Add(p => p.ErrorText, errorText));
+
+            // verify helper text is rendered
+            if (withUserHelperId is false && withHelperText)
+            {
+                var action = () => comp.Find($"#{inputId}-helper-text");
+                action.Should().NotThrow();
+            }
+
+            if (firstExpectedAriaDescribedBy is null)
+            {
+                comp.Find(inputSelector).HasAttribute("aria-describedby").Should().BeFalse();
+            }
+            else
+            {
+                comp.Find(inputSelector).GetAttribute("aria-describedby").Should().Be(firstExpectedAriaDescribedBy);
+            }
+
+            comp.SetParametersAndRender(parameters => parameters
+                .Add(p => p.Error, true));
+            var secondExpectedAriaDescribedBy = withUserHelperId ? $"{errorId} {helperId}" : errorId;
+
+            // verify error text is rendered
+            var errorAction = () => comp.Find($"#{errorId}");
+            errorAction.Should().NotThrow();
+
+            comp.Find(inputSelector).GetAttribute("aria-describedby").Should().Be(secondExpectedAriaDescribedBy);
+        }
+#nullable disable
     }
 }

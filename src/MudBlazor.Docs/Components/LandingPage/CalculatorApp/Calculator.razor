@@ -13,7 +13,7 @@
     </div>
 </MudPaper>
 <MudPaper Square="true" Elevation="0" Height="70%" Class="lp-calc-buttons pb-16">
-    <MudGrid Spacing="0" class="mud-height-full">
+    <MudGrid Spacing="0" Class="mud-height-full">
         <MudItem xs="3" Class="d-flex justify-center align-center pa-6">
             <MudButton OnClick="@(() => CalcExpression += "(")" Class="rounded-circle">(</MudButton>
         </MudItem>
@@ -26,7 +26,7 @@
             </MudButton>
         </MudItem>
         <MudItem xs="3" Class="d-flex justify-center align-center pa-6">
-            <MudButton Variant="Variant.Filled" DisableElevation="true"  OnClick="@(() => CalcExpression += "/")" Class="rounded-circle">
+            <MudButton Variant="Variant.Filled" DropShadow="false"  OnClick="@(() => CalcExpression += "/")" Class="rounded-circle">
                 <MudIcon Icon="@("<path d=\"M19 13H5v-2h14v2m-7-8a2 2 0 0 1 2 2a2 2 0 0 1-2 2a2 2 0 0 1-2-2a2 2 0 0 1 2-2m0 10a2 2 0 0 1 2 2a2 2 0 0 1-2 2a2 2 0 0 1-2-2a2 2 0 0 1 2-2z\">")"/>
             </MudButton>
         </MudItem>
@@ -40,7 +40,7 @@
             <MudButton Class="rounded-circle" OnClick="@(()=>CalcExpression+=9)">9</MudButton>
         </MudItem>
         <MudItem xs="3" Class="d-flex justify-center align-center pa-6">
-            <MudButton Variant="Variant.Filled" DisableElevation="true"  Class="rounded-circle" OnClick="@(()=>CalcExpression+="*")">
+            <MudButton Variant="Variant.Filled" DropShadow="false"  Class="rounded-circle" OnClick="@(()=>CalcExpression+="*")">
               <MudIcon Icon="@Icons.Material.Filled.Close"/>
           </MudButton>
         </MudItem>
@@ -54,7 +54,7 @@
             <MudButton Class="rounded-circle" OnClick="@(()=>CalcExpression+=6)">6</MudButton>
         </MudItem>
         <MudItem xs="3" Class="d-flex justify-center align-center pa-6">
-            <MudButton Variant="Variant.Filled" DisableElevation="true"  Class="rounded-circle" OnClick="@(()=>CalcExpression+="-")">
+            <MudButton Variant="Variant.Filled" DropShadow="false"  Class="rounded-circle" OnClick="@(()=>CalcExpression+="-")">
                <MudIcon Icon="@Icons.Material.Filled.Remove"/>
            </MudButton>
         </MudItem>
@@ -68,7 +68,7 @@
             <MudButton Class="rounded-circle" OnClick="@(()=>CalcExpression+=3)">3</MudButton>
         </MudItem>
         <MudItem xs="3" Class="d-flex justify-center align-center pa-6">
-            <MudButton Variant="Variant.Filled" DisableElevation="true" Class="rounded-circle" OnClick="@(()=>CalcExpression+="+")">
+            <MudButton Variant="Variant.Filled" DropShadow="false" Class="rounded-circle" OnClick="@(()=>CalcExpression+="+")">
                 <MudIcon Icon="@Icons.Material.Filled.Add"/>
             </MudButton>
         </MudItem>
@@ -82,7 +82,7 @@
             <MudButton Class="rounded-circle" OnClick="@(()=>CalcExpression+=".")">.</MudButton>
         </MudItem>
         <MudItem xs="3" Class="d-flex justify-center align-center pa-6">
-            <MudButton Variant="Variant.Filled" DisableElevation="true" Color="Color.Primary" OnClick="Evaluate" Class="rounded-circle">
+            <MudButton Variant="Variant.Filled" DropShadow="false" Color="Color.Primary" OnClick="Evaluate" Class="rounded-circle">
                 <MudIcon Icon="@("<path d=\"M19,10H5V8H19V10M19,16H5V14H19V16Z\"/>")"/>
             </MudButton>
         </MudItem>

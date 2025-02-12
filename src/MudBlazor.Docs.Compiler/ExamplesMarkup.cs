@@ -1,16 +1,13 @@
-﻿using System;
-using System.IO;
-using System.Text;
+﻿using System.Text;
 using System.Text.RegularExpressions;
 using ColorCode;
 
 namespace MudBlazor.Docs.Compiler
 {
-    public class ExamplesMarkup
+    public partial class ExamplesMarkup
     {
         public bool Execute()
         {
-            var paths = new Paths();
             var newFiles = new StringBuilder();
             var success = true;
             var noOfFilesUpdated = 0;
@@ -20,13 +17,13 @@ namespace MudBlazor.Docs.Compiler
             {
                 var formatter = new HtmlClassFormatter();
                 var lastCheckedTime = new DateTime();
-                if (File.Exists(paths.NewFilesToBuildPath))
+                if (File.Exists(Paths.NewFilesToBuildPath))
                 {
-                    var lastNewFilesToBuild = new FileInfo(paths.NewFilesToBuildPath);
+                    var lastNewFilesToBuild = new FileInfo(Paths.NewFilesToBuildPath);
                     lastCheckedTime = lastNewFilesToBuild.LastWriteTime;
                 }
 
-                var directoryInfo = new DirectoryInfo(paths.DocsDirPath);
+                var directoryInfo = new DirectoryInfo(Paths.DocsDirPath);
 
                 foreach (var entry in directoryInfo.GetFiles("*.razor", SearchOption.AllDirectories))
                 {
@@ -42,7 +39,7 @@ namespace MudBlazor.Docs.Compiler
                         continue;
                     }
 
-                    var markupDir = Path.GetDirectoryName(markupPath);
+                    var markupDir = Path.GetDirectoryName(markupPath) ?? string.Empty;
                     if (!Directory.Exists(markupDir))
                     {
                         Directory.CreateDirectory(markupDir);
@@ -50,7 +47,7 @@ namespace MudBlazor.Docs.Compiler
 
                     var src = StripComponentSource(entry.FullName);
                     var blocks = src.Split("@code");
-                    var blocks0 = Regex.Replace(blocks[0], @"</?DocsFrame>", string.Empty)
+                    var blocks0 = DocsFrameEndTagRegularExpression().Replace(blocks[0], string.Empty)
                         .Replace("@", "PlaceholdeR")
                         .Trim();
 
@@ -94,37 +91,34 @@ namespace MudBlazor.Docs.Compiler
                     }
                 }
 
-                File.WriteAllText(paths.NewFilesToBuildPath, newFiles.ToString());
+                File.WriteAllText(Paths.NewFilesToBuildPath, newFiles.ToString());
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Error generating examples markup : {e.Message}");
+                Console.WriteLine(@$"Error generating examples markup : {e.Message}");
                 success = false;
             }
 
-            Console.WriteLine($"Docs.Compiler updated {noOfFilesUpdated} generated files");
-            Console.WriteLine($"Docs.Compiler generated {noOfFilesCreated} new files");
+            Console.WriteLine(@$"Docs.Compiler updated {noOfFilesUpdated} generated files");
+            Console.WriteLine(@$"Docs.Compiler generated {noOfFilesCreated} new files");
             return success;
         }
 
         private static string StripComponentSource(string path)
         {
             var source = File.ReadAllText(path, Encoding.UTF8);
-            source = Regex.Replace(source, "@(namespace|layout|page) .+?\n", string.Empty);
+            source = NamespaceLayoutOrPageRegularExpression().Replace(source, string.Empty);
             return source.Trim();
         }
 
         public static string AttributePostprocessing(string html)
         {
-            return Regex.Replace(
-                html,
-                @"<span class=""htmlAttributeValue"">&quot;(?'value'.*?)&quot;</span>",
-                new MatchEvaluator(m =>
-                    {
-                        var value = m.Groups["value"].Value;
-                        return
-                            $@"<span class=""quot"">&quot;</span>{AttributeValuePostprocessing(value)}<span class=""quot"">&quot;</span>";
-                    }));
+            return HtmlAttributeValueSpanRegularExpression().Replace(html, match =>
+            {
+                var value = match.Groups["value"].Value;
+                return
+                    $@"<span class=""quot"">&quot;</span>{AttributeValuePostprocessing(value)}<span class=""quot"">&quot;</span>";
+            });
         }
 
         private static string AttributeValuePostprocessing(string value)
@@ -133,18 +127,33 @@ namespace MudBlazor.Docs.Compiler
                 return value;
             if (value is "true" or "false")
                 return $"<span class=\"keyword\">{value}</span>";
-            if (Regex.IsMatch(value, "^[A-Z][A-Za-z0-9]+[.][A-Za-z][A-Za-z0-9]+$"))
+            if (AlphanumericDotAlphanumericRegularExpression().IsMatch(value))
             {
                 var tokens = value.Split('.');
                 return $"<span class=\"enum\">{tokens[0]}</span><span class=\"enumValue\">.{tokens[1]}</span>";
             }
 
-            if (Regex.IsMatch(value, "^@[A-Za-z0-9]+$"))
+            if (AlphanumericRegularExpression().IsMatch(value))
             {
                 return $"<span class=\"sharpVariable\">{value}</span>";
             }
 
             return $"<span class=\"htmlAttributeValue\">{value}</span>";
         }
+
+        [GeneratedRegex(@"</?DocsFrame>")]
+        private static partial Regex DocsFrameEndTagRegularExpression();
+
+        [GeneratedRegex("@(namespace|layout|page) .+?\n")]
+        private static partial Regex NamespaceLayoutOrPageRegularExpression();
+
+        [GeneratedRegex(@"<span class=""htmlAttributeValue"">&quot;(?'value'.*?)&quot;</span>")]
+        private static partial Regex HtmlAttributeValueSpanRegularExpression();
+
+        [GeneratedRegex("^[A-Z][A-Za-z0-9]+[.][A-Za-z][A-Za-z0-9]+$")]
+        private static partial Regex AlphanumericDotAlphanumericRegularExpression();
+
+        [GeneratedRegex("^@[A-Za-z0-9]+$")]
+        private static partial Regex AlphanumericRegularExpression();
     }
 }

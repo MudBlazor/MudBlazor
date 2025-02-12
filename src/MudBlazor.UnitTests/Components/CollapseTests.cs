@@ -2,37 +2,44 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Threading.Tasks;
+using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.Collapse;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
-using static MudBlazor.MudCollapse;
 
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
-    public class Collapseests : BunitTest
+    public class CollapseTests : BunitTest
     {
         [Test]
-        public async Task Collapse_Test1()
+        public void Collapse_TwoWayBinding_Test1()
         {
-            //TO DO for %100 coverage we need js test
-            var comp = Context.RenderComponent<MudCollapse>(Parameter("MaxHeight", 1600));
+            var comp = Context.RenderComponent<CollapseBindingTest>();
+            IElement Button() => comp.Find("#outside_btn");
 
-            _ = comp.Instance._state = CollapseState.Exiting;
-            await comp.InvokeAsync(() => comp.Instance.AnimationEnd());
-            comp.WaitForAssertion(() => comp.Instance._height.Should().Be(0));
+            IRenderedComponent<MudSwitch<bool>> MudSwitch() => comp.FindComponent<MudSwitch<bool>>();
+            // Initial state is expanded
+            MudSwitch().Find("input").GetAttribute("aria-checked").Should().Be("true");
 
-            //MaxHeight acceptes minus value?
-            _ = comp.Instance._state = CollapseState.Entering;
-#pragma warning disable BL0005
-            await comp.InvokeAsync(() => comp.Instance.MaxHeight = -1);
-            await comp.InvokeAsync(() => comp.Instance.AnimationEnd());
-            await comp.InvokeAsync(() => comp.Instance.UpdateHeight());
-            comp.WaitForAssertion(() => comp.Instance._height.Should().Be(-1));
+            // Collapse via button
+            Button().Click();
+            MudSwitch().Find("input").GetAttribute("aria-checked").Should().Be("false");
+
+            // Expand via button
+            Button().Click();
+            MudSwitch().Find("input").GetAttribute("aria-checked").Should().Be("true");
+
+            // Collapse via switch
+            MudSwitch().Find("input").Change(false);
+            MudSwitch().Find("input").GetAttribute("aria-checked").Should().Be("false");
+
+            // Expand via switch
+            MudSwitch().Find("input").Change(true);
+            MudSwitch().Find("input").GetAttribute("aria-checked").Should().Be("true");
         }
     }
 }

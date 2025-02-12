@@ -19,11 +19,11 @@
         <MudTd DataLabel="Molar mass">@context.Molar</MudTd>
     </RowTemplate>
     <PagerContent>
-        <MudTablePager PageSizeOptions="new int[]{50, 100}" />
+        <MudTablePager PageSizeOptions="new int[] { 10, 25, 50, 100 }" />
     </PagerContent>
 </MudTable>
 
-<MudSwitch @bind-Checked="enabled" Color="Color.Info">Enable sorting on the Sign Column</MudSwitch>
+<MudSwitch @bind-Value="enabled" Color="Color.Info">Enable sorting on the Sign Column</MudSwitch>
 
 @code {
     private bool enabled = true;

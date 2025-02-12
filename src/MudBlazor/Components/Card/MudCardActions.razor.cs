@@ -3,18 +3,25 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
+    /// <summary>
+    /// Represents a set of buttons displayed as part of a <see cref="MudCard"/>.
+    /// </summary>
+    /// <seealso cref="MudCard" />
+    /// <seealso cref="MudCardContent" />
+    /// <seealso cref="MudCardHeader" />
+    /// <seealso cref="MudCardMedia" />
     public partial class MudCardActions : MudComponentBase
     {
-        protected string Classname =>
-        new CssBuilder("mud-card-actions")
-          .AddClass(Class)
-        .Build();
+        protected string Classname => new CssBuilder("mud-card-actions")
+            .AddClass(Class)
+            .Build();
 
         /// <summary>
-        /// Child content of the component.
+        /// The content within this component.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Card.Behavior)]
-        public RenderFragment ChildContent { get; set; }
+        public RenderFragment? ChildContent { get; set; }
     }
 }

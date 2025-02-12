@@ -1,4 +1,5 @@
 @page "/customization/default-theme"
+
 @using System.Reflection
 @using System.Text.RegularExpressions
 
@@ -132,15 +133,18 @@
                                         @if (Row.CSSVariable.Contains("default-family"))
                                         {
                                             string fontFamily = "";
-                                            foreach (string font in mudTheme.Typography.Default.FontFamily)
+                                            if (mudTheme.Typography.Default.FontFamily is not null)
                                             {
-                                                if (fontFamily == "")
+                                                foreach (string font in mudTheme.Typography.Default.FontFamily)
                                                 {
-                                                    fontFamily += font;
-                                                }
-                                                else
-                                                {
-                                                    fontFamily = fontFamily + ", " + font;
+                                                    if (fontFamily == "")
+                                                    {
+                                                        fontFamily += font;
+                                                    }
+                                                    else
+                                                    {
+                                                        fontFamily = fontFamily + ", " + font;
+                                                    }
                                                 }
                                             }
                                             @fontFamily
@@ -212,13 +216,15 @@
 
     private void LoadPalette()
     {
+#pragma warning disable CS0618
         foreach (var value in typeof(Palette).GetProperties())
+#pragma warning restore CS0618
         {
             var newprop = new ApiDefaultTheme()
             {
                 Name = value.Name,
                 Type = value.PropertyType.ConvertToCSharpSource(),
-                Default = value.GetValue(mudTheme.Palette, null),
+                Default = value.GetValue(mudTheme.PaletteLight, null),
                 Dark = value.GetValue(mudTheme.PaletteDark, null),
                 CSSVariable = $"--mud-palette-{GetCssVar(value.Name)}"
             };
@@ -324,6 +330,10 @@
         else if (value.Contains("TextTransform"))
         {
             return value.Replace("TextTransform", "-Text-Transform").ToLowerInvariant();
+        }
+        else if (value.Contains("BorderRadius"))
+        {
+            return value.Replace("BorderRadius", "-BorderRadius").ToLowerInvariant();
         }
         else
         {

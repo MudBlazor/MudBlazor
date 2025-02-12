@@ -6,32 +6,45 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
+
+    /// <summary>
+    /// A component which prevents the keyboard focus from cycling out of its child content.
+    /// </summary>
+    /// <remarks>
+    /// Typically used within dialogs and other overlays.
+    /// </remarks>
     public partial class MudFocusTrap : IDisposable
     {
+        private bool _shiftDown;
+        private bool _disabled;
+        private bool _initialized;
+        private bool _shouldRender = true;
+
         protected string Classname =>
-            new CssBuilder("outline-none")
+            new CssBuilder("mud-focus-trap")
+                .AddClass("outline-none")
                 .AddClass(Class)
                 .Build();
-        
+
         protected ElementReference _firstBumper;
         protected ElementReference _lastBumper;
         protected ElementReference _fallback;
         protected ElementReference _root;
 
-        private bool _shiftDown;
-        private bool _disabled;
-        private bool _initialized;
-
         /// <summary>
-        /// Child content of the component.
+        /// The content within this focus trap.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FocusTrap.Behavior)]
-        public RenderFragment ChildContent { get; set; }
+        public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// If true, the focus will no longer loop inside the component.
+        /// Prevents the user from interacting with this focus trap.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FocusTrap.Behavior)]
         public bool Disabled
@@ -48,22 +61,30 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Defines on which element to set the focus when the component is created or enabled.
-        /// When DefaultFocus.Element is used, the focus will be set to the FocusTrap itself, so the user will have to press TAB key once to focus the first tabbable element.
+        /// The element which receives focus when this focus trap is created or enabled.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="DefaultFocus.FirstChild"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FocusTrap.Behavior)]
         public DefaultFocus DefaultFocus { get; set; } = DefaultFocus.FirstChild;
+
+        private string TrapTabIndex => Disabled ? "-1" : "0";
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             await base.OnAfterRenderAsync(firstRender);
 
             if (firstRender)
+            {
                 await SaveFocusAsync();
+            }
 
             if (!_initialized)
+            {
                 await InitializeFocusAsync();
+            }
         }
 
         private Task OnBottomFocusAsync(FocusEventArgs args)
@@ -131,7 +152,9 @@ namespace MudBlazor
         {
             _shouldRender = false;
             if (args.Key == "Tab")
+            {
                 _shiftDown = args.ShiftKey;
+            }
         }
 
         private Task RestoreFocusAsync()
@@ -144,20 +167,27 @@ namespace MudBlazor
             return _root.MudSaveFocusAsync().AsTask();
         }
 
-        bool _shouldRender = true;
-
         protected override bool ShouldRender()
         {
             if (_shouldRender)
+            {
                 return true;
+            }
+
             _shouldRender = true; // auto-reset _shouldRender to true
+
             return false;
         }
 
+        /// <summary>
+        /// Releases resources used by this focus trap.
+        /// </summary>
         public void Dispose()
         {
             if (!_disabled)
-                RestoreFocusAsync().AndForget(TaskOption.Safe);
+            {
+                RestoreFocusAsync().CatchAndLog(ignoreExceptions: true);
+            }
         }
     }
 }

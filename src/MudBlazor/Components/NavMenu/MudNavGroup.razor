@@ -1,23 +1,47 @@
 ﻿@namespace MudBlazor
+@using MudBlazor.Resources
 @inherits MudComponentBase
 
-<div @attributes="UserAttributes" class=@Classname disabled="@Disabled" style="@Style">
-    <button @onclick="ExpandedToggle" tabindex="0" class="@ButtonClassname">
-        @if (!String.IsNullOrEmpty(Icon))
+@inject InternalMudLocalizer Localizer
+
+<nav @attributes="UserAttributes"
+     class="@Classname"
+     disabled="@_navigationContext.Disabled"
+     style="@Style"
+     aria-label="@Title">
+    <button @onclick="ExpandedToggleAsync"
+            tabindex="@ButtonTabIndex"
+            class="@ButtonClassname"
+            aria-controls="@_navigationContext.MenuId"
+            aria-expanded="@_navigationContext.Expanded.ToString().ToLowerInvariant()"
+            aria-label="@Localizer[LanguageResource.MudNavGroup_ToggleExpand, Title ?? _navigationContext.MenuId]">
+        @if (!string.IsNullOrEmpty(Icon))
         {
-            <MudIcon Icon="@Icon" Color="@IconColor" Class="@IconClassname" />
+            <MudIcon Disabled="@Disabled" Icon="@Icon" Color="@IconColor" Class="@IconClassname" />
         }
         <div Class="mud-nav-link-text">
-            @Title
+            @if (TitleContent is not null)
+            {
+                @TitleContent
+            }
+            else
+            {
+                @Title
+            }
         </div>
         @if (!HideExpandIcon)
         {
-            <MudIcon Icon="@ExpandIcon" class="@ExpandIconClassname" />
+            <MudIcon Disabled="@Disabled" Icon="@ExpandIcon" Class="@ExpandIconClassname" />
         }
     </button>
-    <MudCollapse Expanded="@Expanded" MaxHeight="@MaxHeight" Class="mud-navgroup-collapse">
-        <MudNavMenu>
-            @ChildContent
-        </MudNavMenu>
+    <MudCollapse aria-hidden="@((_navigationContext.Expanded is false).ToString().ToLowerInvariant())"
+                 Expanded="@_navigationContext.Expanded"
+                 MaxHeight="@MaxHeight"
+                 Class="mud-navgroup-collapse">
+        <CascadingValue Value="@_navigationContext">
+            <MudNavMenu>
+                @ChildContent
+            </MudNavMenu>
+        </CascadingValue>
     </MudCollapse>
-</div>
+</nav>

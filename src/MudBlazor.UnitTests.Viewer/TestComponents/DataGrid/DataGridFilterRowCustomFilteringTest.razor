@@ -1,4 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
+﻿
 
 @*<MudDataGrid Items="@_items" Filterable="true" FilterMode="@DataGridFilterMode.ColumnFilterRow" Bordered="true">
     <Columns>
@@ -7,7 +7,7 @@
         <Column T="Model" Field="@nameof(Model.Status)" />
         <Column T="Model" Field="@nameof(Model.Hired)">
             <FilterTemplate>
-                <MudSwitch T="bool" Color="@Color.Primary" Checked="@_filterHired" CheckedChanged="@((value) => ApplyFilter(value, context))"></MudSwitch>
+                <MudSwitch T="bool" Color="@Color.Primary" Value="@_filterHired" ValueChanged="@((value) => ApplyFilter(value, context))"></MudSwitch>
             </FilterTemplate>
         </Column>
         <Column T="Model" Field="@nameof(Model.HiredOn)" />
@@ -33,14 +33,13 @@
         Value = true
     };
 
-    private void ApplyFilter(bool value, FilterContext<Model> context)
+    private async Task ApplyFilterAsync(bool value, FilterContext<Model> context)
     {
         _filterHired = value;
 
         if (_filterHired)
-            context.Actions.ApplyFilter(_filterDefinition);
+            await context.Actions.ApplyFilterAsync(_filterDefinition);
         else
-            context.Actions.ClearFilter(_filterDefinition);
+            await context.Actions.ClearFilterAsync(_filterDefinition);
     }
-
 }

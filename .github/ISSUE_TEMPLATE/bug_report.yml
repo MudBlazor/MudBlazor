@@ -5,7 +5,18 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking the time to fill out this bug report for [MudBlazor](https://mudblazor.com). Note that this template is only for bug reports. Please use [Github Dicussions](https://github.com/MudBlazor/MudBlazor/discussions) or [Discord](https://discord.gg/mudblazor) for any questions.
+        Thanks for taking the time to fill out this bug report for [MudBlazor](https://mudblazor.com). Note: this template is only for bug reports; Please use [GitHub Discussions](https://github.com/MudBlazor/MudBlazor/discussions) or [Discord](https://discord.gg/mudblazor) for any questions.
+  - type: checkboxes
+    id: preconditions
+    attributes:
+      label: Things to check
+      options:
+        - label: I have searched the **existing issues** for this bug
+          required: true
+        - label: To rule out a caching problem I made sure the bug also happens in an **incognito tab**
+          required: true
+    validations:
+      required: true          
   - type: dropdown
     id: bug-type
     attributes:
@@ -27,7 +38,7 @@ body:
     id: what-happened
     attributes:
       label: What happened?
-      description: Please describe the issue briefly. You can use code-snippets, screenshots, gifs or videos to further explain your problem. Please post code-snippets surrounded in backticks and not as screenshots.
+      description: Please describe the issue briefly. You can use code-snippets, screenshots, or videos to further explain your problem. Please post code-snippets surrounded in backticks and not as screenshots.
       placeholder: Describe your issue!
     validations:
       required: true
@@ -43,7 +54,7 @@ body:
     id: repro-link
     attributes:
       label: Reproduction link
-      description: Please reproduce the issue on [try.mudblazor.com](https://try.mudblazor.com) if possible. Otherwise provide a link to a github repository with a minimal reproduction (No complete applications).
+      description: Please reproduce the issue on [try.mudblazor.com](https://try.mudblazor.com) if possible. Otherwise provide a link to a GitHub repository with a minimal reproduction (no complete applications).
       placeholder: https://try.mudblazor.com/snippet/XXXXXXXXXXXXXXXX
     validations:
       required: true
@@ -69,8 +80,8 @@ body:
     id: bug-version
     attributes:
       label: Version (bug)
-      description: With which version are you experiencing the issue?
-      placeholder: 5.X.X
+      description: With which version are you experiencing the issue? Note that v6 is no longer actively maintained and most bug fixes will be reserved for v7.
+      placeholder: 7.x.x
     validations:
       required: true
   - type: input
@@ -78,7 +89,7 @@ body:
     attributes:
       label: Version (working)
       description: Did it work on a previous version? If so, which version?
-      placeholder: 5.X.X
+      placeholder: 6.x.x
   - type: dropdown
     id: browsers
     attributes:
@@ -88,7 +99,7 @@ body:
       options:
         - Firefox
         - Chrome
-        - Microsoft Edge
+        - Edge
         - Safari
         - Other
     validations:
@@ -96,12 +107,12 @@ body:
   - type: dropdown
     id: os
     attributes:
-      label: On what operating system are you experiencing the issue?
-      description: You don't have to test it on every os.
+      label: On which operating systems are you experiencing the issue?
+      description: You don't have to test it on every OS.
       multiple: true
       options:
         - Windows
-        - Mac OSX
+        - macOS
         - Linux
         - iOS
         - Android
@@ -113,14 +124,14 @@ body:
     id: pr
     attributes:
       label: Pull Request
-      description: Are you interested in implementing a fix via a Pull Request? That would be the fastest way to resolve your issue. We appreciate every contribution!
+      description: If you need this fixed soon, consider submitting a Pull Request! Our team has limited resources so we rely on community contributions. We greatly appreciate all contributions and will review them as soon as possible for inclusion in the next version!
       options:
         - label: I would like to do a Pull Request
   - type: checkboxes
     id: terms
     attributes:
       label: Code of Conduct
-      description: By submitting this issue, you agree to follow our [Code of Conduct](https://github.com/MudBlazor/MudBlazor/blob/dev/CODE_OF_CONDUCT.md)
+      description: By submitting this issue, you agree to follow our [Code of Conduct](https://github.com/MudBlazor/MudBlazor/blob/dev/CODE_OF_CONDUCT.md).
       options:
         - label: I agree to follow this project's Code of Conduct
           required: true

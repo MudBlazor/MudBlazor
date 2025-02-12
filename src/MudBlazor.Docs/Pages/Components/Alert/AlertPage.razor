@@ -1,20 +1,24 @@
 ﻿@page "/components/alert"
 
 <DocsPage>
-    <DocsPageHeader Title="Alert" SubTitle="An alert is used to notify the user about an important message without interrupting the ongoing task." />
+    <DocsPageHeader Title="Alert" Component="@nameof(MudAlert)" />
     <DocsPageContent>
-    
+        <DocsPageSection>
+            <MudText Typo="Typo.h6" GutterBottom="true">Note</MudText>
+            <MudText>To notify the user with dynamic alerts which overlay the page check out <MudLink Href="/components/snackbar">Snackbar</MudLink>.</MudText>
+        </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Simple alerts">
                 <Description>
                     There are five severity levels that each set a different icon and a color.
                 </Description>
             </SectionHeader>
-            <SectionContent Code="AlertSimpleExample">
+            <SectionContent Code="@nameof(AlertSimpleExample)">
                 <AlertSimpleExample />
             </SectionContent>
         </DocsPageSection>
-        
+
         <DocsPageSection>
             <SectionHeader Title="Variants">
                 <Description>The default variant is text. In addition to that, outlined and filled is available.</Description>
@@ -22,22 +26,22 @@
             <SectionHeader>
                 <SubTitle>Outlined</SubTitle>
             </SectionHeader>
-            <SectionContent Code="AlertOutlinedExample">
+            <SectionContent Code="@nameof(AlertOutlinedExample)">
                 <AlertOutlinedExample />
             </SectionContent>
             <SectionHeader Class="mt-12">
                 <SubTitle>Filled</SubTitle>
             </SectionHeader>
-            <SectionContent Code="AlertFilledExample">
+            <SectionContent Code="@nameof(AlertFilledExample)">
                 <AlertFilledExample />
             </SectionContent>
         </DocsPageSection>
-        
+
         <DocsPageSection>
             <SectionHeader Title="Dense">
                 <Description>Taking up too much space? Set the <CodeInline>Dense</CodeInline> property to true. It removes the vertical padding and lowers the horizontal.</Description>
             </SectionHeader>
-            <SectionContent Code="AlertDenseExample" ShowCode="false">
+            <SectionContent Code="@nameof(AlertDenseExample)" ShowCode="false">
                 <AlertDenseExample />
             </SectionContent>
         </DocsPageSection>
@@ -45,7 +49,7 @@
             <SectionHeader Title="No Icons">
                 <Description>You can disable the alert icons with the bool <CodeInline>NoIcon</CodeInline> set to true.</Description>
             </SectionHeader>
-            <SectionContent Code="AlertNoIconExample" ShowCode="false">
+            <SectionContent Code="@nameof(AlertNoIconExample)" ShowCode="false">
                 <AlertNoIconExample />
             </SectionContent>
         </DocsPageSection>
@@ -53,7 +57,7 @@
             <SectionHeader Title="Rounded and Square">
                 <Description>By default, the alert is set to rounded corners by your theme's default value. If you need a square Alert but don't want to change the theme, you can set the <CodeInline>Square</CodeInline> property to true.</Description>
             </SectionHeader>
-            <SectionContent Code="AlertSquareExample" ShowCode="false">
+            <SectionContent Code="@nameof(AlertSquareExample)" ShowCode="false">
                 <AlertSquareExample />
             </SectionContent>
         </DocsPageSection>
@@ -61,7 +65,7 @@
             <SectionHeader Title="Elevation">
                 <Description>The component also accepts the <CodeInline>Elevation</CodeInline> property with a scale from 0 to 24.</Description>
             </SectionHeader>
-            <SectionContent Code="AlertElevationExample" ShowCode="true">
+            <SectionContent Code="@nameof(AlertElevationExample)" ShowCode="true">
                 <AlertElevationExample />
             </SectionContent>
         </DocsPageSection>
@@ -71,7 +75,7 @@
                     Set the <CodeInline>ContentAlignment</CodeInline> property to define the content alignment.
                 </Description>
             </SectionHeader>
-            <SectionContent Code="AlertAlignmentExample" Block="true" FullWidth="true">
+            <SectionContent Code="@nameof(AlertAlignmentExample)" Block="true" FullWidth="true">
                 <AlertAlignmentExample />
             </SectionContent>
         </DocsPageSection>
@@ -82,14 +86,9 @@
                     <CodeInline>CloseIconClicked</CodeInline> provides the EventCallback when clicking on the Close icon of the alert
                 </Description>
             </SectionHeader>
-            <SectionContent Code="AlertCloseExample" ShowCode="false">
+            <SectionContent Code="@nameof(AlertCloseExample)" ShowCode="false">
                 <AlertCloseExample />
             </SectionContent>
-        </DocsPageSection>
-        <DocsPageSection>
-            <SectionHeader Title="Snackbar Alerts">
-                <Description>You can use the <MudLink Href="/components/snackbar">Snackbar</MudLink> to display Alerts.</Description>
-            </SectionHeader>
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>

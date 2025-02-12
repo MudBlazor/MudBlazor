@@ -6,7 +6,7 @@ namespace MudBlazor
 {
     public static class Converters
     {
-        public static CultureInfo DefaultCulture = CultureInfo.CurrentUICulture;
+        public static CultureInfo DefaultCulture => CultureInfo.CurrentUICulture;
 
         #region --> Date converters
         public static Converter<DateTime> IsoDate

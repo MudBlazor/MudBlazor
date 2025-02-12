@@ -1,6 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudForm @bind-IsValid="@_isValid" ValidationDelay="0">
+﻿<MudForm @bind-IsValid="@_isValid" ValidationDelay="0">
     <MudTextField T="int" Immediate="true" />
 </MudForm>
 <MudButton Disabled="@(!_isValid)" Variant="Variant.Filled" Color="Color.Primary">Submit</MudButton>

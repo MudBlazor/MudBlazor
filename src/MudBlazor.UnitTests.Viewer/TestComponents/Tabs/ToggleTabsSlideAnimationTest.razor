@@ -1,6 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudSelect Variant="Variant.Outlined" Label="Tabs Position" Dense="true" Margin="Margin.Dense" T="@Position" @bind-Value="Position">
+﻿<MudSelect Variant="Variant.Outlined" Label="Tabs Position" Dense="true" Margin="Margin.Dense" T="@Position" @bind-Value="Position">
     <MudSelectItem T="Position" Value="@Position.Top">Top</MudSelectItem>
     <MudSelectItem T="Position" Value="@Position.Start">Start</MudSelectItem>
     <MudSelectItem T="Position" Value="@Position.Left">Left</MudSelectItem>
@@ -9,7 +7,7 @@
     <MudSelectItem T="Position" Value="@Position.Bottom">Bottom</MudSelectItem>
 </MudSelect>
 <br />
-<MudTabs @bind-ActivePanelIndex="@SelectedTab" DisableSliderAnimation="@toggle" Position="@Position">
+<MudTabs @bind-ActivePanelIndex="@SelectedTab" SliderAnimation="@SliderAnimation" Position="@Position">
     <MudTabPanel Text="Tab One">
         <MudText>Content One</MudText>
     </MudTabPanel>
@@ -24,43 +22,18 @@
     </MudTabPanel>
 </MudTabs>
 
-Disabled (@toggle):
-<MudToggleIconButton @bind-Toggled="@toggle" 
-    Icon="@Icons.Material.Filled.Animation" 
-    ToggledIcon="@Icons.Material.Filled.Animation" 
-    Color="Color.Error" 
-    ToggledColor="Color.Success"
-/>
+SliderAnimation (@SliderAnimation):
+<MudToggleIconButton @bind-Toggled="@SliderAnimation"
+        Icon="@Icons.Material.Filled.Animation" 
+        ToggledIcon="@Icons.Material.Filled.Animation" 
+        Color="Color.Error" 
+        ToggledColor="Color.Success"/>
 
 @code {
-    public static int SelectedTab { get; set; } = 2;
-    public MudTabs Tabs;
-    public bool toggle { get; set; } = true;
+    [Parameter]
+    public int SelectedTab { get; set; } = 2;
 
-     public Position Position { get; set; } = Position.Left;
+    public bool SliderAnimation { get; set; } = true;
 
-    private void OnSelectedValue(Position value)
-    {
-        switch (value)
-        {
-            case Position.Top:
-                Position = Position.Top;
-                break;
-            case Position.Start:
-                Position = Position.Start;
-                break;
-            case Position.Left:
-                Position = Position.Left;
-                break;
-            case Position.Right:
-                Position = Position.Right;
-                break;
-            case Position.End:
-                Position = Position.End;
-                break;
-            case Position.Bottom:
-                Position = Position.Bottom;
-                break;
-        }
-    }
+    public Position Position { get; set; } = Position.Left;
 }

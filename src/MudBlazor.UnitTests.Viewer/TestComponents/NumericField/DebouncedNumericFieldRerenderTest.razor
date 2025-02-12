@@ -1,0 +1,45 @@
+﻿<MudNumericField @bind-Value="@Value"
+                 Immediate="@true"
+                 DebounceInterval="@DebounceInterval"
+                 Required="@true"
+                 RequiredError="Enter the number of stars" />
+ 
+<MudButton Id="re-render"
+           Variant="@Variant.Filled" 
+           Color="@Color.Primary"
+           OnClick="@LaunchDelayedRerender">
+    Launch delayed re-render
+</MudButton>
+ 
+<MudText>
+    RenderCount: @_renderCount
+</MudText>
+
+<MudText>
+    Value: @Value
+</MudText>
+ 
+@code {
+    public static string __description__ = "Test user input retention on component refresh before debounce.";
+    
+    private int _renderCount;
+
+    [Parameter]
+    public int Value { get; set; }
+
+    public int DebounceInterval => 500;
+
+    public int RerenderDelay => 2000;
+    
+    protected override void OnAfterRender(bool firstRender)
+    {
+        _renderCount++;
+        base.OnAfterRender(firstRender);
+    }
+
+    private async Task LaunchDelayedRerender()
+    {
+        await Task.Delay(RerenderDelay);
+        StateHasChanged();
+    }
+ }

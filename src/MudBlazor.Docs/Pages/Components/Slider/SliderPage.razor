@@ -1,14 +1,14 @@
 ﻿@page "/components/slider"
 
 <DocsPage>
-    <DocsPageHeader Title="Slider" SubTitle="A slider is a visual representation and action to let the user select from a range of values." />
+    <DocsPageHeader Title="Slider" Component="@nameof(MudSlider<T>)" SubTitle="A slider is a visual representation and action to let the user select from a range of values." />
     <DocsPageContent>
 
         <DocsPageSection>
             <SectionHeader Title="Basic Sliders">
                 <Description>Lets you select a value along the whole range.</Description>
             </SectionHeader>
-            <SectionContent Code="SliderBasicExample">
+            <SectionContent Code="@nameof(SliderBasicExample)">
                 <SliderBasicExample />
             </SectionContent>
         </DocsPageSection>
@@ -17,7 +17,7 @@
             <SectionHeader Title="Filled">
                 <Description>The slider also supports <CodeInline>Variant.Filled</CodeInline> which fills the selected value's portion of the slider.</Description>
             </SectionHeader>
-            <SectionContent Code="SliderFilledExample">
+            <SectionContent Code="@nameof(SliderFilledExample)">
                 <SliderFilledExample />
             </SectionContent>
         </DocsPageSection>
@@ -26,7 +26,7 @@
             <SectionHeader Title="Step Sliders">
                 <Description>You can choose the increment with the <CodeInline>Step</CodeInline> prop.</Description>
             </SectionHeader>
-            <SectionContent Code="SliderStepsExample">
+            <SectionContent Code="@nameof(SliderStepsExample)">
                 <SliderStepsExample />
             </SectionContent>
         </DocsPageSection>
@@ -35,8 +35,19 @@
             <SectionHeader Title="Min and Max Values">
                 <Description>With the <CodeInline>Min</CodeInline> and <CodeInline>Max</CodeInline> properties, you can set the minimum and maximum allowed value.</Description>
             </SectionHeader>
-            <SectionContent Code="SliderMinMaxExample">
+            <SectionContent Code="@nameof(SliderMinMaxExample)">
                 <SliderMinMaxExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Nullable">
+                <Description>
+                    If undefined state is required use <CodeInline>@nameof(MudSlider<double>.NullableValue)</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(SliderNullableExample)">
+                <SliderNullableExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -45,9 +56,9 @@
             <SectionSubGroups>
                 <DocsPageSection>
                     <SectionHeader Title="Display Ticks">
-                        <Description>Tick marks can be displayed with <CodeInline>TickMarks</CodeInline> property set to true, its common that its combined with the <CodeInline>Step</CodeInline> property as well.</Description>
+                        <Description>Tick marks can be displayed with <CodeInline>TickMarks</CodeInline> property set to true, it's common that it's combined with the <CodeInline>Step</CodeInline> property as well.</Description>
                     </SectionHeader>
-                    <SectionContent Code="SliderTickMarkExample">
+                    <SectionContent Code="@nameof(SliderTickMarkExample)">
                         <SliderTickMarkExample />
                     </SectionContent>
                 </DocsPageSection>
@@ -56,7 +67,7 @@
                     <SectionHeader Title="Labels">
                         <Description>Labels can be added to each tick by providing a string array to the <CodeInline>TickMarkLabels</CodeInline> property.</Description>
                     </SectionHeader>
-                    <SectionContent Code="SliderTickLabelExample">
+                    <SectionContent Code="@nameof(SliderTickLabelExample)">
                         <SliderTickLabelExample />
                     </SectionContent>
                 </DocsPageSection>
@@ -65,9 +76,15 @@
 
         <DocsPageSection>
             <SectionHeader Title="Value Label">
-                <Description>Use the slider below to see the value label, this can be used by setting <CodeInline>ValueLabel</CodeInline> property to true.</Description>
+                <Description>
+                    Use the slider below to see the value label, this can be used by setting <CodeInline>@nameof(MudSlider<double>.ValueLabel)</CodeInline> property to true.
+                    <br />
+                    Use <CodeInline>@nameof(MudSlider<double>.ValueLabelFormat)</CodeInline> and <CodeInline>@nameof(MudSlider<double>.Culture)</CodeInline> to change the formatting.
+                    <br />
+                    For more customization use <CodeInline>@nameof(MudSlider<double>.ValueLabelContent)</CodeInline> RenderFragment.
+                </Description>
             </SectionHeader>
-            <SectionContent Code="SliderValueLabelExample">
+            <SectionContent Code="@nameof(SliderValueLabelExample)">
                 <SliderValueLabelExample />
             </SectionContent>
         </DocsPageSection>
@@ -76,7 +93,7 @@
             <SectionHeader Title="Size">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Code="SliderSizeExample">
+            <SectionContent Code="@nameof(SliderSizeExample)">
                 <SliderSizeExample />
             </SectionContent>
         </DocsPageSection>
@@ -85,7 +102,7 @@
             <SectionHeader Title="Vertical">
                 <Description>MudSlider can be displayed vertically with the <CodeInline>Vertical</CodeInline> property set to true.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true" Code="SliderVerticalExample">
+            <SectionContent Outlined="true" Code="@nameof(SliderVerticalExample)">
                 <SliderVerticalExample />
             </SectionContent>
         </DocsPageSection>

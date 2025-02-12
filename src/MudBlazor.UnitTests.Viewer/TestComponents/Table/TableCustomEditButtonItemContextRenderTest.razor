@@ -1,0 +1,42 @@
+﻿<MudText>Latest button click item: @LatestButtonClickItem</MudText>
+<MudTable T="string" Items="_items" EditTrigger="TableEditTrigger.EditButton" EditButtonPosition="EditButtonPosition" ApplyButtonPosition="ApplyButtonPosition">
+    <HeaderContent>
+        <MudTh>#</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>
+            <div>
+                @context
+            </div>
+        </MudTd>
+    </RowTemplate>
+    <RowEditingTemplate>
+        <MudTd>
+            <MudTextField T="string" @bind-Value="@context"></MudTextField>
+        </MudTd>
+    </RowEditingTemplate>
+    <EditButtonContent Context="button">
+        <MudButton Size="@Size.Small" Class="pa-0" OnClick="@(() => CustomButtonClick(button.Item))">
+            Custom Button
+        </MudButton>
+    </EditButtonContent>
+</MudTable>
+
+@code {
+    public static string __description__ = "Inline Edit Table: Custom edit button - Item context";
+
+    private readonly string[] _items = ["A", "B", "C"];
+    
+    [Parameter]
+    public TableApplyButtonPosition ApplyButtonPosition { get; set; } = TableApplyButtonPosition.End;
+
+    [Parameter]
+    public TableEditButtonPosition EditButtonPosition { get; set; } = TableEditButtonPosition.End;
+
+    public object? LatestButtonClickItem { get; private set; }
+
+    private void CustomButtonClick(object? item)
+    {
+        LatestButtonClickItem = item;
+    } 
+}

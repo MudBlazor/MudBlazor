@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor
 
 <li aria-hidden="true" class="mud-breadcrumb-separator mud-ltr mud-flip-x-rtl">
-    @if (Parent?.SeparatorTemplate == null)
+    @if (Parent?.SeparatorTemplate is null)
     {
         <span>@Parent?.Separator</span>
     }
@@ -10,7 +10,3 @@
         @Parent?.SeparatorTemplate
     }
 </li>
-
-@code {
-    [CascadingParameter] public MudBreadcrumbs Parent { get; set; }
-}

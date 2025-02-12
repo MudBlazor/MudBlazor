@@ -1,9 +1,6 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-
-<MudTable Items="@Cars" Hover="true" @ref="tableInstance" GroupBy="@groups"
-          GroupHeaderStyle="background-color:var(--mud-palette-background-grey)"
-          GroupFooterStyle="background-color:var(--mud-palette-background-grey)"
+﻿<MudTable Items="@_cars" Hover="true" @ref="TableInstance" GroupBy="@_groups"
+          GroupHeaderStyle="background-color:var(--mud-palette-background-gray)"
+          GroupFooterStyle="background-color:var(--mud-palette-background-gray)"
           MultiSelection="true">
     <HeaderContent>
         <MudTh>Model:</MudTh>
@@ -23,33 +20,34 @@
 </MudTable>
 
 @code {
-    public MudTable<TableGroupingTest.RacingCar> tableInstance;
-    private IEnumerable<TableGroupingTest.RacingCar> Cars;
+    private IEnumerable<TableGroupingTest.RacingCar> _cars = [];
+
+    public MudTable<TableGroupingTest.RacingCar> TableInstance { get; private set; } = null!;
 
     protected override Task OnInitializedAsync()
     {
-        Cars = new List<TableGroupingTest.RacingCar>()
-    {
+        _cars = new List<TableGroupingTest.RacingCar>
+        {
             new("919 Hybrid", "Porsche", "LMP1"),
             new("911 RSR", "Porsche", "GTE"),
             new("911 RS", "Porsche", "GT3"),
             new("R18 e-tron quattor", "Audi", "LMP1"),
             new("R8 LMS", "Audi", "GT3"),
-            new ("F488", "Ferrari", "GTE"),
-            new ("SF-1000", "Ferrari", "Formula 1"),
-            new ("MCL35M", "McLaren", "Formula 1"),
-            new ("720s", "McLaren", "GT3"),
-            new ("Vantage", "Aston Martin", "GTE"),
-            new ("AMR21", "Aston Martin", "Formula 1"),
+            new("F488", "Ferrari", "GTE"),
+            new("SF-1000", "Ferrari", "Formula 1"),
+            new("MCL35M", "McLaren", "Formula 1"),
+            new("720s", "McLaren", "GT3"),
+            new("Vantage", "Aston Martin", "GTE"),
+            new("AMR21", "Aston Martin", "Formula 1"),
         };
         return base.OnInitializedAsync();
     }
 
-    TableGroupDefinition<TableGroupingTest.RacingCar> groups = new()
+    private readonly TableGroupDefinition<TableGroupingTest.RacingCar> _groups = new()
     {
         GroupName = "Category",
         Selector = rc => rc.Category,
-        InnerGroup = new TableGroupDefinition<TableGroupingTest.RacingCar>()
+        InnerGroup = new TableGroupDefinition<TableGroupingTest.RacingCar>
         {
             GroupName = "Brand",
             Selector = rc => rc.Brand

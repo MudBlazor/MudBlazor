@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace MudBlazor.Examples.Data.Models
+namespace MudBlazor.Examples.Data.Models;
+
+public class Table
 {
-    public class Table
-    {
-        [JsonPropertyName("table")]
-        public IList<ElementGroup> ElementGroups { get; set; }
-    }
+    [JsonPropertyName("table")]
+    public IReadOnlyCollection<ElementGroup>? ElementGroups { get; set; }
 }

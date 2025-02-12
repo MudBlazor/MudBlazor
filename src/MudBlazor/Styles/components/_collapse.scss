@@ -1,48 +1,28 @@
-﻿.mud-collapse-container {
-    height: 0px;
-    overflow: hidden;
-}
-
-@keyframes mud-expand-anim {
-    from {
-        height: 0;
-    }
+.mud-collapse-container {
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: minmax(0, 0fr);
+  transition: grid-template-rows 300ms ease-in-out;
 }
 
 .mud-collapse-entering {
-    animation: mud-expand-anim 1s ease-in-out 0ms 1 forwards;
-
-    &.mud-navgroup-collapse {
-        animation-duration: 300ms !important;
-    }
+  grid-template-rows: minmax(0, 1fr);
 }
 
 .mud-collapse-entered {
-    overflow: initial;
-}
-
-@keyframes mud-collapse-anim {
-    to {
-        height: 0;
-    }
-}
-
-.mud-collapse-exiting {
-    animation: mud-collapse-anim 0.5s cubic-bezier(0, 1, 0, 1) 0ms 1 forwards;
-
-    &.mud-navgroup-collapse {
-        animation-duration: 300ms;
-    }
+  overflow: initial;
+  grid-template-rows: minmax(0, 1fr);
 }
 
 .mud-collapse-hidden {
-    visibility: hidden;
+  visibility: hidden;
 }
 
 .mud-collapse-wrapper {
-    display: flex;
+  overflow: hidden;
+  display: flex;
 }
 
 .mud-collapse-wrapper-inner {
-    width: 100%;
+  width: 100%;
 }

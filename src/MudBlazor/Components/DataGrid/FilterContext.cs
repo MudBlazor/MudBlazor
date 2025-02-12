@@ -4,54 +4,83 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
 
 namespace MudBlazor
 {
 #nullable enable
-    public class FilterContext<T>
+    /// <summary>
+    /// Represents the current state of a filter in a <see cref="MudDataGrid{T}"/>.
+    /// </summary>
+    /// <typeparam name="T">The type of item managed by the <see cref="MudDataGrid{T}"/>.</typeparam>
+    /// <seealso cref="MudDataGrid{T}"/>
+    public class FilterContext<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>
     {
         private readonly MudDataGrid<T> _dataGrid;
 
-        internal FilterDefinition<T>? FilterDefinition { get; set; }
-
         internal HeaderCell<T>? HeaderCell { get; set; }
 
-        public IEnumerable<T> Items
-        {
-            get
-            {
-                return _dataGrid.Items;
-            }
-        }
+        /// <summary>
+        /// The definition of this filter.
+        /// </summary>
+        public IFilterDefinition<T>? FilterDefinition { get; set; }
 
-        public List<FilterDefinition<T>> FilterDefinitions
-        {
-            get
-            {
-                return _dataGrid.FilterDefinitions;
-            }
-        }
+        /// <summary>
+        /// The items to filter.
+        /// </summary>
+        public IEnumerable<T> Items => _dataGrid.Items;
 
+        /// <summary>
+        /// The definitions of all filters in the grid.
+        /// </summary>
+        public List<IFilterDefinition<T>> FilterDefinitions => _dataGrid.FilterDefinitions;
+
+        /// <summary>
+        /// The behaviors which occur when filters are applied or cleared.
+        /// </summary>
         public FilterActions Actions { get; }
 
+        /// <summary>
+        /// Creates a new instance.
+        /// </summary>
+        /// <param name="dataGrid">The <see cref="MudDataGrid{T}"/> managing this filter.</param>
         public FilterContext(MudDataGrid<T> dataGrid)
         {
             _dataGrid = dataGrid;
             Actions = new FilterActions
             {
-                ApplyFilter = x => HeaderCell?.ApplyFilter(x),
-                ApplyFilters = x => HeaderCell?.ApplyFilters(x),
-                ClearFilter = x => HeaderCell?.ClearFilter(x),
-                ClearFilters = x => HeaderCell?.ClearFilters(x),
+                ApplyFilterAsync = async x => await (HeaderCell?.ApplyFilterAsync(x) ?? Task.CompletedTask),
+                ApplyFiltersAsync = async x => await (HeaderCell?.ApplyFiltersAsync(x) ?? Task.CompletedTask),
+                ClearFilterAsync = async x => await (HeaderCell?.ClearFilterAsync(x) ?? Task.CompletedTask),
+                ClearFiltersAsync = async x => await (HeaderCell?.ClearFiltersAsync(x) ?? Task.CompletedTask),
             };
         }
 
+        /// <summary>
+        /// Represents the apply and clear behaviors for a filter of a<see cref="MudDataGrid{T}"/>.
+        /// </summary>
         public class FilterActions
         {
-            public Action<FilterDefinition<T>>? ApplyFilter { get; internal set; }
-            public Action<IEnumerable<FilterDefinition<T>>>? ApplyFilters { get; internal set; }
-            public Action<FilterDefinition<T>>? ClearFilter { get; internal set; }
-            public Action<IEnumerable<FilterDefinition<T>>>? ClearFilters { get; internal set; }
+            /// <summary>
+            /// The function which applies a single filter.
+            /// </summary>
+            public required Func<IFilterDefinition<T>, Task> ApplyFilterAsync { get; init; }
+
+            /// <summary>
+            /// The function which applies multiple filters.
+            /// </summary>
+            public required Func<IEnumerable<IFilterDefinition<T>>, Task> ApplyFiltersAsync { get; init; }
+
+            /// <summary>
+            /// The function which clears a single filter.
+            /// </summary>
+            public required Func<IFilterDefinition<T>, Task> ClearFilterAsync { get; init; }
+
+            /// <summary>
+            /// The function which clears multiple filters.
+            /// </summary>
+            public required Func<IEnumerable<IFilterDefinition<T>>, Task> ClearFiltersAsync { get; init; }
         }
     }
 }

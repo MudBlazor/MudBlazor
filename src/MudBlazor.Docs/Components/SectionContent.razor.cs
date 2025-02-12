@@ -2,7 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using MudBlazor.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,16 +11,19 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Extensions;
 using MudBlazor.Docs.Models;
+using MudBlazor.Docs.Services;
+using MudBlazor.Utilities;
 
 namespace MudBlazor.Docs.Components;
 
 public partial class SectionContent
 {
     [Inject] protected IJsApiService JsApiService { get; set; }
+    [Inject] protected IDocsJsApiService DocsJsApiService { get; set; }
 
     protected string Classname =>
         new CssBuilder("docs-section-content")
-            .AddClass($"outlined", Outlined && ChildContent != null )
+            .AddClass($"outlined", Outlined && ChildContent != null)
             .AddClass($"darken", DarkenBackground)
             .AddClass("show-code", _hasCode && ShowCode)
             .AddClass(Class)
@@ -37,15 +39,18 @@ public partial class SectionContent
             .AddClass($"relative d-flex flex-grow-1 flex-wrap justify-center align-center", !Block)
             .AddClass($"d-block mx-auto", Block)
             .AddClass($"mud-width-full", Block && FullWidth)
-            .AddClass("pa-8", !_hasCode)
-            .AddClass("px-8 pb-8 pt-2", _hasCode)
+            .AddClass("pa-8", !_hasCode && !IsApiSection)
+            .AddClass("px-8 pb-8 pt-2", _hasCode && !IsApiSection)
+            .AddClass("pa-2", IsApiSection)
             .Build();
-    
+
     protected string SourceClassname =>
         new CssBuilder("docs-section-source")
             .AddClass($"outlined", Outlined && ChildContent != null)
             .AddClass("show-code", _hasCode && ShowCode)
             .Build();
+
+    private string _snippetId = Identifier.Create();
 
     [Parameter] public string Class { get; set; }
     [Parameter] public bool DarkenBackground { get; set; }
@@ -57,24 +62,25 @@ public partial class SectionContent
     [Parameter] public string HighLight { get; set; }
     [Parameter] public IEnumerable<CodeFile> Codes { get; set; }
     [Parameter] public RenderFragment ChildContent { get; set; }
-    
+    [Parameter] public bool IsApiSection { get; set; }
+
     private bool _hasCode;
     private string _activeCode;
 
     protected override void OnParametersSet()
     {
-        if(Codes != null)
+        if (Codes != null)
         {
             _hasCode = true;
-            _activeCode = Codes.FirstOrDefault().code;
+            _activeCode = Codes.FirstOrDefault()?.code;
         }
-        else if(!String.IsNullOrWhiteSpace(Code))
+        else if (!string.IsNullOrWhiteSpace(Code))
         {
             _hasCode = true;
             _activeCode = Code;
         }
     }
-    
+
     public void OnShowCode()
     {
         ShowCode = !ShowCode;
@@ -96,10 +102,12 @@ public partial class SectionContent
             return "file-button";
         }
     }
-    
+
     private async Task CopyTextToClipboard()
     {
-        await JsApiService.CopyToClipboardAsync(Snippets.GetCode(Code));
+        var code = Snippets.GetCode(Code);
+        code ??= await DocsJsApiService.GetInnerTextByIdAsync(_snippetId);
+        await JsApiService.CopyToClipboardAsync(code ?? $"Snippet '{Code}' not found!");
     }
 
     RenderFragment CodeComponent(string code) => builder =>
@@ -111,13 +119,16 @@ public partial class SectionContent
             using (var reader = new StreamReader(stream))
             {
                 var read = reader.ReadToEnd();
-                
+
+                // Ensure the code uses spaces for identation regardless of the formatting within the source code.
+                read = read.Replace("\t", "    ");
+
                 if (!string.IsNullOrEmpty(HighLight))
                 {
-                    if (HighLight.Contains(","))
+                    if (HighLight.Contains(','))
                     {
                         var highlights = HighLight.Split(",");
-                        
+
                         foreach (var value in highlights)
                         {
                             read = Regex.Replace(read, $"{value}(?=\\s|\")", $"<mark>$&</mark>");
@@ -137,28 +148,27 @@ public partial class SectionContent
             // todo: log this
         }
     };
-    
+
     protected virtual async void RunOnTryMudBlazor()
     {
-        string firstFile = "";
-        
-        if(Codes != null)
-        {
-            firstFile = Codes.FirstOrDefault().code;
-        }
-        else
+        string firstFile;
+        if (Codes == null)
         {
             firstFile = Code;
         }
-        
+        else
+        {
+            firstFile = Codes.FirstOrDefault().code;
+        }
+
         // We use a separator that wont be in code so we can send 2 files later
         var codeFiles = "__Main.razor" + (char)31 + Snippets.GetCode(firstFile);
 
         // Add dialogs for dialog examples
         if (firstFile.StartsWith("Dialog"))
         {
-            var regex = new Regex(@"\Show<(Dialog.*?_Dialog)\>");
-            var dialogCodeName = regex.Match(codeFiles).Groups[1].Value;
+            var regex = ShowDialogRegularExpression();
+            var dialogCodeName = regex.Match(codeFiles).Groups["dialogname"].Value;
             if (dialogCodeName != string.Empty)
             {
                 var dialogCodeFile = dialogCodeName + ".razor" + (char)31 + Snippets.GetCode(dialogCodeName);
@@ -169,13 +179,13 @@ public partial class SectionContent
         // Data models
         if (codeFiles.Contains("MudBlazor.Examples.Data.Models"))
         {
-            if (Regex.Match(codeFiles, @"\bElement\b").Success)
+            if (ElementRegularExpression().Match(codeFiles).Success)
             {
                 var elementCodeFile = "Element.cs" + (char)31 + Snippets.GetCode("Element");
                 codeFiles = codeFiles + (char)31 + elementCodeFile;
             }
 
-            if (Regex.Match(codeFiles, @"\bServer\b").Success)
+            if (ServerRegularExpression().Match(codeFiles).Success)
             {
                 var serverCodeFile = "Server.cs" + (char)31 + Snippets.GetCode("Server");
                 codeFiles = codeFiles + (char)31 + serverCodeFile;
@@ -188,4 +198,13 @@ public partial class SectionContent
         var url = $"{tryMudBlazorLocation}snippet/{codeFileEncoded}";
         await JsApiService.OpenInNewTabAsync(url);
     }
+
+    [GeneratedRegex(@"Show(?:Async)?<(?<dialogname>Dialog.*?_Dialog)>")]
+    private static partial Regex ShowDialogRegularExpression();
+
+    [GeneratedRegex(@"\bElement\b")]
+    private static partial Regex ElementRegularExpression();
+
+    [GeneratedRegex(@"\bServer\b")]
+    private static partial Regex ServerRegularExpression();
 }

@@ -1,6 +1,7 @@
-﻿namespace MudBlazor.Components.Chart
+﻿#nullable enable
+namespace MudBlazor.Interpolation
 {
-    public class Matrix
+    internal class Matrix
     {
         public double[,] a;
         public double[] y;

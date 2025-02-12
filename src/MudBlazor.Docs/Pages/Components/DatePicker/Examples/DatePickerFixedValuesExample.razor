@@ -8,10 +8,10 @@
 <MudDatePicker Label="Day Picker (Fixed Year and Month)" HelperText="@_day?.ToShortDateString()" @bind-Date="_day" FixYear="@DateTime.Today.Year" FixMonth="@DateTime.Today.Month" DateFormat="dd" />
 
 @code { 
-    DateTime? _yearMonth;
-    DateTime? _monthDay;
-    DateTime? _yearDay;
-    DateTime? _year;
-    DateTime? _month;
-    DateTime? _day;
+    private DateTime? _yearMonth;
+    private DateTime? _monthDay;
+    private DateTime? _yearDay;
+    private DateTime? _year;
+    private DateTime? _month;
+    private DateTime? _day;
 }

@@ -1,106 +1,156 @@
-﻿using System;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+#nullable enable
+    /// <summary>
+    /// A choice displayed as part of a list within a <see cref="MudMenu"/> component.
+    /// </summary>
+    /// <seealso cref="MudMenu" />
     public partial class MudMenuItem : MudComponentBase
     {
-        [CascadingParameter] public MudMenu MudMenu { get; set; }
+        [Inject]
+        protected NavigationManager UriHelper { get; set; } = null!;
 
-        [Parameter] [Category(CategoryTypes.Menu.Behavior)] public RenderFragment ChildContent { get; set; }
-        [Parameter] [Category(CategoryTypes.Menu.Behavior)] public bool Disabled { get; set; }
+        [Inject]
+        protected IJsApiService JsApiService { get; set; } = null!;
 
-        [Inject] public NavigationManager UriHelper { get; set; }
-        [Inject] public IJsApiService JsApiService { get; set; }
+        protected string Classname =>
+            new CssBuilder("mud-menu-item")
+                .AddClass("mud-disabled", GetDisabled())
+                .AddClass("mud-ripple", !GetDisabled())
+                .AddClass("mud-list-item-clickable", !GetDisabled())
+                .AddClass("mud-menu-item-dense", GetDense())
+                .AddClass(Class)
+                .Build();
 
         /// <summary>
-        /// If set to a URL, clicking the button will open the referenced document. Use Target to specify where (Obsolete replaced by Href)
+        /// The <see cref="MudMenu"/> which contains this item.
         /// </summary>
-        [Obsolete("Use Href Instead.", false)]
+        [CascadingParameter]
+        public MudMenu? ParentMenu { get; set; }
+
+        /// <summary>
+        /// The text shown on this menu item if <see cref="ChildContent"/> is not set.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Menu.Behavior)]
+        public string? Label { get; set; }
+
+        /// <summary>
+        /// The content within this menu item.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Menu.Behavior)]
+        public RenderFragment? ChildContent { get; set; }
+
+        /// <summary>
+        /// Prevents the user from interacting with this item.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Menu.Behavior)]
+        public bool Disabled { get; set; }
+
+        /// <summary>
+        /// The URL to navigate to when this menu item is clicked.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>. When clicked, the browser will navigate to this URL.  Use the <see cref="Target"/> property to target a specific tab.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Menu.ClickAction)]
-        public string Link { get => Href; set => Href = value; }
+        public string? Href { get; set; }
 
         /// <summary>
-        /// If set to a URL, clicking the button will open the referenced document. Use Target to specify where
+        /// The browser tab/window opened when a click occurs and <see cref="Href"/> is set.
         /// </summary>
-        [Parameter] 
-        [Category(CategoryTypes.Menu.ClickAction)] 
-        public string Href { get; set; }        
-        
+        /// <remarks>
+        /// Defaults to <c>null</c>. This property allows navigation to open a new tab/window or to reuse a specific tab.  Possible values are <c>_blank</c>, <c>_self</c>, <c>_parent</c>, <c>_top</c>, <c>noopener</c>, or the name of an <c>iframe</c> element.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Button.ClickAction)]
+        public string? Target { get; set; }
+
         /// <summary>
-        /// Icon to be used for this menu entry
+        /// Performs a full page load during navigation.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>. When <c>true</c>, client-side routing is bypassed and the browser is forced to load the new page from the server.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Menu.ClickAction)]
+        public bool ForceLoad { get; set; }
+
+        /// <summary>
+        /// The icon displayed at the start of this menu item.  The size depends on whether or not the menu is using the dense variant.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
-        public string Icon { get; set; }
+        public string? Icon { get; set; }
+
         /// <summary>
-        /// The color of the icon. It supports the theme colors.
+        /// The color of the icon when <see cref="Icon"/> is set.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Color.Inherit"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public Color IconColor { get; set; } = Color.Inherit;
+
         /// <summary>
-        /// The Icon Size.
+        /// Closes the menu when this item is clicked.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.  When <c>false</c>, the menu will remain open after this item is clicked.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Menu.ClickAction)]
+        public bool AutoClose { get; set; } = true;
+
+        /// <summary>
+        /// Occurs when this menu item is clicked.
         /// </summary>
         [Parameter]
-        [Category(CategoryTypes.List.Appearance)]
-        public Size IconSize { get; set; } = Size.Medium;
+        public EventCallback<MouseEventArgs> OnClick { get; set; }
 
-        [Parameter] [Category(CategoryTypes.Menu.ClickAction)] public string Target { get; set; }
-        [Parameter] [Category(CategoryTypes.Menu.ClickAction)] public bool ForceLoad { get; set; }
-        [Parameter] [Category(CategoryTypes.Menu.ClickAction)] public ICommand Command { get; set; }
-        [Parameter] [Category(CategoryTypes.Menu.ClickAction)] public object CommandParameter { get; set; }
+        protected string GetHtmlTag() => string.IsNullOrEmpty(Href) ? "div" : "a";
 
-        [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
-        [Parameter] public EventCallback<TouchEventArgs> OnTouch { get; set; }
+        protected bool GetDisabled() => Disabled || ParentMenu?.Disabled == true;
 
-        protected async Task OnClickHandler(MouseEventArgs ev)
+        protected bool GetDense() => ParentMenu?.GetDense() == true;
+
+        protected Typo GetTypo() => GetDense() ? Typo.body2 : Typo.body1;
+
+        /// <summary>
+        /// The menu item is acting as the activator for a sub menu.
+        /// </summary>
+        protected bool ActivatesSubMenu => Class?.Contains("mud-menu-sub-menu-activator") == true;
+
+        protected async Task OnClickHandlerAsync(MouseEventArgs ev)
         {
-            if (Disabled)
-                return;
-            MudMenu.CloseMenu();
-
-            if (Href != null)
+            if (GetDisabled())
             {
-                if (string.IsNullOrWhiteSpace(Target))
-                    UriHelper.NavigateTo(Href, ForceLoad);
-                else
-                    await JsApiService.Open(Href, Target);
+                return;
             }
-            else
+
+            if (AutoClose && ParentMenu is not null)
+            {
+                await ParentMenu.CloseAllMenusAsync();
+            }
+
+            // Manual navigation is only required when the target is empty and a
+            // forced reload is necessary; all other scenarios are managed by the HTML anchor.
+            if (ForceLoad && !string.IsNullOrEmpty(Href) && string.IsNullOrEmpty(Target))
+            {
+                UriHelper.NavigateTo(Href, forceLoad: ForceLoad);
+            }
+
+            if (OnClick.HasDelegate)
             {
                 await OnClick.InvokeAsync(ev);
-                if (Command?.CanExecute(CommandParameter) ?? false)
-                {
-                    Command.Execute(CommandParameter);
-                }
-            }
-        }
-
-        protected internal async Task OnTouchHandler(TouchEventArgs ev)
-        {
-            if (Disabled)
-                return;
-            MudMenu.CloseMenu();
-
-            if (Href != null)
-            {
-                if (string.IsNullOrWhiteSpace(Target))
-                    UriHelper.NavigateTo(Href, ForceLoad);
-                else
-                    await JsApiService.Open(Href, Target);
-            }
-            else
-            {
-                await OnTouch.InvokeAsync(ev);
-                if (Command?.CanExecute(CommandParameter) ?? false)
-                {
-                    Command.Execute(CommandParameter);
-                }
             }
         }
     }

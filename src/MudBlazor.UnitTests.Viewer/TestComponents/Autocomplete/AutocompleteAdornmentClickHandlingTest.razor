@@ -1,0 +1,51 @@
+﻿@using System.Threading
+
+<MudAutocomplete T="string"
+                 Variant="Variant.Outlined"
+                 Value="@_value"
+                 Label="Values"
+                 SearchFunc="SearchValues"
+                 ResetValueOnEmptyText="true"
+                 Adornment="Adornment.End"
+                 AdornmentIcon="@Icons.Material.Filled.Add"
+                 OnAdornmentClick="OpenDialog" />
+
+<MudDialog @bind-Visible="_dialogVisible">
+    <TitleContent>
+        Dialog Title
+    </TitleContent>
+    <DialogContent>
+        Dialog Content
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="CloseDialog">
+            Cancel
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    public static string __description__ = " Adornment Click should not automatically open popover ";
+
+    string _value = "Foo";
+    string[] _values = ["Foo", "Bar", "Baz"];
+    bool _dialogVisible = false;
+
+    private Task<IEnumerable<string>> SearchValues(string value, CancellationToken token)
+    {
+        if (string.IsNullOrEmpty(value))
+            return Task.FromResult<IEnumerable<string>>(_values);
+
+        return Task.FromResult<IEnumerable<string>>(_values.Where(v => v.Contains(value, StringComparison.OrdinalIgnoreCase)));
+    }
+
+    private void OpenDialog()
+    {
+        _dialogVisible = true;
+    }
+
+    private void CloseDialog()
+    {
+        _dialogVisible = false;
+    }
+}

@@ -2,35 +2,51 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace MudBlazor;
 
+/// <summary>
+/// A simple input mask consisting of characters.
+/// </summary>
+/// <remarks>
+/// By default, the mask characters are: <c>a</c> (letter), <c>0</c> (digit), and <c>*</c> (letter or digit)
+/// </remarks>
+/// <seealso cref="BlockMask" />
+/// <seealso cref="DateMask" />
+/// <seealso cref="MultiMask" />
+/// <seealso cref="RegexMask" />
 public class PatternMask : BaseMask
 {
+    /// <summary>
+    /// Creates a new mask.
+    /// </summary>
+    /// <param name="mask">The characters which define the accepted input.</param>
+    /// <remarks>
+    /// By default, the mask characters are: <c>a</c> (letter), <c>0</c> (digit), and <c>*</c> (letter or digit)
+    /// </remarks>
     public PatternMask(string mask)
     {
         Mask = mask;
     }
 
     /// <summary>
-    /// If set, the mask will print placeholders for all non-delimiters that haven't yet been typed.
-    /// For instance a mask "000-000" with input "1" will show "1__-___" as Text.
+    /// The character used for characters which haven't yet been typed.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.  For example: a placeholder of <c>_</c>, mask of <c>000-000</c>, and input of <c>1</c>, will display <c>1__-___</c> as text.
+    /// </remarks>
     public char? Placeholder { get; set; }
 
     /// <summary>
-    /// A function for changing input characters after they were typed, i.e. lower-case to upper-case, etc.
+    /// The function applied to all input characters, such as converting to upper-case, etc.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.  For example: a transformation of <c>Char.ToUpper(c)</c> would convert all characters to upper-case.
+    /// </remarks>
     public Func<char, char> Transformation { get; set; }
 
-    /// <summary>
-    /// Inserts given text at caret position
-    /// </summary>
-    /// <param name="input">One or multiple characters of input</param>
+    /// <inheritdoc />
     public override void Insert(string input)
     {
         Init();
@@ -45,13 +61,14 @@ public class PatternMask : BaseMask
         if (Placeholder != null)
         {
             var p = Placeholder.Value;
-            if (afterText.Take(alignedInput.Length).All(c => IsDelimiter(c) || c==p))
+            if (afterText.Take(alignedInput.Length).All(c => IsDelimiter(c) || c == p))
                 afterText = new string(afterText.Skip(alignedInput.Length).ToArray());
         }
         var alignedAfter = AlignAgainstMask(afterText, pos);
-        UpdateText( FillWithPlaceholder(alignedBefore + alignedInput + alignedAfter));
+        UpdateText(FillWithPlaceholder(alignedBefore + alignedInput + alignedAfter));
     }
 
+    /// <inheritdoc />
     protected override void DeleteSelection(bool align)
     {
         ConsolidateSelection();
@@ -62,14 +79,12 @@ public class PatternMask : BaseMask
         Selection = null;
         CaretPos = sel.Item1;
         if (!align)
-            UpdateText( s1 + s3);
+            UpdateText(s1 + s3);
         else
-            UpdateText( FillWithPlaceholder( s1 + AlignAgainstMask(s3, CaretPos)));
+            UpdateText(FillWithPlaceholder(s1 + AlignAgainstMask(s3, CaretPos)));
     }
 
-    /// <summary>
-    /// Implements the effect of the Del key at the current cursor position
-    /// </summary>
+    /// <inheritdoc />
     public override void Delete()
     {
         Init();
@@ -93,12 +108,10 @@ public class PatternMask : BaseMask
             // adjust the cursor position to after the delimiters
             CaretPos += (numDeleted - 1);
         }
-        UpdateText( FillWithPlaceholder(beforeText + alignedAfter));
+        UpdateText(FillWithPlaceholder(beforeText + alignedAfter));
     }
 
-    /// <summary>
-    /// Implements the effect of the Backspace key at the current cursor position
-    /// </summary>
+    /// <inheritdoc />
     public override void Backspace()
     {
         Init();
@@ -117,14 +130,14 @@ public class PatternMask : BaseMask
         var numDeleted = beforeText.Length - restText.Length;
         CaretPos -= numDeleted;
         var alignedAfter = AlignAgainstMask(afterText, CaretPos);
-        UpdateText( FillWithPlaceholder(restText + alignedAfter));
+        UpdateText(FillWithPlaceholder(restText + alignedAfter));
     }
 
     /// <summary>
-    /// Fill the rest of the text with Placeholder but only if it is set
+    /// Fills the rest of the text with <see cref="Placeholder"/> if it is set.
     /// </summary>
-    /// <param name="text"></param>
-    /// <returns></returns>
+    /// <param name="text">The text to modify.</param>
+    /// <returns>The text with appended placeholder characters.</returns>
     protected virtual string FillWithPlaceholder(string text)
     {
         if (Placeholder == null)
@@ -148,10 +161,11 @@ public class PatternMask : BaseMask
     }
 
     /// <summary>
-    /// Applies the mask to the given text starting at the given offset and returns the masked text. 
+    /// Applies an input to the mask starting at the given offset.
     /// </summary>
-    /// <param name="text"></param>
-    /// <param name="maskOffset"></param>
+    /// <param name="text">The text to apply to the mask.</param>
+    /// <param name="maskOffset">Defaults to <c>0</c>.  The index of the mask to begin applying characters.</param>
+    /// <returns>The text input with any delimiters and placeholders applied.</returns>
     protected virtual string AlignAgainstMask(string text, int maskOffset = 0)
     {
         text ??= "";
@@ -183,7 +197,7 @@ public class PatternMask : BaseMask
             ModifyPartiallyAlignedMask(mask, text, maskOffset, ref textIndex, ref maskIndex, ref alignedText);
         }
         // fill any delimiters if possible
-        for (int i = maskIndex; i < mask.Length; i++)
+        for (var i = maskIndex; i < mask.Length; i++)
         {
             var maskChar = mask[i];
             if (!IsDelimiter(maskChar))
@@ -198,6 +212,12 @@ public class PatternMask : BaseMask
         /* this is an override hook for more specialized mask implementations deriving from this*/
     }
 
+    /// <summary>
+    /// Gets whether the specified character is a match for a mask character.
+    /// </summary>
+    /// <param name="maskChar">The mask character to compare.</param>
+    /// <param name="textChar">The character to compare against the mask character regular expression.</param>
+    /// <returns>When <c>true</c>, the character is a match for the mask character.</returns>
     protected virtual bool IsMatch(char maskChar, char textChar)
     {
         var maskDef = _maskDict[maskChar];
@@ -205,16 +225,20 @@ public class PatternMask : BaseMask
     }
 
     /// <summary>
-    /// If true, all characters which are not defined in the mask (delimiters) are stripped
-    /// from text. 
+    /// Removes delimiter characters from the text.
     /// </summary>
-    public bool CleanDelimiters { get; set; } 
-    
+    /// <remarks>
+    /// Defaults to <c>false</c>.
+    /// </remarks>
+    public bool CleanDelimiters { get; set; }
+
     /// <summary>
-    /// Return the Text without Placeholders. If CleanDelimiters is enabled, then also strip all
-    /// undefined characters. For instance, for a mask "0000 0000 0000 0000" the space would be
-    /// an undefined character (a delimiter) unless it were defined as a mask character in MaskChars.
+    /// The current text in the input, excluding delimiter or placeholder characters.
     /// </summary>
+    /// <remarks>
+    /// When <see cref="CleanDelimiters"/> is <c>true</c>, any undefined characters will be removed.  
+    /// For example: for a mask of <c>0000 0000 0000 0000</c>, the spaces would be removed if they were an undefined character.
+    /// </remarks>
     public override string GetCleanText()
     {
         Init();
@@ -222,23 +246,25 @@ public class PatternMask : BaseMask
         if (string.IsNullOrEmpty(cleanText))
             return cleanText;
         if (CleanDelimiters)
-            cleanText=new string(cleanText.Where((c,i)=>_maskDict.ContainsKey(Mask[i])).ToArray());
+            cleanText = new string(cleanText.Where((c, i) => _maskDict.ContainsKey(Mask[i])).ToArray());
         if (Placeholder != null)
             cleanText = cleanText.Replace(Placeholder.Value.ToString(), "");
         return cleanText;
     }
 
+    /// <inheritdoc />
     protected override void InitInternals()
     {
         base.InitInternals();
-        if (Placeholder!=null)
+        if (Placeholder != null)
             _delimiters.Add(Placeholder.Value);
     }
 
+    /// <inheritdoc />
     protected override void UpdateText(string text)
     {
         // don't show a text consisting only of delimiters and placeholders (no actual input)
-        if (text.All(c => _delimiters.Contains(c) || (Placeholder!=null && c==Placeholder.Value)))
+        if (text.All(c => _delimiters.Contains(c) || (Placeholder != null && c == Placeholder.Value)))
         {
             Text = "";
             CaretPos = 0;
@@ -248,17 +274,22 @@ public class PatternMask : BaseMask
         CaretPos = ConsolidateCaret(Text, CaretPos);
     }
 
+    /// <summary>
+    /// When overridden, applies final adjustments to the text.
+    /// </summary>
+    /// <param name="text">The final text to adjust.</param>
+    /// <returns>The adjusted final text.</returns>
     protected virtual string ModifyFinalText(string text)
     {
         /* this  can be overridden in derived classes to apply any necessary changes to the resulting text */
         return text;
     }
 
+    /// <inheritdoc />
     public override void UpdateFrom(IMask other)
     {
         base.UpdateFrom(other);
-        var o = other as PatternMask;
-        if (o == null)
+        if (other is not PatternMask o)
             return;
         Placeholder = o.Placeholder;
         CleanDelimiters = o.CleanDelimiters;

@@ -8,7 +8,7 @@ namespace MudBlazor
         None = 0,
         [Description("Fade")]
         Fade = 1,
-        [Description("Fade")]
+        [Description("Slide")]
         Slide = 2,
         [Description("Custom")]
         Custom = 99

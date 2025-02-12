@@ -1,7 +1,7 @@
 <MudDialog>
     <DialogContent>
         <div class="d-flex flex-column py-1">
-            <MudButton OnClick="ToggleFullscreen">Toggle FullScreen</MudButton>
+            <MudButton OnClick="ToggleFullscreenAsync">Toggle FullScreen</MudButton>
         </div>
     </DialogContent>
     <DialogActions>
@@ -9,13 +9,18 @@
     </DialogActions>
 </MudDialog>
 @code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; } = null!;
 
-    void Close() => MudDialog.Close(DialogResult.Ok(true));
+    private void Close() => MudDialog.Close(DialogResult.Ok(true));
 
-    void ToggleFullscreen()
+    private Task ToggleFullscreenAsync()
     {
-        MudDialog.Options.FullScreen = !(MudDialog.Options.FullScreen ?? false);
-        MudDialog.SetOptions(MudDialog.Options);
+        var options = MudDialog.Options with
+        {
+            FullScreen = !(MudDialog.Options.FullScreen ?? false)
+        };
+
+        return MudDialog.SetOptionsAsync(options);
     }
 }

@@ -1,0 +1,12 @@
+﻿<MudDialog TitleClass="@TitleClass">
+    <DialogContent>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter]
+    public string TitleClass { get; set; } = string.Empty;
+}

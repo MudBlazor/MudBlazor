@@ -1,7 +1,7 @@
 ﻿@page "/components/chipset"
 
 <DocsPage>
-    <DocsPageHeader Title="Chip Set" SubTitle="The ChipSet is used for creating groups of selections using chips.">
+    <DocsPageHeader Title="Chip Set" Component="@nameof(MudChipSet<T>)">
         <Description><br />See also: <MudLink Href="/components/chips">Chip</MudLink></Description>
     </DocsPageHeader>
     <DocsPageContent>
@@ -9,10 +9,19 @@
         <DocsPageSection>
             <SectionHeader Title="Single selection">
                 <Description>
-                    Chipset will maintain a selection of chips for you. By default, you get a single selection. Setting <CodeInline>Mandatory="true"</CodeInline> will not allow to unselect the selected chip.
+                    Chipset will maintain a selection of chips for you. By default, the <CodeInline>SelectionMode</CodeInline> is <CodeInline>SelectionMode.SingleSelection</CodeInline>.
+                    In this mode you can choose a single value. Similar to a radio button you can switch the value by clicking on a different chip but it is not possible to unselect the selected choice by
+                    clicking a second time. <CodeInline>SelectionMode="SelectionMode.ToggleSelection"</CodeInline> is a single selection which also allows to unselect the selected chip.
+                    To get or set the selected value use <CodeInline>@@bind-SelectedValue</CodeInline>.
+
+                    <MudAlert Severity="Severity.Info" Class="my-3">
+                        Note: If you use the toggle selection and unselect the selected item the <CodeInline>SelectedValue</CodeInline> will become <CodeInline>default(T)</CodeInline>. If that
+                        collides with a valid choice (i.e. 0 for type <CodeInline>int</CodeInline>) you should use a nullable type (i.e. <CodeInline>T="int?"</CodeInline>).
+                    </MudAlert>
+
                 </Description>
             </SectionHeader>
-            <SectionContent ShowCode="false" Code="ChipSetBasicExample" Block="true">
+            <SectionContent ShowCode="false" Code="@nameof(ChipSetBasicExample)" Block="true">
                 <ChipSetBasicExample />
             </SectionContent>
         </DocsPageSection>
@@ -20,10 +29,12 @@
         <DocsPageSection>
             <SectionHeader Title="Multiselection">
                 <Description>
-                    When <CodeInline>MultiSelection="true"</CodeInline> ChipSet will maintain a selection of multiple chips. Setting <CodeInline>Filter="true"</CodeInline> the selected chips will also display a check mark.
+                    When you set <CodeInline>SelectionMode="MultiSelection"</CodeInline> the chip set will maintain a selection of multiple values. To utilize or manipulate the selection use
+                    <CodeInline>@@bind-SelectedValues</CodeInline> (with an 's' at the end).
+                    No matter the selection mode, you can set <CodeInline>CheckMark="true"</CodeInline> if you want the selected chips to display a check mark.
                 </Description>
             </SectionHeader>
-            <SectionContent ShowCode="false" Code="ChipSetMultiselectionExample" Block="true">
+            <SectionContent ShowCode="false" Code="@nameof(ChipSetMultiselectionExample)" Block="true">
                 <ChipSetMultiselectionExample />
             </SectionContent>
         </DocsPageSection>
@@ -33,7 +44,7 @@
                 <Description>
                 </Description>
             </SectionHeader>
-            <SectionContent ShowCode="false" Code="ChipSetAddRemoveExample" Block="true">
+            <SectionContent ShowCode="false" Code="@nameof(ChipSetAddRemoveExample)" Block="true">
                 <ChipSetAddRemoveExample />
             </SectionContent>
         </DocsPageSection>
@@ -44,8 +55,19 @@
                     Chips which have<CodeInline>Default="true"</CodeInline> will be initially selected.
                 </Description>
             </SectionHeader>
-            <SectionContent ShowCode="false" Code="ChipSetDefaultChipsExample" Block="true">
+            <SectionContent ShowCode="false" Code="@nameof(ChipSetDefaultChipsExample)" Block="true">
                 <ChipSetDefaultChipsExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Binding chips in a selection">
+                <Description>
+                    You can bind a Chip's <CodeInline>@nameof(MudChip<T>.Selected)</CodeInline> parameter to manipulate the selection.
+                </Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="@nameof(ChipSetChipBindingExample)" Block="true">
+                <ChipSetChipBindingExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -55,7 +77,7 @@
                     The chip's look different when selected depending on its initial <CodeInline>Variant</CodeInline>.
                 </Description>
             </SectionHeader>
-            <SectionContent ShowCode="false" Code="ChipSetVariantsExample" Block="true">
+            <SectionContent ShowCode="false" Code="@nameof(ChipSetVariantsExample)" Block="true">
                 <ChipSetVariantsExample />
             </SectionContent>
         </DocsPageSection>
@@ -66,8 +88,45 @@
                     The chip's selected color can be changed with the <CodeInline>SelectedColor</CodeInline> property, by default it has the same color as the chip.
                 </Description>
             </SectionHeader>
-            <SectionContent ShowCode="false" Code="ChipSetSelectedColorExample" Block="true">
+            <SectionContent ShowCode="false" Code="@nameof(ChipSetSelectedColorExample)" Block="true">
                 <ChipSetSelectedColorExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Accessibility">
+                <Description>
+                    <MudText Class="mb-2">
+                        A <CodeInline>MudChip</CodeInline> accepts the following shortcuts:
+                    </MudText>
+                    <MudSimpleTable Outlined="true"
+                                    Hover="true">
+                        <thead>
+                        <tr>
+                            <th>Keys</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>
+                                <CodeInline>Space</CodeInline>,
+                                <CodeInline>Enter</CodeInline>,
+                                <CodeInline>NumpadEnter</CodeInline></td>
+                            <td>Click, select, or toggle the state of the currently focused chip</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <CodeInline>Backspace</CodeInline>,
+                                <CodeInline>Delete</CodeInline></td>
+                            <td>Close the currently focused chip if it is closable</td>
+                        </tr>
+                        </tbody>
+                    </MudSimpleTable>
+                </Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="@nameof(ChipSetForKeyboardNavigationExample)">
+                <ChipSetForKeyboardNavigationExample />
             </SectionContent>
         </DocsPageSection>
 

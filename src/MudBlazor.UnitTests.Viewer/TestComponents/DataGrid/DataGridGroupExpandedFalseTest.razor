@@ -1,0 +1,51 @@
+﻿<MudDataGrid @ref="_dataGrid" Items="@_fruits" Filterable="true" Hideable="true" Groupable="true"
+             GroupExpanded="false">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Fruits</MudText>
+        <MudSpacer />
+    </ToolBarContent>
+    <Columns>
+        <PropertyColumn Property="x => x.Name" Title="Name" Filterable="false" Groupable="false" />
+        <PropertyColumn Property="x => x.Count" />
+        <PropertyColumn Property="x => x.Category" Title="Category" Grouping="true" GroupBy="@_groupBy">
+            <GroupTemplate>
+                <span style="font-weight:bold">Category: @context.Grouping.Key</span>
+            </GroupTemplate>
+        </PropertyColumn>
+    </Columns>
+</MudDataGrid>
+
+<div class="d-flex flex-wrap mt-4">
+    <MudButton Class="expand-all" OnClick="@ExpandAllGroups" Color="@Color.Primary">Expand All</MudButton>
+    <MudButton OnClick="@CollapseAllGroups" Color="@Color.Primary">Collapse All</MudButton>
+    <MudButton Class="add-button" OnClick="@AddFruit" Color="@Color.Primary">Add Fruit</MudButton>
+</div>
+
+@code {
+    private MudDataGrid<Fruit> _dataGrid = null!;
+    private readonly List<Fruit> _fruits =
+    [
+        new Fruit("Apple", 2, "Pome"),
+        new Fruit("Pear", 4, "Pome"),
+        new Fruit("Orange", 4, "Citrus")
+    ];
+    
+    private readonly Func<Fruit, object> _groupBy = x => x.Category;
+
+    public void AddFruit()
+    {
+        _fruits.Add(new Fruit("Banana", 5, "Musa"));
+    }
+
+    public void ExpandAllGroups()
+    {
+        _dataGrid.ExpandAllGroups();
+    }
+
+    public void CollapseAllGroups()
+    {
+        _dataGrid.CollapseAllGroups();
+    }
+
+    public record Fruit(string Name, int Count, string Category);
+}

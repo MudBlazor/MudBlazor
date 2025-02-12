@@ -1,24 +1,22 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudDrawer @ref="@Drawer" @bind-Open="@isOpen" Variant="@Variant" DisableOverlay="@DisableOverlay" ClipMode="@ClipMode"></MudDrawer>
-<button @onclick="@HandleButtonClick" />
+﻿<MudDrawer @ref="@Drawer" @bind-Open="@_open" Variant="@Variant" Overlay="@Overlay" OverlayAutoClose="@OverlayAutoClose" ClipMode="@ClipMode"></MudDrawer>
+<button id="toggle-drawer-button" @onclick="@HandleButtonClick">toggle open</button>
 
 @code {
-    bool isOpen = false;
+    private bool _open;
 
-    public MudDrawer Drawer { get; set; }
+    public MudDrawer Drawer { get; private set; } = null!;
 
     [Parameter]
     public DrawerVariant Variant { get; set; }
 
     [Parameter]
-    public bool DisableOverlay { get; set; }
+    public bool Overlay { get; set; } = true;
 
     [Parameter]
     public DrawerClipMode ClipMode { get; set; }
 
-    public void HandleButtonClick()
-    {
-        isOpen = !isOpen;
-    }
+    [Parameter]
+    public bool OverlayAutoClose { get; set; } = true;
+
+    private void HandleButtonClick() => _open = !_open;
 }

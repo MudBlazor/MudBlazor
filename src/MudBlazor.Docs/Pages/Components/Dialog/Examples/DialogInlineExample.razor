@@ -4,10 +4,10 @@
     <MudButton OnClick="OpenDialog" Variant="Variant.Filled" Color="Color.Primary">
         Edit rating
     </MudButton>
-    <MudRating SelectedValue="rating" Disabled="true" Class="mt-1 ml-3" />
+    <MudRating SelectedValue="_rating" Disabled="true" Class="mt-1 ml-3" />
 </div>
 
-<MudDialog @bind-IsVisible="visible" Options="dialogOptions">
+<MudDialog @bind-Visible="_visible" Options="_dialogOptions">
     <TitleContent>
         <MudText Typo="Typo.h6">
             <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-3" /> Edit rating
@@ -15,7 +15,7 @@
     </TitleContent>
     <DialogContent>
         <p>How awesome are inline dialogs?</p>
-        <MudRating @bind-SelectedValue="rating" Class="mt-3" />
+        <MudRating @bind-SelectedValue="_rating" Class="mt-3" />
     </DialogContent>
     <DialogActions>
         <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Class="px-10">Close</MudButton>
@@ -23,10 +23,11 @@
 </MudDialog>
 
 @code {
-    private bool visible;
-    private int rating;
-    private void OpenDialog() => visible = true;
-    void Submit() => visible = false;
+    private bool _visible;
+    private int _rating;
+    private readonly DialogOptions _dialogOptions = new() { FullWidth = true };
 
-    private DialogOptions dialogOptions = new() { FullWidth = true };
+    private void OpenDialog() => _visible = true;
+
+    private void Submit() => _visible = false;
 }

@@ -1,6 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-@*based on a bugreport*@
+﻿@*based on a bugreport*@
 <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-16 mb-16">
 
     <MudTextField T="string" @bind-Value="text" Label="First edit here"
@@ -12,9 +10,7 @@
     <p>Then edit the first TF again to see how the binding breaks down for the second</p>
 </MudContainer>
 
-
 @code
 {
-    string text;
-
+    private string? text;
 }

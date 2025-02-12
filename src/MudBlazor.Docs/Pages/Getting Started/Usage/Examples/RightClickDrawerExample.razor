@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <div @oncontextmenu="ClickForDrawer" @oncontextmenu:preventDefault class="d-flex align-center justify-center" style="height: calc(100vh - 64px); background: linear-gradient(90deg, #00C9FF 0%, #92FE9D 100%);">
-    <MudDrawer @bind-Open="@drawerOpen" Anchor="@Anchor.Right" Elevation="1" Variant="@DrawerVariant.Temporary" DisableOverlay="true">
+    <MudDrawer @bind-Open="@drawerOpen" Anchor="@Anchor.Right" Elevation="1" Variant="@DrawerVariant.Temporary" Overlay="false">
         <MudDrawerHeader>
             <MudText Typo="Typo.h6">My Drawer</MudText>
         </MudDrawerHeader>
@@ -10,7 +10,7 @@
                 <MudButton Color="Color.Primary" Variant="Variant.Outlined">New Record</MudButton>
             </MudCardContent>
         </MudCard>
-        <MudList Clickable="true">
+        <MudList T="string">
             <MudListSubheader>List</MudListSubheader>
             <MudListItem Text="Item 1"></MudListItem>
         </MudList>

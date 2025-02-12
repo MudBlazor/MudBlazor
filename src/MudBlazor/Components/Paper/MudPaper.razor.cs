@@ -2,100 +2,133 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
+#nullable enable
+
+/// <summary>
+/// A surface for grouping other components.
+/// </summary>
 public partial class MudPaper : MudComponentBase
 {
     protected string Classname =>
-    new CssBuilder("mud-paper")
-      .AddClass($"mud-paper-outlined", Outlined)
-      .AddClass($"mud-paper-square", Square)
-      .AddClass($"mud-elevation-{Elevation.ToString()}", !Outlined)
-      .AddClass(Class)
-    .Build();
+        new CssBuilder("mud-paper")
+            .AddClass($"mud-paper-outlined", Outlined)
+            .AddClass($"mud-paper-square", Square)
+            .AddClass($"mud-elevation-{Elevation}", !Outlined)
+            .AddClass(Class)
+            .Build();
 
     protected string Stylename =>
-    new StyleBuilder()
-        .AddStyle("height", $"{Height}", !String.IsNullOrEmpty(Height))
-        .AddStyle("width", $"{Width}", !String.IsNullOrEmpty(Width))
-        .AddStyle("max-height", $"{MaxHeight}", !String.IsNullOrEmpty(MaxHeight))
-        .AddStyle("max-width", $"{MaxWidth}", !String.IsNullOrEmpty(MaxWidth))
-        .AddStyle("min-height", $"{MinHeight}", !String.IsNullOrEmpty(MinHeight))
-        .AddStyle("min-width", $"{MinWidth}", !String.IsNullOrEmpty(MinWidth))
-        .AddStyle(Style)
-    .Build();
+        new StyleBuilder()
+            .AddStyle("height", $"{Height}", !string.IsNullOrEmpty(Height))
+            .AddStyle("width", $"{Width}", !string.IsNullOrEmpty(Width))
+            .AddStyle("max-height", $"{MaxHeight}", !string.IsNullOrEmpty(MaxHeight))
+            .AddStyle("max-width", $"{MaxWidth}", !string.IsNullOrEmpty(MaxWidth))
+            .AddStyle("min-height", $"{MinHeight}", !string.IsNullOrEmpty(MinHeight))
+            .AddStyle("min-width", $"{MinWidth}", !string.IsNullOrEmpty(MinWidth))
+            .AddStyle(Style)
+            .Build();
 
     /// <summary>
-    /// The higher the number, the heavier the drop-shadow.
+    /// The size of the drop shadow.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <c>1</c>.  A higher number creates a heavier drop shadow.  Use a value of <c>0</c> for no shadow.
+    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Paper.Appearance)]
     public int Elevation { set; get; } = 1;
 
     /// <summary>
-    /// If true, border-radius is set to 0.
+    /// Displays a square shape.
     /// </summary>
-    [Parameter] 
+    /// <remarks>
+    /// Defaults to <c>false</c>.
+    /// Can be overridden by <see cref="MudGlobal.Rounded"/>.
+    /// When <c>true</c>, the <c>border-radius</c> is set to <c>0</c>.
+    /// </remarks>
+    [Parameter]
     [Category(CategoryTypes.Paper.Appearance)]
-    public bool Square { get; set; }
+    public bool Square { get; set; } = MudGlobal.Rounded == false;
 
     /// <summary>
-    /// If true, card will be outlined.
+    /// Displays an outline around this component.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.
+    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Paper.Appearance)]
     public bool Outlined { get; set; }
 
     /// <summary>
-    /// Height of the component.
+    /// The height of this component.
     /// </summary>
-    [Parameter] 
-    [Category(CategoryTypes.Paper.Appearance)]
-    public string Height { get; set; }
-
-    /// <summary>
-    /// Width of the component.
-    /// </summary>
-    [Parameter] 
-    [Category(CategoryTypes.Paper.Appearance)]
-    public string Width { get; set; }
-
-    /// <summary>
-    /// Max-Height of the component.
-    /// </summary>
-    [Parameter] 
-    [Category(CategoryTypes.Paper.Appearance)]
-    public string MaxHeight { get; set; }
-
-    /// <summary>
-    /// Max-Width of the component.
-    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.  Can be a pixel height (<c>150px</c>), percentage (<c>30%</c>), or other CSS height value.
+    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Paper.Appearance)]
-    public string MaxWidth { get; set; }
+    public string? Height { get; set; }
 
     /// <summary>
-    /// Min-Height of the component.
+    /// The width of this component.
     /// </summary>
-    [Parameter] 
-    [Category(CategoryTypes.Paper.Appearance)]
-    public string MinHeight { get; set; }
-
-    /// <summary>
-    /// Min-Width of the component.
-    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.  Can be a pixel width (<c>150px</c>), percentage (<c>30%</c>), or other CSS width value.
+    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Paper.Appearance)]
-    public string MinWidth { get; set; }
+    public string? Width { get; set; }
 
     /// <summary>
-    /// Child content of the component.
+    /// The maximum height of this component.
     /// </summary>
-    [Parameter] 
+    /// <remarks>
+    /// Defaults to <c>null</c>.  Can be a pixel height (<c>150px</c>), percentage (<c>30%</c>), or other CSS height value.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Paper.Appearance)]
+    public string? MaxHeight { get; set; }
+
+    /// <summary>
+    /// The maximum width of this component.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.  Can be a pixel width (<c>150px</c>), percentage (<c>30%</c>), or other CSS width value.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Paper.Appearance)]
+    public string? MaxWidth { get; set; }
+
+    /// <summary>
+    /// The minimum height of this component.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.  Can be a pixel height (<c>150px</c>), percentage (<c>30%</c>), or other CSS height value.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Paper.Appearance)]
+    public string? MinHeight { get; set; }
+
+    /// <summary>
+    /// The minimum width of this component.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.  Can be a pixel width (<c>150px</c>), percentage (<c>30%</c>), or other CSS width value.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Paper.Appearance)]
+    public string? MinWidth { get; set; }
+
+    /// <summary>
+    /// The content within this component.
+    /// </summary>
+    [Parameter]
     [Category(CategoryTypes.Paper.Behavior)]
-    public RenderFragment ChildContent { get; set; }
+    public RenderFragment? ChildContent { get; set; }
 }

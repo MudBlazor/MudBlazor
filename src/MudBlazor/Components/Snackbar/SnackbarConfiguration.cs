@@ -1,20 +1,18 @@
 ﻿//Copyright(c) Alessandro Ghidini.All rights reserved.
 //Changes and improvements Copyright (c) The MudBlazor Team.
 
-using System;
-
 namespace MudBlazor
 {
-
+#nullable enable
     public class SnackbarConfiguration : CommonSnackbarOptions
     {
         private bool _newestOnTop;
         private bool _preventDuplicates;
         private int _maxDisplayedSnackbars;
-        private string _positionClass;
+        private string _positionClass = string.Empty;
         private bool _clearAfterNavigation;
 
-        internal event Action OnUpdate;
+        internal event Action? OnUpdate;
 
         public bool NewestOnTop
         {

@@ -1,6 +1,6 @@
 ﻿<MudGrid>
 	<MudItem xs="12" md="6" lg="4">
-		<MudChart ChartType="ChartType.Donut" Width="300px" Height="300px" InputData="@data" InputLabels="@labels">
+		<MudChart ChartType="ChartType.Donut" Width="300px" Height="300px" InputData="@Data" InputLabels="@Labels">
 			<CustomGraphics>
 				<text class="donut-inner-text" x="47%" y="35%" dominant-baseline="middle" text-anchor="middle" fill="black" font-family="Helvetica" font-size="2">Chart</text>
 				<text class="donut-inner-text" x="47%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="black" font-family="Helvetica" font-size="5">DONUT</text>
@@ -8,7 +8,7 @@
 		</MudChart>
 	</MudItem>
 	<MudItem xs="12" md="6" lg="4">
-		<MudChart ChartType="ChartType.Pie" Width="300px" Height="300px" InputData="@data" InputLabels="@labels">
+		<MudChart ChartType="ChartType.Pie" Width="300px" Height="300px" InputData="@Data" InputLabels="@Labels">
 			<CustomGraphics>
 				 <text class="donut-inner-text" style="transform:rotate(90deg)" x="0" y="0" dominant-baseline="middle" text-anchor="middle" fill="white" font-family="Helvetica" font-size="0.3">PIE</text>
 			</CustomGraphics>
@@ -42,16 +42,15 @@
 
 @code {
 	public static string __description__ = "Charts with custom svg graphics using a RenderFragment.";
-    public double[] data = { 10, 420, 20, 69 };
-    public string[] labels = { "Data 1", "Data 2", "Data 3", "Data 4" };
+    public double[] Data = [10, 420, 20, 69];
+    public string[] Labels = ["Data 1", "Data 2", "Data 3", "Data 4"];
 
-    public List<ChartSeries> Series = new List<ChartSeries>()
-    {
-        new ChartSeries() { Name = "United States", Data = new double[] { 40, 20, 25, 27, 46, 60, 48, 80, 15 } },
-        new ChartSeries() { Name = "Germany", Data = new double[] { 19, 24, 35, 13, 28, 15, 13, 16, 31 } },
-        new ChartSeries() { Name = "Sweden", Data = new double[] { 8, 6, 11, 13, 4, 16, 10, 16, 18 } },
-    };
+    public List<ChartSeries> Series =
+    [
+        new() { Name = "United States", Data = [40, 20, 25, 27, 46, 60, 48, 80, 15] },
+        new() { Name = "Germany", Data = [19, 24, 35, 13, 28, 15, -4, 16, 31] },
+        new() { Name = "Sweden", Data = [8, 6, -11, 13, 4, 16, 10, 16, 18] }
+    ];
 
-    public string[] XAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
-
+    public string[] XAxisLabels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"];
 }

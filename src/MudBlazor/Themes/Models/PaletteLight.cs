@@ -4,6 +4,10 @@
 
 namespace MudBlazor;
 
+#nullable enable
+/// <summary>
+/// Represents a light color palette.
+/// </summary>
 public class PaletteLight : Palette
 {
     // everything is inherited from Palette so people will know about it.

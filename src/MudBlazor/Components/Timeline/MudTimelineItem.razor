@@ -3,7 +3,7 @@
 
 <div @attributes="UserAttributes" class="@Classnames" style="@Style" @onclick="Select">
     <div class="mud-timeline-item-content">
-        @if (ChildContent != null)
+        @if (ChildContent is not null)
         {
             @ChildContent
         }
@@ -17,7 +17,7 @@
         {
             <div class="@DotClassnames">
                 <div class="@DotInnerClassnames" style="@DotStyle">
-                    @if(ItemDot != null)
+                    @if (ItemDot is not null)
                     {
                         @ItemDot
                     }
@@ -25,7 +25,7 @@
             </div>
         }
     </div>
-    @if (ItemOpposite != null)
+    @if (ItemOpposite is not null)
     {
         <div class="mud-timeline-item-opposite">
             @ItemOpposite

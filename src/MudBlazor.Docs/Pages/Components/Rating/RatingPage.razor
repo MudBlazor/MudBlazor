@@ -1,7 +1,7 @@
 ﻿@page "/components/rating"
 
 <DocsPage>
-    <DocsPageHeader Title="Rating" SubTitle="Ratings provide insight regarding other's opinions and experiences with a product.">
+    <DocsPageHeader Title="Rating" Component="@nameof(MudRating)" SubTitle="Ratings provide insight regarding other's opinions and experiences with a product.">
         <Description>Collecting user feedback via ratings is a simple analytic that can provide a lot of feedback to your product or application.</Description>
     </DocsPageHeader>
     <DocsPageContent>
@@ -10,7 +10,7 @@
             <SectionHeader Title="Basic Rating">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Code="BasicRatingExample">
+            <SectionContent Code="@nameof(BasicRatingExample)">
                 <BasicRatingExample />
             </SectionContent>
         </DocsPageSection>
@@ -19,7 +19,7 @@
             <SectionHeader Title="Disabled">
                 <Description>A disabled component cannot change its state. Use the <CodeInline>Disabled</CodeInline> parameter to disable a component.</Description>
             </SectionHeader>
-            <SectionContent Code="RatingDisabledExample">
+            <SectionContent Code="@nameof(RatingDisabledExample)">
                 <RatingDisabledExample />
             </SectionContent>
         </DocsPageSection>
@@ -28,7 +28,7 @@
             <SectionHeader Title="Read only">
                 <Description>A read-only component doesn't allow interactions. Use the <CodeInline>ReadOnly</CodeInline> parameter to mark a component as read-only.</Description>
             </SectionHeader>
-            <SectionContent Code="RatingReadonlyExample">
+            <SectionContent Code="@nameof(RatingReadonlyExample)">
                 <RatingReadonlyExample />
             </SectionContent>
         </DocsPageSection>
@@ -37,7 +37,7 @@
             <SectionHeader Title="Sizes">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Code="RatingSizesExample">
+            <SectionContent Code="@nameof(RatingSizesExample)">
                 <RatingSizesExample />
             </SectionContent>
         </DocsPageSection>
@@ -46,16 +46,16 @@
             <SectionHeader Title="Max value">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Code="RatingMaxValueExample">
+            <SectionContent Code="@nameof(RatingMaxValueExample)">
                 <RatingMaxValueExample />
             </SectionContent>
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Icons and color">
-                <Description></Description>
+                <Description>Icons and colors can be set separately for Empty and Full icons. Icons can be set using <CodeInline>FullIcon</CodeInline> and <CodeInline>EmptyIcon</CodeInline> properties, while Color can be set using <CodeInline>Color</CodeInline> attribute for both icons, or separately for full/empty icons using <CodeInline>FullIconColor</CodeInline> and <CodeInline>EmptyIconColor</CodeInline> properties. If one of those is not set, the component will use the value set in <CodeInline>Color</CodeInline> property for both empty and full.</Description>
             </SectionHeader>
-            <SectionContent Code="RatingIconsAndColorExample">
+            <SectionContent Code="@nameof(RatingIconsAndColorExample)">
                 <RatingIconsAndColorExample />
             </SectionContent>
         </DocsPageSection>
@@ -64,25 +64,25 @@
             <SectionHeader Title="Events and value binding">
                 <Description> The <CodeInline>MudRating</CodeInline> component provides value binding and events for changed selected value or hover. E.g you can display a label on hover to help users pick the correct rating value, using parameters like <CodeInline>HoveredValueChanged</CodeInline>, <CodeInline>SelectedValueChanged</CodeInline> and <CodeInline>bind-SelectedValue</CodeInline>.</Description>
             </SectionHeader>
-            <SectionContent Code="RatingBindingsExample" ShowCode="false">
+            <SectionContent Code="@nameof(RatingBindingsExample)" ShowCode="false">
                 <RatingBindingsExample />
             </SectionContent>
         </DocsPageSection>
 
-		<DocsPageSection>
+        <DocsPageSection>
             <SectionHeader Title="Keyboard Navigation">
-				<Description>
-					<MudText>MudRating accepts keys to keyboard navigation.</MudText>
-					<br />
-					<MudText><CodeInline>ArrowLeft</CodeInline> key to decrease value by 1</MudText>
-					<MudText><CodeInline>ArrowRight</CodeInline> key to increase value by 1</MudText>
-					<MudText><CodeInline>Shift+ArrowLeft</CodeInline> key to set value 0</MudText>
-					<MudText><CodeInline>Shift+ArrowRight</CodeInline> key to increase value to max</MudText>
-					<br />
-					<MudText>*Disabled or readonly ratings' value cannot be changed by keys.</MudText>
-				</Description>
+                <Description>
+                    <MudText>MudRating accepts keys to keyboard navigation.</MudText>
+                    <br />
+                    <MudText><CodeInline>ArrowLeft</CodeInline> key to decrease value by 1</MudText>
+                    <MudText><CodeInline>ArrowRight</CodeInline> key to increase value by 1</MudText>
+                    <MudText><CodeInline>Shift+ArrowLeft</CodeInline> key to set value 0</MudText>
+                    <MudText><CodeInline>Shift+ArrowRight</CodeInline> key to increase value to max</MudText>
+                    <br />
+                    <MudText>*Disabled or readonly ratings' value cannot be changed by keys.</MudText>
+                </Description>
             </SectionHeader>
-            <SectionContent Code="RatingKeyboardNavigationExample" ShowCode="false">
+            <SectionContent Code="@nameof(RatingKeyboardNavigationExample)" ShowCode="false">
                 <RatingKeyboardNavigationExample />
             </SectionContent>
         </DocsPageSection>

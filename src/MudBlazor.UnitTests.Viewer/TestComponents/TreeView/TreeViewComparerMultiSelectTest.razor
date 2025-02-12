@@ -1,0 +1,24 @@
+﻿<MudTreeView T="string" @bind-SelectedValues="SelectedValues" Comparer="Comparer" SelectionMode="SelectionMode.MultiSelection">
+    <MudTreeViewItem Value='"AA"' @bind-Selected="Item1Selected" />
+    <MudTreeViewItem Value='"AC"' @bind-Selected="Item2Selected" />
+</MudTreeView>
+
+@code{
+    [Parameter]
+    public IReadOnlyCollection<string>? SelectedValues { get; set; }
+
+    [Parameter]
+    public IEqualityComparer<string> Comparer { get; set; } = new DelegateEqualityComparer<string>(
+        (x, y) =>
+        {
+            if (x == null && y == null) return true;
+            if (x == null || y == null) return false;
+            return x.Equals(y);
+        },
+
+        obj => obj?.GetHashCode() ?? 0);
+
+    public bool Item1Selected { get; set; }
+
+    public bool Item2Selected { get; set; }
+}

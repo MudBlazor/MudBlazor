@@ -1,0 +1,36 @@
+﻿<MudPopoverProvider />
+
+<MudSelect Label="Select Item"
+           MultiSelection="true"
+           T="string"
+           Delimiter="^"
+           SelectAll="true"
+           @bind-SelectedValues="@_selectedItems">
+    @foreach (var item in _allItems)
+    {
+        if (item == _allItems.Last())
+        {
+            <MudSelectItem T="string" Value="@item" Disabled="true">@item</MudSelectItem>
+        }
+        else
+        {
+            <MudSelectItem T="string" Value="@item">@item</MudSelectItem>
+        }
+    }
+</MudSelect>
+
+@code {
+    public static string __description__ = "Test for the Select All option with one disabled SelectItem";
+    private readonly List<string> _allItems = [];
+    private IEnumerable<string> _selectedItems = new HashSet<string>();
+
+    protected override void OnInitialized()
+    {
+        _allItems.Add("FirstA");
+        _allItems.Add("SecondA");
+        _allItems.Add("ThirdA");
+        _allItems.Add("FourthA");
+
+        base.OnInitialized();
+    }
+}

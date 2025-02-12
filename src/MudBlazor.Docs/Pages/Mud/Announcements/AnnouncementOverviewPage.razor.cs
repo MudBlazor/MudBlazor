@@ -11,7 +11,7 @@ namespace MudBlazor.Docs.Pages.Mud.Announcements;
 
 public partial class AnnouncementOverviewPage
 {
-    private IDictionary<NotificationMessage,bool> _messages = null;
+    private IDictionary<NotificationMessage, bool> _messages = null;
 
     [Inject] public INotificationService NotificationService { get; set; }
 
@@ -23,11 +23,11 @@ public partial class AnnouncementOverviewPage
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender == true)
+        if (firstRender)
         {
             await NotificationService.MarkNotificationsAsRead();
         }
-        
+
         await base.OnAfterRenderAsync(firstRender);
     }
 }

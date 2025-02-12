@@ -1,15 +1,14 @@
 ﻿@page "/components/textfield"
 
-
 <DocsPage>
-<DocsPageHeader Title="Text Field" SubTitle="Text field components are used for receiving user provided information."/>
+    <DocsPageHeader Title="Text Field" Component="@nameof(MudTextField<T>)" />
 <DocsPageContent>
 
 <DocsPageSection>
-    <SectionHeader Title="Basic Text Field's">
+    <SectionHeader Title="Basic Text Fields">
         <Description></Description>
     </SectionHeader>
-    <SectionContent Code="TextFieldBasicExample" ShowCode="false">
+    <SectionContent Code="@nameof(TextFieldBasicExample)" ShowCode="false">
         <TextFieldBasicExample/>
     </SectionContent>
 </DocsPageSection>
@@ -21,10 +20,19 @@
     <SectionSubGroups>
 
         <DocsPageSection>
-            <SectionHeader Title="Dense">
-                <Description>With the <CodeInline>margin</CodeInline> prop you can reduce the text field height.</Description>
+            <SectionHeader Title="Typo">
+                <Description>With the <CodeInline>Typo</CodeInline> property you can control the typography of the text field.</Description>
             </SectionHeader>
-            <SectionContent Code="TextFieldDenseExample" ShowCode="false">
+            <SectionContent Code="@nameof(TextFieldTypoExample)" ShowCode="false">
+                <TextFieldTypoExample/>
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Dense">
+                <Description>With the <CodeInline>Margin</CodeInline> property you can reduce the text field height.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TextFieldDenseExample)" ShowCode="false">
                 <TextFieldDenseExample/>
             </SectionContent>
         </DocsPageSection>
@@ -33,8 +41,17 @@
             <SectionHeader Title="Helper Text">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Code="TextFieldFormPropsHelperTextExample" ShowCode="false">
-                <TextFieldFormPropsHelperTextExample/>
+            <SectionContent Code="@nameof(TextFieldFormPropsHelperTextExample)" ShowCode="false">
+                <TextFieldFormPropsHelperTextExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Helper Text On Focus">
+                <Description>With the <CodeInline>HelperTextOnFocus</CodeInline> property set to true, the helper text will only display on focus.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TextFieldHelperTextExample)" ShowCode="false">
+                <TextFieldHelperTextExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -42,7 +59,7 @@
             <SectionHeader Title="Disabled">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Code="TextFieldFormPropsDisabledExample" ShowCode="false">
+            <SectionContent Code="@nameof(TextFieldFormPropsDisabledExample)" ShowCode="false">
                 <TextFieldFormPropsDisabledExample/>
             </SectionContent>
         </DocsPageSection>
@@ -51,21 +68,21 @@
             <SectionHeader Title="Read Only">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Code="TextFieldFormPropsReadOnlyExample" ShowCode="false">
+            <SectionContent Code="@nameof(TextFieldFormPropsReadOnlyExample)" ShowCode="false">
                 <TextFieldFormPropsReadOnlyExample/>
             </SectionContent>
         </DocsPageSection>
 
-    </SectionSubGroups>
-</DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Shrink Label">
+                <Description>With the <CodeInline>ShrinkLabel</CodeInline> property set to true, the label will not move into the field when empty.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TextFieldShrinkLabelExample)" ShowCode="false">
+                <TextFieldShrinkLabelExample/>
+            </SectionContent>
+        </DocsPageSection>
 
-<DocsPageSection>
-    <SectionHeader Title="Helper Text On Focus">
-        <Description>With the <CodeInline>HelperTextOnFocus</CodeInline> property set to true, the helper text will only display on focus.</Description>
-    </SectionHeader>
-    <SectionContent Code="TextFieldHelperTextExample" ShowCode="false">
-        <TextFieldHelperTextExample/>
-    </SectionContent>
+    </SectionSubGroups>
 </DocsPageSection>
 
 <DocsPageSection>
@@ -76,7 +93,7 @@
             Add <CodeInline>MaxLength</CodeInline> to force a max count directly on the input and use <CodeInline>Validation</CodeInline> to validate the data.
         </Description>
     </SectionHeader>
-    <SectionContent Code="TextFieldCharacterCountExample" ShowCode="false">
+    <SectionContent Code="@nameof(TextFieldCharacterCountExample)" ShowCode="false">
         <TextFieldCharacterCountExample/>
     </SectionContent>
 </DocsPageSection>
@@ -85,118 +102,147 @@
     <SectionHeader Title="Adornments">
         <Description>This can be used to add a prefix or a suffix. Text, Icon or Icon Button. For WCAG standards for buttons, an <CodeInline>AdornmentAriaLabel</CodeInline> can be added to use as the <CodeInline>aria-label</CodeInline>.</Description>
     </SectionHeader>
-    <SectionContent Code="TextFieldAdornmentsExample" ShowCode="false" Block="true" FullWidth="true">
-        <TextFieldAdornmentsExample/>
+    <SectionContent Code="@nameof(TextFieldAdornmentsExample)" ShowCode="false" Block="true" FullWidth="true">
+        <TextFieldAdornmentsExample />
     </SectionContent>
+    <SectionSubGroups>
+        <DocsPageSection>
+            <SectionHeader Title="Adornment Color">
+                <Description>The color of the adornment can be changed separately from the text field.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TextFieldAdornmentColorExample)" ShowCode="false">
+                <TextFieldAdornmentColorExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Focus">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TextFieldFocusExample)" ShowCode="false" Block="true" FullWidth="true">
+                <TextFieldFocusExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Select">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TextFieldSelectExample)" ShowCode="false" Block="true" FullWidth="true">
+                <TextFieldSelectExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Select Range">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TextFieldSelectRangeExample)" ShowCode="false" Block="true" FullWidth="true">
+                <TextFieldSelectRangeExample />
+            </SectionContent>
+        </DocsPageSection>
+    </SectionSubGroups>
 </DocsPageSection>
 
 <DocsPageSection>
-    <SectionHeader Title="Adornment Color">
-        <Description>The color of the adornment can be changed separately from the textfield.</Description>
-    </SectionHeader>
-    <SectionContent Code="TextFieldAdornmentColorExample" ShowCode="false">
-        <TextFieldAdornmentColorExample/>
-    </SectionContent>
-</DocsPageSection>
-
-<DocsPageSection>
-    <SectionHeader Title="Binding Properties of a POCO">
-        <Description>
-            The following text fields are bound against the properties of a POCO (Plain old C-Sharp Object). Edit them to see the model change. Reset the model and see the textfields change.
-            <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">Note: always use two-way bindings (<CodeInline>@("@bind-Value")</CodeInline>) with textfields.</MudAlert>
-        </Description>
-    </SectionHeader>
-    <SectionContent Code="TextFieldBindingExample" ShowCode="false">
-        <TextFieldBindingExample/>
-    </SectionContent>
-</DocsPageSection>
-
-<DocsPageSection>
-    <SectionHeader Title="Binding Value Types vs Nullables">
-        <Description>
-            When you bind value types, the text field will not be empty even if the user hasn't entered a value yet because a value type always has a value, even when unassigned.
-            The two-way-bindable <CodeInline>Value</CodeInline> property will automatically assume the default value of that type (i.e. <CodeInline>0</CodeInline> for <CodeInline>int</CodeInline>).<br/>
-            So if you want your text fields to be empty as long as nothing has been entered yet, use the nullable version of that type (i.e. <CodeInline>int?</CodeInline>).
-        </Description>
-    </SectionHeader>
-    <SectionContent Code="TextFieldBindingValueTypesExample" ShowCode="false">
-        <TextFieldBindingValueTypesExample/>
-    </SectionContent>
-</DocsPageSection>
-
-<DocsPageSection>
-    <SectionHeader Title="Immediate vs Debounced">
-        <Description>
-            By default, <CodeInline>MudTextField</CodeInline> updates the bound value on Enter or when it loses focus. Set <CodeInline>Immediate="true"</CodeInline> to update the value whenever the user types.<br/>
-            You can also set the <CodeInline>DebounceInterval</CodeInline> parameter to the number of milliseconds you want to wait before updating the bound value. If you need to know when the interval elapses, you can pass an <CodeInline>OnDebounceIntervalElapsed</CodeInline> EventCallback.
-            Notice how in this example the debounced text only updates 500 ms after you stop typing.
-        </Description>
-    </SectionHeader>
-    <SectionContent Code="DebouncedTextFieldExample" ShowCode="false">
-        <DebouncedTextFieldExample/>
-    </SectionContent>
-</DocsPageSection>
-
-<DocsPageSection>
-    <SectionHeader Title="Clear button">
+    <SectionHeader Title="Clear Button">
         <Description></Description>
     </SectionHeader>
-    <SectionContent Code="TextFieldClearableAndInputTypeExample" ShowCode="false">
+    <SectionContent Code="@nameof(TextFieldClearableAndInputTypeExample)" ShowCode="false">
         <TextFieldClearableAndInputTypeExample/>
     </SectionContent>
+</DocsPageSection>
+
+<DocsPageSection>
+    <SectionHeader Title="Binding">
+        <Description></Description>
+    </SectionHeader>
+
+    <SectionSubGroups>
+        <DocsPageSection>
+            <SectionHeader Title="Properties of a POCO">
+                <Description>
+                    The following text fields are bound against the properties of a POCO (Plain old C-Sharp Object). Edit them to see the model change. Reset the model and see the textfields change.
+                    <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">Note: always use two-way bindings (<CodeInline>@("@bind-Value")</CodeInline>) with textfields.</MudAlert>
+                    <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">Note: only on BSS, the parameter <CodeInline>TextUpdateSuppression</CodeInline> prevents the text from being updated via a bound value while the input is focused. Defaults to <CodeInline>true</CodeInline>.</MudAlert>
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TextFieldBindingExample)" ShowCode="false">
+                <TextFieldBindingExample/>
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Value Types vs Nullables">
+                <Description>
+                    When you bind value types, the text field will not be empty even if the user hasn't entered a value yet because a value type always has a value, even when unassigned.
+                    The two-way-bindable <CodeInline>Value</CodeInline> property will automatically assume the default value of that type (i.e. <CodeInline>0</CodeInline> for <CodeInline>int</CodeInline>).<br/>
+                    So if you want your text fields to be empty as long as nothing has been entered yet, use the nullable version of that type (i.e. <CodeInline>int?</CodeInline>).
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TextFieldBindingValueTypesExample)" ShowCode="false">
+                <TextFieldBindingValueTypesExample/>
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Immediate vs Debounced">
+                <Description>
+                    By default, <CodeInline>MudTextField</CodeInline> updates the bound value on Enter or when it loses focus. Set <CodeInline>Immediate="true"</CodeInline> to update the value whenever the user types.<br/>
+                    You can also set the <CodeInline>DebounceInterval</CodeInline> parameter to the number of milliseconds you want to wait before updating the bound value. If you need to know when the interval elapses, you can pass an <CodeInline>OnDebounceIntervalElapsed</CodeInline> EventCallback.
+                    Notice how in this example the debounced text only updates 500 ms after you stop typing.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(DebouncedTextFieldExample)" ShowCode="false">
+                <DebouncedTextFieldExample/>
+            </SectionContent>
+        </DocsPageSection>
+    </SectionSubGroups>
 </DocsPageSection>
 
 <DocsPageSection>
     <SectionHeader Title="Multiline">
         <Description></Description>
     </SectionHeader>
-    <SectionContent Code="TextFieldMultilineExample" ShowCode="false">
+    <SectionContent Code="@nameof(TextFieldMultilineExample)" ShowCode="false">
         <TextFieldMultilineExample/>
     </SectionContent>
-</DocsPageSection>
-
-<DocsPageSection>
-    <SectionHeader Title="Focus">
-        <Description></Description>
-    </SectionHeader>
-    <SectionContent Code="TextFieldFocusExample" ShowCode="false" Block="true" FullWidth="true">
-        <TextFieldFocusExample/>
-    </SectionContent>
-</DocsPageSection>
-
-<DocsPageSection>
-    <SectionHeader Title="Select">
-        <Description></Description>
-    </SectionHeader>
-    <SectionContent Code="TextFieldSelectExample" ShowCode="false" Block="true" FullWidth="true">
-        <TextFieldSelectExample/>
-    </SectionContent>
-</DocsPageSection>
-
-<DocsPageSection>
-    <SectionHeader Title="Select Range">
-        <Description></Description>
-    </SectionHeader>
-    <SectionContent Code="TextFieldSelectRangeExample" ShowCode="false" Block="true" FullWidth="true">
-        <TextFieldSelectRangeExample/>
-    </SectionContent>
+    <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
+        If you use Blazor Server for your app, note that there is a default limit on the maximum message size SignalR can handle. If you want to support large texts in the input element (around 15k characters and more)
+        you need to increase the message size limit by setting <CodeInline>MaximumReceiveMessageSize</CodeInline> accordingly in the HubOptions in your Program.cs file.
+        For more details see <MudLink Typo="Typo.body2" Href="https://github.com/MudBlazor/MudBlazor/issues/7263">this issue</MudLink> on github.
+    </MudAlert>
+    <SectionSubGroups>
+        <DocsPageSection>
+            <SectionHeader Title="Auto Grow">
+                <Description>
+                    With the <CodeInline>AutoGrow</CodeInline> property set to true, the height of the text field automatically changes with the number of lines of text.
+                    The text field will not get smaller than the number of lines specified with the <CodeInline>Lines</CodeInline> property.
+                    You can limit the maximum height of the text field with the <CodeInline>MaxLines</CodeInline> property.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TextFieldAutoGrowExample)" ShowCode="false">
+                <TextFieldAutoGrowExample />
+            </SectionContent>
+        </DocsPageSection>
+    </SectionSubGroups>
 </DocsPageSection>
 
 <DocsPageSection>
     <SectionHeader Title="Input Types">
         <Description>
             You can change the InputType of MudTextField to use the native browser implementation of the
-            <MudLink Href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input">HTML input element</MudLink>.
+            <MudLink Href="https://developer.mozilla.org/docs/Web/HTML/Element/input">HTML input element</MudLink>.
             Note that any Placeholder will be ignored where the browser provides a default placeholder.
             <br/>
             <br/>
             All inputs can be bound to <CodeInline>string</CodeInline> types; alternatively, input types <CodeInline>Date</CodeInline> and <CodeInline>DateTimeLocal</CodeInline>
             can be bound to a nullable <CodeInline>DateTime?</CodeInline>. When binding to a <CodeInline>DateTime?</CodeInline> you <strong>must</strong> set the <CodeInline>Format</CodeInline> property to <CodeInline>yyyy-MM-dd</CodeInline> for input type <CodeInline>Date</CodeInline>, and you
-            <strong>must</strong> set the <CodeInline>Format</CodeInline> property to <CodeInline>s</CodeInline> (<MudLink Href="https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings#Sortable">ISO 8601</MudLink>) for input type <CodeInline>DateTimeLocal</CodeInline>.
+            <strong>must</strong> set the <CodeInline>Format</CodeInline> property to <CodeInline>s</CodeInline> (<MudLink Href="https://docs.microsoft.com/dotnet/standard/base-types/standard-date-and-time-format-strings#Sortable">ISO 8601</MudLink>) for input type <CodeInline>DateTimeLocal</CodeInline>.
 
         </Description>
     </SectionHeader>
-    <SectionContent Code="TextFieldNativeInputsExample">
+    <SectionContent Code="@nameof(TextFieldNativeInputsExample)">
         <TextFieldNativeInputsExample/>
     </SectionContent>
 </DocsPageSection>
@@ -205,7 +251,7 @@
     <SectionHeader Title="Input">
         <Description>MudInput a building block of MudTextField without label or helper text.</Description>
     </SectionHeader>
-    <SectionContent Code="TextFieldInputsExample" ShowCode="false">
+    <SectionContent Code="@nameof(TextFieldInputsExample)" ShowCode="false">
         <TextFieldInputsExample/>
     </SectionContent>
 </DocsPageSection>
@@ -213,22 +259,22 @@
 <DocsPageSection>
     <SectionHeader Title="Mask">
         <Description>
-            If you set the <CodeInline>Mask</CodeInline> property, the text field will apply formatting rules or input restrictions on-the-fly 
-            while the user is typing.             
+            If you set the <CodeInline>Mask</CodeInline> property, the text field will apply formatting rules or input restrictions on-the-fly
+            while the user is typing.
 
             <MudAlert  Class="my-3" Severity="Severity.Info">
-                Check out the <MudLink Href="features/masking">Masking</MudLink> page for more info and examples. 
+                Check out the <MudLink Href="features/masking">Masking</MudLink> page for more info and examples.
             </MudAlert>
 
-            In this example we apply a <CodeInline>PatternMask</CodeInline> with a mask string of 
-            <CodeInline>"0000 0000 0000 0000"</CodeInline> prompting for blocks of digits and 
+            In this example we apply a <CodeInline>PatternMask</CodeInline> with a mask string of
+            <CodeInline>"0000 0000 0000 0000"</CodeInline> prompting for blocks of digits and
             refusing invalid input. Note how the cursor automatically
             jumps over delimiters so you don't have to type them. You can also try pasting the test credit card number <i>4543474002249996</i>.
         </Description>
     </SectionHeader>
-    <SectionContent FullWidth="true" Outlined="true" Code="PatternMaskExample" ShowCode="false">
+    <SectionContent FullWidth="true" Outlined="true" Code="@nameof(PatternMaskExample)" ShowCode="false">
         <PatternMaskExample />
-    </SectionContent>          
+    </SectionContent>
 </DocsPageSection>
 
 </DocsPageContent>

@@ -4,17 +4,28 @@
 
 using System.ComponentModel;
 
-namespace MudBlazor
+namespace MudBlazor;
+
+/// <summary>
+/// Indicates the sorting mode for a <see cref="MudDataGrid{T}"/>.
+/// </summary>
+public enum SortMode
 {
-    public enum SortMode
-    {
-        [Description("none")]
-        None,
+    /// <summary>
+    /// Sorting is not allowed.
+    /// </summary>
+    [Description("none")]
+    None,
 
-        [Description("single")]
-        Single,
+    /// <summary>
+    /// Sorting can occur for one column at a time.
+    /// </summary>
+    [Description("single")]
+    Single,
 
-        [Description("multiple")]
-        Multiple
-    }
+    /// <summary>
+    /// Sorting can be done for multiple columns.
+    /// </summary>
+    [Description("multiple")]
+    Multiple
 }

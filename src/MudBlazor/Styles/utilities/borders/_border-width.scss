@@ -5,18 +5,20 @@ $border-width-directions: ("t": top, "r": right, "b": bottom, "l": left);
   .border#{$name} {
     border-width: $value !important;
   }
+
   @each $direction, $suffix in $border-width-directions {
     .border-#{$direction}#{$name} {
       border-#{$suffix}-width: $value !important;
     }
   }
+
   .border-x#{$name} {
     border-left-width: $value !important;
     border-right-width: $value !important;
   }
+
   .border-y#{$name} {
     border-top-width: $value !important;
     border-bottom-width: $value !important;
   }
 }
-

@@ -1,0 +1,29 @@
+﻿<MudFileUpload T="IBrowserFile"
+               FilesChanged="@FilesChanged"
+               OnFilesChanged="@OnFilesChanged" >
+    <ActivatorContent>
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.CloudUpload">
+        </MudButton>
+    </ActivatorContent>
+</MudFileUpload>
+
+<MudStack>
+    <MudText>
+        FilesChanged count: @FilesChangedCount
+    </MudText>
+    <MudText>
+        OnFilesChanged count: @OnFilesChangedCount
+    </MudText>
+</MudStack>
+
+@code {
+    public int FilesChangedCount { get; private set; }
+
+    public int OnFilesChangedCount { get; private set; }
+
+    private void FilesChanged(IBrowserFile? _) => FilesChangedCount++;
+
+    private void OnFilesChanged(InputFileChangeEventArgs _) => OnFilesChangedCount++;
+}

@@ -1,19 +1,6 @@
 ﻿@namespace MudBlazor
-@using MudBlazor.Utilities
 @inherits MudComponentBase
 
 <div @attributes="UserAttributes" class="@Classname" style="@Style">
     @ChildContent
 </div>
-
-@code {
-
-    protected string Classname =>
-    new CssBuilder("mud-main-content")
-        .AddClass(Class)
-     .Build();
-
-    [Parameter]
-    [Category(CategoryTypes.MainContent.Behavior)]
-    public RenderFragment ChildContent { get; set; }
-}

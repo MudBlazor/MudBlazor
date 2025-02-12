@@ -1,0 +1,27 @@
+﻿<MudPaper Width="300px" Elevation="0">
+    <MudTreeView T="string" Hover SelectionMode="@SelectionMode.ToggleSelection" Color="Color.Tertiary">
+        <MudTreeViewItem Class="item-config" Text="config" @bind-Expanded="_configExpanded" Icon="@Icons.Custom.Uncategorized.Folder" IconExpanded="@Icons.Custom.Uncategorized.FolderOpen">
+            <MudTreeViewItem Class="item-launch" Text="launch.json" @bind-Selected="_launchSelected" Icon="@Icons.Custom.FileFormats.FileCode" />
+            <MudTreeViewItem Class="item-tasks" Text="tasks.json" @bind-Selected="_tasksSelected" Icon="@Icons.Custom.FileFormats.FileCode" />
+        </MudTreeViewItem>
+        <MudTreeViewItem Class="item-images" Text="images" @bind-Expanded="_imagesExpanded" Icon="@Icons.Custom.Uncategorized.Folder" IconExpanded="@Icons.Custom.Uncategorized.FolderOpen">
+            <MudTreeViewItem Class="item-logo" Text="logo.png" @bind-Selected="_logoSelected" Icon="@Icons.Custom.FileFormats.FileImage" />
+        </MudTreeViewItem>
+    </MudTreeView>
+</MudPaper>
+
+<MudStack Row Justify="Justify.Center" Style="width: 100%" Wrap="Wrap.Wrap">
+    <MudSwitch Class="switch-config" @bind-Value="_configExpanded" Color="Color.Tertiary">config</MudSwitch>
+    <MudSwitch Class="switch-images" @bind-Value="_imagesExpanded" Color="Color.Tertiary">images</MudSwitch>
+    <MudCheckBox Class="checkbox-launch" @bind-Value="_launchSelected" Color="Color.Tertiary">launch.json</MudCheckBox>
+    <MudCheckBox Class="checkbox-tasks" @bind-Value="_tasksSelected" Color="Color.Tertiary">tasks.json</MudCheckBox>
+    <MudCheckBox Class="checkbox-logo" @bind-Value="_logoSelected" Color="Color.Tertiary">logo.png</MudCheckBox>
+</MudStack>
+
+@code {
+    private bool _configExpanded;
+    private bool _imagesExpanded;
+    private bool _launchSelected = true;
+    private bool _tasksSelected;
+    private bool _logoSelected;
+}

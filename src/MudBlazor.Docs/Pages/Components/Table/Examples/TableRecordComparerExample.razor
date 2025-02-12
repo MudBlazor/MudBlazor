@@ -20,14 +20,14 @@
         <MudTd DataLabel="Molar mass">@context.Molar</MudTd>
     </RowTemplate>
     <PagerContent>
-        <MudTablePager PageSizeOptions="new int[]{50, 100}" />
+        <MudTablePager PageSizeOptions="new int[] { 10, 25, 50, 100 }" />
     </PagerContent>
     <FooterContent>
         <MudTd colspan="5">Select All</MudTd>
     </FooterContent>
 </MudTable>
 
-<MudText Inline="true">Selected items: @(selectedItems1 == null ? "" : string.Join(", ", selectedItems1.OrderBy(x => x.Sign).Select(x => x.Sign)))</MudText>
+<MudText HtmlTag="span">Selected items: @(selectedItems1 == null ? "" : string.Join(", ", selectedItems1.OrderBy(x => x.Sign).Select(x => x.Sign)))</MudText>
 
 @code {
     private HashSet<Element> selectedItems1 = new HashSet<Element>();

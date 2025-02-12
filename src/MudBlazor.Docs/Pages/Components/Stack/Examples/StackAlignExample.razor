@@ -8,7 +8,7 @@
     </MudStack>
 </MudPaper>
 
-<MudChipSet Filter="true" Mandatory="true" Class="d-flex justify-center mt-12">
+<MudChipSet T="string" CheckMark Class="d-flex justify-center mt-12">
     <MudChip Text="Start" OnClick="@(() => _align = AlignItems.Start)" SelectedColor="Color.Primary" Default="true" />
     <MudChip Text="Center" OnClick="@(() => _align = AlignItems.Center)" SelectedColor="Color.Primary" />
     <MudChip Text="End" OnClick="@(() => _align = AlignItems.End)" SelectedColor="Color.Primary" />
