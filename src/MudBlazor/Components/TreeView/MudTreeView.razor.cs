@@ -282,7 +282,7 @@ namespace MudBlazor
             {
                 _isFirstRender = false;
                 await UpdateItemsAsync();
-				await ExpandToSelectedAsync();
+                await ExpandToSelectedAsync();
             }
 
             await base.OnAfterRenderAsync(firstRender);
@@ -609,29 +609,29 @@ namespace MudBlazor
             return values;
         }
 
-		/// <summary>
-		/// If set, the treeview will try to expand all child items down to the selected child items.
-		/// The parameters to this delegate are:
-		/// T childItemValue
-		/// Int32 treeLevel
-		/// The delegate should return true, when the childItemValue is in the path down to a selected child item, or is
-		/// the selected child item, otherwise it should return false.
-		/// </summary>
-		[Parameter]
-		[Category(CategoryTypes.TreeView.Behavior)]
-		public Func<T, Int32, Boolean>? IsInExpandedPath { get; set; }
+        /// <summary>
+        /// If set, the treeview will try to expand all child items down to the selected child items.
+        /// The parameters to this delegate are:
+        /// T childItemValue
+        /// Int32 treeLevel
+        /// The delegate should return true, when the childItemValue is in the path down to a selected child item, or is
+        /// the selected child item, otherwise it should return false.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Behavior)]
+        public Func<T, Int32, Boolean>? IsInExpandedPath { get; set; }
 
-		private async Task ExpandToSelectedAsync()
+        private async Task ExpandToSelectedAsync()
         {
-			// Iterate through all the child items.
-			if (this._childItems != null)
+            // Iterate through all the child items.
+            if (this._childItems != null)
             {
-			    foreach (MudTreeViewItem<T> childItem in this._childItems)
+                foreach (MudTreeViewItem<T> childItem in this._childItems)
                 {
-				    await childItem.ExpandToSelectedAsync(0);
-				}
+                    await childItem.ExpandToSelectedAsync(0);
+                }
             }
-		} // ExpandToSelectedAsync
+        } // ExpandToSelectedAsync
 
     }
 }
