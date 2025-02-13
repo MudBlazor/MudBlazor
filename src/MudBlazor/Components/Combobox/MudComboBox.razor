@@ -1,35 +1,106 @@
 ﻿@namespace MudBlazor
-@inherits MudComponentBase
+@using MudBlazor.Components.Combobox
+@using MudBlazor.Resources
+@using MudBlazor.Internal
+@inherits MudBaseInput<T>
 @typeparam T
 <!--  TODO: Implement Bottom Sheets for XS screens -->
 <!-- Material 3 ComboBox specificiations from menu:  https://m3.material.io/components/menus/  -->
-<MudTextField @ref="_searchField"
-			  Disabled="@Disabled"
-              ReadOnly="@ReadOnly"
-			  ValueChanged="ComboBoxValueChanged"
-			  Value="@_comboBoxValueState.Value"
-			  Variant="@Variant"
-			  Immediate="@Immediate"
-			  @onfocus="@FocusOnEnterAsync"
-			  @onblur="@BlurredAsync"
-			  Placeholder="@PlaceHolder"
-              ShrinkLabel="@ShrinkLabel"
-              HelperTextOnFocus="@HelperTextOnFocus"
-			  Label="@Label"
-			  FullWidth="false"
-              Margin="@(Dense ? Margin.Dense : MudGlobal.InputDefaults.Margin)"
-			  OnKeyDown="@KeyDown"
-			  HelperText="@HelperText"
-			  Adornment="Adornment.End"
-			  AdornmentIcon="@(_comboBoxValueState.Value.Length > 0 ? Icons.Material.Filled.Clear : string.Empty)"
-			  OnAdornmentClick="@ComboBoxValueClear" />
+<!-- By using a MudField ComboBox could be expanded to use anything as the activator, a Button, AutoComplete, Select, etc with minimal work -->
+<MudField Class="@Class" 
+          Disabled="@Disabled"
+          Variant="@Variant"
+          Label="@Label"
+          Underline="@Underline"
+          HelperText="@HelperText"
+          FullWidth="@FullWidth"
+          Margin="@(Dense ? Margin.Dense : MudGlobal.InputDefaults.Margin)">
+    <!-- Anything that needs to be displayed on the left side of the field -->
+    @if (RightToLeft)
+    {
+        <!-- DropDownIcon -->
+        <MudInputAdornment Icon="@(_openItemListState.Value ? CloseIcon : OpenIcon)"
+                           Color="@AdornmentColor"
+                           Size="@IconSize"
+                           Text="@AdornmentText"                           
+                           AdornmentClick="@OnAdornmentClick" />
+
+        @if (ShowClearButton())
+        {
+            <MudIconButton Color="@AdornmentColor"
+                           Icon="@ClearIcon"
+                           Size="@IconSize"
+                           OnClick="@HandleClearButtonAsync"
+                           aria-label="@Localizer[LanguageResource.MudInput_Clear]"
+                           tabindex="-1"
+                           @onmousedown:stopPropagation />
+        }
+    }
+
+    <!-- The actual input field, this is where the Activator Content could be extended -->
+    <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
+        <MudInput @ref="_elementReference" @key="_elementKey" InputType="InputType.Text"
+                  Class="@InputClassname" Margin="@Margin"
+                  Variant="@Variant"
+                  Typo="@Typo"
+                  Label="@Label"
+                  Underline="false"
+                  TextUpdateSuppression="@TextUpdateSuppression"
+                  ValueChanged="(EventCallback<string>)ComboBoxValueChanged"
+                  Value="@_comboBoxValueState.Value"
+                  Disabled="@GetDisabledState()"
+                  ReadOnly="@GetReadOnlyState()"
+                  Error="@Error"
+                  ErrorId="@ErrorId"
+                  HelperId="@GetHelperId()"
+                  HelperText="@HelperText"
+                  MaxLength="@MaxLength"
+                  autocomplete="@GetAutocomplete()"
+                  @attributes="UserAttributes"
+                  TextChanged="OnTextChangedAsync"                  
+                  @onfocus="@OnInputFocusedAsync"
+                  OnBlur="OnInputBlurredAsync"
+                  OnKeyDown="@OnInputKeyDownAsync"
+                  OnKeyUp="@OnInputKeyUpAsync" 
+                  KeyUpPreventDefault="KeyUpPreventDefault"
+                  Placeholder="@Placeholder" 
+                  Immediate="true"
+                  InputMode="@InputMode" 
+                  Pattern="@Pattern"
+                  Required="@Required"
+                  InputId="@InputElementId" />
+    </CascadingValue>
+
+    <!-- Anything that needs to be displayed on the right side of the field -->
+    @if (!RightToLeft)
+    {
+        @if (ShowClearButton())
+        {
+            <MudIconButton Color="@AdornmentColor"
+                           Icon="@ClearIcon"
+                           Size="@IconSize"
+                           OnClick="@HandleClearButtonAsync"
+                           aria-label="@Localizer[LanguageResource.MudInput_Clear]"
+                           tabindex="-1"
+                           @onmousedown:stopPropagation />
+        }
+        <!-- DropDownIcon -->
+        <MudInputAdornment Icon="@(_openItemListState.Value ? CloseIcon : OpenIcon)"
+                           Color="@AdornmentColor"
+                           Size="@IconSize"
+                           Text="@AdornmentText"
+                           AdornmentClick="@OnAdornmentClick" />
+    }
+</MudField>
+
+<!-- List and List Items -->
 
 @if (_openItemListState)
 {
     <MudPopover Open="_openItemListState" Class="@PopoverClass" MaxHeight="@MaxHeight"
-                AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" 
-                Fixed="DropdownSettings.Fixed" OverflowBehavior="DropdownSettings.OverflowBehavior" 
-                RelativeWidth="@RelativeWidth">
+    AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" 
+    Fixed="DropdownSettings.Fixed" OverflowBehavior="DropdownSettings.OverflowBehavior" 
+    RelativeWidth="@RelativeWidth">
         <CascadingValue Value="this">
             @if (BeforeItemsTemplate is not null)
             {
@@ -37,17 +108,22 @@
                     @BeforeItemsTemplate;
                 </div>
             }
-            <MudList Class="mud-combobox-list" T="T" Dense="@Dense" SelectionMode="@MultiSelection">
+            <MudList Class="mud-combobox-list" T="T" Dense="@Dense">
                 @if (FilteredItems.Count > 0)
                 {
                     @foreach (var item in FilteredItems)
                     {
+                        var isSelected = _selectedItemsState.Value.Contains(item);
+                        var isDisabled = ItemDisabledFunc?.Invoke(item) ?? false;
                         @if (ItemTemplate != null)
                         {
-                            @ItemTemplate(item);
+                            @ItemTemplate(new ComboBoxItem<T>(item, isSelected, isDisabled, ComboBoxToggleItem(item)));                            
                         }
-                        <MudListItem OnClick="@(() =>ComboBoxToggleItem(@item))" 
-                                     Text="@item!.ToString()" />
+                        else
+                        {
+                        <MudListItem OnClick="@(() =>ComboBoxToggleItem(@item))"  Class="@(isSelected ? "selected" : "")"
+                            Text="@item!.ToString()" />
+                        }
                     }
                 }
             </MudList>

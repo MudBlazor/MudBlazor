@@ -1,20 +1,21 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Components.Combobox;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 #nullable enable
 namespace MudBlazor
 {
-    public partial class MudComboBox<T> : MudComponentBase
+    public partial class MudComboBox<T> : MudBaseInput<T>
     {
         private int _selectedComboBoxIndex = -1;
+        private int _elementKey = 0;
 
         private ParameterState<string?> _comboBoxValueState;
-        private ParameterState<T?> _selectedItemState;
         private ParameterState<HashSet<T>> _selectedItemsState;
         private ParameterState<bool> _openItemListState;
 
-        private MudTextField<string>? _searchField;
+        private MudInput<string> _elementReference = null!;
 
         public MudComboBox()
         {
@@ -22,9 +23,6 @@ namespace MudBlazor
             _comboBoxValueState = registerScope.RegisterParameter<string?>(nameof(ComboBoxValue))
                 .WithParameter(() => ComboBoxValue)
                 .WithEventCallback(() => ComboBoxValueChanged);
-            _selectedItemState = registerScope.RegisterParameter<T?>(nameof(SelectedItem))
-                .WithParameter(() => SelectedItem)
-                .WithEventCallback(() => SelectedItemChanged);
             _selectedItemsState = registerScope.RegisterParameter<HashSet<T>>(nameof(SelectedItems))
                 .WithParameter(() => SelectedItems)
                 .WithEventCallback(() => SelectedItemsChanged);
@@ -33,11 +31,30 @@ namespace MudBlazor
                 .WithEventCallback(() => OpenItemListChanged);
         }
 
+        [Inject]
+        private InternalMudLocalizer Localizer { get; set; } = null!;
+
         protected string Classname => new CssBuilder("mud-combobox")
             .AddClass(Class)
             .Build();
 
+        protected string InputClassname => new CssBuilder("mud-combobox-input")
+            .AddClass(InputClass)
+            .Build();
+
+        /// <summary>
+        /// Wether Right to Left is designated by the parent
+        /// </summary>
+        [CascadingParameter(Name = "RightToLeft")]
+        public bool RightToLeft { get; set; } = false;
+
         #region Confirmed Parameters
+
+        /// <summary>
+        /// The class or classes applied to the input element.
+        /// </summary>
+        [Parameter]
+        public string? InputClass { get; set; }
 
         /// <summary>
         /// The class or classes applied to the <see cref="MudPopover" /> that contains the list of ComboBox items.
@@ -45,14 +62,7 @@ namespace MudBlazor
         [Parameter]
         public string? PopoverClass { get; set; }
 
-        /// <summary>
-        /// The display variant for this input.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="Variant.Text"/>.
-        /// </remarks>
-        [Parameter]
-        public Variant Variant { get; set; } = Variant.Text;
+        // hidden public Variant Variant { get; set; } = Variant.Text;
 
         /// <summary>
         /// The location where the popover will open from.
@@ -82,13 +92,14 @@ namespace MudBlazor
         public bool Dense { get; set; }
 
         /// <summary>
-        /// Whether the ComboBox text field can be used to filter the available items.
+        /// Updates the Value to the currently selected item when pressing the Tab key.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>
+        /// Defaults to <c>false</c>.
         /// </remarks>
         [Parameter]
-        public bool ReadOnly { get; set; }
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public bool SelectValueOnTab { get; set; }
 
         /// <summary>
         /// The maximum height, in pixels, of the Combobox Popover when it is open.
@@ -98,24 +109,6 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         public int MaxHeight { get; set; } = 300;
-
-        /// <summary>
-        /// When disabled interactivity of the ComboBox is disabled and appropriate effect is applied.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>.
-        /// </remarks>
-        [Parameter]
-        public bool Disabled { get; set; }
-
-        /// <summary>
-        /// Changes the <see cref="ComboBoxValue"/> as soon as input is received.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>true</c>.  When <c>true</c>, the <see cref="ComboBoxValue"/> property will be updated any time user input occurs.
-        /// If <c>false</c>, <see cref="ComboBoxValue"/> is updated when the user presses <c>Enter</c> or the input loses focus.
-        /// </remarks>
-        public bool Immediate { get; set; } = true;
 
         /// <summary>
         /// Any template you wish to place Before the Items list.
@@ -165,55 +158,17 @@ namespace MudBlazor
         [Parameter]
         public bool Overlay { get; set; } = true;
 
-        /// <summary>
-        /// The text displayed in the input if no <see cref="ComboBoxValue"/> is specified/selected.
-        /// </summary>
-        /// <remarks>
-        /// This property is typically used to give the user a hint as to what kind of input is expected.
-        /// </remarks>
-        [Parameter]
-        public string? PlaceHolder { get; set; }
+        #endregion
 
         /// <summary>
-        /// The label for this input.
+        /// Displays the Clear icon button.
         /// </summary>
         /// <remarks>
-        /// If no <see cref="ComboBoxValue"/> is specified, the label will be displayed in the input. Otherwise, it will be scaled down to the top of the input.
-        /// </remarks>
-        [Parameter]
-        public string? Label { get; set; }
-
-        /// <summary>
-        /// Shows the label inside the input if no <see cref="ComboBoxValue"/> is specified.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c> in <see cref="MudGlobal.InputDefaults.ShrinkLabel"/>.
-        /// When <c>true</c>, the label will not move into the input when the input is empty.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Appearance)]
-        public bool ShrinkLabel { get; set; } = MudGlobal.InputDefaults.ShrinkLabel;
-
-        /// <summary>
-        /// The text displayed below the text field.
-        /// </summary>
-        /// <remarks>
-        /// This property is typically used to help the user understand what kind of input is allowed.  The <see cref="HelperTextOnFocus"/> property controls when this text is visible.
-        /// </remarks>
-        [Parameter]
-        public string? HelperText { get; set; }
-
-        /// <summary>
-        /// Displays the <see cref="HelperText"/> only when this input has focus.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>.
+        /// Defaults to <c>false</c>.  When <c>true</c>, an icon is displayed which, when clicked, clears the Text and Value.  Use the <c>ClearIcon</c> property to control the Clear button icon.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool HelperTextOnFocus { get; set; }
-
-        #endregion
+        public bool Clearable { get; set; }
 
         /// <summary>
         /// The "open" Combobox icon.
@@ -232,6 +187,15 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         public string CloseIcon { get; set; } = Icons.Material.Filled.ArrowDropUp;
+
+        /// <summary>
+        /// The icon to display when <see cref="Clearable"/> is <c>true</c>.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.Clear"/>.
+        /// </remarks>
+        [Parameter]
+        public string ClearIcon { get; set; } = Icons.Material.Filled.Clear;
 
         /// <summary>
         /// The "add" Combobox icon.
@@ -257,6 +221,16 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public Breakpoint? SmallScreens { get; set; } = Breakpoint.SmAndDown;
+
+        /// <summary>
+        /// The function used to determine if an item should be disabled.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public Func<T, bool>? ItemDisabledFunc { get; set; }
 
         /// <summary>
         /// The function used to get the display text for each item.
@@ -301,7 +275,7 @@ namespace MudBlazor
         /// Defaults to <c>10</c>. A value of 0 will display all items.
         /// </remarks>
         [Parameter]
-        public int MaxItems { get; set; } = 10;
+        public int MaxItems { get; set; } = 25;
 
         /// <summary>
         /// The minimum number of characters typed to initiate a search.
@@ -340,12 +314,10 @@ namespace MudBlazor
         [Parameter]
         public int DebounceInterval { get; set; } = 100;
 
-        /// <summary>
-        /// The custom template used to display items. Has access to <c>context</c> and <c>context.Item</c>
-        /// </summary>
+        // Modify the ItemTemplate parameter type
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
-        public RenderFragment<T>? ItemTemplate { get; set; }
+        public RenderFragment<ComboBoxItem<T>>? ItemTemplate { get; set; }
 
         /// <summary>
         /// Overrides the <c>Text</c> property when an item is selected.
@@ -370,20 +342,11 @@ namespace MudBlazor
         /// <summary>
         /// Whether a user can select multiple items
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
-        public SelectionMode MultiSelection { get; set; }
-
-        /// <summary>
-        /// The currently selected ComboBox item
-        /// </summary>
-        [Parameter]
-        public T? SelectedItem { get; set; }
-
-        /// <summary>
-        /// Event is fired when the selected item changes
-        /// </summary>
-        [Parameter]
-        public EventCallback<T?> SelectedItemChanged { get; set; }
+        public bool MultiSelection { get; set; }
 
         /// <summary>
         /// The currently selected ComboBox items
@@ -454,86 +417,31 @@ namespace MudBlazor
             await InvokeAsync(StateHasChanged);
         }
 
-        // Allow "enter" to search
-        private async Task KeyDown(KeyboardEventArgs eventArgs)
-        {
-            if (eventArgs.Key.Equals("Esc"))
-            {
-                await _openItemListState.SetValueAsync(false);
-                if (_searchField != null)
-                {
-                    await _searchField.ResetAsync();
-                    await _searchField.FocusAsync();
-                }
-                return;
-            }
-            await _openItemListState.SetValueAsync(false);
-            if (eventArgs.Key.Equals("Enter"))
-            {
-                if (FilteredItems.Count > 0)
-                {
-                    if (_selectedComboBoxIndex > -1 &&
-                        FilteredItems.Count > _selectedComboBoxIndex)
-                    {
-                        var item = FilteredItems[_selectedComboBoxIndex];
-                        await _comboBoxValueState.SetValueAsync(item?.ToString() ?? FilteredItems[0]?.ToString());
-                    }
-                }
-                if (_searchField != null)
-                {
-                    await _searchField.ResetAsync();
-                    await _searchField.FocusAsync();
-                }
-                return;
-            }
-            // switch on key up, down arrows
-            if (FilteredItems.Count == 0)
-            {
-                return;
-            }
-            if (eventArgs.Key.Equals("ArrowDown"))
-            {
-                _selectedComboBoxIndex = Math.Min(_selectedComboBoxIndex + 1, FilteredItems.Count - 1);
-                SelectedItem = FilteredItems[_selectedComboBoxIndex];
-            }
-            else if (eventArgs.Key.Equals("ArrowUp") && FilteredItems.Count > 0)
-            {
-                _selectedComboBoxIndex = Math.Max(_selectedComboBoxIndex - 1, 0);
-                SelectedItem = FilteredItems[_selectedComboBoxIndex];
-            }
-        }
-
-        public async Task ComboBoxToggleItem(T item)
+        public Task ComboBoxToggleItem(T item)
         {
             if (item == null)
-                return;
-
-            // Toggle SelectedItem 
-            var selectedItem = _selectedItemState.Value;
-            if (item.Equals(selectedItem))
-            {
-                await _selectedItemState.SetValueAsync(default);
-            }
-            else
-            {
-                await _selectedItemState.SetValueAsync(item);
-            }
+                return Task.CompletedTask;
 
             // Toggle SelectedItems to Add if it doesn't exist, remove it if it does.
             var selectedItems = _selectedItemsState.Value ?? [];
+            if (!MultiSelection)
+            {
+                selectedItems.Clear();
+            }
             if (!selectedItems.Remove(item))
             {
                 selectedItems.Add(item);
             }
+            return _selectedItemsState.SetValueAsync(selectedItems);
         }
 
         private async Task FocusOnEnterAsync()
         {
             if (OpenOnEnter)
-                await _openItemListState.SetValueAsync(true);
+                await OpenListAsync();
         }
 
-        private async Task BlurredAsync()
+        private async Task OnBlurredAsync()
         {
             await _openItemListState.SetValueAsync(false);
         }
@@ -541,17 +449,14 @@ namespace MudBlazor
         private async Task ComboBoxValueClear()
         {
             await _comboBoxValueState.SetValueAsync(default);
-            await _openItemListState.SetValueAsync(false);
+            _selectedComboBoxIndex = -1;
             FilteredItems = Items;
         }
 
         private async Task ComboBoxValueUpdated(string? value)
         {
             await _comboBoxValueState.SetValueAsync(value);
-            if (_comboBoxValueState.Value?.Length > 0)
-            {
-                await _openItemListState.SetValueAsync(true);
-            }
+
             _selectedComboBoxIndex = -1;
             if (FilterType == ComboBoxFilterType.Client)
             {
@@ -561,10 +466,167 @@ namespace MudBlazor
             {
                 FilteredItems = Items;
             }
-            SelectedItem = FilteredItems.FirstOrDefault();
-            _selectedComboBoxIndex = SelectedItem != null ? FilteredItems.IndexOf(SelectedItem) : -1;
-            await InvokeAsync(StateHasChanged);
         }
 
+        public async Task OpenListAsync()
+        {
+            await _openItemListState.SetValueAsync(true);
+            StateHasChanged();
+        }
+
+        public async Task CloseListAsync()
+        {
+            await _openItemListState.SetValueAsync(false);
+            StateHasChanged();
+        }
+
+        public async Task OnEnterKeyAsync()
+        {
+            await Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Returns a value for the <c>autocomplete</c> attribute, either supplied by default or the one specified in the attribute overrides.
+        /// </summary>
+        protected object? GetAutocomplete() => UserAttributes.GetValueOrDefault("autocomplete", "off");
+
+        private async Task OnTextChangedAsync(string? text) => await Task.CompletedTask;
+
+        private async Task OnInputFocusedAsync() => await Task.CompletedTask;
+
+        private async Task OnInputBlurredAsync() => await Task.CompletedTask;
+
+        private async Task OnInputKeyDownAsync(KeyboardEventArgs args)
+        {
+            var _open = _openItemListState.Value;
+            switch (args.Key)
+            {
+                // We need to catch Tab here because a tab will move focus to the next element and thus we'd never get the tab key in OnInputKeyUpAsync.
+                case "Tab":
+                    if (_open)
+                    {
+                        if (SelectValueOnTab)
+                            await OnEnterKeyAsync();
+                    }
+                    await CloseListAsync();
+                    break;
+                case "ArrowDown":
+                    if (_open)
+                    {
+                        await SelectAdjacentItemAsync(+1);
+                    }
+                    else
+                    {
+                        await OpenListAsync();
+                    }
+                    break;
+                case "ArrowUp":
+                    if (args.AltKey)
+                    {
+                        await CloseListAsync();
+                    }
+                    else if (!_open)
+                    {
+                        await OpenListAsync();
+                    }
+                    else
+                    {
+                        await SelectAdjacentItemAsync(-1);
+                    }
+                    break;
+            }
+
+            await base.InvokeKeyDownAsync(args);
+        }
+
+        private async Task OnInputKeyUpAsync(KeyboardEventArgs args)
+        {
+            var _open = _openItemListState.Value;
+            switch (args.Key)
+            {
+                case "Enter":
+                case "NumpadEnter":
+                    if (_open)
+                    {
+                        await OnEnterKeyAsync();
+                    }
+                    else
+                    {
+                        await OpenListAsync();
+                    }
+                    break;
+                case "Escape":
+                    await CloseListAsync();
+                    break;
+                case "Backspace":
+                    if (args.CtrlKey && args.ShiftKey)
+                    {
+                        await ResetAsync();
+                    }
+                    break;
+            }
+
+            await base.InvokeKeyUpAsync(args);
+        }
+
+        /// <summary>
+        /// Selects the next or previous enabled item in the list and scrolls to it.
+        /// </summary>
+        /// <param name="direction">The direction to move, positive for down, negative for up.</param>
+        private async ValueTask SelectAdjacentItemAsync(int direction)
+        {
+            var _items = FilteredItems;
+            var _enabledItemIndices = _items.Select((item, index) => (item, index))
+                .Where(x => !ItemDisabledFunc?.Invoke(x.item) ?? true)
+                .Select(x => x.index)
+                .ToList();
+
+            if (_items == null || _items.Count == 0 || _enabledItemIndices.Count == 0)
+                await ValueTask.CompletedTask;
+
+            // Get the current index among enabled items
+            var currentEnabledIndex = _enabledItemIndices.IndexOf(_selectedComboBoxIndex);
+
+            // Determine the new index based on the direction
+            var newEnabledIndex = currentEnabledIndex + direction;
+
+            // Ensure new index is within bounds
+            if (newEnabledIndex >= 0 && newEnabledIndex < _enabledItemIndices.Count)
+            {
+                _selectedComboBoxIndex = _enabledItemIndices[newEnabledIndex];
+                await ComboBoxToggleItem(FilteredItems[_selectedComboBoxIndex]);
+            }
+        }
+
+        private bool ShowClearButton()
+        {
+            if (GetDisabledState())
+            {
+                return false;
+            }
+
+            if (!Clearable)
+            {
+                return false;
+            }
+
+            // If this is a standalone input it will not be clearable when read-only
+            if (SubscribeToParentForm && GetReadOnlyState())
+            {
+                return false;
+            }
+
+            if (Value is string stringValue)
+            {
+                return !string.IsNullOrWhiteSpace(stringValue);
+            }
+
+            return Value is not string and not null;
+        }
+
+        private async Task HandleClearButtonAsync()
+        {
+            await Task.CompletedTask;
+        }
     }
 }
