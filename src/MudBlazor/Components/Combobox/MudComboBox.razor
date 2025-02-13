@@ -1,17 +1,20 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 @typeparam T
-
+<!--  TODO: Implement Bottom Sheets for XS screens -->
+<!-- Material 3 ComboBox specificiations from menu:  https://m3.material.io/components/menus/  -->
 <MudTextField @ref="_searchField"
 			  Disabled="@Disabled"
               ReadOnly="@ReadOnly"
 			  ValueChanged="ComboBoxValueChanged"
 			  Value="@_comboBoxValueState.Value"
 			  Variant="@Variant"
-			  Immediate="true"
+			  Immediate="@Immediate"
 			  @onfocus="@FocusOnEnterAsync"
-			  @onblur="@(BlurredAsync)"
+			  @onblur="@BlurredAsync"
 			  Placeholder="@PlaceHolder"
+              ShrinkLabel="@ShrinkLabel"
+              HelperTextOnFocus="@HelperTextOnFocus"
 			  Label="@Label"
 			  FullWidth="false"
               Margin="@(Dense ? Margin.Dense : MudGlobal.InputDefaults.Margin)"
@@ -23,8 +26,10 @@
 
 @if (_openItemListState)
 {
-    <MudPopover Open="_openItemListState" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Class="@PopoverClass"
-    Fixed="DropdownSettings.Fixed" OverflowBehavior="DropdownSettings.OverflowBehavior" RelativeWidth="@RelativeWidth">
+    <MudPopover Open="_openItemListState" Class="@PopoverClass" MaxHeight="@MaxHeight"
+                AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" 
+                Fixed="DropdownSettings.Fixed" OverflowBehavior="DropdownSettings.OverflowBehavior" 
+                RelativeWidth="@RelativeWidth">
         <CascadingValue Value="this">
             @if (BeforeItemsTemplate is not null)
             {
@@ -42,11 +47,11 @@
                             @ItemTemplate(item);
                         }
                         <MudListItem OnClick="@(() =>ComboBoxToggleItem(@item))" 
-                        Text="@item!.ToString()" />
+                                     Text="@item!.ToString()" />
                     }
                 }
             </MudList>
-            @if (NoRecords != null)
+            @if (NoRecords is not null)
             {
                 @NoRecords
             }

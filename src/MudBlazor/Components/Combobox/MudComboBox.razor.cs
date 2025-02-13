@@ -37,8 +37,10 @@ namespace MudBlazor
             .AddClass(Class)
             .Build();
 
+        #region Confirmed Parameters
+
         /// <summary>
-        /// The class or classes applied to the <see cref="MudPopover" />
+        /// The class or classes applied to the <see cref="MudPopover" /> that contains the list of ComboBox items.
         /// </summary>
         [Parameter]
         public string? PopoverClass { get; set; }
@@ -71,13 +73,147 @@ namespace MudBlazor
         public Origin TransformOrigin { get; set; } = Origin.TopLeft;
 
         /// <summary>
-        /// Uses compact padding.
+        /// Uses compact padding, including the search items.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c> or <c>MudGlobal.InputDefaults.Margin</c>.
+        /// </remarks>
+        [Parameter]
+        public bool Dense { get; set; }
+
+        /// <summary>
+        /// Whether the ComboBox text field can be used to filter the available items.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>
+        /// </remarks>
+        [Parameter]
+        public bool ReadOnly { get; set; }
+
+        /// <summary>
+        /// The maximum height, in pixels, of the Combobox Popover when it is open.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>300</c>.
+        /// </remarks>
+        [Parameter]
+        public int MaxHeight { get; set; } = 300;
+
+        /// <summary>
+        /// When disabled interactivity of the ComboBox is disabled and appropriate effect is applied.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
         /// </remarks>
         [Parameter]
-        public bool Dense { get; set; }
+        public bool Disabled { get; set; }
+
+        /// <summary>
+        /// Changes the <see cref="ComboBoxValue"/> as soon as input is received.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.  When <c>true</c>, the <see cref="ComboBoxValue"/> property will be updated any time user input occurs.
+        /// If <c>false</c>, <see cref="ComboBoxValue"/> is updated when the user presses <c>Enter</c> or the input loses focus.
+        /// </remarks>
+        public bool Immediate { get; set; } = true;
+
+        /// <summary>
+        /// Any template you wish to place Before the Items list.
+        /// </summary>
+        [Parameter]
+        public RenderFragment? BeforeItemsTemplate { get; set; }
+
+        /// <summary>
+        /// What is displayed when there are no AutoCompleteItems. 
+        /// </summary>
+        [Parameter]
+        public RenderFragment? NoRecords { get; set; }
+
+        /// <summary>
+        /// Determines the width of the ComboBox dropdown in relation to the parent container.
+        /// </summary>
+        /// <remarks>
+        /// <para>Defaults to <see cref="DropdownWidth.Relative" />. </para>
+        /// <para>When SmallScreens is set DropdownWidth is overridden to <see cref="DropdownWidth.Ignore" /></para>.
+        /// <para>When <see cref="DropdownWidth.Relative" />, restricts the max-width of the component to the width of the parent container</para>
+        /// <para>When <see cref="DropdownWidth.Adaptive" />, restricts the min-width of the component to the width of the parent container</para>
+        /// <para>When <see cref="DropdownWidth.Ignore" />, there are no width restrictions of the component to the width of the parent container</para>
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Popover.Appearance)]
+        public DropdownWidth RelativeWidth { get; set; } = DropdownWidth.Relative;
+
+        /// <summary>
+        /// The behavior of the ComboBox dropdown. 
+        /// <para>OverflowBehavior when it cannot display in full at the original Anchor and Transform positions.</para>
+        /// <para>Fixed true displays the dropdown popover in a fixed position, even while scrolling.</para>
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="DropdownSettings.Fixed" /> false
+        /// Defaults to <see cref="DropdownSettings.OverflowBehavior" /> <see cref="OverflowBehavior.FlipOnOpen" />
+        /// </remarks>
+        [Category(CategoryTypes.Popover.Behavior)]
+        [Parameter]
+        public DropdownSettings DropdownSettings { get; set; } = new DropdownSettings();
+
+        /// <summary>
+        /// Whether or not the ComboBox uses an overlay when the dropdown is active.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        public bool Overlay { get; set; } = true;
+
+        /// <summary>
+        /// The text displayed in the input if no <see cref="ComboBoxValue"/> is specified/selected.
+        /// </summary>
+        /// <remarks>
+        /// This property is typically used to give the user a hint as to what kind of input is expected.
+        /// </remarks>
+        [Parameter]
+        public string? PlaceHolder { get; set; }
+
+        /// <summary>
+        /// The label for this input.
+        /// </summary>
+        /// <remarks>
+        /// If no <see cref="ComboBoxValue"/> is specified, the label will be displayed in the input. Otherwise, it will be scaled down to the top of the input.
+        /// </remarks>
+        [Parameter]
+        public string? Label { get; set; }
+
+        /// <summary>
+        /// Shows the label inside the input if no <see cref="ComboBoxValue"/> is specified.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c> in <see cref="MudGlobal.InputDefaults.ShrinkLabel"/>.
+        /// When <c>true</c>, the label will not move into the input when the input is empty.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public bool ShrinkLabel { get; set; } = MudGlobal.InputDefaults.ShrinkLabel;
+
+        /// <summary>
+        /// The text displayed below the text field.
+        /// </summary>
+        /// <remarks>
+        /// This property is typically used to help the user understand what kind of input is allowed.  The <see cref="HelperTextOnFocus"/> property controls when this text is visible.
+        /// </remarks>
+        [Parameter]
+        public string? HelperText { get; set; }
+
+        /// <summary>
+        /// Displays the <see cref="HelperText"/> only when this input has focus.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool HelperTextOnFocus { get; set; }
+
+        #endregion
 
         /// <summary>
         /// The "open" Combobox icon.
@@ -98,27 +234,29 @@ namespace MudBlazor
         public string CloseIcon { get; set; } = Icons.Material.Filled.ArrowDropUp;
 
         /// <summary>
-        /// The maximum height, in pixels, of the Combobox Popover when it is open.
+        /// The "add" Combobox icon.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>300</c>.
+        /// Defaults to <see cref="Icons.Material.Filled.AddCircle"/>.
         /// </remarks>
         [Parameter]
-        public int MaxHeight { get; set; } = 300;
-
-        [Parameter]
-        public bool ReadOnly { get; set; }
-
-        [Parameter]
-        public bool Disabled { get; set; }
+        public string AddIcon { get; set; } = Icons.Material.Filled.AddCircle;
 
         /// <summary>
-        /// Changes the <see cref="ComboBoxValue"/> as soon as input is received.
+        /// When <c>true</c> an AddIcon is displayed when custom input does not have an exact match. 
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>true</c>.  When <c>true</c>, the <see cref="ComboBoxValue"/> property will be updated any time user input occurs.  Otherwise, <see cref="ComboBoxValue"/> is updated when the user presses <c>Enter</c> or the input loses focus.
+        /// Defaults to <c>false</c>
         /// </remarks>
-        public bool Immediate { get; set; } = true;
+        [Parameter]
+        public bool CustomInput { get; set; }
+
+        /// <summary>
+        /// Sets the point at which the list becomes a BottomSheet encompassing the entire bottom (or top) of the presumed mobile display.
+        /// <para>--TODO--</para>
+        /// </summary>
+        [Parameter]
+        public Breakpoint? SmallScreens { get; set; } = Breakpoint.SmAndDown;
 
         /// <summary>
         /// The function used to get the display text for each item.
@@ -160,10 +298,10 @@ namespace MudBlazor
         /// The maximum number of items to display.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>10</c>.  A value of <c>null</c> will display all items.
+        /// Defaults to <c>10</c>. A value of 0 will display all items.
         /// </remarks>
         [Parameter]
-        public int? MaxItems { get; set; } = 10;
+        public int MaxItems { get; set; } = 10;
 
         /// <summary>
         /// The minimum number of characters typed to initiate a search.
@@ -197,38 +335,17 @@ namespace MudBlazor
         /// The debounce interval, in milliseconds.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>100</c>.  A higher value can help reduce the number of calls to <see cref="SearchFunc"/>, which can improve responsiveness.
+        /// Defaults to <c>100</c>. A higher value can help reduce the number of calls to <see cref="SearchFunc"/>, which can improve responsiveness.
         /// </remarks>
         [Parameter]
         public int DebounceInterval { get; set; } = 100;
 
         /// <summary>
-        /// The custom template used to display items.
+        /// The custom template used to display items. Has access to <c>context</c> and <c>context.Item</c>
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
         public RenderFragment<T>? ItemTemplate { get; set; }
-
-        [Parameter]
-        public RenderFragment? BeforeItemsTemplate { get; set; }
-
-        /// <summary>
-        /// What is displayed when there are no AutoCompleteItems
-        /// </summary>
-        [Parameter]
-        public RenderFragment? NoRecords { get; set; }
-
-        /// <summary>
-        /// Determines the width of this Popover dropdown in relation to the parent container.
-        /// </summary>
-        /// <remarks>
-        /// <para>Defaults to <see cref="DropdownWidth.Relative" />. </para>
-        /// <para>When <see cref="DropdownWidth.Relative" />, restricts the max-width of the component to the width of the parent container</para>
-        /// <para>When <see cref="DropdownWidth.Adaptive" />, restricts the min-width of the component to the width of the parent container</para>
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.Popover.Appearance)]
-        public DropdownWidth RelativeWidth { get; set; } = DropdownWidth.Relative;
 
         /// <summary>
         /// Overrides the <c>Text</c> property when an item is selected.
@@ -251,24 +368,10 @@ namespace MudBlazor
         public bool CoerceValue { get; set; }
 
         /// <summary>
-        /// The behavior of the dropdown popover menu
+        /// Whether a user can select multiple items
         /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="DropdownSettings.Fixed" /> false
-        /// Defaults to <see cref="DropdownSettings.OverflowBehavior" /> <see cref="OverflowBehavior.FlipOnOpen" />
-        /// </remarks>
-        [Category(CategoryTypes.Popover.Behavior)]
         [Parameter]
-        public DropdownSettings DropdownSettings { get; set; } = new DropdownSettings();
-
-        /// <summary>
-        /// Whether or not the Popover generated uses an overlay.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>true</c>.
-        /// </remarks>
-        [Parameter]
-        public bool Overlay { get; set; } = true;
+        public SelectionMode MultiSelection { get; set; }
 
         /// <summary>
         /// The currently selected ComboBox item
@@ -283,12 +386,6 @@ namespace MudBlazor
         public EventCallback<T?> SelectedItemChanged { get; set; }
 
         /// <summary>
-        /// Whether a user can select multiple items
-        /// </summary>
-        [Parameter]
-        public SelectionMode MultiSelection { get; set; }
-
-        /// <summary>
         /// The currently selected ComboBox items
         /// </summary>
         [Parameter]
@@ -301,23 +398,14 @@ namespace MudBlazor
         public EventCallback<HashSet<T>> SelectedItemsChanged { get; set; }
 
         /// <summary>
-        /// Sets the filter type, Client filters based on AutoCompleteItems, Server expects user to update AutoCompleteItems.
+        /// Sets the filter type, Client filters based on ComboBox Items, Server expects user to update ComboBoxItems.
         /// Default is Client
         /// </summary>
         [Parameter]
         public ComboBoxFilterType FilterType { get; set; } = ComboBoxFilterType.Client;
 
         [Parameter]
-        public string? PlaceHolder { get; set; }
-
-        [Parameter]
-        public string? Label { get; set; }
-
-        [Parameter]
         public bool OpenOnEnter { get; set; }
-
-        [Parameter]
-        public string? HelperText { get; set; }
 
         [Parameter]
         public bool OpenItemList { get; set; }
