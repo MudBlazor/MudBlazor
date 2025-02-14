@@ -10,15 +10,21 @@ namespace MudBlazor
     {
         private int _selectedComboBoxIndex = -1;
         private int _elementKey = 0;
+        private int _filteredTake = 0;
 
         private ParameterState<string?> _comboBoxValueState;
         private ParameterState<HashSet<T>> _selectedItemsState;
         private ParameterState<bool> _openItemListState;
+        private ParameterState<bool> _isLoadingState;
 
         private MudInput<string> _elementReference = null!;
 
         public MudComboBox()
         {
+            Adornment = Adornment.End;
+            IconSize = Size.Medium;
+            Immediate = true;
+
             using var registerScope = CreateRegisterScope();
             _comboBoxValueState = registerScope.RegisterParameter<string?>(nameof(ComboBoxValue))
                 .WithParameter(() => ComboBoxValue)
@@ -29,18 +35,34 @@ namespace MudBlazor
             _openItemListState = registerScope.RegisterParameter<bool>(nameof(OpenItemList))
                 .WithParameter(() => OpenItemList)
                 .WithEventCallback(() => OpenItemListChanged);
+            _isLoadingState = registerScope.RegisterParameter<bool>(nameof(IsLoading))
+                .WithParameter(() => IsLoading)
+                .WithEventCallback(() => IsLoadingChanged);
         }
 
         [Inject]
         private InternalMudLocalizer Localizer { get; set; } = null!;
 
-        protected string Classname => new CssBuilder("mud-combobox")
+        protected string Classname => new CssBuilder("mud-select")
+            .AddClass("mud-combobox")
             .AddClass(Class)
             .Build();
 
-        protected string InputClassname => new CssBuilder("mud-combobox-input")
+        protected string ComboBoxClassname =>
+            new CssBuilder("mud-select")
+                .AddClass("mud-combobox")
+                .AddClass("mud-width-full", FullWidth)
+                .AddClass("mud-autocomplete--with-progress", ShowProgressIndicator && IsLoading)
+                .Build();
+
+        protected string InputClassname => new CssBuilder("mud-select-input")
+            .AddClass("mud-combobox-input")
             .AddClass(InputClass)
             .Build();
+        protected string CircularProgressClassname =>
+            new CssBuilder("progress-indicator-circular")
+                .AddClass("progress-indicator-circular--with-adornment", Adornment == Adornment.End)
+                .Build();
 
         /// <summary>
         /// Wether Right to Left is designated by the parent
@@ -92,6 +114,11 @@ namespace MudBlazor
         public bool Dense { get; set; }
 
         /// <summary>
+        /// Margin to be applied to the component, make internal.
+        /// </summary>
+        internal new Margin Margin => Dense ? Margin.Dense : Margin.None;
+
+        /// <summary>
         /// Updates the Value to the currently selected item when pressing the Tab key.
         /// </summary>
         /// <remarks>
@@ -109,6 +136,17 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         public int MaxHeight { get; set; } = 300;
+
+        /// <summary>
+        /// The custom template used for the progress indicator when <see cref="ShowProgressIndicator"/> is <c>true</c>.
+        /// <para>In Order to create a progress indicator inside your popover use the BeforeItemsTemplate.</para>
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public RenderFragment? ProgressIndicatorTemplate { get; set; }
 
         /// <summary>
         /// Any template you wish to place Before the Items list.
@@ -361,7 +399,7 @@ namespace MudBlazor
         public EventCallback<HashSet<T>> SelectedItemsChanged { get; set; }
 
         /// <summary>
-        /// Sets the filter type, Client filters based on ComboBox Items, Server expects user to update ComboBoxItems.
+        /// Sets the filter type, Client filters based on ComboBox Items, Server expects user to update ComboBoxItems via the Search function.
         /// Default is Client
         /// </summary>
         [Parameter]
@@ -382,6 +420,12 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<string?> ComboBoxValueChanged { get; set; }
 
+        [Parameter]
+        public bool IsLoading { get; set; }
+
+        [Parameter]
+        public EventCallback<bool> IsLoadingChanged { get; set; }
+
         /// <summary>
         /// The list of items filtered
         /// </summary>
@@ -396,25 +440,25 @@ namespace MudBlazor
         /// The list of items to display in the ComboBox, the ToString method is used for display
         /// </summary>
         [Parameter]
-        public List<T> Items { get; set; } = [];
+        public IEnumerable<T> Items { get; set; } = [];
 
         /// <summary>
         /// The number of items
         /// </summary>
-        public int ItemsCount { get => Items.Count; }
+        public int ItemsCount { get => Items.Count(); }
 
         protected override async void OnParametersSet()
         {
-            if (FilterType == ComboBoxFilterType.Client)
-            {
-                FilteredItems = Items
-                    .Where(x => x?.ToString()?.Contains(_comboBoxValueState.Value ?? string.Empty, StringComparison.CurrentCultureIgnoreCase) ?? false).ToList();
-            }
-            else if (FilterType == ComboBoxFilterType.Server)
-            {
-                FilteredItems = Items;
-            }
-            await InvokeAsync(StateHasChanged);
+            //if (FilterType == ComboBoxFilterType.Client)
+            //{
+            //    FilteredItems = Items
+            //        .Where(x => x?.ToString()?.Contains(_comboBoxValueState.Value ?? string.Empty, StringComparison.CurrentCultureIgnoreCase) ?? false).ToList();
+            //}
+            //else if (FilterType == ComboBoxFilterType.Server)
+            //{
+            //    FilteredItems = Items.ToList();
+            //}
+            //await InvokeAsync(StateHasChanged);
         }
 
         public Task ComboBoxToggleItem(T item)
@@ -450,7 +494,7 @@ namespace MudBlazor
         {
             await _comboBoxValueState.SetValueAsync(default);
             _selectedComboBoxIndex = -1;
-            FilteredItems = Items;
+            FilteredItems = Items.ToList();
         }
 
         private async Task ComboBoxValueUpdated(string? value)
@@ -464,12 +508,15 @@ namespace MudBlazor
             }
             else if (FilterType == ComboBoxFilterType.Server)
             {
-                FilteredItems = Items;
+                FilteredItems = Items.ToList();
             }
         }
 
         public async Task OpenListAsync()
         {
+            if (ReadOnly || Disabled)
+                return;
+
             await _openItemListState.SetValueAsync(true);
             StateHasChanged();
         }
@@ -490,9 +537,47 @@ namespace MudBlazor
         /// </summary>
         protected object? GetAutocomplete() => UserAttributes.GetValueOrDefault("autocomplete", "off");
 
+        private string GetDropDownIcon => _openItemListState.Value ? CloseIcon : OpenIcon;
+
         private async Task OnTextChangedAsync(string? text) => await Task.CompletedTask;
 
-        private async Task OnInputFocusedAsync() => await Task.CompletedTask;
+        private async Task OnInputFocusedAsync() => await PerformSearchAsync();
+
+        private async Task PerformSearchAsync()
+        {
+            // Perform open
+            await _openItemListState.SetValueAsync(true);
+
+            // Is it set to Client side filtering or Server side filtering
+
+            if (FilterType == ComboBoxFilterType.Client)
+            {
+                // We expect user's ToStringFunc or .ToString method to work with Contains
+                FilteredItems = Items
+                    .Where(x => x?.ToString()?.Contains(_comboBoxValueState.Value ?? string.Empty, StringComparison.CurrentCultureIgnoreCase) ?? false).ToList();
+                _filteredTake = MaxItems;
+            }
+            else if (FilterType == ComboBoxFilterType.Server)
+            {
+                // User does the filtering himself via SearchFunc
+                FilteredItems = Items.ToList();
+            }
+
+
+
+            // Show open to user in case they are using BeforeItems to show a custom progress indicator
+            StateHasChanged();
+        }
+
+        private void NextFilteredPage()
+        {
+            // if we have more items to show, increase the take to the maximum number of items
+            if (_filteredTake < FilteredItems.Count)
+            {
+                _filteredTake += MaxItems;
+            }
+            StateHasChanged();
+        }
 
         private async Task OnInputBlurredAsync() => await Task.CompletedTask;
 
@@ -537,6 +622,18 @@ namespace MudBlazor
             }
 
             await base.InvokeKeyDownAsync(args);
+        }
+
+        private async Task AdornmentClickHandlerAsync(MouseEventArgs args)
+        {
+            if (_openItemListState.Value)
+            {
+                await CloseListAsync();
+            }
+            else
+            {
+                await OpenListAsync();
+            }
         }
 
         private async Task OnInputKeyUpAsync(KeyboardEventArgs args)
