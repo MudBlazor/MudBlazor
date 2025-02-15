@@ -28,7 +28,8 @@ namespace MudBlazor
                 .AddClass("mud-lg-table", Breakpoint is Breakpoint.Lg or Breakpoint.Always)
                 .AddClass("mud-xl-table", Breakpoint is Breakpoint.Xl or Breakpoint.Always)
                 .AddClass("mud-xxl-table", Breakpoint is Breakpoint.Xxl or Breakpoint.Always)
-                .AddClass("mud-table-dense", Dense)
+                .AddClass("mud-table-dense", Dense && !UltraDense)
+                .AddClass("mud-table-ultra-dense", UltraDense)
                 .AddClass("mud-table-hover", Hover)
                 .AddClass("mud-table-bordered", Bordered)
                 .AddClass("mud-table-striped", Striped)
@@ -105,6 +106,16 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Table.Appearance)]
         public bool Dense { get; set; }
+
+        /// <summary>
+        /// Uses ultra compact padding for all rows.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>. If <c>true</c>, override the Dense parameter.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Table.Appearance)]
+        public bool UltraDense { get; set; }
 
         /// <summary>
         /// Highlights rows when hovering over them.

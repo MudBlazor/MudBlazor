@@ -3,7 +3,7 @@
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-<MudTable Items="@Elements">
+<MudTable Items="@Elements" Dense="@dense" UltraDense="@ultraDense">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Periodic Elements</MudText>
     </ToolBarContent>
@@ -22,14 +22,14 @@
         <MudTd DataLabel="Molar mass">@context.Molar</MudTd>
     </RowTemplate>
     <PagerContent>
-            <MudTablePager PageSizeOptions="new int[] { 10, 25, 50, 100, int.MaxValue }"
-                           RowsPerPageString="@rowsPerPageString"
-                           InfoFormat="@infoFormat"
-                           AllItemsText="@allItemsText"
-                           HorizontalAlignment="@horizontalAlignment"
-                           HideRowsPerPage="@hideRowsPerPage"
-                           HidePageNumber="@hidePageNumber"
-                           HidePagination="@hidePagination" />
+        <MudTablePager PageSizeOptions="new int[] { 10, 25, 50, 100, int.MaxValue }"
+        RowsPerPageString="@rowsPerPageString"
+        InfoFormat="@infoFormat"
+        AllItemsText="@allItemsText"
+        HorizontalAlignment="@horizontalAlignment"
+        HideRowsPerPage="@hideRowsPerPage"
+        HidePageNumber="@hidePageNumber"
+        HidePagination="@hidePagination" />
     </PagerContent>
 </MudTable>
 
@@ -44,17 +44,21 @@
 </div>
 <div class="d-flex flex-wrap mt-4">
     <MudTextField Label="RowsPerPageString" @bind-Value="rowsPerPageString" Immediate/>
-     <MudTextField Class="ml-4" Label="AllItemsText" @bind-Value="allItemsText" Immediate />
-     <MudTextField Class="ml-4" Label="InfoFormat" @bind-Value="infoFormat" Immediate />
+    <MudTextField Class="ml-4" Label="AllItemsText" @bind-Value="allItemsText" Immediate />
+    <MudTextField Class="ml-4" Label="InfoFormat" @bind-Value="infoFormat" Immediate />
 </div>
 <div class="d-flex flex-wrap mt-4">
-     <MudSwitch @bind-Value="hideRowsPerPage" Color="Color.Tertiary">HideRowsPerPage</MudSwitch>
-     <MudSwitch @bind-Value="hidePageNumber" Color="Color.Primary">HidePageNumber</MudSwitch>
-     <MudSwitch @bind-Value="hidePagination" Color="Color.Secondary">HidePagination</MudSwitch>
+    <MudSwitch @bind-Value="hideRowsPerPage" Color="Color.Tertiary">HideRowsPerPage</MudSwitch>
+    <MudSwitch @bind-Value="hidePageNumber" Color="Color.Primary">HidePageNumber</MudSwitch>
+    <MudSwitch @bind-Value="hidePagination" Color="Color.Secondary">HidePagination</MudSwitch>
+    <MudSwitch @bind-Value="dense" Color="Color.Warning">Dense</MudSwitch>
+    <MudSwitch @bind-Value="ultraDense" Color="Color.Info">Ultra Dense</MudSwitch>
 </div>
 
 @code {
     private HorizontalAlignment horizontalAlignment = HorizontalAlignment.Right;
+    private bool dense;
+    private bool ultraDense;
     private bool hidePageNumber;
     private bool hidePagination;
     private bool hideRowsPerPage;
