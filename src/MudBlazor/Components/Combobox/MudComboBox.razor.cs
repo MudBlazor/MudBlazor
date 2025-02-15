@@ -11,6 +11,7 @@ namespace MudBlazor
         private int _selectedComboBoxIndex = -1;
         private int _elementKey = 0;
         private int _filteredTake = 0;
+        private readonly string _componentId = Identifier.Create();
 
         private ParameterState<string?> _comboBoxValueState;
         private ParameterState<HashSet<T>> _selectedItemsState;
@@ -277,6 +278,7 @@ namespace MudBlazor
         /// Defaults to the <c>ToString()</c> method of items.
         /// </remarks>
         [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
         public Func<T?, string?>? ToStringFunc { get; set; }
 
         /// <summary>
@@ -422,7 +424,6 @@ namespace MudBlazor
 
         [Parameter]
         public bool IsLoading { get; set; }
-
         [Parameter]
         public EventCallback<bool> IsLoadingChanged { get; set; }
 
@@ -445,21 +446,46 @@ namespace MudBlazor
         /// <summary>
         /// The number of items
         /// </summary>
-        public int ItemsCount { get => Items.Count(); }
+        public int ItemsCount { get => Items.Count(); }        
 
-        protected override async void OnParametersSet()
+        private string? GetItemString(T? item)
         {
-            //if (FilterType == ComboBoxFilterType.Client)
-            //{
-            //    FilteredItems = Items
-            //        .Where(x => x?.ToString()?.Contains(_comboBoxValueState.Value ?? string.Empty, StringComparison.CurrentCultureIgnoreCase) ?? false).ToList();
-            //}
-            //else if (FilterType == ComboBoxFilterType.Server)
-            //{
-            //    FilteredItems = Items.ToList();
-            //}
-            //await InvokeAsync(StateHasChanged);
+            if (item is null)
+            {
+                return string.Empty;
+            }
+
+            try
+            {
+                return ToStringFunc?.Invoke(item) ?? item.ToString();
+            }
+            catch (NullReferenceException)
+            {
+                // ignore
+            }
+
+            return "null";
         }
+
+
+        private string GetListItemId(in int index)
+        {
+            return $"{_componentId}_item{index}";
+        }
+
+        //protected override async void OnParametersSet()
+        //{
+        //    if (FilterType == ComboBoxFilterType.Client)
+        //    {
+        //        FilteredItems = Items
+        //            .Where(x => x?.ToString()?.Contains(_comboBoxValueState.Value ?? string.Empty, StringComparison.CurrentCultureIgnoreCase) ?? false).ToList();
+        //    }
+        //    else if (FilterType == ComboBoxFilterType.Server)
+        //    {
+        //        FilteredItems = Items.ToList();
+        //    }
+        //    await InvokeAsync(StateHasChanged);
+        //}
 
         public Task ComboBoxToggleItem(T item)
         {

@@ -79,19 +79,21 @@
                 @if (_openItemListState.Value)
                 {
                     <MudPopover Open="_openItemListState" Class="@PopoverClass" MaxHeight="@MaxHeight"
-                    AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin"
-                    Fixed="DropdownSettings.Fixed" OverflowBehavior="DropdownSettings.OverflowBehavior"
-                    RelativeWidth="@RelativeWidth">
+                                AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin"
+                                Fixed="DropdownSettings.Fixed" OverflowBehavior="DropdownSettings.OverflowBehavior"
+                                RelativeWidth="@RelativeWidth">
                         <CascadingValue Value="this">
                             <MudList Class="mud-combobox-list" T="T" Dense="@Dense">
-                                <MudListSubheader>
-                                    @if (BeforeItemsTemplate is not null)
-                                    {
+
+                                @if (BeforeItemsTemplate is not null)
+                                {
+                                    <MudListSubheader>
                                         <div class="mud-combobox-before-items pa-1">
-                                            @BeforeItemsTemplate;
+                                            @BeforeItemsTemplate
                                         </div>
-                                    }
-                                </MudListSubheader>
+                                    </MudListSubheader>
+                                }
+
                                 @if (FilteredItems.Count > 0)
                                 {
                                     var displayedItems = FilteredItems.Take(_filteredTake).ToList();
@@ -100,18 +102,22 @@
                                     {
                                         var isSelected = _selectedItemsState.Value.Contains(item);
                                         var isDisabled = ItemDisabledFunc?.Invoke(item) ?? false;
-
+                                        var index = FilteredItems.IndexOf(item);
                                         @if (ItemTemplate != null)
                                         {
-                                            @ItemTemplate(new ComboBoxItem<T>(item, isSelected, isDisabled, ComboBoxToggleItem(item)));
+                                            <MudListItem T="T" @key="@index" id="@GetListItemId(index)">
+                                                @ItemTemplate(new ComboBoxItem<T>(item, isSelected, isDisabled, ComboBoxToggleItem(item)));
+                                            </MudListItem>                                            
                                         }
                                         else
                                         {
-                                            <MudListItem OnClick="@(() => ComboBoxToggleItem(item))"
-                                                         Disabled="@isDisabled"
-                                                         Icon="@(isSelected ? Icons.Material.Filled.Check : "")"
-                                                         Class="@(isSelected ? "selected" : "")"
-                                                         Text="@item!.ToString()" />
+                                            <MudListItem T="T" @key="@index" id="@GetListItemId(index)"
+                                                            OnClick="@(() => ComboBoxToggleItem(item))"
+                                                            Disabled="@isDisabled"
+                                                            Icon="@(isSelected ? Icons.Material.Filled.Check : "")"
+                                                            Class="@(isSelected ? "selected" : "")">
+                                                @GetItemString(item)
+                                            </MudListItem>
                                         }
                                     }
 
@@ -121,20 +127,20 @@
                                         <MudListItem OnClick="NextFilteredPage" Class="mud-underline mud-theme-info">More...</MudListItem>
                                     }
                                 }
-                            </MudList>
-                            <MudListSubheader>
+
                                 @if (NoRecords is not null)
                                 {
-                                    @NoRecords
+                                    <MudListSubheader>
+                                        @NoRecords
+                                    </MudListSubheader>
                                 }
-                            </MudListSubheader>
+
+                            </MudList>
                         </CascadingValue>
                     </MudPopover>
                 }
-
             </InputContent>
         </MudInputControl>
-
     </div>
 </CascadingValue>
 
