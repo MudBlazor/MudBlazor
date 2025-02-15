@@ -631,7 +631,7 @@ namespace MudBlazor
                     await childItem.ExpandToSelectedAsync(0);
                 }
             }
-        } // ExpandToSelectedAsync
+        }
 
     }
 }
