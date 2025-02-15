@@ -5029,5 +5029,37 @@ namespace MudBlazor.UnitTests.Components
             else
                 test.GetGroupIcon(isExpanded, isRightToLeft).Should().Be(isRightToLeft ? Icons.Material.Filled.ChevronLeft : Icons.Material.Filled.ChevronRight);
         }
+
+        /// <summary>
+        /// Verifies data grid does not reuse row child components for different items (the @key for the row is set to the user supplied item).
+        /// </summary>
+        [Test]
+        public async Task DataGridUniqueRowKey()
+        {
+            //Test the normal case
+            var comp = Context.RenderComponent<DataGridUniqueRowKeyTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<string>>();
+
+            var sortByColumnName = dataGrid.Instance.RenderedColumns.FirstOrDefault().PropertyName;
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync(sortByColumnName, SortDirection.Ascending, x => { return x; }));
+            var before = dataGrid.FindComponent<MudInput<string>>();
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync(sortByColumnName, SortDirection.Descending, x => { return x; }));
+            var after = dataGrid.FindComponent<MudInput<string>>();
+
+            before.Should().NotBeSameAs(after, because: "If the @key is correctly set to the row item, child components will be recreated on row reordering.");
+
+
+            //Test the expanded group case
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.Group, true));
+            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroups());
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync(sortByColumnName, SortDirection.Ascending, x => { return x; }));
+            before = dataGrid.FindComponent<MudInput<string>>();
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync(sortByColumnName, SortDirection.Descending, x => { return x; }));
+            after = dataGrid.FindComponent<MudInput<string>>();
+
+            before.Should().NotBeSameAs(after, because: "If the @key is correctly set to the row item, child components will be recreated on row reordering.");
+        }
     }
 }
