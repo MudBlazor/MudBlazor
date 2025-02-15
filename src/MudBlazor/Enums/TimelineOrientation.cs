@@ -1,12 +1,21 @@
 ﻿using System.ComponentModel;
 
-namespace MudBlazor
+namespace MudBlazor;
+
+/// <summary>
+/// Specifies the orientation of items in a <see cref="MudTimeline"/>
+/// </summary>
+public enum TimelineOrientation
 {
-    public enum TimelineOrientation
-    {
-        [Description("vertical")]
-        Vertical,
-        [Description("horizontal")]
-        Horizontal
-    }
+    /// <summary>
+    /// Items are displayed vertically.
+    /// </summary>
+    [Description("vertical")]
+    Vertical,
+
+    /// <summary>
+    /// Items are displayed horizontally.
+    /// </summary>
+    [Description("horizontal")]
+    Horizontal
 }
