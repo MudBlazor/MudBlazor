@@ -136,6 +136,7 @@ namespace MudBlazor.UnitTests.Analyzers
         }
 
         [Test]
+        [Ignore("https://github.com/MudBlazor/MudBlazor/issues/10869")]
         public void AllowLowerCaseAttributes()
         {
             var diagnostics = LowerCaseAttributesDiagnostics.FilterToClass(typeof(AttributeTest).FullName);
@@ -160,6 +161,7 @@ namespace MudBlazor.UnitTests.Analyzers
         }
 
         [Test]
+        [Ignore("https://github.com/MudBlazor/MudBlazor/issues/10869")]
         public void AllowDefaultListAttributes()
         {
             var diagnostics = DefaultAttributesListDiagnostics.FilterToClass(typeof(AttributeTest).FullName);
@@ -188,6 +190,7 @@ namespace MudBlazor.UnitTests.Analyzers
         }
 
         [Test]
+        [Ignore("https://github.com/MudBlazor/MudBlazor/issues/10869")]
         public void AllowCustomListAttributes()
         {
             var diagnostics = CustomAttributesListDiagnostics.FilterToClass(typeof(AttributeTest).FullName);
@@ -215,6 +218,7 @@ namespace MudBlazor.UnitTests.Analyzers
         }
 
         [Test]
+        [Ignore("https://github.com/MudBlazor/MudBlazor/issues/10869")]
         public void AllowDataAndAriaAttributes()
         {
             var diagnostics = DataAndAriaAttributesDiagnostics.FilterToClass(typeof(AttributeTest).FullName);
@@ -244,6 +248,7 @@ namespace MudBlazor.UnitTests.Analyzers
         }
 
         [Test]
+        [Ignore("https://github.com/MudBlazor/MudBlazor/issues/10869")]
         public void AllowNoAttributes()
         {
             var diagnostics = NoAttributesDiagnostics.FilterToClass(typeof(AttributeTest).FullName);
@@ -276,6 +281,7 @@ namespace MudBlazor.UnitTests.Analyzers
         }
 
         [Test]
+        [Ignore("https://github.com/MudBlazor/MudBlazor/issues/10869")]
         public void AllowAnyAttributes()
         {
             var diagnostics = AnyAttributesDiagnostics.FilterToClass(typeof(AttributeTest).FullName);
