@@ -78,7 +78,7 @@
                 <!-- Dropdown/Popover for the List and List Items -->
                 @if (_openItemListState.Value)
                 {
-                    <MudPopover Open="_openItemListState" Class="@PopoverClass" MaxHeight="@MaxHeight"
+                    <MudPopover Open="_openItemListState.Value" Class="@PopoverClass" MaxHeight="@MaxHeight"
                                 AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin"
                                 Fixed="DropdownSettings.Fixed" OverflowBehavior="DropdownSettings.OverflowBehavior"
                                 RelativeWidth="@RelativeWidth">
