@@ -172,6 +172,10 @@
     margin-inline-end: 8px;
     margin-inline-start: unset;
   }
+
+  &.mud-tab-panel-hidden {
+    display: none;
+  }
 }
 
 .mud-tab-slider {
