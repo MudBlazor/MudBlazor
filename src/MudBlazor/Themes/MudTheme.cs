@@ -43,10 +43,16 @@
         public PseudoCss PseudoCss { get; set; }
 
         /// <summary>
+        /// Gets or sets the density.
+        /// </summary>
+        public Density Density { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="MudTheme"/> class.
         /// </summary>
         public MudTheme()
         {
+            Density = new Density();
             PaletteLight = new PaletteLight();
             PaletteDark = new PaletteDark();
             Shadows = new Shadow();

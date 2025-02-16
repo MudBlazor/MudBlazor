@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Enums;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -28,8 +29,7 @@ namespace MudBlazor
                 .AddClass("mud-lg-table", Breakpoint is Breakpoint.Lg or Breakpoint.Always)
                 .AddClass("mud-xl-table", Breakpoint is Breakpoint.Xl or Breakpoint.Always)
                 .AddClass("mud-xxl-table", Breakpoint is Breakpoint.Xxl or Breakpoint.Always)
-                .AddClass("mud-table-dense", Dense && !UltraDense)
-                .AddClass("mud-table-ultra-dense", UltraDense)
+                .AddClass($"mud-density-ps-{PaddingDensity.ToDescriptionString()}")
                 .AddClass("mud-table-hover", Hover)
                 .AddClass("mud-table-bordered", Bordered)
                 .AddClass("mud-table-striped", Striped)
@@ -108,14 +108,14 @@ namespace MudBlazor
         public bool Dense { get; set; }
 
         /// <summary>
-        /// Uses ultra compact padding for all rows.
+        /// Define padding density for the cells.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>. If <c>true</c>, override the Dense parameter.
+        /// Defaults to <c>false</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Appearance)]
-        public bool UltraDense { get; set; }
+        public PaddingDensity PaddingDensity { get; set; } = PaddingDensity.Max;
 
         /// <summary>
         /// Highlights rows when hovering over them.
