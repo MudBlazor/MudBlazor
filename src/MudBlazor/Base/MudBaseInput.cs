@@ -499,7 +499,7 @@ namespace MudBlazor
             }
 
             // all the OnBlur parents (TextField, MudMask, NumericField, DateRange, etc) currently point to this method
-            // which causes this method to be fired repeatedly
+            // which causes this method to be fired repeatedly, we can use the obj.Type of FocusedEventArgs to track it
             // Console.WriteLine($"OnBlurredAsync fired, FocusedEventArgs from: {obj.Type} _isFocused: {_isFocused}");
 
             _isFocused = false;

@@ -16,6 +16,12 @@ namespace MudBlazor
         private string? _oldText = null;
         private bool _shouldInitAutoGrow;
         private ElementReference _elementReference1;
+        private readonly Lazy<DotNetObjectReference<MudInput<T>>> _dotNetReferenceLazy;
+
+        public MudInput()
+        {
+            _dotNetReferenceLazy = new Lazy<DotNetObjectReference<MudInput<T>>>(DotNetObjectReference.Create(this));
+        }
 
         protected string Classname =>
             new CssBuilder(
@@ -334,7 +340,7 @@ namespace MudBlazor
             {
                 // add onblur event through javascript which will trigger CallOnBlurredAsync
                 // must do in javascript or it won't detect ios Keyboard button - limitation of Blazor/React/other frameworks of the DOM
-                await ElementReference.MudAddOnBlurViaJS(DotNetObjectReference.Create(this));
+                await ElementReference.MudAttachBlurEventWithJS(_dotNetReferenceLazy.Value);
             }
 
             await base.OnAfterRenderAsync(firstRender);
