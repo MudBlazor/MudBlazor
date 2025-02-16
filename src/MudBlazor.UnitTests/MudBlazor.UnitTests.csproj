@@ -34,10 +34,15 @@
   <ItemGroup>
     <ProjectReference Include="..\MudBlazor.Analyzers.TestComponents\MudBlazor.Analyzers.TestComponents.csproj" />
     <ProjectReference Include="..\MudBlazor.Analyzers\MudBlazor.Analyzers.csproj" />
+    <ProjectReference Include="..\MudBlazor.Docs\MudBlazor.Docs.csproj" />
     <ProjectReference Include="..\MudBlazor.SourceGenerator\MudBlazor.SourceGenerator.csproj" />
     <ProjectReference Include="..\MudBlazor.UnitTests.Shared\MudBlazor.UnitTests.Shared.csproj" />
     <ProjectReference Include="..\MudBlazor.UnitTests.Viewer\MudBlazor.UnitTests.Viewer.csproj" />
     <ProjectReference Include="..\MudBlazor\MudBlazor.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Generated\" />
   </ItemGroup>
 
   <Target Name="GenerateHtmlCoverageReport" AfterTargets="GenerateCoverageResultAfterTest" Condition="'@(CoverletReport-&gt;Count())' != 0">

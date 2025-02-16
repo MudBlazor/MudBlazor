@@ -11,6 +11,6 @@
 </MudDateTimePicker>
 
 @code {
-    MudDateTimePicker _picker;
+    MudDateTimePicker _picker { get; set; } = default!;
     DateTime? dateTime = DateTime.Today;
 }

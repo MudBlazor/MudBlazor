@@ -260,8 +260,8 @@ namespace MudBlazor
         {
             const string ParsingErrorMessage = "Not a valid datetime";
             Converter.GetError = true;
-            Converter.GetErrorMessage = ParsingErrorMessage;
-            Converter.OnError?.Invoke(ParsingErrorMessage);
+            Converter.GetErrorMessage = (ParsingErrorMessage, []);
+            Converter.OnError?.Invoke(ParsingErrorMessage, []);
         }
 
         protected override Task StringValueChangedAsync(string value)
