@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.Logging;
 using MudBlazor.Components.Combobox;
 using MudBlazor.State;
 using MudBlazor.Utilities;
@@ -11,25 +12,27 @@ namespace MudBlazor
         private int _selectedComboBoxIndex = -1;
         private int _elementKey = 0;
         private int _filteredTake = 0;
+        private bool _activatorEvents;
         private readonly string _componentId = Identifier.Create();
+        private int _maxItems = 10;
 
-        private ParameterState<string?> _comboBoxValueState;
         private ParameterState<HashSet<T>> _selectedItemsState;
         private ParameterState<bool> _openItemListState;
         private ParameterState<bool> _isLoadingState;
+
+        private CancellationTokenSource? _cancellationTokenSrc;
+        //private Timer? _debounceTimer;
 
         private MudInput<string> _elementReference = null!;
 
         public MudComboBox()
         {
+            // default values, can be overridden
             Adornment = Adornment.End;
             IconSize = Size.Medium;
             Immediate = true;
 
             using var registerScope = CreateRegisterScope();
-            _comboBoxValueState = registerScope.RegisterParameter<string?>(nameof(ComboBoxValue))
-                .WithParameter(() => ComboBoxValue)
-                .WithEventCallback(() => ComboBoxValueChanged);
             _selectedItemsState = registerScope.RegisterParameter<HashSet<T>>(nameof(SelectedItems))
                 .WithParameter(() => SelectedItems)
                 .WithEventCallback(() => SelectedItemsChanged);
@@ -130,6 +133,16 @@ namespace MudBlazor
         public bool SelectValueOnTab { get; set; }
 
         /// <summary>
+        /// Opens the list when focus is received on the input element; otherwise only opens on click.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c> so the list opens anytime it receives focus regardless of how.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public bool OpenOnFocus { get; set; } = true;
+
+        /// <summary>
         /// The maximum height, in pixels, of the Combobox Popover when it is open.
         /// </summary>
         /// <remarks>
@@ -137,6 +150,16 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         public int MaxHeight { get; set; } = 300;
+
+        /// <summary>
+        /// Whether the dropdown becomes filterable by text input. In client mode the items will be filtered by the <see cref="ToStringFunc"/> 
+        /// or default <c>ToString()</c> method.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        public bool Filterable { get; set; }
 
         /// <summary>
         /// The custom template used for the progress indicator when <see cref="ShowProgressIndicator"/> is <c>true</c>.
@@ -312,10 +335,20 @@ namespace MudBlazor
         /// The maximum number of items to display.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>10</c>. A value of 0 will display all items.
+        /// <para>Defaults to <c>10</c>. A value of 0 will display all items.</para>
+        /// <para>Value cannot be less than 0</para>
         /// </remarks>
         [Parameter]
-        public int MaxItems { get; set; } = 25;
+        public int MaxItems
+        {
+            get => _maxItems;
+            set
+            {
+                if (value < 0)
+                    throw new ArgumentOutOfRangeException(nameof(MaxItems), "Value cannot be less than 0.");
+                _maxItems = value;
+            }
+        }
 
         /// <summary>
         /// The minimum number of characters typed to initiate a search.
@@ -340,7 +373,6 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.
-        /// Previously known as <c>SelectOnClick</c>.
         /// </remarks>
         [Parameter]
         public bool SelectOnActivation { get; set; } = true;
@@ -417,12 +449,6 @@ namespace MudBlazor
         public EventCallback<bool> OpenItemListChanged { get; set; }
 
         [Parameter]
-        public string? ComboBoxValue { get; set; }
-
-        [Parameter]
-        public EventCallback<string?> ComboBoxValueChanged { get; set; }
-
-        [Parameter]
         public bool IsLoading { get; set; }
         [Parameter]
         public EventCallback<bool> IsLoadingChanged { get; set; }
@@ -446,7 +472,7 @@ namespace MudBlazor
         /// <summary>
         /// The number of items
         /// </summary>
-        public int ItemsCount { get => Items.Count(); }        
+        public int ItemsCount { get => Items.Count(); }
 
         private string? GetItemString(T? item)
         {
@@ -505,50 +531,22 @@ namespace MudBlazor
             return _selectedItemsState.SetValueAsync(selectedItems);
         }
 
-        private async Task FocusOnEnterAsync()
-        {
-            if (OpenOnEnter)
-                await OpenListAsync();
-        }
-
-        private async Task OnBlurredAsync()
-        {
-            await _openItemListState.SetValueAsync(false);
-        }
-
-        private async Task ComboBoxValueClear()
-        {
-            await _comboBoxValueState.SetValueAsync(default);
-            _selectedComboBoxIndex = -1;
-            FilteredItems = Items.ToList();
-        }
-
-        private async Task ComboBoxValueUpdated(string? value)
-        {
-            await _comboBoxValueState.SetValueAsync(value);
-
-            _selectedComboBoxIndex = -1;
-            if (FilterType == ComboBoxFilterType.Client)
-            {
-                FilteredItems = Items.Where(x => x?.ToString()?.StartsWith(_comboBoxValueState.Value!.ToLower(), StringComparison.CurrentCultureIgnoreCase) ?? false).ToList();
-            }
-            else if (FilterType == ComboBoxFilterType.Server)
-            {
-                FilteredItems = Items.ToList();
-            }
-        }
-
         public async Task OpenListAsync()
         {
-            if (ReadOnly || Disabled)
+            if (_openItemListState.Value || GetReadOnlyState() || GetDisabledState())
                 return;
 
             await _openItemListState.SetValueAsync(true);
+            await PerformSearchAsync();
             StateHasChanged();
         }
 
         public async Task CloseListAsync()
         {
+            CancelToken();
+            //_debounceTimer?.Dispose();
+            //await RestoreScrollPositionAsync();
+            //await CoerceTextToValueAsync();
             await _openItemListState.SetValueAsync(false);
             StateHasChanged();
         }
@@ -567,31 +565,86 @@ namespace MudBlazor
 
         private async Task OnTextChangedAsync(string? text) => await Task.CompletedTask;
 
-        private async Task OnInputFocusedAsync() => await PerformSearchAsync();
+        private async Task OnInputClickedAsync()
+        {
+            // this fires at nearly the same time as oninputfocused when both fire together
+            await Task.Delay(5);
+            if (_activatorEvents)
+            {
+                _activatorEvents = false;
+                return;
+            }
+            await InputActivationAsync(true);
+        }
+
+        private async Task OnInputFocusedAsync()
+        {
+            if (OpenOnFocus)
+            {
+                _activatorEvents = true;
+            }
+            await InputActivationAsync(OpenOnFocus);
+        }
+
+        private async Task InputActivationAsync(bool openMenu)
+        {
+            if (SelectOnActivation)
+            {
+                await SelectAsync();
+            }
+
+            if (openMenu)
+                await OpenListAsync();
+
+            await PerformSearchAsync();
+        }
 
         private async Task PerformSearchAsync()
         {
-            // Perform open
-            await _openItemListState.SetValueAsync(true);
+            // We use this to allow pagination of the items and a More Button
+            _filteredTake = MaxItems;
 
-            // Is it set to Client side filtering or Server side filtering
-
+            // Perform filtering based on FilterType
             if (FilterType == ComboBoxFilterType.Client)
             {
-                // We expect user's ToStringFunc or .ToString method to work with Contains
+                if (Filterable)
+                {
+                    FilteredItems = Items.ToList();
+                    StateHasChanged();
+                    return;
+                }
+                // We expect user's ToStringFunc or .ToString method to work with Contains combined in GetItemString method
                 FilteredItems = Items
-                    .Where(x => x?.ToString()?.Contains(_comboBoxValueState.Value ?? string.Empty, StringComparison.CurrentCultureIgnoreCase) ?? false).ToList();
-                _filteredTake = MaxItems;
+                    .Where(x => GetItemString(x)?.Contains(Text ?? string.Empty, StringComparison.CurrentCultureIgnoreCase) ?? false).ToList();
             }
             else if (FilterType == ComboBoxFilterType.Server)
             {
+                CancelToken();
+                _cancellationTokenSrc ??= new CancellationTokenSource();
+                var searchText = Text ?? string.Empty;
+                var searchTask = SearchFunc?.Invoke(searchText, _cancellationTokenSrc.Token);
                 // User does the filtering himself via SearchFunc
-                FilteredItems = Items.ToList();
+                try
+                {
+                    FilteredItems = searchTask switch
+                    {
+                        null => [],
+                        _ => (await searchTask).ToList()
+                    };
+                }
+                catch (TaskCanceledException)
+                {
+                }
+                catch (OperationCanceledException)
+                {
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"The search function failed to return results: {e.Message}");
+                }
             }
 
-
-
-            // Show open to user in case they are using BeforeItems to show a custom progress indicator
+            // Make sure FilterdItems updates the list
             StateHasChanged();
         }
 
@@ -605,7 +658,7 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        private async Task OnInputBlurredAsync() => await Task.CompletedTask;
+        private async Task OnInputBlurredAsync() => await CloseListAsync();
 
         private async Task OnInputKeyDownAsync(KeyboardEventArgs args)
         {
@@ -750,6 +803,19 @@ namespace MudBlazor
         private async Task HandleClearButtonAsync()
         {
             await Task.CompletedTask;
+        }
+
+        private void CancelToken()
+        {
+            try
+            {
+                _cancellationTokenSrc?.Cancel();
+            }
+            catch { /*ignored*/ }
+            finally
+            {
+                _cancellationTokenSrc = new CancellationTokenSource();
+            }
         }
     }
 }

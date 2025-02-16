@@ -6,23 +6,25 @@
         @foreach (var variant in Enum.GetValues(typeof(Variant)).Cast<Variant>())
         {
             <MudComboBox @bind-Value="_value"
-                             Items="@_states"
-                             SearchFunc="Search"
-                             Variant="variant"
-                             Label="@variant.ToString()"
-                             Dense="_dense"
-                             Disabled="_disabled"
-                             ReadOnly="_readonly"
-                             Placeholder="@(_placeholder ? "Placeholder" : null)"
-                             HelperText="@(_helperText ? "Helper Text" : null)"
-                             HelperTextOnFocus="_helperTextOnFocus"
-                             Clearable="_clearable" />
+            Items="@_states"
+            SearchFunc="Search"
+            Variant="variant"
+            Label="@variant.ToString()"
+            Filterable="_filterable"
+            Dense="_dense"
+            Disabled="_disabled"
+            ReadOnly="_readonly"
+            Placeholder="@(_placeholder ? "Placeholder" : null)"
+            HelperText="@(_helperText ? "Helper Text" : null)"
+            HelperTextOnFocus="_helperTextOnFocus"
+            Clearable="_clearable" />
         }
     </MudStack>
 
     <MudStack>
         <MudSwitch @bind-Value="_dense" Label="Dense" Color="Color.Primary" />
         <MudSwitch @bind-Value="_readonly" Label="ReadOnly" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_filterable" Label="Filterable" Color="Color.Primary" />
         <MudSwitch @bind-Value="_disabled" Label="Disabled" Color="Color.Primary" />
         <MudSwitch @bind-Value="_placeholder" Label="Placeholder" Color="Color.Primary" />
         <MudSwitch @bind-Value="_helperText" Label="HelperText" Color="Color.Primary" />
@@ -32,11 +34,14 @@
 </MudStack>
 
 @code {
+
     #nullable enable
     string _value = string.Empty;
     bool _dense;
     bool _disabled;
     bool _readonly;
+
+    bool _filterable;
     bool _placeholder;
     bool _helperText;
     bool _helperTextOnFocus;

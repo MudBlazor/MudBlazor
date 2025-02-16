@@ -10,55 +10,60 @@
 
 <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
     <div class="@ComboBoxClassname">
-        <MudInputControl Label="@Label"
-                         Variant="@Variant"
-                         HelperId="@GetHelperId()"                         
+        <MudInputControl Class="@Classname"
+                         Disabled="@GetDisabledState()"
+                         Error="@HasErrors"
+                         ErrorId="@ErrorId"
+                         ErrorText="@GetErrorText()"
+                         ForId="@InputElementId"
+                         FullWidth="@FullWidth"
+                         HelperId="@GetHelperId()"
                          HelperText="@HelperText"
                          HelperTextOnFocus="@HelperTextOnFocus"
-                         FullWidth="@FullWidth"
+                         Label="@Label"
                          Margin="@Margin"
-                         Class="@Classname"
-                         Style="@Style"
-                         Error="@HasErrors"
-                         ErrorText="@GetErrorText()"
-                         ErrorId="@ErrorId"
-                         Disabled="@GetDisabledState()"
                          Required="@Required"
-                         @onfocus="@OnInputFocusedAsync"
-                         ForId="@InputElementId">
+                         Style="@Style"
+                         Variant="@Variant"
+                         @onmousedown="@OnInputClickedAsync">
             <InputContent>
                 <MudInput @ref="_elementReference" @key="_elementKey" InputType="InputType.Text"
-                          Class="@InputClassname" Margin="@Margin"
-                          Variant="@Variant"
-                          Typo="@Typo"
-                          Label="@Label"                         
-                          TextUpdateSuppression="@TextUpdateSuppression"
-                          Value="@Text" Underline="@Underline"
+                          @attributes="UserAttributes" autocomplete="@GetAutocomplete()"
+                          @onfocus="@OnInputFocusedAsync"
+                          Adornment="@Adornment" AdornmentAriaLabel="@AdornmentAriaLabel"
+                          AdornmentIcon="@GetDropDownIcon" AdornmentColor="@AdornmentColor" AdornmentText="@AdornmentText"
+                          Class="@InputClassname" 
+                          Clearable="@(Clearable && !GetReadOnlyState())"
+                          ClearIcon="@ClearIcon"
                           Disabled="@GetDisabledState()"
-                          ReadOnly="@GetReadOnlyState()"
                           Error="@Error"
                           ErrorId="@ErrorId"
                           HelperId="@GetHelperId()"
                           HelperText="@HelperText"
-                          AdornmentIcon="@GetDropDownIcon" Adornment="@Adornment" AdornmentColor="@AdornmentColor" IconSize="@IconSize" AdornmentText="@AdornmentText"
-                          OnAdornmentClick="@AdornmentClickHandlerAsync"
-                          AdornmentAriaLabel="@AdornmentAriaLabel"
-                          Clearable="@(Clearable && !GetReadOnlyState())"
-                          OnClearButtonClick="@HandleClearButtonAsync"
-                          ClearIcon="@ClearIcon"
+                          IconSize="@IconSize"
+                          Immediate="@Immediate"
+                          InputId="@InputElementId"
+                          InputMode="@InputMode"
+                          KeyUpPreventDefault="KeyUpPreventDefault"
+                          Label="@Label"
+                          Margin="@Margin"
                           MaxLength="@MaxLength"
-                          autocomplete="@GetAutocomplete()"
-                          @attributes="UserAttributes"
-                          TextChanged="OnTextChangedAsync"
-                          @onfocus="@OnInputFocusedAsync"
+                          OnAdornmentClick="@AdornmentClickHandlerAsync"
                           OnBlur="OnInputBlurredAsync"
+                          OnClearButtonClick="@HandleClearButtonAsync"
                           OnKeyDown="@OnInputKeyDownAsync"
-                          OnKeyUp="@OnInputKeyUpAsync" KeyUpPreventDefault="KeyUpPreventDefault"
-                          Placeholder="@Placeholder" Immediate="true"
-                          InputMode="@InputMode" Pattern="@Pattern"
-                          ShrinkLabel="@ShrinkLabel"
+                          OnKeyUp="@OnInputKeyUpAsync"
+                          Pattern="@Pattern"
+                          Placeholder="@Placeholder"                          
+                          ReadOnly="@(Filterable ? GetReadOnlyState() : true)"
                           Required="@Required"
-                          InputId="@InputElementId" />
+                          ShrinkLabel="@ShrinkLabel"
+                          TextChanged="OnTextChangedAsync"
+                          TextUpdateSuppression="@TextUpdateSuppression"
+                          Typo="@Typo"
+                          Underline="@Underline"
+                          Value="@Text" 
+                          Variant="@Variant" />
 
                 <!-- Progress Indicator -->
                 @if (ShowProgressIndicator && _isLoadingState.Value)
@@ -103,20 +108,21 @@
                                         var isSelected = _selectedItemsState.Value.Contains(item);
                                         var isDisabled = ItemDisabledFunc?.Invoke(item) ?? false;
                                         var index = FilteredItems.IndexOf(item);
+                                        var itemContext = new ComboBoxItem<T>(item, isSelected, isDisabled, ComboBoxToggleItem(item));
                                         @if (ItemTemplate != null)
                                         {
                                             <MudListItem T="T" @key="@index" id="@GetListItemId(index)">
-                                                @ItemTemplate(new ComboBoxItem<T>(item, isSelected, isDisabled, ComboBoxToggleItem(item)));
+                                                @ItemTemplate(itemContext);
                                             </MudListItem>                                            
                                         }
                                         else
                                         {
                                             <MudListItem T="T" @key="@index" id="@GetListItemId(index)"
-                                                            OnClick="@(() => ComboBoxToggleItem(item))"
-                                                            Disabled="@isDisabled"
-                                                            Icon="@(isSelected ? Icons.Material.Filled.Check : "")"
-                                                            Class="@(isSelected ? "selected" : "")">
-                                                @GetItemString(item)
+                                                            OnClick="@(() => itemContext.ToggleSelectedItem)"
+                                                            Disabled="@itemContext.IsDisabled"
+                                                            Icon="@(itemContext.IsSelected ? Icons.Material.Filled.Check : "")"
+                                                            Class="@(itemContext.IsSelected ? "selected" : "")">
+                                                @GetItemString(itemContext.Item)
                                             </MudListItem>
                                         }
                                     }
