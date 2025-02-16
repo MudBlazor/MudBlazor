@@ -1,8 +1,15 @@
-﻿<MudCard Style="height:300px">
-</MudCard>
+﻿@namespace MudBlazor.Docs.Examples
 
-<MudDataGrid Items="@_persons" T="Person" Loading="true"
+<MudDataGrid Items="@_persons" T="Person" Loading="_loading"
              Filterable Dense="@_dense" FixedHeader ShowMenuIcon Height="350px">
+    <ToolBarContent>
+        <MudSwitch Class="ml-auto" @bind-Value="@_dense" Label="Dense" />
+        <MudSwitch Class="ml-2 mr-auto" @bind-Value="@_loading" Label="Loading" /> 
+    </ToolBarContent>
+    <ColGroup>
+        <col style="width: 50px; background: var(--mud-palette-tertiary);" />
+        <col />
+    </ColGroup>
     <Columns>
         <PropertyColumn Property="x => x.Id" Title="Id" />
         <PropertyColumn Property="x => x.Name" Title="Name" />
@@ -12,20 +19,12 @@
     </PagerContent>
 </MudDataGrid>
 
-<MudSwitch @bind-Value="@_dense" Label="Dense" />
-
 @code {
     private bool _dense = false;
-    public static string __description__ = " Filter popover positioning when DataGrid FixedHeader is true as well as loading indicator ";
-    List<Person> _persons = [];
-
-    protected override void OnInitialized()
-    {
-        for (int i = 0; i < 100; i++)
-        {
-            _persons.Add(new() { Id = i, Name = $"Name{i}" });
-        }
-    }
+    private bool _loading = true;
+    List<Person> _persons = Enumerable.Repeat(0, 100)
+                .Select((_, i) => new Person { Id = i, Name = $"Name{i}" })
+                .ToList();
 
     private async Task<GridData<Person>> ServerReload(GridState<Person> state)
     {

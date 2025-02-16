@@ -280,8 +280,19 @@
         top: 0;
       }
 
+      & * .mud-table-loading {
+        background-color: var(--mud-palette-surface);
+        position: sticky;
+        z-index: 2;
+        top: 59px;
+      }
+
       & * .mud-filter-panel-cell {
-        top: 58px;
+        top: 59px;
+      }
+      // If .mud-table-loading exists, move .mud-filter-panel-cell down
+      table:has(.mud-table-loading) & * .mud-filter-panel-cell {
+        top: 63px;
       }
 
       & * .mud-table-cell.sticky-left,
@@ -296,8 +307,17 @@
 .mud-table-sticky-header.mud-table-dense {
   & * .mud-table-root {
     .mud-table-head {
+
+      & * .mud-table-loading {
+        top: 39px;
+      }
+
       & * .mud-filter-panel-cell {
         top: 39px;
+      }
+
+      table:has(.mud-table-loading) & * .mud-filter-panel-cell {
+        top: 43px;
       }
     }
   }
