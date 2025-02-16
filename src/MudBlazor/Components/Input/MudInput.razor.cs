@@ -382,7 +382,6 @@ namespace MudBlazor
         [JSInvokable]
         public async Task CallOnBlurredAsync()
         {
-            //Console.WriteLine($"CallOnBlurredAsync fired, _isFocused: {_isFocused}");
             // If onblurred already fired then cancel
             if (!_isFocused)
                 return;

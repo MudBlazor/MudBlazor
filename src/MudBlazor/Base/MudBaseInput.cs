@@ -503,7 +503,7 @@ namespace MudBlazor
             // Console.WriteLine($"OnBlurredAsync fired, FocusedEventArgs from: {obj.Type} _isFocused: {_isFocused}");
 
             _isFocused = false;
-            
+
             if (!OnlyValidateIfDirty || _isDirty)
             {
                 Touched = true;
