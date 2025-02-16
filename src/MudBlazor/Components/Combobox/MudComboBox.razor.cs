@@ -21,7 +21,7 @@ namespace MudBlazor
         private ParameterState<bool> _isLoadingState;
 
         private CancellationTokenSource? _cancellationTokenSrc;
-        //private Timer? _debounceTimer;
+        private Timer? _debounceTimer;
 
         private MudInput<string> _elementReference = null!;
 
@@ -392,24 +392,31 @@ namespace MudBlazor
         public RenderFragment<ComboBoxItem<T>>? ItemTemplate { get; set; }
 
         /// <summary>
-        /// Overrides the <c>Text</c> property when an item is selected.
+        /// Determines whether the <c>Text</c>> property should be automatically adjusted to match a valid selection from the available options.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>true</c>.  When <c>true</c>, selecting a value will update the Text property.  When <c>false</c>, incomplete values for Text are allowed.
+        /// Defaults to <c>true</c>. When <c>true</c>, selecting an item from the dropdown updates the <c>Text</c> property to match.
+        /// If the user types an input that does not match any option and presses Enter, the text remains unchanged.
+        /// When set to <c>false</c>, the <c>Text</c> property can hold any user input, even if it does not correspond to a valid selection.
         /// </remarks>
+        /// <para>e.g. If the available options are "Apple", "Banana", and "Cherry", and the user types "xyz" and presses Enter, the input will remain "xyz" if <c>false</c>, but will be cleared or corrected if <c>true</c>.</para>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool CoerceText { get; set; } = true;
 
         /// <summary>
-        /// Sets the <c>Value</c> property even if no match is found by <see cref="SearchFunc"/>.
+        /// Controls whether the <c>Value</c> property is updated based on user input, even if the input does not match any option in the list.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  When <c>true</c>, the user input will be applied to the Value property which allows it to be validated and show an error message.
+        /// Defaults to <c>false</c>. When set to <c>true</c>, the <c>Value</c> property is updated whenever the <c>Text</c> changes,
+        /// even if the text does not match an available option.
+        /// This allows the component to validate and display errors for user-entered values that are not part of the predefined options.
         /// </remarks>
+        /// <para>e.g. If the user types "xyz" and presses Enter, <c>Value</c> will be set to "xyz" if <c>true</c>, but will remain unchanged if <c>false</c>.</para>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool CoerceValue { get; set; }
+
 
         /// <summary>
         /// Whether a user can select multiple items
@@ -493,25 +500,10 @@ namespace MudBlazor
             return "null";
         }
 
-
         private string GetListItemId(in int index)
         {
             return $"{_componentId}_item{index}";
         }
-
-        //protected override async void OnParametersSet()
-        //{
-        //    if (FilterType == ComboBoxFilterType.Client)
-        //    {
-        //        FilteredItems = Items
-        //            .Where(x => x?.ToString()?.Contains(_comboBoxValueState.Value ?? string.Empty, StringComparison.CurrentCultureIgnoreCase) ?? false).ToList();
-        //    }
-        //    else if (FilterType == ComboBoxFilterType.Server)
-        //    {
-        //        FilteredItems = Items.ToList();
-        //    }
-        //    await InvokeAsync(StateHasChanged);
-        //}
 
         public Task ComboBoxToggleItem(T item)
         {
@@ -544,7 +536,7 @@ namespace MudBlazor
         public async Task CloseListAsync()
         {
             CancelToken();
-            //_debounceTimer?.Dispose();
+            _debounceTimer?.Dispose();
             //await RestoreScrollPositionAsync();
             //await CoerceTextToValueAsync();
             await _openItemListState.SetValueAsync(false);
@@ -553,17 +545,90 @@ namespace MudBlazor
 
         public async Task OnEnterKeyAsync()
         {
-            await Task.CompletedTask;
+            if (!_openItemListState.Value || FilteredItems.Count == 0)
+            {
+                // When Immediate is enabled, then the CoerceValue is set by TextChanged
+                // So only coerce the value on enter when Immediate is disabled
+                if (!Immediate)
+                {
+                    await CoerceValueToTextAsync();
+                }
+                return;
+            }
+
+            try
+            {
+                if (_selectedComboBoxIndex >= 0 && _selectedComboBoxIndex < FilteredItems.Count)
+                    await SelectOptionAsync(FilteredItems[_selectedComboBoxIndex]);
+            }
+            finally
+            {
+                await CloseListAsync();
+            }
+        }
+
+        public async Task SelectOptionAsync(T value)
+        {
+            try
+            {
+                await SetValueAsync(value);
+
+                _selectedComboBoxIndex = FilteredItems.IndexOf(value);
+
+                var optionText = GetItemString(value);
+
+                await SetTextAsync(optionText, false);
+
+                _debounceTimer?.Dispose();
+
+                await BeginValidateAsync();
+
+                await _elementReference.SetText(optionText);
+
+                await FocusAsync();
+                // We want focus with a closed popover
+                await CloseListAsync();
+
+            }
+            finally
+            {
+                // And update
+                StateHasChanged();
+            }
         }
 
         /// <summary>
-        /// Returns a value for the <c>autocomplete</c> attribute, either supplied by default or the one specified in the attribute overrides.
+        /// Returns a value for the <c>autocomplete</c> html attribute, either supplied by default or the one specified in the attribute overrides.
         /// </summary>
         protected object? GetAutocomplete() => UserAttributes.GetValueOrDefault("autocomplete", "off");
 
         private string GetDropDownIcon => _openItemListState.Value ? CloseIcon : OpenIcon;
 
-        private async Task OnTextChangedAsync(string? text) => await Task.CompletedTask;
+        protected override async Task UpdateValuePropertyAsync(bool updateText)
+        {
+            _debounceTimer?.Dispose();
+
+            if (ResetValueOnEmptyText && string.IsNullOrWhiteSpace(Text))
+                await SetValueAsync(default(T), updateText);
+            else if (Immediate)
+                await CoerceValueToTextAsync();
+
+            if (DebounceInterval <= 0)
+                await PerformSearchAsync();
+            else
+                _debounceTimer = new Timer(OnDebounceComplete, null, DebounceInterval, Timeout.Infinite);
+        }
+
+        private void OnDebounceComplete(object? stateInfo) => InvokeAsync(PerformSearchAsync);
+
+        private async Task OnTextChangedAsync(string? text)
+        {
+            await base.TextChanged.InvokeAsync(text);
+            
+            if (text is null) return;
+
+            await SetTextAsync(text);
+        }
 
         private async Task OnInputClickedAsync()
         {
