@@ -40,6 +40,7 @@
                           ErrorId="@ErrorId"
                           HelperId="@GetHelperId()"
                           HelperText="@HelperText"
+                          hidden="@(!Filterable ? true : false)"
                           IconSize="@IconSize"
                           Immediate="@Immediate"
                           InputId="@InputElementId"
@@ -55,7 +56,7 @@
                           OnKeyUp="@OnInputKeyUpAsync"
                           Pattern="@Pattern"
                           Placeholder="@Placeholder"                          
-                          ReadOnly="@(Filterable ? GetReadOnlyState() : true)"
+                          ReadOnly="@GetReadOnlyState()"
                           Required="@Required"
                           ShrinkLabel="@ShrinkLabel"
                           TextChanged="OnTextChangedAsync"
@@ -64,7 +65,26 @@
                           Underline="@Underline"
                           Value="@Text" 
                           Variant="@Variant" />
-
+                <MudText Class="mud-width-full">
+                    @foreach (var item in _selectedItemsState.Value)
+                    {
+                        var isSelected = _selectedItemsState.Value.Contains(item);
+                        var isDisabled = ItemDisabledFunc?.Invoke(item) ?? false;
+                        var itemContext = new ComboBoxItem<T>(item, isSelected, isDisabled, ComboBoxToggleItem(item));
+                        @if (SelectedItemsTemplate != null)
+                        {
+                            @SelectedItemsTemplate(itemContext);
+                        }
+                        else
+                        {
+                            <MudChip T="string" Color="Color.Primary"
+                                     OnClose="@(() => itemContext.ToggleSelectedItem)"
+                                     Disabled="@itemContext.IsDisabled">
+                                @GetItemString(itemContext.Item)
+                            </MudChip>
+                        }
+                    }
+                </MudText>
                 <!-- Progress Indicator -->
                 @if (ShowProgressIndicator && _isLoadingState.Value)
                 {

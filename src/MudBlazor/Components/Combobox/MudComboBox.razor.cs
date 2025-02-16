@@ -386,10 +386,18 @@ namespace MudBlazor
         [Parameter]
         public int DebounceInterval { get; set; } = 100;
 
-        // Modify the ItemTemplate parameter type
+        /// <summary>
+        /// The template used to display all the items in the PopoverList, contains a context of <c>ComboBoxItem<typeparamref name="T"/></c>
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
         public RenderFragment<ComboBoxItem<T>>? ItemTemplate { get; set; }
+
+        /// <summary>
+        /// The template used to display selected items in the textbox area. When <c>Filterable</c> is <c>true</c> the template is shown under the input.
+        /// </summary>
+        [Parameter]
+        public RenderFragment<ComboBoxItem<T>>? SelectedItemsTemplate { get; set; }
 
         /// <summary>
         /// Determines whether the <c>Text</c>> property should be automatically adjusted to match a valid selection from the available options.
@@ -565,6 +573,17 @@ namespace MudBlazor
             {
                 await CloseListAsync();
             }
+        }
+
+        private Task CoerceValueToTextAsync()
+        {
+            if (!CoerceValue)
+                return Task.CompletedTask;
+
+            _debounceTimer?.Dispose();
+
+            var value = Converter.Get(Text);
+            return SetValueAsync(value, updateText: false);
         }
 
         public async Task SelectOptionAsync(T value)
