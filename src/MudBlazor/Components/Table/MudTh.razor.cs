@@ -10,7 +10,8 @@ namespace MudBlazor;
 /// </summary>
 public partial class MudTh : MudComponentBase
 {
-    protected string Classname => new CssBuilder($"mud-table-cell {Context?.Table?.CellClass}")
+    protected string Classname => new CssBuilder("mud-table-cell")
+        .AddClass(Context?.Table?.CellClass)
         .AddClass(Class)
         .Build();
 

@@ -53,7 +53,7 @@ public sealed class ApiMemberTableTests : BunitTest
         // There should be a switch for protected properties
         comp.Markup.Should().Contain("<p class=\"mud-typography mud-typography-body1 mud-switch mud-switch-label-small mud-input-content-placement-end\">Show Protected</p>");
         // The "Classname" protected property should be visible
-        comp.Markup.Should().Contain("<td data-label=\"Name\" class=\"mud-table-cell docs-content-api-cell\" id=\"Classname\">");
+        comp.Markup.Should().Contain("<td data-label=\"Name\" class=\"mud-table-cell  docs-content-api-cell\" id=\"Classname\">");
     }
 
     /// <summary>
@@ -87,7 +87,7 @@ public sealed class ApiMemberTableTests : BunitTest
         // There should be a switch for protected properties
         comp.Markup.Should().Contain("<p class=\"mud-typography mud-typography-body1 mud-switch mud-switch-label-small mud-input-content-placement-end\">Show Protected</p>");
         // The "BeginValidateAsync" protected method should be visible
-        comp.Markup.Should().Contain("<td data-label=\"Name\" class=\"mud-table-cell docs-content-api-cell\" id=\"BeginValidateAsync\">");
+        comp.Markup.Should().Contain("<td data-label=\"Name\" class=\"mud-table-cell  docs-content-api-cell\" id=\"BeginValidateAsync\">");
     }
 
     /// <summary>
@@ -121,7 +121,7 @@ public sealed class ApiMemberTableTests : BunitTest
         // There should be a switch for protected properties
         comp.Markup.Should().Contain("<p class=\"mud-typography mud-typography-body1 mud-switch mud-switch-label-small mud-input-content-placement-end\">Show Protected</p>");
         // The "CurrentView" protected field should be visible
-        comp.Markup.Should().Contain("<td data-label=\"Name\" class=\"mud-table-cell docs-content-api-cell\" id=\"CurrentView\">");
+        comp.Markup.Should().Contain("<td data-label=\"Name\" class=\"mud-table-cell  docs-content-api-cell\" id=\"CurrentView\">");
     }
 
     /// <summary>
