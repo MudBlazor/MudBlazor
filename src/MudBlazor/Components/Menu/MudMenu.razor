@@ -1,4 +1,4 @@
-@namespace MudBlazor
+﻿@namespace MudBlazor
 @using MudBlazor.Interfaces
 @inherits MudComponentBase
 
@@ -91,5 +91,9 @@
         </CascadingValue>
     </MudPopover>
 
-    <MudOverlay Visible="_openState.Value && !_isTransient" AutoClose OnClosed="CloseMenuAsync" LockScroll="LockScroll" />
+    <MudOverlay Visible="_openState.Value && !_isTransient"
+                AutoClose
+                OnClosed="CloseMenuAsync"
+                LockScroll="LockScroll"
+                Style="@OverlayStyle" />
 </div>
