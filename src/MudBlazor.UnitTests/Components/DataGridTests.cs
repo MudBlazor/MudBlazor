@@ -5025,9 +5025,13 @@ namespace MudBlazor.UnitTests.Components
         {
             var test = new MudDataGrid<int>();
             if (isExpanded)
+            {
                 test.GetGroupIcon(isExpanded, isRightToLeft).Should().Be(Icons.Material.Filled.ExpandMore);
+            }
             else
+            {
                 test.GetGroupIcon(isExpanded, isRightToLeft).Should().Be(isRightToLeft ? Icons.Material.Filled.ChevronLeft : Icons.Material.Filled.ChevronRight);
+            }
         }
 
         /// <summary>
