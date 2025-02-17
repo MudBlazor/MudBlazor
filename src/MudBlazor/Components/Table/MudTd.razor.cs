@@ -11,10 +11,16 @@ namespace MudBlazor
     public partial class MudTd : MudComponentBase
     {
         protected string Classname =>
-            new CssBuilder("mud-table-cell")
+            new CssBuilder($"mud-table-cell {Context?.Table?.CellClass}")
                 .AddClass("mud-table-cell-hide", HideSmall)
                 .AddClass(Class)
                 .Build();
+
+        /// <summary>
+        /// The current state of the <see cref="MudTable{T}"/> containing this group.
+        /// </summary>
+        [CascadingParameter]
+        public TableContext? Context { get; set; }
 
         /// <summary>
         /// The content within this cell.

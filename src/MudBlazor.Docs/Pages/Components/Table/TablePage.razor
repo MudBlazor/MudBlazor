@@ -57,24 +57,10 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Compact display">
-                <Description>
-                    When many columns need to be displayed in a table, it can sometimes be too wide horizontally. This can be a problem with some screen sizes. 
-                    In this case, it is possible to reduce the density of the information displayed in the table. The <CodeInline>MarginDensity</CodeInline> property can be used to define this density.
-                </Description>
-            </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="@nameof(TableExample)" ShowCode="false" Block="true" FullWidth="true">
-                <TablePaddingDensity />
-            </SectionContent>
-        </DocsPageSection>
-
-        <DocsPageSection>
             <SectionHeader Title="TablePager Customization">
                 <Description>
                     The <CodeInline>TablePager</CodeInline> has many properties to customize it.
                     The property <CodeInline>HorizontalAlignment</CodeInline> can be used to define the position.
-                    The property <CodeInline>Dense</CodeInline> uses compact padding for all rows.
-                    The property <CodeInline>UltraDense</CodeInline> uses ultra compact padding for all rows.
                     The properties <CodeInline>RowsPerPageString</CodeInline>, <CodeInline>InfoFormat</CodeInline> and <CodeInline>AllItemsText</CodeInline> can be used to customize the displayed text.
                     The properties <CodeInline>HideRowsPerPage</CodeInline>, <CodeInline>HidePageNumber</CodeInline> and <CodeInline>HidePagination</CodeInline> can be used to hide the corresponding information.
                     <br /><br />
@@ -118,6 +104,19 @@
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(TableMultiSelectExample)" ShowCode="false" Block="true" FullWidth="true">
                 <TableMultiSelectExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Cell Class">
+                <Description>
+                    It may be necessary to apply a particular style to all the cells in the table. 
+                    In this case, it will be necessary to add a class to each row and column definition. 
+                    Alternatively, you can define the class at table level using the <CodeInline>CellClass</CodeInline> parameter.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(TableCellClassExample)" ShowCode="false" Block="true" FullWidth="true">
+                <TableCellClassExample />
             </SectionContent>
         </DocsPageSection>
 
