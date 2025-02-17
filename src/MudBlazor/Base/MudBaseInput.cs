@@ -75,7 +75,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public bool FullWidth { get; set; }
+        public virtual bool FullWidth { get; set; }
 
         /// <summary>
         /// Changes the <see cref="Value"/> as soon as input is received.

@@ -97,3 +97,12 @@
   border-bottom: 1px solid lightgray;
   padding-bottom: 18px;
 }
+
+.mud-select-filler {
+  white-space: nowrap;
+  height: 0px;
+}
+
+.mud-width-content {
+    max-width: min-content;
+}

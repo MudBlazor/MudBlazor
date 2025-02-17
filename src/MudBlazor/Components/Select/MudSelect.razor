@@ -57,6 +57,35 @@
                         @GetSelectedValuePresenter()
                     }
                 </MudInput>
+                @if (!FullWidth && _longestItem is not null)
+                {
+                    <MudStack Class="@FillerClassname" Spacing="1" Row>
+                        @{
+                            var value = ToStringFunc?.Invoke(_longestItem.Value);
+                        }
+                        @if (Placeholder?.Length > value.Length)
+                        {
+                            <MudText Typo="@Typo">@(MultiSelectionTextFunc?.Invoke([Placeholder]) ?? Placeholder)</MudText>
+                        }
+                        else if (_longestItem.ChildContent is null || MultiSelectionTextFunc is not null)
+                        {
+                            <MudText Typo="@Typo">@(MultiSelectionTextFunc?.Invoke([value]) ?? value)</MudText>
+                        }
+                        else
+                        {
+                            <MudText Typo="@Typo">@_longestItem.ChildContent</MudText>
+                        }
+                        @AdornmentText
+                        @if (AdornmentText is null)
+                        {
+                            <MudIcon Icon="@(AdornmentIcon ?? OpenIcon)" Size="IconSize"></MudIcon>
+                        }
+                        @if (Clearable)
+                        {
+                            <MudIcon Icon="@ClearIcon" Size="IconSize"></MudIcon>
+                        }
+                    </MudStack>
+                }
                 <MudPopover Open=@(_open)
                             MaxHeight="@MaxHeight"
                             Class="@PopoverClass"
