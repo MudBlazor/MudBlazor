@@ -456,4 +456,7 @@
   <data name="HeatMap_More" xml:space="preserve">
     <value>More</value>
   </data>
+  <data name="MudComboBox_MaxItems_Exception" xml:space="preserve">
+    <value>Value cannot be less than 0</value>
+  </data>
 </root>

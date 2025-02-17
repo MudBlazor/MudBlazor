@@ -1,12 +1,9 @@
 ﻿@namespace MudBlazor
 @using MudBlazor.Components.Combobox
-@using MudBlazor.Resources
-@using MudBlazor.Internal
-@using MudBlazor.Extensions
 @inherits MudBaseInput<T>
 @typeparam T
 <!--  TODO: Implement Bottom Sheets for XS screens -->
-<!-- Material 3 ComboBox specificiations from menu:  https://m3.material.io/components/menus/  -->
+<!-- Material 3 ComboBox specifications from menu:  https://m3.material.io/components/menus/  -->
 
 <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
     <div class="@ComboBoxClassname">
@@ -40,10 +37,7 @@
                           ErrorId="@ErrorId"
                           HelperId="@GetHelperId()"
                           HelperText="@HelperText"
-                          hidden="@(!Filterable ? true : false)"
-                          IconSize="@IconSize"
-                          Immediate="@Immediate"
-                          InputId="@InputElementId"
+                          hidden="@(!Filterable)"
                           InputMode="@InputMode"
                           KeyUpPreventDefault="KeyUpPreventDefault"
                           Label="@Label"
@@ -66,14 +60,13 @@
                           Value="@Text" 
                           Variant="@Variant" />
                 <MudText Class="mud-width-full">
-                    @foreach (var item in _selectedItemsState.Value)
+                    @foreach (var item in _selectedItemsState.Value!)
                     {
-                        var isSelected = _selectedItemsState.Value.Contains(item);
                         var isDisabled = ItemDisabledFunc?.Invoke(item) ?? false;
-                        var itemContext = new ComboBoxItem<T>(item, isSelected, isDisabled, ComboBoxToggleItem(item));
+                        var itemContext = new ComboBoxItem<T>(item, true, isDisabled, ComboBoxToggleItem(item));
                         @if (SelectedItemsTemplate != null)
                         {
-                            @SelectedItemsTemplate(itemContext);
+                            @SelectedItemsTemplate(itemContext)
                         }
                         else
                         {
@@ -125,7 +118,7 @@
 
                                     @foreach (var item in displayedItems)
                                     {
-                                        var isSelected = _selectedItemsState.Value.Contains(item);
+                                        var isSelected = _selectedItemsState.Value!.Contains(item);
                                         var isDisabled = ItemDisabledFunc?.Invoke(item) ?? false;
                                         var index = FilteredItems.IndexOf(item);
                                         var itemContext = new ComboBoxItem<T>(item, isSelected, isDisabled, ComboBoxToggleItem(item));

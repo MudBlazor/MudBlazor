@@ -1,12 +1,13 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.Extensions.Logging;
 using MudBlazor.Components.Combobox;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 #nullable enable
 namespace MudBlazor
 {
+    // ReSharper disable MemberCanBePrivate.Global
+    // TODO Remove ReSharper disable 
     public partial class MudComboBox<T> : MudBaseInput<T>
     {
         private int _selectedComboBoxIndex = -1;
@@ -69,10 +70,10 @@ namespace MudBlazor
                 .Build();
 
         /// <summary>
-        /// Wether Right to Left is designated by the parent
+        /// The Right to Left designated by the parent
         /// </summary>
         [CascadingParameter(Name = "RightToLeft")]
-        public bool RightToLeft { get; set; } = false;
+        public bool RightToLeft { get; set; }
 
         #region Confirmed Parameters
 
@@ -120,7 +121,7 @@ namespace MudBlazor
         /// <summary>
         /// Margin to be applied to the component, make internal.
         /// </summary>
-        internal new Margin Margin => Dense ? Margin.Dense : Margin.None;
+        private new Margin Margin => Dense ? Margin.Dense : Margin.None;
 
         /// <summary>
         /// Updates the Value to the currently selected item when pressing the Tab key.
@@ -212,7 +213,7 @@ namespace MudBlazor
         public DropdownSettings DropdownSettings { get; set; } = new DropdownSettings();
 
         /// <summary>
-        /// Whether or not the ComboBox uses an overlay when the dropdown is active.
+        /// Uses a <see cref="MudOverlay"/> when the dropdown is open. 
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.
@@ -345,7 +346,7 @@ namespace MudBlazor
             set
             {
                 if (value < 0)
-                    throw new ArgumentOutOfRangeException(nameof(MaxItems), "Value cannot be less than 0.");
+                    throw new ArgumentOutOfRangeException(nameof(MaxItems), Localizer[Resources.LanguageResource.MudComboBox_MaxItems_Exception]);
                 _maxItems = value;
             }
         }
@@ -357,7 +358,7 @@ namespace MudBlazor
         /// Defaults to <c>0</c>.
         /// </remarks>
         [Parameter]
-        public int MinCharacters { get; set; } = 0;
+        public int MinCharacters { get; set; }
 
         /// <summary>
         /// Reset the selected value if the user deletes the text.
@@ -513,7 +514,7 @@ namespace MudBlazor
             return $"{_componentId}_item{index}";
         }
 
-        public Task ComboBoxToggleItem(T item)
+        public Task ComboBoxToggleItem(T? item)
         {
             if (item == null)
                 return Task.CompletedTask;
@@ -544,7 +545,7 @@ namespace MudBlazor
         public async Task CloseListAsync()
         {
             CancelToken();
-            _debounceTimer?.Dispose();
+            await DebounceTimerDispose();
             //await RestoreScrollPositionAsync();
             //await CoerceTextToValueAsync();
             await _openItemListState.SetValueAsync(false);
@@ -575,15 +576,15 @@ namespace MudBlazor
             }
         }
 
-        private Task CoerceValueToTextAsync()
+        private async Task CoerceValueToTextAsync()
         {
             if (!CoerceValue)
-                return Task.CompletedTask;
+                return;
 
-            _debounceTimer?.Dispose();
+            await DebounceTimerDispose();
 
             var value = Converter.Get(Text);
-            return SetValueAsync(value, updateText: false);
+            await SetValueAsync(value, updateText: false);
         }
 
         public async Task SelectOptionAsync(T value)
@@ -597,8 +598,8 @@ namespace MudBlazor
                 var optionText = GetItemString(value);
 
                 await SetTextAsync(optionText, false);
-
-                _debounceTimer?.Dispose();
+                
+                await DebounceTimerDispose();
 
                 await BeginValidateAsync();
 
@@ -623,9 +624,17 @@ namespace MudBlazor
 
         private string GetDropDownIcon => _openItemListState.Value ? CloseIcon : OpenIcon;
 
+        private async Task DebounceTimerDispose()
+        {
+            if (_debounceTimer != null)
+            {
+                await _debounceTimer.DisposeAsync();
+            }
+        }
+        
         protected override async Task UpdateValuePropertyAsync(bool updateText)
         {
-            _debounceTimer?.Dispose();
+            await DebounceTimerDispose();
 
             if (ResetValueOnEmptyText && string.IsNullOrWhiteSpace(Text))
                 await SetValueAsync(default(T), updateText);
@@ -651,7 +660,8 @@ namespace MudBlazor
 
         private async Task OnInputClickedAsync()
         {
-            // this fires at nearly the same time as oninputfocused when both fire together
+            // this fires at nearly the same time as OnInputFocusedAsync, so we need to delay when both fire together
+            // to prevent running the search method twice
             await Task.Delay(5);
             if (_activatorEvents)
             {
@@ -722,13 +732,9 @@ namespace MudBlazor
                 catch (OperationCanceledException)
                 {
                 }
-                catch (Exception e)
-                {
-                    Console.WriteLine($"The search function failed to return results: {e.Message}");
-                }
             }
 
-            // Make sure FilterdItems updates the list
+            // Make sure FilteredItems updates the list
             StateHasChanged();
         }
 
@@ -746,12 +752,12 @@ namespace MudBlazor
 
         private async Task OnInputKeyDownAsync(KeyboardEventArgs args)
         {
-            var _open = _openItemListState.Value;
+            var open = _openItemListState.Value;
             switch (args.Key)
             {
-                // We need to catch Tab here because a tab will move focus to the next element and thus we'd never get the tab key in OnInputKeyUpAsync.
+                // We need to catch Tab here because a tab will move focus to the next element thus we'd never get the tab key in OnInputKeyUpAsync.
                 case "Tab":
-                    if (_open)
+                    if (open)
                     {
                         if (SelectValueOnTab)
                             await OnEnterKeyAsync();
@@ -759,7 +765,7 @@ namespace MudBlazor
                     await CloseListAsync();
                     break;
                 case "ArrowDown":
-                    if (_open)
+                    if (open)
                     {
                         await SelectAdjacentItemAsync(+1);
                     }
@@ -773,7 +779,7 @@ namespace MudBlazor
                     {
                         await CloseListAsync();
                     }
-                    else if (!_open)
+                    else if (!open)
                     {
                         await OpenListAsync();
                     }
@@ -801,12 +807,12 @@ namespace MudBlazor
 
         private async Task OnInputKeyUpAsync(KeyboardEventArgs args)
         {
-            var _open = _openItemListState.Value;
+            var open = _openItemListState.Value;
             switch (args.Key)
             {
                 case "Enter":
                 case "NumpadEnter":
-                    if (_open)
+                    if (open)
                     {
                         await OnEnterKeyAsync();
                     }
@@ -819,7 +825,7 @@ namespace MudBlazor
                     await CloseListAsync();
                     break;
                 case "Backspace":
-                    if (args.CtrlKey && args.ShiftKey)
+                    if (args is { CtrlKey: true, ShiftKey: true })
                     {
                         await ResetAsync();
                     }
@@ -835,25 +841,25 @@ namespace MudBlazor
         /// <param name="direction">The direction to move, positive for down, negative for up.</param>
         private async ValueTask SelectAdjacentItemAsync(int direction)
         {
-            var _items = FilteredItems;
-            var _enabledItemIndices = _items.Select((item, index) => (item, index))
+            var items = FilteredItems;
+            var enabledItemIndices = items.Select((item, index) => (item, index))
                 .Where(x => !ItemDisabledFunc?.Invoke(x.item) ?? true)
                 .Select(x => x.index)
                 .ToList();
 
-            if (_items == null || _items.Count == 0 || _enabledItemIndices.Count == 0)
-                await ValueTask.CompletedTask;
+            if (items.Count == 0 || enabledItemIndices.Count == 0)
+                return;
 
             // Get the current index among enabled items
-            var currentEnabledIndex = _enabledItemIndices.IndexOf(_selectedComboBoxIndex);
+            var currentEnabledIndex = enabledItemIndices.IndexOf(_selectedComboBoxIndex);
 
             // Determine the new index based on the direction
             var newEnabledIndex = currentEnabledIndex + direction;
 
             // Ensure new index is within bounds
-            if (newEnabledIndex >= 0 && newEnabledIndex < _enabledItemIndices.Count)
+            if (newEnabledIndex >= 0 && newEnabledIndex < enabledItemIndices.Count)
             {
-                _selectedComboBoxIndex = _enabledItemIndices[newEnabledIndex];
+                _selectedComboBoxIndex = enabledItemIndices[newEnabledIndex];
                 await ComboBoxToggleItem(FilteredItems[_selectedComboBoxIndex]);
             }
         }
