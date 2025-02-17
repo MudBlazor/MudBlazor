@@ -113,6 +113,7 @@ namespace MudBlazor
         /// Multiple classes must be separated by spaces.
         /// </remarks>
         [Parameter]
+        [Category(CategoryTypes.Table.Appearance)]
         public string? CellClass { get; set; }
 
         /// <summary>
