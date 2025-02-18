@@ -1523,7 +1523,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task SelectFullWidthTest()
+        public async Task SelectPopoverFullWidthTest()
         {
             var comp = Context.RenderComponent<SelectPopoverRelativeWidthTest>();
 
@@ -1545,6 +1545,30 @@ namespace MudBlazor.UnitTests.Components
 
             //confirm relative width class not applied
             comp.Find(".expanded").ClassList.Should().Contain("mud-popover-open").And.NotContain("mud-popover-relative-width");
+        }
+
+        [Test]
+        public void SelectFullWidthTest()
+        {
+            var comp = Context.RenderComponent<SelectClearableTest>();
+
+            comp.Instance.FullWidth.Should().BeTrue();
+
+            var select = comp.Find(".mud-select");
+
+            select.ClassList.Should().Contain("mud-width-full")
+                  .And.NotContain("mud-width-content");
+
+            comp.Instance.FullWidth = false;
+            comp.Render();
+
+            select.ClassList.Should().Contain("mud-width-content")
+                  .And.NotContain("mud-width-full");
+
+            var filler = comp.Find(".mud-select-filler");
+
+            filler.ClassList.Should().Contain("d-inline-block").And.Contain("mx-2");
+            filler.TextContent.Trim().Should().Be("1");
         }
 #nullable disable
     }
