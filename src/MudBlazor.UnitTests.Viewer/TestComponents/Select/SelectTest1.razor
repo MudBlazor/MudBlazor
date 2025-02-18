@@ -11,19 +11,19 @@
 <MudSwitch @bind-Value="_fullWidth" Class="mt-4" Color="Color.Primary">Full Width</MudSwitch>
 
 @code {
-	public static string __description__ = "Click should open the Menu and selecting a value should update the bindable value.";
+    public static string __description__ = "Click should open the Menu and selecting a value should update the bindable value.";
 
     private bool _fullWidth = true;
     private string? _value = null;
     private bool _focused;
 
-	private void Focused()
-	{
-		_focused = true;
-	}
+    private void Focused()
+    {
+	    _focused = true;
+    }
 
-	private void Blurred()
-	{
-		_focused = false;
-	}
+    private void Blurred()
+    {
+	    _focused = false;
+    }
 }
