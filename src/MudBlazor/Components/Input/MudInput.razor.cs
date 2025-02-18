@@ -63,6 +63,12 @@ namespace MudBlazor
         public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
+        /// The content to display before the input. This content will share the space with the input pushing it right. Be mindful of the height for the filled Variant.
+        /// </summary>
+        [Parameter]
+        public RenderFragment? PreContent { get; set; }
+
+        /// <summary>
         /// The reference to the HTML element for this component.
         /// </summary>
         public ElementReference ElementReference { get; private set; }

@@ -62,7 +62,7 @@ namespace MudBlazor
 
         protected string InputClassname => new CssBuilder("mud-select-input")
             .AddClass("mud-combobox-input")
-            .AddClass("mud-hidden", _selectedItemsState.Value is { Count:  > 0})
+            .AddClass("mud-combobox-items", _selectedItemsState.Value!.Count > 0)
             .AddClass(InputClass)
             .Build();
         protected string CircularProgressClassname =>
@@ -73,8 +73,8 @@ namespace MudBlazor
         protected string GetListItemClassname(bool isSelected) =>
             new CssBuilder("mud-combobox-item")
                 .AddClass("mud-selected-item mud-primary-text mud-primary-hover", isSelected)
-                .Build();        
-        
+                .Build();
+
         /// <summary>
         /// The Right to Left designated by the parent
         /// </summary>
@@ -148,6 +148,12 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
         public bool OpenOnFocus { get; set; } = true;
+
+        /// <summary>
+        /// Whether or not the OpenList closes when an item is Selected via ComboBoxToggleItem
+        /// </summary>
+        [Parameter]
+        public bool AutoClose { get; set; } = true;
 
         /// <summary>
         /// The maximum height, in pixels, of the Combobox Popover when it is open.
@@ -407,33 +413,6 @@ namespace MudBlazor
         public RenderFragment<ComboBoxItem<T>>? SelectedItemsTemplate { get; set; }
 
         /// <summary>
-        /// Determines whether the <c>Text</c>> property should be automatically adjusted to match a valid selection from the available options.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>true</c>. When <c>true</c>, selecting an item from the dropdown updates the <c>Text</c> property to match.
-        /// If the user types an input that does not match any option and presses Enter, the text remains unchanged.
-        /// When set to <c>false</c>, the <c>Text</c> property can hold any user input, even if it does not correspond to a valid selection.
-        /// </remarks>
-        /// <para>e.g. If the available options are "Apple", "Banana", and "Cherry", and the user types "xyz" and presses Enter, the input will remain "xyz" if <c>false</c>, but will be cleared or corrected if <c>true</c>.</para>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool CoerceText { get; set; } = true;
-
-        /// <summary>
-        /// Controls whether the <c>Value</c> property is updated based on user input, even if the input does not match any option in the list.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>. When set to <c>true</c>, the <c>Value</c> property is updated whenever the <c>Text</c> changes,
-        /// even if the text does not match an available option.
-        /// This allows the component to validate and display errors for user-entered values that are not part of the predefined options.
-        /// </remarks>
-        /// <para>e.g. If the user types "xyz" and presses Enter, <c>Value</c> will be set to "xyz" if <c>true</c>, but will remain unchanged if <c>false</c>.</para>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool CoerceValue { get; set; }
-
-
-        /// <summary>
         /// Whether a user can select multiple items
         /// </summary>
         /// <remarks>
@@ -520,22 +499,34 @@ namespace MudBlazor
             return $"{_componentId}_item{index}";
         }
 
-        public Task ComboBoxToggleItem(T? item)
+        public async Task ComboBoxToggleItem(T? item, bool toggleMenu = false)
         {
             if (item == null)
-                return Task.CompletedTask;
+                return;
 
             // Toggle SelectedItems to Add if it doesn't exist, remove it if it does.
             var selectedItems = _selectedItemsState.Value ?? [];
-            if (!MultiSelection)
+            if (selectedItems.Contains(item))
             {
-                selectedItems.Clear();
+                selectedItems.Remove(item);
             }
-            if (!selectedItems.Remove(item))
+            else if (!selectedItems.Remove(item))
             {
                 selectedItems.Add(item);
             }
-            return _selectedItemsState.SetValueAsync(selectedItems);
+            await _selectedItemsState.SetValueAsync(selectedItems);
+            if (toggleMenu)
+            {
+                if (_openItemListState.Value)
+                {
+                    await CloseListAsync();
+                }
+                else
+                {
+                    await OpenListAsync();
+                    await PerformSearchAsync();
+                }
+            }
         }
 
         public async Task OpenListAsync()
@@ -566,7 +557,7 @@ namespace MudBlazor
                 // So only coerce the value on enter when Immediate is disabled
                 if (!Immediate)
                 {
-                    await CoerceValueToTextAsync();
+                    //await CoerceValueToTextAsync();
                 }
                 return;
             }
@@ -582,17 +573,6 @@ namespace MudBlazor
             }
         }
 
-        private async Task CoerceValueToTextAsync()
-        {
-            if (!CoerceValue)
-                return;
-
-            await DebounceTimerDispose();
-
-            var value = Converter.Get(Text);
-            await SetValueAsync(value, updateText: false);
-        }
-
         public async Task SelectOptionAsync(T value, bool closeList = true)
         {
             try
@@ -604,11 +584,14 @@ namespace MudBlazor
                 // Toggle the Selected Item
                 await ComboBoxToggleItem(value);
 
-                // if it's a selection update the Value
-                if (itemSelected)
+                if (!itemSelected)
                 {
-                    await SetValueAsync(value);
+                    StateHasChanged();
+                    return;
                 }
+
+                // if it's a selection update the Value
+                await SetValueAsync(value);
 
                 // update the current Index
                 _selectedComboBoxIndex = FilteredItems.IndexOf(value);
@@ -616,13 +599,13 @@ namespace MudBlazor
                 // update the default display
                 var setText = string.Join(", ", selectedItems.Select(GetItemString));
                 await SetTextAsync(setText, false);
-                
+
                 await DebounceTimerDispose();
 
                 await BeginValidateAsync();
 
                 await _elementReference.SetText(setText);
-                
+
                 // We want focus with a closed popover if closeList is true
                 if (closeList)
                 {
@@ -651,7 +634,7 @@ namespace MudBlazor
                 await _debounceTimer.DisposeAsync();
             }
         }
-        
+
         protected override async Task UpdateValuePropertyAsync(bool updateText)
         {
             await DebounceTimerDispose();
@@ -659,12 +642,12 @@ namespace MudBlazor
             if (ResetValueOnEmptyText && string.IsNullOrWhiteSpace(Text))
                 await SetValueAsync(default(T), updateText);
             else if (Immediate)
-                await CoerceValueToTextAsync();
+                //await CoerceValueToTextAsync();
 
-            if (DebounceInterval <= 0)
-                await PerformSearchAsync();
-            else
-                _debounceTimer = new Timer(OnDebounceComplete, null, DebounceInterval, Timeout.Infinite);
+                if (DebounceInterval <= 0)
+                    await PerformSearchAsync();
+                else
+                    _debounceTimer = new Timer(OnDebounceComplete, null, DebounceInterval, Timeout.Infinite);
         }
 
         private void OnDebounceComplete(object? stateInfo) => InvokeAsync(PerformSearchAsync);
@@ -672,7 +655,7 @@ namespace MudBlazor
         private async Task OnTextChangedAsync(string? text)
         {
             await base.TextChanged.InvokeAsync(text);
-            
+
             if (text is null) return;
 
             await SetTextAsync(text);
@@ -685,7 +668,7 @@ namespace MudBlazor
         {
             return _elementReference.SelectAsync();
         }
-        
+
         /// <summary>
         /// Selects a portion of the text within the Autocomplete text box.
         /// </summary>
@@ -696,7 +679,7 @@ namespace MudBlazor
         {
             return _elementReference.SelectRangeAsync(pos1, pos2);
         }
-        
+
         private async Task OnInputClickedAsync()
         {
             // this fires at nearly the same time as OnInputFocusedAsync, so we need to delay when both fire together

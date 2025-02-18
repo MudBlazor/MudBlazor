@@ -9,15 +9,18 @@
     @if (Adornment == Adornment.Start)
     {
         <MudInputAdornment Class="@AdornmentClassname"
-                           Icon="@AdornmentIcon"
-                           Color="@AdornmentColor"
-                           Size="@IconSize"
-                           Text="@AdornmentText"
-                           Placement="@Adornment.Start"
-                           AdornmentClick="@OnAdornmentClick"
-                           AriaLabel="@AdornmentAriaLabel" />
+        Icon="@AdornmentIcon"
+        Color="@AdornmentColor"
+        Size="@IconSize"
+        Text="@AdornmentText"
+        Placement="@Adornment.Start"
+        AdornmentClick="@OnAdornmentClick"
+        AriaLabel="@AdornmentAriaLabel" />
     }
-
+    @if (PreContent != null)
+    {
+        @PreContent
+    }
     @if (AutoGrow || Lines > 1)
     {
         <textarea class="@InputClassname"
