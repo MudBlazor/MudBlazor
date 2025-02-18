@@ -1,6 +1,4 @@
-﻿@using System.Threading
-
-<MudAutocomplete T="string"
+﻿<MudAutocomplete T="string"
                  Variant="Variant.Outlined"
                  Value="@_value"
                  Label="Values"
@@ -25,18 +23,22 @@
 </MudDialog>
 
 @code {
-    public static string __description__ = " Adornment Click should not automatically open popover ";
+    public static string __description__ = "Adornment Click should not automatically open popover";
 
-    string _value = "Foo";
-    string[] _values = ["Foo", "Bar", "Baz"];
-    bool _dialogVisible = false;
+    private readonly string _value = "Foo";
+    private readonly string[] _values = ["Foo", "Bar", "Baz"];
+    private bool _dialogVisible;
 
     private Task<IEnumerable<string>> SearchValues(string value, CancellationToken token)
     {
         if (string.IsNullOrEmpty(value))
+        {
             return Task.FromResult<IEnumerable<string>>(_values);
+        }
 
-        return Task.FromResult<IEnumerable<string>>(_values.Where(v => v.Contains(value, StringComparison.OrdinalIgnoreCase)));
+        var values = _values.Where(v => v.Contains(value, StringComparison.OrdinalIgnoreCase));
+
+        return Task.FromResult(values);
     }
 
     private void OpenDialog()

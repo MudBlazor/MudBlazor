@@ -1,11 +1,11 @@
-﻿<MudButton @onclick="@(() => dialog_open = !dialog_open)" Variant="Variant.Filled" Color="Color.Primary">
+﻿<MudButton @onclick="@(() => _dialogOpen = !_dialogOpen)" Variant="Variant.Filled" Color="Color.Primary">
     Open Simple Dialog
 </MudButton>
 
-<MudDialog @bind-Visible="dialog_open" Style="width: 80%; height: 80%;">
+<MudDialog @bind-Visible="_dialogOpen" Style="width: 80%; height: 80%;">
     <DialogContent>
         <MudButton Variant="Variant.Text" OnClick="@(() => OpenDrawer(Anchor.End))">Open Drawer</MudButton>
-        <MudDrawer @bind-Open="@_open" Anchor="@_anchor" Elevation="1" Variant="@DrawerVariant.Temporary" OverlayAutoClose="@_overlayAutoClose">
+        <MudDrawer @bind-Open="@_open" Anchor="@_anchor" Elevation="1" Variant="@DrawerVariant.Temporary" OverlayAutoClose="@OverlayAutoClose">
             <MudDrawerHeader>
                 <MudText Typo="Typo.h6">My App</MudText>
             </MudDrawerHeader>
@@ -21,12 +21,11 @@
 </MudDialog>
 
 @code {
-    #nullable enable
-    public static string __description__ = " Drawer inside a Dialog with a Select inside the Drawer make sure z-index is not overridden by css. ";
-    private bool dialog_open;
+    public static string __description__ = "Drawer inside a Dialog with a Select inside the Drawer make sure z-index is not overridden by css.";
+    private bool _dialogOpen;
     private bool _open;
     private Anchor _anchor;
-    private bool _overlayAutoClose = true;
+    private const bool OverlayAutoClose = true;
 
     private void OpenDrawer(Anchor anchor)
     {

@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Services;
@@ -1214,7 +1215,7 @@ namespace MudBlazor
         /// Clears all selections and resets validation
         /// </summary>
         /// <remarks>
-        /// To maintain validation errors (e.g. requried), use <see cref="ClearAsync"/>
+        /// To maintain validation errors (e.g. required), use <see cref="ClearAsync"/>
         /// </remarks>
         protected override async Task ResetValueAsync()
         {
@@ -1244,11 +1245,9 @@ namespace MudBlazor
         /// <remarks>
         /// To reset validation errors (e.g. required), use <see cref="ResetValueAsync"/>
         /// </remarks>
+        [ExcludeFromCodeCoverage]
         [Obsolete("Use ClearAsync instead")]
-        public async Task Clear()
-        {
-            await ClearAsync();
-        }
+        public Task Clear() => ClearAsync();
 
         private async Task SelectAllClickAsync()
         {
