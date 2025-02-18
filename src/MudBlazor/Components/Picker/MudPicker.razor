@@ -8,34 +8,34 @@
     protected virtual RenderFragment? InputContent =>
     // note: Mask needs to remain before Text!
         @<MudTextField T="string"
-              @ref="_inputReference"
-              @attributes="UserAttributes"
-              Style="@Style"
-              Label="@Label"
-              Mask="@_mask"
-              @bind-Value="@Text"
-              Immediate="@(ImmediateText && Editable)"
-              Placeholder="@Placeholder"
-              HelperText="@HelperText"
-              HelperTextOnFocus="@HelperTextOnFocus"
-              Variant="@Variant"
-              ReadOnly="@(!Editable || GetReadOnlyState())"
-              Disabled="@GetDisabledState()"
-              Underline="@Underline"
-              OnAdornmentClick="ToggleStateAsync"
-              Adornment="@Adornment"
-              AdornmentIcon="@AdornmentIcon"
-              AdornmentColor="@AdornmentColor"
-              AdornmentAriaLabel="@AdornmentAriaLabel"
-              IconSize="@IconSize"
-              Margin="@Margin"
-              Required="@Required"
-              RequiredError="@RequiredError"
-              Error="@Error"
-              ErrorText="@ErrorText"
-              Clearable="@(Clearable && !GetReadOnlyState())"
-              OnClearButtonClick="@(async () => await ClearAsync())"
-              @onclick="OnClickAsync" />;
+                       @ref="_inputReference"
+                       @attributes="UserAttributes"
+                       Style="@Style"
+                       Label="@Label"
+                       Mask="@_mask"
+                       @bind-Value="@Text"
+                       Immediate="@(ImmediateText && Editable)"
+                       Placeholder="@Placeholder"
+                       HelperText="@HelperText"
+                       HelperTextOnFocus="@HelperTextOnFocus"
+                       Variant="@Variant"
+                       ReadOnly="@(!Editable || GetReadOnlyState())"
+                       Disabled="@GetDisabledState()"
+                       Underline="@Underline"
+                       OnAdornmentClick="ToggleStateAsync"
+                       Adornment="@Adornment"
+                       AdornmentIcon="@AdornmentIcon"
+                       AdornmentColor="@AdornmentColor"
+                       AdornmentAriaLabel="@AdornmentAriaLabel"
+                       IconSize="@IconSize"
+                       Margin="@Margin"
+                       Required="@Required"
+                       RequiredError="@RequiredError"
+                       Error="@Error"
+                       ErrorText="@ErrorText"
+                       Clearable="@(Clearable && !GetReadOnlyState())"
+                       OnClearButtonClick="@(async () => await ClearAsync())"
+                       @onclick="OnClickAsync" />;
 
 #nullable enable
     /// <summary>
@@ -48,10 +48,10 @@
     protected virtual RenderFragment? Render =>
     @<CascadingValue Value="@this" IsFixed="true">
         <div class="@PickerClassname" id="@_elementId">
-            @if (PickerVariant != PickerVariant.Static)
+        @if (PickerVariant != PickerVariant.Static)
         {
             <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
-                @if (InputContent != null)
+            @if (InputContent != null)
             {
                 @InputContent
             }
@@ -63,12 +63,12 @@
                 <div @ref="_pickerInlineRef" class="@PickerInlineClassname">
                     <MudPaper @attributes="UserAttributes" Class="@PickerPaperClassname" Style="@PickerPaperStylename" Square="@_pickerSquare">
                         <div class="@PickerContainerClassname">
-                            @if (PickerContent != null)
+                        @if (PickerContent != null)
                         {
                             @PickerContent
                         }
                         </div>
-                        @if (PickerActions != null)
+                    @if (PickerActions != null)
                     {
                         <div class="@ActionsClassname">
                             @PickerActions(this)
