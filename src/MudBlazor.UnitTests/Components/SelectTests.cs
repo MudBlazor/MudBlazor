@@ -193,7 +193,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MultiSelectWithValueContainZeroTest>();
             var inputs = comp.FindAll("input");
-            inputs.Count.Should().Be(3);
+            inputs.Count.Should().Be(5);
             inputs[1].GetAttribute("value").Should().Be("Value2");
             await inputs[1].TriggerEventAsync("onmousedown", new MouseEventArgs());
             await Task.Delay(500);
