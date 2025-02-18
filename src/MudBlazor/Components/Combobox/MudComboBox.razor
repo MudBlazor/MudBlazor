@@ -37,7 +37,6 @@
                           ErrorId="@ErrorId"
                           HelperId="@GetHelperId()"
                           HelperText="@HelperText"
-                          hidden="@(!Filterable)"
                           InputMode="@InputMode"
                           KeyUpPreventDefault="KeyUpPreventDefault"
                           Label="@Label"
@@ -50,7 +49,7 @@
                           OnKeyUp="@OnInputKeyUpAsync"
                           Pattern="@Pattern"
                           Placeholder="@Placeholder"                          
-                          ReadOnly="@GetReadOnlyState()"
+                          ReadOnly="@(GetReadOnlyState() && !Filterable)"
                           Required="@Required"
                           ShrinkLabel="@ShrinkLabel"
                           TextChanged="OnTextChangedAsync"
@@ -59,25 +58,6 @@
                           Underline="@Underline"
                           Value="@Text" 
                           Variant="@Variant" />
-                <MudText Class="mud-width-full">
-                    @foreach (var item in _selectedItemsState.Value!)
-                    {
-                        var isDisabled = ItemDisabledFunc?.Invoke(item) ?? false;
-                        var itemContext = new ComboBoxItem<T>(item, true, isDisabled, ComboBoxToggleItem(item));
-                        @if (SelectedItemsTemplate != null)
-                        {
-                            @SelectedItemsTemplate(itemContext)
-                        }
-                        else
-                        {
-                            <MudChip T="string" Color="Color.Primary"
-                                     OnClose="@(() => itemContext.ToggleSelectedItem)"
-                                     Disabled="@itemContext.IsDisabled">
-                                @GetItemString(itemContext.Item)
-                            </MudChip>
-                        }
-                    }
-                </MudText>
                 <!-- Progress Indicator -->
                 @if (ShowProgressIndicator && _isLoadingState.Value)
                 {
@@ -121,7 +101,7 @@
                                         var isSelected = _selectedItemsState.Value!.Contains(item);
                                         var isDisabled = ItemDisabledFunc?.Invoke(item) ?? false;
                                         var index = FilteredItems.IndexOf(item);
-                                        var itemContext = new ComboBoxItem<T>(item, isSelected, isDisabled, ComboBoxToggleItem(item));
+                                        var itemContext = new ComboBoxItem<T>(item, isSelected, isDisabled, () => SelectOptionAsync(item));
                                         @if (ItemTemplate != null)
                                         {
                                             <MudListItem T="T" @key="@index" id="@GetListItemId(index)">
@@ -130,11 +110,12 @@
                                         }
                                         else
                                         {
-                                            <MudListItem T="T" @key="@index" id="@GetListItemId(index)"
-                                                            OnClick="@(() => itemContext.ToggleSelectedItem)"
-                                                            Disabled="@itemContext.IsDisabled"
-                                                            Icon="@(itemContext.IsSelected ? Icons.Material.Filled.Check : "")"
-                                                            Class="@(itemContext.IsSelected ? "selected" : "")">
+                                            <MudListItem T="T" @key="@index" id="@GetListItemId(index)" Value="@itemContext.Item"
+                                                         OnClick="@(async () => await itemContext.ToggleSelectedItem())"
+                                                         OnClickPreventDefault="true"
+                                                         Disabled="@itemContext.IsDisabled"
+                                                         Icon="@(itemContext.IsSelected ? Icons.Material.Filled.Check : "")"
+                                                         Class="@GetListItemClassname(itemContext.IsSelected)">
                                                 @GetItemString(itemContext.Item)
                                             </MudListItem>
                                         }
@@ -158,6 +139,31 @@
                         </CascadingValue>
                     </MudPopover>
                 }
+                <!-- Selected Items 
+                @if (!_openItemListState.Value && _selectedItemsState.Value!.Count > 0)
+                {
+                <MudText Class="mud-width-full">
+                    @{ var items = _selectedItemsState.Value!.ToList(); }
+                    @foreach (var item in items)
+                    {
+                    var isDisabled = ItemDisabledFunc?.Invoke(item) ?? false;
+                    var itemContext = new ComboBoxItem<T>(item, true, isDisabled, ComboBoxToggleItem(item));
+                    @if (SelectedItemsTemplate != null)
+                    {
+                    @SelectedItemsTemplate(itemContext)
+                    }
+                    else
+                    {
+                    <MudChip T="string" Color="Color.Primary"
+                             OnClose="@(() => itemContext.ToggleSelectedItem)"
+                             @onclick:stopPropagation
+                             Disabled="@itemContext.IsDisabled">
+                        @GetItemString(itemContext.Item)
+                    </MudChip>
+                    }
+                    }
+                </MudText>
+                } -->
             </InputContent>
         </MudInputControl>
     </div>

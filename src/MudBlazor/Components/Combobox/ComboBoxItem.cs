@@ -4,5 +4,5 @@
 
 namespace MudBlazor.Components.Combobox
 {
-    public record ComboBoxItem<T>(T Item, bool IsSelected, bool IsDisabled, Task ToggleSelectedItem);
+    public record ComboBoxItem<T>(T Item, bool IsSelected, bool IsDisabled, Func<Task> ToggleSelectedItem);
 }

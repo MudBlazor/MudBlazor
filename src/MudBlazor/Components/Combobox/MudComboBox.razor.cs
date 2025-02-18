@@ -62,6 +62,7 @@ namespace MudBlazor
 
         protected string InputClassname => new CssBuilder("mud-select-input")
             .AddClass("mud-combobox-input")
+            .AddClass("mud-hidden", _selectedItemsState.Value is { Count:  > 0})
             .AddClass(InputClass)
             .Build();
         protected string CircularProgressClassname =>
@@ -69,6 +70,11 @@ namespace MudBlazor
                 .AddClass("progress-indicator-circular--with-adornment", Adornment == Adornment.End)
                 .Build();
 
+        protected string GetListItemClassname(bool isSelected) =>
+            new CssBuilder("mud-combobox-item")
+                .AddClass("mud-selected-item mud-primary-text mud-primary-hover", isSelected)
+                .Build();        
+        
         /// <summary>
         /// The Right to Left designated by the parent
         /// </summary>
@@ -587,28 +593,42 @@ namespace MudBlazor
             await SetValueAsync(value, updateText: false);
         }
 
-        public async Task SelectOptionAsync(T value)
+        public async Task SelectOptionAsync(T value, bool closeList = true)
         {
             try
             {
-                await SetValueAsync(value);
+                // does item exist in selected list
+                var selectedItems = _selectedItemsState.Value!.ToList();
+                var itemSelected = selectedItems.Contains(value);
 
+                // Toggle the Selected Item
+                await ComboBoxToggleItem(value);
+
+                // if it's a selection update the Value
+                if (itemSelected)
+                {
+                    await SetValueAsync(value);
+                }
+
+                // update the current Index
                 _selectedComboBoxIndex = FilteredItems.IndexOf(value);
 
-                var optionText = GetItemString(value);
-
-                await SetTextAsync(optionText, false);
+                // update the default display
+                var setText = string.Join(", ", selectedItems.Select(GetItemString));
+                await SetTextAsync(setText, false);
                 
                 await DebounceTimerDispose();
 
                 await BeginValidateAsync();
 
-                await _elementReference.SetText(optionText);
-
-                await FocusAsync();
-                // We want focus with a closed popover
-                await CloseListAsync();
-
+                await _elementReference.SetText(setText);
+                
+                // We want focus with a closed popover if closeList is true
+                if (closeList)
+                {
+                    await FocusAsync();
+                    await CloseListAsync();
+                }
             }
             finally
             {
@@ -658,6 +678,25 @@ namespace MudBlazor
             await SetTextAsync(text);
         }
 
+        /// <summary>
+        /// Selects all the current text within the Autocomplete text box.
+        /// </summary>
+        public override ValueTask SelectAsync()
+        {
+            return _elementReference.SelectAsync();
+        }
+        
+        /// <summary>
+        /// Selects a portion of the text within the Autocomplete text box.
+        /// </summary>
+        /// <param name="pos1">The index of the first character to select.</param>
+        /// <param name="pos2">The index of the last character to select.</param>
+        /// <returns>A <see cref="ValueTask"/> object.</returns>
+        public override ValueTask SelectRangeAsync(int pos1, int pos2)
+        {
+            return _elementReference.SelectRangeAsync(pos1, pos2);
+        }
+        
         private async Task OnInputClickedAsync()
         {
             // this fires at nearly the same time as OnInputFocusedAsync, so we need to delay when both fire together
