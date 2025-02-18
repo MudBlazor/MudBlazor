@@ -673,7 +673,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MultiSelect_Initial_Values()
         {
-            var comp = Context.RenderComponent<MultiSelectWithInitialValues>();
+            var comp = Context.RenderComponent<MultiSelectWithInitialValuesTest>();
             // print the generated html
 
             // select the input of the select

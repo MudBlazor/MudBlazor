@@ -6,7 +6,7 @@
                 <MudText Typo="Typo.h6">My App</MudText>
             </MudDrawerHeader>
             <MudPaper Height="2000px" Square="true">
-                <MudSelect Style="margin-top:100px;" T="string" Label="Coffee" AnchorOrigin="Origin.BottomLeft" Fixed="true">
+                <MudSelect Style="margin-top:100px;" T="string" Label="Coffee" AnchorOrigin="Origin.BottomLeft" FullWidth="_fullWidth">
                     <MudSelectItem Value="@("Cappuccino")" />
                     <MudSelectItem Value="@("Cafe Latte")" />
                     <MudSelectItem Value="@("Espresso")" />
@@ -24,10 +24,13 @@
     </MudDrawerContainer>
 </MudPaper>
 
+<MudSwitch @bind-Value="_fullWidth" Class="mt-4" Color="Color.Primary">Full Width</MudSwitch>
+
 @code {
     public static string __description__ = "A MudSelect inside a Drawer that stays fixed when scrolled";
 
     private bool _open = false;
+    private bool _fullWidth = true;
 
     private void ToggleDrawer()
     {

@@ -1,13 +1,18 @@
 ﻿<MudPopoverProvider />
 
-<MudSelect @bind-Value="_value" MultiSelection="true">
+<MudSelect @bind-Value="_value" MultiSelection="true" FullWidth="_fullWidth" RelativeWidth="@(_adaptive ? DropdownWidth.Adaptive : DropdownWidth.Relative)">
     <MudSelectItem Value="@("1")">1</MudSelectItem>
     <MudSelectItem Value="@("2")">2</MudSelectItem>
     <MudSelectItem Value="@("3")">3</MudSelectItem>
 </MudSelect>
 
+<MudSwitch @bind-Value="_fullWidth" Class="mt-4" Color="Color.Primary">Full Width</MudSwitch>
+<MudSwitch @bind-Value="_adaptive" Class="mt-4" Color="Color.Primary">Adaptive Content</MudSwitch>
+
 @code {
     public static string __description__ = "Click should not close the menu and selecting multiple values should update the bindable value with a comma separated list.";
 
     private string? _value = null;
+    private bool _fullWidth = true;
+    private bool _adaptive;
 }

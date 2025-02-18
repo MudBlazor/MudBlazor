@@ -3,7 +3,9 @@
 <MudSelect Label="Select Item"
            MultiSelection="true"
            T="@TestItem"
+           FullWidth="_fullWidth"
            SelectedValues="@_selectedItems"
+           RelativeWidth="@(_adaptive ? DropdownWidth.Adaptive : DropdownWidth.Relative)"
            ToStringFunc="@ToString">
     @foreach (var item in _allItems)
     {
@@ -11,8 +13,13 @@
     }
 </MudSelect>
 
+<MudSwitch @bind-Value="_fullWidth" Class="mt-4" Color="Color.Primary">Full Width</MudSwitch>
+<MudSwitch @bind-Value="_adaptive" Class="mt-4" Color="Color.Primary">Adaptive Content</MudSwitch>
+
 @code {
-    private readonly List<TestItem> _allItems = [];    
+    private bool _adaptive;
+    private bool _fullWidth = true;
+    private readonly List<TestItem> _allItems = [];
     private readonly HashSet<TestItem> _selectedItems = [];
 
     protected override async Task OnInitializedAsync()

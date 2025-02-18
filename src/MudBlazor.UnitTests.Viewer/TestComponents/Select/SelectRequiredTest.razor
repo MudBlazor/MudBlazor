@@ -1,15 +1,18 @@
 ﻿<MudPopoverProvider />
 
-<MudSelect id="selectLabelTest" @bind-Value="_value" Label="RequiredTest" Required="true">
+<MudSelect id="selectLabelTest" @bind-Value="_value" Label="RequiredTest" Required="true" FullWidth="_fullWidth">
     <MudSelectItem Value="@(string.Empty)" />
     <MudSelectItem Value="@("1")" />
     <MudSelectItem Value="@("2")" />
     <MudSelectItem Value="@("3")" />
 </MudSelect>
 
+<MudSwitch @bind-Value="_fullWidth" Class="mt-4" Color="Color.Primary">Full Width</MudSwitch>
+
 @code
 {
     public static string __description__ = "The Select should not show required-error initially. The first (empty) item should.";
 
+    private bool _fullWidth = true;
     private string? _value;
 }

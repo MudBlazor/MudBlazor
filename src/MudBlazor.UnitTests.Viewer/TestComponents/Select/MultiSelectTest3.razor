@@ -5,6 +5,7 @@
         <MudSelect T="string" Label="Felines" HelperText="Pick your favorite feline"
                    MultiSelection="true" SelectAll="true" SelectAllText="Select all felines"
                    @bind-Value="_value" @bind-SelectedValues="_options" AdornmentIcon="@Icons.Material.Filled.Search"
+                   FullWidth="_fullWidth" 
                    MultiSelectionTextFunc="@(new Func<List<string>, string>(GetMultiSelectionText))">
             @foreach (var feline in _felines)
             {
@@ -17,7 +18,10 @@
     </MudItem>
 </MudGrid>
 
+<MudSwitch @bind-Value="_fullWidth" Class="mt-4" Color="Color.Primary">Full Width</MudSwitch>
+
 @code {
+    private bool _fullWidth = true;
     private string _value = "Nothing selected";
     private IEnumerable<string> _options  = new List<string> { "Jaguar", "Leopard", "Lion", "Lynx", "Panther", "Puma", "Tiger"};
 

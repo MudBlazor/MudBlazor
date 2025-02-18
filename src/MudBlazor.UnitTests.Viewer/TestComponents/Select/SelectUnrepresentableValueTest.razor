@@ -1,13 +1,16 @@
 ﻿<MudPopoverProvider />
 
-<MudSelect @bind-Value="_value">
+<MudSelect @bind-Value="_value" FullWidth="_fullWidth">
     <MudSelectItem T="int" Value="1">One</MudSelectItem>
     <MudSelectItem T="int" Value="2">Two</MudSelectItem>
     <MudSelectItem T="int" Value="3">Three</MudSelectItem>
 </MudSelect>
 
+<MudSwitch @bind-Value="_fullWidth" Class="mt-4" Color="Color.Primary">Full Width</MudSwitch>
+
 @code {
     public static string __description__ = "Initially, since the value is not in the list of options, it should be shown as text instead of render fragment.";
 
+    private bool _fullWidth = true;
     private int _value = 17;
 }

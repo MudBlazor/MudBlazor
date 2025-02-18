@@ -3,6 +3,7 @@
 <MudSelect Label="Select Item"
            MultiSelection="true"
            T="@TestItem"
+           FullWidth="@_fullWidth"
            SelectedValues="@_selectedItems"
            ToStringFunc="@ToString"
            MultiSelectionTextFunc="GetMultiSelectionText">
@@ -12,7 +13,10 @@
     }
 </MudSelect>
 
+<MudSwitch @bind-Value="_fullWidth" Class="mt-4" Color="Color.Primary">FullWidth</MudSwitch>
+
 @code {
+    private bool _fullWidth = true;
     private readonly List<TestItem> _allItems = [];
     private readonly HashSet<TestItem> _selectedItems = [];
 

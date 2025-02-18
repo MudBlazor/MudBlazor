@@ -5,6 +5,8 @@
            T="string"
            Delimiter="^"
            SelectAll="true"
+           FullWidth="_fullWidth" 
+           RelativeWidth="@(_adaptive ? DropdownWidth.Adaptive : DropdownWidth.Relative)"
            @bind-SelectedValues="@_selectedItems">
     @foreach (var item in _allItems)
     {
@@ -12,9 +14,14 @@
     }
 </MudSelect>
 
+<MudSwitch @bind-Value="_fullWidth" Class="mt-4" Color="Color.Primary">Full Width</MudSwitch>
+<MudSwitch @bind-Value="_adaptive" Class="mt-4" Color="Color.Primary">Adaptive Content</MudSwitch>
+
 @code {
     public static string __description__ = "Test for the Select All option";
 
+    private bool _fullWidth = true;
+    private bool _adaptive;
     private readonly List<string> _allItems = [];
     private IEnumerable<string> _selectedItems = new HashSet<string>();
 

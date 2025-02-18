@@ -1,13 +1,17 @@
 ﻿<MudPopoverProvider />
 
-<MudSelect T="string" ValueChanged="ValueChanged" SelectedValuesChanged="ValuesChanged" MultiSelection="MultiSelection">
+<MudSelect T="string" ValueChanged="ValueChanged" SelectedValuesChanged="ValuesChanged" MultiSelection="MultiSelection" FullWidth="_fullWidth">
     <MudSelectItem T="string" Value="@("1")" />
     <MudSelectItem T="string" Value="@("2")" />
     <MudSelectItem T="string" Value="@("3")" />
     <MudSelectItem T="string" Value="@("4")" Disabled="true" />
 </MudSelect>
 
+<MudSwitch @bind-Value="_fullWidth" Class="mt-4" Color="Color.Primary">Full Width</MudSwitch>
+
 @code {
+    private bool _fullWidth = true;
+
     [Parameter]
     public bool MultiSelection { get; set; }
 

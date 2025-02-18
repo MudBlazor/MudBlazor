@@ -1,14 +1,18 @@
 ﻿<MudPopoverProvider />
 
 <div>
-    <MudSelect T="string" Variant="Variant.Text" @bind-Value="_fruit" Dense SelectedValuesChanged="@(() => FruitChanged(null))">
+    <MudSelect T="string" Variant="Variant.Text" @bind-Value="_fruit" Dense 
+               SelectedValuesChanged="@(() => FruitChanged(null))" FullWidth="_fullWidth">
         <MudSelectItem Value="@("Apple")">Apple</MudSelectItem>
         <MudSelectItem Value="@("Orange")">Orange</MudSelectItem>
     </MudSelect>
 </div>
 
+<MudSwitch @bind-Value="_fullWidth" Class="mt-4" Color="Color.Primary">Full Width</MudSwitch>
+
 @code{
     private string _fruit = "Apple";
+    private bool _fullWidth = true;
 
     public int ChangeCount { get; private set; }
 

@@ -6,7 +6,7 @@
     <MudItem xs="12" sm="6" md="4">
         <EditForm Model="_model">
             <DataAnnotationsValidator />
-            <MudSelect For="@(() => _model.Value)" Label="Metasyntactic variable" @bind-Value="_model.Value">
+            <MudSelect For="@(() => _model.Value)" Label="Metasyntactic variable" @bind-Value="_model.Value" FullWidth="_fullWidth">
                 @foreach (var v in _metasyntacticVariable)
                 {
                     <MudSelectItem Value="@v">@v</MudSelectItem>
@@ -15,9 +15,13 @@
         </EditForm>
     </MudItem>
 </MudGrid>
+
+<MudSwitch @bind-Value="_fullWidth" Class="mt-4" Color="Color.Primary">Full Width</MudSwitch>
+
 @code {
     public static string __description__ = "Test use of data attributes accessible using `For` bound expression.";
 
+    private bool _fullWidth = true;
     private readonly TestModel _model = new();
 
     // What does this awkward var name means ? => https://en.wikipedia.org/wiki/Metasyntactic_variable
