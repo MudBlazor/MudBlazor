@@ -25,6 +25,15 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Breakpoint">
+                <Description>With the <CodeInline>@nameof(MudStack.Breakpoint)</CodeInline> property set, the state of the <CodeInline>@nameof(MudStack.Row)</CodeInline> property will be reversed based on the defined screen size breakpoint. For example, when set to a specific breakpoint such as <CodeInline>@nameof(Breakpoint.Md)</CodeInline>, the row state is reversed at that screen size. If set to a range like <CodeInline>@nameof(Breakpoint.MdAndUp)</CodeInline>, the row state will be reversed for all screen sizes greater than or equal to the specified breakpoint.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(StackBreakpointExample)">
+                <StackBreakpointExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Spacing">
                 <Description>The default spacing can be changed by setting any number between 0 and 16 with the <CodeInline>@nameof(MudStack.Spacing)</CodeInline> property.</Description>
             </SectionHeader>

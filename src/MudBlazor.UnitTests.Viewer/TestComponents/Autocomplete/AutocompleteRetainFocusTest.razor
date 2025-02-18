@@ -1,34 +1,31 @@
-﻿@using MudBlazor
-@using System.Threading
-
-<MudPaper Height="100px">
+﻿<MudPaper Height="100px">
     <MudText>
         This is only here to push the autocompletes lower on the page to demonstrate the behaviour where
         they draw over a message box.
     </MudText>
 </MudPaper>
 
-<MudAutocomplete T="string" @ref=autocomp1
+<MudAutocomplete T="string" @ref="_autocomp1"
                  Value="_messageBoxValue"
                  ValueChanged="OpenMessageBox"
                  Label="Opens Message Box"
                  SearchFunc="Search"
                  Class="mt-18"
                  Clearable="true" />
-<MudText>@($"Text: {autocomp1?.Text} Value: {autocomp1?.Value} Local Value: {_messageBoxValue}")</MudText>
+<MudText>@($"Text: {_autocomp1?.Text} Value: {_autocomp1?.Value} Local Value: {_messageBoxValue}")</MudText>
 
-<MudSelect T="string" @ref=select1
+<MudSelect T="string" @ref="_select1"
            Value="_dialogValue"
            ValueChanged="OpenDialog"
            Label="MudSelect"
            Clearable="true"
            Class="mt-18">
-    @foreach (string s in _states)
+    @foreach (var state in _states)
     {
-        <MudSelectItem Value="@s" />
+        <MudSelectItem Value="@state" />
     }
 </MudSelect>
-<MudText>@($"Text: {select1?.Text} Value: {select1?.Value} Local Value: {_dialogValue}")</MudText>
+<MudText>@($"Text: {_select1?.Text} Value: {_select1?.Value} Local Value: {_dialogValue}")</MudText>
 <MudAutocomplete @ref="_workaroundAutocomplete"
                     T="string"
                     Value="_workaroundValue"
@@ -69,23 +66,21 @@
 </MudDialog>
 
 @code {
-    public static string __description__ = " Test Autocomplete retaining focus and not closing properly. ";
+    public static string __description__ = "Test Autocomplete retaining focus and not closing properly.";
     private string _messageBoxValue = string.Empty;
     private string _dialogValue = string.Empty;
     private string _workaroundValue = string.Empty;
 
-    private MudAutocomplete<string> autocomp1 = default!;
-    private MudSelect<string> select1 = default!;
-    private MudMessageBox _msgBox = default!;
+    private MudAutocomplete<string> _autocomp1 = null!;
+    private MudSelect<string> _select1 = null!;
+    private MudMessageBox _msgBox = null!;
     private MudAutocomplete<string> _workaroundAutocomplete = new();
 
     private bool _dialogVisible;
     private int _rating;
     private readonly DialogOptions _dialogOptions = new() { FullWidth = true };
-    private void OpenDialog() => _dialogVisible = true;
-    private void Submit() => _dialogVisible = false;
 
-    private string[] _states =
+    private readonly string[] _states =
     {
         "Alabama", "Alaska", "Arizona", "Arkansas", "California",
         "Colorado", "Connecticut", "Delaware", "Florida", "Georgia",
@@ -106,10 +101,14 @@
 
         // if text is null or empty, show complete list
         if (string.IsNullOrEmpty(value))
+        {
             return _states;
+        }
 
         return _states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
     }
+
+    private void Submit() => _dialogVisible = false;
 
     private async Task OpenMessageBox(string value)
     {

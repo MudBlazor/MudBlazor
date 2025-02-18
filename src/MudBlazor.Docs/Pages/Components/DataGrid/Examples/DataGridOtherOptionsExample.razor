@@ -15,32 +15,21 @@
         <PropertyColumn Property="x => x.Name" Title="Name" />
     </Columns>
     <PagerContent>
-        <MudDataGridPager T="Person" PageSizeOptions="new int[] {10, 1000}" />
+        <MudDataGridPager T="Person" PageSizeOptions="new[] {10, 1000}" />
     </PagerContent>
 </MudDataGrid>
 
 @code {
     private bool _dense = false;
     private bool _loading = true;
-    List<Person> _persons = Enumerable.Repeat(0, 100)
+    private readonly List<Person> _persons = Enumerable.Repeat(0, 100)
                 .Select((_, i) => new Person { Id = i, Name = $"Name{i}" })
                 .ToList();
 
-    private async Task<GridData<Person>> ServerReload(GridState<Person> state)
-    {
-        await Task.CompletedTask;
-
-        return new GridData<Person>
-            {
-                TotalItems = _persons.Count,
-                Items = _persons
-            };
-    }
-
     public class Person
     {
-        public int Id { get; set; }
+        public required int Id { get; init; }
 
-        public string Name { get; set; } = default!;
+        public required string Name { get; init; }
     }
 }
