@@ -27,29 +27,29 @@ style="@Style"
         if (ParentMenu is null)
         {
             <MudButton Class="mud-menu-button-activator"
-            StartIcon="@StartIcon"
-            EndIcon="@EndIcon"
-            IconColor="@IconColor"
-            Color="@Color"
-            Size="@Size"
-            Variant="@Variant"
-            Disabled="@Disabled"
-            Ripple="@Ripple"
-            DropShadow="@DropShadow"
-            OnClick="@ToggleMenuAsync"
-            aria-label="@AriaLabel">
+                       StartIcon="@StartIcon"
+                       EndIcon="@EndIcon"
+                       IconColor="@IconColor"
+                       Color="@Color"
+                       Size="@Size"
+                       Variant="@Variant"
+                       Disabled="@Disabled"
+                       Ripple="@Ripple"
+                       DropShadow="@DropShadow"
+                       OnClick="@ToggleMenuAsync"
+                       aria-label="@AriaLabel">
                 @Label
             </MudButton>
         }
         else
         {
             <MudMenuItem Class="mud-menu-sub-menu-activator"
-            Icon="@StartIcon"
-            IconColor="@IconColor"
-            Disabled="@Disabled"
-            OnClick="OpenSubMenuAsync"
-            AutoClose="false"
-            aria-label="@AriaLabel">
+                         Icon="@StartIcon"
+                         IconColor="@IconColor"
+                         Disabled="@Disabled"
+                         OnClick="OpenSubMenuAsync"
+                         AutoClose="false"
+                         aria-label="@AriaLabel">
                 @Label
             </MudMenuItem>
         }
@@ -57,15 +57,15 @@ style="@Style"
     else
     {
         <MudIconButton Class="mud-menu-icon-button-activator"
-        Variant="@Variant"
-        Icon="@Icon"
-        Color="@Color"
-        Size="@Size"
-        Disabled="@Disabled"
-        Ripple="@Ripple"
-        DropShadow="@DropShadow"
-        OnClick="@ToggleMenuAsync"
-        aria-label="@AriaLabel" />
+                       Variant="@Variant"
+                       Icon="@Icon"
+                       Color="@Color"
+                       Size="@Size"
+                       Disabled="@Disabled"
+                       Ripple="@Ripple"
+                       DropShadow="@DropShadow"
+                       OnClick="@ToggleMenuAsync"
+                       aria-label="@AriaLabel" />
     }
 
     @* The portal has to include the cascading values inside because it's not able to teletransport the cascade *@

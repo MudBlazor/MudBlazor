@@ -83,16 +83,16 @@
             <MudPaper @attributes="UserAttributes" Class="@PickerPaperClassname" Style="@PickerPaperStylename" Square="@_pickerSquare">
                 <div class="@PickerContainerClassname">
                     @if (PickerContent != null)
-                {
-                    @PickerContent
-                }
+                    {
+                        @PickerContent
+                    }
                 </div>
                 @if (PickerActions != null)
-            {
-                <div class="@ActionsClassname">
-                    @PickerActions(this)
-                </div>
-            }
+                {
+                    <div class="@ActionsClassname">
+                        @PickerActions(this)
+                    </div>
+                }
             </MudPaper>
         }
         else if (Open && PickerVariant == PickerVariant.Dialog)
@@ -101,16 +101,16 @@
                 <MudPaper @attributes="UserAttributes" Class="@PickerPaperClassname" Style="@PickerPaperStylename" Square="@_pickerSquare">
                     <div class="@PickerContainerClassname">
                         @if (PickerContent != null)
-                    {
-                        @PickerContent
-                    }
+                        {
+                            @PickerContent
+                        }
                     </div>
                     @if (PickerActions != null)
-                {
-                    <div class="@ActionsClassname">
-                        @PickerActions(this)
-                    </div>
-                }
+                    {
+                        <div class="@ActionsClassname">
+                            @PickerActions(this)
+                        </div>
+                    }
                 </MudPaper>
             </MudOverlay>
         }
