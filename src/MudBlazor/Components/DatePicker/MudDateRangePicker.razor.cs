@@ -53,7 +53,7 @@ namespace MudBlazor
         public int? MinDays { get; set; }
 
         /// <summary>
-        /// Include disabled dates within the valdi min/max days range.
+        /// Include disabled dates within the valid min/max days range.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>. Disabled days will be included in the min/max count. 
