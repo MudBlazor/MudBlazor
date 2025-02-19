@@ -49,9 +49,9 @@
                           OnKeyUp="@OnInputKeyUpAsync"
                           Pattern="@Pattern"
                           Placeholder="@Placeholder"                          
-                          ReadOnly="@(GetReadOnlyState() && !Filterable)"
+                          ReadOnly="@(GetReadOnlyState() || !Filterable)"
                           Required="@Required"
-                          ShrinkLabel="@(ShrinkLabel || _selectedItemsState.Value.Count() > 0)"
+                          ShrinkLabel="@(ShrinkLabel || SelectedItemsCount > 0)"
                           TextChanged="OnTextChangedAsync"
                           TextUpdateSuppression="@TextUpdateSuppression"
                           Typo="@Typo"
@@ -59,9 +59,9 @@
                           Value="@Text" 
                           Variant="@Variant">
                     <PreContent>
-                @if (!_openItemListState.Value && _selectedItemsState.Value!.Count() > 0)
+                @if (!_openItemListState.Value && SelectedItemsCount > 0)
                         {
-                                <MudText Class=@($"mud-width-full {(Variant == Variant.Filled ? "align-self-end" : "")}")>
+                            <MudText Class=@($"mud-width-full {(Variant == Variant.Filled ? "align-self-end" : "")}")>
                                 @{
                                     var items = _selectedItemsState.Value!.ToList();
                                 }
@@ -75,7 +75,7 @@
                                     }
                                     else
                                     {
-                                <MudChip T="string" Color="Color.Primary" Size="Size.Small"
+                                <MudChip T="string" Color="Color.Primary" Variant="Variant.Text" Size="Size.Small"
                                          OnClose="@(() => itemContext.ToggleSelectedItem())"
                                          @onmousedown:stopPropagation
                                          Disabled="@itemContext.IsDisabled">
@@ -105,7 +105,7 @@
                 <!-- Dropdown/Popover for the List and List Items -->
                 @if (_openItemListState.Value)
                 {
-                        <MudPopover Open="_openItemListState.Value" Class="@PopoverClass" MaxHeight="@MaxHeight"
+                        <MudPopover Open="true" Class="@PopoverClass" MaxHeight="@MaxHeight"
                                     AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin"
                                     Fixed="DropdownSettings.Fixed" OverflowBehavior="DropdownSettings.OverflowBehavior"
                                     RelativeWidth="@RelativeWidth">
@@ -133,9 +133,9 @@
                                         var itemContext = new ComboBoxItem<T>(item, isSelected, isDisabled, () => ComboBoxToggleItem(item, AutoClose));
                                         @if (ItemTemplate != null)
                                         {
-                                                            <MudListItem T="T" @key="@index" id="@GetListItemId(index)">
+                                            <MudListItem T="T" @key="@index" id="@GetListItemId(index)">
                                                 @ItemTemplate(itemContext);
-                                                            </MudListItem>                                            
+                                            </MudListItem>                                            
                                         }
                                         else
                                         {

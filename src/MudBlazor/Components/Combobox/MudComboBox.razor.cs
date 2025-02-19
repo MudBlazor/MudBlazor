@@ -62,7 +62,8 @@ namespace MudBlazor
 
         protected string InputClassname => new CssBuilder("mud-select-input")
             .AddClass("mud-combobox-input")
-            .AddClass("mud-combobox-items", _selectedItemsState.Value!.Count > 0)
+            .AddClass("mud-combobox-items", SelectedItemsCount > 0)
+            .AddClass("mud-visibility-collapse", SelectedItemsCount > 0 && !_openItemListState.Value)
             .AddClass(InputClass)
             .Build();
         protected string CircularProgressClassname =>
@@ -150,7 +151,7 @@ namespace MudBlazor
         public bool OpenOnFocus { get; set; } = true;
 
         /// <summary>
-        /// Whether or not the OpenList closes when an item is Selected via ComboBoxToggleItem
+        /// Whether the OpenList closes when an item is Selected via ComboBoxToggleItem
         /// </summary>
         [Parameter]
         public bool AutoClose { get; set; } = true;
@@ -427,6 +428,8 @@ namespace MudBlazor
         [Parameter]
         public HashSet<T> SelectedItems { get; set; } = [];
 
+        public int SelectedItemsCount {get => SelectedItems.Count;}
+        
         /// <summary>
         /// Event is fired when the selected items change
         /// </summary>
@@ -506,14 +509,18 @@ namespace MudBlazor
 
             // Toggle SelectedItems to Add if it doesn't exist, remove it if it does.
             var selectedItems = _selectedItemsState.Value ?? [];
-            if (selectedItems.Contains(item))
+            // if removing the item is false then add the item
+            var toggled = selectedItems.Remove(item);
+            if (!toggled)
             {
-                selectedItems.Remove(item);
-            }
-            else if (!selectedItems.Remove(item))
-            {
+                // if it's single selection clear the list first
+                if (!MultiSelection)
+                {
+                    selectedItems.Clear();
+                }
                 selectedItems.Add(item);
             }
+            
             await _selectedItemsState.SetValueAsync(selectedItems);
             if (toggleMenu)
             {
@@ -527,6 +534,8 @@ namespace MudBlazor
                     await PerformSearchAsync();
                 }
             }
+            else
+                StateHasChanged();
         }
 
         public async Task OpenListAsync()
