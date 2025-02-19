@@ -5025,9 +5025,13 @@ namespace MudBlazor.UnitTests.Components
         {
             var test = new MudDataGrid<int>();
             if (isExpanded)
+            {
                 test.GetGroupIcon(isExpanded, isRightToLeft).Should().Be(Icons.Material.Filled.ExpandMore);
+            }
             else
+            {
                 test.GetGroupIcon(isExpanded, isRightToLeft).Should().Be(isRightToLeft ? Icons.Material.Filled.ChevronLeft : Icons.Material.Filled.ChevronRight);
+            }
         }
 
         /// <summary>
@@ -5042,9 +5046,9 @@ namespace MudBlazor.UnitTests.Components
 
             var sortByColumnName = dataGrid.Instance.RenderedColumns.FirstOrDefault().PropertyName;
 
-            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync(sortByColumnName, SortDirection.Ascending, x => { return x; }));
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync(sortByColumnName, SortDirection.Ascending, x => x));
             var before = dataGrid.FindComponent<MudInput<string>>();
-            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync(sortByColumnName, SortDirection.Descending, x => { return x; }));
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync(sortByColumnName, SortDirection.Descending, x => x));
             var after = dataGrid.FindComponent<MudInput<string>>();
 
             before.Should().NotBeSameAs(after, because: "If the @key is correctly set to the row item, child components will be recreated on row reordering.");
@@ -5054,9 +5058,9 @@ namespace MudBlazor.UnitTests.Components
             comp.SetParametersAndRender(parameters => parameters.Add(p => p.Group, true));
             await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroups());
 
-            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync(sortByColumnName, SortDirection.Ascending, x => { return x; }));
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync(sortByColumnName, SortDirection.Ascending, x => x));
             before = dataGrid.FindComponent<MudInput<string>>();
-            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync(sortByColumnName, SortDirection.Descending, x => { return x; }));
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync(sortByColumnName, SortDirection.Descending, x => x));
             after = dataGrid.FindComponent<MudInput<string>>();
 
             before.Should().NotBeSameAs(after, because: "If the @key is correctly set to the row item, child components will be recreated on row reordering.");
