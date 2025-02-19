@@ -1021,6 +1021,36 @@ namespace MudBlazor.UnitTests.Components
 
         [Test]
         [SetUICulture("ru-RU")]
+        public void Format_should_use_default_culture()
+        {
+            var comp = Context.RenderComponent<MudNumericField<decimal>>(parameters => parameters
+                                .Add(p => p.Format, "N3"));
+
+            comp.Find("input").Change("123,45");
+            comp.Find("input").Blur();
+
+            comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(123.45M));
+            comp.Instance.Text.Should().Be("123,450");
+            comp.Instance.Culture.Name.Should().Be("ru-RU");
+        }
+
+        [Test]
+        [SetUICulture("ru-RU")]
+        public void Pattern_should_use_default_culture()
+        {
+            var comp = Context.RenderComponent<MudNumericField<decimal>>(parameters => parameters
+                                .Add(p => p.Pattern, "[0-9,.\\-]"));
+
+            comp.Find("input").Change("123,45");
+            comp.Find("input").Blur();
+
+            comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(123.45M));
+            comp.Instance.Text.Should().Be("123,45");
+            comp.Instance.Culture.Name.Should().Be("ru-RU");
+        }
+
+        [Test]
+        [SetUICulture("ru-RU")]
         public void Should_apply_defined_culture()
         {
             var comp = Context.RenderComponent<NumericFieldCultureTest>();
@@ -1041,6 +1071,38 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Text.Should().Be("1,234.56"));
             comp.WaitForAssertion(() => comp.Instance.FieldImmediate.Value.Should().Be(1234.56));
             comp.Instance.FieldImmediate.Culture.Name.Should().Be("en-US");
+        }
+
+        [Test]
+        [SetUICulture("ru-RU")]
+        public void Format_should_use_defined_culture()
+        {
+            var comp = Context.RenderComponent<MudNumericField<decimal>>(parameters => parameters
+                                .Add(p => p.Format, "N3")
+                                .Add(p => p.Culture, CultureInfo.GetCultureInfo("en-US")));
+
+            comp.Find("input").Change("123.45");
+            comp.Find("input").Blur();
+
+            comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(123.45M));
+            comp.Instance.Text.Should().Be("123.450");
+            comp.Instance.Culture.Name.Should().Be("en-US");
+        }
+
+        [Test]
+        [SetUICulture("ru-RU")]
+        public void Pattern_should_use_defined_culture()
+        {
+            var comp = Context.RenderComponent<MudNumericField<decimal>>(parameters => parameters
+                                .Add(p => p.Pattern, "[0-9,.\\-]")
+                                .Add(p => p.Culture, CultureInfo.GetCultureInfo("en-US")));
+
+            comp.Find("input").Change("123.45");
+            comp.Find("input").Blur();
+
+            comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(123.45M));
+            comp.Instance.Text.Should().Be("123.45");
+            comp.Instance.Culture.Name.Should().Be("en-US");
         }
 
         [Test]

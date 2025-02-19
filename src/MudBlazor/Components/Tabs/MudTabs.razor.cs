@@ -571,7 +571,7 @@ namespace MudBlazor
 
         private async void ActivatePanel(MudTabPanel panel, MouseEventArgs? ev, bool ignoreDisabledState = false)
         {
-            if (!panel.Disabled || ignoreDisabledState)
+            if ((panel.Visible && !panel.Disabled) || ignoreDisabledState)
             {
                 var index = _panels.IndexOf(panel);
                 var previewArgs = new TabInteractionEventArgs
@@ -700,7 +700,7 @@ namespace MudBlazor
               .AddClass($"mud-ripple", Ripple)
               .AddClass(ActiveTabClass, when: () => panel == ActivePanel)
               .AddClass(TabPanelClass)
-              .AddClass(panel.Class)
+              .AddClass(panel.Classname)
               .Build();
 
             return tabClass;

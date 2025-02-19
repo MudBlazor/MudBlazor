@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -91,6 +87,14 @@ namespace MudBlazor
         [Category(CategoryTypes.ExpansionPanel.Behavior)]
         public RenderFragment? ChildContent { get; set; }
 
+        /// <summary>
+        /// A read-only list of the panels within this component. 
+        /// </summary>
+        /// <remarks>
+        /// Expansion panels are controlled by adding more <see cref="MudExpansionPanel"/> components in the Razor page.
+        /// </remarks>
+        public IReadOnlyList<MudExpansionPanel> Panels => _panels;
+
         internal async Task AddPanelAsync(MudExpansionPanel panel)
         {
             if (!MultiExpansion && _panels.Any(p => p._expandedState.Value))
@@ -148,15 +152,11 @@ namespace MudBlazor
         /// <param name="panel">The panel to keep expanded.</param>
         public async Task CollapseAllExceptAsync(MudExpansionPanel panel)
         {
-            foreach (var expansionPanel in _panels)
+            foreach (var expansionPanel in _panels.Where(expansionPanel => expansionPanel != panel))
             {
-                if (expansionPanel == panel)
-                {
-                    continue;
-                }
-
                 await expansionPanel.CollapseAsync();
             }
+
             await InvokeAsync(UpdateAllAsync);
         }
 

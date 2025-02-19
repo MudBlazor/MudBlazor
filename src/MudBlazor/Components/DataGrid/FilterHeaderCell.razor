@@ -1,4 +1,4 @@
-@using MudBlazor.Extensions
+﻿@using MudBlazor.Extensions
 @using MudBlazor.Resources
 @namespace MudBlazor
 @inherits MudComponentBase
@@ -53,16 +53,19 @@
                         </MudItem>
                     </MudGrid>
                 }
-                <MudMenu Icon="@Icons.Material.Filled.FilterAlt" Size="@Size.Small" Dense="true">
-                    @foreach (var o in operators)
-                    {
-                        if (!string.IsNullOrWhiteSpace(o))
+                @if (!Column.ShowFilterIcon.HasValue || Column.ShowFilterIcon.Value)
+                {
+                    <MudMenu Class="column-filter-menu" Icon="@Icons.Material.Filled.FilterAlt" Size="@Size.Small" Dense="true">
+                        @foreach (var o in operators)
                         {
-                            <MudMenuItem Style="@chosenOperatorStyle(o)" OnClick="@(async () => await ChangeOperatorAsync(o))">@Localizer[FilterOperator.GetTranslationKeyByOperatorName(o)]</MudMenuItem>
+                            if (!string.IsNullOrWhiteSpace(o))
+                            {
+                                <MudMenuItem Style="@chosenOperatorStyle(o)" OnClick="@(async () => await ChangeOperatorAsync(o))">@Localizer[FilterOperator.GetTranslationKeyByOperatorName(o)]</MudMenuItem>
+                            }
                         }
-                    }
-                </MudMenu>
-                <MudIconButton Class="align-self-center" Icon="@Icons.Material.Filled.FilterAltOff" Size="@Size.Small" OnClick="@ClearFilterAsync" aria-label="@Localizer[LanguageResource.MudDataGrid_ClearFilter]"></MudIconButton>
+                    </MudMenu>
+                    <MudIconButton Class="align-self-center" Icon="@Icons.Material.Filled.FilterAltOff" Size="@Size.Small" OnClick="@ClearFilterAsync" aria-label="@Localizer[LanguageResource.MudDataGrid_ClearFilter]"></MudIconButton>
+                }
             </MudStack>
         }
     </th>

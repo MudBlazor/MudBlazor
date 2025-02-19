@@ -269,7 +269,7 @@
                                             <ChildContent>
                                                 @{ var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(itemBag.Item, itemBag.Index)).Build(); }
                                                 @{ var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(itemBag.Item, itemBag.Index)).Build(); }
-                                                <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="itemBag.Index"
+                                                <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="itemBag.Item"
                                                     @onclick="@((args) => OnRowClickedAsync(args, itemBag.Item, itemBag.Index))"
                                                     @oncontextmenu="@((args) => OnContextMenuClickedAsync(args, itemBag.Item, itemBag.Index))"
                                                     @oncontextmenu:preventDefault="@(RowContextMenuClick.HasDelegate)">
@@ -330,7 +330,7 @@
                                     <ChildContent>
                                         @{ var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(itemBag.Item, itemBag.Index)).Build(); }
                                         @{ var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(itemBag.Item, itemBag.Index)).Build(); }
-                                        <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="itemBag.Index" 
+                                        <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="itemBag.Item" 
                                             @onclick="@((args) => OnRowClickedAsync(args, itemBag.Item, itemBag.Index))" 
                                             @oncontextmenu="@((args) => OnContextMenuClickedAsync(args, itemBag.Item, itemBag.Index))"
                                             @oncontextmenu:preventDefault="@(RowContextMenuClick.HasDelegate ? true : false)">

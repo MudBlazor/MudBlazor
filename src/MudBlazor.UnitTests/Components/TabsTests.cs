@@ -1318,5 +1318,22 @@ namespace MudBlazor.UnitTests.Components
             comp.SetParametersAndRender(parameters => parameters.Add(p => p.Ripple, false));
             comp.FindAll("div.mud-ripple").Count.Should().Be(0);
         }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void TabPanel_Hidden_Class(bool visible)
+        {
+            var comp = Context.RenderComponent<TabsVisibleTest>(parameters => parameters.Add(x => x.Visible, visible));
+
+            var panel = comp.FindAll(".mud-tab-panel")[1];
+            if (visible)
+            {
+                panel.ClassList.Should().NotContain("mud-tab-panel-hidden");
+            }
+            else
+            {
+                panel.ClassList.Should().Contain("mud-tab-panel-hidden");
+            }
+        }
     }
 }
