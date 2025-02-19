@@ -1,20 +1,40 @@
 ﻿<MudPopoverProvider />
 
-<MudSelect @bind-Value="_value" Label="String Binding" MultiSelection="true" Required="true" Clearable="true">
+<MudSelect @ref="_stringSelect" @bind-Value="_value" Label="String Binding" MultiSelection="true" Required="true" Clearable="true">
     <MudSelectItem Value="@("1")">1</MudSelectItem>
     <MudSelectItem Value="@("2")">2</MudSelectItem>
     <MudSelectItem Value="@("3")">3</MudSelectItem>
 </MudSelect>
 
-<MudSelect T="TestClass" Label="Object Binding" MultiSelection="true" Required="true" @bind-SelectedValues="_selectedRoles" Clearable="true">
+<MudStack Row Class="py-8">
+    <MudButton id="clear-string" Variant="Variant.Filled" OnClick="@(() => _stringSelect.ClearAsync())">Clear</MudButton>
+    <MudButton id="reset-string" Variant="Variant.Filled" OnClick="@(() => _stringSelect.ResetAsync())">Reset</MudButton>
+</MudStack>
+
+<MudText>Value: @_stringSelect?.Value</MudText>
+<MudText>Selected values: @((_stringSelect?.SelectedValues is null) ? null : string.Join(", ", _stringSelect.SelectedValues.Select(x => x)))</MudText>
+
+<MudSelect @ref="_objectSelect" T="TestClass" Label="Object Binding" MultiSelection="true" Required="true" @bind-SelectedValues="_selectedRoles" Clearable="true">
     @foreach(var role in _roles)
     {
         <MudSelectItem T="TestClass" Value=@role/>
     }
 </MudSelect>
 
+<MudStack Row Class="py-8">
+    <MudButton id="clear-object" Variant="Variant.Filled" OnClick="@(() => _objectSelect.ClearAsync())">Clear</MudButton>
+    <MudButton id="reset-object" Variant="Variant.Filled" OnClick="@(() => _objectSelect.ResetAsync())">Reset</MudButton>
+</MudStack>
+
+<MudText>Value: @_objectSelect?.Value?.Name</MudText>
+<MudText>Selected values: @((_objectSelect?.SelectedValues is null) ? null : string.Join(", ", _objectSelect.SelectedValues.Select(x => x!.Name)))</MudText>
+
+
 @code {
-	public static string __description__ = "Multi-Select Required Should Recognize Values";
+    public static string __description__ = "Multi-Select Required Should Recognize Values";
+
+    private MudSelect<string?> _stringSelect = null!;
+    private MudSelect<TestClass> _objectSelect = null!;
 
     private string? _value = null;
 

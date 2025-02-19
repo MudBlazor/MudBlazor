@@ -12,7 +12,7 @@ indent_style = space
 # (Please don't specify an indent_size here; that has too many unintended consequences.)
 
 # Code files
-[*.{cs,csx,vb,vbx}]
+[*.{cs,csx,vb,vbx,razor}]
 indent_size = 4
 insert_final_newline = true
 charset = utf-8-bom

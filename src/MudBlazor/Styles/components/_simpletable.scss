@@ -13,6 +13,12 @@
 
     tbody {
       display: table-row-group;
+
+      tr:last-child {
+        td {
+          border-bottom: none;
+        }
+      }
     }
 
     * tr {
@@ -36,14 +42,6 @@
       > th {
         font-weight: 500;
         line-height: 1.5rem;
-      }
-    }
-
-    tbody {
-      tr:last-child {
-        td {
-          border-bottom: none;
-        }
       }
     }
   }

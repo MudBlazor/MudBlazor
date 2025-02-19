@@ -22,6 +22,11 @@
     transition-duration: 0ms !important;
     transition-delay: 0ms !important;
   }
+
+  .mud-list {
+    max-height: inherit;
+    overflow-y: auto;
+  }
 }
 
 .mud-popover .mud-popover {
@@ -57,13 +62,5 @@
 .mud-select {
     .mud-popover-cascading-value {
     z-index: calc(var(--mud-zindex-select) + 5);
-  }
-
-}
-
-.mud-popover {
-  .mud-list {
-    max-height: inherit;
-    overflow-y: auto;
   }
 }

@@ -149,6 +149,7 @@
       box-sizing: border-box;
       width: 100%;
       max-width: 100%;
+      min-width: 0%;
       height: 100%;
       text-align: start;
       pointer-events: none;
@@ -359,7 +360,6 @@
     box-sizing: content-box;
     letter-spacing: inherit;
     -webkit-tap-highlight-color: transparent;
-    height: auto;
     resize: none;
     cursor: auto;
 
@@ -502,15 +502,13 @@
 }
 
 .mud-input-adornment-start {
-  &.mud-input-root-filled-shrink {
-    margin-top: 16px;
-  }
-}
-
-.mud-input-adornment-start {
   margin-right: 8px;
   margin-inline-end: 8px;
   margin-inline-start: unset;
+
+  &.mud-input-root-filled-shrink {
+    margin-top: 16px;
+  }
 }
 
 .mud-input-adornment-end {

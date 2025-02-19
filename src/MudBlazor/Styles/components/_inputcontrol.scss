@@ -59,16 +59,6 @@
           margin-top: 16px;
         }
       }
-
-      &.mud-input.mud-input-filled {
-        &.mud-input-filled-with-label {
-        }
-      }
-
-      &.mud-input.mud-input-outlined {
-        &.mud-input-outlined-with-label {
-        }
-      }
     }
   }
 
@@ -83,7 +73,7 @@
     padding: 0;
     font-size: 1rem;
     font-weight: 400;
-    line-height: 1;
+    line-height: 1.15rem;
     letter-spacing: 0.00938em;
     z-index: 0;
     pointer-events: none;
@@ -158,14 +148,18 @@
       bottom: 0;
 
       & button {
-        padding: 2px;
+        padding: 2px 0;
         min-width: unset;
         min-height: unset;
       }
     }
+  }
 
-    .mud-input-numeric-spin button {
-      padding: 2px 0;
+  &:focus-within, &.mud-input-error {
+    .mud-input-helper-text {
+      &.mud-input-helper-onfocus {
+        transform: translateY(0);
+      }
     }
   }
 }
@@ -187,16 +181,6 @@
   &.mud-input-helper-onfocus {
     transform: translateY(-100%);
     transition: color 200ms cubic-bezier(0,0,.2,1) 0ms,transform 200ms cubic-bezier(0,0,.2,1) 0ms;
-  }
-}
-
-.mud-input-control {
-  &:focus-within, &.mud-input-error {
-    .mud-input-helper-text {
-      &.mud-input-helper-onfocus {
-        transform: translateY(0);
-      }
-    }
   }
 }
 

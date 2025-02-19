@@ -24,7 +24,7 @@
 }
 
 .mud-input-label-animated {
-  transition: color 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,transform 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
+  transition: color 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms, transform 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms, max-width 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
 }
 
 .mud-input-label-filled {
@@ -68,7 +68,7 @@ label.mud-input-label.mud-input-label-inputcontrol {
 
     &.mud-input-label-filled {
       transform: translate(12px, 10px) scale(0.75);
-      max-width: calc(100% - 12px);
+      max-width: calc((100% - 12px) / 0.75);
 
       &.mud-input-label-margin-dense {
         transform: translate(12px, 7px) scale(0.75);
@@ -77,7 +77,7 @@ label.mud-input-label.mud-input-label-inputcontrol {
 
     &.mud-input-label-outlined {
       transform: translate(14px, -6px) scale(0.75);
-      max-width: calc(100% - 14px);
+      max-width: calc((100% - 14px) / 0.75);
     }
   }
 

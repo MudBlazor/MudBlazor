@@ -369,5 +369,23 @@
             </SectionContent>
         </DocsPageSection>
 
+        <DocsPageSection>
+            <SectionHeader Title="Other Options">
+                <Description>
+                    There are many options available for the <CodeInline>&lt;MudDataGrid></CodeInline> that are not covered in the examples above.
+                    The <CodeInline>&lt;ColGroup></CodeInline> component allows you to apply a span or style property to multiple columns. However, 
+                    the available styles are limited to a few CSS properties, including width, visibility, background, and border. Additionally, the 
+                    `span` property enables a column to extend across multiple columns. The <CodeInline>Loading</CodeInline> property displays a loading 
+                    indicator while the data grid is retrieving data. You can bind this attribute to a `bool` variable set to `true` when initializing 
+                    the page and toggle it once the data has loaded. The <CodeInline>FixedHeader</CodeInline> property ensures that the header remains
+                    fixed at the top of the grid, even when scrolling. These are just a few of the many available options. For a complete list and 
+                    additional details, refer to the <MudLink Href="components/datagrid#api">API</MudLink> documentation above.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(DataGridOtherOptionsExample)" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridOtherOptionsExample />
+            </SectionContent>
+        </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>

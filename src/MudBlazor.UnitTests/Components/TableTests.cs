@@ -115,6 +115,24 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("td")[2].TextContent.Trim().Should().Be("A");
         }
 
+        [Theory]
+        [TestCase(true)]
+        [TestCase(false)]
+        public void TableSortLabel(bool sortEnabled)
+        {
+            // Arrange
+            var comp = Context.RenderComponent<TableSortLabelTest>(
+                parameters => parameters.Add(x => x.SortEnabled, sortEnabled));
+            var tableSortLabel = comp.FindComponent<MudTableSortLabel<string>>();
+
+            // Assert
+            tableSortLabel
+                .Find("span")
+                .GetAttribute("class")
+                .Contains("mud-button-root")
+                .Should().Be(sortEnabled);
+        }
+
         /// <summary>
         /// Check if the loading parameter is adding a supplementary row.
         /// </summary>
@@ -1449,15 +1467,15 @@ namespace MudBlazor.UnitTests.Components
             tds[2].TextContent.Trim().Should().Be("2");
             tds[3].TextContent.Trim().Should().Be("3");
 
-            trs[1].GetAttribute("style").Contains("color: red");
-            trs[2].GetAttribute("style").Contains("color: red");
-            trs[3].GetAttribute("style").Contains("color: blue");
-            trs[4].GetAttribute("style").Contains("color: blue");
+            trs[1].GetAttribute("style").Should().Contain("color: red");
+            trs[2].GetAttribute("style").Should().Contain("color: red");
+            trs[3].GetAttribute("style").Should().Contain("color: blue");
+            trs[4].GetAttribute("style").Should().Contain("color: blue");
 
-            trs[1].GetAttribute("class").Contains("even");
-            trs[2].GetAttribute("class").Contains("odd");
-            trs[3].GetAttribute("class").Contains("even");
-            trs[4].GetAttribute("class").Contains("odd");
+            trs[1].GetAttribute("class").Should().Contain("even");
+            trs[2].GetAttribute("class").Should().Contain("odd");
+            trs[3].GetAttribute("class").Should().Contain("even");
+            trs[4].GetAttribute("class").Should().Contain("odd");
         }
 
         public class TableRowValidatorTest : TableRowValidator

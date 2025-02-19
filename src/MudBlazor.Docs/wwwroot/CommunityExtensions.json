@@ -107,5 +107,14 @@
     "Link": "https://mudblocks.cc/",
     "GitHubUserPath": "mouse0270",
     "GitHubRepoPath": "mudblocks"
+  },
+  {
+    "AvatarImageSrc": "https://avatars.githubusercontent.com/u/5263228?s=48&amp;v=4",
+    "Category": "Components",
+    "Name": "MudBlazor PdfViewer",
+    "Description": "A component for displaying and manipulating PDF documents.",
+    "Link": "https://mudpdf.info",
+    "GitHubUserPath": "tgothorp",
+    "GitHubRepoPath": "MudBlazor.PdfViewer"
   }
 ]

@@ -69,6 +69,7 @@
         public string Address_Line_2 { get; set; }
         public int Postal_Code { get; set; }
     }
+
     public class Person
     {
         public bool ShowDetails { get; set; }
@@ -77,6 +78,7 @@
         public int Age { get; set; }
         public IList<Address> Addresses { get; set; }
     }
+
     private void FillPeople()
     {
         IList<Person> people = new List<Person>();
@@ -119,6 +121,7 @@
         });
         People = people;
     }
+
     private static IEnumerable<Person> People { get; set; }
 
     private void ShowBtnPress(int nr)
