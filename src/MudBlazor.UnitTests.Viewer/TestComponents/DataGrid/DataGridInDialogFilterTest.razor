@@ -19,22 +19,15 @@
 </MudDialog>
 
 @code {
-#nullable enable
-    public static string __description__ = " Datagrid inside a Dialog making sure Filter popover shows and goes away properly. ";
+    public static string __description__ = "Datagrid inside a Dialog making sure Filter popover shows and goes away properly.";
 
-    private readonly List<Model> _items = new List<Model>();
-    private bool _visible;
+    private readonly List<Model> _items = Enumerable.Repeat(0, 200)
+        .Select((_, i) => new Model($"Value_{i}", $"Value_{i}", $"Value_{i}", $"Value_{i}", $"Value_{i}"))
+        .ToList();
     private readonly DialogOptions _dialogOptions = new() { FullWidth = true };
+    private bool _visible;
 
     private void OpenDialog() => _visible = true;
-
-    private void Submit() => _visible = false;
-
-    protected override void OnInitialized()
-    {
-        for (var i = 0; i < 200; i++)
-            _items.Add(new Model($"Value_{i}", $"Value_{i}", $"Value_{i}", $"Value_{i}", $"Value_{i}"));
-    }
 
     public record Model(string Column1, string Column2, string Column3, string Column4, string Column5);
 }
