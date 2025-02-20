@@ -600,9 +600,9 @@ namespace MudBlazor
             return _selectedState ? CheckedIcon : UncheckedIcon;
         }
 
-        internal async Task ExpandToSelectedAsync(Int32 level)
+        internal async Task ServerExpandToSelectedAsync(MudTreeViewItem<T>? parent, int level)
         {
-            if ((this.MudTreeRoot != null) && (this.MudTreeRoot.IsInExpandedPath != null) && (this.Value is not null))
+            if ((this.MudTreeRoot is not null) && (this.MudTreeRoot.IsServerItemDescendantOrSelectedAsync is not null) && (this.Value is not null))
             {
                 if (this.Selected)
                 {
@@ -618,18 +618,19 @@ namespace MudBlazor
                 }
 
                 // Try to expand this item, if it is in the path to a selected item.
-                if (this.MudTreeRoot.IsInExpandedPath(this.Value, level))
+                T? parentValue = (parent is not null) ? parent.Value : default(T);
+                if (await this.MudTreeRoot.IsServerItemDescendantOrSelectedAsync(this.Value, parentValue, level))
                 {
                     await _expandedState.SetValueAsync(true);
                     await this.TryInvokeServerLoadFunc();
                 }
 
                 // Iterate through all the child items.
-                if (this._childItems != null)
+                if (this._childItems is not null)
                 {
                     foreach (MudTreeViewItem<T> childItem in this._childItems)
                     {
-                        await childItem.ExpandToSelectedAsync(level + 1);
+                        await childItem.ServerExpandToSelectedAsync(this, level + 1);
                     }
                 }
             }
