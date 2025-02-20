@@ -171,12 +171,14 @@
         <DocsPageSection>
             <SectionHeader Title="Expand to Selected">
                 <Description>
-                    Set the <CodeInline Tag>IsInExpandedPath</CodeInline> property to enable the <CodeInline>MudTreeView</CodeInline>
-                    to expand all child items down to the selected child items.
-                    This is different then <CodeInline Tag>AutoExpand</CodeInline>, because it can work with <CodeInline Tag>Server Side Data</CodeInline>.
-                    The <CodeInline>Func&lt;T, Int32, Boolean&gt;</CodeInline> delegate should return true, when
-                    the <CodeInline>T</CodeInline> is part of the path down to a selected child item, or is the selected
-                    child item, otherwise it should return false.
+                    Used in combination with <CodeInline Tag>ServerData</CodeInline>, the <CodeInline Tag>IsServerItemDescendantOrSelectedAsync</CodeInline> property
+                    can be set to enable the <CodeInline>MudTreeView</CodeInline>  to automatically expand the tree down 
+                    to the selected <CodeInline>MudTreeViewItem</CodeInline>.
+                    
+                    You set a delegate function that examins and return true if the specified <CodeInline Tag>MudTreeViewItem.Value</CodeInline>
+                    is a descendant of another <CodeInline Tag>MudTreeViewItem.Value</CodeInline>, or it is selected.
+                    
+                    This is different then <CodeInline Tag>AutoExpand</CodeInline>, because this work with <CodeInline Tag>Server Side Data</CodeInline>.
                 </Description>
             </SectionHeader>
             <SectionContent Outlined="true" Code="@nameof(TreeViewExpandToSelectedExample)" ShowCode="false">
