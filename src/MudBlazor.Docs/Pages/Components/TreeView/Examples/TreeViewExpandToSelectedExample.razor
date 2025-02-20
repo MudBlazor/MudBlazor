@@ -3,7 +3,7 @@
 @namespace MudBlazor.Docs.Examples
 
 <MudPaper Width="300px" Elevation="0">
-    <MudTreeView ServerData="@LoadServerData" Items="@InitialTreeItems" IsInExpandedPath="this.IsInExpandedPath">
+    <MudTreeView ServerData="@LoadServerData" Items="@InitialTreeItems" IsServerItemDescendantOrSelectedAsync="this.IsServerItemDescendantOrSelectedAsync">
         <ItemTemplate>
             <MudTreeViewItem
                 Value="@context.Value"
@@ -107,10 +107,12 @@
         treeItemData.Children = children?.ToList();
     }
 
-    public bool IsInExpandedPath(string value, int level) {
-        // The selected item path.
-        string[] path = ["House 2", "Car 5", "Computer 2", "Girl 4"];
-        return (path.Contains(value) == true);
+    public async Task<bool> IsServerItemDescendantOrSelectedAsync(string value, string parentValue, int level) {
+        return await Task.Run(() => {
+            // The selected item path.
+            string[] path = ["House 2", "Car 5", "Computer 2", "Girl 4"];
+            return (path.Contains(value) == true);
+        });
     }
 
 }
