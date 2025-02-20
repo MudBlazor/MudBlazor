@@ -101,7 +101,7 @@ internal sealed class BrowserViewportService : IBrowserViewportService
         optionsClone.BreakpointDefinitions = BreakpointGlobalOptions.GetDefaultOrUserDefinedBreakpointDefinition(optionsClone, ResizeOptions);
 
         var subscription = await CreateJavaScriptListener(optionsClone, observer.Id);
-        if (_observerManager.Observers.ContainsKey(subscription))
+        if (_observerManager.IsSubscribed(subscription))
         {
             // Only re-subscribe
             _observerManager.Subscribe(subscription, observer);

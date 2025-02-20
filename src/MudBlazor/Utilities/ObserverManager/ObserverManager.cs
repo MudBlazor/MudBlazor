@@ -4,6 +4,7 @@
 
 using System.Collections;
 using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 
 namespace MudBlazor.Utilities.ObserverManager;
@@ -49,6 +50,30 @@ internal class ObserverManager<TIdentity, TObserver> : IEnumerable<TObserver> wh
     /// Removes all observers.
     /// </summary>
     public void Clear() => _observers.Clear();
+
+    /// <summary>
+    /// Checks if an observer with the specified identity is subscribed.
+    /// </summary>
+    /// <param name="id">The identity of the observer.</param>
+    /// <returns>True if the observer is subscribed; otherwise, false.</returns>
+    public bool IsSubscribed(TIdentity id) => _observers.ContainsKey(id);
+
+    /// <summary>
+    /// Tries to get the subscription for the specified identity.
+    /// </summary>
+    /// <param name="id">The identity of the observer.</param>
+    /// <param name="observer">When this method returns, contains the observer associated with the specified identity, if the identity is found; otherwise, the default value for the type of the observer parameter.</param>
+    /// <returns>True if the observer is found; otherwise, false.</returns>
+    public bool TryGetSubscription(TIdentity id, [MaybeNullWhen(false)] out TObserver observer)
+    {
+        if (_observers.TryGetValue(id, out var entry))
+        {
+            observer = entry.Observer;
+            return true;
+        }
+        observer = default;
+        return false;
+    }
 
     /// <summary>
     /// Ensures that the provided <paramref name="observer"/> is subscribed, renewing its subscription.
