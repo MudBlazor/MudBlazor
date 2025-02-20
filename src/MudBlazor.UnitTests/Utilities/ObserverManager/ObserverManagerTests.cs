@@ -36,6 +36,36 @@ public class ObserverManagerTests
     }
 
     [Test]
+    public void TryGetSubscription_ReturnsTrueAndObserver_WhenObserverExists()
+    {
+        // Arrange
+        var id = 1;
+        var observer = "Observer1";
+        _observerManager.Subscribe(id, observer);
+
+        // Act
+        var result = _observerManager.TryGetSubscription(id, out var retrievedObserver);
+
+        // Assert
+        result.Should().BeTrue();
+        retrievedObserver.Should().Be(observer);
+    }
+
+    [Test]
+    public void TryGetSubscription_ReturnsFalseAndDefault_WhenObserverDoesNotExist()
+    {
+        // Arrange
+        var id = 1;
+
+        // Act
+        var result = _observerManager.TryGetSubscription(id, out var retrievedObserver);
+
+        // Assert
+        result.Should().BeFalse();
+        retrievedObserver.Should().BeNull();
+    }
+
+    [Test]
     public void Subscribe_AddsObserverToDictionary()
     {
         // Arrange
