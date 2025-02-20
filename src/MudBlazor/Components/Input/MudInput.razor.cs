@@ -386,6 +386,7 @@ namespace MudBlazor
             if (!_isFocused)
                 return;
 
+            StateHasChanged();
             await OnBlurredAsync(new FocusEventArgs { Type = "jsBlur.OnBlur" });
         }
     }
