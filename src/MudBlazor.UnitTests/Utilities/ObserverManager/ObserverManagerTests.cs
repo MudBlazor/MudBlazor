@@ -66,6 +66,25 @@ public class ObserverManagerTests
     }
 
     [Test]
+    public void FindObserverIdentities_ReturnsMatchingIdentities()
+    {
+        // Arrange
+        var observer1 = "Observer1";
+        var observer2 = "Observer2";
+        var observer3 = "Observer3";
+
+        _observerManager.Subscribe(1, observer1);
+        _observerManager.Subscribe(2, observer2);
+        _observerManager.Subscribe(3, observer3);
+
+        // Act
+        var result = _observerManager.FindObserverIdentities((_, observer) => observer.Contains('2')).ToList();
+
+        // Assert
+        result.Should().ContainSingle().Which.Should().Be(2);
+    }
+
+    [Test]
     public void Subscribe_AddsObserverToDictionary()
     {
         // Arrange

@@ -76,6 +76,14 @@ internal class ObserverManager<TIdentity, TObserver> : IEnumerable<TObserver> wh
     }
 
     /// <summary>
+    /// Finds the identities of observers that match the specified predicate.
+    /// </summary>
+    /// <param name="predicate">The predicate to filter the observers.</param>
+    /// <returns>An enumerable collection of observer identities that match the predicate.</returns>
+    public IEnumerable<TIdentity> FindObserverIdentities(Func<TIdentity, TObserver, bool> predicate) =>
+        _observers.Where(kvp => predicate(kvp.Key, kvp.Value.Observer)).Select(kvp => kvp.Key);
+
+    /// <summary>
     /// Ensures that the provided <paramref name="observer"/> is subscribed, renewing its subscription.
     /// </summary>
     /// <param name="id">
