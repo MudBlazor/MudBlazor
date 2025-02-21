@@ -107,7 +107,7 @@ namespace MudBlazor
         public bool Dense { get; set; }
 
         /// <summary>
-        /// The CSS classes applied to all cells of the table.
+        /// The CSS classes to apply to the cell.
         /// </summary>
         /// <remarks>
         /// Multiple classes must be separated by spaces.
@@ -778,5 +778,24 @@ namespace MudBlazor
         /// Defaults to a new <see cref="TableRowValidator"/>.
         /// </remarks>
         public Interfaces.IForm Validator { get; set; } = new TableRowValidator();
+
+        private int _rowsQuantity;
+        private int _cellsQuantity;
+
+        internal void IncreaseCellsQuantity()
+        {
+            _cellsQuantity++;
+        }
+
+        internal void SetRowsQuantity(int rowIndex)
+        {
+            _rowsQuantity = rowIndex;
+        }
+
+        internal int GetRowsQuantity() => _rowsQuantity;
+
+        internal int GetCellsQuantity() => _cellsQuantity;
+
+        public abstract string GetCellClassFuncAsync();
     }
 }

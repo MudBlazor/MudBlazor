@@ -10,10 +10,19 @@ namespace MudBlazor
     /// </summary>
     public partial class MudTd : MudComponentBase
     {
+        protected override void OnInitialized()
+        {
+            if (Context?.Table is not null)
+            {
+                Context.Table.IncreaseCellsQuantity();
+            }
+        }
+
         protected string Classname =>
             new CssBuilder("mud-table-cell")
                 .AddClass(Context?.Table?.CellClass)
                 .AddClass("mud-table-cell-hide", HideSmall)
+                .AddClass(Context?.Table?.GetCellClassFuncAsync())
                 .AddClass(Class)
                 .Build();
 

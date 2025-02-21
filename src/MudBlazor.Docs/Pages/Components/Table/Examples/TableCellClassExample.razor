@@ -2,12 +2,16 @@
 
 <style>
     .mud-table-small-cell {
-    padding: 4px !important;
-    background-color: lightsteelblue;
+        padding: 4px !important;
+    }
+
+    .mud-table-purple-cell {
+        background-color: #C5CAE9;
     }
 </style>
 
-<MudTable Items="@Elements.Take(4)" Hover="true" Breakpoint="Breakpoint.Sm" MultiSelection="@multiSelection" CellClass="@(applyCellClass? "mud-table-small-cell" : "")">
+<MudTable Items="@Elements.Take(4)" Hover="true" Breakpoint="Breakpoint.Sm"
+    CellClass="@(applyCellClass ? "mud-table-small-cell" : "")" CellClassFunc="@(applyCellClass ? GetCellClass : null)">
     <HeaderContent>
         <MudTh>Nr</MudTh>
         <MudTh>Sign</MudTh>
@@ -39,15 +43,23 @@
         }
     </ChildRowContent>
 </MudTable>
-<MudSwitch @bind-Value="@multiSelection" Color="Color.Primary">Show checkboxes cells</MudSwitch>
 <MudSwitch @bind-Value="@applyCellClass" Color="Color.Primary">Apply Cell Class</MudSwitch>
 @code {
-    private bool multiSelection;
     private bool applyCellClass;
 
     private void ShowCell(Element element)
     {
         element.ShowCell = !element.ShowCell;
+    }
+
+    private string GetCellClass(Element element, int x, int y)
+    {
+        if (x == 1 || (x == 2 && y == 1) || (x == 3 && y == 2) || (x == 4 && y == 1) || x == 5)
+        {
+            return "mud-table-purple-cell";
+        }
+
+        return string.Empty;
     }
 
     public class Element

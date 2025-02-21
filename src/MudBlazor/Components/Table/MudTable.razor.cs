@@ -65,6 +65,16 @@ namespace MudBlazor
         public RenderFragment<T>? RowEditingTemplate { get; set; }
 
         /// <summary>
+        /// The function used to determine CSS classes for this cell.
+        /// </summary>
+        /// <remarks>
+        /// Multiple classes must be separated by spaces.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Table.Appearance)]
+        public Func<T, int, int, string>? CellClassFunc { get; set; }
+
+        /// <summary>
         /// The function which determines if a row can be edited.
         /// </summary>
         /// <remarks>
@@ -760,6 +770,33 @@ namespace MudBlazor
         {
             _currentRenderFilteredItemsCached = false;
             return "";
+        }
+
+        private int _cellIndex;
+
+        public override string GetCellClassFuncAsync()
+        {
+            if (Context?.Table is not null && !Virtualize && GroupBy is null
+                && Items is not null && Context.Table.GetRowsQuantity() != 0 &&
+                !CustomHeader && FooterContent is null && !MultiSelection && CellClassFunc is not null)
+            {
+                var columnsCount = Context.Table.GetCellsQuantity() / Context.Table.GetRowsQuantity();
+                var columnIndex = _cellIndex % columnsCount;
+                var rowIndex = _cellIndex / columnsCount;
+
+                if (_cellIndex == Context.Table.GetCellsQuantity() - 1)
+                {
+                    _cellIndex = 0;
+                }
+                else
+                {
+                    _cellIndex++;
+                }
+
+                return CellClassFunc.Invoke(Items.ElementAt(rowIndex), columnIndex, rowIndex);
+            }
+
+            return string.Empty;
         }
 
         /// <summary>

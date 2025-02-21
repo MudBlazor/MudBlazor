@@ -124,13 +124,14 @@
 										{
                                             @Columns(item)
 										}
-                                   }
+                                   } 
                                </MudTr>
                                @if (ChildRowContent != null)
                                {
                                    @ChildRowContent(item)
                                }   
                                @{ rowIndex++; }
+                               @{ Context.Table.SetRowsQuantity(rowIndex); }
                             </MudVirtualize>
                         }
                     }
@@ -238,6 +239,7 @@
                     @ChildRowContent(item)
                 }
                 @{rowIndex++;}
+                @{ Context.Table.SetRowsQuantity(rowIndex); }
         </text>
     ;
 
