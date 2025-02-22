@@ -55,7 +55,7 @@ public enum TimelinePosition
     /// <remarks>
     /// Only applies if <see cref="MudTimeline.TimelineOrientation"/> is <see cref="TimelineOrientation.Vertical"/>.<br />
     /// When Right-to-Left is enabled, the dots are displayed on the right of each item's text.<br />
-    /// When Right-to-Left is disabled, the dots are displayed on the left of each item's text.<br />
+    /// When Right-to-Left is disabled, the dots are displayed on the left of each item's text.
     /// </remarks>
     [Description("start")]
     Start,
@@ -66,7 +66,7 @@ public enum TimelinePosition
     /// <remarks>
     /// Only applies if <see cref="MudTimeline.TimelineOrientation"/> is <see cref="TimelineOrientation.Vertical"/>.<br />
     /// When Right-to-Left is enabled, the dots are displayed on the left of each item's text.<br />
-    /// When Right-to-Left is disabled, the dots are displayed on the right of each item's text.<br />
+    /// When Right-to-Left is disabled, the dots are displayed on the right of each item's text.
     /// </remarks>
     [Description("end")]
     End

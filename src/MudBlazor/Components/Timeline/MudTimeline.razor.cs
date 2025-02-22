@@ -35,7 +35,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <see cref="TimelineOrientation.Vertical"/>.<br />
         /// When set to <see cref="TimelineOrientation.Vertical"/>, <see cref="TimelinePosition"/> can be set to <c>Left</c>, <c>Right</c>, <c>Alternate</c>, <c>Start</c>, or <c>End</c>.<br />
-        /// When set to <see cref="TimelineOrientation.Horizontal"/>, <see cref="TimelinePosition"/> can be set to <c>Top</c>, <c>Bottom</c>, or <c>Alternate</c>.<br />
+        /// When set to <see cref="TimelineOrientation.Horizontal"/>, <see cref="TimelinePosition"/> can be set to <c>Top</c>, <c>Bottom</c>, or <c>Alternate</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Timeline.Behavior)]
