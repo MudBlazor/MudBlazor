@@ -111,7 +111,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
     /// </summary>
     /// <param name="functionOnChange">The function to call when the system theme has changed.</param>
     /// <remarks>
-    /// A value of <c>true</c> is passed if the system is now in Dark Mode.  Otherwise, the system is now in Light Mode.
+    /// A value of <c>true</c> is passed if the system is now in Dark Mode. Otherwise, the system is now in Light Mode.
     /// </remarks>
     public Task WatchSystemPreference(Func<bool, Task> functionOnChange)
     {

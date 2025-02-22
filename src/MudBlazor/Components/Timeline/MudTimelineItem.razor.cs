@@ -37,7 +37,7 @@ namespace MudBlazor
         protected internal MudBaseItemsControl<MudTimelineItem>? Parent { get; set; }
 
         /// <summary>
-        /// (Obsolete)  The icon displayed for the dot.
+        /// (Obsolete) The icon displayed for the dot.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Timeline.Dot)]
@@ -57,7 +57,7 @@ namespace MudBlazor
         /// The CSS styles applied to the dot.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>null</c>.  Styles such as <c>background-color</c> can be applied (e.g. <c>background-color:red;</c>).
+        /// Defaults to <c>null</c>. Styles such as <c>background-color</c> can be applied (e.g. <c>background-color:red;</c>).
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Timeline.Dot)]
@@ -87,7 +87,7 @@ namespace MudBlazor
         /// The size of the dot's drop shadow.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>1</c>.  A higher number creates a heavier drop shadow.  Use a value of <c>0</c> for no shadow.
+        /// Defaults to <c>1</c>. A higher number creates a heavier drop shadow. Use a value of <c>0</c> for no shadow.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Timeline.Dot)]
@@ -127,7 +127,7 @@ namespace MudBlazor
         /// The custom content for this item.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>null</c>.  Only applies if <see cref="ChildContent"/> is <c>null</c>.
+        /// Defaults to <c>null</c>. Only applies if <see cref="ChildContent"/> is <c>null</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Timeline.Behavior)]
@@ -147,7 +147,7 @@ namespace MudBlazor
         /// The custom content for the entire item.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>null</c>.  When set, <see cref="ItemContent"/> will not be displayed.
+        /// Defaults to <c>null</c>. When set, <see cref="ItemContent"/> will not be displayed.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Timeline.Behavior)]

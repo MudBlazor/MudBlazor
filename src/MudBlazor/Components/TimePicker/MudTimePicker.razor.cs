@@ -114,7 +114,7 @@ namespace MudBlazor
         /// The amount of time, in milliseconds, to wait before closing the picker.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>200</c>.  The delay gives users a moment to see the selected time before the popover disappears.
+        /// Defaults to <c>200</c>. The delay gives users a moment to see the selected time before the popover disappears.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
@@ -124,7 +124,7 @@ namespace MudBlazor
         /// Closes this picker when the value is set or cleared.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  When <c>true</c> and <c>PickerActions</c> are defined, 
+        /// Defaults to <c>false</c>. When <c>true</c> and <c>PickerActions</c> are defined, 
         /// the hour and the minutes can be selected and the drop-down will close without having to 
         /// click any of the action buttons.
         /// </remarks>
@@ -136,7 +136,7 @@ namespace MudBlazor
         /// The step interval when selecting minutes.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>1</c>.  For example: a value of <c>15</c> would only let minutes of <c>0</c>, <c>15</c>, 
+        /// Defaults to <c>1</c>. For example: a value of <c>15</c> would allow minutes <c>0</c>, <c>15</c>, 
         /// <c>30</c>, and <c>45</c> be selected.
         /// </remarks>
         [Parameter]
