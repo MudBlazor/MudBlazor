@@ -14,6 +14,8 @@ namespace MudBlazor
     /// </summary>
     public abstract class MudTableBase : MudComponentBase
     {
+        private int _rowsQuantity;
+        private int _cellsQuantity;
         private int _currentPage = 0;
         private bool _isFirstRendered = false;
         internal int? _rowsPerPage;
@@ -779,9 +781,6 @@ namespace MudBlazor
         /// </remarks>
         public Interfaces.IForm Validator { get; set; } = new TableRowValidator();
 
-        private int _rowsQuantity;
-        private int _cellsQuantity;
-
         internal void IncreaseCellsQuantity()
         {
             _cellsQuantity++;
@@ -796,6 +795,6 @@ namespace MudBlazor
 
         internal int GetCellsQuantity() => _cellsQuantity;
 
-        public abstract string GetCellClassFuncAsync();
+        public abstract string GetCellClassFunc();
     }
 }

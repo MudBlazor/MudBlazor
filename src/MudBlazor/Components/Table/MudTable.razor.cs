@@ -19,6 +19,7 @@ namespace MudBlazor
     /// <typeparam name="T">The type of item displayed in this table.</typeparam>
     public partial class MudTable<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] T> : MudTableBase, IDisposable
     {
+        private int _cellIndex;
         private T? _selectedItem;
         private IEnumerable<T>? _items;
         private IEnumerable<T>? _preEditSort;
@@ -772,13 +773,12 @@ namespace MudBlazor
             return "";
         }
 
-        private int _cellIndex;
-
-        public override string GetCellClassFuncAsync()
+        public override string GetCellClassFunc()
         {
-            if (Context?.Table is not null && !Virtualize && GroupBy is null
-                && Items is not null && Context.Table.GetRowsQuantity() != 0 &&
-                !CustomHeader && FooterContent is null && !MultiSelection && CellClassFunc is not null)
+            if (CellClassFunc is not null && Context?.Table is not null &&
+                !Virtualize && GroupBy is null &&
+                Items is not null && Context.Table.GetRowsQuantity() != 0 &&
+                !CustomHeader && FooterContent is null && !MultiSelection)
             {
                 var columnsCount = Context.Table.GetCellsQuantity() / Context.Table.GetRowsQuantity();
                 var columnIndex = _cellIndex % columnsCount;

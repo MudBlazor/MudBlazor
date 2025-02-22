@@ -22,7 +22,7 @@ namespace MudBlazor
             new CssBuilder("mud-table-cell")
                 .AddClass(Context?.Table?.CellClass)
                 .AddClass("mud-table-cell-hide", HideSmall)
-                .AddClass(Context?.Table?.GetCellClassFuncAsync())
+                .AddClass(Context?.Table?.GetCellClassFunc())
                 .AddClass(Class)
                 .Build();
 

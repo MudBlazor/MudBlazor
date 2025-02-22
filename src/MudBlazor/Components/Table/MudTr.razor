@@ -36,7 +36,8 @@
     }
     @if (Expandable || Checkable)
     {
-        <MudElement HtmlTag="@("Td")" Class="@($"mud-table-cell {Context?.Table?.CellClass}")">
+        string cellClass = new Utilities.CssBuilder("mud-table-cell").AddClass(Context?.Table?.CellClass).Build();
+        <MudElement HtmlTag="@("Td")" Class="@cellClass">
             <div class="d-flex" style="@ActionsStylename">
                 @if (Checkable)
                 {
