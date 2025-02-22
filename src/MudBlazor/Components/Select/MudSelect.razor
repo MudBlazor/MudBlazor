@@ -57,19 +57,20 @@
                         @GetSelectedValuePresenter()
                     }
                 </MudInput>
-                @if (!FullWidth && _longestItem is not null)
+                @if (!FitContent && _longestItem is { Value: not null } )
                 {
                     <MudStack Class="@FillerClassname" Spacing="1" Row>
                         @{
-                            var value = ToStringFunc?.Invoke(_longestItem.Value);
+                            var value = ToStringFunc?.Invoke(_longestItem.Value) ?? Converter.Set(_longestItem.Value);
+                            var defaultValue = Label?.Length > Placeholder?.Length ? Label : Placeholder
                         }
-                        @if (Placeholder?.Length > value.Length)
+                        @if (defaultValue?.Length > value!.Length)
                         {
-                            <MudText Typo="@Typo">@(MultiSelectionTextFunc?.Invoke([Placeholder]) ?? Placeholder)</MudText>
+                            <MudText Typo="@Typo">@(MultiSelectionTextFunc?.Invoke([defaultValue]) ?? defaultValue)</MudText>
                         }
                         else if (_longestItem.ChildContent is null || MultiSelectionTextFunc is not null)
                         {
-                            <MudText Typo="@Typo">@(MultiSelectionTextFunc?.Invoke([value]) ?? value)</MudText>
+                            <MudText Typo="@Typo">@(MultiSelectionTextFunc?.Invoke([value!]) ?? value!)</MudText>
                         }
                         else
                         {

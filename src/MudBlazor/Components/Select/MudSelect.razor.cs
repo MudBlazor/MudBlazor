@@ -37,8 +37,8 @@ namespace MudBlazor
 
         protected string OuterClassname =>
             new CssBuilder("mud-select")
-                .AddClass("mud-width-full", FullWidth)
-                .AddClass("mud-width-content", !FullWidth)
+                .AddClass("mud-width-full", FullWidth && !FitContent)
+                .AddClass("mud-width-content", FitContent)
                 .AddClass(OuterClass)
                 .Build();
 
@@ -236,14 +236,14 @@ namespace MudBlazor
         public DropdownWidth RelativeWidth { get; set; } = DropdownWidth.Relative;
 
         /// <summary>
-        /// Fills the full width of the parent container.
+        /// Sets the container width to match its contents.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>true</c>.
+        /// Defaults to <c>false</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public override bool FullWidth { get; set; } = true;
+        public bool FitContent { get; set; }
 
         /// <summary>
         /// The CSS classes applied to the outer <c>div</c>.

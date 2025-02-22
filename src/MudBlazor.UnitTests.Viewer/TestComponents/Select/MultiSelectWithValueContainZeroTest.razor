@@ -16,7 +16,7 @@
     }
 </MudSelect>
 
-    <MudSelect T="int" MultiSelection="true" RelativeWidth="@(_adaptive ? DropdownWidth.Adaptive : DropdownWidth.Relative)"
+<MudSelect T="int" MultiSelection="true" RelativeWidth="@(_adaptive ? DropdownWidth.Adaptive : DropdownWidth.Relative)"
            @bind-SelectedValues="_selectedOptionsInt" Label="int with contain 0" FullWidth="_fullWidth">
     @foreach (var item in _intTestList)
     {
