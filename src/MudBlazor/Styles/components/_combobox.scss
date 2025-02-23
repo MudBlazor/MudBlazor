@@ -1,0 +1,43 @@
+.mud-combobox-input > input {
+  &.mud-input-root {
+    font: inherit;
+    color: currentColor;
+    max-width: 100%;
+    flex: 1 1 auto;
+    min-width: 25%;
+    border: 0;
+    height: 1lh;
+    margin: 0;
+    display: block;
+    min-width: 0;
+    background: none;
+    position: relative;
+    box-sizing: content-box;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-tap-highlight-color: transparent;
+
+    @include inputplaceholder {
+      color: currentColor;
+      opacity: 0.42;
+      transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    }
+
+    &:focus, &:active {
+      outline: 0;
+    }
+
+    &:invalid {
+      box-shadow: none;
+    }
+
+    &:disabled {
+      opacity: 1;
+    }
+  }
+
+  &::-ms-reveal, &::-ms-clear {
+    display: none !important;
+  }
+}
