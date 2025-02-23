@@ -325,11 +325,11 @@ namespace MudBlazor
         public virtual string? Pattern { get; set; }
 
         /// <summary>
-        /// Shows the label inside the input if no <see cref="Value"/> is specified.
+        /// <para>When <c>false</c>, shows the label inside the input if no <see cref="Value"/> is specified.</para>
+        /// <para>When <c>true</c>, the label will not move into the input when the input is empty.</para>
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c> in <see cref="MudGlobal.InputDefaults.ShrinkLabel"/>.
-        /// When <c>true</c>, the label will not move into the input when the input is empty.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
