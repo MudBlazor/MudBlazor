@@ -2,17 +2,17 @@
 
 <div>
     <MudSelect T="string" Variant="Variant.Text" @bind-Value="_fruit" Dense 
-               SelectedValuesChanged="@(() => FruitChanged(null))" FullWidth="_fullWidth">
+               SelectedValuesChanged="@(() => FruitChanged(null))" FitContent="_fitContent">
         <MudSelectItem Value="@("Apple")">Apple</MudSelectItem>
         <MudSelectItem Value="@("Orange")">Orange</MudSelectItem>
     </MudSelect>
 </div>
 
-<MudSwitch @bind-Value="_fullWidth" Class="mt-4" Color="Color.Primary">Full Width</MudSwitch>
+<MudSwitch @bind-Value="_fitContent" Class="mt-4" Color="Color.Primary">Fit Content</MudSwitch>
 
 @code{
     private string _fruit = "Apple";
-    private bool _fullWidth = true;
+    private bool _fitContent;
 
     public int ChangeCount { get; private set; }
 

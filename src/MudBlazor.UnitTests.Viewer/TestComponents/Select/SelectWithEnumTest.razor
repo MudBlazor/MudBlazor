@@ -2,19 +2,19 @@
 
 Value: @_selected
 <br />
-<MudSelect @bind-Value="@_selected" FullWidth="_fullWidth">
+<MudSelect @bind-Value="@_selected" FitContent="_fitContent">
     @foreach (MyEnum item in Enum.GetValues(typeof(MyEnum)))
     {
         <MudSelectItem Value="@item">@item</MudSelectItem>
     }
 </MudSelect>
 
-<MudSwitch @bind-Value="_fullWidth" Class="mt-4" Color="Color.Primary">Full Width</MudSwitch>
+<MudSwitch @bind-Value="_fitContent" Class="mt-4" Color="Color.Primary">Fit Content</MudSwitch>
 
 @code {
     public static string __description__ = "Initial Text should be the enum's default value.";
 
-    private bool _fullWidth = true;
+    private bool _fitContent;
     private MyEnum _selected;
 
     public enum MyEnum

@@ -1548,22 +1548,20 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void SelectFullWidthTest()
+        public void SelectFitContentTest()
         {
             var comp = Context.RenderComponent<SelectClearableTest>();
 
-            comp.Instance.FullWidth.Should().BeTrue();
+            comp.Instance.FitContent.Should().BeFalse();
 
             var select = comp.Find(".mud-select");
 
-            select.ClassList.Should().Contain("mud-width-full")
-                  .And.NotContain("mud-width-content");
+            select.ClassList.Should().NotContain("mud-width-content");
 
-            comp.Instance.FullWidth = false;
+            comp.Instance.FitContent = true;
             comp.Render();
 
-            select.ClassList.Should().Contain("mud-width-content")
-                  .And.NotContain("mud-width-full");
+            select.ClassList.Should().Contain("mud-width-content");
 
             var filler = comp.Find(".mud-select-filler");
 

@@ -1,17 +1,17 @@
 ﻿<MudPopoverProvider />
 
-<MudSelect @bind-Value="_value" PopoverClass="select-popover-class" FullWidth="_fullWidth">
+<MudSelect @bind-Value="_value" PopoverClass="select-popover-class" FitContent="_fitContent">
     <MudSelectItem Value="@("1")"/>
     <MudSelectItem Value="@("2")"/>
     <MudSelectItem Value="@("3")"/>
     <MudSelectItem Value="@("4")" Disabled="true"/>
 </MudSelect>
 
-<MudSwitch @bind-Value="_fullWidth" Class="mt-4" Color="Color.Primary">Full Width</MudSwitch>
+<MudSwitch @bind-Value="_fitContent" Class="mt-4" Color="Color.Primary">Fit Content</MudSwitch>
 
 @code {
     public static string __description__ = "Value 2 should be selected initially and highlighted.";
 
-    private bool _fullWidth = true;
+    private bool _fitContent;
     private string? _value = "2";
 }
