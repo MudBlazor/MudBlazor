@@ -14,6 +14,7 @@ namespace MudBlazor
         private int _elementKey = 0;
         private int _filteredTake = 0;
         private bool _activatorEvents;
+        private string? _internalText;
         private readonly string _componentId = Identifier.Create();
         private int _maxItems = 10;
 
@@ -24,7 +25,7 @@ namespace MudBlazor
         private CancellationTokenSource? _cancellationTokenSrc;
         private Timer? _debounceTimer;
 
-        private MudInput<string> _elementReference = null!;
+        private ElementReference _elementReference = default!;
 
         public MudComboBox()
         {
@@ -48,27 +49,31 @@ namespace MudBlazor
         [Inject]
         private InternalMudLocalizer Localizer { get; set; } = null!;
 
-        protected string Classname => new CssBuilder("mud-select")
-            .AddClass("mud-combobox")
+        protected string Classname => new CssBuilder()
+            .AddClass("mud-combobox-input")
+            .AddClass("mud-autocomplete--with-progress", ShowProgressIndicator && IsLoading)
             .AddClass(Class)
             .Build();
 
         protected string ComboBoxClassname =>
             new CssBuilder("mud-select")
                 .AddClass("mud-combobox")
-                .AddClass("mud-width-full", FullWidth)
-                .AddClass("mud-autocomplete--with-progress", ShowProgressIndicator && IsLoading)
+                //.AddClass("mud-width-full", FullWidth)
                 .Build();
 
-        protected string InputClassname => new CssBuilder("mud-select-input")
-            .AddClass("mud-combobox-input")
+        protected string InputClassname => new CssBuilder(MudInputCssHelper.GetInputClassname(this))
             .AddClass("mud-combobox-items", SelectedItemsCount > 0)
-            .AddClass("mud-visibility-collapse", SelectedItemsCount > 0 && !_openItemListState.Value)
+            //.AddClass("mud-visibility-collapse", SelectedItemsCount > 0 && !_openItemListState.Value)
             .AddClass(InputClass)
             .Build();
+
         protected string CircularProgressClassname =>
             new CssBuilder("progress-indicator-circular")
                 .AddClass("progress-indicator-circular--with-adornment", Adornment == Adornment.End)
+                .Build();
+
+        protected string ClearButtonClassname =>
+            new CssBuilder("mud-input-clear-button")
                 .Build();
 
         protected string GetListItemClassname(bool isSelected) =>
@@ -613,7 +618,7 @@ namespace MudBlazor
 
                 await BeginValidateAsync();
 
-                await _elementReference.SetText(setText);
+                //await _elementReference.SetText(setText);
 
                 // We want focus with a closed popover if closeList is true
                 if (closeList)
@@ -675,7 +680,7 @@ namespace MudBlazor
         /// </summary>
         public override ValueTask SelectAsync()
         {
-            return _elementReference.SelectAsync();
+            return _elementReference.MudSelectAsync();
         }
 
         /// <summary>
@@ -686,7 +691,7 @@ namespace MudBlazor
         /// <returns>A <see cref="ValueTask"/> object.</returns>
         public override ValueTask SelectRangeAsync(int pos1, int pos2)
         {
-            return _elementReference.SelectRangeAsync(pos1, pos2);
+            return _elementReference.MudSelectRangeAsync(pos1, pos2);
         }
 
         private async Task OnInputClickedAsync()
@@ -938,5 +943,34 @@ namespace MudBlazor
                 _cancellationTokenSrc = new CancellationTokenSource();
             }
         }
+
+        // fires for every keystroke change
+        protected Task OnInput(ChangeEventArgs? args)
+        {
+            if (!Immediate)
+                return Task.CompletedTask;
+
+            return SetTextAsync(args?.Value as string);
+        }
+
+        // fires when input field loses focus after a change has been made
+        protected async Task OnChange(ChangeEventArgs? args)
+        {
+            _internalText = args?.Value as string;
+            await OnInternalInputChanged.InvokeAsync(args);
+            if (!Immediate)
+            {
+                await SetTextAsync(args?.Value as string);
+            }
+        }
+
+        private bool ShouldLabelShrink =>
+            SelectedItemsCount == 0 &&              // no SelectedItems to Display
+            string.IsNullOrEmpty(_internalText) &&  // no text in the input
+            Adornment != Adornment.Start &&         // no adornment set to Adornment.Start
+            string.IsNullOrEmpty(Placeholder) &&    // no Placeholder Text
+            !_isFocused &&                          // element isn't focused
+            !_openItemListState.Value &&            // popover is closed
+            !ShrinkLabel;                           // is allowed to shrink into input area
     }
 }

@@ -26,6 +26,22 @@
                 <MudSwitch @bind-Value="_openStates[variant]" Label="Open" Color="Color.Primary" />
             </MudStack>
         }
+        <MudAutocomplete @bind-Value="@_value"
+                         Items="@_states"
+                         SearchFunc="Search"
+                         FullWidth
+                         Variant="Variant.Filled"
+                         Label="@Variant.Filled.ToString()"
+                         Filterable="_filterable"
+                         MultiSelection="_multiSelection"
+                         AutoClose="_autoClose"
+                         Dense="_dense"
+                         Disabled="_disabled"
+                         ReadOnly="_readonly"
+                         Placeholder="@(_placeholder ? "Placeholder" : null)"
+                         HelperText="@(_helperText ? "Helper Text" : null)"
+                         HelperTextOnFocus="_helperTextOnFocus"
+                         Clearable="_clearable" />
     </MudStack>
 
     <MudStack>
