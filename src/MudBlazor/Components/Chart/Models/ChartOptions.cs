@@ -53,6 +53,14 @@ namespace MudBlazor
         /// Defaults to <c>false</c>.
         /// </remarks>
         public bool XAxisLines { get; set; }
+
+        /// <summary>
+        /// Shows zero point on vertical axis.
+        /// Only takes effect when the <see cref="MudChart"/> type is <see cref="ChartType.Line"/> or <see cref="MudTimeSeriesChartBase" /> is used.
+        /// <remarks>
+        /// Defaults to <c>false</c>
+        /// </remarks>
+        /// </summary>
         public bool YAxisRequireZeroPoint { get; set; }
 
         /// <summary>
