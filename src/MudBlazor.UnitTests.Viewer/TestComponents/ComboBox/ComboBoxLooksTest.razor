@@ -16,7 +16,7 @@
                              @bind-OpenItemList="_openStates[variant]"
                             @bind-SelectedItems="_selectedItems"
                             AutoClose="_autoClose"
-                            Dense="_dense"
+                            Margin="@(_dense ? Margin.Dense : Margin.Normal)"
                             Disabled="_disabled"
                             ReadOnly="_readonly"
                             Placeholder="@(_placeholder ? "Placeholder" : null)"

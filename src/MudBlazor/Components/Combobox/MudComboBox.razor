@@ -35,54 +35,45 @@
                             }
                             else
                             {
-                                <MudLink Typo="Typo.subtitle2" Class="mud-combobox-selected-items" Color="Color.Primary" Underline="MudBlazor.Underline.Hover" Disabled="@itemContext.IsDisabled" @onmousedown:stopPropagation>
-                                    @GetItemString(itemContext.Item)
-                                    <MudIconButton Class="mud-chip-close-button"
-                                                   Color="Color.Inherit"
-                                                   Icon="@Icons.Material.Filled.Cancel"
-                                                   OnClick="@itemContext.ToggleSelectedItem"
-                                                   Size="MudBlazor.Size.Small"
-                                                   Disabled="@itemContext.IsDisabled"
-                                                   aria-label="@Localizer[Resources.LanguageResource.MudChip_Close]"
-                                                   tabindex="-1" @onmousedown:stopPropagation/>                                    
-                                </MudLink> 
+                                <MudChip T="string" Class="mud-combobox-selected-items" Color="Color.Primary" CloseIcon="@Icons.Material.Filled.Cancel" 
+                                         Size="Size.Small" Disabled="@itemContext.IsDisabled" OnClose="@itemContext.ToggleSelectedItem" @onmousedown:stopPropagation>
+                                    @GetItemString(itemContext.Item)                                 
+                                </MudChip> 
                             }
                         }
                 }
                 @* @onblur="@OnBlurredAsync" onblur is set in javascript  *@
-                <input @ref="@_elementReference" @key="_elementKey" id="@InputElementId"
-                       @attributes="UserAttributes" autocomplete="@GetAutocomplete()"
-                       @onfocus="@OnInputFocusedAsync"
-                       @oninput="OnInput"
-                       @onchange="OnChange"
-                       @onkeydown="@InvokeKeyDownAsync"
-                       @onkeyup="@InvokeKeyUpAsync"
-                       @onkeydown:preventDefault="KeyDownPreventDefault"
-                       @onkeyup:preventDefault="@KeyUpPreventDefault"
-                       aria-describedby="@GetAriaDescribedByString()"
-                       aria-invalid="@Error.ToString().ToLowerInvariant()"
-                       aria-required="@Required.ToString().ToLowerInvariant()"
-                       class="@InputClassname"
-                       disabled=@GetDisabledState()
-                       inputmode="@(InputType.Text.ToDescriptionString())"
-                       pattern="@Pattern"
-                       placeholder="@Placeholder"
-                       readonly="@(GetReadOnlyState() || !Filterable)"
-                       required="@Required"
-                       type="@(InputType.Text.ToDescriptionString())"
-                       value="@_internalText" />
+                    <input @ref="@_elementReference" @key="_elementKey" id="@InputElementId"
+                           @attributes="UserAttributes" autocomplete="@GetAutocomplete()"
+                           @onfocus="@OnInputFocusedAsync"
+                           @oninput="OnInput"
+                           @onkeydown="@OnInputKeyDownAsync"
+                           @onkeyup="@OnInputKeyUpAsync"
+                           @onkeydown:preventDefault="KeyDownPreventDefault"
+                           @onkeyup:preventDefault="@KeyUpPreventDefault"
+                           aria-describedby="@GetAriaDescribedByString()"
+                           aria-invalid="@Error.ToString().ToLowerInvariant()"
+                           aria-required="@Required.ToString().ToLowerInvariant()"
+                           class="@InputClassname"
+                           disabled=@GetDisabledState()
+                           inputmode="@(InputType.Text.ToDescriptionString())"
+                           pattern="@Pattern"
+                           placeholder="@Placeholder"
+                           readonly="@(GetReadOnlyState() || !Filterable)"
+                           required="@Required"
+                           type="@(InputType.Text.ToDescriptionString())"
+                           value="@Text" />
+                    @if (ShowClearButton())
+                    {
+                        <MudIconButton Class="@ClearButtonClassname"
+                                       Color="@Color.Default"
+                                       Icon="@ClearIcon"
+                                       Size="@Size.Small"
+                                       OnClick="@HandleClearButtonAsync"
+                                       aria-label="@Localizer[Resources.LanguageResource.MudInput_Clear]"
+                                       tabindex="-1" @onmousedown:stopPropagation />
+                    }
             </MudStack>
-
-            @if (ShowClearButton())
-            {
-                <MudIconButton Class="@ClearButtonClassname"
-                               Color="@Color.Default"
-                               Icon="@ClearIcon"
-                               Size="@Size.Small"
-                               OnClick="@HandleClearButtonAsync"
-                               aria-label="@Localizer[Resources.LanguageResource.MudInput_Clear]"
-                               tabindex="-1" @onmousedown:stopPropagation />
-            }
 
             <!-- Progress Indicator -->
             @if (ShowProgressIndicator && _isLoadingState.Value)
@@ -107,7 +98,7 @@
                     Fixed="DropdownSettings.Fixed" OverflowBehavior="DropdownSettings.OverflowBehavior"
                     RelativeWidth="@RelativeWidth">
             <CascadingValue Value="this">
-                <MudList Class="mud-combobox-list" T="T" Dense="@Dense">
+                <MudList Class="mud-combobox-list" T="T" Dense="@(Margin == Margin.Dense ? true : false)">
 
                     @if (BeforeItemsTemplate is not null)
                     {

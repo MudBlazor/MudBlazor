@@ -14,7 +14,6 @@ namespace MudBlazor
         private int _elementKey = 0;
         private int _filteredTake = 0;
         private bool _activatorEvents;
-        private string? _internalText;
         private readonly string _componentId = Identifier.Create();
         private int _maxItems = 10;
 
@@ -32,7 +31,7 @@ namespace MudBlazor
             // default values, can be overridden
             Adornment = Adornment.End;
             IconSize = Size.Medium;
-            Immediate = true;
+            base.Immediate = true;
 
             using var registerScope = CreateRegisterScope();
             _selectedItemsState = registerScope.RegisterParameter<HashSet<T>>(nameof(SelectedItems))
@@ -50,15 +49,14 @@ namespace MudBlazor
         private InternalMudLocalizer Localizer { get; set; } = null!;
 
         protected string Classname => new CssBuilder()
-            .AddClass("mud-combobox-input")
+            .AddClass("mud-combobox--with-progress", ShowProgressIndicator && IsLoading)
             .AddClass("mud-autocomplete--with-progress", ShowProgressIndicator && IsLoading)
             .AddClass(Class)
             .Build();
 
         protected string ComboBoxClassname =>
-            new CssBuilder("mud-select")
-                .AddClass("mud-combobox")
-                //.AddClass("mud-width-full", FullWidth)
+            new CssBuilder("mud-combobox")
+                //.AddClass("mud-width-full", FullWidth) 
                 .Build();
 
         protected string InputClassname => new CssBuilder(MudInputCssHelper.GetInputClassname(this))
@@ -100,8 +98,6 @@ namespace MudBlazor
         [Parameter]
         public string? PopoverClass { get; set; }
 
-        // hidden public Variant Variant { get; set; } = Variant.Text;
-
         /// <summary>
         /// The location where the popover will open from.
         /// </summary>
@@ -119,20 +115,6 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         public Origin TransformOrigin { get; set; } = Origin.TopLeft;
-
-        /// <summary>
-        /// Uses compact padding, including the search items.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c> or <c>MudGlobal.InputDefaults.Margin</c>.
-        /// </remarks>
-        [Parameter]
-        public bool Dense { get; set; }
-
-        /// <summary>
-        /// Margin to be applied to the component, make internal.
-        /// </summary>
-        private new Margin Margin => Dense ? Margin.Dense : Margin.None;
 
         /// <summary>
         /// Updates the Value to the currently selected item when pressing the Tab key.
@@ -237,6 +219,10 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         public bool Overlay { get; set; } = true;
+
+        #endregion
+
+        #region Hidden members of MudBaseInput<T>
 
         #endregion
 
@@ -426,14 +412,20 @@ namespace MudBlazor
         [Parameter]
         public bool MultiSelection { get; set; }
 
+        private new bool Immediate { get; set; } = true;
+
+        private new T? Value { get; set; }
+
+        private new EventCallback<T?> ValueChanged { get; set; }
+
         /// <summary>
         /// The currently selected ComboBox items
         /// </summary>
         [Parameter]
         public HashSet<T> SelectedItems { get; set; } = [];
 
-        public int SelectedItemsCount {get => SelectedItems.Count;}
-        
+        public int SelectedItemsCount { get => SelectedItems.Count; }
+
         /// <summary>
         /// Event is fired when the selected items change
         /// </summary>
@@ -460,6 +452,40 @@ namespace MudBlazor
         public bool IsLoading { get; set; }
         [Parameter]
         public EventCallback<bool> IsLoadingChanged { get; set; }
+
+        /// <summary>
+        /// Controls whether text input overrides selected item values. Only applies to current/last selected item when Multiselection is true.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// When true (default): Selecting an item from the dropdown will replace any user-typed text
+        /// in the input field with the selected item's text.
+        /// </para>
+        /// <para>
+        /// When false: User-typed text remains unchanged even after selecting items, allowing for 
+        /// partial/incomplete text that doesn't match any selection.
+        /// </para>
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool CoerceText { get; set; } = true;
+
+        /// <summary>
+        /// Controls whether non-matching text input affects the bound Value property. Only applies to current/last Value when Multiselection is true.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// When true: Text entered by the user will update the bound Value property even if it 
+        /// doesn't match any item in the dropdown. This enables validation on user-entered text.
+        /// </para>
+        /// <para>
+        /// When false (default): Only text that matches a dropdown item will update the bound Value property.
+        /// Non-matching text remains in the input but doesn't affect the underlying Value.
+        /// </para>
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool CoerceValue { get; set; }
 
         /// <summary>
         /// The list of items filtered
@@ -511,8 +537,24 @@ namespace MudBlazor
             if (item == null)
                 return;
 
+            // Toggle Value
+            // if Value != item
+            if (!EqualityComparer<T>.Default.Equals(Value, item))
+            {
+                // set value to item
+                await ValueChanged.InvokeAsync(item);
+                Value = item;
+            }
+            else
+            {
+                // set Value to default
+                Value = default;
+            }
+
             // Toggle SelectedItems to Add if it doesn't exist, remove it if it does.
-            var selectedItems = _selectedItemsState.Value ?? [];
+            // start by creating a new hashset list to ensure reference updates
+            var selectedItems = new HashSet<T>(_selectedItemsState.Value ?? []);
+
             // if removing the item is false then add the item
             var toggled = selectedItems.Remove(item);
             if (!toggled)
@@ -524,7 +566,7 @@ namespace MudBlazor
                 }
                 selectedItems.Add(item);
             }
-            
+
             await _selectedItemsState.SetValueAsync(selectedItems);
             if (toggleMenu)
             {
@@ -535,7 +577,6 @@ namespace MudBlazor
                 else
                 {
                     await OpenListAsync();
-                    await PerformSearchAsync();
                 }
             }
             else
@@ -548,8 +589,7 @@ namespace MudBlazor
                 return;
 
             await _openItemListState.SetValueAsync(true);
-            await PerformSearchAsync();
-            StateHasChanged();
+            await UpdateValuePropertyAsync(false);
         }
 
         public async Task CloseListAsync()
@@ -633,46 +673,42 @@ namespace MudBlazor
             }
         }
 
-        /// <summary>
-        /// Returns a value for the <c>autocomplete</c> html attribute, either supplied by default or the one specified in the attribute overrides.
-        /// </summary>
-        protected object? GetAutocomplete() => UserAttributes.GetValueOrDefault("autocomplete", "off");
-
-        private string GetDropDownIcon => _openItemListState.Value ? CloseIcon : OpenIcon;
-
-        private async Task DebounceTimerDispose()
+        private ValueTask DebounceTimerDispose()
         {
             if (_debounceTimer != null)
             {
-                await _debounceTimer.DisposeAsync();
+                return _debounceTimer.DisposeAsync();
             }
+            return ValueTask.CompletedTask;
         }
 
         protected override async Task UpdateValuePropertyAsync(bool updateText)
         {
-            await DebounceTimerDispose();
+            _debounceTimer?.Dispose();
 
             if (ResetValueOnEmptyText && string.IsNullOrWhiteSpace(Text))
                 await SetValueAsync(default(T), updateText);
             else if (Immediate)
-                //await CoerceValueToTextAsync();
+                await CoerceValueToTextAsync();
 
-                if (DebounceInterval <= 0)
-                    await PerformSearchAsync();
-                else
-                    _debounceTimer = new Timer(OnDebounceComplete, null, DebounceInterval, Timeout.Infinite);
+            if (DebounceInterval <= 0)
+                await PerformSearchAsync();
+            else
+                _debounceTimer = new Timer(OnDebounceComplete, null, DebounceInterval, Timeout.Infinite);
+        }
+
+        private Task CoerceValueToTextAsync()
+        {
+            if (!CoerceValue)
+                return Task.CompletedTask;
+
+            _debounceTimer?.Dispose();
+
+            var value = Converter.Get(Text);
+            return SetValueAsync(value, updateText: false);
         }
 
         private void OnDebounceComplete(object? stateInfo) => InvokeAsync(PerformSearchAsync);
-
-        private async Task OnTextChangedAsync(string? text)
-        {
-            await base.TextChanged.InvokeAsync(text);
-
-            if (text is null) return;
-
-            await SetTextAsync(text);
-        }
 
         /// <summary>
         /// Selects all the current text within the Autocomplete text box.
@@ -724,11 +760,9 @@ namespace MudBlazor
 
             if (openMenu)
                 await OpenListAsync();
-
-            await PerformSearchAsync();
         }
 
-        private async Task PerformSearchAsync()
+        public async Task PerformSearchAsync()
         {
             // We use this to allow pagination of the items and a More Button
             _filteredTake = MaxItems;
@@ -738,13 +772,15 @@ namespace MudBlazor
             {
                 if (Filterable)
                 {
-                    FilteredItems = Items.ToList();
-                    StateHasChanged();
-                    return;
+                    // Filter the items based on the text
+                    FilteredItems = Items
+                        .Where(x => GetItemString(x)?.Contains(Text ?? string.Empty, StringComparison.CurrentCultureIgnoreCase) ?? false).ToList();
                 }
-                // We expect user's ToStringFunc or .ToString method to work with Contains combined in GetItemString method
-                FilteredItems = Items
-                    .Where(x => GetItemString(x)?.Contains(Text ?? string.Empty, StringComparison.CurrentCultureIgnoreCase) ?? false).ToList();
+                else
+                {
+                    // No filtering, just show all items
+                    FilteredItems = Items.ToList();
+                }
             }
             else if (FilterType == ComboBoxFilterType.Server)
             {
@@ -828,18 +864,6 @@ namespace MudBlazor
             await base.InvokeKeyDownAsync(args);
         }
 
-        private async Task AdornmentClickHandlerAsync(MouseEventArgs args)
-        {
-            if (_openItemListState.Value)
-            {
-                await CloseListAsync();
-            }
-            else
-            {
-                await OpenListAsync();
-            }
-        }
-
         private async Task OnInputKeyUpAsync(KeyboardEventArgs args)
         {
             var open = _openItemListState.Value;
@@ -899,30 +923,16 @@ namespace MudBlazor
             }
         }
 
-        private bool ShowClearButton()
+        private async Task AdornmentClickHandlerAsync(MouseEventArgs args)
         {
-            if (GetDisabledState())
+            if (_openItemListState.Value)
             {
-                return false;
+                await CloseListAsync();
             }
-
-            if (!Clearable)
+            else
             {
-                return false;
+                await OpenListAsync();
             }
-
-            // If this is a standalone input it will not be clearable when read-only
-            if (SubscribeToParentForm && GetReadOnlyState())
-            {
-                return false;
-            }
-
-            if (Value is string stringValue)
-            {
-                return !string.IsNullOrWhiteSpace(stringValue);
-            }
-
-            return Value is not string and not null;
         }
 
         private async Task HandleClearButtonAsync()
@@ -946,30 +956,44 @@ namespace MudBlazor
         // fires for every keystroke change
         protected Task OnInput(ChangeEventArgs? args)
         {
-            if (!Immediate)
-                return Task.CompletedTask;
-
             return SetTextAsync(args?.Value as string);
         }
 
-        // fires when input field loses focus after a change has been made
-        protected async Task OnChange(ChangeEventArgs? args)
+        private bool ShowClearButton()
         {
-            _internalText = args?.Value as string;
-            await OnInternalInputChanged.InvokeAsync(args);
-            if (!Immediate)
+            if (GetDisabledState())
             {
-                await SetTextAsync(args?.Value as string);
+                return false;
             }
+
+            if (!Clearable)
+            {
+                return false;
+            }
+
+            // If this is a standalone input it will not be clearable when read-only
+            if (SubscribeToParentForm && GetReadOnlyState())
+            {
+                return false;
+            }
+
+            return !string.IsNullOrWhiteSpace(Text);
         }
 
         private bool ShouldLabelShrink =>
             SelectedItemsCount == 0 &&              // no SelectedItems to Display
-            string.IsNullOrEmpty(_internalText) &&  // no text in the input
+            string.IsNullOrEmpty(Text) &&           // no text in the input
             Adornment != Adornment.Start &&         // no adornment set to Adornment.Start
             string.IsNullOrEmpty(Placeholder) &&    // no Placeholder Text
             !_isFocused &&                          // element isn't focused
             !_openItemListState.Value &&            // popover is closed
             !ShrinkLabel;                           // is allowed to shrink into input area
+
+        /// <summary>
+        /// Returns a value for the <c>autocomplete</c> html attribute, either supplied by default or the one specified in the attribute overrides.
+        /// </summary>
+        protected object? GetAutocomplete() => UserAttributes.GetValueOrDefault("autocomplete", "off");
+
+        private string GetDropDownIcon => _openItemListState.Value ? CloseIcon : OpenIcon;
     }
 }

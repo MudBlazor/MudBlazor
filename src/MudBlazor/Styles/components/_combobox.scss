@@ -6,7 +6,7 @@
     border: 0;
     height: 1lh;
     margin: 0;
-    min-width: 0;
+    width: 100px;
     background: none;
     position: relative;
     box-sizing: content-box;
@@ -39,6 +39,44 @@
   }
 }
 
-.mud-combobox-input .mud-combobox-selected-items {
-  max-height: 19px;
+.mud-combobox-input {
+    min-width: 0;
+  &.mud-combobox-selected-items {
+    max-height: 19px;
+    margin: 0px;   
+    padding: 0px 12px;
+  }
+}
+
+.mud-combobox--with-progress {
+  & .mud-combobox-input input {
+    padding-right: 3.5rem !important;
+  }
+
+  & .mud-input-adorned-end input {
+    padding-right: 4.5rem !important;
+  }
+  // If autocomplete has a progress indicator, the adornment should be hidden when loading
+  & .mud-combobox-input .mud-icon-button {
+    display: none !important;
+  }
+
+  & .progress-indicator-circular {
+    position: absolute;
+    width: 100%;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+    padding-right: 1rem;
+  }
+
+  & .mud-progress-linear {
+    position: absolute;
+    bottom: -1px;
+    height: 2px;
+  }
 }
