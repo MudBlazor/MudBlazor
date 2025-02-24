@@ -180,6 +180,16 @@ namespace MudBlazor
         public Color AdornmentColor { get; set; } = Color.Default;
 
         /// <summary>
+        /// The <c>aria-label</c> for the adornment.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public string? AdornmentAriaLabel { get; set; }
+
+        /// <summary>
         /// The size of the icon.
         /// </summary>
         /// <remarks>
