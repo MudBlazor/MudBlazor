@@ -33,7 +33,7 @@ class mudOverlay {
         }
 
         overlay.style.pointerEvents = "auto";
-        overlay.offsetHeight; // Trigger reflow
+        const _ = overlay.offsetHeight; // Trigger reflow
         const elementsFromPoint = document.elementsFromPoint(event.clientX, event.clientY);
         overlay.style.pointerEvents = "none";
         if (elementsFromPoint.length > 0 && elementsFromPoint[0] === overlay) {
