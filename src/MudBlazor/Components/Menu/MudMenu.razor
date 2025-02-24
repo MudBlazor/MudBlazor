@@ -94,6 +94,6 @@
     <MudOverlay Visible="_openState.Value && !_isTransient"
                 AutoClose
                 OnClosed="CloseMenuAsync"
-                LockScroll="LockScroll"
-                Style="@OverlayStyle" />
+                LockScroll="@LockScroll"
+                Modal="@Modal" />
 </div>

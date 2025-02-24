@@ -4,6 +4,8 @@
 
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.JSInterop;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
@@ -17,6 +19,7 @@ namespace MudBlazor;
 public partial class MudOverlay : MudComponentBase, IAsyncDisposable
 {
     private readonly ParameterState<bool> _visibleState;
+    private DotNetObjectReference<MudOverlay>? _dotNetRef;
 
     protected string Classname =>
         new CssBuilder("mud-overlay")
@@ -33,8 +36,12 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
     protected string Styles =>
         new StyleBuilder()
             .AddStyle("z-index", $"{ZIndex}", ZIndex != 5)
+            .AddStyle("pointer-events", "none", !Modal)
             .AddStyle(Style)
             .Build();
+
+    [Inject]
+    private IJSRuntime JsRuntime { get; set; } = null!;
 
     /// <summary>
     /// The manager for scroll events.
@@ -101,6 +108,16 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
     [Parameter]
     [Category(CategoryTypes.Overlay.Behavior)]
     public string LockScrollClass { get; set; } = "scroll-locked";
+
+    /// <summary>
+    /// Prevents interaction with background elements.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>true</c>.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Overlay.Behavior)]
+    public bool Modal { get; set; } = true;
 
     /// <summary>
     /// Applies the theme's dark overlay color.
@@ -176,7 +193,8 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
         using var registerScope = CreateRegisterScope();
         _visibleState = registerScope.RegisterParameter<bool>(nameof(Visible))
             .WithParameter(() => Visible)
-            .WithEventCallback(() => VisibleChanged);
+            .WithEventCallback(() => VisibleChanged)
+            .WithChangeHandler(OnVisibleChanged);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstTime)
@@ -196,15 +214,41 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
         }
     }
 
+    protected async Task OnVisibleChanged(ParameterChangedEventArgs<bool> args)
+    {
+        if (Modal || !AutoClose || !IsJSRuntimeAvailable)
+        {
+            return;
+        }
+
+        if (_dotNetRef is null)
+            _dotNetRef = DotNetObjectReference.Create(this);
+
+        if (args.Value)
+        {
+            await JsRuntime.InvokeVoidAsync("mudOverlay.listenForMouseDown", _dotNetRef);
+        }
+        else
+        {
+            await JsRuntime.InvokeVoidAsync("mudOverlay.cancelListener");
+        }
+    }
+
     protected internal async Task OnClickHandlerAsync(MouseEventArgs ev)
     {
         if (AutoClose)
         {
-            await _visibleState.SetValueAsync(false);
-            await OnClosed.InvokeAsync();
+            await CloseOverlayAsync();
         }
 
         await OnClick.InvokeAsync(ev);
+    }
+
+    [JSInvokable]
+    public async Task CloseOverlayAsync()
+    {
+        await _visibleState.SetValueAsync(false);
+        await OnClosed.InvokeAsync();
     }
 
     /// <summary>
@@ -228,7 +272,7 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
         if (IsJSRuntimeAvailable)
         {
             return UnblockScrollAsync();
-        }
+            }
 
         return ValueTask.CompletedTask;
     }

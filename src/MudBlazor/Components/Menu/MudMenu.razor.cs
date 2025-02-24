@@ -4,7 +4,6 @@
 
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.JSInterop;
 using MudBlazor.Interfaces;
 using MudBlazor.State;
 using MudBlazor.Utilities;
@@ -18,9 +17,6 @@ namespace MudBlazor
     /// <seealso cref="MudMenuItem" />
     public partial class MudMenu : MudComponentBase, IActivatable, IDisposable
     {
-        [Inject]
-        private IJSRuntime JsRuntime { get; set; } = null!;
-
         private readonly ParameterState<bool> _openState;
         private readonly List<MudMenu> _subMenus = [];
         private (double Top, double Left) _openPosition;
@@ -28,7 +24,6 @@ namespace MudBlazor
         private bool _isTransient;
         private CancellationTokenSource? _hoverCts;
         private CancellationTokenSource? _leaveCts;
-        private DotNetObjectReference<MudMenu>? _dotNetRef;
 
         public MudMenu()
         {
@@ -80,14 +75,6 @@ namespace MudBlazor
             new StyleBuilder()
                 .AddStyle("top", _openPosition.Top.ToPx(), PositionAtCursor)
                 .AddStyle("left", _openPosition.Left.ToPx(), PositionAtCursor)
-                .Build();
-
-        /// <summary>
-        /// Inline styles for the overlay element based on the modal state.
-        /// </summary>
-        protected string OverlayStyle =>
-            new StyleBuilder()
-                .AddStyle("pointer-events", "none", !Modal)
                 .Build();
 
         /// <summary>
@@ -338,7 +325,7 @@ namespace MudBlazor
         public bool DropShadow { get; set; } = true;
 
         /// <summary>
-        /// Prevents interaction with the rest of the page while this menu is open.
+        /// Prevents interaction with background elements while this menu is open.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.
@@ -425,7 +412,6 @@ namespace MudBlazor
         /// <summary>
         /// Closes this menu and any descendants if it's a nested menu.
         /// </summary>
-        [JSInvokable]
         public async Task CloseMenuAsync()
         {
             CancelPendingActions();
@@ -438,11 +424,6 @@ namespace MudBlazor
 
             await _openState.SetValueAsync(false);
             await InvokeAsync(StateHasChanged);
-
-            if (!Modal && _dotNetRef is not null)
-            {
-                await JsRuntime.InvokeVoidAsync("mudMenu.cancelListener", _dotNetRef);
-            }
         }
 
         /// <summary>
@@ -494,16 +475,6 @@ namespace MudBlazor
 
             await _openState.SetValueAsync(true);
             await InvokeAsync(StateHasChanged);
-
-            if (!Modal)
-            {
-                if (_dotNetRef is null)
-                {
-                    _dotNetRef = DotNetObjectReference.Create(this);
-                }
-
-                await JsRuntime.InvokeVoidAsync("mudMenu.listenForMouseDown", _dotNetRef);
-            }
         }
 
         /// <summary>
