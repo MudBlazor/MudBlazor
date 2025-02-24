@@ -2,13 +2,10 @@
   &.mud-input-root {
     font: inherit;
     color: currentColor;
-    max-width: 100%;
     flex: 1 1 auto;
-    min-width: 25%;
     border: 0;
     height: 1lh;
     margin: 0;
-    display: block;
     min-width: 0;
     background: none;
     position: relative;
@@ -40,4 +37,8 @@
   &::-ms-reveal, &::-ms-clear {
     display: none !important;
   }
+}
+
+.mud-combobox-input .mud-combobox-selected-items {
+  max-height: 19px;
 }

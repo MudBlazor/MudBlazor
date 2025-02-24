@@ -63,7 +63,6 @@ namespace MudBlazor
 
         protected string InputClassname => new CssBuilder(MudInputCssHelper.GetInputClassname(this))
             .AddClass("mud-combobox-items", SelectedItemsCount > 0)
-            //.AddClass("mud-visibility-collapse", SelectedItemsCount > 0 && !_openItemListState.Value)
             .AddClass(InputClass)
             .Build();
 
