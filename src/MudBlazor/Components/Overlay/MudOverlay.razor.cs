@@ -272,7 +272,7 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
         if (IsJSRuntimeAvailable)
         {
             return UnblockScrollAsync();
-            }
+        }
 
         return ValueTask.CompletedTask;
     }
