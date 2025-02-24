@@ -2,7 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-class mudOverlay {
+class MudOverlay {
     constructor() {
         this.handlerRef = null;
     }
@@ -33,14 +33,12 @@ class mudOverlay {
         }
 
         overlay.style.pointerEvents = "auto";
-        const _ = overlay.offsetHeight; // Trigger reflow
-        const elementsFromPoint = document.elementsFromPoint(event.clientX, event.clientY);
+        // NOSONAR
+        const _ = overlay.offsetHeight; // Trigger reflow to make sure the style change is applied
+        const topElement = document.elementFromPoint(event.clientX, event.clientY);
         overlay.style.pointerEvents = "none";
-        if (elementsFromPoint.length > 0 && elementsFromPoint[0] === overlay) {
-            return true;
-        }
 
-        return false;
+        return topElement === overlay;
      }
 
     cancelListener() {
@@ -51,4 +49,4 @@ class mudOverlay {
     }
 }
 
-window.mudOverlay = new mudOverlay();
+window.mudOverlay = new MudOverlay();
