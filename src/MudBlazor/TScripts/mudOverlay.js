@@ -5,46 +5,63 @@
 class MudOverlay {
     constructor() {
         this.handlerRef = null;
+        this.map = new Map();
     }
 
-    listenForMouseDown(dotNetReference) {
-        if (this.handlerRef) {
-            this.cancelListener();
-        }
-
-        if (!dotNetReference) {
+    listenForMouseDown(elementId, dotNetReference) {
+        if (!elementId || !dotNetReference) {
             return;
         }
 
-        this.handlerRef = this.mouseDownHandler.bind(this, dotNetReference);
-        document.addEventListener("mousedown", this.handlerRef, false);
-    }
+        this.map.set(elementId, dotNetReference);
 
-    mouseDownHandler(dotNetReference, event) {
-        if (this.isOverlay(event)) {
-            dotNetReference.invokeMethodAsync("CloseOverlayAsync");
+        if (!this.handlerRef) {
+            this.handlerRef = this.mouseDownHandler.bind(this);
+            document.addEventListener("mousedown", this.handlerRef, false);
         }
     }
 
-    isOverlay(event) {
-        const overlay = document.querySelector(".mud-overlay");
-        if (!overlay) {
-            return false;
+    mouseDownHandler(event) {
+        if (this.map.size === 0) {
+            return;
         }
 
-        overlay.style.pointerEvents = "auto";
-        // NOSONAR
-        const _ = overlay.offsetHeight; // Trigger reflow to make sure the style change is applied
-        const topElement = document.elementFromPoint(event.clientX, event.clientY);
-        overlay.style.pointerEvents = "none";
+        const overlayElements = [];
+        for (const id of this.map.keys()) {
+            const element = document.getElementById(id);
+            if (element) {
+                overlayElements.push(element);
+            }
+        }
+        if (overlayElements.length === 0) {
+            return;
+        }
 
-        return topElement === overlay;
-     }
+        // Change style of the passthrough overlay elements to allow pointer events
+        overlayElements.forEach(x => x.style.pointerEvents = "auto");
 
-    cancelListener() {
-        if (this.handlerRef) {
+        // Get the elements from the point of the mouse event
+        const elementsFromPoint = document.elementsFromPoint(event.clientX, event.clientY);
+
+        // Restore the style of the passthrough overlay elements
+        overlayElements.forEach(x => x.style.pointerEvents = "none");
+
+        for (const element of elementsFromPoint) {
+            if (!element.id || !this.map.has(element.id)) {
+                // If the element is not in the map then it should be treated
+                // as a blocking elemenet so we break the loop
+                break;
+            }
+
+            this.map.get(element.id).invokeMethodAsync("CloseOverlayAsync");
+        }
+    }
+
+    cancelListener(elementId) {
+        this.map.delete(elementId);
+        if (this.map.size === 0) {
             document.removeEventListener("mousedown", this.handlerRef);
-            this.handlerRef = null
+            this.handlerRef = null;
         }
     }
 }

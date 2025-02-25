@@ -18,6 +18,7 @@ namespace MudBlazor;
 /// </summary>
 public partial class MudOverlay : MudComponentBase, IAsyncDisposable
 {
+    private readonly string _elementId = Identifier.Create("overlay");
     private readonly ParameterState<bool> _visibleState;
     private DotNetObjectReference<MudOverlay>? _dotNetRef;
 
@@ -36,7 +37,7 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
     protected string Styles =>
         new StyleBuilder()
             .AddStyle("z-index", $"{ZIndex}", ZIndex != 5)
-            .AddStyle("pointer-events", "none", !Modal)
+            .AddStyle("pointer-events-none", !Modal)
             .AddStyle(Style)
             .Build();
 
@@ -226,11 +227,11 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
 
         if (args.Value)
         {
-            await JsRuntime.InvokeVoidAsync("mudOverlay.listenForMouseDown", _dotNetRef);
+            await JsRuntime.InvokeVoidAsync("mudOverlay.listenForMouseDown", _elementId, _dotNetRef);
         }
         else
         {
-            await JsRuntime.InvokeVoidAsync("mudOverlay.cancelListener");
+            await JsRuntime.InvokeVoidAsync("mudOverlay.cancelListener", _elementId);
         }
     }
 
