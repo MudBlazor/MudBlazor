@@ -1,9 +1,10 @@
 ﻿@namespace MudBlazor.Charts
+@using System.Globalization
 @inherits MudCategoryChartBase
 
 <svg @attributes="UserAttributes" class="mud-chart-donut" width="@ParentWidth" height="@ParentHeight" viewBox="0 0 42 42">
     <Filters />
-    <circle class="mud-donut-ring" cx="21" cy="21" r="@(100 / (2 * Math.PI))"></circle>
+    <circle class="mud-donut-ring" cx="21" cy="21" r="@((100 / (2 * Math.PI)).ToString(CultureInfo.InvariantCulture))"></circle>
     @foreach (var item in _circles)
     {
         <circle class="mud-chart-serie mud-donut-segment" @onclick="() => SelectedIndex = item.Index" stroke="@MudChartParent?.ChartOptions.ChartPalette.GetValue(item.Index % MudChartParent.ChartOptions.ChartPalette.Length)"
