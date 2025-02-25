@@ -39,7 +39,8 @@ namespace MudBlazor
                 .WithEventCallback(() => SelectedItemsChanged);
             _openItemListState = registerScope.RegisterParameter<bool>(nameof(OpenItemList))
                 .WithParameter(() => OpenItemList)
-                .WithEventCallback(() => OpenItemListChanged);
+                .WithEventCallback(() => OpenItemListChanged)
+                .WithChangeHandler(OnOpenChanged);
             _isLoadingState = registerScope.RegisterParameter<bool>(nameof(IsLoading))
                 .WithParameter(() => IsLoading)
                 .WithEventCallback(() => IsLoadingChanged);
@@ -220,17 +221,11 @@ namespace MudBlazor
         [Parameter]
         public bool Overlay { get; set; } = true;
 
-        #endregion
-
-        #region Hidden members of MudBaseInput<T>
-
-        #endregion
-
         /// <summary>
-        /// Displays the Clear icon button.
+        /// Displays the Clear icon button. Has no impact if Filterable is not <c>true</c>.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  When <c>true</c>, an icon is displayed which, when clicked, clears the Text and Value.  Use the <c>ClearIcon</c> property to control the Clear button icon.
+        /// Defaults to <c>false</c>.  When <c>true</c>, an icon is displayed which, when clicked, clears the filter Text.  Use the <c>ClearIcon</c> property to control the Clear button icon.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
@@ -261,10 +256,10 @@ namespace MudBlazor
         /// Defaults to <see cref="Icons.Material.Filled.Clear"/>.
         /// </remarks>
         [Parameter]
-        public string ClearIcon { get; set; } = Icons.Material.Filled.Clear;
+        public string ClearIcon { get; set; } = Icons.Material.Filled.Cancel;
 
         /// <summary>
-        /// The "add" Combobox icon.
+        /// The Add Combobox item icon. When OnAddItemClick is defined this icon is shown when the Text property exceeds MinCharacters.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Icons.Material.Filled.AddCircle"/>.
@@ -273,13 +268,54 @@ namespace MudBlazor
         public string AddIcon { get; set; } = Icons.Material.Filled.AddCircle;
 
         /// <summary>
-        /// When <c>true</c> an AddIcon is displayed when custom input does not have an exact match. 
+        /// When this method is defined the AddIcon is shown when the Text property exceeds MinCharacters. When clicked it executes the method.
+        /// </summary>
+        [Parameter]
+        public EventCallback<MouseEventArgs> OnAddItemClick { get; set; }
+
+        /// <summary>
+        /// The maximum number of items to display.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>
+        /// <para>Defaults to <c>10</c>. A value of 0 will display all items.</para>
+        /// <para>Value cannot be less than 0</para>
         /// </remarks>
         [Parameter]
-        public bool CustomInput { get; set; }
+        public int MaxItems
+        {
+            get => _maxItems;
+            set
+            {
+                if (value < 0)
+                    throw new ArgumentOutOfRangeException(nameof(MaxItems), Localizer[Resources.LanguageResource.MudComboBox_MaxItems_Exception]);
+                _maxItems = value;
+            }
+        }
+
+        /// <summary>
+        /// The minimum number of characters typed to initiate a search. 
+        /// <para>The clear and add buttons use this as <c>MinCharacters + 1</c> to display.</para>
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>0</c>.
+        /// </remarks>
+        [Parameter]
+        public int MinCharacters { get; set; }
+
+        /// <summary>
+        /// Always set to the last item of type T when selecting items. Cleared if item is removed even if more items exist.
+        /// </summary>
+        public new T? Value { get; private set; }
+
+        #endregion
+
+        #region Hidden members of MudBaseInput<T> or it's descendants
+
+        private new bool HelperTextOnFocus { get; set; } = false;
+        private new bool Immediate { get; set; } = true;
+        private new EventCallback<T?> ValueChanged { get; set; }
+
+        #endregion
 
         /// <summary>
         /// Sets the point at which the list becomes a BottomSheet encompassing the entire bottom (or top) of the presumed mobile display.
@@ -336,34 +372,6 @@ namespace MudBlazor
         public Func<string?, CancellationToken, Task<IEnumerable<T>>?>? SearchFunc { get; set; }
 
         /// <summary>
-        /// The maximum number of items to display.
-        /// </summary>
-        /// <remarks>
-        /// <para>Defaults to <c>10</c>. A value of 0 will display all items.</para>
-        /// <para>Value cannot be less than 0</para>
-        /// </remarks>
-        [Parameter]
-        public int MaxItems
-        {
-            get => _maxItems;
-            set
-            {
-                if (value < 0)
-                    throw new ArgumentOutOfRangeException(nameof(MaxItems), Localizer[Resources.LanguageResource.MudComboBox_MaxItems_Exception]);
-                _maxItems = value;
-            }
-        }
-
-        /// <summary>
-        /// The minimum number of characters typed to initiate a search.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>0</c>.
-        /// </remarks>
-        [Parameter]
-        public int MinCharacters { get; set; }
-
-        /// <summary>
         /// Reset the selected value if the user deletes the text.
         /// </summary>
         /// <remarks>
@@ -412,11 +420,6 @@ namespace MudBlazor
         [Parameter]
         public bool MultiSelection { get; set; }
 
-        private new bool Immediate { get; set; } = true;
-
-        private new T? Value { get; set; }
-
-        private new EventCallback<T?> ValueChanged { get; set; }
 
         /// <summary>
         /// The currently selected ComboBox items
@@ -532,27 +535,19 @@ namespace MudBlazor
             return $"{_componentId}_item{index}";
         }
 
+        /// <summary>
+        /// Toggles the ComboBox item, if it's not in the list it will be added, if it is in the list it will be removed.
+        /// </summary>
+        /// <param name="item">The item of type <c>T</c> to Toggle.</param>
+        /// <param name="toggleMenu">Whether to toggle the menu open/closed</param>
+        /// <returns></returns>
         public async Task ComboBoxToggleItem(T? item, bool toggleMenu = false)
         {
             if (item == null)
                 return;
 
-            // Toggle Value
-            // if Value != item
-            if (!EqualityComparer<T>.Default.Equals(Value, item))
-            {
-                // set value to item
-                await ValueChanged.InvokeAsync(item);
-                Value = item;
-            }
-            else
-            {
-                // set Value to default
-                Value = default;
-            }
-
             // Toggle SelectedItems to Add if it doesn't exist, remove it if it does.
-            // start by creating a new hashset list to ensure reference updates
+            // start by creating a new hashset list to ensure updates
             var selectedItems = new HashSet<T>(_selectedItemsState.Value ?? []);
 
             // if removing the item is false then add the item
@@ -565,31 +560,57 @@ namespace MudBlazor
                     selectedItems.Clear();
                 }
                 selectedItems.Add(item);
+                // set value to item
+                Value = item;
             }
-
+            else
+            {
+                // set Value to default
+                Value = default;
+            }
+            await SetTextAsync(default, false);
             await _selectedItemsState.SetValueAsync(selectedItems);
             if (toggleMenu)
             {
-                if (_openItemListState.Value)
-                {
-                    await CloseListAsync();
-                }
-                else
-                {
-                    await OpenListAsync();
-                }
+                await ComboBoxToggleListAsync();
             }
             else
                 StateHasChanged();
         }
 
+        public async Task ComboBoxToggleListAsync()
+        {
+            if (_openItemListState.Value)
+            {
+                await CloseListAsync();
+            }
+            else
+            {
+                await OpenListAsync();
+            }
+        }
+
         public async Task OpenListAsync()
         {
-            if (_openItemListState.Value || GetReadOnlyState() || GetDisabledState())
+            // make sure it can be opened
+            if (GetReadOnlyState() || GetDisabledState())
                 return;
 
-            await _openItemListState.SetValueAsync(true);
+            // only set the value if it's not already set
+            if (!_openItemListState.Value)
+                await _openItemListState.SetValueAsync(true);
+
+            // start searching
             await UpdateValuePropertyAsync(false);
+        }
+
+        public Task OnOpenChanged(ParameterChangedEventArgs<bool> args)
+        {
+            if (!args.LastValue)
+            {
+                return OpenListAsync();
+            }
+            return CloseListAsync();
         }
 
         public async Task CloseListAsync()
@@ -684,11 +705,10 @@ namespace MudBlazor
 
         protected override async Task UpdateValuePropertyAsync(bool updateText)
         {
+            // Overridden to give ComboBox specific behavior but still use the _debounce build in
             _debounceTimer?.Dispose();
 
-            if (ResetValueOnEmptyText && string.IsNullOrWhiteSpace(Text))
-                await SetValueAsync(default(T), updateText);
-            else if (Immediate)
+            if (Immediate)
                 await CoerceValueToTextAsync();
 
             if (DebounceInterval <= 0)
@@ -923,21 +943,29 @@ namespace MudBlazor
             }
         }
 
-        private async Task AdornmentClickHandlerAsync(MouseEventArgs args)
+        private Task HandleClearButtonAsync()
         {
-            if (_openItemListState.Value)
+            return SetTextAsync(default, false);
+        }
+
+        internal async Task AdornmentClickHandlerAsync()
+        {
+            if (OnAdornmentClick.HasDelegate)
             {
-                await CloseListAsync();
+
+                await OnAdornmentClick.InvokeAsync();
             }
             else
             {
-                await OpenListAsync();
+                await ComboBoxToggleListAsync();
             }
         }
 
-        private async Task HandleClearButtonAsync()
+        internal async Task AddButtonClickHandlerAsync()
         {
-            await Task.CompletedTask;
+            await OnAddItemClick.InvokeAsync();
+            await CloseListAsync();
+            await SetTextAsync(default, false);
         }
 
         private void CancelToken()
@@ -959,26 +987,9 @@ namespace MudBlazor
             return SetTextAsync(args?.Value as string);
         }
 
-        private bool ShowClearButton()
-        {
-            if (GetDisabledState())
-            {
-                return false;
-            }
+        private bool ShowClearButton => !GetDisabledState() && !GetReadOnlyState() && Clearable && Text?.Length > MinCharacters;
 
-            if (!Clearable)
-            {
-                return false;
-            }
-
-            // If this is a standalone input it will not be clearable when read-only
-            if (SubscribeToParentForm && GetReadOnlyState())
-            {
-                return false;
-            }
-
-            return !string.IsNullOrWhiteSpace(Text);
-        }
+        private bool ShowAddButton => !GetDisabledState() && !GetReadOnlyState() && Text?.Length > MinCharacters && OnAddItemClick.HasDelegate;
 
         private bool ShouldLabelShrink =>
             SelectedItemsCount == 0 &&              // no SelectedItems to Display

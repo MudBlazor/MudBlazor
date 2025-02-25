@@ -459,4 +459,7 @@
   <data name="MudComboBox_MaxItems_Exception" xml:space="preserve">
     <value>Value cannot be less than 0</value>
   </data>
+  <data name="MudInput_Add" xml:space="preserve">
+    <value>Add</value>
+  </data>
 </root>

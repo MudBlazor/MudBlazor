@@ -1,8 +1,22 @@
-.mud-combobox-input > input {
+.mud-combobox {
+  display: flex;
+  flex-grow: 1;
+  position: relative;
+
+  & .mud-input-slot {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
+
+.mud-combobox-input input {
   &.mud-input-root {
     font: inherit;
     color: currentColor;
-    flex: 1 1 auto;
+    width: 100%;
+    min-width: 100px;
+    flex: 1;
     border: 0;
     height: 1lh;
     margin: 0;
@@ -39,13 +53,10 @@
   }
 }
 
-.mud-combobox-input {
-    min-width: 0;
-  &.mud-combobox-selected-items {
-    max-height: 19px;
-    margin: 0px;   
-    padding: 0px 12px;
-  }
+.mud-combobox-selected-items {
+  max-height: 19px;
+  margin: 0px;   
+  padding: 0px 12px;
 }
 
 .mud-combobox--with-progress {

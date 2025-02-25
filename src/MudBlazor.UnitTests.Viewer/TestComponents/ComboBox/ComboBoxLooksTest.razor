@@ -4,68 +4,89 @@
     <MudStack Style="width: 500px">
         @foreach (var variant in Enum.GetValues(typeof(Variant)).Cast<Variant>())
         {
-            <MudStack Row Spacing="4" AlignItems="AlignItems.End">            
-                <MudComboBox @bind-Value="@_value"
-                             Items="@_states"
-                             SearchFunc="Search"
-                             FullWidth
-                             Variant="variant"
-                            Label="@variant.ToString()"
-                             Filterable="_filterable"
-                            MultiSelection="_multiSelection"
-                             @bind-OpenItemList="_openStates[variant]"
-                            @bind-SelectedItems="_selectedItems"
-                            AutoClose="_autoClose"
-                            Margin="@(_dense ? Margin.Dense : Margin.Normal)"
-                            Disabled="_disabled"
-                            ReadOnly="_readonly"
-                            Placeholder="@(_placeholder ? "Placeholder" : null)"
-                            HelperText="@(_helperText ? "Helper Text" : null)"
-                            HelperTextOnFocus="_helperTextOnFocus"
-                            Clearable="_clearable" />
-                <MudSwitch @bind-Value="_openStates[variant]" Label="Open" Color="Color.Primary" />
+            <MudStack Row Spacing="4" AlignItems="AlignItems.End">
+                <MudComboBox @bind-Text="@_value"
+                             Items="@_stateList"
+                SearchFunc="Search"
+                FullWidth
+                Variant="variant"
+                Label="@variant.ToString()"
+                Filterable="_filterable"
+                MultiSelection="_multiSelection"
+                @bind-OpenItemList="_openStates[variant]"
+                @bind-SelectedItems="_selectedItems"
+                             OnAddItemClick="@(_addItem ? EventCallback.Factory.Create<MouseEventArgs>(this, (MouseEventArgs e) => AddItem(e)) : default)"
+                AutoClose="_autoClose"
+                Margin="@(_dense ? Margin.Dense : Margin.Normal)"
+                Disabled="_disabled"
+                ReadOnly="_readonly"
+                Placeholder="@(_placeholder ? "Placeholder" : null)"
+                HelperText="@(_helperText ? "Helper Text" : null)"
+                Clearable="_clearable" />
+                <MudSwitch @bind-Value="_openStates[variant]" Label="Open" Color="Color.Primary" />           
             </MudStack>
         }
         <MudAutocomplete @bind-Value="@_value"
-                         Items="@_states"
-                         SearchFunc="Search"
-                         FullWidth
-                         Variant="Variant.Filled"
-                         Label="@Variant.Filled.ToString()"
-                         Filterable="_filterable"
-                         MultiSelection="_multiSelection"
-                         AutoClose="_autoClose"
-                         Dense="_dense"
-                         Disabled="_disabled"
-                         ReadOnly="_readonly"
-                         Placeholder="@(_placeholder ? "Placeholder" : null)"
-                         HelperText="@(_helperText ? "Helper Text" : null)"
-                         HelperTextOnFocus="_helperTextOnFocus"
-                         Clearable="_clearable" />
+        SearchFunc="Search"
+        FullWidth
+        Variant="Variant.Filled"
+        Label="MudAutoComplete"
+        Dense="_dense"
+        Disabled="_disabled"
+        ReadOnly="_readonly"
+        Placeholder="@(_placeholder ? "Placeholder" : null)"
+        HelperText="@(_helperText ? "Helper Text" : null)"
+        Clearable="_clearable" />
+
+        <MudComboBox     @bind-Text="@_value"
+        @ref="_comboBox"
+        @bind-SelectedItems="_selectedItems"
+                     Items="@_stateList"
+        SearchFunc="Search"
+        FullWidth
+        Variant="Variant.Filled"
+        Label="MudComboBoxWithRef"
+        Filterable="_filterable"
+        MultiSelection="_multiSelection"
+        AutoClose="_autoClose"
+         OnAddItemClick="@(_addItem ? EventCallback.Factory.Create<MouseEventArgs>(this, (MouseEventArgs e) => AddItem(e)) : default)"
+        Margin="_dense ? Margin.Dense : Margin.Normal"
+        Disabled="_disabled"
+        ReadOnly="_readonly"
+        Placeholder="@(_placeholder ? "Placeholder" : null)"
+        HelperText="@(_helperText ? "Helper Text" : null)"
+        Clearable="_clearable" />
+        <MudText>Value: @_comboBox?.Value</MudText>
     </MudStack>
 
     <MudStack>
         <MudSwitch @bind-Value="_dense" Label="Dense" Color="Color.Primary" />
-        <MudSwitch @bind-Value="_readonly" Label="ReadOnly" Color="Color.Primary" />
-        <MudSwitch @bind-Value="_filterable" Label="Filterable" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_readonly" Label="ReadOnly" Color="Color.Primary" />        
         <MudSwitch @bind-Value="_disabled" Label="Disabled" Color="Color.Primary" />
         <MudSwitch @bind-Value="_autoClose" Label="Auto Close" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_multiSelection" Label="MultiSelection" Color="Color.Primary" />
     </MudStack>
 
     <MudStack>
         <MudSwitch @bind-Value="_placeholder" Label="Placeholder" Color="Color.Primary" />
         <MudSwitch @bind-Value="_helperText" Label="HelperText" Color="Color.Primary" />
-        <MudSwitch @bind-Value="_helperTextOnFocus" Label="HelperTextOnFocus" Color="Color.Primary" />
-        <MudSwitch @bind-Value="_clearable" Label="Clearable" Color="Color.Primary" />
-        <MudSwitch @bind-Value="_multiSelection" Label="MultiSelection" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_filterable" Label="Filterable" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_addItem" Label="Add Enable" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_clearable" Label="Clearable" Color="Color.Primary" />        
     </MudStack>
 
 </MudStack>
-
+<!-- 
+    (_addItem ? EventCallback.Factory.Create<MouseEventArgs>(this, AddItem) : EventCallback<MouseEventArgs>.Empty) 
+-->
 @code {
 
     #nullable enable
+
     string _value = string.Empty;
+    string _lastValue = string.Empty;
+
+    bool _addItem;
     bool _dense;
     bool _disabled;
     bool _readonly;
@@ -73,12 +94,13 @@
     bool _filterable;
     bool _placeholder;
     bool _helperText;
-    bool _helperTextOnFocus;
     bool _clearable;
     bool _multiSelection;
-    private readonly Dictionary<Variant, bool> _openStates = new();    
 
+    private readonly Dictionary<Variant, bool> _openStates = new();
+    private List<string> _stateList = new();
     private HashSet<string> _selectedItems = new();
+    private MudComboBox<string>? _comboBox;
 
     protected override void OnInitialized()
     {
@@ -86,6 +108,16 @@
         {
             _openStates[variant] = false; // Initialize each variant's state
         }
+
+        _stateList = _states.ToList();
+    }
+
+    private void AddItem(MouseEventArgs args)
+    {
+        if (string.IsNullOrEmpty(_value))
+            return;
+
+        _stateList.Add(_value);
     }
 
     private async Task<IEnumerable<string>> Search(string value, CancellationToken token)
