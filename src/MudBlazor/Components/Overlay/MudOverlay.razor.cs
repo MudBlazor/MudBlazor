@@ -4,7 +4,6 @@
 
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.JSInterop;
 using MudBlazor.State;
 using MudBlazor.Utilities;
@@ -227,7 +226,7 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
 
         if (args.Value)
         {
-            await JsRuntime.InvokeVoidAsync("mudOverlay.listenForMouseDown", _elementId, _dotNetRef);
+            await JsRuntime.InvokeVoidAsync("mudOverlay.listenForPointerDown", _elementId, _dotNetRef);
         }
         else
         {

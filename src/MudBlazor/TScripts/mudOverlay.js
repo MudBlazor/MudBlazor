@@ -3,29 +3,33 @@
 // See the LICENSE file in the project root for more information.
 
 class MudOverlay {
+    static EVENT_POINTER_DOWN = "pointerdown";
+
     constructor() {
         this.handlerRef = null;
         this.map = new Map();
     }
 
-    listenForMouseDown(elementId, dotNetReference) {
+    listenForPointerDown(elementId, dotNetReference) {
         if (!elementId || !dotNetReference) {
             return;
         }
 
         this.map.set(elementId, dotNetReference);
 
+        // If the event listener is not already attached, attach it.
         if (!this.handlerRef) {
-            this.handlerRef = this.mouseDownHandler.bind(this);
-            document.addEventListener("mousedown", this.handlerRef, false);
+            this.handlerRef = this.pointerDownHandler.bind(this);
+            document.addEventListener(this.EVENT_POINTER_DOWN, this.handlerRef, false);
         }
     }
 
-    mouseDownHandler(event) {
+    pointerDownHandler(event) {
         if (this.map.size === 0) {
             return;
         }
 
+        // Get all the overlay elements we are tracking
         const overlayElements = [];
         for (const id of this.map.keys()) {
             const element = document.getElementById(id);
@@ -33,34 +37,39 @@ class MudOverlay {
                 overlayElements.push(element);
             }
         }
+
         if (overlayElements.length === 0) {
             return;
         }
 
-        // Change style of the passthrough overlay elements to allow pointer events
+        // Set the pointer events of each overlay to auto so they are returned in the elementsFromPoint
         overlayElements.forEach(x => x.style.pointerEvents = "auto");
 
-        // Get the elements from the point of the mouse event
+        // Get the elements directly under the event
         const elementsFromPoint = document.elementsFromPoint(event.clientX, event.clientY);
 
-        // Restore the style of the passthrough overlay elements
+        // Reset the pointer events of each overlay to none
         overlayElements.forEach(x => x.style.pointerEvents = "none");
 
+        // Start checking the topmost element and work our way down
         for (const element of elementsFromPoint) {
+            // If the element is not in the map then it should be treated
+            // as a blocking element, so we break the loop.
             if (!element.id || !this.map.has(element.id)) {
-                // If the element is not in the map then it should be treated
-                // as a blocking elemenet so we break the loop
                 break;
             }
 
+            // Close the overlay. It will unregister itself from the map.
             this.map.get(element.id).invokeMethodAsync("CloseOverlayAsync");
         }
     }
 
     cancelListener(elementId) {
         this.map.delete(elementId);
+
+        // If there are no more elements to track, remove the event listener.
         if (this.map.size === 0) {
-            document.removeEventListener("mousedown", this.handlerRef);
+            document.removeEventListener(this.EVENT_POINTER_DOWN, this.handlerRef);
             this.handlerRef = null;
         }
     }
