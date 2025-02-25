@@ -169,12 +169,6 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
     public EventCallback<MouseEventArgs> OnClick { get; set; }
 
     /// <summary>
-    /// Occurs when the overlay is closing due to <see cref="AutoClose"/>.
-    /// </summary>
-    [Parameter]
-    public EventCallback OnClosing { get; set; }
-
-    /// <summary>
     /// Occurs when the overlay is closed due to <see cref="AutoClose"/>.
     /// </summary>
     [Parameter]
@@ -253,7 +247,6 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
     [JSInvokable]
     public async Task CloseOverlayAsync()
     {
-        await OnClosing.InvokeAsync();
         await _visibleState.SetValueAsync(false);
         await OnClosed.InvokeAsync();
     }
