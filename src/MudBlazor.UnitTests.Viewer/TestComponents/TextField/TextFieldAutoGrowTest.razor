@@ -1,11 +1,11 @@
-<div Style="margin-top:50px">
+﻿<div Style="margin-top:50px">
     Filled without AutoGrow
     <MudTextField T="string" Label="example" Variant="Variant.Filled"/>
 </div>
 
 <div Style="margin-top:50px">
     Filled with AutoGrow
-    <MudTextField T="string" Label="example" Variant="Variant.Filled" AutoGrow/>
+    <MudTextField T="string" Label="example" Variant="Variant.Filled" AutoGrow="_autoGrow"/>
 </div>
 
 <div Style="margin-top:50px">
@@ -15,12 +15,12 @@
 
 <div Style="margin-top:50px">
     Filled , Dense with AutoGrow
-    <MudTextField T="string" Label="example" Margin="Margin.Dense" Variant="Variant.Filled" AutoGrow/>
+    <MudTextField T="string" Label="example" Margin="Margin.Dense" Variant="Variant.Filled" AutoGrow="_autoGrow"/>
 </div>
 
 <div Style="margin-top:50px">
     AutoGrow with MaxLines test
-    <MudTextField T="string" MaxLines="5" Label="example" Variant="Variant.Filled" AutoGrow/>
+    <MudTextField T="string" MaxLines="5" Label="example" Variant="Variant.Filled" AutoGrow="_autoGrow"/>
 </div>
 
 <div Style="margin-top:50px">
@@ -30,7 +30,7 @@
 
 <div Style="margin-top:50px">
     Outlined with AutoGrow
-    <MudTextField T="string" Label="example" Variant="Variant.Outlined" AutoGrow/>
+    <MudTextField T="string" Label="example" Variant="Variant.Outlined" AutoGrow="_autoGrow"/>
 </div>
 
 <div Style="margin-top:50px">
@@ -40,5 +40,11 @@
 
 <div Style="margin-top:50px">
     Outlined , Dense with AutoGrow
-    <MudTextField T="string" Label="example" Margin="Margin.Dense" Variant="Variant.Outlined" AutoGrow/>
+    <MudTextField T="string" Label="example" Margin="Margin.Dense" Variant="Variant.Outlined" AutoGrow="_autoGrow"/>
 </div>
+
+<MudSwitch @bind-Value="_autoGrow">Auto Grow</MudSwitch>
+
+@code {
+    private bool _autoGrow = true;
+}
