@@ -15,7 +15,6 @@ namespace MudBlazor
         private int _filteredTake = 0;
         private bool _activatorEvents;
         private readonly string _componentId = Identifier.Create();
-        private int _maxItems = 10;
 
         private ParameterState<HashSet<T>> _selectedItemsState;
         private ParameterState<bool> _openItemListState;
@@ -353,16 +352,7 @@ namespace MudBlazor
         /// <para>Value cannot be less than 0</para>
         /// </remarks>
         [Parameter]
-        public int MaxItems
-        {
-            get => _maxItems;
-            set
-            {
-                if (value < 0)
-                    throw new ArgumentOutOfRangeException(nameof(MaxItems), Localizer[Resources.LanguageResource.MudComboBox_MaxItems_Exception]);
-                _maxItems = value;
-            }
-        }
+        public int MaxItems { get; set; }
 
         /// <summary>
         /// The minimum number of characters typed to initiate a search.
@@ -428,8 +418,8 @@ namespace MudBlazor
         [Parameter]
         public HashSet<T> SelectedItems { get; set; } = [];
 
-        public int SelectedItemsCount {get => SelectedItems.Count;}
-        
+        public int SelectedItemsCount { get => SelectedItems.Count; }
+
         /// <summary>
         /// Event is fired when the selected items change
         /// </summary>
@@ -520,7 +510,7 @@ namespace MudBlazor
                 }
                 selectedItems.Add(item);
             }
-            
+
             await _selectedItemsState.SetValueAsync(selectedItems);
             if (toggleMenu)
             {

@@ -68,7 +68,7 @@
                                 @foreach (var item in items)
                                 {
                                     var isDisabled = ItemDisabledFunc?.Invoke(item) ?? false;
-                                    var itemContext = new ComboBoxItem<T>(item, true, isDisabled, () => ComboBoxToggleItem(item, AutoClose));
+                                    var itemContext = new ComboBoxItem<T>(item, true, isDisabled, false, () => ComboBoxToggleItem(item, AutoClose));
                                     @if (SelectedItemsTemplate != null)
                                     {
                                         @SelectedItemsTemplate(itemContext)
@@ -130,7 +130,7 @@
                                         var isSelected = _selectedItemsState.Value!.Contains(item);
                                         var isDisabled = ItemDisabledFunc?.Invoke(item) ?? false;
                                         var index = FilteredItems.IndexOf(item);
-                                        var itemContext = new ComboBoxItem<T>(item, isSelected, isDisabled, () => ComboBoxToggleItem(item, AutoClose));
+                                        var itemContext = new ComboBoxItem<T>(item, isSelected, isDisabled, _selectedComboBoxIndex == index, () => ComboBoxToggleItem(item, AutoClose));
                                         @if (ItemTemplate != null)
                                         {
                                             <MudListItem T="T" @key="@index" id="@GetListItemId(index)">

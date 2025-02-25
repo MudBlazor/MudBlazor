@@ -15,7 +15,6 @@ namespace MudBlazor
         private int _filteredTake = 0;
         private bool _activatorEvents;
         private readonly string _componentId = Identifier.Create();
-        private int _maxItems = 10;
 
         private ParameterState<HashSet<T>> _selectedItemsState;
         private ParameterState<bool> _openItemListState;
@@ -74,9 +73,10 @@ namespace MudBlazor
             new CssBuilder("mud-input-clear-button")
                 .Build();
 
-        protected string GetListItemClassname(bool isSelected) =>
+        protected string GetListItemClassname(ComboBoxItem<T> item) =>
             new CssBuilder("mud-combobox-item")
-                .AddClass("mud-selected-item mud-primary-text mud-primary-hover", isSelected)
+                .AddClass("mud-primary-hover", item.IsHovered)
+                .AddClass("mud-selected-item mud-primary-text mud-primary-hover", item.IsSelected)
                 .Build();
 
         /// <summary>
@@ -281,16 +281,7 @@ namespace MudBlazor
         /// <para>Value cannot be less than 0</para>
         /// </remarks>
         [Parameter]
-        public int MaxItems
-        {
-            get => _maxItems;
-            set
-            {
-                if (value < 0)
-                    throw new ArgumentOutOfRangeException(nameof(MaxItems), Localizer[Resources.LanguageResource.MudComboBox_MaxItems_Exception]);
-                _maxItems = value;
-            }
-        }
+        public int MaxItems { get; set; } = 10;
 
         /// <summary>
         /// The minimum number of characters typed to initiate a search. 
@@ -858,7 +849,7 @@ namespace MudBlazor
                 case "ArrowDown":
                     if (open)
                     {
-                        await SelectAdjacentItemAsync(+1);
+                        SelectAdjacentItemAsync(+1);
                     }
                     else
                     {
@@ -876,7 +867,7 @@ namespace MudBlazor
                     }
                     else
                     {
-                        await SelectAdjacentItemAsync(-1);
+                        SelectAdjacentItemAsync(-1);
                     }
                     break;
             }
@@ -918,11 +909,14 @@ namespace MudBlazor
         /// Selects the next or previous enabled item in the list and scrolls to it.
         /// </summary>
         /// <param name="direction">The direction to move, positive for down, negative for up.</param>
-        private async ValueTask SelectAdjacentItemAsync(int direction)
+        private void SelectAdjacentItemAsync(int direction)
         {
             var items = FilteredItems;
+            // list of valid indices that are not disabled and less than the _filteredTake
+            // _filteredTake is set by MaxItems initially and updated during performsearch
             var enabledItemIndices = items.Select((item, index) => (item, index))
-                .Where(x => !ItemDisabledFunc?.Invoke(x.item) ?? true)
+                .Where(x => !ItemDisabledFunc?.Invoke(x.item) ?? true &&
+                            x.index <= _filteredTake)
                 .Select(x => x.index)
                 .ToList();
 
@@ -939,7 +933,6 @@ namespace MudBlazor
             if (newEnabledIndex >= 0 && newEnabledIndex < enabledItemIndices.Count)
             {
                 _selectedComboBoxIndex = enabledItemIndices[newEnabledIndex];
-                await ComboBoxToggleItem(FilteredItems[_selectedComboBoxIndex]);
             }
         }
 
