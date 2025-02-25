@@ -53,7 +53,8 @@
                           ShrinkLabel="@ShrinkLabel"
                           InputId="@InputElementId"
                           Required="@Required">
-                    @if (CanRenderValue) {
+                    @if (CanRenderValue)
+                    {
                         @GetSelectedValuePresenter()
                     }
                 </MudInput>
@@ -70,7 +71,8 @@
                                  Class="@ListClass"
                                  Dense="@Dense"
                                  @bind-SelectedValue="_activeItemId">
-                            @if (MultiSelection && SelectAll) {
+                            @if (MultiSelection && SelectAll)
+                            {
                                 <MudListItem Value="@("__SelectAll__")"
                                              Icon="@SelectAllCheckBoxIcon"
                                              Text="@SelectAllText"
@@ -95,5 +97,19 @@
     </CascadingValue>
 
 </CascadingValue>
-<!-- pointerdown instead of click needed to close the menu before OnLostFocus runs -->
-<MudOverlay Visible="_open" @onpointerdown="@(() => CloseMenu(false))" LockScroll="@LockScroll" />
+@if (Modal)
+{
+    <!-- pointerdown instead of click needed to close the menu before OnLostFocus runs -->
+    <MudOverlay Visible="_open"
+                @onpointerdown="@(() => CloseMenu(false))"
+                LockScroll="@LockScroll"
+                Modal="@Modal" />
+}
+else
+{
+    <MudOverlay Visible="_open"
+                LockScroll="@LockScroll"
+                Modal="@Modal"
+                AutoClose="true"
+                OnClosing="@(() => CloseMenu(false))" />
+}

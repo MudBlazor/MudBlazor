@@ -3,8 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 class MudOverlay {
-    static EVENT_POINTER_DOWN = "pointerdown";
-
     constructor() {
         this.handlerRef = null;
         this.map = new Map();
@@ -20,7 +18,7 @@ class MudOverlay {
         // If the event listener is not already attached, attach it.
         if (!this.handlerRef) {
             this.handlerRef = this.pointerDownHandler.bind(this);
-            document.addEventListener(this.EVENT_POINTER_DOWN, this.handlerRef, false);
+            document.addEventListener("pointerdown", this.handlerRef, false);
         }
     }
 
@@ -69,7 +67,7 @@ class MudOverlay {
 
         // If there are no more elements to track, remove the event listener.
         if (this.map.size === 0) {
-            document.removeEventListener(this.EVENT_POINTER_DOWN, this.handlerRef);
+            document.removeEventListener("pointerdown", this.handlerRef);
             this.handlerRef = null;
         }
     }

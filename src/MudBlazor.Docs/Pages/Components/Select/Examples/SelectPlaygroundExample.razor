@@ -15,7 +15,8 @@
                        Placeholder="@(_placeholder ? "Placeholder" : null)"
                        HelperText="@(_helperText ? "Helper Text" : null)"
                        HelperTextOnFocus="_helperTextOnFocus"
-                       Clearable="_clearable">
+                       Clearable="_clearable"
+                       Modal="_modal">
                 @foreach (var state in _states)
                 {
                     <MudSelectItem Value="state">@state</MudSelectItem>
@@ -39,6 +40,7 @@
         <MudSwitch @bind-Value="_helperText" Label="HelperText" Color="Color.Primary" />
         <MudSwitch @bind-Value="_helperTextOnFocus" Label="HelperTextOnFocus" Color="Color.Primary" />
         <MudSwitch @bind-Value="_clearable" Label="Clearable" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_modal" Label="Modal" Color="Color.Primary" />
     </MudStack>
 </MudStack>
 
@@ -52,6 +54,7 @@
     bool _helperText;
     bool _helperTextOnFocus;
     bool _clearable;
+    bool _modal;
 
     private string[] _states =
     {
