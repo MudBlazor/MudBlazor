@@ -126,11 +126,12 @@ namespace MudBlazor
 
         internal MudRadioGroup<T>? MudRadioGroup => (MudRadioGroup<T>?)IMudRadioGroup;
 
-        internal void SetChecked(bool value)
+        internal async Task SetCheckedAsync(bool value)
         {
             if (Checked != value)
             {
                 Checked = value;
+                await SetBoolValueAsync(value);
                 StateHasChanged();
             }
         }

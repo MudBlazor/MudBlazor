@@ -163,7 +163,7 @@ namespace MudBlazor
 
                 foreach (var item in _radios)
                 {
-                    item.SetChecked(item == _selectedRadio);
+                    await item.SetCheckedAsync(item == _selectedRadio);
                 }
 
                 if (updateOption)
@@ -201,7 +201,7 @@ namespace MudBlazor
         {
             if (_selectedRadio is not null)
             {
-                _selectedRadio.SetChecked(false);
+                await _selectedRadio.SetCheckedAsync(false);
                 _selectedRadio = null;
             }
 
