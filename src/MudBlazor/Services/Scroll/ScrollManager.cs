@@ -44,8 +44,8 @@ internal sealed class ScrollManager : IScrollManager
         _jSRuntime.InvokeVoidAsync("mudScrollManager.scrollToYear", elementId);
 
     /// <inheritdoc />
-    public ValueTask ScrollToListItemAsync(string elementId) =>
-        _jSRuntime.InvokeVoidAsync("mudScrollManager.scrollToListItem", elementId);
+    public ValueTask ScrollToListItemAsync(string elementId, bool forceScroll = true) =>
+        _jSRuntime.InvokeVoidAsync("mudScrollManager.scrollToListItem", elementId, forceScroll);
 
     /// <inheritdoc />
     public ValueTask LockScrollAsync(string selector = "body", string cssClass = "scroll-locked") =>
