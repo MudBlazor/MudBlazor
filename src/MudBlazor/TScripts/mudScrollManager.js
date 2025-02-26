@@ -14,15 +14,32 @@ class MudScrollManager {
 
     // sets the scroll position of the elements container, 
     // to the position of the element with the given element id
-    scrollToListItem(elementId) {
+    // optionally can only scroll if the element is out of view
+    scrollToListItem(elementId, forceScroll) {
         let element = document.getElementById(elementId);
         if (element) {
             let parent = element.parentElement;
             if (parent) {
-                parent.scrollTop = element.offsetTop;
+                let elementTop = element.offsetTop;
+
+                if (forceScroll) {
+                    // Always scroll to the element regardless of visibility
+                    parent.scrollTop = elementTop;
+                } else {
+                    let elementBottom = elementTop + element.offsetHeight;
+                    let parentTop = parent.scrollTop;
+                    let parentBottom = parentTop + parent.clientHeight;
+                    // Only scroll if the element is out of view
+                    if (elementTop < parentTop) {
+                        parent.scrollTop = elementTop; // Scroll up
+                    } else if (elementBottom > parentBottom) {
+                        parent.scrollTop = elementBottom - parent.clientHeight; // Scroll down
+                    }
+                }
             }
         }
     }
+
 
     //scrolls to the selected element. Default is documentElement (i.e., html element)
     scrollTo(selector, left, top, behavior) {
