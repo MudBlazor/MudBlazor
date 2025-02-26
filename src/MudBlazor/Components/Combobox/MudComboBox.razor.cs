@@ -46,6 +46,9 @@ namespace MudBlazor
         }
 
         [Inject]
+        private IScrollManager ScrollManager { get; set; } = null!;
+
+        [Inject]
         private InternalMudLocalizer Localizer { get; set; } = null!;
 
         protected string Classname => new CssBuilder()
@@ -118,7 +121,7 @@ namespace MudBlazor
         public Origin TransformOrigin { get; set; } = Origin.TopLeft;
 
         /// <summary>
-        /// Updates the Value to the currently selected item when pressing the Tab key.
+        /// Updates the Value and SelectedItems to the currently selected item when pressing the Tab key.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -527,11 +530,10 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Toggles the ComboBox item, if it's not in the list it will be added, if it is in the list it will be removed.
+        /// Toggles the ComboBox item, if it's not selected it will be, if it is selected it will be unselected.
         /// </summary>
         /// <param name="item">The item of type <c>T</c> to Toggle.</param>
-        /// <param name="toggleMenu">Whether to toggle the menu open/closed</param>
-        /// <returns></returns>
+        /// <param name="toggleMenu">Whether to toggle the menu open/closed after.</param>
         public async Task ComboBoxToggleItem(T? item, bool toggleMenu = false)
         {
             if (item == null)
@@ -559,8 +561,12 @@ namespace MudBlazor
                 // set Value to default
                 Value = default;
             }
+            // clear text and update Selected Items
             await SetTextAsync(default, false);
             await _selectedItemsState.SetValueAsync(selectedItems);
+            await DebounceTimerDispose();
+            await BeginValidateAsync();
+            // Toggle Menu if it's supposed to (they update StateHasChanged) if not call StateHasChanged manually
             if (toggleMenu)
             {
                 await ComboBoxToggleListAsync();
@@ -569,20 +575,23 @@ namespace MudBlazor
                 StateHasChanged();
         }
 
-        public async Task ComboBoxToggleListAsync()
+        private async Task ComboBoxToggleListAsync()
         {
+            // do not make public, access to two way bind activates accordingly
             if (_openItemListState.Value)
             {
                 await CloseListAsync();
             }
             else
             {
+                await _elementReference.FocusAsync();
                 await OpenListAsync();
             }
         }
 
-        public async Task OpenListAsync()
+        private async Task OpenListAsync()
         {
+            // do not make public, access to two way bind activates accordingly
             // make sure it can be opened
             if (GetReadOnlyState() || GetDisabledState())
                 return;
@@ -592,97 +601,32 @@ namespace MudBlazor
                 await _openItemListState.SetValueAsync(true);
 
             // start searching
-            await UpdateValuePropertyAsync(false);
+            if (DebounceInterval <= 0)
+                await PerformSearchAsync();
+            else
+                _debounceTimer = new Timer(OnDebounceComplete, null, DebounceInterval, Timeout.Infinite);
         }
 
-        public Task OnOpenChanged(ParameterChangedEventArgs<bool> args)
+        private async Task CloseListAsync()
         {
+            // do not make public, access to two way bind activates accordingly
+            if (FilteredItemsCount > 0)
+                await ScrollManager.ScrollToListItemAsync(GetListItemId(0));
+            CancelToken();
+            await DebounceTimerDispose();
+            //await RestoreScrollPositionAsync();
+            await _openItemListState.SetValueAsync(false);
+            StateHasChanged();
+        }
+
+        private Task OnOpenChanged(ParameterChangedEventArgs<bool> args)
+        {
+            // triggers when OpenListItems is toggled by two way bind
             if (!args.LastValue)
             {
                 return OpenListAsync();
             }
             return CloseListAsync();
-        }
-
-        public async Task CloseListAsync()
-        {
-            CancelToken();
-            await DebounceTimerDispose();
-            //await RestoreScrollPositionAsync();
-            //await CoerceTextToValueAsync();
-            await _openItemListState.SetValueAsync(false);
-            StateHasChanged();
-        }
-
-        public async Task OnEnterKeyAsync()
-        {
-            if (!_openItemListState.Value || FilteredItems.Count == 0)
-            {
-                // When Immediate is enabled, then the CoerceValue is set by TextChanged
-                // So only coerce the value on enter when Immediate is disabled
-                if (!Immediate)
-                {
-                    //await CoerceValueToTextAsync();
-                }
-                return;
-            }
-
-            try
-            {
-                if (_selectedComboBoxIndex >= 0 && _selectedComboBoxIndex < FilteredItems.Count)
-                    await SelectOptionAsync(FilteredItems[_selectedComboBoxIndex]);
-            }
-            finally
-            {
-                await CloseListAsync();
-            }
-        }
-
-        public async Task SelectOptionAsync(T value, bool closeList = true)
-        {
-            try
-            {
-                // does item exist in selected list
-                var selectedItems = _selectedItemsState.Value!.ToList();
-                var itemSelected = selectedItems.Contains(value);
-
-                // Toggle the Selected Item
-                await ComboBoxToggleItem(value);
-
-                if (!itemSelected)
-                {
-                    StateHasChanged();
-                    return;
-                }
-
-                // if it's a selection update the Value
-                await SetValueAsync(value);
-
-                // update the current Index
-                _selectedComboBoxIndex = FilteredItems.IndexOf(value);
-
-                // update the default display
-                var setText = string.Join(", ", selectedItems.Select(GetItemString));
-                await SetTextAsync(setText, false);
-
-                await DebounceTimerDispose();
-
-                await BeginValidateAsync();
-
-                //await _elementReference.SetText(setText);
-
-                // We want focus with a closed popover if closeList is true
-                if (closeList)
-                {
-                    await FocusAsync();
-                    await CloseListAsync();
-                }
-            }
-            finally
-            {
-                // And update
-                StateHasChanged();
-            }
         }
 
         private ValueTask DebounceTimerDispose()
@@ -692,31 +636,6 @@ namespace MudBlazor
                 return _debounceTimer.DisposeAsync();
             }
             return ValueTask.CompletedTask;
-        }
-
-        protected override async Task UpdateValuePropertyAsync(bool updateText)
-        {
-            // Overridden to give ComboBox specific behavior but still use the _debounce build in
-            _debounceTimer?.Dispose();
-
-            if (Immediate)
-                await CoerceValueToTextAsync();
-
-            if (DebounceInterval <= 0)
-                await PerformSearchAsync();
-            else
-                _debounceTimer = new Timer(OnDebounceComplete, null, DebounceInterval, Timeout.Infinite);
-        }
-
-        private Task CoerceValueToTextAsync()
-        {
-            if (!CoerceValue)
-                return Task.CompletedTask;
-
-            _debounceTimer?.Dispose();
-
-            var value = Converter.Get(Text);
-            return SetValueAsync(value, updateText: false);
         }
 
         private void OnDebounceComplete(object? stateInfo) => InvokeAsync(PerformSearchAsync);
@@ -849,7 +768,8 @@ namespace MudBlazor
                 case "ArrowDown":
                     if (open)
                     {
-                        SelectAdjacentItemAsync(+1);
+                        await SelectAdjacentItemAsync(+1);
+                        await ScrollToListItemAsync(_selectedComboBoxIndex);
                     }
                     else
                     {
@@ -867,7 +787,8 @@ namespace MudBlazor
                     }
                     else
                     {
-                        SelectAdjacentItemAsync(-1);
+                        await SelectAdjacentItemAsync(-1);
+                        await ScrollToListItemAsync(_selectedComboBoxIndex);
                     }
                     break;
             }
@@ -891,6 +812,9 @@ namespace MudBlazor
                         await OpenListAsync();
                     }
                     break;
+                case "Space":
+                    await ComboBoxToggleListAsync();
+                    break;
                 case "Escape":
                     await CloseListAsync();
                     break;
@@ -905,18 +829,16 @@ namespace MudBlazor
             await base.InvokeKeyUpAsync(args);
         }
 
-        /// <summary>
-        /// Selects the next or previous enabled item in the list and scrolls to it.
-        /// </summary>
+        /// <summary>Selects the next or previous enabled item in the list and scrolls to it.</summary>
         /// <param name="direction">The direction to move, positive for down, negative for up.</param>
-        private void SelectAdjacentItemAsync(int direction)
+        private async ValueTask SelectAdjacentItemAsync(int direction)
         {
             var items = FilteredItems;
             // list of valid indices that are not disabled and less than the _filteredTake
             // _filteredTake is set by MaxItems initially and updated during performsearch
             var enabledItemIndices = items.Select((item, index) => (item, index))
                 .Where(x => !ItemDisabledFunc?.Invoke(x.item) ?? true &&
-                            x.index <= _filteredTake)
+                            x.index < _filteredTake)
                 .Select(x => x.index)
                 .ToList();
 
@@ -929,20 +851,68 @@ namespace MudBlazor
             // Determine the new index based on the direction
             var newEnabledIndex = currentEnabledIndex + direction;
 
-            // Ensure new index is within bounds
-            if (newEnabledIndex >= 0 && newEnabledIndex < enabledItemIndices.Count)
+            // open up additional items and try again if more items exist
+            if (newEnabledIndex == _filteredTake && _filteredTake < items.Count)
             {
-                _selectedComboBoxIndex = enabledItemIndices[newEnabledIndex];
+                NextFilteredPage();
+                await SelectAdjacentItemAsync(direction);
+            }
+            // Ensure new index is in the range in the list.
+            else if (newEnabledIndex >= 0 && newEnabledIndex <= enabledItemIndices.Max(x => x))
+            {
+                if (enabledItemIndices.Contains(newEnabledIndex))
+                    _selectedComboBoxIndex = enabledItemIndices[newEnabledIndex];
+                else
+                    await SelectAdjacentItemAsync(direction); // if in range but not in list it's disabled go to next
+            }
+            else if (newEnabledIndex < 0)
+            {
+                _selectedComboBoxIndex = enabledItemIndices.Max(x => x);
+            }
+            else // start at top
+            {
+                _selectedComboBoxIndex = 0;
             }
         }
 
-        private Task HandleClearButtonAsync()
+        private async Task OnEnterKeyAsync()
+        {
+            // Action that happens when the keyboard events onenter or tab with SelectValueOnTab is true
+            if (!_openItemListState.Value)
+            {
+                await OpenListAsync();
+            }
+            else if (_selectedComboBoxIndex >= 0 && _selectedComboBoxIndex < FilteredItemsCount)
+            {
+                // toggle the item we know it's a valid index and ComboBox doesn't care if it's invalid.
+                await ComboBoxToggleItem(FilteredItems[_selectedComboBoxIndex], AutoClose);
+            }
+        }
+
+        /// <summary>
+        /// Scrolls to the index of FilteredItems when dropdown is open
+        /// </summary>
+        /// <param name="index">The index of the FilteredItems to scroll to</param>
+        /// <returns></returns>
+        public ValueTask ScrollToListItemAsync(int index)
+        {
+            if (!_openItemListState.Value)
+            {
+                return ValueTask.CompletedTask;
+            }
+            var id = GetListItemId(index);
+
+            //id of the scrolled element and scroll if not in view
+            return ScrollManager.ScrollToListItemAsync(id, false);
+        }
+
+        private Task ClearButtonClickHandlerAsync()
         {
             return SetTextAsync(default, false);
         }
 
         internal async Task AdornmentClickHandlerAsync()
-        {
+        {            
             if (OnAdornmentClick.HasDelegate)
             {
 
