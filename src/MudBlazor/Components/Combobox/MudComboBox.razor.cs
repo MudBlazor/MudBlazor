@@ -598,7 +598,11 @@ namespace MudBlazor
 
             // only set the value if it's not already set
             if (!_openItemListState.Value)
+            {
                 await _openItemListState.SetValueAsync(true);
+                if (FilteredItemsCount > 0)
+                    await ScrollManager.ScrollToListItemAsync(GetListItemId(0));
+            }
 
             // start searching
             if (DebounceInterval <= 0)
@@ -610,8 +614,6 @@ namespace MudBlazor
         private async Task CloseListAsync()
         {
             // do not make public, access to two way bind activates accordingly
-            if (FilteredItemsCount > 0)
-                await ScrollManager.ScrollToListItemAsync(GetListItemId(0));
             CancelToken();
             await DebounceTimerDispose();
             //await RestoreScrollPositionAsync();
@@ -912,7 +914,7 @@ namespace MudBlazor
         }
 
         internal async Task AdornmentClickHandlerAsync()
-        {            
+        {
             if (OnAdornmentClick.HasDelegate)
             {
 
