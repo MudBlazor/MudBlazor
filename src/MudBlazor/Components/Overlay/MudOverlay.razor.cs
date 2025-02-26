@@ -274,7 +274,11 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
     /// </summary>
     private ValueTask StartModelessAutoCloseTrackingAsync()
     {
-        _dotNetRef ??= DotNetObjectReference.Create(this);
+        if (_dotNetRef is null)
+        {
+            _dotNetRef = DotNetObjectReference.Create(this);
+        }
+
         return JsRuntime.InvokeVoidAsync("mudOverlay.listenForPointerDown", _elementId, _dotNetRef);
     }
 
