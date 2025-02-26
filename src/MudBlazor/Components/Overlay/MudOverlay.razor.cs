@@ -199,18 +199,23 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
 
     protected override async Task OnAfterRenderAsync(bool firstTime)
     {
-        if (!LockScroll || Absolute)
+        if (LockScroll && !Absolute)
         {
-            return;
+            if (Visible)
+            {
+                await BlockScrollAsync();
+            }
+            else
+            {
+                await UnblockScrollAsync();
+            }
         }
 
-        if (Visible)
+        // If the overlay is initially visible and modeless auto-close is enabled,
+        // then start tracking pointer down events.
+        if (firstTime && Visible && !Modal && AutoClose)
         {
-            await BlockScrollAsync();
-        }
-        else
-        {
-            await UnblockScrollAsync();
+            await StartModelessAutoCloseTrackingAsync();
         }
     }
 
@@ -221,16 +226,13 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
             return;
         }
 
-        if (_dotNetRef is null)
-            _dotNetRef = DotNetObjectReference.Create(this);
-
         if (args.Value)
         {
-            await JsRuntime.InvokeVoidAsync("mudOverlay.listenForPointerDown", _elementId, _dotNetRef);
+            await StartModelessAutoCloseTrackingAsync();
         }
         else
         {
-            await JsRuntime.InvokeVoidAsync("mudOverlay.cancelListener", _elementId);
+            await StopModelessAutoCloseTrackingAsync();
         }
     }
 
@@ -267,13 +269,34 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
         return ScrollManager.UnlockScrollAsync("body", LockScrollClass);
     }
 
-    public ValueTask DisposeAsync()
+    /// <summary>
+    /// Adds and starts the overlay's pointer down event tracking.
+    /// </summary>
+    private ValueTask StartModelessAutoCloseTrackingAsync()
     {
-        if (IsJSRuntimeAvailable)
+        _dotNetRef ??= DotNetObjectReference.Create(this);
+        return JsRuntime.InvokeVoidAsync("mudOverlay.listenForPointerDown", _elementId, _dotNetRef);
+    }
+
+    /// <summary>
+    /// Removes the overlay from the pointer down event tracking.
+    /// </summary>
+    private ValueTask StopModelessAutoCloseTrackingAsync()
+    {
+        return JsRuntime.InvokeVoidAsync("mudOverlay.cancelListener", _elementId);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        _dotNetRef?.Dispose();
+        _dotNetRef = null;
+
+        if (!IsJSRuntimeAvailable)
         {
-            return UnblockScrollAsync();
+            return;
         }
 
-        return ValueTask.CompletedTask;
+        await UnblockScrollAsync();
+        await StopModelessAutoCloseTrackingAsync();
     }
 }
