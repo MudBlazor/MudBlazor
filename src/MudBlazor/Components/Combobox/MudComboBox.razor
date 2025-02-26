@@ -7,19 +7,17 @@
 <!--  TODO: Implement proper FullWidth / FitWidth / Width parameter -->
 <!--  TODO: hide methods inherited that aren't used -->
 <!--  TODO: Finish sorting parameters that have not been verified -->
-<!--  TODO: Line 661 of MudBaseInput throws error on Enter key during keyboard navigation -->
 <!--  TODO: Look at _activatorEvents and improve using Debounce , perhaps have a minimum 50 debounce value -->
 <!--  TODO: Look at the Select/SelectRange methods in this style do we want full selection of text -->
 <!-- Material 3 ComboBox specifications from menu:  https://m3.material.io/components/menus/  -->
-
 <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
     <div class="@ComboBoxClassname">
         <MudField Class="@Classname"
-                  ContentShrink="@(ShouldLabelShrink)"                                    
+                  ContentShrink="@(ShouldLabelShrink)"
                   Disabled="@GetDisabledState()"
                   Error="@HasErrors"
                   FullWidth="@FullWidth"
-                  HelperText="@HelperText"                  
+                  HelperText="@HelperText"
                   Label="@Label"
                   Margin="@Margin"
                   Style="@Style"
@@ -28,7 +26,7 @@
                   Adornment="@Adornment" AdornmentAriaLabel="@AdornmentAriaLabel" OnAdornmentClick="@AdornmentClickHandlerAsync"
                   AdornmentIcon="@GetDropDownIcon" AdornmentColor="@AdornmentColor" AdornmentText="@AdornmentText"
                   @onmousedown="@OnInputClickedAsync">
-                  <!-- TODO SelectedItemsTemplate not SelectedItemTemplate, need it out of the for loop.  -->
+            <!-- TODO SelectedItemsTemplate not SelectedItemTemplate, need it out of the for loop.  -->
             <MudStack Row Wrap="Wrap.Wrap" Class="@($"mud-combobox-input {(Variant == Variant.Filled ? "align-self-end" : "")}")" Spacing="2" AlignItems="AlignItems.Center">
                 @if (SelectedItemsCount > 0)
                 {
@@ -37,16 +35,19 @@
                     {
                         var item = items[i];
                         var isDisabled = ItemDisabledFunc?.Invoke(item) ?? false;
-                        var itemContext = new ComboBoxItem<T>(item, true, isDisabled, false, () => ComboBoxToggleItem(item, false));
+#nullable enable
+                        Func<Task>? task = GetReadOnlyState() || GetDisabledState() ? null : async () => await ComboBoxToggleItem(item, false);
+                        var itemContext = new ComboBoxItem<T>(item, true, isDisabled, false, task);
                         @if (SelectedItemsTemplate != null)
                         {
                             @SelectedItemsTemplate(itemContext)
                         }
                         else
-                        {  <!-- key cannot be an id or index as HashSet has no first, last, or true index -->
-                            <MudChip T="string" @key="@item" Class="mud-combobox-selected-items" Color="Color.Inherit"
-                                     CloseIcon="@Icons.Material.Filled.Cancel" Size="Size.Small" Disabled="@itemContext.IsDisabled"
-                                     OnClose="@itemContext.ToggleSelectedItem" @onmousedown:stopPropagation tabindex="-1">
+                        {
+                            <!-- key cannot be an id or index as HashSet has no first, last, or true index -->
+                            <MudChip T="string" @key="@item" Class="@SelectedChipClassname" 
+                            CloseIcon="@Icons.Material.Filled.Cancel" Size="Size.Small" Disabled="@itemContext.IsDisabled"
+                            OnClose="@itemContext.ToggleSelectedItem" @onmousedown:stopPropagation tabindex="-1">
                                 @GetItemString(itemContext.Item)
                             </MudChip>
                         }
@@ -109,82 +110,84 @@
                     </div>
                 }
             }
-            <!-- TODO look again after overlay bug has been merged -->
-            <!-- Dropdown/Popover for the List and List Items Must be inside MudField or you can't click anywhere in MudField when it's open -->
-            @if (_openItemListState.Value)
-            {
-                <MudPopover Open="true" Class="@PopoverClass" MaxHeight="@MaxHeight"
-                AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin"
-                Fixed="DropdownSettings.Fixed" OverflowBehavior="DropdownSettings.OverflowBehavior"
-                RelativeWidth="@RelativeWidth">
-                    <CascadingValue Value="this">
-                        <MudList Class="mud-combobox-list" T="T" Dense="@(Margin == Margin.Dense ? true : false)">
+        </MudField>
+        <!-- TODO look again after overlay bug has been merged -->
+        <!-- Dropdown/Popover for the List and List Items Must be inside MudField or you can't click anywhere in MudField when it's open -->
+        @if (_openItemListState.Value)
+        {
+            <MudPopover Open="true" Class="@PopoverClass" MaxHeight="@MaxHeight"
+                        AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin"
+                        Fixed="DropdownSettings.Fixed" OverflowBehavior="DropdownSettings.OverflowBehavior"
+                        RelativeWidth="@RelativeWidth">
+                <CascadingValue Value="this">
+                    <MudList Class="mud-combobox-list" T="T" Dense="@(Margin == Margin.Dense ? true : false)">
 
-                            @if (BeforeItemsTemplate is not null)
-                            {
-                                <MudListSubheader>
-                                    <div class="mud-combobox-before-items pa-1">
-                                        @BeforeItemsTemplate
-                                    </div>
-                                </MudListSubheader>
-                            }
+                        @if (BeforeItemsTemplate is not null)
+                        {
+                            <MudListSubheader>
+                                <div class="mud-combobox-before-items pa-1">
+                                    @BeforeItemsTemplate
+                                </div>
+                            </MudListSubheader>
+                        }
 
-                            @if (FilteredItems.Count > 0)
+                        @if (FilteredItems.Count > 0)
+                        {
+                            var displayedItems = FilteredItems.Take(_filteredTake).ToList();
+                            <!-- TODO: Enable Grouping with GroupByFunc? -->
+                            @foreach (var item in displayedItems)
                             {
-                                var displayedItems = FilteredItems.Take(_filteredTake).ToList();
-                                <!-- TODO: Enable Grouping with GroupByFunc? -->
-                                @foreach (var item in displayedItems)
+                                var isSelected = _selectedItemsState.Value!.Contains(item);
+                                var isDisabled = ItemDisabledFunc?.Invoke(item) ?? false;
+                                var index = FilteredItems.IndexOf(item);
+                                var isHovered = index == _selectedComboBoxIndex;
+#nullable enable
+                                Func<Task>? task = GetReadOnlyState() || GetDisabledState() ? null : async () => await ComboBoxToggleItem(item, AutoClose);
+                                var itemContext = new ComboBoxItem<T>(item, isSelected, isDisabled, isHovered, task);
+                                @if (ItemTemplate != null)
                                 {
-                                    var isSelected = _selectedItemsState.Value!.Contains(item);
-                                    var isDisabled = ItemDisabledFunc?.Invoke(item) ?? false;                                    
-                                    var index = FilteredItems.IndexOf(item);
-                                    var isHovered = index == _selectedComboBoxIndex;
-                                    var itemContext = new ComboBoxItem<T>(item, isSelected, isDisabled, isHovered, () => ComboBoxToggleItem(item, AutoClose));
-                                    @if (ItemTemplate != null)
-                                    {
-                                                        <MudListItem T="T" @key="@index" id="@GetListItemId(index)">
-                                            @ItemTemplate(itemContext);
-                                                        </MudListItem>
-                                    }
-                                    else
-                                    {
-                                                        <MudListItem T="T" @key="@index" id="@GetListItemId(index)" Value="@itemContext.Item"
-                                                                     OnClick="@(async () => await itemContext.ToggleSelectedItem())"
-                                                                     OnClickPreventDefault="true"
-                                                                     Disabled="@itemContext.IsDisabled"
-                                                                     Icon="@(itemContext.IsSelected ? Icons.Material.Filled.Check : "")"
-                                                                     Class="@GetListItemClassname(itemContext)">
-                                            @GetItemString(itemContext.Item)
-                                                        </MudListItem>
-                                    }
+                                    <MudListItem T="T" @key="@index" id="@GetListItemId(index)">
+                                        @ItemTemplate(itemContext);
+                                    </MudListItem>
                                 }
-
-                                @if (_filteredTake < FilteredItems.Count)
+                                else
                                 {
-                                                <MudDivider />
-                                                <MudListItem OnClick="NextFilteredPage" Class="mud-underline mud-theme-info">More...</MudListItem>
+                                    <MudListItem T="T" @key="@index" id="@GetListItemId(index)" Value="@itemContext.Item"
+                                                 OnClick="@(async () => await itemContext.ToggleSelectedItem())"
+                                                 OnClickPreventDefault="true"
+                                                 Disabled="@itemContext.IsDisabled"
+                                                 Icon="@(itemContext.IsSelected ? Icons.Material.Filled.Check : "")"
+                                                 Class="@GetListItemClassname(itemContext)">
+                                        @GetItemString(itemContext.Item)
+                                    </MudListItem>
                                 }
                             }
 
-                            @if (NoRecords is not null)
+                            @if (_filteredTake < FilteredItems.Count)
                             {
-                                        <MudListSubheader>
-                                    @NoRecords
-                                        </MudListSubheader>
+                                <MudDivider />
+                                <MudListItem OnClick="NextFilteredPage" Class="mud-underline mud-theme-info">More...</MudListItem>
                             }
+                        }
 
-                            </MudList>
-                        </CascadingValue>
-                    </MudPopover>
-            }
-        </MudField>   
+                        @if (NoRecords is not null)
+                        {
+                            <MudListSubheader>
+                                @NoRecords
+                            </MudListSubheader>
+                        }
+
+                    </MudList>
+                </CascadingValue>
+            </MudPopover>
+        }
     </div>
 </CascadingValue>
 
 <!-- Overlay for the Popover, optional -->
 @if (Overlay && _openItemListState.Value)
 {
-        <MudOverlay Visible="@true" AutoClose="true" OnClick="@(async () => await CloseListAsync())"></MudOverlay>
+    <MudOverlay Visible="@true" AutoClose="true" OnClick="@(async () => await CloseListAsync())"></MudOverlay>
 }
 
 @*         <MudInputControl 

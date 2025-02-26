@@ -52,6 +52,7 @@ namespace MudBlazor
         private InternalMudLocalizer Localizer { get; set; } = null!;
 
         protected string Classname => new CssBuilder()
+            .AddClass($"mud-theme-{Color.ToDescriptionString()}")
             .AddClass("mud-combobox--with-progress", ShowProgressIndicator && IsLoading)
             .AddClass("mud-autocomplete--with-progress", ShowProgressIndicator && IsLoading)
             .AddClass(Class)
@@ -67,6 +68,10 @@ namespace MudBlazor
             .AddClass(InputClass)
             .Build();
 
+        protected string SelectedChipClassname => new CssBuilder("mud-combobox-selected-items")
+            .AddClass($"mud-theme-{Color.ToDescriptionString()}")
+            .Build();
+
         protected string CircularProgressClassname =>
             new CssBuilder("progress-indicator-circular")
                 .AddClass("progress-indicator-circular--with-adornment", Adornment == Adornment.End)
@@ -78,8 +83,8 @@ namespace MudBlazor
 
         protected string GetListItemClassname(ComboBoxItem<T> item) =>
             new CssBuilder("mud-combobox-item")
-                .AddClass("mud-primary-hover", item.IsHovered)
-                .AddClass("mud-selected-item mud-primary-text mud-primary-hover", item.IsSelected)
+                .AddClass(GetThemeHover, item.IsHovered)
+                .AddClass($"mud-selected-item mud-{Color.ToDescriptionString()}-text", item.IsSelected) // mud-primary-hover
                 .Build();
 
         /// <summary>
@@ -143,6 +148,7 @@ namespace MudBlazor
         /// <summary>
         /// Whether the OpenList closes when an item is Selected via ComboBoxToggleItem
         /// </summary>
+        /// <remarks>Defaults to <c>true</c>.</remarks>
         [Parameter]
         public bool AutoClose { get; set; } = true;
 
@@ -310,6 +316,12 @@ namespace MudBlazor
         private new EventCallback<T?> ValueChanged { get; set; }
 
         #endregion
+
+        /// <summary>
+        /// The theming of the component
+        /// </summary>
+        [Parameter]
+        public Color Color { get; set; } = Color.Primary;
 
         /// <summary>
         /// Sets the point at which the list becomes a BottomSheet encompassing the entire bottom (or top) of the presumed mobile display.
@@ -487,7 +499,7 @@ namespace MudBlazor
         /// <summary>
         /// The list of items filtered
         /// </summary>
-        public List<T> FilteredItems { get; private set; } = [];
+        public IList<T> FilteredItems { get; private set; } = [];
 
         /// <summary>
         /// The number of items currently filtered
@@ -498,7 +510,7 @@ namespace MudBlazor
         /// The list of items to display in the ComboBox, the ToString method is used for display
         /// </summary>
         [Parameter]
-        public IEnumerable<T> Items { get; set; } = [];
+        public IReadOnlyCollection<T> Items { get; set; } = [];
 
         /// <summary>
         /// The number of items
@@ -971,5 +983,23 @@ namespace MudBlazor
         protected object? GetAutocomplete() => UserAttributes.GetValueOrDefault("autocomplete", "off");
 
         private string GetDropDownIcon => _openItemListState.Value ? CloseIcon : OpenIcon;
+
+        private string GetThemeHover => Color is not Color.Default and not Color.Inherit and not Color.Transparent
+                                        ? $"mud-{Color.ToDescriptionString()}-hover" : "mud-dark-hover";
+
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+
+            if (typeof(T).IsEnum)
+            {
+                Items = Enum.GetValues(typeof(T))
+                            .Cast<T>()
+                            .ToList()
+                            .AsReadOnly();
+
+                ToStringFunc = value => value?.ToString();
+            }
+        }
     }
 }
