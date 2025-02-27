@@ -14,8 +14,6 @@ namespace MudBlazor
     /// </summary>
     public abstract class MudTableBase : MudComponentBase
     {
-        private int _rowsQuantity;
-        private int _cellsQuantity;
         private int _currentPage = 0;
         private bool _isFirstRendered = false;
         internal int? _rowsPerPage;
@@ -109,7 +107,7 @@ namespace MudBlazor
         public bool Dense { get; set; }
 
         /// <summary>
-        /// The CSS classes to apply to the cell.
+        /// The CSS classes applied to all cells of the table.
         /// </summary>
         /// <remarks>
         /// Multiple classes must be separated by spaces.
@@ -780,21 +778,5 @@ namespace MudBlazor
         /// Defaults to a new <see cref="TableRowValidator"/>.
         /// </remarks>
         public Interfaces.IForm Validator { get; set; } = new TableRowValidator();
-
-        internal void IncreaseCellsQuantity()
-        {
-            _cellsQuantity++;
-        }
-
-        internal void SetRowsQuantity(int rowIndex)
-        {
-            _rowsQuantity = rowIndex;
-        }
-
-        internal int GetRowsQuantity() => _rowsQuantity;
-
-        internal int GetCellsQuantity() => _cellsQuantity;
-
-        public abstract string GetCellClassFunc();
     }
 }

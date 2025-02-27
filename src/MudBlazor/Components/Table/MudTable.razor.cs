@@ -19,7 +19,6 @@ namespace MudBlazor
     /// <typeparam name="T">The type of item displayed in this table.</typeparam>
     public partial class MudTable<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] T> : MudTableBase, IDisposable
     {
-        private int _cellIndex;
         private T? _selectedItem;
         private IEnumerable<T>? _items;
         private IEnumerable<T>? _preEditSort;
@@ -64,16 +63,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Table.Editing)]
         public RenderFragment<T>? RowEditingTemplate { get; set; }
-
-        /// <summary>
-        /// The function used to determine CSS classes for this cell.
-        /// </summary>
-        /// <remarks>
-        /// Multiple classes must be separated by spaces.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.Table.Appearance)]
-        public Func<T, int, int, string>? CellClassFunc { get; set; }
 
         /// <summary>
         /// The function which determines if a row can be edited.
@@ -771,32 +760,6 @@ namespace MudBlazor
         {
             _currentRenderFilteredItemsCached = false;
             return "";
-        }
-
-        public override string GetCellClassFunc()
-        {
-            if (CellClassFunc is not null && Context?.Table is not null &&
-                !Virtualize && GroupBy is null &&
-                Items is not null && Context.Table.GetRowsQuantity() != 0 &&
-                !CustomHeader && FooterContent is null && !MultiSelection)
-            {
-                var columnsCount = Context.Table.GetCellsQuantity() / Context.Table.GetRowsQuantity();
-                var columnIndex = _cellIndex % columnsCount;
-                var rowIndex = _cellIndex / columnsCount;
-
-                if (_cellIndex == Context.Table.GetCellsQuantity() - 1)
-                {
-                    _cellIndex = 0;
-                }
-                else
-                {
-                    _cellIndex++;
-                }
-
-                return CellClassFunc.Invoke(Items.ElementAt(rowIndex), columnIndex, rowIndex);
-            }
-
-            return string.Empty;
         }
 
         /// <summary>
