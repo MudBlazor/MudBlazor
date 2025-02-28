@@ -81,7 +81,7 @@ namespace MudBlazor
         {
             base.OnAfterRender(firstRender);
 
-            if (firstRender && Expanded)
+            if (firstRender && _expandedState.Value)
             {
                 _state = CollapseState.Entered;
                 StateHasChanged();
