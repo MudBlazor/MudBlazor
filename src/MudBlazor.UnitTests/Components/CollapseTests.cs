@@ -5,10 +5,8 @@
 using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
-using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.Collapse;
 using NUnit.Framework;
-using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -19,6 +17,10 @@ namespace MudBlazor.UnitTests.Components
         public void Collapse_TwoWayBinding_Test1()
         {
             var comp = Context.RenderComponent<CollapseBindingTest>();
+            var collapse = comp.FindComponent<MudCollapse>();
+
+            collapse.Markup.Should().Contain("mud-collapse-entered");
+
             IElement Button() => comp.Find("#outside_btn");
 
             IRenderedComponent<MudSwitch<bool>> MudSwitch() => comp.FindComponent<MudSwitch<bool>>();
