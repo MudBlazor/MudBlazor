@@ -20,31 +20,42 @@ namespace MudBlazor
         public TimeSpan TimeLabelSpacing { get; set; } = TimeSpan.FromMinutes(5);
 
         /// <summary>
-        /// A way to have the timestamp labels be rounded to the nearest spacing value. Default is false.
+        /// Determines whether timestamp labels should be rounded to the nearest spacing value. 
         /// </summary>
+        /// <remarks>
+        /// Default is <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Chart.Behavior)]
         public bool TimeLabelSpacingRounding { get; set; }
 
         /// <summary>
-        /// When TimeLabelSpacingRounding is true, 
-        /// When true: pad series to allow rounding with labels before and after the series start/end.
-        /// When false: move the labels inwards to be rounded to the label spacing without changing the start/end time of the axis.
+        /// Determines how timestamp labels are adjusted when <see cref="TimeLabelSpacingRounding"/> is enabled.
         /// </summary>
+        /// <remarks>
+        /// When <c>true</c>, the series is padded to allow rounding with labels before and after the series start and end.
+        /// When <c>false</c>, labels are moved inward to align with the label spacing without altering the axis start and end times.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Chart.Behavior)]
         public bool TimeLabelSpacingRoundingPadSeries { get; set; }
 
         /// <summary>
-        /// A way to specify datetime formats for timestamp labels, default of HH:mm.
+        /// Specifies the datetime format for timestamp labels. 
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>"HH:mm"</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Chart.Behavior)]
         public string TimeLabelFormat { get; set; } = "HH:mm";
 
         /// <summary>
-        /// A way to specify datetime formats for timestamp labels used in datapoint marker labels, default of HH:mm.
+        /// Specifies the DateTime format for Timestamp labels in DataPoint marker tooltips. 
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>"HH:mm"</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Chart.Behavior)]
         public string DataMarkerTooltipTimeLabelFormat { get; set; } = "HH:mm";
@@ -64,7 +75,7 @@ namespace MudBlazor
         public string? YAxisTitle { get; set; }
 
         /// <summary>
-        /// Specifies the chart should take its bounds from the parent chart.
+        /// Determines if the chart should derive its bounds from the parent chart.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Chart.Behavior)]

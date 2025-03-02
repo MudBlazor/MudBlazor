@@ -23,7 +23,7 @@ public abstract class MudChartBase : MudComponentBase
     public ChartOptions ChartOptions { get; set; } = new();
 
     /// <summary>
-    /// Display options applied to the chart specific to Axis charts.
+    /// Display options for axis-based charts.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Chart.Appearance)]
