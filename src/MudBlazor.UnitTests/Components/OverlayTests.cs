@@ -1,6 +1,8 @@
 ﻿using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using MudBlazor.UnitTests.TestComponents.Overlay;
 using NUnit.Framework;
 
@@ -252,5 +254,68 @@ public class OverlayTests : BunitTest
         );
 
         comp.Find("div.child-content").TextContent.Should().Be("Hello World");
+    }
+
+    [Test]
+    [TestCase(true, true, false, true)]
+    [TestCase(true, false, false, false)]
+    [TestCase(true, false, true, false)]
+    [TestCase(true, true, true, false)]
+    [TestCase(false, true, false, false)]
+    [TestCase(false, false, false, false)]
+    [TestCase(false, false, true, false)]
+    [TestCase(false, true, true, false)]
+    public void CallsCreateOnPointerDownListenerFactoryWhenExpected(bool visible, bool autoClose, bool modal, bool callsCreate)
+    {
+        Context.Services.Remove(ServiceDescriptor.Scoped<IOverlayPointerDownListenerFactory, OverlayPointerDownListenerFactory>());
+        var factoryMock = new Mock<IOverlayPointerDownListenerFactory>();
+        var listenerMock = new Mock<IOverlayPointerDownListener>();
+        factoryMock
+            .Setup(s => s.Create(It.IsAny<string>()))
+            .Returns(listenerMock.Object)
+            .Verifiable();
+
+        Context.Services.AddScoped(_ => factoryMock.Object);
+        var comp = Context.RenderComponent<MudOverlay>(parameters => parameters
+            .Add(p => p.Visible, visible)
+            .Add(p => p.AutoClose, autoClose)
+            .Add(p => p.Modal, modal)
+        );
+
+        factoryMock.Verify(s => s.Create(It.IsAny<string>()), callsCreate ? Times.Once() : Times.Never());
+    }
+
+    [Test]
+    [TestCase(true, true, false, true)]
+    [TestCase(true, false, false, false)]
+    [TestCase(true, false, true, false)]
+    [TestCase(true, true, true, false)]
+    [TestCase(false, true, false, false)]
+    [TestCase(false, false, false, false)]
+    [TestCase(false, false, true, false)]
+    [TestCase(false, true, true, false)]
+    public void CallsStartOnPointerDownListenerWhenExpected(bool visible, bool autoClose, bool modal, bool callsStart)
+    {
+        Context.Services.Remove(ServiceDescriptor.Scoped<IOverlayPointerDownListenerFactory, OverlayPointerDownListenerFactory>());
+        var factoryMock = new Mock<IOverlayPointerDownListenerFactory>();
+        var listenerMock = new Mock<IOverlayPointerDownListener>();
+        factoryMock
+            .Setup(s => s.Create(It.IsAny<string>()))
+            .Returns(listenerMock.Object);
+        listenerMock.Setup(s => s.StartAsync())
+            .ReturnsAsync(true)
+            .Verifiable();
+        listenerMock.Setup(s => s.StopAsync())
+            .ReturnsAsync(true)
+            .Verifiable();
+        Context.Services.AddScoped(_ => factoryMock.Object);
+
+        var providerComp = Context.RenderComponent<MudPopoverProvider>();
+        var comp = Context.RenderComponent<MudOverlay>(parameters => parameters
+            .Add(p => p.Visible, visible)
+            .Add(p => p.AutoClose, autoClose)
+            .Add(p => p.Modal, modal)
+        );
+        listenerMock.Verify(s => s.StartAsync(), callsStart ? Times.Once() : Times.Never());
     }
 }
