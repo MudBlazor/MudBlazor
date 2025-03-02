@@ -35,7 +35,7 @@ internal sealed class OverlayPointerDownListener : IOverlayPointerDownListener
             _dotNetRef ??= DotNetObjectReference.Create(this);
             _started = await _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudOverlay.listenForPointerDown", _elementId, _dotNetRef);
         }
-        
+
         return _started;
     }
 
