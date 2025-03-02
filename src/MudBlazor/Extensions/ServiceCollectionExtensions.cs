@@ -236,6 +236,16 @@ namespace MudBlazor.Services
         }
 
         /// <summary>
+        /// Adds an IOverlayPointerDownListener as a scoped dependency.
+        /// </summary>
+        /// <param name="services">IServiceCollection</param>
+        public static IServiceCollection AddMudBlazorOverlayPointerDownListenerFactory(this IServiceCollection services)
+        {
+            services.TryAddScoped<IOverlayPointerDownListenerFactory, OverlayPointerDownListenerFactory>();
+            return services;
+        }
+
+        /// <summary>
         /// Adds the services required for translations.
         /// </summary>
         /// <param name="services">IServiceCollection</param>
@@ -324,6 +334,7 @@ namespace MudBlazor.Services
                 .AddMudBlazorScrollSpy()
                 .AddMudPopoverService()
                 .AddMudEventManager()
+                .AddMudBlazorOverlayPointerDownListenerFactory()
                 .AddMudLocalization();
         }
 
@@ -399,6 +410,7 @@ namespace MudBlazor.Services
                 })
                 .AddMudBlazorScrollSpy()
                 .AddMudEventManager()
+                .AddMudBlazorOverlayPointerDownListenerFactory()
                 .AddMudLocalization();
         }
 

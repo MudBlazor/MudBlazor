@@ -151,6 +151,37 @@ public class OverlayTests : BunitTest
     }
 
     [Test]
+    [TestCase(true)]
+    [TestCase(false)]
+    public void ShouldApplyCorrectPointerEvents(bool modal)
+    {
+        var providerComp = Context.RenderComponent<MudPopoverProvider>();
+        var comp = Context.RenderComponent<MudOverlay>(parameters => parameters
+            .Add(p => p.Visible, true)
+            .Add(p => p.Modal, modal)
+        );
+
+        if (modal)
+        {
+            providerComp.Find("div.mud-overlay").Attributes["style"].Value.Should().NotContain("pointer-events:none");
+        }
+        else
+        {
+            providerComp.Find("div.mud-overlay").Attributes["style"].Value.Should().Contain("pointer-events:none");
+        }
+    }
+
+    [Test]
+    public void ShouldHaveId()
+    {
+        var providerComp = Context.RenderComponent<MudPopoverProvider>();
+        var comp = Context.RenderComponent<MudOverlay>(parameters => parameters
+            .Add(p => p.Visible, true)
+        );
+        providerComp.Find("div.mud-overlay").Attributes["id"].Value.Should().NotBeNullOrEmpty();
+    }
+
+    [Test]
     [TestCase(true, "", false, 0)] // Absolute is true
     [TestCase(false, "mud-skip-overlay-section", false, 1)] // Dialog
     [TestCase(false, "", true, 3)]  // Child content

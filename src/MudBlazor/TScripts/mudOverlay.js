@@ -58,7 +58,7 @@ class MudOverlay {
             }
 
             // Close the overlay. It will unregister itself from the map.
-            this.map.get(element.id).invokeMethodAsync("CloseOverlayAsync");
+            this.map.get(element.id).invokeMethodAsync("RaiseOnPointerDown");
         }
     }
 

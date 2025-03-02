@@ -378,6 +378,21 @@ public class ServiceCollectionExtensionsTests
     }
 
     [Test]
+    public void AddMudBlazorOverlayPointerDownListenerFactory_ShouldRegisterServices()
+    {
+        // Arrange
+        var services = new ServiceCollection();
+
+        // Act
+        services.AddMudBlazorOverlayPointerDownListenerFactory();
+        var serviceProvider = services.BuildServiceProvider();
+        var overlayPointerDownListenerFactory = serviceProvider.GetService<IOverlayPointerDownListenerFactory>();
+
+        // Assert
+        overlayPointerDownListenerFactory.Should().NotBeNull();
+    }
+
+    [Test]
     public void AddMudLocalization_ShouldRegisterServices()
     {
         // Arrange
