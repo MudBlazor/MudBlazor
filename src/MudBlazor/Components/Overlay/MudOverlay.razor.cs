@@ -20,7 +20,6 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
 {
     private readonly string _elementId = Identifier.Create("overlay");
     private readonly ParameterState<bool> _visibleState;
-    private readonly ParameterState<bool> _autoCloseState;
     private IOverlayPointerDownListener? _pointerDownListener;
 
     protected string Classname =>
@@ -209,12 +208,7 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
         using var registerScope = CreateRegisterScope();
         _visibleState = registerScope.RegisterParameter<bool>(nameof(Visible))
             .WithParameter(() => Visible)
-            .WithEventCallback(() => VisibleChanged)
-            .WithChangeHandler(OnVisibleChanged);
-        _autoCloseState = registerScope.RegisterParameter<bool>(nameof(AutoClose))
-            .WithParameter(() => AutoClose)
-            .WithEventCallback(() => AutoCloseChanged)
-            .WithChangeHandler(OnAutoCloseChanged);
+            .WithEventCallback(() => VisibleChanged);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstTime)
@@ -239,31 +233,14 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
         }
     }
 
-    protected async Task OnVisibleChanged(ParameterChangedEventArgs<bool> args)
+    protected override async Task OnParametersSetAsync()
     {
-        if (Modal || !AutoClose || !IsJSRuntimeAvailable)
+        if (!IsJSRuntimeAvailable)
         {
             return;
         }
 
-        if (args.Value)
-        {
-            await StartModelessAutoCloseTrackingAsync();
-        }
-        else
-        {
-            await StopModelessAutoCloseTrackingAsync();
-        }
-    }
-
-    protected async Task OnAutoCloseChanged(ParameterChangedEventArgs<bool> args)
-    {
-        if (Modal || !Visible || !IsJSRuntimeAvailable)
-        {
-            return;
-        }
-
-        if (args.Value)
+        if (Visible && !Modal && AutoClose)
         {
             await StartModelessAutoCloseTrackingAsync();
         }
@@ -326,11 +303,6 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
     /// <param name="e"></param>
     private async void PointerDownListener_OnPointerDown(object? sender, EventArgs e)
     {
-        if (!AutoClose)
-        {
-            return;
-        }
-
         await CloseOverlayAsync();
     }
 

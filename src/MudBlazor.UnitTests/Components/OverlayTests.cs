@@ -274,8 +274,8 @@ public class OverlayTests : BunitTest
             .Setup(s => s.Create(It.IsAny<string>()))
             .Returns(listenerMock.Object)
             .Verifiable();
-
         Context.Services.AddScoped(_ => factoryMock.Object);
+
         var comp = Context.RenderComponent<MudOverlay>(parameters => parameters
             .Add(p => p.Visible, visible)
             .Add(p => p.AutoClose, autoClose)
@@ -310,12 +310,12 @@ public class OverlayTests : BunitTest
             .Verifiable();
         Context.Services.AddScoped(_ => factoryMock.Object);
 
-        var providerComp = Context.RenderComponent<MudPopoverProvider>();
         var comp = Context.RenderComponent<MudOverlay>(parameters => parameters
             .Add(p => p.Visible, visible)
             .Add(p => p.AutoClose, autoClose)
             .Add(p => p.Modal, modal)
         );
+
         listenerMock.Verify(s => s.StartAsync(), callsStart ? Times.Once() : Times.Never());
     }
 }

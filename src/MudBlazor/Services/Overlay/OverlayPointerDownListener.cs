@@ -13,6 +13,7 @@ internal sealed class OverlayPointerDownListener : IOverlayPointerDownListener
 {
     private readonly string _elementId;
     private readonly IJSRuntime _jsRuntime;
+    private bool _started;
     private bool _disposed;
     private DotNetObjectReference<OverlayPointerDownListener>? _dotNetRef;
 
@@ -25,19 +26,29 @@ internal sealed class OverlayPointerDownListener : IOverlayPointerDownListener
         _jsRuntime = jsRuntime;
     }
 
-    public ValueTask<bool> StartAsync()
+    public async ValueTask<bool> StartAsync()
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
 
-        _dotNetRef ??= DotNetObjectReference.Create(this);
-        return _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudOverlay.listenForPointerDown", _elementId, _dotNetRef);
+        if (!_started)
+        {
+            _dotNetRef ??= DotNetObjectReference.Create(this);
+            _started = await _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudOverlay.listenForPointerDown", _elementId, _dotNetRef);
+        }
+        
+        return _started;
     }
 
-    public ValueTask<bool> StopAsync()
+    public async ValueTask<bool> StopAsync()
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
 
-        return _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudOverlay.cancelListener", _elementId);
+        if (_started)
+        {
+            _started = !await _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudOverlay.cancelListener", _elementId);
+        }
+
+        return !_started;
     }
 
     [JSInvokable]
