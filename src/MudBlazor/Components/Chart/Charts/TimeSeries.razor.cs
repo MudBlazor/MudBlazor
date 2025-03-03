@@ -17,7 +17,7 @@ namespace MudBlazor.Charts
     /// <seealso cref="Line"/>
     /// <seealso cref="Pie"/>
     /// <seealso cref="StackedBar"/>
-    partial class TimeSeries : MudTimeSeriesChartBase
+    partial class TimeSeries : MudTimeSeriesChartBase, IDisposable
     {
         private const double Epsilon = 1e-6;
         private const double BoundWidthDefault = 800;
@@ -54,7 +54,7 @@ namespace MudBlazor.Charts
         private DateTime _minDateTime;
         private DateTime _maxDateTime;
         private TimeSpan _minDateLabelOffset;
-        private DotNetObjectReference<TimeSeries>? _dotNetObjectReference;
+        private DotNetObjectReference<TimeSeries> _dotNetObjectReference;
         private ElementReference _elementReference;
 
         public TimeSeries()
@@ -462,6 +462,17 @@ namespace MudBlazor.Charts
         {
             _hoveredDataPoint = null;
             _hoverDataPointChartLine = null;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            _dotNetObjectReference.Dispose();
         }
     }
 }
