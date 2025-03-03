@@ -50,7 +50,7 @@ public partial class ChartTooltip : ComponentBase
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await base.OnAfterRenderAsync(firstRender);
-        
+
         if (firstRender)
         {
             // Uses interop to get the bounding box of the title text to determine the width of the tooltip box
