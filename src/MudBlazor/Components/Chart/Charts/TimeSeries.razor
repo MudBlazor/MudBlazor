@@ -109,14 +109,14 @@
         if (!string.IsNullOrWhiteSpace(series.DataMarkerTooltipTitleFormat))
         {
             var tooltipTitle = series.DataMarkerTooltipTitleFormat
-            .Replace("{{SERIES_NAME}}", series.Name)
-            .Replace("{{X_VALUE}}", _hoveredDataPoint.LabelXValue)
-            .Replace("{{Y_VALUE}}", _hoveredDataPoint.LabelYValue);
+                .Replace("{{SERIES_NAME}}", series.Name)
+                .Replace("{{X_VALUE}}", _hoveredDataPoint.LabelXValue)
+                .Replace("{{Y_VALUE}}", _hoveredDataPoint.LabelYValue);
 
             var tooltipSubtitle = series.DataMarkerTooltipSubtitleFormat?
-            .Replace("{{SERIES_NAME}}", series.Name)
-            .Replace("{{X_VALUE}}", _hoveredDataPoint.LabelXValue)
-            .Replace("{{Y_VALUE}}", _hoveredDataPoint.LabelYValue) ?? string.Empty;
+                .Replace("{{SERIES_NAME}}", series.Name)
+                .Replace("{{X_VALUE}}", _hoveredDataPoint.LabelXValue)
+                .Replace("{{Y_VALUE}}", _hoveredDataPoint.LabelYValue) ?? string.Empty;
 
             <ChartTooltip Title="@tooltipTitle" Subtitle="@tooltipSubtitle" Color="@color" X="_hoveredDataPoint.LabelX" Y="_hoveredDataPoint.LabelY - dataPointLabelOffset" />
         }
