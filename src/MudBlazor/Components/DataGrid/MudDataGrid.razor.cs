@@ -54,7 +54,7 @@ namespace MudBlazor
             _selectedItemState = registerScope.RegisterParameter<T>(nameof(SelectedItem))
                 .WithParameter(() => SelectedItem)
                 .WithEventCallback(() => SelectedItemChanged)
-                .WithChangeHandler(OnSelectedItemChanged);
+                .WithChangeHandler(OnSelectedItemChangedAsync);
 
             _selectedItemsState = registerScope.RegisterParameter<HashSet<T>>(nameof(SelectedItems))
                 .WithParameter(() => SelectedItems)
@@ -1255,7 +1255,7 @@ namespace MudBlazor
                 await ClearCurrentSortings();
         }
 
-        private void OnSelectedItemChanged(ParameterChangedEventArgs<T> args)
+        private async Task OnSelectedItemChangedAsync(ParameterChangedEventArgs<T> args)
         {
             if (!MultiSelection)
             {
@@ -1268,7 +1268,7 @@ namespace MudBlazor
                 Selection.Add(args.Value);
             }
 
-            _selectedItemsState.SetValueAsync(Selection);
+            await _selectedItemsState.SetValueAsync(Selection);
         }
 
         private void OnSelectedItemsChanged(ParameterChangedEventArgs<HashSet<T>> args)
