@@ -10,7 +10,7 @@ public partial class ChartTooltip : ComponentBase
     private ElementReference? _hoverTextTitle = null;
 
     [Inject]
-    protected IJSRuntime JSRuntime { get; set; } = null!;
+    protected IJSRuntime JsRuntime { get; set; } = null!;
 
     /// <summary>
     /// The title of the tooltip.
@@ -60,7 +60,7 @@ public partial class ChartTooltip : ComponentBase
         if (firstRender)
         {
             // Uses interop to get the bounding box of the title text to determine the width of the tooltip box
-            var bboxTitle = await JSRuntime.InvokeAsync<BBox>("mudGetSvgBBox", _hoverTextTitle);
+            var bboxTitle = await JsRuntime.InvokeAsync<BBox>("mudGetSvgBBox", _hoverTextTitle);
 
             _boxWidth = Math.Max(bboxTitle.Width, 30) + 10; // Minimum width for the text of 30px with 10px padding (5px each side)
 
