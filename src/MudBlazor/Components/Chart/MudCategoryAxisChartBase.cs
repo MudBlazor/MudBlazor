@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using MudBlazor.Interop;
 
@@ -31,6 +32,8 @@ namespace MudBlazor
         private readonly DotNetObjectReference<MudCategoryAxisChartBase> _dotNetObjectReference;
         protected ElementReference _elementReference = new();
 
+        [DynamicDependency(nameof(OnElementSizeChanged))]
+        [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(ElementSize))]
         protected MudCategoryAxisChartBase()
         {
             _dotNetObjectReference = DotNetObjectReference.Create(this);
@@ -67,8 +70,10 @@ namespace MudBlazor
         {
             _elementSize = elementSize;
 
-            if (AxisChartOptions.MatchBoundsToSize == false)
+            if (!AxisChartOptions.MatchBoundsToSize)
+            {
                 return;
+            }
 
             if (Math.Abs(_boundWidth - _elementSize.Width) < Epsilon &&
                 Math.Abs(_boundHeight - _elementSize.Height) < Epsilon)

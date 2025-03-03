@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
 namespace MudBlazor.Charts;
@@ -46,6 +47,11 @@ public partial class ChartTooltip : ComponentBase
     /// </remarks>
     [Parameter]
     public string Color { get; set; } = "darkgrey";
+
+    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(BBox))]
+    public ChartTooltip()
+    {
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
