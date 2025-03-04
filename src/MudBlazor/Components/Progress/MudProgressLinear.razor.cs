@@ -79,7 +79,8 @@ namespace MudBlazor
         /// Displays a rounded border.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c> in <see cref="MudGlobal.Rounded"/>.
+        /// Defaults to <c>false</c>.
+        /// Can be overridden by <see cref="MudGlobal.Rounded"/>
         /// When <c>true</c>, the CSS <c>border-radius</c> is set to the theme's default value.
         /// </remarks>
         [Parameter]
