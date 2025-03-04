@@ -337,7 +337,10 @@ namespace MudBlazor.UnitTests.Components
             DateTime? returnDate = null;
             var comp = OpenPicker(EventCallback(nameof(MudDatePicker.DateChanged), (DateTime? date) => { eventCount++; returnDate = date; }));
             // clicking a day button to select a date and close
-            comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("23")).Click();
+            comp.FindAll("button.mud-picker-calendar-day")
+                .Where(x => !x.ClassList.Contains("mud-hidden") && x.TrimmedText().Equals("23"))
+                .First()
+                .Click();
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0), TimeSpan.FromSeconds(5));
             comp.Instance.Date.Should().NotBeNull();
             eventCount.Should().Be(1);
