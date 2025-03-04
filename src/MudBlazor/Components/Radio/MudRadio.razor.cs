@@ -126,12 +126,11 @@ namespace MudBlazor
 
         internal MudRadioGroup<T>? MudRadioGroup => (MudRadioGroup<T>?)IMudRadioGroup;
 
-        internal async Task SetCheckedAsync(bool value)
+        internal void SetChecked(bool value)
         {
             if (Checked != value)
             {
                 Checked = value;
-                await SetBoolValueAsync(value);
                 StateHasChanged();
             }
         }
@@ -163,10 +162,8 @@ namespace MudBlazor
             {
                 return MudRadioGroup.SetSelectedRadioAsync(this);
             }
-            else
-            {
-                return SetCheckedAsync(true);
-            }
+
+            return Task.CompletedTask;
         }
 
         protected internal async Task HandleKeyDownAsync(KeyboardEventArgs keyboardEventArgs)

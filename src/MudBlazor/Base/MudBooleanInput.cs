@@ -122,21 +122,14 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<T?> ValueChanged { get; set; }
 
-        protected bool? BoolValue
-        {
-            get
-            {
-                Console.WriteLine(Converter.Set(Value) is null ? "null" : Converter.Set(Value).ToString());
-                return Converter.Set(Value);
-            }
-        }
+        protected bool? BoolValue => Converter.Set(Value);
 
         protected virtual Task OnChange(ChangeEventArgs args)
         {
             return SetBoolValueAsync((bool?)args.Value, true);
         }
 
-        protected Task SetBoolValueAsync(bool? value, bool markAsTouched = false)
+        protected Task SetBoolValueAsync(bool? value, bool? markAsTouched = null)
         {
             if (markAsTouched is true)
             {
@@ -152,10 +145,13 @@ namespace MudBlazor
                 return;
             }
 
-            Value = value;
-            await ValueChanged.InvokeAsync(value);
-            await BeginValidateAsync();
-            FieldChanged(Value);
+            if (!EqualityComparer<T>.Default.Equals(Value, value))
+            {
+                Value = value;
+                await ValueChanged.InvokeAsync(value);
+                await BeginValidateAsync();
+                FieldChanged(Value);
+            }
         }
 
         protected override bool SetConverter(Converter<T?, bool?> value)

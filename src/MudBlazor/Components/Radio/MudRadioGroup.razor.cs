@@ -163,7 +163,7 @@ namespace MudBlazor
 
                 foreach (var item in _radios)
                 {
-                    await item.SetCheckedAsync(item == _selectedRadio);
+                    item.SetChecked(item == _selectedRadio);
                 }
 
                 if (updateOption)
@@ -197,15 +197,15 @@ namespace MudBlazor
             }
         }
 
-        protected override async Task ResetValueAsync()
+        protected override Task ResetValueAsync()
         {
             if (_selectedRadio is not null)
             {
-                await _selectedRadio.SetCheckedAsync(false);
+                _selectedRadio.SetChecked(false);
                 _selectedRadio = null;
             }
 
-            await base.ResetValueAsync();
+            return base.ResetValueAsync();
         }
 
         private static T? GetValueOrDefault(MudRadio<T>? radio)
