@@ -163,8 +163,10 @@ namespace MudBlazor
             {
                 return MudRadioGroup.SetSelectedRadioAsync(this);
             }
-
-            return Task.CompletedTask;
+            else
+            {
+                return SetCheckedAsync(true);
+            }
         }
 
         protected internal async Task HandleKeyDownAsync(KeyboardEventArgs keyboardEventArgs)

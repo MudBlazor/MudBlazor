@@ -197,7 +197,7 @@ namespace MudBlazor
             }
         }
 
-        protected override Task ResetValueAsync()
+        protected override async Task ResetValueAsync()
         {
             if (_selectedRadio is not null)
             {
@@ -205,7 +205,7 @@ namespace MudBlazor
                 _selectedRadio = null;
             }
 
-            return base.ResetValueAsync();
+            await base.ResetValueAsync();
         }
 
         private static T? GetValueOrDefault(MudRadio<T>? radio)
