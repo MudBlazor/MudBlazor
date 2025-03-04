@@ -4,7 +4,6 @@ using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
-using MudBlazor.Docs.Examples;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents.Form;
 using MudBlazor.Utilities;
@@ -1931,6 +1930,36 @@ namespace MudBlazor.UnitTests.Components
                 comp.SetParam(x => x.Spacing, i);
                 comp.Find("form.mud-form").ClassList.Should().Contain($"gap-{i}");
             }
+        }
+
+        [Test]
+        public async Task ChildForm_TouchChangedPropogate()
+        {
+            var comp = Context.RenderComponent<FormWithChildForm>();
+            var childFormSwitch = comp.Find(".mud-switch-input");
+            var parentForm = comp.FindComponent<MudForm>().Instance;
+            var parentTextFieldCmp = comp.FindComponent<MudTextField<string>>();
+            var parentTextField = parentTextFieldCmp.Instance;
+            // display the child form
+            childFormSwitch.Change(true);
+            var forms = comp.FindComponents<MudForm>();
+            forms.Count.Should().Be(2);
+            var childForm = forms[1];
+            childForm.Instance.IsValid.Should().BeFalse();
+            parentForm.IsValid.Should().Be(false);
+
+            // verify they start as false
+            await comp.InvokeAsync(async () => await parentForm.ResetAsync());
+            comp.Instance.IsParentTouchChanged.Should().BeFalse();
+            comp.Instance.IsChildTouchChanged.Should().BeFalse();
+
+            // triggering childform touch should trigger parent form touched
+            var childTextFieldCmp = childForm.FindComponent<MudTextField<string>>();
+            childTextFieldCmp.Find("input").Change("Marilyn Manson");
+
+            // verify child and parent touch events happened
+            comp.Instance.IsParentTouchChanged.Should().BeTrue();
+            comp.Instance.IsChildTouchChanged.Should().BeTrue();
         }
     }
 }
