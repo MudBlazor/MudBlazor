@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Services;
@@ -1190,9 +1191,24 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// Clears all selections and resets validation
+        /// </summary>
+        /// <remarks>
+        /// To maintain validation errors (e.g. required), use <see cref="ClearAsync"/>
+        /// </remarks>
+        protected override async Task ResetValueAsync()
+        {
+            await ClearAsync();
+            await base.ResetValueAsync();
+        }
+
+        /// <summary>
         /// Clears all selections.
         /// </summary>
-        public async Task Clear()
+        /// <remarks>
+        /// To reset validation errors (e.g. required), use <see cref="ResetValueAsync"/>
+        /// </remarks>
+        public async Task ClearAsync()
         {
             await SetValueAsync(default, false);
             await SetTextAsync(default, false);
@@ -1201,6 +1217,16 @@ namespace MudBlazor
             StateHasChanged();
             await SelectedValuesChanged.InvokeAsync(_selectedValues);
         }
+
+        /// <summary>
+        /// Clears all selections.
+        /// </summary>
+        /// <remarks>
+        /// To reset validation errors (e.g. required), use <see cref="ResetValueAsync"/>
+        /// </remarks>
+        [ExcludeFromCodeCoverage]
+        [Obsolete("Use ClearAsync instead")]
+        public Task Clear() => ClearAsync();
 
         private async Task SelectAllClickAsync()
         {
@@ -1215,7 +1241,7 @@ namespace MudBlazor
             if (_selectAllChecked.Value)
                 await SelectAllItems();
             else
-                await Clear();
+                await ClearAsync();
         }
 
         private async Task SelectAllItems()
