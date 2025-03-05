@@ -63,7 +63,8 @@ namespace MudBlazor
         /// Uses rounded corners on the tab's edges.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="MudGlobal.Rounded" />.
+        /// Defaults to <c>false</c>.
+        /// Can be overridden by <see cref="MudGlobal.Rounded"/>
         /// When <c>true</c>, the <c>border-radius</c> style is set to the theme's default value.
         /// </remarks>
         [Parameter]
