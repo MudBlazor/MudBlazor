@@ -420,6 +420,13 @@ namespace MudBlazor
             }
         }
 
+        protected virtual bool IsDayDisabled(DateTime date)
+        {
+            return date < MinDate ||
+                   date > MaxDate ||
+                   IsDateDisabledFunc(date);
+        }
+
         protected abstract string GetDayClasses(int month, DateTime day);
 
         /// <summary>
@@ -526,7 +533,7 @@ namespace MudBlazor
         {
             var selectedYear = HighlightedDate ?? GetMonthStart(0);
 
-            return selectedYear.ToString("yyyy", Culture);
+            return GetCalendarYear(selectedYear).ToString();
         }
 
         private void OnPreviousMonthClick()
@@ -697,7 +704,7 @@ namespace MudBlazor
             var month = FixMonth ?? (year == today.Year ? today.Month : 1);
             var day = FixDay ?? 1;
 
-            if (DateTime.TryParseExact($"{year}-{month}-{day}", "yyyy-M-d", Culture, DateTimeStyles.None, out var date))
+            if (DateTime.TryParseExact($"{year}-{month}-{day}", "yyyy-M-d", CultureInfo.InvariantCulture, DateTimeStyles.None, out var date))
             {
                 HighlightedDate = date;
             }

@@ -38,9 +38,9 @@ namespace MudBlazor.UnitTests.Components
             // print the generated html
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: -1");
             // now click something and see that the selected index changes:
-            comp.FindAll("circle.mud-chart-serie")[0].Click();
+            comp.FindAll("path.mud-chart-serie")[0].Click();
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: 0");
-            comp.FindAll("circle.mud-chart-serie")[3].Click();
+            comp.FindAll("path.mud-chart-serie")[3].Click();
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: 3");
         }
 

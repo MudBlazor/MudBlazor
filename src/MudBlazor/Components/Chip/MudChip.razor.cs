@@ -82,7 +82,8 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         {
             return "button";
         }
-        else if (IsAnchor)
+
+        if (IsAnchor)
         {
             return "a";
         }
@@ -414,15 +415,18 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     {
         await base.OnAfterRenderAsync(firstRender);
 
-        var options = new KeyInterceptorOptions(
-            "mud-chip",
-            [
-                new(" ", preventDown: "key+none", preventUp: "key+none"),
-                new("Backspace", preventDown: "key+none"),
-                new("Delete", preventDown: "key+none")
-            ]);
+        if (firstRender)
+        {
+            var options = new KeyInterceptorOptions(
+                "mud-chip",
+                [
+                    new(" ", preventDown: "key+none", preventUp: "key+none"),
+                    new("Backspace", preventDown: "key+none"),
+                    new("Delete", preventDown: "key+none")
+                ]);
 
-        await KeyInterceptorService.SubscribeAsync(_chipContainerId, options, keyDown: HandleKeyDownAsync);
+            await KeyInterceptorService.SubscribeAsync(_chipContainerId, options, keyDown: HandleKeyDownAsync);
+        }
     }
 
     protected internal async Task OnClickAsync(MouseEventArgs ev)

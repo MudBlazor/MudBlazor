@@ -36,6 +36,55 @@ public class ObserverManagerTests
     }
 
     [Test]
+    public void TryGetSubscription_ReturnsTrueAndObserver_WhenObserverExists()
+    {
+        // Arrange
+        var id = 1;
+        var observer = "Observer1";
+        _observerManager.Subscribe(id, observer);
+
+        // Act
+        var result = _observerManager.TryGetSubscription(id, out var retrievedObserver);
+
+        // Assert
+        result.Should().BeTrue();
+        retrievedObserver.Should().Be(observer);
+    }
+
+    [Test]
+    public void TryGetSubscription_ReturnsFalseAndDefault_WhenObserverDoesNotExist()
+    {
+        // Arrange
+        var id = 1;
+
+        // Act
+        var result = _observerManager.TryGetSubscription(id, out var retrievedObserver);
+
+        // Assert
+        result.Should().BeFalse();
+        retrievedObserver.Should().BeNull();
+    }
+
+    [Test]
+    public void FindObserverIdentities_ReturnsMatchingIdentities()
+    {
+        // Arrange
+        var observer1 = "Observer1";
+        var observer2 = "Observer2";
+        var observer3 = "Observer3";
+
+        _observerManager.Subscribe(1, observer1);
+        _observerManager.Subscribe(2, observer2);
+        _observerManager.Subscribe(3, observer3);
+
+        // Act
+        var result = _observerManager.FindObserverIdentities((_, observer) => observer.Contains('2')).ToList();
+
+        // Assert
+        result.Should().ContainSingle().Which.Should().Be(2);
+    }
+
+    [Test]
     public void Subscribe_AddsObserverToDictionary()
     {
         // Arrange
@@ -80,7 +129,7 @@ public class ObserverManagerTests
 
         // Assert
         _observerManager.Count.Should().Be(0);
-        _observerManager.Observers.ContainsKey(id).Should().BeFalse();
+        _observerManager.IsSubscribed(id).Should().BeFalse();
     }
 
     [Test]
@@ -134,9 +183,9 @@ public class ObserverManagerTests
 
         // Assert
         _observerManager.Count.Should().Be(2);
-        _observerManager.Observers.ContainsKey(1).Should().BeTrue();
-        _observerManager.Observers.ContainsKey(3).Should().BeTrue();
-        _observerManager.Observers.ContainsKey(2).Should().BeFalse();
+        _observerManager.IsSubscribed(1).Should().BeTrue();
+        _observerManager.IsSubscribed(3).Should().BeTrue();
+        _observerManager.IsSubscribed(2).Should().BeFalse();
     }
 
     [Test]
