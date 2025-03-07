@@ -769,8 +769,8 @@ namespace MudBlazor
             _sliderSize = GetRelevantSize(ActivePanel.PanelRef);
         }
 
-        private bool IsSliderPositionDetermined => _activePanelIndex > 0 && _sliderPosition > 0 ||
-                                                   _activePanelIndex <= 0;
+        private bool IsSliderPositionDetermined => (_activePanelIndex > 0 && _sliderPosition > 0) ||
+                                                   IsFirstVisiblePanel(ActivePanel);
 
         private void GetTabBarContentSize() => _tabBarContentSize = GetRelevantSize(_tabsContentSize);
 
@@ -815,6 +815,24 @@ namespace MudBlazor
         }
 
         private double GetPanelLength(MudTabPanel? panel) => panel == null ? 0.0 : GetRelevantSize(panel.PanelRef);
+
+        private bool IsFirstVisiblePanel(MudTabPanel? panel)
+        {
+            foreach (var p in _panels)
+            {
+                if (panel == p)
+                {
+                    return true;
+                }
+
+                if (p.Visible)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
 
         #endregion
 
