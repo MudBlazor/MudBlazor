@@ -571,5 +571,31 @@ namespace MudBlazor.UnitTests.Components
             heatMap.Instance._legendPosition.Should().BeOneOf(Position.Top, Position.Bottom, Position.Left, Position.Right);
         }
 
+        [TestCase(null, null)]
+        [TestCase(0, 100)]
+        [TestCase(0, .95)]
+        public void HeatMap_Override_Min_Max(double? min, double? max)
+        {
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.HeatMap)
+                .Add(p => p.ChartSeries, new List<ChartSeries>
+                {
+                    new() { Name = "Series 1", Data = [-0.5, .5, .98] }
+                })
+                .Add(p => p.ChildContent, (RenderFragment)(builder =>
+                {
+                    builder.OpenComponent<MudHeatMapCell>(0);
+                    builder.AddAttribute(1, "Row", 0);
+                    builder.AddAttribute(2, "Column", 0);
+                    builder.AddAttribute(3, "MinValue", min);
+                    builder.AddAttribute(4, "MaxValue", max);
+                    builder.CloseComponent();
+                }))
+            );
+            var heatmap = comp.FindComponent<HeatMap>();
+            heatmap.Instance._minValue.Should().Be(min.HasValue ? min : 0);
+            heatmap.Instance._maxValue.Should().Be(max.HasValue ? max : 1);
+        }
+
     }
 }

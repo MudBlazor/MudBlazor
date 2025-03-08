@@ -1,0 +1,70 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudGrid>
+    <MudItem xs="6">
+        <MudChart ChartType="ChartType.HeatMap"
+                  ChartSeries="@exampleOne"
+                  ChartOptions="@chartOptions"
+                  XAxisLabels="@testLabels"
+                  Width="100%" Height="100%">
+            <MudHeatMapCell Row="0" Column="0" MinValue="@(_useOverride ? 0 : default)" MaxValue="@(_useOverride ? .95 : null)" />
+        </MudChart>
+        <MudSwitch Class="mx-auto" Label="Include Override" @bind-Value="_useOverride" />
+    </MudItem>
+    <MudItem xs="6">
+        <MudChart ChartType="ChartType.HeatMap"
+                  ChartSeries="@exampleTwo"
+                  ChartOptions="@chartOptions"
+                  XAxisLabels="@testLabels"
+                  Width="100%" Height="100%">
+            <MudHeatMapCell Row="0" Column="0" MinValue="@(_useOverride ? 0 : default)" MaxValue="@(_useOverride ? .95 : null)" />
+        </MudChart>
+        <MudSwitch Class="mx-auto" Label="Show Legend" @bind-Value="_showLegend" @bind-Value:after="UpdateLegend" />
+    </MudItem>
+</MudGrid>
+
+@code {
+    private const string COLOR_PERFECT = "#008f00";
+    private const string COLOR_GOOD = "#66ff66";
+    private const string COLOR_BAD = "#ff4d4d";
+    private const string COLOR_HORRIBLE = "#b80000";
+    private bool _useOverride;
+    private bool _showLegend = true;
+
+    private ChartOptions chartOptions = new()
+    {
+        ChartPalette = [COLOR_HORRIBLE, COLOR_BAD, COLOR_GOOD, COLOR_PERFECT],
+        XAxisLabelPosition = XAxisLabelPosition.Top,
+        ValueFormatString = "P0",
+        ShowLegend = false,
+    };
+
+    protected override void OnInitialized()
+    {
+        UpdateLegend();
+    }
+
+    private void UpdateLegend()
+    {
+        chartOptions.ShowLegend = _showLegend;
+        StateHasChanged();
+    }
+
+    private string[] testLabels => ["Test 1", "Test 2", "Test 3", "Test 4"];
+
+    private List<ChartSeries> exampleOne = 
+    [
+        new() { Name = "Student 1", Data = [.40, .72, .64, .92] },
+        new() { Name = "Student 2", Data = [.80, .71, .97, .75] },
+        new() { Name = "Student 3", Data = [.92, .84, .85, .97] },
+        new() { Name = "Student 4", Data = [.79, .99, .87, .69] },
+    ];
+
+    private List<ChartSeries> exampleTwo = 
+    [
+        new() { Name = "Student 1", Data = [.40, .52, .64, .32] },
+        new() { Name = "Student 2", Data = [.32, .65, .48, .66] },
+        new() { Name = "Student 3", Data = [.35, .34, .55, .67] },
+        new() { Name = "Student 4", Data = [.30, .63, .36, .62] },
+    ];
+}
