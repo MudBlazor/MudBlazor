@@ -6,9 +6,9 @@
     <MudPaper Class="mt-4 px-8">
         <MudStepper @ref="_stepper" NonLinear Class="mr-4">
             <ChildContent>
-                <MudStep Title="Step 1" CompletedChanged="@( () => StateHasChanged())">Introductory Step</MudStep>
-                <MudStep Title="Step 2" CompletedChanged="@( () => StateHasChanged())">More Details</MudStep>
-                <MudStep Title="Step 3" CompletedChanged="@( () => StateHasChanged())">Wrap things up</MudStep>
+                <MudStep Title="Step 1" CompletedChanged="@(() => StateHasChanged())">Introductory Step</MudStep>
+                <MudStep Title="Step 2" CompletedChanged="@(() => StateHasChanged())">More Details</MudStep>
+                <MudStep Title="Step 3" CompletedChanged="@(() => StateHasChanged())">Wrap things up</MudStep>
             </ChildContent>
         </MudStepper>
 

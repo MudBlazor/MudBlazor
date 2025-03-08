@@ -3,7 +3,7 @@
 <DocsPage>
     <DocsPageHeader Title="Parameter State" SubTitle="Parameter state allows for adhering to Blazor best practices when working with the Parameter attribute" />
     <MudAlert Class="my-3" Severity="Severity.Info">
-        When submitting a Pull Request that includes a new compnent please review the <MudLink Target="_blank" Href="https://github.com/MudBlazor/MudBlazor/blob/dev/CONTRIBUTING.md#parameter-registration-or-why-we-cant-have-logic-in-parameter-setters">Contribution Guide</MudLink> on GitHub for additional Parameter State guidelines.
+        When submitting a Pull Request that includes a new component, please review the <MudLink Target="_blank" Href="https://github.com/MudBlazor/MudBlazor/blob/dev/CONTRIBUTING.md#parameter-registration-or-why-we-cant-have-logic-in-parameter-setters">Contribution Guide</MudLink> on GitHub for additional Parameter State guidelines.
     </MudAlert>
     <DocsPageContent>
 
@@ -15,7 +15,7 @@
                     This page explains the core issue in Blazor, how ParameterState addresses it in MudBlazor, and how you should interact with parameter values as an end user.
                     <br/><br/>
                     <MudText>Review <MudLink Href="https://learn.microsoft.com/en-us/aspnet/core/blazor/components/overwriting-parameters">this</MudLink> 
-                             article for some of the best practices for working with Paramerts in Blazor.
+                             article for some of the best practices for working with Parameters in Blazor.
                     </MudText>
                 </Description>
             </SectionHeader>
@@ -34,7 +34,7 @@
                         </MudBadge>
                         <MudBadge Class="ml-4" Color="Color.Primary" Origin="Origin.CenterLeft" Dot Bordered>
                             <div class="pl-2">
-                                <CodeInline>Parameter resets:</CodeInline> When a parent component rerenders, parameters reset unexpectedly.
+                                <CodeInline>Parameter resets:</CodeInline> When a parent component re-renders, parameters reset unexpectedly.
                             </div>
                         </MudBadge>
                         <MudBadge Class="ml-4" Color="Color.Primary" Origin="Origin.CenterLeft" Dot Bordered>
@@ -92,7 +92,7 @@
                 <ParameterStateUsageExample />
             </SectionContent>
             <MudAlert Class="my-3" Severity="Severity.Info">
-                Using <CodeInline>ParameterState</CodeInline> ensures that the parameter remains consistent and does not reset unexpectedly when the parent rerenders.
+                Using <CodeInline>ParameterState</CodeInline> ensures that the parameter remains consistent and does not reset unexpectedly when the parent re-renders.
             </MudAlert>
         </DocsPageSection>
      
