@@ -72,6 +72,23 @@
   margin-inline-start: unset;
 }
 
+.mud-icon-button-size-micro {
+  padding: 0;
+  font-size: 0.6875rem;
+
+  &.mud-icon-button-edge-start {
+    margin-left: 0px;
+    margin-inline-start: 0px;
+    margin-inline-end: unset;
+  }
+
+  &.mud-icon-button-edge-end {
+    margin-right: 0px;
+    margin-inline-end: 0px;
+    margin-inline-start: unset;
+  }
+}
+
 .mud-icon-button-size-small {
   padding: 3px;
   font-size: 1.125rem;

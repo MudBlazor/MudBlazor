@@ -8,6 +8,12 @@ namespace MudBlazor;
 public enum Size
 {
     /// <summary>
+    /// The smallest size for standard buttons and icon buttons.
+    /// </summary>
+    [Description("micro")]
+    Micro,
+
+    /// <summary>
     /// The smallest size.
     /// </summary>
     [Description("small")]
