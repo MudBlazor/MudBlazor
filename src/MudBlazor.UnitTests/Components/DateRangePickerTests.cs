@@ -1094,5 +1094,98 @@ namespace MudBlazor.UnitTests.Components
             picker.PickerReference.PickerMonth!.Value.Year.Should().Be(2025);
             comp.FindAll("div.mud-picker-year").First(x => x.TrimmedText().Equals("2025")).ToMarkup().Should().Contain("mud-picker-year-selected");
         }
+
+        [Test]
+        public async Task DateRangePicker_MinMaxDays()
+        {
+            //no restrictions - minimum of 3 days
+            var startingRange = new DateRange(new DateTime(2025, 1, 1).Date, new DateTime(2025, 1, 1).Date);
+            var comp = Context.RenderComponent<DateRangePickerMinMaxDaysTest>(p => p.Add(x => x.DateRange, startingRange));
+
+            await comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("16")).First().ClickAsync(new MouseEventArgs());
+            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("17")).First().ToMarkup().Should().Contain("disabled");
+            await comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("18")).First().ClickAsync(new MouseEventArgs());
+
+            comp.Instance.DateRange.Should().Be(new DateRange(new DateTime(2025, 1, 16).Date, new DateTime(2025, 1, 18).Date));
+
+            //no restrictions - maximum of 7 days 
+            await comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("16")).First().ClickAsync(new MouseEventArgs());
+            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("17")).First().ToMarkup().Should().Contain("disabled"); //2 days not allowed
+            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("18")).First().ToMarkup().Should().NotContain("disabled"); //3 days valid
+            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("19")).First().ToMarkup().Should().NotContain("disabled"); //4 days valid
+            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("20")).First().ToMarkup().Should().NotContain("disabled"); //5 days valid
+            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("21")).First().ToMarkup().Should().NotContain("disabled"); //6 days valid
+            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("22")).First().ToMarkup().Should().NotContain("disabled"); //7 days valid
+            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("23")).First().ToMarkup().Should().Contain("disabled"); //8 days not allowed
+            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("24")).First().ToMarkup().Should().Contain("disabled"); //9 days not allowed
+            await comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("22")).First().ClickAsync(new MouseEventArgs());
+
+            comp.Instance.DateRange.Should().Be(new DateRange(new DateTime(2025, 1, 16).Date, new DateTime(2025, 1, 22).Date));
+
+            //weekends not allowed - minimum of 3 days - count disabled
+            comp.Instance.AllowWeekends = false;
+            comp.Render();
+
+            await comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("16")).First().ClickAsync(new MouseEventArgs()); //                              [1]
+            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("17")).First().ToMarkup().Should().Contain("disabled"); //2 days not allowed           [2]
+            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("18")).First().ToMarkup().Should().Contain("disabled"); //3 disabled (weekend)         [3]
+            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("19")).First().ToMarkup().Should().Contain("disabled"); //4 disabled (weekend)         [4]
+            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("20")).First().ToMarkup().Should().NotContain("disabled"); //5 days valid              [5]
+            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("21")).First().ToMarkup().Should().NotContain("disabled"); //6 days valid              [6]
+            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("22")).First().ToMarkup().Should().NotContain("disabled"); //7 days valid              [7]
+            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("23")).First().ToMarkup().Should().Contain("disabled"); //8 days not allowed
+            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("24")).First().ToMarkup().Should().Contain("disabled"); //9 days not allowed
+            await comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("20")).First().ClickAsync(new MouseEventArgs());
+
+            comp.Instance.DateRange.Should().Be(new DateRange(new DateTime(2025, 1, 16).Date, new DateTime(2025, 1, 20).Date)); //min valid range 5 days
+
+            //weekends not allowed - maximum of 7 days - count disabled
+            await comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("16")).First().ClickAsync(new MouseEventArgs()); //                              [1]
+            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("17")).First().ToMarkup().Should().Contain("disabled"); //2 days not allowed           [2]
+            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("18")).First().ToMarkup().Should().Contain("disabled"); //3 disabled (weekend)         [3]
+            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("19")).First().ToMarkup().Should().Contain("disabled"); //4 disabled (weekend)         [4]
+            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("20")).First().ToMarkup().Should().NotContain("disabled"); //5 days valid              [5]
+            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("21")).First().ToMarkup().Should().NotContain("disabled"); //6 days valid              [6]
+            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("22")).First().ToMarkup().Should().NotContain("disabled"); //7 days valid              [7]
+            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("23")).First().ToMarkup().Should().Contain("disabled"); //8 days not allowed
+            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("24")).First().ToMarkup().Should().Contain("disabled"); //9 days not allowed
+            await comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("22")).First().ClickAsync(new MouseEventArgs());
+
+            comp.Instance.DateRange.Should().Be(new DateRange(new DateTime(2025, 1, 16).Date, new DateTime(2025, 1, 22).Date)); //max valid range 7 days
+
+            //weekends not allowed - minimum of 3 days - exclude disabled (skip weekends)
+            comp.Instance.CountDisabledDays = false;
+            comp.Render();
+
+            await comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("16")).First().ClickAsync(new MouseEventArgs());  //                             [1]
+            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("17")).First().ToMarkup().Should().Contain("disabled"); //2 days not allowed           [2]
+            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("18")).First().ToMarkup().Should().Contain("disabled"); //3 disabled (weekend)         [ ]
+            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("19")).First().ToMarkup().Should().Contain("disabled"); //4 disabled (weekend)         [ ]
+            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("20")).First().ToMarkup().Should().NotContain("disabled"); //5 days valid              [3]
+            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("21")).First().ToMarkup().Should().NotContain("disabled"); //6 days valid              [4]
+            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("22")).First().ToMarkup().Should().NotContain("disabled"); //7 days valid              [5]
+            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("23")).First().ToMarkup().Should().NotContain("disabled"); //8 days valid              [6]
+            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("24")).First().ToMarkup().Should().NotContain("disabled"); //9 days valid              [7]
+            await comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("20")).First().ClickAsync(new MouseEventArgs());
+
+            comp.Instance.DateRange.Should().Be(new DateRange(new DateTime(2025, 1, 16).Date, new DateTime(2025, 1, 20).Date)); //min valid range 5 days
+
+            //weekends not allowed - maximum of 7 days - exclude disabled (skip weekends)
+            await comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("16")).First().ClickAsync(new MouseEventArgs());  //                             [1]
+            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("17")).First().ToMarkup().Should().Contain("disabled"); //2 days not allowed           [2]
+            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("18")).First().ToMarkup().Should().Contain("disabled"); //3 disabled (weekend)         [ ]
+            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("19")).First().ToMarkup().Should().Contain("disabled"); //4 disabled (weekend)         [ ]
+            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("20")).First().ToMarkup().Should().NotContain("disabled"); //5 days valid              [3]
+            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("21")).First().ToMarkup().Should().NotContain("disabled"); //6 days valid              [4]
+            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("22")).First().ToMarkup().Should().NotContain("disabled"); //7 days valid              [5]
+            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("23")).First().ToMarkup().Should().NotContain("disabled"); //8 days valid              [6]
+            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("24")).First().ToMarkup().Should().NotContain("disabled"); //9 days valid              [7]
+            comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("25")).First().ToMarkup().Should().Contain("disabled"); //9 days valid                 [8]
+
+            await comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("24")).First().ClickAsync(new MouseEventArgs());
+
+            comp.Instance.DateRange.Should().Be(new DateRange(new DateTime(2025, 1, 16).Date, new DateTime(2025, 1, 24).Date)); //max valid range 9 days
+
+        }
     }
 }
