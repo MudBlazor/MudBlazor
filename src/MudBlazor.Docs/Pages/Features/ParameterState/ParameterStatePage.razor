@@ -2,6 +2,9 @@
 
 <DocsPage>
     <DocsPageHeader Title="Parameter State" SubTitle="Parameter state allows for adhering to Blazor best practices when working with the Parameter attribute" />
+    <MudAlert Class="my-3" Severity="Severity.Info">
+        When submitting a Pull Request that includes a new compnent please review the <MudLink Target="_blank" Href="https://github.com/MudBlazor/MudBlazor/blob/dev/CONTRIBUTING.md#parameter-registration-or-why-we-cant-have-logic-in-parameter-setters">Contribution Guide</MudLink> on GitHub for additional Parameter State guidelines.
+    </MudAlert>
     <DocsPageContent>
 
         <DocsPageSection>
@@ -26,7 +29,7 @@
                     <MudStack>
                         <MudBadge Class="ml-4" Color="Color.Primary" Origin="Origin.CenterLeft" Dot Bordered>
                             <div class="pl-2">
-                                <CodeInline>Update loops:</CodeInline> Directly modifying parameters within components can lead to infinite update cycles.
+                                <CodeInline>Property auto-complete warnings (BL0007):</CodeInline> If a [Parameter] property has setter logic, the setter could be used to cause side effects that create problems, such as infinite rendering loops.
                             </div>
                         </MudBadge>
                         <MudBadge Class="ml-4" Color="Color.Primary" Origin="Origin.CenterLeft" Dot Bordered>
@@ -85,7 +88,7 @@
                     </MudStack>
                 </Description>
             </SectionHeader>
-            <SectionContent FullWidth="true" Outlined="true" Code="@nameof(ParameterStateUsageExample)" ShowCode>
+            <SectionContent FullWidth="true" Outlined Code="@nameof(ParameterStateUsageExample)" ShowCode>
                 <ParameterStateUsageExample />
             </SectionContent>
             <MudAlert Class="my-3" Severity="Severity.Info">
@@ -113,11 +116,18 @@
                 </MudStack>
                 <TwoWayBindingExample />
             </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Reading Parameter Values">
+                <Description>
+                    MudBlazor provides <CodeInline>GetState</CodeInline> methods (<CodeInline>Component.GetState(x => x.Parameter)</CodeInline>) to retrieve parameter values safely. <br />
+                    However, <strong>this is not our first recommendation</strong>.<br /><br />
+                    We recommend using two-way binding wherever possible, as it is the approach intended by Microsoft. Two-way binding ensures proper synchronization between parent and child components. When the parent subscribes to <CodeInline>bind-Completed</CodeInline>, it will receive updates from the child, re-render itself, and trigger a re-render of the child with the updated parameter value.
+                    You can read more about this approach <MudLink Href="https://github.com/dotnet/aspnetcore/issues/49187">here</MudLink>.
+                </Description>
+            </SectionHeader>
             <SectionContent Class="mt-4" FullWidth Outlined Code="@nameof(AccessParameterValueExample)" ShowCode>
-                <MudStack Class="align-center">
-                    <MudText Typo="Typo.h6">Reading Parameter Values</MudText>
-                    <MudText>MudBlazor provides <CodeInline>GetState</CodeInline> methods (<CodeInline>Component.GetState(x => x.Parameter)</CodeInline>) to retrieve parameter values safely.</MudText>
-                </MudStack>
                 <AccessParameterValueExample />
             </SectionContent>
         </DocsPageSection>
