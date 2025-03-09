@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Globalization;
+using System.Runtime.Serialization;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
@@ -151,10 +152,10 @@ namespace MudBlazor.Charts
 
         private void InitializeHeatmap()
         {
+            double? minValue = null;
+            double? maxValue = null;
             // Populate _heatmapCells based on data, e.g., matrix of values
             _heatMapCells.Clear();
-            _minValue = 0;
-            _maxValue = 1;
             var overrideMinValue = _customHeatMapCells.LastOrDefault(x => x.MinValue.HasValue)?.MinValue;
             var overrideMaxValue = _customHeatMapCells.LastOrDefault(x => x.MaxValue.HasValue)?.MaxValue;
 
@@ -182,19 +183,26 @@ namespace MudBlazor.Charts
                     });
                     if (value != null)
                     {
-                        _minValue = Math.Min(_minValue, value.Value);
-                        _maxValue = Math.Max(_maxValue, value.Value);
+                        if (!minValue.HasValue)
+                            minValue = value.Value;
+                        if (!maxValue.HasValue)
+                            maxValue = value.Value;
+
+                        minValue = Math.Min(minValue.Value, value.Value);
+                        maxValue = Math.Max(maxValue.Value, value.Value);
                     }
                 }
             }
             if (overrideMaxValue.HasValue)
             {
-                _maxValue = overrideMaxValue.Value;
+                maxValue = overrideMaxValue.Value;
             }
             if (overrideMinValue.HasValue)
             {
-                _minValue = overrideMinValue.Value;
+                minValue = overrideMinValue.Value;
             }
+            _minValue = minValue!.Value;
+            _maxValue = maxValue!.Value;
             CalculateAreas();
             BuildLegends();
         }

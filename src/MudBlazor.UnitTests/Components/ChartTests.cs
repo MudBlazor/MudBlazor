@@ -593,8 +593,8 @@ namespace MudBlazor.UnitTests.Components
                 }))
             );
             var heatmap = comp.FindComponent<HeatMap>();
-            heatmap.Instance._minValue.Should().Be(min.HasValue ? min : 0);
-            heatmap.Instance._maxValue.Should().Be(max.HasValue ? max : 1);
+            heatmap.Instance._minValue.Should().Be(min.HasValue ? min : -0.5);
+            heatmap.Instance._maxValue.Should().Be(max.HasValue ? max : .98);
         }
 
     }
