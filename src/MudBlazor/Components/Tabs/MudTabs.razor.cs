@@ -816,16 +816,16 @@ namespace MudBlazor
 
         private double GetPanelLength(MudTabPanel? panel) => panel == null ? 0.0 : GetRelevantSize(panel.PanelRef);
 
-        private bool IsFirstVisiblePanel(MudTabPanel? panel)
+        private bool IsFirstVisiblePanel(MudTabPanel? activePanel)
         {
-            foreach (var p in _panels)
+            foreach (var panel in _panels)
             {
-                if (panel == p)
+                if (activePanel == panel)
                 {
                     return true;
                 }
 
-                if (p.Visible)
+                if (panel.Visible)
                 {
                     return false;
                 }
