@@ -201,8 +201,8 @@ namespace MudBlazor.Charts
             {
                 minValue = overrideMinValue.Value;
             }
-            _minValue = minValue!.Value;
-            _maxValue = maxValue!.Value;
+            _minValue = minValue ?? 0.0;
+            _maxValue = maxValue ?? 1.0;
             CalculateAreas();
             BuildLegends();
         }
