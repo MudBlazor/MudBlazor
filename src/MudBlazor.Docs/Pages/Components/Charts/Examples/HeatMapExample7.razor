@@ -41,6 +41,24 @@
         ShowLegend = false,
     };
 
+    private readonly string[] testLabels = ["Test 1", "Test 2", "Test 3", "Test 4"];
+
+    private readonly List<ChartSeries> exampleOne =
+        [
+        new() { Name = "Student 1", Data = [.40, .72, .64, .92] },
+        new() { Name = "Student 2", Data = [.80, .71, .97, .75] },
+        new() { Name = "Student 3", Data = [.92, .84, .85, .97] },
+        new() { Name = "Student 4", Data = [.79, .99, .87, .69] },
+    ];
+
+    private readonly List<ChartSeries> exampleTwo =
+        [
+        new() { Name = "Student 1", Data = [.40, .52, .64, .32] },
+        new() { Name = "Student 2", Data = [.32, .65, .48, .66] },
+        new() { Name = "Student 3", Data = [.35, .34, .55, .67] },
+        new() { Name = "Student 4", Data = [.30, .63, .36, .62] },
+    ];
+
     protected override void OnInitialized()
     {
         UpdateLegend();
@@ -51,22 +69,4 @@
         chartOptions.ShowLegend = _showLegend;
         StateHasChanged();
     }
-
-    private string[] testLabels => ["Test 1", "Test 2", "Test 3", "Test 4"];
-
-    private List<ChartSeries> exampleOne = 
-    [
-        new() { Name = "Student 1", Data = [.40, .72, .64, .92] },
-        new() { Name = "Student 2", Data = [.80, .71, .97, .75] },
-        new() { Name = "Student 3", Data = [.92, .84, .85, .97] },
-        new() { Name = "Student 4", Data = [.79, .99, .87, .69] },
-    ];
-
-    private List<ChartSeries> exampleTwo = 
-    [
-        new() { Name = "Student 1", Data = [.40, .52, .64, .32] },
-        new() { Name = "Student 2", Data = [.32, .65, .48, .66] },
-        new() { Name = "Student 3", Data = [.35, .34, .55, .67] },
-        new() { Name = "Student 4", Data = [.30, .63, .36, .62] },
-    ];
 }
