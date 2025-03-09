@@ -54,10 +54,10 @@ namespace MudBlazor.Charts
         private double _verticalEndSpace = HeatMapPadding;
 
         // the minimum value in all series
-        internal double _minValue = 0.0;
+        internal double _minValue = double.MaxValue;
 
         // the maximum value in all series
-        internal double _maxValue = 1.0;
+        internal double _maxValue = double.MinValue;
 
         private string[] _colorPalette = ["#587934"];
 
@@ -152,13 +152,9 @@ namespace MudBlazor.Charts
 
         private void InitializeHeatmap()
         {
-            double? minValue = null;
-            double? maxValue = null;
             // Populate _heatmapCells based on data, e.g., matrix of values
             _heatMapCells.Clear();
-            var overrideMinValue = _customHeatMapCells.LastOrDefault(x => x.MinValue.HasValue)?.MinValue;
-            var overrideMaxValue = _customHeatMapCells.LastOrDefault(x => x.MaxValue.HasValue)?.MaxValue;
-
+            var hasValues = false;
             // # of rows
             var rows = _series.Count;
             // cols should be the max number of data[] in all series
@@ -181,28 +177,21 @@ namespace MudBlazor.Charts
                         Height = mudHeatMapOverride?.Height,
                         MudColor = mudHeatMapOverride?.MudColor,
                     });
-                    if (value != null)
+                    if (value.HasValue)
                     {
-                        if (!minValue.HasValue)
-                            minValue = value.Value;
-                        if (!maxValue.HasValue)
-                            maxValue = value.Value;
-
-                        minValue = Math.Min(minValue.Value, value.Value);
-                        maxValue = Math.Max(maxValue.Value, value.Value);
+                        _minValue = Math.Min(_minValue, value.Value);
+                        _maxValue = Math.Max(_maxValue, value.Value);
+                        hasValues = true;
                     }
                 }
             }
-            if (overrideMaxValue.HasValue)
-            {
-                maxValue = overrideMaxValue.Value;
-            }
-            if (overrideMinValue.HasValue)
-            {
-                minValue = overrideMinValue.Value;
-            }
-            _minValue = minValue ?? 0.0;
-            _maxValue = maxValue ?? 1.0;
+
+            var overrideMinValue = _customHeatMapCells.LastOrDefault(x => x.MinValue.HasValue)?.MinValue;
+            var overrideMaxValue = _customHeatMapCells.LastOrDefault(x => x.MaxValue.HasValue)?.MaxValue;
+
+            _minValue = overrideMinValue ?? (hasValues ? _minValue : 0.0);
+            _maxValue = overrideMaxValue ?? (hasValues ? _maxValue : 1.0);
+
             CalculateAreas();
             BuildLegends();
         }
