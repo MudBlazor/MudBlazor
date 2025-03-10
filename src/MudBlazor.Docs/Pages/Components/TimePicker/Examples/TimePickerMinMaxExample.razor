@@ -1,0 +1,11 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudTimePicker PickerVariant="PickerVariant.Static" AmPm="false" MinTime="@_minTime" MaxTime="@_maxTime" />
+<MudTimePicker PickerVariant="PickerVariant.Static" AmPm="true" MinTime="@_minTime" MaxTime="@_maxTime" />
+
+<MudTimePicker PickerVariant="PickerVariant.Static" IsTimeDisabledFunc="@((TimeSpan ts) => (ts.Hours % 2 == 0) ? ts.Minutes >= 30 : ts.Minutes < 30)" />
+
+@code {
+    private TimeSpan? _minTime = new TimeSpan(9, 30, 0);
+    private TimeSpan? _maxTime = new TimeSpan(17, 45, 0);
+}

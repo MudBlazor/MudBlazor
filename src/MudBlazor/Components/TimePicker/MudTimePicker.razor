@@ -47,7 +47,7 @@
                                 {
                                     var _i = i;
                                     var angle = (6 - _i) * 30;
-                                    <MudText Class="@GetNumberColor(_i)" Style="@GetTransform(angle, 109, 0, 5)">@_i</MudText>
+                                    <MudText Class="@GetNumberColor(HourAmPm(_i))" Style="@GetTransform(angle, 109, 0, 5)">@_i</MudText>
                                 }
                                 for (int i = 1; i <= 12; ++i)
                                 {

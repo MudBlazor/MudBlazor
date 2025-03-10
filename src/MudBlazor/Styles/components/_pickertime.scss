@@ -257,6 +257,11 @@
       justify-content: center;
       transition-duration: 120ms;
       transition-property: color;
+
+      &.mud-hidden {
+        opacity: .5;
+        pointer-events: none;
+      }
     }
   }
 }

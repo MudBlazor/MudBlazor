@@ -187,6 +187,31 @@ namespace MudBlazor
             set => SetTimeAsync(value, true).CatchAndLog();
         }
 
+        /// <summary>
+        /// The minimum selectable time.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public TimeSpan? MinTime { get; set; }
+
+        /// <summary>
+        /// The maximum selectable time.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public TimeSpan? MaxTime { get; set; }
+
+        /// <summary>
+        /// The function used to disable one or more TimeSpan.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.<br />
+        /// When set, a time will be disabled if the function returns <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public Func<TimeSpan, bool> IsTimeDisabledFunc { get; set; } = _ => false;
+
         protected async Task SetTimeAsync(TimeSpan? time, bool updateValue)
         {
             if (_value != time)
@@ -411,10 +436,23 @@ namespace MudBlazor
                 {
                     return $"mud-clock-number mud-theme-{Color.ToDescriptionString()}";
                 }
+
+                if (IsHourDisabled(value))
+                {
+                    return $"mud-clock-number mud-hidden";
+                }
             }
-            else if (_currentView == OpenTo.Minutes && _timeSet.Minute == value)
+            else if (_currentView == OpenTo.Minutes)
             {
-                return $"mud-clock-number mud-theme-{Color.ToDescriptionString()}";
+                if (_timeSet.Minute == value)
+                {
+                    return $"mud-clock-number mud-theme-{Color.ToDescriptionString()}";
+                }
+
+                if (IsTimeDisabled(_timeSet.Hour, value))
+                {
+                    return $"mud-clock-number mud-hidden";
+                }
             }
 
             return "mud-clock-number";
@@ -545,6 +583,38 @@ namespace MudBlazor
             _timeSet.Minute = TimeIntermediate.Value.Minutes;
         }
 
+        private bool IsHourDisabled(int hour)
+        {
+            if (MinTime.HasValue && hour < MinTime.Value.Hours)
+            {
+                return true;
+            }
+
+            if (MaxTime.HasValue && hour > MaxTime.Value.Hours)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool IsTimeDisabled(int hour, int minute)
+        {
+            var testedTime = new TimeSpan(hour, minute, 0);
+
+            if (MinTime.HasValue && testedTime < MinTime.Value)
+            {
+                return true;
+            }
+
+            if (MaxTime.HasValue && testedTime > MaxTime.Value)
+            {
+                return true;
+            }
+
+            return IsTimeDisabledFunc(testedTime);
+        }
+
         /// <summary>
         /// <c>true</c> while the main pointer button is held down and moving.
         /// </summary>
@@ -571,12 +641,12 @@ namespace MudBlazor
             PointerMoving = pointerMoving;
 
             // Update the .NET properties from the JavaScript events.
-            if (_currentView == OpenTo.Minutes)
+            if (_currentView == OpenTo.Minutes && !IsTimeDisabled(_timeSet.Hour, value))
             {
                 var minute = RoundToStepInterval(value);
                 _timeSet.Minute = minute;
             }
-            else if (_currentView == OpenTo.Hours)
+            else if (_currentView == OpenTo.Hours && !IsHourDisabled(HourAmPm(value)))
             {
                 _timeSet.Hour = HourAmPm(value);
             }
@@ -599,11 +669,11 @@ namespace MudBlazor
             PointerMoving = false;
 
             // Clicking a stick will submit the time.
-            if (_currentView == OpenTo.Minutes)
+            if (_currentView == OpenTo.Minutes && !IsTimeDisabled(_timeSet.Hour, value))
             {
                 await SubmitAndCloseAsync();
             }
-            else if (_currentView == OpenTo.Hours)
+            else if (_currentView == OpenTo.Hours && !IsHourDisabled(HourAmPm(value)))
             {
                 if (TimeEditMode == TimeEditMode.Normal)
                 {
@@ -677,94 +747,16 @@ namespace MudBlazor
             switch (obj.Key)
             {
                 case "ArrowRight":
-                    if (Open)
-                    {
-                        if (obj.CtrlKey)
-                        {
-                            await ChangeHourAsync(1);
-                        }
-                        else if (obj.ShiftKey)
-                        {
-                            if (_timeSet.Minute > 55)
-                            {
-                                await ChangeHourAsync(1);
-                            }
-
-                            await ChangeMinuteAsync(5);
-                        }
-                        else
-                        {
-                            if (_timeSet.Minute == 59)
-                            {
-                                await ChangeHourAsync(1);
-                            }
-
-                            await ChangeMinuteAsync(1);
-                        }
-                    }
-
+                    await HandleArrowRightAsync(obj);
                     break;
                 case "ArrowLeft":
-                    if (Open)
-                    {
-                        if (obj.CtrlKey)
-                        {
-                            await ChangeHourAsync(-1);
-                        }
-                        else if (obj.ShiftKey)
-                        {
-                            if (_timeSet.Minute < 5)
-                            {
-                                await ChangeHourAsync(-1);
-                            }
-
-                            await ChangeMinuteAsync(-5);
-                        }
-                        else
-                        {
-                            if (_timeSet.Minute == 0)
-                            {
-                                await ChangeHourAsync(-1);
-                            }
-
-                            await ChangeMinuteAsync(-1);
-                        }
-                    }
-
+                    await HandleArrowLeftAsync(obj);
                     break;
                 case "ArrowUp":
-                    if (!Open && !Editable)
-                    {
-                        Open = true;
-                    }
-                    else if (obj.AltKey)
-                    {
-                        Open = false;
-                    }
-                    else if (obj.ShiftKey)
-                    {
-                        await ChangeHourAsync(5);
-                    }
-                    else
-                    {
-                        await ChangeHourAsync(1);
-                    }
-
+                    await HandleArrowUpAsync(obj);
                     break;
                 case "ArrowDown":
-                    if (!Open && !Editable)
-                    {
-                        Open = true;
-                    }
-                    else if (obj.ShiftKey)
-                    {
-                        await ChangeHourAsync(-5);
-                    }
-                    else
-                    {
-                        await ChangeHourAsync(-1);
-                    }
-
+                    await HandleArrowDownAsync(obj);
                     break;
                 case "Escape":
                     await ReturnTimeBackUpAsync();
@@ -802,6 +794,154 @@ namespace MudBlazor
             }
 
             StateHasChanged();
+        }
+
+        private async Task HandleArrowRightAsync(KeyboardEventArgs obj)
+        {
+            if (!Open)
+            {
+                return;
+            }
+
+            if (obj.CtrlKey)
+            {
+                await AdjustHourAsync(1);
+            }
+            else
+            {
+                int change = obj.ShiftKey ? 5 : 1;
+                await AdjustMinuteAsync(change);
+            }
+        }
+
+        private async Task HandleArrowLeftAsync(KeyboardEventArgs obj)
+        {
+            if (!Open)
+            {
+                return;
+            }
+
+            if (obj.CtrlKey)
+            {
+                await AdjustHourAsync(-1);
+            }
+            else
+            {
+                int change = obj.ShiftKey ? -5 : -1;
+                await AdjustMinuteAsync(change);
+            }
+        }
+
+        private async Task HandleArrowUpAsync(KeyboardEventArgs obj)
+        {
+            if (!Open && !Editable)
+            {
+                Open = true;
+            }
+            else if (obj.AltKey)
+            {
+                Open = false;
+            }
+            else
+            {
+                int change = obj.ShiftKey ? 5 : 1;
+                await AdjustHourAsync(change);
+            }
+        }
+
+        private async Task HandleArrowDownAsync(KeyboardEventArgs obj)
+        {
+            if (!Open && !Editable)
+            {
+                Open = true;
+            }
+            else
+            {
+                int change = obj.ShiftKey ? -5 : -1;
+                await AdjustHourAsync(change);
+            }
+        }
+
+        private async Task AdjustHourAsync(int change)
+        {
+            if (!IsHourDisabled(_timeSet.Hour + change))
+            {
+                await ChangeHourAsync(change);
+            }
+            else
+            {
+                await ChangeHourAsync(GetNextValidHourInterval(change < 0 ? -1 : 1));
+            }
+        }
+
+        private int GetNextValidHourInterval(int direction)
+        {
+            int currentHour = _timeSet.Hour;
+            int nextHour = currentHour;
+
+            for (int i = 1; i < 24; i++)
+            {
+                nextHour = (nextHour + direction + 24) % 24;
+
+                if (!IsHourDisabled(nextHour))
+                {
+                    return i * direction;
+                }
+            }
+
+            return 0;
+        }
+
+        private async Task AdjustMinuteAsync(int change)
+        {
+            int currentMinute = _timeSet.Minute;
+
+            if (change == 5 && currentMinute > 55)
+            {
+                await AdjustHourAsync(1);
+            }
+            else if (change == -5 && currentMinute < 5)
+            {
+                await AdjustHourAsync(-1);
+            }
+            else if (change == 1 && currentMinute == 59)
+            {
+                await AdjustHourAsync(1);
+            }
+            else if (change == -1 && currentMinute == 0)
+            {
+                await AdjustHourAsync(-1);
+            }
+
+            int newMinute = (currentMinute + change + 60) % 60;
+
+            // Change minute or adjust to next valid interval if disabled
+            if (!IsTimeDisabled(_timeSet.Hour, newMinute))
+            {
+                await ChangeMinuteAsync(change);
+            }
+            else
+            {
+                await ChangeMinuteAsync(GetNextValidMinuteInterval(change < 0 ? -1 : 1));
+            }
+        }
+
+        private int GetNextValidMinuteInterval(int direction)
+        {
+            int currentMinute = _timeSet.Minute;
+            int nextMinute = currentMinute;
+
+            for (int i = 1; i < 60; i++)
+            {
+                nextMinute = (nextMinute + direction + 60) % 60;
+
+                if (!IsTimeDisabled(_timeSet.Hour, nextMinute))
+                {
+                    return i * direction;
+                }
+            }
+
+            return 0;
         }
 
         protected Task ChangeMinuteAsync(int minute)
