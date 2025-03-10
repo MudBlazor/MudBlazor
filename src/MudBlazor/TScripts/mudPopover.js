@@ -433,10 +433,11 @@ window.mudpopoverHelper = {
             const overlay = provider.querySelector('.mud-overlay');
             // skip any overlay marked with mud-skip-overlay
             if (overlay && !overlay.classList.contains('mud-skip-overlay-positioning')) {
-                // Only assign z-index if it doesn't already exist
-                if (popoverContentNode && !overlay.style['z-index']) {
+                // Only assign z-index if it doesn't already exist or has changed
+                if (popoverContentNode && overlay.style['z-index'] !== popoverContentNode.style['z-index']) {
                     overlay.style['z-index'] = popoverContentNode.style['z-index'];
                 }
+
             }
         }
     },
@@ -547,16 +548,23 @@ class MudPopover {
                     }
 
                     // Iterate over the items in this.map to reset any open overlays
-                    for (const mapItem of Object.entries(this.map)) {
-                        const item = mapItem.length > 1 ? mapItem[1] : mapItem;
-                        const popoverContentNode = item.popoverContentNode; // Access the popover content node (in mud-popover-provider)
+                    let highestTickItem = null;
+                    let highestTickValue = -1;
+                    // Iterate over the items in this.map to find the highest data-ticks value
+                    for (const mapItem of Object.values(this.map)) {
+                        const popoverContentNode = mapItem.popoverContentNode;
                         if (popoverContentNode) {
-                            const tickValue = parseInt(popoverContentNode.getAttribute('data-ticks')); // get data-ticks property
-                            if (tickValue == 0) {
-                                continue;
+                            const tickValue = Number(popoverContentNode.getAttribute('data-ticks')); // Convert to Number
+
+                            if (tickValue > highestTickValue) {
+                                highestTickValue = tickValue;
+                                highestTickItem = popoverContentNode;
                             }
-                            window.mudpopoverHelper.updatePopoverOverlay(popoverContentNode); // Update the popover overlay for an active popover                            
                         }
+                    }
+
+                    if (highestTickItem) {
+                        window.mudpopoverHelper.updatePopoverOverlay(highestTickItem);
                     }
 
                     if (tickValues.length == 0) {
