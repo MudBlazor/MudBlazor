@@ -11,6 +11,20 @@ namespace MudBlazor;
 /// <typeparam name="T"></typeparam>
 public class GroupDefinition<T>
 {
+    private GroupDefinition<T>? _innerGroup;
+    private bool _indentation = true;
+
+    /// <summary>
+    /// Creates a new instance.
+    /// </summary>
+    /// <param name="grouping">The LINQ definition of the grouping.</param>
+    /// <param name="expanded">Expands this group.</param>
+    public GroupDefinition(IGrouping<object?, T> grouping, bool expanded)
+    {
+        Grouping = grouping;
+        Expanded = expanded;
+    }
+
     /// <summary>
     /// The LINQ definition of the grouping.
     /// </summary>
@@ -25,13 +39,74 @@ public class GroupDefinition<T>
     public bool Expanded { get; set; }
 
     /// <summary>
-    /// Creates a new instance.
+    /// The group definition within this definition.
     /// </summary>
-    /// <param name="grouping">The LINQ definition of the grouping.</param>
-    /// <param name="expanded">Expands this group.</param>
-    public GroupDefinition(IGrouping<object?, T> grouping, bool expanded)
+    public GroupDefinition<T>? InnerGroup
     {
-        Grouping = grouping;
-        Expanded = expanded;
+        get => _innerGroup;
+        set
+        {
+            if (_innerGroup is not null)
+            {
+                _innerGroup.Parent = null;
+            }
+
+            _innerGroup = value;
+
+            if (_innerGroup is not null)
+            {
+                _innerGroup.Parent = this;
+                _innerGroup.Indentation = Indentation;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Indents the first column cell for this group and child groups.
+    /// </summary>
+    /// <remarks>
+    /// When set, all child group definitions are also updated.  Must be set for the first grouping level.
+    /// <para>Defaults to <c>true</c>.</para>
+    /// </remarks>
+    public bool Indentation
+    {
+        get => _indentation;
+        set
+        {
+            _indentation = value;
+            if (InnerGroup is not null)
+            {
+                InnerGroup.Indentation = value;
+            }
+        }
+    }
+
+    /// <summary>
+    /// The number of pixels this grouping level will be indented.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to 8.
+    /// </remarks>
+    public int IndentationPixels { get; set; } = 8;
+
+    /// <summary>
+    /// The parent group definition.
+    /// </summary>
+    internal GroupDefinition<T>? Parent { get; private set; }
+
+    /// <summary>
+    /// Gets the nesting level of this group.
+    /// </summary>
+    internal int Level
+    {
+        get
+        {
+            if (Parent is null)
+            {
+                return 1;
+            }
+
+            return Parent.Level + 1;
+        }
     }
 }
