@@ -1,0 +1,44 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+@typeparam T
+
+<tr class="mud-table-row">
+    <td class="@GroupClassname" colspan="1000" style="@StyleClass">
+
+    </td>
+</tr>
+
+@if (HeaderTemplate != null && GroupDefinition != null)
+{
+    <tr class="@HeaderClassname" style="@HeaderStyle">
+        <td>
+            <div class="d-flex">
+                <MudIconButton Icon="@(Expanded ? Icons.Material.Filled.ExpandMore : Icons.Material.Filled.ChevronRight)" 
+                OnClick="@(() => { Expanded = !Expanded; GroupDefinition.Expanded = Expanded; StateHasChanged(); })" />
+            </div>
+        </td>
+        @HeaderTemplate(new DataGridGroupData<object?, T>(Items?.Key, Items?.ToList() ?? new List<T>()))
+    </tr>
+}
+
+@if (Expanded)
+{
+    @if (_innerGroupItems != null && GroupDefinition?.InnerGroup != null)
+    {
+        @foreach (var group in _innerGroupItems)
+        {
+            <DataGridGroupRow  GroupDefinition="GroupDefinition.InnerGroup" 
+            Items="@group"
+            HeaderTemplate="@HeaderTemplate"
+            HeaderClass="@HeaderClass"
+            HeaderStyle="@HeaderStyle" T="T" />
+        }
+    }
+    else
+    {
+        @foreach (var item in Items ?? Enumerable.Empty<T>())
+        {
+            @DataGrid?.RenderRow(item, (GroupDefinition?.Indentation ?? false) ? $"mud-table-row-group-indented-{GroupDefinition?.Level - 1}" : null)
+        }
+    }
+}
