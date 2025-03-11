@@ -82,7 +82,7 @@
                            In Disabled state the tabindex attribute must NOT be set at all or else it will get focus on click
              *@
             <div class="@InputClassname"
-                 style="@("display:"+(InputType == InputType.Hidden && ChildContent != null ? "inline" : "none")+";")"
+                 style="@($"display:{(InputType == InputType.Hidden && ChildContent != null ? "inline" : "none")};")"
                  @ref="@_elementReference1">
                 @ChildContent
             </div>

@@ -1,18 +1,20 @@
-﻿<MudDataGrid @ref=_refGrid T="ContractEntity"
-             Items="Contracts"
+﻿<MudDataGrid T="ContractEntity"
+             Items="_contracts"
              MultiSelection="false"
              SelectedItem="_selectedItem"
              SelectedItemChanged="SelectedItemChanged">
     <Columns>
         <SelectColumn T="ContractEntity" ShowInHeader="false" />
-        <PropertyColumn T="ContractEntity"
-                        TProperty="DateOnly"
-                        Property="x => DateOnly.FromDateTime(x.ValidFrom)"
-                        Title="ValidFrom" />
-        <PropertyColumn T="ContractEntity"
-                        TProperty="DateOnly"
-                        Property="x => DateOnly.FromDateTime(x.ValidTo)"
-                        Title="ValidTo" />
+        <PropertyColumn Property="x => x.ValidFrom" Title="ValidFrom">
+            <CellTemplate>
+                @DateOnly.FromDateTime(context.Item.ValidFrom)
+            </CellTemplate>
+        </PropertyColumn>
+        <PropertyColumn Property="x => x.ValidTo" Title="ValidTo">
+            <CellTemplate>
+                @DateOnly.FromDateTime(context.Item.ValidTo)
+            </CellTemplate>
+        </PropertyColumn>
     </Columns>
     <PagerContent>
         <MudDataGridPager T="ContractEntity" />
@@ -24,34 +26,17 @@
 </MudText>
 
 @code {
-    private List<ContractEntity> Contracts = new List<ContractEntity>();
-    MudDataGrid<ContractEntity>? _refGrid;
     private ContractEntity? _selectedItem;
+    private readonly List<ContractEntity> _contracts =
+    [
+        new ContractEntity(1, DateTime.Now, DateTime.Now),
+        new ContractEntity(2, DateTime.Now, DateTime.Now),
+        new ContractEntity(3, DateTime.Now, DateTime.Now)
+    ];
 
     protected override void OnInitialized()
     {
-        Contracts.Add(new ContractEntity()
-            {
-                Id = 1,
-                ValidFrom = DateTime.Now,
-                ValidTo = DateTime.Now,
-            });
-
-        Contracts.Add(new ContractEntity()
-            {
-                Id = 2,
-                ValidFrom = DateTime.Now,
-                ValidTo = DateTime.Now,
-            });
-
-        Contracts.Add(new ContractEntity()
-            {
-                Id = 3,
-                ValidFrom = DateTime.Now,
-                ValidTo = DateTime.Now,
-            });
-
-        _selectedItem = Contracts.First();
+        _selectedItem = _contracts.First();
     }
 
     private void SelectedItemChanged(ContractEntity entity)
@@ -59,12 +44,5 @@
         _selectedItem = entity;
     }
 
-    public class ContractEntity
-    {
-        public int Id { get; set; }
-
-        public DateTime ValidFrom { get; set; }
-
-        public DateTime ValidTo { get; set; }
-    }
+    public record ContractEntity(int Id, DateTime ValidFrom, DateTime ValidTo);
 }
