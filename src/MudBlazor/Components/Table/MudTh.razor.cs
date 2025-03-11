@@ -11,8 +11,15 @@ namespace MudBlazor;
 public partial class MudTh : MudComponentBase
 {
     protected string Classname => new CssBuilder("mud-table-cell")
+        .AddClass(Context?.Table?.CellClass)
         .AddClass(Class)
         .Build();
+
+    /// <summary>
+    /// The current state of the <see cref="MudTable{T}"/> containing this group.
+    /// </summary>
+    [CascadingParameter]
+    public TableContext? Context { get; set; }
 
     /// <summary>
     /// The content within this header cell.

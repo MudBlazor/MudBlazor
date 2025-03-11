@@ -1,4 +1,4 @@
-@namespace MudBlazor
+﻿@namespace MudBlazor
 @using MudBlazor.Interfaces
 @inherits MudComponentBase
 
@@ -69,27 +69,29 @@
     }
 
     @* The portal has to include the cascading values inside because it's not able to teletransport the cascade *@
-    <MudPopover Open="@_openState.Value"
-                Class="@PopoverClassname"
-                Style="@Stylename"
-                MaxHeight="@MaxHeight"
-                AnchorOrigin="@GetAnchorOrigin()"
-                TransformOrigin="@TransformOrigin"
-                RelativeWidth="@RelativeWidth"
-                Fixed="@DropdownSettings.Fixed"
-                OverflowBehavior="@DropdownSettings.OverflowBehavior"
-                DropShadow="@DropShadow"
-                Duration="@(GetDense() ? 0 : MudGlobal.TransitionDefaults.Duration.TotalMilliseconds)">
-        <CascadingValue Value="@this">
-            <MudList T="object"
-                     Class="@ListClassname"
-                     Dense="@Dense"
-                     @onpointerenter="@PointerEnterAsync"
-                     @onpointerleave="@PointerLeaveAsync">
-                @ChildContent
-            </MudList>
-        </CascadingValue>
-    </MudPopover>
-
-    <MudOverlay Visible="_openState.Value && !_isTransient" AutoClose OnClosed="CloseMenuAsync" LockScroll="LockScroll" />
+    @if (_openState.Value)
+    {
+        <MudPopover Open="@_openState.Value"
+                    Class="@PopoverClassname"
+                    Style="@Stylename"
+                    MaxHeight="@MaxHeight"
+                    AnchorOrigin="@GetAnchorOrigin()"
+                    TransformOrigin="@TransformOrigin"
+                    RelativeWidth="@RelativeWidth"
+                    Fixed="@DropdownSettings.Fixed"
+                    OverflowBehavior="@DropdownSettings.OverflowBehavior"
+                    DropShadow="@DropShadow"
+                    Duration="@(GetDense() ? 0 : MudGlobal.TransitionDefaults.Duration.TotalMilliseconds)">
+            <CascadingValue Value="@this">
+                <MudList T="object"
+                         Class="@ListClassname"
+                         Dense="@Dense"
+                         @onpointerenter="@PointerEnterAsync"
+                         @onpointerleave="@PointerLeaveAsync">
+                    @ChildContent
+                </MudList>
+            </CascadingValue>
+        </MudPopover>
+        <MudOverlay Visible="_openState.Value && !_isTransient" AutoClose OnClosed="CloseMenuAsync" LockScroll="LockScroll" />
+    }
 </div>

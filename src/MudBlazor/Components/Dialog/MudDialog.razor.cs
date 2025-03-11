@@ -223,9 +223,9 @@ namespace MudBlazor
                 [nameof(DefaultFocus)] = DefaultFocus,
             };
 
-            await _visibleState.SetValueAsync(true);
-
             _reference = await DialogService.ShowAsync<MudDialog>(title, parameters, options ?? Options);
+
+            await _visibleState.SetValueAsync(true);
 
             // Do not await this!
             _reference.Result.ContinueWith(t =>

@@ -34,5 +34,24 @@ namespace MudBlazor
         /// The position of this series within a list.
         /// </summary>
         public int Index { get; set; }
+
+        /// <summary>
+        /// Shows points at datapoints on line and area charts.
+        /// </summary>
+        public bool ShowDataMarkers { get; set; }
+
+        /// <summary>
+        /// Tooltip title format for the series. Supported tags are {{SERIES_NAME}}, {{X_VALUE}} and {{Y_VALUE}}.
+        /// </summary>
+        public string DataMarkerTooltipTitleFormat { get; set; } = "{{Y_VALUE}}";
+
+        /// <summary>
+        /// Tooltip subtitle format for the series. Supported tags are {{SERIES_NAME}}, {{X_VALUE}} and {{Y_VALUE}}.
+        /// </summary>
+        public string? DataMarkerTooltipSubtitleFormat { get; set; }
+
+        public LineDisplayType LineDisplayType { get; set; }
+
+        public double FillOpacity { get; set; } = 0.4;
     }
 }
