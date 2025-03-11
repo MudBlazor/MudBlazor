@@ -4,10 +4,11 @@
 
 <h3>Persian DatePicker</h3>
 
-<MudDatePicker Label="Date Format" @bind-Date="_date"
+<MudDatePicker Label="Date Format" @bind-Date="Date"
                HelperText="Persian" DateFormat="yyyy/MM/dd"
                Culture="@CultureInfo.GetCultureInfo("fa-Ir")" />
 
-@code { 
-    private DateTime? _date = new DateTime(2021, 02, 14); 
+@code {
+    [Parameter]
+    public DateTime? Date { get; set; } = new DateTime(2021, 02, 14); 
 }

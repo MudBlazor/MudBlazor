@@ -1,4 +1,4 @@
-@namespace MudBlazor
+﻿@namespace MudBlazor
 @inherits MudBaseInput<T>
 @typeparam T
 
@@ -44,7 +44,7 @@
                           MaxLength="@MaxLength"
                           autocomplete="@GetAutocomplete()"
                           @attributes="UserAttributes"
-                          TextChanged="OnTextChangedAsync"                          
+                          TextChanged="OnTextChangedAsync"
                           @onfocus="@OnInputFocusedAsync"
                           OnBlur="OnInputBlurredAsync"
                           OnKeyDown="@OnInputKeyDownAsync"
