@@ -982,7 +982,6 @@ namespace MudBlazor
                     _debounceDispatcher = new DebounceDispatcher(5);
 
                 await _debounceDispatcher.DebounceAsync(OpenMenuAsync);
-                await OpenMenuAsync();
             }
         }
 
