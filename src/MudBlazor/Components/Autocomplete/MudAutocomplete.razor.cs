@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Logging;
 using MudBlazor.Utilities;
+using MudBlazor.Utilities.Debounce;
 
 #nullable enable
 namespace MudBlazor
@@ -28,6 +29,7 @@ namespace MudBlazor
         private CancellationTokenSource? _cancellationTokenSrc;
         private Task? _currentSearchTask;
         private Timer? _debounceTimer;
+        private DebounceDispatcher? _debounceDispatcher;
         private T[]? _items;
         private List<int> _enabledItemIndices = [];
         private Func<T?, string?>? _toStringFunc;
@@ -962,9 +964,6 @@ namespace MudBlazor
 
         private async Task OnInputActivationAsync(bool openMenu)
         {
-            if (_isFocused)
-                return;
-
             _isFocused = true;
 
             if (Open || GetDisabledState() || GetReadOnlyState())
@@ -979,6 +978,10 @@ namespace MudBlazor
 
             if (openMenu)
             {
+                if (_debounceDispatcher == null)
+                    _debounceDispatcher = new DebounceDispatcher(5);
+
+                await _debounceDispatcher.DebounceAsync(OpenMenuAsync);
                 await OpenMenuAsync();
             }
         }
