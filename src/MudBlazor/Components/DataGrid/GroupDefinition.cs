@@ -1,4 +1,4 @@
-﻿// Copyright (c) MudBlazor 2021
+﻿﻿// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -19,7 +19,7 @@ public class GroupDefinition<T>
     /// </summary>
     /// <param name="grouping">The LINQ definition of the grouping.</param>
     /// <param name="expanded">Expands this group.</param>
-    public GroupDefinition(IGrouping<object?, T> grouping, bool expanded)
+    public GroupDefinition(IGrouping<object, T> grouping, bool expanded)
     {
         Grouping = grouping;
         Expanded = expanded;
@@ -28,7 +28,7 @@ public class GroupDefinition<T>
     /// <summary>
     /// The LINQ definition of the grouping.
     /// </summary>
-    public IGrouping<object?, T> Grouping { get; set; }
+    public IGrouping<object, T> Grouping { get; set; }
 
     /// <summary>
     /// Expands this group.
@@ -80,14 +80,6 @@ public class GroupDefinition<T>
             }
         }
     }
-
-    /// <summary>
-    /// The number of pixels this grouping level will be indented.
-    /// </summary>
-    /// <remarks>
-    /// Defaults to 8.
-    /// </remarks>
-    public int IndentationPixels { get; set; } = 8;
 
     /// <summary>
     /// The parent group definition.

@@ -216,7 +216,7 @@
                             }
                         }
                         @if (Virtualize || resolvedPageItems is { Count: > 0 })
-                        {
+                {
                             if (GroupedColumn != null)
                             {
                                 if (_currentPageGroups is { Count: 0 })
@@ -231,85 +231,15 @@
                                 }
                                 foreach (var g in _currentPageGroups)
                                 {
-
-                                    <tr class="mud-table-row">
-                                        @{ var groupClass = new CssBuilder(GroupClass).AddClass(GroupClassFunc?.Invoke(g)).Build(); }
-                                        @{ var groupStyle = new StyleBuilder().AddStyle(GroupStyle).AddStyle(GroupStyleFunc?.Invoke(g)).Build(); }
-
-                                        <td class="mud-table-cell @groupClass" colspan="1000" style="background-color:var(--mud-palette-background-gray);@groupStyle">
-                                            <MudIconButton Class="mud-table-row-expander" Icon="@GetGroupIcon(g.Expanded, this.RightToLeft)"
-                                                           OnClick="@(() => ToggleGroupExpansion(g))" aria-label="@Localizer[LanguageResource.MudDataGrid_ToggleGroupExpansion]" />
-
-                                            @if (GroupedColumn.GroupTemplate == null)
-                                            {
-                                                <span style="font-weight:bold">@GroupedColumn.Title: @g.Grouping.Key</span>
-                                            }
-                                            else
-                                            {
-                                                @GroupedColumn.GroupTemplate(@g)
-                                            }
-                                        </td>
-                                    </tr>
-
-                                    @if (g.Expanded)
-                                    {
-                                        <MudVirtualize @ref="_mudVirtualize" ItemsProvider="@VirtualItemsProvider" Enabled="@Virtualize" Items="@g.Grouping.Select((item, index) => new IndexBag<T>(index, item)).ToList()" OverscanCount="@OverscanCount" ItemSize="@ItemSize" Context="itemBag">
-                                            <Placeholder>
-                                                @if (RowLoadingContent != null)
-                                                {
-                                                    @RowLoadingContent
-                                                }
-                                                else
-                                                {
-                                                    <tr class="mud-table-row">
-                                                        <td class="mud-table-cell" colspan="1000">
-                                                            @Localizer[LanguageResource.MudDataGrid_Loading]
-                                                        </td>
-                                                    </tr>
-                                                }
-                                            </Placeholder>
-                                            
-                                            <ChildContent>
-                                                @{ var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(itemBag.Item, itemBag.Index)).Build(); }
-                                                @{ var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(itemBag.Item, itemBag.Index)).Build(); }
-                                                <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="itemBag.Item"
-                                                    @onclick="@((args) => OnRowClickedAsync(args, itemBag.Item, itemBag.Index))"
-                                                    @oncontextmenu="@((args) => OnContextMenuClickedAsync(args, itemBag.Item, itemBag.Index))"
-                                                    @oncontextmenu:preventDefault="@(RowContextMenuClick.HasDelegate)">
-                                                    <CascadingValue Value="@Validator" IsFixed="true">
-                                                        @foreach (var column in RenderedColumns)
-                                                        {
-                                                            if (!column.HiddenState.Value)
-                                                            {
-                                                                @Cell(column, itemBag.Item)
-                                                            }
-                                                        }
-                                                    </CascadingValue>
-                                                </tr>
-                                                @if (ChildRowContent != null && (_openHierarchies.Contains(itemBag.Item) || !HasHierarchyColumn))
-                                                {
-                                                    <tr class="mud-table-row">
-                                                        <td class="mud-table-cell mud-table-child-content" colspan="1000">
-                                                            @ChildRowContent(new CellContext<T>(this, itemBag.Item))
-                                                        </td>
-                                                    </tr>
-                                                }
-                                            </ChildContent>
-                                            <NoRecordsContent>
-                                                <tr>
-                                                    <th colspan="1000" class="mud-table-empty-row">
-                                                        <div Class="my-3">
-                                                            @NoRecordsContent
-                                                        </div>
-                                                    </th>
-                                                </tr>
-                                            </NoRecordsContent>
-                                        </MudVirtualize>
-                                        @*Group Footer*@
-                                        <tr class="mud-table-row">
-                                            @FooterCells(g.Grouping.ToList())
-                                        </tr>
-                                    }
+                                    <DataGridGroupRow T="T"
+                                                     GroupDefinition="g"
+                                                     Items="g.Grouping"
+                                                     GroupTemplate="GroupedColumn.GroupTemplate"
+                                                     GroupClass="@GroupClass"
+                                                     GroupStyle="@GroupStyle"
+                                                     GroupClassFunc="@GroupClassFunc"
+                                                     GroupStyleFunc="@GroupStyleFunc"
+                                                     DataGrid="this" />
                                 }
                             }
                             else

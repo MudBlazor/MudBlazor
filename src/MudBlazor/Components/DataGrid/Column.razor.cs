@@ -116,6 +116,21 @@ namespace MudBlazor
         public Func<T, object> GroupBy { get; set; }
 
         /// <summary>
+        /// The order in which values are grouped when there are more than one group
+        /// </summary>
+        /// <remarks>
+        /// Defaults to 0.
+        /// </remarks>
+        [Parameter]
+        public int GroupByOrder { get; set; }
+
+        /// <summary>
+        /// Whether the column is indented 48px beyond it's parent when grouped.
+        /// </summary>
+        [Parameter]
+        public bool GroupIndented { get; set; } = true;
+
+        /// <summary>
         /// Requires a value to be set.
         /// </summary>
         /// <remarks>

@@ -1,24 +1,24 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 @typeparam T
+@using System.Diagnostics.CodeAnalysis
+
+#nullable enable
 
 <tr class="mud-table-row">
-    <td class="@GroupClassname" colspan="1000" style="@StyleClass">
-
+    <td class="@GroupClassname" colspan="1000" style="@ComputedGroupStyle">
+        <MudIconButton Icon="@(Expanded ? Icons.Material.Filled.ExpandMore : Icons.Material.Filled.ChevronRight)" 
+                       OnClick="@(() => { Expanded = !Expanded; GroupDefinition.Expanded = Expanded; StateHasChanged(); })" />
     </td>
 </tr>
 
-@if (HeaderTemplate != null && GroupDefinition != null)
+@if (GroupTemplate == null)
 {
-    <tr class="@HeaderClassname" style="@HeaderStyle">
-        <td>
-            <div class="d-flex">
-                <MudIconButton Icon="@(Expanded ? Icons.Material.Filled.ExpandMore : Icons.Material.Filled.ChevronRight)" 
-                OnClick="@(() => { Expanded = !Expanded; GroupDefinition.Expanded = Expanded; StateHasChanged(); })" />
-            </div>
-        </td>
-        @HeaderTemplate(new DataGridGroupData<object?, T>(Items?.Key, Items?.ToList() ?? new List<T>()))
-    </tr>
+    <span style="font-weight:bold">@GroupedColumn.Title: @g.Grouping.Key</span>
+}
+else
+{
+    @GroupedColumn.GroupTemplate(GroupDefinition)
 }
 
 @if (Expanded)
@@ -27,18 +27,87 @@
     {
         @foreach (var group in _innerGroupItems)
         {
-            <DataGridGroupRow  GroupDefinition="GroupDefinition.InnerGroup" 
-            Items="@group"
-            HeaderTemplate="@HeaderTemplate"
-            HeaderClass="@HeaderClass"
-            HeaderStyle="@HeaderStyle" T="T" />
+            <DataGridGroupRow T="T" Items="@group"
+                              GroupDefinition="GroupDefinition.InnerGroup"
+                              GroupClass="@GroupClass"
+                              GroupStyle="@GroupStyle"
+                              GroupClassFunc="@GroupClassFunc"
+                              GroupStyleFunc="@GroupStyleFunc"
+                              DataGrid="@DataGrid" />
         }
     }
     else
     {
-        @foreach (var item in Items ?? Enumerable.Empty<T>())
+        <MudVirtualize @ref="@_mudVirtualize" ItemsProvider="@DataGrid?.VirtualItemsProvider" 
+                       Enabled="@(DataGrid?.Virtualize ?? false)" 
+                       Items="@(Items?.Select((item, index) => new IndexBag<T>(index, item)).ToList())" 
+                       OverscanCount="@(DataGrid?.OverscanCount ?? 0)" 
+                       ItemSize="@(DataGrid?.ItemSize ?? 50)" Context="itemBag">
+            <Placeholder>
+                @if (DataGrid?.RowLoadingContent != null)
+                {
+                    @DataGrid.RowLoadingContent
+                }
+                else
+                {
+                    <tr class="mud-table-row">
+                        <td class="mud-table-cell" colspan="1000">
+                            Loading...
+                        </td>
+                    </tr>
+                }
+            </Placeholder>
+            <ChildContent>
+                @{
+                    var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(itemBag.Item, itemBag.Index)).Build();
+                    var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(itemBag.Item, itemBag.Index)).Build();
+                }
+                    <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="itemBag.Item"
+                        @onclick="@((args) => OnRowClickedAsync(args, itemBag.Item, itemBag.Index))"
+                        @oncontextmenu="@((args) => OnContextMenuClickedAsync(args, itemBag.Item, itemBag.Index))"
+                        @oncontextmenu:preventDefault="@(RowContextMenuClick.HasDelegate)">
+                        <CascadingValue Value="@Validator" IsFixed="true">
+                            @foreach (var column in RenderedColumns)
+                            {
+                                if (!column.HiddenState.Value)
+                                {
+                                    @Cell(column, itemBag.Item)
+                                }
+                            }
+                        </CascadingValue>
+                    </tr>
+                @if (ChildRowContent != null && (_openHierarchies.Contains(itemBag.Item) || !HasHierarchyColumn))
+                {
+                                                                <tr class="mud-table-row">
+                                                                    <td class="mud-table-cell mud-table-child-content" colspan="1000">
+                            @ChildRowContent(new CellContext<T>(this, itemBag.Item))
+                                                                    </td>
+                                                                </tr>
+                }
+            </ChildContent>
+            <NoRecordsContent>
+                <tr>
+                    <th colspan="1000" class="mud-table-empty-row">
+                        <div Class="my-3">
+                            @if (DataGrid?.NoRecordsContent != null)
+                            {
+                                @DataGrid.NoRecordsContent
+                            }
+                            else
+                            {
+                                <span>No Records Found</span>
+                            }
+                        </div>
+                    </th>
+                </tr>
+            </NoRecordsContent>
+        </MudVirtualize>
+
+        @if (Items != null && DataGrid != null)
         {
-            @DataGrid?.RenderRow(item, (GroupDefinition?.Indentation ?? false) ? $"mud-table-row-group-indented-{GroupDefinition?.Level - 1}" : null)
+            <tr class="mud-table-row">
+                @DataGrid.FooterCells(Items)
+            </tr>
         }
     }
 }
