@@ -1,0 +1,23 @@
+﻿@using MudBlazor.State
+@namespace MudBlazor.Docs.Examples
+@inherits ComponentBaseWithState
+
+@code {
+    private readonly ParameterState<bool> _expandedState; //separate field for storing parameter state
+
+    [Parameter]
+    public bool Expanded { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> ExpandedChanged { get; set; }
+
+    public ParameterStateUsageExample()
+    {
+        using var registerScope = CreateRegisterScope();
+        _expandedState = registerScope.RegisterParameter<bool>(nameof(Expanded))
+            .WithParameter(() => Expanded)
+            .WithEventCallback(() => ExpandedChanged);
+    }
+
+    private Task ToggleAsync() => _expandedState.SetValueAsync(!_expandedState.Value); //✔ Do NOT modify parameters directly.
+}

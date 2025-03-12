@@ -53,10 +53,10 @@ namespace MudBlazor.Charts
         private double _verticalEndSpace = HeatMapPadding;
 
         // the minimum value in all series
-        private double _minValue = 0.0;
+        internal double _minValue = double.MaxValue;
 
         // the maximum value in all series
-        private double _maxValue = 1.0;
+        internal double _maxValue = double.MinValue;
 
         private string[] _colorPalette = ["#587934"];
 
@@ -149,14 +149,11 @@ namespace MudBlazor.Charts
             }
         }
 
-
         private void InitializeHeatmap()
         {
             // Populate _heatmapCells based on data, e.g., matrix of values
             _heatMapCells.Clear();
-            _minValue = 0;
-            _maxValue = 1;
-
+            var hasValues = false;
             // # of rows
             var rows = _series.Count;
             // cols should be the max number of data[] in all series
@@ -179,13 +176,21 @@ namespace MudBlazor.Charts
                         Height = mudHeatMapOverride?.Height,
                         MudColor = mudHeatMapOverride?.MudColor,
                     });
-                    if (value != null)
+                    if (value.HasValue)
                     {
                         _minValue = Math.Min(_minValue, value.Value);
                         _maxValue = Math.Max(_maxValue, value.Value);
+                        hasValues = true;
                     }
                 }
             }
+
+            var overrideMinValue = _customHeatMapCells.LastOrDefault(x => x.MinValue.HasValue)?.MinValue;
+            var overrideMaxValue = _customHeatMapCells.LastOrDefault(x => x.MaxValue.HasValue)?.MaxValue;
+
+            _minValue = overrideMinValue ?? (hasValues ? _minValue : 0.0);
+            _maxValue = overrideMaxValue ?? (hasValues ? _maxValue : 1.0);
+
             CalculateAreas();
             BuildLegends();
         }

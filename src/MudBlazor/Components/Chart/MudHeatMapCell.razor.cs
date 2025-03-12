@@ -61,6 +61,22 @@ namespace MudBlazor
         public int? Height { get; set; }
 
         /// <summary>
+        /// Optional, setting this will set the minimum value for the heatmap range, by default the range is calculated from the data. This only needs to be set on one
+        /// <see cref="MudHeatMapCell"/> in the <see cref="MudBlazor.Charts.HeatMap"/>."/> Only the last value set will be used.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Chart.Behavior)]
+        public double? MinValue { get; set; }
+
+        /// <summary>
+        /// Optional, setting this will set the maximum value for the heatmap range, by default the range is calculated from the data. This only needs to be set on one
+        /// <see cref="MudHeatMapCell"/> in the <see cref="MudBlazor.Charts.HeatMap"/>."/> Only the last value set will be used.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Chart.Behavior)]
+        public double? MaxValue { get; set; }
+
+        /// <summary>
         /// Optional, The custom svg element you want to include
         /// </summary>
         [Parameter]
