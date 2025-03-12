@@ -1548,7 +1548,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".expanded").ClassList.Should().Contain("mud-popover-open").And.NotContain("mud-popover-relative-width");
         }
 
-        [TestCaseSource(typeof(MouseEventArgsTestCase),nameof(MouseEventArgsTestCase.AllCombinations))]
+        [TestCaseSource(typeof(MouseEventArgsTestCase), nameof(MouseEventArgsTestCase.AllCombinations))]
         [Test]
         public async Task Select_HandleMouseDown(MouseEventArgs args)
         {
