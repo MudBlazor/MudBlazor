@@ -978,8 +978,7 @@ namespace MudBlazor
 
             if (openMenu)
             {
-                if (_debounceDispatcher == null)
-                    _debounceDispatcher = new DebounceDispatcher(5);
+                _debounceDispatcher ??= new DebounceDispatcher(5);
 
                 await _debounceDispatcher.DebounceAsync(OpenMenuAsync);
             }
