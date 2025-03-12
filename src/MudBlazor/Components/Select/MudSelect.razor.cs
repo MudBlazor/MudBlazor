@@ -836,7 +836,7 @@ namespace MudBlazor
             }
         }
 
-        public Task HandleMouseDown(MouseEventArgs args)
+        internal Task HandleMouseDown(MouseEventArgs args)
         {
             if (args.Button != 0) // if it wasn't left click drop out
                 return Task.CompletedTask;
