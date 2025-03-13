@@ -127,8 +127,7 @@ namespace MudBlazor
             if (GetDisabledState())
                 return;
             await OnClick.InvokeAsync(ev);
-            if (!Class?.Contains("mud-input-adornment-icon-button") ?? true)
-                Activatable?.Activate(this, ev);
+            Activatable?.Activate(this, ev);
         }
 
         protected override void OnInitialized()
