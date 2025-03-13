@@ -78,6 +78,21 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Fit Content">
+                <Description>
+                    By default, the <CodeInline>MudSelect</CodeInline> component automatically takes up the space availalbe to it (<CodeInline>FullWidth=False</CodeInline>).
+                    If you want the component to take up only the space it needs, you can set <CodeInline>FitContent=True</CodeInline>.
+                    <MudAlert Class="mt-4" Severity="Severity.Info">
+                        Note: Along with the content of select items, the width of the select component can depend on the Placeholder, Label, Adornment, and Clearable properties.
+                    </MudAlert>
+                </Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="@nameof(SelectFitContentExample)">
+                <SelectFitContentExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Value presentation">
                 <Description>
                     Select uses the render fragments you specify for the items to display the selected value (if any). If you don't specify render fragments, the value will be displayed as text. Also, if you have render fragments

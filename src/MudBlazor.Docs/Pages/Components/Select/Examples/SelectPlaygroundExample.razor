@@ -10,6 +10,7 @@
                        Label="@variant.ToString()"
                        Margin="_margin"
                        Dense="_dense"
+                       FitContent="_fitContent"
                        Disabled="_disabled"
                        ReadOnly="_readonly"
                        Placeholder="@(_placeholder ? "Placeholder" : null)"
@@ -33,6 +34,7 @@
         </MudSelect>
 
         <MudSwitch @bind-Value="_dense" Label="Dense" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_fitContent" Label="FitContent" Color="Color.Primary" />
         <MudSwitch @bind-Value="_readonly" Label="ReadOnly" Color="Color.Primary" />
         <MudSwitch @bind-Value="_disabled" Label="Disabled" Color="Color.Primary" />
         <MudSwitch @bind-Value="_placeholder" Label="Placeholder" Color="Color.Primary" />
@@ -52,6 +54,7 @@
     bool _helperText;
     bool _helperTextOnFocus;
     bool _clearable;
+    bool _fitContent;
 
     private string[] _states =
     {
