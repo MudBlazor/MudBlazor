@@ -13,7 +13,9 @@
 
     private string? _value;
 
+    [Parameter]
     public bool FitContent { get; set;}
+
     public bool ClearButtonClicked { get; private set; }
 
     private void ClearButtonClickHandler(MouseEventArgs e)

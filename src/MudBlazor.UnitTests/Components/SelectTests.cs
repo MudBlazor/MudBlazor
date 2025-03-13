@@ -1558,8 +1558,7 @@ namespace MudBlazor.UnitTests.Components
 
             select.ClassList.Should().NotContain("mud-width-content");
 
-            comp.Instance.FitContent = true;
-            comp.Render();
+            comp.SetParametersAndRender(parameters => parameters.Add(c => c.FitContent, true));
 
             select.ClassList.Should().Contain("mud-width-content");
 
