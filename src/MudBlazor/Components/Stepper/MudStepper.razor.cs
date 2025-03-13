@@ -22,9 +22,18 @@ public partial class MudStepper : MudComponentBase
             .WithParameter(() => ActiveIndex)
             .WithEventCallback(() => ActiveIndexChanged)
             .WithChangeHandler(async args => await SetActiveIndexAsync(args.Value));
+
+        _currentStepColor = registerScope.RegisterParameter<Color>(nameof(CurrentStepColor))
+            .WithParameter(() => CurrentStepColor)
+            .WithEventCallback(() => CurrentStepColorChanged)
+            .WithChangeHandler(async args => await SetCurrentStepColorAsync(args.Value));
+
+        _originalCurrentStepColor = CurrentStepColor;
     }
 
     private readonly ParameterState<int> _activeIndex;
+    private readonly ParameterState<Color> _currentStepColor;
+    private readonly Color _originalCurrentStepColor;
     private List<MudStep> _steps = [];
     private HashSet<MudStep> _skippedSteps = [];
 
@@ -70,6 +79,13 @@ public partial class MudStepper : MudComponentBase
     [Parameter]
     [Category(CategoryTypes.List.Behavior)]
     public EventCallback<int> ActiveIndexChanged { get; set; }
+
+    /// <summary>
+    /// Occurs when <see cref="CurrentStepColor"/> has changed.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.List.Behavior)]
+    public EventCallback<Color> CurrentStepColorChanged { get; set; }
 
     /// <summary>
     /// The color of completed steps.
@@ -431,6 +447,8 @@ public partial class MudStepper : MudComponentBase
                     var nextStep = GetNextStep(index);
                     if (nextStep is not null)
                         index = _steps.IndexOf(nextStep);
+                    else
+                        await SetCurrentStepColorAsync(CompletedStepColor);
                     await SetActiveIndexAsync(index);
                     break;
                 }
@@ -467,9 +485,20 @@ public partial class MudStepper : MudComponentBase
             step = _steps.SkipWhile(x => _steps.IndexOf(x) < index || x.DisabledState).FirstOrDefault();
             index = step is null ? -1 : _steps.IndexOf(step);
         }
+        if (NonLinear)
+        {
+            await SetCurrentStepColorAsync(_originalCurrentStepColor);
+        }
         ActiveStep = step;
         await _activeIndex.SetValueAsync(index);
         StateHasChanged(); // this is important !
+    }
+
+    private async Task SetCurrentStepColorAsync(Color color)
+    {
+        CurrentStepColor = color;
+        await _currentStepColor.SetValueAsync(color);
+        StateHasChanged();
     }
 
     // Keeps track of initialization
@@ -555,6 +584,8 @@ public partial class MudStepper : MudComponentBase
         {
             return;
         }
+
+        await SetCurrentStepColorAsync(_originalCurrentStepColor);
 
         foreach (var step in _steps)
         {
