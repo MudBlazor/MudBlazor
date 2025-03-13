@@ -3,7 +3,7 @@
 @inherits MudBaseInput<T>
 
 <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
-    <div class="@OuterClassname" id="@_elementId" @onfocusout="@OnFocusOutAsync">
+    <div class="@OuterClassname" id="@_elementId" @onfocusout="@OnFocusOutAsync" @onclick:stopPropagation @onmousedown:stopPropagation>
         <MudInputControl Label="@Label"
                          Variant="@Variant"
                          HelperId="@GetHelperId()"
