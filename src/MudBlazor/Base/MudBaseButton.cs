@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
 using static System.String;
@@ -128,7 +127,8 @@ namespace MudBlazor
             if (GetDisabledState())
                 return;
             await OnClick.InvokeAsync(ev);
-            Activatable?.Activate(this, ev);
+            if (!Class?.Contains("mud-input-adornment-icon-button") ?? true)
+                Activatable?.Activate(this, ev);
         }
 
         protected override void OnInitialized()
