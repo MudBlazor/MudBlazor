@@ -1213,7 +1213,7 @@ namespace MudBlazor
             }
         }
 
-        private bool HasHierarchyColumn
+        internal bool HasHierarchyColumn
         {
             get
             {
@@ -2066,7 +2066,8 @@ namespace MudBlazor
                 var topLevelGroup = new GroupDefinition<T>(topGroup, _groupExpansionsDict[topGroup.Key])
                 {
                     // Apply indentation based on GroupIndented property of the GroupedColumn
-                    Indentation = GroupedColumn.GroupIndented
+                    Indentation = GroupedColumn.GroupIndented,
+                    Title = GroupedColumn.Title,
                 };
 
                 if (groupColumns.Any())
