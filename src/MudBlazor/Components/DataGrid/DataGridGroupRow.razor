@@ -6,7 +6,7 @@
 #nullable enable
 
 <tr class="mud-table-row">
-    <td class="@GroupClassname" colspan="1000" style="@ComputedGroupStyle">
+    <td class="@GroupClassname" colspan="1000" style="@GroupStylename">
         <MudIconButton Icon="@(Expanded ? Icons.Material.Filled.ExpandMore : Icons.Material.Filled.ChevronRight)" 
                        OnClick="@(() => { Expanded = !Expanded; GroupDefinition.Expanded = Expanded; StateHasChanged(); })" />
     </td>
