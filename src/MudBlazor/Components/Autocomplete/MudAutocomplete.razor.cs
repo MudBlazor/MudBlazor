@@ -978,7 +978,9 @@ namespace MudBlazor
 
             if (openMenu)
             {
-                _debounceDispatcher ??= new DebounceDispatcher(5);
+                // The click and focus events will conflict with each other if the debounce is too low,
+                // so forcing a minimum of 5ms
+                _debounceDispatcher ??= new DebounceDispatcher(5);  
 
                 await _debounceDispatcher.DebounceAsync(OpenMenuAsync);
             }
