@@ -583,5 +583,39 @@ namespace MudBlazor.UnitTests.Components
             // Ensure all popovers are closed.
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
         }
+
+        [Test]
+        public void Menu_ButtonActivator()
+        {
+            var provider = Context.RenderComponent<MudPopoverProvider>();
+            var comp = Context.RenderComponent<MudMenu>(parameters => parameters
+                .Add(p => p.ActivatorContent, builder =>
+                {
+                    builder.OpenComponent<MudButton>(0);
+                    builder.CloseComponent();
+                }));
+
+            provider.FindAll("div.mud-popover-open").Count.Should().Be(0);
+
+            // Click the MudButton inside the ActivatorContent
+            var button = comp.Find("button.mud-button-root");
+            button.Click();
+            provider.FindAll("div.mud-popover-open").Count.Should().Be(1);
+            button.Click();
+            // Render component with MudIconButton inside ActivatorContent
+            comp = Context.RenderComponent<MudMenu>(parameters => parameters
+                .Add(p => p.ActivatorContent, builder =>
+                {
+                    builder.OpenComponent<MudIconButton>(0);
+                    builder.AddAttribute(1, "Class", "mud-icon-button-activator");
+                    builder.CloseComponent();
+                }));
+
+            provider.FindAll("div.mud-popover-open").Count.Should().Be(0);
+
+            // Click the MudIconButton inside the ActivatorContent
+            comp.Find("button.mud-icon-button-activator").Click();
+            provider.FindAll("div.mud-popover-open").Count.Should().Be(1);
+        }
     }
 }
