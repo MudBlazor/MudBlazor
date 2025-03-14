@@ -1176,11 +1176,14 @@ namespace MudBlazor
         [Parameter]
         public Interfaces.IForm Validator { get; set; } = new DataGridRowValidator();
 
-        internal Column<T> GroupedColumn
+        /// <summary>
+        /// This is just an indication if there is grouping
+        /// </summary>
+        internal bool IsGrouped
         {
             get
             {
-                return RenderedColumns.FirstOrDefault(x => x.GroupingState.Value);
+                return RenderedColumns.FirstOrDefault(x => x.GroupingState.Value) != null;
             }
         }
 
@@ -2021,7 +2024,7 @@ namespace MudBlazor
             if (!noStateChange)
                 DropContainerHasChanged();
 
-            if (GroupedColumn?.groupBy == null)
+            if (!IsGrouped)
             {
                 _currentPageGroups = new List<GroupDefinition<T>>();
                 _allGroups = new List<GroupDefinition<T>>();
@@ -2030,94 +2033,33 @@ namespace MudBlazor
                 return;
             }
 
-            var currentPageGroupings = CurrentPageItems.GroupBy(GroupedColumn.groupBy);
+            //var currentPageGroupings = CurrentPageItems.GroupBy(GroupedColumn.groupBy);
 
             // Maybe group Items to keep groups expanded after clearing a filter?
-            var allGroupings = FilteredItems.GroupBy(GroupedColumn.groupBy).ToArray();
+            //var allGroupings = FilteredItems.GroupBy(GroupedColumn.groupBy).ToArray();
 
-            if (GetFilteredItemsCount() > 0)
-            {
-                foreach (var group in allGroupings)
-                {
-                    _groupExpansionsDict.TryAdd(group.Key, GroupExpanded);
-                }
-            }
+            //if (GetFilteredItemsCount() > 0)
+            //{
+            //    foreach (var group in allGroupings)
+            //    {
+            //        _groupExpansionsDict.TryAdd(group.Key, GroupExpanded);
+            //    }
+            //}
 
             // Get all grouping columns ordered by GroupByOrder
-            var additionalGroupColumns = RenderedColumns
-                .Where(c => c != GroupedColumn && c.GroupingState.Value)
-                .OrderBy(c => c.GroupByOrder)
-                .ToList();
+            //var additionalGroupColumns = RenderedColumns
+            //    .Where(c => c != GroupedColumn && c.GroupingState.Value)
+            //    .OrderBy(c => c.GroupByOrder)
+            //    .ToList();
 
             // construct the groups for current page
-            _currentPageGroups = CreateGroupHierarchy(currentPageGroupings, additionalGroupColumns);
+            //_currentPageGroups = CreateGroupHierarchy(currentPageGroupings, additionalGroupColumns);
 
             // construct the groups for all items
-            _allGroups = CreateGroupHierarchy(allGroupings, additionalGroupColumns);
+            //_allGroups = CreateGroupHierarchy(allGroupings, additionalGroupColumns);
 
             if ((_isFirstRendered || HasServerData) && !noStateChange)
                 StateHasChanged();
-        }
-
-        private List<GroupDefinition<T>> CreateGroupHierarchy(IEnumerable<IGrouping<object, T>> groupings, List<Column<T>> groupColumns)
-        {
-            return groupings.Select(topGroup =>
-            {
-                var topLevelGroup = new GroupDefinition<T>(topGroup, _groupExpansionsDict[topGroup.Key])
-                {
-                    // Apply indentation based on GroupIndented property of the GroupedColumn
-                    Indentation = GroupedColumn.GroupIndented,
-                    Title = GroupedColumn.Title,
-                };
-
-                if (groupColumns.Any())
-                {
-                    // Create the nested group hierarchy recursively
-                    CreateNestedGroups(topLevelGroup, topGroup, groupColumns, 0);
-                }
-
-                return topLevelGroup;
-            }).ToList();
-        }
-
-        private void CreateNestedGroups(GroupDefinition<T> parentGroup, IEnumerable<T> items, List<Column<T>> groupColumns, int level)
-        {
-            if (level >= groupColumns.Count)
-                return;
-
-            var currentColumn = groupColumns[level];
-            var innerGroupings = items.GroupBy(currentColumn.groupBy);
-
-            var innerGroups = innerGroupings.Select(innerGroup =>
-                new GroupDefinition<T>(innerGroup,
-                    _groupExpansionsDict.TryGetValue(innerGroup.Key, out var expanded)
-                        ? expanded
-                        : GroupExpanded)
-                {
-                    // Apply indentation based on GroupIndented property of the current column
-                    Indentation = currentColumn.GroupIndented
-                }).ToList();
-
-            if (innerGroups.Any())
-            {
-                // Set the first inner group
-                var firstInnerGroup = innerGroups.First();
-                parentGroup.InnerGroup = firstInnerGroup;
-
-                // Chain the remaining inner groups
-                var currentGroup = firstInnerGroup;
-                foreach (var nextGroup in innerGroups.Skip(1))
-                {
-                    currentGroup.InnerGroup = nextGroup;
-                    currentGroup = nextGroup;
-                }
-
-                // Recursively create the next level of groups for each inner group
-                foreach (var group in innerGroups)
-                {
-                    CreateNestedGroups(group, group.Grouping, groupColumns, level + 1);
-                }
-            }
         }
 
         internal async Task ChangedGrouping(Column<T> column)

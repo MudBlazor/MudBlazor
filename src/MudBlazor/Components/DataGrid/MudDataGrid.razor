@@ -217,7 +217,7 @@
                         }
                         @if (Virtualize || resolvedPageItems is { Count: > 0 })
                 {
-                            if (GroupedColumn != null)
+                            if (IsGrouped)
                             {
                                 if (_currentPageGroups is { Count: 0 })
                                 {
@@ -234,7 +234,6 @@
                                     <DataGridGroupRow T="T"
                                                      GroupDefinition="g"
                                                      Items="g.Grouping"
-                                                     GroupTemplate="GroupedColumn.GroupTemplate"
                                                      GroupClass="@GroupClass"
                                                      GroupStyle="@GroupStyle"
                                                      GroupClassFunc="@GroupClassFunc"

@@ -4608,7 +4608,7 @@ namespace MudBlazor.UnitTests.Components
             cells[7].TextContent.Should().Be("Name: Oxygen");
             cells[8].TextContent.Should().Be("Name: Fluorine");
             cells[9].TextContent.Should().Be("Name: Neon");
-            dataGrid.Instance.GroupedColumn.Should().NotBeNull();
+            dataGrid.Instance.IsGrouped.Should().BeTrue();
 
             //click name ungrouping in grid
             headerOption = comp.Find("th.name .mud-menu button");
@@ -4625,7 +4625,7 @@ namespace MudBlazor.UnitTests.Components
             cells[3].TextContent.Should().Be("0");
             cells[4].TextContent.Should().Be("1.00794");
             cells[5].TextContent.Should().Be("Other");
-            dataGrid.Instance.GroupedColumn.Should().BeNull();
+            dataGrid.Instance.IsGrouped.Should().BeFalse();
         }
 
         [Test]

@@ -2,6 +2,8 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using Microsoft.AspNetCore.Components;
+
 namespace MudBlazor;
 
 #nullable enable
@@ -37,6 +39,11 @@ public class GroupDefinition<T>
     /// Defaults to <c>False</c>.
     /// </remarks>
     public bool Expanded { get; set; }
+
+    /// <summary>
+    /// The template for the grouped column.
+    /// </summary>
+    public RenderFragment<GroupDefinition<T>>? GroupTemplate { get; set; }
 
     /// <summary>
     /// The title of the grouped column

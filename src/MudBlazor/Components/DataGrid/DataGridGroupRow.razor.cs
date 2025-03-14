@@ -43,9 +43,6 @@ namespace MudBlazor
             .Build();
 
         [Parameter]
-        public RenderFragment<GroupDefinition<T>>? GroupTemplate { get; set; }
-
-        [Parameter]
         public bool Expanded { get; set; }
 
         [Parameter]
