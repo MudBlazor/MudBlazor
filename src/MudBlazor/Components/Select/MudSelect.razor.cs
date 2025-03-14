@@ -37,8 +37,8 @@ namespace MudBlazor
 
         protected string OuterClassname =>
             new CssBuilder("mud-select")
-                .AddClass("mud-width-full", FullWidth && !FitContent)
-                .AddClass("mud-width-content", FitContent)
+                .AddClass("mud-width-full", FullWidth && !ShrinkToContent)
+                .AddClass("mud-width-content", ShrinkToContent)
                 .AddClass(OuterClass)
                 .Build();
 
@@ -243,7 +243,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public bool FitContent { get; set; }
+        public bool ShrinkToContent { get; set; }
 
         /// <summary>
         /// The CSS classes applied to the outer <c>div</c>.

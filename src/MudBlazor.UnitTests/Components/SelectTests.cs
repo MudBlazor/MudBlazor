@@ -1553,13 +1553,13 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<SelectClearableTest>();
 
-            comp.Instance.FitContent.Should().BeFalse();
+            comp.Instance.ShrinkToContent.Should().BeFalse();
 
             var select = comp.Find(".mud-select");
 
             select.ClassList.Should().NotContain("mud-width-content");
 
-            comp.SetParametersAndRender(parameters => parameters.Add(c => c.FitContent, true));
+            comp.SetParametersAndRender(parameters => parameters.Add(c => c.ShrinkToContent, true));
 
             select.ClassList.Should().Contain("mud-width-content");
 

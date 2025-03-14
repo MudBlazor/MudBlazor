@@ -57,7 +57,7 @@
                         @GetSelectedValuePresenter()
                     }
                 </MudInput>
-                @if (FitContent && _longestItem is { Value: not null } )
+                @if (ShrinkToContent && _longestItem is { Value: not null } )
                 {
                     <MudStack Class="@FillerClassname" Spacing="1" Row>
                         @{
