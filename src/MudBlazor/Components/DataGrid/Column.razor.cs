@@ -1,4 +1,4 @@
-﻿// Copyright (c) MudBlazor 2021
+﻿﻿// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -129,6 +129,15 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public bool GroupIndented { get; set; } = true;
+
+        /// <summary>
+        /// Whether groups created from this column start expanded.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        public bool GroupExpanded { get; set; }
 
         /// <summary>
         /// Requires a value to be set.

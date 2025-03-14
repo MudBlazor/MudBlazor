@@ -1,4 +1,4 @@
-﻿// Copyright (c) MudBlazor 2021
+﻿﻿﻿﻿// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -32,7 +32,7 @@ namespace MudBlazor
 
         protected string GroupClassname => new CssBuilder("mud-table-cell")
             .AddClass("mud-datagrid-group")
-            .AddClass($"mud-table-row-group-indented-{(GroupDefinition.Indentation ? GroupDefinition.Level : 0)}")
+            .AddClass($"mud-table-row-group-indented-{(GroupDefinition.Indentation ? Math.Min(GroupDefinition.Level, 5) : 0)}")
             .AddClass(GroupClassFunc?.Invoke(GroupDefinition))
             .AddClass(GroupClass)
             .Build();
@@ -88,11 +88,7 @@ namespace MudBlazor
             // Process inner groups if they exist
             if (Items != null && GroupDefinition?.InnerGroup != null)
             {
-                var key = GroupDefinition.InnerGroup.Grouping.Key;
-                if (key != null)
-                {
-                    _innerGroupItems = Items.GroupBy(g => key);
-                }
+                _innerGroupItems = Items.GroupBy(GroupDefinition.InnerGroup.Selector);
             }
         }
     }

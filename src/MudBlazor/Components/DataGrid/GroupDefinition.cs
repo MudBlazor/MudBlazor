@@ -14,23 +14,14 @@ namespace MudBlazor;
 public class GroupDefinition<T>
 {
     private GroupDefinition<T>? _innerGroup;
-    private bool _indentation = true;
 
     /// <summary>
-    /// Creates a new instance.
+    /// The function which selects items for this group.
     /// </summary>
-    /// <param name="grouping">The LINQ definition of the grouping.</param>
-    /// <param name="expanded">Expands this group.</param>
-    public GroupDefinition(IGrouping<object, T> grouping, bool expanded)
-    {
-        Grouping = grouping;
-        Expanded = expanded;
-    }
-
-    /// <summary>
-    /// The LINQ definition of the grouping.
-    /// </summary>
-    public IGrouping<object, T> Grouping { get; set; }
+    /// <remarks>
+    /// Typically used during a LINQ <c>GroupBy()</c> call to group items.
+    /// </remarks>
+    public Func<T, object> Selector { get; set; } = default!;
 
     /// <summary>
     /// Expands this group.
@@ -74,24 +65,9 @@ public class GroupDefinition<T>
     }
 
     /// <summary>
-    /// Indents the first column cell for this group and child groups.
+    /// Indents the first column cell for this group by 48px to it's parent
     /// </summary>
-    /// <remarks>
-    /// When set, all child group definitions are also updated.  Must be set for the first grouping level.
-    /// <para>Defaults to <c>true</c>.</para>
-    /// </remarks>
-    public bool Indentation
-    {
-        get => _indentation;
-        set
-        {
-            _indentation = value;
-            if (InnerGroup is not null)
-            {
-                InnerGroup.Indentation = value;
-            }
-        }
-    }
+    public bool Indentation { get; set; } = true;
 
     /// <summary>
     /// The parent group definition.

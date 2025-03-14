@@ -1,4 +1,4 @@
-﻿// Copyright (c) MudBlazor 2021
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -37,9 +37,8 @@ namespace MudBlazor
         private PropertyInfo[] _properties = typeof(T).GetProperties();
         private CancellationTokenSource _serverDataCancellationTokenSource;
         private IEnumerable<T> _currentRenderFilteredItemsCache = null;
-        internal Dictionary<NullableObject<object>, bool> _groupExpansionsDict = new();
-        private List<GroupDefinition<T>> _currentPageGroups = [];
-        private List<GroupDefinition<T>> _allGroups = [];
+        private GroupDefinition<T> _groups;
+        private Dictionary<string, bool> _groupExpansionsDict = new();
         private GridData<T> _serverData = new() { TotalItems = 0, Items = Array.Empty<T>() };
         private Func<IFilterDefinition<T>> _defaultFilterDefinitionFactory = () => new FilterDefinition<T>();
 
@@ -192,9 +191,7 @@ namespace MudBlazor
 
         private static void Swap<TItem>(List<TItem> list, int indexA, int indexB)
         {
-            var tmp = list[indexA];
-            list[indexA] = list[indexB];
-            list[indexB] = tmp;
+            (list[indexB], list[indexA]) = (list[indexA], list[indexB]);
         }
 
         private Task ItemUpdatedAsync(MudItemDropInfo<Column<T>> dropItem)
@@ -998,9 +995,7 @@ namespace MudBlazor
 
                     if (!_groupable)
                     {
-                        _currentPageGroups.Clear();
-                        _allGroups.Clear();
-                        _groupExpansionsDict.Clear();
+                        _groups = null;
 
                         foreach (var column in RenderedColumns)
                             column.RemoveGrouping().CatchAndLog();
@@ -1191,7 +1186,7 @@ namespace MudBlazor
 
         #region Computed Properties
 
-        internal static string GetGroupIcon(bool isExpanded, bool rtl)
+        internal string GetGroupIcon(bool isExpanded, bool rtl)
         {
             if (isExpanded)
             {
@@ -2024,42 +2019,59 @@ namespace MudBlazor
             if (!noStateChange)
                 DropContainerHasChanged();
 
-            if (!IsGrouped)
+            _groups = null;
+
+            if (!IsGrouped || GetFilteredItemsCount() == 0)
             {
-                _currentPageGroups = new List<GroupDefinition<T>>();
-                _allGroups = new List<GroupDefinition<T>>();
                 if (_isFirstRendered && !noStateChange)
                     StateHasChanged();
                 return;
             }
 
-            //var currentPageGroupings = CurrentPageItems.GroupBy(GroupedColumn.groupBy);
+            // get all groups ordered by GroupByOrder
+            var groups = RenderedColumns.Where(x => x.groupBy != null).OrderBy(x => x.GroupByOrder).ToList();
 
-            // Maybe group Items to keep groups expanded after clearing a filter?
-            //var allGroupings = FilteredItems.GroupBy(GroupedColumn.groupBy).ToArray();
+            // Create group definitions and link them hierarchically
+            GroupDefinition<T> lastGroup = null;
+            foreach (var group in groups)
+            {
+                var currentGroup = ProcessGroup(group);
+                if (lastGroup != null)
+                {
+                    lastGroup.InnerGroup = currentGroup;
+                }
+                lastGroup = currentGroup;
+            }
 
-            //if (GetFilteredItemsCount() > 0)
-            //{
-            //    foreach (var group in allGroupings)
-            //    {
-            //        _groupExpansionsDict.TryAdd(group.Key, GroupExpanded);
-            //    }
-            //}
-
-            // Get all grouping columns ordered by GroupByOrder
-            //var additionalGroupColumns = RenderedColumns
-            //    .Where(c => c != GroupedColumn && c.GroupingState.Value)
-            //    .OrderBy(c => c.GroupByOrder)
-            //    .ToList();
-
-            // construct the groups for current page
-            //_currentPageGroups = CreateGroupHierarchy(currentPageGroupings, additionalGroupColumns);
-
-            // construct the groups for all items
-            //_allGroups = CreateGroupHierarchy(allGroupings, additionalGroupColumns);
+            // Set the root group
+            if (groups.Count > 0)
+            {
+                _groups = ProcessGroup(groups[0]);
+                lastGroup = _groups;
+                
+                for (int i = 1; i < groups.Count; i++)
+                {
+                    var currentGroup = ProcessGroup(groups[i]);
+                    lastGroup.InnerGroup = currentGroup;
+                    lastGroup = currentGroup;
+                }
+            }
 
             if ((_isFirstRendered || HasServerData) && !noStateChange)
                 StateHasChanged();
+        }
+
+        private GroupDefinition<T> ProcessGroup(Column<T> column)
+        {
+            return new()
+            {
+                Selector = column.groupBy,
+                Expanded = column.GroupExpanded,
+                GroupTemplate = column.GroupTemplate,
+                Indentation = column.GroupIndented,
+                Title = column.Title,
+                InnerGroup = null
+            };
         }
 
         internal async Task ChangedGrouping(Column<T> column)
@@ -2075,11 +2087,7 @@ namespace MudBlazor
 
         internal void ToggleGroupExpansion(GroupDefinition<T> g)
         {
-            if (_groupExpansionsDict.TryGetValue(g.Grouping.Key, out var value))
-            {
-                _groupExpansionsDict[g.Grouping.Key] = !value;
-            }
-
+            g.Expanded = !g.Expanded;
             GroupItems();
         }
 
@@ -2091,9 +2099,9 @@ namespace MudBlazor
         /// </remarks>
         public void ExpandAllGroups()
         {
-            foreach (var group in _allGroups)
+            if (_groups != null)
             {
-                ExpandGroupRecursively(group);
+                ExpandGroupRecursively(_groups);
             }
             GroupItems();
         }
@@ -2106,9 +2114,9 @@ namespace MudBlazor
         /// </remarks>
         public void CollapseAllGroups()
         {
-            foreach (var group in _allGroups)
+            if (_groups != null)
             {
-                CollapseGroupRecursively(group);
+                CollapseGroupRecursively(_groups);
             }
             GroupItems();
         }
@@ -2116,13 +2124,11 @@ namespace MudBlazor
         private void ExpandGroupRecursively(GroupDefinition<T> group)
         {
             group.Expanded = true;
-            _groupExpansionsDict[group.Grouping.Key] = true;
 
             var currentInnerGroup = group.InnerGroup;
             while (currentInnerGroup != null)
             {
                 currentInnerGroup.Expanded = true;
-                _groupExpansionsDict[currentInnerGroup.Grouping.Key] = true;
                 currentInnerGroup = currentInnerGroup.InnerGroup;
             }
         }
@@ -2130,13 +2136,11 @@ namespace MudBlazor
         private void CollapseGroupRecursively(GroupDefinition<T> group)
         {
             group.Expanded = false;
-            _groupExpansionsDict[group.Grouping.Key] = false;
 
             var currentInnerGroup = group.InnerGroup;
             while (currentInnerGroup != null)
             {
                 currentInnerGroup.Expanded = false;
-                _groupExpansionsDict[currentInnerGroup.Grouping.Key] = false;
                 currentInnerGroup = currentInnerGroup.InnerGroup;
             }
         }

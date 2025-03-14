@@ -1,4 +1,4 @@
-﻿@namespace MudBlazor
+﻿﻿﻿﻿@namespace MudBlazor
 @inherits MudComponentBase
 @typeparam T
 @using System.Diagnostics.CodeAnalysis
@@ -6,19 +6,20 @@
 
 <tr class="mud-table-row">
     <td class="@GroupClassname" colspan="1000" style="@GroupStylename">
-        <MudIconButton Icon="@(Expanded ? Icons.Material.Filled.ExpandMore : Icons.Material.Filled.ChevronRight)" 
-                       OnClick="@(() => { Expanded = !Expanded; GroupDefinition.Expanded = Expanded; StateHasChanged(); })" />
+        <div style="display:flex; align-items:center;">
+            <MudIconButton Icon="@(Expanded ? Icons.Material.Filled.ExpandMore : Icons.Material.Filled.ChevronRight)" 
+                          OnClick="@(() => { Expanded = !Expanded; GroupDefinition.Expanded = Expanded; StateHasChanged(); })" />
+            @if (GroupDefinition.GroupTemplate == null)
+            {
+                <span style="font-weight:bold">@GroupDefinition.Title: @Items?.Key</span>
+            }
+            else
+            {
+                @GroupDefinition.GroupTemplate(GroupDefinition)
+            }
+        </div>
     </td>
 </tr>
-
-@if (GroupTemplate == null)
-{
-    <span style="font-weight:bold">@GroupDefinition.Title: @GroupDefinition.Grouping.Key</span>
-}
-else
-{
-    @GroupDefinition.GroupTemplate
-}
 
 @if (Expanded)
 {
