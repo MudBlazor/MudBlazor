@@ -3,6 +3,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents.Select;
+using MudBlazor.UnitTests.TestData;
 using NUnit.Framework;
 using static MudBlazor.UnitTests.TestComponents.Select.SelectWithEnumTest;
 
@@ -1566,6 +1567,33 @@ namespace MudBlazor.UnitTests.Components
 
             filler.ClassList.Should().Contain("d-inline-block").And.Contain("mx-2");
             filler.TextContent.Trim().Should().Be("1");
+        }
+
+        [TestCaseSource(typeof(MouseEventArgsTestCase), nameof(MouseEventArgsTestCase.AllCombinations))]
+        [Test]
+        public async Task Select_HandleMouseDown(MouseEventArgs args)
+        {
+            var comp = Context.RenderComponent<MudSelect<string>>(p => p
+                .Add(x => x.Text, "some value")
+                .Add(x => x.Clearable, true)
+                .Add(x => x.ReadOnly, false));
+
+            var instance = comp.Instance;
+
+            instance._open.Should().BeFalse();
+
+            await comp.InvokeAsync(async () => await instance.HandleMouseDown(args));
+
+            switch (args.Button)
+            {
+                case 0:
+                    instance._open.Should().BeTrue();
+                    break;
+                case 1:
+                case 2:
+                    instance._open.Should().BeFalse();
+                    break;
+            }
         }
 #nullable disable
     }
