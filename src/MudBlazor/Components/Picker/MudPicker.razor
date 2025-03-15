@@ -1,4 +1,4 @@
-@namespace MudBlazor
+﻿@namespace MudBlazor
 @inherits MudFormComponent<T, string>
 @typeparam T
 
@@ -118,7 +118,11 @@
             </div>
             @if (PickerVariant == PickerVariant.Inline)
             {
-                <MudOverlay Visible="@Open" OnClick="CloseOverlayAsync" LockScroll="false"/>
+                <MudOverlay Visible="@Open"
+                            AutoClose
+                            Modal="@Modal"
+                            OnClosed="CloseOverlayAsync"
+                            LockScroll="false"/>
             }
         </CascadingValue>;
 }
