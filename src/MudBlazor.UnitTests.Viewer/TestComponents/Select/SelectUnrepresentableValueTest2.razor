@@ -1,16 +1,16 @@
 ﻿<MudPopoverProvider />
 
-<MudSelect @bind-Value="_value" Strict="true" ShrinkToContent="_shinkToContent">
+<MudSelect @bind-Value="_value" Strict="true" FitContent="_fitContent">
     <MudSelectItem T="int" Value="1"/>
     <MudSelectItem T="int" Value="2"/>
     <MudSelectItem T="int" Value="3"/>
 </MudSelect>
 
-<MudSwitch @bind-Value="_shinkToContent" Class="mt-4" Color="Color.Primary">Fit Content</MudSwitch>
+<MudSwitch @bind-Value="_fitContent" Class="mt-4" Color="Color.Primary">Fit Content</MudSwitch>
 
 @code {
     public static string __description__ = "Don't show initial value which is not in list because of Strict=true.";
 
-    private bool _shinkToContent;
+    private bool _fitContent;
     private int _value = 17;
 }

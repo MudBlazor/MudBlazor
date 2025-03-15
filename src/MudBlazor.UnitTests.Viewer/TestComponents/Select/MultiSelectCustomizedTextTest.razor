@@ -3,7 +3,7 @@
 <MudSelect Label="Select Item"
            MultiSelection="true"
            T="@TestItem"
-           ShrinkToContent="@_shrinkToContent"
+           FitContent="@_fitContent"
            SelectedValues="@_selectedItems"
            ToStringFunc="@ToString"
            MultiSelectionTextFunc="GetMultiSelectionText">
@@ -13,10 +13,10 @@
     }
 </MudSelect>
 
-<MudSwitch @bind-Value="_shrinkToContent" Class="mt-4" Color="Color.Primary">Shrink To Content</MudSwitch>
+<MudSwitch @bind-Value="_fitContent" Class="mt-4" Color="Color.Primary">Fit Content</MudSwitch>
 
 @code {
-    private bool _shrinkToContent;
+    private bool _fitContent;
     private readonly List<TestItem> _allItems = [];
     private readonly HashSet<TestItem> _selectedItems = [];
 

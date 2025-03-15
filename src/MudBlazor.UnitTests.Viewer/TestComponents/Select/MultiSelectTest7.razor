@@ -5,7 +5,7 @@
            T="string"
            Delimiter="^"
            SelectAll="true"
-           ShrinkToContent="_shinkToContent"
+           FitContent="_fitContent"
            RelativeWidth="@(_adaptive ? DropdownWidth.Adaptive : DropdownWidth.Relative)"
            @bind-SelectedValues="@_selectedItems">
     @foreach (var item in _allItems)
@@ -21,11 +21,11 @@
     }
 </MudSelect>
 
-<MudSwitch @bind-Value="_shinkToContent" Class="mt-4" Color="Color.Primary">Fit Content</MudSwitch>
+<MudSwitch @bind-Value="_fitContent" Class="mt-4" Color="Color.Primary">Fit Content</MudSwitch>
 <MudSwitch @bind-Value="_adaptive" Class="mt-4" Color="Color.Primary">Adaptive Content</MudSwitch>
 
 @code {
-    private bool _shinkToContent;
+    private bool _fitContent;
     private bool _adaptive;
     public static string __description__ = "Test for the Select All option with one disabled SelectItem";
     private readonly List<string> _allItems = [];

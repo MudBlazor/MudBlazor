@@ -1,21 +1,21 @@
 ﻿@namespace MudBlazor.Docs.Examples
 @using MudBlazor
 
-<MudSelect @bind-Value="_selectedState" Label="Select a State" FullWidth="_fullWidth" ShrinkToContent="_shinkToContent" Variant="Variant.Outlined" ShrinkLabel>
+<MudSelect @bind-Value="_selectedState" Label="Select a State" FullWidth="_fullWidth" FitContent="_fitContent" Variant="Variant.Outlined" ShrinkLabel>
     @foreach (var state in _states)
     {
         <MudSelectItem Value="@state">@state</MudSelectItem>
     }
 </MudSelect>
 
-<MudSelect @bind-Value="_selectedState" Label="Select a State"  FullWidth="_fullWidth" ShrinkToContent="_shinkToContent" Variant="Variant.Outlined" Clearable>
+<MudSelect @bind-Value="_selectedState" Label="Select a State"  FullWidth="_fullWidth" FitContent="_fitContent" Variant="Variant.Outlined" Clearable>
     @foreach (var state in _states)
     {
         <MudSelectItem Value="@state">@state</MudSelectItem>
     }
 </MudSelect>
 
-<MudSelect @bind-Value="_selectedState" Label="Select a State"  FullWidth="_fullWidth" ShrinkToContent="_shinkToContent" Variant="Variant.Outlined" Clearable Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.LocationOn">
+<MudSelect @bind-Value="_selectedState" Label="Select a State"  FullWidth="_fullWidth" FitContent="_fitContent" Variant="Variant.Outlined" Clearable Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.LocationOn">
     @foreach (var state in _states)
     {
         <MudSelectItem Value="@state">@state</MudSelectItem>
@@ -24,12 +24,12 @@
 
 <MudStack Class="align-center mud-width-full" Row>
     <MudSwitch @bind-Value="_fullWidth" Label="Full Width" Color="Color.Primary" />
-    <MudSwitch @bind-Value="_shinkToContent" Label="Fit Content" Color="Color.Primary" />
+    <MudSwitch @bind-Value="_fitContent" Label="Fit Content" Color="Color.Primary" />
 </MudStack>
 
 @code {
     private bool _fullWidth;
-    private bool _shinkToContent;
+    private bool _fitContent;
     private string _selectedState;
     private readonly string[] _states =
     [

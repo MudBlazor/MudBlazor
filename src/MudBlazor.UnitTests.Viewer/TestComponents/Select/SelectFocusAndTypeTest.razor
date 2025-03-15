@@ -1,17 +1,17 @@
 ﻿<MudPopoverProvider />
 
-<MudSelect @bind-Value="_value" QuickSearchInterval="@TimeSpan.FromMilliseconds(200)" ShrinkToContent="_shinkToContent">
+<MudSelect @bind-Value="_value" QuickSearchInterval="@TimeSpan.FromMilliseconds(200)" FitContent="_fitContent">
     @foreach (var state in _states)
     {
         <MudSelectItem Value="state">@state</MudSelectItem>
     }
 </MudSelect>
 
-<MudSwitch @bind-Value="_shinkToContent" Class="mt-4" Color="Color.Primary">Fit Content</MudSwitch>
+<MudSwitch @bind-Value="_fitContent" Class="mt-4" Color="Color.Primary">Fit Content</MudSwitch>
 
 @code {
     string? _value;
-    private bool _shinkToContent;
+    private bool _fitContent;
 
     private string[] _states =
     {
