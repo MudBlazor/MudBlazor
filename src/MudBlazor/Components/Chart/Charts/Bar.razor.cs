@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components.Web;
 
 #nullable enable
 namespace MudBlazor.Charts
@@ -11,21 +11,8 @@ namespace MudBlazor.Charts
     /// <seealso cref="Pie"/>
     /// <seealso cref="StackedBar"/>
     /// <seealso cref="TimeSeries"/>
-    partial class Bar : MudCategoryChartBase
+    partial class Bar : MudCategoryAxisChartBase
     {
-        private const double BoundWidth = 650.0;
-        private const double BoundHeight = 350.0;
-        private const double HorizontalStartSpace = 30.0;
-        private const double HorizontalEndSpace = 30.0;
-        private const double VerticalStartSpace = 25.0;
-        private const double VerticalEndSpace = 25.0;
-
-        /// <summary>
-        /// The chart, if any, containing this component.
-        /// </summary>
-        [CascadingParameter]
-        public MudChart? MudChartParent { get; set; }
-
         private List<SvgPath> _horizontalLines = [];
         private List<SvgText> _horizontalValues = [];
 
@@ -36,19 +23,26 @@ namespace MudBlazor.Charts
         private List<ChartSeries> _series = [];
 
         private List<SvgPath> _bars = [];
+        private SvgPath? _hoveredBar;
 
         /// <inheritdoc />
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
 
+            RebuildChart();
+        }
+
+        protected override void RebuildChart()
+        {
             if (MudChartParent != null)
                 _series = MudChartParent.ChartSeries;
 
+            SetBounds();
             ComputeUnitsAndNumberOfLines(out var gridXUnits, out var gridYUnits, out var numHorizontalLines, out var lowestHorizontalLine, out var numVerticalLines);
 
-            var horizontalSpace = (BoundWidth - HorizontalStartSpace - HorizontalEndSpace) / Math.Max(1, numVerticalLines - 1);
-            var verticalSpace = (BoundHeight - VerticalStartSpace - VerticalEndSpace) / Math.Max(1, numHorizontalLines - 1);
+            var horizontalSpace = (_boundWidth - HorizontalStartSpace - HorizontalEndSpace) / Math.Max(1, numVerticalLines - 1);
+            var verticalSpace = (_boundHeight - VerticalStartSpace - VerticalEndSpace - AxisChartOptions.LabelExtraHeight) / Math.Max(1, numHorizontalLines - 1);
 
             GenerateHorizontalGridLines(numHorizontalLines, lowestHorizontalLine, gridYUnits, verticalSpace);
             GenerateVerticalGridLines(numVerticalLines, gridXUnits, horizontalSpace);
@@ -102,7 +96,7 @@ namespace MudBlazor.Charts
                 var line = new SvgPath()
                 {
                     Index = i,
-                    Data = $"M {ToS(HorizontalStartSpace)} {ToS(BoundHeight - y)} L {ToS(BoundWidth - HorizontalEndSpace)} {ToS(BoundHeight - y)}"
+                    Data = $"M {ToS(HorizontalStartSpace)} {ToS(_boundHeight - AxisChartOptions.LabelExtraHeight - y)} L {ToS(_boundWidth - HorizontalEndSpace)} {ToS(_boundHeight - AxisChartOptions.LabelExtraHeight - y)}"
                 };
                 _horizontalLines.Add(line);
 
@@ -110,7 +104,7 @@ namespace MudBlazor.Charts
                 var lineValue = new SvgText()
                 {
                     X = HorizontalStartSpace - 10,
-                    Y = BoundHeight - y + 5,
+                    Y = _boundHeight - AxisChartOptions.LabelExtraHeight - y + 5,
                     Value = ToS(startGridY, MudChartParent?.ChartOptions.YAxisFormat)
                 };
                 _horizontalValues.Add(lineValue);
@@ -128,7 +122,7 @@ namespace MudBlazor.Charts
                 var line = new SvgPath()
                 {
                     Index = i,
-                    Data = $"M {ToS(x)} {ToS(BoundHeight - VerticalStartSpace)} L {ToS(x)} {ToS(VerticalEndSpace)}"
+                    Data = $"M {ToS(x)} {ToS(_boundHeight - VerticalStartSpace - AxisChartOptions.LabelExtraHeight)} L {ToS(x)} {ToS(VerticalEndSpace)}"
                 };
                 _verticalLines.Add(line);
 
@@ -136,7 +130,7 @@ namespace MudBlazor.Charts
                 var lineValue = new SvgText()
                 {
                     X = x,
-                    Y = BoundHeight - 2,
+                    Y = _boundHeight - (AxisChartOptions.LabelExtraHeight / 2) - 10,
                     Value = xLabels
                 };
                 _verticalValues.Add(lineValue);
@@ -155,14 +149,18 @@ namespace MudBlazor.Charts
                 for (var j = 0; j < data.Length; j++)
                 {
                     var gridValueX = HorizontalStartSpace + (i * 10) + (j * horizontalSpace);
-                    var gridValueY = BoundHeight - VerticalStartSpace + (lowestHorizontalLine * verticalSpace);
+                    var gridValueY = _boundHeight - VerticalStartSpace - AxisChartOptions.LabelExtraHeight + (lowestHorizontalLine * verticalSpace);
                     var dataValue = ((data[j] / gridYUnits) - lowestHorizontalLine) * verticalSpace;
-                    var gridValue = BoundHeight - VerticalStartSpace - dataValue;
+                    var gridValue = _boundHeight - VerticalStartSpace - AxisChartOptions.LabelExtraHeight - dataValue;
 
                     var bar = new SvgPath()
                     {
                         Index = i,
-                        Data = $"M {ToS(gridValueX)} {ToS(gridValueY)} L {ToS(gridValueX)} {ToS(gridValue)}"
+                        Data = $"M {ToS(gridValueX)} {ToS(gridValueY)} L {ToS(gridValueX)} {ToS(gridValue)}",
+                        LabelXValue = XAxisLabels.Length > j ? XAxisLabels[j] : string.Empty,
+                        LabelYValue = dataValue.ToString(),
+                        LabelX = gridValueX,
+                        LabelY = gridValue
                     };
                     _bars.Add(bar);
                 }
@@ -174,6 +172,16 @@ namespace MudBlazor.Charts
                 };
                 _legends.Add(legend);
             }
+        }
+
+        private void OnBarMouseOver(MouseEventArgs _, SvgPath bar)
+        {
+            _hoveredBar = bar;
+        }
+
+        private void OnBarMouseOut(MouseEventArgs _)
+        {
+            _hoveredBar = null;
         }
     }
 }
