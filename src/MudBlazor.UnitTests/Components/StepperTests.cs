@@ -806,6 +806,25 @@ namespace MudBlazor.UnitTests.Components
             stepper.Instance.GetState<int>(nameof(MudStepper.ActiveIndex)).Should().Be(0);
         }
 
+        [Test]
+        public void HasCompletedClassIfLinear()
+        {
+            var stepper = Context.RenderComponent<MudStepper>(self =>
+            {
+                self.Add(x => x.CompletedStepColor, Color.Success);
+                self.Add(x => x.CurrentStepColor, Color.Secondary);
+                self.AddChildContent<MudStep>(step =>
+                {
+                    step.Add(x => x.Completed, true);
+                });
+            });
+
+            var stepIcon = stepper.Find(".mud-step-label-icon");
+
+            stepIcon.ClassList.Should().Contain("mud-success");
+            stepIcon.ClassList.Should().NotContain("mud-secondary");
+        }
+
         [TestCase(true, true)]
         [TestCase(false, false)]
         public void HasRippleClass(bool ripple, bool hasClass)

@@ -337,7 +337,10 @@ namespace MudBlazor.UnitTests.Components
             DateTime? returnDate = null;
             var comp = OpenPicker(EventCallback(nameof(MudDatePicker.DateChanged), (DateTime? date) => { eventCount++; returnDate = date; }));
             // clicking a day button to select a date and close
-            comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("23")).Click();
+            comp.FindAll("button.mud-picker-calendar-day")
+                .Where(x => !x.ClassList.Contains("mud-hidden") && x.TrimmedText().Equals("23"))
+                .First()
+                .Click();
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0), TimeSpan.FromSeconds(5));
             comp.Instance.Date.Should().NotBeNull();
             eventCount.Should().Be(1);
@@ -654,6 +657,23 @@ namespace MudBlazor.UnitTests.Components
                 .FindAll(".mud-button-root.mud-icon-button.mud-ripple.mud-ripple-icon.mud-picker-calendar-day.mud-day")
                 .Single(x => x.GetAttribute("style") == "--day-id: 1;");
             button.TextContent.Should().Be("1");
+        }
+
+        [Test]
+        public async Task PersianCalendarDefaultTest()
+        {
+            var timeProvider = new FakeTimeProvider();
+            Context.Services.AddSingleton<TimeProvider>(timeProvider);
+            timeProvider.SetUtcNow(new DateTime(2025, 2, 1, 0, 0, 0, DateTimeKind.Utc));
+
+            var comp = Context.RenderComponent<PersianDatePickerTest>(paramter => paramter.Add(p => p.Date, null));
+            var datePicker = comp.FindComponent<MudDatePicker>().Instance;
+            await comp.InvokeAsync(() => datePicker.OpenAsync());
+
+            datePicker.Text.Should().BeNull();
+            comp.Find("button.mud-button-year").TrimmedText().Equals("1403");
+            comp.Find("button.mud-button-month").TrimmedText().Should().Contain("1403");
+            comp.Find("button.mud-button-date").TrimmedText().Should().BeNullOrEmpty();
         }
 
         [Test]

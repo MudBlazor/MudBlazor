@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Globalization;
+using System.Runtime.InteropServices.JavaScript;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
@@ -20,6 +21,13 @@ public abstract class MudChartBase : MudComponentBase
     [Parameter]
     [Category(CategoryTypes.Chart.Appearance)]
     public ChartOptions ChartOptions { get; set; } = new();
+
+    /// <summary>
+    /// Display options for axis-based charts.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Chart.Appearance)]
+    public AxisChartOptions AxisChartOptions { get; set; } = new();
 
     /// <summary>
     /// The custom graphics within this chart.
@@ -128,9 +136,9 @@ public abstract class MudChartBase : MudComponentBase
     protected string ToS(double d, string? format = null)
     {
         if (string.IsNullOrEmpty(format))
-            return d.ToString(CultureInfo.InvariantCulture);
+            return Math.Round(d, 4).ToString(CultureInfo.InvariantCulture);
 
-        return d.ToString(format);
+        return Math.Round(d, 4).ToString(format);
     }
 
     /// <summary>

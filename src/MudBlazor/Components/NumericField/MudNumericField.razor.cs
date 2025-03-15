@@ -144,6 +144,8 @@ namespace MudBlazor
 
         protected override void OnAfterRender(bool firstRender)
         {
+            base.OnAfterRender(firstRender);
+
             if (!firstRender)
             {
                 return;
@@ -156,8 +158,6 @@ namespace MudBlazor
             {
                 SetCulture(CultureInfo.InvariantCulture);
             }
-
-            base.OnAfterRender(firstRender);
         }
 
         /// <inheritdoc />
