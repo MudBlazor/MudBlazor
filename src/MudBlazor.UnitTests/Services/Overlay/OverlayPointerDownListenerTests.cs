@@ -59,7 +59,6 @@ public class OverlayPointerDownListenerTests
         // Arrange
         var jsRuntimeMock = new MockJsRuntime();
         var service = new OverlayPointerDownListener("elementId", jsRuntimeMock);
-        
         bool wasCalled = false;
         service.OnPointerDown += (sender, args) => wasCalled = true;
 

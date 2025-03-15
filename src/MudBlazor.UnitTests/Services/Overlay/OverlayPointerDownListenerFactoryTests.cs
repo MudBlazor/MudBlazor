@@ -25,7 +25,7 @@ public class OverlayPointerDownListenerFactoryTests
 
         // Act
         var listener = factory.Create("elementId");
-        
+
         // Assert
         listener.Should().NotBeNull();
         listener.Should().BeOfType<OverlayPointerDownListener>();
