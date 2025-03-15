@@ -17,6 +17,8 @@ internal sealed class OverlayPointerDownListener : IOverlayPointerDownListener
     private bool _disposed;
     private DotNetObjectReference<OverlayPointerDownListener>? _dotNetRef;
 
+    public bool IsStarted => _started;
+
     public event EventHandler? OnPointerDown;
 
     [DynamicDependency(nameof(RaiseOnPointerDown))]
