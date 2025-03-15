@@ -1,0 +1,136 @@
+﻿@page "/features/parameterstate"
+
+<DocsPage>
+    <DocsPageHeader Title="Parameter State" SubTitle="Parameter state allows for adhering to Blazor best practices when working with the Parameter attribute" />
+    <MudAlert Class="my-3" Severity="Severity.Info">
+        When submitting a Pull Request that includes a new component, please review the <MudLink Target="_blank" Href="https://github.com/MudBlazor/MudBlazor/blob/dev/CONTRIBUTING.md#parameter-registration-or-why-we-cant-have-logic-in-parameter-setters">Contribution Guide</MudLink> on GitHub for additional Parameter State guidelines.
+    </MudAlert>
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Parameter Best Practices">
+                <Description>
+                    MudBlazor implemented a <CodeInline>ParameterState</CodeInline> framework to improve how component parameters are managed, 
+                    ensuring reliable updates, preventing unobserved async discards, and enforcing best practices in Blazor development. 
+                    This page explains the core issue in Blazor, how ParameterState addresses it in MudBlazor, and how you should interact with parameter values as an end user.
+                    <br/><br/>
+                    <MudText>Review <MudLink Href="https://learn.microsoft.com/en-us/aspnet/core/blazor/components/overwriting-parameters">this</MudLink> 
+                             article for some of the best practices for working with Parameters in Blazor.
+                    </MudText>
+                </Description>
+            </SectionHeader>
+            <BestPracticesList />        
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Why Parameter State Exists">
+                <Description>
+                    Parameters are typically simple properties, sometimes with logic inside their setters. However, this approach leads to issues such as:
+                    <MudStack>
+                        <MudBadge Class="ml-4" Color="Color.Primary" Origin="Origin.CenterLeft" Dot Bordered>
+                            <div class="pl-2">
+                                <CodeInline>Property auto-complete warnings (BL0007):</CodeInline> If a [Parameter] property has setter logic, the setter could be used to cause side effects that create problems, such as infinite rendering loops.
+                            </div>
+                        </MudBadge>
+                        <MudBadge Class="ml-4" Color="Color.Primary" Origin="Origin.CenterLeft" Dot Bordered>
+                            <div class="pl-2">
+                                <CodeInline>Parameter resets:</CodeInline> When a parent component re-renders, parameters reset unexpectedly.
+                            </div>
+                        </MudBadge>
+                        <MudBadge Class="ml-4" Color="Color.Primary" Origin="Origin.CenterLeft" Dot Bordered>
+                            <div class="pl-2">
+                                <CodeInline>Unobserved async discards:</CodeInline> Discarding Task results inside property setters can cause lost exceptions and unpredictable behavior.
+                            </div>
+                        </MudBadge>
+                        <MudBadge Class="ml-4" Color="Color.Primary" Origin="Origin.CenterLeft" Dot Bordered>
+                            <div class="pl-2">
+                                <CodeInline>Direct parameter modification warnings (BL0005):</CodeInline> Imperative updates to parameters on component references go against Blazor best practices.
+                            </div>
+                        </MudBadge>
+                    </MudStack>
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(ProblemUsageExample)" FullWidth Outlined ShowCode>
+                <ProblemUsageExample />
+            </SectionContent>
+            <MudAlert Class="my-3" Severity="Severity.Warning">
+                If the parent re-renders, <CodeInline>Expanded</CodeInline> might revert to its original value, leading to unexpected UI behavior.
+            </MudAlert>
+        </DocsPageSection>
+
+
+        <DocsPageSection>
+            <SectionHeader Title="How Parameter State Rosolves These Issues">
+                <Description>
+                    <CodeInline>ParameterState</CodeInline> tracks and manages parameter changes reliably. 
+                    Instead of using traditional property setters, parameters are registered with handlers that:
+                    <MudStack>
+                        <MudBadge Class="ml-4" Color="Color.Primary" Origin="Origin.CenterLeft" Dot Bordered>
+                            <div class="pl-2">
+                                <CodeInline>Change Tracking:</CodeInline> Properly track changes without triggering infinite loops.
+                            </div>
+                        </MudBadge>
+                        <MudBadge Class="ml-4" Color="Color.Primary" Origin="Origin.CenterLeft" Dot Bordered>
+                            <div class="pl-2">
+                                <CodeInline>Async Handling:</CodeInline> Ensure async operations are observed.
+                            </div>
+                        </MudBadge>
+                        <MudBadge Class="ml-4" Color="Color.Primary" Origin="Origin.CenterLeft" Dot Bordered>
+                            <div class="pl-2">
+                                <CodeInline>State Management:</CodeInline> Prevent parameter resets by storing values internally.
+                            </div>
+                        </MudBadge>
+                        <MudBadge Class="ml-4" Color="Color.Primary" Origin="Origin.CenterLeft" Dot Bordered>
+                            <div class="pl-2">
+                                <CodeInline>Avoid Overwrites:</CodeInline> Prevents direct parameter modification inside the component.
+                            </div>
+                        </MudBadge>
+                    </MudStack>
+                </Description>
+            </SectionHeader>
+            <SectionContent FullWidth="true" Outlined Code="@nameof(ParameterStateUsageExample)" ShowCode>
+                <ParameterStateUsageExample />
+            </SectionContent>
+            <MudAlert Class="my-3" Severity="Severity.Info">
+                Using <CodeInline>ParameterState</CodeInline> ensures that the parameter remains consistent and does not reset unexpectedly when the parent re-renders.
+            </MudAlert>
+        </DocsPageSection>
+     
+        <DocsPageSection>
+            <SectionHeader Title="How You Should Interact with Parameter Values">
+                <Description>
+                    As an end user of MudBlazor components, <CodeInline>ParameterState</CodeInline> ensures that binding and event handling work seamlessly. Here’s what you need to know:
+                </Description>
+            </SectionHeader>
+            <SectionContent Class="mt-4" FullWidth Outlined Code="@nameof(IncorrectParameterModificationExample)" ShowCode>
+                <MudStack Class="align-center">
+                    <MudText Typo="Typo.h6">Avoid Direct Parameter Modifications</MudText>
+                    <MudText>You should <b>NOT</b> modify a component’s parameters through its reference. Use two-way binding instead</MudText>
+                </MudStack>
+                <IncorrectParameterModificationExample />
+            </SectionContent>
+            <SectionContent Class="mt-4" FullWidth Outlined Code="@nameof(TwoWayBindingExample)" ShowCode>
+                <MudStack Class="align-center">
+                    <MudText Typo="Typo.h6">Use Two-Way Binding Where Needed</MudText>
+                    <MudText>MudBlazor components fully support two-way binding with bind-Value. This ensures parameter changes propagate correctly</MudText>
+                </MudStack>
+                <TwoWayBindingExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Reading Parameter Values">
+                <Description>
+                    MudBlazor provides <CodeInline>GetState</CodeInline> methods (<CodeInline>Component.GetState(x => x.Parameter)</CodeInline>) to retrieve parameter values safely. <br />
+                    However, <strong>this is not our first recommendation</strong>.<br /><br />
+                    We recommend using two-way binding wherever possible, as it is the approach intended by Microsoft. Two-way binding ensures proper synchronization between parent and child components. When the parent subscribes to <CodeInline>bind-Completed</CodeInline>, it will receive updates from the child, re-render itself, and trigger a re-render of the child with the updated parameter value.
+                    You can read more about this approach <MudLink Href="https://github.com/dotnet/aspnetcore/issues/49187">here</MudLink>.
+                </Description>
+            </SectionHeader>
+            <SectionContent Class="mt-4" FullWidth Outlined Code="@nameof(AccessParameterValueExample)" ShowCode>
+                <AccessParameterValueExample />
+            </SectionContent>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>

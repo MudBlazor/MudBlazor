@@ -139,6 +139,7 @@ namespace MudBlazor.Docs.Services
                 new DocsLink {Title = "Elevation", Href = "features/elevation"},
                 new DocsLink {Title = "Converters", Href = "features/converters"},
                 new DocsLink {Title = "Icon Reference", Href = "features/icons"}, // <-- note: title changed from "Icons" to "Icon Reference" to avoid confusion in Search box with the MudIcon page which is also called "Icons"
+                new DocsLink {Title = "Parameter State", Href = "features/parameterstate"},
                 new DocsLink {Title = "Masking", Href = "features/masking"},
                 new DocsLink {Title = "RTL Languages", Href = "features/rtl-languages"},
                 new DocsLink {Title = "Localization", Href = "features/localization"},

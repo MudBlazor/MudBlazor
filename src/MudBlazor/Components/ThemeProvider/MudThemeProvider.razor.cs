@@ -1,8 +1,6 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using MudBlazor.State;
@@ -11,6 +9,11 @@ using MudBlazor.Utilities;
 namespace MudBlazor;
 
 #nullable enable
+
+/// <summary>
+/// Provides a standard set of colors, shapes, sizes and shadows to a layout.
+/// </summary>
+/// <seealso cref="MudTheme"/>
 partial class MudThemeProvider : ComponentBaseWithState, IDisposable
 {
     // private const string Breakpoint = "mud-breakpoint";
@@ -40,26 +43,37 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
     public MudTheme? Theme { get; set; }
 
     /// <summary>
-    ///  If true, will not apply MudBlazor styled scrollbar and use browser default. 
+    /// Uses the browser default scrollbar instead of the MudBlazor scrollbar. 
     /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.
+    /// </remarks>
     [Parameter]
     public bool DefaultScrollbar { get; set; }
 
     /// <summary>
-    /// Sets a value indicating whether to observe changes in the system theme preference.
-    /// Default is <c>true</c>.
+    /// Detects when the system theme has changed between Light Mode and Dark Mode.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <c>true</c>.<br />
+    /// When <c>true</c>, the theme will automatically change to Light Mode or Dark Mode as the system theme changes.
+    /// </remarks>
     [Parameter]
     public bool ObserveSystemThemeChange { get; set; } = true;
 
     /// <summary>
-    /// The active palette of the theme.
+    /// Uses darker colors for all MudBlazor components.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>. When this value changes, <see cref="IsDarkModeChanged"/> occurs.<br />  
+    /// When <c>true</c>, the <see cref="MudTheme.PaletteDark"/> colors will be used.<br />  
+    /// When <c>false</c>, the <see cref="MudTheme.PaletteLight"/> colors will be used.<br />  
+    /// </remarks>
     [Parameter]
     public bool IsDarkMode { get; set; }
 
     /// <summary>
-    /// Invoked when the dark mode changes.
+    /// Occurs when <see cref="IsDarkMode"/> has changed.
     /// </summary>
     [Parameter]
     public EventCallback<bool> IsDarkModeChanged { get; set; }
@@ -79,9 +93,12 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
     }
 
     /// <summary>
-    /// Returns the dark mode preference of the user. True if dark mode is preferred.
+    /// Gets whether the system is using Dark Mode.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>
+    /// When <c>true</c>, the system is using Dark Mode.<br />
+    /// When <c>false</c>, the system is using Light Mode.
+    /// </returns>
     public async Task<bool> GetSystemPreference()
     {
         var (_, value) = await JsRuntime.InvokeAsyncWithErrorHandling(false, "darkModeChange");
@@ -89,6 +106,13 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         return value;
     }
 
+    /// <summary>
+    /// Calls a function when the system theme has changed.
+    /// </summary>
+    /// <param name="functionOnChange">The function to call when the system theme has changed.</param>
+    /// <remarks>
+    /// A value of <c>true</c> is passed if the system is now in Dark Mode. Otherwise, the system is now in Light Mode.
+    /// </remarks>
     public Task WatchSystemPreference(Func<bool, Task> functionOnChange)
     {
         _darkLightModeChanged += functionOnChange;
@@ -96,6 +120,10 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         return Task.CompletedTask;
     }
 
+    /// <summary>
+    /// Occurs when the system theme has changed.
+    /// </summary>
+    /// <param name="isDarkMode">When <c>true</c>, the system is in Dark Mode.</param>
     [JSInvokable]
     public async Task SystemPreferenceChanged(bool isDarkMode)
     {
@@ -107,6 +135,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         }
     }
 
+    /// <inheritdoc />
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -121,12 +150,14 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         await base.OnAfterRenderAsync(firstRender);
     }
 
+    /// <inheritdoc />
     protected override void OnInitialized()
     {
         _theme = Theme ?? new MudTheme();
         base.OnInitialized();
     }
 
+    /// <inheritdoc />
     protected override void OnParametersSet()
     {
         if (Theme is not null)
@@ -140,6 +171,10 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         base.OnParametersSet();
     }
 
+    /// <summary>
+    /// Gets the CSS styles for this provider.
+    /// </summary>
+    /// <returns>A <c>style</c> HTML element containing this theme's styles.</returns>
     protected string BuildTheme()
     {
         _theme = Theme ?? new MudTheme();
@@ -154,6 +189,10 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         return theme.ToString();
     }
 
+    /// <summary>
+    /// Gets the CSS styles for the browser scrollbar.
+    /// </summary>
+    /// <returns>A <c>style</c> HTML element containing the scrollbar's styles.</returns>
     protected static string BuildMudBlazorScrollbar()
     {
         var scrollbar = new StringBuilder();
@@ -169,6 +208,13 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         return scrollbar.ToString();
     }
 
+    /// <summary>
+    /// Generates the CSS styles for the specified theme.
+    /// </summary>
+    /// <param name="theme">The theme to append to.</param>
+    /// <remarks>
+    /// Several CSS values for color, opacity, and elevation are appended based on the value of <see cref="IsDarkMode"/>.
+    /// </remarks>
     protected virtual void GenerateTheme(StringBuilder theme)
     {
         if (_theme is null)
@@ -479,6 +525,9 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--mud-native-html-color-scheme: {(IsDarkMode ? "dark" : "light")};");
     }
 
+    /// <summary>
+    /// Releases resources used by this component.
+    /// </summary>
     public void Dispose()
     {
         if (!_disposed)

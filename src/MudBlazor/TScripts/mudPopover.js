@@ -4,6 +4,31 @@
 
 window.mudpopoverHelper = {
 
+    debounce: function (func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    },
+
+    rafThrottle: function (func) {
+        let ticking = false;
+        return function (...args) {
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    func.apply(this, args);
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        };
+    },
+
     calculatePopoverPosition: function (list, boundingRect, selfRect) {
         let top = 0;
         let left = 0;
@@ -162,7 +187,6 @@ window.mudpopoverHelper = {
 
             if (classSelector) {
                 if (classList.contains(classSelector) == false) {
-                    this.updatePopoverOverlay(popoverContentNode);
                     return;
                 }
             }
@@ -354,7 +378,6 @@ window.mudpopoverHelper = {
                 popoverContentNode.style['z-index'] = Math.max(window.getComputedStyle(popoverNode).getPropertyValue('z-index'), popoverContentNode.style['z-index']);
                 popoverContentNode.skipZIndex = true;
             }
-            this.updatePopoverOverlay(popoverContentNode);
         }
         else {
             //console.log(`popoverNode: ${popoverNode} ${popoverNode ? popoverNode.parentNode : ""}`);
@@ -410,10 +433,11 @@ window.mudpopoverHelper = {
             const overlay = provider.querySelector('.mud-overlay');
             // skip any overlay marked with mud-skip-overlay
             if (overlay && !overlay.classList.contains('mud-skip-overlay-positioning')) {
-                // Only assign z-index if it doesn't already exist
-                if (!overlay.style['z-index']) {
+                // Only assign z-index if it doesn't already exist or has changed
+                if (popoverContentNode && overlay.style['z-index'] !== popoverContentNode.style['z-index']) {
                     overlay.style['z-index'] = popoverContentNode.style['z-index'];
                 }
+
             }
         }
     },
@@ -524,16 +548,23 @@ class MudPopover {
                     }
 
                     // Iterate over the items in this.map to reset any open overlays
-                    for (const mapItem of Object.entries(this.map)) {
-                        const item = mapItem.length > 1 ? mapItem[1] : mapItem;
-                        const popoverContentNode = item.popoverContentNode; // Access the popover content node (in mud-popover-provider)
+                    let highestTickItem = null;
+                    let highestTickValue = -1;
+                    // Iterate over the items in this.map to find the highest data-ticks value
+                    for (const mapItem of Object.values(this.map)) {
+                        const popoverContentNode = mapItem.popoverContentNode;
                         if (popoverContentNode) {
-                            const tickValue = parseInt(popoverContentNode.getAttribute('data-ticks')); // get data-ticks property
-                            if (tickValue == 0) {
-                                continue;
+                            const tickValue = Number(popoverContentNode.getAttribute('data-ticks')); // Convert to Number
+
+                            if (tickValue > highestTickValue) {
+                                highestTickValue = tickValue;
+                                highestTickItem = popoverContentNode;
                             }
-                            window.mudpopoverHelper.updatePopoverOverlay(popoverContentNode); // Update the popover overlay for an active popover                            
                         }
+                    }
+
+                    if (highestTickItem) {
+                        window.mudpopoverHelper.updatePopoverOverlay(highestTickItem);
                     }
 
                     if (tickValues.length == 0) {
@@ -604,12 +635,11 @@ class MudPopover {
 
             observer.observe(popoverContentNode, config);
 
-            const resizeObserver = new ResizeObserver(entries => {
+            // Optimize resize observer
+            const throttledResize = window.mudpopoverHelper.rafThrottle(entries => {
                 for (let entry of entries) {
                     const target = entry.target;
-
-                    for (var i = 0; i < target.childNodes.length; i++) {
-                        const childNode = target.childNodes[i];
+                    for (let childNode of target.childNodes) {
                         if (childNode.id && childNode.id.startsWith('popover-')) {
                             window.mudpopoverHelper.placePopover(childNode);
                         }
@@ -617,17 +647,16 @@ class MudPopover {
                 }
             });
 
+            const resizeObserver = new ResizeObserver(throttledResize);
             resizeObserver.observe(popoverNode.parentNode);
 
-            const contentNodeObserver = new ResizeObserver(entries => {
+            const throttledContent = window.mudpopoverHelper.rafThrottle(entries => {
                 for (let entry of entries) {
-                    var target = entry.target;
-                    window.mudpopoverHelper.placePopoverByNode(target);
-
-
+                    window.mudpopoverHelper.placePopoverByNode(entry.target);
                 }
             });
 
+            const contentNodeObserver = new ResizeObserver(throttledContent);
             contentNodeObserver.observe(popoverContentNode);
 
             this.map[id] = {
@@ -672,11 +701,14 @@ class MudPopover {
 
 window.mudPopover = new MudPopover();
 
-window.addEventListener('scroll', () => {
+const debouncedResize = window.mudpopoverHelper.debounce(() => {
+    window.mudpopoverHelper.placePopoverByClassSelector();
+}, 100);
+
+const throttledScroll = window.mudpopoverHelper.rafThrottle(() => {
     window.mudpopoverHelper.placePopoverByClassSelector('mud-popover-fixed');
     window.mudpopoverHelper.placePopoverByClassSelector('mud-popover-overflow-flip-always');
 });
 
-window.addEventListener('resize', () => {
-    window.mudpopoverHelper.placePopoverByClassSelector();
-});
+window.addEventListener('resize', debouncedResize, { passive: true });
+window.addEventListener('scroll', throttledScroll, { passive: true });

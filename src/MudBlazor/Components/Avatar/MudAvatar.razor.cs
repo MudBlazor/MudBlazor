@@ -56,11 +56,12 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
+        /// Can be overridden by <see cref="MudGlobal.Rounded"/>
         /// When <c>true</c>, the <c>border-radius</c> style is set to the theme's default value.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Avatar.Appearance)]
-        public bool Rounded { get; set; }
+        public bool Rounded { get; set; } = MudGlobal.Rounded == true;
 
         /// <summary>
         /// The color of the avatar.
