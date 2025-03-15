@@ -318,4 +318,43 @@ public class OverlayTests : BunitTest
 
         listenerMock.Verify(s => s.StartAsync(), callsStart ? Times.Once() : Times.Never());
     }
+
+    [Test]
+    [TestCase(true, true, false, true)]
+    [TestCase(true, false, false, false)]
+    [TestCase(true, false, true, false)]
+    [TestCase(true, true, true, false)]
+    [TestCase(false, true, false, false)]
+    [TestCase(false, false, false, false)]
+    [TestCase(false, false, true, false)]
+    [TestCase(false, true, true, false)]
+    public void AutoCloseTriggeredByPointerDownListener_WhenConditionsMet(bool visible, bool autoClose, bool modal, bool expectedAutoClose)
+    {
+        Context.Services.Remove(ServiceDescriptor.Scoped<IOverlayPointerDownListenerFactory, OverlayPointerDownListenerFactory>());
+        var factoryMock = new Mock<IOverlayPointerDownListenerFactory>();
+        var listenerMock = new Mock<IOverlayPointerDownListener>();
+        factoryMock
+            .Setup(s => s.Create(It.IsAny<string>()))
+            .Returns(listenerMock.Object);
+        listenerMock.Setup(s => s.StartAsync())
+            .ReturnsAsync(true);
+        listenerMock.Setup(s => s.StopAsync())
+            .ReturnsAsync(true);
+        Context.Services.AddScoped(_ => factoryMock.Object);
+
+        var providerComp = Context.RenderComponent<MudPopoverProvider>();
+        var comp = Context.RenderComponent<MudOverlay>(parameters => parameters
+            .Add(p => p.Visible, visible)
+            .Add(p => p.AutoClose, autoClose)
+            .Add(p => p.Modal, modal)
+        );
+
+        listenerMock.Raise(s => s.OnPointerDown += null, EventArgs.Empty);
+        comp.Render();
+
+        if (expectedAutoClose || !visible)
+            providerComp.FindAll("div.mud-overlay").Count.Should().Be(0);
+        else
+            providerComp.FindAll("div.mud-overlay").Count.Should().Be(1);
+    }
 }
