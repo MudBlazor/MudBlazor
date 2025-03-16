@@ -24,6 +24,7 @@ namespace MudBlazor
         private int _elementKey = 0;
         private int _returnedItemsCount;
         private bool _open;
+        private bool _opening;
         private MudInput<string> _elementReference = null!;
         private CancellationTokenSource? _cancellationTokenSrc;
         private Task? _currentSearchTask;
@@ -676,6 +677,8 @@ namespace MudBlazor
                 return;
             }
 
+            _opening = true;
+
             var searchedItems = Array.Empty<T>();
             CancelToken();
 
@@ -741,6 +744,7 @@ namespace MudBlazor
                 Open = true;
             }
 
+            _opening = false;
             StateHasChanged();
         }
 
@@ -959,21 +963,14 @@ namespace MudBlazor
 
         private async Task OnInputActivationAsync(bool openMenu)
         {
-            var wasFocused = _isFocused;
             _isFocused = true;
 
-            if (Open || GetDisabledState() || GetReadOnlyState())
-            {
-                return;
-            }
-
-            if (SelectOnActivation)
+            if (SelectOnActivation && !GetDisabledState() && !GetReadOnlyState())
             {
                 await SelectAsync();
             }
 
-            // The click and focus events can be called together and we only want to open the menu once.
-            if (openMenu && !wasFocused)
+            if (openMenu && !Open && !_opening)
             {
                 await OpenMenuAsync();
             }
