@@ -665,11 +665,8 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Opens the drop-down of items.
+        /// Opens the drop-down of items, or refreshes the list if it is already open.
         /// </summary>
-        /// <remarks>
-        /// Will have no effect if the autocomplete is disabled or read-only.
-        /// </remarks>
         public async Task OpenMenuAsync()
         {
             if (MinCharacters > 0 && (string.IsNullOrWhiteSpace(Text) || Text.Length < MinCharacters))
@@ -962,6 +959,7 @@ namespace MudBlazor
 
         private async Task OnInputActivationAsync(bool openMenu)
         {
+            var wasFocused = _isFocused;
             _isFocused = true;
 
             if (Open || GetDisabledState() || GetReadOnlyState())
@@ -974,7 +972,8 @@ namespace MudBlazor
                 await SelectAsync();
             }
 
-            if (openMenu)
+            // The click and focus events can be called together and we only want to open the menu once.
+            if (openMenu && !wasFocused)
             {
                 await OpenMenuAsync();
             }
