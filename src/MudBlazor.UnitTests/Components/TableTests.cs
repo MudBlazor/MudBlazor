@@ -1297,25 +1297,25 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<TableServerSideDataTest5>();
             comp.Find("#counter").TextContent.Should().Be("1"); //initial counter
 
-            comp.Find("span.mud-button-root.mud-table-sort-label").Click(); // sort
+            comp.Find("span.mud-clickable.mud-table-sort-label").Click(); // sort
             comp.Find("#counter").TextContent.Should().Be("2");
 
-            comp.Find("span.mud-button-root.mud-table-sort-label").Click(); // sort
+            comp.Find("span.mud-clickable.mud-table-sort-label").Click(); // sort
             comp.Find("#counter").TextContent.Should().Be("3");
 
-            comp.Find("span.mud-button-root.mud-table-sort-label").Click(); // sort
+            comp.Find("span.mud-clickable.mud-table-sort-label").Click(); // sort
             comp.Find("#counter").TextContent.Should().Be("4");
 
             comp.Find("#reseter").Click(); //reset counter and test again
             comp.Find("#counter").TextContent.Should().Be("0");
 
-            comp.Find("span.mud-button-root.mud-table-sort-label").Click(); // sort
+            comp.Find("span.mud-clickable.mud-table-sort-label").Click(); // sort
             comp.Find("#counter").TextContent.Should().Be("1");
 
-            comp.Find("span.mud-button-root.mud-table-sort-label").Click(); // sort
+            comp.Find("span.mud-clickable.mud-table-sort-label").Click(); // sort
             comp.Find("#counter").TextContent.Should().Be("2");
 
-            comp.Find("span.mud-button-root.mud-table-sort-label").Click(); // sort
+            comp.Find("span.mud-clickable.mud-table-sort-label").Click(); // sort
             comp.Find("#counter").TextContent.Should().Be("3");
         }
 
