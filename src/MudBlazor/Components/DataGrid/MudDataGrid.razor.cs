@@ -1499,6 +1499,7 @@ namespace MudBlazor
 
         internal async Task SetSelectedItemAsync(bool value, T item)
         {
+            Selection = new HashSet<T>(Comparer);
             if (value)
             {
                 if (!MultiSelection)
@@ -1528,7 +1529,7 @@ namespace MudBlazor
                 }
             }
 
-            await _selectedItemsState.SetValueAsync(Selection);
+            await InvokeAsync(async () => await _selectedItemsState.SetValueAsync(Selection));
             await InvokeAsync(() => SelectedItemsChangedEvent?.Invoke(Selection));
 
             await InvokeAsync(StateHasChanged);
@@ -1547,7 +1548,7 @@ namespace MudBlazor
             if (value)
                 Selection = new HashSet<T>(items, Comparer);
             else
-                Selection.Clear();
+                Selection = new HashSet<T>(Comparer);
 
             await InvokeAsync(async () => await _selectedItemsState.SetValueAsync(Selection));
             await InvokeAsync(() => SelectedItemsChangedEvent?.Invoke(Selection));
