@@ -164,7 +164,7 @@ class MudElementReference {
     }
     // dispose event
     removeOnBlurEvent(element, dotnetRef) {
-        if (!element || !element._mudBlurHandler) return;
+        if (!element?._mudBlurHandler) return;
         element.removeEventListener('blur', element._mudBlurHandler);
         delete element._mudBlurHandler;
     }
