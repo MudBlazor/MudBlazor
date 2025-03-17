@@ -1,7 +1,5 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using MudBlazor.Interop;
@@ -71,5 +69,10 @@ namespace MudBlazor
             this ElementReference elementReference,
             DotNetObjectReference<T> obj) where T : class =>
             elementReference.GetJSRuntime()?.InvokeVoidAsync("mudElementRef.addOnBlurEvent", elementReference, obj) ?? ValueTask.CompletedTask;
+
+        public static ValueTask MudDetachBlurEventWithJS<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods)] T>(
+            this ElementReference elementReference,
+            DotNetObjectReference<T> obj) where T : class =>
+            elementReference.GetJSRuntime()?.InvokeVoidAsync("mudElementRef.removeOnBlurEvent", elementReference, obj) ?? ValueTask.CompletedTask;
     }
 }
