@@ -1183,7 +1183,25 @@ namespace MudBlazor.UnitTests.Components
             await comp.FindAll("button.mud-picker-calendar-day").Where(x => x.TrimmedText().Equals("24")).First().ClickAsync(new MouseEventArgs());
 
             comp.Instance.DateRange.Should().Be(new DateRange(new DateTime(2025, 1, 16).Date, new DateTime(2025, 1, 24).Date)); //max valid range 9 days
+        }
 
+        [Test]
+        public async Task DateRangePicker_MaxSelectableDateTest()
+        {
+            var comp = Context.RenderComponent<MudDateRangePicker>();
+
+            comp.SetParametersAndRender(parameters => parameters.Add(picker => picker.MaxDays, 30)
+                                                                .Add(picker => picker.PickerVariant, PickerVariant.Static)
+                                                                .Add(picker => picker.IsDateDisabledFunc, x => x.Date > DateTime.Today));
+
+            var today = DateTime.Today;
+
+            await comp.FindAll("button.mud-picker-calendar-day")
+                      .Where(x => x.TrimmedText().Equals(today.Day.ToString())).First().ClickAsync(new MouseEventArgs());
+            await comp.FindAll("button.mud-picker-calendar-day")
+                      .Where(x => x.TrimmedText().Equals(today.Day.ToString())).First().ClickAsync(new MouseEventArgs());
+
+            comp.Instance.DateRange.Start.Should().Be(comp.Instance.DateRange.End);
         }
     }
 }
