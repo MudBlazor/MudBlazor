@@ -1499,14 +1499,19 @@ namespace MudBlazor
 
         internal async Task SetSelectedItemAsync(bool value, T item)
         {
-            Selection = new HashSet<T>(Comparer);
             if (value)
             {
+                if (!MultiSelection)
+                {
+                    Selection.Clear();
+                }
+
                 Selection.Add(item);
                 await _selectedItemState.SetValueAsync(item);
             }
             else
             {
+                Selection.Remove(item);
                 if (Comparer != null)
                 {
                     if (Comparer.Equals(item, _selectedItemState.Value))
@@ -1523,7 +1528,9 @@ namespace MudBlazor
                 }
             }
 
-            await InvokeAsync(async () => await _selectedItemsState.SetValueAsync(Selection));
+            await _selectedItemsState.SetValueAsync(Selection);
+            // manually invoke due to ParameterState not seeing state change with HashSet
+            await InvokeAsync(async () => await SelectedItemsChanged.InvokeAsync(Selection));
             await InvokeAsync(() => SelectedItemsChangedEvent?.Invoke(Selection));
 
             await InvokeAsync(StateHasChanged);
@@ -1540,11 +1547,21 @@ namespace MudBlazor
                     : FilteredItems;
 
             if (value)
-                Selection = new HashSet<T>(items, Comparer);
+            {
+                Selection.Clear();
+                foreach (var item in items)
+                {
+                    Selection.Add(item);
+                }
+            }
             else
-                Selection = new HashSet<T>(Comparer);
+            {
+                Selection.Clear();
+            }
 
             await InvokeAsync(async () => await _selectedItemsState.SetValueAsync(Selection));
+            // manually invoke due to ParameterState not seeing state change with HashSet
+            await InvokeAsync(async () => await SelectedItemsChanged.InvokeAsync(Selection));
             await InvokeAsync(() => SelectedItemsChangedEvent?.Invoke(Selection));
             await InvokeAsync(() => SelectedAllItemsChangedEvent?.Invoke(value));
 
