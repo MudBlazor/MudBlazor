@@ -428,7 +428,6 @@ window.mudpopoverHelper = {
 
     updatePopoverOverlay: function (popoverContentNode) {
         // tooltips don't have an overlay
-        console.log(popoverContentNode);
         if (popoverContentNode.classList.contains("mud-tooltip")) {
             return;
         }
