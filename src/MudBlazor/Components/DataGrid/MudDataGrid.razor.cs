@@ -1855,29 +1855,15 @@ namespace MudBlazor
             if (!SelectOnRowClick)
                 return;
 
-            // this is toggle logic (unselect if selected)
-            if (!Selection.Remove(item))
+            // duplicate code from SetSelectedItemAsync(bool, T) but we need to call this method when SelectOnRowClick is false
+            if (Selection.Contains(item))
             {
-                Selection.Add(item);
-            }
-            else if (!MultiSelection)
-            {
-                await _selectedItemState.SetValueAsync(default);
-                return;
-            }
-
-            if (MultiSelection)
-            {
-                await _selectedItemsState.SetValueAsync(Selection);
-                SelectedItemsChangedEvent?.Invoke(Selection);
+                await SetSelectedItemAsync(false, item);
             }
             else
             {
-                Selection.Remove(_selectedItemState.Value);
+                await SetSelectedItemAsync(true, item);
             }
-
-            await _selectedItemState.SetValueAsync(item);
-            await _selectedItemsState.SetValueAsync(Selection);
         }
 
         /// <summary>
