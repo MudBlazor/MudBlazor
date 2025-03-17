@@ -1,0 +1,45 @@
+﻿<MudDataGrid T="DocumentChecklistItem" ServerData="ServerReload" Bordered="true" Dense="true"
+MultiSelection="true" SelectedItemsChanged="@((e) => OnSelectedItemsChanged(e))"
+RowsPerPage="25"
+@ref="_dataGrid">
+    <Columns>
+        <SelectColumn T="DocumentChecklistItem"></SelectColumn>
+        <PropertyColumn Property="c=>c.Id" Title="Id"></PropertyColumn>
+        <PropertyColumn Property="c=>c.Name" Title="Name"></PropertyColumn>
+    </Columns>
+</MudDataGrid>
+
+<MudText>
+    @_message
+</MudText>
+
+@code {
+    #nullable enable
+    public static string __description__ = "A test viewer for visibility testing of row Selection";
+    private List<DocumentChecklistItem> _selectedDocuments = [];
+    private MudDataGrid<DocumentChecklistItem>? _dataGrid;
+    private string _message = "Click select column to select the item";
+
+    private void OnSelectedItemsChanged(HashSet<DocumentChecklistItem> documents)
+    {
+        _selectedDocuments = documents.ToList();
+        _message = "OnSelectedItemsChanged was called. " + _selectedDocuments.Count() + " items selected";
+
+    }
+
+    private async Task<GridData<DocumentChecklistItem>> ServerReload(GridState<DocumentChecklistItem> state)
+    {
+        List<DocumentChecklistItem> items = new List<DocumentChecklistItem>(){
+                new DocumentChecklistItem {Id="1", Name="Test"},
+                new DocumentChecklistItem {Id="2",Name="Test2"}
+            };
+
+        return await Task.FromResult(new GridData<DocumentChecklistItem>() { Items = items, TotalItems = 1 });
+    }
+
+    public class DocumentChecklistItem
+    {
+        public string Id { get; set; } = default!;
+        public string Name { get; set; } = default!;
+    }
+}
