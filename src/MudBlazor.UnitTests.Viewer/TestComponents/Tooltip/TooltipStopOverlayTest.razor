@@ -1,0 +1,25 @@
+﻿<MudOverlay @bind-Visible="_isOverlayOpen" AutoClose="true" />
+
+<MudStack Style="margin: 5px 0px;" Justify="Justify.SpaceBetween" Spacing="0" AlignItems="AlignItems.Center" Row>
+    <MudText>Test</MudText>
+    <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Info" Size="Size.Small" OnClick="ToggleOverlay" Style="@IconButtonStyle" />
+    <MudPopover @bind-Open="_isOverlayOpen" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopLeft" RelativeWidth="DropdownWidth.Adaptive" OverflowBehavior="OverflowBehavior.FlipOnOpen">
+        <MudPaper Class="p-3">
+            <MudToggleGroup T="string" Class="ms-auto" SelectionMode="SelectionMode.SingleSelection">
+                <MudToggleItem Value="1">"Off"</MudToggleItem>
+                <MudToggleItem Value="2"><MudTooltip Text="Test" Placement="Placement.Top" Arrow="true" Inline="false" Color="Color.Info" Delay="300">"Key"</MudTooltip> </MudToggleItem>
+                <MudToggleItem Value="3">"On"</MudToggleItem>
+            </MudToggleGroup>
+            <MudDivider Class="my-2" />
+            <MudButton OnClick="ToggleOverlay" Color="Color.Info" Class="mt-1" Size="Size.Small" Variant="Variant.Outlined">Close</MudButton>
+        </MudPaper>
+    </MudPopover>
+</MudStack>
+
+@code {
+#nullable enable
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    private void ToggleOverlay() => _isOverlayOpen = !_isOverlayOpen;
+    private bool _isOverlayOpen;
+    private string IconButtonStyle => _isOverlayOpen ? "right: 2px;" : "left: 7px;";
+}
