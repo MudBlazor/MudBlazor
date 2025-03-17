@@ -1269,6 +1269,8 @@ namespace MudBlazor
             }
 
             await _selectedItemsState.SetValueAsync(Selection);
+            // doesn't fire due to hashset reference not changing, so fire it manually
+            await SelectedItemsChanged.InvokeAsync(Selection);
         }
 
         private void OnSelectedItemsChanged(ParameterChangedEventArgs<HashSet<T>> args)
