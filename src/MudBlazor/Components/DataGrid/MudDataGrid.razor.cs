@@ -1502,17 +1502,11 @@ namespace MudBlazor
             Selection = new HashSet<T>(Comparer);
             if (value)
             {
-                if (!MultiSelection)
-                {
-                    Selection.Clear();
-                }
-
                 Selection.Add(item);
                 await _selectedItemState.SetValueAsync(item);
             }
             else
             {
-                Selection.Remove(item);
                 if (Comparer != null)
                 {
                     if (Comparer.Equals(item, _selectedItemState.Value))
