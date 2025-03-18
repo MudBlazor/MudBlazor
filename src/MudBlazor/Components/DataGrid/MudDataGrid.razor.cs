@@ -1548,17 +1548,10 @@ namespace MudBlazor
                     ? ServerItems
                     : FilteredItems;
 
+            Selection.Clear();
             if (value)
             {
-                Selection.Clear();
-                foreach (var item in items)
-                {
-                    Selection.Add(item);
-                }
-            }
-            else
-            {
-                Selection.Clear();
+                Selection.UnionWith(items);
             }
 
             await InvokeAsync(async () => await _selectedItemsState.SetValueAsync(Selection));
