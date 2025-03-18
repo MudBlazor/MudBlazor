@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
 using MudBlazor.Utilities;
+using MudBlazor.Utilities.Debounce;
 
 namespace MudBlazor
 {
@@ -10,9 +11,16 @@ namespace MudBlazor
         private readonly ParameterState<bool> _visibleState;
         private Origin _anchorOrigin;
         private Origin _transformOrigin;
-
+        private DebounceDispatcher _showDebouncer;
+        private DebounceDispatcher _hideDebouncer;
+        private double _previousDelay;
+        private double _previousDuration;
         public MudTooltip()
         {
+            _previousDelay = Delay;
+            _showDebouncer = new DebounceDispatcher((int)Delay);
+            _previousDuration = Duration;
+            _hideDebouncer = new DebounceDispatcher((int)Duration);            
             using var registerScope = CreateRegisterScope();
             _visibleState = registerScope.RegisterParameter<bool>(nameof(Visible))
                 .WithParameter(() => Visible)
@@ -169,14 +177,45 @@ namespace MudBlazor
             return !Disabled && _visibleState.Value && (TooltipContent is not null || !string.IsNullOrEmpty(Text));
         }
 
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
+
+            if (_showDebouncer != null && _previousDelay != Delay)
+            {
+                _showDebouncer = new DebounceDispatcher((int)Delay);
+                _previousDelay = Delay;
+            }
+
+            if (_hideDebouncer != null && _previousDuration != Duration)
+            {
+                _hideDebouncer = new DebounceDispatcher((int)Duration);
+                _previousDuration = Duration;
+            }
+        }
+
         private Task HandlePointerEnterAsync()
         {
-            return ShowOnHover ? _visibleState.SetValueAsync(true) : Task.CompletedTask;
+            if (!ShowOnHover)
+                return Task.CompletedTask;
+
+            _hideDebouncer.Cancel();
+            return _showDebouncer.DebounceAsync(async () =>
+            {
+                await _visibleState.SetValueAsync(true);
+            });
         }
 
         private Task HandlePointerLeaveAsync()
         {
-            return ShowOnHover ? _visibleState.SetValueAsync(false) : Task.CompletedTask;
+            if (!ShowOnHover)
+                return Task.CompletedTask;
+
+            _showDebouncer.Cancel();
+            return _hideDebouncer.DebounceAsync(async () =>
+            {
+                await _visibleState.SetValueAsync(false);
+            });
         }
 
         private Task HandleFocusInAsync()

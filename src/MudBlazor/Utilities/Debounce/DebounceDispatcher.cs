@@ -59,4 +59,12 @@ internal class DebounceDispatcher
             // If the task was canceled, ignore it
         }
     }
+
+    /// <summary>
+    /// Cancel the current debounced task if no cancellationToken provided
+    /// </summary>
+    public void Cancel()
+    {
+        _cancellationTokenSource?.Cancel();
+    }
 }
