@@ -1547,7 +1547,7 @@ namespace MudBlazor
         /// </remarks>
         public async Task SetSelectedItemAsync(T item)
         {
-            if (!SelectOnRowClick || item == null)
+            if (!SelectOnRowClick)
                 return;
 
             var isSelected = Selection.Contains(item);
