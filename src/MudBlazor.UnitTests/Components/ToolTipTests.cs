@@ -356,5 +356,59 @@ namespace MudBlazor.UnitTests.Components
             await button.ParentElement.TriggerEventAsync("onpointerenter", new PointerEventArgs());
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
         }
+
+        [TestCase(0, 0)]
+        [TestCase(500, 500)]
+        [Test]
+        public void Tooltip_Debouncer_Initials(double duration, double delay)
+        {
+            var comp = Context.RenderComponent<TooltipDurationDelayTest>(p =>
+            {
+                p.Add(x => x.Delay, delay);
+                p.Add(x => x.Duration, duration);
+            });
+
+            var tooltipComp = comp.FindComponent<MudTooltip>().Instance;
+            tooltipComp.Delay.Should().Be(delay);
+            tooltipComp.Duration.Should().Be(duration);
+            tooltipComp._previousDelay.Should().Be(delay);
+            tooltipComp._previousDuration.Should().Be(duration);
+            var button = comp.Find("button");
+            button.Should().NotBeNull();
+        }
+
+        [TestCase(0, 0)]
+        [TestCase(500, 500)]
+        [Test]
+        public async Task Tooltip_Debouncer_Duration_and_Delay(double duration, double delay)
+        {
+            var comp = Context.RenderComponent<TooltipDurationDelayTest>(p =>
+            {
+                p.Add(x => x.Delay, delay);
+                p.Add(x => x.Duration, duration);
+            });
+
+            var tooltipComp = comp.FindComponent<MudTooltip>().Instance;
+
+            // cannot await or it waits until the debounce happens
+            var eventTask = tooltipComp.HandlePointerEnterAsync();
+            if (delay > 0)
+                tooltipComp.ShowToolTip().Should().BeFalse();
+
+            await Task.Delay((int)delay + 50);
+            tooltipComp.ShowToolTip().Should().BeTrue();
+
+            await eventTask; //  ensure all completed
+
+            // cannot await or it waits until the debounce happens
+            eventTask = tooltipComp.HandlePointerLeaveAsync();
+            if (duration > 0)
+                tooltipComp.ShowToolTip().Should().BeTrue();
+
+            await Task.Delay((int)(duration + delay) + 50);
+            tooltipComp.ShowToolTip().Should().BeFalse();
+
+            await eventTask;
+        }
     }
 }

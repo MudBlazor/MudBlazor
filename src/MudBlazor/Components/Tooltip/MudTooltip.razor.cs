@@ -11,10 +11,10 @@ namespace MudBlazor
         private readonly ParameterState<bool> _visibleState;
         private Origin _anchorOrigin;
         private Origin _transformOrigin;
-        private DebounceDispatcher _showDebouncer;
-        private DebounceDispatcher _hideDebouncer;
-        private double _previousDelay;
-        private double _previousDuration;
+        internal DebounceDispatcher _showDebouncer;
+        internal DebounceDispatcher _hideDebouncer;
+        internal double _previousDelay;
+        internal double _previousDuration;
         public MudTooltip()
         {
             _previousDelay = Delay;
@@ -170,7 +170,7 @@ namespace MudBlazor
         /// <summary>
         /// Register and Show the Popover for the tooltip if it is not disabled, set to be visible, the content or Text is not empty or null
         /// </summary>
-        private bool ShowToolTip()
+        internal bool ShowToolTip()
         {
             if (_anchorOrigin == Origin.TopLeft || _transformOrigin == Origin.TopLeft)
                 ConvertPlacement();
@@ -181,20 +181,20 @@ namespace MudBlazor
         {
             base.OnParametersSet();
 
-            if (_showDebouncer != null && _previousDelay != Delay)
+            if (_showDebouncer != null && Math.Abs(_previousDelay - Delay) > .001)
             {
                 _showDebouncer = new DebounceDispatcher((int)Delay);
                 _previousDelay = Delay;
             }
 
-            if (_hideDebouncer != null && _previousDuration != Duration)
+            if (_hideDebouncer != null && Math.Abs(_previousDuration - Duration) > 001)
             {
                 _hideDebouncer = new DebounceDispatcher((int)Duration);
                 _previousDuration = Duration;
             }
         }
 
-        private Task HandlePointerEnterAsync()
+        internal Task HandlePointerEnterAsync()
         {
             if (!ShowOnHover)
                 return Task.CompletedTask;
@@ -206,7 +206,7 @@ namespace MudBlazor
             });
         }
 
-        private Task HandlePointerLeaveAsync()
+        internal Task HandlePointerLeaveAsync()
         {
             if (!ShowOnHover)
                 return Task.CompletedTask;
