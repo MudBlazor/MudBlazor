@@ -78,17 +78,16 @@ namespace MudBlazor.UnitTests.Charts
                 comp.Markup.Should()
                     .Contain("Technetium");
             }
-
             if (data.Length == 4 && data.Contains(77))
             {
                 comp.Markup.Should()
-                    .Contain("d=\"M 0 -140 A 140 140 0 1 1 -86.7071 109.9176 L 0 0\"");
+                    .Contain("d=\"M 0 -140 A 140 140 0 1 1 -86.7071 109.9176 L 0 0 Z\"");
             }
 
             if (data.Length == 4 && data.Contains(5))
             {
                 comp.Markup.Should()
-                    .Contain("d=\"M -34.2796 -135.7384 A 140 140 0 0 1 -0 -140 L 0 0\"");
+                    .Contain("d=\"M -34.2796 -135.7384 A 140 140 0 0 1 -0 -140 L 0 0 Z\"");
             }
 
             comp.SetParametersAndRender(parameters => parameters
@@ -143,9 +142,7 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.ChartType, ChartType.Pie)
                 .Add(p => p.InputData, data));
 
-            var paths1 = comp.FindAll("path");
-
-            paths1.First().OuterHtml.Should().Contain("d=\"M 0 -140 A 140 140 0 0 1 0 140 A 140 140 0 0 1 -0 -140 L 0 0 Z\"");
+            comp.Markup.Should().Contain("d=\"M 0 -140 A 140 140 0 1 1 0 140 A 140 140 0 1 1 -0 -140 L 0 0 Z\"");
         }
     }
 }

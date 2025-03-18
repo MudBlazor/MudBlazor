@@ -1,5 +1,5 @@
-﻿using System.Diagnostics.Metrics;
-using System.Globalization;
+﻿using System.Globalization;
+using System.Text;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
@@ -66,9 +66,10 @@ namespace MudBlazor.Charts
                 cumulativeRadians += 2 * Math.PI * data / 2;
                 var endx = Math.Cos(cumulativeRadians);
                 var endy = Math.Sin(cumulativeRadians);
-                var largeArcFlag = data / 2 > 0.5 ? 1 : 0;
+                var largeArcFlag = data > 0.5 ? 1 : 0;
 
                 SvgPath path;
+                var pathStringBuilder = new StringBuilder();
                 if (donutRadiusRatio < 1)
                 {
                     // Calculate inner radius with a hole.
@@ -90,28 +91,42 @@ namespace MudBlazor.Charts
                     var innerEndX = endx * innerRadius;
                     var innerEndY = endy * innerRadius;
 
+
+                    pathStringBuilder.Append($"M {ToS(outerStartX)} {ToS(outerStartY)} "); // Move to the start point
+                    if (!(data < 1))
+                    {
+                        pathStringBuilder.Append($"A {ToS(Radius)} {ToS(Radius)} 0 {ToS(largeArcFlag)} 1 {ToS(outerMidX)} {ToS(outerMidY)} "); // Add an arc to a mid point half way through the slice (outer) to support 100% donuts
+                    }
+                    pathStringBuilder.Append($"A {ToS(Radius)} {ToS(Radius)} 0 {ToS(largeArcFlag)} 1 {ToS(outerEndX)} {ToS(outerEndY)} "); // Add an arc to the end point (outer)
+                    pathStringBuilder.Append($"L {ToS(innerEndX)} {ToS(innerEndY)} "); // Line to the end point of the inner arc
+                    if (!(data < 1))
+                    {
+                        pathStringBuilder.Append($"A {ToS(innerRadius)} {ToS(innerRadius)} 0 {ToS(largeArcFlag)} 0 {ToS(innerMidX)} {ToS(innerMidY)} ");  // Add an arc to a mid point half way through the slice to support 100% donuts
+                    }
+                    pathStringBuilder.Append($"A {ToS(innerRadius)} {ToS(innerRadius)} 0 {ToS(largeArcFlag)} 0 {ToS(innerStartX)} {ToS(innerStartY)} Z"); // Add an arc to the start point (inner)
+
                     // Build a compound path: outer arc -> line to inner arc -> inner arc -> close
                     path = new SvgPath
                     {
                         Index = i,
-                        Data = $"M {ToS(outerStartX)} {ToS(outerStartY)} " + // Move to the start point
-                               $"A {ToS(Radius)} {ToS(Radius)} 0 {ToS(largeArcFlag)} 1 {ToS(outerMidX)} {ToS(outerMidY)} " + // Add an arc to a mid point half way through the slice (outer) to support 100% donuts
-                               $"A {ToS(Radius)} {ToS(Radius)} 0 {ToS(largeArcFlag)} 1 {ToS(outerEndX)} {ToS(outerEndY)} " + // Add an arc to the end point (outer)
-                               $"L {ToS(innerEndX)} {ToS(innerEndY)} " + // Line to the end point of the inner arc
-                               $"A {ToS(innerRadius)} {ToS(innerRadius)} 0 {ToS(largeArcFlag)} 0 {ToS(innerMidX)} {ToS(innerMidY)}" +  // Add an arc to a mid point half way through the slice to support 100% donuts
-                               $"A {ToS(innerRadius)} {ToS(innerRadius)} 0 {ToS(largeArcFlag)} 0 {ToS(innerStartX)} {ToS(innerStartY)} Z" // Add an arc to the start point (inner)
+                        Data = pathStringBuilder.ToString()
                     };
                 }
                 else
                 {
+                    pathStringBuilder.Append($"M {ToS(startx * Radius)} {ToS(starty * Radius)} "); // Move to the start point
+                    if (!(data < 1))
+                    {
+                        pathStringBuilder.Append($"A {ToS(Radius)} {ToS(Radius)} 0 {ToS(largeArcFlag)} 1 {ToS(midx * Radius)} {ToS(midy * Radius)} "); // Add an arc to a mid point half way through the slice to support 100% pies
+                    }
+                    pathStringBuilder.Append($"A {ToS(Radius)} {ToS(Radius)} 0 {ToS(largeArcFlag)} 1 {ToS(endx * Radius)} {ToS(endy * Radius)} "); // Add an arc to the end point
+                    pathStringBuilder.Append("L 0 0 Z"); // Line to the center
+
                     // Standard pie slice path going to the center.
                     path = new SvgPath()
                     {
                         Index = i,
-                        Data = $"M {ToS(startx * Radius)} {ToS(starty * Radius)} " + // Move to the start point
-                               $"A {ToS(Radius)} {ToS(Radius)} 0 {ToS(largeArcFlag)} 1 {ToS(midx * Radius)} {ToS(midy * Radius)} " + // Add an arc to a mid point half way through the slice to support 100% pies
-                               $"A {ToS(Radius)} {ToS(Radius)} 0 {ToS(largeArcFlag)} 1 {ToS(endx * Radius)} {ToS(endy * Radius)} " + // Add an arc to the end point
-                               "L 0 0 Z" // Line to the center
+                        Data = pathStringBuilder.ToString()
                     };
                 }
 
