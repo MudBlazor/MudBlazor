@@ -115,24 +115,6 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("td")[2].TextContent.Trim().Should().Be("A");
         }
 
-        [Theory]
-        [TestCase(true)]
-        [TestCase(false)]
-        public void TableSortLabel(bool sortEnabled)
-        {
-            // Arrange
-            var comp = Context.RenderComponent<TableSortLabelTest>(
-                parameters => parameters.Add(x => x.SortEnabled, sortEnabled));
-            var tableSortLabel = comp.FindComponent<MudTableSortLabel<string>>();
-
-            // Assert
-            tableSortLabel
-                .Find("span")
-                .GetAttribute("class")
-                .Contains("mud-button-root")
-                .Should().Be(sortEnabled);
-        }
-
         /// <summary>
         /// Check if the loading parameter is adding a supplementary row.
         /// </summary>
@@ -1315,25 +1297,25 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<TableServerSideDataTest5>();
             comp.Find("#counter").TextContent.Should().Be("1"); //initial counter
 
-            comp.Find("span.mud-button-root.mud-table-sort-label").Click(); // sort
+            comp.Find("span.mud-clickable.mud-table-sort-label").Click(); // sort
             comp.Find("#counter").TextContent.Should().Be("2");
 
-            comp.Find("span.mud-button-root.mud-table-sort-label").Click(); // sort
+            comp.Find("span.mud-clickable.mud-table-sort-label").Click(); // sort
             comp.Find("#counter").TextContent.Should().Be("3");
 
-            comp.Find("span.mud-button-root.mud-table-sort-label").Click(); // sort
+            comp.Find("span.mud-clickable.mud-table-sort-label").Click(); // sort
             comp.Find("#counter").TextContent.Should().Be("4");
 
             comp.Find("#reseter").Click(); //reset counter and test again
             comp.Find("#counter").TextContent.Should().Be("0");
 
-            comp.Find("span.mud-button-root.mud-table-sort-label").Click(); // sort
+            comp.Find("span.mud-clickable.mud-table-sort-label").Click(); // sort
             comp.Find("#counter").TextContent.Should().Be("1");
 
-            comp.Find("span.mud-button-root.mud-table-sort-label").Click(); // sort
+            comp.Find("span.mud-clickable.mud-table-sort-label").Click(); // sort
             comp.Find("#counter").TextContent.Should().Be("2");
 
-            comp.Find("span.mud-button-root.mud-table-sort-label").Click(); // sort
+            comp.Find("span.mud-clickable.mud-table-sort-label").Click(); // sort
             comp.Find("#counter").TextContent.Should().Be("3");
         }
 
@@ -2536,6 +2518,23 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll(".mud-table-pagination-actions .mud-button-root")[2].Click();
             comp.WaitForAssertion(() => table.CurrentPage.Should().Be(2));
             comp.WaitForAssertion(() => comp.Find(".mud-table-body .mud-table-row .mud-table-cell").TextContent.Should().Be("3"));
+        }
+
+        [Test]
+        [TestCase(SortDirection.None)]
+        [TestCase(SortDirection.Ascending)]
+        [TestCase(SortDirection.Descending)]
+        public void TableSortLabelDirectionClasses(SortDirection direction)
+        {
+            var comp = Context.RenderComponent<MudTableSortLabel<string>>(parameters => parameters
+                .Add(p => p.SortDirection, direction)
+            );
+
+            var icon = comp.Find(".mud-table-sort-label-icon");
+
+            icon.ClassList.Should().Contain("mud-table-sort-label-icon");
+            icon.ClassList.Contains("mud-direction-asc").Should().Be(direction == SortDirection.Ascending);
+            icon.ClassList.Contains("mud-direction-desc").Should().Be(direction == SortDirection.Descending);
         }
     }
 }

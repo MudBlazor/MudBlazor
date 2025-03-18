@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using MudBlazor.Utilities;
@@ -18,6 +19,7 @@ namespace MudBlazor
         private ElementReference _elementReference1;
         private readonly Lazy<DotNetObjectReference<MudInput<T>>> _dotNetReferenceLazy;
 
+        [DynamicDependency(nameof(CallOnBlurredAsync))]
         public MudInput()
         {
             _dotNetReferenceLazy = new Lazy<DotNetObjectReference<MudInput<T>>>(DotNetObjectReference.Create(this));
@@ -386,7 +388,7 @@ namespace MudBlazor
             if (!_isFocused)
                 return;
 
-            StateHasChanged();
+            await InvokeAsync(StateHasChanged);
             await OnBlurredAsync(new FocusEventArgs { Type = "jsBlur.OnBlur" });
         }
     }
