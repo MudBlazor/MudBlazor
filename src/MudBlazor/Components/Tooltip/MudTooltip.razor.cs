@@ -20,7 +20,7 @@ namespace MudBlazor
             _previousDelay = Delay;
             _showDebouncer = new DebounceDispatcher((int)Delay);
             _previousDuration = Duration;
-            _hideDebouncer = new DebounceDispatcher((int)Duration);            
+            _hideDebouncer = new DebounceDispatcher((int)Duration);
             using var registerScope = CreateRegisterScope();
             _visibleState = registerScope.RegisterParameter<bool>(nameof(Visible))
                 .WithParameter(() => Visible)
