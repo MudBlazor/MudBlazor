@@ -746,6 +746,15 @@ namespace MudBlazor
 
             _opening = false;
             StateHasChanged();
+            
+            // If not strict scroll to the selected item
+            if (!Strict)
+            {
+                if (_selectedListItemIndex > 0)
+                {
+                    await ScrollToListItemAsync(_selectedListItemIndex);
+                }
+            }
         }
 
         /// <summary>
