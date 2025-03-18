@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.DateTimePicker;
 using NUnit.Framework;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using static Bunit.ComponentParameterFactory;
@@ -230,8 +231,8 @@ namespace MudBlazor.UnitTests.Components
             var comp = OpenPicker(Parameter("ShowWeekNumbers", true));
             comp.FindAll(".mud-picker-calendar-week").Count.Should().Be(5 + 2);
 
-            comp = OpenPicker(Parameter("ShowWeekNumbers", false));
-            comp.FindAll(".mud-picker-calendar-week").Count.Should().Be(1);
+            comp.SetParametersAndRender(Parameter("ShowWeekNumbers", false));
+            comp.FindAll(".mud-picker-calendar-week").Count.Should().Be(0);
         }
 
         public IRenderedComponent<SimpleDateTimePickerTest> OpenPicker(params ComponentParameter[] parameters)
