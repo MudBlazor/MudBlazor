@@ -1538,6 +1538,22 @@ namespace MudBlazor
             await InvokeAsync(StateHasChanged);
         }
 
+        /// <summary>
+        /// Set the currently selected item in the data grid.
+        /// </summary>
+        /// <param name="item">The item to select.</param>
+        /// <remarks>
+        /// When <see cref="MultiSelection"/> is <c>true</c> and <see cref="SelectOnRowClick"/> is <c>true</c>, the <see cref="SelectedItems"/> are updated.  The <see cref="SelectedItem"/> is also updated.
+        /// </remarks>
+        public async Task SetSelectedItemAsync(T item)
+        {
+            if (!SelectOnRowClick || item == null)
+                return;
+
+            var isSelected = Selection.Contains(item);
+            await SetSelectedItemAsync(!isSelected, item);
+        }
+
         internal async Task SetSelectAllAsync(bool value)
         {
             // nothing should happen if multiselection is false
@@ -1836,29 +1852,6 @@ namespace MudBlazor
                     _serverData.Items.Select((item, index) => new IndexBag<T>(request.StartIndex + index, item)),
                     _serverData.TotalItems);
             };
-        }
-
-        /// <summary>
-        /// Set the currently selected item in the data grid.
-        /// </summary>
-        /// <param name="item">The item to select.</param>
-        /// <remarks>
-        /// When <see cref="MultiSelection"/> is <c>true</c> and <see cref="SelectOnRowClick"/> is <c>true</c>, the <see cref="SelectedItems"/> are updated.  The <see cref="SelectedItem"/> is also updated.
-        /// </remarks>
-        public async Task SetSelectedItemAsync(T item)
-        {
-            if (!SelectOnRowClick)
-                return;
-
-            // duplicate code from SetSelectedItemAsync(bool, T) but we need to call this method when SelectOnRowClick is false
-            if (Selection.Contains(item))
-            {
-                await SetSelectedItemAsync(false, item);
-            }
-            else
-            {
-                await SetSelectedItemAsync(true, item);
-            }
         }
 
         /// <summary>
