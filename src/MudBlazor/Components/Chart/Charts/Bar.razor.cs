@@ -144,7 +144,8 @@ namespace MudBlazor.Charts
 
             for (var i = 0; i < _series.Count; i++)
             {
-                var data = _series[i].Data;
+                var series = _series[i];
+                var data = series.Data;
 
                 for (var j = 0; j < data.Length; j++)
                 {
@@ -158,7 +159,7 @@ namespace MudBlazor.Charts
                         Index = i,
                         Data = $"M {ToS(gridValueX)} {ToS(gridValueY)} L {ToS(gridValueX)} {ToS(gridValue)}",
                         LabelXValue = XAxisLabels.Length > j ? XAxisLabels[j] : string.Empty,
-                        LabelYValue = dataValue.ToString(),
+                        LabelYValue = dataValue.ToString(series.DataMarkerTooltipYValueFormat),
                         LabelX = gridValueX,
                         LabelY = gridValue
                     };
@@ -168,7 +169,7 @@ namespace MudBlazor.Charts
                 var legend = new SvgLegend()
                 {
                     Index = i,
-                    Labels = _series[i].Name
+                    Labels = series.Name
                 };
                 _legends.Add(legend);
             }

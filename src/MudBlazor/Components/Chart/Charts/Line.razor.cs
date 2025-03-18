@@ -208,7 +208,7 @@ namespace MudBlazor.Charts
                             LabelX = x,
                             LabelXValue = XAxisLabels[j / interpolationResolution],
                             LabelY = y,
-                            LabelYValue = dataValue.ToString(),
+                            LabelYValue = dataValue.ToString(series.DataMarkerTooltipYValueFormat),
                         });
                     }
 
@@ -282,7 +282,7 @@ namespace MudBlazor.Charts
                                 LabelX = x,
                                 LabelXValue = XAxisLabels.Length > j ? XAxisLabels[j] : string.Empty,
                                 LabelY = y,
-                                LabelYValue = dataValue.ToString(),
+                                LabelYValue = dataValue.ToString(series.DataMarkerTooltipYValueFormat),
                             });
                         }
                     }

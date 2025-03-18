@@ -35,5 +35,10 @@ namespace MudBlazor
         /// Tooltip subtitle format for the series. Supported tags are {{SERIES_NAME}}, {{X_VALUE}} and {{Y_VALUE}}.
         /// </summary>
         public string? DataMarkerTooltipSubtitleFormat { get; set; }
+
+        /// <summary>
+        /// Tooltip YValue format for the series. It is used to format the {{Y_VALUE}} tag.
+        /// </summary>
+        public string? DataMarkerTooltipYValueFormat { get; set; }
     }
 }

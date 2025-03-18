@@ -384,7 +384,7 @@ namespace MudBlazor.Charts
                             LabelX = x,
                             LabelXValue = dataValue.DateTime.ToString(MudChartParent?.DataMarkerTooltipTimeLabelFormat ?? "{0}"),
                             LabelY = y,
-                            LabelYValue = dataValue.Value.ToString(),
+                            LabelYValue = dataValue.Value.ToString(series.DataMarkerTooltipYValueFormat),
                         });
                     }
                 }

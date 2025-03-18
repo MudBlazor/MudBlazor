@@ -206,7 +206,7 @@ namespace MudBlazor.Charts
                         Index = i,
                         Data = $"M {ToS(x)} {ToS(yStart)} L {ToS(x)} {ToS(yEnd - BarOverlapAmountFix)}",
                         LabelXValue = XAxisLabels.Length > j ? XAxisLabels[j] : string.Empty,
-                        LabelYValue = dataValue.ToString(),
+                        LabelYValue = dataValue.ToString(series.DataMarkerTooltipYValueFormat),
                         LabelX = x,
                         LabelY = yEnd
                     };
