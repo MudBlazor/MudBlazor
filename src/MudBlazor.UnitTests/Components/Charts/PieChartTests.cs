@@ -137,7 +137,7 @@ namespace MudBlazor.UnitTests.Charts
         [Test]
         public void PieChart100Percent()
         {
-            double[] data = { 50 };
+            double[] data = { 50, 0, 0 };
 
             var comp = Context.RenderComponent<MudChart>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Pie)
