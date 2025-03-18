@@ -25,6 +25,7 @@ namespace MudBlazor
     {
         private IDialogReference? _reference;
         private readonly ParameterState<bool> _visibleState;
+        private bool _isShowing;
 
         /// <summary>
         /// Creates a new instance.
@@ -223,6 +224,8 @@ namespace MudBlazor
                 [nameof(DefaultFocus)] = DefaultFocus,
             };
 
+            _isShowing = true;
+
             _reference = await DialogService.ShowAsync<MudDialog>(title, parameters, options ?? Options);
 
             await _visibleState.SetValueAsync(true);
@@ -233,6 +236,7 @@ namespace MudBlazor
                 return InvokeAsync(() => _visibleState.SetValueAsync(false));
             }).CatchAndLog();
 
+            _isShowing = false;
             return _reference;
         }
 
@@ -257,7 +261,7 @@ namespace MudBlazor
         {
             if (IsInline)
             {
-                if (_visibleState.Value && _reference is null)
+                if (_visibleState.Value && _reference is null && !_isShowing)
                 {
                     // If visible and we don't have any reference we need to call Show
                     await ShowAsync();
