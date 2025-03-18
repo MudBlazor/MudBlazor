@@ -60,10 +60,13 @@ namespace MudBlazor.Charts
                 var data = normalizedData[i];
                 var startx = Math.Cos(cumulativeRadians);
                 var starty = Math.Sin(cumulativeRadians);
-                cumulativeRadians += 2 * Math.PI * data;
+                cumulativeRadians += 2 * Math.PI * data / 2;
+                var midx = Math.Cos(cumulativeRadians);
+                var midy = Math.Sin(cumulativeRadians);
+                cumulativeRadians += 2 * Math.PI * data / 2;
                 var endx = Math.Cos(cumulativeRadians);
                 var endy = Math.Sin(cumulativeRadians);
-                var largeArcFlag = data > 0.5 ? 1 : 0;
+                var largeArcFlag = data / 2 > 0.5 ? 1 : 0;
 
                 SvgPath path;
                 if (donutRadiusRatio < 1)
@@ -74,12 +77,16 @@ namespace MudBlazor.Charts
                     // Outer coordinates
                     var outerStartX = startx * Radius;
                     var outerStartY = starty * Radius;
+                    var outerMidX = midx * Radius;
+                    var outerMidY = midy * Radius;
                     var outerEndX = endx * Radius;
                     var outerEndY = endy * Radius;
 
                     // Inner coordinates (for the hole)
                     var innerStartX = startx * innerRadius;
                     var innerStartY = starty * innerRadius;
+                    var innerMidX = midx * innerRadius;
+                    var innerMidY = midy * innerRadius;
                     var innerEndX = endx * innerRadius;
                     var innerEndY = endy * innerRadius;
 
@@ -87,10 +94,12 @@ namespace MudBlazor.Charts
                     path = new SvgPath
                     {
                         Index = i,
-                        Data = $"M {ToS(outerStartX)} {ToS(outerStartY)} " +
-                               $"A {ToS(Radius)} {ToS(Radius)} 0 {ToS(largeArcFlag)} 1 {ToS(outerEndX)} {ToS(outerEndY)} " +
-                               $"L {ToS(innerEndX)} {ToS(innerEndY)} " +
-                               $"A {ToS(innerRadius)} {ToS(innerRadius)} 0 {ToS(largeArcFlag)} 0 {ToS(innerStartX)} {ToS(innerStartY)} Z"
+                        Data = $"M {ToS(outerStartX)} {ToS(outerStartY)} " + // Move to the start point
+                               $"A {ToS(Radius)} {ToS(Radius)} 0 {ToS(largeArcFlag)} 1 {ToS(outerMidX)} {ToS(outerMidY)} " + // Add an arc to a mid point half way through the slice (outer) to support 100% donuts
+                               $"A {ToS(Radius)} {ToS(Radius)} 0 {ToS(largeArcFlag)} 1 {ToS(outerEndX)} {ToS(outerEndY)} " + // Add an arc to the end point (outer)
+                               $"L {ToS(innerEndX)} {ToS(innerEndY)} " + // Line to the end point of the inner arc
+                               $"A {ToS(innerRadius)} {ToS(innerRadius)} 0 {ToS(largeArcFlag)} 0 {ToS(innerMidX)} {ToS(innerMidY)}" +  // Add an arc to a mid point half way through the slice to support 100% donuts
+                               $"A {ToS(innerRadius)} {ToS(innerRadius)} 0 {ToS(largeArcFlag)} 0 {ToS(innerStartX)} {ToS(innerStartY)} Z" // Add an arc to the start point (inner)
                     };
                 }
                 else
@@ -99,7 +108,10 @@ namespace MudBlazor.Charts
                     path = new SvgPath()
                     {
                         Index = i,
-                        Data = $"M {ToS(startx * Radius)} {ToS(starty * Radius)} A {Radius} {Radius} 0 {ToS(largeArcFlag)} 1 {ToS(endx * Radius)} {ToS(endy * Radius)} L 0 0"
+                        Data = $"M {ToS(startx * Radius)} {ToS(starty * Radius)} " + // Move to the start point
+                               $"A {ToS(Radius)} {ToS(Radius)} 0 {ToS(largeArcFlag)} 1 {ToS(midx * Radius)} {ToS(midy * Radius)} " + // Add an arc to a mid point half way through the slice to support 100% pies
+                               $"A {ToS(Radius)} {ToS(Radius)} 0 {ToS(largeArcFlag)} 1 {ToS(endx * Radius)} {ToS(endy * Radius)} " + // Add an arc to the end point
+                               "L 0 0 Z" // Line to the center
                     };
                 }
 
@@ -110,6 +122,13 @@ namespace MudBlazor.Charts
                 // Calculate the midpoint coordinates at half the radius
                 var midX = Math.Cos(midAngle) * midRadius;
                 var midY = Math.Sin(midAngle) * midRadius;
+
+                if (donutRadiusRatio == 1 && data == 1)
+                {
+                    // If the donut is a full circle, the label should be at the center
+                    midX = 0;
+                    midY = 0;
+                }
 
                 path.LabelX = midX;
                 path.LabelY = midY;

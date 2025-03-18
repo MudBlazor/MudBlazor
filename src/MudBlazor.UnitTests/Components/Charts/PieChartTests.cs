@@ -133,5 +133,19 @@ namespace MudBlazor.UnitTests.Charts
                 }
             }
         }
+
+        [Test]
+        public void PieChart100Percent()
+        {
+            double[] data = { 50 };
+
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Pie)
+                .Add(p => p.InputData, data));
+
+            var paths1 = comp.FindAll("path");
+
+            paths1.First().OuterHtml.Should().Contain("d=\"M 0 -140 A 140 140 0 0 1 0 140 A 140 140 0 0 1 -0 -140 L 0 0 Z\"");
+        }
     }
 }

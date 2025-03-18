@@ -164,5 +164,19 @@ namespace MudBlazor.UnitTests.Charts
                 }
             }
         }
+
+        [Test]
+        public void DonutChart100Percent()
+        {
+            double[] data = { 50 };
+
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Donut)
+                .Add(p => p.InputData, data));
+
+            var paths1 = comp.FindAll("path");
+
+            paths1.First().OuterHtml.Should().Contain("d=\"M 0 -140 A 140 140 0 0 1 0 140 A 140 140 0 0 1 -0 -140 L -0 -105 A 105 105 0 0 0 0 105A 105 105 0 0 0 0 -105 Z\"");
+        }
     }
 }
