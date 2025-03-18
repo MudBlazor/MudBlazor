@@ -728,7 +728,7 @@ namespace MudBlazor
                     int split = (MaxItems.Value / 2) + 1;
                     int valueIndex = Array.IndexOf(searchedItems, Value);
                     int endIndex = Math.Min(valueIndex + split, searchedItems.Length);
-                    int startIndex = endIndex - MaxItems.Value;
+                    int startIndex = endIndex - Math.Min(MaxItems.Value, searchedItems.Length);
                 
                     searchedItems = searchedItems.Take(new Range(startIndex, endIndex)).ToArray();
                 }
