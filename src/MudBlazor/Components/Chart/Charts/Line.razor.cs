@@ -196,6 +196,10 @@ namespace MudBlazor.Charts
                         var (x, y) = (XValues[j], YValues[j]) = GetXYForDataPoint(j);
 
                         var dataValue = data[j];
+
+                        if (MudChartParent?.ChartOptions.ShowToolTips != true)
+                            continue;
+
                         chartDataCirlces.Add(new()
                         {
                             Index = j,
@@ -268,16 +272,19 @@ namespace MudBlazor.Charts
 
                         var dataValue = data[j];
 
-                        chartDataCirlces.Add(new()
+                        if (MudChartParent?.ChartOptions.ShowToolTips == true)
                         {
-                            Index = j,
-                            CX = x,
-                            CY = y,
-                            LabelX = x,
-                            LabelXValue = XAxisLabels.Length > j ? XAxisLabels[j] : string.Empty,
-                            LabelY = y,
-                            LabelYValue = dataValue.ToString(),
-                        });
+                            chartDataCirlces.Add(new()
+                            {
+                                Index = j,
+                                CX = x,
+                                CY = y,
+                                LabelX = x,
+                                LabelXValue = XAxisLabels.Length > j ? XAxisLabels[j] : string.Empty,
+                                LabelY = y,
+                                LabelYValue = dataValue.ToString(),
+                            });
+                        }
                     }
                 }
 

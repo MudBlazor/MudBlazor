@@ -99,7 +99,7 @@
     @MudChartParent?.CustomGraphics
 
     @* Render the tooltip as an SVG group when a bar is hovered *@
-    @if (_hoveredDataPoint is not null && _hoverDataPointChartLine is not null)
+    @if (_hoveredDataPoint is not null && _hoverDataPointChartLine is not null && MudChartParent?.ChartOptions.ShowToolTips == true)
     {
         var seriesIndex = _chartDataPoints.First(x => x.Value.Contains(_hoveredDataPoint)).Key;
 

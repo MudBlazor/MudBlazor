@@ -1,7 +1,9 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
+#nullable enable
 namespace MudBlazor.Charts;
 
 public partial class ChartTooltip : ComponentBase
@@ -77,5 +79,13 @@ public partial class ChartTooltip : ComponentBase
         public double Width { get; set; }
 
         public double Height { get; set; }
+    }
+
+    protected string ToS(double d, string? format = null)
+    {
+        if (string.IsNullOrEmpty(format))
+            return Math.Round(d, 4).ToString(CultureInfo.InvariantCulture);
+
+        return Math.Round(d, 4).ToString(format);
     }
 }

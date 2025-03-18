@@ -373,6 +373,9 @@ namespace MudBlazor.Charts
 
                         var dataValue = data[j];
 
+                        if (MudChartParent?.ChartOptions.ShowToolTips != true) 
+                            continue;
+
                         chartDataCirlces.Add(new()
                         {
                             Index = j,
