@@ -96,7 +96,7 @@
     {
         var seriesIndex = _hoverDataPointChartLine.Index;
 
-        var color = MudChartParent?.ChartOptions.ChartPalette.GetValue(seriesIndex % MudChartParent.ChartOptions.ChartPalette.Length)?.ToString() ?? string.Empty;
+        var color = MudChartParent.ChartOptions.ChartPalette.GetValue(seriesIndex % MudChartParent.ChartOptions.ChartPalette.Length)?.ToString() ?? string.Empty;
         var series = _series[seriesIndex];
 
         if (!string.IsNullOrWhiteSpace(series.DataMarkerTooltipTitleFormat))

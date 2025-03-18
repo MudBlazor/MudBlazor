@@ -26,9 +26,9 @@
     @* Render the tooltip as an SVG group when a bar is hovered *@
     @if (_hoveredSegment is not null && MudChartParent?.ChartOptions.ShowToolTips == true)
     {
-        var color = MudChartParent?.ChartOptions.ChartPalette.GetValue(_hoveredSegment.Index % MudChartParent.ChartOptions.ChartPalette.Length)?.ToString() ?? string.Empty;
+        var color = MudChartParent.ChartOptions.ChartPalette.GetValue(_hoveredSegment.Index % MudChartParent.ChartOptions.ChartPalette.Length)?.ToString() ?? string.Empty;
 
-        if (!string.IsNullOrWhiteSpace(MudChartParent?.ChartOptions.DefaultDataMarkerTooltipTitleFormat))
+        if (!string.IsNullOrWhiteSpace(MudChartParent.ChartOptions.DefaultDataMarkerTooltipTitleFormat))
         {
             var tooltipTitle = MudChartParent.ChartOptions.DefaultDataMarkerTooltipTitleFormat
                 .Replace("{{SERIES_NAME}}", _hoveredSegment.LabelYValue)

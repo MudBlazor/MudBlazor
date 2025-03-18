@@ -81,7 +81,7 @@ public partial class ChartTooltip : ComponentBase
         public double Height { get; set; }
     }
 
-    protected string ToS(double d, string? format = null)
+    protected static string ToS(double d, string? format = null)
     {
         if (string.IsNullOrEmpty(format))
             return Math.Round(d, 4).ToString(CultureInfo.InvariantCulture);
