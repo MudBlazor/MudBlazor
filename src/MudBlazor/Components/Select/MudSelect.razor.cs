@@ -836,6 +836,13 @@ namespace MudBlazor
             }
         }
 
+        internal Task HandleMouseDown(MouseEventArgs args)
+        {
+            if (args.Button != 0) // if it wasn't left click drop out
+                return Task.CompletedTask;
+            return ToggleMenu();
+        }
+
         /// <summary>
         /// Opens or closes the drop-down menu.
         /// </summary>
