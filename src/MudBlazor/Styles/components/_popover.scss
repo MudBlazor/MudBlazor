@@ -23,6 +23,10 @@
     transition-delay: 0ms !important;
   }
 
+  &:empty {
+    box-shadow: none !important;
+  }
+
   .mud-list {
     max-height: inherit;
     overflow-y: auto;
@@ -60,7 +64,7 @@
 }
 
 .mud-select {
-    .mud-popover-cascading-value {
+  .mud-popover-cascading-value {
     z-index: calc(var(--mud-zindex-select) + 5);
   }
 }
