@@ -119,15 +119,14 @@ namespace MudBlazor.Charts
                 var midAngle = cumulativeRadians - Math.PI * data;
                 var midRadius = Radius * (1 - donutRadiusRatio / 2);
 
-                // Calculate the midpoint coordinates at half the radius
-                var midX = Math.Cos(midAngle) * midRadius;
-                var midY = Math.Sin(midAngle) * midRadius;
+                var midX = 0d;
+                var midY = 0d;
 
-                if (donutRadiusRatio == 1 && data == 1)
+                if (donutRadiusRatio < 1 || data < 1) // don't find mid point when donut is 100% and data is 100%, just use the 0,0 point.
                 {
-                    // If the donut is a full circle, the label should be at the center
-                    midX = 0;
-                    midY = 0;
+                    // Calculate the midpoint coordinates at half the radius
+                    midX = Math.Cos(midAngle) * midRadius;
+                    midY = Math.Sin(midAngle) * midRadius;
                 }
 
                 path.LabelX = midX;
