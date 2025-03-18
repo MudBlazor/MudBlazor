@@ -410,5 +410,29 @@ namespace MudBlazor.UnitTests.Components
 
             await eventTask;
         }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        [Test]
+        public async Task Tooltip_ShowOnHover(bool showOnHover)
+        {
+            var comp = Context.RenderComponent<TooltipDurationDelayTest>(p =>
+            {
+                p.Add(x => x.ShowOnHover, showOnHover);
+            });
+            // we don't need to await Task.Delay to account for Delay/Duration since the await Handle takes care of it.
+            var tooltipComp = comp.FindComponent<MudTooltip>().Instance;
+            tooltipComp.ShowOnHover.Should().Be(showOnHover);
+            if (!showOnHover)
+            {
+                await tooltipComp.HandlePointerEnterAsync();
+                tooltipComp.ShowToolTip().Should().BeFalse();
+            }
+            else
+            {
+                await tooltipComp.HandlePointerEnterAsync();
+                tooltipComp.ShowToolTip().Should().BeTrue();
+            }
+        }
     }
 }

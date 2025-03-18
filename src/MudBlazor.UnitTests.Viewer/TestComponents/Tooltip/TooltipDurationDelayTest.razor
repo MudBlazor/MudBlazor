@@ -1,9 +1,12 @@
 ﻿
-<MudTooltip Text="Test content..." Duration="@Duration" Delay="@Delay">
+<MudTooltip Text="Test content..." Duration="@Duration" Delay="@Delay" ShowOnHover="@ShowOnHover">
     <MudButton id="my-tooltip-button">Button With Tooltip</MudButton>
 </MudTooltip>
 
 @code {
+
+
+
     public static string __description__ = "Used to test Tooltip Duration and Delay";
 
     [Parameter]
@@ -11,5 +14,11 @@
 
     [Parameter]
     public double Delay { get; set; } = 500;
+
+
+
+    [Parameter]
+
+    public bool ShowOnHover { get; set; } = true;
 }
 
