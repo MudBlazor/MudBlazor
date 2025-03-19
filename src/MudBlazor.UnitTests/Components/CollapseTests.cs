@@ -25,23 +25,23 @@ namespace MudBlazor.UnitTests.Components
 
             IRenderedComponent<MudSwitch<bool>> MudSwitch() => comp.FindComponent<MudSwitch<bool>>();
             // Initial state is expanded
-            MudSwitch().Find("input").GetAttribute("aria-checked").Should().Be("true");
+            MudSwitch().Instance.Value.Should().BeTrue();
 
             // Collapse via button
             Button().Click();
-            MudSwitch().Find("input").GetAttribute("aria-checked").Should().Be("false");
+            MudSwitch().Instance.Value.Should().BeFalse();
 
             // Expand via button
             Button().Click();
-            MudSwitch().Find("input").GetAttribute("aria-checked").Should().Be("true");
+            MudSwitch().Instance.Value.Should().BeTrue();
 
             // Collapse via switch
             MudSwitch().Find("input").Change(false);
-            MudSwitch().Find("input").GetAttribute("aria-checked").Should().Be("false");
+            MudSwitch().Instance.Value.Should().BeFalse();
 
             // Expand via switch
             MudSwitch().Find("input").Change(true);
-            MudSwitch().Find("input").GetAttribute("aria-checked").Should().Be("true");
+            MudSwitch().Instance.Value.Should().BeTrue();
         }
     }
 }
