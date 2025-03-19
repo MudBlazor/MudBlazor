@@ -16,6 +16,11 @@ public class GroupDefinition<T>
     private GroupDefinition<T>? _innerGroup;
 
     /// <summary>
+    /// The LINQ definition of the grouping.
+    /// </summary>
+    public required IGrouping<object?, T> Grouping { get; set; }
+
+    /// <summary>
     /// The function which selects items for this group.
     /// </summary>
     /// <remarks>

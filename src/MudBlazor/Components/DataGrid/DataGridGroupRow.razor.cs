@@ -1,9 +1,10 @@
-﻿﻿﻿﻿// Copyright (c) MudBlazor 2021
+﻿// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 #nullable enable
@@ -29,6 +30,11 @@ namespace MudBlazor
     {
         private IEnumerable<IGrouping<object, T>>? _innerGroupItems = null;
         private MudVirtualize<IndexBag<T>>? _mudVirtualize;
+
+        public DataGridGroupRow()
+        {
+            // TODO make sure Expanded is somehow bindable from GroupExpanded property
+        }
 
         protected string GroupClassname => new CssBuilder("mud-table-cell")
             .AddClass("mud-datagrid-group")
@@ -58,7 +64,7 @@ namespace MudBlazor
         /// The groups and items within this grouping.
         /// </summary>
         [Parameter]
-        public IGrouping<object, T>? Items { get; set; }
+        public IGrouping<object, T> Items { get; set; }
 
         [Parameter]
         public string? GroupClass { get; set; }
@@ -84,12 +90,11 @@ namespace MudBlazor
             {
                 Expanded = GroupDefinition.Expanded;
             }
+        }
 
-            // Process inner groups if they exist
-            if (Items != null && GroupDefinition?.InnerGroup != null)
-            {
-                _innerGroupItems = Items.GroupBy(GroupDefinition.InnerGroup.Selector);
-            }
+        private async Task OnExpandedChangeHandlerAsync(ParameterChangedEventArgs<bool> args)
+        {
+            await Task.CompletedTask;
         }
     }
 }

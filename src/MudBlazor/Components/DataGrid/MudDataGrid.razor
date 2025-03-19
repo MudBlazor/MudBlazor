@@ -1,4 +1,4 @@
-﻿﻿@namespace MudBlazor
+﻿@namespace MudBlazor
 @inherits MudComponentBase
 @typeparam T
 @using MudBlazor.Utilities
@@ -219,7 +219,7 @@
                 {
                             if (IsGrouped)
                             {
-                                if (_allGroups is { Count: 0 })
+                                if (_groupDefinitions is { Count: 0 })
                                 {
                                     <tr>
                                         <th colspan="1000" class="mud-table-empty-row">
@@ -229,7 +229,7 @@
                                         </th>
                                     </tr>
                                 }
-                                foreach (var g in _allGroups)
+                                foreach (var g in _groupDefinitions)
                                 {
                                     <DataGridGroupRow T="T"
                                                      GroupDefinition="g"

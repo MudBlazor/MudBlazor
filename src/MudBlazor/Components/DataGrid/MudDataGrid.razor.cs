@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿// Copyright (c) MudBlazor 2021
+﻿// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -37,7 +37,8 @@ namespace MudBlazor
         private PropertyInfo[] _properties = typeof(T).GetProperties();
         private CancellationTokenSource _serverDataCancellationTokenSource;
         private IEnumerable<T> _currentRenderFilteredItemsCache = null;
-        private GroupDefinition<T> _groups;
+        private GroupDefinition<T> _lastGroup;
+        private List<GroupDefinition<T>> _groupDefinitions = new();
         private Dictionary<string, bool> _groupExpansionsDict = new();
         private GridData<T> _serverData = new() { TotalItems = 0, Items = Array.Empty<T>() };
         private Func<IFilterDefinition<T>> _defaultFilterDefinitionFactory = () => new FilterDefinition<T>();
@@ -995,7 +996,7 @@ namespace MudBlazor
 
                     if (!_groupable)
                     {
-                        _groups = null;
+                        _lastGroup = null;
 
                         foreach (var column in RenderedColumns)
                             column.RemoveGrouping().CatchAndLog();
@@ -2006,7 +2007,7 @@ namespace MudBlazor
             _dropContainer?.Refresh();
             _columnsPanelDropContainer?.Refresh();
         }
-
+#nullable enable
         /// <summary>
         /// Performs grouping of the current items.
         /// </summary>
@@ -2019,7 +2020,8 @@ namespace MudBlazor
             if (!noStateChange)
                 DropContainerHasChanged();
 
-            _groups = null;
+            _lastGroup = null;
+            _groupDefinitions.Clear();
 
             if (!IsGrouped || GetFilteredItemsCount() == 0)
             {
@@ -2031,31 +2033,43 @@ namespace MudBlazor
             // get all groups ordered by GroupByOrder
             var groups = RenderedColumns.Where(x => x.groupBy != null).OrderBy(x => x.GroupByOrder).ToList();
 
-            // Create group definitions and link them hierarchically
-            GroupDefinition<T> lastGroup = null;
-            foreach (var group in groups)
+            _lastGroup = ProcessGroup(groups[0]);
+            var lastGroup = _lastGroup;
+            var selectors = new List<Func<T, object>> { _lastGroup.Selector };
+            for (var i = 1; i < groups.Count; i++)
             {
-                var currentGroup = ProcessGroup(group);
-                if (lastGroup != null)
-                {
-                    lastGroup.InnerGroup = currentGroup;
-                }
+                var currentGroup = ProcessGroup(groups[i]);
+                lastGroup.InnerGroup = currentGroup;
                 lastGroup = currentGroup;
+                _groupDefinitions.Add(currentGroup);
             }
 
-            // Set the root group
-            if (groups.Count > 0)
+            // Apply group-by operations for all levels at once
+            IEnumerable<IGrouping<object, T>> groupedItems;
+
+            if (selectors.Count == 1)
             {
-                _groups = ProcessGroup(groups[0]);
-                lastGroup = _groups;
-                
-                for (int i = 1; i < groups.Count; i++)
-                {
-                    var currentGroup = ProcessGroup(groups[i]);
-                    lastGroup.InnerGroup = currentGroup;
-                    lastGroup = currentGroup;
-                }
+                // Simple single-level grouping
+                groupedItems = CurrentPageItems.GroupBy(selectors[0]);
             }
+            else
+            {
+                // Multi-level grouping
+                // We'll build a composite key selector that combines all group selectors
+                groupedItems = CurrentPageItems.GroupBy(item =>
+                {
+                    // Create a composite key from all selectors
+                    var key = new CompositeGroupKey(selectors.Count);
+                    for (var i = 0; i < selectors.Count; i++)
+                    {
+                        key.Keys[i] = selectors[i](item);
+                    }
+                    return key;
+                });
+            }
+
+            // Assign the grouping to the last group
+            lastGroup.Grouping = groupedItems.Select(x => x).FirstOrDefault() ?? new EmptyGrouping<object?, T>(null);
 
             if ((_isFirstRendered || HasServerData) && !noStateChange)
                 StateHasChanged();
@@ -2070,9 +2084,10 @@ namespace MudBlazor
                 GroupTemplate = column.GroupTemplate,
                 Indentation = column.GroupIndented,
                 Title = column.Title,
-                InnerGroup = null
+                Grouping = new EmptyGrouping<object?, T>(null) // Ensure Grouping is not null
             };
         }
+#nullable disable
 
         internal async Task ChangedGrouping(Column<T> column)
         {
@@ -2099,9 +2114,9 @@ namespace MudBlazor
         /// </remarks>
         public void ExpandAllGroups()
         {
-            if (_groups != null)
+            if (_lastGroup != null)
             {
-                ExpandGroupRecursively(_groups);
+                ExpandGroupRecursively(_lastGroup);
             }
             GroupItems();
         }
@@ -2114,9 +2129,9 @@ namespace MudBlazor
         /// </remarks>
         public void CollapseAllGroups()
         {
-            if (_groups != null)
+            if (_lastGroup != null)
             {
-                CollapseGroupRecursively(_groups);
+                CollapseGroupRecursively(_lastGroup);
             }
             GroupItems();
         }
@@ -2197,6 +2212,62 @@ namespace MudBlazor
             _serverDataCancellationTokenSource?.Dispose();
             // TODO: Use IAsyncDisposable for MudDataGrid
             _resizeService?.DisposeAsync().CatchAndLog();
+        }
+
+        private class CompositeGroupKey
+        {
+            public object[] Keys { get; }
+
+            public CompositeGroupKey(int count)
+            {
+                Keys = new object[count];
+            }
+
+            public override bool Equals(object obj)
+            {
+                if (obj is not CompositeGroupKey other)
+                    return false;
+
+                if (Keys.Length != other.Keys.Length)
+                    return false;
+
+                for (int i = 0; i < Keys.Length; i++)
+                {
+                    if (!Equals(Keys[i], other.Keys[i]))
+                        return false;
+                }
+
+                return true;
+            }
+
+            public override int GetHashCode()
+            {
+                unchecked
+                {
+                    int hash = 17;
+                    foreach (var key in Keys)
+                    {
+                        hash = hash * 23 + (key?.GetHashCode() ?? 0);
+                    }
+                    return hash;
+                }
+            }
+        }
+
+        private class EmptyGrouping<TKey, TElement> : IGrouping<TKey, TElement>
+        {
+            private readonly List<TElement> _elements = new();
+
+            public TKey Key { get; }
+
+            public EmptyGrouping(TKey key)
+            {
+                Key = key;
+            }
+
+            public IEnumerator<TElement> GetEnumerator() => _elements.GetEnumerator();
+
+            System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
         }
     }
 }

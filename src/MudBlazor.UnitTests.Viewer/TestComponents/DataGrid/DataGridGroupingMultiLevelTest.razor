@@ -1,4 +1,5 @@
 ﻿﻿﻿﻿﻿﻿﻿﻿@using System.Collections.Generic
+@using MudBlazor.Utilities
 @inject HttpClient httpClient
 
 <MudDataGrid @ref="@dataGrid"
@@ -23,7 +24,7 @@ GroupStyleFunc="@(_customizeGroupStyle ? GroupStyleFunc : null)">
         <PropertyColumn Property="x => x.PrimaryIndustry" Title="Primary Industry" GroupBy="_groupBy1">
             <GroupTemplate>
                 @{
-                    var color = context.Grouping.Key.ToString() switch
+                    var color = context.Grouping.Key?.ToString() switch
                     {
                         "Healthcare" => Color.Primary,
                         "Tech" => Color.Secondary,
@@ -43,7 +44,7 @@ GroupStyleFunc="@(_customizeGroupStyle ? GroupStyleFunc : null)">
         <PropertyColumn Property="x => x.Region" Title="Region" GroupBy="_groupBy2">
             <GroupTemplate>
                 @{
-                    var (icon, color) = context.Grouping.Key.ToString() switch
+                    var (icon, color) = context.Grouping.Key?.ToString() switch
                     {
                         "Northeast" or "Southeast" => (Icons.Material.Filled.East, Color.Warning),
                         "West" or "Pacific" => (Icons.Material.Filled.West, Color.Success),
@@ -64,7 +65,7 @@ GroupStyleFunc="@(_customizeGroupStyle ? GroupStyleFunc : null)">
         <PropertyColumn Property="x => x.Climate" Title="Climate" GroupBy="_groupBy3">
             <GroupTemplate>
                 @{
-                    var (icon, color) = context.Grouping.Key.ToString() switch
+                    var (icon, color) = context.Grouping.Key?.ToString() switch
                     {
                         "Continental" => (Icons.Material.Filled.AcUnit, Color.Primary),
                         "Humid Subtropical" => (Icons.Material.Filled.WbSunny, Color.Warning),
@@ -113,15 +114,25 @@ GroupStyleFunc="@(_customizeGroupStyle ? GroupStyleFunc : null)">
     private bool _customizeGroupTemplate;
     private bool _customizeGroupBy;
     
-    // Primary grouping by industry type
-    Func<USState, object> _groupBy1 = x =>
-    {
-        if (_customizeGroupBy)
-            return x.PrimaryIndustry.Equals("Healthcare") ? "Healthcare" : 
-                   x.PrimaryIndustry.Contains("Technology") ? "Tech" :
-                   x.PrimaryIndustry.Contains("Tourism") ? "Tourism" : "Other";
-        return x.PrimaryIndustry;
-    };
+    @code {
+        // Primary grouping by industry type
+        Func<USState, object>? _groupBy1;
+
+        protected override void OnInitialized()
+        {
+            _states = GetAllStates();
+            _groupBy1 = x =>
+            {
+                if (_customizeGroupBy)
+                    return x.PrimaryIndustry.Equals("Healthcare") ? "Healthcare" :
+                           x.PrimaryIndustry.Contains("Technology") ? "Tech" :
+                           x.PrimaryIndustry.Contains("Tourism") ? "Tourism" : "Other";
+                return x.PrimaryIndustry;
+            };
+
+            _states = GetAllStates();
+        }
+    }
 
     // Secondary grouping by region
     Func<USState, object> _groupBy2 = x => x.Region;
@@ -131,7 +142,7 @@ GroupStyleFunc="@(_customizeGroupStyle ? GroupStyleFunc : null)">
 
     private string GroupClassFunc(GroupDefinition<USState> item)
     {
-        var key = item.Grouping.Key.ToString();
+        var key = item.Grouping.Key?.ToString();
         
         // Primary level groups (Industry)
         if (item.Parent == null)
@@ -172,7 +183,7 @@ GroupStyleFunc="@(_customizeGroupStyle ? GroupStyleFunc : null)">
 
     private string GroupStyleFunc(GroupDefinition<USState> item)
     {
-        var key = item.Grouping.Key.ToString();
+        var key = item.Grouping.Key?.ToString();
         var indent = item.Level * 16; // 16px per level
         var borderWidth = Math.Max(1, 4 - item.Level); // Decrease border width with depth
         
@@ -188,7 +199,7 @@ GroupStyleFunc="@(_customizeGroupStyle ? GroupStyleFunc : null)">
 
     private string GetBorderColor(GroupDefinition<USState> item)
     {
-        var key = item.Grouping.Key.ToString();
+        var key = item.Grouping.Key?.ToString();
         
         // Primary level (Industry)
         if (item.Parent == null)
@@ -228,11 +239,6 @@ GroupStyleFunc="@(_customizeGroupStyle ? GroupStyleFunc : null)">
     }
 
     bool _customizeGroupStyle;
-
-    protected override void OnInitialized()
-    {
-        _states = GetAllStates();
-    }
 
     void ExpandAllGroups()
     {
