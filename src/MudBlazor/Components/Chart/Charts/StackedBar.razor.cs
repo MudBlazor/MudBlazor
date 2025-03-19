@@ -51,7 +51,7 @@ namespace MudBlazor.Charts
             ComputeStackedUnitsAndNumberOfLines(out var _, out var gridYUnits, out var numHorizontalLines, out var numVerticalLines);
 
             // Calculate spacing – note the horizontal space is computed so that the vertical grid lines line up
-            double horizontalSpace = Math.Round((_boundWidth - HorizontalStartSpace - HorizontalEndSpace) / (numVerticalLines > 1 ? (numVerticalLines) : 1), 1);
+            double horizontalSpace = Math.Round((_boundWidth - HorizontalStartSpace - HorizontalEndSpace - AxisChartOptions.LabelExtraWidth) / (numVerticalLines > 1 ? (numVerticalLines) : 1), 1);
             double verticalSpace = (_boundHeight - VerticalStartSpace - VerticalEndSpace - AxisChartOptions.LabelExtraHeight) / (numHorizontalLines > 1 ? (numHorizontalLines) : 1);
 
             GenerateHorizontalGridLines(numHorizontalLines, gridYUnits, verticalSpace);
@@ -77,7 +77,7 @@ namespace MudBlazor.Charts
             // Determine the number of columns (i.e. vertical grid lines)
             numVerticalLines = _series.Any() ? _series.Max(series => series.Data.Length) : 0;
 
-            _barWidthStroke = _barWidth = (_boundWidth - HorizontalStartSpace - HorizontalEndSpace) / (numVerticalLines > 1 ? (numVerticalLines) : 1) * AxisChartOptions.StackedBarWidthRatio;
+            _barWidthStroke = _barWidth = (_boundWidth - HorizontalStartSpace - HorizontalEndSpace - AxisChartOptions.LabelExtraWidth) / (numVerticalLines > 1 ? (numVerticalLines) : 1) * AxisChartOptions.StackedBarWidthRatio;
 
             if (AxisChartOptions.StackedBarWidthRatio >= 0.9999)
             {
@@ -88,7 +88,7 @@ namespace MudBlazor.Charts
             else
             {
                 var roundedBarWidth = Math.Round(_barWidth, 0);
-                if (roundedBarWidth * numVerticalLines < (_boundWidth - HorizontalStartSpace - HorizontalEndSpace))
+                if (roundedBarWidth * numVerticalLines < (_boundWidth - HorizontalStartSpace - HorizontalEndSpace - AxisChartOptions.LabelExtraWidth))
                 {
                     _barWidthStroke = _barWidth = roundedBarWidth;
                 }
@@ -118,20 +118,20 @@ namespace MudBlazor.Charts
 
             for (int i = 0; i <= numHorizontalLines; i++)
             {
-                double y = VerticalStartSpace + (i * verticalSpace);
+                double y = VerticalStartSpace + AxisChartOptions.LabelExtraHeight + (i * verticalSpace);
                 double lineValue = i * gridYUnits;
 
                 var line = new SvgPath()
                 {
                     Index = i,
-                    Data = $"M {ToS(HorizontalStartSpace)} {ToS(_boundHeight - AxisChartOptions.LabelExtraHeight - y)} L {ToS(_boundWidth - HorizontalEndSpace)} {ToS(_boundHeight - AxisChartOptions.LabelExtraHeight - y)}"
+                    Data = $"M {ToS(HorizontalStartSpace + AxisChartOptions.LabelExtraWidth)} {ToS(_boundHeight - y)} L {ToS(_boundWidth - HorizontalEndSpace)} {ToS(_boundHeight - y)}"
                 };
                 _horizontalLines.Add(line);
 
                 var text = new SvgText()
                 {
-                    X = HorizontalStartSpace - 10,
-                    Y = _boundHeight - AxisChartOptions.LabelExtraHeight - y + 5,
+                    X = HorizontalStartSpace + AxisChartOptions.LabelExtraWidth - 10,
+                    Y = _boundHeight - y + 5,
                     Value = ToS(lineValue, MudChartParent?.ChartOptions.YAxisFormat)
                 };
                 _horizontalValues.Add(text);
@@ -150,7 +150,7 @@ namespace MudBlazor.Charts
 
             for (int j = 0; j <= numVerticalLines; j++)
             {
-                double x = HorizontalStartSpace + startPadding + (j * horizontalSpace);
+                double x = HorizontalStartSpace + AxisChartOptions.LabelExtraWidth + startPadding + (j * horizontalSpace);
 
                 var line = new SvgPath()
                 {
@@ -184,7 +184,7 @@ namespace MudBlazor.Charts
 
             for (int j = 0; j < maxSeriesLength; j++)
             {
-                double x = HorizontalStartSpace + startPadding + (j * horizontalSpace);
+                double x = HorizontalStartSpace + AxisChartOptions.LabelExtraWidth + startPadding + (j * horizontalSpace);
 
                 var yStart = _boundHeight - VerticalStartSpace - AxisChartOptions.LabelExtraHeight;
                 for (int i = 0; i < _series.Count; i++)

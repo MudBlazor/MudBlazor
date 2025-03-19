@@ -108,13 +108,13 @@ window.mudObserveElementSize = (dotNetReference, element, functionName = 'OnElem
 
     // Throttled notification function.
     const throttledNotify = (width, height) => {
-        const now = Date.now();
-        const timeSinceLast = now - lastNotifiedTime;
+        const timestamp = Date.now();
+        const timeSinceLast = timestamp - lastNotifiedTime;
         if (timeSinceLast >= debounceMillis) {
             // Enough time has passed, notify immediately.
-            lastNotifiedTime = now;
+            lastNotifiedTime = timestamp;
             try {
-                dotNetReference.invokeMethodAsync(functionName, { width, height });
+                dotNetReference.invokeMethodAsync(functionName, { width, height, timestamp });
             }
             catch (error) {
                 this.logger("[MudBlazor] Error in mudObserveElementSize:", { error });
@@ -128,7 +128,7 @@ window.mudObserveElementSize = (dotNetReference, element, functionName = 'OnElem
                 lastNotifiedTime = Date.now();
                 scheduledCall = null;
                 try {
-                    dotNetReference.invokeMethodAsync(functionName, { width, height });
+                    dotNetReference.invokeMethodAsync(functionName, { width, height, timestamp });
                 }
                 catch (error) {
                     this.logger("[MudBlazor] Error in mudObserveElementSize:", { error });

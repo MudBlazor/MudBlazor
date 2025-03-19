@@ -75,9 +75,9 @@ namespace MudBlazor.Charts
 
             if (firstRender)
             {
-                _elementSize = await JsRuntime.InvokeAsync<ElementSize>("mudObserveElementSize", _dotNetObjectReference, _elementReference);
+                var elementSize = await JsRuntime.InvokeAsync<ElementSize>("mudObserveElementSize", _dotNetObjectReference, _elementReference);
 
-                OnElementSizeChanged(_elementSize);
+                OnElementSizeChanged(elementSize);
             }
         }
 
@@ -122,9 +122,9 @@ namespace MudBlazor.Charts
         }
 
         [JSInvokable]
-        public void OnElementSizeChanged(ElementSize elementSize)
+        public void OnElementSizeChanged(ElementSize? elementSize)
         {
-            if (elementSize == null)
+            if (elementSize == null || elementSize.Timestamp <= _elementSize?.Timestamp)
                 return;
 
             _elementSize = elementSize;

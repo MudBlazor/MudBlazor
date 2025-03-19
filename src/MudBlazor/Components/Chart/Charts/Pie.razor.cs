@@ -156,6 +156,10 @@ namespace MudBlazor.Charts
             {
                 var percent = normalizedData[i] * 100;
                 var labels = i < InputLabels.Length ? InputLabels[i] : "";
+
+                if (labels.Length == 0)
+                    continue;
+
                 var legend = new SvgLegend()
                 {
                     Index = i,

@@ -14,7 +14,12 @@ public class AxisChartOptions
     public int LabelRotation { get; set; }
 
     /// <summary>
-    /// Extra height to fit rotated labels.
+    /// Extra width to fit YAxis larger labels.
+    /// </summary>
+    public int LabelExtraWidth { get; set; }
+
+    /// <summary>
+    /// Extra height to fit XAxis rotated labels.
     /// </summary>
     public int LabelExtraHeight { get; set; }
 
