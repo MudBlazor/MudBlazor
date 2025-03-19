@@ -8,7 +8,7 @@ namespace MudBlazor.Charts;
 
 public partial class ChartTooltip : ComponentBase
 {
-    private double _boxWidth = 0;
+    private double _boxWidth = 40;
     private ElementReference? _hoverTextTitle = null;
 
     [Inject]
