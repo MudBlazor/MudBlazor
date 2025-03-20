@@ -66,5 +66,10 @@ namespace MudBlazor
 
             return elementReference.GetJSRuntime()?.InvokeVoidAsync("mudElementRef.removeDefaultPreventingHandlers", elementReference, eventNames, listenerIds) ?? ValueTask.CompletedTask;
         }
+
+        public static ValueTask MudAttachBlurEventWithJS<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods)] T>(
+            this ElementReference elementReference,
+            DotNetObjectReference<T> obj) where T : class =>
+            elementReference.GetJSRuntime()?.InvokeVoidAsync("mudElementRef.addOnBlurEvent", elementReference, obj) ?? ValueTask.CompletedTask;
     }
 }

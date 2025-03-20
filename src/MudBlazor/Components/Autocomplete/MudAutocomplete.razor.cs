@@ -24,6 +24,7 @@ namespace MudBlazor
         private int _elementKey = 0;
         private int _returnedItemsCount;
         private bool _open;
+        private bool _opening;
         private MudInput<string> _elementReference = null!;
         private CancellationTokenSource? _cancellationTokenSrc;
         private Task? _currentSearchTask;
@@ -665,11 +666,8 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Opens the drop-down of items.
+        /// Opens the drop-down of items, or refreshes the list if it is already open.
         /// </summary>
-        /// <remarks>
-        /// Will have no effect if the autocomplete is disabled or read-only.
-        /// </remarks>
         public async Task OpenMenuAsync()
         {
             if (MinCharacters > 0 && (string.IsNullOrWhiteSpace(Text) || Text.Length < MinCharacters))
@@ -678,6 +676,8 @@ namespace MudBlazor
                 StateHasChanged();
                 return;
             }
+
+            _opening = true;
 
             var searchedItems = Array.Empty<T>();
             CancelToken();
@@ -744,6 +744,7 @@ namespace MudBlazor
                 Open = true;
             }
 
+            _opening = false;
             StateHasChanged();
         }
 
@@ -964,17 +965,12 @@ namespace MudBlazor
         {
             _isFocused = true;
 
-            if (Open || GetDisabledState() || GetReadOnlyState())
-            {
-                return;
-            }
-
-            if (SelectOnActivation)
+            if (SelectOnActivation && !GetDisabledState() && !GetReadOnlyState())
             {
                 await SelectAsync();
             }
 
-            if (openMenu)
+            if (openMenu && !Open && !_opening)
             {
                 await OpenMenuAsync();
             }

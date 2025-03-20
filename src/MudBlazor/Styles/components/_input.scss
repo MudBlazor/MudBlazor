@@ -370,7 +370,7 @@
     }
 
     &.mud-input-root-margin-dense {
-      margin-top: 3px;
+      padding-top: 3px;
     }
 
     &.mud-input-root-type-search {
@@ -429,15 +429,15 @@
       }
 
       &.mud-input-root-adorned-start {
-        margin-left: 0;
-        margin-inline-start: 0;
-        margin-inline-end: 12px;
+        padding-left: 0;
+        padding-inline-start: 0;
+        padding-inline-end: 12px;
       }
 
       &.mud-input-root-adorned-end {
-        margin-right: 0;
-        margin-inline-end: unset;
-        margin-inline-start: 12px;
+        padding-right: 0;
+        padding-inline-end: unset;
+        padding-inline-start: 12px;
       }
     }
 
@@ -480,15 +480,15 @@
     }
 
     &.mud-input-root-adorned-start {
-      margin-left: 0;
-      margin-inline-start: 0;
-      margin-inline-end: 14px;
+      padding-left: 0;
+      padding-inline-start: 0;
+      padding-inline-end: 14px;
     }
 
     &.mud-input-root-adorned-end {
-      margin-right: 0;
-      margin-inline-end: 0;
-      margin-inline-start: 14px;
+      padding-right: 0;
+      padding-inline-end: 0;
+      padding-inline-start: 14px;
     }
   }
 }
