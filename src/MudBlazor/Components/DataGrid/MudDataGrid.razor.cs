@@ -474,7 +474,7 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// <para>
-        /// This property specifies a group of one or more columns in a table for formatting.  For example:
+        /// This property specifies a groupedColumns of one or more columns in a table for formatting.  For example:
         /// </para>
         /// <para>
         /// table
@@ -982,7 +982,7 @@ namespace MudBlazor
         /// Allows grouping of columns in this grid.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  When <c>true</c>, columns can be used to group sets of items.  Can be overridden for individual columns via <see cref="Column{T}.Groupable"/>.
+        /// Defaults to <c>false</c>.  When <c>true</c>, columns can be used to groupedColumns sets of items.  Can be overridden for individual columns via <see cref="Column{T}.Groupable"/>.
         /// </remarks>
         [Parameter]
         public bool Groupable
@@ -1954,7 +1954,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Shows a panel that lets you show, hide, filter, group, sort and re-arrange columns.
+        /// Shows a panel that lets you show, hide, filter, groupedColumns, sort and re-arrange columns.
         /// </summary>
         public void ShowColumnsPanel()
         {
@@ -2030,24 +2030,22 @@ namespace MudBlazor
                 return;
             }
 
-            // get all groups ordered by GroupByOrder
-            if (!RenderedColumns.Any()) return;
-            var groups = RenderedColumns.Where(x => x.GroupingState.Value).OrderBy(x => x.GroupByOrder).ToList();
+            // get all columns that are grouped in the order they are grouped
+            var groupedColumns = RenderedColumns.Where(x => x.GroupingState.Value).OrderBy(x => x.GroupByOrder).ToList();
 
-            var lastGroup = ProcessGroup(groups[0]);
+            var lastGroup = ProcessGroup(groupedColumns[0]);
             var selectors = new List<Func<T, object>> { lastGroup.Selector };
-            _groupDefinitions.Add(lastGroup);
-            // start at group 1 we've already set group 0 into lastGroup
-            for (var i = 1; i < groups.Count; i++)
+
+            // start at groupedColumns 1 we've already set groupedColumns 0 into lastGroup
+            for (var i = 1; i < groupedColumns.Count; i++)
             {
-                var currentGroup = ProcessGroup(groups[i]);
+                var currentGroup = ProcessGroup(groupedColumns[i]);
                 lastGroup.InnerGroup = currentGroup;
                 lastGroup = currentGroup;
-                _groupDefinitions.Add(currentGroup);
                 selectors.Add(currentGroup.Selector);
             }
 
-            // Apply group-by operations for all levels at once and get the grouped items
+            // Apply groupedColumns-by operations for all levels at once and get the grouped items
             IEnumerable<IGrouping<object, T>> groupedItems;
 
             if (selectors.Count == 1)
@@ -2058,7 +2056,7 @@ namespace MudBlazor
             else
             {
                 // Multi-level grouping
-                // We'll build a composite key selector that combines all group selectors
+                // We'll build a composite key selector that combines all groupedColumns selectors
                 groupedItems = CurrentPageItems.GroupBy(item =>
                 {
                     // Create a composite key from all selectors
@@ -2071,11 +2069,19 @@ namespace MudBlazor
                 });
             }
 
-            // Assign the grouping to the last group
+            _groupDefinitions = groupedItems.Select()
+
+            // Assign the grouping to the last groupedColumns
             lastGroup.Grouping = groupedItems.Select(x => x).FirstOrDefault() ?? new EmptyGrouping<object?, T>(null);
             _lastGroup = lastGroup;
             if ((_isFirstRendered || HasServerData) && !noStateChange)
                 StateHasChanged();
+        }
+
+        private void AddGroupItems(GroupDefinition<T> group)
+        {
+            // recursively build the groupedColumns hierarchy
+
         }
 
         private static GroupDefinition<T> ProcessGroup(Column<T> column)
