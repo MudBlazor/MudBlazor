@@ -106,6 +106,16 @@ namespace MudBlazor.Charts
             }
             var maxY = stackedTotals.Any() ? stackedTotals.Max() : 0;
             numHorizontalLines = (int)(maxY / gridYUnits) + 1;
+
+            // this is a safeguard against millions of gridlines which might arise with very high values
+            var maxYTicks = MudChartParent?.ChartOptions.MaxNumYAxisTicks ?? 20;
+            while (numHorizontalLines > maxYTicks)
+            {
+                gridYUnits *= 2;
+                var lowestHorizontalLine = Math.Min((int)Math.Floor(0 / gridYUnits), 0);
+                var highestHorizontalLine = Math.Max((int)Math.Ceiling(maxY / gridYUnits), 0);
+                numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
+            }
         }
 
         /// <summary>

@@ -70,7 +70,7 @@ namespace MudBlazor.Charts
                 numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
 
                 // this is a safeguard against millions of gridlines which might arise with very high values
-                var maxYTicks = MudChartParent?.ChartOptions.MaxNumYAxisTicks ?? 100;
+                var maxYTicks = MudChartParent?.ChartOptions.MaxNumYAxisTicks ?? 20;
                 while (numHorizontalLines > maxYTicks)
                 {
                     gridYUnits *= 2;
