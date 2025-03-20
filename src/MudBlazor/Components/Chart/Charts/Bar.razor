@@ -12,17 +12,17 @@
         <g class="mud-charts-gridlines-yaxis">
             @foreach (var horizontalLine in _horizontalLines)
             {
-                    <path stroke="#e0e0e0" stroke-width="0.3" d="@horizontalLine.Data"></path>
+                <path stroke="#e0e0e0" stroke-width="0.3" d="@horizontalLine.Data"></path>
             }
         </g>
         @if (MudChartParent?.ChartOptions.XAxisLines == true)
         {
-                <g class="mud-charts-gridlines-xaxis-lines">
+            <g class="mud-charts-gridlines-xaxis-lines">
                 @foreach (var verticalLine in _verticalLines)
                 {
-                            <path stroke="gray" stroke-width="0.3" d="@verticalLine.Data"></path>
+                    <path stroke="gray" stroke-width="0.3" d="@verticalLine.Data"></path>
                 }
-                </g>
+            </g>
         }
     </g>
     <g @ref="_yAxisGroupElementReference" class="mud-charts-yaxis">
@@ -46,15 +46,15 @@
         {
             var color = MudChartParent?.ChartOptions.ChartPalette.GetValue(bar.Index % MudChartParent.ChartOptions.ChartPalette.Length);
 
-                <path class="mud-chart-bar"
-                      @onclick="() => SelectedIndex = bar.Index" 
-                      fill="@color"
-                      stroke="@color"
-                      stroke-width="8" 
-                      d="@bar.Data"
-                      @onmouseover="(e) => OnBarMouseOver(e, bar)"
-                      @onmouseout="OnBarMouseOut">
-                </path>
+            <path class="mud-chart-bar"
+                  @onclick="() => SelectedIndex = bar.Index" 
+                  fill="@color"
+                  stroke="@color"
+                  stroke-width="@BarStroke" 
+                  d="@bar.Data"
+                  @onmouseover="(e) => OnBarMouseOver(e, bar)"
+                  @onmouseout="OnBarMouseOut">
+            </path>
         }
     </g>
 
@@ -78,7 +78,7 @@
                 .Replace("{{X_VALUE}}", _hoveredBar.LabelXValue)
                 .Replace("{{Y_VALUE}}", _hoveredBar.LabelYValue) ?? string.Empty;
 
-                    <ChartTooltip Title="@tooltipTitle" Subtitle="@tooltipSubtitle" Color="@color" X="_hoveredBar.LabelX" Y="_hoveredBar.LabelY" />
+            <ChartTooltip Title="@tooltipTitle" Subtitle="@tooltipSubtitle" Color="@color" X="_hoveredBar.LabelX" Y="_hoveredBar.LabelY" />
         }
     }
 </svg>

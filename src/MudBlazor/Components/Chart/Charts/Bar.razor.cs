@@ -25,6 +25,10 @@ namespace MudBlazor.Charts
         private readonly List<SvgPath> _bars = [];
         private SvgPath? _hoveredBar;
 
+        private double BarStroke => 8;
+        private double BarGap => 10;
+        private double BarGroupWidth => (_series.Count - 1) * BarGap + BarStroke; // number of gaps of 10 + the stroke width
+
         /// <inheritdoc />
         protected override void OnParametersSet()
         {
@@ -41,8 +45,7 @@ namespace MudBlazor.Charts
             SetBounds();
             ComputeUnitsAndNumberOfLines(out var gridXUnits, out var gridYUnits, out var numHorizontalLines, out var lowestHorizontalLine, out var numVerticalLines);
 
-            var barGroupWidth = _series.Count * 10; // without taking this into account, the bars are drawn after the chart
-            var horizontalSpace = (_boundWidth - HorizontalStartSpace - HorizontalEndSpace - barGroupWidth) / Math.Max(1, numVerticalLines - 1);
+            var horizontalSpace = (_boundWidth - HorizontalStartSpace - HorizontalEndSpace - BarGroupWidth) / Math.Max(1, numVerticalLines - 1);
             var verticalSpace = (_boundHeight - VerticalStartSpace - VerticalEndSpace) / Math.Max(1, numHorizontalLines - 1);
 
             GenerateHorizontalGridLines(numHorizontalLines, lowestHorizontalLine, gridYUnits, verticalSpace);
@@ -130,7 +133,7 @@ namespace MudBlazor.Charts
                 var xLabels = i < XAxisLabels.Length ? XAxisLabels[i] : "";
                 var lineValue = new SvgText()
                 {
-                    X = x,
+                    X = x + (BarGroupWidth / 2),
                     Y = _boundHeight - 10,
                     Value = xLabels
                 };
@@ -150,7 +153,7 @@ namespace MudBlazor.Charts
 
                 for (var j = 0; j < data.Length; j++)
                 {
-                    var gridValueX = HorizontalStartSpace + (i * 10) + (j * horizontalSpace);
+                    var gridValueX = HorizontalStartSpace + (BarStroke / 2) + (i * BarGap) + (j * horizontalSpace);
                     var gridValueY = _boundHeight - VerticalStartSpace + (lowestHorizontalLine * verticalSpace);
                     var dataValue = ((data[j] / gridYUnits) - lowestHorizontalLine) * verticalSpace;
                     var gridValue = _boundHeight - VerticalStartSpace - dataValue;
