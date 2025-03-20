@@ -86,7 +86,7 @@ namespace MudBlazor.Charts
             var xAxisLabelSize = _xAxisGroupElementReference != null ? await JsRuntime.InvokeAsync<ElementSize>("mudGetSvgBBox", _xAxisGroupElementReference) : null;
 
             var axisChanged = false;
-            if (yAxisLabelSize != null && ( _yAxisLabelSize == null || !DoubleEpsilonEqualityComparer.Default.Equals(yAxisLabelSize.Width, _yAxisLabelSize.Width)))
+            if (yAxisLabelSize != null && (_yAxisLabelSize == null || !DoubleEpsilonEqualityComparer.Default.Equals(yAxisLabelSize.Width, _yAxisLabelSize.Width)))
             {
                 _yAxisLabelSize = yAxisLabelSize;
             }
