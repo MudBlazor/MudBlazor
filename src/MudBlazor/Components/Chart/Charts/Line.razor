@@ -18,17 +18,17 @@
         <g class="mud-charts-gridlines-yaxis">
             @foreach (var horizontalLine in _horizontalLines)
             {
-                    <path stroke="#e0e0e0" stroke-width="0.3" d="@horizontalLine.Data"></path>
+                <path stroke="#e0e0e0" stroke-width="0.3" d="@horizontalLine.Data"></path>
             }
         </g>
         @if (MudChartParent?.ChartOptions.XAxisLines == true)
         {
-                <g class="mud-charts-gridlines-xaxis-lines">
+            <g class="mud-charts-gridlines-xaxis-lines">
                 @foreach (var verticalLine in _verticalLines)
                 {
-                            <path stroke="gray" stroke-width="0.3" d="@verticalLine.Data"></path>
+                    <path stroke="gray" stroke-width="0.3" d="@verticalLine.Data"></path>
                 }
-                </g>
+            </g>
         }
     </g>
     <g @ref="_yAxisGroupElementReference" class="mud-charts-yaxis">
@@ -57,12 +57,12 @@
 
             var lineClass = isHovered ? "mud-chart-serie mud-chart-line mud-chart-serie-hovered" : "mud-chart-serie mud-chart-line";
 
-                <path class="@lineClass" @onclick="() => SelectedIndex = chartLine.Index" fill="none" stroke="@color" stroke-width="@lineStrokeWidth" d="@chartLine.Data"></path>
+            <path class="@lineClass" @onclick="() => SelectedIndex = chartLine.Index" fill="none" stroke="@color" stroke-width="@lineStrokeWidth" d="@chartLine.Data"></path>
 
             if (series.LineDisplayType == LineDisplayType.Area)
             {
                 var chartArea = _chartAreas[chartLine.Index];
-                        <path class="@lineClass" @onclick="() => SelectedIndex = chartLine.Index" fill="@color" fill-opacity="@series.FillOpacity" d="@chartArea.Data"></path>
+                <path class="@lineClass" @onclick="() => SelectedIndex = chartLine.Index" fill="@color" fill-opacity="@series.FillOpacity" d="@chartArea.Data"></path>
             }
 
             @foreach (var item in _chartDataPoints[chartLine.Index].OrderBy(x => x.Index))
@@ -70,21 +70,21 @@
                 if (showDataMarkers && item != _hoveredDataPoint)
                 {
                     // Unhovered data point
-                                <circle class="mud-chart-serie mud-donut-segment" @onclick="() => SelectedIndex = chartLine.Index" stroke="@color" stroke-width="@dataPointStroke"
-                                        cx="@ToS(item.CX)"
-                                        cy="@ToS(item.CY)"
-                                        r="@ToS(dataPointRadius)">
-                                </circle>
+                    <circle class="mud-chart-serie mud-donut-segment" @onclick="() => SelectedIndex = chartLine.Index" stroke="@color" stroke-width="@dataPointStroke"
+                            cx="@ToS(item.CX)"
+                            cy="@ToS(item.CY)"
+                            r="@ToS(dataPointRadius)">
+                    </circle>
                 }
 
                 // This is a hoverable circle that is invisible until it is the hovered point but has a larger radius to make it easier to hover over
-                        <circle class="mud-chart-serie mud-donut-segment" @onclick="() => SelectedIndex = chartLine.Index" fill="@(item == _hoveredDataPoint ? color : string.Empty)" stroke="@color" stroke-width="@dataPointStroke" opacity="@(item == _hoveredDataPoint ? 1 : 0)"
-                                cx="@ToS(item.CX)"
-                                cy="@ToS(item.CY)"
-                                r="@ToS(dataPointHoverRadius)"
-                                @onmouseover="(e) => OnDataPointMouseOver(e, item)"
-                                @onmouseout="OnDataPointMouseOut">
-                        </circle>
+                <circle class="mud-chart-serie mud-donut-segment" @onclick="() => SelectedIndex = chartLine.Index" fill="@(item == _hoveredDataPoint ? color : string.Empty)" stroke="@color" stroke-width="@dataPointStroke" opacity="@(item == _hoveredDataPoint ? 1 : 0)"
+                        cx="@ToS(item.CX)"
+                        cy="@ToS(item.CY)"
+                        r="@ToS(dataPointHoverRadius)"
+                        @onmouseover="(e) => OnDataPointMouseOver(e, item)"
+                        @onmouseout="OnDataPointMouseOut">
+                </circle>
             }
         }
     </g>
@@ -111,7 +111,7 @@
                 .Replace("{{X_VALUE}}", _hoveredDataPoint.LabelXValue)
                 .Replace("{{Y_VALUE}}", _hoveredDataPoint.LabelYValue) ?? string.Empty;
 
-                    <ChartTooltip Title="@tooltipTitle" Subtitle="@tooltipSubtitle" Color="@color" X="_hoveredDataPoint.LabelX" Y="_hoveredDataPoint.LabelY - dataPointLabelOffset" />
+            <ChartTooltip Title="@tooltipTitle" Subtitle="@tooltipSubtitle" Color="@color" X="_hoveredDataPoint.LabelX" Y="_hoveredDataPoint.LabelY - dataPointLabelOffset" />
         }
     }
 </svg>

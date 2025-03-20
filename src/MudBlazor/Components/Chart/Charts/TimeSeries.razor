@@ -17,17 +17,17 @@
         <g class="mud-charts-gridlines-yaxis">
             @foreach (var horizontalLine in _horizontalLines)
             {
-                    <path stroke="#e0e0e0" stroke-width="0.3" d="@horizontalLine.Data"></path>
+                <path stroke="#e0e0e0" stroke-width="0.3" d="@horizontalLine.Data"></path>
             }
         </g>
         @if (MudChartParent?.ChartOptions.XAxisLines == true)
         {
-                <g class="mud-charts-gridlines-xaxis-lines">
+            <g class="mud-charts-gridlines-xaxis-lines">
                 @foreach (var verticalLine in _verticalLines)
                 {
-                            <path stroke="gray" stroke-width="0.3" d="@verticalLine.Data"></path>
+                    <path stroke="gray" stroke-width="0.3" d="@verticalLine.Data"></path>
                 }
-                </g>
+            </g>
         }
     </g>
     <g @ref="_yAxisGroupElementReference" class="mud-charts-yaxis">
@@ -37,11 +37,9 @@
         }
         @if (YAxisTitle is not null)
         {
-                <g transform="translate(10, @(_boundHeight / 2))">
-                    <text transform="rotate(-90)" font-size="14px" text-anchor="middle" dominant-baseline="hanging">
-                    @YAxisTitle
-                    </text>
-                </g>
+            <g transform="translate(10, @(_boundHeight / 2))">
+                <text transform="rotate(-90)" font-size="14px" text-anchor="middle" dominant-baseline="hanging">@YAxisTitle</text>
+            </g>
         }
     </g>
     <g @ref="_xAxisGroupElementReference" class="mud-charts-xaxis">
