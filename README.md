@@ -94,7 +94,7 @@ Add the following to your HTML `head` section, it's either `index.html` or `_Lay
 ```
 Next, add the following to the default Blazor script at the end of the `body`
 ```razor
-<script src="_content/MudBlazor/MudBlazor.min.js"></script>
+<script src="_content/MudBlazor/MudBlazor.min.js?v=@(Assembly.GetAssembly(typeof(MudBlazor.AbstractLocalizationInterceptor))?.GetName().Version?.ToString()"></script>
 ```
 
 Add the following to the relevant sections of `Program.cs`
