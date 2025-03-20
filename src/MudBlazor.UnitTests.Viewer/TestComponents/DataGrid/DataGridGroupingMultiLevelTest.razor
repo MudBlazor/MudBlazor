@@ -21,7 +21,7 @@ GroupStyleFunc="@(_customizeGroupStyle ? GroupStyleFunc : null)">
         <PropertyColumn Property="x => x.State" Title="State" Groupable="false" />
         <PropertyColumn Property="x => x.Counties" Groupable="false" />
         <PropertyColumn Property="x => x.Population" Groupable="false" />
-        <PropertyColumn Property="x => x.PrimaryIndustry" Title="Primary Industry" GroupBy="_groupBy1">
+        <PropertyColumn Property="x => x.PrimaryIndustry" Title="Primary Industry" Grouping GroupBy="_groupBy1">
             <GroupTemplate>
                 @{
                     var color = context.Grouping.Key?.ToString() switch

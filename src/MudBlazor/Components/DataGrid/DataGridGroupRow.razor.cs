@@ -14,23 +14,20 @@ namespace MudBlazor
     /// <summary>
     /// Represents group data for a DataGrid
     /// </summary>
-    public class DataGridGroupData<TKey, T>
-    {
-        public TKey? Key { get; }
-        public List<T> Items { get; }
+    //public class DataGridGroupData<TKey, T>
+    //{
+    //    public TKey? Key { get; }
+    //    public List<T> Items { get; }
 
-        public DataGridGroupData(TKey? key, List<T> items)
-        {
-            Key = key;
-            Items = items;
-        }
-    }
+    //    public DataGridGroupData(TKey? key, List<T> items)
+    //    {
+    //        Key = key;
+    //        Items = items;
+    //    }
+    //}
 
     public partial class DataGridGroupRow<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase
     {
-        private IEnumerable<IGrouping<object, T>>? _innerGroupItems = null;
-        private MudVirtualize<IndexBag<T>>? _mudVirtualize;
-
         public DataGridGroupRow()
         {
             // TODO make sure Expanded is somehow bindable from GroupExpanded property
@@ -52,7 +49,7 @@ namespace MudBlazor
         public bool Expanded { get; set; }
 
         [Parameter]
-        public MudDataGrid<T>? DataGrid { get; set; }
+        public required MudDataGrid<T> DataGrid { get; set; }
 
         /// <summary>
         /// The definition for this grouping level
@@ -64,7 +61,7 @@ namespace MudBlazor
         /// The groups and items within this grouping.
         /// </summary>
         [Parameter]
-        public IGrouping<object, T> Items { get; set; }
+        public required IGrouping<object, T> Items { get; set; }
 
         [Parameter]
         public string? GroupClass { get; set; }

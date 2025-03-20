@@ -26,7 +26,7 @@ namespace MudBlazor
         internal int? _rowsPerPage;
         private int _currentPage = 0;
         private IEnumerable<T> _items;
-        private MudVirtualize<IndexBag<T>> _mudVirtualize;
+        internal MudVirtualize<IndexBag<T>> _mudVirtualize;
         private bool _isFirstRendered = false;
         private bool _filtersMenuVisible = false;
         private bool _columnsPanelVisible = false;
@@ -1196,7 +1196,7 @@ namespace MudBlazor
             return rtl ? Icons.Material.Filled.ChevronLeft : Icons.Material.Filled.ChevronRight;
         }
 
-        private bool HasFooter
+        internal bool HasFooter
         {
             get
             {
@@ -2031,11 +2031,13 @@ namespace MudBlazor
             }
 
             // get all groups ordered by GroupByOrder
-            var groups = RenderedColumns.Where(x => x.groupBy != null).OrderBy(x => x.GroupByOrder).ToList();
+            if (!RenderedColumns.Any()) return;
+            var groups = RenderedColumns.Where(x => x.GroupingState.Value).OrderBy(x => x.GroupByOrder).ToList();
 
-            _lastGroup = ProcessGroup(groups[0]);
-            var lastGroup = _lastGroup;
-            var selectors = new List<Func<T, object>> { _lastGroup.Selector };
+            var lastGroup = ProcessGroup(groups[0]);
+            var selectors = new List<Func<T, object>> { lastGroup.Selector };
+            _groupDefinitions.Add(lastGroup);
+            // start at group 1 we've already set group 0 into lastGroup
             for (var i = 1; i < groups.Count; i++)
             {
                 var currentGroup = ProcessGroup(groups[i]);
@@ -2044,7 +2046,7 @@ namespace MudBlazor
                 _groupDefinitions.Add(currentGroup);
             }
 
-            // Apply group-by operations for all levels at once
+            // Apply group-by operations for all levels at once and get the grouped items
             IEnumerable<IGrouping<object, T>> groupedItems;
 
             if (selectors.Count == 1)
@@ -2070,7 +2072,7 @@ namespace MudBlazor
 
             // Assign the grouping to the last group
             lastGroup.Grouping = groupedItems.Select(x => x).FirstOrDefault() ?? new EmptyGrouping<object?, T>(null);
-
+            _lastGroup = lastGroup;
             if ((_isFirstRendered || HasServerData) && !noStateChange)
                 StateHasChanged();
         }
