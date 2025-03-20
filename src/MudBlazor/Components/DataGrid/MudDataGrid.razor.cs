@@ -2044,6 +2044,7 @@ namespace MudBlazor
                 lastGroup.InnerGroup = currentGroup;
                 lastGroup = currentGroup;
                 _groupDefinitions.Add(currentGroup);
+                selectors.Add(currentGroup.Selector);
             }
 
             // Apply group-by operations for all levels at once and get the grouped items
@@ -2077,7 +2078,7 @@ namespace MudBlazor
                 StateHasChanged();
         }
 
-        private GroupDefinition<T> ProcessGroup(Column<T> column)
+        private static GroupDefinition<T> ProcessGroup(Column<T> column)
         {
             return new()
             {

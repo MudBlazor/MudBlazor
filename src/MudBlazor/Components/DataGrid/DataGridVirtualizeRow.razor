@@ -8,15 +8,15 @@
 
 @{
     var resolvedItems = new List<IndexBag<T>>(0);
-    if (!DataGrid.Virtualize || DataGrid.VirtualizeServerData == null ||
+    if (DataGrid.IsGrouped)
+    {
+        resolvedItems = GroupedItems.Select((item, index) => new IndexBag<T>(index, item)).ToList();
+    }
+    else if (!DataGrid.Virtualize || DataGrid.VirtualizeServerData == null ||
         DataGrid.HasFooter)
     {
         resolvedItems = DataGrid.CurrentPageItems.Select((items, index) => new IndexBag<T>(index, items))
                 .ToList();
-    }
-    else if (DataGrid.IsGrouped)
-    {
-        resolvedItems = GroupedItems.Select((item, index) => new IndexBag<T>(index, item)).ToList();
     }
     else
     {

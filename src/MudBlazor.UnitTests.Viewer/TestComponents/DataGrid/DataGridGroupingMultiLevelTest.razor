@@ -41,7 +41,7 @@ GroupStyleFunc="@(_customizeGroupStyle ? GroupStyleFunc : null)">
                 </div>
             </GroupTemplate>
         </PropertyColumn>
-        <PropertyColumn Property="x => x.Region" Title="Region" GroupBy="_groupBy2">
+        <PropertyColumn Property="x => x.Region" Title="Region" Grouping GroupBy="_groupBy2">
             <GroupTemplate>
                 @{
                     var (icon, color) = context.Grouping.Key?.ToString() switch
@@ -62,7 +62,7 @@ GroupStyleFunc="@(_customizeGroupStyle ? GroupStyleFunc : null)">
                 </div>
             </GroupTemplate>
         </PropertyColumn>
-        <PropertyColumn Property="x => x.Climate" Title="Climate" GroupBy="_groupBy3">
+        <PropertyColumn Property="x => x.Climate" Title="Climate" Grouping GroupBy="_groupBy3">
             <GroupTemplate>
                 @{
                     var (icon, color) = context.Grouping.Key?.ToString() switch
@@ -83,7 +83,7 @@ GroupStyleFunc="@(_customizeGroupStyle ? GroupStyleFunc : null)">
                 </div>
             </GroupTemplate>
         </PropertyColumn>
-        <PropertyColumn Property="x => x.YearInducted" Title="Year Inducted" GroupBy="x => x.YearInducted">
+        <PropertyColumn Property="x => x.YearInducted" Title="Year Inducted" Grouping GroupBy="x => x.YearInducted">
             <GroupTemplate>
                 @if (_customizeGroupTemplate)
                 {
