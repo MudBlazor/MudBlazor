@@ -163,7 +163,7 @@ namespace MudBlazor.Charts
                 var text = new SvgText()
                 {
                     X = x,
-                    Y = _boundHeight - 10,
+                    Y = _boundHeight - XAxisLabelOffset,
                     Value = label,
                 };
                 _verticalValues.Add(text);

@@ -21,11 +21,12 @@ namespace MudBlazor
         protected const double BoundWidthDefault = 650.0;
         protected const double BoundHeightDefault = 350.0;
         protected const double HorizontalStartSpaceBuffer = 10.0;
-        protected double HorizontalStartSpace => Math.Max(HorizontalStartSpaceBuffer + (_yAxisLabelSize?.Width ?? 0), 30);
+        protected double HorizontalStartSpace => Math.Max(HorizontalStartSpaceBuffer + Math.Ceiling(_yAxisLabelSize?.Width ?? 0), 30);
         protected const double HorizontalEndSpace = 30.0;
         protected const double VerticalStartSpaceBuffer = 10.0;
         protected double VerticalStartSpace => Math.Max(VerticalStartSpaceBuffer + (_xAxisLabelSize?.Height ?? 0), 30);
         protected const double VerticalEndSpace = 25.0;
+        protected double XAxisLabelOffset => Math.Ceiling(_xAxisLabelSize?.Height ?? 20) / 2;
 
         protected double _boundWidth = 650.0;
         protected double _boundHeight = 350.0;
@@ -60,13 +61,14 @@ namespace MudBlazor
             var xAxisLabelSize = _xAxisGroupElementReference != null ? await JsRuntime.InvokeAsync<ElementSize>("mudGetSvgBBox", _xAxisGroupElementReference) : null;
 
             var axisChanged = false;
-            if (yAxisLabelSize != null && (_yAxisLabelSize == null || !DoubleEpsilonEqualityComparer.Default.Equals(yAxisLabelSize.Width, _yAxisLabelSize.Width)))
+            var comparer = new DoubleEpsilonEqualityComparer(0.01);
+            if (yAxisLabelSize != null && (_yAxisLabelSize == null || !comparer.Equals(yAxisLabelSize.Width, _yAxisLabelSize.Width)))
             {
                 _yAxisLabelSize = yAxisLabelSize;
                 axisChanged = true;
             }
 
-            if (xAxisLabelSize != null && (_xAxisLabelSize == null || !DoubleEpsilonEqualityComparer.Default.Equals(xAxisLabelSize.Width, _xAxisLabelSize.Width)))
+            if (xAxisLabelSize != null && (_xAxisLabelSize == null || !comparer.Equals(xAxisLabelSize.Height, _xAxisLabelSize.Height)))
             {
                 _xAxisLabelSize = xAxisLabelSize;
                 axisChanged = true;

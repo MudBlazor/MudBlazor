@@ -29,16 +29,16 @@
     <g @ref="_yAxisGroupElementReference" class="mud-charts-yaxis">
         @foreach (var horizontalLineValue in _horizontalValues)
         {
-            @((MarkupString)$"<text x='{horizontalLineValue.X.ToString(CultureInfo.InvariantCulture)}' y='{horizontalLineValue.Y.ToString(CultureInfo.InvariantCulture)}' font-size='12px' text-anchor='end' dominant-baseline='auto'>{horizontalLineValue.Value?.ToString(CultureInfo.InvariantCulture)}</text>")
+            @((MarkupString)$"<text x='{ToS(horizontalLineValue.X)}' y='{ToS(horizontalLineValue.Y)}' font-size='12px' text-anchor='end' dominant-baseline='auto'>{horizontalLineValue.Value?.ToString(CultureInfo.InvariantCulture)}</text>")
         }
     </g>
     <g @ref="_xAxisGroupElementReference" class="mud-charts-xaxis">
         @for (var i = 0; i < _verticalValues.Count; i++)
         {
             var verticalLineValue = _verticalValues[i];
-            var x = verticalLineValue.X.ToString(CultureInfo.InvariantCulture);
-            var y = verticalLineValue.Y.ToString(CultureInfo.InvariantCulture);
-            var rotation = (-AxisChartOptions.XAxisLabelRotation).ToString(CultureInfo.InvariantCulture);
+            var x = ToS(verticalLineValue.X);
+            var y = ToS(verticalLineValue.Y);
+            var rotation = ToS(-AxisChartOptions.XAxisLabelRotation);
             @((MarkupString)$"<text x='{x}' y='{y}' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate({rotation} {x} {y})'>{verticalLineValue.Value?.ToString(CultureInfo.InvariantCulture)}</text>")
         }
     </g>

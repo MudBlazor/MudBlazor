@@ -23,6 +23,7 @@ namespace MudBlazor.Charts
         private const double VerticalStartSpaceBuffer = 10.0;
         protected double VerticalStartSpace => Math.Max(VerticalStartSpaceBuffer + (_xAxisLabelSize?.Height ?? 0), 30);
         private const double VerticalEndSpace = 25.0;
+        protected double XAxisLabelOffset => Math.Ceiling(_xAxisLabelSize?.Height ?? 20) / 2;
 
         private double _boundWidth = BoundWidthDefault;
         private double _boundHeight = BoundHeightDefault;
@@ -305,7 +306,7 @@ namespace MudBlazor.Charts
                 var line = new SvgPath()
                 {
                     Index = i,
-                    Data = $"M {ToS(x)} {ToS((_boundHeight - VerticalStartSpace))} L {ToS(x)} {ToS(VerticalEndSpace)}"
+                    Data = $"M {ToS(x)} {ToS(_boundHeight - VerticalStartSpace)} L {ToS(x)} {ToS(VerticalEndSpace)}"
                 };
                 _verticalLines.Add(line);
 
@@ -314,7 +315,7 @@ namespace MudBlazor.Charts
                 var lineValue = new SvgText()
                 {
                     X = x,
-                    Y = _boundHeight - (AxisChartOptions.LabelExtraHeight / 2) - 10,
+                    Y = _boundHeight - XAxisLabelOffset,
                     Value = xLabels.ToString(TimeLabelFormat),
                 };
                 _verticalValues.Add(lineValue);
