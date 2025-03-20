@@ -25,15 +25,23 @@ namespace MudBlazor.Utilities.ObserverManager;
 /// </remarks>
 internal class ObserverManager<TIdentity, TObserver> : IEnumerable<TObserver> where TIdentity : notnull
 {
-    private readonly ConcurrentDictionary<TIdentity, ObserverEntry> _observers = new();
+    private readonly ConcurrentDictionary<TIdentity, ObserverEntry> _observers;
     private readonly ILogger _log;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ObserverManager{TIdentity,TObserver}"/> class. 
     /// </summary>
-    public ObserverManager(ILogger log)
+    public ObserverManager(ILogger log) : this(log, null)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ObserverManager{TIdentity,TObserver}"/> class. 
+    /// </summary>
+    public ObserverManager(ILogger log, IEqualityComparer<TIdentity>? comparer)
     {
         _log = log ?? throw new ArgumentNullException(nameof(log));
+        _observers = new(comparer);
     }
 
     /// <summary>
@@ -84,6 +92,39 @@ internal class ObserverManager<TIdentity, TObserver> : IEnumerable<TObserver> wh
         _observers.Where(kvp => predicate(kvp.Key, kvp.Value.Observer)).Select(kvp => kvp.Key);
 
     /// <summary>
+    /// Tries to get the existing subscription for the specified identity, or subscribes the observer if it does not exist.
+    /// </summary>
+    /// <param name="id">The identity of the observer.</param>
+    /// <param name="observer">The observer to subscribe if it does not already exist.</param>
+    /// <param name="newObserver">When this method returns, contains the observer associated with the specified identity, whether it was already subscribed or newly subscribed.</param>
+    /// <returns>True if the observer was already subscribed; otherwise, false.</returns>
+    public bool TryGetOrAddSubscription(TIdentity id, TObserver observer, out TObserver newObserver)
+    {
+        // Add or update the subscription.
+        if (_observers.TryGetValue(id, out var entry))
+        {
+            entry.Observer = observer;
+            if (_log.IsEnabled(LogLevel.Trace))
+            {
+                _log.LogTrace("Updating entry for {Id}/{Observer}. {Count} total observers.", id, observer, _observers.Count);
+            }
+
+            newObserver = entry.Observer;
+            return true;
+        }
+
+        var newEntry = new ObserverEntry(observer);
+        _observers[id] = newEntry;
+        if (_log.IsEnabled(LogLevel.Trace))
+        {
+            _log.LogTrace("Adding entry for {Id}/{Observer}. {Count} total observers after add.", id, observer, _observers.Count);
+        }
+
+        newObserver = newEntry.Observer;
+        return false;
+    }
+
+    /// <summary>
     /// Ensures that the provided <paramref name="observer"/> is subscribed, renewing its subscription.
     /// </summary>
     /// <param name="id">
@@ -95,23 +136,7 @@ internal class ObserverManager<TIdentity, TObserver> : IEnumerable<TObserver> wh
     /// <exception cref="Exception">A delegate callback throws an exception.</exception>
     public void Subscribe(TIdentity id, TObserver observer)
     {
-        // Add or update the subscription.
-        if (_observers.TryGetValue(id, out var entry))
-        {
-            entry.Observer = observer;
-            if (_log.IsEnabled(LogLevel.Trace))
-            {
-                _log.LogTrace("Updating entry for {Id}/{Observer}. {Count} total observers.", id, observer, _observers.Count);
-            }
-        }
-        else
-        {
-            _observers[id] = new ObserverEntry(observer);
-            if (_log.IsEnabled(LogLevel.Trace))
-            {
-                _log.LogTrace("Adding entry for {Id}/{Observer}. {Count} total observers after add.", id, observer, _observers.Count);
-            }
-        }
+        _ = TryGetOrAddSubscription(id, observer, out _);
     }
 
     /// <summary>

@@ -427,6 +427,10 @@ window.mudpopoverHelper = {
     },
 
     updatePopoverOverlay: function (popoverContentNode) {
+        // tooltips don't have an overlay
+        if (popoverContentNode.classList.contains("mud-tooltip")) {
+            return;
+        }
         // set any associated overlay to equal z-index
         const provider = popoverContentNode.closest('.mud-popover-provider');
         if (provider && popoverContentNode.classList.contains("mud-popover")) {
