@@ -35,8 +35,8 @@ namespace MudBlazor.Charts
         [Category(CategoryTypes.Chart.Appearance)]
         public double CircleDonutRatio { get; set; } = 1;
 
-        private List<SvgPath> _paths = [];
-        private List<SvgLegend> _legends = [];
+        private readonly List<SvgPath> _paths = [];
+        private readonly List<SvgLegend> _legends = [];
         private SvgPath? _hoveredSegment;
 
         protected override void OnParametersSet()
@@ -93,13 +93,13 @@ namespace MudBlazor.Charts
 
 
                     pathStringBuilder.Append($"M {ToS(outerStartX)} {ToS(outerStartY)} "); // Move to the start point
-                    if (!(data < 1))
+                    if (data >= 1)
                     {
                         pathStringBuilder.Append($"A {ToS(Radius)} {ToS(Radius)} 0 {ToS(largeArcFlag)} 1 {ToS(outerMidX)} {ToS(outerMidY)} "); // Add an arc to a mid point half way through the slice (outer) to support 100% donuts
                     }
                     pathStringBuilder.Append($"A {ToS(Radius)} {ToS(Radius)} 0 {ToS(largeArcFlag)} 1 {ToS(outerEndX)} {ToS(outerEndY)} "); // Add an arc to the end point (outer)
                     pathStringBuilder.Append($"L {ToS(innerEndX)} {ToS(innerEndY)} "); // Line to the end point of the inner arc
-                    if (!(data < 1))
+                    if (data >= 1)
                     {
                         pathStringBuilder.Append($"A {ToS(innerRadius)} {ToS(innerRadius)} 0 {ToS(largeArcFlag)} 0 {ToS(innerMidX)} {ToS(innerMidY)} ");  // Add an arc to a mid point half way through the slice to support 100% donuts
                     }
@@ -115,7 +115,7 @@ namespace MudBlazor.Charts
                 else
                 {
                     pathStringBuilder.Append($"M {ToS(startx * Radius)} {ToS(starty * Radius)} "); // Move to the start point
-                    if (!(data < 1))
+                    if (data >= 1)
                     {
                         pathStringBuilder.Append($"A {ToS(Radius)} {ToS(Radius)} 0 {ToS(largeArcFlag)} 1 {ToS(midx * Radius)} {ToS(midy * Radius)} "); // Add an arc to a mid point half way through the slice to support 100% pies
                     }

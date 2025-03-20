@@ -59,11 +59,20 @@ namespace MudBlazor
             var yAxisLabelSize = _yAxisGroupElementReference != null ? await JsRuntime.InvokeAsync<ElementSize>("mudGetSvgBBox", _yAxisGroupElementReference) : null;
             var xAxisLabelSize = _xAxisGroupElementReference != null ? await JsRuntime.InvokeAsync<ElementSize>("mudGetSvgBBox", _xAxisGroupElementReference) : null;
 
-            if (yAxisLabelSize?.Width != _yAxisLabelSize?.Width || xAxisLabelSize?.Height != _xAxisLabelSize?.Height)
+            var axisChanged = false;
+            if (yAxisLabelSize != null && (_yAxisLabelSize == null || !DoubleEpsilonEqualityComparer.Default.Equals(yAxisLabelSize.Width, _yAxisLabelSize.Width)))
             {
                 _yAxisLabelSize = yAxisLabelSize;
-                _xAxisLabelSize = xAxisLabelSize;
+            }
 
+            if (xAxisLabelSize != null && (_xAxisLabelSize == null || !DoubleEpsilonEqualityComparer.Default.Equals(xAxisLabelSize.Width, _xAxisLabelSize.Width)))
+            {
+                _xAxisLabelSize = xAxisLabelSize;
+            }
+
+            // maybe there should be some kind of cancellation token here to prevent multiple rebuilds when the invokeasync takes time in server mode and subsequent renders have started to take place
+            if (axisChanged)
+            {
                 RebuildChart();
                 StateHasChanged();
             }

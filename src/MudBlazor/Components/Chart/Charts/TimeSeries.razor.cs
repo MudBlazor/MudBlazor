@@ -36,25 +36,25 @@ namespace MudBlazor.Charts
         [CascadingParameter]
         public MudTimeSeriesChartBase? MudChartParent { get; set; }
 
-        private List<SvgPath> _horizontalLines = [];
-        private List<SvgText> _horizontalValues = [];
+        private readonly List<SvgPath> _horizontalLines = [];
+        private readonly List<SvgText> _horizontalValues = [];
 
-        private List<SvgPath> _verticalLines = [];
-        private List<SvgText> _verticalValues = [];
+        private readonly List<SvgPath> _verticalLines = [];
+        private readonly List<SvgText> _verticalValues = [];
 
-        private List<SvgLegend> _legends = [];
+        private readonly List<SvgLegend> _legends = [];
         private List<TimeSeriesChartSeries> _series = [];
 
-        private List<SvgPath> _chartLines = [];
-        private Dictionary<int, SvgPath> _chartAreas = [];
-        private Dictionary<int, List<SvgCircle>> _chartDataPoints = [];
+        private readonly List<SvgPath> _chartLines = [];
+        private readonly Dictionary<int, SvgPath> _chartAreas = [];
+        private readonly Dictionary<int, List<SvgCircle>> _chartDataPoints = [];
         private SvgCircle? _hoveredDataPoint;
         private SvgPath? _hoverDataPointChartLine;
 
         private DateTime _minDateTime;
         private DateTime _maxDateTime;
         private TimeSpan _minDateLabelOffset;
-        private DotNetObjectReference<TimeSeries> _dotNetObjectReference;
+        private readonly DotNetObjectReference<TimeSeries> _dotNetObjectReference;
         private ElementReference _elementReference;
         protected ElementReference? _xAxisGroupElementReference;
         protected ElementReference? _yAxisGroupElementReference;
@@ -85,12 +85,20 @@ namespace MudBlazor.Charts
             var yAxisLabelSize = _yAxisGroupElementReference != null ? await JsRuntime.InvokeAsync<ElementSize>("mudGetSvgBBox", _yAxisGroupElementReference) : null;
             var xAxisLabelSize = _xAxisGroupElementReference != null ? await JsRuntime.InvokeAsync<ElementSize>("mudGetSvgBBox", _xAxisGroupElementReference) : null;
 
-            // maybe there should be some kind of cancellation token here to prevent multiple rebuilds when the invokeasync takes time in server mode and subsequent renders have started to take place
-            if (yAxisLabelSize?.Width != _yAxisLabelSize?.Width || xAxisLabelSize?.Height != _xAxisLabelSize?.Height)
+            var axisChanged = false;
+            if (yAxisLabelSize != null && ( _yAxisLabelSize == null || !DoubleEpsilonEqualityComparer.Default.Equals(yAxisLabelSize.Width, _yAxisLabelSize.Width)))
             {
                 _yAxisLabelSize = yAxisLabelSize;
-                _xAxisLabelSize = xAxisLabelSize;
+            }
 
+            if (xAxisLabelSize != null && (_xAxisLabelSize == null || !DoubleEpsilonEqualityComparer.Default.Equals(xAxisLabelSize.Width, _xAxisLabelSize.Width)))
+            {
+                _xAxisLabelSize = xAxisLabelSize;
+            }
+
+            // maybe there should be some kind of cancellation token here to prevent multiple rebuilds when the invokeasync takes time in server mode and subsequent renders have started to take place
+            if (axisChanged)
+            {
                 RebuildChart();
                 StateHasChanged();
             }

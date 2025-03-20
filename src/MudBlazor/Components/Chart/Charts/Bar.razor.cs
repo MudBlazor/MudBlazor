@@ -13,16 +13,16 @@ namespace MudBlazor.Charts
     /// <seealso cref="TimeSeries"/>
     partial class Bar : MudCategoryAxisChartBase
     {
-        private List<SvgPath> _horizontalLines = [];
-        private List<SvgText> _horizontalValues = [];
+        private readonly List<SvgPath> _horizontalLines = [];
+        private readonly List<SvgText> _horizontalValues = [];
 
-        private List<SvgPath> _verticalLines = [];
-        private List<SvgText> _verticalValues = [];
+        private readonly List<SvgPath> _verticalLines = [];
+        private readonly List<SvgText> _verticalValues = [];
 
-        private List<SvgLegend> _legends = [];
+        private readonly List<SvgLegend> _legends = [];
         private List<ChartSeries> _series = [];
 
-        private List<SvgPath> _bars = [];
+        private readonly List<SvgPath> _bars = [];
         private SvgPath? _hoveredBar;
 
         /// <inheritdoc />

@@ -17,16 +17,16 @@ namespace MudBlazor.Charts
     {
         private const double BarOverlapAmountFix = 0.5; // used to trigger slight overlap so the bars don't have gaps due to floating point rounding
 
-        private List<SvgPath> _horizontalLines = [];
-        private List<SvgText> _horizontalValues = [];
+        private readonly List<SvgPath> _horizontalLines = [];
+        private readonly List<SvgText> _horizontalValues = [];
 
-        private List<SvgPath> _verticalLines = [];
-        private List<SvgText> _verticalValues = [];
+        private readonly List<SvgPath> _verticalLines = [];
+        private readonly List<SvgText> _verticalValues = [];
 
-        private List<SvgLegend> _legends = [];
+        private readonly List<SvgLegend> _legends = [];
         private List<ChartSeries> _series = [];
 
-        private List<SvgPath> _bars = [];
+        private readonly List<SvgPath> _bars = [];
         private double _barWidth;
         private double _barWidthStroke;
         private SvgPath? _hoveredBar;
