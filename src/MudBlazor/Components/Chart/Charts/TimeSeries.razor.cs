@@ -12,23 +12,23 @@ namespace MudBlazor.Charts
     /// <summary>
     /// A chart which displays values over time.
     /// </summary>
-    /// <seealso cref="Bar"/>
-    /// <seealso cref="Donut"/>
-    /// <seealso cref="Line"/>
-    /// <seealso cref="Pie"/>
-    /// <seealso cref="StackedBar"/>
     partial class TimeSeries : MudTimeSeriesChartBase, IDisposable
     {
         private const double Epsilon = 1e-6;
         private const double BoundWidthDefault = 800;
         private const double BoundHeightDefault = 350;
-        private const double HorizontalStartSpace = 80.0; // needs space to have the full label visible and be even to the end space
-        private const double HorizontalEndSpace = 80.0; // needs space to have the full label visible and be even to the start space
-        private const double VerticalStartSpace = 25.0;
+        private const double HorizontalStartSpaceBuffer = 10.0;
+        protected double HorizontalStartSpace => Math.Max(HorizontalStartSpaceBuffer + (_yAxisLabelSize?.Width ?? 0), 30);
+        private const double HorizontalEndSpace = 30.0;
+        private const double VerticalStartSpaceBuffer = 10.0;
+        protected double VerticalStartSpace => Math.Max(VerticalStartSpaceBuffer + (_xAxisLabelSize?.Height ?? 0), 30);
         private const double VerticalEndSpace = 25.0;
+
         private double _boundWidth = BoundWidthDefault;
         private double _boundHeight = BoundHeightDefault;
         private ElementSize? _elementSize = null;
+        private ElementSize? _yAxisLabelSize;
+        private ElementSize? _xAxisLabelSize;
 
         [Inject]
         private IJSRuntime JsRuntime { get; set; } = null!;
@@ -56,6 +56,8 @@ namespace MudBlazor.Charts
         private TimeSpan _minDateLabelOffset;
         private DotNetObjectReference<TimeSeries> _dotNetObjectReference;
         private ElementReference _elementReference;
+        protected ElementReference? _xAxisGroupElementReference;
+        protected ElementReference? _yAxisGroupElementReference;
 
         public TimeSeries()
         {
@@ -79,6 +81,19 @@ namespace MudBlazor.Charts
 
                 OnElementSizeChanged(elementSize);
             }
+
+            var yAxisLabelSize = _yAxisGroupElementReference != null ? await JsRuntime.InvokeAsync<ElementSize>("mudGetSvgBBox", _yAxisGroupElementReference) : null;
+            var xAxisLabelSize = _xAxisGroupElementReference != null ? await JsRuntime.InvokeAsync<ElementSize>("mudGetSvgBBox", _xAxisGroupElementReference) : null;
+
+            // maybe there should be some kind of cancellation token here to prevent multiple rebuilds when the invokeasync takes time in server mode and subsequent renders have started to take place
+            if (yAxisLabelSize?.Width != _yAxisLabelSize?.Width || xAxisLabelSize?.Height != _xAxisLabelSize?.Height)
+            {
+                _yAxisLabelSize = yAxisLabelSize;
+                _xAxisLabelSize = xAxisLabelSize;
+
+                RebuildChart();
+                StateHasChanged();
+            }
         }
 
         private void RebuildChart()
@@ -90,8 +105,8 @@ namespace MudBlazor.Charts
             ComputeMinAndMaxDateTimes();
             ComputeUnitsAndNumberOfLines(out var gridXUnits, out var gridYUnits, out var numHorizontalLines, out var lowestHorizontalLine, out var numVerticalLines);
 
-            var horizontalSpace = (_boundWidth - HorizontalStartSpace - HorizontalEndSpace) / Math.Max(1, numVerticalLines - 1);
-            var verticalSpace = (_boundHeight - VerticalStartSpace - VerticalEndSpace - AxisChartOptions.LabelExtraHeight) / Math.Max(1, numHorizontalLines - 1);
+            var horizontalSpace = (_boundWidth - HorizontalStartSpace - HorizontalEndSpace) / Math.Max(1, (_maxDateTime - _minDateTime) / TimeLabelSpacing);
+            var verticalSpace = (_boundHeight - VerticalStartSpace - VerticalEndSpace) / Math.Max(1, numHorizontalLines - 1);
 
             GenerateHorizontalGridLines(numHorizontalLines, lowestHorizontalLine, gridYUnits, verticalSpace);
             GenerateVerticalGridLines(numVerticalLines, gridXUnits, horizontalSpace);
@@ -215,7 +230,7 @@ namespace MudBlazor.Charts
 
                 var labelSpacing = TimeLabelSpacing;
 
-                numVerticalLines = (int)Math.Ceiling((_maxDateTime - _minDateTime) / labelSpacing);
+                numVerticalLines = (int)((_maxDateTime - _minDateTime) / labelSpacing) + 1;
             }
             else
             {
@@ -236,7 +251,7 @@ namespace MudBlazor.Charts
                 var line = new SvgPath()
                 {
                     Index = i,
-                    Data = $"M {ToS(HorizontalStartSpace)} {ToS((_boundHeight - AxisChartOptions.LabelExtraHeight - y))} L {ToS((_boundWidth - HorizontalEndSpace))} {ToS((_boundHeight - AxisChartOptions.LabelExtraHeight - y))}"
+                    Data = $"M {ToS(HorizontalStartSpace)} {ToS(_boundHeight - y)} L {ToS(_boundWidth - HorizontalEndSpace)} {ToS(_boundHeight - y)}"
                 };
                 _horizontalLines.Add(line);
 
@@ -244,7 +259,7 @@ namespace MudBlazor.Charts
                 var lineValue = new SvgText()
                 {
                     X = HorizontalStartSpace - 10,
-                    Y = _boundHeight - AxisChartOptions.LabelExtraHeight - y + 5,
+                    Y = _boundHeight - y + 5,
                     Value = ToS(startGridY, MudChartParent?.ChartOptions.YAxisFormat)
                 };
                 _horizontalValues.Add(lineValue);
@@ -326,19 +341,19 @@ namespace MudBlazor.Charts
                     var diffFromMin = dateTime - _minDateTime;
 
                     var gridValue = (data[index].Value / gridYUnits - lowestHorizontalLine) * verticalSpace;
-                    var y = _boundHeight - VerticalStartSpace - AxisChartOptions.LabelExtraHeight - gridValue;
+                    var y = _boundHeight - VerticalStartSpace - gridValue;
 
                     if (fullDateTimeDiff.TotalMilliseconds == 0)
                         return (HorizontalStartSpace, y);
 
-                    var x = HorizontalStartSpace + diffFromMin.TotalMilliseconds / fullDateTimeDiff.TotalMilliseconds * (_boundWidth - HorizontalStartSpace - HorizontalEndSpace);
+                    var x = HorizontalStartSpace + (diffFromMin.TotalMilliseconds / fullDateTimeDiff.TotalMilliseconds * (_boundWidth - HorizontalStartSpace - HorizontalEndSpace));
 
                     return (x, y);
                 }
                 double GetYForZeroPoint()
                 {
                     var gridValue = (0 / gridYUnits - lowestHorizontalLine) * verticalSpace;
-                    var y = _boundHeight - VerticalStartSpace - AxisChartOptions.LabelExtraHeight - gridValue;
+                    var y = _boundHeight - VerticalStartSpace - gridValue;
 
                     return y;
                 }

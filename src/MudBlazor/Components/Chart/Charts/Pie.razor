@@ -6,9 +6,9 @@
     var chartClass = CircleDonutRatio < 1 ? "mud-chart-donut" : "mud-chart-pie";
 }
 
-<svg @attributes="UserAttributes" class="@chartClass" width="@MudChartParent?.Width" height="@MudChartParent?.Height" viewBox="-@Radius -@Radius @(Radius * 2) @(Radius * 2)" style="@style">
+<svg @attributes="UserAttributes" class="@chartClass" width="@MudChartParent?.Width" height="@MudChartParent?.Height" viewBox="0 0 @(Radius * 2) @(Radius * 2)" style="@style">
     <Filters />
-    <g>
+    <g transform="translate(@Radius, @Radius)">
         @foreach (var item in _paths)
         {
             <path @onclick="() => SelectedIndex = item.Index"
@@ -35,7 +35,7 @@
                 .Replace("{{X_VALUE}}", _hoveredSegment.LabelXValue)
                 .Replace("{{Y_VALUE}}", _hoveredSegment.LabelYValue);
 
-            <ChartTooltip Title="@tooltipTitle" Color="@color" X="_hoveredSegment.LabelX" Y="_hoveredSegment.LabelY" />
+            <ChartTooltip Title="@tooltipTitle" Color="@color" X="_hoveredSegment.LabelX + Radius" Y="_hoveredSegment.LabelY + Radius" />
         }
     }
 </svg>

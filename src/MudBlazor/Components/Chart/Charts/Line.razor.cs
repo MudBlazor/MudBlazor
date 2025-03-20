@@ -47,7 +47,7 @@ namespace MudBlazor.Charts
             ComputeUnitsAndNumberOfLines(out var gridXUnits, out var gridYUnits, out var numHorizontalLines, out var lowestHorizontalLine, out var numVerticalLines);
 
             var horizontalSpace = (_boundWidth - HorizontalStartSpace - HorizontalEndSpace) / Math.Max(1, numVerticalLines - 1);
-            var verticalSpace = (_boundHeight - VerticalStartSpace - VerticalEndSpace - AxisChartOptions.LabelExtraHeight) / Math.Max(1, numHorizontalLines - 1);
+            var verticalSpace = (_boundHeight - VerticalStartSpace - VerticalEndSpace) / Math.Max(1, numHorizontalLines - 1);
 
             GenerateHorizontalGridLines(numHorizontalLines, lowestHorizontalLine, gridYUnits, verticalSpace);
             GenerateVerticalGridLines(numVerticalLines, gridXUnits, horizontalSpace);
@@ -109,7 +109,7 @@ namespace MudBlazor.Charts
                 var line = new SvgPath()
                 {
                     Index = i,
-                    Data = $"M {ToS(HorizontalStartSpace)} {ToS(_boundHeight - AxisChartOptions.LabelExtraHeight - y)} L {ToS(_boundWidth - HorizontalEndSpace)} {ToS(_boundHeight - AxisChartOptions.LabelExtraHeight - y)}"
+                    Data = $"M {ToS(HorizontalStartSpace)} {ToS(_boundHeight - y)} L {ToS(_boundWidth - HorizontalEndSpace)} {ToS(_boundHeight - y)}"
                 };
                 _horizontalLines.Add(line);
 
@@ -117,7 +117,7 @@ namespace MudBlazor.Charts
                 var lineValue = new SvgText()
                 {
                     X = HorizontalStartSpace - 10,
-                    Y = _boundHeight - AxisChartOptions.LabelExtraHeight - y + 5,
+                    Y = _boundHeight - y + 5,
                     Value = ToS(startGridY, MudChartParent?.ChartOptions.YAxisFormat)
                 };
                 _horizontalValues.Add(lineValue);
@@ -143,7 +143,7 @@ namespace MudBlazor.Charts
                 var lineValue = new SvgText()
                 {
                     X = x,
-                    Y = _boundHeight - (AxisChartOptions.LabelExtraHeight / 2) - 10,
+                    Y = _boundHeight - 10,
                     Value = xLabels
                 };
                 _verticalValues.Add(lineValue);
@@ -169,13 +169,13 @@ namespace MudBlazor.Charts
                 {
                     var x = HorizontalStartSpace + (index * horizontalSpace);
                     var gridValue = ((data[index] / gridYUnits) - lowestHorizontalLine) * verticalSpace;
-                    var y = _boundHeight - VerticalStartSpace - AxisChartOptions.LabelExtraHeight - gridValue;
+                    var y = _boundHeight - VerticalStartSpace - gridValue;
                     return (x, y);
                 }
                 double GetYForZeroPoint()
                 {
                     var gridValue = (0 / gridYUnits - lowestHorizontalLine) * verticalSpace;
-                    var y = _boundHeight - VerticalStartSpace - AxisChartOptions.LabelExtraHeight - gridValue;
+                    var y = _boundHeight - VerticalStartSpace - gridValue;
 
                     return y;
                 }

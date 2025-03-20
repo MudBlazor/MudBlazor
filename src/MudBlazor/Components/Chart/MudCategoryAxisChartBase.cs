@@ -18,19 +18,25 @@ namespace MudBlazor
         public MudChart? MudChartParent { get; set; }
 
         private const double Epsilon = 1e-6;
-        protected const double HorizontalStartSpace = 30.0;
-        protected const double HorizontalEndSpace = 30.0;
-        protected const double VerticalStartSpace = 25.0;
-        protected const double VerticalEndSpace = 25.0;
-
         protected const double BoundWidthDefault = 650.0;
         protected const double BoundHeightDefault = 350.0;
+        protected const double HorizontalStartSpaceBuffer = 10.0;
+        protected double HorizontalStartSpace => Math.Max(HorizontalStartSpaceBuffer + (_yAxisLabelSize?.Width ?? 0), 30);
+        protected const double HorizontalEndSpace = 30.0;
+        protected const double VerticalStartSpaceBuffer = 10.0;
+        protected double VerticalStartSpace => Math.Max(VerticalStartSpaceBuffer + (_xAxisLabelSize?.Height ?? 0), 30);
+        protected const double VerticalEndSpace = 25.0;
+
         protected double _boundWidth = 650.0;
         protected double _boundHeight = 350.0;
         private ElementSize? _elementSize;
+        private ElementSize? _yAxisLabelSize;
+        private ElementSize? _xAxisLabelSize;
 
         private readonly DotNetObjectReference<MudCategoryAxisChartBase> _dotNetObjectReference;
-        protected ElementReference _elementReference = new();
+        protected ElementReference _elementReference;
+        protected ElementReference? _xAxisGroupElementReference;
+        protected ElementReference? _yAxisGroupElementReference;
 
         [DynamicDependency(nameof(OnElementSizeChanged))]
         [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(ElementSize))]
@@ -48,6 +54,18 @@ namespace MudBlazor
                 var elementSize = await JsRuntime.InvokeAsync<ElementSize>("mudObserveElementSize", _dotNetObjectReference, _elementReference);
 
                 OnElementSizeChanged(elementSize);
+            }
+
+            var yAxisLabelSize = _yAxisGroupElementReference != null ? await JsRuntime.InvokeAsync<ElementSize>("mudGetSvgBBox", _yAxisGroupElementReference) : null;
+            var xAxisLabelSize = _xAxisGroupElementReference != null ? await JsRuntime.InvokeAsync<ElementSize>("mudGetSvgBBox", _xAxisGroupElementReference) : null;
+
+            if (yAxisLabelSize?.Width != _yAxisLabelSize?.Width || xAxisLabelSize?.Height != _xAxisLabelSize?.Height)
+            {
+                _yAxisLabelSize = yAxisLabelSize;
+                _xAxisLabelSize = xAxisLabelSize;
+
+                RebuildChart();
+                StateHasChanged();
             }
         }
 
