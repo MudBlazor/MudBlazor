@@ -437,7 +437,21 @@ namespace MudBlazor
         {
             if (Text != text)
             {
-                Text = text;
+                if (text == "0-")
+                {
+                    Text = "-";
+                    updateValue = true;
+                }
+                else if (text == "-")
+                {
+                    Text = "-";
+                    updateValue = false;
+                }
+                else
+                {
+                    Text = text;
+                }
+
                 _validated = false;
 
                 if (!string.IsNullOrEmpty(Text))
