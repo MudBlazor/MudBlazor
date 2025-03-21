@@ -239,7 +239,7 @@ namespace MudBlazor
         /// Sets the container width to match its contents.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>. Overrides FullWidth when <c>true</c>
+        /// Defaults to <c>false</c>. Requires FullWidth to be <c>false</c>
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
