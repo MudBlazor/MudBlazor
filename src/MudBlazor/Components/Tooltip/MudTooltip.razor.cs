@@ -208,7 +208,9 @@ namespace MudBlazor
         internal Task HandlePointerLeaveAsync()
         {
             if (!ShowOnHover)
+            {
                 return Task.CompletedTask;
+            }
 
             _showDebouncer.Cancel();
             return _hideDebouncer.DebounceAsync(() => _visibleState.SetValueAsync(false));
