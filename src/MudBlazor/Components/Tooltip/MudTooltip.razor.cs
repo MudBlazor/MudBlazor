@@ -187,7 +187,7 @@ namespace MudBlazor
                 _previousDelay = Delay;
             }
 
-            if (Math.Abs(_previousDuration - Duration) > 001)
+            if (Math.Abs(_previousDuration - Duration) > .001)
             {
                 _hideDebouncer = new DebounceDispatcher(TimeSpan.FromMilliseconds(Duration));
                 _previousDuration = Duration;
