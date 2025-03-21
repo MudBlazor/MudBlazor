@@ -209,7 +209,7 @@
                                 {
                                     if (IsGrouped)
                                     {
-                                        if (_groupDefinitions is { Count: 0 })
+                                        if (!_groupedItems.Any())
                                         {
                                             <tr>
                                                 <th colspan="1000" class="mud-table-empty-row">
@@ -219,11 +219,11 @@
                                                 </th>
                                             </tr>
                                         }
-                                        foreach (var g in _groupDefinitions)
+                                        foreach (var g in GroupItemsPage)
                                         {
                                             <DataGridGroupRow T="T"
-                                                              GroupDefinition="g"
-                                                              Items="g.Grouping"
+                                                              GroupDefinition="@_groupDefinition"
+                                                              Items="@g"
                                                               GroupClass="@GroupClass"
                                                               GroupStyle="@GroupStyle"
                                                               GroupClassFunc="@GroupClassFunc"

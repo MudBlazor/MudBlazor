@@ -6,6 +6,7 @@ using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
@@ -37,8 +38,8 @@ namespace MudBlazor
         private PropertyInfo[] _properties = typeof(T).GetProperties();
         private CancellationTokenSource _serverDataCancellationTokenSource;
         private IEnumerable<T> _currentRenderFilteredItemsCache = null;
-        private GroupDefinition<T> _lastGroup;
-        private List<GroupDefinition<T>> _groupDefinitions = new();
+        private GroupDefinition<T> _groupDefinition;
+        private IEnumerable<IGrouping<object, T>> _groupedItems = [];
         private Dictionary<string, bool> _groupExpansionsDict = new();
         private GridData<T> _serverData = new() { TotalItems = 0, Items = Array.Empty<T>() };
         private Func<IFilterDefinition<T>> _defaultFilterDefinitionFactory = () => new FilterDefinition<T>();
@@ -996,7 +997,7 @@ namespace MudBlazor
 
                     if (!_groupable)
                     {
-                        _lastGroup = null;
+                        _groupDefinition = null;
 
                         foreach (var column in RenderedColumns)
                             column.RemoveGrouping().CatchAndLog();
@@ -2020,8 +2021,8 @@ namespace MudBlazor
             if (!noStateChange)
                 DropContainerHasChanged();
 
-            _lastGroup = null;
-            _groupDefinitions.Clear();
+            _groupDefinition = default;
+            _groupedItems = [];
 
             if (!IsGrouped || GetFilteredItemsCount() == 0)
             {
@@ -2032,56 +2033,75 @@ namespace MudBlazor
 
             // get all columns that are grouped in the order they are grouped
             var groupedColumns = RenderedColumns.Where(x => x.GroupingState.Value).OrderBy(x => x.GroupByOrder).ToList();
+            var allSelectors = groupedColumns.Select(x => x.groupBy).ToList();
 
-            var lastGroup = ProcessGroup(groupedColumns[0]);
-            var selectors = new List<Func<T, object>> { lastGroup.Selector };
+            // Initialize with the first group definition
+            _groupDefinition = ProcessGroup(groupedColumns[0]);
 
-            // start at groupedColumns 1 we've already set groupedColumns 0 into lastGroup
-            for (var i = 1; i < groupedColumns.Count; i++)
+            // Create a reference to build the hierarchy
+            var currentGroupDef = _groupDefinition;
+
+            // Start from index 1 since we've already processed the first column
+            for (int i = 1; i < groupedColumns.Count; i++)
             {
-                var currentGroup = ProcessGroup(groupedColumns[i]);
-                lastGroup.InnerGroup = currentGroup;
-                lastGroup = currentGroup;
-                selectors.Add(currentGroup.Selector);
+                var nextGroupDef = ProcessGroup(groupedColumns[i]);
+                // Connect it to the current level
+                currentGroupDef.InnerGroup = nextGroupDef;
+                // Move to the next level for the next iteration
+                currentGroupDef = nextGroupDef;
             }
 
-            // Apply groupedColumns-by operations for all levels at once and get the grouped items
-            IEnumerable<IGrouping<object, T>> groupedItems;
+            // Now you have a hierarchical structure where _groupDefinition is the root
+            // and each level's InnerGroup points to the next grouping level
 
-            if (selectors.Count == 1)
+            // Apply groupedColumns-by operations for all levels at once and get the grouped items
+
+            if (allSelectors.Count == 1)
             {
                 // Simple single-level grouping
-                groupedItems = CurrentPageItems.GroupBy(selectors[0]);
+                _groupedItems = CurrentPageItems.GroupBy(allSelectors[0]);
             }
             else
             {
                 // Multi-level grouping
                 // We'll build a composite key selector that combines all groupedColumns selectors
-                groupedItems = CurrentPageItems.GroupBy(item =>
+                _groupedItems = CurrentPageItems.GroupBy(item =>
                 {
                     // Create a composite key from all selectors
-                    var key = new CompositeGroupKey(selectors.Count);
-                    for (var i = 0; i < selectors.Count; i++)
+                    var key = new CompositeGroupKey(allSelectors.Count);
+                    for (var i = 0; i < allSelectors.Count; i++)
                     {
-                        key.Keys[i] = selectors[i](item);
+                        key.Keys[i] = allSelectors[i](item);
                     }
                     return key;
                 });
             }
 
-            _groupDefinitions = groupedItems.Select()
-
-            // Assign the grouping to the last groupedColumns
-            lastGroup.Grouping = groupedItems.Select(x => x).FirstOrDefault() ?? new EmptyGrouping<object?, T>(null);
-            _lastGroup = lastGroup;
             if ((_isFirstRendered || HasServerData) && !noStateChange)
                 StateHasChanged();
         }
 
-        private void AddGroupItems(GroupDefinition<T> group)
+        private IEnumerable<IGrouping<object, T>> GroupItemsPage
         {
-            // recursively build the groupedColumns hierarchy
+            get
+            {
+                return GetItemsOfGroup(_groupDefinition, CurrentPageItems);
+            }
+        }
 
+        internal IEnumerable<IGrouping<object, T>> GetItemsOfGroup(GroupDefinition<T>? parent, IEnumerable<T>? sourceList)
+        {
+            if (parent is null || sourceList is null)
+            {
+                return new List<IGrouping<object, T>>();
+            }
+
+            if (parent.Selector is not null)
+            {
+                return sourceList.GroupBy(parent.Selector).ToList();
+            }
+
+            return new List<IGrouping<object, T>>();
         }
 
         private static GroupDefinition<T> ProcessGroup(Column<T> column)
@@ -2123,9 +2143,9 @@ namespace MudBlazor
         /// </remarks>
         public void ExpandAllGroups()
         {
-            if (_lastGroup != null)
+            if (_groupDefinition != null)
             {
-                ExpandGroupRecursively(_lastGroup);
+                ExpandGroupRecursively(_groupDefinition);
             }
             GroupItems();
         }
@@ -2138,9 +2158,9 @@ namespace MudBlazor
         /// </remarks>
         public void CollapseAllGroups()
         {
-            if (_lastGroup != null)
+            if (_groupDefinition != null)
             {
-                CollapseGroupRecursively(_lastGroup);
+                CollapseGroupRecursively(_groupDefinition);
             }
             GroupItems();
         }

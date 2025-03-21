@@ -83,7 +83,7 @@ GroupStyleFunc="@(_customizeGroupStyle ? GroupStyleFunc : null)">
                 </div>
             </GroupTemplate>
         </PropertyColumn>
-        <PropertyColumn Property="x => x.YearInducted" Title="Year Inducted" Grouping GroupBy="x => x.YearInducted">
+        <PropertyColumn Property="x => x.YearInducted" Title="Year Inducted" GroupBy="x => x.YearInducted">
             <GroupTemplate>
                 @if (_customizeGroupTemplate)
                 {
