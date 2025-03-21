@@ -1,33 +1,20 @@
-﻿// Copyright (c) MudBlazor 2021
+﻿﻿// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.State;
 using MudBlazor.Utilities;
 
 #nullable enable
 
 namespace MudBlazor
 {
-    /// <summary>
-    /// Represents group data for a DataGrid
-    /// </summary>
-    //public class DataGridGroupData<TKey, T>
-    //{
-    //    public TKey? Key { get; }
-    //    public List<T> Items { get; }
-
-    //    public DataGridGroupData(TKey? key, List<T> items)
-    //    {
-    //        Key = key;
-    //        Items = items;
-    //    }
-    //}
-
     public partial class DataGridGroupRow<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase
     {
+        private IEnumerable<IGrouping<object, T>>? _innerGroupItems;
+        private IGrouping<object, T>? _items;
+
         public DataGridGroupRow()
         {
             // TODO make sure Expanded is somehow bindable from GroupExpanded property
@@ -61,7 +48,15 @@ namespace MudBlazor
         /// The groups and items within this grouping.
         /// </summary>
         [Parameter]
-        public required IGrouping<object, T> Items { get; set; }
+        public IGrouping<object, T>? Items
+        {
+            get => _items;
+            set
+            {
+                _items = value;
+                SyncInnerGroupItems();
+            }
+        }
 
         [Parameter]
         public string? GroupClass { get; set; }
@@ -89,9 +84,16 @@ namespace MudBlazor
             }
         }
 
-        private async Task OnExpandedChangeHandlerAsync(ParameterChangedEventArgs<bool> args)
+        private void SyncInnerGroupItems()
         {
-            await Task.CompletedTask;
+            if (GroupDefinition?.InnerGroup != null && Items != null)
+            {
+                _innerGroupItems = DataGrid?.GetItemsOfGroup(GroupDefinition.InnerGroup, Items);
+            }
+            else
+            {
+                _innerGroupItems = new List<IGrouping<object, T>>();
+            }
         }
     }
 }

@@ -676,11 +676,6 @@ namespace MudBlazor
         internal async Task SetGroupingAsync(bool group)
         {
             await GroupingState.SetValueAsync(group);
-
-            if (DataGrid is not null)
-            {
-                await DataGrid.ChangedGrouping(this);
-            }
         }
 
         /// <summary>

@@ -6,7 +6,6 @@ using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
@@ -39,7 +38,6 @@ namespace MudBlazor
         private CancellationTokenSource _serverDataCancellationTokenSource;
         private IEnumerable<T> _currentRenderFilteredItemsCache = null;
         private GroupDefinition<T> _groupDefinition;
-        private IEnumerable<IGrouping<object, T>> _groupedItems = [];
         private Dictionary<string, bool> _groupExpansionsDict = new();
         private GridData<T> _serverData = new() { TotalItems = 0, Items = Array.Empty<T>() };
         private Func<IFilterDefinition<T>> _defaultFilterDefinitionFactory = () => new FilterDefinition<T>();
@@ -2022,7 +2020,6 @@ namespace MudBlazor
                 DropContainerHasChanged();
 
             _groupDefinition = default;
-            _groupedItems = [];
 
             if (!IsGrouped || GetFilteredItemsCount() == 0)
             {
@@ -2049,32 +2046,6 @@ namespace MudBlazor
                 currentGroupDef.InnerGroup = nextGroupDef;
                 // Move to the next level for the next iteration
                 currentGroupDef = nextGroupDef;
-            }
-
-            // Now you have a hierarchical structure where _groupDefinition is the root
-            // and each level's InnerGroup points to the next grouping level
-
-            // Apply groupedColumns-by operations for all levels at once and get the grouped items
-
-            if (allSelectors.Count == 1)
-            {
-                // Simple single-level grouping
-                _groupedItems = CurrentPageItems.GroupBy(allSelectors[0]);
-            }
-            else
-            {
-                // Multi-level grouping
-                // We'll build a composite key selector that combines all groupedColumns selectors
-                _groupedItems = CurrentPageItems.GroupBy(item =>
-                {
-                    // Create a composite key from all selectors
-                    var key = new CompositeGroupKey(allSelectors.Count);
-                    for (var i = 0; i < allSelectors.Count; i++)
-                    {
-                        key.Keys[i] = allSelectors[i](item);
-                    }
-                    return key;
-                });
             }
 
             if ((_isFirstRendered || HasServerData) && !noStateChange)
@@ -2118,21 +2089,9 @@ namespace MudBlazor
         }
 #nullable disable
 
-        internal async Task ChangedGrouping(Column<T> column)
-        {
-            foreach (var c in RenderedColumns)
-            {
-                if (c.PropertyName != column.PropertyName)
-                    await c.RemoveGrouping();
-            }
-
-            GroupItems();
-        }
-
         internal void ToggleGroupExpansion(GroupDefinition<T> g)
         {
             g.Expanded = !g.Expanded;
-            GroupItems();
         }
 
         /// <summary>
@@ -2241,46 +2200,6 @@ namespace MudBlazor
             _serverDataCancellationTokenSource?.Dispose();
             // TODO: Use IAsyncDisposable for MudDataGrid
             _resizeService?.DisposeAsync().CatchAndLog();
-        }
-
-        private class CompositeGroupKey
-        {
-            public object[] Keys { get; }
-
-            public CompositeGroupKey(int count)
-            {
-                Keys = new object[count];
-            }
-
-            public override bool Equals(object obj)
-            {
-                if (obj is not CompositeGroupKey other)
-                    return false;
-
-                if (Keys.Length != other.Keys.Length)
-                    return false;
-
-                for (int i = 0; i < Keys.Length; i++)
-                {
-                    if (!Equals(Keys[i], other.Keys[i]))
-                        return false;
-                }
-
-                return true;
-            }
-
-            public override int GetHashCode()
-            {
-                unchecked
-                {
-                    int hash = 17;
-                    foreach (var key in Keys)
-                    {
-                        hash = hash * 23 + (key?.GetHashCode() ?? 0);
-                    }
-                    return hash;
-                }
-            }
         }
 
         private class EmptyGrouping<TKey, TElement> : IGrouping<TKey, TElement>
