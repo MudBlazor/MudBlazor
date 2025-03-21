@@ -18,7 +18,7 @@ namespace MudBlazor
         public MudTooltip()
         {
             _previousDelay = Delay;
-            _showDebouncer = new DebounceDispatcher(TimeSpan.FromMicroseconds(Delay));
+            _showDebouncer = new DebounceDispatcher(TimeSpan.FromMilliseconds(Delay));
             _previousDuration = Duration;
             _hideDebouncer = new DebounceDispatcher(TimeSpan.FromMilliseconds(Duration));
             using var registerScope = CreateRegisterScope();
