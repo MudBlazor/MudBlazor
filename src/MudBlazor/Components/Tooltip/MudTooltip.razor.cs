@@ -18,9 +18,9 @@ namespace MudBlazor
         public MudTooltip()
         {
             _previousDelay = Delay;
-            _showDebouncer = new DebounceDispatcher((int)Delay);
+            _showDebouncer = new DebounceDispatcher(TimeSpan.FromMicroseconds(Delay));
             _previousDuration = Duration;
-            _hideDebouncer = new DebounceDispatcher((int)Duration);
+            _hideDebouncer = new DebounceDispatcher(TimeSpan.FromMilliseconds(Duration));
             using var registerScope = CreateRegisterScope();
             _visibleState = registerScope.RegisterParameter<bool>(nameof(Visible))
                 .WithParameter(() => Visible)
@@ -181,15 +181,15 @@ namespace MudBlazor
         {
             base.OnParametersSet();
 
-            if (_showDebouncer != null && Math.Abs(_previousDelay - Delay) > .001)
+            if (Math.Abs(_previousDelay - Delay) > .001)
             {
-                _showDebouncer = new DebounceDispatcher((int)Delay);
+                _showDebouncer = new DebounceDispatcher(TimeSpan.FromMilliseconds(Delay));
                 _previousDelay = Delay;
             }
 
-            if (_hideDebouncer != null && Math.Abs(_previousDuration - Duration) > 001)
+            if (Math.Abs(_previousDuration - Duration) > 001)
             {
-                _hideDebouncer = new DebounceDispatcher((int)Duration);
+                _hideDebouncer = new DebounceDispatcher(TimeSpan.FromMilliseconds(Duration));
                 _previousDuration = Duration;
             }
         }
@@ -197,13 +197,12 @@ namespace MudBlazor
         internal Task HandlePointerEnterAsync()
         {
             if (!ShowOnHover)
+            {
                 return Task.CompletedTask;
+            }
 
             _hideDebouncer.Cancel();
-            return _showDebouncer.DebounceAsync(async () =>
-            {
-                await _visibleState.SetValueAsync(true);
-            });
+            return _showDebouncer.DebounceAsync(() => _visibleState.SetValueAsync(true));
         }
 
         internal Task HandlePointerLeaveAsync()
@@ -212,10 +211,7 @@ namespace MudBlazor
                 return Task.CompletedTask;
 
             _showDebouncer.Cancel();
-            return _hideDebouncer.DebounceAsync(async () =>
-            {
-                await _visibleState.SetValueAsync(false);
-            });
+            return _hideDebouncer.DebounceAsync(() => _visibleState.SetValueAsync(false));
         }
 
         private Task HandleFocusInAsync()
