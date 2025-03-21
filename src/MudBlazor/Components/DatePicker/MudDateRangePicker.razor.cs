@@ -285,20 +285,30 @@ namespace MudBlazor
         private DateTime GetMaxSelectableDate(DateTime startDate, int maxDays)
         {
             var validDayCount = 1;
+            var lastValidDate = startDate;
             var maxDate = startDate.AddDays(1);
 
             while (validDayCount < maxDays)
             {
                 if (!IsDateDisabledFunc(maxDate))
+                {
                     validDayCount++;
+                    lastValidDate = maxDate;
+                }
 
                 if (validDayCount == maxDays)
+                    break;
+
+                if (maxDate.Date > MaxDate.GetValueOrDefault(startDate.AddYears(50)).Date)
+                    break;
+
+                if (maxDate.Date == DateTime.MaxValue.Date)
                     break;
 
                 maxDate = maxDate.AddDays(1);
             }
 
-            return maxDate;
+            return lastValidDate;
         }
 
         /// <summary>

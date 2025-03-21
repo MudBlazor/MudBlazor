@@ -1325,6 +1325,22 @@ namespace MudBlazor.UnitTests.Components
             // Close button should still be visible
             closeButton().Should().NotBeNull();
         }
+
+        /// <summary>
+        /// Ensures dialog will only be shown once
+        /// </summary>
+        [Test]
+        public async Task DuplicateDialogTest()
+        {
+            var comp = Context.RenderComponent<MudDialogProvider>();
+            var service = Context.Services.GetRequiredService<IDialogService>();
+            service.Should().NotBe(null);
+            var comp1 = Context.RenderComponent<InlineDialogDuplicateTest>();
+            // open the dialog
+            comp1.Find("button").Click();
+            await Task.Delay(1000);
+            comp.FindComponents<MudDialog>().Count.Should().Be(1);
+        }
     }
 
     internal class CustomDialogService : DialogService

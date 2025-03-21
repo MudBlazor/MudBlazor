@@ -39,7 +39,9 @@
         <DocsPageSection>
             <SectionHeader Title="Min/Max Days">
                 <Description>
-                    Defines the smallest and largest number of days that a user can select
+                    Defines the smallest and largest number of days that a user can select.<br/><br/>
+                    For performance reasons, the component checks up to 50 years ahead, from the user-selected start date, to find valid dates that meet the <CodeInline>MaxDays</CodeInline> requirement. 
+                    To extend this limit, set the <CodeInline>MaxDate</CodeInline> property to a specific date.
                 </Description>    
             </SectionHeader>
             <SectionContent Code="@nameof(DateRangePickerMinMaxDaysExample)" ShowCode="false">
