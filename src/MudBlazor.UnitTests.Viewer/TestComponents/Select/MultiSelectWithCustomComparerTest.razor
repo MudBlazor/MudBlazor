@@ -6,8 +6,6 @@
                    MultiSelection="true"
                    SelectedValues="_selected" SelectedValuesChanged="SelectedChanged"
                    Comparer="Comparer"
-                   FitContent="_fitContent"
-                   RelativeWidth="@(_adaptive ? DropdownWidth.Adaptive : DropdownWidth.Relative)"
                    ToStringFunc="@(x => x?.Name)">
             <MudSelectItem Value="@(new Coffee("cap","Cappuccino"))" />
             <MudSelectItem Value="@(new Coffee("lat","Cafe Latte"))" />
@@ -20,12 +18,7 @@
     </MudItem>
 </MudGrid>
 
-<MudSwitch @bind-Value="_fitContent" Class="mt-4" Color="Color.Primary">Fit Content</MudSwitch>
-<MudSwitch @bind-Value="_adaptive" Class="mt-4" Color="Color.Primary">Adaptive Content</MudSwitch>
-
 @code {
-    private bool _adaptive;
-    private bool _fitContent;
     private static CoffeeComparer Comparer { get; } = new();
 
     private readonly HashSet<Coffee?> _selected = new(Comparer);

@@ -1,16 +1,13 @@
 ﻿<MudPopoverProvider />
 
-<MudSelect @bind-Value="_value" FitContent="_fitContent">
+<MudSelect @bind-Value="_value">
     <MudSelectItem T="int" Value="1"/>
     <MudSelectItem T="int" Value="2"/>
     <MudSelectItem T="int" Value="3"/>
 </MudSelect>
 
-<MudSwitch @bind-Value="_fitContent" Class="mt-4" Color="Color.Primary">Fit Content</MudSwitch>
-
 @code {
     public static string __description__ = "The items have no render fragments, so instead of RF the select must display the converted string value";
     
-    private bool _fitContent;
     private int _value = 1;
 }

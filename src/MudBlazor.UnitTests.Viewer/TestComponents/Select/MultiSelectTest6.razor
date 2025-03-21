@@ -1,16 +1,13 @@
 ﻿<MudPopoverProvider />
 
-<MudSelect T="string" Label="US States" MultiSelection="true" @bind-Value="_value" @bind-SelectedValues="_options" FitContent="_fitContent">
+<MudSelect T="string" Label="US States" MultiSelection="true" @bind-Value="_value" @bind-SelectedValues="_options">
     @foreach (var state in _states)
     {
         <MudSelectItem T="string" Value="@state">@state</MudSelectItem>
     }
 </MudSelect>
 
-<MudSwitch @bind-Value="_fitContent" Class="mt-4" Color="Color.Primary">Fit Content</MudSwitch>
-
 @code {
-    private bool _fitContent;
     private string _value = "Nothing selected";
     private IEnumerable<string> _options  = new HashSet<string> { "Alaska" };
 

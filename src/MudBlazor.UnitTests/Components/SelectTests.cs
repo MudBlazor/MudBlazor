@@ -194,7 +194,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MultiSelectWithValueContainZeroTest>();
             var inputs = comp.FindAll("input");
-            inputs.Count.Should().Be(5);
+            inputs.Count.Should().Be(3);
             inputs[1].GetAttribute("value").Should().Be("Value2");
             await inputs[1].TriggerEventAsync("onmousedown", new MouseEventArgs());
             await Task.Delay(500);
@@ -1551,22 +1551,36 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void SelectFitContentTest()
         {
-            var comp = Context.RenderComponent<SelectClearableTest>();
+            var comp = Context.RenderComponent<SelectFitContentTest>();
 
+            //default values
+            comp.Instance.FullWidth.Should().BeFalse();
             comp.Instance.FitContent.Should().BeFalse();
 
             var select = comp.Find(".mud-select");
 
             select.ClassList.Should().NotContain("mud-width-content");
 
+            //set fit content
             comp.SetParametersAndRender(parameters => parameters.Add(c => c.FitContent, true));
+
+            comp.Instance.FullWidth.Should().BeFalse();
+            comp.Instance.FitContent.Should().BeTrue();
 
             select.ClassList.Should().Contain("mud-width-content");
 
             var filler = comp.Find(".mud-select-filler");
 
-            filler.ClassList.Should().Contain("d-inline-block").And.Contain("mx-2");
-            filler.TextContent.Trim().Should().Be("1");
+            filler.ClassList.Should().Contain("d-inline-block").And.Contain("mx-4");
+            filler.TextContent.Trim().Should().Be("Federated States of Micronesia");
+
+            //set full width
+            comp.SetParametersAndRender(parameters => parameters.Add(c => c.FullWidth, true));
+
+            comp.Instance.FullWidth.Should().BeTrue();
+            comp.Instance.FitContent.Should().BeTrue();
+
+            select.ClassList.Should().NotContain("mud-width-content");
         }
 
         [TestCaseSource(typeof(MouseEventArgsTestCase), nameof(MouseEventArgsTestCase.AllCombinations))]

@@ -1,6 +1,6 @@
 ﻿<MudPopoverProvider />
 
-<MudSelect @bind-Value="_value" PopoverClass="select-popover-class" @onfocus="Focused" OnBlur="Blurred" FitContent="_fitContent">
+<MudSelect @bind-Value="_value" PopoverClass="select-popover-class" @onfocus="Focused" OnBlur="Blurred">
     <MudSelectItem Value="@("1")"/>
     <MudSelectItem Value="@("2")"/>
     <MudSelectItem Value="@("3")"/>
@@ -8,12 +8,10 @@
 </MudSelect>
 
 <MudSwitch @bind-Value="@_focused" />
-<MudSwitch @bind-Value="_fitContent" Class="mt-4" Color="Color.Primary">Fit Content</MudSwitch>
 
 @code {
     public static string __description__ = "Click should open the Menu and selecting a value should update the bindable value.";
 
-    private bool _fitContent;
     private string? _value = null;
     private bool _focused;
 

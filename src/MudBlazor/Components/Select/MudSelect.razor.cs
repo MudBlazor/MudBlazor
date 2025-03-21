@@ -37,8 +37,8 @@ namespace MudBlazor
 
         protected string OuterClassname =>
             new CssBuilder("mud-select")
-                .AddClass("mud-width-full", FullWidth && !FitContent)
-                .AddClass("mud-width-content", FitContent)
+                .AddClass("mud-width-full", FullWidth)
+                .AddClass("mud-width-content", FitContent && !FullWidth)
                 .AddClass(OuterClass)
                 .Build();
 
@@ -1306,6 +1306,8 @@ namespace MudBlazor
                 return;
 
             _shadowLookup[item.Value] = item;
+
+            if (!FitContent) return;
 
             var stringValue = ToStringFunc?.Invoke(item.Value) ?? Converter.Set(item.Value);
 

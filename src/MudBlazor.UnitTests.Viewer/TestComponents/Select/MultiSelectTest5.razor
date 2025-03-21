@@ -1,7 +1,6 @@
 ﻿@if (_posts is not null)
 {
-    <MudSelect Label="Roles" T="string" SelectedValues="_selectedValues" MultiSelection="true" FitContent="_fitContent"
-               RelativeWidth="@(_adaptive ? DropdownWidth.Adaptive : DropdownWidth.Relative)">
+    <MudSelect Label="Roles" T="string" SelectedValues="_selectedValues" MultiSelection="true">
         @foreach (var role in _posts)
         {
             <MudSelectItem T="string" Value="@role">@role</MudSelectItem>
@@ -9,13 +8,7 @@
     </MudSelect>
 }
 
-<MudSwitch @bind-Value="_fitContent" Class="mt-4" Color="Color.Primary">Fit Content</MudSwitch>
-<MudSwitch @bind-Value="_adaptive" Class="mt-4" Color="Color.Primary">Adaptive Content</MudSwitch>
-
 @code {
-    private bool _fitContent;
-    private bool _adaptive; 
-    
     private readonly IEnumerable<string> _selectedValues = new HashSet<string>
     { 
         "Programista", "test"

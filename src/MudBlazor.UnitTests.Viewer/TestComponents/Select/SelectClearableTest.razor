@@ -1,20 +1,15 @@
 ﻿<MudPopoverProvider />
 
-<MudSelect @bind-Value="_value" Clearable="true" OnClearButtonClick="@ClearButtonClickHandler" FitContent="FitContent">
+<MudSelect @bind-Value="_value" Clearable="true" OnClearButtonClick="@ClearButtonClickHandler">
     <MudSelectItem Value="@("1")" />
     <MudSelectItem Value="@("2")" />
     <MudSelectItem Value="@("3")" />
 </MudSelect>
 
-<MudSwitch @bind-Value="FitContent" Class="mt-4" Color="Color.Primary">Fit Content</MudSwitch>
-
 @code {
     public static string __description__ = "Initially hidden clear button should show when item is selected.";
 
     private string? _value;
-
-    [Parameter]
-    public bool FitContent { get; set;}
 
     public bool ClearButtonClicked { get; private set; }
 
