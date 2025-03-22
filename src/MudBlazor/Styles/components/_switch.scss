@@ -42,7 +42,7 @@
     z-index: -1;
     transition: opacity 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
     border-radius: 9px;
-    background-color: var(--mud-palette-gray-default);
+    background-color: var(--mud-palette-gray-dark);
   }
 }
 
@@ -73,7 +73,7 @@
     color: var(--mud-palette-gray-default) !important;
 
     & + .mud-switch-track {
-      opacity: 0.12 !important;
+      opacity: 0.4 !important;
     }
 
     @media(hover: hover) and (pointer: fine) {
