@@ -592,7 +592,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.ActivatorContent, builder =>
                 {
                     builder.OpenComponent<MudIconButton>(0);
-                    builder.AddAttribute(1, "Class", "mud-input-adornment-icon-button");
+                    builder.AddAttribute(1, "Class", "mud-no-activator");
                     builder.CloseComponent();
                 }));
             var menu = comp.Instance;
@@ -606,10 +606,15 @@ namespace MudBlazor.UnitTests.Components
             activatable.Activate(new object(), new MouseEventArgs());
             comp.WaitForAssertion(() => menu.GetState(x => x.Open).Should().BeFalse("Menu should be closed after calling Activate again"));
 
-            // Special case with input adornment icon button
-            var iconButton = comp.FindComponent<MudIconButton>().Instance;
-            activatable.Activate(iconButton, new MouseEventArgs());
-            comp.WaitForAssertion(() => menu.GetState(x => x.Open).Should().BeFalse("Menu should not open when Activate is called with an input adornment icon button"));
+            // Special case with icon button
+            var classButton = comp.FindComponent<MudIconButton>().Instance;
+            activatable.Activate(classButton, new MouseEventArgs());
+            comp.WaitForAssertion(() => menu.GetState(x => x.Open).Should().BeFalse("Menu should not open when Activate is called with an mud-no-activator selector"));
+
+            // Special case with regular button
+            var compButton = Context.RenderComponent<MudButton>(p => p.Add(p => p.Class, "mud-no-activator")).Instance;
+            activatable.Activate(compButton, new MouseEventArgs());
+            comp.WaitForAssertion(() => menu.GetState(x => x.Open).Should().BeFalse("Menu should not open when Activate is called with an mud-no-activator selector"));
 
             // Clean up
             await menu.CloseMenuAsync();

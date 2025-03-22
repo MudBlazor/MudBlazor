@@ -633,8 +633,8 @@ namespace MudBlazor
         /// </summary>
         void IActivatable.Activate(object activator, MouseEventArgs args)
         {
-            if (activator is MudIconButton activatorButton &&
-                (activatorButton.Class?.Contains("mud-input-adornment-icon-button") ?? false))
+            if (activator is MudBaseButton activatorButton &&
+                (activatorButton.Class?.Contains("mud-no-activator") ?? false))
             {
                 return;
             }
