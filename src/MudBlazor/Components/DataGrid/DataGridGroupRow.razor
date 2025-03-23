@@ -8,7 +8,7 @@
     <td class="@GroupClassname" colspan="1000" style="@GroupStylename">
         <div style="display:flex; align-items:center;">
             <MudIconButton Icon="@(Expanded ? Icons.Material.Filled.ExpandMore : Icons.Material.Filled.ChevronRight)"
-                           OnClick="@(() => { Expanded = !Expanded; GroupDefinition.Expanded = Expanded; StateHasChanged(); })" />
+                           OnClick="@GroupExpandClick" />
             @if (GroupDefinition?.GroupTemplate == null)
             {
                 <span style="font-weight:bold">@GroupDefinition?.Title: @(Items?.Key ?? "null")</span>

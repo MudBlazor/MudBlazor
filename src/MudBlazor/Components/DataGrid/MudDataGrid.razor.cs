@@ -2089,6 +2089,11 @@ namespace MudBlazor
         }
 #nullable disable
 
+        internal void ChangedGrouping()
+        {
+            GroupItems();
+        }
+
         internal void ToggleGroupExpansion(GroupDefinition<T> g)
         {
             g.Expanded = !g.Expanded;

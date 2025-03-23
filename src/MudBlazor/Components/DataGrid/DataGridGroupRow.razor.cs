@@ -22,7 +22,7 @@ namespace MudBlazor
 
         protected string GroupClassname => new CssBuilder("mud-table-cell")
             .AddClass("mud-datagrid-group")
-            .AddClass($"mud-table-row-group-indented-{(GroupDefinition.Indentation ? Math.Min(GroupDefinition.Level, 5) : 0)}")
+            .AddClass($"mud-row-group-indented-{(GroupDefinition.Indentation ? Math.Min(GroupDefinition.Level, 5) : 0)}")
             .AddClass(GroupClassFunc?.Invoke(GroupDefinition))
             .AddClass(GroupClass)
             .Build();
@@ -94,6 +94,13 @@ namespace MudBlazor
             {
                 _innerGroupItems = new List<IGrouping<object, T>>();
             }
+        }
+
+        private void GroupExpandClick()
+        {
+            Expanded = !Expanded; 
+            GroupDefinition.Expanded = Expanded;
+            DataGrid.GroupItems();
         }
     }
 }

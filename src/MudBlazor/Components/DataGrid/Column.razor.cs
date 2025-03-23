@@ -570,17 +570,15 @@ namespace MudBlazor
             GroupingState = registerScope.RegisterParameter<bool>(nameof(Grouping))
                 .WithParameter(() => Grouping)
                 .WithEventCallback(() => GroupingChanged)
-                .WithChangeHandler(OnGroupingParameterChangedAsync);
+                .WithChangeHandler(OnGroupingParameterChanged);
         }
 
-        private async Task OnGroupingParameterChangedAsync()
+        private void OnGroupingParameterChanged()
         {
-            if (GroupingState.Value)
+            // Regroup DataGrid           
+            if (DataGrid is not null)
             {
-                if (DataGrid is not null)
-                {
-                    await DataGrid.ChangedGrouping(this);
-                }
+                DataGrid.ChangedGrouping();
             }
         }
 

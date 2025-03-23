@@ -507,7 +507,7 @@ namespace MudBlazor
             {
                 await Column.SetGroupingAsync(true);
             }
-
+            DataGrid.ChangedGrouping();
             DataGrid.DropContainerHasChanged();
         }
 
@@ -517,7 +517,7 @@ namespace MudBlazor
             {
                 await Column.SetGroupingAsync(false);
             }
-
+            DataGrid.ChangedGrouping();
             DataGrid.DropContainerHasChanged();
         }
 
