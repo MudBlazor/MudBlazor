@@ -356,7 +356,7 @@ namespace MudBlazor
 
             DataGrid.DropContainerHasChanged();
 
-            if (args.CtrlKey && DataGrid.SortMode == SortMode.Multiple)
+            if ((args.MetaKey || args.CtrlKey) && DataGrid.SortMode == SortMode.Multiple)
                 await InvokeAsync(() => DataGrid.ExtendSortAsync(Column.PropertyName, SortDirection, Column.GetLocalSortFunc(), Column.Comparer));
             else
                 await InvokeAsync(() => DataGrid.SetSortAsync(Column.PropertyName, SortDirection, Column.GetLocalSortFunc(), Column.Comparer));

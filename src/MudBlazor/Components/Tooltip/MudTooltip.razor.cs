@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
 using MudBlazor.Utilities;
+using MudBlazor.Utilities.Debounce;
 
 namespace MudBlazor
 {
@@ -10,9 +11,16 @@ namespace MudBlazor
         private readonly ParameterState<bool> _visibleState;
         private Origin _anchorOrigin;
         private Origin _transformOrigin;
-
+        internal DebounceDispatcher _showDebouncer;
+        internal DebounceDispatcher _hideDebouncer;
+        internal double _previousDelay;
+        internal double _previousDuration;
         public MudTooltip()
         {
+            _previousDelay = Delay;
+            _showDebouncer = new DebounceDispatcher(TimeSpan.FromMilliseconds(Delay));
+            _previousDuration = Duration;
+            _hideDebouncer = new DebounceDispatcher(TimeSpan.FromMilliseconds(Duration));
             using var registerScope = CreateRegisterScope();
             _visibleState = registerScope.RegisterParameter<bool>(nameof(Visible))
                 .WithParameter(() => Visible)
@@ -162,21 +170,50 @@ namespace MudBlazor
         /// <summary>
         /// Register and Show the Popover for the tooltip if it is not disabled, set to be visible, the content or Text is not empty or null
         /// </summary>
-        private bool ShowToolTip()
+        internal bool ShowToolTip()
         {
             if (_anchorOrigin == Origin.TopLeft || _transformOrigin == Origin.TopLeft)
                 ConvertPlacement();
             return !Disabled && _visibleState.Value && (TooltipContent is not null || !string.IsNullOrEmpty(Text));
         }
 
-        private Task HandlePointerEnterAsync()
+        protected override void OnParametersSet()
         {
-            return ShowOnHover ? _visibleState.SetValueAsync(true) : Task.CompletedTask;
+            base.OnParametersSet();
+
+            if (Math.Abs(_previousDelay - Delay) > .001)
+            {
+                _showDebouncer = new DebounceDispatcher(TimeSpan.FromMilliseconds(Delay));
+                _previousDelay = Delay;
+            }
+
+            if (Math.Abs(_previousDuration - Duration) > .001)
+            {
+                _hideDebouncer = new DebounceDispatcher(TimeSpan.FromMilliseconds(Duration));
+                _previousDuration = Duration;
+            }
         }
 
-        private Task HandlePointerLeaveAsync()
+        internal Task HandlePointerEnterAsync()
         {
-            return ShowOnHover ? _visibleState.SetValueAsync(false) : Task.CompletedTask;
+            if (!ShowOnHover)
+            {
+                return Task.CompletedTask;
+            }
+
+            _hideDebouncer.Cancel();
+            return _showDebouncer.DebounceAsync(() => _visibleState.SetValueAsync(true));
+        }
+
+        internal Task HandlePointerLeaveAsync()
+        {
+            if (!ShowOnHover)
+            {
+                return Task.CompletedTask;
+            }
+
+            _showDebouncer.Cancel();
+            return _hideDebouncer.DebounceAsync(() => _visibleState.SetValueAsync(false));
         }
 
         private Task HandleFocusInAsync()
