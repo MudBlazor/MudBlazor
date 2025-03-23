@@ -14,11 +14,7 @@ namespace MudBlazor
     {
         private IEnumerable<IGrouping<object, T>>? _innerGroupItems;
         private IGrouping<object, T>? _items;
-
-        public DataGridGroupRow()
-        {
-            // TODO make sure Expanded is somehow bindable from GroupExpanded property
-        }
+        private bool _expanded;
 
         protected string GroupClassname => new CssBuilder("mud-table-cell")
             .AddClass("mud-datagrid-group")
@@ -33,7 +29,23 @@ namespace MudBlazor
             .Build();
 
         [Parameter]
-        public bool Expanded { get; set; }
+        public bool Expanded
+        {
+            get => _expanded;
+            set
+            {
+                if (GroupDefinition?.InnerGroup != null)
+                {
+                    SyncInnerGroupItems();
+                }
+                // if values are equal no change
+                if (_expanded == value)
+                {
+                    return;
+                }
+                _expanded = value;
+            }
+        }
 
         [Parameter]
         public required MudDataGrid<T> DataGrid { get; set; }
@@ -98,9 +110,7 @@ namespace MudBlazor
 
         private void GroupExpandClick()
         {
-            Expanded = !Expanded; 
-            GroupDefinition.Expanded = Expanded;
-            DataGrid.GroupItems();
+            _expanded = !_expanded;
         }
     }
 }

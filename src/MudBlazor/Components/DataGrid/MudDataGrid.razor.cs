@@ -38,7 +38,6 @@ namespace MudBlazor
         private CancellationTokenSource _serverDataCancellationTokenSource;
         private IEnumerable<T> _currentRenderFilteredItemsCache = null;
         private GroupDefinition<T> _groupDefinition;
-        private Dictionary<string, bool> _groupExpansionsDict = new();
         private GridData<T> _serverData = new() { TotalItems = 0, Items = Array.Empty<T>() };
         private Func<IFilterDefinition<T>> _defaultFilterDefinitionFactory = () => new FilterDefinition<T>();
 
@@ -2029,7 +2028,7 @@ namespace MudBlazor
             }
 
             // get all columns that are grouped in the order they are grouped
-            var groupedColumns = RenderedColumns.Where(x => x.GroupingState.Value).OrderBy(x => x.GroupByOrder).ToList();
+            var groupedColumns = RenderedColumns.Where(x => x.GroupingState.Value).OrderBy(x => x._groupByOrderState.Value).ToList();
             var allSelectors = groupedColumns.Select(x => x.groupBy).ToList();
 
             // Initialize with the first group definition
@@ -2080,7 +2079,7 @@ namespace MudBlazor
             return new()
             {
                 Selector = column.groupBy,
-                Expanded = column.GroupExpanded,
+                Expanded = column._groupExpandedState.Value,
                 GroupTemplate = column.GroupTemplate,
                 Indentation = column.GroupIndented,
                 Title = column.Title,
@@ -2094,24 +2093,18 @@ namespace MudBlazor
             GroupItems();
         }
 
-        internal void ToggleGroupExpansion(GroupDefinition<T> g)
-        {
-            g.Expanded = !g.Expanded;
-        }
-
         /// <summary>
         /// Expands all groups.
         /// </summary>
         /// <remarks>
         /// Applies when <see cref="Groupable"/> is <c>true</c>.
         /// </remarks>
-        public void ExpandAllGroups()
+        public async Task ExpandAllGroups()
         {
-            if (_groupDefinition != null)
+            if (_groupDefinition != null && _groupable)
             {
-                ExpandGroupRecursively(_groupDefinition);
+                await ToggleGroupExpandRecursively(_groupDefinition, true);
             }
-            GroupItems();
         }
 
         /// <summary>
@@ -2120,37 +2113,24 @@ namespace MudBlazor
         /// <remarks>
         /// Applies when <see cref="Groupable"/> is <c>true</c>.
         /// </remarks>
-        public void CollapseAllGroups()
+        public async Task CollapseAllGroups()
         {
-            if (_groupDefinition != null)
+            if (_groupDefinition != null && _groupable)
             {
-                CollapseGroupRecursively(_groupDefinition);
+                await ToggleGroupExpandRecursively(_groupDefinition, false);
+            }
+        }
+
+        private async Task ToggleGroupExpandRecursively(GroupDefinition<T> group, bool expanded)
+        {
+            foreach (var column in RenderedColumns)
+            {
+                if (column.GroupingState.Value)
+                {
+                    await column._groupExpandedState.SetValueAsync(expanded);
+                }
             }
             GroupItems();
-        }
-
-        private void ExpandGroupRecursively(GroupDefinition<T> group)
-        {
-            group.Expanded = true;
-
-            var currentInnerGroup = group.InnerGroup;
-            while (currentInnerGroup != null)
-            {
-                currentInnerGroup.Expanded = true;
-                currentInnerGroup = currentInnerGroup.InnerGroup;
-            }
-        }
-
-        private void CollapseGroupRecursively(GroupDefinition<T> group)
-        {
-            group.Expanded = false;
-
-            var currentInnerGroup = group.InnerGroup;
-            while (currentInnerGroup != null)
-            {
-                currentInnerGroup.Expanded = false;
-                currentInnerGroup = currentInnerGroup.InnerGroup;
-            }
         }
 
         #endregion

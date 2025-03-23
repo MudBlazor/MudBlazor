@@ -222,9 +222,8 @@
                                         }
                                         foreach (var g in groupItemsPage)
                                         {
-                                            <DataGridGroupRow T="T"
-                                                              GroupDefinition="@_groupDefinition"
-                                                              Items="@g"
+                                            <DataGridGroupRow T="T" Items="@g" Expanded="@_groupDefinition.Expanded"
+                                                              GroupDefinition="@_groupDefinition"                                                             
                                                               GroupClass="@GroupClass"
                                                               GroupStyle="@GroupStyle"
                                                               GroupClassFunc="@GroupClassFunc"

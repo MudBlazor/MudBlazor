@@ -22,6 +22,8 @@ namespace MudBlazor
         private static readonly RenderFragment<CellContext<T>> EmptyChildContent = _ => builder => { };
         internal ParameterState<bool> HiddenState { get; }
         internal ParameterState<bool> GroupingState { get; }
+        internal ParameterState<bool> _groupExpandedState;
+        internal ParameterState<int> _groupByOrderState;
 
         /// <summary>
         /// The data grid which owns this column.
@@ -125,19 +127,31 @@ namespace MudBlazor
         public int GroupByOrder { get; set; }
 
         /// <summary>
+        /// Occurs when the <see cref="GroupByOrder"/> property has changed.
+        /// </summary>
+        [Parameter]
+        public EventCallback<int> GroupByOrderChanged { get; set; }
+
+        /// <summary>
         /// Whether the column is indented 48px beyond it's parent when grouped.
         /// </summary>
         [Parameter]
         public bool GroupIndented { get; set; } = true;
 
         /// <summary>
-        /// Whether groups created from this column start expanded.
+        /// Whether groups created from this column are expanded. Toggling the value will Toggle all grouped rows of this column.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
         /// </remarks>
         [Parameter]
         public bool GroupExpanded { get; set; }
+
+        /// <summary>
+        /// Occurs when the <see cref="GroupExpanded"/> property has changed.
+        /// </summary>
+        [Parameter]
+        public EventCallback<bool> GroupExpandedChanged { get; set; }
 
         /// <summary>
         /// Requires a value to be set.
@@ -571,9 +585,33 @@ namespace MudBlazor
                 .WithParameter(() => Grouping)
                 .WithEventCallback(() => GroupingChanged)
                 .WithChangeHandler(OnGroupingParameterChanged);
+            _groupExpandedState = registerScope.RegisterParameter<bool>(nameof(GroupExpanded))
+                .WithParameter(() => GroupExpanded)
+                .WithChangeHandler(OnGroupExpandedChanged);
+            _groupByOrderState = registerScope.RegisterParameter<int>(nameof(GroupByOrder))
+                .WithParameter(() => GroupByOrder)
+                .WithChangeHandler(OnGroupByOrderChanged);
         }
 
         private void OnGroupingParameterChanged()
+        {
+            // Regroup DataGrid           
+            if (DataGrid is not null)
+            {
+                DataGrid.ChangedGrouping();
+            }
+        }
+
+        private void OnGroupExpandedChanged()
+        {
+            // Regroup DataGrid           
+            if (DataGrid is not null)
+            {
+                DataGrid.ChangedGrouping();
+            }
+        }
+
+        private void OnGroupByOrderChanged()
         {
             // Regroup DataGrid           
             if (DataGrid is not null)

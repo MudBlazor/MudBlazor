@@ -70,7 +70,7 @@ public class GroupDefinition<T>
     }
 
     /// <summary>
-    /// Indents the first column cell for this group by 48px to it's parent
+    /// Indents the each Group beyond the first by 48 px.
     /// </summary>
     public bool Indentation { get; set; } = true;
 

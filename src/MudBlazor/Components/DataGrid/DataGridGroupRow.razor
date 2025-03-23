@@ -29,6 +29,7 @@
             @foreach (var group in _innerGroupItems ?? Enumerable.Empty<IGrouping<object, T>>())
             {
                 <DataGridGroupRow T="T" Items="@group"
+                                Expanded="GroupDefinition.Expanded"
                                 GroupDefinition="GroupDefinition.InnerGroup"
                                 GroupClass="@GroupClass"
                                 GroupStyle="@GroupStyle"
