@@ -70,11 +70,16 @@ class MudScrollManager {
 
     //unlocks the scroll. Default is body
     unlockScroll(selector, lockclass) {
-        let element = document.querySelector(selector) || document.body;
-
-        // remove both lock classes to be sure it's unlocked
-        element.classList.remove(lockclass);
-        element.classList.remove(lockclass + "-no-padding");
+        setTimeout(() => {
+            let overlay = document.querySelector('.mud-overlay');
+            if (overlay === null) {
+                let element = document.querySelector(selector) || document.body;
+            
+                // remove both lock classes to be sure it's unlocked
+                element.classList.remove(lockclass);
+                element.classList.remove(lockclass + "-no-padding");
+            }
+        }, 1);
     }
 };
 window.mudScrollManager = new MudScrollManager();
