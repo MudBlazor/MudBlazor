@@ -159,137 +159,136 @@ namespace MudBlazor.Charts
 
             for (var i = 0; i < _series.Count; i++)
             {
-                var chartLine = new StringBuilder();
-
                 var series = _series[i];
-                var data = series.Data;
-                var chartDataCirlces = _chartDataPoints[i] = [];
 
-                (double x, double y) GetXYForDataPoint(int index)
+                if (series.Visible)
                 {
-                    var x = HorizontalStartSpace + (index * horizontalSpace);
-                    var gridValue = ((data[index] / gridYUnits) - lowestHorizontalLine) * verticalSpace;
-                    var y = _boundHeight - VerticalStartSpace - gridValue;
-                    return (x, y);
-                }
-                double GetYForZeroPoint()
-                {
-                    var gridValue = (0 / gridYUnits - lowestHorizontalLine) * verticalSpace;
-                    var y = _boundHeight - VerticalStartSpace - gridValue;
+                    var chartLine = new StringBuilder();
+                    var data = series.Data;
+                    var chartDataCirlces = _chartDataPoints[i] = [];
 
-                    return y;
-                }
-
-                var zeroPointY = GetYForZeroPoint();
-                double firstPointX = 0;
-                double firstPointY = 0;
-                double lastPointX = 0;
-
-                var interpolationEnabled = MudChartParent != null && MudChartParent.ChartOptions.InterpolationOption != InterpolationOption.Straight;
-                if (interpolationEnabled)
-                {
-                    var interpolationResolution = 10;
-                    var XValues = new double[data.Length];
-                    var YValues = new double[data.Length];
-                    for (var j = 0; j < data.Length; j++)
+                    (double x, double y) GetXYForDataPoint(int index)
                     {
-                        var (x, y) = (XValues[j], YValues[j]) = GetXYForDataPoint(j);
+                        var x = HorizontalStartSpace + (index * horizontalSpace);
+                        var gridValue = ((data[index] / gridYUnits) - lowestHorizontalLine) * verticalSpace;
+                        var y = _boundHeight - VerticalStartSpace - gridValue;
+                        return (x, y);
+                    }
+                    double GetYForZeroPoint()
+                    {
+                        var gridValue = (0 / gridYUnits - lowestHorizontalLine) * verticalSpace;
+                        var y = _boundHeight - VerticalStartSpace - gridValue;
 
-                        var dataValue = data[j];
-
-                        if (MudChartParent?.ChartOptions.ShowToolTips != true)
-                            continue;
-
-                        chartDataCirlces.Add(new()
-                        {
-                            Index = j,
-                            CX = x,
-                            CY = y,
-                            LabelX = x,
-                            LabelXValue = XAxisLabels[j / interpolationResolution],
-                            LabelY = y,
-                            LabelYValue = dataValue.ToString(series.DataMarkerTooltipYValueFormat),
-                        });
+                        return y;
                     }
 
-                    ILineInterpolator interpolator = MudChartParent?.ChartOptions.InterpolationOption switch
+                    var zeroPointY = GetYForZeroPoint();
+                    double firstPointX = 0;
+                    double firstPointY = 0;
+                    double lastPointX = 0;
+
+                    var interpolationEnabled = MudChartParent != null && MudChartParent.ChartOptions.InterpolationOption != InterpolationOption.Straight;
+                    if (interpolationEnabled)
                     {
-                        InterpolationOption.NaturalSpline => new NaturalSpline(XValues, YValues, interpolationResolution),
-                        InterpolationOption.EndSlope => new EndSlopeSpline(XValues, YValues, interpolationResolution),
-                        InterpolationOption.Periodic => new PeriodicSpline(XValues, YValues, interpolationResolution),
-                        _ => throw new NotImplementedException("Interpolation option not implemented yet")
-                    };
-
-                    var horizontalSpaceInterpolated = (_boundWidth - HorizontalStartSpace - HorizontalEndSpace) / (interpolator.InterpolatedXs.Length - 1);
-
-                    for (var j = 0; j < interpolator.InterpolatedYs.Length; j++)
-                    {
-                        var x = HorizontalStartSpace + (j * horizontalSpaceInterpolated);
-                        var y = interpolator.InterpolatedYs[j];
-
-                        if (j == 0)
+                        var interpolationResolution = 10;
+                        var XValues = new double[data.Length];
+                        var YValues = new double[data.Length];
+                        for (var j = 0; j < data.Length; j++)
                         {
-                            chartLine.Append("M ");
-                            firstPointX = x;
-                            firstPointY = y;
-                        }
-                        else
-                            chartLine.Append(" L ");
+                            var (x, y) = (XValues[j], YValues[j]) = GetXYForDataPoint(j);
 
-                        if (j == interpolator.InterpolatedYs.Length - 1)
-                        {
-                            lastPointX = x;
-                        }
+                            var dataValue = data[j];
 
-                        chartLine.Append(ToS(x));
-                        chartLine.Append(' ');
-                        chartLine.Append(ToS(y));
-                    }
-                }
-                else
-                {
-                    for (var j = 0; j < data.Length; j++)
-                    {
-                        var (x, y) = GetXYForDataPoint(j);
+                            if (MudChartParent?.ChartOptions.ShowToolTips != true)
+                                continue;
 
-                        if (j == 0)
-                        {
-                            chartLine.Append("M ");
-                            firstPointX = x;
-                            firstPointY = y;
-                        }
-                        else
-                            chartLine.Append(" L ");
-
-                        if (j == data.Length - 1)
-                        {
-                            lastPointX = x;
-                        }
-
-                        chartLine.Append(ToS(x));
-                        chartLine.Append(' ');
-                        chartLine.Append(ToS(y));
-
-                        var dataValue = data[j];
-
-                        if (MudChartParent?.ChartOptions.ShowToolTips == true)
-                        {
                             chartDataCirlces.Add(new()
                             {
                                 Index = j,
                                 CX = x,
                                 CY = y,
                                 LabelX = x,
-                                LabelXValue = XAxisLabels.Length > j ? XAxisLabels[j] : string.Empty,
+                                LabelXValue = XAxisLabels[j / interpolationResolution],
                                 LabelY = y,
                                 LabelYValue = dataValue.ToString(series.DataMarkerTooltipYValueFormat),
                             });
                         }
-                    }
-                }
 
-                if (series.Visible)
-                {
+                        ILineInterpolator interpolator = MudChartParent?.ChartOptions.InterpolationOption switch
+                        {
+                            InterpolationOption.NaturalSpline => new NaturalSpline(XValues, YValues, interpolationResolution),
+                            InterpolationOption.EndSlope => new EndSlopeSpline(XValues, YValues, interpolationResolution),
+                            InterpolationOption.Periodic => new PeriodicSpline(XValues, YValues, interpolationResolution),
+                            _ => throw new NotImplementedException("Interpolation option not implemented yet")
+                        };
+
+                        var horizontalSpaceInterpolated = (_boundWidth - HorizontalStartSpace - HorizontalEndSpace) / (interpolator.InterpolatedXs.Length - 1);
+
+                        for (var j = 0; j < interpolator.InterpolatedYs.Length; j++)
+                        {
+                            var x = HorizontalStartSpace + (j * horizontalSpaceInterpolated);
+                            var y = interpolator.InterpolatedYs[j];
+
+                            if (j == 0)
+                            {
+                                chartLine.Append("M ");
+                                firstPointX = x;
+                                firstPointY = y;
+                            }
+                            else
+                                chartLine.Append(" L ");
+
+                            if (j == interpolator.InterpolatedYs.Length - 1)
+                            {
+                                lastPointX = x;
+                            }
+
+                            chartLine.Append(ToS(x));
+                            chartLine.Append(' ');
+                            chartLine.Append(ToS(y));
+                        }
+                    }
+                    else
+                    {
+                        for (var j = 0; j < data.Length; j++)
+                        {
+                            var (x, y) = GetXYForDataPoint(j);
+
+                            if (j == 0)
+                            {
+                                chartLine.Append("M ");
+                                firstPointX = x;
+                                firstPointY = y;
+                            }
+                            else
+                                chartLine.Append(" L ");
+
+                            if (j == data.Length - 1)
+                            {
+                                lastPointX = x;
+                            }
+
+                            chartLine.Append(ToS(x));
+                            chartLine.Append(' ');
+                            chartLine.Append(ToS(y));
+
+                            var dataValue = data[j];
+
+                            if (MudChartParent?.ChartOptions.ShowToolTips == true)
+                            {
+                                chartDataCirlces.Add(new()
+                                {
+                                    Index = j,
+                                    CX = x,
+                                    CY = y,
+                                    LabelX = x,
+                                    LabelXValue = XAxisLabels.Length > j ? XAxisLabels[j] : string.Empty,
+                                    LabelY = y,
+                                    LabelYValue = dataValue.ToString(series.DataMarkerTooltipYValueFormat),
+                                });
+                            }
+                        }
+                    }
                     var line = new SvgPath()
                     {
                         Index = i,
@@ -331,6 +330,7 @@ namespace MudBlazor.Charts
                         _chartAreas.Add(i, area);
                     }
                 }
+
                 var legend = new SvgLegend()
                 {
                     Index = i,

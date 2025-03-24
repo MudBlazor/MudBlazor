@@ -336,86 +336,86 @@ namespace MudBlazor.Charts
 
             for (var i = 0; i < _series.Count; i++)
             {
-                var chartLine = new StringBuilder();
-
                 var series = _series[i];
-                var data = series.Data;
-                var chartDataCirlces = _chartDataPoints[i] = [];
 
-                if (data.Count <= 0)
-                    continue;
-
-                (double x, double y) GetXYForDataPoint(int index)
+                if (series.IsVisible)
                 {
-                    var dateTime = data[index].DateTime;
+                    var chartLine = new StringBuilder();
+                    var data = series.Data;
+                    var chartDataCirlces = _chartDataPoints[i] = [];
 
-                    var diffFromMin = dateTime - _minDateTime;
+                    if (data.Count <= 0)
+                        continue;
 
-                    var gridValue = (data[index].Value / gridYUnits - lowestHorizontalLine) * verticalSpace;
-                    var y = _boundHeight - VerticalStartSpace - gridValue;
-
-                    if (fullDateTimeDiff.TotalMilliseconds == 0)
-                        return (HorizontalStartSpace, y);
-
-                    var x = HorizontalStartSpace + (diffFromMin.TotalMilliseconds / fullDateTimeDiff.TotalMilliseconds * (_boundWidth - HorizontalStartSpace - HorizontalEndSpace));
-
-                    return (x, y);
-                }
-                double GetYForZeroPoint()
-                {
-                    var gridValue = (0 / gridYUnits - lowestHorizontalLine) * verticalSpace;
-                    var y = _boundHeight - VerticalStartSpace - gridValue;
-
-                    return y;
-                }
-
-                bool interpolationEnabled = MudChartParent != null && MudChartParent.ChartOptions.InterpolationOption != InterpolationOption.Straight;
-                if (interpolationEnabled)
-                {
-                    // TODO this is not simple to implement, as the x values are not linearly spaced
-                    // and the interpolation should be done based on the datetime
-                    // so we need to find a way to interpolate the x values based on the datetime
-                    // and then interpolate the y values based on the x values
-                    // this is not trivial and needs to be done in a separate PR
-
-                    throw new NotImplementedException("Interpolation not implemented yet for timeseries charts");
-                }
-                else
-                {
-                    for (var j = 0; j < data.Count; j++)
+                    (double x, double y) GetXYForDataPoint(int index)
                     {
-                        var (x, y) = GetXYForDataPoint(j);
+                        var dateTime = data[index].DateTime;
 
-                        if (j == 0)
-                        {
-                            chartLine.Append("M ");
-                        }
-                        else
-                            chartLine.Append(" L ");
+                        var diffFromMin = dateTime - _minDateTime;
 
-                        chartLine.Append(ToS(x));
-                        chartLine.Append(' ');
-                        chartLine.Append(ToS(y));
+                        var gridValue = (data[index].Value / gridYUnits - lowestHorizontalLine) * verticalSpace;
+                        var y = _boundHeight - VerticalStartSpace - gridValue;
 
-                        var dataValue = data[j];
+                        if (fullDateTimeDiff.TotalMilliseconds == 0)
+                            return (HorizontalStartSpace, y);
 
-                        if (MudChartParent?.ChartOptions.ShowToolTips != true)
-                            continue;
+                        var x = HorizontalStartSpace + (diffFromMin.TotalMilliseconds / fullDateTimeDiff.TotalMilliseconds * (_boundWidth - HorizontalStartSpace - HorizontalEndSpace));
 
-                        chartDataCirlces.Add(new()
-                        {
-                            Index = j,
-                            CX = x,
-                            CY = y,
-                            LabelX = x,
-                            LabelXValue = dataValue.DateTime.ToString(MudChartParent?.DataMarkerTooltipTimeLabelFormat ?? "{0}"),
-                            LabelY = y,
-                            LabelYValue = dataValue.Value.ToString(series.DataMarkerTooltipYValueFormat),
-                        });
+                        return (x, y);
                     }
-                }
-                if (_series[i].IsVisible)
-                {
+                    double GetYForZeroPoint()
+                    {
+                        var gridValue = (0 / gridYUnits - lowestHorizontalLine) * verticalSpace;
+                        var y = _boundHeight - VerticalStartSpace - gridValue;
+
+                        return y;
+                    }
+
+                    bool interpolationEnabled = MudChartParent != null && MudChartParent.ChartOptions.InterpolationOption != InterpolationOption.Straight;
+                    if (interpolationEnabled)
+                    {
+                        // TODO this is not simple to implement, as the x values are not linearly spaced
+                        // and the interpolation should be done based on the datetime
+                        // so we need to find a way to interpolate the x values based on the datetime
+                        // and then interpolate the y values based on the x values
+                        // this is not trivial and needs to be done in a separate PR
+
+                        throw new NotImplementedException("Interpolation not implemented yet for timeseries charts");
+                    }
+                    else
+                    {
+                        for (var j = 0; j < data.Count; j++)
+                        {
+                            var (x, y) = GetXYForDataPoint(j);
+
+                            if (j == 0)
+                            {
+                                chartLine.Append("M ");
+                            }
+                            else
+                                chartLine.Append(" L ");
+
+                            chartLine.Append(ToS(x));
+                            chartLine.Append(' ');
+                            chartLine.Append(ToS(y));
+
+                            var dataValue = data[j];
+
+                            if (MudChartParent?.ChartOptions.ShowToolTips != true)
+                                continue;
+
+                            chartDataCirlces.Add(new()
+                            {
+                                Index = j,
+                                CX = x,
+                                CY = y,
+                                LabelX = x,
+                                LabelXValue = dataValue.DateTime.ToString(MudChartParent?.DataMarkerTooltipTimeLabelFormat ?? "{0}"),
+                                LabelY = y,
+                                LabelYValue = dataValue.Value.ToString(series.DataMarkerTooltipYValueFormat),
+                            });
+                        }
+                    }
                     var line = new SvgPath()
                     {
                         Index = i,
@@ -465,8 +465,8 @@ namespace MudBlazor.Charts
                 var legend = new SvgLegend()
                 {
                     Index = i,
-                    Labels = _series[i].Name,
-                    Visible = _series[i].IsVisible,
+                    Labels = series.Name,
+                    Visible = series.IsVisible,
                     OnVisibilityChanged = EventCallback.Factory.Create<SvgLegend>(this, HandleLegendVisibilityChanged)
                 };
                 _legends.Add(legend);
