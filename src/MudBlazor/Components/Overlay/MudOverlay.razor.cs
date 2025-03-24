@@ -45,7 +45,7 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
     public IScrollManager ScrollManager { get; set; } = null!;
 
     /// <summary>
-    /// Pointer events service when pointer events are set to none.
+    /// Pointer events none service when pointer events are set to none.
     /// </summary>
     [Inject]
     private IPointerEventsNoneService PointerEventsNoneService { get; set; } = null!;
@@ -284,7 +284,7 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
     private async Task StartModelessAutoCloseTrackingAsync()
     {
         if (IsJSRuntimeAvailable)
-            await PointerEventsNoneService.SubscribeAsync(this, new(subscribeDown: true));
+            await PointerEventsNoneService.SubscribeAsync(this, new() { SubscribeDown = true });
     }
 
     /// <summary>
@@ -301,6 +301,7 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
         await CloseOverlayAsync();
     }
 
+    /// <inheritdoc />
     public async ValueTask DisposeAsync()
     {
         if (IsJSRuntimeAvailable)

@@ -12,6 +12,15 @@ namespace MudBlazor;
 
 #nullable enable
 
+/// <inheritdoc />
+/// <remarks>
+/// This implementation uses JavaScript interop to globally listen for pointer events such as pointer down and up.
+/// Since elements with <c>pointer-events: none</c> do not receive events normally, the interop captures these events
+/// and checks if they occurred over any registered element IDs. Matching observers are then notified in C#.
+///
+/// This allows you to make elements with disabled pointer interaction still participate in interaction logic,
+/// such as overlays or custom render layers.
+/// </remarks>
 internal sealed class PointerEventsNoneService : IPointerEventsNoneService
 {
     private bool _disposed;
@@ -94,6 +103,15 @@ internal sealed class PointerEventsNoneService : IPointerEventsNoneService
         await _pointerEventsNoneInterop.CancelListenerAsync(elementId, _cancellationToken);
     }
 
+    /// <summary>
+    /// Notifies observers when a pointer down event occurs over one or more of the specified HTML elements.
+    /// This method is invoked from JavaScript via interop.
+    /// </summary>
+    /// <param name="elementIds">An array of element IDs for which the pointer down event was detected.</param>
+    /// <returns>A task representing the asynchronous notification operation.</returns>
+    /// <remarks>
+    /// This method is not exposed in the public API of the <see cref="IPointerEventsNoneService"/> interface and is intended for internal use only.
+    /// </remarks>
     [JSInvokable]
     public Task RaiseOnPointerDown(string[] elementIds)
     {
@@ -103,6 +121,16 @@ internal sealed class PointerEventsNoneService : IPointerEventsNoneService
                 predicate: (id, _) => elementIds.Contains(id));
     }
 
+    /// <summary>
+    /// Notifies observers when a pointer up event occurs on any of the specified HTML elements.
+    /// This method is invoked from JavaScript via interop.
+    /// </summary>
+    /// <param name="elementIds">An array of HTML element IDs that received the pointer up event.</param>
+    /// <returns>A task representing the asynchronous notification operation.</returns>
+    /// <remarks>
+    /// This method is not exposed in the public API of the <see cref="IPointerEventsNoneService"/> interface and is intended for internal use only.
+    /// It is called by the JavaScript layer when a pointer up event is detected globally over elements with <c>pointer-events: none</c>.
+    /// </remarks>
     [JSInvokable]
     public Task RaiseOnPointerUp(string[] elementIds)
     {
