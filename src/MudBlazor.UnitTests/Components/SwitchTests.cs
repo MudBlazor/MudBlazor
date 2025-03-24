@@ -124,7 +124,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Optional Switch should not have required attribute and aria-required should be false.
+        /// Optional Switch should not have required attribute should be false.
         /// </summary>
         [Test]
         public void OptionalSwitch_Should_NotHaveRequiredAttribute()
