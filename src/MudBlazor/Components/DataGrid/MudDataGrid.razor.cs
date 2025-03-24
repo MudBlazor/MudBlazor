@@ -1006,10 +1006,10 @@ namespace MudBlazor
         private bool _groupable = false;
 
         /// <summary>
-        /// Expands grouped columns by default.
+        /// Expands grouped columns by default. Overrides <see cref="Column{T}.GroupExpanded" />
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  Applies when <see cref="Groupable"/> is <c>true</c>.
+        /// Defaults to <c>false</c>. Applies when <see cref="Groupable"/> is <c>true</c>.
         /// </remarks>
         [Parameter]
         public bool GroupExpanded { get; set; }
@@ -2073,12 +2073,13 @@ namespace MudBlazor
             return new List<IGrouping<object, T>>();
         }
 
-        private static GroupDefinition<T> ProcessGroup(Column<T> column)
+        private GroupDefinition<T> ProcessGroup(Column<T> column)
         {
+            var expanded = GroupExpanded ? true : column._groupExpandedState.Value;
             return new()
             {
                 Selector = column.groupBy,
-                Expanded = column._groupExpandedState.Value,
+                Expanded = expanded,
                 GroupTemplate = column.GroupTemplate,
                 Indentation = column.GroupIndented,
                 Title = column.Title,
