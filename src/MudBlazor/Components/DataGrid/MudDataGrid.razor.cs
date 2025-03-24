@@ -2127,7 +2127,7 @@ namespace MudBlazor
         {
             if (_groupDefinition != null && _groupable)
             {
-                await ToggleGroupExpandRecursively(_groupDefinition, true);
+                await ToggleGroupExpandRecursively(true);
             }
         }
 
@@ -2141,11 +2141,11 @@ namespace MudBlazor
         {
             if (_groupDefinition != null && _groupable)
             {
-                await ToggleGroupExpandRecursively(_groupDefinition, false);
+                await ToggleGroupExpandRecursively(false);
             }
         }
 
-        private async Task ToggleGroupExpandRecursively(GroupDefinition<T> group, bool expanded)
+        private async Task ToggleGroupExpandRecursively(bool expanded)
         {
             foreach (var column in RenderedColumns)
             {
@@ -2211,7 +2211,7 @@ namespace MudBlazor
             _resizeService?.DisposeAsync().CatchAndLog();
         }
 
-        private class EmptyGrouping<TKey, TElement> : IGrouping<TKey, TElement>
+        private sealed class EmptyGrouping<TKey, TElement> : IGrouping<TKey, TElement>
         {
             private readonly List<TElement> _elements = new();
 
