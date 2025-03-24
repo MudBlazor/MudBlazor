@@ -26,6 +26,7 @@ namespace MudBlazor
         internal int? _rowsPerPage;
         private int _currentPage = 0;
         private IEnumerable<T> _items;
+        internal bool _groupInitialExpanded = true;
         internal MudVirtualize<IndexBag<T>> _mudVirtualize;
         private bool _isFirstRendered = false;
         private bool _filtersMenuVisible = false;
@@ -2076,7 +2077,9 @@ namespace MudBlazor
 
         private GroupDefinition<T> ProcessGroup(Column<T> column)
         {
-            var expanded = GroupExpanded ? true : column._groupExpandedState.Value;
+            var expanded = _groupInitialExpanded ?
+                            GroupExpanded ? true : column._groupExpandedState.Value :
+                            column._groupExpandedState.Value;
             return new()
             {
                 Selector = column.groupBy,
@@ -2193,6 +2196,7 @@ namespace MudBlazor
                     await column._groupExpandedState.SetValueAsync(expanded);
                 }
             }
+            _groupInitialExpanded = false;
             GroupItems();
         }
 

@@ -89,6 +89,7 @@ namespace MudBlazor
                     DataGrid._groupExpansionsDict.TryAdd(key, Expanded);
                 }
             }
+            DataGrid._groupInitialExpanded = false;
         }
     }
 }

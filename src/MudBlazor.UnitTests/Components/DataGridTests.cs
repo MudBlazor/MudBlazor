@@ -4104,9 +4104,9 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
             await comp.InvokeAsync(() =>
                 comp.Instance.AddFruit());
-            // datagrid should be expanded with the new category
+            // datagrid should not be expanded with the new category since CollapseAll collapsed it (Even if it was empty)
             dataGrid.Render();
-            comp.FindAll("tbody .mud-table-row").Count.Should().Be(5);
+            comp.FindAll("tbody .mud-table-row").Count.Should().Be(3);
         }
 
         [Test]
@@ -4122,9 +4122,9 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(2));
             await comp.InvokeAsync(() =>
                 comp.Instance.AddFruit());
-            // datagrid should be expanded with the new category
+            // datagrid should not be expanded with the new category since CollapseAll collapsed it (Even if it was empty)
             dataGrid.Render();
-            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(5));
+            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(3));
         }
 
         [Test]
@@ -4139,9 +4139,9 @@ namespace MudBlazor.UnitTests.Components
             // after all groups are collapsed
             comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(2));
             await comp.InvokeAsync(() => comp.Instance.AddFruit());
-            // datagrid should be expanded with the new category
+            // datagrid should not be expanded with the new category since CollapseAll collapsed it (Even if it was empty)
             dataGrid.Render();
-            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(5));
+            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(3));
         }
 
         [Test]
@@ -4157,9 +4157,9 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(7);
             await comp.InvokeAsync(() =>
                 comp.Instance.AddFruit());
-            // datagrid should be collapsed with the new category
+            // datagrid should not be collapsed with the new category since ExpandAll expanded it (Even if it was empty)
             dataGrid.Render();
-            comp.FindAll("tbody .mud-table-row").Count.Should().Be(8);
+            comp.FindAll("tbody .mud-table-row").Count.Should().Be(10);
         }
 
         [Test]
@@ -4175,9 +4175,9 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
             await comp.InvokeAsync(() =>
                 comp.Instance.AddFruit());
-            // datagrid should be collapsed with the new category
+            // datagrid should not be collapsed with the new category since ExpandAll expanded it (Even if it was empty)
             dataGrid.Render();
-            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(8));
+            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(10));
         }
 
         [Test]
@@ -4192,9 +4192,9 @@ namespace MudBlazor.UnitTests.Components
             // after all groups are expanded
             comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
             await comp.InvokeAsync(() => comp.Instance.AddFruit());
-            // datagrid should be collapsed with the new category
+            // datagrid should not be collapsed with the new category since ExpandAll expanded it (Even if it was empty)
             dataGrid.Render();
-            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(8));
+            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(10));
         }
 
         [Test]
