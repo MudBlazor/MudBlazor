@@ -13,9 +13,11 @@ class MudPointerEventsNone {
     }
 
     listenForPointerEvents(dotNetReference, elementId, options) {
-        this.logger = options?.enableLogging
-            ? (msg, ...args) => console.log("[MudBlazor | PointerEventsNone]", msg, ...args)
-            : (msg, ...args) => { };
+        if (options && options.enableLogging) {
+            this.logger = (msg, ...args) => console.log("[MudBlazor | PointerEventsNone]", msg, ...args);
+        } else {
+            this.logger = (msg, ...args) => { };
+        }
 
         this.logger("Called listenForPointerEvents", { dotNetReference, elementId, options });
 
