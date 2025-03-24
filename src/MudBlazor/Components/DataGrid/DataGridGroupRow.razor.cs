@@ -44,7 +44,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.DataGrid.Grouping)]
-        public IGrouping<object, T>? Items { get; set; }
+        public IGrouping<object?, T>? Items { get; set; }
 
         [Parameter]
         [Category(CategoryTypes.DataGrid.Appearance)]
@@ -69,17 +69,26 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             base.OnInitialized();
-
-            // Initialize expansion state from GroupDefinition
-            if (GroupDefinition != null)
-            {
-                Expanded = GroupDefinition.Expanded;
-            }
         }
 
         private void GroupExpandClick()
         {
             Expanded = !Expanded;
+            if (Items != null)
+            {
+                var key = new { GroupDefinition.Title, Items?.Key };
+                if (DataGrid._groupExpansionsDict.ContainsKey(key))
+                {
+                    if (Expanded == GroupDefinition.Expanded)
+                        DataGrid._groupExpansionsDict.Remove(key);
+                    else
+                        DataGrid._groupExpansionsDict[key] = Expanded;
+                }
+                else
+                {
+                    DataGrid._groupExpansionsDict.TryAdd(key, Expanded);
+                }
+            }
         }
     }
 }

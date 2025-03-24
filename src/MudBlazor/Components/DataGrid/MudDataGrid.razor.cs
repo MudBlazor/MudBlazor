@@ -38,6 +38,7 @@ namespace MudBlazor
         private CancellationTokenSource _serverDataCancellationTokenSource;
         private IEnumerable<T> _currentRenderFilteredItemsCache = null;
         private GroupDefinition<T> _groupDefinition;
+        internal Dictionary<NullableObject<object>, bool> _groupExpansionsDict = new();
         private GridData<T> _serverData = new() { TotalItems = 0, Items = Array.Empty<T>() };
         private Func<IFilterDefinition<T>> _defaultFilterDefinitionFactory = () => new FilterDefinition<T>();
 
@@ -2092,10 +2093,18 @@ namespace MudBlazor
             List<GroupDefinition<T>> result = new();
             foreach (var group in groups)
             {
+                bool expanded = false;
+                if (group is { Key: not null })
+                {
+                    var key = new { groupDef.Title, group.Key };
+                    expanded = _groupExpansionsDict.ContainsKey(key) ?
+                                   _groupExpansionsDict[key] :
+                                   groupDef.Expanded;
+                }
                 result.Add(new GroupDefinition<T>
                 {
                     Selector = groupDef.Selector,
-                    Expanded = groupDef.Expanded,
+                    Expanded = expanded,
                     GroupTemplate = groupDef.GroupTemplate,
                     Indentation = groupDef.Indentation,
                     Title = groupDef.Title,
@@ -2176,6 +2185,7 @@ namespace MudBlazor
 
         private async Task ToggleGroupExpandRecursively(bool expanded)
         {
+            _groupExpansionsDict.Clear();
             foreach (var column in RenderedColumns)
             {
                 if (column.GroupingState.Value)

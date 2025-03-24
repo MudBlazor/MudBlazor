@@ -4797,7 +4797,7 @@ namespace MudBlazor.UnitTests.Components
             cells[28].TextContent.Should().Be("Neon"); cells[29].TextContent.Should().Be("10");
             //get next page
             dataGrid.Instance.CurrentPage = 1;
-            await comp.InvokeAsync(async () => await dataGrid.Instance.CollapseAllGroups());
+            await comp.InvokeAsync(() => dataGrid.Instance.CollapseAllGroups());
             cells = dataGrid.FindAll("td");
             cells.Count.Should().Be(10, because: "We have 10 data rows with one group collapsed from next page");
             await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroups());
