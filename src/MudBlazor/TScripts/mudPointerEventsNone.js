@@ -13,7 +13,12 @@ class MudPointerEventsNone {
     }
 
     listenForPointerEvents(dotNetReference, elementId, options) {
-        if (options && options.enableLogging) {
+        if (!options) {
+            this.logger("options object is required but was not provided");
+            return;
+        }
+
+        if (options.enableLogging) {
             this.logger = (msg, ...args) => console.log("[MudBlazor | PointerEventsNone]", msg, ...args);
         } else {
             this.logger = (msg, ...args) => { };
@@ -28,11 +33,6 @@ class MudPointerEventsNone {
 
         if (!elementId) {
             this.logger("elementId is required but was not provided");
-            return;
-        }
-
-        if (!options) {
-            this.logger("options object is required but was not provided");
             return;
         }
 
