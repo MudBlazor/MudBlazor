@@ -2119,16 +2119,44 @@ namespace MudBlazor
         }
 #nullable disable
         /// <summary>
+        /// Expands all groups async.
+        /// </summary>
+        /// <remarks>
+        /// Applies when <see cref="Groupable"/> is <c>true</c>.
+        /// </remarks>
+        public async Task ExpandAllGroupsAsync()
+        {
+            if (_groupDefinition != null && _groupable)
+            {
+                await ToggleGroupExpandRecursively(true);
+            }
+        }
+
+        /// <summary>
         /// Expands all groups.
         /// </summary>
         /// <remarks>
         /// Applies when <see cref="Groupable"/> is <c>true</c>.
         /// </remarks>
-        public async Task ExpandAllGroups()
+        public void ExpandAllGroups()
         {
             if (_groupDefinition != null && _groupable)
             {
-                await ToggleGroupExpandRecursively(true);
+                ToggleGroupExpandRecursively(true).CatchAndLog();
+            }
+        }
+
+        /// <summary>
+        /// Collapses all groups async.
+        /// </summary>
+        /// <remarks>
+        /// Applies when <see cref="Groupable"/> is <c>true</c>.
+        /// </remarks>
+        public async Task CollapseAllGroupsAsync()
+        {
+            if (_groupDefinition != null && _groupable)
+            {
+                await ToggleGroupExpandRecursively(false);
             }
         }
 
@@ -2138,11 +2166,11 @@ namespace MudBlazor
         /// <remarks>
         /// Applies when <see cref="Groupable"/> is <c>true</c>.
         /// </remarks>
-        public async Task CollapseAllGroups()
+        public void CollapseAllGroups()
         {
             if (_groupDefinition != null && _groupable)
             {
-                await ToggleGroupExpandRecursively(false);
+                ToggleGroupExpandRecursively(false).CatchAndLog();
             }
         }
 
