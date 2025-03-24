@@ -6,6 +6,9 @@ namespace MudBlazor;
 
 #nullable enable
 
+/// <summary>
+/// Represents a pointer events observer that handles pointer down and pointer up events for a specific HTML element.
+/// </summary>
 public class PointerEventsNoneObserver : IPointerEventsNoneObserver
 {
     private readonly string _elementId;
@@ -13,7 +16,13 @@ public class PointerEventsNoneObserver : IPointerEventsNoneObserver
     private readonly IPointerUpObserver _pointerUpObserver;
     private static readonly PointerEventsObserverIgnore _ignore = new();
 
-    public PointerEventsNoneObserver(string elementId, IPointerDownObserver? pointerDownObserver, IPointerUpObserver? pointerUpObserver)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PointerEventsNoneObserver"/> class
+    /// </summary>
+    /// <param name="elementId">The unique identifier of the HTML element to observe.</param>
+    /// <param name="pointerDownObserver">The observer for pointer down events.</param>
+    /// <param name="pointerUpObserver">The observer for pointer up events.</param>
+    internal PointerEventsNoneObserver(string elementId, IPointerDownObserver? pointerDownObserver, IPointerUpObserver? pointerUpObserver)
     {
         _elementId = elementId;
         _pointerDownObserver = pointerDownObserver ?? _ignore;
@@ -29,9 +38,17 @@ public class PointerEventsNoneObserver : IPointerEventsNoneObserver
     /// <inheritdoc />
     Task IPointerUpObserver.NotifyOnPointerUpAsync(EventArgs args) => _pointerUpObserver.NotifyOnPointerUpAsync(args);
 
+    /// <summary>
+    /// Gets a <see cref="IPointerDownObserver"/> that ignores pointer down events.
+    /// </summary>
+    /// <returns>An instance of <see cref="IPointerDownObserver"/> that ignores pointer down events.</returns>
     public static IPointerDownObserver PointerDownIgnore() => _ignore;
 
+    /// <summary>
+    /// Gets a <see cref="IPointerUpObserver"/> that ignores pointer up events.
+    /// </summary>
+    /// <returns>An instance of <see cref="IPointerDownObserver"/> that ignores pointer down events.</returns>
     public static IPointerUpObserver PointerUpIgnore() => _ignore;
 
-    private class PointerEventsObserverIgnore : IPointerDownObserver, IPointerUpObserver;
+    private sealed class PointerEventsObserverIgnore : IPointerDownObserver, IPointerUpObserver;
 }
