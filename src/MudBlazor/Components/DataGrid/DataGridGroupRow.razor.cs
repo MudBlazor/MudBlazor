@@ -66,17 +66,12 @@ namespace MudBlazor
         [Category(CategoryTypes.DataGrid.Appearance)]
         public string? StyleClass { get; set; }
 
-        protected override void OnInitialized()
-        {
-            base.OnInitialized();
-        }
-
         private void GroupExpandClick()
         {
             Expanded = !Expanded;
             if (Items != null)
             {
-                var key = new { GroupDefinition.Title, Items?.Key };
+                var key = new { GroupDefinition.Title, Items.Key };
                 if (DataGrid._groupExpansionsDict.ContainsKey(key))
                 {
                     if (Expanded == GroupDefinition.Expanded)

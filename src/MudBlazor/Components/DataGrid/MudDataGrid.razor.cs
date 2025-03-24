@@ -39,7 +39,7 @@ namespace MudBlazor
         private CancellationTokenSource _serverDataCancellationTokenSource;
         private IEnumerable<T> _currentRenderFilteredItemsCache = null;
         private GroupDefinition<T> _groupDefinition;
-        internal Dictionary<NullableObject<object>, bool> _groupExpansionsDict = new();
+        internal Dictionary<NullableObject<object>, bool> _groupExpansionsDict = [];
         private GridData<T> _serverData = new() { TotalItems = 0, Items = Array.Empty<T>() };
         private Func<IFilterDefinition<T>> _defaultFilterDefinitionFactory = () => new FilterDefinition<T>();
 
@@ -2039,7 +2039,7 @@ namespace MudBlazor
             var currentGroupDef = _groupDefinition;
 
             // Start from index 1 since we've already processed the first column
-            for (int i = 1; i < groupedColumns.Count; i++)
+            for (var i = 1; i < groupedColumns.Count; i++)
             {
                 var nextGroupDef = ProcessGroup(groupedColumns[i]);
                 // Connect it to the current level
@@ -2078,7 +2078,7 @@ namespace MudBlazor
         private GroupDefinition<T> ProcessGroup(Column<T> column)
         {
             var expanded = _groupInitialExpanded ?
-                            GroupExpanded ? true : column._groupExpandedState.Value :
+                            (GroupExpanded || column._groupExpandedState.Value) :
                             column._groupExpandedState.Value;
             return new()
             {
@@ -2096,7 +2096,7 @@ namespace MudBlazor
             List<GroupDefinition<T>> result = new();
             foreach (var group in groups)
             {
-                bool expanded = false;
+                var expanded = false;
                 if (group is { Key: not null })
                 {
                     var key = new { groupDef.Title, group.Key };
@@ -2124,7 +2124,7 @@ namespace MudBlazor
             // If col is not null add GroupByOrder is not set set it to the end
             if (col is { _groupByOrderState.Value: 0 })
             {
-                int maxOrder = RenderedColumns.Max(x => x._groupByOrderState.Value);
+                var maxOrder = RenderedColumns.Max(x => x._groupByOrderState.Value);
                 await col._groupByOrderState.SetValueAsync(maxOrder + 1);
             }
             GroupItems();
