@@ -10,9 +10,11 @@ namespace MudBlazor
     public partial class DataGridVirtualizeRow<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase
     {
         [Parameter]
+        [Category(CategoryTypes.DataGrid.Data)]
         public required MudDataGrid<T> DataGrid { get; set; }
 
         [Parameter]
+        [Category(CategoryTypes.DataGrid.Grouping)]
         public IGrouping<object, T>? GroupedItems { get; set; }
     }
 }

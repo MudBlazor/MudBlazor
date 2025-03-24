@@ -3697,11 +3697,11 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGridAggregationTest()
+        public async Task DataGridAggregationTest()
         {
             var comp = Context.RenderComponent<DataGridAggregationTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridAggregationTest.Model>>();
-
+            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroups());
             dataGrid.FindAll("td.footer-cell")[1].TrimmedText().Should().Be("Average age is 56");
             dataGrid.FindAll("tfoot td.footer-cell")[1].TrimmedText().Should().Be("Average age is 43");
         }

@@ -25,36 +25,45 @@ namespace MudBlazor
             .Build();
 
         [Parameter]
+        [Category(CategoryTypes.DataGrid.Behavior)]
         public bool Expanded { get; set; }
 
         [Parameter]
+        [Category(CategoryTypes.DataGrid.Grouping)]
         public required MudDataGrid<T> DataGrid { get; set; }
 
         /// <summary>
         /// The definition for this grouping level
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.DataGrid.Grouping)]
         public GroupDefinition<T> GroupDefinition { get; set; } = default!;
 
         /// <summary>
         /// The groups and items within this grouping.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.DataGrid.Grouping)]
         public IGrouping<object, T>? Items { get; set; }
 
         [Parameter]
+        [Category(CategoryTypes.DataGrid.Appearance)]
         public string? GroupClass { get; set; }
 
         [Parameter]
+        [Category(CategoryTypes.DataGrid.Appearance)]
         public string? GroupStyle { get; set; }
 
         [Parameter]
+        [Category(CategoryTypes.DataGrid.Appearance)]
         public Func<GroupDefinition<T>, string>? GroupClassFunc { get; set; }
 
         [Parameter]
+        [Category(CategoryTypes.DataGrid.Appearance)]
         public Func<GroupDefinition<T>, string>? GroupStyleFunc { get; set; }
 
         [Parameter]
+        [Category(CategoryTypes.DataGrid.Appearance)]
         public string? StyleClass { get; set; }
 
         protected override void OnInitialized()
