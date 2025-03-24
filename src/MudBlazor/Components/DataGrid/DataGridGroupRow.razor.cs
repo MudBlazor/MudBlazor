@@ -28,14 +28,14 @@ namespace MudBlazor
         [Category(CategoryTypes.DataGrid.Behavior)]
         public bool Expanded { get; set; }
 
-        [Parameter]
+        [Parameter, EditorRequired]
         [Category(CategoryTypes.DataGrid.Grouping)]
-        public required MudDataGrid<T> DataGrid { get; set; }
+        public MudDataGrid<T> DataGrid { get; set; } = default!;
 
         /// <summary>
         /// The definition for this grouping level
         /// </summary>
-        [Parameter]
+        [Parameter, EditorRequired]
         [Category(CategoryTypes.DataGrid.Grouping)]
         public GroupDefinition<T> GroupDefinition { get; set; } = default!;
 

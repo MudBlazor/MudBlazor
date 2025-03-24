@@ -9,9 +9,9 @@ namespace MudBlazor
 {
     public partial class DataGridVirtualizeRow<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase
     {
-        [Parameter]
+        [Parameter, EditorRequired]
         [Category(CategoryTypes.DataGrid.Data)]
-        public required MudDataGrid<T> DataGrid { get; set; }
+        public MudDataGrid<T> DataGrid { get; set; } = default!;
 
         [Parameter]
         [Category(CategoryTypes.DataGrid.Grouping)]
