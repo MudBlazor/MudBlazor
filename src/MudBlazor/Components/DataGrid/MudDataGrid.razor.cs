@@ -2256,8 +2256,6 @@ namespace MudBlazor
 
         private sealed class EmptyGrouping<TKey, TElement> : IGrouping<TKey, TElement>
         {
-            private readonly List<TElement> _elements = new();
-
             public TKey Key { get; }
 
             public EmptyGrouping(TKey key)
@@ -2265,7 +2263,7 @@ namespace MudBlazor
                 Key = key;
             }
 
-            public IEnumerator<TElement> GetEnumerator() => _elements.GetEnumerator();
+            public IEnumerator<TElement> GetEnumerator() => Enumerable.Empty<TElement>().GetEnumerator();
 
             System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
         }
