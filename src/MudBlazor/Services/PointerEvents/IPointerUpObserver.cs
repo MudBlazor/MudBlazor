@@ -8,7 +8,15 @@ namespace MudBlazor;
 
 #nullable enable
 
+/// <summary>
+/// Represents an observer that observes and responds to pointer up events.
+/// </summary>
 public interface IPointerUpObserver
 {
+    /// <summary>
+    /// Notifies the observer of a pointer up event.
+    /// </summary>
+    /// <param name="args">The event arguments associated with the pointer up event.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
     Task NotifyOnPointerUpAsync(EventArgs args) => Task.CompletedTask;
 }
