@@ -4,25 +4,23 @@
 
 namespace MudBlazor;
 
+/// <summary>
+/// Represents options for <see cref="IPointerEventsNoneService"/>.
+/// </summary>
 public class PointerEventsNoneOptions
 {
+    /// <summary>
+    /// Output event and debug information to the browser's console.
+    /// </summary>
     public bool EnableLogging { get; init; }
 
+    /// <summary>
+    /// Subscribe to pointer down events.
+    /// </summary>
     public bool SubscribeDown { get; init; }
 
+    /// <summary>
+    /// Subscribe to pointer up events.
+    /// </summary>
     public bool SubscribeUp { get; init; }
-
-    public PointerEventsNoneOptions()
-    {
-    }
-
-    public PointerEventsNoneOptions(
-        bool enableLogging = false,
-        bool subscribeDown = false,
-        bool subscribeUp = false)
-    {
-        EnableLogging = enableLogging;
-        SubscribeDown = subscribeDown;
-        SubscribeUp = subscribeUp;
-    }
 }
