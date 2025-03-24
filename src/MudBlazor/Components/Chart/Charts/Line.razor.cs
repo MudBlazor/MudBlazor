@@ -349,11 +349,10 @@ namespace MudBlazor.Charts
             RebuildChart();
         }
 
-        private void OnDataPointMouseOver(MouseEventArgs _, SvgCircle dataPoint)
+        private void OnDataPointMouseOver(MouseEventArgs _, SvgCircle dataPoint, SvgPath seriesPath)
         {
             _hoveredDataPoint = dataPoint;
-            var seriesIndex = _chartDataPoints.First(x => x.Value.Contains(_hoveredDataPoint)).Key;
-            _hoverDataPointChartLine = _chartLines[seriesIndex];
+            _hoverDataPointChartLine = seriesPath;
         }
 
         private void OnDataPointMouseOut(MouseEventArgs _)
