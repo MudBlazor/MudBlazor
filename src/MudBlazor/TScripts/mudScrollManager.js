@@ -71,7 +71,7 @@ class MudScrollManager {
     //unlocks the scroll. Default is body
     unlockScroll(selector, lockclass) {
         setTimeout(() => {
-            let overlay = document.querySelector('.mud-overlay');
+            let overlay = document.querySelector(".mud-overlay");
             if (overlay === null) {
                 let element = document.querySelector(selector) || document.body;
             
