@@ -2029,7 +2029,6 @@ namespace MudBlazor
 
             // get all columns that are grouped in the order they are grouped
             var groupedColumns = RenderedColumns.Where(x => x.GroupingState.Value).OrderBy(x => x._groupByOrderState.Value).ToList();
-            var allSelectors = groupedColumns.Select(x => x.groupBy).ToList();
 
             // Initialize with the first group definition
             _groupDefinition = ProcessGroup(groupedColumns[0]);
@@ -2086,13 +2085,38 @@ namespace MudBlazor
                 Grouping = new EmptyGrouping<object?, T>(null) // Ensure Grouping is not null
             };
         }
-#nullable disable
 
-        internal void ChangedGrouping()
+        internal IEnumerable<GroupDefinition<T>> GetGroupDefinitions(GroupDefinition<T> groupDef, IEnumerable<IGrouping<object?, T>> groups)
         {
-            GroupItems();
+            List<GroupDefinition<T>> result = new();
+            foreach (var group in groups)
+            {
+                result.Add(new GroupDefinition<T>
+                {
+                    Selector = groupDef.Selector,
+                    Expanded = groupDef.Expanded,
+                    GroupTemplate = groupDef.GroupTemplate,
+                    Indentation = groupDef.Indentation,
+                    Title = groupDef.Title,
+                    Parent = groupDef.Parent,
+                    InnerGroup = groupDef.InnerGroup,
+                    Grouping = group,
+                });
+            }
+            return result;
         }
 
+        internal async Task ChangedGrouping(Column<T>? col = null)
+        {
+            // If col is not null add GroupByOrder is not set set it to the end
+            if (col is { _groupByOrderState.Value: 0 })
+            {
+                int maxOrder = RenderedColumns.Max(x => x._groupByOrderState.Value);
+                await col._groupByOrderState.SetValueAsync(maxOrder + 1);
+            }
+            GroupItems();
+        }
+#nullable disable
         /// <summary>
         /// Expands all groups.
         /// </summary>

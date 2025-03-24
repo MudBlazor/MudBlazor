@@ -584,39 +584,39 @@ namespace MudBlazor
             GroupingState = registerScope.RegisterParameter<bool>(nameof(Grouping))
                 .WithParameter(() => Grouping)
                 .WithEventCallback(() => GroupingChanged)
-                .WithChangeHandler(OnGroupingParameterChanged);
+                .WithChangeHandler(OnGroupingParameterChangedAsync);
             _groupExpandedState = registerScope.RegisterParameter<bool>(nameof(GroupExpanded))
                 .WithParameter(() => GroupExpanded)
-                .WithChangeHandler(OnGroupExpandedChanged);
+                .WithChangeHandler(OnGroupExpandedChangedAsync);
             _groupByOrderState = registerScope.RegisterParameter<int>(nameof(GroupByOrder))
                 .WithParameter(() => GroupByOrder)
-                .WithChangeHandler(OnGroupByOrderChanged);
+                .WithChangeHandler(OnGroupByOrderChangedAsync);
         }
 
-        private void OnGroupingParameterChanged()
+        private async Task OnGroupingParameterChangedAsync()
         {
             // Regroup DataGrid           
             if (DataGrid is not null)
             {
-                DataGrid.ChangedGrouping();
+                await DataGrid.ChangedGrouping(this);
             }
         }
 
-        private void OnGroupExpandedChanged()
+        private async Task OnGroupExpandedChangedAsync()
         {
-            // Regroup DataGrid           
+            // Regroup DataGrid
             if (DataGrid is not null)
             {
-                DataGrid.ChangedGrouping();
+                await DataGrid.ChangedGrouping();
             }
         }
 
-        private void OnGroupByOrderChanged()
+        private async Task OnGroupByOrderChangedAsync()
         {
             // Regroup DataGrid           
             if (DataGrid is not null)
             {
-                DataGrid.ChangedGrouping();
+                await DataGrid.ChangedGrouping();
             }
         }
 

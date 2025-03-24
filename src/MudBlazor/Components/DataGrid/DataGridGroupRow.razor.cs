@@ -1,4 +1,4 @@
-﻿﻿// Copyright (c) MudBlazor 2021
+﻿// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -12,10 +12,6 @@ namespace MudBlazor
 {
     public partial class DataGridGroupRow<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase
     {
-        private IEnumerable<IGrouping<object, T>>? _innerGroupItems;
-        private IGrouping<object, T>? _items;
-        private bool _expanded;
-
         protected string GroupClassname => new CssBuilder("mud-table-cell")
             .AddClass("mud-datagrid-group")
             .AddClass($"mud-row-group-indented-{(GroupDefinition.Indentation ? Math.Min(GroupDefinition.Level, 5) : 0)}")
@@ -29,23 +25,7 @@ namespace MudBlazor
             .Build();
 
         [Parameter]
-        public bool Expanded
-        {
-            get => _expanded;
-            set
-            {
-                if (GroupDefinition?.InnerGroup != null)
-                {
-                    SyncInnerGroupItems();
-                }
-                // if values are equal no change
-                if (_expanded == value)
-                {
-                    return;
-                }
-                _expanded = value;
-            }
-        }
+        public bool Expanded { get; set; }
 
         [Parameter]
         public required MudDataGrid<T> DataGrid { get; set; }
@@ -60,15 +40,7 @@ namespace MudBlazor
         /// The groups and items within this grouping.
         /// </summary>
         [Parameter]
-        public IGrouping<object, T>? Items
-        {
-            get => _items;
-            set
-            {
-                _items = value;
-                SyncInnerGroupItems();
-            }
-        }
+        public IGrouping<object, T>? Items { get; set; }
 
         [Parameter]
         public string? GroupClass { get; set; }
@@ -96,21 +68,9 @@ namespace MudBlazor
             }
         }
 
-        private void SyncInnerGroupItems()
-        {
-            if (GroupDefinition?.InnerGroup != null && Items != null)
-            {
-                _innerGroupItems = DataGrid?.GetItemsOfGroup(GroupDefinition.InnerGroup, Items);
-            }
-            else
-            {
-                _innerGroupItems = new List<IGrouping<object, T>>();
-            }
-        }
-
         private void GroupExpandClick()
         {
-            _expanded = !_expanded;
+            Expanded = !Expanded;
         }
     }
 }

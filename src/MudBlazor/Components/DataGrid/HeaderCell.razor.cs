@@ -506,8 +506,12 @@ namespace MudBlazor
             if (Column is not null)
             {
                 await Column.SetGroupingAsync(true);
+                await DataGrid.ChangedGrouping(Column);
             }
-            DataGrid.ChangedGrouping();
+            else
+            {
+                await DataGrid.ChangedGrouping();
+            }
             DataGrid.DropContainerHasChanged();
         }
 
@@ -517,7 +521,7 @@ namespace MudBlazor
             {
                 await Column.SetGroupingAsync(false);
             }
-            DataGrid.ChangedGrouping();
+            await DataGrid.ChangedGrouping();
             DataGrid.DropContainerHasChanged();
         }
 
