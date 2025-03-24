@@ -13,6 +13,18 @@ namespace MudBlazor;
 /// <typeparam name="T"></typeparam>
 public class GroupDefinition<T>
 {
+    @* 
+    private IGrouping<object?, T>? _grouping;
+
+    /// <summary>
+    /// The LINQ definition of the grouping.
+    /// </summary>
+    public IGrouping<object?, T> Grouping 
+    { 
+        get => _grouping ?? new EmptyGrouping<object?, T>(null);
+        set => _grouping = value; 
+    }    
+     *@
     private GroupDefinition<T>? _innerGroup;
 
     /// <summary>
