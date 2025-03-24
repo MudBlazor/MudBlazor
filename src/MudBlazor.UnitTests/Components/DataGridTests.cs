@@ -4667,7 +4667,7 @@ namespace MudBlazor.UnitTests.Components
             var genderGrouping = comp.Find(".GroupByGender");
             genderGrouping.Click();
             comp.Instance.IsGenderGrouped.Should().Be(true);
-            comp.Instance.IsAgeGrouped.Should().Be(true, because: "Age is not bound");
+            comp.Instance.IsAgeGrouped.Should().Be(false);
             comp.Instance.IsProfessionGrouped.Should().Be(false);
             var genderCells = Cells();
             genderCells.Count.Should().Be(2, because: "2 data rows");
@@ -4678,7 +4678,7 @@ namespace MudBlazor.UnitTests.Components
             var professionGrouping = comp.Find(".GroupByProfession");
             professionGrouping.Click();
             comp.Instance.IsGenderGrouped.Should().Be(false);
-            comp.Instance.IsAgeGrouped.Should().Be(true, because: "Age is not bound");
+            comp.Instance.IsAgeGrouped.Should().Be(false);
             comp.Instance.IsProfessionGrouped.Should().Be(true);
             var professionCells = Cells();
             professionCells.Count.Should().Be(2, because: "2 data rows");
@@ -4693,9 +4693,9 @@ namespace MudBlazor.UnitTests.Components
             listItems.Count.Should().Be(2);
             var clickablePopover = listItems[1].Find(".mud-menu-item");
             clickablePopover.Click();
-            comp.Instance.IsAgeGrouped.Should().Be(true);
+            comp.Instance.IsAgeGrouped.Should().Be(false);
             comp.Instance.IsGenderGrouped.Should().Be(false);
-            comp.Instance.IsProfessionGrouped.Should().Be(false);
+            comp.Instance.IsProfessionGrouped.Should().Be(true);
             Rows().Count.Should().Be(5, because: "1 header row + 3 data rows + 1 footer row");
 
             //click gender grouping in grid
@@ -4706,9 +4706,9 @@ namespace MudBlazor.UnitTests.Components
             clickablePopover = listItems[1].Find(".mud-menu-item");
             clickablePopover.Click();
             comp.Instance.IsGenderGrouped.Should().Be(true);
-            comp.Instance.IsAgeGrouped.Should().Be(true, because: "Age is not bound");
-            comp.Instance.IsProfessionGrouped.Should().Be(false);
-            Rows().Count.Should().Be(4, because: "1 header row + 2 data rows + 1 footer row");
+            comp.Instance.IsAgeGrouped.Should().Be(false);
+            comp.Instance.IsProfessionGrouped.Should().Be(true);
+            Rows().Count.Should().Be(5, because: "1 header row + 3 data rows + 1 footer row");
 
             //click Name grouping in grid
             headerOption = comp.Find("th.name .mud-menu button");
@@ -4717,9 +4717,9 @@ namespace MudBlazor.UnitTests.Components
             listItems.Count.Should().Be(2);
             clickablePopover = listItems[1].Find(".mud-menu-item");
             clickablePopover.Click();
-            comp.Instance.IsGenderGrouped.Should().Be(false);
-            comp.Instance.IsAgeGrouped.Should().Be(true, because: "Age is not bound");
-            comp.Instance.IsProfessionGrouped.Should().Be(false);
+            comp.Instance.IsGenderGrouped.Should().Be(true);
+            comp.Instance.IsAgeGrouped.Should().Be(false);
+            comp.Instance.IsProfessionGrouped.Should().Be(true);
             Rows().Count.Should().Be(6, because: "1 header row + 4 data rows + 1 footer row");
 
             //click profession grouping in grid
@@ -4729,10 +4729,10 @@ namespace MudBlazor.UnitTests.Components
             listItems.Count.Should().Be(2);
             clickablePopover = listItems[1].Find(".mud-menu-item");
             clickablePopover.Click();
-            comp.Instance.IsGenderGrouped.Should().Be(false);
-            comp.Instance.IsAgeGrouped.Should().Be(true, because: "Age is not bound");
-            comp.Instance.IsProfessionGrouped.Should().Be(true);
-            Rows().Count.Should().Be(4, because: "1 header row + 2 data rows + 1 footer row");
+            comp.Instance.IsGenderGrouped.Should().Be(true);
+            comp.Instance.IsAgeGrouped.Should().Be(false);
+            comp.Instance.IsProfessionGrouped.Should().Be(false);
+            Rows().Count.Should().Be(6, because: "1 header row + 4 data rows + 1 footer row");
         }
 
         [Test]
