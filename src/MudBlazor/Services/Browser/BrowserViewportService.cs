@@ -101,22 +101,16 @@ internal sealed class BrowserViewportService : IBrowserViewportService
         optionsClone.BreakpointDefinitions = BreakpointGlobalOptions.GetDefaultOrUserDefinedBreakpointDefinition(optionsClone, ResizeOptions);
 
         var subscription = await CreateJavaScriptListener(optionsClone, observer.Id);
-        if (_observerManager.IsSubscribed(subscription))
+
+        if (!_observerManager.TryGetOrAddSubscription(subscription, observer, out var newObserver))
         {
-            // Only re-subscribe
-            _observerManager.Subscribe(subscription, observer);
-        }
-        else
-        {
-            // Subscribe and fire if necessary
-            _observerManager.Subscribe(subscription, observer);
             if (fireImmediately)
             {
                 // Not waiting for Browser Size to change and RaiseOnResized to fire and post event with current breakpoint and browser window size
                 var latestWindowSize = await GetCurrentBrowserWindowSizeAsync();
                 var latestBreakpoint = await GetCurrentBreakpointAsync();
                 // Notify only current subscription
-                await observer.NotifyBrowserViewportChangeAsync(new BrowserViewportEventArgs(subscription.JavaScriptListenerId, latestWindowSize, latestBreakpoint, isImmediate: true));
+                await newObserver.NotifyBrowserViewportChangeAsync(new BrowserViewportEventArgs(subscription.JavaScriptListenerId, latestWindowSize, latestBreakpoint, isImmediate: true));
             }
         }
     }
