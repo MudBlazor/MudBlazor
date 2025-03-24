@@ -2,10 +2,8 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.JSInterop;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
@@ -16,11 +14,10 @@ namespace MudBlazor;
 /// <summary>
 /// A layer which darkens a window, often as part of showing a <see cref="MudDialog" />.
 /// </summary>
-public partial class MudOverlay : MudComponentBase, IAsyncDisposable
+public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, IAsyncDisposable
 {
     private readonly string _elementId = Identifier.Create("overlay");
     private readonly ParameterState<bool> _visibleState;
-    private IOverlayPointerDownListener? _pointerDownListener;
 
     protected string Classname =>
         new CssBuilder("mud-overlay")
@@ -41,9 +38,6 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
             .AddStyle(Style)
             .Build();
 
-    [Inject]
-    private IJSRuntime JsRuntime { get; set; } = null!;
-
     /// <summary>
     /// The manager for scroll events.
     /// </summary>
@@ -51,10 +45,10 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
     public IScrollManager ScrollManager { get; set; } = null!;
 
     /// <summary>
-    /// The factory for creating overlay pointer down listeners.
+    /// Pointer events service when pointer events are set to none.
     /// </summary>
     [Inject]
-    public IOverlayPointerDownListenerFactory OverlayPointerDownListenerFactory { get; set; } = null!;
+    private IPointerEventsNoneService PointerEventsNoneService { get; set; } = null!;
 
     /// <summary>
     /// Child content of the component.
@@ -203,6 +197,8 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
         (Class?.Contains("mud-skip-overlay-section") ?? false) ||
         ChildContent != null;
 
+    string IPointerEventsNoneObserver.ElementId => _elementId;
+
     public MudOverlay()
     {
         using var registerScope = CreateRegisterScope();
@@ -235,12 +231,12 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
 
     protected override async Task OnParametersSetAsync()
     {
-        if (!IsJSRuntimeAvailable)
+        if (Modal || !AutoClose)
         {
             return;
         }
 
-        if (Visible && !Modal && AutoClose)
+        if (Visible)
         {
             await StartModelessAutoCloseTrackingAsync();
         }
@@ -283,55 +279,37 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
     }
 
     /// <summary>
-    /// Adds and starts the overlay's pointer down event tracking.
+    /// Subscribes to pointer down events to close the overlay when the user clicks outside of it.
     /// </summary>
-    private async ValueTask StartModelessAutoCloseTrackingAsync()
+    private async Task StartModelessAutoCloseTrackingAsync()
     {
-        if (_pointerDownListener is null)
-        {
-            _pointerDownListener = OverlayPointerDownListenerFactory.Create(_elementId);
-            _pointerDownListener.OnPointerDown += PointerDownListener_OnPointerDown;
-        }
-
-        await _pointerDownListener.StartAsync();
+        if (IsJSRuntimeAvailable)
+            await PointerEventsNoneService.SubscribeAsync(this, new(subscribeDown: true));
     }
 
     /// <summary>
-    /// Closes the overlay when a pointer down event is detected.
+    /// Unsubscribes from pointer down events.
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private async void PointerDownListener_OnPointerDown(object? sender, EventArgs e)
+    private async Task StopModelessAutoCloseTrackingAsync()
+    {
+        if (IsJSRuntimeAvailable)
+            await PointerEventsNoneService.UnsubscribeAsync(this);
+    }
+
+    async Task IPointerDownObserver.NotifyOnPointerDownAsync(EventArgs args)
     {
         await CloseOverlayAsync();
     }
 
-    /// <summary>
-    /// Removes the overlay from the pointer down event tracking.
-    /// </summary>
-    private async ValueTask StopModelessAutoCloseTrackingAsync()
-    {
-        if (_pointerDownListener is null)
-        {
-            return;
-        }
-
-        await _pointerDownListener.StopAsync();
-    }
-
     public async ValueTask DisposeAsync()
     {
-        if (!IsJSRuntimeAvailable)
+        if (IsJSRuntimeAvailable)
         {
             return;
         }
 
         await UnblockScrollAsync();
 
-        if (_pointerDownListener is not null)
-        {
-            _pointerDownListener.OnPointerDown -= PointerDownListener_OnPointerDown;
-            await _pointerDownListener.DisposeAsync();
-        }
+        await StopModelessAutoCloseTrackingAsync();
     }
 }

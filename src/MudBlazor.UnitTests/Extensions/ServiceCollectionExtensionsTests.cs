@@ -378,18 +378,20 @@ public class ServiceCollectionExtensionsTests
     }
 
     [Test]
-    public void AddMudBlazorOverlayPointerDownListenerFactory_ShouldRegisterServices()
+    public void AddMudBlazorPointerEventsNoneService_ShouldRegisterServices()
     {
         // Arrange
-        var services = new ServiceCollection();
+        var services = new ServiceCollection()
+            .AddLogging()
+            .AddSingleton<IJSRuntime, MockJsRuntime>();
 
         // Act
-        services.AddMudBlazorOverlayPointerDownListenerFactory();
+        services.AddMudBlazorPointerEventsNoneService();
         var serviceProvider = services.BuildServiceProvider();
-        var overlayPointerDownListenerFactory = serviceProvider.GetService<IOverlayPointerDownListenerFactory>();
+        var pointerEventsNoneService = serviceProvider.GetService<IPointerEventsNoneService>();
 
         // Assert
-        overlayPointerDownListenerFactory.Should().NotBeNull();
+        pointerEventsNoneService.Should().NotBeNull();
     }
 
     [Test]

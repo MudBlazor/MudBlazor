@@ -2,12 +2,13 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using Microsoft.AspNetCore.Components.Web;
+
 namespace MudBlazor;
 
-public interface IOverlayPointerDownListener : IAsyncDisposable
-{
-    event EventHandler OnPointerDown;
+#nullable enable
 
-    ValueTask<bool> StartAsync();
-    ValueTask<bool> StopAsync();
+public interface IPointerDownObserver
+{
+    Task NotifyOnPointerDownAsync(EventArgs args) => Task.CompletedTask;
 }

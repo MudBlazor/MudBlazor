@@ -4,9 +4,7 @@
 
 namespace MudBlazor;
 
-#nullable enable
-
-public interface IOverlayPointerDownListenerFactory
+public interface IPointerEventsNoneObserver : IPointerDownObserver, IPointerUpObserver
 {
-    IOverlayPointerDownListener Create(string elementId);
+    string ElementId { get; }
 }
