@@ -4588,6 +4588,14 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<Examples.Data.Models.Element>>();
             var popoverProvider = comp.FindComponent<MudPopoverProvider>();
 
+            //ungroup Category
+            var headerCategory = comp.Find("th.group .mud-menu button");
+            headerCategory.Click();
+            var catListItems = popoverProvider.FindComponents<MudMenuItem>();
+            catListItems.Count.Should().Be(4);
+            var clickableCategoryUngroup = catListItems[3].Find(".mud-menu-item");
+            clickableCategoryUngroup.Click();
+
             //click name grouping in grid
             var headerOption = comp.Find("th.name .mud-menu button");
             headerOption.Click();
