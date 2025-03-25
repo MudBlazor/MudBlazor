@@ -1,8 +1,9 @@
 ﻿@namespace MudBlazor
-
+@using MudBlazor.Resources
 @inherits MudComponentBase
+@inject InternalMudLocalizer Localizer
 
-<div @attributes="UserAttributes" role="alert" class="@Classname" Style="@Style" @onclick="OnClick">
+<div @attributes="UserAttributes" class="@Classname" Style="@Style" @onclick="this.AsNonRenderingEventHandler<MouseEventArgs>(OnClickHandler)">
 <div class="@ClassPosition">
     @if (!NoIcon)
     {
@@ -17,7 +18,8 @@
 @if (ShowCloseIcon)
 {
     <div class="mud-alert-close">
-        <MudToggleIconButton Icon="@CloseIcon" @onclick="OnCloseIconClickAsync" Size="Size.Small" />
+        <MudIconButton Class="mud-alert-close-button" Icon="@CloseIcon" @onclick="OnCloseIconClickAsync" Size="Size.Small"
+                        aria-label="@Localizer[LanguageResource.MudAlert_Close]" />
     </div>
 }
 </div>

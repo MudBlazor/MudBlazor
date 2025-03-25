@@ -1,0 +1,29 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<div>
+    <MudChart ChartType="ChartType.Line" ChartSeries="@_series" XAxisLabels="@_xAxisLabels" ChartOptions="@_options" Width="100%" Height="350px"></MudChart>
+    <MudSlider @bind-Value="_options.YAxisTicks" Min="10" Max="400" Step="10" Color="Color.Info">Y-Axis Ticks: @_options.YAxisTicks.ToString()</MudSlider>
+</div>
+
+@code {
+    private readonly List<ChartSeries> _series = new();
+    private readonly ChartOptions _options = new();
+    private readonly string[] _xAxisLabels = { "1986-04-20", "1986-04-21", "1986-04-22", "1986-04-23", "1986-04-24", "1986-04-25", "1986-04-26" };
+
+    protected override void OnInitialized()
+    {
+        double[] data1 = { 65, 68, 70, 74, 74, 72, 74 };
+        double[] data2 = { 88, 90, 91, 92, 91, 90, 90 };
+        double[] data3 = { 89, 91, 92, 92, 92, 92, 91 };
+        double[] data4 = { 85, 86, 90, 90, 92, 99, 0 };
+
+        _series.Add(new ChartSeries { Name = "Chernobyl-1", Data = data1 });
+        _series.Add(new ChartSeries { Name = "Chernobyl-2", Data = data2 });
+        _series.Add(new ChartSeries { Name = "Chernobyl-3", Data = data3 });
+        _series.Add(new ChartSeries { Name = "Chernobyl-4", Data = data4 });
+
+        _options.YAxisTicks = 50;
+
+        StateHasChanged();
+    }
+}

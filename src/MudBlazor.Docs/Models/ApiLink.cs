@@ -1,15 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using MudBlazor.Charts;
-
+﻿using MudBlazor.Charts;
 namespace MudBlazor.Docs.Models
 {
+#nullable enable
     public static class ApiLink
     {
+        /// <summary>
+        /// Gets the URL of the API documentation for a type.
+        /// </summary>
+        /// <param name="type">The type to find.</param>
         public static string GetApiLinkFor(Type type)
         {
-            return $"api/{GetComponentName(type)}";
+            return $"api/{type.Name.Replace("`1", "").Replace("`2", "").ToLowerInvariant()}";
         }
 
         public static string GetComponentLinkFor(Type type)
@@ -24,30 +25,35 @@ namespace MudBlazor.Docs.Models
         ///   button  <see cref="MudButton"/>
         ///   appbar  <see cref="MudAppBar"/>
         /// </summary>
-        public static Type GetTypeFromComponentLink(string component)
+        public static Type? GetTypeFromComponentLink(string component)
         {
-            if (component.Contains('#') == true)
+            if (string.IsNullOrEmpty(component))
             {
-                component = component.Substring(0, component.IndexOf('#'));
+                return null;
+            }
+            if (component.Contains('#'))
+            {
+                component = component[..component.IndexOf('#')];
+            }
+            if (InverseSpecialCase.TryGetValue(component, out var type))
+            {
+                return type;
             }
 
-            if (string.IsNullOrEmpty(component))
-                return null;
-            if (s_inverseSpecialCase.TryGetValue(component, out var type))
-                return type;
-
             var assembly = typeof(MudComponentBase).Assembly;
-            foreach (var x in assembly.GetTypes())
+            foreach (var componentType in assembly.GetTypes())
             {
-                if (new string(x.Name.ToLowerInvariant().TakeWhile(c => c != '`').ToArray()) == $"mud{component}".ToLowerInvariant())
+                var typeNameWithoutGenericInfo = new string(componentType.Name.ToLowerInvariant().TakeWhile(c => c != '`').ToArray());
+                if (typeNameWithoutGenericInfo.Equals($"mud{component}", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    if (x.Name.Contains('`'))
+                    if (componentType.Name.Contains('`'))
                     {
-                        return x.MakeGenericType(typeof(T));
+                        return componentType.MakeGenericType(typeof(T));
                     }
-                    else if (x.Name.ToLowerInvariant() == $"mud{component}".ToLowerInvariant())
+
+                    if (string.Equals(componentType.Name, $"mud{component}", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        return x;
+                        return componentType;
                     }
                 }
             }
@@ -57,16 +63,20 @@ namespace MudBlazor.Docs.Models
 
         private static string GetComponentName(Type type)
         {
-            if (!s_specialCaseComponents.TryGetValue(type, out var component))
+            if (!SpecialCaseComponents.TryGetValue(type, out var component))
             {
-                component = new string(type.ToString().Replace("MudBlazor.Mud", "").TakeWhile(c => c != '`').ToArray())
+                component = new string(type
+                        .ToString()
+                        .Replace("MudBlazor.Mud", "")
+                        .TakeWhile(c => c != '`')
+                        .ToArray())
                     .ToLowerInvariant();
             }
 
             return component;
         }
 
-        private static Dictionary<Type, string> s_specialCaseComponents =
+        private static readonly Dictionary<Type, string> SpecialCaseComponents =
             new()
             {
                 [typeof(MudFab)] = "buttonfab",
@@ -75,15 +85,17 @@ namespace MudBlazor.Docs.Models
                 [typeof(MudText)] = "typography",
                 [typeof(MudSnackbarProvider)] = "snackbar",
                 [typeof(Bar)] = "barchart",
+                [typeof(StackedBar)] = "stackedbarchart",
                 [typeof(Donut)] = "donutchart",
                 [typeof(Line)] = "linechart",
+                [typeof(TimeSeries)] = "timeserieschart",
                 [typeof(Pie)] = "piechart",
-                [typeof(MudChip)] = "chips",
+                [typeof(MudChip<T>)] = "chips",
                 [typeof(ChartOptions)] = "options"
             };
 
         // this is the inversion of above lookup
-        private static Dictionary<string, Type> s_inverseSpecialCase =
-            s_specialCaseComponents.ToDictionary(pair => pair.Value, pair => pair.Key);
+        private static readonly Dictionary<string, Type> InverseSpecialCase =
+            SpecialCaseComponents.ToDictionary(pair => pair.Value, pair => pair.Key);
     }
 }

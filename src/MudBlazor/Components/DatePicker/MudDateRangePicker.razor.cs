@@ -1,47 +1,130 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+    /// <summary>
+    /// Represents a picker for a range of dates.
+    /// </summary>
+    /// <seealso cref="MudDatePicker"/>
     public partial class MudDateRangePicker : MudBaseDatePicker
     {
-        private DateTime? _firstDate = null, _secondDate;
+        private readonly ParameterState<bool> _allowDisabledDatesInCountState;
+        private DateTime? _firstDate = null, _secondDate, _minValidDate, _maxValidDate;
         private DateRange _dateRange;
         private Range<string> _rangeText;
 
         protected override bool IsRange => true;
 
+        /// <summary>
+        /// Creates a new instance.
+        /// </summary>
         public MudDateRangePicker()
         {
+            using var registerScope = CreateRegisterScope();
+            _allowDisabledDatesInCountState = registerScope.RegisterParameter<bool>(nameof(AllowDisabledDatesInCount))
+                .WithParameter(() => AllowDisabledDatesInCount)
+                .WithChangeHandler(RecalculateValidDays);
+
             DisplayMonths = 2;
             AdornmentAriaLabel = "Open Date Range Picker";
         }
 
         /// <summary>
-        /// Fired when the DateFormat changes.
+        /// The maximum number of selectable days.
         /// </summary>
-        [Parameter] public EventCallback<DateRange> DateRangeChanged { get; set; }
+        /// <remarks>
+        /// Inclusive of the selected date.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public int? MaxDays { get; set; }
 
         /// <summary>
-        /// The currently selected range (two-way bindable). If null, then nothing was selected.
+        /// The minimum number of selectable days.
+        /// </summary>
+        /// <remarks>
+        /// Inclusive of the selected date.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public int? MinDays { get; set; }
+
+        /// <summary>
+        /// Include disabled dates within the valid min/max days range.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>. Disabled days will be included in the min/max count. 
+        /// This parameter will take effect when <see cref="MinDays"/> or <see cref="MaxDays"/> is set.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public bool AllowDisabledDatesInCount { get; set; } = true;
+
+        /// <summary>
+        /// The text displayed in the start input if no date is specified.
+        /// </summary>
+        /// <remarks>
+        /// This property is typically used to give the user a hint as to what kind of input is expected.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public string PlaceholderStart { get; set; }
+
+        /// <summary>
+        /// The text displayed in the end input if no date is specified.
+        /// </summary>
+        /// <remarks>
+        /// This property is typically used to give the user a hint as to what kind of input is expected.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public string PlaceholderEnd { get; set; }
+
+        /// <summary>
+        /// The icon displayed between start and end dates.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.ArrowRightAlt"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public string SeparatorIcon { get; set; } = Icons.Material.Filled.ArrowRightAlt;
+
+        /// <summary>
+        /// Occurs when <see cref="DateRange"/> has changed.
+        /// </summary>
+        [Parameter]
+        public EventCallback<DateRange> DateRangeChanged { get; set; }
+
+        /// <summary>
+        /// The currently selected date range.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Data)]
         public DateRange DateRange
         {
             get => _dateRange;
-            set => SetDateRangeAsync(value, true).AndForget();
+            set => SetDateRangeAsync(value, true).CatchAndLog();
         }
+
+        /// <summary>
+        /// Enables capture for disabled dates within the selected date range.
+        /// </summary>
+        /// <remarks>
+        /// By default, it will always ignore disabled dates. This parameter will take effect when <see cref="MudBaseDatePicker.IsDateDisabledFunc"/> is set.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public bool AllowDisabledDatesInRange { get; set; } = false;
 
         protected async Task SetDateRangeAsync(DateRange range, bool updateValue)
         {
             if (_dateRange != range)
             {
-                var doesRangeContainDisabledDates = range?.Start != null && range?.End != null && Enumerable
+                var doesRangeContainDisabledDates = !AllowDisabledDatesInRange && range is { Start: not null, End: not null } && Enumerable
                     .Range(0, int.MaxValue)
                     .Select(index => range.Start.Value.AddDays(index))
                     .TakeWhile(date => date <= range.End.Value)
@@ -56,13 +139,17 @@ namespace MudBlazor
 
                 Touched = true;
 
+                if (range?.Start is not null)
+                    PickerMonth = new DateTime(Culture.Calendar.GetYear(range.Start.Value), Culture.Calendar.GetMonth(range.Start.Value), 1, Culture.Calendar);
+
                 _dateRange = range;
                 _value = range?.End;
+                HighlightedDate = range?.Start;
 
                 if (updateValue)
                 {
                     Converter.GetError = false;
-                    if (_dateRange == null)
+                    if (_dateRange == null || (_dateRange.Start == null && _dateRange.End == null))
                     {
                         _rangeText = null;
                         await SetTextAsync(null, false);
@@ -92,68 +179,152 @@ namespace MudBlazor
 
                 Touched = true;
                 _rangeText = value;
-                SetDateRangeAsync(ParseDateRangeValue(value?.Start, value?.End), false).AndForget();
+                SetDateRangeAsync(ParseDateRangeValue(value?.Start, value?.End), false).CatchAndLog();
             }
         }
 
         private MudRangeInput<string> _rangeInput;
 
         /// <summary>
-        /// Focuses the start date of MudDateRangePicker
+        /// Focuses the start input.
         /// </summary>
-        /// <returns></returns>
         public ValueTask FocusStartAsync() => _rangeInput.FocusStartAsync();
 
         /// <summary>
-        /// Selects the start date of MudDateRangePicker
+        /// Selects the start input text.
         /// </summary>
-        /// <returns></returns>
         public ValueTask SelectStartAsync() => _rangeInput.SelectStartAsync();
 
         /// <summary>
-        /// Selects the specified range of the start date text
+        /// Selects a portion of the start input text.
         /// </summary>
-        /// <param name="pos1">Start position of the selection</param>
-        /// <param name="pos2">End position of the selection</param>
-        /// <returns></returns>
+        /// <param name="pos1">The index of the first character to select.</param>
+        /// <param name="pos2">The index of the last character to select.</param>
         public ValueTask SelectRangeStartAsync(int pos1, int pos2) => _rangeInput.SelectRangeStartAsync(pos1, pos2);
 
         /// <summary>
-        /// Focuses the end date of MudDateRangePicker
+        /// Focuses the end input.
         /// </summary>
-        /// <returns></returns>
         public ValueTask FocusEndAsync() => _rangeInput.FocusEndAsync();
 
         /// <summary>
-        /// Selects the end date of MudDateRangePicker
+        /// Selects the end input text.
         /// </summary>
-        /// <returns></returns>
         public ValueTask SelectEndAsync() => _rangeInput.SelectEndAsync();
 
         /// <summary>
-        /// Selects the specified range of the end date text
+        /// Selects a portion of the end input text.
         /// </summary>
-        /// <param name="pos1">Start position of the selection</param>
-        /// <param name="pos2">End position of the selection</param>
-        /// <returns></returns>
+        /// <param name="pos1">The index of the first character to select.</param>
+        /// <param name="pos2">The index of the last character to select.</param>
         public ValueTask SelectRangeEndAsync(int pos1, int pos2) => _rangeInput.SelectRangeEndAsync(pos1, pos2);
 
-        protected override Task DateFormatChanged(string newFormat)
+        protected override Task DateFormatChangedAsync(string newFormat)
         {
             Touched = true;
+            _rangeText = null;
+            if (_dateRange?.Start != null || _dateRange?.End != null)
+            {
+                _rangeText = new Range<string>(
+                    Converter.Set(_dateRange.Start),
+                    Converter.Set(_dateRange.End));
+            }
+
             return SetTextAsync(_dateRange?.ToString(Converter), false);
         }
 
-        protected override Task StringValueChanged(string value)
+        protected override Task StringValueChangedAsync(string value)
         {
             Touched = true;
-            // Update the daterange property (without updating back the Value property)
+            // Update the date range property (without updating back the Value property)
             return SetDateRangeAsync(ParseDateRangeValue(value), false);
         }
 
-        protected override bool HasValue(DateTime? value)
+        protected override bool HasValue(DateTime? value) => value is not null;
+
+        protected override bool IsDayDisabled(DateTime date)
         {
-            return null != value && value.HasValue;
+            if (_firstDate is null || _secondDate is not null)
+            {
+                return base.IsDayDisabled(date);
+            }
+
+            var selectedDate = _firstDate.Value;
+            var validDateRange = GetValidDateRange(selectedDate);
+
+            return base.IsDayDisabled(date) || MudDateRangePicker.IsDateOutOfRange(date, selectedDate, validDateRange);
+        }
+
+        private DateRange GetValidDateRange(DateTime selectedDate)
+        {
+            var start = MinDays switch
+            {
+                null => selectedDate,
+                _ when _allowDisabledDatesInCountState.Value => selectedDate.Date.AddDays(MinDays.Value - 1),
+                _ => _minValidDate
+            };
+
+            var end = MaxDays switch
+            {
+                null => DateTime.MaxValue,
+                _ when _allowDisabledDatesInCountState.Value => selectedDate.Date.AddDays(MaxDays.Value - 1),
+                _ => _maxValidDate
+            };
+
+            return new DateRange(start, end);
+        }
+
+        private static bool IsDateOutOfRange(DateTime date, DateTime selectedDate, DateRange validRange)
+        {
+            var isNotSelectedDate = date < selectedDate || date > selectedDate;
+            var isOutsideValidRange = date < validRange.Start || date > validRange.End;
+
+            return isNotSelectedDate && isOutsideValidRange;
+        }
+
+        private DateTime GetMaxSelectableDate(DateTime startDate, int maxDays)
+        {
+            var validDayCount = 1;
+            var lastValidDate = startDate;
+            var maxDate = startDate.AddDays(1);
+
+            while (validDayCount < maxDays)
+            {
+                if (!IsDateDisabledFunc(maxDate))
+                {
+                    validDayCount++;
+                    lastValidDate = maxDate;
+                }
+
+                if (validDayCount == maxDays)
+                    break;
+
+                if (maxDate.Date > MaxDate.GetValueOrDefault(startDate.AddYears(50)).Date)
+                    break;
+
+                if (maxDate.Date == DateTime.MaxValue.Date)
+                    break;
+
+                maxDate = maxDate.AddDays(1);
+            }
+
+            return lastValidDate;
+        }
+
+        /// <summary>
+        /// Recalculate the valid days in relation to the <see cref="MinDays"/> and <see cref="MaxDays"/> allowed
+        /// </summary>
+        public void RecalculateValidDays()
+        {
+            if (_firstDate is null) return;
+
+            if (MinDays is not null)
+                _minValidDate = GetMaxSelectableDate(_firstDate.Value, MinDays.Value);
+
+            if (MaxDays is not null)
+                _maxValidDate = GetMaxSelectableDate(_firstDate.Value, MaxDays.Value);
+
+            StateHasChanged();
         }
 
         private DateRange ParseDateRangeValue(string value)
@@ -166,10 +337,19 @@ namespace MudBlazor
             return DateRange.TryParse(start, end, Converter, out var dateRange) ? dateRange : null;
         }
 
-        protected override void OnPickerClosed()
+        protected override Task OnPickerClosedAsync()
         {
             _firstDate = null;
-            base.OnPickerClosed();
+
+            return base.OnPickerClosedAsync();
+        }
+
+        private bool CheckDateRange(DateTime day, Func<DateTime, DateTime, bool> compareStart, Func<DateTime, DateTime, bool> compareEnd)
+        {
+            return _firstDate is null
+                && _dateRange is { Start: { } start, End: { } end }
+                && compareStart(start.Date, day)
+                && compareEnd(end.Date, day);
         }
 
         protected override string GetDayClasses(int month, DateTime day)
@@ -181,8 +361,13 @@ namespace MudBlazor
                 return b.AddClass("mud-hidden").Build();
             }
 
-            if ((_firstDate != null && _secondDate != null && _firstDate < day && _secondDate > day) ||
-                (_firstDate == null && _dateRange != null && _dateRange.Start < day && _dateRange.End > day))
+            static bool isLessThan(DateTime date1, DateTime date2) => date1 < date2;
+            static bool isGreaterThan(DateTime date1, DateTime date2) => date1 > date2;
+            static bool isEqualTo(DateTime date1, DateTime date2) => date1 == date2;
+            static bool isNotEqualTo(DateTime date1, DateTime date2) => date1 != date2;
+
+
+            if ((_firstDate?.Date < day && _secondDate?.Date > day) || CheckDateRange(day, compareStart: isLessThan, compareEnd: isGreaterThan))
             {
                 return b
                     .AddClass("mud-range")
@@ -191,8 +376,14 @@ namespace MudBlazor
                     .Build();
             }
 
-            if ((_firstDate != null && day == _firstDate) ||
-                (_firstDate == null && _dateRange != null && _dateRange.Start == day && DateRange.End != day))
+            if (_firstDate?.Date == day && _secondDate?.Date == day)
+            {
+                return b.AddClass("mud-selected")
+                    .AddClass($"mud-theme-{Color.ToDescriptionString()}")
+                    .Build();
+            }
+
+            if (_firstDate?.Date == day || CheckDateRange(day, compareStart: isEqualTo, compareEnd: isNotEqualTo))
             {
                 return b.AddClass("mud-selected")
                     .AddClass("mud-range")
@@ -202,8 +393,7 @@ namespace MudBlazor
                     .Build();
             }
 
-            if ((_firstDate != null && _secondDate != null && day == _secondDate) ||
-                (_firstDate == null && _dateRange != null && _dateRange.Start != day && _dateRange.End == day))
+            if ((_firstDate is { } && _secondDate?.Date == day) || CheckDateRange(day, compareStart: isNotEqualTo, compareEnd: isEqualTo))
             {
                 return b.AddClass("mud-selected")
                     .AddClass("mud-range")
@@ -212,15 +402,15 @@ namespace MudBlazor
                     .Build();
             }
 
-            if (_firstDate == null && _dateRange != null && _dateRange.Start == _dateRange.End && _dateRange.Start == day)
+            if (CheckDateRange(day, compareStart: isEqualTo, compareEnd: isEqualTo))
             {
                 return b.AddClass("mud-selected").AddClass($"mud-theme-{Color.ToDescriptionString()}").Build();
             }
-            else if (_firstDate != null && day > _firstDate)
+            else if (_firstDate?.Date < day)
             {
-                return b.AddClass("mud-range", _secondDate == null && day != DateTime.Today)
+                return b.AddClass("mud-range", _secondDate is null && day != DateTime.Today)
                     .AddClass("mud-range-selection")
-                    .AddClass($"mud-range-selection-{Color.ToDescriptionString()}", _firstDate != null)
+                    .AddClass($"mud-range-selection-{Color.ToDescriptionString()}", _firstDate is not null)
                     .AddClass($"mud-current mud-{Color.ToDescriptionString()}-text mud-button-outlined mud-button-outlined-{Color.ToDescriptionString()}", day == DateTime.Today)
                     .Build();
             }
@@ -236,35 +426,45 @@ namespace MudBlazor
             return b.Build();
         }
 
-        protected override async void OnDayClicked(DateTime dateTime)
+        protected override async Task OnDayClickedAsync(DateTime dateTime)
         {
-            if (_firstDate == null || _firstDate > dateTime || _secondDate != null)
+            if (_firstDate == null || _secondDate != null)
             {
                 _secondDate = null;
                 _firstDate = dateTime;
+
+                RecalculateValidDays();
+
                 return;
             }
-
-            _secondDate = dateTime;
+            if (_firstDate > dateTime)
+            {
+                _secondDate = _firstDate;
+                _firstDate = dateTime;
+            }
+            else
+            {
+                _secondDate = dateTime;
+            }
             if (PickerActions == null || AutoClose)
             {
-                Submit();
+                await SubmitAsync();
 
                 if (PickerVariant != PickerVariant.Static)
                 {
                     await Task.Delay(ClosingDelay);
-                    Close(false);
+                    await CloseAsync(false);
                 }
             }
         }
 
-        protected override void OnOpened()
+        protected override Task OnOpenedAsync()
         {
             _secondDate = null;
-            base.OnOpened();
+            return base.OnOpenedAsync();
         }
 
-        protected internal override async void Submit()
+        protected internal override async Task SubmitAsync()
         {
             if (GetReadOnlyState())
                 return;
@@ -277,11 +477,11 @@ namespace MudBlazor
             _secondDate = null;
         }
 
-        public override void Clear(bool close = true)
+        public override Task ClearAsync(bool close = true)
         {
             DateRange = null;
             _firstDate = _secondDate = null;
-            base.Clear();
+            return base.ClearAsync(close);
         }
 
         protected override string GetTitleDateString()
@@ -300,10 +500,10 @@ namespace MudBlazor
             return date.StartOfMonth(Culture);
         }
 
-        protected override int GetCalendarYear(int year)
+        protected override int GetCalendarYear(DateTime yearDate)
         {
             var date = DateRange?.Start ?? DateTime.Today;
-            var diff = date.Year - year;
+            var diff = Culture.Calendar.GetYear(date) - Culture.Calendar.GetYear(yearDate);
             var calenderYear = Culture.Calendar.GetYear(date);
             return calenderYear - diff;
         }

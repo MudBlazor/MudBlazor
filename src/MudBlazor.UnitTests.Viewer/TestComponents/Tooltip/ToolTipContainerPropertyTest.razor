@@ -1,11 +1,10 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudPopoverProvider></MudPopoverProvider>
+﻿<MudPopoverProvider />
 
 <MudTooltip Text="My TooltipContent" Inline="@Inline">
-	<MudButton>My Buttion</MudButton>
+	<MudButton>My Button</MudButton>
 </MudTooltip>
 
 @code {
-	[Parameter] public bool Inline { get; set; } = true;
+	[Parameter]
+    public bool Inline { get; set; } = true;
 }

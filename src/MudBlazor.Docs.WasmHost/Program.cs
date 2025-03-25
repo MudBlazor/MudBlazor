@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Net.Http;
-using Blazor.Analytics;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MudBlazor.Docs.Extensions;
-using MudBlazor.Docs.WasmHost.Prerender;
+using MudBlazor.Docs.Models;
 using MudBlazor.Docs.Services;
 using MudBlazor.Docs.Services.Notifications;
-using MudBlazor.Examples.Data;
+using MudBlazor.Docs.WasmHost.Prerender;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,13 +23,13 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped(sp =>
 {
     var context = sp.GetRequiredService<IHttpContextAccessor>().HttpContext;
-    var client = new HttpClient { BaseAddress = new Uri($"{context.Request.Scheme}://{context.Request.Host}{context.Request.PathBase}") };
+    var client = new HttpClient { BaseAddress = new Uri($"{context?.Request.Scheme}://{context?.Request.Host}{context?.Request.PathBase}") };
 
     return client;
 });
 builder.Services.TryAddDocsViewServices();
 //set the capacity max so that content is not queue. Again this is for prerending to serve the entire page back to crawler
-builder.Services.AddSingleton<IRenderQueueService>(new RenderQueueService { Capacity = int.MaxValue });
+builder.Services.AddScoped<IRenderQueueService>(s => new RenderQueueService { Capacity = int.MaxValue });
 
 builder.Services.AddSingleton<ICrawlerIdentifier>(new FileBasedCrawlerIdentifier("CrawlerInfo.json"));
 
@@ -65,13 +63,16 @@ app.MapFallbackToPage("/_Host");
 using (var scope = app.Services.CreateScope())
 {
     var notificationService = scope.ServiceProvider.GetService<INotificationService>();
-    if (notificationService is InMemoryNotificationService inmemoryService)
+    if (notificationService is InMemoryNotificationService inMemoryService)
     {
-        inmemoryService.Preload();
+        inMemoryService.Preload();
     }
 
     var crawlerIdentifier = scope.ServiceProvider.GetRequiredService<ICrawlerIdentifier>();
     await crawlerIdentifier.Initialize();
+
+    // Warm up the documentation
+    ApiDocumentation.GetType("MudAlert");
 }
 
 app.Run();

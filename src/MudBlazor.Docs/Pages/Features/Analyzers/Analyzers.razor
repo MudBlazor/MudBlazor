@@ -1,0 +1,34 @@
+﻿@page "/features/analyzers"
+@using System.Reflection
+@using System.Text.RegularExpressions
+
+<DocsPage>
+    <DocsPageHeader Title="Analyzers">
+        <Description>
+            MudBlazor includes a Roslyn analyzer to detect common MudBlazor issues at compile time.
+        </Description>
+    </DocsPageHeader>
+    <DocsPageContent>
+        
+        <DocsPageSection>
+            <SectionHeader Title="MUD0002">
+                <Description>
+                    Identifies attributes set on MudBlazor components that don't match a defined pattern. This helps prevent component parameter errors due to typos or changes in MudBlazor.
+                    The warning will only indicate the correct .razor file, not the exact location. 
+                    Configure the analyzer by adding the code below to your <CodeInline>.csproj</CodeInline> file.
+                </Description>
+            </SectionHeader>
+            <MUD0002ConfigurationTable />
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="Custom Attribute List">
+                        <Description>
+                            The HTMLAttributes option can use a custom list of attributes. Configure this by adding the code below to your <CodeInline>.csproj</CodeInline> file.
+                        </Description>
+                    </SectionHeader>
+                </DocsPageSection>
+                <MUD0002CustomAttributeList />
+            </SectionSubGroups>
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>

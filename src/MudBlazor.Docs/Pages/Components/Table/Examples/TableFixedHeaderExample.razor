@@ -30,8 +30,8 @@
     </PagerContent>
 </MudTable>
 
-<MudSwitch @bind-Checked="@fixed_header">Fixed Header</MudSwitch>
-<MudSwitch @bind-Checked="@fixed_footer">Fixed Footer</MudSwitch>
+<MudSwitch @bind-Value="fixed_header" Color="Color.Primary">Fixed Header</MudSwitch>
+<MudSwitch @bind-Value="fixed_footer" Color="Color.Primary">Fixed Footer</MudSwitch>
 
 @code {
     bool fixed_header = true;

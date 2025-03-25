@@ -1,11 +1,11 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudSwitch @bind-Checked="@_outlined" Label="Outlined Card" Color="Color.Primary" />
-<MudSwitch @bind-Checked="@_modifiers" Label="Disable Modifiers" Color="Color.Secondary" />
+<MudSwitch @bind-Value="Outlined" Label="Outlined Card" Color="Color.Primary" />
+<MudSwitch @bind-Value="Modifiers" Label="Modifiers" Color="Color.Secondary" />
 
-<MudTimeline TimelinePosition="TimelinePosition.Start" DisableModifiers="@_modifiers">
-    <MudTimelineItem Size="Size.Medium" Color="Color.Info" Elevation="@(_outlined ? 0 : 25)">
-        <MudCard Outlined="@_outlined" Elevation="25">
+<MudTimeline TimelinePosition="TimelinePosition.Start" Modifiers="@Modifiers">
+    <MudTimelineItem Size="Size.Medium" Color="Color.Info" Elevation="@(Outlined ? 0 : 25)">
+        <MudCard Outlined="@Outlined" Elevation="25">
             <MudCardContent>
                 <MudText Typo="Typo.h6">Kopparberg</MudText>
                 <MudText Typo="Typo.body2">Kopparberg is a locality and the seat of Ljusnarsberg, Örebro County, Sweden, with 4,200 inhabitants in 2015.</MudText>
@@ -16,6 +16,6 @@
 </MudTimeline>
 
 @code{
-    public bool _modifiers { get; set; }
-    public bool _outlined { get; set; }
+    public bool Modifiers { get; set; } = true;
+    public bool Outlined { get; set; }
 }

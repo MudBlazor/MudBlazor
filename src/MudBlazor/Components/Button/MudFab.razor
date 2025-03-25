@@ -6,22 +6,22 @@
             Class="@Classname"
             Style="@Style"
             @attributes="UserAttributes"
-            @onclick="OnClickHandler"
+            @onclick="this.AsNonRenderingEventHandler<MouseEventArgs>(OnClickHandler)"
             type="@ButtonType.ToDescriptionString()"
             href="@Href"
             target="@Target"
             rel="@GetRel()"
             disabled="@GetDisabledState()"
-            title="@Title">
+            ClickPropagation="@GetClickPropagation()">
     <span class="mud-fab-label">
         @if (!string.IsNullOrWhiteSpace(StartIcon))
         {
-            <MudIcon Icon="@StartIcon" Color="@IconColor" Size="@IconSize" />
+            <MudIcon Disabled="@Disabled" Icon="@StartIcon" Color="@IconColor" Size="@IconSize" />
         }
         @Label
         @if (!string.IsNullOrWhiteSpace(EndIcon))
         {
-            <MudIcon Icon="@EndIcon" Color="@IconColor" Size="@IconSize" />
+            <MudIcon Disabled="@Disabled" Icon="@EndIcon" Color="@IconColor" Size="@IconSize" />
         }
     </span>
 </MudElement>

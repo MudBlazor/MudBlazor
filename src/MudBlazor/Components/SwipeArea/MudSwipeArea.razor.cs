@@ -1,15 +1,17 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
 #nullable enable
+
+    /// <summary>
+    /// An area which receives swipe events for devices where touch events are supported.
+    /// </summary>
     public partial class MudSwipeArea : MudComponentBase
     {
-        private static readonly string[] _preventDefaultEventNames = { "touchstart", "touchend", "touchcancel" };
+        private static readonly string[] _preventDefaultEventNames = ["onpointerdown", "onpointerup", "onpointercancel"];
 
         private double? _swipeDelta;
         internal int[]? _listenerIds;
@@ -17,33 +19,44 @@ namespace MudBlazor
         private bool _preventDefaultChanged;
         private ElementReference _componentRef;
 
+        /// <summary>
+        /// The content within this swipe area.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.SwipeArea.Behavior)]
         public RenderFragment? ChildContent { get; set; }
 
-        [Obsolete("Use OnSwipeEnd instead.")]
-        [Parameter]
-        [Category(CategoryTypes.SwipeArea.Behavior)]
-        public Action<SwipeDirection>? OnSwipe { get; set; }
-
+        /// <summary>
+        /// Occurs when a swipe has ended.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.SwipeArea.Behavior)]
         public EventCallback<SwipeEventArgs> OnSwipeEnd { get; set; }
 
         /// <summary>
-        /// Swipe threshold in pixels. If SwipeDelta is below Sensitivity then OnSwipe is not called.
+        /// The amount of pixels which must be swiped to raise the <see cref="OnSwipeEnd"/> event.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>100</c> (100 pixels).
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.SwipeArea.Behavior)]
         public int Sensitivity { get; set; } = 100;
 
         /// <summary>
-        /// Prevents default behavior of the browser when swiping.
-        /// Usable especially when swiping up/down - this will prevent the whole page from scrolling up/down.
+        /// Prevents the default behavior of the browser when swiping.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>. Typically <c>true</c> when swiping up or down, which will prevent the whole page from scrolling.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.SwipeArea.Behavior)]
         public bool PreventDefault { get; set; }
+
+        protected string Classname =>
+            new CssBuilder("mud-swipearea")
+                .AddClass(Class)
+                .Build();
 
         /// <inheritdoc />
         public override async Task SetParametersAsync(ParameterView parameters)
@@ -83,21 +96,21 @@ namespace MudBlazor
             }
         }
 
-        internal void OnTouchStart(TouchEventArgs arg)
+        internal void OnPointerDown(PointerEventArgs arg)
         {
-            _xDown = arg.Touches[0].ClientX;
-            _yDown = arg.Touches[0].ClientY;
+            _xDown = arg.ClientX;
+            _yDown = arg.ClientY;
         }
 
-        internal async Task OnTouchEnd(TouchEventArgs arg)
+        internal async Task OnPointerUp(PointerEventArgs arg)
         {
             if (_xDown is null || _yDown is null)
             {
                 return;
             }
 
-            var xDiff = _xDown.Value - arg.ChangedTouches[0].ClientX;
-            var yDiff = _yDown.Value - arg.ChangedTouches[0].ClientY;
+            var xDiff = _xDown.Value - arg.ClientX;
+            var yDiff = _yDown.Value - arg.ClientY;
 
             if (Math.Abs(xDiff) < Sensitivity && Math.Abs(yDiff) < Sensitivity)
             {
@@ -119,23 +132,10 @@ namespace MudBlazor
             }
 
             await OnSwipeEnd.InvokeAsync(new SwipeEventArgs(arg, swipeDirection, _swipeDelta, this));
-#pragma warning disable CS0618
-            if (OnSwipe != null)
-            {
-                await InvokeAsync(() => OnSwipe(swipeDirection));
-            }
-#pragma warning restore CS0618
             _xDown = _yDown = null;
         }
 
-        /// <summary>
-        /// The last successful swipe difference in pixels since the last OnSwipe invocation
-        /// </summary>
-        [ExcludeFromCodeCoverage]
-        [Obsolete("Use OnSwipeEnd to get SwipeDelta")]
-        public double? GetSwipeDelta() => _swipeDelta;
-
-        internal void OnTouchCancel(TouchEventArgs arg)
+        internal void OnPointerCancel(PointerEventArgs arg)
         {
             _xDown = _yDown = null;
         }

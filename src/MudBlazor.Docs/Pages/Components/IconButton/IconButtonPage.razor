@@ -1,36 +1,36 @@
 ﻿@page "/components/iconbutton"
 
 <DocsPage>
-    <DocsPageHeader Title="Icon Button">
+    <DocsPageHeader Title="Icon Button" Component="@nameof(MudIconButton)">
         <Description>
-            Similar to <CodeInline>MudButton</CodeInline> but with icons. For guidance and suggestions, go to <MudLink Href="/components/icons">Icons.</MudLink>
+            Similar to <ApiTypeLink TypeName="MudButton" /> but with icons. For guidance and suggestions, go to <MudLink Href="/components/icons">Icons.</MudLink>
         </Description>
     </DocsPageHeader>
     <DocsPageContent>
 
         <DocsPageSection>
             <SectionHeader Title="Simple Icon Buttons">
-                <Description>With the librarys preloaded icons. Check out our <MudLink Href="/features/icons">icon page</MudLink> to find out what you can use.</Description>
+                <Description>With the library's preloaded icons. Check out our <MudLink Href="/features/icons">icon page</MudLink> to find out what you can use.</Description>
             </SectionHeader>
-            <SectionContent Code="IconButtonSimpleExample">
+            <SectionContent Code="@nameof(IconButtonSimpleExample)">
                 <IconButtonSimpleExample />
             </SectionContent>
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Using font icons">
+            <SectionHeader Title="Using Font Icons">
                 <Description>In this example, we are passing down <MudLink Href="https://fontawesome.com/icons">Font Awesome</MudLink> icon classes instead.</Description>
             </SectionHeader>
-            <SectionContent Code="IconButtonFontIconExample">
+            <SectionContent Code="@nameof(IconButtonFontIconExample)">
                 <IconButtonFontIconExample />
             </SectionContent>
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Variant">
+            <SectionHeader Title="Variant and Size">
                 <Description>If preferred, it's possible to apply the same style of a text button using the <CodeInline>Variant</CodeInline> parameter.</Description>
             </SectionHeader>
-            <SectionContent Code="IconButtonStyleExample">
+            <SectionContent Code="@nameof(IconButtonStyleExample)">
                 <IconButtonStyleExample />
             </SectionContent>
         </DocsPageSection>

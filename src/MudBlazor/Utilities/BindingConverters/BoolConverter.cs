@@ -1,4 +1,5 @@
 ﻿using System;
+using MudBlazor.Resources;
 
 namespace MudBlazor
 {
@@ -59,12 +60,12 @@ namespace MudBlazor
                     return (T?)result;
                 }
 
-                UpdateGetError($"Conversion to type {typeof(T)} not implemented");
+                UpdateGetError(LanguageResource.Converter_ConversionNotImplemented, [typeof(T)]);
                 return default(T);
             }
             catch (Exception exception)
             {
-                UpdateGetError($"Conversion error: {exception.Message}");
+                UpdateGetError(LanguageResource.Converter_ConversionError, [exception.Message]);
                 return default(T);
             }
         }
@@ -93,13 +94,13 @@ namespace MudBlazor
                     case string:
                         return null;
                     default:
-                        UpdateSetError($"Unable to convert to bool? from type {typeof(T).Name}");
+                        UpdateSetError(LanguageResource.Converter_UnableToConvert, ["bool?", typeof(T).Name]);
                         return null;
                 }
             }
             catch (FormatException exception)
             {
-                UpdateSetError($"Conversion error: {exception.Message}");
+                UpdateSetError(LanguageResource.Converter_ConversionError, [exception.Message]);
                 return null;
             }
         }

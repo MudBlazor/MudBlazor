@@ -20,18 +20,15 @@ internal class BatchPeriodicQueue<T> : BackgroundWorkerBase
     private readonly ConcurrentQueue<T> _items;
     private readonly PeriodicTimer _periodicTimer;
     private readonly IBatchTimerHandler<T> _handler;
-    private readonly bool _tickOnDispose;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="BatchPeriodicQueue{T}"/> class with the specified batch timer handler and period.
     /// </summary>
     /// <param name="handler">The batch timer handler.</param>
     /// <param name="period">The time period for triggering batch execution.</param>
-    /// <param name="tickOnDispose">>Specifies whether to trigger a guaranteed <see cref="IBatchTimerHandler{T}.OnBatchTimerElapsedAsync"/> when calling <see cref="DisposeAsync"/>.</param>
-    public BatchPeriodicQueue(IBatchTimerHandler<T> handler, TimeSpan period, bool tickOnDispose = true)
+    public BatchPeriodicQueue(IBatchTimerHandler<T> handler, TimeSpan period)
     {
         _handler = handler;
-        _tickOnDispose = tickOnDispose;
         _items = new ConcurrentQueue<T>();
         _periodicTimer = new PeriodicTimer(period);
     }
@@ -48,16 +45,10 @@ internal class BatchPeriodicQueue<T> : BackgroundWorkerBase
     public int Count => _items.Count;
 
     /// <inheritdoc/>
-    public override async ValueTask DisposeAsync()
+    public override void Dispose()
     {
         _periodicTimer.Dispose();
-        await base.DisposeAsync();
-
-        if (_tickOnDispose)
-        {
-            //If there is anything left over in the list we trigger so the handler could do something with this for example cleanup
-            await OnBatchTimerElapsedAsync();
-        }
+        base.Dispose();
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)

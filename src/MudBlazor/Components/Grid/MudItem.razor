@@ -1,47 +1,6 @@
 ﻿@namespace MudBlazor
-@using MudBlazor.Utilities
-@using MudBlazor.Extensions
 @inherits MudComponentBase
 
 <div @attributes="UserAttributes" class="@Classname" style="@Style">
     @ChildContent
 </div>
-
-@code { 
-    protected string Classname =>
-    new CssBuilder("mud-grid-item")
-        .AddClass($"mud-grid-item-xs-{xs.ToString()}", xs != 0)
-        .AddClass($"mud-grid-item-sm-{sm.ToString()}", sm != 0)
-        .AddClass($"mud-grid-item-md-{md.ToString()}", md != 0)
-        .AddClass($"mud-grid-item-lg-{lg.ToString()}", lg != 0)
-        .AddClass($"mud-grid-item-xl-{xl.ToString()}", xl != 0)
-        .AddClass($"mud-grid-item-xxl-{xxl.ToString()}", xxl != 0)
-      .AddClass(Class)
-    .Build();
-
-    [CascadingParameter]
-    private MudGrid Parent { get; set; }
-
-    [Parameter] [Category(CategoryTypes.Item.Behavior)] public int xs { get; set; }
-    [Parameter] [Category(CategoryTypes.Item.Behavior)] public int sm { get; set; }
-    [Parameter] [Category(CategoryTypes.Item.Behavior)] public int md { get; set; }
-    [Parameter] [Category(CategoryTypes.Item.Behavior)] public int lg { get; set; }
-    [Parameter] [Category(CategoryTypes.Item.Behavior)] public int xl { get; set; }
-    [Parameter] [Category(CategoryTypes.Item.Behavior)] public int xxl { get; set; }
-
-    // ToDo false,auto,true on all sizes.
-
-    [Parameter]
-    [Category(CategoryTypes.Item.Behavior)]
-    public RenderFragment ChildContent { get; set; }
-
-    protected override void OnInitialized()
-    {
-        // NOTE: we can't throw here, the component must be able to live alone for the docs API to infer default parameters
-        //if (Parent == null)
-        //    throw new ArgumentNullException(nameof(Parent), "Item must exist within a Grid");
-        base.OnInitialized();
-    }
-
-}
-

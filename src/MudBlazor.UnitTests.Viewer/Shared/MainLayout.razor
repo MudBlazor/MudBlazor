@@ -1,7 +1,14 @@
 ﻿@inherits LayoutComponentBase
 
-<MudThemeProvider/>
+<MudPopoverProvider/>
 <MudDialogProvider/>
 <MudSnackbarProvider/>
 
 @Body
+
+@code {
+    static MainLayout()
+    {
+        MudGlobal.TooltipDefaults.Delay = TimeSpan.FromMilliseconds(500);
+    }
+}

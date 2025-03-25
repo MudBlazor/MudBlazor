@@ -1,153 +1,187 @@
-﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Components;
-using MudBlazor.Charts.SVG.Models;
+﻿using Microsoft.AspNetCore.Components.Web;
 
+#nullable enable
 namespace MudBlazor.Charts
 {
-    partial class Bar : MudChartBase
+    /// <summary>
+    /// Represents a chart which displays series values as rectangular bars.
+    /// </summary>
+    /// <seealso cref="Donut"/>
+    /// <seealso cref="Line"/>
+    /// <seealso cref="Pie"/>
+    /// <seealso cref="StackedBar"/>
+    /// <seealso cref="TimeSeries"/>
+    partial class Bar : MudCategoryAxisChartBase
     {
-        [CascadingParameter] public MudChart MudChartParent { get; set; }
+        private List<SvgPath> _horizontalLines = [];
+        private List<SvgText> _horizontalValues = [];
 
-        private List<SvgPath> _horizontalLines = new();
-        private List<SvgText> _horizontalValues = new();
+        private List<SvgPath> _verticalLines = [];
+        private List<SvgText> _verticalValues = [];
 
-        private List<SvgPath> _verticalLines = new();
-        private List<SvgText> _verticalValues = new();
+        private List<SvgLegend> _legends = [];
+        private List<ChartSeries> _series = [];
 
-        private List<SvgLegend> _legends = new();
-        private List<ChartSeries> _series = new();
+        private List<SvgPath> _bars = [];
+        private SvgPath? _hoveredBar;
 
-        private List<SvgPath> _bars = new();
-
+        /// <inheritdoc />
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
-            _horizontalLines.Clear();
-            _verticalLines.Clear();
-            _horizontalValues.Clear();
-            _verticalValues.Clear();
-            _legends.Clear();
-            _bars.Clear();
 
+            RebuildChart();
+        }
+
+        protected override void RebuildChart()
+        {
             if (MudChartParent != null)
                 _series = MudChartParent.ChartSeries;
 
-            var maxY = 0.0;
-            var numValues = 0;
-            var numXLabels = XAxisLabels.Length;
-            foreach (var item in _series)
+            SetBounds();
+            ComputeUnitsAndNumberOfLines(out var gridXUnits, out var gridYUnits, out var numHorizontalLines, out var lowestHorizontalLine, out var numVerticalLines);
+
+            var horizontalSpace = (_boundWidth - HorizontalStartSpace - HorizontalEndSpace) / Math.Max(1, numVerticalLines - 1);
+            var verticalSpace = (_boundHeight - VerticalStartSpace - VerticalEndSpace - AxisChartOptions.LabelExtraHeight) / Math.Max(1, numHorizontalLines - 1);
+
+            GenerateHorizontalGridLines(numHorizontalLines, lowestHorizontalLine, gridYUnits, verticalSpace);
+            GenerateVerticalGridLines(numVerticalLines, gridXUnits, horizontalSpace);
+            GenerateBars(lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace);
+        }
+
+        private void ComputeUnitsAndNumberOfLines(out double gridXUnits, out double gridYUnits, out int numHorizontalLines, out int lowestHorizontalLine, out int numVerticalLines)
+        {
+            gridXUnits = 30;
+
+            gridYUnits = MudChartParent?.ChartOptions.YAxisTicks ?? 20;
+            if (gridYUnits <= 0)
+                gridYUnits = 20;
+
+            if (_series.SelectMany(series => series.Data).Any())
             {
-                if (numValues < item.Data.Length)
+                var minY = _series.SelectMany(series => series.Data).Min();
+                var maxY = _series.SelectMany(series => series.Data).Max();
+                lowestHorizontalLine = Math.Min((int)Math.Floor(minY / gridYUnits), 0);
+                var highestHorizontalLine = Math.Max((int)Math.Ceiling(maxY / gridYUnits), 0);
+                numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
+
+                // this is a safeguard against millions of gridlines which might arise with very high values
+                var maxYTicks = MudChartParent?.ChartOptions.MaxNumYAxisTicks ?? 100;
+                while (numHorizontalLines > maxYTicks)
                 {
-                    numValues = item.Data.Length;
+                    gridYUnits *= 2;
+                    lowestHorizontalLine = Math.Min((int)Math.Floor(minY / gridYUnits), 0);
+                    highestHorizontalLine = Math.Max((int)Math.Ceiling(maxY / gridYUnits), 0);
+                    numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
                 }
-                foreach (int i in item.Data)
-                {
-                    if (maxY < i)
-                    {
-                        maxY = i;
-                    }
-                }
+
+                numVerticalLines = _series.Max(series => series.Data.Length);
             }
-
-            var boundHeight = 350.0;
-            var boundWidth = 650.0;
-
-            double gridYUnits = MudChartParent?.ChartOptions.YAxisTicks ?? 20;
-            double gridXUnits = 30;
-
-            var numVerticalLines = numValues - 1;
-
-            var numHorizontalLines = ((int)(maxY / gridYUnits)) + 1;
-
-            var verticalStartSpace = 25.0;
-            var horizontalStartSpace = 30.0;
-            var verticalEndSpace = 25.0;
-            var horizontalEndSpace = 30.0;
-
-            var verticalSpace = (boundHeight - verticalStartSpace - verticalEndSpace) / (numHorizontalLines);
-            var horizontalSpace = (boundWidth - horizontalStartSpace - horizontalEndSpace) / (numVerticalLines);
-
-            //Horizontal Grid Lines
-            var y = verticalStartSpace;
-            double startGridY = 0;
-            for (var counter = 0; counter <= numHorizontalLines; counter++)
+            else
             {
+                numHorizontalLines = 1;
+                lowestHorizontalLine = 0;
+                numVerticalLines = 1;
+            }
+        }
+
+        private void GenerateHorizontalGridLines(int numHorizontalLines, int lowestHorizontalLine, double gridYUnits, double verticalSpace)
+        {
+            _horizontalLines.Clear();
+            _horizontalValues.Clear();
+
+            for (var i = 0; i < numHorizontalLines; i++)
+            {
+                var y = VerticalStartSpace + (i * verticalSpace);
                 var line = new SvgPath()
                 {
-                    Index = counter,
-                    Data = $"M {ToS(horizontalStartSpace)} {ToS((boundHeight - y))} L {ToS((boundWidth - horizontalEndSpace))} {ToS((boundHeight - y))}"
+                    Index = i,
+                    Data = $"M {ToS(HorizontalStartSpace)} {ToS(_boundHeight - AxisChartOptions.LabelExtraHeight - y)} L {ToS(_boundWidth - HorizontalEndSpace)} {ToS(_boundHeight - AxisChartOptions.LabelExtraHeight - y)}"
                 };
                 _horizontalLines.Add(line);
 
-                var lineValue = new SvgText() { X = (horizontalStartSpace - 10), Y = (boundHeight - y + 5), Value = ToS(startGridY, MudChartParent?.ChartOptions.YAxisFormat) };
+                var startGridY = (lowestHorizontalLine + i) * gridYUnits;
+                var lineValue = new SvgText()
+                {
+                    X = HorizontalStartSpace - 10,
+                    Y = _boundHeight - AxisChartOptions.LabelExtraHeight - y + 5,
+                    Value = ToS(startGridY, MudChartParent?.ChartOptions.YAxisFormat)
+                };
                 _horizontalValues.Add(lineValue);
-
-                startGridY += gridYUnits;
-                y += verticalSpace;
             }
+        }
 
-            //Vertical Grid Lines
-            var x = horizontalStartSpace;
-            double startGridX = 0;
-            for (var counter = 0; counter <= numVerticalLines; counter++)
+        private void GenerateVerticalGridLines(int numVerticalLines, double gridXUnits, double horizontalSpace)
+        {
+            _verticalLines.Clear();
+            _verticalValues.Clear();
+
+            for (var i = 0; i < numVerticalLines; i++)
             {
-
+                var x = HorizontalStartSpace + (i * horizontalSpace);
                 var line = new SvgPath()
                 {
-                    Index = counter,
-                    Data = $"M {ToS(x)} {ToS((boundHeight - verticalStartSpace))} L {ToS(x)} {ToS(verticalEndSpace)}"
+                    Index = i,
+                    Data = $"M {ToS(x)} {ToS(_boundHeight - VerticalStartSpace - AxisChartOptions.LabelExtraHeight)} L {ToS(x)} {ToS(VerticalEndSpace)}"
                 };
                 _verticalLines.Add(line);
 
-                var xLabels = "";
-                if (counter < numXLabels)
+                var xLabels = i < XAxisLabels.Length ? XAxisLabels[i] : "";
+                var lineValue = new SvgText()
                 {
-                    xLabels = XAxisLabels[counter];
-                }
-
-                var lineValue = new SvgText() { X = x, Y = boundHeight - 2, Value = xLabels };
+                    X = x,
+                    Y = _boundHeight - (AxisChartOptions.LabelExtraHeight / 2) - 10,
+                    Value = xLabels
+                };
                 _verticalValues.Add(lineValue);
-
-                startGridX += gridXUnits;
-                x += horizontalSpace;
             }
+        }
 
+        private void GenerateBars(int lowestHorizontalLine, double gridYUnits, double horizontalSpace, double verticalSpace)
+        {
+            _legends.Clear();
+            _bars.Clear();
 
-            //Bars
-            var colorcounter = 0;
-            double barsPerSeries = 0;
-            foreach (var item in _series)
+            for (var i = 0; i < _series.Count; i++)
             {
-                double gridValueX = horizontalStartSpace + barsPerSeries;
-                double gridValueY = boundHeight - verticalStartSpace;
+                var data = _series[i].Data;
 
-                foreach (var dataLine in item.Data)
+                for (var j = 0; j < data.Length; j++)
                 {
-                    var dataValue = dataLine * verticalSpace / gridYUnits;
-                    var gridValue = gridValueY - dataValue;
-                    var bar = $"M {ToS(gridValueX)} {ToS(gridValueY)} L {ToS(gridValueX)} {ToS(gridValue)}";
+                    var gridValueX = HorizontalStartSpace + (i * 10) + (j * horizontalSpace);
+                    var gridValueY = _boundHeight - VerticalStartSpace - AxisChartOptions.LabelExtraHeight + (lowestHorizontalLine * verticalSpace);
+                    var dataValue = ((data[j] / gridYUnits) - lowestHorizontalLine) * verticalSpace;
+                    var gridValue = _boundHeight - VerticalStartSpace - AxisChartOptions.LabelExtraHeight - dataValue;
 
-                    gridValueX += horizontalSpace;
-
-                    var line = new SvgPath()
+                    var bar = new SvgPath()
                     {
-                        Index = colorcounter,
-                        Data = bar
+                        Index = i,
+                        Data = $"M {ToS(gridValueX)} {ToS(gridValueY)} L {ToS(gridValueX)} {ToS(gridValue)}",
+                        LabelXValue = XAxisLabels.Length > j ? XAxisLabels[j] : string.Empty,
+                        LabelYValue = dataValue.ToString(),
+                        LabelX = gridValueX,
+                        LabelY = gridValue
                     };
-                    _bars.Add(line);
+                    _bars.Add(bar);
                 }
-
-                barsPerSeries += 10;
 
                 var legend = new SvgLegend()
                 {
-                    Index = colorcounter,
-                    Labels = item.Name
+                    Index = i,
+                    Labels = _series[i].Name
                 };
-                colorcounter++;
                 _legends.Add(legend);
             }
+        }
+
+        private void OnBarMouseOver(MouseEventArgs _, SvgPath bar)
+        {
+            _hoveredBar = bar;
+        }
+
+        private void OnBarMouseOut(MouseEventArgs _)
+        {
+            _hoveredBar = null;
         }
     }
 }

@@ -33,7 +33,7 @@ namespace MudBlazor
         /// <summary>
         /// Indicating if the section is currently in the middle of the viewport
         /// </summary>
-        public bool IsActive { get; private set; }
+        public bool Active { get; private set; }
 
         /// <summary>
         /// create a new instance with a title and id and level set to zero
@@ -61,15 +61,15 @@ namespace MudBlazor
             Parent?._children.Add(this);
         }
 
-        protected internal void Activate() => IsActive = true;
+        protected internal void Activate() => Active = true;
 
-        protected internal void Deactive() => IsActive = false;
+        protected internal void Deactive() => Active = false;
 
         internal void SetLevelStructure(int counter, int diff)
         {
             LevelSortingValue = counter;
-            int levelDiff = diff / 10;
-            int value = counter + levelDiff;
+            var levelDiff = diff / 10;
+            var value = counter + levelDiff;
             foreach (var item in _children)
             {
                 item.SetLevelStructure(value, levelDiff);

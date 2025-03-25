@@ -4,7 +4,7 @@
 
 <MudGrid>
 	<MudItem xs="12">
-		<MudAutocomplete T="string" Label="US States" @bind-Value="_state" SearchFuncWithCancel="@Search" Variant="Variant.Outlined" ShowProgressIndicator="true" />
+		<MudAutocomplete T="string" Label="US States" @bind-Value="_state" SearchFunc="@Search" Variant="Variant.Outlined" ShowProgressIndicator="true" />
 	</MudItem>
 </MudGrid>
 
@@ -14,9 +14,7 @@
 
 	private async Task<IEnumerable<string>> Search(string value, CancellationToken token)
 	{
-		//the http endpoint does not return immediately. There is an artifical delay built-in
-		var result = await HttpClient.GetFromJsonAsync<IEnumerable<string>>($"webapi/AmericanStates/searchWithDelay/{value ?? string.Empty}", token);
-		return result;
+		// Forward the CancellationToken to methods which supported, such as HttpClient and DbContext
+		return await HttpClient.GetFromJsonAsync<IEnumerable<string>>($"webapi/AmericanStates/searchWithDelay/{value ?? string.Empty}", token);
 	}
-
 }

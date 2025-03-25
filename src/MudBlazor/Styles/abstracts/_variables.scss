@@ -10,4 +10,4 @@ $breakpoint-xl: 1920px;
 $breakpoint-xxl: 2560px;
 
 $breakpoints: ( xs: $breakpoint-xs, sm: $breakpoint-sm, md: $breakpoint-md, lg: $breakpoint-lg, xl: $breakpoint-xl, xxl: $breakpoint-xxl );
-$breakpoints-css-utilities-only: (  sm: $breakpoint-sm, md: $breakpoint-md, lg: $breakpoint-lg, xl: $breakpoint-xl, xxl: $breakpoint-xxl );
+$breakpoints-css-utilities-only: ( sm: $breakpoint-sm, md: $breakpoint-md, lg: $breakpoint-lg, xl: $breakpoint-xl, xxl: $breakpoint-xxl );

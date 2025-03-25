@@ -2,12 +2,11 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-
 namespace MudBlazor;
 
+/// <summary>
+/// A base class for designing input masks for the <see cref="MudMask"/>, <see cref="MudTextField{T}"/>, and <see cref="MudPicker{T}"/> components.
+/// </summary>
 public abstract class BaseMask : IMask
 {
     protected bool _initialized;
@@ -34,6 +33,9 @@ public abstract class BaseMask : IMask
         InitInternals();
     }
 
+    /// <summary>
+    /// Initializes this mask's characters and delimiters.
+    /// </summary>
     protected virtual void InitInternals()
     {
         _maskDict = _maskChars.ToDictionary(x => x.Char);
@@ -44,41 +46,32 @@ public abstract class BaseMask : IMask
                 new HashSet<char>(Mask.Where(c => _maskChars.All(maskDef => maskDef.Char != c)));
     }
 
-    /// <summary>
-    /// The mask defining the structure of the accepted input. 
-    /// The mask format depends on the implementation.
-    /// </summary>
+    /// <inheritdoc />
     public string Mask { get; protected set; }
 
-    /// <summary>
-    /// The current text as it is displayed in the component
-    /// </summary>
+    /// <inheritdoc />
     public string Text { get; protected set; }
 
-    /// <summary>
-    /// Get the Text without delimiters or placeholders. Depends on the implementation entirely.
-    /// Clean text will usually be used for the Value property of a mask field. 
-    /// </summary>
+    /// <inheritdoc />
     public virtual string GetCleanText() => Text;
 
-    /// <summary>
-    /// The current caret position
-    /// </summary>
+    /// <inheritdoc />
     public int CaretPos { get; set; }
 
-    /// <summary>
-    /// The currently selected sub-section of the Text
-    /// </summary>
+    /// <inheritdoc />
     public (int, int)? Selection { get; set; }
 
     /// <summary>
-    /// Allow showing a text consisting only of delimiters
+    /// Allows showing text which consists only of delimiter characters.
     /// </summary>
     public bool AllowOnlyDelimiters { get; set; }
 
     /// <summary>
-    /// The mask chars define the meaning of single mask characters such as 'a', '0'
+    /// The list of mask characters and their meanings.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <c>a</c> for letters, <c>0</c> for digits, and <c>*</c> for letters or digits.
+    /// </remarks>
     public MaskChar[] MaskChars
     {
         get => _maskChars;
@@ -90,25 +83,16 @@ public abstract class BaseMask : IMask
         }
     }
 
-    /// <summary>
-    /// Implements user input at the current caret position (single key strokes or pasting longer text)
-    /// </summary>
-    /// <param name="input"></param>
+    /// <inheritdoc />
     public abstract void Insert(string input);
 
-    /// <summary>
-    /// Implements the effect of the Del key at the current cursor position
-    /// </summary>
+    /// <inheritdoc />
     public abstract void Delete();
 
-    /// <summary>
-    /// Implements the effect of the Backspace key at the current cursor position
-    /// </summary>
+    /// <inheritdoc />
     public abstract void Backspace();
 
-    /// <summary>
-    /// Reset the mask as if the whole textfield was cleared
-    /// </summary>
+    /// <inheritdoc />
     public void Clear()
     {
         Init();
@@ -117,10 +101,7 @@ public abstract class BaseMask : IMask
         Selection = null;
     }
 
-    /// <summary>
-    /// Overwrite the mask text from the outside without losing caret position
-    /// </summary>
-    /// <param name="text"></param>
+    /// <inheritdoc />
     public void SetText(string text)
     {
         Clear();
@@ -128,9 +109,9 @@ public abstract class BaseMask : IMask
     }
 
     /// <summary>
-    /// Update Text from the inside
+    /// Overwrites the text and updates the cursor position.
     /// </summary>
-    /// <param name="text"></param>
+    /// <param name="text">The text to set.</param>
     protected virtual void UpdateText(string text)
     {
         // don't show a text consisting only of delimiters and placeholders (no actual input)
@@ -143,17 +124,26 @@ public abstract class BaseMask : IMask
         CaretPos = ConsolidateCaret(Text, CaretPos);
     }
 
+    /// <summary>
+    /// Deletes the selected characters.
+    /// </summary>
+    /// <param name="align">When <c>true</c>, the text to the right of the selection will be shifted to the left.</param>
     protected abstract void DeleteSelection(bool align);
 
+    /// <summary>
+    /// Gets whether the specified character is a mask character.
+    /// </summary>
+    /// <param name="maskChar">The character to examine.</param>
+    /// <returns>When <c>true</c>, the character is a delimiter.</returns>
     protected virtual bool IsDelimiter(char maskChar)
     {
         return _delimiters.Contains(maskChar);
     }
 
+    /// <inheritdoc />
     public virtual void UpdateFrom(IMask o)
     {
-        var other = o as BaseMask;
-        if (other == null)
+        if (o is not BaseMask other)
             return;
         if (other.Mask != Mask)
         {
@@ -173,8 +163,7 @@ public abstract class BaseMask : IMask
     }
 
     /// <summary>
-    /// Re-applies parameters (i.e. after they changed) without loosing internal state
-    /// such as Text, CaretPos and Selection
+    /// Reapplies parameters after they change, while preserving <see cref="Text"/>, <see cref="CaretPos"/>, and <see cref="Selection"/>.
     /// </summary>
     protected virtual void Refresh()
     {
@@ -187,6 +176,12 @@ public abstract class BaseMask : IMask
             ConsolidateSelection();
     }
 
+    /// <summary>
+    /// Divides a string into two strings at the specified index.
+    /// </summary>
+    /// <param name="text">The text to split.</param>
+    /// <param name="pos">The index of the string to split.</param>
+    /// <returns>Two strings split at the specified position.</returns>
     internal static (string, string) SplitAt(string text, int pos)
     {
         if (pos <= 0)
@@ -197,8 +192,11 @@ public abstract class BaseMask : IMask
     }
 
     /// <summary>
-    /// Performs simple border checks and corrections to the caret position
+    /// Adjusts the cursor position to be within the text.
     /// </summary>
+    /// <remarks>
+    /// If <see cref="Text"/> is empty, the position becomes <c>0</c>.  If the position was beyond the length of <see cref="Text"/>, the position is adjusted to the end.  Otherwise, no change is made.
+    /// </remarks>
     protected static int ConsolidateCaret(string text, int caretPos)
     {
         if (string.IsNullOrEmpty(text) || caretPos < 0)
@@ -209,9 +207,11 @@ public abstract class BaseMask : IMask
     }
 
     /// <summary>
-    /// Performs simple border checks and corrections to the selection
-    /// and removes zero-width selections
+    /// Adjusts the selection to be within the text.
     /// </summary>
+    /// <remarks>
+    /// If the selection has zero length, the selection is deleted.  If the selection start is less than <c>0</c>, the start becomes <c>0</c>.  If the end is longer than the length of <see cref="Text"/>, the end becomes the text length.
+    /// </remarks>
     protected void ConsolidateSelection()
     {
         if (Selection == null)
@@ -239,10 +239,11 @@ public abstract class BaseMask : IMask
     }
 
     /// <summary>
-    /// Prints a representation of the input including markers for caret and selection
-    /// Used heavily by the tests
+    /// Gets the current input including markers for caret and selection.
     /// </summary>
-    /// <returns></returns>
+    /// <remarks>
+    /// This method is used frequently by unit tests.
+    /// </remarks>
     public override string ToString()
     {
         var text = Text ?? "";
@@ -264,5 +265,4 @@ public abstract class BaseMask : IMask
             return s1 + "[" + s2 + "]" + s3;
         }
     }
-
 }

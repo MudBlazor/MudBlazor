@@ -15,10 +15,10 @@
 </MudDataGrid>
 
 <div class="d-flex flex-wrap mt-4">
-    <MudSwitch @bind-Checked="@_hover" Color="Color.Primary">Hover</MudSwitch>
-    <MudSwitch @bind-Checked="@_dense" Color="Color.Secondary">Dense</MudSwitch>
-    <MudSwitch @bind-Checked="@_striped" Color="Color.Tertiary">Striped</MudSwitch>
-    <MudSwitch @bind-Checked="@_bordered" Color="Color.Warning">Bordered</MudSwitch>
+    <MudSwitch @bind-Value="_hover" Color="Color.Primary">Hover</MudSwitch>
+    <MudSwitch @bind-Value="_dense" Color="Color.Secondary">Dense</MudSwitch>
+    <MudSwitch @bind-Value="_striped" Color="Color.Tertiary">Striped</MudSwitch>
+    <MudSwitch @bind-Value="_bordered" Color="Color.Warning">Bordered</MudSwitch>
 </div>
 
 @code {

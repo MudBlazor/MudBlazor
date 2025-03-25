@@ -3,17 +3,29 @@
 @inject IDialogService DialogService
 
 
-<MudButton @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Primary">
-    Open Dialog
+<MudButton @onclick="OpenDialogAsync" Variant="Variant.Filled" Color="Color.Primary">
+    Select Coffee
 </MudButton>
-
+<MudChip T="string">@_returnValue</MudChip>
 
 @code {
 
-    private void OpenDialog()
-    {    
-        DialogOptions closeOnEscapeKey = new DialogOptions() { CloseOnEscapeKey = true };
+    string _returnValue = "Dialog return value (not yet set)";
 
-        DialogService.Show<DialogKeyboardNavigationExample_Dialog>("Simple Dialog", closeOnEscapeKey);
+    private async Task OpenDialogAsync()
+    {    
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+        var dialogReference = await DialogService.ShowAsync<DialogKeyboardNavigationExample_Dialog>("Dialog Keyboard Accessibility Demo", options);
+        _returnValue = "Waiting for dialog to conclude ...";
+        StateHasChanged();
+        var dialogResult = await dialogReference.Result;
+        if (dialogResult.Canceled) {
+            _returnValue = "Dialog was canceled";
+            StateHasChanged();
+        }
+        else {
+            _returnValue = $"Dialog returned '{dialogResult.Data}'";
+            StateHasChanged();
+        }
     }
 }

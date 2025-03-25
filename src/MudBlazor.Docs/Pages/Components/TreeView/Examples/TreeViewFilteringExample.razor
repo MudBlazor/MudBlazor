@@ -1,0 +1,64 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudPaper Width="300px" Elevation="0">
+    <MudStack AlignItems="AlignItems.Center">
+        <MudTextField T="string" Label="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" TextChanged="OnTextChanged" Immediate="true" Clearable="true" />
+        <MudTreeView Items="@_treeItemData" @ref="_treeView" FilterFunc="MatchesName">
+            <ItemTemplate>
+                <MudTreeViewItem @bind-Expanded="@context.Expanded" Items="@context.Children" Value="@context.Value"
+                                 Icon="@context.Icon" Text="@context.Text" Visible="@context.Visible" />
+            </ItemTemplate>
+        </MudTreeView>
+    </MudStack>
+</MudPaper>
+
+@code {
+    private List<TreeItemData<string>> _treeItemData = [];
+
+    private MudTreeView<string> _treeView;
+
+    private string _searchPhrase;
+
+    public class TreeItemPresenter : TreeItemData<string>
+    {
+        public TreeItemPresenter(string text, string icon) : base(text)
+        {
+            Text = text;
+            Icon = icon;
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        _treeItemData.Add(new TreeItemPresenter("All Mail", Icons.Material.Filled.Email));
+        _treeItemData.Add(new TreeItemPresenter("Trash", Icons.Material.Filled.Delete));
+        _treeItemData.Add(new TreeItemPresenter("Categories", Icons.Material.Filled.Label)
+        {
+            Expanded = true,
+            Children =
+            [
+                new TreeItemPresenter("Social", Icons.Material.Filled.Group),
+                new TreeItemPresenter("Updates", Icons.Material.Filled.Info),
+                new TreeItemPresenter("Forums", Icons.Material.Filled.QuestionAnswer),
+                new TreeItemPresenter("Promotions", Icons.Material.Filled.LocalOffer)
+            ]
+        });
+        _treeItemData.Add(new TreeItemPresenter("History", Icons.Material.Filled.Label));
+    }
+
+    private async void OnTextChanged(string searchPhrase) 
+    {
+        _searchPhrase = searchPhrase;
+        await _treeView.FilterAsync();
+    }
+
+    private Task<bool> MatchesName(TreeItemData<string> item)
+    {
+        if (string.IsNullOrEmpty(item.Text))
+        {
+            return Task.FromResult(false);
+        }
+
+        return Task.FromResult(item.Text.Contains(_searchPhrase, StringComparison.OrdinalIgnoreCase));
+    }
+}

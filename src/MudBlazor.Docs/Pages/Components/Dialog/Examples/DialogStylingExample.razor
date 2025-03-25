@@ -1,0 +1,16 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+@inject IDialogService DialogService
+
+<MudButton @onclick="OpenDialogAsync" Variant="Variant.Filled" Color="Color.Primary">
+    Open Custom Styled Dialog
+</MudButton>
+
+@code {
+    private Task OpenDialogAsync()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true, CloseButton = true };
+
+        return DialogService.ShowAsync<DialogStylingExample_Dialog>("Styling Example Dialog", options);
+    }
+}

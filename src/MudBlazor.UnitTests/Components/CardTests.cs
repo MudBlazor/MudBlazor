@@ -6,7 +6,7 @@ using System;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
-using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.Card;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
 

@@ -1,18 +1,18 @@
 ﻿@page "/components/carousel"
 
 <DocsPage>
-	<DocsPageHeader Title="Carousel" SubTitle="It's used to display large numbers of visual content on a rotating timer" />
+    <DocsPageHeader Title="Carousel" Component="@nameof(MudCarousel<T>)" />
     <DocsPageContent>
-        
+
         <DocsPageSection>
             <SectionHeader Title="Example">
                 <Description>Default implementation.</Description>
             </SectionHeader>
-            <SectionContent Code="CarouselExample" Block="true" FullWidth="true">
-                <CarouselExample/>
+            <SectionContent Code="@nameof(CarouselExample)" Block="true" FullWidth="true">
+                <CarouselExample />
             </SectionContent>
         </DocsPageSection>
-        
+
         <DocsPageSection>
             <SectionHeader Title="DataBinding">
                 <Description>
@@ -20,37 +20,37 @@
                     You can also Two-Way Bind the <CodeInline>SelectedIndex</CodeInline> to read or write the current position.
                 </Description>
             </SectionHeader>
-            <SectionContent Code="CarouselBindingExample" Block="true" FullWidth="true">
+            <SectionContent Code="@nameof(CarouselBindingExample)" Block="true" FullWidth="true">
                 <CarouselBindingExample />
             </SectionContent>
         </DocsPageSection>
-        
+
         <DocsPageSection>
             <SectionHeader Title="Custom Transition">
                 <Description>You can use your own classes for items transition.</Description>
             </SectionHeader>
-            <SectionContent Code="CarouselCustomTransitionExample" Block="true" FullWidth="true">
+            <SectionContent Code="@nameof(CarouselCustomTransitionExample)" Block="true" FullWidth="true">
                 <CarouselCustomTransitionExample />
             </SectionContent>
         </DocsPageSection>
-        
+
         <DocsPageSection>
             <SectionHeader Title="Transitions per page">
                 <Description>Transitions are set per page.</Description>
             </SectionHeader>
-            <SectionContent Code="CarouselPerPageTransitionExample" Block="true" FullWidth="true">
+            <SectionContent Code="@nameof(CarouselPerPageTransitionExample)" Block="true" FullWidth="true">
                 <CarouselPerPageTransitionExample />
             </SectionContent>
         </DocsPageSection>
-        
+
         <DocsPageSection>
             <SectionHeader Title="Elements Templates">
                 <Description>Custom arrows or bullets templates:</Description>
             </SectionHeader>
-            <SectionContent Code="CarouselTemplatesExample" Block="true" FullWidth="true">
+            <SectionContent Code="@nameof(CarouselTemplatesExample)" Block="true" FullWidth="true">
                 <CarouselTemplatesExample />
             </SectionContent>
         </DocsPageSection>
-        
+
     </DocsPageContent>
 </DocsPage>

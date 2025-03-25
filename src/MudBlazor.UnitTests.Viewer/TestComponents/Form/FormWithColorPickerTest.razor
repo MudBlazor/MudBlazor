@@ -1,7 +1,6 @@
 ﻿@using MudBlazor.Utilities
-@namespace MudBlazor.UnitTests.TestComponents
 
-<MudPopoverProvider></MudPopoverProvider>
+<MudPopoverProvider />
 
 <MudForm ValidationDelay="0">
     <MudColorPicker Required="true" @bind-Value="ColorValue">
@@ -12,5 +11,5 @@
     public static string __description__ = "Form should validate color picker's value.";
 
     [Parameter]
-    public MudColor? ColorValue { get; set; } = new("#000000");
+    public MudColor ColorValue { get; set; } = new("#000000");
 }

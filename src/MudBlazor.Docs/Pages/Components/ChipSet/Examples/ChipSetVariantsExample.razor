@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudChipSet MultiSelection="true" Filter="filter">
-    <MudChip Text="grey" Variant="Variant.Text" Color="Color.Default">Default</MudChip>
+<MudChipSet T="string" SelectionMode="SelectionMode.MultiSelection" CheckMark="_checkMark">
+    <MudChip Text="gray" Variant="Variant.Text" Color="Color.Default">Default</MudChip>
     <MudChip Text="purple" Variant="Variant.Text" Color="Color.Primary">Primary</MudChip>
     <MudChip Text="pink" Variant="Variant.Text" Color="Color.Secondary">Secondary</MudChip>
     <MudChip Text="blue" Variant="Variant.Text" Color="Color.Info">Info</MudChip>
@@ -10,8 +10,8 @@
     <MudChip Text="red" Variant="Variant.Text" Color="Color.Error">Error</MudChip>
     <MudChip Text="black" Variant="Variant.Text" Color="Color.Dark">Dark</MudChip>
 </MudChipSet>
-<MudChipSet MultiSelection="true" Filter="filter">
-    <MudChip Text="grey" Variant="Variant.Outlined" Color="Color.Default">Default</MudChip>
+<MudChipSet T="string" SelectionMode="SelectionMode.MultiSelection" CheckMark="_checkMark">
+    <MudChip Text="gray" Variant="Variant.Outlined" Color="Color.Default">Default</MudChip>
     <MudChip Text="purple" Variant="Variant.Outlined" Color="Color.Primary">Primary</MudChip>
     <MudChip Text="pink" Variant="Variant.Outlined" Color="Color.Secondary">Secondary</MudChip>
     <MudChip Text="blue" Variant="Variant.Outlined" Color="Color.Info">Info</MudChip>
@@ -20,8 +20,8 @@
     <MudChip Text="red" Variant="Variant.Outlined" Color="Color.Error">Error</MudChip>
     <MudChip Text="black" Variant="Variant.Outlined" Color="Color.Dark">Dark</MudChip>
 </MudChipSet>
-<MudChipSet MultiSelection="true" Filter="filter">
-    <MudChip Text="grey" Variant="Variant.Filled" Color="Color.Default">Default</MudChip>
+<MudChipSet T="string" SelectionMode="SelectionMode.MultiSelection" CheckMark="_checkMark">
+    <MudChip Text="gray" Variant="Variant.Filled" Color="Color.Default">Default</MudChip>
     <MudChip Text="purple" Variant="Variant.Filled" Color="Color.Primary">Primary</MudChip>
     <MudChip Text="pink" Variant="Variant.Filled" Color="Color.Secondary">Secondary</MudChip>
     <MudChip Text="blue" Variant="Variant.Filled" Color="Color.Info">Info</MudChip>
@@ -30,11 +30,11 @@
     <MudChip Text="red" Variant="Variant.Filled" Color="Color.Error">Error</MudChip>
     <MudChip Text="black" Variant="Variant.Filled" Color="Color.Dark">Dark</MudChip>
 </MudChipSet>
-<MudCheckBox @bind-Checked="filter">Filter</MudCheckBox>
+<MudCheckBox @bind-Value="_checkMark">Check marks</MudCheckBox>
 
 
 @code
 {
-    bool filter = true;
+    private bool _checkMark = true;
 }
 

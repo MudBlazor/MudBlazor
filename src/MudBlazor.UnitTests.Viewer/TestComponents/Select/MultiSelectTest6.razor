@@ -1,7 +1,6 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-<MudPopoverProvider></MudPopoverProvider>
+﻿<MudPopoverProvider />
 
-<MudSelect T="string" Label="US States" MultiSelection="true" @bind-Value="value" @bind-SelectedValues="options">
+<MudSelect T="string" Label="US States" MultiSelection="true" @bind-Value="_value" @bind-SelectedValues="_options">
     @foreach (var state in _states)
     {
         <MudSelectItem T="string" Value="@state">@state</MudSelectItem>
@@ -9,12 +8,11 @@
 </MudSelect>
 
 @code {
-
-    private string value { get; set; } = "Nothing selected";
-    private IEnumerable<string> options { get; set; } = new HashSet<string>() { "Alaska" };
+    private string _value = "Nothing selected";
+    private IEnumerable<string> _options  = new HashSet<string> { "Alaska" };
 
     private readonly string[] _states =
-    {
+    [
         "Alabama", "Alaska", "American Samoa", "Arizona",
         "Arkansas", "California", "Colorado", "Connecticut",
         "Delaware", "District of Columbia", "Federated States of Micronesia",
@@ -28,7 +26,7 @@
         "Oklahoma", "Oregon", "Palau", "Pennsylvania", "Puerto Rico",
         "Rhode Island", "South Carolina", "South Dakota", "Tennessee",
         "Texas", "Utah", "Vermont", "Virgin Island", "Virginia",
-        "Washington", "West Virginia", "Wisconsin", "Wyoming",
-    };
+        "Washington", "West Virginia", "Wisconsin", "Wyoming"
+    ];
 }
 

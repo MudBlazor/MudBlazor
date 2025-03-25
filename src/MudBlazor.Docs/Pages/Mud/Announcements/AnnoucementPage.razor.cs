@@ -23,17 +23,17 @@ public partial class AnnoucementPage
         _message = await NotificationService.GetMessageById(Id);
         if (_message == null)
         {
-            
+
         }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender == true)
+        if (firstRender)
         {
             await NotificationService.MarkNotificationsAsRead(Id);
         }
-        
+
         await base.OnAfterRenderAsync(firstRender);
     }
 }

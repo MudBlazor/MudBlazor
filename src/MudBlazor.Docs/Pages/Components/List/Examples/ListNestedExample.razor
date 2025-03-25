@@ -2,17 +2,11 @@
 
 
 <MudPaper Width="300px">
-    <MudList Clickable="true">
+    <MudList T="string">
         <MudListSubheader>
             Nested List Items
         </MudListSubheader>
-        <MudListItem Icon="@Icons.Material.Filled.Send">
-            Sent mail
-        </MudListItem>
-        <MudListItem Icon="@Icons.Material.Filled.Drafts">
-            Drafts
-        </MudListItem>
-        <MudListItem Icon="@Icons.Material.Filled.Inbox" Text="Inbox" InitiallyExpanded="true">
+        <MudListItem Icon="@Icons.Material.Filled.Inbox" Text="Inbox" Expanded>
             <NestedList>
                 <MudListItem Icon="@Icons.Material.Filled.StarRate">
                     Starred
@@ -22,5 +16,22 @@
                 </MudListItem>
             </NestedList>
         </MudListItem>
+        <MudListItem Icon="@Icons.Material.Filled.Send" Text="Sent mail" @bind-Expanded="_expanded">
+            <NestedList>
+                <MudListItem>Re: Meeting tomorrow</MudListItem>
+                <MudListItem>Fwd: JavaScript memes xD</MudListItem>
+            </NestedList>
+        </MudListItem>
+        <MudListItem Icon="@Icons.Material.Filled.Drafts">
+            Drafts
+        </MudListItem>
+        <MudDivider/>
+        <MudListSubheader Class="mb-n3">
+            <MudSwitch Color="Color.Primary" @bind-Value="_expanded">"Sent mail" Expansion</MudSwitch>
+        </MudListSubheader>
     </MudList>
 </MudPaper>
+
+@code {
+    bool _expanded;
+}

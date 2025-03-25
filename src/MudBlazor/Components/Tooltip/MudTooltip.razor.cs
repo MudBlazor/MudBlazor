@@ -1,16 +1,31 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
+using MudBlazor.State;
 using MudBlazor.Utilities;
+using MudBlazor.Utilities.Debounce;
 
 namespace MudBlazor
 {
 #nullable enable
     public partial class MudTooltip : MudComponentBase
     {
-        private bool _isVisible;
+        private readonly ParameterState<bool> _visibleState;
         private Origin _anchorOrigin;
         private Origin _transformOrigin;
+        internal DebounceDispatcher _showDebouncer;
+        internal DebounceDispatcher _hideDebouncer;
+        internal double _previousDelay;
+        internal double _previousDuration;
+        public MudTooltip()
+        {
+            _previousDelay = Delay;
+            _showDebouncer = new DebounceDispatcher(TimeSpan.FromMilliseconds(Delay));
+            _previousDuration = Duration;
+            _hideDebouncer = new DebounceDispatcher(TimeSpan.FromMilliseconds(Duration));
+            using var registerScope = CreateRegisterScope();
+            _visibleState = registerScope.RegisterParameter<bool>(nameof(Visible))
+                .WithParameter(() => Visible)
+                .WithEventCallback(() => VisibleChanged);
+        }
 
         protected string ContainerClass => new CssBuilder("mud-tooltip-root")
             .AddClass("mud-tooltip-inline", Inline)
@@ -19,9 +34,9 @@ namespace MudBlazor
 
         protected string Classname => new CssBuilder("mud-tooltip")
             .AddClass("d-flex")
-            .AddClass($"mud-tooltip-default", Color == Color.Default)
+            .AddClass("mud-tooltip-default", Color == Color.Default)
             .AddClass($"mud-tooltip-{ConvertPlacement().ToDescriptionString()}")
-            .AddClass($"mud-tooltip-arrow", Arrow)
+            .AddClass("mud-tooltip-arrow", Arrow)
             .AddClass($"mud-border-{Color.ToDescriptionString()}", Arrow && Color != Color.Default)
             .AddClass($"mud-theme-{Color.ToDescriptionString()}", Color != Color.Default)
             .AddClass(Class)
@@ -42,40 +57,34 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tooltip.Behavior)]
-        public string Text { get; set; } = string.Empty;
+        public string? Text { get; set; } = string.Empty;
 
         /// <summary>
-        /// If true, a arrow will be displayed pointing towards the content from the tooltip.
+        /// If true, an arrow will be displayed pointing towards the content from the tooltip.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tooltip.Appearance)]
         public bool Arrow { get; set; } = false;
 
         /// <summary>
-        /// Sets the length of time that the opening transition takes to complete.
+        /// The length of time that the opening transition takes to complete.
         /// </summary>
+        /// <remarks>
+        /// Defaults to 251ms in <see cref="MudGlobal.TooltipDefaults.Duration"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tooltip.Appearance)]
-        public double Duration { get; set; } = 251;
+        public double Duration { get; set; } = MudGlobal.TooltipDefaults.Duration.TotalMilliseconds;
 
         /// <summary>
-        /// Sets the amount of time in milliseconds to wait from opening the popover before beginning to perform the transition. 
+        /// The amount of time in milliseconds to wait from opening the popover before beginning to perform the transition. 
         /// </summary>
+        /// <remarks>
+        /// Defaults to 0ms in <see cref="MudGlobal.TooltipDefaults.Delay"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tooltip.Appearance)]
-        public double Delay { get; set; } = 0;
-
-        /// <summary>
-        /// Changes the default transition delay in seconds.
-        /// </summary>
-        [Obsolete("Use Delay instead.", true)]
-        [ExcludeFromCodeCoverage]
-        [Parameter]
-        public double Delayed
-        {
-            get { return Delay / 1000; }
-            set { Delay = value * 1000; }
-        }
+        public double Delay { get; set; } = MudGlobal.TooltipDefaults.Delay.TotalMilliseconds;
 
         /// <summary>
         /// Tooltip placement.
@@ -112,7 +121,9 @@ namespace MudBlazor
         [Category(CategoryTypes.Tooltip.Appearance)]
         public string? RootStyle { get; set; }
 
+        /// <summary>
         /// Classes applied directly to root component of the tooltip
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.Tooltip.Appearance)]
         public string? RootClass { get; set; }
@@ -140,64 +151,84 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool IsVisible
-        {
-            get => _isVisible;
-            set
-            {
-                if (value == _isVisible)
-                    return;
-                _isVisible = value;
-                IsVisibleChanged.InvokeAsync(_isVisible).AndForget();
-            }
-        }
+        public bool Visible { get; set; }
 
         /// <summary>
-        /// An event triggered when the state of IsVisible has changed
+        /// An event triggered when the state of Visible has changed
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public EventCallback<bool> IsVisibleChanged { get; set; }
+        public EventCallback<bool> VisibleChanged { get; set; }
 
-        private void HandleMouseEnter()
+        /// <summary>
+        /// If true, the tooltip will be disabled; the popover will not be visible.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool Disabled { get; set; }
+
+        /// <summary>
+        /// Register and Show the Popover for the tooltip if it is not disabled, set to be visible, the content or Text is not empty or null
+        /// </summary>
+        internal bool ShowToolTip()
         {
-            if (ShowOnHover)
+            if (_anchorOrigin == Origin.TopLeft || _transformOrigin == Origin.TopLeft)
+                ConvertPlacement();
+            return !Disabled && _visibleState.Value && (TooltipContent is not null || !string.IsNullOrEmpty(Text));
+        }
+
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
+
+            if (Math.Abs(_previousDelay - Delay) > .001)
             {
-                IsVisible = true;
+                _showDebouncer = new DebounceDispatcher(TimeSpan.FromMilliseconds(Delay));
+                _previousDelay = Delay;
+            }
+
+            if (Math.Abs(_previousDuration - Duration) > .001)
+            {
+                _hideDebouncer = new DebounceDispatcher(TimeSpan.FromMilliseconds(Duration));
+                _previousDuration = Duration;
             }
         }
 
-        private void HandleMouseLeave()
+        internal Task HandlePointerEnterAsync()
         {
-            if (ShowOnHover == false)
-                return;
-            IsVisible = false;
-        }
-
-        private void HandleFocusIn()
-        {
-            if (ShowOnFocus)
+            if (!ShowOnHover)
             {
-                IsVisible = true;
-            }
-        }
-
-        private void HandleFocusOut()
-        {
-            if (ShowOnFocus == false)
-            {
-                return;
+                return Task.CompletedTask;
             }
 
-            IsVisible = false;
+            _hideDebouncer.Cancel();
+            return _showDebouncer.DebounceAsync(() => _visibleState.SetValueAsync(true));
         }
 
-        private void HandleMouseUp()
+        internal Task HandlePointerLeaveAsync()
         {
-            if (ShowOnClick)
+            if (!ShowOnHover)
             {
-                IsVisible = !IsVisible;
+                return Task.CompletedTask;
             }
+
+            _showDebouncer.Cancel();
+            return _hideDebouncer.DebounceAsync(() => _visibleState.SetValueAsync(false));
+        }
+
+        private Task HandleFocusInAsync()
+        {
+            return ShowOnFocus ? _visibleState.SetValueAsync(true) : Task.CompletedTask;
+        }
+
+        private Task HandleFocusOutAsync()
+        {
+            return ShowOnFocus ? _visibleState.SetValueAsync(false) : Task.CompletedTask;
+        }
+
+        private Task HandlePointerUpAsync()
+        {
+            return ShowOnClick ? _visibleState.SetValueAsync(!_visibleState.Value) : Task.CompletedTask;
         }
 
         private Origin ConvertPlacement()
@@ -218,7 +249,7 @@ namespace MudBlazor
                 return Origin.TopCenter;
             }
 
-            if (Placement == Placement.Left || Placement == Placement.Start && !RightToLeft || Placement == Placement.End && RightToLeft)
+            if (Placement == Placement.Left || (Placement == Placement.Start && !RightToLeft) || (Placement == Placement.End && RightToLeft))
             {
                 _anchorOrigin = Origin.CenterLeft;
                 _transformOrigin = Origin.CenterRight;
@@ -226,17 +257,15 @@ namespace MudBlazor
                 return Origin.CenterLeft;
             }
 
-            if (Placement == Placement.Right || Placement == Placement.End && !RightToLeft || Placement == Placement.Start && RightToLeft)
+            if (Placement == Placement.Right || (Placement == Placement.End && !RightToLeft) || (Placement == Placement.Start && RightToLeft))
             {
                 _anchorOrigin = Origin.CenterRight;
                 _transformOrigin = Origin.CenterLeft;
 
                 return Origin.CenterRight;
             }
-            else
-            {
-                return Origin.BottomCenter;
-            }
+
+            return Origin.BottomCenter;
         }
     }
 }

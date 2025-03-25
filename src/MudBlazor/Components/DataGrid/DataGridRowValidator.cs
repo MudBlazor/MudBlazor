@@ -9,8 +9,14 @@ using MudBlazor.Interfaces;
 
 namespace MudBlazor
 {
+    /// <summary>
+    /// Represents the validation logic for a <see cref="MudDataGrid{T}"/> row.
+    /// </summary>
     public class DataGridRowValidator : IForm
     {
+        /// <summary>
+        /// Indicates whether the row is valid.
+        /// </summary>
         public bool IsValid
         {
             get
@@ -20,14 +26,20 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// Any validation errors for this row.
+        /// </summary>
         public string[] Errors
         {
             get => _errors.ToArray();
         }
 
 #nullable enable
+        /// <summary>
+        /// The data to validate for this row.
+        /// </summary>
         [ExcludeFromCodeCoverage]
-        public object? Model { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        public virtual object? Model { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
 #nullable disable
 
         protected HashSet<string> _errors = new HashSet<string>();
@@ -55,6 +67,9 @@ namespace MudBlazor
 
         protected HashSet<IFormComponent> _formControls = new HashSet<IFormComponent>();
 
+        /// <summary>
+        /// Checks this row for any validation errors.
+        /// </summary>
         [ExcludeFromCodeCoverage]
         public void Validate()
         {

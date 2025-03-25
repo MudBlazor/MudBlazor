@@ -1,8 +1,7 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
+﻿<MudText Typo="Typo.h6">Result: @_searchString</MudText>
+<MudTextField @bind-Value="_searchString" T="string" DebounceInterval="500"></MudTextField>
 
-<MudText Typo="Typo.h6">Result: @searchString</MudText>
-<MudTextField @bind-Value="searchString" T="string" DebounceInterval="500"></MudTextField>
 @code
 {
-    public string searchString { get; set; } = "";
+    private string _searchString  = string.Empty;
 }

@@ -1,0 +1,43 @@
+﻿<MudDataGrid T="Model" Items="@_items">
+    <Columns>
+        <PropertyColumn Property="x => x.DateTimeOffset.Date" />
+        <PropertyColumn Property="x => x.DateTimeOffsetNullable" />
+        <PropertyColumn Property="x => x.DateTime.Date" />
+        <PropertyColumn Property="x => x.DateTimeNullable" />
+        <PropertyColumn Property="x => x.Nested!.NameNotNull" />
+        <PropertyColumn Property="x => x.Nested!.NameNull" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private readonly IEnumerable<Model> _items = new List<Model>
+    {
+        new(),
+        new()
+        {
+            DateTimeOffsetNullable = new DateTimeOffset(),
+            DateTimeNullable = new DateTime(),
+            Nested = new Model.NestedModel()
+        }
+    };
+
+    public class Model
+    {
+        public DateTimeOffset DateTimeOffset { get; set; }
+
+        public DateTimeOffset? DateTimeOffsetNullable { get; set; }
+
+        public DateTime DateTime { get; set; }
+
+        public DateTime? DateTimeNullable { get; set; }
+
+        public NestedModel? Nested { get; set; }
+
+        public class NestedModel
+        {
+            public string? NameNull { get; set; }
+
+            public string NameNotNull { get; set; } = "some text";
+        }
+    }
+}

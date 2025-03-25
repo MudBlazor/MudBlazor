@@ -1,8 +1,8 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudSlider @bind-Value="spacing" Min="0" Max="10" Color="Color.Info" Class="mb-6">Spacing: @spacing.ToString()</MudSlider>
+<MudSlider @bind-Value="Spacing" Min="0" Max="20" Color="Color.Info" Class="mb-6">Spacing: @Spacing.ToString()</MudSlider>
 
-<MudGrid Spacing="@spacing" Justify="Justify.Center">
+<MudGrid Spacing="@Spacing" Justify="Justify.Center">
     <MudItem>
         <MudPaper Height="140px" Width="140px"/>
     </MudItem>
@@ -16,5 +16,5 @@
 
 
 @code {
-    public int spacing { get; set; } = 2;
+    public int Spacing { get; set; } = 6;
 }

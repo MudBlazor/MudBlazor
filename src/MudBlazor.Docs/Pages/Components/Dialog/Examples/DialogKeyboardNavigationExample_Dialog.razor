@@ -1,9 +1,9 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudDialog>
+<MudDialog OnKeyDown="OnKeyDownAsync">
     <DialogContent>
-        <MudTextField T="string" Label="Name"></MudTextField>
-        <MudSelect T="string" Label="Favorite Coffee" AnchorOrigin="Origin.BottomCenter">
+        <MudText>Select your favourite coffee. Hit Enter to accept or Escape to cancel.</MudText>
+        <MudSelect T="string" Label="Favorite Coffee" @bind-Value="_returnValue">
             <MudSelectItem Value="@("Cappuccino")" />
             <MudSelectItem Value="@("Cafe Latte")" />
             <MudSelectItem Value="@("Espresso")" />
@@ -16,10 +16,35 @@
     </DialogActions>
 </MudDialog>
 
-
 @code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Inject] 
+    private IDialogService DialogService { get; set; } // for MessageBox
 
-    void Submit() => MudDialog.Close(DialogResult.Ok(true));
-    void Cancel() => MudDialog.Cancel();
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; }
+
+    private string _returnValue;
+
+    private void Submit() => MudDialog.Close(DialogResult.Ok(_returnValue));
+
+    private void Cancel() => MudDialog.Cancel();
+
+    private async Task OnKeyDownAsync(KeyboardEventArgs args)
+    {
+        switch(args.Key) {
+            case "Enter":
+            case "NumpadEnter":
+                if (string.IsNullOrEmpty(_returnValue)) {
+                    await DialogService.ShowMessageBox(
+                        "Sorry",
+                        @"You must either select a coffee and close with Enter or cancel with Escape!", 
+                        yesText:"Got it", 
+                        options: new DialogOptions() { CloseOnEscapeKey = true });
+                    return;
+                }
+                Submit();
+                break;
+        }
+    }
+
 }

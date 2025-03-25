@@ -4,7 +4,7 @@
     <MudImage ObjectFit="ObjectFit.None" ObjectPosition="@ImagePosition" Height="200" Width="400" Src="images/iceland.jpg" Alt="Öxarárfoss, Iceland"  Elevation="25" Class="rounded-lg"/>
 </div>
 
-<MudChipSet Filter="true" Mandatory="true" Class="mt-12">
+<MudChipSet T="string" CheckMark Class="mt-12">
     <MudChip Text="Center" OnClick="@(() => SetImagePosition(ObjectPosition.Center))" SelectedColor="Color.Primary" Default="true" />
     <MudChip Text="Top" OnClick="@(() => SetImagePosition(ObjectPosition.Top))" SelectedColor="Color.Primary" />
     <MudChip Text="Bottom" OnClick="@(() => SetImagePosition(ObjectPosition.Bottom))" SelectedColor="Color.Primary" />

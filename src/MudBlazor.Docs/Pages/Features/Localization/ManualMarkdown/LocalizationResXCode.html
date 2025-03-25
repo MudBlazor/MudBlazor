@@ -13,6 +13,8 @@
     }
 
     <span class="keyword">public</span> <span class="keyword">override</span> LocalizedString <span class="keyword">this</span>[<span class="keyword">string</span> key] =&gt; <span class="localVar">_localization</span>[key];
+
+    <span class="keyword">public</span> <span class="keyword">override</span> LocalizedString <span class="keyword">this</span>[<span class="keyword">string</span> key, <span class="keyword">params object[]</span> arguments] =&gt; <span class="localVar">_localization</span>[key, arguments];
 }
 </pre></div>
 </div>

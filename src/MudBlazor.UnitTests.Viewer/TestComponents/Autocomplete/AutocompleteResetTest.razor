@@ -1,5 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-<MudPopoverProvider></MudPopoverProvider>
+﻿<MudPopoverProvider />
 <MudAutocomplete @ref="_selectAsync"
                  T="string"
                  ToStringFunc="x => x"
@@ -10,7 +9,6 @@
                  MaxItems="null"
                  Class="mb-3" />
 @code {
-#nullable enable
     private MudAutocomplete<string> _selectAsync = null!;
     private readonly IEnumerable<string> _elements = new List<string>(2)
     {
@@ -23,16 +21,14 @@
         {
             return;
         }
-        await SomeTask();
+
+        await SomeTaskAsync();
         await _selectAsync.ResetAsync();
     }
 
-    private async Task SomeTask()
-    {
-        //await Task.Delay(5);
-    }
+    private static Task SomeTaskAsync() => Task.CompletedTask;
 
-    private Task<IEnumerable<string>> Search(string value)
+    private Task<IEnumerable<string>> Search(string value, CancellationToken token)
     {
         if (string.IsNullOrEmpty(value))
         {

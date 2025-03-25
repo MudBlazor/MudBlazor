@@ -1,7 +1,7 @@
 ﻿@page "/components/hidden"
 
 <DocsPage>
-    <DocsPageHeader Title="Hidden" SubTitle="Make UI responsive by conditionally rendering different UI on certain display sizes" />
+    <DocsPageHeader Title="Hidden" Component="@nameof(MudHidden)" />
     <DocsPageContent>
         <MudText>
             <CodeInline Tag>MudHidden</CodeInline> is configured with a <MudLink Href="/features/breakpoints">breakpoint</MudLink> which tells it under which screen size to refrain from rendering its content. 
@@ -22,7 +22,7 @@
             <SectionHeader Title="How it works">
                 <Description>The following example shows all breakpoint options only if they match the screen size. Because it is more intuitive for this example, we inverted all the breakpoints so that you can see them only if they match.</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="HiddenExample" ShowCode="false">
+            <SectionContent DarkenBackground="true" Code="@nameof(HiddenExample)" ShowCode="false">
                 <HiddenExample />
             </SectionContent>
         </DocsPageSection>
@@ -33,7 +33,7 @@
                     <MudText>Directly listening to the screen size change events is the most expensive way to adapt to a resizing browser window. Use this only if the other breakpoint methods don't work for you.</MudText>
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="BrowserResizeEventExample" ShowCode="false">
+            <SectionContent DarkenBackground="true" Code="@nameof(BrowserResizeEventExample)" ShowCode="false">
                 <BrowserResizeEventExample />
             </SectionContent>
         </DocsPageSection>

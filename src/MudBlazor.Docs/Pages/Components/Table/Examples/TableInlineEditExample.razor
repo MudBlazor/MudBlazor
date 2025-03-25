@@ -46,16 +46,16 @@
     <RowEditingTemplate>
         <MudTd DataLabel="Nr">@context.Number</MudTd>
         <MudTd DataLabel="Sign">
-            <MudTextField @bind-Value="@context.Sign" Required />
+            <MudTextField @bind-Value="context.Sign" Required />
         </MudTd>
         <MudTd DataLabel="Name">
-            <MudTextField @bind-Value="@context.Name" Required />
+            <MudTextField @bind-Value="context.Name" Required />
         </MudTd>
         <MudTd DataLabel="Position">
-            <MudNumericField @bind-Value="@context.Position" Required Min="1" />
+            <MudNumericField @bind-Value="context.Position" Required Min="1" />
         </MudTd>
         <MudTd DataLabel="Molar mass">
-            <MudTextField @bind-Value="@context.Molar" Required />
+            <MudTextField @bind-Value="context.Molar" Required />
         </MudTd>
     </RowEditingTemplate>
     <PagerContent>
@@ -66,11 +66,11 @@
     </EditButtonContent>
 </MudTable>
 
-<MudSwitch @bind-Checked="@hover" Color="Color.Primary">Hover</MudSwitch>
-<MudSwitch @bind-Checked="@dense" Color="Color.Secondary">Dense</MudSwitch>
-<MudSwitch @bind-Checked="@ronly" Color="Color.Tertiary">Read Only</MudSwitch>
-<MudSwitch @bind-Checked="@canCancelEdit" Color="Color.Info">Can Cancel Edit</MudSwitch>
-<MudSwitch @bind-Checked="@blockSwitch" Color="Color.Success">Block Edit Row Switching</MudSwitch>
+<MudSwitch @bind-Value="hover" Color="Color.Primary">Hover</MudSwitch>
+<MudSwitch @bind-Value="dense" Color="Color.Secondary">Dense</MudSwitch>
+<MudSwitch @bind-Value="ronly" Color="Color.Tertiary">Read Only</MudSwitch>
+<MudSwitch @bind-Value="canCancelEdit" Color="Color.Info">Can Cancel Edit</MudSwitch>
+<MudSwitch @bind-Value="blockSwitch" Color="Color.Success">Block Edit Row Switching</MudSwitch>
 <MudGrid>
     <MudItem xs="12" md="4">
         <MudSelect Label="Edit Trigger" T="TableEditTrigger" @bind-Value="editTrigger">
@@ -81,7 +81,7 @@
     @if (editTrigger == TableEditTrigger.EditButton)
     {
         <MudItem xs="12" md="4">
-            <MudSelect Label="Edit Button Postion" T="TableEditButtonPosition" @bind-Value="editButtonPosition">
+            <MudSelect Label="Edit Button Position" T="TableEditButtonPosition" @bind-Value="editButtonPosition">
                 <MudSelectItem Value="TableEditButtonPosition.Start">Start</MudSelectItem>
                 <MudSelectItem Value="TableEditButtonPosition.End">End</MudSelectItem>
                 <MudSelectItem Value="TableEditButtonPosition.StartAndEnd">Start and End</MudSelectItem>
@@ -89,7 +89,7 @@
         </MudItem>
     }
     <MudItem xs="12" md="4">
-        <MudSelect Label="Apply Button Postion" T="TableApplyButtonPosition" @bind-Value="applyButtonPosition">
+        <MudSelect Label="Apply Button Position" T="TableApplyButtonPosition" @bind-Value="applyButtonPosition">
             <MudSelectItem Value="TableApplyButtonPosition.Start">Start</MudSelectItem>
             <MudSelectItem Value="TableApplyButtonPosition.End">End</MudSelectItem>
             <MudSelectItem Value="TableApplyButtonPosition.StartAndEnd">Start and End</MudSelectItem>
@@ -97,7 +97,7 @@
     </MudItem>
 </MudGrid>
 
-<MudText Inline="true">Selected1: @selectedItem1?.Name</MudText>
+<MudText HtmlTag="span">Selected1: @selectedItem1?.Name</MudText>
 
 <MudExpansionPanels Style="flex: 1;">
     <MudExpansionPanel Text="Show inline-edit event log">

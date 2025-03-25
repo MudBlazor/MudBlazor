@@ -1,4 +1,5 @@
 ﻿using System;
+using MudBlazor.Resources;
 
 namespace MudBlazor
 {
@@ -25,7 +26,7 @@ namespace MudBlazor
             }
             catch (FormatException e)
             {
-                UpdateGetError(e.Message);
+                UpdateGetError(LanguageResource.Converter_ConversionError, [e.Message]);
                 return null;
             }
         }
@@ -40,7 +41,7 @@ namespace MudBlazor
             }
             catch (FormatException e)
             {
-                UpdateSetError(e.Message);
+                UpdateSetError(LanguageResource.Converter_ConversionError, [e.Message]);
                 return null;
             }
         }
@@ -68,7 +69,7 @@ namespace MudBlazor
             }
             catch (FormatException e)
             {
-                UpdateGetError(e.Message);
+                UpdateGetError(LanguageResource.Converter_ConversionError, [e.Message]);
                 return default;
             }
         }
@@ -81,7 +82,7 @@ namespace MudBlazor
             }
             catch (FormatException e)
             {
-                UpdateSetError(e.Message);
+                UpdateSetError(LanguageResource.Converter_ConversionError, [e.Message]);
                 return null;
             }
         }

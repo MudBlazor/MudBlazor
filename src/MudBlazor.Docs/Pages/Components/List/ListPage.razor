@@ -1,68 +1,116 @@
 ﻿@page "/components/list"
 
 <DocsPage>
-    <DocsPageHeader Title="Lists">
-        <Description>Easily customizable and scrollable lists. Make them suit your needs with avatars, icons, or something like checkboxes.</Description>
-        </DocsPageHeader>
+    <DocsPageHeader Title="Lists" Component="@nameof(MudList<T>)" />
     <DocsPageContent>
 
         <DocsPageSection>
             <SectionHeader Title="Simple List">
-                <Description></Description>
+                <Description>
+                    <CodeInline>MudList</CodeInline> is used to display a collection of items which can contain an avatar, an icon, text or custom content.
+                    If you want the component to be readonly set parameter <CodeInline>ReadOnly</CodeInline> to true. You can also use the list for
+                    navigation if you set parameter <CodeInline>Href</CodeInline> on its <CodeInline>MudListItems</CodeInline>. Use
+                    <CodeInline Tag>MudDivider</CodeInline> to separate groups of items.
+
+                    <MudAlert Severity="Severity.Info" Class="mt-3">
+                        Because lists can manage a selected value of any type, you have to specify the type parameter <CodeInline>T</CodeInline> for the list and
+                        its items, even if you only use them for presentation purposes.
+                    </MudAlert>
+                </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="ListSimpleExample">
-                <ListSimpleExample/>
+            <SectionContent DarkenBackground="true" Code="@nameof(ListSimpleExample)">
+                <ListSimpleExample />
             </SectionContent>
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Nested List">
-                <Description></Description>
+                <Description>
+                    To create a nested list with multiple levels of nesting use the <CodeInline Tag>NestedList</CodeInline> render fragment of the  <CodeInline Tag>MudListItem</CodeInline>.
+                    The nested lists inherit all settings of the top-level list. To initialize the expansion state of a nested list set the <CodeInline>@nameof(MudListItem<T>.Expanded)</CodeInline> parameter. You can also bind
+                    it to control the sub-list expansion state. This example also shows how to appropriate the <CodeInline Tag>MudListSubheader</CodeInline> as a footer.
+                </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="ListNestedExample">
-                <ListNestedExample/>
+            <SectionContent DarkenBackground="true" Code="@nameof(ListNestedExample)">
+                <ListNestedExample />
             </SectionContent>
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Avatar List">
-                <Description></Description>
+            <SectionHeader Title="Single-Selection">
+                <Description>
+                    <p>
+                        A <CodeInline Tag>MudList</CodeInline> which has its <CodeInline>SelectionMode</CodeInline> set to either <CodeInline>SelectionMode.SingleSelection</CodeInline> or 
+                        <CodeInline>SelectionMode.ToggleSelection</CodeInline> can be used to select a single value across all its nested lists.
+                        Use <CodeInline>@@bind-SelectedValue</CodeInline> to manipulate the selected value or receive updates when the user selects a value.
+                    </p>
+                    <MudAlert Severity="Severity.Info" Class="my-3">
+                        Note: If you use the toggle selection and unselect the selected item the <CodeInline>SelectedValue</CodeInline> will become <CodeInline>default(T)</CodeInline>. If that
+                        collides with a valid choice (i.e. 0 for type <CodeInline>int</CodeInline>) you should use a nullable type (i.e. <CodeInline>T="int?"</CodeInline>).
+                    </MudAlert>
+                    <p>
+                        The value of a <CodeInline Tag>MudListItem</CodeInline> is defined either via its <CodeInline>Text</CodeInline> or its <CodeInline>Value</CodeInline> parameter. 
+                        For <CodeInline>T="string"</CodeInline> setting only <CodeInline>Text</CodeInline> will suffice if the text you want to display is the same as the selectable value. If 
+                        you set <CodeInline>Value</CodeInline> you can set a different display text with <CodeInline>Text</CodeInline>. The example below demonstrates this.
+                    </p>
+                    <p>
+                        You can customize the selected item color via the <CodeInline>Color</CodeInline> parameter. If <CodeInline>ReadOnly</CodeInline> is set, the list will display the selected value but 
+                        you can't change it.
+                    </p>
+                </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="ListFolderExample">
-                <ListFolderExample/>
+            <SectionContent DarkenBackground="true" ShowCode="false" Code="@nameof(ListSingleSelectionExample)">
+                <ListSingleSelectionExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Multiselection">
+                <Description>
+                    <p>
+                        <CodeInline Tag>MudList</CodeInline> can also be used to select multiple values if the <CodeInline>SelectionMode</CodeInline> is set to <CodeInline>SelectionMode.MultiSelection</CodeInline>. 
+                        To manipulate the selected values or to receive updates when the user changes the selection use <CodeInline>@@bind-SelectedValues</CodeInline> (note the 's' at the end).
+                    </p>
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" ShowCode="false" Code="@nameof(ListMultiSelectionExample)">
+                <ListMultiSelectionExample />
             </SectionContent>
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Interactive">
-                <Description></Description>
-            </SectionHeader>
-            <SectionContent DarkenBackground="true" ShowCode="false" Code="ListInteractiveExample">
-                <ListInteractiveExample/>
-            </SectionContent>
-        </DocsPageSection>
-        
-        <DocsPageSection>
-            <SectionHeader Title="Selection">
                 <Description>
-                    If you set <CodeInline>Clickable="true"</CodeInline> and use <CodeInline>@@bind-SelectedItem</CodeInline>, MudList will manage an exclusive single-selection across all its nested lists for you. 
+                    To make the list non-interactive you can set the <CodeInline Tag>ReadOnly</CodeInline> parameter. In this mode it will still display the selected item. 
+                    In <CodeInline Tag>Disabled</CodeInline> mode the selection is not shown at all.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" ShowCode="false" Code="ListSelectionExample">
-                <ListSelectionExample/>
+            <SectionContent DarkenBackground="true" ShowCode="false" Code="@nameof(ListInteractiveExample)">
+                <ListInteractiveExample />
             </SectionContent>
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Color">
+            <SectionHeader Title="Avatar">
                 <Description>
-                    In selectable MudList, you can also set the selected item's color.
+                    <p>
+                        List items can either display an icon via the <CodeInline>Icon</CodeInline> parameter or an avatar via the <CodeInline Tag>AvatarContent</CodeInline> render fragment.
+                        The content inside <CodeInline Tag>AvatarContent</CodeInline> doesn't necessarily have to be an <MudLink Href="/components/avatar">Avatar</MudLink> it can be 
+                        anything you want to render in place of an avatar or icon. 
+                    </p>
+                    <p>
+                        <MudAlert Severity="Severity.Info" Class="mt-3">
+                            Note: when you define <CodeInline Tag>AvatarContent</CodeInline> the <CodeInline>Icon</CodeInline> parameter is ignored. Also, you'll need to use the
+                            <CodeInline Tag>ChildContent</CodeInline> render fragment for the other content such as the item text.
+                        </MudAlert>
+                    </p>
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" ShowCode="false" Code="ListColorExample">
-                <ListColorExample/>
+            <SectionContent DarkenBackground="true" Code="@nameof(ListAvatarExample)">
+                <ListAvatarExample />
             </SectionContent>
         </DocsPageSection>
+
 
     </DocsPageContent>
 </DocsPage>

@@ -1,0 +1,9 @@
+@namespace MudBlazor.Docs.Examples
+
+<MudTextField ShrinkLabel @bind-Value="TextValue" Label="Standard" Variant="Variant.Text"></MudTextField>
+<MudTextField ShrinkLabel @bind-Value="TextValue" Label="Filled" Variant="Variant.Filled"></MudTextField>
+<MudTextField ShrinkLabel @bind-Value="TextValue" Label="Outlined" Variant="Variant.Outlined"></MudTextField>
+
+@code {
+    public string TextValue { get; set; }
+}

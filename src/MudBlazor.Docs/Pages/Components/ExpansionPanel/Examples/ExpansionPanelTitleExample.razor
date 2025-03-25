@@ -29,11 +29,11 @@
                 Panel Content
             </ChildContent>
         </MudExpansionPanel>
-        <MudExpansionPanel @bind-IsExpanded="isOpen" HideIcon="true">
+        <MudExpansionPanel @bind-Expanded="@open" HideIcon="true">
             <TitleContent>
                 <div class="d-flex">
                     <MudText>Overriding standard icon with own icon</MudText>
-                    <MudIcon Icon="@(isOpen ? Icons.Material.Filled.Close : Icons.Material.Filled.Add)" class="ml-auto"></MudIcon>
+                    <MudIcon Icon="@(open ? Icons.Material.Filled.Close : Icons.Material.Filled.Add)" class="ml-auto"></MudIcon>
                 </div>
             </TitleContent>
             <ChildContent>
@@ -45,5 +45,5 @@
 
 @code
 {
-    bool isOpen;
+    bool open;
 }

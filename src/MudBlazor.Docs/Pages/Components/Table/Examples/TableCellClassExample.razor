@@ -1,0 +1,79 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<style>
+    .mud-table-small-cell {
+        padding: 4px !important;
+        background-color: lightsteelblue;
+    }
+</style>
+
+<MudTable Items="@Elements.Take(4)" Hover="true" Breakpoint="Breakpoint.Sm" MultiSelection="@multiSelection" CellClass="@(applyCellClass? "mud-table-small-cell" : "")">
+    <HeaderContent>
+        <MudTh>Nr</MudTh>
+        <MudTh>Sign</MudTh>
+        <MudTh>Name</MudTh>
+        <MudTh>Position</MudTh>
+        <MudTh>Molar mass</MudTh>
+        <MudTh>Action</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Nr">@context.Number</MudTd>
+        <MudTd DataLabel="Sign">@context.Sign</MudTd>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Position">@context.Position</MudTd>
+        <MudTd DataLabel="Molar mass">@context.Molar</MudTd>
+        <MudTd DataLabel="Action">
+            <div @onclick="@(() => ShowCell(context))">@(context.ShowCell ? "Hide Cell" : "Show Cell")</div>
+        </MudTd>
+    </RowTemplate>
+    <ChildRowContent>
+        @if (context.ShowCell)
+        {
+            <MudTr>
+                <td colspan="6">
+                    <div class="d-flex justify-center">
+                        <MudText Typo="Typo.body1"><strong>The cell is shown</strong></MudText>
+                    </div>
+                </td>
+            </MudTr>
+        }
+    </ChildRowContent>
+</MudTable>
+<MudSwitch @bind-Value="@multiSelection" Color="Color.Primary">Show checkboxes cells</MudSwitch>
+<MudSwitch @bind-Value="@applyCellClass" Color="Color.Primary">Apply Cell Class</MudSwitch>
+@code {
+    private bool multiSelection;
+    private bool applyCellClass;
+
+    private void ShowCell(Element element)
+    {
+        element.ShowCell = !element.ShowCell;
+    }
+
+    public class Element
+    {
+        public string Number { get; set; }
+        public string Sign { get; set; }
+        public string Name { get; set; }
+        public string Position { get; set; }
+        public decimal Molar { get; set; }
+        public bool ShowCell { get; set; }
+
+        public Element(string number, string sign, string name, string position, decimal molar)
+        {
+            Number = number;
+            Sign = sign;
+            Name = name;
+            Position = position;
+            Molar = molar;
+        }
+    }
+
+    private List<Element> Elements = new List<Element>()
+    {
+        new Element("1", "H", "Hydrogen", "0", 1.00794M),
+        new Element("1", "He", "Helium", "17", 4.002602M),
+        new Element("1", "Li", "Lithium", "0", 6.941M),
+        new Element("1", "Be", "Beryllium", "1", 9.012182M)
+    };
+}

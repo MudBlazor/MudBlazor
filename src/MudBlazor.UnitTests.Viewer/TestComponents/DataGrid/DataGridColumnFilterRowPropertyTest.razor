@@ -1,0 +1,49 @@
+﻿<MudDataGrid @ref="@_dataGrid" T="Model" Items="@_items" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterRow">
+    <ToolBarContent>
+        <MudButton Class="clear-all-filters" OnClick="@(() => _dataGrid.ClearFiltersAsync())">Clear All Filters</MudButton>
+    </ToolBarContent>
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Age" />
+        <PropertyColumn Property="x => x.Status" />
+        <PropertyColumn Property="x => x.Hired" />
+        <PropertyColumn Property="x => x.HiredOn"/>
+    </Columns>
+</MudDataGrid>
+
+@code {
+    public record Model (string Name, int? Age, Severity? Status, bool? Hired, DateTime? HiredOn);
+
+    private MudDataGrid<Model> _dataGrid = null!;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var item = _items.Skip(2).First();
+
+            AddFilter(0, item.Name);
+            AddFilter(1, Convert.ToDouble(item.Age));
+            AddFilter(2, item.Status);
+            AddFilter(3, item.Hired);
+            AddFilter(4, item.HiredOn);
+
+            StateHasChanged();
+        }
+    }
+
+    private void AddFilter(int columnIndex, object? value)
+    {
+        var filter = _dataGrid.RenderedColumns[columnIndex].FilterContext.FilterDefinition;
+        filter!.Value = value;
+        _dataGrid.FilterDefinitions.Add(filter);
+    }
+
+    private readonly IEnumerable<Model> _items = new List<Model>
+    {
+        new("Sam", 56, Severity.Normal, false, null), 
+        new("Alicia", 54, Severity.Info, null, null), 
+        new("Ira", 27, Severity.Success, true, new DateTime(2011, 1, 2)),
+        new("John", 32, Severity.Warning, false, null)
+    };
+}

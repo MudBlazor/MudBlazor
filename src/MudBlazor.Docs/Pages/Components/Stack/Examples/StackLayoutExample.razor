@@ -1,0 +1,100 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudStack AlignItems="AlignItems.Center">
+
+    <MudStack Spacing="0" StretchItems="StretchItems.Middle" Class="stack-main mud-elevation-25 stack-adorner">
+
+        @* Title Bar *@
+        <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mud-paper mud-paper-square stack-adorner">
+            <MudIcon Icon="@Icons.Custom.Brands.MudBlazor" Color="Color.Primary" Class="ml-3 my-1 hideable" />
+            <MudText Class="hideable">MudBlazor</MudText>
+            <MudButton Color="Color.Error" Variant="Variant.Filled" Class="rounded-0 hideable" Style="min-width: 0;" DropShadow="false" OnClick="()=>counter=0">✕</MudButton>
+        </MudStack>
+
+        @* Middle Section *@
+        <MudStack Row StretchItems="StretchItems.End" AlignItems="AlignItems.Stretch" Spacing="0" Style="height: 0px;" Class="stack-adorner">
+            @* Side Menu *@
+            <MudStack Justify="Justify.SpaceBetween" Spacing="0" Class="mud-theme-dark stack-adorner">
+                <MudStack Spacing="0" Class="stack-adorner">
+                    <MudButton Color="Color.Inherit" Class="pa-3 rounded-0 hideable" Style="min-width: 0;" OnClick="Count"><MudIcon Icon="@Icons.Material.Outlined.FileCopy" /></MudButton>
+                    <MudButton Color="Color.Inherit" Class="pa-3 rounded-0 hideable" Style="min-width: 0;" OnClick="Count"><MudIcon Icon="@Icons.Material.Filled.Search" /></MudButton>
+                    <MudButton Color="Color.Inherit" Class="pa-3 rounded-0 hideable" Style="min-width: 0;" OnClick="Count"><MudIcon Icon="@Icons.Material.Outlined.AltRoute" /></MudButton>
+                </MudStack>
+                <MudStack Spacing="0" Class="stack-adorner">
+                    <MudButton Color="Color.Inherit" Class="pa-3 rounded-0 hideable" Style="min-width: 0;" OnClick="Count"><MudIcon Icon="@Icons.Material.Outlined.AccountCircle" /></MudButton>
+                    <MudButton Color="Color.Inherit" Class="pa-3 rounded-0 hideable" Style="min-width: 0;" OnClick="Count"><MudIcon Icon="@Icons.Material.Outlined.Settings" /></MudButton>
+                </MudStack>
+            </MudStack>
+            @* Main *@
+            <MudStack Class="mud-background-gray stack-adorner" Style="overflow-x: auto;">
+                <MudText Class="ma-6 hideable">
+                    The MudStack provides flexibility in layout management, enabling the creation of elegant and responsive designs with minimal effort. Despite its simple design, it is powerful, making it perfect for both - simple and complex layouts. MudStack can perfectly complement and enhance your application's UI.
+                </MudText>
+            </MudStack>
+        </MudStack>
+
+        @* Status Bar *@
+        <MudStack Row Spacing="0" Justify="Justify.SpaceBetween" Class="mud-theme-info stack-adorner">
+            <MudButton Size="Size.Small" Color="Color.Inherit" StartIcon="@Icons.Material.Outlined.MarkChatRead" Class="hideable" OnClick="Count">Ready</MudButton>
+            <MudStack Row Spacing="0" AlignItems="AlignItems.Center" Class="stack-adorner">
+                <MudButton Size="Size.Small" Color="Color.Inherit" Class="hideable" OnClick="Count">MudBlazor</MudButton>
+                <MudBadge Content="@counter" Overlap Class="mr-3 hideable">
+                    <MudIconButton Size="Size.Small" Color="Color.Inherit" Icon="@Icons.Material.Outlined.Notifications" OnClick="Count" />
+                </MudBadge>
+            </MudStack>
+        </MudStack>
+
+    </MudStack>
+
+    <MudStack Row>
+        <MudSwitch @bind-Value="showAdorners" Color="Color.Primary">Inspect MudStacks</MudSwitch>
+        <MudSwitch @bind-Value="hideContent" Color="Color.Primary">Hide content</MudSwitch>
+    </MudStack>
+
+</MudStack>
+
+<style>
+    .stack-main {
+        width: 380px;
+        height: 320px;
+        min-height: 310px;
+        min-width: 300px;
+        max-height: 420px;
+        max-width: 520px;
+        resize: both;
+        overflow: hidden;
+    }
+
+    .mud-badge {
+        font-size: 10px;
+        height: 11px;
+        min-width: 11px;
+        padding: 1px 4px;
+    }
+</style>
+@if (showAdorners)
+{
+    <style>
+        .stack-adorner:hover {
+            outline: 2px dashed var(--mud-palette-secondary);
+            z-index: 100;
+        }
+    </style>
+}
+@if (hideContent)
+{
+    <style>
+        .hideable {
+            opacity: 0;
+        }
+    </style>
+}
+@code {
+    bool showAdorners;
+    bool hideContent;
+    int counter = 2;
+    void Count()
+    {
+        counter++;
+    }
+}

@@ -1,10 +1,7 @@
-@namespace MudBlazor.UnitTests.TestComponents
-
-
-<MudTable @ref="MudTableRef" Items="items" T="Element" @bind-SelectedItem="selectedItem"
- RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues" CanCancelEdit="true">
+<MudTable Items="_items" T="Element" @bind-SelectedItem="_selectedItem"
+          RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues" CanCancelEdit="true">
     <HeaderContent>
-        <MudTh><MudTableSortLabel SortBy="new Func<Element, object>(x=>x.Value)">#</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<Element, object?>( x=> x.Value)">#</MudTableSortLabel></MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Nr">@context.Value</MudTd>
@@ -18,31 +15,30 @@
 
 @code {
     public static string __description__ = "editing a sorted column should not shift position while open";
-    
-    private Element elementBeforeEditing = new();
-    private Element selectedItem = null;
-    public MudTable<Element> MudTableRef { get; private set; }
 
-    IEnumerable<Element> items = new List<Element> 
-    { 
-        new Element { Value = "B", Id = "Id1" }, 
-        new Element { Value = "A", Id = "Id2" }, 
-        new Element { Value = "C", Id = "Id3" }, 
+    private readonly Element _elementBeforeEditing = new();
+    private Element? _selectedItem;
+    private readonly IEnumerable<Element> _items = new List<Element>
+    {
+        new() { Value = "B", Id = "Id1" },
+        new() { Value = "A", Id = "Id2" },
+        new() { Value = "C", Id = "Id3" },
     };
-    
+
     private void BackupItem(object element)
     {
-        elementBeforeEditing.Value = ((Element)element).Value;
+        _elementBeforeEditing.Value = ((Element)element).Value;
     }
 
     private void ResetItemToOriginalValues(object element)
     {
-        ((Element)element).Value = elementBeforeEditing.Value;
+        ((Element)element).Value = _elementBeforeEditing.Value;
     }
-    
+
     public class Element
     {
-        public string Id { get; set; }
-        public string Value { get; set; }
+        public string? Id { get; set; }
+
+        public string? Value { get; set; }
     }
 }

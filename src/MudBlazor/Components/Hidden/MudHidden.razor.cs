@@ -1,72 +1,84 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
-using MudBlazor.Services;
+﻿using Microsoft.AspNetCore.Components;
+using MudBlazor.State;
 
 namespace MudBlazor
 {
 #nullable enable
+
+    /// <summary>
+    /// A component which conditionally renders content depending on the screen size.
+    /// </summary>
+    /// <remarks>
+    /// This component uses JavaScript to listen for browser window size changes.  If you want a solution using only CSS, you can use the <see href="https://mudblazor.com/features/display#class-reference">responsive display classes</see>.
+    /// </remarks>
     public partial class MudHidden : MudComponentBase, IBrowserViewportObserver, IAsyncDisposable
     {
-        private bool _isHidden = true;
+        private readonly ParameterState<bool> _hiddenState;
         private bool _serviceIsReady = false;
-        private Guid _breakpointServiceSubscriptionId;
         private Breakpoint _currentBreakpoint = Breakpoint.None;
-
-        [Inject]
-        [Obsolete]
-        public IBreakpointService BreakpointService { get; set; } = null!;
 
         [Inject]
         protected IBrowserViewportService BrowserViewportService { get; set; } = null!;
 
+        /// <summary>
+        /// The current breakpoint.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Breakpoint.None"/>.
+        /// </remarks>
         [CascadingParameter]
         public Breakpoint CurrentBreakpointFromProvider { get; set; } = Breakpoint.None;
 
         /// <summary>
-        /// The screen size(s) depending on which the ChildContent should not be rendered (or should be, if Invert is true)
+        /// The breakpoint at which component is not rendered, when <see cref="Invert"/> is <c>false</c>.
         /// </summary>
+        /// <remarks>
+        /// When <see cref="Invert"/> is <c>true</c>, this property controls when the content is shown.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Hidden.Behavior)]
         public Breakpoint Breakpoint { get; set; }
 
         /// <summary>
-        /// Inverts the Breakpoint, so that the ChildContent is only rendered when the breakpoint matches the screen size.
+        /// Causes the <see cref="Breakpoint"/> to control when content is displayed.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Hidden.Behavior)]
         public bool Invert { get; set; }
 
         /// <summary>
-        /// True if the component is not visible (two-way bindable)
+        /// Hides the content within this component.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Hidden.Behavior)]
-        public bool IsHidden
-        {
-            get => _isHidden;
-            set
-            {
-                if (_isHidden != value)
-                {
-                    _isHidden = value;
-                    IsHiddenChanged.InvokeAsync(_isHidden);
-                }
-            }
-        }
+        public bool Hidden { get; set; } = true;
 
         /// <summary>
-        /// Fires when the breakpoint changes visibility of the component
+        /// Occurs when <see cref="Hidden"/> has changed.
         /// </summary>
         [Parameter]
-        public EventCallback<bool> IsHiddenChanged { get; set; }
+        public EventCallback<bool> HiddenChanged { get; set; }
 
         /// <summary>
-        /// Child content of component.
+        /// The content within this component.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Hidden.Behavior)]
         public RenderFragment? ChildContent { get; set; }
+
+        public MudHidden()
+        {
+            using var registerScope = CreateRegisterScope();
+            _hiddenState = registerScope.RegisterParameter<bool>(nameof(Hidden))
+                .WithParameter(() => Hidden)
+                .WithEventCallback(() => HiddenChanged);
+        }
 
         protected override async Task OnParametersSetAsync()
         {
@@ -92,9 +104,15 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// Releases resources used by this component.
+        /// </summary>
         public async ValueTask DisposeAsync()
         {
-            await BrowserViewportService.UnsubscribeAsync(this);
+            if (IsJSRuntimeAvailable)
+            {
+                await BrowserViewportService.UnsubscribeAsync(this);
+            }
         }
 
         Guid IBrowserViewportObserver.Id { get; } = Guid.NewGuid();
@@ -132,7 +150,7 @@ namespace MudBlazor
                 hidden = !hidden;
             }
 
-            IsHidden = hidden;
+            await _hiddenState.SetValueAsync(hidden);
         }
     }
 }

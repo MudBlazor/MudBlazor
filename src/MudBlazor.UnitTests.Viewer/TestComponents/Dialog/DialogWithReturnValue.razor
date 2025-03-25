@@ -1,6 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudDialog>
+﻿<MudDialog>
     <DialogContent>
         <MudText>This Dialog returns a string as return value</MudText>
     </DialogContent>
@@ -11,6 +9,6 @@
 </MudDialog>
 
 @code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
-
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; } = null!;
 }

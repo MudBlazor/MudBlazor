@@ -1,16 +1,14 @@
 ﻿@page "/components/container"
 
 <DocsPage>
-    <DocsPageHeader Title="Container">
-        <Description>A simple component to center content. Choose between fluid or fixed.</Description>
-    </DocsPageHeader>
+    <DocsPageHeader Title="Container" Component="@nameof(MudContainer)" SubTitle="A simple component to center content. Choose between fluid or fixed." />
     <DocsPageContent>
 
         <DocsPageSection>
             <SectionHeader Title="Fluid">
                 <Description>You can set the max width with the <CodeInline>MaxWidth</CodeInline> enum.</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="ContainerFluidExample">
+            <SectionContent DarkenBackground="true" Code="@nameof(ContainerFluidExample)">
                 <ContainerFluidExample />
             </SectionContent>
         </DocsPageSection>
@@ -19,7 +17,7 @@
             <SectionHeader Title="Fixed">
                 <Description>With the <CodeInline>Fixed</CodeInline> property set to true the container will "snap" to the closest breakpoint.</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="ContainedFixedExample">
+            <SectionContent DarkenBackground="true" Code="@nameof(ContainedFixedExample)">
                 <ContainedFixedExample />
             </SectionContent>
         </DocsPageSection>

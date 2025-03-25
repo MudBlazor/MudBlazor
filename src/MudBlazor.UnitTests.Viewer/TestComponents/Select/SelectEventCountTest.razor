@@ -1,10 +1,9 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
+﻿<MudPopoverProvider />
 
-<MudPopoverProvider></MudPopoverProvider>
-<MudSelect @ref="_select" T="string" ValueChanged="ValueChanged" SelectedValuesChanged="ValuesChanged" MultiSelection="MultiSelection">
-    <MudSelectItem @ref="FirstItem" T="string" Value="@("1")" />
-    <MudSelectItem @ref="SecondItem" T="string" Value="@("2")" />
-    <MudSelectItem @ref="ThirdItem" T="string" Value="@("3")" />
+<MudSelect T="string" ValueChanged="ValueChanged" SelectedValuesChanged="ValuesChanged" MultiSelection="MultiSelection">
+    <MudSelectItem T="string" Value="@("1")" />
+    <MudSelectItem T="string" Value="@("2")" />
+    <MudSelectItem T="string" Value="@("3")" />
     <MudSelectItem T="string" Value="@("4")" Disabled="true" />
 </MudSelect>
 
@@ -13,14 +12,8 @@
     public bool MultiSelection { get; set; }
 
     public int ValueChangeCount { get; set; }
-    public int ValuesChangeCount { get; set; }
-    public int ItemChangeCount { get; set; }
-    public int ItemsChangeCount { get; set; }
 
-    MudSelect<string> _select;
-    MudSelectItem<string> FirstItem { get; set; }
-    MudSelectItem<string> SecondItem { get; set; }
-    MudSelectItem<string> ThirdItem { get; set; }
+    public int ValuesChangeCount { get; set; }
 
     private void ValueChanged()
     {
@@ -30,15 +23,5 @@
     private void ValuesChanged()
     {
         ValuesChangeCount++;
-    }
-
-    private void ItemChanged()
-    {
-        ItemChangeCount++;
-    }
-
-    private void ItemsChanged()
-    {
-        ItemsChangeCount++;
     }
 }

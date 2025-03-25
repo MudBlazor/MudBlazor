@@ -1,0 +1,146 @@
+@namespace MudBlazor.Docs.Examples
+
+<MudGrid>
+    <MudItem md="4">
+        <MudSelect T="string"
+                   Label="MudSelect"
+                   DropdownSettings="@_dropdownSettings"
+                   AnchorOrigin="@_anchor"
+                   TransformOrigin="@_transform"
+                   RelativeWidth="_dropdownWidth"
+                   Variant="Variant.Outlined"
+                   AdornmentIcon="@Icons.Material.Filled.Search"
+                   AdornmentColor="Color.Primary">
+            <MudSelectItem Value="@("foo")">Foo</MudSelectItem>
+            <MudSelectItem Value="@("bar")">Bar</MudSelectItem>
+            <MudSelectItem Value="@("bar")">Lorem ipsum dolor sit amet, consectetur adipiscing elit</MudSelectItem>
+        </MudSelect>
+    </MudItem>
+
+    <MudItem md="4"
+             Class="d-flex justify-center align-center">
+        <MudMenu Label="MudMenu"
+                 Variant="Variant.Filled"
+                 Color="Color.Primary"
+                 DropdownSettings="@_dropdownSettings"
+                 AnchorOrigin="@_anchor"
+                 TransformOrigin="@_transform"
+                 RelativeWidth="_dropdownWidth">
+            <MudMenuItem Label="Enlist" />
+            <MudMenuItem Label="Barracks" />
+            <MudMenuItem Label="Armory" />
+            <MudMenuItem Label="The quick brown fox jumps over the lazy dog" />
+        </MudMenu>
+    </MudItem>
+
+    <MudItem md="4">
+        <MudAutocomplete SearchFunc="Search"
+                         Variant="Variant.Outlined"
+                         Label="MudAutocomplete"
+                         DropdownSettings="@_dropdownSettings"
+                         AnchorOrigin="@_anchor"
+                         TransformOrigin="@_transform"
+                         RelativeWidth="_dropdownWidth" />
+    </MudItem>
+
+    <MudItem md="1" />
+
+    <MudItem md="2"
+             Class="d-flex align-center justify-center">
+        <MudSwitch @bind-Value="@_fixed"
+                   Label="Fixed"
+                   LabelPlacement="Placement.Right" />
+    </MudItem>
+
+    <MudItem md="2">
+        <MudSelect T="Origin"
+                   Label="Anchor Origin"
+                   @bind-Value="@_anchor"
+                   DropdownSettings="@_dropdownSettings">
+            <MudSelectItem Value="@Origin.TopLeft">Top Left</MudSelectItem>
+            <MudSelectItem Value="@Origin.TopCenter">Top Center</MudSelectItem>
+            <MudSelectItem Value="@Origin.TopRight">Top Right</MudSelectItem>
+            <MudSelectItem Value="@Origin.BottomLeft">Bottom Left</MudSelectItem>
+            <MudSelectItem Value="@Origin.BottomCenter">Bottom Center</MudSelectItem>
+            <MudSelectItem Value="@Origin.BottomRight">Bottom Right</MudSelectItem>
+            <MudSelectItem Value="@Origin.CenterLeft">Center Left</MudSelectItem>
+            <MudSelectItem Value="@Origin.CenterCenter">Center Center</MudSelectItem>
+            <MudSelectItem Value="@Origin.CenterRight">Center Right</MudSelectItem>
+        </MudSelect>
+    </MudItem>
+
+    <MudItem md="2">
+        <MudSelect T="Origin"
+                   Label="Transform Origin"
+                   @bind-Value="@_transform">
+            <MudSelectItem Value="@Origin.TopLeft">Top Left</MudSelectItem>
+            <MudSelectItem Value="@Origin.TopCenter">Top Center</MudSelectItem>
+            <MudSelectItem Value="@Origin.TopRight">Top Right</MudSelectItem>
+            <MudSelectItem Value="@Origin.BottomLeft">Bottom Left</MudSelectItem>
+            <MudSelectItem Value="@Origin.BottomCenter">Bottom Center</MudSelectItem>
+            <MudSelectItem Value="@Origin.BottomRight">Bottom Right</MudSelectItem>
+            <MudSelectItem Value="@Origin.CenterLeft">Center Left</MudSelectItem>
+            <MudSelectItem Value="@Origin.CenterCenter">Center Center</MudSelectItem>
+            <MudSelectItem Value="@Origin.CenterRight">Center Right</MudSelectItem>
+        </MudSelect>
+    </MudItem>
+
+    <MudItem md="2">
+        <MudSelect T="OverflowBehavior"
+                   Label="Overflow Behavior"
+                   @bind-Value="@_overflowBehavior">
+            <MudSelectItem Value="@OverflowBehavior.FlipNever">Flip Never</MudSelectItem>
+            <MudSelectItem Value="@OverflowBehavior.FlipOnOpen">Flip On Open</MudSelectItem>
+            <MudSelectItem Value="@OverflowBehavior.FlipAlways">Flip Always</MudSelectItem>
+        </MudSelect>
+    </MudItem>
+
+    <MudItem md="2">
+        <MudSelect T="DropdownWidth"
+                   Label="Dropdown Width"
+                   @bind-Value="@_dropdownWidth">
+            <MudSelectItem Value="@DropdownWidth.Relative">Relative (equal to activator width)</MudSelectItem>
+            <MudSelectItem Value="@DropdownWidth.Adaptive">Adaptive (min = activator width)</MudSelectItem>
+            <MudSelectItem Value="@DropdownWidth.Ignore">Ignore (independent width)</MudSelectItem>
+        </MudSelect>
+    </MudItem>
+
+</MudGrid>
+
+
+@code {
+
+    private Origin _anchor = Origin.BottomLeft;
+    private Origin _transform = Origin.TopLeft;
+    private bool _fixed = false;
+    private OverflowBehavior _overflowBehavior = OverflowBehavior.FlipOnOpen;
+    private DropdownWidth _dropdownWidth = DropdownWidth.Relative;
+
+    private DropdownSettings _dropdownSettings => new DropdownSettings() { Fixed = _fixed, OverflowBehavior = _overflowBehavior, };
+
+    private string[] _states =
+    {
+        "Alabama", "Alaska", "Arizona", "Arkansas", "California",
+        "Colorado", "Connecticut", "Delaware", "Florida", "Georgia",
+        "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas",
+        "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts",
+        "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana",
+        "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico",
+        "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma",
+        "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota",
+        "Tennessee", "Texas", "Utah", "Vermont", "Virginia",
+        "Washington", "West Virginia", "Wisconsin", "Wyoming"
+    };
+
+    private async Task<IEnumerable<string>> Search(string value, CancellationToken token)
+    {
+        // In real life use an asynchronous function for fetching data from an api.
+        await Task.Delay(5, token);
+
+        // if text is null or empty, show complete list
+        if (string.IsNullOrEmpty(value))
+            return _states;
+
+        return _states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+}

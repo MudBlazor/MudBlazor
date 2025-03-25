@@ -1,6 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudTable ServerData="@(new Func<TableState, Task<TableData<int>>>(ServerReload))">
+﻿<MudTable ServerData="ServerReload">
     <HeaderContent>
         <MudTh><MudTableSortLabel SortLabel="No." T="int">Nr</MudTableSortLabel></MudTh>
     </HeaderContent>
@@ -10,22 +8,20 @@
 </MudTable>
 
 @code {
-#pragma warning disable CS1998 // async without await
     public static string __description__ = "Even without a MudTablePagination the table should call ServerReload to get the items on start.";
 
-    private IEnumerable<int> pagedData;
-
-    private int totalItems;
+    private int _totalItems;
+    private IEnumerable<int> _pagedData = [];
 
     /// <summary>
     /// Here we simulate getting the paged, filtered and ordered data from the server
     /// </summary>
-    private async Task<TableData<int>> ServerReload(TableState state)
+    private Task<TableData<int>> ServerReload(TableState state, CancellationToken token)
     {
-        IEnumerable<int> data = new List<int>() { 1,2,3 };
-        totalItems = data.Count();
-        pagedData = data.ToArray();
-        return new TableData<int>() { TotalItems = totalItems, Items = pagedData };
-    }
+        var data = new List<int> { 1, 2, 3 };
+        _totalItems = data.Count;
+        _pagedData = data.ToArray();
 
+        return Task.FromResult(new TableData<int> { TotalItems = _totalItems, Items = _pagedData });
+    }
 }

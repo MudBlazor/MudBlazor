@@ -2,31 +2,28 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
-namespace MudBlazor.UnitTests.TestComponents
+namespace MudBlazor.UnitTests.TestComponents.Table
 {
     public partial class TableRowsPerPageTwoWayBindingTest : ComponentBase
     {
         public static string __description__ = "Test Two-Way Binding of RowsPerPage Parameter.";
 
-        private int _RowsPerPage = 3;
+        private int _rowsPerPage = 3;
+        private readonly ViewModel _viewModel = new();
 
         [Parameter]
         public int RowsPerPage
         {
-            get => _RowsPerPage;
+            get => _rowsPerPage;
             set
             {
-                if (_RowsPerPage == value)
+                if (_rowsPerPage == value)
                     return;
-                _RowsPerPage = value;
+                _rowsPerPage = value;
                 RowsPerPageChanged.InvokeAsync(value);
             }
         }
@@ -34,30 +31,26 @@ namespace MudBlazor.UnitTests.TestComponents
         [Parameter]
         public EventCallback<int> RowsPerPageChanged { get; set; }
 
-
-        private ViewModel viewModel = new ViewModel();
+        protected override async Task OnInitializedAsync()
+        {
+            _viewModel.PropertyChanged += (_, _) => InvokeAsync(StateHasChanged).ConfigureAwait(false);
+            await _viewModel.LoadItemsAsync().ConfigureAwait(false);
+            await base.OnInitializedAsync();
+        }
 
         private sealed class Item
         {
-            public string Text { get; set; }
-        }
-
-        protected override async Task OnInitializedAsync()
-        {
-            viewModel.PropertyChanged += (sender, args) => InvokeAsync(StateHasChanged).ConfigureAwait(false);
-            await viewModel.LoadItemsAsync().ConfigureAwait(false);
-            await base.OnInitializedAsync();
+            public string? Text { get; init; }
         }
 
         private sealed class ViewModel : INotifyPropertyChanged
         {
-            private List<Item> _items = new List<Item>();
-            public bool Filter(Item arg) { return true; }
+            private List<Item> _items = [];
 
             public List<Item> Items
             {
                 get => _items;
-                set
+                private set
                 {
                     _items = value;
                     OnPropertyChanged();
@@ -69,19 +62,18 @@ namespace MudBlazor.UnitTests.TestComponents
                 var list = new List<Item>();
                 //delay to simulate web service call
                 await Task.Delay(50).ConfigureAwait(false);
-                for (int i = 0; i < 20; i++)
+                for (var i = 0; i < 20; i++)
                 {
                     list.Add(new Item { Text = i.ToString() });
                 }
                 Items = list;
             }
 
-            public event PropertyChangedEventHandler PropertyChanged;
+            public event PropertyChangedEventHandler? PropertyChanged;
 
-            private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+            private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
             {
-                PropertyChanged?.Invoke(this,
-                                        new PropertyChangedEventArgs(propertyName));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             }
         }
     }

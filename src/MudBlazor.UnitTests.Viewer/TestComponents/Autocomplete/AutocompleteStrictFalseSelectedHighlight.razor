@@ -1,37 +1,32 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
+﻿<MudPopoverProvider />
 
-<MudPopoverProvider />
-
-<MudAutocomplete T="string" SearchFunc="@Search" ItemDisabledFunc="@ItemDisabledFunc" @bind-Value="@Fruit" Strict="false" />
+<MudAutocomplete T="string" SearchFunc="@Search" ItemDisabledFunc="@ItemDisabledFunc" @bind-Value="@_fruit" Strict="false" />
 
 @code {
-	public string Fruit { get; set; }
+    private string? _fruit;
 
-	public string[] Fruits = new string[]
-	{
-		"apple",
+	private readonly string[] _fruits =
+    [
+        "apple",
 		"banana",
 		"pear",
 		"carrot",
 		"cherry",
 		"raspberry",
 		"peach"
-	};
+    ];
 
-	public Func<string, bool> ItemDisabledFunc = (string text) =>
-	{
-		return text.Equals("carrot", StringComparison.InvariantCulture);
-	};
+	public Func<string, bool> ItemDisabledFunc = text => text.Equals("carrot", StringComparison.InvariantCulture);
 
-	public async Task<IEnumerable<string>> Search(string text)
-	{
-		await Task.Delay(100);
+    public async Task<IEnumerable<string>> Search(string text, CancellationToken token)
+    {
+		await Task.Delay(100, token);
 
 		if (string.IsNullOrWhiteSpace(text))
 		{
-			return Fruits;
+			return _fruits;
 		}
 
-		return Fruits.Where(x => x.Contains(text, StringComparison.InvariantCulture));
+		return _fruits.Where(x => x.Contains(text, StringComparison.InvariantCulture));
 	}
 }

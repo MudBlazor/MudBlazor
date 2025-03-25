@@ -1,0 +1,33 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<div>
+    <MudChart ChartType="ChartType.Line" ChartSeries="@Series" XAxisLabels="@XAxisLabels" Width="100%" Height="350px" CanHideSeries/>
+    <MudButton Variant="Variant.Filled" @onclick="RandomizeData">Randomize Data</MudButton>
+</div>
+
+@code {
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        RandomizeData();
+    }
+
+    public List<ChartSeries> Series = new List<ChartSeries>();
+    public string[] XAxisLabels = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
+
+    Random random = new Random();
+    public void RandomizeData()
+    {
+        var newSeries = new List<ChartSeries>();
+        for (int s = 1; s <= 10; s++)
+        {
+            var series = new ChartSeries() { Name = $"Series {s}", Data = new double[9] };
+            for (int i = 0; i < 9; i++)
+                series.Data[i] = random.NextDouble() * 100;
+            newSeries.Add(series);
+        }
+        Series = newSeries;
+        StateHasChanged();
+    }
+}

@@ -1,86 +1,90 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-<MudPopoverProvider></MudPopoverProvider>
+﻿<MudPopoverProvider />
 
 <MudAutocomplete Label="State" SearchFunc="@SearchStateAsync" 
-                 ToStringFunc="@(e => e?.StateName)" @bind-Value="@StateDetails" Variant="Variant.Outlined" 
-                 Margin="MudBlazor.Margin.Dense" ResetValueOnEmptyText="true" />
+                 ToStringFunc="@ToStringFunc" @bind-Value="@_stateDetails" Variant="Variant.Outlined" 
+                 Margin="Margin.Dense" ResetValueOnEmptyText="true" />
 
 @code {
     public static string __description__ = "Autocomplete should show 'Assam'.";
-    public IEnumerable<State> StateList { get; set; }
-    public State StateDetails { get; set; }
+    private State? _stateDetails;
+    private IEnumerable<State> _stateList = [];
 
     protected override void OnInitialized()
     {
         LoadStates();
-        StateDetails = new State();
-        StateDetails.StateId = 6;
-        StateDetails.StateName = "Assam";
+        _stateDetails = new State
+        {
+            StateId = 6,
+            StateName = "Assam"
+        };
         base.OnInitialized();
     }
 
-
     private void LoadStates()
     {
-        State s1 = new State
+        var s1 = new State
         {
             StateId = 1,
             StateName = "Delhi"
         };
 
-        State s2 = new State
+        var s2 = new State
         {
             StateId = 2,
             StateName = "Gujarat"
         };
 
-        State s3 = new State
+        var s3 = new State
         {
             StateId = 3,
             StateName = "Maharashtra"
         };
 
-        State s4 = new State
+        var s4 = new State
         {
             StateId = 4,
             StateName = "Kerala"
         };
 
-        State s5 = new State
+        var s5 = new State
         {
             StateId = 5,
             StateName = "Tamil Nadu"
         };
 
-        State s6 = new State
+        var s6 = new State
         {
             StateId = 6,
             StateName = "Assam"
         };
 
-        State s7 = new State
+        var s7 = new State
         {
             StateId = 7,
             StateName = "Chhattisgarh"
         };
 
-        StateList = new List<State> { s1, s2, s3, s4, s5, s6, s7 };
+        _stateList = new List<State> { s1, s2, s3, s4, s5, s6, s7 };
     }
 
-    public async Task<IEnumerable<State>> SearchStateAsync(string value)
+    public async Task<IEnumerable<State?>> SearchStateAsync(string value, CancellationToken token)
     {
         // In real life use an asynchronous function for fetching data from an api.
-        await Task.Delay(5);
+        await Task.Delay(5, token);
 
-        IEnumerable<State> list;
-        if (string.IsNullOrEmpty(value)) list = StateList;
-        else list = StateList.Where(e => e.StateName.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+        IEnumerable<State> list = string.IsNullOrEmpty(value)
+            ? _stateList
+            : _stateList.Where(e => e.StateName.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+        
         return list;
     }
 
+    private static string? ToStringFunc(State? arg) => arg?.StateName;
+
     public class State
     {
-        public int StateId { get; set; }
-        public string StateName { get; set; }
+        public required int StateId { get; init; }
+
+        public required string StateName { get; init; }
     }
 }

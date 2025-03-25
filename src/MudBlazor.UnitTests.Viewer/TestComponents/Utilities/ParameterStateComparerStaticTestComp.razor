@@ -1,0 +1,16 @@
+﻿@using System.Globalization
+@inherits MudComponentBase
+@namespace MudBlazor.UnitTests
+
+<p>Parameter changes:</p>
+<div class="parameter-changes">
+    @foreach (var parameterChange in _parameterChanges)
+    {
+        <p>@($"DoubleParam: {parameterChange.LastValue.ToString(CultureInfo.InvariantCulture)}=>{parameterChange.Value.ToString(CultureInfo.InvariantCulture)}")</p>
+    }
+</div>
+
+@code
+{
+    public static string __description__ = "Tests the ParameterState framework's parameter change notification with custom IEqualityComparer.";
+}

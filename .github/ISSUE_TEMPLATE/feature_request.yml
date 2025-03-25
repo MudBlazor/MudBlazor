@@ -1,11 +1,11 @@
-name: Feature request
+name: Feature Request
 description: Suggest an idea for this project
 labels: [triage, enhancement]
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking the time to fill out this feature request for [MudBlazor](https://mudblazor.com). Note that this template is only for feature requests. Please use [Github Dicussions](https://github.com/MudBlazor/MudBlazor/discussions) or [Discord](https://discord.gg/mudblazor) for any questions.
+        Thanks for taking the time to fill out this feature request for [MudBlazor](https://mudblazor.com). Note: this template is only for feature requests. Please use [Github Discussions](https://github.com/MudBlazor/MudBlazor/discussions) or [Discord](https://discord.gg/mudblazor) for any questions.
   - type: dropdown
     id: enhancement-type
     attributes:
@@ -41,7 +41,7 @@ body:
     id: examples
     attributes:
       label: Have you seen this feature anywhere else?
-      description: Please provide a link to the Material Design guidelines, other implementations, or screenshots of the expected behavior, if possible.
+      description: Please provide links to the Material Design guidelines, other implementations, or screenshots or videos of the expected behavior if possible.
       placeholder: Show us examples!
   - type: textarea
     id: alternatives
@@ -53,14 +53,14 @@ body:
     id: pr
     attributes:
       label: Pull Request
-      description: Are you interested in implementing the feature via a Pull Request? That would be the fastest way to realize your request. We appreciate every contribution!
+      description: If you want to see this feature soon, consider submitting a Pull Request! Our team has limited resources so we rely on community contributions. We greatly appreciate all contributions and will review them as soon as possible for inclusion in the next version!
       options:
         - label: I would like to do a Pull Request
   - type: checkboxes
     id: terms
     attributes:
       label: Code of Conduct
-      description: By submitting this issue, you agree to follow our [Code of Conduct](https://github.com/MudBlazor/MudBlazor/blob/dev/CODE_OF_CONDUCT.md)
+      description: By submitting this issue, you agree to follow our [Code of Conduct](https://github.com/MudBlazor/MudBlazor/blob/dev/CODE_OF_CONDUCT.md).
       options:
         - label: I agree to follow this project's Code of Conduct
           required: true

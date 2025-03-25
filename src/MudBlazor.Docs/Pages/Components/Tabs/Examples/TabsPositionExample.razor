@@ -1,14 +1,5 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudSelect Variant="Variant.Outlined" Label="Tabs Position" Dense="true" Margin="Margin.Dense" T="@Position" @bind-Value="Position">
-    <MudSelectItem T="Position" Value="@Position.Top">Top</MudSelectItem>
-    <MudSelectItem T="Position" Value="@Position.Start">Start</MudSelectItem>
-    <MudSelectItem T="Position" Value="@Position.Left">Left</MudSelectItem>
-    <MudSelectItem T="Position" Value="@Position.Right">Right</MudSelectItem>
-    <MudSelectItem T="Position" Value="@Position.End">End</MudSelectItem>
-    <MudSelectItem T="Position" Value="@Position.Bottom">Bottom</MudSelectItem>
-</MudSelect>
-
 <MudTabs Outlined="true" Position="@Position" Rounded="true" Border="true"
     ApplyEffectsToContainer="true" Class="mt-8" PanelClass="pa-6">
     <MudTabPanel Text="Item One">
@@ -22,6 +13,14 @@
     </MudTabPanel>
 </MudTabs>
 
+<MudSelect Label="Tabs Position" @bind-Value="Position" Variant="Variant.Outlined">
+    <MudSelectItem T="Position" Value="@Position.Top">Top</MudSelectItem>
+    <MudSelectItem T="Position" Value="@Position.Start">Start</MudSelectItem>
+    <MudSelectItem T="Position" Value="@Position.Left">Left</MudSelectItem>
+    <MudSelectItem T="Position" Value="@Position.Right">Right</MudSelectItem>
+    <MudSelectItem T="Position" Value="@Position.End">End</MudSelectItem>
+    <MudSelectItem T="Position" Value="@Position.Bottom">Bottom</MudSelectItem>
+</MudSelect>
 
 @code {
     public Position Position { get; set; } = Position.Left;

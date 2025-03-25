@@ -1,106 +1,153 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Threading.Tasks;
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 using MudBlazor.Utilities.Exceptions;
 
 namespace MudBlazor
 {
+#nullable enable
+
+    /// <summary>
+    /// A group of <see cref="MudRadio{T}"/> components.
+    /// </summary>
+    /// <typeparam name="T">The type of value being selected.</typeparam>
     public partial class MudRadioGroup<T> : MudFormComponent<T, T>, IMudRadioGroup
     {
-        public MudRadioGroup() : base(new Converter<T, T>()) { }
-
-        private MudRadio<T> _selectedRadio;
-
+        private MudRadio<T>? _selectedRadio;
         private HashSet<MudRadio<T>> _radios = new();
 
+        public MudRadioGroup() : base(new Converter<T, T>()) { }
+
         protected string Classname =>
-        new CssBuilder("mud-input-control-boolean-input")
-            .AddClass(Class)
-            .Build();
+            new CssBuilder("mud-input-control-boolean-input")
+                .AddClass(Class)
+                .Build();
 
         private string GetInputClass() =>
-        new CssBuilder("mud-radio-group")
-            .AddClass(InputClass)
-            .Build();
+            new CssBuilder("mud-radio-group")
+                .AddClass(InputClass)
+                .Build();
+
+        [CascadingParameter(Name = "ParentDisabled")]
+        private bool ParentDisabled { get; set; }
+
+        [CascadingParameter(Name = "ParentReadOnly")]
+        private bool ParentReadOnly { get; set; }
 
         /// <summary>
-        /// User class names for the input, separated by space
+        /// The CSS classes for this button group.
+        /// </summary>
+        /// <remarks>
+        /// Multiple classes must be separated by spaces.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Radio.Appearance)]
+        public string? InputClass { get; set; }
+
+        /// <summary>
+        /// The CSS styles for this button group.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Radio.Appearance)]
-        public string InputClass { get; set; }
+        public string? InputStyle { get; set; }
 
         /// <summary>
-        /// User style definitions for the input
+        /// The content within this button group.
         /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Radio.Appearance)]
-        public string InputStyle { get; set; }
-
+        /// <remarks>
+        /// Usually a set of <see cref="MudRadio{T}"/> components.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Radio.Behavior)]
-        public RenderFragment ChildContent { get; set; }
+        public RenderFragment? ChildContent { get; set; }
 
+        /// <summary>
+        /// The unique name for this button group.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.Radio.Behavior)]
         public string Name { get; set; } = Guid.NewGuid().ToString();
 
-        public void CheckGenericTypeMatch(object select_item)
-        {
-            var itemT = select_item.GetType().GenericTypeArguments[0];
-            if (itemT != typeof(T))
-                throw new GenericTypeMismatchException("MudRadioGroup", "MudRadio", typeof(T), itemT);
-        }
-
         /// <summary>
-        /// If true, the input will be disabled.
+        /// Prevents the user from interacting with this group.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool Disabled { get; set; }
-        [CascadingParameter(Name = "ParentDisabled")] private bool ParentDisabled { get; set; }
-        internal bool GetDisabledState() => Disabled || ParentDisabled; //internal because the MudRadio reads this value directly
 
         /// <summary>
-        /// If true, the input will be read-only.
+        /// Prevents the selected value from being changed.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool ReadOnly { get; set; }
-        [CascadingParameter(Name = "ParentReadOnly")] private bool ParentReadOnly { get; set; }
-        internal bool GetReadOnlyState() => ReadOnly || ParentReadOnly; //internal because the MudRadio reads this value directly
 
+        /// <summary>
+        /// The current value.
+        /// </summary>
+        /// <remarks>
+        /// When this value changes, the <see cref="ValueChanged"/> event occurs.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Radio.Data)]
-        public T SelectedOption
+        public T? Value
         {
             get => _value;
-            set => SetSelectedOptionAsync(value, true).AndForget();
+            set => SetSelectedOptionAsync(value, true, updateValue: false).CatchAndLog();
         }
 
-        protected async Task SetSelectedOptionAsync(T option, bool updateRadio)
+        /// <summary>
+        /// Occurs whenever <see cref="Value"/> has changed.
+        /// </summary>
+        [Parameter]
+        public EventCallback<T> ValueChanged { get; set; }
+
+        internal bool GetDisabledState() => Disabled || ParentDisabled; //internal because the MudRadio reads this value directly
+
+        internal bool GetReadOnlyState() => ReadOnly || ParentReadOnly; //internal because the MudRadio reads this value directly
+
+        protected async Task SetSelectedOptionAsync(T? option, bool updateRadio, bool updateValue = true)
         {
             if (!OptionEquals(_value, option))
             {
                 _value = option;
 
                 if (updateRadio)
-                    await SetSelectedRadioAsync(_radios.FirstOrDefault(r => OptionEquals(r.Option, _value)), false);
+                {
+                    var radio = _radios.FirstOrDefault(r => OptionEquals(r.Value, _value));
+                    await SetSelectedRadioAsync(radio, false);
+                }
 
-                await SelectedOptionChanged.InvokeAsync(_value);
+                if (updateValue)
+                    await ValueChanged.InvokeAsync(_value);
 
                 await BeginValidateAsync();
                 FieldChanged(_value);
             }
         }
 
-        [Parameter]
-        public EventCallback<T> SelectedOptionChanged { get; set; }
+        /// <summary>
+        /// Tests whether the specified value is valid for this button.
+        /// </summary>
+        /// <param name="selectItem">The value to examine.</param>
+        /// <exception cref="GenericTypeMismatchException">Raised if the specified value does not match <c>T</c>.</exception>
+        public void CheckGenericTypeMatch(object selectItem)
+        {
+            var itemT = selectItem.GetType().GenericTypeArguments[0];
+            if (itemT != typeof(T))
+            {
+                throw new GenericTypeMismatchException("MudRadioGroup", "MudRadio", typeof(T), itemT);
+            }
+        }
 
         internal Task SetSelectedRadioAsync(MudRadio<T> radio)
         {
@@ -108,17 +155,21 @@ namespace MudBlazor
             return SetSelectedRadioAsync(radio, true);
         }
 
-        protected async Task SetSelectedRadioAsync(MudRadio<T> radio, bool updateOption)
+        protected async Task SetSelectedRadioAsync(MudRadio<T>? radio, bool updateOption)
         {
             if (_selectedRadio != radio)
             {
                 _selectedRadio = radio;
 
-                foreach (var item in _radios.ToArray())
+                foreach (var item in _radios)
+                {
                     item.SetChecked(item == _selectedRadio);
+                }
 
                 if (updateOption)
-                    await SetSelectedOptionAsync(GetOptionOrDefault(_selectedRadio), false);
+                {
+                    await SetSelectedOptionAsync(GetValueOrDefault(_selectedRadio), false);
+                }
             }
         }
 
@@ -126,10 +177,12 @@ namespace MudBlazor
         {
             _radios.Add(radio);
 
-            if (_selectedRadio == null)
+            if (_selectedRadio is null)
             {
-                if (OptionEquals(radio.Option, _value))
+                if (OptionEquals(radio.Value, _value))
+                {
                     return SetSelectedRadioAsync(radio, false);
+                }
             }
             return Task.CompletedTask;
         }
@@ -139,25 +192,14 @@ namespace MudBlazor
             _radios.Remove(radio);
 
             if (_selectedRadio == radio)
-                _selectedRadio = null;
-        }
-
-        [Obsolete($"Use {nameof(ResetValueAsync)} instead. This will be removed in v7")]
-        [ExcludeFromCodeCoverage]
-        protected override void ResetValue()
-        {
-            if (_selectedRadio != null)
             {
-                _selectedRadio.SetChecked(false);
                 _selectedRadio = null;
             }
-
-            base.ResetValue();
         }
 
         protected override Task ResetValueAsync()
         {
-            if (_selectedRadio != null)
+            if (_selectedRadio is not null)
             {
                 _selectedRadio.SetChecked(false);
                 _selectedRadio = null;
@@ -166,12 +208,12 @@ namespace MudBlazor
             return base.ResetValueAsync();
         }
 
-        private static T GetOptionOrDefault(MudRadio<T> radio)
+        private static T? GetValueOrDefault(MudRadio<T>? radio)
         {
-            return radio != null ? radio.Option : default;
+            return radio is not null ? radio.Value : default;
         }
 
-        private static bool OptionEquals(T option1, T option2)
+        private static bool OptionEquals(T? option1, T? option2)
         {
             return EqualityComparer<T>.Default.Equals(option1, option2);
         }

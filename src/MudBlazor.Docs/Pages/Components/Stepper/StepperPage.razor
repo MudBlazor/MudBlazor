@@ -1,0 +1,113 @@
+﻿@page "/components/stepper"
+
+<DocsPage>
+    <DocsPageHeader Title="Stepper" Component="@nameof(MudStepper)" SubTitle="A wizard that guides the user through a series of steps to complete a transaction.">
+        <Description>
+            <DocsPageSection>
+                <MudAlert Class="mt-4" Severity="Severity.Warning">
+                    <b>Warning:</b> This component is currently under development.
+                    <br />
+                    <br />
+                    Breaking changes such as updates to the API, look and feel, or CSS classes, may occur even in minor patch releases.
+                    Please use it only if you are prepared to adapt your code accordingly and provide feedback or contribute code.
+                </MudAlert>
+            </DocsPageSection>
+        </Description>
+    </DocsPageHeader>
+
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Horizontal stepper">
+                <Description>
+                    Stepper needs <CodeInline>@nameof(MudStep)</CodeInline> in its child content. Each step can have <CodeInline>@nameof(MudStep.Title)</CodeInline> and <CodeInline>@nameof(MudStep.SecondaryText)</CodeInline>
+                    so the component can be displayed properly. The reset button is only shown if <CodeInline>@nameof(MudStepper.ShowResetButton)</CodeInline> is set. You might not need it in a real world example but in the docs it is important to be able
+                    to reset the stepper so we enabled it everywhere.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(StepperBasicExample)" ShowCode="true">
+                <StepperBasicExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Non-linear version">
+                <Description>
+                    If you need to jump between the steps, parameter <CodeInline>@nameof(MudStepper.NonLinear)</CodeInline> is there for that.
+                    You can opt out of the ripple effect with <CodeInline>@nameof(MudStepper.Ripple)</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(StepperNonLinearExample)" ShowCode="false">
+                <StepperNonLinearExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Centered labels">
+                <Description><CodeInline>@nameof(MudStepper.CenterLabels)</CodeInline> centers the labels in the navigation bar below the circle. It affects only horizontal steppers.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(StepperBasicAlternativeLabelExample)" ShowCode="false">
+                <StepperBasicAlternativeLabelExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Customization">
+                <Description>
+                    The component can be customized via <CodeInline>@nameof(MudStepper.TitleTemplate)</CodeInline>, <CodeInline>@nameof(MudStepper.LabelTemplate)</CodeInline> and <CodeInline>@nameof(MudStepper.ConnectorTemplate)</CodeInline>.
+                    You can also add a success message after the last step thanks to the <CodeInline>@nameof(MudStepper.CompletedContent)</CodeInline> fragment.<br />
+                    You can also replace the step action buttons (previous, skip and next) by providing alternative buttons via the<CodeInline>@nameof(MudStepper.ActionContent)</CodeInline> template.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(StepperCustomizationExample)" ShowCode="false">
+                <StepperCustomizationExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Step binding">
+                <Description>Each step can also show an error via <CodeInline>@nameof(MudStep.HasError)</CodeInline> be disabled via <CodeInline>@nameof(MudStep.Disabled)</CodeInline> or be completed via <CodeInline>@nameof(MudStep.Completed)</CodeInline>.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(StepperStepBindingExample)" ShowCode="false">
+                <StepperStepBindingExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Controlling navigation">
+                <Description>
+                    If you want to restrict navigation depending on certain conditions, i.e. completion of a form etc. you can do this using the <CodeInline>@nameof(MudStepper.OnPreviewInteraction)</CodeInline> event.<br />
+                    <br />
+                    When the user clicks the Next-button, the stepper will try to set the current step completed when the user clicks previous or any other step header, the stepper will try to activate that step. Depending on the user action
+                    the <CodeInline>@nameof(StepperInteractionEventArgs).@nameof(StepperInteractionEventArgs.Action)</CodeInline> will be either
+                    <CodeInline>@nameof(StepAction.Complete)</CodeInline> or <CodeInline>@nameof(StepAction.Activate)</CodeInline>. The <CodeInline>@nameof(StepperInteractionEventArgs).@nameof(StepperInteractionEventArgs.StepIndex)</CodeInline>
+                    indicates which step the user wants to complete or activate (navigate to). By setting the
+                    <CodeInline>@nameof(StepperInteractionEventArgs).@nameof(StepperInteractionEventArgs.Cancel)</CodeInline> property you can selectively prevent user actions and thus you have total control over which steps can be navigated to and
+                    which can't. In this example we also open a message box to notify the user about the required actions to be able to take the desired action.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(StepperControlledNavigationExample)" ShowCode="false">
+                <StepperControlledNavigationExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Dynamically adding or removing steps">
+                <Description>By maintaining a list of steps you can easily add or remove steps programmatically. In this example we also set a custom <CodeInline>@nameof(MudStepper.CompletedContent)</CodeInline> that shows after the final step has been completed. </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(StepperDynamicExample)" ShowCode="false">
+                <StepperDynamicExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Vertical stepper">
+                <Description>Stepper also has a vertical version enabled by parameter <CodeInline>@nameof(MudStepper.Vertical).</CodeInline></Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(StepperBasicVerticalExample)" ShowCode="false">
+                <StepperBasicVerticalExample />
+            </SectionContent>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>

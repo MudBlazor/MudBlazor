@@ -1,62 +1,64 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<div style="max-width: 400px;">
-    <EditForm EditContext="@editContext">
+﻿<div style="max-width: 400px;">
+    <EditForm EditContext="@_editContext">
         <MudCard>
             <MudCardContent>
                 <MudTextField Label="Field One"
-                              @bind-Value="model.Field1"
-                              For="@(() => model.Field1)" />
+                              @bind-Value="_model.Field1"
+                              For="@(() => _model.Field1)" />
                 <MudTextField Label="Field Two (no For=)" Class="mt-3"
-                              @bind-Value="model.Field2" />
+                              @bind-Value="_model.Field2" />
                 <MudTextField Label="Field Three" Class="mt-3"
-                              @bind-Value="model.Field3"
-                              For="@(() => model.Field3)" />
+                              @bind-Value="_model.Field3"
+                              For="@(() => _model.Field3)" />
 
             </MudCardContent>
         </MudCard>
 
-        <MudChip Color="Color.Info" Class="mt-3">@Message1</MudChip>
-        <MudChip Color="Color.Info" Class="mt-3">@Message2</MudChip>
-        <MudChip Color="Color.Info" Class="mt-3">@Message3</MudChip>
+        <MudChip T="string" Color="Color.Info" Class="mt-3">@_message1</MudChip>
+        <MudChip T="string" Color="Color.Info" Class="mt-3">@_message2</MudChip>
+        <MudChip T="string" Color="Color.Info" Class="mt-3">@_message3</MudChip>
     </EditForm>
 </div>
 
 @code {
     public static string __description__ = "After changing any of the textfields with a For expression the corresponding chip should show a change message after the textfield blurred.";
-    TestFormModel model = new TestFormModel();
-    EditContext editContext;
 
-    string Message1 = "Field1 not changed";
-    string Message2 = "Field2 not changed";
-    string Message3 = "Field3 not changed";
+    private EditContext? _editContext;
+    private readonly TestFormModel _model = new();
 
-    public class TestFormModel
-    {
-        public string Field1 { get; set; }
-        public string Field2 { get; set; }
-        public string Field3 { get; set; }
-    }
+    private string _message1 = "Field1 not changed";
+    private string _message2 = "Field2 not changed";
+    private string _message3 = "Field3 not changed";
 
     protected override void OnInitialized()
     {
-        editContext = new EditContext(model);
-        editContext.OnFieldChanged += HandleFieldChanged;
+        _editContext = new EditContext(_model);
+        _editContext.OnFieldChanged += HandleFieldChanged;
+        base.OnInitialized();
     }
 
-    private void HandleFieldChanged(object sender, FieldChangedEventArgs e)
+    private void HandleFieldChanged(object? sender, FieldChangedEventArgs e)
     {
         switch (e.FieldIdentifier.FieldName)
         {
             case "Field1":
-                Message1 = e.FieldIdentifier.FieldName + " changed";
+                _message1 = e.FieldIdentifier.FieldName + " changed";
                 break;
             case "Field2":
-                Message2 = e.FieldIdentifier.FieldName + " changed";
+                _message2 = e.FieldIdentifier.FieldName + " changed";
                 break;
             case "Field3":
-                Message3 = e.FieldIdentifier.FieldName + " changed";
+                _message3 = e.FieldIdentifier.FieldName + " changed";
                 break;
         }
+    }
+
+    public class TestFormModel
+    {
+        public string? Field1 { get; set; }
+
+        public string? Field2 { get; set; }
+
+        public string? Field3 { get; set; }
     }
 }

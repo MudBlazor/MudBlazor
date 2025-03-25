@@ -1,0 +1,60 @@
+﻿<MudTable Items="@_users" FixedHeader="@fixed_header" FixedFooter="@fixed_footer" Height="@(fixed_header || fixed_footer ?"400px":"")">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Periodic Elements</MudText>
+        <MudSpacer />
+        <MudTextField T="string" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Name</MudTh>
+        <MudTh>Age</MudTh>
+        <MudTh Style="white-space:nowrap">@((MarkupString)$"scroll column{string.Join("", Enumerable.Repeat("&nbsp;", 1000))}...")</MudTh>
+        <MudTh>Salary</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Age">@context.Age</MudTd>
+        <MudTd DataLabel="FilterColumn">@context.FillerColumn</MudTd>
+        <MudTd DataLabel="Salary">@context.Salary</MudTd>
+    </RowTemplate>
+    <FooterContent>
+        <MudTd>Name</MudTd>
+        <MudTd>Age</MudTd>
+        <MudTd>FilterColumn</MudTd>
+        <MudTd>Salary</MudTd>
+    </FooterContent>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[]{50, 100}" />
+    </PagerContent>
+</MudTable>
+
+<MudSwitch @bind-Value="fixed_header" Color="Color.Primary">Fixed Header</MudSwitch>
+<MudSwitch @bind-Value="fixed_footer" Color="Color.Primary">Fixed Footer</MudSwitch>
+
+@code {
+    public static string __description__ = "Toolbar and pager should stick to the table border while scrolling left/right";
+
+    bool fixed_header = true;
+    bool fixed_footer = false;
+
+    private readonly IEnumerable<User> _users = new List<User>
+    {
+        new User("Sam", 56, "...", 50_000.00M),
+        new User("Alicia", 54, "...", 75_000.00M),
+        new User("Ira", 27, "...", 102_000.00M),
+        new User("John", 32, "...", 132_000.00M),
+        new User("Sam", 56, "...", 50_000.00M),
+        new User("Alicia", 54, "...", 75_000.00M),
+        new User("Ira", 27, "...", 102_000.00M),
+        new User("John", 32, "...", 132_000.00M),
+        new User("Sam", 56, "...", 50_000.00M),
+        new User("Alicia", 54, "...", 75_000.00M),
+        new User("Ira", 27, "...", 102_000.00M),
+        new User("John", 32, "...", 132_000.00M),
+        new User("Sam", 56, "...", 50_000.00M),
+        new User("Alicia", 54, "...", 75_000.00M),
+        new User("Ira", 27, "...", 102_000.00M),
+        new User("John", 32, "...", 132_000.00M),
+    };
+
+    public record User(string Name, int Age, string FillerColumn, decimal Salary);
+}

@@ -1,153 +1,130 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.Extensions;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudRadio<T> : MudComponentBase, IDisposable
-    {
-        [CascadingParameter(Name = "RightToLeft")] public bool RightToLeft { get; set; }
+#nullable enable
 
-        protected string Classname =>
-        new CssBuilder("mud-radio")
-            .AddClass($"mud-disabled", IsDisabled)
-            .AddClass($"mud-readonly", MudRadioGroup?.GetReadOnlyState())
-            .AddClass($"mud-radio-content-placement-{ConvertPlacement(Placement).ToDescriptionString()}")
+    /// <summary>
+    /// An option from a set of mutually exclusive options, often as part of a <see cref="MudRadioGroup{T}"/>.
+    /// </summary>
+    /// <typeparam name="T">The type of value being selected, often a <c>bool</c>.</typeparam>
+    /// <seealso cref="MudCheckBox{T}" />
+    /// <seealso cref="MudRadioGroup{T}" />
+    public partial class MudRadio<T> : MudBooleanInput<T>
+    {
+        private IMudRadioGroup? _parent;
+        private string _elementId = Identifier.Create("radio");
+
+        protected override string Classname => new CssBuilder("mud-input-control-boolean-input")
+            .AddClass("mud-disabled", GetDisabledState())
+            .AddClass("mud-readonly", GetReadOnlyState())
+            .AddClass("mud-input-with-content", ChildContent is not null)
             .AddClass(Class)
             .Build();
 
-        protected string ButtonClassname =>
-        new CssBuilder("mud-button-root mud-icon-button")
-            .AddClass($"mud-ripple mud-ripple-radio", !DisableRipple && !Disabled && !(MudRadioGroup?.GetDisabledState() ?? false) && !(MudRadioGroup?.GetReadOnlyState() ?? false))
-            .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", UnCheckedColor == null || (UnCheckedColor != null && Checked == true))
-            .AddClass($"mud-{UnCheckedColor?.ToDescriptionString()}-text hover:mud-{UnCheckedColor?.ToDescriptionString()}-hover", UnCheckedColor != null && Checked == false)
-            .AddClass($"mud-radio-dense", Dense)
-            .AddClass($"mud-disabled", IsDisabled)
-            .AddClass($"mud-readonly", MudRadioGroup?.GetReadOnlyState())
-            .AddClass($"mud-checked", Checked)
+        protected override string LabelClassname => new CssBuilder("mud-radio")
+            .AddClass($"mud-disabled", GetDisabledState())
+            .AddClass($"mud-readonly", GetReadOnlyState())
+            .AddClass($"mud-input-content-placement-{ConvertPlacement(LabelPlacement).ToDescriptionString()}")
+            .Build();
+
+        protected override string IconClassname => new CssBuilder("mud-button-root mud-icon-button")
+            .AddClass("mud-ripple mud-ripple-radio", Ripple && !GetDisabledState() && !GetReadOnlyState())
+            .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && (UncheckedColor == null || (UncheckedColor != null && Checked)))
+            .AddClass($"mud-{UncheckedColor?.ToDescriptionString()}-text hover:mud-{UncheckedColor?.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && UncheckedColor != null && Checked == false)
+            .AddClass("mud-radio-dense", Dense)
+            .AddClass("mud-disabled", GetDisabledState())
+            .AddClass("mud-readonly", GetReadOnlyState())
+            .AddClass("mud-checked", Checked)
             .AddClass("mud-error-text", MudRadioGroup?.HasErrors)
             .Build();
 
-        protected string RadioIconsClassNames =>
-        new CssBuilder("mud-radio-icons")
-            .AddClass($"mud-checked", Checked)
-            .Build();
-
-        protected string IconClassName =>
-        new CssBuilder("mud-icon-root mud-svg-icon")
-            .AddClass($"mud-icon-size-{Size.ToDescriptionString()}")
-            .Build();
-
-        protected string CheckedIconClassName =>
-        new CssBuilder("mud-icon-root mud-svg-icon mud-radio-icon-checked")
-            .AddClass($"mud-icon-size-{Size.ToDescriptionString()}")
-            .Build();
-
-        protected string ChildSpanClassName =>
-        new CssBuilder("mud-radio-content mud-typography mud-typography-body1")
-            .AddClass("mud-error-text", MudRadioGroup.HasErrors)
-            .Build();
-
-        private IMudRadioGroup _parent;
+        [Inject]
+        private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
         /// <summary>
         /// The parent Radio Group
         /// </summary>
         [CascadingParameter]
-        internal IMudRadioGroup IMudRadioGroup
+        internal IMudRadioGroup? IMudRadioGroup
         {
             get => _parent;
             set
             {
                 _parent = value;
-                if (_parent == null)
-                    return;
-                _parent.CheckGenericTypeMatch(this);
-                //MudRadioGroup<T>?.Add(this);
+                _parent?.CheckGenericTypeMatch(this);
             }
         }
 
-        internal MudRadioGroup<T> MudRadioGroup => (MudRadioGroup<T>)IMudRadioGroup;
-
-        private Placement ConvertPlacement(Placement placement)
-        {
-            return placement switch
-            {
-                Placement.Left => RightToLeft ? Placement.End : Placement.Start,
-                Placement.Right => RightToLeft ? Placement.Start : Placement.End,
-                _ => placement
-            };
-        }
-
         /// <summary>
-        /// The color of the component. It supports the theme colors.
+        /// The color to use when in an unchecked state.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Radio.Appearance)]
-        public Color Color { get; set; } = Color.Default;
+        public Color? UncheckedColor { get; set; } = null;
 
         /// <summary>
-        /// The base color of the component in its none active/unchecked state. It supports the theme colors.
+        /// Uses compact vertical padding.
         /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Radio.Appearance)]
-        public Color? UnCheckedColor { get; set; } = null;
-
-        /// <summary>
-        /// The position of the child content.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Radio.Behavior)]
-        public Placement Placement { get; set; } = Placement.End;
-
-        /// <summary>
-        /// The value to associate to the button.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Radio.Behavior)]
-        public T Option { get; set; }
-
-        /// <summary>
-        /// If true, compact padding will be applied.
-        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Radio.Appearance)]
         public bool Dense { get; set; }
 
         /// <summary>
-        /// The Size of the component.
+        /// The icon displayed when in a checked state.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.RadioButtonChecked"/>.
+        /// </remarks>
         [Parameter]
-        [Category(CategoryTypes.Radio.Appearance)]
-        public Size Size { get; set; } = Size.Medium;
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public string CheckedIcon { get; set; } = Icons.Material.Filled.RadioButtonChecked;
 
         /// <summary>
-        /// If true, disables ripple effect.
+        /// The icon displayed when in an unchecked state.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.RadioButtonUnchecked"/>.
+        /// </remarks>
         [Parameter]
-        [Category(CategoryTypes.Radio.Appearance)]
-        public bool DisableRipple { get; set; }
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public string UncheckedIcon { get; set; } = Icons.Material.Filled.RadioButtonUnchecked;
 
         /// <summary>
-        /// If true, the button will be disabled.
+        /// The icon to display for an indeterminate state.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.IndeterminateCheckBox"/>.
+        /// </remarks>
         [Parameter]
-        [Category(CategoryTypes.Radio.Behavior)]
-        public bool Disabled { get; set; }
-        private bool IsDisabled => Disabled || (MudRadioGroup?.GetDisabledState() ?? false);
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public string IndeterminateIcon { get; set; } = Icons.Material.Filled.IndeterminateCheckBox;
 
-        /// <summary>
-        /// Child content of component.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.Radio.Behavior)]
-        public RenderFragment ChildContent { get; set; }
+        private string GetIcon()
+        {
+            return Checked switch
+            {
+                true => CheckedIcon,
+                false => UncheckedIcon
+            };
+        }
 
         internal bool Checked { get; private set; }
+
+        internal MudRadioGroup<T>? MudRadioGroup => (MudRadioGroup<T>?)IMudRadioGroup;
 
         internal void SetChecked(bool value)
         {
@@ -158,96 +135,102 @@ namespace MudBlazor
             }
         }
 
-        public void Select()
+        /// <summary>
+        /// Checks this radio button.
+        /// </summary>
+        /// <remarks>
+        /// When part of a <see cref="MudRadioGroup{T}"/>, other values will be unchecked.
+        /// </remarks>
+        public Task SelectAsync()
         {
-            MudRadioGroup?.SetSelectedRadioAsync(this).AndForget();
-        }
-
-        internal Task OnClick()
-        {
-            if (IsDisabled || (MudRadioGroup?.GetReadOnlyState() ?? false)) return Task.CompletedTask;
-            if (MudRadioGroup != null)
+            if (MudRadioGroup is not null)
+            {
                 return MudRadioGroup.SetSelectedRadioAsync(this);
+            }
 
             return Task.CompletedTask;
         }
 
-        [Obsolete($"Use {nameof(HandleKeyDownAsync)} instead. This method will be removed in v7")]
-        protected internal void HandleKeyDown(KeyboardEventArgs obj)
+        internal Task OnClickAsync()
         {
-            if (IsDisabled || (MudRadioGroup?.GetReadOnlyState() ?? false))
-                return;
-            switch (obj.Key)
+            if (GetDisabledState() || GetReadOnlyState() || (MudRadioGroup?.GetReadOnlyState() ?? false))
             {
-                case "Enter":
-                case "NumpadEnter":
-                case " ":
-                    Select();
-                    break;
-                case "Backspace":
-                    MudRadioGroup.Reset();
-                    break;
+                return Task.CompletedTask;
             }
+
+            if (MudRadioGroup != null)
+            {
+                return MudRadioGroup.SetSelectedRadioAsync(this);
+            }
+
+            return Task.CompletedTask;
         }
 
         protected internal async Task HandleKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
         {
-            if (IsDisabled || (MudRadioGroup?.GetReadOnlyState() ?? false))
+            if (GetDisabledState() || GetReadOnlyState() || (MudRadioGroup?.GetReadOnlyState() ?? false))
+            {
                 return;
+            }
+
             switch (keyboardEventArgs.Key)
             {
-                case "Enter":
-                case "NumpadEnter":
-                case " ":
-                    Select();
+                case "Enter" or "NumpadEnter" or " ":
+                    await SelectAsync();
                     break;
                 case "Backspace":
-                    if (MudRadioGroup is not null)
                     {
-                        await MudRadioGroup.ResetAsync();
-                    }
+                        if (MudRadioGroup is not null)
+                        {
+                            await MudRadioGroup.ResetAsync();
+                        }
 
-                    break;
+                        break;
+                    }
             }
         }
 
+        /// <inheritdoc />
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
 
-            if (MudRadioGroup != null)
+            if (MudRadioGroup is not null)
+            {
                 await MudRadioGroup.RegisterRadioAsync(this);
+            }
         }
 
-        public void Dispose()
-        {
-            MudRadioGroup?.UnregisterRadio(this);
-            _keyInterceptor?.Dispose();
-        }
-
-        private IKeyInterceptor _keyInterceptor;
-        [Inject] private IKeyInterceptorFactory _keyInterceptorFactory { get; set; }
-
-        private string _elementId = "radio" + Guid.NewGuid().ToString().Substring(0, 8);
-
+        /// <inheritdoc />
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
             {
-                _keyInterceptor = _keyInterceptorFactory.Create();
-                await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
-                {
-                    //EnableLogging = true,
-                    TargetClass = "mud-button-root",
-                    Keys = {
-                        new KeyOptions { Key=" ", PreventDown = "key+none", PreventUp = "key+none" }, // prevent scrolling page
-                        new KeyOptions { Key="Enter", PreventDown = "key+none" },
-                        new KeyOptions { Key="NumpadEnter", PreventDown = "key+none" },
-                        new KeyOptions { Key="Backspace", PreventDown = "key+none" },
-                    },
-                });
+                var options = new KeyInterceptorOptions(
+                    "mud-button-root",
+                    [
+                        // prevent scrolling page
+                        new(" ", preventDown: "key+none", preventUp: "key+none"),
+                        new("Enter", preventDown: "key+none"),
+                        new("NumpadEnter", preventDown: "key+none"),
+                        new("Backspace", preventDown: "key+none")
+                    ]);
+
+                await KeyInterceptorService.SubscribeAsync(_elementId, options, KeyObserver.KeyDownIgnore(), KeyObserver.KeyUpIgnore());
             }
+
             await base.OnAfterRenderAsync(firstRender);
+        }
+
+        /// <inheritdoc />
+        protected override async ValueTask DisposeAsyncCore()
+        {
+            await base.DisposeAsyncCore();
+            MudRadioGroup?.UnregisterRadio(this);
+            if (IsJSRuntimeAvailable)
+            {
+                await KeyInterceptorService.UnsubscribeAsync(_elementId);
+            }
         }
     }
 }

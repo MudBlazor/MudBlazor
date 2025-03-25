@@ -1,0 +1,57 @@
+﻿@page "/customization/globals"
+
+<DocsPage>
+    <DocsPageHeader Title="Globals" SubTitle="A collection of settings that let you control the default behavior or appearance of MudBlazor components.">
+        <Description>
+            <DocsPageSection>
+                <MudAlert Class="mt-4" Severity="Severity.Warning">
+                    <b>Warning:</b> This feature is currently under development.
+                    <br />
+                    <br />
+                    Breaking changes to the API may occur between releases.
+                    Please only use MudGlobal if you are prepared to adapt your code and <MudLink Href="https://github.com/MudBlazor/MudBlazor/issues/new/choose">provide feedback</MudLink> or <MudLink Href="https://github.com/MudBlazor/MudBlazor/blob/dev/src/MudBlazor/Services/MudGlobal.cs">contribute code </MudLink>.
+                </MudAlert>
+            </DocsPageSection>
+        </Description>
+    </DocsPageHeader>
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader Title="Usage">
+                <Description>
+                    The static <ApiTypeLink TypeName="MudGlobal" /> class contains default settings which can override the default settings for MudBlazor components.
+                    <br/>
+                    <br/>
+                    The following example changes all <ApiTypeLink TypeName="MudButton" /> components to use a large size, secondary color, and filled variant as their defaults.
+                    <br/>
+                    <br/>
+                    Note: Defaults should be set when your application initializes, such as when adding MudBlazor services.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(ButtonGlobalsStartupExample)">
+                <ButtonGlobalsExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Exception Handler">
+                <Description>
+                    A global exception handler is available via the <CodeInline>MudGlobal.UnhandledExceptionHandler</CodeInline> property.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(GlobalExceptionHandlerExample)" />
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>
+
+@code
+{
+    private List<DocumentedType> TypesWithGlobals { get; set; }
+
+    protected override void OnInitialized()
+    {
+        // Find the types which have global settings
+        TypesWithGlobals = [.. ApiDocumentation.Types.Where(pair => pair.Value.GlobalSettings.Count > 0).Select(pair => pair.Value).OrderBy(type => type.NameFriendly)];
+        base.OnInitialized();
+    }
+}

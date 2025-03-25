@@ -1,7 +1,5 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudText>SelectedItems { @string.Join(", ", selectedItems) }</MudText>
-<MudTable Items="items" @bind-SelectedItems="selectedItems" MultiSelection="true">
+﻿<MudText>SelectedItems { @string.Join(", ", _selectedItems) }</MudText>
+<MudTable Items="_items" @bind-SelectedItems="_selectedItems" MultiSelection="true">
     <HeaderContent>
         <MudTh>Nr</MudTh>
         <MudTh></MudTh>
@@ -17,12 +15,12 @@
 @code {
     public static string __description__ = "SelectedItems should update when rows are removed and the header should remain checked.";
 
-    IList<int> items = new int[] { 0, 1, 2, 3, 4 }.ToList();
-    HashSet<int> selectedItems = new HashSet<int>();
+    private HashSet<int> _selectedItems = [];
+    private readonly List<int> _items = [0, 1, 2, 3, 4];
 
     private void DeleteItem(int i)
     {
-        items.Remove(i);
+        _items.Remove(i);
         StateHasChanged();
     }
 }

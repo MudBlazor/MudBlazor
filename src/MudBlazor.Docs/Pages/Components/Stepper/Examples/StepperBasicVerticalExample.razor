@@ -1,0 +1,20 @@
+﻿@namespace MudBlazor.Docs.Examples
+<MudPaper Style="width: 400px">
+    <MudStepper Vertical ShowResetButton NonLinear="_nonLinear">
+        <ChildContent>
+            <MudStep Title="Select campaign settings">For each ad campaign that you create, you can control how much you're willing to spend on clicks and conversions, which networks and geographical locations you want your ads to show on, and more.</MudStep>
+            <MudStep Title="Create an ad group" SecondaryText="Optional" Skippable="true">An ad group contains one or more ads which target a shared set of keywords.</MudStep>
+            <MudStep Title="Create an ad">Try out different ad text to see what brings in the most customers, and learn how to enhance your ads using features like ad extensions. If you run into any problems with your ads, find out how to tell if they're running and how to resolve approval issues.</MudStep>
+        </ChildContent>
+        <CompletedContent>
+            Thank you for wasting your money on clicks!
+        </CompletedContent>
+    </MudStepper>
+</MudPaper>
+<br/>
+<MudSwitch @bind-Value="_nonLinear" Color="Color.Primary">NonLinear</MudSwitch>
+
+
+@code {
+    bool _nonLinear;
+}

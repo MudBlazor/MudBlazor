@@ -1,0 +1,32 @@
+﻿<MudPopoverProvider></MudPopoverProvider>
+
+<MudDataGrid Items="@_items" Filterable="true">
+    <Columns>
+        <PropertyColumn Property="x => x.Firstname" FilterOperators="@_nameOperators" />
+        <PropertyColumn Property="x => x.Lastname" />
+        <PropertyColumn Property="x => x.Age" FilterOperators="_ageOperators" />
+        <PropertyColumn Property="x => x.Status" FilterOperators="@(AddInvalid ? _invalidOperators : [])" />
+        <PropertyColumn Property="x => x.HiredOn" FilterOperators="_dateOperators" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private HashSet<string> _nameOperators = [FilterOperator.String.StartsWith, FilterOperator.String.EndsWith, FilterOperator.String.Equal, FilterOperator.String.Contains];
+    private HashSet<string> _ageOperators = [FilterOperator.Number.LessThan, FilterOperator.Number.GreaterThan, FilterOperator.Number.Equal];
+    private HashSet<string> _dateOperators = [FilterOperator.DateTime.Before, FilterOperator.DateTime.After];
+
+    private HashSet<string> _invalidOperators = [FilterOperator.Enum.Is, FilterOperator.Enum.IsNot, FilterOperator.Number.LessThan];
+
+    private IEnumerable<Model> _items = new List<Model>()
+    {
+        new Model("Sam", "Smith", 56, Severity.Normal, null),
+        new Model("Alicia", "Applewood", 54, Severity.Info, null),
+        new Model("Ira", "Irving", 27, Severity.Success, new DateTime(2011, 1, 2)),
+        new Model("John", "Jameson", 32, Severity.Warning, null)
+    };
+
+    [Parameter]
+    public bool AddInvalid { get; set; }
+
+    public record Model(string Firstname, string Lastname, int Age, Severity Status, DateTime? HiredOn);
+}

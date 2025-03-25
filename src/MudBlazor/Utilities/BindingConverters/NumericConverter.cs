@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using MudBlazor.Resources;
 
 namespace MudBlazor
 {
 
     /// <summary>
-    /// A universal T to double binding converter
-    ///
+    /// <para>A universal T to double binding converter</para>
+    /// <para>
     /// Note: currently not in use. Should we ever use it, remove
     /// the  [ExcludeFromCodeCoverage] attribute
+    /// </para>
     /// </summary>
     [ExcludeFromCodeCoverage]
     public class NumericConverter<T> : Converter<T, double>
@@ -63,12 +65,12 @@ namespace MudBlazor
                     return (T)(object)Convert.ToDecimal(value);
                 else
                 {
-                    UpdateGetError($"Conversion to type {typeof(T)} not implemented");
+                    UpdateGetError(LanguageResource.Converter_ConversionNotImplemented, [typeof(T)]);
                 }
             }
             catch (Exception e)
             {
-                UpdateGetError("Conversion error: " + e.Message);
+                UpdateGetError(LanguageResource.Converter_ConversionError, [e.Message]);
                 return default(T);
             }
             return default(T);
@@ -140,46 +142,16 @@ namespace MudBlazor
                     return Convert.ToDouble(((decimal?)(object)arg).Value);
                 else
                 {
-                    UpdateSetError("Unable to convert to double from type " + typeof(T).Name);
+                    UpdateSetError(LanguageResource.Converter_UnableToConvert, ["double", typeof(T).Name]);
                     return double.NaN;
                 }
             }
             catch (FormatException e)
             {
-                UpdateSetError("Conversion error: " + e.Message);
+                UpdateSetError(LanguageResource.Converter_ConversionError, [e.Message]);
                 return double.NaN;
             }
         }
-
-
-        #region --> Floating Point comparison
-
-        const double MinNormal = 2.2250738585072014E-308d;
-
-        public static bool AreEqual(double a, double b, double epsilon = MinNormal)
-        {
-            // Copyright (c) Michael Borgwardt
-            var absA = Math.Abs(a);
-            var absB = Math.Abs(b);
-            var diff = Math.Abs(a - b);
-
-            if (a.Equals(b))
-            { // shortcut, handles infinities
-                return true;
-            }
-            else if (a == 0 || b == 0 || absA + absB < MinNormal)
-            {
-                // a or b is zero or both are extremely close to it
-                // relative error is less meaningful here
-                return diff < (epsilon * MinNormal);
-            }
-            else
-            { // use relative error
-                return diff / (absA + absB) < epsilon;
-            }
-        }
-
-        #endregion
     }
 
     [ExcludeFromCodeCoverage]

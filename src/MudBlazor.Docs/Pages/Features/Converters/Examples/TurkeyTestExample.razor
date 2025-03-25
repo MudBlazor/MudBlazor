@@ -9,7 +9,7 @@
         <MudTextField Label="de-AT" Variant="Variant.Outlined" Culture="@de" @bind-Value="date"></MudTextField>
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
-        <MudTextField Label="cn-ZH" Variant="Variant.Outlined" Culture="@cn" @bind-Value="date"></MudTextField>
+        <MudTextField Label="zh-CN" Variant="Variant.Outlined" Culture="@cn" @bind-Value="date"></MudTextField>
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
         <MudTextField Label="en-US: dddd, MMM dd" Variant="Variant.Outlined" Culture="@en" Format="dddd, MMM dd" @bind-Value="date" />
@@ -18,13 +18,13 @@
         <MudTextField Label="de-AT: dddd, dd. MM." Variant="Variant.Outlined" Culture="@de" Format="dddd, dd. MM." @bind-Value="date"></MudTextField>
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
-        <MudTextField Label="cn-ZH: yy年MM月dd日" Variant="Variant.Outlined" Culture="@cn" Format="yyyy年MM月dd日" @bind-Value="date"></MudTextField>
+        <MudTextField Label="zh-CN: yy年MM月dd日" Variant="Variant.Outlined" Culture="@cn" Format="yyyy年MM月dd日" @bind-Value="date"></MudTextField>
     </MudItem>
 </MudGrid>
 
 @code {
     CultureInfo en = @CultureInfo.GetCultureInfo("en-US");
     CultureInfo de = CultureInfo.GetCultureInfo("de-AT");
-    CultureInfo cn = CultureInfo.GetCultureInfo("cn-ZH");
+    CultureInfo cn = CultureInfo.GetCultureInfo("zh-CN");
     DateTime date = DateTime.Now;
 }

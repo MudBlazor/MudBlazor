@@ -1,0 +1,69 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudPaper Class="pa-4">
+    <MudChart ChartType="ChartType.HeatMap" ChartSeries="@_series" ChartOptions="@_options"
+              XAxisLabels="@_xLabels" Width="100%" Height="350px"></MudChart>
+</MudPaper>
+<MudPaper Class="pa-4 mt-2 d-flex justify-center">
+    <MudGrid Spacing="2" Class="d-flex">
+        <MudItem xs="4" Class="d-flex align-center">
+            <MudCheckBox T="bool" @bind-Value="@_showValueLabels" @bind-Value:after="BuildOptions" Color="Color.Primary">
+                Show Values
+            </MudCheckBox>
+        </MudItem>
+        <MudItem xs="4" Class="d-flex align-center justify-center">
+            <MudButton @onclick="RandomizeData" Variant="Variant.Filled" Class="mx-4">Randomize</MudButton>
+        </MudItem>
+        <MudItem xs="4" Class="d-flex align-center">
+            <MudCheckBox T="bool" @bind-Value="@_showValueToolTips" @bind-Value:after="BuildOptions" Color="Color.Primary">
+                Show Value Tooltips
+            </MudCheckBox>
+        </MudItem>
+    </MudGrid>
+</MudPaper>
+
+@code {
+    private readonly string[] _colors = ["#5AC8FA", "#34C759", "#007AFF"];
+    private List<ChartSeries> _series = [];
+    private ChartOptions _options = new();
+    private bool _showValueLabels = true;
+    private bool _showValueToolTips = true;
+    private string[] _xLabels = [];
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        BuildOptions();
+        RandomizeData();
+    }
+
+    private void BuildOptions()
+    {
+        var options = new ChartOptions
+        {
+            ChartPalette = _colors,
+            ShowLabels = _showValueLabels,
+            ShowToolTips = _showValueToolTips
+        };
+        _options = options;
+    }
+
+    private void RandomizeData()
+    {
+        string[] xaxis = ["A", "B", "C",];
+        var heatMapSeries = new List<ChartSeries>();
+        var dataPoints = xaxis.Length;
+        foreach (var x in xaxis)
+        {
+            var data = new double[dataPoints];
+            for (int i = 0; i < dataPoints; i++)
+            {
+                data[i] = Math.Round(Random.Shared.NextDouble() * 100, 2);
+            }
+            heatMapSeries.Add(new ChartSeries { Name = x, Data = data });
+        }
+        _xLabels = xaxis;
+        _series = heatMapSeries;
+        BuildOptions();
+    }
+}

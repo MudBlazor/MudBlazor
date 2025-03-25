@@ -1,10 +1,9 @@
 @inherits LayoutComponentBase
 
-<PageTitle>MudBlazor - Blazor Component Library</PageTitle>
-
 <MudRTLProvider RightToLeft="@LayoutService.IsRTL">
-    <MudThemeProvider @ref="@_mudThemeProvider" Theme="@LayoutService.CurrentTheme" IsDarkMode="@LayoutService.IsDarkMode" IsDarkModeChanged="LayoutService.SetDarkMode"/>
-    <MudDialogProvider FullWidth="true" MaxWidth="MaxWidth.ExtraSmall"/>
+    <MudThemeProvider @ref="@_mudThemeProvider" Theme="@LayoutService.CurrentTheme" ObserveSystemThemeChange="@LayoutService.ObserveSystemThemeChange" IsDarkMode="@LayoutService.IsDarkMode" IsDarkModeChanged="LayoutService.SetDarkMode" />
+    <MudPopoverProvider />
     <MudSnackbarProvider/>
+    <MudDialogProvider FullWidth="true" MaxWidth="MaxWidth.ExtraSmall"/>
     @Body
 </MudRTLProvider>

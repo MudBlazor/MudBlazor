@@ -2,6 +2,7 @@
 using Bunit;
 using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.Element;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
 namespace MudBlazor.UnitTests.Components
@@ -47,6 +48,13 @@ namespace MudBlazor.UnitTests.Components
             //after hovered the element, the property WasHovered should be true
             comp2.Find("span").MouseOver();
             comp2.Instance.WasHovered.Should().BeTrue();
+        }
+
+        [Test]
+        public void ElementReferenceCapture()
+        {
+            var comp = Context.RenderComponent<ElementReferenceExceptionTest>();
+            comp.Find("#element-button").Click();
         }
     }
 }

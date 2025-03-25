@@ -14,7 +14,9 @@
                     }
                     else if(DotConfig == 2)
                     {
-                        <MudAvatar Size="@DotSize" Image="images/mony.jpg" />
+                        <MudAvatar Size="@DotSize">
+                            <MudImage Src="images/mony.jpg" />
+                        </MudAvatar>
                     }
                 </ItemDot>
             </MudTimelineItem>
@@ -46,12 +48,12 @@
                 <MudSelectItem T="Variant" Value="Variant.Outlined">Outlined</MudSelectItem>
                 <MudSelectItem T="Variant" Value="Variant.Filled">Filled</MudSelectItem>
             </MudSelect>
-            <MudSlider @bind-Value="@DotElevation" Step="1" Min="0" Max="25" Class="mt-2">Dot Elevation</MudSlider>
-            <MudRadioGroup T="int" SelectedOptionChanged="DotConfigChanged">
-                <MudRadio Option="0" Color="Color.Primary">Default</MudRadio>
-                <MudRadio Option="1" Color="Color.Secondary">Icon</MudRadio>
-                <MudRadio Option="2" Color="Color.Tertiary">Avatar</MudRadio>
-                <MudRadio Option="3" Color="Color.Default">Hide</MudRadio>
+            <MudSlider @bind-Value="DotElevation" Step="1" Min="0" Max="25" Class="mt-2">Dot Elevation</MudSlider>
+            <MudRadioGroup T="int" ValueChanged="DotConfigChanged">
+                <MudRadio Value="0" Color="Color.Primary">Default</MudRadio>
+                <MudRadio Value="1" Color="Color.Secondary">Icon</MudRadio>
+                <MudRadio Value="2" Color="Color.Tertiary">Avatar</MudRadio>
+                <MudRadio Value="3" Color="Color.Default">Hide</MudRadio>
             </MudRadioGroup>
         </MudPaper>
     </MudItem>

@@ -1,0 +1,160 @@
+﻿<MudTable T="DocumentedMember" @ref="Table" ServerData="@GetData"
+          Breakpoint="@Breakpoint.Sm"
+          Elevation="0" Class="docs-content-api-table" Hover="true" Dense="true"
+          AllowUnsorted="false" GroupBy="@CurrentGroups">
+    <GroupHeaderTemplate>
+        @if (Mode == ApiMemberTableMode.Globals)
+        {
+            <MudTh Class="mud-table-cell-custom-group" colspan="3" aria-label="Grouped by inheritance">
+                <MudText Typo="Typo.h6">@context.Key</MudText>
+            </MudTh>
+        }
+        else
+        {
+            @if (Grouping == ApiMemberGrouping.Inheritance)
+            {
+                <MudTh Class="mud-table-cell-custom-group" colspan="3" aria-label="Grouped by inheritance">
+                    <MudText Typo="Typo.h6">@context.Key</MudText>
+                </MudTh>
+            }
+            else if (Grouping == ApiMemberGrouping.Categories)
+            {
+                <MudTh Class="mud-table-cell-custom-group" colspan="3" aria-label="Grouped by category">
+                    <MudText Typo="Typo.h6">@(context.Key ?? "General")</MudText>
+                </MudTh>
+            }
+        }
+    </GroupHeaderTemplate>
+    <HeaderContent>
+        <MudTh><MudTableSortLabel T="DocumentedMember" SortLabel="Name" InitialDirection="SortDirection.Ascending">Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel T="DocumentedMember" SortLabel="Type">Type</MudTableSortLabel></MudTh>
+        <MudTh>Description</MudTh>
+    </HeaderContent>
+    <ToolBarContent>
+        @if (Mode != ApiMemberTableMode.Globals)
+        {
+            <div class="docs-content-api-table-toolbar-container">
+                <MudTextField T="string"
+                              Value="@Keyword"
+                              ValueChanged="OnKeywordChangedAsync"
+                              DebounceInterval="300"
+                              Adornment="Adornment.Start"
+                              AdornmentIcon="@Icons.Material.Filled.Search"
+                              Placeholder="Search members" />
+
+                <div class="docs-content-api-table-toolbar-configuration-container">
+                    @if (true || HasProtected())
+                    {
+                        @* There are protected members.  Show a "Show Protected" switch *@
+                        <MudSwitch T="bool"
+                                   Value="@ShowProtected"
+                                   ValueChanged="OnShowProtectedChangedAsync"
+                                   Size="Size.Small"
+                                   Color="Color.Primary">Show Protected</MudSwitch>
+                    }
+
+                    <MudToggleGroup Class="docs-content-api-grouping"
+                                    T="ApiMemberGrouping"
+                                    Value="Grouping"
+                                    ValueChanged="OnGroupingChangedAsync"
+                                    Size="Size.Small">
+                        <MudToggleItem Value="ApiMemberGrouping.None">None</MudToggleItem>
+                        <MudToggleItem Value="ApiMemberGrouping.Categories">Category</MudToggleItem>
+                        <MudToggleItem Value="ApiMemberGrouping.Inheritance">Inheritance</MudToggleItem>
+                    </MudToggleGroup>
+                </div>
+            </div>
+        }
+    </ToolBarContent>
+    <RowTemplate>
+        <MudTd id="@context.Name" DataLabel="Name" Class="docs-content-api-cell">
+            @if (Mode == ApiMemberTableMode.Methods)
+            {
+                <CodeInline Class="pr-0">@($"{context.Name}(")</CodeInline>
+                var parameters = ((DocumentedMethod)context).Parameters;
+                @for (int index = 0; index < parameters.Count; index++)
+                {
+                    var parameter = parameters[index];
+                    @if (index > 0)
+                    {
+                        <CodeInline Class="px-0">, </CodeInline>
+                    }
+                    <MudTooltip Arrow="true">
+                        <ChildContent>
+                            <CodeInline Class="px-0">@parameter.Name</CodeInline>
+                        </ChildContent>
+                        <TooltipContent>
+                            <MudSimpleTable Elevation="0" Hover="true" Dense="true">
+                                <MudTr>
+                                    <MudTh>Parameter Name</MudTh>
+                                    <MudTh>Type</MudTh>
+                                    <MudTh>Summary</MudTh>
+                                </MudTr>
+                                <MudTr>
+                                    <MudTd><CodeInline>@parameter.Name</CodeInline></MudTd>
+                                    <MudTd><ApiTypeLink Type="@parameter.Type" TypeName="@parameter.TypeName" TypeFriendlyName="@parameter.TypeFriendlyName" /></MudTd>
+                                    <MudTd><ApiText Text="@parameter.Summary" /></MudTd>
+                                </MudTr>
+                            </MudSimpleTable>
+                        </TooltipContent>
+                    </MudTooltip>
+                }
+                <CodeInline Class="pl-0">@(")")</CodeInline>
+            }
+            else if (context.DeclaringType != null && context.DeclaringType.Name != Type.Name)
+            {
+                <MudTooltip Text="@("From " + context.DeclaringType.NameFriendly)" Placement="Placement.Top">
+                    <CodeInline>@context.Name</CodeInline>
+                </MudTooltip>
+            }
+            else
+            {
+                <CodeInline>@context.Name</CodeInline>
+            }
+            @if (Mode == ApiMemberTableMode.Properties)
+            {
+                var property = context as DocumentedProperty;
+                if (property.ChangeEvent != null && ShowBindable)
+                {
+                    <MudTooltip Text="@($"This property is bindable via @bind-{property.Name}.")">
+                        <MudIcon Class="pt-2" Color="Color.Primary" Size="Size.Small" Icon="@Icons.Material.Filled.CompareArrows" />
+                    </MudTooltip>
+                }
+            }
+            else if (Mode == ApiMemberTableMode.Events)
+            {
+                var eventItem = context as DocumentedEvent;
+                if (eventItem.Property != null && ShowBindable)
+                {
+                    <MudTooltip Text="@($"This event is bindable via @bind-{eventItem.Property.Name}.")">
+                        <MudIcon Class="pt-2" Size="Size.Small" Icon="@Icons.Material.Filled.CompareArrows" />
+                    </MudTooltip>
+                }
+            }
+            @if (context.IsProtected)
+            {
+                <MudTooltip Text="@($"This member is protected.")">
+                    <MudIcon Class="pt-2" Color="Color.Primary" Size="Size.Small" Icon="@Icons.Material.Filled.Lock" />
+                </MudTooltip>
+            }
+        </MudTd>
+        <MudTd DataLabel="Type" Class="docs-content-api-cell">
+            <ApiTypeLink Type="@context.Type" TypeName="@context.TypeName" TypeFriendlyName="@context.TypeFriendlyName" />
+        </MudTd>
+        @if (Mode == ApiMemberTableMode.Methods && !string.IsNullOrEmpty(((DocumentedMethod)context).Returns))
+        {
+            <MudTd DataLabel="Returns" Class="docs-content-api-cell">
+                <ApiText Text="@(context.Summary + " " + context.Remarks + "  Returns: " + ((DocumentedMethod)context).Returns)" />
+            </MudTd>
+        }
+        else
+        {
+            <MudTd DataLabel="Description" Class="docs-content-api-cell docs-content-api-description">
+                <ApiText Text="@(context.Summary + " " + context.Remarks)" />
+            </MudTd>
+        }
+    </RowTemplate>
+    <NoRecordsContent>
+        <MudAlert Severity="Severity.Info">No members match the current filters.</MudAlert>
+    </NoRecordsContent>
+</MudTable>

@@ -1,0 +1,11 @@
+﻿<MudTextField Label="No Mask Phone Number" T="string"
+              InputType="InputType.Telephone"
+              Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
+
+
+<MudTextField Label="Masked Phone Number" T="string"
+              InputType="InputType.Telephone" Mask="@(new PatternMask("(000)000-0000"))"
+              Variant="Variant.Outlined" Margin="Margin.Dense" ShrinkLabel />
+@code {
+    public static string __description__ = "Adding Mask to a MudTextField with ShinkLabel, should shrink label";
+}

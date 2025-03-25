@@ -1,18 +1,18 @@
 ﻿@page "/components/toggleiconbutton"
 
 <DocsPage>
-    <DocsPageHeader Title="Toggle Icon Button">
+    <DocsPageHeader Title="Toggle Icon Button" Component="@nameof(MudToggleIconButton)">
         <Description>
-            A toggleable implementation of <CodeInline>MudIconButton</CodeInline> where you can use its familiar API to define two different states which you can toggle between. For available icons, go to <MudLink Href="/components/icons">Icons.</MudLink>. Custom icons are passed as an SVG string.
+            A toggleable implementation of <CodeInline>MudIconButton</CodeInline> where you can use its familiar API to define two different states which you can toggle between. For available icons, go to <MudLink Href="/components/icons">Icons</MudLink>. Custom icons are passed as an SVG string.
         </Description>
     </DocsPageHeader>
 
     <DocsPageContent>
         <DocsPageSection>
-            <SectionHeader Title="Basic usage">
-                <Description>Use two-way binding <CodeInline>@(@"@bind-Toggle=""...""")</CodeInline> to update a bound value in the parent component.</Description>
+            <SectionHeader Title="Basic Usage">
+                <Description>Use two-way binding <CodeInline>@(@"@bind-Toggle=""...""")</CodeInline> to update a value in the parent component.</Description>
             </SectionHeader>
-            <SectionContent Code="ToggleIconButtonTwoWayBindingExample">
+            <SectionContent Code="@nameof(ToggleIconButtonTwoWayBindingExample)">
                 <ToggleIconButtonTwoWayBindingExample />
             </SectionContent>
         </DocsPageSection>
@@ -20,10 +20,10 @@
 
     <DocsPageContent>
         <DocsPageSection>
-            <SectionHeader Title="Advanced usage">
-                <Description>You may act on the toggled state by using the <CodeInline>Toggled</CodeInline> EventCallback.</Description>
+            <SectionHeader Title="Without Binding">
+                <Description>You may act on the toggled state by using the <CodeInline>Toggled</CodeInline> EventCallback instead of a two-way binding.</Description>
             </SectionHeader>
-            <SectionContent Code="ToggleIconButtonEventCallbackExample" ShowCode="false">
+            <SectionContent Code="@nameof(ToggleIconButtonEventCallbackExample)" ShowCode="false">
                 <ToggleIconButtonEventCallbackExample />
             </SectionContent>
         </DocsPageSection>

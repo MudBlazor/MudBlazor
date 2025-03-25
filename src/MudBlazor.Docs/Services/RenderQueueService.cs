@@ -2,10 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using MudBlazor.Docs.Components;
 
@@ -16,14 +13,16 @@ namespace MudBlazor.Docs.Services
         int Capacity { get; }
 
         void Enqueue(QueuedContent component);
+
         Task WaitUntilEmpty();
+
         void Clear();
     }
 
     public class RenderQueueService : IRenderQueueService
     {
-        private Queue<QueuedContent> _queue = new();
         private TaskCompletionSource _tcs;
+        private readonly Queue<QueuedContent> _queue = new();
 
         public int Capacity { get; init; }
 
@@ -32,10 +31,11 @@ namespace MudBlazor.Docs.Services
             Capacity = 3;
         }
 
-        public void Clear() {
+        public void Clear()
+        {
             lock (_queue)
             {
-                _queue.Clear();                
+                _queue.Clear();
                 _tcs?.TrySetResult();
                 _tcs = null;
             }
@@ -43,7 +43,7 @@ namespace MudBlazor.Docs.Services
 
         void IRenderQueueService.Enqueue(QueuedContent component)
         {
-            bool renderImmediately = false;
+            bool renderImmediately;
             lock (_queue)
             {
                 renderImmediately = _queue.Count == 0;
@@ -95,7 +95,7 @@ namespace MudBlazor.Docs.Services
 
         public Task WaitUntilEmpty()
         {
-            lock(_queue)
+            lock (_queue)
             {
                 if (_queue.Count == 0)
                     return Task.CompletedTask;

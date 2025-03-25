@@ -1,0 +1,14 @@
+﻿<MudDialog ActionsClass="@ActionsClass">
+    <DialogContent>
+    </DialogContent>
+    <DialogActions>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter]
+    public string ActionsClass { get; set; } = string.Empty;
+}

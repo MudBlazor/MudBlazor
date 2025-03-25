@@ -1,0 +1,41 @@
+﻿<MudPopoverProvider />
+<MudDataGrid T="Model" ShowMenuIcon="true" Items="@_items" Groupable="true">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" Title="Name" Grouping="true" HeaderClass="name" />
+        <PropertyColumn Property="x => x.Age" Title="Age" Grouping="@IsAgeGrouped" HeaderClass="age" />
+        <PropertyColumn Property="x => x.Gender" Title="Gender" @bind-Grouping="@IsGenderGrouped" HeaderClass="gender"/>
+        <PropertyColumn Property="x => x.Profession" Title="Profession" @bind-Grouping="@IsProfessionGrouped" GroupBy="_groupByProfession" HeaderClass="profession" />
+    </Columns>
+</MudDataGrid>
+
+<MudButton Class="GroupByGender" @onclick="GroupByGender">Group By Gender</MudButton>
+<MudButton Class="GroupByAge" @onclick="GroupByAge">Group By Age</MudButton>
+<MudButton Class="GroupByProfession" @onclick="GroupByProfession">Group By Profession</MudButton>
+@code {
+
+    private readonly Func<Model, object> _groupByProfession = x => string.IsNullOrEmpty(x.Profession)
+        ? "(None)" // Customize group name for null values otherwise would be empty group name
+        : x.Profession;
+
+    public bool IsGenderGrouped { get; private set; }
+
+    public bool IsAgeGrouped { get; private set; }
+
+    public bool IsProfessionGrouped { get; private set; }
+
+    private readonly List<Model> _items =
+    [
+        new("John", 45, "Male", "Cook"),
+        new("Johanna", 23, "Female", null),
+        new("Steve", 32, "Male", null),
+        new("Alice", 32, "Female", "Cook")
+    ];
+
+    private void GroupByGender(MouseEventArgs args) => IsGenderGrouped = true;
+
+    private void GroupByAge(MouseEventArgs args) => IsAgeGrouped = true;
+
+    private void GroupByProfession(MouseEventArgs args) => IsProfessionGrouped = true;
+
+    public record Model(string Name, int Age, string Gender, string? Profession);
+}

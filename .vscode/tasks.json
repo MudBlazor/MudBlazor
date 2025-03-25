@@ -73,7 +73,7 @@
             "problemMatcher": []
         },
         {
-            "label": "compile docs",
+            "label": "docs generator",
             "command": "dotnet",
             "type": "shell",
             "args": [

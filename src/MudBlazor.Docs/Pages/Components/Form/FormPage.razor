@@ -1,8 +1,7 @@
 ﻿@page "/components/form"
 
-
 <DocsPage>
-    <DocsPageHeader Title="Form Validation" SubTitle="All about checking user input and visualization of errors" />
+    <DocsPageHeader Title="Form Validation" Component="@nameof(MudForm)" SubTitle="All about checking user input and visualization of errors" />
     <DocsPageContent>
 
         <DocsPageSection>
@@ -13,7 +12,7 @@
                     <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">Note: for MudForm, do NOT use a button with <CodeInline>ButtonType="ButtonType.Submit"</CodeInline></MudAlert>
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" ShowCode="false" Code="MudFormExample">
+            <SectionContent DarkenBackground="true" ShowCode="false" Code="@nameof(MudFormExample)">
                 <MudFormExample />
             </SectionContent>
         </DocsPageSection>
@@ -21,16 +20,19 @@
         <DocsPageSection>
             <SectionHeader Title="EditForm Support">
                 <Description>
-                    In Blazor, form validation is usually done with EditForm in conjunction with a form model class that is decorated with <MudLink Href="https://docs.microsoft.com/en-us/aspnet/core/mvc/models/validation?view=aspnetcore-3.1">data annotations</MudLink>. MudBlazor's input components support
+                    In Blazor, form validation is usually done with EditForm in conjunction with a form model class that is decorated with <MudLink Href="https://docs.microsoft.com/aspnet/core/mvc/models/validation?view=aspnetcore-3.1">data annotations</MudLink>. MudBlazor's input components support
                     Blazor's form validation if you put them into a <CodeInline>&lt;EditForm&gt;</CodeInline>. The following example shows a very simple use case. If you want to learn more, please check out
-                    <MudLink Href="https://docs.microsoft.com/en-us/aspnet/core/blazor/forms-validation?view=aspnetcore-3.1">ASP.NET Core Blazor forms and validation</MudLink> on the official Blazor documentation.
+                    <MudLink Href="https://docs.microsoft.com/aspnet/core/blazor/forms-validation?view=aspnetcore-3.1">ASP.NET Core Blazor forms and validation</MudLink> on the official Blazor documentation.
                     <br /><br />
                     <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
                         Note: for EditForm validation to work make sure to set <CodeInline>ButtonType="ButtonType.Submit"</CodeInline> and do not use a MudForm.
                     </MudAlert>
+                    <MudAlert Severity="Severity.Warning" Dense="true" Class="mt-3">
+                        Make sure you don't forget the <CodeInline Tag>DataAnnotationsValidator /</CodeInline> tag inside your <CodeInline Tag>EditForm</CodeInline>
+                    </MudAlert>
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" ShowCode="false" Code="EditFormExample">
+            <SectionContent DarkenBackground="true" ShowCode="false" Code="@nameof(EditFormExample)">
                 <EditFormExample />
             </SectionContent>
         </DocsPageSection>
@@ -42,7 +44,7 @@
                     validation function and simply return the error messages.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" ShowCode="false" Code="FluentValidationExample">
+            <SectionContent DarkenBackground="true" ShowCode="false" Code="@nameof(FluentValidationExample)">
                 <FluentValidationExample />
             </SectionContent>
         </DocsPageSection>
@@ -53,7 +55,7 @@
                     This example shows how to make use of the powerful <MudLink Href="https://docs.fluentvalidation.net/en/latest/index.html">FluentValidation</MudLink> validators with MudForm. This approach utilizes a standard AbstractValidator which can be shared with the <MudLink Href="https://docs.fluentvalidation.net/en/latest/aspnet.html">ASP.NET API Controllers</MudLink>.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" ShowCode="false" Code="FluentValidationComplexExample">
+            <SectionContent DarkenBackground="true" ShowCode="false" Code="@nameof(FluentValidationComplexExample)">
                 <FluentValidationComplexExample />
             </SectionContent>
         </DocsPageSection>
@@ -68,7 +70,7 @@
                     </MudAlert>
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" ShowCode="false" Code="ValidateIfDirtyExample">
+            <SectionContent DarkenBackground="true" ShowCode="false" Code="@nameof(ValidateIfDirtyExample)">
                 <ValidateIfDirtyExample />
             </SectionContent>
         </DocsPageSection>
@@ -76,10 +78,10 @@
         <DocsPageSection>
             <SectionHeader Title="Automatically set Labels">
                 <Description>
-                    A form field <CodeInline>Label</CodeInline> can be set automatically by adding a <CodeInline>[Label]</CodeInline> attribute to the relevant property on the model class. The <CodeInline>For</CodeInline> property must also be set. An automatic label can be overriden by setting the <CodeInline>Label</CodeInline> property manually on the component.
+                    A form field <CodeInline>Label</CodeInline> can be set automatically by adding a <CodeInline>[Label]</CodeInline> attribute to the relevant property on the model class. The <CodeInline>For</CodeInline> property must also be set. An automatic label can be overridden by setting the <CodeInline>Label</CodeInline> property manually on the component.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" ShowCode="false" Code="LabelAttributeExample">
+            <SectionContent DarkenBackground="true" ShowCode="false" Code="@nameof(LabelAttributeExample)">
                 <LabelAttributeExample />
             </SectionContent>
         </DocsPageSection>
@@ -87,11 +89,22 @@
         <DocsPageSection>
             <SectionHeader Title="ReadOnly and Disabled Forms">
                 <Description>
-                    Settings <CodeInline>ReadOnly</CodeInline> or <CodeInline>Disabled</CodeInline> to true on a MudForm will automatically set all children inputs as ReadOnly or Disabled. The state will also be applied to child MudForms.
+                    Setting <CodeInline>ReadOnly</CodeInline> or <CodeInline>Disabled</CodeInline> to true on a MudForm will automatically set all child inputs as ReadOnly or Disabled. The state will also be applied to child MudForms.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" ShowCode="false" Code="FormReadonlyDisabledExample">
+            <SectionContent DarkenBackground="true" ShowCode="false" Code="@nameof(FormReadonlyDisabledExample)">
                 <FormReadonlyDisabledExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Customization">
+                <Description>
+                    You can control the gap between items with <CodeInline>Spacing</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" ShowCode="false" Code="@nameof(FormCustomizationExample)">
+                <FormCustomizationExample />
             </SectionContent>
         </DocsPageSection>
 

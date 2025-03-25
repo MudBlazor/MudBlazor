@@ -5,7 +5,7 @@
 window.mudDragAndDrop = {
 
     initDropZone: (id) => {
-        const elem = document.getElementById('mud-drop-zone-' + id);
+        const elem = document.getElementById(id);
         elem.addEventListener('dragover',() => event.preventDefault());
         elem.addEventListener('dragstart', () => event.dataTransfer.setData('', event.target.id));
     },
@@ -30,11 +30,11 @@ window.mudDragAndDrop = {
         return "";
     },
     getDropIndexOnPosition: (x, y, id) => {
-        //const selfItem = document.getElementById('mud-drop-item-' + id);
+        //const selfItem = document.getElementById(id);
 
         const elems = document.elementsFromPoint(x, y);
 
-        const dropItems = elems.filter(e => e.classList.contains('mud-drop-item') && e.id != ('mud-drop-item-' + id))
+        const dropItems = elems.filter(e => e.classList.contains('mud-drop-item') && e.id != id)
         const dropItem = dropItems[0];
         if (dropItem) {
             return dropItem.getAttribute('index') || "";
@@ -52,7 +52,7 @@ window.mudDragAndDrop = {
         }
     },
     moveItemByDifference: (id, dx, dy) => {
-        const elem = document.getElementById('mud-drop-item-' + id);
+        const elem = document.getElementById(id);
         
 
 
@@ -71,7 +71,7 @@ window.mudDragAndDrop = {
         elem.setAttribute('data-y', ty);
     },
     resetItem: (id) => {
-        const elem = document.getElementById('mud-drop-item-' + id);
+        const elem = document.getElementById(id);
         if (elem) {
             // translate the element
             elem.style.webkitTransform =

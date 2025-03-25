@@ -1,12 +1,12 @@
 ﻿//Copyright(c) Alessandro Ghidini.All rights reserved.
 //Changes and improvements Copyright (c) The MudBlazor Team.
 
-using System;
 using System.Diagnostics;
 using static System.String;
 
 namespace MudBlazor
 {
+#nullable enable
     internal class SnackBarMessageState
     {
         private string AnimationId { get; }
@@ -18,7 +18,7 @@ namespace MudBlazor
         public SnackBarMessageState(SnackbarOptions options)
         {
             Options = options;
-            AnimationId = $"snackbar-{Guid.NewGuid()}";
+            AnimationId = Identifier.Create();
             SnackbarState = SnackbarState.Init;
         }
         private string Opacity => ((decimal)Options.MaximumOpacity / 100).ToPercentage();
@@ -69,9 +69,16 @@ namespace MudBlazor
         {
             get
             {
-                var result = $"mud-snackbar {Options.SnackbarTypeClass}";
+                var baseTypeClass = $"mud-alert-{Options.SnackbarVariant.ToDescriptionString()}-{Options.Severity.ToDescriptionString()}";
 
-                if (Options.Onclick != null && !ShowActionButton)
+                if (Options.SnackbarVariant != Variant.Filled)
+                {
+                    baseTypeClass += Options.BackgroundBlurred ? " mud-snackbar-blurred" : " mud-snackbar-surface";
+                }
+
+                var result = $"mud-snackbar {baseTypeClass} {Options.SnackbarTypeClass}";
+
+                if (Options.OnClick != null && !ShowActionButton)
                     result += " force-cursor";
 
                 return result;

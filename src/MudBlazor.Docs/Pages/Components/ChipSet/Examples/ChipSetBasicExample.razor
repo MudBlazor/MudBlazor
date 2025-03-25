@@ -1,27 +1,31 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudChipSet @bind-SelectedChip="selected" Filter="true" Mandatory="@mandatory">
-    <MudChip Text="grey">Default</MudChip>
-    <MudChip Text="purple" Color="Color.Primary">Primary</MudChip>
-    <MudChip Text="pink" Color="Color.Secondary">Secondary</MudChip>
-    <MudChip Text="blue" Color="Color.Info">Info</MudChip>
-    <MudChip Text="green" Color="Color.Success">Success</MudChip>
-    <MudChip Text="orange" Color="Color.Warning">Warning</MudChip>
-    <MudChip Text="red" Color="Color.Error">Error</MudChip>
-    <MudChip Text="black" Color="Color.Dark">Dark</MudChip>
+<MudChipSet T="Color" @bind-SelectedValue="SelectedColor" CheckMark SelectionMode="@SelectionMode">
+    <MudChip Text="purple" Color="Color.Primary" Value="@Color.Primary">Primary</MudChip>
+    <MudChip Text="pink" Color="Color.Secondary" Value="@Color.Secondary">Secondary</MudChip>
+    <MudChip Text="blue" Color="Color.Info" Value="@Color.Info">Info</MudChip>
+    <MudChip Text="green" Color="Color.Success" Value="@Color.Success">Success</MudChip>
+    <MudChip Text="orange" Color="Color.Warning" Value="@Color.Warning">Warning</MudChip>
+    <MudChip Text="red" Color="Color.Error" Value="@Color.Error">Error</MudChip>
+    <MudChip Text="black" Color="Color.Dark" Value="@Color.Dark">Dark</MudChip>
 </MudChipSet>
 
 <div class="d-flex flex-column align-center">
-    @if (selected != null)
-    {
-        <MudText>You selected the <MudText Color="@selected.Color" Inline="true">@selected.Text</MudText> chip.</MudText>
+    @if (SelectedColor != default) {
+        <MudText>You selected the <MudText Color="@SelectedColor" Inline>@SelectedColor.ToDescriptionString()</MudText> chip.</MudText>
     }
-    <MudCheckBox @bind-Checked="mandatory">Mandatory</MudCheckBox>
+    else {
+        <MudText>Nothing selected.</MudText>
+    }
+    <MudRadioGroup @bind-Value="SelectionMode">
+        <MudRadio Value="@SelectionMode.SingleSelection" Color="Color.Primary">SingleSelection</MudRadio>
+        <MudRadio Value="@SelectionMode.ToggleSelection" Color="Color.Primary">ToggleSelection</MudRadio>
+    </MudRadioGroup>
 </div>
 
 @code
 {
-    bool mandatory = true;
-    MudChip selected;
+    public SelectionMode SelectionMode = SelectionMode.SingleSelection;
+    public Color SelectedColor;
 }
 

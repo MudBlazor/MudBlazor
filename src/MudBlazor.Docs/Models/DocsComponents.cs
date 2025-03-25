@@ -6,19 +6,20 @@ namespace MudBlazor.Docs.Models
 {
     public class DocsComponents
     {
-        private List<MudComponent> _mudComponents = new();
+        private readonly List<MudComponent> _mudComponents = new();
 
-        public DocsComponents AddItem(string name, Type component, params Type[] childcomponents)
+        public DocsComponents AddItem(string name, Type component, params Type[] childComponents)
         {
             var componentItem = new MudComponent
             {
                 Name = name,
                 Link = name.ToLowerInvariant().Replace(" ", ""),
                 Type = component,
-                ChildTypes = childcomponents,
+                ChildTypes = childComponents,
                 IsNavGroup = false
             };
             _mudComponents.Add(componentItem);
+
             return this;
         }
 
@@ -32,6 +33,7 @@ namespace MudBlazor.Docs.Models
                 IsNavGroup = true
             };
             _mudComponents.Add(componentItem);
+
             return this;
         }
 

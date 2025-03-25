@@ -1,412 +1,534 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Threading.Tasks;
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
 
+#nullable enable
 namespace MudBlazor
 {
+    /// <summary>
+    /// A component for selecting date, time, and color values.
+    /// </summary>
+    /// <typeparam name="T">The type of value being chosen.</typeparam>
+    /// <seealso cref="MudPickerContent" />
+    /// <seealso cref="MudPickerToolbar" />
     public partial class MudPicker<T> : MudFormComponent<T, string>
     {
-        protected IKeyInterceptor _keyInterceptor;
+        private string? _text;
+        private bool _pickerSquare;
+        private ElementReference _pickerInlineRef;
+        private bool _keyInterceptorObserving = false;
+        private string _elementId = Identifier.Create("picker");
 
         public MudPicker() : base(new Converter<T, string>()) { }
+
         protected MudPicker(Converter<T, string> converter) : base(converter) { }
 
-        [Inject] private IKeyInterceptorFactory _keyInterceptorFactory { get; set; }
+        [Inject]
+        private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
-        private string _elementId = "picker" + Guid.NewGuid().ToString().Substring(0, 8);
-
-        protected string PickerClass =>
+        protected string PickerClassname =>
             new CssBuilder("mud-picker")
-                .AddClass($"mud-picker-inline", PickerVariant != PickerVariant.Static)
-                .AddClass($"mud-picker-static", PickerVariant == PickerVariant.Static)
-                .AddClass($"mud-rounded", PickerVariant == PickerVariant.Static && !_pickerSquare)
-                .AddClass($"mud-elevation-{_pickerElevation}", PickerVariant == PickerVariant.Static)
-                .AddClass($"mud-picker-input-button", !Editable && PickerVariant != PickerVariant.Static)
-                .AddClass($"mud-picker-input-text", Editable && PickerVariant != PickerVariant.Static)
-                .AddClass($"mud-disabled", GetDisabledState() && PickerVariant != PickerVariant.Static)
+                .AddClass("mud-picker-inline", PickerVariant != PickerVariant.Static)
+                .AddClass("mud-picker-static", PickerVariant == PickerVariant.Static)
+                .AddClass("mud-rounded", PickerVariant == PickerVariant.Static && !_pickerSquare)
+                .AddClass($"mud-elevation-{Elevation ?? 0}", PickerVariant != PickerVariant.Inline)
+                .AddClass("mud-picker-input-button", !Editable && PickerVariant != PickerVariant.Static)
+                .AddClass("mud-picker-input-text", Editable && PickerVariant != PickerVariant.Static)
+                .AddClass("mud-disabled", GetDisabledState() && PickerVariant != PickerVariant.Static)
                 .AddClass(Class)
                 .Build();
 
-        protected string PickerPaperClass =>
+        protected string PickerPaperClassname =>
             new CssBuilder("mud-picker")
                 .AddClass("mud-picker-paper")
                 .AddClass("mud-picker-view", PickerVariant == PickerVariant.Inline)
-                .AddClass("mud-picker-open", IsOpen && PickerVariant == PickerVariant.Inline)
+                .AddClass("mud-picker-open", Open && PickerVariant == PickerVariant.Inline)
                 .AddClass("mud-picker-popover-paper", PickerVariant == PickerVariant.Inline)
                 .AddClass("mud-dialog", PickerVariant == PickerVariant.Dialog)
                 .Build();
 
-        protected string PickerInlineClass =>
+        protected string PickerPaperStylename =>
+            new StyleBuilder()
+                .AddStyle("transition-duration", $"{Math.Round(MudGlobal.TransitionDefaults.Duration.TotalMilliseconds)}ms")
+                .AddStyle("transition-delay", $"{Math.Round(MudGlobal.TransitionDefaults.Delay.TotalMilliseconds)}ms")
+                .AddStyle(Style)
+                .Build();
+
+        protected string PickerInlineClassname =>
             new CssBuilder("mud-picker-inline-paper")
                 .Build();
 
-        protected string PickerContainerClass =>
+        protected string PickerContainerClassname =>
             new CssBuilder("mud-picker-container")
                 .AddClass("mud-paper-square", _pickerSquare)
                 .AddClass("mud-picker-container-landscape",
                     Orientation == Orientation.Landscape && PickerVariant == PickerVariant.Static)
                 .Build();
 
-        protected string PickerInputClass =>
-            new CssBuilder("mud-input-input-control").AddClass(Class)
+        protected string PickerInputClassname =>
+            new CssBuilder("mud-input-input-control")
+                .AddClass(Class)
                 .Build();
 
-        protected string ActionClass => new CssBuilder("mud-picker-actions")
-            .AddClass(ClassActions)
-            .Build();
+        protected string PopoverClassname =>
+            new CssBuilder("mud-picker-popover")
+                // We can't use the Elevation parameter because it requires Paper=true; Instead we define the class explicitly.
+                .AddClass($"mud-elevation-{Elevation ?? MudGlobal.PopoverDefaults.Elevation}")
+                .Build();
+
+        protected string ActionsClassname =>
+            new CssBuilder("mud-picker-actions")
+                .AddClass(ActionsClass)
+                .Build();
+
+        [CascadingParameter(Name = "ParentDisabled")]
+        private bool ParentDisabled { get; set; }
+
+        [CascadingParameter(Name = "ParentReadOnly")]
+        private bool ParentReadOnly { get; set; }
 
         /// <summary>
-        /// Sets the icon of the input text field
+        /// The color of the <see cref="AdornmentIcon"/>.
         /// </summary>
-        [ExcludeFromCodeCoverage]
-        [Parameter]
-        [Obsolete("Use AdornmentIcon instead.", true)]
-        public string InputIcon
-        {
-            get { return AdornmentIcon; }
-            set { AdornmentIcon = value; }
-        }
-
-        /// <summary>
-        /// The color of the adornment if used. It supports the theme colors.
-        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Color.Default"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
         public Color AdornmentColor { get; set; } = Color.Default;
 
         /// <summary>
-        /// Sets the icon of the input text field
+        /// The icon shown next to the text input.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.Event"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public string AdornmentIcon { get; set; } = Icons.Material.Filled.Event;
 
         /// <summary>
-        /// Sets the aria-label of the input text field icon
+        /// The <c>aria-label</c> for the adornment.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public string AdornmentAriaLabel { get; set; } = string.Empty;
+        public string? AdornmentAriaLabel { get; set; }
 
         /// <summary>
-        /// The short hint displayed in the input before the user enters a value.
+        /// The text displayed in the input if no value is specified.
         /// </summary>
+        /// <remarks>
+        /// This property is typically used to give the user a hint as to what kind of input is expected.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public string Placeholder { get; set; }
+        public string? Placeholder { get; set; }
 
         /// <summary>
-        /// Fired when the dropdown / dialog opens
+        /// Occurs when this picker has opened.
         /// </summary>
         [Parameter]
         public EventCallback PickerOpened { get; set; }
 
         /// <summary>
-        /// Fired when the dropdown / dialog closes
+        /// Occurs when this picker has closed.
         /// </summary>
         [Parameter]
         public EventCallback PickerClosed { get; set; }
 
         /// <summary>
-        /// The higher the number, the heavier the drop-shadow. 0 for no shadow set to 8 by default in inline mode and 0 in static mode.
+        /// The size of the drop shadow.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>8</c> for inline pickers; otherwise <c>0</c>.<br />
+        /// A higher number creates a heavier drop shadow.  Use a value of <c>0</c> for no shadow.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerAppearance)]
-        public int Elevation { set; get; } = 8;
+        public int? Elevation { set; get; }
 
         /// <summary>
-        /// If true, border-radius is set to 0 this is set to true automatically in static mode but can be overridden with Rounded bool.
+        /// Disables rounded corners.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// Can be overridden by <see cref="MudGlobal.Rounded"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerAppearance)]
-        public bool Square { get; set; }
+        public bool Square { get; set; } = MudGlobal.Rounded == false;
 
         /// <summary>
-        /// If true, border-radius is set to theme default when in Static Mode.
+        /// Shows rounded corners.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// Can be overridden by <see cref="MudGlobal.Rounded"/>.
+        /// When <c>true</c>, the <c>border-radius</c> style is set to the theme's default value.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerAppearance)]
-        public bool Rounded { get; set; }
+        public bool Rounded { get; set; } = MudGlobal.Rounded == true;
 
         /// <summary>
-        /// If string has value, HelperText will be applied.
+        /// The text displayed below the text field.
         /// </summary>
+        /// <remarks>
+        /// This property is typically used to help the user understand what kind of input is allowed.  The <see cref="HelperTextOnFocus"/> property controls when this text is visible.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public string HelperText { get; set; }
+        public string? HelperText { get; set; }
 
         /// <summary>
-        /// If true, the helper text will only be visible on focus.
+        /// Displays the <see cref="HelperText"/> only when this input has focus.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool HelperTextOnFocus { get; set; }
 
         /// <summary>
-        /// If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.
+        /// The label for this input.
         /// </summary>
+        /// <remarks>
+        /// If no value is specified, the label will be displayed in the input.  Otherwise, it will be scaled down to the top of the input.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public string Label { get; set; }
+        public string? Label { get; set; }
 
         /// <summary>
-        /// Show clear button.
+        /// Displays the Clear icon button.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.<br />
+        /// When <c>true</c>, an icon is displayed which, when clicked, clears the Text and Value.  Use the <c>ClearIcon</c> property to control the Clear button icon.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool Clearable { get; set; } = false;
 
         /// <summary>
-        /// If true, the picker will be disabled.
+        /// Prevents the user from interacting with this button.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool Disabled { get; set; }
-        [CascadingParameter(Name = "ParentDisabled")] private bool ParentDisabled { get; set; }
-        protected bool GetDisabledState() => Disabled || ParentDisabled;
 
         /// <summary>
-        /// If true, the input will not have an underline.
+        /// Shows an underline under the input text.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public bool DisableUnderLine { get; set; }
+        public bool Underline { get; set; } = true;
 
         /// <summary>
-        /// If true, no date or time can be defined.
+        /// Prevents the input from being changed by the user.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.<br />
+        /// When <c>true</c>, the user can copy text in the control, but cannot change the value.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool ReadOnly { get; set; }
-        [CascadingParameter(Name = "ParentReadOnly")] private bool ParentReadOnly { get; set; }
-        protected bool GetReadOnlyState() => ReadOnly || ParentReadOnly;
 
         /// <summary>
-        /// If true, the picker will be editable.
+        /// Allows the value to be edited.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool Editable { get; set; } = false;
 
         /// <summary>
-        /// Hide toolbar and show only date/time views.
+        /// Shows the toolbar.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerAppearance)]
-        public bool DisableToolbar { get; set; }
+        public bool ShowToolbar { get; set; } = true;
 
         /// <summary>
-        /// User class names for picker's ToolBar, separated by space
+        /// The CSS classes for the toolbar when <see cref="ShowToolbar"/> is <c>true</c>.
         /// </summary>
+        /// <remarks>
+        /// Multiple classes must be separated by spaces.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerAppearance)]
-        public string ToolBarClass { get; set; }
+        public string? ToolbarClass { get; set; }
 
         /// <summary>
-        /// Picker container option
+        /// The display variant for this picker.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="PickerVariant.Inline"/>.<br />
+        /// Other values are <see cref="PickerVariant.Dialog"/> and <see cref="PickerVariant.Static"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public PickerVariant PickerVariant { get; set; } = PickerVariant.Inline;
 
         /// <summary>
-        ///  Variant of the text input
+        /// The display variant of the text input.
         /// </summary>
-        [ExcludeFromCodeCoverage]
-        [Parameter]
-        [Obsolete("Use Variant instead.", true)]
-        public Variant InputVariant
-        {
-            get { return Variant; }
-            set { Variant = value; }
-        }
-
-        /// <summary>
-        /// Variant of the text input
-        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Variant.Text"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
         public Variant Variant { get; set; } = Variant.Text;
 
         /// <summary>
-        /// Sets if the icon will be att start or end, set to false to disable.
+        /// The location of the <see cref="AdornmentIcon"/> for the input.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Adornment.End"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public Adornment Adornment { get; set; } = Adornment.End;
 
         /// <summary>
-        /// What orientation to render in when in PickerVariant Static Mode.
+        /// The orientation of the picker when <see cref="PickerVariant"/> is <see cref="PickerVariant.Static"/>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Orientation.Portrait"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerAppearance)]
         public Orientation Orientation { get; set; } = Orientation.Portrait;
 
         /// <summary>
-        /// Sets the Icon Size.
+        /// The size of the icon in the input field.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Size.Medium"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
         public Size IconSize { get; set; } = Size.Medium;
 
         /// <summary>
-        /// The color of the toolbar, selected and active. It supports the theme colors.
+        /// The color of the toolbar, selected, and active values.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Color.Primary"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerAppearance)]
         public Color Color { get; set; } = Color.Primary;
 
         /// <summary>
-        /// Changes the cursor appearance.
-        /// </summary>
-        [Obsolete("This is enabled now by default when you use Editable=true. You can remove the parameter.", false)]
-        [Parameter]
-        public bool AllowKeyboardInput { get; set; }
-
-        /// <summary>
-        /// Fired when the text changes.
+        /// Occurs when <see cref="Text"/> has changed.
         /// </summary>
         [Parameter]
         public EventCallback<string> TextChanged { get; set; }
 
         /// <summary>
-        /// Fired when the text input is clicked.
+        /// Updates <see cref="Text"/> immediately upon typing when <see cref="Editable"/> is <c>true</c>.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.<br />
+        /// When <c>false</c>, <see cref="Text"/> is only updated when pressing <c>Enter</c> or upon loss of focus.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool ImmediateText { get; set; }
+
+        /// <summary>
+        /// Occurs when the text input has been clicked.
         /// </summary>
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
 
         /// <summary>
-        /// The currently selected string value (two-way bindable)
+        /// The currently selected value, as a string.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Data)]
-        public string Text
+        public string? Text
         {
             get => _text;
-            set => SetTextAsync(value, true).AndForget();
+            set => SetTextAsync(value, true).CatchAndLog();
         }
 
-        private string _text;
-
         /// <summary>
-        /// CSS class that will be applied to the action buttons container
+        /// The CSS classes applied to the action buttons container.
         /// </summary>
+        /// <remarks>Multiple classes must be separated by a space.</remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerAppearance)]
-        public string ClassActions { get; set; }
+        public string? ActionsClass { get; set; }
 
         /// <summary>
-        /// Define the action buttons here
+        /// The custom action buttons to display.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
-        public RenderFragment<MudPicker<T>> PickerActions { get; set; }
+        public RenderFragment<MudPicker<T>>? PickerActions { get; set; }
 
         /// <summary>
-        ///  Will adjust vertical spacing.
+        /// Applies vertical spacing.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
         public Margin Margin { get; set; } = Margin.None;
 
         /// <summary>
-        /// A mask for structured input of the date (requires Editable to be true).
+        /// The mask to apply to input values when <see cref="Editable"/> is <c>true</c>.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public IMask Mask
+        public IMask? Mask
         {
             get => _mask;
             set => _mask = value;
         }
 
         /// <summary>
-        /// Gets or sets the origin of the popover's anchor. Defaults to <see cref="Origin.TopLeft"/>
+        /// The location the popover opens, relative to its container.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Origin.BottomLeft"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
-        public Origin AnchorOrigin { get; set; } = Origin.TopLeft;
+        public Origin AnchorOrigin { get; set; } = Origin.BottomLeft;
 
         /// <summary>
-        /// Gets or sets the origin of the popover's transform. Defaults to <see cref="Origin.TopLeft"/>
+        /// The direction the popover opens, relative to its container.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Origin.TopLeft"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
         public Origin TransformOrigin { get; set; } = Origin.TopLeft;
 
-        protected IMask _mask = null;
+        /// <summary>
+        /// The behavior of the popover when it overflows its container.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="OverflowBehavior.FlipOnOpen"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Popover.Appearance)]
+        public OverflowBehavior OverflowBehavior { get; set; } = OverflowBehavior.FlipOnOpen;
 
-        protected async Task SetTextAsync(string value, bool callback)
+        /// <summary>
+        /// Determines the width of the Popover dropdown in relation the parent container.
+        /// </summary>
+        /// <remarks>
+        /// <para>Defaults to <see cref="DropdownWidth.Ignore" />. </para>
+        /// <para>When <see cref="DropdownWidth.Relative" />, restricts the max-width of the component to the width of the parent container</para>
+        /// <para>When <see cref="DropdownWidth.Adaptive" />, restricts the min-width of the component to the width of the parent container</para>
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Popover.Appearance)]
+        public DropdownWidth RelativeWidth { get; set; } = DropdownWidth.Ignore;
+
+        protected IMask? _mask = null;
+
+        protected bool GetDisabledState() => Disabled || ParentDisabled;
+
+        protected bool GetReadOnlyState() => ReadOnly || ParentReadOnly;
+
+        protected async Task SetTextAsync(string? value, bool callback)
         {
             if (_text != value)
             {
                 _text = value;
                 if (callback)
-                    await StringValueChanged(_text);
+                    await StringValueChangedAsync(_text);
                 await TextChanged.InvokeAsync(_text);
             }
         }
 
         /// <summary>
-        /// Value change hook for descendants.
+        /// Occurs when the string value has changed.
         /// </summary>
-        protected virtual Task StringValueChanged(string value)
+        protected virtual Task StringValueChangedAsync(string? value) => Task.CompletedTask;
+
+        protected bool Open { get; set; }
+
+        /// <summary>
+        /// Opens or closes this picker.
+        /// </summary>
+        public Task ToggleOpenAsync()
         {
-            return Task.CompletedTask;
+            if (Open)
+            {
+                return CloseAsync();
+            }
+
+            return OpenAsync();
         }
 
-        protected bool IsOpen { get; set; }
-
-        public void ToggleOpen()
+        /// <summary>
+        /// Closes this picker.
+        /// </summary>
+        /// <param name="submit">When <c>true</c>, the value is committed.</param>
+        public async Task CloseAsync(bool submit = true)
         {
-            if (IsOpen)
-                Close();
-            else
-                Open();
-        }
-
-        public void Close(bool submit = true)
-        {
-            IsOpen = false;
+            Open = false;
 
             if (submit)
             {
-                Submit();
+                await SubmitAsync();
             }
 
-            OnClosed();
+            await OnClosedAsync();
             StateHasChanged();
         }
 
-        public void Open()
+        /// <summary>
+        /// Displays this picker.
+        /// </summary>
+        public Task OpenAsync()
         {
-            IsOpen = true;
+            Open = true;
             StateHasChanged();
-            OnOpened();
+
+            return OnOpenedAsync();
         }
 
-        private void CloseOverlay() => Close(PickerActions == null);
+        private Task CloseOverlayAsync() => CloseAsync(PickerActions == null);
 
-        protected internal virtual void Submit() { }
+        protected internal virtual Task SubmitAsync() => Task.CompletedTask;
 
-        public virtual void Clear(bool close = true)
+        /// <summary>
+        /// Hides this picker.
+        /// </summary>
+        /// <param name="close">When <c>true</c>, the picker will be closed if <see cref="PickerVariant"/> is not <see cref="PickerVariant.Static"/>.</param>
+        public virtual async Task ClearAsync(bool close = true)
         {
             if (close && PickerVariant != PickerVariant.Static)
             {
-                Close(false);
+                await CloseAsync(false);
             }
-        }
-
-        [Obsolete($"Use {nameof(ResetValueAsync)} instead. This will be removed in v7")]
-        [ExcludeFromCodeCoverage]
-        protected override void ResetValue()
-        {
-            _inputReference?.Reset();
-            base.ResetValue();
         }
 
         protected override async Task ResetValueAsync()
@@ -418,34 +540,37 @@ namespace MudBlazor
             await base.ResetValueAsync();
         }
 
-        protected internal MudTextField<string> _inputReference;
+        protected internal MudTextField<string>? _inputReference;
 
+        /// <summary>
+        /// Focuses the input.
+        /// </summary>
         public virtual ValueTask FocusAsync() => _inputReference?.FocusAsync() ?? ValueTask.CompletedTask;
 
+        /// <summary>
+        /// Releases focus for the input.
+        /// </summary>
         public virtual ValueTask BlurAsync() => _inputReference?.BlurAsync() ?? ValueTask.CompletedTask;
 
+        /// <summary>
+        /// Selects the input content.
+        /// </summary>
         public virtual ValueTask SelectAsync() => _inputReference?.SelectAsync() ?? ValueTask.CompletedTask;
 
+        /// <summary>
+        /// Selects a portion of the input content.
+        /// </summary>
+        /// <param name="pos1">The index of the first character to select.</param>
+        /// <param name="pos2">The index of the last character to select.</param>
         public virtual ValueTask SelectRangeAsync(int pos1, int pos2) =>
             _inputReference?.SelectRangeAsync(pos1, pos2) ?? ValueTask.CompletedTask;
 
-        private bool _pickerSquare;
-        private int _pickerElevation;
-        private ElementReference _pickerInlineRef;
-
         protected override void OnInitialized()
         {
+            base.OnInitialized();
             if (PickerVariant == PickerVariant.Static)
             {
-                IsOpen = true;
-                if (Elevation == 8)
-                {
-                    _pickerElevation = 0;
-                }
-                else
-                {
-                    _pickerElevation = Elevation;
-                }
+                Open = true;
 
                 if (!Rounded)
                 {
@@ -455,142 +580,130 @@ namespace MudBlazor
             else
             {
                 _pickerSquare = Square;
-                _pickerElevation = Elevation;
             }
 
             if (Label == null && For != null)
                 Label = For.GetLabelString();
         }
 
-        private async Task EnsureKeyInterceptor()
+        private async Task EnsureKeyInterceptorAsync()
         {
-            if (_keyInterceptor == null)
+            if (_keyInterceptorObserving)
             {
-                _keyInterceptor = _keyInterceptorFactory.Create();
-
-                await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions()
-                {
-                    //EnableLogging = true,
-                    TargetClass = "mud-input-slot",
-                    Keys =
-                    {
-                        new KeyOptions { Key = " ", PreventDown = "key+none" },
-                        new KeyOptions { Key = "ArrowUp", PreventDown = "key+none" },
-                        new KeyOptions { Key = "ArrowDown", PreventDown = "key+none" },
-                        new KeyOptions { Key = "Enter", PreventDown = "key+none" },
-                        new KeyOptions { Key = "NumpadEnter", PreventDown = "key+none" },
-                        new KeyOptions { Key = "/./", SubscribeDown = true, SubscribeUp = true }, // for our users
-                    },
-                });
-                _keyInterceptor.KeyDown += HandleKeyDown;
+                return;
             }
+
+            _keyInterceptorObserving = true;
+            var options = new KeyInterceptorOptions(
+                "mud-input-slot",
+                [
+                    new(" ", preventDown: "key+none"),
+                    new("ArrowUp", preventDown: "key+none"),
+                    new("ArrowDown", preventDown: "key+none"),
+                    new("Enter", preventDown: "key+none"),
+                    new("NumpadEnter", preventDown: "key+none"),
+                    new("/./", subscribeDown: true, subscribeUp: true)
+                ]);
+
+            await KeyInterceptorService.SubscribeAsync(_elementId, options, keyDown: OnHandleKeyDownAsync);
         }
 
         private async Task OnClickAsync(MouseEventArgs args)
         {
             if (!Editable)
-                ToggleState();
+            {
+                await ToggleStateAsync();
+            }
 
             if (OnClick.HasDelegate)
+            {
                 await OnClick.InvokeAsync(args);
+            }
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if (firstRender == true)
+            if (firstRender)
             {
-                await EnsureKeyInterceptor();
+                await EnsureKeyInterceptorAsync();
             }
 
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        protected internal void ToggleState()
+        protected internal async Task ToggleStateAsync()
         {
             if (GetDisabledState() || GetReadOnlyState())
                 return;
-            if (IsOpen)
+            if (Open)
             {
-                IsOpen = false;
-                OnClosed();
+                Open = false;
+                await OnClosedAsync();
             }
             else
             {
-                IsOpen = true;
-                OnOpened();
-                FocusAsync();
+                Open = true;
+                await OnOpenedAsync();
+                await FocusAsync();
             }
         }
 
-        protected virtual async void OnOpened()
+        protected virtual async Task OnOpenedAsync()
         {
-            OnPickerOpened();
+            await OnPickerOpenedAsync();
 
             if (PickerVariant == PickerVariant.Inline)
             {
-                await _pickerInlineRef.MudChangeCssAsync(PickerInlineClass);
+                await _pickerInlineRef.MudChangeCssAsync(PickerInlineClassname);
             }
 
-            await EnsureKeyInterceptor();
-            await _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "key+none" });
+            await EnsureKeyInterceptorAsync();
+            await KeyInterceptorService.UpdateKeyAsync(_elementId, new("Escape", stopDown: "key+none"));
         }
 
-        protected virtual async void OnClosed()
+        protected virtual async Task OnClosedAsync()
         {
-            OnPickerClosed();
+            await OnPickerClosedAsync();
 
-            await EnsureKeyInterceptor();
-            await _keyInterceptor.UpdateKey(new() { Key = "Escape", StopDown = "none" });
+            await EnsureKeyInterceptorAsync();
+            await KeyInterceptorService.UpdateKeyAsync(_elementId, new("Escape", stopDown: "none"));
         }
 
-        protected virtual void OnPickerOpened()
-        {
-            PickerOpened.InvokeAsync(this);
-        }
+        protected virtual Task OnPickerOpenedAsync() => PickerOpened.InvokeAsync(this);
 
-        protected virtual void OnPickerClosed()
-        {
-            PickerClosed.InvokeAsync(this);
-        }
+        protected virtual Task OnPickerClosedAsync() => PickerClosed.InvokeAsync(this);
 
-        protected internal virtual void HandleKeyDown(KeyboardEventArgs obj)
+        protected internal virtual async Task OnHandleKeyDownAsync(KeyboardEventArgs args)
         {
             if (GetDisabledState() || GetReadOnlyState())
                 return;
-            switch (obj.Key)
+            switch (args.Key)
             {
                 case "Backspace":
-                    if (obj.CtrlKey == true && obj.ShiftKey == true)
+                    if (args.CtrlKey && args.ShiftKey)
                     {
-                        Clear();
-                        _value = default(T);
-                        Reset();
+                        await ClearAsync();
+                        _value = default;
+                        await ResetAsync();
                     }
 
                     break;
                 case "Escape":
                 case "Tab":
-                    Close(false);
+                    await CloseAsync(false);
                     break;
             }
         }
 
-        protected override void Dispose(bool disposing)
+        /// <inheritdoc />
+        protected override async ValueTask DisposeAsyncCore()
         {
-            base.Dispose(disposing);
+            await base.DisposeAsyncCore();
 
-            if (disposing == true)
+            if (IsJSRuntimeAvailable)
             {
-                if (_keyInterceptor != null)
-                {
-                    _keyInterceptor.KeyDown -= HandleKeyDown;
-                    _keyInterceptor.Dispose();
-                }
-
+                await KeyInterceptorService.UnsubscribeAsync(_elementId);
             }
         }
-
-
-
     }
 }

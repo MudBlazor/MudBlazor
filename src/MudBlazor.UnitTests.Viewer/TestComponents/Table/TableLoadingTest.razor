@@ -1,8 +1,8 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudTable Items="@Elements" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_loading" Filter="new Func<Element, bool>(FilterFunc)">
+﻿<MudTable Items="@_elements" Hover="true" Breakpoint="Breakpoint.Sm"
+          Loading="@_isLoading" Filter="new Func<Element, bool>(FilterFunc)" Striped
+          MultiSelection="@_isMultiSelectionEnabled">
     <ToolBarContent>
-        <MudTextField id="searchString" @bind-Value="searchString" Placeholder="Search"></MudTextField>
+        <MudTextField id="searchString" @bind-Value="_searchString" Placeholder="Search"></MudTextField>
     </ToolBarContent>
     <HeaderContent>
         <MudTh>Nr</MudTh>
@@ -18,51 +18,68 @@
         <MudTd DataLabel="Position">@context.Position</MudTd>
         <MudTd DataLabel="Molar mass">@context.Molar</MudTd>
     </RowTemplate>
+     <RowEditingTemplate>
+         <MudTd DataLabel="Nr">@context.Number</MudTd>
+         <MudTd DataLabel="Sign">@context.Sign</MudTd>
+         <MudTd DataLabel="Name">@context.Name</MudTd>
+         <MudTd DataLabel="Position">@context.Position</MudTd>
+         <MudTd DataLabel="Molar mass">@context.Molar</MudTd>
+     </RowEditingTemplate>
     <NoRecordsContent>No matching records found</NoRecordsContent>
     <LoadingContent>Loading...</LoadingContent>
 </MudTable>
 
-<MudSwitch id="switch" @bind-Checked="_loading">Show Loading</MudSwitch>
+<MudSwitch id="switch" @bind-Value="_isLoading">Show Loading</MudSwitch>
+<MudSwitch id="multi-selection" @bind-Value="_isMultiSelectionEnabled">Enable Multi-selection</MudSwitch>
 
-@code {
-    public static string __description__ = "When loading is true a progress bar should appear";
+ @code {
+    public static string __description__ = @"
+                                                   When loading is set to true, a progress bar should appear in the table header,
+                                                   which would not affect the striped table.
+                                                   Dynamically added columns should not affect number of cells in the loader row.
+                                           ";
 
-    private bool _loading = false;
-    private IEnumerable<Element> Elements = new List<Element>();
-    private string searchString;
+    private bool _isLoading;
+    private string? _searchString;
+    private bool _isMultiSelectionEnabled;
+    private IEnumerable<Element> _elements = new List<Element>();
 
     protected override void OnInitialized()
     {
-        Elements = new List<Element>()
+        _elements = new List<Element>
         {
-            new Element() { Molar = "A", Sign = "A", Name = "A", Number = "A", Position = "A"},
-            new Element() { Molar = "B", Sign = "B", Name = "B", Number = "B", Position = "B"},
+            new() { Molar = "A", Sign = "A", Name = "A", Number = "A", Position = "A"},
+            new() { Molar = "B", Sign = "B", Name = "B", Number = "B", Position = "B"},
         };
     }
 
     private bool FilterFunc(Element element)
     {
-        if (string.IsNullOrWhiteSpace(searchString))
+        if (string.IsNullOrWhiteSpace(_searchString))
             return true;
-        if (element.Number.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        if (element.Number.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
             return true;
-        if (element.Sign.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        if (element.Sign.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
             return true;
-        if (element.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        if (element.Name.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
             return true;
-        if (element.Position.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        if (element.Position.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
             return true;
-        if (element.Molar.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        if (element.Molar.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
             return true;
         return false;
     }
 
     public class Element
     {
-        public string Number { get; set; }
-        public string Sign { get; set; }
-        public string Name { get; set; }
-        public string Position { get; set; }
-        public string Molar { get; set; }
+        public required string Number { get; set; }
+
+        public required string Sign { get; set; }
+
+        public required string Name { get; set; }
+
+        public required string Position { get; set; }
+
+        public required string Molar { get; set; }
     }
 }

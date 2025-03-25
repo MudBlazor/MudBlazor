@@ -1,0 +1,31 @@
+﻿@using System.Text.RegularExpressions
+@using System.ComponentModel.DataAnnotations
+@namespace MudBlazor.Docs.Examples
+
+<MudGrid>
+    <MudItem xs="12" sm="7">
+        <MudPaper Class="pa-4">
+            <MudForm Spacing="spacing">
+                <MudTextField T="string" Label="Username" />
+                <MudTextField T="string" Label="Email" />
+                <MudTextField T="string" Label="Password" HelperText="Choose a strong password" InputType="InputType.Password" />
+                <MudTextField T="string" Label="Password" HelperText="Repeat the password" InputType="InputType.Password" />
+                <div class="d-flex">
+                    <MudRadioGroup T="string">
+                        <MudRadio Value="@("Personal")">Personal</MudRadio>
+                        <MudRadio Value="@("Professional")">Professional</MudRadio>
+                    </MudRadioGroup>
+                </div>
+            </MudForm>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" sm="5">
+        <MudPaper Class="pa-4 mud-height-full">
+            <MudSlider @bind-Value="spacing" Min="0" Max="16" ValueLabel>Spacing between items</MudSlider>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+    int spacing;
+}

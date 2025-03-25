@@ -2,95 +2,243 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Interfaces;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public abstract partial class Column<T> : MudComponentBase
+    /// <summary>
+    /// Represents a vertical set of values.
+    /// </summary>
+    /// <typeparam name="T">The kind of item for this column.</typeparam>
+    /// <seealso cref="MudDataGrid{T}"/>
+    public abstract partial class Column<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase, IDisposable
     {
         private static readonly RenderFragment<CellContext<T>> EmptyChildContent = _ => builder => { };
+        internal ParameterState<bool> HiddenState { get; }
+        internal ParameterState<bool> GroupingState { get; }
 
-        internal readonly Guid uid = Guid.NewGuid();
-
-        [CascadingParameter] public MudDataGrid<T> DataGrid { get; set; }
+        /// <summary>
+        /// The data grid which owns this column.
+        /// </summary>
+        [CascadingParameter]
+        public MudDataGrid<T> DataGrid { get; set; }
 
         //[CascadingParameter(Name = "HeaderCell")] public HeaderCell<T> HeaderCell { get; set; }
 
+        /// <summary>
+        /// The value stored in this column.
+        /// </summary>
         [Parameter] public T Value { get; set; }
-        [Parameter] public EventCallback<T> ValueChanged { get; set; }
+
+        /// <summary>
+        /// Occurs when the <see cref="Value"/> has changed.
+        /// </summary>
+        [Parameter]
+        public EventCallback<T> ValueChanged { get; set; }
 
         //[Parameter] public bool Visible { get; set; } = true;
 
-        /// <summary>
-        /// Specifies the name of the object's property bound to the column
-        /// </summary>
         //[Parameter] public string Field { get; set; }
 
         //[Parameter] public Type FieldType { get; set; }
-        [Parameter] public string Title { get; set; }
-        [Parameter] public bool HideSmall { get; set; }
+
+        /// <summary>
+        /// The display text for this column.
+        /// </summary>
+        [Parameter]
+        public string Title { get; set; }
+
+        /// <summary>
+        /// Hides this column.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        public bool HideSmall { get; set; }
+
+        /// <summary>
+        /// The number of columns spanned by this column in the footer.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>1</c>.
+        /// </remarks>
         [Parameter] public int FooterColSpan { get; set; } = 1;
+
+        /// <summary>
+        /// The number of columns spanned by this column in the header.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>1</c>.
+        /// </remarks>
         [Parameter] public int HeaderColSpan { get; set; } = 1;
-        [Parameter] public RenderFragment<HeaderContext<T>> HeaderTemplate { get; set; }
-        [Parameter] public RenderFragment<CellContext<T>> CellTemplate { get; set; }
-        [Parameter] public RenderFragment<FooterContext<T>> FooterTemplate { get; set; }
-        [Parameter] public RenderFragment<GroupDefinition<T>> GroupTemplate { get; set; }
-        [Parameter] public Func<T, object> GroupBy { get; set; }
+
+        /// <summary>
+        /// The template used to display this column's header.
+        /// </summary>
+        [Parameter]
+        public RenderFragment<HeaderContext<T>> HeaderTemplate { get; set; }
+
+        /// <summary>
+        /// The template used to display this column's value cells.
+        /// </summary>
+        [Parameter]
+        public RenderFragment<CellContext<T>> CellTemplate { get; set; }
+
+        /// <summary>
+        /// The template used to display this column's footer.
+        /// </summary>
+        [Parameter]
+        public RenderFragment<FooterContext<T>> FooterTemplate { get; set; }
+
+        /// <summary>
+        /// The template used to display this column's grouping.
+        /// </summary>
+        [Parameter]
+        public RenderFragment<GroupDefinition<T>> GroupTemplate { get; set; }
+
+        /// <summary>
+        /// The template used to display this column's aggregate.
+        /// </summary>
+        [Parameter]
+        public RenderFragment<IEnumerable<T>> AggregateTemplate { get; set; }
+
+        /// <summary>
+        /// The function which groups values in this column.
+        /// </summary>
+        [Parameter]
+        public Func<T, object> GroupBy { get; set; }
+
+        /// <summary>
+        /// Requires a value to be set.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        public bool Required { get; set; } = true;
 
         #region HeaderCell Properties
 
-        [Parameter] public string HeaderClass { get; set; }
-        [Parameter] public Func<T, string> HeaderClassFunc { get; set; }
-        [Parameter] public string HeaderStyle { get; set; }
-        [Parameter] public Func<T, string> HeaderStyleFunc { get; set; }
-
         /// <summary>
-        /// Determines whether this columns data can be sorted. This overrides the Sortable parameter on the DataGrid.
+        /// The CSS class applied to the header.
         /// </summary>
-        [Parameter] public bool? Sortable { get; set; }
-
-        [Parameter] public bool? Resizable { get; set; }
-
-        /// <summary>
-        /// If set this will override the DragDropColumnReordering parameter of MudDataGrid which applies to all columns.
-        /// Set true to enable reordering for this column. Set false to disable it. 
-        /// </summary>
-        [Parameter] public bool? DragAndDropEnabled { get; set; }
-        /// <summary>
-        /// Determines whether this columns data can be filtered. This overrides the Filterable parameter on the DataGrid.
-        /// </summary>
-        [Parameter] public bool? Filterable { get; set; }
-
-        [Parameter] public bool? ShowFilterIcon { get; set; }
-
-        /// <summary>
-        /// Determines whether this column can be hidden. This overrides the Hideable parameter on the DataGrid.
-        /// </summary>
-        [Parameter] public bool? Hideable { get; set; }
-
-        [Parameter] public bool Hidden { get; set; }
-        [Parameter] public EventCallback<bool> HiddenChanged { get; set; }
-
-        /// <summary>
-        /// Determines whether to show or hide column options. This overrides the ShowColumnOptions parameter on the DataGrid.
-        /// </summary>
-        [Parameter] public bool? ShowColumnOptions { get; set; }
-
+        /// <remarks>
+        /// Defaults to <c>null</c>.  Separate multiple classes with spaces.
+        /// </remarks>
         [Parameter]
-        public IComparer<object> Comparer
-        {
-            get => _comparer;
-            set => _comparer = value;
-        }
+        public string HeaderClass { get; set; }
 
+        /// <summary>
+        /// The function which calculates CSS classes for the header.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  Separate multiple classes with spaces.
+        /// </remarks>
+        [Parameter]
+        public Func<IEnumerable<T>, string> HeaderClassFunc { get; set; }
+
+        /// <summary>
+        /// The CSS style applied to this column's header.
+        /// </summary>
+        [Parameter]
+        public string HeaderStyle { get; set; }
+
+        /// <summary>
+        /// The function which calculates CSS styles for the header.
+        /// </summary>
+        [Parameter]
+        public Func<IEnumerable<T>, string> HeaderStyleFunc { get; set; }
+
+        /// <summary>
+        /// Sorts values in this column.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  When set, this overrides the <see cref="MudDataGrid{T}.SortMode"/> property.
+        /// </remarks>
+        [Parameter]
+        public virtual bool? Sortable { get; set; }
+
+        /// <summary>
+        /// Allows this column's width to be changed.
+        /// </summary>
+        [Parameter]
+        public virtual bool? Resizable { get; set; }
+
+        /// <summary>
+        /// Allows this column to be reordered via drag-and-drop operations.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  When set, this overrides the <see cref="MudDataGrid{T}.DragDropColumnReordering"/> property.
+        /// </remarks>
+        [Parameter]
+        public virtual bool? DragAndDropEnabled { get; set; }
+
+        /// <summary>
+        /// Allows filters to be used on this column.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  When set, this overrides the <see cref="MudDataGrid{T}.Filterable"/> property.
+        /// </remarks>
+        [Parameter]
+        public virtual bool? Filterable { get; set; }
+
+        /// <summary>
+        /// Shows the filter icon.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  When set, this overrides the <see cref="MudDataGrid{T}.ShowFilterIcons"/> property.
+        /// </remarks>
+        [Parameter]
+        public bool? ShowFilterIcon { get; set; }
+
+        /// <summary>
+        /// Allows this column to be hidden.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  When set, this overrides the <see cref="MudDataGrid{T}.Hideable"/> property.
+        /// </remarks>
+        [Parameter]
+        public bool? Hideable { get; set; }
+
+        /// <summary>
+        /// Hides this column.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        public bool Hidden { get; set; }
+
+        /// <summary>
+        /// Occurs when the <see cref="Hidden"/> property has changed.
+        /// </summary>
+        [Parameter]
+        public EventCallback<bool> HiddenChanged { get; set; }
+
+        /// <summary>
+        /// Shows options for this column.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  When set, this overrides the <see cref="MudDataGrid{T}.ShowColumnOptions"/> property.
+        /// </remarks>
+        [Parameter] public virtual bool? ShowColumnOptions { get; set; }
+
+        /// <summary>
+        /// The comparison used for values in this column.
+        /// </summary>
+        [Parameter]
+        public IComparer<object> Comparer { get; set; } = null;
+
+        /// <summary>
+        /// The function used to sort values in this column.
+        /// </summary>
         [Parameter]
         public Func<T, object> SortBy
         {
@@ -103,35 +251,87 @@ namespace MudBlazor
                 _sortBy = value;
             }
         }
-        [Parameter] public SortDirection InitialDirection { get; set; } = SortDirection.None;
-        [Parameter] public string SortIcon { get; set; } = Icons.Material.Filled.ArrowUpward;
 
         /// <summary>
-        /// Specifies whether the column can be grouped.
+        /// The sorting direction applied when <see cref="Sortable"/> is <c>true</c>.
         /// </summary>
-        [Parameter] public bool? Groupable { get; set; }
+        /// <remarks>
+        /// Defaults to <see cref="SortDirection.None"/>.
+        /// </remarks>
+        [Parameter]
+        public SortDirection InitialDirection { get; set; } = SortDirection.None;
 
         /// <summary>
-        /// Specifies whether the column is grouped.
+        /// The icon shown when <see cref="Sortable"/> is <c>true</c>.
         /// </summary>
-        [Parameter] public bool Grouping { get; set; }
+        [Parameter]
+        public string SortIcon { get; set; } = Icons.Material.Filled.ArrowUpward;
 
         /// <summary>
-        /// Specifies whether the column is sticky.
+        /// Allows values in this column to be grouped.
         /// </summary>
-        [Parameter] public bool StickyLeft { get; set; }
+        /// <remarks>
+        /// Defaults to <c>null</c>.  When set, this overrides the <see cref="MudDataGrid{T}.Groupable"/> property.
+        /// </remarks>
+        [Parameter]
+        public bool? Groupable { get; set; }
 
-        [Parameter] public bool StickyRight { get; set; }
+        /// <summary>
+        /// Indicates whether this column is currently grouped.
+        /// </summary>
+        [Parameter]
+        public bool Grouping { get; set; }
 
-        [Parameter] public RenderFragment<FilterContext<T>> FilterTemplate { get; set; }
+        /// <summary>
+        /// Occurs when the <see cref="Grouping"/> property has changed.
+        /// </summary>
+        [Parameter]
+        public EventCallback<bool> GroupingChanged { get; set; }
 
+        /// <summary>
+        /// Fixes this column to the left side.
+        /// </summary>
+        /// <remarks>
+        /// When <c>true</c>, this column will be visible even as the container is scrolled horizontally.
+        /// </remarks>
+        [Parameter]
+        public bool StickyLeft { get; set; }
+
+        /// <summary>
+        /// Fixes this column to the right side.
+        /// </summary>
+        /// <remarks>
+        /// When <c>true</c>, this column will be visible even as the container is scrolled horizontally.
+        /// </remarks>
+        [Parameter]
+        public bool StickyRight { get; set; }
+
+        /// <summary>
+        /// The template used to display this column's filter.
+        /// </summary>
+        [Parameter]
+        public RenderFragment<FilterContext<T>> FilterTemplate { get; set; }
+
+        /// <summary>
+        /// The operators to use for this column's filter.
+        /// </summary>
+        [Parameter]
+        public HashSet<string> FilterOperators { get; set; } = [];
+
+        /// <summary>
+        /// The unique identifier for this column.
+        /// </summary>
         public string Identifier { get; set; }
-        
+
 
         private CultureInfo _culture;
+
         /// <summary>
-        /// The culture used to represent this column and by the filtering input field.
+        /// The culture used to parse, filter, and display values in this column.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="MudDataGrid{T}.Culture"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Appearance)]
         public CultureInfo Culture
@@ -142,55 +342,117 @@ namespace MudBlazor
                 _culture = value;
             }
         }
+
         #endregion
 
         #region Cell Properties
 
-        [Parameter] public string CellClass { get; set; }
-        [Parameter] public Func<T, string> CellClassFunc { get; set; }
-        [Parameter] public string CellStyle { get; set; }
-        [Parameter] public Func<T, string> CellStyleFunc { get; set; }
-        [Parameter] public bool IsEditable { get; set; } = true;
-        [Parameter] public RenderFragment<CellContext<T>> EditTemplate { get; set; }
+        /// <summary>
+        /// The CSS classes to apply to the cell.
+        /// </summary>
+        /// <remarks>
+        /// Multiple classes must be separated by spaces.
+        /// </remarks>
+        [Parameter]
+        public string CellClass { get; set; }
+
+        /// <summary>
+        /// The function used to determine CSS classes for this cell.
+        /// </summary>
+        /// <remarks>
+        /// Multiple classes must be separated by spaces.
+        /// </remarks>
+        [Parameter]
+        public Func<T, string> CellClassFunc { get; set; }
+
+        /// <summary>
+        /// The CSS styles to apply to this cell.
+        /// </summary>
+        [Parameter]
+        public string CellStyle { get; set; }
+
+        /// <summary>
+        /// The function which calculates CSS styles for this cell.
+        /// </summary>
+        [Parameter]
+        public Func<T, string> CellStyleFunc { get; set; }
+
+        /// <summary>
+        /// Allows editing for this cell.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        public bool Editable { get; set; } = true;
+
+        /// <summary>
+        /// The template for editing values in this cell.
+        /// </summary>
+        [Parameter]
+        public RenderFragment<CellContext<T>> EditTemplate { get; set; }
 
         #endregion
 
         #region FooterCell Properties
 
-        [Parameter] public string FooterClass { get; set; }
-        [Parameter] public Func<T, string> FooterClassFunc { get; set; }
-        [Parameter] public string FooterStyle { get; set; }
-        [Parameter] public Func<T, string> FooterStyleFunc { get; set; }
-        [Parameter] public bool EnableFooterSelection { get; set; }
-        [Parameter] public AggregateDefinition<T> AggregateDefinition { get; set; }
+        /// <summary>
+        /// The CSS classes applied to this column's footer.
+        /// </summary>
+        /// <remarks>
+        /// Multiple classes must be separated by spaces.
+        /// </remarks>
+        [Parameter]
+        public string FooterClass { get; set; }
+
+        /// <summary>
+        /// The function which calculates CSS classes for this column's footer.
+        /// </summary>
+        /// <remarks>
+        /// Multiple classes must be separated by spaces.
+        /// </remarks>
+        [Parameter]
+        public Func<IEnumerable<T>, string> FooterClassFunc { get; set; }
+
+        /// <summary>
+        /// The CSS styles to apply to this column's footer.
+        /// </summary>
+        [Parameter]
+        public string FooterStyle { get; set; }
+
+        /// <summary>
+        /// The function which calculates CSS styles for this column's footer.
+        /// </summary>
+        [Parameter]
+        public Func<IEnumerable<T>, string> FooterStyleFunc { get; set; }
+
+        /// <summary>
+        /// Allows the footer to be selected.
+        /// </summary>
+        [Parameter]
+        public bool EnableFooterSelection { get; set; }
+
+        /// <summary>
+        /// The function which calculates aggregates for this column.
+        /// </summary>
+        [Parameter]
+        public AggregateDefinition<T> AggregateDefinition { get; set; }
 
         #endregion
 
-        public Action ColumnStateHasChanged { get; set; }
-
-        internal string headerClassname =>
+        internal string HeaderClassname =>
             new CssBuilder("mud-table-cell")
                 .AddClass("mud-table-cell-hide", HideSmall)
                 .AddClass("sticky-left", StickyLeft)
                 .AddClass("sticky-right", StickyRight)
                 .AddClass(Class)
-            .Build();
+                .Build();
 
-        internal string cellClassname;
-        //internal string cellClassname =>
-        //    new CssBuilder("mud-table-cell")
-        //        .AddClass("mud-table-cell-hide", HideSmall)
-        //        .AddClass("sticky-right", StickyRight)
-        //        .AddClass(Class)
-        //    .Build();
-
-        internal string footerClassname =>
+        internal string FooterClassname =>
             new CssBuilder("mud-table-cell")
                 .AddClass("mud-table-cell-hide", HideSmall)
                 .AddClass(Class)
-            .Build();
-
-        internal bool grouping;
+                .Build();
 
         #region Computed Properties
 
@@ -202,37 +464,27 @@ namespace MudBlazor
             }
         }
 
-        // This returns the data type for an object when T is an IDictionary<string, object>.
-        internal Type innerDataType
-        {
-            get
-            {
-                // Handle case where T is IDictionary.
-                if (typeof(T) == typeof(IDictionary<string, object>))
-                {
-                    // We need to get the actual type here so we need to look at actual data.
-                    // get the first item where we have a non-null value in the field to be filtered.
-                    var first = DataGrid.Items.FirstOrDefault(x => ((IDictionary<string, object>)x)[PropertyName] != null);
-
-                    if (first != null)
-                    {
-                        return ((IDictionary<string, object>)first)[PropertyName].GetType();
-                    }
-                    else
-                    {
-                        return typeof(object);
-                    }
-                }
-
-                return dataType;
-            }
-        }
-
         internal bool isNumber
         {
             get
             {
                 return TypeIdentifier.IsNumber(PropertyType);
+            }
+        }
+
+        internal bool hideable
+        {
+            get
+            {
+                return Hideable ?? DataGrid?.Hideable ?? false;
+            }
+        }
+
+        internal bool sortable
+        {
+            get
+            {
+                return Sortable ?? DataGrid?.SortMode != SortMode.None;
             }
         }
 
@@ -257,13 +509,15 @@ namespace MudBlazor
         internal int SortIndex { get; set; } = -1;
         internal HeaderCell<T> HeaderCell { get; set; }
 
-        private IComparer<object> _comparer = null;
         private Func<T, object> _sortBy;
         internal Func<T, object> groupBy;
         internal HeaderContext<T> headerContext;
         private FilterContext<T> filterContext;
         internal FooterContext<T> footerContext;
 
+        /// <summary>
+        /// The context used for filtering values in this column.
+        /// </summary>
         public FilterContext<T> FilterContext
         {
             get
@@ -271,7 +525,7 @@ namespace MudBlazor
                 // Make sure that when we access filterContext properties, they have been defined...
                 if (filterContext.FilterDefinition == null)
                 {
-                    var operators = FilterOperator.GetOperatorByDataType(PropertyType);
+                    var operators = GetFilterOperators(FieldType.Identify(PropertyType));
                     var filterDefinition = DataGrid.CreateFilterDefinitionInstance();
                     filterDefinition.Title = Title;
                     filterDefinition.Operator = operators.FirstOrDefault();
@@ -283,18 +537,47 @@ namespace MudBlazor
             }
         }
 
+        protected Column()
+        {
+            using var registerScope = CreateRegisterScope();
+            HiddenState = registerScope.RegisterParameter<bool>(nameof(Hidden))
+                .WithParameter(() => Hidden)
+                .WithEventCallback(() => HiddenChanged);
+            GroupingState = registerScope.RegisterParameter<bool>(nameof(Grouping))
+                .WithParameter(() => Grouping)
+                .WithEventCallback(() => GroupingChanged)
+                .WithChangeHandler(OnGroupingParameterChangedAsync);
+        }
+
+        private async Task OnGroupingParameterChangedAsync()
+        {
+            if (GroupingState.Value)
+            {
+                if (DataGrid is not null)
+                {
+                    await DataGrid.ChangedGrouping(this);
+                }
+            }
+        }
+
         protected override void OnInitialized()
         {
-            if (!Hideable.HasValue)
-                Hideable = DataGrid?.Hideable;
+            if (FilterOperators.Count > 0)
+            {
+                var defaultOperators = FilterOperator.GetOperatorByDataType(PropertyType);
+                var invalidOperators = FilterOperators.Where(@operator => !defaultOperators.Contains(@operator)).ToArray();
+
+                if (invalidOperators.Length > 0)
+                {
+                    throw new ArgumentException($"Invalid filter operators for {PropertyType.Name}: {string.Join(", ", invalidOperators)}");
+                }
+            }
+
+            base.OnInitialized();
 
             groupBy = GroupBy;
 
-            if (groupable && Grouping)
-                grouping = Grouping;
-
-            if (DataGrid != null)
-                DataGrid.AddColumn(this);
+            DataGrid?.AddColumn(this);
 
             // Add the HeaderContext
             headerContext = new HeaderContext<T>(DataGrid);
@@ -319,6 +602,18 @@ namespace MudBlazor
 
             // Add the FooterContext
             footerContext = new FooterContext<T>(DataGrid);
+        }
+
+        internal IReadOnlyCollection<string> GetFilterOperators(FieldType fieldType)
+        {
+            if (FilterOperators.Count == 0)
+            {
+                return FilterOperator.GetOperatorByDataType(fieldType);
+            }
+            else
+            {
+                return FilterOperators;
+            }
         }
 
         internal Func<T, object> GetLocalSortFunc()
@@ -354,40 +649,59 @@ namespace MudBlazor
         }
 
         // Allows child components to change column grouping.
-        internal void SetGrouping(bool g)
+        internal async Task SetGroupingAsync(bool group)
         {
-            if (groupable)
+            await GroupingState.SetValueAsync(group);
+
+            if (DataGrid is not null)
             {
-                grouping = g;
-                DataGrid?.ChangedGrouping(this);
+                await DataGrid.ChangedGrouping(this);
             }
         }
 
         /// <summary>
         /// This method's sole purpose is for the DataGrid to remove grouping in mass.
         /// </summary>
-        internal void RemoveGrouping()
+        internal async Task RemoveGrouping()
         {
-            grouping = false;
+            if (GroupingState.Value)
+            {
+                await GroupingState.SetValueAsync(false);
+            }
         }
 
-        public async Task HideAsync()
+        /// <summary>
+        /// Hides this column.
+        /// </summary>
+        public Task HideAsync()
         {
-            Hidden = true;
-            await HiddenChanged.InvokeAsync(Hidden);
+            return HiddenState.SetValueAsync(true);
         }
 
-        public async Task ShowAsync()
+        /// <summary>
+        /// Shows this column.
+        /// </summary>
+        public Task ShowAsync()
         {
-            Hidden = false;
-            await HiddenChanged.InvokeAsync(Hidden);
+            return HiddenState.SetValueAsync(false);
         }
 
+        /// <summary>
+        /// Hides or shows this column.
+        /// </summary>
         public async Task ToggleAsync()
         {
-            Hidden = !Hidden;
-            await HiddenChanged.InvokeAsync(Hidden);
+            await HiddenState.SetValueAsync(!HiddenState.Value);
             ((IMudStateHasChanged)DataGrid).StateHasChanged();
+        }
+
+        /// <summary>
+        /// Releases resources used by this column.
+        /// </summary>
+        public virtual void Dispose()
+        {
+            if (DataGrid != null)
+                DataGrid.RemoveColumn(this);
         }
 
 
@@ -402,6 +716,9 @@ namespace MudBlazor
             return x => true;
         }
 
+        /// <summary>
+        /// The name of the property used for sorting this column's values.
+        /// </summary>
         public virtual string PropertyName { get; }
 
 #nullable enable

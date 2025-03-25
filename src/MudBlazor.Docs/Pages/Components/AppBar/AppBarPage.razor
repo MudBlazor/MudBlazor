@@ -1,7 +1,7 @@
 ﻿@page "/components/appbar"
 
 <DocsPage>
-    <DocsPageHeader Title="App Bar" SubTitle="App bar is used to display actions, branding, navigation and screen titles.">
+    <DocsPageHeader Title="App Bar" Component="@nameof(MudAppBar)">
         <Description>
             Keeping the app bar persistent while browsing different pages will ease navigation and access to actions for your users.
         </Description>
@@ -9,33 +9,26 @@
     <DocsPageContent>
 
         <DocsPageSection>
-            <SectionHeader Title="Regular App Bar">
+            <SectionHeader Title="Basic App Bar">
                 <Description>
                     <MudText Class="py-6">App bars have two types: regular and contextual action bar. Below is an example of a regular app bar.</MudText>
                     <MudText>A contextual action bar is something that will provide actions for a selected item on the page.</MudText>
                     <MudText>A top bar can transform into a contextual action bar and be dismissed at any time.</MudText>
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="AppBarSimpleExample">
+            <SectionContent DarkenBackground="true" Code="@nameof(AppBarSimpleExample)">
                 <AppBarSimpleExample />
             </SectionContent>
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Elevation">
-                <Description>You can change the App Bar elevation, with values from 0-25</Description>
+            <SectionHeader Title="Usage">
+                <Description>
+                    <MudText>You can customize the Elevation of an AppBar, as well as set the Dense property to save space.</MudText>
+                </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="AppBarElevationExample">
-                <AppBarElevationExample />
-            </SectionContent>
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader Title="Dense">
-                <Description></Description>
-            </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="AppBarDenseExample">
-                <AppBarDenseExample />
+            <SectionContent DarkenBackground="true" Code="@nameof(AppBarUsageExample)" ShowCode="false">
+                <AppBarUsageExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -43,11 +36,34 @@
             <SectionHeader Title="Bottom App Bar">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="AppBarBottomExample" ShowCode="false">
+            <SectionContent DarkenBackground="true" Code="@nameof(AppBarBottomExample)" ShowCode="false">
                 <iframe src="/iframe/docs/examples/appbar/bottom" class="docs-iframe rounded mud-elevation-25" style="height: 450px; ">
                     <AppBarBottomExample />
                 </iframe>
             </SectionContent>
         </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="App Bar with Menu">
+                <Description>
+                    <MudText>You can attach MudMenu's to the appbar, allowing for a myriad of appbar options.</MudText>
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(AppBarMenuExample)" ShowCode="false">
+                <AppBarMenuExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Contextual App Bar">
+                <Description>
+                    <MudText>You can conditionally transform the app bar into a contextual action bar with page specific action buttons.</MudText>
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(AppBarContextualExample)" ShowCode="false">
+                <AppBarContextualExample />
+            </SectionContent>
+        </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>

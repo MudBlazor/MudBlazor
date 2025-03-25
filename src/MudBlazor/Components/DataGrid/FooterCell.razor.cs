@@ -2,32 +2,57 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class FooterCell<T> : MudComponentBase
+    /// <summary>
+    /// Represents a cell displayed at the bottom of a column.
+    /// </summary>
+    /// <typeparam name="T">The kind of data managed by this footer.</typeparam>
+    public partial class FooterCell<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase
     {
-        [CascadingParameter] public MudDataGrid<T> DataGrid { get; set; }
+        /// <summary>
+        /// The <see cref="MudDataGrid{T}"/> which contains this footer cell.
+        /// </summary>
+        [CascadingParameter]
+        public MudDataGrid<T> DataGrid { get; set; }
 
-        [Parameter] public Column<T> Column { get; set; }
-        [Parameter] public RenderFragment ChildContent { get; set; }
-        [Parameter] public IEnumerable<T> CurrentItems { get; set; }
+        /// <summary>
+        /// The column related to this footer cell.
+        /// </summary>
+        [Parameter]
+        public Column<T> Column { get; set; }
 
-        private string _classname =>
+        /// <summary>
+        /// The content within this footer cell.
+        /// </summary>
+        [Parameter]
+        public RenderFragment ChildContent { get; set; }
+
+        /// <summary>
+        /// The current values related to this footer cell.
+        /// </summary>
+        [Parameter]
+        public IEnumerable<T> CurrentItems { get; set; }
+
+        private string Classname =>
             new CssBuilder("footer-cell")
+                .AddClass(Column?.FooterClassFunc?.Invoke(items ?? Enumerable.Empty<T>()))
                 .AddClass(Column?.FooterClass)
-                .AddClass(Column?.footerClassname)
+                .AddClass(Column?.FooterClassname)
                 .AddClass(Class)
-            .Build();
-        private string _style =>
+                .Build();
+
+        private string Stylename =>
             new StyleBuilder()
+                .AddStyle(Column?.FooterStyleFunc?.Invoke(items ?? Enumerable.Empty<T>()))
                 .AddStyle(Column?.FooterStyle)
                 .AddStyle(Style)
                 .AddStyle("font-weight", "600")
-            .Build();
+                .Build();
 
         internal IEnumerable<T> items
         {

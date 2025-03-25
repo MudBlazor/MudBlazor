@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
@@ -12,18 +12,19 @@ namespace MudBlazor
     [ExcludeFromCodeCoverage]
     public static class ElementReferenceExtensions
     {
-        private static readonly PropertyInfo? jsRuntimeProperty =
-            typeof(WebElementReferenceContext).GetProperty("JSRuntime", BindingFlags.Instance | BindingFlags.NonPublic);
+        [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "<JSRuntime>k__BackingField")]
+        private static extern ref IJSRuntime GetJsRuntime(WebElementReferenceContext context);
 
         internal static IJSRuntime? GetJSRuntime(this ElementReference elementReference)
         {
             if (elementReference.Context is WebElementReferenceContext context)
             {
-                return (IJSRuntime?)jsRuntimeProperty?.GetValue(context);
+                var jsRuntime = GetJsRuntime(context);
+
+                return jsRuntime;
             }
 
             return null;
-
         }
 
         public static ValueTask MudFocusFirstAsync(this ElementReference elementReference, int skip = 0, int min = 0) =>
@@ -65,5 +66,10 @@ namespace MudBlazor
 
             return elementReference.GetJSRuntime()?.InvokeVoidAsync("mudElementRef.removeDefaultPreventingHandlers", elementReference, eventNames, listenerIds) ?? ValueTask.CompletedTask;
         }
+
+        public static ValueTask MudAttachBlurEventWithJS<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods)] T>(
+            this ElementReference elementReference,
+            DotNetObjectReference<T> obj) where T : class =>
+            elementReference.GetJSRuntime()?.InvokeVoidAsync("mudElementRef.addOnBlurEvent", elementReference, obj) ?? ValueTask.CompletedTask;
     }
 }

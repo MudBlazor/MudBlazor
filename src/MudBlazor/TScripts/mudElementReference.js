@@ -112,9 +112,13 @@ class MudElementReference {
     }
 
     addDefaultPreventingHandler(element, eventName) {
-        let listener = function(e) {
-            e.preventDefault();
-        }
+        let listener = function (e) {
+            // Only prevent default if not already prevented
+            if (!e.defaultPrevented) {
+                e.preventDefault();
+            }
+        };
+
         element.addEventListener(eventName, listener, { passive: false });
         this.eventListeners[++this.listenerId] = listener;
         return this.listenerId;
@@ -141,6 +145,22 @@ class MudElementReference {
             const listenerId = listenerIds[index];
             this.removeDefaultPreventingHandler(element, eventName, listenerId);
         }
+    }
+
+    // ios doesn't trigger Blazor/React/Other dom style blur event so add a base event listener here 
+    // that will trigger with IOS Done button and regular blur events
+    addOnBlurEvent(element, dotNetReference) {
+        function onFocusOut(e) {
+            e.preventDefault();
+            element.blur();
+            if (dotNetReference) {
+                dotNetReference.invokeMethodAsync('CallOnBlurredAsync');
+            }
+            else {
+                console.error("No dotNetReference found for iosKeyboardFocus");
+            }
+        }
+        element.addEventListener('blur', onFocusOut);
     }
 };
 window.mudElementRef = new MudElementReference();

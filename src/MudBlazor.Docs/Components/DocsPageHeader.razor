@@ -1,12 +1,3 @@
-@using System
-@using System.Linq
-@using Microsoft.AspNetCore.Components
-@using MudBlazor
-@using MudBlazor.Docs.Models
-@using MudBlazor.Docs.Extensions
-@using System.Collections.Generic
-@using System.Text.RegularExpressions
-
 @*html head (for server prerendering)*@
 <PageTitle>@(GetTitle())</PageTitle>
 <HeadContent>
@@ -15,45 +6,47 @@
     <meta Name="twitter:title" Content="@GetTitle()" />
     @if (!string.IsNullOrEmpty(SubTitle))
     {
-        <meta Name="description" Content="@(SubTitle)" />
+        <meta Name="description" Content="@SubTitle" />
         <meta Property="og:description" Content="@SubTitle" />
         <meta Name="twitter:description" Content="@SubTitle" />
     }
+    <link rel="canonical" href="@GetCanonicalUri()" />
 </HeadContent>
 
 @if (SpecialHeaderContent != null)
 {
     <div class="docs-page-header my-16">
         @SpecialHeaderContent
-        <DocsRenderBenchmark/>
+        <DocsRenderBenchmark />
     </div>
 }
 else
 {
-    <div class="docs-page-header mt-6 mb-12">
-        <MudText Typo="@Typo.h3">@Title</MudText>
-        <MudText>@GetSubTitle() @Description</MudText>
-        <DocsRenderBenchmark/>
+    <div class="docs-page-header">
+        <MudText Typo="@Typo.h4">@Title</MudText>
+        <ApiText Typo="@Typo.subtitle1" Text="@GetSubTitle()" />
+        <MudText Typo="@Typo.body1">@Description</MudText>
+        <DocsRenderBenchmark />
     </div>
 }
 
-@if (!_isApiPage && _componentTypeName != null && !DisableApiHeader)
+@if (!IsApi && DocumentedType != null)
 {
     <DocsPageSection api-link-section>
         <SectionHeader Title="API" />
         <div class="docs-page-apilinks">
             <ul class="my-2">
                 <li>
-                    <MudLink Href="@_apiLink">
-                        <CodeInline>@($"<{_componentTypeName}>")</CodeInline>
+                    <MudLink Href="@(DocumentedType.ApiUrl.ToLowerInvariant())">
+                        <CodeInline>@($"<{Component}>")</CodeInline>
                     </MudLink>
                 </li>
-                @if (_component.ChildTypes != null)
+                @if (Example != null && Example.ChildTypes != null)
                 {
-                    @foreach (var childType in _component.ChildTypes)
+                    @foreach (var childType in Example.ChildTypes)
                     {
                         <li>
-                            <MudLink Href="@($"api/{childType.Name.Replace("`1", "").ToLowerInvariant().Replace("mud","")}")" Class="ms-1">
+                            <MudLink Href="@($"api/{childType.Name.ToLowerInvariant()}")" Class="ms-1">
                                 - <CodeInline>@($"<{childType.Name.Replace("`1", "")}>")</CodeInline>
                             </MudLink>
                         </li>
@@ -63,85 +56,12 @@ else
         </div>
     </DocsPageSection>
 }
-@if (_isApiPage && !string.IsNullOrEmpty(ComponentLink))
+@if (IsApi && Example != null)
 {
-    <link Rel="canonical" Href="@($"https://mudblazor.com/{ComponentLink}")" />
     <DocsPageSection api-link-section>
         <SectionHeader Title="Pages" />
-        <div class="docs-page-apilinks">
-            <ul class="my-2">
-                <li>
-                    <MudLink Href="@GetComponentLink()">
-                        <CodeInline>@($"{_componentPage}")</CodeInline>
-                    </MudLink>
-                </li>
-            </ul>
-        </div>
+        <MudAlert Severity="Severity.Info" Class="mt-6">
+            For examples and details on the usage of this component, visit the <MudLink Href="@($"/components/{Example.Link.ToLowerInvariant()}")" Typo="Typo.inherit">@Example.Name</MudLink> page.
+        </MudAlert>
     </DocsPageSection>
-}
-
-@code {
-
-    [Inject] public NavigationManager NavigationManager { get; set; }
-    [Inject] IMenuService MenuService { get; set; }
-
-    [Parameter] public string Title { get; set; }
-    [Parameter] public string SubTitle { get; set; }
-    [Parameter] public string Keywords { get; set; }
-    [Parameter] public bool DisableApiHeader { get; set; }
-    [Parameter] public RenderFragment Description { get; set; }
-    [Parameter] public RenderFragment SpecialHeaderContent { get; set; }
-    [Parameter] public string ComponentLink { get; set; }
-    public Type _componentType;
-    public MudComponent _parentComponent;
-    public MudComponent _component;
-    public string _componentName;
-    private string _componentPage;
-    private bool _isApiPage;
-    private string _apiLink;
-    private string _componentTypeName;
-
-    protected override void OnParametersSet()
-    {
-        base.OnParametersSet();
-        _isApiPage = NavigationManager.Uri.ToString().Contains("/api/");
-        _componentName = NavigationManager.Uri.ToString().Split('/', StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
-        _componentType = ApiLink.GetTypeFromComponentLink(_componentName);
-        _component = MenuService.GetComponent(_componentType);
-        _parentComponent = MenuService.GetParent(_componentType);
-        _componentTypeName = _componentType?.Name.Replace("`1", "");
-        _apiLink = $"api/{_componentName}";
-        _componentPage = (_component?.Type == null) ? _parentComponent?.Name : _component?.Name;
-    }   
-
-    private string GetComponentLink()
-    {
-        if (_component?.Type != null)
-            return $"components/{_component?.Link}";
-        return $"components/{_parentComponent?.Link}";
-    }
-
-    string GetTitle() => $"{Title} - MudBlazor";
-
-    string GetSubTitle()
-    {
-        if (string.IsNullOrEmpty(SubTitle))
-            return "";
-        return SubTitle.TrimEnd('.') + ".";
-    }
-
-    string GetKeywords()
-    {
-        var keywords = new HashSet<string>(Regex.Split(Keywords ?? "", @",\s"));
-        keywords.Add(Title);
-        keywords.Add(_componentTypeName);
-        keywords.Add(_componentTypeName?.Replace("Mud", ""));
-        keywords.Add("mudblazor");
-        keywords.Add("blazor");
-        keywords.Add("component");
-        keywords.Add("material design");
-        keywords.Remove("");
-        keywords.Remove(null);
-        return string.Join(", ", keywords);
-    }
 }

@@ -1,15 +1,18 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.RegularExpressions;
 
-namespace MudBlazor.Docs.Compiler
+namespace MudBlazor.Docs.Compiler;
+
+public static partial class StringExtensions
 {
-    public static class StringExtensions
+    [return: NotNullIfNotNull(nameof(self))]
+    public static string? ToLfLineEndings(this string? self)
     {
-
-        public static string ToLfLineEndings(this string self)
-        {
-            if (self == null)
-                return null;
-            return Regex.Replace(self, @"\r?\n", "\n");
-        }
+        return self is null
+            ? null
+            : NewLineRegularExpression().Replace(self, "\n");
     }
+
+    [GeneratedRegex(@"\r?\n")]
+    private static partial Regex NewLineRegularExpression();
 }

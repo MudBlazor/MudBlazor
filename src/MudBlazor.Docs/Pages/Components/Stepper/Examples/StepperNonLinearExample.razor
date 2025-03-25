@@ -1,0 +1,17 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudPaper Style="width: 800px">
+    <MudStepper NonLinear ShowResetButton Ripple="Ripple">
+        <MudStep Title="Write the code">Most programmers first start writing the code but some experts write the tests first</MudStep>
+        <MudStep Title="Write the tests">If you write the tests first you will design a better API when you write the code</MudStep>
+        <MudStep Title="Write the documentation" SecondaryText="... or not">Some consider writing readable code more important than writing documentation.</MudStep>
+    </MudStepper>
+</MudPaper>
+
+<MudDivider />
+
+<MudSwitch @bind-Value="@Ripple" Color="Color.Primary" Label="Ripple"></MudSwitch>
+
+@code {
+    public bool Ripple { get; set; } = true;
+}

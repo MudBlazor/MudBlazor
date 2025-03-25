@@ -1,7 +1,7 @@
 ﻿@page "/components/card"
 
 <DocsPage>
-    <DocsPageHeader Title="Card">
+    <DocsPageHeader Title="Card" Component="@nameof(MudCard)">
         <Description>
             Cards can contain actions, text, or media like images or graphics. Keeping a card to a single subject keeps the design clean.
         </Description>
@@ -12,7 +12,7 @@
             <SectionHeader Title="Simple Card">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="CardSimpleExample">
+            <SectionContent DarkenBackground="true" Code="@nameof(CardSimpleExample)">
                 <CardSimpleExample />
             </SectionContent>
         </DocsPageSection>
@@ -21,7 +21,7 @@
             <SectionHeader Title="Outlined">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="CardOutlinedExample">
+            <SectionContent DarkenBackground="true" Code="@nameof(CardOutlinedExample)">
                 <CardOutlinedExample />
             </SectionContent>
         </DocsPageSection>
@@ -30,7 +30,7 @@
             <SectionHeader Title="Header">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="CardHeaderExample" ShowCode="false">
+            <SectionContent DarkenBackground="true" Code="@nameof(CardHeaderExample)" ShowCode="false">
                 <CardHeaderExample />
             </SectionContent>
         </DocsPageSection>
@@ -39,7 +39,7 @@
             <SectionHeader Title="Media">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="CardMediaExample">
+            <SectionContent DarkenBackground="true" Code="@nameof(CardMediaExample)">
                 <CardMediaExample />
             </SectionContent>
         </DocsPageSection>
@@ -48,7 +48,7 @@
             <SectionHeader Title="Combined">
                 <Description></Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="CardCombinedExample" ShowCode="false">
+            <SectionContent DarkenBackground="true" Code="@nameof(CardCombinedExample)" ShowCode="false">
                 <CardCombinedExample />
             </SectionContent>
         </DocsPageSection>

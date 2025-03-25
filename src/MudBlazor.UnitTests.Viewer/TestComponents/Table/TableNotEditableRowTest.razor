@@ -1,0 +1,19 @@
+﻿<MudTable T="int" Items="_items" EditTrigger="EditTrigger" RowEditableFunc="x => x > 5">
+    <RowTemplate>
+        <MudTd>@context</MudTd>
+    </RowTemplate> 
+    <RowEditingTemplate>
+        <MudTd>
+            <MudNumericField T="int" @bind-Value="context" />
+        </MudTd>
+    </RowEditingTemplate>
+</MudTable>
+
+@code {
+    public static string __description__ = "The Tr should not allow editing when AllowEditItem returns false.";
+
+    private readonly int[] _items = [5, 10, 20];
+
+    [Parameter]
+    public TableEditTrigger EditTrigger { get; set; } = TableEditTrigger.RowClick;
+}

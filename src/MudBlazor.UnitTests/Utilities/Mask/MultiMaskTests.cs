@@ -28,7 +28,7 @@ namespace MudBlazor.UnitTests.Utilities.Mask
                 new MaskOption("Discover", "0000 0000 0000 0000", @"^(6011|65|64[4-9])")
             );
             MaskOption? option = null;
-            int eventCount = 0;
+            var eventCount = 0;
             mask.OptionDetected = (o, text) =>
             {
                 eventCount++;

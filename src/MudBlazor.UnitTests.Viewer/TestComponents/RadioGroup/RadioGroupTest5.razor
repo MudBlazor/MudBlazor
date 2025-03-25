@@ -1,9 +1,7 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudRadioGroup @bind-SelectedOption="@option">
-    <MudRadio Option="@("1")" />
-    <MudRadio Option="@("2")" />
-    <MudRadio Option="@("3")" />
+﻿<MudRadioGroup @bind-Value="@_option" @bind-Value:after="BindAfter">
+    <MudRadio Value="@("1")" />
+    <MudRadio Value="@("2")" />
+    <MudRadio Value="@("3")" />
 </MudRadioGroup>
 
 <MudButton OnClick="OnClick" />
@@ -11,10 +9,11 @@
 @code {
     public static string __description__ = "RadioGroup should be resettable";
 
-    string option;
+    private string? _option;
 
-    private void OnClick()
-    {
-        option = null;
-    }
+    public int BindAfterCount { get; private set; }
+
+    private void OnClick() => _option = null;
+
+    private void BindAfter() => BindAfterCount++;
 }

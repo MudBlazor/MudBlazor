@@ -15,12 +15,13 @@ namespace MudBlazor.UnitTests.Utilities
     public class NaturalComparerTest
     {
 
-        Func<string, string> _expand = (s) => {
+        Func<string, string> _expand = (s) =>
+        {
             int o; while ((o = s.IndexOf('\\')) != -1)
             {
-                int p = o + 1;
-                int z = 1; while (s[p] == '0') { z++; p++; }
-                int c = Int32.Parse(s.Substring(p, z));
+                var p = o + 1;
+                var z = 1; while (s[p] == '0') { z++; p++; }
+                var c = int.Parse(s.Substring(p, z));
                 s = s.Substring(0, o) + new string(s[o - 1], c) + s.Substring(p + z);
             }
             return s;
@@ -338,12 +339,12 @@ namespace MudBlazor.UnitTests.Utilities
         [Test]
         public void SortFiles()
         {
-            string[] fileNames = Encoding.UTF8.GetString(Convert.FromBase64String(s_encodedFileNames))
+            var fileNames = Encoding.UTF8.GetString(Convert.FromBase64String(s_encodedFileNames))
                 .Replace("*", ".txt?").Split(new[] { "?" }, StringSplitOptions.RemoveEmptyEntries)
                 .Select(n => _expand(n)).ToArray();
 
-            string[] orderedFiles = fileNames.OrderBy(x => x, new NaturalComparer()).ToArray();
-            
+            var orderedFiles = fileNames.OrderBy(x => x, new NaturalComparer()).ToArray();
+
             orderedFiles.Should().NotBeEmpty();
             orderedFiles.Should().ContainInOrder(s_orderedFileNames);
         }

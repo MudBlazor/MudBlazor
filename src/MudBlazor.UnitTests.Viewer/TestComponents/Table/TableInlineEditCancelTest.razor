@@ -1,7 +1,5 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudTable @ref="Table" T="Element" Items="items" @bind-SelectedItem="selectedItem" 
- RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues" CanCancelEdit="true">
+﻿<MudTable @ref="Table" T="Element" Items="_items" @bind-SelectedItem="_selectedItem"
+          RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues" CanCancelEdit="true">
     <HeaderContent>
         <MudTh>Value</MudTh>
     </HeaderContent>
@@ -16,30 +14,33 @@
 </MudTable>
 
 @code {
-    private Element elementBeforeEdition = new();
-    private Element selectedItem = null;
-    List<Element> items = new List<Element> 
-    { 
-        new Element { Value = "A", Id = "Id1" }, 
-        new Element { Value = "B", Id = "Id2" }, 
-        new Element { Value = "C", Id = "Id3" }, 
-    };
+    private readonly Element _elementBeforeEdition = new();
 
-    public MudTable<Element> Table { get; private set; }
+    private Element? _selectedItem;
+
+    private readonly List<Element> _items =
+    [
+        new() { Value = "A", Id = "Id1" },
+        new() { Value = "B", Id = "Id2" },
+        new() { Value = "C", Id = "Id3" }
+    ];
+
+    public MudTable<Element> Table { get; private set; } = null!;
 
     private void BackupItem(object element)
     {
-        elementBeforeEdition.Value = ((Element)element).Value;
+        _elementBeforeEdition.Value = ((Element)element).Value;
     }
 
     private void ResetItemToOriginalValues(object element)
     {
-        ((Element)element).Value = elementBeforeEdition.Value;
+        ((Element)element).Value = _elementBeforeEdition.Value;
     }
 
     public class Element
     {
-        public string Id { get; set; }
-        public string Value { get; set; }
+        public string? Id { get; set; }
+
+        public string? Value { get; set; }
     }
 }

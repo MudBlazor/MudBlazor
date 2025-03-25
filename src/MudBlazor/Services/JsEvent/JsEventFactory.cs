@@ -2,32 +2,32 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 
-namespace MudBlazor.Services
+namespace MudBlazor.Services;
+
+/// <summary>
+/// Provides a factory for creating instances of <see cref="IJsEvent"/>.
+/// </summary>
+internal sealed class JsEventFactory : IJsEventFactory
 {
-    public interface IJsEventFactory
+    private readonly IServiceProvider _provider;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="JsEventFactory"/> class.
+    /// </summary>
+    /// <param name="provider">The service provider to use for resolving dependencies.</param>
+    public JsEventFactory(IServiceProvider provider)
     {
-        IJsEvent Create();
+        _provider = provider;
     }
 
-    public class JsEventFactory : IJsEventFactory
+    /// <inheritdoc />
+    public IJsEvent Create()
     {
-        private readonly IServiceProvider _provider;
+        var jsRuntime = _provider.GetRequiredService<IJSRuntime>();
 
-        public JsEventFactory(IServiceProvider provider)
-        {
-            _provider = provider;
-        }
-
-        public IJsEvent Create() =>
-            new JsEvent(_provider.GetRequiredService<IJSRuntime>());
+        return new JsEvent(jsRuntime);
     }
-
 }

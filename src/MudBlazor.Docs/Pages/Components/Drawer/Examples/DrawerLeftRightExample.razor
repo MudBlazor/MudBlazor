@@ -2,7 +2,7 @@
 
 <MudPaper Height="200px" Class="mud-theme-primary" Style="overflow:hidden; position:relative;">
     <MudDrawerContainer Class="mud-height-full">
-        <MudDrawer @bind-Open="@openLeft" Anchor="Anchor.Left" Elevation="0" Variant="@DrawerVariant.Persistent">
+        <MudDrawer @bind-Open="@_openLeft" Anchor="Anchor.Left" Elevation="0" Variant="@DrawerVariant.Persistent">
             <MudDrawerHeader>
                 <MudText Typo="Typo.h6">My App</MudText>
             </MudDrawerHeader>
@@ -12,7 +12,7 @@
                 <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Forum">Community</MudNavLink>
             </MudNavMenu>
         </MudDrawer>
-        <MudDrawer @bind-Open="@openRight" Fixed="false" Anchor="Anchor.Right" Elevation="0" Variant="@DrawerVariant.Persistent">
+        <MudDrawer @bind-Open="@_openRight" Fixed="false" Anchor="Anchor.Right" Elevation="0" Variant="@DrawerVariant.Persistent">
             <MudDrawerHeader>
                 <MudText Typo="Typo.h6">Settings</MudText>
             </MudDrawerHeader>
@@ -39,19 +39,19 @@
 
 @code
 {
+    private bool _openLeft = false;
+    private bool _openRight = false;
+
     [CascadingParameter]
     public bool Rtl { get; set; }
 
-    bool openLeft = false;
-    bool openRight = false;
-
-    void ToggleLeftDrawer()
+    private void ToggleLeftDrawer()
     {
-        openLeft = !openLeft;
+        _openLeft = !_openLeft;
     }
 
-    void ToggleRightDrawer()
+    private void ToggleRightDrawer()
     {
-        openRight = !openRight;
+        _openRight = !_openRight;
     }
 }

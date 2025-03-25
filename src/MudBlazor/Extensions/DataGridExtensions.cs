@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace MudBlazor
@@ -10,10 +11,10 @@ namespace MudBlazor
 #nullable enable
     public static class DataGridExtensions
     {
-        public static IEnumerable<T> OrderBySortDefinitions<T>(this IEnumerable<T> source, GridState<T> state)
+        public static IEnumerable<T> OrderBySortDefinitions<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(this IEnumerable<T> source, GridState<T> state)
             => OrderBySortDefinitions(source, state.SortDefinitions);
 
-        public static IEnumerable<T> OrderBySortDefinitions<T>(this IEnumerable<T> source, ICollection<SortDefinition<T>> sortDefinitions)
+        public static IEnumerable<T> OrderBySortDefinitions<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(this IEnumerable<T> source, ICollection<SortDefinition<T>> sortDefinitions)
         {
             //avoid multiple enumeration
             var sourceArray = source as T[] ?? source.ToArray();
@@ -47,7 +48,7 @@ namespace MudBlazor
             return orderedEnumerable ?? source;
         }
 
-        public static Column<T>? GetColumnByPropertyName<T>(this MudDataGrid<T> dataGrid, string propertyName)
+        public static Column<T>? GetColumnByPropertyName<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(this MudDataGrid<T> dataGrid, string propertyName)
         {
             return dataGrid.RenderedColumns.FirstOrDefault(x => x.PropertyName == propertyName);
         }

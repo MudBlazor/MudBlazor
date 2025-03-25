@@ -2,7 +2,7 @@
 
 <MudText Typo="Typo.h6" Class="mud-width-full">@(pizza == null ? "Nothing selected." : $"Pizza: {pizza.Name}")</MudText>
 
-<MudSelect T="Pizza" @bind-Value="@pizza" ToStringFunc="@converter" Label="Select your pizza" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" Clearable>
+<MudSelect T="Pizza" @bind-Value="pizza" ToStringFunc="@converter" Label="Select your pizza" Variant="Variant.Outlined" Clearable>
     <MudSelectItem Value="@(new Pizza() { Name="Cardinale"})" />
     <MudSelectItem Value="@(new Pizza() { Name="Diavolo"})" />
     <MudSelectItem Value="@(new Pizza() { Name="Margarita"})" />

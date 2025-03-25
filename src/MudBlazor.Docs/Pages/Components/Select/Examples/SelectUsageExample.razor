@@ -9,8 +9,7 @@
 </MudSelect>
 
 <MudSelect @bind-Value="enumValue" Label="Select drink" HelperText="Enum" OpenIcon="@Icons.Material.Filled.LocalDrink" AdornmentColor="Color.Secondary">
-    @foreach (Drink item in Enum.GetValues(typeof(Drink)))
-    {
+    @foreach (Drink item in Enum.GetValues(typeof(Drink))) {
         <MudSelectItem Value="@item">@item</MudSelectItem>
     }
 </MudSelect>
@@ -19,20 +18,20 @@
     <MudSelectItem Value="@(CultureInfo.GetCultureInfo("en-US"))" />
     <MudSelectItem Value="@(CultureInfo.GetCultureInfo("de-AT"))" />
     <MudSelectItem Value="@(CultureInfo.GetCultureInfo("pt-BR"))" />
-    <MudSelectItem Value="@(CultureInfo.GetCultureInfo("zh-CN"))"/>
+    <MudSelectItem Value="@(CultureInfo.GetCultureInfo("zh-CN"))" />
 </MudSelect>
 
 <div class="d-flex mud-width-full align-center mt-8">
     <MudText Typo="Typo.subtitle1" Class="mr-2">Selected values: </MudText>
-    <MudChip>@(stringValue ?? "Select fast-food")</MudChip>
-    <MudChip Color="Color.Primary">@enumValue</MudChip>
-    <MudChip Color="Color.Secondary">@(cultureValue?.DisplayName ?? "Select culture")</MudChip>
+    <MudChip T="string">@(stringValue ?? "Select fast-food")</MudChip>
+    <MudChip T="string" Color="Color.Primary">@enumValue</MudChip>
+    <MudChip T="string" Color="Color.Secondary">@(cultureValue?.DisplayName ?? "Select culture")</MudChip>
 </div>
 
 @code {
     private string stringValue { get; set; }
     private Drink enumValue { get; set; } = Drink.HotWater;
-    public enum Drink { Tea, SparklingWater, SoftDrink, Cider, Beer, Wine, Moonshine, Wodka, Cola, GreeTea, FruitJuice, Lemonade, HotWater, SpringWater, IceWater,  }
+    public enum Drink { Tea, SparklingWater, SoftDrink, Cider, Beer, Wine, Moonshine, Wodka, Cola, GreeTea, FruitJuice, Lemonade, HotWater, SpringWater, IceWater, }
     private CultureInfo cultureValue { get; set; }
     private Func<CultureInfo, string> convertFunc = ci => ci?.DisplayName;
 }

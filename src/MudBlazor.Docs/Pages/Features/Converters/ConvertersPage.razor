@@ -40,7 +40,7 @@
                     </MudText>
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="false" Code="TurkeyTestExample" ShowCode="false">
+            <SectionContent DarkenBackground="false" Code="@nameof(TurkeyTestExample)" ShowCode="false">
                 <TurkeyTestExample/>
             </SectionContent>
         </DocsPageSection>
@@ -55,11 +55,22 @@
                     </MudText>
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="false" Code="SpecialConverterExample" ShowCode="false">
+            <SectionContent DarkenBackground="false" Code="@nameof(SpecialConverterExample)" ShowCode="false">
                 <SpecialConverterExample/>
             </SectionContent>
         </DocsPageSection>
-
+        <DocsPageSection>
+            <SectionHeader Title="Default Custom Binding Converters">
+                <Description>
+                    If you need to setup global converter for a certain class or struct you can do it as well through static delegate:
+                    Just set a <CodeInline>Converter<Tag>T</Tag>.GlobalGetFunc</CodeInline> and
+                    <CodeInline>Converter<Tag>T</Tag>.GlobalSetFunc</CodeInline>
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="false" Code="@nameof(PointConverterExample)" ShowCode="false">
+                <PointConverterExample />
+            </SectionContent>
+        </DocsPageSection>
     </DocsPageContent>
 </DocsPage>
 

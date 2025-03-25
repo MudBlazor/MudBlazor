@@ -1,7 +1,7 @@
 ﻿<MudPaper Outlined="true">
     <div class="d-flex align-center px-4 pt-2">
-        <MudSwitch Color="Color.Primary" @bind-Checked="@nullable">Nullable variants</MudSwitch>
-        <MudSwitch Color="Color.Secondary" @bind-Checked="@unsigned">Unsigned variants</MudSwitch>
+        <MudSwitch Color="Color.Primary" @bind-Value="nullable">Nullable variants</MudSwitch>
+        <MudSwitch Color="Color.Secondary" @bind-Value="unsigned">Unsigned variants</MudSwitch>
     </div>
     <MudSimpleTable Elevation="0" Hover="true">
         <thead>
@@ -19,30 +19,30 @@
                     <tr>
                         <td><CodeInline>byte?</CodeInline></td>
                         <td>
-                            <MudTextField T="byte?" @bind-Value="@nbyte_value" Class="mt-n1" Immediate="true"/>
+                            <MudTextField T="byte?" @bind-Value="nbyte_value" Class="mt-n1" Immediate="true"/>
                         </td>
-                        <td><MudText Inline="true">@ToS(nbyte_value)</MudText></td>
+                        <td><MudText HtmlTag="span">@ToS(nbyte_value)</MudText></td>
                     </tr>
                     <tr>
                         <td><CodeInline>ushort?</CodeInline></td>
                         <td>
-                            <MudTextField T="ushort?" @bind-Value="@nushort_value" Class="mt-n1" Immediate="true"/>
+                            <MudTextField T="ushort?" @bind-Value="nushort_value" Class="mt-n1" Immediate="true"/>
                         </td>
-                        <td><MudText Inline="true">@ToS(nushort_value)</MudText></td>
+                        <td><MudText HtmlTag="span">@ToS(nushort_value)</MudText></td>
                     </tr>
                     <tr>
                         <td><CodeInline>uint?</CodeInline></td>
                         <td>
-                            <MudTextField T="uint?" @bind-Value="@nuint_value" Class="mt-n1" Immediate="true"/>
+                            <MudTextField T="uint?" @bind-Value="nuint_value" Class="mt-n1" Immediate="true"/>
                         </td>
-                        <td><MudText Inline="true">@ToS(nuint_value)</MudText></td>
+                        <td><MudText HtmlTag="span">@ToS(nuint_value)</MudText></td>
                     </tr>
                     <tr>
                         <td><CodeInline>ulong?</CodeInline></td>
                         <td>
-                            <MudTextField T="ulong?" @bind-Value="@nulong_value" Class="mt-n1" Immediate="true"/>
+                            <MudTextField T="ulong?" @bind-Value="nulong_value" Class="mt-n1" Immediate="true"/>
                         </td>
-                        <td><MudText Inline="true">@ToS(nulong_value)</MudText></td>
+                        <td><MudText HtmlTag="span">@ToS(nulong_value)</MudText></td>
                     </tr>
                 }
                 else
@@ -50,102 +50,102 @@
                     <tr>
                         <td><CodeInline>sbyte?</CodeInline></td>
                         <td>
-                            <MudTextField T="sbyte?" @bind-Value="@nsbyte_value" Class="mt-n1" Immediate="true"/>
+                            <MudTextField T="sbyte?" @bind-Value="nsbyte_value" Class="mt-n1" Immediate="true"/>
                         </td>
-                        <td><MudText Inline="true">@ToS(nsbyte_value)</MudText></td>
+                        <td><MudText HtmlTag="span">@ToS(nsbyte_value)</MudText></td>
                     </tr>
                     <tr>
                         <td><CodeInline>short?</CodeInline></td>
                         <td>
-                            <MudTextField T="short?" @bind-Value="@nshort_value" Class="mt-n1" Immediate="true"/>
+                            <MudTextField T="short?" @bind-Value="nshort_value" Class="mt-n1" Immediate="true"/>
                         </td>
-                        <td><MudText Inline="true">@ToS(nshort_value)</MudText></td>
+                        <td><MudText HtmlTag="span">@ToS(nshort_value)</MudText></td>
                     </tr>
                     <tr>
                         <td><CodeInline>int?</CodeInline></td>
                         <td>
-                            <MudTextField T="int?" @bind-Value="@nint_value" Class="mt-n1" Immediate="true"/>
+                            <MudTextField T="int?" @bind-Value="nint_value" Class="mt-n1" Immediate="true"/>
                         </td>
-                        <td><MudText Inline="true">@ToS(nint_value)</MudText></td>
+                        <td><MudText HtmlTag="span">@ToS(nint_value)</MudText></td>
                     </tr>
                     <tr>
                         <td><CodeInline>long?</CodeInline></td>
                         <td>
-                            <MudTextField T="long?" @bind-Value="@nlong_value" Class="mt-n1" Immediate="true"/>
+                            <MudTextField T="long?" @bind-Value="nlong_value" Class="mt-n1" Immediate="true"/>
                         </td>
-                        <td><MudText Inline="true">@ToS(nlong_value)</MudText></td>
+                        <td><MudText HtmlTag="span">@ToS(nlong_value)</MudText></td>
                     </tr>
                 }
                 <tr>
                     <td><CodeInline>bool?</CodeInline></td>
                     <td>
-                        <MudTextField T="bool?" @bind-Value="@nbool_value" Class="mt-n1" Immediate="true"/>
+                        <MudTextField T="bool?" @bind-Value="nbool_value" Class="mt-n1" Immediate="true"/>
                     </td>
-                    <td><MudText Inline="true">@ToS(nbool_value)</MudText></td>
+                    <td><MudText HtmlTag="span">@ToS(nbool_value)</MudText></td>
                 </tr>
                 <tr>
                     <td><CodeInline>char?</CodeInline></td>
                     <td>
-                        <MudTextField T="char?" @bind-Value="@nchar_value" Class="mt-n1" Immediate="true"/>
+                        <MudTextField T="char?" @bind-Value="nchar_value" Class="mt-n1" Immediate="true"/>
                     </td>
-                    <td><MudText Inline="true">@ToS(nchar_value) </MudText></td>
+                    <td><MudText HtmlTag="span">@ToS(nchar_value) </MudText></td>
                 </tr>
                 <tr>
                     <td><CodeInline>float?</CodeInline></td>
                     <td>
-                        <MudTextField T="float?" @bind-Value="@nfloat_value" Class="mt-n1" Immediate="true"/>
+                        <MudTextField T="float?" @bind-Value="nfloat_value" Class="mt-n1" Immediate="true"/>
                     </td>
-                    <td><MudText Inline="true">@ToS(nfloat_value) </MudText></td>
+                    <td><MudText HtmlTag="span">@ToS(nfloat_value) </MudText></td>
                 </tr>
                 <tr>
                     <td><CodeInline>double?</CodeInline></td>
                     <td>
-                        <MudTextField T="double?" @bind-Value="@ndouble_value" Class="mt-n1" Immediate="true"/>
+                        <MudTextField T="double?" @bind-Value="ndouble_value" Class="mt-n1" Immediate="true"/>
                     </td>
-                    <td><MudText Inline="true">@ToS(ndouble_value) </MudText></td>
+                    <td><MudText HtmlTag="span">@ToS(ndouble_value) </MudText></td>
                 </tr>
                 <tr>
                     <td><CodeInline>decimal?</CodeInline></td>
                     <td>
-                        <MudTextField T="decimal?" @bind-Value="@ndecimal_value" Class="mt-n1" Immediate="true"/>
+                        <MudTextField T="decimal?" @bind-Value="ndecimal_value" Class="mt-n1" Immediate="true"/>
                     </td>
-                    <td><MudText Inline="true">@ToS(ndecimal_value) </MudText></td>
+                    <td><MudText HtmlTag="span">@ToS(ndecimal_value) </MudText></td>
                 </tr>
                 <tr>
                     <td><CodeInline>decimal (2 decimals)</CodeInline></td>
                     <td>
-                        <MudTextField T="decimal?" Format="0.00" @bind-Value="@ndecimal_value2" Class="mt-n1" Immediate="true"/>
+                        <MudTextField T="decimal?" Format="0.00" @bind-Value="ndecimal_value2" Class="mt-n1" Immediate="true"/>
                     </td>
-                    <td><MudText Inline="true">@ToS(ndecimal_value2) </MudText></td>
+                    <td><MudText HtmlTag="span">@ToS(ndecimal_value2) </MudText></td>
                 </tr>
                     
                 <tr>
                     <td><CodeInline>DateTime?</CodeInline></td>
                     <td>
-                        <MudTextField T="DateTime?" @bind-Value="@ndatetime_value" Class="mt-n1" Immediate="true"/>
+                        <MudTextField T="DateTime?" @bind-Value="ndatetime_value" Class="mt-n1" Immediate="true"/>
                     </td>
-                    <td><MudText Inline="true">@ToS(ndatetime_value) </MudText></td>
+                    <td><MudText HtmlTag="span">@ToS(ndatetime_value) </MudText></td>
                 </tr>
                 <tr>
                     <td><CodeInline>TimeSpan?</CodeInline></td>
                     <td>
-                        <MudTextField T="TimeSpan?" @bind-Value="@ntimespan_value" Class="mt-n1" Immediate="true"/>
+                        <MudTextField T="TimeSpan?" @bind-Value="ntimespan_value" Class="mt-n1" Immediate="true"/>
                     </td>
-                    <td><MudText Inline="true">@ToS(ntimespan_value)</MudText></td>
+                    <td><MudText HtmlTag="span">@ToS(ntimespan_value)</MudText></td>
                 </tr>
                 <tr>
                     <td><CodeInline>Guid?</CodeInline></td>
                     <td>
-                        <MudTextField T="Guid?" @bind-Value="@nguid_value" Class="mt-n1" Immediate="true"/>
+                        <MudTextField T="Guid?" @bind-Value="nguid_value" Class="mt-n1" Immediate="true"/>
                     </td>
-                    <td><MudText Inline="true">@nguid_value</MudText></td>
+                    <td><MudText HtmlTag="span">@nguid_value</MudText></td>
                 </tr>
                 <tr>
                     <td><CodeInline>Enum?</CodeInline></td>
                     <td>
-                        <MudTextField T="StringSplitOptions?" @bind-Value="@nenum_value" Class="mt-n1" Immediate="true"/>
+                        <MudTextField T="StringSplitOptions?" @bind-Value="nenum_value" Class="mt-n1" Immediate="true"/>
                     </td>
-                    <td><MudText Inline="true">@ToS(nenum_value)</MudText></td>
+                    <td><MudText HtmlTag="span">@ToS(nenum_value)</MudText></td>
                 </tr>
             }
             else
@@ -155,30 +155,30 @@
                     <tr>
                         <td><CodeInline>byte</CodeInline></td>
                         <td>
-                            <MudTextField T="byte" @bind-Value="@byte_value" Class="mt-n1" Immediate="true"/>
+                            <MudTextField T="byte" @bind-Value="byte_value" Class="mt-n1" Immediate="true"/>
                         </td>
-                        <td><MudText Inline="true">@byte_value</MudText></td>
+                        <td><MudText HtmlTag="span">@byte_value</MudText></td>
                     </tr>
                     <tr>
                         <td><CodeInline>ushort</CodeInline></td>
                         <td>
-                            <MudTextField T="ushort" @bind-Value="@ushort_value" Class="mt-n1" Immediate="true"/>
+                            <MudTextField T="ushort" @bind-Value="ushort_value" Class="mt-n1" Immediate="true"/>
                         </td>
-                        <td><MudText Inline="true">@ushort_value</MudText></td>
+                        <td><MudText HtmlTag="span">@ushort_value</MudText></td>
                     </tr>
                     <tr>
                         <td><CodeInline>uint</CodeInline></td>
                         <td>
-                            <MudTextField T="uint" @bind-Value="@uint_value" Class="mt-n1" Immediate="true"/>
+                            <MudTextField T="uint" @bind-Value="uint_value" Class="mt-n1" Immediate="true"/>
                         </td>
-                        <td><MudText Inline="true">@uint_value</MudText></td>
+                        <td><MudText HtmlTag="span">@uint_value</MudText></td>
                     </tr>
                     <tr>
                         <td><CodeInline>ulong</CodeInline></td>
                         <td>
-                            <MudTextField T="ulong" @bind-Value="@ulong_value" Class="mt-n1" Immediate="true"/>
+                            <MudTextField T="ulong" @bind-Value="ulong_value" Class="mt-n1" Immediate="true"/>
                         </td>
-                        <td><MudText Inline="true">@ulong_value</MudText></td>
+                        <td><MudText HtmlTag="span">@ulong_value</MudText></td>
                     </tr>
                 }
                 else
@@ -186,101 +186,101 @@
                     <tr>
                         <td><CodeInline>sbyte</CodeInline></td>
                         <td>
-                            <MudTextField T="sbyte" @bind-Value="@sbyte_value" Class="mt-n1" Immediate="true"/>
+                            <MudTextField T="sbyte" @bind-Value="sbyte_value" Class="mt-n1" Immediate="true"/>
                         </td>
-                        <td><MudText Inline="true">@sbyte_value</MudText></td>
+                        <td><MudText HtmlTag="span">@sbyte_value</MudText></td>
                     </tr>
                     <tr>
                         <td><CodeInline>short</CodeInline></td>
                         <td>
-                            <MudTextField T="short" @bind-Value="@short_value" Class="mt-n1" Immediate="true"/>
+                            <MudTextField T="short" @bind-Value="short_value" Class="mt-n1" Immediate="true"/>
                         </td>
-                        <td><MudText Inline="true">@short_value</MudText></td>
+                        <td><MudText HtmlTag="span">@short_value</MudText></td>
                     </tr>
                     <tr>
                         <td><CodeInline>int</CodeInline></td>
                         <td>
-                            <MudTextField T="int" @bind-Value="@int_value" Class="mt-n1" Immediate="true"/>
+                            <MudTextField T="int" @bind-Value="int_value" Class="mt-n1" Immediate="true"/>
                         </td>
-                        <td><MudText Inline="true">@int_value</MudText></td>
+                        <td><MudText HtmlTag="span">@int_value</MudText></td>
                     </tr>
                     <tr>
                         <td><CodeInline>long</CodeInline></td>
                         <td>
-                            <MudTextField T="long" @bind-Value="@long_value" Class="mt-n1" Immediate="true"/>
+                            <MudTextField T="long" @bind-Value="long_value" Class="mt-n1" Immediate="true"/>
                         </td>
-                        <td><MudText Inline="true">@long_value</MudText></td>
+                        <td><MudText HtmlTag="span">@long_value</MudText></td>
                     </tr>
                 }
                 <tr>
                     <td><CodeInline>bool</CodeInline></td>
                     <td>
-                        <MudTextField T="bool" @bind-Value="@bool_value" Class="mt-n1" Immediate="true"/>
+                        <MudTextField T="bool" @bind-Value="bool_value" Class="mt-n1" Immediate="true"/>
                     </td>
-                    <td><MudText Inline="true">@bool_value</MudText></td>
+                    <td><MudText HtmlTag="span">@bool_value</MudText></td>
                 </tr>
                 <tr>
                     <td><CodeInline>char</CodeInline></td>
                     <td>
-                        <MudTextField T="char" @bind-Value="@char_value" Class="mt-n1" Immediate="true"/>
+                        <MudTextField T="char" @bind-Value="char_value" Class="mt-n1" Immediate="true"/>
                     </td>
-                    <td><MudText Inline="true">@char_value</MudText></td>
+                    <td><MudText HtmlTag="span">@char_value</MudText></td>
                 </tr>
                 <tr>
                     <td><CodeInline>float</CodeInline></td>
                     <td>
-                        <MudTextField T="float" @bind-Value="@float_value" Class="mt-n1" Immediate="true"/>
+                        <MudTextField T="float" @bind-Value="float_value" Class="mt-n1" Immediate="true"/>
                     </td>
-                    <td><MudText Inline="true">@ToS(float_value) </MudText></td>
+                    <td><MudText HtmlTag="span">@ToS(float_value) </MudText></td>
                 </tr>
                 <tr>
                     <td><CodeInline>double</CodeInline></td>
                     <td>
-                        <MudTextField T="double" @bind-Value="@double_value" Class="mt-n1" Immediate="true"/>
+                        <MudTextField T="double" @bind-Value="double_value" Class="mt-n1" Immediate="true"/>
                     </td>
-                    <td><MudText Inline="true">@ToS(double_value) </MudText></td>
+                    <td><MudText HtmlTag="span">@ToS(double_value) </MudText></td>
                 </tr>
                 <tr>
                     <td><CodeInline>decimal</CodeInline></td>
                     <td>
-                        <MudTextField T="decimal" @bind-Value="@decimal_value" Class="mt-n1" Immediate="true"/>
+                        <MudTextField T="decimal" @bind-Value="decimal_value" Class="mt-n1" Immediate="true"/>
                     </td>
-                    <td><MudText Inline="true">@ToS(decimal_value) </MudText></td>
+                    <td><MudText HtmlTag="span">@ToS(decimal_value) </MudText></td>
                 </tr>
                 <tr>
                     <td><CodeInline>decimal (2 decimals)</CodeInline></td>
                     <td>
-                        <MudTextField T="decimal" Format="0.00" @bind-Value="@decimal_value2" Class="mt-n1" Immediate="true"/>
+                        <MudTextField T="decimal" Format="0.00" @bind-Value="decimal_value2" Class="mt-n1" Immediate="true"/>
                     </td>
-                    <td><MudText Inline="true">@ToS(decimal_value2) </MudText></td>
+                    <td><MudText HtmlTag="span">@ToS(decimal_value2) </MudText></td>
                 </tr>
                 <tr>
                     <td><CodeInline>DateTime</CodeInline></td>
                     <td>
-                        <MudTextField T="DateTime" @bind-Value="@datetime_value" Class="mt-n1" Immediate="true"/>
+                        <MudTextField T="DateTime" @bind-Value="datetime_value" Class="mt-n1" Immediate="true"/>
                     </td>
-                    <td><MudText Inline="true">@datetime_value</MudText></td>
+                    <td><MudText HtmlTag="span">@datetime_value</MudText></td>
                 </tr>
                 <tr>
                     <td><CodeInline>TimeSpan</CodeInline></td>
                     <td>
-                        <MudTextField T="TimeSpan" @bind-Value="@timespan_value" Class="mt-n1" Immediate="true"/>
+                        <MudTextField T="TimeSpan" @bind-Value="timespan_value" Class="mt-n1" Immediate="true"/>
                     </td>
-                    <td><MudText Inline="true">@timespan_value</MudText></td>
+                    <td><MudText HtmlTag="span">@timespan_value</MudText></td>
                 </tr>
                 <tr>
                     <td><CodeInline>Guid</CodeInline></td>
                     <td>
-                        <MudTextField T="Guid" @bind-Value="@guid_value" Class="mt-n1" Immediate="true"/>
+                        <MudTextField T="Guid" @bind-Value="guid_value" Class="mt-n1" Immediate="true"/>
                     </td>
-                    <td><MudText Inline="true">@guid_value</MudText></td>
+                    <td><MudText HtmlTag="span">@guid_value</MudText></td>
                 </tr>
                 <tr>
                     <td><CodeInline>Enum</CodeInline></td>
                     <td>
-                        <MudTextField T="StringSplitOptions" @bind-Value="@enum_value" Class="mt-n1" Immediate="true"/>
+                        <MudTextField T="StringSplitOptions" @bind-Value="enum_value" Class="mt-n1" Immediate="true"/>
                     </td>
-                    <td><MudText Inline="true">@enum_value</MudText></td>
+                    <td><MudText HtmlTag="span">@enum_value</MudText></td>
                 </tr>
             }
         </tbody>

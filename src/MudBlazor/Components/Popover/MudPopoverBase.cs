@@ -2,17 +2,16 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
 namespace MudBlazor;
 
 #nullable enable
+
 /// <summary>
-/// Base class for implementing Popover component.
+/// A base class for implementing Popover components.
 /// </summary>
 /// <remarks>
 /// This class provides a base implementation for a Popover component. It implements the <see cref="IPopover"/> interface
@@ -51,7 +50,10 @@ public abstract class MudPopoverBase : MudComponentBase, IPopover, IAsyncDisposa
     /// <inheritdoc />
     protected override async Task OnInitializedAsync()
     {
-        await PopoverService.CreatePopoverAsync(this);
+        if (PopoverService.PopoverOptions.Mode == PopoverMode.Default)
+        {
+            await PopoverService.CreatePopoverAsync(this);
+        }
 
         await base.OnInitializedAsync();
     }
@@ -63,7 +65,10 @@ public abstract class MudPopoverBase : MudComponentBase, IPopover, IAsyncDisposa
 
         if (_afterFirstRender)
         {
-            await PopoverService.UpdatePopoverAsync(this);
+            if (PopoverService.PopoverOptions.Mode == PopoverMode.Default)
+            {
+                await PopoverService.UpdatePopoverAsync(this);
+            }
         }
     }
 
@@ -72,7 +77,11 @@ public abstract class MudPopoverBase : MudComponentBase, IPopover, IAsyncDisposa
     {
         if (firstRender)
         {
-            await PopoverService.UpdatePopoverAsync(this);
+            if (PopoverService.PopoverOptions.Mode == PopoverMode.Default)
+            {
+                await PopoverService.UpdatePopoverAsync(this);
+            }
+
             _afterFirstRender = true;
         }
 
@@ -85,7 +94,13 @@ public abstract class MudPopoverBase : MudComponentBase, IPopover, IAsyncDisposa
     {
         try
         {
-            await PopoverService.DestroyPopoverAsync(this);
+            if (IsJSRuntimeAvailable)
+            {
+                if (PopoverService.PopoverOptions.Mode == PopoverMode.Default)
+                {
+                    await PopoverService.DestroyPopoverAsync(this);
+                }
+            }
         }
         catch (JSDisconnectedException) { }
         catch (TaskCanceledException) { }

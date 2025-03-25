@@ -1,0 +1,60 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudSelect T="State" Label="US States" MultiSelection="true" @bind-SelectedValues="_options">
+    @foreach (var state in _states)
+    {
+        <MudSelectItem T="State" Value="@state">@state</MudSelectItem>
+    }
+</MudSelect>
+
+<MudGrid Class="mt-6 px-4">
+    <MudItem xs="6">
+        <MudText Typo="Typo.subtitle2">SelectedValues: HashSet&lt;State&gt;</MudText>
+        <MudText Typo="Typo.subtitle2">{</MudText>
+        <MudText Typo="Typo.body2" Class="pl-4">@(string.Join(", ", _options.Select(x=>$"\"{x}\"")))</MudText>
+        <MudText Typo="Typo.subtitle2">}</MudText>
+    </MudItem>
+</MudGrid>
+
+@code {
+#nullable enable
+    private IEnumerable<State> _options = new HashSet<State> { new("Alaska") };
+
+    private readonly State[] _states =
+    [
+        new("Alabama"), new("Alaska"), new("Arizona"), new("Arkansas"), new("California"),
+        new("Colorado"), new("Connecticut"), new("Delaware"), new("Florida"), new("Georgia"),
+        new("Hawaii"), new("Idaho"), new("Illinois"), new("Indiana"), new("Iowa"), new("Kansas"),
+        new("Kentucky"), new("Louisiana"), new("Maine"), new("Maryland"), new("Massachusetts"),
+        new("Michigan"), new("Minnesota"), new("Mississippi"), new("Missouri"), new("Montana"),
+        new("Nebraska"), new("Nevada"), new("New Hampshire"), new("New Jersey"), new("New Mexico"),
+        new("New York"), new("North Carolina"), new("North Dakota"), new("Ohio"), new("Oklahoma"),
+        new("Oregon"), new("Pennsylvania"), new("Rhode Island"), new("South Carolina"), new("South Dakota"),
+        new("Tennessee"), new("Texas"), new("Utah"), new("Vermont"), new("Virginia"),
+        new("Washington"), new("West Virginia"), new("Wisconsin"), new("Wyoming")
+    ];
+
+    public class State(string name) : IEquatable<State>
+    {
+        // IEquatable is required for complex objects, because otherwise the framework will compare the references
+        // Which will not be equal when comparing the list of items and the selected item.
+        // Alternatively you can implement IEqualityComparer separately and pass it to Comparer in MudSelect if you have no control over the object
+
+        public string Name { get; } = name;
+
+        public bool Equals(State? other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Name == other.Name;
+        }
+
+        public override bool Equals(object? obj) => obj is State state && Equals(state);
+
+        public override int GetHashCode() => Name.GetHashCode();
+
+        // Also important to override ToString, otherwise the object will be displayed as the full class name
+        // Alternatively you can use ToStringFunc="x => x.Name" in MudSelect
+        public override string ToString() => Name;
+    }
+}

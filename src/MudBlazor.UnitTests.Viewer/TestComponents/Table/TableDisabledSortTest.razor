@@ -1,7 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-
-<MudTable Items="@Examples" T="string">
+﻿<MudTable Items="@_examples" T="string">
     <HeaderContent>
         <MudTh><MudTableSortLabel SortBy="new Func<string, object>(x=>x)">#</MudTableSortLabel></MudTh>
     </HeaderContent>
@@ -11,10 +8,10 @@
 </MudTable>
 
 @code {
-    private IEnumerable<string> Examples = new List<string>();
+    private IEnumerable<string> _examples = new List<string>();
 
     protected override void OnInitialized()
     {
-        Examples = new List<string>() { "B", "A", "C" };
+        _examples = new List<string> { "B", "A", "C" };
     }
 }

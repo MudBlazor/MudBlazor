@@ -1,10 +1,10 @@
 @using System.Net.Http.Json
 @using MudBlazor.Examples.Data.Models
+@using System.Threading
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-<MudTable ServerData="@(new Func<TableState, Task<TableData<Element>>>(ServerReload))"
-          Dense="true" Hover="true" @ref="table">
+<MudTable ServerData="ServerReload" Dense="true" Hover="true" @ref="table">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Periodic Elements</MudText>
         <MudSpacer />
@@ -46,10 +46,10 @@
     /// <summary>
     /// Here we simulate getting the paged, filtered and ordered data from the server
     /// </summary>
-    private async Task<TableData<Element>> ServerReload(TableState state)
+    private async Task<TableData<Element>> ServerReload(TableState state, CancellationToken token)
     {
-        IEnumerable<Element> data = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
-        await Task.Delay(300);
+        IEnumerable<Element> data = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable", token);
+        await Task.Delay(300, token);
         data = data.Where(element =>
         {
             if (string.IsNullOrWhiteSpace(searchString))

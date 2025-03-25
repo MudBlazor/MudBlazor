@@ -1,9 +1,9 @@
-﻿using FluentAssertions;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.Linq.Expressions;
+using FluentAssertions;
 using MudBlazor;
 using NUnit.Framework;
-using System.Linq.Expressions;
-using System;
-using System.ComponentModel.DataAnnotations;
 
 namespace MudBlazor.UnitTests.Extensions
 {

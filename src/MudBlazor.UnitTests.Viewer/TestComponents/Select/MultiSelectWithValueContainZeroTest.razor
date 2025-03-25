@@ -1,0 +1,43 @@
+﻿<MudPopoverProvider/>
+<MudSelect T="TestEnum" MultiSelection="true"
+           @bind-SelectedValues="_selectedOptions" Label="Default Enum Test">
+    @foreach (var option in Enum.GetValues<TestEnum>())
+    {
+        <MudSelectItem Value="@option">@option.ToString()</MudSelectItem>
+    }
+</MudSelect>
+
+<MudSelect T="TestEnum" MultiSelection="true" MultiSelectionTextFunc="EnumMultiSelectionTextFunc"
+           @bind-SelectedValues="_selectedOptions" Label="Enum With Custom TextFunc">
+    @foreach (var option in Enum.GetValues<TestEnum>())
+    {
+        <MudSelectItem Value="@option">@option.ToString()</MudSelectItem>
+    }
+</MudSelect>
+
+<MudSelect T="int" MultiSelection="true"
+           @bind-SelectedValues="_selectedOptionsInt" Label="int with contain 0">
+    @foreach (var item in _intTestList)
+    {
+        <MudSelectItem Value="@item">@item.ToString()</MudSelectItem>
+    }
+</MudSelect>
+
+@code {
+    private IEnumerable<TestEnum> _selectedOptions = [TestEnum.Value2];
+    private IEnumerable<int> _selectedOptionsInt = [1, 2];
+    private readonly List<int> _intTestList = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+    private static string EnumMultiSelectionTextFunc(List<string> selectedValues)
+    {
+        var text = string.Join("; ", selectedValues);
+        return text;
+    }
+
+    public enum TestEnum
+    {
+        Value1,
+        Value2,
+        Value3
+    }
+}

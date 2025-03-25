@@ -1,0 +1,25 @@
+﻿<MudDynamicTabs KeepPanelsAlive MinimumTabWidth="100px"
+                AddIconClass="custom-add-button" CloseIconClass="custom-close-button" CloseTab="@OnCloseTab" @bind-ActivePanelIndex="@_activePanel">
+    @foreach (var item in _tabs)
+    {
+        <MudTabPanel ID="@item.Id" Text="@($"tab {item.Id}")" ShowCloseIcon @key="@item" />
+    }
+</MudDynamicTabs>
+
+@code {
+    public static string __description__ = "Slider needs to be visible while popping tabs from the front";
+
+    private int _activePanel = 3;
+    private readonly List<Item> _tabs = Enumerable.Range(0, 4).Select(x => new Item(x)).ToList();
+
+    private void OnCloseTab(MudTabPanel panel)
+    {
+        var idx = _tabs.FindIndex(x => x.Id.Equals(panel.ID));
+        _tabs.RemoveAt(idx);
+    }
+
+    private class Item(int id)
+    {
+        public int Id { get; } = id;
+    }
+}

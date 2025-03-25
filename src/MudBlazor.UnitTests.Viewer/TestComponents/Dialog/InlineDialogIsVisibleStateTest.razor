@@ -1,12 +1,10 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<div class="d-flex">
+﻿<div class="d-flex">
     <MudButton OnClick="OpenDialog" Variant="Variant.Filled" Color="Color.Primary">
         Open dialog
     </MudButton>
 </div>
 
-<MudDialog @bind-IsVisible="visible">
+<MudDialog @bind-Visible="_visible">
     <TitleContent>
         <MudText Typo="Typo.h6">
             <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mr-3"/> Edit rating
@@ -20,6 +18,7 @@
 </MudDialog>
 
 @code { 
-    private bool visible;
-    private void OpenDialog() => visible = true;
+    private bool _visible;
+
+    private void OpenDialog() => _visible = true;
 }

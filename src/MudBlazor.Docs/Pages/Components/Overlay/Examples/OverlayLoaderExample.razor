@@ -13,7 +13,7 @@
             <MudSkeleton Width="64px" Height="40px" Class="ml-2" />
             <MudSkeleton Width="105px" Height="40px" Class="ml-3" />
         </MudCardActions>
-        <MudOverlay Visible="isVisible" DarkBackground="true" Absolute="true">
+        <MudOverlay Visible="visible" DarkBackground="true" Absolute="true">
             <MudProgressCircular Color="Color.Secondary" Indeterminate="true" />
         </MudOverlay>
     }
@@ -32,22 +32,23 @@
     }
 </MudCard>
 
-<MudToolBar DisableGutters="true">
+<MudToolBar Gutters="false">
     <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenOverlay" EndIcon="@Icons.Material.Filled.Refresh">Refresh Data</MudButton>
     <MudSpacer/>
     <MudButton Variant="Variant.Filled" OnClick="ResetExample">Reset Example</MudButton>
 </MudToolBar>
 
 @code { 
-    private bool isVisible;
+    private bool visible;
     private bool dataLoaded;
 
     public async void OpenOverlay()
     {
-        isVisible = true;
+        visible = true;
+        dataLoaded = false;
         await Task.Delay(3000);
-        isVisible = false;
         dataLoaded = true;
+        visible = false;
         StateHasChanged();
     }
 

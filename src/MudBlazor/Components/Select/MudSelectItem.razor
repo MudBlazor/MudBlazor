@@ -1,19 +1,17 @@
 ﻿@namespace MudBlazor
 @typeparam T
-@inherits MudBaseSelectItem
+@inherits MudComponentBase
 
-@if (HideContent == false)
+@if (!HideContent)
 {
-	<MudListItem @attributes="UserAttributes" Value="@ItemId" id="@ItemId" OnClick="@OnClicked" OnClickHandlerPreventDefault="true" Icon="@CheckBoxIcon" Disabled="@Disabled" Class="@GetCssClasses()" Style="@Style">
-		@if (ChildContent != null)
-		{
-			@ChildContent
-		}
-		else
-		{
-			@DisplayString
-		}
-	</MudListItem>
+    <MudListItem @attributes="UserAttributes" Value="@ItemId" id="@ItemId" OnClick="@OnClickHandleAsync" OnClickPreventDefault="true" Icon="@CheckBoxIcon" Disabled="@Disabled" Class="@GetCssClasses()" Style="@Style">
+        @if (ChildContent is not null)
+        {
+            @ChildContent
+        }
+        else
+        {
+            @DisplayString
+        }
+    </MudListItem>
 }
-
-

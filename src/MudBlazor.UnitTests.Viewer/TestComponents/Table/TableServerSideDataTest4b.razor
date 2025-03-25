@@ -1,15 +1,13 @@
-@namespace MudBlazor.UnitTests.TestComponents
+<MudPopoverProvider />
 
-<MudPopoverProvider></MudPopoverProvider>
-
-<MudTable ServerData="@(new Func<TableState, Task<TableData<TestModel>>>(ServerReload))" SortLabel="Sort by">
+<MudTable ServerData="ServerReload" SortLabel="Sort by">
     <HeaderContent>
         <MudTh><MudTableSortLabel SortLabel="a" T="TestModel">a</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortLabel="b" T="TestModel">b</MudTableSortLabel></MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="a">@context.a</MudTd>
-        <MudTd DataLabel="b">@context.b</MudTd>
+        <MudTd DataLabel="a">@context.A</MudTd>
+        <MudTd DataLabel="b">@context.B</MudTd>
     </RowTemplate>
     <PagerContent>
         <MudTablePager />
@@ -17,38 +15,38 @@
 </MudTable>
 
 @code {
-#pragma warning disable CS1998 // async without await
     public static string __description__ = "The server-side loaded table should reload data on mobile sort.";
 
-    public class TestModel
-    {
-        public int a { get; set; }
-        public int b { get; set; }
-    }
-    private int totalItems;
+    private int _totalItems;
 
     /// <summary>
     /// Here we simulate getting the paged, filtered and ordered data from the server
     /// </summary>
-    private async Task<TableData<TestModel>> ServerReload(TableState state)
+    private Task<TableData<TestModel>> ServerReload(TableState state, CancellationToken token)
     {
         // This creates an in-memory IQueryable variation of our IEnumerable test
-        IQueryable<TestModel> data = new List<TestModel>() { new TestModel() { a=1, b=3 },
-                                            new TestModel() { a=2, b=2 },
-                                            new TestModel() { a=3, b=1 } }.AsQueryable();
-        totalItems = 3;
-        switch (state.SortLabel)
+        var data = new List<TestModel>
         {
-            case "a":
-                data = data.OrderByDirection(state.SortDirection, x => x.a);
-                break;
-            case "b":
-                data = data.OrderByDirection(state.SortDirection, x => x.b);
-                break;
-            default:
-                break;
-        }
-        return new TableData<TestModel>() { TotalItems = totalItems, Items = data };
+            new() { A = 1, B = 3 },
+            new() { A = 2, B = 2 },
+            new() { A = 3, B = 1 }
+        }.AsQueryable();
+
+        _totalItems = 3;
+        data = state.SortLabel switch
+        {
+            "a" => data.OrderByDirection(state.SortDirection, x => x.A),
+            "b" => data.OrderByDirection(state.SortDirection, x => x.B),
+            _ => data
+        };
+
+        return Task.FromResult(new TableData<TestModel> { TotalItems = _totalItems, Items = data });
     }
 
+    public class TestModel
+    {
+        public int A { get; set; }
+
+        public int B { get; set; }
+    }
 }

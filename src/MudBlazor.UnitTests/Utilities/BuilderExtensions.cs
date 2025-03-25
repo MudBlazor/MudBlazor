@@ -6,33 +6,37 @@ using MudBlazor.Utilities;
 
 namespace UtilityTests
 {
+#nullable enable
+    /// <summary>
+    /// Provides extension methods for <see cref="CssBuilder"/> to handle null rendering scenarios.
+    /// </summary>
     public static class BuilderExtensions
     {
         /// <summary>
-        /// Used to convert a CssBuilder into a null when it is empty.
+        /// Converts a <see cref="CssBuilder"/> into null if it is empty.
         /// Usage: class=null causes the attribute to be excluded when rendered.
         /// </summary>
-        /// <param name="builder"></param>
-        /// <returns>string</returns>
-        public static string NullIfEmpty(this CssBuilder builder) =>
+        /// <param name="builder">The <see cref="CssBuilder"/> instance.</param>
+        /// <returns>A null string if the builder is empty; otherwise, the built string.</returns>
+        public static string? NullIfEmpty(this CssBuilder builder) =>
             string.IsNullOrEmpty(builder.ToString()) ? null : builder.ToString();
 
         /// <summary>
-        /// Used to convert a StyleBuilder into a null when it is empty.
+        /// Converts a <see cref="StyleBuilder"/> into null if it is empty.
         /// Usage: style=null causes the attribute to be excluded when rendered.
         /// </summary>
-        /// <param name="builder"></param>
-        /// <returns>string</returns>
-        public static string NullIfEmpty(this StyleBuilder builder) =>
+        /// <param name="builder">The <see cref="StyleBuilder"/> instance.</param>
+        /// <returns>A null string if the builder is empty; otherwise, the built string.</returns>
+        public static string? NullIfEmpty(this StyleBuilder builder) =>
             string.IsNullOrEmpty(builder.ToString()) ? null : builder.ToString();
 
         /// <summary>
-        /// Used to convert a string.IsNullOrEmpty into a null when it is empty.
+        /// Converts a string into null if it is empty.
         /// Usage: attribute=null causes the attribute to be excluded when rendered.
         /// </summary>
-        /// <returns>string</returns>
-        public static string NullIfEmpty(this string s) =>
+        /// <param name="s">The input string.</param>
+        /// <returns>A null string if the input string is null or empty; otherwise, the input string.</returns>
+        public static string? NullIfEmpty(this string s) =>
             string.IsNullOrEmpty(s) ? null : s;
-
     }
 }

@@ -1,16 +1,13 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudChip Text="Click me" OnClick="Click" OnClose="Close"></MudChip>
+﻿<MudChip T="string" Text="Click me" OnClick="Click" OnClose="Close" />
 <div id="chip-click-test-expected-value">@_event</div>
+
 @code
 {
     public static string __description__ = "OnClick or OnClose should be displayed when clicking on the chip.";
-    private string _event = "";
-    private void Click() {
-        _event = "OnClick";
-    }
-    
-    private void Close() {
-        _event = "OnClose";
-    }
+
+    private string _event = string.Empty;
+
+    private void Click() => _event = "OnClick";
+
+    private void Close() => _event = "OnClose";
 }
