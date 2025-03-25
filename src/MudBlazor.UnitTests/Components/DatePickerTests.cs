@@ -296,7 +296,6 @@ namespace MudBlazor.UnitTests.Components
             {
                 Assert.Fail("Should not throw exception on valid dates");
             }
-
         }
 
         private IRenderedComponent<SimpleMudDatePickerTest> OpenPicker(ComponentParameter parameter)
