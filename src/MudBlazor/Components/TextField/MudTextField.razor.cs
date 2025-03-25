@@ -212,6 +212,15 @@ namespace MudBlazor
                 text = _mask.Text;
             }
 
+            if (text != null && (typeof(T) == typeof(int) || typeof(T) == typeof(float) || typeof(T) == typeof(decimal) || typeof(T) == typeof(double) || typeof(T) == typeof(short) || typeof(T) == typeof(long)))
+            {
+                if (text == "0-")
+                    text = "-";
+
+                if (text == "-")
+                    updateValue = false;
+            }
+
             return base.SetTextAsync(text, updateValue);
         }
 
