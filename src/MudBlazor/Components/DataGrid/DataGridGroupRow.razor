@@ -37,7 +37,9 @@
                                 GroupStyle="@GroupStyle"
                                 GroupClassFunc="@GroupClassFunc"
                                 GroupStyleFunc="@GroupStyleFunc"
-                                DataGrid="@DataGrid" />            
+                                DataGrid="@DataGrid"
+                                RowClick="@((args) => RowClick.InvokeAsync((args.args, args.item, args.index)))"
+                                ContextRowClick="@((args) => ContextRowClick.InvokeAsync((args.args, args.item, args.index)))" />
             }
         }
         <!-- Show the items -->
@@ -47,7 +49,9 @@
             {
                 <DataGridVirtualizeRow T="T" 
                                        DataGrid="@DataGrid"
-                                       GroupedItems="@Items" />
+                                       GroupedItems="@Items"
+                                       RowClick="@((args) => RowClick.InvokeAsync((args.args, args.item, args.index)))"
+                                       ContextRowClick="@((args) => ContextRowClick.InvokeAsync((args.args, args.item, args.index)))" />
                 <!-- Group Footer -->
                 <tr class="mud-table-row">
                     @DataGrid.FooterCells(Items)

@@ -227,12 +227,16 @@
                                                               GroupStyle="@GroupStyle"
                                                               GroupClassFunc="@GroupClassFunc"
                                                               GroupStyleFunc="@GroupStyleFunc"
-                                                              DataGrid="this" />
+                                                              DataGrid="this"
+                                                              RowClick="@(args => OnRowClickedAsync(args.args, args.item, args.index))"
+                                                              ContextRowClick="@(args => OnContextMenuClickedAsync(args.args, args.item, args.index))" />
                                         }
                                     }
                                     else
                                     {
-                                        <DataGridVirtualizeRow T="T" DataGrid="this" />
+                                        <DataGridVirtualizeRow T="T" DataGrid="this" 
+                                                               RowClick="@(args => OnRowClickedAsync(args.args, args.item, args.index))" 
+                                                               ContextRowClick="@(args => OnContextMenuClickedAsync(args.args, args.item, args.index))" />
                                     }
                                 }
                                 else if (Loading ? LoadingContent != null : NoRecordsContent != null)

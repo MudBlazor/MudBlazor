@@ -4,6 +4,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 #nullable enable
 namespace MudBlazor
 {
@@ -16,5 +17,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.DataGrid.Grouping)]
         public IGrouping<object, T>? GroupedItems { get; set; }
+
+        [Parameter]
+        [Category(CategoryTypes.DataGrid.Selecting)]
+        public EventCallback<(MouseEventArgs args, T item, int index)> RowClick { get; set; }
+
+        [Parameter]
+        [Category(CategoryTypes.DataGrid.Selecting)]
+        public EventCallback<(MouseEventArgs args, T item, int index)> ContextRowClick { get; set; }
     }
 }
