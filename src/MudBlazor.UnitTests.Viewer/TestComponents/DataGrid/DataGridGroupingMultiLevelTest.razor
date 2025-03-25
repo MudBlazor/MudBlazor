@@ -8,9 +8,8 @@ Hover
 Height="500px" 
 FixedHeader
 Groupable
-GroupExpanded="false"
 GroupClass="@(_customizeGroupStyle ? "pa-4" : null)"
-GroupStyle="@(_customizeGroupStyle ? "background-color: var(--mud-palette-background-grey);" : null)"
+GroupStyle="@(_customizeGroupStyle ? "background-color: var(--mud-palette-info);" : null)"
 GroupClassFunc="@(_customizeGroupStyle ? GroupClassFunc : null)"
 GroupStyleFunc="@(_customizeGroupStyle ? GroupStyleFunc : null)">
     <ToolBarContent>
@@ -21,80 +20,104 @@ GroupStyleFunc="@(_customizeGroupStyle ? GroupStyleFunc : null)">
         <PropertyColumn Property="x => x.State" Title="State" Groupable="false" />
         <PropertyColumn Property="x => x.Counties" Groupable="false" />
         <PropertyColumn Property="x => x.Population" Groupable="false" />
-        <PropertyColumn Property="x => x.PrimaryIndustry" Title="Primary Industry" GroupBy="_groupBy1">
-            <GroupTemplate>
-                @{
-                    var color = context.Grouping.Key?.ToString() switch
+        @if (_customizeGroupTemplate)
+        {
+            <PropertyColumn Property="x => x.PrimaryIndustry" Title="Primary Industry" 
+                            @bind-Grouping="_primaryIndustryGrouping" GroupBy="_groupBy1" 
+                            @bind-GroupByOrder="_primaryIndustryOrder"
+                            @bind-GroupExpanded="_primaryIndustryExpanded">
+                <GroupTemplate>
+                    @{
+                        var color = context.Grouping.Key?.ToString() switch
+                        {
+                            "Healthcare" => Color.Primary,
+                            "Tech" => Color.Secondary,
+                            "Tourism" => Color.Info,
+                            _ => Color.Dark
+                        };
+                    }
+                    <div class="d-flex align-center">
+                        <MudIcon Icon="@Icons.Material.Filled.Business" Color="@color" Size="Size.Small" Class="mr-2" />
+                        <span style="font-weight:bold">@context.Grouping.Key</span>
+                        <MudChip Variant="Variant.Outlined" Color="@color" Size="Size.Small" Class="ml-2">
+                            @context.Grouping.Count() states
+                        </MudChip>
+                    </div>
+                </GroupTemplate>
+            </PropertyColumn>
+            <PropertyColumn Property="x => x.Region" Title="Region"
+                            @bind-Grouping="_regionGrouping" GroupBy="_groupBy2"
+                            @bind-GroupByOrder="_regionOrder"
+                            @bind-GroupExpanded="_regionExpanded">
+                <GroupTemplate>
+                    @{
+                        var (icon, color) = context.Grouping.Key?.ToString() switch
+                        {
+                            "Northeast" or "Southeast" => (Icons.Material.Filled.East, Color.Warning),
+                            "West" or "Pacific" => (Icons.Material.Filled.West, Color.Success),
+                            "Midwest" => (Icons.Material.Filled.LocationOn, Color.Info),
+                            "Southwest" => (Icons.Material.Filled.South, Color.Error),
+                            _ => (Icons.Material.Filled.Public, Color.Default)
+                        };
+                    }
+                    <div class="d-flex align-center">
+                        <MudIcon Icon="@icon" Color="@color" Size="Size.Small" Class="mr-2" />
+                        <span style="font-weight:bold">@context.Grouping.Key</span>
+                        <MudChip Variant="Variant.Outlined" Color="@color" Size="Size.Small" Class="ml-2">
+                            @context.Grouping.Count() states
+                        </MudChip>
+                    </div>
+                </GroupTemplate>
+            </PropertyColumn>
+            <PropertyColumn Property="x => x.Climate" Title="Climate"
+                            @bind-Grouping="_climateGrouping" GroupBy="_groupBy3"
+                            @bind-GroupByOrder="_climateOrder"
+                            @bind-GroupExpanded="_climateExpanded">
+                <GroupTemplate>
+                    @{
+                        var (icon, color) = context.Grouping.Key?.ToString() switch
+                        {
+                            "Continental" => (Icons.Material.Filled.AcUnit, Color.Primary),
+                            "Humid Subtropical" => (Icons.Material.Filled.WbSunny, Color.Warning),
+                            "Mediterranean" or "Tropical" => (Icons.Material.Filled.WaterDrop, Color.Info),
+                            "Desert" or "Semi-arid" or "Arid" => (Icons.Material.Filled.Landscape, Color.Error),
+                            _ => (Icons.Material.Filled.Cloud, Color.Default)
+                        };
+                    }
+                    <div class="d-flex align-center">
+                        <MudIcon Icon="@icon" Color="@color" Size="Size.Small" Class="mr-2" />
+                        <span style="font-weight:bold">@context.Grouping.Key</span>
+                        <MudChip Variant="Variant.Outlined" Color="@color" Size="Size.Small" Class="ml-2">
+                            @context.Grouping.Count() states
+                        </MudChip>
+                    </div>
+                </GroupTemplate>
+            </PropertyColumn>
+            <PropertyColumn Property="x => x.YearInducted" Title="Year Inducted" GroupBy="x => x.YearInducted">
+                <GroupTemplate>
+                    @if (_customizeGroupTemplate)
                     {
-                        "Healthcare" => Color.Primary,
-                        "Tech" => Color.Secondary,
-                        "Tourism" => Color.Info,
-                        _ => Color.Dark
-                    };
-                }
-                <div class="d-flex align-center">
-                    <MudIcon Icon="@Icons.Material.Filled.Business" Color="@color" Size="Size.Small" Class="mr-2" />
-                    <span style="font-weight:bold">@context.Grouping.Key</span>
-                    <MudChip Variant="Variant.Outlined" Color="@color" Size="Size.Small" Class="ml-2">
-                        @context.Grouping.Count() states
-                    </MudChip>
-                </div>
-            </GroupTemplate>
-        </PropertyColumn>
-        <PropertyColumn Property="x => x.Region" Title="Region" Grouping GroupBy="_groupBy2">
-            <GroupTemplate>
-                @{
-                    var (icon, color) = context.Grouping.Key?.ToString() switch
-                    {
-                        "Northeast" or "Southeast" => (Icons.Material.Filled.East, Color.Warning),
-                        "West" or "Pacific" => (Icons.Material.Filled.West, Color.Success),
-                        "Midwest" => (Icons.Material.Filled.LocationOn, Color.Info),
-                        "Southwest" => (Icons.Material.Filled.South, Color.Error),
-                        _ => (Icons.Material.Filled.Public, Color.Default)
-                    };
-                }
-                <div class="d-flex align-center">
-                    <MudIcon Icon="@icon" Color="@color" Size="Size.Small" Class="mr-2" />
-                    <span style="font-weight:bold">@context.Grouping.Key</span>
-                    <MudChip Variant="Variant.Outlined" Color="@color" Size="Size.Small" Class="ml-2">
-                        @context.Grouping.Count() states
-                    </MudChip>
-                </div>
-            </GroupTemplate>
-        </PropertyColumn>
-        <PropertyColumn Property="x => x.Climate" Title="Climate" Grouping GroupBy="_groupBy3">
-            <GroupTemplate>
-                @{
-                    var (icon, color) = context.Grouping.Key?.ToString() switch
-                    {
-                        "Continental" => (Icons.Material.Filled.AcUnit, Color.Primary),
-                        "Humid Subtropical" => (Icons.Material.Filled.WbSunny, Color.Warning),
-                        "Mediterranean" or "Tropical" => (Icons.Material.Filled.WaterDrop, Color.Info),
-                        "Desert" or "Semi-arid" or "Arid" => (Icons.Material.Filled.Landscape, Color.Error),
-                        _ => (Icons.Material.Filled.Cloud, Color.Default)
-                    };
-                }
-                <div class="d-flex align-center">
-                    <MudIcon Icon="@icon" Color="@color" Size="Size.Small" Class="mr-2" />
-                    <span style="font-weight:bold">@context.Grouping.Key</span>
-                    <MudChip Variant="Variant.Outlined" Color="@color" Size="Size.Small" Class="ml-2">
-                        @context.Grouping.Count() states
-                    </MudChip>
-                </div>
-            </GroupTemplate>
-        </PropertyColumn>
-        <PropertyColumn Property="x => x.YearInducted" Title="Year Inducted" GroupBy="x => x.YearInducted">
-            <GroupTemplate>
-                @if (_customizeGroupTemplate)
-                {
-                    <span style="font-weight:bold">Year Inducted: @context.Grouping.Key <MudChip Variant="Variant.Outlined" Color="Color.Primary" Size="Size.Small">total @context.Grouping.Count()</MudChip></span>
-                }
-                else
-                {
-                    <span style="font-weight:bold">Year Inducted: @context.Grouping.Key</span>
-                }
-            </GroupTemplate>
-        </PropertyColumn>
+                        <span style="font-weight:bold">Year Inducted: @context.Grouping.Key <MudChip Variant="Variant.Outlined" Color="Color.Primary" Size="Size.Small">total @context.Grouping.Count()</MudChip></span>
+                    }
+                </GroupTemplate>
+            </PropertyColumn>
+        }
+        else
+        {
+            <PropertyColumn Property="x => x.PrimaryIndustry" Title="Primary Industry" 
+                            @bind-Grouping="_primaryIndustryGrouping" GroupBy="_groupBy1" 
+                            @bind-GroupByOrder="_primaryIndustryOrder"
+                            @bind-GroupExpanded="_primaryIndustryExpanded" />
+            <PropertyColumn Property="x => x.Region" Title="Region"
+                            @bind-Grouping="_regionGrouping" GroupBy="_groupBy2"
+                            @bind-GroupByOrder="_regionOrder"
+                            @bind-GroupExpanded="_regionExpanded" />
+            <PropertyColumn Property="x => x.Climate" Title="Climate"
+                            @bind-Grouping="_climateGrouping" GroupBy="_groupBy3"
+                            @bind-GroupByOrder="_climateOrder"
+                            @bind-GroupExpanded="_climateExpanded" />
+            <PropertyColumn Property="x => x.YearInducted" Title="Year Inducted" GroupBy="x => x.YearInducted" />
+        }        
     </Columns>
 </MudDataGrid>
 
@@ -107,13 +130,21 @@ GroupStyleFunc="@(_customizeGroupStyle ? GroupStyleFunc : null)">
 </div>
 
 @code {
-#nullable enable
+    #nullable enable
     public static string __description__ = "Multi Level Grouping within DataGrid";
     private IEnumerable<USState> _states = [];
     private MudDataGrid<USState>? dataGrid;
     private bool _customizeGroupTemplate;
     private bool _customizeGroupBy;
-    
+    private bool _primaryIndustryGrouping = true;
+    private bool _regionGrouping = true;
+    private bool _climateGrouping = true;
+    private int _primaryIndustryOrder = 0;
+    private int _climateOrder = 1;
+    private int _regionOrder = 2;
+    private bool _primaryIndustryExpanded = true;
+    private bool _regionExpanded = true;
+    private bool _climateExpanded = true;
     @code {
         // Primary grouping by industry type
         Func<USState, object>? _groupBy1;
