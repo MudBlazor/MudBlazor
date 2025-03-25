@@ -5061,7 +5061,6 @@ namespace MudBlazor.UnitTests.Components
 
             before.Should().NotBeSameAs(after, because: "If the @key is correctly set to the row item, child components will be recreated on row reordering.");
 
-
             //Test the expanded group case
             comp.SetParametersAndRender(parameters => parameters.Add(p => p.Group, true));
             await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroups());
