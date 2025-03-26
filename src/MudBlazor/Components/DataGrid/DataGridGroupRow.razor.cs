@@ -81,7 +81,7 @@ namespace MudBlazor
         [Category(CategoryTypes.DataGrid.Appearance)]
         public string? StyleClass { get; set; }
 
-        private void GroupExpandClick()
+        internal void GroupExpandClick()
         {
             _expanded = !_expanded;
             if (Items != null)

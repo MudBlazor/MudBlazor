@@ -297,7 +297,7 @@
         dataGrid?.GroupItems();
     }
 
-    private record USState(int Id, string State, int Counties, int Population, string PrimaryIndustry, string Region, string Climate, int YearInducted);
+    public record USState(int Id, string State, int Counties, int Population, string PrimaryIndustry, string Region, string Climate, int YearInducted);
 
     private static List<USState> GetAllStates(string searchString, ICollection<SortDefinition<USState>> sortDefinitions)
     {

@@ -7,7 +7,7 @@ using Bunit;
 using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents.DataGrid;
 using NUnit.Framework;
-
+#nullable enable
 namespace MudBlazor.UnitTests.Components
 {
     public class DataGridGroupingTests : BunitTest
@@ -396,7 +396,8 @@ namespace MudBlazor.UnitTests.Components
             cells[27].TextContent.Should().Be("Number: 10");
             cells[28].TextContent.Should().Be("Neon"); cells[29].TextContent.Should().Be("10");
             //get next page
-            dataGrid.Instance.CurrentPage = 1;
+            await comp.InvokeAsync(() => dataGrid.Instance.NavigateTo(Page.Next));
+            comp.Render();
             await comp.InvokeAsync(() => dataGrid.Instance.CollapseAllGroups());
             cells = dataGrid.FindAll("td");
             cells.Count.Should().Be(10, because: "We have 10 data rows with one group collapsed from next page");
@@ -443,5 +444,48 @@ namespace MudBlazor.UnitTests.Components
                 test.GetGroupIcon(isExpanded, isRightToLeft).Should().Be(isRightToLeft ? Icons.Material.Filled.ChevronLeft : Icons.Material.Filled.ChevronRight);
             }
         }
+
+        [Test]
+        public async Task GroupExpandClick_ShouldToggleExpandedState()
+        {
+            // Arrange
+            var items = new List<int> { 1, 2, 3 }.GroupBy(x => (object?)null).First();
+            var component = Context.RenderComponent<DataGridGroupingMultiLevelTest>();
+
+            var dataGrid = component.FindComponent<MudDataGrid<DataGridGroupingMultiLevelTest.USState>>();
+            await component.InvokeAsync(() => dataGrid.Instance.ReloadServerData());
+
+            var rows = component.FindComponents<DataGridGroupRow<DataGridGroupingMultiLevelTest.USState>>();
+            rows.Count().Should().Be(15);
+            var row = rows[0];
+            // Test the method
+            // Act
+            row.Instance.Expanded.Should().BeTrue();
+            row.Instance.GroupExpandClick();
+
+            // Assert
+            row.Instance.Expanded.Should().BeFalse();
+            dataGrid.Instance._groupExpansionsDict.Count().Should().Be(1);
+
+            // Act
+            row.Instance.GroupExpandClick();
+
+            // Assert
+            row.Instance.Expanded.Should().BeTrue();
+            dataGrid.Instance._groupExpansionsDict.Count().Should().Be(0);
+            // Test the UI
+            var expandButton = row.Find(".mud-datagrid-group-button");
+            expandButton.Should().NotBeNull();
+            expandButton.Click();
+
+            row.Instance.Expanded.Should().BeFalse();
+            dataGrid.Instance._groupExpansionsDict.Count().Should().Be(1);
+            expandButton.Click();
+
+            row.Instance.Expanded.Should().BeTrue();
+            dataGrid.Instance._groupExpansionsDict.Count().Should().Be(0);
+
+        }
+
     }
 }
