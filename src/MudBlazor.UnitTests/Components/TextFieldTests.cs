@@ -1578,6 +1578,20 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("#error-id").InnerHtml.Should().Be(comp.Instance.ConversionErrorMessage);
         }
 
+        [Test]
+        public void TextField_Should_AllowUserToEnterNegativeNumberWhenBoundToNumericTypeAndImmediate()
+        {
+            var comp = Context.RenderComponent<MudTextField<int>>(parameters => parameters
+                .Add(p => p.Immediate, true)
+                .Add(p => p.Value, 5));
+
+            comp.Find("input").Input("0-");
+
+            comp.Instance.Text.Should().Be("-");
+            comp.Instance.Text.Should().NotBe("0");
+            comp.Instance.Value.Should().Be(5);
+        }
+
         [TestCase(Adornment.Start, false, false)]
         [TestCase(Adornment.Start, false, true)]
         [TestCase(Adornment.Start, true, false)]

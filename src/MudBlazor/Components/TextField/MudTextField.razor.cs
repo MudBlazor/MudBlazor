@@ -212,7 +212,9 @@ namespace MudBlazor
                 text = _mask.Text;
             }
 
-            if (text != null && (typeof(T) == typeof(int) || typeof(T) == typeof(float) || typeof(T) == typeof(decimal) || typeof(T) == typeof(double) || typeof(T) == typeof(short) || typeof(T) == typeof(long)))
+            var valueType = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
+
+            if (text != null && (valueType == typeof(int) || valueType == typeof(float) || valueType == typeof(decimal) || valueType == typeof(double) || valueType == typeof(short) || valueType == typeof(long)))
             {
                 if (text == "0-")
                     text = "-";
