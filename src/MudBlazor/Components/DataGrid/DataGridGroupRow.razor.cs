@@ -13,6 +13,8 @@ namespace MudBlazor
 {
     public partial class DataGridGroupRow<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase
     {
+        private bool _expanded;
+
         protected string GroupClassname => new CssBuilder("mud-table-cell")
             .AddClass("mud-datagrid-group")
             .AddClass($"mud-row-group-indented-{(GroupDefinition.Indentation ? Math.Min(GroupDefinition.Level, 5) : 0)}")
@@ -27,7 +29,11 @@ namespace MudBlazor
 
         [Parameter]
         [Category(CategoryTypes.DataGrid.Behavior)]
-        public bool Expanded { get; set; }
+        public bool Expanded
+        {
+            get => _expanded;
+            set => _expanded = value;
+        }
 
         [Parameter, EditorRequired]
         [Category(CategoryTypes.DataGrid.Grouping)]
@@ -77,7 +83,7 @@ namespace MudBlazor
 
         private void GroupExpandClick()
         {
-            Expanded = !Expanded;
+            _expanded = !_expanded;
             if (Items != null)
             {
                 var key = new { GroupDefinition.Title, Items.Key };
