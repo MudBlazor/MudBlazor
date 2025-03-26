@@ -1173,13 +1173,13 @@ namespace MudBlazor
         public Interfaces.IForm Validator { get; set; } = new DataGridRowValidator();
 
         /// <summary>
-        /// This is just an indication if there is grouping
+        /// Returns true if <see cref="Groupable"/> is true and at least one column has <see cref="Column{T}.Grouping"/>Grouping toggled on.
         /// </summary>
-        internal bool IsGrouped
+        public bool IsGrouped
         {
             get
             {
-                return RenderedColumns.FirstOrDefault(x => x.GroupingState.Value) != null;
+                return Groupable && RenderedColumns.FirstOrDefault(x => x.GroupingState.Value) != null;
             }
         }
 
