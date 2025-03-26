@@ -674,7 +674,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MultiSelect_Initial_Values()
         {
-            var comp = Context.RenderComponent<MultiSelectWithInitialValues>();
+            var comp = Context.RenderComponent<MultiSelectWithInitialValuesTest>();
             // print the generated html
 
             // select the input of the select
@@ -1524,7 +1524,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task SelectFullWidthTest()
+        public async Task SelectPopoverFullWidthTest()
         {
             var comp = Context.RenderComponent<SelectPopoverRelativeWidthTest>();
 
@@ -1546,6 +1546,41 @@ namespace MudBlazor.UnitTests.Components
 
             //confirm relative width class not applied
             comp.Find(".expanded").ClassList.Should().Contain("mud-popover-open").And.NotContain("mud-popover-relative-width");
+        }
+
+        [Test]
+        public void SelectFitContentTest()
+        {
+            var comp = Context.RenderComponent<SelectFitContentTest>();
+
+            //default values
+            comp.Instance.FullWidth.Should().BeFalse();
+            comp.Instance.FitContent.Should().BeFalse();
+
+            var select = comp.Find(".mud-select");
+
+            select.ClassList.Should().NotContain("mud-width-content");
+
+            //set fit content
+            comp.SetParametersAndRender(parameters => parameters.Add(c => c.FitContent, true));
+
+            comp.Instance.FullWidth.Should().BeFalse();
+            comp.Instance.FitContent.Should().BeTrue();
+
+            select.ClassList.Should().Contain("mud-width-content");
+
+            var filler = comp.Find(".mud-select-filler");
+
+            filler.ClassList.Should().Contain("d-inline-block").And.Contain("mx-4");
+            filler.TextContent.Trim().Should().Be("Federated States of Micronesia");
+
+            //set full width
+            comp.SetParametersAndRender(parameters => parameters.Add(c => c.FullWidth, true));
+
+            comp.Instance.FullWidth.Should().BeTrue();
+            comp.Instance.FitContent.Should().BeTrue();
+
+            select.ClassList.Should().NotContain("mud-width-content");
         }
 
         [TestCaseSource(typeof(MouseEventArgsTestCase), nameof(MouseEventArgsTestCase.AllCombinations))]

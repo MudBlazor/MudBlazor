@@ -10,6 +10,7 @@
                        Label="@variant.ToString()"
                        Margin="_margin"
                        Dense="_dense"
+                       FitContent="_fitContent"
                        Disabled="_disabled"
                        ReadOnly="_readonly"
                        Placeholder="@(_placeholder ? "Placeholder" : null)"
@@ -39,21 +40,23 @@
         <MudSwitch @bind-Value="_helperText" Label="HelperText" Color="Color.Primary" />
         <MudSwitch @bind-Value="_helperTextOnFocus" Label="HelperTextOnFocus" Color="Color.Primary" />
         <MudSwitch @bind-Value="_clearable" Label="Clearable" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_fitContent" Label="FitContent" Color="Color.Primary" />
     </MudStack>
 </MudStack>
 
 @code {
-    string _value;
-    Margin _margin;
-    bool _dense;
-    bool _disabled;
-    bool _readonly;
-    bool _placeholder;
-    bool _helperText;
-    bool _helperTextOnFocus;
-    bool _clearable;
+    private string _value;
+    private Margin _margin;
+    private bool _dense;
+    private bool _disabled;
+    private bool _readonly;
+    private bool _placeholder;
+    private bool _helperText;
+    private bool _helperTextOnFocus;
+    private bool _clearable;
+    private bool _fitContent;
 
-    private string[] _states =
+    private readonly string[] _states =
     {
         "Alabama", "Alaska", "Arizona", "Arkansas", "California",
         "Colorado", "Connecticut", "Delaware", "Florida", "Georgia",

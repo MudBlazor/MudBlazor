@@ -57,6 +57,39 @@
                         @GetSelectedValuePresenter()
                     }
                 </MudInput>
+                @if (FitContent)
+                {
+                    <MudStack Class="@FillerClassname" Spacing="1" Row>
+                        @{
+                            var value = _longestItem is { Value: not null } ? ToStringFunc ?.Invoke(_longestItem.Value) ?? Converter.Set(_longestItem.Value) : string.Empty;
+                            var useLabel = Label is not null && Placeholder is null && !ShrinkLabel
+                                        && (Adornment != Adornment.Start || (AdornmentIcon is null && AdornmentText is null));
+
+                            var defaultValue = useLabel ? Label : Placeholder;
+                        }
+                        @if (defaultValue?.Length > value!.Length)
+                        {
+                            <MudText Typo="@Typo">@(MultiSelectionTextFunc?.Invoke([defaultValue]) ?? defaultValue)</MudText>
+                        }
+                        else if (_longestItem?.ChildContent is null || MultiSelectionTextFunc is not null)
+                        {
+                            <MudText Typo="@Typo">@(MultiSelectionTextFunc?.Invoke([value!]) ?? value!)</MudText>
+                        }
+                        else
+                        {
+                            <MudText Typo="@Typo">@_longestItem.ChildContent</MudText>
+                        }
+                        @AdornmentText
+                        @if (AdornmentText is null)
+                        {
+                            <MudIcon Icon="@(AdornmentIcon ?? OpenIcon)" Size="IconSize"></MudIcon>
+                        }
+                        @if (Clearable)
+                        {
+                            <MudIcon Icon="@ClearIcon" Size="IconSize"></MudIcon>
+                        }
+                    </MudStack>
+                }
                 <MudPopover Open=@(_open)
                             MaxHeight="@MaxHeight"
                             Class="@PopoverClass"
@@ -93,7 +126,6 @@
             @ChildContent
         </CascadingValue>
     </CascadingValue>
-
 </CascadingValue>
 <!-- pointerdown instead of click needed to close the menu before OnLostFocus runs -->
 <MudOverlay Visible="_open" @onpointerdown="@(() => CloseMenu(false))" LockScroll="@LockScroll" />
