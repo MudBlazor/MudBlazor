@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
@@ -125,7 +128,7 @@ namespace MudBlazor
         public bool Disabled { get; set; }
 
         /// <summary>
-        /// If true, the MudTreeViewItem's selection can not be changed.  
+        /// If true, the MudTreeViewItem's selection can not be changed.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Behavior)]
@@ -596,5 +599,42 @@ namespace MudBlazor
             // only _selectedState.Value matters!
             return _selectedState ? CheckedIcon : UncheckedIcon;
         }
+
+        internal async Task ServerExpandToSelectedAsync(MudTreeViewItem<T>? parent, int level)
+        {
+            if ((this.MudTreeRoot is not null) && (this.MudTreeRoot.IsServerItemDescendantOrSelectedAsync is not null) && (this.Value is not null))
+            {
+                if (this.Selected)
+                {
+                    HashSet<T> selectedValues = new HashSet<T>();
+                    selectedValues.Add(this.Value);
+                    await UpdateSelectionStateAsync(selectedValues);
+
+                    // Stop iterating, when multiselection if off.
+                    if (this.MudTreeRoot.MultiSelection == false)
+                    {
+                        return;
+                    }
+                }
+
+                // Try to expand this item, if it is in the path to a selected item.
+                T? parentValue = (parent is not null) ? parent.Value : default(T);
+                if (await this.MudTreeRoot.IsServerItemDescendantOrSelectedAsync(this.Value, parentValue, level))
+                {
+                    await _expandedState.SetValueAsync(true);
+                    await this.TryInvokeServerLoadFunc();
+                }
+
+                // Iterate through all the child items.
+                if (this._childItems is not null)
+                {
+                    foreach (MudTreeViewItem<T> childItem in this._childItems)
+                    {
+                        await childItem.ServerExpandToSelectedAsync(this, level + 1);
+                    }
+                }
+            }
+        }
+
     }
 }

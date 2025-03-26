@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.State;
 using MudBlazor.Utilities;
@@ -278,6 +282,7 @@ namespace MudBlazor
             {
                 _isFirstRender = false;
                 await UpdateItemsAsync();
+                await ServerExpandToSelectedAsync();
             }
 
             await base.OnAfterRenderAsync(firstRender);
@@ -521,7 +526,7 @@ namespace MudBlazor
 
         ///  <summary>
         ///  Sets the selected value of the tree view in Single- and ToggleSelection mode.
-        ///  If the value is found, the corresponding item is selected; 
+        ///  If the value is found, the corresponding item is selected;
         ///  otherwise, selected value is set default.
         ///  If the selected item is valid it sets the corresponding tree item to selected.
         ///  </summary>
@@ -602,6 +607,35 @@ namespace MudBlazor
             }
 
             return values;
+        }
+
+        /// <summary>
+        /// Used in combination with <see cref="ServerData"/>, this property enables the <see cref="MudTreeView{T}"/> to
+        /// automatically expand the tree down to the selected <see cref="MudTreeViewItem{T}"/>.
+        ///
+        /// You set a delegate function that examins and return true if the specified <see cref="MudTreeViewItem{T}.Value"/>
+        /// is a descendant of another <see cref="MudTreeViewItem{T}.Value"/>, or it is selected. Otherwise the function
+        /// return false.
+        ///
+        /// The function type parameters are:
+        /// T: The <see cref="MudTreeViewItem{T}.Value"/> being evaluated.
+        /// T: The parent <see cref="MudTreeViewItem{T}.Value"/>.
+        /// Int32: The level down the tree, of the item being evaluated.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Behavior)]
+        public Func<T, T?, int, Task<bool>>? IsServerItemDescendantOrSelectedAsync { get; set; }
+
+        private async Task ServerExpandToSelectedAsync()
+        {
+            // Iterate through all the child items.
+            if (this._childItems is not null)
+            {
+                foreach (MudTreeViewItem<T> childItem in this._childItems)
+                {
+                    await childItem.ServerExpandToSelectedAsync(null, 0);
+                }
+            }
         }
 
     }
