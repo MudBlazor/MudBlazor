@@ -23,6 +23,8 @@ namespace MudBlazor
         private string? _activeItemId;
         private bool? _selectAllChecked;
         private string? _multiSelectionText;
+        private int _longestItemLength;
+        private MudSelectItem<T>? _longestItem;
         private IEqualityComparer<T?>? _comparer;
         private TaskCompletionSource? _renderComplete;
         private MudInput<string> _elementReference = null!;
@@ -36,6 +38,7 @@ namespace MudBlazor
         protected string OuterClassname =>
             new CssBuilder("mud-select")
                 .AddClass("mud-width-full", FullWidth)
+                .AddClass("mud-width-content", FitContent && !FullWidth)
                 .AddClass(OuterClass)
                 .Build();
 
@@ -47,6 +50,14 @@ namespace MudBlazor
         protected string InputClassname =>
             new CssBuilder("mud-select-input")
                 .AddClass(InputClass)
+                .Build();
+
+        protected string FillerClassname =>
+            new CssBuilder("mud-select-filler")
+                .AddClass("d-inline-block")
+                .AddClass("invisible")
+                .AddClass("mx-2", Variant == Variant.Text)
+                .AddClass("mx-4", Variant != Variant.Text)
                 .Build();
 
         [Inject]
@@ -223,6 +234,16 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
         public DropdownWidth RelativeWidth { get; set; } = DropdownWidth.Relative;
+
+        /// <summary>
+        /// Sets the container width to match its contents.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>. Requires FullWidth to be <c>false</c>
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public bool FitContent { get; set; }
 
         /// <summary>
         /// The CSS classes applied to the outer <c>div</c>.
@@ -1283,7 +1304,20 @@ namespace MudBlazor
         {
             if (item == null || item.Value == null)
                 return;
+
             _shadowLookup[item.Value] = item;
+
+            if (!FitContent) return;
+
+            var stringValue = ToStringFunc?.Invoke(item.Value) ?? Converter.Set(item.Value);
+
+            if (_longestItem is null || stringValue?.Length > _longestItemLength)
+            {
+                _longestItem = item;
+                _longestItemLength = stringValue?.Length ?? 0;
+
+                StateHasChanged();
+            }
         }
 
         /// <summary>

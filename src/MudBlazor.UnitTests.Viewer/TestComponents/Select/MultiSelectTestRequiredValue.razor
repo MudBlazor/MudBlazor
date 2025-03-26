@@ -29,7 +29,6 @@
 <MudText>Value: @_objectSelect?.Value?.Name</MudText>
 <MudText>Selected values: @((_objectSelect?.SelectedValues is null) ? null : string.Join(", ", _objectSelect.SelectedValues.Select(x => x!.Name)))</MudText>
 
-
 @code {
     public static string __description__ = "Multi-Select Required Should Recognize Values";
 
