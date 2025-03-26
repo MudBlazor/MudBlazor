@@ -17,9 +17,12 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<DataGridGroupExpandedTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedTest.Fruit>>();
-
+            // until a change happens this bool tracks whether GroupExpanded is applied.
+            dataGrid.Instance._groupInitialExpanded = true;
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(7);
             await comp.InvokeAsync(() => dataGrid.Instance.CollapseAllGroups());
+            // collapsing group rows counts
+            dataGrid.Instance._groupInitialExpanded = false;
             dataGrid.Render();
             // after all groups are collapsed
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
@@ -464,28 +467,54 @@ namespace MudBlazor.UnitTests.Components
             row.Instance.GroupExpandClick();
 
             // Assert
-            row.Instance.Expanded.Should().BeFalse();
+            row.WaitForAssertion(() => row.Instance.Expanded.Should().BeFalse());
             dataGrid.Instance._groupExpansionsDict.Count().Should().Be(1);
 
             // Act
             row.Instance.GroupExpandClick();
 
             // Assert
-            row.Instance.Expanded.Should().BeTrue();
+            row.WaitForAssertion(() => row.Instance.Expanded.Should().BeTrue());
             dataGrid.Instance._groupExpansionsDict.Count().Should().Be(0);
             // Test the UI
             var expandButton = row.Find(".mud-datagrid-group-button");
             expandButton.Should().NotBeNull();
             expandButton.Click();
 
-            row.Instance.Expanded.Should().BeFalse();
+            row.WaitForAssertion(() => row.Instance.Expanded.Should().BeFalse());
             dataGrid.Instance._groupExpansionsDict.Count().Should().Be(1);
             expandButton.Click();
 
-            row.Instance.Expanded.Should().BeTrue();
+            row.WaitForAssertion(() => row.Instance.Expanded.Should().BeTrue());
             dataGrid.Instance._groupExpansionsDict.Count().Should().Be(0);
 
         }
 
+        [Test]
+        public async Task DataGrid_Grouping_TestGroupableSets()
+        {
+            // Arrange
+            var items = new List<int> { 1, 2, 3 }.GroupBy(x => (object?)null).First();
+            var component = Context.RenderComponent<DataGridGroupingMultiLevelTest>();
+
+            var dataGrid = component.FindComponent<MudDataGrid<DataGridGroupingMultiLevelTest.USState>>();
+            // by default has a groupdefinition
+            dataGrid.WaitForAssertion(() => dataGrid.Instance._groupDefinition.Should().NotBeNull());
+            // turn off grouping for the whole grid
+            dataGrid.SetParam(x => x.Groupable, false);
+            dataGrid.Render();
+            await component.InvokeAsync(() => dataGrid.Instance.ReloadServerData());
+
+            // grouping shouldn't exist
+            dataGrid.Instance._groupDefinition.Should().BeNull();
+            foreach (var column in dataGrid.Instance.RenderedColumns)
+            {
+                column.GroupingState.Value.Should().Be(false);
+            }
+
+            // no grouping rows
+            var rows = component.FindComponents<DataGridGroupRow<DataGridGroupingMultiLevelTest.USState>>();
+            rows.Count.Should().Be(0);
+        }
     }
 }

@@ -38,7 +38,7 @@ namespace MudBlazor
         private PropertyInfo[] _properties = typeof(T).GetProperties();
         private CancellationTokenSource _serverDataCancellationTokenSource;
         private IEnumerable<T> _currentRenderFilteredItemsCache = null;
-        private GroupDefinition<T> _groupDefinition;
+        internal GroupDefinition<T> _groupDefinition;
         internal Dictionary<NullableObject<object>, bool> _groupExpansionsDict = [];
         private GridData<T> _serverData = new() { TotalItems = 0, Items = Array.Empty<T>() };
         private Func<IFilterDefinition<T>> _defaultFilterDefinitionFactory = () => new FilterDefinition<T>();
