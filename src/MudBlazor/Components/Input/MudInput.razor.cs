@@ -338,6 +338,12 @@ namespace MudBlazor
                     _oldText = _internalText;
                 }
             }
+            if (firstRender)
+            {
+                // add onblur event through javascript which will trigger CallOnBlurredAsync
+                // must do in javascript or it won't detect ios Keyboard button - limitation of Blazor/React/other frameworks of the DOM
+                await ElementReference.MudAttachBlurEventWithJS(_dotNetReferenceLazy.Value);
+            }
 
             await base.OnAfterRenderAsync(firstRender);
         }
@@ -369,6 +375,7 @@ namespace MudBlazor
         {
             if (IsJSRuntimeAvailable)
             {
+                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudElementRef.removeOnBlurEvent", ElementReference, _dotNetReferenceLazy);
                 if (AutoGrow)
                 {
                     await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputAutoGrow.destroy", ElementReference);
