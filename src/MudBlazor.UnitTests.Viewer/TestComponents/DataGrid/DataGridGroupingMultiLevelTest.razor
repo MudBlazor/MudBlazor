@@ -1,8 +1,8 @@
 ﻿﻿﻿﻿﻿﻿@using System.Collections.Generic
 @using MudBlazor.Utilities
 
-<MudDataGrid @ref="@dataGrid"
-             Items=@_states
+<MudDataGrid @ref="@dataGrid" T="USState"
+             ServerData=@ServerReload
              Hover FixedHeader Groupable
              Height="500px" 
              GroupClass="@(_customizeGroupStyle ? "pa-4" : null)"
@@ -12,7 +12,9 @@
     <ToolBarContent>
         <MudText Typo="Typo.h6">US States Information<sub style="color: var(--mud-palette-warning);font-size: smaller;">2025</sub></MudText>
         <MudSpacer />
-        <MudTextField @bind-Value="_searchString" AdornmentIcon="@Icons.Material.Outlined.Search" Adornment="Adornment.End" DebounceInterval="100" />
+        <MudTextField AdornmentIcon="@Icons.Material.Outlined.Search" Adornment="Adornment.End" 
+                      @bind-Value="_searchString" @bind-Value:after="@(() => dataGrid!.ReloadServerData())" 
+                      DebounceInterval="100" Variant="Variant.Outlined" Clearable />
     </ToolBarContent>
     <Columns>
         <PropertyColumn Property="x => x.State" Title="State" Groupable="false" />
@@ -131,7 +133,6 @@
     #nullable enable
     public static string __description__ = "Multi Level Grouping within DataGrid";
     // For the Grid
-    private IEnumerable<USState> _states = [];
     private MudDataGrid<USState>? dataGrid;
     private string _searchString = string.Empty;
     // Bound Properties @bind-
@@ -154,8 +155,6 @@
 
     protected override void OnInitialized()
     {
-        _states = GetAllStates();
-
         _groupBy1 = x =>
             {
                 if (_customizeGroupBy)
@@ -169,6 +168,22 @@
                 return x.PrimaryIndustry;
             };
     }    
+
+    private async Task<GridData<USState>> ServerReload(GridState<USState> state)
+    {
+        // call API
+        var data = GetAllStates(_searchString, state.SortDefinitions);
+        // simulate some wait time
+        await Task.Delay(150);
+
+        var totalItems = data.Count();        
+        var pagedData = data.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray();
+        return new()
+            {
+                TotalItems = totalItems,
+                Items = pagedData
+            };
+    }
 
     private string GroupClassFunc(GroupDefinition<USState> item)
     {
@@ -282,11 +297,11 @@
         dataGrid?.GroupItems();
     }
 
-    public record USState(int Id, string State, int Counties, int Population, string PrimaryIndustry, string Region, string Climate, int YearInducted);
+    private record USState(int Id, string State, int Counties, int Population, string PrimaryIndustry, string Region, string Climate, int YearInducted);
 
-    public static List<USState> GetAllStates()
+    private static List<USState> GetAllStates(string searchString, ICollection<SortDefinition<USState>> sortDefinitions)
     {
-        return
+        List<USState> data =
         [
             new USState(Id: 1, State: "Alabama", Counties: 67, Population: 5024279, PrimaryIndustry: "Manufacturing", Region: "Southeast", Climate: "Humid Subtropical", YearInducted: 1819),
             new USState(Id: 2, State: "Alaska", Counties: 30, Population: 733406, PrimaryIndustry: "Oil and Gas", Region: "Pacific", Climate: "Subarctic", YearInducted: 1959),
@@ -339,5 +354,31 @@
             new USState(Id: 49, State: "Wisconsin", Counties: 72, Population: 5893718, PrimaryIndustry: "Manufacturing", Region: "Midwest", Climate: "Continental", YearInducted: 1848),
             new USState(Id: 50, State: "Wyoming", Counties: 23, Population: 576851, PrimaryIndustry: "Mining", Region: "West", Climate: "Semi-arid", YearInducted: 1890)
         ];
+
+        if (sortDefinitions != null && sortDefinitions.Any())
+        {
+            // on server or actual API would be IQueryable likely
+            IOrderedEnumerable<USState>? orderedQuery = null;
+            foreach (var sort in sortDefinitions)
+            {
+                orderedQuery = data.OrderByDirection(sort.Descending ? SortDirection.Descending : SortDirection.Ascending,
+                                                     o => GetPropertyValue(o, sort.SortBy));
+            }
+            data = orderedQuery!.ToList();
+        }
+
+        return
+            data.Where(x => x.State.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+                                 x.PrimaryIndustry.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+                                 x.YearInducted.ToString().Contains(searchString) ||
+                                 x.Climate.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+                                 x.Region.Contains(searchString, StringComparison.OrdinalIgnoreCase)                           
+                           ).ToList();
     }
+
+    private static object? GetPropertyValue<T>(T obj, string propertyName)
+    {
+        return typeof(T).GetProperty(propertyName)?.GetValue(obj);
+    }
+
 }
