@@ -116,12 +116,21 @@ public partial class HierarchyColumn<[DynamicallyAccessedMembers(DynamicallyAcce
 
     private string GetGroupIcon(CellContext<T> context)
     {
-        return context.OpenHierarchies.Contains(context.Item)
-                ? (string.IsNullOrWhiteSpace(OpenIcon)
-                    ? context.Actions.GetGroupIcon(true, RightToLeft)
-                    : OpenIcon)
-                : (string.IsNullOrWhiteSpace(ClosedIcon)
-                    ? context.Actions.GetGroupIcon(false, RightToLeft)
-                    : ClosedIcon);
+        bool isItemOpen = context.OpenHierarchies.Contains(context.Item);
+        bool isOpenIconEmpty = string.IsNullOrWhiteSpace(OpenIcon);
+        bool isClosedIconEmpty = string.IsNullOrWhiteSpace(ClosedIcon);
+
+        if (isItemOpen)
+        {
+            return isOpenIconEmpty
+                ? context.Actions.GetGroupIcon(true, RightToLeft)
+                : OpenIcon;
+        }
+        else
+        {
+            return isClosedIconEmpty
+                ? context.Actions.GetGroupIcon(false, RightToLeft)
+                : ClosedIcon;
+        }
     }
 }
