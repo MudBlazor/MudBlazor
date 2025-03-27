@@ -1283,8 +1283,6 @@ namespace MudBlazor
             }
         }
 
-        #region Methods
-
         /// <summary>
         /// Check if a specific Footer cell is displayable
         /// </summary>
@@ -2107,14 +2105,20 @@ namespace MudBlazor
             GroupItems();
         }
 
-        internal async Task ExpandAllHierarchy()
+        /// <summary>
+        /// Expands all Hierarchy columns
+        /// </summary>
+        public async Task ExpandAllHierarchy()
         {
             _openHierarchies.Clear();
             _openHierarchies.UnionWith(FilteredItems);
             await InvokeAsync(StateHasChanged);
         }
 
-        internal async Task CollapseAllHierarchy()
+        /// <summary>
+        /// Collapses all Hierarchy columns
+        /// </summary>
+        public async Task CollapseAllHierarchy()
         {
             _openHierarchies.Clear();
             await InvokeAsync(StateHasChanged);
