@@ -168,7 +168,21 @@
                     };
                 return x.PrimaryIndustry;
             };
-    }    
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+
+        if (firstRender)
+        {
+            // Check if the dataGrid is grouped and update the state accordingly (for IsGrouped)
+            if (dataGrid?.IsGrouped == true)
+            {
+                StateHasChanged();
+            }
+        }
+    }
 
     private async Task<GridData<USState>> ServerReload(GridState<USState> state)
     {

@@ -542,6 +542,10 @@ namespace MudBlazor.UnitTests.Components
             row = rows[6];
             row.Instance.Items.Should().NotBeNull();
             row.Instance.Items.Count().Should().Be(2);
+            // the next row is a sub group of Agriculture and should also have 2 items
+            row = rows[7];
+            row.Instance.Items.Should().NotBeNull();
+            row.Instance.Items.Count().Should().Be(2);
         }
     }
 }
