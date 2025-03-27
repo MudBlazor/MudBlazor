@@ -2,7 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 
@@ -20,13 +19,19 @@ public partial class HierarchyColumn<[DynamicallyAccessedMembers(DynamicallyAcce
     private readonly HashSet<CellContext<T>> _initiallyExpandedItems = [];
 
     /// <summary>
+    /// Whether the display should be right to left
+    /// </summary>
+    [CascadingParameter(Name = "RightToLeft")]
+    public bool RightToLeft { get; set; }
+
+    /// <summary>
     /// The icon to display for the close button.
     /// </summary>
     /// <remarks>
-    /// Defaults to <see cref="Icons.Material.Filled.ChevronRight"/>.
+    /// Defaults to <see cref="Icons.Material.Filled.ChevronRight"/> or <see cref="Icons.Material.Filled.ChevronLeft"/> if RightToLeft.
     /// </remarks>
     [Parameter]
-    public string ClosedIcon { get; set; } = Icons.Material.Filled.ChevronRight;
+    public string ClosedIcon { get; set; }
 
     /// <summary>
     /// The icon to display for the open button.
@@ -35,7 +40,7 @@ public partial class HierarchyColumn<[DynamicallyAccessedMembers(DynamicallyAcce
     /// Defaults to <see cref="Icons.Material.Filled.ExpandMore"/>.
     /// </remarks>
     [Parameter]
-    public string OpenIcon { get; set; } = Icons.Material.Filled.ExpandMore;
+    public string OpenIcon { get; set; }
 
     /// <summary>
     /// The size of the open and close icons.
@@ -107,5 +112,16 @@ public partial class HierarchyColumn<[DynamicallyAccessedMembers(DynamicallyAcce
                 await context.Actions.ToggleHierarchyVisibilityForItemAsync.Invoke();
             }
         }
+    }
+
+    private string GetGroupIcon(CellContext<T> context)
+    {
+        return context.OpenHierarchies.Contains(context.Item)
+                ? (string.IsNullOrWhiteSpace(OpenIcon)
+                    ? context.Actions.GetGroupIcon(true, RightToLeft)
+                    : OpenIcon)
+                : (string.IsNullOrWhiteSpace(ClosedIcon)
+                    ? context.Actions.GetGroupIcon(false, RightToLeft)
+                    : ClosedIcon);
     }
 }
