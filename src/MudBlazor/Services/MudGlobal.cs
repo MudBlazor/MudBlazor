@@ -27,12 +27,12 @@ public static class MudGlobal
         /// <summary>
         /// The checked icon to use for <see cref="MudCheckBox{T}"/>.
         /// </summary>
-        public static string CheckedIcon = Icons.Material.Filled.CheckBox;
+        public static string CheckedIcon { get; set; } = Icons.Material.Filled.CheckBox;
 
         /// <summary>
         /// The indeterminate icon to use for <see cref="MudCheckBox{T}"/>.
         /// </summary>
-        public static string IndeterminateIcon = Icons.Material.Filled.IndeterminateCheckBox;
+        public static string IndeterminateIcon { get; set; } = Icons.Material.Filled.IndeterminateCheckBox;
 
         /// <summary>
         /// The typography variant to use for the label of <see cref="MudCheckBox{T}"/>.
@@ -42,12 +42,12 @@ public static class MudGlobal
         /// <summary>
         /// The unchecked color for <see cref="MudCheckBox{T}"/>.
         /// </summary>
-        public static Color? UncheckedColor = null;
+        public static Color? UncheckedColor { get; set; } = null;
 
         /// <summary>
         /// The unchecked icon to use for <see cref="MudCheckBox{T}"/>.
         /// </summary>
-        public static string UncheckedIcon = Icons.Material.Filled.CheckBoxOutlineBlank;
+        public static string UncheckedIcon { get; set; } = Icons.Material.Filled.CheckBoxOutlineBlank;
     }
 
     public static class DialogDefaults
