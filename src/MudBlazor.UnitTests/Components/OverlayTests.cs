@@ -283,4 +283,22 @@ public class OverlayTests : BunitTest
 
         serviceMock.Verify(s => s.SubscribeAsync(It.IsAny<IPointerEventsNoneObserver>(), It.IsAny<PointerEventsNoneOptions>()), callsStart ? Times.Once() : Times.Never());
     }
+
+    [Test]
+    public void Overlay_ShouldHaveElementId_AndMatchRenderedDivId()
+    {
+        // Arrange
+        var providerComp = Context.RenderComponent<MudPopoverProvider>();
+        var comp = Context.RenderComponent<MudOverlay>(parameters => parameters
+            .Add(p => p.Visible, true)
+        );
+
+        // Act
+        var elementId = ((IPointerEventsNoneObserver)comp.Instance).ElementId;
+        var overlayDiv = providerComp.Find("div.mud-overlay");
+
+        // Assert
+        elementId.Should().NotBeNullOrWhiteSpace();
+        overlayDiv.Id.Should().Be(elementId);
+    }
 }
