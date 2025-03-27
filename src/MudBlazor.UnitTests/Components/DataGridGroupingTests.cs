@@ -493,8 +493,6 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DataGrid_Grouping_TestGroupableSets()
         {
-            // Arrange
-            var items = new List<int> { 1, 2, 3 }.GroupBy(x => (object?)null).First();
             var component = Context.RenderComponent<DataGridGroupingMultiLevelTest>();
 
             var dataGrid = component.FindComponent<MudDataGrid<DataGridGroupingMultiLevelTest.USState>>();
@@ -515,6 +513,35 @@ namespace MudBlazor.UnitTests.Components
             // no grouping rows
             var rows = component.FindComponents<DataGridGroupRow<DataGridGroupingMultiLevelTest.USState>>();
             rows.Count.Should().Be(0);
+        }
+
+        [Test]
+        public async Task DataGrid_Grouping_GroupDefinition()
+        {
+            var component = Context.RenderComponent<DataGridGroupingMultiLevelTest>();
+
+            var dataGrid = component.FindComponent<MudDataGrid<DataGridGroupingMultiLevelTest.USState>>();
+            await component.InvokeAsync(() => dataGrid.Instance.ReloadServerData());
+            // grouping is already setup make sure group definition is not null and it's first inner definition is not null
+            dataGrid.WaitForAssertion(() => dataGrid.Instance._groupDefinition.Should().NotBeNull());
+            dataGrid.Instance._groupDefinition.InnerGroup.Should().NotBeNull();
+            dataGrid.Instance._groupDefinition.Grouping.Should().BeNullOrEmpty();
+            // _groupDefintion is the definition for all the groups but isn't combined into the items until display so we need to 
+            // check the final definitions from within the DataGridGroupRow            
+
+            var rows = component.FindComponents<DataGridGroupRow<DataGridGroupingMultiLevelTest.USState>>();
+            rows.Count().Should().Be(15);
+            var row = rows[0];
+
+            // Only One Manufacturing Primary Industry
+            row.Instance.GroupDefinition.Title.Should().Be("Primary Industry");
+            row.Instance.GroupDefinition.Grouping.Key.Should().Be("Manufacturing");
+            row.Instance.Items.Should().NotBeNull();
+            row.Instance.Items.Count().Should().Be(1);
+            // Agriculture should have 2 items
+            row = rows[6];
+            row.Instance.Items.Should().NotBeNull();
+            row.Instance.Items.Count().Should().Be(2);
         }
     }
 }
