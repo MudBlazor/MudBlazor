@@ -2107,7 +2107,18 @@ namespace MudBlazor
             GroupItems();
         }
 
-        #endregion
+        internal async Task ExpandAllHierarchy()
+        {
+            _openHierarchies.Clear();
+            _openHierarchies.UnionWith(FilteredItems);
+            await InvokeAsync(StateHasChanged);
+        }
+
+        internal async Task CollapseAllHierarchy()
+        {
+            _openHierarchies.Clear();
+            await InvokeAsync(StateHasChanged);
+        }
 
         internal async Task ToggleHierarchyVisibilityAsync(T item)
         {
