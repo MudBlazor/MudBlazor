@@ -288,14 +288,14 @@ namespace MudBlazor.UnitTests.Components
         public void Check_DateTime_MaxValue()
         {
             DateTime? date = DateTime.MaxValue;
-            try
-            {
-                OpenPicker(Parameter("Date", date));
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                Assert.Fail("Should not throw exception on valid dates");
-            }
+
+            var comp = OpenPicker(Parameter("Date", date));
+
+            comp.Instance.Date.Should().Be(DateTime.MaxValue);
+
+            comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("31")).ToMarkup().Should().Contain("mud-selected");
+            comp.Find("button.mud-button-date .mud-button-label").InnerHtml.Should().Be("Fri, 31 Dec");
+            comp.Find("button.mud-button-year .mud-button-label").InnerHtml.Should().Be("9999");
         }
 
         private IRenderedComponent<SimpleMudDatePickerTest> OpenPicker(ComponentParameter parameter)
