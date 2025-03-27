@@ -373,9 +373,13 @@ namespace MudBlazor
         /// <inheritdoc />
         protected override async ValueTask DisposeAsyncCore()
         {
-            if (AutoGrow && IsJSRuntimeAvailable)
+            if (IsJSRuntimeAvailable)
             {
-                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputAutoGrow.destroy", ElementReference);
+                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudElementRef.removeOnBlurEvent", ElementReference, _dotNetReferenceLazy);
+                if (AutoGrow)
+                {
+                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputAutoGrow.destroy", ElementReference);
+                }
             }
 
             await base.DisposeAsyncCore();
@@ -388,7 +392,6 @@ namespace MudBlazor
             if (!_isFocused)
                 return;
 
-            await InvokeAsync(StateHasChanged);
             await OnBlurredAsync(new FocusEventArgs { Type = "jsBlur.OnBlur" });
         }
     }
