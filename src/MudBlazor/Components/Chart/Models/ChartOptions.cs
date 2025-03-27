@@ -143,5 +143,7 @@ namespace MudBlazor
         /// Defaults to "F2"
         /// </summary>
         public string ValueFormatString { get; set; } = "F2";
+
+        public string DefaultDataMarkerTooltipTitleFormat { get; set; } = "{{Y_VALUE}} - {{X_VALUE}}";
     }
 }

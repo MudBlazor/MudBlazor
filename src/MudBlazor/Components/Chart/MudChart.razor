@@ -1,11 +1,12 @@
-@namespace MudBlazor
+﻿@namespace MudBlazor
 @using MudBlazor.Charts
 @inherits MudCategoryChartBase
 
 <CascadingValue Value="@this" IsFixed="true">
     <CascadingValue Value="@((MudChartBase)this)" IsFixed="true">
         @ChildContent
-        <div @attributes="UserAttributes" class="@Classname" style="@Style" dir="ltr">
+
+        <div @attributes="UserAttributes" class="@Classname" style="@Style; width: @Width; height: @Height;" dir="ltr">
             @if (ChartType == ChartType.Donut)
             {
                 <Donut InputData="@InputData" @bind-SelectedIndex="@SelectedIndex" InputLabels="@InputLabels"></Donut>
@@ -16,15 +17,15 @@
             }
             @if (ChartType == ChartType.Line)
             {
-                <Line ChartSeries="@ChartSeries" @bind-SelectedIndex="@SelectedIndex" XAxisLabels="@XAxisLabels"></Line>
+                <Line ChartSeries="@ChartSeries" AxisChartOptions="AxisChartOptions" @bind-SelectedIndex="@SelectedIndex" XAxisLabels="@XAxisLabels"></Line>
             }
             @if (ChartType == ChartType.Bar)
             {
-                <Bar ChartSeries="@ChartSeries" @bind-SelectedIndex="@SelectedIndex" XAxisLabels="@XAxisLabels"></Bar>
+                <Bar ChartSeries="@ChartSeries" AxisChartOptions="AxisChartOptions" @bind-SelectedIndex="@SelectedIndex" XAxisLabels="@XAxisLabels"></Bar>
             }
             @if (ChartType == ChartType.StackedBar)
             {
-                <StackedBar ChartSeries="@ChartSeries" @bind-SelectedIndex="@SelectedIndex" XAxisLabels="@XAxisLabels"></StackedBar>
+                <StackedBar ChartSeries="@ChartSeries" AxisChartOptions="AxisChartOptions" @bind-SelectedIndex="@SelectedIndex" XAxisLabels="@XAxisLabels"></StackedBar>
             }
             @if (ChartType == ChartType.HeatMap)
             {

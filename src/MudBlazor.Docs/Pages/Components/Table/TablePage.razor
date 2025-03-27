@@ -108,6 +108,18 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Cell Class">
+                <Description>
+                    If you want to apply a particular style to all the cells in the table define a CSS class and use it in the <CodeInline>CellClass</CodeInline> parameter. 
+                    Separate multiple classes with spaces.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(TableCellClassExample)" ShowCode="false" Block="true" FullWidth="true">
+                <TableCellClassExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Fixed header and footer">
                 <Description>
                     Set <CodeInline>FixedHeader="true"</CodeInline> to make the header sticky when scrolling the table.<br />

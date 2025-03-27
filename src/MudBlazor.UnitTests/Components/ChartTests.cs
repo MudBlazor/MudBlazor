@@ -38,9 +38,9 @@ namespace MudBlazor.UnitTests.Components
             // print the generated html
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: -1");
             // now click something and see that the selected index changes:
-            comp.FindAll("circle.mud-chart-serie")[0].Click();
+            comp.FindAll("path.mud-chart-serie")[0].Click();
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: 0");
-            comp.FindAll("circle.mud-chart-serie")[3].Click();
+            comp.FindAll("path.mud-chart-serie")[3].Click();
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: 3");
         }
 
@@ -569,6 +569,32 @@ namespace MudBlazor.UnitTests.Components
 
             var heatMap = comp.FindComponent<HeatMap>();
             heatMap.Instance._legendPosition.Should().BeOneOf(Position.Top, Position.Bottom, Position.Left, Position.Right);
+        }
+
+        [TestCase(null, null)]
+        [TestCase(0, 100)]
+        [TestCase(0, .95)]
+        public void HeatMap_Override_Min_Max(double? min, double? max)
+        {
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.HeatMap)
+                .Add(p => p.ChartSeries, new List<ChartSeries>
+                {
+                    new() { Name = "Series 1", Data = [-0.5, .5, .98] }
+                })
+                .Add(p => p.ChildContent, (RenderFragment)(builder =>
+                {
+                    builder.OpenComponent<MudHeatMapCell>(0);
+                    builder.AddAttribute(1, "Row", 0);
+                    builder.AddAttribute(2, "Column", 0);
+                    builder.AddAttribute(3, "MinValue", min);
+                    builder.AddAttribute(4, "MaxValue", max);
+                    builder.CloseComponent();
+                }))
+            );
+            var heatmap = comp.FindComponent<HeatMap>();
+            heatmap.Instance._minValue.Should().Be(min.HasValue ? min : -0.5);
+            heatmap.Instance._maxValue.Should().Be(max.HasValue ? max : .98);
         }
 
     }

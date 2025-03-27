@@ -54,17 +54,9 @@ internal sealed class KeyInterceptorService : IKeyInterceptorService
             return;
         }
 
-        if (!_observerManager.IsSubscribed(observer.ElementId))
+        if (!_observerManager.TryGetOrAddSubscription(observer.ElementId, observer, out var newObserver))
         {
-            var isConnected = await _keyInterceptorInterop.Connect(_dotNetReferenceLazy.Value, observer.ElementId, options);
-            if (isConnected)
-            {
-                _observerManager.Subscribe(observer.ElementId, observer);
-            }
-        }
-        else
-        {
-            _observerManager.Subscribe(observer.ElementId, observer);
+            _ = await _keyInterceptorInterop.Connect(_dotNetReferenceLazy.Value, newObserver.ElementId, options);
         }
     }
 
