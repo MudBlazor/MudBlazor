@@ -1585,11 +1585,11 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.Immediate, true)
                 .Add(p => p.Value, 5));
 
-            comp.Find("input").Input("0-");
+            comp.Find("input").Input("");
+            comp.Instance.Value.Should().Be(0);
 
+            comp.Find("input").Input("0-");
             comp.Instance.Text.Should().Be("-");
-            comp.Instance.Text.Should().NotBe("0");
-            comp.Instance.Value.Should().Be(5);
         }
 
         [TestCase(Adornment.Start, false, false)]

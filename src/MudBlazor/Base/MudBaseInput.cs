@@ -435,20 +435,23 @@ namespace MudBlazor
 
         protected virtual async Task SetTextAsync(string? text, bool updateValue = true)
         {
-            Text = text;
-            _validated = false;
-
-            if (!string.IsNullOrEmpty(Text))
+            if (Text != text)
             {
-                Touched = true;
-            }
+                Text = text;
+                _validated = false;
 
-            if (updateValue)
-            {
-                await UpdateValuePropertyAsync(false);
-            }
+                if (!string.IsNullOrEmpty(Text))
+                {
+                    Touched = true;
+                }
 
-            await TextChanged.InvokeAsync(Text);
+                if (updateValue)
+                {
+                    await UpdateValuePropertyAsync(false);
+                }
+
+                await TextChanged.InvokeAsync(Text);
+            }
         }
 
         /// <summary>
