@@ -4,9 +4,11 @@
 <MudCheckBox @bind-Value="Label_CheckBox2" Label="Primary" Color="Color.Primary"></MudCheckBox>
 <MudCheckBox @bind-Value="Label_CheckBox3" Label="Secondary" LabelPlacement="Placement.Start" Color="Color.Secondary"></MudCheckBox>
 <MudCheckBox @bind-Value="Label_CheckBox1" Disabled="true" Label="Disabled" LabelPlacement="Placement.Start"></MudCheckBox>
+<MudCheckBox @bind-Value="Label_CheckBox4" Label="Small" Typo="Typo.subtitle2"></MudCheckBox>
 
 @code {
     public bool Label_CheckBox1 { get; set; } = true;
     public bool Label_CheckBox2 { get; set; } = false;
     public bool Label_CheckBox3 { get; set; } = false;
+    public bool Label_CheckBox4 { get; set; } = false;
 }

@@ -51,7 +51,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Radio.Appearance)]
-        public Color? UncheckedColor { get; set; } = null;
+        public Color? UncheckedColor { get; set; } = MudGlobal.CheckBoxDefaults.UncheckedColor;
 
         /// <summary>
         /// Allows this checkbox to be controlled via the keyboard.
@@ -81,7 +81,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public string CheckedIcon { get; set; } = Icons.Material.Filled.CheckBox;
+        public string CheckedIcon { get; set; } = MudGlobal.CheckBoxDefaults.CheckedIcon;
 
         /// <summary>
         /// The icon to display for an unchecked state.
@@ -91,7 +91,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public string UncheckedIcon { get; set; } = Icons.Material.Filled.CheckBoxOutlineBlank;
+        public string UncheckedIcon { get; set; } = MudGlobal.CheckBoxDefaults.UncheckedIcon;
 
         /// <summary>
         /// The icon to display for an indeterminate state.
@@ -101,7 +101,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public string IndeterminateIcon { get; set; } = Icons.Material.Filled.IndeterminateCheckBox;
+        public string IndeterminateIcon { get; set; } = MudGlobal.CheckBoxDefaults.IndeterminateIcon;
 
         /// <summary>
         /// Allows the checkbox to have an indeterminate state.
@@ -112,6 +112,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]
         public bool TriState { get; set; }
+
+        /// <summary>
+        /// Typography for the label text.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public Typo Typo { get; set; } = MudGlobal.CheckBoxDefaults.Typo;
 
         private string GetIcon()
         {

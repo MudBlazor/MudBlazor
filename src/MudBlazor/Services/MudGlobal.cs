@@ -22,6 +22,34 @@ public static class MudGlobal
         public static Variant Variant { get; set; } = Variant.Text;
     }
 
+    public static class CheckBoxDefaults
+    {
+        /// <summary>
+        /// The checked icon to use for <see cref="MudCheckBox{T}"/>.
+        /// </summary>
+        public static string CheckedIcon = Icons.Material.Filled.CheckBox;
+
+        /// <summary>
+        /// The indeterminate icon to use for <see cref="MudCheckBox{T}"/>.
+        /// </summary>
+        public static string IndeterminateIcon = Icons.Material.Filled.IndeterminateCheckBox;
+
+        /// <summary>
+        /// The typography variant to use for the label of <see cref="MudCheckBox{T}"/>.
+        /// </summary>
+        public static Typo Typo { get; set; } = Typo.body1;
+
+        /// <summary>
+        /// The unchecked color for <see cref="MudCheckBox{T}"/>.
+        /// </summary>
+        public static Color? UncheckedColor = null;
+
+        /// <summary>
+        /// The unchecked icon to use for <see cref="MudCheckBox{T}"/>.
+        /// </summary>
+        public static string UncheckedIcon = Icons.Material.Filled.CheckBoxOutlineBlank;
+    }
+
     public static class DialogDefaults
     {
         /// <summary>

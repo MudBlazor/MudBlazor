@@ -342,6 +342,28 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("label.mud-checkbox")[2].ClassList.Should().Contain("mud-input-content-placement-start"); // 3rd checkbox: Placement.Start
         }
 
+
+        [Test]
+        [TestCase(Typo.body1)]
+        [TestCase(Typo.body2)]
+        [TestCase(Typo.caption)]
+        [TestCase(Typo.button)]
+        [TestCase(Typo.h1)]
+        [TestCase(Typo.h2)]
+        [TestCase(Typo.h3)]
+        [TestCase(Typo.h4)]
+        [TestCase(Typo.h5)]
+        [TestCase(Typo.h6)]
+        [TestCase(Typo.subtitle1)]
+        [TestCase(Typo.subtitle2)]
+        public void CheckBoxLabelTypoTest(Typo typo)
+        {
+            var comp = Context.RenderComponent<MudCheckBox<bool>>(x => x.Add(c => c.Label, "LabelText").Add(c => c.Typo, typo));
+
+            var expectedTypoClass = $"mud-typography-{typo}";
+            comp.Find("label").GetElementsByClassName(expectedTypoClass).Should().ContainSingle();
+        }
+
         [Test]
         public void CheckBoxLabelTest()
         {
