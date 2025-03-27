@@ -10,7 +10,7 @@ namespace MudBlazor;
 /// Represents a service that enables C# components to receive pointer event notifications for HTML elements
 /// with <c>pointer-events: none</c>, which normally do not receive any pointer interactions.
 /// </summary>
-public interface IPointerEventsNoneService : IAsyncDisposable
+internal interface IPointerEventsNoneService : IAsyncDisposable
 {
     /// <summary>
     /// Subscribes an observer to pointer events for a specified element.

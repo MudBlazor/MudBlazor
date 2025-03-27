@@ -284,7 +284,9 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
     private async Task StartModelessAutoCloseTrackingAsync()
     {
         if (IsJSRuntimeAvailable)
+        {
             await PointerEventsNoneService.SubscribeAsync(this, new() { SubscribeDown = true });
+        }
     }
 
     /// <summary>
@@ -293,13 +295,12 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
     private async Task StopModelessAutoCloseTrackingAsync()
     {
         if (IsJSRuntimeAvailable)
+        {
             await PointerEventsNoneService.UnsubscribeAsync(this);
+        }
     }
 
-    async Task IPointerDownObserver.NotifyOnPointerDownAsync(EventArgs args)
-    {
-        await CloseOverlayAsync();
-    }
+    Task IPointerDownObserver.NotifyOnPointerDownAsync(EventArgs args) => CloseOverlayAsync();
 
     /// <inheritdoc />
     public async ValueTask DisposeAsync()

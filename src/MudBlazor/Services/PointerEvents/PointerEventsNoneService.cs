@@ -55,14 +55,9 @@ internal sealed class PointerEventsNoneService : IPointerEventsNoneService
     {
         ArgumentNullException.ThrowIfNull(observer);
 
-        if (_observerManager.IsSubscribed(observer.ElementId))
+        if (!_observerManager.TryGetOrAddSubscription(observer.ElementId, observer, out var newObserver))
         {
-            _observerManager.Subscribe(observer.ElementId, observer);
-        }
-        else
-        {
-            await _pointerEventsNoneInterop.ListenForPointerEventsAsync(_dotNetObjectReference.Value, observer.ElementId, options, _cancellationToken);
-            _observerManager.Subscribe(observer.ElementId, observer);
+            await _pointerEventsNoneInterop.ListenForPointerEventsAsync(_dotNetObjectReference.Value, newObserver.ElementId, options, _cancellationToken);
         }
     }
 
@@ -94,9 +89,6 @@ internal sealed class PointerEventsNoneService : IPointerEventsNoneService
         {
             return;
         }
-
-        if (!_observerManager.IsSubscribed(elementId))
-            return;
 
         _observerManager.Unsubscribe(elementId);
 
@@ -152,7 +144,9 @@ internal sealed class PointerEventsNoneService : IPointerEventsNoneService
             _observerManager.Clear();
 
             if (_dotNetObjectReference.IsValueCreated)
+            {
                 _dotNetObjectReference.Value.Dispose();
+            }
 
             await _pointerEventsNoneInterop.DisposeAsync(CancellationToken.None);
 

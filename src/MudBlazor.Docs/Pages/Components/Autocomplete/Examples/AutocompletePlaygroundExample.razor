@@ -41,16 +41,16 @@
 </MudStack>
 
 @code {
-    string _value;
-    Margin _margin;
-    bool _dense;
-    bool _disabled;
-    bool _readonly;
-    bool _placeholder;
-    bool _helperText;
-    bool _helperTextOnFocus;
-    bool _clearable;
-    bool _modal = true;
+    private string _value;
+    private Margin _margin;
+    private bool _dense;
+    private bool _disabled;
+    private bool _readonly;
+    private bool _placeholder;
+    private bool _helperText;
+    private bool _helperTextOnFocus;
+    private bool _clearable;
+    private bool _modal = true;
 
     private string[] _states =
     {
@@ -73,7 +73,9 @@
 
         // if text is null or empty, show complete list
         if (string.IsNullOrEmpty(value))
+        {
             return _states;
+        }
 
         return _states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
     }
