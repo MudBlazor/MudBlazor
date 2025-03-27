@@ -116,9 +116,9 @@ public partial class HierarchyColumn<[DynamicallyAccessedMembers(DynamicallyAcce
 
     private string GetGroupIcon(CellContext<T> context)
     {
-        bool isItemOpen = context.OpenHierarchies.Contains(context.Item);
-        bool isOpenIconEmpty = string.IsNullOrWhiteSpace(OpenIcon);
-        bool isClosedIconEmpty = string.IsNullOrWhiteSpace(ClosedIcon);
+        var isItemOpen = context.OpenHierarchies.Contains(context.Item);
+        var isOpenIconEmpty = string.IsNullOrEmpty(OpenIcon);
+        var isClosedIconEmpty = string.IsNullOrEmpty(ClosedIcon);
 
         if (isItemOpen)
         {
