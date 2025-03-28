@@ -5,33 +5,34 @@
         @foreach (var variant in Enum.GetValues(typeof(Variant)).Cast<Variant>())
         {
             <MudStack Row Spacing="4" AlignItems="AlignItems.End">
-                <MudComboBox @bind-Text="@_value"
-                             Items="@_stateList"
-                             SearchFunc="Search"
+                <MudDropDown @bind-Text="@_value"
                              FullWidth
                              Variant="variant"
-                             Color="@(_colorComboBox?.Value ?? Color.Default)"
                              Label="@variant.ToString()"
                              Filterable="_filterable"
                              MultiSelection="_multiSelection"
                              @bind-OpenItemList="_openStates[variant]"
                              @bind-SelectedItems="_selectedItems"
                              OnAddItemClick="@(_addItem ? EventCallback.Factory.Create<MouseEventArgs>(this, (MouseEventArgs e) => AddItem(e)) : default)"
-                             AutoClose="_autoClose"
                              Margin="@(_dense ? Margin.Dense : Margin.Normal)"
                              Disabled="_disabled"
                              ReadOnly="_readonly"
                              Placeholder="@(_placeholder ? "Placeholder" : null)"
                              HelperText="@(_helperText ? "Helper Text" : null)"
-                             Clearable="_clearable" />
+                             Clearable="_clearable">
+                    <DropDownContent>
+                        <MudPaper>
+                            Potential list of dropdown items
+                        </MudPaper>
+                    </DropDownContent>         
+                </MudDropDown>
                 <MudSwitch @bind-Value="_openStates[variant]" Label="Open" Color="Color.Primary" />
             </MudStack>
         }
             <MudStack Row Spacing="4" AlignItems="AlignItems.End">
                 <MudAutocomplete @bind-Value="@_value"
-                                 OpenChanged="OnOpenChanged"
                                  SearchFunc="Search"
-                                 FullWidth
+                                 FullWidth OpenChanged="OnOpenChanged"
                                  Variant="Variant.Filled"
                                  Label="MudAutoComplete"
                                  Dense="_dense"
@@ -42,27 +43,6 @@
                                  Clearable="_clearable" />
                 <MudSwitch @bind-Value="_autoCompleteOpen" ReadOnly Label="Open" Color="Color.Primary" />
             </MudStack>
-
-        <MudComboBox @bind-Text="@_value"
-                     @ref="_comboBox"
-                     @bind-SelectedItems="_selectedItems"
-                     Color="@(_colorComboBox?.Value ?? Color.Default)"
-                     Items="@_stateList"
-                     SearchFunc="Search"
-                     FullWidth
-                     Variant="Variant.Filled"
-                     Label="MudComboBoxWithRef"
-                     Filterable="_filterable"
-                     MultiSelection="_multiSelection"
-                     AutoClose="_autoClose"
-                     OnAddItemClick="@(_addItem ? EventCallback.Factory.Create<MouseEventArgs>(this, (MouseEventArgs e) => AddItem(e)) : default)"
-                     Margin="_dense ? Margin.Dense : Margin.Normal"
-                     Disabled="_disabled"
-                     ReadOnly="_readonly"
-                     Placeholder="@(_placeholder ? "Placeholder" : null)"
-                     HelperText="@(_helperText ? "Helper Text" : null)"
-                     Clearable="_clearable" />
-        <MudText>Value: @_comboBox?.Value</MudText>
     </MudStack>
 
     <MudStack>
@@ -107,7 +87,6 @@
     private readonly Dictionary<Variant, bool> _openStates = new();
     private List<string> _stateList = new();
     private HashSet<string> _selectedItems = new();
-    private MudComboBox<string>? _comboBox;
     private MudComboBox<MudBlazor.Color>? _colorComboBox;
 
     protected override void OnInitialized()

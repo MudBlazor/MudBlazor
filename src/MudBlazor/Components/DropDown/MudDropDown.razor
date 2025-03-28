@@ -1,4 +1,5 @@
 ﻿@namespace MudBlazor
+@using System.Globalization
 @inherits MudFormComponent<T, string>
 @typeparam T
 
@@ -19,7 +20,8 @@
                   Adornment="@Adornment" AdornmentAriaLabel="@AdornmentAriaLabel" OnAdornmentClick="@AdornmentClickHandlerAsync"
                   AdornmentIcon="@GetDropDownIcon" AdornmentColor="@AdornmentColor" AdornmentText="@AdornmentText"
                   @onmousedown="@OnInputClickedAsync">
-            <MudStack Row Wrap="Wrap.Wrap" Class="@($"mud-dropdown-input {(Variant == Variant.Filled ? "align-self-end" : "")}")" Spacing="2" AlignItems="AlignItems.Center">
+            <MudStack Row Wrap="Wrap.Wrap" Class="@($"mud-dropdown-input {(Variant == Variant.Filled ? "align-self-end" : "")}")" 
+            Spacing="2" AlignItems="AlignItems.Center" tabindex="-1">
                 @* TODO: @onblur="@OnBlurredAsync" onblur is set in javascript  *@
                 <input @ref="@_elementReference" @key="_elementKey" id="@InputElementId"
                 @attributes="UserAttributes" autocomplete="@GetAutocomplete()"
@@ -46,7 +48,7 @@
                     <MudIconButton Class="@ClearButtonClassname"
                     Color="@Color.Inherit"
                     Icon="@ClearIcon"
-                    Size="@Size.Small"
+                    Size="@IconSize"
                     OnClick="@ClearButtonClickHandlerAsync"
                     aria-label="@Localizer[Resources.LanguageResource.MudInput_Clear]"
                     tabindex="-1" @onmousedown:stopPropagation />
@@ -56,7 +58,7 @@
                     <MudIconButton Class="@ClearButtonClassname"
                     Color="@Color.Success"
                     Icon="@AddIcon"
-                    Size="@Size.Small"
+                    Size="@IconSize"
                     OnClick="@AddButtonClickHandlerAsync"
                     aria-label="@Localizer[Resources.LanguageResource.MudInput_Add]"
                     tabindex="-1" @onmousedown:stopPropagation />
@@ -72,21 +74,18 @@
             }
         </MudField>
         <!-- Popover for the DropDownContent Must be inside MudField or you can't click anywhere in MudField when it's open -->
-        @if (_openItemListState.Value)
-        {
-            <MudPopover Open="true" Class="@PopoverClass" MaxHeight="@MaxHeight"
-                        AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin"
-                        Fixed="DropdownSettings.Fixed" OverflowBehavior="DropdownSettings.OverflowBehavior"
-                        RelativeWidth="@RelativeWidth">
-                @DropDownContent(this)
-            </MudPopover>
-        }
+        <MudPopover Open="@_openMenuState.Value" Class="@PopoverClass" MaxHeight="@MaxHeight"
+                    AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin"
+                    Fixed="DropdownSettings.Fixed" OverflowBehavior="DropdownSettings.OverflowBehavior"
+                    RelativeWidth="@RelativeWidth">
+            @DropDownContent(this)
+        </MudPopover>
     </div>
 </CascadingValue>
 
 <!-- Overlay for the Popover, optional -->
-@if (Overlay && _openItemListState.Value)
+@if (Overlay)
 {
-    <MudOverlay Visible="@true" AutoClose="true" OnClick="@(async () => await CloseListAsync())"></MudOverlay>
+    <MudOverlay Visible="@_openMenuState.Value" AutoClose="true" OnClick="@(async () => await CloseMenuAsync())"></MudOverlay>
 }
 

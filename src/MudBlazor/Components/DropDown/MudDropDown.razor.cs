@@ -8,9 +8,9 @@ using MudBlazor.Components.DropDown;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
-#nullable enable
 namespace MudBlazor
 {
+#nullable enable
     /// <summary>
     /// Represents a base class for designing drop down components.
     /// </summary>
@@ -18,7 +18,7 @@ namespace MudBlazor
     public partial class MudDropDown<T> : MudFormComponent<T, string>
     {
         private readonly ParameterState<HashSet<T>> _selectedItemsState;
-        private readonly ParameterState<bool> _openItemListState;
+        private readonly ParameterState<bool> _openMenuState;
         private readonly ParameterState<bool> _isLoadingState;
         private readonly ParameterState<string?> _textState;
         private readonly ParameterState<string?> _inputIdState;
@@ -26,8 +26,9 @@ namespace MudBlazor
         private ElementReference _elementReference = default!;
         private int _elementKey = 0;
         private string? _userAttributesId = Identifier.Create("mudinput");
-        private readonly string _componentId = Identifier.Create("mudinput");        
-        
+        private readonly string _componentId = Identifier.Create("mudinput");
+        private bool _opening;
+
         public MudDropDown() : base(new DefaultConverter<T>())
         {
             // default values, can be overridden
@@ -38,9 +39,10 @@ namespace MudBlazor
             _selectedItemsState = registerScope.RegisterParameter<HashSet<T>>(nameof(SelectedItems))
                 .WithParameter(() => SelectedItems)
                 .WithEventCallback(() => SelectedItemsChanged);
-            _openItemListState = registerScope.RegisterParameter<bool>(nameof(OpenItemList))
-                .WithParameter(() => OpenItemList)
-                .WithEventCallback(() => OpenItemListChanged);
+            _openMenuState = registerScope.RegisterParameter<bool>(nameof(OpenMenu))
+                .WithParameter(() => OpenMenu)
+                .WithEventCallback(() => OpenMenuChanged)
+                .WithChangeHandler(OnOpenMenuChanged);
             _isLoadingState = registerScope.RegisterParameter<bool>(nameof(IsLoading))
                 .WithParameter(() => IsLoading)
                 .WithEventCallback(() => IsLoadingChanged);
@@ -50,14 +52,14 @@ namespace MudBlazor
                 .WithChangeHandler(OnTextChangedHandler);
             _inputIdState = registerScope.RegisterParameter<string?>(nameof(InputId))
                 .WithParameter(() => InputId)
-                .WithChangeHandler(UpdateInputIdStateAsync);            
+                .WithChangeHandler(UpdateInputIdStateAsync);
         }
 
         [Inject]
-        private InternalMudLocalizer Localizer { get; set; } = null!;        
-        
+        private InternalMudLocalizer Localizer { get; set; } = null!;
+
         protected string Classname => new CssBuilder()
-            .AddClass($"mud-theme-{Color.ToDescriptionString()}")
+            //.AddClass($"mud-theme-{Color.ToDescriptionString()}")
             .AddClass("mud-combobox--with-progress", ShowProgressIndicator && _isLoadingState.Value)
             .AddClass("mud-autocomplete--with-progress", ShowProgressIndicator && _isLoadingState.Value)
             .AddClass(Class)
@@ -70,24 +72,24 @@ namespace MudBlazor
 
         protected string InputClassname => new CssBuilder(MudInputCssHelper.GetInputClassname(this))
             .AddClass(InputClass)
-            .Build();        
-        
+            .Build();
+
         protected string ClearButtonClassname =>
             new CssBuilder("mud-input-clear-button")
-                .Build();        
-        
+                .Build();
+
         protected string CircularProgressClassname =>
             new CssBuilder("progress-indicator-circular")
                 .AddClass("progress-indicator-circular--with-adornment", Adornment == Adornment.End)
-                .Build();        
-        
+                .Build();
+
         protected string? InputElementId => _inputIdState.Value;
-        
+
         protected bool GetDisabledState() => Disabled || ParentDisabled;
 
         protected bool GetReadOnlyState() => ReadOnly || ParentReadOnly;
 
-        protected string GetDropDownIcon => _openItemListState.Value ? CloseIcon : OpenIcon;
+        protected string GetDropDownIcon => _openMenuState.Value ? CloseIcon : OpenIcon;
 
         protected string? GetAriaDescribedByString()
         {
@@ -97,8 +99,8 @@ namespace MudBlazor
             return errorId is not null && helperId is not null
                 ? $"{errorId} {helperId}"
                 : errorId ?? helperId ?? null;
-        }        
-        
+        }
+
         protected string? GetHelperId()
         {
             if (HelperId is not null)
@@ -115,8 +117,8 @@ namespace MudBlazor
             return HelperText is not null
                 ? $"{_inputIdState.Value}-helper-text"
                 : null;
-        }        
-        
+        }
+
         /// <summary>
         /// The regular expression used to validate the <see cref="Text"/> property.
         /// </summary>
@@ -125,8 +127,8 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]
-        public virtual string? Pattern { get; set; }        
-        
+        public virtual string? Pattern { get; set; }
+
         /// <summary>
         /// The text displayed in the input.
         /// </summary>
@@ -148,8 +150,8 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public string? InputId { get; set; }        
-        
+        public string? InputId { get; set; }
+
         /// <summary>
         /// The class or classes applied to the input element.
         /// </summary>
@@ -178,8 +180,8 @@ namespace MudBlazor
         /// Defaults to <see cref="Origin.TopLeft"/>.
         /// </remarks>
         [Parameter]
-        public Origin TransformOrigin { get; set; } = Origin.TopLeft;        
-        
+        public Origin TransformOrigin { get; set; } = Origin.TopLeft;
+
         /// <summary>
         /// Uses a <see cref="MudOverlay"/> when the dropdown is open. 
         /// </summary>
@@ -339,6 +341,16 @@ namespace MudBlazor
         public bool HelperTextOnFocus { get; set; }
 
         /// <summary>
+        /// Opens the list when focus is received on the input element; otherwise only opens on click.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c> so the list opens anytime it receives focus regardless of how.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public bool OpenOnFocus { get; set; } = true;
+
+        /// <summary>
         /// The icon displayed for the adornment.
         /// </summary>
         /// <remarks>
@@ -409,14 +421,14 @@ namespace MudBlazor
         public string? Label { get; set; }
 
         /// <summary>
-        /// The size of the icon.
+        /// Controls the size of the icons for adornment, clear, and add buttons.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Size.Medium"/>.
+        /// Defaults to <see cref="Size.Small"/>. Larger Icon sizes will cause the Ripple effect to expand the size.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public Size IconSize { get; set; } = Size.Medium;
+        public Size IconSize { get; set; } = Size.Small;
 
         /// <summary>
         /// Occurs when the adornment text or icon has been clicked.
@@ -428,7 +440,7 @@ namespace MudBlazor
         /// Occurs when the add button is clicked
         /// </summary>
         [Parameter]
-        public EventCallback<MouseEventArgs> OnAddButtonClick { get; set; }
+        public EventCallback<MouseEventArgs> OnAddItemClick { get; set; }
 
         /// <summary>
         /// The appearance variation to use.
@@ -479,10 +491,10 @@ namespace MudBlazor
         public bool ShrinkLabel { get; set; } = MudGlobal.InputDefaults.ShrinkLabel;
 
         [Parameter]
-        public bool OpenItemList { get; set; }
+        public bool OpenMenu { get; set; }
 
         [Parameter]
-        public EventCallback<bool> OpenItemListChanged { get; set; }
+        public EventCallback<bool> OpenMenuChanged { get; set; }
 
         /// <summary>
         /// Whether the dropdown becomes filterable by text input. 
@@ -501,7 +513,8 @@ namespace MudBlazor
         public RenderFragment<DropDownItem<T>>? SelectedItemsTemplate { get; set; }
 
         /// <summary>
-        /// The content in the Popover, can be anything. Add items of type <typeparamref name="T"/> to the context.<see cref="SelectedItems"/>
+        /// The content in the Popover, can be anything. Add items of type <typeparamref name="T"/> to the context.<see cref="SelectedItems"/> and
+        /// access public actions like context.<see cref="OpenMenuAsync"/> and context.<see cref="CloseMenuAsync"/> or context.<see cref="DropDownToggleItem(T?, bool)"/>
         /// </summary>
         [Parameter, EditorRequired]
         public RenderFragment<MudDropDown<T>> DropDownContent { get; set; } = default!;
@@ -513,8 +526,8 @@ namespace MudBlazor
         /// Defaults to <c>false</c>.  The progress indicator uses the color specified in the <see cref="ProgressIndicatorColor"/> property.
         /// </remarks>
         [Parameter]
-        public bool ShowProgressIndicator { get; set; }        
-        
+        public bool ShowProgressIndicator { get; set; }
+
         /// <summary>
         /// The color of the progress indicator.
         /// </summary>
@@ -555,8 +568,8 @@ namespace MudBlazor
         /// Defaults to <c>300</c>.
         /// </remarks>
         [Parameter]
-        public int MaxHeight { get; set; } = 300;        
-        
+        public int MaxHeight { get; set; } = 300;
+
         /// <summary>
         /// The minimum number of characters typed to initiate a search. 
         /// <para>The clear and add buttons use this as <c>MinCharacters + 1</c> to display.</para>
@@ -565,8 +578,8 @@ namespace MudBlazor
         /// Defaults to <c>0</c>.
         /// </remarks>
         [Parameter]
-        public int MinCharacters { get; set; }        
-        
+        public int MinCharacters { get; set; }
+
         /// <summary>
         /// The currently selected ComboBox items
         /// </summary>
@@ -580,31 +593,31 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public EventCallback<HashSet<T>> SelectedItemsChanged { get; set; }
-        
+
         [Parameter]
         public EventCallback<KeyboardEventArgs> OnInputKeyDown { get; set; }
-        
+
         [Parameter]
         public EventCallback<KeyboardEventArgs> OnInputKeyUp { get; set; }
-        
+
         private bool ShowClearButton => !GetDisabledState() && !GetReadOnlyState() && Clearable && Text?.Length > MinCharacters;
 
-        private bool ShowAddButton => !GetDisabledState() && !GetReadOnlyState() && Text?.Length > MinCharacters && OnAddButtonClick.HasDelegate;        
-        
+        private bool ShowAddButton => !GetDisabledState() && !GetReadOnlyState() && Text?.Length > MinCharacters && OnAddItemClick.HasDelegate;
+
         private bool ShouldLabelShrink =>
             SelectedItemsCount == 0 &&              // no SelectedItems to Display
             string.IsNullOrEmpty(Text) &&           // no text in the input
             Adornment != Adornment.Start &&         // no adornment set to Adornment.Start
             string.IsNullOrEmpty(Placeholder) &&    // no Placeholder Text
                                                     //!_isFocused &&                          // element isn't focused
-            !_openItemListState.Value &&            // popover is closed
+            !_openMenuState.Value &&                // popover is closed
             !ShrinkLabel;                           // is allowed to shrink into input area
 
         /// <summary>
         /// Returns a value for the <c>autocomplete</c> html attribute, either supplied by default or the one specified in the attribute overrides.
         /// </summary>
-        protected object? GetAutocomplete() => UserAttributes.GetValueOrDefault("autocomplete", "off");        
-        
+        protected object? GetAutocomplete() => UserAttributes.GetValueOrDefault("autocomplete", "off");
+
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
@@ -620,98 +633,102 @@ namespace MudBlazor
             {
                 await UpdateInputIdStateAsync();
             }
-        }        
-        
+        }
+
         // fires for every keystroke change
         protected Task OnInput(ChangeEventArgs? args)
         {
             return SetTextAsync(args?.Value as string);
-        }        
-        
+        }
+
         private Task ClearButtonClickHandlerAsync()
         {
-            return Task.CompletedTask;
-            //return SetTextAsync(default, false);
+            return SetTextAsync(default);
+        }
+
+        internal async Task AddButtonClickHandlerAsync()
+        {
+            if (OnAddItemClick.HasDelegate)
+            {
+                await OnAdornmentClick.InvokeAsync();
+            }
+        }
+
+        public async Task OpenMenuAsync()
+        {
+            if (GetReadOnlyState() || GetDisabledState())
+                return;
+
+            if (MinCharacters > 0 && (string.IsNullOrWhiteSpace(Text) || Text.Length < MinCharacters))
+            {
+                return;
+            }
+
+            _opening = true;
+            await _elementReference.FocusAsync();
+            // TODO: Perform Search Action
+
+            // only set the value if it's not already set
+            if (!_openMenuState.Value)
+            {
+                await _openMenuState.SetValueAsync(true);
+            }
+
+            _opening = false;
+        }
+
+        public async Task CloseMenuAsync()
+        {
+            await _openMenuState.SetValueAsync(false);
+        }
+
+        public async Task ToggleMenuAsync()
+        {
+            if (_openMenuState.Value)
+            {
+                await CloseMenuAsync();
+            }
+            else
+            {
+                await OpenMenuAsync();
+            }
         }
 
         internal async Task AdornmentClickHandlerAsync()
         {
             if (OnAdornmentClick.HasDelegate)
             {
-
                 await OnAdornmentClick.InvokeAsync();
             }
             else
             {
-                await ToggleOpenAsync();
+                await ToggleMenuAsync();
             }
         }
 
-        internal async Task AddButtonClickHandlerAsync()
+        private Task OnInputClickedAsync() => OnInputActivationAsync(true);
+
+        private Task OnInputFocusedAsync() => OnInputActivationAsync(OpenOnFocus);
+
+        private async Task OnInputActivationAsync(bool openMenu)
         {
-            if (OnAddButtonClick.HasDelegate)
+            if (GetDisabledState() || GetReadOnlyState())
             {
-                await OnAdornmentClick.InvokeAsync();
-            }
-        }
-
-        private async Task OpenListAsync()
-        {
-            // do not make public, access to two way bind activates accordingly
-            // make sure it can be opened
-            if (GetReadOnlyState() || GetDisabledState())
                 return;
+            }
 
-            // only set the value if it's not already set
-            if (!_openItemListState.Value)
+            if (openMenu && !_openMenuState.Value && !_opening)
             {
-                await _openItemListState.SetValueAsync(true);
+                await OpenMenuAsync();
             }
         }
 
-        private async Task CloseListAsync()
-        {
-            await _openItemListState.SetValueAsync(false);
-            StateHasChanged();
-        }
-
-        private async Task ToggleOpenAsync()
-        {
-            if (_openItemListState.Value)
-            {
-                await CloseListAsync();
-            }
-            else
-            {
-                await OpenListAsync();
-            }
-        }
-
-        private async Task OnInputClickedAsync()
-        {
-            // TODO: See latest AutoComplete fix by DC
-            // this fires at nearly the same time as OnInputFocusedAsync, so we need to delay when both fire together
-            // to prevent running the search method twice
-            //await Task.Delay(5);
-            //if (_activatorEvents)
-            //{
-            //    _activatorEvents = false;
-            //    return;
-            //}
-            //await InputActivationAsync(true);
-            await Task.CompletedTask;
-        }
-
-        private async Task OnInputFocusedAsync()
-        {
-            //if (OpenOnFocus)
-            //{
-            //    _activatorEvents = true;
-            //}
-            //await InputActivationAsync(OpenOnFocus);
-            await Task.CompletedTask;
-        }
-
+        /// <summary>
+        /// Toggles the item in the SelectedItems HashSet&lt;<typeparamref name="T"/>&gt;
+        /// </summary>
+        /// <param name="item">The item to be toggled, if exists it will be removed, otherwise it will be added</param>
+        /// <param name="toggleMenu">Whether the menu should be toggled after the item is toggled</param>
+        /// <returns></returns>
         public async Task DropDownToggleItem(T? item, bool toggleMenu = false)
         {
             if (item == null)
@@ -739,7 +756,7 @@ namespace MudBlazor
             // Toggle Menu if it's supposed to (they update StateHasChanged) if not call StateHasChanged manually
             if (toggleMenu)
             {
-                await ToggleOpenAsync();
+                await ToggleMenuAsync();
             }
             else
                 StateHasChanged();
@@ -762,7 +779,15 @@ namespace MudBlazor
         {
             await Task.CompletedTask;
         }
-        
+
+        private async Task OnOpenMenuChanged(ParameterChangedEventArgs<bool> args)
+        {
+            if (!args.LastValue)
+                await OpenMenuAsync();
+            else
+                await CloseMenuAsync();
+        }
+
         private async Task UpdateInputIdStateAsync()
         {
             if (InputId is not null)
@@ -777,6 +802,6 @@ namespace MudBlazor
             }
 
             await _inputIdState.SetValueAsync(_componentId);
-        }        
+        }
     }
 }
