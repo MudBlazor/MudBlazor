@@ -642,9 +642,7 @@ class MudPopover {
             const resizeObserver = new ResizeObserver(entries => {
                 for (let entry of entries) {
                     const target = entry.target;
-
-                    for (var i = 0; i < target.childNodes.length; i++) {
-                        const childNode = target.childNodes[i];
+                    for (const childNode of target.childNodes) {
                         if (childNode.id && childNode.id.startsWith('popover-')) {
                             window.mudpopoverHelper.placePopover(childNode);
                         }
@@ -656,8 +654,9 @@ class MudPopover {
 
             const contentNodeObserver = new ResizeObserver(entries => {
                 for (let entry of entries) {
-                    var target = entry.target;
-                    window.mudpopoverHelper.placePopoverByNode(target);
+                    const target = entry.target;
+                    if (target)
+                        window.mudpopoverHelper.placePopoverByNode(target);
                 }
             });
 
