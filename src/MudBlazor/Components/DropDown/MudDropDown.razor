@@ -1,5 +1,4 @@
 ﻿@namespace MudBlazor
-@using MudBlazor.Components.DropDown
 @inherits MudFormComponent<T, string>
 @typeparam T
 
@@ -20,42 +19,16 @@
                   Adornment="@Adornment" AdornmentAriaLabel="@AdornmentAriaLabel" OnAdornmentClick="@AdornmentClickHandlerAsync"
                   AdornmentIcon="@GetDropDownIcon" AdornmentColor="@AdornmentColor" AdornmentText="@AdornmentText"
                   @onmousedown="@OnInputClickedAsync">
-            <!-- TODO SelectedItemsTemplate not SelectedItemTemplate, need it out of the for loop.  -->
             <MudStack Row Wrap="Wrap.Wrap" Class="@($"mud-dropdown-input {(Variant == Variant.Filled ? "align-self-end" : "")}")" Spacing="2" AlignItems="AlignItems.Center">
-                @if (SelectedItemsCount > 0)
-                {
-                    var items = _selectedItemsState.Value!.ToList();
-                    @for (var i = 0; i < items.Count; i++)
-                    {
-                        var item = items[i];
-                        var isDisabled = ItemDisabledFunc?.Invoke(item) ?? false;
-#nullable enable
-                        Func<Task>? task = GetReadOnlyState() || GetDisabledState() ? null : async () => await ComboBoxToggleItem(item, false);
-                        var itemContext = new DropDownItem<T>(item, true, isDisabled, false, task);
-                        @if (SelectedItemsTemplate != null)
-                        {
-                            @SelectedItemsTemplate(itemContext)
-                        }
-                        else
-                        {
-                            <!-- key cannot be an id or index as HashSet has no first, last, or true index -->
-                            <MudChip T="string" @key="@item" Class="@SelectedChipClassname" 
-                            CloseIcon="@Icons.Material.Filled.Cancel" Size="Size.Small" Disabled="@itemContext.IsDisabled"
-                            OnClose="@itemContext.ToggleSelectedItem" @onmousedown:stopPropagation tabindex="-1">
-                                @GetItemString(itemContext.Item)
-                            </MudChip>
-                        }
-                    }
-                }
                 @* TODO: @onblur="@OnBlurredAsync" onblur is set in javascript  *@
                 <input @ref="@_elementReference" @key="_elementKey" id="@InputElementId"
                 @attributes="UserAttributes" autocomplete="@GetAutocomplete()"
                 @onfocus="@OnInputFocusedAsync"
                 @oninput="OnInput"
-                @onkeydown="@OnInputKeyDownAsync"
-                @onkeyup="@OnInputKeyUpAsync"
-                @onkeydown:preventDefault="KeyDownPreventDefault"
-                @onkeyup:preventDefault="@KeyUpPreventDefault"
+                @onkeydown="@OnInputKeyDown"
+                @onkeyup="@OnInputKeyUp"
+                @onkeydown:preventDefault="false"
+                @onkeyup:preventDefault="@false"
                 aria-describedby="@GetAriaDescribedByString()"
                 aria-invalid="@Error.ToString().ToLowerInvariant()"
                 aria-required="@Required.ToString().ToLowerInvariant()"
@@ -93,16 +66,9 @@
             <!-- Progress Indicator -->
             @if (ShowProgressIndicator && _isLoadingState.Value)
             {
-                @if (ProgressIndicatorTemplate is not null)
-                {
-                    @ProgressIndicatorTemplate
-                }
-                else
-                {
-                    <div class="@CircularProgressClassname">
-                        <MudProgressCircular Color="ProgressIndicatorColor" Indeterminate="true" Size="Size.Small" tabindex="-1" />
-                    </div>
-                }
+                <div class="@CircularProgressClassname">
+                    <MudProgressCircular Color="ProgressIndicatorColor" Indeterminate="true" Size="Size.Small" tabindex="-1" />
+                </div>
             }
         </MudField>
         <!-- Popover for the DropDownContent Must be inside MudField or you can't click anywhere in MudField when it's open -->
@@ -123,35 +89,4 @@
 {
     <MudOverlay Visible="@true" AutoClose="true" OnClick="@(async () => await CloseListAsync())"></MudOverlay>
 }
-
-@*         <MudInputControl 
-
-                         ErrorId="@ErrorId"
-                         ErrorText="@GetErrorText()"
-                         ForId="@InputElementId"
-                         FullWidth="@FullWidth"
-                         HelperId="@GetHelperId()"                         
-                         HelperTextOnFocus="@HelperTextOnFocus"
-                         Required="@Required"
-
-            <InputContent>
-                <MudInput 
-                          Error="@Error"
-                          ErrorId="@ErrorId"
-                          HelperId="@GetHelperId()"
-                          MaxLength="@MaxLength"                          
-
-                          ShrinkLabel="@(ShrinkLabel || SelectedItemsCount > 0)"
-
-                          TextChanged="OnTextChangedAsync"
-                          TextUpdateSuppression="@TextUpdateSuppression"
-
-                          Typo="@Typo"
-                          Underline="@Underline"
-                          Value="@Text" >    
-                 </MudInput>
-
-            </InputContent>
-        </MudInputControl> *@
-
 

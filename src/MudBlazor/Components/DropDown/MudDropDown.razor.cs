@@ -4,8 +4,10 @@
 
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Components.DropDown;
 using MudBlazor.State;
 using MudBlazor.Utilities;
+
 #nullable enable
 namespace MudBlazor
 {
@@ -15,11 +17,17 @@ namespace MudBlazor
     /// <typeparam name="T">The type of item being input.</typeparam>
     public partial class MudDropDown<T> : MudFormComponent<T, string>
     {
-        private ParameterState<HashSet<T>> _selectedItemsState;
-        private ParameterState<bool> _openItemListState;
-        private ParameterState<bool> _isLoadingState;
-        private ParameterState<string> _textState;
+        private readonly ParameterState<HashSet<T>> _selectedItemsState;
+        private readonly ParameterState<bool> _openItemListState;
+        private readonly ParameterState<bool> _isLoadingState;
+        private readonly ParameterState<string?> _textState;
+        private readonly ParameterState<string?> _inputIdState;
 
+        private ElementReference _elementReference = default!;
+        private int _elementKey = 0;
+        private string? _userAttributesId = Identifier.Create("mudinput");
+        private readonly string _componentId = Identifier.Create("mudinput");        
+        
         public MudDropDown() : base(new DefaultConverter<T>())
         {
             // default values, can be overridden
@@ -36,16 +44,22 @@ namespace MudBlazor
             _isLoadingState = registerScope.RegisterParameter<bool>(nameof(IsLoading))
                 .WithParameter(() => IsLoading)
                 .WithEventCallback(() => IsLoadingChanged);
-            _textState = registerScope.RegisterParameter<string>(nameof(Text))
+            _textState = registerScope.RegisterParameter<string?>(nameof(Text))
                 .WithParameter(() => Text)
                 .WithEventCallback(() => TextChanged)
-                .WithChangeHandler(OnTextChanged);
+                .WithChangeHandler(OnTextChangedHandler);
+            _inputIdState = registerScope.RegisterParameter<string?>(nameof(InputId))
+                .WithParameter(() => InputId)
+                .WithChangeHandler(UpdateInputIdStateAsync);            
         }
 
+        [Inject]
+        private InternalMudLocalizer Localizer { get; set; } = null!;        
+        
         protected string Classname => new CssBuilder()
             .AddClass($"mud-theme-{Color.ToDescriptionString()}")
-            .AddClass("mud-combobox--with-progress", IsLoading)
-            .AddClass("mud-autocomplete--with-progress", IsLoading)
+            .AddClass("mud-combobox--with-progress", ShowProgressIndicator && _isLoadingState.Value)
+            .AddClass("mud-autocomplete--with-progress", ShowProgressIndicator && _isLoadingState.Value)
             .AddClass(Class)
             .Build();
 
@@ -54,24 +68,172 @@ namespace MudBlazor
                 .AddClass("mud-width-full", FullWidth)
                 .Build();
 
+        protected string InputClassname => new CssBuilder(MudInputCssHelper.GetInputClassname(this))
+            .AddClass(InputClass)
+            .Build();        
+        
+        protected string ClearButtonClassname =>
+            new CssBuilder("mud-input-clear-button")
+                .Build();        
+        
+        protected string CircularProgressClassname =>
+            new CssBuilder("progress-indicator-circular")
+                .AddClass("progress-indicator-circular--with-adornment", Adornment == Adornment.End)
+                .Build();        
+        
+        protected string? InputElementId => _inputIdState.Value;
+        
         protected bool GetDisabledState() => Disabled || ParentDisabled;
 
         protected bool GetReadOnlyState() => ReadOnly || ParentReadOnly;
 
         protected string GetDropDownIcon => _openItemListState.Value ? CloseIcon : OpenIcon;
 
+        protected string? GetAriaDescribedByString()
+        {
+            var errorId = HasErrors ? ErrorId : null;
+            var helperId = GetHelperId();
+
+            return errorId is not null && helperId is not null
+                ? $"{errorId} {helperId}"
+                : errorId ?? helperId ?? null;
+        }        
+        
+        protected string? GetHelperId()
+        {
+            if (HelperId is not null)
+            {
+                return HelperId;
+            }
+
+            // error text replaces helper text in MudInputControl, so if the user does not provide a custom helper id, we have no valid helper element
+            if (HasErrors)
+            {
+                return null;
+            }
+
+            return HelperText is not null
+                ? $"{_inputIdState.Value}-helper-text"
+                : null;
+        }        
+        
+        /// <summary>
+        /// The regular expression used to validate the <see cref="Text"/> property.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>. This property is used to validate the input against a regular expression.  Must be a valid JavaScript regular expression.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public virtual string? Pattern { get; set; }        
+        
         /// <summary>
         /// The text displayed in the input.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Data)]
-        public string Text { get; set; } = string.Empty;
+        public string? Text { get; set; }
 
         /// <summary>
         /// This event is triggered when Text has changed.
         /// </summary>
         [Parameter]
-        public EventCallback<string> TextChanged { get; set; }
+        public EventCallback<string?> TextChanged { get; set; }
+
+        /// <summary>
+        /// The ID of the input element.
+        /// </summary>
+        /// <remarks>
+        /// When set takes precedence over any internally generated IDs.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public string? InputId { get; set; }        
+        
+        /// <summary>
+        /// The class or classes applied to the input element.
+        /// </summary>
+        [Parameter]
+        public string? InputClass { get; set; }
+
+        /// <summary>
+        /// The class or classes applied to the <see cref="MudPopover" /> that contains the list of ComboBox items.
+        /// </summary>
+        [Parameter]
+        public string? PopoverClass { get; set; }
+
+        /// <summary>
+        /// The location where the popover will open from.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Origin.BottomLeft" />.
+        /// </remarks>
+        [Parameter]
+        public Origin AnchorOrigin { get; set; } = Origin.BottomLeft;
+
+        /// <summary>
+        /// The transform origin point for the popover.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Origin.TopLeft"/>.
+        /// </remarks>
+        [Parameter]
+        public Origin TransformOrigin { get; set; } = Origin.TopLeft;        
+        
+        /// <summary>
+        /// Uses a <see cref="MudOverlay"/> when the dropdown is open. 
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        public bool Overlay { get; set; } = true;
+
+        /// <summary>
+        /// Determines the width of the ComboBox dropdown in relation to the parent container.
+        /// </summary>
+        /// <remarks>
+        /// <para>Defaults to <see cref="DropdownWidth.Relative" />. </para>
+        /// <para>When SmallScreens is set DropdownWidth is overridden to <see cref="DropdownWidth.Ignore" /></para>.
+        /// <para>When <see cref="DropdownWidth.Relative" />, restricts the max-width of the component to the width of the parent container</para>
+        /// <para>When <see cref="DropdownWidth.Adaptive" />, restricts the min-width of the component to the width of the parent container</para>
+        /// <para>When <see cref="DropdownWidth.Ignore" />, there are no width restrictions of the component to the width of the parent container</para>
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Popover.Appearance)]
+        public DropdownWidth RelativeWidth { get; set; } = DropdownWidth.Relative;
+
+        /// <summary>
+        /// The behavior of the ComboBox dropdown. 
+        /// <para>OverflowBehavior when it cannot display in full at the original Anchor and Transform positions.</para>
+        /// <para>Fixed true displays the dropdown popover in a fixed position, even while scrolling.</para>
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="DropdownSettings.Fixed" /> false
+        /// Defaults to <see cref="DropdownSettings.OverflowBehavior" /> <see cref="OverflowBehavior.FlipOnOpen" />
+        /// </remarks>
+        [Category(CategoryTypes.Popover.Behavior)]
+        [Parameter]
+        public DropdownSettings DropdownSettings { get; set; } = new DropdownSettings();
+
+        /// <summary>
+        /// Displays the Clear icon button. Has no impact if Filterable is not <c>true</c>.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  When <c>true</c>, an icon is displayed which, when clicked, clears the filter Text.  Use the <c>ClearIcon</c> property to control the Clear button icon.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool Clearable { get; set; }
+
+        /// <summary>
+        /// The icon to display when <see cref="Clearable"/> is <c>true</c>.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.Clear"/>.
+        /// </remarks>
+        [Parameter]
+        public string ClearIcon { get; set; } = Icons.Material.Filled.Cancel;
 
         /// <summary>
         /// The "open" Combobox icon.
@@ -90,6 +252,15 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         public string CloseIcon { get; set; } = Icons.Material.Filled.ArrowDropUp;
+
+        /// <summary>
+        /// The Add Combobox item icon. When OnAddItemClick is defined this icon is shown when the Text property exceeds MinCharacters.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.AddCircle"/>.
+        /// </remarks>
+        [Parameter]
+        public string AddIcon { get; set; } = Icons.Material.Filled.AddCircle;
 
         /// <summary>
         /// Allows the component to receive input.
@@ -314,11 +485,36 @@ namespace MudBlazor
         public EventCallback<bool> OpenItemListChanged { get; set; }
 
         /// <summary>
+        /// Whether the dropdown becomes filterable by text input. 
+        /// or default <c>ToString()</c> method.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        public bool Filterable { get; set; }
+
+        /// <summary>
+        /// The template used to display selected items in the textbox area. When <c>Filterable</c> is <c>true</c> the template is shown under the input.
+        /// </summary>
+        [Parameter]
+        public RenderFragment<DropDownItem<T>>? SelectedItemsTemplate { get; set; }
+
+        /// <summary>
         /// The content in the Popover, can be anything. Add items of type <typeparamref name="T"/> to the context.<see cref="SelectedItems"/>
         /// </summary>
         [Parameter, EditorRequired]
         public RenderFragment<MudDropDown<T>> DropDownContent { get; set; } = default!;
 
+        /// <summary>
+        /// Shows the progress indicator during searches.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  The progress indicator uses the color specified in the <see cref="ProgressIndicatorColor"/> property.
+        /// </remarks>
+        [Parameter]
+        public bool ShowProgressIndicator { get; set; }        
+        
         /// <summary>
         /// The color of the progress indicator.
         /// </summary>
@@ -344,16 +540,6 @@ namespace MudBlazor
         public EventCallback<bool> IsLoadingChanged { get; set; }
 
         /// <summary>
-        /// The function used to determine if an item should be disabled.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>null</c>.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.ListBehavior)]
-        public Func<T, bool>? ItemDisabledFunc { get; set; }
-
-        /// <summary>
         /// Whether a user can select multiple items
         /// </summary>
         /// <remarks>
@@ -362,6 +548,25 @@ namespace MudBlazor
         [Parameter]
         public bool MultiSelection { get; set; }
 
+        /// <summary>
+        /// The maximum height, in pixels, of the Combobox Popover when it is open.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>300</c>.
+        /// </remarks>
+        [Parameter]
+        public int MaxHeight { get; set; } = 300;        
+        
+        /// <summary>
+        /// The minimum number of characters typed to initiate a search. 
+        /// <para>The clear and add buttons use this as <c>MinCharacters + 1</c> to display.</para>
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>0</c>.
+        /// </remarks>
+        [Parameter]
+        public int MinCharacters { get; set; }        
+        
         /// <summary>
         /// The currently selected ComboBox items
         /// </summary>
@@ -375,9 +580,17 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public EventCallback<HashSet<T>> SelectedItemsChanged { get; set; }
+        
+        [Parameter]
+        public EventCallback<KeyboardEventArgs> OnInputKeyDown { get; set; }
+        
+        [Parameter]
+        public EventCallback<KeyboardEventArgs> OnInputKeyUp { get; set; }
+        
+        private bool ShowClearButton => !GetDisabledState() && !GetReadOnlyState() && Clearable && Text?.Length > MinCharacters;
 
-
-
+        private bool ShowAddButton => !GetDisabledState() && !GetReadOnlyState() && Text?.Length > MinCharacters && OnAddButtonClick.HasDelegate;        
+        
         private bool ShouldLabelShrink =>
             SelectedItemsCount == 0 &&              // no SelectedItems to Display
             string.IsNullOrEmpty(Text) &&           // no text in the input
@@ -387,6 +600,34 @@ namespace MudBlazor
             !_openItemListState.Value &&            // popover is closed
             !ShrinkLabel;                           // is allowed to shrink into input area
 
+        /// <summary>
+        /// Returns a value for the <c>autocomplete</c> html attribute, either supplied by default or the one specified in the attribute overrides.
+        /// </summary>
+        protected object? GetAutocomplete() => UserAttributes.GetValueOrDefault("autocomplete", "off");        
+        
+        protected override async Task OnInitializedAsync()
+        {
+            await base.OnInitializedAsync();
+
+            if (string.IsNullOrEmpty(Label) && For != null)
+            {
+                Label = For.GetLabelString();
+            }
+
+            _userAttributesId = UserAttributes.FirstOrDefault(userAttribute => userAttribute.Key.Equals("id", StringComparison.InvariantCultureIgnoreCase)).Value?.ToString();
+
+            if (InputId is null)
+            {
+                await UpdateInputIdStateAsync();
+            }
+        }        
+        
+        // fires for every keystroke change
+        protected Task OnInput(ChangeEventArgs? args)
+        {
+            return SetTextAsync(args?.Value as string);
+        }        
+        
         private Task ClearButtonClickHandlerAsync()
         {
             return Task.CompletedTask;
@@ -414,16 +655,35 @@ namespace MudBlazor
             }
         }
 
-        // do not make public, access to two way bind activates accordingly
+        private async Task OpenListAsync()
+        {
+            // do not make public, access to two way bind activates accordingly
+            // make sure it can be opened
+            if (GetReadOnlyState() || GetDisabledState())
+                return;
+
+            // only set the value if it's not already set
+            if (!_openItemListState.Value)
+            {
+                await _openItemListState.SetValueAsync(true);
+            }
+        }
+
+        private async Task CloseListAsync()
+        {
+            await _openItemListState.SetValueAsync(false);
+            StateHasChanged();
+        }
+
         private async Task ToggleOpenAsync()
         {
             if (_openItemListState.Value)
             {
-                await _openItemListState.SetValueAsync(false);
+                await CloseListAsync();
             }
             else
             {
-                await _openItemListState.SetValueAsync(true);
+                await OpenListAsync();
             }
         }
 
@@ -498,9 +758,25 @@ namespace MudBlazor
             }
         }
 
-        private async Task OnTextChangedHandler(ParameterChangedEventArgs<string> args)
+        private async Task OnTextChangedHandler(ParameterChangedEventArgs<string?> args)
         {
             await Task.CompletedTask;
         }
+        
+        private async Task UpdateInputIdStateAsync()
+        {
+            if (InputId is not null)
+            {
+                return;
+            }
+
+            if (_userAttributesId is not null)
+            {
+                await _inputIdState.SetValueAsync(_userAttributesId);
+                return;
+            }
+
+            await _inputIdState.SetValueAsync(_componentId);
+        }        
     }
 }

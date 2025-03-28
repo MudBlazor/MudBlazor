@@ -46,6 +46,21 @@ internal static class MudInputCssHelper
             .Build();
 
     /// <summary>
+    /// Gets the CSS classes for the specified input component slot.
+    /// </summary>
+    /// <typeparam name="T">The type of data collect by the input.</typeparam>
+    /// <param name="baseDropDown">The input control of the dropdown to use.</param>
+    /// <returns>A set of CSS classes.</returns>    
+    public static string GetInputClassname<T>(MudDropDown<T> baseDropDown) =>
+        new CssBuilder("mud-input-slot")
+            .AddClass("mud-input-root")
+            .AddClass($"mud-input-root-{baseDropDown.Variant.ToDescriptionString()}")
+            .AddClass($"mud-input-root-adorned-{baseDropDown.Adornment.ToDescriptionString()}", baseDropDown.Adornment != Adornment.None)
+            .AddClass($"mud-input-root-margin-{baseDropDown.Margin.ToDescriptionString()}", () => baseDropDown.Margin != Margin.None)
+            .AddClass(baseDropDown.Class)
+            .Build();    
+    
+    /// <summary>
     /// Gets the CSS classes for the specified input adornment.
     /// </summary>
     /// <typeparam name="T">The type of data collect by the input.</typeparam>
