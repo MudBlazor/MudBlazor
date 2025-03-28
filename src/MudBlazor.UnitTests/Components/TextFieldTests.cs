@@ -1586,10 +1586,18 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.Value, 5));
 
             comp.Find("input").Input("");
+            comp.Find("input").Blur();
+
+            comp.Instance.Text.Should().Be("");
             comp.Instance.Value.Should().Be(0);
 
+            comp.Find("input").Input("5");
+            comp.Find("input").Blur();
             comp.Find("input").Input("0-");
+            comp.Find("input").Blur();
+
             comp.Instance.Text.Should().Be("-");
+            comp.Instance.Value.Should().Be(5);
         }
 
         [TestCase(Adornment.Start, false, false)]
