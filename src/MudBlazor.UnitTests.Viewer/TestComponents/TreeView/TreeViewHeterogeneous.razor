@@ -1,0 +1,10 @@
+﻿<MudTreeView T="string" ExpandOnDoubleClick=true Hover=true Dense=true>
+    <MudTreeViewItem Text="L1" Expanded="true">
+        <MudTreeViewItem Text="L2" Value="IntValue" Class="L2" @onclick="() => { }">
+        </MudTreeViewItem>
+    </MudTreeViewItem>
+</MudTreeView>
+
+@code {
+    public int IntValue { get; set; }
+}
