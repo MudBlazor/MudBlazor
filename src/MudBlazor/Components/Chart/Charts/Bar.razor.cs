@@ -25,8 +25,8 @@ namespace MudBlazor.Charts
         private readonly List<SvgPath> _bars = [];
         private SvgPath? _hoveredBar;
 
-        private double BarStroke => 8;
-        private double BarGap => 10;
+        private const double BarStroke = 8;
+        private const double BarGap = 10;
         private double BarGroupWidth => (_series.Count - 1) * BarGap + BarStroke; // number of gaps of 10 + the stroke width
 
         /// <inheritdoc />

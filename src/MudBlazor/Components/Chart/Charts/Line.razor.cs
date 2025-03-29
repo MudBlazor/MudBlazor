@@ -165,7 +165,7 @@ namespace MudBlazor.Charts
                 {
                     var chartLine = new StringBuilder();
                     var data = series.Data;
-                    var chartDataCirlces = _chartDataPoints[i] = [];
+                    var chartDataCircles = _chartDataPoints[i] = [];
 
                     (double x, double y) GetXYForDataPoint(int index)
                     {
@@ -200,9 +200,11 @@ namespace MudBlazor.Charts
                             var dataValue = data[j];
 
                             if (MudChartParent?.ChartOptions.ShowToolTips != true)
+                            {
                                 continue;
+                            }
 
-                            chartDataCirlces.Add(new()
+                            chartDataCircles.Add(new()
                             {
                                 Index = j,
                                 CX = x,
@@ -276,7 +278,7 @@ namespace MudBlazor.Charts
 
                             if (MudChartParent?.ChartOptions.ShowToolTips == true)
                             {
-                                chartDataCirlces.Add(new()
+                                chartDataCircles.Add(new()
                                 {
                                     Index = j,
                                     CX = x,
