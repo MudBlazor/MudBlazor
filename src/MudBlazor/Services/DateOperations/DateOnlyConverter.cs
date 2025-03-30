@@ -2,25 +2,16 @@
 
 namespace MudBlazor.Services;
 
+#nullable enable
 internal class DateOnlyConverter : IDateConverter<DateOnly>
 {
-    public DateTimeOffset ConvertTo(DateOnly date)
-    {
-        return new DateTimeOffset(date.Year, date.Month, date.Day, 0, 0, 0, TimeSpan.Zero);
-    }
-
     public DateTimeOffset? ConvertTo(DateOnly? date)
     {
-        return date.HasValue ? ConvertTo(date.Value) : null;
-    }
-
-    public DateOnly ConvertFrom(DateTimeOffset date)
-    {
-        return new DateOnly(date.Year, date.Month, date.Day);
+        return date.HasValue ? new DateTimeOffset(date.Value.Year, date.Value.Month, date.Value.Day, 0, 0, 0, TimeSpan.Zero) : null;
     }
 
     public DateOnly? ConvertFrom(DateTimeOffset? date)
     {
-        return date.HasValue ? ConvertFrom(date.Value) : null;
+        return date.HasValue ? new DateOnly(date.Value.Year, date.Value.Month, date.Value.Day) : null;
     }
 }

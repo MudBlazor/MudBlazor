@@ -2,11 +2,10 @@
 
 namespace MudBlazor.Services;
 
-internal interface IDateConverter<T> where T : struct
+#nullable enable
+internal interface IDateConverter<T>
 {
-    DateTimeOffset ConvertTo(T date);
     DateTimeOffset? ConvertTo(T? date);
 
-    T ConvertFrom(DateTimeOffset date);
     T? ConvertFrom(DateTimeOffset? date);
 }

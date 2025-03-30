@@ -6,11 +6,12 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using MudBlazor.Extensions;
+using MudBlazor.Services.DateOperations;
 
 namespace MudBlazor.Services;
 #nullable enable
 
-internal interface IDateWrapper<T> where T : struct
+internal interface IDateWrapper<T>
 {
     CultureInfo Culture { get; }
 
@@ -66,22 +67,14 @@ internal interface IDateWrapper<T> where T : struct
     T SetYearMonth(T month, T? selectedDate);
 }
 
-internal class DateWrapper<T> : IDateWrapper<T> where T : struct
+internal class DateWrapper<T> : IDateWrapper<T>
 {
-    private readonly IDateConverter<T> _converter;
-
-    public CultureInfo Culture { get; private set; }
+    public CultureInfo Culture { get; private set; } = CultureInfo.CurrentCulture;
 
     /// <summary>
     /// returns the current date
     /// </summary>
-    public T Today => _converter.ConvertFrom(DateTimeOffset.UtcNow.Date);
-
-    public DateWrapper(IDateConverter<T> converter)
-    {
-        _converter = converter;
-        Culture = CultureInfo.CurrentCulture;
-    }
+    public T Today => DateValueConverter.ConvertTo<T>(DateTimeOffset.UtcNow.Date);
 
     public void SetCulture(CultureInfo culture)
     {
@@ -90,24 +83,24 @@ internal class DateWrapper<T> : IDateWrapper<T> where T : struct
 
     public T EndOfMonth(T? date, int month = 0)
     {
-        var monthStartDate = date ?? StartOfMonth(Today);
+        T monthStartDate = date ?? StartOfMonth(Today);
 
-        var dateTime = _converter.ConvertTo(monthStartDate)
+        var dateTime = DateValueConverter.ConvertFrom(monthStartDate)?
             .AddMonths(month, Culture)
             .EndOfMonth(Culture);
 
-        return _converter.ConvertFrom(dateTime);
+        return DateValueConverter.ConvertTo<T>(dateTime);
     }
 
     public T StartOfMonth(T? date, int month = 0)
     {
-        var monthStartDate = date ?? StartOfMonth(Today);
+        T monthStartDate = date ?? StartOfMonth(Today);
 
-        var dateTime = _converter.ConvertTo(monthStartDate)
+        var dateTime = DateValueConverter.ConvertFrom(monthStartDate)?
             .AddMonths(month, Culture)
             .StartOfMonth(Culture);
 
-        return _converter.ConvertFrom(dateTime);
+        return DateValueConverter.ConvertTo<T>(dateTime);
     }
 
     public IEnumerable<T> GetWeek(T? date, int month, int index, DayOfWeek? dayOfWeek = null)

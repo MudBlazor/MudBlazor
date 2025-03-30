@@ -8,13 +8,12 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public abstract partial class MudBaseDatePicker<T> : MudPicker<T?>
-        where T: struct
+    public abstract partial class MudBaseDatePicker<T> : MudPicker<T>
     {
         private readonly string _mudPickerCalendarContentElementId;
         private bool _dateFormatTouched;
 
-        protected MudBaseDatePicker() : base(new DefaultConverter<T?>
+        protected MudBaseDatePicker() : base(new DefaultConverter<T>
         {
             Format = CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern,
             Culture = CultureInfo.CurrentCulture
