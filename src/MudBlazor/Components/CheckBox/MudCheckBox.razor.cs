@@ -28,6 +28,7 @@ namespace MudBlazor
         protected override string LabelClassname => new CssBuilder("mud-checkbox")
             .AddClass($"mud-disabled", GetDisabledState())
             .AddClass($"mud-readonly", GetReadOnlyState())
+            .AddClass($"mud-checkbox-label-{Size.ToDescriptionString()}")
             .AddClass($"mud-input-content-placement-{ConvertPlacement(LabelPlacement).ToDescriptionString()}")
             .Build();
 
@@ -112,13 +113,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]
         public bool TriState { get; set; }
-
-        /// <summary>
-        /// Typography for the label text.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Appearance)]
-        public Typo Typo { get; set; } = MudGlobal.CheckBoxDefaults.Typo;
 
         private string GetIcon()
         {

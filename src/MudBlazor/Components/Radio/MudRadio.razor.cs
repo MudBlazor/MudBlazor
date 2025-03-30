@@ -32,6 +32,7 @@ namespace MudBlazor
         protected override string LabelClassname => new CssBuilder("mud-radio")
             .AddClass($"mud-disabled", GetDisabledState())
             .AddClass($"mud-readonly", GetReadOnlyState())
+            .AddClass($"mud-radio-label-{Size.ToDescriptionString()}")
             .AddClass($"mud-input-content-placement-{ConvertPlacement(LabelPlacement).ToDescriptionString()}")
             .Build();
 
@@ -102,16 +103,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
         public string UncheckedIcon { get; set; } = Icons.Material.Filled.RadioButtonUnchecked;
-
-        /// <summary>
-        /// The icon to display for an indeterminate state.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="Icons.Material.Filled.IndeterminateCheckBox"/>.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Appearance)]
-        public string IndeterminateIcon { get; set; } = Icons.Material.Filled.IndeterminateCheckBox;
 
         private string GetIcon()
         {

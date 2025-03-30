@@ -34,10 +34,6 @@ public static class MudGlobal
         /// </summary>
         public static string IndeterminateIcon { get; set; } = Icons.Material.Filled.IndeterminateCheckBox;
 
-        /// <summary>
-        /// The typography variant to use for the label of <see cref="MudCheckBox{T}"/>.
-        /// </summary>
-        public static Typo Typo { get; set; } = Typo.body1;
 
         /// <summary>
         /// The unchecked color for <see cref="MudCheckBox{T}"/>.
