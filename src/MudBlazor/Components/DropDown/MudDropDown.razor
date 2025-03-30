@@ -13,6 +13,7 @@
                   FullWidth="@FullWidth"
                   HelperText="@HelperText"
                   Label="@Label"
+                  IconSize="@IconSize"
                   Margin="@Margin"
                   Style="@Style"
                   tabindex="-1"
@@ -56,7 +57,7 @@
                 @if (ShowAddButton)
                 {
                     <MudIconButton Class="@ClearButtonClassname"
-                    Color="@Color.Success"
+                    Color="@Color.Inherit"
                     Icon="@AddIcon"
                     Size="@IconSize"
                     OnClick="@AddButtonClickHandlerAsync"
@@ -69,7 +70,7 @@
             @if (ShowProgressIndicator && _isLoadingState.Value)
             {
                 <div class="@CircularProgressClassname">
-                    <MudProgressCircular Color="ProgressIndicatorColor" Indeterminate="true" Size="Size.Small" tabindex="-1" />
+                    <MudProgressCircular Color="ProgressIndicatorColor" Indeterminate="true" Size="@IconSize" tabindex="-1" />
                 </div>
             }
         </MudField>

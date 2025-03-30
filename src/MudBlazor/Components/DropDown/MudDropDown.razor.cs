@@ -31,10 +31,6 @@ namespace MudBlazor
 
         public MudDropDown() : base(new DefaultConverter<T>())
         {
-            // default values, can be overridden
-            Adornment = Adornment.End;
-            IconSize = Size.Medium;
-
             using var registerScope = CreateRegisterScope();
             _selectedItemsState = registerScope.RegisterParameter<HashSet<T>>(nameof(SelectedItems))
                 .WithParameter(() => SelectedItems)
@@ -59,7 +55,6 @@ namespace MudBlazor
         private InternalMudLocalizer Localizer { get; set; } = null!;
 
         protected string Classname => new CssBuilder()
-            //.AddClass($"mud-theme-{Color.ToDescriptionString()}")
             .AddClass("mud-combobox--with-progress", ShowProgressIndicator && _isLoadingState.Value)
             .AddClass("mud-autocomplete--with-progress", ShowProgressIndicator && _isLoadingState.Value)
             .AddClass(Class)
@@ -67,6 +62,7 @@ namespace MudBlazor
 
         protected string DropDownClassname =>
             new CssBuilder("mud-dropdown")
+                .AddClass($"mud-dropdown-{Color.ToDescriptionString()}", Color != Color.Default)
                 .AddClass("mud-width-full", FullWidth)
                 .Build();
 
@@ -374,11 +370,11 @@ namespace MudBlazor
         /// The location of the adornment icon or text.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Adornment.None"/>.  When set to <c>Start</c> or <c>End</c>, the <see cref="AdornmentText"/> will be displayed, or <see cref="AdornmentIcon"/> if no adornment text is specified.
+        /// Defaults to <see cref="Adornment.End"/>.  When set to <c>Start</c> or <c>End</c>, the <see cref="AdornmentText"/> will be displayed, or <see cref="AdornmentIcon"/> if no adornment text is specified.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public Adornment Adornment { get; set; } = Adornment.None;
+        public Adornment Adornment { get; set; } = Adornment.End;
 
         /// <summary>
         /// Limits validation to when the user changes the <see cref="Text"/>.
@@ -571,6 +567,12 @@ namespace MudBlazor
         public int MaxHeight { get; set; } = 300;
 
         /// <summary>
+        /// The theming of the component
+        /// </summary>
+        [Parameter]
+        public Color Color { get; set; } = Color.Primary;
+
+        /// <summary>
         /// The minimum number of characters typed to initiate a search. 
         /// <para>The clear and add buttons use this as <c>MinCharacters + 1</c> to display.</para>
         /// </summary>
@@ -665,7 +667,7 @@ namespace MudBlazor
             }
 
             _opening = true;
-            await _elementReference.FocusAsync();
+            await _elementReference.MudForceFocusAsync();
             // TODO: Perform Search Action
 
             // only set the value if it's not already set
@@ -679,7 +681,8 @@ namespace MudBlazor
 
         public async Task CloseMenuAsync()
         {
-            await _openMenuState.SetValueAsync(false);
+            if (_openMenuState.Value)
+                await _openMenuState.SetValueAsync(false);
         }
 
         public async Task ToggleMenuAsync()

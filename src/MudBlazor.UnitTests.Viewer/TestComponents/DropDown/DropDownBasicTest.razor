@@ -11,7 +11,7 @@
                              Label="@variant.ToString()"
                              Filterable="_filterable"
                              MultiSelection="_multiSelection"
-                             @bind-OpenItemList="_openStates[variant]"
+                             @bind-OpenMenu="_openStates[variant]"
                              @bind-SelectedItems="_selectedItems"
                              OnAddItemClick="@(_addItem ? EventCallback.Factory.Create<MouseEventArgs>(this, (MouseEventArgs e) => AddItem(e)) : default)"
                              Margin="@(_dense ? Margin.Dense : Margin.Normal)"
@@ -19,7 +19,7 @@
                              ReadOnly="_readonly"
                              Placeholder="@(_placeholder ? "Placeholder" : null)"
                              HelperText="@(_helperText ? "Helper Text" : null)"
-                             Clearable="_clearable">
+                             Clearable="_clearable" Color="_color">
                     <DropDownContent>
                         <MudPaper>
                             Potential list of dropdown items
@@ -46,9 +46,19 @@
     </MudStack>
 
     <MudStack>
-        <MudComboBox @ref="@_colorComboBox" T="MudBlazor.Color" Color="Color.Default"
-                     FullWidth
-                     Label="Select Theme" />
+        <MudSelect T="MudBlazor.Color" @bind-Value="@_color"
+                   FullWidth
+                   Label="Select Theme">
+            <MudSelectItem T="MudBlazor.Color" Value="Color.Default">Default</MudSelectItem>
+            <MudSelectItem T="MudBlazor.Color" Value="Color.Primary">Primary</MudSelectItem>
+            <MudSelectItem T="MudBlazor.Color" Value="Color.Secondary">Secondary</MudSelectItem>
+            <MudSelectItem T="MudBlazor.Color" Value="Color.Tertiary">Tertiary</MudSelectItem>
+            <MudSelectItem T="MudBlazor.Color" Value="Color.Success">Success</MudSelectItem>
+            <MudSelectItem T="MudBlazor.Color" Value="Color.Warning">Warning</MudSelectItem>
+            <MudSelectItem T="MudBlazor.Color" Value="Color.Error">Error</MudSelectItem>
+            <MudSelectItem T="MudBlazor.Color" Value="Color.Info">Info</MudSelectItem>
+            <MudSelectItem T="MudBlazor.Color" Value="Color.Dark">Dark</MudSelectItem>
+        </MudSelect>
         <MudSwitch @bind-Value="_dense" Label="Dense" Color="Color.Primary" />
         <MudSwitch @bind-Value="_readonly" Label="ReadOnly" Color="Color.Primary" />
         <MudSwitch @bind-Value="_disabled" Label="Disabled" Color="Color.Primary" />
@@ -69,7 +79,7 @@
 @code {
 
 #nullable enable
-
+    Color _color = Color.Default;
     string _value = string.Empty;
     string _lastValue = string.Empty;
     bool _autoCompleteOpen = false;
@@ -87,7 +97,6 @@
     private readonly Dictionary<Variant, bool> _openStates = new();
     private List<string> _stateList = new();
     private HashSet<string> _selectedItems = new();
-    private MudComboBox<MudBlazor.Color>? _colorComboBox;
 
     protected override void OnInitialized()
     {
