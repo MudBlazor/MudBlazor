@@ -1292,7 +1292,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<TreeViewHeterogeneous>();
             var l2 = comp.Find(".L2 > div.mud-treeview-item-content");
-            l2.Click();
+            var act = () => l2.Click();
+            act.Should().NotThrow();
         }
     }
 }
