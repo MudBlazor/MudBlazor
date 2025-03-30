@@ -643,8 +643,14 @@ namespace MudBlazor
         /// </summary>
         void IActivatable.Activate(object activator, MouseEventArgs args)
         {
-            _ = ToggleMenuAsync(args);
+            if (activator is MudBaseButton activatorButton &&
+                (activatorButton.Class?.Contains("mud-no-activator") ?? false))
+            {
+                return;
+            }
+            ToggleMenuAsync(args).CatchAndLog();
         }
+
 
         /// <summary>
         /// Disposes managed and unmanaged resources.

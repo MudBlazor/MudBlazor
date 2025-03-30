@@ -583,5 +583,75 @@ namespace MudBlazor.UnitTests.Components
             // Ensure all popovers are closed.
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
         }
+
+        [Test]
+        public async Task IActivatable_Activate_Should_ToggleMenu_Except_For_InputAdornmentIconButton()
+        {
+            // Arrange
+            var comp = Context.RenderComponent<MudMenu>(parameters => parameters
+                .Add(p => p.ActivatorContent, builder =>
+                {
+                    builder.OpenComponent<MudIconButton>(0);
+                    builder.AddAttribute(1, "Class", "mud-no-activator");
+                    builder.CloseComponent();
+                }));
+            var menu = comp.Instance;
+            var activatable = (Interfaces.IActivatable)menu;
+
+            // Normal case
+            activatable.Activate(new object(), new MouseEventArgs());
+            comp.WaitForAssertion(() => menu.GetState(x => x.Open).Should().BeTrue("Menu should open when Activate is called with a regular object"));
+
+            // Close Menu
+            activatable.Activate(new object(), new MouseEventArgs());
+            comp.WaitForAssertion(() => menu.GetState(x => x.Open).Should().BeFalse("Menu should be closed after calling Activate again"));
+
+            // Special case with icon button
+            var classButton = comp.FindComponent<MudIconButton>().Instance;
+            activatable.Activate(classButton, new MouseEventArgs());
+            comp.WaitForAssertion(() => menu.GetState(x => x.Open).Should().BeFalse("Menu should not open when Activate is called with an mud-no-activator selector"));
+
+            // Special case with regular button
+            var compButton = Context.RenderComponent<MudButton>(p => p.Add(p => p.Class, "mud-no-activator")).Instance;
+            activatable.Activate(compButton, new MouseEventArgs());
+            comp.WaitForAssertion(() => menu.GetState(x => x.Open).Should().BeFalse("Menu should not open when Activate is called with an mud-no-activator selector"));
+
+            // Clean up
+            await menu.CloseMenuAsync();
+        }
+
+        [Test]
+        public void Menu_ButtonActivator()
+        {
+            var provider = Context.RenderComponent<MudPopoverProvider>();
+            var comp = Context.RenderComponent<MudMenu>(parameters => parameters
+                .Add(p => p.ActivatorContent, builder =>
+                {
+                    builder.OpenComponent<MudButton>(0);
+                    builder.CloseComponent();
+                }));
+
+            provider.FindAll("div.mud-popover-open").Count.Should().Be(0);
+
+            // Click the MudButton inside the ActivatorContent
+            var button = comp.Find("button.mud-button-root");
+            button.Click();
+            provider.FindAll("div.mud-popover-open").Count.Should().Be(1);
+            button.Click();
+            // Render component with MudIconButton inside ActivatorContent
+            comp = Context.RenderComponent<MudMenu>(parameters => parameters
+                .Add(p => p.ActivatorContent, builder =>
+                {
+                    builder.OpenComponent<MudIconButton>(0);
+                    builder.AddAttribute(1, "Class", "mud-icon-button-activator");
+                    builder.CloseComponent();
+                }));
+
+            provider.FindAll("div.mud-popover-open").Count.Should().Be(0);
+
+            // Click the MudIconButton inside the ActivatorContent
+            comp.Find("button.mud-icon-button-activator").Click();
+            provider.FindAll("div.mud-popover-open").Count.Should().Be(1);
+        }
     }
 }

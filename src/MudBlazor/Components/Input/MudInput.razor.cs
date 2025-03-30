@@ -46,6 +46,7 @@ namespace MudBlazor
                 .AddClass("mud-icon-button-edge-end", Adornment == Adornment.End && HideSpinButtons)
                 .AddClass("me-6", Adornment != Adornment.End && HideSpinButtons == false)
                 .AddClass("mud-icon-button-edge-margin-end", Adornment != Adornment.End && HideSpinButtons)
+                .AddClass("mud-no-activator")
                 .Build();
 
         internal override InputType GetInputType() => InputType;
