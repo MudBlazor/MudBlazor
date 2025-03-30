@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
+﻿using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 
 #nullable enable
@@ -17,16 +16,16 @@ namespace MudBlazor.Charts
     {
         private const double BarOverlapAmountFix = 0.5; // used to trigger slight overlap so the bars don't have gaps due to floating point rounding
 
-        private List<SvgPath> _horizontalLines = [];
-        private List<SvgText> _horizontalValues = [];
+        private readonly List<SvgPath> _horizontalLines = [];
+        private readonly List<SvgText> _horizontalValues = [];
 
-        private List<SvgPath> _verticalLines = [];
-        private List<SvgText> _verticalValues = [];
+        private readonly List<SvgPath> _verticalLines = [];
+        private readonly List<SvgText> _verticalValues = [];
 
-        private List<SvgLegend> _legends = [];
+        private readonly List<SvgLegend> _legends = [];
         private List<ChartSeries> _series = [];
 
-        private List<SvgPath> _bars = [];
+        private readonly List<SvgPath> _bars = [];
         private double _barWidth;
         private double _barWidthStroke;
         private SvgPath? _hoveredBar;
@@ -52,7 +51,7 @@ namespace MudBlazor.Charts
 
             // Calculate spacing – note the horizontal space is computed so that the vertical grid lines line up
             double horizontalSpace = Math.Round((_boundWidth - HorizontalStartSpace - HorizontalEndSpace) / (numVerticalLines > 1 ? (numVerticalLines) : 1), 1);
-            double verticalSpace = (_boundHeight - VerticalStartSpace - VerticalEndSpace - AxisChartOptions.LabelExtraHeight) / (numHorizontalLines > 1 ? (numHorizontalLines) : 1);
+            double verticalSpace = (_boundHeight - VerticalStartSpace - VerticalEndSpace) / (numHorizontalLines > 1 ? (numHorizontalLines) : 1);
 
             GenerateHorizontalGridLines(numHorizontalLines, gridYUnits, verticalSpace);
             GenerateVerticalGridLines(numVerticalLines, horizontalSpace);
@@ -106,6 +105,16 @@ namespace MudBlazor.Charts
             }
             var maxY = stackedTotals.Any() ? stackedTotals.Max() : 0;
             numHorizontalLines = (int)(maxY / gridYUnits) + 1;
+
+            // this is a safeguard against millions of gridlines which might arise with very high values
+            var maxYTicks = MudChartParent?.ChartOptions.MaxNumYAxisTicks ?? 20;
+            while (numHorizontalLines > maxYTicks)
+            {
+                gridYUnits *= 2;
+                var lowestHorizontalLine = Math.Min((int)Math.Floor(0 / gridYUnits), 0);
+                var highestHorizontalLine = Math.Max((int)Math.Ceiling(maxY / gridYUnits), 0);
+                numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
+            }
         }
 
         /// <summary>
@@ -124,14 +133,14 @@ namespace MudBlazor.Charts
                 var line = new SvgPath()
                 {
                     Index = i,
-                    Data = $"M {ToS(HorizontalStartSpace)} {ToS(_boundHeight - AxisChartOptions.LabelExtraHeight - y)} L {ToS(_boundWidth - HorizontalEndSpace)} {ToS(_boundHeight - AxisChartOptions.LabelExtraHeight - y)}"
+                    Data = $"M {ToS(HorizontalStartSpace)} {ToS(_boundHeight - y)} L {ToS(_boundWidth - HorizontalEndSpace)} {ToS(_boundHeight - y)}"
                 };
                 _horizontalLines.Add(line);
 
                 var text = new SvgText()
                 {
                     X = HorizontalStartSpace - 10,
-                    Y = _boundHeight - AxisChartOptions.LabelExtraHeight - y + 5,
+                    Y = _boundHeight - y + 5,
                     Value = ToS(lineValue, MudChartParent?.ChartOptions.YAxisFormat)
                 };
                 _horizontalValues.Add(text);
@@ -163,7 +172,7 @@ namespace MudBlazor.Charts
                 var text = new SvgText()
                 {
                     X = x,
-                    Y = _boundHeight - (AxisChartOptions.LabelExtraHeight / 2) - 10,
+                    Y = _boundHeight - XAxisLabelOffset,
                     Value = label,
                 };
                 _verticalValues.Add(text);
@@ -186,7 +195,7 @@ namespace MudBlazor.Charts
             {
                 double x = HorizontalStartSpace + startPadding + (j * horizontalSpace);
 
-                var yStart = _boundHeight - VerticalStartSpace - AxisChartOptions.LabelExtraHeight;
+                var yStart = _boundHeight - VerticalStartSpace;
                 for (int i = 0; i < _series.Count; i++)
                 {
                     var series = _series[i];
@@ -206,7 +215,7 @@ namespace MudBlazor.Charts
                         Index = i,
                         Data = $"M {ToS(x)} {ToS(yStart)} L {ToS(x)} {ToS(yEnd - BarOverlapAmountFix)}",
                         LabelXValue = XAxisLabels.Length > j ? XAxisLabels[j] : string.Empty,
-                        LabelYValue = dataValue.ToString(),
+                        LabelYValue = dataValue.ToString(series.DataMarkerTooltipYValueFormat),
                         LabelX = x,
                         LabelY = yEnd
                     };

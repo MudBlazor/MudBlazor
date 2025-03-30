@@ -284,6 +284,20 @@ namespace MudBlazor.UnitTests.Components
             picker.Text.Should().Be("13/01/2021");
         }
 
+        [Test]
+        public void Check_DateTime_MaxValue()
+        {
+            DateTime? date = DateTime.MaxValue;
+
+            var comp = OpenPicker(Parameter("Date", date));
+
+            comp.Instance.Date.Should().Be(DateTime.MaxValue);
+
+            comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("31")).ToMarkup().Should().Contain("mud-selected");
+            comp.Find("button.mud-button-date .mud-button-label").InnerHtml.Should().Be("Fri, 31 Dec");
+            comp.Find("button.mud-button-year .mud-button-label").InnerHtml.Should().Be("9999");
+        }
+
         private IRenderedComponent<SimpleMudDatePickerTest> OpenPicker(ComponentParameter parameter)
         {
             return OpenPicker(new[] { parameter });

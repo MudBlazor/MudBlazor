@@ -113,11 +113,12 @@
                                                 <MudText class="mud-picker-calendar-week-text" Typo="Typo.caption">@GetWeekNumber(tempMonth, tempWeek)</MudText>
                                             </div>
                                         }
+                                        var wasMaxValue = false;
                                         @foreach (var day in GetWeek(tempMonth, tempWeek))
                                         {
                                             var tempId = ++dayId;
 
-                                            @if (tempId != 0 || !firstMonthFirstYear)
+                                            @if ((tempId != 0 || !firstMonthFirstYear) && !wasMaxValue)
                                             {
                                                 var selectedDay = !firstMonthFirstYear ? day : day.AddDays(-1);
                                                 <button @key="@(!firstMonthFirstYear ? selectedDay : tempId)" type="button" style="--day-id: @(!firstMonthFirstYear ? tempId : tempId + 1);"
@@ -136,6 +137,7 @@
                                                     <p class="mud-typography mud-typography-body2 mud-inherit-text"></p>
                                                 </button>
                                             }
+                                            wasMaxValue = day == Culture.Calendar.MaxSupportedDateTime;
                                         }
                                     }
                                 </div>
