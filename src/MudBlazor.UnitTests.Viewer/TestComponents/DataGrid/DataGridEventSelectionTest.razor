@@ -1,7 +1,6 @@
 ﻿<MudDataGrid T="DocumentChecklistItem" ServerData="ServerReload" Bordered="true" Dense="true"
              MultiSelection="true" SelectedItemsChanged="@((e) => OnSelectedItemsChanged(e))"
-             RowsPerPage="25"
-             @ref="_dataGrid">
+             RowsPerPage="25">
     <Columns>
         <SelectColumn T="DocumentChecklistItem"></SelectColumn>
         <PropertyColumn Property="c=>c.Id" Title="Id"></PropertyColumn>
@@ -17,7 +16,6 @@
 #nullable enable
     public static string __description__ = "A test viewer for visibility testing of row Selection";
     private List<DocumentChecklistItem> _selectedDocuments = [];
-    private MudDataGrid<DocumentChecklistItem>? _dataGrid;
     private string _message = "Click select column to select the item";
 
     private void OnSelectedItemsChanged(HashSet<DocumentChecklistItem> documents)
@@ -26,20 +24,16 @@
         _message = "OnSelectedItemsChanged was called. " + _selectedDocuments.Count() + " items selected";
     }
 
-    private async Task<GridData<DocumentChecklistItem>> ServerReload(GridState<DocumentChecklistItem> state)
+    private static Task<GridData<DocumentChecklistItem>> ServerReload(GridState<DocumentChecklistItem> state)
     {
-        List<DocumentChecklistItem> items = new()
-            {
-                new DocumentChecklistItem {Id="1", Name="Test"},
-                new DocumentChecklistItem {Id="2",Name="Test2"}
-            };
+        List<DocumentChecklistItem> items =
+        [
+            new("1", "Test"),
+            new("2", "Test2")
+        ];
 
-        return await Task.FromResult(new GridData<DocumentChecklistItem>() { Items = items, TotalItems = items.Count });
+        return Task.FromResult(new GridData<DocumentChecklistItem> { Items = items, TotalItems = items.Count });
     }
 
-    public class DocumentChecklistItem
-    {
-        public string Id { get; set; } = default!;
-        public string Name { get; set; } = default!;
-    }
+    public record DocumentChecklistItem(string Id, string Name);
 }

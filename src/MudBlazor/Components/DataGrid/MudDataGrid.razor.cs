@@ -1545,13 +1545,15 @@ namespace MudBlazor
         /// <remarks>
         /// When <see cref="MultiSelection"/> is <c>true</c> and <see cref="SelectOnRowClick"/> is <c>true</c>, the <see cref="SelectedItems"/> are updated.  The <see cref="SelectedItem"/> is also updated.
         /// </remarks>
-        public async Task SetSelectedItemAsync(T item)
+        public Task SetSelectedItemAsync(T item)
         {
             if (!SelectOnRowClick)
-                return;
+            {
+                return Task.CompletedTask;
+            }
 
             var isSelected = Selection.Contains(item);
-            await SetSelectedItemAsync(!isSelected, item);
+            return SetSelectedItemAsync(!isSelected, item);
         }
 
         internal async Task SetSelectAllAsync(bool value)
@@ -1659,9 +1661,9 @@ namespace MudBlazor
             await SetSelectedItemAsync(item);
         }
 
-        internal async Task OnContextMenuClickedAsync(MouseEventArgs args, T item, int rowIndex)
+        internal Task OnContextMenuClickedAsync(MouseEventArgs args, T item, int rowIndex)
         {
-            await RowContextMenuClick.InvokeAsync(new DataGridRowClickEventArgs<T>(args, item, rowIndex));
+            return RowContextMenuClick.InvokeAsync(new DataGridRowClickEventArgs<T>(args, item, rowIndex));
         }
 
         /// <summary>
