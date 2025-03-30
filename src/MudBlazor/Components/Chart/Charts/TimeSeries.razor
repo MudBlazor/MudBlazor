@@ -30,7 +30,7 @@
             </g>
         }
     </g>
-    <g class="mud-charts-yaxis">
+    <g @ref="_yAxisGroupElementReference" class="mud-charts-yaxis">
         @foreach (var horizontalLineValue in _horizontalValues)
         {
             @((MarkupString)$"<text x='{horizontalLineValue.X.ToString(CultureInfo.InvariantCulture)}' y='{horizontalLineValue.Y.ToString(CultureInfo.InvariantCulture)}' font-size='12px' text-anchor='end' dominant-baseline='auto'>{horizontalLineValue.Value?.ToString(CultureInfo.InvariantCulture)}</text>")
@@ -38,19 +38,17 @@
         @if (YAxisTitle is not null)
         {
             <g transform="translate(10, @(_boundHeight / 2))">
-                <text transform="rotate(-90)" font-size="14px" text-anchor="middle" dominant-baseline="hanging">
-                    @YAxisTitle
-                </text>
+                <text transform="rotate(-90)" font-size="14px" text-anchor="middle" dominant-baseline="hanging">@YAxisTitle</text>
             </g>
         }
     </g>
-    <g class="mud-charts-xaxis">
+    <g @ref="_xAxisGroupElementReference" class="mud-charts-xaxis">
         @for (var i = 0; i < _verticalValues.Count; i++)
         {
             var verticalLineValue = _verticalValues[i];
             var x = verticalLineValue.X.ToString(CultureInfo.InvariantCulture);
             var y = verticalLineValue.Y.ToString(CultureInfo.InvariantCulture);
-            var rotation = (-AxisChartOptions.LabelRotation).ToString(CultureInfo.InvariantCulture);
+            var rotation = (-AxisChartOptions.XAxisLabelRotation).ToString(CultureInfo.InvariantCulture);
             @((MarkupString)$"<text x='{x}' y='{y}' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate({rotation} {x} {y})'>{verticalLineValue.Value?.ToString(CultureInfo.InvariantCulture)}</text>")
         }
     </g>
@@ -89,7 +87,7 @@
                         cx="@ToS(item.CX)"
                         cy="@ToS(item.CY)"
                         r="@ToS(dataPointHoverRadius)"
-                        @onmouseover="(e) => OnDataPointMouseOver(e, item)"
+                        @onmouseover="(e) => OnDataPointMouseOver(e, item, chartLine)"
                         @onmouseout="OnDataPointMouseOut">
                 </circle>
             }
@@ -99,11 +97,11 @@
     @MudChartParent?.CustomGraphics
 
     @* Render the tooltip as an SVG group when a bar is hovered *@
-    @if (_hoveredDataPoint is not null && _hoverDataPointChartLine is not null)
+    @if (_hoveredDataPoint is not null && _hoverDataPointChartLine is not null && MudChartParent?.ChartOptions.ShowToolTips == true)
     {
         var seriesIndex = _chartDataPoints.First(x => x.Value.Contains(_hoveredDataPoint)).Key;
 
-        var color = MudChartParent?.ChartOptions.ChartPalette.GetValue(seriesIndex % MudChartParent.ChartOptions.ChartPalette.Length)?.ToString() ?? string.Empty;
+        var color = MudChartParent.ChartOptions.ChartPalette.GetValue(seriesIndex % MudChartParent.ChartOptions.ChartPalette.Length)?.ToString() ?? string.Empty;
         var series = _series[seriesIndex];
 
         if (!string.IsNullOrWhiteSpace(series.DataMarkerTooltipTitleFormat))

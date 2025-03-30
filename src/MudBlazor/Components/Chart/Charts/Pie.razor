@@ -6,9 +6,9 @@
     var chartClass = CircleDonutRatio < 1 ? "mud-chart-donut" : "mud-chart-pie";
 }
 
-<svg @attributes="UserAttributes" class="@chartClass" width="@MudChartParent?.Width" height="@MudChartParent?.Height" viewBox="-@Radius -@Radius @(Radius * 2) @(Radius * 2)" style="@style">
+<svg @attributes="UserAttributes" class="@chartClass" width="@MudChartParent?.Width" height="@MudChartParent?.Height" viewBox="0 0 @(Radius * 2) @(Radius * 2)" style="@style">
     <Filters />
-    <g>
+    <g transform="translate(@Radius, @Radius)">
         @foreach (var item in _paths)
         {
             <path @onclick="() => SelectedIndex = item.Index"
@@ -24,18 +24,18 @@
     @MudChartParent?.CustomGraphics
 
     @* Render the tooltip as an SVG group when a bar is hovered *@
-    @if (_hoveredSegment is not null)
+    @if (_hoveredSegment is not null && MudChartParent?.ChartOptions.ShowToolTips == true)
     {
-        var color = MudChartParent?.ChartOptions.ChartPalette.GetValue(_hoveredSegment.Index % MudChartParent.ChartOptions.ChartPalette.Length)?.ToString() ?? string.Empty;
+        var color = MudChartParent.ChartOptions.ChartPalette.GetValue(_hoveredSegment.Index % MudChartParent.ChartOptions.ChartPalette.Length)?.ToString() ?? string.Empty;
 
-        if (!string.IsNullOrWhiteSpace(MudChartParent?.ChartOptions.DefaultDataMarkerTooltipTitleFormat))
+        if (!string.IsNullOrWhiteSpace(MudChartParent.ChartOptions.DefaultDataMarkerTooltipTitleFormat))
         {
             var tooltipTitle = MudChartParent.ChartOptions.DefaultDataMarkerTooltipTitleFormat
-            .Replace("{{SERIES_NAME}}", _hoveredSegment.LabelYValue)
-            .Replace("{{X_VALUE}}", _hoveredSegment.LabelXValue)
-            .Replace("{{Y_VALUE}}", _hoveredSegment.LabelYValue);
+                .Replace("{{SERIES_NAME}}", _hoveredSegment.LabelYValue)
+                .Replace("{{X_VALUE}}", _hoveredSegment.LabelXValue)
+                .Replace("{{Y_VALUE}}", _hoveredSegment.LabelYValue);
 
-            <ChartTooltip Title="@tooltipTitle" Color="@color" X="_hoveredSegment.LabelX" Y="_hoveredSegment.LabelY" />
+            <ChartTooltip Title="@tooltipTitle" Color="@color" X="_hoveredSegment.LabelX + Radius" Y="_hoveredSegment.LabelY + Radius" />
         }
     }
 </svg>

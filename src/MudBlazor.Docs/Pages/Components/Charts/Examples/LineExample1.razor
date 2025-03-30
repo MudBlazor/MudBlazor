@@ -9,33 +9,27 @@
         <MudText Typo="Typo.body1" Class="py-3">Selected: @(_index < 0 ? "None" : _series[_index].Name)</MudText>
     </MudItem>
     <MudItem md="6" xs="12">
-        <MudCheckBox @bind-Value="_axisChartOptions.MatchBoundsToSize" Color="Color.Info" Label="MatchBoundsToSize"></MudCheckBox>
+        <MudTextField @bind-Value="_width" Label="Chart Width"></MudTextField>
     </MudItem>
     <MudItem md="6" xs="12">
-        <MudTextField @bind-Value="_width" Label="Chart Width"></MudTextField>
+        <MudCheckBox @bind-Value="_axisChartOptions.MatchBoundsToSize" Label="MatchBoundsToSize"></MudCheckBox>
     </MudItem>
     <MudItem md="6" xs="12">
         <MudTextField @bind-Value="_height" Label="Chart Height"></MudTextField>
     </MudItem>
     <MudItem md="6" xs="12">
-        <MudSlider @bind-Value="_options.LineStrokeWidth" Min="1" Max="10" Color="Color.Info">Line Width: @_options.LineStrokeWidth.ToString()</MudSlider>
+        <MudCheckBox T="bool" ValueChanged="(v)=> _series[0].LineDisplayType = v ? LineDisplayType.Area : LineDisplayType.Line" Label="Fossil as Area"></MudCheckBox>
     </MudItem>
     <MudItem md="6" xs="12">
-        <MudCheckBox T="bool" ValueChanged="(v)=> _series[0].LineDisplayType = v ? LineDisplayType.Area : LineDisplayType.Line" Label="Fossil as Area"></MudCheckBox>
+        <MudSlider @bind-Value="_options.LineStrokeWidth" Min="1" Max="10">Line Width: @_options.LineStrokeWidth.ToString()</MudSlider>
     </MudItem>
     <MudItem md="6" xs="12">
         <MudCheckBox T="bool" ValueChanged="(v)=> _series[1].LineDisplayType = v ? LineDisplayType.Area : LineDisplayType.Line" Label="Renewable as Area"></MudCheckBox>
     </MudItem>
     <MudItem md="6" xs="12">
         <MudStack>
-            <MudText Typo="Typo.body1">Label Extra Height</MudText>
-            <MudSlider @bind-Value="_axisChartOptions.LabelExtraHeight" Min="0" Max="40" Step="5"></MudSlider>
-        </MudStack>
-    </MudItem>
-    <MudItem md="6" xs="12">
-        <MudStack>
-            <MudText Typo="Typo.body1">Label Rotation</MudText>
-            <MudSlider @bind-Value="_axisChartOptions.LabelRotation" Min="0" Max="90" Step="15"></MudSlider>
+            <MudText Typo="Typo.body1">XAxis Label Rotation</MudText>
+            <MudSlider @bind-Value="_axisChartOptions.XAxisLabelRotation" Min="0" Max="90" Step="15"></MudSlider>
         </MudStack>
     </MudItem>
     <MudItem md="6" xs="12">

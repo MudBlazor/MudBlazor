@@ -37,10 +37,12 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.TimeLabelSpacing, TimeSpan.FromHours(1)));
 
             // check the line path
-            comp.Markup.Should().ContainEquivalentOf("<path class=\"mud-chart-serie mud-chart-line\" blazor:onclick=\"1\" fill=\"none\" stroke=\"#2979FF\" stroke-opacity=\"1\" stroke-width=\"3\" d=\"M 80 325 L 293.3333 325 L 506.6667 325 L 720 325\"></path>");
+            comp.Markup.Should().ContainEquivalentOf("<path class=\"mud-chart-serie mud-chart-line\" blazor:onclick=\"1\" fill=\"none\" stroke=\"#2979FF\" stroke-opacity=\"1\" stroke-width=\"3\" d=\"M 30 320 L 276.6667 320 L 523.3333 320 L 770 320\"></path>");
 
             // check the axis
-            comp.Markup.Should().ContainEquivalentOf("<g class=\"mud-charts-gridlines-yaxis\"><path stroke=\"#e0e0e0\" stroke-width=\"0.3\" d=\"M 80 325 L 720 325\"></path></g></g>\n    <g class=\"mud-charts-yaxis\"><text x='70' y='330' font-size='12px' text-anchor='end' dominant-baseline='auto'>1000</text></g>\n    <g class=\"mud-charts-xaxis\"><text x='80' y='340' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 80 340)'>23:00</text><text x='400' y='340' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 400 340)'>00:00</text><text x='720' y='340' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 720 340)'>01:00</text></g>");
+            comp.Markup.Should().ContainEquivalentOf("<g class=\"mud-charts-gridlines-yaxis\"><path stroke=\"#e0e0e0\" stroke-width=\"0.3\" d=\"M 30 320 L 770 320\"></path></g></g>");
+            comp.Markup.Should().ContainEquivalentOf("<text x='20' y='325' font-size='12px' text-anchor='end' dominant-baseline='auto'>1000</text></g>");
+            comp.Markup.Should().ContainEquivalentOf("<text x='30' y='340' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 30 340)'>23:00</text><text x='276.66666666666663' y='340' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 276.66666666666663 340)'>00:00</text><text x='523.3333333333333' y='340' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 523.3333333333333 340)'>01:00</text><text x='770' y='340' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 770 340)'>02:00</text></g>");
         }
 
         [Test]
@@ -88,7 +90,8 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.TimeLabelSpacingRounding, true));
 
             // check the axis
-            comp.Markup.Should().ContainEquivalentOf("<g class=\"mud-charts-gridlines-yaxis\"><path stroke=\"#e0e0e0\" stroke-width=\"0.3\" d=\"M 80 325 L 720 325\"></path></g></g>\n    <g class=\"mud-charts-yaxis\"><text x='70' y='330' font-size='12px' text-anchor='end' dominant-baseline='auto'>1000</text></g>\n    <g class=\"mud-charts-xaxis\"><text x='257.77777777777777' y='340' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 257.77777777777777 340)'>00:00</text><text x='577.7777777777778' y='340' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 577.7777777777778 340)'>01:00</text></g>");
+            comp.Markup.Should().ContainEquivalentOf("<text x='20' y='325' font-size='12px' text-anchor='end' dominant-baseline='auto'>1000</text>");
+            comp.Markup.Should().ContainEquivalentOf("<text x='235.55555555555557' y='340' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 235.55555555555557 340)'>00:00</text><text x='482.22222222222223' y='340' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 482.22222222222223 340)'>01:00</text><text x='728.8888888888889' y='340' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 728.8888888888889 340)'>02:00</text>");
         }
 
         [Test]
@@ -112,10 +115,11 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.TimeLabelSpacingRoundingPadSeries, true));
 
             // check the axis
-            comp.Markup.Should().ContainEquivalentOf("<g class=\"mud-charts-grid\"><g class=\"mud-charts-gridlines-yaxis\"><path stroke=\"#e0e0e0\" stroke-width=\"0.3\" d=\"M 80 325 L 720 325\"></path></g></g>\n    <g class=\"mud-charts-yaxis\"><text x='70' y='330' font-size='12px' text-anchor='end' dominant-baseline='auto'>1000</text></g>\n    <g class=\"mud-charts-xaxis\"><text x='80' y='340' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 80 340)'>23:00</text><text x='293.33333333333337' y='340' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 293.33333333333337 340)'>00:00</text><text x='506.6666666666667' y='340' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 506.6666666666667 340)'>01:00</text><text x='720' y='340' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 720 340)'>02:00</text></g>");
+            comp.Markup.Should().ContainEquivalentOf("<text x='20' y='325' font-size='12px' text-anchor='end' dominant-baseline='auto'>1000</text>");
+            comp.Markup.Should().ContainEquivalentOf("<text x='30' y='340' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 30 340)'>23:00</text><text x='215' y='340' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 215 340)'>00:00</text><text x='400' y='340' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 400 340)'>01:00</text><text x='585' y='340' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 585 340)'>02:00</text><text x='770' y='340' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 770 340)'>03:00</text>");
 
             // check the line path
-            comp.Markup.Should().ContainEquivalentOf("<path class=\"mud-chart-serie mud-chart-line\" blazor:onclick=\"1\" fill=\"none\" stroke=\"#2979FF\" stroke-opacity=\"1\" stroke-width=\"3\" d=\"M 106.6667 325 L 266.6667 325 L 426.6667 325 L 586.6667 325\"></path>");
+            comp.Markup.Should().ContainEquivalentOf("d=\"M 60.8333 320 L 245.8333 320 L 430.8333 320 L 615.8333 320\"");
         }
 
         [Test]
