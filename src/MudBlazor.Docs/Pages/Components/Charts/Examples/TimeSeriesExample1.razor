@@ -19,37 +19,31 @@
         <MudText Typo="Typo.body1" Class="py-3">Selected: @(_index < 0 ? "None" : _series[_index].Name)</MudText>
     </MudItem>
     <MudItem md="6" xs="12">
-        <MudSlider @bind-Value="_options.LineStrokeWidth" Min="1" Max="10" Color="Color.Info">Line Width: @_options.LineStrokeWidth.ToString()</MudSlider>
+        <MudSlider @bind-Value="_options.LineStrokeWidth" Min="1" Max="10">Line Width: @_options.LineStrokeWidth.ToString()</MudSlider>
     </MudItem>
     <MudItem md="6" xs="12">
-        <MudCheckBox @bind-Value="_roundedLabelSpacing" Color="Color.Info" Label="TimeLabelSpacing Rounding"></MudCheckBox>
-    </MudItem>
-    <MudItem md="6" xs="12">
-        <MudCheckBox @bind-Value="_roundedLabelSpacingPadSeries" Color="Color.Info" Label="TimeLabelSpacing Rounding - Pad Series"></MudCheckBox>
-    </MudItem>
-    <MudItem md="6" xs="12">
-        <MudCheckBox @bind-Value="_axisChartOptions.MatchBoundsToSize" Color="Color.Info" Label="MatchBoundsToSize"></MudCheckBox>
+        <MudCheckBox @bind-Value="_roundedLabelSpacing" Color="Color.Primary" Label="TimeLabelSpacing Rounding"></MudCheckBox>
     </MudItem>
     <MudItem md="6" xs="12">
         <MudTextField @bind-Value="_width" Label="Chart Width"></MudTextField>
     </MudItem>
     <MudItem md="6" xs="12">
+        <MudCheckBox @bind-Value="_roundedLabelSpacingPadSeries" Color="Color.Primary" Label="TimeLabelSpacing Rounding - Pad Series"></MudCheckBox>
+    </MudItem>
+    <MudItem md="6" xs="12">
         <MudTextField @bind-Value="_height" Label="Chart Height"></MudTextField>
     </MudItem>
     <MudItem md="6" xs="12">
-        <MudStack>
-            <MudText Typo="Typo.body1">Label Extra Height</MudText>
-            <MudSlider @bind-Value="_axisChartOptions.LabelExtraHeight" Min="0" Max="40" Step="5"></MudSlider>
-        </MudStack>
+        <MudCheckBox @bind-Value="_axisChartOptions.MatchBoundsToSize" Color="Color.Primary" Label="MatchBoundsToSize"></MudCheckBox>
     </MudItem>
     <MudItem md="6" xs="12">
         <MudStack>
-            <MudText Typo="Typo.body1">Label Rotation</MudText>
-            <MudSlider @bind-Value="_axisChartOptions.LabelRotation" Min="0" Max="90" Step="15"></MudSlider>
+            <MudText Typo="Typo.body1">XAxis Label Rotation</MudText>
+            <MudSlider @bind-Value="_axisChartOptions.XAxisLabelRotation" Min="0" Max="90" Step="15"></MudSlider>
         </MudStack>
     </MudItem>
     <MudItem md="6" xs="12">
-        <MudCheckBox T="bool" ValueChanged="(v)=> _series.ForEach(x => x.ShowDataMarkers = v)" Label="Show Data Markers"></MudCheckBox>
+        <MudCheckBox T="bool" ValueChanged="(v)=> _series.ForEach(x => x.ShowDataMarkers = v)" Color="Color.Primary" Label="Show Data Markers"></MudCheckBox>
     </MudItem>
 </MudGrid>
 
@@ -66,7 +60,7 @@
             LineStrokeWidth = 1,
         };
 
-    private AxisChartOptions _axisChartOptions = new();
+    private AxisChartOptions _axisChartOptions = new() { };
 
     private TimeSeriesChartSeries _chart1 = new();
     private TimeSeriesChartSeries _chart2 = new();

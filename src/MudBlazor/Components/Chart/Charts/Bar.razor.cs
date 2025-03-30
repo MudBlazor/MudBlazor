@@ -13,17 +13,21 @@ namespace MudBlazor.Charts
     /// <seealso cref="TimeSeries"/>
     partial class Bar : MudCategoryAxisChartBase
     {
-        private List<SvgPath> _horizontalLines = [];
-        private List<SvgText> _horizontalValues = [];
+        private readonly List<SvgPath> _horizontalLines = [];
+        private readonly List<SvgText> _horizontalValues = [];
 
-        private List<SvgPath> _verticalLines = [];
-        private List<SvgText> _verticalValues = [];
+        private readonly List<SvgPath> _verticalLines = [];
+        private readonly List<SvgText> _verticalValues = [];
 
-        private List<SvgLegend> _legends = [];
+        private readonly List<SvgLegend> _legends = [];
         private List<ChartSeries> _series = [];
 
-        private List<SvgPath> _bars = [];
+        private readonly List<SvgPath> _bars = [];
         private SvgPath? _hoveredBar;
+
+        private const double BarStroke = 8;
+        private const double BarGap = 10;
+        private double BarGroupWidth => (_series.Count - 1) * BarGap + BarStroke; // number of gaps of 10 + the stroke width
 
         /// <inheritdoc />
         protected override void OnParametersSet()
@@ -41,8 +45,8 @@ namespace MudBlazor.Charts
             SetBounds();
             ComputeUnitsAndNumberOfLines(out var gridXUnits, out var gridYUnits, out var numHorizontalLines, out var lowestHorizontalLine, out var numVerticalLines);
 
-            var horizontalSpace = (_boundWidth - HorizontalStartSpace - HorizontalEndSpace) / Math.Max(1, numVerticalLines - 1);
-            var verticalSpace = (_boundHeight - VerticalStartSpace - VerticalEndSpace - AxisChartOptions.LabelExtraHeight) / Math.Max(1, numHorizontalLines - 1);
+            var horizontalSpace = (_boundWidth - HorizontalStartSpace - HorizontalEndSpace - BarGroupWidth) / Math.Max(1, numVerticalLines - 1);
+            var verticalSpace = (_boundHeight - VerticalStartSpace - VerticalEndSpace) / Math.Max(1, numHorizontalLines - 1);
 
             GenerateHorizontalGridLines(numHorizontalLines, lowestHorizontalLine, gridYUnits, verticalSpace);
             GenerateVerticalGridLines(numVerticalLines, gridXUnits, horizontalSpace);
@@ -66,7 +70,7 @@ namespace MudBlazor.Charts
                 numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
 
                 // this is a safeguard against millions of gridlines which might arise with very high values
-                var maxYTicks = MudChartParent?.ChartOptions.MaxNumYAxisTicks ?? 100;
+                var maxYTicks = MudChartParent?.ChartOptions.MaxNumYAxisTicks ?? 20;
                 while (numHorizontalLines > maxYTicks)
                 {
                     gridYUnits *= 2;
@@ -96,7 +100,7 @@ namespace MudBlazor.Charts
                 var line = new SvgPath()
                 {
                     Index = i,
-                    Data = $"M {ToS(HorizontalStartSpace)} {ToS(_boundHeight - AxisChartOptions.LabelExtraHeight - y)} L {ToS(_boundWidth - HorizontalEndSpace)} {ToS(_boundHeight - AxisChartOptions.LabelExtraHeight - y)}"
+                    Data = $"M {ToS(HorizontalStartSpace)} {ToS(_boundHeight - y)} L {ToS(_boundWidth - HorizontalEndSpace)} {ToS(_boundHeight - y)}"
                 };
                 _horizontalLines.Add(line);
 
@@ -104,7 +108,7 @@ namespace MudBlazor.Charts
                 var lineValue = new SvgText()
                 {
                     X = HorizontalStartSpace - 10,
-                    Y = _boundHeight - AxisChartOptions.LabelExtraHeight - y + 5,
+                    Y = _boundHeight - y + 5,
                     Value = ToS(startGridY, MudChartParent?.ChartOptions.YAxisFormat)
                 };
                 _horizontalValues.Add(lineValue);
@@ -122,15 +126,15 @@ namespace MudBlazor.Charts
                 var line = new SvgPath()
                 {
                     Index = i,
-                    Data = $"M {ToS(x)} {ToS(_boundHeight - VerticalStartSpace - AxisChartOptions.LabelExtraHeight)} L {ToS(x)} {ToS(VerticalEndSpace)}"
+                    Data = $"M {ToS(x)} {ToS(_boundHeight - VerticalStartSpace)} L {ToS(x)} {ToS(VerticalEndSpace)}"
                 };
                 _verticalLines.Add(line);
 
                 var xLabels = i < XAxisLabels.Length ? XAxisLabels[i] : "";
                 var lineValue = new SvgText()
                 {
-                    X = x,
-                    Y = _boundHeight - (AxisChartOptions.LabelExtraHeight / 2) - 10,
+                    X = x + (BarGroupWidth / 2),
+                    Y = _boundHeight - 10,
                     Value = xLabels
                 };
                 _verticalValues.Add(lineValue);
@@ -144,21 +148,22 @@ namespace MudBlazor.Charts
 
             for (var i = 0; i < _series.Count; i++)
             {
-                var data = _series[i].Data;
+                var series = _series[i];
+                var data = series.Data;
 
                 for (var j = 0; j < data.Length; j++)
                 {
-                    var gridValueX = HorizontalStartSpace + (i * 10) + (j * horizontalSpace);
-                    var gridValueY = _boundHeight - VerticalStartSpace - AxisChartOptions.LabelExtraHeight + (lowestHorizontalLine * verticalSpace);
+                    var gridValueX = HorizontalStartSpace + (BarStroke / 2) + (i * BarGap) + (j * horizontalSpace);
+                    var gridValueY = _boundHeight - VerticalStartSpace + (lowestHorizontalLine * verticalSpace);
                     var dataValue = ((data[j] / gridYUnits) - lowestHorizontalLine) * verticalSpace;
-                    var gridValue = _boundHeight - VerticalStartSpace - AxisChartOptions.LabelExtraHeight - dataValue;
+                    var gridValue = _boundHeight - VerticalStartSpace - dataValue;
 
                     var bar = new SvgPath()
                     {
                         Index = i,
                         Data = $"M {ToS(gridValueX)} {ToS(gridValueY)} L {ToS(gridValueX)} {ToS(gridValue)}",
                         LabelXValue = XAxisLabels.Length > j ? XAxisLabels[j] : string.Empty,
-                        LabelYValue = dataValue.ToString(),
+                        LabelYValue = dataValue.ToString(series.DataMarkerTooltipYValueFormat),
                         LabelX = gridValueX,
                         LabelY = gridValue
                     };
@@ -168,7 +173,7 @@ namespace MudBlazor.Charts
                 var legend = new SvgLegend()
                 {
                     Index = i,
-                    Labels = _series[i].Name
+                    Labels = series.Name
                 };
                 _legends.Add(legend);
             }

@@ -14,4 +14,9 @@ public class ElementSize
     /// The width of the Element.
     /// </summary>
     public required double Width { get; init; }
+
+    /// <summary>
+    /// The timestamp of the size change, used to help filter out of order events for server mode.
+    /// </summary>
+    public long Timestamp { get; set; }
 }
