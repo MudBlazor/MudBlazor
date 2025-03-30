@@ -1,11 +1,6 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Bunit;
+﻿using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.Docs.Examples;
-using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.RadioGroup;
 using NUnit.Framework;
 
@@ -195,11 +190,18 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("label > span")[1].ClassList.Should().NotContain("mud-radio-dense");
             comp.FindAll("label > span")[2].ClassList.Should().NotContain("mud-radio-dense");
             comp.FindAll("label > span")[3].ClassList.Should().NotContain("mud-radio-dense");
+            comp.FindAll("label > span")[4].ClassList.Should().NotContain("mud-radio-dense");
             // check size
-            comp.FindAll("svg")[0].ClassList.Should().Contain("mud-icon-size-medium");
-            comp.FindAll("svg")[1].ClassList.Should().Contain("mud-icon-size-small");
-            comp.FindAll("svg")[2].ClassList.Should().Contain("mud-icon-size-medium");
-            comp.FindAll("svg")[3].ClassList.Should().Contain("mud-icon-size-large");
+            comp.FindAll("svg").ToArray()[0].ClassList.Should().Contain("mud-icon-size-medium");
+            comp.FindAll("label p").ToArray()[0].ClassList.Should().Contain("mud-radio-label-medium");
+            comp.FindAll("svg").ToArray()[1].ClassList.Should().Contain("mud-icon-size-small");
+            comp.FindAll("label p").ToArray()[1].ClassList.Should().Contain("mud-radio-label-small");
+            comp.FindAll("svg").ToArray()[2].ClassList.Should().Contain("mud-icon-size-medium");
+            comp.FindAll("label p").ToArray()[2].ClassList.Should().Contain("mud-radio-label-medium");
+            comp.FindAll("svg").ToArray()[3].ClassList.Should().Contain("mud-icon-size-medium");
+            comp.FindAll("label p").ToArray()[3].ClassList.Should().Contain("mud-radio-label-medium");
+            comp.FindAll("svg").ToArray()[4].ClassList.Should().Contain("mud-icon-size-large");
+            comp.FindAll("label p").ToArray()[4].ClassList.Should().Contain("mud-radio-label-large");
         }
 
         [Test]

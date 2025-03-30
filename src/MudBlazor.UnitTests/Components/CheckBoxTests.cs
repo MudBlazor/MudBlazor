@@ -1,8 +1,6 @@
-﻿using System.Linq;
-using Bunit;
+﻿using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.Docs.Examples;
 using MudBlazor.UnitTests.TestComponents.CheckBox;
 using MudBlazor.UnitTests.Utilities;
 using NUnit.Framework;
@@ -119,11 +117,19 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("span").ToArray()[1].ClassList.Should().NotContain("mud-checkbox-dense");
             comp.FindAll("span").ToArray()[2].ClassList.Should().NotContain("mud-checkbox-dense");
             comp.FindAll("span").ToArray()[3].ClassList.Should().NotContain("mud-checkbox-dense");
+            comp.FindAll("span").ToArray()[4].ClassList.Should().NotContain("mud-checkbox-dense");
+            
             // check size
             comp.FindAll("svg").ToArray()[0].ClassList.Should().Contain("mud-icon-size-medium");
+            comp.FindAll("label p").ToArray()[0].ClassList.Should().Contain("mud-checkbox-label-medium");
             comp.FindAll("svg").ToArray()[1].ClassList.Should().Contain("mud-icon-size-small");
+            comp.FindAll("label p").ToArray()[1].ClassList.Should().Contain("mud-checkbox-label-small");
             comp.FindAll("svg").ToArray()[2].ClassList.Should().Contain("mud-icon-size-medium");
-            comp.FindAll("svg").ToArray()[3].ClassList.Should().Contain("mud-icon-size-large");
+            comp.FindAll("label p").ToArray()[2].ClassList.Should().Contain("mud-checkbox-label-medium");
+            comp.FindAll("svg").ToArray()[3].ClassList.Should().Contain("mud-icon-size-medium");
+            comp.FindAll("label p").ToArray()[3].ClassList.Should().Contain("mud-checkbox-label-medium");
+            comp.FindAll("svg").ToArray()[4].ClassList.Should().Contain("mud-icon-size-large");
+            comp.FindAll("label p").ToArray()[4].ClassList.Should().Contain("mud-checkbox-label-large");
         }
 
         /// <summary>
@@ -340,28 +346,6 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<CheckboxLabelTest>();
 
             comp.FindAll("label.mud-checkbox")[2].ClassList.Should().Contain("mud-input-content-placement-start"); // 3rd checkbox: Placement.Start
-        }
-
-
-        [Test]
-        [TestCase(Typo.body1)]
-        [TestCase(Typo.body2)]
-        [TestCase(Typo.caption)]
-        [TestCase(Typo.button)]
-        [TestCase(Typo.h1)]
-        [TestCase(Typo.h2)]
-        [TestCase(Typo.h3)]
-        [TestCase(Typo.h4)]
-        [TestCase(Typo.h5)]
-        [TestCase(Typo.h6)]
-        [TestCase(Typo.subtitle1)]
-        [TestCase(Typo.subtitle2)]
-        public void CheckBoxLabelTypoTest(Typo typo)
-        {
-            var comp = Context.RenderComponent<MudCheckBox<bool>>(x => x.Add(c => c.Label, "LabelText").Add(c => c.Typo, typo));
-
-            var expectedTypoClass = $"mud-typography-{typo}";
-            comp.Find("label").GetElementsByClassName(expectedTypoClass).Should().ContainSingle();
         }
 
         [Test]
