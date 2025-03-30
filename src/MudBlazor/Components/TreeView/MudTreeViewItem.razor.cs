@@ -438,7 +438,7 @@ namespace MudBlazor
             }
             if (!GetReadOnly())
             {
-                if (MudTreeRoot != null)
+                if (MudTreeRoot is not null)
                 {
                     await MudTreeRoot.OnItemClickAsync(this);
                 }
@@ -459,7 +459,7 @@ namespace MudBlazor
             }
             if (!GetReadOnly())
             {
-                if (MudTreeRoot != null)
+                if (MudTreeRoot is not null)
                 {
                     await MudTreeRoot.OnItemClickAsync(this);
                 }
