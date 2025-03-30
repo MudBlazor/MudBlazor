@@ -120,7 +120,7 @@ namespace MudBlazor
         public YAxisLabelPosition YAxisLabelPosition { get; set; } = YAxisLabelPosition.Left;
 
         /// <summary>
-        /// Enables tooltips for values in a <see cref="ChartType.HeatMap"/>
+        /// Enables tooltips for values
         /// Defaults to true
         /// </summary>
         public bool ShowToolTips { get; set; } = true;

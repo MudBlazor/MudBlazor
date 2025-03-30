@@ -9,7 +9,7 @@
         <MudText Typo="Typo.body1" Class="py-3">Selected: @(_index < 0 ? "None" : _series[_index].Name)</MudText>
     </MudItem>
     <MudItem md="6" xs="12">
-        <MudCheckBox @bind-Value="_axisChartOptions.MatchBoundsToSize" Color="Color.Info" Label="MatchBoundsToSize"></MudCheckBox>
+        <MudCheckBox @bind-Value="_axisChartOptions.MatchBoundsToSize" Color="Color.Primary" Label="MatchBoundsToSize"></MudCheckBox>
     </MudItem>
     <MudItem md="6" xs="12">
         <MudTextField @bind-Value="_width" Label="Chart Width"></MudTextField>
@@ -19,14 +19,8 @@
     </MudItem>
     <MudItem md="6" xs="12">
         <MudStack>
-            <MudText Typo="Typo.body1">Label Extra Height</MudText>
-            <MudSlider @bind-Value="_axisChartOptions.LabelExtraHeight" Min="0" Max="40" Step="5"></MudSlider>
-        </MudStack>
-    </MudItem>
-    <MudItem md="6" xs="12">
-        <MudStack>
-            <MudText Typo="Typo.body1">Label Rotation</MudText>
-            <MudSlider @bind-Value="_axisChartOptions.LabelRotation" Min="0" Max="90" Step="15"></MudSlider>
+            <MudText Typo="Typo.body1">XAxis Label Rotation</MudText>
+            <MudSlider @bind-Value="_axisChartOptions.XAxisLabelRotation" Min="0" Max="90" Step="15"></MudSlider>
         </MudStack>
     </MudItem>
     <MudItem md="6" xs="12">

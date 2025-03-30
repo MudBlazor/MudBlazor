@@ -2,11 +2,12 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
+#nullable enable
 namespace MudBlazor.Charts;
 
 public partial class ChartTooltip : ComponentBase
 {
-    private double _boxWidth = -1;
+    private double _boxWidth = 40;
     private ElementReference? _hoverTextTitle = null;
 
     [Inject]
@@ -62,7 +63,7 @@ public partial class ChartTooltip : ComponentBase
             // Uses interop to get the bounding box of the title text to determine the width of the tooltip box
             var bboxTitle = await JsRuntime.InvokeAsync<BBox>("mudGetSvgBBox", _hoverTextTitle);
 
-            _boxWidth = Math.Max(bboxTitle.Width, 30) + 10; // Minimum width for the text of 30px with 10px padding (5px each side)
+            _boxWidth = Math.Max(bboxTitle?.Width ?? 0, 30) + 10; // Minimum width for the text of 30px with 10px padding (5px each side)
 
             StateHasChanged();
         }

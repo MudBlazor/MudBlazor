@@ -50,6 +50,11 @@ namespace MudBlazor
         /// </summary>
         public string? DataMarkerTooltipSubtitleFormat { get; set; }
 
+        /// <summary>
+        /// Tooltip YValue format for the series. It is used to format the {{Y_VALUE}} tag.
+        /// </summary>
+        public string? DataMarkerTooltipYValueFormat { get; set; }
+
         public LineDisplayType LineDisplayType { get; set; }
 
         public double FillOpacity { get; set; } = 0.4;

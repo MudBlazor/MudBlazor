@@ -86,16 +86,17 @@ namespace MudBlazor.UnitTests.Charts
                     Contain("United States").And.Contain("Germany").And.Contain("Sweden");
             }
 
-            if (chartSeries.Count == 3 && chartSeries.Any(x => x.Data.Contains(40)))
+            var bars = comp.FindAll("path.mud-chart-bar");
+            if (chartSeries.TryGetIndexOfDataValue(0, 40, out var index))
             {
-                comp.Markup.Should()
-                    .Contain("d=\"M 30 265 L 30 145\"");
+                bars[index].OuterHtml.Should()
+                    .Contain("d=\"M 34 261 L 34 143\"");
             }
 
-            if (chartSeries.Count == 3 && chartSeries.Any(x => x.Data.Contains(80)))
+            if (chartSeries.TryGetIndexOfDataValue(0, 80, out index))
             {
-                comp.Markup.Should()
-                    .Contain("d=\"M 546.25 265 L 546.25 25\"");
+                bars[index].OuterHtml.Should()
+                    .Contain("d=\"M 525.75 261 L 525.75 25\"");
             }
 
             comp.SetParametersAndRender(parameters => parameters
@@ -141,16 +142,17 @@ namespace MudBlazor.UnitTests.Charts
                     Contain("United States").And.Contain("Germany").And.Contain("Sweden");
             }
 
-            if (chartSeries.Count == 3 && chartSeries.Any(x => x.Data.Contains(40)))
+            var bars = comp.FindAll("path.mud-chart-bar");
+            if (chartSeries.TryGetIndexOfDataValue(0, 40, out var index))
             {
-                comp.Markup.Should()
-                    .Contain("d=\"M 30 265 L 30 145\"");
+                bars[index].OuterHtml.Should()
+                    .Contain("d=\"M 34 261 L 34 143\"");
             }
 
-            if (chartSeries.Count == 3 && chartSeries.Any(x => x.Data.Contains(80)))
+            if (chartSeries.TryGetIndexOfDataValue(0, 80, out index))
             {
-                comp.Markup.Should()
-                    .Contain("d=\"M 546.25 265 L 546.25 25\"");
+                bars[index].OuterHtml.Should()
+                    .Contain("d=\"M 525.75 261 L 525.75 25\"");
             }
 
             comp.SetParametersAndRender(parameters => parameters.Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _modifiedPalette }));
