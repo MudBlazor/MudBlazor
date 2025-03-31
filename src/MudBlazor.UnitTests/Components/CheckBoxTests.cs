@@ -118,7 +118,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("span").ToArray()[2].ClassList.Should().NotContain("mud-checkbox-dense");
             comp.FindAll("span").ToArray()[3].ClassList.Should().NotContain("mud-checkbox-dense");
             comp.FindAll("span").ToArray()[4].ClassList.Should().NotContain("mud-checkbox-dense");
-            
+
             // check size
             comp.FindAll("svg").ToArray()[0].ClassList.Should().Contain("mud-icon-size-medium");
             comp.FindAll("label p").ToArray()[0].ClassList.Should().Contain("mud-checkbox-label-medium");
