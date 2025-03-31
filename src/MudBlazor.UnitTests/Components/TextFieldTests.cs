@@ -1593,6 +1593,10 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").Input("0-");
             comp.Instance.Text.Should().Be("-");
             comp.Instance.Value.Should().Be(5);
+
+            comp.Find("input").Input("-7");
+            comp.Instance.Text.Should().Be("-7");
+            comp.Instance.Value.Should().Be(-7);
         }
 
         [TestCase(Adornment.Start, false, false)]
