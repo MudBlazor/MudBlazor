@@ -544,7 +544,7 @@ namespace MudBlazor
         /// <summary>
         /// Handles the pointer entering either the activator or the menu list.
         /// </summary>
-        private async Task PointerEnterAsync(PointerEventArgs args)
+        internal async Task PointerEnterAsync(PointerEventArgs args)
         {
             _isPointerOver = true;
 
@@ -569,13 +569,13 @@ namespace MudBlazor
         /// <summary>
         /// Handles the pointer leaving either the activator or the menu list.
         /// </summary>
-        private async Task PointerLeaveAsync(PointerEventArgs args)
+        internal async Task PointerLeaveAsync(PointerEventArgs args)
         {
             _isPointerOver = false;
             var isSubmenu = ParentMenu is not null;
             if (!isSubmenu && ActivationEvent != MouseEvent.MouseOver)
             {
-                return; // main menu that doesn't use mopuseover
+                return; // main menu that doesn't use mouseover
             }
 
             if (!_isTransient || !IsHoverable(args))
