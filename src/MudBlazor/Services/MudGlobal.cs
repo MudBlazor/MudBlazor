@@ -78,7 +78,7 @@ public static class MudGlobal
     {
         /// <summary>
         /// The time in milliseconds before a <see cref="MudMenu"/> is activated by the cursor hovering over it
-        /// or before it is hidden after the cursor leaves the menu.
+        /// or 2x that time before it is hidden after the cursor leaves the menu.
         /// </summary>
         public static int HoverDelay { get; set; } = 300;
     }
