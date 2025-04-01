@@ -32,6 +32,7 @@ namespace MudBlazor
         private T[]? _items;
         private List<int> _enabledItemIndices = [];
         private Func<T?, string?>? _toStringFunc;
+        private bool _isFocusBeingHandledInternally;
 
         [Inject]
         private IScrollManager ScrollManager { get; set; } = null!;
@@ -561,13 +562,8 @@ namespace MudBlazor
                     await _elementReference.SetText(optionText);
                 }
 
-                _isFocused = true; // Prevent menu from reopening from the focus handler.
                 await FocusAsync();
-                // We want focus with a closed popover
-                Open = false;
-                // And update
-                StateHasChanged();
-
+                await CloseMenuAsync();
             }
             finally
             {
@@ -978,33 +974,33 @@ namespace MudBlazor
             return OnInputActivationAsync(true);
         }
 
-        private Task OnInputFocusedAsync() => OnInputActivationAsync(OpenOnFocus);
-
-        private async Task OnInputActivationAsync(bool openMenu)
+        private async Task OnInputFocusedAsync()
         {
-            int number = DateTime.Now.Millisecond;
+            var wasFocused = _isFocused;
+            _isFocused = true;
 
-            if (_isFocused)
+            // Was focus NOT triggered by user interaction?
+            if (_isFocusBeingHandledInternally)
             {
+                _isFocusBeingHandledInternally = false;
                 return;
             }
 
-            var wasFocused = _isFocused;
-            _isFocused = true;
-            Logger.LogInformation($"{number}: {wasFocused}");
-
-            if (SelectOnActivation)
+            // Select the input text unless we're already focused or it will interfere with mouse selection.
+            if (!wasFocused && SelectOnActivation)
             {
-                Logger.LogInformation($"{number}: before select");
                 await SelectAsync();
-                Logger.LogInformation($"{number}: after select");
             }
 
-            if (openMenu && !wasFocused && !Open && !_opening && !GetReadOnlyState())
+            await OnInputActivationAsync(OpenOnFocus);
+        }
+
+        private async Task OnInputActivationAsync(bool openMenu)
+        {
+            // The click event also triggers the focus event so we don't want to unnecessarily handle both.
+            if (openMenu && !Open && !_opening && !GetReadOnlyState())
             {
-                Logger.LogInformation($"{number}: before menu");
                 await OpenMenuAsync();
-                Logger.LogInformation($"{number}: after menu");
             }
         }
 
@@ -1012,12 +1008,12 @@ namespace MudBlazor
         {
             // clear button clicked, let's make sure text is cleared and the menu has focus
             Open = true;
-            _isFocused = true;
             await SetValueAsync(default, false);
             await SetTextAsync(default, false);
             _selectedListItemIndex = default;
-            await CloseMenuAsync();
+            Open = false;
             StateHasChanged();
+            await FocusAsync();
             await OnClearButtonClick.InvokeAsync(e);
             await BeginValidateAsync();
         }
@@ -1026,7 +1022,6 @@ namespace MudBlazor
         {
             if (OnAdornmentClick.HasDelegate)
             {
-
                 await OnAdornmentClick.InvokeAsync();
             }
             else
@@ -1038,6 +1033,7 @@ namespace MudBlazor
         private Task OnInputBlurredAsync(FocusEventArgs args)
         {
             _isFocused = false;
+            _isFocusBeingHandledInternally = false;
 
             // When Immediate is enabled, then the CoerceValue is set by TextChanged
             // So only coerce the value on blur when Immediate is disabled
@@ -1122,6 +1118,7 @@ namespace MudBlazor
         /// </summary>
         public override ValueTask FocusAsync()
         {
+            _isFocusBeingHandledInternally = true; // The subsequent event that will be triggered will know it's not by the user.
             return _elementReference.FocusAsync();
         }
 
