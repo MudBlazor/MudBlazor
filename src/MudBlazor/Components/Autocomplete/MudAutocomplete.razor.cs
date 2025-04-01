@@ -562,7 +562,6 @@ namespace MudBlazor
                     await _elementReference.SetText(optionText);
                 }
 
-                await FocusAsync();
                 await CloseMenuAsync();
             }
             finally
@@ -1164,6 +1163,10 @@ namespace MudBlazor
             await SetTextAsync(text, true);
         }
 
-        private Task ListItemOnClickAsync(T item) => SelectOptionAsync(item);
+        private async Task ListItemOnClickAsync(T item)
+        {
+            await SelectOptionAsync(item);
+            await FocusAsync();
+        }
     }
 }
