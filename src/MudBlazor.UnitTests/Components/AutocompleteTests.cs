@@ -2103,5 +2103,34 @@ namespace MudBlazor.UnitTests.Components
 
             comp.WaitForAssertion(() => comp.Instance.Open.Should().Be(openOnFocus, $"OpenOnFocus should set Open to {openOnFocus} after input Focus"));
         }
+
+        [Test]
+        public async Task DebounceShouldNotOpenMenuIfAutocompleteIsDisabledDuringThatTime()
+        {
+            var valueChangedCount = 0;
+            var comp = Context.RenderComponent<AutocompleteStates>(parameters =>
+            {
+                parameters.Add(p => p.DebounceInterval, 500);
+                parameters.Add(p => p.CoerceText, false);
+                parameters.Add(p => p.CoerceValue, true);
+                parameters.Add(p => p.Immediate, true);
+                parameters.Add(p => p.ValueChanged, v => valueChangedCount++);
+            });
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+            var autocomplete = autocompletecomp.Instance;
+
+            autocomplete.Disabled.Should().BeFalse();
+            autocomplete.Open.Should().BeFalse();
+            comp.Markup.Should().NotContain("mud-popover-open");
+
+            await comp.Find("input").InputAsync(new ChangeEventArgs { Value = "Al" });
+
+            autocomplete.Disabled = true;
+
+            // Wait until after the debounce should have elapsed and ensure the menu is still closed.
+            await Task.Delay(1000);
+            autocomplete.Open.Should().BeFalse();
+            comp.Markup.Should().NotContain("mud-popover-open");
+        }
     }
 }
