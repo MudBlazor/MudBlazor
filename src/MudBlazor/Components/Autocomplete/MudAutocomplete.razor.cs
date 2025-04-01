@@ -674,10 +674,17 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Opens the drop-down of items.
+        /// Opens the drop-down of items, or refreshes the list if it is already open.
         /// </summary>
         public async Task OpenMenuAsync()
         {
+            if (MinCharacters > 0 && (string.IsNullOrWhiteSpace(Text) || Text.Length < MinCharacters))
+            {
+                Open = false;
+                StateHasChanged();
+                return;
+            }
+
             _opening = true;
 
             var searchedItems = Array.Empty<T>();
@@ -757,17 +764,8 @@ namespace MudBlazor
         /// </returns>
         private async Task<bool> TryOpenMenuAsync()
         {
-            // Close the menu if we don't have enough characters.
-            if (MinCharacters > 0 && (string.IsNullOrWhiteSpace(Text) || Text.Length < MinCharacters))
+            if (Open || GetDisabledState() || GetReadOnlyState())
             {
-                Open = false;
-                StateHasChanged();
-                return false;
-            }
-
-            if (GetDisabledState() || GetReadOnlyState())
-            {
-                await CloseMenuAsync();
                 return false;
             }
 
@@ -869,9 +867,13 @@ namespace MudBlazor
             {
                 case "Enter":
                 case "NumpadEnter":
-                    if (!await TryOpenMenuAsync())
+                    if (Open)
                     {
                         await OnEnterKeyAsync();
+                    }
+                    else
+                    {
+                        await TryOpenMenuAsync();
                     }
                     break;
                 case "Escape":
