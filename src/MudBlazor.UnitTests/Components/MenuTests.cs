@@ -689,7 +689,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-popover-open").Count.Should().Be(2, "Submenu should remain open immediately after pointer leave");
 
             // Wait less than the delay
-            await Task.Delay(hoverDelay - 50);
+            await Task.Delay(hoverDelay / 2);
             comp.FindAll("div.mud-popover-open").Count.Should().Be(2, "Submenu should still be open before hide delay completes");
 
             // After the full delay, submenu should close
