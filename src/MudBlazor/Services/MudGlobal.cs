@@ -77,8 +77,7 @@ public static class MudGlobal
     public static class MenuDefaults
     {
         /// <summary>
-        /// The time in milliseconds before a <see cref="MudMenu"/> is activated by the cursor hovering over it
-        /// or before it is hidden after the cursor leaves the menu.
+        /// The delay in milliseconds before a <see cref="MudMenu"/> is shown when hovered, or hidden after the cursor moves away.
         /// </summary>
         public static int HoverDelay { get; set; } = 300;
     }
