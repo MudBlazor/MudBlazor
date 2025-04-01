@@ -6,20 +6,20 @@
         {
             <MudStack Row Spacing="4" AlignItems="AlignItems.End">
                 <MudDropDown @bind-Text="@_value"
-                             FullWidth
-                             Variant="variant"
-                             Label="@variant.ToString()"
-                             Filterable="_filterable"
-                             MultiSelection="_multiSelection"
-                             @bind-OpenMenu="_openStates[variant]"
-                             @bind-SelectedItems="_selectedItems"
-                             OnAddItemClick="@(_addItem ? EventCallback.Factory.Create<MouseEventArgs>(this, (MouseEventArgs e) => AddItem(e)) : default)"
-                             Margin="@(_dense ? Margin.Dense : Margin.Normal)"
-                             Disabled="_disabled"
-                             ReadOnly="_readonly"
-                             Placeholder="@(_placeholder ? "Placeholder" : null)"
-                             HelperText="@(_helperText ? "Helper Text" : null)"
-                             Clearable="_clearable" Color="_color">
+                FullWidth
+                Variant="variant"
+                Label="@variant.ToString()"
+                Filterable="_filterable"
+                MultiSelection="_multiSelection"
+                @bind-OpenMenu="_openStates[variant]"
+                @bind-SelectedItems="_selectedItems"
+                OnAddItemClick="@(_addItem ? EventCallback.Factory.Create<MouseEventArgs>(this, (MouseEventArgs e) => AddItem(e)) : default)"
+                Margin="@(_dense ? Margin.Dense : Margin.Normal)"
+                Disabled="_disabled"
+                ReadOnly="_readonly"
+                Placeholder="@(_placeholder ? "Placeholder" : null)"
+                HelperText="@(_helperText ? "Helper Text" : null)"
+                Clearable="_clearable" Color="_color">
                     <DropDownContent>
                         <MudPaper>
                             Potential list of dropdown items
@@ -29,26 +29,26 @@
                 <MudSwitch @bind-Value="_openStates[variant]" Label="Open" Color="Color.Primary" />
             </MudStack>
         }
-            <MudStack Row Spacing="4" AlignItems="AlignItems.End">
-                <MudAutocomplete @bind-Value="@_value"
-                                 SearchFunc="Search"
-                                 FullWidth OpenChanged="OnOpenChanged"
-                                 Variant="Variant.Filled"
-                                 Label="MudAutoComplete"
-                                 Dense="_dense"
-                                 Disabled="_disabled"
-                                 ReadOnly="_readonly"
-                                 Placeholder="@(_placeholder ? "Placeholder" : null)"
-                                 HelperText="@(_helperText ? "Helper Text" : null)"
-                                 Clearable="_clearable" />
-                <MudSwitch @bind-Value="_autoCompleteOpen" ReadOnly Label="Open" Color="Color.Primary" />
-            </MudStack>
+        <MudStack Row Spacing="4" AlignItems="AlignItems.End">
+            <MudAutocomplete @bind-Value="@_autoVariant"
+            SearchFunc="Search"
+            FullWidth OpenChanged="OnOpenChanged"
+            Variant="_autoVariant"
+            Label="MudAutoComplete"
+            Dense="_dense"
+            Disabled="_disabled"
+            ReadOnly="_readonly"
+            Placeholder="@(_placeholder ? "Placeholder" : null)"
+            HelperText="@(_helperText ? "Helper Text" : null)"
+            Clearable="_clearable" />
+            <MudSwitch @bind-Value="_autoCompleteOpen" ReadOnly Label="Open" Color="Color.Primary" />
+        </MudStack>
     </MudStack>
 
     <MudStack>
         <MudSelect T="MudBlazor.Color" @bind-Value="@_color"
-                   FullWidth
-                   Label="Select Theme">
+        FullWidth
+        Label="Select Theme">
             <MudSelectItem T="MudBlazor.Color" Value="Color.Default">Default</MudSelectItem>
             <MudSelectItem T="MudBlazor.Color" Value="Color.Primary">Primary</MudSelectItem>
             <MudSelectItem T="MudBlazor.Color" Value="Color.Secondary">Secondary</MudSelectItem>
@@ -78,8 +78,11 @@
 
 @code {
 
-#nullable enable
+
+
+    #nullable enable
     Color _color = Color.Default;
+    Variant _autoVariant = Variant.Text;
     string _value = string.Empty;
     string _lastValue = string.Empty;
     bool _autoCompleteOpen = false;
@@ -123,17 +126,24 @@
         _autoCompleteOpen = open;
     }
 
-    private async Task<IEnumerable<string>> Search(string value, CancellationToken token)
+    private async Task<IEnumerable<Variant>> Search(string value, CancellationToken token)
     {
         // In real life use an asynchronous function for fetching data from an api.
         await Task.Delay(5, token);
 
         // if text is null or empty, show complete list
         if (string.IsNullOrEmpty(value))
-            return _states;
+            return _variants;
 
-        return _states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+        return _variants.Where(x => x.ToDescriptionString().Contains(value, StringComparison.InvariantCultureIgnoreCase));
     }
+
+
+
+    private readonly Variant[] _variants =
+        [
+        Variant.Text,Variant.Outlined,Variant.Filled
+    ];
 
     private readonly string[] _states =
     [
