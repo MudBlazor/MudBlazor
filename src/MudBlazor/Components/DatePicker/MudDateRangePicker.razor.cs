@@ -259,14 +259,14 @@ namespace MudBlazor
         {
             var start = MinDays switch
             {
-                null => selectedDate,
+                null => MinDate ?? DateTime.MinValue,
                 _ when _allowDisabledDatesInCountState.Value => selectedDate.Date.AddDays(MinDays.Value - 1),
                 _ => _minValidDate
             };
 
             var end = MaxDays switch
             {
-                null => DateTime.MaxValue,
+                null => MaxDate ?? DateTime.MaxValue,
                 _ when _allowDisabledDatesInCountState.Value => selectedDate.Date.AddDays(MaxDays.Value - 1),
                 _ => _maxValidDate
             };
