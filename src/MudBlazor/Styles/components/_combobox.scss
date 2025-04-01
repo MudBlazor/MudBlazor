@@ -95,7 +95,7 @@
 
 // Theme Settings
 .mud-dropdown {
-    
+
   @each $color in $mud-palette-colors {
     &.mud-dropdown-#{$color} {
       .mud-input {
@@ -120,17 +120,15 @@
             border-bottom-color: var(--mud-palette-#{$color});
           }
 
-          &:hover:before {
-            border-bottom: 2px solid var(--mud-palette-#{$color}) !important;
+          @media(hover: hover) and (pointer: fine) {
+            &:hover:not(.mud-disabled):before {
+              border-bottom-color: var(--mud-palette-#{$color}-darken) !important;
+            }
           }
 
           &:after {
             border-bottom-color: var(--mud-palette-#{$color}-darken);
           }
-        }
-
-        &.mud-input-outlined:hover {
-          border-bottom-width: 2px;
         }
 
         .mud-input-adornment-icon-button svg path {
@@ -142,15 +140,18 @@
           }
         }
 
-        .mud-input-outlined-border {
-          border-color: var(--mud-palette-#{$color}) !important;
+        & > .mud-input-outlined-border {
+          border-color: var(--mud-palette-#{$color});
 
-          &:hover, &:focus-within {
-            border-color: var(--mud-palette-#{$color}-darken) !important;
+          @media(hover: hover) and (pointer: fine) {
+            &:not(.mud-disabled):not(:focus-within):hover .mud-input-outlined-border {
+              border-color: var(--mud-palette-#{$color}-darken) !important;
+            }
           }
 
-          &:hover {
-            border-bottom: 2px solid !important;
+          &:focus-within > .mud-input-outlined-border, &:focus-within .mud-shrink > .mud-input-outlined-border {
+            border-width: 2px;
+            border-color: var(--mud-palette-#{$color}-darken) !important;
           }
         }
       }
@@ -171,16 +172,6 @@
             color: var(--mud-palette-#{$color}-text);
             font-weight: bolder;
           }
-
-          &.mud-input-underline {
-            &:before {
-              border-color: var(--mud-palette-#{$color}-text);
-            }
-
-            &:after {
-              border-color: var(--mud-palette-#{$color}-text);
-            }
-          }
         }
 
         &:focus-within ~ label.mud-input-label.mud-input-label-inputcontrol {
@@ -190,6 +181,12 @@
         &.mud-input-underline {
           &:before {
             border-color: var(--mud-palette-#{$color}-text);
+          }
+
+          @media(hover: hover) and (pointer: fine) {
+            &:hover:not(.mud-disabled):before {
+              border-color: var(--mud-palette-#{$color}-darken) !important;
+            }
           }
 
           &:after {
