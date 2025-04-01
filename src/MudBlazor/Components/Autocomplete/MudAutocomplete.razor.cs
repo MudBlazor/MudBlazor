@@ -620,12 +620,12 @@ namespace MudBlazor
                 await CoerceValueToTextAsync();
 
             if (DebounceInterval <= 0)
-                await TryOpenMenuAsync();
+                await OpenMenuAsync();
             else
                 _debounceTimer = new Timer(OnDebounceComplete, null, DebounceInterval, Timeout.Infinite);
         }
 
-        private void OnDebounceComplete(object? stateInfo) => InvokeAsync(TryOpenMenuAsync);
+        private void OnDebounceComplete(object? stateInfo) => InvokeAsync(OpenMenuAsync);
 
         private void CancelToken()
         {
@@ -652,12 +652,14 @@ namespace MudBlazor
         /// <remarks>
         /// Will have no effect if the autocomplete is disabled or read-only.
         /// </remarks>
-        public async Task ToggleMenuAsync()
+        public Task ToggleMenuAsync()
         {
-            if (!await TryOpenMenuAsync())
+            if (!Open && (GetDisabledState() || GetReadOnlyState()))
             {
-                await CloseMenuAsync();
+                return Task.CompletedTask;
             }
+
+            return Open ? CloseMenuAsync() : OpenMenuAsync();
         }
 
         /// <summary>
@@ -757,23 +759,6 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Opens the drop-down of items if the UI is in a state where it's allowed to (e.g. not read-only or already open).
-        /// </summary>
-        /// <returns>
-        /// Returns <c>true</c> if the menu was opened; otherwise, <c>false</c>.
-        /// </returns>
-        private async Task<bool> TryOpenMenuAsync()
-        {
-            if (Open || GetDisabledState() || GetReadOnlyState())
-            {
-                return false;
-            }
-
-            await OpenMenuAsync();
-            return true;
-        }
-
-        /// <summary>
         /// Resets the Text and Value, and closes the drop-down if it is open.
         /// </summary>
         public async Task ClearAsync()
@@ -839,7 +824,7 @@ namespace MudBlazor
                     }
                     else
                     {
-                        await TryOpenMenuAsync();
+                        await OpenMenuAsync();
                     }
                     break;
                 case "ArrowUp":
@@ -849,7 +834,7 @@ namespace MudBlazor
                     }
                     else if (!Open)
                     {
-                        await TryOpenMenuAsync();
+                        await OpenMenuAsync();
                     }
                     else
                     {
@@ -873,7 +858,7 @@ namespace MudBlazor
                     }
                     else
                     {
-                        await TryOpenMenuAsync();
+                        await OpenMenuAsync();
                     }
                     break;
                 case "Escape":
@@ -997,7 +982,7 @@ namespace MudBlazor
 
             if (openMenu && !Open && !_opening)
             {
-                await TryOpenMenuAsync();
+                await OpenMenuAsync();
             }
         }
 
