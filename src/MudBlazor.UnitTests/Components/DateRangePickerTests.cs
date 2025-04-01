@@ -1232,7 +1232,5 @@ namespace MudBlazor.UnitTests.Components
 
             return selectedDate;
         }
-
-        
     }
 }
