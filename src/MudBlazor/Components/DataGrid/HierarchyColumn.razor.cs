@@ -119,16 +119,17 @@ public partial class HierarchyColumn<[DynamicallyAccessedMembers(DynamicallyAcce
         var isItemOpen = context.OpenHierarchies.Contains(context.Item);
         var isOpenIconEmpty = string.IsNullOrEmpty(OpenIcon);
         var isClosedIconEmpty = string.IsNullOrEmpty(ClosedIcon);
+        var isGetGroupDefined = context.Actions.GetGroupIcon != null;
 
         if (isItemOpen)
         {
-            return isOpenIconEmpty
+            return isOpenIconEmpty && isGetGroupDefined
                 ? context.Actions.GetGroupIcon(true, RightToLeft)
                 : OpenIcon;
         }
         else
         {
-            return isClosedIconEmpty
+            return isClosedIconEmpty && isGetGroupDefined
                 ? context.Actions.GetGroupIcon(false, RightToLeft)
                 : ClosedIcon;
         }

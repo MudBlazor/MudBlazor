@@ -85,7 +85,7 @@ namespace MudBlazor
             /// <summary>
             /// The function which retrieves the GroupIcon.
             /// </summary>
-            public required Func<bool, bool, string> GetGroupIcon { get; init; }
+            public Func<bool, bool, string>? GetGroupIcon { get; init; }
         }
     }
 }
