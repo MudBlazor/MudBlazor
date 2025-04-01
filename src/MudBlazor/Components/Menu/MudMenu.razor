@@ -1,4 +1,4 @@
-@namespace MudBlazor
+﻿@namespace MudBlazor
 @using MudBlazor.Interfaces
 @inherits MudComponentBase
 
@@ -92,33 +92,11 @@
     </MudPopover>
     @if (ParentMenu is null)
     {
-        <MudPopover Open="@_openState.Value"
-                    Class="@PopoverClassname"
-                    Style="@Stylename"
-                    MaxHeight="@MaxHeight"
-                    AnchorOrigin="@GetAnchorOrigin()"
-                    TransformOrigin="@TransformOrigin"
-                    RelativeWidth="@RelativeWidth"
-                    Fixed="@DropdownSettings.Fixed"
-                    OverflowBehavior="@DropdownSettings.OverflowBehavior"
-                    DropShadow="@DropShadow"
-                    Duration="@(GetDense() ? 0 : MudGlobal.TransitionDefaults.Duration.TotalMilliseconds)">
-            <CascadingValue Value="@this">
-                <MudList T="object"
-                         Class="@ListClassname"
-                         Dense="@Dense"
-                         @onpointerenter="@PointerEnterAsync"
-                         @onpointerleave="@PointerLeaveAsync">
-                    @ChildContent
-                </MudList>
-            </CascadingValue>
-        </MudPopover>
+        <MudOverlay Class="mud-skip-overlay-positioning"
+                    Visible="_openState.Value && !_isTransient"
+                    AutoClose
+                    OnClosed="CloseMenuAsync"
+                    LockScroll="LockScroll"
+                    Modal="@Modal" />
     }
-
-    <MudOverlay Class="mud-skip-overlay-positioning"
-                Visible="_openState.Value && !_isTransient"
-                AutoClose
-                OnClosed="CloseMenuAsync"
-                LockScroll="LockScroll"
-                Modal="@Modal" />
 </div>
