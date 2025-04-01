@@ -32,7 +32,7 @@ namespace MudBlazor
         private T[]? _items;
         private List<int> _enabledItemIndices = [];
         private Func<T?, string?>? _toStringFunc;
-        private bool _isFocusBeingHandledInternally;
+        private bool _isNextFocusBeingHandledInternally;
 
         [Inject]
         private IScrollManager ScrollManager { get; set; } = null!;
@@ -976,13 +976,19 @@ namespace MudBlazor
 
         private async Task OnInputFocusedAsync()
         {
+            if (GetReadOnlyState())
+            {
+                // The readonly input doesn't trigger onblur and so we'll have to disable focus features for it.
+                return;
+            }
+
             var wasFocused = _isFocused;
             _isFocused = true;
 
             // Was focus NOT triggered by user interaction?
-            if (_isFocusBeingHandledInternally)
+            if (_isNextFocusBeingHandledInternally)
             {
-                _isFocusBeingHandledInternally = false;
+                _isNextFocusBeingHandledInternally = false;
                 return;
             }
 
@@ -1033,7 +1039,7 @@ namespace MudBlazor
         private Task OnInputBlurredAsync(FocusEventArgs args)
         {
             _isFocused = false;
-            _isFocusBeingHandledInternally = false;
+            _isNextFocusBeingHandledInternally = false;
 
             // When Immediate is enabled, then the CoerceValue is set by TextChanged
             // So only coerce the value on blur when Immediate is disabled
@@ -1118,7 +1124,7 @@ namespace MudBlazor
         /// </summary>
         public override ValueTask FocusAsync()
         {
-            _isFocusBeingHandledInternally = true; // The subsequent event that will be triggered will know it's not by the user.
+            _isNextFocusBeingHandledInternally = true; // The subsequent event that will be triggered will know it's not by the user.
             return _elementReference.FocusAsync();
         }
 
