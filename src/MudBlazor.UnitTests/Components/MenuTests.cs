@@ -735,7 +735,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Start leave sequence, but re-enter before hide completes
             menu.PointerLeaveAsync(new PointerEventArgs()).CatchAndLog();
-            await Task.Delay(hoverDelay);
+            await Task.Delay(hoverDelay / 2);
             menu._hideDebouncer.Cancel();
 
             // Wait for what would have been the full hide delay
