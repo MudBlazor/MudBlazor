@@ -10,117 +10,6 @@
     white-space: nowrap;
     text-overflow: ellipsis;
   }
-
-  @each $color in $mud-palette-colors {
-    &.mud-dropdown-#{$color} {
-      .mud-input {
-        color: var(--mud-palette-#{$color});
-        border-color: var(--mud-palette-#{$color});
-        --mud-ripple-color: var(--mud-palette-#{$color});
-
-        ~ label.mud-input-label.mud-input-label-inputcontrol {
-          color: var(--mud-palette-#{$color});
-
-          &:hover {
-            color: var(--mud-palette-#{$color}-darken);
-          }
-        }
-
-        &:focus-within ~ label.mud-input-label.mud-input-label-inputcontrol {
-          color: var(--mud-palette-#{$color}-darken);
-        }
-
-        &.mud-input-underline {
-          &:before {
-            border-bottom-color: var(--mud-palette-#{$color});
-          }
-
-          &:hover:before {
-            border-bottom: 2px solid var(--mud-palette-#{$color}) !important;
-          }
-
-          &:after {
-            border-bottom-color: var(--mud-palette-#{$color}-darken);
-          }
-        }
-
-        &.mud-input-outlined:hover {
-          border-bottom-width: 2px;
-        }
-
-        .mud-input-adornment-icon-button svg path {
-          color: var(--mud-palette-#{$color});
-
-          &:focus-within,
-          &:hover {
-            color: var(--mud-palette-#{$color});
-          }
-        }
-
-        .mud-input-outlined-border {
-            border-color: var(--mud-palette-#{$color}) !important;
-            &:hover,&:focus-within {
-                border-color: var(--mud-palette-#{$color}-darken) !important;
-            }
-            &:hover {
-                border-bottom: 2px solid !important;
-            }
-        }
-      }
-
-      .mud-input-filled {
-        background-color: var(--mud-palette-#{$color});
-        color: var(--mud-palette-#{$color}-text);
-        --mud-ripple-color: var(--mud-palette-#{$color}-text);
-
-        &:hover {
-          background-color: var(--mud-palette-#{$color}-darken);
-        }
-
-        ~ label.mud-input-label.mud-input-label-inputcontrol {
-          color: var(--mud-palette-#{$color}-text);
-
-          &:hover {
-            color: var(--mud-palette-#{$color}-text);
-            font-weight: bolder;
-          }
-
-          &.mud-input-underline {
-            &:before {
-              border-color: var(--mud-palette-#{$color}-text);
-            }
-
-            &:after {
-              border-color: var(--mud-palette-#{$color}-text);
-            }
-          }
-        }
-
-        &:focus-within ~ label.mud-input-label.mud-input-label-inputcontrol {
-          color: var(--mud-palette-#{$color}-text);
-        }
-
-        &.mud-input-underline {
-          &:before {
-            border-color: var(--mud-palette-#{$color}-text);
-          }
-
-          &:after {
-            border-color: var(--mud-palette-#{$color}-text);
-          }
-        }
-
-        .mud-input-adornment-icon-button svg path {
-          color: var(--mud-palette-#{$color}-text);
-
-          &:focus-within,
-          &:hover {
-            color: var(--mud-palette-#{$color}-text);
-          }
-        }
-      }
-    }
-  }
 }
 
 .mud-dropdown-input input {
@@ -198,9 +87,125 @@
   }
 }
 
-
 .mud-combobox-selected-items {
   max-height: 19px;
   margin: 0px;
   padding: 0px 12px;
+}
+
+// Theme Settings
+.mud-dropdown {
+    
+  @each $color in $mud-palette-colors {
+    &.mud-dropdown-#{$color} {
+      .mud-input {
+        color: var(--mud-palette-#{$color});
+        border-color: var(--mud-palette-#{$color});
+        --mud-ripple-color: var(--mud-palette-#{$color});
+
+        ~ label.mud-input-label.mud-input-label-inputcontrol {
+          color: var(--mud-palette-#{$color});
+
+          &:hover {
+            color: var(--mud-palette-#{$color}-darken);
+          }
+        }
+
+        &:focus-within ~ label.mud-input-label.mud-input-label-inputcontrol {
+          color: var(--mud-palette-#{$color}-darken);
+        }
+
+        &.mud-input-underline {
+          &:before {
+            border-bottom-color: var(--mud-palette-#{$color});
+          }
+
+          &:hover:before {
+            border-bottom: 2px solid var(--mud-palette-#{$color}) !important;
+          }
+
+          &:after {
+            border-bottom-color: var(--mud-palette-#{$color}-darken);
+          }
+        }
+
+        &.mud-input-outlined:hover {
+          border-bottom-width: 2px;
+        }
+
+        .mud-input-adornment-icon-button svg path {
+          color: var(--mud-palette-#{$color});
+
+          &:focus-within,
+          &:hover {
+            color: var(--mud-palette-#{$color});
+          }
+        }
+
+        .mud-input-outlined-border {
+          border-color: var(--mud-palette-#{$color}) !important;
+
+          &:hover, &:focus-within {
+            border-color: var(--mud-palette-#{$color}-darken) !important;
+          }
+
+          &:hover {
+            border-bottom: 2px solid !important;
+          }
+        }
+      }
+
+      .mud-input-filled {
+        background-color: var(--mud-palette-#{$color});
+        color: var(--mud-palette-#{$color}-text);
+        --mud-ripple-color: var(--mud-palette-#{$color}-text);
+
+        &:hover {
+          background-color: var(--mud-palette-#{$color}-darken);
+        }
+
+        ~ label.mud-input-label.mud-input-label-inputcontrol {
+          color: var(--mud-palette-#{$color}-text);
+
+          &:hover {
+            color: var(--mud-palette-#{$color}-text);
+            font-weight: bolder;
+          }
+
+          &.mud-input-underline {
+            &:before {
+              border-color: var(--mud-palette-#{$color}-text);
+            }
+
+            &:after {
+              border-color: var(--mud-palette-#{$color}-text);
+            }
+          }
+        }
+
+        &:focus-within ~ label.mud-input-label.mud-input-label-inputcontrol {
+          color: var(--mud-palette-#{$color}-text);
+        }
+
+        &.mud-input-underline {
+          &:before {
+            border-color: var(--mud-palette-#{$color}-text);
+          }
+
+          &:after {
+            border-color: var(--mud-palette-#{$color}-text);
+          }
+        }
+
+        .mud-input-adornment-icon-button svg path {
+          color: var(--mud-palette-#{$color}-text);
+
+          &:focus-within,
+          &:hover {
+            color: var(--mud-palette-#{$color}-text);
+          }
+        }
+      }
+    }
+  }
 }
