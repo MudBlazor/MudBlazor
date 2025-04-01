@@ -20,6 +20,7 @@
                          Required="@Required"
                          @onmousedown="@OnInputClickedAsync"
                          @onfocus="@OnInputFocusedAsync"
+                         @onblur="OnInputBlurredAsync"
                          ForId="@InputElementId">
             <InputContent>
                 <MudInput @ref="_elementReference" @key="_elementKey" InputType="InputType.Text"

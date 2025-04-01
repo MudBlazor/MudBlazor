@@ -561,6 +561,7 @@ namespace MudBlazor
                     await _elementReference.SetText(optionText);
                 }
 
+                _isFocused = true; // Prevent menu from reopening from the focus handler.
                 await FocusAsync();
                 // We want focus with a closed popover
                 Open = false;
@@ -967,22 +968,43 @@ namespace MudBlazor
             }
         }
 
-        private Task OnInputClickedAsync() => OnInputActivationAsync(true);
+        private Task OnInputClickedAsync()
+        {
+            if (GetDisabledState())
+            {
+                return Task.CompletedTask;
+            }
+
+            return OnInputActivationAsync(true);
+        }
 
         private Task OnInputFocusedAsync() => OnInputActivationAsync(OpenOnFocus);
 
         private async Task OnInputActivationAsync(bool openMenu)
         {
-            _isFocused = true;
+            int number = DateTime.Now.Millisecond;
 
-            if (SelectOnActivation && !GetDisabledState() && !GetReadOnlyState())
+            if (_isFocused)
             {
-                await SelectAsync();
+                return;
             }
 
-            if (openMenu && !Open && !_opening)
+            var wasFocused = _isFocused;
+            _isFocused = true;
+            Logger.LogInformation($"{number}: {wasFocused}");
+
+            if (SelectOnActivation)
             {
+                Logger.LogInformation($"{number}: before select");
+                await SelectAsync();
+                Logger.LogInformation($"{number}: after select");
+            }
+
+            if (openMenu && !wasFocused && !Open && !_opening && !GetReadOnlyState())
+            {
+                Logger.LogInformation($"{number}: before menu");
                 await OpenMenuAsync();
+                Logger.LogInformation($"{number}: after menu");
             }
         }
 
