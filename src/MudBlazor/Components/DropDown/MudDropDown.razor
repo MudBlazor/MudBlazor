@@ -21,48 +21,48 @@
                   Adornment="@Adornment" AdornmentAriaLabel="@AdornmentAriaLabel" OnAdornmentClick="@AdornmentClickHandlerAsync"
                   AdornmentIcon="@GetDropDownIcon" AdornmentColor="@AdornmentColor" AdornmentText="@AdornmentText"
                   @onmousedown="@OnInputClickedAsync">
-            <MudStack Row Wrap="Wrap.Wrap" Class="@($"mud-dropdown-input {(Variant == Variant.Filled ? "align-self-end" : "")}")" 
-            Spacing="2" AlignItems="AlignItems.Center" tabindex="-1">
+            <MudStack Wrap="Wrap.Wrap" Row Class="@($"mud-dropdown-input {(Variant == Variant.Filled ? "align-self-end" : "")}")" 
+                      Spacing="2" AlignItems="AlignItems.Center" tabindex="-1">
                 @* TODO: @onblur="@OnBlurredAsync" onblur is set in javascript  *@
                 <input @ref="@_elementReference" @key="_elementKey" id="@InputElementId"
-                @attributes="UserAttributes" autocomplete="@GetAutocomplete()"
-                @onfocus="@OnInputFocusedAsync"
-                @oninput="OnInput"
-                @onkeydown="@OnInputKeyDown"
-                @onkeyup="@OnInputKeyUp"
-                @onkeydown:preventDefault="false"
-                @onkeyup:preventDefault="@false"
-                aria-describedby="@GetAriaDescribedByString()"
-                aria-invalid="@Error.ToString().ToLowerInvariant()"
-                aria-required="@Required.ToString().ToLowerInvariant()"
-                class="@InputClassname"
-                disabled=@GetDisabledState()
-                inputmode="@(InputType.Text.ToDescriptionString())"
-                pattern="@Pattern"
-                placeholder="@Placeholder"
-                readonly="@(GetReadOnlyState() || !Filterable)"
-                required="@Required"
-                type="@(InputType.Text.ToDescriptionString())"
-                value="@_textState.Value" />
+                       @attributes="UserAttributes" autocomplete="@GetAutocomplete()"
+                       @onfocus="@OnInputFocusedAsync"
+                       @oninput="OnInput"
+                       @onkeydown="@OnInputKeyDown"
+                       @onkeyup="@OnInputKeyUp"
+                       @onkeydown:preventDefault="false"
+                       @onkeyup:preventDefault="@false"
+                       aria-describedby="@GetAriaDescribedByString()"
+                       aria-invalid="@Error.ToString().ToLowerInvariant()"
+                       aria-required="@Required.ToString().ToLowerInvariant()"
+                       class="@InputClassname"
+                       disabled=@GetDisabledState()
+                       inputmode="@(InputType.Text.ToDescriptionString())"
+                       pattern="@Pattern"
+                       placeholder="@Placeholder"
+                       readonly="@(GetReadOnlyState() || !Filterable)"
+                       required="@Required"
+                       type="@(InputType.Text.ToDescriptionString())"
+                       value="@_textState.Value" />
                 @if (ShowClearButton)
                 {
                     <MudIconButton Class="@ClearButtonClassname"
-                    Color="@Color.Inherit"
-                    Icon="@ClearIcon"
-                    Size="@IconSize"
-                    OnClick="@ClearButtonClickHandlerAsync"
-                    aria-label="@Localizer[Resources.LanguageResource.MudInput_Clear]"
-                    tabindex="-1" @onmousedown:stopPropagation />
+                                    Color="@Color.Inherit"
+                                    Icon="@ClearIcon"
+                                    Size="@IconSize"
+                                    OnClick="@ClearButtonClickHandlerAsync"
+                                    aria-label="@Localizer[Resources.LanguageResource.MudInput_Clear]"
+                                    tabindex="-1" @onmousedown:stopPropagation />                    
                 }
                 @if (ShowAddButton)
                 {
                     <MudIconButton Class="@ClearButtonClassname"
-                    Color="@Color.Inherit"
-                    Icon="@AddIcon"
-                    Size="@IconSize"
-                    OnClick="@AddButtonClickHandlerAsync"
-                    aria-label="@Localizer[Resources.LanguageResource.MudInput_Add]"
-                    tabindex="-1" @onmousedown:stopPropagation />
+                                    Color="@Color.Inherit"
+                                    Icon="@AddIcon"
+                                    Size="@IconSize"
+                                    OnClick="@AddButtonClickHandlerAsync"
+                                    aria-label="@Localizer[Resources.LanguageResource.MudInput_Add]"
+                                    tabindex="-1" @onmousedown:stopPropagation />
                 }
             </MudStack>
 
@@ -87,6 +87,6 @@
 <!-- Overlay for the Popover, optional -->
 @if (Overlay)
 {
-    <MudOverlay Visible="@_openMenuState.Value" AutoClose="true" OnClick="@(async () => await CloseMenuAsync())"></MudOverlay>
+                            <MudOverlay Visible="@_openMenuState.Value" AutoClose="true" OnClick="@(async () => await CloseMenuAsync())"></MudOverlay>
 }
 
