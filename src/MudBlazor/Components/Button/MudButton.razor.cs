@@ -72,7 +72,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public Color IconColor { get; set; } = Color.Inherit;
+        public Color IconColor { get; set; } = MudGlobal.ButtonDefaults.IconColor;
 
         /// <summary>
         /// The size of icons.
@@ -82,7 +82,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public Size? IconSize { get; set; }
+        public Size? IconSize { get; set; } = MudGlobal.ButtonDefaults.IconSize;
 
         /// <summary>
         /// The CSS classes applied to icons.
@@ -92,7 +92,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public string? IconClass { get; set; }
+        public string? IconClass { get; set; } = MudGlobal.ButtonDefaults.IconClass;
 
         /// <summary>
         /// The color of the button.
@@ -113,7 +113,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public Size Size { get; set; } = Size.Medium;
+        public Size Size { get; set; } = MudGlobal.ButtonDefaults.Size;
 
         /// <summary>
         /// The display variation to use.
@@ -133,7 +133,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public bool FullWidth { get; set; }
+        public bool FullWidth { get; set; } = MudGlobal.ButtonDefaults.FullWidth;
 
         /// <summary>
         /// The content within this component.
@@ -141,6 +141,18 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
         public RenderFragment? ChildContent { get; set; }
+
+        public MudButton()
+        {
+            // From MudComponentBase
+            Class = MudGlobal.ButtonDefaults.Class;
+            Style = MudGlobal.ButtonDefaults.Style;
+            
+            // From MudBaseButton
+            Disabled = MudGlobal.ButtonDefaults.Disabled;
+            DropShadow = MudGlobal.ButtonDefaults.DropShadow;
+            Ripple = MudGlobal.ButtonDefaults.Ripple;
+        }
 
         protected override void OnInitialized()
         {
