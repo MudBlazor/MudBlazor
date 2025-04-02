@@ -16,7 +16,7 @@ public static class MudGlobal
         /// The color of the <see cref="MudButton"/> icons.
         /// </summary>
         public static Color IconColor { get; set; } = Color.Inherit;
-        
+
         /// <summary>
         /// The size of the <see cref="MudButton"/> icons.
         /// </summary>
@@ -26,7 +26,7 @@ public static class MudGlobal
         /// The CSS classes applied to the <see cref="MudButton"/> icons.
         /// </summary>
         public static string? IconClass { get; set; }
-        
+
         /// <summary>
         /// The color of the <see cref="MudButton"/>.
         /// </summary>
@@ -36,32 +36,32 @@ public static class MudGlobal
         /// The display variation to use for <see cref="MudButton"/>.
         /// </summary>
         public static Variant Variant { get; set; } = Variant.Text;
-        
+
         /// <summary>
         /// Expands the <see cref="MudButton"/> to 100% of the container width.
         /// </summary>
         public static bool FullWidth { get; set; }
-        
+
         /// <summary>
         /// The size of the <see cref="MudButton"/>.
         /// </summary>
         public static Size Size { get; set; } = Size.Medium;
-        
+
         /// <summary>
         /// Allows the user to interact with this <see cref="MudButton"/>.
         /// </summary>
         public static bool Disabled { get; set; }
-        
+
         /// <summary>
         /// Displays a shadow under the <see cref="MudButton"/>.
         /// </summary>
         public static bool DropShadow { get; set; } = true;
-        
+
         /// <summary>
         /// Shows a ripple effect when the user clicks the <see cref="MudButton"/>.
         /// </summary>
         public static bool Ripple { get; set; } = true;
-        
+
         /// <summary>
         /// The CSS classes applied to the <see cref="MudButton"/>.
         /// </summary>

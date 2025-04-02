@@ -147,7 +147,7 @@ namespace MudBlazor
             // From MudComponentBase
             Class = MudGlobal.ButtonDefaults.Class;
             Style = MudGlobal.ButtonDefaults.Style;
-            
+
             // From MudBaseButton
             Disabled = MudGlobal.ButtonDefaults.Disabled;
             DropShadow = MudGlobal.ButtonDefaults.DropShadow;
