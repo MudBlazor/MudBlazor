@@ -4,7 +4,7 @@
               Variant="Variant.Text"
               Immediate="true"
               OnKeyDown="@HandleKeyDown"
-              OnKeyUp="@(async (args) => await SendMessage(args))"
+              OnKeyUp="@SendMessage"
               Disabled="@IsLoading"
               MaxLength="5000"
               Lines="10"
@@ -14,20 +14,16 @@
               AutoGrow="true"
               MaxLines="10"
               Underline="true"
-              UserAttributes="@(new Dictionary<string, object> { { "autocomplete", "off" },  { "data-textfieldref", "ChatbotMessageTextField" } })" />
+              UserAttributes="@_userAttributes" />
 
 @code {
-    public string Text { get; set; } = "????";
-    public string ButtonText { get; set; } = "Click Me";
-    public int ButtonClicked { get; set; }
     bool IsLoading = false;
 
-    void ButtonOnClick()
+    private readonly Dictionary<string, object> _userAttributes = new Dictionary<string, object>
     {
-        ButtonClicked += 1;
-        Text = $"Awesome x {ButtonClicked}";
-        ButtonText = "Click Me Again";
-    }
+        { "autocomplete", "off" },
+        { "data-textfieldref", "ChatbotMessageTextField" }
+    };
 
     private async Task SendMessage(KeyboardEventArgs e)
     {
