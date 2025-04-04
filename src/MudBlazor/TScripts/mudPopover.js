@@ -3,11 +3,32 @@
 // See the LICENSE file in the project root for more information.
 
 window.mudpopoverHelper = {
-    // set by the class MudPopover
+    // set by the class MudPopover in initialize
     mainContainerClass: null,
 
+    // set by the class MudPopover in initialize
     flipMargin: 0,
 
+    // used for setting a debounce
+    debounce: function (func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    },
+
+    basePopoverZIndex: parseInt(getComputedStyle(document.documentElement)
+        .getPropertyValue('--mud-zindex-popover')) || 1200,
+
+    baseTooltipZIndex: parseInt(getComputedStyle(document.documentElement)
+        .getPropertyValue('--mud-zindex-tooltip')) || 1600,
+
+    // static set of replacement valus
     flipClassReplacements: {
         'top': {
             'mud-popover-top-left': 'mud-popover-bottom-left',
@@ -48,37 +69,7 @@ window.mudpopoverHelper = {
 
     },
 
-    basePopoverZIndex: parseInt(getComputedStyle(document.documentElement)
-        .getPropertyValue('--mud-zindex-popover')) || 1200,
-
-    baseTooltipZIndex: parseInt(getComputedStyle(document.documentElement)
-        .getPropertyValue('--mud-zindex-tooltip')) || 1600,
-
-    debounce: function (func, wait) {
-        let timeout;
-        return function executedFunction(...args) {
-            const later = () => {
-                clearTimeout(timeout);
-                func(...args);
-            };
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-        };
-    },
-
-    rafThrottle: function (func) {
-        let ticking = false;
-        return function (...args) {
-            if (!ticking) {
-                window.requestAnimationFrame(() => {
-                    func.apply(this, args);
-                    ticking = false;
-                });
-                ticking = true;
-            }
-        };
-    },
-
+    // used to calculate the position of the popover
     calculatePopoverPosition: function (list, boundingRect, selfRect) {
         let top = 0;
         let left = 0;
@@ -149,27 +140,33 @@ window.mudpopoverHelper = {
             offsetY = -selfRect.height;
         }
 
+        console.log(`top: ${top}, left: ${left}, offsetX: ${offsetX}, offsetY: ${offsetY}`);
         return {
             top: top, left: left, offsetX: offsetX, offsetY: offsetY
         };
     },
 
+    // used to flip the popover using the flipClassReplacements, so we pass it the flip direction by selector
+    // with a list of classes and returns the proper flipped position for calculatePopoverPosition
     getPositionForFlippedPopver: function (inputArray, selector, boundingRect, selfRect) {
         const classList = [];
+        const replacementsList = {};
         for (var i = 0; i < inputArray.length; i++) {
             const item = inputArray[i];
-            const replacments = window.mudpopoverHelper.flipClassReplacements[selector][item];
-            if (replacments) {
-                classList.push(replacments);
+            const replacements = window.mudpopoverHelper.flipClassReplacements[selector][item];
+            if (replacements) {
+                replacementsList[item] = replacements;
+                classList.push(replacements);
             }
             else {
                 classList.push(item);
             }
         }
-
+        console.log(replacementsList);
         return window.mudpopoverHelper.calculatePopoverPosition(classList, boundingRect, selfRect);
     },
 
+    // primary positioning method
     placePopover: function (popoverNode, classSelector) {
         // parentNode is the calling element, mudmenu/tooltip/etc not the parent popover if it's a child popover
         // this happens at page load unless it's popover inside a popover, then it happens when you activate the parent
@@ -178,15 +175,19 @@ window.mudpopoverHelper = {
             const id = popoverNode.id.substr(8);
             const popoverContentNode = document.getElementById('popovercontent-' + id);
 
+            // if the popover doesn't exist we stop
             if (!popoverContentNode) {
                 return;
             }
+
             const classList = popoverContentNode.classList;
 
+            // if the popover isn't open we stop
             if (classList.contains('mud-popover-open') == false) {
                 return;
             }
 
+            // if a classSelector was supplied and doesn't exist we stop
             if (classSelector) {
                 if (classList.contains(classSelector) == false) {
                     return;
@@ -206,11 +207,13 @@ window.mudpopoverHelper = {
             const selfRect = popoverContentNode.getBoundingClientRect();
             const classListArray = Array.from(classList);
 
+            // calculate position based on opening anchor/transform
             const postion = window.mudpopoverHelper.calculatePopoverPosition(classListArray, boundingRect, selfRect);
             let left = postion.left;
             let top = postion.top;
             let offsetX = postion.offsetX;
             let offsetY = postion.offsetY;
+
             // get the top/left/ from popoverContentNode if the popover has been hardcoded for position
             if (classList.contains('mud-popover-position-override')) {
                 left = parseInt(popoverContentNode.style['left']) || left;
@@ -227,9 +230,20 @@ window.mudpopoverHelper = {
                     width: selfRect.width,
                     height: selfRect.height
                 };
-            }
+            }            
+
             // flipping logic
-            if (classList.contains('mud-popover-overflow-flip-onopen') || classList.contains('mud-popover-overflow-flip-always')) {
+            // get flip status
+            let selector = popoverContentNode.getAttribute("data-mudpopover-flip");
+            console.log(`starting: ${selector}`);
+            // if there has not been a flip and it's got an onopen class OR
+            // there is a flip-always class
+            if ((!selector && classList.contains('mud-popover-overflow-flip-onopen')) ||
+                classList.contains('mud-popover-overflow-flip-always')) {
+
+                // we know it's supposed to flip if able
+                selector = null;
+                popoverContentNode.removeAttribute('data-mudpopover-flip');
 
                 const appBarElements = document.getElementsByClassName("mud-appbar mud-appbar-fixed-top");
                 let appBarOffset = 0;
@@ -243,74 +257,93 @@ window.mudpopoverHelper = {
                 const deltaTop = top - selfRect.height - appBarOffset;
                 const spaceToTop = top - appBarOffset;
                 const deltaBottom = window.innerHeight - top - selfRect.height;
-                //console.log('self-width: ' + selfRect.width + ' | self-height: ' + selfRect.height);
-                //console.log('left: ' + deltaToLeft + ' | rigth:' + deltaToRight + ' | top: ' + deltaTop + ' | bottom: ' + deltaBottom + ' | spaceToTop: ' + spaceToTop);
-
-                let selector = popoverContentNode.mudPopoverFliped;
 
                 if (!selector) {
                     if (classList.contains('mud-popover-top-left')) {
-                        if (deltaBottom < graceMargin && deltaToRight < graceMargin && spaceToTop >= selfRect.height && deltaToLeft >= selfRect.width) {
+                        // get values that determine where the most space is
+                        const shouldFlipVertically = deltaBottom < graceMargin && spaceToTop >= selfRect.height && spaceToTop > deltaBottom;
+                        const shouldFlipHorizontally = deltaToRight < graceMargin && deltaToLeft >= selfRect.width && deltaToLeft > deltaToRight;
+
+                        if (shouldFlipVertically && shouldFlipHorizontally) {
                             selector = 'top-and-left';
-                        } else if (deltaBottom < graceMargin && spaceToTop >= selfRect.height) {
+                        } else if (shouldFlipVertically) {
                             selector = 'top';
-                        } else if (deltaToRight < graceMargin && deltaToLeft >= selfRect.width) {
+                        } else if (shouldFlipHorizontally) {
                             selector = 'left';
                         }
                     } else if (classList.contains('mud-popover-top-center')) {
-                        if (deltaBottom < graceMargin && spaceToTop >= selfRect.height) {
+                        if (deltaBottom < graceMargin && spaceToTop >= selfRect.height && spaceToTop > deltaBottom) {
                             selector = 'top';
                         }
                     } else if (classList.contains('mud-popover-top-right')) {
-                        if (deltaBottom < graceMargin && deltaToLeft < graceMargin && spaceToTop >= selfRect.height && deltaToRight >= selfRect.width) {
+                        const shouldFlipVertically = deltaBottom < graceMargin && spaceToTop >= selfRect.height && spaceToTop > deltaBottom;
+                        const shouldFlipHorizontally = deltaToLeft < graceMargin && deltaToRight >= selfRect.width && deltaToRight > deltaToLeft;
+
+                        if (shouldFlipVertically && shouldFlipHorizontally) {
                             selector = 'top-and-right';
-                        } else if (deltaBottom < graceMargin && spaceToTop >= selfRect.height) {
+                        } else if (shouldFlipVertically) {
                             selector = 'top';
-                        } else if (deltaToLeft < graceMargin && deltaToRight >= selfRect.width) {
+                        } else if (shouldFlipHorizontally) {
                             selector = 'right';
                         }
                     }
 
                     else if (classList.contains('mud-popover-center-left')) {
-                        if (deltaToRight < graceMargin && deltaToLeft >= selfRect.width) {
+                        if (deltaToRight < graceMargin && deltaToLeft >= selfRect.width && deltaToLeft > deltaToRight) {
                             selector = 'left';
                         }
                     }
                     else if (classList.contains('mud-popover-center-right')) {
-                        if (deltaToLeft < graceMargin && deltaToRight >= selfRect.width) {
+                        if (deltaToLeft < graceMargin && deltaToRight >= selfRect.width && deltaToRight > deltaToLeft) {
                             selector = 'right';
                         }
                     }
                     else if (classList.contains('mud-popover-bottom-left')) {
-                        if (deltaTop < graceMargin && deltaToRight < graceMargin && deltaBottom >= 0 && deltaToLeft >= selfRect.width) {
+                        const shouldFlipVertically = deltaTop < graceMargin && deltaBottom >= 0 && deltaBottom > deltaTop;
+                        const shouldFlipHorizontally = deltaToRight < graceMargin && deltaToLeft >= selfRect.width && deltaToLeft > deltaToRight;
+
+                        if (shouldFlipVertically && shouldFlipHorizontally) {
                             selector = 'bottom-and-left';
-                        } else if (deltaTop < graceMargin && deltaBottom >= 0) {
+                        } else if (shouldFlipVertically) {
                             selector = 'bottom';
-                        } else if (deltaToRight < graceMargin && deltaToLeft >= selfRect.width) {
+                        } else if (shouldFlipHorizontally) {
                             selector = 'left';
                         }
                     } else if (classList.contains('mud-popover-bottom-center')) {
-                        if (deltaTop < graceMargin && deltaBottom >= 0) {
+                        if (deltaTop < graceMargin && deltaBottom >= 0 && deltaBottom > deltaTop) {
                             selector = 'bottom';
                         }
                     } else if (classList.contains('mud-popover-bottom-right')) {
-                        if (deltaTop < graceMargin && deltaToLeft < graceMargin && deltaBottom >= 0 && deltaToRight >= selfRect.width) {
+                        const shouldFlipVertically = deltaTop < graceMargin && deltaBottom >= 0 && deltaBottom > deltaTop;
+                        const shouldFlipHorizontally = deltaToLeft < graceMargin && deltaToRight >= selfRect.width && deltaToRight > deltaToLeft;
+
+                        if (shouldFlipVertically && shouldFlipHorizontally) {
                             selector = 'bottom-and-right';
-                        } else if (deltaTop < graceMargin && deltaBottom >= 0) {
+                        } else if (shouldFlipVertically) {
                             selector = 'bottom';
-                        } else if (deltaToLeft < graceMargin && deltaToRight >= selfRect.width) {
+                        } else if (shouldFlipHorizontally) {
                             selector = 'right';
                         }
                     }
                 }
 
+
+                // selector is set in above if statement if it needs to flip
                 if (selector && selector != 'none') {
                     const newPosition = window.mudpopoverHelper.getPositionForFlippedPopver(classListArray, selector, boundingRect, selfRect);
                     left = newPosition.left;
                     top = newPosition.top;
                     offsetX = newPosition.offsetX;
                     offsetY = newPosition.offsetY;
+                    //console.log(`what now: ${selector} | left: ${left} | top: ${top} | offsetX: ${offsetX} | offsetY: ${offsetY}`);
                     popoverContentNode.setAttribute('data-mudpopover-flip', 'flipped');
+
+                    // if we are flip on open then store the true top/left
+                    if (classList.contains('mud-popover-overflow-flip-onopen')) {
+                        console.log(`setting flip top: ${top} | left: ${ left }`);
+                        popoverContentNode.setAttribute('data-flip-left', left);
+                        popoverContentNode.setAttribute('data-flip-top', top);
+                    }
                 }
                 else {
                     // did not flip, ensure the left and top are inside bounds
@@ -344,13 +377,6 @@ window.mudpopoverHelper = {
                     if (list && list.offsetHeight > listMaxHeight) {
                         list.style.maxHeight = (listMaxHeight - listPadding) + 'px';
                     }
-                    popoverContentNode.removeAttribute('data-mudpopover-flip');
-                }
-
-                if (classList.contains('mud-popover-overflow-flip-onopen')) {
-                    if (!popoverContentNode.mudPopoverFliped) {
-                        popoverContentNode.mudPopoverFliped = selector || 'none';
-                    }
                 }
             }
 
@@ -366,6 +392,14 @@ window.mudpopoverHelper = {
                 // no offset if popover position is hardcoded
                 offsetX = 0;
                 offsetY = 0;
+            }
+
+            // if it's been set to flip-onopen get the top/left from the attributes to reapply the offset           
+            if (selector === 'flipped' && classList.contains('mud-popover-overflow-flip-onopen')) {
+                console.log(`calculated left ${left} | top ${top}`);
+                left = parseInt(popoverContentNode.getAttribute('data-flip-left')) || left;
+                top = parseInt(popoverContentNode.getAttribute('data-flip-top')) || top;
+                console.log(`left: ${left} | top: ${top} | offsetX: ${offsetX} | offsetY: ${offsetY}`);
             }
 
             popoverContentNode.style['left'] = (left + offsetX) + 'px';
@@ -386,25 +420,28 @@ window.mudpopoverHelper = {
         }
     },
 
+    // cycles through popovers to reposition those that are open, classSelector is passed on
     placePopoverByClassSelector: function (classSelector = null) {
         var items = window.mudPopover.getAllObservedContainers();
-
         for (let i = 0; i < items.length; i++) {
             const popoverNode = document.getElementById('popover-' + items[i]);
             window.mudpopoverHelper.placePopover(popoverNode, classSelector);
         }
     },
 
+    // used in the initial placement of a popover
     placePopoverByNode: function (target) {
         const id = target.id.substr(15);
         const popoverNode = document.getElementById('popover-' + id);
         window.mudpopoverHelper.placePopover(popoverNode);
     },
 
+    // returns the count of providers
     countProviders: function () {
         return document.querySelectorAll(`.${window.mudpopoverHelper.mainContainerClass}`).length;
     },
 
+    // sets popoveroverlay to the right z-index
     updatePopoverOverlay: function (popoverContentNode) {
         // tooltips don't have an overlay
         if (popoverContentNode.classList.contains("mud-tooltip")) {
@@ -425,6 +462,7 @@ window.mudpopoverHelper = {
         }
     },
 
+    // set zindex order
     updatePopoverZIndex: function (popoverContentNode, parentNode) {
         // find the first parent mud-popover if it exists
         const parentPopover = parentNode.closest('.mud-popover');
@@ -480,6 +518,27 @@ window.mudpopoverHelper = {
             popoverContentNode.style['z-index'] = newZIndex;
         }
     },
+
+    // adds scroll listeners to node + parents up to body
+    popoverScrollListener: function (node) {
+        let currentNode = node.parentNode;
+        const scrollableElements = [];
+        while (currentNode) {
+            const isScrollable =
+                (currentNode.scrollHeight > currentNode.clientHeight) || // Vertical scroll
+                (currentNode.scrollWidth > currentNode.clientWidth);    // Horizontal scroll
+            if (isScrollable) {
+                currentNode.addEventListener('scroll', handleScroll, { passive: true });
+                scrollableElements.push(currentNode);
+            }
+            // Stop if we reach the body, or head
+            if (currentNode.tagName === "BODY") {
+                break;
+            }
+            currentNode = currentNode.parentNode;
+        }
+        return scrollableElements;
+    },
 }
 
 class MudPopover {
@@ -489,88 +548,60 @@ class MudPopover {
         this.contentObserver = null;
     }
 
-    callback(id, mutationsList, observer) {
-        for (const mutation of mutationsList) {
-            if (mutation.type === 'attributes') {
-                const target = mutation.target
-                if (mutation.attributeName == 'class') {
-                    if (target.classList.contains('mud-popover-overflow-flip-onopen') &&
-                        target.classList.contains('mud-popover-open') == false) {
-                        target.mudPopoverFliped = null;
-                        target.removeAttribute('data-mudpopover-flip');
-                    }
-
-                    window.mudpopoverHelper.placePopoverByNode(target);
+    callbackPopover(mutation) {
+        const target = mutation.target;
+        if (!target) return;
+        // we use top and left negative numbers to prevent showing until done with this method
+        if (mutation.type == 'attributes' && mutation.attributeName == 'data-ticks') {
+            // when data-ticks attribute is the mutation something has changed with the popover
+            // and it needs to be repositioned and shown, note we don't use mud-popover-open here
+            // instead we use data-ticks since we know the newest data-ticks > 0 is the top most.            
+            const tickAttribute = target.getAttribute('data-ticks');
+            // if data-ticks is 0 the popover isn't open and it's hidden in css but we don't want it to reappear until
+            // it's positioned the next time so we move it off screen
+            if (tickAttribute == 0) {
+                // wait this long until we "move it off screen"
+                const delay = parseFloat(target.style['transition-duration']) || 0;
+                if (delay == 0) {
+                    target.style['left'] = '-9999px';
+                    target.style['top'] = '-9999px';
                 }
-                else if (mutation.attributeName == 'data-ticks') {
-                    // data-ticks are important for Direction and Location, it doesn't reposition
-                    // if they aren't there     
-                    const tickAttribute = target.getAttribute('data-ticks');
+                setTimeout(() => {
+                    target.style['left'] = '-9999px';
+                    target.style['top'] = '-9999px';
+                }, delay);
 
-                    const tickValues = [];
-                    let max = -1;
-                    if (parent && parent.children) {
-                        for (let i = 0; i < parent.children.length; i++) {
-                            const childNode = parent.children[i];
-                            const tickValue = parseInt(childNode.getAttribute('data-ticks'));
-                            if (tickValue == 0) {
-                                continue;
-                            }
+                // reset flip status
+                target.removeAttribute('data-mudpopover-flip');
+            }
+            // data ticks is not 0 so let's reposition the popover and overlay
+            else if (target.parentNode &&
+                target.parentNode.classList.contains(window.mudpopoverHelper.mainContainerClass)) {
 
-                            if (tickValues.indexOf(tickValue) >= 0) {
-                                continue;
-                            }
+                // reposition popover
+                window.mudpopoverHelper.placePopoverByNode(target);
 
-                            tickValues.push(tickValue);
+                // check and reposition overlay if needed
+                let highestTickItem = null;
+                let highestTickValue = -1;
 
-                            if (tickValue > max) {
-                                max = tickValue;
-                            }
+                // Traverse children of target.parentNode that contain the class "mud-popover"
+                for (const child of target.parentNode.children) {
+                    if (child.classList.contains("mud-popover")) {
+                        const tickValue = Number(child.getAttribute("data-ticks")) || 0;
+
+                        if (tickValue > highestTickValue) {
+                            highestTickValue = tickValue;
+                            highestTickItem = child;
                         }
                     }
+                }
 
-                    // Iterate over the items in this.map to reset any open overlays
-                    let highestTickItem = null;
-                    let highestTickValue = -1;
-                    // Iterate over the items in this.map to find the highest data-ticks value
-                    for (const mapItem of Object.values(this.map)) {
-                        const popoverContentNode = mapItem.popoverContentNode;
-                        if (popoverContentNode) {
-                            const tickValue = Number(popoverContentNode.getAttribute('data-ticks')); // Convert to Number
-
-                            if (tickValue > highestTickValue) {
-                                highestTickValue = tickValue;
-                                highestTickItem = popoverContentNode;
-                            }
-                        }
-                    }
-
-                    if (highestTickItem) {
-                        window.mudpopoverHelper.updatePopoverOverlay(highestTickItem);
-                    }
-
-                    if (tickValues.length == 0) {
-                        continue;
-                    }
-
-                    const sortedTickValues = tickValues.sort((x, y) => x - y);
-                    // z-index calculation not used here
-                    continue;
-                    for (let i = 0; i < parent.children.length; i++) {
-                        const childNode = parent.children[i];
-                        const tickValue = parseInt(childNode.getAttribute('data-ticks'));
-                        if (tickValue == 0) {
-                            continue;
-                        }
-
-                        if (childNode.skipZIndex == true) {
-                            continue;
-                        }
-                        const newIndex = window.mudpopoverHelper.basePopoverZIndex + sortedTickValues.indexOf(tickValue) + 3;
-                        childNode.style['z-index'] = newIndex;
-                    }
+                if (highestTickItem) {
+                    window.mudpopoverHelper.updatePopoverOverlay(highestTickItem);
                 }
             }
+
         }
     }
 
@@ -594,16 +625,16 @@ class MudPopover {
         const config = {
             attributes: true, // only observe attributes
             subtree: true, // all descendants of popover
-            attributeFilter: ['class', 'data-ticks']
+            attributeFilter: ['data-ticks'] // limit to just data-ticks
         };
 
         const observer = new MutationObserver((mutations) => {
-            for (const mutation in mutations) {
+            for (const mutation of mutations) {
                 // if it's direct parent is the provider
                 // and contains the class mud-popover
                 if (mutation.target.parentNode === provider && mutation.target.classList.contains('mud-popover')) {
-                    console.log('Change detected on popover element:', mutation.target.id);
-                    this.callback.bind(this, mutation.target.id)
+                    // console.log('Change detected on popover element:', mutation.target.id);
+                    this.callbackPopover(mutation);
                     }
             }
         });
@@ -627,62 +658,51 @@ class MudPopover {
 
         if (popoverNode && popoverNode.parentNode && popoverContentNode) {
 
-            window.mudpopoverHelper.placePopover(popoverNode);
+            // Add scroll event listeners to the content node and its parents up to the Body
+            const scrollableElements = window.mudpopoverHelper.popoverScrollListener(popoverNode);
 
-            const config = { attributeFilter: ['class', 'data-ticks'] };
-
-            const observer = new MutationObserver(this.callback.bind(this, id));
-
-            // observer.observe(popoverContentNode, config);
-
+            // add a resize observor to catch resize events 
             const resizeObserver = new ResizeObserver(entries => {
                 for (let entry of entries) {
                     const target = entry.target;
                     for (const childNode of target.childNodes) {
                         if (childNode.id && childNode.id.startsWith('popover-')) {
-                            window.mudpopoverHelper.placePopover(childNode);
+                            debouncedResize();
                         }
                     }
                 }
             });
 
-            // resizeObserver.observe(popoverNode.parentNode);
-
-            const contentNodeObserver = new ResizeObserver(entries => {
-                for (let entry of entries) {
-                    const target = entry.target;
-                    if (target)
-                        window.mudpopoverHelper.placePopoverByNode(target);
-                }
-            });
-
-            // contentNodeObserver.observe(popoverContentNode);
+            resizeObserver.observe(popoverNode.parentNode);
 
             this.map[id] = {
                 popoverContentNode: popoverContentNode,
-                mutationObserver: observer,
-                resizeObserver: resizeObserver,
-                contentNodeObserver: contentNodeObserver
+                scrollableElements: scrollableElements,
+                parentResizeObserver: resizeObserver,
             };
         }
     }
 
     disconnect(id) {
         if (this.map[id]) {
+            // Remove scroll event listeners from the stored scrollable elements
+            const { scrollableElements } = this.map[id];
+            
+            scrollableElements.forEach(element => {
+                element.removeEventListener('scroll', handleScroll);
+            });
 
-            const item = this.map[id]
-            item.mutationObserver.disconnect();
-            item.resizeObserver.disconnect();
-            item.contentNodeObserver.disconnect();
+            // Remove resize observer
+            this.map[id].parentResizeObserver.disconnect();
 
             delete this.map[id];
         }
     }
 
     dispose() {
-        // for (var i in this.map) {
-        //     disconnect(i);
-        // }
+         for (var i in this.map) {
+             this.disconnect(i);
+         }
 
         this.contentObserver.disconnect();
         this.contentObserver = null;
@@ -702,12 +722,12 @@ window.mudPopover = new MudPopover();
 
 const debouncedResize = window.mudpopoverHelper.debounce(() => {
     window.mudpopoverHelper.placePopoverByClassSelector();
-}, 100);
+}, 25);
 
-const throttledScroll = window.mudpopoverHelper.rafThrottle(() => {
+const handleScroll = function () {
     window.mudpopoverHelper.placePopoverByClassSelector('mud-popover-fixed');
     window.mudpopoverHelper.placePopoverByClassSelector('mud-popover-overflow-flip-always');
-});
+};
 
 window.addEventListener('resize', debouncedResize, { passive: true });
-window.addEventListener('scroll', throttledScroll, { passive: true });
+window.addEventListener('scroll', handleScroll, { passive: true });
