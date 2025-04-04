@@ -28,7 +28,7 @@ window.mudpopoverHelper = {
     baseTooltipZIndex: parseInt(getComputedStyle(document.documentElement)
         .getPropertyValue('--mud-zindex-tooltip')) || 1600,
 
-    // static set of replacement valus
+    // static set of replacement values
     flipClassReplacements: {
         'top': {
             'mud-popover-top-left': 'mud-popover-bottom-left',
@@ -140,7 +140,7 @@ window.mudpopoverHelper = {
             offsetY = -selfRect.height;
         }
 
-        console.log(`top: ${top}, left: ${left}, offsetX: ${offsetX}, offsetY: ${offsetY}`);
+        // console.log(`top: ${top}, left: ${left}, offsetX: ${offsetX}, offsetY: ${offsetY}`);
         return {
             top: top, left: left, offsetX: offsetX, offsetY: offsetY
         };
@@ -162,7 +162,7 @@ window.mudpopoverHelper = {
                 classList.push(item);
             }
         }
-        console.log(replacementsList);
+        // console.log(replacementsList);
         return window.mudpopoverHelper.calculatePopoverPosition(classList, boundingRect, selfRect);
     },
 
@@ -179,7 +179,6 @@ window.mudpopoverHelper = {
             if (!popoverContentNode) {
                 return;
             }
-
             const classList = popoverContentNode.classList;
 
             // if the popover isn't open we stop
@@ -213,7 +212,6 @@ window.mudpopoverHelper = {
             let top = postion.top;
             let offsetX = postion.offsetX;
             let offsetY = postion.offsetY;
-
             // get the top/left/ from popoverContentNode if the popover has been hardcoded for position
             if (classList.contains('mud-popover-position-override')) {
                 left = parseInt(popoverContentNode.style['left']) || left;
@@ -230,20 +228,9 @@ window.mudpopoverHelper = {
                     width: selfRect.width,
                     height: selfRect.height
                 };
-            }            
-
+            }
             // flipping logic
-            // get flip status
-            let selector = popoverContentNode.getAttribute("data-mudpopover-flip");
-            console.log(`starting: ${selector}`);
-            // if there has not been a flip and it's got an onopen class OR
-            // there is a flip-always class
-            if ((!selector && classList.contains('mud-popover-overflow-flip-onopen')) ||
-                classList.contains('mud-popover-overflow-flip-always')) {
-
-                // we know it's supposed to flip if able
-                selector = null;
-                popoverContentNode.removeAttribute('data-mudpopover-flip');
+            if (classList.contains('mud-popover-overflow-flip-onopen') || classList.contains('mud-popover-overflow-flip-always')) {
 
                 const appBarElements = document.getElementsByClassName("mud-appbar mud-appbar-fixed-top");
                 let appBarOffset = 0;
@@ -257,6 +244,10 @@ window.mudpopoverHelper = {
                 const deltaTop = top - selfRect.height - appBarOffset;
                 const spaceToTop = top - appBarOffset;
                 const deltaBottom = window.innerHeight - top - selfRect.height;
+                //console.log('self-width: ' + selfRect.width + ' | self-height: ' + selfRect.height);
+                //console.log('left: ' + deltaToLeft + ' | rigth:' + deltaToRight + ' | top: ' + deltaTop + ' | bottom: ' + deltaBottom + ' | spaceToTop: ' + spaceToTop);
+
+                let selector = popoverContentNode.mudPopoverFliped;
 
                 if (!selector) {
                     if (classList.contains('mud-popover-top-left')) {
@@ -335,15 +326,7 @@ window.mudpopoverHelper = {
                     top = newPosition.top;
                     offsetX = newPosition.offsetX;
                     offsetY = newPosition.offsetY;
-                    //console.log(`what now: ${selector} | left: ${left} | top: ${top} | offsetX: ${offsetX} | offsetY: ${offsetY}`);
                     popoverContentNode.setAttribute('data-mudpopover-flip', 'flipped');
-
-                    // if we are flip on open then store the true top/left
-                    if (classList.contains('mud-popover-overflow-flip-onopen')) {
-                        console.log(`setting flip top: ${top} | left: ${ left }`);
-                        popoverContentNode.setAttribute('data-flip-left', left);
-                        popoverContentNode.setAttribute('data-flip-top', top);
-                    }
                 }
                 else {
                     // did not flip, ensure the left and top are inside bounds
@@ -377,6 +360,13 @@ window.mudpopoverHelper = {
                     if (list && list.offsetHeight > listMaxHeight) {
                         list.style.maxHeight = (listMaxHeight - listPadding) + 'px';
                     }
+                    popoverContentNode.removeAttribute('data-mudpopover-flip');
+                }
+
+                if (classList.contains('mud-popover-overflow-flip-onopen')) {
+                    if (!popoverContentNode.mudPopoverFliped) {
+                        popoverContentNode.mudPopoverFliped = selector || 'none';
+                    }
                 }
             }
 
@@ -392,14 +382,6 @@ window.mudpopoverHelper = {
                 // no offset if popover position is hardcoded
                 offsetX = 0;
                 offsetY = 0;
-            }
-
-            // if it's been set to flip-onopen get the top/left from the attributes to reapply the offset           
-            if (selector === 'flipped' && classList.contains('mud-popover-overflow-flip-onopen')) {
-                console.log(`calculated left ${left} | top ${top}`);
-                left = parseInt(popoverContentNode.getAttribute('data-flip-left')) || left;
-                top = parseInt(popoverContentNode.getAttribute('data-flip-top')) || top;
-                console.log(`left: ${left} | top: ${top} | offsetX: ${offsetX} | offsetY: ${offsetY}`);
             }
 
             popoverContentNode.style['left'] = (left + offsetX) + 'px';
@@ -572,6 +554,7 @@ class MudPopover {
                 }, delay);
 
                 // reset flip status
+                target.mudPopoverFliped = null;
                 target.removeAttribute('data-mudpopover-flip');
             }
             // data ticks is not 0 so let's reposition the popover and overlay
