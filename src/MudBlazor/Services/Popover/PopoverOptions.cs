@@ -20,7 +20,7 @@ public class PopoverOptions
     /// Gets or sets the CSS class of the popover container.
     /// The default value is <c>mudblazor-main-content</c>.
     /// </summary>
-    public string ContainerClass { get; set; } = "mudblazor-main-content";
+    public string ContainerClass { get; set; } = "mud-popover-provider";
 
     /// <summary>
     /// Gets or sets the FlipMargin for the popover.
