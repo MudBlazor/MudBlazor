@@ -1,0 +1,33 @@
+﻿
+<MudContainer Fixed="true" @key="key">
+    @for (var i = 0; i < 200; i++)
+    {
+
+        <div>
+            <MudTooltip Text="Tooltext buttontip" Delay="0" Duration="0">
+                <MudButton>BTN @i </MudButton>
+            </MudTooltip>
+        </div>
+    }
+</MudContainer>
+
+@code
+{
+    private Guid key;
+
+    protected override Task OnInitializedAsync()
+    {
+        RunThing().CatchAndLog();
+        return base.OnInitializedAsync();
+    }
+
+    private async Task RunThing()
+    {
+        while (true)
+        {
+            this.key = Guid.NewGuid();
+            InvokeAsync(StateHasChanged).CatchAndLog();
+            await Task.Delay(100);
+        }
+    }
+}
