@@ -562,7 +562,10 @@ namespace MudBlazor
                     await _elementReference.SetText(optionText);
                 }
 
-                await CloseMenuAsync();
+                // We want focus with a closed popover	
+                Open = false;
+                // And update	
+                StateHasChanged();
             }
             finally
             {
