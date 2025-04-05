@@ -985,6 +985,7 @@ namespace MudBlazor
             var wasFocused = _isFocused;
             _isFocused = true;
 
+            // Skip features that are not meant for internal focus events.
             if (_handleNextFocus)
             {
                 _handleNextFocus = false;
