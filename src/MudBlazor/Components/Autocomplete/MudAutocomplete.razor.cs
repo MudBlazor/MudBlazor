@@ -975,6 +975,11 @@ namespace MudBlazor
         {
             _isFocused = true;
 
+            if (Open || GetDisabledState() || GetReadOnlyState())
+            {
+                return;
+            }
+
             if (SelectOnActivation && !GetDisabledState() && !GetReadOnlyState())
             {
                 await SelectAsync();
