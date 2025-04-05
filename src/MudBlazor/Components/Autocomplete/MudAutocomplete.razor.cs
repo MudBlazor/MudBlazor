@@ -970,37 +970,36 @@ namespace MudBlazor
                 return Task.CompletedTask;
             }
 
-            return OnInputActivationAsync(true);
+            return OnInputActivatedAsync(true);
         }
 
         private async Task OnInputFocusedAsync()
         {
             if (GetReadOnlyState())
             {
-                // The readonly input doesn't trigger onblur and so we'll have to disable focus features for it.
+                // A readonly input doesn't trigger onblur later correctly, so we have to disable focus features for it.
                 return;
             }
 
             var wasFocused = _isFocused;
             _isFocused = true;
 
-            // Was focus NOT triggered by user interaction?
             if (_handleNextFocus)
             {
                 _handleNextFocus = false;
                 return;
             }
 
-            // Select the input text unless we're already focused or it will interfere with mouse selection.
+            // Select the input text unless we're already focused or it will interfere with cursor selection.
             if (!wasFocused && SelectOnActivation)
             {
                 await SelectAsync();
             }
 
-            await OnInputActivationAsync(OpenOnFocus);
+            await OnInputActivatedAsync(OpenOnFocus);
         }
 
-        private async Task OnInputActivationAsync(bool openMenu)
+        private async Task OnInputActivatedAsync(bool openMenu)
         {
             // The click event also triggers the focus event so we don't want to unnecessarily handle both.
             if (openMenu && !Open && !_opening && !GetReadOnlyState())
@@ -1017,6 +1016,7 @@ namespace MudBlazor
             await SetTextAsync(default, false);
             _selectedListItemIndex = default;
             await CloseMenuAsync();
+            StateHasChanged();
             await OnClearButtonClick.InvokeAsync(e);
             await BeginValidateAsync();
         }
@@ -1025,6 +1025,7 @@ namespace MudBlazor
         {
             if (OnAdornmentClick.HasDelegate)
             {
+
                 await OnAdornmentClick.InvokeAsync();
             }
             else
@@ -1121,7 +1122,7 @@ namespace MudBlazor
         /// </summary>
         public override ValueTask FocusAsync()
         {
-            _handleNextFocus = true; // The subsequent event that will be triggered will know it's not by the user.
+            _handleNextFocus = true; // Let the event handler know it was not triggered by the user.
             return _elementReference.FocusAsync();
         }
 
