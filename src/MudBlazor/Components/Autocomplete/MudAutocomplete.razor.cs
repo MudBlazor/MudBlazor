@@ -32,7 +32,7 @@ namespace MudBlazor
         private T[]? _items;
         private List<int> _enabledItemIndices = [];
         private Func<T?, string?>? _toStringFunc;
-        private bool _isNextFocusBeingHandledInternally;
+        private bool _handleNextFocus;
 
         [Inject]
         private IScrollManager ScrollManager { get; set; } = null!;
@@ -985,9 +985,9 @@ namespace MudBlazor
             _isFocused = true;
 
             // Was focus NOT triggered by user interaction?
-            if (_isNextFocusBeingHandledInternally)
+            if (_handleNextFocus)
             {
-                _isNextFocusBeingHandledInternally = false;
+                _handleNextFocus = false;
                 return;
             }
 
@@ -1037,7 +1037,7 @@ namespace MudBlazor
         private Task OnInputBlurredAsync(FocusEventArgs args)
         {
             _isFocused = false;
-            _isNextFocusBeingHandledInternally = false;
+            _handleNextFocus = false;
 
             // When Immediate is enabled, then the CoerceValue is set by TextChanged
             // So only coerce the value on blur when Immediate is disabled
@@ -1122,7 +1122,7 @@ namespace MudBlazor
         /// </summary>
         public override ValueTask FocusAsync()
         {
-            _isNextFocusBeingHandledInternally = true; // The subsequent event that will be triggered will know it's not by the user.
+            _handleNextFocus = true; // The subsequent event that will be triggered will know it's not by the user.
             return _elementReference.FocusAsync();
         }
 
