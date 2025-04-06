@@ -33,7 +33,7 @@ MudBlazor is an ambitious Material Design component framework for Blazor with an
 - Fully written in C# with minimal JavaScript.
 - Build beautiful UIs without touching CSS (but full control if needed).
 - No third-party component dependencies - full control and flexibility.
-- Focused on stability with extensive test coverage.
+- Strive for stability with extensive test coverage.
 - Frequent releases so devs get their fixes and features fast.
 
 ## ⚙️ Prerequisites
@@ -68,9 +68,7 @@ For larger features or changes, feel free to chat with us [on Discord](https://d
 📚 Check out our [contribution guidelines](/CONTRIBUTING.md) to get started and learn more about how the project works.
 
 ## 🚀 Getting Started
-We have ready-to-go templates at the [MudBlazor.Templates](https://github.com/mudblazor/Templates) repository.
-
-The full installation guide can be found [on our website](https://mudblazor.com/getting-started/installation).
+We have ready-to-go templates at the [MudBlazor.Templates](https://github.com/mudblazor/Templates) repository, or follow the quick install guide to set things up manually:
 
 ### 🛠️ Quick Install
 Install Package:
@@ -110,6 +108,9 @@ using MudBlazor.Services;
 ```c#
 builder.Services.AddMudServices();
 ```
+
+### 🔗 Full Setup Guide
+For more details, see the [complete installation guide](https://mudblazor.com/getting-started/installation) on our website.
 
 ### 💻 Example Usage
 ```razor
