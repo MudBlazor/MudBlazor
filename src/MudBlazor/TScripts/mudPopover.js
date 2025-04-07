@@ -141,7 +141,7 @@ window.mudpopoverHelper = {
         }
 
         return {
-            top: top, left: left, offsetX: offsetX, offsetY: offsetY
+            top: top, left: left, offsetX: offsetX, offsetY: offsetY, anchorY: top, anchorX: left
         };
     },
 
@@ -210,6 +210,9 @@ window.mudpopoverHelper = {
             let top = position.top; // Y-coordinate of the popover
             let offsetX = position.offsetX; // Horizontal offset of the popover
             let offsetY = position.offsetY; // Vertical offset of the popover
+            let anchorY = position.anchorY; // Y-coordinate of the opening anchor
+            let anchorX = position.anchorX; // X-coordinate of the opening anchor
+
             // get the top/left/ from popoverContentNode if the popover has been hardcoded for position
             if (classList.contains('mud-popover-position-override')) {
                 left = parseInt(popoverContentNode.style['left']) || left;
@@ -236,7 +239,7 @@ window.mudpopoverHelper = {
                     appBarOffset = appBarElements[0].getBoundingClientRect().height;
                 }
 
-                const spaceToTop = top - appBarOffset; // Space available above the popover
+                const contentPadding = 24;
                 // mudPopoverFliped is the flip direction for first flip on flip - onopen popovers
                 let selector = popoverContentNode.mudPopoverFliped;
 
@@ -250,7 +253,7 @@ window.mudpopoverHelper = {
                         const spaceRight = window.innerWidth - left; // Space to the right of the anchor
 
                         // Space available in opposite direction
-                        const spaceAbove = spaceToTop;
+                        const spaceAbove = top - contentPadding;
                         const spaceLeft = left;
 
                         // Check if popover exceeds available space AND if opposite side has more space
@@ -273,7 +276,7 @@ window.mudpopoverHelper = {
                     else if (classList.contains('mud-popover-top-center')) {
                         // Space available in current direction vs opposite direction
                         const spaceBelow = window.innerHeight - top;
-                        const spaceAbove = spaceToTop;
+                        const spaceAbove = top - contentPadding;
 
                         // Only flip if popover exceeds available space AND there's more space in opposite direction
                         if (selfRect.height > spaceBelow && spaceAbove > spaceBelow) {
@@ -288,7 +291,7 @@ window.mudpopoverHelper = {
                         const spaceLeft = left;
 
                         // Space available in opposite direction
-                        const spaceAbove = spaceToTop;
+                        const spaceAbove = top - contentPadding;
                         const spaceRight = window.innerWidth - left;
 
                         // Check if popover exceeds available space AND if opposite side has more space
@@ -398,57 +401,62 @@ window.mudpopoverHelper = {
                     top = newPosition.top;
                     offsetX = newPosition.offsetX;
                     offsetY = newPosition.offsetY;
-                    popoverContentNode.setAttribute('data-mudpopover-flip', 'flipped');
+                    popoverContentNode.setAttribute('data-mudpopover-flip', selector);
                 }
                 else {
-                    // did not flip, ensure the left is inside bounds
-                    if (left + offsetX < 0 && // it's starting left of the screen
-                        Math.abs(left + offsetX) < selfRect.width) { // it's not starting so far left the entire box would be hidden
-                        left = Math.max(0, left + offsetX);
-                        // set offsetX to 0 to avoid double offset
-                        offsetX = 0;
-                    }
-
-                    // will be covered by appbar so adjust zindex with appbar as parent
-                    if (top + offsetY < appBarOffset &&
-                        appBarElements.length > 0) {
-                        this.updatePopoverZIndex(popoverContentNode, appBarElements[0]);
-                    }
-
                     popoverContentNode.removeAttribute('data-mudpopover-flip');
+                }                
+
+                // ensure the left is inside bounds
+                if (left + offsetX < contentPadding && // it's starting left of the screen
+                    Math.abs(left + offsetX) < selfRect.width) { // it's not starting so far left the entire box would be hidden
+                    left = contentPadding;
+                    // set offsetX to 0 to avoid double offset
+                    offsetX = 0;
+                }
+
+                // ensure the top is inside bounds
+                if (top + offsetY < contentPadding && // it's starting above the screen
+                    boundingRect.top >= 0 && // the popoverNode is still on screen
+                    Math.abs(top + offsetY) < selfRect.height) { // it's not starting so far above the entire box would be hidden
+                    top = contentPadding;
+                    // set offsetY to 0 to avoid double offset
+                    offsetY = 0;
+                }
+
+                // will be covered by appbar so adjust zindex with appbar as parent
+                if (top + offsetY < appBarOffset &&
+                    appBarElements.length > 0) {
+                    this.updatePopoverZIndex(popoverContentNode, appBarElements[0]);
                 }
 
                 // adjust the popover position/maxheight if it contians a mud-list as it's first descendant
-                // exceeds the bounds and doesn't have a max-height 
+                // exceeds the bounds and doesn't have a max-height set by the user
+                // maxHeight adjustments stop the minute popoverNode is no longer inside the window
                 const firstChild = popoverContentNode.firstElementChild;
                 const list = firstChild && firstChild.classList.contains('mud-list') ? firstChild : null;
                 if (list) {
-                    let anchorPoint = top - offsetY; // Moving upwards
-                    if (offsetY >= 0) { anchorPoint = top + offsetY; } // Moving downwards
                     // Reset max-height if it was previously set and anchor is in bounds
-                    if (popoverContentNode.mudHeight && anchorPoint > 0 && anchorPoint < window.innerHeight) {
+                    if (popoverContentNode.mudHeight && anchorY > 0 && anchorY < window.innerHeight) {
                         popoverContentNode.style.maxHeight = null;
                         list.style.maxHeight = null;
                         popoverContentNode.mudHeight = null;
                     }
+
                     // Check if max-height is set on popover or list
                     const hasMaxHeight = popoverContentNode.style.maxHeight != '' || list.style.maxHeight != '';
 
-                    if (!hasMaxHeight) { 
-                        let contentPadding = 24;
-                        let listMaxHeight = (window.innerHeight - top - offsetY); // moving downwards
-
-                        if (top + offsetY < 0 && // it's starting above the screen
-                            Math.abs(top + offsetY) < selfRect.height) { // it's not starting so far above the entire box would be hidden
-                            top = Math.max(contentPadding, top + offsetY);
-                            // set offsetY to 0 to avoid double offset
-                            offsetY = 0;
-                            listMaxHeight = window.innerHeight - top + offsetY; // moving upwards
+                    if (!hasMaxHeight) {
+                        // calculate list max height if it exceeds bounds
+                        let listMaxHeight = window.innerHeight - top - offsetY; // downwards
+                        // moving upwards
+                        if (top + offsetY < anchorY || top + offsetY == contentPadding) {
+                            listMaxHeight = anchorY - contentPadding;
                         }
-                        
+
                         // if list calculated height exceeds the listmaxheight
-                        if (list.offsetHeight > listMaxHeight && anchorPoint > 0) {
-                            list.style.maxHeight = (listMaxHeight - contentPadding) + 'px';
+                        if (list.offsetHeight > listMaxHeight) {
+                            list.style.maxHeight = (listMaxHeight) + 'px';
                             popoverContentNode.mudHeight = "setmaxheight";
                         }
                     }
