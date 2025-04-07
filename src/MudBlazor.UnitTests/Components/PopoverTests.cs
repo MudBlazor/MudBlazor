@@ -14,7 +14,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var options = new PopoverOptions();
 
-            options.ContainerClass.Should().Be("mudblazor-main-content");
+            options.OverflowPadding.Should().Be(24);
+            options.ContainerClass.Should().Be("mud-popover-provider");
             options.FlipMargin.Should().Be(0);
             options.ThrowOnDuplicateProvider.Should().Be(true);
         }
