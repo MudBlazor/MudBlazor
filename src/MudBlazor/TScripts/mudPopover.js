@@ -706,16 +706,21 @@ class MudPopover {
     callbackPopover(mutation) {
         const target = mutation.target;
         if (!target) return;
-        if (mutation.type == 'attributes' && mutation.attributeName == 'data-ticks') {
-            // when data-ticks attribute is the mutation something has changed with the popover
-            // and it needs to be repositioned and shown, note we don't use mud-popover-open here
-            // instead we use data-ticks since we know the newest data-ticks > 0 is the top most.            
-            const tickAttribute = target.getAttribute('data-ticks');
-            const id = target.id.substr(15);
-            // if data-ticks is 0 the popover isn't open and it's hidden in css but we don't want it to reappear until
-            // it's positioned the next time so we move it off screen
-            if (tickAttribute == 0) {
-                // tell the map that this popover is closed                
+        const id = target.id.substr(15);
+        if (mutation.type == 'attributes' && mutation.attributeName == 'class') {
+            if (target.classList.contains('mud-popover-open')) {
+                // setup for an open popover and create observers
+                if (this.map[id] && !this.map[id].isOpened) {
+                    this.map[id].isOpened = true;
+                    this.createObservers(id);
+                }
+                console.log("open");
+                // reposition popover individually
+                window.mudpopoverHelper.placePopoverByNode(target);
+            }
+            else {
+                // tell the map that this popover is closed  
+                
                 if (this.map[id] && this.map[id].isOpened) {
                     this.map[id].isOpened = false;
                     this.disposeObservers(id);
@@ -726,27 +731,37 @@ class MudPopover {
                     // remove left and top styles
                     target.style.removeProperty('left');
                     target.style.removeProperty('top');
+                    console.log("immediate hide");
                 }
-                setTimeout(() => {
-                    target.style.removeProperty('left');
-                    target.style.removeProperty('top');
-                }, delay);
-
+                else {
+                    setTimeout(() => {
+                        if (this.map[id] && this.map[id].isOpened) return; // in case it's reopened before the timeout is over
+                        if (target && !target.classList.contains('mud-popover-open')) {
+                            target.style.removeProperty('left');
+                            target.style.removeProperty('top');
+                            console.log("delayed hide");
+                        }                        
+                    }, delay);
+                }
                 // reset flip status
                 target.mudPopoverFliped = null;
                 target.removeAttribute('data-mudpopover-flip');
+                console.log("close");
             }
+        }
+        else if (mutation.type == 'attributes' && mutation.attributeName == 'data-ticks') {
+            // when data-ticks attribute is the mutation something has changed with the popover
+            // and it needs to be repositioned and shown, note we don't use mud-popover-open here
+            // instead we use data-ticks since we know the newest data-ticks > 0 is the top most.            
+            const tickAttribute = target.getAttribute('data-ticks');            
             // data ticks is not 0 so let's reposition the popover and overlay
-            else if (target.parentNode &&
+            if (tickAttribute > 0 && target.parentNode &&
                 target.parentNode.classList.contains(window.mudpopoverHelper.mainContainerClass)) {
-                const id = target.id.substr(15);
-                if (this.map[id] && !this.map[id].isOpened) {
-                    this.map[id].isOpened = true;
-                    this.createObservers(id);
-                }
+
                 // reposition popover individually
                 window.mudpopoverHelper.placePopoverByNode(target);
-                // check and reposition overlay if needed
+
+                // check and reposition overlay if needed, positions and z-index can change during a reflow so leave it in data-ticks
                 let highestTickItem = null;
                 let highestTickValue = -1;
 
@@ -790,7 +805,7 @@ class MudPopover {
         const config = {
             attributes: true, // only observe attributes
             subtree: true, // all descendants of popover
-            attributeFilter: ['data-ticks'] // limit to just data-ticks
+            attributeFilter: ['data-ticks','class'] // limit to just data-ticks and class changes
         };
 
         // Dispose of any existing observer before creating a new one
