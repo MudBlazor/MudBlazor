@@ -7,7 +7,7 @@
         @ChildContent
 
         <div @attributes="UserAttributes" class="@Classname" style="@Style; width: @Width; height: @Height;" dir="ltr">
-            @if (ChartType == ChartType.Donut)
+@*             @if (ChartType == ChartType.Donut)
             {
                 <Donut InputData="@InputData" @bind-SelectedIndex="@SelectedIndex" InputLabels="@InputLabels"></Donut>
             }
@@ -30,7 +30,7 @@
             @if (ChartType == ChartType.HeatMap)
             {
                 <HeatMap ChartSeries="@ChartSeries" @bind-SelectedIndex="@SelectedIndex" XAxisLabels="@XAxisLabels"></HeatMap>
-            }
+            } *@
         </div>
     </CascadingValue>
 </CascadingValue>

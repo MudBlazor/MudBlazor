@@ -16,6 +16,13 @@ public abstract class MudChartBase<TOptions> : MudComponentBase where TOptions :
     public bool RightToLeft { get; set; }
 
     /// <summary>
+    /// The series of values to display.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Chart.Behavior)]
+    public List<ChartDataSet> ChartSeries { get; set; } = [];
+
+    /// <summary>
     /// The display options applied to the chart.
     /// </summary>
     [Parameter]
@@ -111,18 +118,15 @@ public abstract class MudChartBase<TOptions> : MudComponentBase where TOptions :
             .WithEventCallback(() => SelectedIndexChanged);
     }
 
-    private Position ConvertLegendPosition(Position position)
+    private Position ConvertLegendPosition(Position position) => position switch
     {
-        return position switch
-        {
-            Position.Start => RightToLeft ? Position.Right : Position.Left,
-            Position.End => RightToLeft ? Position.Left : Position.Right,
-            _ => position
-        };
-    }
+        Position.Start => RightToLeft ? Position.Right : Position.Left,
+        Position.End => RightToLeft ? Position.Left : Position.Right,
+        _ => position
+    };
 
-    internal void SetSelectedIndex(int index)
+    internal async Task SetSelectedIndexAsync(int index)
     {
-        SelectedIndex = index;
+        await _selectedIndex.SetValueAsync(index);
     }
 }

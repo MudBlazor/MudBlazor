@@ -1,6 +1,8 @@
-﻿@namespace MudBlazor.Components.Chart
-@using MudBlazor.Charts
-@inherits MudCategoryChartBase
+﻿@using MudBlazor.Charts
+
+@namespace MudBlazor.Components.Chart
+
+@inherits MudChartBase<IChartOptions>
 
 <CascadingValue Value="@this" IsFixed="true">
     <CascadingValue Value="@((MudChartBase<IChartOptions>)this)" IsFixed="true">
@@ -17,7 +19,7 @@
 
     private RenderFragment ChartContent => (ChartType, Options) switch
     {
-        (ChartType.Bar, BarChartOptions barOptions) => @<Bar ChartSeries="@ChartSeries" ChartOptions="Options" @bind-SelectedIndex="@SelectedIndex" />,
+        (ChartType.Bar, BarChartOptions barOptions) => @<Bar ChartSeries="@ChartSeries" ChartOptions="barOptions" @bind-SelectedIndex="@SelectedIndex" />,
         _ => throw new NotImplementedException($"{ChartType} chart is not supported")
     };
 

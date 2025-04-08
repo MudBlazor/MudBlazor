@@ -6,7 +6,7 @@ using MudBlazor.Interop;
 #nullable enable
 namespace MudBlazor.Components.Chart;
 
-public abstract class MudCategoryAxisChartBase : MudCategoryChartBase, IDisposable
+public abstract class MudAxisChartBase<TOptions> : MudChartBase<TOptions>, IDisposable where TOptions : IChartOptions
 {
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
@@ -34,14 +34,14 @@ public abstract class MudCategoryAxisChartBase : MudCategoryChartBase, IDisposab
     private ElementSize? _yAxisLabelSize;
     private ElementSize? _xAxisLabelSize;
 
-    private readonly DotNetObjectReference<MudCategoryAxisChartBase> _dotNetObjectReference;
+    private readonly DotNetObjectReference<MudAxisChartBase<TOptions>> _dotNetObjectReference;
     protected ElementReference _elementReference;
     protected ElementReference? _xAxisGroupElementReference;
     protected ElementReference? _yAxisGroupElementReference;
 
     [DynamicDependency(nameof(OnElementSizeChanged))]
     [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(ElementSize))]
-    protected MudCategoryAxisChartBase()
+    protected MudAxisChartBase()
     {
         _dotNetObjectReference = DotNetObjectReference.Create(this);
     }

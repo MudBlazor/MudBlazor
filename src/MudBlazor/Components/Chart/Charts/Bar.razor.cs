@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Components.Chart;
 
 #nullable enable
 namespace MudBlazor.Charts
@@ -11,7 +12,7 @@ namespace MudBlazor.Charts
     /// <seealso cref="Pie"/>
     /// <seealso cref="StackedBar"/>
     /// <seealso cref="TimeSeries"/>
-    partial class Bar : Components.Chart.MudCategoryAxisChartBase
+    partial class Bar : MudAxisChartBase<BarChartOptions>
     {
         private readonly List<SvgPath> _horizontalLines = [];
         private readonly List<SvgText> _horizontalValues = [];
@@ -20,7 +21,7 @@ namespace MudBlazor.Charts
         private readonly List<SvgText> _verticalValues = [];
 
         private readonly List<SvgLegend> _legends = [];
-        private List<ChartSeries> _series = [];
+        private List<ChartDataSet> _series = [];
 
         private readonly List<SvgPath> _bars = [];
         private SvgPath? _hoveredBar;
@@ -61,10 +62,10 @@ namespace MudBlazor.Charts
             if (gridYUnits <= 0)
                 gridYUnits = 20;
 
-            if (_series.SelectMany(series => series.Data).Any())
+            if (_series.SelectMany(series => series.Data.Values).Any())
             {
-                var minY = _series.SelectMany(series => series.Data).Min();
-                var maxY = _series.SelectMany(series => series.Data).Max();
+                var minY = _series.SelectMany(series => series.Data.Values).Min();
+                var maxY = _series.SelectMany(series => series.Data.Values).Max();
                 lowestHorizontalLine = Math.Min((int)Math.Floor(minY / gridYUnits), 0);
                 var highestHorizontalLine = Math.Max((int)Math.Ceiling(maxY / gridYUnits), 0);
                 numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
@@ -79,7 +80,7 @@ namespace MudBlazor.Charts
                     numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
                 }
 
-                numVerticalLines = _series.Max(series => series.Data.Length);
+                numVerticalLines = _series.Max(series => series.Data.Values.Length);
             }
             else
             {
@@ -130,7 +131,7 @@ namespace MudBlazor.Charts
                 };
                 _verticalLines.Add(line);
 
-                var xLabels = i < XAxisLabels.Length ? XAxisLabels[i] : "";
+                var xLabels = i < ChartOptions!.XAxisLabels.Length ? ChartOptions!.XAxisLabels[i] : "";
                 var lineValue = new SvgText()
                 {
                     X = x + (BarGroupWidth / 2),
@@ -151,9 +152,9 @@ namespace MudBlazor.Charts
                 var series = _series[i];
                 var data = series.Data;
 
-                for (var j = 0; j < data.Length; j++)
+                for (var j = 0; j < data.Values.Length; j++)
                 {
-                    var dataValue = data[j];
+                    var dataValue = data.Values[j];
                     var gridValueX = HorizontalStartSpace + (BarStroke / 2) + (i * BarGap) + (j * horizontalSpace);
                     var gridValueY = _boundHeight - VerticalStartSpace + (lowestHorizontalLine * verticalSpace);
                     var barHeight = ((dataValue / gridYUnits) - lowestHorizontalLine) * verticalSpace;
@@ -163,8 +164,8 @@ namespace MudBlazor.Charts
                     {
                         Index = i,
                         Data = $"M {ToS(gridValueX)} {ToS(gridValueY)} L {ToS(gridValueX)} {ToS(gridValue)}",
-                        LabelXValue = XAxisLabels.Length > j ? XAxisLabels[j] : string.Empty,
-                        LabelYValue = dataValue.ToString(series.DataMarkerTooltipYValueFormat),
+                        LabelXValue = ChartOptions!.XAxisLabels.Length > j ? ChartOptions!.XAxisLabels[j] : string.Empty,
+                        LabelYValue = dataValue.ToString(series.TooltipYValueFormat),
                         LabelX = gridValueX,
                         LabelY = gridValue
                     };
@@ -174,7 +175,7 @@ namespace MudBlazor.Charts
                 var legend = new SvgLegend()
                 {
                     Index = i,
-                    Labels = series.Name
+                    Labels = series.Label
                 };
                 _legends.Add(legend);
             }
