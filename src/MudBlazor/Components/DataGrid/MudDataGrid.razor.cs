@@ -1269,6 +1269,8 @@ namespace MudBlazor
             }
 
             await _selectedItemsState.SetValueAsync(Selection);
+            // doesn't fire due to hashset reference not changing, so fire it manually
+            await SelectedItemsChanged.InvokeAsync(Selection);
         }
 
         private void OnSelectedItemsChanged(ParameterChangedEventArgs<HashSet<T>> args)
@@ -1529,9 +1531,29 @@ namespace MudBlazor
             }
 
             await _selectedItemsState.SetValueAsync(Selection);
+            // manually invoke due to ParameterState not seeing state change with HashSet
+            await InvokeAsync(async () => await SelectedItemsChanged.InvokeAsync(Selection));
             await InvokeAsync(() => SelectedItemsChangedEvent?.Invoke(Selection));
 
             await InvokeAsync(StateHasChanged);
+        }
+
+        /// <summary>
+        /// Set the currently selected item in the data grid.
+        /// </summary>
+        /// <param name="item">The item to select.</param>
+        /// <remarks>
+        /// When <see cref="MultiSelection"/> is <c>true</c> and <see cref="SelectOnRowClick"/> is <c>true</c>, the <see cref="SelectedItems"/> are updated.  The <see cref="SelectedItem"/> is also updated.
+        /// </remarks>
+        public Task SetSelectedItemAsync(T item)
+        {
+            if (!SelectOnRowClick)
+            {
+                return Task.CompletedTask;
+            }
+
+            var isSelected = Selection.Contains(item);
+            return SetSelectedItemAsync(!isSelected, item);
         }
 
         internal async Task SetSelectAllAsync(bool value)
@@ -1544,12 +1566,15 @@ namespace MudBlazor
                     ? ServerItems
                     : FilteredItems;
 
+            Selection.Clear();
             if (value)
-                Selection = new HashSet<T>(items, Comparer);
-            else
-                Selection.Clear();
+            {
+                Selection.UnionWith(items);
+            }
 
             await InvokeAsync(async () => await _selectedItemsState.SetValueAsync(Selection));
+            // manually invoke due to ParameterState not seeing state change with HashSet
+            await InvokeAsync(async () => await SelectedItemsChanged.InvokeAsync(Selection));
             await InvokeAsync(() => SelectedItemsChangedEvent?.Invoke(Selection));
             await InvokeAsync(() => SelectedAllItemsChangedEvent?.Invoke(value));
 
@@ -1636,9 +1661,9 @@ namespace MudBlazor
             await SetSelectedItemAsync(item);
         }
 
-        internal async Task OnContextMenuClickedAsync(MouseEventArgs args, T item, int rowIndex)
+        internal Task OnContextMenuClickedAsync(MouseEventArgs args, T item, int rowIndex)
         {
-            await RowContextMenuClick.InvokeAsync(new DataGridRowClickEventArgs<T>(args, item, rowIndex));
+            return RowContextMenuClick.InvokeAsync(new DataGridRowClickEventArgs<T>(args, item, rowIndex));
         }
 
         /// <summary>
@@ -1829,43 +1854,6 @@ namespace MudBlazor
                     _serverData.Items.Select((item, index) => new IndexBag<T>(request.StartIndex + index, item)),
                     _serverData.TotalItems);
             };
-        }
-
-        /// <summary>
-        /// Set the currently selected item in the data grid.
-        /// </summary>
-        /// <param name="item">The item to select.</param>
-        /// <remarks>
-        /// When <see cref="MultiSelection"/> is <c>true</c> and <see cref="SelectOnRowClick"/> is <c>true</c>, the <see cref="SelectedItems"/> are updated.  The <see cref="SelectedItem"/> is also updated.
-        /// </remarks>
-        public async Task SetSelectedItemAsync(T item)
-        {
-            if (!SelectOnRowClick)
-                return;
-
-            // this is toggle logic (unselect if selected)
-            if (!Selection.Remove(item))
-            {
-                Selection.Add(item);
-            }
-            else if (!MultiSelection)
-            {
-                await _selectedItemState.SetValueAsync(default);
-                return;
-            }
-
-            if (MultiSelection)
-            {
-                await _selectedItemsState.SetValueAsync(Selection);
-                SelectedItemsChangedEvent?.Invoke(Selection);
-            }
-            else
-            {
-                Selection.Remove(_selectedItemState.Value);
-            }
-
-            await _selectedItemState.SetValueAsync(item);
-            await _selectedItemsState.SetValueAsync(Selection);
         }
 
         /// <summary>

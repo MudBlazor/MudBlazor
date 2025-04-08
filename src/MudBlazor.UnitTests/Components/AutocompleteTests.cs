@@ -1854,6 +1854,75 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Ensure selecting an option does not reopen the list.
+        /// </summary>
+        [Test]
+        public void Autocomplete_SelectingOption_ShouldNot_ReopenList()
+        {
+            var comp = Context.RenderComponent<AutocompleteTest1>();
+            var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
+            var autocomplete = autocompleteComponent.Instance;
+
+            // Open the menu
+            autocompleteComponent.Find("div.mud-input-control").Focus();
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+
+            // Select an option
+            comp.Find("div.mud-list-item").Click();
+
+            // Assert: Menu should remain closed
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+        }
+
+        /// <summary>
+        /// Ensure the menu does not open in read-only mode.
+        /// </summary>
+        [Test]
+        public void Autocomplete_User_ShouldNot_OpenMenu_InReadOnlyMode()
+        {
+            var comp = Context.RenderComponent<MudAutocomplete<string>>(parameters => parameters
+                .Add(p => p.ReadOnly, true)
+                .Add(p => p.OpenOnFocus, true));
+            var autocomplete = comp.Instance;
+
+            // Attempt to open the menu via focus
+            comp.Find("div.mud-input-control").Focus();
+
+            // Assert: Menu should not open
+            comp.WaitForAssertion(() => autocomplete.Open.Should().BeFalse());
+
+            // Attempt to open the menu via click
+            comp.Find("div.mud-input-control").MouseDown();
+
+            // Assert: Menu should not open
+            comp.WaitForAssertion(() => autocomplete.Open.Should().BeFalse());
+        }
+
+        /// <summary>
+        /// Ensure the menu does not open in disabled mode.
+        /// </summary>
+        [Test]
+        public void Autocomplete_User_ShouldNot_OpenMenu_InDisabledMode()
+        {
+            var comp = Context.RenderComponent<MudAutocomplete<string>>(parameters => parameters
+                .Add(p => p.Disabled, true)
+                .Add(p => p.OpenOnFocus, true));
+            var autocomplete = comp.Instance;
+
+            // Attempt to open the menu via focus
+            comp.Find("div.mud-input-control").Focus();
+
+            // Assert: Menu should not open
+            comp.WaitForAssertion(() => autocomplete.Open.Should().BeFalse());
+
+            // Attempt to open the menu via click
+            comp.Find("div.mud-input-control").MouseDown();
+
+            // Assert: Menu should not open
+            comp.WaitForAssertion(() => autocomplete.Open.Should().BeFalse());
+        }
+
+        /// <summary>
         /// Ensure that the ItemDisabledTemplate and ItemSelectedTemplate both can display when ItemTemplate isn't provided (null)
         /// </summary>
         [Test]

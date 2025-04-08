@@ -255,10 +255,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = OpenPicker();
             // clicking a day buttons to select a range and close
-            comp.FindAll("button.mud-picker-calendar-day")
-                .Where(x => x.TrimmedText().Equals("10")).First().Click();
-            comp.FindAll("button.mud-picker-calendar-day")
-                .Where(x => x.TrimmedText().Equals("8")).First().Click();
+            comp.SelectDate("10");
+            comp.SelectDate("8");
             comp.FindAll("div.mud-picker-open").Count.Should().Be(1);
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0), TimeSpan.FromSeconds(5));
             comp.Instance.DateRange.Should().NotBeNull();
@@ -1202,6 +1200,37 @@ namespace MudBlazor.UnitTests.Components
                       .Where(x => x.TrimmedText().Equals(today.Day.ToString())).First().ClickAsync(new MouseEventArgs());
 
             comp.Instance.DateRange.Start.Should().Be(comp.Instance.DateRange.End);
+        }
+    }
+
+    public static class DatePickerRenderedFragmentExtensions
+    {
+        public static void SelectDate(this IRenderedFragment comp, string day, bool firstOccurrence = true)
+        {
+            comp.ValidateSelection(day, firstOccurrence).Click();
+        }
+
+        public static async Task SelectDateAsync(this IRenderedFragment comp, string day, bool firstOccurrence = true)
+        {
+            await comp.ValidateSelection(day, firstOccurrence).ClickAsync(new MouseEventArgs());
+        }
+
+        private static IElement ValidateSelection(this IRenderedFragment comp, string day, bool firstOccurrence)
+        {
+            var matchingDays = comp.FindAll("button.mud-picker-calendar-day")
+                       .Where(x => !x.ClassList.Contains("mud-hidden") && x.TrimmedText().Equals(day))
+                       .ToList();
+
+            Assert.That(matchingDays.Count != 0, $"Invalid day ({day}) selected");
+
+            if (!firstOccurrence)
+                Assert.That(matchingDays.Count == 2, $"Only one instance of date ({day}) found");
+
+            var selectedDate = matchingDays[firstOccurrence ? 0 : 1];
+
+            Assert.That(!selectedDate.IsDisabled(), $"Selected date ({day}) is disabled");
+
+            return selectedDate;
         }
     }
 }

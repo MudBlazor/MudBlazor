@@ -1,0 +1,39 @@
+﻿<MudDataGrid T="DocumentChecklistItem" ServerData="ServerReload" Bordered="true" Dense="true"
+             MultiSelection="true" SelectedItemsChanged="@((e) => OnSelectedItemsChanged(e))"
+             RowsPerPage="25">
+    <Columns>
+        <SelectColumn T="DocumentChecklistItem"></SelectColumn>
+        <PropertyColumn Property="c=>c.Id" Title="Id"></PropertyColumn>
+        <PropertyColumn Property="c=>c.Name" Title="Name"></PropertyColumn>
+    </Columns>
+</MudDataGrid>
+
+<MudText>
+    @_message
+</MudText>
+
+@code {
+#nullable enable
+    public static string __description__ = "A test viewer for visibility testing of row Selection";
+    private List<DocumentChecklistItem> _selectedDocuments = [];
+    private string _message = "Click select column to select the item";
+
+    private void OnSelectedItemsChanged(HashSet<DocumentChecklistItem> documents)
+    {
+        _selectedDocuments = documents.ToList();
+        _message = "OnSelectedItemsChanged was called. " + _selectedDocuments.Count() + " items selected";
+    }
+
+    private static Task<GridData<DocumentChecklistItem>> ServerReload(GridState<DocumentChecklistItem> state)
+    {
+        List<DocumentChecklistItem> items =
+        [
+            new("1", "Test"),
+            new("2", "Test2")
+        ];
+
+        return Task.FromResult(new GridData<DocumentChecklistItem> { Items = items, TotalItems = items.Count });
+    }
+
+    public record DocumentChecklistItem(string Id, string Name);
+}

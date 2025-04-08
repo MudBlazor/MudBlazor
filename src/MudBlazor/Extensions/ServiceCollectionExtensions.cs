@@ -236,9 +236,21 @@ namespace MudBlazor.Services
         }
 
         /// <summary>
+        /// Adds IPointerEventsNoneService as a scoped dependency.
+        /// </summary>
+        /// <param name="services">IServiceCollection</param>
+        public static IServiceCollection AddMudBlazorPointerEventsNoneService(this IServiceCollection services)
+        {
+            services.TryAddScoped<IPointerEventsNoneService, PointerEventsNoneService>();
+
+            return services;
+        }
+
+        /// <summary>
         /// Adds the services required for translations.
         /// </summary>
         /// <param name="services">IServiceCollection</param>
+        /// <returns>Continues the IServiceCollection chain.</returns>
         public static IServiceCollection AddMudLocalization(this IServiceCollection services)
         {
             services.TryAddTransient<ILocalizationInterceptor, DefaultLocalizationInterceptor>();
@@ -324,6 +336,7 @@ namespace MudBlazor.Services
                 .AddMudBlazorScrollSpy()
                 .AddMudPopoverService()
                 .AddMudEventManager()
+                .AddMudBlazorPointerEventsNoneService()
                 .AddMudLocalization();
         }
 
@@ -399,6 +412,7 @@ namespace MudBlazor.Services
                 })
                 .AddMudBlazorScrollSpy()
                 .AddMudEventManager()
+                .AddMudBlazorPointerEventsNoneService()
                 .AddMudLocalization();
         }
 

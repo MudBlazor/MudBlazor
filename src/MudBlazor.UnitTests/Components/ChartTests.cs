@@ -63,9 +63,18 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<BarChartSelectionTest>();
             // print the generated html
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: -1");
+
+            //check tooltip
+            comp.FindAll("path.mud-chart-bar")[0].MouseOver();
+            comp.Find("tspan").InnerHtml.Trim().Should().Be("40");
+
             // now click something and see that the selected index changes:
             comp.FindAll("path.mud-chart-bar")[0].Click();
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: 0");
+
+            comp.FindAll("path.mud-chart-bar")[10].MouseOver();
+            comp.Find("tspan").InnerHtml.Trim().Should().Be("24");
+
             comp.FindAll("path.mud-chart-bar")[10].Click();
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: 1");
         }
