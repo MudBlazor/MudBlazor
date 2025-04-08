@@ -8,14 +8,14 @@ With the release of v7 and now v8, we've introduced many new features, fixed lon
 
 ### .NET Lifecycle
 
-We no longer provide builds for .NET 6 or .NET 7.  
-This change aligns with Microsoft’s [.NET support policies](https://dotnet.microsoft.com/en-us/platform/support/policy/dotnet-core) and lets us focus on newer versions.
+We no longer provide updates for .NET 6 or .NET 7.  
+This change aligns with Microsoft's [.NET support policies](https://dotnet.microsoft.com/en-us/platform/support/policy/dotnet-core) and lets us focus on newer versions.
 
 To stay current, update your SDK to .NET 8 or .NET 9.
 
 ### MudBlazor Version Support
 
-- **v8**: The current recommended version. All new features and improvements are focused here.
+- **v8**: The current recommended version. All new features and improvements go here.
 - **v7**: We'll continue to accept bug fixes from the community, but no new features.
 - **v6**: Official support ended in January 2025. No further updates will be released.
 
@@ -24,13 +24,14 @@ To stay current, update your SDK to .NET 8 or .NET 9.
 v7 introduced necessary breaking changes. v8 builds on that with an aim for smoother transitions.
 
 For help with upgrading, check out:
+
 - [v7 Migration Guide](https://github.com/MudBlazor/MudBlazor/issues/8447)
 - [v8 Migration Guide](https://github.com/MudBlazor/MudBlazor/issues/9953)  
 - [Built-in Analyzer](https://mudblazor.com/features/analyzers) – flags removed or renamed parameters
 
 ## 🔮 Looking Ahead
 
-We’re committed to improving MudBlazor, but since it's a community-driven project, we can’t promise exact release timelines or specific features.
+We're committed to improving MudBlazor, but since it's a community-driven project, we can't promise exact release timelines or specific features.
 
 Our focus is to keep the library stable, performant, and modern. The pace of development depends on volunteer availability, and we appreciate your patience and support as we continue to evolve.
 
