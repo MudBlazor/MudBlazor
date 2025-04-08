@@ -976,6 +976,12 @@ namespace MudBlazor
 
         private async Task OnInputFocusedAsync()
         {
+            if (GetDisabledState())
+            {
+                // This shouldn't be possible through the UI, but could be triggered in code.
+                return;
+            }
+
             if (GetReadOnlyState())
             {
                 // A readonly input doesn't trigger onblur later correctly, so we have to disable focus features for it.
