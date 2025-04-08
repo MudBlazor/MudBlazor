@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.Charts
 @using System.Globalization;
-@inherits MudCategoryAxisChartBase
+@inherits Components.Chart.MudCategoryAxisChartBase
 
 @{
     var style = _hoveredBar != null ? "overflow: visible;" : "";
@@ -37,7 +37,7 @@
             var verticalLineValue = _verticalValues[i];
             var x = verticalLineValue.X.ToString(CultureInfo.InvariantCulture);
             var y = verticalLineValue.Y.ToString(CultureInfo.InvariantCulture);
-            var rotation = (-AxisChartOptions.XAxisLabelRotation).ToString(CultureInfo.InvariantCulture);
+            var rotation = (-ChartOptions.XAxisLabelRotation).ToString(CultureInfo.InvariantCulture);
             @((MarkupString)$"<text x='{x}' y='{y}' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate({rotation} {x} {y})'>{verticalLineValue.Value?.ToString(CultureInfo.InvariantCulture)}</text>")
         }
     </g>

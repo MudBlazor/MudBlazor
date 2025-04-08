@@ -33,6 +33,11 @@ public interface IChartOptions
     public bool XAxisLines { get; set; }
 
     /// <summary>
+    /// Rotation angle to rotate the labels in degrees.
+    /// </summary>
+    public int XAxisLabelRotation { get; set; }
+
+    /// <summary>
     /// Shows the chart series legend.
     /// </summary>
     public bool ShowLegend { get; set; }

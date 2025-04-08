@@ -11,7 +11,7 @@ namespace MudBlazor.Charts
     /// <seealso cref="Pie"/>
     /// <seealso cref="StackedBar"/>
     /// <seealso cref="TimeSeries"/>
-    partial class Bar : MudCategoryAxisChartBase
+    partial class Bar : Components.Chart.MudCategoryAxisChartBase
     {
         private readonly List<SvgPath> _horizontalLines = [];
         private readonly List<SvgText> _horizontalValues = [];
@@ -57,7 +57,7 @@ namespace MudBlazor.Charts
         {
             gridXUnits = 30;
 
-            gridYUnits = MudChartParent?.ChartOptions.YAxisTicks ?? 20;
+            gridYUnits = ChartOptions?.YAxisTicks ?? 20;
             if (gridYUnits <= 0)
                 gridYUnits = 20;
 
@@ -70,7 +70,7 @@ namespace MudBlazor.Charts
                 numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
 
                 // this is a safeguard against millions of gridlines which might arise with very high values
-                var maxYTicks = MudChartParent?.ChartOptions.MaxNumYAxisTicks ?? 20;
+                var maxYTicks = ChartOptions?.MaxNumYAxisTicks ?? 20;
                 while (numHorizontalLines > maxYTicks)
                 {
                     gridYUnits *= 2;
@@ -109,7 +109,7 @@ namespace MudBlazor.Charts
                 {
                     X = HorizontalStartSpace - 10,
                     Y = _boundHeight - y + 5,
-                    Value = ToS(startGridY, MudChartParent?.ChartOptions.YAxisFormat)
+                    Value = ToS(startGridY, ChartOptions?.YAxisFormat)
                 };
                 _horizontalValues.Add(lineValue);
             }

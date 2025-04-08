@@ -5,7 +5,7 @@
 #nullable enable
 namespace MudBlazor.Components.Chart;
 
-public class DefaultChartOptions : IChartOptions
+public abstract class DefaultChartOptions : IChartOptions
 {
     /// <summary>
     /// The spacing between vertical tick marks.
@@ -13,14 +13,14 @@ public class DefaultChartOptions : IChartOptions
     /// <remarks>
     /// Defaults to <c>20</c>.
     /// </remarks>
-    public int YAxisTicks { get; set; } = 20;
+    public virtual int YAxisTicks { get; set; } = 20;
     /// <summary>
     /// The maximum allowed number of vertical tick marks.
     /// </summary>
     /// <remarks>
     /// If the number of ticks calculated exceeds this value, the tick marks will automatically be thinned out.
     /// </remarks>
-    public int MaxNumYAxisTicks { get; set; } = 20;
+    public virtual int MaxNumYAxisTicks { get; set; } = 20;
 
     /// <summary>
     /// The format applied to numbers on the vertical axis.
@@ -28,7 +28,7 @@ public class DefaultChartOptions : IChartOptions
     /// <remarks>
     /// Values in this property are standard .NET format strings, such as those passed into the <c>ToString()</c> method.  For a list of common formats, see: <see href="https://learn.microsoft.com/dotnet/standard/base-types/formatting-types" />
     /// </remarks>
-    public string? YAxisFormat { get; set; }
+    public virtual string? YAxisFormat { get; set; }
 
     /// <summary>
     /// Shows vertical axis lines.
@@ -36,7 +36,7 @@ public class DefaultChartOptions : IChartOptions
     /// <remarks>
     /// Defaults to <c>true</c>.
     /// </remarks>
-    public bool YAxisLines { get; set; } = true;
+    public virtual bool YAxisLines { get; set; } = true;
 
     /// <summary>
     /// Shows horizontal axis lines.
@@ -44,7 +44,12 @@ public class DefaultChartOptions : IChartOptions
     /// <remarks>
     /// Defaults to <c>false</c>.
     /// </remarks>
-    public bool XAxisLines { get; set; }
+    public virtual bool XAxisLines { get; set; }
+
+    /// <summary>
+    /// Rotation angle to rotate the labels in degrees.
+    /// </summary>
+    public int XAxisLabelRotation { get; set; }
 
     /// <summary>
     /// Shows the chart series legend.
@@ -52,7 +57,7 @@ public class DefaultChartOptions : IChartOptions
     /// <remarks>
     /// Defaults to <c>true</c>.
     /// </remarks>
-    public bool ShowLegend { get; set; } = true;
+    public virtual bool ShowLegend { get; set; } = true;
 
     /// <summary>
     /// Enables tooltips for values
@@ -60,12 +65,12 @@ public class DefaultChartOptions : IChartOptions
     /// <remarks>
     /// Defaults to <c>true</c>.
     /// </remarks>
-    public bool ShowToolTips { get; set; } = true;
+    public virtual bool ShowToolTips { get; set; } = true;
 
     /// <summary>
     /// The format applied to the data marker tooltip title.
     /// </summary>
-    public string DefaultDataMarkerTooltipTitleFormat { get; set; } = "{{Y_VALUE}} - {{X_VALUE}}";
+    public virtual string DefaultDataMarkerTooltipTitleFormat { get; set; } = "{{Y_VALUE}} - {{X_VALUE}}";
 
     /// <summary>
     /// The list of colors applied to series values.
@@ -73,7 +78,7 @@ public class DefaultChartOptions : IChartOptions
     /// <remarks>
     /// Defaults to an array of <c>20</c> colors.
     /// </remarks>
-    public string[] ChartPalette { get; set; } =
+    public virtual string[] ChartPalette { get; set; } =
     [
         Colors.Blue.Accent3, Colors.Teal.Accent3, Colors.Amber.Accent3, Colors.Orange.Accent3, Colors.Red.Accent3,
             Colors.DeepPurple.Accent3, Colors.Green.Accent3, Colors.LightBlue.Accent3, Colors.Teal.Lighten1, Colors.Amber.Lighten1,

@@ -17,7 +17,7 @@
 
     private RenderFragment ChartContent => (ChartType, Options) switch
     {
-        (ChartType.Bar, BarChartOptions barOptions) => @<Bar  />,
+        (ChartType.Bar, BarChartOptions barOptions) => @<Bar ChartSeries="@ChartSeries" ChartOptions="Options" @bind-SelectedIndex="@SelectedIndex" />,
         _ => throw new NotImplementedException($"{ChartType} chart is not supported")
     };
 
