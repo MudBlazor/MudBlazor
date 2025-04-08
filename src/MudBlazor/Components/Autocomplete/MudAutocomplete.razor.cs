@@ -768,12 +768,9 @@ namespace MudBlazor
             StateHasChanged();
             
             // If not strict scroll to the selected item
-            if (!Strict)
+            if (!Strict && _selectedListItemIndex > 0)
             {
-                if (_selectedListItemIndex > 0)
-                {
-                    await ScrollToListItemAsync(_selectedListItemIndex);
-                }
+                await ScrollToListItemAsync(_selectedListItemIndex);
             }
         }
 
