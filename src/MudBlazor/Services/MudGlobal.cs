@@ -5,10 +5,21 @@
 namespace MudBlazor;
 
 /// <summary>
-/// A collection of settings that let you control the default behavior or appearance of MudBlazor components.
+/// <para>
+/// Static properties that let you control the default behavior of some parts of MudBlazor.
+/// </para>
+/// <para>
+/// <b>Warning:</b> This feature is under development and breaking changes to the API <b>will occur</b> between releases.
+/// See <see href="https://mudblazor.com/customization/globals#usage">our website</see> for more info including our support policy.
+/// </para>
 /// </summary>
 public static class MudGlobal
 {
+    /// <summary>
+    /// Default settings for <see cref="MudButton"/>.
+    /// <br/>
+    /// <b>Warning:</b> This feature is under development and breaking changes to the API <b>will occur</b> between releases.
+    /// </summary>
     public static class ButtonDefaults
     {
         /// <summary>
@@ -22,6 +33,11 @@ public static class MudGlobal
         public static Variant Variant { get; set; } = Variant.Text;
     }
 
+    /// <summary>
+    /// Default settings for <see cref="MudDialog"/>.
+    /// <br/>
+    /// <b>Warning:</b> This feature is under development and breaking changes to the API <b>will occur</b> between releases.
+    /// </summary>
     public static class DialogDefaults
     {
         /// <summary>
@@ -30,6 +46,11 @@ public static class MudGlobal
         public static DefaultFocus DefaultFocus { get; set; } = DefaultFocus.Element;
     }
 
+    /// <summary>
+    /// Default settings for <see cref="MudGrid"/>.
+    /// <br/>
+    /// <b>Warning:</b> This feature is under development and breaking changes to the API <b>will occur</b> between releases.
+    /// </summary>
     public static class GridDefaults
     {
         /// <summary>
@@ -38,6 +59,11 @@ public static class MudGlobal
         public static int Spacing { set; get; } = 6;
     }
 
+    /// <summary>
+    /// Default settings for MudBlazor input components.
+    /// <br/>
+    /// <b>Warning:</b> This feature is under development and breaking changes to the API <b>will occur</b> between releases.
+    /// </summary>
     public static class InputDefaults
     {
         /// <summary>
@@ -56,6 +82,11 @@ public static class MudGlobal
         public static Margin Margin { get; set; } = Margin.None;
     }
 
+    /// <summary>
+    /// Default settings for <see cref="MudLink"/>.
+    /// <br/>
+    /// <b>Warning:</b> This feature is under development and breaking changes to the API <b>will occur</b> between releases.
+    /// </summary>
     public static class LinkDefaults
     {
         /// <summary>
@@ -74,6 +105,11 @@ public static class MudGlobal
         public static Underline Underline { get; set; } = Underline.Hover;
     }
 
+    /// <summary>
+    /// Default settings for <see cref="MudMenu"/>.
+    /// <br/>
+    /// <b>Warning:</b> This feature is under development and breaking changes to the API <b>will occur</b> between releases.
+    /// </summary>
     public static class MenuDefaults
     {
         /// <summary>
@@ -82,6 +118,11 @@ public static class MudGlobal
         public static int HoverDelay { get; set; } = 300;
     }
 
+    /// <summary>
+    /// Default settings for <see cref="MudPopover"/>.
+    /// <br/>
+    /// <b>Warning:</b> This feature is under development and breaking changes to the API <b>will occur</b> between releases.
+    /// </summary>
     public static class PopoverDefaults
     {
         /// <summary>
@@ -90,6 +131,11 @@ public static class MudGlobal
         public static int Elevation { get; set; } = 8;
     }
 
+    /// <summary>
+    /// Default settings for <see cref="MudStack"/>.
+    /// <br/>
+    /// <b>Warning:</b> This feature is under development and breaking changes to the API <b>will occur</b> between releases.
+    /// </summary>
     public static class StackDefaults
     {
         /// <summary>
@@ -98,6 +144,11 @@ public static class MudGlobal
         public static int Spacing { get; set; } = 3;
     }
 
+    /// <summary>
+    /// Default settings for <see cref="MudTooltip"/>.
+    /// <br/>
+    /// <b>Warning:</b> This feature is under development and breaking changes to the API <b>will occur</b> between releases.
+    /// </summary>
     public static class TooltipDefaults
     {
         /// <summary>
@@ -111,6 +162,11 @@ public static class MudGlobal
         public static TimeSpan Duration { get; set; } = TransitionDefaults.Duration;
     }
 
+    /// <summary>
+    /// Default settings for transitions in MudBlazor components.
+    /// <br/>
+    /// <b>Warning:</b> This feature is under development and breaking changes to the API <b>will occur</b> between releases.
+    /// </summary>
     public static class TransitionDefaults
     {
         /// <summary>
@@ -125,7 +181,7 @@ public static class MudGlobal
     }
 
     /// <summary>
-    /// Applies regular rounding by default; additional rounding if set to true; or squares them if set to false for MudBlazor components.
+    /// Applies regular rounding to components by default; additional rounding if set to true; or squares them if set to false for MudBlazor components.
     /// </summary>
     public static bool? Rounded { get; set; }
 
