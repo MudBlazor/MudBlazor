@@ -455,11 +455,9 @@ window.mudpopoverHelper = {
                         let listMaxHeight = window.innerHeight - top - offsetY - window.mudpopoverHelper.overflowPadding; // downwards
                         // moving upwards
                         if (top + offsetY < anchorY || top + offsetY == window.mudpopoverHelper.overflowPadding) {
-                            console.log("up set");
                             shouldShowFromTop = true;
                             listMaxHeight = anchorY - window.mudpopoverHelper.overflowPadding;
                         }
-                        else console.log("down set");
 
                         // if list calculated height exceeds the listmaxheight
                         if (list.offsetHeight > listMaxHeight) {
@@ -499,7 +497,6 @@ window.mudpopoverHelper = {
 
             // update z-index by sending the calling popover to update z-index,
             // and the parentnode of the calling popover (not content parent)
-            //console.log(popoverContentNode, popoverNode.parentNode);
             this.updatePopoverZIndex(popoverContentNode, popoverNode.parentNode);
 
             if (!zIndexAuto) {
@@ -714,7 +711,6 @@ class MudPopover {
                     this.map[id].isOpened = true;
                     this.createObservers(id);
                 }
-                console.log("open");
                 // reposition popover individually
                 window.mudpopoverHelper.placePopoverByNode(target);
             }
@@ -731,7 +727,6 @@ class MudPopover {
                     // remove left and top styles
                     target.style.removeProperty('left');
                     target.style.removeProperty('top');
-                    console.log("immediate hide");
                 }
                 else {
                     setTimeout(() => {
@@ -739,14 +734,12 @@ class MudPopover {
                         if (target && !target.classList.contains('mud-popover-open')) {
                             target.style.removeProperty('left');
                             target.style.removeProperty('top');
-                            console.log("delayed hide");
                         }                        
                     }, delay);
                 }
                 // reset flip status
                 target.mudPopoverFliped = null;
                 target.removeAttribute('data-mudpopover-flip');
-                console.log("close");
             }
         }
         else if (mutation.type == 'attributes' && mutation.attributeName == 'data-ticks') {
