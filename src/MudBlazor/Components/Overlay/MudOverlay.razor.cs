@@ -18,6 +18,8 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
 {
     private readonly string _elementId = Identifier.Create("overlay");
     private readonly ParameterState<bool> _visibleState;
+    private bool _previousLockScroll = false;
+    private bool _previousAbsolute = false;
 
     protected string Classname =>
         new CssBuilder("mud-overlay")
@@ -204,23 +206,12 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
         using var registerScope = CreateRegisterScope();
         _visibleState = registerScope.RegisterParameter<bool>(nameof(Visible))
             .WithParameter(() => Visible)
-            .WithEventCallback(() => VisibleChanged);
+            .WithEventCallback(() => VisibleChanged)
+            .WithChangeHandler(HandleVisibleChanged);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstTime)
     {
-        if (LockScroll && !Absolute)
-        {
-            if (Visible)
-            {
-                await BlockScrollAsync();
-            }
-            else
-            {
-                await UnblockScrollAsync();
-            }
-        }
-
         // If the overlay is initially visible and modeless auto-close is enabled,
         // then start tracking pointer down events.
         if (firstTime && Visible && !Modal && AutoClose)
@@ -231,6 +222,14 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
 
     protected override async Task OnParametersSetAsync()
     {
+        if (_previousLockScroll != LockScroll || _previousAbsolute != Absolute)
+        {
+            // handle lock scroll change when user changes LockScroll parameter
+            _previousLockScroll = LockScroll;
+            _previousAbsolute = Absolute;
+            await HandleLockScrollChange();
+        }
+
         if (Modal || !AutoClose)
         {
             return;
@@ -245,6 +244,24 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
             await StopModelessAutoCloseTrackingAsync();
         }
     }
+
+    private async Task HandleLockScrollChange()
+    {
+        if (LockScroll && !Absolute)
+        {
+            if (_visibleState.Value)
+            {
+                await BlockScrollAsync();
+            }
+            else
+            {
+                await UnblockScrollAsync();
+            }
+        }
+    }
+
+    // change lockscroll value when user toggles visible state
+    private Task HandleVisibleChanged(ParameterChangedEventArgs<bool> args) => HandleLockScrollChange();
 
     protected internal async Task OnClickHandlerAsync(MouseEventArgs ev)
     {
@@ -305,7 +322,7 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
     /// <inheritdoc />
     public async ValueTask DisposeAsync()
     {
-        if (IsJSRuntimeAvailable)
+        if (!IsJSRuntimeAvailable)
         {
             return;
         }
