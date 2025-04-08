@@ -54,15 +54,15 @@ class MudScrollManager {
 
     //locks the scroll of the selected element. Default is body
     lockScroll(selector, lockclass) {
-        let element = document.querySelector(selector) || document.body;
+        const element = document.querySelector(selector) || document.body;
 
         //if the body doesn't have a scroll bar, don't add the lock class with padding
-        let hasScrollBar = window.innerWidth > document.body.clientWidth;
+        const hasScrollBar = window.innerWidth > document.body.clientWidth;
+        const lockClassNoPadding = lockclass + "-no-padding";
 
-        if (hasScrollBar) {
+        if (hasScrollBar && !element.classList.contains(lockclass)) {
             element.classList.add(lockclass);
-        } else {
-            let lockClassNoPadding = lockclass + "-no-padding";
+        } else if (!element.classList.contains(lockClassNoPadding)) {            
             element.classList.add(lockClassNoPadding);
         }
 
@@ -70,7 +70,7 @@ class MudScrollManager {
 
     //unlocks the scroll. Default is body
     unlockScroll(selector, lockclass) {
-        let element = document.querySelector(selector) || document.body;
+        const element = document.querySelector(selector) || document.body;
 
         // remove both lock classes to be sure it's unlocked
         element.classList.remove(lockclass);
