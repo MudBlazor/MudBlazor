@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using MudBlazor.Components.Chart;
 
 #nullable enable
 namespace MudBlazor.Charts
@@ -6,13 +7,13 @@ namespace MudBlazor.Charts
     /// <summary>
     /// Represents a set of text labels which describe data values in a <see cref="MudChart"/>.
     /// </summary>
-    public partial class Legend : MudChartBase
+    public partial class Legend : MudChartBase<IChartOptions>
     {
         /// <summary>
         /// The chart, if any, containing this component.
         /// </summary>
         [CascadingParameter]
-        public MudChartBase? MudChartParent { get; set; }
+        public Components.Chart.MudChart? MudChartParent { get; set; }
 
         /// <summary>
         /// The data labels for this legend.
@@ -22,7 +23,7 @@ namespace MudBlazor.Charts
 
         private string GetCheckBoxStyle(int index)
         {
-            var color = MudChartParent?.ChartOptions.ChartPalette.GetValue(index % ChartOptions.ChartPalette.Length);
+            var color = MudChartParent?.ChartOptions!.ChartPalette.GetValue(index % ChartOptions!.ChartPalette.Length);
             return $"--checkbox-color: {color};";
         }
     }

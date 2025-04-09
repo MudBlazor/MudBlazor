@@ -1,12 +1,14 @@
-﻿@namespace MudBlazor.Charts
-@inherits MudChartBase
+﻿@using MudBlazor.Components.Chart
+
+@namespace MudBlazor.Charts
+@inherits MudChartBase<IChartOptions>
 
 @if (MudChartParent?.ChartOptions.ShowLegend ?? true)
 {
     <div @attributes="UserAttributes" class="mud-chart-legend">
         @foreach (var item in Data)        
         {
-            <div class="mud-chart-legend-item" @onclick=@(()=>{ if (MudChartParent!=null) { MudChartParent.SelectedIndex=item.Index; }}) @onclick:stopPropagation=@(MudChartParent!=null) >
+            <div class="mud-chart-legend-item" @onclick=@(async ()=>{ if (MudChartParent!=null) { await MudChartParent.SetSelectedIndexAsync(item.Index); }}) @onclick:stopPropagation=@(MudChartParent!=null) >
                 @if(MudChartParent?.CanHideSeries == false)
                 {
                     <span class="mud-chart-legend-marker" style="@($"background-color:{MudChartParent.ChartOptions.ChartPalette.GetValue(item.Index % MudChartParent.ChartOptions.ChartPalette.Length)}")"></span>

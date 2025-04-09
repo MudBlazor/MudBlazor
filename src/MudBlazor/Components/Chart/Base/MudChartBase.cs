@@ -103,17 +103,27 @@ public abstract class MudChartBase<TOptions> : MudComponentBase where TOptions :
     [Category(CategoryTypes.Chart.Behavior)]
     public EventCallback<int> SelectedIndexChanged { get; set; }
 
+    /// <summary>
+    /// Allows series to be hidden 
+    /// </summary>
+    /// <remarks>
+    /// When <c>true</c>, checkboxes are displayed which can toggle visibility of each data set
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Chart.Behavior)]
+    public bool CanHideSeries { get; set; } = false;
+
     protected string Classname => new CssBuilder("mud-chart")
         .AddClass($"mud-chart-legend-{ConvertLegendPosition(LegendPosition).ToDescriptionString()}", ChartType != ChartType.HeatMap)
         .AddClass(Class)
         .Build();
 
-    private readonly ParameterState<int> _selectedIndex;
+    protected readonly ParameterState<int> SelectedIndexState;
 
     protected MudChartBase()
     {
         using var registerScope = CreateRegisterScope();
-        _selectedIndex = registerScope.RegisterParameter<int>(nameof(SelectedIndex))
+        SelectedIndexState = registerScope.RegisterParameter<int>(nameof(SelectedIndex))
             .WithParameter(() => SelectedIndex)
             .WithEventCallback(() => SelectedIndexChanged);
     }
@@ -127,6 +137,6 @@ public abstract class MudChartBase<TOptions> : MudComponentBase where TOptions :
 
     internal async Task SetSelectedIndexAsync(int index)
     {
-        await _selectedIndex.SetValueAsync(index);
+        await SelectedIndexState.SetValueAsync(index);
     }
 }
