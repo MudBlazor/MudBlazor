@@ -22,21 +22,21 @@
 
 MudBlazor is an ambitious Material Design component framework for Blazor with an emphasis on ease of use and clear structure. It is perfect for .NET developers who want to rapidly build web applications without having to struggle with CSS and Javascript. MudBlazor, being written entirely in C#, empowers you to adapt, fix or extend the framework. There are plenty of examples in the documentation, which makes understanding and learning MudBlazor very easy.
 
-## Documentation & Demo
-- [MudBlazor.com](https://mudblazor.com)
-- [Try.MudBlazor.com](https://try.mudblazor.com/)
+## 📘 Documentation & Demo
+- 🌐 [MudBlazor.com](https://mudblazor.com) – Full documentation
+- ⚡ [Try.MudBlazor.com](https://try.mudblazor.com/) – Interactive playground
 
-## Why is MudBlazor so successful?
-- Clean and aesthetic graphic design based on Material Design.
-- Clear and easy to understand structure.
-- Good documentation with many examples and source snippets.
-- All components are written entirely in C#, no JavaScript allowed (except where absolutely necessary).
-- Users can make beautiful apps without needing CSS (but they can of course use CSS too).
-- No dependencies on other component libraries, 100% control over components and features.
-- Stability! We strive for a complete test coverage.
-- Releases often so developers can get their PRs and fixes in a timely fashion.
+## 💎 Why is MudBlazor so successful?
+- Aesthetic design that follows Material Design principles.
+- Intuitive, consistent component structure.
+- Rich documentation with tons of examples and code snippets.
+- Fully written in C# with minimal JavaScript.
+- Build beautiful UIs without CSS (but fully customizable when needed).
+- No third-party component dependencies – maximum flexibility.
+- Strive for stability with extensive test coverage.
+- Frequent releases so devs get their fixes and features fast.
 
-## Prerequisites
+## ⚙️ Prerequisites
 | MudBlazor | .NET | Support |
 | :--- | :---: | :---: |
 | 1.x.x - 2.0.x | .NET 3.1 | Ended 03/2021 |
@@ -46,58 +46,62 @@ MudBlazor is an ambitious Material Design component framework for Blazor with an
 | 8.x.x | [.NET 8](https://dotnet.microsoft.com/download/dotnet/8.0), [.NET 9](https://dotnet.microsoft.com/download/dotnet/9.0) | :heavy_check_mark: |
 
 > [!TIP]
-> If you're updating to a newer version of MudBlazor, make sure to check out the [Migration Guide](https://github.com/MudBlazor/MudBlazor/blob/dev/MIGRATION.md) for detailed instructions on handling breaking changes and new features.  
+> Upgrading? Check our [Migration Guide](https://github.com/MudBlazor/MudBlazor/blob/dev/MIGRATION.md) for help with breaking changes.  
 
 > [!WARNING]
 > 1. Static rendering is not supported - [Learn more](https://learn.microsoft.com/aspnet/core/blazor/components/render-modes).
-> 2. We cannot guarantee compatibility with browsers no longer maintained by their publishers.
-For the best experience, use an up-to-date browser - See [Blazor supported platforms](https://learn.microsoft.com/aspnet/core/blazor/supported-platforms).
+> 2. Older browsers may not be supported. Use a modern, up-to-date browser - [Blazor supported platforms](https://learn.microsoft.com/aspnet/core/blazor/supported-platforms).
 
-## Stats
+## 📊 Repo Stats
 ![Alt](https://repobeats.axiom.co/api/embed/db53a44092e88fc34a4c0f37db12773b6787ec7e.svg "Repobeats analytics image")
 
-## Contributing
-👋 Thanks for wanting to contribute!  
+## 🤝 Contributing
+Thanks for wanting to contribute! 👋  
 Contributions from the community are what makes MudBlazor successful.
 
-If you are familiar with technologies like C#, Blazor, JavaScript, or CSS, and wish to give something back, please consider submitting a pull request!
-We try to merge all non-breaking bugfixes and will deliberate the value of new features for the community.
-Please note there is no guarantee your PR will be merged, so if you want to be sure before investing the work, feel free to [contact the team](https://discord.gg/mudblazor) first.
+If you're comfortable with C#, Blazor, JavaScript, or CSS, we'd love your help!  
+Whether it's fixing bugs, adding features, or improving documentation, every contribution counts.
 
-Check out the [contribution guidelines](/CONTRIBUTING.md) to understand our goals and learn more about the internals of the project.
+We aim to review and merge non-breaking pull requests quickly.  
+For larger features or changes, feel free to chat with us [on Discord](https://discord.gg/mudblazor) first to get feedback before diving in.
 
-## Getting Started
-We have premade templates available at the [MudBlazor.Templates](https://github.com/mudblazor/Templates) repository.
+📚 Check out our [contribution guidelines](/CONTRIBUTING.md) to get started and learn more about how the project works.
 
-Full installation instructions can be found [on our website](https://mudblazor.com/getting-started/installation).
+## 🚀 Getting Started
+We have ready-to-go templates at the [MudBlazor.Templates](https://github.com/mudblazor/Templates) repository, or follow the quick install guide to set things up manually:
 
-### Quick Installation Guide
-Install Package
+### 🛠️ Quick Install
+Install Package:
 ```
 dotnet add package MudBlazor
 ```
-Add the following to `_Imports.razor`
+
+Add to `_Imports.razor`:
 ```razor
 @using MudBlazor
 ```
-Add the following to the `MainLayout.razor` or `App.razor`
+
+Add to the `MainLayout.razor` or `App.razor`:
 ```razor
 <MudThemeProvider/>
 <MudPopoverProvider/>
 <MudDialogProvider/>
 <MudSnackbarProvider/>
 ```
-Add the following to your HTML `head` section, it's either `index.html` or `_Layout.cshtml`/`_Host.cshtml`/`App.razor` depending on whether you're running WebAssembly or Server
+
+Add to your HTML `head` section:
 ```razor
 <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
 <link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
 ```
-Next, add the following to the default Blazor script at the end of the `body`
+It's either `index.html` or `_Layout.cshtml`/`_Host.cshtml`/`App.razor` depending on whether you're running WebAssembly or Server.
+ 
+Next, add to the default Blazor script at the end of the `body`:
 ```razor
 <script src="_content/MudBlazor/MudBlazor.min.js"></script>
 ```
 
-Add the following to the relevant sections of `Program.cs`
+Add to the relevant sections of `Program.cs`:
 ```c#
 using MudBlazor.Services;
 ```
@@ -105,7 +109,10 @@ using MudBlazor.Services;
 builder.Services.AddMudServices();
 ```
 
-### Usage
+### 🔗 Full Setup Guide
+For more details, see the [complete installation guide](https://mudblazor.com/getting-started/installation) on our website.
+
+### 💻 Example Usage
 ```razor
 <MudText Typo="Typo.h6">
     MudBlazor is @Text
