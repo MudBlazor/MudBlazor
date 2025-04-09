@@ -35,6 +35,7 @@
                        ErrorText="@ErrorText"
                        Clearable="@(Clearable && !GetReadOnlyState())"
                        OnClearButtonClick="@(async () => await ClearAsync())"
+                       TextUpdateSuppression="@(Editable && !GetReadOnlyState())"
                        @onclick="OnClickAsync" />;
 
 #nullable enable
