@@ -20,6 +20,7 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
     private readonly ParameterState<bool> _visibleState;
     private bool _previousLockScroll = false;
     private bool _previousAbsolute = false;
+    internal int _lockCount = 0;
 
     protected string Classname =>
         new CssBuilder("mud-overlay")
@@ -245,7 +246,7 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
         }
     }
 
-    private async Task HandleLockScrollChange()
+    internal async Task HandleLockScrollChange()
     {
         if (LockScroll && !Absolute)
         {
@@ -273,10 +274,11 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
         await OnClick.InvokeAsync(ev);
     }
 
-    private async Task CloseOverlayAsync()
+    internal async Task CloseOverlayAsync()
     {
         await _visibleState.SetValueAsync(false);
         await OnClosed.InvokeAsync();
+        await HandleLockScrollChange();
     }
 
     /// <summary>
@@ -284,6 +286,9 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
     /// </summary>
     private ValueTask BlockScrollAsync()
     {
+        // we only want to lock scroll once
+        if (_lockCount > 0) return ValueTask.CompletedTask;
+        _lockCount++;
         return ScrollManager.LockScrollAsync("body", LockScrollClass);
     }
 
@@ -292,6 +297,7 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
     /// </summary>
     private ValueTask UnblockScrollAsync()
     {
+        _lockCount = Math.Max(0, _lockCount - 1);
         return ScrollManager.UnlockScrollAsync("body", LockScrollClass);
     }
 
@@ -327,7 +333,8 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
             return;
         }
 
-        await UnblockScrollAsync();
+        if (_lockCount > 0)
+            await UnblockScrollAsync();
 
         await StopModelessAutoCloseTrackingAsync();
     }
