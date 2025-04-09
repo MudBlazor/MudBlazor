@@ -1,11 +1,10 @@
 ﻿
-<MudContainer Fixed="true" @key="key">
+<MudContainer Fixed="true" @key="_key">
     @for (var i = 0; i < 200; i++)
     {
-
         <div>
             <MudTooltip Text="Tooltext buttontip" Delay="0" Duration="0">
-                <MudButton>BTN @i </MudButton>
+                <MudButton>BTN @i</MudButton>
             </MudTooltip>
         </div>
     }
@@ -13,7 +12,7 @@
 
 @code
 {
-    private Guid key;
+    private Guid _key;
 
     protected override Task OnInitializedAsync()
     {
@@ -25,7 +24,7 @@
     {
         while (true)
         {
-            this.key = Guid.NewGuid();
+            this._key = Guid.NewGuid();
             InvokeAsync(StateHasChanged).CatchAndLog();
             await Task.Delay(100);
         }
