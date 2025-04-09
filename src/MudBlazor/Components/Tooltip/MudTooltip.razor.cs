@@ -7,7 +7,7 @@ namespace MudBlazor
 #nullable enable
     public partial class MudTooltip : MudComponentBase
     {
-        private readonly ParameterState<bool> _visibleState;
+        internal readonly ParameterState<bool> _visibleState;
         private Origin _anchorOrigin;
         private Origin _transformOrigin;
         public MudTooltip()

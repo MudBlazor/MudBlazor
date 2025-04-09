@@ -357,5 +357,41 @@ namespace MudBlazor.UnitTests.Components
             await button.ParentElement.TriggerEventAsync("onpointerenter", new PointerEventArgs());
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
         }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        [Test]
+        public async Task Tooltip_Handle_Pointer_Events(bool showOnHover)
+        {
+            var comp = Context.RenderComponent<MudTooltip>(parameters => parameters
+                .Add(x => x.ShowOnHover, showOnHover)
+                .Add(x => x.ShowOnClick, true)
+                .Add(x => x.Text, "tooltip text")
+            );
+
+            var div = comp.Find(".mud-tooltip-root");
+            div.Should().NotBeNull();
+
+            var tooltip = comp.Instance;
+            tooltip.Should().NotBeNull();
+
+            await tooltip.HandlePointerEnterAsync();
+            tooltip._visibleState.Value.Should().Be(showOnHover);
+
+            if (showOnHover)
+            {
+                await tooltip.HandlePointerLeaveAsync();
+                tooltip._visibleState.Value.Should().Be(!showOnHover);
+            }
+
+            await div.PointerEnterAsync(new PointerEventArgs());
+            tooltip._visibleState.Value.Should().Be(showOnHover);
+
+            if (showOnHover)
+            {
+                await div.PointerLeaveAsync(new PointerEventArgs());
+                tooltip._visibleState.Value.Should().Be(!showOnHover);
+            }
+        }
     }
 }
