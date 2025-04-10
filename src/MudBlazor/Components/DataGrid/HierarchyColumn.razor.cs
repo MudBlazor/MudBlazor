@@ -95,6 +95,42 @@ public partial class HierarchyColumn<[DynamicallyAccessedMembers(DynamicallyAcce
     public bool EnableHeaderToggle { get; set; } = false;
 
     /// <summary>
+    /// The CSS class applied to the header.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.  Separate multiple classes with spaces.
+    /// </remarks>
+    [Parameter]
+    public string HeaderClass { get; set; }
+
+    /// <summary>
+    /// The function which calculates CSS classes for the header.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.  Separate multiple classes with spaces.
+    /// </remarks>
+    [Parameter]
+    public Func<IEnumerable<T>, string> HeaderClassFunc { get; set; }
+
+    /// <summary>
+    /// The CSS style applied to this column's header.
+    /// </summary>
+    [Parameter]
+    public string HeaderStyle { get; set; } = "width:0%;";
+
+    /// <summary>
+    /// The function which calculates CSS styles for the header.
+    /// </summary>
+    [Parameter]
+    public Func<IEnumerable<T>, string> HeaderStyleFunc { get; set; }
+
+    /// <summary>
+    /// The template used to display this column's header.
+    /// </summary>
+    [Parameter]
+    public RenderFragment<HeaderContext<T>> HeaderTemplate { get; set; }
+
+    /// <summary>
     /// The function which determines whether the row should be initially expanded.
     /// </summary>
     /// <remarks>
