@@ -8,11 +8,12 @@
             <MudSelectItem Value="justify">@justify</MudSelectItem>
         }
     </MudSelect>
+    <MudSlider @bind-Value="_spacingRatio" Min="0" Max="1" Step="0.02">Spacing: @_spacingRatio.ToString("F2")</MudSlider>
 
     <MudBlazor.Components.Chart.MudChart ChartType="ChartType.Bar"
               ChartSeries="@_series"
               @bind-SelectedIndex="_index"
-              ChartOptions="@(new BarChartOptions() { XAxisLabels = _labels, Justify = _selectedJustify })"
+              ChartOptions="@(new BarChartOptions() { XAxisLabels = _labels, Justify = _selectedJustify, SpacingRatio = _spacingRatio })"
               Width="100%"
               Height="350px" />
 
@@ -21,7 +22,7 @@
 
 @code {
     private int _index = -1;
-
+    private double _spacingRatio = 1;
     private Justify _selectedJustify = Justify.FlexStart;
 
     private readonly List<ChartDataSet> _series =

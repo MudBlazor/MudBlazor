@@ -44,20 +44,18 @@ namespace MudBlazor.Charts
                 _series = MudChartParent.ChartSeries;
 
             SetBounds();
-            ComputeUnitsAndNumberOfLines(out var gridXUnits, out var gridYUnits, out var numHorizontalLines, out var lowestHorizontalLine, out var numVerticalLines);
+            ComputeUnitsAndNumberOfLines(out var gridYUnits, out var numHorizontalLines, out var lowestHorizontalLine, out var numVerticalLines);
 
-            var horizontalSpace = (_boundWidth - HorizontalStartSpace - HorizontalEndSpace - BarGroupWidth) / Math.Max(1, numVerticalLines - 1);
+            var horizontalSpace = _boundWidth - HorizontalStartSpace - HorizontalEndSpace;
             var verticalSpace = (_boundHeight - VerticalStartSpace - VerticalEndSpace) / Math.Max(1, numHorizontalLines - 1);
 
             GenerateHorizontalGridLines(numHorizontalLines, lowestHorizontalLine, gridYUnits, verticalSpace);
-            GenerateVerticalGridLines(numVerticalLines, gridXUnits, horizontalSpace);
+            GenerateVerticalGridLines(numVerticalLines, horizontalSpace);
             GenerateBars(lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace, numVerticalLines);
         }
 
-        private void ComputeUnitsAndNumberOfLines(out double gridXUnits, out double gridYUnits, out int numHorizontalLines, out int lowestHorizontalLine, out int numVerticalLines)
+        private void ComputeUnitsAndNumberOfLines(out double gridYUnits, out int numHorizontalLines, out int lowestHorizontalLine, out int numVerticalLines)
         {
-            gridXUnits = 30;
-
             gridYUnits = ChartOptions?.YAxisTicks ?? 20;
             if (gridYUnits <= 0)
                 gridYUnits = 20;
@@ -116,13 +114,12 @@ namespace MudBlazor.Charts
             }
         }
 
-        private void GenerateVerticalGridLines(int numVerticalLines, double gridXUnits, double horizontalSpace)
+        private void GenerateVerticalGridLines(int numVerticalLines, double horizontalSpace)
         {
             _verticalLines.Clear();
             _verticalValues.Clear();
 
-            var chartAreaWidth = _boundWidth - HorizontalStartSpace - HorizontalEndSpace;
-            var barGroupPositions = CalculateBarGroupPositions(horizontalSpace, numVerticalLines, chartAreaWidth);
+            var barGroupPositions = CalculateBarGroupPositions(horizontalSpace, numVerticalLines);
 
             for (var i = 0; i < numVerticalLines; i++)
             {
@@ -150,9 +147,7 @@ namespace MudBlazor.Charts
             _legends.Clear();
             _bars.Clear();
 
-            var chartAreaWidth = _boundWidth - HorizontalStartSpace - HorizontalEndSpace;
-
-            var barGroupPositions = CalculateBarGroupPositions(horizontalSpace, numVerticalLines, chartAreaWidth);
+            var barGroupPositions = CalculateBarGroupPositions(horizontalSpace, numVerticalLines);
 
             for (var i = 0; i < _series.Count; i++)
             {
@@ -188,7 +183,7 @@ namespace MudBlazor.Charts
             }
         }
 
-        private double[] CalculateBarGroupPositions(double horizontalSpace, int numVerticalLines, double chartAreaWidth)
+        private double[] CalculateBarGroupPositions(double horizontalSpace, int numVerticalLines)
         {
             var numGroups = _series.Count;
 
@@ -197,9 +192,9 @@ namespace MudBlazor.Charts
             var positions = new double[numVerticalLines];
 
             var totalGroupWidth = numGroups * BarGroupWidth;
-            var groupSpacing = CalculateSpaceWidth(numVerticalLines);
+            var groupSpacing = Math.Max(BarGroupWidth, CalculateSpaceWidth(numVerticalLines));
             var centerOffset = BarGroupWidth / 2;
-            var centerX = HorizontalStartSpace + ((chartAreaWidth - totalGroupWidth) / 2) + centerOffset;
+            var centerX = HorizontalStartSpace + ((horizontalSpace - totalGroupWidth) / 2) + centerOffset;
 
             switch (ChartOptions!.Justify)
             {
@@ -229,7 +224,7 @@ namespace MudBlazor.Charts
                     break;
 
                 case Justify.SpaceBetween:
-                    var spacing = (chartAreaWidth - BarGroupWidth - HorizontalEndSpace) / (numVerticalLines - 1);
+                    var spacing = (horizontalSpace - BarGroupWidth - HorizontalEndSpace) / (numVerticalLines - 1);
                     for (var i = 0; i < numVerticalLines; i++)
                     {
                         positions[i] = numVerticalLines == 1 ? centerX : HorizontalStartSpace + centerOffset + (i * spacing);
@@ -237,7 +232,7 @@ namespace MudBlazor.Charts
                     break;
 
                 case Justify.SpaceAround:
-                    var unitSpaceAround = chartAreaWidth / (numVerticalLines * 2);
+                    var unitSpaceAround = horizontalSpace / (numVerticalLines * 2);
                     for (var i = 0; i < numVerticalLines; i++)
                     {
                         positions[i] = numVerticalLines == 1 ? centerX : HorizontalStartSpace + unitSpaceAround + (i * (unitSpaceAround * 2));
@@ -245,7 +240,7 @@ namespace MudBlazor.Charts
                     break;
 
                 case Justify.SpaceEvenly:
-                    var unitSpaceEvenly = chartAreaWidth / (numVerticalLines + 1);
+                    var unitSpaceEvenly = horizontalSpace / (numVerticalLines + 1);
                     for (var i = 0; i < numVerticalLines; i++)
                     {
                         positions[i] = numVerticalLines == 1 ? centerX : HorizontalStartSpace + unitSpaceEvenly * (i + 1);
