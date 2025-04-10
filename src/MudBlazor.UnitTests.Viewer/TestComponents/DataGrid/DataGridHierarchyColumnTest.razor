@@ -1,7 +1,7 @@
 ﻿<CascadingValue Name="RightToLeft" Value="@RightToLeft" IsFixed="true">
     <MudDataGrid @ref="_dataGrid" Items="@_items" Filterable="true">
         <Columns>
-            <HierarchyColumn ButtonDisabledFunc="@(x => x.Name == "Alicia")" InitiallyExpandedFunc="@(x => x.Name == "Ira" || x.Name == "Anders")" />
+            <HierarchyColumn EnableHeaderToggle="@_enableHeaderToggle" ButtonDisabledFunc="@(x => x.Name == "Alicia")" InitiallyExpandedFunc="@(x => x.Name == "Ira" || x.Name == "Anders")" />
             <PropertyColumn Property="x => x.Name" />
             <PropertyColumn Property="x => x.Age" />
             <PropertyColumn Property="x => x.Status" />
@@ -15,9 +15,12 @@
 </CascadingValue>
 <MudButton OnClick="@ExpandAll" Color="@Color.Primary">Expand All</MudButton>
 <MudButton OnClick="@CollapseAll" Color="@Color.Primary">Collapse All</MudButton>
+<MudSwitch @bind-Value="_enableHeaderToggle" Label="Enable Header Toggle" />
 @code {
     [Parameter]
     public bool RightToLeft { get; set; }
+
+    private bool _enableHeaderToggle = true;
 
     private MudDataGrid<Model> _dataGrid = null!;
     private readonly IEnumerable<Model> _items = new List<Model>()
