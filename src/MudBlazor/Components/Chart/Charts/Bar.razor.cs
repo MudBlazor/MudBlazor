@@ -51,7 +51,7 @@ namespace MudBlazor.Charts
 
             GenerateHorizontalGridLines(numHorizontalLines, lowestHorizontalLine, gridYUnits, verticalSpace);
             GenerateVerticalGridLines(numVerticalLines, gridXUnits, horizontalSpace);
-            GenerateBars(lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace);
+            GenerateBars(lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace, numVerticalLines);
         }
 
         private void ComputeUnitsAndNumberOfLines(out double gridXUnits, out double gridYUnits, out int numHorizontalLines, out int lowestHorizontalLine, out int numVerticalLines)
@@ -121,9 +121,12 @@ namespace MudBlazor.Charts
             _verticalLines.Clear();
             _verticalValues.Clear();
 
+            var chartAreaWidth = _boundWidth - HorizontalStartSpace - HorizontalEndSpace;
+            var barGroupPositions = CalculateBarGroupPositions(horizontalSpace, numVerticalLines, chartAreaWidth);
+
             for (var i = 0; i < numVerticalLines; i++)
             {
-                var x = HorizontalStartSpace + (i * horizontalSpace);
+                var x = barGroupPositions[i];
                 var line = new SvgPath()
                 {
                     Index = i,
@@ -142,20 +145,24 @@ namespace MudBlazor.Charts
             }
         }
 
-        private void GenerateBars(int lowestHorizontalLine, double gridYUnits, double horizontalSpace, double verticalSpace)
+        private void GenerateBars(int lowestHorizontalLine, double gridYUnits, double horizontalSpace, double verticalSpace, int numVerticalLines)
         {
             _legends.Clear();
             _bars.Clear();
+
+            var chartAreaWidth = _boundWidth - HorizontalStartSpace - HorizontalEndSpace;
+
+            var barGroupPositions = CalculateBarGroupPositions(horizontalSpace, numVerticalLines, chartAreaWidth);
 
             for (var i = 0; i < _series.Count; i++)
             {
                 var series = _series[i];
                 var data = series.Data;
 
-                for (var j = 0; j < data.Values.Length; j++)
+                for (var j = 0; j < data.Values.Length && j < barGroupPositions.Length; j++)
                 {
                     var dataValue = data.Values[j];
-                    var gridValueX = HorizontalStartSpace + (BarStroke / 2) + (i * BarGap) + (j * horizontalSpace);
+                    var gridValueX = barGroupPositions[j] + (BarStroke / 2) + (i * BarGap);
                     var gridValueY = _boundHeight - VerticalStartSpace + (lowestHorizontalLine * verticalSpace);
                     var barHeight = ((dataValue / gridYUnits) - lowestHorizontalLine) * verticalSpace;
                     var gridValue = _boundHeight - VerticalStartSpace - barHeight;
@@ -179,6 +186,84 @@ namespace MudBlazor.Charts
                 };
                 _legends.Add(legend);
             }
+        }
+
+        private double[] CalculateBarGroupPositions(double horizontalSpace, int numVerticalLines, double chartAreaWidth)
+        {
+            var numGroups = _series.Count;
+
+            if (numGroups == 0) return [];
+
+            var positions = new double[numVerticalLines];
+
+            var totalGroupWidth = numGroups * BarGroupWidth;
+            var groupSpacing = CalculateSpaceWidth(numVerticalLines);
+            var centerOffset = BarGroupWidth / 2;
+            var centerX = HorizontalStartSpace + ((chartAreaWidth - totalGroupWidth) / 2) + centerOffset;
+
+            switch (ChartOptions!.Justify)
+            {
+                case Justify.FlexStart:
+                    for (var i = 0; i < numVerticalLines; i++)
+                    {
+                        positions[i] = HorizontalStartSpace + centerOffset + (i * groupSpacing);
+                    }
+                    break;
+
+                case Justify.FlexEnd:
+                    var totalSpacing = groupSpacing * (numVerticalLines - 1);
+                    var endStartX = _boundWidth - HorizontalStartSpace - HorizontalEndSpace - BarGroupWidth - totalSpacing;
+                    for (var i = 0; i < numVerticalLines; i++)
+                    {
+                        positions[i] = endStartX + centerOffset + (i * groupSpacing);
+                    }
+                    break;
+
+                case Justify.Center:
+                    var halfTotalSpacing = groupSpacing * (numVerticalLines / 2);
+                    var centerStartX = centerX - halfTotalSpacing;
+                    for (var i = 0; i < numVerticalLines; i++)
+                    {
+                        positions[i] = centerStartX + (i * groupSpacing);
+                    }
+                    break;
+
+                case Justify.SpaceBetween:
+                    var spacing = (chartAreaWidth - BarGroupWidth - HorizontalEndSpace) / (numVerticalLines - 1);
+                    for (var i = 0; i < numVerticalLines; i++)
+                    {
+                        positions[i] = numVerticalLines == 1 ? centerX : HorizontalStartSpace + centerOffset + (i * spacing);
+                    }
+                    break;
+
+                case Justify.SpaceAround:
+                    var unitSpaceAround = chartAreaWidth / (numVerticalLines * 2);
+                    for (var i = 0; i < numVerticalLines; i++)
+                    {
+                        positions[i] = numVerticalLines == 1 ? centerX : HorizontalStartSpace + unitSpaceAround + (i * (unitSpaceAround * 2));
+                    }
+                    break;
+
+                case Justify.SpaceEvenly:
+                    var unitSpaceEvenly = chartAreaWidth / (numVerticalLines + 1);
+                    for (var i = 0; i < numVerticalLines; i++)
+                    {
+                        positions[i] = numVerticalLines == 1 ? centerX : HorizontalStartSpace + unitSpaceEvenly * (i + 1);
+                    }
+                    break;
+            }
+
+            return positions;
+        }
+
+        private int CalculateSpaceWidth(int groupCount)
+        {
+            var spaceCount = groupCount - 1;
+            var remainingWidth = _boundWidth - HorizontalStartSpace - HorizontalEndSpace - (BarGroupWidth * groupCount);
+            var spaceWidth = remainingWidth * ChartOptions!.SpacingRatio;
+            var spaceBetweenGroups = spaceCount > 0 ? spaceWidth / spaceCount : 0;
+
+            return (int)spaceBetweenGroups;
         }
 
         private void OnBarMouseOver(MouseEventArgs _, SvgPath bar)

@@ -1,11 +1,28 @@
-﻿@using MudBlazor.Components.Chart
-<div>
-    <MudBlazor.Components.Chart.MudChart ChartType="ChartType.Bar" ChartSeries="@_series" @bind-SelectedIndex="_index" ChartOptions="@_options" Width="100%" Height="350px"></MudBlazor.Components.Chart.MudChart>
-</div>
-<MudText Typo="Typo.h6">Selected portion of the chart: @_index</MudText>
+﻿@using MudBlazor
+@using MudBlazor.Components.Chart
+
+<MudStack Spacing="2">
+    <MudSelect Justify="Justify.Start" T="Justify" Label="Justify Type" @bind-Value="_selectedJustify" Dense="true">
+        @foreach (Justify justify in Enum.GetValues(typeof(Justify)))
+        {
+            <MudSelectItem Value="justify">@justify</MudSelectItem>
+        }
+    </MudSelect>
+
+    <MudBlazor.Components.Chart.MudChart ChartType="ChartType.Bar"
+              ChartSeries="@_series"
+              @bind-SelectedIndex="_index"
+              ChartOptions="@(new BarChartOptions() { XAxisLabels = _labels, Justify = _selectedJustify })"
+              Width="100%"
+              Height="350px" />
+
+    <MudText Typo="Typo.h6">Selected portion of the chart: @_index</MudText>
+</MudStack>
 
 @code {
-    private int _index = -1; //default value cannot be 0 -> first selectedindex is 0.
+    private int _index = -1;
+
+    private Justify _selectedJustify = Justify.FlexStart;
 
     private readonly List<ChartDataSet> _series =
     [
@@ -14,10 +31,5 @@
         new() { Label = "Sweden", Data = [8, 6, 11, 13, 4, 16, 10, 16, 18] }
     ];
 
-    private readonly BarChartOptions _options = new()
-    {
-        XAxisLabelRotation = 0,
-        XAxisLabels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"]
-    };
+    private string[] _labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"];
 }
-

@@ -10,4 +10,13 @@ public class BarChartOptions : DefaultAxisChartOptions
     /// Controls how bar groups are distributed across the available space
     /// </summary>
     public Justify Justify { get; set; } = Justify.SpaceEvenly;
+
+    /// <summary>
+    /// A value between 0.1 and 1.0 indicating how much of the chart width should occupied by the bars.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>1</c> (100%).
+    /// Only applies when using <see cref="Justify.FlexStart"/>, <see cref="Justify.Center"/> or <see cref="Justify.FlexEnd"/>
+    /// </remarks>
+    public double SpacingRatio { get; set; } = 1;
 }
