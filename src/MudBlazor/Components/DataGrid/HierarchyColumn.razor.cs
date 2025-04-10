@@ -88,6 +88,13 @@ public partial class HierarchyColumn<[DynamicallyAccessedMembers(DynamicallyAcce
     public EventCallback<bool> HiddenChanged { get; set; }
 
     /// <summary>
+    /// Whether or not to show a button in the header to expand/collapse all columns.
+    /// </summary>
+    /// <remarks>Defaults to <c>false</c>.</remarks>
+    [Parameter]
+    public bool EnableHeaderToggle { get; set; } = false;
+
+    /// <summary>
     /// The function which determines whether the row should be initially expanded.
     /// </summary>
     /// <remarks>
