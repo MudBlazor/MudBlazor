@@ -1,5 +1,4 @@
-﻿
-<CascadingValue Name="RightToLeft" Value="@RightToLeft" IsFixed="true">
+﻿<CascadingValue Name="RightToLeft" Value="@RightToLeft" IsFixed="true">
     <MudDataGrid @ref="_dataGrid" Items="@_items" Filterable="true">
         <Columns>
             <HierarchyColumn ButtonDisabledFunc="@(x => x.Name == "Alicia")" InitiallyExpandedFunc="@(x => x.Name == "Ira" || x.Name == "Anders")" />
@@ -20,7 +19,7 @@
     [Parameter]
     public bool RightToLeft { get; set; }
 
-    private MudDataGrid<Model> _dataGrid = default!;
+    private MudDataGrid<Model> _dataGrid = null!;
     private readonly IEnumerable<Model> _items = new List<Model>()
     {
         new Model("Sam", 56, Severity.Normal), 
@@ -29,8 +28,6 @@
         new Model("John", 32, Severity.Warning),
         new Model("Anders", 24, Severity.Error)
     };
-
-    public record Model (string Name, int Age, Severity Status);
 
     private Task ExpandAll()
     {
@@ -41,4 +38,6 @@
     {
         return _dataGrid.CollapseAllHierarchy();
     }
+
+    public record Model (string Name, int Age, Severity Status);
 }
