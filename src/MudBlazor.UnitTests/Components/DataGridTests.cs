@@ -2952,9 +2952,9 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.WaitForAssertion(() => dataGrid.Instance._openHierarchies.Count.Should().Be(5));
         }
 
+        [Test]
         [TestCase(true)]
         [TestCase(false)]
-        [Test]
         public void DataGrid_RowDetail_RTL_GroupIcon(bool rightToLeft)
         {
             var comp = Context.RenderComponent<DataGridHierarchyColumnTest>(param => param
