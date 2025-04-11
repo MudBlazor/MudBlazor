@@ -124,7 +124,7 @@ namespace MudBlazor
             }
         }
 
-        private bool _includeHierarchyToggle { get { return Column?.HeaderClass?.Contains("mud-header-togglehierarchy") ?? false; } }
+        internal bool _includeHierarchyToggle { get { return Column?.HeaderClass?.Contains("mud-header-togglehierarchy") ?? false; } }
 
         private string computedTitle
         {
@@ -259,7 +259,7 @@ namespace MudBlazor
 
         #region Events
 
-        private void ToggleHierarchy()
+        internal void ToggleHierarchy()
         {
             if (_expanded)
             {
@@ -271,7 +271,7 @@ namespace MudBlazor
             }
         }
 
-        private string GetGroupIcon()
+        internal string GetGroupIcon()
         {
             return DataGrid?.GetGroupIcon(_expanded, RightToLeft) ?? string.Empty;
         }
