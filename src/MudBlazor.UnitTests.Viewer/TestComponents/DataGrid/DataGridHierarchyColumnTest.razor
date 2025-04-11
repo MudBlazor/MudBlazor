@@ -20,7 +20,7 @@
     [Parameter]
     public bool RightToLeft { get; set; }
 
-    private bool _enableHeaderToggle = true;
+    private bool _enableHeaderToggle = false;
 
     private MudDataGrid<Model> _dataGrid = null!;
     private readonly IEnumerable<Model> _items = new List<Model>()
