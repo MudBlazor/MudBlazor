@@ -766,7 +766,9 @@ class MudPopover {
                     }
                 }
 
-                if (highestTickItem) {
+                const isNested = highestTickItem.classList.contains('mud-popover-nested');
+                console.log('isNested: ', isNested);
+                if (highestTickItem && !isNested) {
                     window.mudpopoverHelper.updatePopoverOverlay(highestTickItem);
                 }
             }
