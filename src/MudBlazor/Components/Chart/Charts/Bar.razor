@@ -51,7 +51,7 @@
                   @onclick="async () => await SetSelectedIndexAsync(bar.Index)" 
                   fill="@color"
                   stroke="@color"
-                  stroke-width="@BarStroke" 
+                  stroke-width="@_barWidth.ToString(CultureInfo.InvariantCulture)" 
                   d="@bar.Data"
                   @onmouseover="(e) => OnBarMouseOver(e, bar)"
                   @onmouseout="OnBarMouseOut">

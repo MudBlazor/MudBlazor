@@ -2,18 +2,25 @@
 @using MudBlazor.Components.Chart
 
 <MudStack Spacing="2">
-    <MudSelect Justify="Justify.Start" T="Justify" Label="Justify Type" @bind-Value="_selectedJustify" Dense="true">
-        @foreach (Justify justify in Enum.GetValues(typeof(Justify)))
-        {
-            <MudSelectItem Value="justify">@justify</MudSelectItem>
-        }
-    </MudSelect>
+    <MudStack Row>
+        <MudSelect Justify="Justify.Start" T="Justify" Label="Justify Type" @bind-Value="_selectedJustify" Dense="true" FitContent>
+            @foreach (Justify justify in Enum.GetValues(typeof(Justify)))
+            {
+                <MudSelectItem Value="justify">@justify</MudSelectItem>
+            }
+        </MudSelect>
+        <MudButton Variant="Variant.Filled" OnClick="@( () => _series = DataSet.Take(_series.Count + 1).ToList())">Add Data</MudButton>
+        <MudButton Variant="Variant.Filled" OnClick="@( () => _series.Remove(_series.Last()))">Remove Data</MudButton>
+    </MudStack>
+
     <MudSlider @bind-Value="_spacingRatio" Min="0" Max="1" Step="0.02">Spacing: @_spacingRatio.ToString("F2")</MudSlider>
+    <MudSlider @bind-Value="_barWidthRation" Min="0" Max="1" Step="0.02">Width: @_barWidthRation.ToString("F2")</MudSlider>
+    <MudSlider @bind-Value="_innerGapRatio" Min="0" Max="1" Step="0.02">Gap: @_innerGapRatio.ToString("F2")</MudSlider>
 
     <MudBlazor.Components.Chart.MudChart ChartType="ChartType.Bar"
               ChartSeries="@_series"
               @bind-SelectedIndex="_index"
-              ChartOptions="@(new BarChartOptions() { XAxisLabels = _labels, Justify = _selectedJustify, SpacingRatio = _spacingRatio })"
+              ChartOptions="@(new BarChartOptions() { XAxisLabels = _labels, Justify = _selectedJustify, SpacingRatio = _spacingRatio, BarWidthRatio = _barWidthRation, BarInnerGapRatio = _innerGapRatio })"
               Width="100%"
               Height="350px" />
 
@@ -22,15 +29,23 @@
 
 @code {
     private int _index = -1;
-    private double _spacingRatio = 1;
+    private double _spacingRatio = 1.0;
+    private double _barWidthRation = 0.20;
+    private double _innerGapRatio = 0.40;
     private Justify _selectedJustify = Justify.FlexStart;
+    private List<ChartDataSet> _series = DataSet.Take(1).ToList();
 
-    private readonly List<ChartDataSet> _series =
+    private static List<ChartDataSet> DataSet =>
     [
-        new() { Label = "United States", Data = [40, 20, 25, 27, 46, 60, 48, 80, 15] },
-        new() { Label = "Germany", Data = [19, 24, 35, 13, 28, 15, 13, 16, 31] },
-        new() { Label = "Sweden", Data = [8, 6, 11, 13, 4, 16, 10, 16, 18] }
+        new() { Label = "United Kingdon",   Data = [60] },
+        new() { Label = "United States",    Data = [40] },
+        new() { Label = "Greenland",        Data = [47] },
+        new() { Label = "Germany",          Data = [19] },
+        new() { Label = "Norway",           Data = [14] },
+        new() { Label = "Italy",            Data = [20] },
+        new() { Label = "Spain",            Data = [10] },
+        new() { Label = "Sweden",           Data = [8] }
     ];
 
-    private string[] _labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"];
+    private string[] _labels = ["Jan"];
 }

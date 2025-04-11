@@ -12,11 +12,24 @@ public class BarChartOptions : DefaultAxisChartOptions
     public Justify Justify { get; set; } = Justify.SpaceEvenly;
 
     /// <summary>
-    /// A value between 0.1 and 1.0 indicating how much of the chart width should occupied by the bars.
+    /// Specifies the proportion of horizontal space the chart should occupy, ranging from 0.01 to 1.0.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>1</c> (100%).
-    /// Only applies when using <see cref="Justify.FlexStart"/>, <see cref="Justify.Center"/> or <see cref="Justify.FlexEnd"/>
+    /// The default value is <c>1</c> (100%).  
+    /// This setting is only applicable when using <see cref="Justify.FlexStart"/>, <see cref="Justify.Center"/>, or <see cref="Justify.FlexEnd"/>.
     /// </remarks>
     public double SpacingRatio { get; set; } = 1;
+
+    /// <summary>
+    /// Defines the relative width of the bars compared to the total available space, with a value between 0.01 and 1.0.
+    /// </summary>
+    /// <remarks>
+    /// This setting is only applicable when using <see cref="Justify.FlexStart"/>, <see cref="Justify.Center"/>, or <see cref="Justify.FlexEnd"/>.
+    /// </remarks>
+    public double BarWidthRatio { get; set; } = .20;
+
+    /// <summary>
+    /// Defines the spacing between bars as a ratio of the group width, with a value between 0.0 and 1.0.
+    /// </summary>
+    public double BarInnerGapRatio { get; set; } = 0.40;
 }

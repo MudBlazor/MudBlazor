@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Components.Chart;
+using MudBlazor.Extensions;
 
 #nullable enable
 namespace MudBlazor.Charts
@@ -26,9 +27,11 @@ namespace MudBlazor.Charts
         private readonly List<SvgPath> _bars = [];
         private SvgPath? _hoveredBar;
 
-        private const double BarStroke = 8;
-        private const double BarGap = 10;
-        private double BarGroupWidth => (_series.Count - 1) * BarGap + BarStroke; // number of gaps of 10 + the stroke width
+        private double _barGroupWidth;
+        private double _barWidth;
+        private double _barGap;
+
+        private const double MinBarWidth = 4;
 
         /// <inheritdoc />
         protected override void OnParametersSet()
@@ -48,7 +51,9 @@ namespace MudBlazor.Charts
 
             var horizontalSpace = _boundWidth - HorizontalStartSpace - HorizontalEndSpace;
             var verticalSpace = (_boundHeight - VerticalStartSpace - VerticalEndSpace) / Math.Max(1, numHorizontalLines - 1);
+            var tickWidth = horizontalSpace / numVerticalLines;
 
+            ComputeBarDimensions(tickWidth - HorizontalStartSpace - HorizontalEndSpace);
             GenerateHorizontalGridLines(numHorizontalLines, lowestHorizontalLine, gridYUnits, verticalSpace);
             GenerateVerticalGridLines(numVerticalLines, horizontalSpace);
             GenerateBars(lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace, numVerticalLines);
@@ -119,6 +124,14 @@ namespace MudBlazor.Charts
             _verticalLines.Clear();
             _verticalValues.Clear();
 
+            var spaces = _series.Count - 1;
+            var leftShift = spaces switch
+            {
+                0 or 2 => _barWidth / 2,
+                1 => 0,
+                _ => _barWidth * ((spaces - 1) / 2.0)
+            };
+
             var barGroupPositions = CalculateBarGroupPositions(horizontalSpace, numVerticalLines);
 
             for (var i = 0; i < numVerticalLines; i++)
@@ -134,7 +147,7 @@ namespace MudBlazor.Charts
                 var xLabels = i < ChartOptions!.XAxisLabels.Length ? ChartOptions!.XAxisLabels[i] : "";
                 var lineValue = new SvgText()
                 {
-                    X = x + (BarGroupWidth / 2),
+                    X = x + (_barGroupWidth / 2) - ((_barGap * spaces) / 2) - leftShift,
                     Y = _boundHeight - 10,
                     Value = xLabels
                 };
@@ -157,7 +170,10 @@ namespace MudBlazor.Charts
                 for (var j = 0; j < data.Values.Length && j < barGroupPositions.Length; j++)
                 {
                     var dataValue = data.Values[j];
-                    var gridValueX = barGroupPositions[j] + (BarStroke / 2) + (i * BarGap);
+
+                    var groupStartX = barGroupPositions[j] - (_barGroupWidth / 2);
+                    var gridValueX = groupStartX + (i * (_barWidth + _barGap)) + (_barWidth / 2);
+
                     var gridValueY = _boundHeight - VerticalStartSpace + (lowestHorizontalLine * verticalSpace);
                     var barHeight = ((dataValue / gridYUnits) - lowestHorizontalLine) * verticalSpace;
                     var gridValue = _boundHeight - VerticalStartSpace - barHeight;
@@ -191,32 +207,34 @@ namespace MudBlazor.Charts
 
             var positions = new double[numVerticalLines];
 
-            var totalGroupWidth = numGroups * BarGroupWidth;
-            var groupSpacing = Math.Max(BarGroupWidth, CalculateSpaceWidth(numVerticalLines));
-            var centerOffset = BarGroupWidth / 2;
+            var totalGroupWidth = numGroups * _barGroupWidth;
+            var groupSpacing = Math.Max(_barGroupWidth, CalculateSpaceWidth(numVerticalLines, horizontalSpace));
+            var centerOffset = _barGroupWidth / 2;
             var centerX = HorizontalStartSpace + ((horizontalSpace - totalGroupWidth) / 2) + centerOffset;
 
             switch (ChartOptions!.Justify)
             {
                 case Justify.FlexStart:
+                    var flexStartSpacing = ChartOptions.SpacingRatio / 2;
+                    var startStartX = HorizontalStartSpace + HorizontalEndSpace;
                     for (var i = 0; i < numVerticalLines; i++)
                     {
-                        positions[i] = HorizontalStartSpace + centerOffset + (i * groupSpacing);
+                        positions[i] = startStartX + centerOffset + (i * groupSpacing) + (i * _barWidth) + (i * (_barGap / 2) * flexStartSpacing);
                     }
                     break;
 
                 case Justify.FlexEnd:
-                    var totalSpacing = groupSpacing * (numVerticalLines - 1);
-                    var endStartX = _boundWidth - HorizontalStartSpace - HorizontalEndSpace - BarGroupWidth - totalSpacing;
+                    var flexEndSpacing = groupSpacing * (numVerticalLines - 1);
+                    var endStartX = horizontalSpace - HorizontalStartSpace - HorizontalEndSpace - (numVerticalLines * _barGroupWidth);
                     for (var i = 0; i < numVerticalLines; i++)
                     {
-                        positions[i] = endStartX + centerOffset + (i * groupSpacing);
+                        positions[i] = endStartX - centerOffset + (i * groupSpacing) + (i * flexEndSpacing);
                     }
                     break;
 
                 case Justify.Center:
-                    var halfTotalSpacing = groupSpacing * (numVerticalLines / 2);
-                    var centerStartX = centerX - halfTotalSpacing;
+                    var centerSpacing = groupSpacing * (numVerticalLines / 2);
+                    var centerStartX = centerX - centerSpacing;
                     for (var i = 0; i < numVerticalLines; i++)
                     {
                         positions[i] = centerStartX + (i * groupSpacing);
@@ -224,7 +242,7 @@ namespace MudBlazor.Charts
                     break;
 
                 case Justify.SpaceBetween:
-                    var spacing = (horizontalSpace - BarGroupWidth - HorizontalEndSpace) / (numVerticalLines - 1);
+                    var spacing = (horizontalSpace - _barGroupWidth - HorizontalEndSpace) / (numVerticalLines - 1);
                     for (var i = 0; i < numVerticalLines; i++)
                     {
                         positions[i] = numVerticalLines == 1 ? centerX : HorizontalStartSpace + centerOffset + (i * spacing);
@@ -251,15 +269,31 @@ namespace MudBlazor.Charts
             return positions;
         }
 
-        private int CalculateSpaceWidth(int groupCount)
+        private int CalculateSpaceWidth(int groupCount, double horizontalSpace)
         {
+            if (groupCount <= 1) return 0;
+
             var spaceCount = groupCount - 1;
-            var remainingWidth = _boundWidth - HorizontalStartSpace - HorizontalEndSpace - (BarGroupWidth * groupCount);
-            var spaceWidth = remainingWidth * ChartOptions!.SpacingRatio;
+            var remainingWidth = horizontalSpace - HorizontalStartSpace - HorizontalEndSpace - ((_barGroupWidth + (_barWidth / 2)) * groupCount);
+            var spaceWidth = remainingWidth * ChartOptions!.SpacingRatio.EnsureRange(0.01, 1.0);
             var spaceBetweenGroups = spaceCount > 0 ? spaceWidth / spaceCount : 0;
 
             return (int)spaceBetweenGroups;
         }
+
+        private void ComputeBarDimensions(double tickWidth)
+        {
+            var seriesCount = _series.Count;
+            var groupWidthRatio = ChartOptions!.BarWidthRatio.EnsureRange(0.01, 1.0);
+            var totalGapRatio = seriesCount > 1 ? ChartOptions!.BarInnerGapRatio * (seriesCount - 1) : 1;
+            var barWidthRelative = 1.0 / (seriesCount + totalGapRatio);
+            var groupWidthRelative = tickWidth * groupWidthRatio;
+
+            _barWidth = Math.Max(MinBarWidth, groupWidthRelative * barWidthRelative);
+            _barGap = seriesCount > 1 ? groupWidthRelative * barWidthRelative * ChartOptions!.BarInnerGapRatio : 0;
+            _barGroupWidth = Math.Max(MinBarWidth * seriesCount - 2, groupWidthRelative - _barWidth);
+        }
+
 
         private void OnBarMouseOver(MouseEventArgs _, SvgPath bar)
         {
