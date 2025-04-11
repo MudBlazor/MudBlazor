@@ -5315,7 +5315,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGridGetGroupIconTest()
+        public void DataGridGetHierarchyGroupIconTest()
         {
             // Create a test component
             var comp = Context.RenderComponent<DataGridHierarchyColumnTest>();
@@ -5340,6 +5340,24 @@ namespace MudBlazor.UnitTests.Components
             comp.SetParametersAndRender(parameters => parameters.Add(p => p.RightToLeft, true));
             // When collapsed + RTL
             comp.WaitForAssertion(() => accessor.GetGroupIcon().Should().Be(Icons.Material.Filled.ChevronLeft));
+        }
+
+        [Test]
+        public void DataGrid_HierarchyExpandSingleRowTest()
+        {
+            var comp = Context.RenderComponent<DataGridHierarchyColumnTest>(parameters => parameters
+                .Add(p => p.ExpandSingleRow, false));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
+
+            dataGrid.Instance._openHierarchies.Count.Should().Be(2);
+            var item = dataGrid.Instance._openHierarchies.First();
+            item.Should().NotBeNull();
+
+            comp.SetParametersAndRender(p => p.Add(p => p.ExpandSingleRow, true));
+
+            dataGrid.Instance._openHierarchies.Count.Should().Be(1);
+
+            dataGrid.Instance._openHierarchies.First().Should().Be(item);
         }
     }
 }
