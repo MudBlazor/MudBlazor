@@ -169,7 +169,7 @@ else if (Column != null && !Column.HiddenState.Value)
         return
         @<text>
             <MudIconButton Icon=@GetGroupIcon() 
-                           Class="mud-table-row-expander"
+                           Class="ma-n3 pa-1"
                            OnClick=@ToggleHierarchy
                            aria-label="@(_expanded ? @Localizer[LanguageResource.MudDataGrid_CollapseAllGroups] : @Localizer[LanguageResource.MudDataGrid_ExpandAllGroups])" />
         </text>;

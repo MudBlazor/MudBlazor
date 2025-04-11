@@ -131,6 +131,12 @@ public partial class HierarchyColumn<[DynamicallyAccessedMembers(DynamicallyAcce
     public RenderFragment<HeaderContext<T>> HeaderTemplate { get; set; }
 
     /// <summary>
+    /// The template used to display this column's value cells.
+    /// </summary>
+    [Parameter]
+    public RenderFragment<CellContext<T>> CellTemplate { get; set; }
+
+    /// <summary>
     /// The function which determines whether the row should be initially expanded.
     /// </summary>
     /// <remarks>

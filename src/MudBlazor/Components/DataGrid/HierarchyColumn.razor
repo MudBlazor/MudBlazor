@@ -7,15 +7,22 @@
     Filterable="false" Editable="false" DragAndDropEnabled="@DragAndDropEnabled" HeaderTemplate="@HeaderTemplate"
     HeaderStyle="@HeaderStyle" HeaderStyleFunc="@HeaderStyleFunc">
     <CellTemplate>
+        @if (CellTemplate != null)
+        {
+            @CellTemplate(context)            
+        }
+        else
+        {
+            <MudIconButton 
+                Class="ma-n3 pa-1"
+                Icon="@GetGroupIcon(context)" 
+                OnClick="context.Actions.ToggleHierarchyVisibilityForItemAsync"
+                Size="@IconSize"
+                Disabled="ButtonDisabledFunc.Invoke(context.Item)"/>            
+        }
         @if (!_finishedInitialExpanded && InitiallyExpandedFunc.Invoke(context.Item))
         {
             _initiallyExpandedItems.Add(context);
         }
-        <MudIconButton 
-            Class="ma-n3 pa-1"
-            Icon="@GetGroupIcon(context)" 
-            OnClick="context.Actions.ToggleHierarchyVisibilityForItemAsync"
-            Size="@IconSize"
-            Disabled="ButtonDisabledFunc.Invoke(context.Item)"/>
     </CellTemplate>
 </TemplateColumn>
