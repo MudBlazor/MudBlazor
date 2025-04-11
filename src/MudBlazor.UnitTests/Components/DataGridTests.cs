@@ -2940,6 +2940,44 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGrid_RowDetail_ExpandCollapseAllTest()
+        {
+            var comp = Context.RenderComponent<DataGridHierarchyColumnTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
+
+            dataGrid.WaitForAssertion(() => dataGrid.Instance._openHierarchies.Count.Should().Be(2));
+            await dataGrid.InvokeAsync(() => dataGrid.Instance.CollapseAllHierarchy());
+            dataGrid.WaitForAssertion(() => dataGrid.Instance._openHierarchies.Count.Should().Be(0));
+            await dataGrid.InvokeAsync(() => dataGrid.Instance.ExpandAllHierarchy());
+            dataGrid.WaitForAssertion(() => dataGrid.Instance._openHierarchies.Count.Should().Be(5));
+        }
+
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public void DataGrid_RowDetail_RTL_GroupIcon(bool rightToLeft)
+        {
+            var comp = Context.RenderComponent<DataGridHierarchyColumnTest>(param => param
+                .Add(p => p.RightToLeft, rightToLeft)
+            );
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
+            var svg = dataGrid.Find(".mud-table-body .mud-table-row .mud-table-cell .mud-icon-root");
+
+            if (!rightToLeft)
+            {
+                // ChevronRight by Default
+                svg.InnerHtml.Should().Contain("<path d=\"M0 0h24v24H0z\"")
+                    .And.Contain("<path d=\"M10 6L8.59 7.41");
+            }
+            else
+            {
+                // ChevronLeft when RTL is true
+                svg.InnerHtml.Should().Contain("<path d=\"M0 0h24v24H0z\"")
+                    .And.Contain("<path d=\"M15.41 7.41L14 6l-6");
+            }
+        }
+
+        [Test]
         public void DataGridRowDetailButtonDisabledTest()
         {
             var comp = Context.RenderComponent<DataGridHierarchyColumnTest>();
