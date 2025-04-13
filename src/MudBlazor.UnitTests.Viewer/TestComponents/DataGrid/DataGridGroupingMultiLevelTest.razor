@@ -10,7 +10,7 @@
              GroupClassFunc="@(_customizeGroupStyle ? GroupClassFunc : null)"
              GroupStyleFunc="@(_customizeGroupStyle ? GroupStyleFunc : null)">
     <ToolBarContent>
-        <MudText Typo="Typo.h6">US States Information<sub style="color: var(--mud-palette-warning);font-size: smaller;">2025</sub></MudText>
+        <MudText Typo="Typo.h6">US States Information<span class="ml-2" style="color: var(--mud-palette-warning);font-size: smaller;">2025</span></MudText>
         <MudSpacer />
         <MudTextField AdornmentIcon="@Icons.Material.Outlined.Search" Adornment="Adornment.End" Placeholder="Filter Results"
                       @bind-Value="_searchString" @bind-Value:after="@(() => dataGrid!.ReloadServerData())" 
