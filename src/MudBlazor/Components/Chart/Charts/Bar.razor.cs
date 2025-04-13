@@ -208,7 +208,7 @@ namespace MudBlazor.Charts
             var positions = new double[numVerticalLines];
 
             var totalGroupWidth = numGroups * _barGroupWidth;
-            var groupSpacing = Math.Max(_barGroupWidth, CalculateSpaceWidth(numVerticalLines, horizontalSpace));
+            var groupSpacing = Math.Max(numGroups == 1 ? 0 : _barGroupWidth, CalculateSpaceWidth(horizontalSpace, numVerticalLines));
             var centerOffset = _barGroupWidth / 2;
             var centerX = HorizontalStartSpace + ((horizontalSpace - totalGroupWidth) / 2) + centerOffset;
 
@@ -233,11 +233,27 @@ namespace MudBlazor.Charts
                     break;
 
                 case Justify.Center:
-                    var centerSpacing = groupSpacing * (numVerticalLines / 2);
-                    var centerStartX = centerX - centerSpacing;
+                    var centerSpacing = ChartOptions.SpacingRatio / 2;
+                    var spaces = numVerticalLines - 1;
+                    var offsets = numGroups - 1;
+                    var halfGap = _barGap / 2;
+                    var halfBar = _barWidth / 2;
+                    var halfSpace = groupSpacing / 2;
+                    var shiftLeft = (spaces * halfBar) + (spaces * halfSpace);
+                    centerOffset = numGroups switch
+                    {
+                        <= 2 => centerOffset,
+                        3 => _barGroupWidth + halfBar,
+                        _ => ((_barGroupWidth + _barWidth) * (offsets / 2.0)) - halfBar
+                    };
+
+                    var centerStartX = HorizontalStartSpace + ((horizontalSpace - totalGroupWidth) / 2);
+
                     for (var i = 0; i < numVerticalLines; i++)
                     {
-                        positions[i] = centerStartX + (i * groupSpacing);
+                        var positionX = centerStartX + centerOffset - shiftLeft + (offsets * halfGap) + (i * groupSpacing) + (i * _barWidth) + (i * halfGap * centerSpacing);
+
+                        positions[i] = positionX;
                     }
                     break;
 
@@ -269,7 +285,7 @@ namespace MudBlazor.Charts
             return positions;
         }
 
-        private int CalculateSpaceWidth(int groupCount, double horizontalSpace)
+        private int CalculateSpaceWidth(double horizontalSpace, int groupCount)
         {
             if (groupCount <= 1) return 0;
 

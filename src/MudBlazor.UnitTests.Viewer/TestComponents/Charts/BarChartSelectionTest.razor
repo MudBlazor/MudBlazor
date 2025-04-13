@@ -1,6 +1,5 @@
 ﻿@using MudBlazor
 @using MudBlazor.Components.Chart
-
 <MudStack Spacing="2">
     <MudStack Row>
         <MudSelect Justify="Justify.Start" T="Justify" Label="Justify Type" @bind-Value="_selectedJustify" Dense="true" FitContent>
@@ -9,43 +8,41 @@
                 <MudSelectItem Value="justify">@justify</MudSelectItem>
             }
         </MudSelect>
-        <MudButton Variant="Variant.Filled" OnClick="@( () => _series = DataSet.Take(_series.Count + 1).ToList())">Add Data</MudButton>
-        <MudButton Variant="Variant.Filled" OnClick="@( () => _series.Remove(_series.Last()))">Remove Data</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => _series = DataSet.Take(_series.Count + 1).ToList())">Add Country</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => { if (_series.Count > 1) _series.Remove(_series.Last()); })">Remove Country</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="@(() => _dataPointCount = Math.Min(_dataPointCount + 1, 12))">Add Month</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="@(() => _dataPointCount = Math.Max(_dataPointCount - 1, 1))">Remove Month</MudButton>
     </MudStack>
-
     <MudSlider @bind-Value="_spacingRatio" Min="0" Max="1" Step="0.02">Spacing: @_spacingRatio.ToString("F2")</MudSlider>
-    <MudSlider @bind-Value="_barWidthRation" Min="0" Max="1" Step="0.02">Width: @_barWidthRation.ToString("F2")</MudSlider>
+    <MudSlider @bind-Value="_barWidthRatio" Min="0" Max="1" Step="0.02">Width: @_barWidthRatio.ToString("F2")</MudSlider>
     <MudSlider @bind-Value="_innerGapRatio" Min="0" Max="1" Step="0.02">Gap: @_innerGapRatio.ToString("F2")</MudSlider>
-
     <MudBlazor.Components.Chart.MudChart ChartType="ChartType.Bar"
-              ChartSeries="@_series"
-              @bind-SelectedIndex="_index"
-              ChartOptions="@(new BarChartOptions() { XAxisLabels = _labels, Justify = _selectedJustify, SpacingRatio = _spacingRatio, BarWidthRatio = _barWidthRation, BarInnerGapRatio = _innerGapRatio })"
-              Width="100%"
-              Height="350px" />
-
+                                         ChartSeries="@_series.Select(s => new ChartDataSet { Label = s.Label, Data = s.Data.Values.Take(_dataPointCount).ToArray() }).ToList()"
+                                         @bind-SelectedIndex="_index"
+                                         ChartOptions="@(new BarChartOptions() { XAxisLabels = _labels.Take(_dataPointCount).ToArray(), Justify = _selectedJustify, SpacingRatio = _spacingRatio, BarWidthRatio = _barWidthRatio, BarInnerGapRatio = _innerGapRatio })"
+                                         Width="100%"
+                                         Height="350px" />
     <MudText Typo="Typo.h6">Selected portion of the chart: @_index</MudText>
 </MudStack>
-
 @code {
     private int _index = -1;
     private double _spacingRatio = 1.0;
-    private double _barWidthRation = 0.20;
+    private double _barWidthRatio = 0.20;
     private double _innerGapRatio = 0.40;
-    private Justify _selectedJustify = Justify.FlexStart;
+    private Justify _selectedJustify = Justify.Center;
     private List<ChartDataSet> _series = DataSet.Take(1).ToList();
+    private int _dataPointCount = 3;
 
     private static List<ChartDataSet> DataSet =>
-    [
-        new() { Label = "United Kingdon",   Data = [60] },
-        new() { Label = "United States",    Data = [40] },
-        new() { Label = "Greenland",        Data = [47] },
-        new() { Label = "Germany",          Data = [19] },
-        new() { Label = "Norway",           Data = [14] },
-        new() { Label = "Italy",            Data = [20] },
-        new() { Label = "Spain",            Data = [10] },
-        new() { Label = "Sweden",           Data = [8] }
+        [
+        new() { Label = "United Kingdom", Data = [60, 54, 23, 42, 67, 31, 45, 72, 38, 51, 63, 29] },
+        new() { Label = "United States",  Data = [40, 12, 32, 58, 43, 65, 27, 49, 38, 74, 51, 68] },
+        new() { Label = "Greenland",      Data = [47, 30, 43, 25, 59, 63, 48, 36, 52, 69, 41, 55] },
+        new() { Label = "Germany",        Data = [19, 51, 54, 37, 62, 45, 58, 31, 74, 52, 67, 43] },
+        new() { Label = "Norway",         Data = [14, 27, 65, 43, 21, 58, 39, 76, 42, 55, 38, 61] },
+        new() { Label = "Italy",          Data = [20, 34, 76, 45, 57, 29, 63, 48, 71, 36, 59, 42] },
+        new() { Label = "Spain",          Data = [10, 48, 87, 35, 62, 29, 54, 43, 76, 31, 58, 67] },
+        new() { Label = "Sweden",         Data = [08, 14, 98, 45, 32, 67, 29, 53, 41, 72, 38, 61] }
     ];
-
-    private string[] _labels = ["Jan"];
+    private string[] _labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 }
