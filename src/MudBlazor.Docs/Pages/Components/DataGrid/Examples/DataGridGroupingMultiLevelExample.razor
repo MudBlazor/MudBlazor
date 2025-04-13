@@ -2,8 +2,8 @@
 @using MudBlazor.Utilities
 @namespace MudBlazor.Docs.Examples
 
-<MudDataGrid @ref="@dataGrid" T="USState"
-             ServerData=@ServerReload
+<MudDataGrid @ref="@_dataGrid" T="USState"
+             ServerData="@ServerReload"
              Hover FixedHeader Groupable
              Height="500px" 
              GroupClass="@(_customizeGroupStyle ? "pa-4" : null)"
@@ -14,7 +14,7 @@
         <MudText Typo="Typo.h6">US States Information<sub style="color: var(--mud-palette-warning);font-size: smaller;">2025</sub></MudText>
         <MudSpacer />
         <MudTextField AdornmentIcon="@Icons.Material.Outlined.Search" Adornment="Adornment.End" Placeholder="Filter Results"
-                      @bind-Value="_searchString" @bind-Value:after="@(() => dataGrid!.ReloadServerData())" 
+                      @bind-Value="_searchString" @bind-Value:after="@(() => _dataGrid!.ReloadServerData())" 
                       DebounceInterval="100" Variant="Variant.Outlined" Clearable />
     </ToolBarContent>
     <Columns>
@@ -126,16 +126,16 @@
     <MudSwitch T="bool" @bind-Value="_customizeGroupTemplate" Color="@Color.Primary">Customize Group Template</MudSwitch>
     <MudSwitch T="bool" Value="@_customizeGroupBy" Color="@Color.Primary" ValueChanged="@CustomizeByGroupChanged">Customize Group By Industry</MudSwitch>
     <MudSwitch T="bool" @bind-Value="_customizeGroupStyle" Color="@Color.Primary">Customize Group Style</MudSwitch>
-    <MudButton OnClick="@ExpandAllGroupsAsync" Color="@Color.Primary" Disabled="@(!(dataGrid?.IsGrouped ?? false))">Expand All</MudButton>
-    <MudButton OnClick="@CollapseAllGroupsAsync" Color="@Color.Primary" Disabled="@(!(dataGrid?.IsGrouped ?? false))">Collapse All</MudButton>
+    <MudButton OnClick="@ExpandAllGroupsAsync" Color="@Color.Primary" Disabled="@(!(_dataGrid?.IsGrouped ?? false))">Expand All</MudButton>
+    <MudButton OnClick="@CollapseAllGroupsAsync" Color="@Color.Primary" Disabled="@(!(_dataGrid?.IsGrouped ?? false))">Collapse All</MudButton>
 </div>
 
 @code {
-    #nullable enable
+#nullable enable
     public static string __description__ = "Multi Level Grouping within DataGrid";
     // For the Grid
-    private MudDataGrid<USState>? dataGrid;
-    private string _searchString = string.Empty;
+    private MudDataGrid<USState>? _dataGrid;
+    private string? _searchString = string.Empty;
     // Bound Properties @bind-
     private bool _customizeGroupTemplate;
     private bool _customizeGroupBy;
@@ -157,17 +157,20 @@
     protected override void OnInitialized()
     {
         _groupBy1 = x =>
+        {
+            if (_customizeGroupBy)
             {
-                if (_customizeGroupBy)
-                    return x.PrimaryIndustry switch
-                    {
-                        "Healthcare" => "Health",
-                        "Technology" => "Tech",
-                        "Tourism" => "Vacay",
-                        _ => "Other"
-                    };
-                return x.PrimaryIndustry;
-            };
+                return x.PrimaryIndustry switch
+                {
+                    "Healthcare" => "Health",
+                    "Technology" => "Tech",
+                    "Tourism" => "Vacay",
+                    _ => "Other"
+                };
+            }
+
+            return x.PrimaryIndustry;
+        };
     }
 
     protected override void OnAfterRender(bool firstRender)
@@ -177,7 +180,7 @@
         if (firstRender)
         {
             // Check if the dataGrid is grouped and update the state accordingly (for IsGrouped)
-            if (dataGrid?.IsGrouped == true)
+            if (_dataGrid?.IsGrouped == true)
             {
                 StateHasChanged();
             }
@@ -194,53 +197,46 @@
         var totalItems = data.Count();        
         var pagedData = data.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray();
         return new()
-            {
-                TotalItems = totalItems,
-                Items = pagedData
-            };
+        {
+            TotalItems = totalItems,
+            Items = pagedData
+        };
     }
 
-    private string GroupClassFunc(GroupDefinition<USState> item)
+    private static string GroupClassFunc(GroupDefinition<USState> item)
     {
         var key = item.Grouping.Key?.ToString();
 
-        if (item.Title == "Primary Industry")
+        return item.Title switch
         {
-            return key switch
+            "Primary Industry" => key switch
             {
                 "Healthcare" => "mud-theme-primary",
                 "Tech" => "mud-theme-secondary",
                 "Tourism" => "mud-theme-info",
                 _ => "mud-theme-dark"
-            };
-        }
-        else if (item.Title == "Region")
-        {
-            return key switch
+            },
+            "Region" => key switch
             {
                 "Northeast" or "Southeast" => "mud-theme-warning",
                 "West" or "Pacific" => "mud-theme-success",
                 "Midwest" => "mud-theme-info",
                 "Southwest" => "mud-theme-error",
                 _ => string.Empty
-            };
-        }
-        else
-        {
-            return key switch
+            },
+            _ => key switch
             {
                 "Continental" => "mud-theme-primary",
                 "Humid Subtropical" => "mud-theme-warning",
                 "Mediterranean" or "Tropical" => "mud-theme-info",
                 "Desert" or "Semi-arid" or "Arid" => "mud-theme-error",
                 _ => string.Empty
-            };
-        }
+            }
+        };
     }
 
     private string GroupStyleFunc(GroupDefinition<USState> item)
     {
-        var key = item.Grouping.Key?.ToString();
         var indent = item.Level * 16; // 16px per level
         var borderWidth = Math.Max(1, 4 - item.Level); // Decrease border width with depth
 
@@ -254,67 +250,59 @@
         return style;
     }
 
-    private string GetBorderColor(GroupDefinition<USState> item)
+    private static string GetBorderColor(GroupDefinition<USState> item)
     {
         var key = item.Grouping.Key?.ToString();
 
-        // Primary level (Industry)
-        if (item.Title == "Primary Industry")
+        return item.Title switch
         {
-            return key switch
+            // Primary level (Industry)
+            "Primary Industry" => key switch
             {
                 "Healthcare" => "var(--mud-palette-primary)",
                 "Tech" => "var(--mud-palette-secondary)",
                 "Tourism" => "var(--mud-palette-info)",
                 _ => "var(--mud-palette-dark)"
-            };
-        }
-        else if (item.Title == "Region")
-        {
-            return key switch
+            },
+            "Region" => key switch
             {
                 "Northeast" or "Southeast" => "var(--mud-palette-warning)",
                 "West" or "Pacific" => "var(--mud-palette-success)",
                 "Midwest" => "var(--mud-palette-info)",
                 "Southwest" => "var(--mud-palette-error)",
                 _ => "var(--mud-palette-dark)"
-            };
-        }
-        else if (item.Title == "Climate")
-        {
-            return key switch
+            },
+            "Climate" => key switch
             {
                 "Continental" => "var(--mud-palette-primary)",
                 "Humid Subtropical" => "var(--mud-palette-warning)",
                 "Mediterranean" or "Tropical" => "var(--mud-palette-info)",
                 "Desert" or "Semi-arid" or "Arid" => "var(--mud-palette-error)",
                 _ => "var(--mud-palette-dark)"
-            };
-        }
-        else return "var(--mud-palette-dark)";
+            },
+            _ => "var(--mud-palette-dark)"
+        };
     }    
 
     private async Task ExpandAllGroupsAsync()
     {
-        if (dataGrid is not null)
-            await dataGrid!.ExpandAllGroupsAsync();
+        if (_dataGrid is not null)
+            await _dataGrid!.ExpandAllGroupsAsync();
     }
 
     private async Task CollapseAllGroupsAsync()
     {
-        if (dataGrid is not null)
-            await dataGrid.CollapseAllGroupsAsync();
+        if (_dataGrid is not null)
+            await _dataGrid.CollapseAllGroupsAsync();
     }
 
     private void CustomizeByGroupChanged(bool isChecked)
     {
         _customizeGroupBy = isChecked;
-        dataGrid?.GroupItems();
+        _dataGrid?.GroupItems();
     }
 
-    private record USState(int Id, string State, int Counties, int Population, string PrimaryIndustry, string Region, string Climate, int YearInducted);
-
-    private static List<USState> GetAllStates(string searchString, ICollection<SortDefinition<USState>> sortDefinitions)
+    private static List<USState> GetAllStates(string? searchString, ICollection<SortDefinition<USState>>? sortDefinitions)
     {
         List<USState> data =
         [
@@ -377,23 +365,32 @@
             foreach (var sort in sortDefinitions)
             {
                 orderedQuery = data.OrderByDirection(sort.Descending ? SortDirection.Descending : SortDirection.Ascending,
-                                                     o => GetPropertyValue(o, sort.SortBy));
+                                                     obj => GetPropertyValue(obj, sort.SortBy));
             }
             data = orderedQuery!.ToList();
         }
 
-        return
-            data.Where(x => x.State.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
-                                 x.PrimaryIndustry.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
-                                 x.YearInducted.ToString().Contains(searchString) ||
-                                 x.Climate.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
-                                 x.Region.Contains(searchString, StringComparison.OrdinalIgnoreCase)                           
-                           ).ToList();
+        return data.Where(x => MatchesSearch(x, searchString)).ToList();
     }
 
-    private static object? GetPropertyValue<T>(T obj, string propertyName)
+    private static bool MatchesSearch(USState obj, string? searchString)
     {
-        return typeof(T).GetProperty(propertyName)?.GetValue(obj);
+        if (string.IsNullOrEmpty(searchString))
+        {
+            return false;
+        }
+
+        return obj.State.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+               obj.PrimaryIndustry.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+               obj.YearInducted.ToString().Contains(searchString) ||
+               obj.Climate.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+               obj.Region.Contains(searchString, StringComparison.OrdinalIgnoreCase);
     }
 
+    private static object? GetPropertyValue<TT>(TT obj, string propertyName)
+    {
+        return typeof(TT).GetProperty(propertyName)?.GetValue(obj);
+    }
+
+    private record USState(int Id, string State, int Counties, int Population, string PrimaryIndustry, string Region, string Climate, int YearInducted);
 }
