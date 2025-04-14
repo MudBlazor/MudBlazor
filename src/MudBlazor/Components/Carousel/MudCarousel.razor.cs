@@ -18,6 +18,7 @@ namespace MudBlazor
         private bool _autoCycle = true;
         private Color _currentColor = Color.Inherit;
         private TimeSpan _cycleTimeout = TimeSpan.FromSeconds(5);
+        private bool _disposing;
 
         protected string Classname => new CssBuilder("mud-carousel")
             .AddClass($"mud-carousel-{(BulletsColor ?? _currentColor).ToDescriptionString()}")
@@ -334,6 +335,8 @@ namespace MudBlazor
 
             if (firstRender)
             {
+                // Prevent timer creation after or while disposal, which would result in a memory leak.
+                if (_disposing) return;
                 _timer = new Timer(TimerElapsed, null, AutoCycle ? AutoCycleTime : Timeout.InfiniteTimeSpan, AutoCycleTime);
             }
         }
@@ -347,6 +350,10 @@ namespace MudBlazor
 
         protected virtual async ValueTask DisposeAsyncCore()
         {
+            // Immediately sets disposing to true,
+            // so that timer creation on OnAfterRenderAsync does not happen after disposal.
+            _disposing = true;
+
             await StopTimerAsync();
 
             var timer = _timer;
