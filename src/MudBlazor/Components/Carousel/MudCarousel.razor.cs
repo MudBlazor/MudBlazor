@@ -293,7 +293,7 @@ namespace MudBlazor
         /// </summary>
         private ValueTask StartTimerAsync()
         {
-            if (AutoCycle)
+            if (AutoCycle && _disposing == false)
             {
                 _timer?.Change(AutoCycleTime, TimeSpan.Zero);
             }
