@@ -224,11 +224,20 @@ namespace MudBlazor.Charts
                     break;
 
                 case Justify.FlexEnd:
-                    var flexEndSpacing = groupSpacing * (numVerticalLines - 1);
-                    var endStartX = horizontalSpace - HorizontalStartSpace - HorizontalEndSpace - (numVerticalLines * _barGroupWidth);
+                    var offset = numGroups - 1;
+                    var xSpaces = numVerticalLines - 1;
+                    var endStartX = horizontalSpace - (totalGroupWidth + (xSpaces * groupSpacing) + (xSpaces * _barWidth)) + (offset * (_barGap / 2));
+
+                    centerOffset = numGroups switch
+                    {
+                        <= 2 => centerOffset + (offset * (_barGap / 2)),
+                        3 => _barGroupWidth * offset,
+                        _ => (_barGroupWidth * offset) + (_barWidth * (offset - 2) * 0.5)
+                    };
+
                     for (var i = 0; i < numVerticalLines; i++)
                     {
-                        positions[i] = endStartX - centerOffset + (i * groupSpacing) + (i * flexEndSpacing);
+                        positions[i] = endStartX + centerOffset + (i * groupSpacing) + (i * _barWidth) - (i * ((_barGap / 64) - (_barWidth / 64)));
                     }
                     break;
 
@@ -239,7 +248,8 @@ namespace MudBlazor.Charts
                     var halfGap = _barGap / 2;
                     var halfBar = _barWidth / 2;
                     var halfSpace = groupSpacing / 2;
-                    var shiftLeft = (spaces * halfBar) + (spaces * halfSpace);
+                    var leftShift = (spaces * halfBar) + (spaces * halfSpace);
+
                     centerOffset = numGroups switch
                     {
                         <= 2 => centerOffset,
@@ -251,14 +261,13 @@ namespace MudBlazor.Charts
 
                     for (var i = 0; i < numVerticalLines; i++)
                     {
-                        var positionX = centerStartX + centerOffset - shiftLeft + (offsets * halfGap) + (i * groupSpacing) + (i * _barWidth) + (i * halfGap * centerSpacing);
-
-                        positions[i] = positionX;
+                        positions[i] = centerStartX + centerOffset - leftShift + (offsets * halfGap) + (i * groupSpacing) + (i * _barWidth) + (i * halfGap * centerSpacing);
                     }
                     break;
 
                 case Justify.SpaceBetween:
                     var spacing = (horizontalSpace - _barGroupWidth - HorizontalEndSpace) / (numVerticalLines - 1);
+
                     for (var i = 0; i < numVerticalLines; i++)
                     {
                         positions[i] = numVerticalLines == 1 ? centerX : HorizontalStartSpace + centerOffset + (i * spacing);

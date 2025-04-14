@@ -27,9 +27,9 @@
 @code {
     private int _index = -1;
     private double _spacingRatio = 1.0;
-    private double _barWidthRatio = 0.20;
-    private double _innerGapRatio = 0.40;
-    private Justify _selectedJustify = Justify.Center;
+    private double _barWidthRatio = 1.0;
+    private double _innerGapRatio = 1.0;
+    private Justify _selectedJustify = Justify.FlexEnd;
     private List<ChartDataSet> _series = DataSet.Take(1).ToList();
     private int _dataPointCount = 3;
 
