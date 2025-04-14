@@ -15,10 +15,10 @@ namespace MudBlazor
     public partial class MudCarousel<TData> : MudBaseBindableItemsControl<MudCarouselItem, TData>, IAsyncDisposable
     {
         private Timer? _timer;
+        private bool _disposing;
         private bool _autoCycle = true;
         private Color _currentColor = Color.Inherit;
         private TimeSpan _cycleTimeout = TimeSpan.FromSeconds(5);
-        private bool _disposing;
 
         protected string Classname => new CssBuilder("mud-carousel")
             .AddClass($"mud-carousel-{(BulletsColor ?? _currentColor).ToDescriptionString()}")
@@ -293,7 +293,7 @@ namespace MudBlazor
         /// </summary>
         private ValueTask StartTimerAsync()
         {
-            if (AutoCycle && _disposing == false)
+            if (AutoCycle && !_disposing)
             {
                 _timer?.Change(AutoCycleTime, TimeSpan.Zero);
             }
