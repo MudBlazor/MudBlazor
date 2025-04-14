@@ -215,7 +215,7 @@ namespace MudBlazor.Charts
             switch (ChartOptions!.Justify)
             {
                 case Justify.FlexStart:
-                    var flexStartSpacing = ChartOptions.SpacingRatio / 2;
+                    var flexStartSpacing = ChartOptions.SeriesSpacingRatio / 2;
                     var startStartX = HorizontalStartSpace + HorizontalEndSpace;
                     for (var i = 0; i < numVerticalLines; i++)
                     {
@@ -233,7 +233,7 @@ namespace MudBlazor.Charts
                     break;
 
                 case Justify.Center:
-                    var centerSpacing = ChartOptions.SpacingRatio / 2;
+                    var centerSpacing = ChartOptions.SeriesSpacingRatio / 2;
                     var spaces = numVerticalLines - 1;
                     var offsets = numGroups - 1;
                     var halfGap = _barGap / 2;
@@ -291,7 +291,7 @@ namespace MudBlazor.Charts
 
             var spaceCount = groupCount - 1;
             var remainingWidth = horizontalSpace - HorizontalStartSpace - HorizontalEndSpace - ((_barGroupWidth + (_barWidth / 2)) * groupCount);
-            var spaceWidth = remainingWidth * ChartOptions!.SpacingRatio.EnsureRange(0.01, 1.0);
+            var spaceWidth = remainingWidth * ChartOptions!.SeriesSpacingRatio.EnsureRange(0.01, 1.0);
             var spaceBetweenGroups = spaceCount > 0 ? spaceWidth / spaceCount : 0;
 
             return (int)spaceBetweenGroups;
@@ -301,12 +301,12 @@ namespace MudBlazor.Charts
         {
             var seriesCount = _series.Count;
             var groupWidthRatio = ChartOptions!.BarWidthRatio.EnsureRange(0.01, 1.0);
-            var totalGapRatio = seriesCount > 1 ? ChartOptions!.BarInnerGapRatio * (seriesCount - 1) : 1;
+            var totalGapRatio = seriesCount > 1 ? ChartOptions!.BarSpacingRatio * (seriesCount - 1) : 1;
             var barWidthRelative = 1.0 / (seriesCount + totalGapRatio);
             var groupWidthRelative = tickWidth * groupWidthRatio;
 
             _barWidth = Math.Max(MinBarWidth, groupWidthRelative * barWidthRelative);
-            _barGap = seriesCount > 1 ? groupWidthRelative * barWidthRelative * ChartOptions!.BarInnerGapRatio : 0;
+            _barGap = seriesCount > 1 ? groupWidthRelative * barWidthRelative * ChartOptions!.BarSpacingRatio : 0;
             _barGroupWidth = Math.Max(MinBarWidth * seriesCount - 2, groupWidthRelative - _barWidth);
         }
 

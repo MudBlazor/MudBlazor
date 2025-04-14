@@ -7,29 +7,34 @@ namespace MudBlazor.Components.Chart;
 public class BarChartOptions : DefaultAxisChartOptions
 {
     /// <summary>
-    /// Controls how bar groups are distributed across the available space
+    /// Specifies how bar groups are horizontally justified within the chart area.
     /// </summary>
     public Justify Justify { get; set; } = Justify.SpaceEvenly;
 
     /// <summary>
-    /// Specifies the proportion of horizontal space the chart should occupy, ranging from 0.01 to 1.0.
+    /// Controls the amount of space between groups of bars (data sets).
+    /// This value, between 0.1 and 1.0 is multiplied against the available space to calculate spacing.
     /// </summary>
     /// <remarks>
-    /// The default value is <c>1</c> (100%).  
+    /// Defaults to <c>1</c> (100%). 
     /// This setting is only applicable when using <see cref="Justify.FlexStart"/>, <see cref="Justify.Center"/>, or <see cref="Justify.FlexEnd"/>.
     /// </remarks>
-    public double SpacingRatio { get; set; } = 1;
+    public double SeriesSpacingRatio { get; set; } = 1;
 
     /// <summary>
-    /// Defines the relative width of the bars compared to the total available space, with a value between 0.01 and 1.0.
+    /// Determines the proportion of horizontal space allocated to each bar group, relative to the available tick width.
+    /// Value should be between 0.01 and 1.0.
     /// </summary>
     /// <remarks>
-    /// This setting is only applicable when using <see cref="Justify.FlexStart"/>, <see cref="Justify.Center"/>, or <see cref="Justify.FlexEnd"/>.
+    /// Defaults to <c>0.20</c> (20%).
     /// </remarks>
-    public double BarWidthRatio { get; set; } = .20;
+    public double BarWidthRatio { get; set; } = 0.20;
 
     /// <summary>
     /// Defines the spacing between bars as a ratio of the group width, with a value between 0.0 and 1.0.
     /// </summary>
-    public double BarInnerGapRatio { get; set; } = 0.40;
+    /// <remarks>
+    /// Defaults to <c>0.10</c> (10%).
+    /// </remarks>
+    public double BarSpacingRatio { get; set; } = 0.10;
 }

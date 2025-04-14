@@ -19,7 +19,7 @@
     <MudBlazor.Components.Chart.MudChart ChartType="ChartType.Bar"
                                          ChartSeries="@_series.Select(s => new ChartDataSet { Label = s.Label, Data = s.Data.Values.Take(_dataPointCount).ToArray() }).ToList()"
                                          @bind-SelectedIndex="_index"
-                                         ChartOptions="@(new BarChartOptions() { XAxisLabels = _labels.Take(_dataPointCount).ToArray(), Justify = _selectedJustify, SpacingRatio = _spacingRatio, BarWidthRatio = _barWidthRatio, BarInnerGapRatio = _innerGapRatio })"
+                                         ChartOptions="@(new BarChartOptions() { XAxisLabels = _labels.Take(_dataPointCount).ToArray(), Justify = _selectedJustify, SeriesSpacingRatio = _spacingRatio, BarWidthRatio = _barWidthRatio, BarSpacingRatio = _innerGapRatio })"
                                          Width="100%"
                                          Height="350px" />
     <MudText Typo="Typo.h6">Selected portion of the chart: @_index</MudText>
