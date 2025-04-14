@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿@using System.Collections.Generic
+﻿@using System.Collections.Generic
 @using MudBlazor.Utilities
 @namespace MudBlazor.Docs.Examples
 
@@ -377,7 +377,7 @@
     {
         if (string.IsNullOrEmpty(searchString))
         {
-            return false;
+            return true;
         }
 
         return obj.State.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
