@@ -2152,6 +2152,7 @@ namespace MudBlazor
         /// <remarks>
         /// Applies when <see cref="Groupable"/> is <c>true</c>.
         /// </remarks>
+        [Obsolete("Use ExpandAllGroupsAsync instead")]
         public void ExpandAllGroups()
         {
             if (_groupDefinition != null && _groupable)
@@ -2180,6 +2181,7 @@ namespace MudBlazor
         /// <remarks>
         /// Applies when <see cref="Groupable"/> is <c>true</c>.
         /// </remarks>
+        [Obsolete("Use CollapseAllGroupsAsync instead")]
         public void CollapseAllGroups()
         {
             if (_groupDefinition != null && _groupable)

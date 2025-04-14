@@ -65,14 +65,14 @@
         Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
     }
 
-    void ExpandAllGroups()
+    Task ExpandAllGroups()
     {
-        dataGrid?.ExpandAllGroups();
+        return dataGrid?.ExpandAllGroupsAsync();
     }
 
-    void CollapseAllGroups()
+    Task CollapseAllGroups()
     {
-        dataGrid?.CollapseAllGroups();
+        return dataGrid?.CollapseAllGroupsAsync();
     }
 
     void CustomizeByGroupChanged(bool isChecked)

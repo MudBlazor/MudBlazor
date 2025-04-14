@@ -13,7 +13,7 @@ namespace MudBlazor
 {
     public partial class DataGridGroupRow<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase
     {
-        private bool _expanded;
+        internal bool _expanded = false;
 
         protected string GroupClassname => new CssBuilder("mud-table-cell")
             .AddClass("mud-datagrid-group")
@@ -26,14 +26,6 @@ namespace MudBlazor
             .AddStyle(GroupStyle)
             .AddStyle(GroupStyleFunc?.Invoke(GroupDefinition))
             .Build();
-
-        [Parameter]
-        [Category(CategoryTypes.DataGrid.Behavior)]
-        public bool Expanded
-        {
-            get => _expanded;
-            set => _expanded = value;
-        }
 
         [Parameter, EditorRequired]
         [Category(CategoryTypes.DataGrid.Grouping)]
@@ -81,22 +73,32 @@ namespace MudBlazor
         [Category(CategoryTypes.DataGrid.Appearance)]
         public string? StyleClass { get; set; }
 
+        protected override void OnParametersSet()
+        {
+            _expanded = GroupDefinition.Expanded;
+            base.OnParametersSet();
+        }
+
         internal void GroupExpandClick()
         {
             _expanded = !_expanded;
+            // update the expansion state for _groupExpansionsDict
+            // if it has a key we see if it differs from the definition Expanded State and update accordingly
+            // if it doesn't we add it if the new state doesn't match the definition
             if (Items != null)
             {
                 var key = new { GroupDefinition.Title, Items.Key };
                 if (DataGrid._groupExpansionsDict.ContainsKey(key))
                 {
-                    if (Expanded == GroupDefinition.Expanded)
+                    if (_expanded == GroupDefinition.Expanded)
                         DataGrid._groupExpansionsDict.Remove(key);
                     else
-                        DataGrid._groupExpansionsDict[key] = Expanded;
+                        DataGrid._groupExpansionsDict[key] = _expanded;
                 }
                 else
                 {
-                    DataGrid._groupExpansionsDict.TryAdd(key, Expanded);
+                    if (_expanded != GroupDefinition.Expanded)
+                        DataGrid._groupExpansionsDict.TryAdd(key, _expanded);
                 }
             }
             DataGrid._groupInitialExpanded = false;

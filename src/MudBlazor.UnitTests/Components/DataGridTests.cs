@@ -4633,7 +4633,7 @@ namespace MudBlazor.UnitTests.Components
 
             //Test the expanded group case
             comp.SetParametersAndRender(parameters => parameters.Add(p => p.Group, true));
-            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroups());
+            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroupsAsync());
 
             await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync(sortByColumnName, SortDirection.Ascending, x => x));
             before = dataGrid.FindComponent<MudInput<string>>();

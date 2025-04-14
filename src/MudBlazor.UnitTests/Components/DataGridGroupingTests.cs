@@ -20,7 +20,7 @@ namespace MudBlazor.UnitTests.Components
             // until a change happens this bool tracks whether GroupExpanded is applied.
             dataGrid.Instance._groupInitialExpanded = true;
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(7);
-            await comp.InvokeAsync(() => dataGrid.Instance.CollapseAllGroups());
+            await comp.InvokeAsync(() => dataGrid.Instance.CollapseAllGroupsAsync());
             // collapsing group rows counts
             dataGrid.Instance._groupInitialExpanded = false;
             dataGrid.Render();
@@ -40,7 +40,7 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedAsyncTest.Fruit>>();
 
             comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
-            await comp.InvokeAsync(() => dataGrid.Instance.CollapseAllGroups());
+            await comp.InvokeAsync(() => dataGrid.Instance.CollapseAllGroupsAsync());
             dataGrid.Render();
             // after all groups are collapsed
             comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(2));
@@ -58,7 +58,7 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedServerDataTest.Fruit>>();
 
             comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
-            await comp.InvokeAsync(() => dataGrid.Instance.CollapseAllGroups());
+            await comp.InvokeAsync(() => dataGrid.Instance.CollapseAllGroupsAsync());
             dataGrid.Render();
             // after all groups are collapsed
             comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(2));
@@ -75,7 +75,7 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedFalseTest.Fruit>>();
 
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
-            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroups());
+            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroupsAsync());
             dataGrid.Render();
             // after all groups are expanded
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(7);
@@ -93,7 +93,7 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedFalseAsyncTest.Fruit>>();
 
             comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(2));
-            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroups());
+            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroupsAsync());
             dataGrid.Render();
             // after all groups are expanded
             comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
@@ -111,7 +111,7 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedFalseServerDataTest.Fruit>>();
 
             comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(2));
-            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroups());
+            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroupsAsync());
             dataGrid.Render();
             // after all groups are expanded
             comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
@@ -128,10 +128,10 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupCollapseAllTest.TestObject>>();
 
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(3);
-            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroups());
+            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroupsAsync());
             comp.Render();
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(15);
-            await comp.InvokeAsync(() => dataGrid.Instance.CollapseAllGroups());
+            await comp.InvokeAsync(() => dataGrid.Instance.CollapseAllGroupsAsync());
             comp.Render();
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(3);
             comp.Instance.RefreshList();
@@ -147,13 +147,13 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandAllCollapseAllTest.Element>>();
 
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
-            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroups());
+            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroupsAsync());
             comp.Render();
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(14);
             await dataGrid.InvokeAsync(() => dataGrid.Instance.NavigateTo(Page.First));
             await dataGrid.InvokeAsync(() => dataGrid.Instance.NavigateTo(Page.Next));
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(18);
-            await comp.InvokeAsync(() => dataGrid.Instance.CollapseAllGroups());
+            await comp.InvokeAsync(() => dataGrid.Instance.CollapseAllGroupsAsync());
             await dataGrid.InvokeAsync(() => dataGrid.Instance.NavigateTo(Page.First));
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
             comp.Instance.RefreshList();
@@ -372,7 +372,7 @@ namespace MudBlazor.UnitTests.Components
             rows.Count.Should().Be(12, because: "1 header row + 10 data rows + 1 footer row");
             var cells = dataGrid.FindAll("td");
             cells.Count.Should().Be(10, because: "We have 10 data rows with one group collapsed");
-            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroups());
+            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroupsAsync());
             rows = dataGrid.FindAll("tr");
             rows.Count.Should().Be(32, because: "1 header row + 10 data rows + 1 footer row + 10 group rows + 10 footer group rows");
             cells = dataGrid.FindAll("td");
@@ -401,10 +401,10 @@ namespace MudBlazor.UnitTests.Components
             //get next page
             await comp.InvokeAsync(() => dataGrid.Instance.NavigateTo(Page.Next));
             comp.Render();
-            await comp.InvokeAsync(() => dataGrid.Instance.CollapseAllGroups());
+            await comp.InvokeAsync(() => dataGrid.Instance.CollapseAllGroupsAsync());
             cells = dataGrid.FindAll("td");
             cells.Count.Should().Be(10, because: "We have 10 data rows with one group collapsed from next page");
-            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroups());
+            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroupsAsync());
             cells = dataGrid.FindAll("td");
             cells.Count.Should().Be(30, because: "We have next 10 data rows with one group + 10*2 cells inside groups");
             //cells should have data from next page
@@ -461,33 +461,40 @@ namespace MudBlazor.UnitTests.Components
             var rows = component.FindComponents<DataGridGroupRow<DataGridGroupingMultiLevelTest.USState>>();
             rows.Count().Should().Be(15);
             var row = rows[0];
+            var defaultExpanded = row.Instance.GroupDefinition.Expanded;
             // Test the method
             // Act
-            row.Instance.Expanded.Should().BeTrue();
+            void GetCount(bool currExpanded)
+            {
+                // Whatever the expanded state is if it differs from the default it should be in the dictionary
+                dataGrid.Instance._groupExpansionsDict.Count().Should().Be(currExpanded != defaultExpanded ? 1 : 0);
+            }
+            ;
+            row.Instance._expanded.Should().BeTrue();
             row.Instance.GroupExpandClick();
 
             // Assert
-            row.WaitForAssertion(() => row.Instance.Expanded.Should().BeFalse());
-            dataGrid.Instance._groupExpansionsDict.Count().Should().Be(1);
+            row.WaitForAssertion(() => row.Instance._expanded.Should().BeFalse());
+            GetCount(false);
 
             // Act
             row.Instance.GroupExpandClick();
 
             // Assert
-            row.WaitForAssertion(() => row.Instance.Expanded.Should().BeTrue());
-            dataGrid.Instance._groupExpansionsDict.Count().Should().Be(0);
+            row.WaitForAssertion(() => row.Instance._expanded.Should().BeTrue());
+            GetCount(true);
+
             // Test the UI
             var expandButton = row.Find(".mud-datagrid-group-button");
             expandButton.Should().NotBeNull();
             expandButton.Click();
 
-            row.WaitForAssertion(() => row.Instance.Expanded.Should().BeFalse());
-            dataGrid.Instance._groupExpansionsDict.Count().Should().Be(1);
+            row.WaitForAssertion(() => row.Instance._expanded.Should().BeFalse());
+            GetCount(false);
             expandButton.Click();
 
-            row.WaitForAssertion(() => row.Instance.Expanded.Should().BeTrue());
-            dataGrid.Instance._groupExpansionsDict.Count().Should().Be(0);
-
+            row.WaitForAssertion(() => row.Instance._expanded.Should().BeTrue());
+            GetCount(true);
         }
 
         [Test]

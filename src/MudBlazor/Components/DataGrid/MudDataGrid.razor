@@ -172,8 +172,8 @@
                                                 <MudStack Row="true">
                                                     @if (Groupable)
                                                     {
-                                                        <MudButton OnClick="@CollapseAllGroups" Color="@Color.Primary">@Localizer[LanguageResource.MudDataGrid_CollapseAllGroups]</MudButton>
-                                                        <MudButton OnClick="@ExpandAllGroups" Color="@Color.Primary">@Localizer[LanguageResource.MudDataGrid_ExpandAllGroups]</MudButton>
+                                                        <MudButton OnClick="@CollapseAllGroupsAsync" Color="@Color.Primary">@Localizer[LanguageResource.MudDataGrid_CollapseAllGroups]</MudButton>
+                                                        <MudButton OnClick="@ExpandAllGroupsAsync" Color="@Color.Primary">@Localizer[LanguageResource.MudDataGrid_ExpandAllGroups]</MudButton>
                                                     }
                                                     <MudSpacer />
 
@@ -221,7 +221,7 @@
                                         }
                                         foreach (var g in groupDefinitions)
                                         {
-                                            <DataGridGroupRow T="T" Items="@g.Grouping" Expanded="@g.Expanded"
+                                            <DataGridGroupRow T="T" Items="@g.Grouping" 
                                                               GroupDefinition="@g"                                                             
                                                               GroupClass="@GroupClass"
                                                               GroupStyle="@GroupStyle"
@@ -323,8 +323,8 @@
             <MudMenuItem OnClick="@dataGrid.ShowColumnsPanel">@Localizer[LanguageResource.MudDataGrid_Columns]</MudMenuItem>
             @if (dataGrid.Groupable)
         {
-            <MudMenuItem OnClick="@dataGrid.ExpandAllGroups">@Localizer[LanguageResource.MudDataGrid_ExpandAllGroups]</MudMenuItem>
-            <MudMenuItem OnClick="@dataGrid.CollapseAllGroups">@Localizer[LanguageResource.MudDataGrid_CollapseAllGroups]</MudMenuItem>
+            <MudMenuItem OnClick="@dataGrid.ExpandAllGroupsAsync">@Localizer[LanguageResource.MudDataGrid_ExpandAllGroups]</MudMenuItem>
+            <MudMenuItem OnClick="@dataGrid.CollapseAllGroupsAsync">@Localizer[LanguageResource.MudDataGrid_CollapseAllGroups]</MudMenuItem>
         }
             @if (dataGrid.HasServerData)
         {
