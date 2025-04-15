@@ -16,7 +16,7 @@
     <MudSlider @bind-Value="_spacingRatio" Min="0" Max="1" Step="0.02">Spacing: @_spacingRatio.ToString("F2")</MudSlider>
     <MudSlider @bind-Value="_barWidthRatio" Min="0" Max="1" Step="0.02">Width: @_barWidthRatio.ToString("F2")</MudSlider>
     <MudSlider @bind-Value="_innerGapRatio" Min="0" Max="1" Step="0.02">Gap: @_innerGapRatio.ToString("F2")</MudSlider>
-    <MudBlazor.Components.Chart.MudChart ChartType="ChartType.Bar"
+    <MudBlazor.Components.Chart.MudChart ChartType="ChartType.Bar" CanHideSeries
                                          ChartSeries="@_series.Select(s => new ChartDataSet { Label = s.Label, Data = s.Data.Values.Take(_dataPointCount).ToArray() }).ToList()"
                                          @bind-SelectedIndex="_index"
                                          ChartOptions="@(new BarChartOptions() { XAxisLabels = _labels.Take(_dataPointCount).ToArray(), Justify = _selectedJustify, SeriesSpacingRatio = _spacingRatio, BarWidthRatio = _barWidthRatio, BarSpacingRatio = _innerGapRatio })"

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components.Web;
+﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Components.Chart;
 using MudBlazor.Extensions;
 
@@ -169,7 +170,7 @@ namespace MudBlazor.Charts
 
                 for (var j = 0; j < data.Values.Length && j < barGroupPositions.Length; j++)
                 {
-                    var dataValue = data.Values[j];
+                    var dataValue = series.Visible ? data.Values[j] : 0;
 
                     var groupStartX = barGroupPositions[j] - (_barGroupWidth / 2);
                     var gridValueX = groupStartX + (i * (_barWidth + _barGap)) + (_barWidth / 2);
@@ -193,10 +194,19 @@ namespace MudBlazor.Charts
                 var legend = new SvgLegend()
                 {
                     Index = i,
-                    Labels = series.Label
+                    Labels = series.Label,
+                    Visible = series.Visible,
+                    OnVisibilityChanged = EventCallback.Factory.Create<SvgLegend>(this, HandleLegendVisibilityChanged)
                 };
                 _legends.Add(legend);
             }
+        }
+
+        private void HandleLegendVisibilityChanged(SvgLegend legend)
+        {
+            var series = _series[legend.Index];
+            series.Visible = legend.Visible;
+            RebuildChart();
         }
 
         private double[] CalculateBarGroupPositions(double horizontalSpace, int columnsPerDataSet)
