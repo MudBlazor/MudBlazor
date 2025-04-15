@@ -199,94 +199,99 @@ namespace MudBlazor.Charts
             }
         }
 
-        private double[] CalculateBarGroupPositions(double horizontalSpace, int numVerticalLines)
+        private double[] CalculateBarGroupPositions(double horizontalSpace, int columnsPerDataSet)
         {
-            var numGroups = _series.Count;
+            var dataSetCount = _series.Count;
 
-            if (numGroups == 0) return [];
+            if (dataSetCount == 0) return [];
 
-            var positions = new double[numVerticalLines];
-
-            var totalGroupWidth = numGroups * _barGroupWidth;
-            var groupSpacing = Math.Max(numGroups == 1 ? 0 : _barGroupWidth, CalculateSpaceWidth(horizontalSpace, numVerticalLines));
+            var positions = new double[columnsPerDataSet];
+            var spaceBetweenGroups = Math.Max(dataSetCount == 1 ? 0 : _barGroupWidth, CalculateSpaceWidth(horizontalSpace, columnsPerDataSet));
             var centerOffset = _barGroupWidth / 2;
-            var centerX = HorizontalStartSpace + ((horizontalSpace - totalGroupWidth) / 2) + centerOffset;
+            var barGapOffset = _barGap / 2;
+            var spacingOffset = spaceBetweenGroups / 2;
+            var spacingRatioOffset = ChartOptions!.SeriesSpacingRatio / 2;
+            var totalSpaces = dataSetCount - 1;
+            var gapsPerDataSet = columnsPerDataSet - 1;
+            var hasSingleItemOrLine = dataSetCount <= 1 || columnsPerDataSet <= 1;
+            var startingPoint = centerOffset;
 
-            switch (ChartOptions!.Justify)
+            switch (ChartOptions.Justify)
             {
                 case Justify.FlexStart:
-                    var flexStartSpacing = ChartOptions.SeriesSpacingRatio / 2;
-                    var startStartX = HorizontalStartSpace + HorizontalEndSpace;
-                    for (var i = 0; i < numVerticalLines; i++)
+                    startingPoint += HorizontalStartSpace + HorizontalEndSpace;
+
+                    for (var i = 0; i < columnsPerDataSet; i++)
                     {
-                        positions[i] = startStartX + centerOffset + (i * groupSpacing) + (i * _barWidth) + (i * (_barGap / 2) * flexStartSpacing);
+                        positions[i] = startingPoint + i * (spaceBetweenGroups + _barWidth + barGapOffset * spacingRatioOffset);
                     }
                     break;
 
                 case Justify.FlexEnd:
-                    var offset = numGroups - 1;
-                    var xSpaces = numVerticalLines - 1;
-                    var endStartX = horizontalSpace - (totalGroupWidth + (xSpaces * groupSpacing) + (xSpaces * _barWidth)) + (offset * (_barGap / 2));
+                    startingPoint = horizontalSpace - (dataSetCount * _barGroupWidth + gapsPerDataSet * (spaceBetweenGroups + _barWidth)) + totalSpaces * barGapOffset;
 
-                    centerOffset = numGroups switch
+                    centerOffset = dataSetCount switch
                     {
-                        <= 2 => centerOffset + (offset * (_barGap / 2)),
-                        3 => _barGroupWidth * offset,
-                        _ => (_barGroupWidth * offset) + (_barWidth * (offset - 2) * 0.5)
+                        <= 2 => centerOffset + totalSpaces * barGapOffset,
+                        3 => _barGroupWidth * totalSpaces,
+                        _ => (_barGroupWidth * totalSpaces) + (_barWidth * (totalSpaces - 2) * 0.5)
                     };
 
-                    for (var i = 0; i < numVerticalLines; i++)
+                    for (var i = 0; i < columnsPerDataSet; i++)
                     {
-                        positions[i] = endStartX + centerOffset + (i * groupSpacing) + (i * _barWidth) - (i * ((_barGap / 64) - (_barWidth / 64)));
+                        positions[i] = startingPoint + centerOffset + i * (spaceBetweenGroups + _barWidth - ((_barGap - _barWidth) / 64));
                     }
                     break;
 
                 case Justify.Center:
-                    var centerSpacing = ChartOptions.SeriesSpacingRatio / 2;
-                    var spaces = numVerticalLines - 1;
-                    var offsets = numGroups - 1;
-                    var halfGap = _barGap / 2;
-                    var halfBar = _barWidth / 2;
-                    var halfSpace = groupSpacing / 2;
-                    var leftShift = (spaces * halfBar) + (spaces * halfSpace);
+                    var barWidthOffset = _barWidth / 2;
 
-                    centerOffset = numGroups switch
+                    startingPoint = HorizontalStartSpace + (horizontalSpace - dataSetCount * _barGroupWidth) / 2;
+
+                    centerOffset = dataSetCount switch
                     {
-                        <= 2 => centerOffset,
-                        3 => _barGroupWidth + halfBar,
-                        _ => ((_barGroupWidth + _barWidth) * (offsets / 2.0)) - halfBar
+                        <= 2 => _barGroupWidth / 2,
+                        3 => _barGroupWidth + barWidthOffset,
+                        _ => ((_barGroupWidth + _barWidth) * (totalSpaces / 2.0)) - barWidthOffset
                     };
+                    var leftShift = gapsPerDataSet * (barWidthOffset + spacingOffset);
 
-                    var centerStartX = HorizontalStartSpace + ((horizontalSpace - totalGroupWidth) / 2);
-
-                    for (var i = 0; i < numVerticalLines; i++)
+                    for (var i = 0; i < columnsPerDataSet; i++)
                     {
-                        positions[i] = centerStartX + centerOffset - leftShift + (offsets * halfGap) + (i * groupSpacing) + (i * _barWidth) + (i * halfGap * centerSpacing);
+                        positions[i] = startingPoint + centerOffset - leftShift + totalSpaces * barGapOffset + i * (spaceBetweenGroups + _barWidth + barGapOffset * spacingRatioOffset);
                     }
                     break;
 
                 case Justify.SpaceBetween:
-                    var spacing = (horizontalSpace - _barGroupWidth - HorizontalEndSpace) / (numVerticalLines - 1);
-
-                    for (var i = 0; i < numVerticalLines; i++)
+                    if (dataSetCount == 1 && columnsPerDataSet == 1)
                     {
-                        positions[i] = numVerticalLines == 1 ? centerX : HorizontalStartSpace + centerOffset + (i * spacing);
+                        positions[0] = HorizontalStartSpace + centerOffset + (horizontalSpace - _barGroupWidth) / 2;
+                        return positions;
+                    }
+
+                    var spacing = (horizontalSpace - _barGroupWidth) / gapsPerDataSet - (dataSetCount == 1 ? 0 : (_barWidth / gapsPerDataSet));
+
+                    for (var i = 0; i < columnsPerDataSet; i++)
+                    {
+                        positions[i] = startingPoint + HorizontalStartSpace + i * spacing;
                     }
                     break;
 
                 case Justify.SpaceAround:
-                    var unitSpaceAround = horizontalSpace / (numVerticalLines * 2);
-                    for (var i = 0; i < numVerticalLines; i++)
+                    var spaceAround = horizontalSpace / (columnsPerDataSet * 2);
+
+                    for (var i = 0; i < columnsPerDataSet; i++)
                     {
-                        positions[i] = numVerticalLines == 1 ? centerX : HorizontalStartSpace + unitSpaceAround + (i * (unitSpaceAround * 2));
+                        positions[i] = HorizontalStartSpace + spaceAround + i * (spaceAround * 2);
                     }
                     break;
 
                 case Justify.SpaceEvenly:
-                    var unitSpaceEvenly = horizontalSpace / (numVerticalLines + 1);
-                    for (var i = 0; i < numVerticalLines; i++)
+                    var evenSpace = horizontalSpace / (columnsPerDataSet + 1);
+
+                    for (var i = 0; i < columnsPerDataSet; i++)
                     {
-                        positions[i] = numVerticalLines == 1 ? centerX : HorizontalStartSpace + unitSpaceEvenly * (i + 1);
+                        positions[i] = HorizontalStartSpace + evenSpace * (i + 1);
                     }
                     break;
             }
