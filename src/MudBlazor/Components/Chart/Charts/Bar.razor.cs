@@ -324,6 +324,18 @@ namespace MudBlazor.Charts
         private void ComputeBarDimensions(double tickWidth)
         {
             var seriesCount = _series.Count;
+
+            var fixedWidth = ChartOptions?.FixedBarWidth;
+
+            if (fixedWidth.HasValue)
+            {
+                _barWidth = fixedWidth.Value;
+                _barGap = _barWidth * 0.25;
+                _barGroupWidth = (seriesCount * _barWidth) + ((seriesCount - 1) * _barGap);
+                ChartOptions!.Justify = Justify.SpaceBetween;
+                return;
+            }
+
             var groupWidthRatio = ChartOptions!.BarWidthRatio.EnsureRange(0.01, 1.0);
             var totalGapRatio = seriesCount > 1 ? ChartOptions!.BarSpacingRatio * (seriesCount - 1) : 1;
             var barWidthRelative = 1.0 / (seriesCount + totalGapRatio);

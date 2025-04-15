@@ -37,4 +37,12 @@ public class BarChartOptions : DefaultAxisChartOptions
     /// Defaults to <c>0.10</c> (10%).
     /// </remarks>
     public double BarSpacingRatio { get; set; } = 0.10;
+
+    /// <summary>
+    /// Specifies the width of the bar stoke.
+    /// </summary>
+    /// <remarks>
+    /// Overrides the <see cref="BarWidthRatio"/> and <see cref="BarSpacingRatio"/> setting.
+    /// </remarks>
+    public int? FixedBarWidth { get; set; }
 }
