@@ -85,3 +85,110 @@ window.serializeParameter = (data, spec) => {
 
     return res;
 };
+
+// mudGetSvgBBox is a helper function to get the size of an svgElement
+window.mudGetSvgBBox = (svgElement) => {
+    if (svgElement == null) return null;
+
+    const bbox = svgElement.getBBox();
+    return {
+        x: bbox.x,
+        y: bbox.y,
+        width: bbox.width,
+        height: bbox.height
+    };
+};
+
+// mudObserveElementSize is a helper function to observe the size of an element and notify a .NET reference.
+// It will automatically unobserve when the element is removed from the DOM.
+// The notification will be throttled to at most once every debounceMillis (defaults to 200ms).
+window.mudObserveElementSize = (dotNetReference, element, functionName = 'OnElementSizeChanged', debounceMillis = 200) => {
+    if (!element) return;
+
+    let lastNotifiedTime = 0;
+    let scheduledCall = null;
+
+    // Throttled notification function.
+    const throttledNotify = (width, height) => {
+        const timestamp = Date.now();
+        const timeSinceLast = timestamp - lastNotifiedTime;
+        if (timeSinceLast >= debounceMillis) {
+            // Enough time has passed, notify immediately.
+            lastNotifiedTime = timestamp;
+            try {
+                dotNetReference.invokeMethodAsync(functionName, { width, height, timestamp });
+            }
+            catch (error) {
+                this.logger("[MudBlazor] Error in mudObserveElementSize:", { error });
+            }
+        } else {
+            // Otherwise, schedule a notification after the remaining delay.
+            if (scheduledCall !== null) {
+                clearTimeout(scheduledCall);
+            }
+            scheduledCall = setTimeout(() => {
+                lastNotifiedTime = Date.now();
+                scheduledCall = null;
+                try {
+                    dotNetReference.invokeMethodAsync(functionName, { width, height, timestamp });
+                }
+                catch (error) {
+                    this.logger("[MudBlazor] Error in mudObserveElementSize:", { error });
+                }
+            }, debounceMillis - timeSinceLast);
+        }
+    };
+
+    // Create the ResizeObserver to notify on size changes.
+    const resizeObserver = new ResizeObserver(entries => {
+        if (element.isConnected === false) { return; } // Element is no longer in the DOM.
+
+        // Use the last entry's contentRect (or element's client dimensions).
+        let width = element.clientWidth;
+        let height = element.clientHeight;
+        for (const entry of entries) {
+            width = entry.contentRect.width;
+            height = entry.contentRect.height;
+        }
+
+        // Convert the values to integers using Math.floor.
+        width = Math.floor(width);
+        height = Math.floor(height);
+
+        throttledNotify(width, height);
+    });
+    resizeObserver.observe(element);
+
+    // If the element has a parent, set up a MutationObserver to detect its removal.
+    let mutationObserver = null;
+    const parent = element.parentNode;
+    if (parent) {
+        mutationObserver = new MutationObserver(mutations => {
+            for (const mutation of mutations) {
+                for (const removedNode of mutation.removedNodes) {
+                    if (removedNode === element) {
+                        cleanup();
+                    }
+                }
+            }
+        });
+        mutationObserver.observe(parent, { childList: true });
+    }
+
+    // Cleanup function disconnects both observers and clears any scheduled notifications.
+    function cleanup() {
+        resizeObserver.disconnect();
+        if (mutationObserver) {
+            mutationObserver.disconnect();
+        }
+        if (scheduledCall !== null) {
+            clearTimeout(scheduledCall);
+        }
+    }
+
+    // Return the current size of the element.
+    return {
+        width: element.clientWidth,
+        height: element.clientHeight
+    };
+};

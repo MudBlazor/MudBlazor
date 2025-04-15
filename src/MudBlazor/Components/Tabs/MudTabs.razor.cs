@@ -63,7 +63,8 @@ namespace MudBlazor
         /// Uses rounded corners on the tab's edges.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="MudGlobal.Rounded" />.
+        /// Defaults to <c>false</c>.
+        /// Can be overridden by <see cref="MudGlobal.Rounded"/>
         /// When <c>true</c>, the <c>border-radius</c> style is set to the theme's default value.
         /// </remarks>
         [Parameter]
@@ -768,8 +769,8 @@ namespace MudBlazor
             _sliderSize = GetRelevantSize(ActivePanel.PanelRef);
         }
 
-        private bool IsSliderPositionDetermined => _activePanelIndex > 0 && _sliderPosition > 0 ||
-                                                   _activePanelIndex <= 0;
+        private bool IsSliderPositionDetermined => (_activePanelIndex > 0 && _sliderPosition > 0) ||
+                                                   IsFirstVisiblePanel(ActivePanel);
 
         private void GetTabBarContentSize() => _tabBarContentSize = GetRelevantSize(_tabsContentSize);
 
@@ -814,6 +815,24 @@ namespace MudBlazor
         }
 
         private double GetPanelLength(MudTabPanel? panel) => panel == null ? 0.0 : GetRelevantSize(panel.PanelRef);
+
+        private bool IsFirstVisiblePanel(MudTabPanel? activePanel)
+        {
+            foreach (var panel in _panels)
+            {
+                if (activePanel == panel)
+                {
+                    return true;
+                }
+
+                if (panel.Visible)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
 
         #endregion
 

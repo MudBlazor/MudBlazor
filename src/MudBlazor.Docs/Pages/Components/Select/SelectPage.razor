@@ -78,6 +78,37 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Dynamic Sizing">
+                <Description>
+                    The <CodeInline>MudSelect</CodeInline> component provides dynamic sizing capabilities through the <CodeInline>FullWidth</CodeInline> and <CodeInline>FitContent</CodeInline> parameters, allowing it to adapt to different layout needs:
+                    <MudStack>
+                        <MudBadge Class="ml-4" Color="Color.Primary" Origin="Origin.CenterLeft" Dot Bordered>
+                            <div class="pl-2">
+                                Default Behavior - <CodeInline>FullWidth=False</CodeInline>: The component expands to fill the available space within its container, adjusting dynamically based on its surroundings.
+                            </div>
+                        </MudBadge>
+                        <MudBadge Class="ml-4" Color="Color.Primary" Origin="Origin.CenterLeft" Dot Bordered>
+                            <div class="pl-2">
+                                Full-Width Mode - <CodeInline>FullWidth=True</CodeInline>: Forces the component to stretch and occupy 100% of its parent container’s width.
+                            </div>
+                        </MudBadge>
+                        <MudBadge Class="ml-4" Color="Color.Primary" Origin="Origin.CenterLeft" Dot Bordered>
+                            <div class="pl-2">
+                                Fit-Content Mode - <CodeInline>FitContent=True</CodeInline>: Instead of expanding, the component adjusts its width to fit only the necessary space required for its content.
+                            </div>
+                        </MudBadge>
+                    </MudStack>
+                    <MudAlert Class="mt-4" Severity="Severity.Info">
+                        Note: When using FitContent, the width of the select component can depend on the Placeholder, Label, Adornment, and Clearable properties.
+                    </MudAlert>
+                </Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="@nameof(SelectFitContentExample)">
+                <SelectFitContentExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Value presentation">
                 <Description>
                     Select uses the render fragments you specify for the items to display the selected value (if any). If you don't specify render fragments, the value will be displayed as text. Also, if you have render fragments

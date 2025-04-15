@@ -53,6 +53,14 @@ namespace MudBlazor
         /// Defaults to <c>false</c>.
         /// </remarks>
         public bool XAxisLines { get; set; }
+
+        /// <summary>
+        /// Shows zero point on vertical axis.
+        /// Only takes effect when the <see cref="MudChart"/> type is <see cref="ChartType.Line"/> or <see cref="MudTimeSeriesChartBase" /> is used.
+        /// <remarks>
+        /// Defaults to <c>false</c>
+        /// </remarks>
+        /// </summary>
         public bool YAxisRequireZeroPoint { get; set; }
 
         /// <summary>
@@ -112,7 +120,7 @@ namespace MudBlazor
         public YAxisLabelPosition YAxisLabelPosition { get; set; } = YAxisLabelPosition.Left;
 
         /// <summary>
-        /// Enables tooltips for values in a <see cref="ChartType.HeatMap"/>
+        /// Enables tooltips for values
         /// Defaults to true
         /// </summary>
         public bool ShowToolTips { get; set; } = true;
@@ -135,5 +143,7 @@ namespace MudBlazor
         /// Defaults to "F2"
         /// </summary>
         public string ValueFormatString { get; set; } = "F2";
+
+        public string DefaultDataMarkerTooltipTitleFormat { get; set; } = "{{Y_VALUE}} - {{X_VALUE}}";
     }
 }

@@ -38,5 +38,25 @@ namespace MudBlazor
         /// The offset applied to the <see cref="StrokeDashArray"/>.
         /// </summary>
         public double StrokeDashOffset { get; set; }
+
+        /// <summary>
+        /// The label text for on hover.
+        /// </summary>
+        public string LabelXValue { get; set; } = string.Empty;
+
+        /// <summary>
+        /// The label text for on hover.
+        /// </summary>
+        public string LabelYValue { get; set; } = string.Empty;
+
+        /// <summary>
+        /// The label X position for on hover.
+        /// </summary>
+        public double LabelX { get; set; }
+
+        /// <summary>
+        /// The label Y position for on hover.
+        /// </summary>
+        public double LabelY { get; set; }
     }
 }

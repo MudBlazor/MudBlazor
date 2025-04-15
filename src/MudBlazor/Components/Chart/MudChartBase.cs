@@ -22,6 +22,13 @@ public abstract class MudChartBase : MudComponentBase
     public ChartOptions ChartOptions { get; set; } = new();
 
     /// <summary>
+    /// Display options for axis-based charts.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Chart.Appearance)]
+    public AxisChartOptions AxisChartOptions { get; set; } = new();
+
+    /// <summary>
     /// The custom graphics within this chart.
     /// </summary>
     [Parameter]
@@ -124,14 +131,6 @@ public abstract class MudChartBase : MudComponentBase
     [Parameter]
     [Category(CategoryTypes.Chart.Behavior)]
     public EventCallback<int> SelectedIndexChanged { get; set; }
-
-    protected string ToS(double d, string? format = null)
-    {
-        if (string.IsNullOrEmpty(format))
-            return d.ToString(CultureInfo.InvariantCulture);
-
-        return d.ToString(format);
-    }
 
     /// <summary>
     /// Allows series to be hidden when <see cref="ChartType"/> is <see cref="ChartType.Line"/>.

@@ -12,7 +12,7 @@
         }
         <MudIconButton 
             Class="ma-n3 pa-1"
-            Icon="@(context.OpenHierarchies.Contains(context.Item) ?  OpenIcon : ClosedIcon)" 
+            Icon="@GetGroupIcon(context)" 
             OnClick="context.Actions.ToggleHierarchyVisibilityForItemAsync"
             Size="@IconSize"
             Disabled="ButtonDisabledFunc.Invoke(context.Item)"/>

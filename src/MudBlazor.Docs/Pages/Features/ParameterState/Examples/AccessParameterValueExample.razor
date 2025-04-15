@@ -1,0 +1,44 @@
+﻿@using MudBlazor.Extensions
+
+@namespace MudBlazor.Docs.Examples
+
+<MudContainer Class="mt-8" Style="justify-items: center">
+    <MudPaper Class="mt-4 px-8">
+        <MudStepper @ref="_stepper" NonLinear Class="mr-4">
+            <ChildContent>
+                <MudStep Title="Step 1" CompletedChanged="@(() => StateHasChanged())">Introductory Step</MudStep>
+                <MudStep Title="Step 2" CompletedChanged="@(() => StateHasChanged())">More Details</MudStep>
+                <MudStep Title="Step 3" CompletedChanged="@(() => StateHasChanged())">Wrap things up</MudStep>
+            </ChildContent>
+        </MudStepper>
+
+        @if (_stepper is not null)
+        {
+            <MudStack Row Class="justify-center">
+                @foreach (var step in _stepper.Steps)
+                {
+                    @*Using the GetState extension on the component reference*@
+                    <MudChip T="string" Color="@GetColor(step.GetState(s => s.Completed))">
+                        @step.Title
+                    </MudChip>
+                }
+            </MudStack>
+
+            <MudStack Row Class="justify-center">
+                @foreach (var step in _stepper.Steps)
+                {
+                    @*Directly accessing the property via component reference*@
+                    <MudChip T="string" Color="@GetColor(step.Completed)">
+                        @step.Title
+                    </MudChip>
+                }
+            </MudStack>
+        }
+    </MudPaper>
+</MudContainer>
+
+@code {
+    private MudStepper _stepper = null!;
+
+    private Color GetColor(bool completed) => completed ? Color.Success : Color.Error;
+}
