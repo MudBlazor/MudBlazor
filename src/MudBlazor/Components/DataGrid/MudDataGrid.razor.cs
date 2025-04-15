@@ -30,7 +30,6 @@ namespace MudBlazor
         private bool _isFirstRendered = false;
         private bool _filtersMenuVisible = false;
         private bool _columnsPanelVisible = false;
-        private bool _expandSingleRow = false;
         internal HashSet<T> _openHierarchies = [];
         private string _columnsPanelSearch = string.Empty;
         private MudDropContainer<Column<T>> _dropContainer;
@@ -46,6 +45,7 @@ namespace MudBlazor
 
         private readonly ParameterState<T> _selectedItemState;
         private readonly ParameterState<HashSet<T>> _selectedItemsState;
+        private readonly ParameterState<bool> _expandSingleRowState;
 
         public MudDataGrid()
         {
@@ -61,6 +61,10 @@ namespace MudBlazor
                 .WithParameter(() => SelectedItems)
                 .WithEventCallback(() => SelectedItemsChanged)
                 .WithChangeHandler(OnSelectedItemsChanged);
+
+            _expandSingleRowState = registerScope.RegisterParameter<bool>(nameof(ExpandSingleRow))
+                .WithParameter(() => ExpandSingleRow)
+                .WithChangeHandler(OnExpandSingleRowChanged);
         }
 
         protected string Classname =>
@@ -1071,24 +1075,7 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>Defaults to <c>false</c>.</remarks>
         [Parameter]
-        public bool ExpandSingleRow
-        {
-            get => _expandSingleRow;
-            set
-            {
-                if (_expandSingleRow == value) return;
-                // if users changes the value this will update the open hierarchies to only include one
-                _expandSingleRow = value;
-
-                if (_openHierarchies.Count > 0)
-                {
-                    var item = _openHierarchies.First();
-                    _openHierarchies.Clear();
-                    _openHierarchies.Add(item);
-                    InvokeAsync(StateHasChanged);
-                }
-            }
-        }
+        public bool ExpandSingleRow { get; set; }
 
         /// <summary>
         /// The comparer used to determine row selection.
@@ -1307,6 +1294,18 @@ namespace MudBlazor
             else
             {
                 Selection = args.Value;
+            }
+        }
+
+        private void OnExpandSingleRowChanged(ParameterChangedEventArgs<bool> args)
+        {
+            // If user changes the ExpandSingleRow parameter, clear all open hierarchies except the first;
+            if (_openHierarchies.Count > 0)
+            {
+                var item = _openHierarchies.First();
+                _openHierarchies.Clear();
+                _openHierarchies.Add(item);
+                InvokeAsync(StateHasChanged);
             }
         }
 
