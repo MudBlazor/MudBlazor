@@ -74,7 +74,9 @@ public abstract class MudChartBase<TOptions> : MudComponentBase where TOptions :
     /// <summary>
     /// Make the chart fill the parent
     /// </summary>
-    public bool MatchBoundsToSize { get; set; } = true;
+    [Parameter]
+    [Category(CategoryTypes.Chart.Appearance)]
+    public bool MatchBoundsToSize { get; set; }
 
     /// <summary>
     /// The location of series labels.
