@@ -48,7 +48,7 @@
             var color = MudChartParent?.ChartOptions.ChartPalette.GetValue(bar.Index % MudChartParent.ChartOptions.ChartPalette.Length);
             
             <path class="mud-chart-bar"
-                  @onclick="() => SelectedIndex = bar.Index"
+                  @onclick="async () => await SetSelectedIndexAsync(bar.Index)"
                   stroke="@color"
                   stroke-width="@_barWidthStroke.ToString(CultureInfo.InvariantCulture)"
                   fill="none"
