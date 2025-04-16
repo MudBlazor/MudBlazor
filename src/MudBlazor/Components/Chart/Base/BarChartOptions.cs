@@ -10,7 +10,7 @@ public class BarChartOptions : DefaultAxisChartOptions
     /// <summary>
     /// Specifies how bar groups are horizontally justified within the chart area.
     /// </summary>
-    public Justify Justify { get; set; } = Justify.SpaceEvenly;
+    public Justify Justify { get; set; } = Justify.SpaceBetween;
 
     /// <summary>
     /// Controls the amount of space between groups of bars (data sets).

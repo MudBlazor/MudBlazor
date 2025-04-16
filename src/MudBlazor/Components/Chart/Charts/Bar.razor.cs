@@ -332,7 +332,6 @@ namespace MudBlazor.Charts
                 _barWidth = fixedWidth.Value;
                 _barGap = _barWidth * 0.25;
                 _barGroupWidth = (seriesCount * _barWidth) + ((seriesCount - 1) * _barGap);
-                ChartOptions!.Justify = Justify.SpaceBetween;
                 return;
             }
 

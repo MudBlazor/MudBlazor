@@ -78,26 +78,9 @@ namespace MudBlazor.Charts
                 gridYUnits = 20;
 
             // Determine the number of columns (i.e. vertical grid lines)
-            numVerticalLines = _series.Any() ? _series.Max(series => series.Data.Values.Length) : 0;
+            numVerticalLines = _series.Count != 0 ? _series.Max(series => series.Data.Values.Length) : 0;
 
-            _barWidthStroke = _barWidth = (_boundWidth - HorizontalStartSpace - HorizontalEndSpace) / (numVerticalLines > 1 ? (numVerticalLines) : 1) * ChartOptions!.BarWidthRatio;
-
-            if (ChartOptions!.BarWidthRatio >= 0.9999)
-            {
-                // Optimisation to remove gaps between bars due to floating point rounding causing gaps to be visible between bars.
-                // This givs a very slight overlap which isn't visible without purposeful inspection and zooming.
-                _barWidthStroke += BarOverlapAmountFix;
-            }
-            else
-            {
-                var roundedBarWidth = Math.Round(_barWidth, 0);
-                if (roundedBarWidth * numVerticalLines < (_boundWidth - HorizontalStartSpace - HorizontalEndSpace))
-                {
-                    _barWidthStroke = _barWidth = roundedBarWidth;
-                }
-            }
-
-            _barWidthStroke = Math.Max(_barWidthStroke, MinBarWidth);
+            CalculateStrokeWidth(numVerticalLines);
 
             // Compute the stacked total for each column
             var stackedTotals = new double[numVerticalLines];
@@ -120,6 +103,35 @@ namespace MudBlazor.Charts
                 var lowestHorizontalLine = Math.Min((int)Math.Floor(0 / gridYUnits), 0);
                 var highestHorizontalLine = Math.Max((int)Math.Ceiling(maxY / gridYUnits), 0);
                 numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
+            }
+        }
+
+        private void CalculateStrokeWidth(int numVerticalLines)
+        {
+            if (ChartOptions?.FixedBarWidth is not null)
+            {
+                _barWidthStroke = _barWidth = ChartOptions.FixedBarWidth.Value;
+                ChartOptions!.BarWidthRatio = 1;
+                return;
+            }
+
+            var barWidth = Math.Round((_boundWidth - HorizontalStartSpace - HorizontalEndSpace) / (numVerticalLines > 1 ? (numVerticalLines) : 1), 1);
+
+            _barWidthStroke = _barWidth = Math.Max(MinBarWidth, barWidth * ChartOptions!.BarWidthRatio);
+
+            if (ChartOptions!.BarWidthRatio >= 0.9999)
+            {
+                // Optimisation to remove gaps between bars due to floating point rounding causing gaps to be visible between bars.
+                // This givs a very slight overlap which isn't visible without purposeful inspection and zooming.
+                _barWidthStroke += BarOverlapAmountFix;
+            }
+            else
+            {
+                var roundedBarWidth = Math.Round(_barWidth, 0);
+                if (roundedBarWidth * numVerticalLines < (_boundWidth - HorizontalStartSpace - HorizontalEndSpace))
+                {
+                    _barWidthStroke = _barWidth = roundedBarWidth;
+                }
             }
         }
 

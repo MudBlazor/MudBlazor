@@ -1,33 +1,30 @@
 ﻿@using MudBlazor
 @using MudBlazor.Components.Chart
 
-<MudStack Spacing="2">
-    <MudStack Spacing="4" Row>
-        <MudSelect T="ChartType" Label="Chart Type" @bind-Value="_chartType" Dense FitContent>
+<MudStack Spacing="2" AlignItems="AlignItems.Center">
+    <MudStack Class="my-2" Spacing="4" Row>
+        <MudSelect T="ChartType" Label="Chart Type" @bind-Value="_chartType" Dense FitContent Variant="Variant.Outlined" Margin="Margin.Dense">
             @foreach (ChartType chartType in Enum.GetValues(typeof(ChartType)))
             {
                 <MudSelectItem Value="chartType">@chartType</MudSelectItem>
             }
         </MudSelect>
-        <MudSelect T="Justify" Label="Justify Type" @bind-Value="_selectedJustify" Dense FitContent>
+        <MudSelect T="Justify" Label="Justify Type" @bind-Value="_selectedJustify" Dense FitContent Variant="Variant.Outlined" Margin="Margin.Dense">
             @foreach (Justify justify in Enum.GetValues(typeof(Justify)))
             {
                 <MudSelectItem Value="justify">@justify</MudSelectItem>
             }
         </MudSelect>
-        <MudCheckBox @bind-Value="_matchParentSize" Label="Match Parent Size" />
-        <MudCheckBox @bind-Value="_canHideSeries" Label="Can Hide Series" />
     </MudStack>
-    <MudStack Row>
+    <MudStack Class="my-2" Row>
         <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => _series = DataSet.Take(_series.Count + 1).ToList())">Add Country</MudButton>
         <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => { if (_series.Count > 1) _series.Remove(_series.Last()); })">Remove Country</MudButton>
         <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="@(() => _dataPointCount = Math.Min(_dataPointCount + 1, 12))">Add Month</MudButton>
         <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="@(() => _dataPointCount = Math.Max(_dataPointCount - 1, 1))">Remove Month</MudButton>
     </MudStack>
     <MudStack Row>
-        <MudSlider @bind-Value="_spacingRatio" Min="0" Max="1" Step="0.02">Spacing: @_spacingRatio.ToString("F2")</MudSlider>
-        <MudSlider @bind-Value="_barWidthRatio" Min="0" Max="1" Step="0.02">Width: @_barWidthRatio.ToString("F2")</MudSlider>
-        <MudSlider @bind-Value="_innerGapRatio" Min="0" Max="1" Step="0.02">Gap: @_innerGapRatio.ToString("F2")</MudSlider>
+        <MudCheckBox @bind-Value="_matchParentSize" Label="Match Parent Size" Color="Color.Tertiary" />
+        <MudCheckBox @bind-Value="_canHideSeries" Label="Can Hide Series" Color="Color.Tertiary"/>
     </MudStack>
     <MudBlazor.Components.Chart.MudChart ChartType="_chartType" MatchBoundsToSize="_matchParentSize" CanHideSeries="_canHideSeries"
                                          ChartSeries="@_series.Select(s => new ChartDataSet { Label = s.Label, Data = s.Data.Values.Take(_dataPointCount).ToArray() }).ToList()"
@@ -37,6 +34,12 @@
                                          Height="350px" />
     <MudText Typo="Typo.h6">Selected portion of the chart: @_index</MudText>
 </MudStack>
+<MudStack Class="my-2" Row>
+    <MudSlider @bind-Value="_spacingRatio" Min="0" Max="1" Step="0.02">Spacing: @_spacingRatio.ToString("F2")</MudSlider>
+    <MudSlider @bind-Value="_barWidthRatio" Min="0" Max="1" Step="0.02">Width: @_barWidthRatio.ToString("F2")</MudSlider>
+    <MudSlider @bind-Value="_innerGapRatio" Min="0" Max="1" Step="0.02">Gap: @_innerGapRatio.ToString("F2")</MudSlider>
+</MudStack>
+
 @code {
     private int _index = -1;
     private bool _canHideSeries;
