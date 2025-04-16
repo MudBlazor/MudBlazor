@@ -21,6 +21,10 @@
                                                              ChartOptions="barOptions" 
                                                              @bind-SelectedIndex:get="this.SelectedIndexState.Value" 
                                                              @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
+        (ChartType.StackedBar, StackedBarChartOptions stackedBarOptions) => @<StackedBar ChartSeries="@ChartSeries" 
+                                                                            ChartOptions="stackedBarOptions" 
+                                                                            @bind-SelectedIndex:get="this.SelectedIndexState.Value" 
+                                                                            @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
         _ => throw new NotImplementedException($"{ChartType} chart is not supported")
     };
 

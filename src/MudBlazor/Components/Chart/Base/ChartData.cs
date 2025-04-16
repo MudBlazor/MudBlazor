@@ -20,6 +20,12 @@ public class ChartData
 
     public double[] Values => _values;
 
+    public double this[int index]
+    {
+        get => _values[index];
+        set => _values[index] = value;
+    }
+
     public static implicit operator ChartData(double value) => new(value);
 
     public static implicit operator ChartData(double[] values) => new(values);

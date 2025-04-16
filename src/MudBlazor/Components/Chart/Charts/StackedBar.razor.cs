@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Components.Web;
+﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Components.Chart;
 using MudBlazor.Extensions;
 
 #nullable enable
@@ -12,7 +14,7 @@ namespace MudBlazor.Charts
     /// <seealso cref="Line"/>
     /// <seealso cref="Pie"/>
     /// <seealso cref="TimeSeries"/>
-    partial class StackedBar : MudCategoryAxisChartBase
+    partial class StackedBar : MudAxisChartBase<StackedBarChartOptions>
     {
         private const double BarOverlapAmountFix = 0.5; // used to trigger slight overlap so the bars don't have gaps due to floating point rounding
 
@@ -23,12 +25,14 @@ namespace MudBlazor.Charts
         private readonly List<SvgText> _verticalValues = [];
 
         private readonly List<SvgLegend> _legends = [];
-        private List<ChartSeries> _series = [];
+        private List<ChartDataSet> _series = [];
 
         private readonly List<SvgPath> _bars = [];
         private double _barWidth;
         private double _barWidthStroke;
         private SvgPath? _hoveredBar;
+
+        private const double MinBarWidth = 4;
 
         /// <inheritdoc />
         protected override void OnParametersSet()
@@ -44,14 +48,14 @@ namespace MudBlazor.Charts
                 _series = MudChartParent.ChartSeries;
 
             // ensure the stacked bar width ratio is within the valid range
-            AxisChartOptions.StackedBarWidthRatio = AxisChartOptions.StackedBarWidthRatio.EnsureRange(0.1, 1);
+            ChartOptions!.BarWidthRatio = ChartOptions.BarWidthRatio.EnsureRange(0.01, 1);
 
             SetBounds();
             ComputeStackedUnitsAndNumberOfLines(out var _, out var gridYUnits, out var numHorizontalLines, out var numVerticalLines);
 
             // Calculate spacing – note the horizontal space is computed so that the vertical grid lines line up
-            double horizontalSpace = Math.Round((_boundWidth - HorizontalStartSpace - HorizontalEndSpace) / (numVerticalLines > 1 ? (numVerticalLines) : 1), 1);
-            double verticalSpace = (_boundHeight - VerticalStartSpace - VerticalEndSpace) / (numHorizontalLines > 1 ? (numHorizontalLines) : 1);
+            var horizontalSpace = Math.Round((_boundWidth - HorizontalStartSpace - HorizontalEndSpace) / (numVerticalLines > 1 ? (numVerticalLines) : 1), 1);
+            var verticalSpace = (_boundHeight - VerticalStartSpace - VerticalEndSpace) / (numHorizontalLines > 1 ? (numHorizontalLines) : 1);
 
             GenerateHorizontalGridLines(numHorizontalLines, gridYUnits, verticalSpace);
             GenerateVerticalGridLines(numVerticalLines, horizontalSpace);
@@ -69,16 +73,16 @@ namespace MudBlazor.Charts
             out int numVerticalLines)
         {
             gridXUnits = 30;
-            gridYUnits = MudChartParent?.ChartOptions.YAxisTicks ?? 20;
+            gridYUnits = ChartOptions?.YAxisTicks ?? 20;
             if (gridYUnits <= 0)
                 gridYUnits = 20;
 
             // Determine the number of columns (i.e. vertical grid lines)
-            numVerticalLines = _series.Any() ? _series.Max(series => series.Data.Length) : 0;
+            numVerticalLines = _series.Any() ? _series.Max(series => series.Data.Values.Length) : 0;
 
-            _barWidthStroke = _barWidth = (_boundWidth - HorizontalStartSpace - HorizontalEndSpace) / (numVerticalLines > 1 ? (numVerticalLines) : 1) * AxisChartOptions.StackedBarWidthRatio;
+            _barWidthStroke = _barWidth = (_boundWidth - HorizontalStartSpace - HorizontalEndSpace) / (numVerticalLines > 1 ? (numVerticalLines) : 1) * ChartOptions!.BarWidthRatio;
 
-            if (AxisChartOptions.StackedBarWidthRatio >= 0.9999)
+            if (ChartOptions!.BarWidthRatio >= 0.9999)
             {
                 // Optimisation to remove gaps between bars due to floating point rounding causing gaps to be visible between bars.
                 // This givs a very slight overlap which isn't visible without purposeful inspection and zooming.
@@ -93,21 +97,23 @@ namespace MudBlazor.Charts
                 }
             }
 
+            _barWidthStroke = Math.Max(_barWidthStroke, MinBarWidth);
+
             // Compute the stacked total for each column
-            double[] stackedTotals = new double[numVerticalLines];
-            for (int j = 0; j < numVerticalLines; j++)
+            var stackedTotals = new double[numVerticalLines];
+            for (var j = 0; j < numVerticalLines; j++)
             {
                 foreach (var series in _series)
                 {
-                    if (j < series.Data.Length)
+                    if (j < series.Data.Values.Length)
                         stackedTotals[j] += series.Data[j];
                 }
             }
-            var maxY = stackedTotals.Any() ? stackedTotals.Max() : 0;
+            var maxY = stackedTotals.Length != 0 ? stackedTotals.Max() : 0;
             numHorizontalLines = (int)(maxY / gridYUnits) + 1;
 
             // this is a safeguard against millions of gridlines which might arise with very high values
-            var maxYTicks = MudChartParent?.ChartOptions.MaxNumYAxisTicks ?? 20;
+            var maxYTicks = ChartOptions?.MaxNumYAxisTicks ?? 20;
             while (numHorizontalLines > maxYTicks)
             {
                 gridYUnits *= 2;
@@ -125,10 +131,10 @@ namespace MudBlazor.Charts
             _horizontalLines.Clear();
             _horizontalValues.Clear();
 
-            for (int i = 0; i <= numHorizontalLines; i++)
+            for (var i = 0; i <= numHorizontalLines; i++)
             {
-                double y = VerticalStartSpace + (i * verticalSpace);
-                double lineValue = i * gridYUnits;
+                var y = VerticalStartSpace + (i * verticalSpace);
+                var lineValue = i * gridYUnits;
 
                 var line = new SvgPath()
                 {
@@ -141,7 +147,7 @@ namespace MudBlazor.Charts
                 {
                     X = HorizontalStartSpace - 10,
                     Y = _boundHeight - y + 5,
-                    Value = ToS(lineValue, MudChartParent?.ChartOptions.YAxisFormat)
+                    Value = ToS(lineValue, ChartOptions?.YAxisFormat)
                 };
                 _horizontalValues.Add(text);
             }
@@ -155,11 +161,11 @@ namespace MudBlazor.Charts
             _verticalLines.Clear();
             _verticalValues.Clear();
 
-            var startPadding = (_barWidth / 2) + (horizontalSpace * (1 - AxisChartOptions.StackedBarWidthRatio) / 2);
+            var startPadding = (_barWidth / 2) + (horizontalSpace * (1 - ChartOptions!.BarWidthRatio) / 2);
 
-            for (int j = 0; j <= numVerticalLines; j++)
+            for (var j = 0; j <= numVerticalLines; j++)
             {
-                double x = HorizontalStartSpace + startPadding + (j * horizontalSpace);
+                var x = HorizontalStartSpace + startPadding + (j * horizontalSpace);
 
                 var line = new SvgPath()
                 {
@@ -168,7 +174,7 @@ namespace MudBlazor.Charts
                 };
                 _verticalLines.Add(line);
 
-                string label = j < XAxisLabels.Length ? XAxisLabels[j] : "";
+                var label = j < ChartOptions.XAxisLabels.Length ? ChartOptions.XAxisLabels[j] : "";
                 var text = new SvgText()
                 {
                     X = x,
@@ -186,36 +192,36 @@ namespace MudBlazor.Charts
         {
             _bars.Clear();
 
-            var startPadding = (_barWidth / 2) + (horizontalSpace * (1 - AxisChartOptions.StackedBarWidthRatio) / 2);
+            var startPadding = (_barWidth / 2) + (horizontalSpace * (1 - ChartOptions!.BarWidthRatio) / 2);
 
             // For each series, stack the bars in each column
-            var maxSeriesLength = _series.Any() ? _series.Max(series => series.Data.Length) : 0;
+            var maxSeriesLength = _series.Count != 0 ? _series.Max(series => series.Data.Values.Length) : 0;
 
-            for (int j = 0; j < maxSeriesLength; j++)
+            for (var j = 0; j < maxSeriesLength; j++)
             {
-                double x = HorizontalStartSpace + startPadding + (j * horizontalSpace);
+                var x = HorizontalStartSpace + startPadding + (j * horizontalSpace);
 
                 var yStart = _boundHeight - VerticalStartSpace;
-                for (int i = 0; i < _series.Count; i++)
+                for (var i = 0; i < _series.Count; i++)
                 {
                     var series = _series[i];
                     // Ensure the series has data for this index
-                    if (j >= series.Data.Length)
+                    if (j >= series.Data.Values.Length)
                     {
                         continue;
                     }
 
-                    double dataValue = series.Data[j];
-                    double segmentHeight = (dataValue / gridYUnits) * verticalSpace;
+                    var dataValue = series.Visible ? series.Data[j] : 0;
+                    var segmentHeight = (dataValue / gridYUnits) * verticalSpace;
 
-                    double yEnd = yStart - segmentHeight;
+                    var yEnd = yStart - segmentHeight;
 
                     var bar = new SvgPath()
                     {
                         Index = i,
                         Data = $"M {ToS(x)} {ToS(yStart)} L {ToS(x)} {ToS(yEnd - BarOverlapAmountFix)}",
-                        LabelXValue = XAxisLabels.Length > j ? XAxisLabels[j] : string.Empty,
-                        LabelYValue = dataValue.ToString(series.DataMarkerTooltipYValueFormat),
+                        LabelXValue = ChartOptions.XAxisLabels.Length > j ? ChartOptions.XAxisLabels[j] : string.Empty,
+                        LabelYValue = dataValue.ToString(series.TooltipYValueFormat),
                         LabelX = x,
                         LabelY = yEnd
                     };
@@ -233,15 +239,25 @@ namespace MudBlazor.Charts
         private void GenerateLegends()
         {
             _legends.Clear();
-            for (int i = 0; i < _series.Count; i++)
+            for (var i = 0; i < _series.Count; i++)
             {
+                var series = _series[i];
                 var legend = new SvgLegend()
                 {
                     Index = i,
-                    Labels = _series[i].Name
+                    Labels = series.Label,
+                    Visible = series.Visible,
+                    OnVisibilityChanged = EventCallback.Factory.Create<SvgLegend>(this, HandleLegendVisibilityChanged)
                 };
                 _legends.Add(legend);
             }
+        }
+
+        private void HandleLegendVisibilityChanged(SvgLegend legend)
+        {
+            var series = _series[legend.Index];
+            series.Visible = legend.Visible;
+            RebuildChart();
         }
 
         private void OnBarMouseOver(MouseEventArgs _, SvgPath bar)

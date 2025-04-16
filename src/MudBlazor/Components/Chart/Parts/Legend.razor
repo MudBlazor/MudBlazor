@@ -17,7 +17,7 @@
                 else
                 {   
                     <div class="mud-chart-legend-checkbox" style="@GetCheckBoxStyle(item.Index)">    
-                        <MudCheckBox Value="@item.Visible" ValueChanged="@((bool value) => item.HandleCheckboxChangeAsync())"></MudCheckBox>
+                        <MudCheckBox Value="@item.Visible" ValueChanged="@((bool value) => item.HandleCheckboxChangeAsync())" Dense></MudCheckBox>
                         <MudText Typo="Typo.body2" Class="ml-1" HtmlTag="span">@item.Labels</MudText>
                     </div> 
                 }                 

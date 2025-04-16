@@ -1,34 +1,50 @@
 ﻿@using MudBlazor
 @using MudBlazor.Components.Chart
+
 <MudStack Spacing="2">
-    <MudStack Row>
-        <MudSelect Justify="Justify.Start" T="Justify" Label="Justify Type" @bind-Value="_selectedJustify" Dense="true" FitContent>
+    <MudStack Spacing="4" Row>
+        <MudSelect T="ChartType" Label="Chart Type" @bind-Value="_chartType" Dense FitContent>
+            @foreach (ChartType chartType in Enum.GetValues(typeof(ChartType)))
+            {
+                <MudSelectItem Value="chartType">@chartType</MudSelectItem>
+            }
+        </MudSelect>
+        <MudSelect T="Justify" Label="Justify Type" @bind-Value="_selectedJustify" Dense FitContent>
             @foreach (Justify justify in Enum.GetValues(typeof(Justify)))
             {
                 <MudSelectItem Value="justify">@justify</MudSelectItem>
             }
         </MudSelect>
+        <MudCheckBox @bind-Value="_matchParentSize" Label="Match Parent Size" />
+        <MudCheckBox @bind-Value="_canHideSeries" Label="Can Hide Series" />
+    </MudStack>
+    <MudStack Row>
         <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => _series = DataSet.Take(_series.Count + 1).ToList())">Add Country</MudButton>
         <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => { if (_series.Count > 1) _series.Remove(_series.Last()); })">Remove Country</MudButton>
         <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="@(() => _dataPointCount = Math.Min(_dataPointCount + 1, 12))">Add Month</MudButton>
         <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="@(() => _dataPointCount = Math.Max(_dataPointCount - 1, 1))">Remove Month</MudButton>
     </MudStack>
-    <MudSlider @bind-Value="_spacingRatio" Min="0" Max="1" Step="0.02">Spacing: @_spacingRatio.ToString("F2")</MudSlider>
-    <MudSlider @bind-Value="_barWidthRatio" Min="0" Max="1" Step="0.02">Width: @_barWidthRatio.ToString("F2")</MudSlider>
-    <MudSlider @bind-Value="_innerGapRatio" Min="0" Max="1" Step="0.02">Gap: @_innerGapRatio.ToString("F2")</MudSlider>
-    <MudBlazor.Components.Chart.MudChart ChartType="ChartType.Bar" CanHideSeries
+    <MudStack Row>
+        <MudSlider @bind-Value="_spacingRatio" Min="0" Max="1" Step="0.02">Spacing: @_spacingRatio.ToString("F2")</MudSlider>
+        <MudSlider @bind-Value="_barWidthRatio" Min="0" Max="1" Step="0.02">Width: @_barWidthRatio.ToString("F2")</MudSlider>
+        <MudSlider @bind-Value="_innerGapRatio" Min="0" Max="1" Step="0.02">Gap: @_innerGapRatio.ToString("F2")</MudSlider>
+    </MudStack>
+    <MudBlazor.Components.Chart.MudChart ChartType="_chartType" MatchBoundsToSize="_matchParentSize" CanHideSeries="_canHideSeries"
                                          ChartSeries="@_series.Select(s => new ChartDataSet { Label = s.Label, Data = s.Data.Values.Take(_dataPointCount).ToArray() }).ToList()"
                                          @bind-SelectedIndex="_index"
-                                         ChartOptions="@(new BarChartOptions() { XAxisLabels = _labels.Take(_dataPointCount).ToArray(), Justify = _selectedJustify, SeriesSpacingRatio = _spacingRatio, BarWidthRatio = _barWidthRatio, BarSpacingRatio = _innerGapRatio })"
+                                         ChartOptions="@GetChartOptions()"
                                          Width="100%"
                                          Height="350px" />
     <MudText Typo="Typo.h6">Selected portion of the chart: @_index</MudText>
 </MudStack>
 @code {
     private int _index = -1;
+    private bool _canHideSeries;
+    private bool _matchParentSize;
     private double _spacingRatio = 1.0;
     private double _barWidthRatio = 0.3;
     private double _innerGapRatio = 0.1;
+    private ChartType _chartType = ChartType.Bar;
     private Justify _selectedJustify = Justify.SpaceEvenly;
     private List<ChartDataSet> _series = DataSet.Take(1).ToList();
     private int _dataPointCount = 3;
@@ -44,5 +60,25 @@
         new() { Label = "Spain",          Data = [10, 48, 87, 35, 62, 29, 54, 43, 76, 31, 58, 67] },
         new() { Label = "Sweden",         Data = [08, 14, 98, 45, 32, 67, 29, 53, 41, 72, 38, 61] }
     ];
+
     private string[] _labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+    private IChartOptions GetChartOptions() => _chartType switch
+    {
+        ChartType.Bar => new BarChartOptions
+            {
+                XAxisLabels = _labels.Take(_dataPointCount).ToArray(),
+                Justify = _selectedJustify,
+                SeriesSpacingRatio = _spacingRatio,
+                BarWidthRatio = _barWidthRatio,
+                BarSpacingRatio = _innerGapRatio
+            },
+        ChartType.StackedBar => new StackedBarChartOptions
+            {
+                XAxisLabels = _labels.Take(_dataPointCount).ToArray(),
+                Justify = _selectedJustify,
+                BarWidthRatio = _barWidthRatio,
+            },
+        _ => throw new NotImplementedException()
+    };
 }

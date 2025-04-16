@@ -87,7 +87,7 @@ public abstract class MudAxisChartBase<TOptions> : MudChartBase<TOptions>, IDisp
         _boundWidth = BoundWidthDefault;
         _boundHeight = BoundHeightDefault;
 
-        if (MudChartParent is not null && MatchBoundsToSize) // backwards compatibilitly to the mudchartparent approach
+        if (MudChartParent is not null && MudChartParent.MatchBoundsToSize) // backwards compatibilitly to the mudchartparent approach
         {
             if (_elementSize is not null)
             {
@@ -113,7 +113,7 @@ public abstract class MudAxisChartBase<TOptions> : MudChartBase<TOptions>, IDisp
 
         _elementSize = elementSize;
 
-        if (!MatchBoundsToSize)
+        if (MudChartParent?.MatchBoundsToSize is not true)
         {
             return;
         }

@@ -170,7 +170,7 @@ namespace MudBlazor.Charts
 
                 for (var j = 0; j < data.Values.Length && j < barGroupPositions.Length; j++)
                 {
-                    var dataValue = series.Visible ? data.Values[j] : 0;
+                    var dataValue = series.Visible ? data[j] : 0;
 
                     var groupStartX = barGroupPositions[j] - (_barGroupWidth / 2);
                     var gridValueX = groupStartX + (i * (_barWidth + _barGap)) + (_barWidth / 2);
