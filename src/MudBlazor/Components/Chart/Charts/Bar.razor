@@ -45,6 +45,8 @@
     <g class="mud-charts-bar-series">
         @foreach (var bar in _bars)
         {
+            if (!_series[bar.Index].Visible) continue;
+
             var color = ChartOptions.ChartPalette.GetValue(bar.Index % ChartOptions.ChartPalette.Length);
 
             <path class="mud-chart-bar"

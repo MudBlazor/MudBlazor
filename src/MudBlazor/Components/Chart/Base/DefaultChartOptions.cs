@@ -5,7 +5,7 @@
 #nullable enable
 namespace MudBlazor.Components.Chart;
 
-public class DefaultChartOptions : IChartOptions
+public abstract class DefaultChartOptions : IChartOptions
 {
     /// <summary>
     /// Shows the chart series legend.

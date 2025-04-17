@@ -32,7 +32,7 @@ namespace MudBlazor.Charts
         private double _barWidthStroke;
         private SvgPath? _hoveredBar;
 
-        private const double MinBarWidth = 4;
+        private const double MinBarWidth = 6;
 
         /// <inheritdoc />
         protected override void OnParametersSet()
@@ -54,7 +54,7 @@ namespace MudBlazor.Charts
             ComputeStackedUnitsAndNumberOfLines(out var _, out var gridYUnits, out var numHorizontalLines, out var numVerticalLines);
 
             // Calculate spacing – note the horizontal space is computed so that the vertical grid lines line up
-            var horizontalSpace = Math.Round((_boundWidth - HorizontalStartSpace - HorizontalEndSpace) / (numVerticalLines > 1 ? (numVerticalLines) : 1), 1);
+            var horizontalSpace = _boundWidth - HorizontalStartSpace - HorizontalEndSpace;
             var verticalSpace = (_boundHeight - VerticalStartSpace - VerticalEndSpace) / (numHorizontalLines > 1 ? (numHorizontalLines) : 1);
 
             GenerateHorizontalGridLines(numHorizontalLines, gridYUnits, verticalSpace);
@@ -174,10 +174,12 @@ namespace MudBlazor.Charts
             _verticalValues.Clear();
 
             var startPadding = (_barWidth / 2) + (horizontalSpace * (1 - ChartOptions!.BarWidthRatio) / 2);
+            var maxSeriesLength = _series.Count != 0 ? _series.Max(series => series.Data.Values.Length) : 0;
+            var barPositions = CalculateBarGroupPositions(horizontalSpace, maxSeriesLength);
 
-            for (var j = 0; j <= numVerticalLines; j++)
+            for (var j = 0; j < numVerticalLines; j++)
             {
-                var x = HorizontalStartSpace + startPadding + (j * horizontalSpace);
+                var x = barPositions[j];
 
                 var line = new SvgPath()
                 {
@@ -208,10 +210,11 @@ namespace MudBlazor.Charts
 
             // For each series, stack the bars in each column
             var maxSeriesLength = _series.Count != 0 ? _series.Max(series => series.Data.Values.Length) : 0;
+            var barPositions = CalculateBarGroupPositions(horizontalSpace, maxSeriesLength);
 
             for (var j = 0; j < maxSeriesLength; j++)
             {
-                var x = HorizontalStartSpace + startPadding + (j * horizontalSpace);
+                var x = barPositions[j];
 
                 var yStart = _boundHeight - VerticalStartSpace;
                 for (var i = 0; i < _series.Count; i++)
@@ -243,6 +246,99 @@ namespace MudBlazor.Charts
                     yStart = yEnd;
                 }
             }
+        }
+
+        private double[] CalculateBarGroupPositions(double horizontalSpace, int maxColumns)
+        {
+            if (_series.Count == 0) return [];
+
+            var positions = new double[maxColumns];
+            var spaceBetweenBars = CalculateSpaceWidth(horizontalSpace, maxColumns);
+            var centerOffset = _barWidth / 2;
+            var totalSpaces = maxColumns - 1;
+            var startingPoint = centerOffset;
+
+            switch (ChartOptions!.Justify)
+            {
+                case Justify.FlexStart:
+                    startingPoint += HorizontalStartSpace;
+
+                    for (var i = 0; i < maxColumns; i++)
+                    {
+                        positions[i] = startingPoint + i * (spaceBetweenBars + _barWidth);
+                    }
+                    break;
+
+                case Justify.FlexEnd:
+                    startingPoint += horizontalSpace + HorizontalEndSpace - ((maxColumns * _barWidth) + (spaceBetweenBars * totalSpaces));
+
+                    for (var i = 0; i < maxColumns; i++)
+                    {
+                        positions[i] = startingPoint + i * (spaceBetweenBars + _barWidth);
+                    }
+                    break;
+
+                case Justify.Center:
+                    startingPoint += HorizontalStartSpace + (horizontalSpace - (maxColumns * _barWidth) - (spaceBetweenBars * totalSpaces)) / 2;
+
+                    for (var i = 0; i < maxColumns; i++)
+                    {
+                        positions[i] = startingPoint + i * (spaceBetweenBars + _barWidth);
+                    }
+                    break;
+
+                case Justify.SpaceBetween:
+                    if (maxColumns == 1)
+                    {
+                        positions[0] = HorizontalStartSpace + centerOffset + (horizontalSpace - _barWidth) / 2;
+                        return positions;
+                    }
+
+                    var totalBarWidth = maxColumns * _barWidth;
+                    var spaceBetween = (horizontalSpace - totalBarWidth) / (maxColumns - 1);
+
+                    for (var i = 0; i < maxColumns; i++)
+                    {
+                        positions[i] = startingPoint + HorizontalStartSpace + i * (_barWidth + spaceBetween);
+                    }
+                    break;
+
+                case Justify.SpaceAround:
+                    var spaceAround = horizontalSpace / (maxColumns * 2);
+
+                    for (var i = 0; i < maxColumns; i++)
+                    {
+                        positions[i] = HorizontalStartSpace + spaceAround + i * (spaceAround * 2);
+                    }
+                    break;
+
+                case Justify.SpaceEvenly:
+                    var contentSpace = maxColumns * _barWidth;
+                    var remainingSpace = horizontalSpace - contentSpace;
+                    var startSpace = remainingSpace / (maxColumns + 1);
+                    
+                    positions[0] = startingPoint += HorizontalStartSpace + startSpace;
+
+                    for (var i = 1; i < maxColumns; i++)
+                    {
+                        positions[i] = positions[i - 1] + _barWidth + startSpace;
+                    }
+                    break;
+            }
+
+            return positions;
+        }
+
+        private int CalculateSpaceWidth(double horizontalSpace, int maxColumns)
+        {
+            if (maxColumns <= 1) return 0;
+
+            var spaceCount = maxColumns - 1;
+            var remainingWidth = horizontalSpace - HorizontalStartSpace - (_barWidth * maxColumns);
+            var spaceWidth = remainingWidth * ChartOptions!.SeriesSpacingRatio.EnsureRange(0.0, 1.0);
+            var spaceBetweenBars = spaceCount > 0 ? spaceWidth / spaceCount : 0;
+
+            return (int)Math.Max(0, spaceBetweenBars);
         }
 
         /// <summary>

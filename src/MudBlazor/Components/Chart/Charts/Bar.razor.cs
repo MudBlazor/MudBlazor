@@ -170,7 +170,7 @@ namespace MudBlazor.Charts
 
                 for (var j = 0; j < data.Values.Length && j < barGroupPositions.Length; j++)
                 {
-                    var dataValue = series.Visible ? data[j] : 0;
+                    var dataValue = data[j];
 
                     var groupStartX = barGroupPositions[j] - (_barGroupWidth / 2);
                     var gridValueX = groupStartX + (i * (_barWidth + _barGap)) + (_barWidth / 2);
@@ -223,7 +223,6 @@ namespace MudBlazor.Charts
             var spacingRatioOffset = ChartOptions!.SeriesSpacingRatio / 2;
             var totalSpaces = dataSetCount - 1;
             var gapsPerDataSet = columnsPerDataSet - 1;
-            var hasSingleItemOrLine = dataSetCount <= 1 || columnsPerDataSet <= 1;
             var startingPoint = centerOffset;
 
             switch (ChartOptions.Justify)
@@ -318,7 +317,7 @@ namespace MudBlazor.Charts
             var spaceWidth = remainingWidth * ChartOptions!.SeriesSpacingRatio.EnsureRange(0.01, 1.0);
             var spaceBetweenGroups = spaceCount > 0 ? spaceWidth / spaceCount : 0;
 
-            return (int)spaceBetweenGroups;
+            return (int)Math.Max(0, spaceBetweenGroups);
         }
 
         private void ComputeBarDimensions(double tickWidth)

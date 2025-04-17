@@ -5,7 +5,7 @@
 #nullable enable
 namespace MudBlazor.Components.Chart;
 
-public class DefaultAxisChartOptions : DefaultChartOptions, IAxisChartOptions
+public abstract class DefaultAxisChartOptions : DefaultChartOptions, IAxisChartOptions
 {
     /// <summary>
     /// The spacing between vertical tick marks.
