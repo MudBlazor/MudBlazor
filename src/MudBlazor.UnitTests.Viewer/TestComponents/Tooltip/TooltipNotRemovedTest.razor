@@ -1,10 +1,12 @@
-﻿
-<MudContainer Fixed="true" @key="_key">
+﻿<MudContainer Fixed="true" @key="_key">
     @for (var i = 0; i < 200; i++)
     {
         <div>
+            @{
+                var current = i;
+            }
             <MudTooltip Text="Tooltext buttontip" Delay="0" Duration="0">
-                <MudButton>BTN @i</MudButton>
+                <MudButton>BTN @current</MudButton>
             </MudTooltip>
         </div>
     }
@@ -16,17 +18,18 @@
 
     protected override Task OnInitializedAsync()
     {
-        RunThing().CatchAndLog();
+        var cts = new CancellationTokenSource();
+        RunThingAsync(cts.Token).CatchAndLog();
         return base.OnInitializedAsync();
     }
 
-    private async Task RunThing()
+    private async Task RunThingAsync(CancellationToken cancellationToken)
     {
-        while (true)
+        while (!cancellationToken.IsCancellationRequested)
         {
-            this._key = Guid.NewGuid();
+            _key = Guid.NewGuid();
             InvokeAsync(StateHasChanged).CatchAndLog();
-            await Task.Delay(100);
+            await Task.Delay(100, cancellationToken);
         }
     }
 }

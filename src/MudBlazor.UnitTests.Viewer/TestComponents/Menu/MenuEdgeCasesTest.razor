@@ -81,7 +81,7 @@
         <MudPaper style="width: 70px;">
             @* On initial load these don't respect the mouseover leave event only activating and not deactivating *@
             <MudNavMenu>
-                @foreach (var menu in menuList)
+                @foreach (var menu in _menuList)
                 {
                     <MudMenu Icon="@Icons.Material.Filled.Mouse" FullWidth="true" ActivationEvent="@MouseEvent.MouseOver"
                              AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.CenterLeft">
@@ -174,6 +174,6 @@
 
 @code {
     public static string __description__ = "4 menu edge cases for visual testing, initial load, in appbar, nested, and in dialog.";
-    private readonly string[] menuList = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
-    private bool _visible = false;
+    private readonly string[] _menuList = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
+    private bool _visible;
 }

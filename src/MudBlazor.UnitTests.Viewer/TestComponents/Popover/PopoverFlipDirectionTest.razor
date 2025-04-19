@@ -1,13 +1,13 @@
 ﻿
 <MudStack Spacing="2">
     <MudButton OnClick="OnExpandCollapseClick">@(_expanded ? "Collapse" : "Expand")</MudButton>
-    <MudButton OnClick="OnExpandCollapseFor5sClick">@(_expanded ? "Collapse" : "Expand") for 5 s</MudButton>
-    <MudButton OnClick="OnExpandListIn5s">Expand list in 5 s</MudButton>
+    <MudButton OnClick="OnExpandCollapseFor5sClickAsync">@(_expanded ? "Collapse" : "Expand") for 5 s</MudButton>
+    <MudButton OnClick="OnExpandListIn5sAsync">Expand list in 5 s</MudButton>
     <MudDivider />
     <MudCollapse Expanded="_expanded">
         <div style="@($"height: {_height}px")">
-            <MudNumericField T="Int32" @bind-Value="_height" Min="0" Label="Section height (in px)" />
-            <MudCheckBox T="Boolean" @bind-Value="_hideBottom" Label="Hide bottom section" />
+            <MudNumericField T="int" @bind-Value="_height" Min="0" Label="Section height (in px)" />
+            <MudCheckBox T="bool" @bind-Value="_hideBottom" Label="Hide bottom section" />
             <MudSelect T="Origin"
                        Label="Anchor Origin"
                        @bind-Value="@_anchor">
@@ -71,48 +71,42 @@
     @if (!_hideBottom)
     {
         <MudButton OnClick="OnExpandCollapseClick">@(_expanded ? "Collapse" : "Expand")</MudButton>
-        <MudButton OnClick="OnExpandCollapseFor5sClick">@(_expanded ? "Collapse" : "Expand") for 5 s</MudButton>
+        <MudButton OnClick="OnExpandCollapseFor5sClickAsync">@(_expanded ? "Collapse" : "Expand") for 5 s</MudButton>
         <MudDivider />
         <MudCollapse Expanded="_expanded">
             <div style="@($"height: {_heightBottom}px")">
-                <MudNumericField T="Int32" @bind-Value="_heightBottom" Min="0" Label="Section height (in px)" />
+                <MudNumericField T="int" @bind-Value="_heightBottom" Min="0" Label="Section height (in px)" />
             </div>
         </MudCollapse>
     }
 </MudStack>
 @code {
-
-
-
     public static string __description__ = "Popover should take the best available space";
 
-    private Int32 _height = 600;
-    private Int32 _heightBottom = 400;
     private bool _hideBottom;
     private bool _expandList;
+    private bool _expanded = true;
+    private int _height = 600;
+    private int _heightBottom = 400;
     private Origin _anchor = Origin.BottomLeft;
     private Origin _transform = Origin.TopLeft;
-    private bool _expanded = true;
 
-	private readonly DropdownSettings _dropdownSettings = new DropdownSettings
-	{
+	private readonly DropdownSettings _dropdownSettings = new()
+    {
 		OverflowBehavior = OverflowBehavior.FlipAlways
 	};
 	
-	private void OnExpandCollapseClick()
-	{
-		_expanded = !_expanded;
-	}
+	private void OnExpandCollapseClick() => _expanded = !_expanded;
 
-	private async Task OnExpandCollapseFor5sClick()
+    private async Task OnExpandCollapseFor5sClickAsync()
 	{
-		var cur = _expanded;
-		_expanded = !cur;
-		await Task.Delay(5000);
-		_expanded = cur;
-	}
+		var expanded = _expanded;
+        _expanded = !expanded;
+        await Task.Delay(5000);
+        _expanded = expanded;
+    }
 
-	private async Task OnExpandListIn5s()
+	private async Task OnExpandListIn5sAsync()
 	{
 		_expandList = false;
 		await Task.Delay(5000);
