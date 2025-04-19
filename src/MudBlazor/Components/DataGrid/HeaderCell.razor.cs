@@ -116,15 +116,9 @@ namespace MudBlazor
 
         #region Computed Properties and Functions
 
-        private bool _expanded
-        {
-            get
-            {
-                return Column?.DataGrid._openHierarchies.Count > 1;
-            }
-        }
+        private bool Expanded => Column?.DataGrid._openHierarchies.Count > 1;
 
-        internal bool _includeHierarchyToggle { get { return Column?.HeaderClass?.Contains("mud-header-togglehierarchy") ?? false; } }
+        internal bool IncludeHierarchyToggle => Column?.HeaderClass?.Contains("mud-header-togglehierarchy") ?? false;
 
         private string computedTitle
         {
@@ -259,21 +253,26 @@ namespace MudBlazor
 
         #region Events
 
-        internal void ToggleHierarchy()
+        internal async Task ToggleHierarchyAsync()
         {
-            if (_expanded)
+            if (DataGrid is null)
             {
-                DataGrid?.CollapseAllHierarchy();
+                return;
+            }
+
+            if (Expanded)
+            {
+                await DataGrid.CollapseAllHierarchy();
             }
             else
             {
-                DataGrid?.ExpandAllHierarchy();
+                await DataGrid.ExpandAllHierarchy();
             }
         }
 
         internal string GetGroupIcon()
         {
-            return DataGrid?.GetGroupIcon(_expanded, RightToLeft) ?? string.Empty;
+            return DataGrid?.GetGroupIcon(Expanded, RightToLeft) ?? string.Empty;
         }
 
         /// <summary>

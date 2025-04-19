@@ -7,7 +7,7 @@
     Filterable="false" Editable="false" DragAndDropEnabled="@DragAndDropEnabled" HeaderTemplate="@HeaderTemplate"
     HeaderStyle="@HeaderStyle" HeaderStyleFunc="@HeaderStyleFunc">
     <CellTemplate>
-        @if (CellTemplate != null)
+        @if (CellTemplate is not null)
         {
             @CellTemplate(context)            
         }
@@ -18,7 +18,7 @@
                 Icon="@GetGroupIcon(context)" 
                 OnClick="context.Actions.ToggleHierarchyVisibilityForItemAsync"
                 Size="@IconSize"
-                Disabled="ButtonDisabledFunc.Invoke(context.Item)"/>            
+                Disabled="ButtonDisabledFunc.Invoke(context.Item)"/>
         }
         @if (!_finishedInitialExpanded && InitiallyExpandedFunc.Invoke(context.Item))
         {

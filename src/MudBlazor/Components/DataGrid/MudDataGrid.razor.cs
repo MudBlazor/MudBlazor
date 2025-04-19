@@ -64,7 +64,7 @@ namespace MudBlazor
 
             _expandSingleRowState = registerScope.RegisterParameter<bool>(nameof(ExpandSingleRow))
                 .WithParameter(() => ExpandSingleRow)
-                .WithChangeHandler(OnExpandSingleRowChanged);
+                .WithChangeHandler(OnExpandSingleRowChangedAsync);
         }
 
         protected string Classname =>
@@ -1297,15 +1297,15 @@ namespace MudBlazor
             }
         }
 
-        private void OnExpandSingleRowChanged(ParameterChangedEventArgs<bool> args)
+        private async Task OnExpandSingleRowChangedAsync(ParameterChangedEventArgs<bool> args)
         {
             // If user changes the ExpandSingleRow parameter, clear all open hierarchies except the first;
             if (_openHierarchies.Count > 0)
             {
-                var item = _openHierarchies.First();
+                var first = _openHierarchies.First();
                 _openHierarchies.Clear();
-                _openHierarchies.Add(item);
-                InvokeAsync(StateHasChanged);
+                _openHierarchies.Add(first);
+                await InvokeAsync(StateHasChanged);
             }
         }
 

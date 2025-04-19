@@ -46,9 +46,9 @@ else if (Column != null && !Column.HiddenState.Value)
                     {
                         @Column.HeaderTemplate(Column.headerContext)
                     }
-                    else if (_includeHierarchyToggle)
+                    else if (IncludeHierarchyToggle)
                     {
-                        @HierarchyToggle()
+                        @HierarchyToggle
                     }
                     else 
                     {
@@ -62,9 +62,9 @@ else if (Column != null && !Column.HiddenState.Value)
                 {
                     @Column.HeaderTemplate(Column.headerContext)
                 }
-                else if (_includeHierarchyToggle)
+                else if (IncludeHierarchyToggle)
                 {
-                    @HierarchyToggle()
+                    @HierarchyToggle
                 }
                 else 
                 {
@@ -164,14 +164,12 @@ else if (Column != null && !Column.HiddenState.Value)
         </text>;
     }
 
-    internal RenderFragment HierarchyToggle()
-    {
-        return
+    private RenderFragment HierarchyToggle =>
         @<text>
-            <MudIconButton Icon=@GetGroupIcon() 
-                           Class="ma-n3 pa-1 mud-hierarchy-toggle-button"
-                           OnClick=@ToggleHierarchy
-                           aria-label="@(_expanded ? @Localizer[LanguageResource.MudDataGrid_CollapseAllGroups] : @Localizer[LanguageResource.MudDataGrid_ExpandAllGroups])" />
-        </text>;
-    }
+             <MudIconButton Icon="@GetGroupIcon()"
+                            Class="ma-n3 pa-1 mud-hierarchy-toggle-button"
+                            OnClick="@ToggleHierarchyAsync"
+                            aria-label="@(Expanded ? @Localizer[LanguageResource.MudDataGrid_CollapseAllGroups] : @Localizer[LanguageResource.MudDataGrid_ExpandAllGroups])"/>
+         </text>;
+
 }

@@ -5228,7 +5228,7 @@ namespace MudBlazor.UnitTests.Components
 
             var headerElement = comp.Find("th.mud-header-togglehierarchy");
             headerElement.Should().NotBeNull("Header should have mud-header-togglehierarchy class when EnableHeaderToggle is true");
-            headerCell.Instance._includeHierarchyToggle.Should().BeTrue();
+            headerCell.Instance.IncludeHierarchyToggle.Should().BeTrue();
 
             // Check that the HierarchyToggle button exists in the header
             var toggleButton = headerElement.QuerySelector(".mud-hierarchy-toggle-button");
@@ -5292,7 +5292,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGridToggleHierarchyMethodTest()
+        public async Task DataGridToggleHierarchyMethodTest()
         {
             var comp = Context.RenderComponent<DataGridHierarchyColumnTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
@@ -5302,20 +5302,20 @@ namespace MudBlazor.UnitTests.Components
             // Initially, there should be 2 expanded items
             dataGrid.Instance._openHierarchies.Count.Should().Be(2);
             var accessor = headerCell.Instance;
-            accessor.ToggleHierarchy();
+            await accessor.ToggleHierarchyAsync();
 
             // After calling ToggleHierarchy when some hierarchies are open, all should be collapsed
             dataGrid.Instance._openHierarchies.Count.Should().Be(0);
 
             // Call ToggleHierarchy again
-            accessor.ToggleHierarchy();
+            await accessor.ToggleHierarchyAsync();
 
             // Now all hierarchies should be expanded
             dataGrid.Instance._openHierarchies.Count.Should().Be(5);
         }
 
         [Test]
-        public void DataGridGetHierarchyGroupIconTest()
+        public async Task DataGridGetHierarchyGroupIconTest()
         {
             // Create a test component
             var comp = Context.RenderComponent<DataGridHierarchyColumnTest>();
@@ -5331,7 +5331,7 @@ namespace MudBlazor.UnitTests.Components
             var expandedIcon = accessor.GetGroupIcon();
             expandedIcon.Should().Be(Icons.Material.Filled.ExpandMore);
 
-            accessor.ToggleHierarchy(); // collapse all
+            await accessor.ToggleHierarchyAsync(); // collapse all
 
             // When collapsed + LTR
             var collapsedIcon = accessor.GetGroupIcon();
