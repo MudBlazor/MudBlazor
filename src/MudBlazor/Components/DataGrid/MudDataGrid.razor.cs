@@ -1299,7 +1299,7 @@ namespace MudBlazor
 
         private async Task OnExpandSingleRowChangedAsync(ParameterChangedEventArgs<bool> args)
         {
-            // If user changes the ExpandSingleRow parameter, clear all open hierarchies except the first;
+            // If user changes the ExpandSingleRow parameter, clear all open hierarchies except the first
             if (_openHierarchies.Count > 0)
             {
                 var first = _openHierarchies.First();
