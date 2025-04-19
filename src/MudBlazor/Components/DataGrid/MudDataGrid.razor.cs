@@ -2138,9 +2138,11 @@ namespace MudBlazor
 
         public async Task ToggleHierarchyVisibilityAsync(T item)
         {
-            // if ExpandSingleRow is true, clear all open hierarchies which will immediate add the item clicked
-            if (ExpandSingleRow)
+            // if ExpandSingleRow is true, clear all open hierarchies, which will immediately add the item that was clicked.
+            if (_expandSingleRowState.Value)
+            {
                 _openHierarchies.Clear();
+            }
 
             // if item doesn't exist remove will return false and add the item
             if (!_openHierarchies.Remove(item))
