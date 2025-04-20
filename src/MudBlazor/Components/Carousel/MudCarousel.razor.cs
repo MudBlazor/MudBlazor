@@ -15,6 +15,7 @@ namespace MudBlazor
     public partial class MudCarousel<TData> : MudBaseBindableItemsControl<MudCarouselItem, TData>, IAsyncDisposable
     {
         private Timer? _timer;
+        private bool _disposing;
         private bool _autoCycle = true;
         private Color _currentColor = Color.Inherit;
         private TimeSpan _cycleTimeout = TimeSpan.FromSeconds(5);
@@ -292,7 +293,7 @@ namespace MudBlazor
         /// </summary>
         private ValueTask StartTimerAsync()
         {
-            if (AutoCycle)
+            if (AutoCycle && !_disposing)
             {
                 _timer?.Change(AutoCycleTime, TimeSpan.Zero);
             }
@@ -334,6 +335,8 @@ namespace MudBlazor
 
             if (firstRender)
             {
+                // Prevent timer creation after or while disposal, which would result in a memory leak.
+                if (_disposing) return;
                 _timer = new Timer(TimerElapsed, null, AutoCycle ? AutoCycleTime : Timeout.InfiniteTimeSpan, AutoCycleTime);
             }
         }
@@ -347,6 +350,10 @@ namespace MudBlazor
 
         protected virtual async ValueTask DisposeAsyncCore()
         {
+            // Immediately sets disposing to true,
+            // so that timer creation on OnAfterRenderAsync does not happen after disposal.
+            _disposing = true;
+
             await StopTimerAsync();
 
             var timer = _timer;
