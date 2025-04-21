@@ -808,7 +808,7 @@ namespace MudBlazor.UnitTests.Components
             timePicker.Error.Should().BeFalse();
             timePicker.ErrorText.Should().BeNullOrEmpty();
             // input a date
-            timePickerComp.Find("input").Change("09:30");
+            timePickerComp.Find("input").Change("09:30:00");
             form.IsValid.Should().Be(true);
             form.Errors.Length.Should().Be(0);
             timePicker.Error.Should().BeFalse();
@@ -833,7 +833,7 @@ namespace MudBlazor.UnitTests.Components
             var timeComp = comp.FindComponent<MudTimePicker>();
             var timePicker = comp.FindComponent<MudTimePicker>().Instance;
             timeComp.SetParam(x => x.Validation, new Func<TimeSpan?, string>(time => time != null && time.Value.Minutes == 0 ? null : "Only full hours allowed"));
-            timeComp.Find("input").Change("09:00");
+            timeComp.Find("input").Change("09:00:00");
             form.IsValid.Should().Be(true);
             form.Errors.Length.Should().Be(0);
             timePicker.Error.Should().BeFalse();
@@ -1574,7 +1574,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.FormFieldChangedEventArgs.NewValue.Should().Be(new DateTime(2022, 04, 03));
             datePicker.Instance.Should().Be(comp.Instance.FormFieldChangedEventArgs.Field);
 
-            await comp.InvokeAsync(() => timePicker.Find("input").Change("00:45"));
+            await comp.InvokeAsync(() => timePicker.Find("input").Change("00:45:00"));
             comp.Instance.FormFieldChangedEventArgs.NewValue.Should().Be(new TimeSpan(00, 45, 00));
             timePicker.Instance.Should().Be(comp.Instance.FormFieldChangedEventArgs.Field);
 

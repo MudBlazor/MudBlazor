@@ -34,7 +34,7 @@ public class TimeSpanExtensionsTests
         var result = timeSpan.ToIsoString(seconds: true, ms: false);
 
         // Assert
-        result.Should().Be("10:30-45");
+        result.Should().Be("10:30:45");
     }
 
     [Test]
@@ -47,7 +47,7 @@ public class TimeSpanExtensionsTests
         var result = timeSpan.ToIsoString(seconds: true, ms: true);
 
         // Assert
-        result.Should().Be("10:30-45,123");
+        result.Should().Be("10:30:45.123");
     }
 
     [Test]

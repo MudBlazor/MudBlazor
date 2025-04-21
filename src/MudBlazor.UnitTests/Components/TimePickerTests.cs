@@ -56,7 +56,7 @@ namespace MudBlazor.UnitTests.Components
             comp.SetParam(p => p.Clearable, true);
             comp.SetParam(p => p.Time, new TimeSpan(637940935730000000));
             picker.Time.Should().Be(new TimeSpan(637940935730000000));
-            picker.Text.Should().Be(new TimeSpan(637940935730000000).ToIsoString());
+            picker.Text.Should().Be(new TimeSpan(637940935730000000).ToIsoString(true));
 
             comp.Find(".mud-input-clear-button").Click(); //clear the input
 
@@ -168,7 +168,7 @@ namespace MudBlazor.UnitTests.Components
             var picker = comp.Instance;
 
             // valid time
-            comp.Find("input").Change("23:02");
+            comp.Find("input").Change("23:02:00");
             picker.TimeIntermediate.Should().Be(new TimeSpan(23, 2, 0));
             picker.ConversionError.Should().BeFalse();
             picker.ConversionErrorMessage.Should().BeNull();

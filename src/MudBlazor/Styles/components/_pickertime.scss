@@ -1,13 +1,13 @@
 .mud-picker-timepicker-toolbar {
 
+  .mud-timepicker-toolbar-text {
+    color: rgba(255, 255, 255, 0.54);
+  }
+
   .mud-timepicker-button {
     padding: 0;
     min-width: 16px;
     text-transform: none;
-
-    &.mud-timepicker-toolbar-text {
-      color: rgba(255, 255, 255, 0.54);
-    }
 
     @media(hover: hover) and (pointer: fine) {
       &:hover {
@@ -16,7 +16,7 @@
     }
   }
 
-  .mud-timepicker-hourminute {
+  .mud-timepicker-hourminutesecond {
     display: flex;
     align-items: baseline;
     justify-content: flex-end;
@@ -54,10 +54,9 @@
 
   &.mud-picker-timepicker-toolbar-landscape {
     flex-wrap: wrap;
-    width: 150px;
     justify-content: center;
 
-    .mud-timepicker-hourminute {
+    .mud-timepicker-hourminutesecond {
       .mud-timepicker-button {
         font-size: 3rem;
         font-weight: 400;
@@ -68,10 +67,10 @@
 
     .mud-timepicker-ampm {
       display: flex;
-      margin-left: 20px;
-      margin-right: -20px;
-      margin-inline-start: 20px;
-      margin-inline-end: -20px;
+      margin-left: 10px;
+      margin-right: 0;
+      margin-inline-start: 10px;
+      margin-inline-end: 0;
       flex-direction: column;
 
       .mud-timepicker-button {
@@ -194,6 +193,20 @@
       }
 
       &.mud-minute {
+        &:after {
+          content: "";
+          position: absolute;
+          left: 50%;
+          transform: translate(-50%,-50%);
+          height: 44px;
+          width: 15px;
+          top: 20px;
+          border-radius: 50%;
+          background-color: inherit;
+        }
+      }
+
+      &.mud-second {
         &:after {
           content: "";
           position: absolute;

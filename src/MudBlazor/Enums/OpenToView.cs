@@ -35,4 +35,9 @@ public enum OpenTo
     /// The minutes picker is displayed.
     /// </summary>
     Minutes,
+
+    /// <summary>
+    /// The seconds picker is displayed.
+    /// </summary>
+    Seconds,
 }
