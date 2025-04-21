@@ -608,24 +608,27 @@ window.mudpopoverHelper = {
     getEffectiveZIndex: function (element) {
         let currentElement = element;
         let maxZIndex = 0;
-
+        // navigate up the body reciording z-index until document.body
         while (currentElement && currentElement !== document.body) {
-            // Only fetch computed style if element is an element node
-            const style = currentElement.nodeType === 1 ? window.getComputedStyle(currentElement) : null;
+            if (currentElement.nodeType !== 1) { // 1 is an element node
+                currentElement = currentElement.parentElement;
+                continue;
+            }
 
-            if (style) {
-                const position = style.getPropertyValue('position');
+            const style = window.getComputedStyle(currentElement);
+            const position = style.getPropertyValue('position');
 
-                if (position !== 'static') {
-                    const zIndex = style.getPropertyValue('z-index');
-                    const zIndexValue = parseInt(zIndex, 10);
+            if (position === 'static') { // static elements have no z-index
+                currentElement = currentElement.parentElement;
+                continue;
+            }
 
-                    if (!isNaN(zIndexValue) && zIndexValue > 0) {
-                        if (zIndexValue > maxZIndex) {
-                            maxZIndex = zIndexValue;
-                        }
-                    }
-                }
+            const zIndex = style.getPropertyValue('z-index');
+            const zIndexValue = parseInt(zIndex, 10);
+
+            // update maxZIndex only if zIndexValue is defined and greater than current max
+            if (!isNaN(zIndexValue) && zIndexValue > maxZIndex) {
+                maxZIndex = zIndexValue;
             }
 
             currentElement = currentElement.parentElement;
@@ -633,7 +636,6 @@ window.mudpopoverHelper = {
 
         return maxZIndex;
     },
-
 
     popoverOverlayUpdates: function () {
         let highestTickItem = null;
