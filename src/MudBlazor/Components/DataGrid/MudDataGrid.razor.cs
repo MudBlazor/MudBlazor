@@ -45,6 +45,7 @@ namespace MudBlazor
 
         private readonly ParameterState<T> _selectedItemState;
         private readonly ParameterState<HashSet<T>> _selectedItemsState;
+        private readonly ParameterState<bool> _expandSingleRowState;
 
         public MudDataGrid()
         {
@@ -60,6 +61,10 @@ namespace MudBlazor
                 .WithParameter(() => SelectedItems)
                 .WithEventCallback(() => SelectedItemsChanged)
                 .WithChangeHandler(OnSelectedItemsChanged);
+
+            _expandSingleRowState = registerScope.RegisterParameter<bool>(nameof(ExpandSingleRow))
+                .WithParameter(() => ExpandSingleRow)
+                .WithChangeHandler(OnExpandSingleRowChangedAsync);
         }
 
         protected string Classname =>
@@ -1062,6 +1067,13 @@ namespace MudBlazor
         public bool ShowMenuIcon { get; set; } = false;
 
         /// <summary>
+        /// Ensures the user can only expand one Hierarchy row at a time. This only has an effect if you are using a Hierarchy column.
+        /// </summary>
+        /// <remarks>Defaults to <c>false</c>.</remarks>
+        [Parameter]
+        public bool ExpandSingleRow { get; set; }
+
+        /// <summary>
         /// The comparer used to determine row selection.
         /// </summary>
         /// <remarks>
@@ -1283,6 +1295,18 @@ namespace MudBlazor
             else
             {
                 Selection = args.Value;
+            }
+        }
+
+        private async Task OnExpandSingleRowChangedAsync(ParameterChangedEventArgs<bool> args)
+        {
+            // If user changes the ExpandSingleRow parameter, clear all open hierarchies except the first
+            if (_openHierarchies.Count > 0)
+            {
+                var first = _openHierarchies.First();
+                _openHierarchies.Clear();
+                _openHierarchies.Add(first);
+                await InvokeAsync(StateHasChanged);
             }
         }
 
@@ -2209,13 +2233,20 @@ namespace MudBlazor
             await InvokeAsync(StateHasChanged);
         }
 
-        internal async Task ToggleHierarchyVisibilityAsync(T item)
+        /// <summary>
+        /// Collapses or expands the hierarchy of the specified item.
+        /// </summary>
+        /// <param name="item">The item whose hierarchy visibility is to be toggled.</param>
+        public async Task ToggleHierarchyVisibilityAsync(T item)
         {
-            if (_openHierarchies.Contains(item))
+            // if ExpandSingleRow is true, clear all open hierarchies, which will immediately add the item that was clicked.
+            if (_expandSingleRowState.Value)
             {
-                _openHierarchies.Remove(item);
+                _openHierarchies.Clear();
             }
-            else
+
+            // if item doesn't exist remove will return false and add the item
+            if (!_openHierarchies.Remove(item))
             {
                 _openHierarchies.Add(item);
             }

@@ -20,7 +20,7 @@ public class PopoverOptions
     /// Gets or sets the CSS class of the popover container.
     /// The default value is <c>mudblazor-main-content</c>.
     /// </summary>
-    public string ContainerClass { get; set; } = "mudblazor-main-content";
+    public string ContainerClass { get; set; } = "mud-popover-provider";
 
     /// <summary>
     /// Gets or sets the FlipMargin for the popover.
@@ -33,6 +33,13 @@ public class PopoverOptions
     /// The default value is <c>0.5 seconds</c>.
     /// </summary>
     public TimeSpan QueueDelay { get; set; } = TimeSpan.FromSeconds(0.5);
+
+    /// <summary>
+    /// Gets or sets the overflow padding for the popover. This is used when adjusting popovers that go off screen at the top or left.
+    /// It is also used to create max-height for popovers containing a list that will go off screen.
+    /// The default value is <c>24</c> rougly equal to the 8dp margin of material design.
+    /// </summary>
+    public int OverflowPadding { get; set; } = 24;
 
     /// <summary>
     /// Gets or sets a value indicating whether to throw an exception when a duplicate <see cref="MudPopoverProvider"/> is encountered.
