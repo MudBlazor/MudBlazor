@@ -2940,6 +2940,44 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGrid_RowDetail_ExpandCollapseAllTest()
+        {
+            var comp = Context.RenderComponent<DataGridHierarchyColumnTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
+
+            dataGrid.WaitForAssertion(() => dataGrid.Instance._openHierarchies.Count.Should().Be(2));
+            await dataGrid.InvokeAsync(() => dataGrid.Instance.CollapseAllHierarchy());
+            dataGrid.WaitForAssertion(() => dataGrid.Instance._openHierarchies.Count.Should().Be(0));
+            await dataGrid.InvokeAsync(() => dataGrid.Instance.ExpandAllHierarchy());
+            dataGrid.WaitForAssertion(() => dataGrid.Instance._openHierarchies.Count.Should().Be(5));
+        }
+
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public void DataGrid_RowDetail_RTL_GroupIcon(bool rightToLeft)
+        {
+            var comp = Context.RenderComponent<DataGridHierarchyColumnTest>(param => param
+                .Add(p => p.RightToLeft, rightToLeft)
+            );
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
+            var svg = dataGrid.Find(".mud-table-body .mud-table-row .mud-table-cell .mud-icon-root");
+
+            if (!rightToLeft)
+            {
+                // ChevronRight by Default
+                svg.InnerHtml.Should().Contain("<path d=\"M0 0h24v24H0z\"")
+                    .And.Contain("<path d=\"M10 6L8.59 7.41");
+            }
+            else
+            {
+                // ChevronLeft when RTL is true
+                svg.InnerHtml.Should().Contain("<path d=\"M0 0h24v24H0z\"")
+                    .And.Contain("<path d=\"M15.41 7.41L14 6l-6");
+            }
+        }
+
+        [Test]
         public void DataGridRowDetailButtonDisabledTest()
         {
             var comp = Context.RenderComponent<DataGridHierarchyColumnTest>();
@@ -4679,6 +4717,79 @@ namespace MudBlazor.UnitTests.Components
             selectedItems.Should().Contain(5);
             selectedItems.Count().Should().Be(2);
             selectedItem.Should().Be(4);
+        }
+
+        [Test]
+        public async Task DataGridSelectedItemEventsTest()
+        {
+            var comp = Context.RenderComponent<DataGridEventCallbacksTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEventCallbacksTest.Item>>();
+
+            // Test single selection mode
+            dataGrid.SetParam(x => x.MultiSelection, false);
+            comp.Render();
+
+            // Select an item
+            var firstItem = dataGrid.Instance.Items.First();
+            await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectedItemAsync(true, firstItem));
+
+            // Verify events
+            comp.Instance.SelectedItemChanged.Should().BeTrue();
+            comp.Instance.SelectedItemsChanged.Should().BeTrue();
+
+            // Reset event flags
+            comp.Instance.SelectedItemChanged = false;
+            comp.Instance.SelectedItemsChanged = false;
+
+            // Deselect the item
+            await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectedItemAsync(false, firstItem));
+
+            // Verify events for deselection
+            comp.Instance.SelectedItemChanged.Should().BeTrue();
+            comp.Instance.SelectedItemsChanged.Should().BeTrue();
+
+            // Reset event flags
+            comp.Instance.SelectedItemChanged = false;
+            comp.Instance.SelectedItemsChanged = false;
+
+            // Test multi-selection mode
+            dataGrid.SetParam(x => x.MultiSelection, true);
+            comp.Render();
+
+            // Select all items
+            await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectAllAsync(true));
+
+            // Verify events
+            comp.Instance.SelectedItemChanged.Should().BeFalse();
+            comp.Instance.SelectedItemsChanged.Should().BeTrue();
+
+            // Reset event flags
+            comp.Instance.SelectedItemChanged = false;
+            comp.Instance.SelectedItemsChanged = false;
+
+            // Deselect all items
+            await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectAllAsync(false));
+
+            // Verify events for deselection
+            comp.Instance.SelectedItemChanged.Should().BeFalse();
+            comp.Instance.SelectedItemsChanged.Should().BeTrue();
+
+            // Reset event flags
+            comp.Instance.SelectedItemChanged = false;
+            comp.Instance.SelectedItemsChanged = false;
+
+            // Test row click select
+            // find first mud-table-row and second mud-table-cell
+            var firstRow = dataGrid.FindAll(".mud-table-row")[1];
+            firstRow.Click();
+
+            // Verify events for row click
+            comp.WaitForAssertion(() => comp.Instance.SelectedItemChanged.Should().BeTrue());
+            comp.Instance.SelectedItemsChanged.Should().BeTrue();
+
+            // Reset event flags
+            comp.Instance.SelectedItemChanged = false;
+            comp.Instance.SelectedItemsChanged = false;
         }
     }
 }

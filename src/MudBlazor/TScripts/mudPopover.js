@@ -639,11 +639,10 @@ class MudPopover {
 
             observer.observe(popoverContentNode, config);
 
-            // Optimize resize observer
-            const throttledResize = window.mudpopoverHelper.rafThrottle(entries => {
+            const resizeObserver = new ResizeObserver(entries => {
                 for (let entry of entries) {
                     const target = entry.target;
-                    for (let childNode of target.childNodes) {
+                    for (const childNode of target.childNodes) {
                         if (childNode.id && childNode.id.startsWith('popover-')) {
                             window.mudpopoverHelper.placePopover(childNode);
                         }
@@ -651,16 +650,16 @@ class MudPopover {
                 }
             });
 
-            const resizeObserver = new ResizeObserver(throttledResize);
             resizeObserver.observe(popoverNode.parentNode);
 
-            const throttledContent = window.mudpopoverHelper.rafThrottle(entries => {
+            const contentNodeObserver = new ResizeObserver(entries => {
                 for (let entry of entries) {
-                    window.mudpopoverHelper.placePopoverByNode(entry.target);
+                    const target = entry.target;
+                    if (target)
+                        window.mudpopoverHelper.placePopoverByNode(target);
                 }
             });
 
-            const contentNodeObserver = new ResizeObserver(throttledContent);
             contentNodeObserver.observe(popoverContentNode);
 
             this.map[id] = {

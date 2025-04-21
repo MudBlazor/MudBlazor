@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Globalization;
-using System.Runtime.InteropServices.JavaScript;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
@@ -132,14 +131,6 @@ public abstract class MudChartBase : MudComponentBase
     [Parameter]
     [Category(CategoryTypes.Chart.Behavior)]
     public EventCallback<int> SelectedIndexChanged { get; set; }
-
-    protected string ToS(double d, string? format = null)
-    {
-        if (string.IsNullOrEmpty(format))
-            return Math.Round(d, 4).ToString(CultureInfo.InvariantCulture);
-
-        return Math.Round(d, 4).ToString(format);
-    }
 
     /// <summary>
     /// Allows series to be hidden when <see cref="ChartType"/> is <see cref="ChartType.Line"/>.

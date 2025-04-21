@@ -70,6 +70,7 @@ else
     [Parameter]
     public Func<DateTime, string>? AdditionalDateClassesFunc { get; set; }
 
+    [Parameter]
     public DateTime? Date { get; set; }
 
     private async Task HandleDateChanged(DateTime? input)
