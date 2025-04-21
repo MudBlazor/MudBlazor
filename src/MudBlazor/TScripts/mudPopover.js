@@ -595,8 +595,7 @@ window.mudpopoverHelper = {
         }
         // nested popover inside any other child element
         else if (popoverNode.parentNode) {
-            const baseZIndexValue = window.mudpopoverHelper.getEffectiveZIndex(popoverNode.parentNode);
-            console.log(`baseZIndexValue: ${baseZIndexValue}`);
+            const baseZIndexValue = window.mudpopoverHelper.getEffectiveZIndex(popoverNode.parentNode);           
             newZIndex = baseZIndexValue + 1;
             popoverContentNode.style['z-index'] = Math.max(newZIndex, window.mudpopoverHelper.basePopoverZIndex + 1, origZIndex);
         }
