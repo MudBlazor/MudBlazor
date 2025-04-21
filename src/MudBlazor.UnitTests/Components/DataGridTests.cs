@@ -5214,5 +5214,150 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.SelectedItemChanged = false;
             comp.Instance.SelectedItemsChanged = false;
         }
+
+        [Test]
+        public void DataGridHeaderToggleHierarchyTest()
+        {
+            // Render with EnableHeaderToggle = true to enable header toggle functionality
+            var comp = Context.RenderComponent<DataGridHierarchyColumnTest>(parameters =>
+                parameters.Add(p => p.EnableHeaderToggle, true));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
+
+            // Find the header cell that should include hierarchy toggle
+            var headerCell = dataGrid.FindComponents<HeaderCell<DataGridHierarchyColumnTest.Model>>().First();
+
+            var headerElement = comp.Find("th.mud-header-togglehierarchy");
+            headerElement.Should().NotBeNull("Header should have mud-header-togglehierarchy class when EnableHeaderToggle is true");
+            headerCell.Instance.IncludeHierarchyToggle.Should().BeTrue();
+
+            // Check that the HierarchyToggle button exists in the header
+            var toggleButton = headerElement.QuerySelector(".mud-hierarchy-toggle-button");
+            toggleButton.Should().NotBeNull("HierarchyToggle button should be rendered in header");
+
+            // The initial state should be expanded (Anders and Ira items are initially expanded)
+            dataGrid.Instance._openHierarchies.Count.Should().Be(2);
+
+            // Click the toggle button to collapse all hierarchies
+            toggleButton.Click();
+            comp.WaitForAssertion(() => dataGrid.Instance._openHierarchies.Count.Should().Be(0));
+
+            // Click again to expand all
+            toggleButton = headerElement.QuerySelector(".mud-hierarchy-toggle-button");
+            toggleButton.Click();
+            comp.WaitForAssertion(() => dataGrid.Instance._openHierarchies.Count.Should().Be(5));
+        }
+
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public void DataGridHeaderToggleIconTest(bool rightToLeft)
+        {
+            // Render with EnableHeaderToggle = true and set RTL mode
+            var comp = Context.RenderComponent<DataGridHierarchyColumnTest>(parameters =>
+            {
+                parameters.Add(p => p.EnableHeaderToggle, true);
+                parameters.Add(p => p.RightToLeft, rightToLeft);
+            });
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
+
+            // Find the header with toggle
+            var headerElement = comp.Find("th.mud-header-togglehierarchy");
+
+            // Find the toggle button in header
+            var toggleButton = headerElement.QuerySelector(".mud-hierarchy-toggle-button");
+            var icon = toggleButton.QuerySelector(".mud-icon-root");
+
+            // Initial state should show expanded icon (ExpandMore)
+            var iconPath = icon.InnerHtml;
+            iconPath.Should().Contain("M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z",
+                "Icon should be ExpandMore when hierarchies are expanded");
+
+            // Click to collapse all
+            toggleButton.Click();
+
+            // Now the icon should change based on RTL mode
+            icon = headerElement.QuerySelector(".mud-hierarchy-toggle-button .mud-icon-root");
+            iconPath = icon.InnerHtml;
+
+            if (rightToLeft)
+            {
+                iconPath.Should().Contain("M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z",
+                    "Icon should be ChevronLeft in RTL mode when hierarchies are collapsed");
+            }
+            else
+            {
+                iconPath.Should().Contain("M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z",
+                    "Icon should be ChevronRight in LTR mode when hierarchies are collapsed");
+            }
+        }
+
+        [Test]
+        public async Task DataGridToggleHierarchyMethodTest()
+        {
+            var comp = Context.RenderComponent<DataGridHierarchyColumnTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
+
+            var headerCell = dataGrid.FindComponents<HeaderCell<DataGridHierarchyColumnTest.Model>>().First();
+
+            // Initially, there should be 2 expanded items
+            dataGrid.Instance._openHierarchies.Count.Should().Be(2);
+            var accessor = headerCell.Instance;
+            await accessor.ToggleHierarchyAsync();
+
+            // After calling ToggleHierarchy when some hierarchies are open, all should be collapsed
+            dataGrid.Instance._openHierarchies.Count.Should().Be(0);
+
+            // Call ToggleHierarchy again
+            await accessor.ToggleHierarchyAsync();
+
+            // Now all hierarchies should be expanded
+            dataGrid.Instance._openHierarchies.Count.Should().Be(5);
+        }
+
+        [Test]
+        public async Task DataGridGetHierarchyGroupIconTest()
+        {
+            // Create a test component
+            var comp = Context.RenderComponent<DataGridHierarchyColumnTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
+
+            // Get a reference to a HeaderCell to test GetGroupIcon method
+            var headerCell = dataGrid.FindComponents<HeaderCell<DataGridHierarchyColumnTest.Model>>().First();
+
+            // Create a PrivateAccessor to invoke the GetGroupIcon method
+            var accessor = headerCell.Instance;
+
+            // When expanded (RTL doesn't matter in this case)
+            var expandedIcon = accessor.GetGroupIcon();
+            expandedIcon.Should().Be(Icons.Material.Filled.ExpandMore);
+
+            await accessor.ToggleHierarchyAsync(); // collapse all
+
+            // When collapsed + LTR
+            var collapsedIcon = accessor.GetGroupIcon();
+            comp.WaitForAssertion(() => collapsedIcon.Should().Be(Icons.Material.Filled.ChevronRight));
+
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.RightToLeft, true));
+            // When collapsed + RTL
+            comp.WaitForAssertion(() => accessor.GetGroupIcon().Should().Be(Icons.Material.Filled.ChevronLeft));
+        }
+
+        [Test]
+        public void DataGrid_HierarchyExpandSingleRowTest()
+        {
+            var comp = Context.RenderComponent<DataGridHierarchyColumnTest>(parameters => parameters
+                .Add(p => p.ExpandSingleRow, false));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
+
+            dataGrid.Instance._openHierarchies.Count.Should().Be(2);
+            var item = dataGrid.Instance._openHierarchies.First();
+            item.Should().NotBeNull();
+
+            comp.SetParametersAndRender(p => p.Add(p => p.ExpandSingleRow, true));
+
+            dataGrid.Instance._openHierarchies.Count.Should().Be(1);
+
+            dataGrid.Instance._openHierarchies.First().Should().Be(item);
+        }
     }
 }

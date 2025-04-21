@@ -31,6 +31,12 @@ namespace MudBlazor
         public MudDataGrid<T> DataGrid { get; set; }
 
         /// <summary>
+        /// Whether the display should be right to left
+        /// </summary>
+        [CascadingParameter(Name = "RightToLeft")]
+        public bool RightToLeft { get; set; }
+
+        /// <summary>
         /// Shows this cell only in the header area.
         /// </summary>
         /// <remarks>
@@ -109,6 +115,10 @@ namespace MudBlazor
 
 
         #region Computed Properties and Functions
+
+        private bool Expanded => Column?.DataGrid._openHierarchies.Count > 1;
+
+        internal bool IncludeHierarchyToggle => Column?.HeaderClass?.Contains("mud-header-togglehierarchy") ?? false;
 
         private string computedTitle
         {
@@ -242,6 +252,28 @@ namespace MudBlazor
         }
 
         #region Events
+
+        internal async Task ToggleHierarchyAsync()
+        {
+            if (DataGrid is null)
+            {
+                return;
+            }
+
+            if (Expanded)
+            {
+                await DataGrid.CollapseAllHierarchy();
+            }
+            else
+            {
+                await DataGrid.ExpandAllHierarchy();
+            }
+        }
+
+        internal string GetGroupIcon()
+        {
+            return DataGrid?.GetGroupIcon(Expanded, RightToLeft) ?? string.Empty;
+        }
 
         /// <summary>
         /// This is triggered by the DataGrid when a sort is applied

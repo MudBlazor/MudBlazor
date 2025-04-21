@@ -5,7 +5,7 @@
     @ChildContent
     @if (ShowToolTip())
     {
-        <MudPopover Open="@_visibleState.Value" Duration="0" Delay="0" AnchorOrigin="@_anchorOrigin" TransformOrigin="@_transformOrigin" Class="@Classname" Style="@Style" Paper="false">
+        <MudPopover Open="@_visibleState.Value" Duration="@Duration" Delay="@Delay" AnchorOrigin="@_anchorOrigin" TransformOrigin="@_transformOrigin" Class="@Classname" Style="@Style" Paper="false">
             @if (TooltipContent is not null)
             {
                 <div class="d-block">
