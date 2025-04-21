@@ -103,10 +103,19 @@
 
         <DocsPageSection>
             <SectionHeader Title="MinuteSelectionStep">
-                <Description>You can change the granularity of selectable times with the <CodeInline>MinuteSelectionStep</CodeInline> parameter.</Description>
+                <Description>You can change the granularity of selectable times with the <CodeInline>MinuteSelectionStep</CodeInline> parameter. The <CodeInline>SecondSelectionStep</CodeInline> similarly controls the seconds steps. </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Class="demo-datetime-margin" Code="@nameof(TimePickerStepExample)" ShowCode="false">
                 <TimePickerStepExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="HoursVisible and SecondsVisible">
+                <Description>You can set whether the hours and seconds are visible using the <CodeInline>HoursVisible</CodeInline> and <CodeInline>SecondsVisible</CodeInline> parameters</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Class="demo-datetime-margin" Code="@nameof(TimePickerHoursVisibleSecondsVisibleExample)" ShowCode="false">
+                <TimePickerHoursVisibleSecondsVisibleExample />
             </SectionContent>
         </DocsPageSection>
 
