@@ -376,22 +376,6 @@ namespace MudBlazor
             return formComponent.HasValue();
         }
 
-        protected override Task OnAfterRenderAsync(bool firstRender)
-        {
-            if (firstRender)
-            {
-                var valid = _formControls.All(IsFormComponentValid);
-                if (valid != IsValid)
-                {
-                    // the user probably bound a variable to IsValid and it conflicts with our state.
-                    // let's set this right
-                    SetIsValid(valid);
-                }
-
-            }
-            return base.OnAfterRenderAsync(firstRender);
-        }
-
         private void SetDefaultControlValidation(IFormComponent formComponent)
         {
             if (Validation == null) return;
