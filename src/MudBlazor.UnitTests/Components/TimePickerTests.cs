@@ -95,11 +95,13 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void OpenToHours_CheckMinutesHidden()
+        public void OpenToHours_CheckMinutesAndSecondsHidden()
         {
             var comp = OpenPicker(Parameter("OpenTo", OpenTo.Hours));
-            // Are hours displayed
+            // Are minutes displayed
             comp.FindAll("div.mud-time-picker-minute.mud-time-picker-dial-hidden").Count.Should().Be(1);
+            // Are seconds displayed
+            comp.FindAll("div.mud-time-picker-second.mud-time-picker-dial-hidden").Count.Should().Be(1);
         }
 
         [Test]
@@ -120,45 +122,97 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void OpenToMinutes_CheckHoursHidden()
+        public void OpenToMinutes_CheckHoursAndSecondsHidden()
         {
             var comp = OpenPicker(Parameter("OpenTo", OpenTo.Minutes));
             // Are Hours hidden
             comp.FindAll("div.mud-time-picker-hour.mud-time-picker-dial-hidden").Count.Should().Be(1);
+            // Are Seconds hidden
+            comp.FindAll("div.mud-time-picker-second.mud-time-picker-dial-hidden").Count.Should().Be(1);
         }
 
         [Test]
-        public void TimeEditModeMinutes_CheckHoursHidden()
+        public void TimeEditModeMinutes_CheckHoursAndSecondsHidden()
         {
             var comp = OpenPicker(Parameter("TimeEditMode", TimeEditMode.OnlyMinutes));
             // Are Hours hidden
             comp.FindAll("div.mud-time-picker-hour.mud-time-picker-dial-hidden").Count.Should().Be(1);
+            // Are Seconds hidden
+            comp.FindAll("div.mud-time-picker-second.mud-time-picker-dial-hidden").Count.Should().Be(1);
         }
 
         [Test]
-        public void TimeEditModeHours_CheckMinutesHidden()
+        public void TimeEditModeHours_CheckMinutesAndSecondsHidden()
         {
             var comp = OpenPicker(Parameter("TimeEditMode", TimeEditMode.OnlyHours));
             // Are Minutes hidden
             comp.FindAll("div.mud-time-picker-minute.mud-time-picker-dial-hidden").Count.Should().Be(1);
+            // Are Seconds hidden
+            comp.FindAll("div.mud-time-picker-second.mud-time-picker-dial-hidden").Count.Should().Be(1);
         }
 
         [Test]
-        public void TimeEditModeNormal_CheckMinutesHidden()
+        public void TimeEditModeSeconds_CheckHoursAndMinutesHidden()
         {
-            var comp = OpenPicker(Parameter("TimeEditMode", TimeEditMode.Normal));
+            var comp = OpenPicker(Parameter("TimeEditMode", TimeEditMode.OnlySeconds));
+            // Are Hours hidden
+            comp.FindAll("div.mud-time-picker-hour.mud-time-picker-dial-hidden").Count.Should().Be(1);
             // Are Minutes hidden
             comp.FindAll("div.mud-time-picker-minute.mud-time-picker-dial-hidden").Count.Should().Be(1);
         }
 
         [Test]
-        public void ChangeToMinutes_FromHours_CheckHoursHidden()
+        public void TimeEditModeHoursMinutes_CheckMinutesAndSecondsHidden()
+        {
+            var comp = OpenPicker(Parameter("TimeEditMode", TimeEditMode.HoursMinutes));
+            // Are Minutes hidden
+            comp.FindAll("div.mud-time-picker-minute.mud-time-picker-dial-hidden").Count.Should().Be(1);
+            // Are Seconds hidden
+            comp.FindAll("div.mud-time-picker-second.mud-time-picker-dial-hidden").Count.Should().Be(1);
+        }
+
+        [Test]
+        public void TimeEditModeMinutesSeconds_CheckHoursAndSecondsHidden()
+        {
+            var comp = OpenPicker(Parameter("TimeEditMode", TimeEditMode.MinutesSeconds));
+            // Are Hours hidden
+            comp.FindAll("div.mud-time-picker-hour.mud-time-picker-dial-hidden").Count.Should().Be(1);
+            // Are Seconds hidden
+            comp.FindAll("div.mud-time-picker-second.mud-time-picker-dial-hidden").Count.Should().Be(1);
+        }
+
+        [Test]
+        public void TimeEditModeNormal_CheckMinutesAndSecondsHidden()
+        {
+            var comp = OpenPicker(Parameter("TimeEditMode", TimeEditMode.Normal));
+            // Are Minutes hidden
+            comp.FindAll("div.mud-time-picker-minute.mud-time-picker-dial-hidden").Count.Should().Be(1);
+            // Are Seconds hidden
+            comp.FindAll("div.mud-time-picker-second.mud-time-picker-dial-hidden").Count.Should().Be(1);
+        }
+
+        [Test]
+        public void ChangeToMinutes_FromHours_CheckHoursAndSecondsHidden()
         {
             var comp = OpenPicker();
             // click on the minutes input
             comp.FindAll("button.mud-timepicker-button")[1].Click();
-            // Are minutes displayed
+            // Are hours displayed
             comp.FindAll("div.mud-time-picker-hour.mud-time-picker-dial-hidden").Count.Should().Be(1);
+            // Are seconds displayed
+            comp.FindAll("div.mud-time-picker-second.mud-time-picker-dial-hidden").Count.Should().Be(1);
+        }
+
+        [Test]
+        public void ChangeToSeconds_FromHours_CheckHoursAndSecondsHidden()
+        {
+            var comp = OpenPicker();
+            // click on the seconds input
+            comp.FindAll("button.mud-timepicker-button")[2].Click();
+            // Are hours displayed
+            comp.FindAll("div.mud-time-picker-hour.mud-time-picker-dial-hidden").Count.Should().Be(1);
+            // Are minutes displayed
+            comp.FindAll("div.mud-time-picker-minute.mud-time-picker-dial-hidden").Count.Should().Be(1);
         }
 
         [Test]
@@ -349,6 +403,55 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").Id.Should().Be(expectedId);
             comp.Find("label").Attributes.GetNamedItem("for").Should().NotBeNull();
             comp.Find("label").Attributes.GetNamedItem("for")!.Value.Should().Be(expectedId);
+        }
+
+        [Test]
+        public void PickerVariantStaticOnlyMinutes_MinuteDialIsVisible()
+        {
+            ComponentParameter[] parameters =
+            [
+                Parameter("TimeEditMode", TimeEditMode.OnlyMinutes),
+                Parameter("PickerVariant", PickerVariant.Static)
+            ];
+            var comp = Context.RenderComponent<SimpleTimePickerTest>(parameters);
+            
+            comp.FindAll("div.mud-time-picker-hour.mud-time-picker-dial-hidden").Count.Should().Be(1);
+            comp.FindAll("div.mud-time-picker-minute.mud-time-picker-dial-hidden").Count.Should().Be(0);
+            comp.FindAll("div.mud-time-picker-second.mud-time-picker-dial-hidden").Count.Should().Be(1);
+        }
+
+        [Test]
+        public void HoursVisibleFalse_OnlyMinutesAndSecondsVisibleInToolbar()
+        {
+            var time = new TimeSpan(12, 05, 10);
+            ComponentParameter[] parameters =
+            [
+                Parameter("Time", time),
+                Parameter("HoursVisible", false),
+            ];
+            var comp = OpenPicker(parameters);
+
+            var timeSectionButtons = comp.FindAll("button.mud-button");
+            timeSectionButtons.Count.Should().Be(2);
+            timeSectionButtons.Count(x => x.TextContent == "05").Should().Be(1);
+            timeSectionButtons.Count(x => x.TextContent == "10").Should().Be(1);
+        }
+
+        [Test]
+        public void SecondsVisibleFalse_OnlyHoursAndMinutesVisibleInToolbar()
+        {
+            var time = new TimeSpan(12, 05, 10);
+            ComponentParameter[] parameters =
+            [
+                Parameter("Time", time),
+                Parameter("SecondsVisible", false),
+            ];
+            var comp = OpenPicker(parameters);
+
+            var timeSectionButtons = comp.FindAll("button.mud-button");
+            timeSectionButtons.Count.Should().Be(2);
+            timeSectionButtons.Count(x => x.TextContent == "12").Should().Be(1);
+            timeSectionButtons.Count(x => x.TextContent == "05").Should().Be(1);
         }
     }
 }

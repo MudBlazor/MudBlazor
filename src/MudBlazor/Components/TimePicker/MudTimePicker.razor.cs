@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using MudBlazor.Resources;
 using MudBlazor.Utilities;
+using OpenToEnum = MudBlazor.OpenTo;
 
 namespace MudBlazor
 {
@@ -98,7 +99,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
-        public OpenTo OpenTo { get; set; } = OpenTo.Hours;
+        public OpenTo? OpenTo { get; set; }
 
         /// <summary>
         /// Controls which values can be edited.
@@ -293,15 +294,11 @@ namespace MudBlazor
         protected override async Task OnPickerOpenedAsync()
         {
             await base.OnPickerOpenedAsync();
-            _currentView = TimeEditMode switch
+            _currentView = OpenTo ?? TimeEditMode switch
             {
-                TimeEditMode.Normal => OpenTo,
-                TimeEditMode.OnlyHours => OpenTo.Hours,
-                TimeEditMode.OnlyMinutes => OpenTo.Minutes,
-                TimeEditMode.OnlySeconds => OpenTo.Seconds,
-                TimeEditMode.HoursMinutes => OpenTo.Hours,
-                TimeEditMode.MinutesSeconds => OpenTo.Minutes,
-                _ => _currentView
+                TimeEditMode.OnlyMinutes or TimeEditMode.MinutesSeconds => OpenToEnum.Minutes,
+                TimeEditMode.OnlySeconds => OpenToEnum.Seconds,
+                _ => OpenToEnum.Hours
             };
         }
 
@@ -386,19 +383,19 @@ namespace MudBlazor
 
         private async Task OnHourClickAsync()
         {
-            _currentView = OpenTo.Hours;
+            _currentView = OpenToEnum.Hours;
             await FocusAsync();
         }
 
         private async Task OnMinutesClick()
         {
-            _currentView = OpenTo.Minutes;
+            _currentView = OpenToEnum.Minutes;
             await FocusAsync();
         }
 
         private async Task OnSecondsClick()
         {
-            _currentView = OpenTo.Seconds;
+            _currentView = OpenToEnum.Seconds;
             await FocusAsync();
         }
 
@@ -429,17 +426,17 @@ namespace MudBlazor
 
         protected string HoursButtonClassname =>
             new CssBuilder("mud-timepicker-button")
-                .AddClass("mud-timepicker-toolbar-text", _currentView != OpenTo.Hours)
+                .AddClass("mud-timepicker-toolbar-text", _currentView != OpenToEnum.Hours)
                 .Build();
 
         protected string MinuteButtonClassname =>
             new CssBuilder("mud-timepicker-button")
-                .AddClass("mud-timepicker-toolbar-text", _currentView != OpenTo.Minutes)
+                .AddClass("mud-timepicker-toolbar-text", _currentView != OpenToEnum.Minutes)
                 .Build();
         
         protected string SecondButtonClassname =>
             new CssBuilder("mud-timepicker-button")
-                .AddClass("mud-timepicker-toolbar-text", _currentView != OpenTo.Seconds)
+                .AddClass("mud-timepicker-toolbar-text", _currentView != OpenToEnum.Seconds)
                 .Build();
 
         protected string AmButtonClassname =>
@@ -455,22 +452,22 @@ namespace MudBlazor
         private string HourDialClassname =>
             new CssBuilder("mud-time-picker-hour")
                 .AddClass("mud-time-picker-dial")
-                .AddClass("mud-time-picker-dial-out", _currentView != OpenTo.Hours)
-                .AddClass("mud-time-picker-dial-hidden", _currentView != OpenTo.Hours)
+                .AddClass("mud-time-picker-dial-out", _currentView != OpenToEnum.Hours)
+                .AddClass("mud-time-picker-dial-hidden", _currentView != OpenToEnum.Hours)
                 .Build();
 
         private string MinuteDialClassname =>
             new CssBuilder("mud-time-picker-minute")
                 .AddClass("mud-time-picker-dial")
-                .AddClass("mud-time-picker-dial-out", _currentView != OpenTo.Minutes)
-                .AddClass("mud-time-picker-dial-hidden", _currentView != OpenTo.Minutes)
+                .AddClass("mud-time-picker-dial-out", _currentView != OpenToEnum.Minutes)
+                .AddClass("mud-time-picker-dial-hidden", _currentView != OpenToEnum.Minutes)
                 .Build();
 
         private string SecondDialClassname =>
             new CssBuilder("mud-time-picker-second")
                 .AddClass("mud-time-picker-dial")
-                .AddClass("mud-time-picker-dial-out", _currentView != OpenTo.Seconds)
-                .AddClass("mud-time-picker-dial-hidden", _currentView != OpenTo.Seconds)
+                .AddClass("mud-time-picker-dial-out", _currentView != OpenToEnum.Seconds)
+                .AddClass("mud-time-picker-dial-hidden", _currentView != OpenToEnum.Seconds)
                 .Build();
 
         private Typo ToolbarTextTypo => Orientation == Orientation.Portrait ? Typo.h2 : Typo.h3;
@@ -510,7 +507,7 @@ namespace MudBlazor
 
         private string GetNumberColor(int value)
         {
-            if (_currentView == OpenTo.Hours)
+            if (_currentView == OpenToEnum.Hours)
             {
                 var h = _timeSet.Hour;
 
@@ -528,11 +525,11 @@ namespace MudBlazor
                     return $"mud-clock-number mud-theme-{Color.ToDescriptionString()}";
                 }
             }
-            else if (_currentView == OpenTo.Minutes && _timeSet.Minute == value)
+            else if (_currentView == OpenToEnum.Minutes && _timeSet.Minute == value)
             {
                 return $"mud-clock-number mud-theme-{Color.ToDescriptionString()}";
             }
-            else if (_currentView == OpenTo.Seconds && _timeSet.Second == value)
+            else if (_currentView == OpenToEnum.Seconds && _timeSet.Second == value)
             {
                 return $"mud-clock-number mud-theme-{Color.ToDescriptionString()}";
             }
@@ -544,17 +541,17 @@ namespace MudBlazor
         {
             double deg = 0;
 
-            if (_currentView == OpenTo.Hours)
+            if (_currentView == OpenToEnum.Hours)
             {
                 deg = _timeSet.Hour * 30 % 360;
             }
 
-            if (_currentView == OpenTo.Minutes)
+            if (_currentView == OpenToEnum.Minutes)
             {
                 deg = _timeSet.Minute * 6 % 360;
             }
 
-            if (_currentView == OpenTo.Seconds)
+            if (_currentView == OpenToEnum.Seconds)
             {
                 deg = _timeSet.Second * 6 % 360;
             }
@@ -574,17 +571,17 @@ namespace MudBlazor
         {
             double deg = 0;
 
-            if (_currentView == OpenTo.Hours)
+            if (_currentView == OpenToEnum.Hours)
             {
                 deg = _timeSet.Hour * 30 % 360;
             }
 
-            if (_currentView == OpenTo.Minutes)
+            if (_currentView == OpenToEnum.Minutes)
             {
                 deg = _timeSet.Minute * 6 % 360;
             }
 
-            if (_currentView == OpenTo.Seconds)
+            if (_currentView == OpenToEnum.Seconds)
             {
                 deg = _timeSet.Second * 6 % 360;
             }
@@ -596,12 +593,12 @@ namespace MudBlazor
         {
             var height = 40;
 
-            if (_currentView == OpenTo.Minutes)
+            if (_currentView == OpenToEnum.Minutes)
             {
                 height = 40;
             }
 
-            if (_currentView == OpenTo.Hours)
+            if (_currentView == OpenToEnum.Hours)
             {
                 if (!AmPm && _timeSet.Hour > 0 && _timeSet.Hour < 13)
                 {
@@ -635,15 +632,11 @@ namespace MudBlazor
 
         protected override void OnParametersSet()
         {
-            _currentView ??= TimeEditMode switch
+            _currentView ??= OpenTo ?? TimeEditMode switch
             {
-                TimeEditMode.Normal => OpenTo,
-                TimeEditMode.OnlyHours => OpenTo.Hours,
-                TimeEditMode.OnlyMinutes => OpenTo.Minutes,
-                TimeEditMode.OnlySeconds => OpenTo.Seconds,
-                TimeEditMode.HoursMinutes => OpenTo.Hours,
-                TimeEditMode.MinutesSeconds => OpenTo.Minutes,
-                _ => _currentView
+                TimeEditMode.OnlyMinutes or TimeEditMode.MinutesSeconds => OpenToEnum.Minutes,
+                TimeEditMode.OnlySeconds => OpenToEnum.Seconds,
+                _ => OpenToEnum.Hours
             };
             base.OnParametersSet();
         }
@@ -722,17 +715,17 @@ namespace MudBlazor
             PointerMoving = pointerMoving;
 
             // Update the .NET properties from the JavaScript events.
-            if (_currentView == OpenTo.Seconds)
+            if (_currentView == OpenToEnum.Seconds)
             {
                 var second = RoundToStepInterval(value, SecondSelectionStep);
                 _timeSet.Second = second;
             }
-            if (_currentView == OpenTo.Minutes)
+            if (_currentView == OpenToEnum.Minutes)
             {
                 var minute = RoundToStepInterval(value, MinuteSelectionStep);
                 _timeSet.Minute = minute;
             }
-            else if (_currentView == OpenTo.Hours)
+            else if (_currentView == OpenToEnum.Hours)
             {
                 _timeSet.Hour = HourAmPm(value);
             }
@@ -757,26 +750,26 @@ namespace MudBlazor
             PointerMoving = false;
 
             // Clicking a stick will submit the time.
-            if (_currentView == OpenTo.Seconds)
+            if (_currentView == OpenToEnum.Seconds)
             {
                 await SubmitAndCloseAsync();
             }
-            if (_currentView == OpenTo.Minutes)
+            if (_currentView == OpenToEnum.Minutes)
             {
                 if (TimeEditMode is TimeEditMode.Normal or TimeEditMode.MinutesSeconds)
                 {
-                    _currentView = OpenTo.Seconds;
+                    _currentView = OpenToEnum.Seconds;
                 }
                 else if (TimeEditMode is TimeEditMode.OnlyMinutes or TimeEditMode.HoursMinutes)
                 {
                     await SubmitAndCloseAsync();
                 }
             }
-            else if (_currentView == OpenTo.Hours)
+            else if (_currentView == OpenToEnum.Hours)
             {
                 if (TimeEditMode is TimeEditMode.Normal or TimeEditMode.HoursMinutes)
                 {
-                    _currentView = OpenTo.Minutes;
+                    _currentView = OpenToEnum.Minutes;
                 }
                 else if (TimeEditMode == TimeEditMode.OnlyHours)
                 {
@@ -975,7 +968,7 @@ namespace MudBlazor
 
         protected Task ChangeSecondAsync(int second)
         {
-            _currentView = OpenTo.Seconds;
+            _currentView = OpenToEnum.Seconds;
             _timeSet.Second = (_timeSet.Second + second + 60) % 60;
 
             return UpdateTimeAsync();
@@ -983,7 +976,7 @@ namespace MudBlazor
 
         protected Task ChangeMinuteAsync(int minute)
         {
-            _currentView = OpenTo.Minutes;
+            _currentView = OpenToEnum.Minutes;
             _timeSet.Minute = (_timeSet.Minute + minute + 60) % 60;
 
             return UpdateTimeAsync();
@@ -991,7 +984,7 @@ namespace MudBlazor
 
         protected Task ChangeHourAsync(int hour)
         {
-            _currentView = OpenTo.Hours;
+            _currentView = OpenToEnum.Hours;
             _timeSet.Hour = (_timeSet.Hour + hour + 24) % 24;
 
             return UpdateTimeAsync();
