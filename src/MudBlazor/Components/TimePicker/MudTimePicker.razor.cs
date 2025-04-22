@@ -85,7 +85,7 @@ namespace MudBlazor
         }
 
         private bool _amPm = false;
-        private OpenTo _currentView;
+        private OpenTo? _currentView;
         private string _timeFormat = string.Empty;
 
         internal TimeSpan? TimeIntermediate { get; private set; }
@@ -627,11 +627,25 @@ namespace MudBlazor
         {
             base.OnInitialized();
             UpdateTimeSetFromTime();
-            _currentView = OpenTo;
             _initialHour = _timeSet.Hour;
             _initialMinute = _timeSet.Minute;
             _initialSecond= _timeSet.Second;
             _dotNetRef = DotNetObjectReference.Create(this);
+        }
+
+        protected override void OnParametersSet()
+        {
+            _currentView ??= TimeEditMode switch
+            {
+                TimeEditMode.Normal => OpenTo,
+                TimeEditMode.OnlyHours => OpenTo.Hours,
+                TimeEditMode.OnlyMinutes => OpenTo.Minutes,
+                TimeEditMode.OnlySeconds => OpenTo.Seconds,
+                TimeEditMode.HoursMinutes => OpenTo.Hours,
+                TimeEditMode.MinutesSeconds => OpenTo.Minutes,
+                _ => _currentView
+            };
+            base.OnParametersSet();
         }
 
         [Inject] private IJSRuntime JsRuntime { get; set; } = null!;
