@@ -1,6 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudDropContainer T="DropItem" Items="_items" ItemsSelector="@((item,dropzone) => item.Selector == dropzone)" ItemPicked="OnDragStart" ItemDropped="ItemUpdated" Class="d-flex flex-wrap flex-grow-1" >
+﻿<MudDropContainer T="DropItem" Items="_items" ItemsSelector="@((item,dropzone) => item.Selector == dropzone)" ItemPicked="OnDragStart" ItemDropped="ItemUpdated" Class="d-flex flex-wrap flex-grow-1" >
     <ChildContent>
         @for (int i = 1; i < 5; i++)
         {
@@ -18,39 +16,44 @@
     </ItemRenderer>
 </MudDropContainer>
 
-<MudText>@Message</MudText>
+<MudText>@_message</MudText>
 
 @code {
-    private string Message;
+    private string? _message;
+
+    private readonly List<DropItem> _items =
+    [
+        new() { Name = "Item 1", Selector = "1" },
+        new() { Name = "Item 2", Selector = "1" },
+        new() { Name = "Item 3", Selector = "1" },
+        new() { Name = "Item 4", Selector = "1" },
+        new() { Name = "Item 5", Selector = "2" },
+        new() { Name = "Item 6", Selector = "2" }
+    ];
+
+    public List<int> IndexHistory { get; set; } = [];
 
     private void ItemUpdated(MudItemDropInfo<DropItem> dropItem)
     {
-        dropItem.Item.Selector = dropItem.DropzoneIdentifier;
+        if (dropItem.Item != null)
+        {
+            dropItem.Item.Selector = dropItem.DropzoneIdentifier;
+        }
+
         IndexHistory.Add(dropItem.IndexInZone);
-        Message = string.Empty;
+        _message = string.Empty;
     }
 
-    public List<int> IndexHistory { get; set; } = new();
-
-    private List<DropItem> _items = new()
+    private void OnDragStart(MudDragAndDropItemTransaction<DropItem> transactionItem)
     {
-        new DropItem(){ Name = "Item 1", Selector = "1" },
-        new DropItem(){ Name = "Item 2", Selector = "1" },
-        new DropItem(){ Name = "Item 3", Selector = "1" },
-        new DropItem(){ Name = "Item 4", Selector = "1" },
-        new DropItem(){ Name = "Item 5", Selector = "2" },
-        new DropItem(){ Name = "Item 6", Selector = "2" },
-    };
+        _message = $"Draging Started for [{transactionItem.Item?.Name}]";
+        StateHasChanged();
+    }
 
     public class DropItem
     {
-        public string Name { get; init; }
-        public string Selector { get; set; }
-    }
+        public required string Name { get; init; }
 
-    private void OnDragStart(MudDragAndDropItemTransaction<DropItem> TransactionItem)
-    {
-        Message = $"Draging Started for [{TransactionItem.Item.Name}]";
-        StateHasChanged();
+        public required string Selector { get; set; }
     }
 }

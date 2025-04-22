@@ -1,9 +1,18 @@
 ﻿@namespace MudBlazor.Charts
-@using MudBlazor.Components.Chart.Models
 @using System.Globalization;
 @inherits MudTimeSeriesChartBase
 
-<svg @attributes="UserAttributes" class="mud-chart-line mud-ltr" width="@MudChartParent?.Width" height="@MudChartParent?.Height" viewBox="0 0 @BoundWidth @BoundHeight">
+@{
+    var style = _hoveredDataPoint != null ? "overflow: visible;" : "";
+
+    var lineStrokeWidth = MudChartParent?.ChartOptions.LineStrokeWidth ?? 3;
+    var dataPointRadius = Math.Max(lineStrokeWidth / 2 + 2, 3);
+    var dataPointHoverRadius = dataPointRadius + 1;
+    var dataPointStroke = 2;
+    var dataPointLabelOffset = dataPointHoverRadius + (dataPointStroke / 2);
+}
+<svg @ref="_elementReference" @attributes="UserAttributes" class="mud-chart-line mud-ltr" width="@MudChartParent?.Width" height="@MudChartParent?.Height" viewBox="0 0 @_boundWidth @_boundHeight" style="@style">
+    <Filters />
     <g class="mud-charts-grid">
         <g class="mud-charts-gridlines-yaxis">
             @foreach (var horizontalLine in _horizontalLines)
@@ -21,38 +30,104 @@
             </g>
         }
     </g>
-    <g class="mud-charts-yaxis">
+    <g @ref="_yAxisGroupElementReference" class="mud-charts-yaxis">
         @foreach (var horizontalLineValue in _horizontalValues)
         {
-            @((MarkupString)$"<text x='{horizontalLineValue.X.ToString(CultureInfo.InvariantCulture)}' y='{horizontalLineValue.Y.ToString(CultureInfo.InvariantCulture)}' font-size='12px' text-anchor='end' dominant-baseline='auto'>{horizontalLineValue.Value.ToString(CultureInfo.InvariantCulture)}</text>")
+            @((MarkupString)$"<text x='{horizontalLineValue.X.ToString(CultureInfo.InvariantCulture)}' y='{horizontalLineValue.Y.ToString(CultureInfo.InvariantCulture)}' font-size='12px' text-anchor='end' dominant-baseline='auto'>{horizontalLineValue.Value?.ToString(CultureInfo.InvariantCulture)}</text>")
+        }
+        @if (YAxisTitle is not null)
+        {
+            <g transform="translate(10, @(_boundHeight / 2))">
+                <text transform="rotate(-90)" font-size="14px" text-anchor="middle" dominant-baseline="hanging">@YAxisTitle</text>
+            </g>
         }
     </g>
-    <g class="mud-charts-xaxis">
-        @foreach (var verticalLineValue in _verticalValues)
+    <g @ref="_xAxisGroupElementReference" class="mud-charts-xaxis">
+        @for (var i = 0; i < _verticalValues.Count; i++)
         {
-            @((MarkupString)$"<text x='{verticalLineValue.X.ToString(CultureInfo.InvariantCulture)}' y='{verticalLineValue.Y.ToString(CultureInfo.InvariantCulture)}' font-size='12px' text-anchor='middle'>{verticalLineValue.Value.ToString(CultureInfo.InvariantCulture)}</text>")
+            var verticalLineValue = _verticalValues[i];
+            var x = verticalLineValue.X.ToString(CultureInfo.InvariantCulture);
+            var y = verticalLineValue.Y.ToString(CultureInfo.InvariantCulture);
+            var rotation = (-AxisChartOptions.XAxisLabelRotation).ToString(CultureInfo.InvariantCulture);
+            @((MarkupString)$"<text x='{x}' y='{y}' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate({rotation} {x} {y})'>{verticalLineValue.Value?.ToString(CultureInfo.InvariantCulture)}</text>")
         }
     </g>
     <g class="mud-charts-line-series">
         @foreach (var chartLine in _chartLines)
         {
             var series = _series[chartLine.Index];
-            var colour = MudChartParent.ChartOptions.ChartPalette.GetValue(chartLine.Index % MudChartParent.ChartOptions.ChartPalette.Count());
+            var color = MudChartParent?.ChartOptions.ChartPalette.GetValue(chartLine.Index % MudChartParent.ChartOptions.ChartPalette.Length);
+            var showDataMarkers = _series[chartLine.Index].ShowDataMarkers;
+            var isHovered = _hoverDataPointChartLine == chartLine;
 
-            <path class="mud-chart-line" @onclick="() => SelectedIndex = chartLine.Index" fill="none" stroke="@colour" stroke-opacity="@series.StrokeOpacity" stroke-width="@MudChartParent.ChartOptions.LineStrokeWidth" d="@chartLine.Data"></path>
+            var lineClass = isHovered ? "mud-chart-serie mud-chart-line mud-chart-serie-hovered" : "mud-chart-serie mud-chart-line";
 
-            if (series.Type == TimeSeriesDiplayType.Area)
+            <path class="@lineClass" @onclick="() => SelectedIndex = chartLine.Index" fill="none" stroke="@color" stroke-opacity="@series.StrokeOpacity" stroke-width="@MudChartParent?.ChartOptions.LineStrokeWidth" d="@chartLine.Data"></path>
+
+            if (series.LineDisplayType == LineDisplayType.Area)
             {
                 var chartArea = _chartAreas[chartLine.Index];
-                <path class="mud-chart-line" @onclick="() => SelectedIndex = chartLine.Index" fill="@colour" fill-opacity="@series.FillOpacity" d="@chartArea.Data"></path>
+                <path class="@lineClass" @onclick="() => SelectedIndex = chartLine.Index" fill="@color" fill-opacity="@series.FillOpacity" d="@chartArea.Data"></path>
+            }
+
+            @foreach (var item in _chartDataPoints[chartLine.Index].OrderBy(x => x.Index))
+            {
+                if (showDataMarkers && item != _hoveredDataPoint)
+                {
+                    // Unhovered data point
+                    <circle class="mud-chart-serie mud-donut-segment" @onclick="() => SelectedIndex = chartLine.Index" stroke="@color" stroke-width="@dataPointStroke"
+                            cx="@ToS(item.CX)"
+                            cy="@ToS(item.CY)"
+                            r="@ToS(dataPointRadius)">
+                    </circle>
+                }
+
+                // This is a hoverable circle that is invisible until it is the hovered point but has a larger radius to make it easier to hover over
+                <circle class="mud-chart-serie mud-donut-segment" @onclick="() => SelectedIndex = chartLine.Index" fill="@(item == _hoveredDataPoint ? color : string.Empty)" stroke="@color" stroke-width="@dataPointStroke" opacity="@(item == _hoveredDataPoint ? 1 : 0)"
+                        cx="@ToS(item.CX)"
+                        cy="@ToS(item.CY)"
+                        r="@ToS(dataPointHoverRadius)"
+                        @onmouseover="(e) => OnDataPointMouseOver(e, item, chartLine)"
+                        @onmouseout="OnDataPointMouseOut">
+                </circle>
             }
         }
     </g>
 
     @MudChartParent?.CustomGraphics
+
+    @* Render the tooltip as an SVG group when a bar is hovered *@
+    @if (_hoveredDataPoint is not null && _hoverDataPointChartLine is not null && MudChartParent?.ChartOptions.ShowToolTips == true)
+    {
+        var dataPoint = _chartDataPoints.FirstOrDefault(x => x.Value.Contains(_hoveredDataPoint));
+
+        if (dataPoint.Value is not null)
+        {
+            var seriesIndex = dataPoint.Key;
+            var color = MudChartParent.ChartOptions.ChartPalette.GetValue(seriesIndex % MudChartParent.ChartOptions.ChartPalette.Length)?.ToString() ?? string.Empty;
+            var series = _series[seriesIndex];
+
+            if (!string.IsNullOrWhiteSpace(series.DataMarkerTooltipTitleFormat))
+            {
+                var tooltipTitle = series.DataMarkerTooltipTitleFormat
+                    .Replace("{{SERIES_NAME}}", series.Name)
+                    .Replace("{{X_VALUE}}", _hoveredDataPoint.LabelXValue)
+                    .Replace("{{Y_VALUE}}", _hoveredDataPoint.LabelYValue);
+
+                var tooltipSubtitle = series.DataMarkerTooltipSubtitleFormat?
+                    .Replace("{{SERIES_NAME}}", series.Name)
+                    .Replace("{{X_VALUE}}", _hoveredDataPoint.LabelXValue)
+                    .Replace("{{Y_VALUE}}", _hoveredDataPoint.LabelYValue) ?? string.Empty;
+
+                <ChartTooltip Title="@tooltipTitle" Subtitle="@tooltipSubtitle" Color="@color" X="_hoveredDataPoint.LabelX" Y="_hoveredDataPoint.LabelY - dataPointLabelOffset" />
+            }
+        }
+    }
 </svg>
-<Legend Data="@_legends" />
-
-@code {
-
+@if (XAxisTitle is not null)
+{
+    <MudStack Class="mt-2" Row="true" Justify="Justify.Center">
+        <MudText Typo="Typo.body2">@XAxisTitle</MudText>
+    </MudStack>
 }
+<Legend Data="@_legends" />

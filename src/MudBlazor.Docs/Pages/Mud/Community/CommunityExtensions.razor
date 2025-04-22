@@ -1,0 +1,76 @@
+﻿@page "/mud/community/extensions"
+@using System.Net.Http.Json
+@using System.Text.Json
+@using System.Text.Json.Serialization.Metadata
+@using MudBlazor.Docs.Enums
+@using MudBlazor.Docs.Models.Context
+
+@inject HttpClient HttpClient
+
+<DocsPage DisplayFooter="true">
+    <MudContainer Class="announcement-container" MaxWidth="MaxWidth.Medium">
+        <DocsPageHeader Title="Community Extensions" SubTitle="Extensions for MudBlazor from the community">
+        </DocsPageHeader>
+        <DocsPageContent>
+
+            <DocsPageSection class="mb-n2">
+                <SectionHeader>
+                    <Description>
+                        <br />
+                        One of the reasons MudBlazor has been so successful is a wide berth of community support. Regular developers, willing to put in the
+                        time to either create something new with MudBlazor, help with the main repository, or create external components or utilities designed
+                        to make the MudBlazor experience better for everyone. The following are a list of extensions created for MudBlazor and
+                        just might be able to help you with your next project.
+                        <br />
+                        <MudText Typo="Typo.caption">
+                            <ul class="ml-2">
+                                <li>
+                                    * Don't forget to star your favorite Github Repositories!
+                                </li>
+                                <li>
+                                    * MudBlazor does not actively support any of these community extensions, please reach out to them if you
+                                    have any questions or concerns.
+                                </li>
+                                <li>
+                                    * If you have a community extension that should be added to this list please submit a Pull Request with your
+                                    information at the end of <CodeInline>CommunityExtensions.json</CodeInline>
+                                </li>
+                            </ul>
+                        </MudText>
+                    </Description>
+                </SectionHeader>
+            </DocsPageSection>
+
+                <MudContainer Class="py-4 py-sm-6 py-md-8 py-lg-8 py-xl-8">
+                    <MudGrid>
+                        @foreach (CommunityCategories category in Enum.GetValues(typeof(CommunityCategories)))
+                        {
+                            @foreach (var json in _jsonExtensions.Where(x => x.Category.Equals(category.ToString(), StringComparison.InvariantCultureIgnoreCase)))
+                            {
+                                <MudItem xs="12" sm="6" lg="4">
+                                    <ExtensionCard Extension="@json" CategoryName="@category.ToDescriptionString()" />
+                                </MudItem>
+                            }
+                        }
+                    </MudGrid>
+                </MudContainer>
+
+        </DocsPageContent>
+    </MudContainer>
+</DocsPage>
+
+@code {
+    private IReadOnlyList<CommunityExtension> _jsonExtensions = [];
+    private readonly JsonSerializerOptions _jsonSerializerOptions = new()
+        {
+            TypeInfoResolver = JsonTypeInfoResolver.Combine(CommunityApiJsonSerializerContext.Default)
+        };
+    private const string JsonFilePath = "_content/MudBlazor.Docs/CommunityExtensions.json";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var content = await HttpClient.GetFromJsonAsync<IReadOnlyList<CommunityExtension>>(JsonFilePath, _jsonSerializerOptions);
+        _jsonExtensions = content.OrderBy(x => x.Name).ToArray();
+        StateHasChanged();
+    }
+}

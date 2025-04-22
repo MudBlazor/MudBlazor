@@ -4,6 +4,7 @@
 
 using Bunit;
 using FluentAssertions;
+using MudBlazor.UnitTests.TestComponents.AppBar;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
 
@@ -78,5 +79,30 @@ namespace MudBlazor.UnitTests.Components
             comp.FindComponent<MudToolBar>().Instance.WrapContent.Should().Be(false);
         }
 
+        [Test]
+        public void AppBarWithContextualSetTrue()
+        {
+            var comp = Context.RenderComponent<ContextualAppBarTest>();
+            var bar = comp.FindComponent<MudAppBar>();
+
+            bar.Markup.Should().Contain("regular-app-bar").And.Contain("mud-theme-primary");
+
+            comp.Find(".mud-switch-input").Change(true);
+
+            bar.Markup.Should().Contain("contextual-app-bar").And.Contain("mud-theme-tertiary");
+        }
+
+        [Test]
+        public void AppBarWithContextualSetFalse()
+        {
+            var comp = Context.RenderComponent<ContextualAppBarTest>(Parameter(nameof(ContextualAppBarTest.IsContextual), false));
+            var bar = comp.FindComponent<MudAppBar>();
+
+            bar.Markup.Should().Contain("regular-app-bar").And.Contain("mud-theme-primary");
+
+            comp.Find(".mud-switch-input").Change(true);
+
+            bar.Markup.Should().Contain("regular-app-bar").And.Contain("mud-theme-primary");
+        }
     }
 }

@@ -1,14 +1,42 @@
 ﻿@namespace MudBlazor.Charts
-@using System.Globalization
 @inherits MudCategoryChartBase
 
-<svg @attributes="UserAttributes" class="mud-chart-pie" width="@MudChartParent?.Width" height="@MudChartParent?.Height" viewBox="-1 -1 2 2" style="transform: rotate(-90deg);">
-    <Filters />
-    @foreach (var item in _paths)
-    {
-        <path @onclick="() => SelectedIndex = item.Index" class="mud-chart-serie" fill="@(MudChartParent.ChartOptions.ChartPalette.GetValue(item.Index % MudChartParent.ChartOptions.ChartPalette.Count()))" d="@item.Data"></path>
-	}
+@{
+    var style = _hoveredSegment != null ? "overflow: visible;" : "";
+    var chartClass = CircleDonutRatio < 1 ? "mud-chart-donut" : "mud-chart-pie";
+}
 
-	@MudChartParent?.CustomGraphics
+<svg @attributes="UserAttributes" class="@chartClass" width="@MudChartParent?.Width" height="@MudChartParent?.Height" viewBox="0 0 @(Radius * 2) @(Radius * 2)" style="@style">
+    <Filters />
+    <g transform="translate(@Radius, @Radius)">
+        @foreach (var item in _paths)
+        {
+            <path @onclick="() => SelectedIndex = item.Index"
+                  class="mud-chart-serie"
+                  fill="@MudChartParent?.ChartOptions.ChartPalette.GetValue(item.Index % MudChartParent.ChartOptions.ChartPalette.Length)"
+                  d="@item.Data"
+                  @onmouseover="(e) => OnSegmentMouseOver(e, item)"
+                  @onmouseout="OnSegmentMouseOut">
+            </path>
+        }
+    </g>
+
+    @MudChartParent?.CustomGraphics
+
+    @* Render the tooltip as an SVG group when a bar is hovered *@
+    @if (_hoveredSegment is not null && MudChartParent?.ChartOptions.ShowToolTips == true)
+    {
+        var color = MudChartParent.ChartOptions.ChartPalette.GetValue(_hoveredSegment.Index % MudChartParent.ChartOptions.ChartPalette.Length)?.ToString() ?? string.Empty;
+
+        if (!string.IsNullOrWhiteSpace(MudChartParent.ChartOptions.DefaultDataMarkerTooltipTitleFormat))
+        {
+            var tooltipTitle = MudChartParent.ChartOptions.DefaultDataMarkerTooltipTitleFormat
+                .Replace("{{SERIES_NAME}}", _hoveredSegment.LabelYValue)
+                .Replace("{{X_VALUE}}", _hoveredSegment.LabelXValue)
+                .Replace("{{Y_VALUE}}", _hoveredSegment.LabelYValue);
+
+            <ChartTooltip Title="@tooltipTitle" Color="@color" X="_hoveredSegment.LabelX + Radius" Y="_hoveredSegment.LabelY + Radius" />
+        }
+    }
 </svg>
 <Legend Data="@_legends" />

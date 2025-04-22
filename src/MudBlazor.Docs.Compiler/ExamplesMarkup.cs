@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Text;
+﻿using System.Text;
 using System.Text.RegularExpressions;
 using ColorCode;
 
@@ -41,7 +39,7 @@ namespace MudBlazor.Docs.Compiler
                         continue;
                     }
 
-                    var markupDir = Path.GetDirectoryName(markupPath);
+                    var markupDir = Path.GetDirectoryName(markupPath) ?? string.Empty;
                     if (!Directory.Exists(markupDir))
                     {
                         Directory.CreateDirectory(markupDir);
@@ -97,12 +95,12 @@ namespace MudBlazor.Docs.Compiler
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Error generating examples markup : {e.Message}");
+                Console.WriteLine(@$"Error generating examples markup : {e.Message}");
                 success = false;
             }
 
-            Console.WriteLine($"Docs.Compiler updated {noOfFilesUpdated} generated files");
-            Console.WriteLine($"Docs.Compiler generated {noOfFilesCreated} new files");
+            Console.WriteLine(@$"Docs.Compiler updated {noOfFilesUpdated} generated files");
+            Console.WriteLine(@$"Docs.Compiler generated {noOfFilesCreated} new files");
             return success;
         }
 
@@ -115,12 +113,12 @@ namespace MudBlazor.Docs.Compiler
 
         public static string AttributePostprocessing(string html)
         {
-            return HtmlAttributeValueSpanRegularExpression().Replace(html, new MatchEvaluator(m =>
-                    {
-                        var value = m.Groups["value"].Value;
-                        return
-                            $@"<span class=""quot"">&quot;</span>{AttributeValuePostprocessing(value)}<span class=""quot"">&quot;</span>";
-                    }));
+            return HtmlAttributeValueSpanRegularExpression().Replace(html, match =>
+            {
+                var value = match.Groups["value"].Value;
+                return
+                    $@"<span class=""quot"">&quot;</span>{AttributeValuePostprocessing(value)}<span class=""quot"">&quot;</span>";
+            });
         }
 
         private static string AttributeValuePostprocessing(string value)

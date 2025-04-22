@@ -1,9 +1,7 @@
 ﻿@page "/components/rating"
-@page "/components/MudRating"
-@page "/components/MudRatingItem"
 
 <DocsPage>
-    <DocsPageHeader Title="Rating" SubTitle="Ratings provide insight regarding other's opinions and experiences with a product.">
+    <DocsPageHeader Title="Rating" Component="@nameof(MudRating)" SubTitle="Ratings provide insight regarding other's opinions and experiences with a product.">
         <Description>Collecting user feedback via ratings is a simple analytic that can provide a lot of feedback to your product or application.</Description>
     </DocsPageHeader>
     <DocsPageContent>
@@ -71,18 +69,18 @@
             </SectionContent>
         </DocsPageSection>
 
-		<DocsPageSection>
+        <DocsPageSection>
             <SectionHeader Title="Keyboard Navigation">
-				<Description>
-					<MudText>MudRating accepts keys to keyboard navigation.</MudText>
-					<br />
-					<MudText><CodeInline>ArrowLeft</CodeInline> key to decrease value by 1</MudText>
-					<MudText><CodeInline>ArrowRight</CodeInline> key to increase value by 1</MudText>
-					<MudText><CodeInline>Shift+ArrowLeft</CodeInline> key to set value 0</MudText>
-					<MudText><CodeInline>Shift+ArrowRight</CodeInline> key to increase value to max</MudText>
-					<br />
-					<MudText>*Disabled or readonly ratings' value cannot be changed by keys.</MudText>
-				</Description>
+                <Description>
+                    <MudText>MudRating accepts keys to keyboard navigation.</MudText>
+                    <br />
+                    <MudText><CodeInline>ArrowLeft</CodeInline> key to decrease value by 1</MudText>
+                    <MudText><CodeInline>ArrowRight</CodeInline> key to increase value by 1</MudText>
+                    <MudText><CodeInline>Shift+ArrowLeft</CodeInline> key to set value 0</MudText>
+                    <MudText><CodeInline>Shift+ArrowRight</CodeInline> key to increase value to max</MudText>
+                    <br />
+                    <MudText>*Disabled or readonly ratings' value cannot be changed by keys.</MudText>
+                </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(RatingKeyboardNavigationExample)" ShowCode="false">
                 <RatingKeyboardNavigationExample />

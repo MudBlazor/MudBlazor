@@ -2,19 +2,23 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
+using MudBlazor.Resources;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudTimePicker : MudPicker<TimeSpan?>, IAsyncDisposable
+    /// <summary>
+    /// A component for selecting time values.
+    /// </summary>
+    /// <seealso cref="MudDatePicker"/>
+    /// <seealso cref="MudDateRangePicker"/>
+    public partial class MudTimePicker : MudPicker<TimeSpan?>
     {
         private const string Format24Hours = "HH:mm";
         private const string Format12Hours = "hh:mm tt";
@@ -74,10 +78,10 @@ namespace MudBlazor
 
         private void HandleParsingError()
         {
-            const string ParsingErrorMessage = "Not a valid time span";
+            const string ParsingErrorMessage = LanguageResource.Converter_InvalidTimeSpan;
             Converter.GetError = true;
-            Converter.GetErrorMessage = ParsingErrorMessage;
-            Converter.OnError?.Invoke(ParsingErrorMessage);
+            Converter.GetErrorMessage = (ParsingErrorMessage, []);
+            Converter.OnError?.Invoke(ParsingErrorMessage, []);
         }
 
         private bool _amPm = false;
@@ -87,46 +91,66 @@ namespace MudBlazor
         internal TimeSpan? TimeIntermediate { get; private set; }
 
         /// <summary>
-        /// First view to show in the MudDatePicker.
+        /// The initial view for this picker.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="OpenTo.Hours"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public OpenTo OpenTo { get; set; } = OpenTo.Hours;
 
         /// <summary>
-        /// Selects the edit mode. By default, you can edit hours and minutes.
+        /// Controls which values can be edited.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="TimeEditMode.Normal"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public TimeEditMode TimeEditMode { get; set; } = TimeEditMode.Normal;
 
         /// <summary>
-        /// Sets the amount of time in milliseconds to wait before closing the picker.
+        /// The amount of time, in milliseconds, to wait before closing the picker.
         /// </summary>
         /// <remarks>
-        /// This helps the user see that the time was selected before the popover disappears.
+        /// Defaults to <c>200</c>. The delay gives users a moment to see the selected time before the popover disappears.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public int ClosingDelay { get; set; } = 200;
 
         /// <summary>
-        /// If true and PickerActions are defined, the hour and the minutes can be defined without any action.
+        /// Closes this picker when the value is set or cleared.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>. When <c>true</c> and <c>PickerActions</c> are defined, 
+        /// the hour and the minutes can be selected and the drop-down will close without having to 
+        /// click any of the action buttons.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public bool AutoClose { get; set; }
 
         /// <summary>
-        /// Sets the number interval for minutes.
+        /// The step interval when selecting minutes.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>1</c>. For example: a value of <c>15</c> would allow minutes <c>0</c>, <c>15</c>, 
+        /// <c>30</c>, and <c>45</c> be selected.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public int MinuteSelectionStep { get; set; } = 1;
 
         /// <summary>
-        /// If true, enables 12 hour selection clock.
+        /// Shows a 12-hour selection clock.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.<br />
+        /// When <c>true</c>, hours 1-12 are displayed with an AM or PM marker.<br />
+        /// When <c>false</c>, hours 0-23 are displayed.<br />
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool AmPm
@@ -152,8 +176,17 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// String format for selected time view.
+        /// The format applied to time values.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>hh:mm tt</c> when <see cref="AmPm"/> is <c>true</c>, otherwise <c>HH:mm</c>.<br />
+        /// Format strings are typically a combination of these characters:<br />
+        /// * <c>h</c> (lowercase) for hours in 12-hour time, <br />
+        /// * <c>H</c> (uppercase) for hours in 24-hour time, <br />
+        /// * <c>m</c> for minutes,<br />
+        /// * <c>tt</c> for AM/PM markers.<br />
+        /// For example: <c>h:mm tt</c> would display <c>6:32 PM</c>, and <c>HH:mm</c> would display <c>18:32</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public string TimeFormat
@@ -178,8 +211,11 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// The currently selected time (two-way bindable). If <c>null</c>, nothing was selected.
+        /// The currently selected time.
         /// </summary>
+        /// <remarks>
+        /// When this value changes, <see cref="TimeChanged"/> occurs.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Data)]
         public TimeSpan? Time
@@ -188,6 +224,11 @@ namespace MudBlazor
             set => SetTimeAsync(value, true).CatchAndLog();
         }
 
+        /// <summary>
+        /// Sets the selected time value.
+        /// </summary>
+        /// <param name="time">The new value to set.</param>
+        /// <param name="updateValue">When <c>true</c>, the <c>Text</c> will also be updated.</param>
         protected async Task SetTimeAsync(TimeSpan? time, bool updateValue)
         {
             if (_value != time)
@@ -208,10 +249,11 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Fired when the date changes.
+        /// Occurs when <see cref="Time"/> has changed.
         /// </summary>
         [Parameter] public EventCallback<TimeSpan?> TimeChanged { get; set; }
 
+        /// <inheritdoc />
         protected override Task StringValueChangedAsync(string value)
         {
             Touched = true;
@@ -220,8 +262,8 @@ namespace MudBlazor
             return SetTimeAsync(Converter.Get(value), false);
         }
 
-        // The last line cannot be tested.
-        [ExcludeFromCodeCoverage]
+        /// <inheritdoc />
+        [ExcludeFromCodeCoverage] // The last line cannot be tested.
         protected override async Task OnPickerOpenedAsync()
         {
             await base.OnPickerOpenedAsync();
@@ -234,6 +276,7 @@ namespace MudBlazor
             };
         }
 
+        /// <inheritdoc />
         protected internal override Task SubmitAsync()
         {
             if (GetReadOnlyState())
@@ -246,6 +289,7 @@ namespace MudBlazor
             return Task.CompletedTask;
         }
 
+        /// <inheritdoc />
         public override async Task ClearAsync(bool close = true)
         {
             TimeIntermediate = null;
@@ -257,6 +301,10 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// Gets the hour portion of the selected time.
+        /// </summary>
+        /// <returns>A two-character string depending on whether <see cref="AmPm"/> is set, or <c>--</c> if no value is set.</returns>
         private string GetHourString()
         {
             if (TimeIntermediate == null)
@@ -268,6 +316,10 @@ namespace MudBlazor
             return $"{Math.Min(23, Math.Max(0, h)):D2}";
         }
 
+        /// <summary>
+        /// Gets the minute portion of the selected time.
+        /// </summary>
+        /// <returns>A two-digit string for minutes, or <c>--</c> if no value is set.</returns>
         private string GetMinuteString()
         {
             if (TimeIntermediate == null)
@@ -507,6 +559,7 @@ namespace MudBlazor
 
         protected ElementReference ClockElementReference { get; private set; }
 
+        /// <inheritdoc />
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             await base.OnAfterRenderAsync(firstRender);
@@ -520,8 +573,11 @@ namespace MudBlazor
             }
         }
 
-        public async ValueTask DisposeAsync()
+        /// <inheritdoc />
+        protected override async ValueTask DisposeAsyncCore()
         {
+            await base.DisposeAsyncCore();
+
             if (IsJSRuntimeAvailable)
             {
                 await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudTimePicker.destroyPointerEvents", ClockElementReference);
@@ -544,19 +600,21 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// <c>true</c> while the main pointer button is held down and moving.
+        /// Whether the pointer button is held down and moving.
         /// </summary>
         /// <remarks>
-        /// Disables clock animations.
+        /// When <c>true</c>, clock animations are disabled.
         /// </remarks>
         public bool PointerMoving { get; set; }
 
         /// <summary>
         /// Updates the position of the hands on the clock.
-        /// This method is called by the JavaScript events.
         /// </summary>
         /// <param name="value">The minute or hour.</param>
         /// <param name="pointerMoving">Is the pointer being moved?</param>
+        /// <remarks>
+        /// This method is invoked via JavaScript.
+        /// </remarks>
         [JSInvokable]
         public async Task SelectTimeFromStick(int value, bool pointerMoving)
         {
@@ -587,9 +645,11 @@ namespace MudBlazor
 
         /// <summary>
         /// Performs the click action for the sticks.
-        /// This method is called by the JavaScript events.
         /// </summary>
         /// <param name="value">The minute or hour.</param>
+        /// <remarks>
+        /// This method is invoked via JavaScript.
+        /// </remarks>
         [JSInvokable]
         public async Task OnStickClick(int value)
         {

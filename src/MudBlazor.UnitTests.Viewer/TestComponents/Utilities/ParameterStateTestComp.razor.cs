@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
 
 namespace MudBlazor.UnitTests;
 
-#nullable enable
 public partial class ParameterStateTestComp : MudComponentBase
 {
     private readonly List<string> _parameterChanges = new();

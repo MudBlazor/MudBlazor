@@ -5,10 +5,10 @@
 <MudElement HtmlTag="@HtmlTag"
             Class="@Classname"
             Style="@Style"
+            tabindex="0"
             @attributes="UserAttributes"
             @onclick="OnClickHandlerAsync"
             href="@Href"
-            tabindex="0"
             target="@Target"
             PreventDefault="@GetPreventDefault()"
             ClickPropagation="@GetClickPropagation()">
@@ -45,7 +45,7 @@
                      @bind-Value:set="@(x => OnCheckboxChangedAsync())" />
     }
 
-    <div class="mud-list-item-text @(Inset ? "mud-list-item-text-inset" : "")">
+    <div class="mud-list-item-text@(Inset ? " mud-list-item-text-inset" : string.Empty)">
         <MudText Typo="@TextTypo">
             @if (ChildContent != null)
             {
@@ -79,14 +79,15 @@
 {
     <MudCollapse Expanded="@_expandedState.Value">
         <MudList T="T"
-                 Class="mud-nested-list"
-                 Comparer="@Comparer"
-                 SelectionMode="@SelectionMode"
-                 ReadOnly="@ReadOnly"
-                 Color="@(MudList?.Color ?? Color.Primary)"
-                 Padding="false"
-                 Disabled="@GetDisabled()"
-                 Dense="@GetDense()">
+                Class="mud-nested-list"
+                Comparer="@Comparer"
+                SelectionMode="@SelectionMode"
+                ReadOnly="@ReadOnly"
+                Color="@(MudList?.Color ?? Color.Primary)"
+                Padding="false"
+                Disabled="@GetDisabled()"
+                Dense="@GetDense()"
+                Gutters="@(MudList?.Gutters ?? true)">
             @NestedList
         </MudList>
     </MudCollapse>

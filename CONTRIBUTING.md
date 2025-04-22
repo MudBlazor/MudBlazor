@@ -434,6 +434,12 @@ cs files start with an underscore.
 
 ### Continuous Integration
 
-We have an Azure DevOps pipeline which will automatically execute the entire
-test suite on all pushes and PRs. If your commit or PR breaks the tests
-you'll be notified.
+We have a GitHub action which runs against all Pull Requests.
+
+It performs the following checks.
+- Builds the project.
+- Runs the test suite.
+- Checks the code coverage.
+- Checks the code quality.
+
+We generally require all these checks to pass before merging contributions.

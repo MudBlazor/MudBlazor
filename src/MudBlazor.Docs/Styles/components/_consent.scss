@@ -4,6 +4,7 @@
   position: fixed;
   bottom: 0;
   left: 0;
+  pointer-events: none;
   width: 100%;
   z-index: var(--mud-zindex-popover);
 }
@@ -14,6 +15,7 @@
   padding: 1em;
   gap: 0.5rem;
   max-width: 48rem;
+  pointer-events: all;
   border-radius: 0.25rem;
 }
 

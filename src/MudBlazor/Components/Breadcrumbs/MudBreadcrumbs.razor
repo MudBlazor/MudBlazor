@@ -8,29 +8,31 @@
 }
 
 <CascadingValue Value="this" IsFixed="true">
-    <ul @attributes="UserAttributes" class="@Classname" style="@Style">
-        @if (MaxItems != null && Collapsed && Items.Count > MaxItems)
-        {
-            <BreadcrumbLink Item="Items[0]"></BreadcrumbLink>
-            <BreadcrumbSeparator></BreadcrumbSeparator>
-            <li class="mud-breadcrumbs-expander" @onclick="Expand">
-                <MudIcon Icon="@ExpanderIcon" Size="Size.Small"></MudIcon>
-            </li>
-            <BreadcrumbSeparator></BreadcrumbSeparator>
-            <BreadcrumbLink Item="Items[^1]"></BreadcrumbLink>
-        }
-        else
-        {
-            @for (var i = 0; i < Items.Count; i++)
+    <nav>
+        <ol @attributes="UserAttributes" class="@Classname" style="@Style">
+            @if (MaxItems != null && Collapsed && Items.Count > MaxItems)
             {
-                var item = Items[i];
-                <BreadcrumbLink Item="item"></BreadcrumbLink>
-
-                if (i != Items.Count - 1)
+                <BreadcrumbLink Item="Items[0]"></BreadcrumbLink>
+                <BreadcrumbSeparator></BreadcrumbSeparator>
+                <li class="mud-breadcrumbs-expander" @onclick="Expand">
+                    <MudIcon Icon="@ExpanderIcon" Size="Size.Small"></MudIcon>
+                </li>
+                <BreadcrumbSeparator></BreadcrumbSeparator>
+                <BreadcrumbLink Item="Items[^1]"></BreadcrumbLink>
+            }
+            else
+            {
+                @for (var i = 0; i < Items.Count; i++)
                 {
-                    <BreadcrumbSeparator></BreadcrumbSeparator>
+                    var item = Items[i];
+                    <BreadcrumbLink Item="item"></BreadcrumbLink>
+
+                    if (i != Items.Count - 1)
+                    {
+                        <BreadcrumbSeparator></BreadcrumbSeparator>
+                    }
                 }
             }
-        }
-    </ul>
+        </ol>
+    </nav>
 </CascadingValue>

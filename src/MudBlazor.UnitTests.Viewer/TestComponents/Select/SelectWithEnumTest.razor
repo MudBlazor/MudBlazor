@@ -1,9 +1,8 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-<MudPopoverProvider></MudPopoverProvider>
+﻿<MudPopoverProvider />
 
-Value: @Selected
+Value: @_selected
 <br />
-<MudSelect IsPreRendered @bind-Value="@Selected">
+<MudSelect @bind-Value="@_selected">
     @foreach (MyEnum item in Enum.GetValues(typeof(MyEnum)))
     {
         <MudSelectItem Value="@item">@item</MudSelectItem>
@@ -13,7 +12,7 @@ Value: @Selected
 @code {
     public static string __description__ = "Initial Text should be the enum's default value.";
 
-    public MyEnum Selected { get; set; }
+    private MyEnum _selected;
 
     public enum MyEnum
     {

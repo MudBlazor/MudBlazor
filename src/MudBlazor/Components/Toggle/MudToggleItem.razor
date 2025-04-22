@@ -12,9 +12,14 @@
            Color="@(Parent?.Color ?? Color.Default)"
            Variant="@(Selected ? Variant.Filled : Variant.Outlined)"
            Disabled="Disabled || (Parent?.Disabled ?? false)"
-           Ripple="Parent?.Ripple == true"
-           StartIcon="@GetCurrentIcon()"
-           IconClass="@CheckMarkClassname">
+           Ripple="Parent?.Ripple == true">
+    @if (!string.IsNullOrWhiteSpace(GetCurrentIcon()))
+    {
+        <MudIcon Class="@CheckMarkClassname"
+                 Disabled="Disabled"
+                 Icon="@GetCurrentIcon()"
+                 Size="Parent?.Size ?? Size.Medium" />
+    }
     @if (ChildContent is not null)
     {
         <div class="mud-toggle-item-content">

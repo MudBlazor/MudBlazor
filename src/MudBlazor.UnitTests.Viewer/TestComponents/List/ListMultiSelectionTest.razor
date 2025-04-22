@@ -1,5 +1,4 @@
-﻿
-<MudList T="string" @bind-SelectedValues="SelectedValues" SelectionMode="SelectionMode.MultiSelection">
+﻿<MudList T="string" @bind-SelectedValues="SelectedValues" SelectionMode="SelectionMode.MultiSelection">
     <MudListSubheader>
         Select your favourite drinks:
     </MudListSubheader>
@@ -22,11 +21,10 @@
 </MudList>
 
 <p class="selected-values">
-    @(string.Join(", ", (SelectedValues ?? Array.Empty<string>()).OrderBy(x=>x)))
+    @(string.Join(", ", (SelectedValues ?? Array.Empty<string>()).OrderBy(x => x)))
 </p>
 
-@code
-{
+@code {
     [Parameter]
-    public IReadOnlyCollection<string> SelectedValues { get; set; }
+    public IReadOnlyCollection<string>? SelectedValues { get; set; }
 }

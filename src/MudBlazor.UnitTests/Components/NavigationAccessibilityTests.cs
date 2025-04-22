@@ -6,6 +6,7 @@ using Bunit;
 using FluentAssertions;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.Navigation;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components;

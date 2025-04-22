@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace MudBlazor.Components.Chart.Models
+﻿#nullable enable
+namespace MudBlazor
 {
     public class TimeSeriesChartSeries
     {
@@ -9,21 +7,38 @@ namespace MudBlazor.Components.Chart.Models
 
         public string Name { get; set; } = string.Empty;
 
-        public List<TimeValue> Data { get; set; } = new();
+        public List<TimeValue> Data { get; set; } = [];
 
         public bool IsVisible { get; set; } = true;
 
         public int Index { get; set; }
 
-        public TimeSeriesDiplayType Type { get; set; } = TimeSeriesDiplayType.Line;
+        [Obsolete("Use LineDisplayType instead. This will be removed in a future major version.", false)]
+        public TimeSeriesDisplayType Type { get => (TimeSeriesDisplayType)LineDisplayType; set => LineDisplayType = (LineDisplayType)value; }
+        public LineDisplayType LineDisplayType { get; set; } = LineDisplayType.Line;
 
         public double FillOpacity { get; set; } = 0.4;
-        public double StrokeOpacity { get; set; } = 1;
-    }
 
-    public enum TimeSeriesDiplayType
-    {
-        Line,
-        Area,
+        public double StrokeOpacity { get; set; } = 1;
+
+        /// <summary>
+        /// Shows points at datapoints on line and area charts.
+        /// </summary>
+        public bool ShowDataMarkers { get; set; }
+
+        /// <summary>
+        /// Tooltip title format for the series. Supported tags are {{SERIES_NAME}}, {{X_VALUE}} and {{Y_VALUE}}.
+        /// </summary>
+        public string DataMarkerTooltipTitleFormat { get; set; } = "{{X_VALUE}} - {{Y_VALUE}}";
+
+        /// <summary>
+        /// Tooltip subtitle format for the series. Supported tags are {{SERIES_NAME}}, {{X_VALUE}} and {{Y_VALUE}}.
+        /// </summary>
+        public string? DataMarkerTooltipSubtitleFormat { get; set; }
+
+        /// <summary>
+        /// Tooltip YValue format for the series. It is used to format the {{Y_VALUE}} tag.
+        /// </summary>
+        public string? DataMarkerTooltipYValueFormat { get; set; }
     }
 }

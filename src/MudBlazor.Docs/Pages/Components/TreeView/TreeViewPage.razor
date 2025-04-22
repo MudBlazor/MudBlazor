@@ -1,11 +1,7 @@
 ﻿@page "/components/treeview"
-@page "/components/MudTreeView"
-@page "/components/MudTreeView`1"
-@page "/components/MudTreeViewItem"
-@page "/components/MudTreeViewItem`1"
 
 <DocsPage>
-    <DocsPageHeader Title="Tree View">
+    <DocsPageHeader Title="Tree View" Component="@nameof(MudTreeView<T>)">
         <Description>An extensively customizable tree view component with selection and lazy-loading support.</Description>
     </DocsPageHeader>
     <DocsPageContent>
@@ -129,6 +125,18 @@
             </SectionHeader>
             <SectionContent Code="@nameof(TreeViewServerExample)" ShowCode="false">
                 <TreeViewServerExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Filtering">
+                <Description>
+                    The tree nodes can be filtered using the <CodeInline>FilterFunc</CodeInline>. The filtering can be triggered using the <CodeInline>Filter</CodeInline> function on the <CodeInline>MudTreeView</CodeInline> component.
+                    This function is applied to every tree view item in the tree and sets the <CodeInline>Visible</CodeInline> property.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TreeViewFilteringExample)" ShowCode="false">
+                <TreeViewFilteringExample />
             </SectionContent>
         </DocsPageSection>
 

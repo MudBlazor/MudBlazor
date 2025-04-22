@@ -1,7 +1,5 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudForm ValidationDelay="0">
-    <MudTextField T="string" Required="true" RequiredError="Enter a star" Validation="@validation"></MudTextField>
+﻿<MudForm ValidationDelay="0">
+    <MudTextField T="string" Required="true" RequiredError="Enter a star" Validation="@Validation"></MudTextField>
     <MudSelect T="string" Required="false" >
         <MudSelectItem T="string" Value="@("foo")" />
         <MudSelectItem T="string" Value="@("bar")" />
@@ -11,5 +9,6 @@
 @code {
     public static string __description__ = "Form should become valid as soon as all required fields are filled in correctly.";
 
-    [Parameter] public object validation { get; set; }
+    [Parameter]
+    public object? Validation { get; set; }
 }

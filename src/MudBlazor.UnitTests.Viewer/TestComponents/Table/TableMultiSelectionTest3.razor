@@ -1,7 +1,5 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudText>SelectedItems { @string.Join(", ", selectedItems) }</MudText>
-<MudTable Items="items" @bind-SelectedItems="selectedItems" MultiSelection="true">
+﻿<MudText>SelectedItems { @string.Join(", ", _selectedItems) }</MudText>
+<MudTable Items="_items" @bind-SelectedItems="_selectedItems" MultiSelection="true">
     <HeaderContent>
         <MudTh>#</MudTh>
     </HeaderContent>
@@ -13,6 +11,6 @@
 @code {
     public static string __description__ = "The check box of row 1 should be checked. Header checkbox should be off.";
 
-    int[] items = new int[]{0,1,2};
-    HashSet<int> selectedItems=new HashSet<int>() { 1 };
+    private readonly int[] _items = [0, 1, 2];
+    private HashSet<int> _selectedItems = [1];
 }

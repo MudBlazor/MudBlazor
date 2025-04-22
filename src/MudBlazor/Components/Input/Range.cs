@@ -1,4 +1,5 @@
-﻿namespace MudBlazor
+﻿#nullable enable
+namespace MudBlazor
 {
     /// <summary>
     /// A range of values.
@@ -9,12 +10,12 @@
         /// <summary>
         /// The minimum value.
         /// </summary>
-        public T Start { get; set; }
+        public T? Start { get; set; }
 
         /// <summary>
         /// The maximum value.
         /// </summary>
-        public T End { get; set; }
+        public T? End { get; set; }
 
         /// <summary>
         /// Creates a new instance.
@@ -35,7 +36,7 @@
         }
 
         /// <inheritdoc />
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return obj is Range<T> r
                 && null != r.Start

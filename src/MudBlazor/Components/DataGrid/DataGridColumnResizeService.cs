@@ -2,17 +2,14 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
 
 namespace MudBlazor
 {
 #nullable enable
-    internal sealed class DataGridColumnResizeService<T>
+    internal sealed class DataGridColumnResizeService<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : IAsyncDisposable
     {
         private const string EventPointerMove = "pointermove";
         private const string EventPointerUp = "pointerup";
@@ -29,16 +26,16 @@ namespace MudBlazor
         private Guid _pointerMoveSubscriptionId;
         private Guid _pointerUpSubscriptionId;
 
-        public DataGridColumnResizeService(MudDataGrid<T> dataGrid, IEventListener eventListener)
+        public DataGridColumnResizeService(MudDataGrid<T> dataGrid, IEventListenerFactory eventListenerFactory)
         {
             _dataGrid = dataGrid;
-            _eventListener = eventListener;
+            _eventListener = eventListenerFactory.Create();
         }
 
         internal async Task<bool> StartResizeColumn(HeaderCell<T> headerCell, double clientX, IList<Column<T>> columns,
-            ResizeMode columnResizeMode, bool rightToLeft)
+                                                    ResizeMode columnResizeMode, bool rightToLeft)
         {
-            if ((headerCell.Column?.Resizable ?? false) || columnResizeMode == ResizeMode.None ||
+            if (headerCell.Column?.Resizable is false || columnResizeMode == ResizeMode.None ||
                 _pointerMoveSubscriptionId != default || _pointerUpSubscriptionId != default)
                 return false;
 
@@ -174,5 +171,7 @@ namespace MudBlazor
 
             await columnToEnlarge.HeaderCell.UpdateColumnWidth(enlargedWidth, gridHeight, finish);
         }
+
+        public ValueTask DisposeAsync() => _eventListener.DisposeAsync();
     }
 }

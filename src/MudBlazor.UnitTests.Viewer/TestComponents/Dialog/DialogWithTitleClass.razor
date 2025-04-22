@@ -1,13 +1,11 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudDialog TitleClass="@TitleClass">
+﻿<MudDialog TitleClass="@TitleClass">
     <DialogContent>
     </DialogContent>
 </MudDialog>
 
 @code {
     [CascadingParameter]
-    private MudDialogInstance MudDialog { get; set; }
+    private IMudDialogInstance MudDialog { get; set; } = null!;
 
     [Parameter]
     public string TitleClass { get; set; } = string.Empty;

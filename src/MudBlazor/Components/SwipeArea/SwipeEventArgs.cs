@@ -8,38 +8,38 @@ namespace MudBlazor
 {
 #nullable enable
     /// <summary>
-    /// Provides event data for the swipe event.
+    /// Information about a swipe event when <see cref="MudSwipeArea.OnSwipeEnd"/> occurs.
     /// </summary>
     public class SwipeEventArgs
     {
         /// <summary>
-        /// Gets information about a touch event that is being raised.
+        /// The information about the pointer.
         /// </summary>
-        public TouchEventArgs TouchEventArgs { get; }
+        public PointerEventArgs TouchEventArgs { get; }
 
         /// <summary>
-        /// Gets the swipe delta value indicating the distance of the swipe movement.
+        /// The distance of the swipe gesture, in pixels.
         /// </summary>
         public double? SwipeDelta { get; }
 
         /// <summary>
-        /// Gets the sender of the swipe event.
+        /// The <see cref="MudSwipeArea"/> which raised the swipe event.
         /// </summary>
         public MudSwipeArea Sender { get; }
 
         /// <summary>
-        /// Gets the direction of the swipe.
+        /// The direction of the swipe.
         /// </summary>
         public SwipeDirection SwipeDirection { get; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SwipeEventArgs"/> class.
         /// </summary>
-        /// <param name="touchEventArgs">The touch event arguments associated with the swipe event.</param>
+        /// <param name="touchEventArgs">The size, pressure, and tilt of the pointer.</param>
         /// <param name="swipeDirection">The direction of the swipe.</param>
-        /// <param name="swipeDelta">The swipe delta value indicating the distance of the swipe movement.</param>
-        /// <param name="sender">The sender of the swipe event.</param>
-        public SwipeEventArgs(TouchEventArgs touchEventArgs, SwipeDirection swipeDirection, double? swipeDelta, MudSwipeArea sender)
+        /// <param name="swipeDelta">The distance of the swipe movement, in pixels.</param>
+        /// <param name="sender">The <see cref="MudSwipeArea" /> which originated the swipe event.</param>
+        public SwipeEventArgs(PointerEventArgs touchEventArgs, SwipeDirection swipeDirection, double? swipeDelta, MudSwipeArea sender)
         {
             TouchEventArgs = touchEventArgs;
             SwipeDirection = swipeDirection;

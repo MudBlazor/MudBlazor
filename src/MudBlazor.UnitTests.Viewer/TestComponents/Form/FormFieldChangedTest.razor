@@ -1,9 +1,6 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-@using MudBlazor.Utilities
-@using System.Text.RegularExpressions
-@using System.ComponentModel.DataAnnotations
+﻿@using MudBlazor.Utilities
 
-<MudForm @ref="form" FieldChanged="((v) => FormFieldChangedEventArgs = v)">
+<MudForm FieldChanged="v => FormFieldChangedEventArgs = v">
     <MudTextField T="string" />
     <MudNumericField T="int" />
     <div class="d-flex">
@@ -17,7 +14,5 @@
 </MudForm>
 
 @code {
-    MudForm form;
-
-    public FormFieldChangedEventArgs FormFieldChangedEventArgs;
+    public FormFieldChangedEventArgs? FormFieldChangedEventArgs { get; private set; }
 }

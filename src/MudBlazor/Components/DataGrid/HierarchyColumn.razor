@@ -2,19 +2,27 @@
 @inherits MudComponentBase
 @typeparam T
 
-<TemplateColumn T="T" Tag="@("hierarchy-column")" Sortable="false" Resizable="false" ShowColumnOptions="false" HeaderStyle="width:0%"
-    Hideable="Hideable" Hidden="Hidden" HiddenChanged="HiddenChanged"
-    Filterable="false" Editable="false" DragAndDropEnabled="@DragAndDropEnabled">
+<TemplateColumn T="T" Tag="@("hierarchy-column")" Sortable="false" Resizable="false" ShowColumnOptions="false" HeaderClassFunc="@HeaderClassFunc"
+    Hideable="Hideable" Hidden="Hidden" HiddenChanged="HiddenChanged" HeaderClass="@(EnableHeaderToggle ? $"mud-header-togglehierarchy {HeaderClass}" : HeaderClass)"
+    Filterable="false" Editable="false" DragAndDropEnabled="@DragAndDropEnabled" HeaderTemplate="@HeaderTemplate"
+    HeaderStyle="@HeaderStyle" HeaderStyleFunc="@HeaderStyleFunc">
     <CellTemplate>
+        @if (CellTemplate is not null)
+        {
+            @CellTemplate(context)            
+        }
+        else
+        {
+            <MudIconButton 
+                Class="ma-n3 pa-1"
+                Icon="@GetGroupIcon(context)" 
+                OnClick="context.Actions.ToggleHierarchyVisibilityForItemAsync"
+                Size="@IconSize"
+                Disabled="ButtonDisabledFunc.Invoke(context.Item)"/>
+        }
         @if (!_finishedInitialExpanded && InitiallyExpandedFunc.Invoke(context.Item))
         {
-            context.OpenHierarchies.Add(context.Item);
+            _initiallyExpandedItems.Add(context);
         }
-        <MudIconButton 
-            Class="ma-n3 pa-1"
-            Icon="@(context.OpenHierarchies.Contains(context.Item) ?  OpenIcon : ClosedIcon)" 
-            OnClick="context.Actions.ToggleHierarchyVisibilityForItemAsync"
-            Size="@IconSize"
-            Disabled="ButtonDisabledFunc.Invoke(context.Item)"/>
     </CellTemplate>
 </TemplateColumn>

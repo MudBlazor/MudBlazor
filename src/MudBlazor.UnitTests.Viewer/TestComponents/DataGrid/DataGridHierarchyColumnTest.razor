@@ -1,21 +1,34 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudDataGrid Items="@_items" Filterable="true">
-    <Columns>
-        <HierarchyColumn ButtonDisabledFunc="@(x => x.Name == "Alicia")" InitiallyExpandedFunc="@(x => x.Name == "Ira" || x.Name == "Anders")" />
-        <PropertyColumn Property="x => x.Name" />
-        <PropertyColumn Property="x => x.Age" />
-        <PropertyColumn Property="x => x.Status" />
-    </Columns>
-    <ChildRowContent>
-        <tr>
-            <td colspan="3">@($"uid = {context.Item.Name}|{context.Item.Age}|{context.Item.Status}|{Guid.NewGuid()}")</td>
-        </tr>
-    </ChildRowContent>
-</MudDataGrid>
-
+﻿<CascadingValue Name="RightToLeft" Value="@RightToLeft" IsFixed="true">
+    <MudDataGrid @ref="_dataGrid" Items="@_items" Filterable="true" ExpandSingleRow="@ExpandSingleRow">
+        <Columns>
+            <HierarchyColumn EnableHeaderToggle="@EnableHeaderToggle" ButtonDisabledFunc="@(x => x.Name == "Alicia")" InitiallyExpandedFunc="@(x => x.Name == "Ira" || x.Name == "Anders")" />
+            <PropertyColumn Property="x => x.Name" />
+            <PropertyColumn Property="x => x.Age" />
+            <PropertyColumn Property="x => x.Status" />
+        </Columns>
+        <ChildRowContent>
+            <tr>
+                <td colspan="3">@($"uid = {context.Item.Name}|{context.Item.Age}|{context.Item.Status}|{Guid.NewGuid()}")</td>
+            </tr>
+        </ChildRowContent>
+    </MudDataGrid>
+</CascadingValue>
+<MudButton OnClick="@ExpandAll" Color="@Color.Primary">Expand All</MudButton>
+<MudButton OnClick="@CollapseAll" Color="@Color.Primary">Collapse All</MudButton>
+<MudSwitch @bind-Value="EnableHeaderToggle" Label="Enable Header Toggle" />
+<MudSwitch @bind-Value="ExpandSingleRow" Label="Expand Single Row" />
 @code {
-    private IEnumerable<Model> _items = new List<Model>()
+    [Parameter]
+    public bool RightToLeft { get; set; }
+
+    [Parameter]
+    public bool EnableHeaderToggle { get; set;}
+
+    [Parameter]
+    public bool ExpandSingleRow { get; set; }
+
+    private MudDataGrid<Model> _dataGrid = null!;
+    private readonly IEnumerable<Model> _items = new List<Model>
     {
         new Model("Sam", 56, Severity.Normal), 
         new Model("Alicia", 54, Severity.Info), 
@@ -23,6 +36,16 @@
         new Model("John", 32, Severity.Warning),
         new Model("Anders", 24, Severity.Error)
     };
+
+    private Task ExpandAll()
+    {
+        return _dataGrid.ExpandAllHierarchy();
+    }
+
+    private Task CollapseAll()
+    {
+        return _dataGrid.CollapseAllHierarchy();
+    }
 
     public record Model (string Name, int Age, Severity Status);
 }

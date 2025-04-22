@@ -2,15 +2,11 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
 
 namespace MudBlazor.UnitTests;
 
-#nullable enable
 public partial class ParameterStateChildBindingTestComp : MudComponentBase
 {
     private readonly List<(bool lastValue, bool value)> _parameterChangedEvents = new();

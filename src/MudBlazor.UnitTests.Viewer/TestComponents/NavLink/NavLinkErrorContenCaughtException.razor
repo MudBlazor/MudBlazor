@@ -1,6 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<ErrorBoundary>
+﻿<ErrorBoundary>
     <ChildContent>
         <MudNavMenu Margin="Margin.Dense" Color="Color.Warning">
             <MudNavLink OnClick="HandleClickAsync">
@@ -14,8 +12,6 @@
 </ErrorBoundary>
 
 @code {
-#nullable enable
-
     public async Task HandleClickAsync()
     {
         await Task.Delay(100);

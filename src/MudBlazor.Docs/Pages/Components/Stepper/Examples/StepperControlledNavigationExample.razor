@@ -1,0 +1,75 @@
+﻿@namespace MudBlazor.Docs.Examples
+<MudPaper Style="width: 800px">
+    <MudStepper NonLinear ShowResetButton OnPreviewInteraction="OnPreviewInteraction">
+        <MudStep Title="Step 1" SecondaryText="Flip the switch" HasError="@(_step1Complete==false)">
+            <MudSwitch @bind-Value="_step1Complete" Color="Color.Primary">Flip the switch to be able to advance to step 2</MudSwitch>
+        </MudStep>
+        <MudStep Title="Step 2" SecondaryText="Enter some text" HasError="@(_step2TextInput=="")">
+            <MudTextField Label="Enter some text" @bind-Value="_step2TextInput" Variant="Variant.Filled" Clearable/>
+        </MudStep>
+        <MudStep Title="Step 3">This step can only be visited if the other steps are completed.</MudStep>
+    </MudStepper>
+</MudPaper>
+
+@code {
+
+    [Inject] 
+    IDialogService DialogService { get; set; }
+
+    private bool? _step1Complete;
+    private string _step2TextInput;
+
+    private async Task OnPreviewInteraction(StepperInteractionEventArgs arg)
+    {
+        if (arg.Action == StepAction.Complete) 
+        {
+            // occurrs when clicking next
+            await ControlStepCompletion(arg);
+        }
+        else if (arg.Action == StepAction.Activate) 
+        {
+            // occurrs when clicking a step header with the mouse
+            await ControlStepNavigation(arg);
+        }
+    }
+
+    private async Task ControlStepCompletion(StepperInteractionEventArgs arg)
+    {
+        switch (arg.StepIndex) {
+            case 0:
+                if (_step1Complete != true) 
+                {
+                    await DialogService.ShowMessageBox("Error", "You have not flipped the switch in step 1");
+                    arg.Cancel = true;
+                }
+                break;
+            case 1:
+                if ((_step2TextInput?.Length ?? 0) == 0) 
+                {
+                    await DialogService.ShowMessageBox("Error", "You have not entered text in step 2");
+                    arg.Cancel = true;
+                }
+                break;
+        }
+    }
+
+    private async Task ControlStepNavigation(StepperInteractionEventArgs arg)
+    {
+        switch (arg.StepIndex) {
+            case 1:
+                if (_step1Complete != true) 
+                {
+                    await DialogService.ShowMessageBox("Error", "Finish step 1 first");
+                    arg.Cancel = true;
+                }
+                break;
+            case 2:
+                if (_step1Complete != true || (_step2TextInput?.Length ?? 0) == 0) 
+                {
+                    await DialogService.ShowMessageBox("Error", "Finish step 1 and 2 first");
+                    arg.Cancel = true;
+                }
+                break;
+        }
+    }
+}

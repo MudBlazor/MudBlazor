@@ -1,7 +1,13 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudTabs Elevation="4" Rounded="true" Centered="true" Color="@Color.Primary">
+<MudTabs Centered="_centered" Color="Color.Primary">
     <MudTabPanel Text="One"/>
     <MudTabPanel Text="Two"/>
     <MudTabPanel Text="Three"/>
 </MudTabs>
+
+<MudSwitch @bind-Value="_centered" Color="Color.Primary">Centered</MudSwitch>
+
+@code{
+    bool _centered = true;
+}

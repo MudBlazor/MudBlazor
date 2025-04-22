@@ -1,11 +1,7 @@
 ﻿@page "/components/popover"
-@page "/components/MudPopover"
-@page "/components/MudPopoverBase"
-@page "/components/MudPopoverHandler"
-@page "/components/MudPopoverProvider"
 
 <DocsPage>
-	<DocsPageHeader Title="Popover" SubTitle="A Popover can be used to display some content on top of another." />
+    <DocsPageHeader Title="Popover" Component="@nameof(MudPopover)" />
 	<DocsPageContent>
 
 		<DocsPageSection>
@@ -51,8 +47,22 @@
 					You can have any content within a popover like with any other Blazor component. The position of the popover is updated automatically
 				</Description>
 			</SectionHeader>
-            <SectionContent Codes="@(new[] {new CodeFile("Page.razor", "PopoverComplexContentExample"), new CodeFile("Component.razor", "PopoverDynamicContentExample")})">
+            <SectionContent Codes="@(new[] {new CodeFile("Page.razor", "PopoverComplexContentExample"), new CodeFile("Component.razor", "PopoverDynamicContentExample")})" ShowCode="false">
                 <PopoverComplexContentExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Popover RelativeWidth">
+                <Description>
+                    Popovers can be placed relative to their Activator or Parent. The <CodeInline>RelativeWidth</CodeInline> is an enum <CodeInline>DropdownWidth</CodeInline>,
+                    with a default value of <CodeInline>DropdownWidth.Ignore</CodeInline> which means the width is not associated to the Activator Width and can grow or shrink as needed. 
+                    Additional options are <CodeInline>DropdownWidth.Relative</CodeInline> which constrains the width of the popover to be the same size as the Activator Width and cannot grow.
+                    <CodeInline>DropdownWidth.Adaptive</CodeInline> which constrains the minimum width of the popover to be the same size as the Activator / Parent but can grow wider as needed.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(PopoverRelativeWidthExample)" ShowCode="false">
+                <PopoverRelativeWidthExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -62,10 +72,38 @@
 					Popovers can be placed within elements that are using popover for itself. Like tooltips that are placed inside a menu.
 				</Description>
 			</SectionHeader>
-			<SectionContent Code="@nameof(PopoverInceptionExampleExample)">
+			<SectionContent Code="@nameof(PopoverInceptionExampleExample)" ShowCode="false">
 				<PopoverInceptionExampleExample />
 			</SectionContent>
 		</DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="DropdownSettings">
+                <Description>
+                    Some components use <MudLink Href="/components/popover">MudPopover</MudLink> to place their list of items in combination with <MudLink Href="/components/overlay">MudOverlay</MudLink>. Some of these
+                    settings can be controlled with <CodeInline>DropdownSettings</CodeInline> which contain defaults for the <CodeInline>MudPopover</CodeInline>
+                    appearance and behavior. Default settings for <CodeInline>DropdownSettings</CodeInline> are:
+                    <ul class="ml-2">
+                        <li><CodeInline>Fixed</CodeInline> = <CodeInline>false</CodeInline> - Displays the dropdown popover in a fixed position, even while scrolling.</li>
+                        <li><CodeInline>OverflowBehavior</CodeInline> = <CodeInline>OverflowBehavior.FlipOnOpen</CodeInline> - The behavior applied when there is not enough space for the dropdown popover to be visible.</li>
+                    </ul>
+                    <br/>Some settings reside on the <CodeInline>MudMenu</CodeInline> component itself due to differences between different types of dropdowns. <br />These settings and their defaults are:
+                    <ul class="ml-2">
+                        <li><CodeInline>RelativeWidth</CodeInline> = <CodeInline>DropdownWidth.Ignore</CodeInline> - The width of the dropdown popover is not dependent upon the Activator or Parent.</li>
+                        <li><CodeInline>AnchorOrigin</CodeInline> = <CodeInline>Origin.BottomLeft</CodeInline> - The location where the popover will open from.</li>
+                        <ul class="ml-4">
+                            <li><MudText Typo="Typo.caption">
+                                * AnchorOrigin and TransformOrigin do not have to be set, and if not set will have a default Nested behavior that can be overridden.
+                            </MudText></li>
+                        </ul>
+                        <li><CodeInline>TransformOrigin</CodeInline> = <CodeInline>Origin.TopLeft</CodeInline> - The transform origin point for the popover.</li>
+                    </ul>
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(PopoverDropdownSettingsExample)" ShowCode="false">
+                <PopoverDropdownSettingsExample />
+            </SectionContent>
+        </DocsPageSection>
 
 	</DocsPageContent>
 </DocsPage>

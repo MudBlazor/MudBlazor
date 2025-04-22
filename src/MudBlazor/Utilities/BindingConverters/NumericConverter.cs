@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using MudBlazor.Resources;
 
 namespace MudBlazor
 {
@@ -64,12 +65,12 @@ namespace MudBlazor
                     return (T)(object)Convert.ToDecimal(value);
                 else
                 {
-                    UpdateGetError($"Conversion to type {typeof(T)} not implemented");
+                    UpdateGetError(LanguageResource.Converter_ConversionNotImplemented, [typeof(T)]);
                 }
             }
             catch (Exception e)
             {
-                UpdateGetError("Conversion error: " + e.Message);
+                UpdateGetError(LanguageResource.Converter_ConversionError, [e.Message]);
                 return default(T);
             }
             return default(T);
@@ -141,13 +142,13 @@ namespace MudBlazor
                     return Convert.ToDouble(((decimal?)(object)arg).Value);
                 else
                 {
-                    UpdateSetError("Unable to convert to double from type " + typeof(T).Name);
+                    UpdateSetError(LanguageResource.Converter_UnableToConvert, ["double", typeof(T).Name]);
                     return double.NaN;
                 }
             }
             catch (FormatException e)
             {
-                UpdateSetError("Conversion error: " + e.Message);
+                UpdateSetError(LanguageResource.Converter_ConversionError, [e.Message]);
                 return double.NaN;
             }
         }

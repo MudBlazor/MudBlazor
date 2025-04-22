@@ -5,6 +5,8 @@
   display: inline-flex;
   box-sizing: border-box;
   align-items: center;
+  color-scheme: var(--mud-native-html-color-scheme);
+  line-height: 1.1876em;
 
   &.mud-input-full-width {
     width: 100%;
@@ -147,6 +149,7 @@
       box-sizing: border-box;
       width: 100%;
       max-width: 100%;
+      min-width: 0%;
       height: 100%;
       text-align: start;
       pointer-events: none;
@@ -157,13 +160,39 @@
       transition: border-width,border-color 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
     }
 
+    & > .mud-input-outlined-border {
+      legend {
+        float: none;
+        visibility: hidden;
+        font-size: 1rem * 0.75;
+        font-weight: inherit;
+        width: 0;
+        height: 0;
+        margin: 0 11px 0 11px;
+        padding: 0;
+        position: relative;
+      }
+    }
+
     @media(hover: hover) and (pointer: fine) {
       &:not(.mud-disabled):not(:focus-within):hover .mud-input-outlined-border {
         border-color: var(--mud-palette-action-default);
       }
     }
 
-    &:focus-within .mud-input-outlined-border {
+    &.mud-shrink > .mud-input-outlined-border {
+      legend {
+        width: auto;
+        padding: 0 5px;
+      }
+    }
+
+    &:focus-within > .mud-input-outlined-border, &:focus-within .mud-shrink > .mud-input-outlined-border {
+      legend {
+        width: auto;
+        padding: 0 5px;
+      }
+
       border-width: 2px;
       border-color: var(--mud-palette-primary);
     }
@@ -331,7 +360,6 @@
     box-sizing: content-box;
     letter-spacing: inherit;
     -webkit-tap-highlight-color: transparent;
-    height: auto;
     resize: none;
     cursor: auto;
 
@@ -342,7 +370,7 @@
     }
 
     &.mud-input-root-margin-dense {
-      margin-top: 3px;
+      padding-top: 3px;
     }
 
     &.mud-input-root-type-search {
@@ -363,11 +391,20 @@
     }
 
     &.mud-input-root-filled {
-      margin: 27px 12px 10px;
+      box-sizing: border-box;
+      margin-top: 0;
+      margin-bottom: 0;
+      padding: 27px 12px 10px;
+      mask-image: linear-gradient(to bottom,
+        transparent 27px,
+        black 27px);
 
       &.mud-input-root-margin-dense {
-        margin-top: 23px;
-        margin-bottom: 6px;
+        padding-top: 23px;
+        padding-bottom: 6px;
+        mask-image: linear-gradient(to bottom,
+          transparent 23px,
+          black 23px);
       }
 
       &:-webkit-autofill {
@@ -376,25 +413,31 @@
       }
 
       &.mud-input-root-hidden-label {
-        margin-top: 18px;
-        margin-bottom: 19px;
+        padding-top: 18px;
+        padding-bottom: 19px;
+        mask-image: linear-gradient(to bottom,
+          transparent 18px,
+          black 18px);
 
         &.mud-input-root-margin-dense {
-          margin-top: 10px;
-          margin-bottom: 11px;
+          padding-top: 10px;
+          padding-bottom: 11px;
+          mask-image: linear-gradient(to bottom,
+            transparent 10px,
+            black 10px);
         }
       }
 
       &.mud-input-root-adorned-start {
-        margin-left: 0;
-        margin-inline-start: 0;
-        margin-inline-end: 12px;
+        padding-left: 0;
+        padding-inline-start: 0;
+        padding-inline-end: 12px;
       }
 
       &.mud-input-root-adorned-end {
-        margin-right: 0;
-        margin-inline-end: unset;
-        margin-inline-start: 12px;
+        padding-right: 0;
+        padding-inline-end: unset;
+        padding-inline-start: 12px;
       }
     }
 
@@ -416,28 +459,36 @@
   }
 
   &.mud-input-root-outlined {
-    margin: 18.5px 14px;
-
+    box-sizing: border-box;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 18.5px 14px;
+    mask-image: linear-gradient(to bottom,
+      transparent 18.5px,
+      black 18.5px);
 
     &.mud-input-root:-webkit-autofill {
       border-radius: inherit;
     }
 
     &.mud-input-root-margin-dense {
-      margin-top: 10.5px;
-      margin-bottom: 10.5px;
+      padding-top: 10.5px;
+      padding-bottom: 10.5px;
+      mask-image: linear-gradient(to bottom,
+        transparent 10.5px,
+        black 10.5px);
     }
 
     &.mud-input-root-adorned-start {
-      margin-left: 0;
-      margin-inline-start: 0;
-      margin-inline-end: 14px;
+      padding-left: 0;
+      padding-inline-start: 0;
+      padding-inline-end: 14px;
     }
 
     &.mud-input-root-adorned-end {
-      margin-right: 0;
-      margin-inline-end: 0;
-      margin-inline-start: 14px;
+      padding-right: 0;
+      padding-inline-end: 0;
+      padding-inline-start: 14px;
     }
   }
 }
@@ -451,15 +502,13 @@
 }
 
 .mud-input-adornment-start {
-  &.mud-input-root-filled-shrink {
-    margin-top: 16px;
-  }
-}
-
-.mud-input-adornment-start {
   margin-right: 8px;
   margin-inline-end: 8px;
   margin-inline-start: unset;
+
+  &.mud-input-root-filled-shrink {
+    margin-top: 16px;
+  }
 }
 
 .mud-input-adornment-end {

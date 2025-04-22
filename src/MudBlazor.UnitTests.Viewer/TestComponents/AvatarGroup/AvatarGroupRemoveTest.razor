@@ -1,8 +1,6 @@
-@namespace MudBlazor.UnitTests.TestComponents
-
-<MudButton OnClick="Empty" Variant="Variant.Filled" Class="mb-4">Empty</MudButton>
+<MudButton id="empty-button" OnClick="Empty" Variant="Variant.Filled" Class="mb-4">Empty</MudButton>
 <MudAvatarGroup>
-    @for(var _ = 0; _ < count; _++)
+    @for(var _ = 0; _ < _count; _++)
     {
         <MudAvatar/>
     }
@@ -11,11 +9,11 @@
 @code {
     public static string __description__ = "Removing avatars should update the UI *and* the avatar group instance.";
 
-    private int count = 2;
+    private int _count = 2;
 
-    void Empty()
+    private void Empty()
     {
-        count = 0;
+        _count = 0;
         StateHasChanged();
     }
 }

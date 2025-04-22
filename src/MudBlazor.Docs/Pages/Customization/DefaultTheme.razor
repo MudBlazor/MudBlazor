@@ -1,6 +1,4 @@
 @page "/customization/default-theme"
-@page "/components/MudTheme"
-@page "/components/MudThemeProvider"
 
 @using System.Reflection
 @using System.Text.RegularExpressions
@@ -30,7 +28,7 @@
                                     <td>@Row.Name</td>
                                     <td>@Row.Type</td>
                                     <td>
-                                        <div class="d-flex align-center">
+                                        <div class="d-inline-flex align-center">
                                             <MudPaper Outlined="true" Height="16px" Width="16px" Class="mr-2" Style="@($"background-color:{Row.Default}")"/>
                                             @Row.Default
                                         </div>
@@ -39,7 +37,7 @@
                                     <td>
                                         @if (!Row.Default.Equals(Row.Dark))
                                         {
-                                            <div class="d-flex align-center">
+                                            <div class="d-inline-flex align-center">
                                                 <MudPaper Outlined="true" Height="16px" Width="16px" Class="mr-2" Style="@($"background-color:{Row.Dark}")"/>
                                                 @Row.Dark
                                             </div>
@@ -332,6 +330,10 @@
         else if (value.Contains("TextTransform"))
         {
             return value.Replace("TextTransform", "-Text-Transform").ToLowerInvariant();
+        }
+        else if (value.Contains("BorderRadius"))
+        {
+            return value.Replace("BorderRadius", "-BorderRadius").ToLowerInvariant();
         }
         else
         {

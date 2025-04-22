@@ -9,7 +9,7 @@
             <div class="mud-chart-legend-item" @onclick=@(()=>{ if (MudChartParent!=null) { MudChartParent.SelectedIndex=item.Index; }}) @onclick:stopPropagation=@(MudChartParent!=null) >
                 @if(MudChartParent?.CanHideSeries == false)
                 {
-                    <span class="mud-chart-legend-marker" style="@($"background-color:{MudChartParent.ChartOptions.ChartPalette.GetValue(item.Index % MudChartParent.ChartOptions.ChartPalette.Count())}")"></span>
+                    <span class="mud-chart-legend-marker" style="@($"background-color:{MudChartParent.ChartOptions.ChartPalette.GetValue(item.Index % MudChartParent.ChartOptions.ChartPalette.Length)}")"></span>
                     <MudText Typo="Typo.body2" HtmlTag="span">@item.Labels</MudText>
                 }
                 else

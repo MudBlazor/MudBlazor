@@ -1,8 +1,7 @@
 ﻿@page "/components/timepicker"
-@page "/components/MudTimePicker"
 
 <DocsPage>
-    <DocsPageHeader Title="Time Picker">
+    <DocsPageHeader Title="Time Picker" Component="@nameof(MudTimePicker)">
         <Description>Provides the user with a simple way to select time.</Description>
     </DocsPageHeader>
     <DocsPageContent>
@@ -46,6 +45,18 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Inline Non-modal Mode">
+                <Description>
+                    By default, the time picker is modal, preventing interaction with other elements while it is open.
+                    To allow interactions with other elements, set <CodeInline>Modal="false"</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TimePickerInlineModelessExample)" ShowCode="false">
+                <TimePickerInlineModelessExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Static Mode">
                 <Description></Description>
             </SectionHeader>
@@ -83,7 +94,7 @@
 
         <DocsPageSection>
             <SectionHeader Title="Elevation">
-                <Description>You can change the elevation with the <CodeInline>Elevation</CodeInline> parameter. The default value is 0 for static and 8 for inline.</Description>
+                <Description>You can change the elevation with the <CodeInline>Elevation</CodeInline> parameter. The default level is 8 for Inline, and 0 for Static or Dialog.</Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Class="demo-datetime-margin" Code="@nameof(TimePickerElevationExample)" ShowCode="false">
                 <TimePickerElevationExample />

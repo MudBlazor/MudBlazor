@@ -1,6 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudTable T="int" Items="items" EditTrigger="EditTrigger" RowEditableFunc="x => x > 5">
+﻿<MudTable T="int" Items="_items" EditTrigger="EditTrigger" RowEditableFunc="x => x > 5">
     <RowTemplate>
         <MudTd>@context</MudTd>
     </RowTemplate> 
@@ -13,6 +11,9 @@
 
 @code {
     public static string __description__ = "The Tr should not allow editing when AllowEditItem returns false.";
-    [Parameter] public TableEditTrigger EditTrigger { get; set; } = TableEditTrigger.RowClick;
-    private int[] items = new int[] { 5, 10, 20 };
+
+    private readonly int[] _items = [5, 10, 20];
+
+    [Parameter]
+    public TableEditTrigger EditTrigger { get; set; } = TableEditTrigger.RowClick;
 }

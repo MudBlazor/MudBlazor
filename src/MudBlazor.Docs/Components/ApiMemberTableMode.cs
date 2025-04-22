@@ -39,4 +39,9 @@ public enum ApiMemberTableMode
     /// Only events will be displayed.
     /// </summary>
     Events,
+
+    /// <summary>
+    /// Only related <see cref="MudGlobal"/> properties will be displayed.
+    /// </summary>
+    Globals,
 }

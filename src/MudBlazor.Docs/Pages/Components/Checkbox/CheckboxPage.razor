@@ -1,9 +1,7 @@
 ﻿@page "/components/checkbox"
-@page "/components/MudCheckBox"
-@page "/components/MudCheckBox`1"
 
 <DocsPage>
-    <DocsPageHeader Title="Check Box" SubTitle="Checkboxes are a great way to allow the user to make a selection of choices from things like a list.">
+    <DocsPageHeader Title="Check Box" Component="@nameof(MudCheckBox<T>)">
         <Description>
             If you want to let the user turn a setting on or off on demand, a Switch component is recommended instead.
         </Description>
@@ -32,7 +30,7 @@
             <SectionHeader Title="Labels">
                 <Description>
                     Text can be added using the <CodeInline>Label</CodeInline> property and its
-                    position can be specified using the <CodeInline>LabelPosition</CodeInline> property
+                    position can be specified using the <CodeInline>LabelPlacement</CodeInline> property
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(CheckboxLabelExample)">
@@ -90,6 +88,15 @@
             </SectionHeader>
             <SectionContent  Code="CheckboxConversionExample" ShowCode="false">
                 <CheckboxConversionExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Content Placement">
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(CheckboxContentPlacementExample)" ShowCode="false">
+                <CheckboxContentPlacementExample />
             </SectionContent>
         </DocsPageSection>
 

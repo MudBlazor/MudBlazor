@@ -1,0 +1,78 @@
+﻿<MudDataGrid @ref="_dataGrid" T="Person" Items="@_people" @bind-SelectedItems="_selectedItems" Comparer="null" 
+             MultiSelection Filterable Bordered RowClick="RowClicked">
+    <Columns>
+        <SelectColumn ShowInFooter="false" />
+        <PropertyColumn Property="x => x.Role" />
+        <PropertyColumn Property="x => x.Name" />
+    </Columns>
+</MudDataGrid>
+<MudChipSet T="string" SelectedValue="_selectedRole" SelectedValueChanged="SelectedValueChanged" 
+            SelectionMode="SelectionMode.SingleSelection" CheckMark>
+    <MudChip Value="@("CEO")" Color="Color.Primary" />
+    <MudChip Value="@("Lead Scientist")" Color="Color.Secondary" />
+    <MudChip Value="@("Scientist")" Color="Color.Info" />
+    <MudChip Value="@("Security Specialist")" Color="Color.Success" />
+    <MudChip Value="@("Intern")" Color="Color.Warning" />
+</MudChipSet>
+
+@code {
+    public static string __description__ = "Should use custom comparer as opposed to object equality";
+
+    private MudDataGrid<Person> _dataGrid = null!;
+
+    private readonly List<Person> _people =
+    [
+        new() { Id = Guid.NewGuid(), Name = "Tony Stark", Role = "CEO" },
+        new() { Id = Guid.NewGuid(), Name = "Bruce Banner", Role = "Lead Scientist" },
+        new() { Id = Guid.NewGuid(), Name = "Hank Pym", Role = "Scientist" },
+        new() { Id = Guid.NewGuid(), Name = "Jane Foster", Role = "Scientist" },
+        new() { Id = Guid.NewGuid(), Name = "Natasha Romanoff", Role = "Security Specialist" },
+        new() { Id = Guid.NewGuid(), Name = "Steve Rogers", Role = "Security Specialist" },
+        new() { Id = Guid.NewGuid(), Name = "Clint Barton", Role = "Security Specialist" },
+        new() { Id = Guid.NewGuid(), Name = "Peter Parker", Role = "Intern" },
+    ];
+
+    private readonly RoleComparer _roleComparer = new();
+    private readonly IdComparer _idComparer = new();
+    private HashSet<Person> _selectedItems = [];
+    private string? _selectedRole = string.Empty;
+
+    public IEqualityComparer<Person>? Comparer { get; set; }
+
+    private void RowClicked(DataGridRowClickEventArgs<Person> args)
+    {
+        _dataGrid.Selection = new HashSet<Person>(_dataGrid.Selection, _idComparer);
+    }
+
+    private async Task SelectedValueChanged(string? selection)
+    {
+        _selectedRole = selection;
+
+        _selectedItems.Clear();
+        
+        _dataGrid.Selection = new HashSet<Person>(_roleComparer);
+
+        await _dataGrid.SetSelectedItemAsync(true, new Person { Role = selection });
+    }
+
+    public class Person
+    {
+        public Guid Id { get; set; }
+        public string? Name { get; set; }
+        public string? Role { get; set; }
+    }
+
+    public class IdComparer : IEqualityComparer<Person>
+    {
+        public bool Equals(Person? a, Person? b) => a?.Id == b?.Id;
+
+        public int GetHashCode(Person x) => HashCode.Combine(x.Id);
+    }
+
+    public class RoleComparer : IEqualityComparer<Person>
+    {
+        public bool Equals(Person? a, Person? b) => a?.Role == b?.Role;
+
+        public int GetHashCode(Person x) => HashCode.Combine(x.Role);
+    }
+}

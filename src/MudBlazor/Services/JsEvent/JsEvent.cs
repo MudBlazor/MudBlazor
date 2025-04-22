@@ -2,41 +2,30 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
-using MudBlazor.Interop;
 
 namespace MudBlazor.Services
 {
-    public interface IJsEvent : IDisposable
-    {
-        Task Connect(string elementId, JsEventOptions options);
-        Task Disconnect();
-        event Action<int> CaretPositionChanged;
-        event Action<string> Paste;
-        event Action<int, int> Select;
-    }
-
     /// <summary>
-    /// Subscribe JS events of any element by html id
+    /// Subscribes to JavaScript events of any HTML element by its ID.
     /// </summary>
-    public class JsEvent : IJsEvent
+    internal sealed class JsEvent : IJsEvent
     {
-        private bool _isDisposed = false;
-
-        private readonly DotNetObjectReference<JsEvent> _dotNetRef;
-        private readonly IJSRuntime _jsRuntime;
+        private bool _disposed;
         private string _elementId;
         private bool _isObserving;
-        internal HashSet<string> _subscribedEvents = new HashSet<string>();
+        private readonly IJSRuntime _jsRuntime;
+        private readonly DotNetObjectReference<JsEvent> _dotNetRef;
+        internal HashSet<string> _subscribedEvents = new();
+        private readonly List<Action<string>> _pasteHandlers = new();
+        private readonly List<Action<int, int>> _selectHandlers = new();
+        private readonly List<Action<int>> _caretPositionChangedHandlers = new();
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="JsEvent"/> class.
+        /// </summary>
+        /// <param name="jsRuntime">The JavaScript runtime to use for invoking JavaScript functions.</param>
         [DynamicDependency(nameof(OnCaretPositionChanged))]
         [DynamicDependency(nameof(OnPaste))]
         [DynamicDependency(nameof(OnSelect))]
@@ -47,80 +36,86 @@ namespace MudBlazor.Services
             _jsRuntime = jsRuntime;
         }
 
-        /// <summary>
-        /// Connect to the ancestor element of the element(s) that should be observed
-        /// </summary>
-        /// <param name="elementId">Ancestor html element id</param>
-        /// <param name="options">Define here the descendant(s) by setting TargetClass and the keystrokes to be monitored</param>
+        /// <inheritdoc />
         public async Task Connect(string elementId, JsEventOptions options)
         {
-            if (_isObserving || _isDisposed)
+            if (_isObserving || _disposed)
+            {
                 return;
+            }
+
             _elementId = elementId;
-            _isObserving = await _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudJsEvent.connect", _dotNetRef, elementId, options); ;
+            _isObserving = await _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudJsEvent.connect", _dotNetRef, elementId, options);
         }
 
-        /// <summary>
-        /// Disconnect from the previously connected ancestor and its descendants
-        /// </summary>
+        /// <inheritdoc />
         public async Task Disconnect()
         {
-            if (_elementId == null)
-                return;
-            await UnsubscribeAll();
-            try
+            if (_elementId is null)
             {
-                await _jsRuntime.InvokeVoidAsync($"mudJsEvent.disconnect", _elementId);
+                return;
             }
-            catch (Exception) {  /*ignore*/ }
+
+            await UnsubscribeAll();
+            await _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudJsEvent.disconnect", _elementId);
+
             _isObserving = false;
         }
 
+        /// <summary>
+        /// Subscribes to the specified JavaScript event.
+        /// </summary>
+        /// <param name="eventName">The name of the event to subscribe to.</param>
         internal void Subscribe(string eventName)
         {
-            if (_elementId == null)
-                throw new InvalidOperationException("Call Connect(...) before attaching events!");
-            if (_subscribedEvents.Contains(eventName) || _isDisposed)
-                return;
-            try
+            if (_elementId is null)
             {
-                _jsRuntime.InvokeVoidAsync("mudJsEvent.subscribe", _elementId, eventName).CatchAndLog();
-                _subscribedEvents.Add(eventName);
+                throw new InvalidOperationException("Call Connect(...) before attaching events!");
             }
-            catch (JSDisconnectedException) { }
-            catch (TaskCanceledException) { }
+
+            if (_subscribedEvents.Contains(eventName) || _disposed)
+            {
+                return;
+            }
+
+            _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudJsEvent.subscribe", _elementId, eventName).CatchAndLog();
+            _subscribedEvents.Add(eventName);
         }
 
+        /// <summary>
+        /// Unsubscribes from the specified JavaScript event.
+        /// </summary>
+        /// <param name="eventName">The name of the event to unsubscribe from.</param>
         internal async Task Unsubscribe(string eventName)
         {
-            if (_elementId == null)
-                return;
-            try
+            if (_elementId is null)
             {
-                await _jsRuntime.InvokeVoidAsync($"mudJsEvent.unsubscribe", _elementId, eventName);
+                return;
             }
-            catch (Exception) {  /*ignore*/ }
+
+            await _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudJsEvent.unsubscribe", _elementId, eventName);
             _subscribedEvents.Remove(eventName);
         }
 
+        /// <summary>
+        /// Unsubscribes from all JavaScript events.
+        /// </summary>
         internal async Task UnsubscribeAll()
         {
-            if (_elementId == null)
-                return;
-            try
+            if (_elementId is null)
             {
-                foreach (var eventName in _subscribedEvents)
-                    await _jsRuntime.InvokeVoidAsync($"mudJsEvent.unsubscribe", _elementId, eventName);
+                return;
             }
-            catch (Exception) {  /*ignore*/ }
+
+            foreach (var eventName in _subscribedEvents)
+            {
+                await _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudJsEvent.unsubscribe", _elementId, eventName);
+            }
+
             _subscribedEvents.Clear();
         }
 
-        List<Action<int>> _caretPositionChangedHandlers = new List<Action<int>>();
-
-        /// <summary>
-        /// Subscribe this event to get notified about caret changes in an input on click and on keyup
-        /// </summary>
+        /// <inheritdoc />
         public event Action<int> CaretPositionChanged
         {
             add
@@ -130,94 +125,87 @@ namespace MudBlazor.Services
                     Subscribe("click");
                     Subscribe("keyup");
                 }
+
                 _caretPositionChangedHandlers.Add(value);
             }
             remove
             {
                 if (_caretPositionChangedHandlers.Count == 0)
+                {
                     return;
+                }
+
                 if (_caretPositionChangedHandlers.Count == 1)
                 {
                     Unsubscribe("click").CatchAndLog();
                     Unsubscribe("keyup").CatchAndLog();
                 }
+
                 _caretPositionChangedHandlers.Remove(value);
             }
         }
 
-        /// <summary>
-        /// To be invoked only by JS
-        /// </summary>
-        [JSInvokable]
-        public void OnCaretPositionChanged(int caretPosition)
-        {
-            foreach (var handler in _caretPositionChangedHandlers)
-            {
-                handler.Invoke(caretPosition);
-            }
-        }
-
-        List<Action<string>> _pasteHandlers = new List<Action<string>>();
-
-        /// <summary>
-        /// Subscribe this event to get notified about paste actions
-        /// </summary>
+        /// <inheritdoc />
         public event Action<string> Paste
         {
             add
             {
                 if (_pasteHandlers.Count == 0)
+                {
                     Subscribe("paste");
+                }
+
                 _pasteHandlers.Add(value);
             }
             remove
             {
                 if (_pasteHandlers.Count == 0)
+                {
                     return;
+                }
+
                 if (_pasteHandlers.Count == 1)
+                {
                     Unsubscribe("paste").CatchAndLog();
+                }
+
                 _pasteHandlers.Remove(value);
             }
         }
 
-        /// <summary>
-        /// To be invoked only by JS
-        /// </summary>
-        [JSInvokable]
-        public void OnPaste(string text)
-        {
-            foreach (var handler in _pasteHandlers)
-            {
-                handler.Invoke(text);
-            }
-        }
-
-        List<Action<int, int>> _selectHandlers = new List<Action<int, int>>();
-
-        /// <summary>
-        /// Subscribe this event to get notified about paste actions
-        /// </summary>
+        /// <inheritdoc />
         public event Action<int, int> Select
         {
             add
             {
                 if (_selectHandlers.Count == 0)
+                {
                     Subscribe("select");
+                }
+
                 _selectHandlers.Add(value);
             }
             remove
             {
                 if (_selectHandlers.Count == 0)
+                {
                     return;
+                }
+
                 if (_selectHandlers.Count == 1)
+                {
                     Unsubscribe("select").CatchAndLog();
+                }
+
                 _selectHandlers.Remove(value);
             }
         }
 
         /// <summary>
-        /// To be invoked only by JS
+        /// Invoked by JavaScript when a text selection action is performed.
         /// </summary>
+        /// <param name="start">The start position of the selection.</param>
+        /// <param name="end">The end position of the selection.</param>
         [JSInvokable]
         public void OnSelect(int start, int end)
         {
@@ -227,20 +215,41 @@ namespace MudBlazor.Services
             }
         }
 
-        protected virtual void Dispose(bool disposing)
+        /// <summary>
+        /// Invoked by JavaScript when a paste action is performed.
+        /// </summary>
+        /// <param name="text">The text that was pasted.</param>
+        [JSInvokable]
+        public void OnPaste(string text)
         {
-            if (!disposing || _isDisposed)
-                return;
-            _isDisposed = true;
-            Disconnect().CatchAndLog();
-            _dotNetRef.Dispose();
+            foreach (var handler in _pasteHandlers)
+            {
+                handler.Invoke(text);
+            }
         }
 
-        public void Dispose()
+        /// <summary>
+        /// Invoked by JavaScript when the caret position changes in an input element.
+        /// </summary>
+        /// <param name="caretPosition">The new caret position.</param>
+        [JSInvokable]
+        public void OnCaretPositionChanged(int caretPosition)
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            foreach (var handler in _caretPositionChangedHandlers)
+            {
+                handler.Invoke(caretPosition);
+            }
         }
 
+        /// <inheritdoc />
+        public async ValueTask DisposeAsync()
+        {
+            if (!_disposed)
+            {
+                _disposed = true;
+                await Disconnect();
+                _dotNetRef.Dispose();
+            }
+        }
     }
 }

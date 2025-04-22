@@ -2,11 +2,9 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 
 namespace MudBlazor.Utilities.ObserverManager;
@@ -27,15 +25,23 @@ namespace MudBlazor.Utilities.ObserverManager;
 /// </remarks>
 internal class ObserverManager<TIdentity, TObserver> : IEnumerable<TObserver> where TIdentity : notnull
 {
-    private readonly Dictionary<TIdentity, ObserverEntry> _observers = new();
+    private readonly ConcurrentDictionary<TIdentity, ObserverEntry> _observers;
     private readonly ILogger _log;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ObserverManager{TIdentity,TObserver}"/> class. 
     /// </summary>
-    public ObserverManager(ILogger log)
+    public ObserverManager(ILogger log) : this(log, null)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ObserverManager{TIdentity,TObserver}"/> class. 
+    /// </summary>
+    public ObserverManager(ILogger log, IEqualityComparer<TIdentity>? comparer)
     {
         _log = log ?? throw new ArgumentNullException(nameof(log));
+        _observers = new(comparer);
     }
 
     /// <summary>
@@ -54,6 +60,71 @@ internal class ObserverManager<TIdentity, TObserver> : IEnumerable<TObserver> wh
     public void Clear() => _observers.Clear();
 
     /// <summary>
+    /// Checks if an observer with the specified identity is subscribed.
+    /// </summary>
+    /// <param name="id">The identity of the observer.</param>
+    /// <returns>True if the observer is subscribed; otherwise, false.</returns>
+    public bool IsSubscribed(TIdentity id) => _observers.ContainsKey(id);
+
+    /// <summary>
+    /// Tries to get the subscription for the specified identity.
+    /// </summary>
+    /// <param name="id">The identity of the observer.</param>
+    /// <param name="observer">When this method returns, contains the observer associated with the specified identity, if the identity is found; otherwise, the default value for the type of the observer parameter.</param>
+    /// <returns>True if the observer is found; otherwise, false.</returns>
+    public bool TryGetSubscription(TIdentity id, [MaybeNullWhen(false)] out TObserver observer)
+    {
+        if (_observers.TryGetValue(id, out var entry))
+        {
+            observer = entry.Observer;
+            return true;
+        }
+        observer = default;
+        return false;
+    }
+
+    /// <summary>
+    /// Finds the identities of observers that match the specified predicate.
+    /// </summary>
+    /// <param name="predicate">The predicate to filter the observers.</param>
+    /// <returns>An enumerable collection of observer identities that match the predicate.</returns>
+    public IEnumerable<TIdentity> FindObserverIdentities(Func<TIdentity, TObserver, bool> predicate) =>
+        _observers.Where(kvp => predicate(kvp.Key, kvp.Value.Observer)).Select(kvp => kvp.Key);
+
+    /// <summary>
+    /// Tries to get the existing subscription for the specified identity, or subscribes the observer if it does not exist.
+    /// </summary>
+    /// <param name="id">The identity of the observer.</param>
+    /// <param name="observer">The observer to subscribe if it does not already exist.</param>
+    /// <param name="newObserver">When this method returns, contains the observer associated with the specified identity, whether it was already subscribed or newly subscribed.</param>
+    /// <returns>True if the observer was already subscribed; otherwise, false.</returns>
+    public bool TryGetOrAddSubscription(TIdentity id, TObserver observer, out TObserver newObserver)
+    {
+        // Add or update the subscription.
+        if (_observers.TryGetValue(id, out var entry))
+        {
+            entry.Observer = observer;
+            if (_log.IsEnabled(LogLevel.Trace))
+            {
+                _log.LogTrace("Updating entry for {Id}/{Observer}. {Count} total observers.", id, observer, _observers.Count);
+            }
+
+            newObserver = entry.Observer;
+            return true;
+        }
+
+        var newEntry = new ObserverEntry(observer);
+        _observers[id] = newEntry;
+        if (_log.IsEnabled(LogLevel.Trace))
+        {
+            _log.LogTrace("Adding entry for {Id}/{Observer}. {Count} total observers after add.", id, observer, _observers.Count);
+        }
+
+        newObserver = newEntry.Observer;
+        return false;
+    }
+
+    /// <summary>
     /// Ensures that the provided <paramref name="observer"/> is subscribed, renewing its subscription.
     /// </summary>
     /// <param name="id">
@@ -65,23 +136,7 @@ internal class ObserverManager<TIdentity, TObserver> : IEnumerable<TObserver> wh
     /// <exception cref="Exception">A delegate callback throws an exception.</exception>
     public void Subscribe(TIdentity id, TObserver observer)
     {
-        // Add or update the subscription.
-        if (_observers.TryGetValue(id, out var entry))
-        {
-            entry.Observer = observer;
-            if (_log.IsEnabled(LogLevel.Debug))
-            {
-                _log.LogDebug("Updating entry for {Id}/{Observer}. {Count} total observers.", id, observer, _observers.Count);
-            }
-        }
-        else
-        {
-            _observers[id] = new ObserverEntry(observer);
-            if (_log.IsEnabled(LogLevel.Debug))
-            {
-                _log.LogDebug("Adding entry for {Id}/{Observer}. {Count} total observers after add.", id, observer, _observers.Count);
-            }
-        }
+        _ = TryGetOrAddSubscription(id, observer, out _);
     }
 
     /// <summary>
@@ -93,9 +148,9 @@ internal class ObserverManager<TIdentity, TObserver> : IEnumerable<TObserver> wh
     public void Unsubscribe(TIdentity id)
     {
         _observers.Remove(id, out _);
-        if (_log.IsEnabled(LogLevel.Debug))
+        if (_log.IsEnabled(LogLevel.Trace))
         {
-            _log.LogDebug("Removed entry for {Id}. {Count} total observers after remove.", id, _observers.Count);
+            _log.LogTrace("Removed entry for {Id}. {Count} total observers after remove.", id, _observers.Count);
         }
     }
 
@@ -114,7 +169,7 @@ internal class ObserverManager<TIdentity, TObserver> : IEnumerable<TObserver> wh
     public async Task NotifyAsync(Func<TObserver, Task> notification, Func<TIdentity, TObserver, bool>? predicate = null)
     {
         var defunct = default(List<TIdentity>);
-        foreach (var observer in _observers.ToArray())
+        foreach (var observer in _observers)
         {
             // Skip observers which don't match the provided predicate.
             if (predicate != null && !predicate(observer.Key, observer.Value.Observer))
@@ -140,9 +195,9 @@ internal class ObserverManager<TIdentity, TObserver> : IEnumerable<TObserver> wh
             foreach (var observer in defunct)
             {
                 _observers.Remove(observer, out _);
-                if (_log.IsEnabled(LogLevel.Debug))
+                if (_log.IsEnabled(LogLevel.Trace))
                 {
-                    _log.LogDebug("Removing defunct entry for {Id}. {Count} total observers after remove.", observer, _observers.Count);
+                    _log.LogTrace("Removing defunct entry for {Id}. {Count} total observers after remove.", observer, _observers.Count);
                 }
             }
         }

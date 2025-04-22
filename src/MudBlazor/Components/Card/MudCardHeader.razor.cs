@@ -7,6 +7,10 @@ namespace MudBlazor
     /// <summary>
     /// Represents the top portion of a <see cref="MudCard"/>.
     /// </summary>
+    /// <seealso cref="MudCard" />
+    /// <seealso cref="MudCardActions" />
+    /// <seealso cref="MudCardContent" />
+    /// <seealso cref="MudCardMedia" />
     public partial class MudCardHeader : MudComponentBase
     {
         protected string Classname => new CssBuilder("mud-card-header")

@@ -2,10 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MudBlazor
 {
@@ -14,7 +11,7 @@ namespace MudBlazor
     /// Represents the current state of a header in a <see cref="MudDataGrid{T}"/>.
     /// </summary>
     /// <typeparam name="T">The kind of item being managed.</typeparam>
-    public class HeaderContext<T>
+    public class HeaderContext<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>
     {
         private readonly MudDataGrid<T> _dataGrid;
 

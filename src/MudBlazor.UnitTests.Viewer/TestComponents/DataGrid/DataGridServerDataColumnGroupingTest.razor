@@ -1,8 +1,7 @@
 ﻿@using MudBlazor.Examples.Data
 @using MudBlazor.Examples.Data.Models
-@namespace MudBlazor.UnitTests.TestComponents
 
-<MudPopoverProvider></MudPopoverProvider>
+<MudPopoverProvider />
 
 <MudDataGrid @ref="_dataGrid" MultiSelection="true" Items="@_elements" Filterable="true"
              Hideable="true" Groupable="true" GroupExpanded="false" GroupClassFunc="GroupClassFunc">
@@ -44,15 +43,15 @@
 @code {
     private readonly PeriodicTableService _periodicTableService = new();
     private IEnumerable<Element> _elements = new List<Element>();
-    private MudDataGrid<Element> _dataGrid;
+    private MudDataGrid<Element> _dataGrid = null!;
     private bool _customizeGroupTemplate;
     private static bool _customizeGroupBy;
-    private static readonly string[] NonMetals = ["H", "He", "N", "O", "F", "Ne", "Cl", "Ar", "Kr", "Xe", "Rn", "Br", "C", "P", "Se", "Se", "I"];
-    private readonly Func<Element, object> _groupBy = static x =>
+    private static readonly string[] _nonMetals = ["H", "He", "N", "O", "F", "Ne", "Cl", "Ar", "Kr", "Xe", "Rn", "Br", "C", "P", "Se", "Se", "I"];
+    private readonly Func<Element, object?> _groupBy = static x =>
     {
         if (_customizeGroupBy)
         {
-            return NonMetals.Contains(x.Sign) ? "Nonmetal" : "Metal";
+            return _nonMetals.Contains(x.Sign) ? "Nonmetal" : "Metal";
         }
 
         return x.Group;
@@ -73,12 +72,12 @@
 
     private void ExpandAllGroups()
     {
-        _dataGrid?.ExpandAllGroups();
+        _dataGrid.ExpandAllGroups();
     }
 
     private void CollapseAllGroups()
     {
-        _dataGrid?.CollapseAllGroups();
+        _dataGrid.CollapseAllGroups();
     }
 
     private void CustomizeByGroupChanged(bool isChecked)

@@ -464,19 +464,19 @@ namespace MudBlazor.UnitTests.Components
 
             // MudButton
             await MudButton().ClickAsync(new MouseEventArgs());
-            alertTextFunc().InnerHtml.Should().Be("Oh my! We caught an error and handled it!");
+            alertTextFunc().InnerHtml.Should().Be("Something went wrong...");
             await comp.InvokeAsync(comp.Instance.Recover);
             alertTextFunc.Should().Throw<ComponentNotFoundException>();
 
             // MudFab
             await MudFab().ClickAsync(new MouseEventArgs());
-            alertTextFunc().InnerHtml.Should().Be("Oh my! We caught an error and handled it!");
+            alertTextFunc().InnerHtml.Should().Be("Something went wrong...");
             await comp.InvokeAsync(comp.Instance.Recover);
             alertTextFunc.Should().Throw<ComponentNotFoundException>();
 
             // MudIconButton
             await MudIconButton().ClickAsync(new MouseEventArgs());
-            alertTextFunc().InnerHtml.Should().Be("Oh my! We caught an error and handled it!");
+            alertTextFunc().InnerHtml.Should().Be("Something went wrong...");
             await comp.InvokeAsync(comp.Instance.Recover);
             alertTextFunc.Should().Throw<ComponentNotFoundException>();
         }

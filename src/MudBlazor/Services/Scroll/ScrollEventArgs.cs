@@ -1,11 +1,9 @@
-﻿using System;
-using MudBlazor.Interop;
+﻿using MudBlazor.Interop;
 
 namespace MudBlazor
 {
     public class ScrollEventArgs : EventArgs
     {
-
         /// <summary>
         /// The BoundingClientRect for the first child of the scrolled element
         /// </summary>
@@ -35,6 +33,5 @@ namespace MudBlazor
         /// Node name of the scrolled element
         /// </summary>
         public string NodeName { get; set; }
-
     }
 }

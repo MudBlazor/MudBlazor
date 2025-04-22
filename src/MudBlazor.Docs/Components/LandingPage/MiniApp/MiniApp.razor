@@ -14,38 +14,38 @@
 
             <MudListSubheader Class="pt-6 pb-2">General</MudListSubheader>
 
-            <MudListItem Value="1" Icon="@Icons.Material.Rounded.SpaceDashboard" Text="Dashboard" IconColor="Color.Inherit"/>
-            <MudListItem Value="2" Icon="@Icons.Material.Rounded.ShoppingCart" Text="E-Commerce" IconColor="Color.Inherit"/>
-            <MudListItem Value="3" Icon="@Icons.Material.Rounded.AccountBalance" Text="Banking" IconColor="Color.Inherit"/>
-            <MudListItem Value="4" Icon="@Icons.Material.Rounded.Event" Text="Booking" IconColor="Color.Inherit"/>
+            <MudListItem tabindex="-1" Value="1" Icon="@Icons.Material.Rounded.SpaceDashboard" Text="Dashboard" IconColor="Color.Inherit"/>
+            <MudListItem tabindex="-1" Value="2" Icon="@Icons.Material.Rounded.ShoppingCart" Text="E-Commerce" IconColor="Color.Inherit"/>
+            <MudListItem tabindex="-1" Value="3" Icon="@Icons.Material.Rounded.AccountBalance" Text="Banking" IconColor="Color.Inherit"/>
+            <MudListItem tabindex="-1" Value="4" Icon="@Icons.Material.Rounded.Event" Text="Booking" IconColor="Color.Inherit"/>
 
             <MudListSubheader Class="pt-6 pb-2">Applications</MudListSubheader>
 
-            <MudListItem Value="5" Icon="@Icons.Material.Rounded.Email" Text="Mail" IconColor="Color.Inherit" />
-            <MudListItem Value="6" Icon="@Icons.Material.Rounded.QuestionAnswer" Text="Chat" IconColor="Color.Inherit" />
-            <MudListItem Value="7" Icon="@Icons.Material.Rounded.EventNote" Text="Calendar" IconColor="Color.Inherit" />
-            <MudListItem Value="8" Icon="@Icons.Material.Rounded.ViewKanban" Text="Kanban" IconColor="Color.Inherit" />
+            <MudListItem tabindex="-1" Value="5" Icon="@Icons.Material.Rounded.Email" Text="Mail" IconColor="Color.Inherit" />
+            <MudListItem tabindex="-1" Value="6" Icon="@Icons.Material.Rounded.QuestionAnswer" Text="Chat" IconColor="Color.Inherit" />
+            <MudListItem tabindex="-1" Value="7" Icon="@Icons.Material.Rounded.EventNote" Text="Calendar" IconColor="Color.Inherit" />
+            <MudListItem tabindex="-1" Value="8" Icon="@Icons.Material.Rounded.ViewKanban" Text="Kanban" IconColor="Color.Inherit" />
 
             <MudListSubheader Class="pt-6 pb-2">Manage</MudListSubheader>
 
-            <MudListItem Value="9" Icon="@Icons.Material.Rounded.Person" Text="Users" />
-            <MudListItem Value="10" Icon="@Icons.Material.Rounded.Group" Text="Groups" />
-            <MudListItem Value="11" Icon="@Icons.Material.Rounded.ShoppingCart" Text="E-Commerce" Expanded="false">
+            <MudListItem tabindex="-1" Value="9" Icon="@Icons.Material.Rounded.Person" Text="Users" />
+            <MudListItem tabindex="-1" Value="10" Icon="@Icons.Material.Rounded.Group" Text="Groups" />
+            <MudListItem tabindex="-1" Value="11" Icon="@Icons.Material.Rounded.ShoppingCart" Text="E-Commerce" Expanded="false">
                 <NestedList>
-                    <MudListItem Value="12" Text="Analytics"/>
-                    <MudListItem Value="13" Text="Products"/>
-                    <MudListItem Value="14" Text="Orders"/>
-                    <MudListItem Value="15" Text="Invoice"/>
+                    <MudListItem tabindex="-1" Value="12" Text="Analytics"/>
+                    <MudListItem tabindex="-1" Value="13" Text="Products"/>
+                    <MudListItem tabindex="-1" Value="14" Text="Orders"/>
+                    <MudListItem tabindex="-1" Value="15" Text="Invoice"/>
                 </NestedList>
             </MudListItem>
         </MudList>
     </div>
     <div class="@ContentClassNames">
         <MudToolBar Gutters="false" Class="mud-text-secondary">
-            <MudIconButton OnClick="@(() => ToggleMiniDrawer())" Icon="@GetIcon()" Color="Color.Inherit" />
-            <MudIconButton Icon="@Icons.Material.Outlined.Search" Color="Color.Inherit" />
+            <MudIconButton tabindex="-1" OnClick="@(() => ToggleMiniDrawer())" Icon="@GetIcon()" Color="Color.Inherit" />
+            <MudIconButton tabindex="-1" Icon="@Icons.Material.Outlined.Search" Color="Color.Inherit" />
             <MudSpacer />
-            <MudIconButton Class="mud-text-secondary" Icon="@Icons.Material.Outlined.Notifications"/>
+            <MudIconButton tabindex="-1" Class="mud-text-secondary" Icon="@Icons.Material.Outlined.Notifications"/>
             <MudMenu AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" PopoverClass="mudblazor-landingpage-scaled-menu mud-elevation-1">
                 <ActivatorContent>
                     <MiniAppAvatar />
@@ -140,17 +140,17 @@
             <MudPaper Class="py-4 px-6 rounded-lg d-flex flex-column">
                     <MudText Typo="Typo.h6">Uranium-235</MudText>
                     <div class="d-flex align-center gap-4">
-                        <MudRating ReadOnly="true" SelectedValue="4" />
+                        <MudRating tabindex="-1" ReadOnly="true" SelectedValue="4" />
                         <MudText Typo="Typo.subtitle2" Color="Color.Primary">See all 137 reviews</MudText>
                     </div>
                     <MudText>This is the type of uranium used in the RBMK reactors.</MudText>
                     <MudDivider Class="my-3"/>
                     <MudText Typo="Typo.subtitle2" GutterBottom="true">Reactor Type</MudText>
                     <div class="mx-n2 mb-2">
-                    <MudChip T="string" Color="Color.Primary">RBMK-1000</MudChip><MudChip T="string">RBMK-1500</MudChip><MudChip T="string">RBMKP-2400</MudChip>
+                    <MudChip tabindex="-1" T="string" Color="Color.Primary">RBMK-1000</MudChip><MudChip tabindex="-1" T="string">RBMK-1500</MudChip><MudChip tabindex="-1" T="string">RBMKP-2400</MudChip>
                     </div>
                     <div>
-                        <MudButton Variant="Variant.Text" Color="Color.Primary" Class="ml-n2 mb-n2">Read More</MudButton>
+                        <MudButton tabindex="-1" Variant="Variant.Text" Color="Color.Primary" Class="ml-n2 mb-n2">Read More</MudButton>
                     </div>
             </MudPaper>
             @if(IsMobile == false)
@@ -193,14 +193,14 @@
                 </div>
                 <MudDivider/>
                 <div class="d-flex flex-column pa-4 gap-4">
-                    <MudTextField T="string" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Rounded.CreditCard" Mask="@(new PatternMask("0000 0000 0000 0000"))" Label="Card Number" Placeholder="0000 0000 0000 0000"  Variant="@Variant.Text" />
+                    <MudTextField tabindex="-1" T="string" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Rounded.CreditCard" Mask="@(new PatternMask("0000 0000 0000 0000"))" Label="Card Number" Placeholder="0000 0000 0000 0000"  Variant="@Variant.Text" />
                     <div class="d-flex gap-4">
-                        <MudTextField T="string" Mask="@(new DateMask("MM/YY", 'Y', 'M'))" Label="Expiration" Placeholder="MM/YY"  Variant="@Variant.Text" />
-                        <MudTextField T="string" Mask="@(new PatternMask("000"))" Label="CVC" Placeholder="000" Variant="@Variant.Text" />
+                        <MudTextField tabindex="-1" T="string" Mask="@(new DateMask("MM/YY", 'Y', 'M'))" Label="Expiration" Placeholder="MM/YY"  Variant="@Variant.Text" />
+                        <MudTextField tabindex="-1" T="string" Mask="@(new PatternMask("000"))" Label="CVC" Placeholder="000" Variant="@Variant.Text" />
                     </div>
                 </div>
                 <div class="d-flex align-end flex-grow-1 pa-4">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" DropShadow="false">Pay now</MudButton>
+                    <MudButton tabindex="-1" Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" DropShadow="false">Pay now</MudButton>
                 </div>
             </MudPaper>
             <div class="d-flex flex-column gap-6">
@@ -214,19 +214,19 @@
                     <MudPaper Class="d-flex flex-column align-center py-2">
                         <MudText Typo="Typo.body2">100°C</MudText>
                         <div class="mud-height-full my-n6">
-                            <MudSlider Value="@sliderValue" Vertical="true" Class="d-flex mx-n8"/>
+                            <MudSlider tabindex="-1" Value="@sliderValue" Vertical="true" Class="d-flex mx-n8"/>
                         </div>
                         <MudText Typo="Typo.body2">0°C</MudText>
                     </MudPaper>
                     <div class="d-flex flex-column gap-6">
                         <MudPaper Class="d-flex">
-                            <MudIconButton Icon="@Icons.Material.Filled.FormatAlignRight" Class="rounded-0 rounded-l" />
-                            <MudIconButton Icon="@Icons.Material.Filled.FormatAlignCenter" Class="rounded-0" />
-                            <MudIconButton Icon="@Icons.Material.Filled.FormatAlignLeft" Class="rounded-0" />
+                            <MudIconButton tabindex="-1" Icon="@Icons.Material.Filled.FormatAlignRight" Class="rounded-0 rounded-l" />
+                            <MudIconButton tabindex="-1" Icon="@Icons.Material.Filled.FormatAlignCenter" Class="rounded-0" />
+                            <MudIconButton tabindex="-1" Icon="@Icons.Material.Filled.FormatAlignLeft" Class="rounded-0" />
                             <MudDivider Vertical="true" FlexItem="true" Class="mx-2" />
-                            <MudIconButton Icon="@Icons.Material.Filled.FormatBold" Class="rounded-0" />
-                            <MudIconButton Icon="@Icons.Material.Filled.FormatItalic" Class="rounded-0" />
-                            <MudIconButton Icon="@Icons.Material.Filled.FormatUnderlined" Class="rounded-0 rounded-r" />
+                            <MudIconButton tabindex="-1" Icon="@Icons.Material.Filled.FormatBold" Class="rounded-0" />
+                            <MudIconButton tabindex="-1" Icon="@Icons.Material.Filled.FormatItalic" Class="rounded-0" />
+                            <MudIconButton tabindex="-1" Icon="@Icons.Material.Filled.FormatUnderlined" Class="rounded-0 rounded-r" />
                         </MudPaper>
                         <div class="relative">
                             <MudExpansionPanels>
@@ -289,8 +289,9 @@
 
     protected string MiniDrawerClassNames =>
         new CssBuilder("mini-drawer py-8 flex-grow-0 flex-shrink-0")
-          .AddClass("absolute", IsMobile)
-        .Build();
+            .AddClass("absolute", IsMobile)
+            .Build();
+
     protected string ContentClassNames =>
         new CssBuilder("flex-grow-1 flex-shrink-1")
             .AddClass("pa-5", !IsMobile)

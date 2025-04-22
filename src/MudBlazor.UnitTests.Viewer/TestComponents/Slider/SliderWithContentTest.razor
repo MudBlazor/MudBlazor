@@ -1,8 +1,6 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudSlider Max="100.0" Value="20.0" Min="0.0">@Text</MudSlider>
+﻿<MudSlider Max="100.0" Value="20.0" Min="0.0">@Text</MudSlider>
 
 @code {
     [Parameter]
-    public string Text { get; set; }
+    public string? Text { get; set; }
 }

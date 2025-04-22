@@ -5,12 +5,12 @@
     <MudItem xs="12" sm="6" md="4">
         <MudAutocomplete T="string" Label="US States" @bind-Value="value1" SearchFunc="@Search1"
                          ResetValueOnEmptyText="@resetValueOnEmptyText"
-                         CoerceText="@coerceText" CoerceValue="@coerceValue" />
+                         CoerceText="@coerceText" CoerceValue="@coerceValue" SelectValueOnTab="@selectedOnTab" />
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
         <MudAutocomplete T="string" Label="US States" @bind-Value="value2" SearchFunc="@Search2"
                          ResetValueOnEmptyText="@resetValueOnEmptyText"
-                         CoerceText="@coerceText" CoerceValue="@coerceValue"
+                         CoerceText="@coerceText" CoerceValue="@coerceValue" SelectValueOnTab="@selectedOnTab"
                          AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary" />
     </MudItem>
     <MudItem xs="12" md="12">
@@ -22,6 +22,8 @@
         <MudSwitch @bind-Value="resetValueOnEmptyText" Color="Color.Primary">Reset Value on empty Text</MudSwitch>
         <MudSwitch @bind-Value="coerceText" Color="Color.Secondary">Coerce Text to Value</MudSwitch>
         <MudSwitch @bind-Value="coerceValue" Color="Color.Tertiary">Coerce Value to Text (if not found)</MudSwitch>
+        <MudSwitch @bind-Value="selectedOnTab" Color="Color.Tertiary">Select Value On Tab Key Press</MudSwitch>
+
     </MudItem>
 </MudGrid>
 
@@ -29,6 +31,7 @@
     private bool resetValueOnEmptyText;
     private bool coerceText;
     private bool coerceValue;
+    private bool selectedOnTab;
     private string value1, value2;
     private string[] states =
     {

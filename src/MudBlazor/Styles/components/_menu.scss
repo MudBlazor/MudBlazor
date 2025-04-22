@@ -20,3 +20,66 @@
     user-select: none;
   }
 }
+
+.mud-menu-button-hidden {
+  /* this ensures that the menu div doesn't use any space in the layout */
+  position: absolute;
+}
+
+.mud-menu-list {
+  padding: 4px 0;
+
+  > .mud-menu {
+    width: 100%;
+  }
+
+  > .mud-divider {
+    margin: 4px 0;
+  }
+}
+
+.mud-menu-item {
+  width: 100%;
+  display: flex;
+  position: relative;
+  box-sizing: border-box;
+  text-align: start;
+  align-items: center;
+  justify-content: flex-start;
+  text-decoration: none;
+  padding: 8px 12px;
+
+  > .mud-icon-root {
+    color: var(--mud-palette-action-default);
+  }
+
+  .mud-menu-item-icon {
+    display: inline-flex;
+    flex-shrink: 0;
+    margin-inline-end: 12px;
+  }
+
+  .mud-menu-item-text {
+    flex: 1 1 auto;
+    margin: 4px 0;
+  }
+
+  &.mud-menu-item-dense {
+    padding: 2px 12px;
+  }
+
+  &.mud-disabled {
+    color: var(--mud-palette-action-disabled) !important;
+    cursor: default !important;
+    pointer-events: none !important;
+
+    .mud-menu-item-icon {
+      color: var(--mud-palette-action-disabled) !important;
+    }
+  }
+}
+
+// If any menu item has an icon, then give the other ones the same gutters.
+.mud-menu-list:has(.mud-menu-item-icon) .mud-menu-item:not(:has(.mud-menu-item-icon)) .mud-menu-item-text {
+  margin-inline-start: 36px;
+}

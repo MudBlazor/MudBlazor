@@ -1,45 +1,55 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudDropContainer T="DropItem" Items="_items" ItemsSelector="@((item,dropzone) => item.Selector == dropzone)" ItemDropped="ItemUpdated" Class="d-flex flex-wrap flex-grow-1">
+﻿<MudDropContainer T="DropItem" Items="_items" ItemsSelector="@((item,dropzone) => item.Selector == dropzone)" ItemDropped="ItemUpdated" Class="d-flex flex-wrap flex-grow-1">
     <ChildContent>
-        @for (int i = 1; i < 4; i++) 
-         {
-             var dropzone = i.ToString();
-             <MudPaper Class="ma-4 flex-grow-1">
-                 <MudList T="string" Class="d-flex flex-column mud-height-full">
-                     <MudListSubheader>Drop Zone @dropzone</MudListSubheader>
-                     <MudDropZone T="DropItem" Identifier="@dropzone" Class="@($"flex-grow-1 dropzone-{dropzone}")" AllowReorder />
-                 </MudList>
-             </MudPaper>
-         }
+        @for (int i = 1; i < 4; i++)
+        {
+            var dropzone = i.ToString();
+            <MudPaper Class="ma-4 flex-grow-1">
+                <MudList T="string" Class="d-flex flex-column mud-height-full">
+                    <MudListSubheader>Drop Zone @dropzone</MudListSubheader>
+                    <MudDropZone T="DropItem" Identifier="@dropzone" Class="@($"flex-grow-1 dropzone-{dropzone}")" AllowReorder />
+                </MudList>
+            </MudPaper>
+        }
     </ChildContent>
     <ItemRenderer>
-        <MudListItem T="string" Text="@context.Name" />
+        <MudPaper Class="pa-4 ma-4">
+            <MudStack Row>
+                <MudIconButton Ripple="true"
+                               Icon="@Icons.Material.Filled.DragIndicator"
+                               Size="Size.Small" />
+                <MudText>@context.Name</MudText>
+            </MudStack>
+        </MudPaper>
     </ItemRenderer>
 </MudDropContainer>
 
 @code {
-	private void ItemUpdated(MudItemDropInfo<DropItem> dropItem)
-	{
-		dropItem.Item.Selector = dropItem.DropzoneIdentifier;
-		IndexHistory.Add(dropItem.IndexInZone);
-	}
+    private readonly List<DropItem> _items =
+    [
+        new() { Name = "Item 1", Selector = "1" },
+        new() { Name = "Item 2", Selector = "1" },
+        new() { Name = "Item 3", Selector = "1" },
+        new() { Name = "Item 4", Selector = "1" },
+        new() { Name = "Item 5", Selector = "2" },
+        new() { Name = "Item 6", Selector = "2" }
+    ];
 
-	public List<int> IndexHistory { get; set; } = new();
+	public List<int> IndexHistory { get; set; } = [];
 
-    private List<DropItem> _items = new()
+    private void ItemUpdated(MudItemDropInfo<DropItem> dropItem)
     {
-        new DropItem(){ Name = "Item 1", Selector = "1" },
-        new DropItem(){ Name = "Item 2", Selector = "1" },
-        new DropItem(){ Name = "Item 3", Selector = "1" },
-        new DropItem(){ Name = "Item 4", Selector = "1" },
-        new DropItem(){ Name = "Item 5", Selector = "2" },
-        new DropItem(){ Name = "Item 6", Selector = "2" },
-    };
+        if (dropItem.Item != null)
+        {
+            dropItem.Item.Selector = dropItem.DropzoneIdentifier;
+        }
+
+        IndexHistory.Add(dropItem.IndexInZone);
+    }
     
     public class DropItem
     {
-        public string Name { get; init; }
-        public string Selector { get; set; }
+        public required string Name { get; init; }
+
+        public required string Selector { get; set; }
     }
 }

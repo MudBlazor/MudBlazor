@@ -1,4 +1,4 @@
-﻿
+
 .mud-progress-circular {
   display: inline-block;
   color: var(--mud-palette-text-secondary);
@@ -44,6 +44,10 @@
 
   &.mud-progress-static {
     transition: stroke-dashoffset 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  }
+
+  &.mud-progress-circular-circle-rounded {
+    stroke-linecap: round;
   }
 }
 

@@ -1,6 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-@* https://github.com/MudBlazor/MudBlazor/issues/9544 *@
+﻿@* https://github.com/MudBlazor/MudBlazor/issues/9544 *@
 
 <MudButton id="element-button"
            Variant="@Variant.Filled"
@@ -11,9 +9,9 @@
 </MudButton>
 
 @code {
-    private string _tabindex = "-1";
+    private string? _tabindex = "-1";
 
-    void ButtonOnClick()
+    private void ButtonOnClick()
     {
         _tabindex = null;
     }

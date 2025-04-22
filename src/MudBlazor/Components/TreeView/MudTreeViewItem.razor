@@ -2,65 +2,68 @@
 @inherits MudComponentBase
 @typeparam T
 
-<li @attributes="UserAttributes" class="@Classname" style="@Style">
-    <div class="@ContentClassname" @onclick="OnItemClickedAsync" @onclick:stopPropagation="true" @ondblclick="OnItemDoubleClickedAsync" @ondblclick:stopPropagation="true">
-        @if (Content != null)
-        {
-            @Content
-        }
-        else
-        {
-            <MudTreeViewItemToggleButton Disabled="@GetDisabled()" Loading="_loading" Expanded="_expandedState.Value" ExpandedChanged="OnItemExpanded" Visible="@HasChildren()" ExpandedIcon="@ExpandButtonIcon" ExpandedIconColor="@ExpandButtonIconColor" LoadingIcon="@LoadingIcon" LoadingIconColor="LoadingIconColor"></MudTreeViewItemToggleButton>
-
-            @if (MultiSelection)
+@if (Visible)
+{
+    <li @attributes="UserAttributes" class="@Classname" style="@Style">
+        <div class="@ContentClassname" @onclick="OnItemClickedAsync" @onclick:stopPropagation="true" @ondblclick="OnItemDoubleClickedAsync" @ondblclick:stopPropagation="true">
+            @if (Content != null)
             {
-                <MudCheckBox T="bool?" TriState Class="mud-treeview-item-checkbox" CheckedIcon="@CheckedIcon" UncheckedIcon="@UncheckedIcon" IndeterminateIcon="@GetIndeterminateIcon()" 
-                        @bind-Value:get="GetCheckBoxStateTriState()" @bind-Value:set="@(x=>OnCheckboxChangedAsync())" Disabled="@Disabled"></MudCheckBox>
-            }
-
-            @if (HasIcon)
-            {
-                <div class="mud-treeview-item-icon">
-                    <MudIcon Disabled="@GetDisabled()" Icon="@GetIcon()" Color="@IconColor" />
-                </div>
-            }
-
-            @if (BodyContent != null)
-            {
-                @BodyContent(this)
+                @Content
             }
             else
             {
-                <MudText Typo="@TextTypo" Class="@TextClassname">
-                    @GetText()
-                </MudText>
+                <MudTreeViewItemToggleButton Disabled="@GetDisabled()" Loading="_loading" Expanded="_expandedState.Value" ExpandedChanged="OnItemExpanded" Visible="@(HasChildren() && AreChildrenVisible())" ExpandedIcon="@ExpandButtonIcon" ExpandedIconColor="@ExpandButtonIconColor" LoadingIcon="@LoadingIcon" LoadingIconColor="LoadingIconColor"></MudTreeViewItemToggleButton>
 
-                @if (!string.IsNullOrEmpty(EndText))
+                @if (MultiSelection)
                 {
-                    <MudText Typo="@EndTextTypo" Class="@EndTextClass">
-                        @EndText
-                    </MudText>
+                    <MudCheckBox T="bool?" TriState Class="mud-treeview-item-checkbox" CheckedIcon="@CheckedIcon" UncheckedIcon="@UncheckedIcon" IndeterminateIcon="@GetIndeterminateIcon()"
+                                 @bind-Value:get="GetCheckBoxStateTriState()" @bind-Value:set="@(x=>OnCheckboxChangedAsync())" Disabled="@Disabled"></MudCheckBox>
                 }
 
-                @if (!string.IsNullOrEmpty(EndIcon))
+                @if (HasIcon)
                 {
                     <div class="mud-treeview-item-icon">
-                        <MudIcon Disabled="@Disabled" Icon="@EndIcon" Color="@EndIconColor" />
+                        <MudIcon Disabled="@GetDisabled()" Icon="@GetIcon()" Color="@IconColor" />
                     </div>
                 }
+
+                @if (BodyContent != null)
+                {
+                    @BodyContent(this)
+                }
+                else
+                {
+                    <MudText Typo="@TextTypo" Class="@TextClassname">
+                        @GetText()
+                    </MudText>
+
+                    @if (!string.IsNullOrEmpty(EndText))
+                    {
+                        <MudText Typo="@EndTextTypo" Class="@EndTextClass">
+                            @EndText
+                        </MudText>
+                    }
+
+                    @if (!string.IsNullOrEmpty(EndIcon))
+                    {
+                        <div class="mud-treeview-item-icon">
+                            <MudIcon Disabled="@Disabled" Icon="@EndIcon" Color="@EndIconColor" />
+                        </div>
+                    }
+                }
             }
-        }
-    </div>
-    @if (HasChildren())
-    {
-        <MudCollapse Expanded="@_expandedState.Value">
-            <CascadingValue Value="@MudTreeRoot" IsFixed="true">
-                <CascadingValue Value="this" IsFixed="true">
-                    <MudTreeView Items="Items" ItemTemplate="MudTreeRoot?.ItemTemplate" Class="mud-treeview-group">
-                        @ChildContent
-                    </MudTreeView>
+        </div>
+        @if (HasChildren())
+        {
+            <MudCollapse Expanded="@_expandedState.Value">
+                <CascadingValue Value="@MudTreeRoot" IsFixed="true">
+                    <CascadingValue Value="this" IsFixed="true">
+                        <MudTreeView Items="@_itemsState.Value" ItemTemplate="MudTreeRoot?.ItemTemplate" Class="mud-treeview-group">
+                            @ChildContent
+                        </MudTreeView>
+                    </CascadingValue>
                 </CascadingValue>
-            </CascadingValue>
-        </MudCollapse>
-    }
-</li>
+            </MudCollapse>
+        }
+    </li>
+}

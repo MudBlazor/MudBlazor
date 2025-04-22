@@ -14,6 +14,7 @@ using Microsoft.Extensions.Logging;
 using MudBlazor.UnitTests.Components;
 using MudBlazor.UnitTests.Mocks;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.Logger;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Utilities

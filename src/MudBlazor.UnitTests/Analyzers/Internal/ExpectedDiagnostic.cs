@@ -9,7 +9,6 @@ using System.Linq;
 using FluentAssertions;
 using Microsoft.CodeAnalysis;
 using MudBlazor.Analyzers;
-using static MudBlazor.UnitTests.Components.ParametersTests;
 
 namespace MudBlazor.UnitTests.Analyzers.Internal
 {
@@ -56,6 +55,7 @@ namespace MudBlazor.UnitTests.Analyzers.Internal
 
         internal static void Compare(IEnumerable<Diagnostic> diagnostics, IEnumerable<ExpectedDiagnostic> expectedDiagnostics)
         {
+            diagnostics.Count().Should().Be(expectedDiagnostics.Count());
             var oderedDiagnostics = SortToFileOrder(diagnostics);
             var orderedExpectedDiagnostics = SortToFileOrder(expectedDiagnostics);
 
@@ -63,9 +63,9 @@ namespace MudBlazor.UnitTests.Analyzers.Internal
                 TestMessage(oderedDiagnostics.ElementAt(i), orderedExpectedDiagnostics.ElementAt(i));
         }
 
-        private static void TestMessage(Diagnostic diagnostic, ExpectedDiagnostic expectedDiagnostics)
+        private static void TestMessage(Diagnostic diagnostic, ExpectedDiagnostic expectedDiagnostic)
         {
-            diagnostic.GetMessage().Should().StartWith(expectedDiagnostics.Message);
+            diagnostic.GetMessage().Should().StartWith(expectedDiagnostic.Message);
         }
     }
 #nullable restore

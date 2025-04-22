@@ -1,7 +1,4 @@
-﻿@using System.Globalization;
-@namespace MudBlazor.UnitTests.TestComponents
-
-<MudPopoverProvider></MudPopoverProvider>
+﻿<MudPopoverProvider />
 
 @if (IsDateDisabledFunc != null)
 {
@@ -24,13 +21,13 @@ else
                         AdditionalDateClassesFunc="@AdditionalDateClassesFunc" />
 }
 @code {
-    private MudDateRangePicker _picker;
+    private MudDateRangePicker _picker = null!;
 
     [Parameter]
-    public DateRange DateRange { get; set; }
+    public DateRange? DateRange { get; set; }
 
     [Parameter]
-    public Func<DateTime, bool> IsDateDisabledFunc { get; set; }
+    public Func<DateTime, bool>? IsDateDisabledFunc { get; set; }
 
     [Parameter]
     public DateTime? PickerMonth { get; set; }
@@ -42,7 +39,7 @@ else
     public DateTime? StartMonth { get; set; }
 
     [Parameter]
-    public Func<DateTime, string> AdditionalDateClassesFunc { get; set; }
+    public Func<DateTime, string>? AdditionalDateClassesFunc { get; set; }
 
     [Parameter]
     public bool AllowDisabledDatesInRange { get; set; }
@@ -50,5 +47,4 @@ else
     public async Task Open() => await InvokeAsync(() => _picker.OpenAsync());
 
     public async Task Close() => await InvokeAsync(() => _picker.CloseAsync());
-
 }

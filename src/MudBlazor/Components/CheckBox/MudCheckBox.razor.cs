@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
@@ -12,25 +10,28 @@ namespace MudBlazor
     /// Represents a form input for boolean values or selecting multiple items in a list.
     /// </summary>
     /// <typeparam name="T">The type of item managed by this checkbox.</typeparam>
+    /// <seealso cref="MudRadio{T}"/>
     public partial class MudCheckBox<T> : MudBooleanInput<T>
     {
-        private IKeyInterceptor? _keyInterceptor;
         private string _elementId = Identifier.Create("checkbox");
 
         [Inject]
-        private IKeyInterceptorFactory KeyInterceptorFactory { get; set; } = null!;
+        private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
-        protected string Classname => new CssBuilder("mud-input-control-boolean-input")
+        protected override string Classname => new CssBuilder("mud-input-control-boolean-input")
+            .AddClass($"mud-disabled", GetDisabledState())
+            .AddClass($"mud-readonly", GetReadOnlyState())
+            .AddClass("mud-input-with-content", ChildContent is not null)
             .AddClass(Class)
             .Build();
 
-        protected string LabelClassname => new CssBuilder("mud-checkbox")
+        protected override string LabelClassname => new CssBuilder("mud-checkbox")
             .AddClass($"mud-disabled", GetDisabledState())
             .AddClass($"mud-readonly", GetReadOnlyState())
-            .AddClass("flex-row-reverse", LabelPosition == LabelPosition.Start)
+            .AddClass($"mud-input-content-placement-{ConvertPlacement(LabelPlacement).ToDescriptionString()}")
             .Build();
 
-        protected string CheckBoxClassname => new CssBuilder("mud-button-root mud-icon-button")
+        protected override string IconClassname => new CssBuilder("mud-button-root mud-icon-button")
             .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && UncheckedColor == null || (UncheckedColor != null && BoolValue == true))
             .AddClass($"mud-{UncheckedColor?.ToDescriptionString()}-text hover:mud-{UncheckedColor?.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && UncheckedColor != null && BoolValue == false)
             .AddClass($"mud-checkbox-dense", Dense)
@@ -43,16 +44,6 @@ namespace MudBlazor
             .Build();
 
         /// <summary>
-        /// The color of the checkbox.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="Color.Default"/>.  Theme colors are supported.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Appearance)]
-        public Color Color { get; set; } = Color.Default;
-
-        /// <summary>
         /// The color of the checkbox when its <c>Value</c> is <c>false</c> or <c>null</c>.
         /// </summary>
         /// <remarks>
@@ -61,26 +52,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Radio.Appearance)]
         public Color? UncheckedColor { get; set; } = null;
-
-        /// <summary>
-        /// The text to display next to the checkbox.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>null</c>.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Behavior)]
-        public string? Label { get; set; }
-
-        /// <summary>
-        /// The position of the <see cref="Label" /> text.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="LabelPosition.End"/>.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Behavior)]
-        public LabelPosition LabelPosition { get; set; } = LabelPosition.End;
 
         /// <summary>
         /// Allows this checkbox to be controlled via the keyboard.
@@ -93,16 +64,6 @@ namespace MudBlazor
         public bool KeyboardEnabled { get; set; } = true;
 
         /// <summary>
-        /// Shows a ripple effect when this checkbox is clicked.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>true</c>.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Appearance)]
-        public bool Ripple { get; set; } = true;
-
-        /// <summary>
         /// Uses compact padding.
         /// </summary>
         /// <remarks>
@@ -111,23 +72,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
         public bool Dense { get; set; }
-
-        /// <summary>
-        /// The size of the checkbox.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="Size.Medium"/>.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Appearance)]
-        public Size Size { get; set; } = Size.Medium;
-
-        /// <summary>
-        /// The content within this checkbox.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Behavior)]
-        public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
         /// The icon to display for a checked state.
@@ -199,7 +143,7 @@ namespace MudBlazor
             return SetBoolValueAsync((bool?)args.Value, true);
         }
 
-        protected void HandleKeyDown(KeyboardEventArgs obj)
+        protected async Task HandleKeyDownAsync(KeyboardEventArgs obj)
         {
             if (GetDisabledState() || GetReadOnlyState() || !KeyboardEnabled)
             {
@@ -209,15 +153,15 @@ namespace MudBlazor
             switch (obj.Key)
             {
                 case "Delete":
-                    SetBoolValueAsync(false, true);
+                    await SetBoolValueAsync(false, true);
                     break;
                 case "Enter" or "NumpadEnter":
-                    SetBoolValueAsync(true, true);
+                    await SetBoolValueAsync(true, true);
                     break;
                 case "Backspace":
                     if (TriState)
                     {
-                        SetBoolValueAsync(null, true);
+                        await SetBoolValueAsync(null, true);
                     }
 
                     break;
@@ -225,16 +169,16 @@ namespace MudBlazor
                     switch (BoolValue)
                     {
                         case null:
-                            SetBoolValueAsync(true, true);
+                            await SetBoolValueAsync(true, true);
                             break;
                         case true:
-                            SetBoolValueAsync(false, true);
+                            await SetBoolValueAsync(false, true);
                             break;
                         case false when TriState:
-                            SetBoolValueAsync(null, true);
+                            await SetBoolValueAsync(null, true);
                             break;
                         case false:
-                            SetBoolValueAsync(true, true);
+                            await SetBoolValueAsync(true, true);
                             break;
                     }
 
@@ -256,39 +200,29 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                _keyInterceptor = KeyInterceptorFactory.Create();
+                var options = new KeyInterceptorOptions(
+                    "mud-button-root",
+                    [
+                        // prevent scrolling page
+                        new(" ", preventDown: "key+none", preventUp: "key+none"),
+                        new("Enter", preventDown: "key+none"),
+                        new("NumpadEnter", preventDown: "key+none"),
+                        new("Backspace", preventDown: "key+none")
+                    ]);
 
-                await _keyInterceptor.Connect(_elementId, new KeyInterceptorOptions
-                {
-                    //EnableLogging = true,
-                    TargetClass = "mud-button-root",
-                    Keys =
-                    {
-                        new KeyOptions { Key=" ", PreventDown = "key+none", PreventUp = "key+none" }, // prevent scrolling page
-                        new KeyOptions { Key="Enter", PreventDown = "key+none" },
-                        new KeyOptions { Key="NumpadEnter", PreventDown = "key+none" },
-                        new KeyOptions { Key="Backspace", PreventDown = "key+none" },
-                    },
-                });
-                _keyInterceptor.KeyDown += HandleKeyDown;
+                await KeyInterceptorService.SubscribeAsync(_elementId, options, keyDown: HandleKeyDownAsync);
             }
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        protected override void Dispose(bool disposing)
+        /// <inheritdoc />
+        protected override async ValueTask DisposeAsyncCore()
         {
-            base.Dispose(disposing);
+            await base.DisposeAsyncCore();
 
-            if (disposing)
+            if (IsJSRuntimeAvailable)
             {
-                if (_keyInterceptor is not null)
-                {
-                    _keyInterceptor.KeyDown -= HandleKeyDown;
-                    if (IsJSRuntimeAvailable)
-                    {
-                        _keyInterceptor.Dispose();
-                    }
-                }
+                await KeyInterceptorService.UnsubscribeAsync(_elementId);
             }
         }
     }

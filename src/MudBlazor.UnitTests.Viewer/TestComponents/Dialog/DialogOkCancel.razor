@@ -1,6 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudDialog Class="test-class" ContentClass="content-class" Style="color: red;" ContentStyle="color: blue;">
+﻿<MudDialog Class="test-class" ContentClass="content-class" Style="color: red;" ContentStyle="color: blue;" OnKeyDown="OnKeyDown" OnKeyUp="OnKeyUp">
     <DialogContent>
         <MudText>Wabalabadubdub!</MudText>
     </DialogContent>
@@ -13,9 +11,19 @@
 
 @code {
     [CascadingParameter]
-    public MudDialogInstance MudDialog { get; set; }
+    public IMudDialogInstance MudDialog { get; set; } = null!;
+
+    public KeyboardEventArgs? LastKeyDown { get; private set; }
+
+    public KeyboardEventArgs? LastKeyUp { get; private set; }
 
     private void Submit() => MudDialog.Close(DialogResult.Ok(true));
+
     private void CloseDefault() => MudDialog.Close();
+
     private void Cancel() => MudDialog.Cancel();
+
+    private void OnKeyDown(KeyboardEventArgs arg) => LastKeyDown = arg;
+
+    private void OnKeyUp(KeyboardEventArgs arg) => LastKeyUp = arg;
 }

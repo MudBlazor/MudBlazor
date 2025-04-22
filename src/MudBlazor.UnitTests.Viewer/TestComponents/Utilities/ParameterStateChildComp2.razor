@@ -1,0 +1,24 @@
+﻿@using System.Globalization
+@inherits MudComponentBase
+@namespace MudBlazor.UnitTests
+
+<style>
+    .child2-div {
+        background-color: #FF0000;
+        padding: 20px;
+        color: black;
+    }
+</style>
+
+<div class="child2-div">
+    Child Component 2
+    <MudButton id="childBtn2" OnClick="OnClickChild2Async">Click Child 2</MudButton>
+
+    <p>Parameter changes 2:</p>
+    <div class="parameter-changes2">
+        @foreach (var parameterChange in _parameterChangedEvents)
+        {
+            <p>@($"Counter: {parameterChange.LastValue.ToString(CultureInfo.InvariantCulture)}=>{parameterChange.Value.ToString(CultureInfo.InvariantCulture)} by ")@(parameterChange.IsChildOriginatedChange ? "Child" : "Parent")</p>
+        }
+    </div>
+</div>

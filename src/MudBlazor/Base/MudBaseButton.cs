@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
 using static System.String;
@@ -28,8 +27,8 @@ namespace MudBlazor
         /// The HTML tag rendered for this component.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see href="https://developer.mozilla.org/docs/Web/HTML/Element/Button"><c>button</c></see>,
-        /// or <see href="https://developer.mozilla.org/docs/Web/HTML/Element/a"><c>a</c></see> if <see cref="Href"/> is set.
+        /// Defaults to <see href="https://developer.mozilla.org/docs/Web/HTML/Element/Button">button</see>,
+        /// or <see href="https://developer.mozilla.org/docs/Web/HTML/Element/a">a</see> if <see cref="Href"/> is set.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.ClickAction)]

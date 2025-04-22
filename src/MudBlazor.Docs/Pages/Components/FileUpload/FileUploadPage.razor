@@ -1,10 +1,8 @@
 ﻿@page "/components/fileupload"
 @page "/components/fileuploader"
-@page "/components/MudFileUpload"
-@page "/components/MudFileUpload`1"
 
 <DocsPage>
-    <DocsPageHeader Title="File Upload">
+    <DocsPageHeader Title="File Upload" Component="@nameof(MudFileUpload<T>)">
         <Description>
             <MudText Typo="@Typo.body1" Class="mt-4">
                 To create a file upload button, two elements are needed: an activator (using the <CodeInline>ActivatorContent</CodeInline> parameter) and an <CodeInline>input</CodeInline>.

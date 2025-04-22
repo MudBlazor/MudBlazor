@@ -1,11 +1,9 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudDateRangePicker PickerVariant="PickerVariant.Static" @bind-DateRange="DateTimeRange" />
+﻿<MudDateRangePicker PickerVariant="PickerVariant.Static" @bind-DateRange="DateTimeRange" />
 
 @code {
     public static string __description__ = "DateTime range with a timestamp";
 
-    public DateRange DateTimeRange { get; set; }
+    public DateRange? DateTimeRange { get; set; }
 
     protected override Task OnInitializedAsync()
     {

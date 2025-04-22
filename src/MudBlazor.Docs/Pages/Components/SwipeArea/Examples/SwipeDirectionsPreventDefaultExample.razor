@@ -1,18 +1,17 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudSwipeArea @ref="_swipeArea" OnSwipeEnd="HandleSwipeEnd" Style="width: 100%; height: 300px" Sensitivity="_sensitivity" PreventDefault="@_preventDefault">
-    <MudText Typo="@Typo.body1">@($"{_swipeDirection} - Swiped: {_swipeDelta}px")</MudText>
+    <MudText Style="user-select: none;" Typo="@Typo.body1">@($"{_swipeDirection} - Swiped: {_swipeDelta}px")</MudText>
 </MudSwipeArea>
 <MudSwitch @bind-Value="_preventDefault" Color="Color.Primary">Prevent Default</MudSwitch>
 <MudNumericField @bind-Value="_sensitivity" Label="Sensitivity" Min="0" />
 
-@code
-    {
-    MudSwipeArea _swipeArea;
-    SwipeDirection _swipeDirection;
-    bool _preventDefault = true;
-    int _sensitivity = 100;
-    double? _swipeDelta;
+@code {
+    private MudSwipeArea _swipeArea;
+    private SwipeDirection _swipeDirection;
+    private bool _preventDefault = true;
+    private int _sensitivity = 100;
+    private double? _swipeDelta;
 
     private void HandleSwipeEnd(SwipeEventArgs args)
     {

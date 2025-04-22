@@ -1,13 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <RootNamespace>MudBlazor.Analyzers.TestComponents</RootNamespace>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\MudBlazor\MudBlazor.csproj" />
+	<!--https://github.com/MudBlazor/MudBlazor/issues/11114-->
+	<!--https://github.com/dotnet/roslyn/issues/77255-->
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.13.0" />
   </ItemGroup>
   
   <ItemGroup>

@@ -1,8 +1,7 @@
 ﻿@page "/components/alert"
-@page "/components/MudAlert"
 
 <DocsPage>
-    <DocsPageHeader Title="Alert" SubTitle="An alert is used to display an important message which is statically embedded in the page content." />
+    <DocsPageHeader Title="Alert" Component="@nameof(MudAlert)" />
     <DocsPageContent>
         <DocsPageSection>
             <MudText Typo="Typo.h6" GutterBottom="true">Note</MudText>
@@ -19,7 +18,7 @@
                 <AlertSimpleExample />
             </SectionContent>
         </DocsPageSection>
-        
+
         <DocsPageSection>
             <SectionHeader Title="Variants">
                 <Description>The default variant is text. In addition to that, outlined and filled is available.</Description>
@@ -37,7 +36,7 @@
                 <AlertFilledExample />
             </SectionContent>
         </DocsPageSection>
-        
+
         <DocsPageSection>
             <SectionHeader Title="Dense">
                 <Description>Taking up too much space? Set the <CodeInline>Dense</CodeInline> property to true. It removes the vertical padding and lowers the horizontal.</Description>

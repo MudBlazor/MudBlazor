@@ -2,6 +2,7 @@
 using Bunit;
 using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.Element;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
 namespace MudBlazor.UnitTests.Components

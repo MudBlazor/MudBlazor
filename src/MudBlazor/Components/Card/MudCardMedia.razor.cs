@@ -7,6 +7,10 @@ namespace MudBlazor
     /// <summary>
     /// Represents an image displayed as part of a <see cref="MudCard"/>.
     /// </summary>
+    /// <seealso cref="MudCard" />
+    /// <seealso cref="MudCardActions" />
+    /// <seealso cref="MudCardContent" />
+    /// <seealso cref="MudCardHeader" />
     public partial class MudCardMedia : MudComponentBase
     {
         protected string StyleString => StyleBuilder.Default($"background-image:url(\"{Image}\");height: {Height}px;")

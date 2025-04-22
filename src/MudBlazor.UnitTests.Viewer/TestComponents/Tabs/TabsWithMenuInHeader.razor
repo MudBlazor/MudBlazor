@@ -1,6 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudPopoverProvider></MudPopoverProvider>
+﻿<MudPopoverProvider />
 
 <MudTabs Elevation="2" Rounded="true" PanelClass="pa-6" ApplyEffectsToContainer="true">
 	<ChildContent>
@@ -11,12 +9,8 @@
 	<TabPanelHeader>
 		<MudMenu Size="Size.Small" Dense="true" Icon="@Icons.Material.Filled.MoreVert">
 			<MudMenuItem Class="my-menu-item-1">Enlist</MudMenuItem>
-			<MudMenuItem>Barracks</MudMenuItem>
-			<MudMenuItem>Armory</MudMenuItem>
+			<MudMenuItem Label="Barracks" />
+			<MudMenuItem Label="Armory" />
 		</MudMenu>
 	</TabPanelHeader>  
 </MudTabs>
-
-
-@code {
-}

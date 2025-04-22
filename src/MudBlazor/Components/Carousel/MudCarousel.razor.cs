@@ -11,9 +11,11 @@ namespace MudBlazor
     /// Represents a set of slides which transition after a delay.
     /// </summary>
     /// <typeparam name="TData">The kind of item to display.</typeparam>
+    /// <seealso cref="MudCarouselItem" />
     public partial class MudCarousel<TData> : MudBaseBindableItemsControl<MudCarouselItem, TData>, IAsyncDisposable
     {
         private Timer? _timer;
+        private bool _disposing;
         private bool _autoCycle = true;
         private Color _currentColor = Color.Inherit;
         private TimeSpan _cycleTimeout = TimeSpan.FromSeconds(5);
@@ -291,7 +293,7 @@ namespace MudBlazor
         /// </summary>
         private ValueTask StartTimerAsync()
         {
-            if (AutoCycle)
+            if (AutoCycle && !_disposing)
             {
                 _timer?.Change(AutoCycleTime, TimeSpan.Zero);
             }
@@ -333,31 +335,32 @@ namespace MudBlazor
 
             if (firstRender)
             {
+                // Prevent timer creation after or while disposal, which would result in a memory leak.
+                if (_disposing) return;
                 _timer = new Timer(TimerElapsed, null, AutoCycle ? AutoCycleTime : Timeout.InfiniteTimeSpan, AutoCycleTime);
             }
         }
 
-        /// <summary>
-        /// Releases resources used by this component.
-        /// </summary>
+        /// <inheritdoc />
         public async ValueTask DisposeAsync()
         {
-            await DisposeAsync(true);
+            await DisposeAsyncCore();
             GC.SuppressFinalize(this);
         }
 
-        protected virtual async ValueTask DisposeAsync(bool disposing)
+        protected virtual async ValueTask DisposeAsyncCore()
         {
-            if (disposing)
-            {
-                await StopTimerAsync();
+            // Immediately sets disposing to true,
+            // so that timer creation on OnAfterRenderAsync does not happen after disposal.
+            _disposing = true;
 
-                var timer = _timer;
-                if (timer != null)
-                {
-                    _timer = null;
-                    await timer.DisposeAsync();
-                }
+            await StopTimerAsync();
+
+            var timer = _timer;
+            if (timer != null)
+            {
+                _timer = null;
+                await timer.DisposeAsync();
             }
         }
     }

@@ -3,7 +3,6 @@ using FluentAssertions;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
-using MudBlazor.Docs.Extensions;
 using MudBlazor.Resources;
 using NUnit.Framework;
 
@@ -20,11 +19,11 @@ public class DefaultLocalizationInterceptorTests
         // Because we didn't provide custom MudLocalizer, so it will fall back.
 
         // Arrange
-        var defaultLocalizationIInterceptor = new DefaultLocalizationInterceptor(NullLoggerFactory.Instance, mudLocalizer: null)
+        var defaultLocalizationInterceptor = new DefaultLocalizationInterceptor(NullLoggerFactory.Instance, mudLocalizer: null)
         {
             IgnoreDefaultEnglish = true
         };
-        var internalMudLocalizer = new InternalMudLocalizer(defaultLocalizationIInterceptor);
+        var internalMudLocalizer = new InternalMudLocalizer(defaultLocalizationInterceptor);
         var resourceManager = LanguageResource.ResourceManager;
         var resourceSet = resourceManager
             .GetResourceSet(CultureInfo.InvariantCulture, true, true)
@@ -50,11 +49,11 @@ public class DefaultLocalizationInterceptorTests
         // Arrange
         var mudLocalizer = new Mock<MudLocalizer> { CallBase = true };
         mudLocalizer.Setup(mock => mock[LanguageResource.MudDataGrid_IsEmpty]).Returns(new LocalizedString(LanguageResource.MudDataGrid_IsEmpty, "XXX", resourceNotFound: false));
-        var defaultLocalizationIInterceptor = new DefaultLocalizationInterceptor(NullLoggerFactory.Instance, mudLocalizer.Object)
+        var defaultLocalizationInterceptor = new DefaultLocalizationInterceptor(NullLoggerFactory.Instance, mudLocalizer.Object)
         {
             IgnoreDefaultEnglish = false
         };
-        var internalMudLocalizer = new InternalMudLocalizer(defaultLocalizationIInterceptor);
+        var internalMudLocalizer = new InternalMudLocalizer(defaultLocalizationInterceptor);
 
         // Act
         var result = internalMudLocalizer[LanguageResource.MudDataGrid_IsEmpty];
@@ -72,11 +71,11 @@ public class DefaultLocalizationInterceptorTests
         // Arrange
         var mudLocalizer = new Mock<MudLocalizer> { CallBase = true };
         mudLocalizer.Setup(mock => mock[LanguageResource.MudDataGrid_IsEmpty]).Returns(new LocalizedString(LanguageResource.MudDataGrid_IsEmpty, "XXX", resourceNotFound: false));
-        var defaultLocalizationIInterceptor = new DefaultLocalizationInterceptor(NullLoggerFactory.Instance, mudLocalizer.Object)
+        var defaultLocalizationInterceptor = new DefaultLocalizationInterceptor(NullLoggerFactory.Instance, mudLocalizer.Object)
         {
             IgnoreDefaultEnglish = false
         };
-        var internalMudLocalizer = new InternalMudLocalizer(defaultLocalizationIInterceptor);
+        var internalMudLocalizer = new InternalMudLocalizer(defaultLocalizationInterceptor);
 
         // Act
         var result = internalMudLocalizer[LanguageResource.MudDataGrid_IsEmpty];
@@ -97,11 +96,11 @@ public class DefaultLocalizationInterceptorTests
         // Arrange
         var mudLocalizer = new Mock<MudLocalizer> { CallBase = true };
         mudLocalizer.Setup(mock => mock["TemplateString"]).Returns(new LocalizedString("TemplateString", "Bonjour {0}!", resourceNotFound: false));
-        var defaultLocalizationIInterceptor = new DefaultLocalizationInterceptor(NullLoggerFactory.Instance, mudLocalizer.Object)
+        var defaultLocalizationInterceptor = new DefaultLocalizationInterceptor(NullLoggerFactory.Instance, mudLocalizer.Object)
         {
             IgnoreDefaultEnglish = ignoreDefaultEnglish
         };
-        var internalMudLocalizer = new InternalMudLocalizer(defaultLocalizationIInterceptor);
+        var internalMudLocalizer = new InternalMudLocalizer(defaultLocalizationInterceptor);
 
         // Act
         var result = internalMudLocalizer["TemplateString", "le monde"];
@@ -122,11 +121,11 @@ public class DefaultLocalizationInterceptorTests
 
         // Arrange
         var mudLocalizer = new Mock<MudLocalizer> { CallBase = true };
-        var defaultLocalizationIInterceptor = new DefaultLocalizationInterceptor(NullLoggerFactory.Instance, mudLocalizer.Object)
+        var defaultLocalizationInterceptor = new DefaultLocalizationInterceptor(NullLoggerFactory.Instance, mudLocalizer.Object)
         {
             IgnoreDefaultEnglish = ignoreDefaultEnglish
         };
-        var internalMudLocalizer = new InternalMudLocalizer(defaultLocalizationIInterceptor);
+        var internalMudLocalizer = new InternalMudLocalizer(defaultLocalizationInterceptor);
 
         // Act
 
@@ -149,11 +148,11 @@ public class DefaultLocalizationInterceptorTests
 
         // Arrange
         var mudLocalizer = new Mock<MudLocalizer> { CallBase = true };
-        var defaultLocalizationIInterceptor = new DefaultLocalizationInterceptor(NullLoggerFactory.Instance, mudLocalizer.Object)
+        var defaultLocalizationInterceptor = new DefaultLocalizationInterceptor(NullLoggerFactory.Instance, mudLocalizer.Object)
         {
             IgnoreDefaultEnglish = ignoreDefaultEnglish
         };
-        var internalMudLocalizer = new InternalMudLocalizer(defaultLocalizationIInterceptor);
+        var internalMudLocalizer = new InternalMudLocalizer(defaultLocalizationInterceptor);
 
         // Act
         var result = internalMudLocalizer[LanguageResource.MudColorPicker_ModeSwitch];

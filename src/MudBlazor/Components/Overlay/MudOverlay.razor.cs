@@ -1,5 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.State;
@@ -8,8 +10,13 @@ using MudBlazor.Utilities;
 namespace MudBlazor;
 
 #nullable enable
-public partial class MudOverlay : MudComponentBase, IAsyncDisposable
+
+/// <summary>
+/// A layer which darkens a window, often as part of showing a <see cref="MudDialog" />.
+/// </summary>
+public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, IAsyncDisposable
 {
+    private readonly string _elementId = Identifier.Create("overlay");
     private readonly ParameterState<bool> _visibleState;
 
     protected string Classname =>
@@ -27,11 +34,21 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
     protected string Styles =>
         new StyleBuilder()
             .AddStyle("z-index", $"{ZIndex}", ZIndex != 5)
+            .AddStyle("pointer-events", "none", !Modal)
             .AddStyle(Style)
             .Build();
 
+    /// <summary>
+    /// The manager for scroll events.
+    /// </summary>
     [Inject]
     public IScrollManager ScrollManager { get; set; } = null!;
+
+    /// <summary>
+    /// Pointer events none service when pointer events are set to none.
+    /// </summary>
+    [Inject]
+    private IPointerEventsNoneService PointerEventsNoneService { get; set; } = null!;
 
     /// <summary>
     /// Child content of the component.
@@ -74,6 +91,14 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
     public bool AutoClose { get; set; }
 
     /// <summary>
+    /// Occurs when <see cref="AutoClose"/> changes.
+    /// </summary>
+    /// <remarks>
+    /// This event is triggered when the auto-close behavior of the overlay changes.
+    /// </remarks>
+    public EventCallback<bool> AutoCloseChanged { get; set; }
+
+    /// <summary>
     /// Prevents the <c>Document.body</c> element from scrolling.
     /// </summary>
     /// <remarks>
@@ -92,6 +117,16 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
     [Parameter]
     [Category(CategoryTypes.Overlay.Behavior)]
     public string LockScrollClass { get; set; } = "scroll-locked";
+
+    /// <summary>
+    /// Prevents interaction with background elements.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>true</c>.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Overlay.Behavior)]
+    public bool Modal { get; set; } = true;
 
     /// <summary>
     /// Applies the theme's dark overlay color.
@@ -148,6 +183,22 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
     [Parameter]
     public EventCallback OnClosed { get; set; }
 
+    /// <summary>
+    /// Determines whether the overlay should be rendered outside of the section. If it's false, the overlay will be rendered with the MudPopOverProvider.
+    /// If it's true it will be rendered as is where is (v7 and previous behavior)
+    /// </summary>
+    /// <remarks>
+    /// If the user sets Absolute to true, the user intends for it to be part of his markup and not rendered by the MudPopoverProvider
+    /// Dialog's need the separation of the overlay for display purposes
+    /// If the user provides a child content, the user intends for it to be part of his markup and not rendered by the MudPopoverProvider
+    /// </remarks>
+    internal bool RenderOutsideOfSection =>
+        Absolute ||
+        (Class?.Contains("mud-skip-overlay-section") ?? false) ||
+        ChildContent != null;
+
+    string IPointerEventsNoneObserver.ElementId => _elementId;
+
     public MudOverlay()
     {
         using var registerScope = CreateRegisterScope();
@@ -158,18 +209,40 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
 
     protected override async Task OnAfterRenderAsync(bool firstTime)
     {
-        if (!LockScroll || Absolute)
+        if (LockScroll && !Absolute)
+        {
+            if (Visible)
+            {
+                await BlockScrollAsync();
+            }
+            else
+            {
+                await UnblockScrollAsync();
+            }
+        }
+
+        // If the overlay is initially visible and modeless auto-close is enabled,
+        // then start tracking pointer down events.
+        if (firstTime && Visible && !Modal && AutoClose)
+        {
+            await StartModelessAutoCloseTrackingAsync();
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Modal || !AutoClose)
         {
             return;
         }
 
         if (Visible)
         {
-            await BlockScrollAsync();
+            await StartModelessAutoCloseTrackingAsync();
         }
         else
         {
-            await UnblockScrollAsync();
+            await StopModelessAutoCloseTrackingAsync();
         }
     }
 
@@ -177,11 +250,16 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
     {
         if (AutoClose)
         {
-            await _visibleState.SetValueAsync(false);
-            await OnClosed.InvokeAsync();
+            await CloseOverlayAsync();
         }
 
         await OnClick.InvokeAsync(ev);
+    }
+
+    private async Task CloseOverlayAsync()
+    {
+        await _visibleState.SetValueAsync(false);
+        await OnClosed.InvokeAsync();
     }
 
     /// <summary>
@@ -200,13 +278,40 @@ public partial class MudOverlay : MudComponentBase, IAsyncDisposable
         return ScrollManager.UnlockScrollAsync("body", LockScrollClass);
     }
 
-    public ValueTask DisposeAsync()
+    /// <summary>
+    /// Subscribes to pointer down events to close the overlay when the user clicks outside of it.
+    /// </summary>
+    private async Task StartModelessAutoCloseTrackingAsync()
     {
         if (IsJSRuntimeAvailable)
         {
-            return UnblockScrollAsync();
+            await PointerEventsNoneService.SubscribeAsync(this, new() { SubscribeDown = true });
+        }
+    }
+
+    /// <summary>
+    /// Unsubscribes from pointer down events.
+    /// </summary>
+    private async Task StopModelessAutoCloseTrackingAsync()
+    {
+        if (IsJSRuntimeAvailable)
+        {
+            await PointerEventsNoneService.UnsubscribeAsync(this);
+        }
+    }
+
+    Task IPointerDownObserver.NotifyOnPointerDownAsync(EventArgs args) => CloseOverlayAsync();
+
+    /// <inheritdoc />
+    public async ValueTask DisposeAsync()
+    {
+        if (IsJSRuntimeAvailable)
+        {
+            return;
         }
 
-        return ValueTask.CompletedTask;
+        await UnblockScrollAsync();
+
+        await StopModelessAutoCloseTrackingAsync();
     }
 }

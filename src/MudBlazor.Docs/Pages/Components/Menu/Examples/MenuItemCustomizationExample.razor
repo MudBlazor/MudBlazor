@@ -1,7 +1,13 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudMenu Label="Menu with Icons">
-    <MudMenuItem IconSize="Size.Small" IconColor="Color.Primary" Disabled="true" Icon="@Icons.Material.Filled.Chair">Chair</MudMenuItem>
-    <MudMenuItem Icon="@Icons.Material.Filled.DoorFront">Door</MudMenuItem>
-    <MudMenuItem IconSize="Size.Large" IconColor="Color.Secondary" Icon="@Icons.Material.Filled.Window">Window</MudMenuItem>
+<MudMenu Label="Open Menu with Icons">
+    <MudMenuItem Icon="@Icons.Material.Filled.Chair" Label="Chair" />
+    <MudMenuItem Icon="@Icons.Material.Filled.DoorFront" IconColor="Color.Secondary" Label="Door" />
+    <MudMenuItem Icon="@Icons.Material.Filled.Window" IconColor="Color.Tertiary" Label="Window" />
+</MudMenu>
+
+<MudMenu Label="Open Menu with Dense Icons" Dense>
+    <MudMenuItem Icon="@Icons.Material.Filled.Chair" Label="Chair" />
+    <MudMenuItem Icon="@Icons.Material.Filled.DoorFront" IconColor="Color.Secondary" Label="Door" />
+    <MudMenuItem Icon="@Icons.Material.Filled.Window" IconColor="Color.Tertiary" Label="Window" />
 </MudMenu>

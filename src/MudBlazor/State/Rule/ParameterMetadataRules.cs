@@ -1,5 +1,4 @@
-﻿using System;
-using MudBlazor.State.Rule.Exclusion;
+﻿using MudBlazor.State.Rule.Exclusion;
 
 namespace MudBlazor.State.Rule;
 
@@ -9,11 +8,11 @@ namespace MudBlazor.State.Rule;
 /// </summary>
 internal class ParameterMetadataRules
 {
-    private static readonly IExclusion[] Exclusions =
-    {
+    private static readonly IExclusion[] _exclusions =
+    [
         new HandlerLambdaExclusion(),
         new ComparerParameterLambdaExclusion()
-    };
+    ];
 
     /// <summary>
     /// Modifies the provided <see cref="ParameterMetadata"/> based on defined exclusion rules.
@@ -25,7 +24,7 @@ internal class ParameterMetadataRules
         ArgumentNullException.ThrowIfNull(originalMetadata);
         var currentMetaData = originalMetadata;
 
-        foreach (var exclusion in Exclusions)
+        foreach (var exclusion in _exclusions)
         {
             if (exclusion.IsExclusion(originalMetadata, out var newMetadata))
             {

@@ -1,10 +1,8 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudList T="string" Color="Color" @bind-SelectedValue="selectedValue">
+﻿<MudList T="string" Color="Color" @bind-SelectedValue="_selectedValue">
     <MudListSubheader>
         Your drink:
         <MudChip Color="Color.Secondary">
-            @(selectedValue ?? "You are dry")
+            @(_selectedValue ?? "You are dry")
         </MudChip>
     </MudListSubheader>
     <MudListItem Text="Sparkling Water" />
@@ -24,17 +22,17 @@
     </MudListItem>
 </MudList>
 
-@code
-{
+@code {
     public static string __description__ = "Sparkling Water should be selected initially.";
-    private string selectedValue = "Sparkling Water";
+
+    private string? _selectedValue = "Sparkling Water";
 
     [Parameter]
     public Color Color { get; set; } = Color.Primary;
 
     public void SetSelectedValue(string value)
     {
-        selectedValue = value;
+        _selectedValue = value;
         StateHasChanged();
     }
 }

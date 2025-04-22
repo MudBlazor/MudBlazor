@@ -1,0 +1,42 @@
+﻿@using System.ComponentModel.DataAnnotations
+
+
+
+<MudPopoverProvider />
+
+<MudDataGrid Items="@_items" Filterable="true">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+
+    private readonly IEnumerable<Item> _items = new List<Item>()
+    {
+        new Item(EnumFormTraining.Free), 
+        new Item(EnumFormTraining.Paid), 
+        new Item(EnumFormTraining.Paid),
+        new Item(EnumFormTraining.Free),
+        new Item(EnumFormTraining.Untranslated)
+    };
+
+    public class Item
+    {
+        public EnumFormTraining Name { get; set; }
+
+        public Item(EnumFormTraining name)
+        {
+            Name = name;
+        }
+    }
+
+    public enum EnumFormTraining
+    {
+        [Display(Name = "Free education")]
+        Free,
+        [Display(Name = "Paid training")]
+        Paid,
+        Untranslated
+    }
+}

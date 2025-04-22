@@ -7,6 +7,7 @@ using Bunit;
 using FluentAssertions;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.ThemeProvider;
 using MudBlazor.Utilities;
 using NUnit.Framework;
 
@@ -109,6 +110,7 @@ namespace MudBlazor.UnitTests.Components
                 "--mud-palette-table-hover: rgba(0,0,0,0.0392156862745098);",
                 "--mud-palette-divider: rgba(224,224,224,1);",
                 "--mud-palette-divider-light: rgba(0,0,0,0.8);",
+                "--mud-palette-skeleton: rgba(0,0,0,0.10980392156862745);",
                 "--mud-palette-gray-default: #9E9E9E;",
                 "--mud-palette-gray-light: #BDBDBD;",
                 "--mud-palette-gray-lighter: #E0E0E0;",
@@ -217,12 +219,6 @@ namespace MudBlazor.UnitTests.Components
                 "--mud-typography-body2-lineheight: 1.43;",
                 "--mud-typography-body2-letterspacing: .01071em;",
                 "--mud-typography-body2-text-transform: none;",
-                "--mud-typography-input-family: 'Roboto','Helvetica','Arial','sans-serif';",
-                "--mud-typography-input-size: 1rem;",
-                "--mud-typography-input-weight: 400;",
-                "--mud-typography-input-lineheight: 1.1876;",
-                "--mud-typography-input-letterspacing: .00938em;",
-                "--mud-typography-input-text-transform: none;",
                 "--mud-typography-button-family: 'Roboto','Helvetica','Arial','sans-serif';",
                 "--mud-typography-button-size: .875rem;",
                 "--mud-typography-button-weight: 500;",
@@ -247,6 +243,7 @@ namespace MudBlazor.UnitTests.Components
                 "--mud-zindex-popover: 1200;",
                 "--mud-zindex-snackbar: 1500;",
                 "--mud-zindex-tooltip: 1600;",
+                "--mud-native-html-color-scheme: light;",
                 "}"
             };
 
@@ -453,6 +450,34 @@ namespace MudBlazor.UnitTests.Components
 
             // Assert
             Context.JSInterop.VerifyInvoke("watchDarkThemeMedia");
+        }
+
+        [Test]
+        public void ThemeProvider_ShouldHave_ClassName()
+        {
+            const string Scope = ":root";
+            var mudTheme = new MudTheme
+            {
+                PaletteDark = new PaletteDark
+                {
+                    Primary = Colors.Green.Darken1,
+                },
+                PseudoCss = new PseudoCss
+                {
+                    Scope = Scope
+                }
+            };
+            var comp = Context.RenderComponent<MudThemeProvider>(
+                parameters =>
+                    parameters.Add(p => p.Theme, mudTheme)
+                        .Add(p => p.IsDarkMode, true)
+            );
+            comp.Should().NotBeNull();
+
+            var styleNodes = comp.Nodes.OfType<IHtmlStyleElement>().ToArray();
+
+            var rootStyleNode = styleNodes[2];
+            rootStyleNode.ClassName.Should().Be("mud-theme-provider");
         }
     }
 }

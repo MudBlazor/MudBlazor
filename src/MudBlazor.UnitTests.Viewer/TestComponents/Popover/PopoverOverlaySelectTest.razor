@@ -1,0 +1,56 @@
+﻿<MudPopoverProvider />
+
+<MudButton OnClick="OpenEditorClickAsync" Variant="Variant.Filled" Color="Color.Primary">Click me to edit Person</MudButton>
+
+<MudOverlay @bind-Visible="@_isFormVisible" DarkBackground="true" ZIndex="1200" AutoClose="false">
+    <MudCard>
+        <MudCardHeader Class="justify-center">
+            <MudText Typo="Typo.h6">This is a popup editor form</MudText>
+        </MudCardHeader>
+        <MudCardContent>
+            <MudForm @ref="_personForm" Model="@_selectedPerson">
+                <MudTextField @bind-Value="_selectedPerson.Name" Label="Person name" Clearable="true" Variant="Variant.Outlined" Margin="Margin.Dense" HelperTextOnFocus="true" HelperText="The name" Required="true" RequiredError="Name cannot be empty" />
+                <MudSelect T="string" MultiSelection="false" @bind-Value="_selectedPerson.PersonType" Label="Person type" Required RequiredError="Person type cannot be empty" HelperTextOnFocus="true" HelperText="the person type" Margin="Margin.Dense" AdornmentColor=" Color.Secondary" Variant="Variant.Outlined">
+                    @foreach (var personType in _personTypes)
+                    {
+                        <MudSelectItem Value="@personType">@personType</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudForm>
+        </MudCardContent>
+        <MudCardActions>
+            <MudButton OnClick="SaveStuffClickAsync" Variant="Variant.Filled" Color="Color.Primary">Save and close</MudButton>
+        </MudCardActions>
+    </MudCard>
+</MudOverlay>
+
+@code {
+    public static string __description__ = "Popover Overlay with Child Select";
+
+    private bool _isFormVisible;
+    private MudForm _personForm = new();
+    private readonly Person _selectedPerson = new() { Name = "Jerry" };
+    private readonly List<string> _personTypes = ["Teacher", "Student", "Major", "Soldier", "President", "Other"];
+
+    private async Task OpenEditorClickAsync()
+    {
+        await Task.Delay(100);
+        _isFormVisible = true;
+    }
+
+    private async Task SaveStuffClickAsync()
+    {
+        await _personForm.Validate();
+        if (_personForm.IsValid)
+        {
+            _isFormVisible = false;
+        }
+    }
+
+    public class Person
+    {
+        public string Name { get; set; } = string.Empty;
+
+        public string PersonType { get; set; } = string.Empty;
+    }
+}

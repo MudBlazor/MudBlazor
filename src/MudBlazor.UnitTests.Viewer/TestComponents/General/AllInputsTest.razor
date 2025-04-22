@@ -1,9 +1,11 @@
-﻿
-@* MODE SELECTORS *@
+﻿@* MODE SELECTORS *@
 
 <MudStack Row AlignItems="AlignItems.End">
     <MudSelect T="Margin" Label="Margin size" @bind-Value="Margin" Variant="Variant.Outlined" Margin="Margin.Dense">
-        @foreach (Margin margin in Enum.GetValues(typeof(Margin))) { <MudSelectItem Value="@margin">@margin</MudSelectItem> }
+        @foreach (Margin margin in Enum.GetValues(typeof(Margin)))
+        {
+            <MudSelectItem Value="@margin">@margin</MudSelectItem>
+        }
     </MudSelect>
     <MudSelect T="AlignItems" Label="Align" @bind-Value="Align" Variant="Variant.Outlined" Margin="Margin.Dense">
         @foreach (AlignItems align in Enum.GetValues(typeof(AlignItems)))
@@ -159,13 +161,13 @@
 
 <MudText Typo="Typo.h6" Class="mt-6 mb-2">MudRadio</MudText>
 <MudRadioGroup T="string" Class="some-main-class" InputClass="some-input-class">
-    <MudRadio Value="@("1")" Placement="Placement.Left" />
-    <MudRadio Value="@("2")" Placement="Placement.Top" />
+    <MudRadio Value="@("1")" LabelPlacement="Placement.Left" />
+    <MudRadio Value="@("2")" LabelPlacement="Placement.Top" />
     <MudRadio Value="@("3")" />
 </MudRadioGroup>
 <MudRadioGroup T="string" Class="some-main-class" InputClass="some-input-class">
-    <MudRadio Value="@("1")" Placement="Placement.Left">With Content</MudRadio>
-    <MudRadio Value="@("2")" Placement="Placement.Top">With Content</MudRadio>
+    <MudRadio Value="@("1")" LabelPlacement="Placement.Left">With Content</MudRadio>
+    <MudRadio Value="@("2")" LabelPlacement="Placement.Top">With Content</MudRadio>
     <MudRadio Value="@("3")">With Content</MudRadio>
 </MudRadioGroup>
 
@@ -181,16 +183,27 @@
     <MudSelect T="string"></MudSelect>
     <MudColorPicker />
     <MudCheckBox T="bool" />
-    <MudRadio Value="@("1")" Placement="Placement.Left" />
+    <MudRadio Value="@("1")" LabelPlacement="Placement.Left" />
     <MudSwitch T="bool" />
     <MudButton Variant="Variant.Filled">Text</MudButton>
 </MudStack>
 
+<MudText Typo="Typo.h6" Class="mt-6 mb-2">Boolean Input</MudText>
+<MudRadioGroup T="int" Class="some-main-class" InputClass="some-input-class">
+    <MudRadio Value="1" LabelPlacement="Placement.Right">With Content</MudRadio>
+    <MudRadio Value="2" LabelPlacement="Placement.Right"></MudRadio>
+</MudRadioGroup>
+<MudCheckBox T="bool" LabelPlacement="Placement.Right" />
+<MudCheckBox T="bool" LabelPlacement="Placement.Right" Label="With Label" />
+<MudSwitch T="bool" />
+<MudSwitch T="bool" Label="With Label" />
+
 @code {
+    public static string __description__ = "Test used to validate any inputs leyout in a single place.";
+
     [Parameter]
     public Margin Margin { get; set; } = Margin.Dense;
+
     [Parameter]
     public AlignItems Align { get; set; } = AlignItems.End;
-
-    public static string __description__ = "Test used to validate any inputs leyout in a single place.";
 }

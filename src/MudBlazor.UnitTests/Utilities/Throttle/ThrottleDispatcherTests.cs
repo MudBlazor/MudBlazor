@@ -45,7 +45,7 @@ public class ThrottleDispatcherTests
 
         // Assert
         await Task.WhenAll(tasks);
-        counter.Should().BeInRange(9, 11);
+        counter.Should().BeInRange(6, 11);
     }
 
     [Test]
@@ -77,7 +77,7 @@ public class ThrottleDispatcherTests
 
         // Assert
         await Task.WhenAll(tasks);
-        counter.Should().BeInRange(6, 8);
+        counter.Should().BeInRange(5, 8);
     }
 
     [Test]

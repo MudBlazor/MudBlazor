@@ -2,11 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -27,6 +23,101 @@ public class ObserverManagerTests
     {
         //Reset on each test
         _observerManager = new ObserverManager<int, string>(NullLogger<ObserverManager<int, string>>.Instance);
+    }
+
+    [Test]
+    public void Constructor_ThrowsException()
+    {
+        // Arrange & Act
+        var construct = () => new ObserverManager<int, string>(null!);
+
+        // Assert
+        construct.Should().Throw<ArgumentNullException>();
+    }
+
+    [Test]
+    public void TryGetSubscription_ReturnsTrueAndObserver_WhenObserverExists()
+    {
+        // Arrange
+        var id = 1;
+        var observer = "Observer1";
+        _observerManager.Subscribe(id, observer);
+
+        // Act
+        var result = _observerManager.TryGetSubscription(id, out var retrievedObserver);
+
+        // Assert
+        result.Should().BeTrue();
+        retrievedObserver.Should().Be(observer);
+    }
+
+    [Test]
+    public void TryGetSubscription_ReturnsFalseAndDefault_WhenObserverDoesNotExist()
+    {
+        // Arrange
+        var id = 1;
+
+        // Act
+        var result = _observerManager.TryGetSubscription(id, out var retrievedObserver);
+
+        // Assert
+        result.Should().BeFalse();
+        retrievedObserver.Should().BeNull();
+    }
+
+    [Test]
+    public void TryGetOrAddSubscription_ReturnsTrueAndUpdatesObserver_WhenObserverExists()
+    {
+        // Arrange
+        var id = 1;
+        var observer1 = "Observer1";
+        var observer2 = "Observer2";
+        _observerManager.Subscribe(id, observer1);
+
+        // Act
+        var result = _observerManager.TryGetOrAddSubscription(id, observer2, out var newObserver);
+
+        // Assert
+        result.Should().BeTrue();
+        newObserver.Should().Be(observer2);
+        _observerManager.Count.Should().Be(1);
+        _observerManager.Observers[id].Should().Be(observer2);
+    }
+
+    [Test]
+    public void TryGetOrAddSubscription_ReturnsFalseAndAddsObserver_WhenObserverDoesNotExist()
+    {
+        // Arrange
+        var id = 1;
+        var observer = "Observer1";
+
+        // Act
+        var result = _observerManager.TryGetOrAddSubscription(id, observer, out var newObserver);
+
+        // Assert
+        result.Should().BeFalse();
+        newObserver.Should().Be(observer);
+        _observerManager.Count.Should().Be(1);
+        _observerManager.Observers[id].Should().Be(observer);
+    }
+
+    [Test]
+    public void FindObserverIdentities_ReturnsMatchingIdentities()
+    {
+        // Arrange
+        var observer1 = "Observer1";
+        var observer2 = "Observer2";
+        var observer3 = "Observer3";
+
+        _observerManager.Subscribe(1, observer1);
+        _observerManager.Subscribe(2, observer2);
+        _observerManager.Subscribe(3, observer3);
+
+        // Act
+        var result = _observerManager.FindObserverIdentities((_, observer) => observer.Contains('2')).ToList();
+
+        // Assert
+        result.Should().ContainSingle().Which.Should().Be(2);
     }
 
     [Test]
@@ -74,7 +165,7 @@ public class ObserverManagerTests
 
         // Assert
         _observerManager.Count.Should().Be(0);
-        _observerManager.Observers.ContainsKey(id).Should().BeFalse();
+        _observerManager.IsSubscribed(id).Should().BeFalse();
     }
 
     [Test]
@@ -128,9 +219,9 @@ public class ObserverManagerTests
 
         // Assert
         _observerManager.Count.Should().Be(2);
-        _observerManager.Observers.ContainsKey(1).Should().BeTrue();
-        _observerManager.Observers.ContainsKey(3).Should().BeTrue();
-        _observerManager.Observers.ContainsKey(2).Should().BeFalse();
+        _observerManager.IsSubscribed(1).Should().BeTrue();
+        _observerManager.IsSubscribed(3).Should().BeTrue();
+        _observerManager.IsSubscribed(2).Should().BeFalse();
     }
 
     [Test]
@@ -223,11 +314,11 @@ public class ObserverManagerTests
 
 
     [Test]
-    public void Unsubscribe_Subscribe_UpdateSubscribe_DebugLogEnabled_LogsDebugInformation()
+    public void Unsubscribe_Subscribe_UpdateSubscribe_TraceLogEnabled_LogsDebugInformation()
     {
         // Arrange
         var loggerMock = new Mock<ILogger>();
-        loggerMock.Setup(x => x.IsEnabled(LogLevel.Debug)).Returns(true);
+        loggerMock.Setup(x => x.IsEnabled(LogLevel.Trace)).Returns(true);
 
         var observerManager = new ObserverManager<int, string>(loggerMock.Object);
 
@@ -241,17 +332,17 @@ public class ObserverManagerTests
 
         // Assert
         loggerMock
-            .VerifyLogging($"Adding entry for {Id}/{Observer}. 1 total observers after add.")
-            .VerifyLogging($"Updating entry for {Id}/{Observer}. 1 total observers.")
-            .VerifyLogging($"Removed entry for {Id}. 0 total observers after remove.");
+            .VerifyLogging($"Adding entry for {Id}/{Observer}. 1 total observers after add.", LogLevel.Trace)
+            .VerifyLogging($"Updating entry for {Id}/{Observer}. 1 total observers.", LogLevel.Trace)
+            .VerifyLogging($"Removed entry for {Id}. 0 total observers after remove.", LogLevel.Trace);
     }
 
     [Test]
-    public async Task NotifyAsync_DefunctObserver_LogsDebugInformation()
+    public async Task NotifyAsync_DefunctObserver_LogsTraceInformation()
     {
         // Arrange
         var loggerMock = new Mock<ILogger>();
-        loggerMock.Setup(x => x.IsEnabled(LogLevel.Debug)).Returns(true);
+        loggerMock.Setup(x => x.IsEnabled(LogLevel.Trace)).Returns(true);
 
         var observerManager = new ObserverManager<int, string>(loggerMock.Object);
 
@@ -273,8 +364,8 @@ public class ObserverManagerTests
 
         // Assert
         loggerMock
-            .VerifyLogging($"Adding entry for {DefunctObserverId}/{DefunctObserver}. 1 total observers after add.")
-            .VerifyLogging($"Removing defunct entry for {DefunctObserverId}. 0 total observers after remove.");
+            .VerifyLogging($"Adding entry for {DefunctObserverId}/{DefunctObserver}. 1 total observers after add.", LogLevel.Trace)
+            .VerifyLogging($"Removing defunct entry for {DefunctObserverId}. 0 total observers after remove.", LogLevel.Trace);
     }
 
     [Test]

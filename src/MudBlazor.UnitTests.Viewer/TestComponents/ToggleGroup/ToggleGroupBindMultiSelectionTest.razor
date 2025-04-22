@@ -1,6 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudToggleGroup @bind-Values="_values" T="string" Color="Color.Primary" SelectionMode="SelectionMode.MultiSelection">
+﻿<MudToggleGroup @bind-Values="_values" T="string" Color="Color.Primary" SelectionMode="SelectionMode.MultiSelection">
     <MudToggleItem T="string" Value="@("Item One")" Text="Item One" />
     <MudToggleItem T="string" Value="@("Item Two")" Text="Item Two" />
     <MudToggleItem T="string" Value="@("Item Three")" Text="Item Three" />
@@ -13,5 +11,5 @@
 </MudToggleGroup>
 
 @code {
-    private IEnumerable<string> _values;
+    private IEnumerable<string>? _values;
 }

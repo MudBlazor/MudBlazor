@@ -375,4 +375,85 @@
   <data name="MudDataGridPager_InfoFormat" xml:space="preserve">
     <value>{0}-{1} of {2}</value>
   </data>
+  <data name="MudStepper_Next" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="MudStepper_Previous" xml:space="preserve">
+    <value>Previous</value>
+  </data>
+  <data name="MudStepper_Skip" xml:space="preserve">
+    <value>Skip</value>
+  </data>
+  <data name="MudStepper_Reset" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="MudStepper_Complete" xml:space="preserve">
+    <value>Complete</value>
+  </data>
+  <data name="MudDataGrid_ClearFilter" xml:space="preserve">
+    <value>Clear Filter</value>
+  </data>
+  <data name="MudDataGrid_OpenFilters" xml:space="preserve">
+    <value>Open Filters</value>
+  </data>
+  <data name="MudDataGrid_ToggleGroupExpansion" xml:space="preserve">
+    <value>Toggle Group Expansion</value>
+  </data>
+  <data name="MudDataGrid_RemoveFilter" xml:space="preserve">
+    <value>Remove Filter</value>
+  </data>
+  <data name="MudDataGridPager_FirstPage" xml:space="preserve">
+    <value>First Page</value>
+  </data>
+  <data name="MudDataGridPager_PreviousPage" xml:space="preserve">
+    <value>Previous Page</value>
+  </data>
+  <data name="MudDataGridPager_NextPage" xml:space="preserve">
+    <value>Next Page</value>
+  </data>
+  <data name="MudDataGridPager_LastPage" xml:space="preserve">
+    <value>Last Page</value>
+  </data>
+  <data name="MudDataGrid_ShowColumnOptions" xml:space="preserve">
+    <value>Show Column Options</value>
+  </data>
+  <data name="Converter_InvalidBoolean" xml:space="preserve">
+    <value>Not a valid boolean</value>
+  </data>
+  <data name="Converter_InvalidNumber" xml:space="preserve">
+    <value>Not a valid number</value>
+  </data>
+  <data name="Converter_InvalidGUID" xml:space="preserve">
+    <value>Not a valid GUID</value>
+  </data>
+  <data name="Converter_NotValueOf" xml:space="preserve">
+    <value>Not a value of {0}</value>
+  </data>
+  <data name="Converter_InvalidDateTime" xml:space="preserve">
+    <value>Not a valid date time</value>
+  </data>
+  <data name="Converter_InvalidTimeSpan" xml:space="preserve">
+    <value>Not a valid time span</value>
+  </data>
+  <data name="Converter_InvalidType" xml:space="preserve">
+    <value>Not a valid {0}</value>
+  </data>
+  <data name="Converter_ConversionNotImplemented" xml:space="preserve">
+    <value>Conversion to type {0} not implemented</value>
+  </data>
+  <data name="Converter_ConversionError" xml:space="preserve">
+    <value>Conversion error: {0}</value>
+  </data>
+  <data name="Converter_ConversionFailed" xml:space="preserve">
+    <value>Conversion from {0} to {1} failed: {2}</value>
+  </data>
+  <data name="Converter_UnableToConvert" xml:space="preserve">
+    <value>Unable to convert to {0} from type {1}</value>
+  </data>
+  <data name="HeatMap_Less" xml:space="preserve">
+    <value>Less</value>
+  </data>
+  <data name="HeatMap_More" xml:space="preserve">
+    <value>More</value>
+  </data>
 </root>

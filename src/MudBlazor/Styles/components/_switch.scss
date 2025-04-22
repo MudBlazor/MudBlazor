@@ -2,10 +2,6 @@
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  margin-left: -11px;
-  margin-right: 16px;
-  margin-inline-start: -11px;
-  margin-inline-end: 16px;
   vertical-align: middle;
   -webkit-tap-highlight-color: transparent;
 
@@ -46,7 +42,7 @@
     z-index: -1;
     transition: opacity 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
     border-radius: 9px;
-    background-color: var(--mud-palette-black);
+    background-color: var(--mud-palette-action-default);
   }
 }
 

@@ -1,10 +1,8 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
+﻿<MudPopoverProvider />
 
-<MudPopoverProvider></MudPopoverProvider>
-
-<MudTooltip Arrow Disabled=@TooltipDisabled ShowOnHover=@ShowOnHover ShowOnFocus=@ShowOnFocus>
+<MudTooltip Arrow Disabled="@TooltipDisabled" ShowOnHover="@ShowOnHover" ShowOnFocus="@ShowOnFocus">
     <ChildContent>
-        <MudButton Disabled=@ButtonDisabled>My Button</MudButton>
+        <MudButton Disabled="@ButtonDisabled">My Button</MudButton>
     </ChildContent>
     <TooltipContent>
         <div id="my-tooltip-content">
@@ -14,12 +12,12 @@
 </MudTooltip>
 
 <MudStack Row>
-    <MudSwitch @bind-Value=@ShowOnHover>ShowOnHover: @ShowOnHover</MudSwitch>
-    <MudSwitch @bind-Value=@ShowOnFocus>ShowOnFocus: @ShowOnFocus</MudSwitch>
+    <MudSwitch @bind-Value="@ShowOnHover">ShowOnHover: @ShowOnHover</MudSwitch>
+    <MudSwitch @bind-Value="@ShowOnFocus">ShowOnFocus: @ShowOnFocus</MudSwitch>
 </MudStack>
 <MudStack Row>
-    <MudSwitch @bind-Value=@TooltipDisabled>Tooltip disabled: @TooltipDisabled</MudSwitch>
-    <MudSwitch @bind-Value=@ButtonDisabled>Button disabled: @ButtonDisabled</MudSwitch>
+    <MudSwitch @bind-Value="@TooltipDisabled">Tooltip disabled: @TooltipDisabled</MudSwitch>
+    <MudSwitch @bind-Value="@ButtonDisabled">Button disabled: @ButtonDisabled</MudSwitch>
 </MudStack>
 
 @code

@@ -1,6 +1,6 @@
-﻿<MudPopoverProvider></MudPopoverProvider>
+﻿<MudPopoverProvider />
 
-<MudTimePicker Label="With action buttons" @bind-Time="time">
+<MudTimePicker Label="With action buttons" @bind-Time="_time">
     <PickerActions>
         <MudButton Class="mr-auto align-self-start" OnClick="@(() => context.ClearAsync())">Clear</MudButton>
         <MudButton OnClick="@(() => context.CloseAsync(false))">Cancel</MudButton>
@@ -9,5 +9,5 @@
 </MudTimePicker>
 
 @code{
-    TimeSpan? time = new TimeSpan(00, 45, 00);
+    private TimeSpan? _time = new TimeSpan(00, 45, 00);
 }

@@ -3,12 +3,12 @@ using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Web;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.Snackbar;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -239,6 +239,22 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void SnackbarIconConfigurationTest()
+        {
+            var testComponent = Context.RenderComponent<SnackbarIconConfiguationTest>();
+
+            testComponent.Find("button").Click();
+
+            _provider.WaitForAssertion(() =>
+                _provider.Find("div.mud-snackbar-content-message").Should().NotBe(null)
+            );
+
+            var svg = _provider.Find("#mud-snackbar-container .mud-snackbar").FirstElementChild.FirstElementChild;
+            svg.ClassName.Should().Contain("mud-icon-size-large");
+            svg.InnerHtml.Should().Contain("M15.73,3H8.27L3,8.27v7.46L8.27,21h7.46L21,15.73V8.27L15.73,3z M19,14.9L14.9,19H9.1L5,14.9V9.1L9.1,5h5.8L19,9.1V14.9z");
+        }
+
+        [Test]
         public async Task IconTest()
         {
             await _provider.InvokeAsync(() => _service.Add("Boom, big reveal. Im a pickle!"));
@@ -417,7 +433,7 @@ namespace MudBlazor.UnitTests.Components
                     c.ShowTransitionDuration = 0;
                     c.HideTransitionDuration = 0;
                     c.VisibleStateDuration = int.MaxValue;
-                    c.Onclick = _ => Task.CompletedTask;
+                    c.OnClick = _ => Task.CompletedTask;
                 })
             );
             _provider.FindAll(".mud-snackbar").Count.Should().Be(1);
@@ -455,6 +471,34 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task CloseButtonInvokesCustomTask()
+        {
+            var counter = 0;
+            Task Count(Snackbar s)
+            {
+                counter++;
+                return Task.CompletedTask;
+            }
+            // Set up the snackbar.
+            await _provider.InvokeAsync(() =>
+                _service.Add("ah, ah, ah, ah, stayin' alive", Severity.Normal, c =>
+                {
+                    c.CloseButtonClickFunc = Count;
+                    c.RequireInteraction = true;
+                })
+            );
+
+            _provider.FindAll(".mud-snackbar").Count.Should().Be(1);
+
+            counter.Should().Be(0);
+
+            _provider.FindAll(".mud-snackbar-close-button").Single().Click();
+
+            counter.Should().Be(1);
+            _provider.WaitForAssertion(() => _provider.FindAll(".mud-snackbar").Count.Should().Be(0));
+        }
+
+        [Test]
         public async Task ActionButtonClosesWithPointerOver()
         {
             // Set up the snackbar.
@@ -465,7 +509,7 @@ namespace MudBlazor.UnitTests.Components
                     c.HideTransitionDuration = 0;
                     c.VisibleStateDuration = int.MaxValue;
                     c.Action = "Close";
-                    c.Onclick = _ => Task.CompletedTask;
+                    c.OnClick = _ => Task.CompletedTask;
                 })
             );
 
@@ -690,7 +734,7 @@ namespace MudBlazor.UnitTests.Components
                     c.HideTransitionDuration = 300;
                     c.VisibleStateDuration = int.MaxValue;
                     c.Action = "Click me";
-                    c.Onclick = _ =>
+                    c.OnClick = _ =>
                     {
                         successfulClicks++;
                         return Task.CompletedTask;
@@ -736,7 +780,7 @@ namespace MudBlazor.UnitTests.Components
                     c.ShowTransitionDuration = 0;
                     c.HideTransitionDuration = 300;
                     c.VisibleStateDuration = int.MaxValue;
-                    c.Onclick = _ =>
+                    c.OnClick = _ =>
                     {
                         successfulClicks++;
                         return Task.CompletedTask;

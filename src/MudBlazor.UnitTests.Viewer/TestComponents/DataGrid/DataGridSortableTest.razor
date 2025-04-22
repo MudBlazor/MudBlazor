@@ -1,6 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudDataGrid Items="@_items" Sortable="true">
+﻿<MudDataGrid Items="@_items" Sortable="true">
     <Columns>
         <PropertyColumn Property="x => x.Name" />
         <PropertyColumn Property="x => x.Value" />
@@ -13,28 +11,23 @@
 Note that the 'Misc' column is being sorted by length and not by the content itself.";
 
 
-    private IEnumerable<Item> _items = new List<Item>()
+    private readonly IEnumerable<Item> _items = new List<Item>
     {
-        new Item("B", 42, "555"), 
-        new Item("A", 73, "7"), 
-        new Item("A", 11, "4444"), 
-        new Item("C", 33, "33333"),
-        new Item("A", 99, "66"), 
-        new Item("C", 44, "1111111"),
-        new Item("C", 55, "222222")
+        new("B", 42, "555"), 
+        new("A", 73, "7"), 
+        new("A", 11, "4444"), 
+        new("C", 33, "33333"),
+        new("A", 99, "66"), 
+        new("C", 44, "1111111"),
+        new("C", 55, "222222")
     };
 
-    public class Item
+    public class Item(string name, int value, string misc)
     {
-        public string Name { get; set; }
-        public int Value { get; set; }
-        public string Misc { get; set; }
+        public string Name { get; set; } = name;
 
-        public Item(string name, int value, String misc)
-        {
-            Name = name;
-            Value = value;
-            Misc = misc;
-        }
+        public int Value { get; set; } = value;
+
+        public string Misc { get; set; } = misc;
     }
 }

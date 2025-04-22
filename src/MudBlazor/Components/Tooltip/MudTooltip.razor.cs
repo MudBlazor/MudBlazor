@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
@@ -11,7 +10,6 @@ namespace MudBlazor
         private readonly ParameterState<bool> _visibleState;
         private Origin _anchorOrigin;
         private Origin _transformOrigin;
-
         public MudTooltip()
         {
             using var registerScope = CreateRegisterScope();
@@ -60,20 +58,20 @@ namespace MudBlazor
         public bool Arrow { get; set; } = false;
 
         /// <summary>
-        /// Sets the length of time that the opening transition takes to complete.
+        /// The length of time that the opening transition takes to complete.
         /// </summary>
         /// <remarks>
-        /// Set globally via <see cref="MudGlobal.TransitionDefaults.Duration"/>.
+        /// Defaults to 251ms in <see cref="MudGlobal.TooltipDefaults.Duration"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tooltip.Appearance)]
-        public double Duration { get; set; } = MudGlobal.TransitionDefaults.Duration.TotalMilliseconds;
+        public double Duration { get; set; } = MudGlobal.TooltipDefaults.Duration.TotalMilliseconds;
 
         /// <summary>
-        /// Sets the amount of time in milliseconds to wait from opening the popover before beginning to perform the transition. 
+        /// The amount of time in milliseconds to wait from opening the popover before beginning to perform the transition. 
         /// </summary>
         /// <remarks>
-        /// Set globally via <see cref="MudGlobal.TooltipDefaults.Delay"/>.
+        /// Defaults to 0ms in <see cref="MudGlobal.TooltipDefaults.Delay"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tooltip.Appearance)]
@@ -160,15 +158,24 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool Disabled { get; set; }
 
-        private Task HandlePointerEnterAsync()
+        /// <summary>
+        /// Register and Show the Popover for the tooltip if it is not disabled, set to be visible, the content or Text is not empty or null
+        /// </summary>
+        internal bool ShowToolTip()
         {
-            return ShowOnHover ? _visibleState.SetValueAsync(true) : Task.CompletedTask;
+            return !Disabled && (TooltipContent is not null || !string.IsNullOrEmpty(Text));
         }
 
-        private Task HandlePointerLeaveAsync()
+        protected override void OnParametersSet()
         {
-            return ShowOnHover ? _visibleState.SetValueAsync(false) : Task.CompletedTask;
+            base.OnParametersSet();
+
+            ConvertPlacement();
         }
+
+        internal Task HandlePointerEnterAsync() => ShowOnHover ? _visibleState.SetValueAsync(true) : Task.CompletedTask;
+
+        internal Task HandlePointerLeaveAsync() => ShowOnHover ? _visibleState.SetValueAsync(false) : Task.CompletedTask;
 
         private Task HandleFocusInAsync()
         {

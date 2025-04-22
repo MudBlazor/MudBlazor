@@ -2,7 +2,7 @@
 @using Microsoft.AspNetCore.Components.Web.Virtualization
 
 <DocsPage>
-    <DocsPageHeader Title="MudBlazor Icons" DisableApiHeader="true" SubTitle="Over 1800 Material Design icons and a few custom ones." />
+    <DocsPageHeader Title="MudBlazor Icons" SubTitle="Over 1800 Material Design icons and a few custom ones." />
     <DocsPageContent>
 
         <DocsPageSection>
@@ -83,7 +83,7 @@
             <MudIcon Size="@PreviewIconSize" Color="@PreviewIconColor" Icon="@SelectedIcon.Code" />
         </MudPaper>
 
-        <MudSelect T="Color" @bind-Value="PreviewIconColor" Label="Color" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Class="my-4">
+        <MudSelect T="Color" @bind-Value="PreviewIconColor" Label="Color" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Class="my-4">
             <DocsColorSelect Color="Color.Dark" />
             <DocsColorSelect Color="Color.Default" />
             <DocsColorSelect Color="Color.Primary" />
@@ -94,7 +94,7 @@
             <DocsColorSelect Color="Color.Warning" />
             <DocsColorSelect Color="Color.Error" />
         </MudSelect>
-        <MudSelect T="Size" @bind-Value="PreviewIconSize" Label="Size" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Class="my-4">
+        <MudSelect T="Size" @bind-Value="PreviewIconSize" Label="Size" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense" Class="my-4">
             <MudSelectItem Value="Size.Small">Small</MudSelectItem>
             <MudSelectItem Value="Size.Medium">Medium</MudSelectItem>
             <MudSelectItem Value="Size.Large">Large</MudSelectItem>

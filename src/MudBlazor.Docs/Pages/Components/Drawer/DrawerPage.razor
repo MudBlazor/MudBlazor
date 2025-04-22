@@ -1,11 +1,7 @@
 ﻿@page "/components/drawer"
-@page "/components/MudDrawer"
-@page "/components/MudDrawerContainer"
-@page "/components/MudDrawerHeader"
 
 <DocsPage>
-    <DocsPageHeader Title="Drawer" SubTitle="Navigation Drawers provide access to destinations in your app.">
-    </DocsPageHeader>
+    <DocsPageHeader Title="Drawer" Component="@nameof(MudDrawer)" />
     <DocsPageContent>
 
         <DocsPageSection>
@@ -29,7 +25,8 @@
                 <DocsPageSection>
                     <SectionHeader Title="Temporary">
                         <Description>
-                            Temporary Drawers can be opened temporarily above all other content until a section is selected, or until the overlay is clicked if <CodeInline>OverlayAutoClose</CodeInline> is set to true.
+                            The Temporary Drawers can be opened temporarily above all other content until a section is selected, or until the overlay is clicked if <CodeInline>OverlayAutoClose</CodeInline> is set to true. 
+                            This drawer type is not responsive. Temporary Drawers will stay open until the <CodeInline>Open</CodeInline> parameter is set to false again.
                         </Description>
                     </SectionHeader>
                     <SectionContent Code="@nameof(DrawerTemporaryExample)" ShowCode="false">
@@ -40,8 +37,8 @@
                 <DocsPageSection>
                     <SectionHeader Title="Persistent">
                         <Description>
-                            Persistent Drawer is outside its container. When opened, it forces other contents to change their size.
-                            Persistent Drawer will stay open until the <CodeInline>Open</CodeInline> parameter is set to false again.
+                            The Persistent Drawer is outside its container. When opened, it forces other contents to change their size.
+                            This drawer type is not responsive. Persistent Drawers will stay open until the <CodeInline>Open</CodeInline> parameter is set to false again.
                         </Description>
                     </SectionHeader>
                     <SectionContent DarkenBackground="true" Code="@nameof(DrawerPersistentExample)" ShowCode="false" Block="true" FullWidth="true">
@@ -52,8 +49,8 @@
                 <DocsPageSection>
                     <SectionHeader Title="Responsive">
                         <Description>
-                            Responsive Drawers behaves persistently on wider screens and temporarily on smaller ones.
-                            Opened Drawers close automatically when the window size becomes small, and opens after the original state has been restored.
+                            Responsive Drawers behaves persistently on wider screens and responsively on smaller ones.
+                            Opened Responsive Drawers close automatically when the window size becomes small, and opens after the original state has been restored according to its breakpoint configuration.
                         </Description>
                     </SectionHeader>
                     <SectionContent DarkenBackground="true" Code="@nameof(DrawerResponsiveExample)" ShowCode="false">
@@ -66,7 +63,8 @@
                 <DocsPageSection>
                     <SectionHeader Title="Mini">
                         <Description>
-                            Using the Mini variant, the Drawer will shrink (default 56px). It currently only has built-in style support for <CodeInline>MudNavLink</CodeInline>s.
+                            The Mini variant is a variation of the Responsive Drawer. It will responsively shrink to a slim band of icons (default 56px) according do its breakpoint configuration. 
+                            Mini Drawers currently only have built-in style support for <CodeInline>MudNavLink</CodeInline>s.
                         </Description>
                     </SectionHeader>
                     <SectionContent Code="@nameof(DrawerMiniExample)" ShowCode="false" Block="true" FullWidth="true">
@@ -129,7 +127,7 @@
         <DocsPageSection>
             <SectionHeader Title="Custom Breakpoint">
                 <Description>
-                    The switching point for Responsive Drawers can be changed using the <CodeInline>Breakpoint</CodeInline> parameter. The default is <CodeInline>Breakpoint.Md</CodeInline>.
+                    The switching point for Responsive Drawers (<CodeInline>DrawerVariant.Mini</CodeInline> and <CodeInline>DrawerVariant.Responsive</CodeInline>) can be changed using the <CodeInline>Breakpoint</CodeInline> parameter. The default is <CodeInline>Breakpoint.Md</CodeInline>.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(DrawerBreakpointExample)" ShowCode="false">

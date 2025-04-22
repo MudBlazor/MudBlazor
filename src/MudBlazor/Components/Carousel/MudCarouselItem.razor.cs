@@ -9,6 +9,7 @@ namespace MudBlazor
     /// <summary>
     /// Represents a slide displayed within a <see cref="MudCarousel{TData}"/>.
     /// </summary>
+    /// <seealso cref="MudCarousel{TData}" />
     public partial class MudCarouselItem : MudComponentBase, IDisposable
     {
         private bool _disposed = false;

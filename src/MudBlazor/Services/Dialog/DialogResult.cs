@@ -6,8 +6,6 @@
 // License: MIT
 // See https://github.com/Blazored
 
-using System;
-
 #nullable enable
 namespace MudBlazor
 {

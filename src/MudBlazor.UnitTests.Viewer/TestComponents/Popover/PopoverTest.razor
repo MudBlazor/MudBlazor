@@ -1,28 +1,24 @@
-﻿<MudPopoverProvider></MudPopoverProvider>
+﻿<MudPopoverProvider />
 
 <div class="popoverparent">
 	<p>Some Text</p>
-	<MudPopover @ref="_popover" Open="_open">
+	<MudPopover Open="_open">
 		<MudText>Popover content</MudText>
 	</MudPopover>
 </div>
 
-
 @code {
-	private MudPopover _popover;
-
 	private bool _open;
 
-	public async Task Open()
+	public Task Open()
 	{
 		_open = true;
-		await InvokeAsync(StateHasChanged);
+		return InvokeAsync(StateHasChanged);
 	}
 
-	public async Task Close()
+	public Task Close()
 	{
 		_open = false;
-		await InvokeAsync(StateHasChanged);
+		return InvokeAsync(StateHasChanged);
 	}
-
 }

@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
@@ -18,6 +15,7 @@ namespace MudBlazor
         private bool _isServerLoaded;
         private readonly ParameterState<bool> _selectedState;
         private readonly ParameterState<bool> _expandedState;
+        private readonly ParameterState<IReadOnlyCollection<TreeItemData<T?>>?> _itemsState;
         private Converter<T> _converter = new DefaultConverter<T>();
         private readonly HashSet<MudTreeViewItem<T>> _childItems = new();
 
@@ -31,6 +29,9 @@ namespace MudBlazor
                 .WithParameter(() => Selected)
                 .WithEventCallback(() => SelectedChanged)
                 .WithChangeHandler(OnSelectedParameterChangedAsync);
+            _itemsState = registerScope.RegisterParameter<IReadOnlyCollection<TreeItemData<T?>>?>(nameof(Items))
+                .WithParameter(() => Items)
+                .WithEventCallback(() => ItemsChanged);
         }
 
         protected string Classname =>
@@ -110,6 +111,13 @@ namespace MudBlazor
         public string? EndTextClass { get; set; }
 
         /// <summary>
+        /// Indicates whether the tree view item and its children are visible.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Appearance)]
+        public bool Visible { get; set; } = true;
+
+        /// <summary>
         /// If true, TreeViewItem will be disabled.
         /// </summary>
         [Parameter]
@@ -159,6 +167,12 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.TreeView.Data)]
         public IReadOnlyCollection<TreeItemData<T?>>? Items { get; set; }
+
+        /// <summary>
+        /// Called whenever children were loaded from the server
+        /// </summary>
+        [Parameter]
+        public EventCallback<IReadOnlyCollection<TreeItemData<T?>>?> ItemsChanged { get; set; }
 
         /// <summary>
         /// Expand or collapse TreeView item when it has children. Two-way bindable. Note: if you directly set this to
@@ -273,9 +287,18 @@ namespace MudBlazor
 
         private bool HasChildren()
         {
-            return ChildContent != null ||
-                   (MudTreeRoot != null && Items != null && Items.Count != 0) ||
-                   (MudTreeRoot?.ServerData != null && CanExpand && !_isServerLoaded && (Items == null || Items.Count == 0));
+            return ChildContent != null
+                || (MudTreeRoot != null && GetItems().Count != 0)
+                || (MudTreeRoot?.ServerData != null && CanExpand && !_isServerLoaded && GetItems().Count == 0);
+        }
+
+        private bool AreChildrenVisible() => _itemsState.Value is null || _itemsState.Value.Any(i => i.Visible);
+
+        private IReadOnlyCollection<TreeItemData<T>> GetItems()
+        {
+            if (_itemsState.Value == null)
+                return Array.Empty<TreeItemData<T>>();
+            return _itemsState.Value!;
         }
 
         internal T? GetValue()
@@ -415,8 +438,10 @@ namespace MudBlazor
             }
             if (!GetReadOnly())
             {
-                Debug.Assert(MudTreeRoot != null);
-                await MudTreeRoot.OnItemClickAsync(this);
+                if (MudTreeRoot is not null)
+                {
+                    await MudTreeRoot.OnItemClickAsync(this);
+                }
             }
             await OnClick.InvokeAsync(ev);
         }
@@ -434,8 +459,10 @@ namespace MudBlazor
             }
             if (!GetReadOnly())
             {
-                Debug.Assert(MudTreeRoot != null);
-                await MudTreeRoot.OnItemClickAsync(this);
+                if (MudTreeRoot is not null)
+                {
+                    await MudTreeRoot.OnItemClickAsync(this);
+                }
             }
             await OnDoubleClick.InvokeAsync(ev);
         }
@@ -454,9 +481,9 @@ namespace MudBlazor
         /// </summary>
         public async Task ReloadAsync()
         {
-            if (Items is not null)
+            if (_itemsState.Value is not null)
             {
-                Items = Array.Empty<TreeItemData<T?>>();
+                await _itemsState.SetValueAsync(Array.Empty<TreeItemData<T?>>());
             }
             await TryInvokeServerLoadFunc();
 
@@ -498,13 +525,14 @@ namespace MudBlazor
 
         internal async Task TryInvokeServerLoadFunc()
         {
-            if ((Items != null && Items.Count != 0) || !CanExpand || MudTreeRoot?.ServerData == null)
+            if (GetItems().Count != 0 || !CanExpand || MudTreeRoot?.ServerData == null)
                 return;
             _loading = true;
             StateHasChanged();
             try
             {
-                Items = await MudTreeRoot.ServerData(GetValue());
+                var items = await MudTreeRoot.ServerData(GetValue());
+                await _itemsState.SetValueAsync(items);
             }
             finally
             {

@@ -10,7 +10,7 @@ namespace MudBlazor
 {
 #nullable enable
     /// <summary>
-    /// Represents a language support provider for Right-to-Left (RTL) languages such as Arabic, Hebrew, and Persian.
+    /// A language support provider for Right-to-Left (RTL) languages such as Arabic, Hebrew, and Persian.
     /// </summary>
     public partial class MudRTLProvider : MudComponentBase
     {

@@ -1,0 +1,36 @@
+﻿<ErrorBoundary>
+    <ChildContent>
+        <MudDataGrid Items="@_model" T="Model">
+            <Columns>
+        <PropertyColumn Property="@(dto => dto.Name)" Title="Name"></PropertyColumn>
+        <PropertyColumn Property="@(dto => dto.Teacher!.Name)" Title="Teacher"></PropertyColumn>
+    </Columns>
+</MudDataGrid>
+    </ChildContent>
+    <ErrorContent>
+        <MudAlert Severity="Severity.Error">Oh my! We caught an error and handled it!</MudAlert>
+    </ErrorContent>
+</ErrorBoundary>
+
+@code {
+    private readonly List<Model> _model =
+    [
+        new Model
+        {
+            Name = "Class A",
+            Teacher = null
+        }
+    ];
+
+    public record Model 
+    {
+        public string? Name {get; set;}
+
+        public Teacher? Teacher {get; set;}
+    }
+
+    public record Teacher 
+    {
+        public string? Name {get; set;}
+    }
+}

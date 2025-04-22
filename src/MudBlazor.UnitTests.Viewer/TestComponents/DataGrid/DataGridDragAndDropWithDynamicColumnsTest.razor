@@ -1,4 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
+﻿
 @using System.Linq.Expressions;
 <MudPopoverProvider></MudPopoverProvider>
 
@@ -20,7 +20,7 @@
         new("John", 32, Severity.Warning, false, null)
     };
 
-    private readonly List<ColumnInfo> _columnInfos = new();
+    private readonly List<ColumnInfo> _columnInfos = [];
 
     protected override void OnInitialized()
     {       
@@ -32,5 +32,5 @@
     }
 
     public record Model (string Name, int? Age, Severity? Status, bool? Hired, DateTime? HiredOn);
-    public record ColumnInfo(Expression<Func<Model, object>> Property, string Title);
+    public record ColumnInfo(Expression<Func<Model, object?>> Property, string Title);
 }

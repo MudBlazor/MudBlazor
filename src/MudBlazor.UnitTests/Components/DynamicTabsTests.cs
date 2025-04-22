@@ -1,17 +1,11 @@
-﻿
-#pragma warning disable CS1998 // async without await
-
-using System;
-using System.Threading.Tasks;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Services;
-using MudBlazor.UnitTests.Mocks;
-using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.Tabs;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -26,7 +20,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DefaultValues()
+        public void DefaultValues()
         {
             var comp = Context.RenderComponent<MudDynamicTabs>();
             var tabs = comp.Instance;
@@ -55,7 +49,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task BasicParameters()
+        public void BasicParameters()
         {
             var comp = Context.RenderComponent<SimpleDynamicTabsTest>();
 
@@ -110,9 +104,10 @@ namespace MudBlazor.UnitTests.Components
                 actual.Should().BeEquivalentTo(expected);
 
                 var parent = (IHtmlElement)item.Parent;
-                parent.Children.Should().HaveCount(2, because: "the button and the empty popover hint");
+                parent.Children.Should().HaveCount(2, because: "the button and the empty popover hint since it's not active");
 
                 await item.ParentElement.TriggerEventAsync("onpointerenter", new PointerEventArgs());
+
                 var popoverId = parent.Children[1].Id.Substring(8);
 
                 var toolTip = comp.Find($"#popovercontent-{popoverId}");
@@ -141,6 +136,7 @@ namespace MudBlazor.UnitTests.Components
                 parent.Children.Should().HaveCount(2, because: "the button and the empty popover hint"); ;
 
                 await item.ParentElement.TriggerEventAsync("onpointerenter", new PointerEventArgs());
+
                 var popoverId = parent.Children[1].Id.Substring(8);
 
                 var toolTip = comp.Find($"#popovercontent-{popoverId}");
@@ -178,7 +174,6 @@ namespace MudBlazor.UnitTests.Components
 
                 comp.Instance.CloseClicked.Should().HaveCount(i + 1);
             }
-
         }
     }
 }

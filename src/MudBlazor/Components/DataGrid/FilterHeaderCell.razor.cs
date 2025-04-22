@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -16,7 +17,8 @@ namespace MudBlazor
     /// Represents a column filter shown when <see cref="MudDataGrid{T}.FilterMode"/> is <see cref="DataGridFilterMode.ColumnFilterRow"/>.
     /// </summary>
     /// <typeparam name="T">The type of value managed by the <see cref="MudDataGrid{T}"/></typeparam>
-    public partial class FilterHeaderCell<T> : MudComponentBase
+    /// <seealso cref="MudDataGrid{T}"/>
+    public partial class FilterHeaderCell<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase
     {
         /// <summary>
         /// The <see cref="MudDataGrid{T}"/> containing this filter cell.
@@ -36,14 +38,14 @@ namespace MudBlazor
         [Parameter]
         public RenderFragment ChildContent { get; set; }
 
-        private string _classname =>
+        private string Classname =>
             new CssBuilder(Column?.HeaderClass)
-                .AddClass(Column?.headerClassname)
+                .AddClass(Column?.HeaderClassname)
                 .AddClass(Class)
                 .AddClass("filter-header-cell")
                 .Build();
 
-        private string _style =>
+        private string Stylename =>
             new StyleBuilder()
                 .AddStyle(Column?.HeaderStyle)
                 .AddStyle(Style)
@@ -61,11 +63,11 @@ namespace MudBlazor
 
         private FieldType fieldType => FieldType.Identify(dataType);
 
-        private string[] operators
+        private IReadOnlyCollection<string> operators
         {
             get
             {
-                return FilterOperator.GetOperatorByDataType(dataType);
+                return Column.GetFilterOperators(FieldType.Identify(dataType));
             }
         }
 

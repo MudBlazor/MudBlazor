@@ -1,7 +1,6 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-<MudPopoverProvider></MudPopoverProvider>
+﻿<MudPopoverProvider />
 
-<MudSelect @bind-Value="value" PopoverClass="select-popover-class" IsPreRendered>
+<MudSelect @bind-Value="_value" PopoverClass="select-popover-class">
     <MudSelectItem Value="@("1")"/>
     <MudSelectItem Value="@("2")"/>
     <MudSelectItem Value="@("3")"/>
@@ -9,7 +8,7 @@
 </MudSelect>
 
 @code {
-    public static string __description__ = "Value 2 should be selected initially and hilighted.";
+    public static string __description__ = "Value 2 should be selected initially and highlighted.";
 
-    string value="2";
+    private string? _value = "2";
 }

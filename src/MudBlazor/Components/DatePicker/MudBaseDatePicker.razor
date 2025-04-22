@@ -11,7 +11,7 @@
     protected override RenderFragment PickerContent =>
     @<CascadingValue Value="@this" IsFixed="true">
         <MudPickerToolbar Class="mud-picker-datepicker-toolbar" ShowToolbar="@ShowToolbar" Orientation="@Orientation" PickerVariant="@PickerVariant" Color="@Color">
-            <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="mud-button-year" OnClick="OnYearClick">@GetFormattedYearString()</MudButton>
+            <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="mud-button-year" OnClick="GoToSelectedYear">@GetFormattedYearString()</MudButton>
             <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="mud-button-date" OnClick="OnFormattedDateClick">@GetTitleDateString()</MudButton>
         </MudPickerToolbar>
         <MudPickerContent>
@@ -113,11 +113,12 @@
                                                 <MudText class="mud-picker-calendar-week-text" Typo="Typo.caption">@GetWeekNumber(tempMonth, tempWeek)</MudText>
                                             </div>
                                         }
+                                        var wasMaxValue = false;
                                         @foreach (var day in GetWeek(tempMonth, tempWeek))
                                         {
                                             var tempId = ++dayId;
 
-                                            @if (tempId != 0 || !firstMonthFirstYear)
+                                            @if ((tempId != 0 || !firstMonthFirstYear) && !wasMaxValue)
                                             {
                                                 var selectedDay = !firstMonthFirstYear ? day : day.AddDays(-1);
                                                 <button @key="@(!firstMonthFirstYear ? selectedDay : tempId)" type="button" style="--day-id: @(!firstMonthFirstYear ? tempId : tempId + 1);"
@@ -125,7 +126,7 @@
                                                         @onclick="(async () => { var d = selectedDay; await OnDayClickedAsync(d); })"
                                                         @onclick:stopPropagation="true"
                                                         onpointerover="@(async () => await HandleMouseoverOnPickerCalendarDayButton(!firstMonthFirstYear ? tempId : tempId + 1))"
-                                                        disabled="@((selectedDay < MinDate) || (selectedDay > MaxDate) || IsDateDisabledFunc(selectedDay))">
+                                                        disabled="@IsDayDisabled(selectedDay)">
                                                     <p class="mud-typography mud-typography-body2 mud-inherit-text">@GetCalendarDayOfMonth(selectedDay)</p>
                                                 </button>
                                             }
@@ -136,6 +137,7 @@
                                                     <p class="mud-typography mud-typography-body2 mud-inherit-text"></p>
                                                 </button>
                                             }
+                                            wasMaxValue = day == Culture.Calendar.MaxSupportedDateTime;
                                         }
                                     }
                                 </div>

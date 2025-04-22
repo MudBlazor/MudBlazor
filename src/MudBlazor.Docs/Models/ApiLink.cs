@@ -1,16 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using MudBlazor.Charts;
-
+﻿using MudBlazor.Charts;
 namespace MudBlazor.Docs.Models
 {
 #nullable enable
     public static class ApiLink
     {
+        /// <summary>
+        /// Gets the URL of the API documentation for a type.
+        /// </summary>
+        /// <param name="type">The type to find.</param>
         public static string GetApiLinkFor(Type type)
         {
-            return $"api/{type.Name}";
+            return $"api/{type.Name.Replace("`1", "").Replace("`2", "").ToLowerInvariant()}";
         }
 
         public static string GetComponentLinkFor(Type type)

@@ -1,16 +1,25 @@
 ﻿@page "/components/daterangepicker"
-@page "/components/MudDateRangePicker"
 
 <DocsPage>
-    <DocsPageHeader Title="Date Range Picker">
-        <Description>Provides the user with a simple way to select a date range.</Description>
-    </DocsPageHeader>
+    <DocsPageHeader Title="Date Range Picker" Component="@nameof(MudDateRangePicker)" />
     <DocsPageContent>
 
         <DocsPageSection>
             <SectionHeader Title="Basic Usage" />
             <SectionContent Code="@nameof(DateRangePickerBasicUsageExample)" ShowCode="false">
                 <DateRangePickerBasicUsageExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Inline Non-modal">
+                <Description>
+                    By default, the date range picker is modal, preventing interaction with other elements while it is open.
+                    To allow interactions with other elements, set <CodeInline>Modal="false"</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(DateRangePickerInlineModelessExample)" ShowCode="false">
+                <DateRangePickerInlineModelessExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -29,9 +38,26 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Min/Max Date" />
+            <SectionHeader Title="Min/Max Date">
+                <Description>
+                    Defines the earliest and latest calendar dates available from user selection
+                </Description>                
+            </SectionHeader>
             <SectionContent Code="@nameof(DateRangePickerMinMaxDateExample)" ShowCode="false">
                 <DateRangePickerMinMaxDateExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Min/Max Days">
+                <Description>
+                    Defines the smallest and largest number of days that a user can select.<br/><br/>
+                    For performance reasons, the component checks up to 50 years ahead, from the user-selected start date, to find valid dates that meet the <CodeInline>MaxDays</CodeInline> requirement. 
+                    To extend this limit, set the <CodeInline>MaxDate</CodeInline> property to a specific date.
+                </Description>    
+            </SectionHeader>
+            <SectionContent Code="@nameof(DateRangePickerMinMaxDaysExample)" ShowCode="false">
+                <DateRangePickerMinMaxDaysExample />
             </SectionContent>
         </DocsPageSection>
 

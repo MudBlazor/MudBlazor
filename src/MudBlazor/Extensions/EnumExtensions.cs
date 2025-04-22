@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace MudBlazor.Extensions
+﻿namespace MudBlazor.Extensions
 {
 #nullable enable
     public static class EnumExtensions
@@ -16,7 +12,7 @@ namespace MudBlazor.Extensions
         {
             if (type is null)
             {
-                return Enumerable.Empty<Enum>();
+                return [];
             }
 
             if (type.IsEnum)
@@ -30,7 +26,22 @@ namespace MudBlazor.Extensions
                 return Enum.GetValues(actualType).Cast<Enum>();
             }
 
-            return Enumerable.Empty<Enum>();
+            return [];
+        }
+
+        /// <summary>
+        /// Converts an <see cref="Adornment"/> to its corresponding <see cref="Edge"/> value.
+        /// </summary>
+        /// <param name="adornment">The adornment value to convert.</param>
+        /// <returns>The corresponding <see cref="Edge"/> value.</returns>
+        internal static Edge ToEdge(this Adornment adornment)
+        {
+            return adornment switch
+            {
+                Adornment.Start => Edge.Start,
+                Adornment.End => Edge.End,
+                _ => Edge.False
+            };
         }
     }
 }

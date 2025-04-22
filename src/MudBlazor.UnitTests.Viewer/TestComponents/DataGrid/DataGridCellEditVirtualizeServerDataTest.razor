@@ -1,6 +1,3 @@
-@using System.Threading
-@namespace MudBlazor.UnitTests.TestComponents
-
 <MudDataGrid T="Item" VirtualizeServerData="ServerDataFunc" Virtualize="true" ReadOnly="false" EditMode="@DataGridEditMode.Cell">
     <Columns>
         <PropertyColumn Property="x => x.Name"/>
@@ -11,11 +8,11 @@
 @code {
     public static string __description__ = @"Test editing values in cells of the DataGrid.";
 
-    private readonly IEnumerable<Item> _items = new List<Item>()
+    private readonly IEnumerable<Item> _items = new List<Item>
     {
-        new Item("John", 45),
-        new Item("Johanna", 23),
-        new Item("Steve", 32)
+        new("John", 45),
+        new("Johanna", 23),
+        new("Steve", 32)
     };
 
     public record Item(string Name, int Age);

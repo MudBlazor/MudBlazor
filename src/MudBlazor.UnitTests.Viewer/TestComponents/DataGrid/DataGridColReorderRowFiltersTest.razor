@@ -1,5 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-<MudPopoverProvider></MudPopoverProvider>
+﻿<MudPopoverProvider />
 
 <MudDataGrid @ref="_dataGrid" Items="@_items" Filterable="true" DragDropColumnReordering="true" FilterMode="DataGridFilterMode.ColumnFilterRow" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive">
     <ToolBarContent>
@@ -16,14 +15,14 @@
 </MudDataGrid>
 
 @code {
-    MudDataGrid<Model> _dataGrid;
+    private MudDataGrid<Model> _dataGrid = null!;
 
-    private IEnumerable<Model> _items = new List<Model>()
+    private readonly IEnumerable<Model> _items = new List<Model>
     {
-        new Model("Sam", 56, Severity.Normal, false, null, null),
-        new Model("Alicia", 54, Severity.Info, null, null, new Guid("b7accfd5-928d-48ad-8a0c-9448ae37bf96")),
-        new Model("Ira", 27, Severity.Success, true, new DateTime(2011, 1, 2), null),
-        new Model("John", 32, Severity.Warning, false, null, null)
+        new("Sam", 56, Severity.Normal, false, null, null),
+        new("Alicia", 54, Severity.Info, null, null, new Guid("b7accfd5-928d-48ad-8a0c-9448ae37bf96")),
+        new("Ira", 27, Severity.Success, true, new DateTime(2011, 1, 2), null),
+        new("John", 32, Severity.Warning, false, null, null)
     };
 
     public record Model (string Name, int? Age, Severity? Status, bool? Hired, DateTime? HiredOn, Guid? ApplicationId);

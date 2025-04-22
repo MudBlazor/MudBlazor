@@ -5,5 +5,5 @@ It is advised to name the test component exactly the same as the bUnit testcase 
 In order to have the test description show up, make sure the component implements a static field __description__ in the @code section:
 
 @code {
-    public static string __description__ = " ... ";
+    public static string __description__ = "...";
 }

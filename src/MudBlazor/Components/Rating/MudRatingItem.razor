@@ -16,6 +16,7 @@ else
     <span role="radio"
           class="@ClassName"
           style="@Style"
+          aria-checked="@(Checked.ToString().ToLower())"
           @onpointerover="HandlePointerOverAsync"
           @onpointerout="HandlePointerOutAsync"
           @onclick="HandleClickAsync">

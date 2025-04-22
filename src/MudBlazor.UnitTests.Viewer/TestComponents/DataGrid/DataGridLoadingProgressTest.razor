@@ -1,0 +1,23 @@
+﻿<MudDataGrid Items="@_items" Loading="@_isLoading" Striped>
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Age" />
+        <PropertyColumn Property="x => x.Status" />
+    </Columns>
+</MudDataGrid>
+
+<MudSwitch id="loadingSwitch" @bind-Value="_isLoading">Show Loading</MudSwitch>
+
+@code {
+    public static string __description__ = "When Loading is set to true, a progress bar should appear in the table header without affecting the striped table rows.";
+
+    private bool _isLoading;
+
+    private IEnumerable<Model> _items = [
+        new ("Ash", 19, Severity.Info),
+        new ("Sam", 20, Severity.Info),
+        new ("Max", 20, Severity.Info)
+    ];
+
+    public record Model (string Name, int Age, Severity Status);
+}

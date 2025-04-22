@@ -1,0 +1,14 @@
+@namespace MudBlazor.UnitTests.TestComponents
+
+<MudList T="string" Gutters="@ListGutters">
+    <MudListItem Text="Inbox" Icon="@Icons.Material.Filled.Inbox" Gutters="@ItemGutters"/>
+</MudList>
+
+@code
+{
+    [Parameter]
+    public required bool ListGutters { get; set; }
+    
+    [Parameter]
+    public required bool? ItemGutters { get; set; }
+}

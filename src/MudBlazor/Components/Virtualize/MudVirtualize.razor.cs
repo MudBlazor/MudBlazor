@@ -2,8 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
 
@@ -34,6 +32,12 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public RenderFragment? Placeholder { get; set; }
+
+        /// <summary>
+        /// The content shown when there are no rows to display.
+        /// </summary>
+        [Parameter]
+        public RenderFragment? NoRecordsContent { get; set; }
 
         /// <summary>
         /// Gets or sets the fixed item source.
@@ -71,12 +75,11 @@ namespace MudBlazor
         /// <summary>
         /// Refreshes the data in the Virtualize component asynchronously.
         /// </summary>
-        public async Task RefreshDataAsync()
+        public Task RefreshDataAsync()
         {
-            if (_virtualizeContainerReference != null)
-            {
-                await _virtualizeContainerReference.RefreshDataAsync();
-            }
+            return _virtualizeContainerReference is null
+                ? Task.CompletedTask
+                : _virtualizeContainerReference.RefreshDataAsync();
         }
     }
 }

@@ -11,7 +11,7 @@
             {
                 @if (Context?.Table.EditButtonContent != null)
                 {
-                    @Context?.Table.EditButtonContent(new MudBlazorFix.EditButtonContext(StartEditingItem, Context.EditButtonDisabled(Item), Item))
+                    @Context?.Table.EditButtonContent(new EditButtonContext(StartEditingItem, Context.EditButtonDisabled(Item), Item))
                 }
                 else
                 {
@@ -36,7 +36,7 @@
     }
     @if (Expandable || Checkable)
     {
-        <MudElement HtmlTag="@("Td")" Class="mud-table-cell">
+        <MudElement HtmlTag="@("Td")" Class="@($"mud-table-cell {Context?.Table?.CellClass}")">
             <div class="d-flex" style="@ActionsStylename">
                 @if (Checkable)
                 {
@@ -54,7 +54,7 @@
             {
                 @if (Context?.Table.EditButtonContent != null)
                 {
-                    @Context?.Table.EditButtonContent(new MudBlazorFix.EditButtonContext(StartEditingItem, Context.EditButtonDisabled(Item), Item))
+                    @Context?.Table.EditButtonContent(new EditButtonContext(StartEditingItem, Context.EditButtonDisabled(Item), Item))
                 }
                 else
                 {

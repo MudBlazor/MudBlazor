@@ -1,6 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<div style="max-width: 400px;">
+﻿<div style="max-width: 400px;">
     <MudCard>
         <MudCardContent>
             <MudForm ReadOnly="FormReadOnly" Disabled="FormDisabled">
@@ -37,15 +35,18 @@
         </MudCardActions>
     </MudCard>
 </div>
-@code
-{
+@code {
     public static string __description__ = "All child form fields should be disabled or readonly if the Form property is changed";
+    
     [Parameter]
     public bool FormReadOnly { get; set; }
+
     [Parameter]
     public bool CompReadOnly { get; set; }
+
     [Parameter]
     public bool FormDisabled { get; set; }
+
     [Parameter]
     public bool CompDisabled { get; set; }
 }

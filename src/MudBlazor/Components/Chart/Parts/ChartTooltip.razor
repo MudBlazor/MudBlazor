@@ -1,0 +1,30 @@
+﻿@namespace MudBlazor.Charts
+
+@{
+    var hasSubtitle = !string.IsNullOrWhiteSpace(Subtitle);
+    var subtitleHeight = hasSubtitle ? 16 : 0;
+    var opacity = _boxWidth > 0 ? 1 : 0;
+}
+<g class="svg-tooltip" opacity="@opacity" style="pointer-events: none;">
+    <!-- The triangle pointing down (8px wide at the top) -->
+    <polygon points="@ToS(X - 8),@ToS(Y - 8) @ToS(X + 8),@ToS(Y - 8) @ToS(X),@ToS(Y - 1.5)"
+            fill="@Color"
+            stroke="white"
+            stroke-width="2" />
+
+    <rect x="@ToS(X - (_boxWidth / 2))" y="@ToS(Y - 30 - subtitleHeight)" width="@ToS(_boxWidth)" height="@ToS(24 + subtitleHeight)" rx="4" ry="4" fill="@Color" stroke="white" stroke-width="1" />
+
+    <polygon points="@ToS(X - 10),@ToS(Y - 10) @ToS(X + 10),@ToS(Y - 10) @ToS(X),@ToS(Y - 1.5)"
+            fill="@Color"
+            stroke="white"
+            stroke-width="0" />
+
+
+    <text @ref="_hoverTextTitle" x="@ToS(X)" y="@ToS(Y - 14 - subtitleHeight)" text-anchor="middle" font-size="12px">
+        <tspan x="@ToS(X)" dy="0">@Title</tspan>
+        @if (hasSubtitle)
+        {
+            <tspan x="@ToS(X)" dy="16">@Subtitle</tspan>
+        }
+    </text>
+</g>

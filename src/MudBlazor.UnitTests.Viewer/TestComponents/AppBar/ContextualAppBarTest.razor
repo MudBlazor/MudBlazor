@@ -1,0 +1,26 @@
+﻿<MudAppBar Color="Color.Primary" Fixed="false" Contextual="IsContextual" id="regular-app-bar">
+    <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" />
+    <MudSpacer />
+    <MudText Typo="Typo.h6">Regular</MudText>
+    <MudSpacer />
+    <MudIconButton Icon="@Icons.Material.Filled.DarkMode" Color="Color.Inherit"/>
+</MudAppBar>
+
+<MudContextualActionBar Color="Color.Tertiary" Fixed="false" Visible="_visible" id="contextual-app-bar">
+    <MudIconButton Icon="@Icons.Material.Filled.Close" Color="Color.Inherit" Edge="Edge.Start" OnClick="@(() => _visible = false)" />
+    <MudSpacer />
+    <MudText Class="pl-8" Typo="Typo.h6">Contextual</MudText>
+    <MudSpacer />
+    <MudIconButton Icon="@Icons.Material.Filled.LightMode" Color="Color.Inherit" />
+</MudContextualActionBar>
+
+<MudSwitch Class="pt-8" @bind-Value="_visible" />
+
+@code {
+    public static string __description__ = "App bar should change when toggled";
+
+    private bool _visible;
+
+    [Parameter]
+    public bool IsContextual { get; set; } = true;
+}

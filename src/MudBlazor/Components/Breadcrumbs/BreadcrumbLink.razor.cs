@@ -12,6 +12,9 @@ namespace MudBlazor;
 /// <summary>
 /// Represents a segment in a list of breadcrumbs.
 /// </summary>
+/// <seealso cref="MudBreadcrumbs" />
+/// <seealso cref="BreadcrumbItem" />
+/// <seealso cref="BreadcrumbSeparator" />
 public partial class BreadcrumbLink
 {
     /// <summary>

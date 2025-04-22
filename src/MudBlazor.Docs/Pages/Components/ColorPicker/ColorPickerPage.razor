@@ -1,8 +1,7 @@
 ﻿@page "/components/colorpicker"
-@page "/components/MudColorPicker"
 
 <DocsPage>
-    <DocsPageHeader Title="Color Picker" SubTitle="A sophisticated and customizable pop-up for choosing a color." />
+    <DocsPageHeader Title="Color Picker" Component="@nameof(MudColorPicker)" />
     <DocsPageContent>
 
         <DocsPageSection>
@@ -77,12 +76,24 @@
             </SectionContent>
         </DocsPageSection>
 
-		 <DocsPageSection>
+        <DocsPageSection>
             <SectionHeader Title="Inline Mode">
                 <Description></Description>
             </SectionHeader>
             <SectionContent Code="@nameof(ColorPickerInlineExample)">
                 <ColorPickerInlineExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Inline Non-modal Mode">
+                <Description>
+                    By default, the color picker is modal, preventing interaction with other elements while it is open.
+                    To allow interactions with other elements, set <CodeInline>Modal="false"</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(ColorPickerInlineModelessExample)">
+                <ColorPickerInlineModelessExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -97,7 +108,7 @@
 
         <DocsPageSection>
             <SectionHeader Title="Elevation">
-                <Description>You can change the elevation with the <CodeInline>Elevation</CodeInline> parameter. The default value is 0 for static and 8 for inline.</Description>
+                <Description>You can change the elevation with the <CodeInline>Elevation</CodeInline> parameter. The default level is 8 for Inline, and 0 for Static or Dialog.</Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Class="demo-datetime-margin" Code="@nameof(ColorPickerElevationExample)">
                 <ColorPickerElevationExample />

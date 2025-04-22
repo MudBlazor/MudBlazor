@@ -2,8 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MudBlazor;
 
@@ -30,8 +29,11 @@ public class TreeItemData<T> : IEquatable<TreeItemData<T>>
 
     public virtual bool Selected { get; set; }
 
+    public virtual bool Visible { get; set; } = true;
+
     public virtual List<TreeItemData<T>>? Children { get; set; }
 
+    [MemberNotNullWhen(true, nameof(Children))]
     public virtual bool HasChildren => Children is not null && Children.Count > 0;
 
     public virtual bool Equals(TreeItemData<T>? other)

@@ -1,0 +1,37 @@
+﻿<MudStack Class="test-container1" Row>
+    <MudTextField T="string" Variant="Variant.Outlined" Label="Normal"></MudTextField>
+    <MudTextField T="string" Variant="Variant.Outlined" Label="Shrink Normal" ShrinkLabel="true"></MudTextField>
+    <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Dense"></MudTextField>
+    <MudTextField T="string" Variant="Variant.Outlined" Label="Shrink Dense" ShrinkLabel="true" Margin="Margin.Dense"></MudTextField>
+</MudStack>
+
+<MudRTLProvider RightToLeft>
+    <MudStack Class="test-container1" Row>
+        <MudTextField T="string" Variant="Variant.Outlined" Label="Shrink Dense" ShrinkLabel="true" Margin="Margin.Dense"></MudTextField>
+        <MudTextField T="string" Variant="Variant.Outlined" Margin="Margin.Dense" Label="Dense"></MudTextField>
+        <MudTextField T="string" Variant="Variant.Outlined" Label="Shrink Normal" ShrinkLabel="true"></MudTextField>
+        <MudTextField T="string" Variant="Variant.Outlined" Label="Normal"></MudTextField>
+    </MudStack>
+</MudRTLProvider>
+
+<div class="test-container2">
+    <MudTextField T="string" Variant="Variant.Outlined" Label="Shrink Normal" ShrinkLabel="true"></MudTextField>
+</div>
+
+<MudRTLProvider RightToLeft>
+    <div class="test-container2">
+        <MudTextField T="string" Variant="Variant.Outlined" Label="Shrink Normal" ShrinkLabel="true"></MudTextField>
+    </div>
+</MudRTLProvider>
+
+
+<style>
+    .test-container1 {
+        padding: 20px;
+        background-color: deepskyblue;
+    }
+
+    .test-container2 {
+        background-color: deepskyblue;
+    }
+</style>

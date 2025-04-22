@@ -1,8 +1,7 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-@using FluentValidation
+﻿@using FluentValidation
 
 <MudForm Model="_model" Validation="@_validator.ValidateValue" FieldChanged="@FieldChanged">
-    <MudTextField T="string" @bind-Value="@_model.Value" For="() => _model.Value" Immediate="true" DebounceInterval="@DebounceInterval" Required="true" RequiredError="Enter a star"></MudTextField>
+    <MudTextField T="string?" @bind-Value="@_model.Value" For="() => _model.Value" Immediate="true" DebounceInterval="@DebounceInterval" Required="true" RequiredError="Enter a star"></MudTextField>
 </MudForm>
 
 <MudText>RenderCount: @_renderCount</MudText>
@@ -10,14 +9,13 @@
 @code {
     public static string __description__ = "User validation should not be swallowed when new text is added during async validation.";
 
-    public int DebounceInterval = 500;
-    public int AsyncTaskDelay = 2000;
-
-    private Model _model = new();
-
-    private ModelFluentValidator _validator = new();
-
     private int _renderCount;
+    private readonly Model _model = new();
+    private readonly ModelFluentValidator _validator = new();
+
+    public int DebounceInterval => 500;
+
+    public int AsyncTaskDelay => 2000;
 
     protected override void OnAfterRender(bool firstRender)
     {
@@ -25,14 +23,13 @@
         _renderCount++;
     }
 
-    private void FieldChanged()
+    private static void FieldChanged()
     {
-        return;
     }
     
     public class Model
     {
-        public string Value { get; set; }
+        public string? Value { get; set; }
     }
 
     private class ModelFluentValidator : AbstractValidator<Model>
@@ -44,7 +41,7 @@
                 .MustAsync(async (value, _) => await CustomValidation(value));
         }
         
-        private async Task<bool> CustomValidation(string val)
+        private static async Task<bool> CustomValidation(string? val)
         {
             await Task.Delay(2000);
             return val == "star";

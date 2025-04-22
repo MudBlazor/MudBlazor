@@ -1,5 +1,4 @@
 ﻿@namespace MudBlazor
-@using System.Globalization
 @using MudBlazor.Resources
 @using MudBlazor.Utilities
 @inherits MudPicker<MudColor>
@@ -26,19 +25,19 @@
                            Size="Size.Small"
                            Color="GetButtonColor(ColorPickerView.Spectrum)"
                            Icon="@SpectrumIcon"
-                           OnClick="(() => ChangeView(ColorPickerView.Spectrum))"
+                           OnClick="() => ChangeView(ColorPickerView.Spectrum)"
                            aria-label="@Localizer[LanguageResource.MudColorPicker_SpectrumView]" />
             <MudIconButton Class="pa-1 mx-1"
                            Size="Size.Small"
                            Color="GetButtonColor(ColorPickerView.Grid)"
                            Icon="@GridIcon"
-                           OnClick="(() => ChangeView(ColorPickerView.Grid))"
+                           OnClick="() => ChangeView(ColorPickerView.Grid)"
                            aria-label="@Localizer[LanguageResource.MudColorPicker_GridView]" />
             <MudIconButton Class="pa-1"
                            Size="Size.Small"
                            Color="GetButtonColor(ColorPickerView.Palette)"
                            Icon="@PaletteIcon"
-                           OnClick="(() => ChangeView(ColorPickerView.Palette))"
+                           OnClick="() => ChangeView(ColorPickerView.Palette)"
                            aria-label="@Localizer[LanguageResource.MudColorPicker_PaletteView]" />
         </MudPickerToolbar>
         <MudPickerContent Class="mud-picker-color-content">
@@ -47,7 +46,7 @@
                 <div class="mud-picker-color-picker">
                     @if (_activeColorPickerView == ColorPickerView.Spectrum)
                     {
-                        <div class="mud-picker-color-overlay" style="@($"background-color: {_baseColor.ToString(MudColorOutputFormats.RGB)}")">
+                        <div class="mud-picker-color-overlay" style="@($"background-color: {_baseColor?.ToString(MudColorOutputFormats.RGB)}")">
                             <div class="mud-picker-color-overlay mud-picker-color-overlay-white">
                                 <div class="mud-picker-color-overlay mud-picker-color-overlay-black">
                                     <div class="mud-picker-color-overlay"
@@ -105,7 +104,7 @@
                                     <div class="mud-picker-color-dot mud-picker-color-dot-current mud-ripple"
                                          @onclick="ToggleCollection"
                                          aria-label="@Localizer[LanguageResource.MudColorPicker_ToggleCurrentColor]">
-                                        <div class="mud-picker-color-fill" style="@($"background: {_value.ToString(MudColorOutputFormats.RGBA)};")"></div>
+                                        <div class="mud-picker-color-fill" style="@($"background: {_value?.ToString(MudColorOutputFormats.RGBA)};")"></div>
                                     </div>
                                 }
                                 @if (ShowSliders && !_collectionOpen)
@@ -233,8 +232,6 @@
                                                           MaxLength="@GetHexColorInputMaxLength()"
                                                           HelperText="HEX"
                                                           Required="@Required" />
-                                            break;
-                                        default:
                                             break;
                                     }
 

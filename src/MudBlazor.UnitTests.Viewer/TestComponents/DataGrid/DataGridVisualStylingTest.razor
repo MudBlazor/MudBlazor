@@ -1,33 +1,30 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudDataGrid Items="@_items">
+﻿<MudDataGrid Items="@_items">
     <Columns>
-        <PropertyColumn Property="x => x.Name" CellStyleFunc="@_cellStyleFunc" HeaderStyleFunc="@_headerStyleFunc" HeaderClassFunc="@_headerClassFunc" />
+        <PropertyColumn Property="x => x.Name" CellStyleFunc="@CellStyleFunc" HeaderStyleFunc="@HeaderStyleFunc" HeaderClassFunc="@HeaderClassFunc" />
     </Columns>
 </MudDataGrid>
 
 @code {
-    private IEnumerable<Item> _items = new List<Item>()
+    private readonly IEnumerable<Item> _items = new List<Item>
     {
-        new Item("A"), 
-        new Item("B"), 
-        new Item("C")
+        new("A"), 
+        new("B"), 
+        new("C")
     };
 
     // style the cells according to the element's physical classification and the molar mass.
-    private Func<Item, string> _cellStyleFunc => x =>
+    private static Func<Item, string> CellStyleFunc => x =>
     {
-        if (x.Name == "B")
-            return "background-color:#E5BDE5";
-
-        if (x.Name == "C")
-            return "font-weight:bold";
-
-        return "";
+        return x.Name switch
+        {
+            "B" => "background-color:#E5BDE5",
+            "C" => "font-weight:bold",
+            _ => ""
+        };
     };
     
     // style the header according to the presence of elements.
-    private Func<IEnumerable<Item>, string> _headerStyleFunc => x =>
+    private static Func<IEnumerable<Item>, string> HeaderStyleFunc => x =>
     {
         var style = "";
         
@@ -48,26 +45,20 @@
     };
     
     // add classes to the header according to the presence of elements.
-    private Func<IEnumerable<Item>, string> _headerClassFunc => x =>
+    private static Func<IEnumerable<Item>, string> HeaderClassFunc => x =>
     {
-        var classes = "";
+        var classes = string.Empty;
         
         foreach (var item in x)
         {
-            classes += "class-" + item.Name + " ";
+            classes += $"class-{item.Name} ";
         }
 
         return classes.ToLower().Trim();
     };
 
-    public class Item
+    public class Item(string name)
     {
-        public string Name { get; set; }
-
-        public Item(string name)
-        {
-            Name = name;
-        }
+        public string Name { get; set; } = name;
     }
-
 }

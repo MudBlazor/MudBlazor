@@ -9,6 +9,7 @@ using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.Timeline;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -149,6 +150,23 @@ namespace MudBlazor.UnitTests.Components
             });
 
             comp.Find("div.mud-timeline-item-dot-inner").GetStyle()["background-color"].Should().Be("rgba(255, 0, 0, 1)");
+        }
+
+        /// <summary>
+        /// Test horizontal timeline inside vertical timeline.
+        /// </summary>
+        [Test]
+        public void HorizontalTimelineInsideVerticalTimeline_Test()
+        {
+            var comp = Context.RenderComponent<HorizontalTimelineInsideVerticalTimelineTest>();
+            // select elements needed for the test
+            var timeline = comp.FindComponent<MudTimeline>().Instance;
+            // validating some renders
+            timeline.Should().NotBeNull();
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-timeline").Count.Should().Be(2));
+            comp.FindAll("div.mud-timeline-item").Count.Should().Be(9);
+            var items = comp.FindComponents<MudTimelineItem>();
+            items.Count.Should().Be(9);
         }
     }
 }

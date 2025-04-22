@@ -7,10 +7,10 @@
 
     private int _index = -1; //default value cannot be 0 -> first selectedindex is 0.
 
-    public List<ChartSeries> Series = new List<ChartSeries>()
-    {
-        new ChartSeries() { Name = "Series 1", Data = new double[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 } }
-    };
+    public List<ChartSeries> Series = 
+    [
+        new() { Name = "Series 1", Data = [0, 0, 0, 0, 0, 0, 0, 0, 0] }
+    ];
 
-    public string[] XAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
+    public string[] XAxisLabels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"];
 }

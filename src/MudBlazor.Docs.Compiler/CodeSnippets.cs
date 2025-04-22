@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 using System.Text.RegularExpressions;
 
 namespace MudBlazor.Docs.Compiler
@@ -51,7 +48,7 @@ namespace MudBlazor.Docs.Compiler
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Error generating {Paths.SnippetsFilePath} : {e.Message}");
+                Console.WriteLine(@$"Error generating {Paths.SnippetsFilePath} : {e.Message}");
                 success = false;
             }
 

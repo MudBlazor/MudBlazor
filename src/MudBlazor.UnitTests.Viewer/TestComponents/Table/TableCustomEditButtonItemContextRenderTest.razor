@@ -1,7 +1,5 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudText>Latest button click item: @LatestButtonClickItem</MudText>
-<MudTable @ref="Table" T="string" Items="items" EditTrigger="TableEditTrigger.EditButton" EditButtonPosition="EditButtonPosition" ApplyButtonPosition="ApplyButtonPosition">
+﻿<MudText>Latest button click item: @LatestButtonClickItem</MudText>
+<MudTable T="string" Items="_items" EditTrigger="TableEditTrigger.EditButton" EditButtonPosition="EditButtonPosition" ApplyButtonPosition="ApplyButtonPosition">
     <HeaderContent>
         <MudTh>#</MudTh>
     </HeaderContent>
@@ -26,18 +24,18 @@
 
 @code {
     public static string __description__ = "Inline Edit Table: Custom edit button - Item context";
-    string[] items = new string[] { "A", "B", "C" };
-    
-    public object LatestButtonClickItem;
+
+    private readonly string[] _items = ["A", "B", "C"];
     
     [Parameter]
     public TableApplyButtonPosition ApplyButtonPosition { get; set; } = TableApplyButtonPosition.End;
+
     [Parameter]
     public TableEditButtonPosition EditButtonPosition { get; set; } = TableEditButtonPosition.End;
-    
-    public MudTable<string> Table { get; private set; }
 
-    private void CustomButtonClick(object item)
+    public object? LatestButtonClickItem { get; private set; }
+
+    private void CustomButtonClick(object? item)
     {
         LatestButtonClickItem = item;
     } 

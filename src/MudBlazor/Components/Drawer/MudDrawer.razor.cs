@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.Interfaces;
 using MudBlazor.Services;
 using MudBlazor.State;
@@ -15,10 +12,10 @@ namespace MudBlazor
     /// </summary>
     /// <seealso cref="MudDrawerContainer"/>
     /// <seealso cref="MudDrawerHeader"/>
-    public partial class MudDrawer : MudComponentBase, INavigationEventReceiver, IBrowserViewportObserver, IDisposable
+    public partial class MudDrawer : MudComponentBase, INavigationEventReceiver, IBrowserViewportObserver, IAsyncDisposable
     {
         private double _height;
-        private int _disposeCount;
+        private bool _disposed;
         private readonly ParameterState<bool> _rtlState;
         private readonly ParameterState<bool> _openState;
         private readonly ParameterState<Breakpoint> _breakpointState;
@@ -75,6 +72,8 @@ namespace MudBlazor
                 .AddClass($"mud-drawer-overlay-{Variant.ToDescriptionString()}")
                 .AddClass($"mud-drawer-overlay-{_breakpointState.Value.ToDescriptionString()}")
                 .AddClass($"mud-drawer-overlay--initial", _initial)
+                .AddClass($"mud-skip-overlay-positioning") // popovers try to position the overlay by zindex, this skips that behavior
+                .AddClass($"mud-skip-overlay-section") // drawer overlay remains outside of Section
                 .Build();
 
         protected string Stylename =>
@@ -209,7 +208,12 @@ namespace MudBlazor
         /// <item><description><see cref="Breakpoint.LgAndUp"/>: Aliases to <see cref="Breakpoint.Lg"/></description></item> 
         /// <item><description><see cref="Breakpoint.XlAndUp"/>: Aliases to <see cref="Breakpoint.Xl"/></description></item> 
         /// </list> 
-        /// Setting the value to <see cref="Breakpoint.None"/> will always close the drawer, while <see cref="Breakpoint.Always"/> will always keep it open. 
+        /// <para>
+        /// Setting the value to <see cref="Breakpoint.None"/> will always close the drawer, while <see cref="Breakpoint.Always"/> will always keep it open.
+        /// </para>
+        /// <para>
+        /// Applies when <see cref="Variant" /> is set to <see cref="DrawerVariant.Responsive"/> or <see cref="DrawerVariant.Mini" />.
+        /// </para>
         /// </remarks> 
         [Parameter]
         [Category(CategoryTypes.Drawer.Behavior)]
@@ -282,7 +286,10 @@ namespace MudBlazor
             if (firstRender)
             {
                 await UpdateHeightAsync();
-                await BrowserViewportService.SubscribeAsync(this, fireImmediately: true);
+                if (!_disposed)
+                {
+                    await BrowserViewportService.SubscribeAsync(this, fireImmediately: true);
+                }
 
                 _isRendered = true;
                 if (string.IsNullOrWhiteSpace(Height) && Anchor is Anchor.Bottom or Anchor.Top)
@@ -294,24 +301,17 @@ namespace MudBlazor
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        public void Dispose()
+        public async ValueTask DisposeAsync()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        public virtual void Dispose(bool disposing)
-        {
-            if (Interlocked.Increment(ref _disposeCount) == 1)
+            if (!_disposed)
             {
-                if (disposing)
-                {
-                    DrawerContainer?.Remove(this);
+                _disposed = true;
 
-                    if (IsJSRuntimeAvailable)
-                    {
-                        BrowserViewportService.UnsubscribeAsync(this).CatchAndLog();
-                    }
+                DrawerContainer?.Remove(this);
+
+                if (IsJSRuntimeAvailable)
+                {
+                    await BrowserViewportService.UnsubscribeAsync(this);
                 }
             }
         }
@@ -461,6 +461,11 @@ namespace MudBlazor
             if (browserViewportEventArgs.IsImmediate)
             {
                 _lastUpdatedBreakpoint = browserViewportEventArgs.Breakpoint;
+                if (!IsResponsiveOrMini())
+                {
+                    return;
+                }
+
                 if (HandleBreakpointNone())
                 {
                     await InitialOpenState(false);

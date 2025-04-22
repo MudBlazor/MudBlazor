@@ -7,7 +7,8 @@
               RequiredError="Enter a star"
               Culture="System.Globalization.CultureInfo.InvariantCulture" />
 
-<MudButton Variant="@Variant.Filled" 
+<MudButton id="format-change-button"
+           Variant="@Variant.Filled"
            Color="@Color.Primary"
            OnClick="@LaunchDelayedFormatChange">
     Launch delayed format change
@@ -24,19 +25,24 @@
 @code {
     public static string __description__ = "Test user input retention on component refresh before debounce with changed format.";
 
-    public int DebounceInterval = 500;
-    public int RerenderDelay = 2000;
-    public DateTime Date = new (2023, 07, 12);
-    public string Format = "yyyy/MM/dd";
-
     private int _renderCount;
+
+    public int DebounceInterval => 500;
+
+    public int RerenderDelay => 2000;
+
+    public DateTime Date { get; set; } = new(2023, 07, 12);
+
+    public string Format { get; set; } = "yyyy/MM/dd";
 
     protected override void OnAfterRender(bool firstRender)
     {
         _renderCount++;
+
+        base.OnAfterRender(firstRender);
     }
 
-    async Task LaunchDelayedFormatChange()
+    private async Task LaunchDelayedFormatChange()
     {
         await Task.Delay(RerenderDelay);
         Format = "dd/MM/yyyy";

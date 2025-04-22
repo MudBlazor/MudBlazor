@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 
+#nullable enable
 namespace MudBlazor
 {
     /// <summary>
@@ -8,13 +9,13 @@ namespace MudBlazor
     /// <remarks>
     /// This class is typically used to display multiple sets of values in a line, bar, or stacked bar chart.
     /// </remarks>
-    [DebuggerDisplay("{Index} = {Name} (Visible={IsVisible})")]
+    [DebuggerDisplay("{Index} = {Name} (Visible={Visible})")]
     public class ChartSeries
     {
         /// <summary>
         /// The legend label for this series.
         /// </summary>
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         /// <summary>
         /// The values to display.
@@ -22,7 +23,7 @@ namespace MudBlazor
         /// <remarks>
         /// The number of values in this array is typically equal to the number of values in the <see cref="MudChart"/> <c>XAxisLabels</c> property.
         /// </remarks>
-        public double[] Data { get; set; }
+        public double[] Data { get; set; } = [];
 
         /// <summary>
         /// Displays this series in the chart.
@@ -33,5 +34,29 @@ namespace MudBlazor
         /// The position of this series within a list.
         /// </summary>
         public int Index { get; set; }
+
+        /// <summary>
+        /// Shows points at datapoints on line and area charts.
+        /// </summary>
+        public bool ShowDataMarkers { get; set; }
+
+        /// <summary>
+        /// Tooltip title format for the series. Supported tags are {{SERIES_NAME}}, {{X_VALUE}} and {{Y_VALUE}}.
+        /// </summary>
+        public string DataMarkerTooltipTitleFormat { get; set; } = "{{Y_VALUE}}";
+
+        /// <summary>
+        /// Tooltip subtitle format for the series. Supported tags are {{SERIES_NAME}}, {{X_VALUE}} and {{Y_VALUE}}.
+        /// </summary>
+        public string? DataMarkerTooltipSubtitleFormat { get; set; }
+
+        /// <summary>
+        /// Tooltip YValue format for the series. It is used to format the {{Y_VALUE}} tag.
+        /// </summary>
+        public string? DataMarkerTooltipYValueFormat { get; set; }
+
+        public LineDisplayType LineDisplayType { get; set; }
+
+        public double FillOpacity { get; set; } = 0.4;
     }
 }

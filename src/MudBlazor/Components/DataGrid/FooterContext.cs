@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -15,7 +16,7 @@ namespace MudBlazor
     /// Represents the current state of a footer in a <see cref="MudDataGrid{T}"/>.
     /// </summary>
     /// <typeparam name="T">The kind of item being managed.</typeparam>
-    public class FooterContext<T>
+    public class FooterContext<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>
     {
         private readonly MudDataGrid<T> _dataGrid;
 

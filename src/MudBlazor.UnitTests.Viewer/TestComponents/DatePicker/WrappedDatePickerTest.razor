@@ -1,6 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudPopoverProvider></MudPopoverProvider>
+﻿<MudPopoverProvider />
 
 <MudGrid>
     <MudItem>
@@ -21,8 +19,10 @@
 </MudGrid>
 
 @code {
+
     public static string __description__ = "Selected date should show in input on first selection";
 
     public DateTime? SelectedDate { get; set; }
-    public MudDatePicker Picker { get; set; }
+
+    public MudDatePicker Picker { get; set; } = null!;
 }

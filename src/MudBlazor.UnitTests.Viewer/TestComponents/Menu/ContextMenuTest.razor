@@ -1,0 +1,46 @@
+﻿<MudCard Elevation="16" Style="max-width: 400px;">
+    <div @onclick="@(OpenContextMenu)" @oncontextmenu="@(OpenContextMenu)" @oncontextmenu:preventDefault>
+        <MudCardContent>
+            <MudText>Click me</MudText>
+        </MudCardContent>
+    </div>
+</MudCard>
+
+@if (ActivatorContent is null)
+{
+    <MudMenu PositionAtCursor @ref="_contextMenu" Label="@Label">
+        <MudMenuItem Label="Cut" />
+        <MudMenuItem Label="Copy" />
+        <MudMenuItem Label="Paste" />
+        <MudMenuItem Label="Delete" />
+    </MudMenu>
+}
+else
+{
+    <MudMenu PositionAtCursor @ref="_contextMenu" Label="@Label">
+        <ActivatorContent>@ActivatorContent</ActivatorContent>
+        <ChildContent>
+            <MudMenuItem Label="Cut" />
+            <MudMenuItem Label="Copy" />
+            <MudMenuItem Label="Paste" />
+            <MudMenuItem Label="Delete" />
+        </ChildContent>
+    </MudMenu>
+}
+
+@code {
+    public static string __description__ = "Left or right clicking the card should open a context menu. The padding above and below the card must be the same size.";
+
+    private MudMenu _contextMenu = null!;
+
+    [Parameter]
+    public string? Label { get; set; }
+
+    [Parameter]
+    public RenderFragment? ActivatorContent { get; set; }
+
+    private async Task OpenContextMenu(MouseEventArgs args)
+    {
+        await _contextMenu.OpenMenuAsync(args);
+    }
+}

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.State;
 using MudBlazor.Utilities;
@@ -69,7 +65,6 @@ namespace MudBlazor
                 .AddStyle($"max-height", MaxHeight, !string.IsNullOrWhiteSpace(MaxHeight))
                 .AddStyle(Style)
                 .Build();
-
 
         [CascadingParameter]
         private MudTreeView<T> MudTreeRoot { get; set; }
@@ -180,6 +175,13 @@ namespace MudBlazor
         public bool Disabled { get; set; }
 
         /// <summary>
+        /// Determines whether the <see cref="TreeItemData{T}"/> is displayed during filtering or not. True is visible and false is invisible.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Behavior)]
+        public Func<TreeItemData<T>, Task<bool>>? FilterFunc { get; set; }
+
+        /// <summary>
         /// Gets or sets whether to show a ripple effect when the user clicks the button. Default is true.
         /// </summary>
         [Parameter]
@@ -277,9 +279,70 @@ namespace MudBlazor
                 _isFirstRender = false;
                 await UpdateItemsAsync();
             }
+
             await base.OnAfterRenderAsync(firstRender);
         }
 
+        /// <summary>
+        /// Invokes the <see cref="FilterFunc"/> to be applied to every item.
+        /// </summary>
+        /// <returns>A task to represent the asynchronous operation.</returns>
+        public async Task FilterAsync()
+        {
+            if (Items is null)
+            {
+                return;
+            }
+
+            if (FilterFunc is null)
+            {
+                ResetFilter(Items);
+                return;
+            }
+
+            await TraverseFilterAsync(Items);
+        }
+
+        /// <summary>
+        /// The internal filter logic that traverses the tree recursively and applies the <see cref="FilterFunc"/> to every item to set the <see cref="MudTreeViewItem{T}.Visible"/> property
+        /// </summary>
+        /// <param name="items">The hierarchical tree structure to traverse</param>
+        /// <returns>A task to represent the asynchronous operation.</returns>
+        private async Task TraverseFilterAsync(IEnumerable<TreeItemData<T>> items)
+        {
+            foreach (var item in items)
+            {
+                if (item.HasChildren)
+                {
+                    /* Recursively traverse the tree. Since HasChildren performs the null check on the children we can use the null-forgiving operator here.
+                     * Same goes for the FilterFunc which is checked for null in the public Filter function that invokes this function.
+                     */
+                    await TraverseFilterAsync(item.Children);
+                    item.Expanded = item.Visible = await FilterFunc!(item) || item.Children.Any(c => c.Visible);
+                }
+                else
+                {
+                    item.Expanded = item.Visible = await FilterFunc!(item);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Resets the filter, so that all <see cref="MudTreeViewItem{T}.Visible"/> are set to true and the entire tree is visible.
+        /// </summary>
+        /// <param name="items">The items to reset</param>
+        private static void ResetFilter(IEnumerable<TreeItemData<T>> items)
+        {
+            foreach (var item in items)
+            {
+                if (item.HasChildren)
+                {
+                    ResetFilter(item.Children);
+                }
+
+                item.Visible = true;
+            }
+        }
 
         /// <summary>
         /// Expands all items and their children recursively.

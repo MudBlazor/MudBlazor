@@ -1,17 +1,11 @@
-﻿#pragma warning disable CS1998 // async without await
-#pragma warning disable IDE1006 // leading underscore
+﻿#pragma warning disable IDE1006 // leading underscore
 
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.ColorPicker;
 using MudBlazor.Utilities;
 using NUnit.Framework;
@@ -147,7 +141,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task Default()
+        public void Default()
         {
             var comp = Context.RenderComponent<MudColorPicker>();
 
@@ -1139,9 +1133,9 @@ namespace MudBlazor.UnitTests.Components
             await comp.Instance.OpenPicker();
 
             var providerNode = comp.Find(".mud-popover-provider");
-            providerNode.Children.Should().ContainSingle();
+            providerNode.Children.Count().Should().Be(2);
 
-            var popoverNode = providerNode.Children[0];
+            var popoverNode = providerNode.Children[1];
 
             popoverNode.ClassList.Should().BeEquivalentTo(
             [
@@ -1149,8 +1143,10 @@ namespace MudBlazor.UnitTests.Components
                 "mud-popover-fixed",
                 "mud-popover-open",
                 "mud-popover-top-left",
-                "mud-popover-anchor-top-left",
+                "mud-popover-anchor-bottom-left",
                 "mud-popover-overflow-flip-onopen",
+                "mud-picker-popover",
+                "mud-elevation-8",
             ]);
         }
 

@@ -1,6 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudTreeView Class="tree1" T="string" SelectionMode="SelectionMode.MultiSelection" @bind-SelectedValue="SelectedValue" @bind-SelectedValues="SelectedValues" AutoSelectParent="@AutoSelectParent">
+﻿<MudTreeView Class="tree1" T="string" SelectionMode="SelectionMode.MultiSelection" @bind-SelectedValue="SelectedValue" @bind-SelectedValues="SelectedValues" AutoSelectParent="@AutoSelectParent">
     <MudTreeViewItem Class="item-1" Value='"item1"'>
         <MudTreeViewItem Class="item-1-1" Value='"item1.1"' />
         <MudTreeViewItem Class="item-1-2" Value='"item1.2"' />
@@ -12,7 +10,12 @@
 </p>
 
 @code {
-    [Parameter] public string SelectedValue { get; set; }
-    [Parameter] public IReadOnlyCollection<string> SelectedValues { get; set; }
-    [Parameter] public bool AutoSelectParent { get; set; } = true;
+    [Parameter]
+    public string? SelectedValue { get; set; }
+
+    [Parameter]
+    public IReadOnlyCollection<string>? SelectedValues { get; set; }
+
+    [Parameter]
+    public bool AutoSelectParent { get; set; } = true;
 }

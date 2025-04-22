@@ -12,7 +12,7 @@
 @if (Codes != null || ChildContent != null)
 {
     <div class="@Classname">
-        @if (Codes != null || ChildContent != null)
+        @if (Codes != null || (_hasCode && ChildContent != null))
         {
             <MudToolBar Class="@ToolbarClassname">
                 @if(Codes != null)

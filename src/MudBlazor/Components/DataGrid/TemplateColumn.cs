@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
@@ -12,7 +13,7 @@ namespace MudBlazor
     /// Represents an additional column for a <see cref="MudDataGrid{T}"/> which isn't tied to data.
     /// </summary>
     /// <typeparam name="T">The type of data represented by this column.</typeparam>
-    public partial class TemplateColumn<T> : Column<T>
+    public partial class TemplateColumn<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : Column<T>
     {
         protected internal override object? CellContent(T item)
             => null;

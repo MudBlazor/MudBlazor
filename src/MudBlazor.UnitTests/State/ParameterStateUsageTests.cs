@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using AngleSharp.Dom;
+﻿using AngleSharp.Dom;
 using Bunit;
 using Bunit.Rendering;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
-using MudBlazor.UnitTests.Components;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.State;
@@ -469,5 +465,69 @@ public class ParameterStateUsageTests : BunitTest
         comp.Instance.ExpandedChild1BindSyntax.Should().BeFalse();
         comp.Instance.ExpandedChild2VariableAndCallback.Should().BeFalse();
         comp.Instance.ExpandedChild4OneWay.Should().BeFalse();
+    }
+
+    [Test]
+    public async Task ParentChild_IsChildOriginatedChange_Test()
+    {
+        var comp = Context.RenderComponent<ParameterStateChildParentTestComp>();
+        IElement ButtonParent() => comp.Find("#parentBtn");
+        IElement ButtonChild1() => comp.Find("#childBtn1");
+        IElement ButtonChild2() => comp.Find("#childBtn2");
+
+        // ParameterState change handler events for ParameterStateChildComp1
+        IElement ParamChanges1() => comp.Find(".parameter-changes1");
+        // ParameterState change handler events for ParameterStateChildComp2
+        IElement ParamChanges2() => comp.Find(".parameter-changes2");
+
+        // This is expected because the default value of Counter in the child component is 0, 
+        // but the parent overrides the initial value to 1 during initialization. 
+        // Therefore, we get the correct data. If the parent had 
+        // `Counter { get; internal set; } = 0`, no change would have occurred.
+        ParamChanges1().Children.Length.Should().Be(1);
+        ParamChanges1().Children[0].TextContent.Trimmed().Should().Be("Counter: 0=>1 by Parent");
+
+        ParamChanges2().Children.Length.Should().Be(1);
+        ParamChanges2().Children[0].TextContent.Trimmed().Should().Be("Counter: 0=>1 by Parent");
+
+        // Click twice on parent button
+        await ButtonParent().ClickAsync(new MouseEventArgs());
+        await ButtonParent().ClickAsync(new MouseEventArgs());
+        // Click once on child1 button
+        await ButtonChild1().ClickAsync(new MouseEventArgs());
+
+        ParamChanges1().Children.Length.Should().Be(4);
+        ParamChanges1().Children[1].TextContent.Trimmed().Should().Be("Counter: 1=>2 by Parent");
+        ParamChanges1().Children[2].TextContent.Trimmed().Should().Be("Counter: 2=>3 by Parent");
+        ParamChanges1().Children[3].TextContent.Trimmed().Should().Be("Counter: 3=>4 by Child");
+
+        ParamChanges2().Children.Length.Should().Be(4);
+        ParamChanges2().Children[1].TextContent.Trimmed().Should().Be("Counter: 1=>2 by Parent");
+        ParamChanges2().Children[2].TextContent.Trimmed().Should().Be("Counter: 2=>3 by Parent");
+        ParamChanges2().Children[3].TextContent.Trimmed().Should().Be("Counter: 3=>4 by Parent", because: "For Child2 the Child1 is his parent.");
+
+        // Click once on parent button
+        await ButtonParent().ClickAsync(new MouseEventArgs());
+        // Click twice on child1 button
+        await ButtonChild1().ClickAsync(new MouseEventArgs());
+        await ButtonChild1().ClickAsync(new MouseEventArgs());
+
+        ParamChanges1().Children.Length.Should().Be(7);
+        ParamChanges1().Children[4].TextContent.Trimmed().Should().Be("Counter: 4=>5 by Parent");
+        ParamChanges1().Children[5].TextContent.Trimmed().Should().Be("Counter: 5=>6 by Child");
+        ParamChanges1().Children[6].TextContent.Trimmed().Should().Be("Counter: 6=>7 by Child");
+
+        ParamChanges2().Children.Length.Should().Be(7);
+        ParamChanges2().Children[4].TextContent.Trimmed().Should().Be("Counter: 4=>5 by Parent");
+        ParamChanges2().Children[5].TextContent.Trimmed().Should().Be("Counter: 5=>6 by Parent", because: "For Child2 the Child1 is his parent.");
+        ParamChanges2().Children[6].TextContent.Trimmed().Should().Be("Counter: 6=>7 by Parent", because: "For Child2 the Child1 is his parent.");
+
+        await ButtonChild2().ClickAsync(new MouseEventArgs());
+
+        ParamChanges1().Children.Length.Should().Be(8);
+        ParamChanges1().Children[7].TextContent.Trimmed().Should().Be("Counter: 7=>8 by Child");
+
+        ParamChanges2().Children.Length.Should().Be(8);
+        ParamChanges2().Children[7].TextContent.Trimmed().Should().Be("Counter: 7=>8 by Child");
     }
 }

@@ -2,8 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Collections.Generic;
-using System.Linq;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
@@ -13,7 +12,7 @@ namespace MudBlazor
     /// Represents a cell displayed at the bottom of a column.
     /// </summary>
     /// <typeparam name="T">The kind of data managed by this footer.</typeparam>
-    public partial class FooterCell<T> : MudComponentBase
+    public partial class FooterCell<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase
     {
         /// <summary>
         /// The <see cref="MudDataGrid{T}"/> which contains this footer cell.
@@ -39,20 +38,21 @@ namespace MudBlazor
         [Parameter]
         public IEnumerable<T> CurrentItems { get; set; }
 
-        private string _classname =>
+        private string Classname =>
             new CssBuilder("footer-cell")
                 .AddClass(Column?.FooterClassFunc?.Invoke(items ?? Enumerable.Empty<T>()))
                 .AddClass(Column?.FooterClass)
-                .AddClass(Column?.footerClassname)
+                .AddClass(Column?.FooterClassname)
                 .AddClass(Class)
-            .Build();
-        private string _style =>
+                .Build();
+
+        private string Stylename =>
             new StyleBuilder()
                 .AddStyle(Column?.FooterStyleFunc?.Invoke(items ?? Enumerable.Empty<T>()))
                 .AddStyle(Column?.FooterStyle)
                 .AddStyle(Style)
                 .AddStyle("font-weight", "600")
-            .Build();
+                .Build();
 
         internal IEnumerable<T> items
         {

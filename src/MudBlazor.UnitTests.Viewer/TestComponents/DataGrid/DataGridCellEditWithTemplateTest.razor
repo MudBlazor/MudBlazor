@@ -1,6 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudDataGrid Items="@_items" ReadOnly="false" EditMode="@DataGridEditMode.Cell">
+﻿<MudDataGrid Items="@_items" ReadOnly="false" EditMode="@DataGridEditMode.Cell">
     <Columns>
         <PropertyColumn Property="x => x.Name" />
         <PropertyColumn Property="x => x.Age" />
@@ -13,25 +11,17 @@
 </MudDataGrid>
 
 @code {
-    private IEnumerable<Model> _items = new List<Model>()
+    private readonly IEnumerable<Model> _items = new List<Model>
     {
-        new Model("John", 45, false), 
-        new Model("Johanna", 23, true), 
-        new Model("Steve", 32, false)
+        new("John", 45, false), 
+        new("Johanna", 23, true), 
+        new("Steve", 32, false)
     };
 
-    public class Model
+    public class Model(string name, int age, bool hired)
     {
-        public string Name { get; set; }
-        public int Age { get; set; }
-        public bool Hired { get; set; }
-
-        public Model(string name, int age, bool hired)
-        {
-            this.Name = name;
-            this.Age = age;
-            this.Hired = hired;
-        }
-
+        public string Name { get; set; } = name;
+        public int Age { get; set; } = age;
+        public bool Hired { get; set; } = hired;
     }
 }

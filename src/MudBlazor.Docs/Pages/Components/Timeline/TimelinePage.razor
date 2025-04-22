@@ -1,9 +1,7 @@
 ﻿@page "/components/timeline"
-@page "/components/MudTimeline"
-@page "/components/MudTimelineItem"
 
 <DocsPage>
-    <DocsPageHeader Title="Timeline" SubTitle="The timeline displays items in chronological order." />
+    <DocsPageHeader Title="Timeline" Component="@nameof(MudTimeline)" SubTitle="The timeline displays items in chronological order." />
     <DocsPageContent>
 
         <DocsPageSection>
@@ -69,14 +67,23 @@
             </SectionContent>
         </DocsPageSection>
 
-        <DocsPageSection>
-            <SectionHeader Title="Timeline Align">
-                <Description>You can set from which direction the dots should start from by changing the <CodeInline>TimelineAlign</CodeInline> on the <CodeInline>Timeline</CodeInline> component itself.</Description>
-            </SectionHeader>
-            <SectionContent Code="@nameof(TimelineAlignExample)" ShowCode="false" Block="true">
-                <TimelineAlignExample />
-            </SectionContent>
-        </DocsPageSection>
+      <DocsPageSection>
+        <SectionHeader Title="Timeline Align">
+          <Description>You can set from which direction the dots should start from by changing the <CodeInline>TimelineAlign</CodeInline> on the <CodeInline>Timeline</CodeInline> component itself.</Description>
+        </SectionHeader>
+        <SectionContent Code="@nameof(TimelineAlignExample)" ShowCode="false" Block="true">
+          <TimelineAlignExample />
+        </SectionContent>
+      </DocsPageSection>
+
+      <DocsPageSection>
+        <SectionHeader Title="Chat Bubbles">
+          <Description>You can use the timeline with <CodeInline>Chat</CodeInline> to create a chat timeline.</Description>
+        </SectionHeader>
+        <SectionContent Code="@nameof(TimelineChatExample)" ShowCode="false" Block="true">
+          <TimelineChatExample />
+        </SectionContent>
+      </DocsPageSection>
 
     </DocsPageContent>
 </DocsPage>

@@ -13,7 +13,11 @@ namespace MudBlazor
     /// or <see href="https://developer.mozilla.org/docs/Web/HTML/Element/a">anchor</see> if <c>Href</c> is set.<br/>
     /// You can directly add attributes like <c>title</c> or <c>aria-label</c>.
     /// </remarks>
-    public partial class MudIconButton : MudBaseButton, IHandleEvent
+    /// <seealso cref="MudButton" />
+    /// <seealso cref="MudFab" />
+    /// <seealso cref="MudToggleIconButton" />
+    /// <seealso cref="MudIcon"/>
+    public partial class MudIconButton : MudBaseButton
     {
         protected string Classname => new CssBuilder("mud-button-root mud-icon-button")
             .AddClass("mud-button", when: AsButton)
@@ -45,11 +49,11 @@ namespace MudBlazor
         /// The color of the button.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Color.Default"/>.  Theme colors are supported.
+        /// Defaults to <see cref="Color.Default"/> in <see cref="MudGlobal.ButtonDefaults.Color"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public Color Color { get; set; } = Color.Default;
+        public Color Color { get; set; } = MudGlobal.ButtonDefaults.Color;
 
         /// <summary>
         /// The size of the button.
@@ -72,14 +76,14 @@ namespace MudBlazor
         public Edge Edge { get; set; }
 
         /// <summary>
-        /// The variation to use.
+        /// The display variation to use.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Variant.Text"/>.  Other values include <see cref="Variant.Filled"/> and <see cref="Variant.Outlined"/>.
+        /// Defaults to <see cref="Variant.Text"/> in <see cref="MudGlobal.ButtonDefaults.Variant"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Button.Appearance)]
-        public Variant Variant { get; set; } = Variant.Text;
+        public Variant Variant { get; set; } = MudGlobal.ButtonDefaults.Variant;
 
         /// <summary>
         /// The custom content within this button.
@@ -90,13 +94,5 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Button.Behavior)]
         public RenderFragment? ChildContent { get; set; }
-
-        /// <inheritdoc/>
-        /// <remarks>
-        /// See: https://github.com/MudBlazor/MudBlazor/issues/8365
-        /// <para/>
-        /// Since <see cref="MudIconButton"/> implements only single <see cref="EventCallback"/> <see cref="MudBaseButton.OnClick"/> this is safe to disable globally within the component.
-        /// </remarks>
-        Task IHandleEvent.HandleEventAsync(EventCallbackWorkItem callback, object? arg) => callback.InvokeAsync(arg);
     }
 }

@@ -62,7 +62,6 @@ public partial class SectionContent
     [Parameter] public string HighLight { get; set; }
     [Parameter] public IEnumerable<CodeFile> Codes { get; set; }
     [Parameter] public RenderFragment ChildContent { get; set; }
-
     [Parameter] public bool IsApiSection { get; set; }
 
     private bool _hasCode;

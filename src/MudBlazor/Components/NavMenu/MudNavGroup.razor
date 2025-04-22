@@ -20,7 +20,14 @@
             <MudIcon Disabled="@Disabled" Icon="@Icon" Color="@IconColor" Class="@IconClassname" />
         }
         <div Class="mud-nav-link-text">
-            @Title
+            @if (TitleContent is not null)
+            {
+                @TitleContent
+            }
+            else
+            {
+                @Title
+            }
         </div>
         @if (!HideExpandIcon)
         {

@@ -117,16 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="MUD0001Description" xml:space="preserve">
+  <data name="MUD0002Description" xml:space="preserve">
     <value>This is not a component parameter, it could be an attribute.</value>
   </data>
-  <data name="MUD0001MessageFormat" xml:space="preserve">
-    <value>Illegal Parameter '{0}' on '{1}' using '{2}' source location '{3}'</value>
-  </data>
-  <data name="MUD0001Title" xml:space="preserve">
+  <data name="MUD0002Title" xml:space="preserve">
     <value>Unknown MudBlazor attribute/parameter</value>
   </data>
-  <data name="MUD0001Url" xml:space="preserve">
+  <data name="MUD0002Url" xml:space="preserve">
     <value>https://mudblazor.com/features/analyzers</value>
   </data>
   <data name="MUD0002MessageFormat" xml:space="preserve">

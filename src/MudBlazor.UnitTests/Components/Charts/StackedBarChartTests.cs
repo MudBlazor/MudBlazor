@@ -1,14 +1,10 @@
 ﻿// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
-
-using System.Collections.Generic;
-using System.Linq;
 using Bunit;
 using FluentAssertions;
 using MudBlazor.Charts;
 using MudBlazor.UnitTests.Components;
-using MudBlazor.UnitTests.Utilities;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Charts
@@ -61,7 +57,7 @@ namespace MudBlazor.UnitTests.Charts
             var comp = Context.RenderComponent<MudChart>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.StackedBar)
                 .Add(p => p.Height, "350px")
-                .Add(p => p.Width, "100%")
+                .Add(p => p.Width, "650px")
                 .Add(p => p.ChartOptions, new ChartOptions { ChartPalette = _baseChartPalette })
                 .Add(p => p.ChartSeries, chartSeries)
                 .Add(p => p.XAxisLabels, xAxisLabels));
@@ -91,17 +87,11 @@ namespace MudBlazor.UnitTests.Charts
                     Contain("United States").And.Contain("Germany").And.Contain("Sweden");
             }
 
-            if (chartSeries.Count == 3 && chartSeries.Any(x => x.Data.Contains(40)))
-            {
-                comp.Markup.Should()
-                    .Contain("d=\"M 59 325 L 59 225\"");
-            }
+            comp.Markup.Should()
+                .Contain("d=\"M 62.9 320 L 62.9 221.1667\"");
 
-            if (chartSeries.Count == 3 && chartSeries.Any(x => x.Data.Contains(18)))
-            {
-                comp.Markup.Should()
-                    .Contain("d=\"M 579 210 L 579 165\"");
-            }
+            comp.Markup.Should()
+                .Contain("d=\"M 587.7 206.9167 L 587.7 162.1667\"");
 
             comp.SetParametersAndRender(parameters => parameters
                 .Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _modifiedPalette }));
@@ -148,7 +138,7 @@ namespace MudBlazor.UnitTests.Charts
             var paths1 = comp.FindAll("path");
 
             int count;
-            count = paths1.Count(p => p.OuterHtml.Contains($"fill=\"{"#1E9AB0"}\"") && p.OuterHtml.Contains($"stroke=\"{"#1E9AB0"}\""));
+            count = paths1.Count(p => p.OuterHtml.Contains($"fill=\"none\"") && p.OuterHtml.Contains($"stroke=\"{"#1E9AB0"}\""));
             count.Should().Be(5 * 22);
 
             comp.SetParametersAndRender(parameters => parameters
@@ -158,7 +148,7 @@ namespace MudBlazor.UnitTests.Charts
 
             foreach (var color in _customPalette)
             {
-                count = paths2.Count(p => p.OuterHtml.Contains($"fill=\"{color}\"") && p.OuterHtml.Contains($"stroke=\"{color}\""));
+                count = paths2.Count(p => p.OuterHtml.Contains($"fill=\"none\"") && p.OuterHtml.Contains($"stroke=\"{color}\""));
                 if (color == _customPalette[0])
                 {
                     count.Should().Be(5 * 2, because: "the number of series defined exceeds the number of colors in the chart palette, thus, any new defined series takes the color from the chart palette in the same fashion as the previous series starting from the beginning");

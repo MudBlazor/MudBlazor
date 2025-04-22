@@ -2,12 +2,9 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Interfaces;
 using MudBlazor.State;
@@ -19,7 +16,8 @@ namespace MudBlazor
     /// Represents a vertical set of values.
     /// </summary>
     /// <typeparam name="T">The kind of item for this column.</typeparam>
-    public abstract partial class Column<T> : MudComponentBase, IDisposable
+    /// <seealso cref="MudDataGrid{T}"/>
+    public abstract partial class Column<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase, IDisposable
     {
         private static readonly RenderFragment<CellContext<T>> EmptyChildContent = _ => builder => { };
         internal ParameterState<bool> HiddenState { get; }
@@ -104,6 +102,12 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public RenderFragment<GroupDefinition<T>> GroupTemplate { get; set; }
+
+        /// <summary>
+        /// The template used to display this column's aggregate.
+        /// </summary>
+        [Parameter]
+        public RenderFragment<IEnumerable<T>> AggregateTemplate { get; set; }
 
         /// <summary>
         /// The function which groups values in this column.
@@ -230,11 +234,7 @@ namespace MudBlazor
         /// The comparison used for values in this column.
         /// </summary>
         [Parameter]
-        public IComparer<object> Comparer
-        {
-            get => _comparer;
-            set => _comparer = value;
-        }
+        public IComparer<object> Comparer { get; set; } = null;
 
         /// <summary>
         /// The function used to sort values in this column.
@@ -311,6 +311,12 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public RenderFragment<FilterContext<T>> FilterTemplate { get; set; }
+
+        /// <summary>
+        /// The operators to use for this column's filter.
+        /// </summary>
+        [Parameter]
+        public HashSet<string> FilterOperators { get; set; } = [];
 
         /// <summary>
         /// The unique identifier for this column.
@@ -434,24 +440,19 @@ namespace MudBlazor
 
         #endregion
 
-        /// <summary>
-        /// Occurs when this column's state has changed.
-        /// </summary>
-        public Action ColumnStateHasChanged { get; set; }
-
-        internal string headerClassname =>
+        internal string HeaderClassname =>
             new CssBuilder("mud-table-cell")
                 .AddClass("mud-table-cell-hide", HideSmall)
                 .AddClass("sticky-left", StickyLeft)
                 .AddClass("sticky-right", StickyRight)
                 .AddClass(Class)
-            .Build();
+                .Build();
 
-        internal string footerClassname =>
+        internal string FooterClassname =>
             new CssBuilder("mud-table-cell")
                 .AddClass("mud-table-cell-hide", HideSmall)
                 .AddClass(Class)
-            .Build();
+                .Build();
 
         #region Computed Properties
 
@@ -508,7 +509,6 @@ namespace MudBlazor
         internal int SortIndex { get; set; } = -1;
         internal HeaderCell<T> HeaderCell { get; set; }
 
-        private IComparer<object> _comparer = null;
         private Func<T, object> _sortBy;
         internal Func<T, object> groupBy;
         internal HeaderContext<T> headerContext;
@@ -525,7 +525,7 @@ namespace MudBlazor
                 // Make sure that when we access filterContext properties, they have been defined...
                 if (filterContext.FilterDefinition == null)
                 {
-                    var operators = FilterOperator.GetOperatorByDataType(PropertyType);
+                    var operators = GetFilterOperators(FieldType.Identify(PropertyType));
                     var filterDefinition = DataGrid.CreateFilterDefinitionInstance();
                     filterDefinition.Title = Title;
                     filterDefinition.Operator = operators.FirstOrDefault();
@@ -562,11 +562,22 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
+            if (FilterOperators.Count > 0)
+            {
+                var defaultOperators = FilterOperator.GetOperatorByDataType(PropertyType);
+                var invalidOperators = FilterOperators.Where(@operator => !defaultOperators.Contains(@operator)).ToArray();
+
+                if (invalidOperators.Length > 0)
+                {
+                    throw new ArgumentException($"Invalid filter operators for {PropertyType.Name}: {string.Join(", ", invalidOperators)}");
+                }
+            }
+
             base.OnInitialized();
+
             groupBy = GroupBy;
 
-            if (DataGrid != null)
-                DataGrid.AddColumn(this);
+            DataGrid?.AddColumn(this);
 
             // Add the HeaderContext
             headerContext = new HeaderContext<T>(DataGrid);
@@ -591,6 +602,18 @@ namespace MudBlazor
 
             // Add the FooterContext
             footerContext = new FooterContext<T>(DataGrid);
+        }
+
+        internal IReadOnlyCollection<string> GetFilterOperators(FieldType fieldType)
+        {
+            if (FilterOperators.Count == 0)
+            {
+                return FilterOperator.GetOperatorByDataType(fieldType);
+            }
+            else
+            {
+                return FilterOperators;
+            }
         }
 
         internal Func<T, object> GetLocalSortFunc()

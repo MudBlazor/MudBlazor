@@ -1,29 +1,33 @@
-@namespace MudBlazor.UnitTests.TestComponents
+﻿
 
 <MudDataGrid T="Item" Items="@_items" EditMode="@DataGridEditMode.Cell"
-    RowClick="@OnRowClick"
-    RowContextMenuClick="@OnRowContextMenuClick"
-    SelectedItemChanged="@OnSelectedItemChanged"
-    CommittedItemChanges="@OnCommittedItemChanges" 
-    StartedEditingItem="@OnStartedEditingItem" 
-    CanceledEditingItem="@OnCanceledEditingItem"
-    ReadOnly="false">
+             RowClick="@OnRowClick"
+             RowContextMenuClick="@OnRowContextMenuClick"
+             SelectedItemChanged="@OnSelectedItemChanged"
+             SelectedItemsChanged="@OnSelectedItemsChanged"
+             CommittedItemChanges="@OnCommittedItemChanges"
+             StartedEditingItem="@OnStartedEditingItem"
+             CanceledEditingItem="@OnCanceledEditingItem"
+             ReadOnly="false">
     <Columns>
         <PropertyColumn Property="x => x.Name" />
     </Columns>
 </MudDataGrid>
 
 @code {
+    public static string __description__ = "Used for Unit Tests to verify SelectedItem/SelectedItems Changed";
+
     private IEnumerable<Item> _items = new List<Item>()
     {
-        new Item("A"), 
-        new Item("B"), 
+        new Item("A"),
+        new Item("B"),
         new Item("C")
     };
 
     public bool RowClicked { get; set; }
     public bool RowContextMenuClicked { get; set; }
     public bool SelectedItemChanged { get; set; }
+    public bool SelectedItemsChanged { get; set; }
     public bool CommittedItemChanges { get; set; }
     public bool StartedEditingItem { get; set; }
     public bool CanceledEditingItem { get; set; }
@@ -32,7 +36,7 @@
     {
         RowClicked = true;
     }
-    
+
     private void OnRowContextMenuClick(DataGridRowClickEventArgs<Item> args)
     {
         RowContextMenuClicked = true;
@@ -41,6 +45,11 @@
     private void OnSelectedItemChanged(Item item)
     {
         SelectedItemChanged = true;
+    }
+
+    private void OnSelectedItemsChanged(HashSet<Item> items)
+    {
+        SelectedItemsChanged = true;
     }
 
     private void OnCommittedItemChanges(Item item)

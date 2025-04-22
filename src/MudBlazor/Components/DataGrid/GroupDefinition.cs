@@ -2,12 +2,9 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Linq;
-
 namespace MudBlazor;
 
 #nullable enable
-
 /// <summary>
 /// Represents the grouping information for columns in a <see cref="MudDataGrid{T}"/>.
 /// </summary>
@@ -17,7 +14,7 @@ public class GroupDefinition<T>
     /// <summary>
     /// The LINQ definition of the grouping.
     /// </summary>
-    public IGrouping<object, T> Grouping { get; set; }
+    public IGrouping<object?, T> Grouping { get; set; }
 
     /// <summary>
     /// Expands this group.
@@ -32,7 +29,7 @@ public class GroupDefinition<T>
     /// </summary>
     /// <param name="grouping">The LINQ definition of the grouping.</param>
     /// <param name="expanded">Expands this group.</param>
-    public GroupDefinition(IGrouping<object, T> grouping, bool expanded)
+    public GroupDefinition(IGrouping<object?, T> grouping, bool expanded)
     {
         Grouping = grouping;
         Expanded = expanded;

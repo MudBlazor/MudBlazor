@@ -1,0 +1,214 @@
+
+
+.mud-stepper {
+
+  .mud-stepper-nav {
+
+    .mud-step {
+      padding: 24px;
+      position: relative;
+      cursor: default;
+      pointer-events: none;
+      user-select: text;
+
+      &.mud-clickable {
+        cursor: pointer;
+        pointer-events: auto;
+        user-select: none;
+        transition: background-color 250ms cubic-bezier(.4,0,.2,1) 0ms,box-shadow 250ms cubic-bezier(.4,0,.2,1) 0ms,border 250ms cubic-bezier(.4,0,.2,1) 0ms;
+
+        @media(hover: hover) and (pointer: fine) {
+          &:hover {
+            background-color: var(--mud-palette-action-default-hover);
+          }
+        }
+
+        &:focus-visible, &:active {
+          background-color: var(--mud-palette-action-default-hover);
+        }
+      }
+
+      &:disabled {
+        .mud-step-label-icon {
+          background-color: var(--mud-palette-lines-default) !important;
+          color: var(--mud-palette-text-disabled) !important;
+        }
+
+        .mud-step-label-content {
+          color: var(--mud-palette-text-disabled) !important;
+        }
+      }
+
+      .mud-step-label {
+        display: flex;
+        align-items: center;
+        flex-direction: row;
+        height: 100%;
+        gap: 8px;
+
+        .mud-step-label-icon {
+          display: flex;
+          flex-shrink: 0;
+          color: var(--mud-palette-white);
+          border-radius: 50%;
+          background-color: var(--mud-palette-text-disabled);
+          height: 24px;
+          width: 24px;
+          align-items: center;
+          justify-content: center;
+          font-size: 12px;
+          letter-spacing: 0;
+          text-indent: 0;
+          white-space: nowrap;
+
+          .mud-typography {
+            line-height: 1;
+          }
+        }
+
+        .mud-step-label-content {
+          width: 100%;
+          color: var(--mud-palette-text-secondary);
+          --mud-ripple-color: var(--mud-palette-text-secondary);
+          text-align: start;
+        }
+
+        .mud-step-label-content-title {
+          line-height: var(--mud-typography-body2-lineheight)
+        }
+      }
+
+      &.active {
+        .mud-step-label-content {
+          color: var(--mud-palette-text-primary);
+          --mud-ripple-color: var(--mud-palette-text-primary);
+        }
+      }
+    }
+
+    &.mud-stepper-nav-scrollable {
+      overflow: auto;
+
+      .mud-step {
+        min-width: fit-content;
+      }
+
+      .mud-stepper-nav-connector {
+        min-width: 32px;
+      }
+    }
+  }
+
+  .mud-stepper-content {
+    padding: 0 24px;
+  }
+
+  .mud-stepper-nav-connector {
+    flex: 1 1 auto;
+
+    .mud-stepper-nav-connector-line {
+      display: block;
+      border-color: var(--mud-palette-lines-inputs);
+    }
+  }
+
+  &.mud-stepper__horizontal {
+
+    .mud-stepper-nav {
+      display: flex;
+    }
+
+    &.mud-stepper__center-labels {
+
+      .mud-step {
+        flex-basis: 175px;
+      }
+
+      .mud-step-label {
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+
+        .mud-step-label-icon {
+          margin-inline-end: 0px !important;
+        }
+
+        .mud-step-label-content {
+          margin-top: 12px;
+          text-align: center;
+        }
+      }
+
+      .mud-stepper-nav-connector {
+        margin: 35px -67px 0;
+        align-self: flex-start;
+      }
+    }
+
+    .mud-stepper-nav-connector {
+      align-self: center;
+      margin: 0 -16px;
+
+      .mud-stepper-nav-connector-line {
+        border-top-style: solid;
+        border-top-width: 1px;
+      }
+    }
+  }
+
+  &.mud-stepper__vertical {
+
+    .mud-stepper-nav {
+      padding: 8px 0px;
+    }
+
+    .mud-step {
+      padding: 0 16px;
+
+      .mud-step-label {
+        padding: 8px 0px;
+      }
+    }
+
+    .mud-stepper-nav-connector {
+      margin-inline-start: 28px;
+      margin-inline-end: 0;
+
+      .mud-stepper-nav-connector-line {
+        border-inline-start: 1px solid rgb(189, 189, 189);
+        min-height: 24px;
+      }
+    }
+
+    .mud-stepper-content {
+      margin-inline-start: 28px;
+      margin-inline-end: 0;
+      padding-inline-start: 20px;
+      padding-inline-end: 0;
+      border-inline-start: 1px solid var(--mud-palette-lines-inputs);
+    }
+  }
+}
+
+.mud-stepper-step-button {
+  display: inline-flex;
+  -moz-box-align: center;
+  align-items: center;
+  -moz-box-pack: center;
+  justify-content: center;
+  position: relative;
+  background-color: transparent;
+  outline: 0px;
+  border: 0px;
+  border-radius: 0px;
+  cursor: pointer;
+  user-select: none;
+  vertical-align: middle;
+  appearance: none;
+  text-decoration: none;
+  color: inherit;
+  width: 100%;
+  padding: 24px 16px;
+  margin: -24px -16px;
+  box-sizing: content-box;
+}

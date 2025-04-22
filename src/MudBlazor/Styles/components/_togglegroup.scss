@@ -5,6 +5,7 @@
   overflow: hidden;
   box-sizing: border-box;
   border-width: 0;
+  border-radius: var(--mud-default-borderradius);
 
   & > .mud-toggle-item {
     box-shadow: none;
@@ -55,14 +56,29 @@
   & > .mud-button-label {
     min-height: 20px;
   }
+
+  .mud-toggle-item-check-icon {
+    margin: 0 6px;
+    font-size: 20px;
+  }
 }
 
 .mud-toggle-item-size-small {
   padding: 4px;
+
+  .mud-toggle-item-check-icon {
+    margin: 0 4px;
+    font-size: 18px;
+  }
 }
 
 .mud-toggle-item-size-large {
   padding: 8px;
+
+  .mud-toggle-item-check-icon {
+    margin: 0 8px;
+    font-size: 22px;
+  }
 }
 
 .mud-toggle-item-fixed > .mud-button-label:has(>.mud-toggle-item-check-icon) {

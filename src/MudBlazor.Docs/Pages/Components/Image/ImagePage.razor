@@ -1,12 +1,7 @@
 ﻿@page "/components/image"
-@page "/components/MudImage"
 
 <DocsPage>
-    <DocsPageHeader Title="Image" SubTitle="A simple component that represent the HTML img tag">
-        <Description>
-        </Description>
-    </DocsPageHeader>
-
+    <DocsPageHeader Title="Image" Component="@nameof(MudImage)" />
     <DocsPageContent>
 
         <DocsPageSection>
@@ -20,7 +15,18 @@
                 <ImageUsageExample />
             </SectionContent>
         </DocsPageSection>
-        
+
+        <DocsPageSection>
+            <SectionHeader Title="Fallback Image">
+                <Description>
+                    If the <CodeInline>Src</CodeInline> image fails to load, the <CodeInline>FallbackSrc</CodeInline> will be loaded.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(ImageFallbackExample)" Block="true">
+                <ImageFallbackExample />
+            </SectionContent>
+        </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Size">
                 <Description>Size can be directly set on the image with the <CodeInline>Width</CodeInline> and <CodeInline>Height</CodeInline> property, it can also be useful to set this even if you want a responsive image, setting them will make the image take up set space even before they are loaded which can be useful if your pictures takes long time to load.</Description>
@@ -29,7 +35,7 @@
                 <ImageSizeExample />
             </SectionContent>
         </DocsPageSection>
-                
+
         <DocsPageSection>
             <SectionHeader Title="Responsive Images">
                 <Description>
@@ -65,7 +71,7 @@
                 <ImagePositionExample />
             </SectionContent>
         </DocsPageSection>
- 
+
         <DocsPageSection>
             <SectionHeader Title="Playground">
                 <Description></Description>
@@ -74,7 +80,5 @@
                 <ImagePlaygroundExample />
             </SectionContent>
         </DocsPageSection>
-        
-
     </DocsPageContent>
 </DocsPage>

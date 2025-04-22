@@ -1,6 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudTable T="ComplexObject" ServerData="ServerData" MultiSelection @bind-SelectedItems="_selectedItems" Comparer="Comparer" Dense>
+﻿<MudTable T="ComplexObject" ServerData="ServerData" MultiSelection @bind-SelectedItems="_selectedItems" Comparer="_comparer" Dense>
     <HeaderContent>
         <MudTh>Id</MudTh>
         <MudTh>Name</MudTh>
@@ -12,8 +10,8 @@
         <MudTd>@context.Id</MudTd>
         <MudTd>@context.Name</MudTd>
         <MudTd>@context.DateTime</MudTd>
-        <MudTd>@context.NestedObject.X</MudTd>
-        <MudTd>@context.NestedObject.Y</MudTd>
+        <MudTd>@context.NestedObject?.X</MudTd>
+        <MudTd>@context.NestedObject?.Y</MudTd>
     </RowTemplate>
     <PagerContent>
         <MudTablePager HideRowsPerPage />

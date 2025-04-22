@@ -1,16 +1,10 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-
-<MudDateRangePicker PickerVariant="PickerVariant.Static" @bind-DateRange="DateRange" />
+﻿<MudDateRangePicker @ref="PickerReference" PickerVariant="PickerVariant.Static" @bind-DateRange="DateRange" />
 
 @code {
     public static string __description__ = "DateTime range without a timestamp";
 
-    public DateRange DateRange { get; set; }
+    [Parameter]
+    public DateRange? DateRange { get; set; } = new DateRange(DateTime.Now.AddMonths(-1).Date, DateTime.Now.Date);
 
-    protected override Task OnInitializedAsync()
-    {
-        DateRange = new DateRange(DateTime.Now.AddDays(1).Date, DateTime.Now.AddDays(5).Date);
-
-        return base.OnInitializedAsync();
-    }
+    public MudDateRangePicker? PickerReference;
 }

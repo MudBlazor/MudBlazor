@@ -1,52 +1,52 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.AspNetCore.Components;
-using MudBlazor.Charts.SVG.Models;
+﻿using Microsoft.AspNetCore.Components.Web;
 
+#nullable enable
 namespace MudBlazor.Charts
 {
     /// <summary>
     /// Represents a chart which displays series values as rectangular bars.
     /// </summary>
-    partial class Bar : MudCategoryChartBase
+    /// <seealso cref="Donut"/>
+    /// <seealso cref="Line"/>
+    /// <seealso cref="Pie"/>
+    /// <seealso cref="StackedBar"/>
+    /// <seealso cref="TimeSeries"/>
+    partial class Bar : MudCategoryAxisChartBase
     {
-        private const double BoundWidth = 650.0;
-        private const double BoundHeight = 350.0;
-        private const double HorizontalStartSpace = 30.0;
-        private const double HorizontalEndSpace = 30.0;
-        private const double VerticalStartSpace = 25.0;
-        private const double VerticalEndSpace = 25.0;
+        private readonly List<SvgPath> _horizontalLines = [];
+        private readonly List<SvgText> _horizontalValues = [];
 
-        /// <summary>
-        /// The chart, if any, containing this component.
-        /// </summary>
-        [CascadingParameter]
-        public MudChart MudChartParent { get; set; }
+        private readonly List<SvgPath> _verticalLines = [];
+        private readonly List<SvgText> _verticalValues = [];
 
-        private List<SvgPath> _horizontalLines = new();
-        private List<SvgText> _horizontalValues = new();
+        private readonly List<SvgLegend> _legends = [];
+        private List<ChartSeries> _series = [];
 
-        private List<SvgPath> _verticalLines = new();
-        private List<SvgText> _verticalValues = new();
+        private readonly List<SvgPath> _bars = [];
+        private SvgPath? _hoveredBar;
 
-        private List<SvgLegend> _legends = new();
-        private List<ChartSeries> _series = new();
-
-        private List<SvgPath> _bars = new();
+        private const double BarStroke = 8;
+        private const double BarGap = 10;
+        private double BarGroupWidth => (_series.Count - 1) * BarGap + BarStroke; // number of gaps of 10 + the stroke width
 
         /// <inheritdoc />
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
 
+            RebuildChart();
+        }
+
+        protected override void RebuildChart()
+        {
             if (MudChartParent != null)
                 _series = MudChartParent.ChartSeries;
 
+            SetBounds();
             ComputeUnitsAndNumberOfLines(out var gridXUnits, out var gridYUnits, out var numHorizontalLines, out var lowestHorizontalLine, out var numVerticalLines);
 
-            var horizontalSpace = (BoundWidth - HorizontalStartSpace - HorizontalEndSpace) / Math.Max(1, numVerticalLines - 1);
-            var verticalSpace = (BoundHeight - VerticalStartSpace - VerticalEndSpace) / Math.Max(1, numHorizontalLines - 1);
+            var horizontalSpace = (_boundWidth - HorizontalStartSpace - HorizontalEndSpace - BarGroupWidth) / Math.Max(1, numVerticalLines - 1);
+            var verticalSpace = (_boundHeight - VerticalStartSpace - VerticalEndSpace) / Math.Max(1, numHorizontalLines - 1);
 
             GenerateHorizontalGridLines(numHorizontalLines, lowestHorizontalLine, gridYUnits, verticalSpace);
             GenerateVerticalGridLines(numVerticalLines, gridXUnits, horizontalSpace);
@@ -70,7 +70,7 @@ namespace MudBlazor.Charts
                 numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
 
                 // this is a safeguard against millions of gridlines which might arise with very high values
-                var maxYTicks = MudChartParent?.ChartOptions.MaxNumYAxisTicks ?? 100;
+                var maxYTicks = MudChartParent?.ChartOptions.MaxNumYAxisTicks ?? 20;
                 while (numHorizontalLines > maxYTicks)
                 {
                     gridYUnits *= 2;
@@ -100,7 +100,7 @@ namespace MudBlazor.Charts
                 var line = new SvgPath()
                 {
                     Index = i,
-                    Data = $"M {ToS(HorizontalStartSpace)} {ToS(BoundHeight - y)} L {ToS(BoundWidth - HorizontalEndSpace)} {ToS(BoundHeight - y)}"
+                    Data = $"M {ToS(HorizontalStartSpace)} {ToS(_boundHeight - y)} L {ToS(_boundWidth - HorizontalEndSpace)} {ToS(_boundHeight - y)}"
                 };
                 _horizontalLines.Add(line);
 
@@ -108,7 +108,7 @@ namespace MudBlazor.Charts
                 var lineValue = new SvgText()
                 {
                     X = HorizontalStartSpace - 10,
-                    Y = BoundHeight - y + 5,
+                    Y = _boundHeight - y + 5,
                     Value = ToS(startGridY, MudChartParent?.ChartOptions.YAxisFormat)
                 };
                 _horizontalValues.Add(lineValue);
@@ -126,15 +126,15 @@ namespace MudBlazor.Charts
                 var line = new SvgPath()
                 {
                     Index = i,
-                    Data = $"M {ToS(x)} {ToS(BoundHeight - VerticalStartSpace)} L {ToS(x)} {ToS(VerticalEndSpace)}"
+                    Data = $"M {ToS(x)} {ToS(_boundHeight - VerticalStartSpace)} L {ToS(x)} {ToS(VerticalEndSpace)}"
                 };
                 _verticalLines.Add(line);
 
                 var xLabels = i < XAxisLabels.Length ? XAxisLabels[i] : "";
                 var lineValue = new SvgText()
                 {
-                    X = x,
-                    Y = BoundHeight - 2,
+                    X = x + (BarGroupWidth / 2),
+                    Y = _boundHeight - 10,
                     Value = xLabels
                 };
                 _verticalValues.Add(lineValue);
@@ -148,19 +148,25 @@ namespace MudBlazor.Charts
 
             for (var i = 0; i < _series.Count; i++)
             {
-                var data = _series[i].Data;
+                var series = _series[i];
+                var data = series.Data;
 
                 for (var j = 0; j < data.Length; j++)
                 {
-                    var gridValueX = HorizontalStartSpace + (i * 10) + (j * horizontalSpace);
-                    var gridValueY = BoundHeight - VerticalStartSpace + (lowestHorizontalLine * verticalSpace);
-                    var dataValue = ((data[j] / gridYUnits) - lowestHorizontalLine) * verticalSpace;
-                    var gridValue = BoundHeight - VerticalStartSpace - dataValue;
+                    var dataValue = data[j];
+                    var gridValueX = HorizontalStartSpace + (BarStroke / 2) + (i * BarGap) + (j * horizontalSpace);
+                    var gridValueY = _boundHeight - VerticalStartSpace + (lowestHorizontalLine * verticalSpace);
+                    var barHeight = ((dataValue / gridYUnits) - lowestHorizontalLine) * verticalSpace;
+                    var gridValue = _boundHeight - VerticalStartSpace - barHeight;
 
                     var bar = new SvgPath()
                     {
                         Index = i,
-                        Data = $"M {ToS(gridValueX)} {ToS(gridValueY)} L {ToS(gridValueX)} {ToS(gridValue)}"
+                        Data = $"M {ToS(gridValueX)} {ToS(gridValueY)} L {ToS(gridValueX)} {ToS(gridValue)}",
+                        LabelXValue = XAxisLabels.Length > j ? XAxisLabels[j] : string.Empty,
+                        LabelYValue = dataValue.ToString(series.DataMarkerTooltipYValueFormat),
+                        LabelX = gridValueX,
+                        LabelY = gridValue
                     };
                     _bars.Add(bar);
                 }
@@ -168,10 +174,20 @@ namespace MudBlazor.Charts
                 var legend = new SvgLegend()
                 {
                     Index = i,
-                    Labels = _series[i].Name
+                    Labels = series.Name
                 };
                 _legends.Add(legend);
             }
+        }
+
+        private void OnBarMouseOver(MouseEventArgs _, SvgPath bar)
+        {
+            _hoveredBar = bar;
+        }
+
+        private void OnBarMouseOut(MouseEventArgs _)
+        {
+            _hoveredBar = null;
         }
     }
 }

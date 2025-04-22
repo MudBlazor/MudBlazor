@@ -5,6 +5,7 @@ window.mudInputAutoGrow = {
     initAutoGrow: (elem, maxLines) => {
         const compStyle = getComputedStyle(elem);
         const lineHeight = parseFloat(compStyle.getPropertyValue('line-height'));
+        const paddingTop = parseFloat(compStyle.getPropertyValue('padding-top'));
 
         let maxHeight = 0;
 
@@ -12,7 +13,7 @@ window.mudInputAutoGrow = {
         elem.updateParameters = function (newMaxLines) {
             if (newMaxLines > 0) {
                 // Cap the height to the number of lines specified in the input.
-                maxHeight = lineHeight * newMaxLines;
+                maxHeight = lineHeight * newMaxLines + paddingTop;
             } else {
                 maxHeight = 0;
             }
@@ -36,7 +37,7 @@ window.mudInputAutoGrow = {
                 elem.style.textAlign = null;
             }
 
-            let minHeight = lineHeight * elem.rows;
+            let minHeight = lineHeight * elem.rows + paddingTop;
             let newHeight = Math.max(minHeight, elem.scrollHeight);
             let initialOverflowY = elem.style.overflowY;
             if (maxHeight > 0 && newHeight > maxHeight) {

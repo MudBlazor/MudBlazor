@@ -4,7 +4,7 @@
 
 <MudInputControl Class="@Classname" Style="@Style" Error="@HasErrors" ErrorText="@GetErrorText()" Required="@Required">
     <InputContent>
-        <label class="@LabelClassname" style="@Style" @onkeydown="@HandleKeyDown" id="@_elementId">
+        <label class="@LabelClassname" style="@Style" @onkeydown="HandleKeyDownAsync" id="@_elementId">
             <span class="@SpanClassname">
                 <span tabindex="0" class="@SwitchClassname">
                     <span class="mud-switch-button">
@@ -21,13 +21,13 @@
             </span>
             @if (!string.IsNullOrEmpty(Label))
             {
-                <MudText Class="@SwitchLabelClassname" Color="HasErrors ? Color.Error : Color.Inherit">
+                <MudText Class="@LabelClassname" Color="HasErrors ? Color.Error : Color.Inherit">
                     @Label
                 </MudText>
             }
             @if (ChildContent != null)
             {
-                <MudText Class="@SwitchLabelClassname" Color="HasErrors ? Color.Error : Color.Inherit">
+                <MudText Class="@LabelClassname" Color="HasErrors ? Color.Error : Color.Inherit">
                     @ChildContent
                 </MudText>
             }

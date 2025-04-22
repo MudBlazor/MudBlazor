@@ -1,8 +1,13 @@
 ﻿@namespace MudBlazor.Charts
 @using System.Globalization;
-@inherits MudCategoryChartBase
+@inherits MudCategoryAxisChartBase
 
-<svg @attributes="UserAttributes" class="mud-chart-line mud-ltr" width="@MudChartParent?.Width" height="@MudChartParent?.Height" viewBox="0 0 650 350">
+@{
+    var style = _hoveredBar != null ? "overflow: visible;" : "";
+}
+
+<svg @ref="_elementReference" @attributes="UserAttributes" class="mud-chart-line mud-ltr" width="@MudChartParent?.Width" height="@MudChartParent?.Height" viewBox="0 0 @_boundWidth @_boundHeight" style="@style">
+    <Filters />
     <g class="mud-charts-grid">
         <g class="mud-charts-gridlines-yaxis">
             @foreach (var horizontalLine in _horizontalLines)
@@ -10,7 +15,7 @@
                 <path stroke="#e0e0e0" stroke-width="0.3" d="@horizontalLine.Data"></path>
             }
         </g>
-        @if (MudChartParent?.ChartOptions.XAxisLines==true)
+        @if (MudChartParent?.ChartOptions.XAxisLines == true)
         {
             <g class="mud-charts-gridlines-xaxis-lines">
                 @foreach (var verticalLine in _verticalLines)
@@ -20,26 +25,62 @@
             </g>
         }
     </g>
-    <g class="mud-charts-yaxis">
+    <g @ref="_yAxisGroupElementReference" class="mud-charts-yaxis">
         @foreach (var horizontalLineValue in _horizontalValues)
         {
-            @((MarkupString)$"<text x='{horizontalLineValue.X.ToString(CultureInfo.InvariantCulture)}' y='{horizontalLineValue.Y.ToString(CultureInfo.InvariantCulture)}' font-size='12px' text-anchor='end' dominant-baseline='auto'>{horizontalLineValue.Value.ToString(CultureInfo.InvariantCulture)}</text>")
+            @((MarkupString)$"<text x='{ToS(horizontalLineValue.X)}' y='{ToS(horizontalLineValue.Y)}' font-size='12px' text-anchor='end' dominant-baseline='auto'>{horizontalLineValue.Value?.ToString(CultureInfo.InvariantCulture)}</text>")
         }
     </g>
-    <g class="mud-charts-xaxis">
-        @foreach (var verticalLineValue in _verticalValues)
+    <g @ref="_xAxisGroupElementReference" class="mud-charts-xaxis">
+        @for (var i = 0; i < _verticalValues.Count; i++)
         {
-            @((MarkupString)$"<text x='{verticalLineValue.X.ToString(CultureInfo.InvariantCulture)}' y='{verticalLineValue.Y.ToString(CultureInfo.InvariantCulture)}' font-size='12px' text-anchor='middle'>{verticalLineValue.Value.ToString(CultureInfo.InvariantCulture)}</text>")
+            var verticalLineValue = _verticalValues[i];
+            var x = ToS(verticalLineValue.X);
+            var y = ToS(verticalLineValue.Y);
+            var rotation = ToS(-AxisChartOptions.XAxisLabelRotation);
+            @((MarkupString)$"<text x='{x}' y='{y}' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate({rotation} {x} {y})'>{verticalLineValue.Value?.ToString(CultureInfo.InvariantCulture)}</text>")
         }
     </g>
     <g class="mud-charts-bar-series">
         @foreach (var bar in _bars)
         {
-            <path class="mud-chart-bar" @onclick="() => SelectedIndex = bar.Index"  fill="@(MudChartParent.ChartOptions.ChartPalette.GetValue(bar.Index % MudChartParent.ChartOptions.ChartPalette.Count()))" stroke="@(MudChartParent.ChartOptions.ChartPalette.GetValue(bar.Index % MudChartParent.ChartOptions.ChartPalette.Count()))" stroke-width="32" d="@bar.Data"></path>
+            var color = MudChartParent?.ChartOptions.ChartPalette.GetValue(bar.Index % MudChartParent.ChartOptions.ChartPalette.Length);
+            
+            <path class="mud-chart-bar"
+                  @onclick="() => SelectedIndex = bar.Index"
+                  stroke="@color"
+                  stroke-width="@_barWidthStroke"
+                  fill="none"
+                  d="@bar.Data"
+                  @onmouseover="(e) => OnBarMouseOver(e, bar)"
+                  @onmouseout="OnBarMouseOut">
+            </path>
         }
     </g>
 
 
-	@MudChartParent?.CustomGraphics
+    @MudChartParent?.CustomGraphics
+
+    @* Render the tooltip as an SVG group when a bar is hovered *@
+    @if (_hoveredBar is not null && MudChartParent?.ChartOptions.ShowToolTips == true)
+    {
+        var color = MudChartParent.ChartOptions.ChartPalette.GetValue(_hoveredBar.Index % MudChartParent.ChartOptions.ChartPalette.Length)?.ToString() ?? string.Empty;
+        var series = _series[_hoveredBar.Index];
+
+        if (!string.IsNullOrWhiteSpace(series.DataMarkerTooltipTitleFormat))
+        {
+            var tooltipTitle = series.DataMarkerTooltipTitleFormat
+                .Replace("{{SERIES_NAME}}", series.Name)
+                .Replace("{{X_VALUE}}", _hoveredBar.LabelXValue)
+                .Replace("{{Y_VALUE}}", _hoveredBar.LabelYValue);
+
+            var tooltipSubtitle = series.DataMarkerTooltipSubtitleFormat?
+                .Replace("{{SERIES_NAME}}", series.Name)
+                .Replace("{{X_VALUE}}", _hoveredBar.LabelXValue)
+                .Replace("{{Y_VALUE}}", _hoveredBar.LabelYValue) ?? string.Empty;
+
+            <ChartTooltip Title="@tooltipTitle" Subtitle="@tooltipSubtitle" Color="@color" X="_hoveredBar.LabelX" Y="_hoveredBar.LabelY" />
+        }
+    }
 </svg>
 <Legend Data="@_legends" />

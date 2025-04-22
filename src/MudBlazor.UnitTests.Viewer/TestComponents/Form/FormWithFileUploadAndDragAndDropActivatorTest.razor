@@ -1,8 +1,5 @@
-﻿@using System.Threading
-@using System.IO
+﻿@using System.IO
 @using System.Text
-
-@namespace MudBlazor.UnitTests.TestComponents
 
 <MudForm Model="@_model"
          @bind-IsValid="_isValid"
@@ -39,11 +36,11 @@
             </MudFileUpload>
             <MudToolBar Gutters="@false"
                         Class="relative d-flex justify-end gap-4">
-                <MudButton Id="open-file-picker-button"
+                <MudButton id="open-file-picker-button"
                            OnClick="@OpenFilePickerAsync">
                     Open file picker
                 </MudButton>
-                <MudButton Id="clear-button"
+                <MudButton id="clear-button"
                            OnClick="@ClearAsync">
                     Clear
                 </MudButton>
@@ -56,29 +53,13 @@
 </MudForm>
 
 @code {
-#nullable enable
-    public record BrowserFile(string Name, DateTimeOffset LastModified, long Size, string ContentType, byte[] Content) : IBrowserFile
-    {
-        public Stream OpenReadStream(long maxAllowedSize = 512000, CancellationToken cancellationToken = default) => new MemoryStream(Content);
-    }
-
-    public class Model
-    {
-        public IBrowserFile? File { get; set; } = new BrowserFile(
-            Guid.NewGuid().ToString(),
-            DateTimeOffset.Now,
-            default,
-            "text/plain",
-            Encoding.ASCII.GetBytes(FileContent));
-    }
-
     private Model _model = null!;
     private bool _isValid;
     private bool _isTouched;
+    private string _dragClass = DefaultDragClass;
     private MudFileUpload<IBrowserFile>? _fileUpload;
     private const string FileContent = "this is content";
     private const string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full z-10";
-    private string _dragClass = DefaultDragClass;
 
     protected override void OnInitialized()
         => _model = new Model();
@@ -94,4 +75,19 @@
 
     private Task ClearAsync()
         => _fileUpload?.ClearAsync() ?? Task.CompletedTask;
+
+    public class Model
+    {
+        public IBrowserFile? File { get; set; } = new BrowserFile(
+            Guid.NewGuid().ToString(),
+            DateTimeOffset.Now,
+            default,
+            "text/plain",
+            Encoding.ASCII.GetBytes(FileContent));
+    }
+
+    public record BrowserFile(string Name, DateTimeOffset LastModified, long Size, string ContentType, byte[] Content) : IBrowserFile
+    {
+        public Stream OpenReadStream(long maxAllowedSize = 512000, CancellationToken cancellationToken = default) => new MemoryStream(Content);
+    }
 }

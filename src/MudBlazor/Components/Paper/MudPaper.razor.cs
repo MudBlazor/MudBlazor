@@ -8,6 +8,10 @@ using MudBlazor.Utilities;
 namespace MudBlazor;
 
 #nullable enable
+
+/// <summary>
+/// A surface for grouping other components.
+/// </summary>
 public partial class MudPaper : MudComponentBase
 {
     protected string Classname =>
@@ -30,70 +34,99 @@ public partial class MudPaper : MudComponentBase
             .Build();
 
     /// <summary>
-    /// The higher the number, the heavier the drop-shadow.
+    /// The size of the drop shadow.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <c>1</c>.  A higher number creates a heavier drop shadow.  Use a value of <c>0</c> for no shadow.
+    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Paper.Appearance)]
     public int Elevation { set; get; } = 1;
 
     /// <summary>
-    /// If true, border-radius is set to 0.
+    /// Displays a square shape.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.
+    /// Can be overridden by <see cref="MudGlobal.Rounded"/>.
+    /// When <c>true</c>, the <c>border-radius</c> is set to <c>0</c>.
+    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Paper.Appearance)]
-    public bool Square { get; set; }
+    public bool Square { get; set; } = MudGlobal.Rounded == false;
 
     /// <summary>
-    /// If true, card will be outlined.
+    /// Displays an outline around this component.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.
+    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Paper.Appearance)]
     public bool Outlined { get; set; }
 
     /// <summary>
-    /// Height of the component.
+    /// The height of this component.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.  Can be a pixel height (<c>150px</c>), percentage (<c>30%</c>), or other CSS height value.
+    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Paper.Appearance)]
     public string? Height { get; set; }
 
     /// <summary>
-    /// Width of the component.
+    /// The width of this component.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.  Can be a pixel width (<c>150px</c>), percentage (<c>30%</c>), or other CSS width value.
+    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Paper.Appearance)]
     public string? Width { get; set; }
 
     /// <summary>
-    /// Max-Height of the component.
+    /// The maximum height of this component.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.  Can be a pixel height (<c>150px</c>), percentage (<c>30%</c>), or other CSS height value.
+    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Paper.Appearance)]
     public string? MaxHeight { get; set; }
 
     /// <summary>
-    /// Max-Width of the component.
+    /// The maximum width of this component.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.  Can be a pixel width (<c>150px</c>), percentage (<c>30%</c>), or other CSS width value.
+    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Paper.Appearance)]
     public string? MaxWidth { get; set; }
 
     /// <summary>
-    /// Min-Height of the component.
+    /// The minimum height of this component.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.  Can be a pixel height (<c>150px</c>), percentage (<c>30%</c>), or other CSS height value.
+    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Paper.Appearance)]
     public string? MinHeight { get; set; }
 
     /// <summary>
-    /// Min-Width of the component.
+    /// The minimum width of this component.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.  Can be a pixel width (<c>150px</c>), percentage (<c>30%</c>), or other CSS width value.
+    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Paper.Appearance)]
     public string? MinWidth { get; set; }
 
     /// <summary>
-    /// Child content of the component.
+    /// The content within this component.
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Paper.Behavior)]

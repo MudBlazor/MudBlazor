@@ -7,6 +7,7 @@ namespace MudBlazor
     /// <summary>
     /// Represents a group of connected <see cref="MudButton"/> components.
     /// </summary>
+    /// <seealso cref="MudButton" />
     public partial class MudButtonGroup : MudComponentBase
     {
         protected string Classname => new CssBuilder("mud-button-group-root")
@@ -101,5 +102,22 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.ButtonGroup.Appearance)]
         public bool FullWidth { get; set; }
+
+        private readonly List<MudButton> _renderedButtons = [];
+
+        internal void AddButton(MudButton button)
+        {
+            _renderedButtons.Add(button);
+        }
+
+        internal void RemoveButton(MudButton button)
+        {
+            _renderedButtons.Remove(button);
+        }
+
+        internal bool NoneButtonIsStreched()
+        {
+            return !_renderedButtons.Any(b => b.FullWidth);
+        }
     }
 }

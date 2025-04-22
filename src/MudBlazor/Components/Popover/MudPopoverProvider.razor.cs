@@ -2,44 +2,49 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Interfaces;
 
 namespace MudBlazor
 {
 #nullable enable
+
+    /// <summary>
+    /// A required component which manages all MudBlazor popovers.
+    /// </summary>
+    /// <remarks>
+    /// This component is required for MudBlazor components to display popovers properly.  It is typically added to your main layout page.
+    /// </remarks>
+    /// <seealso cref="MudThemeProvider"/>
+    /// <seealso cref="MudDialogProvider"/>
+    /// <seealso cref="MudSnackbarProvider"/>
     public partial class MudPopoverProvider : IDisposable, IPopoverObserver
     {
         private bool _isConnectedToService = false;
 
         [Inject]
-        [Obsolete($"Use {nameof(PopoverService)} instead. This will be removed in a future version")]
-        public IMudPopoverService Service { get; set; } = null!;
-
-        [Inject]
         internal IPopoverService PopoverService { get; set; } = null!;
 
         /// <summary>
-        /// In some scenarios we need more than one ThemeProvider but we must not have more than one
-        /// PopoverProvider. Set a cascading value with UsePopoverProvider=false to prevent it.
+        /// Controls whether this provider is enabled.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// If more than one <see cref="MudPopoverProvider"/> is detected, this property will be <c>false</c> to ensure only one instance is active.
+        /// Can be overridden by setting a cascading parameter of <c>UsePopoverProvider</c> to <c>false</c>.
+        /// </remarks>
         [CascadingParameter(Name = "UsePopoverProvider")]
         public bool Enabled { get; set; } = true;
 
+        /// <summary>
+        /// Releases resources used by this provider.
+        /// </summary>
         public void Dispose()
         {
-#pragma warning disable CS0618
-            //TODO: For backward compatibility with old service. Should be removed in a future version
-            Service.FragmentsChanged -= Service_FragmentsChanged;
-#pragma warning restore CS0618
             PopoverService.Unsubscribe(this);
         }
 
+        /// <inheritdoc />
         protected override void OnInitialized()
         {
             if (Enabled == false)
@@ -47,39 +52,22 @@ namespace MudBlazor
                 return;
             }
 
-#pragma warning disable CS0618
-            //TODO: For backward compatibility with old service. Should be removed in a future version
-            Service.FragmentsChanged += Service_FragmentsChanged;
-#pragma warning restore CS0618
             PopoverService.Subscribe(this);
             _isConnectedToService = true;
         }
 
+        /// <inheritdoc />
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
 
             if (!Enabled && _isConnectedToService)
             {
-#pragma warning disable CS0618
-                //TODO: For backward compatibility with old service. Should be removed in a future version with the _isConnectedToService
-                Service.FragmentsChanged -= Service_FragmentsChanged;
-#pragma warning restore CS0618
                 PopoverService.Unsubscribe(this);
                 _isConnectedToService = false;
 
                 return;
             }
-
-#pragma warning disable CS0618
-            //TODO: For backward compatibility with old service. Whole block should be removed in a future version
-            if (Enabled && !_isConnectedToService)
-            {
-                Service.FragmentsChanged -= Service_FragmentsChanged; // make sure to avoid multiple registration
-                Service.FragmentsChanged += Service_FragmentsChanged;
-                _isConnectedToService = true;
-            }
-#pragma warning restore CS0618
 
             // Let's in our new case ignore _isConnectedToService and always update the subscription except Enabled = false. The manager is specifically designed for it.
             // The reason is because If an observer throws an exception during the PopoverCollectionUpdatedNotification, indicating a malfunction, it will be automatically unsubscribed.
@@ -87,9 +75,9 @@ namespace MudBlazor
             {
                 PopoverService.Subscribe(this);
             }
-
         }
 
+        /// <inheritdoc />
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender && Enabled && PopoverService.PopoverOptions.ThrowOnDuplicateProvider)
@@ -101,20 +89,6 @@ namespace MudBlazor
             }
             await base.OnAfterRenderAsync(firstRender);
         }
-
-        //TODO: For backward compatibility with old service. Should be removed in a future version
-        private void Service_FragmentsChanged(object? sender, EventArgs e)
-        {
-            InvokeAsync(StateHasChanged);
-        }
-
-        //TODO: For backward compatibility with old service. Should be removed in a future version
-#pragma warning disable CS0618
-        private IEnumerable<IMudPopoverHolder> GetActivePopovers()
-        {
-            return PopoverService.ActivePopovers.Concat(Service.Handlers);
-        }
-#pragma warning restore CS0618
 
         /// <inheritdoc />
         Guid IPopoverObserver.Id { get; } = Guid.NewGuid();

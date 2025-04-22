@@ -1,5 +1,4 @@
-﻿@namespace MudBlazor.UnitTests.TestComponents
-@typeparam T
+﻿@typeparam T
 
 <MudStack>
     <MudTextField @bind-Value="_filterValue" Placeholder="Search" />
@@ -10,34 +9,43 @@
 </MudStack>
 
 @code {
-    [Parameter]
-    public FilterContext<T> FilterContext { get; set; }
+    private string? _filterValue;
 
-    private string _filterValue;
+    [Parameter]
+    public FilterContext<T>? FilterContext { get; set; }
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
 
-        FilterContext.FilterDefinition.Operator = FilterOperator.String.Contains;
-
-        if (FilterContext.FilterDefinition.Value is string stringValue)
+        if (FilterContext is not null)
         {
-            _filterValue = stringValue;
+            FilterContext.FilterDefinition!.Operator = FilterOperator.String.Contains;
+
+            if (FilterContext.FilterDefinition.Value is string stringValue)
+            {
+                _filterValue = stringValue;
+            }
         }
     }
 
     private async Task ApplyAsync()
     {
-        FilterContext.FilterDefinition.Value = _filterValue;
+        if (FilterContext is not null)
+        {
+            FilterContext.FilterDefinition!.Value = _filterValue;
 
-        await FilterContext.Actions.ApplyFilterAsync(FilterContext.FilterDefinition);
+            await FilterContext.Actions.ApplyFilterAsync(FilterContext.FilterDefinition);
+        }
     }
 
     private async Task ResetAsync()
     {
-        FilterContext.FilterDefinition.Value = null;
+        if (FilterContext is not null)
+        {
+            FilterContext.FilterDefinition!.Value = null;
 
-        await FilterContext.Actions.ClearFilterAsync(FilterContext.FilterDefinition);
+            await FilterContext.Actions.ClearFilterAsync(FilterContext.FilterDefinition);
+        }
     }
 }

@@ -9,6 +9,7 @@ namespace MudBlazor
     /// <summary>
     /// Represents a grouping of multiple <see cref="MudAvatar"/> components.
     /// </summary>
+    /// <seealso cref="MudAvatar" />
     partial class MudAvatarGroup : MudComponentBase
     {
         private bool _childrenNeedUpdates = false;
@@ -65,21 +66,25 @@ namespace MudBlazor
         /// Disables rounded corners when the number of avatars exceeds <see cref="Max"/>.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  When <c>true</c>, the <c>border-radius</c> CSS style is set to <c>0</c>.
+        /// Defaults to <c>false</c>.
+        /// Can be overridden by <see cref="MudGlobal.Rounded"/>
+        /// When <c>true</c>, the <c>border-radius</c> CSS style is set to <c>0</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.AvatarGroup.Appearance)]
-        public bool MaxSquare { get; set; }
+        public bool MaxSquare { get; set; } = MudGlobal.Rounded == false;
 
         /// <summary>
         /// Shows rounded corners when the number of avatars exceeds <see cref="Max"/>.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  When <c>true</c>, the <c>border-radius</c> style is set to the theme's default value.
+        /// Defaults to <c>false</c>.
+        /// Can be overridden by <see cref="MudGlobal.Rounded"/>
+        /// When <c>true</c>, the <c>border-radius</c> style is set to the theme's default value.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.AvatarGroup.Appearance)]
-        public bool MaxRounded { get; set; }
+        public bool MaxRounded { get; set; } = MudGlobal.Rounded == true;
 
         /// <summary>
         /// The color of the avatar when the number of avatars exceeds <see cref="Max"/>.

@@ -4,6 +4,7 @@
 
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Models;
+using MudBlazor.Docs.Services;
 
 namespace MudBlazor.Docs.Pages.Api;
 
@@ -15,10 +16,25 @@ namespace MudBlazor.Docs.Pages.Api;
 public partial class Api
 {
     /// <summary>
+    /// The service for managing menus.
+    /// </summary>
+    [Inject]
+    public IMenuService? MenuService { get; set; }
+
+    /// <summary>
     /// The name of the type to display.
     /// </summary>
     [Parameter]
     public string? TypeName { get; set; }
+
+    /// <summary>
+    /// The name of the component associated with this type.
+    /// </summary>
+    /// <remarks>
+    /// The friendly name for the type, if it is a MudBlazor component.  For example: the type
+    /// <c>StackedBar</c> will return <c>Stacked Bar Chart</c>.
+    /// </remarks>
+    public string? ComponentName { get; set; }
 
     /// <summary>
     /// The name at the top of the page.
@@ -28,7 +44,7 @@ public partial class Api
     /// <summary>
     /// Shows the inheritance hierarchy.
     /// </summary>
-    public static bool ShowInheritance => false;
+    public static bool ShowInheritance => true;
 
     /// <summary>
     /// The type being displayed.
@@ -40,7 +56,12 @@ public partial class Api
         if (DocumentedType == null || DocumentedType.Name != TypeName)
         {
             DocumentedType = ApiDocumentation.GetType(TypeName);
-            if (DocumentedType.IsComponent)
+            ComponentName = MenuService!.GetComponentName(TypeName!) ?? DocumentedType?.NameFriendly;
+            if (DocumentedType == null)
+            {
+                Title = TypeName + " Not Found";
+            }
+            else if (DocumentedType.IsComponent)
             {
                 Title = DocumentedType.NameFriendly + " Component";
             }
