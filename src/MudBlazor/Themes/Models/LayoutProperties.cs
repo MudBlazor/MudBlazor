@@ -32,8 +32,9 @@
         public string DrawerWidthRight { get; set; } = "240px";
 
         /// <summary>
-        /// Gets or sets the height of the appbar.
+        /// Gets or sets the base height of the appbar. <br/>
+        /// The actual height of the appbar is relative to this value, and it also depends on the current <see cref="Breakpoint"/>, or <see cref="MudAppBar.Dense"/>.
         /// </summary>
-        public string AppbarHeight { get; set; } = "64px";
+        public string AppBarBaseHeight { get; set; } = "64px";
     }
 }

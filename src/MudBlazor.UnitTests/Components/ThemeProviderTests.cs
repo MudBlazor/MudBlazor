@@ -152,7 +152,7 @@ namespace MudBlazor.UnitTests.Components
                 "--mud-drawer-width-right: 240px;",
                 "--mud-drawer-width-mini-left: 56px;",
                 "--mud-drawer-width-mini-right: 56px;",
-                "--mud-appbar-height: 64px;",
+                "--mud-appbar-base-height: 64px;",
                 "--mud-typography-default-family: 'Roboto','Helvetica','Arial','sans-serif';",
                 "--mud-typography-default-size: .875rem;",
                 "--mud-typography-default-weight: 400;",

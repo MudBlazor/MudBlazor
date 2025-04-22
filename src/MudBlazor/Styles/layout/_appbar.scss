@@ -1,4 +1,4 @@
-﻿@import '../abstracts/variables';
+@import '../abstracts/variables';
 
 .mud-appbar {
   width: 100%;
@@ -35,24 +35,12 @@
   }
 
   .mud-toolbar-appbar {
-    height: calc(var(--mud-appbar-height) - var(--mud-appbar-height) / 8);
-  }
-
-  @media (min-width:$breakpoint-xs) and (orientation: landscape) {
-    .mud-toolbar-appbar {
-      height: calc(var(--mud-appbar-height) - var(--mud-appbar-height) / 4);
-    }
-  }
-
-  @media (min-width:$breakpoint-sm) {
-    .mud-toolbar-appbar {
-      height: var(--mud-appbar-height);
-    }
+    height: var(--mud-appbar-height);
   }
 
   &.mud-appbar-dense {
     .mud-toolbar-appbar {
-      height: calc(var(--mud-appbar-height) - var(--mud-appbar-height) / 4);
+      height: var(--mud-appbar-dense-height);
     }
   }
 }
