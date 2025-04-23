@@ -966,14 +966,6 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        protected Task ChangeSecondAsync(int second)
-        {
-            _currentView = OpenToEnum.Seconds;
-            _timeSet.Second = (_timeSet.Second + second + 60) % 60;
-
-            return UpdateTimeAsync();
-        }
-
         protected Task ChangeMinuteAsync(int minute)
         {
             _currentView = OpenToEnum.Minutes;
