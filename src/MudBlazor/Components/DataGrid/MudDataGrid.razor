@@ -452,6 +452,11 @@
                     <MudMenuItem OnClick="@dataGrid.ExpandAllGroups">@Localizer[LanguageResource.MudDataGrid_ExpandAllGroups]</MudMenuItem>
                     <MudMenuItem OnClick="@dataGrid.CollapseAllGroups">@Localizer[LanguageResource.MudDataGrid_CollapseAllGroups]</MudMenuItem>
                 }
+                @if (dataGrid.HasHierarchyColumn)
+                {
+                    <MudMenuItem OnClick="@dataGrid.ExpandAllHierarchy">@Localizer[LanguageResource.MudDataGrid_ExpandAllGroups]</MudMenuItem>
+                    <MudMenuItem OnClick="@dataGrid.CollapseAllHierarchy">@Localizer[LanguageResource.MudDataGrid_CollapseAllGroups]</MudMenuItem>
+                }
                 @if (dataGrid.HasServerData)
                 {
                     <MudMenuItem OnClick="@dataGrid.InvokeServerLoadFunc">@Localizer[LanguageResource.MudDataGrid_RefreshData]</MudMenuItem>
