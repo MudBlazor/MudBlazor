@@ -414,7 +414,7 @@ namespace MudBlazor.UnitTests.Components
                 Parameter("PickerVariant", PickerVariant.Static)
             ];
             var comp = Context.RenderComponent<SimpleTimePickerTest>(parameters);
-            
+
             comp.FindAll("div.mud-time-picker-hour.mud-time-picker-dial-hidden").Count.Should().Be(1);
             comp.FindAll("div.mud-time-picker-minute.mud-time-picker-dial-hidden").Count.Should().Be(0);
             comp.FindAll("div.mud-time-picker-second.mud-time-picker-dial-hidden").Count.Should().Be(1);

@@ -272,7 +272,7 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
         public bool HoursVisible { get; set; } = true;
-        
+
         /// <summary>
         /// Whether the seconds section of the time is visible on the dropdown.
         /// </summary>
@@ -433,7 +433,7 @@ namespace MudBlazor
             new CssBuilder("mud-timepicker-button")
                 .AddClass("mud-timepicker-toolbar-text", _currentView != OpenToEnum.Minutes)
                 .Build();
-        
+
         protected string SecondButtonClassname =>
             new CssBuilder("mud-timepicker-button")
                 .AddClass("mud-timepicker-toolbar-text", _currentView != OpenToEnum.Seconds)
@@ -626,7 +626,7 @@ namespace MudBlazor
             UpdateTimeSetFromTime();
             _initialHour = _timeSet.Hour;
             _initialMinute = _timeSet.Minute;
-            _initialSecond= _timeSet.Second;
+            _initialSecond = _timeSet.Second;
             _dotNetRef = DotNetObjectReference.Create(this);
         }
 
@@ -1018,5 +1018,4 @@ namespace MudBlazor
         [GeneratedRegex("AM|PM", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
         private static partial Regex AmPmRegularExpression();
     }
-    
 }
