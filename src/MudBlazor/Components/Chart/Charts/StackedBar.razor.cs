@@ -315,13 +315,13 @@ namespace MudBlazor.Charts
                 case Justify.SpaceEvenly:
                     var contentSpace = maxColumns * _barWidth;
                     var remainingSpace = horizontalSpace - contentSpace;
-                    var startSpace = remainingSpace / (maxColumns + 1);
+                    var evenSpace = remainingSpace / (maxColumns + 1);
                     
-                    positions[0] = startingPoint += HorizontalStartSpace + startSpace;
+                    positions[0] = startingPoint += HorizontalStartSpace + evenSpace;
 
                     for (var i = 1; i < maxColumns; i++)
                     {
-                        positions[i] = positions[i - 1] + _barWidth + startSpace;
+                        positions[i] = positions[i - 1] + _barWidth + evenSpace;
                     }
                     break;
             }

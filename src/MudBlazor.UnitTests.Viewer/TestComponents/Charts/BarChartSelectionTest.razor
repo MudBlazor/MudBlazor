@@ -48,10 +48,10 @@
     private bool _canHideSeries;
     private bool _matchParentSize;
     private double _spacingRatio = 1.0;
-    private double _barWidthRatio = 0.3;
-    private double _innerGapRatio = 0.1;
-    private ChartType _chartType = ChartType.StackedBar;
-    private Justify _selectedJustify = Justify.FlexStart;
+    private double _barWidthRatio = 0.2;
+    private double _innerGapRatio = 0.0;
+    private ChartType _chartType = ChartType.Bar;
+    private Justify _selectedJustify = Justify.SpaceEvenly;
     private List<ChartDataSet> _series = DataSet.Take(1).ToList();
     private int _dataPointCount = 3;
 
