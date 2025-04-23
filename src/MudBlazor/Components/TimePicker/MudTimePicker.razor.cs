@@ -359,7 +359,7 @@ namespace MudBlazor
         /// <summary>
         /// Gets the second portion of the selected time.
         /// </summary>
-        /// <returns>A two-digit string for minutes, or <c>--</c> if no value is set.</returns>
+        /// <returns>A two-digit string for seconds, or <c>--</c> if no value is set.</returns>
         private string GetSecondString()
         {
             if (TimeIntermediate == null)
