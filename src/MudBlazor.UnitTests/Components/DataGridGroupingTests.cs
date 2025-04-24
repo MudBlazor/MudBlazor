@@ -475,14 +475,14 @@ namespace MudBlazor.UnitTests.Components
 
             // Assert
             row.WaitForAssertion(() => row.Instance._expanded.Should().BeFalse());
-            GetCount(false);
+            row.WaitForAssertion(() => GetCount(false));
 
             // Act
             row.Instance.GroupExpandClick();
 
             // Assert
             row.WaitForAssertion(() => row.Instance._expanded.Should().BeTrue());
-            GetCount(true);
+            row.WaitForAssertion(() => GetCount(true));
 
             // Test the UI
             var expandButton = row.Find(".mud-datagrid-group-button");
@@ -490,11 +490,11 @@ namespace MudBlazor.UnitTests.Components
             expandButton.Click();
 
             row.WaitForAssertion(() => row.Instance._expanded.Should().BeFalse());
-            GetCount(false);
+            row.WaitForAssertion(() => GetCount(false));
             expandButton.Click();
 
             row.WaitForAssertion(() => row.Instance._expanded.Should().BeTrue());
-            GetCount(true);
+            row.WaitForAssertion(() => GetCount(true));
         }
 
         [Test]
