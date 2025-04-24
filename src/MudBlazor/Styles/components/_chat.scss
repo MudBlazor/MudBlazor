@@ -41,13 +41,27 @@ $default-foreground: var(--mud-palette-text-primary);
       top: 0;
     }
 
-    &.mud-chat-start {
+    &.mud-chat-start,
+    &.mud-chat-end.mud-chat-rtl {
+      .mud-chat-bubble:before {
+        transform: none;
+      }
+    }
+
+    &.mud-chat-end,
+    &.mud-chat-start.mud-chat-rtl {
+      .mud-chat-bubble:before {
+        transform: scaleX(-1);
+      }
+    }
+
+    &.mud-chat-start, &.mud-chat-end.mud-chat-rtl {
       .mud-chat-bubble {
         border-top-left-radius: 0;
       }
     }
 
-    &.mud-chat-end {
+    &.mud-chat-end, &.mud-chat-start.mud-chat-rtl {
       .mud-chat-bubble {
         border-top-right-radius: 0;
       }
@@ -61,13 +75,27 @@ $default-foreground: var(--mud-palette-text-primary);
       bottom: 0;
     }
 
-    &.mud-chat-start {
+    &.mud-chat-start,
+    &.mud-chat-end.mud-chat-rtl {
+      .mud-chat-bubble:before {
+        transform: none;
+      }
+    }
+
+    &.mud-chat-end,
+    &.mud-chat-start.mud-chat-rtl {
+      .mud-chat-bubble:before {
+        transform: scaleX(-1);
+      }
+    }
+
+    &.mud-chat-start, &.mud-chat-end.mud-chat-rtl {
       .mud-chat-bubble {
         border-bottom-left-radius: 0;
       }
     }
 
-    &.mud-chat-end {
+    &.mud-chat-end, &.mud-chat-start.mud-chat-rtl {
       .mud-chat-bubble {
         border-bottom-right-radius: 0;
       }

@@ -164,7 +164,7 @@ class MudElementReference {
                 console.error("No dotNetReference found for iosKeyboardFocus");
             }
         }
-        element.addEventListener('blur', element._mudBlurHandler);
+        if (element) element.addEventListener('blur', element._mudBlurHandler);
     }
     // dispose event
     removeOnBlurEvent(element, dotnetRef) {

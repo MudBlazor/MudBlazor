@@ -2136,6 +2136,10 @@ namespace MudBlazor
             await InvokeAsync(StateHasChanged);
         }
 
+        /// <summary>
+        /// Collapses or expands the hierarchy of the specified item.
+        /// </summary>
+        /// <param name="item">The item whose hierarchy visibility is to be toggled.</param>
         public async Task ToggleHierarchyVisibilityAsync(T item)
         {
             // if ExpandSingleRow is true, clear all open hierarchies, which will immediately add the item that was clicked.
