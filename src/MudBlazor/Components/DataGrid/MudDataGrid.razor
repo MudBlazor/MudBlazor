@@ -222,21 +222,21 @@
                                         foreach (var g in groupDefinitions)
                                         {
                                             <DataGridGroupRow T="T" Items="@g.Grouping" 
-                                                              GroupDefinition="@g"                                                             
-                                                              GroupClass="@GroupClass"
-                                                              GroupStyle="@GroupStyle"
-                                                              GroupClassFunc="@GroupClassFunc"
-                                                              GroupStyleFunc="@GroupStyleFunc"
-                                                              DataGrid="this"
-                                                              RowClick="@(args => OnRowClickedAsync(args.args, args.item, args.index))"
-                                                              ContextRowClick="@(args => OnContextMenuClickedAsync(args.args, args.item, args.index))" />
+                                            GroupDefinition="@g"                                                             
+                                            GroupClass="@GroupClass"
+                                            GroupStyle="@GroupStyle"
+                                            GroupClassFunc="@GroupClassFunc"
+                                            GroupStyleFunc="@GroupStyleFunc"
+                                            DataGrid="this"
+                                            RowClick="@(args => OnRowClickedAsync(args.args, args.item, args.index))"
+                                            ContextRowClick="@(args => OnContextMenuClickedAsync(args.args, args.item, args.index))" />
                                         }
                                     }
                                     else
                                     {
                                         <DataGridVirtualizeRow T="T" DataGrid="this" 
-                                                               RowClick="@(args => OnRowClickedAsync(args.args, args.item, args.index))" 
-                                                               ContextRowClick="@(args => OnContextMenuClickedAsync(args.args, args.item, args.index))" />
+                                        RowClick="@(args => OnRowClickedAsync(args.args, args.item, args.index))" 
+                                        ContextRowClick="@(args => OnContextMenuClickedAsync(args.args, args.item, args.index))" />
                                     }
                                 }
                                 else if (Loading ? LoadingContent != null : NoRecordsContent != null)
@@ -296,12 +296,12 @@
                             if (propertyType == typeof(string))
                             {
                                 <MudTextField T="string" Label="@column.Title" Value="@cell._valueString" ValueChanged="@cell.StringValueChangedAsync" Margin="@Margin.Dense"
-                                              Required=column.Required Variant="@Variant.Outlined" Disabled="@(!column.Editable || ReadOnly)" Class="mt-4" />
+                                Required=column.Required Variant="@Variant.Outlined" Disabled="@(!column.Editable || ReadOnly)" Class="mt-4" />
                             }
                             else if (TypeIdentifier.IsNumber(propertyType))
                             {
                                 <MudNumericField T="double?" Label="@column.Title" Value="@cell._valueNumber" ValueChanged="@cell.NumberValueChangedAsync" Margin="@Margin.Dense"
-                                                 Required=column.Required Variant="@Variant.Outlined" Disabled="@(!column.Editable || ReadOnly)" Class="mt-4" />
+                                Required=column.Required Variant="@Variant.Outlined" Disabled="@(!column.Editable || ReadOnly)" Class="mt-4" />
                             }
                         }
                     }
@@ -336,7 +336,10 @@
                     <MudMenuItem OnClick="@dataGrid.InvokeServerLoadFunc">@Localizer[LanguageResource.MudDataGrid_RefreshData]</MudMenuItem>
                 }
             </MudMenu>
-         </text>;
+         </text>
+    ;
+
+
 
     internal RenderFragment FooterCells(IEnumerable<T> currentItems) =>
         @<text>
@@ -353,7 +356,7 @@
                      }
                  }
              }
-    </text>;
+         </text>;
 
 
     internal RenderFragment Cell(Column<T> column, T item) =>
@@ -419,7 +422,7 @@
                      }
                  }
              </td>
-    </text>;
+         </text>;
 
     internal RenderFragment Filter(IFilterDefinition<T> filterDefinition, Column<T> column) =>
         @<text>

@@ -452,14 +452,13 @@ namespace MudBlazor.UnitTests.Components
         public async Task GroupExpandClick_ShouldToggleExpandedState()
         {
             // Arrange
-            var items = new List<int> { 1, 2, 3 }.GroupBy(x => (object?)null).First();
             var component = Context.RenderComponent<DataGridGroupingMultiLevelTest>();
 
             var dataGrid = component.FindComponent<MudDataGrid<DataGridGroupingMultiLevelTest.USState>>();
             await component.InvokeAsync(() => dataGrid.Instance.ReloadServerData());
 
             var rows = component.FindComponents<DataGridGroupRow<DataGridGroupingMultiLevelTest.USState>>();
-            rows.Count().Should().Be(15);
+            rows.Count.Should().Be(15);
             var row = rows[0];
             var defaultExpanded = row.Instance.GroupDefinition.Expanded;
             // Test the method
@@ -467,9 +466,8 @@ namespace MudBlazor.UnitTests.Components
             void GetCount(bool currExpanded)
             {
                 // Whatever the expanded state is if it differs from the default it should be in the dictionary
-                dataGrid.Instance._groupExpansionsDict.Count().Should().Be(currExpanded != defaultExpanded ? 1 : 0);
+                dataGrid.Instance._groupExpansionsDict.Count.Should().Be(currExpanded != defaultExpanded ? 1 : 0);
             }
-            ;
             row.Instance._expanded.Should().BeTrue();
             row.Instance.GroupExpandClick();
 

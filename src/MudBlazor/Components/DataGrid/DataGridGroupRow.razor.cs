@@ -13,7 +13,7 @@ namespace MudBlazor
 {
     public partial class DataGridGroupRow<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase
     {
-        internal bool _expanded = false;
+        internal bool _expanded;
 
         protected string GroupClassname => new CssBuilder("mud-table-cell")
             .AddClass("mud-datagrid-group")
@@ -29,7 +29,7 @@ namespace MudBlazor
 
         [Parameter, EditorRequired]
         [Category(CategoryTypes.DataGrid.Grouping)]
-        public MudDataGrid<T> DataGrid { get; set; } = default!;
+        public MudDataGrid<T> DataGrid { get; set; } = null!;
 
         [Parameter]
         [Category(CategoryTypes.DataGrid.Selecting)]
@@ -44,7 +44,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter, EditorRequired]
         [Category(CategoryTypes.DataGrid.Grouping)]
-        public GroupDefinition<T> GroupDefinition { get; set; } = default!;
+        public GroupDefinition<T> GroupDefinition { get; set; } = null!;
 
         /// <summary>
         /// The groups and items within this grouping.

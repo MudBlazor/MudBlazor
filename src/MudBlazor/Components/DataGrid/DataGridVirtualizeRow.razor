@@ -1,7 +1,6 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 @typeparam T
-@using System.Diagnostics.CodeAnalysis
 @using MudBlazor.Utilities
 @using MudBlazor.Resources
 @inject InternalMudLocalizer Localizer
@@ -10,7 +9,10 @@
     var resolvedItems = new List<IndexBag<T>>(0);
     if (DataGrid.IsGrouped)
     {
-        resolvedItems = GroupedItems.Select((item, index) => new IndexBag<T>(index, item)).ToList();
+        if (GroupedItems is not null)
+        {
+            resolvedItems = GroupedItems.Select((item, index) => new IndexBag<T>(index, item)).ToList();
+        }
     }
     else if (!DataGrid.Virtualize || DataGrid.VirtualizeServerData == null || DataGrid.HasFooter)
     {

@@ -1,5 +1,4 @@
-﻿@using System.Collections.Generic
-@using MudBlazor.Utilities
+﻿@using MudBlazor.Utilities
 
 <MudDataGrid @ref="@_dataGrid" T="USState"
              ServerData="@ServerReload"
@@ -13,7 +12,7 @@
         <MudText Typo="Typo.h6">US States Information<span class="ml-2" style="color: var(--mud-palette-warning);font-size: smaller;">2025</span></MudText>
         <MudSpacer />
         <MudTextField AdornmentIcon="@Icons.Material.Outlined.Search" Adornment="Adornment.End" Placeholder="Filter Results"
-                      @bind-Value="_searchString" @bind-Value:after="@(() => _dataGrid!.ReloadServerData())" 
+                      @bind-Value="_searchString" @bind-Value:after="@(() => _dataGrid.ReloadServerData())" 
                       DebounceInterval="100" Variant="Variant.Outlined" Clearable />
     </ToolBarContent>
     <Columns>
@@ -133,16 +132,16 @@
 #nullable enable
     public static string __description__ = "Multi Level Grouping within DataGrid";
     // For the Grid
-    private MudDataGrid<USState>? _dataGrid;
+    private MudDataGrid<USState> _dataGrid = null!;
     private string? _searchString = string.Empty;
     // Bound Properties @bind-
     private bool _customizeGroupTemplate;
     private bool _customizeGroupBy;
     private bool _customizeGroupStyle;
     private bool _primaryIndustryGrouping = true;
-    private bool _regionGrouping = false;
+    private bool _regionGrouping;
     private bool _climateGrouping = true;
-    private int _primaryIndustryOrder = 0;
+    private int _primaryIndustryOrder;
     private int _climateOrder = 1;
     private int _regionOrder = 2;
     // Display Options
@@ -179,7 +178,7 @@
         if (firstRender)
         {
             // Check if the dataGrid is grouped and update the state accordingly (for IsGrouped)
-            if (_dataGrid?.IsGrouped == true)
+            if (_dataGrid.IsGrouped == true)
             {
                 StateHasChanged();
             }
@@ -193,7 +192,7 @@
         // simulate some wait time
         await Task.Delay(150);
 
-        var totalItems = data.Count();        
+        var totalItems = data.Count;        
         var pagedData = data.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray();
         return new()
         {
@@ -234,7 +233,7 @@
         };
     }
 
-    private string GroupStyleFunc(GroupDefinition<USState> item)
+    private static string GroupStyleFunc(GroupDefinition<USState> item)
     {
         var indent = item.Level * 16; // 16px per level
         var borderWidth = Math.Max(1, 4 - item.Level); // Decrease border width with depth
@@ -283,22 +282,20 @@
         };
     }    
 
-    private async Task ExpandAllGroupsAsync()
+    private Task ExpandAllGroupsAsync()
     {
-        if (_dataGrid is not null)
-            await _dataGrid!.ExpandAllGroupsAsync();
+        return _dataGrid.ExpandAllGroupsAsync();
     }
 
-    private async Task CollapseAllGroupsAsync()
+    private Task CollapseAllGroupsAsync()
     {
-        if (_dataGrid is not null)
-            await _dataGrid.CollapseAllGroupsAsync();
+        return _dataGrid.CollapseAllGroupsAsync();
     }
 
     private void CustomizeByGroupChanged(bool isChecked)
     {
         _customizeGroupBy = isChecked;
-        _dataGrid?.GroupItems();
+        _dataGrid.GroupItems();
     }
 
     private static List<USState> GetAllStates(string? searchString, ICollection<SortDefinition<USState>>? sortDefinitions)

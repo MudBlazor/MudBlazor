@@ -5,6 +5,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+
 #nullable enable
 namespace MudBlazor
 {
@@ -12,7 +13,7 @@ namespace MudBlazor
     {
         [Parameter, EditorRequired]
         [Category(CategoryTypes.DataGrid.Data)]
-        public MudDataGrid<T> DataGrid { get; set; } = default!;
+        public MudDataGrid<T> DataGrid { get; set; } = null!;
 
         [Parameter]
         [Category(CategoryTypes.DataGrid.Grouping)]
