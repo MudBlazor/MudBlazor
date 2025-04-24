@@ -101,6 +101,12 @@ namespace MudBlazor
         /// </summary>
         public ValueTask FocusStartAsync() => _elementReferenceStart.FocusAsync();
 
+        public override async ValueTask BlurAsync()
+        {
+            await _elementReferenceStart.MudBlurAsync();
+            await _elementReferenceEnd.MudBlurAsync();
+        }
+
         /// <summary>
         /// Selects the text in the starting input.
         /// </summary>
