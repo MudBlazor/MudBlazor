@@ -1,11 +1,12 @@
 ﻿@namespace MudBlazor.Charts
 @using System.Globalization;
-@inherits MudCategoryAxisChartBase
+@using MudBlazor.Components.Chart
+@inherits MudAxisChartBase<LineChartOptions>
 
 @{
     var style = _hoveredDataPoint != null ? "overflow: visible;" : "";
 
-    var lineStrokeWidth = MudChartParent?.ChartOptions.LineStrokeWidth ?? 3;
+    var lineStrokeWidth = ChartOptions?.LineStrokeWidth ?? 3;
     var dataPointRadius = Math.Max(lineStrokeWidth / 2 + 3, 4);
     var dataPointHoverRadius = dataPointRadius + 2;
     var dataPointStroke = 2;
@@ -21,7 +22,7 @@
                 <path stroke="#e0e0e0" stroke-width="0.3" d="@horizontalLine.Data"></path>
             }
         </g>
-        @if (MudChartParent?.ChartOptions.XAxisLines == true)
+        @if (ChartOptions?.XAxisLines == true)
         {
             <g class="mud-charts-gridlines-xaxis-lines">
                 @foreach (var verticalLine in _verticalLines)
@@ -43,7 +44,7 @@
             var verticalLineValue = _verticalValues[i];
             var x = verticalLineValue.X.ToString(CultureInfo.InvariantCulture);
             var y = verticalLineValue.Y.ToString(CultureInfo.InvariantCulture);
-            var rotation = (-AxisChartOptions.XAxisLabelRotation).ToString(CultureInfo.InvariantCulture);
+            var rotation = (-ChartOptions!.XAxisLabelRotation).ToString(CultureInfo.InvariantCulture);
             @((MarkupString)$"<text x='{x}' y='{y}' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate({rotation} {x} {y})'>{verticalLineValue.Value?.ToString(CultureInfo.InvariantCulture)}</text>")
         }
     </g>
@@ -52,17 +53,31 @@
         {
             var series = _series[chartLine.Index];
             var color = MudChartParent?.ChartOptions.ChartPalette.GetValue(chartLine.Index % MudChartParent.ChartOptions.ChartPalette.Length)?.ToString() ?? string.Empty;
-            var showDataMarkers = series.ShowDataMarkers;
+            var showDataMarkers = ChartOptions?.ShowDataMarkers ?? false;
             var isHovered = _hoverDataPointChartLine == chartLine;
 
             var lineClass = isHovered ? "mud-chart-serie mud-chart-line mud-chart-serie-hovered" : "mud-chart-serie mud-chart-line";
 
-            <path class="@lineClass" @onclick="() => SelectedIndex = chartLine.Index" fill="none" stroke="@color" stroke-width="@lineStrokeWidth" d="@chartLine.Data"></path>
+            <path class="@lineClass" 
+                  @onclick="async () => await SetSelectedIndexAsync(chartLine.Index)" 
+                  fill="none" 
+                  stroke="@color" 
+                  stroke-width="@lineStrokeWidth" 
+                  d="@chartLine.Data">
+            </path>
 
-            if (series.LineDisplayType == LineDisplayType.Area)
+            var overrideSettings = GetOverride(series);
+            var displayType = overrideSettings?.LineDisplayType ?? ChartOptions?.LineDisplayType;
+
+            if (displayType == LineDisplayType.Area)
             {
                 var chartArea = _chartAreas[chartLine.Index];
-                <path class="@lineClass" @onclick="() => SelectedIndex = chartLine.Index" fill="@color" fill-opacity="@series.FillOpacity" d="@chartArea.Data"></path>
+                <path class="@lineClass"
+                      @onclick="async () => await SetSelectedIndexAsync(chartLine.Index)"
+                      fill="@color" 
+                      fill-opacity="@series.FillOpacity" 
+                      d="@chartArea.Data">
+                </path>
             }
 
             @foreach (var item in _chartDataPoints[chartLine.Index].OrderBy(x => x.Index))
@@ -70,7 +85,10 @@
                 if (showDataMarkers && item != _hoveredDataPoint)
                 {
                     // Unhovered data point
-                    <circle class="mud-chart-serie mud-donut-segment" @onclick="() => SelectedIndex = chartLine.Index" stroke="@color" stroke-width="@dataPointStroke"
+                    <circle class="mud-chart-serie mud-donut-segment"
+                            @onclick="async () => await SetSelectedIndexAsync(chartLine.Index)" 
+                            stroke="@color" 
+                            stroke-width="@dataPointStroke"
                             cx="@ToS(item.CX)"
                             cy="@ToS(item.CY)"
                             r="@ToS(dataPointRadius)">
@@ -78,7 +96,12 @@
                 }
 
                 // This is a hoverable circle that is invisible until it is the hovered point but has a larger radius to make it easier to hover over
-                <circle class="mud-chart-serie mud-donut-segment" @onclick="() => SelectedIndex = chartLine.Index" fill="@(item == _hoveredDataPoint ? color : string.Empty)" stroke="@color" stroke-width="@dataPointStroke" opacity="@(item == _hoveredDataPoint ? 1 : 0)"
+                <circle class="mud-chart-serie mud-donut-segment"
+                        @onclick="async () => await SetSelectedIndexAsync(chartLine.Index)"
+                        fill="@(item == _hoveredDataPoint ? color : string.Empty)"
+                        stroke="@color"
+                        stroke-width="@dataPointStroke"
+                        opacity="@(item == _hoveredDataPoint ? 1 : 0)"
                         cx="@ToS(item.CX)"
                         cy="@ToS(item.CY)"
                         r="@ToS(dataPointHoverRadius)"
@@ -99,15 +122,15 @@
         var color = MudChartParent.ChartOptions.ChartPalette.GetValue(seriesIndex % MudChartParent.ChartOptions.ChartPalette.Length)?.ToString() ?? string.Empty;
         var series = _series[seriesIndex];
 
-        if (!string.IsNullOrWhiteSpace(series.DataMarkerTooltipTitleFormat))
+        if (!string.IsNullOrWhiteSpace(series.TooltipTitleFormat))
         {
-            var tooltipTitle = series.DataMarkerTooltipTitleFormat
-                .Replace("{{SERIES_NAME}}", series.Name)
+            var tooltipTitle = series.TooltipTitleFormat
+                .Replace("{{SERIES_NAME}}", series.Label)
                 .Replace("{{X_VALUE}}", _hoveredDataPoint.LabelXValue)
                 .Replace("{{Y_VALUE}}", _hoveredDataPoint.LabelYValue);
 
-            var tooltipSubtitle = series.DataMarkerTooltipSubtitleFormat?
-                .Replace("{{SERIES_NAME}}", series.Name)
+            var tooltipSubtitle = series.TooltipSubtitleFormat?
+                .Replace("{{SERIES_NAME}}", series.Label)
                 .Replace("{{X_VALUE}}", _hoveredDataPoint.LabelXValue)
                 .Replace("{{Y_VALUE}}", _hoveredDataPoint.LabelYValue) ?? string.Empty;
 

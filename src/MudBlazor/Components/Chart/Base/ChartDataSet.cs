@@ -3,8 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 #nullable enable
-using System.Runtime.CompilerServices;
-
 namespace MudBlazor.Components.Chart;
 
 public class ChartDataSet
@@ -23,11 +21,6 @@ public class ChartDataSet
     /// Displays this data set in the chart.
     /// </summary>
     public bool Visible { get; set; } = true;
-
-    /// <summary>
-    /// The position of this data set within a list.
-    /// </summary>
-    public int Index { get; set; }
 
     /// <summary>
     /// Tooltip title format for the data set. Supported tags are {{SERIES_NAME}}, {{X_VALUE}} and {{Y_VALUE}}.
