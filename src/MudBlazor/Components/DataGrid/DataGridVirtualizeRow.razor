@@ -1,0 +1,87 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+@typeparam T
+@using MudBlazor.Utilities
+@using MudBlazor.Resources
+@inject InternalMudLocalizer Localizer
+
+@{
+    var resolvedItems = new List<IndexBag<T>>(0);
+    if (DataGrid.IsGrouped)
+    {
+        if (GroupedItems is not null)
+        {
+            resolvedItems = GroupedItems.Select((item, index) => new IndexBag<T>(index, item)).ToList();
+        }
+    }
+    else if (!DataGrid.Virtualize || DataGrid.VirtualizeServerData == null || DataGrid.HasFooter)
+    {
+        resolvedItems = DataGrid.CurrentPageItems.Select((items, index) => new IndexBag<T>(index, items))
+                .ToList();
+    }
+    else
+    {
+        resolvedItems = DataGrid.CurrentPageItems.Select((item, index) => new IndexBag<T>(index, item)).ToList();
+    }
+}
+
+<MudVirtualize @ref="DataGrid._mudVirtualize"
+               ItemsProvider="@DataGrid.VirtualItemsProvider"
+               Enabled="@DataGrid.Virtualize"
+               Items="@resolvedItems"
+               OverscanCount="@DataGrid.OverscanCount"
+               ItemSize="@DataGrid.ItemSize"
+               Context="itemBag">
+    <Placeholder>
+        @if (DataGrid.RowLoadingContent != null)
+        {
+            @DataGrid.RowLoadingContent
+        }
+        else
+        {
+            <tr class="mud-table-row">
+                <td class="mud-table-cell" colspan="1000">
+                    @Localizer[LanguageResource.MudDataGrid_Loading]
+                </td>
+            </tr>
+        }
+    </Placeholder>
+
+    <ChildContent>
+        @{
+            var rowClass = new CssBuilder(DataGrid.RowClass).AddClass(DataGrid.RowClassFunc?.Invoke(itemBag.Item, itemBag.Index)).Build();
+            var rowStyle = new StyleBuilder().AddStyle(DataGrid.RowStyle).AddStyle(DataGrid.RowStyleFunc?.Invoke(itemBag.Item, itemBag.Index)).Build();
+        }
+        <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="itemBag.Item"
+            @onclick="@((args) => RowClick.InvokeAsync((args, itemBag.Item, itemBag.Index)))"
+            @oncontextmenu="@((args) => ContextRowClick.InvokeAsync((args, itemBag.Item, itemBag.Index)))"
+            @oncontextmenu:preventDefault="@(DataGrid.RowContextMenuClick.HasDelegate ? true : false)">
+            <CascadingValue Value="@DataGrid.Validator" IsFixed="true">
+                @foreach (var column in DataGrid.RenderedColumns)
+                {
+                    if (!column.HiddenState.Value)
+                    {
+                        @DataGrid.Cell(column, itemBag.Item)
+                    }
+                }
+            </CascadingValue>
+        </tr>
+        @if (DataGrid.ChildRowContent != null && (DataGrid._openHierarchies.Contains(itemBag.Item) || !DataGrid.HasHierarchyColumn))
+        {
+            <tr class="mud-table-row">
+                <td class="mud-table-cell mud-table-child-content" colspan="1000">
+                    @DataGrid.ChildRowContent(new CellContext<T>(DataGrid, itemBag.Item))
+                </td>
+            </tr>
+        }
+    </ChildContent>
+    <NoRecordsContent>
+        <tr>
+            <th colspan="1000" class="mud-table-empty-row">
+                <div Class="my-3">
+                    @DataGrid.NoRecordsContent
+                </div>
+            </th>
+        </tr>
+    </NoRecordsContent>
+</MudVirtualize>

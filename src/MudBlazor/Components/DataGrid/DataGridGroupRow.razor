@@ -1,0 +1,57 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+@typeparam T
+
+<tr class="mud-table-row">
+    <td class="@GroupClassname" colspan="1000" style="@GroupStylename">
+        <div style="display:flex; align-items:center;">
+            <MudIconButton Class="mud-datagrid-group-button" Icon="@(DataGrid.GetGroupIcon(_expanded))"
+                           OnClick="@GroupExpandClick" />
+            @if (GroupDefinition?.GroupTemplate == null)
+            {
+                <span style="font-weight:bold">@GroupDefinition?.Title: @(Items?.Key ?? "null")</span>
+            }
+            else
+            {
+                @GroupDefinition.GroupTemplate(GroupDefinition)
+            }
+        </div>
+    </td>
+</tr>
+
+@if (_expanded)
+{
+    <!-- The last group will have items, otherwise we need the next group row -->
+    @if (GroupDefinition.InnerGroup != null)
+    {
+        var innerGroupItems = DataGrid?.GetItemsOfGroup(GroupDefinition.InnerGroup, Items);
+        var groupDefinitions = DataGrid.GetGroupDefinitions(GroupDefinition.InnerGroup, innerGroupItems);
+        @foreach (var group in groupDefinitions)
+        {
+            <DataGridGroupRow T="T" Items="@group.Grouping"
+                                GroupDefinition="group"
+                                GroupClass="@GroupClass"
+                                GroupStyle="@GroupStyle"
+                                GroupClassFunc="@GroupClassFunc"
+                                GroupStyleFunc="@GroupStyleFunc"
+                                DataGrid="@DataGrid"
+                                RowClick="@((args) => RowClick.InvokeAsync((args.args, args.item, args.index)))"
+                                ContextRowClick="@((args) => ContextRowClick.InvokeAsync((args.args, args.item, args.index)))"/>
+        }
+    }
+    else
+    {
+        @if (Items != null)
+        {
+            <DataGridVirtualizeRow T="T"
+                                    DataGrid="@DataGrid"
+                                    GroupedItems="@Items"
+                                    RowClick="@((args) => RowClick.InvokeAsync((args.args, args.item, args.index)))"
+                                    ContextRowClick="@((args) => ContextRowClick.InvokeAsync((args.args, args.item, args.index)))"/>
+            <!-- Group Footer -->
+            <tr class="mud-table-row">
+                @DataGrid.FooterCells(Items)
+            </tr>
+        }
+    }
+}

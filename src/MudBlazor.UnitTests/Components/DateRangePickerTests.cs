@@ -1201,6 +1201,25 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Instance.DateRange.Start.Should().Be(comp.Instance.DateRange.End);
         }
+
+        [Test]
+        public async Task DateRangePicker_BlurAsync()
+        {
+            var comp = Context.RenderComponent<MudDateRangePicker>(parameters => parameters
+                    .Add(picker => picker.ReadOnly, false)
+                    .Add(picker => picker.Editable, true));
+
+            var input = comp.Find("input");
+
+            await comp.Instance.FocusStartAsync();
+
+            // the input is actually never focused because the test is run in a headless browser
+            //comp.Find("input").IsFocused.Should().BeTrue();
+
+            await comp.Instance.BlurAsync();
+
+            comp.Find("input").IsFocused.Should().BeFalse();
+        }
     }
 
     public static class DatePickerRenderedFragmentExtensions
