@@ -6,6 +6,11 @@
     var opacity = _boxWidth > 0 ? 1 : 0;
 }
 <g class="svg-tooltip" opacity="@opacity" style="pointer-events: none;">
+    <defs>
+        <filter id="text-shadow" x="-50%" y="-50%" width="200%" height="200%">
+            <feDropShadow dx="0" dy="0" stdDeviation="1.0" flood-color="black" flood-opacity="1" />
+        </filter>
+    </defs>
     <!-- The triangle pointing down (8px wide at the top) -->
     <polygon points="@ToS(X - 8),@ToS(Y - 8) @ToS(X + 8),@ToS(Y - 8) @ToS(X),@ToS(Y - 1.5)"
             fill="@Color"
@@ -20,7 +25,7 @@
             stroke-width="0" />
 
 
-    <text @ref="_hoverTextTitle" x="@ToS(X)" y="@ToS(Y - 14 - subtitleHeight)" text-anchor="middle" font-size="12px">
+    <text @ref="_hoverTextTitle" x="@ToS(X)" y="@ToS(Y - 14 - subtitleHeight)" text-anchor="middle" font-size="12px" fill="white" stroke="black" stroke-width="0.8" paint-order="stroke" filter="url(#text-shadow)">
         <tspan x="@ToS(X)" dy="0">@Title</tspan>
         @if (hasSubtitle)
         {
