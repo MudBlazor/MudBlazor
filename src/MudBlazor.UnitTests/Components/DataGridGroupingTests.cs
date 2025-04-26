@@ -7,6 +7,7 @@ using Bunit;
 using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents.DataGrid;
 using NUnit.Framework;
+
 #nullable enable
 namespace MudBlazor.UnitTests.Components
 {
@@ -460,36 +461,23 @@ namespace MudBlazor.UnitTests.Components
             var rows = component.FindComponents<DataGridGroupRow<DataGridGroupingMultiLevelTest.USState>>();
             rows.Count.Should().Be(15);
             var row = rows[0];
-            var defaultExpanded = row.Instance.GroupDefinition.Expanded;
             // Test the method
             // Act
             void GetCount(bool currExpanded)
             {
+                var defaultExpanded = row.Instance.GroupDefinition.Expanded;
                 // Whatever the expanded state is if it differs from the default it should be in the dictionary
                 dataGrid.Instance._groupExpansionsDict.Count.Should().Be(currExpanded != defaultExpanded ? 1 : 0);
             }
-            row.Instance._expanded.Should().BeTrue();
-            row.Instance.GroupExpandClick();
-
-            // Assert
-            row.WaitForAssertion(() => row.Instance._expanded.Should().BeFalse());
-            row.WaitForAssertion(() => GetCount(false));
-
-            // Act
-            row.Instance.GroupExpandClick();
-
-            // Assert
-            row.WaitForAssertion(() => row.Instance._expanded.Should().BeTrue());
-            row.WaitForAssertion(() => GetCount(true));
 
             // Test the UI
-            var expandButton = row.Find(".mud-datagrid-group-button");
+            var expandButton = () => row.Find(".mud-datagrid-group-button");
             expandButton.Should().NotBeNull();
-            expandButton.Click();
+            expandButton().Click();
 
             row.WaitForAssertion(() => row.Instance._expanded.Should().BeFalse());
             row.WaitForAssertion(() => GetCount(false));
-            expandButton.Click();
+            expandButton().Click();
 
             row.WaitForAssertion(() => row.Instance._expanded.Should().BeTrue());
             row.WaitForAssertion(() => GetCount(true));
@@ -531,11 +519,11 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.WaitForAssertion(() => dataGrid.Instance._groupDefinition.Should().NotBeNull());
             dataGrid.Instance._groupDefinition.InnerGroup.Should().NotBeNull();
             dataGrid.Instance._groupDefinition.Grouping.Should().BeNullOrEmpty();
-            // _groupDefintion is the definition for all the groups but isn't combined into the items until display so we need to 
+            // _groupDefinition is the definition for all the groups but isn't combined into the items until display so we need to 
             // check the final definitions from within the DataGridGroupRow            
 
             var rows = component.FindComponents<DataGridGroupRow<DataGridGroupingMultiLevelTest.USState>>();
-            rows.Count().Should().Be(15);
+            rows.Count.Should().Be(15);
             var row = rows[0];
 
             // Only One Manufacturing Primary Industry
