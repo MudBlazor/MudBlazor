@@ -29,14 +29,19 @@
                                                                  ChartOptions="lineOptions" 
                                                                  @bind-SelectedIndex:get="this.SelectedIndexState.Value" 
                                                                  @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
+        (ChartType.Pie, PieChartOptions pieOptions) => @<Pie ChartSeries="@ChartSeries"
+                                                             ChartOptions="pieOptions"
+                                                             @bind-SelectedIndex:get="this.SelectedIndexState.Value"
+                                                             @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
         _ => throw new NotImplementedException($"{ChartType} chart is not supported")
     };
 
     private IChartOptions GetDefaultOptionsForChart() => ChartType switch
     {
         ChartType.Bar => new BarChartOptions(),
-        ChartType.StackedBar => new StackedBarChartOptions(),
+        ChartType.Pie => new PieChartOptions(),
         ChartType.Line => new LineChartOptions(),
+        ChartType.StackedBar => new StackedBarChartOptions(),
         _ => throw new NotImplementedException($"{ChartType} chart is not supported")
     };
 }

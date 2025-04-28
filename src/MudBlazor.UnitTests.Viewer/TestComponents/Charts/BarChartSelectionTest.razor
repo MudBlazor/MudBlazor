@@ -107,6 +107,10 @@
             XAxisLabels = _labels.Take(_dataPointCount).ToArray(),
             LineDisplayType = _selectedDisplayType,
         },
+        ChartType.Pie => new PieChartOptions
+        {
+            InputLabels = _labels.Take(_dataPointCount).ToArray(),
+        },
         _ => throw new NotImplementedException()
     };
 }
