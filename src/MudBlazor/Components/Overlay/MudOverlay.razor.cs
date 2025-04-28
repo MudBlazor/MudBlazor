@@ -20,7 +20,7 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
     private readonly ParameterState<bool> _visibleState;
     private bool _previousLockScroll = false;
     private bool _previousAbsolute = false;
-    internal int _lockCount = 0;
+    private int _lockCount = 0;
 
     protected string Classname =>
         new CssBuilder("mud-overlay")

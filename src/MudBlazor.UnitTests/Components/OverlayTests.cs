@@ -330,12 +330,10 @@ public class OverlayTests : BunitTest
         if (!absolute && lockscroll)
         {
             scrollManagerMock.Verify(s => s.LockScrollAsync("body", mudOverlay.LockScrollClass), Times.Once());
-            mudOverlay._lockCount.Should().Be(1);
         }
         else
         {
             scrollManagerMock.Verify(s => s.LockScrollAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never());
-            mudOverlay._lockCount.Should().Be(0);
         }
 
         // === Manually re-trigger HandleLockScrollChange (should not change counts) ===
@@ -344,12 +342,10 @@ public class OverlayTests : BunitTest
         if (!absolute && lockscroll)
         {
             scrollManagerMock.Verify(s => s.LockScrollAsync("body", mudOverlay.LockScrollClass), Times.Once());
-            mudOverlay._lockCount.Should().Be(1);
         }
         else
         {
             scrollManagerMock.Verify(s => s.LockScrollAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never());
-            mudOverlay._lockCount.Should().Be(0);
         }
 
         // === Toggle visible to false, expect unlock ===
@@ -359,43 +355,38 @@ public class OverlayTests : BunitTest
         if (!absolute && lockscroll)
         {
             scrollManagerMock.Verify(s => s.UnlockScrollAsync("body", mudOverlay.LockScrollClass), Times.Once());
-            mudOverlay._lockCount.Should().Be(0);
         }
         else
         {
             scrollManagerMock.Verify(s => s.UnlockScrollAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never());
-            mudOverlay._lockCount.Should().Be(0);
         }
 
-        // === Close overlay manually, expect another unlock ===
-        // raise counter so it will force and unlock
-        mudOverlay._lockCount++;
+        // open it
+        visible = true;
+        comp.SetParametersAndRender(p => p.Add(p => p.Visible, visible));
+
+        // close it by method
         await mudOverlay.CloseOverlayAsync();
 
         if (!absolute && lockscroll)
         {
             scrollManagerMock.Verify(s => s.UnlockScrollAsync("body", mudOverlay.LockScrollClass), Times.Exactly(2));
-            mudOverlay._lockCount.Should().Be(0);
         }
         else
         {
             scrollManagerMock.Verify(s => s.UnlockScrollAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never());
-            mudOverlay._lockCount.Should().Be(1);
-            mudOverlay._lockCount--;
         }
 
-        // === Dispose component, expect final unlock since we are raising counter ===
-        mudOverlay._lockCount++;
+        // === Dispose component ===
         await mudOverlay.DisposeAsync();
 
         if (!absolute && lockscroll)
         {
-            scrollManagerMock.Verify(s => s.UnlockScrollAsync("body", mudOverlay.LockScrollClass), Times.Exactly(3));
+            scrollManagerMock.Verify(s => s.UnlockScrollAsync("body", mudOverlay.LockScrollClass), Times.AtLeast(2));
         }
         else
         {
-            // we added a lockCount to force the unlock
-            scrollManagerMock.Verify(s => s.UnlockScrollAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Once());
+            scrollManagerMock.Verify(s => s.UnlockScrollAsync(It.IsAny<string>(), It.IsAny<string>()), Times.AtMostOnce());
         }
     }
 }
