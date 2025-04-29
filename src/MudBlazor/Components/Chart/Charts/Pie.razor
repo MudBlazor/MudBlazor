@@ -1,17 +1,18 @@
-﻿@namespace MudBlazor.Charts
-@inherits MudCategoryChartBase
+﻿@using MudBlazor.Components.Chart
+
+@namespace MudBlazor.Charts
+@inherits MudRadialChartBase<PieChartOptions>
 
 @{
     var style = _hoveredSegment != null ? "overflow: visible;" : "";
-    var chartClass = CircleDonutRatio < 1 ? "mud-chart-donut" : "mud-chart-pie";
 }
 
-<svg @attributes="UserAttributes" class="@chartClass" width="@MudChartParent?.Width" height="@MudChartParent?.Height" viewBox="0 0 @(Radius * 2) @(Radius * 2)" style="@style">
+<svg @ref="_elementReference" @attributes="UserAttributes" class="@ChartClass" width="@MudChartParent?.Width" height="@MudChartParent?.Height" viewBox="0 0 @(CalculatedRadius * 2) @(CalculatedRadius * 2)" style="@style">
     <Filters />
-    <g transform="translate(@Radius, @Radius)">
+    <g transform="translate(@CalculatedRadius, @CalculatedRadius)">
         @foreach (var item in _paths)
         {
-            <path @onclick="() => SelectedIndex = item.Index"
+            <path @onclick="async () => await SetSelectedIndexAsync(item.Index)"
                   class="mud-chart-serie"
                   fill="@MudChartParent?.ChartOptions.ChartPalette.GetValue(item.Index % MudChartParent.ChartOptions.ChartPalette.Length)"
                   d="@item.Data"
@@ -28,14 +29,14 @@
     {
         var color = MudChartParent.ChartOptions.ChartPalette.GetValue(_hoveredSegment.Index % MudChartParent.ChartOptions.ChartPalette.Length)?.ToString() ?? string.Empty;
 
-        if (!string.IsNullOrWhiteSpace(MudChartParent.ChartOptions.DefaultDataMarkerTooltipTitleFormat))
+        if (!string.IsNullOrWhiteSpace(MudChartParent.ChartOptions.TooltipTitleFormat))
         {
-            var tooltipTitle = MudChartParent.ChartOptions.DefaultDataMarkerTooltipTitleFormat
-                .Replace("{{SERIES_NAME}}", _hoveredSegment.LabelYValue)
+            var tooltipTitle = ChartOptions.TooltipTitleFormat
+                .Replace("{{SERIES_NAME}}", GetSeriesName(ChartOptions!.AggregationOption))
                 .Replace("{{X_VALUE}}", _hoveredSegment.LabelXValue)
                 .Replace("{{Y_VALUE}}", _hoveredSegment.LabelYValue);
 
-            <ChartTooltip Title="@tooltipTitle" Color="@color" X="_hoveredSegment.LabelX + Radius" Y="_hoveredSegment.LabelY + Radius" />
+            <ChartTooltip Title="@tooltipTitle" Color="@color" X="_hoveredSegment.LabelX + CalculatedRadius" Y="_hoveredSegment.LabelY + CalculatedRadius" />
         }
     }
 </svg>

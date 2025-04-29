@@ -5,7 +5,15 @@
 #nullable enable
 namespace MudBlazor.Components.Chart;
 
-public abstract class DefaultRadialChartOptions : DefaultChartOptions
+public abstract class DefaultRadialChartOptions : DefaultChartOptions, IRadialChartOptions
 {
-    public string[] InputLabels { get; set; } = [];
+    /// <summary>
+    /// The aggregation option to use for charts with multiple data sets.
+    /// </summary>
+    public virtual AggregationOption AggregationOption { get; set; }
+
+    /// <summary>
+    /// Show the series value as a percentage of the total.
+    /// </summary>
+    public bool ShowAsPercentage { get; set; }
 }

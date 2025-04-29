@@ -11,7 +11,7 @@ using MudBlazor.Interop;
 #nullable enable
 namespace MudBlazor.Components.Chart;
 
-public abstract partial class MudRadialChartBase<TOptions> : MudChartBase<TOptions>, IDisposable where TOptions : IChartOptions
+public abstract partial class MudRadialChartBase<TOptions> : MudChartBase<TOptions>, IDisposable where TOptions : IRadialChartOptions
 {
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
@@ -24,14 +24,16 @@ public abstract partial class MudRadialChartBase<TOptions> : MudChartBase<TOptio
 
     private readonly DotNetObjectReference<MudRadialChartBase<TOptions>> _dotNetObjectReference;
     private ElementSize? _elementSize;
-    private ElementReference _elementReference;
+    protected ElementReference _elementReference;
+    private const double BoundWidthDefault = 280;
+    private const double BoundHeightDefault = 280;
     private double _boundWidth = 280;
     private double _boundHeight = 280;
     internal List<SvgPath> _paths = [];
     internal List<SvgLegend> _legends = [];
-    private SvgPath? _hoveredSegment;
+    internal SvgPath? _hoveredSegment;
+    protected HashSet<int> _hiddenIndicies = [];
     protected (double x, double y, string label, double value)? _hoveredDot = null;
-    protected int? _selectedSeriesIndex = null;
     protected double CalculatedRadius => Math.Round(Math.Min(_boundWidth, _boundHeight) / 2);
     protected abstract string ChartClass { get; }
 
@@ -50,13 +52,13 @@ public abstract partial class MudRadialChartBase<TOptions> : MudChartBase<TOptio
         _legends.Clear();
         _hoveredSegment = null;
         _hoveredDot = null;
-        _selectedSeriesIndex = null;
 
         if (ChartSeries == null || ChartSeries.Count == 0)
             return;
 
         RebuildChart();
     }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await base.OnAfterRenderAsync(firstRender);
@@ -68,23 +70,107 @@ public abstract partial class MudRadialChartBase<TOptions> : MudChartBase<TOptio
             OnElementSizeChanged(elementSize);
         }
     }
-    protected double[] AggregateSeriesData()
+    protected double[] AggregateSeriesData(AggregationOption aggregation)
     {
-        if (ChartSeries == null || ChartSeries.Count == 0)
+        if (aggregation == AggregationOption.None || ChartSeries is null || !ChartSeries.Any(x => x.Visible))
             return [];
 
-        var categories = ChartSeries.Max(series => series.Data.Values.Length);
-        var aggregated = new double[categories];
+        var maxCategoryLength = ChartOptions!.AggregationOption == AggregationOption.GroupByLabel
+                ? ChartSeries.Max(series => series.Data.Values.Length)
+                : ChartSeries.Count;
+        var aggregated = new double[maxCategoryLength];
 
-        foreach (var series in ChartSeries)
+        switch (aggregation)
         {
-            for (var i = 0; i < series.Data.Values.Length; i++)
-            {
-                aggregated[i] += series.Data.Values[i];
-            }
+            case AggregationOption.GroupByLabel:
+                foreach (var series in ChartSeries)
+                {
+                    if (!series.Visible)
+                        continue;
+
+                    var values = series.Data.Values;
+
+                    for (var i = 0; i < values.Length; i++)
+                    {
+                        if (_hiddenIndicies.Contains(i))
+                            continue;
+
+                        aggregated[i] += values[i];
+                    }
+                }
+                break;
+
+            case AggregationOption.GroupByDataSet:
+                var index = -1;
+
+                foreach (var series in ChartSeries)
+                {
+                    index++;
+
+                    if (!series.Visible)
+                        continue;
+
+                    if (index >= aggregated.Length)
+                        break;
+
+                    aggregated[index] = series.Data.Values.Sum();
+                }
+                break;
+
+            default:
+                throw new ArgumentOutOfRangeException(nameof(aggregation), $"Unsupported aggregation: {aggregation}");
         }
 
         return aggregated;
+    }
+
+    public string GetSeriesName(AggregationOption aggregation)
+    {
+        if (ChartSeries is null || ChartSeries.Count == 0)
+            return string.Empty;
+
+        switch (aggregation)
+        {
+            case AggregationOption.GroupByLabel:
+                var chartSeries = ChartSeries.Where(x => x.Visible).ToArray();
+
+                if (chartSeries.Length == 1)
+                    return chartSeries[0].Label;
+
+                return chartSeries.Length.ToString();
+
+            case AggregationOption.GroupByDataSet:
+                if (ChartLabels.Length == 1)
+                    return ChartLabels[0];
+
+                return ChartLabels.Length.ToString();
+
+            default:
+                throw new ArgumentOutOfRangeException(nameof(aggregation), $"Unsupported aggregation: {aggregation}");
+        }
+    }
+
+    protected void SetBounds()
+    {
+        _boundWidth = BoundWidthDefault;
+        _boundHeight = BoundHeightDefault;
+
+        if (MudChartParent?.MatchBoundsToSize is true)
+        {
+            if (_elementSize is not null)
+            {
+                _boundWidth = _elementSize.Width;
+                _boundHeight = _elementSize.Height;
+            }
+            else if (MudChartParent.Width.EndsWith("px")
+                && MudChartParent.Height.EndsWith("px")
+                && double.TryParse(MudChartParent.Width.AsSpan(0, MudChartParent.Width.Length - 2), out var width)
+                && double.TryParse(MudChartParent.Height.AsSpan(0, MudChartParent.Height.Length - 2), out var height))
+            {
+                _boundWidth = width;
+                _boundHeight = height;
+            }
+        }
     }
 
     internal void OnSegmentMouseOver(MouseEventArgs _, SvgPath segment)
