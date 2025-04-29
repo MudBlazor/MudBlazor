@@ -500,6 +500,9 @@ window.mudpopoverHelper = {
                 popoverContentNode.style['z-index'] = Math.max(popoverNodeStyle.getPropertyValue('z-index'), popoverContentNode.style['z-index']);
                 popoverContentNode.skipZIndex = true;
             }
+
+            // adjust overlays as needed with new zindex
+            window.mudpopoverHelper.popoverOverlayUpdates();
         }
         else {
             //console.log(`popoverNode: ${popoverNode} ${popoverNode ? popoverNode.parentNode : ""}`);
@@ -530,34 +533,35 @@ window.mudpopoverHelper = {
     // sets popoveroverlay to the right z-index
     updatePopoverOverlay: function (popoverContentNode) {
         // tooltips don't have an overlay
-        if (popoverContentNode.classList.contains("mud-tooltip")) {
+        if (!popoverContentNode || popoverContentNode.classList.contains("mud-tooltip")) {
             return;
         }
         // set any associated overlay to equal z-index
         const provider = popoverContentNode.closest(`.${window.mudpopoverHelper.mainContainerClass}`);
         if (provider && popoverContentNode.classList.contains("mud-popover")) {
-            const overlay = provider.querySelector('.mud-overlay');
+            const overlay = provider.querySelector('.mud-overlay');          
             // skip any overlay marked with mud-skip-overlay
             if (overlay && !overlay.classList.contains('mud-skip-overlay-positioning')) {
                 // Only assign z-index if it doesn't already exist or has changed
-                if (popoverContentNode && overlay.style['z-index'] !== popoverContentNode.style['z-index']) {
-                    overlay.style['z-index'] = popoverContentNode.style['z-index'];
+                const popoverContentNodeZindex = Number(popoverContentNode.style['z-index'] || 0);
+                const overlayZindex = Number(overlay.style['z-index'] || 0);
+                if (popoverContentNodeZindex > overlayZindex) {
+                    overlay.style['z-index'] = popoverContentNodeZindex;
                 }
-
             }
         }
     },
 
-    // set zindex order
+    // set zindex order, popoverContentNode is the calling popover, parentNode is the node to compare to
     updatePopoverZIndex: function (popoverContentNode, parentNode) {
-        // find the first parent mud-popover if it exists
+        // find the first parent mud-popover if it exists (nested popovers)
         const parentPopover = parentNode.closest('.mud-popover');
-        const parentOfPopover = popoverContentNode.parentNode;
+        const popoverNode = document.getElementById('popover-' + popoverContentNode.id.substr(15));
         // get --mud-zindex-popover from root
         let newZIndex = window.mudpopoverHelper.basePopoverZIndex + 1;
         const origZIndex = parseInt(popoverContentNode.style['z-index']) || 1;
         const contentZIndex = popoverContentNode.style['z-index'];
-        // normal nested position update
+        // normal nested position update parentPopover is a parent with .mud-popover so nested for sure
         if (parentPopover) {
             // get parent popover z-index
             const computedStyle = window.getComputedStyle(parentPopover);
@@ -570,17 +574,7 @@ window.mudpopoverHelper = {
             }
             popoverContentNode.style['z-index'] = newZIndex;
         }
-        // nested popover inside any other child element
-        else if (parentOfPopover) {
-            const computedStyle = window.getComputedStyle(parentOfPopover);
-            const tooltipZIndexValue = computedStyle.getPropertyValue('z-index');
-            if (tooltipZIndexValue !== 'auto') {
-                newZIndex = parseInt(tooltipZIndexValue) + 1;
-            }
-            popoverContentNode.style['z-index'] = Math.max(newZIndex, window.mudpopoverHelper.baseTooltipZIndex + 1, origZIndex);
-        }
-        // tooltip container update 
-        // (it's not technically a nested popover but when nested inside popover components it doesn't set zindex properly)
+        // tooltip container update, so the node it's being compared to is a tooltip
         else if (parentNode && parentNode.classList.contains("mud-tooltip-root")) {
             const computedStyle = window.getComputedStyle(parentNode);
             const tooltipZIndexValue = computedStyle.getPropertyValue('z-index');
@@ -599,9 +593,72 @@ window.mudpopoverHelper = {
             }
             popoverContentNode.style['z-index'] = newZIndex;
         }
+        // nested popover inside any other child element
+        else if (popoverNode.parentNode) {
+            const baseZIndexValue = window.mudpopoverHelper.getEffectiveZIndex(popoverNode.parentNode);           
+            newZIndex = baseZIndexValue + 1;
+            popoverContentNode.style['z-index'] = Math.max(newZIndex, window.mudpopoverHelper.basePopoverZIndex + 1, origZIndex);
+        }
         // if popoverContentNode.style['z-index'] is not set or set lower than minimum set it to default popover zIndex
         else if (!contentZIndex || parseInt(contentZIndex) < 1) {
             popoverContentNode.style['z-index'] = newZIndex;
+        }
+    },
+
+    getEffectiveZIndex: function (element) {
+        let currentElement = element;
+        let maxZIndex = 0;
+        // navigate up the body reciording z-index until document.body
+        while (currentElement && currentElement !== document.body) {
+            if (currentElement.nodeType !== 1) { // 1 is an element node
+                currentElement = currentElement.parentElement;
+                continue;
+            }
+
+            const style = window.getComputedStyle(currentElement);
+            const position = style.getPropertyValue('position');
+
+            if (position === 'static') { // static elements have no z-index
+                currentElement = currentElement.parentElement;
+                continue;
+            }
+
+            const zIndex = style.getPropertyValue('z-index');
+            const zIndexValue = parseInt(zIndex, 10);
+
+            // update maxZIndex only if zIndexValue is defined and greater than current max
+            if (!isNaN(zIndexValue) && zIndexValue > maxZIndex) {
+                maxZIndex = zIndexValue;
+            }
+
+            currentElement = currentElement.parentElement;
+        }
+
+        return maxZIndex;
+    },
+
+    popoverOverlayUpdates: function () {
+        let highestTickItem = null;
+        let highestTickValue = -1;
+
+        const parentNode = document.querySelector(`.${window.mudpopoverHelper.mainContainerClass}`);
+        if (!parentNode || !parentNode.children) { return; }
+        // Traverse children of target.parentNode that contain the class "mud-popover"
+        for (const child of parentNode.children) {
+            if (child && child.classList && child.classList.contains("mud-popover-open")) {
+                const tickValue = Number(child.getAttribute("data-ticks")) || 0;
+
+                if (tickValue > highestTickValue) {
+                    highestTickValue = tickValue;
+                    highestTickItem = child;
+                }
+            }
+        }
+        if (highestTickItem) {
+            const isNested = highestTickItem.classList.contains('mud-popover-nested');
+            if (!isNested) {
+                window.mudpopoverHelper.updatePopoverOverlay(highestTickItem);
+            }
         }
     },
 
@@ -694,6 +751,9 @@ class MudPopover {
     }
 
     callbackPopover(mutation) {
+        // good viewertests to check anytime you make a change
+        // DrawerDialogSelectTest, OverlayNestedFreezeTest, OverlayDialogTest, PopoverDataGridFilterOptionsTest
+        // TooltipNotRemovedTest (performance), PopoverFlipDirectionTest (flip test)
         const target = mutation.target;
         if (!target) return;
         const id = target.id.substr(15);
@@ -736,6 +796,8 @@ class MudPopover {
 
                 // Remove individual observers and listeners that might exist
                 this.disposeObservers(id);
+                // reposition overlays as needed
+                window.mudpopoverHelper.popoverOverlayUpdates();
             }
         }
         else if (mutation.type == 'attributes' && mutation.attributeName == 'data-ticks') {
@@ -748,29 +810,7 @@ class MudPopover {
             if (tickAttribute > 0 && target.parentNode && this.map[id] && this.map[id].isOpened &&
                 target.parentNode.classList.contains(window.mudpopoverHelper.mainContainerClass)) {
                 // reposition popover individually
-                window.mudpopoverHelper.placePopoverByNode(target);
-
-                // check and reposition overlay if needed, positions and z-index can change during a reflow so leave it in data-ticks
-                let highestTickItem = null;
-                let highestTickValue = -1;
-
-                // Traverse children of target.parentNode that contain the class "mud-popover"
-                for (const child of target.parentNode.children) {
-                    if (child.classList.contains("mud-popover")) {
-                        const tickValue = Number(child.getAttribute("data-ticks")) || 0;
-
-                        if (tickValue > highestTickValue) {
-                            highestTickValue = tickValue;
-                            highestTickItem = child;
-                        }
-                    }
-                }
-
-                const isNested = highestTickItem.classList.contains('mud-popover-nested');
-
-                if (highestTickItem && !isNested) {
-                    window.mudpopoverHelper.updatePopoverOverlay(highestTickItem);
-                }
+                window.mudpopoverHelper.placePopoverByNode(target);           
             }
         }
     }
@@ -842,6 +882,9 @@ class MudPopover {
 
         // this is the content node in the provider regardless of the RenderFragment that exists when the popover is active
         const popoverContentNode = document.getElementById('popovercontent-' + id);
+
+        // queue a resize event so we ensure if this popover started opened or nested it will be positioned correctly
+        window.mudpopoverHelper.debouncedResize();
 
         // Store all references needed for later cleanup
         this.map[id] = {

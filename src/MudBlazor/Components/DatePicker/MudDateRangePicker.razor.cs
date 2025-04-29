@@ -212,6 +212,8 @@ namespace MudBlazor
         /// </summary>
         public ValueTask SelectEndAsync() => _rangeInput.SelectEndAsync();
 
+        public override ValueTask BlurAsync() => _rangeInput.BlurAsync();
+
         /// <summary>
         /// Selects a portion of the end input text.
         /// </summary>
