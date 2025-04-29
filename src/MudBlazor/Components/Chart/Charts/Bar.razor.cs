@@ -145,7 +145,7 @@ namespace MudBlazor.Charts
                 };
                 _verticalLines.Add(line);
 
-                var xLabels = i < ChartOptions!.XAxisLabels.Length ? ChartOptions!.XAxisLabels[i] : "";
+                var xLabels = i < ChartLabels.Length ? ChartLabels[i] : "";
                 var lineValue = new SvgText()
                 {
                     X = x + (_barGroupWidth / 2) - ((_barGap * spaces) / 2) - leftShift,
@@ -183,7 +183,7 @@ namespace MudBlazor.Charts
                     {
                         Index = i,
                         Data = $"M {ToS(gridValueX)} {ToS(gridValueY)} L {ToS(gridValueX)} {ToS(gridValue)}",
-                        LabelXValue = ChartOptions!.XAxisLabels.Length > j ? ChartOptions!.XAxisLabels[j] : string.Empty,
+                        LabelXValue = ChartLabels.Length > j ? ChartLabels[j] : string.Empty,
                         LabelYValue = dataValue.ToString(series.TooltipYValueFormat),
                         LabelX = gridValueX,
                         LabelY = gridValue

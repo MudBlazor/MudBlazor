@@ -16,6 +16,16 @@ public abstract class MudChartBase<TOptions> : MudComponentBase where TOptions :
     public bool RightToLeft { get; set; }
 
     /// <summary>
+    /// The labels describing data values.
+    /// </summary>
+    /// <remarks>
+    /// The number of labels in this array is typically the same as the number of values in the <see cref="ChartSeries.Data"/> property.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Chart.Behavior)]
+    public string[] ChartLabels { get; set; } = [];
+
+    /// <summary>
     /// The series of values to display.
     /// </summary>
     [Parameter]

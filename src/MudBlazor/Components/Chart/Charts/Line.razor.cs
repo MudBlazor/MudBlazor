@@ -140,7 +140,7 @@ namespace MudBlazor.Charts
                 };
                 _verticalLines.Add(line);
 
-                var xLabels = i < ChartOptions?.XAxisLabels.Length ? ChartOptions?.XAxisLabels[i] : "";
+                var xLabels = i < ChartLabels.Length ? ChartLabels[i] : "";
                 var lineValue = new SvgText()
                 {
                     X = x,
@@ -214,7 +214,7 @@ namespace MudBlazor.Charts
                                 CX = x,
                                 CY = y,
                                 LabelX = x,
-                                LabelXValue = ChartOptions!.XAxisLabels[j / interpolationResolution],
+                                LabelXValue = ChartLabels[j / interpolationResolution],
                                 LabelY = y,
                                 LabelYValue = dataValue.ToString(series.TooltipYValueFormat),
                             });
@@ -288,7 +288,7 @@ namespace MudBlazor.Charts
                                     CX = x,
                                     CY = y,
                                     LabelX = x,
-                                    LabelXValue = ChartOptions!.XAxisLabels.Length > j ? ChartOptions!.XAxisLabels[j] : string.Empty,
+                                    LabelXValue = ChartLabels.Length > j ? ChartLabels[j] : string.Empty,
                                     LabelY = y,
                                     LabelYValue = dataValue.ToString(series.TooltipYValueFormat),
                                 });

@@ -188,7 +188,7 @@ namespace MudBlazor.Charts
                 };
                 _verticalLines.Add(line);
 
-                var label = j < ChartOptions.XAxisLabels.Length ? ChartOptions.XAxisLabels[j] : "";
+                var label = j < ChartLabels.Length ? ChartLabels[j] : "";
                 var text = new SvgText()
                 {
                     X = x,
@@ -235,7 +235,7 @@ namespace MudBlazor.Charts
                     {
                         Index = i,
                         Data = $"M {ToS(x)} {ToS(yStart)} L {ToS(x)} {ToS(yEnd - BarOverlapAmountFix)}",
-                        LabelXValue = ChartOptions.XAxisLabels.Length > j ? ChartOptions.XAxisLabels[j] : string.Empty,
+                        LabelXValue = ChartLabels.Length > j ? ChartLabels[j] : string.Empty,
                         LabelYValue = dataValue.ToString(series.TooltipYValueFormat),
                         LabelX = x,
                         LabelY = yEnd

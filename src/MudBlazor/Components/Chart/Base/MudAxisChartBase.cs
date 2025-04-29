@@ -6,7 +6,7 @@ using MudBlazor.Interop;
 #nullable enable
 namespace MudBlazor.Components.Chart;
 
-public abstract class MudAxisChartBase<TOptions> : MudChartBase<TOptions>, IDisposable where TOptions : IChartOptions
+public abstract class MudAxisChartBase<TOptions> : MudChartBase<TOptions>, IDisposable where TOptions : IAxisChartOptions
 {
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;

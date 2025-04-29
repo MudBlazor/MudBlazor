@@ -5,7 +5,7 @@
 #nullable enable
 namespace MudBlazor.Components.Chart;
 
-public interface IAxisChartOptions
+public interface IAxisChartOptions : IChartOptions
 {
     /// <summary>
     /// The spacing between vertical tick marks.
@@ -31,11 +31,6 @@ public interface IAxisChartOptions
     /// Shows horizontal axis lines.
     /// </summary>
     public bool XAxisLines { get; set; }
-
-    /// <summary>
-    /// The labels applied to the horizontal axis.
-    /// </summary>
-    public string[] XAxisLabels { get; set; }
 
     /// <summary>
     /// Rotation angle to rotate the labels in degrees.

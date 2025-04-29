@@ -47,14 +47,6 @@ public abstract class DefaultAxisChartOptions : DefaultChartOptions, IAxisChartO
     public bool XAxisLines { get; set; }
 
     /// <summary>
-    /// The labels applied to the horizontal axis.
-    /// </summary>
-    /// <remarks>
-    /// The number of values in this array is typically equal to the number of values in the <see cref="ChartSeries.Data"/> property.
-    /// </remarks>
-    public string[] XAxisLabels { get; set; } = [];
-
-    /// <summary>
     /// Rotation angle to rotate the labels in degrees.
     /// </summary>
     public int XAxisLabelRotation { get; set; }
