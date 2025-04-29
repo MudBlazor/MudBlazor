@@ -16,11 +16,11 @@ namespace MudBlazor;
 /// </summary>
 public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, IAsyncDisposable
 {
-    private readonly string _elementId = Identifier.Create("overlay");
+    private int _lockCount;
+    private bool _previousAbsolute;
+    private bool _previousLockScroll;
     private readonly ParameterState<bool> _visibleState;
-    private bool _previousLockScroll = false;
-    private bool _previousAbsolute = false;
-    private int _lockCount = 0;
+    private readonly string _elementId = Identifier.Create("overlay");
 
     protected string Classname =>
         new CssBuilder("mud-overlay")
@@ -287,7 +287,11 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
     private ValueTask BlockScrollAsync()
     {
         // we only want to lock scroll once
-        if (_lockCount > 0) return ValueTask.CompletedTask;
+        if (_lockCount > 0)
+        {
+            return ValueTask.CompletedTask;
+        }
+
         _lockCount++;
         return ScrollManager.LockScrollAsync("body", LockScrollClass);
     }
@@ -334,7 +338,9 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
         }
 
         if (_lockCount > 0)
+        {
             await UnblockScrollAsync();
+        }
 
         await StopModelessAutoCloseTrackingAsync();
     }
