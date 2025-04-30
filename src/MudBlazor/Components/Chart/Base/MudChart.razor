@@ -36,6 +36,11 @@
                                                              ChartOptions="pieOptions"
                                                              @bind-SelectedIndex:get="this.SelectedIndexState.Value"
                                                              @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
+        (ChartType.Donut, DonutChartOptions donutOptions) => @<Donut ChartSeries="@ChartSeries"
+                                                                     ChartLabels="@ChartLabels"
+                                                                     ChartOptions="donutOptions"
+                                                                     @bind-SelectedIndex:get="this.SelectedIndexState.Value"
+                                                                     @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
         _ => throw new NotImplementedException($"{ChartType} chart is not supported")
     };
 
@@ -44,6 +49,7 @@
         ChartType.Bar => new BarChartOptions(),
         ChartType.Pie => new PieChartOptions(),
         ChartType.Line => new LineChartOptions(),
+        ChartType.Donut => new DonutChartOptions(),
         ChartType.StackedBar => new StackedBarChartOptions(),
         _ => throw new NotImplementedException($"{ChartType} chart is not supported")
     };

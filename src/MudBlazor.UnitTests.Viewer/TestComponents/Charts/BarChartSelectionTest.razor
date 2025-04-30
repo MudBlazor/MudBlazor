@@ -27,7 +27,7 @@
                 }
             </MudSelect>
         }
-        else if (_chartType == ChartType.Pie)
+        else if (_chartType == ChartType.Pie || _chartType == ChartType.Donut)
         {
             <MudSelect T="AggregationOption" Label="Group By" @bind-Value="_selectedAggregationOption" Dense FitContent Variant="Variant.Outlined" Margin="Margin.Dense">
                 @foreach (AggregationOption groupBy in Enum.GetValues(typeof(AggregationOption)))
@@ -119,6 +119,10 @@
         {
             AggregationOption = _selectedAggregationOption,
             ShowAsPercentage = true,
+        },
+        ChartType.Donut => new DonutChartOptions
+        {
+            AggregationOption = _selectedAggregationOption,
         },
         _ => throw new NotImplementedException()
     };

@@ -1,4 +1,32 @@
-﻿@namespace MudBlazor.Charts
-@inherits MudCategoryChartBase
+﻿@using MudBlazor.Components.Chart
 
-<Pie UserAttributes="@UserAttributes" InputData="@InputData" @bind-SelectedIndex="@SelectedIndex" InputLabels="@InputLabels" CircleDonutRatio="0.25"></Pie>
+@namespace MudBlazor.Charts
+@inherits MudRadialChartBase<DonutChartOptions>
+
+<RadialChart TChartOptions="DonutChartOptions"
+    ElementRefChanged="SetElementReference"
+    Radius="@CalculatedRadius"
+    ChartClass="@ChartClass"
+    Paths="@_paths"
+    Legends="@_legends"
+    HoveredSegment="@_hoveredSegment"
+    UserAttributes="@UserAttributes"
+    TooltipTitle="@BuildTooltipTitle()"
+    OnPathClick="async (i) => await SetSelectedIndexAsync(i)"
+    OnMouseOver="(i) => OnSegmentMouseOver(new MouseEventArgs(), i)"
+    OnMouseOut="() => OnSegmentMouseOut(new MouseEventArgs())" />
+
+@code {
+    public override string ChartClass => "mud-chart-donut";
+
+    private string BuildTooltipTitle()
+    {
+        if (_hoveredSegment == null || string.IsNullOrWhiteSpace(ChartOptions?.TooltipTitleFormat))
+            return string.Empty;
+
+        return ChartOptions.TooltipTitleFormat
+            .Replace("{{SERIES_NAME}}", GetSeriesName(ChartOptions.AggregationOption))
+            .Replace("{{X_VALUE}}", _hoveredSegment.LabelXValue)
+            .Replace("{{Y_VALUE}}", _hoveredSegment.LabelYValue);
+    }
+}
