@@ -467,7 +467,7 @@ namespace MudBlazor.UnitTests.Components
 
             picker.Markup.Should().Contain("mud-selected"); //confirm selected date is shown
 
-            comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals("23")).Click();
+            comp.SelectDate("23");
 
             var date = DateTime.Today.Subtract(TimeSpan.FromDays(60));
 
