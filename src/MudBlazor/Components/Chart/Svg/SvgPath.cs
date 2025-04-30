@@ -4,7 +4,7 @@ namespace MudBlazor
     /// <summary>
     /// Represents an arbitrary SVG path.
     /// </summary>
-    internal class SvgPath
+    public sealed class SvgPath
     {
         /// <summary>
         /// The position of this path within a list.

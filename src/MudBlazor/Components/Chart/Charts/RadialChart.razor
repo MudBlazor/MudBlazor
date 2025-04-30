@@ -1,0 +1,87 @@
+﻿@namespace MudBlazor.Charts
+@using MudBlazor.Components.Chart
+@typeparam TChartOptions where TChartOptions : IRadialChartOptions, new()
+
+@{
+    var style = HoveredSegment is not null ? "overflow: visible;" : "";
+}
+
+<svg @ref="_svgRef" @attributes="UserAttributes" class="@ChartClass" width="@MudChartParent?.Width" height="@MudChartParent?.Height" viewBox="0 0 @(Radius * 2) @(Radius * 2)" style="@style">
+    <Filters />
+
+    <g transform="translate(@Radius, @Radius)">
+        @foreach (var item in Paths)
+        {
+            <path @onclick="() => OnPathClick.InvokeAsync(item.Index)"
+                  class="mud-chart-serie"
+                  fill="@GetColor(item.Index)"
+                  d="@item.Data"
+                  @onmouseover="() => OnMouseOver.InvokeAsync(item)"
+                  @onmouseout="() => OnMouseOut.InvokeAsync()">
+            </path>
+        }
+    </g>
+
+    @MudChartParent?.CustomGraphics
+
+    @if (HoveredSegment is not null && MudChartParent?.ChartOptions?.ShowToolTips is true)
+    {
+        <ChartTooltip Title="@TooltipTitle"
+                      Color="@GetColor(HoveredSegment.Index)"
+                      X="@(HoveredSegment.LabelX + Radius)"
+                      Y="@(HoveredSegment.LabelY + Radius)" />
+    }
+</svg>
+
+<Legend Data="@Legends" />
+
+@code {
+    private ElementReference _svgRef;
+
+    [CascadingParameter] 
+    private MudChart MudChartParent { get; set; }
+    
+    [Parameter] 
+    public double Radius { get; set; }
+    
+    [Parameter] 
+    public string ChartClass { get; set; }
+    
+    [Parameter] 
+    public string TooltipTitle { get; set; }
+
+    [Parameter] 
+    public SvgPath HoveredSegment { get; set; }
+    
+    [Parameter] 
+    public List<SvgPath> Paths { get; set; } = [];
+    
+    [Parameter] 
+    public List<SvgLegend> Legends { get; set; } = [];
+    
+    [Parameter] 
+    public Dictionary<string, object> UserAttributes { get; set; } = [];
+
+    [Parameter] 
+    public EventCallback OnMouseOut { get; set; }
+    
+    [Parameter] 
+    public EventCallback<int> OnPathClick { get; set; }
+    
+    [Parameter] 
+    public EventCallback<SvgPath> OnMouseOver { get; set; }
+    
+    [Parameter] 
+    public EventCallback<ElementReference> ElementRefChanged { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+            await ElementRefChanged.InvokeAsync(_svgRef);
+    }
+
+    private string GetColor(int index) =>
+        MudChartParent?.ChartOptions.ChartPalette
+            .GetValue(index % MudChartParent.ChartOptions.ChartPalette.Length)?
+            .ToString() ?? string.Empty;
+}
