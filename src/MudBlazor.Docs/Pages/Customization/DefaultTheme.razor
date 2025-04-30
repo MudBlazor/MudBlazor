@@ -240,14 +240,14 @@
             Type = "String[]",
             Default = "System.String[]"
         });
-        for (int i = 0; i < mudTheme.Shadows.Elevation.Length; i++)
+        for (int i = 0; i < mudTheme.Shadows.ElevationLight.Length; i++)
         {
             int a = i;
             ApiShadow.Add(new ApiDefaultTheme()
             {
                 Name = $"Elevation[{a}]",
                 Type = "String",
-                Default = mudTheme.Shadows.Elevation.GetValue(a),
+                Default = mudTheme.Shadows.ElevationLight.GetValue(a),
                 CSSVariable = $"--mud-elevation-{a}",
                 CSSClass = $"mud-elevation-{a}"
             });
