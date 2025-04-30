@@ -178,7 +178,7 @@ namespace MudBlazor.Docs
 
         private static readonly Shadow LandingPageShadows = new()
         {
-            Elevation = new string[]
+            ElevationLight = new string[]
             {
             "none",
             "0 2px 4px -1px rgba(6, 24, 44, 0.2)",
