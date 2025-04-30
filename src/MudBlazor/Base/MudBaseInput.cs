@@ -493,23 +493,38 @@ namespace MudBlazor
 
         protected internal virtual async Task OnBlurredAsync(FocusEventArgs obj)
         {
+            _isFocused = false;
+
             if (ReadOnly)
             {
                 return;
             }
 
-            _isFocused = false;
+            // all the OnBlur parents (TextField, MudMask, NumericField, DateRange, etc) currently point to this method
+            // which causes this method to be fired repeatedly, we can use the obj.Type of FocusedEventArgs to track it
 
             if (!OnlyValidateIfDirty || _isDirty)
             {
                 Touched = true;
                 if (_validated)
                 {
-                    await OnBlur.InvokeAsync(obj);
+                    if (OnBlur.HasDelegate)
+                    {
+                        obj.Type += ".additional";
+                        await OnBlur.InvokeAsync(obj);
+                    }
                 }
                 else
                 {
-                    await BeginValidationAfterAsync(OnBlur.InvokeAsync(obj));
+                    if (OnBlur.HasDelegate)
+                    {
+                        obj.Type += ".additional";
+                        await BeginValidationAfterAsync(OnBlur.InvokeAsync(obj));
+                    }
+                    else
+                    {
+                        await BeginValidateAsync();
+                    }
                 }
             }
         }

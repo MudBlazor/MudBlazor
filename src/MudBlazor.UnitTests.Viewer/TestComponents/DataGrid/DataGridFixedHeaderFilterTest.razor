@@ -1,49 +1,31 @@
 ﻿<MudCard Style="height:300px">
 </MudCard>
 
-
-<MudDataGrid Items="@_persons" T="Person"
-Filterable Dense="@_dense" FixedHeader ShowMenuIcon Height="350px">
+<MudDataGrid Items="@_persons" T="Person" Loading="true"
+             Filterable Dense="@_dense" FixedHeader ShowMenuIcon Height="350px">
     <Columns>
         <PropertyColumn Property="x => x.Id" Title="Id" />
         <PropertyColumn Property="x => x.Name" Title="Name" />
-
     </Columns>
     <PagerContent>
-        <MudDataGridPager T="Person" SetRowsPerPage="new int[] {10, 1000}" />
+        <MudDataGridPager T="Person" PageSizeOptions="new int[] {10, 1000}" />
     </PagerContent>
 </MudDataGrid>
 
 <MudSwitch @bind-Value="@_dense" Label="Dense" />
 
 @code {
-    private bool _dense = false;
-    public static string __description__ = " Filter popover positioning when DataGrid FixedHeader is true ";
-    List<Person> _persons = [];
-
-    protected override void OnInitialized()
-    {
-        for (int i = 0; i < 100; i++)
-        {
-            _persons.Add(new() { Id = i, Name = $"Name{i}" });
-        }
-    }
-
-    private async Task<GridData<Person>> ServerReload(GridState<Person> state)
-    {
-        await Task.CompletedTask;
-
-        return new GridData<Person>
-            {
-                TotalItems = _persons.Count,
-                Items = _persons
-            };
-    }
+    public static string __description__ = "Filter popover positioning when DataGrid FixedHeader is true as well as loading indicator";
+    
+    private bool _dense;
+    private readonly List<Person> _persons = Enumerable.Repeat(0, 100)
+        .Select((_, i) => new Person { Id = i, Name = $"Name{i}" })
+        .ToList();
 
     public class Person
     {
-        public int Id { get; set; }
+        public required int Id { get; init; }
 
-        public string Name { get; set; } = default!;
+        public required string Name { get; init; }
     }
 }

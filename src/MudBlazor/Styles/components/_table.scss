@@ -31,10 +31,6 @@
       color: var(--mud-palette-text-primary);
       font-weight: 500;
       line-height: 1.5rem;
-
-      & .mud-button-root {
-          user-select: auto;
-      }
     }
   }
 
@@ -57,25 +53,30 @@
 }
 
 .mud-table-sort-label {
-  cursor: pointer;
   display: inline-flex;
   align-items: center;
   flex-direction: inherit;
   justify-content: flex-start;
 
-  @media(hover: hover) and (pointer: fine) {
-    &:hover {
-      color: var(--mud-palette-action-default);
+  &.mud-clickable {
+    cursor: pointer;
+    user-select: none;
+    transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
 
-      .mud-table-sort-label-icon {
-        opacity: 0.8;
+    @media(hover: hover) and (pointer: fine) {
+      &:hover {
+        opacity: 0.64;
+
+        .mud-table-sort-label-icon {
+          opacity: 1;
+        }
       }
     }
   }
 
   .mud-table-sort-label-icon {
     font-size: 18px;
-    transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,transform 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,transform 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
     margin-left: 4px;
     user-select: none;
     margin-right: 4px;
@@ -101,7 +102,6 @@
   padding-inline-start: 16px;
   padding-inline-end: 8px;
 }
-
 
 
 .mud-table-cell {
@@ -282,8 +282,19 @@
         top: 0;
       }
 
+      & * .mud-table-loading {
+        background-color: var(--mud-palette-surface);
+        position: sticky;
+        z-index: 2;
+        top: 59px;
+      }
+
       & * .mud-filter-panel-cell {
-        top: 58px;
+        top: 59px;
+      }
+      // If .mud-table-loading exists, move .mud-filter-panel-cell down
+      table:has(.mud-table-loading) & * .mud-filter-panel-cell {
+        top: 63px;
       }
 
       & * .mud-table-cell.sticky-left,
@@ -298,8 +309,17 @@
 .mud-table-sticky-header.mud-table-dense {
   & * .mud-table-root {
     .mud-table-head {
+
+      & * .mud-table-loading {
+        top: 39px;
+      }
+
       & * .mud-filter-panel-cell {
         top: 39px;
+      }
+
+      table:has(.mud-table-loading) & * .mud-filter-panel-cell {
+        top: 43px;
       }
     }
   }
@@ -500,6 +520,10 @@
   tr.mud-table-row-group-indented-#{$i} td:first-child {
     padding-left: #{$i * 48}px !important;
   }
+}
+
+.mud-header-togglehierarchy .mud-table-row-expander {
+    padding: 6px;
 }
 
 .mud-table-row-expander {

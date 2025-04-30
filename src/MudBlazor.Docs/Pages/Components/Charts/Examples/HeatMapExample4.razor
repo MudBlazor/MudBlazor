@@ -42,7 +42,7 @@
         </MudRadioGroup>
     </MudItem>
     <MudItem xs="10">
-        <MudChart ChartType="ChartType.HeatMap" ChartSeries="@_series"
+        <MudChart ChartType="ChartType.HeatMap" ChartSeries="@_series" Height="400px" Width="100%"
                   XAxisLabels="@_xAxisLabels" ChartOptions="@_options" LegendPosition="_showLegendPosition">
             <MudHeatMapCell Row="0" Column="0">
                 <!-- Font Icons act differently and should resize dynamically without specifying width/height -->

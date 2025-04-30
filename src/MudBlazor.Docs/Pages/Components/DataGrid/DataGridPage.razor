@@ -96,16 +96,21 @@
         <DocsPageSection>
             <SectionHeader Title="Grouping">
                 <Description>
-                    The <CodeInline>&lt;MudDataGrid></CodeInline> allows you to group data by column. Setting the <CodeInline>Grouping</CodeInline> property
-                    to <CodeInline>true</CodeInline> will turn on grouping which will add a menu item in the column options to toggle grouping of that column.
-                    To disable grouping on a column, set its <CodeInline>Groupable</CodeInline> property to <CodeInline>false</CodeInline>.
+                    The <CodeInline>&lt;MudDataGrid></CodeInline> allows you to group data by columns. Setting the <CodeInline>Grouping</CodeInline> property
+                    to <CodeInline>true</CodeInline> enables grouping, adding a menu item in the column options to toggle grouping for that column.
+                    To disable grouping for a specific column, set its <CodeInline>Groupable</CodeInline> property to <CodeInline>false</CodeInline>.
 
+                    You can group multiple <CodeInline>Column</CodeInline> elements at the same time. Options for configuring column grouping include the two-way bindable
+                    properties <CodeInline>Grouping</CodeInline>, <CodeInline>GroupExpanded</CodeInline>, and <CodeInline>GroupByOrder</CodeInline>.
+
+                    The <CodeInline>GroupBy</CodeInline> property allows you to define a custom function for grouping a column.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="@nameof(DataGridGroupingExample)" ShowCode="false" Block="true" FullWidth="true">
-                <DataGridGroupingExample />
+            <SectionContent DarkenBackground="true" Code="@nameof(DataGridGroupingMultiLevelExample)" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridGroupingMultiLevelExample />
             </SectionContent>
         </DocsPageSection>
+
 
          <DocsPageSection>
             <SectionHeader Title="Sorting">
@@ -182,7 +187,8 @@
                 <Description>
                     The <CodeInline>&lt;MudDataGrid></CodeInline> allows you to create hierarchical layouts. To do that the <CodeInline>HierarchyColumn</CodeInline> has to be added in the <CodeInline>Columns</CodeInline> definitions.
                     <br><br>
-                    You can customize the icon to toggle the RowDetail, disable the toggle button and also initially expand the RowDetail.
+                    You can customize the icon to toggle the RowDetail, disable the toggle button and also initially expand the RowDetail. In addition most customization options are available
+                    including <CodeInline>EnableHeaderToggle</CodeInline> that puts a Toggle Icon in the header row to Expand/Collapse all.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(DataGridDetailRowExample)" ShowCode="false" Block="true" FullWidth="true">
@@ -366,6 +372,24 @@
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(DataGridValidatorExample)" ShowCode="false" Block="true" FullWidth="true">
                 <DataGridValidatorExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Other Options">
+                <Description>
+                    There are many options available for the <CodeInline>&lt;MudDataGrid></CodeInline> that are not covered in the examples above.
+                    The <CodeInline>&lt;ColGroup></CodeInline> component allows you to apply a span or style property to multiple columns. However, 
+                    the available styles are limited to a few CSS properties, including width, visibility, background, and border. Additionally, the 
+                    `span` property enables a column to extend across multiple columns. The <CodeInline>Loading</CodeInline> property displays a loading 
+                    indicator while the data grid is retrieving data. You can bind this attribute to a `bool` variable set to `true` when initializing 
+                    the page and toggle it once the data has loaded. The <CodeInline>FixedHeader</CodeInline> property ensures that the header remains
+                    fixed at the top of the grid, even when scrolling. These are just a few of the many available options. For a complete list and 
+                    additional details, refer to the <MudLink Href="components/datagrid#api">API</MudLink> documentation above.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(DataGridOtherOptionsExample)" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridOtherOptionsExample />
             </SectionContent>
         </DocsPageSection>
 

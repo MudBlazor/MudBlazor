@@ -28,6 +28,10 @@
       &:focus-visible, &:active {
         background-color: var(--mud-palette-action-default-hover);
       }
+
+      &:disabled {
+        border-color: var(--mud-palette-action-disabled-background) !important;
+      }
     }
   }
 
@@ -323,6 +327,10 @@
 
           &:focus-visible, &:active {
             background-color: var(--mud-palette-#{$color}-darken);
+          }
+
+          &:disabled {
+            background-color: var(--mud-palette-action-disabled-background);
           }
         }
 

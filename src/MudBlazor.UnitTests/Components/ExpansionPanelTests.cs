@@ -178,6 +178,7 @@ namespace MudBlazor.UnitTests.Components
             await panels.Instance.AddPanelAsync(panel3);
             // We check _expandedState because we do not modify Expanded directly, therefore the parameter doesn't change.
             // For parameter to change you need to bind panels Expansion it via razor syntax, so that parent would update it.
+            panels.Instance.Panels.Count.Should().Be(3);
             panel1._expandedState.Value.Should().BeFalse();
             panel2._expandedState.Value.Should().BeFalse();
             panel3._expandedState.Value.Should().BeFalse();
@@ -205,6 +206,7 @@ namespace MudBlazor.UnitTests.Components
             await panel3.ExpandAsync();
             // We check _expandedState because we do not modify Expanded directly, therefore the parameter doesn't change.
             // For parameter to change you need to bind panels Expansion it via razor syntax, so that parent would update it.
+            panels.Instance.Panels.Count.Should().Be(3);
             panel1._expandedState.Value.Should().BeTrue();
             panel2._expandedState.Value.Should().BeTrue();
             panel3._expandedState.Value.Should().BeTrue();
@@ -232,6 +234,7 @@ namespace MudBlazor.UnitTests.Components
             await panel3.ExpandAsync();
             // We check _expandedState because we do not modify Expanded directly, therefore the parameter doesn't change.
             // For parameter to change you need to bind panels Expansion it via razor syntax, so that parent would update it.
+            panels.Instance.Panels.Count.Should().Be(3);
             panel1._expandedState.Value.Should().BeTrue();
             panel2._expandedState.Value.Should().BeTrue();
             panel3._expandedState.Value.Should().BeTrue();

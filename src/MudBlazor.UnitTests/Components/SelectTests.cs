@@ -3,6 +3,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents.Select;
+using MudBlazor.UnitTests.TestData;
 using NUnit.Framework;
 using static MudBlazor.UnitTests.TestComponents.Select.SelectWithEnumTest;
 
@@ -673,7 +674,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MultiSelect_Initial_Values()
         {
-            var comp = Context.RenderComponent<MultiSelectWithInitialValues>();
+            var comp = Context.RenderComponent<MultiSelectWithInitialValuesTest>();
             // print the generated html
 
             // select the input of the select
@@ -1217,6 +1218,91 @@ namespace MudBlazor.UnitTests.Components
             selectWithT.ValidationErrors.Count.Should().Be(0);
         }
 
+        [Test]
+        public async Task MultiSelectClearAndReset()
+        {
+            var comp = Context.RenderComponent<MultiSelectTestRequiredValue>();
+            var select = comp.FindComponent<MudSelect<string>>().Instance;
+            select.Required.Should().BeTrue();
+            await comp.InvokeAsync(() => select.Validate());
+            select.ValidationErrors.First().Should().Be("Required");
+
+            await comp.Find("#clear-string").ClickAsync(new MouseEventArgs());
+            select.ValidationErrors.First().Should().Be("Required");
+
+            await comp.Find("#reset-string").ClickAsync(new MouseEventArgs());
+            select.ValidationErrors.Should().BeEmpty();
+
+            //test clearing string values
+            var inputs = comp.FindAll("div.mud-input-control");
+            await inputs[0].MouseDownAsync(new MouseEventArgs());
+
+            var items = comp.FindAll("div.mud-list-item").ToArray();
+            await items[1].ClickAsync(new MouseEventArgs());
+            await inputs[0].MouseDownAsync(new MouseEventArgs());
+            select.Value.Should().Be("2");
+            select.SelectedValues.Should().Contain("2");
+
+            await comp.Find("#clear-string").ClickAsync(new MouseEventArgs());
+
+            select.Value.Should().BeNullOrEmpty();
+            select.SelectedValues.Should().BeEmpty();
+            select.ValidationErrors.First().Should().Be("Required");
+
+            //test resetting string values
+            inputs = comp.FindAll("div.mud-input-control");
+            await inputs[0].MouseDownAsync(new MouseEventArgs());
+            items = comp.FindAll("div.mud-list-item").ToArray();
+            await items[1].ClickAsync(new MouseEventArgs());
+            await inputs[0].MouseDownAsync(new MouseEventArgs());
+            select.Value.Should().Be("2");
+            select.SelectedValues.Should().Contain("2");
+
+            await comp.Find("#reset-string").ClickAsync(new MouseEventArgs());
+
+            select.Value.Should().BeNullOrEmpty();
+            select.SelectedValues.Should().BeEmpty();
+            select.ValidationErrors.Should().BeEmpty();
+
+            //test clearing object values
+            var select2 = comp.FindComponent<MudSelect<MultiSelectTestRequiredValue.TestClass>>().Instance;
+            select2.Required.Should().BeTrue();
+            await comp.InvokeAsync(() => select2.Validate());
+            select2.ValidationErrors.First().Should().Be("Required");
+
+            await comp.Find("#clear-object").ClickAsync(new MouseEventArgs());
+            select2.ValidationErrors.First().Should().Be("Required");
+
+            await comp.Find("#reset-object").ClickAsync(new MouseEventArgs());
+            select2.ValidationErrors.Should().BeEmpty();
+
+            inputs = comp.FindAll("div.mud-input-control");
+            await inputs[1].MouseDownAsync(new MouseEventArgs());
+
+            items = comp.FindAll("div.mud-list-item").ToArray();
+            await items[1].ClickAsync(new MouseEventArgs());
+            await inputs[1].MouseDownAsync(new MouseEventArgs());
+            select2.SelectedValues.Select(x => x.Name).Should().Contain("Customer");
+
+            await comp.Find("#clear-object").ClickAsync(new MouseEventArgs());
+
+            select2.SelectedValues.Should().BeEmpty();
+            select2.ValidationErrors.First().Should().Be("Required");
+
+            //test resetting object values
+            inputs = comp.FindAll("div.mud-input-control");
+            await inputs[1].MouseDownAsync(new MouseEventArgs());
+            items = comp.FindAll("div.mud-list-item").ToArray();
+            await items[1].ClickAsync(new MouseEventArgs());
+            await inputs[1].MouseDownAsync(new MouseEventArgs());
+            select2.SelectedValues.Select(x => x.Name).Should().Contain("Customer");
+
+            await comp.Find("#reset-object").ClickAsync(new MouseEventArgs());
+
+            select2.SelectedValues.Should().BeEmpty();
+            select2.ValidationErrors.Should().BeEmpty();
+        }
+
         /// <summary>
         /// When MultiSelect attribute goes after SelectedValues, text should contain all selected values.
         /// </summary>
@@ -1438,7 +1524,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task SelectFullWidthTest()
+        public async Task SelectPopoverFullWidthTest()
         {
             var comp = Context.RenderComponent<SelectPopoverRelativeWidthTest>();
 
@@ -1460,6 +1546,68 @@ namespace MudBlazor.UnitTests.Components
 
             //confirm relative width class not applied
             comp.Find(".expanded").ClassList.Should().Contain("mud-popover-open").And.NotContain("mud-popover-relative-width");
+        }
+
+        [Test]
+        public void SelectFitContentTest()
+        {
+            var comp = Context.RenderComponent<SelectFitContentTest>();
+
+            //default values
+            comp.Instance.FullWidth.Should().BeFalse();
+            comp.Instance.FitContent.Should().BeFalse();
+
+            var select = comp.Find(".mud-select");
+
+            select.ClassList.Should().NotContain("mud-width-content");
+
+            //set fit content
+            comp.SetParametersAndRender(parameters => parameters.Add(c => c.FitContent, true));
+
+            comp.Instance.FullWidth.Should().BeFalse();
+            comp.Instance.FitContent.Should().BeTrue();
+
+            select.ClassList.Should().Contain("mud-width-content");
+
+            var filler = comp.Find(".mud-select-filler");
+
+            filler.ClassList.Should().Contain("d-inline-block").And.Contain("mx-4");
+            filler.TextContent.Trim().Should().Be("Federated States of Micronesia");
+
+            //set full width
+            comp.SetParametersAndRender(parameters => parameters.Add(c => c.FullWidth, true));
+
+            comp.Instance.FullWidth.Should().BeTrue();
+            comp.Instance.FitContent.Should().BeTrue();
+
+            select.ClassList.Should().NotContain("mud-width-content");
+        }
+
+        [TestCaseSource(typeof(MouseEventArgsTestCase), nameof(MouseEventArgsTestCase.AllCombinations))]
+        [Test]
+        public async Task Select_HandleMouseDown(MouseEventArgs args)
+        {
+            var comp = Context.RenderComponent<MudSelect<string>>(p => p
+                .Add(x => x.Text, "some value")
+                .Add(x => x.Clearable, true)
+                .Add(x => x.ReadOnly, false));
+
+            var instance = comp.Instance;
+
+            instance._open.Should().BeFalse();
+
+            await comp.InvokeAsync(async () => await instance.HandleMouseDown(args));
+
+            switch (args.Button)
+            {
+                case 0:
+                    instance._open.Should().BeTrue();
+                    break;
+                case 1:
+                case 2:
+                    instance._open.Should().BeFalse();
+                    break;
+            }
         }
 #nullable disable
     }

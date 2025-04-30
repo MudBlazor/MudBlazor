@@ -1,9 +1,9 @@
-@namespace MudBlazor
+﻿@namespace MudBlazor
 @inherits MudBaseInput<T>
 @typeparam T
 
 <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
-    <div class="@AutocompleteClassname">
+    <div class="@AutocompleteClassname" @onclick:stopPropagation @onmousedown:stopPropagation>
         <MudInputControl Label="@Label"
                          Variant="@Variant"
                          HelperId="@GetHelperId()"
@@ -44,7 +44,7 @@
                           MaxLength="@MaxLength"
                           autocomplete="@GetAutocomplete()"
                           @attributes="UserAttributes"
-                          TextChanged="OnTextChangedAsync"                          
+                          TextChanged="OnTextChangedAsync"
                           @onfocus="@OnInputFocusedAsync"
                           OnBlur="OnInputBlurredAsync"
                           OnKeyDown="@OnInputKeyDownAsync"
@@ -143,4 +143,8 @@
     </div>
 </CascadingValue>
 
-<MudOverlay AutoClose Visible="Open" OnClosed="OnOverlayClosedAsync" LockScroll="false" />
+<MudOverlay AutoClose
+            Visible="Open"
+            OnClosed="OnOverlayClosedAsync"
+            LockScroll="false"
+            Modal="@Modal" />

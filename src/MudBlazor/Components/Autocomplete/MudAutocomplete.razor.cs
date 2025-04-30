@@ -24,6 +24,7 @@ namespace MudBlazor
         private int _elementKey = 0;
         private int _returnedItemsCount;
         private bool _open;
+        private bool _opening;
         private MudInput<string> _elementReference = null!;
         private CancellationTokenSource? _cancellationTokenSrc;
         private Task? _currentSearchTask;
@@ -31,6 +32,7 @@ namespace MudBlazor
         private T[]? _items;
         private List<int> _enabledItemIndices = [];
         private Func<T?, string?>? _toStringFunc;
+        private bool _handleNextFocus;
 
         [Inject]
         private IScrollManager ScrollManager { get; set; } = null!;
@@ -366,6 +368,16 @@ namespace MudBlazor
         public RenderFragment? ProgressIndicatorInPopoverTemplate { get; set; }
 
         /// <summary>
+        /// Prevents interaction with background elements while this list is open.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public bool Modal { get; set; } = true;
+
+        /// <summary>
         /// Determines the width of this Popover dropdown in relation to the parent container.
         /// </summary>
         /// <remarks>
@@ -550,12 +562,8 @@ namespace MudBlazor
                     await _elementReference.SetText(optionText);
                 }
 
-                await FocusAsync();
-                // We want focus with a closed popover
                 Open = false;
-                // And update
                 StateHasChanged();
-
             }
             finally
             {
@@ -665,11 +673,8 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Opens the drop-down of items.
+        /// Opens the drop-down of items, or refreshes the list if it is already open.
         /// </summary>
-        /// <remarks>
-        /// Will have no effect if the autocomplete is disabled or read-only.
-        /// </remarks>
         public async Task OpenMenuAsync()
         {
             if (MinCharacters > 0 && (string.IsNullOrWhiteSpace(Text) || Text.Length < MinCharacters))
@@ -678,6 +683,8 @@ namespace MudBlazor
                 StateHasChanged();
                 return;
             }
+
+            _opening = true;
 
             var searchedItems = Array.Empty<T>();
             CancelToken();
@@ -744,6 +751,7 @@ namespace MudBlazor
                 Open = true;
             }
 
+            _opening = false;
             StateHasChanged();
         }
 
@@ -956,25 +964,53 @@ namespace MudBlazor
             }
         }
 
-        private Task OnInputClickedAsync() => OnInputActivationAsync(true);
-
-        private Task OnInputFocusedAsync() => OnInputActivationAsync(OpenOnFocus);
-
-        private async Task OnInputActivationAsync(bool openMenu)
+        private Task OnInputClickedAsync()
         {
-            _isFocused = true;
-
-            if (Open || GetDisabledState() || GetReadOnlyState())
+            if (GetDisabledState())
             {
+                return Task.CompletedTask;
+            }
+
+            return OnInputActivatedAsync(true);
+        }
+
+        private async Task OnInputFocusedAsync()
+        {
+            if (GetDisabledState())
+            {
+                // This shouldn't be possible through the UI, but could be triggered in code.
                 return;
             }
 
-            if (SelectOnActivation)
+            if (GetReadOnlyState())
+            {
+                // A readonly input doesn't trigger onblur later correctly, so we have to disable focus features for it.
+                return;
+            }
+
+            var wasFocused = _isFocused;
+            _isFocused = true;
+
+            // Skip features that are not meant for internal focus events.
+            if (_handleNextFocus)
+            {
+                _handleNextFocus = false;
+                return;
+            }
+
+            // Select the input text unless we're already focused or it will interfere with cursor selection.
+            if (!wasFocused && SelectOnActivation)
             {
                 await SelectAsync();
             }
 
-            if (openMenu)
+            await OnInputActivatedAsync(OpenOnFocus);
+        }
+
+        private async Task OnInputActivatedAsync(bool openMenu)
+        {
+            // The click event also triggers the focus event so we don't want to unnecessarily handle both.
+            if (openMenu && !Open && !_opening && !GetReadOnlyState())
             {
                 await OpenMenuAsync();
             }
@@ -984,7 +1020,6 @@ namespace MudBlazor
         {
             // clear button clicked, let's make sure text is cleared and the menu has focus
             Open = true;
-            _isFocused = true;
             await SetValueAsync(default, false);
             await SetTextAsync(default, false);
             _selectedListItemIndex = default;
@@ -998,7 +1033,7 @@ namespace MudBlazor
         {
             if (OnAdornmentClick.HasDelegate)
             {
-                await FocusAsync();
+
                 await OnAdornmentClick.InvokeAsync();
             }
             else
@@ -1010,6 +1045,7 @@ namespace MudBlazor
         private Task OnInputBlurredAsync(FocusEventArgs args)
         {
             _isFocused = false;
+            _handleNextFocus = false;
 
             // When Immediate is enabled, then the CoerceValue is set by TextChanged
             // So only coerce the value on blur when Immediate is disabled
@@ -1094,6 +1130,7 @@ namespace MudBlazor
         /// </summary>
         public override ValueTask FocusAsync()
         {
+            _handleNextFocus = true; // Let the event handler know it was not triggered by the user.
             return _elementReference.FocusAsync();
         }
 
@@ -1134,6 +1171,10 @@ namespace MudBlazor
             await SetTextAsync(text, true);
         }
 
-        private Task ListItemOnClickAsync(T item) => SelectOptionAsync(item);
+        private async Task ListItemOnClickAsync(T item)
+        {
+            await SelectOptionAsync(item);
+            await FocusAsync();
+        }
     }
 }

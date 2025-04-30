@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Bunit;
+﻿using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.TimePicker;
@@ -221,7 +218,6 @@ namespace MudBlazor.UnitTests.Components
 #pragma warning disable BL0005 // Component parameter should not be set outside of its component.
             var comp = Context.RenderComponent<SimpleTimePickerTest>();
             var timePicker = comp.FindComponent<MudTimePicker>().Instance;
-            var overlay = comp.FindComponent<MudOverlay>();
 
             await comp.InvokeAsync(() => timePicker.OnHandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", }));
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
