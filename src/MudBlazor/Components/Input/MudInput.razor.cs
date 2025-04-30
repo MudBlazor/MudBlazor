@@ -383,6 +383,11 @@ namespace MudBlazor
                 }
             }
 
+            if (_dotNetReferenceLazy.IsValueCreated)
+            {
+                _dotNetReferenceLazy.Value.Dispose();
+            }
+
             await base.DisposeAsyncCore();
         }
 

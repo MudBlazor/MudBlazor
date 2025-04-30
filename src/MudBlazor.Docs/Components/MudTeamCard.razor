@@ -14,8 +14,14 @@
                     <MudIconButton Icon="@Icons.Custom.Brands.LinkedIn" Href="@Member.LinkedIn" Color="Color.Primary" Target="_blank" Edge="Edge.End" />
                 </MudTooltip>
             }
+            @if(Member.GitHubSponsor)
+            {
+                <MudTooltip Text="Sponsor" Placement="Placement.Top" Class="d-flex">
+                    <MudIconButton Icon="@Icons.Material.Filled.FavoriteBorder" Href="@($"https://github.com/sponsors/{Member.GitHub}")" Color="Color.Secondary" Edge="Edge.End" Target="_blank" />
+                </MudTooltip>
+            }
             <MudTooltip Text="GitHub" Placement="Placement.Top" Class="d-flex">
-                <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Href="@("https://github.com/"+Member.GitHub)" Color="Color.Inherit" Target="_blank" />
+                <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Href="@($"https://github.com/{Member.GitHub}")" Color="Color.Inherit" Target="_blank" />
             </MudTooltip>
         </div>
     </div>
