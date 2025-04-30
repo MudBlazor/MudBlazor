@@ -340,32 +340,10 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Ripple}-opacity-secondary: {_theme.PaletteLight.RippleOpacitySecondary.ToString(CultureInfo.InvariantCulture)};");
 
         //Elevations
-        theme.AppendLine($"--{Elevation}-0: {_theme.Shadows.Elevation.GetValue(0)};");
-        theme.AppendLine($"--{Elevation}-1: {_theme.Shadows.Elevation.GetValue(1)};");
-        theme.AppendLine($"--{Elevation}-2: {_theme.Shadows.Elevation.GetValue(2)};");
-        theme.AppendLine($"--{Elevation}-3: {_theme.Shadows.Elevation.GetValue(3)};");
-        theme.AppendLine($"--{Elevation}-4: {_theme.Shadows.Elevation.GetValue(4)};");
-        theme.AppendLine($"--{Elevation}-5: {_theme.Shadows.Elevation.GetValue(5)};");
-        theme.AppendLine($"--{Elevation}-6: {_theme.Shadows.Elevation.GetValue(6)};");
-        theme.AppendLine($"--{Elevation}-7: {_theme.Shadows.Elevation.GetValue(7)};");
-        theme.AppendLine($"--{Elevation}-8: {_theme.Shadows.Elevation.GetValue(8)};");
-        theme.AppendLine($"--{Elevation}-9: {_theme.Shadows.Elevation.GetValue(9)};");
-        theme.AppendLine($"--{Elevation}-10: {_theme.Shadows.Elevation.GetValue(10)};");
-        theme.AppendLine($"--{Elevation}-11: {_theme.Shadows.Elevation.GetValue(11)};");
-        theme.AppendLine($"--{Elevation}-12: {_theme.Shadows.Elevation.GetValue(12)};");
-        theme.AppendLine($"--{Elevation}-13: {_theme.Shadows.Elevation.GetValue(13)};");
-        theme.AppendLine($"--{Elevation}-14: {_theme.Shadows.Elevation.GetValue(14)};");
-        theme.AppendLine($"--{Elevation}-15: {_theme.Shadows.Elevation.GetValue(15)};");
-        theme.AppendLine($"--{Elevation}-16: {_theme.Shadows.Elevation.GetValue(16)};");
-        theme.AppendLine($"--{Elevation}-17: {_theme.Shadows.Elevation.GetValue(17)};");
-        theme.AppendLine($"--{Elevation}-18: {_theme.Shadows.Elevation.GetValue(18)};");
-        theme.AppendLine($"--{Elevation}-19: {_theme.Shadows.Elevation.GetValue(19)};");
-        theme.AppendLine($"--{Elevation}-20: {_theme.Shadows.Elevation.GetValue(20)};");
-        theme.AppendLine($"--{Elevation}-21: {_theme.Shadows.Elevation.GetValue(21)};");
-        theme.AppendLine($"--{Elevation}-22: {_theme.Shadows.Elevation.GetValue(22)};");
-        theme.AppendLine($"--{Elevation}-23: {_theme.Shadows.Elevation.GetValue(23)};");
-        theme.AppendLine($"--{Elevation}-24: {_theme.Shadows.Elevation.GetValue(24)};");
-        theme.AppendLine($"--{Elevation}-25: {_theme.Shadows.Elevation.GetValue(25)};");
+        for (int i = 0; i <= 25; i++)
+        {
+            theme.AppendLine($"--{Elevation}-{i}: {(IsDarkMode ? _theme.Shadows.ElevationDark.GetValue(i) : _theme.Shadows.ElevationLight.GetValue(i))};");
+        }
 
         //Layout Properties
         theme.AppendLine(
