@@ -48,6 +48,14 @@ namespace MudBlazor
         private IResizeObserverFactory _resizeObserverFactory { get; set; } = null!;
 
         /// <summary>
+        /// Enables drag-and-drop re-ordering of tabs.
+        /// </summary>
+        /// <remarks>Defaults to <c>false</c>.</remarks>
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Behavior)]
+        public bool EnableDragAndDrop { get; set; }
+
+        /// <summary>
         /// Persists the content of tabs when they are not visible.
         /// </summary>
         /// <remarks>
@@ -998,5 +1006,34 @@ namespace MudBlazor
         }
 
         #endregion
+
+        private void ItemUpdated(MudItemDropInfo<MudTabPanel> dropItem)
+        {
+            if (dropItem.Item is null)
+            {
+                return;
+            }
+
+            // get the old index where this item was at
+            var oldIndex = _panels.IndexOf(dropItem.Item);
+            // get the new index in _panels using IndexInZone
+            var newIndex = dropItem.IndexInZone;
+
+            // remove the item from the old index
+            _panels.RemoveAt(oldIndex);
+
+            // insert the item at the new index
+            if (newIndex < _panels.Count)
+            {
+                _panels.Insert(newIndex, dropItem.Item);
+            }
+            else
+            {
+                _panels.Add(dropItem.Item);
+            }
+
+            // Set the dragged tab as active
+            ActivatePanel(dropItem.Item);
+        }
     }
 }

@@ -1335,5 +1335,23 @@ namespace MudBlazor.UnitTests.Components
                 panel.ClassList.Should().Contain("mud-tab-panel-hidden");
             }
         }
+
+        [Test]
+        public void TabsDragAndDrop()
+        {
+            var comp = Context.RenderComponent<TabsDragAndDropTest>();
+            var tabs = comp.FindComponent<MudTabs>().Instance;
+
+            tabs.Should().NotBeNull();
+
+            // should be 3 draggable tabs
+            var droptabs = comp.FindAll("div[draggable='true']");
+            droptabs.Count.Should().Be(3);
+            // should be 3 draggable "drop zones" to allow reordering
+            var dropzone = comp.FindAll("div[ondrop]");
+            droptabs.Count.Should().Be(3);
+            // simulate dragging a tab?
+
+        }
     }
 }
