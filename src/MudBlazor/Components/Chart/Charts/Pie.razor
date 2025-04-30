@@ -3,41 +3,30 @@
 @namespace MudBlazor.Charts
 @inherits MudRadialChartBase<PieChartOptions>
 
-@{
-    var style = _hoveredSegment != null ? "overflow: visible;" : "";
-}
+<RadialChart TChartOptions="PieChartOptions"
+             ElementRefChanged="SetElementReference"
+             Radius="@CalculatedRadius"
+             ChartClass="@ChartClass"
+             Paths="@_paths"
+             Legends="@_legends"
+             HoveredSegment="@_hoveredSegment"
+             UserAttributes="@UserAttributes"
+             TooltipTitle="@BuildTooltipTitle()"
+             OnPathClick="async (i) => await SetSelectedIndexAsync(i)"
+             OnMouseOver="(i) => OnSegmentMouseOver(new MouseEventArgs(), i)"
+             OnMouseOut="() => OnSegmentMouseOut(new MouseEventArgs())" />
 
-<svg @ref="_elementReference" @attributes="UserAttributes" class="@ChartClass" width="@MudChartParent?.Width" height="@MudChartParent?.Height" viewBox="0 0 @(CalculatedRadius * 2) @(CalculatedRadius * 2)" style="@style">
-    <Filters />
-    <g transform="translate(@CalculatedRadius, @CalculatedRadius)">
-        @foreach (var item in _paths)
-        {
-            <path @onclick="async () => await SetSelectedIndexAsync(item.Index)"
-                  class="mud-chart-serie"
-                  fill="@MudChartParent?.ChartOptions.ChartPalette.GetValue(item.Index % MudChartParent.ChartOptions.ChartPalette.Length)"
-                  d="@item.Data"
-                  @onmouseover="(e) => OnSegmentMouseOver(e, item)"
-                  @onmouseout="OnSegmentMouseOut">
-            </path>
-        }
-    </g>
+@code {
+    public override string ChartClass => "mud-chart-pie";
 
-    @MudChartParent?.CustomGraphics
-
-    @* Render the tooltip as an SVG group when a bar is hovered *@
-    @if (_hoveredSegment is not null && MudChartParent?.ChartOptions.ShowToolTips == true)
+    private string BuildTooltipTitle()
     {
-        var color = MudChartParent.ChartOptions.ChartPalette.GetValue(_hoveredSegment.Index % MudChartParent.ChartOptions.ChartPalette.Length)?.ToString() ?? string.Empty;
+        if (_hoveredSegment == null || string.IsNullOrWhiteSpace(ChartOptions?.TooltipTitleFormat))
+            return string.Empty;
 
-        if (!string.IsNullOrWhiteSpace(MudChartParent.ChartOptions.TooltipTitleFormat))
-        {
-            var tooltipTitle = ChartOptions.TooltipTitleFormat
-                .Replace("{{SERIES_NAME}}", GetSeriesName(ChartOptions!.AggregationOption))
-                .Replace("{{X_VALUE}}", _hoveredSegment.LabelXValue)
-                .Replace("{{Y_VALUE}}", _hoveredSegment.LabelYValue);
-
-            <ChartTooltip Title="@tooltipTitle" Color="@color" X="_hoveredSegment.LabelX + CalculatedRadius" Y="_hoveredSegment.LabelY + CalculatedRadius" />
-        }
+        return ChartOptions.TooltipTitleFormat
+            .Replace("{{SERIES_NAME}}", GetSeriesName(ChartOptions.AggregationOption))
+            .Replace("{{X_VALUE}}", _hoveredSegment.LabelXValue)
+            .Replace("{{Y_VALUE}}", _hoveredSegment.LabelYValue);
     }
-</svg>
-<Legend Data="@_legends" />
+}

@@ -11,7 +11,7 @@ using MudBlazor.Interop;
 #nullable enable
 namespace MudBlazor.Components.Chart;
 
-public abstract partial class MudRadialChartBase<TOptions> : MudChartBase<TOptions>, IDisposable where TOptions : IRadialChartOptions
+public abstract class MudRadialChartBase<TOptions> : MudChartBase<TOptions>, IDisposable where TOptions : IRadialChartOptions
 {
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
@@ -24,7 +24,6 @@ public abstract partial class MudRadialChartBase<TOptions> : MudChartBase<TOptio
 
     private readonly DotNetObjectReference<MudRadialChartBase<TOptions>> _dotNetObjectReference;
     private ElementSize? _elementSize;
-    protected ElementReference _elementReference;
     private const double BoundWidthDefault = 280;
     private const double BoundHeightDefault = 280;
     private double _boundWidth = 280;
@@ -35,7 +34,7 @@ public abstract partial class MudRadialChartBase<TOptions> : MudChartBase<TOptio
     protected HashSet<int> _hiddenIndicies = [];
     protected (double x, double y, string label, double value)? _hoveredDot = null;
     protected double CalculatedRadius => Math.Round(Math.Min(_boundWidth, _boundHeight) / 2);
-    protected abstract string ChartClass { get; }
+    public abstract string ChartClass { get; }
 
     [DynamicDependency(nameof(OnElementSizeChanged))]
     [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(ElementSize))]
@@ -59,17 +58,13 @@ public abstract partial class MudRadialChartBase<TOptions> : MudChartBase<TOptio
         RebuildChart();
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected async Task SetElementReference(ElementReference elementRef)
     {
-        await base.OnAfterRenderAsync(firstRender);
+        var elementSize = await JsRuntime.InvokeAsync<ElementSize>("mudObserveElementSize", _dotNetObjectReference, elementRef);
 
-        if (firstRender)
-        {
-            var elementSize = await JsRuntime.InvokeAsync<ElementSize>("mudObserveElementSize", _dotNetObjectReference, _elementReference);
-
-            OnElementSizeChanged(elementSize);
-        }
+        OnElementSizeChanged(elementSize);
     }
+
     protected double[] AggregateSeriesData(AggregationOption aggregation)
     {
         if (aggregation == AggregationOption.None || ChartSeries is null || !ChartSeries.Any(x => x.Visible))
@@ -173,6 +168,42 @@ public abstract partial class MudRadialChartBase<TOptions> : MudChartBase<TOptio
         }
     }
 
+    /// <summary>
+    /// Scales the input data to the range between 0 and 1
+    /// </summary>
+    protected double[] GetNormalizedData()
+    {
+        if (ChartSeries is null || ChartSeries.Count == 0)
+            return [];
+
+        var data = AggregateSeriesData(ChartOptions!.AggregationOption);
+        var total = data.Sum();
+
+        if (total == 0)
+            return data;
+
+        return data.Select(x => Math.Abs(x) / total).ToArray();
+    }
+
+    protected void HandleLegendVisibilityChanged(SvgLegend legend)
+    {
+        if (legend.Visible)
+        {
+            _hiddenIndicies.Remove(legend.Index);
+        }
+        else
+        {
+            _hiddenIndicies.Add(legend.Index);
+        }
+
+        if (ChartOptions!.AggregationOption == AggregationOption.GroupByDataSet)
+        {
+            ChartSeries[legend.Index].Visible = legend.Visible;
+        }
+
+        RebuildChart();
+    }
+
     internal void OnSegmentMouseOver(MouseEventArgs _, SvgPath segment)
     {
         _hoveredSegment = segment;
@@ -202,7 +233,7 @@ public abstract partial class MudRadialChartBase<TOptions> : MudChartBase<TOptio
         StateHasChanged();
     }
 
-    protected abstract void RebuildChart();
+    public abstract void RebuildChart();
 
     public void Dispose()
     {

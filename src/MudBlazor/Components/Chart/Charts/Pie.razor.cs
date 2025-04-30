@@ -17,19 +17,7 @@ namespace MudBlazor.Charts
     /// <seealso cref="TimeSeries"/>
     partial class Pie : MudRadialChartBase<PieChartOptions>
     {
-        protected override string ChartClass => "mud-chart-pie";
-
-        protected override void OnParametersSet()
-        {
-            base.OnParametersSet();
-
-            if (ChartSeries is null || ChartSeries.Count == 0)
-                return;
-
-            RebuildChart();
-        }
-
-        protected override void RebuildChart()
+        public override void RebuildChart()
         {
             _paths.Clear();
             _legends.Clear();
@@ -85,7 +73,7 @@ namespace MudBlazor.Charts
                 var midX = 0d;
                 var midY = 0d;
 
-                if (data < 1) // don't find mid point when donut is 100% and data is 100%, just use the 0,0 point.
+                if (data < 1) // don't find mid point when data is 100%, just use the 0,0 point.
                 {
                     // Calculate the midpoint coordinates at half the radius
                     midX = Math.Cos(midAngle) * midRadius;
@@ -116,42 +104,6 @@ namespace MudBlazor.Charts
                 };
                 _legends.Add(legend);
             }
-        }
-
-        private void HandleLegendVisibilityChanged(SvgLegend legend)
-        {
-            if (legend.Visible)
-            {
-                _hiddenIndicies.Remove(legend.Index);
-            }
-            else
-            {
-                _hiddenIndicies.Add(legend.Index);
-            }
-
-            if (ChartOptions!.AggregationOption == AggregationOption.GroupByDataSet)
-            {
-                ChartSeries[legend.Index].Visible = legend.Visible;
-            }
-
-            RebuildChart();
-        }
-
-        /// <summary>
-        /// Scales the input data to the range between 0 and 1
-        /// </summary>
-        protected double[] GetNormalizedData()
-        {
-            if (ChartSeries is null || ChartSeries.Count == 0)
-                return [];
-
-            var data = AggregateSeriesData(ChartOptions!.AggregationOption);
-            var total = data.Sum();
-
-            if (total == 0)
-                return data;
-
-            return data.Select(x => Math.Abs(x) / total).ToArray();
         }
     }
 }
