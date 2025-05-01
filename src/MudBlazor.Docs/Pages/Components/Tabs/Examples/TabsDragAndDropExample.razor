@@ -1,0 +1,72 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudTabs Outlined="true" Elevation="4" Rounded="true" Border="true" 
+         ApplyEffectsToContainer="true" Class="mt-8" PanelClass="pa-6" 
+         EnableDragAndDrop="true" Position="@Position">
+    <MudTabPanel Text="One">
+        <MudText Typo="Typo.h6">Tab One</MudText>
+    </MudTabPanel>
+    <MudTabPanel Text="Two">
+        <MudText Typo="Typo.h6">Tab Two</MudText>
+    </MudTabPanel>
+    <MudTabPanel Text="Three">
+        <MudText Typo="Typo.h6">Tab Three</MudText>
+    </MudTabPanel>
+    <MudTabPanel Text="Four">
+        <MudText Typo="Typo.h6">Tab Four</MudText>
+    </MudTabPanel>"
+    <MudTabPanel Text="Five">
+        <MudText Typo="Typo.h6">Tab Five</MudText>
+    </MudTabPanel>
+    <MudTabPanel Text="Six">
+        <MudText Typo="Typo.h6">Tab Six</MudText>
+    </MudTabPanel>
+    <MudTabPanel Text="Seven">
+        <MudText Typo="Typo.h6">Tab Seven</MudText>
+    </MudTabPanel>
+    <MudTabPanel Text="Eight">
+        <MudText Typo="Typo.h6">Tab Eight</MudText>
+    </MudTabPanel>
+    <MudTabPanel Text="Nine">
+        <MudText Typo="Typo.h6">Tab Nine</MudText>
+    </MudTabPanel>
+</MudTabs>
+
+<MudSelect Label="Tabs Position" @bind-Value="Position" Variant="Variant.Outlined">
+    <MudSelectItem T="Position" Value="@Position.Top">Top</MudSelectItem>
+    <MudSelectItem T="Position" Value="@Position.Start">Start</MudSelectItem>
+    <MudSelectItem T="Position" Value="@Position.Left">Left</MudSelectItem>
+    <MudSelectItem T="Position" Value="@Position.Right">Right</MudSelectItem>
+    <MudSelectItem T="Position" Value="@Position.End">End</MudSelectItem>
+    <MudSelectItem T="Position" Value="@Position.Bottom">Bottom</MudSelectItem>
+</MudSelect>
+   
+@code {
+    public Position Position { get; set; } = Position.Left;
+    public int TabCount { get; set; } = 6;
+
+    private void OnSelectedValue(Position value)
+    {
+        switch (value)
+        {
+            case Position.Top:
+                Position = Position.Top;
+                break;
+            case Position.Start:
+                Position = Position.Start;
+                break;
+            case Position.Left:
+                Position = Position.Left;
+                break;
+            case Position.Right:
+                Position = Position.Right;
+                break;
+            case Position.End:
+                Position = Position.End;
+                break;
+            case Position.Bottom:
+                Position = Position.Bottom;
+                break;
+        }
+    }
+} 

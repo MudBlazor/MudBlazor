@@ -449,6 +449,7 @@ namespace MudBlazor
             _resizeObserver ??= _resizeObserverFactory.Create();
 
             Rerender();
+            StateHasChanged();
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -465,8 +466,6 @@ namespace MudBlazor
 
                 _resizeObserver.OnResized += OnResized;
 
-                Rerender();
-                StateHasChanged();
                 ActivatePanel(ActivePanelIndex);
 
                 _isRendered = true;
@@ -605,6 +604,7 @@ namespace MudBlazor
                 SetSliderState();
                 SetScrollButtonVisibility();
                 SetScrollabilityStates();
+                Rerender();
                 StateHasChanged();
             }
         }
@@ -612,13 +612,6 @@ namespace MudBlazor
         #endregion
 
         #region Style and classes
-
-        protected string DragAndDropPositionClass =>
-            new CssBuilder()
-            .AddClass("d-flex")
-            .AddClass("flex-column", Position == Position.Top || Position == Position.Bottom)
-            .AddClass("flex-grow-1")
-            .Build();
 
         protected string TabsClassnames =>
             new CssBuilder("mud-tabs")
@@ -668,6 +661,13 @@ namespace MudBlazor
                 .AddClass($"mud-tab-slider-vertical", IsVerticalTabs())
                 .AddClass($"mud-tab-slider-horizontal-reverse", Position == Position.Bottom)
                 .AddClass($"mud-tab-slider-vertical-reverse", Position == Position.Right || Position == Position.Start && RightToLeft || Position == Position.End && !RightToLeft)
+                .Build();
+
+        protected string DropZoneClassnames =>
+            new CssBuilder("mud-tabs-dropzone")
+                .AddClass("d-flex", !IsVerticalTabs())
+                .AddClass($"mud-tabs-vertical", IsVerticalTabs())
+                .AddClass("flex-grow-1")
                 .Build();
 
         protected string MaxHeightStyles =>
