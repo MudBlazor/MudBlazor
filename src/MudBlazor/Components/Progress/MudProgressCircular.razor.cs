@@ -19,6 +19,7 @@ namespace MudBlazor
         private int _svgValue;
         private readonly ParameterState<double> _valueState;
         private const int MagicNumber = 126; // weird, but required for the SVG to work
+        private double _fraction;
 
         protected string Classname =>
             new CssBuilder("mud-progress-circular")
@@ -118,6 +119,13 @@ namespace MudBlazor
         [Category(CategoryTypes.ProgressCircular.Appearance)]
         public int StrokeWidth { get; set; } = 3;
 
+        /// <summary>
+        /// RenderFragment for rendering custom content
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.ProgressCircular.Appearance)]
+        public RenderFragment? ChildContent { get; set; }
+
         public MudProgressCircular()
         {
             using var registerScope = CreateRegisterScope();
@@ -144,9 +152,9 @@ namespace MudBlazor
         {
             var minValue = Math.Min(Math.Max(Min, value), Max);
             // calculate fraction, which is a value between 0 and 1
-            var fraction = (minValue - Min) / (Max - Min);
+            _fraction = (minValue - Min) / (Max - Min);
             // now project into the range of the SVG value (126 .. 0)
-            return (int)Math.Round(MagicNumber - (MagicNumber * fraction));
+            return (int)Math.Round(MagicNumber - (MagicNumber * _fraction));
         }
     }
 }
