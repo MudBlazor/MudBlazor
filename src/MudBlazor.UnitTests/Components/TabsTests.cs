@@ -1344,14 +1344,22 @@ namespace MudBlazor.UnitTests.Components
 
             tabs.Should().NotBeNull();
 
-            // should be 3 draggable tabs
-            var droptabs = comp.FindAll("div[draggable='true']");
-            droptabs.Count.Should().Be(3);
-            // should be 3 draggable "drop zones" to allow reordering
-            var dropzone = comp.FindAll("div[ondrop]");
-            droptabs.Count.Should().Be(3);
-            // simulate dragging a tab?
+            var tab = tabs._panels[0];
+            tab.Should().NotBeNull();
+            var tabText = tab.Text;
 
+            // should be 3 draggable tabs
+            var droptabs = comp.FindAll("div[draggable='false']");
+            droptabs.Count.Should().Be(2); // disabled droptab plus beginning ghost tab
+            droptabs = comp.FindAll("div[draggable='true']");
+            droptabs.Count.Should().Be(3); // enabled droptabs
+            // should be 1 draggable "drop zone" to allow reordering
+            var dropzone = comp.FindAll("div.mud-drop-zone");
+            dropzone.Count.Should().Be(1);
+            // simulate dragging a tab? moving tab at index 0 to index 2
+            var dropInfo = new MudItemDropInfo<MudTabPanel>(tab, "mud-drop-zone", 2);
+            tabs.ItemUpdated(dropInfo);
+            comp.WaitForAssertion(() => tabs._panels[2].Text.Should().Be(tabText));
         }
     }
 }

@@ -22,7 +22,7 @@
                         <!-- Drag And Drop -->
                         @if (EnableDragAndDrop)
                         {
-                            <MudDropContainer T="MudTabPanel" Class="d-flex flex-column flex-grow-1" Items="_panels" 
+                            <MudDropContainer T="MudTabPanel" Class="@DragAndDropPositionClass" Items="_panels" 
                                               ItemsSelector="@((item,dropzone) => true)" ItemDropped="@ItemUpdated"
                                               ItemDisabled="@((item) => item.Disabled)">
                                 <ChildContent>

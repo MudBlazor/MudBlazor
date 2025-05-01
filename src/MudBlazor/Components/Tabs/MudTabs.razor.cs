@@ -369,7 +369,7 @@ namespace MudBlazor
         /// </remarks>
         public IReadOnlyList<MudTabPanel> Panels { get; private set; }
 
-        private List<MudTabPanel> _panels;
+        internal List<MudTabPanel> _panels;
 
         /// <summary>
         /// The custom content added before or after the list of tabs.
@@ -612,6 +612,13 @@ namespace MudBlazor
         #endregion
 
         #region Style and classes
+
+        protected string DragAndDropPositionClass =>
+            new CssBuilder()
+            .AddClass("d-flex")
+            .AddClass("flex-column", Position == Position.Top || Position == Position.Bottom)
+            .AddClass("flex-grow-1")
+            .Build();
 
         protected string TabsClassnames =>
             new CssBuilder("mud-tabs")
@@ -1007,7 +1014,7 @@ namespace MudBlazor
 
         #endregion
 
-        private void ItemUpdated(MudItemDropInfo<MudTabPanel> dropItem)
+        internal void ItemUpdated(MudItemDropInfo<MudTabPanel> dropItem)
         {
             if (dropItem.Item is null)
             {
