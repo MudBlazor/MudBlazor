@@ -88,6 +88,25 @@ namespace MudBlazor.UnitTests.Extensions
         }
 
         [Test]
+        public void OrderBy_ICollection_MultipleColumns_ThenByDescendingOnSecondDefinition()
+        {
+            // This forces the 'else' branch + ThenByDescending
+            var p1 = new Person { Name = "A", Age = 10 };
+            var p2 = new Person { Name = "B", Age = 10 };
+            var p3 = new Person { Name = "C", Age = 5 };
+            var source = new[] { p1, p2, p3 };
+            ICollection<SortDefinition<Person>> sortDefs = new List<SortDefinition<Person>>
+            {
+                ByAge(),         // first => OrderBy
+                ByName(true)     // second => ThenByDescending
+            };
+            var result = source.OrderBySortDefinitions(sortDefs).ToList();
+            // Age 5 first, then among Age 10 names in descending order B, A
+            result.Select(x => x.Name)
+                  .Should().ContainInOrder("C", "B", "A");
+        }
+
+        [Test]
         public void OrderBy_GridState_UsesItsSortDefinitions()
         {
             var p1 = new Person { Name = "Alpha", Age = 5 };
