@@ -286,6 +286,7 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
     /// </summary>
     private ValueTask BlockScrollAsync()
     {
+        if (!IsJSRuntimeAvailable) { return ValueTask.CompletedTask; }
         // we only want to lock scroll once
         if (_lockCount > 0)
         {
@@ -301,6 +302,7 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
     /// </summary>
     private ValueTask UnblockScrollAsync()
     {
+        if (!IsJSRuntimeAvailable) { return ValueTask.CompletedTask; }
         _lockCount = Math.Max(0, _lockCount - 1);
         return ScrollManager.UnlockScrollAsync("body", LockScrollClass);
     }
