@@ -25,10 +25,10 @@ public class ChartDataSet
     /// <summary>
     /// Tooltip title format for the data set. Supported tags are {{SERIES_NAME}}, {{X_VALUE}} and {{Y_VALUE}}.
     /// </summary>
-    public string TooltipTitleFormat { get; set; } = "{{Y_VALUE}}";
+    public string? TooltipTitleFormat { get; set; }
 
     /// <summary>
-    /// Tooltip subtitle format for the series. Supported tags are {{SERIES_NAME}}, {{X_VALUE}} and {{Y_VALUE}}.
+    /// Tooltip subtitle format for the data set. Supported tags are {{SERIES_NAME}}, {{X_VALUE}} and {{Y_VALUE}}.
     /// </summary>
     public string? TooltipSubtitleFormat { get; set; }
 

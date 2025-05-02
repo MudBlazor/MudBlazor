@@ -17,8 +17,18 @@ public abstract class MudAxisChartBase<TOptions> : MudChartBase<TOptions>, IDisp
     [CascadingParameter]
     public MudChart? MudChartParent { get; set; }
 
-    private const double Epsilon = 1e-6;
-    protected const double BoundWidthDefault = 650.0;
+    protected List<ChartDataSet> Series { get; set; } = [];
+
+    protected readonly List<SvgPath> HorizontalLines = [];
+    protected readonly List<SvgText> HorizontalValues = [];
+
+    protected readonly List<SvgPath> VerticalLines = [];
+    protected readonly List<SvgText> VerticalValues = [];
+
+    protected readonly List<SvgLegend> Legends = [];
+
+    protected const double Epsilon = 1e-6;
+    protected const double BoundWidthDefault = 700.0;
     protected const double BoundHeightDefault = 350.0;
     protected const double HorizontalStartSpaceBuffer = 10.0;
     protected double HorizontalStartSpace => Math.Max(HorizontalStartSpaceBuffer + Math.Ceiling(_yAxisLabelSize?.Width ?? 0), 30);
@@ -28,8 +38,8 @@ public abstract class MudAxisChartBase<TOptions> : MudChartBase<TOptions>, IDisp
     protected const double VerticalEndSpace = 25.0;
     protected double XAxisLabelOffset => Math.Ceiling(_xAxisLabelSize?.Height ?? 20) / 2;
 
-    protected double _boundWidth = 650.0;
-    protected double _boundHeight = 350.0;
+    protected double _boundWidth = BoundWidthDefault;
+    protected double _boundHeight = BoundHeightDefault;
     private ElementSize? _elementSize;
     private ElementSize? _yAxisLabelSize;
     private ElementSize? _xAxisLabelSize;
@@ -44,6 +54,13 @@ public abstract class MudAxisChartBase<TOptions> : MudChartBase<TOptions>, IDisp
     protected MudAxisChartBase()
     {
         _dotNetObjectReference = DotNetObjectReference.Create(this);
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        RebuildChart();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -125,11 +142,17 @@ public abstract class MudAxisChartBase<TOptions> : MudChartBase<TOptions>, IDisp
         }
 
         RebuildChart();
-
         StateHasChanged();
     }
 
     protected abstract void RebuildChart();
+
+    protected virtual void HandleLegendVisibilityChanged(SvgLegend legend)
+    {
+        var series = Series[legend.Index];
+        series.Visible = legend.Visible;
+        RebuildChart();
+    }
 
     public void Dispose()
     {

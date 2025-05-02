@@ -26,7 +26,12 @@ public abstract class DefaultChartOptions : IChartOptions
     /// <summary>
     /// The format applied to the data marker tooltip title.
     /// </summary>
-    public string TooltipTitleFormat { get; set; } = "{{Y_VALUE}} - {{X_VALUE}}";
+    public virtual string TooltipTitleFormat { get; set; } = "{{Y_VALUE}} - {{X_VALUE}}";
+
+    /// <summary>
+    /// The format applied to the data marker tooltip subtitle.
+    /// </summary>
+    public virtual string? TooltipSubtitleFormat { get; set; }
 
     /// <summary>
     /// The list of colors applied to series values.

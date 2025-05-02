@@ -11,7 +11,7 @@
     Legends="@_legends"
     HoveredSegment="@_hoveredSegment"
     UserAttributes="@UserAttributes"
-    TooltipTitle="@BuildTooltipTitle()"
+    TooltipFormat="@BuildTooltipFormat()"
     OnPathClick="async (i) => await SetSelectedIndexAsync(i)"
     OnMouseOver="(i) => OnSegmentMouseOver(new MouseEventArgs(), i)"
     OnMouseOut="() => OnSegmentMouseOut(new MouseEventArgs())" />
@@ -19,14 +19,28 @@
 @code {
     public override string ChartClass => "mud-chart-donut";
 
-    private string BuildTooltipTitle()
+    private (string title, string subtitle) BuildTooltipFormat()
     {
-        if (_hoveredSegment == null || string.IsNullOrWhiteSpace(ChartOptions?.TooltipTitleFormat))
-            return string.Empty;
+        if (_hoveredSegment == null)
+            return (string.Empty, string.Empty);
 
-        return ChartOptions.TooltipTitleFormat
+        var series = ChartOptions.AggregationOption == AggregationOption.GroupByDataSet ? ChartSeries[_hoveredSegment.Index] : null;
+        var tooltipTitleFormat = series?.TooltipTitleFormat ?? ChartOptions.TooltipTitleFormat;
+        var tooltipSubtitleFormat = series?.TooltipSubtitleFormat ?? ChartOptions.TooltipSubtitleFormat;
+
+        if (string.IsNullOrWhiteSpace(tooltipTitleFormat))
+            return (string.Empty, string.Empty);
+
+        var title = tooltipTitleFormat?
             .Replace("{{SERIES_NAME}}", GetSeriesName(ChartOptions.AggregationOption))
             .Replace("{{X_VALUE}}", _hoveredSegment.LabelXValue)
             .Replace("{{Y_VALUE}}", _hoveredSegment.LabelYValue);
+
+        var subtitle = tooltipSubtitleFormat?
+            .Replace("{{SERIES_NAME}}", GetSeriesName(ChartOptions.AggregationOption))
+            .Replace("{{X_VALUE}}", _hoveredSegment.LabelXValue)
+            .Replace("{{Y_VALUE}}", _hoveredSegment.LabelYValue);
+
+        return (title, subtitle);
     }
 }

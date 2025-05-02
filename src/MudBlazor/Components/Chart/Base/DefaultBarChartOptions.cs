@@ -37,4 +37,6 @@ public abstract class DefaultBarChartOptions : DefaultAxisChartOptions
     /// Overrides the <see cref="BarWidthRatio"/> setting.
     /// </remarks>
     public int? FixedBarWidth { get; set; }
+
+    public override string TooltipTitleFormat { get; set; } = "{{Y_VALUE}}";
 }

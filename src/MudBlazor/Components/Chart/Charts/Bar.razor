@@ -13,7 +13,7 @@
     <Filters />
     <g class="mud-charts-grid">
         <g class="mud-charts-gridlines-yaxis">
-            @foreach (var horizontalLine in _horizontalLines)
+            @foreach (var horizontalLine in HorizontalLines)
             {
                 <path stroke="#e0e0e0" stroke-width="0.3" d="@horizontalLine.Data"></path>
             }
@@ -21,7 +21,7 @@
         @if (ChartOptions.XAxisLines == true)
         {
             <g class="mud-charts-gridlines-xaxis-lines">
-                @foreach (var verticalLine in _verticalLines)
+                @foreach (var verticalLine in VerticalLines)
                 {
                     <path stroke="gray" stroke-width="0.3" d="@verticalLine.Data"></path>
                 }
@@ -29,15 +29,15 @@
         }
     </g>
     <g @ref="_yAxisGroupElementReference" class="mud-charts-yaxis">
-        @foreach (var horizontalLineValue in _horizontalValues)
+        @foreach (var horizontalLineValue in HorizontalValues)
         {
             @((MarkupString)$"<text x='{horizontalLineValue.X.ToString(CultureInfo.InvariantCulture)}' y='{horizontalLineValue.Y.ToString(CultureInfo.InvariantCulture)}' font-size='12px' text-anchor='end' dominant-baseline='auto'>{horizontalLineValue.Value?.ToString(CultureInfo.InvariantCulture)}</text>")
         }
     </g>
     <g @ref="_xAxisGroupElementReference" class="mud-charts-xaxis">
-        @for (var i = 0; i < _verticalValues.Count; i++)
+        @for (var i = 0; i < VerticalValues.Count; i++)
         {
-            var verticalLineValue = _verticalValues[i];
+            var verticalLineValue = VerticalValues[i];
             var x = verticalLineValue.X.ToString(CultureInfo.InvariantCulture);
             var y = verticalLineValue.Y.ToString(CultureInfo.InvariantCulture);
             var rotation = (-ChartOptions.XAxisLabelRotation).ToString(CultureInfo.InvariantCulture);
@@ -47,7 +47,7 @@
     <g class="mud-charts-bar-series">
         @foreach (var bar in _bars)
         {
-            if (!_series[bar.Index].Visible) continue;
+            if (!Series[bar.Index].Visible) continue;
 
             var color = ChartOptions.ChartPalette.GetValue(bar.Index % ChartOptions.ChartPalette.Length);
 
@@ -69,16 +69,18 @@
     @if (_hoveredBar is not null && ChartOptions.ShowToolTips == true)
     {
         var color = ChartOptions.ChartPalette.GetValue(_hoveredBar.Index % ChartOptions.ChartPalette.Length)?.ToString() ?? string.Empty;
-        var series = _series[_hoveredBar.Index];
+        var series = Series[_hoveredBar.Index];
+        var tooltipTitleFormat = series.TooltipTitleFormat ?? ChartOptions.TooltipTitleFormat;
+        var tooltipSubtitleFormat = series.TooltipSubtitleFormat ?? ChartOptions.TooltipSubtitleFormat;
 
-        if (!string.IsNullOrWhiteSpace(series.TooltipTitleFormat))
+        if (!string.IsNullOrWhiteSpace(tooltipTitleFormat))
         {
-            var tooltipTitle = series.TooltipTitleFormat
+            var tooltipTitle = tooltipTitleFormat
                 .Replace("{{SERIES_NAME}}", series.Label)
                 .Replace("{{X_VALUE}}", _hoveredBar.LabelXValue)
                 .Replace("{{Y_VALUE}}", _hoveredBar.LabelYValue);
 
-            var tooltipSubtitle = series.TooltipSubtitleFormat?
+            var tooltipSubtitle = tooltipSubtitleFormat?
                 .Replace("{{SERIES_NAME}}", series.Label)
                 .Replace("{{X_VALUE}}", _hoveredBar.LabelXValue)
                 .Replace("{{Y_VALUE}}", _hoveredBar.LabelYValue) ?? string.Empty;
@@ -87,4 +89,4 @@
         }
     }
 </svg>
-<Legend Data="@_legends" />
+<Legend Data="@Legends" />
