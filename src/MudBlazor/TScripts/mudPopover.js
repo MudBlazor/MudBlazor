@@ -892,6 +892,7 @@ class MudPopover {
             isOpened: startOpened
         };
 
+        window.mudpopoverHelper.placePopover(popoverContentNode);
         // queue a resize event so we ensure if this popover started opened or nested it will be positioned correctly
         // needs to be after setup in the map
         window.mudpopoverHelper.debouncedResize();
