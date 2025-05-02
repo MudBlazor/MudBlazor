@@ -17,9 +17,9 @@ namespace MudBlazor
     public partial class MudProgressCircular : MudComponentBase
     {
         private int _svgValue;
+        private double _fraction;
         private readonly ParameterState<double> _valueState;
         private const int MagicNumber = 126; // weird, but required for the SVG to work
-        private double _fraction;
 
         protected string Classname =>
             new CssBuilder("mud-progress-circular")
