@@ -34,6 +34,10 @@
   transform: rotate(-90deg);
 }
 
+.mud-progress-circular-indeterminate-child {
+  animation: mud-progress-circular-keyframes-circular-rotate 1.4s linear reverse infinite;
+}
+
 .mud-progress-circular-percentage {
   position: absolute;
   top: 0;

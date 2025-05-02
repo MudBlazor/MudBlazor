@@ -25,6 +25,9 @@
 <MudProgressCircular Style="height: 60px; width: 60px" Color="Color.Success" Value="@_doubleValue">
     <ChildContent>@_doubleValue.ToString("N2")</ChildContent>
 </MudProgressCircular>
+<MudProgressCircular Size="Size.Large" Indeterminate="true" Color="Color.Primary">
+    <ChildContent>Mud</ChildContent>
+</MudProgressCircular>
 
 @code {
     private bool _disposed;
