@@ -41,6 +41,11 @@
                                                                      ChartOptions="donutOptions"
                                                                      @bind-SelectedIndex:get="this.SelectedIndexState.Value"
                                                                      @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
+        (ChartType.Timeseries, TimeSeriesChartOptions timeSeriesOptions) => @<TimeSeries ChartSeries="@ChartSeries"
+                                                                                         ChartLabels="@ChartLabels"
+                                                                                         ChartOptions="timeSeriesOptions"
+                                                                                         @bind-SelectedIndex:get="this.SelectedIndexState.Value"
+                                                                                         @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
         _ => throw new NotImplementedException($"{ChartType} chart is not supported")
     };
 

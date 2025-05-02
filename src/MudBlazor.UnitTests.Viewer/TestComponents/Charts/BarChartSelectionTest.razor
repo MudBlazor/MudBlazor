@@ -18,7 +18,7 @@
                 }
             </MudSelect>            
         }
-        else if (_chartType == ChartType.Line)
+        else if (_chartType == ChartType.Line || _chartType == ChartType.Timeseries)
         {
             <MudSelect T="LineDisplayType" Label="Display Type" @bind-Value="_selectedDisplayType" Dense FitContent Variant="Variant.Outlined" Margin="Margin.Dense">
                 @foreach (LineDisplayType lineType in Enum.GetValues(typeof(LineDisplayType)))
@@ -48,7 +48,7 @@
         <MudCheckBox @bind-Value="_canHideSeries" Label="Can Hide Series" Color="Color.Tertiary"/>
     </MudStack>
     <MudBlazor.Components.Chart.MudChart ChartType="_chartType" MatchBoundsToSize="_matchParentSize" CanHideSeries="_canHideSeries"
-                                         ChartSeries="@_series.Select(s => new ChartDataSet { Label = s.Label, Data = s.Data.Values.Take(_dataPointCount).ToArray() }).ToList()"
+                                         ChartSeries="@GetChartSeries()"
                                          ChartLabels="@_labels.Take(_dataPointCount).ToArray()"
                                          @bind-SelectedIndex="_index"
                                          ChartOptions="@GetChartOptions()"
@@ -80,7 +80,7 @@
     private Justify _selectedJustify = Justify.SpaceEvenly;
     private LineDisplayType _selectedDisplayType = LineDisplayType.Line;
     private AggregationOption _selectedAggregationOption = AggregationOption.GroupByLabel;
-    private List<ChartDataSet> _series = DataSet.Take(1).ToList();
+    private List<ChartDataSet> _series = DataSet.Take(3).ToList();
     private List<string> strings = new() { "United Kingdom", "United States", "Greenland", "Germany", "Norway", "Italy", "Spain", "Sweden" };
     private static List<ChartDataSet> DataSet =>
         [
@@ -124,6 +124,42 @@
         {
             AggregationOption = _selectedAggregationOption,
         },
+        ChartType.Timeseries => new TimeSeriesChartOptions
+        {
+            TimeLabelSpacing = TimeSpan.FromDays(7),
+            TooltipTimeLabelFormat = "dd-MMM-yyyy",
+            TimeLabelFormat = "dd-MMM",
+            XAxisLabelRotation = 90,
+            ShowDataMarkers = false,
+            SeriesDisplayOverrides = new Dictionary<ChartDataSet, SeriesDisplayOverride>() 
+            {
+                [DataSet[1]] = new SeriesDisplayOverride
+                {
+                    LineDisplayType = LineDisplayType.Area,
+                }
+            }
+        },
         _ => throw new NotImplementedException()
     };
+
+    private static readonly DateTime[] _dateLabels = Enumerable.Range(0, 12).Select(i => new DateTime(DateTime.Now.Year, 1, 1).AddMonths(i)).ToArray();
+    private List<ChartDataSet> GetChartSeries()
+    {
+        if (_chartType == ChartType.Timeseries)
+        {
+            return _series.Select(s => new ChartDataSet()
+                {
+                    Label = s.Label,
+                    Data = s.Data.Values.Take(_dataPointCount).Select((y, i) => (_dateLabels[i], y)).ToArray()
+                }).ToList();
+        }
+        else
+        {
+            return _series.Select(s => new ChartDataSet
+                {
+                    Label = s.Label,
+                    Data = s.Data.Values.Take(_dataPointCount).ToArray()
+                }).ToList();
+        }
+    }
 }

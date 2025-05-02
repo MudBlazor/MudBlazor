@@ -26,7 +26,8 @@
 
     @if (HoveredSegment is not null && MudChartParent?.ChartOptions?.ShowToolTips is true)
     {
-        <ChartTooltip Title="@TooltipTitle"
+        <ChartTooltip Title="@TooltipFormat.title"
+                      Subtitle="@TooltipFormat.subtitle"
                       Color="@GetColor(HoveredSegment.Index)"
                       X="@(HoveredSegment.LabelX + Radius)"
                       Y="@(HoveredSegment.LabelY + Radius)" />
@@ -48,7 +49,7 @@
     public string ChartClass { get; set; }
     
     [Parameter] 
-    public string TooltipTitle { get; set; }
+    public (string title, string subtitle) TooltipFormat { get; set; }
 
     [Parameter] 
     public SvgPath HoveredSegment { get; set; }

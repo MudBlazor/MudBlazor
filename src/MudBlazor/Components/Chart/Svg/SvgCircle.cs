@@ -7,7 +7,7 @@ namespace MudBlazor
     /// Represents a circular shape drawn as an SVG path.
     /// </summary>
     [DebuggerDisplay("{Index} = {CX},{CY}, R={Radius}")]
-    internal class SvgCircle
+    public sealed class SvgCircle
     {
         /// <summary>
         /// The position of this path within a list.
