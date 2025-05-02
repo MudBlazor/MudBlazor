@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.Docs.Examples
 <MudPaper Style="width: 800px">
-    <MudStepper @bind-ActiveIndex="_index" CompletedStepColor="Color.Success" CurrentStepColor="Color.Primary" NavClass="border-b mud-border-lines-default" StepClass="pt-4" ShowResetButton>
+    <MudStepper @bind-ActiveIndex="_index" Colors="@(new() { CompletedStepColor = Color.Success, CurrentStepColor = Color.Primary })" Classes="@(new() {NavClass = "border-b mud-border-lines-default", StepClass = "pt-4"})" ShowResetButton>
         <TitleTemplate>@*This empty template prevents rendering the title*@</TitleTemplate>
         <ConnectorTemplate Context="step">
             <div class="mud-stepper-nav-connector">
@@ -11,13 +11,16 @@
             </div>
         </ConnectorTemplate>
         <LabelTemplate>
-            @if (context.IsActive) {
+            @if (context.IsActive)
+            {
                 <MudIcon Icon="@Icons.Material.Filled.AirplanemodeActive" Style="rotate: 90deg;" Color="context.Completed ? Color.Success : Color.Primary"></MudIcon>
             }
-            else if (context.Completed) {
+            else if (context.Completed)
+            {
                 <div style="height: 10px; width:10px; background-color: var(--mud-palette-success); border-radius: 50%;"></div>
             }
-            else {
+            else
+            {
                 <div style="height: 10px; width:10px; background-color: #d4ddeb; border-radius: 50%;"></div>
             }
         </LabelTemplate>
@@ -29,7 +32,7 @@
         </ChildContent>
         <CompletedContent>
             <MudStack Row Class="ma-3">
-                <MudIcon Icon="@Icons.Material.Filled.Done" Color="Color.Success"/>
+                <MudIcon Icon="@Icons.Material.Filled.Done" Color="Color.Success" />
                 <MudText>
                     You are checked-in, your ticket will be sent by email.
                 </MudText>
@@ -37,12 +40,13 @@
         </CompletedContent>
         <ActionContent Context="stepper">
             <MudButton OnClick="@(() => stepper.ResetAsync())">Reset</MudButton>
-            @if (!_completed) {
+            @if (!_completed)
+            {
                 <MudIconButton OnClick="@(() => stepper.PreviousStepAsync())" Icon="@Icons.Material.Filled.ArrowBack" Color="Color.Primary" Disabled="@(_index <= 0)" />
                 <MudSpacer />
                 @if (stepper.Steps[_index].Skippable == true)
                 {
-                    <MudIconButton OnClick="@(() => stepper.SkipCurrentStepAsync())" Icon="@stepper.SkipButtonIcon" Color="Color.Primary" />
+                    <MudIconButton OnClick="@(() => stepper.SkipCurrentStepAsync())" Icon="@stepper.IconGroup.SkipButtonIcon" Color="Color.Primary" />
                 }
                 <MudIconButton OnClick="@(() => stepper.NextStepAsync())" Icon="@Icons.Material.Filled.ArrowForward" Color="Color.Primary" />
             }

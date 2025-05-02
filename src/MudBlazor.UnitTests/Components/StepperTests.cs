@@ -811,8 +811,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var stepper = Context.RenderComponent<MudStepper>(self =>
             {
-                self.Add(x => x.CompletedStepColor, Color.Success);
-                self.Add(x => x.CurrentStepColor, Color.Secondary);
+                self.Add(x => x.Colors, new StepperColors() { CompletedStepColor = Color.Success, CurrentStepColor = Color.Secondary });
                 self.AddChildContent<MudStep>(step =>
                 {
                     step.Add(x => x.Completed, true);
