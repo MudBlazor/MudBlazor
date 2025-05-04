@@ -3,6 +3,7 @@ using Bunit;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
+using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents.Overlay;
 using NUnit.Framework;
 
@@ -311,12 +312,11 @@ public class OverlayTests : BunitTest
     {
         var scrollManagerMock = new Mock<IScrollManager>();
         Context.Services.AddSingleton(scrollManagerMock.Object);
-        var providerComp = Context.RenderComponent<MudPopoverProvider>();
 
         var visible = true;
 
         // === Initial: Visible = true, should lock scroll if conditions match ===
-        var comp = Context.RenderComponent<MudOverlay>(parameters => parameters
+        var comp = Context.RenderComponent<DummyOverlay>(parameters => parameters
             .Add(p => p.Absolute, absolute)
             .Bind(p => p.Visible, visible, p => visible = p)
             .Add(p => p.LockScroll, lockscroll)
@@ -324,11 +324,11 @@ public class OverlayTests : BunitTest
 
         var mudOverlay = comp.Instance;
 
-        // Initial unlock state
+        // Initial unlock state without JSRuntime
         scrollManagerMock.Verify(s => s.UnlockScrollAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never());
 
         if (!absolute && lockscroll)
-        {
+        {//fails here
             scrollManagerMock.Verify(s => s.LockScrollAsync("body", mudOverlay.LockScrollClass), Times.Once());
         }
         else
