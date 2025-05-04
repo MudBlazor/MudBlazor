@@ -17,7 +17,6 @@ namespace MudBlazor
     public partial class MudProgressCircular : MudComponentBase
     {
         private int _svgValue;
-        private double _fraction;
         private readonly ParameterState<double> _valueState;
         private const int MagicNumber = 126; // weird, but required for the SVG to work
 
@@ -152,9 +151,9 @@ namespace MudBlazor
         {
             var minValue = Math.Min(Math.Max(Min, value), Max);
             // calculate fraction, which is a value between 0 and 1
-            _fraction = (minValue - Min) / (Max - Min);
+            var fraction = (minValue - Min) / (Max - Min);
             // now project into the range of the SVG value (126 .. 0)
-            return (int)Math.Round(MagicNumber - (MagicNumber * _fraction));
+            return (int)Math.Round(MagicNumber - (MagicNumber * fraction));
         }
     }
 }
