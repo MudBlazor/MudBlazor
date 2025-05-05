@@ -32,6 +32,8 @@ namespace MudBlazor
         private bool _filtersMenuVisible = false;
         private bool _columnsPanelVisible = false;
         internal HashSet<T> _openHierarchies = [];
+        private HashSet<T> _initialExpansions = [];
+        private Func<T, bool> _initialExpandedFunc = null;
         private string _columnsPanelSearch = string.Empty;
         private MudDropContainer<Column<T>> _dropContainer;
         private MudDropContainer<Column<T>> _columnsPanelDropContainer;
@@ -726,27 +728,70 @@ namespace MudBlazor
 
                 _items = value;
 
-                if (PagerStateHasChangedEvent != null)
-                    InvokeAsync(PagerStateHasChangedEvent);
+                OnPagerStateChanged();
+                SetupGrouping();
+                ApplyInitialExpansionForItems(_items);
+                SetupCollectionChangeTracking();
+            }
+        }
 
-                // set initial grouping
-                if (Groupable)
-                {
-                    GroupItems();
-                }
 
-                // Setup ObservableCollection functionality.
-                if (_items is INotifyCollectionChanged changed)
+        private void OnPagerStateChanged()
+        {
+            if (PagerStateHasChangedEvent is not null)
+                InvokeAsync(PagerStateHasChangedEvent);
+        }
+
+        private void SetupGrouping()
+        {
+            if (Groupable)
+                GroupItems();
+        }
+
+        private void SetupCollectionChangeTracking()
+        {
+            if (_items is INotifyCollectionChanged changed)
+            {
+                changed.CollectionChanged += (s, e) =>
                 {
-                    changed.CollectionChanged += (s, e) =>
-                    {
-                        _currentRenderFilteredItemsCache = null;
-                        if (Groupable)
-                            GroupItems();
-                    };
+                    _currentRenderFilteredItemsCache = null;
+
+                    if (Groupable)
+                        GroupItems();
+
+                    ApplyInitialExpansionForNewItems(e);
+                };
+            }
+        }
+
+        private void ApplyInitialExpansionForNewItems(NotifyCollectionChangedEventArgs e)
+        {
+            if (_initialExpandedFunc is null || e.NewItems is null)
+                return;
+
+            foreach (T item in e.NewItems)
+            {
+                if (_initialExpandedFunc.Invoke(item) && _initialExpansions.Add(item))
+                {
+                    _openHierarchies.Add(item);
                 }
             }
         }
+
+        private void ApplyInitialExpansionForItems(IEnumerable<T> items)
+        {
+            if (_initialExpandedFunc is null || items is null)
+                return;
+
+            foreach (var item in items)
+            {
+                if (_initialExpandedFunc.Invoke(item) && _initialExpansions.Add(item))
+                {
+                    _openHierarchies.Add(item);
+                }
+            }
+        }
+
 
         /// <summary>
         /// Shows a loading animation while querying data.
@@ -1345,7 +1390,6 @@ namespace MudBlazor
                     // Cancel any prior request
                     CancelServerDataToken();
                     await _mudVirtualize.RefreshDataAsync();
-                    StateHasChanged();
                 }
                 else
                 {
@@ -1368,7 +1412,6 @@ namespace MudBlazor
                     _currentRenderFilteredItemsCache = null;
 
                     Loading = false;
-                    StateHasChanged();
                 }
             }
             else
@@ -1392,9 +1435,22 @@ namespace MudBlazor
                     CurrentPage = 0;
 
                 Loading = false;
-                StateHasChanged();
                 PagerStateHasChangedEvent?.Invoke();
             }
+            // handle initial hierarchy expansion
+            if (_initialExpandedFunc is not null)
+            {
+                foreach (var data in _serverData.Items)
+                {
+                    // ensure we only add it once if they were expanded initially
+                    if (_initialExpandedFunc(data) && _initialExpansions.Add(data))
+                    {
+                        _openHierarchies.Add(data);
+                    }
+                }
+            }
+
+            StateHasChanged();
             GroupItems();
         }
 
@@ -1402,6 +1458,19 @@ namespace MudBlazor
         {
             if (column.Tag?.ToString() == "hierarchy-column")
             {
+                if (column is TemplateColumn<T> templateColumn)
+                {
+                    _initialExpandedFunc = templateColumn.InitiallyExpandedFunc;
+                    // Apply expansion now if items or _serverData.Items is already set
+                    if (_items is not null)
+                    {
+                        ApplyInitialExpansionForItems(_items);
+                    }
+                    else if (_serverData?.Items?.Any() == true)
+                    {
+                        ApplyInitialExpansionForItems(_serverData.Items);
+                    }
+                }
                 RenderedColumns.Insert(0, column);
             }
             else if (column.Tag?.ToString() == "select-column")
@@ -2253,6 +2322,7 @@ namespace MudBlazor
 
             await InvokeAsync(StateHasChanged);
         }
+
 
         #region Resize feature
 
