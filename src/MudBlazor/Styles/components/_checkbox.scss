@@ -56,6 +56,21 @@
   cursor: pointer;
 }
 
+.mud-checkbox-small {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.mud-checkbox-medium {
+  width: 1.50rem;
+  height: 1.50rem;
+}
+
+.mud-checkbox-large {
+  width: 2.25rem;
+  height: 2.25rem;
+}
+
 .mud-chart-legend-checkbox .mud-checkbox svg path:last-child {
   fill: var(--checkbox-color) !important;
 }
