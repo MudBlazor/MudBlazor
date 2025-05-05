@@ -79,5 +79,14 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         public Func<T, bool>? InitiallyExpandedFunc { get; set; }
+
+        /// <summary>
+        /// Sets the function which determines whether buttons are disabled if used in a Hierarchy Column.
+        /// </summary>
+        /// <remarks>
+        /// Used internally for Hierarchy Columns, setting this will have no effect.
+        /// </remarks>
+        [Parameter]
+        public Func<T, bool> ButtonDisabledFunc { get; set; } = _ => false;
     }
 }

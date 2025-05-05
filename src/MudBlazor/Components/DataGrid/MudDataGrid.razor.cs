@@ -34,6 +34,7 @@ namespace MudBlazor
         internal HashSet<T> _openHierarchies = [];
         private HashSet<T> _initialExpansions = [];
         private Func<T, bool> _initialExpandedFunc = null;
+        private Func<T, bool> _buttonDisabledFunc = null;
         private string _columnsPanelSearch = string.Empty;
         private MudDropContainer<Column<T>> _dropContainer;
         private MudDropContainer<Column<T>> _columnsPanelDropContainer;
@@ -1461,6 +1462,7 @@ namespace MudBlazor
                 if (column is TemplateColumn<T> templateColumn)
                 {
                     _initialExpandedFunc = templateColumn.InitiallyExpandedFunc;
+                    _buttonDisabledFunc = templateColumn.ButtonDisabledFunc;
                     // Apply expansion now if items or _serverData.Items is already set
                     if (_items is not null)
                     {
@@ -2289,7 +2291,7 @@ namespace MudBlazor
         public async Task ExpandAllHierarchy()
         {
             _openHierarchies.Clear();
-            _openHierarchies.UnionWith(FilteredItems);
+            _openHierarchies.UnionWith(FilteredItems.Where(x => _buttonDisabledFunc(x) == false));
             await InvokeAsync(StateHasChanged);
         }
 
@@ -2298,7 +2300,7 @@ namespace MudBlazor
         /// </summary>
         public async Task CollapseAllHierarchy()
         {
-            _openHierarchies.Clear();
+            _openHierarchies.RemoveWhere(x => _buttonDisabledFunc(x) == false);
             await InvokeAsync(StateHasChanged);
         }
 

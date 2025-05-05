@@ -2949,7 +2949,8 @@ namespace MudBlazor.UnitTests.Components
             await dataGrid.InvokeAsync(() => dataGrid.Instance.CollapseAllHierarchy());
             dataGrid.WaitForAssertion(() => dataGrid.Instance._openHierarchies.Count.Should().Be(0));
             await dataGrid.InvokeAsync(() => dataGrid.Instance.ExpandAllHierarchy());
-            dataGrid.WaitForAssertion(() => dataGrid.Instance._openHierarchies.Count.Should().Be(5));
+            // one is disabled and will not be expanded
+            dataGrid.WaitForAssertion(() => dataGrid.Instance._openHierarchies.Count.Should().Be(4));
         }
 
         [Test]
@@ -4799,7 +4800,7 @@ namespace MudBlazor.UnitTests.Components
             // Click again to expand all
             toggleButton = headerElement.QuerySelector(".mud-hierarchy-toggle-button");
             toggleButton.Click();
-            comp.WaitForAssertion(() => dataGrid.Instance._openHierarchies.Count.Should().Be(5));
+            comp.WaitForAssertion(() => dataGrid.Instance._openHierarchies.Count.Should().Be(4)); // one disabled
         }
 
         [Test]
@@ -4865,8 +4866,8 @@ namespace MudBlazor.UnitTests.Components
             // Call ToggleHierarchy again
             await accessor.ToggleHierarchyAsync();
 
-            // Now all hierarchies should be expanded
-            dataGrid.Instance._openHierarchies.Count.Should().Be(5);
+            // Now all hierarchies should be expanded (except the disabled one)
+            dataGrid.Instance._openHierarchies.Count.Should().Be(4);
         }
 
         [Test]
