@@ -32,7 +32,7 @@ namespace MudBlazor
         private bool _filtersMenuVisible = false;
         private bool _columnsPanelVisible = false;
         internal HashSet<T> _openHierarchies = [];
-        private HashSet<T> _initialExpansions = [];
+        private readonly HashSet<T> _initialExpansions = [];
         private Func<T, bool> _initialExpandedFunc = null;
         private Func<T, bool> _buttonDisabledFunc = null;
         private string _columnsPanelSearch = string.Empty;
@@ -2291,7 +2291,7 @@ namespace MudBlazor
         public async Task ExpandAllHierarchy()
         {
             _openHierarchies.Clear();
-            _openHierarchies.UnionWith(FilteredItems.Where(x => _buttonDisabledFunc(x) == false));
+            _openHierarchies.UnionWith(FilteredItems.Where(x => !_buttonDisabledFunc(x)));
             await InvokeAsync(StateHasChanged);
         }
 
@@ -2300,7 +2300,7 @@ namespace MudBlazor
         /// </summary>
         public async Task CollapseAllHierarchy()
         {
-            _openHierarchies.RemoveWhere(x => _buttonDisabledFunc(x) == false);
+            _openHierarchies.RemoveWhere(x => !_buttonDisabledFunc(x));
             await InvokeAsync(StateHasChanged);
         }
 
