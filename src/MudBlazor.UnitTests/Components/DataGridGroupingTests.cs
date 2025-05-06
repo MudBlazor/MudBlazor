@@ -314,6 +314,13 @@ namespace MudBlazor.UnitTests.Components
             professionCells[1].TextContent.Should().Be("Profession: (None)");
             Rows().Count.Should().Be(4, because: "1 header row + 2 data rows + 1 footer row");
 
+            var ungroup = comp.Find(".UnGroupAll");
+            ungroup.Click();
+            comp.Instance.IsAgeGrouped.Should().Be(false);
+            comp.Instance.IsGenderGrouped.Should().Be(false);
+            comp.Instance.IsProfessionGrouped.Should().Be(false);
+            comp.Instance.IsNameGrouped.Should().Be(false);
+
             //click age grouping in grid
             var headerOption = comp.Find("th.age .mud-menu button");
             headerOption.Click();
@@ -321,10 +328,14 @@ namespace MudBlazor.UnitTests.Components
             listItems.Count.Should().Be(2);
             var clickablePopover = listItems[1].Find(".mud-menu-item");
             clickablePopover.Click();
+            comp.Instance.IsAgeGrouped.Should().Be(true);
+            Rows().Count.Should().Be(5, because: "1 header row + 3 data rows + 1 footer row");
+
+            ungroup.Click();
             comp.Instance.IsAgeGrouped.Should().Be(false);
             comp.Instance.IsGenderGrouped.Should().Be(false);
-            comp.Instance.IsProfessionGrouped.Should().Be(true);
-            Rows().Count.Should().Be(5, because: "1 header row + 3 data rows + 1 footer row");
+            comp.Instance.IsProfessionGrouped.Should().Be(false);
+            comp.Instance.IsNameGrouped.Should().Be(false);
 
             //click gender grouping in grid
             headerOption = comp.Find("th.gender .mud-menu button");
@@ -334,9 +345,13 @@ namespace MudBlazor.UnitTests.Components
             clickablePopover = listItems[1].Find(".mud-menu-item");
             clickablePopover.Click();
             comp.Instance.IsGenderGrouped.Should().Be(true);
+            Rows().Count.Should().Be(4, because: "1 header row + 2 data rows + 1 footer row");
+
+            ungroup.Click();
             comp.Instance.IsAgeGrouped.Should().Be(false);
-            comp.Instance.IsProfessionGrouped.Should().Be(true);
-            Rows().Count.Should().Be(5, because: "1 header row + 3 data rows + 1 footer row");
+            comp.Instance.IsGenderGrouped.Should().Be(false);
+            comp.Instance.IsProfessionGrouped.Should().Be(false);
+            comp.Instance.IsNameGrouped.Should().Be(false);
 
             //click Name grouping in grid
             headerOption = comp.Find("th.name .mud-menu button");
@@ -345,10 +360,14 @@ namespace MudBlazor.UnitTests.Components
             listItems.Count.Should().Be(2);
             clickablePopover = listItems[1].Find(".mud-menu-item");
             clickablePopover.Click();
-            comp.Instance.IsGenderGrouped.Should().Be(true);
-            comp.Instance.IsAgeGrouped.Should().Be(false);
-            comp.Instance.IsProfessionGrouped.Should().Be(true);
+            comp.Instance.IsNameGrouped.Should().Be(true);
             Rows().Count.Should().Be(6, because: "1 header row + 4 data rows + 1 footer row");
+
+            ungroup.Click();
+            comp.Instance.IsAgeGrouped.Should().Be(false);
+            comp.Instance.IsGenderGrouped.Should().Be(false);
+            comp.Instance.IsProfessionGrouped.Should().Be(false);
+            comp.Instance.IsNameGrouped.Should().Be(false);
 
             //click profession grouping in grid
             headerOption = comp.Find("th.profession .mud-menu button");
@@ -357,10 +376,8 @@ namespace MudBlazor.UnitTests.Components
             listItems.Count.Should().Be(2);
             clickablePopover = listItems[1].Find(".mud-menu-item");
             clickablePopover.Click();
-            comp.Instance.IsGenderGrouped.Should().Be(true);
-            comp.Instance.IsAgeGrouped.Should().Be(false);
-            comp.Instance.IsProfessionGrouped.Should().Be(false);
-            Rows().Count.Should().Be(6, because: "1 header row + 4 data rows + 1 footer row");
+            comp.Instance.IsProfessionGrouped.Should().Be(true);
+            Rows().Count.Should().Be(4, because: "1 header row + 2 data rows + 1 footer row");
         }
 
 
@@ -463,22 +480,24 @@ namespace MudBlazor.UnitTests.Components
             var row = rows[0];
             // Test the method
             // Act
+            var col = dataGrid.Instance.RenderedColumns[3]; // primary industry col
+            col.PropertyName.Should().Be("PrimaryIndustry");
+            var defaultExpanded = col._groupExpandedState.Value;
             void GetCount(bool currExpanded)
             {
-                var defaultExpanded = row.Instance.GroupDefinition.Expanded;
                 // Whatever the expanded state is if it differs from the default it should be in the dictionary
                 dataGrid.Instance._groupExpansionsDict.Count.Should().Be(currExpanded != defaultExpanded ? 1 : 0);
             }
 
             // Test the UI
-            var expandButton = () => row.Find(".mud-datagrid-group-button");
+            var expandButton = () => row.Find(".mud-table-row-expander");
             expandButton.Should().NotBeNull();
-            expandButton().Click();
 
+            expandButton().Click(); // collapse the group
             row.WaitForAssertion(() => row.Instance._expanded.Should().BeFalse());
             row.WaitForAssertion(() => GetCount(false));
-            expandButton().Click();
 
+            expandButton().Click(); // expand the group
             row.WaitForAssertion(() => row.Instance._expanded.Should().BeTrue());
             row.WaitForAssertion(() => GetCount(true));
         }

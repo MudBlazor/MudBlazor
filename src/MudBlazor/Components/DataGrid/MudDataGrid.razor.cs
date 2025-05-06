@@ -39,7 +39,7 @@ namespace MudBlazor
         private CancellationTokenSource _serverDataCancellationTokenSource;
         private IEnumerable<T> _currentRenderFilteredItemsCache = null;
         internal GroupDefinition<T> _groupDefinition;
-        internal Dictionary<NullableObject<object>, bool> _groupExpansionsDict = [];
+        internal Dictionary<GroupKey, bool> _groupExpansionsDict = [];
         private GridData<T> _serverData = new() { TotalItems = 0, Items = Array.Empty<T>() };
         private Func<IFilterDefinition<T>> _defaultFilterDefinitionFactory = () => new FilterDefinition<T>();
 
@@ -2111,9 +2111,8 @@ namespace MudBlazor
                 var expanded = false;
                 if (group is { Key: not null })
                 {
-                    var key = new { groupDef.Title, group.Key };
-                    expanded = _groupExpansionsDict.ContainsKey(key) ?
-                                   _groupExpansionsDict[key] :
+                    var key = new GroupKey(groupDef.Title, group.Key);
+                    expanded = _groupExpansionsDict.TryGetValue(key, out var value) ? value :
                                    groupDef.Expanded;
                 }
                 result.Add(new GroupDefinition<T>
@@ -2147,7 +2146,24 @@ namespace MudBlazor
             }
         }
 
+        internal void ToggleGroupExpandAsync(string title, object? key, GroupDefinition<T> groupDef, bool expanded)
+        {
+            var groupKey = new GroupKey(title, key);
+
+            // update the expansion state for _groupExpansionsDict
+            // if it has a key we see if it differs from the definition Expanded State and update accordingly
+            // if it doesn't we add it if the new state doesn't match the definition
+            var col = RenderedColumns.FirstOrDefault(x => x.GroupBy == groupDef.Selector);
+            if (expanded == col?._groupExpandedState.Value)
+                _groupExpansionsDict.Remove(groupKey);
+            else
+                _groupExpansionsDict[groupKey] = expanded;
+
+            _groupInitialExpanded = false;
+            StateHasChanged();
+        }
 #nullable disable
+
         /// <summary>
         /// Expands all groups async.
         /// </summary>
@@ -2311,5 +2327,7 @@ namespace MudBlazor
 
             System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
         }
+
+        internal record GroupKey(string Title, object ItemsKey);
     }
 }
