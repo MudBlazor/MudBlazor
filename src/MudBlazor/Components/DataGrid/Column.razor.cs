@@ -24,7 +24,6 @@ namespace MudBlazor
         internal ParameterState<bool> GroupingState { get; }
         internal ParameterState<bool> _groupExpandedState;
         internal ParameterState<int> _groupByOrderState;
-        internal int _initialGroupByOrder = 0;
 
         /// <summary>
         /// The data grid which owns this column.
@@ -616,7 +615,6 @@ namespace MudBlazor
             base.OnInitialized();
 
             groupBy = GroupBy;
-            _initialGroupByOrder = _groupByOrderState.Value;
 
             DataGrid?.AddColumn(this);
 

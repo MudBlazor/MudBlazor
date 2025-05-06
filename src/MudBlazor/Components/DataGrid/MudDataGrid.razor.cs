@@ -2136,8 +2136,8 @@ namespace MudBlazor
             // if added then add to the end if no _groupByOrderState.Value
             if (added)
             {
-                var groupableColumns = RenderedColumns.Where(x => x.groupable);
-                var newOrder = groupableColumns.Any() ? groupableColumns.Max(x => x._groupByOrderState.Value) + 1 : 0;
+                var groupedColumns = RenderedColumns.Where(x => x.GroupingState.Value && x != column);
+                var newOrder = groupedColumns.Any() ? groupedColumns.Max(x => x._groupByOrderState.Value) + 1 : 0;
                 await column._groupByOrderState.SetValueAsync(newOrder);
             }
             // if removed then reset _groupByOrderState.Value 
