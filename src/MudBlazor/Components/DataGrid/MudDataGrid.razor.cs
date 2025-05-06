@@ -9,7 +9,6 @@ using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
-using MudBlazor.Interfaces;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 using MudBlazor.Utilities.Clone;
@@ -21,7 +20,7 @@ namespace MudBlazor
     /// </summary>
     /// <typeparam name="T">The type of data represented by each row in this grid.</typeparam>
     [CascadingTypeParameter(nameof(T))]
-    public partial class MudDataGrid<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase, IDisposable, IMudStateHasChanged
+    public partial class MudDataGrid<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase, IDisposable
     {
         private MudForm _editForm;
         internal int? _rowsPerPage;
@@ -2132,16 +2131,22 @@ namespace MudBlazor
             return result;
         }
 
-        internal async Task ChangedGrouping(Column<T>? col = null)
+        internal async Task UpdateGroupingOrder(Column<T> column, bool added)
         {
-            // If col is not null add GroupByOrder is not set set it to the end
-            if (col is { _groupByOrderState.Value: 0 })
+            // if added then add to the end if no _groupByOrderState.Value
+            if (added)
             {
-                var maxOrder = RenderedColumns.Max(x => x._groupByOrderState.Value);
-                await col._groupByOrderState.SetValueAsync(maxOrder + 1);
+                var groupableColumns = RenderedColumns.Where(x => x.groupable);
+                var newOrder = groupableColumns.Any() ? groupableColumns.Max(x => x._groupByOrderState.Value) + 1 : 0;
+                await column._groupByOrderState.SetValueAsync(newOrder);
             }
-            GroupItems();
+            // if removed then reset _groupByOrderState.Value 
+            else
+            {
+                await column._groupByOrderState.SetValueAsync(default);
+            }
         }
+
 #nullable disable
         /// <summary>
         /// Expands all groups async.
