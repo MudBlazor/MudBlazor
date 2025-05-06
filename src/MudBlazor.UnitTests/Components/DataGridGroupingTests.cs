@@ -380,6 +380,68 @@ namespace MudBlazor.UnitTests.Components
             Rows().Count.Should().Be(4, because: "1 header row + 2 data rows + 1 footer row");
         }
 
+        [Test]
+        public void DataGridGrouping_ManualGroupByOrderTest()
+        {
+            var comp = Context.RenderComponent<DataGridColumnGroupingTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnGroupingTest.Model>>();
+            var popoverProvider = comp.FindComponent<MudPopoverProvider>();
+
+            var nameCol = dataGrid.Instance.RenderedColumns[0]; // Name col
+            nameCol.PropertyName.Should().Be("Name");
+            var ageCol = dataGrid.Instance.RenderedColumns[1]; // Age col
+            ageCol.PropertyName.Should().Be("Age");
+            var genderCol = dataGrid.Instance.RenderedColumns[2]; // Gender col
+            genderCol.PropertyName.Should().Be("Gender");
+
+            // Assert that initially, before any user interaction, groupbyorder on name is 0
+            // note that name starts grouped
+            nameCol._groupByOrderState.Value.Should().Be(0);
+
+            // add age grouping
+            var headerOption = comp.Find("th.age .mud-menu button");
+            headerOption.Click();
+            var listItems = popoverProvider.FindComponents<MudMenuItem>();
+            listItems.Count.Should().Be(2);
+            var clickablePopover = listItems[1].Find(".mud-menu-item");
+            clickablePopover.Click();
+            comp.Instance.IsAgeGrouped.Should().Be(true);
+            // Assert that after user interaction, groupbyorder on age is 1 (+1)
+            ageCol._groupByOrderState.Value.Should().Be(1);
+
+            // add gender grouping
+            headerOption = comp.Find("th.gender .mud-menu button");
+            headerOption.Click();
+            listItems = popoverProvider.FindComponents<MudMenuItem>();
+            listItems.Count.Should().Be(2);
+            clickablePopover = listItems[1].Find(".mud-menu-item");
+            clickablePopover.Click();
+            comp.Instance.IsGenderGrouped.Should().Be(true);
+            // Assert that after user interaction, groupbyorder on gender is 2 (+1 of max)
+            genderCol._groupByOrderState.Value.Should().Be(2);
+
+            // remove age grouping
+            headerOption = comp.Find("th.age .mud-menu button");
+            headerOption.Click();
+            listItems = popoverProvider.FindComponents<MudMenuItem>();
+            listItems.Count.Should().Be(2);
+            clickablePopover = listItems[1].Find(".mud-menu-item");
+            clickablePopover.Click();
+            comp.Instance.IsAgeGrouped.Should().Be(false);
+            // Assert that after user interaction, groupbyorder on age is 0
+            ageCol._groupByOrderState.Value.Should().Be(0);
+
+            // remove gender grouping
+            headerOption = comp.Find("th.gender .mud-menu button");
+            headerOption.Click();
+            listItems = popoverProvider.FindComponents<MudMenuItem>();
+            listItems.Count.Should().Be(2);
+            clickablePopover = listItems[1].Find(".mud-menu-item");
+            clickablePopover.Click();
+            comp.Instance.IsGenderGrouped.Should().Be(false);
+            // Assert that after user interaction, groupbyorder on gender is 0
+            genderCol._groupByOrderState.Value.Should().Be(0);
+        }
 
         [Test]
         public async Task DataGridGroupedWithServerDataPaginationTest()
