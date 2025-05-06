@@ -102,6 +102,7 @@ namespace MudBlazor
                 }
             }
             DataGrid._groupInitialExpanded = false;
+            ((Interfaces.IMudStateHasChanged)DataGrid).StateHasChanged();
         }
     }
 }
