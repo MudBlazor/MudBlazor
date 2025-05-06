@@ -807,8 +807,7 @@ class MudPopover {
             const tickAttribute = target.getAttribute('data-ticks');            
             // data ticks is not 0 so let's reposition the popover and overlay
 
-            if (tickAttribute > 0 && target.parentNode && this.map[id] && this.map[id].isOpened &&
-                target.parentNode.classList.contains(window.mudpopoverHelper.mainContainerClass)) {
+            if (tickAttribute > 0 && target.parentNode && this.map[id] && this.map[id].isOpened) {
                 // reposition popover individually
                 window.mudpopoverHelper.placePopoverByNode(target);           
             }
@@ -817,6 +816,7 @@ class MudPopover {
 
     initialize(containerClass, flipMargin, overflowPadding) {
         // only happens when the PopoverService is created which happens on application start and anytime the service might crash
+        // "mud-popover-provider" is the default name.
         const mainContent = document.getElementsByClassName(containerClass);
         if (mainContent.length == 0) {
             console.error(`No Popover Container found with class ${containerClass}`);
@@ -882,17 +882,20 @@ class MudPopover {
 
         // this is the content node in the provider regardless of the RenderFragment that exists when the popover is active
         const popoverContentNode = document.getElementById('popovercontent-' + id);
-
-        // queue a resize event so we ensure if this popover started opened or nested it will be positioned correctly
-        window.mudpopoverHelper.debouncedResize();
+        const startOpened = popoverContentNode.classList.contains('mud-popover-open');
 
         // Store all references needed for later cleanup
         this.map[id] = {
             popoverContentNode: popoverContentNode,
             scrollableElements: null,
             parentResizeObserver: null,
-            isOpened: false
+            isOpened: startOpened
         };
+
+        window.mudpopoverHelper.placePopover(popoverContentNode);
+        // queue a resize event so we ensure if this popover started opened or nested it will be positioned correctly
+        // needs to be after setup in the map
+        window.mudpopoverHelper.debouncedResize();
     }
 
     /**
