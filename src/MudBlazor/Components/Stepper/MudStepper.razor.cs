@@ -64,13 +64,13 @@ public partial class MudStepper : MudComponentBase
 
     internal string StepClassname =>
         new CssBuilder("mud-stepper-content")
-            .AddClass(Classes.StepClass ?? StepClass)
+            .AddClass(Classes.StepClass)
             .Build();
 
     protected string NavClassname =>
         new CssBuilder("mud-stepper-nav")
             .AddClass("mud-stepper-nav-scrollable", ScrollableNavigation)
-            .AddClass(Classes.NavClass ?? NavClass)
+            .AddClass(Classes.NavClass)
             .Build();
 
     /// <summary>
@@ -98,127 +98,6 @@ public partial class MudStepper : MudComponentBase
     public EventCallback<int> ActiveIndexChanged { get; set; }
 
     /// <summary>
-    /// The color of completed steps.
-    /// </summary>
-    /// <remarks>
-    /// Defaults to <see cref="Color.Primary"/>.
-    /// </remarks>
-    [Parameter]
-    [Obsolete("Use Colors instead")]
-    [Category(CategoryTypes.List.Appearance)]
-    public Color CompletedStepColor { get; set; } = Color.Primary;
-
-    /// <summary>
-    /// The color of the current step.
-    /// </summary>
-    /// <remarks>
-    /// Defaults to <see cref="Color.Primary"/>.
-    /// </remarks>
-    [Parameter]
-    [Obsolete("Use Colors instead")]
-    [Category(CategoryTypes.List.Appearance)]
-    public Color CurrentStepColor { get; set; } = Color.Primary;
-
-    /// <summary>
-    /// The color of steps with errors.
-    /// </summary>
-    /// <remarks>
-    /// Defaults to <see cref="Color.Error"/>.
-    /// </remarks>
-    [Parameter]
-    [Obsolete("Use Colors instead")]
-    [Category(CategoryTypes.List.Appearance)]
-    public Color ErrorStepColor { get; set; } = Color.Error;
-
-    /// <summary>
-    /// The icon shown for completed steps.
-    /// </summary>
-    /// <remarks>
-    /// Defaults to <see cref="Icons.Material.Outlined.Done"/>.
-    /// </remarks>
-    [Parameter]
-    [Obsolete("Use IconGroup instead")]
-    [Category(CategoryTypes.List.Appearance)]
-    public string StepCompleteIcon { get; set; } = Icons.Material.Outlined.Done;
-
-    /// <summary>
-    /// The icon shown for steps with errors.
-    /// </summary>
-    /// <remarks>
-    /// Defaults to <see cref="Icons.Material.Outlined.PriorityHigh"/>.
-    /// </remarks>
-    [Parameter]
-    [Obsolete("Use IconGroup instead")]
-    [Category(CategoryTypes.List.Appearance)]
-    public string StepErrorIcon { get; set; } = Icons.Material.Outlined.PriorityHigh;
-
-    /// <summary>
-    /// The icon shown for the reset button.
-    /// </summary>
-    /// <remarks>
-    /// Defaults to <see cref="Icons.Material.Filled.FirstPage"/>.
-    /// </remarks>
-    [Parameter]
-    [Obsolete("Use IconGroup instead")]
-    [Category(CategoryTypes.List.Appearance)]
-    public string ResetButtonIcon { get; set; } = Icons.Material.Filled.FirstPage;
-
-    /// <summary>
-    /// The icon shown for the <c>Previous</c> button.
-    /// </summary>
-    /// <remarks>
-    /// Defaults to <see cref="Icons.Material.Filled.NavigateBefore"/>.
-    /// </remarks>
-    [Parameter]
-    [Obsolete("Use IconGroup instead")]
-    [Category(CategoryTypes.List.Appearance)]
-    public string PreviousButtonIcon { get; set; } = Icons.Material.Filled.NavigateBefore;
-
-    /// <summary>
-    /// The icon shown for the <c>Skip</c> button.
-    /// </summary>
-    /// <remarks>
-    /// Defaults to a custom icon.
-    /// </remarks>
-    [Parameter]
-    [Obsolete("Use IconGroup instead")]
-    [Category(CategoryTypes.List.Appearance)]
-    public string SkipButtonIcon { get; set; } = @"<svg style=""width:24px;height:24px"" viewBox=""0 0 24 24""><path fill=""currentColor"" d=""M12,14A2,2 0 0,1 14,16A2,2 0 0,1 12,18A2,2 0 0,1 10,16A2,2 0 0,1 12,14M23.46,8.86L21.87,15.75L15,14.16L18.8,11.78C17.39,9.5 14.87,8 12,8C8.05,8 4.77,10.86 4.12,14.63L2.15,14.28C2.96,9.58 7.06,6 12,6C15.58,6 18.73,7.89 20.5,10.72L23.46,8.86Z"" /></svg>";
-
-    /// <summary>
-    /// The icon shown for the <c>Next</c> button.
-    /// </summary>
-    /// <remarks>
-    /// Defaults to <see cref="Icons.Material.Filled.NavigateNext"/>.
-    /// </remarks>
-    [Parameter]
-    [Obsolete("Use IconGroup instead")]
-    [Category(CategoryTypes.List.Appearance)]
-    public string NextButtonIcon { get; set; } = Icons.Material.Filled.NavigateNext;
-
-    /// <summary>
-    /// The icon shown for the <c>Complete</c> button.
-    /// </summary>
-    /// <remarks>
-    /// Defaults to <see cref="Icons.Material.Outlined.Done"/>.
-    /// </remarks>
-    [Parameter]
-    [Obsolete("Use IconGroup instead")]
-    [Category(CategoryTypes.List.Appearance)]
-    public string CompleteButtonIcon { get; set; } = Icons.Material.Outlined.Done;
-
-    /// <summary>
-    /// The CSS classes applied to the navigation bar.
-    /// </summary>
-    /// <remarks>
-    /// Defaults to <c>null</c>.  Multiple classes must be separated by spaces.
-    /// </remarks>
-    [Parameter]
-    [Obsolete("Use Classes instead")]
-    [Category(CategoryTypes.List.Appearance)]
-    public string? NavClass { get; set; }
-
-    /// <summary>
     /// Allows users to move between steps arbitrarily.
     /// </summary>
     /// <remarks>
@@ -244,17 +123,6 @@ public partial class MudStepper : MudComponentBase
     [Parameter]
     [Category(CategoryTypes.List.Appearance)]
     public bool Vertical { get; set; }
-
-    /// <summary>
-    /// The CSS classes applied to all steps.
-    /// </summary>
-    /// <remarks>
-    /// Defaults to <c>null</c>.  Multiple classes must be separated by spaces.
-    /// </remarks>
-    [Parameter]
-    [Obsolete("Use Classes instead")]
-    [Category(CategoryTypes.List.Appearance)]
-    public string? StepClass { get; set; }
 
     /// <summary>
     /// The CSS styles applied to all steps.

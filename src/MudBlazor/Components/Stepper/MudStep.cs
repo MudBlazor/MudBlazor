@@ -109,28 +109,6 @@ public class MudStep : MudComponentBase, IAsyncDisposable
     public bool IsActive => Parent?.ActiveStep == this;
 
     /// <summary>
-    /// The color used when this step is completed.
-    /// </summary>
-    /// <remarks>
-    /// Defaults to <c>null</c>.
-    /// </remarks>
-    [Parameter]
-    [Obsolete("Use Colors instead.")]
-    [Category(CategoryTypes.List.Appearance)]
-    public Color? CompletedStepColor { get; set; }
-
-    /// <summary>
-    /// The color used when this step has an error.
-    /// </summary>
-    /// <remarks>
-    /// Defaults to <c>null</c>.
-    /// </remarks>
-    [Parameter]
-    [Obsolete("Use Colors instead.")]
-    [Category(CategoryTypes.List.Appearance)]
-    public Color? ErrorStepColor { get; set; }
-
-    /// <summary>
     /// Whether the user can skip this step.
     /// </summary>
     /// <remarks>
