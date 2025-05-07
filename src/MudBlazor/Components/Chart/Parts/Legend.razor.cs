@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Components;
-using MudBlazor.Components.Chart;
 
 #nullable enable
 namespace MudBlazor.Charts
@@ -13,7 +12,7 @@ namespace MudBlazor.Charts
         /// The chart, if any, containing this component.
         /// </summary>
         [CascadingParameter]
-        public Components.Chart.MudChart? MudChartParent { get; set; }
+        public MudChart? MudChartParent { get; set; }
 
         /// <summary>
         /// The data labels for this legend.

@@ -1,5 +1,4 @@
-﻿using MudBlazor.Components.Chart;
-using MudBlazor.Interpolation;
+﻿using MudBlazor.Interpolation;
 
 #nullable enable
 namespace MudBlazor.Charts

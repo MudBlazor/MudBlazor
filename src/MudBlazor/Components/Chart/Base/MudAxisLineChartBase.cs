@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interpolation;
 
-namespace MudBlazor.Components.Chart;
+namespace MudBlazor.Charts;
 
 public abstract class MudAxisLineChartBase<TOptions> : MudAxisChartBase<TOptions> where TOptions : IAxisLineChartOptions
 {

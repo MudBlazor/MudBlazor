@@ -5,7 +5,7 @@
 #nullable enable
 using System.Runtime.CompilerServices;
 
-namespace MudBlazor.Components.Chart;
+namespace MudBlazor.Charts;
 
 [CollectionBuilder(typeof(ChartData), nameof(Create))]
 public class ChartData

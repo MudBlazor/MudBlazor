@@ -8,7 +8,6 @@ using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
-using MudBlazor.Components.Chart;
 using MudBlazor.Interop;
 using MudBlazor.State;
 using MudBlazor.Utilities;

@@ -1,7 +1,6 @@
 ﻿using System.Text;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using MudBlazor.Components.Chart;
 using MudBlazor.Interpolation;
 
 #nullable enable

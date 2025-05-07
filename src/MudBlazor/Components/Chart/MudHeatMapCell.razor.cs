@@ -5,7 +5,6 @@
 #nullable enable
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Charts;
-using MudBlazor.Components.Chart;
 using MudBlazor.Utilities;
 
 namespace MudBlazor

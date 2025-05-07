@@ -2,7 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-namespace MudBlazor.Components.Chart;
+namespace MudBlazor.Charts;
 
 public interface IRadialChartOptions : IChartOptions
 {

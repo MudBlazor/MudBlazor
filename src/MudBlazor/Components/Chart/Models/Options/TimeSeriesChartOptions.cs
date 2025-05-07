@@ -5,7 +5,7 @@
 using Microsoft.AspNetCore.Components;
 
 #nullable enable
-namespace MudBlazor.Components.Chart;
+namespace MudBlazor.Charts;
 
 public class TimeSeriesChartOptions : DefaultAxisLineChartOptions
 {

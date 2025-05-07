@@ -1,7 +1,6 @@
 ﻿using System.Data;
 using System.Text;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Components.Chart;
 using MudBlazor.Extensions;
 
 #nullable enable

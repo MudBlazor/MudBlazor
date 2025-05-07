@@ -2,11 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-namespace MudBlazor.Components.Chart;
+#nullable enable
+namespace MudBlazor.Charts;
 
-public enum AggregationOption
-{
-    None,
-    GroupByDataSet,
-    GroupByLabel,
-}
+public class StackedBarChartOptions : DefaultBarChartOptions { }

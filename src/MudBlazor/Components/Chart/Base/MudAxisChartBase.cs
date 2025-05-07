@@ -4,7 +4,7 @@ using Microsoft.JSInterop;
 using MudBlazor.Interop;
 
 #nullable enable
-namespace MudBlazor.Components.Chart;
+namespace MudBlazor.Charts;
 
 public abstract class MudAxisChartBase<TOptions> : MudChartBase<TOptions>, IDisposable where TOptions : IAxisChartOptions
 {

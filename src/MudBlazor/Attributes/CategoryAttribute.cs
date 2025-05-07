@@ -1,4 +1,4 @@
-﻿using MudBlazor.Components.Chart;
+﻿using MudBlazor.Charts;
 namespace MudBlazor
 {
 

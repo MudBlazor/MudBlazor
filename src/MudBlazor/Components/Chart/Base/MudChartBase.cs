@@ -7,7 +7,7 @@ using MudBlazor.State;
 using MudBlazor.Utilities;
 
 #nullable enable
-namespace MudBlazor.Components.Chart;
+namespace MudBlazor.Charts;
 
 public abstract class MudChartBase<TOptions> : MudComponentBase, IMudChart where TOptions : IChartOptions
 {
