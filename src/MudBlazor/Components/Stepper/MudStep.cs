@@ -46,14 +46,14 @@ public class MudStep : MudComponentBase, IAsyncDisposable
 
     internal string LabelIconClassname =>
         new CssBuilder("mud-step-label-icon")
-            .AddClass($"mud-{(Colors?.CompletedStepColor.HasValue == true ? Colors.CompletedStepColor.Value.ToDescriptionString() : Parent?.Colors?.CompletedStepColor.ToDescriptionString())}", CompletedState && !HasErrorState && Parent?.Colors?.CompletedStepColor != Color.Default && (Parent?.ActiveStep != this || (Parent?.IsCompleted == true && Parent?.NonLinear == false)))
-            .AddClass($"mud-{(Colors?.ErrorStepColor.HasValue == true ? Colors.ErrorStepColor.Value.ToDescriptionString() : Parent?.Colors?.ErrorStepColor.ToDescriptionString())}", HasErrorState)
-            .AddClass($"mud-{Parent?.Colors?.CurrentStepColor.ToDescriptionString()}", Parent?.ActiveStep == this && !(Parent?.IsCompleted == true && Parent?.NonLinear == false))
+            .AddClass($"mud-{(Colors?.CompletedStepColor.HasValue == true ? Colors?.CompletedStepColor.Value.ToDescriptionString() : Parent?.Colors.CompletedStepColor.ToDescriptionString())}", CompletedState && !HasErrorState && Parent?.Colors.CompletedStepColor != Color.Default && (Parent?.ActiveStep != this || (Parent?.IsCompleted == true && Parent?.NonLinear == false)))
+            .AddClass($"mud-{(Colors?.ErrorStepColor.HasValue == true ? Colors?.ErrorStepColor.Value.ToDescriptionString() : Parent?.Colors.ErrorStepColor.ToDescriptionString())}", HasErrorState)
+            .AddClass($"mud-{Parent?.Colors.CurrentStepColor.ToDescriptionString()}", Parent?.ActiveStep == this && !(Parent?.IsCompleted == true && Parent?.NonLinear == false))
             .Build();
 
     internal string LabelContentClassname =>
         new CssBuilder("mud-step-label-content")
-            .AddClass($"mud-{(Colors?.ErrorStepColor.HasValue == true ? Colors.ErrorStepColor.Value.ToDescriptionString() : Parent?.Colors?.ErrorStepColor.ToDescriptionString())}-text", HasErrorState)
+            .AddClass($"mud-{(Colors?.ErrorStepColor.HasValue == true ? Colors?.ErrorStepColor.Value.ToDescriptionString() : Parent?.Colors.ErrorStepColor.ToDescriptionString())}-text", HasErrorState)
             .Build();
 
     internal string Classname => new CssBuilder(Parent?.StepClassname)

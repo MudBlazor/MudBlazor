@@ -50,7 +50,7 @@ public partial class MudStepper : MudComponentBase
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.List.Appearance)]
-    public StepperIcons IconGroup { get; set; } = new();
+    public StepperIcons Icons { get; set; } = new();
 
     #endregion
 
