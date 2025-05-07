@@ -15,7 +15,6 @@ namespace MudBlazor;
 /// </summary>
 public partial class MudStepper : MudComponentBase
 {
-#pragma warning disable CS0618
     public MudStepper()
     {
         using var registerScope = CreateRegisterScope();
@@ -26,10 +25,7 @@ public partial class MudStepper : MudComponentBase
     }
 
     private readonly ParameterState<int> _activeIndex;
-    private List<MudStep> _steps = [];
-    private HashSet<MudStep> _skippedSteps = [];
-
-    #region Grouped Parameters
+    private readonly List<MudStep> _steps = [];
 
     /// <summary>
     /// The grouped parameter that contains the CSS classes for the stepper.
@@ -51,8 +47,6 @@ public partial class MudStepper : MudComponentBase
     [Parameter]
     [Category(CategoryTypes.List.Appearance)]
     public StepperIcons Icons { get; set; } = new();
-
-    #endregion
 
     protected string Classname =>
         new CssBuilder("mud-stepper")

@@ -4,22 +4,19 @@
 @inherits MudComponentBase
 @inject InternalMudLocalizer Localizer
 
-@* remove with obsoletes *@
-@{ #pragma warning disable CS0618 }
-
 <div @attributes="@UserAttributes" class="@Classname" style="@Style">
     <div class="@NavClassname" role="tablist">
         @foreach (var step in _steps)
         {
             bool isActive = ActiveStep == step;
             string stepClassname = new CssBuilder()
-            .AddClass("mud-step")
-            .AddClass("active", isActive)
-            .AddClass("mud-ripple", Ripple)
-            .AddClass("mud-clickable", NonLinear && !step.DisabledState.Value)
-            .AddClass("mud-step-error", step.HasErrorState.Value)
-            .AddClass("mud-step-completed", step.CompletedState.Value)
-            .Build();
+                .AddClass("mud-step")
+                .AddClass("active", isActive)
+                .AddClass("mud-ripple", Ripple)
+                .AddClass("mud-clickable", NonLinear && !step.DisabledState.Value)
+                .AddClass("mud-step-error", step.HasErrorState.Value)
+                .AddClass("mud-step-completed", step.CompletedState.Value)
+                .Build();
 
             <button class="@stepClassname" role="tab" type="button" aria-controls="@step.Title" aria-selected="@(isActive.ToString().ToLower())"
                     @onclick="@(async e => await OnStepClickAsync(step, e))" disabled="@step.DisabledState.Value">
@@ -117,59 +114,60 @@
 
 @code {
     RenderFragment RenderStepLabel(MudStep step, bool isActive) =>
-    @<div class="@step.LabelClassname">
-        @if (LabelTemplate is not null)
-    {
-        @LabelTemplate(step)
-    }
-    else
-    {
-        <div class="@step.LabelIconClassname">
-            @if(step.HasErrorState.Value)
-        {
-            <MudIcon Size="Size.Small" Icon="@(Icons.StepErrorIcon)" />
-        }
-        else if (step.CompletedState.Value)
-        {
-            <MudIcon Size="Size.Small" Icon="@(Icons.StepCompleteIcon)" />
-        }
-        else
-        {
-            <MudText Typo="Typo.caption">@(_steps.IndexOf(step) + 1)</MudText>
-        }
-        </div>
-    }
+        @<div class="@step.LabelClassname">
+            @if (LabelTemplate is not null)
+            {
+                @LabelTemplate(step)
+            }
+            else
+            {
+                <div class="@step.LabelIconClassname">
+                    @if(step.HasErrorState.Value)
+                    {
+                        <MudIcon Size="Size.Small" Icon="@Icons.StepErrorIcon" />
+                    }
+                    else if (step.CompletedState.Value)
+                    {
+                        <MudIcon Size="Size.Small" Icon="@Icons.StepCompleteIcon" />
+                    }
+                    else
+                    {
+                        <MudText Typo="Typo.caption">@(_steps.IndexOf(step) + 1)</MudText>
+                    }
+                </div>
+            }
 
-        @if (TitleTemplate is not null)
-    {
-        @TitleTemplate(step)
-    }
-    else
-    {
-        <div class="@step.LabelContentClassname">
-            <MudText Typo="@(isActive ? Typo.subtitle2 : Typo.body2)" Class="mud-step-label-content-title">
-                @step.Title
-            </MudText>
+            @if (TitleTemplate is not null)
+            {
+                @TitleTemplate(step)
+            }
+            else
+            {
+                <div class="@step.LabelContentClassname">
+                    <MudText Typo="@(isActive ? Typo.subtitle2 : Typo.body2)" Class="mud-step-label-content-title">
+                        @step.Title
+                    </MudText>
 
-            @if (!string.IsNullOrEmpty(step.SecondaryText))
-        {
-            <MudText Typo="Typo.caption" Class="mud-step-label-content-secondary-text">@step.SecondaryText</MudText>
-        }
-        </div>
-    }
-    </div>;
+                    @if (!string.IsNullOrEmpty(step.SecondaryText))
+                    {
+                        <MudText Typo="Typo.caption" Class="mud-step-label-content-secondary-text">@step.SecondaryText</MudText>
+                    }
+                </div>
+            }
+        </div>;
 
     RenderFragment StepContent(MudStep step) =>
-    @<div @attributes="@step.UserAttributes" class="@step.Classname" style="@step.Styles" role="tabpanel" aria-labelledby="@step.Title" tabindex="0">
-        @if (Vertical)
-    {
-        <MudCollapse Expanded="step == ActiveStep">
-            @step.ChildContent
-        </MudCollapse>
-    }
-    else
-    {
-        @step.ChildContent
-    }
-    </div>;
+        @<div @attributes="@step.UserAttributes" class="@step.Classname" style="@step.Styles" role="tabpanel" aria-labelledby="@step.Title" tabindex="0">
+            @if (Vertical)
+            {
+                <MudCollapse Expanded="step == ActiveStep">
+                    @step.ChildContent
+                </MudCollapse>
+            }
+            else
+            {
+                @step.ChildContent
+            }
+        </div>;
+}
 }
