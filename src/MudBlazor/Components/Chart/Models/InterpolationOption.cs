@@ -1,13 +1,14 @@
 ﻿// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
+using MudBlazor.Components.Chart;
 
 #nullable enable
 
 namespace MudBlazor
 {
     /// <summary>
-    /// Indicates the technique used to smooth lines connecting values in a <see cref="MudChart"/>.
+    /// Indicates the technique used to smooth lines connecting values in an <see cref="MudAxisLineChartBase{TOptions}"/>.
     /// </summary>
     public enum InterpolationOption
     {

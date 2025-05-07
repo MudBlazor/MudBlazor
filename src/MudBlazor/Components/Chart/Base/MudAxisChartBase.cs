@@ -131,9 +131,7 @@ public abstract class MudAxisChartBase<TOptions> : MudChartBase<TOptions>, IDisp
         _elementSize = elementSize;
 
         if (MudChartParent?.MatchBoundsToSize is not true)
-        {
             return;
-        }
 
         if (Math.Abs(_boundWidth - _elementSize.Width) < Epsilon &&
             Math.Abs(_boundHeight - _elementSize.Height) < Epsilon)

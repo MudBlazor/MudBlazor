@@ -322,8 +322,6 @@ namespace MudBlazor.Charts
             _barGap = seriesCount > 1 ? groupWidthRelative * barWidthRelative * ChartOptions!.BarSpacingRatio : 0;
             _barGroupWidth = Math.Max(MinBarWidth * seriesCount - 2, groupWidthRelative - _barWidth);
         }
-
-
         private void OnBarMouseOver(MouseEventArgs _, SvgPath bar)
         {
             _hoveredBar = bar;

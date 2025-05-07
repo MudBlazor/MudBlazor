@@ -1,4 +1,5 @@
-﻿namespace MudBlazor
+﻿using MudBlazor.Components.Chart;
+namespace MudBlazor
 {
 
     /// <summary>
@@ -148,7 +149,7 @@
             public const string PickerAppearance = "Picker appearance";
         }
 
-        /// <summary>Used in all charts, that is in <see cref="MudCategoryChartBase"/> and all components inheriting from it.</summary>
+        /// <summary>Used in <see cref="MudChartBase{T}"/> and all components inheriting from it.</summary>
         public static class Chart
         {
             public const string Behavior = "Behavior";
