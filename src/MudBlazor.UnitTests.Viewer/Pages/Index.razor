@@ -2,7 +2,7 @@
 @using System.Reflection
 @inject NavigationManager NavManager
 
-<MudThemeProvider Theme="@_customTheme" IsDarkMode="@_isDarkMode"  />
+<MudThemeProvider Theme="@_customTheme" IsDarkMode="@_isDarkMode" />
 
 <MudLayout>
     <MudRTLProvider RightToLeft="_rightToLeft">
@@ -44,11 +44,11 @@
 
                 <div class="d-flex flex-row align-center gap-2">
                     <MudTextField T="string" @bind-Value="@_currentSearchText" Immediate="true" FullWidth="true"
-                    Typo="Typo.subtitle1" Placeholder="Search by component" Clearable DebounceInterval="200" />
+                                  Typo="Typo.subtitle1" Placeholder="Search by component" Clearable DebounceInterval="200" />
 
                     <MudTooltip Text="@(_expandedState ? "Collapse all" : "Expand all")">
                         <MudIconButton Icon="@(_expandedState ? CollapseAllIcon : ExpandAllIcon)" Size="Size.Small"
-                        OnClick="@(() => ToggleExpanded())" />
+                                       OnClick="@(() => ToggleExpanded())" />
                     </MudTooltip>
                 </div>
             </MudDrawerHeader>
@@ -65,7 +65,7 @@
                             @foreach (var type in typesInDir)
                             {
                                 <MudNavLink Class="@(_selectedType == type ? "mode-links active" : "")"
-                                OnClick="@(() => _selectedType = type)" @key="type.Name">@type.Name</MudNavLink>
+                                            OnClick="@(() => _selectedType = type)" @key="type.Name">@type.Name</MudNavLink>
                             }
                         </MudNavGroup>
                     }
@@ -106,40 +106,40 @@
 </MudLayout>
 <style>
     .docs-search-bar .mud-input {
-    height: 42px;
+        height: 42px;
     }
 
     .docs-search-bar.mud-input-control {
-    background-color: rgba(255,255,255,.15);
-    margin-bottom: 5px;
-    height: 42px;
-    border-radius: var(--mud-default-borderradius);
+        background-color: rgba(255,255,255,.15);
+        margin-bottom: 5px;
+        height: 42px;
+        border-radius: var(--mud-default-borderradius);
     }
 
-    .docs-search-bar.mud-input-control .mud-input-root, .docs-search-bar.mud-input-control .mud-icon-default {
-    color: #fafafa;
-    }
+        .docs-search-bar.mud-input-control .mud-input-root, .docs-search-bar.mud-input-control .mud-icon-default {
+            color: #fafafa;
+        }
 
     .docs-search-bar .mud-input.mud-input-outlined .mud-input-outlined-border {
-    border: none;
-    border-radius: var(--mud-default-borderradius);
+        border: none;
+        border-radius: var(--mud-default-borderradius);
     }
 
     .mode-links.active {
-    color: var(--mud-palette-primary);
-    background-color: var(--mud-palette-primary-hover);
+        color: var(--mud-palette-primary);
+        background-color: var(--mud-palette-primary-hover);
     }
 
     .mud-nav-link {
-    padding: 4px;
+        padding: 4px;
     }
 
     .mud-collapse-container {
-    transition-duration: 100ms;
+        transition-duration: 100ms;
     }
 
     .mud-appbar .mud-icon-button {
-    color: var(--mud-palette-appbar-text) !important;
+        color: var(--mud-palette-appbar-text) !important;
     }
 </style>
 
@@ -160,12 +160,12 @@
     private MudAutocomplete<Type> _autocomplete = null!;
     private bool _isDarkMode;
     private readonly MudTheme _customTheme = new()
-    {
-        LayoutProperties = new LayoutProperties
         {
-            DrawerWidthLeft = "400px"
-        }
-    };
+            LayoutProperties = new LayoutProperties
+            {
+                DrawerWidthLeft = "400px"
+            }
+        };
 
     private bool ShouldFilter => !string.IsNullOrWhiteSpace(_currentSearchText) && _currentSearchText.Length > 2;
 
@@ -239,7 +239,7 @@
 
                 if (string.Equals(key, "component", StringComparison.OrdinalIgnoreCase))
                 {
-                    var componentType = _availableComponentTypes.FirstOrDefault(t => 
+                    var componentType = _availableComponentTypes.FirstOrDefault(t =>
                         t.Name.Equals(value, StringComparison.OrdinalIgnoreCase));
 
                     if (componentType != null)
@@ -252,17 +252,17 @@
             }
         }
     }
-    
+
     private void UpdateQueryString(Type componentType)
     {
         if (componentType == null) return;
-        
+
         var uri = new Uri(NavManager.Uri);
         var baseUrl = uri.GetLeftPart(UriPartial.Path);
-        
+
         // Create the new query string
         var newUrl = $"{baseUrl}?component={componentType.Name}";
-        
+
         // Update URL without navigation (false parameter)
         NavManager.NavigateTo(newUrl, false);
     }
