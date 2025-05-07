@@ -8,8 +8,8 @@
     <MudButton OnClick="@(() => _isVisible = !_isVisible)" Variant="Variant.Filled" Color="Color.Primary">
         Tooltip Test
     </MudButton>
-    <MudMenu Icon="@Icons.Material.Filled.Settings" Color="Color.Inherit" AnchorOrigin="@Origin.BottomLeft" TransformOrigin="@Origin.TopLeft"
-    AriaLabel="User menu dropdown">
+    <MudMenu Icon="@Icons.Material.Filled.Settings" Color="Color.Inherit" AnchorOrigin="@Origin.BottomLeft"
+             TransformOrigin="@Origin.TopLeft" AriaLabel="User menu dropdown">
         <MudMenuItem OnClick="@(NavigateToTest)">Popover Tooltip In Overlay</MudMenuItem>
         <MudMenuItem Disabled>Same but with different Popover provider</MudMenuItem>
     </MudMenu>
