@@ -8,7 +8,7 @@ using MudBlazor.Charts;
 namespace MudBlazor
 {
     /// <summary>
-    /// Indicates the technique used to smooth lines connecting values in an <see cref="MudAxisLineChartBase{TOptions}"/>.
+    /// Indicates the technique used to smooth lines connecting values in a <see cref="MudAxisLineChartBase{TOptions}"/>.
     /// </summary>
     public enum InterpolationOption
     {

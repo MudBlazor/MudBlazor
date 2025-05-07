@@ -3,11 +3,12 @@
 // See the LICENSE file in the project root for more information.
 
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Charts;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
 #nullable enable
-namespace MudBlazor.Charts;
+namespace MudBlazor;
 
 public abstract class MudChartBase<TOptions> : MudComponentBase, IMudChart where TOptions : IChartOptions
 {

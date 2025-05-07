@@ -67,32 +67,32 @@
             {
                 // Apply the 4 gradient overlays with partial opacity
                 <rect x="@x.ToString(CultureInfo.InvariantCulture)"
-                y="@y.ToString(CultureInfo.InvariantCulture)"
-                width="@_cellDimension.Width.ToString(CultureInfo.InvariantCulture)"
-                height="@_cellDimension.Height.ToString(CultureInfo.InvariantCulture)"
-                fill="url(#gradient-topcenter-@row-@col)"
-                opacity="0.25" />
+                      y="@y.ToString(CultureInfo.InvariantCulture)"
+                      width="@_cellDimension.Width.ToString(CultureInfo.InvariantCulture)"
+                      height="@_cellDimension.Height.ToString(CultureInfo.InvariantCulture)"
+                      fill="url(#gradient-topcenter-@row-@col)"
+                      opacity="0.25" />
 
                 <rect x="@x.ToString(CultureInfo.InvariantCulture)"
-                y="@y.ToString(CultureInfo.InvariantCulture)"
-                width="@_cellDimension.Width.ToString(CultureInfo.InvariantCulture)"
-                height="@_cellDimension.Height.ToString(CultureInfo.InvariantCulture)"
-                fill="url(#gradient-right-@row-@col)"
-                opacity="0.25" />
+                      y="@y.ToString(CultureInfo.InvariantCulture)"
+                      width="@_cellDimension.Width.ToString(CultureInfo.InvariantCulture)"
+                      height="@_cellDimension.Height.ToString(CultureInfo.InvariantCulture)"
+                      fill="url(#gradient-right-@row-@col)"
+                      opacity="0.25" />
 
                 <rect x="@x.ToString(CultureInfo.InvariantCulture)"
-                y="@y.ToString(CultureInfo.InvariantCulture)"
-                width="@_cellDimension.Width.ToString(CultureInfo.InvariantCulture)"
-                height="@_cellDimension.Height.ToString(CultureInfo.InvariantCulture)"
-                fill="url(#gradient-bottomcenter-@row-@col)"
-                opacity="0.25" />
+                      y="@y.ToString(CultureInfo.InvariantCulture)"
+                      width="@_cellDimension.Width.ToString(CultureInfo.InvariantCulture)"
+                      height="@_cellDimension.Height.ToString(CultureInfo.InvariantCulture)"
+                      fill="url(#gradient-bottomcenter-@row-@col)"
+                      opacity="0.25" />
 
                 <rect x="@x.ToString(CultureInfo.InvariantCulture)"
-                y="@y.ToString(CultureInfo.InvariantCulture)"
-                width="@_cellDimension.Width.ToString(CultureInfo.InvariantCulture)"
-                height="@_cellDimension.Height.ToString(CultureInfo.InvariantCulture)"
-                fill="url(#gradient-left-@row-@col)"
-                opacity="0.25" />
+                      y="@y.ToString(CultureInfo.InvariantCulture)"
+                      width="@_cellDimension.Width.ToString(CultureInfo.InvariantCulture)"
+                      height="@_cellDimension.Height.ToString(CultureInfo.InvariantCulture)"
+                      fill="url(#gradient-left-@row-@col)"
+                      opacity="0.25" />
             }
 
 
@@ -103,29 +103,28 @@
 
                         var cellColor = _options is { EnableSmoothGradient: true }
                                 ? "transparent"
-                                : cell?.MudColor?.ToString(Utilities.MudColorOutputFormats.RGBA) 
-                                    ?? GetColorForValue(cell?.Value);
+                                : cell?.MudColor?.ToString(Utilities.MudColorOutputFormats.RGBA) ?? GetColorForValue(cell?.Value);
                     }
                     <rect x="@x.ToString(CultureInfo.InvariantCulture)"
-                    y="@y.ToString(CultureInfo.InvariantCulture)"
-                    width="@_cellDimension.Width.ToString(CultureInfo.InvariantCulture)"
-                    height="@_cellDimension.Height.ToString(CultureInfo.InvariantCulture)"
-                    @onclick="async () => await SetSelectedCellAsync(rowIndex, colIndex)"
-                    @onmouseover="(e) => OnCellMouseOver(e, cell)"
-                    @onmouseout="OnCellMouseOut"
-                    fill="@(cellColor)" />
+                          y="@y.ToString(CultureInfo.InvariantCulture)"
+                          width="@_cellDimension.Width.ToString(CultureInfo.InvariantCulture)"
+                          height="@_cellDimension.Height.ToString(CultureInfo.InvariantCulture)"
+                          @onclick="async () => await SetSelectedCellAsync(rowIndex, colIndex)"
+                          @onmouseover="(e) => OnCellMouseOver(e, cell)"
+                          @onmouseout="OnCellMouseOut"
+                          fill="@(cellColor)" />
 
                     @if (_options is { ShowLabels: true } && cell is { Value: not null } && cell is { CustomFragment: null })
                     {
                         <g>
                             <text @onclick="async () => await SetSelectedCellAsync(rowIndex, colIndex)"
-                            @onmouseover="(e) => OnCellMouseOver(e, cell)"
-                            @onmouseout="OnCellMouseOut"
-                            font-size="@_dynamicFontSize"
-                            x="@((x + _cellDimension.Width / 2).ToString(CultureInfo.InvariantCulture))"
-                            y="@((y + _cellDimension.Height / 2).ToString(CultureInfo.InvariantCulture))"
-                            dominant-baseline="middle"
-                            text-anchor="middle">
+                                  @onmouseover="(e) => OnCellMouseOver(e, cell)"
+                                  @onmouseout="OnCellMouseOut"
+                                  font-size="@_dynamicFontSize"
+                                  x="@((x + _cellDimension.Width / 2).ToString(CultureInfo.InvariantCulture))"
+                                  y="@((y + _cellDimension.Height / 2).ToString(CultureInfo.InvariantCulture))"
+                                  dominant-baseline="middle"
+                                  text-anchor="middle">
                                 @FormatValueForDisplay(cell?.Value)
                             </text>
                         </g>
@@ -139,12 +138,12 @@
                             var tempHeight = cell.Height ?? _cellDimension.Height;
 
                             <svg x="@x.ToString(CultureInfo.InvariantCulture)"
-                            y="@y.ToString(CultureInfo.InvariantCulture)"
-                            @onclick="async () => await SetSelectedCellAsync(rowIndex, colIndex)"
-                            width="@_cellDimension.Width.ToString(CultureInfo.InvariantCulture)"
-                            height="@_cellDimension.Height.ToString(CultureInfo.InvariantCulture)"
-                            viewBox="0 0 @tempWidth.ToString(CultureInfo.InvariantCulture) @tempHeight.ToString(CultureInfo.InvariantCulture)"
-                            preserveAspectRatio="xMidYMid meet">
+                                 y="@y.ToString(CultureInfo.InvariantCulture)"
+                                 @onclick="async () => await SetSelectedCellAsync(rowIndex, colIndex)"
+                                 width="@_cellDimension.Width.ToString(CultureInfo.InvariantCulture)"
+                                 height="@_cellDimension.Height.ToString(CultureInfo.InvariantCulture)"
+                                 viewBox="0 0 @tempWidth.ToString(CultureInfo.InvariantCulture) @tempHeight.ToString(CultureInfo.InvariantCulture)"
+                                 preserveAspectRatio="xMidYMid meet">
                                 @cell.CustomFragment
                             </svg>
                         }
@@ -152,10 +151,10 @@
                         {
                             // If no specific width/height, use cell dimensions with padding
                             <foreignObject x="@x.ToString(CultureInfo.InvariantCulture)"
-                            y="@y.ToString(CultureInfo.InvariantCulture)"
-                            @onclick="async () => await SetSelectedCellAsync(rowIndex, colIndex)"
-                            width="@_cellDimension.Width.ToString(CultureInfo.InvariantCulture)"
-                            height="@_cellDimension.Height.ToString(CultureInfo.InvariantCulture)">
+                                           y="@y.ToString(CultureInfo.InvariantCulture)"
+                                           @onclick="async () => await SetSelectedCellAsync(rowIndex, colIndex)"
+                                           width="@_cellDimension.Width.ToString(CultureInfo.InvariantCulture)"
+                                           height="@_cellDimension.Height.ToString(CultureInfo.InvariantCulture)">
                                 <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%; height:100%;display:flex; align-items:center; justify-content:center;">
                                     @cell.CustomFragment
                                 </div>
@@ -214,11 +213,11 @@
                     <g transform="translate(@((legendX + offsetX).ToString(CultureInfo.InvariantCulture)), @(legendY.ToString(CultureInfo.InvariantCulture)))">
                         <!-- "Less" label -->
                         <text class="mud-charts-xaxis" 
-                        x="0"
-                        y="0"
-                        dominant-baseline="middle"
-                        text-anchor="start"
-                        font-size="@(LegendFontSize.ToString(CultureInfo.InvariantCulture))">@Localizer[Resources.LanguageResource.HeatMap_Less]
+                              x="0"
+                              y="0"
+                              dominant-baseline="middle"
+                              text-anchor="start"
+                              font-size="@(LegendFontSize.ToString(CultureInfo.InvariantCulture))">@Localizer[Resources.LanguageResource.HeatMap_Less]
                         </text>
                         @for (int i = 0; i < _legends.Count; i++)
                         {
@@ -243,10 +242,10 @@
                                     var y2 = _legendPosition == Position.Top ? -offsetY - LegendLineLength : offsetY + LegendLineLength;
 
                                     <line x1="@x1.ToString(CultureInfo.InvariantCulture)" 
-                                    y1="@y1.ToString(CultureInfo.InvariantCulture)" 
-                                    x2="@x2.ToString(CultureInfo.InvariantCulture)" 
-                                    y2="@y2.ToString(CultureInfo.InvariantCulture)" 
-                                    stroke-width="1" />
+                                          y1="@y1.ToString(CultureInfo.InvariantCulture)" 
+                                          x2="@x2.ToString(CultureInfo.InvariantCulture)" 
+                                          y2="@y2.ToString(CultureInfo.InvariantCulture)" 
+                                          stroke-width="1" />
                                     var y3 = y2 + (_legendPosition == Position.Top ? -LegendLineLength : LegendLineLength);
                                     @((MarkupString)@$"<text x='0' y='{y3.ToString(CultureInfo.InvariantCulture)}' dominant-baseline='middle' text-anchor='start' font-size='{labelFontSize}'>{FormatValueForDisplay(_legends[i].value)}</text>")
                                 }
@@ -255,11 +254,11 @@
 
                         <!-- "More" label -->
                         <text class="mud-charts-xaxis"
-                        x="@(((textWidth / 2) + (_legends.Count * (LegendBox + legendPadding))).ToString(CultureInfo.InvariantCulture))"
-                        y="0"
-                        dominant-baseline="middle"
-                        text-anchor="start"
-                        font-size="@(LegendFontSize.ToString(CultureInfo.InvariantCulture))">@Localizer[Resources.LanguageResource.HeatMap_More]
+                              x="@(((textWidth / 2) + (_legends.Count * (LegendBox + legendPadding))).ToString(CultureInfo.InvariantCulture))"
+                              y="0"
+                              dominant-baseline="middle"
+                              text-anchor="start"
+                              font-size="@(LegendFontSize.ToString(CultureInfo.InvariantCulture))">@Localizer[Resources.LanguageResource.HeatMap_More]
                         </text>
                     </g>
 
@@ -306,10 +305,10 @@
                                     var x3 = x2 + (_legendPosition == Position.Right ? CellPadding : -CellPadding);
 
                                     <line x1="@x1.ToString(CultureInfo.InvariantCulture)" 
-                                    y1="@y1.ToString(CultureInfo.InvariantCulture)" 
-                                    x2="@x2.ToString(CultureInfo.InvariantCulture)" 
-                                    y2="@y2.ToString(CultureInfo.InvariantCulture)" 
-                                    stroke-width="1" />
+                                          y1="@y1.ToString(CultureInfo.InvariantCulture)" 
+                                          x2="@x2.ToString(CultureInfo.InvariantCulture)" 
+                                          y2="@y2.ToString(CultureInfo.InvariantCulture)" 
+                                          stroke-width="1" />
 
                                     @((MarkupString)@$"<text x='{x3.ToString(CultureInfo.InvariantCulture)}' y='0' dominant-baseline='middle' text-anchor='{(_legendPosition == Position.Right ? "start" : "end")}' font-size='{labelFontSize}'>{FormatValueForDisplay(_legends[i].value)}</text>")
                                 }
@@ -318,11 +317,11 @@
 
                         <!-- "More" label -->
                         <text class="mud-charts-xaxis"
-                        x="@offsetX.ToString(CultureInfo.InvariantCulture)"
-                        y="@(((textHeight / 2) + ((_legends.Count) * (LegendBox + CellPadding))).ToString(CultureInfo.InvariantCulture))" 
-                        dominant-baseline="middle" 
-                        text-anchor="start" 
-                        font-size="@LegendFontSize">@Localizer[Resources.LanguageResource.HeatMap_More]
+                              x="@offsetX.ToString(CultureInfo.InvariantCulture)"
+                              y="@(((textHeight / 2) + ((_legends.Count) * (LegendBox + CellPadding))).ToString(CultureInfo.InvariantCulture))" 
+                              dominant-baseline="middle" 
+                              text-anchor="start" 
+                              font-size="@LegendFontSize">@Localizer[Resources.LanguageResource.HeatMap_More]
                         </text>
                     </g>
                 }
