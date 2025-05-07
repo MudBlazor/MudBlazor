@@ -65,6 +65,7 @@ namespace MudBlazor
         private readonly ParameterState<bool> _fixedContent;
         private readonly ParameterState<bool> _disabled;
         private readonly List<MudToggleItem<T>> _items = new();
+        private bool _itemsSelected;
 
         protected string Classname => new CssBuilder("mud-toggle-group")
             .AddClass("mud-toggle-group-horizontal", !Vertical)
@@ -213,6 +214,8 @@ namespace MudBlazor
             }
 
             _items.Add(item);
+            if(_itemsSelected)
+                SetItemsSelected();
             StateHasChanged();
         }
 
@@ -305,6 +308,7 @@ namespace MudBlazor
                 }
             }
 
+            _itemsSelected = true;
             StateHasChanged();
         }
 
