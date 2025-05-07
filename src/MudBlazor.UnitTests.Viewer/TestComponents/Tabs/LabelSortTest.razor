@@ -52,9 +52,14 @@ else if (SortComparer is not null)
 }
 
 @code {
-    [Parameter] public SortDirection? SortDirection { get; set; }
-    [Parameter] public string[]? SortKeys { get; set; }
-    [Parameter] public IComparer<MudTabPanel>? SortComparer { get; set; }
+    [Parameter]
+    public SortDirection? SortDirection { get; set; }
+
+    [Parameter]
+    public string[]? SortKeys { get; set; }
+
+    [Parameter]
+    public IComparer<MudTabPanel>? SortComparer { get; set; }
 
     public class TestComparer : IComparer<MudTabPanel>
     {

@@ -635,14 +635,15 @@ namespace MudBlazor
         private int GetTabSortExpression(MudTabPanel a, MudTabPanel b)
         {
             if (SortComparer is not null)
+            {
                 return SortComparer.Compare(a, b);
+            }
 
             var dir = SortDirection is SortDirection.Ascending ? 1 : -1;
             return Comparer.Default.Compare(GetTabSortKey(a), GetTabSortKey(b)) * dir;
         }
 
-        private static string? GetTabSortKey(MudTabPanel panel)
-            => panel.SortKey ?? panel.Text;
+        private static string? GetTabSortKey(MudTabPanel panel) => panel.SortKey ?? panel.Text;
         #endregion
 
         #region Style and classes
