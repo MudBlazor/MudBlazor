@@ -9,7 +9,7 @@ using MudBlazor.Utilities;
 #nullable enable
 namespace MudBlazor.Components.Chart;
 
-public abstract class MudChartBase<TOptions> : MudComponentBase where TOptions : IChartOptions
+public abstract class MudChartBase<TOptions> : MudComponentBase, IMudChart where TOptions : IChartOptions
 {
     [CascadingParameter(Name = "RightToLeft")]
     [Category(CategoryTypes.Chart.Behavior)]
@@ -19,7 +19,7 @@ public abstract class MudChartBase<TOptions> : MudComponentBase where TOptions :
     /// The labels describing data values.
     /// </summary>
     /// <remarks>
-    /// The number of labels in this array is typically the same as the number of values in the <see cref="ChartSeries.Data"/> property.
+    /// The number of labels in this array is typically the same as the number of values in the <see cref="ChartDataSet.Data"/> property.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Chart.Behavior)]

@@ -4,19 +4,21 @@
 
 #nullable enable
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Charts;
+using MudBlazor.Components.Chart;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a single cell in a <see cref="MudBlazor.Charts.HeatMap"/>. You can override the value from the <see cref="ChartSeries"/> 
+    /// Represents a single cell in a <see cref="MudBlazor.Charts.HeatMap"/>. You can override the value from the <see cref="ChartDataSet"/> 
     /// or provide a custom graphic to be shown inside the cell. You should provide a width and height for the custom graphic you are including
     /// so the Heat Map can resize it dynamically. 
     /// </summary>
     public class MudHeatMapCell : MudComponentBase
     {
         [CascadingParameter]
-        internal MudChart? Parent { get; set; }
+        internal IMudChart? Parent { get; set; }
 
         /// <summary>
         /// The row of the cell you want to modify. Rows use a 0 based index.
@@ -85,12 +87,14 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
-            if (Parent == null)
+            if (Parent is HeatMap heatMap && heatMap is not null)
             {
-                throw new InvalidOperationException("MudHeatMapCell must be used inside a MudChart component.");
+                heatMap.AddCell(this);
             }
-
-            Parent.AddCell(this);
+            else
+            {
+                throw new InvalidOperationException("MudHeatMapCell must be used inside a HeatMap component.");
+            }
         }
     }
 }

@@ -21,7 +21,7 @@ public abstract class DefaultChartOptions : IChartOptions
     /// <remarks>
     /// Defaults to <c>true</c>.
     /// </remarks>
-    public bool ShowToolTips { get; set; } = true;
+    public virtual bool ShowToolTips { get; set; } = true;
 
     /// <summary>
     /// The format applied to the data marker tooltip title.

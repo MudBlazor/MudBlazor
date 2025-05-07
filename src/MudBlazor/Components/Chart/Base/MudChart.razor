@@ -5,7 +5,9 @@
 @inherits MudChartBase<IChartOptions>
 
 <CascadingValue Value="@this" IsFixed="true">
-    @ChildContent
+    <CascadingValue Value="@_chartReference" IsFixed="true">
+        @ChildContent
+    </CascadingValue>
 
     <div @attributes="UserAttributes" class="@Classname" style="@Style; width: @Width; height: @Height;" dir="ltr">
         @ChartContent
@@ -13,19 +15,16 @@
 </CascadingValue>
 
 @code {
+    private IMudChart _chartReference;
     private IChartOptions Options => ChartOptions ?? GetDefaultOptionsForChart();
 
     private RenderFragment ChartContent => (ChartType, Options) switch
     {
-        (ChartType.Bar, BarChartOptions barOptions) => @<Bar ChartSeries="@ChartSeries"
-                                                             ChartLabels="@ChartLabels"
-                                                             ChartOptions="barOptions" 
-                                                             @bind-SelectedIndex:get="this.SelectedIndexState.Value" 
-                                                             @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
-        (ChartType.StackedBar, StackedBarChartOptions stackedBarOptions) => @<StackedBar ChartSeries="@ChartSeries" 
-                                                                                         ChartOptions="stackedBarOptions" 
-                                                                                         @bind-SelectedIndex:get="this.SelectedIndexState.Value" 
-                                                                                         @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
+        (ChartType.Donut, DonutChartOptions donutOptions) => @<Donut ChartSeries="@ChartSeries"
+                                                                     ChartLabels="@ChartLabels"
+                                                                     ChartOptions="donutOptions"
+                                                                     @bind-SelectedIndex:get="this.SelectedIndexState.Value"
+                                                                     @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
         (ChartType.Line, LineChartOptions lineOptions) => @<Line ChartSeries="@ChartSeries"
                                                                  ChartLabels="@ChartLabels"
                                                                  ChartOptions="lineOptions" 
@@ -36,25 +35,36 @@
                                                              ChartOptions="pieOptions"
                                                              @bind-SelectedIndex:get="this.SelectedIndexState.Value"
                                                              @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
-        (ChartType.Donut, DonutChartOptions donutOptions) => @<Donut ChartSeries="@ChartSeries"
-                                                                     ChartLabels="@ChartLabels"
-                                                                     ChartOptions="donutOptions"
-                                                                     @bind-SelectedIndex:get="this.SelectedIndexState.Value"
-                                                                     @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
+        (ChartType.Bar, BarChartOptions barOptions) => @<Bar ChartSeries="@ChartSeries"
+                                                             ChartLabels="@ChartLabels"
+                                                             ChartOptions="barOptions"
+                                                             @ref="_chartReference"
+                                                             @bind-SelectedIndex:get="this.SelectedIndexState.Value" 
+                                                             @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
+        (ChartType.StackedBar, StackedBarChartOptions stackedBarOptions) => @<StackedBar ChartSeries="@ChartSeries" 
+                                                                                         ChartOptions="stackedBarOptions" 
+                                                                                         @bind-SelectedIndex:get="this.SelectedIndexState.Value" 
+                                                                                         @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
         (ChartType.Timeseries, TimeSeriesChartOptions timeSeriesOptions) => @<TimeSeries ChartSeries="@ChartSeries"
                                                                                          ChartLabels="@ChartLabels"
                                                                                          ChartOptions="timeSeriesOptions"
                                                                                          @bind-SelectedIndex:get="this.SelectedIndexState.Value"
                                                                                          @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
+        (ChartType.HeatMap, HeatMapChartOptions heatMapOptions) => @<HeatMap ChartSeries="@ChartSeries"
+                                                                             ChartLabels="@ChartLabels"
+                                                                             ChartOptions="heatMapOptions"
+                                                                             @bind-SelectedIndex:get="this.SelectedIndexState.Value"
+                                                                             @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
         _ => throw new NotImplementedException($"{ChartType} chart is not supported")
     };
 
     private IChartOptions GetDefaultOptionsForChart() => ChartType switch
     {
-        ChartType.Bar => new BarChartOptions(),
         ChartType.Pie => new PieChartOptions(),
+        ChartType.Bar => new BarChartOptions(),
         ChartType.Line => new LineChartOptions(),
         ChartType.Donut => new DonutChartOptions(),
+        ChartType.HeatMap => new HeatMapChartOptions(),
         ChartType.StackedBar => new StackedBarChartOptions(),
         _ => throw new NotImplementedException($"{ChartType} chart is not supported")
     };
