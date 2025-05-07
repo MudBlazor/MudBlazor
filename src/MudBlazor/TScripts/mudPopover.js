@@ -848,8 +848,7 @@ class MudPopover {
         }
 
         // Avoid re-observing same element unless it's been removed from DOM
-        if (this.currentMainProvider === provider &&
-            document.body.contains(this.currentMainProvider)) {
+        if (this.currentMainProvider === provider) {
             return;
         }
 
@@ -881,7 +880,6 @@ class MudPopover {
 
         observer.observe(this.currentMainProvider, config);
         this.contentObserver = observer;
-        console.info(`Initialized and Observing main container ${this.currentMainProvider}`);
     }
 
 
