@@ -18,7 +18,7 @@ public class PopoverOptions
 
     /// <summary>
     /// Gets or sets the CSS class of the popover container.
-    /// The default value is <c>mudblazor-main-content</c>.
+    /// The default value is <c>mud-popover-provider</c>.
     /// </summary>
     public string ContainerClass { get; set; } = "mud-popover-provider";
 

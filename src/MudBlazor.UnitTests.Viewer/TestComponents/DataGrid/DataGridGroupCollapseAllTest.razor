@@ -1,4 +1,4 @@
-<MudDataGrid @ref="_dataGrid"
+﻿<MudDataGrid @ref="_dataGrid"
              Items="@_fruits"
              Filterable="true"
              Hideable="true"
@@ -50,14 +50,14 @@
 		_fruits = _fruits.Select(x => new TestObject(x.Name, x.Category)).ToList();
 	}
 
-	public void ExpandAllGroups()
+	public Task ExpandAllGroups()
 	{
-		_dataGrid.ExpandAllGroups();
+		return _dataGrid.ExpandAllGroupsAsync();
 	}
 
-	public void CollapseAllGroups()
+	public Task CollapseAllGroups()
 	{
-		_dataGrid.CollapseAllGroups();
+		return _dataGrid.CollapseAllGroupsAsync();
 	}
 
     public record TestObject(string Name, string Category);

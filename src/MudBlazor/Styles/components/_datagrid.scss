@@ -153,6 +153,16 @@
     .mud-resizing {
       border-right: 2px solid var(--mud-palette-primary);
     }
+
+    &.mud-datagrid-group {
+      background-color: var(--mud-palette-background-gray);
+    }
+
+    @for $i from 2 through 5 {
+      &.mud-row-group-indented-#{$i} {
+        padding-left: #{$i * 48 - 48}px !important;
+      }
+    }
   }
 }
 
