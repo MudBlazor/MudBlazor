@@ -130,7 +130,7 @@ namespace MudBlazor
 
         internal async Task OnPointerMoveAsync(PointerEventArgs arg)
         {
-            if (_isSwipeOnProgress == false)
+            if (!_isSwipeOnProgress)
             {
                 return;
             }
@@ -146,13 +146,7 @@ namespace MudBlazor
                 _swipeDelta = yDiff;
             }
 
-            var swipeDirection = new List<SwipeDirection>
-            {
-                xDiff == 0 ? SwipeDirection.None :
-                xDiff > 0 ? SwipeDirection.RightToLeft : SwipeDirection.LeftToRight,
-                yDiff == 0 ? SwipeDirection.None :
-                yDiff > 0 ? SwipeDirection.BottomToTop : SwipeDirection.TopToBottom
-            };
+            var swipeDirection = GetSwipeDirections(xDiff, yDiff);
             await OnSwipeMove.InvokeAsync(new MultiDimensionSwipeEventArgs(arg, swipeDirection, [xDiff, yDiff], this));
 
             _xDownway = arg.ClientX;
@@ -214,6 +208,23 @@ namespace MudBlazor
         {
             _xDown = _yDown = _xDownway = _yDownway = null;
             _isSwipeOnProgress = false;
+        }
+
+        private static IReadOnlyList<SwipeDirection> GetSwipeDirections(double xDiff, double yDiff)
+        {
+            var horizontalDirection = xDiff == 0
+                ? SwipeDirection.None
+                : xDiff > 0
+                    ? SwipeDirection.RightToLeft
+                    : SwipeDirection.LeftToRight;
+
+            var verticalDirection = yDiff == 0
+                ? SwipeDirection.None
+                : yDiff > 0
+                    ? SwipeDirection.BottomToTop
+                    : SwipeDirection.TopToBottom;
+
+            return [horizontalDirection, verticalDirection];
         }
     }
 }
