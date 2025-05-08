@@ -214,12 +214,11 @@ namespace MudBlazor
             }
 
             _items.Add(item);
-            if(_itemsSelected)
-            {
-                var isSelected = SelectionMode == SelectionMode.MultiSelection 
+            if (_itemsSelected && (SelectionMode == SelectionMode.MultiSelection
                     ? _values.Value?.Contains(item.Value) ?? false
-                    : EqualityComparer<T>.Default.Equals(_value.Value, item.Value);
-                item.SetSelected(isSelected);
+                    : EqualityComparer<T>.Default.Equals(_value.Value, item.Value)))
+            {
+                item.SetSelected(true);
             }
             StateHasChanged();
         }
