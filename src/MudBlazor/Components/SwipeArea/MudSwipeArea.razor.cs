@@ -11,8 +11,6 @@ namespace MudBlazor
     /// </summary>
     public partial class MudSwipeArea : MudComponentBase
     {
-        #region Fields & Parameters
-
         private static readonly string[] _preventDefaultEventNames = ["onpointerdown", "onpointerup", "onpointercancel", "onpointermove", "onpointerleave"];
 
         private double? _swipeDelta;
@@ -83,8 +81,6 @@ namespace MudBlazor
                 .AddClass(Class)
                 .Build();
 
-        #endregion
-
         /// <inheritdoc />
         public override async Task SetParametersAsync(ParameterView parameters)
         {
@@ -132,7 +128,7 @@ namespace MudBlazor
             _yDownway = arg.ClientY;
         }
 
-        internal async Task OnPointerMove(PointerEventArgs arg)
+        internal async Task OnPointerMoveAsync(PointerEventArgs arg)
         {
             if (_isSwipeOnProgress == false)
             {
@@ -150,13 +146,20 @@ namespace MudBlazor
                 _swipeDelta = yDiff;
             }
 
-            await OnSwipeMove.InvokeAsync(new MultiDimensionSwipeEventArgs(arg, new List<SwipeDirection>() { xDiff == 0 ? SwipeDirection.None : xDiff > 0 ? SwipeDirection.RightToLeft : SwipeDirection.LeftToRight, yDiff == 0 ? SwipeDirection.None : yDiff > 0 ? SwipeDirection.BottomToTop : SwipeDirection.TopToBottom }, new List<double?>() { xDiff, yDiff }, this));
+            var swipeDirection = new List<SwipeDirection>
+            {
+                xDiff == 0 ? SwipeDirection.None :
+                xDiff > 0 ? SwipeDirection.RightToLeft : SwipeDirection.LeftToRight,
+                yDiff == 0 ? SwipeDirection.None :
+                yDiff > 0 ? SwipeDirection.BottomToTop : SwipeDirection.TopToBottom
+            };
+            await OnSwipeMove.InvokeAsync(new MultiDimensionSwipeEventArgs(arg, swipeDirection, [xDiff, yDiff], this));
 
             _xDownway = arg.ClientX;
             _yDownway = arg.ClientY;
         }
 
-        internal async Task OnPointerUp(PointerEventArgs arg)
+        internal async Task OnPointerUpAsync(PointerEventArgs arg)
         {
             if (_xDown is null || _yDown is null)
             {
@@ -167,7 +170,7 @@ namespace MudBlazor
             var xDiff = _xDown.Value - arg.ClientX;
             var yDiff = _yDown.Value - arg.ClientY;
 
-            if (OnSwipeMove.HasDelegate == false && Math.Abs(xDiff) < Sensitivity && Math.Abs(yDiff) < Sensitivity)
+            if (!OnSwipeMove.HasDelegate && Math.Abs(xDiff) < Sensitivity && Math.Abs(yDiff) < Sensitivity)
             {
                 Cancel();
                 return;
@@ -191,10 +194,10 @@ namespace MudBlazor
             _isSwipeOnProgress = false;
         }
 
-        internal async Task OnPointerCancel(PointerEventArgs arg)
+        internal Task OnPointerCancelAsync(PointerEventArgs arg)
         {
             Cancel();
-            await OnSwipeCancel.InvokeAsync(arg);
+            return OnSwipeCancel.InvokeAsync(arg);
         }
 
         protected SwipeDirection GetSwipeDirection(double? xFirst, double? yFirst, double? xLast, double? yLast)
@@ -212,6 +215,5 @@ namespace MudBlazor
             _xDown = _yDown = _xDownway = _yDownway = null;
             _isSwipeOnProgress = false;
         }
-
     }
 }

@@ -47,42 +47,4 @@ namespace MudBlazor
             Sender = sender;
         }
     }
-
-    public class MultiDimensionSwipeEventArgs
-    {
-        /// <summary>
-        /// The information about the pointer.
-        /// </summary>
-        public PointerEventArgs TouchEventArgs { get; }
-
-        /// <summary>
-        /// The distance of the swipe gestures in pixels. Has two values, one for the x-axis and one for the y-axis.
-        /// </summary>
-        public List<double?> SwipeDeltas { get; }
-
-        /// <summary>
-        /// The <see cref="MudSwipeArea"/> which raised the swipe event.
-        /// </summary>
-        public MudSwipeArea Sender { get; }
-
-        /// <summary>
-        /// The direction list of the swipe. Has two values, one for the x-axis and one for the y-axis.
-        /// </summary>
-        public List<SwipeDirection> SwipeDirections { get; }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SwipeEventArgs"/> class.
-        /// </summary>
-        /// <param name="touchEventArgs">The size, pressure, and tilt of the pointer.</param>
-        /// <param name="swipeDirections">The direction of the swipe.</param>
-        /// <param name="swipeDeltas">The distance of the swipe movement, in pixels.</param>
-        /// <param name="sender">The <see cref="MudSwipeArea" /> which originated the swipe event.</param>
-        public MultiDimensionSwipeEventArgs(PointerEventArgs touchEventArgs, List<SwipeDirection> swipeDirections, List<double?> swipeDeltas, MudSwipeArea sender)
-        {
-            TouchEventArgs = touchEventArgs;
-            SwipeDirections = swipeDirections;
-            SwipeDeltas = swipeDeltas;
-            Sender = sender;
-        }
-    }
 }

@@ -18,12 +18,12 @@ namespace MudBlazor.UnitTests.Components
             var swipe = comp.FindComponent<MudSwipeArea>();
 
             await comp.InvokeAsync(() => swipe.Instance._yDown = 50);
-            await comp.InvokeAsync(() => swipe.Instance.OnPointerUp(new PointerEventArgs()));
+            await comp.InvokeAsync(() => swipe.Instance.OnPointerUpAsync(new PointerEventArgs()));
 
-            await comp.InvokeAsync(() => swipe.Instance.OnPointerCancel(new PointerEventArgs()));
+            await comp.InvokeAsync(() => swipe.Instance.OnPointerCancelAsync(new PointerEventArgs()));
             comp.WaitForAssertion(() => swipe.Instance._xDown.Should().Be(null));
 
-            await comp.InvokeAsync(() => swipe.Instance.OnPointerUp(new PointerEventArgs()));
+            await comp.InvokeAsync(() => swipe.Instance.OnPointerUpAsync(new PointerEventArgs()));
             comp.WaitForAssertion(() => swipe.Instance._xDown.Should().Be(null));
         }
 
@@ -36,14 +36,14 @@ namespace MudBlazor.UnitTests.Components
             // Swipe below the sensitivity should not make change.
 
             await comp.InvokeAsync(() => swipe.Instance.OnPointerDown(new PointerEventArgs { ClientX = 0, ClientY = 0 }));
-            await comp.InvokeAsync(() => swipe.Instance.OnPointerUp(new PointerEventArgs { ClientX = 20, ClientY = 20 }));
+            await comp.InvokeAsync(() => swipe.Instance.OnPointerUpAsync(new PointerEventArgs { ClientX = 20, ClientY = 20 }));
 
             comp.WaitForAssertion(() => comp.Instance.SwipeDirection.Should().Be(SwipeDirection.None));
             comp.WaitForAssertion(() => comp.Instance.SwipeDelta.Should().Be(null));
 
             await comp.InvokeAsync(() => swipe.Instance.OnPointerDown(new PointerEventArgs { ClientX = 0, ClientY = 0 }));
-            await comp.InvokeAsync(() => swipe.Instance.OnPointerUp(new PointerEventArgs { ClientX = 150, ClientY = 200 }));
-            await comp.InvokeAsync(() => swipe.Instance.OnPointerUp(new PointerEventArgs { ClientX = 100, ClientY = 50 }));
+            await comp.InvokeAsync(() => swipe.Instance.OnPointerUpAsync(new PointerEventArgs { ClientX = 150, ClientY = 200 }));
+            await comp.InvokeAsync(() => swipe.Instance.OnPointerUpAsync(new PointerEventArgs { ClientX = 100, ClientY = 50 }));
 
             comp.WaitForAssertion(() => comp.Instance.SwipeDirection.Should().Be(SwipeDirection.TopToBottom));
             comp.WaitForAssertion(() => comp.Instance.SwipeDelta.Should().Be(-200));
