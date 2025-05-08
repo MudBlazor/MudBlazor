@@ -52,7 +52,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void SwipeTest_PreventDefault_SetTrue()
         {
-            var listenerIds = new int[] { 1, 2, 3 };
+            var listenerIds = new int[] { 1, 2, 3, 4, 5 };
 
             var handler = Context.JSInterop.Setup<int[]>(invocation => invocation.Identifier == "mudElementRef.addDefaultPreventingHandlers")
                 .SetResult(listenerIds);
@@ -64,13 +64,13 @@ namespace MudBlazor.UnitTests.Components
 
             var invocation = handler.VerifyInvoke("mudElementRef.addDefaultPreventingHandlers");
             invocation.Arguments.Count.Should().Be(2);
-            invocation.Arguments[1].Should().BeEquivalentTo(new[] { "onpointerdown", "onpointerup", "onpointercancel" });
+            invocation.Arguments[1].Should().BeEquivalentTo(new[] { "onpointerdown", "onpointerup", "onpointercancel", "onpointermove", "onpointerleave" });
         }
 
         [Test]
         public void SwipeTest_PreventDefault_SetFalse()
         {
-            var listenerIds = new int[] { 1, 2, 3 };
+            var listenerIds = new int[] { 1, 2, 3, 4, 5 };
 
             Context.JSInterop.Setup<int[]>(invocation => invocation.Identifier == "mudElementRef.addDefaultPreventingHandlers")
                 .SetResult(listenerIds);
@@ -87,7 +87,7 @@ namespace MudBlazor.UnitTests.Components
 
             var invocation = handler.VerifyInvoke("mudElementRef.removeDefaultPreventingHandlers");
             invocation.Arguments.Count.Should().Be(3);
-            invocation.Arguments[1].Should().BeEquivalentTo(new[] { "onpointerdown", "onpointerup", "onpointercancel" });
+            invocation.Arguments[1].Should().BeEquivalentTo(new[] { "onpointerdown", "onpointerup", "onpointercancel", "onpointermove", "onpointerleave" });
             invocation.Arguments[2].Should().BeEquivalentTo(listenerIds);
         }
     }
