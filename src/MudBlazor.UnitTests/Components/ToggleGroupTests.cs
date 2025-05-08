@@ -6,6 +6,7 @@ using AngleSharp.Common;
 using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components.Web.Virtualization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MudBlazor.UnitTests.Mocks;
@@ -253,6 +254,58 @@ namespace MudBlazor.UnitTests.Components
                 .AddChildContent<MudToggleItem<string>>(item => item.Add(x => x.Value, "b"))
                 .AddChildContent<MudToggleItem<string>>(item => item.Add(x => x.Value, "c"))
                 );
+
+            var toggleGroup = comp.Instance;
+            var items = toggleGroup.GetItems().ToList();
+
+            // Act
+            if (selMode == SelectionMode.MultiSelection)
+            {
+                comp.SetParametersAndRender(parameters => parameters.Add(p => p.Values, [selectedValues]));
+            }
+            else
+            {
+                comp.SetParametersAndRender(parameters => parameters.Add(p => p.Value, selectedValues));
+            }
+
+            // Assert
+            // Verify only the selected item has the selected state
+            items.Single(x => x.Value == selectedValues).Selected.Should().BeTrue();
+            items.Where(x => x.Value != selectedValues).All(x => !x.Selected).Should().BeTrue();
+
+            // Verify the UI reflects the selection
+            comp.FindAll("button.mud-toggle-item-selected").Count.Should().Be(1);
+            comp.Find("button.mud-toggle-item-selected").TextContent.Should().Contain(selectedValues);
+
+            // Verify the internal state matches
+            if (selMode == SelectionMode.MultiSelection)
+            {
+                toggleGroup.Values.Should().BeEquivalentTo([selectedValues]);
+                toggleGroup.Value.Should().BeNull();
+            }
+            else
+            {
+                toggleGroup.Value.Should().Be(selectedValues);
+                toggleGroup.Values.Should().BeNull();
+            }
+        }
+
+
+        [Test]
+        [TestCase(SelectionMode.SingleSelection, "b")]
+        [TestCase(SelectionMode.MultiSelection, "b")]
+        [TestCase(SelectionMode.ToggleSelection, "b")]
+        public void ToggleGroup_SetSelectedFromValuesTest_WithAsyncItems(SelectionMode selMode, string selectedValues)
+        {
+            // Arrange
+            var comp = Context.RenderComponent<MudToggleGroup<string>>(parameters => parameters
+                .Add(p => p.SelectionMode, selMode)
+                .AddChildContent<Virtualize<string>>(v =>
+                    v.Add(x => x.Items, ["a", "b", "c"])
+                        .Add<MudToggleItem<string>, string>(x => x.ItemContent,
+                            value => item => item.Add(x => x.Value, value))
+                )
+            );
 
             var toggleGroup = comp.Instance;
             var items = toggleGroup.GetItems().ToList();
