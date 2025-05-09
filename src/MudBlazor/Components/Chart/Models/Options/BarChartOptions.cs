@@ -3,7 +3,9 @@
 // See the LICENSE file in the project root for more information.
 
 #nullable enable
-namespace MudBlazor.Charts;
+using MudBlazor.Charts;
+
+namespace MudBlazor;
 
 public class BarChartOptions : DefaultBarChartOptions
 {
@@ -14,4 +16,13 @@ public class BarChartOptions : DefaultBarChartOptions
     /// Defaults to <c>0.10</c> (10%).
     /// </remarks>
     public double BarSpacingRatio { get; set; } = 0.10;
+
+    public static implicit operator BarChartOptions(ChartOptions options) => new()
+    {
+        ShowLegend = options.ShowLegend,
+        ShowToolTips = options.ShowToolTips,
+        TooltipTitleFormat = options.TooltipTitleFormat,
+        TooltipSubtitleFormat = options.TooltipSubtitleFormat,
+        ChartPalette = options.ChartPalette,
+    };
 }

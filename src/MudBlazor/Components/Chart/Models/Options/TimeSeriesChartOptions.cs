@@ -3,9 +3,10 @@
 // See the LICENSE file in the project root for more information.
 
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Charts;
 
 #nullable enable
-namespace MudBlazor.Charts;
+namespace MudBlazor;
 
 public class TimeSeriesChartOptions : DefaultAxisLineChartOptions
 {
@@ -61,4 +62,12 @@ public class TimeSeriesChartOptions : DefaultAxisLineChartOptions
     /// </summary>
     public string? YAxisTitle { get; set; }
 
+    public static implicit operator TimeSeriesChartOptions(ChartOptions options) => new()
+    {
+        ShowLegend = options.ShowLegend,
+        ShowToolTips = options.ShowToolTips,
+        TooltipTitleFormat = options.TooltipTitleFormat,
+        TooltipSubtitleFormat = options.TooltipSubtitleFormat,
+        ChartPalette = options.ChartPalette,
+    };
 }

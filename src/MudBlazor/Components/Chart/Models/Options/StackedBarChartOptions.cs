@@ -3,6 +3,18 @@
 // See the LICENSE file in the project root for more information.
 
 #nullable enable
-namespace MudBlazor.Charts;
+using MudBlazor.Charts;
 
-public class StackedBarChartOptions : DefaultBarChartOptions { }
+namespace MudBlazor;
+
+public class StackedBarChartOptions : DefaultBarChartOptions
+{
+    public static implicit operator StackedBarChartOptions(ChartOptions options) => new()
+    {
+        ShowLegend = options.ShowLegend,
+        ShowToolTips = options.ShowToolTips,
+        TooltipTitleFormat = options.TooltipTitleFormat,
+        TooltipSubtitleFormat = options.TooltipSubtitleFormat,
+        ChartPalette = options.ChartPalette,
+    };
+}

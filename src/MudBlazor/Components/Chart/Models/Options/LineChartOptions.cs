@@ -3,9 +3,20 @@
 // See the LICENSE file in the project root for more information.
 
 #nullable enable
-namespace MudBlazor.Charts;
+using MudBlazor.Charts;
+
+namespace MudBlazor;
 
 public class LineChartOptions : DefaultAxisLineChartOptions, IAxisLineChartOptions
 {
     public override string TooltipTitleFormat { get; set; } = "{{Y_VALUE}}";
+
+    public static implicit operator LineChartOptions(ChartOptions options) => new()
+    {
+        ShowLegend = options.ShowLegend,
+        ShowToolTips = options.ShowToolTips,
+        TooltipTitleFormat = options.TooltipTitleFormat,
+        TooltipSubtitleFormat = options.TooltipSubtitleFormat,
+        ChartPalette = options.ChartPalette,
+    };
 }

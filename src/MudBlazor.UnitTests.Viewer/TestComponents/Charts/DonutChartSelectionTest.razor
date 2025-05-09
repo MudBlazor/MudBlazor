@@ -1,5 +1,5 @@
-﻿@* <MudPaper Class="pa-4">
-    <MudChart ChartType="ChartType.Donut" Width="300px" Height="300px" @bind-SelectedIndex="_index" InputData="@_data" InputLabels="@_labels"></MudChart>
+﻿<MudPaper Class="pa-4">
+    <MudChart ChartType="ChartType.Donut" Width="300px" Height="300px" @bind-SelectedIndex="_index" ChartSeries="@_data.AsChartDataSet()" ChartLabels="@_labels"></MudChart>
 </MudPaper>
 <MudPaper Class="pa-4 mt-2 d-flex justify-center">
     <MudButton OnClick="AddDataSize" Variant="Variant.Filled" Color="Color.Primary">Add</MudButton>
@@ -46,4 +46,4 @@
             RandomizeData();
         }
     }
-} *@
+}

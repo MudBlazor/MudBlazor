@@ -3,10 +3,17 @@
 // See the LICENSE file in the project root for more information.
 
 #nullable enable
-namespace MudBlazor.Charts;
+using System.Runtime.CompilerServices;
 
+namespace MudBlazor;
+
+[CollectionBuilder(typeof(ChartDataSet), nameof(Create))]
 public class ChartDataSet
 {
+    public ChartDataSet() { }
+
+    public ChartDataSet(double[] doubles) => Data = doubles;
+
     /// <summary>
     /// The legend label for this data set.
     /// </summary>
@@ -38,4 +45,21 @@ public class ChartDataSet
     public string? TooltipYValueFormat { get; set; }
 
     public double FillOpacity { get; set; } = 0.4;
+
+    public static implicit operator ChartDataSet(double[] values) => new() { Data = values };
+    public static ChartDataSet Create(ReadOnlySpan<double> values) => new(values.ToArray());
+    public IEnumerator<double> GetEnumerator() => Data.GetEnumerator();
+}
+
+public static class ChartDataSetExtensions
+{
+    public static List<ChartDataSet> AsList(this ChartDataSet dataSet)
+    {
+        return [dataSet];
+    }
+
+    public static List<ChartDataSet> AsChartDataSet(this double[] dataSet)
+    {
+        return new ChartDataSet(dataSet).AsList();
+    }
 }

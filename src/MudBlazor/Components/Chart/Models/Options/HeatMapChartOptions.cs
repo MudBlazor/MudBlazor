@@ -3,7 +3,9 @@
 // See the LICENSE file in the project root for more information.
 
 #nullable enable
-namespace MudBlazor.Charts;
+using MudBlazor.Charts;
+
+namespace MudBlazor;
 
 public class HeatMapChartOptions : DefaultChartOptions
 {
@@ -60,4 +62,13 @@ public class HeatMapChartOptions : DefaultChartOptions
     /// Defaults to "F2"
     /// </summary>
     public string ValueFormatString { get; set; } = "F2";
+
+    public static implicit operator HeatMapChartOptions(ChartOptions options) => new()
+    {
+        ShowLegend = options.ShowLegend,
+        ShowToolTips = options.ShowToolTips,
+        TooltipTitleFormat = options.TooltipTitleFormat,
+        TooltipSubtitleFormat = options.TooltipSubtitleFormat,
+        ChartPalette = options.ChartPalette,
+    };
 }

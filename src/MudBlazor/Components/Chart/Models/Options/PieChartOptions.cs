@@ -3,7 +3,9 @@
 // See the LICENSE file in the project root for more information.
 
 #nullable enable
-namespace MudBlazor.Charts;
+using MudBlazor.Charts;
+
+namespace MudBlazor;
 
 public class PieChartOptions : DefaultRadialChartOptions
 {
@@ -14,4 +16,13 @@ public class PieChartOptions : DefaultRadialChartOptions
     /// Defaults to <see cref="AggregationOption.GroupByLabel"/>
     /// </remarks>
     public override AggregationOption AggregationOption { get; set; } = AggregationOption.GroupByLabel;
+
+    public static implicit operator PieChartOptions(ChartOptions options) => new()
+    {
+        ShowLegend = options.ShowLegend,
+        ShowToolTips = options.ShowToolTips,
+        TooltipTitleFormat = options.TooltipTitleFormat,
+        TooltipSubtitleFormat = options.TooltipSubtitleFormat,
+        ChartPalette = options.ChartPalette,
+    };
 }

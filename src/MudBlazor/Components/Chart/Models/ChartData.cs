@@ -5,7 +5,7 @@
 #nullable enable
 using System.Runtime.CompilerServices;
 
-namespace MudBlazor.Charts;
+namespace MudBlazor;
 
 [CollectionBuilder(typeof(ChartData), nameof(Create))]
 public class ChartData
@@ -42,10 +42,9 @@ public class ChartData
     }
 
     public static implicit operator ChartData(double value) => new(value);
-
     public static implicit operator ChartData(double[] values) => new(values);
-    public static implicit operator ChartData((DateTime dateTime, double value)[] timeValues) => new ChartData(timeValues);
-    public static implicit operator ChartData(List<(DateTime dateTime, double value)> timeValues) => new ChartData(timeValues);
+    public static implicit operator ChartData((DateTime dateTime, double value)[] timeValues) => new(timeValues);
+    public static implicit operator ChartData(List<(DateTime dateTime, double value)> timeValues) => new(timeValues);
 
 
     public static ChartData Create(ReadOnlySpan<double> values) => new(values.ToArray());
