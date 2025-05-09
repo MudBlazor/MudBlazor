@@ -6,10 +6,10 @@
     var style = HoveredSegment is not null ? "overflow: visible;" : "";
 }
 
-<svg @ref="_svgRef" @attributes="UserAttributes" class="@ChartClass" width="@MudChartParent?.Width" height="@MudChartParent?.Height" viewBox="0 0 @(Radius * 2) @(Radius * 2)" style="@style">
+<svg @ref="_svgRef" @attributes="UserAttributes" class="@ChartClass" width="@MudChartParent?.Width" height="@MudChartParent?.Height" viewBox="0 0 @(ToS(Radius * 2)) @(ToS(Radius * 2))" style="@style">
     <Filters />
 
-    <g transform="translate(@Radius, @Radius)">
+    <g transform="translate(@Radius.ToS(), @Radius.ToS())">
         @foreach (var item in Paths)
         {
             <path @onclick="() => OnPathClick.InvokeAsync(item.Index)"

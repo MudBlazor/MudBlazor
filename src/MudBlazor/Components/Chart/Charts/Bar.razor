@@ -8,7 +8,7 @@
     var style = _hoveredBar != null ? "overflow: visible;" : "";
 }
 
-<svg @ref="_elementReference" @attributes="UserAttributes" class="mud-chart-line mud-ltr" width="@MudChartParent?.Width" height="@MudChartParent?.Height" viewBox="0 0 @_boundWidth @_boundHeight" style="@style">
+<svg @ref="_elementReference" @attributes="UserAttributes" class="mud-chart-line mud-ltr" width="@MudChartParent?.Width" height="@MudChartParent?.Height" viewBox="0 0 @_boundWidth.ToS() @_boundHeight.ToS()" style="@style">
     <Filters />
     <g class="mud-charts-grid">
         <g class="mud-charts-gridlines-yaxis">
@@ -30,17 +30,17 @@
     <g @ref="_yAxisGroupElementReference" class="mud-charts-yaxis">
         @foreach (var horizontalLineValue in HorizontalValues)
         {
-            @((MarkupString)$"<text x='{horizontalLineValue.X.ToString(CultureInfo.InvariantCulture)}' y='{horizontalLineValue.Y.ToString(CultureInfo.InvariantCulture)}' font-size='12px' text-anchor='end' dominant-baseline='auto'>{horizontalLineValue.Value?.ToString(CultureInfo.InvariantCulture)}</text>")
+            @((MarkupString)$"<text x='{horizontalLineValue.X.ToS()}' y='{horizontalLineValue.Y.ToS()}' font-size='12px' text-anchor='end' dominant-baseline='auto'>{horizontalLineValue.Value?.ToString(CultureInfo.InvariantCulture)}</text>")
         }
     </g>
     <g @ref="_xAxisGroupElementReference" class="mud-charts-xaxis">
         @for (var i = 0; i < VerticalValues.Count; i++)
         {
             var verticalLineValue = VerticalValues[i];
-            var x = verticalLineValue.X.ToString(CultureInfo.InvariantCulture);
-            var y = verticalLineValue.Y.ToString(CultureInfo.InvariantCulture);
-            var rotation = (-ChartOptions.XAxisLabelRotation).ToString(CultureInfo.InvariantCulture);
-            @((MarkupString)$"<text x='{x}' y='{y}' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate({rotation} {x} {y})'>{verticalLineValue.Value?.ToString(CultureInfo.InvariantCulture)}</text>")
+            var x = verticalLineValue.X.ToS();
+            var y = verticalLineValue.Y.ToS();
+            var rotation = (-ChartOptions.XAxisLabelRotation).ToString();
+            @((MarkupString)$"<text x='{x}' y='{y}' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate({rotation} {x} {y})'>{verticalLineValue.Value.ToString(CultureInfo.InvariantCulture)}</text>")
         }
     </g>
     <g class="mud-charts-bar-series">
@@ -54,7 +54,7 @@
                   @onclick="async () => await SetSelectedIndexAsync(bar.Index)" 
                   fill="@color"
                   stroke="@color"
-                  stroke-width="@_barWidth.ToString(CultureInfo.InvariantCulture)" 
+                  stroke-width="@_barWidth.ToS()" 
                   d="@bar.Data"
                   @onmouseover="(e) => OnBarMouseOver(e, bar)"
                   @onmouseout="OnBarMouseOut">

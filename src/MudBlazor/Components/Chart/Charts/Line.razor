@@ -14,7 +14,7 @@
     var dataPointLabelOffset = dataPointHoverRadius + (dataPointStroke / 2);
 }
 
-<svg @ref="_elementReference" @attributes="UserAttributes" class="mud-chart-line mud-ltr" width="@MudChartParent?.Width" height="@MudChartParent?.Height" viewBox="0 0 @_boundWidth @_boundHeight" style="@style">
+<svg @ref="_elementReference" @attributes="UserAttributes" class="mud-chart-line mud-ltr" width="@MudChartParent?.Width" height="@MudChartParent?.Height" viewBox="0 0 @_boundWidth.ToS() @_boundHeight.ToS()" style="@style">
     <Filters />
     <g class="mud-charts-grid">
         <g class="mud-charts-gridlines-yaxis">
@@ -36,16 +36,16 @@
     <g @ref="_yAxisGroupElementReference" class="mud-charts-yaxis">
         @foreach (var horizontalLineValue in HorizontalValues)
         {
-            @((MarkupString)$"<text x='{horizontalLineValue.X.ToString(CultureInfo.InvariantCulture)}' y='{horizontalLineValue.Y.ToString(CultureInfo.InvariantCulture)}' font-size='12px' text-anchor='end' dominant-baseline='auto'>{horizontalLineValue.Value?.ToString(CultureInfo.InvariantCulture)}</text>")
+            @((MarkupString)$"<text x='{horizontalLineValue.X.ToS()}' y='{horizontalLineValue.Y.ToS()}' font-size='12px' text-anchor='end' dominant-baseline='auto'>{horizontalLineValue.Value?.ToString(CultureInfo.InvariantCulture)}</text>")
         }
     </g>
     <g @ref="_xAxisGroupElementReference" class="mud-charts-xaxis">
         @for (var i = 0; i < VerticalValues.Count; i++)
         {
             var verticalLineValue = VerticalValues[i];
-            var x = verticalLineValue.X.ToString(CultureInfo.InvariantCulture);
-            var y = verticalLineValue.Y.ToString(CultureInfo.InvariantCulture);
-            var rotation = (-ChartOptions!.XAxisLabelRotation).ToString(CultureInfo.InvariantCulture);
+            var x = verticalLineValue.X.ToS();
+            var y = verticalLineValue.Y.ToS();
+            var rotation = (-ChartOptions!.XAxisLabelRotation).ToString();
             @((MarkupString)$"<text x='{x}' y='{y}' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate({rotation} {x} {y})'>{verticalLineValue.Value?.ToString(CultureInfo.InvariantCulture)}</text>")
         }
     </g>
@@ -64,8 +64,8 @@
                   @onclick="async () => await SetSelectedIndexAsync(chartLine.Index)" 
                   fill="none" 
                   stroke="@color"
-                  stroke-opacity="@overrideSettings?.StrokeOpacity ?? 1" 
-                  stroke-width="@lineStrokeWidth" 
+                  stroke-opacity="@(overrideSettings?.StrokeOpacity.ToS() ?? "1")"
+                  stroke-width="@lineStrokeWidth.ToS()"
                   d="@chartLine.Data">
             </path>
 
@@ -77,7 +77,7 @@
                 <path class="@lineClass"
                       @onclick="async () => await SetSelectedIndexAsync(chartLine.Index)"
                       fill="@color" 
-                      fill-opacity="@series.FillOpacity" 
+                      fill-opacity="@(overrideSettings?.FillOpacity.ToS() ?? "0.4")"
                       d="@chartArea.Data">
                 </path>
             }
@@ -91,9 +91,9 @@
                             @onclick="async () => await SetSelectedIndexAsync(chartLine.Index)" 
                             stroke="@color" 
                             stroke-width="@dataPointStroke"
-                            cx="@ToS(item.CX)"
-                            cy="@ToS(item.CY)"
-                            r="@ToS(dataPointRadius)">
+                            cx="@item.CX.ToS()"
+                            cy="@item.CY.ToS()"
+                            r="@dataPointRadius.ToS()">
                     </circle>
                 }
 
@@ -104,9 +104,9 @@
                         stroke="@color"
                         stroke-width="@dataPointStroke"
                         opacity="@(item == HoveredDataPoint ? 1 : 0)"
-                        cx="@ToS(item.CX)"
-                        cy="@ToS(item.CY)"
-                        r="@ToS(dataPointHoverRadius)"
+                        cx="@item.CX.ToS()"
+                        cy="@item.CY.ToS()"
+                        r="@dataPointHoverRadius.ToS()"
                         @onmouseover="(e) => OnDataPointMouseOver(e, item, chartLine)"
                         @onmouseout="OnDataPointMouseOut">
                 </circle>

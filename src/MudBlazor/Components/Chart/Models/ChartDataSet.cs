@@ -44,7 +44,6 @@ public class ChartDataSet
     /// </summary>
     public string? TooltipYValueFormat { get; set; }
 
-    public double FillOpacity { get; set; } = 0.4;
 
     public static implicit operator ChartDataSet(double[] values) => new() { Data = values };
     public static ChartDataSet Create(ReadOnlySpan<double> values) => new(values.ToArray());

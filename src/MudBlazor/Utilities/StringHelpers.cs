@@ -17,4 +17,16 @@ internal static class StringHelpers
             ? Math.Round(value, 4).ToString(CultureInfo.InvariantCulture)
             : Math.Round(value, 4).ToString(format);
     }
+
+    /// <summary>
+    /// Converts a double value to its string representation, rounded to 4 decimal places.
+    /// </summary>
+    /// <param name="value">The double value to convert</param>
+    /// <returns>
+    /// The string representation of the double value. <br/>
+    /// </returns>
+    public static string? ToS(this double value)
+    {
+        return Math.Round(value, 4).ToString(CultureInfo.InvariantCulture);
+    }
 }

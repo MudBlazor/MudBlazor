@@ -51,4 +51,5 @@ public class SeriesDisplayOverride
     public LineDisplayType? LineDisplayType { get; set; }
     public InterpolationOption? InterpolationOption { get; set; }
     public double StrokeOpacity { get; set; } = 1;
+    public double FillOpacity { get; set; } = 0.4;
 }
