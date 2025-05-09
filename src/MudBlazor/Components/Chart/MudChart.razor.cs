@@ -18,7 +18,6 @@ namespace MudBlazor;
 public partial class MudChart
 {
     private IMudChart? _chartReference;
-    //private bool _chartInitialized;
 
     protected override void OnParametersSet()
     {

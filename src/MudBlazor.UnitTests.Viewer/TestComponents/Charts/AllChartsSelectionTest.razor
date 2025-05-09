@@ -101,53 +101,53 @@
     private IChartOptions GetChartOptions() => _chartType switch
     {
         ChartType.Bar => new BarChartOptions
-            {
-                Justify = _selectedJustify,
-                SeriesSpacingRatio = _spacingRatio,
-                BarWidthRatio = _barWidthRatio,
-                BarSpacingRatio = _innerGapRatio
-            },
+        {
+            Justify = _selectedJustify,
+            SeriesSpacingRatio = _spacingRatio,
+            BarWidthRatio = _barWidthRatio,
+            BarSpacingRatio = _innerGapRatio
+        },
         ChartType.StackedBar => new StackedBarChartOptions
-            {
-                Justify = _selectedJustify,
-                BarWidthRatio = _barWidthRatio,
-                SeriesSpacingRatio = _spacingRatio,
-            },
+        {
+            Justify = _selectedJustify,
+            BarWidthRatio = _barWidthRatio,
+            SeriesSpacingRatio = _spacingRatio,
+        },
         ChartType.Line => new LineChartOptions
-            {
-                LineDisplayType = _selectedDisplayType,
-            },
+        {
+            LineDisplayType = _selectedDisplayType,
+        },
         ChartType.Pie => new PieChartOptions
-            {
-                AggregationOption = _selectedAggregationOption,
-                ShowAsPercentage = true,
-            },
+        {
+            AggregationOption = _selectedAggregationOption,
+            ShowAsPercentage = true,
+        },
         ChartType.Donut => new DonutChartOptions
-            {
-                AggregationOption = _selectedAggregationOption,
-            },
+        {
+            AggregationOption = _selectedAggregationOption,
+        },
         ChartType.Timeseries => new TimeSeriesChartOptions
+        {
+            TimeLabelSpacing = TimeSpan.FromDays(7),
+            TooltipTimeLabelFormat = "dd-MMM-yyyy",
+            TimeLabelFormat = "dd-MMM",
+            XAxisLabelRotation = 90,
+            ShowDataMarkers = false,
+            SeriesDisplayOverrides = new Dictionary<ChartDataSet, SeriesDisplayOverride>()
             {
-                TimeLabelSpacing = TimeSpan.FromDays(7),
-                TooltipTimeLabelFormat = "dd-MMM-yyyy",
-                TimeLabelFormat = "dd-MMM",
-                XAxisLabelRotation = 90,
-                ShowDataMarkers = false,
-                SeriesDisplayOverrides = new Dictionary<ChartDataSet, SeriesDisplayOverride>()
+                [DataSet[1]] = new SeriesDisplayOverride
                 {
-                    [DataSet[1]] = new SeriesDisplayOverride
-                    {
-                        LineDisplayType = LineDisplayType.Area,
-                    }
+                    LineDisplayType = LineDisplayType.Area,
                 }
-            },
+            }
+        },
         ChartType.HeatMap => new HeatMapChartOptions
-            {
-                ChartPalette = [Colors.Teal.Lighten1],
-                EnableSmoothGradient = true,
-                ShowToolTips = true,
-                ShowLabels = false,
-            },
+        {
+            ChartPalette = [Colors.Teal.Lighten1],
+            EnableSmoothGradient = true,
+            ShowToolTips = true,
+            ShowLabels = false,
+        },
         _ => throw new NotImplementedException()
     };
 
