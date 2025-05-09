@@ -1,0 +1,41 @@
+﻿@page "/components/navigationbar"
+
+<DocsPage>
+    <DocsPageHeader Title="Navigation Bar" Component="@nameof(MudNavigationBar)" />
+    <DocsPageContent>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Basic Usage">
+                <Description>MudNavigationBar provides navigation menu especially for mobile view.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(NavigationBarExample)" DarkenBackground="true" ShowCode="false">
+                <NavigationBarExample/>
+            </SectionContent>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Item Count">
+                <Description>MudNavigationBar supports unlimited items. But it is recommended to place 2 to 5 items.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(NavigationBarItemCountExample)" DarkenBackground="true" ShowCode="false">
+                <NavigationBarItemCountExample />
+            </SectionContent>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Customization">
+                <Description>MudNavigationBar has several visual options. Try it on the example.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(NavigationBarCustomizationExample)" DarkenBackground="true" ShowCode="false">
+                <NavigationBarCustomizationExample />
+            </SectionContent>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Navigation Context With Href">
+                <Description>If you determine <CodeInline>Href</CodeInline> parameter, child items behaves like link and navigates to url. It automatically fires <CodeInline>OnSelectionChange</CodeInline>.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(NavigationBarHrefExample)" DarkenBackground="true" ShowCode="false">
+                <NavigationBarHrefExample />
+            </SectionContent>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>

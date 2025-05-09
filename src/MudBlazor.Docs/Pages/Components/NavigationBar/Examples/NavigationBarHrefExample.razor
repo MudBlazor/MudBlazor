@@ -1,0 +1,20 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<div class="d-flex flex-column align-center justify-center" style="transform: translateZ(0); height: 500px; width: 320px; background-color: var(--mud-palette-gray-lighter)">
+    <MudText>Selected Item</MudText>
+    <MudText Color="Color.Primary">@_selectedId</MudText>
+    <MudNavigationBar OnSelectionChange="OnSelectionChange">
+        <MudNavigationBarItem Id="Layout" Icon="@Icons.Material.Filled.DisplaySettings" Text="Layout" />
+        <MudNavigationBarItem Id="Nav Bar" Icon="@Icons.Material.Filled.Navigation" Text="Nav Bar" Href="components/navigationbar#navigation-context-with-href" />
+        <MudNavigationBarItem Id="Input" Icon="@Icons.Material.Filled.Input" Text="Input" />
+    </MudNavigationBar>
+</div>
+
+@code {
+    string _selectedId;
+
+    private void OnSelectionChange(string id)
+    {
+        _selectedId = id;
+    }
+}

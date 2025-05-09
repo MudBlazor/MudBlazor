@@ -1,0 +1,13 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+
+<div class="@Classname" style="@Style" attributes="@UserAttributes" @onclick="HandleClick">
+    @if (Icon != null)
+    {
+        <MudIcon Icon="@Icon" Color="@GetColor()" />
+    }
+    <div class="mud-nav-bar-item-content">
+        <MudText Color="@GetColor()" Typo="@(Parent?.Typo ?? Typo.subtitle2)">@Text</MudText>
+        @ChildContent
+    </div>
+</div>

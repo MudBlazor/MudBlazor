@@ -1,0 +1,9 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+@inject NavigationManager NavigationManager
+
+<CascadingValue Value="this" IsFixed="true">
+    <div class="@Classname" style="@Stylename" attributes="@UserAttributes" role="navigation">
+        @ChildContent
+    </div>
+</CascadingValue>
