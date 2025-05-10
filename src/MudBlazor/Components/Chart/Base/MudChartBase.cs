@@ -127,7 +127,7 @@ public abstract class MudChartBase<TOptions> : MudComponentBase, IMudChart where
     public bool CanHideSeries { get; set; } = false;
 
     protected string Classname => new CssBuilder("mud-chart")
-        .AddClass($"mud-chart-legend-{ConvertLegendPosition(LegendPosition).ToDescriptionString()}", ChartType != ChartType.HeatMap)
+        .AddClass($"mud-chart-legend-{ConvertLegendPosition(LegendPosition).ToDescriptionString()}")
         .AddClass(Class)
         .Build();
 

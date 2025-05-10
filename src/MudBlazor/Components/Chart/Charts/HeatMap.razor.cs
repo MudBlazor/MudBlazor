@@ -33,7 +33,7 @@ namespace MudBlazor.Charts
 
         private readonly List<HeatMapCell> _heatMapCells = [];
 
-        private const double BoundWidth = 650.0;
+        private const double BoundWidth = 800.0;
 
         private const double BoundHeight = 350.0;
 
@@ -57,6 +57,7 @@ namespace MudBlazor.Charts
         private const double AverageCharWidthMultiplier = 0.6;
 
         private const int LegendFontSize = 10;
+        private readonly List<SvgLegend> _toggleLegend = [];
 
         private double _boundWidth = BoundWidth;
 
@@ -217,6 +218,8 @@ namespace MudBlazor.Charts
             SetBounds();
             // Populate _heatmapCells based on data, e.g., matrix of values
             _heatMapCells.Clear();
+            _toggleLegend.Clear();
+
             var hasValues = false;
             // # of rows
             var rows = _series.Count;
@@ -246,6 +249,18 @@ namespace MudBlazor.Charts
                         hasValues = true;
                     }
                 }
+
+                if (MudChartParent?.CanHideSeries is true)
+                {
+                    var legend = new SvgLegend()
+                    {
+                        Index = row,
+                        Labels = _series[row].Label,
+                        Visible = _series[row].Visible,
+                        OnVisibilityChanged = EventCallback.Factory.Create<SvgLegend>(this, HandleLegendVisibilityChanged)
+                    };
+                    _toggleLegend.Add(legend);
+                }
             }
 
             var overrideMinValue = _customHeatMapCells.LastOrDefault(x => x.MinValue.HasValue)?.MinValue;
@@ -258,6 +273,13 @@ namespace MudBlazor.Charts
             BuildLegends();
             UpdateHeatMapCells(MudHeatMapCells);
             StateHasChanged();
+        }
+
+        private void HandleLegendVisibilityChanged(SvgLegend legend)
+        {
+            var series = _series[legend.Index];
+            series.Visible = legend.Visible;
+            RebuildChart();
         }
 
         private void CalculateAreas()
