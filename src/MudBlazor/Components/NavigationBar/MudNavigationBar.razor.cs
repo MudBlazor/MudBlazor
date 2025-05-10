@@ -15,7 +15,7 @@ namespace MudBlazor
     /// <summary>
     /// Represents a navigation bar component that allows for navigation between different sections of the application.
     /// </summary>
-    public partial class MudNavigationBar : MudComponentBase
+    public partial class MudNavigationBar : MudComponentBase, IAsyncDisposable
     {
 
         #region Fields & Parameter State
@@ -31,27 +31,41 @@ namespace MudBlazor
             _ripple = registerScope.RegisterParameter<bool>(nameof(Ripple))
                 .WithParameter(() => Ripple)
                 .WithChangeHandler(OnParameterChanged);
+            _hover = registerScope.RegisterParameter<bool>(nameof(Hover))
+                .WithParameter(() => Hover)
+                .WithChangeHandler(OnParameterChanged);
             _underline = registerScope.RegisterParameter<bool>(nameof(Underline))
                 .WithParameter(() => Underline)
                 .WithChangeHandler(OnParameterChanged);
             _density = registerScope.RegisterParameter<short>(nameof(Density))
                 .WithParameter(() => Density)
                 .WithChangeHandler(OnParameterChanged);
+            _selectedClass = registerScope.RegisterParameter<string?>(nameof(SelectedClass))
+                .WithParameter(() => SelectedClass)
+                .WithChangeHandler(OnParameterChanged);
         }
 
         private readonly ParameterState<Color> _color;
         private readonly ParameterState<Typo> _typo;
         private readonly ParameterState<bool> _ripple;
+        private readonly ParameterState<bool> _hover;
         private readonly ParameterState<bool> _underline;
         private readonly ParameterState<short> _density;
+        private readonly ParameterState<string?> _selectedClass;
 
         private readonly List<MudNavigationBarItem> _items = new();
         protected internal string? _currentLocation;
+        protected ElementReference _elementReference;
 
         protected string Classname =>
             new CssBuilder("mud-nav-bar mud-nav-bar-fixed")
                 .AddClass($"mud-density-layout-{(0 > Density ? $"n{Math.Abs(Density)}" : Math.Abs(Density))}")
                 .AddClass(Class)
+                .Build();
+
+        protected string FabClassname =>
+            new CssBuilder("mud-nav-bar-fab")
+                .AddClass(FabClass)
                 .Build();
 
         protected string Stylename => new StyleBuilder()
@@ -62,11 +76,32 @@ namespace MudBlazor
 
         #region Parameters
         /// <summary>
+        /// The CSS classes that applies on selected items if set.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Appearance)]
+        public string? SelectedClass { get; set; }
+
+        /// <summary>
+        /// The CSS classes that applies on selected items if set.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Appearance)]
+        public string? FabClass { get; set; }
+
+        /// <summary>
         /// Shows a ripple effect when the user clicks on the navigation item.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public bool Ripple { get; set; } = true;
+
+        /// <summary>
+        /// If true, changes background color slightly on hover.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Appearance)]
+        public bool Hover { get; set; } = true;
 
         /// <summary>
         /// Whether to underline the selected navigation item.
@@ -97,6 +132,13 @@ namespace MudBlazor
         public Typo Typo { get; set; } = Typo.subtitle2;
 
         /// <summary>
+        /// The custom comparison function to determine if the navigation location matches with href. The given parameters are the location and href in order.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
+        public Func<string?, string?, bool>? CustomHrefComparisonFunc { get; set; }
+
+        /// <summary>
         /// Fires when the navigation item changes.
         /// </summary>
         [Parameter]
@@ -109,66 +151,20 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public RenderFragment? ChildContent { get; set; }
+
+        /// <summary>
+        /// Custom content to be rendered as primary action right next to navigation bar.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Appearance)]
+        public RenderFragment? FabContent { get; set; }
         #endregion
 
-
+        #region Lifecycle
         protected override void OnInitialized()
         {
             NavigationManager.LocationChanged += OnLocationChanged;
             _currentLocation = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
-        }
-
-        private async void OnLocationChanged(object? sender, LocationChangedEventArgs args)
-        {
-            _currentLocation = NavigationManager.ToBaseRelativePath(args.Location);
-            foreach (var item in _items)
-            {
-                await item.HandleHrefSelected(_currentLocation);
-            }
-        }
-
-        protected internal void Navigate(string url, bool forceLoad = false)
-        {
-            NavigationManager.NavigateTo(url, forceLoad);
-        }
-
-        protected internal async Task ArrangeSelection(MudNavigationBarItem senderItem)
-        {
-            foreach (var item in _items)
-            {
-                if (item == senderItem)
-                {
-                    await item.SetSelected(true);
-                }
-                else
-                {
-                    await item.SetSelected(false);
-                }
-            }
-        }
-
-        protected internal async Task DeselectAll()
-        {
-            foreach (var item in _items)
-            {
-                await item.SetSelected(false);
-            }
-        }
-
-        private void OnParameterChanged()
-        {
-            foreach (IMudStateHasChanged mudComponent in _items)
-            {
-                mudComponent.StateHasChanged();
-            }
-
-            StateHasChanged();
-        }
-
-        public string? GetSelectedItemId()
-        {
-            var relatedItem = _items.FirstOrDefault(x => x._isSelected);
-            return relatedItem?.Id ?? relatedItem?.Text;
         }
 
         protected internal void Register(MudNavigationBarItem item)
@@ -182,5 +178,109 @@ namespace MudBlazor
             _items.Remove(item);
             StateHasChanged();
         }
+
+        public ValueTask DisposeAsync()
+        {
+            NavigationManager.LocationChanged -= OnLocationChanged;
+            return ValueTask.CompletedTask;
+        }
+        #endregion
+
+        #region Public Methods
+        /// <summary>
+        /// Navigates next or previous item with defined value.
+        /// </summary>
+        /// <param name="adjacentValue">The integer value that </param>
+        /// <returns></returns>
+        public async Task NavigateAdjacent(int adjacentValue)
+        {
+            var item = _items.FirstOrDefault(x => x._isSelected);
+            if (item == null)
+            {
+                await DeselectAll();
+                await _items[0].SetSelected(true);
+            }
+            else if (item.Disabled)
+            {
+                await NavigateAdjacent(adjacentValue > 0 ? 1 : -1);
+                return;
+            }
+            else
+            {
+                var index = _items.IndexOf(item) + adjacentValue;
+                if (index < 0 || index >= _items.Count)
+                {
+                    return;
+                }
+                var relatedItem = _items[index];
+                await DeselectAll();
+                await relatedItem.SetSelected(true);
+            }
+        }
+
+        /// <summary>
+        /// Returns the Id (Text if id is null) of the selected item.
+        /// </summary>
+        /// <returns></returns>
+        public string? GetSelectedItemId()
+        {
+            var relatedItem = _items.FirstOrDefault(x => x._isSelected);
+            return relatedItem?.Id ?? relatedItem?.Text;
+        }
+
+        /// <summary>
+        /// Clears the selection.
+        /// </summary>
+        /// <returns></returns>
+        public async Task ResetAsync()
+        {
+            await DeselectAll();
+        }
+
+        /// <summary>
+        /// Obtains focus for component.
+        /// </summary>
+        public ValueTask FocusAsync() => _elementReference.FocusAsync();
+
+        /// <summary>
+        /// Obtains blur for component.
+        /// </summary>
+        public ValueTask BlurAsync() => _elementReference.MudBlurAsync();
+        #endregion
+
+        #region Protected || Internal Methods
+        protected internal void Navigate(string url, bool forceLoad = false)
+        {
+            NavigationManager.NavigateTo(url, forceLoad);
+        }
+
+        protected internal async Task DeselectAll()
+        {
+            foreach (var item in _items)
+            {
+                await item.SetSelected(false);
+            }
+        }
+
+        protected void OnParameterChanged()
+        {
+            foreach (IMudStateHasChanged mudComponent in _items)
+            {
+                mudComponent.StateHasChanged();
+            }
+
+            StateHasChanged();
+        }
+
+        protected async void OnLocationChanged(object? sender, LocationChangedEventArgs args)
+        {
+            _currentLocation = NavigationManager.ToBaseRelativePath(args.Location);
+            foreach (var item in _items)
+            {
+                await item.HandleHrefSelected(_currentLocation);
+            }
+        }
+        #endregion
+
     }
 }

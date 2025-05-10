@@ -15,24 +15,41 @@ namespace MudBlazor
     /// </summary>
     public partial class MudNavigationBarItem : MudComponentBase, IAsyncDisposable
     {
-
-
+        #region Fields
         internal bool _isSelected;
-
-        [CascadingParameter]
-        public MudNavigationBar? Parent { get; set; }
+        ElementReference _elementReference;
 
         protected string Classname =>
             new CssBuilder("mud-nav-bar-item")
                 .AddClass("mud-ripple", Parent?.Ripple == true && !Disabled)
-                .AddClass($"border-solid border-b-2 mud-border-{Parent?.Color.ToDescriptionString() ?? "primary"}", Parent?.Underline == true && _isSelected)
                 .AddClass("mud-disabled", Disabled)
-                .AddClass($"mud-nav-bar-item-selected {SelectedClass}", _isSelected)
+                .AddClass("mud-hoverable", Parent?.Hover)
+                .AddClass($"mud-nav-bar-item-selected {SelectedClass ?? Parent?.SelectedClass}", _isSelected)
                 .AddClass(Class)
                 .Build();
 
+        protected string BadgeClassname =>
+            new CssBuilder("mud-nav-bar-item-badge")
+                .AddClass($"border-solid border-b-2 mud-border-{Parent?.Color.ToDescriptionString() ?? "primary"}", Parent?.Underline == true && _isSelected)
+                .AddClass("mud-disabled", Disabled)
+                .Build();
+        #endregion
+
+        #region Grouped Parameters
         /// <summary>
-        /// The icon to display in the navigation item.
+        /// The grouped parameter that contains the badge parameters.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.List.Appearance)]
+        public NavigationBarBadgeParameters BadgeParameters { get; set; } = new();
+        #endregion
+
+        #region Parameters
+        [CascadingParameter]
+        public MudNavigationBar? Parent { get; set; }
+
+        /// <summary>
+        /// The CSS classes that applies on selected items if set.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
@@ -46,7 +63,7 @@ namespace MudBlazor
         public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// The custom content of the navigation item.
+        /// If true, the navigation item will be disabled and not clickable or selectable.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
@@ -86,7 +103,9 @@ namespace MudBlazor
         [Category(CategoryTypes.List.Behavior)]
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
+        #endregion
 
+        #region Lifecycle
         protected override async Task OnInitializedAsync()
         {
             base.OnInitialized();
@@ -94,6 +113,35 @@ namespace MudBlazor
             await HandleHrefSelected(Parent?._currentLocation);
         }
 
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                Parent?.Unregister(this);
+            }
+        }
+
+        public ValueTask DisposeAsync()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+            return ValueTask.CompletedTask;
+        }
+        #endregion
+
+        #region Public Methods
+        /// <summary>
+        /// Obtains focus for component.
+        /// </summary>
+        public ValueTask FocusAsync() => _elementReference.FocusAsync();
+
+        /// <summary>
+        /// Obtains blur for component.
+        /// </summary>
+        public ValueTask BlurAsync() => _elementReference.MudBlurAsync();
+        #endregion
+
+        #region SelectionLogic
         protected internal async Task HandleHrefSelected(string? location)
         {
             if (Parent == null)
@@ -107,8 +155,13 @@ namespace MudBlazor
             }
         }
 
-        private bool CompareHrefRoute(string href, string? location)
+        protected bool CompareHrefRoute(string href, string? location)
         {
+            if (Parent?.CustomHrefComparisonFunc != null)
+            {
+                return Parent.CustomHrefComparisonFunc.Invoke(location, Href);
+            }
+
             if (href.Contains('#'))
             {
                 href = href.Substring(0, href.IndexOf('#'));
@@ -126,15 +179,9 @@ namespace MudBlazor
             }
             StateHasChanged();
         }
+        #endregion
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                Parent?.Unregister(this);
-            }
-        }
-
+        #region Protected Methods
         protected async Task HandleClick(MouseEventArgs args)
         {
             if (Disabled)
@@ -153,6 +200,15 @@ namespace MudBlazor
             }
             await OnClick.InvokeAsync(args);
         }
+        protected async Task HandleKeyDown(KeyboardEventArgs args)
+        {
+            if (Disabled)
+                return;
+            if (args.Key == "Enter" || args.Key == "NumpadEnter")
+            {
+                await HandleClick(new MouseEventArgs());
+            }
+        }
 
         protected Color GetColor()
         {
@@ -162,7 +218,7 @@ namespace MudBlazor
             }
             else if (_isSelected)
             {
-                if (string.IsNullOrEmpty(SelectedClass))
+                if (string.IsNullOrEmpty(SelectedClass) && string.IsNullOrEmpty(Parent?.SelectedClass))
                 {
                     return Parent?.Color ?? Color.Primary;
                 }
@@ -176,12 +232,6 @@ namespace MudBlazor
                 return Color.Inherit;
             }
         }
-
-        public ValueTask DisposeAsync()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-            return ValueTask.CompletedTask;
-        }
+        #endregion
     }
 }

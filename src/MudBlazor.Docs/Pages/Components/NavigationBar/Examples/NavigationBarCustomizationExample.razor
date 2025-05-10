@@ -1,44 +1,76 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudStack>
-    <div style="transform: translateZ(0); height: 500px; width: 320px; background-color: var(--mud-palette-gray-lighter)">
-        <MudNavigationBar Color="@_color" Ripple="@_ripple" Underline="@_underline" Density="@_density" Typo="@_typo">
-            <MudNavigationBarItem Icon="@(_icon ? Icons.Material.Filled.Flight : null)" Text="@(_text ? "Flight" : null)" SelectedClass="@(_customSelection ? "mud-theme-primary" : null)" Disabled="@_disable" />
-            <MudNavigationBarItem Icon="@(_icon ? Icons.Material.Filled.Explore : null)" Text="@(_text ? "Explore" : null)" SelectedClass="@(_customSelection ? "mud-theme-secondary mud-border-secondary" : null)" />
-            <MudNavigationBarItem Icon="@(_icon ? Icons.Material.Filled.ManageAccounts : null)" Text="@(_text ? "Account" : null)" SelectedClass="@(_customSelection ? "mud-theme-tertiary mud-border-tertiary" : null)" />
+<MudStack Style="width: 320px;">
+    <div style="transform: translateZ(0); height: 500px; width: 100%; background-color: var(--mud-palette-gray-lighter)">
+        <MudNavigationBar @ref="_navBar" Color="@_color" Ripple="@_ripple" Hover="@_hover" Underline="@_underline" Density="@_density" Typo="@_typo" SelectedClass="@(_customSelection ? "mud-theme-info mud-border-info" : null)">
+            <MudNavigationBarItem Icon="@(_icon ? Icons.Material.Filled.Flight : null)" Text="@(_text ? "Flight" : null)" SelectedClass="@(_customSelection ? "mud-theme-primary" : null)" Disabled="@_disable" BadgeParameters="@(new() { Dot = _dot, Content = _badgeContent, Overlap = _badgeOverlap, Color = _badgeColor })" />
+            <MudNavigationBarItem Icon="@(_icon ? Icons.Material.Filled.Explore : null)" Text="@(_text ? "Explore" : null)" SelectedClass="@(_customSelection ? "mud-theme-secondary mud-border-secondary" : null)" BadgeParameters="@(new() { Dot = _dot, Content = _badgeContent, Overlap = _badgeOverlap, Color = _badgeColor })" />
+            <MudNavigationBarItem Icon="@(_icon ? Icons.Material.Filled.ManageAccounts : null)" Text="@(_text ? "Account" : null)" SelectedClass="@(_customSelection ? "mud-theme-tertiary mud-border-tertiary" : null)" BadgeParameters="@(new() { Dot = _dot, Content = _badgeContent, Overlap = _badgeOverlap, Color = _badgeColor })" />
+            <MudNavigationBarItem Icon="@(_icon ? Icons.Material.Filled.Search : null)" Text="@(_text ? "Search" : null)" BadgeParameters="@(new() { Dot = _dot, Content = _badgeContent, Overlap = _badgeOverlap, Color = _badgeColor })" />
         </MudNavigationBar>
     </div>
-    <MudStack>
-        <MudSelect @bind-Value="@_color" Label="Color" Variant="Variant.Outlined" Margin="Margin.Dense">
-            @foreach (var item in Enum.GetValues<Color>())
-            {
-                <MudSelectItem Value="@item">@item.ToDescriptionString()</MudSelectItem>
-            }
-        </MudSelect>
-        <MudSelect @bind-Value="@_typo" Label="Typo" Variant="Variant.Outlined" Margin="Margin.Dense">
-            @foreach (var item in Enum.GetValues<Typo>())
-            {
-                <MudSelectItem Value="@item">@item.ToDescriptionString()</MudSelectItem>
-            }
-        </MudSelect>
-        <MudNumericField T="short" @bind-Value="@_density" Min="@(-5)" Max="5" Label="Density" Variant="Variant.Outlined" Margin="Margin.Dense" />
-        <MudCheckBox @bind-Value="_ripple" Label="Ripple" Color="Color.Primary" Dense="true" />
-        <MudCheckBox @bind-Value="_underline" Label="Underline" Color="Color.Primary" Dense="true" />
-        <MudCheckBox @bind-Value="_icon" Label="Icon" Color="Color.Primary" Dense="true" />
-        <MudCheckBox @bind-Value="_text" Label="Text" Color="Color.Primary" Dense="true" />
-        <MudCheckBox @bind-Value="_disable" Label="Disable First Item" Color="Color.Primary" Dense="true" />
-        <MudCheckBox @bind-Value="_customSelection" Label="Custom Selected Class" Color="Color.Primary" Dense="true" />
-    </MudStack>
+
+    <MudDivider />
+
+    <MudTabs PanelClass="pa-4">
+        <MudTabPanel Text="General Options">
+            <MudStack>
+                <MudSelect @bind-Value="@_color" Label="Color" Variant="Variant.Outlined" Margin="Margin.Dense">
+                    @foreach (var item in Enum.GetValues<Color>())
+                    {
+                        <MudSelectItem Value="@item">@item.ToDescriptionString()</MudSelectItem>
+                    }
+                </MudSelect>
+                <MudSelect @bind-Value="@_typo" Label="Typo" Variant="Variant.Outlined" Margin="Margin.Dense">
+                    @foreach (var item in Enum.GetValues<Typo>())
+                    {
+                        <MudSelectItem Value="@item">@item.ToDescriptionString()</MudSelectItem>
+                    }
+                </MudSelect>
+                <MudNumericField T="short" @bind-Value="@_density" Min="@(-5)" Max="5" Label="Density" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                <MudStack Row="true" Spacing="2" Wrap="Wrap.Wrap">
+                    <MudCheckBox @bind-Value="_ripple" Label="Ripple" Color="Color.Primary" Dense="true" />
+                    <MudCheckBox @bind-Value="_hover" Label="Hover" Color="Color.Primary" Dense="true" />
+                    <MudCheckBox @bind-Value="_underline" Label="Underline" Color="Color.Primary" Dense="true" />
+                    <MudCheckBox @bind-Value="_icon" Label="Icon" Color="Color.Primary" Dense="true" />
+                    <MudCheckBox @bind-Value="_text" Label="Text" Color="Color.Primary" Dense="true" />
+                    <MudCheckBox @bind-Value="_disable" Label="Disable First Item" Color="Color.Primary" Dense="true" />
+                    <MudCheckBox @bind-Value="_customSelection" Label="Custom Selected Class" Color="Color.Primary" Dense="true" />
+                </MudStack>
+                <MudButton OnClick="@(async() => await _navBar.ResetAsync())" Color="Color.Primary" Variant="Variant.Outlined">Reset</MudButton>
+            </MudStack>
+        </MudTabPanel>
+        <MudTabPanel Text="Badge Options">
+            <MudStack>
+                <MudSelect @bind-Value="@_badgeColor" Label="Badge Color" Variant="Variant.Outlined" Margin="Margin.Dense">
+                    @foreach (var item in Enum.GetValues<Color>())
+                    {
+                        <MudSelectItem Value="@item">@item.ToDescriptionString()</MudSelectItem>
+                    }
+                </MudSelect>
+                <MudTextField @bind-Value="@_badgeContent" Label="Badge Content" Variant="Variant.Outlined" MaxLength="3" Margin="Margin.Dense" Immediate="true" />
+                <MudCheckBox @bind-Value="_dot" Label="Dot" Color="Color.Primary" Dense="true" />
+                <MudCheckBox @bind-Value="_badgeOverlap" Label="Badge Overlap" Color="Color.Primary" Dense="true" />
+            </MudStack>
+        </MudTabPanel>
+    </MudTabs>
+
 </MudStack>
 
 @code {
+    MudNavigationBar _navBar;
     Color _color = Color.Primary;
+    Color _badgeColor = Color.Error;
     Typo _typo = Typo.subtitle2;
     bool _ripple = true;
+    bool _hover = true;
     bool _underline = true;
     bool _icon = true;
     bool _text = true;
     bool _disable = false;
     bool _customSelection = false;
+    bool _dot = false;
+    bool _badgeOverlap = true;
     short _density = 0;
+    string _badgeContent;
 }

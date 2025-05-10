@@ -1,0 +1,28 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<div class="d-flex flex-column align-center justify-center" style="transform: translateZ(0); height: 500px; width: 320px; background-color: var(--mud-palette-gray-lighter)">
+    <MudText>Selected Item</MudText>
+    <MudText Color="Color.Primary">@_selectedId</MudText>
+    <MudNavigationBar OnSelectionChange="OnSelectionChange" Underline="false" Ripple="false" Hover="false">
+        <MudNavigationBarItem Icon="@Icons.Material.Filled.Dashboard" Text="Components" />
+        <MudNavigationBarItem Id="MudBlazor">
+            <MudFab Class="main" StartIcon="@Icons.Custom.Brands.MudBlazor" Color="Color.Primary" Size="Size.Large" ClickPropagation="true" />
+        </MudNavigationBarItem>
+        <MudNavigationBarItem Icon="@Icons.Material.Filled.ManageAccounts" Text="Account" />
+    </MudNavigationBar>
+</div>
+
+<style>
+    .main {
+        bottom: 20px;
+    }
+</style>
+
+@code {
+    string _selectedId;
+
+    private void OnSelectionChange(string id)
+    {
+        _selectedId = id;
+    }
+}

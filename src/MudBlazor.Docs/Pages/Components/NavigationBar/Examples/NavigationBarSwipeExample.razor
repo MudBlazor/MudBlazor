@@ -1,0 +1,42 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudSwipeArea OnSwipeEnd="OnSwipeEnd" Sensitivity="20">
+    <div class="d-flex flex-column align-center justify-center" style="transform: translateZ(0); height: 500px; width: 320px; background-color: var(--mud-palette-gray-lighter)">
+    <MudText Class="select-none">Swipe left or right to change navigation.</MudText>
+    <MudText Class="select-none">Selected Item</MudText>
+    <MudText Class="select-none" Color="Color.Primary">@_selectedId</MudText>
+    <MudNavigationBar @ref="_navBar" OnSelectionChange="OnSelectionChange">
+        <MudNavigationBarItem Icon="@Icons.Material.Filled.Flight" Text="Flight" />
+        <MudNavigationBarItem Icon="@Icons.Material.Filled.Explore" Text="Explore" />
+        <MudNavigationBarItem Icon="@Icons.Material.Filled.ManageAccounts" Text="Account" />
+    </MudNavigationBar>
+</div>
+</MudSwipeArea>
+
+<style>
+    .select-none {
+        user-select: none;
+    }
+</style>
+
+@code {
+    MudNavigationBar _navBar;
+    string _selectedId;
+
+    private void OnSelectionChange(string id)
+    {
+        _selectedId = id;
+    }
+
+    private async Task OnSwipeEnd(SwipeEventArgs args)
+    {
+        if (args.SwipeDirection == SwipeDirection.LeftToRight)
+        {
+            await _navBar.NavigateAdjacent(+1);
+        }
+        else if (args.SwipeDirection == SwipeDirection.RightToLeft)
+        {
+            await _navBar.NavigateAdjacent(-1);
+        }
+    }
+}

@@ -1,0 +1,38 @@
+﻿@namespace MudBlazor.Docs.Examples
+@inject ISnackbar Snackbar
+
+<div class="d-flex flex-column align-center justify-center" style="transform: translateZ(0); height: 500px; width: 320px; background-color: var(--mud-palette-gray-lighter)">
+    <MudText>Selected Item</MudText>
+    <MudText Color="Color.Primary">@_selectedId</MudText>
+    <MudNavigationBar OnSelectionChange="OnSelectionChange">
+        <ChildContent>
+            <MudNavigationBarItem Icon="@Icons.Material.Filled.Flight" Text="Flight" />
+            <MudNavigationBarItem Icon="@Icons.Material.Filled.Explore" Text="Explore" />
+            <MudNavigationBarItem Icon="@Icons.Material.Filled.ManageAccounts" Text="Account" />
+        </ChildContent>
+        <FabContent>
+            <MudFab StartIcon="@Icons.Material.Filled.Add" Color="Color.Primary" Size="Size.Large" OnClick="OnFabClick" />
+        </FabContent>
+    </MudNavigationBar>
+</div>
+
+@code {
+    string _selectedId;
+
+    private void OnSelectionChange(string id)
+    {
+        _selectedId = id;
+    }
+
+    private void OnFabClick()
+    {
+        if (string.IsNullOrEmpty(_selectedId))
+        {
+            Snackbar.Add($"Select a location first.", Severity.Error);
+        }
+        else
+        {
+            Snackbar.Add($"FAB clicked on \"{_selectedId}\" location.", Severity.Success);   
+        }
+    }
+}
