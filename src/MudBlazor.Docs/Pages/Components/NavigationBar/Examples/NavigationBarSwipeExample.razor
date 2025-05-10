@@ -32,11 +32,11 @@
     {
         if (args.SwipeDirection == SwipeDirection.LeftToRight)
         {
-            await _navBar.NavigateAdjacent(+1);
+            await _navBar.NavigateAdjacent(-1);
         }
         else if (args.SwipeDirection == SwipeDirection.RightToLeft)
         {
-            await _navBar.NavigateAdjacent(-1);
+            await _navBar.NavigateAdjacent(+1);
         }
     }
 }
