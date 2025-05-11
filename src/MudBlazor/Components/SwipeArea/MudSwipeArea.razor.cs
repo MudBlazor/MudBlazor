@@ -194,16 +194,6 @@ namespace MudBlazor
             return OnSwipeCancel.InvokeAsync(arg);
         }
 
-        protected SwipeDirection GetSwipeDirection(double? xFirst, double? yFirst, double? xLast, double? yLast)
-        {
-            var xDiff = (xFirst - xLast) ?? 0;
-            var yDiff = (yFirst - yLast) ?? 0;
-
-            return Math.Abs(xDiff) > Math.Abs(yDiff) ?
-                xDiff > 0 ? SwipeDirection.RightToLeft : SwipeDirection.LeftToRight :
-                yDiff > 0 ? SwipeDirection.BottomToTop : SwipeDirection.TopToBottom;
-        }
-
         public void Cancel()
         {
             _xDown = _yDown = _xDownway = _yDownway = null;
