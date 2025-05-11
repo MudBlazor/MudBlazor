@@ -16,7 +16,7 @@ namespace MudBlazor
         private double? _swipeDelta;
         internal int[]? _listenerIds;
         internal double? _xDown, _yDown;
-        internal double? _xDownway, _yDownway;
+        private double? _xDownway, _yDownway;
         private bool _isSwipeOnProgress;
         private bool _preventDefaultChanged;
         private ElementReference _componentRef;
@@ -128,12 +128,13 @@ namespace MudBlazor
             _yDownway = arg.ClientY;
         }
 
-        internal async Task OnPointerMoveAsync(PointerEventArgs arg)
+        private async Task OnPointerMoveAsync(PointerEventArgs arg)
         {
             if (!_isSwipeOnProgress)
             {
                 return;
             }
+
             var xDiff = (_xDownway - arg.ClientX) ?? 0;
             var yDiff = (_yDownway - arg.ClientY) ?? 0;
 
@@ -202,19 +203,24 @@ namespace MudBlazor
 
         private static IReadOnlyList<SwipeDirection> GetSwipeDirections(double xDiff, double yDiff)
         {
-            var horizontalDirection = xDiff == 0
-                ? SwipeDirection.None
-                : xDiff > 0
-                    ? SwipeDirection.RightToLeft
-                    : SwipeDirection.LeftToRight;
-
-            var verticalDirection = yDiff == 0
-                ? SwipeDirection.None
-                : yDiff > 0
-                    ? SwipeDirection.BottomToTop
-                    : SwipeDirection.TopToBottom;
+            var horizontalDirection = GetDirection(xDiff, SwipeDirection.RightToLeft, SwipeDirection.LeftToRight);
+            var verticalDirection = GetDirection(yDiff, SwipeDirection.BottomToTop, SwipeDirection.TopToBottom);
 
             return [horizontalDirection, verticalDirection];
+
+            SwipeDirection GetDirection(double diff, SwipeDirection positiveDirection, SwipeDirection negativeDirection)
+            {
+                const double Epsilon = 1e-6;
+
+                if (Math.Abs(diff) < Epsilon)
+                {
+                    return SwipeDirection.None;
+                }
+
+                return diff > Epsilon
+                    ? positiveDirection
+                    : negativeDirection;
+            }
         }
     }
 }
