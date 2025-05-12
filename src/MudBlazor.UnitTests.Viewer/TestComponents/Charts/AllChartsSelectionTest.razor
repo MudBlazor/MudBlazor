@@ -46,6 +46,7 @@
     <MudStack Row>
         <MudCheckBox @bind-Value="_matchParentSize" Label="Match Parent Size" Color="Color.Tertiary" />
         <MudCheckBox @bind-Value="_canHideSeries" Label="Can Hide Series" Color="Color.Tertiary" />
+        <MudCheckBox @bind-Value="_useCustomTooltip" Label="Custom Tooltip" Color="Color.Tertiary" />
     </MudStack>
     <MudChart ChartType="_chartType"
               ChartSeries="@GetChartSeries()"
@@ -55,6 +56,7 @@
               Width="100%"
               Height="350px"
               CanHideSeries="_canHideSeries"
+              TooltipTemplate="@(_useCustomTooltip ? CustomTooltip : null)"
               MatchBoundsToSize="_matchParentSize" />
     <MudText Typo="Typo.h6">Selected portion of the chart: @_index</MudText>
 </MudStack>
@@ -74,6 +76,7 @@
     private int _index = -1;
     private bool _canHideSeries;
     private bool _matchParentSize;
+    private bool _useCustomTooltip;
     private int _dataPointCount = 3;
     private double _spacingRatio = 1.0;
     private double _barWidthRatio = 0.4;
@@ -171,4 +174,37 @@
                 }).ToList();
         }
     }
+
+    private RenderFragment<(SvgPath Segment, string Color)> CustomTooltip => context => builder =>
+    {
+        builder.OpenElement(0, "g");
+
+        builder.OpenElement(1, "foreignObject");
+        builder.AddAttribute(2, "x", "0");
+        builder.AddAttribute(3, "y", "0");
+        builder.AddAttribute(4, "width", "150");
+        builder.AddAttribute(5, "height", "60");
+
+        builder.OpenElement(6, "div");
+        builder.AddAttribute(7, "xmlns", "http://www.w3.org/1999/xhtml");
+        builder.AddAttribute(8, "style", $"background:{context.Color}; color:white; border-radius:6px; padding:8px; font-size:12px; font-family:sans-serif; box-shadow: 0 2px 6px rgba(0,0,0,0.2);");
+
+        builder.OpenElement(9, "div");
+        builder.OpenElement(10, "strong");
+        builder.AddContent(11, context.Segment.LabelXValue);
+        builder.CloseElement(); // strong
+        builder.CloseElement(); // div
+
+        builder.OpenElement(12, "div");
+        builder.AddContent(13, $"Value: {context.Segment.LabelYValue}");
+        builder.CloseElement(); // div
+
+        builder.OpenElement(14, "div");
+        builder.AddContent(15, $"Index: {context.Segment.Index}");
+        builder.CloseElement(); // div
+
+        builder.CloseElement(); // outer div
+        builder.CloseElement(); // foreignObject
+        builder.CloseElement(); // g
+    };
 }

@@ -48,6 +48,26 @@ public abstract class MudChartBase<TOptions> : MudComponentBase, IMudChart where
     public RenderFragment? CustomGraphics { get; set; }
 
     /// <summary>
+    /// Optional template for custom tooltip rendering. If provided, this will be used instead of the default ChartTooltip.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Chart.Appearance)]
+    public RenderFragment<(SvgPath Segment, string Color)>? TooltipTemplate { get; set; }
+
+    /// <summary>
+    /// Optional callback function to determine the position of the tooltip.    
+    /// </summary>
+    /// <remarks>
+    /// If not provided, the default tooltip positioning logic will be used.
+    /// </remarks>
+    /// <returns>
+    /// <see cref="Tuple{T1, T2}"/> representing the absolute coordinates where the tooltip should be positioned.
+    /// </returns>
+    [Parameter]
+    [Category(CategoryTypes.Chart.Appearance)]
+    public Func<SvgPath, (double X, double Y)>? TooltipPositionFunc { get; set; }
+
+    /// <summary>
     /// ChildContent for this component
     /// </summary>
     [Parameter]

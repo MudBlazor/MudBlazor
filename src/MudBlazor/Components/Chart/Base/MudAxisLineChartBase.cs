@@ -113,9 +113,9 @@ public abstract class MudAxisLineChartBase<TOptions> : MudAxisChartBase<TOptions
             var dataLength = series.Data.Points.Count;
             if (dataLength == 0) continue;
 
-            double firstPointX = 0;
-            double firstPointY = 0;
-            double lastPointX = 0;
+            var firstPointX = 0.0;
+            var firstPointY = 0.0;
+            var lastPointX = 0.0;
 
             var overrideSettings = GetSeriesDisplayOverride(series);
             var interpolationOption = overrideSettings?.InterpolationOption ?? ChartOptions?.InterpolationOption;

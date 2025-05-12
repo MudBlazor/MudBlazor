@@ -51,13 +51,13 @@
             var color = ChartOptions.ChartPalette.GetValue(bar.Index % ChartOptions.ChartPalette.Length);
 
             <path class="mud-chart-bar"
-                  @onclick="async () => await SetSelectedIndexAsync(bar.Index)" 
-                  fill="@color"
-                  stroke="@color"
-                  stroke-width="@_barWidth.ToS()" 
-                  d="@bar.Data"
-                  @onmouseover="(e) => OnBarMouseOver(e, bar)"
-                  @onmouseout="OnBarMouseOut">
+            @onclick="async () => await SetSelectedIndexAsync(bar.Index)" 
+            fill="@color"
+            stroke="@color"
+            stroke-width="@_barWidth.ToS()" 
+            d="@bar.Data"
+            @onmouseover="(e) => OnBarMouseOver(e, bar)"
+            @onmouseout="OnBarMouseOut">
             </path>
         }
     </g>
@@ -68,24 +68,45 @@
     @if (_hoveredBar is not null && ChartOptions.ShowToolTips == true)
     {
         var color = ChartOptions.ChartPalette.GetValue(_hoveredBar.Index % ChartOptions.ChartPalette.Length)?.ToString() ?? string.Empty;
-        var series = Series[_hoveredBar.Index];
-        var tooltipTitleFormat = series.TooltipTitleFormat ?? ChartOptions.TooltipTitleFormat;
-        var tooltipSubtitleFormat = series.TooltipSubtitleFormat ?? ChartOptions.TooltipSubtitleFormat;
 
-        if (!string.IsNullOrWhiteSpace(tooltipTitleFormat))
+        var (tooltipX, tooltipY) = TooltipPositionFunc?.Invoke(_hoveredBar) is { } pos
+                ? (pos.X, pos.Y)
+                : (_hoveredBar.LabelX, _hoveredBar.LabelY);
+
+        if (TooltipPositionFunc is not null)
         {
-            var tooltipTitle = tooltipTitleFormat
+            var tooltipPosition = TooltipPositionFunc.Invoke(_hoveredBar);
+            tooltipX = tooltipPosition.X;
+            tooltipY = tooltipPosition.Y;
+        }
+
+        if (TooltipTemplate is not null)
+        {
+            <g class="mud-chart-tooltip" transform="translate(@tooltipX.ToS(), @tooltipY.ToS())">
+                @TooltipTemplate((_hoveredBar, color))
+            </g>
+        }
+        else
+        {
+            var series = Series[_hoveredBar.Index];
+            var tooltipTitleFormat = series.TooltipTitleFormat ?? ChartOptions.TooltipTitleFormat;
+            var tooltipSubtitleFormat = series.TooltipSubtitleFormat ?? ChartOptions.TooltipSubtitleFormat;
+
+            if (!string.IsNullOrWhiteSpace(tooltipTitleFormat))
+            {
+                var tooltipTitle = tooltipTitleFormat
                 .Replace("{{SERIES_NAME}}", series.Label)
                 .Replace("{{X_VALUE}}", _hoveredBar.LabelXValue)
                 .Replace("{{Y_VALUE}}", _hoveredBar.LabelYValue);
 
-            var tooltipSubtitle = tooltipSubtitleFormat?
+                var tooltipSubtitle = tooltipSubtitleFormat?
                 .Replace("{{SERIES_NAME}}", series.Label)
                 .Replace("{{X_VALUE}}", _hoveredBar.LabelXValue)
                 .Replace("{{Y_VALUE}}", _hoveredBar.LabelYValue) ?? string.Empty;
 
-            <ChartTooltip Title="@tooltipTitle" Subtitle="@tooltipSubtitle" Color="@color" X="_hoveredBar.LabelX" Y="_hoveredBar.LabelY" />
-        }
+                <ChartTooltip Title="@tooltipTitle" Subtitle="@tooltipSubtitle" Color="@color" X="tooltipX" Y="tooltipY" />
+            }
+        }        
     }
 </svg>
 <Legend Data="@Legends" />

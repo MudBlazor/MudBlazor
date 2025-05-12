@@ -10,6 +10,8 @@
     HoveredSegment="@_hoveredSegment"
     UserAttributes="@UserAttributes"
     TooltipFormat="@BuildTooltipFormat()"
+    TooltipTemplate="MudChartParent?.TooltipTemplate"
+    TooltipPositionFunc="MudChartParent?.TooltipPositionFunc"
     OnPathClick="async (i) => await SetSelectedIndexAsync(i)"
     OnMouseOver="(i) => OnSegmentMouseOver(new MouseEventArgs(), i)"
     OnMouseOut="() => OnSegmentMouseOut(new MouseEventArgs())" />

@@ -13,11 +13,11 @@
         @foreach (var item in Paths)
         {
             <path @onclick="() => OnPathClick.InvokeAsync(item.Index)"
-                  class="mud-chart-serie"
-                  fill="@GetColor(item.Index)"
-                  d="@item.Data"
-                  @onmouseover="() => OnMouseOver.InvokeAsync(item)"
-                  @onmouseout="() => OnMouseOut.InvokeAsync()">
+            class="mud-chart-serie"
+            fill="@GetColor(item.Index)"
+            d="@item.Data"
+            @onmouseover="() => OnMouseOver.InvokeAsync(item)"
+            @onmouseout="() => OnMouseOut.InvokeAsync()">
             </path>
         }
     </g>
@@ -26,11 +26,34 @@
 
     @if (HoveredSegment is not null && MudChartParent?.ChartOptions?.ShowToolTips is true)
     {
-        <ChartTooltip Title="@TooltipFormat.title"
-                      Subtitle="@TooltipFormat.subtitle"
-                      Color="@GetColor(HoveredSegment.Index)"
-                      X="@(HoveredSegment.LabelX + Radius)"
-                      Y="@(HoveredSegment.LabelY + Radius)" />
+        var color = GetColor(HoveredSegment.Index);
+
+        var (tooltipX, tooltipY) = TooltipPositionFunc?.Invoke(HoveredSegment) is { } pos
+                ? (pos.X, pos.Y)
+                : (HoveredSegment.LabelX + Radius, HoveredSegment.LabelY + Radius);
+
+        if (TooltipPositionFunc is not null)
+        {
+            var tooltipPosition = TooltipPositionFunc.Invoke(HoveredSegment);
+            tooltipX = tooltipPosition.X;
+            tooltipY = tooltipPosition.Y;
+        }
+
+
+        if (TooltipTemplate is not null)
+        {
+            <g class="mud-chart-tooltip" transform="translate(@tooltipX.ToS(), @tooltipY.ToS())">
+                @TooltipTemplate((HoveredSegment, color))
+            </g>
+        }
+        else
+        {
+            <ChartTooltip Title="@TooltipFormat.title"
+                          Subtitle="@TooltipFormat.subtitle"
+                          Color="@color"
+                          X="@tooltipX"
+                          Y="@tooltipY" />
+        }
     }
 </svg>
 
@@ -42,19 +65,18 @@
     [CascadingParameter] 
     private MudChart MudChartParent { get; set; }
     
-    [Parameter] 
+    [Parameter]
+    [EditorRequired]
     public double Radius { get; set; }
     
     [Parameter] 
     public string ChartClass { get; set; }
-    
-    [Parameter] 
-    public (string title, string subtitle) TooltipFormat { get; set; }
 
     [Parameter] 
     public SvgPath HoveredSegment { get; set; }
     
     [Parameter] 
+    [EditorRequired]
     public List<SvgPath> Paths { get; set; } = [];
     
     [Parameter] 
@@ -62,6 +84,9 @@
     
     [Parameter] 
     public Dictionary<string, object> UserAttributes { get; set; } = [];
+
+    [Parameter]
+    public (string title, string subtitle) TooltipFormat { get; set; }
 
     [Parameter] 
     public EventCallback OnMouseOut { get; set; }
@@ -74,6 +99,12 @@
     
     [Parameter] 
     public EventCallback<ElementReference> ElementRefChanged { get; set; }
+
+    [Parameter]
+    public RenderFragment<(SvgPath Segment, string Color)> TooltipTemplate { get; set; }
+
+    [Parameter]
+    public Func<SvgPath, (double X, double Y)> TooltipPositionFunc { get; set; }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
