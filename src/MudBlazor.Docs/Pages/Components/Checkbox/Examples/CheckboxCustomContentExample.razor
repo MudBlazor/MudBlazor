@@ -1,0 +1,69 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudStack AlignItems="AlignItems.Center">
+    <MudCheckBox T="bool" Color="Color.Primary" Size="@_size">
+        <IndicatorContent>
+            @if(context == true)
+            {
+                <div class="mud-width-full mud-height-full mud-theme-primary d-flex align-center justify-center checkbox-scale">
+                    <MudIcon Icon="@Icons.Material.Filled.Check" />
+                </div>
+            }
+            else
+            {
+                @* Show nothing *@
+            }
+        </IndicatorContent>
+    </MudCheckBox>
+
+    <MudCheckBox T="bool?" Color="Color.Primary" TriState="true" Size="@_size" IndicatorClass="smooth">
+        <IndicatorContent>
+            @if(context == true)
+            {
+                <div class="mud-width-full mud-height-full mud-theme-primary d-flex align-center justify-center checkbox-scale rounded-0">
+                    <MudIcon Icon="@Icons.Material.Filled.Check" />
+                </div>
+            }
+            else if (context == false)
+            {
+                <div class="mud-width-full mud-height-full mud-theme-primary d-flex align-center justify-center checkbox-rotate rounded-0">
+                    <MudIcon Icon="@Icons.Material.Filled.Close" />
+                </div>
+            }
+            else if (context == null)
+            {
+                <div class="dimension-80 mud-theme-primary d-flex align-center justify-center rounded-circle" />
+            }
+        </IndicatorContent>
+    </MudCheckBox>
+
+    <MudSelect @bind-Value="_size" Variant="Variant.Outlined" Label="Size" Margin="Margin.Dense" Dense>
+        <MudSelectItem Value="Size.Small">Small</MudSelectItem>
+        <MudSelectItem Value="Size.Medium">Medium</MudSelectItem>
+        <MudSelectItem Value="Size.Large">Large</MudSelectItem>
+    </MudSelect>
+</MudStack>
+
+
+@code {
+    private Size _size = Size.Medium;
+}
+
+<style>
+    .checkbox-scale {
+        animation: mud-scale-up-center 0.3s ease;
+    }
+
+    .checkbox-rotate {
+        animation: mud-progress-circular-keyframes-circular-rotate 0.3s;
+    }
+
+    .smooth {
+        transition: all 0.3s;
+    }
+
+    .dimension-80 {
+        width: 80%;
+        height: 80%;
+    }
+</style>

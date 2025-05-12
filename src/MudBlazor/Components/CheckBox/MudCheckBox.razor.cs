@@ -31,6 +31,15 @@ namespace MudBlazor
             .AddClass($"mud-input-content-placement-{ConvertPlacement(LabelPlacement).ToDescriptionString()}")
             .Build();
 
+        protected string IndicatorClassname => new CssBuilder("mud-checkbox-indicator")
+            .AddClass("border-2 border-solid", IndicatorContent != null)
+            .AddClass($"mud-border-{Color.ToDescriptionString()}", IndicatorContent != null && HasErrors == false)
+            .AddClass($"mud-border-error", HasErrors == true)
+            .AddClass($"mud-checkbox-{Size.ToDescriptionString()}")
+            .AddClass("d-flex align-center justify-center")
+            .AddClass(IndicatorClass)
+            .Build();
+
         protected override string IconClassname => new CssBuilder("mud-button-root mud-icon-button")
             .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && UncheckedColor == null || (UncheckedColor != null && BoolValue == true))
             .AddClass($"mud-{UncheckedColor?.ToDescriptionString()}-text hover:mud-{UncheckedColor?.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && UncheckedColor != null && BoolValue == false)
@@ -42,6 +51,20 @@ namespace MudBlazor
             .AddClass($"mud-checkbox-false", BoolValue == false)
             .AddClass($"mud-checkbox-null", BoolValue is null)
             .Build();
+
+        /// <summary>
+        /// A RenderFragment for designing custom checkbox indicator.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public RenderFragment<bool?>? IndicatorContent { get; set; }
+
+        /// <summary>
+        /// CSS classes for the indicator renderfragment root.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public string? IndicatorClass { get; set; }
 
         /// <summary>
         /// The color of the checkbox when its <c>Value</c> is <c>false</c> or <c>null</c>.
