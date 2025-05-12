@@ -16,8 +16,8 @@ namespace MudBlazor
     public partial class MudNavigationBarItem : MudComponentBase, IAsyncDisposable
     {
         #region Fields
-        internal bool _isSelected;
-        ElementReference _elementReference;
+        protected internal bool _isSelected;
+        private ElementReference _elementReference;
 
         protected string Classname =>
             new CssBuilder("mud-nav-bar-item")
@@ -110,7 +110,7 @@ namespace MudBlazor
         {
             base.OnInitialized();
             Parent?.Register(this);
-            await HandleHrefSelected(Parent?._currentLocation);
+            await HandleHrefSelectedAsync(Parent?._currentLocation);
         }
 
         protected virtual void Dispose(bool disposing)
@@ -142,16 +142,16 @@ namespace MudBlazor
         #endregion
 
         #region SelectionLogic
-        protected internal async Task HandleHrefSelected(string? location)
+        protected internal async Task HandleHrefSelectedAsync(string? location)
         {
             if (Parent == null)
             {
-                await SetSelected(false);
+                await SetSelectedAsync(false);
             }
 
             if (!string.IsNullOrEmpty(Href))
             {
-                await SetSelected(CompareHrefRoute(Href, location));
+                await SetSelectedAsync(CompareHrefRoute(Href, location));
             }
         }
 
@@ -169,7 +169,7 @@ namespace MudBlazor
             return location?.StartsWith(href) ?? false;
         }
 
-        protected internal async Task SetSelected(bool selected)
+        protected internal async Task SetSelectedAsync(bool selected)
         {
             bool callChange = _isSelected != selected;
             _isSelected = selected;
@@ -182,55 +182,46 @@ namespace MudBlazor
         #endregion
 
         #region Protected Methods
-        protected async Task HandleClick(MouseEventArgs args)
+        protected async Task HandleClickAsync(MouseEventArgs args)
         {
-            if (Disabled)
+            if (Disabled || Parent == null)
                 return;
 
             if (!string.IsNullOrEmpty(Href))
             {
-                Parent?.DeselectAll();
-                await HandleHrefSelected(Href);
+                await Parent.DeselectAllAsync();
+                await HandleHrefSelectedAsync(Href);
                 Parent?.Navigate(Href);
             }
             else
             {
-                Parent?.DeselectAll();
-                await SetSelected(true);
+                await Parent.DeselectAllAsync();
+                await SetSelectedAsync(true);
             }
             await OnClick.InvokeAsync(args);
         }
-        protected async Task HandleKeyDown(KeyboardEventArgs args)
+        protected async Task HandleKeyDownAsync(KeyboardEventArgs args)
         {
             if (Disabled)
                 return;
             if (args.Key == "Enter" || args.Key == "NumpadEnter")
             {
-                await HandleClick(new MouseEventArgs());
+                await HandleClickAsync(new MouseEventArgs());
             }
         }
 
         protected Color GetColor()
         {
             if (Disabled)
-            {
                 return Color.Inherit;
-            }
-            else if (_isSelected)
-            {
-                if (string.IsNullOrEmpty(SelectedClass) && string.IsNullOrEmpty(Parent?.SelectedClass))
-                {
-                    return Parent?.Color ?? Color.Primary;
-                }
-                else
-                {
-                    return Color.Inherit;
-                }
-            }
-            else
-            {
+
+            if (!_isSelected)
                 return Color.Inherit;
-            }
+
+            if (string.IsNullOrEmpty(SelectedClass) && string.IsNullOrEmpty(Parent?.SelectedClass))
+                return Parent?.Color ?? Color.Primary;
+
+            return Color.Inherit;
         }
         #endregion
     }

@@ -1,14 +1,14 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<div @ref="_elementReference" class="@Classname" style="@Style" attributes="@UserAttributes" tabindex="0" @onclick="HandleClick" @onkeydown="@HandleKeyDown">
+<div @ref="_elementReference" class="@Classname" style="@Style" attributes="@UserAttributes" tabindex="0" @onclick="HandleClickAsync" @onkeydown="@HandleKeyDownAsync">
     <MudBadge Class="@BadgeClassname" Dot="@BadgeParameters.Dot" Content="@BadgeParameters.Content" Overlap="@BadgeParameters.Overlap" Visible="@(BadgeParameters.Dot || BadgeParameters.Content != null)" Color="@BadgeParameters.Color">
         @if (Icon != null)
         {
             <MudIcon Icon="@Icon" Color="@GetColor()" />
         }
         <div class="mud-nav-bar-item-content">
-            <MudText Color="@GetColor()" Typo="@(Parent?.Typo ?? Typo.subtitle2)" Class="@(Disabled ? "mud-disabled" : null)">@Text</MudText>
+            <MudText Color="@GetColor()" Typo="@(Parent?.Typo ?? Typo.subtitle2)" Style="@(Disabled ? "color: var(--mud-palette-text-secondary) !important" : null)">@Text</MudText>
             @ChildContent
         </div>
     </MudBadge>

@@ -163,7 +163,7 @@ namespace MudBlazor
         #region Lifecycle
         protected override void OnInitialized()
         {
-            NavigationManager.LocationChanged += OnLocationChanged;
+            NavigationManager.LocationChanged += OnLocationChangedAsync;
             _currentLocation = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
         }
 
@@ -181,7 +181,7 @@ namespace MudBlazor
 
         public ValueTask DisposeAsync()
         {
-            NavigationManager.LocationChanged -= OnLocationChanged;
+            NavigationManager.LocationChanged -= OnLocationChangedAsync;
             return ValueTask.CompletedTask;
         }
         #endregion
@@ -192,17 +192,17 @@ namespace MudBlazor
         /// </summary>
         /// <param name="adjacentValue">The integer value that </param>
         /// <returns></returns>
-        public async Task NavigateAdjacent(int adjacentValue)
+        public async Task NavigateAdjacentAsync(int adjacentValue)
         {
             var item = _items.FirstOrDefault(x => x._isSelected);
             if (item == null)
             {
-                await DeselectAll();
-                await _items[0].SetSelected(true);
+                await DeselectAllAsync();
+                await _items[0].SetSelectedAsync(true);
             }
             else if (item.Disabled)
             {
-                await NavigateAdjacent(adjacentValue > 0 ? 1 : -1);
+                await NavigateAdjacentAsync(adjacentValue > 0 ? 1 : -1);
                 return;
             }
             else
@@ -213,8 +213,8 @@ namespace MudBlazor
                     return;
                 }
                 var relatedItem = _items[index];
-                await DeselectAll();
-                await relatedItem.SetSelected(true);
+                await DeselectAllAsync();
+                await relatedItem.SetSelectedAsync(true);
             }
         }
 
@@ -234,7 +234,7 @@ namespace MudBlazor
         /// <returns></returns>
         public async Task ResetAsync()
         {
-            await DeselectAll();
+            await DeselectAllAsync();
         }
 
         /// <summary>
@@ -254,11 +254,11 @@ namespace MudBlazor
             NavigationManager.NavigateTo(url, forceLoad);
         }
 
-        protected internal async Task DeselectAll()
+        protected internal async Task DeselectAllAsync()
         {
             foreach (var item in _items)
             {
-                await item.SetSelected(false);
+                await item.SetSelectedAsync(false);
             }
         }
 
@@ -272,12 +272,12 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        protected async void OnLocationChanged(object? sender, LocationChangedEventArgs args)
+        protected async void OnLocationChangedAsync(object? sender, LocationChangedEventArgs args)
         {
             _currentLocation = NavigationManager.ToBaseRelativePath(args.Location);
             foreach (var item in _items)
             {
-                await item.HandleHrefSelected(_currentLocation);
+                await item.HandleHrefSelectedAsync(_currentLocation);
             }
         }
         #endregion
