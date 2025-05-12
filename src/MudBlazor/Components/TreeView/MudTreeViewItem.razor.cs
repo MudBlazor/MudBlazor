@@ -66,8 +66,11 @@ namespace MudBlazor
         internal MudTreeViewItem<T>? Parent { get; set; }
 
         /// <summary>
-        /// The value associated with this item. Value of the TreeViewItem. Acts as the displayed text if no text is set.
+        /// The value associated with this item.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>. Acts as the displayed text if no text is set.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Data)]
         public T? Value { get; set; }

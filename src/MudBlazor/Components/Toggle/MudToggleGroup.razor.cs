@@ -11,6 +11,14 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
+
+    /// <summary>
+    /// A group of <see cref="MudToggleItem{T}"/> components.
+    /// </summary>
+    /// <typeparam name="T">The type of item being toggled.</typeparam>
+    /// <seealso cref="MudToggleItem{T}"/>
+    /// <seealso cref="MudRadioGroup{T}"/>
+    /// <seealso cref="MudRadio{T}"/>
     public partial class MudToggleGroup<T> : MudComponentBase
     {
         public MudToggleGroup()
@@ -83,7 +91,7 @@ namespace MudBlazor
             .Build();
 
         /// <summary>
-        /// Prevents the user from interacting with this tiggle group.
+        /// Prevents the user from interacting with this toggle group.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
