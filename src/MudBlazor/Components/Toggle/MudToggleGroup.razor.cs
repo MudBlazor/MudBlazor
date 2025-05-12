@@ -268,7 +268,7 @@ namespace MudBlazor
         /// <summary>
         /// Adds the specified item to this group.
         /// </summary>
-        /// <param name="item">The item to register.</param>
+        /// <param name="item">The item to add.</param>
         protected internal void Register(MudToggleItem<T> item)
         {
             if (_items.Select(x => x.Value).Contains(item.Value))
@@ -283,7 +283,7 @@ namespace MudBlazor
         /// <summary>
         /// Removes the specified item from this group.
         /// </summary>
-        /// <param name="item">The item to register.</param>
+        /// <param name="item">The item to remove.</param>
         protected internal void Unregister(MudToggleItem<T> item)
         {
             if (_items.Remove(item))
