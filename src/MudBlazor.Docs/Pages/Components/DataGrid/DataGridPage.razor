@@ -125,6 +125,17 @@
                     In both <i>active</i> modes, single columns can be excluded from sorting by setting the <CodeInline>Sortable</CodeInline> property to false for that column.
                     When SortMode is set to <CodeInline>SortMode.None</CodeInline> sorting is disabled globally and setting the <CodeInline>Sortable</CodeInline> property on a column has no effect.<br /><br />
                     You can also use the <CodeInline>SortBy</CodeInline> parameter on a <CodeInline>TemplateColumn</CodeInline> to allow sorting on that column.
+                    <br /><br />
+                    When using <CodeInline>PropertyColumn</CodeInline>, if the <CodeInline>Property</CodeInline> lambda expression returns directly a field of the object,
+                    the <CodeInline>SortDefinition</CodeInline>'s <CodeInline>SortBy</CodeInline> will return the Field's <CodeInline>nameof</CodeInline>.
+                    Instead, if the Property lamda expression contains a complex value, the SortBy will return the column GUID.
+                    In this case, if you need to retrieve the column, you have several options:
+                    <MudList T="string" Dense>
+                        <MudListItem>- Set the Title for the TemplateColumn, then get a ref of your MudDataGrid, iterate through RenderedColumns, find the TemplateColumn by that GUID, and extract the title.</MudListItem>
+                        <MudListItem>- Create your own TemplateColumn by inheriting <code>Column&lt;T&gt;</code> and override how the PropertyName behaves and use your own logic instead of the random guid.</MudListItem>
+                        <MudListItem>- Embed a <CodeInline>CellTemplate</CodeInline> inside the PropertyColumn and have the lambda expression of PropertyColumn return the simple field while
+                            writing the ad-hoc logic inside CellTemplate.</MudListItem>
+                    </MudList>
                     <MudAlert Severity="Severity.Info" Dense="true" Class="my-1">Changing the SortMode at runtime will reset any former sort orders on all columns.</MudAlert>
                 </Description>
             </SectionHeader>
