@@ -89,7 +89,7 @@ namespace MudBlazor
         /// The color of checkboxes.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Color.Default"/>.  Only applies when <see cref="SelectionMode"/> is <see cref="SelectionMode.MultiSelection" />.
+        /// Defaults to <see cref="Color.Default"/>. Only applies when <see cref="SelectionMode"/> is <see cref="SelectionMode.MultiSelection" />.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Selecting)]
@@ -109,7 +109,7 @@ namespace MudBlazor
         /// Uses checkboxes which support an undetermined state.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>true</c>.  Only applies when <see cref="SelectionMode"/> is <see cref="SelectionMode.MultiSelection"/>.  When set, 
+        /// Defaults to <c>true</c>. Only applies when <see cref="SelectionMode"/> is <see cref="SelectionMode.MultiSelection"/>. When set, 
         /// an item's checkbox will be in the "undetermined" state if child items have a mix of checked and unchecked states.
         /// </remarks>
         [Parameter]
@@ -120,7 +120,7 @@ namespace MudBlazor
         /// Automatically checks an item if all children are selected.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>true</c>.  Only applies when <see cref="SelectionMode"/> is <see cref="SelectionMode.MultiSelection"/>.  
+        /// Defaults to <c>true</c>. Only applies when <see cref="SelectionMode"/> is <see cref="SelectionMode.MultiSelection"/>. 
         /// Items will also be deselected if any children are deselected.
         /// </remarks>
         [Parameter]
@@ -131,7 +131,7 @@ namespace MudBlazor
         /// Expands an item with children if it is clicked anywhere (not just the expand/collapse buttons).
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  
+        /// Defaults to <c>false</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.ClickAction)]
@@ -141,7 +141,7 @@ namespace MudBlazor
         /// Expands an item with children if it is double-clicked anywhere (not just the expand/collapse buttons).
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  
+        /// Defaults to <c>false</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.ClickAction)]
@@ -181,7 +181,7 @@ namespace MudBlazor
         /// Sets a fixed height.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>null</c>.  Can be a CSS value such as <c>500px</c> or <c>30%</c>.  When set, items can be scrolled vertically.  Otherwise, the height will grow automatically.
+        /// Defaults to <c>null</c>. Can be a CSS value such as <c>500px</c> or <c>30%</c>. When set, items can be scrolled vertically. Otherwise, the height will grow automatically.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Appearance)]
@@ -191,7 +191,7 @@ namespace MudBlazor
         /// Sets a maximum height.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>null</c>.  Can be a CSS value such as <c>500px</c> or <c>30%</c>.  When set, items can be scrolled vertically.  Otherwise, the height will grow automatically.
+        /// Defaults to <c>null</c>. Can be a CSS value such as <c>500px</c> or <c>30%</c>. When set, items can be scrolled vertically. Otherwise, the height will grow automatically.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Appearance)]
@@ -201,7 +201,7 @@ namespace MudBlazor
         /// Sets a fixed width.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>null</c>.  Can be a CSS value such as <c>500px</c> or <c>30%</c>.
+        /// Defaults to <c>null</c>. Can be a CSS value such as <c>500px</c> or <c>30%</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Appearance)]
@@ -221,7 +221,7 @@ namespace MudBlazor
         /// Determines whether items are displayed.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>null</c>.  The function provides an item and should return <c>true</c> to display the item, or <c>false</c> to hide it.
+        /// Defaults to <c>null</c>. The function provides an item and should return <c>true</c> to display the item, or <c>false</c> to hide it.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Behavior)]
@@ -304,7 +304,7 @@ namespace MudBlazor
         /// The function for asynchronously loading items.
         /// </summary>
         /// <remarks>
-        /// When set, the function will be called to load the children of a parent item.  
+        /// When set, the function will be called to load the children of a parent item. 
         /// When the parent node is <c>null</c>, top-level items should be returned.
         /// </remarks>
         [Parameter]
@@ -315,7 +315,7 @@ namespace MudBlazor
         /// Prevents selections from being changed.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  When <c>true</c>, selections cannot be changed, but the current
+        /// Defaults to <c>false</c>. When <c>true</c>, selections cannot be changed, but the current
         /// selections will continue to be displayed.
         /// </remarks>
         [Parameter]
@@ -346,7 +346,7 @@ namespace MudBlazor
         /// The icon displayed for indeterminate items.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Icons.Material.Filled.IndeterminateCheckBox"/>.  Only applies when <see cref="TriState"/> is <c>true</c>.
+        /// Defaults to <see cref="Icons.Material.Filled.IndeterminateCheckBox"/>. Only applies when <see cref="TriState"/> is <c>true</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Selecting)]

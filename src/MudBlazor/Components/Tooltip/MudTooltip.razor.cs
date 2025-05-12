@@ -121,7 +121,7 @@ namespace MudBlazor
         /// Displays this tooltip inline with its container.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>true</c>.  When <c>false</c>, the content will display as a block element.
+        /// Defaults to <c>true</c>. When <c>false</c>, the content will display as a block element.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tooltip.Appearance)]
