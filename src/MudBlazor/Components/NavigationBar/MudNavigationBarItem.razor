@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<div @ref="_elementReference" class="@Classname" style="@Style" attributes="@UserAttributes" tabindex="0" @onclick="HandleClickAsync" @onkeydown="@HandleKeyDownAsync">
+<div @ref="_elementReference" class="@Classname" style="@Style" @attributes="@UserAttributes" tabindex="0" @onclick="HandleClickAsync" @onkeydown="@HandleKeyDownAsync">
     <MudBadge Class="@BadgeClassname" Dot="@BadgeParameters.Dot" Content="@BadgeParameters.Content" Overlap="@BadgeParameters.Overlap" Visible="@(BadgeParameters.Dot || BadgeParameters.Content != null)" Color="@BadgeParameters.Color">
         @if (Icon != null)
         {
