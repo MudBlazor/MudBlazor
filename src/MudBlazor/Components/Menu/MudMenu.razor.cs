@@ -53,6 +53,7 @@ namespace MudBlazor
         protected string PopoverClassname =>
             new CssBuilder()
                 .AddClass(PopoverClass)
+                .AddClass("mud-popover-nested", ParentMenu is not null)
                 .AddClass("mud-popover-position-override", PositionAtCursor)
                 .Build();
 

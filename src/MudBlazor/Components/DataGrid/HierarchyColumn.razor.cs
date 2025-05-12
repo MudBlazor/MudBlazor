@@ -88,6 +88,55 @@ public partial class HierarchyColumn<[DynamicallyAccessedMembers(DynamicallyAcce
     public EventCallback<bool> HiddenChanged { get; set; }
 
     /// <summary>
+    /// Whether or not to show a button in the header to expand/collapse all columns.
+    /// </summary>
+    /// <remarks>Defaults to <c>false</c>.</remarks>
+    [Parameter]
+    public bool EnableHeaderToggle { get; set; } = false;
+
+    /// <summary>
+    /// The CSS class applied to the header.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.  Separate multiple classes with spaces.
+    /// </remarks>
+    [Parameter]
+    public string HeaderClass { get; set; }
+
+    /// <summary>
+    /// The function which calculates CSS classes for the header.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.  Separate multiple classes with spaces.
+    /// </remarks>
+    [Parameter]
+    public Func<IEnumerable<T>, string> HeaderClassFunc { get; set; }
+
+    /// <summary>
+    /// The CSS style applied to this column's header.
+    /// </summary>
+    [Parameter]
+    public string HeaderStyle { get; set; } = "width:0%;";
+
+    /// <summary>
+    /// The function which calculates CSS styles for the header.
+    /// </summary>
+    [Parameter]
+    public Func<IEnumerable<T>, string> HeaderStyleFunc { get; set; }
+
+    /// <summary>
+    /// The template used to display this column's header.
+    /// </summary>
+    [Parameter]
+    public RenderFragment<HeaderContext<T>> HeaderTemplate { get; set; }
+
+    /// <summary>
+    /// The template used to display this column's value cells.
+    /// </summary>
+    [Parameter]
+    public RenderFragment<CellContext<T>> CellTemplate { get; set; }
+
+    /// <summary>
     /// The function which determines whether the row should be initially expanded.
     /// </summary>
     /// <remarks>
