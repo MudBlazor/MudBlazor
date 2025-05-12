@@ -200,7 +200,7 @@ namespace MudBlazor
             }
             await OnClick.InvokeAsync(args);
         }
-        protected async Task HandleKeyDownAsync(KeyboardEventArgs args)
+        protected internal async Task HandleKeyDownAsync(KeyboardEventArgs args)
         {
             if (Disabled)
                 return;

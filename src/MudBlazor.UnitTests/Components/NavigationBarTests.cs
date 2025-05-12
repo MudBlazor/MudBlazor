@@ -4,6 +4,7 @@
 
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components.Web;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -55,6 +56,33 @@ namespace MudBlazor.UnitTests.Components
             items[0].Instance._isSelected.Should().BeTrue();
             items[1].Instance._isSelected.Should().BeFalse();
             clickableItems[2].Click();
+            items[0].Instance._isSelected.Should().BeFalse();
+            items[2].Instance._isSelected.Should().BeTrue();
+        }
+
+        [Test]
+        public async Task NavigationBar_FocusandKeyTest()
+        {
+            var comp = Context.RenderComponent<MudNavigationBar>(builder =>
+            {
+                builder.AddChildContent<MudNavigationBarItem>(item => item.Add(x => x.Text, "a"));
+                builder.AddChildContent<MudNavigationBarItem>(item =>
+                {
+                    item.Add(x => x.Text, "b");
+                    item.Add(x => x.Disabled, true);
+                });
+                builder.AddChildContent<MudNavigationBarItem>(item => item.Add(x => x.Text, "c"));
+            });
+            var items = comp.FindComponents<MudNavigationBarItem>();
+            items[0].Instance._isSelected.Should().BeFalse();
+            await comp.InvokeAsync(() => items[0].Instance.FocusAsync());
+            await comp.InvokeAsync(() => items[0].Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter" }));
+            items[0].Instance._isSelected.Should().BeTrue();
+            await comp.InvokeAsync(() => items[0].Instance.BlurAsync());
+            await comp.InvokeAsync(() => items[0].Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter" }));
+            items[0].Instance._isSelected.Should().BeTrue();
+            await comp.InvokeAsync(() => items[2].Instance.FocusAsync());
+            await comp.InvokeAsync(() => items[2].Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "NumpadEnter" }));
             items[0].Instance._isSelected.Should().BeFalse();
             items[2].Instance._isSelected.Should().BeTrue();
         }
