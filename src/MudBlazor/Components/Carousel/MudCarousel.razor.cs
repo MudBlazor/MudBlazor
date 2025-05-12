@@ -207,20 +207,20 @@ namespace MudBlazor
 
         }
 
-        private async Task OnAutoCycleChangedAsync(ParameterChangedEventArgs<bool> args)
+        private Task OnAutoCycleChangedAsync(ParameterChangedEventArgs<bool> args)
         {
             if (args.Value)
-                await ResetTimerAsync();
+                return ResetTimerAsync();
             else
-                await StopTimerAsync();
+                return StopTimerAsync();
         }
 
-        private async Task OnAutoCycleTimeChangedAsync(ParameterChangedEventArgs<TimeSpan> args)
+        private Task OnAutoCycleTimeChangedAsync(ParameterChangedEventArgs<TimeSpan> args)
         {
             if (_autoCycleState.Value)
-                await ResetTimerAsync();
+                return ResetTimerAsync();
             else
-                await StopTimerAsync();
+                return StopTimerAsync();
         }
 
         /// <summary>
