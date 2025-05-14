@@ -13,7 +13,7 @@ namespace MudBlazor
 #nullable enable
 
     /// <summary>
-    /// A group of <see cref="MudToggleItem{T}"/> components.
+    /// Maintains the selection of a group of <see cref="MudToggleItem{T}"/> components.
     /// </summary>
     /// <typeparam name="T">The type of item being toggled.</typeparam>
     /// <seealso cref="MudToggleItem{T}"/>
@@ -256,11 +256,8 @@ namespace MudBlazor
         public bool FixedContent { get; set; }
 
         /// <summary>
-        /// The content within this group.
+        /// Contains the <see cref="MudToggleItem{T}"/> components of this group.
         /// </summary>
-        /// <remarks>
-        /// Typically a set of <see cref="MudToggleItem{T}"/> components.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
         public RenderFragment? ChildContent { get; set; }

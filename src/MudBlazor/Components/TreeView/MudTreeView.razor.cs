@@ -7,7 +7,7 @@ namespace MudBlazor
 {
 #nullable enable
     /// <summary>
-    /// A heirarchical tree of items.
+    /// A hierarchical tree of expandable items with optional value selection.
     /// </summary>
     /// <typeparam name="T">The type of item to display.</typeparam>
     /// <seealso cref="MudTreeViewItem{T}"/>

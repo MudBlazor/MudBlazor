@@ -9,9 +9,12 @@ namespace MudBlazor
 {
 #nullable enable
     /// <summary>
-    /// A node as part of a <see cref="MudTreeView{T}"/>.
+    /// An expandable branch of a <see cref="MudTreeView{T}"/>.
     /// </summary>
-    /// <typeparam name="T">The type of item to display.</typeparam>
+    /// <typeparam name="T">The type of the selectable value held by the item.</typeparam>
+    /// <remarks>
+    /// Used as the data model of the tree.
+    /// </remarks>
     /// <seealso cref="MudTreeView{T}"/>
     /// <seealso cref="MudTreeViewItemToggleButton"/>
     public partial class MudTreeViewItem<T> : MudComponentBase, IDisposable
