@@ -22,7 +22,7 @@ namespace MudBlazor.Charts
         private double _barWidth;
         private double _barGap;
 
-        private const double MinBarWidth = 6;
+        private const double MinBarWidth = 8;
 
         protected override void RebuildChart()
         {

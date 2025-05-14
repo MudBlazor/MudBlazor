@@ -35,7 +35,7 @@ namespace MudBlazor.Charts
                 if (normalizedData[i] == 0)
                     continue;
 
-                var seriesdata = chartData[i];
+                var seriesdata = Math.Max(0, chartData[i]); //Ensure non-negative values
                 var data = normalizedData[i];
                 var startx = Math.Cos(cumulativeRadians);
                 var starty = Math.Sin(cumulativeRadians);

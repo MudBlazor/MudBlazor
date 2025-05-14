@@ -13,9 +13,9 @@ public class BarChartOptions : DefaultBarChartOptions
     /// Defines the spacing between bars as a ratio of the group width, with a value between 0.0 and 1.0.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>0.10</c> (10%).
+    /// Defaults to <c>0.20</c> (20%).
     /// </remarks>
-    public double BarSpacingRatio { get; set; } = 0.10;
+    public double BarSpacingRatio { get; set; } = 0.20;
 
     public static implicit operator BarChartOptions(ChartOptions options) => new()
     {

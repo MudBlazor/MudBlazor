@@ -95,6 +95,16 @@ namespace MudBlazor
                 throw new InvalidOperationException("MudHeatMapCell must be used inside a HeatMap component.");
             }
         }
+
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
+
+            if (Parent is HeatMap heatMap && heatMap is not null)
+            {
+                heatMap.RebuildChart();
+            }
+        }
     }
 }
 

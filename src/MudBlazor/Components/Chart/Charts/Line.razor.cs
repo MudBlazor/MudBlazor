@@ -35,15 +35,19 @@ namespace MudBlazor.Charts
         {
             gridYUnits = ChartOptions?.YAxisTicks ?? 20;
             gridYUnits = ChartOptions?.YAxisTicks ?? 20;
+
             if (gridYUnits <= 0)
                 gridYUnits = 20;
 
-            if (Series.SelectMany(series => series.Data.Values).Any())
-            {
-                var minY = Series.Where(series => series.Visible).SelectMany(series => series.Data.Values).Min();
-                var maxY = Series.Where(series => series.Visible).SelectMany(series => series.Data.Values).Max();
+            var visibleSeries = Series.Where(series => series.Visible).ToArray();
+            var values = visibleSeries.SelectMany(series => series.Data.Values);
 
-                var hasAreaDisplay = ChartOptions?.LineDisplayType == LineDisplayType.Area || Series.Any(series => GetSeriesDisplayOverride(series)?.LineDisplayType == LineDisplayType.Area);
+            if (visibleSeries.Length > 0 && values.Any())
+            {
+                var minY = values.Min();
+                var maxY = values.Max();
+
+                var hasAreaDisplay = ChartOptions?.LineDisplayType == LineDisplayType.Area || visibleSeries.Any(series => GetSeriesDisplayOverride(series)?.LineDisplayType == LineDisplayType.Area);
                 var includeYAxisZeroPoint = ChartOptions?.YAxisRequireZeroPoint is true || hasAreaDisplay;
                 if (includeYAxisZeroPoint)
                 {
@@ -65,7 +69,7 @@ namespace MudBlazor.Charts
                     numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
                 }
 
-                numVerticalLines = Series.Max(series => series.Data.Values.Length);
+                numVerticalLines = visibleSeries.Max(series => series.Data.Values.Length);
             }
             else
             {

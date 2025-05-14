@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using MudBlazor.Interop;
-using MudBlazor.State;
 using MudBlazor.Utilities;
 
 #nullable enable
@@ -213,12 +212,14 @@ namespace MudBlazor.Charts
             _cellDimension = new CellDimension(cellWidth, cellHeight, padding);
         }
 
-        private void RebuildChart()
+        public void RebuildChart()
         {
             SetBounds();
             // Populate _heatmapCells based on data, e.g., matrix of values
             _heatMapCells.Clear();
             _toggleLegend.Clear();
+            _minValue = double.MaxValue;
+            _maxValue = double.MinValue;
 
             var hasValues = false;
             // # of rows

@@ -2,19 +2,19 @@
 @inherits MudRadialChartBase<DonutChartOptions>
 
 <BaseRadialChart TChartOptions="DonutChartOptions"
-    ElementRefChanged="SetElementReference"
-    Radius="@CalculatedRadius"
-    ChartClass="@ChartClass"
-    Paths="@_paths"
-    Legends="@_legends"
-    HoveredSegment="@_hoveredSegment"
-    UserAttributes="@UserAttributes"
-    TooltipFormat="@BuildTooltipFormat()"
-    TooltipTemplate="MudChartParent?.TooltipTemplate"
-    TooltipPositionFunc="MudChartParent?.TooltipPositionFunc"
-    OnPathClick="async (i) => await SetSelectedIndexAsync(i)"
-    OnMouseOver="(i) => OnSegmentMouseOver(new MouseEventArgs(), i)"
-    OnMouseOut="() => OnSegmentMouseOut(new MouseEventArgs())" />
+                 ElementRefChanged="SetElementReference"
+                 Radius="@CalculatedRadius"
+                 ChartClass="@ChartClass"
+                 Paths="@_paths"
+                 Legends="@_legends"
+                 HoveredSegment="@_hoveredSegment"
+                 UserAttributes="@UserAttributes"
+                 TooltipFormat="@BuildTooltipFormat()"
+                 TooltipTemplate="MudChartParent?.TooltipTemplate"
+                 TooltipPositionFunc="MudChartParent?.TooltipPositionFunc"
+                 OnPathClick="async (i) => await SetSelectedIndexAsync(i)"
+                 OnMouseOver="(i) => OnSegmentMouseOver(new MouseEventArgs(), i)"
+                 OnMouseOut="() => OnSegmentMouseOut(new MouseEventArgs())" />
 
 @code {
     public override string ChartClass => "mud-chart-donut";

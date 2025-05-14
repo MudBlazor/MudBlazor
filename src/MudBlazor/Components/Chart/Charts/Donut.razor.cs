@@ -26,7 +26,7 @@ namespace MudBlazor.Charts
             var chartData = AggregateSeriesData(ChartOptions!.AggregationOption);
             var normalizedData = GetNormalizedData();
             var cumulativeRadians = -Math.PI / 2; // Start at -90 degrees
-            var donutRadiusRatio = ChartOptions!.DonutHoleRatio.EnsureRange(0.1, 1);
+            var donutRadiusRatio = ChartOptions!.DonutRingRatio.EnsureRange(0.1, 1);
             var chartLabels = ChartOptions!.AggregationOption == AggregationOption.GroupByDataSet
                     ? ChartSeries.Select(ds => ds.Label).ToArray()
                     : ChartLabels;
@@ -36,7 +36,7 @@ namespace MudBlazor.Charts
                 if (normalizedData[i] == 0)
                     continue;
 
-                var seriesdata = chartData[i];
+                var seriesdata = Math.Max(0, chartData[i]); //Ensure non-negative values
                 var data = normalizedData[i];
                 var startx = Math.Cos(cumulativeRadians);
                 var starty = Math.Sin(cumulativeRadians);

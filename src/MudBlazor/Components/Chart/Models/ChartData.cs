@@ -4,6 +4,7 @@
 
 #nullable enable
 using System.Runtime.CompilerServices;
+using MudBlazor.Charts;
 
 namespace MudBlazor;
 
@@ -16,17 +17,17 @@ public class ChartData
 
     public ChartData(double value) => _points = [new ChartPoint(0, value)];
 
-    public ChartData(double[] values)
-    {
-        _points = new List<ChartPoint>(values.Length);
+    public ChartData(IEnumerable<double> values) => _points = [.. values.Select(v => new ChartPoint(0, v))];
 
-        for (var i = 0; i < values.Length; i++)
-        {
-            _points.Add(new ChartPoint(0, values[i]));
-        }
-    }
+    public ChartData(TimeSeries.DataPoint point) => _points = [new ChartPoint(point.DateTime, point.Value)];
+
+    public ChartData(IEnumerable<TimeSeries.DataPoint> points) =>
+        _points = [.. points.Select(p => new ChartPoint(p.DateTime, p.Value))];
 
     public ChartData(IEnumerable<ChartPoint> points) => _points = [.. points];
+
+    public ChartData((DateTime dateTime, double value) timeValue) =>
+        _points = [new ChartPoint(timeValue.dateTime, timeValue.value)];
 
     public ChartData(IEnumerable<(DateTime dateTime, double value)> timeValues) =>
         _points = [.. timeValues.Select(tv => new ChartPoint(tv.dateTime, tv.value))];
@@ -43,6 +44,8 @@ public class ChartData
 
     public static implicit operator ChartData(double value) => new(value);
     public static implicit operator ChartData(double[] values) => new(values);
+    public static implicit operator ChartData(TimeSeries.DataPoint dataPoint) => new(dataPoint);
+    public static implicit operator ChartData(List<TimeSeries.DataPoint> dataPoints) => new(dataPoints);
     public static implicit operator ChartData((DateTime dateTime, double value)[] timeValues) => new(timeValues);
     public static implicit operator ChartData(List<(DateTime dateTime, double value)> timeValues) => new(timeValues);
 

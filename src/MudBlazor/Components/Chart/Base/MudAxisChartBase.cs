@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using MudBlazor.Interop;
+using MudBlazor.Utilities.Debounce;
 
 #nullable enable
 namespace MudBlazor.Charts;
@@ -41,13 +42,16 @@ public abstract class MudAxisChartBase<TOptions> : MudChartBase<TOptions>, IDisp
     protected double _boundWidth = BoundWidthDefault;
     protected double _boundHeight = BoundHeightDefault;
     private ElementSize? _elementSize;
-    private ElementSize? _yAxisLabelSize;
-    private ElementSize? _xAxisLabelSize;
+    protected ElementSize? _yAxisLabelSize;
+    protected ElementSize? _xAxisLabelSize;
 
     private readonly DotNetObjectReference<MudAxisChartBase<TOptions>> _dotNetObjectReference;
     protected ElementReference _elementReference;
     protected ElementReference? _xAxisGroupElementReference;
     protected ElementReference? _yAxisGroupElementReference;
+
+    private readonly DebounceDispatcher _debouncer = new(DebounceIntervalMs);
+    private const int DebounceIntervalMs = 200;
 
     [DynamicDependency(nameof(OnElementSizeChanged))]
     [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(ElementSize))]
@@ -72,6 +76,7 @@ public abstract class MudAxisChartBase<TOptions> : MudChartBase<TOptions>, IDisp
             var elementSize = await JsRuntime.InvokeAsync<ElementSize>("mudObserveElementSize", _dotNetObjectReference, _elementReference);
 
             OnElementSizeChanged(elementSize);
+            return;
         }
 
         var yAxisLabelSize = _yAxisGroupElementReference != null ? await JsRuntime.InvokeAsync<ElementSize>("mudGetSvgBBox", _yAxisGroupElementReference) : null;
@@ -139,8 +144,15 @@ public abstract class MudAxisChartBase<TOptions> : MudChartBase<TOptions>, IDisp
             return;
         }
 
-        RebuildChart();
-        StateHasChanged();
+        // Debounce the chart update logic
+        _ = _debouncer.DebounceAsync(async () =>
+        {
+            await InvokeAsync(() =>
+            {
+                RebuildChart();
+                StateHasChanged();
+            });
+        });
     }
 
     protected abstract void RebuildChart();

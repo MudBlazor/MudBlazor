@@ -51,7 +51,8 @@
                                                              @ref="_chartReference"
                                                              @bind-SelectedIndex:get="this.SelectedIndexState.Value" 
                                                              @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
-        (ChartType.StackedBar, StackedBarChartOptions stackedBarOptions) => @<StackedBar ChartSeries="@ChartSeries" 
+        (ChartType.StackedBar, StackedBarChartOptions stackedBarOptions) => @<StackedBar ChartSeries="@ChartSeries"
+                                                                                         ChartLabels="@ChartLabels"
                                                                                          ChartOptions="stackedBarOptions"
                                                                                          TooltipTemplate="@TooltipTemplate"
                                                                                          TooltipPositionFunc="@TooltipPositionFunc"
