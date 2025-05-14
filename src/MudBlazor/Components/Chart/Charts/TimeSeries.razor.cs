@@ -59,13 +59,6 @@ partial class TimeSeries : MudAxisLineChartBase<TimeSeriesChartOptions>, IDispos
     {
         _minDateLabelOffset = TimeSpan.Zero;
 
-        if (!Series.SelectMany(series => series.Data.Points).Any())
-        {
-            _minDateTime = DateTime.Now;
-            _maxDateTime = DateTime.Now.AddDays(1);
-            return;
-        }
-
         DateTime? minDate = null;
         DateTime? maxDate = null;
 
@@ -84,16 +77,19 @@ partial class TimeSeries : MudAxisLineChartBase<TimeSeriesChartOptions>, IDispos
             }
         }
 
+        var labelSpacing = ChartOptions!.TimeLabelSpacing;
+
         if (minDate == null || maxDate == null)
         {
             _minDateTime = DateTime.Now;
-            _maxDateTime = DateTime.Now.AddDays(1);
+            _maxDateTime = labelSpacing.Days > 0 ? DateTime.Now.AddDays(1) :
+                           labelSpacing.Minutes > 0 ? DateTime.Now.AddHours(1) :
+                           DateTime.Now.AddMinutes(1);
             return;
         }
 
         _minDateTime = minDate.Value;
         _maxDateTime = maxDate.Value;
-        var labelSpacing = ChartOptions!.TimeLabelSpacing;
 
         if (!ChartOptions!.TimeLabelSpacingRounding) return;
 

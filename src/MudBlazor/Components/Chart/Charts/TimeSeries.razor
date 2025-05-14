@@ -66,12 +66,12 @@
             var lineClass = isHovered ? "mud-chart-serie mud-chart-line mud-chart-serie-hovered" : "mud-chart-serie mud-chart-line";
 
             <path class="@lineClass"
-            @onclick="async () => await SetSelectedIndexAsync(chartLine.Index)"
-            fill="none" 
-            stroke="@color" 
-            stroke-opacity="@(overrideSettings?.StrokeOpacity.ToS() ?? "1")"
-            stroke-width="@lineStrokeWidth.ToS()" 
-            d="@chartLine.Data">
+                  @onclick="async () => await SetSelectedIndexAsync(chartLine.Index)"
+                  fill="none" 
+                  stroke="@color" 
+                  stroke-opacity="@(overrideSettings?.StrokeOpacity.ToS() ?? "1")"
+                  stroke-width="@lineStrokeWidth.ToS()" 
+                  d="@chartLine.Data">
             </path>
 
             var displayType = overrideSettings?.LineDisplayType ?? ChartOptions?.LineDisplayType;
@@ -80,10 +80,10 @@
             {
                 var chartArea = ChartAreas[chartLine.Index];
                 <path class="@lineClass" 
-                @onclick="async () => await SetSelectedIndexAsync(chartLine.Index)"
-                fill="@color"
-                fill-opacity="@(overrideSettings?.FillOpacity.ToS() ?? "0.4")"
-                d="@chartArea.Data">
+                      @onclick="async () => await SetSelectedIndexAsync(chartLine.Index)"
+                      fill="@color"
+                      fill-opacity="@(overrideSettings?.FillOpacity.ToS() ?? "0.4")"
+                      d="@chartArea.Data">
                 </path>
             }
 
@@ -93,27 +93,27 @@
                 {
                     // Unhovered data point
                     <circle class="mud-chart-serie mud-donut-segment" 
-                    @onclick="async () => await SetSelectedIndexAsync(chartLine.Index)"
-                    stroke="@color"
-                    stroke-width="@dataPointStroke"
-                    cx="@item.CX.ToS()"
-                    cy="@item.CY.ToS()"
-                    r="@dataPointRadius.ToS()">
+                            @onclick="async () => await SetSelectedIndexAsync(chartLine.Index)"
+                            stroke="@color"
+                            stroke-width="@dataPointStroke"
+                            cx="@item.CX.ToS()"
+                            cy="@item.CY.ToS()"
+                            r="@dataPointRadius.ToS()">
                     </circle>
                 }
 
                 // This is a hoverable circle that is invisible until it is the hovered point but has a larger radius to make it easier to hover over
                 <circle class="mud-chart-serie mud-donut-segment"
-                @onclick="async () => await SetSelectedIndexAsync(chartLine.Index)" 
-                fill="@(item == HoveredDataPoint ? color : string.Empty)" 
-                stroke="@color" 
-                stroke-width="@dataPointStroke" 
-                opacity="@(item == HoveredDataPoint ? 1 : 0)"
-                cx="@item.CX.ToS()"
-                cy="@item.CY.ToS()"
-                r="@dataPointHoverRadius.ToS()"
-                @onmouseover="(e) => OnDataPointMouseOver(e, item, chartLine)"
-                @onmouseout="OnDataPointMouseOut">
+                        @onclick="async () => await SetSelectedIndexAsync(chartLine.Index)" 
+                        fill="@(item == HoveredDataPoint ? color : string.Empty)" 
+                        stroke="@color" 
+                        stroke-width="@dataPointStroke" 
+                        opacity="@(item == HoveredDataPoint ? 1 : 0)"
+                        cx="@item.CX.ToS()"
+                        cy="@item.CY.ToS()"
+                        r="@dataPointHoverRadius.ToS()"
+                        @onmouseover="(e) => OnDataPointMouseOver(e, item, chartLine)"
+                        @onmouseout="OnDataPointMouseOut">
                 </circle>
             }
         }

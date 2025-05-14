@@ -124,7 +124,7 @@ namespace MudBlazor.Docs.Services
                 .AddItem("Bar Chart", typeof(Bar), typeof(ChartOptions))
                 .AddItem("Heat Map Chart", typeof(HeatMap))
                 .AddItem("Stacked Bar Chart", typeof(StackedBar))
-                .AddItem("Time Series Chart", typeof(TimeSeries), typeof(MudTimeSeriesChartBase), typeof(MudTimeSeriesChart))
+                .AddItem("Time Series Chart", typeof(TimeSeries))
             )
             // this must be last!
             .GetComponentsSortedByName();
