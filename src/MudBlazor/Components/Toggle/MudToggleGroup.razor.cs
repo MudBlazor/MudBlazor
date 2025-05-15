@@ -301,6 +301,7 @@ namespace MudBlazor
                 item.SetSelected(selected);
             }
         }
+
         protected internal async Task ToggleItemAsync(MudToggleItem<T> item)
         {
             var itemValue = item.Value;
