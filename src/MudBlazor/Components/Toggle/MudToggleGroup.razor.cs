@@ -290,13 +290,13 @@ namespace MudBlazor
                 ApplySelectionState(item);
             }
         }
-        
+
         private void ApplySelectionState(MudToggleItem<T> item)
         {
             var selected = SelectionMode == SelectionMode.MultiSelection
                 ? _values.Value?.Contains(item.Value) ?? false
                 : EqualityComparer<T>.Default.Equals(_value.Value, item.Value);
-            if(item.Selected != selected)
+            if (item.Selected != selected)
             {
                 item.SetSelected(selected);
             }
@@ -304,7 +304,6 @@ namespace MudBlazor
         protected internal async Task ToggleItemAsync(MudToggleItem<T> item)
         {
             var itemValue = item.Value;
-
 
             if (SelectionMode == SelectionMode.MultiSelection)
             {
