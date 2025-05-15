@@ -11,11 +11,13 @@ namespace MudBlazor
     /// </summary>
     public partial class MudSwipeArea : MudComponentBase
     {
-        private static readonly string[] _preventDefaultEventNames = ["onpointerdown", "onpointerup", "onpointercancel"];
+        private static readonly string[] _preventDefaultEventNames = ["onpointerdown", "onpointerup", "onpointercancel", "onpointermove", "onpointerleave"];
 
         private double? _swipeDelta;
         internal int[]? _listenerIds;
         internal double? _xDown, _yDown;
+        private double? _xDownway, _yDownway;
+        private bool _isSwipeOnProgress;
         private bool _preventDefaultChanged;
         private ElementReference _componentRef;
 
@@ -27,11 +29,32 @@ namespace MudBlazor
         public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
+        /// Occurs when a swipe has on progress. Ignores sensitivity.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.SwipeArea.Behavior)]
+        public EventCallback<MultiDimensionSwipeEventArgs> OnSwipeMove { get; set; }
+
+        /// <summary>
         /// Occurs when a swipe has ended.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.SwipeArea.Behavior)]
         public EventCallback<SwipeEventArgs> OnSwipeEnd { get; set; }
+
+        /// <summary>
+        /// Occurs when a swipe leaves the area.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.SwipeArea.Behavior)]
+        public EventCallback<PointerEventArgs> OnSwipeLeave { get; set; }
+
+        /// <summary>
+        /// Occurs when a swipe cancelled.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.SwipeArea.Behavior)]
+        public EventCallback<PointerEventArgs> OnSwipeCancel { get; set; }
 
         /// <summary>
         /// The amount of pixels which must be swiped to raise the <see cref="OnSwipeEnd"/> event.
@@ -98,23 +121,53 @@ namespace MudBlazor
 
         internal void OnPointerDown(PointerEventArgs arg)
         {
+            _isSwipeOnProgress = true;
             _xDown = arg.ClientX;
             _yDown = arg.ClientY;
+            _xDownway = arg.ClientX;
+            _yDownway = arg.ClientY;
         }
 
-        internal async Task OnPointerUp(PointerEventArgs arg)
+        private async Task OnPointerMoveAsync(PointerEventArgs arg)
+        {
+            if (!_isSwipeOnProgress)
+            {
+                return;
+            }
+
+            var xDiff = (_xDownway - arg.ClientX) ?? 0;
+            var yDiff = (_yDownway - arg.ClientY) ?? 0;
+
+            if (Math.Abs(xDiff) > Math.Abs(yDiff))
+            {
+                _swipeDelta = xDiff;
+            }
+            else
+            {
+                _swipeDelta = yDiff;
+            }
+
+            var swipeDirection = GetSwipeDirections(xDiff, yDiff);
+            await OnSwipeMove.InvokeAsync(new MultiDimensionSwipeEventArgs(arg, swipeDirection, [xDiff, yDiff], this));
+
+            _xDownway = arg.ClientX;
+            _yDownway = arg.ClientY;
+        }
+
+        internal async Task OnPointerUpAsync(PointerEventArgs arg)
         {
             if (_xDown is null || _yDown is null)
             {
+                _isSwipeOnProgress = false;
                 return;
             }
 
             var xDiff = _xDown.Value - arg.ClientX;
             var yDiff = _yDown.Value - arg.ClientY;
 
-            if (Math.Abs(xDiff) < Sensitivity && Math.Abs(yDiff) < Sensitivity)
+            if (!OnSwipeMove.HasDelegate && Math.Abs(xDiff) < Sensitivity && Math.Abs(yDiff) < Sensitivity)
             {
-                _xDown = _yDown = null;
+                Cancel();
                 return;
             }
 
@@ -132,12 +185,42 @@ namespace MudBlazor
             }
 
             await OnSwipeEnd.InvokeAsync(new SwipeEventArgs(arg, swipeDirection, _swipeDelta, this));
-            _xDown = _yDown = null;
+            _xDown = _yDown = _xDownway = _yDownway = null;
+            _isSwipeOnProgress = false;
         }
 
-        internal void OnPointerCancel(PointerEventArgs arg)
+        internal Task OnPointerCancelAsync(PointerEventArgs arg)
         {
-            _xDown = _yDown = null;
+            Cancel();
+            return OnSwipeCancel.InvokeAsync(arg);
+        }
+
+        public void Cancel()
+        {
+            _xDown = _yDown = _xDownway = _yDownway = null;
+            _isSwipeOnProgress = false;
+        }
+
+        private static IReadOnlyList<SwipeDirection> GetSwipeDirections(double xDiff, double yDiff)
+        {
+            var horizontalDirection = GetDirection(xDiff, SwipeDirection.RightToLeft, SwipeDirection.LeftToRight);
+            var verticalDirection = GetDirection(yDiff, SwipeDirection.BottomToTop, SwipeDirection.TopToBottom);
+
+            return [horizontalDirection, verticalDirection];
+
+            SwipeDirection GetDirection(double diff, SwipeDirection positiveDirection, SwipeDirection negativeDirection)
+            {
+                const double Epsilon = 1e-6;
+
+                if (Math.Abs(diff) < Epsilon)
+                {
+                    return SwipeDirection.None;
+                }
+
+                return diff > Epsilon
+                    ? positiveDirection
+                    : negativeDirection;
+            }
         }
     }
 }

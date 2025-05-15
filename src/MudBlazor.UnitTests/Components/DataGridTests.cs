@@ -2940,6 +2940,44 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGrid_RowDetail_ExpandCollapseAllTest()
+        {
+            var comp = Context.RenderComponent<DataGridHierarchyColumnTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
+
+            dataGrid.WaitForAssertion(() => dataGrid.Instance._openHierarchies.Count.Should().Be(2));
+            await dataGrid.InvokeAsync(() => dataGrid.Instance.CollapseAllHierarchy());
+            dataGrid.WaitForAssertion(() => dataGrid.Instance._openHierarchies.Count.Should().Be(0));
+            await dataGrid.InvokeAsync(() => dataGrid.Instance.ExpandAllHierarchy());
+            dataGrid.WaitForAssertion(() => dataGrid.Instance._openHierarchies.Count.Should().Be(5));
+        }
+
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public void DataGrid_RowDetail_RTL_GroupIcon(bool rightToLeft)
+        {
+            var comp = Context.RenderComponent<DataGridHierarchyColumnTest>(param => param
+                .Add(p => p.RightToLeft, rightToLeft)
+            );
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
+            var svg = dataGrid.Find(".mud-table-body .mud-table-row .mud-table-cell .mud-icon-root");
+
+            if (!rightToLeft)
+            {
+                // ChevronRight by Default
+                svg.InnerHtml.Should().Contain("<path d=\"M0 0h24v24H0z\"")
+                    .And.Contain("<path d=\"M10 6L8.59 7.41");
+            }
+            else
+            {
+                // ChevronLeft when RTL is true
+                svg.InnerHtml.Should().Contain("<path d=\"M0 0h24v24H0z\"")
+                    .And.Contain("<path d=\"M15.41 7.41L14 6l-6");
+            }
+        }
+
+        [Test]
         public void DataGridRowDetailButtonDisabledTest()
         {
             var comp = Context.RenderComponent<DataGridHierarchyColumnTest>();
@@ -4092,152 +4130,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DataGridGroupExpandedTrueTest()
-        {
-            var comp = Context.RenderComponent<DataGridGroupExpandedTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedTest.Fruit>>();
-
-            comp.FindAll("tbody .mud-table-row").Count.Should().Be(7);
-            await comp.InvokeAsync(() => dataGrid.Instance.CollapseAllGroups());
-            dataGrid.Render();
-            // after all groups are collapsed
-            comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
-            await comp.InvokeAsync(() =>
-                comp.Instance.AddFruit());
-            // datagrid should be expanded with the new category
-            dataGrid.Render();
-            comp.FindAll("tbody .mud-table-row").Count.Should().Be(5);
-        }
-
-        [Test]
-        public async Task DataGridGroupExpandedTrueAsyncTest()
-        {
-            var comp = Context.RenderComponent<DataGridGroupExpandedAsyncTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedAsyncTest.Fruit>>();
-
-            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
-            await comp.InvokeAsync(() => dataGrid.Instance.CollapseAllGroups());
-            dataGrid.Render();
-            // after all groups are collapsed
-            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(2));
-            await comp.InvokeAsync(() =>
-                comp.Instance.AddFruit());
-            // datagrid should be expanded with the new category
-            dataGrid.Render();
-            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(5));
-        }
-
-        [Test]
-        public async Task DataGridGroupExpandedTrueServerDataTest()
-        {
-            var comp = Context.RenderComponent<DataGridGroupExpandedServerDataTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedServerDataTest.Fruit>>();
-
-            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
-            await comp.InvokeAsync(() => dataGrid.Instance.CollapseAllGroups());
-            dataGrid.Render();
-            // after all groups are collapsed
-            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(2));
-            await comp.InvokeAsync(() => comp.Instance.AddFruit());
-            // datagrid should be expanded with the new category
-            dataGrid.Render();
-            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(5));
-        }
-
-        [Test]
-        public async Task DataGridGroupExpandedFalseTest()
-        {
-            var comp = Context.RenderComponent<DataGridGroupExpandedFalseTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedFalseTest.Fruit>>();
-
-            comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
-            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroups());
-            dataGrid.Render();
-            // after all groups are expanded
-            comp.FindAll("tbody .mud-table-row").Count.Should().Be(7);
-            await comp.InvokeAsync(() =>
-                comp.Instance.AddFruit());
-            // datagrid should be collapsed with the new category
-            dataGrid.Render();
-            comp.FindAll("tbody .mud-table-row").Count.Should().Be(8);
-        }
-
-        [Test]
-        public async Task DataGridGroupExpandedFalseAsyncTest()
-        {
-            var comp = Context.RenderComponent<DataGridGroupExpandedFalseAsyncTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedFalseAsyncTest.Fruit>>();
-
-            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(2));
-            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroups());
-            dataGrid.Render();
-            // after all groups are expanded
-            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
-            await comp.InvokeAsync(() =>
-                comp.Instance.AddFruit());
-            // datagrid should be collapsed with the new category
-            dataGrid.Render();
-            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(8));
-        }
-
-        [Test]
-        public async Task DataGridGroupExpandedFalseServerDataTest()
-        {
-            var comp = Context.RenderComponent<DataGridGroupExpandedFalseServerDataTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedFalseServerDataTest.Fruit>>();
-
-            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(2));
-            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroups());
-            dataGrid.Render();
-            // after all groups are expanded
-            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
-            await comp.InvokeAsync(() => comp.Instance.AddFruit());
-            // datagrid should be collapsed with the new category
-            dataGrid.Render();
-            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(8));
-        }
-
-        [Test]
-        public async Task DataGridGroupCollapseAllTest()
-        {
-            var comp = Context.RenderComponent<DataGridGroupCollapseAllTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupCollapseAllTest.TestObject>>();
-
-            comp.FindAll("tbody .mud-table-row").Count.Should().Be(3);
-            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroups());
-            comp.Render();
-            comp.FindAll("tbody .mud-table-row").Count.Should().Be(15);
-            await comp.InvokeAsync(() => dataGrid.Instance.CollapseAllGroups());
-            comp.Render();
-            comp.FindAll("tbody .mud-table-row").Count.Should().Be(3);
-            comp.Instance.RefreshList();
-            comp.Render();
-            // after all groups are expanded
-            comp.FindAll("tbody .mud-table-row").Count.Should().Be(3);
-        }
-
-        [Test]
-        public async Task DataGridGroupExpandAllCollapseAllTest()
-        {
-            var comp = Context.RenderComponent<DataGridGroupExpandAllCollapseAllTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandAllCollapseAllTest.Element>>();
-
-            comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
-            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroups());
-            comp.Render();
-            comp.FindAll("tbody .mud-table-row").Count.Should().Be(14);
-            await dataGrid.InvokeAsync(() => dataGrid.Instance.NavigateTo(Page.First));
-            await dataGrid.InvokeAsync(() => dataGrid.Instance.NavigateTo(Page.Next));
-            comp.FindAll("tbody .mud-table-row").Count.Should().Be(18);
-            await comp.InvokeAsync(() => dataGrid.Instance.CollapseAllGroups());
-            await dataGrid.InvokeAsync(() => dataGrid.Instance.NavigateTo(Page.First));
-            comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
-            comp.Instance.RefreshList();
-            comp.Render();
-            comp.FindAll("tbody .mud-table-row").Count.Should().Be(2);
-        }
-
-        [Test]
         public async Task DataGridPropertyColumnFormatTest()
         {
             var comp = Context.RenderComponent<DataGridFormatTest>();
@@ -4492,43 +4384,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ShouldSetIsGenderGroupedToTrueWhenGroupingIsApplied()
-        {
-            // Render the DataGridGroupingTest component for testing.
-            var comp = Context.RenderComponent<DataGridColumnGroupingTest>();
-
-            // Attempt to find the MudPopoverProvider component within the rendered component.
-            // MudPopoverProvider is used to manage popovers in the component, including the grouping popover.
-            var popoverProvider = comp.FindComponent<MudPopoverProvider>();
-
-            // Assert that initially, before any user interaction, IsGenderGrouped should be false.
-            comp.Instance.IsGenderGrouped.Should().Be(false);
-
-            // Find the button within the 'th' element with class 'gender' that triggers the popover for grouping.
-            var genderHeaderOption = comp.Find("th.gender .mud-menu button");
-
-            // Simulate a click on the gender header group button to open the popover with grouping options.
-            genderHeaderOption.Click();
-
-            // Find all MudListItem components within the popoverProvider.
-            // These list items represent the individual options within the grouping popover.
-            var listItems = popoverProvider.FindComponents<MudMenuItem>();
-
-            // Assert that there are exactly 2 list items (options) available in the popover.
-            listItems.Count.Should().Be(2);
-
-            // From the list items found, select the second one which is expected to be the clickable option for grouping.
-            var clickablePopover = listItems[1].Find(".mud-menu-item");
-
-            // click on the grouping option to apply grouping to the data grid.
-            clickablePopover.Click();
-
-            // After clicking the grouping option, assert that IsGenderGrouped is now true, indicating that
-            // the action of applying grouping has successfully updated the component's state.
-            comp.Instance.IsGenderGrouped.Should().Be(true);
-        }
-
-        [Test]
         public void DataGridDynamicColumnsTest()
         {
             var comp = Context.RenderComponent<DataGridDynamicColumnsTest>();
@@ -4581,161 +4436,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        [SetCulture("en-US")]
-        public void DataGridServerGroupUngroupingTest()
-        {
-            var comp = Context.RenderComponent<DataGridServerDataColumnGroupingTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<Examples.Data.Models.Element>>();
-            var popoverProvider = comp.FindComponent<MudPopoverProvider>();
-
-            //click name grouping in grid
-            var headerOption = comp.Find("th.name .mud-menu button");
-            headerOption.Click();
-            var listItems = popoverProvider.FindComponents<MudMenuItem>();
-            listItems.Count.Should().Be(4);
-            var clickablePopover = listItems[3].Find(".mud-menu-item");
-            clickablePopover.Click();
-            var cells = dataGrid.FindAll("td");
-
-            //checking cell content is the most reliable way to verify grouping
-            cells[0].TextContent.Should().Be("Name: Hydrogen");
-            cells[1].TextContent.Should().Be("Name: Helium");
-            cells[2].TextContent.Should().Be("Name: Lithium");
-            cells[3].TextContent.Should().Be("Name: Beryllium");
-            cells[4].TextContent.Should().Be("Name: Boron");
-            cells[5].TextContent.Should().Be("Name: Carbon");
-            cells[6].TextContent.Should().Be("Name: Nitrogen");
-            cells[7].TextContent.Should().Be("Name: Oxygen");
-            cells[8].TextContent.Should().Be("Name: Fluorine");
-            cells[9].TextContent.Should().Be("Name: Neon");
-            dataGrid.Instance.GroupedColumn.Should().NotBeNull();
-
-            //click name ungrouping in grid
-            headerOption = comp.Find("th.name .mud-menu button");
-            headerOption.Click();
-            listItems = popoverProvider.FindComponents<MudMenuItem>();
-            listItems.Count.Should().Be(4);
-            clickablePopover = listItems[3].Find(".mud-menu-item");
-            clickablePopover.Click();
-            cells = dataGrid.FindAll("td");
-            // We do not need check all 10 rows as it's clear that it's ungrouped if first row pass
-            cells[0].TextContent.Should().Be("1");
-            cells[1].TextContent.Should().Be("H");
-            cells[2].TextContent.Should().Be("Hydrogen");
-            cells[3].TextContent.Should().Be("0");
-            cells[4].TextContent.Should().Be("1.00794");
-            cells[5].TextContent.Should().Be("Other");
-            dataGrid.Instance.GroupedColumn.Should().BeNull();
-        }
-
-        [Test]
-        public void DataGridGroupingTestBoundAndUnboundScenarios()
-        {
-            var comp = Context.RenderComponent<DataGridColumnGroupingTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnGroupingTest.Model>>();
-            var popoverProvider = comp.FindComponent<MudPopoverProvider>();
-
-            IRefreshableElementCollection<IElement> Rows() => dataGrid.FindAll("tr");
-            IRefreshableElementCollection<IElement> Cells() => dataGrid.FindAll("td");
-
-            // Assert that initially, before any user interaction, IsGenderGrouped and IsAgeGrouped should be false
-            // The default grouping is by name
-            comp.Instance.IsGenderGrouped.Should().Be(false);
-            comp.Instance.IsAgeGrouped.Should().Be(false);
-            comp.Instance.IsProfessionGrouped.Should().Be(false);
-
-            var nameCells = Cells();
-            nameCells.Count.Should().Be(4, because: "4 data rows");
-            nameCells[0].TextContent.Should().Be("Name: John");
-            nameCells[1].TextContent.Should().Be("Name: Johanna");
-            nameCells[2].TextContent.Should().Be("Name: Steve");
-            nameCells[3].TextContent.Should().Be("Name: Alice");
-            Rows().Count.Should().Be(6, because: "1 header row + 4 data rows + 1 footer row");
-
-            var ageGrouping = comp.Find(".GroupByAge");
-            ageGrouping.Click();
-            comp.Instance.IsAgeGrouped.Should().Be(true);
-            comp.Instance.IsGenderGrouped.Should().Be(false);
-            comp.Instance.IsProfessionGrouped.Should().Be(false);
-            var ageCells = Cells();
-            ageCells.Count.Should().Be(3, because: "3 data rows");
-            ageCells[0].TextContent.Should().Be("Age: 45");
-            ageCells[1].TextContent.Should().Be("Age: 23");
-            ageCells[2].TextContent.Should().Be("Age: 32");
-            Rows().Count.Should().Be(5, because: "1 header row + 3 data rows + 1 footer row");
-
-            var genderGrouping = comp.Find(".GroupByGender");
-            genderGrouping.Click();
-            comp.Instance.IsGenderGrouped.Should().Be(true);
-            comp.Instance.IsAgeGrouped.Should().Be(true, because: "Age is not bound");
-            comp.Instance.IsProfessionGrouped.Should().Be(false);
-            var genderCells = Cells();
-            genderCells.Count.Should().Be(2, because: "2 data rows");
-            genderCells[0].TextContent.Should().Be("Gender: Male");
-            genderCells[1].TextContent.Should().Be("Gender: Female");
-            Rows().Count.Should().Be(4, because: "1 header row + 2 data rows + 1 footer row");
-
-            var professionGrouping = comp.Find(".GroupByProfession");
-            professionGrouping.Click();
-            comp.Instance.IsGenderGrouped.Should().Be(false);
-            comp.Instance.IsAgeGrouped.Should().Be(true, because: "Age is not bound");
-            comp.Instance.IsProfessionGrouped.Should().Be(true);
-            var professionCells = Cells();
-            professionCells.Count.Should().Be(2, because: "2 data rows");
-            professionCells[0].TextContent.Should().Be("Profession: Cook");
-            professionCells[1].TextContent.Should().Be("Profession: (None)");
-            Rows().Count.Should().Be(4, because: "1 header row + 2 data rows + 1 footer row");
-
-            //click age grouping in grid
-            var headerOption = comp.Find("th.age .mud-menu button");
-            headerOption.Click();
-            var listItems = popoverProvider.FindComponents<MudMenuItem>();
-            listItems.Count.Should().Be(2);
-            var clickablePopover = listItems[1].Find(".mud-menu-item");
-            clickablePopover.Click();
-            comp.Instance.IsAgeGrouped.Should().Be(true);
-            comp.Instance.IsGenderGrouped.Should().Be(false);
-            comp.Instance.IsProfessionGrouped.Should().Be(false);
-            Rows().Count.Should().Be(5, because: "1 header row + 3 data rows + 1 footer row");
-
-            //click gender grouping in grid
-            headerOption = comp.Find("th.gender .mud-menu button");
-            headerOption.Click();
-            listItems = popoverProvider.FindComponents<MudMenuItem>();
-            listItems.Count.Should().Be(2);
-            clickablePopover = listItems[1].Find(".mud-menu-item");
-            clickablePopover.Click();
-            comp.Instance.IsGenderGrouped.Should().Be(true);
-            comp.Instance.IsAgeGrouped.Should().Be(true, because: "Age is not bound");
-            comp.Instance.IsProfessionGrouped.Should().Be(false);
-            Rows().Count.Should().Be(4, because: "1 header row + 2 data rows + 1 footer row");
-
-            //click Name grouping in grid
-            headerOption = comp.Find("th.name .mud-menu button");
-            headerOption.Click();
-            listItems = popoverProvider.FindComponents<MudMenuItem>();
-            listItems.Count.Should().Be(2);
-            clickablePopover = listItems[1].Find(".mud-menu-item");
-            clickablePopover.Click();
-            comp.Instance.IsGenderGrouped.Should().Be(false);
-            comp.Instance.IsAgeGrouped.Should().Be(true, because: "Age is not bound");
-            comp.Instance.IsProfessionGrouped.Should().Be(false);
-            Rows().Count.Should().Be(6, because: "1 header row + 4 data rows + 1 footer row");
-
-            //click profession grouping in grid
-            headerOption = comp.Find("th.profession .mud-menu button");
-            headerOption.Click();
-            listItems = popoverProvider.FindComponents<MudMenuItem>();
-            listItems.Count.Should().Be(2);
-            clickablePopover = listItems[1].Find(".mud-menu-item");
-            clickablePopover.Click();
-            comp.Instance.IsGenderGrouped.Should().Be(false);
-            comp.Instance.IsAgeGrouped.Should().Be(true, because: "Age is not bound");
-            comp.Instance.IsProfessionGrouped.Should().Be(true);
-            Rows().Count.Should().Be(4, because: "1 header row + 2 data rows + 1 footer row");
-        }
-
-        [Test]
         public async Task FilterDefinitionTestHasFilterProperty()
         {
             var comp = Context.RenderComponent<DataGridFiltersTest>();
@@ -4758,72 +4458,6 @@ namespace MudBlazor.UnitTests.Components
             // test filter not applied
             var statusHeaderCell = dataGrid.FindComponents<HeaderCell<DataGridFiltersTest.Model>>()[2];
             statusHeaderCell.Instance.hasFilter.Should().BeFalse();
-        }
-
-        [Test]
-        public async Task DataGridGroupedWithServerDataPaginationTest()
-        {
-            var comp = Context.RenderComponent<DataGridGroupableServerDataTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupableServerDataTest.Item>>();
-            var rows = dataGrid.FindAll("tr");
-            rows.Count.Should().Be(12, because: "1 header row + 10 data rows + 1 footer row");
-            var cells = dataGrid.FindAll("td");
-            cells.Count.Should().Be(10, because: "We have 10 data rows with one group collapsed");
-            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroups());
-            rows = dataGrid.FindAll("tr");
-            rows.Count.Should().Be(32, because: "1 header row + 10 data rows + 1 footer row + 10 group rows + 10 footer group rows");
-            cells = dataGrid.FindAll("td");
-            cells.Count.Should().Be(30, because: "We have 10 data rows with one group + 10*2 cells inside groups");
-            //check cells
-            cells[0].TextContent.Should().Be("Number: 1");
-            cells[1].TextContent.Should().Be("Hydrogen"); cells[2].TextContent.Should().Be("1");
-            cells[3].TextContent.Should().Be("Number: 2");
-            cells[4].TextContent.Should().Be("Helium"); cells[5].TextContent.Should().Be("2");
-            cells[6].TextContent.Should().Be("Number: 3");
-            cells[7].TextContent.Should().Be("Lithium"); cells[8].TextContent.Should().Be("3");
-            cells[9].TextContent.Should().Be("Number: 4");
-            cells[10].TextContent.Should().Be("Beryllium"); cells[11].TextContent.Should().Be("4");
-            cells[12].TextContent.Should().Be("Number: 5");
-            cells[13].TextContent.Should().Be("Boron"); cells[14].TextContent.Should().Be("5");
-            cells[15].TextContent.Should().Be("Number: 6");
-            cells[16].TextContent.Should().Be("Carbon"); cells[17].TextContent.Should().Be("6");
-            cells[18].TextContent.Should().Be("Number: 7");
-            cells[19].TextContent.Should().Be("Nitrogen"); cells[20].TextContent.Should().Be("7");
-            cells[21].TextContent.Should().Be("Number: 8");
-            cells[22].TextContent.Should().Be("Oxygen"); cells[23].TextContent.Should().Be("8");
-            cells[24].TextContent.Should().Be("Number: 9");
-            cells[25].TextContent.Should().Be("Fluorine"); cells[26].TextContent.Should().Be("9");
-            cells[27].TextContent.Should().Be("Number: 10");
-            cells[28].TextContent.Should().Be("Neon"); cells[29].TextContent.Should().Be("10");
-            //get next page
-            dataGrid.Instance.CurrentPage = 1;
-            await comp.InvokeAsync(async () => await dataGrid.Instance.ReloadServerData());
-            cells = dataGrid.FindAll("td");
-            cells.Count.Should().Be(10, because: "We have 10 data rows with one group collapsed from next page");
-            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroups());
-            cells = dataGrid.FindAll("td");
-            cells.Count.Should().Be(30, because: "We have next 10 data rows with one group + 10*2 cells inside groups");
-            //cells should have data from next page
-            cells[0].TextContent.Should().Be("Number: 11");
-            cells[1].TextContent.Should().Be("Sodium"); cells[2].TextContent.Should().Be("11");
-            cells[3].TextContent.Should().Be("Number: 12");
-            cells[4].TextContent.Should().Be("Magnesium"); cells[5].TextContent.Should().Be("12");
-            cells[6].TextContent.Should().Be("Number: 13");
-            cells[7].TextContent.Should().Be("Aluminium"); cells[8].TextContent.Should().Be("13");
-            cells[9].TextContent.Should().Be("Number: 14");
-            cells[10].TextContent.Should().Be("Silicon"); cells[11].TextContent.Should().Be("14");
-            cells[12].TextContent.Should().Be("Number: 15");
-            cells[13].TextContent.Should().Be("Phosphorus"); cells[14].TextContent.Should().Be("15");
-            cells[15].TextContent.Should().Be("Number: 16");
-            cells[16].TextContent.Should().Be("Sulfur"); cells[17].TextContent.Should().Be("16");
-            cells[18].TextContent.Should().Be("Number: 17");
-            cells[19].TextContent.Should().Be("Chlorine"); cells[20].TextContent.Should().Be("17");
-            cells[21].TextContent.Should().Be("Number: 18");
-            cells[22].TextContent.Should().Be("Argon"); cells[23].TextContent.Should().Be("18");
-            cells[24].TextContent.Should().Be("Number: 19");
-            cells[25].TextContent.Should().Be("Potassium"); cells[26].TextContent.Should().Be("19");
-            cells[27].TextContent.Should().Be("Number: 20");
-            cells[28].TextContent.Should().Be("Calcium"); cells[29].TextContent.Should().Be("20");
         }
 
         /// <summary>
@@ -5016,24 +4650,6 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => comp.Find(".mud-table-body .mud-table-row .mud-table-cell").TextContent.Should().Be("3"));
         }
 
-        [Test]
-        [TestCase(true, true)]
-        [TestCase(true, false)]
-        [TestCase(false, true)]
-        [TestCase(false, false)]
-        public void TestRtlGroupIconMethod(bool isRightToLeft, bool isExpanded)
-        {
-            var test = new MudDataGrid<int>();
-            if (isExpanded)
-            {
-                test.GetGroupIcon(isExpanded, isRightToLeft).Should().Be(Icons.Material.Filled.ExpandMore);
-            }
-            else
-            {
-                test.GetGroupIcon(isExpanded, isRightToLeft).Should().Be(isRightToLeft ? Icons.Material.Filled.ChevronLeft : Icons.Material.Filled.ChevronRight);
-            }
-        }
-
         /// <summary>
         /// Verifies data grid does not reuse row child components for different items (the @key for the row is set to the user supplied item).
         /// </summary>
@@ -5053,10 +4669,9 @@ namespace MudBlazor.UnitTests.Components
 
             before.Should().NotBeSameAs(after, because: "If the @key is correctly set to the row item, child components will be recreated on row reordering.");
 
-
             //Test the expanded group case
             comp.SetParametersAndRender(parameters => parameters.Add(p => p.Group, true));
-            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroups());
+            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllGroupsAsync());
 
             await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync(sortByColumnName, SortDirection.Ascending, x => x));
             before = dataGrid.FindComponent<MudInput<string>>();
@@ -5102,6 +4717,224 @@ namespace MudBlazor.UnitTests.Components
             selectedItems.Should().Contain(5);
             selectedItems.Count().Should().Be(2);
             selectedItem.Should().Be(4);
+        }
+
+        [Test]
+        public async Task DataGridSelectedItemEventsTest()
+        {
+            var comp = Context.RenderComponent<DataGridEventCallbacksTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridEventCallbacksTest.Item>>();
+
+            // Test single selection mode
+            dataGrid.SetParam(x => x.MultiSelection, false);
+            comp.Render();
+
+            // Select an item
+            var firstItem = dataGrid.Instance.Items.First();
+            await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectedItemAsync(true, firstItem));
+
+            // Verify events
+            comp.Instance.SelectedItemChanged.Should().BeTrue();
+            comp.Instance.SelectedItemsChanged.Should().BeTrue();
+
+            // Reset event flags
+            comp.Instance.SelectedItemChanged = false;
+            comp.Instance.SelectedItemsChanged = false;
+
+            // Deselect the item
+            await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectedItemAsync(false, firstItem));
+
+            // Verify events for deselection
+            comp.Instance.SelectedItemChanged.Should().BeTrue();
+            comp.Instance.SelectedItemsChanged.Should().BeTrue();
+
+            // Reset event flags
+            comp.Instance.SelectedItemChanged = false;
+            comp.Instance.SelectedItemsChanged = false;
+
+            // Test multi-selection mode
+            dataGrid.SetParam(x => x.MultiSelection, true);
+            comp.Render();
+
+            // Select all items
+            await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectAllAsync(true));
+
+            // Verify events
+            comp.Instance.SelectedItemChanged.Should().BeFalse();
+            comp.Instance.SelectedItemsChanged.Should().BeTrue();
+
+            // Reset event flags
+            comp.Instance.SelectedItemChanged = false;
+            comp.Instance.SelectedItemsChanged = false;
+
+            // Deselect all items
+            await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectAllAsync(false));
+
+            // Verify events for deselection
+            comp.Instance.SelectedItemChanged.Should().BeFalse();
+            comp.Instance.SelectedItemsChanged.Should().BeTrue();
+
+            // Reset event flags
+            comp.Instance.SelectedItemChanged = false;
+            comp.Instance.SelectedItemsChanged = false;
+
+            // Test row click select
+            // find first mud-table-row and second mud-table-cell
+            var firstRow = dataGrid.FindAll(".mud-table-row")[1];
+            firstRow.Click();
+
+            // Verify events for row click
+            comp.WaitForAssertion(() => comp.Instance.SelectedItemChanged.Should().BeTrue());
+            comp.Instance.SelectedItemsChanged.Should().BeTrue();
+
+            // Reset event flags
+            comp.Instance.SelectedItemChanged = false;
+            comp.Instance.SelectedItemsChanged = false;
+        }
+
+        [Test]
+        public void DataGridHeaderToggleHierarchyTest()
+        {
+            // Render with EnableHeaderToggle = true to enable header toggle functionality
+            var comp = Context.RenderComponent<DataGridHierarchyColumnTest>(parameters =>
+                parameters.Add(p => p.EnableHeaderToggle, true));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
+
+            // Find the header cell that should include hierarchy toggle
+            var headerCell = dataGrid.FindComponents<HeaderCell<DataGridHierarchyColumnTest.Model>>().First();
+
+            var headerElement = comp.Find("th.mud-header-togglehierarchy");
+            headerElement.Should().NotBeNull("Header should have mud-header-togglehierarchy class when EnableHeaderToggle is true");
+            headerCell.Instance.IncludeHierarchyToggle.Should().BeTrue();
+
+            // Check that the HierarchyToggle button exists in the header
+            var toggleButton = headerElement.QuerySelector(".mud-hierarchy-toggle-button");
+            toggleButton.Should().NotBeNull("HierarchyToggle button should be rendered in header");
+
+            // The initial state should be expanded (Anders and Ira items are initially expanded)
+            dataGrid.Instance._openHierarchies.Count.Should().Be(2);
+
+            // Click the toggle button to collapse all hierarchies
+            toggleButton.Click();
+            comp.WaitForAssertion(() => dataGrid.Instance._openHierarchies.Count.Should().Be(0));
+
+            // Click again to expand all
+            toggleButton = headerElement.QuerySelector(".mud-hierarchy-toggle-button");
+            toggleButton.Click();
+            comp.WaitForAssertion(() => dataGrid.Instance._openHierarchies.Count.Should().Be(5));
+        }
+
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public void DataGridHeaderToggleIconTest(bool rightToLeft)
+        {
+            // Render with EnableHeaderToggle = true and set RTL mode
+            var comp = Context.RenderComponent<DataGridHierarchyColumnTest>(parameters =>
+            {
+                parameters.Add(p => p.EnableHeaderToggle, true);
+                parameters.Add(p => p.RightToLeft, rightToLeft);
+            });
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
+
+            // Find the header with toggle
+            var headerElement = comp.Find("th.mud-header-togglehierarchy");
+
+            // Find the toggle button in header
+            var toggleButton = headerElement.QuerySelector(".mud-hierarchy-toggle-button");
+            var icon = toggleButton.QuerySelector(".mud-icon-root");
+
+            // Initial state should show expanded icon (ExpandMore)
+            var iconPath = icon.InnerHtml;
+            iconPath.Should().Contain("M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z",
+                "Icon should be ExpandMore when hierarchies are expanded");
+
+            // Click to collapse all
+            toggleButton.Click();
+
+            // Now the icon should change based on RTL mode
+            icon = headerElement.QuerySelector(".mud-hierarchy-toggle-button .mud-icon-root");
+            iconPath = icon.InnerHtml;
+
+            if (rightToLeft)
+            {
+                iconPath.Should().Contain("M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z",
+                    "Icon should be ChevronLeft in RTL mode when hierarchies are collapsed");
+            }
+            else
+            {
+                iconPath.Should().Contain("M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z",
+                    "Icon should be ChevronRight in LTR mode when hierarchies are collapsed");
+            }
+        }
+
+        [Test]
+        public async Task DataGridToggleHierarchyMethodTest()
+        {
+            var comp = Context.RenderComponent<DataGridHierarchyColumnTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
+
+            var headerCell = dataGrid.FindComponents<HeaderCell<DataGridHierarchyColumnTest.Model>>().First();
+
+            // Initially, there should be 2 expanded items
+            dataGrid.Instance._openHierarchies.Count.Should().Be(2);
+            var accessor = headerCell.Instance;
+            await accessor.ToggleHierarchyAsync();
+
+            // After calling ToggleHierarchy when some hierarchies are open, all should be collapsed
+            dataGrid.Instance._openHierarchies.Count.Should().Be(0);
+
+            // Call ToggleHierarchy again
+            await accessor.ToggleHierarchyAsync();
+
+            // Now all hierarchies should be expanded
+            dataGrid.Instance._openHierarchies.Count.Should().Be(5);
+        }
+
+        [Test]
+        public async Task DataGridGetHierarchyGroupIconTest()
+        {
+            // Create a test component
+            var comp = Context.RenderComponent<DataGridHierarchyColumnTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
+
+            // Get a reference to a HeaderCell to test GetGroupIcon method
+            var headerCell = dataGrid.FindComponents<HeaderCell<DataGridHierarchyColumnTest.Model>>().First();
+
+            // Create a PrivateAccessor to invoke the GetGroupIcon method
+            var accessor = headerCell.Instance;
+
+            // When expanded (RTL doesn't matter in this case)
+            var expandedIcon = accessor.GetGroupIcon();
+            expandedIcon.Should().Be(Icons.Material.Filled.ExpandMore);
+
+            await accessor.ToggleHierarchyAsync(); // collapse all
+
+            // When collapsed + LTR
+            var collapsedIcon = accessor.GetGroupIcon();
+            comp.WaitForAssertion(() => collapsedIcon.Should().Be(Icons.Material.Filled.ChevronRight));
+
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.RightToLeft, true));
+            // When collapsed + RTL
+            comp.WaitForAssertion(() => accessor.GetGroupIcon().Should().Be(Icons.Material.Filled.ChevronLeft));
+        }
+
+        [Test]
+        public void DataGrid_HierarchyExpandSingleRowTest()
+        {
+            var comp = Context.RenderComponent<DataGridHierarchyColumnTest>(parameters => parameters
+                .Add(p => p.ExpandSingleRow, false));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
+
+            dataGrid.Instance._openHierarchies.Count.Should().Be(2);
+            var item = dataGrid.Instance._openHierarchies.First();
+            item.Should().NotBeNull();
+
+            comp.SetParametersAndRender(p => p.Add(p => p.ExpandSingleRow, true));
+
+            dataGrid.Instance._openHierarchies.Count.Should().Be(1);
+
+            dataGrid.Instance._openHierarchies.First().Should().Be(item);
         }
     }
 }

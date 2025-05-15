@@ -1,0 +1,394 @@
+﻿@using System.Collections.Generic
+@using MudBlazor.Utilities
+@namespace MudBlazor.Docs.Examples
+
+<MudDataGrid @ref="@_dataGrid" T="USState"
+             ServerData="@ServerReload"
+             Hover FixedHeader Groupable
+             Height="500px" 
+             GroupClass="@(_customizeGroupStyle ? "pa-4" : null)"
+             GroupStyle="@(_customizeGroupStyle ? "background-color: var(--mud-palette-info);" : null)"
+             GroupClassFunc="@(_customizeGroupStyle ? GroupClassFunc : null)"
+             GroupStyleFunc="@(_customizeGroupStyle ? GroupStyleFunc : null)">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">US States Information<span class="ml-2" style="color: var(--mud-palette-warning);font-size: smaller;">2025</span></MudText>
+        <MudSpacer />
+        <MudTextField AdornmentIcon="@Icons.Material.Outlined.Search" Adornment="Adornment.End" Placeholder="Filter Results"
+                      @bind-Value="_searchString" @bind-Value:after="@(() => _dataGrid.ReloadServerData())" 
+                      DebounceInterval="100" Variant="Variant.Outlined" Clearable />
+    </ToolBarContent>
+    <Columns>
+        <PropertyColumn Property="x => x.State" Title="State" Groupable="false" />
+        <PropertyColumn Property="x => x.Counties" Groupable="false" />
+        <PropertyColumn Property="x => x.Population" Groupable="false" Format="N0" />
+        <PropertyColumn Property="x => x.PrimaryIndustry" Title="Primary Industry"
+                        @bind-Grouping="_primaryIndustryGrouping" GroupBy="_groupBy1"
+                        @bind-GroupByOrder="_primaryIndustryOrder"
+                        @bind-GroupExpanded="_primaryIndustryExpanded">
+            <GroupTemplate>
+                @if (_customizeGroupTemplate)
+                {
+                    var color = context.Grouping.Key?.ToString() switch
+                    {
+                        "Healthcare" => Color.Primary,
+                        "Tech" => Color.Secondary,
+                        "Tourism" => Color.Info,
+                        _ => Color.Dark
+                    };
+                    <div class="d-flex align-center">
+                        <MudIcon Icon="@Icons.Material.Filled.Business" Color="@color" Size="Size.Small" Class="mr-2" />
+                        <span style="font-weight:bold">@context.Grouping.Key</span>
+                        <MudChip Variant="Variant.Outlined" Color="@color" Size="Size.Small" Class="ml-2">
+                            @context.Grouping.Count() states
+                        </MudChip>
+                    </div>
+                }
+                else
+                {
+                    <span style="font-weight:bold">@context.Title: @(context.Grouping.Key)</span>
+                }
+            </GroupTemplate>
+        </PropertyColumn>
+        <PropertyColumn Property="x => x.Region" Title="Region"
+                        @bind-Grouping="_regionGrouping" 
+                        @bind-GroupByOrder="_regionOrder"
+                        @bind-GroupExpanded="_regionExpanded">
+            <GroupTemplate>
+                @if (_customizeGroupTemplate)
+                {
+                    var (icon, color) = context.Grouping.Key?.ToString() switch
+                    {
+                        "Northeast" or "Southeast" => (Icons.Material.Filled.East, Color.Warning),
+                        "West" or "Pacific" => (Icons.Material.Filled.West, Color.Success),
+                        "Midwest" => (Icons.Material.Filled.LocationOn, Color.Info),
+                        "Southwest" => (Icons.Material.Filled.South, Color.Error),
+                        _ => (Icons.Material.Filled.Public, Color.Default)
+                    };
+                    <div class="d-flex align-center">
+                        <MudIcon Icon="@icon" Color="@color" Size="Size.Small" Class="mr-2" />
+                        <span style="font-weight:bold">@context.Grouping.Key</span>
+                        <MudChip Variant="Variant.Outlined" Color="@color" Size="Size.Small" Class="ml-2">
+                            @context.Grouping.Count() states
+                        </MudChip>
+                    </div>
+                }
+                else
+                {
+                    <span style="font-weight:bold">@context.Title: @(context.Grouping.Key)</span>
+                }
+            </GroupTemplate>
+        </PropertyColumn>
+        <PropertyColumn Property="x => x.Climate" Title="Climate"
+                        @bind-Grouping="_climateGrouping" 
+                        @bind-GroupByOrder="_climateOrder"
+                        @bind-GroupExpanded="_climateExpanded">
+            <GroupTemplate>
+                @if (_customizeGroupTemplate)
+                {
+                    var (icon, color) = context.Grouping.Key?.ToString() switch
+                    {
+                        "Continental" => (Icons.Material.Filled.AcUnit, Color.Primary),
+                        "Humid Subtropical" => (Icons.Material.Filled.WbSunny, Color.Warning),
+                        "Mediterranean" or "Tropical" => (Icons.Material.Filled.WaterDrop, Color.Info),
+                        "Desert" or "Semi-arid" or "Arid" => (Icons.Material.Filled.Landscape, Color.Error),
+                        _ => (Icons.Material.Filled.Cloud, Color.Default)
+                    };
+                    <div class="d-flex align-center">
+                        <MudIcon Icon="@icon" Color="@color" Size="Size.Small" Class="mr-2" />
+                        <span style="font-weight:bold">@context.Grouping.Key</span>
+                        <MudChip Variant="Variant.Outlined" Color="@color" Size="Size.Small" Class="ml-2">
+                            @context.Grouping.Count() states
+                        </MudChip>
+                    </div>
+                }
+                else
+                {
+                    <span style="font-weight:bold">@context.Title: @(context.Grouping.Key)</span>
+                }
+            </GroupTemplate>
+        </PropertyColumn>
+        <PropertyColumn Property="x => x.YearInducted" Title="Year Inducted">
+            <GroupTemplate>
+                @if (_customizeGroupTemplate)
+                {
+                    <span style="font-weight:bold">Year Inducted: @context.Grouping.Key <MudChip Variant="Variant.Outlined" Color="Color.Primary" Size="Size.Small">total @context.Grouping.Count()</MudChip></span>
+                }
+                else
+                {
+                    <span style="font-weight:bold">@context.Title: @(context.Grouping.Key)</span>
+                }
+            </GroupTemplate>
+        </PropertyColumn>
+    </Columns>
+</MudDataGrid>
+
+<div class="d-flex flex-wrap mt-4">
+    <MudSwitch T="bool" @bind-Value="_customizeGroupTemplate" Color="@Color.Primary">Customize Group Template</MudSwitch>
+    <MudSwitch T="bool" Value="@_customizeGroupBy" Color="@Color.Primary" ValueChanged="@CustomizeByGroupChanged">Customize Group By Industry</MudSwitch>
+    <MudSwitch T="bool" @bind-Value="_customizeGroupStyle" Color="@Color.Primary">Customize Group Style</MudSwitch>
+    <MudButton OnClick="@ExpandAllGroupsAsync" Color="@Color.Primary" Disabled="@(!(_dataGrid?.IsGrouped ?? false))">Expand All</MudButton>
+    <MudButton OnClick="@CollapseAllGroupsAsync" Color="@Color.Primary" Disabled="@(!(_dataGrid?.IsGrouped ?? false))">Collapse All</MudButton>
+</div>
+
+@code {
+#nullable enable
+    public static string __description__ = "Multi Level Grouping within DataGrid";
+    // For the Grid
+    private MudDataGrid<USState> _dataGrid = null!;
+    private string? _searchString = string.Empty;
+    // Bound Properties @bind-
+    private bool _customizeGroupTemplate;
+    private bool _customizeGroupBy;
+    private bool _customizeGroupStyle;
+    private bool _primaryIndustryGrouping = true;
+    private bool _regionGrouping;
+    private bool _climateGrouping = true;
+    private int _primaryIndustryOrder ;
+    private int _climateOrder = 1;
+    private int _regionOrder = 2;
+    // Display Options
+    private bool _primaryIndustryExpanded = true;
+    private bool _regionExpanded = true;
+    private bool _climateExpanded = true;
+
+    // Primary grouping by industry type
+    private Func<USState, object>? _groupBy1;
+
+    protected override void OnInitialized()
+    {
+        _groupBy1 = x =>
+        {
+            if (_customizeGroupBy)
+            {
+                return x.PrimaryIndustry switch
+                {
+                    "Healthcare" => "Health",
+                    "Technology" => "Tech",
+                    "Tourism" => "Vacay",
+                    _ => "Other"
+                };
+            }
+
+            return x.PrimaryIndustry;
+        };
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+
+        if (firstRender)
+        {
+            // Check if the dataGrid is grouped and update the state accordingly (for IsGrouped)
+            if (_dataGrid?.IsGrouped == true)
+            {
+                StateHasChanged();
+            }
+        }
+    }
+
+    private async Task<GridData<USState>> ServerReload(GridState<USState> state)
+    {
+        // call API
+        var data = GetAllStates(_searchString, state.SortDefinitions);
+        // simulate some wait time
+        await Task.Delay(150);
+
+        var totalItems = data.Count;        
+        var pagedData = data.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray();
+        return new()
+        {
+            TotalItems = totalItems,
+            Items = pagedData
+        };
+    }
+
+    private static string GroupClassFunc(GroupDefinition<USState> item)
+    {
+        var key = item.Grouping.Key?.ToString();
+
+        return item.Title switch
+        {
+            "Primary Industry" => key switch
+            {
+                "Healthcare" => "mud-theme-primary",
+                "Tech" => "mud-theme-secondary",
+                "Tourism" => "mud-theme-info",
+                _ => "mud-theme-dark"
+            },
+            "Region" => key switch
+            {
+                "Northeast" or "Southeast" => "mud-theme-warning",
+                "West" or "Pacific" => "mud-theme-success",
+                "Midwest" => "mud-theme-info",
+                "Southwest" => "mud-theme-error",
+                _ => string.Empty
+            },
+            _ => key switch
+            {
+                "Continental" => "mud-theme-primary",
+                "Humid Subtropical" => "mud-theme-warning",
+                "Mediterranean" or "Tropical" => "mud-theme-info",
+                "Desert" or "Semi-arid" or "Arid" => "mud-theme-error",
+                _ => string.Empty
+            }
+        };
+    }
+
+    private static string GroupStyleFunc(GroupDefinition<USState> item)
+    {
+        var indent = item.Level * 16; // 16px per level
+        var borderWidth = Math.Max(1, 4 - item.Level); // Decrease border width with depth
+
+        var style = new StyleBuilder()
+            .AddStyle("padding-left", $"{indent}px")
+            .AddStyle("border-left", $"{borderWidth}px solid")
+            .AddStyle("border-color", GetBorderColor(item))
+            .AddStyle("opacity", $"{1 - (item.Level - 1) * 0.2}") // Fade out deeper levels slightly
+            .Build();
+
+        return style;
+    }
+
+    private static string GetBorderColor(GroupDefinition<USState> item)
+    {
+        var key = item.Grouping.Key?.ToString();
+
+        return item.Title switch
+        {
+            // Primary level (Industry)
+            "Primary Industry" => key switch
+            {
+                "Healthcare" => "var(--mud-palette-primary)",
+                "Tech" => "var(--mud-palette-secondary)",
+                "Tourism" => "var(--mud-palette-info)",
+                _ => "var(--mud-palette-dark)"
+            },
+            "Region" => key switch
+            {
+                "Northeast" or "Southeast" => "var(--mud-palette-warning)",
+                "West" or "Pacific" => "var(--mud-palette-success)",
+                "Midwest" => "var(--mud-palette-info)",
+                "Southwest" => "var(--mud-palette-error)",
+                _ => "var(--mud-palette-dark)"
+            },
+            "Climate" => key switch
+            {
+                "Continental" => "var(--mud-palette-primary)",
+                "Humid Subtropical" => "var(--mud-palette-warning)",
+                "Mediterranean" or "Tropical" => "var(--mud-palette-info)",
+                "Desert" or "Semi-arid" or "Arid" => "var(--mud-palette-error)",
+                _ => "var(--mud-palette-dark)"
+            },
+            _ => "var(--mud-palette-dark)"
+        };
+    }    
+
+    private Task ExpandAllGroupsAsync()
+    {
+        return _dataGrid.ExpandAllGroupsAsync();
+    }
+
+    private Task CollapseAllGroupsAsync()
+    {
+        return _dataGrid.CollapseAllGroupsAsync();
+    }
+
+    private void CustomizeByGroupChanged(bool isChecked)
+    {
+        _customizeGroupBy = isChecked;
+        _dataGrid.GroupItems();
+    }
+
+    private static List<USState> GetAllStates(string? searchString, ICollection<SortDefinition<USState>>? sortDefinitions)
+    {
+        List<USState> data =
+        [
+            new USState(Id: 1, State: "Alabama", Counties: 67, Population: 5024279, PrimaryIndustry: "Manufacturing", Region: "Southeast", Climate: "Humid Subtropical", YearInducted: 1819),
+            new USState(Id: 2, State: "Alaska", Counties: 30, Population: 733406, PrimaryIndustry: "Oil and Gas", Region: "Pacific", Climate: "Subarctic", YearInducted: 1959),
+            new USState(Id: 3, State: "Arizona", Counties: 15, Population: 7151502, PrimaryIndustry: "Healthcare", Region: "Southwest", Climate: "Desert", YearInducted: 1912),
+            new USState(Id: 4, State: "Arkansas", Counties: 75, Population: 3011524, PrimaryIndustry: "Agriculture", Region: "Southeast", Climate: "Humid Subtropical", YearInducted: 1836),
+            new USState(Id: 5, State: "California", Counties: 58, Population: 39538223, PrimaryIndustry: "Technology", Region: "West", Climate: "Mediterranean", YearInducted: 1850),
+            new USState(Id: 6, State: "Colorado", Counties: 64, Population: 5773714, PrimaryIndustry: "Tourism", Region: "West", Climate: "Semi-arid", YearInducted: 1876),
+            new USState(Id: 7, State: "Connecticut", Counties: 8, Population: 3605944, PrimaryIndustry: "Finance and Insurance", Region: "Northeast", Climate: "Continental", YearInducted: 1788),
+            new USState(Id: 8, State: "Delaware", Counties: 3, Population: 989948, PrimaryIndustry: "Finance and Insurance", Region: "Northeast", Climate: "Continental", YearInducted: 1787),
+            new USState(Id: 9, State: "Florida", Counties: 67, Population: 21538187, PrimaryIndustry: "Tourism", Region: "Southeast", Climate: "Tropical", YearInducted: 1845),
+            new USState(Id: 10, State: "Georgia", Counties: 159, Population: 10711908, PrimaryIndustry: "Agriculture", Region: "Southeast", Climate: "Humid Subtropical", YearInducted: 1788),
+            new USState(Id: 11, State: "Hawaii", Counties: 5, Population: 1455271, PrimaryIndustry: "Tourism", Region: "Pacific", Climate: "Tropical", YearInducted: 1959),
+            new USState(Id: 12, State: "Idaho", Counties: 44, Population: 1839106, PrimaryIndustry: "Agriculture", Region: "West", Climate: "Continental", YearInducted: 1890),
+            new USState(Id: 13, State: "Illinois", Counties: 102, Population: 12812508, PrimaryIndustry: "Manufacturing", Region: "Midwest", Climate: "Continental", YearInducted: 1818),
+            new USState(Id: 14, State: "Indiana", Counties: 92, Population: 6785528, PrimaryIndustry: "Manufacturing", Region: "Midwest", Climate: "Continental", YearInducted: 1816),
+            new USState(Id: 15, State: "Iowa", Counties: 99, Population: 3190369, PrimaryIndustry: "Agriculture", Region: "Midwest", Climate: "Continental", YearInducted: 1846),
+            new USState(Id: 16, State: "Kansas", Counties: 105, Population: 2937880, PrimaryIndustry: "Agriculture", Region: "Midwest", Climate: "Continental", YearInducted: 1861),
+            new USState(Id: 17, State: "Kentucky", Counties: 120, Population: 4505836, PrimaryIndustry: "Manufacturing", Region: "Southeast", Climate: "Humid Continental", YearInducted: 1792),
+            new USState(Id: 18, State: "Louisiana", Counties: 64, Population: 4657757, PrimaryIndustry: "Oil and Gas", Region: "Southeast", Climate: "Humid Subtropical", YearInducted: 1812),
+            new USState(Id: 19, State: "Maine", Counties: 16, Population: 1362359, PrimaryIndustry: "Healthcare", Region: "Northeast", Climate: "Continental", YearInducted: 1820),
+            new USState(Id: 20, State: "Maryland", Counties: 24, Population: 6177224, PrimaryIndustry: "Healthcare", Region: "Northeast", Climate: "Continental", YearInducted: 1788),
+            new USState(Id: 21, State: "Massachusetts", Counties: 14, Population: 7029917, PrimaryIndustry: "Healthcare", Region: "Northeast", Climate: "Continental", YearInducted: 1788),
+            new USState(Id: 22, State: "Michigan", Counties: 83, Population: 10077331, PrimaryIndustry: "Manufacturing", Region: "Midwest", Climate: "Continental", YearInducted: 1837),
+            new USState(Id: 23, State: "Minnesota", Counties: 87, Population: 5706494, PrimaryIndustry: "Healthcare", Region: "Midwest", Climate: "Continental", YearInducted: 1858),
+            new USState(Id: 24, State: "Mississippi", Counties: 82, Population: 2961279, PrimaryIndustry: "Agriculture", Region: "Southeast", Climate: "Humid Subtropical", YearInducted: 1817),
+            new USState(Id: 25, State: "Missouri", Counties: 115, Population: 6154913, PrimaryIndustry: "Healthcare", Region: "Midwest", Climate: "Continental", YearInducted: 1821),
+            new USState(Id: 26, State: "Montana", Counties: 56, Population: 1084225, PrimaryIndustry: "Agriculture", Region: "West", Climate: "Continental", YearInducted: 1889),
+            new USState(Id: 27, State: "Nebraska", Counties: 93, Population: 1961504, PrimaryIndustry: "Agriculture", Region: "Midwest", Climate: "Continental", YearInducted: 1867),
+            new USState(Id: 28, State: "Nevada", Counties: 17, Population: 3104614, PrimaryIndustry: "Tourism", Region: "West", Climate: "Desert", YearInducted: 1864),
+            new USState(Id: 29, State: "New Hampshire", Counties: 10, Population: 1377529, PrimaryIndustry: "Healthcare", Region: "Northeast", Climate: "Continental", YearInducted: 1788),
+            new USState(Id: 30, State: "New Jersey", Counties: 21, Population: 9288994, PrimaryIndustry: "Finance and Insurance", Region: "Northeast", Climate: "Continental", YearInducted: 1787),
+            new USState(Id: 31, State: "New Mexico", Counties: 33, Population: 2117522, PrimaryIndustry: "Oil and Gas", Region: "Southwest", Climate: "Arid", YearInducted: 1912),
+            new USState(Id: 32, State: "New York", Counties: 62, Population: 20201249, PrimaryIndustry: "Finance and Insurance", Region: "Northeast", Climate: "Continental", YearInducted: 1788),
+            new USState(Id: 33, State: "North Carolina", Counties: 100, Population: 10439388, PrimaryIndustry: "Manufacturing", Region: "Southeast", Climate: "Humid Subtropical", YearInducted: 1789),
+            new USState(Id: 34, State: "North Dakota", Counties: 53, Population: 779094, PrimaryIndustry: "Agriculture", Region: "Midwest", Climate: "Continental", YearInducted: 1889),
+            new USState(Id: 35, State: "Ohio", Counties: 88, Population: 11799448, PrimaryIndustry: "Manufacturing", Region: "Midwest", Climate: "Continental", YearInducted: 1803),
+            new USState(Id: 36, State: "Oklahoma", Counties: 77, Population: 3959353, PrimaryIndustry: "Oil and Gas", Region: "Southwest", Climate: "Continental", YearInducted: 1907),
+            new USState(Id: 37, State: "Oregon", Counties: 36, Population: 4237256, PrimaryIndustry: "Technology", Region: "West", Climate: "Mediterranean", YearInducted: 1859),
+            new USState(Id: 38, State: "Pennsylvania", Counties: 67, Population: 13002700, PrimaryIndustry: "Healthcare", Region: "Northeast", Climate: "Continental", YearInducted: 1787),
+            new USState(Id: 39, State: "Rhode Island", Counties: 5, Population: 1097379, PrimaryIndustry: "Healthcare", Region: "Northeast", Climate: "Continental", YearInducted: 1790),
+            new USState(Id: 40, State: "South Carolina", Counties: 46, Population: 5118425, PrimaryIndustry: "Manufacturing", Region: "Southeast", Climate: "Humid Subtropical", YearInducted: 1788),
+            new USState(Id: 41, State: "South Dakota", Counties: 66, Population: 886667, PrimaryIndustry: "Agriculture", Region: "Midwest", Climate: "Continental", YearInducted: 1889),
+            new USState(Id: 42, State: "Tennessee", Counties: 95, Population: 6910840, PrimaryIndustry: "Healthcare", Region: "Southeast", Climate: "Humid Subtropical", YearInducted: 1796),
+            new USState(Id: 43, State: "Texas", Counties: 254, Population: 29145505, PrimaryIndustry: "Oil and Gas", Region: "Southwest", Climate: "Subtropical", YearInducted: 1845),
+            new USState(Id: 44, State: "Utah", Counties: 29, Population: 3271616, PrimaryIndustry: "Healthcare", Region: "West", Climate: "Semi-arid", YearInducted: 1896),
+            new USState(Id: 45, State: "Vermont", Counties: 14, Population: 643077, PrimaryIndustry: "Tourism", Region: "Northeast", Climate: "Continental", YearInducted: 1791),
+            new USState(Id: 46, State: "Virginia", Counties: 133, Population: 8631393, PrimaryIndustry: "Technology", Region: "Southeast", Climate: "Humid Subtropical", YearInducted: 1788),
+            new USState(Id: 47, State: "Washington", Counties: 39, Population: 7705281, PrimaryIndustry: "Technology", Region: "West", Climate: "Oceanic", YearInducted: 1889),
+            new USState(Id: 48, State: "West Virginia", Counties: 55, Population: 1793716, PrimaryIndustry: "Healthcare", Region: "Southeast", Climate: "Continental", YearInducted: 1863),
+            new USState(Id: 49, State: "Wisconsin", Counties: 72, Population: 5893718, PrimaryIndustry: "Manufacturing", Region: "Midwest", Climate: "Continental", YearInducted: 1848),
+            new USState(Id: 50, State: "Wyoming", Counties: 23, Population: 576851, PrimaryIndustry: "Mining", Region: "West", Climate: "Semi-arid", YearInducted: 1890)
+        ];
+
+        if (sortDefinitions != null && sortDefinitions.Any())
+        {
+            // on server or actual API would be IQueryable likely
+            IOrderedEnumerable<USState>? orderedQuery = null;
+            foreach (var sort in sortDefinitions)
+            {
+                orderedQuery = data.OrderByDirection(sort.Descending ? SortDirection.Descending : SortDirection.Ascending,
+                                                     obj => GetPropertyValue(obj, sort.SortBy));
+            }
+            data = orderedQuery!.ToList();
+        }
+
+        return data.Where(x => MatchesSearch(x, searchString)).ToList();
+    }
+
+    private static bool MatchesSearch(USState obj, string? searchString)
+    {
+        if (string.IsNullOrEmpty(searchString))
+        {
+            return true;
+        }
+
+        return obj.State.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+               obj.PrimaryIndustry.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+               obj.YearInducted.ToString().Contains(searchString) ||
+               obj.Climate.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+               obj.Region.Contains(searchString, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static object? GetPropertyValue<TT>(TT obj, string propertyName)
+    {
+        return typeof(TT).GetProperty(propertyName)?.GetValue(obj);
+    }
+
+    private record USState(int Id, string State, int Counties, int Population, string PrimaryIndustry, string Region, string Climate, int YearInducted);
+}

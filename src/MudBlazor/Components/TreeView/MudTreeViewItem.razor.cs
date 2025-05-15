@@ -438,8 +438,10 @@ namespace MudBlazor
             }
             if (!GetReadOnly())
             {
-                Debug.Assert(MudTreeRoot != null);
-                await MudTreeRoot.OnItemClickAsync(this);
+                if (MudTreeRoot is not null)
+                {
+                    await MudTreeRoot.OnItemClickAsync(this);
+                }
             }
             await OnClick.InvokeAsync(ev);
         }
@@ -457,8 +459,10 @@ namespace MudBlazor
             }
             if (!GetReadOnly())
             {
-                Debug.Assert(MudTreeRoot != null);
-                await MudTreeRoot.OnItemClickAsync(this);
+                if (MudTreeRoot is not null)
+                {
+                    await MudTreeRoot.OnItemClickAsync(this);
+                }
             }
             await OnDoubleClick.InvokeAsync(ev);
         }

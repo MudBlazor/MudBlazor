@@ -15,7 +15,7 @@
                 <path stroke="#e0e0e0" stroke-width="0.3" d="@horizontalLine.Data"></path>
             }
         </g>
-        @if (MudChartParent?.ChartOptions.XAxisLines==true)
+        @if (MudChartParent?.ChartOptions.XAxisLines == true)
         {
             <g class="mud-charts-gridlines-xaxis-lines">
                 @foreach (var verticalLine in _verticalLines)
@@ -25,19 +25,19 @@
             </g>
         }
     </g>
-    <g class="mud-charts-yaxis">
+    <g @ref="_yAxisGroupElementReference" class="mud-charts-yaxis">
         @foreach (var horizontalLineValue in _horizontalValues)
         {
             @((MarkupString)$"<text x='{horizontalLineValue.X.ToString(CultureInfo.InvariantCulture)}' y='{horizontalLineValue.Y.ToString(CultureInfo.InvariantCulture)}' font-size='12px' text-anchor='end' dominant-baseline='auto'>{horizontalLineValue.Value?.ToString(CultureInfo.InvariantCulture)}</text>")
         }
     </g>
-    <g class="mud-charts-xaxis">
+    <g @ref="_xAxisGroupElementReference" class="mud-charts-xaxis">
         @for (var i = 0; i < _verticalValues.Count; i++)
         {
             var verticalLineValue = _verticalValues[i];
             var x = verticalLineValue.X.ToString(CultureInfo.InvariantCulture);
             var y = verticalLineValue.Y.ToString(CultureInfo.InvariantCulture);
-            var rotation = (-AxisChartOptions.LabelRotation).ToString(CultureInfo.InvariantCulture);
+            var rotation = (-AxisChartOptions.XAxisLabelRotation).ToString(CultureInfo.InvariantCulture);
             @((MarkupString)$"<text x='{x}' y='{y}' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate({rotation} {x} {y})'>{verticalLineValue.Value?.ToString(CultureInfo.InvariantCulture)}</text>")
         }
     </g>
@@ -50,7 +50,7 @@
                   @onclick="() => SelectedIndex = bar.Index" 
                   fill="@color"
                   stroke="@color"
-                  stroke-width="8" 
+                  stroke-width="@BarStroke" 
                   d="@bar.Data"
                   @onmouseover="(e) => OnBarMouseOver(e, bar)"
                   @onmouseout="OnBarMouseOut">
@@ -58,12 +58,12 @@
         }
     </g>
 
-	@MudChartParent?.CustomGraphics
+    @MudChartParent?.CustomGraphics
 
     @* Render the tooltip as an SVG group when a bar is hovered *@
-    @if (_hoveredBar is not null)
+    @if (_hoveredBar is not null && MudChartParent?.ChartOptions.ShowToolTips == true)
     {
-        var color = MudChartParent?.ChartOptions.ChartPalette.GetValue(_hoveredBar.Index % MudChartParent.ChartOptions.ChartPalette.Length)?.ToString() ?? string.Empty;
+        var color = MudChartParent.ChartOptions.ChartPalette.GetValue(_hoveredBar.Index % MudChartParent.ChartOptions.ChartPalette.Length)?.ToString() ?? string.Empty;
         var series = _series[_hoveredBar.Index];
 
         if (!string.IsNullOrWhiteSpace(series.DataMarkerTooltipTitleFormat))

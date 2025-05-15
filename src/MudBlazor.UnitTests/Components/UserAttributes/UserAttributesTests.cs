@@ -23,6 +23,8 @@ namespace MudBlazor.UnitTests.UserAttributes
             Exclude(typeof(MudPicker<>));       // Internal component, skip
             Exclude(typeof(MudRadioGroup<>));   // Wrapping component, skip
             Exclude(typeof(MudOverlay));        // Sectioned component, skip
+            Exclude(typeof(DataGridGroupRow<>));  // Internal component, skip
+            Exclude(typeof(DataGridVirtualizeRow<>)); // Internal component, skip
         }
 
         [Test]

@@ -1,9 +1,9 @@
-﻿@namespace MudBlazor
+@namespace MudBlazor
 @typeparam T
 @inherits MudBaseInput<T>
 
 <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
-    <div class="@OuterClassname" id="@_elementId" @onfocusout="@OnFocusOutAsync">
+    <div class="@OuterClassname" id="@_elementId" @onfocusout="@OnFocusOutAsync" @onclick:stopPropagation @onmousedown:stopPropagation>
         <MudInputControl Label="@Label"
                          Variant="@Variant"
                          HelperId="@GetHelperId()"
@@ -53,7 +53,8 @@
                           ShrinkLabel="@ShrinkLabel"
                           InputId="@InputElementId"
                           Required="@Required">
-                    @if (CanRenderValue) {
+                    @if (CanRenderValue)
+                    {
                         @GetSelectedValuePresenter()
                     }
                 </MudInput>
@@ -103,7 +104,8 @@
                                  Class="@ListClass"
                                  Dense="@Dense"
                                  @bind-SelectedValue="_activeItemId">
-                            @if (MultiSelection && SelectAll) {
+                            @if (MultiSelection && SelectAll)
+                            {
                                 <MudListItem Value="@("__SelectAll__")"
                                              Icon="@SelectAllCheckBoxIcon"
                                              Text="@SelectAllText"
@@ -127,5 +129,16 @@
         </CascadingValue>
     </CascadingValue>
 </CascadingValue>
-<!-- pointerdown instead of click needed to close the menu before OnLostFocus runs -->
-<MudOverlay Visible="_open" @onpointerdown="@(() => CloseMenu(false))" LockScroll="@LockScroll" />
+<!-- 
+pointerdown instead of click needed to close the menu before OnLostFocus runs
+
+When Modal is false the overlay does not receive pointer events so we activate
+the auto close feature and call CloseMenu in OnClosed. The modeless auto close
+feature relies on pointerdown event resulting in the same order of events.
+-->
+<MudOverlay Visible="_open"
+            @onpointerdown="@(() => CloseMenu(false))"
+            LockScroll="@LockScroll"
+            AutoClose="@(!Modal)"
+            Modal="@Modal"
+            OnClosed="@(() => CloseMenu(false))"/>
