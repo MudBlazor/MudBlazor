@@ -76,7 +76,6 @@ public abstract class MudAxisChartBase<TOptions> : MudChartBase<TOptions>, IDisp
             var elementSize = await JsRuntime.InvokeAsync<ElementSize>("mudObserveElementSize", _dotNetObjectReference, _elementReference);
 
             OnElementSizeChanged(elementSize);
-            return;
         }
 
         var yAxisLabelSize = _yAxisGroupElementReference != null ? await JsRuntime.InvokeAsync<ElementSize>("mudGetSvgBBox", _yAxisGroupElementReference) : null;

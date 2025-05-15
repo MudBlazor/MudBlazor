@@ -46,7 +46,7 @@ public interface IAxisLineChartOptions : IAxisChartOptions
     public Dictionary<ChartDataSet, SeriesDisplayOverride> SeriesDisplayOverrides { get; set; }
 }
 
-public class SeriesDisplayOverride
+public record SeriesDisplayOverride
 {
     public LineDisplayType? LineDisplayType { get; set; }
     public InterpolationOption? InterpolationOption { get; set; }

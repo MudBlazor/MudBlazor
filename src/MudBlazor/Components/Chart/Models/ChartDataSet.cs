@@ -8,7 +8,7 @@ using System.Runtime.CompilerServices;
 namespace MudBlazor;
 
 [CollectionBuilder(typeof(ChartDataSet), nameof(Create))]
-public class ChartDataSet
+public class ChartDataSet : IEquatable<ChartDataSet>
 {
     public ChartDataSet() { }
 
@@ -48,6 +48,18 @@ public class ChartDataSet
     public static implicit operator ChartDataSet(double[] values) => new() { Data = values };
     public static ChartDataSet Create(ReadOnlySpan<double> values) => new(values.ToArray());
     public IEnumerator<double> GetEnumerator() => Data.GetEnumerator();
+
+    public bool Equals(ChartDataSet? other)
+    {
+        if (other is null) return false;
+
+        return Label == other.Label &&
+               Data.Values.SequenceEqual(other.Data.Values);
+    }
+
+    public override bool Equals(object? obj) => Equals(obj as ChartDataSet);
+
+    public override int GetHashCode() => HashCode.Combine(Label, string.Join(",", Data.Values));
 }
 
 public static class ChartDataSetExtensions

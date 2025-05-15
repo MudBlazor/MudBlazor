@@ -15,7 +15,6 @@ partial class TimeSeries : MudAxisLineChartBase<TimeSeriesChartOptions>, IDispos
     private TimeSpan _minDateLabelOffset;
     private DataPoint[][]? _cachedDataPoints;
 
-    // Pre-calculate conversion constants
     private double _timeToPixelRatio;
 
     protected override bool ShouldInterpolate => false;
@@ -50,7 +49,7 @@ partial class TimeSeries : MudAxisLineChartBase<TimeSeriesChartOptions>, IDispos
         GenerateVerticalGridLines(numVerticalLines, startOffset, horizontalSpace);
 
         if (Series.Count == 0) return;
-        if (_yAxisLabelSize?.Width == 0 && _xAxisLabelSize?.Height == 0) return;
+        if ((_yAxisLabelSize?.Width ?? 0) == 0 || (_xAxisLabelSize?.Height ?? 0) == 0) return;
 
         GenerateChartLines(lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace);
     }
