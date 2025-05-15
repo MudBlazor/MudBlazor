@@ -301,11 +301,11 @@ namespace MudBlazor.UnitTests.Components
                 .AddChildContent<MudToggleItem<string>>(item => item.Add(x => x.Value, "a"))
                 .AddChildContent<MudToggleItem<string>>(item => item.Add(x => x.Value, "b"))
                 .AddChildContent<MudToggleItem<string>>(item => item.Add(x => x.Value, "c"))
-                );
+            );
 
             var toggleGroup = comp.Instance;
             var items = toggleGroup.GetItems().ToList();
-            
+
             for (var i = 0; i < items.Count; i++)
             {
                 // Act
@@ -315,9 +315,7 @@ namespace MudBlazor.UnitTests.Components
                 currentItem.Selected.Should().BeTrue();
                 items.Except([currentItem]).All(x => !x.Selected).Should().BeTrue();
             }
-
         }
-
 
         [Test]
         [TestCase(SelectionMode.SingleSelection, "b")]
