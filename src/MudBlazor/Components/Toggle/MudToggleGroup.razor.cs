@@ -273,14 +273,6 @@ namespace MudBlazor
             ApplySelectionState();
         }
 
-        private void ApplySelectionState()
-        {
-            foreach (var item in _items)
-            {
-                ApplySelectionState(item);
-            }
-        }
-
         private void OnParameterChanged()
         {
             foreach (IMudStateHasChanged mudComponent in _items)
@@ -291,6 +283,14 @@ namespace MudBlazor
             StateHasChanged();
         }
 
+        private void ApplySelectionState()
+        {
+            foreach (var item in _items)
+            {
+                ApplySelectionState(item);
+            }
+        }
+        
         private void ApplySelectionState(MudToggleItem<T> item)
         {
             var selected = SelectionMode == SelectionMode.MultiSelection
