@@ -290,6 +290,34 @@ namespace MudBlazor.UnitTests.Components
             }
         }
 
+        [Test]
+        [TestCase(SelectionMode.SingleSelection)]
+        [TestCase(SelectionMode.ToggleSelection)]
+        public void ToggleGroup_UnselectPreviousValue_OnToggle_Test(SelectionMode selMode)
+        {
+            // Arrange
+            var comp = Context.RenderComponent<MudToggleGroup<string>>(parameters => parameters
+                .Add(p => p.SelectionMode, selMode)
+                .AddChildContent<MudToggleItem<string>>(item => item.Add(x => x.Value, "a"))
+                .AddChildContent<MudToggleItem<string>>(item => item.Add(x => x.Value, "b"))
+                .AddChildContent<MudToggleItem<string>>(item => item.Add(x => x.Value, "c"))
+                );
+
+            var toggleGroup = comp.Instance;
+            var items = toggleGroup.GetItems().ToList();
+            
+            for (var i = 0; i < items.Count; i++)
+            {
+                // Act
+                comp.FindAll(".mud-toggle-item").GetItemByIndex(i).Click();
+                // Assert
+                var currentItem = items[i];
+                currentItem.Selected.Should().BeTrue();
+                items.Except([currentItem]).All(x => !x.Selected).Should().BeTrue();
+            }
+
+        }
+
 
         [Test]
         [TestCase(SelectionMode.SingleSelection, "b")]

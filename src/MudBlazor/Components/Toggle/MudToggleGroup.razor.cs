@@ -305,7 +305,9 @@ namespace MudBlazor
         protected internal async Task ToggleItemAsync(MudToggleItem<T> item)
         {
             var itemValue = item.Value;
-
+            var previousItem = SelectionMode != SelectionMode.MultiSelection 
+                ? _items.FirstOrDefault(x => EqualityComparer<T>.Default.Equals(_value.Value, x.Value))
+                : null;
             if (SelectionMode == SelectionMode.MultiSelection)
             {
                 var selectedValues = new HashSet<T?>(_values.Value ?? []);
@@ -332,7 +334,9 @@ namespace MudBlazor
             {
                 await _value.SetValueAsync(itemValue);
             }
-
+            // unselect previous item if not null and not the same as current item
+            if (previousItem != null && previousItem != item)
+                ApplySelectionState(previousItem);
             ApplySelectionState(item);
         }
 
