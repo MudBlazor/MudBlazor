@@ -1,0 +1,48 @@
+﻿@namespace MudBlazor.Docs.Examples
+@using MudBlazor
+
+<MudDialog DefaultFocus="DefaultFocus.None" OnKeyDown="OnKeyDownAsync">
+    <TitleContent>
+        Dialog Test Title
+    </TitleContent>
+    <DialogContent>
+        <MudTextField AutoFocus T="string" Value="@_what" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton @ref="@btn" OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+#nullable enable
+    [CascadingParameter]
+    private IMudDialogInstance? MudDialog { get; set; }
+
+    private MudButton? btn;
+    private string _what = "What";
+
+    private void Submit() => MudDialog?.Close(DialogResult.Ok(true));
+
+    private void Cancel() => MudDialog?.Cancel();
+
+    private async Task OnKeyDownAsync(KeyboardEventArgs args)
+    {
+        switch(args.Key) {
+            case "Escape":
+                {
+                    await InvokeAsync(() =>
+                    {
+                        if (btn != null)
+                        {
+                        //await btn.FocusAsync();
+                        //await Task.Yield();
+                        MudDialog?.Close();                            
+                        }
+                    });
+                    break;
+                }
+
+        }
+    }
+}
