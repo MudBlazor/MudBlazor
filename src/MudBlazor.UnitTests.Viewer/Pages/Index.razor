@@ -116,9 +116,9 @@
         border-radius: var(--mud-default-borderradius);
     }
 
-        .docs-search-bar.mud-input-control .mud-input-root, .docs-search-bar.mud-input-control .mud-icon-default {
-            color: #fafafa;
-        }
+    .docs-search-bar.mud-input-control .mud-input-root, .docs-search-bar.mud-input-control .mud-icon-default {
+        color: #fafafa;
+    }
 
     .docs-search-bar .mud-input.mud-input-outlined .mud-input-outlined-border {
         border: none;
@@ -160,12 +160,12 @@
     private MudAutocomplete<Type> _autocomplete = null!;
     private bool _isDarkMode;
     private readonly MudTheme _customTheme = new()
+    {
+        LayoutProperties = new LayoutProperties
         {
-            LayoutProperties = new LayoutProperties
-            {
-                DrawerWidthLeft = "400px"
-            }
-        };
+            DrawerWidthLeft = "400px"
+        }
+    };
 
     private bool ShouldFilter => !string.IsNullOrWhiteSpace(_currentSearchText) && _currentSearchText.Length > 2;
 
