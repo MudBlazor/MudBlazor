@@ -190,7 +190,7 @@ namespace MudBlazor
         public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// The custom content within this item. Content of the item, if used completely replaced the default rendering.
+        /// The custom content within this item.
         /// </summary>
         /// <remarks>
         /// When set, completely controls the rendering of child items. For <see cref="MudTreeViewItem{T}"/> children, use <see cref="Items"/> or <see cref="ChildContent"/>.
@@ -259,7 +259,7 @@ namespace MudBlazor
         public string? Icon { get; set; }
 
         /// <summary>
-        /// The item shows when this item is expanded.
+        /// The icon shown when this item is expanded.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.

@@ -205,7 +205,7 @@ namespace MudBlazor
         public bool Disabled { get; set; }
 
         /// <summary>
-        /// Conditionally shows this tooltip.
+        /// Gets whether the tooltip should be shown.
         /// </summary>
         /// <remarks>
         /// The tooltip will be displayed if it is not disabled, not already visible, and either <see cref="TooltipContent"/> or <see cref="Text"/> is specified.

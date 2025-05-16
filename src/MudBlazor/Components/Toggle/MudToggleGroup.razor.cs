@@ -163,7 +163,7 @@ namespace MudBlazor
         /// Uses a vertical layout for items.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>null</c>.
+        /// Defaults to <c>false</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
