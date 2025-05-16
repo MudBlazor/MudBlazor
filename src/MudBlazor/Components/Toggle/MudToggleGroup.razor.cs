@@ -251,16 +251,6 @@ namespace MudBlazor
             }
         }
 
-        protected override void OnAfterRender(bool firstRender)
-        {
-            base.OnAfterRender(firstRender);
-
-            if (firstRender)
-            {
-                ApplySelectionState();
-            }
-        }
-
         private void OnValueChanged()
         {
             // perform Selection after user consumes Value Changed logic
