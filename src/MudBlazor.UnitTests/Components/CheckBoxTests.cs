@@ -355,46 +355,42 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Optional CheckBox should not have required attribute and aria-required should be false.
+        /// Optional CheckBox should not have required attribute.
         /// </summary>
         [Test]
-        public void OptionalCheckBox_Should_NotHaveRequiredAttributeAndAriaRequiredShouldBeFalse()
+        public void OptionalCheckBox_Should_NotHaveRequiredAttribute()
         {
             var comp = Context.RenderComponent<MudCheckBox<bool>>();
 
             comp.Find("input").HasAttribute("required").Should().BeFalse();
-            comp.Find("input").GetAttribute("aria-required").Should().Be("false");
         }
 
         /// <summary>
-        /// Required CheckBox should have required and aria-required attributes.
+        /// Required CheckBox should have required attribute.
         /// </summary>
         [Test]
-        public void RequiredCheckBox_Should_HaveRequiredAndAriaRequiredAttributes()
+        public void RequiredCheckBox_Should_HaveRequiredAttribute()
         {
             var comp = Context.RenderComponent<MudCheckBox<bool>>(parameters => parameters
                 .Add(p => p.Required, true));
             comp.Find("input").HasAttribute("required").Should().BeTrue();
-            comp.Find("input").GetAttribute("aria-required").Should().Be("true");
         }
 
         /// <summary>
-        /// Required and aria-required CheckBox attributes should be dynamic.
+        /// Required CheckBox attribute should be dynamic.
         /// </summary>
         [Test]
-        public void RequiredAndAriaRequiredCheckBoxAttributes_Should_BeDynamic()
+        public void RequiredCheckBoxAttributes_Should_BeDynamic()
         {
             var comp = Context.RenderComponent<MudCheckBox<bool>>();
 
             var input = () => comp.Find("input");
             input().HasAttribute("required").Should().BeFalse();
-            input().GetAttribute("aria-required").Should().Be("false");
 
             comp.SetParametersAndRender(parameters => parameters
                 .Add(p => p.Required, true));
 
             input().HasAttribute("required").Should().BeTrue();
-            input().GetAttribute("aria-required").Should().Be("true");
         }
 
         [Test]

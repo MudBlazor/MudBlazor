@@ -11,6 +11,14 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
+
+    /// <summary>
+    /// Maintains the selection of a group of <see cref="MudToggleItem{T}"/> components.
+    /// </summary>
+    /// <typeparam name="T">The type of item being toggled.</typeparam>
+    /// <seealso cref="MudToggleItem{T}"/>
+    /// <seealso cref="MudRadioGroup{T}"/>
+    /// <seealso cref="MudRadio{T}"/>
     public partial class MudToggleGroup<T> : MudComponentBase
     {
         public MudToggleGroup()
@@ -83,57 +91,80 @@ namespace MudBlazor
             .Build();
 
         /// <summary>
-        /// If true, the group will be disabled.
+        /// Prevents the user from interacting with this toggle group.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
         public bool Disabled { get; set; }
 
         /// <summary>
-        /// The selected value in single- and toggle-selection mode.
+        /// The currently selected value.
         /// </summary>
+        /// <remarks>
+        /// Applies when <see cref="SelectionMode"/> is <see cref="SelectionMode.SingleSelection"/> or <see cref="SelectionMode.ToggleSelection"/>.<br />
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
         public T? Value { get; set; }
 
         /// <summary>
-        /// Fires when Value changes.
+        /// Occurs when <see cref="Value"/> has changed.
         /// </summary>
+        /// <remarks>
+        /// Applies when <see cref="SelectionMode"/> is <see cref="SelectionMode.SingleSelection"/> or <see cref="SelectionMode.ToggleSelection"/>.<br />
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
         public EventCallback<T?> ValueChanged { get; set; }
 
         /// <summary>
-        /// The selected values for multi-selection mode.
+        /// The currently selected values.
         /// </summary>
+        /// <remarks>
+        /// Applies when <see cref="SelectionMode"/> is <see cref="SelectionMode.MultiSelection"/>.<br />
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
         public IEnumerable<T?>? Values { get; set; }
 
         /// <summary>
-        /// Fires when Values change.
+        /// Occurs when <see cref="Values"/> has changed.
         /// </summary>
+        /// <remarks>
+        /// Applies when <see cref="SelectionMode"/> is <see cref="SelectionMode.MultiSelection"/>.<br />
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
         public EventCallback<IEnumerable<T?>?> ValuesChanged { get; set; }
 
         /// <summary>
-        /// Classes (separated by space) to be applied to the selected items only.
+        /// The CSS classes applied to selected items.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>. Multiple classes must be separated by spaces.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public string? SelectedClass { get; set; }
 
         /// <summary>
-        /// Classes (separated by space) to be applied to SelectedIcon/UnselectedIcon of the items (if CheckMark is true).
+        /// The CSS classes applied to checkmark icons.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.<br />
+        /// Applies when <see cref="CheckMark"/> is <c>true</c>. Classes are applied to the <c>SelectedIcon</c> and <c>UnselectedIcon</c> icons.<br />
+        /// Multiple classes must be separated by spaces.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public string? CheckMarkClass { get; set; }
 
         /// <summary>
-        /// If true, use vertical layout.
+        /// Uses a vertical layout for items.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public bool Vertical { get; set; }
@@ -142,69 +173,99 @@ namespace MudBlazor
         public bool RightToLeft { get; set; }
 
         /// <summary>
-        /// If true, show an outline border. Default is true.
+        /// Shows an outline border.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public bool Outlined { get; set; } = true;
 
         /// <summary>
-        /// If true, show a line delimiter between items. Default is true.
+        /// Shows a line delimiter between each item.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public bool Delimiters { get; set; } = true;
 
         /// <summary>
-        /// Gets or sets whether to show a ripple effect when the user clicks the button. Default is true.
+        /// Show a ripple effect when the user clicks an item.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public bool Ripple { get; set; } = true;
 
         /// <summary>
-        /// The size of the items in the toggle group.
+        /// The size of each toggle item.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Size.Medium"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public Size Size { get; set; } = Size.Medium;
 
         /// <summary>
-        /// The selection behavior of the group. SingleSelection (the default) is a radio-button like exclusive collection.
-        /// MultiSelection behaves like a group of check boxes. ToggleSelection is an exclusive single selection where
-        /// you can also select nothing by toggling off the current choice.
+        /// The selection behavior for this group.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="SelectionMode.SingleSelection"/>.<br />
+        /// * <c>SingleSelection</c>: Allows only one item to be selected at a time.<br />
+        /// * <c>MultiSelection</c>: Allows multiple items to be selected.<br />
+        /// * <c>ToggleSelection</c>: Allows only one item to be selected, but the current selection can be deselected.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
         public SelectionMode SelectionMode { get; set; }
 
         /// <summary>
-        /// The color of the component. Affects borders and selection color. Default is Colors.Primary.
+        /// The color of borders and the current selections.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Color.Primary"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public Color Color { get; set; } = Color.Primary;
 
         /// <summary>
-        /// If true, the items show a check mark next to the text or render fragment. Customize the check mark by setting
-        /// SelectedIcon and UnselectedIcon.
+        /// Shows a checkmark next to each item.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>. When <c>true</c>, the checkmark icons can be customized via <c>SelectedIcon</c> and <c>UnselectedIcon</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
         public bool CheckMark { get; set; }
 
         /// <summary>
-        /// If true, the check mark is counter balanced with padding on the right side which makes the content stay always
-        /// centered no matter if the check mark is shown or not.
+        /// Reserves space for checkmarks even when <see cref="CheckMark"/> is <c>false</c>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
         public bool FixedContent { get; set; }
 
+        /// <summary>
+        /// Contains the <see cref="MudToggleItem{T}"/> components of this group.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
         public RenderFragment? ChildContent { get; set; }
 
+        /// <summary>
+        /// Adds the specified item to this group.
+        /// </summary>
+        /// <param name="item">The item to add.</param>
         protected internal void Register(MudToggleItem<T> item)
         {
             if (_items.Select(x => x.Value).Contains(item.Value))
@@ -216,6 +277,10 @@ namespace MudBlazor
             StateHasChanged();
         }
 
+        /// <summary>
+        /// Removes the specified item from this group.
+        /// </summary>
+        /// <param name="item">The item to remove.</param>
         protected internal void Unregister(MudToggleItem<T> item)
         {
             if (_items.Remove(item))
@@ -224,6 +289,7 @@ namespace MudBlazor
             }
         }
 
+        /// <inheritdoc />
         protected override void OnInitialized()
         {
             base.OnInitialized();
@@ -250,6 +316,7 @@ namespace MudBlazor
             }
         }
 
+        /// <inheritdoc />
         protected override void OnAfterRender(bool firstRender)
         {
             base.OnAfterRender(firstRender);

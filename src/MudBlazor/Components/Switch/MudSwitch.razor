@@ -6,9 +6,9 @@
     <InputContent>
         <label class="@LabelClassname" style="@Style" @onkeydown="HandleKeyDownAsync" id="@_elementId">
             <span class="@SpanClassname">
-                <span tabindex="0" class="@SwitchClassname">
+                <span class="@SwitchClassname">
                     <span class="mud-switch-button">
-                        <input tabindex="-1" @attributes="UserAttributes" aria-checked="@((BoolValue == true).ToString().ToLower())" aria-readonly="@(GetDisabledState().ToString().ToLower())" type="checkbox" class="mud-switch-input" checked="@BoolValue" @onchange="@OnChange" disabled="@GetDisabledState()" @onclick:preventDefault="@GetReadOnlyState()" required="@Required" aria-required="@Required.ToString().ToLowerInvariant()" />
+                        <input @attributes="UserAttributes" tabindex="@(GetDisabledState() ? -1 : 0)" aria-readonly="@(GetReadOnlyState().ToString().ToLower())" type="checkbox" class="mud-switch-input" checked="@BoolValue" @onchange="@OnChange" disabled="@GetDisabledState()" @onclick:preventDefault="@GetReadOnlyState()" required="@Required" />
                         <span class="@ThumbClassname">
                             @if (!string.IsNullOrEmpty(ThumbIcon))
                             {
