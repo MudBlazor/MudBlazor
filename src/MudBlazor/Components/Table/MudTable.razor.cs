@@ -381,6 +381,12 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// The custom CSS classes to apply to the table.
+        /// </summary>
+        [Parameter]
+        public string? TableClass { get; set; }
+
+        /// <summary>
         /// The content for the header of each group when <see cref="GroupBy"/> is set.
         /// </summary>
         /// <remarks>
