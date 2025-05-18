@@ -1,4 +1,4 @@
-.cookie-consent-container {
+.cookie-consent__container {
   display: flex;
   justify-content: center;
   position: fixed;
@@ -19,14 +19,14 @@
   border-radius: 0.25rem;
 }
 
-.cookie-consent-content {
+.cookie-consent__body {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1rem;
 }
 
-.cookie-consent-actions {
+.cookie-consent__actions {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
