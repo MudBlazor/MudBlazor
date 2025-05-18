@@ -144,6 +144,13 @@ namespace MudBlazor
         public RenderFragment? LoadingContent { get; set; }
 
         /// <summary>
+        /// Forces the loading content to be shown even if the table has rows and also disables the default loading progress row.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Table.Data)]
+        public bool ForceLoadingContent { get; set; } = false;
+
+        /// <summary>
         /// Shows a horizontal scroll bar if the content exceeds the maximum width.
         /// </summary>
         /// <remarks>

@@ -57,7 +57,7 @@
                                 }
                             </MudTHeadRow>
                         }
-                        @if (Loading)
+                        @if (Loading && !ForceLoadingContent)
                         {
                             <tr class="mud-table-row">
                                 <th colspan="1000" class="@(CurrentPageItems.Any() || LoadingContent is not null ? "mud-table-loading" : "")">
@@ -67,7 +67,7 @@
                         }
                     </thead>
                 }
-                else if (Loading)
+                else if (Loading && !ForceLoadingContent)
                 {
                     <thead class="@HeadClassname">
                         <tr class="mud-table-row">
@@ -90,7 +90,16 @@
                     }
                     else
                     {
-                        @if (CurrentPageItems != null && CurrentPageItems.Any())
+                        @if (ForceLoadingContent && LoadingContent != null && Loading) 
+                        {
+                            <tr>
+                                <th colspan="1000" class="mud-table-empty-row">
+                                    <div Class="my-3">
+                                            @LoadingContent
+                                    </div>
+                                </th>
+                            </tr>
+                        } else if (CurrentPageItems != null && CurrentPageItems.Any())
                         {
                             var rowIndex = 0;
                                 <MudVirtualize Enabled="@Virtualize" Items="@CurrentPageItems?.ToList()" OverscanCount="@OverscanCount" ItemSize="@ItemSize" Context="item">
@@ -134,8 +143,8 @@
                             </MudVirtualize>
                         }
                     }
-                    @if(!(CurrentPageItems is not null && CurrentPageItems.Any())
-                        && (Loading ? LoadingContent != null : NoRecordsContent != null)
+                    @if((CurrentPageItems is null || !CurrentPageItems.Any())
+                        && (Loading ? LoadingContent != null && !ForceLoadingContent : NoRecordsContent != null)
                     )
                     {
                         <tr>
