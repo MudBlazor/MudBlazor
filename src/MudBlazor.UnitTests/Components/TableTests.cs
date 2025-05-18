@@ -18,7 +18,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<TableRowClickTest>();
             var table = comp.FindComponent<MudTable<int>>();
-            table.SetParametersAndRender(parameters=> parameters.Add(x=> x.TableClass, "table-custom-class"));
+            table.SetParametersAndRender(parameters => parameters.Add(x => x.TableClass, "table-custom-class"));
             table.Markup.Should().Contain("class=\"mud-table-root table-custom-class\"");
         }
 
