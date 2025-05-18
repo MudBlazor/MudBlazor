@@ -260,7 +260,7 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
         {
             if (_visibleState.Value)
             {
-                await ();
+                await BlockScrollAsync();
             }
             else
             {
