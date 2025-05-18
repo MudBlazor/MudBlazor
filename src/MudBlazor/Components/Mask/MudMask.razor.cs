@@ -199,7 +199,12 @@ namespace MudBlazor
         {
             try
             {
-                if ((e.CtrlKey && e.Key != "Backspace") || e.AltKey || GetReadOnlyState())
+                if (e.CtrlKey && e.Key != "Backspace"
+                    // on Mac OS, the copy paste command is cmd + v
+                    // cmd is identified using the MetaKey property
+                    || e.MetaKey && e.Key != "Backspace"
+                    || e.AltKey
+                    || GetReadOnlyState())
                     return;
                 switch (e.Key)
                 {
