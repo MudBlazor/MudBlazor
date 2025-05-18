@@ -13,18 +13,26 @@ public partial class MudText : MudComponentBase
     protected string Classname =>
         new CssBuilder("mud-typography")
             .AddClass($"mud-typography-{Typo.ToDescriptionString()}")
-            .AddClass($"mud-{Color.ToDescriptionString()}-text", Color != Color.Default && Color != Color.Inherit)
+            .AddClass($"mud-{Color.ToDescriptionString()}-text", Color != Color.Default && Color != Color.Inherit && !Disabled)
+            .AddClass("mud-text-disabled", Disabled)
             .AddClass("mud-typography-gutterbottom", GutterBottom)
             .AddClass($"mud-typography-align-{ConvertAlign(Align).ToDescriptionString()}", Align != Align.Inherit)
             .AddClass("d-inline", Inline)
             .AddClass(Class)
             .Build();
 
-    /// <summary>
-    /// Whether text is displayed right-to-left.
-    /// </summary>
     [CascadingParameter(Name = "RightToLeft")]
     public bool RightToLeft { get; set; }
+
+    /// <summary>
+    /// Applies disabled style to the element.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.FormComponent.Appearance)]
+    public bool Disabled { get; set; }
 
     /// <summary>
     /// The theme style of the text.
