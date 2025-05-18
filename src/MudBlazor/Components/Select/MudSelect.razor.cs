@@ -280,6 +280,16 @@ namespace MudBlazor
         public EventCallback OnClose { get; set; }
 
         /// <summary>
+        /// Prevents interaction with background elements while this list is open.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public bool Modal { get; set; } = true;
+
+        /// <summary>
         /// The content within this component, typically a list of <see cref="MudSelectItem{T}"/> components.
         /// </summary>
         [Parameter]

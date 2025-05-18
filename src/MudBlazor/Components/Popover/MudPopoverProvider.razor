@@ -2,7 +2,7 @@
 
 @if (Enabled)
 {
-    <div class="mud-popover-provider">
+    <div class="@PopoverService.PopoverOptions.ContainerClass">
         <SectionOutlet SectionName="mud-overlay-to-popover-provider" />
         @foreach (var handler in PopoverService.ActivePopovers)
         {

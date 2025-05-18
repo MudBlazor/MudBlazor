@@ -11,11 +11,18 @@ public class AxisChartOptions
     /// <summary>
     /// Rotation angle to rotate the labels in degrees.
     /// </summary>
-    public int LabelRotation { get; set; }
+    [Obsolete("Renamed to XAxisLabelRotation. This will be removed in a future major version.", false)]
+    public int LabelRotation { get => XAxisLabelRotation; set => XAxisLabelRotation = value; }
 
     /// <summary>
-    /// Extra height to fit rotated labels.
+    /// Rotation angle to rotate the labels in degrees.
     /// </summary>
+    public int XAxisLabelRotation { get; set; }
+
+    /// <summary>
+    /// Extra height to fit XAxis rotated labels.
+    /// </summary>
+    [Obsolete("No longer required, labels are now calculated automatically. This will be removed in a future major version.", false)]
     public int LabelExtraHeight { get; set; }
 
     /// <summary>

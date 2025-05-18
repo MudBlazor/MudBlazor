@@ -1,0 +1,33 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<div style="height: 400px; width: 300px; position: relative; background-color: var(--mud-palette-background)">
+    <div style="height: 56px; width: 56px; border-radius: 50%; cursor: grab; z-index: 9999; position: absolute; left: @(_leftPadding)px; top: @(_topPadding)px;">
+        <MudSwipeArea Class="mud-height-full mud-width-full mud-theme-primary d-flex align-center justify-center rounded-circle" OnSwipeMove="HandleSwipeMove">
+            @if (_showIcon)
+            {
+                <MudIcon Style="width: 80%; height: 80%;" Icon="@Icons.Custom.Brands.MudBlazor" />
+            }
+        </MudSwipeArea>
+    </div>
+</div>
+
+@code {
+    private double _leftPadding;
+    private double _topPadding;
+    private bool _showIcon = false;
+
+    private void HandleSwipeMove(MultiDimensionSwipeEventArgs e)
+    {
+        _leftPadding -= e.SwipeDeltas[0] ?? 0;
+        _topPadding -= e.SwipeDeltas[1] ?? 0;
+
+        if (_leftPadding < 0 || _topPadding < 0 || _leftPadding > 244 || _topPadding > 344)
+        {
+            _showIcon = true;
+        }
+        else
+        {
+            _showIcon = false;
+        }
+    }
+}

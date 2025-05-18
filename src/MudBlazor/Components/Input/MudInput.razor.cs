@@ -46,6 +46,7 @@ namespace MudBlazor
                 .AddClass("mud-icon-button-edge-end", Adornment == Adornment.End && HideSpinButtons)
                 .AddClass("me-6", Adornment != Adornment.End && HideSpinButtons == false)
                 .AddClass("mud-icon-button-edge-margin-end", Adornment != Adornment.End && HideSpinButtons)
+                .AddClass("mud-no-activator")
                 .Build();
 
         internal override InputType GetInputType() => InputType;
@@ -375,11 +376,17 @@ namespace MudBlazor
         {
             if (IsJSRuntimeAvailable)
             {
+                await ElementReference.MudDetachBlurEventWithJS(_dotNetReferenceLazy.Value);
                 await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudElementRef.removeOnBlurEvent", ElementReference, _dotNetReferenceLazy);
                 if (AutoGrow)
                 {
                     await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputAutoGrow.destroy", ElementReference);
                 }
+            }
+
+            if (_dotNetReferenceLazy.IsValueCreated)
+            {
+                _dotNetReferenceLazy.Value.Dispose();
             }
 
             await base.DisposeAsyncCore();

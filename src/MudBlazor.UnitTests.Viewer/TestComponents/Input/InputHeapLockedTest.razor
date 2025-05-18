@@ -1,0 +1,45 @@
+﻿<br />
+<MudTextField T="string"
+              Placeholder="Test"
+              Variant="Variant.Text"
+              Immediate="true"
+              OnKeyDown="@HandleKeyDown"
+              OnKeyUp="@SendMessage"
+              Disabled="@_isLoading"
+              MaxLength="5000"
+              Lines="10"
+              AutoFocus="true"
+              Class="chat-input"
+              TextUpdateSuppression="true"
+              AutoGrow="true"
+              MaxLines="10"
+              Underline="true"
+              UserAttributes="@_userAttributes" />
+
+@code {
+    private bool _isLoading = false;
+
+    private readonly Dictionary<string, object> _userAttributes = new Dictionary<string, object>
+    {
+        { "autocomplete", "off" },
+        { "data-textfieldref", "ChatbotMessageTextField" }
+    };
+
+    private Task SendMessage(KeyboardEventArgs e) => Task.CompletedTask;
+
+    private void HandleKeyDown(KeyboardEventArgs e)
+    {
+        switch (e.Key)
+        {
+            case "Enter":
+                _isLoading = true;
+                break;
+            default:
+                if (e.Key.Length == 1) // Single character
+                {
+                    StateHasChanged();
+                }
+                break;
+        }
+    }
+}

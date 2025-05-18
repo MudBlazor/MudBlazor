@@ -1,4 +1,4 @@
-﻿@namespace MudBlazor.Docs.Examples
+@namespace MudBlazor.Docs.Examples
 @using MudBlazor
 
 <MudStack Row Class="justify-space-between mud-width-full">
@@ -16,7 +16,8 @@
                        Placeholder="@(_placeholder ? "Placeholder" : null)"
                        HelperText="@(_helperText ? "Helper Text" : null)"
                        HelperTextOnFocus="_helperTextOnFocus"
-                       Clearable="_clearable">
+                       Clearable="_clearable"
+                       Modal="_modal">
                 @foreach (var state in _states)
                 {
                     <MudSelectItem Value="state">@state</MudSelectItem>
@@ -41,6 +42,7 @@
         <MudSwitch @bind-Value="_helperTextOnFocus" Label="HelperTextOnFocus" Color="Color.Primary" />
         <MudSwitch @bind-Value="_clearable" Label="Clearable" Color="Color.Primary" />
         <MudSwitch @bind-Value="_fitContent" Label="FitContent" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_modal" Label="Modal" Color="Color.Primary" />
     </MudStack>
 </MudStack>
 
@@ -55,6 +57,7 @@
     private bool _helperTextOnFocus;
     private bool _clearable;
     private bool _fitContent;
+    private bool _modal = true;
 
     private readonly string[] _states =
     {

@@ -38,6 +38,7 @@ namespace MudBlazor.UnitTests.Docs.Generated
             ctx.Services.AddSingleton<IKeyInterceptorService, MockKeyInterceptorService>();
             ctx.Services.AddTransient<IJsEventFactory, MockJsEventFactory>();
             ctx.Services.AddScoped<IRenderQueueService, RenderQueueService>();
+            ctx.Services.AddScoped<IPointerEventsNoneService, MockPointerEventsNoneService>();
             ctx.Services.AddTransient<InternalMudLocalizer>();
             ctx.Services.AddTransient<ILocalizationInterceptor, DefaultLocalizationInterceptor>();
             ctx.Services.AddTransient<ILocalizationEnumInterceptor, DefaultLocalizationEnumInterceptor>();

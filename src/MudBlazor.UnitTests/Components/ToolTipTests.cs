@@ -42,23 +42,25 @@ namespace MudBlazor.UnitTests.Components
 
             button.ParentElement.ClassList.Should().Contain("mud-tooltip-root");
 
-            //the button [0] and the popover node doesn't exist yet
-            button.ParentElement.Children.Should().HaveCount(1);
+            //the button [0] and [1] the popover npde
+            button.ParentElement.Children.Should().HaveCount(2);
+
+            var popoverNode = button.ParentElement.Children[1];
+            popoverNode.Id.Should().StartWith("popover-");
+
+            var popoverContentNode = () => comp.Find($"#popovercontent-{popoverNode.Id.Substring(8)}");
+
+            //no content for the popover node
+            popoverContentNode().Children.Should().BeEmpty();
 
             //not visible by default
             tooltipComp.GetState(x => x.Visible).Should().BeFalse();
 
             //trigger pointerover
-
             await button.ParentElement.TriggerEventAsync("onpointerenter", new PointerEventArgs());
 
-            //content should be visible
-            var popoverNode = button.ParentElement.Children[1];
-            popoverNode.Id.Should().StartWith("popover-");
-
-            var popoverContentNode = comp.Find($"#popovercontent-{popoverNode.Id.Substring(8)}");
-            popoverContentNode.TextContent.Should().Be("my tooltip content text");
-            popoverContentNode.ClassList.Should().Contain("d-flex");
+            popoverContentNode().TextContent.Should().Be("my tooltip content text");
+            popoverContentNode().ClassList.Should().Contain("d-flex");
 
             tooltipComp.GetState(x => x.Visible).Should().BeTrue();
 
@@ -72,9 +74,7 @@ namespace MudBlazor.UnitTests.Components
                 button.ParentElement.FocusOut();
             }
             //no content should be visible
-            comp.Markup.Should().NotContain("my tooltip content text");
-            //the button [0] and the popover node doesn't exist again
-            button.ParentElement.Children.Should().HaveCount(1);
+            popoverContentNode().Children.Should().BeEmpty();
 
             tooltipComp.GetState(x => x.Visible).Should().BeFalse();
         }
@@ -110,16 +110,19 @@ namespace MudBlazor.UnitTests.Components
             button.ParentElement.ClassList.Should().Contain("mud-tooltip-root");
 
             //the button [0] and [1] the popover node
-            button.ParentElement.Children.Should().HaveCount(1);
-
-            //trigger pointerover
-
-            await button.ParentElement.TriggerEventAsync("onpointerenter", new PointerEventArgs());
+            button.ParentElement.Children.Should().HaveCount(2);
 
             var popoverNode = button.ParentElement.Children[1];
             popoverNode.Id.Should().StartWith("popover-");
 
             var popoverContentNode = comp.Find($"#popovercontent-{popoverNode.Id.Substring(8)}");
+
+
+            //no content for the popover node
+            popoverContentNode.Children.Should().BeEmpty();
+
+            //trigger pointerover
+            await button.ParentElement.TriggerEventAsync("onpointerenter", new PointerEventArgs());
 
             //content should be visible
             popoverContentNode.ClassList.Should().Contain("mud-tooltip");
@@ -137,9 +140,7 @@ namespace MudBlazor.UnitTests.Components
                 button.ParentElement.FocusOut();
             }
             //no content should be visible
-            comp.Markup.Should().NotContain("My content");
-            //the button [0] and the popover node doesn't exist again
-            button.ParentElement.Children.Should().HaveCount(1);
+            popoverContentNode.Children.Should().BeEmpty();
         }
 
         [Test]
@@ -357,81 +358,39 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
         }
 
-        [TestCase(0, 0)]
-        [TestCase(500, 500)]
         [Test]
-        public void Tooltip_Debouncer_Initials(double duration, double delay)
-        {
-            var comp = Context.RenderComponent<TooltipDurationDelayTest>(p =>
-            {
-                p.Add(x => x.Delay, delay);
-                p.Add(x => x.Duration, duration);
-            });
-
-            var tooltipComp = comp.FindComponent<MudTooltip>().Instance;
-            tooltipComp.Delay.Should().Be(delay);
-            tooltipComp.Duration.Should().Be(duration);
-            tooltipComp._previousDelay.Should().Be(delay);
-            tooltipComp._previousDuration.Should().Be(duration);
-            var button = comp.Find("button");
-            button.Should().NotBeNull();
-        }
-
-        [TestCase(0, 0)]
-        [TestCase(500, 500)]
-        [Test]
-        public async Task Tooltip_Debouncer_Duration_and_Delay(double duration, double delay)
-        {
-            var comp = Context.RenderComponent<TooltipDurationDelayTest>(p =>
-            {
-                p.Add(x => x.Delay, delay);
-                p.Add(x => x.Duration, duration);
-            });
-
-            var tooltipComp = comp.FindComponent<MudTooltip>().Instance;
-
-            // cannot await or it waits until the debounce happens
-            var eventTask = tooltipComp.HandlePointerEnterAsync();
-            if (delay > 0)
-                tooltipComp.ShowToolTip().Should().BeFalse();
-
-            await Task.Delay((int)delay + 50);
-            tooltipComp.ShowToolTip().Should().BeTrue();
-
-            await eventTask; //  ensure all completed
-
-            // cannot await or it waits until the debounce happens
-            eventTask = tooltipComp.HandlePointerLeaveAsync();
-            if (duration > 0)
-                tooltipComp.ShowToolTip().Should().BeTrue();
-
-            await Task.Delay((int)(duration + delay) + 50);
-            tooltipComp.ShowToolTip().Should().BeFalse();
-
-            await eventTask;
-        }
-
         [TestCase(true)]
         [TestCase(false)]
-        [Test]
-        public async Task Tooltip_ShowOnHover(bool showOnHover)
+        public async Task Tooltip_Handle_Pointer_Events(bool showOnHover)
         {
-            var comp = Context.RenderComponent<TooltipDurationDelayTest>(p =>
+            var comp = Context.RenderComponent<MudTooltip>(parameters => parameters
+                .Add(x => x.ShowOnHover, showOnHover)
+                .Add(x => x.ShowOnClick, true)
+                .Add(x => x.Text, "tooltip text")
+            );
+
+            var div = comp.Find(".mud-tooltip-root");
+            div.Should().NotBeNull();
+
+            var tooltip = comp.Instance;
+            tooltip.Should().NotBeNull();
+
+            await tooltip.HandlePointerEnterAsync();
+            tooltip.GetState(x => x.Visible).Should().Be(showOnHover);
+
+            if (showOnHover)
             {
-                p.Add(x => x.ShowOnHover, showOnHover);
-            });
-            // we don't need to await Task.Delay to account for Delay/Duration since the await Handle takes care of it.
-            var tooltipComp = comp.FindComponent<MudTooltip>().Instance;
-            tooltipComp.ShowOnHover.Should().Be(showOnHover);
-            if (!showOnHover)
-            {
-                await tooltipComp.HandlePointerEnterAsync();
-                tooltipComp.ShowToolTip().Should().BeFalse();
+                await tooltip.HandlePointerLeaveAsync();
+                tooltip.GetState(x => x.Visible).Should().Be(!showOnHover);
             }
-            else
+
+            await div.PointerEnterAsync(new PointerEventArgs());
+            tooltip.GetState(x => x.Visible).Should().Be(showOnHover);
+
+            if (showOnHover)
             {
-                await tooltipComp.HandlePointerEnterAsync();
-                tooltipComp.ShowToolTip().Should().BeTrue();
+                await div.PointerLeaveAsync(new PointerEventArgs());
+                tooltip.GetState(x => x.Visible).Should().Be(!showOnHover);
             }
         }
     }
