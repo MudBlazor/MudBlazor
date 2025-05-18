@@ -384,6 +384,7 @@ namespace MudBlazor
         /// The custom CSS classes to apply to the table.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.Table.Appearance)]
         public string? TableClass { get; set; }
 
         /// <summary>
