@@ -21,13 +21,13 @@ public partial class MudText : MudComponentBase
     public bool RightToLeft { get; set; }
 
     /// <summary>
-    /// Allows the component to look disabled or not.
+    /// Applies disabled style to the element.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>false</c>.
     /// </remarks>
     [Parameter]
-    [Category(CategoryTypes.FormComponent.Behavior)]
+    [Category(CategoryTypes.FormComponent.Appearance)]
     public bool Disabled { get; set; }
 
     /// <summary>
