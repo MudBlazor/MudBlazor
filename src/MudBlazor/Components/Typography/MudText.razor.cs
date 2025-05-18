@@ -31,14 +31,10 @@ public partial class MudText : MudComponentBase
     public bool Disabled { get; set; }
 
     /// <summary>
-    /// Applies theme typography styles to the element.
+    /// The theme style of the text.
     /// </summary>
     /// <remarks>
-    /// <para>
-    /// The rendered HTML tag is determined by the theme unless <see cref="HtmlTag"/> is set.
-    /// The tag affects the display type and the applicability of properties like <see cref="Align"/> and <see cref="GutterBottom"/>.
-    /// </para>
-    /// Defaults to <see cref="Typo.body1"/> which uses the block-level <c>p</c> element.
+    /// Defaults to <see cref="Typo.body1"/>. Uses the theme HTML tag unless <see cref="HtmlTag"/> is set.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Text.Appearance)]
