@@ -5,7 +5,6 @@
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.Extensions.Logging;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
 
