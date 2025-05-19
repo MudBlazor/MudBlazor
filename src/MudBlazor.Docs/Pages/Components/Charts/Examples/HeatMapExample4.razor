@@ -126,7 +126,7 @@
 
 @code {
     private HeatMapChartOptions _options = new();
-    private List<ChartDataSet> _series = [];
+    private List<ChartSeries> _series = [];
     private XAxisLabelPosition _xAxisLabelPosition = XAxisLabelPosition.Bottom;
     private YAxisLabelPosition _yAxisLabelPosition = YAxisLabelPosition.Left;
     private bool _enableGradient = false;
@@ -138,15 +138,15 @@
     private Origin _anchorOrigin = Origin.BottomCenter;
     private int _colorCount = 5;
     private readonly string[] _colors = ["#5AC8FA", "#34C759", "#007AFF", "#FFCC00", "#e03131"];
-    private readonly List<ChartDataSet> _heatMapSeries =
+    private readonly List<ChartSeries> _heatMapSeries =
         [
-        new() { Label = "Mo", Data = [90, 79, 72, 69, 62, 62, 55, 65, 70] },
-        new() { Label = "Te", Data = [35, 41, 35, 51, 49, 62, 69, 91, 148] },
-        new() { Label = "We", Data = [22, 90, 62, 32, 05, 42, 63, 43, 155] },
-        new() { Label = "Th", Data = [35, 41, 35, 51, 49, 62, 69, 91, 148] },
-        new() { Label = "Fr", Data = [22, 90, 62, 32, 05, 42, 63, 43, 155] },
-        new() { Label = "Sa", Data = [35, 41, 35, 51, 49, 62, 69, 91, 148] },
-        new() { Label = "Su", Data = [22, 90, 62, 32, 05, 42, 63, 43, 155] }
+        new() { Name = "Mo", Data = [90, 79, 72, 69, 62, 62, 55, 65, 70] },
+        new() { Name = "Te", Data = [35, 41, 35, 51, 49, 62, 69, 91, 148] },
+        new() { Name = "We", Data = [22, 90, 62, 32, 05, 42, 63, 43, 155] },
+        new() { Name = "Th", Data = [35, 41, 35, 51, 49, 62, 69, 91, 148] },
+        new() { Name = "Fr", Data = [22, 90, 62, 32, 05, 42, 63, 43, 155] },
+        new() { Name = "Sa", Data = [35, 41, 35, 51, 49, 62, 69, 91, 148] },
+        new() { Name = "Su", Data = [22, 90, 62, 32, 05, 42, 63, 43, 155] }
     ];
     private string[] _xAxisLabels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"];
 
@@ -189,7 +189,7 @@
 
     private void RandomizeData()
     {
-        var newSeries = new List<ChartDataSet>();
+        var newSeries = new List<ChartSeries>();
         string[] days = ["Mo", "Te", "We", "Th", "Fr", "Sa", "Su"];
         const int DataPoints = 9;
 
@@ -200,7 +200,7 @@
             {
                 data[i] = Random.Shared.NextDouble() * 100;
             }
-            newSeries.Add(new ChartDataSet { Label = day, Data = data });
+            newSeries.Add(new ChartSeries { Name = day, Data = data });
         }
 
         _series = newSeries;

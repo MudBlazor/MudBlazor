@@ -34,7 +34,7 @@
 
 @code {
     private readonly string[] _colors = ["#5AC8FA", "#34C759", "#007AFF"];
-    private List<ChartDataSet> _series = [];
+    private List<ChartSeries> _series = [];
     private HeatMapChartOptions _options = new();
     private XAxisLabelPosition _xAxisLabelPosition = XAxisLabelPosition.Top;
     private YAxisLabelPosition _yAxisLabelPosition = YAxisLabelPosition.Left;
@@ -61,7 +61,7 @@
     private void RandomizeData()
     {
         string[] xaxis = ["A", "B", "C",];
-        var heatMapSeries = new List<ChartDataSet>();
+        var heatMapSeries = new List<ChartSeries>();
         var dataPoints = xaxis.Length;
         foreach (var x in xaxis)
         {
@@ -70,7 +70,7 @@
             {
                 data[i] = Math.Round(Random.Shared.NextDouble() * 100, 2);
             }
-            heatMapSeries.Add(new ChartDataSet { Label = x, Data = data });
+            heatMapSeries.Add(new ChartSeries { Name = x, Data = data });
         }
         _xLabels = xaxis;
         _series = heatMapSeries;

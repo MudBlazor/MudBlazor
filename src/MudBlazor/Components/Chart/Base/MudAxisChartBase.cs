@@ -18,7 +18,7 @@ public abstract class MudAxisChartBase<TOptions> : MudChartBase<TOptions>, IDisp
     [CascadingParameter]
     public MudChart? MudChartParent { get; set; }
 
-    protected List<ChartDataSet> Series { get; set; } = [];
+    protected List<ChartSeries> Series { get; set; } = [];
 
     protected readonly List<SvgPath> HorizontalLines = [];
     protected readonly List<SvgText> HorizontalValues = [];

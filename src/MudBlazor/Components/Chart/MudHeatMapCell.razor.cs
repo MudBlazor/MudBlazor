@@ -10,7 +10,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a single cell in a <see cref="MudBlazor.Charts.HeatMap"/>. You can override the value from the <see cref="ChartDataSet"/> 
+    /// Represents a single cell in a <see cref="MudBlazor.Charts.HeatMap"/>. You can override the value from the <see cref="ChartSeries"/> 
     /// or provide a custom graphic to be shown inside the cell. You should provide a width and height for the custom graphic you are including
     /// so the Heat Map can resize it dynamically. 
     /// </summary>

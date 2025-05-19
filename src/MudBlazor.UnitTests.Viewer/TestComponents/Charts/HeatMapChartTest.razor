@@ -102,7 +102,7 @@
 
     public static string __description__ = "HeatMap Demo";
     private HeatMapChartOptions options = new HeatMapChartOptions();
-    private List<ChartDataSet> Series = new List<ChartDataSet>();
+    private List<ChartSeries> Series = new List<ChartSeries>();
     private XAxisLabelPosition _XAxisLabelPosition = XAxisLabelPosition.Bottom;
     private YAxisLabelPosition _YAxisLabelPosition = YAxisLabelPosition.Left;
     private bool _enableGradient = false;
@@ -159,22 +159,22 @@
         StateHasChanged();
     }
 
-    public readonly List<ChartDataSet> HeatMapSeries = new List<ChartDataSet>()
+    public readonly List<ChartSeries> HeatMapSeries = new List<ChartSeries>()
     {
-        new ChartDataSet() { Label = "Mo", Data = new double[] { 90, 79, 72, 69, 62, 62, 55, 65, 70 } },
-        new ChartDataSet() { Label = "Te", Data = new double[] { 35, 41, 35, 51, 49, 62, 69, 91, 148 } },
-        new ChartDataSet() { Label = "We", Data = new double[] { 22, 90, 62, 32, 05, 42, 63, 43, 155 } },
-        new ChartDataSet() { Label = "Th", Data = new double[] { 35, 41, 35, 51, 49, 62, 69, 91, 148 } },
-        new ChartDataSet() { Label = "Fr", Data = new double[] { 22, 90, 62, 32, 05, 42, 63, 43, 155 } },
-        new ChartDataSet() { Label = "Sa", Data = new double[] { 35, 41, 35, 51, 49, 62, 69, 91, 148 } },
-        new ChartDataSet() { Label = "Su", Data = new double[] { 22, 90, 62, 32, 05, 42, 63, 43, 155 } },
+        new ChartSeries() { Name = "Mo", Data = new double[] { 90, 79, 72, 69, 62, 62, 55, 65, 70 } },
+        new ChartSeries() { Name = "Te", Data = new double[] { 35, 41, 35, 51, 49, 62, 69, 91, 148 } },
+        new ChartSeries() { Name = "We", Data = new double[] { 22, 90, 62, 32, 05, 42, 63, 43, 155 } },
+        new ChartSeries() { Name = "Th", Data = new double[] { 35, 41, 35, 51, 49, 62, 69, 91, 148 } },
+        new ChartSeries() { Name = "Fr", Data = new double[] { 22, 90, 62, 32, 05, 42, 63, 43, 155 } },
+        new ChartSeries() { Name = "Sa", Data = new double[] { 35, 41, 35, 51, 49, 62, 69, 91, 148 } },
+        new ChartSeries() { Name = "Su", Data = new double[] { 22, 90, 62, 32, 05, 42, 63, 43, 155 } },
     };
 
     public string[] XAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
 
     private void RandomizeData()
     {
-        var newSeries = new List<ChartDataSet>();
+        var newSeries = new List<ChartSeries>();
         string[] days = { "Mo", "Te", "We", "Th", "Fr", "Sa", "Su" };
         int dataPoints = 9;
 
@@ -185,7 +185,7 @@
             {
                 data[i] = Random.Shared.NextDouble() * 100;
             }
-            newSeries.Add(new ChartDataSet() { Label = day, Data = data });
+            newSeries.Add(new ChartSeries() { Name = day, Data = data });
         }
 
         Series = newSeries;

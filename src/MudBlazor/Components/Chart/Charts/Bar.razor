@@ -95,12 +95,12 @@
             if (!string.IsNullOrWhiteSpace(tooltipTitleFormat))
             {
                 var tooltipTitle = tooltipTitleFormat
-                .Replace("{{SERIES_NAME}}", series.Label)
+                .Replace("{{SERIES_NAME}}", series.Name)
                 .Replace("{{X_VALUE}}", _hoveredBar.LabelXValue)
                 .Replace("{{Y_VALUE}}", _hoveredBar.LabelYValue);
 
                 var tooltipSubtitle = tooltipSubtitleFormat?
-                .Replace("{{SERIES_NAME}}", series.Label)
+                .Replace("{{SERIES_NAME}}", series.Name)
                 .Replace("{{X_VALUE}}", _hoveredBar.LabelXValue)
                 .Replace("{{Y_VALUE}}", _hoveredBar.LabelYValue) ?? string.Empty;
 

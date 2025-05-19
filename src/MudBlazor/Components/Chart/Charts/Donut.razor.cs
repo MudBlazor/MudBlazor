@@ -34,7 +34,7 @@ namespace MudBlazor.Charts
             var cumulativeRadians = -Math.PI / 2; // Start at -90 degrees
             var donutRadiusRatio = ChartOptions!.DonutRingRatio.EnsureRange(0.1, 1);
             var chartLabels = ChartOptions!.AggregationOption == AggregationOption.GroupByDataSet
-                    ? ChartSeries.Select(ds => ds.Label).ToArray()
+                    ? ChartSeries.Select(ds => ds.Name).ToArray()
                     : ChartLabels;
 
             for (var i = 0; i < normalizedData.Length; i++)

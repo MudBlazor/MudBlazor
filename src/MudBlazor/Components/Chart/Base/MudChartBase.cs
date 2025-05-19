@@ -20,7 +20,7 @@ public abstract class MudChartBase<TOptions> : MudComponentBase, IMudChart where
     /// The labels describing data values.
     /// </summary>
     /// <remarks>
-    /// The number of labels in this array is typically the same as the number of values in the <see cref="ChartDataSet.Data"/> property.
+    /// The number of labels in this array is typically the same as the number of values in the <see cref="ChartSeries.Data"/> property.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Chart.Behavior)]
@@ -31,7 +31,7 @@ public abstract class MudChartBase<TOptions> : MudComponentBase, IMudChart where
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Chart.Behavior)]
-    public List<ChartDataSet> ChartSeries { get; set; } = [];
+    public List<ChartSeries> ChartSeries { get; set; } = [];
 
     /// <summary>
     /// The display options applied to the chart.

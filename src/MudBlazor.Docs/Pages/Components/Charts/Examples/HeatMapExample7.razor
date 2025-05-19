@@ -44,20 +44,20 @@
 
     private readonly string[] testLabels = ["Test 1", "Test 2", "Test 3", "Test 4"];
 
-    private readonly List<ChartDataSet> exampleOne =
+    private readonly List<ChartSeries> exampleOne =
         [
-        new() { Label = "Student 1", Data = [.40, .72, .64, .92] },
-        new() { Label = "Student 2", Data = [.80, .71, .97, .75] },
-        new() { Label = "Student 3", Data = [.92, .84, .85, .97] },
-        new() { Label = "Student 4", Data = [.79, .99, .87, .69] },
+        new() { Name = "Student 1", Data = [.40, .72, .64, .92] },
+        new() { Name = "Student 2", Data = [.80, .71, .97, .75] },
+        new() { Name = "Student 3", Data = [.92, .84, .85, .97] },
+        new() { Name = "Student 4", Data = [.79, .99, .87, .69] },
     ];
 
-    private readonly List<ChartDataSet> exampleTwo =
+    private readonly List<ChartSeries> exampleTwo =
         [
-        new() { Label = "Student 1", Data = [.40, .52, .64, .32] },
-        new() { Label = "Student 2", Data = [.32, .65, .48, .66] },
-        new() { Label = "Student 3", Data = [.35, .34, .55, .67] },
-        new() { Label = "Student 4", Data = [.30, .63, .36, .62] },
+        new() { Name = "Student 1", Data = [.40, .52, .64, .32] },
+        new() { Name = "Student 2", Data = [.32, .65, .48, .66] },
+        new() { Name = "Student 3", Data = [.35, .34, .55, .67] },
+        new() { Name = "Student 4", Data = [.30, .63, .36, .62] },
     ];
 
     protected override void OnInitialized()

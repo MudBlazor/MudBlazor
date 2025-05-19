@@ -32,7 +32,7 @@
 
 @code {
     private readonly string[] _colors = ["#5AC8FA", "#34C759", "#007AFF"];
-    private List<ChartDataSet> _series = [];
+    private List<ChartSeries> _series = [];
     private HeatMapChartOptions _options = new();
     private string[] _xLabels = [];
 
@@ -61,14 +61,14 @@
     private void WeeklyData()
     {
         string[] xaxis = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat",];
-        var heatMapSeries = new List<ChartDataSet>();
+        var heatMapSeries = new List<ChartSeries>();
         var dataPoints = xaxis.Length;
         var data = new double[dataPoints];
         for (int i = 0; i < dataPoints; i++)
         {
             data[i] = i;
         }
-        heatMapSeries.Add(new ChartDataSet { Label = string.Empty, Data = data });
+        heatMapSeries.Add(new ChartSeries { Name = string.Empty, Data = data });
         _xLabels = xaxis;
         _series = heatMapSeries;
     }

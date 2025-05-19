@@ -9,7 +9,7 @@
 
 <MudGrid>
     <MudItem md="6" xs="12">
-        <MudText Typo="Typo.body1" Class="py-3">Selected: @(_index < 0 ? "None" : _series[_index].Label)</MudText>
+        <MudText Typo="Typo.body1" Class="py-3">Selected: @(_index < 0 ? "None" : _series[_index].Name)</MudText>
     </MudItem>
     <MudItem md="6" xs="12">
         <MudCheckBox @bind-Value="_matchBoundsToSize" Label="MatchBoundsToSize"></MudCheckBox>
@@ -41,10 +41,10 @@
     private int _height = 350;
     private bool _matchBoundsToSize = false;
 
-    private List<ChartDataSet> _series = new List<ChartDataSet>()
+    private List<ChartSeries> _series = new List<ChartSeries>()
     {
-        new ChartDataSet() { Label = "Fossil", Data = new double[] { 90, 79, 72, 69, 62, 62, 55, 65, 70 } },
-        new ChartDataSet() { Label = "Renewable", Data = new double[] { 10, 41, 35, 51, 49, 62, 69, 91, 148 } },
+        new ChartSeries() { Name = "Fossil", Data = new double[] { 90, 79, 72, 69, 62, 62, 55, 65, 70 } },
+        new ChartSeries() { Name = "Renewable", Data = new double[] { 10, 41, 35, 51, 49, 62, 69, 91, 148 } },
     };
     private string[] _xAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
 
@@ -52,7 +52,7 @@
     {
         base.OnInitialized();
 
-        _options.SeriesDisplayOverrides = new Dictionary<ChartDataSet, SeriesDisplayOverride>()
+        _options.SeriesDisplayOverrides = new Dictionary<ChartSeries, SeriesDisplayOverride>()
         {
             { _series[0], new SeriesDisplayOverride() },
             { _series[1], new SeriesDisplayOverride() }

@@ -103,7 +103,7 @@ namespace MudBlazor.Charts
 
         private HeatMapChartOptions? _options;
 
-        private List<ChartDataSet> _series = [];
+        private List<ChartSeries> _series = [];
 
         private List<(double value, string color)> _legends = [];
 
@@ -191,7 +191,7 @@ namespace MudBlazor.Charts
             }
         }
 
-        private void UpdateChartSeries(List<ChartDataSet> chartSeriesList)
+        private void UpdateChartSeries(List<ChartSeries> chartSeriesList)
         {
             var hasUpdatedList = chartSeriesList.Count > 0 && _series != chartSeriesList;
 
@@ -263,7 +263,7 @@ namespace MudBlazor.Charts
                     var legend = new SvgLegend()
                     {
                         Index = row,
-                        Labels = _series[row].Label,
+                        Labels = _series[row].Name,
                         Visible = _series[row].Visible,
                         OnVisibilityChanged = EventCallback.Factory.Create<SvgLegend>(this, HandleLegendVisibilityChanged)
                     };
@@ -299,7 +299,7 @@ namespace MudBlazor.Charts
             _dynamicFontSize = CalculateFontSize(estimatedCellWidth, estimatedCellHeight, 8);
 
             // Calculate Y-axis label width based on dynamic font size
-            _yAxisLabelWidth = (_series.Count > 0 ? _series?.Max(x => x.Label.Length) ?? 1 : 1) * _dynamicFontSize * AverageCharWidthMultiplier;
+            _yAxisLabelWidth = (_series.Count > 0 ? _series?.Max(x => x.Name.Length) ?? 1 : 1) * _dynamicFontSize * AverageCharWidthMultiplier;
 
             var defaultCharsWidth = 5 * LegendFontSize * AverageCharWidthMultiplier;
             _legendLabelsYAxis = (int)Math.Ceiling(_options is { ShowLegendLabels: true }

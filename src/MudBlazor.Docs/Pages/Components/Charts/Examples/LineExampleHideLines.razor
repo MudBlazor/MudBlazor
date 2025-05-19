@@ -13,16 +13,16 @@
         RandomizeData();
     }
 
-    public List<ChartDataSet> Series = new List<ChartDataSet>();
+    public List<ChartSeries> Series = new List<ChartSeries>();
     public string[] XAxisLabels = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
 
     Random random = new Random();
     public void RandomizeData()
     {
-        var newSeries = new List<ChartDataSet>();
+        var newSeries = new List<ChartSeries>();
         for (int s = 1; s <= 10; s++)
         {
-            var series = new ChartDataSet() { Label = $"Series {s}", Data = new double[9] };
+            var series = new ChartSeries() { Name = $"Series {s}", Data = new double[9] };
             for (int i = 0; i < 9; i++)
                 series.Data[i] = random.NextDouble() * 100;
             newSeries.Add(series);

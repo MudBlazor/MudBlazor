@@ -6,6 +6,6 @@ namespace MudBlazor.Charts;
 
 public interface IMudChart
 {
-    List<ChartDataSet> ChartSeries { get; set; }
+    List<ChartSeries> ChartSeries { get; set; }
     ChartType ChartType { get; set; }
 }

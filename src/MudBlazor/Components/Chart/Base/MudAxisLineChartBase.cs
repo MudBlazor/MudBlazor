@@ -257,12 +257,12 @@ public abstract class MudAxisLineChartBase<TOptions> : MudAxisChartBase<TOptions
         return value.ToString(Series[seriesIndex].TooltipYValueFormat) ?? string.Empty;
     }
 
-    protected void AddLegend(int seriesIndex, ChartDataSet series)
+    protected void AddLegend(int seriesIndex, ChartSeries series)
     {
         var legend = new SvgLegend()
         {
             Index = seriesIndex,
-            Labels = series.Label,
+            Labels = series.Name,
             Visible = series.Visible,
             OnVisibilityChanged = EventCallback.Factory.Create<SvgLegend>(this, HandleLegendVisibilityChanged)
         };
@@ -318,7 +318,7 @@ public abstract class MudAxisLineChartBase<TOptions> : MudAxisChartBase<TOptions
         return _boundHeight - VerticalStartSpace;
     }
 
-    protected SeriesDisplayOverride? GetSeriesDisplayOverride(ChartDataSet series)
+    protected SeriesDisplayOverride? GetSeriesDisplayOverride(ChartSeries series)
     {
         return ChartOptions?.SeriesDisplayOverrides.TryGetValue(series, out var overrideData) is true
             ? overrideData

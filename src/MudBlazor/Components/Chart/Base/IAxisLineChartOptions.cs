@@ -43,7 +43,7 @@ public interface IAxisLineChartOptions : IAxisChartOptions
     /// <summary>
     /// Optional per-series display overrides.
     /// </summary>
-    public Dictionary<ChartDataSet, SeriesDisplayOverride> SeriesDisplayOverrides { get; set; }
+    public Dictionary<ChartSeries, SeriesDisplayOverride> SeriesDisplayOverrides { get; set; }
 }
 
 public record SeriesDisplayOverride

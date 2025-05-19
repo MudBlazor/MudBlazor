@@ -132,7 +132,7 @@ public abstract class MudRadialChartBase<TOptions> : MudChartBase<TOptions>, IDi
                 var chartSeries = ChartSeries.Where(x => x.Visible).ToArray();
 
                 if (chartSeries.Length == 1)
-                    return chartSeries[0].Label;
+                    return chartSeries[0].Name;
 
                 return chartSeries.Length.ToString();
 

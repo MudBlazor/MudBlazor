@@ -40,7 +40,7 @@
 @code {
     public static string __description__ = "HeatMap Testing Dynamic Font sizing";
     private readonly string[] _colors = ["#5AC8FA", "#34C759", "#007AFF"];
-    private List<ChartDataSet> Series = [];
+    private List<ChartSeries> Series = [];
     private HeatMapChartOptions Options = new HeatMapChartOptions();
     private XAxisLabelPosition _XAxisLabelPosition = XAxisLabelPosition.Top;
     private YAxisLabelPosition _YAxisLabelPosition = YAxisLabelPosition.Left;
@@ -65,7 +65,7 @@
     private void RandomizeData()
     {
         string[] xaxis = ["A", "B", "C",];
-        var heatMapSeries = new List<ChartDataSet>();
+        var heatMapSeries = new List<ChartSeries>();
         int dataPoints = xaxis.Length;
         foreach (var x in xaxis)
         {
@@ -74,7 +74,7 @@
             {
                 data[i] = Math.Round(Random.Shared.NextDouble() * 100, 2);
             }
-            heatMapSeries.Add(new ChartDataSet { Label = x, Data = data });
+            heatMapSeries.Add(new ChartSeries { Name = x, Data = data });
         }
         _xLabels = xaxis;
         Series = heatMapSeries;

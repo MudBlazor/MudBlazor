@@ -8,7 +8,7 @@ namespace MudBlazor.UnitTests.Components
 {
     internal static class ChartSeriesExtensions
     {
-        internal static bool TryGetIndexOfDataValue(this ChartDataSet chartSeries, int seriesIndex, double value, out int dataIndex)
+        internal static bool TryGetIndexOfDataValue(this ChartSeries chartSeries, int seriesIndex, double value, out int dataIndex)
         {
             dataIndex = -1;
 
@@ -24,6 +24,6 @@ namespace MudBlazor.UnitTests.Components
             return false;
         }
 
-        internal static bool TryGetIndexOfDataValue(this IEnumerable<ChartDataSet> chartSeries, int seriesIndex, double value, out int dataIndex) => TryGetIndexOfDataValue(chartSeries.ElementAt(seriesIndex), seriesIndex, value, out dataIndex);
+        internal static bool TryGetIndexOfDataValue(this IEnumerable<ChartSeries> chartSeries, int seriesIndex, double value, out int dataIndex) => TryGetIndexOfDataValue(chartSeries.ElementAt(seriesIndex), seriesIndex, value, out dataIndex);
     }
 }

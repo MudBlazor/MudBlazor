@@ -7,17 +7,17 @@ using System.Runtime.CompilerServices;
 
 namespace MudBlazor;
 
-[CollectionBuilder(typeof(ChartDataSet), nameof(Create))]
-public class ChartDataSet : IEquatable<ChartDataSet>
+[CollectionBuilder(typeof(ChartSeries), nameof(Create))]
+public class ChartSeries : IEquatable<ChartSeries>
 {
-    public ChartDataSet() { }
+    public ChartSeries() { }
 
-    public ChartDataSet(double[] doubles) => Data = doubles;
+    public ChartSeries(double[] doubles) => Data = doubles;
 
     /// <summary>
     /// The legend label for this data set.
     /// </summary>
-    public string Label { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
 
     /// <summary>
     /// The values to display on the chart.
@@ -45,32 +45,32 @@ public class ChartDataSet : IEquatable<ChartDataSet>
     public string? TooltipYValueFormat { get; set; }
 
 
-    public static implicit operator ChartDataSet(double[] values) => new() { Data = values };
-    public static ChartDataSet Create(ReadOnlySpan<double> values) => new(values.ToArray());
+    public static implicit operator ChartSeries(double[] values) => new() { Data = values };
+    public static ChartSeries Create(ReadOnlySpan<double> values) => new(values.ToArray());
     public IEnumerator<double> GetEnumerator() => Data.GetEnumerator();
 
-    public bool Equals(ChartDataSet? other)
+    public bool Equals(ChartSeries? other)
     {
         if (other is null) return false;
 
-        return Label == other.Label &&
+        return Name == other.Name &&
                Data.Values.SequenceEqual(other.Data.Values);
     }
 
-    public override bool Equals(object? obj) => Equals(obj as ChartDataSet);
+    public override bool Equals(object? obj) => Equals(obj as ChartSeries);
 
-    public override int GetHashCode() => HashCode.Combine(Label, string.Join(",", Data.Values));
+    public override int GetHashCode() => HashCode.Combine(Name, string.Join(",", Data.Values));
 }
 
 public static class ChartDataSetExtensions
 {
-    public static List<ChartDataSet> AsList(this ChartDataSet dataSet)
+    public static List<ChartSeries> AsList(this ChartSeries dataSet)
     {
         return [dataSet];
     }
 
-    public static List<ChartDataSet> AsChartDataSet(this double[] dataSet)
+    public static List<ChartSeries> AsChartDataSet(this double[] dataSet)
     {
-        return new ChartDataSet(dataSet).AsList();
+        return new ChartSeries(dataSet).AsList();
     }
 }

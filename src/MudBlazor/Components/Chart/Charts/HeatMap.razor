@@ -52,7 +52,7 @@
     @for (int row = 0; row < series.Count; row++)
     {
         var rowIndex = row;
-        var rowLabel = series[row].Label;
+        var rowLabel = series[row].Name;
 
         // how tall each cell should be
         var y = (row * (_cellDimension.Height + _cellDimension.Padding)) + _verticalStartSpace;
@@ -375,12 +375,12 @@
             if (!string.IsNullOrWhiteSpace(tooltipTitleFormat))
             {
                 var tooltipTitle = tooltipTitleFormat
-                .Replace("{{SERIES_NAME}}", hoveredSeries.Label)
+                .Replace("{{SERIES_NAME}}", hoveredSeries.Name)
                 .Replace("{{X_VALUE}}", _hoveredCell.Value.ToString())
                 .Replace("{{Y_VALUE}}", _hoveredCell.Value.ToString());
 
                 var tooltipSubtitle = tooltipSubtitleFormat?
-                .Replace("{{SERIES_NAME}}", hoveredSeries.Label)
+                .Replace("{{SERIES_NAME}}", hoveredSeries.Name)
                 .Replace("{{X_VALUE}}", _hoveredCell.Value.ToString())
                 .Replace("{{Y_VALUE}}", _hoveredCell.Value.ToString()) ?? string.Empty;
 

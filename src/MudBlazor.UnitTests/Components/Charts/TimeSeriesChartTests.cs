@@ -62,7 +62,7 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.ChartSeries, [
                     new ()
                     {
-                        Label = "Series 1",
+                        Name = "Series 1",
                         Data = new[] {-1, 0, 1, 2}.Select(x => new TimeSeries.DataPoint(time.AddHours(x), 1000)).ToList(),
                         Visible = true,
                     }
@@ -88,7 +88,7 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.ChartSeries, [
                     new ()
                     {
-                        Label = "Series 1",
+                        Name = "Series 1",
                         Data = new[] {-1, 0, 1, 2}.Select(x => new TimeSeries.DataPoint(time.AddHours(x), 1000)).ToList(),
                         Visible = true,
                     }
@@ -112,7 +112,7 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.ChartSeries, [
                     new ()
                     {
-                        Label = "Series 1",
+                        Name = "Series 1",
                         Data = new[] {-1, 0, 1, 2}.Select(x => new TimeSeries.DataPoint(time.AddHours(x).AddMinutes(10), 1000)).ToList(),
                         Visible = true,
                     }
@@ -139,7 +139,7 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.ChartSeries, [
                     new ()
                     {
-                        Label = "Series 1",
+                        Name = "Series 1",
                         Data = new[] {-1, 0, 1, 2}.Select(x => new TimeSeries.DataPoint(time.AddHours(x).AddMinutes(10), 1000)).ToList(),
                         Visible = true,
                     }
@@ -176,9 +176,9 @@ namespace MudBlazor.UnitTests.Charts
             var comp = Context.RenderComponent<MudChart>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Timeseries)
                 .Add(p => p.ChartSeries, new() {
-                    new ChartDataSet()
+                    new ChartSeries()
                     {
-                        Label = "Series 1",
+                        Name = "Series 1",
                         Data = new[] {-1, 0, 1, 2}.Select(x => new TimeSeries.DataPoint(time.AddDays(x), 1000)).ToList(),
                         Visible = true,
                     }

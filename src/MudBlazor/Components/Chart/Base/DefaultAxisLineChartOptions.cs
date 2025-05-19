@@ -44,23 +44,23 @@ public abstract class DefaultAxisLineChartOptions : DefaultAxisChartOptions, IAx
     /// <summary>
     /// Optional per-series display overrides.
     /// </summary>
-    public Dictionary<ChartDataSet, SeriesDisplayOverride> SeriesDisplayOverrides
+    public Dictionary<ChartSeries, SeriesDisplayOverride> SeriesDisplayOverrides
     {
         get => _seriesDisplayOverrides;
         set
         {
-            _seriesDisplayOverrides = new Dictionary<ChartDataSet, SeriesDisplayOverride>(value, new ChartDataSetComparer());
+            _seriesDisplayOverrides = new Dictionary<ChartSeries, SeriesDisplayOverride>(value, new ChartDataSetComparer());
         }
     }
 
-    private Dictionary<ChartDataSet, SeriesDisplayOverride> _seriesDisplayOverrides = new(new ChartDataSetComparer());
+    private Dictionary<ChartSeries, SeriesDisplayOverride> _seriesDisplayOverrides = new(new ChartDataSetComparer());
 
-    private class ChartDataSetComparer : IEqualityComparer<ChartDataSet>
+    private class ChartDataSetComparer : IEqualityComparer<ChartSeries>
     {
-        public bool Equals(ChartDataSet? x, ChartDataSet? y)
-            => x?.Label == y?.Label;
+        public bool Equals(ChartSeries? x, ChartSeries? y)
+            => x?.Name == y?.Name;
 
-        public int GetHashCode(ChartDataSet obj)
-            => obj.Label?.GetHashCode() ?? 0;
+        public int GetHashCode(ChartSeries obj)
+            => obj.Name?.GetHashCode() ?? 0;
     }
 }

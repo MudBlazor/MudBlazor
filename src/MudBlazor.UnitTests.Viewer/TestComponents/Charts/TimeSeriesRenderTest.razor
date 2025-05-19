@@ -13,7 +13,7 @@
 
 <MudGrid>
     <MudItem md="6" xs="12">
-        <MudText Typo="Typo.body1" Class="py-3">Selected: @(_index < 0 ? "None" : _series[_index].Label)</MudText>
+        <MudText Typo="Typo.body1" Class="py-3">Selected: @(_index < 0 ? "None" : _series[_index].Name)</MudText>
     </MudItem>
     <MudItem md="6" xs="12">
         <MudSlider @bind-Value="_options.LineStrokeWidth" Min="1" Max="10">Line Width: @_options.LineStrokeWidth.ToString()</MudSlider>
@@ -58,7 +58,7 @@
             ShowDataMarkers = false,
             TooltipTimeLabelFormat = "yyyy MMM dd HH:mm:ss",
             TimeLabelSpacing = TimeSpan.FromMinutes(5),
-            SeriesDisplayOverrides = new Dictionary<ChartDataSet, SeriesDisplayOverride>()
+            SeriesDisplayOverrides = new Dictionary<ChartSeries, SeriesDisplayOverride>()
             {
                 [_chart2] = new SeriesDisplayOverride
                 {
@@ -67,11 +67,11 @@
             }
         };
 
-    private static ChartDataSet _chart1 = new();
-    private static ChartDataSet _chart2 = new();
-    private static ChartDataSet _chart3 = new();
+    private static ChartSeries _chart1 = new();
+    private static ChartSeries _chart2 = new();
+    private static ChartSeries _chart3 = new();
 
-    private List<ChartDataSet> _series = new();
+    private List<ChartSeries> _series = new();
 
     private readonly Random _random = new Random();
 
@@ -85,23 +85,23 @@
         base.OnInitialized();
 
         var now = DateTime.Now;
-        _chart1 = new ChartDataSet
+        _chart1 = new ChartSeries
             {
-                Label = "Series 1",
+                Name = "Series 1",
                 Data = Enumerable.Range(-360, 360).Select(x => new TimeSeries.DataPoint(now.AddSeconds(x * 10), _random.Next(6000, 15000))).ToList(),
                 Visible = true,
             };
 
-        _chart2 = new ChartDataSet
+        _chart2 = new ChartSeries
             {
-                Label = "Series 2",
+                Name = "Series 2",
                 Data = Enumerable.Range(-360, 360).Select(x => new TimeSeries.DataPoint(now.AddSeconds(x * 10), _random.Next(0, 7000))).ToList(),
                 Visible = true,
             };
 
-        _chart3 = new ChartDataSet
+        _chart3 = new ChartSeries
             {
-                Label = "Series 3",
+                Name = "Series 3",
                 Data = Enumerable.Range(-90, 60).Select(x => new TimeSeries.DataPoint(now.AddSeconds(x * 30), _random.Next(4000, 10000))).ToList(),
                 Visible = true,
             };

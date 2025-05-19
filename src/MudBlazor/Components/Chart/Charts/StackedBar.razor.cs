@@ -364,7 +364,7 @@ namespace MudBlazor.Charts
                 var legend = new SvgLegend()
                 {
                     Index = i,
-                    Labels = series.Label,
+                    Labels = series.Name,
                     Visible = series.Visible,
                     OnVisibilityChanged = EventCallback.Factory.Create<SvgLegend>(this, HandleLegendVisibilityChanged)
                 };

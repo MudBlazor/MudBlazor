@@ -47,11 +47,11 @@ namespace MudBlazor.UnitTests.Charts
         [Test]
         public void BarChartExampleData()
         {
-            var chartSeries = new List<ChartDataSet>()
+            var chartSeries = new List<ChartSeries>()
             {
-                new () { Label = "United States", Data = new double[] { 40, 20, 25, 27, 46, 60, 48, 80, 15 } },
-                new () { Label = "Germany", Data = new double[] { 19, 24, 35, 13, 28, 15, -4, 16, 31 } },
-                new () { Label = "Sweden", Data = new double[] { 8, 6, -11, 13, 4, 16, 10, 16, 18 } },
+                new () { Name = "United States", Data = new double[] { 40, 20, 25, 27, 46, 60, 48, 80, 15 } },
+                new () { Name = "Germany", Data = new double[] { 19, 24, 35, 13, 28, 15, -4, 16, 31 } },
+                new () { Name = "Sweden", Data = new double[] { 8, 6, -11, 13, 4, 16, 10, 16, 18 } },
             };
             string[] xAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
 
@@ -99,11 +99,11 @@ namespace MudBlazor.UnitTests.Charts
         [Test]
         public void BarChartExampleSingleXAxis()
         {
-            var chartSeries = new List<ChartDataSet>()
+            var chartSeries = new List<ChartSeries>()
             {
-                new () { Label = "United States", Data = new double[] { 40, 20, 25, 27, 46, 60, 48, 80, 15 } },
-                new () { Label = "Germany", Data = new double[] { 19, 24, 35, 13, 28, 15, -4, 16, 31 } },
-                new () { Label = "Sweden", Data = new double[] { 8, 6, -11, 13, 4, 16, 10, 16, 18 } },
+                new () { Name = "United States", Data = new double[] { 40, 20, 25, 27, 46, 60, 48, 80, 15 } },
+                new () { Name = "Germany", Data = new double[] { 19, 24, 35, 13, 28, 15, -4, 16, 31 } },
+                new () { Name = "Sweden", Data = new double[] { 8, 6, -11, 13, 4, 16, 10, 16, 18 } },
             };
             string[] xAxisLabels = { "Jan" };
 
@@ -144,30 +144,30 @@ namespace MudBlazor.UnitTests.Charts
         [Test]
         public void BarChartColoring()
         {
-            var chartSeries = new List<ChartDataSet>()
+            var chartSeries = new List<ChartSeries>()
             {
-                new ChartDataSet() { Label = "Deep Sea Blue", Data = new double[] { 40, 20, 25, 27, 46 } },
-                new ChartDataSet() { Label = "Venetian Red", Data = new double[] { 19, 24, 35, 13, 28 } },
-                new ChartDataSet() { Label = "Banana Yellow", Data = new double[] { 8, 6, 11, 13, 4 } },
-                new ChartDataSet() { Label = "La Salle Green", Data = new double[] { 18, 9, 7, 10, 7 } },
-                new ChartDataSet() { Label = "Rich Carmine", Data = new double[] { 9, 14, 6, 15, 20 } },
-                new ChartDataSet() { Label = "Shiraz", Data = new double[] { 9, 4, 11, 5, 19 } },
-                new ChartDataSet() { Label = "Cloud Burst", Data = new double[] { 14, 9, 20, 16, 6 } },
-                new ChartDataSet() { Label = "Neon Pink", Data = new double[] { 14, 8, 4, 14, 8 } },
-                new ChartDataSet() { Label = "Ocean", Data = new double[] { 11, 20, 13, 5, 5 } },
-                new ChartDataSet() { Label = "Orangey Red", Data = new double[] { 6, 6, 19, 20, 6 } },
-                new ChartDataSet() { Label = "Catalina Blue", Data = new double[] { 3, 2, 20, 3, 10 } },
-                new ChartDataSet() { Label = "Fountain Blue", Data = new double[] { 3, 18, 11, 12, 3 } },
-                new ChartDataSet() { Label = "Irish Green", Data = new double[] { 20, 5, 15, 16, 13 } },
-                new ChartDataSet() { Label = "Wild Strawberry", Data = new double[] { 15, 9, 12, 12, 1 } },
-                new ChartDataSet() { Label = "Geraldine", Data = new double[] { 5, 13, 19, 15, 8 } },
-                new ChartDataSet() { Label = "Grey Teal", Data = new double[] { 12, 16, 20, 16, 17 } },
-                new ChartDataSet() { Label = "Baby Pink", Data = new double[] { 1, 18, 10, 19, 8 } },
-                new ChartDataSet() { Label = "Thunderbird", Data = new double[] { 15, 16, 10, 8, 5 } },
-                new ChartDataSet() { Label = "Navy", Data = new double[] { 16, 2, 3, 5, 5 } },
-                new ChartDataSet() { Label = "Aqua Marina", Data = new double[] { 17, 6, 11, 19, 6 } },
-                new ChartDataSet() { Label = "Lavender Pinocchio", Data = new double[] { 1, 11, 4, 18, 1 } },
-                new ChartDataSet() { Label = "Deep Sea Blue", Data = new double[] { 1, 11, 4, 18, 1 } }
+                new ChartSeries() { Name = "Deep Sea Blue", Data = new double[] { 40, 20, 25, 27, 46 } },
+                new ChartSeries() { Name = "Venetian Red", Data = new double[] { 19, 24, 35, 13, 28 } },
+                new ChartSeries() { Name = "Banana Yellow", Data = new double[] { 8, 6, 11, 13, 4 } },
+                new ChartSeries() { Name = "La Salle Green", Data = new double[] { 18, 9, 7, 10, 7 } },
+                new ChartSeries() { Name = "Rich Carmine", Data = new double[] { 9, 14, 6, 15, 20 } },
+                new ChartSeries() { Name = "Shiraz", Data = new double[] { 9, 4, 11, 5, 19 } },
+                new ChartSeries() { Name = "Cloud Burst", Data = new double[] { 14, 9, 20, 16, 6 } },
+                new ChartSeries() { Name = "Neon Pink", Data = new double[] { 14, 8, 4, 14, 8 } },
+                new ChartSeries() { Name = "Ocean", Data = new double[] { 11, 20, 13, 5, 5 } },
+                new ChartSeries() { Name = "Orangey Red", Data = new double[] { 6, 6, 19, 20, 6 } },
+                new ChartSeries() { Name = "Catalina Blue", Data = new double[] { 3, 2, 20, 3, 10 } },
+                new ChartSeries() { Name = "Fountain Blue", Data = new double[] { 3, 18, 11, 12, 3 } },
+                new ChartSeries() { Name = "Irish Green", Data = new double[] { 20, 5, 15, 16, 13 } },
+                new ChartSeries() { Name = "Wild Strawberry", Data = new double[] { 15, 9, 12, 12, 1 } },
+                new ChartSeries() { Name = "Geraldine", Data = new double[] { 5, 13, 19, 15, 8 } },
+                new ChartSeries() { Name = "Grey Teal", Data = new double[] { 12, 16, 20, 16, 17 } },
+                new ChartSeries() { Name = "Baby Pink", Data = new double[] { 1, 18, 10, 19, 8 } },
+                new ChartSeries() { Name = "Thunderbird", Data = new double[] { 15, 16, 10, 8, 5 } },
+                new ChartSeries() { Name = "Navy", Data = new double[] { 16, 2, 3, 5, 5 } },
+                new ChartSeries() { Name = "Aqua Marina", Data = new double[] { 17, 6, 11, 19, 6 } },
+                new ChartSeries() { Name = "Lavender Pinocchio", Data = new double[] { 1, 11, 4, 18, 1 } },
+                new ChartSeries() { Name = "Deep Sea Blue", Data = new double[] { 1, 11, 4, 18, 1 } }
             };
 
             var comp = Context.RenderComponent<MudChart>(parameters => parameters

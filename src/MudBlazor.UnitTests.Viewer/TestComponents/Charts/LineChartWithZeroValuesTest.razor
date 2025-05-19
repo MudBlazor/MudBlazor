@@ -7,9 +7,9 @@
 
     private int _index = -1; //default value cannot be 0 -> first selectedindex is 0.
 
-    public List<ChartDataSet> Series = 
+    public List<ChartSeries> Series = 
     [
-        new() { Label = "Series 1", Data = [0, 0, 0, 0, 0, 0, 0, 0, 0] }
+        new() { Name = "Series 1", Data = [0, 0, 0, 0, 0, 0, 0, 0, 0] }
     ];
 
     public string[] XAxisLabels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"];
