@@ -8,9 +8,9 @@
     <div @attributes="UserAttributes" class="@Classname" style="@Style; width: @Width; height: @Height;" dir="ltr">
         @ChartContent
     </div>
-    @if (_chartReference is not null)
+    @if (ChartReference is not null)
     {
-        <CascadingValue Value="@_chartReference" IsFixed="true">
+        <CascadingValue Value="@ChartReference" IsFixed="true">
             @ChildContent
         </CascadingValue>
     }
@@ -24,7 +24,7 @@
                                                                      ChartOptions="donutOptions"
                                                                      TooltipTemplate="@TooltipTemplate"
                                                                      TooltipPositionFunc="@TooltipPositionFunc"
-                                                                     @ref="_chartReference"
+                                                                     @ref="ChartReference"
                                                                      @bind-SelectedIndex:get="this.SelectedIndexState.Value"
                                                                      @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
         (ChartType.Line, LineChartOptions lineOptions) => @<Line ChartSeries="@ChartSeries"
@@ -32,7 +32,7 @@
                                                                  ChartOptions="lineOptions"
                                                                  TooltipTemplate="@TooltipTemplate"
                                                                  TooltipPositionFunc="@TooltipPositionFunc"
-                                                                 @ref="_chartReference"
+                                                                 @ref="ChartReference"
                                                                  @bind-SelectedIndex:get="this.SelectedIndexState.Value" 
                                                                  @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
         (ChartType.Pie, PieChartOptions pieOptions) => @<Pie ChartSeries="@ChartSeries"
@@ -40,7 +40,7 @@
                                                              ChartOptions="pieOptions"
                                                              TooltipTemplate="@TooltipTemplate"
                                                              TooltipPositionFunc="@TooltipPositionFunc"
-                                                             @ref="_chartReference"
+                                                             @ref="ChartReference"
                                                              @bind-SelectedIndex:get="this.SelectedIndexState.Value"
                                                              @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
         (ChartType.Bar, BarChartOptions barOptions) => @<Bar ChartSeries="@ChartSeries"
@@ -48,7 +48,7 @@
                                                              ChartOptions="barOptions"
                                                              TooltipTemplate="@TooltipTemplate"
                                                              TooltipPositionFunc="@TooltipPositionFunc"
-                                                             @ref="_chartReference"
+                                                             @ref="ChartReference"
                                                              @bind-SelectedIndex:get="this.SelectedIndexState.Value" 
                                                              @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
         (ChartType.StackedBar, StackedBarChartOptions stackedBarOptions) => @<StackedBar ChartSeries="@ChartSeries"
@@ -56,7 +56,7 @@
                                                                                          ChartOptions="stackedBarOptions"
                                                                                          TooltipTemplate="@TooltipTemplate"
                                                                                          TooltipPositionFunc="@TooltipPositionFunc"
-                                                                                         @ref="_chartReference"
+                                                                                         @ref="ChartReference"
                                                                                          @bind-SelectedIndex:get="this.SelectedIndexState.Value" 
                                                                                          @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
         (ChartType.Timeseries, TimeSeriesChartOptions timeSeriesOptions) => @<TimeSeries ChartSeries="@ChartSeries"
@@ -64,7 +64,7 @@
                                                                                          ChartOptions="timeSeriesOptions"
                                                                                          TooltipTemplate="@TooltipTemplate"
                                                                                          TooltipPositionFunc="@TooltipPositionFunc"
-                                                                                         @ref="_chartReference"
+                                                                                         @ref="ChartReference"
                                                                                          @bind-SelectedIndex:get="this.SelectedIndexState.Value"
                                                                                          @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
         (ChartType.HeatMap, HeatMapChartOptions heatMapOptions) => @<HeatMap ChartSeries="@ChartSeries"
@@ -72,7 +72,7 @@
                                                                              ChartOptions="heatMapOptions"
                                                                              TooltipTemplate="@TooltipTemplate"
                                                                              TooltipPositionFunc="@TooltipPositionFunc"
-                                                                             @ref="_chartReference"
+                                                                             @ref="ChartReference"
                                                                              @bind-SelectedIndex:get="this.SelectedIndexState.Value"
                                                                              @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
         _ => throw new NotImplementedException($"{ChartType} chart is not supported")

@@ -4,7 +4,7 @@
 
 namespace MudBlazor.Charts;
 
-internal interface IMudChart
+public interface IMudChart
 {
     List<ChartDataSet> ChartSeries { get; set; }
     ChartType ChartType { get; set; }

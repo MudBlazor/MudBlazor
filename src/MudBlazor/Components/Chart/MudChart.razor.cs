@@ -12,7 +12,7 @@ namespace MudBlazor;
 /// </summary>
 public partial class MudChart
 {
-    private IMudChart? _chartReference;
+    public IMudChart? ChartReference { get; set; }
 
     protected override void OnParametersSet()
     {
@@ -30,7 +30,7 @@ public partial class MudChart
 
     protected override void OnAfterRender(bool firstRender)
     {
-        if (firstRender && _chartReference != null)
+        if (firstRender && ChartReference != null)
         {
             StateHasChanged();
         }

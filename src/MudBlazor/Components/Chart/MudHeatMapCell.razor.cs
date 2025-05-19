@@ -92,7 +92,7 @@ namespace MudBlazor
             }
             else
             {
-                throw new InvalidOperationException("MudHeatMapCell must be used inside a HeatMap component.");
+                throw new InvalidOperationException("MudHeatMapCell must be used inside a MudChart component.");
             }
         }
 
