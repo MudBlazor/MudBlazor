@@ -1,5 +1,4 @@
 @using System.Net.Http.Json
-@using System.Threading
 @using MudBlazor.Examples.Data.Models
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
@@ -14,10 +13,18 @@
     <Columns>
         <PropertyColumn Property="x => x.Number" Title="Nr" />
         <PropertyColumn Property="x => x.Sign" />
-        <PropertyColumn Property="x => x.Name" />
+        <TemplateColumn Title="@(nameof(Element.Name))" Sortable="true">
+            <CellTemplate>
+                <MudText>@(context.Item.Name ?? "-")</MudText>
+            </CellTemplate>
+        </TemplateColumn>
         <PropertyColumn Property="x => x.Position" />
         <PropertyColumn Property="x => x.Molar" Title="Molar mass" />
-        <PropertyColumn Property="x => x.Group" Title="Category" />
+        <PropertyColumn Property="x => x.Group" Title="Category" Sortable="true">
+            <CellTemplate>
+                @(context.Item.Group ?? "-")
+            </CellTemplate>
+        </PropertyColumn>
     </Columns>
     <PagerContent>
         <MudDataGridPager T="Element" />
@@ -66,12 +73,6 @@
                         o => o.Sign
                     );
                     break;
-                case nameof(Element.Name):
-                    data = data.OrderByDirection(
-                        sortDefinition.Descending ? SortDirection.Descending : SortDirection.Ascending,
-                        o => o.Name
-                    );
-                    break;
                 case nameof(Element.Position):
                     data = data.OrderByDirection(
                         sortDefinition.Descending ? SortDirection.Descending : SortDirection.Ascending,
@@ -83,6 +84,24 @@
                         sortDefinition.Descending ? SortDirection.Descending : SortDirection.Ascending,
                         o => o.Molar
                     );
+                    break;
+                case nameof(Element.Group):
+                    data = data.OrderByDirection(
+                        sortDefinition.Descending ? SortDirection.Descending : SortDirection.Ascending,
+                        o => o.Group
+                    );
+                    break;
+                default:
+                    var sortByColumn = dataGrid.RenderedColumns.First(c => c.PropertyName == sortDefinition.SortBy);
+                    switch (sortByColumn.Title) 
+                    {
+                        case nameof(Element.Name):
+                            data = data.OrderByDirection(
+                                sortDefinition.Descending ? SortDirection.Descending : SortDirection.Ascending,
+                                o => o.Name
+                            );
+                            break; 
+                    }
                     break;
             }
         }

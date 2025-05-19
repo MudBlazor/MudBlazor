@@ -6,7 +6,7 @@
 <span tabindex="@(Disabled ? -1 : 0)" role="radiogroup" aria-readonly="@(ReadOnly.ToString().ToLower())"
       @onkeydown="HandleKeyDownAsync" @attributes="UserAttributes" class="@ClassName" style="@Style">
     <CascadingValue Value="this">
-        @for (int i = 1; i <= MaxValue; i++)
+        @for (var i = 1; i <= MaxValue; i++)
         {
             var currentValue = i;
             <MudRatingItem Class="@RatingItemsClass"
@@ -19,7 +19,7 @@
                            Size="Size"
                            ItemClicked="HandleItemClickedAsync"
                            ItemHovered="HandleItemHoveredAsync"
-                           aria-label="@Localizer[LanguageResource.MudRatingItem_Label, $"{i}"]"/>
+                           aria-label="@Localizer[LanguageResource.MudRatingItem_Label, $"{currentValue}"]"/>
         }
     </CascadingValue>
 </span>

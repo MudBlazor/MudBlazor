@@ -311,7 +311,6 @@ public class OverlayTests : BunitTest
     {
         var scrollManagerMock = new Mock<IScrollManager>();
         Context.Services.AddSingleton(scrollManagerMock.Object);
-        var providerComp = Context.RenderComponent<MudPopoverProvider>();
 
         var visible = true;
 
@@ -324,7 +323,7 @@ public class OverlayTests : BunitTest
 
         var mudOverlay = comp.Instance;
 
-        // Initial unlock state
+        // Initial unlock state without JSRuntime
         scrollManagerMock.Verify(s => s.UnlockScrollAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never());
 
         if (!absolute && lockscroll)

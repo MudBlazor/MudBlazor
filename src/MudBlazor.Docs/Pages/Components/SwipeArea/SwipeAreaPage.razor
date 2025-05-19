@@ -2,16 +2,25 @@
 
 <DocsPage>
     <DocsPageHeader Title="Swipe Area" Component="@nameof(MudSwipeArea)">
-        <Description>Note: these examples only work on devices where touch events are supported.</Description>
+        <Description>Controls the swipe movement of a determined area.</Description>
     </DocsPageHeader>
     <DocsPageContent>
 
         <DocsPageSection>
-            <SectionHeader Title="Swipe directions">
+            <SectionHeader Title="Swipe Directions">
                 <Description>Swipe your finger in different directions to see how the component works.</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="@nameof(SwipeDirectionsExample)">
+            <SectionContent DarkenBackground="true" Code="@nameof(SwipeDirectionsExample)" ShowCode="false">
                 <SwipeDirectionsExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Real Time Swipe">
+                <Description>You can control the process in real time with the <CodeInline>OnSwipeMove</CodeInline> event. This event uses the <CodeInline>MultiDimensionSwipeEventArgs</CodeInline> parameter instead of SwipeEventArgs for increased precision.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(RealTimeSwipeExample)" ShowCode="false">
+                <RealTimeSwipeExample />
             </SectionContent>
         </DocsPageSection>
         
@@ -19,7 +28,7 @@
             <SectionHeader Title="Prevent default browser behavior">
                 <Description>Browser will not scroll when <CodeInline>PreventDefault</CodeInline> is set to <CodeInline>true</CodeInline>.</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="@nameof(SwipeDirectionsPreventDefaultExample)">
+            <SectionContent DarkenBackground="true" Code="@nameof(SwipeDirectionsPreventDefaultExample)" ShowCode="false">
                 <SwipeDirectionsPreventDefaultExample />
             </SectionContent>
         </DocsPageSection>
@@ -39,6 +48,15 @@
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(SwipeDatePickerExample)" ShowCode="false">
                 <SwipeDatePickerExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Swipe Box's Drag Example">
+                <Description>Try to drag this Swipe Box!</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(SwipeBoxExample)" ShowCode="false">
+                <SwipeBoxExample />
             </SectionContent>
         </DocsPageSection>
 
