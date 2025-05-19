@@ -1,13 +1,17 @@
-﻿@inject NavigationManager NavManager
+﻿@layout MainLayoutTwo
+@page "/popover-switch-test/PopoverTwoLayoutsTest"
+@inject NavigationManager NavManager
 
-<MudStack Row Justify="Justify.SpaceAround">
+<MudPopoverProvider />
+
+<MudStack Class="mt-16" Row Justify="Justify.SpaceAround">
     <MudButton OnClick="@(() => _isVisible = !_isVisible)" Variant="Variant.Filled" Color="Color.Primary">
         Tooltip Test
     </MudButton>
-    <MudMenu Icon="@Icons.Material.Filled.Settings" Color="Color.Inherit" AnchorOrigin="@Origin.BottomLeft" 
+    <MudMenu Icon="@Icons.Material.Filled.Settings" Color="Color.Inherit" AnchorOrigin="@Origin.BottomLeft"
              TransformOrigin="@Origin.TopLeft" AriaLabel="User menu dropdown">
-        <MudMenuItem Disabled>Popover Tooltip In Overlay</MudMenuItem>
-        <MudMenuItem OnClick="@(() => NavigateToTest())">Same but with different Popover provider and Page</MudMenuItem>
+        <MudMenuItem OnClick="@(NavigateToTest)">Popover Tooltip In Overlay</MudMenuItem>
+        <MudMenuItem Disabled>Same but with different Popover provider</MudMenuItem>
     </MudMenu>
 </MudStack>
 
@@ -36,12 +40,23 @@
 </MudOverlay>
 
 @code {
-    public static string __description__ = "Popover Tooltip inside Overlay";
+    public static string __description__ = "Tests the popover with a different layout than the default, presumabily with a new observer on the new provider.";
 
-    private bool _isVisible;
+    private bool _isVisible = false;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            if (!NavManager.Uri.Contains("popover-switch-test"))
+            {
+                NavManager.NavigateTo("/popover-switch-test/PopoverTwoLayoutsTest");
+            }
+        }
+    }
 
     private void NavigateToTest()
     {
-        NavManager.NavigateTo("/popover-switch-test/PopoverTwoLayoutsTest");
+        NavManager.NavigateTo($"/?component={nameof(PopoverTooltipInOverlayTest)}");
     }
 }
