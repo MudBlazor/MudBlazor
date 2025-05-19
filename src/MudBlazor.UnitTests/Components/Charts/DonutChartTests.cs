@@ -57,9 +57,9 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.ChartType, ChartType.Donut)
                 .Add(p => p.Height, "300px")
                 .Add(p => p.Width, "300px")
-                .Add(p => p.InputData, data)
+                .Add(p => p.ChartSeries, [data])
                 .Add(p => p.ChartOptions, new ChartOptions { ChartPalette = _baseChartPalette })
-                .Add(p => p.InputLabels, labels));
+                .Add(p => p.ChartLabels, labels));
 
             comp.Markup.Should().Contain("class=\"mud-chart-donut\"");
             comp.Markup.Should().Contain("class=\"mud-chart-serie\"");
@@ -108,9 +108,9 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.ChartType, ChartType.Donut)
                 .Add(p => p.Height, "300px")
                 .Add(p => p.Width, "300px")
-                .Add(p => p.InputData, data)
+                .Add(p => p.ChartSeries, [data])
                 .Add(p => p.ChartOptions, new ChartOptions { ChartPalette = _baseChartPalette })
-                .Add(p => p.InputLabels, labels));
+                .Add(p => p.ChartLabels, labels));
 
             var svgViewBox = comp.Find("svg").GetAttribute("viewBox")?.Split(" ")?.Select(s => int.Parse(s))?.ToArray();
             var circles = comp.FindAll("circle");
@@ -138,7 +138,7 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.Height, "350px")
                 .Add(p => p.Width, "100%")
                 .Add(p => p.ChartOptions, new ChartOptions { ChartPalette = new string[] { "#1E9AB0" } })
-                .Add(p => p.InputData, data));
+                .Add(p => p.ChartSeries, [data]));
 
             var circles1 = comp.FindAll("path");
 
@@ -172,7 +172,7 @@ namespace MudBlazor.UnitTests.Charts
 
             var comp = Context.RenderComponent<MudChart>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Donut)
-                .Add(p => p.InputData, data));
+                .Add(p => p.ChartSeries, [data]));
 
             comp.Markup.Should().Contain("d=\"M 0 -140 A 140 140 0 1 1 0 140 A 140 140 0 1 1 -0 -140 L -0 -105 A 105 105 0 1 0 0 105 A 105 105 0 1 0 0 -105 Z\"");
         }

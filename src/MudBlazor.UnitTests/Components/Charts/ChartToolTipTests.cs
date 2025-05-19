@@ -30,7 +30,7 @@ namespace MudBlazor.UnitTests.Charts
             comp.Markup.Should().Contain("<rect x=\"-9.95\" y=\"-25.98\" width=\"40\" height=\"40\" rx=\"4\" ry=\"4\" fill=\"red\" stroke=\"white\" stroke-width=\"1\"></rect>");
             comp.Markup.Should().Contain("<polygon points=\"0.05,10.02 20.05,10.02 10.05,18.52\" fill=\"red\" stroke=\"white\" stroke-width=\"0\"></polygon>");
             comp.Markup.Should().Contain("<text x=\"10.05\" y=\"-9.98\"");
-            comp.Markup.Should().Contain("<text x=\"10.05\" y=\"-9.98\" text-anchor=\"middle\" font-size=\"12px\" blazor:elementReference=\"\"><tspan x=\"10.05\" dy=\"0\">Some Title</tspan><tspan x=\"10.05\" dy=\"16\">Some Subtitle</tspan></text>");
+            comp.Markup.Should().Contain("<text x=\"10.05\" y=\"-9.98\" text-anchor=\"middle\" font-size=\"12px\" fill=\"white\" stroke=\"black\" stroke-width=\"0.8\" paint-order=\"stroke\" filter=\"url(#text-shadow)\" blazor:elementReference=\"\"><tspan x=\"10.05\" dy=\"0\">Some Title</tspan><tspan x=\"10.05\" dy=\"16\">Some Subtitle</tspan></text>");
         }
     }
 }
