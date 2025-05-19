@@ -295,11 +295,11 @@ namespace MudBlazor
         /// The display variant of the text input.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Variant.Text"/>.
+        /// Defaults to <see cref="Variant.Text"/> in <see cref="MudGlobal.InputDefaults.Variant"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public Variant Variant { get; set; } = Variant.Text;
+        public Variant Variant { get; set; } = MudGlobal.InputDefaults.Variant;
 
         /// <summary>
         /// The location of the <see cref="AdornmentIcon"/> for the input.
@@ -391,11 +391,25 @@ namespace MudBlazor
         public RenderFragment<MudPicker<T>>? PickerActions { get; set; }
 
         /// <summary>
-        /// Applies vertical spacing.
+        /// The amount of vertical spacing for the text input.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Margin.None"/> in <see cref="MudGlobal.InputDefaults.Margin"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public Margin Margin { get; set; } = Margin.None;
+        public Margin Margin { get; set; } = MudGlobal.InputDefaults.Margin;
+
+        /// <summary>
+        /// Shows the label inside the text input if no <see cref="Text"/> is specified.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c> in <see cref="MudGlobal.InputDefaults.ShrinkLabel"/>.
+        /// When <c>true</c>, the label will not move into the input when the input is empty.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public bool ShrinkLabel { get; set; } = MudGlobal.InputDefaults.ShrinkLabel;
 
         /// <summary>
         /// The mask to apply to input values when <see cref="Editable"/> is <c>true</c>.

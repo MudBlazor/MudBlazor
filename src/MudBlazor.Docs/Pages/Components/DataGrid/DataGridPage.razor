@@ -125,6 +125,16 @@
                     In both <i>active</i> modes, single columns can be excluded from sorting by setting the <CodeInline>Sortable</CodeInline> property to false for that column.
                     When SortMode is set to <CodeInline>SortMode.None</CodeInline> sorting is disabled globally and setting the <CodeInline>Sortable</CodeInline> property on a column has no effect.<br /><br />
                     You can also use the <CodeInline>SortBy</CodeInline> parameter on a <CodeInline>TemplateColumn</CodeInline> to allow sorting on that column.
+                    <br /><br />
+                    When using <CodeInline>PropertyColumn</CodeInline>, if the <CodeInline>Property</CodeInline> lambda expression returns a <b>primitive type</b>, 
+                    the <CodeInline>SortDefinition</CodeInline>'s <CodeInline>SortBy</CodeInline> will return the Property's <CodeInline>nameof</CodeInline> value.
+                    Instead, if the Property lamda expression contains a complex value, the SortBy will return the column GUID.
+                    In this case, if you need to retrieve the column, you have several options:
+                    <MudList T="string" Dense>
+                        <MudListItem>- <b>Embed a CellTemplate within the PropertyColumn</b>: Use the lambda expression of the PropertyColumn to return the primitive Property value, while implementing the more complex, ad-hoc logic in the embedded CellTemplate.</MudListItem>
+                        <MudListItem>- <b>Title lookup via GUID</b>: Assign a Title to the TemplateColumn, and a reference to the MudDataGrid using <code>@@ref</code>. Iterate over the RenderedColumns to find the TemplateColumn by matching its unique identifier (where PropertyName == SortDefinition.SortBy), and extract its Title.</MudListItem>
+                        <MudListItem>- <b>Create a custom TemplateColumn</b>: Inherit from the Column base class and override the PropertyName's default behavior and implement your own custom logic instead of relying on a randomly generated identifier</MudListItem>
+                    </MudList>
                     <MudAlert Severity="Severity.Info" Dense="true" Class="my-1">Changing the SortMode at runtime will reset any former sort orders on all columns.</MudAlert>
                 </Description>
             </SectionHeader>

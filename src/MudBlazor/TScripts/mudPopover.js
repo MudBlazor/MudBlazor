@@ -816,11 +816,11 @@ class MudPopover {
 
     initialize(containerClass, flipMargin, overflowPadding) {
         // only happens when the PopoverService is created which happens on application start and anytime the service might crash
-        // "mud-popover-provider" is the default name.
-        const mainContent = document.getElementsByClassName(containerClass);
-        if (mainContent.length == 0) {
-            console.error(`No Popover Container found with class ${containerClass}`);
-            return;
+        // "mud-popover-provider" is the default name of containerClass.
+
+        if (this.map.length > 0) {
+            console.error('Popover Service already initialized, disposing to reinitialize.');
+            this.dispose();
         }
         // store options from PopoverOptions in mudpopoverHelper
         window.mudpopoverHelper.mainContainerClass = containerClass;
@@ -830,39 +830,58 @@ class MudPopover {
             window.mudpopoverHelper.flipMargin = flipMargin;
         }
         // create a single observer to watch all popovers in the provider
-        const provider = mainContent[0];
-
-        // options to observe for
-        const config = {
-            attributes: true, // only observe attributes
-            subtree: true, // all descendants of popover
-            attributeFilter: ['data-ticks','class'] // limit to just data-ticks and class changes
-        };
-
-        // Dispose of any existing observer before creating a new one
-        if (this.contentObserver) {
-            this.contentObserver.disconnect();
-            this.contentObserver = null;
-        }
-
-        const observer = new MutationObserver((mutations) => {
-            for (const mutation of mutations) {
-                // if it's direct parent is the provider
-                // and contains the class mud-popover
-                if (mutation.target.parentNode === provider && mutation.target.classList.contains('mud-popover')) {
-                    this.callbackPopover(mutation);
-                }
-            }
-        });
-
-        observer.observe(provider, config);
-        // store it so we can dispose of it properly
-        this.contentObserver = observer;
+        this.observeMainContainer();
 
         // setup event listeners
         window.addEventListener('resize', window.mudpopoverHelper.debouncedResize, { passive: true });
         window.addEventListener('scroll', window.mudpopoverHelper.handleScroll, { passive: true });
     }
+
+    observeMainContainer() {
+
+        const mainContent = document.body.getElementsByClassName(window.mudpopoverHelper.mainContainerClass);
+        const provider = mainContent[0];
+
+        if (!provider) {
+            console.error(`No Popover Container found with class ${containerClass}`);
+            return;
+        }
+
+        // Avoid re-observing same element unless it's been removed from DOM
+        if (this.currentMainProvider === provider) {
+            return;
+        }
+
+        // Assign and update reference
+        this.currentMainProvider = provider;
+
+        // Cleanup old observer
+        if (this.contentObserver) {
+            this.contentObserver.disconnect();
+            this.contentObserver = null;
+        }
+
+        const config = {
+            attributes: true,
+            subtree: true,
+            attributeFilter: ['data-ticks', 'class']
+        };
+
+        const observer = new MutationObserver((mutations) => {
+            for (const mutation of mutations) {
+                if (
+                    mutation.target.parentNode === this.currentMainProvider &&
+                    mutation.target.classList.contains('mud-popover')
+                ) {
+                    this.callbackPopover(mutation);
+                }
+            }
+        });
+
+        observer.observe(this.currentMainProvider, config);
+        this.contentObserver = observer;
+    }
+
 
     /**
      * Connects a popover element to the system, setting up all necessary event listeners and observers
@@ -874,6 +893,10 @@ class MudPopover {
         if (this.map[id]) {
             this.disconnect(id);
         }
+
+        // compare this.contentObserver = observer to see if the container being observed still exists
+        // will recreate if not, comment out this line if you want to see PopoverTwoLayoutsTest fail in the Viewer
+        this.observeMainContainer()
 
         // this is the origin of the popover in the dom, it can be nested inside another popover's content
         // e.g. the filter popover for datagrid, this would be the inside of <td> where the mudpopover was placed

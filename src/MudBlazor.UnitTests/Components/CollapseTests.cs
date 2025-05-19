@@ -3,7 +3,9 @@
 // See the LICENSE file in the project root for more information.
 
 using AngleSharp.Dom;
+using AngleSharp.Html.Dom;
 using Bunit;
+using Bunit.Web.AngleSharp;
 using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents.Collapse;
 using NUnit.Framework;
@@ -25,23 +27,23 @@ namespace MudBlazor.UnitTests.Components
 
             IRenderedComponent<MudSwitch<bool>> MudSwitch() => comp.FindComponent<MudSwitch<bool>>();
             // Initial state is expanded
-            MudSwitch().Find("input").GetAttribute("aria-checked").Should().Be("true");
+            MudSwitch().Find("input").HasAttribute("checked").Should().BeTrue();
 
             // Collapse via button
             Button().Click();
-            MudSwitch().Find("input").GetAttribute("aria-checked").Should().Be("false");
+            MudSwitch().Find("input").HasAttribute("checked").Should().BeFalse();
 
             // Expand via button
             Button().Click();
-            MudSwitch().Find("input").GetAttribute("aria-checked").Should().Be("true");
+            MudSwitch().Find("input").HasAttribute("checked").Should().BeTrue();
 
             // Collapse via switch
             MudSwitch().Find("input").Change(false);
-            MudSwitch().Find("input").GetAttribute("aria-checked").Should().Be("false");
+            MudSwitch().Find("input").HasAttribute("checked").Should().BeFalse();
 
             // Expand via switch
             MudSwitch().Find("input").Change(true);
-            MudSwitch().Find("input").GetAttribute("aria-checked").Should().Be("true");
+            MudSwitch().Find("input").HasAttribute("checked").Should().BeTrue();
         }
     }
 }

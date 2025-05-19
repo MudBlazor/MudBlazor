@@ -13,6 +13,15 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class TableTests : BunitTest
     {
+        [Test]
+        public void CustomTableClass()
+        {
+            var comp = Context.RenderComponent<TableRowClickTest>();
+            var table = comp.FindComponent<MudTable<int>>();
+            table.SetParametersAndRender(parameters => parameters.Add(x => x.TableClass, "table-custom-class"));
+            table.Markup.Should().Contain("class=\"mud-table-root table-custom-class\"");
+        }
+
         /// <summary>
         /// OnRowClick event callback should be fired regardless of the selection state
         /// </summary>
