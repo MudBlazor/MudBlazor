@@ -2,12 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace MudBlazor;
 
@@ -60,7 +55,7 @@ public class DateTimeMask : PatternMask
         if (mask.Contains(yyyy))
         {
             var (yearString, _) = Extract(yyyy, mask, maskOffset, alignedText);
-            if (yearString == null || yearString.Length < 4)
+            if (string.IsNullOrEmpty(yearString) || yearString.Length < 4)
                 return -1;
             if (int.TryParse(yearString, out var year))
                 return year;
@@ -68,7 +63,7 @@ public class DateTimeMask : PatternMask
         else if (mask.Contains(yy))
         {
             var (yearString, _) = Extract(yy, mask, maskOffset, alignedText);
-            if (yearString == null || yearString.Length < 2)
+            if (string.IsNullOrEmpty(yearString) || yearString.Length < 2)
                 return -1;
             if (int.TryParse(yearString, out var year))
                 return year + 2000;
@@ -165,7 +160,7 @@ public class DateTimeMask : PatternMask
     {
         var hh = new string(_h, 2);
         var (hourString, _) = Extract(hh, mask, maskOffset, alignedText);
-        if (hourString == null)
+        if (string.IsNullOrEmpty(hourString))
             return;
         if (!int.TryParse(hourString, out var hour))
             return;
@@ -190,7 +185,7 @@ public class DateTimeMask : PatternMask
     {
         var mm = new string(_m, 2);
         var (minuteString, _) = Extract(mm, mask, maskOffset, alignedText);
-        if (minuteString == null)
+        if (string.IsNullOrEmpty(minuteString))
             return;
         if (!int.TryParse(minuteString, out var minute))
             return;
@@ -203,7 +198,7 @@ public class DateTimeMask : PatternMask
         }
         else if (minuteString.Length == 2)
         {
-            var fixedMinute = Fixminute(minute);
+            var fixedMinute = FixMinute(minute);
             _minute = fixedMinute;
             if (fixedMinute != minute)
                 alignedText = alignedText.Remove(maskIndex, 2).Insert(maskIndex, $"{fixedMinute:D2}");
@@ -214,7 +209,7 @@ public class DateTimeMask : PatternMask
     {
         var ss = new string(_s, 2);
         var (secondString, _) = Extract(ss, mask, maskOffset, alignedText);
-        if (secondString == null)
+        if (string.IsNullOrEmpty(secondString))
             return;
         if (!int.TryParse(secondString, out var second))
             return;
@@ -228,7 +223,7 @@ public class DateTimeMask : PatternMask
         }
         else if (secondString.Length == 2)
         {
-            var fixedSecond = Fixminute(second);
+            var fixedSecond = FixMinute(second);
             _second = fixedSecond;
             if (fixedSecond != second)
                 alignedText = alignedText.Remove(maskIndex, 2).Insert(maskIndex, $"{fixedSecond:D2}");
@@ -241,7 +236,7 @@ public class DateTimeMask : PatternMask
         return hour % 24;
     }
 
-    private int Fixminute(int minute)
+    private int FixMinute(int minute)
     {
         return minute % 60;
     }
@@ -251,10 +246,10 @@ public class DateTimeMask : PatternMask
         var maskIndex = mask.IndexOf(maskPart);
         var index = maskIndex - maskOffset;
         if (index < 0 || index >= alignedText.Length)
-            return (null, -1);
+            return (string.Empty, -1);
         var subString = alignedText.Substring(index, Math.Min(maskPart.Length, alignedText.Length - index));
         if (!Regex.IsMatch(subString, @"^\d+$"))
-            return (null, -1);
+            return (string.Empty, -1);
         return (subString, index);
     }
 }

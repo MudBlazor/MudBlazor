@@ -2,10 +2,9 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
 using System.Globalization;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.VisualBasic;
 
 namespace MudBlazor
 {
@@ -18,8 +17,8 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Data)]
         public DateTime? DateTime
         {
-            get => GetDateTime();
-            set => SetDateTime(value, true);
+            get => _value;
+            set => SetDateTimeAsync(value, true).CatchAndLog();
         }
 
         /// <summary>
@@ -42,8 +41,24 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Appearance)]
         public string DateTimeFormat
         {
-            get => GetDateTimeFormat();
-            set => SetDateTimeFormat(value);
+            get => (Converter as DefaultConverter<DateTime?>)?.Format;
+            set
+            {
+                if (Converter is DefaultConverter<DateTime?> defaultConverter)
+                {
+                    defaultConverter.Format = value;
+                }
+                DateFormatChangedAsync(value);
+            }
+        }
+
+        /// <summary>
+        /// Occurs when the <see cref="DateFormat"/> has changed.
+        /// </summary>
+        protected virtual Task DateFormatChangedAsync(string newFormat)
+        {
+            Touched = true;
+            return SetTextAsync(Converter.Set(_value), false);
         }
 
         /// <summary>
@@ -101,11 +116,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
-        public DateTime? PickerMonth
-        {
-            get => _pickerMonth;
-            set => _pickerMonth = value;
-        }
+        public DateTime? PickerMonth { get; set; }
 
         /// <summary>
         /// Fired when the month changes.
@@ -194,7 +205,6 @@ namespace MudBlazor
 
         private DateTime? _datePicked { get; set; }
         private TimeSpan? _timePicked { get; set; }
-        private DateTime? _pickerMonth { get; set; }
 
         private bool _datePickedChanged { get; set; }
         private bool _timePickedChanged { get; set; }
@@ -210,7 +220,7 @@ namespace MudBlazor
             Converter.GetFunc = OnGet;
             Converter.SetFunc = OnSet;
             ((DefaultConverter<DateTime?>)Converter).Culture = Culture;
-            ((DefaultConverter<DateTime?>)Converter).Format = null;
+            ((DefaultConverter<DateTime?>)Converter).Format = "yyyy-MM-dd HH:mm:ss";
         }
 
         protected override async Task OnPickerOpenedAsync()
@@ -264,7 +274,7 @@ namespace MudBlazor
             Converter.OnError?.Invoke(ParsingErrorMessage, []);
         }
 
-        protected override Task StringValueChangedAsync(string value)
+        protected override async Task StringValueChangedAsync(string value)
         {
             Touched = true;
             if (string.IsNullOrEmpty(value))
@@ -276,16 +286,10 @@ namespace MudBlazor
                 DateTime? dateTime = Converter.Get(value);
                 if (dateTime is not null)
                 {
-                    SetDateTime(dateTime, false);
+                    await SetDateTimeAsync(dateTime, false);
                 }
             }
-            return base.StringValueChangedAsync(value);
-        }
-
-        protected void SetDateTimeFormat(string format)
-        {
-            ((DefaultConverter<DateTime?>)Converter).Format = format;
-            StateHasChanged();
+            await base.StringValueChangedAsync(value);
         }
 
         protected string GetDateTimeFormat()
@@ -300,11 +304,6 @@ namespace MudBlazor
             }
         }
 
-        protected DateTime? GetDateTime()
-        {
-            return _value;
-        }
-
         protected DateTime? GetPartialDateTime()
         {
             return _datePicked is null || _timePicked is null ? null : _datePicked?.Add((TimeSpan)_timePicked);
@@ -312,7 +311,7 @@ namespace MudBlazor
 
         protected string GetFormattedYearString()
         {
-            return (_pickerMonth ?? System.DateTime.Today).ToString("yyyy");
+            return (PickerMonth ?? System.DateTime.Today).ToString("yyyy");
         }
 
         protected string GetTitleDateString()
@@ -352,7 +351,7 @@ namespace MudBlazor
 
         private async Task OnPickerMonthChanged(DateTime? month)
         {
-            _pickerMonth = month;
+            PickerMonth = month;
             await PickerMonthChanged.InvokeAsync(month);
         }
 
@@ -375,12 +374,6 @@ namespace MudBlazor
             _timePicked = time;
             SubmitAndClose();
         }
-
-        /// <summary>
-        /// Sets the date and time selection
-        /// </summary>
-        protected void SetDateTime(DateTime? dateTime, bool updateValue)
-            => SetDateTimeAsync(dateTime, updateValue).CatchAndLog();
 
         /// <summary>
         /// Goes to the specific date
