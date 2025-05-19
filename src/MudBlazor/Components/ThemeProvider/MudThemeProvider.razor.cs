@@ -203,7 +203,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         scrollbar.AppendLine("::-webkit-scrollbar-thumb:hover {background: #a6a6a6;}");
         scrollbar.AppendLine("html {scrollbar-gutter: stable;}");
         //Firefox
-        scrollbar.AppendLine("html, body * {scrollbar-color: #c4c4c4 transparent;scrollbar-width: thin}");
+        scrollbar.AppendLine("html, body * {scrollbar-color: #c4c4c4 transparent;scrollbar-width: thin;}");
         scrollbar.AppendLine("</style>");
 
         return scrollbar.ToString();
