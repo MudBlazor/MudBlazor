@@ -16,7 +16,8 @@
                              Placeholder="@(_placeholder ? "Placeholder" : null)"
                              HelperText="@(_helperText ? "Helper Text" : null)"
                              HelperTextOnFocus="_helperTextOnFocus"
-                             Clearable="_clearable" />
+                             Clearable="_clearable"
+                             Modal="_modal" />
         }
     </MudStack>
 
@@ -35,19 +36,21 @@
         <MudSwitch @bind-Value="_helperText" Label="HelperText" Color="Color.Primary" />
         <MudSwitch @bind-Value="_helperTextOnFocus" Label="HelperTextOnFocus" Color="Color.Primary" />
         <MudSwitch @bind-Value="_clearable" Label="Clearable" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_modal" Label="Modal" Color="Color.Primary" />
     </MudStack>
 </MudStack>
 
 @code {
-    string _value;
-    Margin _margin;
-    bool _dense;
-    bool _disabled;
-    bool _readonly;
-    bool _placeholder;
-    bool _helperText;
-    bool _helperTextOnFocus;
-    bool _clearable;
+    private string _value;
+    private Margin _margin;
+    private bool _dense;
+    private bool _disabled;
+    private bool _readonly;
+    private bool _placeholder;
+    private bool _helperText;
+    private bool _helperTextOnFocus;
+    private bool _clearable;
+    private bool _modal = true;
 
     private string[] _states =
     {
@@ -70,7 +73,9 @@
 
         // if text is null or empty, show complete list
         if (string.IsNullOrEmpty(value))
+        {
             return _states;
+        }
 
         return _states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
     }

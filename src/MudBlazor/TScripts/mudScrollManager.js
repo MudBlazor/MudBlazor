@@ -3,6 +3,10 @@
 // See the LICENSE file in the project root for more information.
 
 class MudScrollManager { 
+    constructor() {
+        this._lockCount = 0; // internal tracking for the # of overlay locks
+    }
+
     //scrolls to year in MudDatePicker
     scrollToYear(elementId, offset) {
         let element = document.getElementById(elementId);
@@ -54,27 +58,27 @@ class MudScrollManager {
 
     //locks the scroll of the selected element. Default is body
     lockScroll(selector, lockclass) {
-        let element = document.querySelector(selector) || document.body;
+        if (this._lockCount === 0) {
+            const element = document.querySelector(selector) || document.body;
 
-        //if the body doesn't have a scroll bar, don't add the lock class with padding
-        let hasScrollBar = window.innerWidth > document.body.clientWidth;
+            //if the body doesn't have a scroll bar, don't add the lock class with padding
+            const hasScrollBar = window.innerWidth > document.body.clientWidth;
+            const classToAdd = hasScrollBar ? lockclass : lockclass + "-no-padding";
 
-        if (hasScrollBar) {
-            element.classList.add(lockclass);
-        } else {
-            let lockClassNoPadding = lockclass + "-no-padding";
-            element.classList.add(lockClassNoPadding);
+            element.classList.add(classToAdd);
         }
-
+        this._lockCount++;
     }
 
     //unlocks the scroll. Default is body
     unlockScroll(selector, lockclass) {
-        let element = document.querySelector(selector) || document.body;
-
-        // remove both lock classes to be sure it's unlocked
-        element.classList.remove(lockclass);
-        element.classList.remove(lockclass + "-no-padding");
+        this._lockCount = Math.max(0, this._lockCount - 1); // subtract 1 or stop at 0
+        if (this._lockCount === 0) {
+            const element = document.querySelector(selector) || document.body;
+            // remove both lock classes to be sure it's unlocked
+            element.classList.remove(lockclass);
+            element.classList.remove(lockclass + "-no-padding");
+        }        
     }
 };
 window.mudScrollManager = new MudScrollManager();

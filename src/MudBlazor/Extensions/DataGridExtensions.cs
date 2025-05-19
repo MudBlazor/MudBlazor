@@ -14,7 +14,16 @@ namespace MudBlazor
         public static IEnumerable<T> OrderBySortDefinitions<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(this IEnumerable<T> source, GridState<T> state)
             => OrderBySortDefinitions(source, state.SortDefinitions);
 
+        public static IEnumerable<T> OrderBySortDefinitions<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(this IEnumerable<T> source, GridStateVirtualize<T> state)
+            => OrderBySortDefinitions(source, state.SortDefinitions);
+
         public static IEnumerable<T> OrderBySortDefinitions<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(this IEnumerable<T> source, ICollection<SortDefinition<T>> sortDefinitions)
+            => OrderBySortDefinitionsInternal(source, sortDefinitions, sortDefinitions.Count);
+
+        public static IEnumerable<T> OrderBySortDefinitions<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(this IEnumerable<T> source, IReadOnlyCollection<SortDefinition<T>> sortDefinitions)
+            => OrderBySortDefinitionsInternal(source, sortDefinitions, sortDefinitions.Count);
+
+        private static IEnumerable<T> OrderBySortDefinitionsInternal<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(IEnumerable<T> source, IEnumerable<SortDefinition<T>> sortDefinitions, int sortDefinitionsCount)
         {
             //avoid multiple enumeration
             var sourceArray = source as T[] ?? source.ToArray();
@@ -24,7 +33,7 @@ namespace MudBlazor
                 return sourceArray;
             }
 
-            if (sortDefinitions.Count == 0)
+            if (sortDefinitionsCount == 0)
             {
                 return sourceArray;
             }
@@ -35,13 +44,13 @@ namespace MudBlazor
             {
                 if (orderedEnumerable is null)
                 {
-                    orderedEnumerable = sortDefinition.Descending ? sourceArray.OrderByDescending(sortDefinition.SortFunc)
-                        : sourceArray.OrderBy(sortDefinition.SortFunc);
+                    orderedEnumerable = sortDefinition.Descending ? sourceArray.OrderByDescending(sortDefinition.SortFunc, sortDefinition.Comparer)
+                        : sourceArray.OrderBy(sortDefinition.SortFunc, sortDefinition.Comparer);
                 }
                 else
                 {
-                    orderedEnumerable = sortDefinition.Descending ? orderedEnumerable.ThenByDescending(sortDefinition.SortFunc)
-                        : orderedEnumerable.ThenBy(sortDefinition.SortFunc);
+                    orderedEnumerable = sortDefinition.Descending ? orderedEnumerable.ThenByDescending(sortDefinition.SortFunc, sortDefinition.Comparer)
+                        : orderedEnumerable.ThenBy(sortDefinition.SortFunc, sortDefinition.Comparer);
                 }
             }
 

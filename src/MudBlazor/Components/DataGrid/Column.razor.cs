@@ -22,6 +22,8 @@ namespace MudBlazor
         private static readonly RenderFragment<CellContext<T>> EmptyChildContent = _ => builder => { };
         internal ParameterState<bool> HiddenState { get; }
         internal ParameterState<bool> GroupingState { get; }
+        internal ParameterState<bool> _groupExpandedState;
+        internal ParameterState<int> _groupByOrderState;
 
         /// <summary>
         /// The data grid which owns this column.
@@ -114,6 +116,42 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public Func<T, object> GroupBy { get; set; }
+
+        /// <summary>
+        /// The order in which values are grouped when there are more than one group
+        /// </summary>
+        /// <remarks>
+        /// Defaults to 0.
+        /// </remarks>
+        [Parameter]
+        public int GroupByOrder { get; set; }
+
+        /// <summary>
+        /// Occurs when the <see cref="GroupByOrder"/> property has changed.
+        /// </summary>
+        [Parameter]
+        public EventCallback<int> GroupByOrderChanged { get; set; }
+
+        /// <summary>
+        /// Whether the column is indented 48px beyond it's parent when grouped.
+        /// </summary>
+        [Parameter]
+        public bool GroupIndented { get; set; } = true;
+
+        /// <summary>
+        /// Whether groups created from this column are expanded. Toggling the value will Toggle all grouped rows of this column.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        public bool GroupExpanded { get; set; }
+
+        /// <summary>
+        /// Occurs when the <see cref="GroupExpanded"/> property has changed.
+        /// </summary>
+        [Parameter]
+        public EventCallback<bool> GroupExpandedChanged { get; set; }
 
         /// <summary>
         /// Requires a value to be set.
@@ -547,16 +585,38 @@ namespace MudBlazor
                 .WithParameter(() => Grouping)
                 .WithEventCallback(() => GroupingChanged)
                 .WithChangeHandler(OnGroupingParameterChangedAsync);
+            _groupExpandedState = registerScope.RegisterParameter<bool>(nameof(GroupExpanded))
+                .WithParameter(() => GroupExpanded)
+                .WithChangeHandler(OnGroupExpandedChangedAsync);
+            _groupByOrderState = registerScope.RegisterParameter<int>(nameof(GroupByOrder))
+                .WithParameter(() => GroupByOrder)
+                .WithChangeHandler(OnGroupByOrderChangedAsync);
         }
 
         private async Task OnGroupingParameterChangedAsync()
         {
-            if (GroupingState.Value)
+            // Regroup DataGrid           
+            if (DataGrid is not null)
             {
-                if (DataGrid is not null)
-                {
-                    await DataGrid.ChangedGrouping(this);
-                }
+                await DataGrid.ChangedGrouping(this);
+            }
+        }
+
+        private async Task OnGroupExpandedChangedAsync()
+        {
+            // Regroup DataGrid
+            if (DataGrid is not null)
+            {
+                await DataGrid.ChangedGrouping();
+            }
+        }
+
+        private async Task OnGroupByOrderChangedAsync()
+        {
+            // Regroup DataGrid           
+            if (DataGrid is not null)
+            {
+                await DataGrid.ChangedGrouping();
             }
         }
 
@@ -652,11 +712,6 @@ namespace MudBlazor
         internal async Task SetGroupingAsync(bool group)
         {
             await GroupingState.SetValueAsync(group);
-
-            if (DataGrid is not null)
-            {
-                await DataGrid.ChangedGrouping(this);
-            }
         }
 
         /// <summary>

@@ -104,12 +104,11 @@ namespace MudBlazor.UnitTests.Components
                 actual.Should().BeEquivalentTo(expected);
 
                 var parent = (IHtmlElement)item.Parent;
-                parent.Children.Should().HaveCount(1, because: "the button and no empty popover hint since it's not active");
+                parent.Children.Should().HaveCount(2, because: "the button and the empty popover hint since it's not active");
 
                 await item.ParentElement.TriggerEventAsync("onpointerenter", new PointerEventArgs());
 
-                var popover = comp.Find("div.mud-popover");
-                var popoverId = popover.Id.Substring(15);
+                var popoverId = parent.Children[1].Id.Substring(8);
 
                 var toolTip = comp.Find($"#popovercontent-{popoverId}");
 
@@ -134,12 +133,11 @@ namespace MudBlazor.UnitTests.Components
                 actual.Should().BeEquivalentTo(expected);
 
                 var parent = (IHtmlElement)item.Parent;
-                parent.Children.Should().HaveCount(1, because: "the button and no popover hint"); ;
+                parent.Children.Should().HaveCount(2, because: "the button and the empty popover hint"); ;
 
                 await item.ParentElement.TriggerEventAsync("onpointerenter", new PointerEventArgs());
 
-                var popover = comp.Find("div.mud-popover");
-                var popoverId = popover.Id.Substring(15);
+                var popoverId = parent.Children[1].Id.Substring(8);
 
                 var toolTip = comp.Find($"#popovercontent-{popoverId}");
 

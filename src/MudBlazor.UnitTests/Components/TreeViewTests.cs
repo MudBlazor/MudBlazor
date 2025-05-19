@@ -1286,5 +1286,14 @@ namespace MudBlazor.UnitTests.Components
             parentItemButton.Click();
             GetItemExpandedValue().Should().Be(false);
         }
+
+        [Test]
+        public void TreeView_ClickHeterogeneousTreeElement_ShouldNotThrow()
+        {
+            var comp = Context.RenderComponent<TreeViewHeterogeneous>();
+            var l2 = comp.Find(".L2 > div.mud-treeview-item-content");
+            var act = () => l2.Click();
+            act.Should().NotThrow();
+        }
     }
 }

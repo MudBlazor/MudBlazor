@@ -1,8 +1,8 @@
 ﻿@inherits BytexDigital.Blazor.Components.CookieConsent.Dialogs.Prompt.CookieConsentPromptComponentBase
 
-<div class="cookie-consent-container">
-    <MudPaper Class="cookie-consent" Elevation="16">
-        <div class="cookie-consent-content">
+<div class="mud-cc-container">
+    <MudPaper Class="mud-cc-content" Elevation="16">
+        <div class="mud-cc-body">
             <MudText Typo="Typo.subtitle1">
                 We use cookies to enhance your experience and analyze site traffic.
                 By clicking "Accept All" you consent to the use of additional cookies.
@@ -10,7 +10,7 @@
             </MudText>
         </div>
 
-        <div class="cookie-consent-actions">
+        <div class="mud-cc-actions">
             <MudButton OnClick="async () => await AcceptAsync(false)" Variant="Variant.Filled" DropShadow="false" Color="Color.Default">
                 Only Necessary
             </MudButton>
