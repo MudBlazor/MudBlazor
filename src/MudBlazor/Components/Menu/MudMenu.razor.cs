@@ -29,8 +29,7 @@ namespace MudBlazor
         public MudMenu()
         {
             _showDebouncer = new DebounceDispatcher(MudGlobal.MenuDefaults.HoverDelay);
-            // double the delay for hiding a menu
-            _hideDebouncer = new DebounceDispatcher(MudGlobal.MenuDefaults.HoverDelay * 2);
+            _hideDebouncer = new DebounceDispatcher(MudGlobal.MenuDefaults.HoverDelay);
 
             using var registerScope = CreateRegisterScope();
             _openState = registerScope.RegisterParameter<bool>(nameof(Open))
@@ -54,6 +53,7 @@ namespace MudBlazor
         protected string PopoverClassname =>
             new CssBuilder()
                 .AddClass(PopoverClass)
+                .AddClass("mud-popover-nested", ParentMenu is not null)
                 .AddClass("mud-popover-position-override", PositionAtCursor)
                 .Build();
 

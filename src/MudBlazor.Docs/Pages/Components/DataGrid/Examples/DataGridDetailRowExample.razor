@@ -3,10 +3,9 @@
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-<MudDataGrid Items="@Elements"
-             ReadOnly="@_isReadOnly" EditMode="@DataGridEditMode.Cell">
+<MudDataGrid @ref="_dataGrid" Items="@Elements" ReadOnly="@_isReadOnly" EditMode="@DataGridEditMode.Cell" ExpandSingleRow="_expandSingleRow">
     <Columns>
-        <HierarchyColumn T="Element" ButtonDisabledFunc="@(x => x.Sign == "He")" InitiallyExpandedFunc="@(x => x.Sign == "Li")" />
+        <HierarchyColumn T="Element" ButtonDisabledFunc="@(x => x.Sign == "He")" InitiallyExpandedFunc="@(x => x.Sign == "Li")" EnableHeaderToggle="@_enableHeaderToggle" />
         <PropertyColumn Property="x => x.Number" Title="Nr" />
         <PropertyColumn Property="x => x.Sign" />
         <PropertyColumn Property="x => x.Name" />
@@ -33,16 +32,32 @@
 
 <div class="d-flex flex-wrap mt-4">
     <MudSwitch T="bool" @bind-Value="_isReadOnly" Color="@Color.Primary">Read Only</MudSwitch>
+    <MudButton OnClick="@ExpandAll" Color="@Color.Primary">Expand All</MudButton>
+    <MudButton OnClick="@CollapseAll" Color="@Color.Primary">Collapse All</MudButton>
+    <MudSwitch @bind-Value="@_enableHeaderToggle" Label="Enable Header Toggle" Color="@Color.Primary" />
+    <MudSwitch @bind-Value="@_expandSingleRow" Label="Expand Single Row" Color="@Color.Primary" />
 </div>
 
+@code {
 
-@code { 
+    private bool _isReadOnly = true;
+    private bool _expandSingleRow = false;
+    private bool _enableHeaderToggle = false;
+    private MudDataGrid<Element> _dataGrid = null!;
     private IEnumerable<Element> Elements = new List<Element>();
 
     protected override async Task OnInitializedAsync()
     {
         Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
     }
-    
-    private bool _isReadOnly = true;
+
+    private Task ExpandAll()
+    {
+        return _dataGrid.ExpandAllHierarchy();
+    }
+
+    private Task CollapseAll()
+    {
+        return _dataGrid.CollapseAllHierarchy();
+    }
 }

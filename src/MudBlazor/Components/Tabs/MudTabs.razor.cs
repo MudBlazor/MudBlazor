@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Collections;
 using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -412,6 +413,26 @@ namespace MudBlazor
         public Func<TabInteractionEventArgs, Task>? OnPreviewInteraction { get; set; }
 
         /// <summary>
+        /// Sort tab labels lexicographically by <see cref="MudTabPanel.Text"/> or <see cref="MudTabPanel.SortKey"/>. Ignored if <see cref="SortComparer" /> is set.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="SortDirection.None"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Appearance)]
+        public SortDirection SortDirection { get; set; } = SortDirection.None;
+
+        /// <summary>
+        /// Specify a custom Comparer to sort tabs. When set, <see cref="SortDirection" /> is not used.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Appearance)]
+        public IComparer<MudTabPanel>? SortComparer { get; set; }
+
+        /// <summary>
         /// Can be used in derived class to add a class to the main container. If not overwritten return an empty string
         /// </summary>
         protected virtual string InternalClassName { get; } = string.Empty;
@@ -490,8 +511,11 @@ namespace MudBlazor
         internal void AddPanel(MudTabPanel tabPanel)
         {
             _panels.Add(tabPanel);
+            SortPanels();
+
             if (_panels.Count == _activePanelIndex + 1 || _activePanelIndex == -1 && _panels.Count == 1)
                 ActivePanel = tabPanel;
+
             StateHasChanged();
         }
 
@@ -601,6 +625,26 @@ namespace MudBlazor
             }
         }
 
+        private void SortPanels()
+        {
+            if (_panels.Count == 0 || SortDirection == SortDirection.None)
+                return;
+
+            _panels.Sort(GetTabSortExpression);
+        }
+
+        private int GetTabSortExpression(MudTabPanel a, MudTabPanel b)
+        {
+            if (SortComparer is not null)
+            {
+                return SortComparer.Compare(a, b);
+            }
+
+            var dir = SortDirection is SortDirection.Ascending ? 1 : -1;
+            return Comparer.Default.Compare(GetTabSortKey(a), GetTabSortKey(b)) * dir;
+        }
+
+        private static string? GetTabSortKey(MudTabPanel panel) => panel.SortKey ?? panel.Text;
         #endregion
 
         #region Style and classes

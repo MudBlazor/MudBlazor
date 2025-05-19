@@ -688,11 +688,11 @@ namespace MudBlazor.UnitTests.Components
             // Immediately after leave, submenu should still be visible (hide debounce in effect)
             comp.FindAll("div.mud-popover-open").Count.Should().Be(2, "Submenu should remain open immediately after pointer leave");
 
-            // Wait less than the hide delay (which is 2x show delay)
-            await Task.Delay(hoverDelay + 50);
+            // Wait less than the delay
+            await Task.Delay(hoverDelay / 2);
             comp.FindAll("div.mud-popover-open").Count.Should().Be(2, "Submenu should still be open before hide delay completes");
 
-            // After the full hide delay (2x hover delay), submenu should close
+            // After the full delay, submenu should close
             await Task.Delay(hoverDelay + 50);
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "Submenu should close after full hide delay (2x hover delay)");
         }
@@ -735,11 +735,11 @@ namespace MudBlazor.UnitTests.Components
 
             // Start leave sequence, but re-enter before hide completes
             menu.PointerLeaveAsync(new PointerEventArgs()).CatchAndLog();
-            await Task.Delay(hoverDelay);
+            await Task.Delay(hoverDelay / 2);
             menu._hideDebouncer.Cancel();
 
             // Wait for what would have been the full hide delay
-            await Task.Delay((hoverDelay * 2) + 100);
+            await Task.Delay(hoverDelay + 100);
             comp.FindAll("div.mud-popover-open").Count.Should().Be(2,
                 "Submenu should still be open because hide debounce was cancelled by re-entering");
         }

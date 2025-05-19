@@ -3,6 +3,10 @@
 // See the LICENSE file in the project root for more information.
 
 class MudScrollManager { 
+    constructor() {
+        this._lockCount = 0; // internal tracking for the # of overlay locks
+    }
+
     //scrolls to year in MudDatePicker
     scrollToYear(elementId, offset) {
         let element = document.getElementById(elementId);

@@ -53,7 +53,7 @@ namespace MudBlazor.UnitTests.Components
             container.GetAttribute("aria-live").Should().Be(
                 indeterminate ?
                  null : "polite");
-            container.ChildElementCount.Should().Be(1);
+            container.ChildElementCount.Should().Be(2);
 
             var circleContainer = container.Children[0];
             circleContainer.ClassList.Should().Contain("mud-progress-circular-svg");
