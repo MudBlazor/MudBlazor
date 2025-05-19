@@ -1,0 +1,1287 @@
+﻿@using System.Net.Http.Json
+@using System.IO
+@using Microsoft.AspNetCore.Components.Rendering
+@using Microsoft.AspNetCore.Components.Web.HtmlRendering
+@using Microsoft.Extensions.DependencyInjection
+@using Microsoft.Extensions.Logging
+@using MudBlazor.Components
+@using MudBlazor.Utilities
+@using System.Diagnostics.CodeAnalysis
+@using System.Reflection
+@using MudBlazor.Examples.Data.Models
+@using DocumentFormat.OpenXml;
+@using DocumentFormat.OpenXml.Packaging;
+@using DocumentFormat.OpenXml.Spreadsheet;
+@using System.Globalization
+@using Color = MudBlazor.Color;
+@namespace MudBlazor.Docs.Examples
+@inject NavigationManager Nav
+@inject IServiceProvider ServiceProvider
+@inject ILoggerFactory LoggerFactory
+@inject IJSRuntime JSRuntime
+@inject HttpClient httpClient
+
+<MudDataGrid @ref=grid T="Element" Items="@Elements" RowStyleFunc="@_rowStyleFunc" 
+ColumnResizeMode="ResizeMode.Column" RowsPerPage="5"
+Groupable="true" GroupStyle="@("background-color:#AADDFF;")">
+    <GroupTemplate>
+        <div class="d-flex align-center">
+            <MudChip Color="Color.Secondary" Size="Size.Small" Class="ml-2">
+                @context.Grouping.Key
+            </MudChip>
+        </div>
+    </GroupTemplate>
+    <Columns>
+        <PropertyColumn Property="x => x.Number" Title="Nr" Hidden />
+        <PropertyColumn Property="x => x.Sign" Resizable="false" />
+        <TemplateColumn Title="Sign Template">
+            <CellTemplate>
+                @context.Item.Sign
+            </CellTemplate>
+        </TemplateColumn>
+        <PropertyColumn Property="x => x.Name" Grouping GroupByOrder=2 CellStyleFunc="@_cellStyleFunc" HeaderStyleFunc="@_headerStyleFunc"/>
+        <PropertyColumn Property="x => x.Position" AggregateDefinition="_positionAggregation"/>
+        <PropertyColumn Property="x => x.Molar" Title="Molar mass" Format="0.00" />
+        <PropertyColumn Property="x => x.Group" Title="Category" GroupExpanded=true Grouping GroupByOrder=1 AggregateDefinition="@(new AggregateDefinition<Element>())">
+            <HeaderTemplate>
+                <MudChip Value="@("Category")" Size="Size.Small" Color="Color.Secondary"></MudChip>
+            </HeaderTemplate>
+            <CellTemplate>
+                <MudChip Value="@context.Item.Group" Variant="Variant.Outlined" Color="Color.Primary" Size="Size.Small" Class="ml-2"></MudChip>
+            </CellTemplate>
+            <GroupTemplate>
+                <div class="d-flex align-center">
+                    <MudChip Color="Color.Primary" Size="Size.Small" Class="ml-2">
+                        @context.Grouping.Key @context.Grouping.Count()
+                    </MudChip>
+                </div>                
+            </GroupTemplate>
+            <AggregateTemplate>
+                @{
+                    var categories = context.GroupBy(x => x.Group).ToArray();
+                    var index = 1;
+                }
+                @foreach (var cat in categories)
+                {
+                    <MudChip Color="@((Color)index++)"  Size="Size.Small" Class="ml-2 mr-1">
+                        @cat.First().Group @cat.Count()
+                    </MudChip>
+                }
+            </AggregateTemplate>
+        </PropertyColumn>
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="Element" />
+    </PagerContent>
+</MudDataGrid>
+
+<MudStack Row AlignItems="AlignItems.Center" Wrap="Wrap.Wrap">
+    <MudText Typo="Typo.body1">Export</MudText>
+    <MudSwitch @bind-Value=exportHiddenColumns Color="Color.Primary">Hidden Columns</MudSwitch>
+    <MudSwitch @bind-Value=useColumnFormatting Color="Color.Primary">Column Formatting</MudSwitch>
+    <MudSwitch @bind-Value=exportHeader Color="Color.Primary">Header</MudSwitch>
+    <MudSwitch @bind-Value=exportFooter Color="Color.Primary">Footer</MudSwitch>
+    <MudSwitch @bind-Value=exportGroups Color="Color.Primary">Groups</MudSwitch>
+    <MudSwitch @bind-Value=exportGroupFooter Color="Color.Primary">Group Footer</MudSwitch>
+</MudStack>
+<MudStack Row AlignItems="AlignItems.Center" Wrap="Wrap.Wrap">    
+    <MudText Typo="Typo.body1">HTML</MudText>
+    <MudSwitch @bind-Value=exportStyles Color="Color.Primary">Use Styles</MudSwitch>
+    <MudSwitch @bind-Value=exportTemplates Color="Color.Primary">Use Templates</MudSwitch>
+</MudStack>
+<MudStack Row Wrap="Wrap.Wrap">
+    <MudButton class="my-2" Variant="Variant.Filled" Color="Color.Primary" OnClick="ExportCSV">Export CSV</MudButton>
+    <MudButton class="my-2" Variant="Variant.Filled" Color="Color.Primary" OnClick="ExportHTML">Export HTML</MudButton>
+    <MudButton class="my-2" Variant="Variant.Filled" Color="Color.Primary" OnClick="ExportCustom">Export Custom HTML</MudButton>
+    <MudButton class="my-2" Variant="Variant.Filled" Color="Color.Primary" OnClick="ExportExcel">Export Excel</MudButton>
+</MudStack>
+<MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
+    <MudTabPanel Text="Text">
+        <MudTextField @bind-Value=Export Label="Export" Variant="Variant.Outlined" Lines="5"></MudTextField>
+    </MudTabPanel>
+    <MudTabPanel Text="HTML">
+        @GetExportBody()
+    </MudTabPanel>
+</MudTabs>
+
+
+@code {
+
+    #nullable enable
+    public MudDataGrid<Element> grid = null!;
+    string? Export { get; set; }
+    bool exportHiddenColumns { get; set; }
+    bool useColumnFormatting { get; set; } = true;
+    bool exportFooter { get; set; } = true;
+    bool exportHeader { get; set; } = true;
+    bool exportGroups { get; set; } = true;
+    bool exportGroupFooter { get; set; } = true;
+
+    bool exportStyles { get; set; } = true;
+    bool exportTemplates { get; set; } = true;
+
+
+    private MarkupString GetExportBody()
+    {
+        if (Export is null || !Export.StartsWith("<html>"))
+            return (MarkupString) "<div></div>";
+
+        var start = Export.IndexOf("<body>") + "<body>".Length;
+        var end = Export.IndexOf("</body>");
+        if (start < 0 || end < 0 || end <= start)
+            return (MarkupString)"<div></div>";
+
+        return (MarkupString) Export.Substring(start, end - start);
+    }
+
+    private IEnumerable<Element> Elements = new List<Element>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Elements = (await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable"))!.OrderBy(x => x.Group).ToList();
+    }
+
+    AggregateDefinition<Element> _positionAggregation = new AggregateDefinition<Element>
+        {
+            Type = AggregateType.Max,
+            DisplayFormat = "Max Position is: {value}"
+        };
+
+    // style the cells according to the element's physical classification and the molar mass.
+    private Func<Element, string> _cellStyleFunc => x =>
+    {
+        string style = "";
+
+        if (x.Number == 1)
+            style += "background-color:#8CED8C";
+
+        else if (x.Number == 2)
+            style += "background-color:#E5BDE5";
+
+        else if (x.Number == 3)
+            style += "background-color:#EACE5D";
+
+        else if (x.Number == 4)
+            style += "background-color:#F1F165";
+
+        if (x.Molar > 5)
+            style += ";font-weight:bold";
+
+        return style;
+    };
+
+    private Func<IEnumerable<Element>, string> _headerStyleFunc => x =>
+       {
+           return "background-color:#8CED8C;color:white;";
+       };
+
+    private Func<Element, int, string> _rowStyleFunc => (x, i) =>
+    {
+        if (x.Position == 0)
+            return "font-style:italic";
+
+        return "";
+    };
+
+    private async Task ExportExcel()
+    {
+        using var stream = new MemoryStream();
+
+        var columns = exportHiddenColumns ? grid.RenderedColumns : grid.RenderedColumns.Where(x => !x.GetState(x => x.Hidden));
+        var export = new DataGridExportExcel<Element>(stream, grid, grid.FilteredItems, columns, "Export", useColumnFormatting, exportHeader, exportFooter, exportGroups, exportGroupFooter);
+        await export.WriteAll();
+        await stream.FlushAsync();
+        stream.Position = 0;
+
+        Export = "";
+        using var streamRef = new DotNetStreamReference(stream);
+        await JSRuntime.InvokeVoidAsync("downloadFileFromStream", "export.xlsx", streamRef);
+    }
+
+    private async Task ExportCSV()
+    {
+        using var stream = new MemoryStream();
+        var writer = new StreamWriter(stream);
+
+        var columns = exportHiddenColumns ? grid.RenderedColumns : grid.RenderedColumns.Where(x => !x.GetState(x => x.Hidden));
+        var export = new DataGridExportCSV<Element>(writer, grid, grid.FilteredItems, columns, useColumnFormatting, exportHeader, exportFooter, exportGroups, exportGroupFooter);
+        await export.WriteAll();
+        await writer.FlushAsync();
+        stream.Position = 0;
+
+        //write to a file here
+        using StreamReader reader = new StreamReader(stream);
+        Export = reader.ReadToEnd();
+        await writer.DisposeAsync();
+        reader.Dispose();
+    }
+
+    private async Task ExportHTML()
+    {
+        var headContent = await GetHeadContent();
+
+        using var stream = new MemoryStream();
+        var writer = new StreamWriter(stream);
+        var renderer = new BlazorRenderer(ServiceProvider, LoggerFactory);
+
+        var columns = exportHiddenColumns ? grid.RenderedColumns : grid.RenderedColumns.Where(x => !x.GetState(x => x.Hidden));
+        var export = new DataGridExportHTML<Element>(renderer, writer, grid, grid.FilteredItems, columns, headContent, useColumnFormatting, exportHeader, exportFooter, exportGroups, exportGroupFooter, exportStyles, exportTemplates);
+        await export.WriteAll();
+
+        await writer.FlushAsync();
+        stream.Position = 0;
+
+        //write to a file here
+        using StreamReader reader = new StreamReader(stream);
+        Export = reader.ReadToEnd();
+        await writer.DisposeAsync();
+        reader.Dispose();
+    }
+
+    /// <summary>
+    /// Gets the styles from the current page for use in the export.
+    /// </summary>
+    /// <returns></returns>
+    private async Task<string> GetHeadContent()
+    {
+        const string styleSelector = "[... document.querySelectorAll(\"link[rel='stylesheet'], style\")].map(i => i.outerHTML.replace('href=\"_content/', 'href=\"https://mudblazor.com/_content/')).join('\\n')";
+        ValueTask<string> styleTask = JSRuntime.InvokeAsync<string>("eval", styleSelector);
+        return await styleTask;
+    }
+
+    private async Task ExportCustom()
+    {
+        using var stream = new MemoryStream();
+        var writer = new StreamWriter(stream);
+        string headContent = await GetHeadContent();
+
+        var renderer = new BlazorRenderer(ServiceProvider, LoggerFactory);
+        //custom column set
+        var columns = grid.RenderedColumns.Where(x => x.Title == "Nr" || x.Title == "Category");
+        //export setup with grid.Items as the datasource so fitlers will be ignored for export - this could be any custom set of data
+        var export = new DataGridExportHTML<Element>(renderer, writer, grid, grid.Items, columns, headContent, useColumnFormatting, exportHeader, exportFooter, exportGroups, exportGroupFooter, exportStyles, exportTemplates);
+
+        await export.WriteDataGridStart();
+
+        //force header
+        await export.WriteHeaderStart();
+        await export.WriteHeader();
+        await export.WriteHeaderEnd();
+
+        await export.WriteRowsStart();
+        //export only the  Transition Metal (d) category group
+        var groupDefinitions = export.GetGroupDefinitions(grid.GroupDefinition);
+        foreach (var group in groupDefinitions.Where(x => x.Grouping.Key is not null && x.Grouping.Key.Equals("Transition Metal (d)")))
+        {
+            await export.WriteRows(group);
+        }
+        await export.WriteRowsEnd();
+
+        //force footer
+        await export.WriteFooterStart();
+        await export.WriteFooter();
+        await export.WriteFooterEnd();
+
+        await export.WriteDataGridEnd();
+
+        await writer.FlushAsync();
+
+        stream.Position = 0;
+
+        //write to a file here
+        using StreamReader reader = new StreamReader(stream);
+        Export = reader.ReadToEnd();
+        await writer.DisposeAsync();
+        reader.Dispose();
+    }
+
+    public abstract class DataGridExport<T>
+    {
+        public MudDataGrid<T> DataGrid { protected get;  init; }
+        /// <summary>
+        /// The set of items to export. This could be the current page, the entire DataGrid source or any other set of items.
+        /// </summary>
+        public IEnumerable<T> ItemsToExport { get; init; }
+        /// <summary>
+        /// The columns that should appear in the export
+        /// </summary>
+        public IEnumerable<Column<T>> Columns { get; init; }
+
+        public bool UseColumnFormatting { get; init; }
+        public bool ExportHeader { get; init; }
+        public bool ExportFooter { get; init; }
+        public bool ExportGroups { get; init; }
+        public bool ExportGroupFooter { get; init; }
+
+        protected DataGridExport(MudDataGrid<T> dataGrid, IEnumerable<T> itemsToExport, IEnumerable<Column<T>> columns, bool useColumnFormatting, bool exportHeader, bool exportFooter, bool exportGroups, bool exportGroupFooter)
+        {
+            this.DataGrid = dataGrid;
+            this.ItemsToExport = itemsToExport;
+            this.Columns = columns;
+            this.UseColumnFormatting = useColumnFormatting;
+            this.ExportHeader = exportHeader;
+            this.ExportFooter = exportFooter;
+            this.ExportGroups = exportGroups;
+            this.ExportGroupFooter = exportGroupFooter;
+        }
+
+        /// <summary>
+        /// Default implementation of exporting the entire data grid
+        /// </summary>
+        /// <returns></returns>
+        public async Task WriteAll()
+        {
+            await WriteDataGridStart();
+
+            if (ExportHeader)
+            {
+                await WriteHeaderStart();
+                await WriteHeader();
+                await WriteHeaderEnd();
+            }
+
+            await WriteRowsStart();
+            await WriteRows(DataGrid.GroupDefinition);
+            await WriteRowsEnd();
+
+            if (ExportFooter)
+            {
+                await WriteFooterStart();
+                await WriteFooter();
+                await WriteFooterEnd();
+            }
+
+            await WriteDataGridEnd();
+        }
+
+        /// <summary>
+        /// Gets inner group definitions except when the group is grid level (EmptyGrouping)
+        /// </summary>
+        /// <param name="group"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        public IEnumerable<GroupDefinition<T>> GetGroupDefinitions(GroupDefinition<T> group)
+        {
+            if (group.IsEmptyGroup)
+            {
+                var groupItems = DataGrid.GetItemsOfGroup(group, ItemsToExport);
+                return DataGrid.GetGroupDefinitions(group, groupItems);
+            }
+            else if (group.InnerGroup is not null)
+            {
+                var groupItems = DataGrid.GetItemsOfGroup(group.InnerGroup, group.Grouping);
+                return DataGrid.GetGroupDefinitions(group.InnerGroup, groupItems);
+            }
+
+            throw new ArgumentException("Group is not the EmptyGrouping and group definition has no inner group");         
+        }
+
+        /// <summary>
+        /// Write content to start the data grid
+        /// </summary>
+        public abstract Task WriteDataGridStart();
+        /// <summary>
+        /// Write content to end the data grid
+        /// </summary>
+        public abstract Task WriteDataGridEnd();
+
+        /// <summary>
+        /// Write content before column headers
+        /// </summary>
+        public abstract Task WriteHeaderStart();
+
+        /// <summary>
+        /// Write content for each column header
+        /// </summary>
+        /// <returns></returns>
+        public abstract Task WriteHeader();
+
+        /// <summary>
+        /// Write content after column headers
+        /// </summary>
+        public abstract Task WriteHeaderEnd();
+
+        /// <summary>
+        /// Write content before data grid rows
+        /// </summary>
+        public abstract Task WriteRowsStart();
+
+        /// <summary>
+        /// Write a single row of data
+        /// </summary>
+        /// <param name="item">The data for the rowe</param>
+        /// <param name="index">The index of the data from the data source. This may be used in grid styling.</param>
+        public abstract Task WriteRow(T item, int index, GroupDefinition<T> group);
+
+        /// <summary>
+        /// Write the start of a grid group
+        /// </summary>
+        /// <param name="group"></param>
+        public abstract Task WriteGroupStart(GroupDefinition<T> group);   
+        /// <summary>
+        /// Write the end of a grid group (group footer)
+        /// </summary>
+        /// <param name="group"></param>     
+        public abstract Task WriteGroupEnd(GroupDefinition<T> group);
+
+        /// <summary>
+        /// Write a set of rows for a group or the DataGrid. This will be called recursively for inner groups.
+        /// Group footers will be written if ExportGroupFooter is true.
+        /// </summary>
+        /// <param name="group">The hierarchical group definition or the data grid group definition</param>
+        public async Task WriteRows(GroupDefinition<T> groupDefinition)
+        {
+            //not grouped or grouping ignored
+            if (!ExportGroups || !DataGrid.IsGrouped)
+            {
+                foreach(var i in ItemsToExport.Index())
+                {
+                    await WriteRow(i.Item, i.Index, groupDefinition);
+                }
+                return;
+            }
+
+            if (!groupDefinition.IsEmptyGroup)
+                await WriteGroupStart(groupDefinition);
+
+            if (groupDefinition.InnerGroup is not null || groupDefinition.IsEmptyGroup)
+            {                
+                var groupDefinitions = GetGroupDefinitions(groupDefinition);
+                foreach (var g in groupDefinitions)
+                {
+                    await WriteRows(g);      
+                }
+            }
+            else
+            {                
+                foreach(var g in groupDefinition.Grouping.Index())
+                {
+                    await WriteRow(g.Item, g.Index, groupDefinition);
+                }
+            }
+
+            if (!groupDefinition.IsEmptyGroup)
+                await WriteGroupEnd(groupDefinition);
+        }
+
+        /// <summary>
+        /// Write content after data grid rows
+        /// </summary>
+        public abstract Task WriteRowsEnd();        
+
+        /// <summary>
+        /// Write content before the data grid footer
+        /// </summary>
+        public abstract Task WriteFooterStart();
+        /// <summary>
+        /// Write the data grid footer
+        /// </summary>
+        public abstract Task WriteFooter();
+        /// <summary>
+        /// Write content after the data grid footer
+        /// </summary>
+        public abstract Task WriteFooterEnd();
+    }
+
+    public class DataGridExportHTML<T> : DataGridExport<T>
+    {
+        private readonly BlazorRenderer _renderer;
+        private readonly StreamWriter _writer;
+        public string HtmlHeaderContent { get; init; }
+        public bool ExportStyles { get; init; }
+        public bool ExportTemplates { get; init; }
+
+
+        public DataGridExportHTML(BlazorRenderer renderer, StreamWriter writer, MudDataGrid<T> grid, IEnumerable<T> itemsToExport,
+                IEnumerable<Column<T>> columns, string htmlHeaderContent, bool useColumnFormatting = true, bool exportHeader = true, bool exportFooter = true, bool exportGroups = true, bool exportGroupFooter = true, 
+                bool exportStyles = true, bool exportTemplates = true)
+                : base(grid, itemsToExport, columns, useColumnFormatting, exportHeader, exportFooter, exportGroups, exportGroupFooter)
+        {            
+            _renderer = renderer;
+            _writer = writer;
+            HtmlHeaderContent = htmlHeaderContent;
+            ExportStyles = exportStyles;
+            ExportTemplates = exportTemplates;
+        }
+
+        public override async Task WriteDataGridStart()
+        {
+            await _writer.WriteLineAsync("<html>");
+            await _writer.WriteLineAsync("<head>");
+            await _writer.WriteLineAsync(HtmlHeaderContent);            
+            await _writer.WriteLineAsync("</head>");
+            await _writer.WriteLineAsync("<body>");
+            await _writer.WriteLineAsync($"<div class='mud-table mud-data-grid mud-elevation-1'>");
+            await _writer.WriteLineAsync($"<table class='mud-table-root'>");
+        }        
+
+        public override async Task WriteDataGridEnd()
+        {
+            await _writer.WriteLineAsync("</table>");
+            await _writer.WriteLineAsync("</div>");
+            await _writer.WriteLineAsync("</body>");
+            await _writer.WriteLineAsync("</html>");
+        }
+
+        public override async Task WriteHeaderStart()
+        {
+            var gridHeaderClass = new CssBuilder("mud-table-head").AddClass(DataGrid.HeaderClass, ExportStyles).Build();
+            await _writer.WriteLineAsync($"<thead class='{gridHeaderClass}'>");
+            await _writer.WriteLineAsync($" <tr class='mud-table-row'>");
+        }
+
+        public override async Task WriteHeader()
+        {
+            foreach (var column in Columns)
+                await WriteHeaderCell(column);
+        }
+
+        private async Task WriteHeaderCell(Column<T> column)
+        {
+            var headerClass = new CssBuilder("mud-table-cell").AddClass(column.HeaderClass, ExportStyles).AddClass(column.HeaderClassFunc?.Invoke(ItemsToExport), ExportStyles).Build();
+            var headerStyle = new StyleBuilder().AddStyle(column.HeaderStyle, ExportStyles).AddStyle(column.HeaderStyleFunc?.Invoke(ItemsToExport), ExportStyles).Build();
+
+            await _writer.WriteAsync($"<th class='{headerClass}' Style='{headerStyle}'>");
+
+            if (ExportTemplates && column.HeaderTemplate is not null)
+            {
+                var header = column.HeaderTemplate.Invoke(new HeaderContext<T>(DataGrid));
+                await _writer.WriteAsync(await _renderer.RenderComponent(header));
+            }
+            else
+                await _writer.WriteAsync(column.Title);
+
+            await _writer.WriteAsync("</th>");
+        }
+
+        public override async Task WriteHeaderEnd()
+        {
+            await _writer.WriteAsync("</tr>");
+            await _writer.WriteAsync("</thead>");
+        }        
+
+        public override async Task WriteGroupStart(GroupDefinition<T> group)
+        {
+            await _writer.WriteAsync("<tr class='mud-table-row'>");
+
+            var groupClass = new CssBuilder("mud-table-cell").AddClass("mud-datagrid-group")
+                                   .AddClass($"mud-row-group-indented-{(group.Indentation ? Math.Min(group.Level, 5) : 0)}")
+                                   .AddClass(DataGrid.GroupClassFunc?.Invoke(group), ExportStyles)
+                                   .AddClass(DataGrid.GroupClass, ExportStyles)
+                                   .Build();
+
+            var groupStyle = new StyleBuilder().AddStyle(DataGrid.GroupStyle, ExportStyles).AddStyle(DataGrid.GroupStyleFunc?.Invoke(group), ExportStyles).Build();
+
+            await _writer.WriteLineAsync($"<td class=\"{groupClass}\" colspan=\"1000\" style=\"{groupStyle}\">");
+
+            if (ExportTemplates)
+                await _writer.WriteAsync(await _renderer.RenderComponent(group.GroupTemplate.Invoke(group)));
+            else
+                await _writer.WriteLineAsync($"{group.Title}: {group.Grouping.Key}");
+
+            await _writer.WriteAsync("</td></tr>");
+        }
+
+        private async Task WriteRowStart(T item, int index)
+        {
+            var rowClass = new CssBuilder("mud-table-row").AddClass(DataGrid.RowClass, ExportStyles).AddClass(DataGrid.RowClassFunc?.Invoke(item, index), ExportStyles).Build();
+            var rowStyle = new StyleBuilder().AddStyle(DataGrid.RowStyle, ExportStyles).AddStyle(DataGrid.RowStyleFunc?.Invoke(item, index), ExportStyles).Build();
+
+            await _writer.WriteAsync($"<tr class='{rowClass}' Style='{rowStyle}'>");
+        }
+
+        public override async Task WriteRow(T item, int index, GroupDefinition<T> group)
+        {
+            await WriteRowStart(item, index);
+
+            foreach (var column in Columns)
+                await WriteCell(column, item);
+
+            await WriteRowEnd(item, index);
+        }
+
+        private async Task WriteRowEnd(T item, int index)
+        {
+            await _writer.WriteLineAsync("</tr>");
+        }
+
+        private async Task WriteCell(Column<T> column, T item)
+        {
+            var cellContext = new CellContext<T>(DataGrid, item);
+            var cellClass = new CssBuilder("mud-table-cell").AddClass(column.CellClass, ExportStyles).AddClass(column.CellClassFunc?.Invoke(item), ExportStyles).Build();
+            var cellStyle = new StyleBuilder().AddStyle(column.CellStyle, ExportStyles).AddStyle(column.CellStyleFunc?.Invoke(item), ExportStyles).Build();
+
+            await _writer.WriteAsync($"<td data-label='{column.Title} ' class='{cellClass}' style='{cellStyle}'>");
+
+            if (ExportTemplates && column.CellTemplate is not null)
+            {
+                RenderFragment fragment = column.CellTemplate.Invoke(cellContext);
+                await _writer.WriteAsync(await _renderer.RenderComponent(fragment));
+            }
+            else
+            {
+                var formattable = column.CellContent(item) as IFormattable;
+                if (UseColumnFormatting && formattable is not null)
+                    await _writer.WriteAsync(formattable.ToString(column.Format, column.Culture));
+                else
+                    await _writer.WriteAsync(column.CellContent(item)?.ToString());
+            }
+
+            await _writer.WriteAsync("</td>");
+        }
+
+        public override async Task WriteFooterStart()        
+        {
+            var footClass = new CssBuilder("mud-table-foot").AddClass(DataGrid.FooterClass, ExportStyles).Build();
+            await _writer.WriteLineAsync($"<tfoot class='{footClass}'>");
+        }
+
+        public override async Task WriteGroupEnd(GroupDefinition<T> group)
+        {
+            if (ExportGroupFooter)
+                await WriteFooterOrGroupEnd(group);
+        }
+
+        private async Task WriteFooterOrGroupEnd(GroupDefinition<T> group)
+        {            
+            await _writer.WriteLineAsync("<tr class='mud-table-row'>");
+
+            foreach (var column in Columns)
+                await WriteFooterOrGroupEndCell(column, group);
+
+            await _writer.WriteLineAsync("</tr>");
+        }
+
+        public override async Task WriteFooter()
+        {
+            await WriteFooterOrGroupEnd(DataGrid.GroupDefinition);
+        }
+
+        public override async Task WriteFooterEnd()
+        {
+            await _writer.WriteLineAsync("</tfoot>");
+        }
+
+        private async Task WriteFooterOrGroupEndCell(Column<T> column, GroupDefinition<T> group)
+        {
+            IEnumerable<T> items = group.IsEmptyGroup ? ItemsToExport : group.Grouping;
+
+            var footerClass = new CssBuilder("mud-table-cell").AddClass(column.FooterClass, ExportStyles).AddClass(column.FooterClassFunc?.Invoke(items), ExportStyles).Build();
+            var footerStyle = new StyleBuilder().AddStyle(column.FooterStyle, ExportStyles).AddStyle(column.FooterStyleFunc?.Invoke(items), ExportStyles).Build();
+
+            await _writer.WriteAsync($"<td class='{footerClass}' style='{footerStyle}' colspan='{column.FooterColSpan}'>");
+
+            if (column.AggregateDefinition is not null)
+            {
+                if (ExportTemplates && column.AggregateTemplate is not null)
+                {                    
+                    var footer = column.AggregateTemplate.Invoke(items);
+                    await _writer.WriteAsync(await _renderer.RenderComponent(footer));
+                }
+                else
+                {
+                    var footer = column.AggregateDefinition?.GetValue(column.PropertyExpression, items);
+                    await _writer.WriteAsync(footer);                    
+                }
+            } 
+            else if (ExportTemplates && column.FooterTemplate is not null)
+            {
+                column.FooterTemplate(new FooterContext<T>(DataGrid));
+            }
+
+            await _writer.WriteAsync("</td>");
+        }
+
+        public override async Task WriteRowsStart()
+        {
+            await _writer.WriteLineAsync("<tbody class='mud-table-body'>");
+        }
+
+        public override async Task WriteRowsEnd()
+        {
+            await _writer.WriteAsync("</tbody>");
+        }
+    }
+
+    public class DataGridExportCSV<T> : DataGridExport<T>
+    {
+        public string Separator { get; set; } = ",";
+        private readonly StreamWriter _writer;
+
+        public DataGridExportCSV(StreamWriter writer, MudDataGrid<T> grid, IEnumerable<T> itemsToExport, IEnumerable<Column<T>> columns, 
+                bool useColumnFormatting = true, bool exportHeader = true, bool exportFooter = true, bool exportGroups = true, bool exportGroupFooter = true) 
+                : base(grid, itemsToExport, columns, useColumnFormatting, exportHeader, exportFooter, exportGroups, exportGroupFooter)
+        {
+            _writer = writer;
+        }
+
+        public override Task WriteDataGridStart() => Task.CompletedTask;
+        public override Task WriteDataGridEnd() => Task.CompletedTask;
+        public override Task WriteHeaderStart() => Task.CompletedTask;
+
+        public override async Task WriteHeader()
+        {
+            bool prefixSeparator = false;
+            foreach (var column in Columns)
+            {
+                if (prefixSeparator)
+                    await _writer.WriteAsync(Separator);
+
+                await HeaderCell(column);
+                prefixSeparator = true;
+            }
+        }
+
+        private async Task HeaderCell(Column<T> column)
+        {
+            await _writer.WriteAsync(column.Title);
+        }
+
+        public override async Task WriteHeaderEnd()
+        {
+            await _writer.WriteLineAsync("");
+        }
+
+        public override async Task WriteGroupStart(GroupDefinition<T> group)
+        {
+            await _writer.WriteLineAsync($"{group.Title}: {group.Grouping.Key}");
+        }
+
+        private Task WriteRowStart(T item, int index) => Task.CompletedTask;
+
+        public override async Task WriteRow(T item, int index, GroupDefinition<T> group)
+        {
+            await WriteRowStart(item, index);
+
+            bool prefixSeparator = false;
+            foreach (var column in Columns)
+            {   
+                if (prefixSeparator)
+                    await _writer.WriteAsync(Separator);
+
+                await WriteCell(column, item);
+                prefixSeparator = true;
+            }
+
+            await WriteRowEnd(item, index);
+        }
+
+        private async Task WriteRowEnd(T item, int index)
+        {
+            await _writer.WriteLineAsync("");
+        }
+
+        private async Task WriteCell(Column<T> column, T item)
+        {
+            string? cellValue;
+            var formattable = column.CellContent(item) as IFormattable;
+            if (UseColumnFormatting && formattable is not null)
+                cellValue = formattable.ToString(column.Format, column.Culture);
+            else
+                cellValue = column.CellContent(item)?.ToString();
+
+            if (cellValue is null)
+                return;
+
+            //quote any csv files with special characters
+            bool mustQuote = (cellValue.Contains(Separator)
+                        || cellValue.Contains('\"') 
+                        || cellValue.Contains('\r') 
+                        || cellValue.Contains('\n'));
+
+            if (mustQuote)
+            {
+                await _writer.WriteAsync('\"');
+                foreach (char nextChar in cellValue)
+                {
+                    await _writer.WriteAsync(nextChar);
+                    if (nextChar == '"') 
+                        await _writer.WriteAsync('\"');
+                }
+                await _writer.WriteAsync('\"');
+            }
+            else
+            {
+                await _writer.WriteAsync(cellValue);
+            }
+        }
+
+        public override async Task WriteGroupEnd(GroupDefinition<T> group)
+        {
+            if (ExportGroupFooter)
+                await WriteFooterOrGroupEnd(group);
+        }
+
+        private async Task WriteFooterOrGroupEnd(GroupDefinition<T> group)
+        {            
+            bool prefixSeparator = false;
+            foreach (var column in Columns)
+            {
+                if (prefixSeparator)
+                    await _writer.WriteAsync(Separator);
+
+                prefixSeparator = true;
+
+                await WriteFooterOrGroupEndCell(column, group);
+            }
+            await _writer.WriteLineAsync("");
+        }
+
+        public override Task WriteFooterStart() => Task.CompletedTask;
+
+        public override async Task WriteFooter()
+        {            
+            await WriteFooterOrGroupEnd(DataGrid.GroupDefinition);
+        }
+
+        public override Task WriteFooterEnd() => Task.CompletedTask;
+
+        private async Task WriteFooterOrGroupEndCell(Column<T> column, GroupDefinition<T> group)
+        {            
+            IEnumerable<T> items = group.IsEmptyGroup ? ItemsToExport : group.Grouping;
+
+            if (column.AggregateDefinition is not null)
+            {
+                var footer = column.AggregateDefinition?.GetValue(column.PropertyExpression, items);
+                await _writer.WriteAsync(footer);
+            }
+        }
+
+        public override Task WriteRowsStart() => Task.CompletedTask;
+        public override Task WriteRowsEnd() => Task.CompletedTask;
+    }
+
+    public class DataGridExportExcel<T> : DataGridExport<T>
+    {
+        private readonly Stream _stream;
+        private readonly SpreadsheetDocument _document;
+        private SheetData _sheetData {get; init;}
+        private Worksheet _worksheet { get; init; }
+        public string SheetName { get; init; }
+        private int _rowIndex = 1;
+        private string _endColumnReference;
+        MergeCells? _mergeCells;       
+
+        public DataGridExportExcel(Stream stream, MudDataGrid<T> grid, IEnumerable<T> itemsToExport, 
+            IEnumerable<Column<T>> columns, string sheetName, bool useColumnFormatting = true, bool exportHeader = true, bool exportFooter = true, bool exportGroups = true, bool exportGroupFooter = true)
+            : base(grid, itemsToExport, columns, useColumnFormatting, exportHeader, exportFooter, exportGroups, exportGroupFooter)
+        {
+            _stream = stream;
+            _document = SpreadsheetDocument.Create(stream, SpreadsheetDocumentType.Workbook);
+            SheetName = sheetName;
+            _endColumnReference = ColumnIndexToColumnLetter(columns.Count());
+
+            var workbookPart = _document.AddWorkbookPart();
+            workbookPart.Workbook = new Workbook();
+            var workbookStylesPart = workbookPart.AddNewPart<WorkbookStylesPart>();
+            GenerateWorkbookStylesPartContent(workbookStylesPart);
+
+            _sheetData = new SheetData();
+            var worksheetPart = workbookPart.AddNewPart<WorksheetPart>();
+            _worksheet = worksheetPart.Worksheet = new Worksheet(_sheetData);
+
+            if (_worksheet.SheetProperties is null)
+                _worksheet.SheetProperties = new SheetProperties();
+            if (_worksheet.SheetProperties.OutlineProperties is null)
+                _worksheet.SheetProperties.OutlineProperties = new OutlineProperties();
+            _worksheet.SheetProperties.OutlineProperties.SummaryBelow = false;
+
+            workbookPart.Workbook.AppendChild(new Sheets(new Sheet()
+                {
+                    Id = _document.WorkbookPart!.GetIdOfPart(worksheetPart),
+                    SheetId = 1,
+                    Name = SheetName
+                }));
+        }
+
+        public override Task WriteDataGridStart() => Task.CompletedTask;
+
+        public override Task WriteDataGridEnd()
+        {
+            _document.Save();
+            _document.Dispose();
+            return Task.CompletedTask;
+        }
+
+        public override Task WriteHeaderStart() => Task.CompletedTask;
+
+        public override Task WriteHeader()
+        {
+            var row = new Row();
+
+            foreach (var column in Columns)
+            {
+                row.AppendChild(new Cell() { CellValue = new CellValue(column.Title), DataType = CellValues.String });
+            }
+
+            _sheetData.AppendChild(row);
+            _rowIndex++;
+            return Task.CompletedTask;
+        }
+
+        public override Task WriteHeaderEnd() => Task.CompletedTask;
+
+        public override Task WriteRowsStart() => Task.CompletedTask;
+
+        public override Task WriteRow(T item, int index, GroupDefinition<T> group)
+        {
+            var row = new Row();
+            if (ExportGroups)
+                row.OutlineLevel = new ByteValue(Convert.ToByte(group.Level));
+
+            foreach (var column in Columns)
+            {
+                var value = GetCell(column, item);
+                row.AppendChild(value);
+            }
+
+            _sheetData.AppendChild(row);
+            _rowIndex++;
+            return Task.CompletedTask;
+        }
+
+        public override Task WriteGroupStart(GroupDefinition<T> group)
+        {
+            var row = new Row();
+            row.AppendChild(new Cell() { CellValue = new CellValue($"{group.Title}: {group.Grouping.Key}"), DataType = CellValues.String });
+            row.OutlineLevel = new ByteValue(Convert.ToByte(group.Level - 1));
+            _sheetData.AppendChild(row);
+            MergeCells(new MergeCell() { Reference = new StringValue($"A{_rowIndex}:{_endColumnReference}{_rowIndex}") });
+
+            _rowIndex++;
+            return Task.CompletedTask;
+        }
+
+        public async override Task WriteGroupEnd(GroupDefinition<T> group)
+        {
+            if (ExportGroupFooter)
+                await WriteFooterOrGroupEnd(group);
+        }
+
+        public override Task WriteRowsEnd() => Task.CompletedTask;
+
+        public override Task WriteFooterStart() => Task.CompletedTask;
+
+        private async Task WriteFooterOrGroupEnd(GroupDefinition<T> group)
+        {            
+            var row = new Row();
+
+            row.OutlineLevel = new ByteValue(Convert.ToByte(group.Level - 1));
+            foreach (var column in Columns)
+            {                
+                await WriteFooterOrGroupEndCell(column, group, row);
+            }
+            _sheetData.AppendChild(row);
+            _rowIndex++;
+        }
+
+        private Task WriteFooterOrGroupEndCell(Column<T> column, GroupDefinition<T> group, Row row)
+        {            
+            IEnumerable<T> items = group.IsEmptyGroup ? ItemsToExport : group.Grouping;
+
+            if (column.AggregateDefinition is not null)
+            {
+                var footer = column.AggregateDefinition.GetValue(column.PropertyExpression, items);
+                row.AppendChild(new Cell() { CellValue = new CellValue(footer ?? ""), DataType = CellValues.String });
+            }
+            else
+            {
+                row.AppendChild(new Cell() { CellValue = new CellValue(""), DataType = CellValues.String });                
+            }
+            return Task.CompletedTask;
+        }
+
+        public override async Task WriteFooter()
+        {
+            await WriteFooterOrGroupEnd(DataGrid.GroupDefinition);
+        }
+
+        public override Task WriteFooterEnd() => Task.CompletedTask;
+
+        
+        private string ColumnIndexToColumnLetter(int columnIndex)
+        {
+            var index = columnIndex;
+            var columnLetter = string.Empty;
+            var mod = 0;
+
+            while (index > 0)
+            {
+                mod = (index - 1) % 26;
+                columnLetter = (char)(65 + mod) + columnLetter;
+                index = (index - mod) / 26;
+            }
+
+            return columnLetter;
+        }
+
+        private Cell GetCell(Column<T> column, T item)
+        {
+            var value = column.CellContent(item);
+            if (value is null)
+                return new Cell() { CellValue = new CellValue(""), DataType = CellValues.String };
+            
+            var valueType = value.GetType();// column.PropertyType;
+            var underlyingType = valueType.IsGenericType && valueType.GetGenericTypeDefinition() == typeof(Nullable<>) ? Nullable.GetUnderlyingType(valueType) : valueType;
+            var typeCode = Type.GetTypeCode(underlyingType);
+
+            var cell = new Cell();
+
+            //if cells are formatted export them as strings
+            //this could be enhanced to export formatted dates and numbers in the correct type if there were a mapping of .NET format strings to excel ones
+            if (UseColumnFormatting && !string.IsNullOrEmpty(column.Format))
+            {
+                var formattedValue = (value is IFormattable) ? (((IFormattable)value)?.ToString(column.Format, column.Culture)) : value?.ToString();
+
+                cell.CellValue = new CellValue(formattedValue ?? "");
+                cell.DataType = CellValues.String;
+            }
+            else if (typeCode == TypeCode.Boolean)
+            {
+                var boolVal = Convert.ToBoolean(value);
+                cell.CellValue = new CellValue(boolVal);
+                cell.DataType = CellValues.Boolean;
+            }
+            else if (typeCode == TypeCode.Int16 || typeCode == TypeCode.Int32 || typeCode == TypeCode.UInt16 || typeCode == TypeCode.Byte || typeCode == TypeCode.SByte)
+            {
+                var intValue = Convert.ToInt32(value);
+                cell.CellValue = new CellValue(intValue);
+                cell.DataType = CellValues.Number;
+            }
+            else if (typeCode == TypeCode.Single || typeCode == TypeCode.Double)
+            {
+                var doubleValue = Convert.ToDouble(value);
+                cell.CellValue = new CellValue(doubleValue);
+                cell.DataType = CellValues.Number;
+            }
+            else if (typeCode == TypeCode.Decimal)
+            {
+                var decimalValue = Convert.ToDecimal(value);
+                cell.CellValue = new CellValue(decimalValue);
+                cell.DataType = CellValues.Number;
+            }
+            else if (IsNumeric(typeCode) && underlyingType?.IsEnum != true)
+            {
+                var sV = Convert.ToString(value, CultureInfo.InvariantCulture);
+                cell.CellValue = new CellValue(sV ?? "");
+                cell.DataType = CellValues.Number; 
+            }
+            else if (value is DateTime datetimeValue)
+            {
+                cell.CellValue = new CellValue(datetimeValue);
+                cell.DataType = CellValues.Date;
+            }
+            else if (value is DateTimeOffset datetimeOffsetValue)
+            {
+                cell.CellValue = new CellValue(datetimeOffsetValue);
+                cell.DataType = CellValues.Date;
+            }
+            else if (value is string sValue)
+            {
+                cell.CellValue = new CellValue(sValue ?? "");
+                cell.DataType = CellValues.String;
+            }
+            else
+            {
+                cell.CellValue = new CellValue(value?.ToString() ?? "");
+                cell.DataType = CellValues.String;
+            }          
+
+            return cell;
+        }
+
+        private void MergeCells(MergeCell mergeCell)
+        {
+            if (_mergeCells is null)
+            {
+                _mergeCells = new MergeCells();
+                _worksheet.InsertAfter(_mergeCells, _sheetData);
+            }
+            _mergeCells.Append(mergeCell);
+        }
+
+        private bool IsNumeric(TypeCode typeCode)
+        {
+            return typeCode switch
+            {
+                TypeCode.Decimal or 
+                TypeCode.Double or TypeCode.Single or
+                TypeCode.Int16 or TypeCode.Int32 or TypeCode.Int64 or TypeCode.SByte or
+                TypeCode.UInt16 or TypeCode.UInt32 or TypeCode.UInt64 or TypeCode.Byte => true,
+                _ => false,
+            };
+        }
+
+        private void GenerateWorkbookStylesPartContent(WorkbookStylesPart workbookStylesPart1)
+        {
+            var stylesheet1 = new Stylesheet() { MCAttributes = new MarkupCompatibilityAttributes() { Ignorable = "x14ac x16r2 xr" } };
+            stylesheet1.AddNamespaceDeclaration("mc", "http://schemas.openxmlformats.org/markup-compatibility/2006");
+            stylesheet1.AddNamespaceDeclaration("x14ac", "http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac");
+            stylesheet1.AddNamespaceDeclaration("x16r2", "http://schemas.microsoft.com/office/spreadsheetml/2015/02/main");
+            stylesheet1.AddNamespaceDeclaration("xr", "http://schemas.microsoft.com/office/spreadsheetml/2014/revision");
+
+            var fonts1 = new Fonts() { Count = (UInt32Value)1U, KnownFonts = true };
+
+            var font1 = new Font();
+            var fontSize1 = new FontSize() { Val = 11D };
+            var color1 = new DocumentFormat.OpenXml.Spreadsheet.Color() { Theme = (UInt32Value)1U };
+            var fontName1 = new FontName() { Val = "Calibri" };
+            var fontFamilyNumbering1 = new FontFamilyNumbering() { Val = 2 };
+            var fontScheme1 = new FontScheme() { Val = FontSchemeValues.Minor };
+
+            font1.Append(fontSize1);
+            font1.Append(color1);
+            font1.Append(fontName1);
+            font1.Append(fontFamilyNumbering1);
+            font1.Append(fontScheme1);
+            fonts1.Append(font1);
+
+            var fills1 = new Fills() { Count = (UInt32Value)2U };
+
+            var fill1 = new Fill();
+            var patternFill1 = new PatternFill() { PatternType = PatternValues.None };
+
+            fill1.Append(patternFill1);
+
+            var fill2 = new Fill();
+            var patternFill2 = new PatternFill() { PatternType = PatternValues.Gray125 };
+
+            fill2.Append(patternFill2);
+
+            fills1.Append(fill1);
+            fills1.Append(fill2);
+
+            var borders1 = new Borders() { Count = (UInt32Value)1U };
+
+            var border1 = new Border();
+            var leftBorder1 = new LeftBorder();
+            var rightBorder1 = new RightBorder();
+            var topBorder1 = new TopBorder();
+            var bottomBorder1 = new BottomBorder();
+            var diagonalBorder1 = new DiagonalBorder();
+
+            border1.Append(leftBorder1);
+            border1.Append(rightBorder1);
+            border1.Append(topBorder1);
+            border1.Append(bottomBorder1);
+            border1.Append(diagonalBorder1);
+
+            borders1.Append(border1);
+
+            var cellStyleFormats1 = new CellStyleFormats() { Count = (UInt32Value)1U };
+            var cellFormat1 = new CellFormat() { NumberFormatId = (UInt32Value)0U, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)0U };
+
+            cellStyleFormats1.Append(cellFormat1);
+
+            var cellFormats1 = new CellFormats() { Count = (UInt32Value)2U };
+            var cellFormat2 = new CellFormat() { NumberFormatId = (UInt32Value)0U, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)0U, FormatId = (UInt32Value)0U };
+            var cellFormat3 = new CellFormat() { NumberFormatId = (UInt32Value)14U, FontId = (UInt32Value)0U, FillId = (UInt32Value)0U, BorderId = (UInt32Value)0U, FormatId = (UInt32Value)0U, ApplyNumberFormat = true };
+
+            cellFormats1.Append(cellFormat2);
+            cellFormats1.Append(cellFormat3);
+
+            var cellStyles1 = new CellStyles() { Count = (UInt32Value)1U };
+            var cellStyle1 = new CellStyle() { Name = "Normal", FormatId = (UInt32Value)0U, BuiltinId = (UInt32Value)0U };
+
+            cellStyles1.Append(cellStyle1);
+            var differentialFormats1 = new DifferentialFormats() { Count = (UInt32Value)0U };
+            var tableStyles1 = new TableStyles() { Count = (UInt32Value)0U, DefaultTableStyle = "TableStyleMedium2", DefaultPivotStyle = "PivotStyleLight16" };
+
+            var stylesheetExtensionList1 = new StylesheetExtensionList();
+
+            var stylesheetExtension1 = new StylesheetExtension() { Uri = "{EB79DEF2-80B8-43e5-95BD-54CBDDF9020C}" };
+            stylesheetExtension1.AddNamespaceDeclaration("x14", "http://schemas.microsoft.com/office/spreadsheetml/2009/9/main");
+
+            var stylesheetExtension2 = new StylesheetExtension() { Uri = "{9260A510-F301-46a8-8635-F512D64BE5F5}" };
+            stylesheetExtension2.AddNamespaceDeclaration("x15", "http://schemas.microsoft.com/office/spreadsheetml/2010/11/main");
+
+            OpenXmlUnknownElement openXmlUnknownElement4 = workbookStylesPart1.CreateUnknownElement("<x15:timelineStyles defaultTimelineStyle=\"TimeSlicerStyleLight1\" xmlns:x15=\"http://schemas.microsoft.com/office/spreadsheetml/2010/11/main\" />");
+
+            stylesheetExtension2.Append(openXmlUnknownElement4);
+
+            stylesheetExtensionList1.Append(stylesheetExtension1);
+            stylesheetExtensionList1.Append(stylesheetExtension2);
+
+            stylesheet1.Append(fonts1);
+            stylesheet1.Append(fills1);
+            stylesheet1.Append(borders1);
+            stylesheet1.Append(cellStyleFormats1);
+            stylesheet1.Append(cellFormats1);
+            stylesheet1.Append(cellStyles1);
+            stylesheet1.Append(differentialFormats1);
+            stylesheet1.Append(tableStyles1);
+            stylesheet1.Append(stylesheetExtensionList1);
+
+            workbookStylesPart1.Stylesheet = stylesheet1;
+        }
+
+    }
+     
+    /// <summary>
+    /// Renders components to strings 
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public class BlazorRenderer
+    {
+        private readonly HtmlRenderer _htmlRenderer;
+        public BlazorRenderer(HtmlRenderer htmlRenderer)
+        {
+            _htmlRenderer = htmlRenderer;
+        }
+
+        public BlazorRenderer(IServiceProvider serviceProvider, ILoggerFactory loggerFactory)
+        {
+            _htmlRenderer = new HtmlRenderer(serviceProvider, loggerFactory);
+        }
+
+        // Renders a component T which doesn't require any parameters
+        public Task<string> RenderComponent<T>() where T : IComponent
+            => RenderComponent<T>(ParameterView.Empty);
+
+        // Renders a component T using the provided dictionary of parameters
+        public Task<string> RenderComponent<T>(Dictionary<string, object?> dictionary) where T : IComponent
+            => RenderComponent<T>(ParameterView.FromDictionary(dictionary));
+
+        private Task<string> RenderComponent<T>(ParameterView parameters) where T : IComponent
+        {
+            // Use the default dispatcher to invoke actions in the context of the
+            // static HTML renderer and return as a string
+            return _htmlRenderer.Dispatcher.InvokeAsync(async () =>
+            {
+                HtmlRootComponent output = await _htmlRenderer.RenderComponentAsync<T>(parameters);
+                return output.ToHtmlString();
+            });
+        }
+
+        public async Task<string> RenderComponent<T>(RenderFragment<T> fragment, T value)
+            => await RenderComponent(fragment.Invoke(value));
+
+        public async Task<string> RenderComponent(RenderFragment fragment)
+        {
+            return await _htmlRenderer.Dispatcher.InvokeAsync(async () =>
+            {
+                var parameters = ParameterView.FromDictionary(new Dictionary<string, object?> { { nameof(BaseComponentRenderer.ChildContent), fragment } });
+
+                return await RenderComponent<BaseComponentRenderer>(parameters);
+            });
+        }
+
+        /// <summary>
+        /// Accepts a renderfragment to render as a component
+        /// </summary>
+        private class BaseComponentRenderer : ComponentBase
+        {
+            [Parameter, EditorRequired]
+            public required RenderFragment ChildContent { get; set; }
+
+            protected override void BuildRenderTree(RenderTreeBuilder __builder)
+            {
+                __builder.AddContent(0, ChildContent);
+                base.BuildRenderTree(__builder);
+            }
+        }
+    }
+
+#nullable disable
+
+}

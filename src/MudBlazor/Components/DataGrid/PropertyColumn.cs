@@ -34,15 +34,6 @@ namespace MudBlazor
         [EditorRequired]
         public Expression<Func<T, TProperty>> Property { get; set; } = Expression.Lambda<Func<T, TProperty>>(Expression.Default(typeof(TProperty)), Expression.Parameter(typeof(T)));
 
-        /// <summary>
-        /// The format applied to property values.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>null</c>.
-        /// </remarks>
-        [Parameter]
-        public string? Format { get; set; }
-
         /// <inheritdoc />
         protected override void OnParametersSet()
         {
@@ -81,10 +72,7 @@ namespace MudBlazor
         public override string? PropertyName
             => _propertyName;
 
-        protected internal override string? ContentFormat
-            => Format;
-
-        protected internal override object? CellContent(T item)
+        public override object? CellContent(T item)
             => _cellContentFunc!(item);
 
         protected internal override object? PropertyFunc(T item)

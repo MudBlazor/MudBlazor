@@ -208,7 +208,7 @@
                                     if (IsGrouped)
                                     {
                                         var groupItemsPage = GroupItemsPage;
-                                        var groupDefinitions = GetGroupDefinitions(_groupDefinition, groupItemsPage);
+                                        var groupDefinitions = GetGroupDefinitions(GroupDefinition, groupItemsPage);
                                         if (!groupItemsPage.Any())
                                         {
                                             <tr>
@@ -400,9 +400,9 @@
                      }
                      else if (column.Culture is not null && column.isNumber)
                      {
-                         if (column.ContentFormat is not null)
+                         if (column.Format is not null)
                          {
-                             @(((IFormattable)cell._valueNumber)?.ToString(column.ContentFormat, column.Culture))
+                             @(((IFormattable)cell._valueNumber)?.ToString(column.Format, column.Culture))
                          }
                          else
                          {
@@ -411,9 +411,9 @@
                      }
                      else
                      {
-                         if (column.ContentFormat is not null)
+                         if (column.Format is not null)
                          {
-                             @(((IFormattable)cell.ComputedValue)?.ToString(column.ContentFormat, column.Culture))
+                             @(((IFormattable)cell.ComputedValue)?.ToString(column.Format, column.Culture))
                          }
                          else
                          {
@@ -567,4 +567,16 @@
                 </MudGrid>
             }
          </text>;
+}
+
+@code
+{
+#nullable enable
+    /// <summary>
+    /// The default template used to display column grouping for any column that is grouped.
+    /// </summary>
+    /// <remarks>Can be overridden by using the column level GroupTemplate</remarks>
+    [Parameter]
+    public RenderFragment<GroupDefinition<T>> GroupTemplate { get; set; } = (GroupDefinition) => @<span style="font-weight:bold">@GroupDefinition.Title: @(GroupDefinition.Grouping?.Key ?? "null")</span>;
+#nullable disable
 }
