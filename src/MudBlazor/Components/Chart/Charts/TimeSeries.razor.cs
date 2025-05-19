@@ -19,6 +19,12 @@ partial class TimeSeries : MudAxisLineChartBase<TimeSeriesChartOptions>, IDispos
 
     protected override bool ShouldInterpolate => false;
 
+    protected override void OnInitialized()
+    {
+        ChartOptions ??= new TimeSeriesChartOptions();
+        base.OnInitialized();
+    }
+
     protected override void RebuildChart()
     {
         if (MudChartParent != null)
@@ -145,6 +151,8 @@ partial class TimeSeries : MudAxisLineChartBase<TimeSeriesChartOptions>, IDispos
                 minY = Math.Min(minY, 0);
                 maxY = Math.Max(maxY, 0);
             }
+
+            maxY = ChartOptions?.YAxisSuggestedMax is null ? maxY : Math.Max(ChartOptions.YAxisSuggestedMax.Value, maxY);
 
             lowestHorizontalLine = (int)Math.Floor(minY / gridYUnits);
             var highestHorizontalLine = (int)Math.Ceiling(maxY / gridYUnits);

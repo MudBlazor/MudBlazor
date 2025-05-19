@@ -25,9 +25,9 @@ namespace MudBlazor.Charts
         private readonly DotNetObjectReference<HeatMap> _dotNetObjectReference;
 
         protected ElementReference _elementReference;
-        
+
         private ElementSize? _elementSize;
-        
+
         protected const double Epsilon = 1e-6;
 
         private readonly List<HeatMapCell> _heatMapCells = [];
@@ -133,6 +133,7 @@ namespace MudBlazor.Charts
         {
             _dotNetObjectReference = DotNetObjectReference.Create(this);
         }
+
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
@@ -151,6 +152,12 @@ namespace MudBlazor.Charts
             UpdateHeatMapCells(MudHeatMapCells);
 
             RebuildChart();
+        }
+
+        protected override void OnInitialized()
+        {
+            ChartOptions ??= new HeatMapChartOptions();
+            base.OnInitialized();
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -180,7 +187,7 @@ namespace MudBlazor.Charts
             if (_options == null || _options != chartOptions)
             {
                 _options = chartOptions;
-                _colorPalette = _options.ChartPalette.Length >0 ? _options.ChartPalette : _colorPalette;
+                _colorPalette = _options.ChartPalette.Length > 0 ? _options.ChartPalette : _colorPalette;
             }
         }
 

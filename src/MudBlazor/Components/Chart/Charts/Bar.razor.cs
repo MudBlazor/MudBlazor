@@ -24,6 +24,12 @@ namespace MudBlazor.Charts
 
         private const double MinBarWidth = 8;
 
+        protected override void OnInitialized()
+        {
+            ChartOptions ??= new BarChartOptions();
+            base.OnInitialized();
+        }
+
         protected override void RebuildChart()
         {
             if (MudChartParent != null)
@@ -48,10 +54,15 @@ namespace MudBlazor.Charts
             if (gridYUnits <= 0)
                 gridYUnits = 20;
 
-            if (Series.SelectMany(series => series.Data.Values).Any())
+            var allValues = Series.SelectMany(series => series.Data.Values);
+
+            if (allValues.Any())
             {
-                var minY = Series.SelectMany(series => series.Data.Values).Min();
-                var maxY = Series.SelectMany(series => series.Data.Values).Max();
+                var minY = allValues.Min();
+                var maxY = ChartOptions?.YAxisSuggestedMax is null
+                    ? allValues.Max()
+                    : Math.Max(ChartOptions.YAxisSuggestedMax.Value, allValues.Max());
+
                 lowestHorizontalLine = Math.Min((int)Math.Floor(minY / gridYUnits), 0);
                 var highestHorizontalLine = Math.Max((int)Math.Ceiling(maxY / gridYUnits), 0);
                 numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
@@ -119,7 +130,7 @@ namespace MudBlazor.Charts
 
             for (var i = 0; i < numVerticalLines; i++)
             {
-                var x = barGroupPositions[i];
+                var x = barGroupPositions.Length == 0 ? 0 : barGroupPositions[i];
                 var line = new SvgPath()
                 {
                     Index = i,
@@ -168,7 +179,7 @@ namespace MudBlazor.Charts
                         LabelXValue = ChartLabels.Length > j ? ChartLabels[j] : string.Empty,
                         LabelYValue = dataValue.ToString(series.TooltipYValueFormat),
                         LabelX = gridValueX,
-                        LabelY = gridValue
+                        LabelY = dataValue <= 0 ? gridValueY : gridValue
                     };
                     _bars.Add(bar);
                 }

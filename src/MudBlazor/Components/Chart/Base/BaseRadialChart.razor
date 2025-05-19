@@ -13,11 +13,11 @@
         @foreach (var item in Paths)
         {
             <path @onclick="() => OnPathClick.InvokeAsync(item.Index)"
-            class="mud-chart-serie"
-            fill="@GetColor(item.Index)"
-            d="@item.Data"
-            @onmouseover="() => OnMouseOver.InvokeAsync(item)"
-            @onmouseout="() => OnMouseOut.InvokeAsync()">
+                  class="mud-chart-serie"
+                  fill="@GetColor(item.Index)"
+                  d="@item.Data"
+                  @onmouseover="() => OnMouseOver.InvokeAsync(item)"
+                  @onmouseout="() => OnMouseOut.InvokeAsync()">
             </path>
         }
     </g>

@@ -15,6 +15,12 @@ namespace MudBlazor.Charts
     {
         protected override bool ShouldInterpolate => MudChartParent is not null;
 
+        protected override void OnInitialized()
+        {
+            ChartOptions ??= new LineChartOptions();
+            base.OnInitialized();
+        }
+
         protected override void RebuildChart()
         {
             if (MudChartParent != null)
@@ -45,7 +51,9 @@ namespace MudBlazor.Charts
             if (visibleSeries.Length > 0 && values.Any())
             {
                 var minY = values.Min();
-                var maxY = values.Max();
+                var maxY = ChartOptions?.YAxisSuggestedMax is null
+                    ? values.Max()
+                    : Math.Max(ChartOptions.YAxisSuggestedMax.Value, values.Max());
 
                 var hasAreaDisplay = ChartOptions?.LineDisplayType == LineDisplayType.Area || visibleSeries.Any(series => GetSeriesDisplayOverride(series)?.LineDisplayType == LineDisplayType.Area);
                 var includeYAxisZeroPoint = ChartOptions?.YAxisRequireZeroPoint is true || hasAreaDisplay;
@@ -81,7 +89,7 @@ namespace MudBlazor.Charts
 
         protected override string GetVerticalGridLineLabel(int index)
         {
-            return index < ChartLabels.Length? ChartLabels[index] : "";
+            return index < ChartLabels.Length ? ChartLabels[index] : "";
         }
 
         protected override T GetDataValue<T>(int seriesIndex, int dataPointIndex)
@@ -109,12 +117,12 @@ namespace MudBlazor.Charts
             var data = series.Data;
             var interpolationResolution = 10;
 
-            var XValues = new double[data.Values.Length];
-            var YValues = new double[data.Values.Length];
+            var xValues = new double[data.Values.Length];
+            var yValues = new double[data.Values.Length];
 
             for (var j = 0; j < data.Values.Length; j++)
             {
-                var (x, y) = (XValues[j], YValues[j]) = GetXYForDataPoint(seriesIndex, j, lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace);
+                var (x, y) = (xValues[j], yValues[j]) = GetXYForDataPoint(seriesIndex, j, lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace);
             }
 
             var overrideSettings = GetSeriesDisplayOverride(series);
@@ -122,9 +130,9 @@ namespace MudBlazor.Charts
 
             ILineInterpolator interpolator = interpolationOption switch
             {
-                InterpolationOption.NaturalSpline => new NaturalSpline(XValues, YValues, interpolationResolution),
-                InterpolationOption.EndSlope => new EndSlopeSpline(XValues, YValues, interpolationResolution),
-                InterpolationOption.Periodic => new PeriodicSpline(XValues, YValues, interpolationResolution),
+                InterpolationOption.NaturalSpline => new NaturalSpline(xValues, yValues, interpolationResolution),
+                InterpolationOption.EndSlope => new EndSlopeSpline(xValues, yValues, interpolationResolution),
+                InterpolationOption.Periodic => new PeriodicSpline(xValues, yValues, interpolationResolution),
                 _ => throw new NotImplementedException("Interpolation option not implemented yet")
             };
 

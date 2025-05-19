@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
-using System.Text;
+﻿using System.Text;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 
 #nullable enable
@@ -16,6 +16,12 @@ namespace MudBlazor.Charts
     /// <seealso cref="TimeSeries"/>
     public partial class Donut : MudRadialChartBase<DonutChartOptions>
     {
+        protected override void OnInitialized()
+        {
+            ChartOptions ??= new DonutChartOptions();
+            base.OnInitialized();
+        }
+
         public override void RebuildChart()
         {
             _paths.Clear();

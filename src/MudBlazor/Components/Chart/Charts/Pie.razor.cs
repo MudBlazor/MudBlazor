@@ -16,6 +16,12 @@ namespace MudBlazor.Charts
     /// <seealso cref="TimeSeries"/>
     partial class Pie : MudRadialChartBase<PieChartOptions>
     {
+        protected override void OnInitialized()
+        {
+            ChartOptions ??= new PieChartOptions();
+            base.OnInitialized();
+        }
+
         public override void RebuildChart()
         {
             _paths.Clear();

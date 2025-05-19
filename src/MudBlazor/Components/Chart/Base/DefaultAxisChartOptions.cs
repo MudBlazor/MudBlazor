@@ -14,6 +14,17 @@ public abstract class DefaultAxisChartOptions : DefaultChartOptions, IAxisChartO
     /// Defaults to <c>20</c>.
     /// </remarks>
     public int YAxisTicks { get; set; } = 20;
+
+    /// <summary>
+    /// The maximum value for the vertical axis.
+    /// </summary>
+    /// <remarks>
+    /// This value is used only if all data points are less than or equal to it. 
+    /// If any data point exceeds this value, the Y-axis maximum will automatically adjust to fit the data.
+    /// If this value is <c>null</c>, the Y-axis maximum will be calculated automatically.
+    /// </remarks>
+    public double? YAxisSuggestedMax { get; set; }
+
     /// <summary>
     /// The maximum allowed number of vertical tick marks.
     /// </summary>
