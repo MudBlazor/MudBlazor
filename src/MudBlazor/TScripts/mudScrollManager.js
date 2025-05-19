@@ -58,14 +58,20 @@ class MudScrollManager {
 
     //locks the scroll of the selected element. Default is body
     lockScroll(selector, lockclass) {
-        let element = document.querySelector(selector) || document.body;
-        element.classList.add(lockclass);
+        if (this._lockCount === 0) {
+            const element = document.querySelector(selector) || document.body;
+            element.classList.add(lockclass);
+        }
+        this._lockCount++;
     }
 
     //unlocks the scroll. Default is body
     unlockScroll(selector, lockclass) {
-        let element = document.querySelector(selector) || document.body;
-        element.classList.remove(lockclass);
+        this._lockCount = Math.max(0, this._lockCount - 1); // subtract 1 or stop at 0
+        if (this._lockCount === 0) {
+            const element = document.querySelector(selector) || document.body;
+            element.classList.remove(lockclass);
+        }
     }
 };
 window.mudScrollManager = new MudScrollManager();
