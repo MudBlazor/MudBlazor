@@ -150,27 +150,35 @@ class MudElementReference {
     // ios doesn't trigger Blazor/React/Other dom style blur event so add a base event listener here 
     // that will trigger with IOS Done button and regular blur events
     addOnBlurEvent(element, dotNetReference) {
+        if (!element) return;
+
         element._mudBlurHandler = function (e) {
-            if (!element) return;
+            if (!element || !document.contains(element)) {
+                // Element is no longer in the DOM, clean up
+                window.mudElementRef.removeOnBlurEvent(element);
+                return;
+            }
             e.preventDefault();
             element.blur();
             if (dotNetReference) {
-                // make sure blur events only happen when heap is unlocked
-                requestAnimationFrame(() => {
-                    dotNetReference.invokeMethodAsync('CallOnBlurredAsync');
-                });                
-            }
-            else {
+                dotNetReference.invokeMethodAsync('CallOnBlurredAsync').catch(err => {
+                    console.warn("Error invoking CallOnBlurredAsync, possibly disposed:", err);
+                    window.mudElementRef.removeOnBlurEvent(element);
+                });
+            } else {
                 console.error("No dotNetReference found for iosKeyboardFocus");
             }
-        }
-        if (element) element.addEventListener('blur', element._mudBlurHandler);
+        };
+
+        element.addEventListener('blur', element._mudBlurHandler);
     }
-    // dispose event
-    removeOnBlurEvent(element, dotnetRef) {
-        if (!element || !element._mudBlurHandler) return;
-        element.removeEventListener('blur', element._mudBlurHandler);
-        delete element._mudBlurHandler;
+
+    removeOnBlurEvent(element) {
+        if (!element) return;
+        if (element._mudBlurHandler) {
+            element.removeEventListener('blur', element._mudBlurHandler);
+            delete element._mudBlurHandler;
+        }
     }
 };
 window.mudElementRef = new MudElementReference();

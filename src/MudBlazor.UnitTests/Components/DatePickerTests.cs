@@ -1443,6 +1443,7 @@ namespace MudBlazor.UnitTests.Components
         /// Test to check if the outlined dates class shows up correctly
         /// </summary>
         [Test]
+        [SetCulture("en-US")]
         public void DatePicker_CustomTimerProviderTest()
         {
             var timeProvider = new FakeTimeProvider();
