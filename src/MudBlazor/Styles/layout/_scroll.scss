@@ -1,40 +1,5 @@
-﻿.scroll-locked {
-  padding-right: 8px;
+.scroll-locked {
   overflow: hidden;
-
-  .mud-layout {
-    .mud-appbar {
-      padding-right: 8px;
-    }
-
-    .mud-main-content {
-      .mud-scroll-to-top {
-        padding-right: 8px;
-      }
-    }
-  }
-}
-
-.scroll-locked-no-padding {
-  overflow: hidden;
-}
-
-@-moz-document url-prefix() {
-  .scroll-locked {
-    padding-right: 17px; //the width of scroll-bar in firefox
-
-    .mud-layout {
-      .mud-appbar {
-        padding-right: 17px;
-      }
-
-      .mud-main-content {
-        .mud-scroll-to-top {
-          padding-right: 17px;
-        }
-      }
-    }
-  }
 }
 
 .mud-scroll-to-top {
