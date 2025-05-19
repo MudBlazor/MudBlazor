@@ -5,6 +5,7 @@
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.Logging;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
 
@@ -369,15 +370,7 @@ namespace MudBlazor
         }
 
         internal void OnCopy()
-        {
-            var text = Text;
-            if (Mask.Selection != null)
-            {
-                (_, text, _) = BaseMask.SplitSelection(text, Mask.Selection.Value);
-            }
-
-            JsApiService.CopyToClipboardAsync(text);
-        }
+            => CopySelectionToClipboard();
 
         internal async void OnPaste(string? text)
         {
@@ -467,11 +460,12 @@ namespace MudBlazor
             _mask = other;
         }
 
-        private async void OnCut(ClipboardEventArgs obj)
+        private async void OnCut(EventArgs obj)
         {
             if (GetReadOnlyState())
                 return;
 
+            CopySelectionToClipboard();
             if (_selection != null)
                 Mask.Delete();
             await UpdateAsync();
@@ -493,6 +487,20 @@ namespace MudBlazor
                     await _jsEvent.DisposeAsync();
                 }
             }
+        }
+
+        /// <summary>
+        /// Copies the currently selected text (or the entire text if nothing is selected) to the clipboard.
+        /// </summary>
+        private void CopySelectionToClipboard()
+        {
+            var text = Text;
+            if (Mask.Selection != null)
+            {
+                (_, text, _) = BaseMask.SplitSelection(text, Mask.Selection.Value);
+            }
+
+            JsApiService.CopyToClipboardAsync(text);
         }
 
         [GeneratedRegex(@"^.$")]
