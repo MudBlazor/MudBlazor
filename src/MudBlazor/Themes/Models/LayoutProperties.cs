@@ -9,7 +9,7 @@
         /// <summary>
         /// Gets or sets the default border radius.
         /// </summary>
-        public string DefaultBorderRadius { get; set; } = "4px";
+        public string DefaultBorderRadius { get; set; } = MudGlobal.EnablePreviewFeatures ? "8px" : "4px";
 
         /// <summary>
         /// Gets or sets the width of the mini drawer on the left side.

@@ -14,6 +14,7 @@ namespace MudBlazor.Docs.Shared
 
         static MainLayout()
         {
+            MudGlobal.EnablePreviewFeatures = true;
             MudGlobal.TooltipDefaults.Delay = TimeSpan.FromMilliseconds(500);
         }
 

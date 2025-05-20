@@ -337,7 +337,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Menu.PopupBehavior)]
-        public bool Modal { get; set; } = true;
+        public bool Modal { get; set; } = !MudGlobal.EnablePreviewFeatures;
 
         /// <summary>
         /// The <see cref="MudMenuItem" /> components within this menu.

@@ -323,7 +323,11 @@ namespace MudBlazor
             FontWeight = "500";
             LineHeight = "1.75";
             LetterSpacing = ".02857em";
-            TextTransform = "uppercase";
+
+            if (!MudGlobal.EnablePreviewFeatures)
+            {
+                TextTransform = "uppercase";
+            }
         }
     }
 

@@ -186,6 +186,11 @@ public static class MudGlobal
     public static bool? Rounded { get; set; }
 
     /// <summary>
+    /// Enables new preview features that provide a glimpse into the next major version.
+    /// </summary>
+    public static bool EnablePreviewFeatures { get; set; } = false;
+
+    /// <summary>
     /// The handler for unhandled MudBlazor component exceptions.
     /// </summary>
     /// <remarks>

@@ -129,7 +129,7 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Overlay.Behavior)]
-    public bool Modal { get; set; } = true;
+    public bool Modal { get; set; } = !MudGlobal.EnablePreviewFeatures;
 
     /// <summary>
     /// Applies the theme's dark overlay color.
