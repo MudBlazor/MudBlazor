@@ -200,7 +200,7 @@ namespace MudBlazor
             try
             {
                 if (e.CtrlKey && e.Key != "Backspace"
-                    // on Mac OS, the copy paste command is cmd + v
+                    // on macOS, the copy-paste command is Cmd + V
                     // cmd is identified using the MetaKey property
                     || e.MetaKey && e.Key != "Backspace"
                     || e.AltKey
