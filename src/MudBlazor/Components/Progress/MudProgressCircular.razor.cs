@@ -118,6 +118,13 @@ namespace MudBlazor
         [Category(CategoryTypes.ProgressCircular.Appearance)]
         public int StrokeWidth { get; set; } = 3;
 
+        /// <summary>
+        /// RenderFragment for rendering custom content
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.ProgressCircular.Appearance)]
+        public RenderFragment? ChildContent { get; set; }
+
         public MudProgressCircular()
         {
             using var registerScope = CreateRegisterScope();
