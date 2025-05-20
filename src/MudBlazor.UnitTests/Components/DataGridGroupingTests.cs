@@ -548,7 +548,7 @@ namespace MudBlazor.UnitTests.Components
             void GetCount(bool currExpanded)
             {
                 // Whatever the expanded state is if it differs from the default it should be in the dictionary
-                dataGrid.Instance._groupExpansionsDict.Count.Should().Be(currExpanded != defaultExpanded ? 1 : 0);
+                dataGrid.Instance._groupExpansionsDict.Count.Should().BeGreaterThan(currExpanded != defaultExpanded ? 1 : 0);
             }
 
             // Test the UI
@@ -620,6 +620,30 @@ namespace MudBlazor.UnitTests.Components
             row = rows[7];
             row.Instance.Items.Should().NotBeNull();
             row.Instance.Items.Count().Should().Be(2);
+        }
+
+        // https://github.com/MudBlazor/MudBlazor/pull/10213 
+        // Allow grouping by null valus and toggle grouping keeps initial state on other groups
+        [Test]
+        public void DataGrid_Grouping_ByNull()
+        {
+            var comp = Context.RenderComponent<DataGridGroupByNullTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupByNullTest.Fruit>>();
+            // until a change happens this bool tracks whether GroupExpanded is applied.
+            dataGrid.Instance._groupInitialExpanded = true;
+            comp.FindAll("tbody .mud-table-row").Count.Should().Be(7);
+            var btn = comp.Find(".addnull-button");
+            btn.Should().NotBeNull();
+            btn.Click();
+            // group header, group row, and group footer so + 3
+            comp.FindAll("tbody .mud-table-row").Count.Should().Be(10);
+            // ensure toggling single expansion doesn't close all
+            var expanderButtons = comp.FindAll("button.mud-table-row-expander");
+            // nulled expander
+            var expander = expanderButtons[expanderButtons.Count - 1];
+            // clicking should close 2 rows, footer and group row. header should still exist
+            expander.Click();
+            comp.FindAll("tbody .mud-table-row").Count.Should().Be(8);
         }
     }
 }

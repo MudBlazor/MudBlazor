@@ -2109,11 +2109,12 @@ namespace MudBlazor
             foreach (var group in groups)
             {
                 var expanded = false;
-                if (group is { Key: not null })
+                if (group is not null)
                 {
                     var key = new GroupKey(groupDef.Title, group.Key);
                     expanded = _groupExpansionsDict.TryGetValue(key, out var value) ? value :
                                    groupDef.Expanded;
+                    _groupExpansionsDict.TryAdd(key, expanded);
                 }
                 result.Add(new GroupDefinition<T>
                 {
@@ -2124,7 +2125,7 @@ namespace MudBlazor
                     Title = groupDef.Title,
                     Parent = groupDef.Parent,
                     InnerGroup = groupDef.InnerGroup,
-                    Grouping = group,
+                    Grouping = group ?? new EmptyGrouping<object?, T>(null)
                 });
             }
             return result;
