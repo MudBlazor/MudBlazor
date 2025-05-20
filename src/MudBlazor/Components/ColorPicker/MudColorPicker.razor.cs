@@ -296,11 +296,11 @@ namespace MudBlazor
         /// The delay, in milliseconds, between updates to the selected color when <see cref="DragEffect"/> is <c>true</c>.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>300</c> milliseconds between updates.
+        /// Defaults to <c>50</c> milliseconds between updates.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
-        public int ThrottleInterval { get; set; } = 300;
+        public int ThrottleInterval { get; set; } = 50;
 
         /// <inheritdoc />
         protected override void OnInitialized()

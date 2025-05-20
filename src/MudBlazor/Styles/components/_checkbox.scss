@@ -17,7 +17,7 @@
     }
   }
 
-  .mud-disabled:focus-visible, .mud-disabled:active {
+  &.mud-disabled, .mud-disabled:focus-visible, .mud-disabled:active {
     cursor: default;
     background-color: transparent !important;
 

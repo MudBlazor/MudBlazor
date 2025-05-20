@@ -31,41 +31,72 @@ window.mudpopoverHelper = {
     flipClassReplacements: {
         'top': {
             'mud-popover-top-left': 'mud-popover-bottom-left',
-            'mud-popover-top-center': 'mud-popover-bottom-center',
-            'mud-popover-anchor-bottom-center': 'mud-popover-anchor-top-center',
+            'mud-popover-top-center': 'mud-popover-bottom-center',            
             'mud-popover-top-right': 'mud-popover-bottom-right',
+            'mud-popover-anchor-bottom-center': 'mud-popover-anchor-top-center',
+            'mud-popover-anchor-bottom-left': 'mud-popover-anchor-top-left',
+            'mud-popover-anchor-bottom-right': 'mud-popover-anchor-top-right',
         },
         'left': {
             'mud-popover-top-left': 'mud-popover-top-right',
-            'mud-popover-center-left': 'mud-popover-center-right',
-            'mud-popover-anchor-center-right': 'mud-popover-anchor-center-left',
+            'mud-popover-center-left': 'mud-popover-center-right',            
             'mud-popover-bottom-left': 'mud-popover-bottom-right',
+            'mud-popover-anchor-center-right': 'mud-popover-anchor-center-left',
+            'mud-popover-anchor-bottom-right': 'mud-popover-anchor-bottom-left',
+            'mud-popover-anchor-top-right': 'mud-popover-anchor-top-left',
         },
         'right': {
             'mud-popover-top-right': 'mud-popover-top-left',
-            'mud-popover-center-right': 'mud-popover-center-left',
-            'mud-popover-anchor-center-left': 'mud-popover-anchor-center-right',
+            'mud-popover-center-right': 'mud-popover-center-left',            
             'mud-popover-bottom-right': 'mud-popover-bottom-left',
+            'mud-popover-anchor-center-left': 'mud-popover-anchor-center-right',
+            'mud-popover-anchor-bottom-left': 'mud-popover-anchor-bottom-right',
+            'mud-popover-anchor-top-left': 'mud-popover-anchor-top-right',
         },
         'bottom': {
             'mud-popover-bottom-left': 'mud-popover-top-left',
-            'mud-popover-bottom-center': 'mud-popover-top-center',
-            'mud-popover-anchor-top-center': 'mud-popover-anchor-bottom-center',
+            'mud-popover-bottom-center': 'mud-popover-top-center',            
             'mud-popover-bottom-right': 'mud-popover-top-right',
+            'mud-popover-anchor-top-center': 'mud-popover-anchor-bottom-center',
+            'mud-popover-anchor-top-left': 'mud-popover-anchor-bottom-left',
+            'mud-popover-anchor-top-right': 'mud-popover-anchor-bottom-right',
         },
         'top-and-left': {
             'mud-popover-top-left': 'mud-popover-bottom-right',
+            'mud-popover-anchor-bottom-right': 'mud-popover-anchor-top-left',
+            'mud-popover-anchor-bottom-center': 'mud-popover-anchor-top-center',
+            'mud-popover-anchor-bottom-left': 'mud-popover-anchor-top-right',
+            'mud-popover-anchor-top-right': 'mud-popover-anchor-bottom-left',
+            'mud-popover-anchor-top-center': 'mud-popover-anchor-bottom-center',
+            'mud-popover-anchor-top-left': 'mud-popover-anchor-bottom-right',
         },
         'top-and-right': {
             'mud-popover-top-right': 'mud-popover-bottom-left',
+            'mud-popover-anchor-bottom-left': 'mud-popover-anchor-top-right',
+            'mud-popover-anchor-bottom-center': 'mud-popover-anchor-top-center',
+            'mud-popover-anchor-bottom-right': 'mud-popover-anchor-top-left',
+            'mud-popover-anchor-top-left': 'mud-popover-anchor-bottom-right',
+            'mud-popover-anchor-top-center': 'mud-popover-anchor-bottom-center',
+            'mud-popover-anchor-top-right': 'mud-popover-anchor-bottom-left',
         },
         'bottom-and-left': {
             'mud-popover-bottom-left': 'mud-popover-top-right',
+            'mud-popover-anchor-top-right': 'mud-popover-anchor-bottom-left',
+            'mud-popover-anchor-top-center': 'mud-popover-anchor-bottom-center',
+            'mud-popover-anchor-top-left': 'mud-popover-anchor-bottom-right',
+            'mud-popover-anchor-bottom-right': 'mud-popover-anchor-top-left',
+            'mud-popover-anchor-bottom-center': 'mud-popover-anchor-top-center',
+            'mud-popover-anchor-bottom-left': 'mud-popover-anchor-top-right',
         },
         'bottom-and-right': {
             'mud-popover-bottom-right': 'mud-popover-top-left',
+            'mud-popover-anchor-top-left': 'mud-popover-anchor-bottom-right',
+            'mud-popover-anchor-top-center': 'mud-popover-anchor-bottom-center',
+            'mud-popover-anchor-top-right': 'mud-popover-anchor-bottom-left',
+            'mud-popover-anchor-bottom-left': 'mud-popover-anchor-top-right',
+            'mud-popover-anchor-bottom-center': 'mud-popover-anchor-top-center',
+            'mud-popover-anchor-bottom-right': 'mud-popover-anchor-top-left',
         },
-
     },
 
     // used to calculate the position of the popover
@@ -457,16 +488,33 @@ window.mudpopoverHelper = {
                     let shouldShowFromTop = false;
                     // calculate new max height if it exceeds bounds
                     let newMaxHeight = window.innerHeight - top - offsetY - window.mudpopoverHelper.overflowPadding; // downwards
+
+                    // Check if this is a flipped popover showing upward
+                    // Convert classList to an array and check if any class contains the substring
+                    const isCentered = Array.from(classList).some(className => className.includes('mud-popover-anchor-center'));
+                    const isFlippedUpward = !isCentered && ( // center anchors don't flip
+                                            popoverContentNode.getAttribute('data-mudpopover-flip') === 'top' ||
+                                            popoverContentNode.getAttribute('data-mudpopover-flip') === 'top-and-left' ||
+                                            popoverContentNode.getAttribute('data-mudpopover-flip') === 'top-and-right');
+
                     // moving upwards
                     if (top + offsetY < anchorY || top + offsetY == window.mudpopoverHelper.overflowPadding) {
                         shouldShowFromTop = true;
-                        newMaxHeight = anchorY - window.mudpopoverHelper.overflowPadding;
+                        // adjust newMaxHeight if flipped upwards
+                        if (isFlippedUpward) {
+                            newMaxHeight = anchorY - window.mudpopoverHelper.overflowPadding - popoverNode.offsetHeight;
+                        }
+                        // adjust newMaxHeight if not flipped upwards
+                        else {
+                            newMaxHeight = anchorY - window.mudpopoverHelper.overflowPadding;
+                        }
                     }
 
                     // if calculated height exceeds the new maxheight
                     if (popoverContentNode.offsetHeight > newMaxHeight) {
                         if (shouldShowFromTop) { // adjust top to show from top
-                            top = window.mudpopoverHelper.overflowPadding;
+                            // also adjust newMaxHeight 
+                            top = window.mudpopoverHelper.overflowPadding;                          
                             offsetY = 0;
                         }
                         popoverContentNode.style.maxHeight = (newMaxHeight) + 'px';
