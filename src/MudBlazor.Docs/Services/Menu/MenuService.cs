@@ -33,7 +33,6 @@ namespace MudBlazor.Docs.Services
             .AddItem("Hidden", typeof(MudHidden))
             .AddItem("Breakpoint Provider", typeof(MudBreakpointProvider))
             .AddItem("Chips", typeof(MudChip<T>))
-            .AddItem("Chip Set", typeof(MudChipSet<T>))
             .AddItem("Badge", typeof(MudBadge))
             .AddItem("App Bar", typeof(MudAppBar))
             .AddItem("Drawer", typeof(MudDrawer), typeof(MudDrawerHeader), typeof(MudDrawerContainer))

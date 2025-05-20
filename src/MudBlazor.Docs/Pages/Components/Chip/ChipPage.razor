@@ -2,7 +2,6 @@
 
 <DocsPage>
     <DocsPageHeader Title="Chips" Component="@nameof(MudChip<T>)">
-        <Description><br />See also: <MudLink Href="/components/chipset">ChipSet</MudLink></Description>
     </DocsPageHeader>
     <DocsPageContent>
 
@@ -34,12 +33,55 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Closable">
-                <Description>Closable chips show a close icon, which can be customized with the <CodeInline>CloseIcon</CodeInline> property.</Description>
+            <SectionHeader Title="Chip Sets">
+                <Description>Use chip sets to manage mulitple chips.</Description>
             </SectionHeader>
-            <SectionContent ShowCode="false" Code="@nameof(ChipClosableExample)">
-                <ChipClosableExample />
-            </SectionContent>
+
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="Single selection">
+                        <Description>
+                            Select one chip at a time. Use <CodeInline>SelectionMode.SingleSelection</CodeInline> (default) or <CodeInline>SelectionMode.ToggleSelection</CodeInline> to allow unselecting. Bind with <CodeInline>@@bind-SelectedValue</CodeInline>.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent ShowCode="false" Code="@nameof(ChipSetBasicExample)" Block="true">
+                        <ChipSetBasicExample />
+                    </SectionContent>
+                </DocsPageSection>
+
+                <DocsPageSection>
+                    <SectionHeader Title="Multi selection">
+                        <Description>
+                            Select multiple chips with <CodeInline>SelectionMode="MultiSelection"</CodeInline>. Bind with <CodeInline>@@bind-SelectedValues</CodeInline>. Use <CodeInline>CheckMark="true"</CodeInline> to show check marks.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent ShowCode="false" Code="@nameof(ChipSetMultiselectionExample)" Block="true">
+                        <ChipSetMultiselectionExample />
+                    </SectionContent>
+                </DocsPageSection>
+
+                <DocsPageSection>
+                    <SectionHeader Title="Adding and removing chips">
+                        <Description>
+                            Add or remove chips with the close button.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent ShowCode="false" Code="@nameof(ChipSetAddRemoveExample)" Block="true">
+                        <ChipSetAddRemoveExample />
+                    </SectionContent>
+                </DocsPageSection>
+
+                <DocsPageSection>
+                    <SectionHeader Title="Default Selection">
+                        <Description>
+                            Chips with <CodeInline>Default="true"</CodeInline> are selected initially.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent ShowCode="false" Code="@nameof(ChipSetDefaultChipsExample)" Block="true">
+                        <ChipSetDefaultChipsExample />
+                    </SectionContent>
+                </DocsPageSection>
+            </SectionSubGroups>
         </DocsPageSection>
 
         <DocsPageSection>
@@ -50,6 +92,15 @@
             </SectionHeader>
             <SectionContent ShowCode="false" Code="@nameof(ChipClickableExample)">
                 <ChipClickableExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Closable">
+                <Description>Closable chips show a close icon, which can be customized with the <CodeInline>CloseIcon</CodeInline> property.</Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="@nameof(ChipClosableExample)">
+                <ChipClosableExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -111,6 +162,44 @@
                     </SectionContent>
                 </DocsPageSection>
             </SectionSubGroups>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Accessibility">
+                <Description>
+                    <MudText Class="mb-2">
+                        <CodeInline>MudChip</CodeInline> keyboard shortcuts:
+                    </MudText>
+                    <MudSimpleTable Outlined="true" Hover="true">
+                        <thead>
+                            <tr>
+                                <th>Keys</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <CodeInline>Space</CodeInline>,
+                                    <CodeInline>Enter</CodeInline>,
+                                    <CodeInline>NumpadEnter</CodeInline>
+                                </td>
+                                <td>Select or toggle the focused chip</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <CodeInline>Backspace</CodeInline>,
+                                    <CodeInline>Delete</CodeInline>
+                                </td>
+                                <td>Remove the focused chip if closable</td>
+                            </tr>
+                        </tbody>
+                    </MudSimpleTable>
+                </Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="@nameof(ChipKeyboardNavigationExample)">
+                <ChipKeyboardNavigationExample />
+            </SectionContent>
         </DocsPageSection>
 
     </DocsPageContent>

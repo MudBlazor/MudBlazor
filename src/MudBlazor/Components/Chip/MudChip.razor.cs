@@ -9,7 +9,7 @@ namespace MudBlazor;
 #nullable enable
 
 /// <summary>
-/// Represents a compact element used to enter information, select a choice, filter content, or trigger an action.
+/// A compact element used to select a choice, filter content, or trigger an action.
 /// </summary>
 /// <typeparam name="T">The type of item managed by this component.</typeparam>
 /// <seealso cref="MudChipSet{T}"/>

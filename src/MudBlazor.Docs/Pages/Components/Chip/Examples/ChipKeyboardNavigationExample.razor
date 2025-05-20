@@ -1,12 +1,11 @@
 ﻿@namespace MudBlazor.Docs.Examples
 @inject ISnackbar Snackbar
 
-<MudChip T="string"
-         OnClick="ShowSnackbar"
-         Text="Click to open a dialog" />
+<div class="d-flex justify-space-between mud-width-full">
+    <MudButton OnClick="AddChip">
+        Add new chip
+    </MudButton>
 
-<MudStack Justify="@Justify.Center"
-          Class="mud-width-full">
     <MudChipSet T="string"
                 AllClosable="true"
                 CheckMark="true"
@@ -20,10 +19,10 @@
         }
     </MudChipSet>
 
-    <MudButton OnClick="AddChip">
-        Add new chip
-    </MudButton>
-</MudStack>
+    <MudChip T="string"
+             OnClick="ShowSnackbar"
+             Text="Click to show notifiction" />
+</div>
 
 @code {
     [Inject]

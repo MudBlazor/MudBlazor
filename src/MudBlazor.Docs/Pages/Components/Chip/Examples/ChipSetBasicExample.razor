@@ -11,18 +11,15 @@
 </MudChipSet>
 
 <div class="d-flex flex-column align-center">
-    @if (SelectedColor != default)
-    {
+    @if (SelectedColor != default) {
         <MudText>You selected the <MudText Color="@SelectedColor" Inline>@SelectedColor.ToDescriptionString()</MudText> chip.</MudText>
     }
-    else
-    {
+    else {
         <MudText>Nothing selected.</MudText>
     }
     <MudRadioGroup @bind-Value="SelectionMode">
         <MudRadio Value="@SelectionMode.SingleSelection" Color="Color.Primary">SingleSelection</MudRadio>
         <MudRadio Value="@SelectionMode.ToggleSelection" Color="Color.Primary">ToggleSelection</MudRadio>
-        <MudRadio Value="@SelectionMode.MultiSelection" Color="Color.Primary">MultiSelection</MudRadio>
     </MudRadioGroup>
 </div>
 
