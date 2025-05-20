@@ -37,7 +37,7 @@ namespace MudBlazor
 
         private IResizeObserver? _resizeObserver = null;
 
-        private ThrottleDispatcher _throttleDispatcher;
+        private readonly ThrottleDispatcher _throttleDispatcher;
 
         /// <summary>
         /// Displays text right-to-left.
