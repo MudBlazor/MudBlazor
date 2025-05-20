@@ -28,6 +28,8 @@
 
 .mud-menu-list {
   padding: 4px 0;
+  display: flex;
+  flex-direction: column;
 
   > .mud-menu {
     width: 100%;
