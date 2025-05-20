@@ -142,7 +142,7 @@ public abstract class MudAxisLineChartBase<TOptions> : MudAxisChartBase<TOptions
 
             if (displayType == LineDisplayType.Area)
             {
-                GenerateAreaChart(i, chartLine, lowestHorizontalLine, gridYUnits, firstPointX, firstPointY, lastPointX);
+                GenerateAreaChart(i, chartLine, lowestHorizontalLine, firstPointX, firstPointY, lastPointX);
             }
 
             AddLegend(i, series);
@@ -271,12 +271,11 @@ public abstract class MudAxisLineChartBase<TOptions> : MudAxisChartBase<TOptions
         Legends.Add(legend);
     }
 
-    protected void GenerateAreaChart(int seriesIndex, StringBuilder chartLine,
-                             int lowestHorizontalLine, double gridYUnits,
-                             double firstPointX, double firstPointY, double lastPointX)
+    protected void GenerateAreaChart(int seriesIndex, StringBuilder chartLine, int lowestHorizontalLine,
+                                     double firstPointX, double firstPointY, double lastPointX)
     {
         var chartArea = new StringBuilder();
-        var zeroPointY = GetYForZeroPoint(lowestHorizontalLine, gridYUnits);
+        var zeroPointY = GetYForZeroPoint(lowestHorizontalLine);
 
         chartArea.Append(chartLine); // the line up to this point is the same as the area, so we can reuse it
 
@@ -307,9 +306,9 @@ public abstract class MudAxisLineChartBase<TOptions> : MudAxisChartBase<TOptions
         ChartAreas.Add(seriesIndex, area);
     }
 
-    protected double GetYForZeroPoint(int lowestHorizontalLine, double gridYUnits)
+    protected double GetYForZeroPoint(int lowestHorizontalLine)
     {
-        var gridValue = (0 / gridYUnits - lowestHorizontalLine) * GetVerticalSpace();
+        var gridValue = -lowestHorizontalLine * GetVerticalSpace();
         var y = _boundHeight - VerticalStartSpace - gridValue;
 
         return y;
@@ -322,7 +321,7 @@ public abstract class MudAxisLineChartBase<TOptions> : MudAxisChartBase<TOptions
 
     protected SeriesDisplayOverride? GetSeriesDisplayOverride(ChartSeries series)
     {
-        return ChartOptions?.SeriesDisplayOverrides.TryGetValue(series, out var overrideData) is true
+        return ChartOptions?.SeriesDisplayOverrides?.TryGetValue(series, out var overrideData) is true
             ? overrideData
             : null;
     }

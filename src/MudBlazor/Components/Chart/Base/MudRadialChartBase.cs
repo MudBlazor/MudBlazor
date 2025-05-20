@@ -76,7 +76,7 @@ public abstract class MudRadialChartBase<TOptions> : MudChartBase<TOptions>, IDi
 
         var maxCategoryLength = ChartOptions!.AggregationOption == AggregationOption.GroupByLabel
                 ? ChartLabels.Length == 0
-                    ? ChartSeries.Max(x => x.Data.Values.Length)
+                    ? ChartSeries.Count > 0 ? ChartSeries.Where(x => x.Data?.Values != null).DefaultIfEmpty().Max(x => x?.Data?.Values.Length ?? 0) : 0
                     : ChartLabels.Length
                 : ChartSeries.Count;
         var aggregated = new double[maxCategoryLength];
@@ -114,7 +114,7 @@ public abstract class MudRadialChartBase<TOptions> : MudChartBase<TOptions>, IDi
                     if (index >= aggregated.Length)
                         break;
 
-                    aggregated[index] = series.Data.Values.Sum();
+                    aggregated[index] = series.Data?.Values?.Sum() ?? 0;
                 }
                 break;
 

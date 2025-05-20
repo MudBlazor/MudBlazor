@@ -61,7 +61,7 @@
         @foreach (var chartLine in ChartLines)
         {
             var series = Series[chartLine.Index];
-            var color = MudChartParent?.ChartOptions.ChartPalette.GetValue(chartLine.Index % MudChartParent.ChartOptions.ChartPalette.Length);
+            var color = MudChartParent?.ChartOptions?.ChartPalette?.GetValue(chartLine.Index % MudChartParent.ChartOptions.ChartPalette.Length)?.ToString() ?? string.Empty;
             var showDataMarkers = ChartOptions!.ShowDataMarkers;
             var isHovered = HoverDataPointChartLine == chartLine;
             var overrideSettings = GetSeriesDisplayOverride(series);
@@ -132,7 +132,7 @@
         if (dataPoint.Value is not null)
         {
             var seriesIndex = dataPoint.Key;
-            var color = ChartOptions.ChartPalette.GetValue(seriesIndex % ChartOptions.ChartPalette.Length)?.ToString() ?? string.Empty;
+            var color = ChartOptions?.ChartPalette?.GetValue(seriesIndex % ChartOptions.ChartPalette.Length)?.ToString() ?? string.Empty;
             var path = new SvgPath()
             {
                 Index = seriesIndex,

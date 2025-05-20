@@ -40,7 +40,6 @@ namespace MudBlazor.Charts
         private void ComputeUnitsAndNumberOfLines(out double gridYUnits, out int numHorizontalLines, out int lowestHorizontalLine, out int numVerticalLines)
         {
             gridYUnits = ChartOptions?.YAxisTicks ?? 20;
-            gridYUnits = ChartOptions?.YAxisTicks ?? 20;
 
             if (gridYUnits <= 0)
                 gridYUnits = 20;
