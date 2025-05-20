@@ -19,7 +19,6 @@ GroupExpanded="true" RowContextMenuClick="@OnRowContextMenuClick">
     <MudButton Class="expand-all" OnClick="@ExpandAllGroups" Color="@Color.Primary">Expand All</MudButton>
     <MudButton OnClick="@CollapseAllGroups" Color="@Color.Primary">Collapse All</MudButton>
     <MudButton Class="add-button" OnClick="@AddFruit" Color="@Color.Primary">Add Fruit</MudButton>
-    <MudButton Class="addnull-button" OnClick="@AddNullFruit" Color="@Color.Primary">Add Null Fruit</MudButton>
 </div>
 
 @code {
@@ -30,18 +29,13 @@ GroupExpanded="true" RowContextMenuClick="@OnRowContextMenuClick">
         new Fruit("Pear", 4, "Pome"),
         new Fruit("Orange", 4, "Citrus")
     ];
-    private readonly Func<Fruit, object> _groupBy = x => x.Category ?? "Unknown";
+    private readonly Func<Fruit, object> _groupBy = x => x.Category;
 
     public bool RowContextMenuClicked { get; set; }
 
     public void AddFruit()
     {
         _fruits.Add(new Fruit("Banana", 5, "Musa"));
-    }
-
-    public void AddNullFruit()
-    {
-        _fruits.Add(new Fruit("NullFruit", 3, null));
     }
 
     public Task ExpandAllGroups()
@@ -59,12 +53,12 @@ GroupExpanded="true" RowContextMenuClick="@OnRowContextMenuClick">
         RowContextMenuClicked = true;
     }
 
-    public class Fruit(string name, int count, string? category)
+    public class Fruit(string name, int count, string category)
     {
         public string Name { get; set; } = name;
 
         public int Count { get; set; } = count;
 
-        public string? Category { get; set; } = category;
+        public string Category { get; set; } = category;
     }
 }
