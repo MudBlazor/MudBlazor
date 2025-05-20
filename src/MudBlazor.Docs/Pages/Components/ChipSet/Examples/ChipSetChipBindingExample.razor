@@ -1,24 +1,25 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudChipSet @bind-SelectedValues="_selected" SelectionMode="SelectionMode.MultiSelection">
-    @for (int i = 0; i < _included.Length; i++) 
-    {
-        var index = i;
-        <MudChip Value="@_ingredients[index]" @bind-Selected="_included[index]" Color="Color.Primary" Variant="@Variant.Text" />
-    }
-</MudChipSet>
-
 <div class="d-flex flex-column align-center">
-    @if (_selected is { Count: > 0 }) 
+    @if (_selected is { Count: > 0 })
     {
         <MudText>Your special coctail recipe: <b>@string.Join(", ", _selected.OrderBy(x => x))</b></MudText>
     }
-    else 
+    else
     {
         <MudText>Add ingredients to your coctail.</MudText>
     }
+
+    <MudChipSet @bind-SelectedValues="_selected" SelectionMode="SelectionMode.MultiSelection">
+        @for (int i = 0; i < _included.Length; i++)
+        {
+            var index = i;
+            <MudChip Value="@_ingredients[index]" @bind-Selected="_included[index]" Color="Color.Primary" Variant="@Variant.Text" />
+        }
+    </MudChipSet>
+
     <div class="d-flex">
-        @for (int i = 0; i < _included.Length; i++) 
+        @for (int i = 0; i < _included.Length; i++)
         {
             var index = i;
             <MudCheckBox Color="Color.Secondary" @bind-Value="_included[index]">@_ingredients[index]</MudCheckBox>
