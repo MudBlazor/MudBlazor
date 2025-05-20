@@ -237,7 +237,7 @@ public abstract class MudAxisLineChartBase<TOptions> : MudAxisChartBase<TOptions
             // Add tooltip points for interpolated data if needed
             if (j % interpolationResolution == 0 && ChartOptions?.ShowToolTips == true && originalIndex < Series[seriesIndex].Data?.Points.Count)
             {
-                
+
                 chartDataCircles.Add(new SvgCircle()
                 {
                     Index = originalIndex,

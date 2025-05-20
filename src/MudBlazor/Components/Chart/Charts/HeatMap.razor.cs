@@ -119,7 +119,7 @@ namespace MudBlazor.Charts
         private PointF _hoveredLegendPosition;
 
         private readonly DebounceDispatcher _debouncer = new(DebounceIntervalMs);
-        
+
         private const int DebounceIntervalMs = 150;
 
         /// <summary>
@@ -217,7 +217,7 @@ namespace MudBlazor.Charts
                 _customHeatMapCells.Clear();
                 _customHeatMapCells = mudHeatMapCellsList;
             }
-            
+
             var padding = _options is { EnableSmoothGradient: true } ? 0 : CellPadding;
 
             if (RowCount == 0 || SeriesLength == 0)
