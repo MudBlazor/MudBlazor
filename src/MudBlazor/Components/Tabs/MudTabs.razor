@@ -13,11 +13,12 @@
                 }
                 @if (_showScrollButtons)
                 {
-                    <div class="mud-tabs-scroll-button">
+                    <div class="mud-tabs-scroll-button" 
+                         @ondragover="@(e => _throttleDispatcher.ThrottleAsync(() => { ScrollPrev(); return Task.CompletedTask; }))">
                         <MudIconButton Icon="@_prevIcon" Color="@ScrollIconColor" OnClick="@((e) => ScrollPrev())" Disabled="@_prevButtonDisabled" />
                     </div>
                 }
-                <div @ref="@_tabsContentSize" class="mud-tabs-tabbar-content">                    
+                <div @ref="@_tabsContentSize" class="mud-tabs-tabbar-content">
                         @if (EnableDragAndDrop)
                         {
                             <MudDropContainer T="MudTabPanel" Class="@WrapperClassnames" Style="@WrapperScrollStyle" Items="_panels" 
@@ -48,7 +49,8 @@
                 </div>
                 @if (_showScrollButtons)
                 {
-                    <div class="mud-tabs-scroll-button">
+                    <div class="mud-tabs-scroll-button" 
+                         @ondragover="@(e => _throttleDispatcher.ThrottleAsync(() => { ScrollNext(); return Task.CompletedTask; }))">
                         <MudIconButton Icon="@_nextIcon" Color="@ScrollIconColor" OnClick="@((e) => ScrollNext())" Disabled="@_nextButtonDisabled" />
                     </div>
                 }

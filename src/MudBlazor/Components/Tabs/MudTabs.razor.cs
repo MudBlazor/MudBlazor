@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interop;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
+using MudBlazor.Utilities.Throttle;
 
 #nullable enable
 namespace MudBlazor
@@ -35,6 +36,8 @@ namespace MudBlazor
         private double _scrollPosition;
 
         private IResizeObserver? _resizeObserver = null;
+
+        private ThrottleDispatcher _throttleDispatcher;
 
         /// <summary>
         /// Displays text right-to-left.
@@ -453,6 +456,7 @@ namespace MudBlazor
 
         public MudTabs()
         {
+            _throttleDispatcher = new ThrottleDispatcher(500);
             _panels = new List<MudTabPanel>();
             Panels = _panels.AsReadOnly();
         }
