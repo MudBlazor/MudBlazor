@@ -269,7 +269,6 @@ public static partial class ApiDocumentation
         { "carouselitem", "MudBlazor.MudCarouselItem" },
         { "checkbox", "MudBlazor.MudCheckBox`1" },
         { "chips", "MudBlazor.MudChip`1" },
-        { "chipset", "MudBlazor.MudChipSet`1" },
         { "collapse", "MudBlazor.MudCollapse" },
         { "colorpicker", "MudBlazor.MudColorPicker" },
         { "container", "MudBlazor.MudContainer" },
