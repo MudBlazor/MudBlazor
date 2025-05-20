@@ -10,12 +10,13 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using MudBlazor.Interop;
 using MudBlazor.Utilities;
+using MudBlazor.Utilities.Debounce;
 
 #nullable enable
 
 namespace MudBlazor.Charts
 {
-    partial class HeatMap : MudChartBase<HeatMapChartOptions>
+    partial class HeatMap : MudChartBase<HeatMapChartOptions>, IDisposable
     {
         internal record CellDimension(double Width, double Height, int Padding);
 
@@ -84,7 +85,7 @@ namespace MudBlazor.Charts
         private string[] _colorPalette = ["#587934"];
 
         // The maximum number of cells in a series
-        private int SeriesLength => _series.Count > 0 ? _series.Where(s => s.Data != null).Max(s => s.Data.Values.Length) : 0;
+        private int SeriesLength => _series.Select(s => s.Data?.Values.Length ?? 0).DefaultIfEmpty(0).Max();
 
         // The number of rows visible
         private int RowCount => _series.Count > 0 ? _series.Count(s => s.Visible) : 0;
@@ -114,7 +115,12 @@ namespace MudBlazor.Charts
         private HeatMapCell? _hoveredCell;
 
         private (double value, string color)? _hoveredLegend;
+
         private PointF _hoveredLegendPosition;
+
+        private readonly DebounceDispatcher _debouncer = new(DebounceIntervalMs);
+        
+        private const int DebounceIntervalMs = 150;
 
         /// <summary>
         /// The currently selected <see cref="HeatMapCell"/>.
@@ -211,8 +217,15 @@ namespace MudBlazor.Charts
                 _customHeatMapCells.Clear();
                 _customHeatMapCells = mudHeatMapCellsList;
             }
-
+            
             var padding = _options is { EnableSmoothGradient: true } ? 0 : CellPadding;
+
+            if (RowCount == 0 || SeriesLength == 0)
+            {
+                _cellDimension = new CellDimension(CellMinSize, CellMinSize, padding);
+                return;
+            }
+
             var cellHeight = Math.Max(CellMinSize, (_boundHeight - _verticalStartSpace - _verticalEndSpace - (padding * (RowCount - 1))) / RowCount);
             var cellWidth = Math.Max(CellMinSize, (_boundWidth - _horizontalStartSpace - _horizontalEndSpace - padding * (SeriesLength - 1)) / SeriesLength);
 
@@ -474,7 +487,14 @@ namespace MudBlazor.Charts
         internal void AddCell(MudHeatMapCell cell)
         {
             MudHeatMapCells.Add(cell);
-            RebuildChart();
+
+            _ = _debouncer.DebounceAsync(async () =>
+            {
+                await InvokeAsync(() =>
+                {
+                    RebuildChart();
+                });
+            });
         }
 
         private void SetBounds()
@@ -517,7 +537,13 @@ namespace MudBlazor.Charts
                 return;
             }
 
-            RebuildChart();
+            _ = _debouncer.DebounceAsync(async () =>
+            {
+                await InvokeAsync(() =>
+                {
+                    RebuildChart();
+                });
+            });
         }
 
         private void OnCellMouseOver(MouseEventArgs _, HeatMapCell cell)
@@ -546,6 +572,17 @@ namespace MudBlazor.Charts
             SelectedCell = (row, column);
 
             await SetSelectedIndexAsync(row);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            _dotNetObjectReference.Dispose();
         }
     }
 }

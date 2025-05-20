@@ -103,7 +103,7 @@ namespace MudBlazor.UnitTests.Charts
                 }
             }
 
-            if ((comp.Instance.ChartReference as Line).ChartOptions.InterpolationOption == InterpolationOption.Straight && chartSeries.FirstOrDefault(x => x.Name == "Series 2") is not null)
+            if (comp.Instance.ChartReference is Line { ChartOptions.InterpolationOption: InterpolationOption.Straight } && chartSeries.FirstOrDefault(x => x.Name == "Series 2") is not null)
             {
                 var path = comp.FindAll("path.mud-chart-line").Skip(1).First();
                 var d = path.GetAttribute("d");

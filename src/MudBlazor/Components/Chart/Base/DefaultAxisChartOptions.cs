@@ -7,13 +7,34 @@ namespace MudBlazor.Charts;
 
 public abstract class DefaultAxisChartOptions : DefaultChartOptions, IAxisChartOptions
 {
+    private int _yAxisTicks = 20;
+    private int _maxNumYAxisTicks = 20;
+
     /// <summary>
     /// The spacing between vertical tick marks.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>20</c>.
+    /// Value must be greater than or equal to <c>1</c>.
     /// </remarks>
-    public int YAxisTicks { get; set; } = 20;
+    public int YAxisTicks
+    {
+        get => _yAxisTicks;
+        set => _yAxisTicks = Math.Max(1, value);
+    }
+
+    /// <summary>
+    /// The maximum allowed number of vertical tick marks.
+    /// </summary>
+    /// <remarks>
+    /// If the number of ticks calculated exceeds this value, the tick marks will automatically be thinned out.
+    /// Value must be greater than or equal to <c>1</c>.
+    /// </remarks>
+    public int MaxNumYAxisTicks
+    {
+        get => _maxNumYAxisTicks;
+        set => _maxNumYAxisTicks = Math.Max(1, value);
+    }
 
     /// <summary>
     /// The maximum value for the vertical axis.
@@ -24,14 +45,6 @@ public abstract class DefaultAxisChartOptions : DefaultChartOptions, IAxisChartO
     /// If this value is <c>null</c>, the Y-axis maximum will be calculated automatically.
     /// </remarks>
     public double? YAxisSuggestedMax { get; set; }
-
-    /// <summary>
-    /// The maximum allowed number of vertical tick marks.
-    /// </summary>
-    /// <remarks>
-    /// If the number of ticks calculated exceeds this value, the tick marks will automatically be thinned out.
-    /// </remarks>
-    public int MaxNumYAxisTicks { get; set; } = 20;
 
     /// <summary>
     /// The format applied to numbers on the vertical axis.

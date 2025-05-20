@@ -35,7 +35,7 @@ namespace MudBlazor.Charts
             var donutRadiusRatio = ChartOptions!.DonutRingRatio.EnsureRange(0.1, 1);
             var chartLabels = ChartOptions!.AggregationOption == AggregationOption.GroupByDataSet
                     ? ChartSeries.Select(ds => ds.Name).ToArray()
-                    : ChartLabels;
+                    : ChartLabels ?? [];
 
             for (var i = 0; i < normalizedData.Length; i++)
             {
@@ -130,7 +130,7 @@ namespace MudBlazor.Charts
                 {
                     Index = i,
                     Labels = labels,
-                    Visible = !_hiddenIndicies.Contains(i),
+                    Visible = !_hiddenIndices.Contains(i),
                     OnVisibilityChanged = EventCallback.Factory.Create<SvgLegend>(this, HandleLegendVisibilityChanged)
                 };
                 _legends.Add(legend);

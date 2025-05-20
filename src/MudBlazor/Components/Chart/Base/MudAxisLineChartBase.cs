@@ -120,7 +120,7 @@ public abstract class MudAxisLineChartBase<TOptions> : MudAxisChartBase<TOptions
             var overrideSettings = GetSeriesDisplayOverride(series);
             var interpolationOption = overrideSettings?.InterpolationOption ?? ChartOptions?.InterpolationOption;
 
-            var interpolationEnabled = ShouldInterpolate && interpolationOption != InterpolationOption.Straight;
+            var interpolationEnabled = ShouldInterpolate && interpolationOption is not InterpolationOption.Straight and not null;
 
             if (interpolationEnabled)
             {
@@ -233,10 +233,11 @@ public abstract class MudAxisLineChartBase<TOptions> : MudAxisChartBase<TOptions
             chartLine.Append(' ');
             chartLine.Append(ToS(y));
 
+            var originalIndex = j / interpolationResolution;
             // Add tooltip points for interpolated data if needed
-            if (j % interpolationResolution == 0 && ChartOptions?.ShowToolTips == true)
+            if (j % interpolationResolution == 0 && ChartOptions?.ShowToolTips == true && originalIndex < Series[seriesIndex].Data?.Points.Count)
             {
-                var originalIndex = j / interpolationResolution;
+                
                 chartDataCircles.Add(new SvgCircle()
                 {
                     Index = originalIndex,
@@ -296,6 +297,7 @@ public abstract class MudAxisLineChartBase<TOptions> : MudAxisChartBase<TOptions
         chartArea.Append(ToS(firstPointX));
         chartArea.Append(' ');
         chartArea.Append(ToS(firstPointY));
+        chartArea.Append(" Z");
 
         var area = new SvgPath()
         {

@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using MudBlazor.Interpolation;
+﻿using MudBlazor.Interpolation;
 
 #nullable enable
 
@@ -168,7 +167,7 @@ partial class TimeSeries : MudAxisLineChartBase<TimeSeriesChartOptions>, IDispos
             }
 
             var labelSpacing = ChartOptions!.TimeLabelSpacing;
-            numVerticalLines = (int)((_maxDateTime - _minDateTime) / labelSpacing) + 1;
+            numVerticalLines = (int)Math.Ceiling((_maxDateTime - _minDateTime) / labelSpacing) + 1;
         }
         else
         {
@@ -227,7 +226,7 @@ partial class TimeSeries : MudAxisLineChartBase<TimeSeriesChartOptions>, IDispos
     protected override string GetLabelXValue(int seriesIndex, int dataPointIndex)
     {
         var dataValue = GetDataValue<DataPoint>(seriesIndex, dataPointIndex);
-        return dataValue.DateTime.ToString(ChartOptions?.TooltipTimeLabelFormat ?? "{0}");
+        return dataValue.DateTime.ToString(ChartOptions?.TooltipTimeLabelFormat ?? "G");
     }
 
     protected override (double x, double y) GetXYForDataPoint(int seriesIndex, int dataPointIndex, int lowestHorizontalLine, double gridYUnits, double horizontalSpace, double verticalSpace)

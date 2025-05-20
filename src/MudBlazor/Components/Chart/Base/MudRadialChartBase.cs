@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using MudBlazor.Interop;
+using MudBlazor.Utilities.Debounce;
 
 #nullable enable
 namespace MudBlazor.Charts;
@@ -31,9 +32,11 @@ public abstract class MudRadialChartBase<TOptions> : MudChartBase<TOptions>, IDi
     internal List<SvgPath> _paths = [];
     internal List<SvgLegend> _legends = [];
     internal SvgPath? _hoveredSegment;
-    protected HashSet<int> _hiddenIndicies = [];
+    protected HashSet<int> _hiddenIndices = [];
     protected (double x, double y, string label, double value)? _hoveredDot = null;
     protected double CalculatedRadius => Math.Round(Math.Min(_boundWidth, _boundHeight) / 2);
+    private readonly DebounceDispatcher _debouncer = new(DebounceIntervalMs);
+    private const int DebounceIntervalMs = 200;
     public abstract string ChartClass { get; }
 
     [DynamicDependency(nameof(OnElementSizeChanged))]
@@ -49,6 +52,7 @@ public abstract class MudRadialChartBase<TOptions> : MudChartBase<TOptions>, IDi
 
         _paths.Clear();
         _legends.Clear();
+        _hiddenIndices.Clear();
         _hoveredSegment = null;
         _hoveredDot = null;
 
@@ -89,7 +93,7 @@ public abstract class MudRadialChartBase<TOptions> : MudChartBase<TOptions>, IDi
 
                     for (var i = 0; i < values.Length; i++)
                     {
-                        if (_hiddenIndicies.Contains(i))
+                        if (_hiddenIndices.Contains(i))
                             continue;
 
                         aggregated[i] += values[i];
@@ -191,11 +195,11 @@ public abstract class MudRadialChartBase<TOptions> : MudChartBase<TOptions>, IDi
     {
         if (legend.Visible)
         {
-            _hiddenIndicies.Remove(legend.Index);
+            _hiddenIndices.Remove(legend.Index);
         }
         else
         {
-            _hiddenIndicies.Add(legend.Index);
+            _hiddenIndices.Add(legend.Index);
         }
 
         if (ChartOptions!.AggregationOption == AggregationOption.GroupByDataSet)
@@ -206,12 +210,12 @@ public abstract class MudRadialChartBase<TOptions> : MudChartBase<TOptions>, IDi
         RebuildChart();
     }
 
-    internal void OnSegmentMouseOver(MouseEventArgs _, SvgPath segment)
+    internal void OnSegmentMouseOver(MouseEventArgs args, SvgPath segment)
     {
         _hoveredSegment = segment;
     }
 
-    internal void OnSegmentMouseOut(MouseEventArgs _)
+    internal void OnSegmentMouseOut()
     {
         _hoveredSegment = null;
     }
@@ -231,8 +235,14 @@ public abstract class MudRadialChartBase<TOptions> : MudChartBase<TOptions>, IDi
         _boundWidth = minDimension;
         _boundHeight = minDimension;
 
-        RebuildChart();
-        StateHasChanged();
+        _ = _debouncer.DebounceAsync(async () =>
+        {
+            await InvokeAsync(() =>
+            {
+                RebuildChart();
+                StateHasChanged();
+            });
+        });
     }
 
     public abstract void RebuildChart();

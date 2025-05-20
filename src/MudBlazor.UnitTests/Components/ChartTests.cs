@@ -81,7 +81,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void BarChartYAxisFormat()
+        public void LineChartYAxisFormat()
         {
             var options = new LineChartOptions();
             var series = new List<ChartSeries>()

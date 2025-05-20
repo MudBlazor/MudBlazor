@@ -18,7 +18,8 @@
             @* 4-point gradients for each cell *@
             @for (int row = 0; row < series.Count; row++)
             {
-                for (int col = 0; col < series[row].Data.Values.Length; col++)
+                var dataLength = series[row].Data?.Values.Length ?? 0;
+                for (int col = 0; col < dataLength; col++)
                 {
                     var cell = _heatMapCells.FirstOrDefault(c => c.Row == row && c.Column == col);
                     var color = GetColorForValue(cell?.Value);
@@ -56,7 +57,7 @@
 
         // how tall each cell should be
         var y = (row * (_cellDimension.Height + _cellDimension.Padding)) + _verticalStartSpace;
-        var seriesLength = series[row].Data != null ? series[row].Data.Values.Length : 0; // protect from a null array
+        var seriesLength = series[row].Data != null ? series[row].Data.Values.Length : 0;
 
         @for (int col = 0; col < seriesLength; col++)
         {
@@ -167,7 +168,7 @@
             </g>
 
             // XAxis Labels
-            var xAxisLabels = MudChartParent?.ChartLabels;
+            var xAxisLabels = MudChartParent?.ChartLabels ?? [];
             @if (row == 0 && _options?.XAxisLabelPosition == XAxisLabelPosition.Top && col < xAxisLabels.Length)
             {
                 <g transform="translate(@((x + _cellDimension.Width / 2).ToS()), @((y - CellPadding).ToS()))">
@@ -352,13 +353,6 @@
         var (tooltipX, tooltipY) = TooltipPositionFunc?.Invoke(path) is { } pos
                 ? (pos.X, pos.Y)
                 : (path.LabelX, path.LabelY);
-
-        if (TooltipPositionFunc is not null)
-        {
-            var tooltipPosition = TooltipPositionFunc.Invoke(path);
-            tooltipX = tooltipPosition.X;
-            tooltipY = tooltipPosition.Y;
-        }
 
         if (TooltipTemplate is not null)
         {

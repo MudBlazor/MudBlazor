@@ -50,19 +50,12 @@
             LineStrokeWidth = 1,
             ShowDataMarkers = false,
             TooltipTimeLabelFormat = "yyyy MMM dd HH:mm:ss",
-            TimeLabelSpacing = TimeSpan.FromMinutes(5),
-            SeriesDisplayOverrides = new Dictionary<ChartSeries, SeriesDisplayOverride>()
-            {
-                [_chart2] = new SeriesDisplayOverride
-                {
-                    LineDisplayType = LineDisplayType.Area,
-                }
-            }
+            TimeLabelSpacing = TimeSpan.FromMinutes(5)
         };
 
-    private static ChartSeries _chart1 = new();
-    private static ChartSeries _chart2 = new();
-    private static ChartSeries _chart3 = new();
+    private ChartSeries _chart1 = new();
+    private ChartSeries _chart2 = new();
+    private ChartSeries _chart3 = new();
 
     private List<ChartSeries> _series = new();
 
@@ -98,6 +91,14 @@
                 Data = Enumerable.Range(-90, 60).Select(x => new TimeSeries.DataPoint(now.AddSeconds(x * 30), _random.Next(4000, 10000))).ToList(),
                 Visible = true,
             };
+
+        _options.SeriesDisplayOverrides = new Dictionary<ChartSeries, SeriesDisplayOverride>()
+        {
+            [_chart2] = new SeriesDisplayOverride
+            {
+                LineDisplayType = LineDisplayType.Area,
+            }
+        };
 
         _series.Add(_chart1);
         _series.Add(_chart2);

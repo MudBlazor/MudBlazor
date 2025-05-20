@@ -3,13 +3,14 @@
 // See the LICENSE file in the project root for more information.
 
 #nullable enable
+using System.Collections;
 using System.Runtime.CompilerServices;
 using MudBlazor.Charts;
 
 namespace MudBlazor;
 
 [CollectionBuilder(typeof(ChartData), nameof(Create))]
-public class ChartData
+public class ChartData : IEnumerable<double>
 {
     private List<ChartPoint> _points = [];
 
@@ -52,4 +53,5 @@ public class ChartData
 
     public static ChartData Create(ReadOnlySpan<double> values) => new(values.ToArray());
     public IEnumerator<double> GetEnumerator() => _points.Select(p => p.Y).GetEnumerator();
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

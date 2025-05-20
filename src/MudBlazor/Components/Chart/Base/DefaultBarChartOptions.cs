@@ -6,6 +6,9 @@ namespace MudBlazor.Charts;
 
 public abstract class DefaultBarChartOptions : DefaultAxisChartOptions
 {
+    private double _seriesSpacingRatio = 1;
+    private double _barWidthRatio = 0.20;
+
     /// <summary>
     /// Specifies how bar groups are horizontally justified within the chart area.
     /// </summary>
@@ -19,7 +22,11 @@ public abstract class DefaultBarChartOptions : DefaultAxisChartOptions
     /// Defaults to <c>1</c> (100%). 
     /// This setting is only applicable when using <see cref="Justify.FlexStart"/>, <see cref="Justify.Center"/>, or <see cref="Justify.FlexEnd"/>.
     /// </remarks>
-    public double SeriesSpacingRatio { get; set; } = 1;
+    public double SeriesSpacingRatio
+    {
+        get => _seriesSpacingRatio;
+        set => _seriesSpacingRatio = Math.Clamp(value, 0.1, 1.0);
+    }
 
     /// <summary>
     /// Determines the proportion of horizontal space allocated to each bar group, relative to the available tick width.
@@ -28,7 +35,11 @@ public abstract class DefaultBarChartOptions : DefaultAxisChartOptions
     /// <remarks>
     /// Defaults to <c>0.20</c> (20%).
     /// </remarks>
-    public double BarWidthRatio { get; set; } = 0.20;
+    public double BarWidthRatio
+    {
+        get => _barWidthRatio;
+        set => _barWidthRatio = Math.Clamp(value, 0.01, 1.0);
+    }
 
     /// <summary>
     /// Specifies the width of the bar stoke.

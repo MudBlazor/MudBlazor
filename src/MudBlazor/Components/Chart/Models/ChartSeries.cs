@@ -3,12 +3,13 @@
 // See the LICENSE file in the project root for more information.
 
 #nullable enable
+using System.Collections;
 using System.Runtime.CompilerServices;
 
 namespace MudBlazor;
 
 [CollectionBuilder(typeof(ChartSeries), nameof(Create))]
-public class ChartSeries : IEquatable<ChartSeries>
+public sealed class ChartSeries : IEquatable<ChartSeries>, IEnumerable<double>
 {
     public ChartSeries() { }
 
@@ -48,6 +49,7 @@ public class ChartSeries : IEquatable<ChartSeries>
     public static implicit operator ChartSeries(double[] values) => new() { Data = values };
     public static ChartSeries Create(ReadOnlySpan<double> values) => new(values.ToArray());
     public IEnumerator<double> GetEnumerator() => Data.GetEnumerator();
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     public bool Equals(ChartSeries? other)
     {
@@ -59,7 +61,19 @@ public class ChartSeries : IEquatable<ChartSeries>
 
     public override bool Equals(object? obj) => Equals(obj as ChartSeries);
 
-    public override int GetHashCode() => HashCode.Combine(Name, string.Join(",", Data.Values));
+    public override int GetHashCode()
+    {
+        var hashCode = new HashCode();
+        hashCode.Add(Name);
+        if (Data?.Values != null)
+        {
+            foreach (var value in Data.Values)
+            {
+                hashCode.Add(value);
+            }
+        }
+        return hashCode.ToHashCode();
+    }
 }
 
 public static class ChartDataSetExtensions

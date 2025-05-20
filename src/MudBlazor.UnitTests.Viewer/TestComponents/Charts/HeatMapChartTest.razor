@@ -40,7 +40,7 @@
     </MudItem>
     <MudItem xs="10">
         <MudChart ChartType="ChartType.HeatMap" ChartSeries="@Series" 
-        ChartLabels="@XAxisLabels" ChartOptions="@options" LegendPosition="_showLegendPosition"></MudChart>
+        ChartLabels="@ChartLabels" ChartOptions="@options" LegendPosition="_showLegendPosition"></MudChart>
     </MudItem>
 </MudGrid>
 <MudGrid>
@@ -170,7 +170,7 @@
         new ChartSeries() { Name = "Su", Data = new double[] { 22, 90, 62, 32, 05, 42, 63, 43, 155 } },
     };
 
-    public string[] XAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
+    public string[] ChartLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
 
     private void RandomizeData()
     {

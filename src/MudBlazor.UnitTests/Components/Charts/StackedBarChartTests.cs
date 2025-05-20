@@ -91,6 +91,13 @@ namespace MudBlazor.UnitTests.Charts
 
             comp.FindAll("path.mud-chart-bar").Count.Should().Be(3 * 9, because: "3 series with 9 data points each");
 
+
+            comp.Markup.Should()
+                .Contain("d=\"M 37 320 L 37 235.2143\"");
+
+            comp.Markup.Should()
+                .Contain("d=\"M 663 223.0714 L 663 184.6429\"");
+
             comp.SetParametersAndRender(parameters => parameters
                 .Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _modifiedPalette }));
 

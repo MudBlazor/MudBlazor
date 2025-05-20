@@ -95,7 +95,7 @@
                 if (showDataMarkers && item != HoveredDataPoint)
                 {
                     // Unhovered data point
-                    <circle class="mud-chart-serie mud-donut-segment" 
+                    <circle class="mud-chart-serie mud-chart-point" 
                             @onclick="async () => await SetSelectedIndexAsync(chartLine.Index)"
                             stroke="@color"
                             stroke-width="@dataPointStroke"
@@ -106,7 +106,7 @@
                 }
 
                 // This is a hoverable circle that is invisible until it is the hovered point but has a larger radius to make it easier to hover over
-                <circle class="mud-chart-serie mud-donut-segment"
+                <circle class="mud-chart-serie mud-chart-point"
                         @onclick="async () => await SetSelectedIndexAsync(chartLine.Index)" 
                         fill="@(item == HoveredDataPoint ? color : string.Empty)" 
                         stroke="@color" 
@@ -145,13 +145,6 @@
             var (tooltipX, tooltipY) = TooltipPositionFunc?.Invoke(path) is { } pos
                     ? (pos.X, pos.Y)
                     : (path.LabelX, path.LabelY);
-
-            if (TooltipPositionFunc is not null)
-            {
-                var tooltipPosition = TooltipPositionFunc.Invoke(path);
-                tooltipX = tooltipPosition.X;
-                tooltipY = tooltipPosition.Y;
-            }
 
             if (TooltipTemplate is not null)
             {

@@ -22,7 +22,7 @@ namespace MudBlazor.Charts
         private double _barWidth;
         private double _barGap;
 
-        private const double MinBarWidth = 8;
+        private const double MinBarWidth = 6;
 
         protected override void OnInitialized()
         {
@@ -42,7 +42,7 @@ namespace MudBlazor.Charts
             var verticalSpace = (_boundHeight - VerticalStartSpace - VerticalEndSpace) / Math.Max(1, numHorizontalLines - 1);
             var tickWidth = horizontalSpace / numVerticalLines;
 
-            ComputeBarDimensions(tickWidth - HorizontalStartSpace - HorizontalEndSpace);
+            ComputeBarDimensions(tickWidth);
             GenerateHorizontalGridLines(numHorizontalLines, lowestHorizontalLine, gridYUnits, verticalSpace);
             GenerateVerticalGridLines(numVerticalLines, horizontalSpace);
             GenerateBars(lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace, numVerticalLines);

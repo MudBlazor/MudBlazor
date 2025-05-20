@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using MudBlazor.Interop;
@@ -117,8 +118,8 @@ public abstract class MudAxisChartBase<TOptions> : MudChartBase<TOptions>, IDisp
             }
             else if (MudChartParent.Width.EndsWith("px")
                 && MudChartParent.Height.EndsWith("px")
-                && double.TryParse(MudChartParent.Width.AsSpan(0, MudChartParent.Width.Length - 2), out var width)
-                && double.TryParse(MudChartParent.Height.AsSpan(0, MudChartParent.Height.Length - 2), out var height))
+                && double.TryParse(MudChartParent.Width.AsSpan(0, MudChartParent.Width.Length - 2), NumberStyles.Float, CultureInfo.InvariantCulture, out var width)
+                && double.TryParse(MudChartParent.Height.AsSpan(0, MudChartParent.Height.Length - 2), NumberStyles.Float, CultureInfo.InvariantCulture, out var height))
             {
                 _boundWidth = width;
                 _boundHeight = height;

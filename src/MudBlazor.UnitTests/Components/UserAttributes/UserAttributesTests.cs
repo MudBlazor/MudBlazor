@@ -6,6 +6,7 @@ using System.Collections.Concurrent;
 using Bunit;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using MudBlazor.Charts;
 using MudBlazor.Services;
 using NUnit.Framework;
 using TestContext = Bunit.TestContext;
@@ -25,6 +26,8 @@ namespace MudBlazor.UnitTests.UserAttributes
             Exclude(typeof(MudOverlay));        // Sectioned component, skip
             Exclude(typeof(DataGridGroupRow<>));  // Internal component, skip
             Exclude(typeof(DataGridVirtualizeRow<>)); // Internal component, skip
+            Exclude(typeof(BaseRadialChart<>)); // Internal component, skip
+
         }
 
         [Test]

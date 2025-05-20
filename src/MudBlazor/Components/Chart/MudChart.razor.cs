@@ -30,7 +30,7 @@ public partial class MudChart
 
     protected override void OnAfterRender(bool firstRender)
     {
-        if (firstRender && ChartReference != null)
+        if (firstRender && ChartReference is { })
         {
             StateHasChanged();
         }

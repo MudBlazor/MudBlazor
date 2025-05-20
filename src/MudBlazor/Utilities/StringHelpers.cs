@@ -25,8 +25,8 @@ internal static class StringHelpers
     /// <returns>
     /// The string representation of the double value. <br/>
     /// </returns>
-    public static string? ToS(this double value)
+    public static string ToS(this double value)
     {
-        return Math.Round(value, 4).ToString(CultureInfo.InvariantCulture);
+        return ToS(value, null);
     }
 }

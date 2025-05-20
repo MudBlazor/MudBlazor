@@ -59,7 +59,7 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.ChartType, ChartType.Bar)
                 .Add(p => p.Height, "350px")
                 .Add(p => p.Width, "100%")
-                .Add(p => p.ChartOptions, new BarChartOptions { ChartPalette = _baseChartPalette })
+                .Add(p => p.ChartOptions, new BarChartOptions { ChartPalette = _baseChartPalette, FixedBarWidth = 8 })
                 .Add(p => p.ChartSeries, chartSeries)
                 .Add(p => p.ChartLabels, xAxisLabels));
 
@@ -79,7 +79,7 @@ namespace MudBlazor.UnitTests.Charts
             comp.Instance.GetState(x => x.SelectedIndex).Should().Be(1, because: "second legend item was clicked");
             // click first item of legend (to check, if get's back to 0)
             legend.FindAll(LEGEND_CSS_SELECTOR).Skip(0).First().Click();
-            comp.Instance.SelectedIndex.Should().Be(0, because: "first legend item was clicked");
+            comp.Instance.GetState(x => x.SelectedIndex).Should().Be(0, because: "first legend item was clicked");
 
             if (chartSeries.Count <= 3)
             {
@@ -89,6 +89,18 @@ namespace MudBlazor.UnitTests.Charts
 
             var bars = comp.FindAll("path.mud-chart-bar");
             bars.Count.Should().Be(3 * 9, because: "3 series with 9 data points each");
+
+            if (chartSeries.TryGetIndexOfDataValue(0, 40, out var index))
+            {
+                bars[index].OuterHtml.Should()
+                    .Contain("d=\"M 34 261 L 34 143\"");
+            }
+
+            if (chartSeries.TryGetIndexOfDataValue(0, 80, out index))
+            {
+                bars[index].OuterHtml.Should()
+                    .Contain("d=\"M 569.5 261 L 569.5 25\"");
+            }
 
             comp.SetParametersAndRender(parameters => parameters
                 .Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _modifiedPalette }));
@@ -135,6 +147,18 @@ namespace MudBlazor.UnitTests.Charts
 
             var bars = comp.FindAll("path.mud-chart-bar");
             bars.Count.Should().Be(3 * 9, because: "3 series with 9 data points each");
+
+            if (chartSeries.TryGetIndexOfDataValue(0, 40, out var index))
+            {
+                bars[index].OuterHtml.Should()
+                    .Contain("d=\"M 33 261 L 33 143\"");
+            }
+
+            if (chartSeries.TryGetIndexOfDataValue(0, 80, out index))
+            {
+                bars[index].OuterHtml.Should()
+                    .Contain("d=\"M 575.7859 261 L 575.7859 25\"");
+            }
 
             comp.SetParametersAndRender(parameters => parameters.Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _modifiedPalette }));
 

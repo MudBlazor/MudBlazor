@@ -13,7 +13,7 @@ namespace MudBlazor.Charts
     /// <seealso cref="TimeSeries"/>
     partial class Line : MudAxisLineChartBase<LineChartOptions>
     {
-        protected override bool ShouldInterpolate => MudChartParent is not null;
+        protected override bool ShouldInterpolate => true;
 
         protected override void OnInitialized()
         {

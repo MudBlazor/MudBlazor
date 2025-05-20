@@ -22,7 +22,8 @@ namespace MudBlazor.Charts
 
         private string GetCheckBoxStyle(int index)
         {
-            var color = MudChartParent?.ChartOptions!.ChartPalette.GetValue(index % MudChartParent.ChartOptions!.ChartPalette.Length);
+            var palette = MudChartParent?.ChartOptions?.ChartPalette;
+            var color = palette?.GetValue(index % palette.Length);
             return $"--checkbox-color: {color};";
         }
     }

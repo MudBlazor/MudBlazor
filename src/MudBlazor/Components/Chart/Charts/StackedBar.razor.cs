@@ -22,7 +22,7 @@ namespace MudBlazor.Charts
         private double _barWidthStroke;
         private SvgPath? _hoveredBar;
 
-        private const double MinBarWidth = 8;
+        private const double MinBarWidth = 6;
 
         protected override void OnInitialized()
         {
@@ -345,7 +345,7 @@ namespace MudBlazor.Charts
             if (maxColumns <= 1) return 0;
 
             var spaceCount = maxColumns - 1;
-            var remainingWidth = horizontalSpace - HorizontalStartSpace - (_barWidth * maxColumns);
+            var remainingWidth = horizontalSpace - (_barWidth * maxColumns);
             var spaceWidth = remainingWidth * ChartOptions!.SeriesSpacingRatio.EnsureRange(0.0, 1.0);
             var spaceBetweenBars = spaceCount > 0 ? spaceWidth / spaceCount : 0;
 

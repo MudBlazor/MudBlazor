@@ -13,8 +13,8 @@
                  TooltipTemplate="MudChartParent?.TooltipTemplate"
                  TooltipPositionFunc="MudChartParent?.TooltipPositionFunc"
                  OnPathClick="async (i) => await SetSelectedIndexAsync(i)"
-                 OnMouseOver="(i) => OnSegmentMouseOver(new MouseEventArgs(), i)"
-                 OnMouseOut="() => OnSegmentMouseOut(new MouseEventArgs())" />
+                 OnMouseOver="(x) => OnSegmentMouseOver(x.Args, x.Segment)"
+                 OnMouseOut="() => OnSegmentMouseOut()" />
 
 @code {
     public override string ChartClass => "mud-chart-pie";

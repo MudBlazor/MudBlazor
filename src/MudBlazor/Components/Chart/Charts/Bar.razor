@@ -8,7 +8,7 @@
     var style = _hoveredBar != null ? "overflow: visible;" : "";
 }
 
-<svg @ref="_elementReference" @attributes="UserAttributes" class="mud-chart-line mud-ltr" width="@MudChartParent?.Width" height="@MudChartParent?.Height" viewBox="0 0 @_boundWidth.ToS() @_boundHeight.ToS()" style="@style">
+<svg @ref="_elementReference" @attributes="UserAttributes" class="mud-chart-bar mud-ltr" width="@MudChartParent?.Width" height="@MudChartParent?.Height" viewBox="0 0 @_boundWidth.ToS() @_boundHeight.ToS()" style="@style">
     <Filters />
     <g class="mud-charts-grid">
         <g class="mud-charts-gridlines-yaxis">
@@ -72,13 +72,6 @@
         var (tooltipX, tooltipY) = TooltipPositionFunc?.Invoke(_hoveredBar) is { } pos
                 ? (pos.X, pos.Y)
                 : (_hoveredBar.LabelX, _hoveredBar.LabelY);
-
-        if (TooltipPositionFunc is not null)
-        {
-            var tooltipPosition = TooltipPositionFunc.Invoke(_hoveredBar);
-            tooltipX = tooltipPosition.X;
-            tooltipY = tooltipPosition.Y;
-        }
 
         if (TooltipTemplate is not null)
         {
