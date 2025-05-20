@@ -459,7 +459,7 @@ namespace MudBlazor
             _mask = other;
         }
 
-        private async void OnCut(EventArgs obj)
+        private async void OnCut(ClipboardEventArgs obj)
         {
             if (GetReadOnlyState())
                 return;
