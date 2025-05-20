@@ -18,12 +18,12 @@ namespace MudBlazor.UnitTests.Components
             var swipe = comp.FindComponent<MudSwipeArea>();
 
             await comp.InvokeAsync(() => swipe.Instance._yDown = 50);
-            await comp.InvokeAsync(() => swipe.Instance.OnPointerUp(new PointerEventArgs()));
+            await comp.InvokeAsync(() => swipe.Instance.OnPointerUpAsync(new PointerEventArgs()));
 
-            await comp.InvokeAsync(() => swipe.Instance.OnPointerCancel(new PointerEventArgs()));
+            await comp.InvokeAsync(() => swipe.Instance.OnPointerCancelAsync(new PointerEventArgs()));
             comp.WaitForAssertion(() => swipe.Instance._xDown.Should().Be(null));
 
-            await comp.InvokeAsync(() => swipe.Instance.OnPointerUp(new PointerEventArgs()));
+            await comp.InvokeAsync(() => swipe.Instance.OnPointerUpAsync(new PointerEventArgs()));
             comp.WaitForAssertion(() => swipe.Instance._xDown.Should().Be(null));
         }
 
@@ -36,14 +36,14 @@ namespace MudBlazor.UnitTests.Components
             // Swipe below the sensitivity should not make change.
 
             await comp.InvokeAsync(() => swipe.Instance.OnPointerDown(new PointerEventArgs { ClientX = 0, ClientY = 0 }));
-            await comp.InvokeAsync(() => swipe.Instance.OnPointerUp(new PointerEventArgs { ClientX = 20, ClientY = 20 }));
+            await comp.InvokeAsync(() => swipe.Instance.OnPointerUpAsync(new PointerEventArgs { ClientX = 20, ClientY = 20 }));
 
             comp.WaitForAssertion(() => comp.Instance.SwipeDirection.Should().Be(SwipeDirection.None));
             comp.WaitForAssertion(() => comp.Instance.SwipeDelta.Should().Be(null));
 
             await comp.InvokeAsync(() => swipe.Instance.OnPointerDown(new PointerEventArgs { ClientX = 0, ClientY = 0 }));
-            await comp.InvokeAsync(() => swipe.Instance.OnPointerUp(new PointerEventArgs { ClientX = 150, ClientY = 200 }));
-            await comp.InvokeAsync(() => swipe.Instance.OnPointerUp(new PointerEventArgs { ClientX = 100, ClientY = 50 }));
+            await comp.InvokeAsync(() => swipe.Instance.OnPointerUpAsync(new PointerEventArgs { ClientX = 150, ClientY = 200 }));
+            await comp.InvokeAsync(() => swipe.Instance.OnPointerUpAsync(new PointerEventArgs { ClientX = 100, ClientY = 50 }));
 
             comp.WaitForAssertion(() => comp.Instance.SwipeDirection.Should().Be(SwipeDirection.TopToBottom));
             comp.WaitForAssertion(() => comp.Instance.SwipeDelta.Should().Be(-200));
@@ -52,7 +52,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void SwipeTest_PreventDefault_SetTrue()
         {
-            var listenerIds = new int[] { 1, 2, 3 };
+            var listenerIds = new int[] { 1, 2, 3, 4, 5 };
 
             var handler = Context.JSInterop.Setup<int[]>(invocation => invocation.Identifier == "mudElementRef.addDefaultPreventingHandlers")
                 .SetResult(listenerIds);
@@ -64,13 +64,13 @@ namespace MudBlazor.UnitTests.Components
 
             var invocation = handler.VerifyInvoke("mudElementRef.addDefaultPreventingHandlers");
             invocation.Arguments.Count.Should().Be(2);
-            invocation.Arguments[1].Should().BeEquivalentTo(new[] { "onpointerdown", "onpointerup", "onpointercancel" });
+            invocation.Arguments[1].Should().BeEquivalentTo(new[] { "onpointerdown", "onpointerup", "onpointercancel", "onpointermove", "onpointerleave" });
         }
 
         [Test]
         public void SwipeTest_PreventDefault_SetFalse()
         {
-            var listenerIds = new int[] { 1, 2, 3 };
+            var listenerIds = new int[] { 1, 2, 3, 4, 5 };
 
             Context.JSInterop.Setup<int[]>(invocation => invocation.Identifier == "mudElementRef.addDefaultPreventingHandlers")
                 .SetResult(listenerIds);
@@ -87,7 +87,7 @@ namespace MudBlazor.UnitTests.Components
 
             var invocation = handler.VerifyInvoke("mudElementRef.removeDefaultPreventingHandlers");
             invocation.Arguments.Count.Should().Be(3);
-            invocation.Arguments[1].Should().BeEquivalentTo(new[] { "onpointerdown", "onpointerup", "onpointercancel" });
+            invocation.Arguments[1].Should().BeEquivalentTo(new[] { "onpointerdown", "onpointerup", "onpointercancel", "onpointermove", "onpointerleave" });
             invocation.Arguments[2].Should().BeEquivalentTo(listenerIds);
         }
     }

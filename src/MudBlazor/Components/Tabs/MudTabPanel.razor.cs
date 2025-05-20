@@ -190,6 +190,16 @@ public partial class MudTabPanel
     [Category(CategoryTypes.Tabs.Behavior)]
     public string? ToolTip { get; set; }
 
+    /// <summary>
+    /// Value to use when ordering tabs lexicographically, in place of <see cref="MudTabPanel.Text" />.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Tabs.Appearance)]
+    public string? SortKey { get; set; }
+
     /// <inheritdoc/>
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

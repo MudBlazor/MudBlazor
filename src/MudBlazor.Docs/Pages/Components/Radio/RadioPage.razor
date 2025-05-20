@@ -61,14 +61,55 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Keyboard Navigation">
+            <SectionHeader Title="Accessibility">
                 <Description>
-                    <MudText>MudRadio accepts keys to keyboard navigation.</MudText>
-                    <br />
-                    <MudText><CodeInline>Tab</CodeInline> or <CodeInline>Shift+Tab</CodeInline> key to focus next/previous radio</MudText>
-                    <MudText><CodeInline>Enter</CodeInline> or <CodeInline>NumpadEnter</CodeInline> or <CodeInline>Space</CodeInline> keys to select focused radio</MudText>
-                    <MudText><CodeInline>Backspace</CodeInline> key to reset radio</MudText>
-                    <MudText>*Disabled radios cannot be changed by keys.</MudText>
+                    <MudText Class="mb-2">
+                        A <CodeInline>MudRadioGroup</CodeInline> accepts the following shortcuts:
+                    </MudText>
+                    <MudSimpleTable Outlined="true"
+                                    Hover="true">
+                        <thead>
+                        <tr>
+                            <th>Keys</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>
+                                <CodeInline>Tab</CodeInline>,
+                                <CodeInline>Shift+Tab</CodeInline>
+                            </td>
+                            <td>Move focus into or out of the radio group</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <CodeInline>Enter</CodeInline>,
+                                <CodeInline>NumpadEnter</CodeInline>,
+                                <CodeInline>Space</CodeInline>
+                            </td>
+                            <td>Select the focused radio button</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <CodeInline>Left Arrow</CodeInline>,
+                                <CodeInline>Up Arrow</CodeInline>,
+                                <CodeInline>Right Arrow</CodeInline>,
+                                <CodeInline>Down Arrow</CodeInline>
+                            </td>
+                            <td>Cycle focus between radio buttons</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <CodeInline>Backspace</CodeInline>
+                            </td>
+                            <td>Unselect the focused radio button</td>
+                        </tr>
+                        </tbody>
+                    </MudSimpleTable>
+                    <MudAlert Severity="Severity.Info" Class="my-3">
+                        Note: <CodeInline>@nameof(MudRadioGroup<T>.Disabled)</CodeInline> radio buttons are unaffected by these shortcuts and cannot be focused
+                    </MudAlert>
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(RadioKeyboardNavigationExample)" ShowCode="false">

@@ -1,4 +1,4 @@
-.cookie-consent-container {
+.mud-cc-container {
   display: flex;
   justify-content: center;
   position: fixed;
@@ -9,7 +9,7 @@
   z-index: var(--mud-zindex-popover);
 }
 
-.cookie-consent {
+.mud-cc-content {
   display: flex;
   flex-direction: column;
   padding: 1em;
@@ -19,14 +19,14 @@
   border-radius: 0.25rem;
 }
 
-.cookie-consent-content {
+.mud-cc-body {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1rem;
 }
 
-.cookie-consent-actions {
+.mud-cc-actions {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
