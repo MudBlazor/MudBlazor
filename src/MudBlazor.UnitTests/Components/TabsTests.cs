@@ -1360,6 +1360,7 @@ namespace MudBlazor.UnitTests.Components
             var dropInfo = new MudItemDropInfo<MudTabPanel>(tab, "mud-drop-zone", 2);
             tabs.ItemUpdated(dropInfo);
             comp.WaitForAssertion(() => tabs._panels[2].Text.Should().Be(tabText));
+        }
 
         [Test]
         public void LabelSorting_NaturalOrderIfSortingUnspecified()
