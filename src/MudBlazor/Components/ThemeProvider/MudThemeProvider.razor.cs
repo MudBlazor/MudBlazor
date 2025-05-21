@@ -78,7 +78,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
     [Parameter]
     public EventCallback<bool> IsDarkModeChanged { get; set; }
 
-    [DynamicDependency(nameof(SystemPreferenceChanged))]
+    [DynamicDependency(nameof(SystemThemeChangedAsync))]
     public MudThemeProvider()
     {
         using var registerScope = CreateRegisterScope();
@@ -93,18 +93,20 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
     }
 
     /// <summary>
-    /// Gets whether the system is using Dark Mode.
+    /// Gets the system theme's dark mode preference.
     /// </summary>
     /// <returns>
-    /// When <c>true</c>, the system is using Dark Mode.<br />
-    /// When <c>false</c>, the system is using Light Mode.
+    /// Returns <c>true</c> if the theme is Dark Mode; otherwise, <c>false</c>.
     /// </returns>
-    public async Task<bool> GetSystemPreference()
+    public async Task<bool> GetSystemThemeAsync()
     {
         var (_, value) = await JsRuntime.InvokeAsyncWithErrorHandling(false, "darkModeChange");
 
         return value;
     }
+
+    [Obsolete("Use GetSystemTheme instead")]
+    public Task<bool> GetSystemPreference() => GetSystemThemeAsync();
 
     /// <summary>
     /// Calls a function when the system theme has changed.
@@ -113,19 +115,22 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
     /// <remarks>
     /// A value of <c>true</c> is passed if the system is now in Dark Mode. Otherwise, the system is now in Light Mode.
     /// </remarks>
-    public Task WatchSystemPreference(Func<bool, Task> functionOnChange)
+    public Task WatchSystemThemeAsync(Func<bool, Task> functionOnChange)
     {
         _darkLightModeChanged += functionOnChange;
 
         return Task.CompletedTask;
     }
 
+    [Obsolete("Use WatchSystemThemeAsync instead")]
+    public Task WatchSystemPreference(Func<bool, Task> functionOnChange) => WatchSystemThemeAsync(functionOnChange);
+
     /// <summary>
     /// Occurs when the system theme has changed.
     /// </summary>
     /// <param name="isDarkMode">When <c>true</c>, the system is in Dark Mode.</param>
     [JSInvokable]
-    public async Task SystemPreferenceChanged(bool isDarkMode)
+    public async Task SystemThemeChangedAsync(bool isDarkMode)
     {
         await _isDarkModeState.SetValueAsync(isDarkMode);
         var handler = _darkLightModeChanged;
@@ -134,6 +139,10 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
             await handler(isDarkMode);
         }
     }
+
+    [Obsolete("Use SystemThemeChangedAsync instead")]
+    [JSInvokable]
+    public Task SystemPreferenceChanged(bool isDarkMode) => SystemThemeChangedAsync(isDarkMode);
 
     /// <inheritdoc />
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -196,11 +205,13 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
     protected static string BuildMudBlazorScrollbar()
     {
         var scrollbar = new StringBuilder();
+
         scrollbar.AppendLine("<style>");
         scrollbar.AppendLine("::-webkit-scrollbar {width: 8px;height: 8px;z-index: 1;}");
         scrollbar.AppendLine("::-webkit-scrollbar-track {background: transparent;}");
         scrollbar.AppendLine("::-webkit-scrollbar-thumb {background: #c4c4c4;border-radius: 1px;}");
         scrollbar.AppendLine("::-webkit-scrollbar-thumb:hover {background: #a6a6a6;}");
+
         //Firefox
         scrollbar.AppendLine("html, body * {scrollbar-color: #c4c4c4 transparent;scrollbar-width: thin;}");
         scrollbar.AppendLine("</style>");

@@ -1,16 +1,14 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Services;
 
 namespace MudBlazor.Docs.Shared
 {
     public partial class MainLayout : LayoutComponentBase, IDisposable
     {
+        private MudThemeProvider _mudThemeProvider;
+
         [Inject]
         private LayoutService LayoutService { get; set; }
-
-        private MudThemeProvider _mudThemeProvider;
 
         static MainLayout()
         {
@@ -30,18 +28,18 @@ namespace MudBlazor.Docs.Shared
             if (firstRender)
             {
                 await ApplyUserPreferences();
-                await _mudThemeProvider.WatchSystemPreference(OnSystemPreferenceChanged);
+                await _mudThemeProvider.WatchSystemThemeAsync(OnSystemThemeChangedAsync);
                 StateHasChanged();
             }
         }
 
         private async Task ApplyUserPreferences()
         {
-            var defaultDarkMode = await _mudThemeProvider.GetSystemPreference();
-            await LayoutService.ApplyUserPreferences(defaultDarkMode);
+            var darkMode = await _mudThemeProvider.GetSystemThemeAsync();
+            await LayoutService.ApplyUserPreferences(darkMode);
         }
 
-        private async Task OnSystemPreferenceChanged(bool newValue)
+        private async Task OnSystemThemeChangedAsync(bool newValue)
         {
             await LayoutService.OnSystemPreferenceChanged(newValue);
         }

@@ -2,8 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Threading.Tasks;
 using MudBlazor.Docs.Enums;
 using MudBlazor.Docs.Models;
 using MudBlazor.Docs.Services.UserPreferences;
@@ -84,19 +82,18 @@ public class LayoutService
     {
         switch (CurrentDarkLightMode)
         {
-            // Change to Light
             case DarkLightMode.System:
                 CurrentDarkLightMode = DarkLightMode.Light;
                 ObserveSystemThemeChange = false;
                 IsDarkMode = false;
                 break;
-            // Change to Dark
+
             case DarkLightMode.Light:
                 CurrentDarkLightMode = DarkLightMode.Dark;
                 ObserveSystemThemeChange = false;
                 IsDarkMode = true;
                 break;
-            // Change to System
+
             case DarkLightMode.Dark:
                 CurrentDarkLightMode = DarkLightMode.System;
                 ObserveSystemThemeChange = true;

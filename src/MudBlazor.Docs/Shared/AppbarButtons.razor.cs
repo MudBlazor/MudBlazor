@@ -2,8 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Enums;
 using MudBlazor.Docs.Services;
@@ -17,6 +15,10 @@ public partial class AppbarButtons
     [Inject] private LayoutService LayoutService { get; set; }
     private IDictionary<NotificationMessage, bool> _messages = null;
     private bool _newNotificationsAvailable = false;
+
+    public string RtlButtonText => LayoutService.IsRTL ? "Left-to-right" : "Right-to-left";
+
+    public string RtlButtonIcon => LayoutService.IsRTL ? @Icons.Material.Filled.FormatTextdirectionLToR : @Icons.Material.Filled.FormatTextdirectionRToL;
 
     public string DarkLightModeButtonText => LayoutService.CurrentDarkLightMode switch
     {
@@ -32,7 +34,7 @@ public partial class AppbarButtons
         _ => Icons.Material.Filled.LightMode
     };
 
-    private async Task MarkNotificationAsRead()
+    private async Task MarkNotificationAsReadAsync()
     {
         await NotificationService.MarkNotificationsAsRead();
         _newNotificationsAvailable = false;
