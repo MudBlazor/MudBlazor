@@ -4,6 +4,7 @@
 
 using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Enums;
 using MudBlazor.Docs.Models;
 using MudBlazor.Docs.Services.UserPreferences;
@@ -59,17 +60,17 @@ public class LayoutService
 
             PreviewFeaturesEnabled = _userPreferences.PreviewFeatures;
             MudGlobal.EnablePreviewFeatures = PreviewFeaturesEnabled;
+
+            if (!MudGlobal.EnablePreviewFeatures)
+            {
+                MudGlobal.TooltipDefaults.Delay = TimeSpan.FromMilliseconds(500);
+            }
         }
         else
         {
             IsDarkMode = isDarkModeDefaultTheme;
             _userPreferences = new UserPreferences.UserPreferences { DarkLightTheme = DarkLightMode.System };
             await _userPreferencesService.SaveUserPreferences(_userPreferences);
-        }
-
-        if (!MudGlobal.EnablePreviewFeatures)
-        {
-            MudGlobal.TooltipDefaults.Delay = TimeSpan.FromMilliseconds(500);
         }
     }
 
@@ -119,7 +120,7 @@ public class LayoutService
         OnMajorUpdateOccurred();
     }
 
-    public async Task ToggleRightToLeft()
+    public async Task ToggleRightToLeftAsync()
     {
         IsRTL = !IsRTL;
         _userPreferences.RightToLeft = IsRTL;
@@ -127,11 +128,12 @@ public class LayoutService
         OnMajorUpdateOccurred();
     }
 
-    public async Task TogglePreviewFeatures()
+    public async Task TogglePreviewFeaturesAsync()
     {
         PreviewFeaturesEnabled = !PreviewFeaturesEnabled;
         _userPreferences.PreviewFeatures = PreviewFeaturesEnabled;
         await _userPreferencesService.SaveUserPreferences(_userPreferences);
+
         OnMajorUpdateOccurred();
     }
 
