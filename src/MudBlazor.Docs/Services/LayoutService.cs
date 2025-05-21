@@ -56,7 +56,7 @@ public class LayoutService
     /// <summary>
     /// Updates the dark mode state based on user preference and, optionally, the system's dark mode setting.
     /// </summary>
-    /// <param name="systemMode">The current system dark mode setting. If <c>, the existing known system mode is used.</param>
+    /// <param name="systemMode">The current system dark mode setting. If <c>null</c>, the existing known system mode is used.</param>
     public void UpdateDarkModeState(bool? systemMode = null)
     {
         if (systemMode.HasValue)
