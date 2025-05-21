@@ -593,32 +593,11 @@ namespace MudBlazor
                 .WithChangeHandler(OnGroupByOrderChangedAsync);
         }
 
-        private async Task OnGroupingParameterChangedAsync()
-        {
-            // Regroup DataGrid           
-            if (DataGrid is not null)
-            {
-                await DataGrid.ChangedGrouping(this);
-            }
-        }
+        private void OnGroupingParameterChangedAsync() => DataGrid?.GroupItems();
 
-        private async Task OnGroupExpandedChangedAsync()
-        {
-            // Regroup DataGrid
-            if (DataGrid is not null)
-            {
-                await DataGrid.ChangedGrouping();
-            }
-        }
+        private void OnGroupByOrderChangedAsync() => DataGrid?.GroupItems();
 
-        private async Task OnGroupByOrderChangedAsync()
-        {
-            // Regroup DataGrid           
-            if (DataGrid is not null)
-            {
-                await DataGrid.ChangedGrouping();
-            }
-        }
+        private void OnGroupExpandedChangedAsync() => DataGrid?.GroupItems();
 
         protected override void OnInitialized()
         {
