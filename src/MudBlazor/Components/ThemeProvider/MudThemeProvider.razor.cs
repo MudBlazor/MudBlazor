@@ -104,9 +104,6 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         return value;
     }
 
-    [Obsolete("Use GetSystemModeAsync instead")]
-    public Task<bool> GetSystemPreference() => GetSystemModeAsync();
-
     /// <summary>
     /// Calls a function when the system theme has changed.
     /// </summary>
@@ -120,9 +117,6 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
 
         return Task.CompletedTask;
     }
-
-    [Obsolete("Use WatchSystemModeAsync instead")]
-    public Task WatchSystemPreference(Func<bool, Task> functionOnChange) => WatchSystemModeAsync(functionOnChange);
 
     /// <summary>
     /// Occurs when the system theme has changed.
@@ -138,10 +132,6 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
             await handler(isDarkMode);
         }
     }
-
-    [Obsolete("Use SystemModeChangedAsync instead")]
-    [JSInvokable]
-    public Task SystemPreferenceChanged(bool isDarkMode) => SystemModeChangedAsync(isDarkMode);
 
     /// <inheritdoc />
     protected override async Task OnAfterRenderAsync(bool firstRender)

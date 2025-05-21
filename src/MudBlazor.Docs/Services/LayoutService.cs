@@ -91,18 +91,12 @@ public class LayoutService
         }
     }
 
-    [Obsolete("Use ApplyUserPreferencesAsync instead")]
-    public Task ApplyUserPreferences() => ApplyUserPreferencesAsync();
-
     public Task OnSystemModeChanged(bool newValue)
     {
         _systemDarkMode = newValue;
         OnMajorUpdateOccurred();
         return Task.CompletedTask;
     }
-
-    [Obsolete("Use OnSystemModeChanged instead")]
-    public Task OnSystemPreferenceChanged(bool newValue) => OnSystemModeChanged(newValue);
 
     public async Task CycleDarkLightModeAsync()
     {
@@ -138,9 +132,6 @@ public class LayoutService
         await _userPreferencesService.SaveUserPreferences(_userPreferences);
         OnMajorUpdateOccurred();
     }
-
-    [Obsolete("Use ToggleRightToLeftAsync instead")]
-    public Task ToggleRightToLeft() => ToggleRightToLeftAsync();
 
     public void SetBaseTheme(MudTheme theme)
     {
