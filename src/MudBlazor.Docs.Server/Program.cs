@@ -49,7 +49,7 @@ using (var scope = app.Services.CreateScope())
         inMemoryService.Preload();
     }
     // Warm up the documentation
-    ApiDocumentation.GetType("MudAlert");
+    //ApiDocumentation.GetType("MudAlert");
 }
 
 app.Run();

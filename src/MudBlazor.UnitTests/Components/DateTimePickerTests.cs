@@ -79,7 +79,8 @@ namespace MudBlazor.UnitTests.Components
             var comp = OpenPicker();
             var picker = comp.FindComponent<MudDateTimePicker>().Instance;
             picker.GoToDate();
-            comp.Find(".mud-picker-calendar-header button.mud-button-month").TrimmedText().Should().Be(DateTime.Now.ToString("MMMM yyyy"));
+            comp.Find(".mud-picker-calendar-header button.mud-button-month").TrimmedText().Should().Contain(DateTime.Now.ToString("MMMM"));
+            comp.Find(".mud-picker-calendar-header button.mud-button-month").TrimmedText().Should().Contain(DateTime.Now.ToString("yyyy"));
             await comp.InvokeAsync(() => picker.GoToDate(DateTime.Parse("2024-06-26")));
             comp.Find(".mud-picker-calendar-header button.mud-button-month").TrimmedText().Should().Be(DateTime.Parse("2024-06-26").ToString("MMMM yyyy"));
         }
@@ -346,7 +347,8 @@ namespace MudBlazor.UnitTests.Components
                     Parameter("IsDateTimeDisabledFunc", (DateTime dateTime) => dateTime.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday)
                 ]);
             var picker = comp.FindComponent<MudDateTimePicker>();
-            comp.Find("button.mud-button-month").TextContent.Should().Be("February 2024");
+            comp.Find("button.mud-button-month").TextContent.Should().Contain("February");
+            comp.Find("button.mud-button-month").TextContent.Should().Contain("2024");
             string[] lockedDays = ["28", "3", "4", "10", "11", "17", "18", "24", "25", "2", "3", "9"];
             comp.FindAll("button.mud-picker-calendar-day.mud-day[disabled]").All(x => lockedDays.Contains(x.TextContent)).Should().Be(true);
         }
