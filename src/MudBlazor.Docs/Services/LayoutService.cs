@@ -58,12 +58,18 @@ public class LayoutService
             IsRTL = _userPreferences.RightToLeft;
 
             PreviewFeaturesEnabled = _userPreferences.PreviewFeatures;
+            MudGlobal.EnablePreviewFeatures = PreviewFeaturesEnabled;
         }
         else
         {
             IsDarkMode = isDarkModeDefaultTheme;
             _userPreferences = new UserPreferences.UserPreferences { DarkLightTheme = DarkLightMode.System };
             await _userPreferencesService.SaveUserPreferences(_userPreferences);
+        }
+
+        if (!MudGlobal.EnablePreviewFeatures)
+        {
+            MudGlobal.TooltipDefaults.Delay = TimeSpan.FromMilliseconds(500);
         }
     }
 
