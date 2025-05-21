@@ -240,6 +240,31 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void RadioTest_KeyboardInput2()
+        {
+            var comp = Context.RenderComponent<RadioGroupTest8>();
+
+            var radio = comp.FindComponent<MudRadioGroup<bool>>();
+            var nullableRadio = comp.FindComponents<MudRadioGroup<bool?>>().First();
+            var nullableRadio2 = comp.FindComponents<MudRadioGroup<bool?>>().Last();
+            radio.Instance.Value.Should().Be(true);
+            nullableRadio.Instance.Value.Should().Be(false);
+            radio.Instance._selectedRadio.Should().NotBeNull();
+            nullableRadio.Instance._selectedRadio.Should().NotBeNull();
+
+            var inputs = comp.FindAll("input").ToArray();
+            comp.FindAll("input")[0].KeyDown(new KeyboardEventArgs() { Key = "Backspace", Type = "keydown", });
+            comp.FindAll("input")[4].KeyDown(new KeyboardEventArgs() { Key = "Backspace", Type = "keydown", });
+            comp.FindAll("input")[6].KeyDown(new KeyboardEventArgs() { Key = "Backspace", Type = "keydown", });
+            radio.Instance.Value.Should().Be(false);
+            nullableRadio.Instance.Value.Should().Be(null);
+            nullableRadio2.Instance.Value.Should().Be(null);
+            radio.Instance._selectedRadio.Should().NotBeNull();
+            nullableRadio.Instance._selectedRadio.Should().NotBeNull();
+            nullableRadio2.Instance._selectedRadio.Should().BeNull();
+        }
+
+        [Test]
         public async Task RadioTest_Other()
         {
             var comp = Context.RenderComponent<RadioGroupTest1>();

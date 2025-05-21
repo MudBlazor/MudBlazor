@@ -1,0 +1,22 @@
+﻿<MudRadioGroup @bind-Value="_option">
+    <MudRadio Value="true" Color="Color.Primary">Primary</MudRadio>
+    <MudRadio Value="false" Color="Color.Secondary">Secondary</MudRadio>
+</MudRadioGroup>
+
+<MudRadioGroup T="bool?" @bind-Value="_options">
+    <MudRadio T="bool?" Value="true" Color="Color.Primary">Primary</MudRadio>
+    <MudRadio T="bool?" Value="false" Color="Color.Secondary">Secondary</MudRadio>
+    <MudRadio T="bool?" Value="null" Color="Color.Primary">Primary</MudRadio>
+</MudRadioGroup>
+
+<MudRadioGroup T="bool?" @bind-Value="_options2">
+    <MudRadio T="bool?" Value="true" Color="Color.Primary">Primary</MudRadio>
+    <MudRadio T="bool?" Value="false" Color="Color.Secondary">Secondary</MudRadio>
+</MudRadioGroup>
+
+
+@code {
+    private bool _option = true;
+    private bool? _options = false;
+    private bool? _options2 = false;
+}

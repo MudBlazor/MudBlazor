@@ -16,7 +16,7 @@ namespace MudBlazor
     /// <typeparam name="T">The type of value being selected.</typeparam>
     public partial class MudRadioGroup<T> : MudFormComponent<T, T>, IMudRadioGroup
     {
-        private MudRadio<T>? _selectedRadio;
+        internal MudRadio<T>? _selectedRadio;
         private HashSet<MudRadio<T>> _radios = new();
 
         public MudRadioGroup() : base(new Converter<T, T>()) { }
@@ -197,15 +197,9 @@ namespace MudBlazor
             }
         }
 
-        protected override Task ResetValueAsync()
+        protected override async Task ResetValueAsync()
         {
-            if (_selectedRadio is not null)
-            {
-                _selectedRadio.SetChecked(false);
-                _selectedRadio = null;
-            }
-
-            return base.ResetValueAsync();
+            await SetSelectedOptionAsync(default(T), true);
         }
 
         private static T? GetValueOrDefault(MudRadio<T>? radio)
