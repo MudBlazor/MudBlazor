@@ -53,19 +53,9 @@ public partial class AppbarButtons : IDisposable
         _ => Icons.Material.Filled.LightMode
     };
 
-    private async Task ToggleRTLAsync()
-    {
-        await LayoutService.ToggleRightToLeftAsync();
-    }
-
-    private async Task CycleDarkLightModeAsync()
-    {
-        await LayoutService.CycleDarkLightModeAsync();
-    }
-
     private async Task MarkNotificationAsReadAsync()
     {
-        await NotificationService.MarkNotificationsAsReadAsync();
+        await NotificationService.MarkNotificationsAsRead();
         _newNotificationsAvailable = false;
     }
 
@@ -78,11 +68,11 @@ public partial class AppbarButtons : IDisposable
 
     private async Task LoadNotificationsAsync()
     {
-        _newNotificationsAvailable = await NotificationService.AreNewNotificationsAvailableAsync();
-        _messages = await NotificationService.GetNotificationsAsync();
+        _newNotificationsAvailable = await NotificationService.AreNewNotificationsAvailable();
+        _messages = await NotificationService.GetNotifications();
     }
 
-    private void OnMajorLayoutUpdateOccurred(object? sender, EventArgs e)
+    private void OnMajorLayoutUpdateOccurred(object sender, EventArgs e)
     {
         InvokeAsync(StateHasChanged);
     }

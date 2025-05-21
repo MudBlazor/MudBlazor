@@ -115,7 +115,7 @@ public class LayoutService
             DarkLightMode.System => DarkLightMode.Light,
             DarkLightMode.Light => DarkLightMode.Dark,
             DarkLightMode.Dark => DarkLightMode.System,
-            _ => DarkLightMode.System // Default case, should not happen
+            _ => DarkLightMode.System, // Default case, should not happen.
         };
 
         ObserveSystemThemeChange = CurrentDarkLightMode == DarkLightMode.System;

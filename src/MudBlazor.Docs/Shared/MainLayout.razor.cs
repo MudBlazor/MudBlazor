@@ -31,17 +31,12 @@ namespace MudBlazor.Docs.Shared
 
                 await LayoutService.ApplyUserPreferencesAsync();
 
-                await _mudThemeProvider.WatchSystemDarkModeAsync(OnSystemThemeChangedAsync);
+                await _mudThemeProvider.WatchSystemDarkModeAsync(LayoutService.OnSystemModeChangedAsync);
 
                 StateHasChanged();
             }
 
             await base.OnAfterRenderAsync(firstRender);
-        }
-
-        private async Task OnSystemThemeChangedAsync(bool newValue)
-        {
-            await LayoutService.OnSystemModeChanged(newValue);
         }
 
         public void Dispose()
