@@ -633,7 +633,7 @@ namespace MudBlazor
                 SetScrollButtonVisibility();
                 SetScrollabilityStates();
                 Rerender();
-                StateHasChanged();
+                await InvokeAsync(StateHasChanged);
             }
         }
 
