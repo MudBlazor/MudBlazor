@@ -1191,7 +1191,7 @@ namespace MudBlazor
         {
             get
             {
-                return Groupable && RenderedColumns.FirstOrDefault(x => x.GroupingState.Value) != null;
+                return Groupable || RenderedColumns.FirstOrDefault(x => x.GroupingState.Value) != null;
             }
         }
 
