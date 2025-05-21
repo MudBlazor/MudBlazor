@@ -14,8 +14,12 @@ namespace MudBlazor.Docs.Shared
 
         static MainLayout()
         {
-            MudGlobal.EnablePreviewFeatures = true;
-            MudGlobal.TooltipDefaults.Delay = TimeSpan.FromMilliseconds(500);
+            MudGlobal.EnablePreviewFeatures = true; // TODO: Allow users to enable/disable preview features.
+
+            if (!MudGlobal.EnablePreviewFeatures)
+            {
+                MudGlobal.TooltipDefaults.Delay = TimeSpan.FromMilliseconds(500);
+            }
         }
 
         protected override void OnInitialized()

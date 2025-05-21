@@ -43,7 +43,7 @@ public static class MudGlobal
         /// <summary>
         /// The element which will receive focus when this <see cref="MudDialog"/> is shown.
         /// </summary>
-        public static DefaultFocus DefaultFocus { get; set; } = DefaultFocus.Element;
+        public static DefaultFocus DefaultFocus { get; set; } = EnablePreviewFeatures ? DefaultFocus.FirstChild : DefaultFocus.Element;
     }
 
     /// <summary>
