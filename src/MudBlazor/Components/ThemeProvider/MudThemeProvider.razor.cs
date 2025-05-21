@@ -77,7 +77,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
     [Parameter]
     public EventCallback<bool> IsDarkModeChanged { get; set; }
 
-    [DynamicDependency(nameof(SystemModeChangedAsync))]
+    [DynamicDependency(nameof(SystemDarkModeChangedAsync))]
     public MudThemeProvider()
     {
         using var registerScope = CreateRegisterScope();
@@ -97,7 +97,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
     /// <returns>
     /// Returns <c>true</c> if the theme is Dark Mode; otherwise, <c>false</c>.
     /// </returns>
-    public async Task<bool> GetSystemModeAsync()
+    public async Task<bool> GetSystemColorModeAsync()
     {
         var (_, value) = await JsRuntime.InvokeAsyncWithErrorHandling(false, "darkModeChange");
 
@@ -105,13 +105,13 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
     }
 
     /// <summary>
-    /// Calls a function when the system theme has changed.
+    /// Calls a function when the system's color has changed.
     /// </summary>
     /// <param name="functionOnChange">The function to call when the system theme has changed.</param>
     /// <remarks>
     /// A value of <c>true</c> is passed if the system is now in Dark Mode. Otherwise, the system is now in Light Mode.
     /// </remarks>
-    public Task WatchSystemModeAsync(Func<bool, Task> functionOnChange)
+    public Task WatchSystemDarkModeAsync(Func<bool, Task> functionOnChange)
     {
         _darkLightModeChanged += functionOnChange;
 
@@ -119,11 +119,11 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
     }
 
     /// <summary>
-    /// Occurs when the system theme has changed.
+    /// Occurs when the system's dark mode has changed.
     /// </summary>
-    /// <param name="isDarkMode">When <c>true</c>, the system is in Dark Mode.</param>
+    /// <param name="isDarkMode">When <c>true</c>, the system is in Dark Mode; <c>false</c> is Light Mode.</param>
     [JSInvokable]
-    public async Task SystemModeChangedAsync(bool isDarkMode)
+    public async Task SystemDarkModeChangedAsync(bool isDarkMode)
     {
         await _isDarkModeState.SetValueAsync(isDarkMode);
         var handler = _darkLightModeChanged;

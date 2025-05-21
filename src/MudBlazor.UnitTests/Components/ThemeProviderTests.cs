@@ -324,8 +324,8 @@ namespace MudBlazor.UnitTests.Components
                 return Task.CompletedTask;
             }
             var comp = Context.RenderComponent<MudThemeProvider>();
-            await comp.Instance.WatchSystemModeAsync(SystemChangedResult);
-            await comp.Instance.SystemModeChangedAsync(true);
+            await comp.Instance.WatchSystemDarkModeAsync(SystemChangedResult);
+            await comp.Instance.SystemDarkModeChangedAsync(true);
             systemMockValue.Should().BeTrue();
         }
 
