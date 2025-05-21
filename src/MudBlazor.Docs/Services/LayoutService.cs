@@ -20,19 +20,19 @@ public class LayoutService
     public bool IsRTL { get; private set; }
 
     /// <summary>
-    /// Gets the user's preferred dark/light mode setting.
+    /// The user's preferred dark/light mode setting.
     /// This preference is used to determine the actual <see cref="IsDarkMode"/> state.
     /// </summary>
     public DarkLightMode CurrentDarkLightMode { get; private set; }
 
     /// <summary>
-    /// Gets a value indicating whether dark mode is currently active.
-    /// This is determined by <see cref="UpdateDarkModeAsync"/> based on user and system preferences.
+    /// Dark mode is currently active.
+    /// This is determined by <see cref="UpdateDarkModeAsync"/> based on user and system preferences and should not be modified directly.
     /// </summary>
     public bool IsDarkMode { get; private set; }
 
     /// <summary>
-    /// Should the service observe system theme changes to update dark/light mode.
+    /// Observes system theme changes to update dark/light mode.
     /// </summary>
     public bool ObserveSystemThemeChange { get; private set; }
 
@@ -56,8 +56,8 @@ public class LayoutService
     /// <summary>
     /// Updates the dark mode state based on user preference and, optionally, the system's dark mode setting.
     /// </summary>
-    /// <param name="systemMode">The current system dark mode setting. If null, the existing known system mode is used.</param>
-    public void UpdateDarkMode(bool? systemMode = null)
+    /// <param name="systemMode">The current system dark mode setting. If <c>, the existing known system mode is used.</param>
+    public void UpdateDarkModeState(bool? systemMode = null)
     {
         if (systemMode.HasValue)
         {
@@ -89,18 +89,18 @@ public class LayoutService
         {
             IsRTL = _userPreferences.RightToLeft;
             CurrentDarkLightMode = _userPreferences.DarkLightTheme;
-            UpdateDarkMode();
+            UpdateDarkModeState();
         }
     }
 
     /// <summary>
     /// Handles changes in the system's dark mode setting.
     /// </summary>
-    /// <param name="isSystemDarkMode">True if the system is in dark mode, false otherwise.</param>
+    /// <param name="isSystemDarkMode"><c>true</c> if the system is in dark mode, otherwise <c>false</c>.</param>
     public Task OnSystemModeChangedAsync(bool isSystemDarkMode)
     {
         _systemDarkMode = isSystemDarkMode;
-        UpdateDarkMode();
+        UpdateDarkModeState();
         OnMajorUpdateOccurred();
         return Task.CompletedTask;
     }
@@ -119,7 +119,7 @@ public class LayoutService
         };
 
         ObserveSystemThemeChange = CurrentDarkLightMode == DarkLightMode.System;
-        UpdateDarkMode();
+        UpdateDarkModeState();
 
         _userPreferences.DarkLightTheme = CurrentDarkLightMode;
         await _userPreferencesService.SaveUserPreferences(_userPreferences);
