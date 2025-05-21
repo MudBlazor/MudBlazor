@@ -95,7 +95,6 @@ namespace MudBlazor.UnitTests.Components
         public async Task SetPickerValue_CheckDate_SetPickerDate_CheckValue()
         {
             var culture = CultureInfo.CurrentCulture;
-            string dateFormat = $"{culture.DateTimeFormat.ShortDatePattern} {culture.DateTimeFormat.ShortTimePattern}";
             var comp = Context.RenderComponent<MudDateTimePicker>();
             // select elements needed for the test
             var picker = comp.Instance;
@@ -104,7 +103,7 @@ namespace MudBlazor.UnitTests.Components
             comp.SetParam(p => p.Text, DateTime.Parse("2020-10-23 20:30:00").ToString(picker.DateTimeFormat));
             picker.DateTime.Should().Be(DateTime.Parse("2020-10-23 20:30:00"));
             comp.SetParam(p => p.DateTime, DateTime.Parse("2020-10-26 12:45:20"));
-            picker.Text.Should().Be(DateTime.Parse("2020-10-26 12:45").ToString(dateFormat));
+            picker.Text.Should().Be(DateTime.Parse("2020-10-26 12:45:20").ToString(picker.DateTimeFormat));
         }
 
         [Test]
@@ -149,17 +148,15 @@ namespace MudBlazor.UnitTests.Components
             picker.DateTime.Should().Be(null);
 
             var customCulture = new CultureInfo("en-US");
-            customCulture.DateTimeFormat.ShortDatePattern.Should().Be("M/d/yyyy");
-            customCulture.DateTimeFormat.ShortDatePattern = "dd MM yyyy";
-            customCulture.DateTimeFormat.ShortTimePattern = "HH:mm";
             comp.SetParam(p => p.Culture, customCulture);
+            comp.SetParam(p => p.DateTimeFormat, "dd MM yyyy HH:mm");
 
             comp.SetParam(p => p.Text, "23 10 2020 23:45");
             picker.DateTime.Should().Be(DateTime.Parse("2020-10-23 23:45:00"));
             comp.SetParam(p => p.DateTime, DateTime.Parse("2020-10-26 23:45:00"));
             picker.Text.Should().Be("26 10 2020 23:45");
 
-            customCulture.DateTimeFormat.ShortDatePattern = "yyyy-MM-dd";
+            comp.SetParam(p => p.DateTimeFormat, "yyyy-MM-dd HH:mm");
             comp.SetParam(p => p.Text, "2024-03-13 00:00");
             picker.DateTime.Should().Be(DateTime.Parse("2024-03-13 00:00"));
             comp.SetParam(p => p.DateTime, DateTime.Parse("2024-3-16 00:00"));
@@ -193,7 +190,7 @@ namespace MudBlazor.UnitTests.Components
             comp.SetParam(p => p.Clearable, true);
             comp.SetParam(p => p.DateTime, DateTime.Parse("2020-10-26 15:45:00"));
             picker.DateTime.Should().Be(DateTime.Parse("2020-10-26 15:45:00"));
-            picker.Text.Should().Be(DateTime.Parse("2020-10-26 15:45:00").ToString($"{culture.DateTimeFormat.ShortDatePattern} {culture.DateTimeFormat.ShortTimePattern}"));
+            picker.Text.Should().Be(DateTime.Parse("2020-10-26 15:45:00").ToString(picker.DateTimeFormat));
             //clear the input
             comp.Find("button").Click();
             //ensure the text and date are reset. Note this is an empty string rather than null due to how the reset works internally
