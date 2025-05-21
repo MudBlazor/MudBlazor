@@ -10,7 +10,7 @@
     {
         if (firstRender)
         {
-            await _mudThemeProvider.WatchSystemPreference(OnSystemPreferenceChanged);
+            await _mudThemeProvider.WatchSystemModeAsync(OnSystemPreferenceChanged);
             StateHasChanged();
         }
     }

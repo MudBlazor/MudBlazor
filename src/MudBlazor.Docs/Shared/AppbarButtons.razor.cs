@@ -11,10 +11,14 @@ namespace MudBlazor.Docs.Shared;
 
 public partial class AppbarButtons
 {
-    [Inject] private INotificationService NotificationService { get; set; }
-    [Inject] private LayoutService LayoutService { get; set; }
     private IDictionary<NotificationMessage, bool> _messages = null;
     private bool _newNotificationsAvailable = false;
+
+    [Inject]
+    private INotificationService NotificationService { get; set; }
+
+    [Inject]
+    private LayoutService LayoutService { get; set; }
 
     public string RtlButtonText => LayoutService.IsRTL ? "Left-to-right" : "Right-to-left";
 

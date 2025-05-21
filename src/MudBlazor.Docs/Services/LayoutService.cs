@@ -12,16 +12,31 @@ public class LayoutService
 {
     private readonly IUserPreferencesService _userPreferencesService;
     private UserPreferences.UserPreferences _userPreferences;
-    private bool _systemPreferences;
+    private bool _systemDarkMode;
 
+    /// <summary>
+    /// Displays the layout right to left.
+    /// </summary>
     public bool IsRTL { get; private set; }
 
-    public DarkLightMode CurrentDarkLightMode { get; private set; } = DarkLightMode.System;
+    /// <summary>
+    /// The user's preference that indirectly sets the mode through <see cref="IsDarkMode"/>.
+    /// </summary>
+    public DarkLightMode CurrentDarkLightMode { get; private set; }
 
+    /// <summary>
+    /// Determined in <see cref="UpdateDarkMode"/> and is what the UI actually displays out of the user preference and system preference.
+    /// </summary>
     public bool IsDarkMode { get; private set; }
 
+    /// <summary>
+    /// Enables observation of the system theme change so we can update the dark/light mode.
+    /// </summary>
     public bool ObserveSystemThemeChange { get; private set; }
 
+    /// <summary>
+    /// The MudBlazor theme that will be used.
+    /// </summary>
     public MudTheme CurrentTheme { get; private set; }
 
     public LayoutService(IUserPreferencesService userPreferencesService)
@@ -29,54 +44,65 @@ public class LayoutService
         _userPreferencesService = userPreferencesService;
     }
 
-    public void SetDarkMode(bool value)
-    {
-        IsDarkMode = value;
-    }
-
-    public async Task ApplyUserPreferences(bool isDarkModeDefaultTheme)
-    {
-        _systemPreferences = isDarkModeDefaultTheme;
-
-        _userPreferences = await _userPreferencesService.LoadUserPreferences();
-
-        if (_userPreferences != null)
-        {
-            CurrentDarkLightMode = _userPreferences.DarkLightTheme;
-            IsDarkMode = CurrentDarkLightMode switch
-            {
-                DarkLightMode.Dark => true,
-                DarkLightMode.Light => false,
-                DarkLightMode.System => isDarkModeDefaultTheme,
-                _ => IsDarkMode
-            };
-
-            IsRTL = _userPreferences.RightToLeft;
-        }
-        else
-        {
-            IsDarkMode = isDarkModeDefaultTheme;
-            _userPreferences = new UserPreferences.UserPreferences { DarkLightTheme = DarkLightMode.System };
-            await _userPreferencesService.SaveUserPreferences(_userPreferences);
-        }
-    }
-
-    public Task OnSystemPreferenceChanged(bool newValue)
-    {
-        _systemPreferences = newValue;
-
-        if (CurrentDarkLightMode == DarkLightMode.System)
-        {
-            IsDarkMode = newValue;
-            OnMajorUpdateOccurred();
-        }
-
-        return Task.CompletedTask;
-    }
-
+    /// <summary>
+    /// Occurs when a change happens that needs a UI refresh to be properly displayed.
+    /// </summary>
     public event EventHandler MajorUpdateOccurred;
 
     private void OnMajorUpdateOccurred() => MajorUpdateOccurred?.Invoke(this, EventArgs.Empty);
+
+    /// <summary>
+    /// Updates the state of the date mode.
+    /// </summary>
+    /// <param name="systemMode">The known system mode which is used in <see cref="DarkLightMode.System"/>.</param>
+    public void UpdateDarkMode(bool? systemMode = null)
+    {
+        if (systemMode.HasValue)
+        {
+            _systemDarkMode = systemMode.Value;
+        }
+
+        IsDarkMode = CurrentDarkLightMode switch
+        {
+            DarkLightMode.Dark => true,
+            DarkLightMode.Light => false,
+            _ => _systemDarkMode,
+        };
+    }
+
+    public async Task ApplyUserPreferencesAsync()
+    {
+        _userPreferences = await _userPreferencesService.LoadUserPreferences();
+
+        if (_userPreferences is null)
+        {
+            _userPreferences = new()
+            {
+                DarkLightTheme = DarkLightMode.System,
+            };
+
+            await _userPreferencesService.SaveUserPreferences(_userPreferences);
+        }
+        else
+        {
+            IsRTL = _userPreferences.RightToLeft;
+            CurrentDarkLightMode = _userPreferences.DarkLightTheme;
+            UpdateDarkMode();
+        }
+    }
+
+    [Obsolete("Use ApplyUserPreferencesAsync instead")]
+    public Task ApplyUserPreferences() => ApplyUserPreferencesAsync();
+
+    public Task OnSystemModeChanged(bool newValue)
+    {
+        _systemDarkMode = newValue;
+        OnMajorUpdateOccurred();
+        return Task.CompletedTask;
+    }
+
+    [Obsolete("Use OnSystemModeChanged instead")]
+    public Task OnSystemPreferenceChanged(bool newValue) => OnSystemModeChanged(newValue);
 
     public async Task CycleDarkLightModeAsync()
     {
@@ -85,34 +111,36 @@ public class LayoutService
             case DarkLightMode.System:
                 CurrentDarkLightMode = DarkLightMode.Light;
                 ObserveSystemThemeChange = false;
-                IsDarkMode = false;
                 break;
 
             case DarkLightMode.Light:
                 CurrentDarkLightMode = DarkLightMode.Dark;
                 ObserveSystemThemeChange = false;
-                IsDarkMode = true;
                 break;
 
             case DarkLightMode.Dark:
                 CurrentDarkLightMode = DarkLightMode.System;
                 ObserveSystemThemeChange = true;
-                IsDarkMode = _systemPreferences;
                 break;
         }
+
+        UpdateDarkMode();
 
         _userPreferences.DarkLightTheme = CurrentDarkLightMode;
         await _userPreferencesService.SaveUserPreferences(_userPreferences);
         OnMajorUpdateOccurred();
     }
 
-    public async Task ToggleRightToLeft()
+    public async Task ToggleRightToLeftAsync()
     {
         IsRTL = !IsRTL;
         _userPreferences.RightToLeft = IsRTL;
         await _userPreferencesService.SaveUserPreferences(_userPreferences);
         OnMajorUpdateOccurred();
     }
+
+    [Obsolete("Use ToggleRightToLeftAsync instead")]
+    public Task ToggleRightToLeft() => ToggleRightToLeftAsync();
 
     public void SetBaseTheme(MudTheme theme)
     {

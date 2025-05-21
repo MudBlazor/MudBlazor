@@ -17,38 +17,38 @@ namespace MudBlazor.Docs.Shared
 
         protected override void OnInitialized()
         {
-            LayoutService.MajorUpdateOccurred += LayoutServiceOnMajorUpdateOccured;
+            LayoutService.MajorUpdateOccurred += OnMajorUpdateOccured;
             base.OnInitialized();
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            await base.OnAfterRenderAsync(firstRender);
-
             if (firstRender)
             {
-                await ApplyUserPreferences();
-                await _mudThemeProvider.WatchSystemThemeAsync(OnSystemThemeChangedAsync);
+                var dark = await _mudThemeProvider.GetSystemModeAsync();
+
+                LayoutService.UpdateDarkMode(dark);
+
+                await LayoutService.ApplyUserPreferencesAsync();
+
+                await _mudThemeProvider.WatchSystemModeAsync(OnSystemThemeChangedAsync);
+
                 StateHasChanged();
             }
-        }
 
-        private async Task ApplyUserPreferences()
-        {
-            var darkMode = await _mudThemeProvider.GetSystemThemeAsync();
-            await LayoutService.ApplyUserPreferences(darkMode);
+            await base.OnAfterRenderAsync(firstRender);
         }
 
         private async Task OnSystemThemeChangedAsync(bool newValue)
         {
-            await LayoutService.OnSystemPreferenceChanged(newValue);
+            await LayoutService.OnSystemModeChanged(newValue);
         }
 
         public void Dispose()
         {
-            LayoutService.MajorUpdateOccurred -= LayoutServiceOnMajorUpdateOccured;
+            LayoutService.MajorUpdateOccurred -= OnMajorUpdateOccured;
         }
 
-        private void LayoutServiceOnMajorUpdateOccured(object sender, EventArgs e) => StateHasChanged();
+        private void OnMajorUpdateOccured(object sender, EventArgs e) => StateHasChanged();
     }
 }

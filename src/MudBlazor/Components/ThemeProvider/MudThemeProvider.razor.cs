@@ -55,7 +55,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
     /// Detects when the system theme has changed between Light Mode and Dark Mode.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>true</c>.<br />
+    /// Defaults to <c>true</c>.
     /// When <c>true</c>, the theme will automatically change to Light Mode or Dark Mode as the system theme changes.
     /// </remarks>
     [Parameter]
@@ -65,9 +65,8 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
     /// Uses darker colors for all MudBlazor components.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>false</c>. When this value changes, <see cref="IsDarkModeChanged"/> occurs.<br />  
-    /// When <c>true</c>, the <see cref="MudTheme.PaletteDark"/> colors will be used.<br />  
-    /// When <c>false</c>, the <see cref="MudTheme.PaletteLight"/> colors will be used.<br />  
+    /// Defaults to <c>false</c>.
+    /// When this value changes, <see cref="IsDarkModeChanged"/> occurs.
     /// </remarks>
     [Parameter]
     public bool IsDarkMode { get; set; }
@@ -78,7 +77,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
     [Parameter]
     public EventCallback<bool> IsDarkModeChanged { get; set; }
 
-    [DynamicDependency(nameof(SystemThemeChangedAsync))]
+    [DynamicDependency(nameof(SystemModeChangedAsync))]
     public MudThemeProvider()
     {
         using var registerScope = CreateRegisterScope();
@@ -98,15 +97,15 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
     /// <returns>
     /// Returns <c>true</c> if the theme is Dark Mode; otherwise, <c>false</c>.
     /// </returns>
-    public async Task<bool> GetSystemThemeAsync()
+    public async Task<bool> GetSystemModeAsync()
     {
         var (_, value) = await JsRuntime.InvokeAsyncWithErrorHandling(false, "darkModeChange");
 
         return value;
     }
 
-    [Obsolete("Use GetSystemTheme instead")]
-    public Task<bool> GetSystemPreference() => GetSystemThemeAsync();
+    [Obsolete("Use GetSystemModeAsync instead")]
+    public Task<bool> GetSystemPreference() => GetSystemModeAsync();
 
     /// <summary>
     /// Calls a function when the system theme has changed.
@@ -115,22 +114,22 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
     /// <remarks>
     /// A value of <c>true</c> is passed if the system is now in Dark Mode. Otherwise, the system is now in Light Mode.
     /// </remarks>
-    public Task WatchSystemThemeAsync(Func<bool, Task> functionOnChange)
+    public Task WatchSystemModeAsync(Func<bool, Task> functionOnChange)
     {
         _darkLightModeChanged += functionOnChange;
 
         return Task.CompletedTask;
     }
 
-    [Obsolete("Use WatchSystemThemeAsync instead")]
-    public Task WatchSystemPreference(Func<bool, Task> functionOnChange) => WatchSystemThemeAsync(functionOnChange);
+    [Obsolete("Use WatchSystemModeAsync instead")]
+    public Task WatchSystemPreference(Func<bool, Task> functionOnChange) => WatchSystemModeAsync(functionOnChange);
 
     /// <summary>
     /// Occurs when the system theme has changed.
     /// </summary>
     /// <param name="isDarkMode">When <c>true</c>, the system is in Dark Mode.</param>
     [JSInvokable]
-    public async Task SystemThemeChangedAsync(bool isDarkMode)
+    public async Task SystemModeChangedAsync(bool isDarkMode)
     {
         await _isDarkModeState.SetValueAsync(isDarkMode);
         var handler = _darkLightModeChanged;
@@ -140,9 +139,9 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         }
     }
 
-    [Obsolete("Use SystemThemeChangedAsync instead")]
+    [Obsolete("Use SystemModeChangedAsync instead")]
     [JSInvokable]
-    public Task SystemPreferenceChanged(bool isDarkMode) => SystemThemeChangedAsync(isDarkMode);
+    public Task SystemPreferenceChanged(bool isDarkMode) => SystemModeChangedAsync(isDarkMode);
 
     /// <inheritdoc />
     protected override async Task OnAfterRenderAsync(bool firstRender)
