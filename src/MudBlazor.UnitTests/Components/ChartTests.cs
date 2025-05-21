@@ -613,7 +613,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(ChartType.StackedBar)]
         [TestCase(ChartType.HeatMap)]
         [Test]
-        public void NoLable_Chart_IsValid(ChartType chart)
+        public void NoLabel_Chart_IsValid(ChartType chart)
         {
             var series = new List<ChartSeries>()
             {
