@@ -5,7 +5,7 @@ window.darkModeChange = () => {
 };
 
 function darkModeChangeListener(e) {
-    dotNetHelperTheme.invokeMethodAsync('SystemModeChangedAsync', e.matches);
+    dotNetHelperTheme.invokeMethodAsync('SystemDarkModeChangedAsync', e.matches);
 }
 
 function watchDarkThemeMedia(dotNetHelper) {
