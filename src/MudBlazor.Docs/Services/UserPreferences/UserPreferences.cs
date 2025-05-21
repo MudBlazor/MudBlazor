@@ -17,10 +17,5 @@ namespace MudBlazor.Docs.Services.UserPreferences
         /// The current dark light mode that is used
         /// </summary>
         public DarkLightMode DarkLightTheme { get; set; }
-
-        /// <summary>
-        /// Enable preview features from the next major version.
-        /// </summary>
-        public bool PreviewFeatures { get; set; } = false;
     }
 }

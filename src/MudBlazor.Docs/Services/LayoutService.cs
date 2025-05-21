@@ -22,8 +22,6 @@ public class LayoutService
 
     public bool IsDarkMode { get; private set; }
 
-    public bool PreviewFeaturesEnabled { get; private set; }
-
     public bool ObserveSystemThemeChange { get; private set; }
 
     public MudTheme CurrentTheme { get; private set; }
@@ -56,8 +54,6 @@ public class LayoutService
             };
 
             IsRTL = _userPreferences.RightToLeft;
-
-            PreviewFeaturesEnabled = _userPreferences.PreviewFeatures;
         }
         else
         {
@@ -117,14 +113,6 @@ public class LayoutService
     {
         IsRTL = !IsRTL;
         _userPreferences.RightToLeft = IsRTL;
-        await _userPreferencesService.SaveUserPreferences(_userPreferences);
-        OnMajorUpdateOccurred();
-    }
-
-    public async Task TogglePreviewFeatures()
-    {
-        PreviewFeaturesEnabled = !PreviewFeaturesEnabled;
-        _userPreferences.PreviewFeatures = PreviewFeaturesEnabled;
         await _userPreferencesService.SaveUserPreferences(_userPreferences);
         OnMajorUpdateOccurred();
     }
