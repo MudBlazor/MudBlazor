@@ -25,7 +25,7 @@ namespace MudBlazor.Docs.Shared
         {
             if (firstRender)
             {
-                var dark = await _mudThemeProvider.GetSystemColorModeAsync();
+                var dark = await _mudThemeProvider.GetSystemDarkModeAsync();
 
                 LayoutService.UpdateDarkMode(dark);
 

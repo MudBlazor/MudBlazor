@@ -78,6 +78,7 @@ public class LayoutService
         {
             _userPreferences = new()
             {
+                RightToLeft = false,
                 DarkLightTheme = DarkLightMode.System,
             };
 

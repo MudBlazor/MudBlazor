@@ -92,12 +92,12 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
     }
 
     /// <summary>
-    /// Gets the system theme's dark mode preference.
+    /// Gets the browser's color preference.
     /// </summary>
     /// <returns>
     /// Returns <c>true</c> if the theme is Dark Mode; otherwise, <c>false</c>.
     /// </returns>
-    public async Task<bool> GetSystemColorModeAsync()
+    public async Task<bool> GetSystemDarkModeAsync()
     {
         var (_, value) = await JsRuntime.InvokeAsyncWithErrorHandling(false, "darkModeChange");
 
@@ -133,7 +133,6 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         }
     }
 
-    /// <inheritdoc />
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -148,14 +147,12 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         await base.OnAfterRenderAsync(firstRender);
     }
 
-    /// <inheritdoc />
     protected override void OnInitialized()
     {
         _theme = Theme ?? new MudTheme();
         base.OnInitialized();
     }
 
-    /// <inheritdoc />
     protected override void OnParametersSet()
     {
         if (Theme is not null)
