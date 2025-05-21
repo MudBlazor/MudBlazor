@@ -15,6 +15,8 @@ namespace MudBlazor.Charts
     /// <seealso cref="TimeSeries"/>
     partial class StackedBar : MudAxisChartBase<StackedBarChartOptions>
     {
+        public static new ChartType ChartType => ChartType.StackedBar;
+
         private const double BarOverlapAmountFix = 0.5; // used to trigger slight overlap so the bars don't have gaps due to floating point rounding
 
         private readonly List<SvgPath> _bars = [];
@@ -32,8 +34,9 @@ namespace MudBlazor.Charts
 
         protected override void RebuildChart()
         {
-            if (MudChartParent != null)
-                Series = MudChartParent.ChartSeries;
+            Series = (MudChartParent != null && ChartReference is MudChart)
+                ? MudChartParent.ChartSeries
+                : ChartSeries;
 
             // ensure the stacked bar width ratio is within the valid range
             ChartOptions!.BarWidthRatio = ChartOptions.BarWidthRatio.EnsureRange(0.01, 1);

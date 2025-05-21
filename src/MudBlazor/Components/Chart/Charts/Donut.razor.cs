@@ -16,6 +16,8 @@ namespace MudBlazor.Charts
     /// <seealso cref="TimeSeries"/>
     public partial class Donut : MudRadialChartBase<DonutChartOptions>
     {
+        public static new ChartType ChartType => ChartType.Donut;
+
         protected override void OnInitialized()
         {
             ChartOptions ??= new DonutChartOptions();
@@ -130,7 +132,7 @@ namespace MudBlazor.Charts
                 {
                     Index = i,
                     Labels = labels,
-                    Visible = !_hiddenIndices.Contains(i),
+                    Visible = !HiddenIndices.Contains(i),
                     OnVisibilityChanged = EventCallback.Factory.Create<SvgLegend>(this, HandleLegendVisibilityChanged)
                 };
                 _legends.Add(legend);

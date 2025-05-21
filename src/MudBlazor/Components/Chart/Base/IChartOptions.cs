@@ -23,4 +23,6 @@ public interface IChartOptions
     public bool ShowToolTips { get; set; }
 
     public string TooltipTitleFormat { get; set; }
+
+    public string? TooltipSubtitleFormat { get; set; }
 }

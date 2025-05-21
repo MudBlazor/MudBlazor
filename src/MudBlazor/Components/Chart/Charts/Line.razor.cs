@@ -13,6 +13,9 @@ namespace MudBlazor.Charts
     /// <seealso cref="TimeSeries"/>
     partial class Line : MudAxisLineChartBase<LineChartOptions>
     {
+
+        public static new ChartType ChartType => ChartType.Line;
+
         protected override bool ShouldInterpolate => true;
 
         protected override void OnInitialized()
@@ -23,8 +26,9 @@ namespace MudBlazor.Charts
 
         protected override void RebuildChart()
         {
-            if (MudChartParent != null)
-                Series = MudChartParent.ChartSeries;
+            Series = (MudChartParent != null && ChartReference is MudChart)
+                ? MudChartParent.ChartSeries
+                : ChartSeries;
 
             SetBounds();
             ComputeUnitsAndNumberOfLines(out var gridYUnits, out var numHorizontalLines, out var lowestHorizontalLine, out var numVerticalLines);

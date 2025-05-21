@@ -20,6 +20,8 @@ namespace MudBlazor.Charts
     {
         internal record CellDimension(double Width, double Height, int Padding);
 
+        public static new ChartType ChartType => ChartType.HeatMap;
+
         [Inject]
         private IJSRuntime JsRuntime { get; set; } = null!;
 

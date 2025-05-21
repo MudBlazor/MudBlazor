@@ -15,6 +15,8 @@ namespace MudBlazor.Charts
     /// <seealso cref="TimeSeries"/>
     partial class Bar : MudAxisChartBase<BarChartOptions>
     {
+        public static new ChartType ChartType => ChartType.Bar;
+
         private readonly List<SvgPath> _bars = [];
         private SvgPath? _hoveredBar;
 
@@ -32,8 +34,9 @@ namespace MudBlazor.Charts
 
         protected override void RebuildChart()
         {
-            if (MudChartParent != null)
-                Series = MudChartParent.ChartSeries;
+            Series = (MudChartParent != null && ChartReference is MudChart)
+                ? MudChartParent.ChartSeries
+                : ChartSeries;
 
             SetBounds();
             ComputeUnitsAndNumberOfLines(out var gridYUnits, out var numHorizontalLines, out var lowestHorizontalLine, out var numVerticalLines);

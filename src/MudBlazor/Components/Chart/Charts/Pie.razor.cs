@@ -16,6 +16,8 @@ namespace MudBlazor.Charts
     /// <seealso cref="TimeSeries"/>
     partial class Pie : MudRadialChartBase<PieChartOptions>
     {
+        public static new ChartType ChartType => ChartType.Pie;
+
         protected override void OnInitialized()
         {
             ChartOptions ??= new PieChartOptions();
@@ -104,7 +106,7 @@ namespace MudBlazor.Charts
                 {
                     Index = i,
                     Labels = labels,
-                    Visible = !_hiddenIndices.Contains(i),
+                    Visible = !HiddenIndices.Contains(i),
                     OnVisibilityChanged = EventCallback.Factory.Create<SvgLegend>(this, HandleLegendVisibilityChanged)
                 };
                 _legends.Add(legend);

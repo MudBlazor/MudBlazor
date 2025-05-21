@@ -23,21 +23,23 @@ public abstract class MudRadialChartBase<TOptions> : MudChartBase<TOptions>, IDi
     [CascadingParameter]
     public MudChart? MudChartParent { get; set; }
 
-    private readonly DotNetObjectReference<MudRadialChartBase<TOptions>> _dotNetObjectReference;
-    private ElementSize? _elementSize;
     private const double BoundWidthDefault = 280;
     private const double BoundHeightDefault = 280;
+    private const int DebounceIntervalMs = 200;
+
+    private readonly DotNetObjectReference<MudRadialChartBase<TOptions>> _dotNetObjectReference;
+    private readonly DebounceDispatcher _debouncer = new(DebounceIntervalMs);
+    
+    private ElementSize? _elementSize;
     private double _boundWidth = 280;
     private double _boundHeight = 280;
+
     internal List<SvgPath> _paths = [];
     internal List<SvgLegend> _legends = [];
     internal SvgPath? _hoveredSegment;
-    protected HashSet<int> _hiddenIndices = [];
-    protected (double x, double y, string label, double value)? _hoveredDot = null;
+
+    protected HashSet<int> HiddenIndices { get; set; } = [];
     protected double CalculatedRadius => Math.Round(Math.Min(_boundWidth, _boundHeight) / 2);
-    private readonly DebounceDispatcher _debouncer = new(DebounceIntervalMs);
-    private const int DebounceIntervalMs = 200;
-    public abstract string ChartClass { get; }
 
     [DynamicDependency(nameof(OnElementSizeChanged))]
     [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(ElementSize))]
@@ -52,9 +54,8 @@ public abstract class MudRadialChartBase<TOptions> : MudChartBase<TOptions>, IDi
 
         _paths.Clear();
         _legends.Clear();
-        _hiddenIndices.Clear();
+        HiddenIndices.Clear();
         _hoveredSegment = null;
-        _hoveredDot = null;
 
         if (ChartSeries == null || ChartSeries.Count == 0)
             return;
@@ -93,7 +94,7 @@ public abstract class MudRadialChartBase<TOptions> : MudChartBase<TOptions>, IDi
 
                     for (var i = 0; i < values.Length; i++)
                     {
-                        if (_hiddenIndices.Contains(i))
+                        if (HiddenIndices.Contains(i))
                             continue;
 
                         aggregated[i] += values[i];
@@ -123,32 +124,6 @@ public abstract class MudRadialChartBase<TOptions> : MudChartBase<TOptions>, IDi
         }
 
         return aggregated;
-    }
-
-    public string GetSeriesName(AggregationOption aggregation)
-    {
-        if (ChartSeries is null || ChartSeries.Count == 0)
-            return string.Empty;
-
-        switch (aggregation)
-        {
-            case AggregationOption.GroupByLabel:
-                var chartSeries = ChartSeries.Where(x => x.Visible).ToArray();
-
-                if (chartSeries.Length == 1)
-                    return chartSeries[0].Name;
-
-                return chartSeries.Length.ToString();
-
-            case AggregationOption.GroupByDataSet:
-                if (ChartLabels.Length == 1)
-                    return ChartLabels[0];
-
-                return ChartLabels.Length.ToString();
-
-            default:
-                throw new ArgumentOutOfRangeException(nameof(aggregation), $"Unsupported aggregation: {aggregation}");
-        }
     }
 
     protected void SetBounds()
@@ -194,31 +169,19 @@ public abstract class MudRadialChartBase<TOptions> : MudChartBase<TOptions>, IDi
     protected void HandleLegendVisibilityChanged(SvgLegend legend)
     {
         if (legend.Visible)
-        {
-            _hiddenIndices.Remove(legend.Index);
-        }
+            HiddenIndices.Remove(legend.Index);
         else
-        {
-            _hiddenIndices.Add(legend.Index);
-        }
+            HiddenIndices.Add(legend.Index);
 
         if (ChartOptions!.AggregationOption == AggregationOption.GroupByDataSet)
-        {
             ChartSeries[legend.Index].Visible = legend.Visible;
-        }
 
         RebuildChart();
     }
 
-    internal void OnSegmentMouseOver(MouseEventArgs args, SvgPath segment)
-    {
-        _hoveredSegment = segment;
-    }
+    internal void OnSegmentMouseOver(MouseEventArgs args, SvgPath segment) => _hoveredSegment = segment;
 
-    internal void OnSegmentMouseOut()
-    {
-        _hoveredSegment = null;
-    }
+    internal void OnSegmentMouseOut() => _hoveredSegment = null;
 
     [JSInvokable]
     public void OnElementSizeChanged(ElementSize elementSize)

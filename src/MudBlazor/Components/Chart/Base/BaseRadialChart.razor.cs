@@ -5,16 +5,22 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
+#nullable enable
 namespace MudBlazor.Charts;
-
-public record MouseOverArgs(MouseEventArgs MouseEvent, SvgPath Path);
 
 public partial class BaseRadialChart<TChartOptions> : MudComponentBase where TChartOptions : IRadialChartOptions, new()
 {
     private ElementReference _svgRef;
 
-    [CascadingParameter]
-    private MudChart MudChartParent { get; set; }
+    [Parameter]
+    [EditorRequired]
+    [Category(CategoryTypes.Chart.Appearance)]
+    public string Width { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    [Category(CategoryTypes.Chart.Appearance)]
+    public string Height { get; set; }
 
     [Parameter]
     [EditorRequired]
@@ -22,25 +28,32 @@ public partial class BaseRadialChart<TChartOptions> : MudComponentBase where TCh
     public double Radius { get; set; }
 
     [Parameter]
-    [Category(CategoryTypes.Chart.Appearance)]
-    public string ChartClass { get; set; }
-
-    [Parameter]
-    [Category(CategoryTypes.Chart.Behavior)]
-    public SvgPath HoveredSegment { get; set; }
-
-    [Parameter]
     [EditorRequired]
     [Category(CategoryTypes.Chart.Appearance)]
     public List<SvgPath> Paths { get; set; } = [];
 
     [Parameter]
+    [EditorRequired]
     [Category(CategoryTypes.Chart.Appearance)]
-    public List<SvgLegend> Legends { get; set; } = [];
+    public TChartOptions ChartOptions { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    [Category(CategoryTypes.Chart.Appearance)]
+    public string ChartClass { get; set; } = string.Empty;
+
+    [Parameter]
+    [EditorRequired]
+    [Category(CategoryTypes.Chart.Appearance)]
+    public List<ChartSeries> ChartSeries { get; set; } = [];
 
     [Parameter]
     [Category(CategoryTypes.Chart.Appearance)]
-    public (string title, string subtitle) TooltipFormat { get; set; }
+    public string[] ChartLabels { get; set; } = [];
+
+    [Parameter]
+    [Category(CategoryTypes.Chart.Behavior)]
+    public SvgPath? HoveredSegment { get; set; }
 
     [Parameter]
     [Category(CategoryTypes.Chart.Behavior)]
@@ -60,25 +73,78 @@ public partial class BaseRadialChart<TChartOptions> : MudComponentBase where TCh
 
     [Parameter]
     [Category(CategoryTypes.Chart.Appearance)]
-    public RenderFragment<(SvgPath Segment, string Color)> TooltipTemplate { get; set; }
+    public RenderFragment? CustomGraphics { get; set; }
 
     [Parameter]
     [Category(CategoryTypes.Chart.Appearance)]
-    public Func<SvgPath, (double X, double Y)> TooltipPositionFunc { get; set; }
+    public RenderFragment<(SvgPath Segment, string Color)>? TooltipTemplate { get; set; }
+
+    [Parameter]
+    [Category(CategoryTypes.Chart.Appearance)]
+    public Func<SvgPath, (double X, double Y)>? TooltipPositionFunc { get; set; }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
+        if (firstRender && ElementRefChanged.HasDelegate)
             await ElementRefChanged.InvokeAsync(_svgRef);
     }
 
     private string GetColor(int index)
     {
-        var palette = MudChartParent?.ChartOptions?.ChartPalette;
-
-        if (palette is null || palette.Length == 0)
+        if (ChartOptions?.ChartPalette is null || ChartOptions?.ChartPalette.Length == 0)
             return string.Empty;
 
-        return palette.GetValue(index % palette.Length)?.ToString() ?? string.Empty;
+        return ChartOptions!.ChartPalette.GetValue(index % ChartOptions.ChartPalette.Length)?.ToString() ?? string.Empty;
+    }
+
+    private (string? title, string? subtitle) BuildTooltipFormat()
+    {
+        if (HoveredSegment == null)
+            return (string.Empty, string.Empty);
+
+        var series = ChartOptions.AggregationOption == AggregationOption.GroupByDataSet ? ChartSeries[HoveredSegment.Index] : null;
+        var tooltipTitleFormat = series?.TooltipTitleFormat ?? ChartOptions.TooltipTitleFormat;
+        var tooltipSubtitleFormat = series?.TooltipSubtitleFormat ?? ChartOptions.TooltipSubtitleFormat;
+
+        if (string.IsNullOrWhiteSpace(tooltipTitleFormat))
+            return (string.Empty, string.Empty);
+
+        var title = tooltipTitleFormat?
+            .Replace("{{SERIES_NAME}}", GetSeriesName(ChartOptions.AggregationOption))
+            .Replace("{{X_VALUE}}", HoveredSegment.LabelXValue)
+            .Replace("{{Y_VALUE}}", HoveredSegment.LabelYValue);
+
+        var subtitle = tooltipSubtitleFormat?
+            .Replace("{{SERIES_NAME}}", GetSeriesName(ChartOptions.AggregationOption))
+            .Replace("{{X_VALUE}}", HoveredSegment.LabelXValue)
+            .Replace("{{Y_VALUE}}", HoveredSegment.LabelYValue);
+
+        return (title, subtitle);
+    }
+
+    public string GetSeriesName(AggregationOption aggregation)
+    {
+        if (ChartSeries is null || ChartSeries.Count == 0)
+            return string.Empty;
+
+        switch (aggregation)
+        {
+            case AggregationOption.GroupByLabel:
+                var chartSeries = ChartSeries.Where(x => x.Visible).ToArray();
+
+                if (chartSeries.Length == 1)
+                    return chartSeries[0].Name;
+
+                return chartSeries.Length.ToString();
+
+            case AggregationOption.GroupByDataSet:
+                if (ChartLabels.Length == 1)
+                    return ChartLabels[0];
+
+                return ChartLabels.Length.ToString();
+
+            default:
+                throw new ArgumentOutOfRangeException(nameof(aggregation), $"Unsupported aggregation: {aggregation}");
+        }
     }
 }

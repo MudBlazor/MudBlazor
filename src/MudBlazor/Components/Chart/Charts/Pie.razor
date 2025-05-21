@@ -1,46 +1,26 @@
 ﻿@namespace MudBlazor.Charts
 @inherits MudRadialChartBase<PieChartOptions>
 
-<BaseRadialChart TChartOptions="PieChartOptions"
-                 ElementRefChanged="SetElementReference"
-                 Radius="@CalculatedRadius"
-                 ChartClass="@ChartClass"
-                 Paths="@_paths"
-                 Legends="@_legends"
-                 HoveredSegment="@_hoveredSegment"
-                 UserAttributes="@UserAttributes"
-                 TooltipFormat="@BuildTooltipFormat()"
-                 TooltipTemplate="MudChartParent?.TooltipTemplate"
-                 TooltipPositionFunc="MudChartParent?.TooltipPositionFunc"
-                 OnPathClick="async (i) => await SetSelectedIndexAsync(i)"
-                 OnMouseOver="(x) => OnSegmentMouseOver(x.Args, x.Segment)"
-                 OnMouseOut="() => OnSegmentMouseOut()" />
+<div class="@(MudChartParent is null ? Classname : string.Empty)">
+    <BaseRadialChart TChartOptions="PieChartOptions"
+                     ElementRefChanged="SetElementReference"
+                     Width="@(MudChartParent?.Width ?? Width)"
+                     Height="@(MudChartParent?.Height ?? Height)"
+                     Radius="@CalculatedRadius"
+                     ChartClass="mud-chart-pie"
+                     ChartSeries="@ChartSeries"
+                     ChartLabels="@ChartLabels"
+                     ChartOptions="@ChartOptions"
+                     Paths="@_paths"
+                     CustomGraphics="@(MudChartParent?.CustomGraphics ?? CustomGraphics)"
+                     HoveredSegment="@_hoveredSegment"
+                     UserAttributes="@UserAttributes"
+                     TooltipTemplate="@(MudChartParent?.TooltipTemplate ?? TooltipTemplate)"
+                     TooltipPositionFunc="@(MudChartParent?.TooltipPositionFunc ?? TooltipPositionFunc)"
+                     OnPathClick="async (i) => await SetSelectedIndexAsync(i)"
+                     OnMouseOver="(x) => OnSegmentMouseOver(x.Args, x.Segment)"
+                     OnMouseOut="() => OnSegmentMouseOut()" />
 
-@code {
-    public override string ChartClass => "mud-chart-pie";
-
-    private (string title, string subtitle) BuildTooltipFormat()
-    {
-        if (_hoveredSegment == null)
-            return (string.Empty, string.Empty);
-
-        var series = ChartOptions.AggregationOption == AggregationOption.GroupByDataSet ? ChartSeries[_hoveredSegment.Index] : null;
-        var tooltipTitleFormat = series?.TooltipTitleFormat ?? ChartOptions.TooltipTitleFormat;
-        var tooltipSubtitleFormat = series?.TooltipSubtitleFormat ?? ChartOptions.TooltipSubtitleFormat;
-
-        if (string.IsNullOrWhiteSpace(tooltipTitleFormat))
-            return (string.Empty, string.Empty);
-
-        var title = tooltipTitleFormat?
-            .Replace("{{SERIES_NAME}}", GetSeriesName(ChartOptions.AggregationOption))
-            .Replace("{{X_VALUE}}", _hoveredSegment.LabelXValue)
-            .Replace("{{Y_VALUE}}", _hoveredSegment.LabelYValue);
-
-        var subtitle = tooltipSubtitleFormat?
-            .Replace("{{SERIES_NAME}}", GetSeriesName(ChartOptions.AggregationOption))
-            .Replace("{{X_VALUE}}", _hoveredSegment.LabelXValue)
-            .Replace("{{Y_VALUE}}", _hoveredSegment.LabelYValue);
-
-        return (title, subtitle);
-    }
-}
+    <Legend Data="@_legends" ShowLegend="@ChartOptions?.ShowLegend" CanHideSeries="@CanHideSeries"
+            ChartPalette="@ChartOptions?.ChartPalette" OnLegenedSelected="async (i) => await SetSelectedIndexAsync(i)" />
+</div>

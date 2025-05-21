@@ -12,8 +12,6 @@ namespace MudBlazor;
 /// </summary>
 public partial class MudChart
 {
-    public IMudChart? ChartReference { get; set; }
-
     protected override void OnParametersSet()
     {
         base.OnParametersSet();

@@ -1,0 +1,32 @@
+﻿@using MudBlazor.Charts
+
+<MudChart ChartType="ChartType.StackedBar" ChartSeries="@StackedDataSet" ChartOptions="@_barChartOptions" MatchBoundsToSize="true" Width="100%" Height="500px">
+    <Line ChartSeries="@LineDataSet" ChartOptions="@_lineChartOptions" />
+</MudChart>
+
+@code {
+    private List<ChartSeries> StackedDataSet =>
+    [
+        new() { Name = "New", Data = [700, 450, 420, 430, 410, 390, 370, 400, 440, 460, 480, 500, 1250, 400, 430, 450, 470, 500, 530, 510, 520, 540, 560, 580, 600, 630, 650, 670, 690, 710, 740, 760, 780, 800, 820, 840, 860] },
+        new() { Name = "Upgrade", Data = [0, 180, 170, 160, 150, 140, 130, 135, 150, 160, 165, 170, 50, 160, 165, 170, 175, 180, 190, 185, 195, 200, 210, 220, 230, 240, 250, 260, 270, 280, 260, 255, 250, 240, 230, 225, 220, 215] },
+        new() { Name = "Churn", Data = [-1, -240, -230, -220, -210, -200, -190, -195, -200, -210, -220, -230, -500, -210, -220, -225, -230, -240, -250, -260, -270, -280, -290, -300, -310, -320, -330, -340, -350, -360, -370, -380, -390, -400, -410, -420, -430, -440] },
+        new() { Name = "Downgrade", Data = [-1, -140, -130, -120, -110, -100, -90, -95, -100, -110, -115, -120, -350, -115, -120, -125, -130, -135, -140, -145, -150, -155, -160, -165, -170, -175, -180, -185, -190, -195, -200, -205, -210, -215, -220, -225, -230, -235] },
+    ];
+
+    private StackedBarChartOptions _barChartOptions = new StackedBarChartOptions() 
+    { 
+        ChartPalette = ["#4A89C2", "#80B5E2", "#E17C45", "#F4B183"],
+        BarWidthRatio = .95, 
+        YAxisTicks = 400,
+    };
+
+    private List<ChartSeries> LineDataSet => 
+    [
+        new() { Name = "Overall Change", Data = [ 300, 250, 230, 250, 240, 230, 220, 245, 290, 300, 310, 320, 500, 235, 250, 270, 285, 305, 330, 290, 295, 305, 320, 335, 350, 375, 390, 405, 420, 435, 430, 420, 430, 425, 420, 410, 400, 400 ] }
+    ];
+
+    private ChartOptions _lineChartOptions = new ChartOptions()
+    {
+        ChartPalette = ["#000000"],
+    };
+}

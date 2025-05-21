@@ -72,13 +72,6 @@ public abstract class MudAxisChartBase<TOptions> : MudChartBase<TOptions>, IDisp
     {
         await base.OnAfterRenderAsync(firstRender);
 
-        if (firstRender)
-        {
-            var elementSize = await JsRuntime.InvokeAsync<ElementSize>("mudObserveElementSize", _dotNetObjectReference, _elementReference);
-
-            OnElementSizeChanged(elementSize);
-        }
-
         var yAxisLabelSize = _yAxisGroupElementReference != null ? await JsRuntime.InvokeAsync<ElementSize>("mudGetSvgBBox", _yAxisGroupElementReference) : null;
         var xAxisLabelSize = _xAxisGroupElementReference != null ? await JsRuntime.InvokeAsync<ElementSize>("mudGetSvgBBox", _xAxisGroupElementReference) : null;
 
@@ -102,6 +95,13 @@ public abstract class MudAxisChartBase<TOptions> : MudChartBase<TOptions>, IDisp
             RebuildChart();
             StateHasChanged();
         }
+    }
+
+    protected async Task SetElementReference(ElementReference elementRef)
+    {
+        var elementSize = await JsRuntime.InvokeAsync<ElementSize>("mudObserveElementSize", _dotNetObjectReference, elementRef);
+
+        OnElementSizeChanged(elementSize);
     }
 
     protected void SetBounds()

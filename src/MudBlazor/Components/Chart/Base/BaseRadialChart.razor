@@ -7,7 +7,7 @@
     var style = HoveredSegment is not null ? "overflow: visible;" : "";
 }
 
-<svg @ref="_svgRef" @attributes="UserAttributes" class="@ChartClass" width="@MudChartParent?.Width" height="@MudChartParent?.Height" viewBox="0 0 @(ToS(Radius * 2)) @(ToS(Radius * 2))" style="@style">
+<svg @ref="_svgRef" @attributes="UserAttributes" class="@($"{ChartClass} mud-ltr")" width="@Width" height="@Height" viewBox="0 0 @(ToS(Radius * 2)) @(ToS(Radius * 2))" style="@style">
     <Filters />
 
     <g transform="translate(@Radius.ToS(), @Radius.ToS())">
@@ -23,9 +23,9 @@
         }
     </g>
 
-    @MudChartParent?.CustomGraphics
+    @CustomGraphics
 
-    @if (HoveredSegment is not null && MudChartParent?.ChartOptions?.ShowToolTips is true)
+    @if (HoveredSegment is not null && ChartOptions?.ShowToolTips is true)
     {
         var color = GetColor(HoveredSegment.Index);
 
@@ -41,17 +41,8 @@
         }
         else
         {
-            <ChartTooltip Title="@TooltipFormat.title"
-                          Subtitle="@TooltipFormat.subtitle"
-                          Color="@color"
-                          X="@tooltipX"
-                          Y="@tooltipY" />
+            var tooltipFormat = BuildTooltipFormat();
+            <ChartTooltip Title="@tooltipFormat.title" Subtitle="@tooltipFormat.subtitle" Color="@color" X="@tooltipX" Y="@tooltipY" />
         }
     }
 </svg>
-
-<Legend Data="@Legends" />
-
-@code {
-
-}

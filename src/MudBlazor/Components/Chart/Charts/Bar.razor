@@ -4,7 +4,33 @@
 
 @inherits MudAxisChartBase<BarChartOptions>
 
-@{
+<div class="@(MudChartParent is null ? Classname : string.Empty)">
+    <BaseAxisChart TChartOptions="PieChartOptions"
+                     ElementRefChanged="SetElementReference"
+                     Width="@(MudChartParent?.Width ?? Width)"
+                     Height="@(MudChartParent?.Height ?? Height)"
+                     ViewBoxWidth="_boundWidth"
+                     ViewBoxHeight="_boundHeight"
+                     ChartClass="mud-chart-bar"
+                     ChartSeries="@ChartSeries"
+                     ChartLabels="@ChartLabels"
+                     ChartOptions="@ChartOptions"
+                     Paths="@_paths"
+                     Legends="@_legends"
+                     CustomGraphics="@(MudChartParent?.CustomGraphics ?? CustomGraphics)"
+                     HoveredSegment="@_hoveredSegment"
+                     UserAttributes="@UserAttributes"
+                     TooltipTemplate="@(MudChartParent?.TooltipTemplate ?? TooltipTemplate)"
+                     TooltipPositionFunc="@(MudChartParent?.TooltipPositionFunc ?? TooltipPositionFunc)"
+                     OnPathClick="async (i) => await SetSelectedIndexAsync(i)"
+                     OnMouseOver="(x) => OnSegmentMouseOver(x.Args, x.Segment)"
+                     OnMouseOut="() => OnSegmentMouseOut()" />
+
+    <Legend Data="@_legends" ShowLegend="@ChartOptions?.ShowLegend" CanHideSeries="@CanHideSeries"
+            ChartPalette="@ChartOptions?.ChartPalette" OnLegenedSelected="async (i) => await SetSelectedIndexAsync(i)" />
+</div>
+
+@* @{
     var style = _hoveredBar != null ? "overflow: visible;" : "";
 }
 
@@ -51,20 +77,19 @@
             var color = ChartOptions.ChartPalette.GetValue(bar.Index % ChartOptions.ChartPalette.Length);
 
             <path class="mud-chart-bar"
-            @onclick="async () => await SetSelectedIndexAsync(bar.Index)" 
-            fill="@color"
-            stroke="@color"
-            stroke-width="@_barWidth.ToS()" 
-            d="@bar.Data"
-            @onmouseover="(e) => OnBarMouseOver(e, bar)"
-            @onmouseout="OnBarMouseOut">
+                  @onclick="async () => await SetSelectedIndexAsync(bar.Index)"
+                  fill="@color"
+                  stroke="@color"
+                  stroke-width="@_barWidth.ToS()"
+                  d="@bar.Data"
+                  @onmouseover="(e) => OnBarMouseOver(e, bar)"
+                  @onmouseout="OnBarMouseOut">
             </path>
         }
     </g>
 
     @MudChartParent?.CustomGraphics
 
-    @* Render the tooltip as an SVG group when a bar is hovered *@
     @if (_hoveredBar is not null && ChartOptions.ShowToolTips == true)
     {
         var color = ChartOptions.ChartPalette.GetValue(_hoveredBar.Index % ChartOptions.ChartPalette.Length)?.ToString() ?? string.Empty;
@@ -102,4 +127,4 @@
         }        
     }
 </svg>
-<Legend Data="@Legends" />
+<Legend Data="@Legends" /> *@

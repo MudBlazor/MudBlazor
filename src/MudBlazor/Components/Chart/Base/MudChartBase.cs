@@ -16,6 +16,10 @@ public abstract class MudChartBase<TOptions> : MudComponentBase, IMudChart where
     [Category(CategoryTypes.Chart.Behavior)]
     public bool RightToLeft { get; set; }
 
+    [CascadingParameter]
+    [Category(CategoryTypes.Chart.Behavior)]
+    public IMudChart? ChartReference { get; set; }
+
     /// <summary>
     /// The labels describing data values.
     /// </summary>

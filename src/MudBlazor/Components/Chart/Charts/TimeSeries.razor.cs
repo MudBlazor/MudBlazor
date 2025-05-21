@@ -9,6 +9,8 @@ namespace MudBlazor.Charts;
 /// </summary>
 partial class TimeSeries : MudAxisLineChartBase<TimeSeriesChartOptions>, IDisposable
 {
+    public static new ChartType ChartType => ChartType.Timeseries;
+
     private DateTime _minDateTime;
     private DateTime _maxDateTime;
     private TimeSpan _minDateLabelOffset;
@@ -26,8 +28,9 @@ partial class TimeSeries : MudAxisLineChartBase<TimeSeriesChartOptions>, IDispos
 
     protected override void RebuildChart()
     {
-        if (MudChartParent != null)
-            Series = MudChartParent.ChartSeries;
+        Series = (MudChartParent != null && ChartReference is MudChart)
+            ? MudChartParent.ChartSeries
+            : ChartSeries;
 
         _cachedDataPoints = null;
 
