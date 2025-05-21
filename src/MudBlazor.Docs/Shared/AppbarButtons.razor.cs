@@ -9,28 +9,43 @@ using MudBlazor.Docs.Services.Notifications;
 
 namespace MudBlazor.Docs.Shared;
 
-public partial class AppbarButtons
+/// <summary>
+/// Code-behind for the AppbarButtons component, handling UI logic for theme and layout toggles, and notifications.
+/// </summary>
+public partial class AppbarButtons : IDisposable
 {
-    private IDictionary<NotificationMessage, bool> _messages = null;
-    private bool _newNotificationsAvailable = false;
+    private IDictionary<NotificationMessage, bool> _messages = new Dictionary<NotificationMessage, bool>();
+    private bool _newNotificationsAvailable;
 
     [Inject]
-    private INotificationService NotificationService { get; set; }
+    private INotificationService NotificationService { get; set; } = null!;
 
     [Inject]
-    private LayoutService LayoutService { get; set; }
+    private LayoutService LayoutService { get; set; } = null!;
 
-    public string RtlButtonText => LayoutService.IsRTL ? "Left-to-right" : "Right-to-left";
+    /// <summary>
+    /// Gets the text for the RTL toggle button, indicating the next state.
+    /// </summary>
+    public string RtlButtonText => LayoutService.IsRTL ? "Switch to Left-to-right" : "Switch to Right-to-left";
 
+    /// <summary>
+    /// Gets the icon for the RTL toggle button.
+    /// </summary>
     public string RtlButtonIcon => LayoutService.IsRTL ? @Icons.Material.Filled.FormatTextdirectionLToR : @Icons.Material.Filled.FormatTextdirectionRToL;
 
+    /// <summary>
+    /// Gets the text for the dark/light mode toggle button, indicating the next mode.
+    /// </summary>
     public string DarkLightModeButtonText => LayoutService.CurrentDarkLightMode switch
     {
-        DarkLightMode.Dark => "System mode",
-        DarkLightMode.Light => "Dark mode",
-        _ => "Light mode"
+        DarkLightMode.Dark => "Switch to System mode",
+        DarkLightMode.Light => "Switch to Dark mode",
+        _ => "Switch to Light mode"
     };
 
+    /// <summary>
+    /// Gets the icon for the dark/light mode toggle button.
+    /// </summary>
     public string DarkLightModeButtonIcon => LayoutService.CurrentDarkLightMode switch
     {
         DarkLightMode.Dark => Icons.Material.Rounded.AutoMode,
@@ -38,21 +53,44 @@ public partial class AppbarButtons
         _ => Icons.Material.Filled.LightMode
     };
 
+    private async Task ToggleRTLAsync()
+    {
+        await LayoutService.ToggleRightToLeftAsync();
+    }
+
+    private async Task CycleDarkLightModeAsync()
+    {
+        await LayoutService.CycleDarkLightModeAsync();
+    }
+
     private async Task MarkNotificationAsReadAsync()
     {
-        await NotificationService.MarkNotificationsAsRead();
+        await NotificationService.MarkNotificationsAsReadAsync();
         _newNotificationsAvailable = false;
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnInitializedAsync()
     {
-        if (firstRender)
-        {
-            _newNotificationsAvailable = await NotificationService.AreNewNotificationsAvailable();
-            _messages = await NotificationService.GetNotifications();
-            StateHasChanged();
-        }
+        await LoadNotificationsAsync();
+        LayoutService.MajorUpdateOccurred += OnMajorLayoutUpdateOccurred;
+        await base.OnInitializedAsync();
+    }
 
-        await base.OnAfterRenderAsync(firstRender);
+    private async Task LoadNotificationsAsync()
+    {
+        _newNotificationsAvailable = await NotificationService.AreNewNotificationsAvailableAsync();
+        _messages = await NotificationService.GetNotificationsAsync();
+    }
+
+    private void OnMajorLayoutUpdateOccurred(object? sender, EventArgs e)
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    // It's good practice to unsubscribe from events to prevent memory leaks.
+    public void Dispose()
+    {
+        LayoutService.MajorUpdateOccurred -= OnMajorLayoutUpdateOccurred;
+        GC.SuppressFinalize(this);
     }
 }

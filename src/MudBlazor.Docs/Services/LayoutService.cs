@@ -20,22 +20,24 @@ public class LayoutService
     public bool IsRTL { get; private set; }
 
     /// <summary>
-    /// The user's preference that indirectly sets the mode through <see cref="IsDarkMode"/>.
+    /// Gets the user's preferred dark/light mode setting.
+    /// This preference is used to determine the actual <see cref="IsDarkMode"/> state.
     /// </summary>
     public DarkLightMode CurrentDarkLightMode { get; private set; }
 
     /// <summary>
-    /// Determined in <see cref="UpdateDarkMode"/> and is what the UI actually displays out of the user preference and system preference.
+    /// Gets a value indicating whether dark mode is currently active.
+    /// This is determined by <see cref="UpdateDarkModeAsync"/> based on user and system preferences.
     /// </summary>
     public bool IsDarkMode { get; private set; }
 
     /// <summary>
-    /// Enables observation of the system theme change so we can update the dark/light mode.
+    /// Should the service observe system theme changes to update dark/light mode.
     /// </summary>
     public bool ObserveSystemThemeChange { get; private set; }
 
     /// <summary>
-    /// The MudBlazor theme that will be used.
+    /// The currently active MudBlazor theme.
     /// </summary>
     public MudTheme CurrentTheme { get; private set; }
 
@@ -45,16 +47,16 @@ public class LayoutService
     }
 
     /// <summary>
-    /// Occurs when a change happens that needs a UI refresh to be properly displayed.
+    /// Occurs when a change happens that requires a UI refresh.
     /// </summary>
     public event EventHandler MajorUpdateOccurred;
 
     private void OnMajorUpdateOccurred() => MajorUpdateOccurred?.Invoke(this, EventArgs.Empty);
 
     /// <summary>
-    /// Updates the state of the date mode.
+    /// Updates the dark mode state based on user preference and, optionally, the system's dark mode setting.
     /// </summary>
-    /// <param name="systemMode">The known system mode which is used in <see cref="DarkLightMode.System"/>.</param>
+    /// <param name="systemMode">The current system dark mode setting. If null, the existing known system mode is used.</param>
     public void UpdateDarkMode(bool? systemMode = null)
     {
         if (systemMode.HasValue)
@@ -81,7 +83,6 @@ public class LayoutService
                 RightToLeft = false,
                 DarkLightTheme = DarkLightMode.System,
             };
-
             await _userPreferencesService.SaveUserPreferences(_userPreferences);
         }
         else
@@ -92,33 +93,32 @@ public class LayoutService
         }
     }
 
-    public Task OnSystemModeChanged(bool newValue)
+    /// <summary>
+    /// Handles changes in the system's dark mode setting.
+    /// </summary>
+    /// <param name="isSystemDarkMode">True if the system is in dark mode, false otherwise.</param>
+    public Task OnSystemModeChangedAsync(bool isSystemDarkMode)
     {
-        _systemDarkMode = newValue;
+        _systemDarkMode = isSystemDarkMode;
+        UpdateDarkMode();
         OnMajorUpdateOccurred();
         return Task.CompletedTask;
     }
 
+    /// <summary>
+    /// Cycles through the available dark/light mode options (System, Light, Dark) and saves the new preference.
+    /// </summary>
     public async Task CycleDarkLightModeAsync()
     {
-        switch (CurrentDarkLightMode)
+        CurrentDarkLightMode = CurrentDarkLightMode switch
         {
-            case DarkLightMode.System:
-                CurrentDarkLightMode = DarkLightMode.Light;
-                ObserveSystemThemeChange = false;
-                break;
+            DarkLightMode.System => DarkLightMode.Light,
+            DarkLightMode.Light => DarkLightMode.Dark,
+            DarkLightMode.Dark => DarkLightMode.System,
+            _ => DarkLightMode.System // Default case, should not happen
+        };
 
-            case DarkLightMode.Light:
-                CurrentDarkLightMode = DarkLightMode.Dark;
-                ObserveSystemThemeChange = false;
-                break;
-
-            case DarkLightMode.Dark:
-                CurrentDarkLightMode = DarkLightMode.System;
-                ObserveSystemThemeChange = true;
-                break;
-        }
-
+        ObserveSystemThemeChange = CurrentDarkLightMode == DarkLightMode.System;
         UpdateDarkMode();
 
         _userPreferences.DarkLightTheme = CurrentDarkLightMode;
@@ -126,6 +126,9 @@ public class LayoutService
         OnMajorUpdateOccurred();
     }
 
+    /// <summary>
+    /// Toggles the right-to-left (RTL) layout setting and saves the new preference.
+    /// </summary>
     public async Task ToggleRightToLeftAsync()
     {
         IsRTL = !IsRTL;
