@@ -33,3 +33,6 @@
 <MudTooltip Text="@(DarkLightModeButtonText)">
     <MudIconButton Icon="@(DarkLightModeButtonIcon)" Color="Color.Inherit" OnClick="@LayoutService.CycleDarkLightModeAsync" aria-label="@(DarkLightModeButtonText)" />
 </MudTooltip>
+<MudTooltip Text="@(LayoutService.PreviewFeaturesEnabled ? "Disable Preview Features" : "Enable Preview Features")">
+    <MudIconButton Icon="@(LayoutService.PreviewFeaturesEnabled ? @Icons.Material.Filled.FlashOff : @Icons.Material.Filled.FlashOn)" Color="Color.Inherit" OnClick="@LayoutService.TogglePreviewFeatures" aria-label="@(LayoutService.PreviewFeaturesEnabled ? "Disable Preview Features" : "Enable Preview Features")" />
+</MudTooltip>
