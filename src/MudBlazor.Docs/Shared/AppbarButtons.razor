@@ -28,11 +28,11 @@
     </MudBadge>
 </MudTooltip>
 <MudTooltip Text="@(LayoutService.IsRTL ? "Left-to-right" : "Right-to-left")">
-    <MudIconButton Icon="@(LayoutService.IsRTL ? @Icons.Material.Filled.FormatTextdirectionLToR : @Icons.Material.Filled.FormatTextdirectionRToL)" OnClick="@LayoutService.ToggleRightToLeftAsync" Color="Color.Inherit" aria-label="@(LayoutService.IsRTL ? "Left-to-right" : "Right-to-left")" />
+    <MudIconButton Icon="@(LayoutService.IsRTL ? @Icons.Material.Filled.FormatTextdirectionLToR : @Icons.Material.Filled.FormatTextdirectionRToL)" OnClick="@LayoutService.ToggleRightToLeft" Color="Color.Inherit" aria-label="@(LayoutService.IsRTL ? "Left-to-right" : "Right-to-left")" />
 </MudTooltip>
 <MudTooltip Text="@(DarkLightModeButtonText)">
     <MudIconButton Icon="@(DarkLightModeButtonIcon)" Color="Color.Inherit" OnClick="@LayoutService.CycleDarkLightModeAsync" aria-label="@(DarkLightModeButtonText)" />
 </MudTooltip>
 <MudTooltip Text="@(LayoutService.PreviewFeaturesEnabled ? "Disable Preview Features" : "Enable Preview Features")">
-    <MudIconButton Icon="@(LayoutService.PreviewFeaturesEnabled ? @Icons.Material.Filled.FlashOff : @Icons.Material.Filled.FlashOn)" Color="Color.Inherit" OnClick="@LayoutService.TogglePreviewFeaturesAsync" aria-label="@(LayoutService.PreviewFeaturesEnabled ? "Disable Preview Features" : "Enable Preview Features")" />
+    <MudIconButton Icon="@(LayoutService.PreviewFeaturesEnabled ? @Icons.Material.Filled.FlashOff : @Icons.Material.Filled.FlashOn)" Color="Color.Inherit" OnClick="@LayoutService.TogglePreviewFeatures" aria-label="@(LayoutService.PreviewFeaturesEnabled ? "Disable Preview Features" : "Enable Preview Features")" />
 </MudTooltip>

@@ -7,13 +7,8 @@ namespace MudBlazor.Docs.Shared
 {
     public partial class MainLayout : LayoutComponentBase, IDisposable
     {
-        private bool _previewFeaturesEnabled;
-
         [Inject]
         private LayoutService LayoutService { get; set; }
-
-        [Inject]
-        private NavigationManager NavigationManager { get; set; }
 
         private MudThemeProvider _mudThemeProvider;
 
@@ -31,7 +26,6 @@ namespace MudBlazor.Docs.Shared
             if (firstRender)
             {
                 await ApplyUserPreferences();
-                _previewFeaturesEnabled = LayoutService.PreviewFeaturesEnabled;
                 await _mudThemeProvider.WatchSystemPreference(OnSystemPreferenceChanged);
                 StateHasChanged();
             }
@@ -53,14 +47,6 @@ namespace MudBlazor.Docs.Shared
             LayoutService.MajorUpdateOccurred -= LayoutServiceOnMajorUpdateOccured;
         }
 
-        private void LayoutServiceOnMajorUpdateOccured(object sender, EventArgs e)
-        {
-            StateHasChanged();
-
-            if (_previewFeaturesEnabled != LayoutService.PreviewFeaturesEnabled)
-            {
-                NavigationManager.Refresh();
-            }
-        }
+        private void LayoutServiceOnMajorUpdateOccured(object sender, EventArgs e) => StateHasChanged();
     }
 }
