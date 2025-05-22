@@ -96,6 +96,7 @@ namespace MudBlazor.UnitTests.Components
                 "--mud-palette-action-disabled: rgba(0,0,0,0.25882352941176473);",
                 "--mud-palette-action-disabled-background: rgba(0,0,0,0.11764705882352941);",
                 "--mud-palette-surface: rgba(255,255,255,1);",
+                "--mud-palette-inverse-surface: rgba(0,0,0,1);",
                 "--mud-palette-background: rgba(255,255,255,1);",
                 "--mud-palette-background-gray: rgba(245,245,245,1);",
                 "--mud-palette-drawer-background: rgba(255,255,255,1);",
