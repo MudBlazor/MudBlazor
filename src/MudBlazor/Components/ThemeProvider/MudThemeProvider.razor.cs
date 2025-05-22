@@ -327,6 +327,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
             $"--{Palette}-action-disabled-background: {palette.ActionDisabledBackground};");
 
         theme.AppendLine($"--{Palette}-surface: {palette.Surface};");
+        theme.AppendLine($"--{Palette}-inverse-surface: {palette.InverseSurface};");
         theme.AppendLine($"--{Palette}-background: {palette.Background};");
         theme.AppendLine($"--{Palette}-background-gray: {palette.BackgroundGray};");
         theme.AppendLine($"--{Palette}-drawer-background: {palette.DrawerBackground};");

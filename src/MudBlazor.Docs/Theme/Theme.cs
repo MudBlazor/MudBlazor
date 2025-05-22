@@ -55,6 +55,7 @@ namespace MudBlazor.Docs
         {
             Primary = "#7e6fff",
             Surface = "#1e1e2d",
+            InverseSurface = "#ffffff",
             Background = "#1a1a27",
             BackgroundGray = "#151521",
             AppbarText = "#92929f",

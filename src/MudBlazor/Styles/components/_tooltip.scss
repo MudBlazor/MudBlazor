@@ -72,3 +72,12 @@
     border-top-color: inherit;
   }
 }
+
+html:has(.mud-preview-enabled) .mud-tooltip-default {
+  color: var(--mud-palette-surface);
+  background-color: var(--mud-palette-inverse-surface);
+
+  &.mud-tooltip-arrow::after {
+    border-color: var(--mud-palette-inverse-surface) transparent transparent transparent;
+  }
+}

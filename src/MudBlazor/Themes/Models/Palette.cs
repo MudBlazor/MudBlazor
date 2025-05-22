@@ -165,6 +165,11 @@ namespace MudBlazor
         public virtual MudColor Surface { get; set; } = Colors.Shades.White;
 
         /// <summary>
+        /// The inverse surface color.
+        /// </summary>
+        public virtual MudColor InverseSurface { get; set; } = Colors.Shades.Black;
+
+        /// <summary>
         /// The drawer background color.
         /// </summary>
         public virtual MudColor DrawerBackground { get; set; } = Colors.Shades.White;

@@ -61,6 +61,9 @@ namespace MudBlazor
         public override MudColor Surface { get; set; } = "#373740";
 
         /// <inheritdoc />
+        public override MudColor InverseSurface { get; set; } = "#ffffff";
+
+        /// <inheritdoc />
         public override MudColor DrawerBackground { get; set; } = "#27272f";
 
         /// <inheritdoc />
