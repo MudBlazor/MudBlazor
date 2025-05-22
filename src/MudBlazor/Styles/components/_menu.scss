@@ -28,10 +28,10 @@
 
 .mud-menu-list {
   padding: 4px 0;
-  display: grid;
 
   > .mud-menu {
     width: 100%;
+    display: inline;
   }
 
   > .mud-divider {
