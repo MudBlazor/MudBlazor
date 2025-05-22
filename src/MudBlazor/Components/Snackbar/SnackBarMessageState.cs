@@ -44,17 +44,17 @@ namespace MudBlazor
         {
             get
             {
-                const string Template = "opacity: {0}; animation: {1}ms linear {2};";
+                var template = MudGlobal.EnablePreviewFeatures ? "opacity: {0}; animation: {1}ms cubic-bezier(0.4,0,0.2,1) {2};" : "opacity: {0}; animation: {1}ms linear {2};";
 
                 switch (SnackbarState)
                 {
                     case SnackbarState.Showing:
                         var showingDuration = RemainingTransitionMilliseconds(Options.ShowTransitionDuration);
-                        return Format(Template, Opacity, showingDuration, AnimationId);
+                        return Format(template, Opacity, showingDuration, AnimationId);
 
                     case SnackbarState.Hiding:
                         var hidingDuration = RemainingTransitionMilliseconds(Options.HideTransitionDuration);
-                        return Format(Template, 0, hidingDuration, AnimationId);
+                        return Format(template, 0, hidingDuration, AnimationId);
 
                     case SnackbarState.Visible:
                         return $"opacity: {Opacity};";
@@ -90,7 +90,6 @@ namespace MudBlazor
             get
             {
                 var template = "@keyframes " + AnimationId + " {{from{{ {0}: {1}; }} to{{ {0}: {2}; }}}}";
-
                 return SnackbarState switch
                 {
                     SnackbarState.Showing => Format(template, "opacity", "0%", Opacity),

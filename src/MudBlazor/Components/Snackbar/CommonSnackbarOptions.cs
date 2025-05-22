@@ -24,7 +24,7 @@ public abstract class CommonSnackbarOptions
     /// <remarks>
     /// Defaults to <c>1000</c> (one second).
     /// </remarks>
-    public int ShowTransitionDuration { get; set; } = 1000;
+    public int ShowTransitionDuration { get; set; } = MudGlobal.EnablePreviewFeatures ? 500 : 1000;
 
     /// <summary>
     /// The time, in milliseconds, to show the snackbar.
@@ -40,7 +40,7 @@ public abstract class CommonSnackbarOptions
     /// <remarks>
     /// Defaults to <c>2000</c> (two seconds).
     /// </remarks>
-    public int HideTransitionDuration { get; set; } = 2000;
+    public int HideTransitionDuration { get; set; } = MudGlobal.EnablePreviewFeatures ? 500 : 2000;
 
     /// <summary>
     /// Displays a close icon for the snackbar.
