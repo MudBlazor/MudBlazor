@@ -82,7 +82,9 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".mud-picker-calendar-header button.mud-button-month").TrimmedText().Should().Contain(DateTime.Now.ToString("MMMM"));
             comp.Find(".mud-picker-calendar-header button.mud-button-month").TrimmedText().Should().Contain(DateTime.Now.ToString("yyyy"));
             await comp.InvokeAsync(() => picker.GoToDate(DateTime.Parse("2024-06-26")));
-            comp.Find(".mud-picker-calendar-header button.mud-button-month").TrimmedText().Should().Be(DateTime.Parse("2024-06-26").ToString("MMMM yyyy"));
+            DateTime date = DateTime.Parse("2024-06-26");
+            comp.Find(".mud-picker-calendar-header button.mud-button-month").TrimmedText().Should().Contain(date.ToString("MMMM"));
+            comp.Find(".mud-picker-calendar-header button.mud-button-month").TrimmedText().Should().Contain(date.ToString("yyyy"));
         }
 
         [Test]

@@ -41,11 +41,11 @@ public class DateTimeMask : PatternMask
         var y = ExtractYear(mask, alignedText, maskOffset);
         if (y >= 0)
             _year = y;
-        MonthLogic(mask, text, maskOffset, ref textIndex, ref maskIndex, ref alignedText);
-        DayLogic(mask, text, maskOffset, ref textIndex, ref maskIndex, ref alignedText);
-        HourLogic(mask, text, maskOffset, ref textIndex, ref maskIndex, ref alignedText);
-        MinuteLogic(mask, text, maskOffset, ref textIndex, ref maskIndex, ref alignedText);
-        SecondLogic(mask, text, maskOffset, ref textIndex, ref maskIndex, ref alignedText);
+        MonthLogic(mask, maskOffset, ref maskIndex, ref alignedText);
+        DayLogic(mask, maskOffset, ref maskIndex, ref alignedText);
+        HourLogic(mask, maskOffset, ref maskIndex, ref alignedText);
+        MinuteLogic(mask, maskOffset, ref maskIndex, ref alignedText);
+        SecondLogic(mask, maskOffset, ref maskIndex, ref alignedText);
     }
 
     private int ExtractYear(string mask, string alignedText, int maskOffset)
@@ -71,7 +71,7 @@ public class DateTimeMask : PatternMask
         return -1;
     }
 
-    private void MonthLogic(string mask, string text, int maskOffset, ref int textIndex, ref int maskIndex, ref string alignedText)
+    private void MonthLogic(string mask, int maskOffset, ref int maskIndex, ref string alignedText)
     {
         var MM = new string(_M, 2);
         var (monthString, index) = Extract(MM, mask, maskOffset, alignedText);
@@ -97,7 +97,7 @@ public class DateTimeMask : PatternMask
         }
     }
 
-    private void DayLogic(string mask, string text, int maskOffset, ref int textIndex, ref int maskIndex, ref string alignedText)
+    private void DayLogic(string mask, int maskOffset, ref int maskIndex, ref string alignedText)
     {
         var dd = new string(_d, 2);
         var (dayString, index) = Extract(dd, mask, maskOffset, alignedText);
@@ -138,7 +138,7 @@ public class DateTimeMask : PatternMask
         return day;
     }
 
-    private int FixMonth(int month)
+    private static int FixMonth(int month)
     {
         if (month == 0)
             return 1;
@@ -147,7 +147,7 @@ public class DateTimeMask : PatternMask
         return month;
     }
 
-    private int GetDaysInMonth(int year, int month)
+    private static int GetDaysInMonth(int year, int month)
     {
         if (month <= 0 || month > 12) // we don't know yet which month the user means, so assume 31
             return 31;
@@ -156,7 +156,7 @@ public class DateTimeMask : PatternMask
         return DateTime.DaysInMonth(year, Math.Min(12, Math.Max(1, month)));
     }
 
-    private void HourLogic(string mask, string text, int maskOffset, ref int textIndex, ref int maskIndex, ref string alignedText)
+    private void HourLogic(string mask, int maskOffset, ref int maskIndex, ref string alignedText)
     {
         var hh = new string(_h, 2);
         var (hourString, _) = Extract(hh, mask, maskOffset, alignedText);
@@ -181,7 +181,7 @@ public class DateTimeMask : PatternMask
         }
     }
 
-    private void MinuteLogic(string mask, string text, int maskOffset, ref int textIndex, ref int maskIndex, ref string alignedText)
+    private void MinuteLogic(string mask, int maskOffset, ref int maskIndex, ref string alignedText)
     {
         var mm = new string(_m, 2);
         var (minuteString, _) = Extract(mm, mask, maskOffset, alignedText);
@@ -194,7 +194,8 @@ public class DateTimeMask : PatternMask
             if (minute > 1)
             {
                 alignedText = alignedText.Insert(maskIndex, "0");
-                maskIndex++;            }
+                maskIndex++;
+            }
         }
         else if (minuteString.Length == 2)
         {
@@ -205,7 +206,7 @@ public class DateTimeMask : PatternMask
         }
     }
 
-    private void SecondLogic(string mask, string text, int maskOffset, ref int textIndex, ref int maskIndex, ref string alignedText)
+    private void SecondLogic(string mask, int maskOffset, ref int maskIndex, ref string alignedText)
     {
         var ss = new string(_s, 2);
         var (secondString, _) = Extract(ss, mask, maskOffset, alignedText);
@@ -231,12 +232,12 @@ public class DateTimeMask : PatternMask
     }
 
     // Fixes hour within the 24 hour range
-    private int FixHour(int hour)
+    private static int FixHour(int hour)
     {
         return hour % 24;
     }
 
-    private int FixMinute(int minute)
+    private static int FixMinute(int minute)
     {
         return minute % 60;
     }

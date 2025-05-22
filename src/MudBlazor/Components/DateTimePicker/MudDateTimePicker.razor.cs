@@ -404,9 +404,7 @@ namespace MudBlazor
                 Touched = true;
 
                 if (date is not null && IsDateTimeDisabledFunc is not null && IsDateTimeDisabledFunc((DateTime) date))
-                {
                     return;
-                }
 
                 _value = date;
                 if (updateValue)
