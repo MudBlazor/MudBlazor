@@ -12,7 +12,7 @@ namespace MudBlazor.Docs.Shared
 
         protected override void OnInitialized()
         {
-            LayoutService.MajorUpdateOccurred += LayoutServiceOnMajorUpdateOccured;
+            LayoutService.MajorUpdateOccurred += OnMajorUpdateOccured;
 
             if (!MudGlobal.EnablePreviewFeatures)
             {

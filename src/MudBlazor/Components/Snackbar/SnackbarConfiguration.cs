@@ -68,7 +68,7 @@ namespace MudBlazor
         {
             PositionClass = MudGlobal.EnablePreviewFeatures ? Defaults.Classes.Position.BottomLeft : Defaults.Classes.Position.TopRight;
             NewestOnTop = false;
-            PreventDuplicates = !MudGlobal.EnablePreviewFeatures; // See warning in TryAddDocsViewServices.
+            PreventDuplicates = !MudGlobal.EnablePreviewFeatures;
             MaxDisplayedSnackbars = 5;
         }
     }
