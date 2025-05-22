@@ -788,7 +788,10 @@ class MudPopover {
     }
 
     createObservers(id) {
-        // this is the origin of the popover in the dom, it can be nested inside another popover's content
+        // make sure observer lists are starting clear
+        this.disposeObservers(id);
+
+        // popoverNode is the origin of the popover in the dom, it can be nested inside another popover's content
         // e.g. the filter popover for datagrid, this would be the inside of <td> where the mudpopover was placed
         // popoverNode.parentNode is it's immediate parent or the actual <td> element in the above example
         const popoverNode = document.getElementById('popover-' + id);
@@ -860,7 +863,7 @@ class MudPopover {
                 }         
                 // create observers for this popover (resizeObserver and scroll Listeners)
                 this.createObservers(id);
-
+            
                 // reposition popover individually through transition duration
                 const duration = parseFloat(target.style['transition-duration']) || 0;
                 const delay = parseFloat(target.style['transition-delay']) || 0;
@@ -1022,6 +1025,7 @@ class MudPopover {
         };
 
         if (startOpened) {
+            this.createObservers(id);
             // this happens when a popover is created in the dom as opened, force an immediate draw
             window.mudpopoverHelper.placePopover(popoverNode);
         }
