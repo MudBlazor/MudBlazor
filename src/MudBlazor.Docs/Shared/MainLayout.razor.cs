@@ -12,19 +12,15 @@ namespace MudBlazor.Docs.Shared
 
         private MudThemeProvider _mudThemeProvider;
 
-        static MainLayout()
+        protected override void OnInitialized()
         {
-            MudGlobal.EnablePreviewFeatures = true; // TODO: Allow users to enable/disable preview features.
+            LayoutService.MajorUpdateOccurred += LayoutServiceOnMajorUpdateOccured;
 
             if (!MudGlobal.EnablePreviewFeatures)
             {
                 MudGlobal.TooltipDefaults.Delay = TimeSpan.FromMilliseconds(500);
             }
-        }
 
-        protected override void OnInitialized()
-        {
-            LayoutService.MajorUpdateOccurred += LayoutServiceOnMajorUpdateOccured;
             base.OnInitialized();
         }
 
