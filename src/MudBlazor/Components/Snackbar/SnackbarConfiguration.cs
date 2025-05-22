@@ -66,9 +66,9 @@ namespace MudBlazor
 
         public SnackbarConfiguration()
         {
-            PositionClass = Defaults.Classes.Position.TopRight;
+            PositionClass = MudGlobal.EnablePreviewFeatures ? Defaults.Classes.Position.BottomLeft : Defaults.Classes.Position.TopRight;
             NewestOnTop = false;
-            PreventDuplicates = true;
+            PreventDuplicates = !MudGlobal.EnablePreviewFeatures; // See warning in TryAddDocsViewServices.
             MaxDisplayedSnackbars = 5;
         }
     }
