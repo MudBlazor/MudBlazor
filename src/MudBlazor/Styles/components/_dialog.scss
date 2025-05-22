@@ -75,9 +75,15 @@
   max-height: calc(100dvh - var(--mud-appbar-height));
   overflow-y: auto;
 
-  &.mud-dialog-rtl .mud-dialog-title .mud-button-close {
+  &.mud-dialog-rtl .mud-dialog-title {
+    &:has(.mud-button-close) {
+      padding-left: 48px;
+    }
+
+    &.mud-button-close {
     right: unset;
     left: 8px;
+    }
   }
 
   & .mud-dialog-title {
@@ -89,13 +95,17 @@
     border-top-right-radius: var(--mud-default-borderradius);
 
     + * > .mud-dialog-content {
-      border-radius: 0
+      border-radius: 0;
     }
 
     & .mud-button-close {
       top: 8px;
       right: 8px;
       position: absolute;
+    }
+
+    &:has(.mud-button-close) {
+      padding-right: 48px;
     }
   }
 
