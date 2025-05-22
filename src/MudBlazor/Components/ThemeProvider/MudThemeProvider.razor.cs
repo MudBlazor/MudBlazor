@@ -104,6 +104,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         return value;
     }
 
+    [ExcludeFromCodeCoverage]
     [Obsolete("Use GetSystemDarkModeAsync instead")]
     public Task<bool> GetSystemPreference() => GetSystemDarkModeAsync();
 
@@ -121,6 +122,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         return Task.CompletedTask;
     }
 
+    [ExcludeFromCodeCoverage]
     [Obsolete("Use WatchSystemDarkModeAsync instead")]
     public Task WatchSystemPreference(Func<bool, Task> functionOnChange) => WatchSystemDarkModeAsync(functionOnChange);
 
@@ -139,6 +141,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         }
     }
 
+    [ExcludeFromCodeCoverage]
     [Obsolete("Use SystemDarkModeChangedAsync instead")]
     [JSInvokable]
     public Task SystemPreferenceChanged(bool isDarkMode) => SystemDarkModeChangedAsync(isDarkMode);
