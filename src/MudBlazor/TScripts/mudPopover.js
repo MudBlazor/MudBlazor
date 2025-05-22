@@ -194,6 +194,46 @@ window.mudpopoverHelper = {
         return window.mudpopoverHelper.calculatePopoverPosition(classList, boundingRect, selfRect);
     },
 
+    isInViewport: function (node, rect) {
+        // checks a rect to see if it's in the viewport underneath a scrollable container apart from the body
+        const windowHeight = (window.innerHeight || document.documentElement.clientHeight);
+        const windowWidth = (window.innerWidth || document.documentElement.clientWidth);
+
+        const isInVisibleViewport =
+            rect.top < windowHeight &&
+            rect.bottom > 0 &&
+            rect.left < windowWidth &&
+            rect.right > 0;
+
+        // if it's in visible page area return true
+        if (isInVisibleViewport) {
+            return true;
+        }
+
+    // Traverse up to check if it's inside a scrollable container
+    let current = node.parentNode;
+    while (current && current !== document.body) {
+        const style = window.getComputedStyle(current);
+
+        const overflowY = style.overflowY;
+        const overflowX = style.overflowX;
+
+        const isScrollableY = (overflowY === 'auto' || overflowY === 'scroll') &&
+                              current.scrollHeight > current.clientHeight;
+        const isScrollableX = (overflowX === 'auto' || overflowX === 'scroll') &&
+                              current.scrollWidth > current.clientWidth;
+
+        if (isScrollableY || isScrollableX) {
+            return false; // inside a scrollable container and not in view
+        }
+
+        current = current.parentNode;
+        }
+
+        // No scrollable parent found
+        return true;
+    },
+
     // primary positioning method
     placePopover: function (popoverNode, classSelector) {
         // parentNode is the calling element, mudmenu/tooltip/etc not the parent popover if it's a child popover
@@ -216,6 +256,10 @@ window.mudpopoverHelper = {
 
             // Batch DOM reads
             let boundingRect = popoverNode.parentNode.getBoundingClientRect();
+            if (!window.mudpopoverHelper.isInViewport(popoverNode, boundingRect)) {
+                // if the parentNode isn't visible at all we stop
+                return;
+            }
             const selfRect = popoverContentNode.getBoundingClientRect();
             const popoverNodeStyle = window.getComputedStyle(popoverNode);
             const isPositionFixed = popoverNodeStyle.position === 'fixed';
@@ -708,10 +752,21 @@ window.mudpopoverHelper = {
                 window.mudpopoverHelper.updatePopoverOverlay(highestTickItem);
             }
         }
-    },
+    }
+}
+
+class MudPopover {
+
+    constructor() {
+        this.map = {};
+        this.contentObserver = null;
+        this.onResize = () => window.mudpopoverHelper.debouncedResize();
+        this.onScroll = () => window.mudpopoverHelper.handleScroll(null);
+        this.onScrollableNodes = (node) => window.mudpopoverHelper.handleScroll(node);
+    }
 
     // adds scroll listeners to node + parents up to body
-    popoverScrollListener: function (node) {
+    popoverScrollListener(node) {
         let currentNode = node.parentNode;
         const scrollableElements = [];
         while (currentNode) {
@@ -719,8 +774,9 @@ window.mudpopoverHelper = {
                 (currentNode.scrollHeight > currentNode.clientHeight) || // Vertical scroll
                 (currentNode.scrollWidth > currentNode.clientWidth);    // Horizontal scroll
             if (isScrollable) {
-                currentNode.addEventListener('scroll', window.mudpopoverHelper.handleScroll, { passive: true });
-                scrollableElements.push(currentNode);
+                const handler = () => this.onScrollableNodes(node);
+                currentNode.addEventListener('scroll', handler, { passive: true });
+                scrollableElements.push({ element: currentNode, handler });
             }
             // Stop if we reach the body, or head
             if (currentNode.tagName === "BODY") {
@@ -729,14 +785,6 @@ window.mudpopoverHelper = {
             currentNode = currentNode.parentNode;
         }
         return scrollableElements;
-    },
-}
-
-class MudPopover {
-
-    constructor() {
-        this.map = {};
-        this.contentObserver = null;
     }
 
     createObservers(id) {
@@ -755,16 +803,15 @@ class MudPopover {
                     const target = entry.target;
                     for (const childNode of target.childNodes) {
                         if (childNode.id && childNode.id.startsWith('popover-')) {
-                            window.mudpopoverHelper.debouncedResize();
+                            this.onResize();
                         }
                     }
                 }
             });
 
             resizeObserver.observe(popoverNode.parentNode);
-
             // Add scroll event listeners to the content node and its parents up to the Body
-            const scrollableElements = window.mudpopoverHelper.popoverScrollListener(popoverNode);
+            const scrollableElements = this.popoverScrollListener(popoverNode);
 
             // Store all references needed for later cleanup
             this.map[id].scrollableElements = scrollableElements;
@@ -781,9 +828,9 @@ class MudPopover {
 
         // 1. Remove scroll event listeners from all scrollable parent elements
         if (scrollableElements && Array.isArray(scrollableElements)) {
-            scrollableElements.forEach(element => {
+            scrollableElements.forEach(({ element, handler }) => {
                 if (element && typeof element.removeEventListener === 'function') {
-                    element.removeEventListener('scroll', window.mudpopoverHelper.handleScroll);
+                    element.removeEventListener('scroll', handler);
                 }
             });
         }
@@ -814,8 +861,19 @@ class MudPopover {
                 // create observers for this popover (resizeObserver and scroll Listeners)
                 this.createObservers(id);
 
-                // reposition popover individually
+                // reposition popover individually through transition duration
+                const duration = parseFloat(target.style['transition-duration']) || 0;
+                const delay = parseFloat(target.style['transition-delay']) || 0;
+                const total = duration + delay;
+                const interval = Math.ceil(total / 3);
+                const start = performance.now();
                 window.mudpopoverHelper.placePopoverByNode(target);
+                const intervalId = setInterval(() => {
+                    window.mudpopoverHelper.placePopoverByNode(target);
+                    if (performance.now() - start > total) {
+                        clearInterval(intervalId);
+                    }
+                }, interval);
             }
             else {
                 // tell the map that this popover is closed                  
@@ -854,7 +912,6 @@ class MudPopover {
             // instead we use data-ticks since we know the newest data-ticks > 0 is the top most.            
             const tickAttribute = target.getAttribute('data-ticks');            
             // data ticks is not 0 so let's reposition the popover and overlay
-
             if (tickAttribute > 0 && target.parentNode && this.map[id] && this.map[id].isOpened) {
                 // reposition popover individually
                 window.mudpopoverHelper.placePopoverByNode(target);           
@@ -881,8 +938,8 @@ class MudPopover {
         this.observeMainContainer();
 
         // setup event listeners
-        window.addEventListener('resize', window.mudpopoverHelper.debouncedResize, { passive: true });
-        window.addEventListener('scroll', window.mudpopoverHelper.handleScroll, { passive: true });
+        window.addEventListener('resize', this.onResize, { passive: true });
+        window.addEventListener('scroll', this.onScroll, { passive: true });
     }
 
     observeMainContainer() {
@@ -953,6 +1010,7 @@ class MudPopover {
 
         // this is the content node in the provider regardless of the RenderFragment that exists when the popover is active
         const popoverContentNode = document.getElementById('popovercontent-' + id);
+
         const startOpened = popoverContentNode.classList.contains('mud-popover-open');
 
         // Store all references needed for later cleanup
@@ -963,9 +1021,11 @@ class MudPopover {
             isOpened: startOpened
         };
 
-        window.mudpopoverHelper.placePopover(popoverContentNode);
-        // queue a resize event so we ensure if this popover started opened or nested it will be positioned correctly
-        // needs to be after setup in the map
+        if (startOpened) {
+            // this happens when a popover is created in the dom as opened, force an immediate draw
+            window.mudpopoverHelper.placePopover(popoverNode);
+        }
+        // debounce a full reposition
         window.mudpopoverHelper.debouncedResize();
     }
 
@@ -1014,8 +1074,8 @@ class MudPopover {
             }
 
             // 4. Remove global event listeners (handled outside this class, listed here for reference)
-            window.removeEventListener('resize', window.mudpopoverHelper.debouncedResize);
-            window.removeEventListener('scroll', window.mudpopoverHelper.handleScroll);
+            window.removeEventListener('resize', this.onResize);
+            window.removeEventListener('scroll', this.onScroll);
         } catch (error) {
             console.error("Error disposing MudPopover:", error);
         }
@@ -1030,9 +1090,20 @@ window.mudpopoverHelper.debouncedResize = window.mudpopoverHelper.debounce(() =>
     window.mudpopoverHelper.placePopoverByClassSelector();
 }, 25);
 
-window.mudpopoverHelper.handleScroll = function () {
-    window.mudpopoverHelper.placePopoverByClassSelector('mud-popover-fixed');
-    window.mudpopoverHelper.placePopoverByClassSelector('mud-popover-overflow-flip-always');
+window.mudpopoverHelper.handleScroll = function (node = null) {
+    // node is a container scrollable element, doesn't need fixed position or flip always to fire 
+    // does need itself to be repositioned to stay anchored to where it's at
+    // the areas that use node are scrollable containers
+    if (node) {
+        window.mudpopoverHelper.placePopover(node);
+    }
+    else {
+        // reposition all fixed/flip popovers as a body container has scrolled
+        window.mudpopoverHelper.placePopoverByClassSelector('mud-popover-fixed');
+        window.mudpopoverHelper.placePopoverByClassSelector('mud-popover-overflow-flip-always');
+    }
+    // queue a debounced check all
+    window.mudpopoverHelper.debouncedResize();
 };
 
 window.mudPopover = new MudPopover();
