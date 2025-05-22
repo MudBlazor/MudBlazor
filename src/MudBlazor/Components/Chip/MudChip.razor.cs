@@ -62,7 +62,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         .AddClass($"mud-chip-color-{GetColor().ToDescriptionString()}")
         .AddClass("mud-clickable", IsButton || IsAnchor)
         .AddClass("mud-ripple", IsButton && GetRipple())
-        .AddClass("mud-chip-label", GetLabel())
+        .AddClass("mud-chip-label", MudGlobal.EnablePreviewFeatures ? true : GetLabel())
         .AddClass("mud-disabled", GetDisabled())
         .AddClass("mud-chip-selected", SelectedState.Value)
         .AddClass(Class)
