@@ -143,6 +143,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
     [JSInvokable]
     public Task SystemPreferenceChanged(bool isDarkMode) => SystemDarkModeChangedAsync(isDarkMode);
 
+    // <inheritdoc />
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -157,12 +158,14 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         await base.OnAfterRenderAsync(firstRender);
     }
 
+    // <inheritdoc />
     protected override void OnInitialized()
     {
         _theme = Theme ?? new MudTheme();
         base.OnInitialized();
     }
 
+    // <inheritdoc />
     protected override void OnParametersSet()
     {
         if (Theme is not null)
