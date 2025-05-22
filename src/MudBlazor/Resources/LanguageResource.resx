@@ -268,13 +268,13 @@
     <value>Close Picker</value>
   </data>
   <data name="MudColorPicker_SpectrumView" xml:space="preserve">
-    <value>Switch to Spectrum View</value>
+    <value>Spectrum</value>
   </data>
   <data name="MudColorPicker_GridView" xml:space="preserve">
-    <value>Switch to Grid View</value>
+    <value>Grid</value>
   </data>
   <data name="MudColorPicker_PaletteView" xml:space="preserve">
-    <value>Switch to Palette View</value>
+    <value>Palette</value>
   </data>
   <data name="MudColorPicker_ToggleCurrentColor" xml:space="preserve">
     <value>Toggle Current Color</value>
