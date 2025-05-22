@@ -545,3 +545,21 @@
 .mud-picker .mud-shrink .mud-range-input-separator {
   visibility: visible;
 }
+
+html:has(.mud-preview-enabled) .mud-input-adornment-icon-button {
+  padding: 6px;
+  font-size: 1.5rem;
+
+  &.mud-icon-button-edge-start {
+    margin-left: -6px;
+    margin-inline-start: -6px;
+    margin-inline-end: unset;
+  }
+
+  &.mud-icon-button-edge-end {
+    margin-right: -6px;
+    margin-inline-end: -6px;
+    margin-inline-start: unset;
+  }
+}
+

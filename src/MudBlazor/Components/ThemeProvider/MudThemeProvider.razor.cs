@@ -190,7 +190,16 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
     {
         _theme = Theme ?? new MudTheme();
         var theme = new StringBuilder();
-        theme.AppendLine("<style class='mud-theme-provider'>");
+
+        if (MudGlobal.EnablePreviewFeatures)
+        {
+            theme.AppendLine("<style class='mud-theme-provider mud-preview-enabled'>");
+        }
+        else
+        {
+            theme.AppendLine("<style class='mud-theme-provider'>");
+        }
+
         theme.Append(_theme.PseudoCss.Scope);
         theme.AppendLine("{");
         GenerateTheme(theme);
