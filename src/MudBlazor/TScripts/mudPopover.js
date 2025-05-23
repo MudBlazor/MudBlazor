@@ -848,6 +848,23 @@ class MudPopover {
         this.map[id].parentResizeObserver = null;
     }
 
+    openPopover(target, id) {
+        // create observers for this popover (resizeObserver and scroll Listeners)
+        this.createObservers(id);
+
+        // reposition popover individually through transition duration of itself/parents
+        const total = this.getTransitionTimes(id);
+        const interval = Math.ceil(total / 12);
+        const start = performance.now();
+        window.mudpopoverHelper.placePopoverByNode(target);
+        const intervalId = setInterval(() => {
+            window.mudpopoverHelper.placePopoverByNode(target);
+            if (performance.now() - start > total) {
+                clearInterval(intervalId);
+            }
+        }, interval);
+    }
+
     callbackPopover(mutation) {
         // good viewertests to check anytime you make a change
         // DrawerDialogSelectTest, OverlayNestedFreezeTest, OverlayDialogTest, PopoverDataGridFilterOptionsTest
@@ -860,23 +877,8 @@ class MudPopover {
                 // setup for an open popover and create observers
                 if (this.map[id] && !this.map[id].isOpened) {
                     this.map[id].isOpened = true;
-                }         
-                // create observers for this popover (resizeObserver and scroll Listeners)
-                this.createObservers(id);
-            
-                // reposition popover individually through transition duration
-                const duration = parseFloat(target.style['transition-duration']) || 0;
-                const delay = parseFloat(target.style['transition-delay']) || 0;
-                const total = duration + delay;
-                const interval = Math.ceil(total / 3);
-                const start = performance.now();
-                window.mudpopoverHelper.placePopoverByNode(target);
-                const intervalId = setInterval(() => {
-                    window.mudpopoverHelper.placePopoverByNode(target);
-                    if (performance.now() - start > total) {
-                        clearInterval(intervalId);
-                    }
-                }, interval);
+                }
+                this.openPopover(target, id);
             }
             else {
                 // tell the map that this popover is closed                  
@@ -990,6 +992,44 @@ class MudPopover {
         this.contentObserver = observer;
     }
 
+    getTransitionTimes(id) {
+        let node = document.getElementById(`popover-${id}`);
+        if (!node) {
+            return 0;
+        }
+        let maxTime = 0;
+
+        while (node && node.tagName !== 'BODY') {
+            const computedStyle = window.getComputedStyle(node);
+
+            const delays = (computedStyle.transitionDelay + ',' + computedStyle.animationDelay).split(',');
+            const durations = (computedStyle.transitionDuration + ',' + computedStyle.animationDuration).split(',');
+
+            for (let i = 0; i < Math.max(delays.length, durations.length); i++) {
+                const delay = this.parseTime(delays[i % delays.length]);
+                const duration = this.parseTime(durations[i % durations.length]);
+                const total = delay + duration;
+                if (total > maxTime) {
+                    maxTime = total;
+                }
+            }
+
+            node = node.parentElement;
+        }
+
+        return maxTime;
+    }
+
+    parseTime(timeStr) {
+        if (!timeStr) return 0;
+        timeStr = timeStr.trim();
+        if (timeStr.endsWith('ms')) {
+            return parseFloat(timeStr);
+        } else if (timeStr.endsWith('s')) {
+            return parseFloat(timeStr) * 1000;
+        }
+        return 0;
+    }
 
     /**
      * Connects a popover element to the system, setting up all necessary event listeners and observers
@@ -1025,9 +1065,7 @@ class MudPopover {
         };
 
         if (startOpened) {
-            this.createObservers(id);
-            // this happens when a popover is created in the dom as opened, force an immediate draw
-            window.mudpopoverHelper.placePopover(popoverNode);
+            this.openPopover(popoverContentNode, id);
         }
         // debounce a full reposition
         window.mudpopoverHelper.debouncedResize();
