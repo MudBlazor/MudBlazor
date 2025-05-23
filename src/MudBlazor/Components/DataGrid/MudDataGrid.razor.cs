@@ -39,7 +39,7 @@ namespace MudBlazor
         private CancellationTokenSource _serverDataCancellationTokenSource;
         private IEnumerable<T> _currentRenderFilteredItemsCache = null;
         internal GroupDefinition<T> _groupDefinition;
-        internal Dictionary<NullableObject<object>, bool> _groupExpansionsDict = [];
+        internal Dictionary<GroupKey, bool> _groupExpansionsDict = [];
         private GridData<T> _serverData = new() { TotalItems = 0, Items = Array.Empty<T>() };
         private Func<IFilterDefinition<T>> _defaultFilterDefinitionFactory = () => new FilterDefinition<T>();
 
@@ -2109,12 +2109,12 @@ namespace MudBlazor
             foreach (var group in groups)
             {
                 var expanded = false;
-                if (group is { Key: not null })
+                if (group is not null)
                 {
-                    var key = new { groupDef.Title, group.Key };
-                    expanded = _groupExpansionsDict.ContainsKey(key) ?
-                                   _groupExpansionsDict[key] :
+                    var key = new GroupKey(groupDef.Title, group.Key);
+                    expanded = _groupExpansionsDict.TryGetValue(key, out var value) ? value :
                                    groupDef.Expanded;
+                    _groupExpansionsDict.TryAdd(key, expanded);
                 }
                 result.Add(new GroupDefinition<T>
                 {
@@ -2125,23 +2125,57 @@ namespace MudBlazor
                     Title = groupDef.Title,
                     Parent = groupDef.Parent,
                     InnerGroup = groupDef.InnerGroup,
-                    Grouping = group,
+                    Grouping = group ?? new EmptyGrouping<object?, T>(null)
                 });
             }
             return result;
         }
 
-        internal async Task ChangedGrouping(Column<T>? col = null)
+        internal async Task UpdateGroupingOrder(Column<T> column, bool added)
         {
-            // If col is not null add GroupByOrder is not set set it to the end
-            if (col is { _groupByOrderState.Value: 0 })
+            // if added then add to the end if no _groupByOrderState.Value
+            if (added)
             {
-                var maxOrder = RenderedColumns.Max(x => x._groupByOrderState.Value);
-                await col._groupByOrderState.SetValueAsync(maxOrder + 1);
+                var groupedColumns = RenderedColumns.Where(x => x.GroupingState.Value && x != column);
+                var newOrder = groupedColumns.Any() ? groupedColumns.Max(x => x._groupByOrderState.Value) + 1 : 0;
+                await column._groupByOrderState.SetValueAsync(newOrder);
             }
-            GroupItems();
+            // if removed then reset _groupByOrderState.Value 
+            else
+            {
+                await column._groupByOrderState.SetValueAsync(default);
+            }
+            // expand all but last grouped column when changed
+            await GroupExpansion();
+        }
+
+        private async Task GroupExpansion()
+        {
+            var groupedColumns = RenderedColumns.Where(x => x.GroupingState.Value).OrderBy(x => x._groupByOrderState.Value).SkipLast(1);
+            foreach (var col in groupedColumns.OrderBy(x => x._groupByOrderState.Value))
+            {
+                await col._groupExpandedState.SetValueAsync(true);
+            }
+        }
+
+        internal void ToggleGroupExpandAsync(string title, object? key, GroupDefinition<T> groupDef, bool expanded)
+        {
+            var groupKey = new GroupKey(title, key);
+
+            // update the expansion state for _groupExpansionsDict
+            // if it has a key we see if it differs from the definition Expanded State and update accordingly
+            // if it doesn't we add it if the new state doesn't match the definition
+            var col = RenderedColumns.FirstOrDefault(x => x.GroupBy == groupDef.Selector);
+            if (expanded == col?._groupExpandedState.Value)
+                _groupExpansionsDict.Remove(groupKey);
+            else
+                _groupExpansionsDict[groupKey] = expanded;
+
+            _groupInitialExpanded = false;
+            StateHasChanged();
         }
 #nullable disable
+
         /// <summary>
         /// Expands all groups async.
         /// </summary>
@@ -2305,5 +2339,7 @@ namespace MudBlazor
 
             System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
         }
+
+        internal record GroupKey(string Title, object ItemsKey);
     }
 }

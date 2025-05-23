@@ -606,5 +606,31 @@ namespace MudBlazor.UnitTests.Components
             heatmap.Instance._maxValue.Should().Be(max.HasValue ? max : .98);
         }
 
+        [TestCase(ChartType.Donut)]
+        [TestCase(ChartType.Line)]
+        [TestCase(ChartType.Pie)]
+        [TestCase(ChartType.Bar)]
+        [TestCase(ChartType.StackedBar)]
+        [TestCase(ChartType.HeatMap)]
+        [Test]
+        public void NoLabel_Chart_IsValid(ChartType chart)
+        {
+            var series = new List<ChartSeries>()
+            {
+                new() { Name = "Series 1", Data = [90, 79, 72, 69, 62, 62, 55, 65, 70] },
+                new() { Name = "Series 2", Data = [10, 41, 35, 51, 49, 62, 69, 91, 148] },
+            };
+
+            double[] data = { 50, 25, 20, 5, 16, 14, 8, 4, 2, 8, 10, 19, 8, 17, 6, 11, 19, 24, 35, 13, 20, 12 };
+
+            var isRadial = chart == ChartType.Donut || chart == ChartType.Pie;
+
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+                              .Add(p => p.ChartType, chart)
+                              .Add(p => p.ChartOptions, new ChartOptions { InterpolationOption = InterpolationOption.Periodic })
+                              .Add(p => p.ChartSeries, !isRadial ? series : null)
+                              .Add(p => p.InputData, isRadial ? data : null));
+
+        }
     }
 }

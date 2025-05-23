@@ -122,10 +122,10 @@ namespace MudBlazor
                     return InfoFormat
                         .Replace("{first_item}", $"{firstItem}")
                         .Replace("{last_item}", $"{lastItem}")
-                        .Replace("{all_items}", $"{filteredItemsCount}");
+                        .Replace("{all_items}", $"{filteredItemsCount:N0}");
                 }
 
-                return Localizer[LanguageResource.MudDataGridPager_InfoFormat, firstItem, lastItem, filteredItemsCount];
+                return Localizer[LanguageResource.MudDataGridPager_InfoFormat, firstItem, lastItem, $"{filteredItemsCount:N0}"];
             }
         }
 

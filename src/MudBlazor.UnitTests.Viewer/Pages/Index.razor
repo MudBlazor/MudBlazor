@@ -1,7 +1,8 @@
 ﻿@page "/"
 @using System.Reflection
+@inject NavigationManager NavManager
 
-<MudThemeProvider Theme="@_customTheme" IsDarkMode="@_isDarkMode"  />
+<MudThemeProvider Theme="@_customTheme" IsDarkMode="@_isDarkMode" />
 
 <MudLayout>
     <MudRTLProvider RightToLeft="_rightToLeft">
@@ -143,6 +144,7 @@
 </style>
 
 @code {
+
     private const string ExpandAllIcon = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>expand-all-outline</title><path d="M4,2A2,2 0 0,0 2,4V14H4V4H14V2H4M8,6A2,2 0 0,0 6,8V18H8V8H18V6H8M20,12V20H12V12H20M20,10H12A2,2 0 0,0 10,12V20A2,2 0 0,0 12,22H20A2,2 0 0,0 22,20V12A2,2 0 0,0 20,10M19,17H17V19H15V17H13V15H15V13H17V15H19V17Z" /></svg>""";
     private const string CollapseAllIcon = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>collapse-all-outline</title><path d="M4,2A2,2 0 0,0 2,4V14H4V4H14V2H4M8,6A2,2 0 0,0 6,8V18H8V8H18V6H8M20,12V20H12V12H20M20,10H12A2,2 0 0,0 10,12V20A2,2 0 0,0 12,22H20A2,2 0 0,0 22,20V12A2,2 0 0,0 20,10M19,17H13V15H19V17Z" /></svg>""";
 
@@ -198,6 +200,71 @@
             type => type,
             type => type.Namespace?.Split('.').LastOrDefault() ?? string.Empty
         );
+
+        ParseQueryString();
+        NavManager.LocationChanged += HandleLocationChanged;
+    }
+
+    private void HandleLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        ParseQueryString();
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        NavManager.LocationChanged -= HandleLocationChanged;
+    }
+
+    private void ParseQueryString()
+    {
+        var uri = new Uri(NavManager.Uri);
+        var query = uri.Query;
+
+        if (string.IsNullOrEmpty(query))
+            return;
+
+        if (query.StartsWith('?'))
+            query = query.Substring(1);
+
+        var queryParams = query.Split('&');
+
+        foreach (var param in queryParams)
+        {
+            var parts = param.Split('=');
+            if (parts.Length == 2)
+            {
+                var key = parts[0];
+                var value = Uri.UnescapeDataString(parts[1]);
+
+                if (string.Equals(key, "component", StringComparison.OrdinalIgnoreCase))
+                {
+                    var componentType = _availableComponentTypes.FirstOrDefault(t =>
+                        t.Name.Equals(value, StringComparison.OrdinalIgnoreCase));
+
+                    if (componentType != null)
+                    {
+                        _selectedType = componentType;
+                        StateHasChanged();
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    private void UpdateQueryString(Type componentType)
+    {
+        if (componentType == null) return;
+
+        var uri = new Uri(NavManager.Uri);
+        var baseUrl = uri.GetLeftPart(UriPartial.Path);
+
+        // Create the new query string
+        var newUrl = $"{baseUrl}?component={componentType.Name}";
+
+        // Update URL without navigation (false parameter)
+        NavManager.NavigateTo(newUrl, false);
     }
 
     private RenderFragment TestComponent() => builder =>
@@ -254,6 +321,7 @@
         }
 
         _selectedType = entry;
+        UpdateQueryString(entry);
         await Task.Yield();
         await _autocomplete.ClearAsync();
     }

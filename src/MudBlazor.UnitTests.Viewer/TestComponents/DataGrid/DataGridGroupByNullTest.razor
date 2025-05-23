@@ -1,0 +1,50 @@
+﻿<MudDataGrid T="Fruit" @ref="_dataGrid" Items="@_fruits" Filterable="true" Hideable="true" Groupable="true"
+             GroupExpanded="true">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Fruits</MudText>
+        <MudSpacer />
+    </ToolBarContent>
+    <Columns>
+        <PropertyColumn Property="x => x.Name" Title="Name" Filterable="false" Groupable="false" />
+        <PropertyColumn Property="x => x.Count" />
+        <PropertyColumn Property="x => x.Category" Title="Category" Grouping="true" >
+            <GroupTemplate>
+                <span style="font-weight:bold">Category: @context.Grouping.Key</span>
+            </GroupTemplate>
+        </PropertyColumn>
+    </Columns>
+</MudDataGrid>
+
+<div class="d-flex flex-wrap mt-4">
+    <MudButton Class="add-button" OnClick="@AddFruit" Color="@Color.Primary">Add Fruit</MudButton>
+    <MudButton Class="addnull-button" OnClick="@AddNullFruit" Color="@Color.Primary">Add Null Fruit</MudButton>
+</div>
+
+@code {
+    private MudDataGrid<Fruit> _dataGrid = null!;
+    private readonly List<Fruit> _fruits =
+    [
+        new Fruit("Apple", 2, "Pome"),
+        new Fruit("Pear", 4, "Pome"),
+        new Fruit("Orange", 4, "Citrus")
+    ];
+
+    public void AddFruit()
+    {
+        _fruits.Add(new Fruit("Banana", 5, "Musa"));
+    }
+
+    public void AddNullFruit()
+    {
+        _fruits.Add(new Fruit("NullFruit", 3, null));
+    }
+
+    public class Fruit(string name, int count, string? category)
+    {
+        public string Name { get; set; } = name;
+
+        public int Count { get; set; } = count;
+
+        public string? Category { get; set; } = category;
+    }
+}

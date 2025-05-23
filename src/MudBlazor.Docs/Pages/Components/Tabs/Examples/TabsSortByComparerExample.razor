@@ -1,0 +1,25 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudTabs SortComparer="_customComparer" Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
+    <MudTabPanel Text="Tab 2 (Tag=C)" Tag="@( "C" )">
+        <MudText>Content Two</MudText>
+    </MudTabPanel>
+    <MudTabPanel Text="Tab 1 (Tag=B)" Tag="@( "B" )">
+        <MudText>Content One</MudText>
+    </MudTabPanel>
+    <MudTabPanel Text="Tab 3 (Tag=A)" Tag="@( "A" )">
+        <MudText>Content Three</MudText>
+    </MudTabPanel>
+</MudTabs>
+
+@code {
+    private readonly IComparer<MudTabPanel> _customComparer = new CompareByTagAscending();
+
+    private class CompareByTagAscending : IComparer<MudTabPanel>
+    {
+        public int Compare(MudTabPanel x, MudTabPanel y)
+        {
+            return Comparer<string>.Default.Compare( x?.Tag as string, y?.Tag as string );
+        }
+    }
+}
