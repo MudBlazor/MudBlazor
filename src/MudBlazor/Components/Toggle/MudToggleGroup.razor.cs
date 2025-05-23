@@ -317,13 +317,16 @@ namespace MudBlazor
             }
         }
 
-        private void OnValueChanged()
+        private void OnValueChanged(ParameterChangedEventArgs<T?> args)
         {
             // perform Selection after user consumes Value Changed logic
-            ApplySelectionState();
+            var selectedItem = _items.FirstOrDefault(x => EqualityComparer<T>.Default.Equals(x.Value, args.Value));
+            var previousItem = _items.FirstOrDefault(x => EqualityComparer<T>.Default.Equals(x.Value, args.LastValue));
+            if (selectedItem != null) ApplySelectionState(selectedItem);
+            if (previousItem != null) ApplySelectionState(previousItem);
         }
 
-        private void OnValuesChanged()
+        private void OnValuesChanged(ParameterChangedEventArgs<IEnumerable<T?>?> args)
         {
             // perform Selection after user consumes Values Changed logic
             ApplySelectionState();
@@ -391,13 +394,7 @@ namespace MudBlazor
                 await _value.SetValueAsync(itemValue);
             }
 
-            // unselect previous item if not null and not the same as current item
-            if (previousItem != null && previousItem != item)
-            {
-                ApplySelectionState(previousItem);
-            }
-
-            ApplySelectionState(item);
+            // WithChangeHandler will update the selection state if the value/values changed
         }
 
         protected internal IEnumerable<MudToggleItem<T>> GetItems() => _items;
