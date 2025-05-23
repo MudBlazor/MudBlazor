@@ -314,6 +314,11 @@ namespace MudBlazor.UnitTests.Components
                 var currentItem = items[i];
                 currentItem.Selected.Should().BeTrue();
                 items.Except([currentItem]).All(x => !x.Selected).Should().BeTrue();
+                if (selMode == SelectionMode.ToggleSelection)
+                {
+                    comp.FindAll(".mud-toggle-item").GetItemByIndex(i).Click();
+                    currentItem.Selected.Should().BeFalse();
+                }
             }
         }
 
