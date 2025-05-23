@@ -1502,7 +1502,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "Enter" }));
             autocomplete.Text.Should().Be(virginiaString);
             autocomplete.Value.StateName.Should().Be(virginiaString);
-        
+
             await comp.InvokeAsync(autocompleteComponent.Instance.OpenMenuAsync); // reopen menu because Enter closes it.
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover")[index].ClassList.Should().Contain("mud-popover-open"));
             var items2 = comp.FindComponents<MudListItem<AutocompleteStrictFalseTest.State>>().ToArray();
