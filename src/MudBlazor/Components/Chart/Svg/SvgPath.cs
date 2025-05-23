@@ -43,7 +43,7 @@ namespace MudBlazor
 
             if (ReferenceEquals(this, other))
                 return true;
-            
+
             return Index == other.Index &&
                    string.Equals(Data, other.Data) &&
                    string.Equals(LabelXValue, other.LabelXValue) &&

@@ -29,7 +29,7 @@ public abstract class MudRadialChartBase<TOptions> : MudChartBase<TOptions>, IDi
 
     private readonly DotNetObjectReference<MudRadialChartBase<TOptions>> _dotNetObjectReference;
     private readonly DebounceDispatcher _debouncer = new(DebounceIntervalMs);
-    
+
     private ElementSize? _elementSize;
     private double _boundWidth = 280;
     private double _boundHeight = 280;
