@@ -1473,18 +1473,18 @@ namespace MudBlazor.UnitTests.Components
             var selectedItemClassName = "mud-selected-item";
             var californiaString = "California";
             var virginiaString = "Virginia";
-        
+
             var comp = Context.RenderComponent<AutocompleteStrictFalseTest>();
             var autocompleteComponent = comp.FindComponents<MudAutocomplete<AutocompleteStrictFalseTest.State>>()[index];
             var autocomplete = autocompleteComponent.Instance;
-        
+
             //search for and select California
             autocompleteComponent.Find("input").Input("Calif");
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover")[index].ClassList.Should().Contain("mud-popover-open"));
             await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "Enter" }));
             autocomplete.Text.Should().Be(californiaString);
             autocomplete.Value.StateName.Should().Be(californiaString);
-        
+
             //California should appear as index 5 and be selected
             await comp.InvokeAsync(autocompleteComponent.Instance.OpenMenuAsync); // reopen menu because Enter closes it.
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover")[index].ClassList.Should().Contain("mud-popover-open"));
@@ -1493,9 +1493,9 @@ namespace MudBlazor.UnitTests.Components
             var item = items.SingleOrDefault(x => x.Markup.Contains(californiaString));
             items.ToList().IndexOf(item).Should().Be(4);
             comp.WaitForAssertion(() => items.Single(s => s.Markup.Contains(californiaString)).Find(listItemQuerySelector).ClassList.Should().Contain(selectedItemClassName));
-        
+
             await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "Escape" })); // Close autocomplete.
-        
+
             //search for and select Virginia
             autocompleteComponent.Find("input").Input("Virginia");
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover")[index].ClassList.Should().Contain("mud-popover-open"));
