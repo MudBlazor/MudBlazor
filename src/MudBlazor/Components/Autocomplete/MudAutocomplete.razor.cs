@@ -736,7 +736,7 @@ namespace MudBlazor
                     int valueIndex = Array.IndexOf(searchedItems, Value);
                     int endIndex = Math.Min(valueIndex + split, searchedItems.Length);
                     int startIndex = endIndex - Math.Min(MaxItems.Value, searchedItems.Length);
-                
+
                     searchedItems = searchedItems.Take(new Range(startIndex, endIndex)).ToArray();
                 }
                 else
@@ -766,7 +766,7 @@ namespace MudBlazor
 
             _opening = false;
             StateHasChanged();
-            
+
             // If not strict scroll to the selected item
             if (!Strict && _selectedListItemIndex > 0)
             {
