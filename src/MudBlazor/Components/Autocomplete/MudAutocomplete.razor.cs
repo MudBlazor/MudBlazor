@@ -730,7 +730,7 @@ namespace MudBlazor
             if (MaxItems.HasValue)
             {
                 // Get range of items based off selected item so the selected item can be scrolled to when strict is set to false
-                if (!Strict && searchedItems.Length != 0 && Value != default)
+                if (!Strict && searchedItems.Length != 0 && !EqualityComparer<T>.Default.Equals(Value, default(T)))
                 {
                     int split = (MaxItems.Value / 2) + 1;
                     int valueIndex = Array.IndexOf(searchedItems, Value);
