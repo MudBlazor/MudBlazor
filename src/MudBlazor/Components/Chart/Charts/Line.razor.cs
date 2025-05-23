@@ -125,7 +125,7 @@ namespace MudBlazor.Charts
 
             for (var j = 0; j < data.Values.Length; j++)
             {
-                var (x, y) = (xValues[j], yValues[j]) = GetXYForDataPoint(seriesIndex, j, lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace);
+                (xValues[j], yValues[j]) = GetXYForDataPoint(seriesIndex, j, lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace);
             }
 
             var overrideSettings = GetSeriesDisplayOverride(series);

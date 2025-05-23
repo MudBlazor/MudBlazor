@@ -27,7 +27,7 @@ namespace MudBlazor.UnitTests.UserAttributes
             Exclude(typeof(DataGridGroupRow<>));  // Internal component, skip
             Exclude(typeof(DataGridVirtualizeRow<>)); // Internal component, skip
             Exclude(typeof(BaseRadialChart<>)); // Internal component, skip
-
+            Exclude(typeof(BaseAxisChart<>)); // Internal component, skip
         }
 
         [Test]

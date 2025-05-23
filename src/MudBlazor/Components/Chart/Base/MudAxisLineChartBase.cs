@@ -15,8 +15,7 @@ public abstract class MudAxisLineChartBase<TOptions> : MudAxisChartBase<TOptions
     protected List<SvgPath> ChartLines { get; set; } = [];
     protected Dictionary<int, SvgPath> ChartAreas { get; set; } = [];
     protected Dictionary<int, List<SvgCircle>> ChartDataPoints { get; set; } = [];
-    protected SvgCircle? HoveredDataPoint { get; set; }
-    protected SvgPath? HoverDataPointChartLine { get; set; }
+    protected SvgPath? HoveredDataPointPath { get; set; }
     protected abstract bool ShouldInterpolate { get; }
 
     protected abstract T GetDataValue<T>(int seriesIndex, int dataPointIndex);
@@ -113,9 +112,9 @@ public abstract class MudAxisLineChartBase<TOptions> : MudAxisChartBase<TOptions
             var dataLength = series.Data.Points.Count;
             if (dataLength == 0) continue;
 
-            var firstPointX = 0.0;
-            var firstPointY = 0.0;
-            var lastPointX = 0.0;
+            double firstPointX;
+            double firstPointY;
+            double lastPointX;
 
             var overrideSettings = GetSeriesDisplayOverride(series);
             var interpolationOption = overrideSettings?.InterpolationOption ?? ChartOptions?.InterpolationOption;
@@ -186,7 +185,7 @@ public abstract class MudAxisLineChartBase<TOptions> : MudAxisChartBase<TOptions
             {
                 chartDataCircles.Add(new SvgCircle()
                 {
-                    Index = j,
+                    Index = seriesIndex,
                     CX = x,
                     CY = y,
                     LabelX = x,
@@ -240,7 +239,7 @@ public abstract class MudAxisLineChartBase<TOptions> : MudAxisChartBase<TOptions
 
                 chartDataCircles.Add(new SvgCircle()
                 {
-                    Index = originalIndex,
+                    Index = seriesIndex,
                     CX = x,
                     CY = y,
                     LabelX = x,
@@ -326,15 +325,7 @@ public abstract class MudAxisLineChartBase<TOptions> : MudAxisChartBase<TOptions
             : null;
     }
 
-    protected void OnDataPointMouseOver(MouseEventArgs _, SvgCircle dataPoint, SvgPath seriesPath)
-    {
-        HoveredDataPoint = dataPoint;
-        HoverDataPointChartLine = seriesPath;
-    }
+    protected void OnDataPointMouseOver(MouseEventArgs _, SvgPath hoveredPoint) => HoveredDataPointPath = hoveredPoint;
 
-    protected void OnDataPointMouseOut(MouseEventArgs _)
-    {
-        HoveredDataPoint = null;
-        HoverDataPointChartLine = null;
-    }
+    protected void OnDataPointMouseOut() => HoveredDataPointPath = null;
 }

@@ -2,6 +2,7 @@
 using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using MudBlazor.Extensions;
 using MudBlazor.Interop;
 using MudBlazor.Utilities.Debounce;
 
@@ -65,36 +66,9 @@ public abstract class MudAxisChartBase<TOptions> : MudChartBase<TOptions>, IDisp
     {
         base.OnParametersSet();
 
+        if (MatchBoundsToSize is true && _elementSize is null) return;
+
         RebuildChart();
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        await base.OnAfterRenderAsync(firstRender);
-
-        var yAxisLabelSize = _yAxisGroupElementReference != null ? await JsRuntime.InvokeAsync<ElementSize>("mudGetSvgBBox", _yAxisGroupElementReference) : null;
-        var xAxisLabelSize = _xAxisGroupElementReference != null ? await JsRuntime.InvokeAsync<ElementSize>("mudGetSvgBBox", _xAxisGroupElementReference) : null;
-
-        var axisChanged = false;
-        var comparer = new DoubleEpsilonEqualityComparer(0.01);
-        if (yAxisLabelSize != null && (_yAxisLabelSize == null || !comparer.Equals(yAxisLabelSize.Width, _yAxisLabelSize.Width)))
-        {
-            _yAxisLabelSize = yAxisLabelSize;
-            axisChanged = true;
-        }
-
-        if (xAxisLabelSize != null && (_xAxisLabelSize == null || !comparer.Equals(xAxisLabelSize.Height, _xAxisLabelSize.Height)))
-        {
-            _xAxisLabelSize = xAxisLabelSize;
-            axisChanged = true;
-        }
-
-        // maybe there should be some kind of cancellation token here to prevent multiple rebuilds when the invokeasync takes time in server mode and subsequent renders have started to take place
-        if (axisChanged)
-        {
-            RebuildChart();
-            StateHasChanged();
-        }
     }
 
     protected async Task SetElementReference(ElementReference elementRef)
@@ -104,22 +78,34 @@ public abstract class MudAxisChartBase<TOptions> : MudChartBase<TOptions>, IDisp
         OnElementSizeChanged(elementSize);
     }
 
+    protected void AxisChanged()
+    {
+        _ = _debouncer.DebounceAfterFirstExecuteAsync(async () =>
+        {
+            await InvokeAsync(() =>
+            {
+                RebuildChart();
+                StateHasChanged();
+            });
+        });
+    }
+
     protected void SetBounds()
     {
         _boundWidth = BoundWidthDefault;
         _boundHeight = BoundHeightDefault;
 
-        if (MudChartParent is not null && MudChartParent.MatchBoundsToSize) // backwards compatibilitly to the mudchartparent approach
+        if (MatchBoundsToSize)
         {
             if (_elementSize is not null)
             {
                 _boundWidth = _elementSize.Width;
                 _boundHeight = _elementSize.Height;
             }
-            else if (MudChartParent.Width.EndsWith("px")
-                && MudChartParent.Height.EndsWith("px")
-                && double.TryParse(MudChartParent.Width.AsSpan(0, MudChartParent.Width.Length - 2), NumberStyles.Float, CultureInfo.InvariantCulture, out var width)
-                && double.TryParse(MudChartParent.Height.AsSpan(0, MudChartParent.Height.Length - 2), NumberStyles.Float, CultureInfo.InvariantCulture, out var height))
+            else if (Width.EndsWith("px")
+                && Height.EndsWith("px")
+                && double.TryParse(Width.AsSpan(0, Width.Length - 2), NumberStyles.Float, CultureInfo.InvariantCulture, out var width)
+                && double.TryParse(Height.AsSpan(0, Height.Length - 2), NumberStyles.Float, CultureInfo.InvariantCulture, out var height))
             {
                 _boundWidth = width;
                 _boundHeight = height;
@@ -130,10 +116,15 @@ public abstract class MudAxisChartBase<TOptions> : MudChartBase<TOptions>, IDisp
     [JSInvokable]
     public void OnElementSizeChanged(ElementSize elementSize)
     {
-        if (elementSize == null || elementSize.Timestamp <= _elementSize?.Timestamp)
+        if (elementSize is null || elementSize.Timestamp <= _elementSize?.Timestamp)
             return;
 
-        _elementSize = elementSize;
+        _elementSize = new ElementSize()
+        {
+            Height = elementSize.Height,
+            Width = Math.Min(elementSize.Width, elementSize.Width - 50).EnsureRange(0, elementSize.Width),
+            Timestamp = elementSize.Timestamp
+        };
 
         if (MudChartParent?.MatchBoundsToSize is not true)
             return;
@@ -145,7 +136,7 @@ public abstract class MudAxisChartBase<TOptions> : MudChartBase<TOptions>, IDisp
         }
 
         // Debounce the chart update logic
-        _ = _debouncer.DebounceAsync(async () =>
+        _ = _debouncer.DebounceAfterFirstExecuteAsync(async () =>
         {
             await InvokeAsync(() =>
             {

@@ -1,10 +1,11 @@
 ﻿@namespace MudBlazor.Charts
+@using System.Globalization
 
 @inherits MudComponentBase
 @typeparam TChartOptions
 
 @{
-    var style = IsDataPointHovered ? "overflow: visible;" : "";
+    var style = HoveredSegment is not null ? "overflow: visible;" : "";
 }
 
 <svg @ref="_svgRef" @attributes="UserAttributes" class="@($"{ChartClass} mud-ltr")" width="@Width" height="@Height" viewBox="0 0 @ViewBoxWidth.ToS() @ViewBoxHeight.ToS()" style="@style">
@@ -20,7 +21,7 @@
                 }
             </g>
         }
-        @if (ChartOptions?.XAxisLines == true)
+        @if (ChartOptions?.XAxisLines is true)
         {
             <g class="mud-charts-gridlines-xaxis-lines">
                 @foreach (var verticalLine in VerticalLines)
@@ -48,16 +49,22 @@
             var verticalLineValue = VerticalValues[i];
             var x = verticalLineValue.X.ToS();
             var y = verticalLineValue.Y.ToS();
-            var rotation = (-XAxisLabelRotation).ToString();
+            var rotation = (-ChartOptions.XAxisLabelRotation).ToString();
             @((MarkupString)$"<text x='{x}' y='{y}' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate({rotation} {x} {y})'>{verticalLineValue.Value?.ToString(CultureInfo.InvariantCulture)}</text>")
         }
     </g>
-
-    @SeriesContent
+    <g class="@($"mud-charts-{ChartType?.ToString().ToLower()}-series")">
+        @SeriesContent
+    </g>
 
     @CustomGraphics
 
-    @TooltipContent
+    @if (ChartOptions?.ShowToolTips is true) 
+    {
+        <g class="mud-charts-tooltip" style="display: @(HoveredSegment is not null ? "block" : "none")">
+            @TooltipContent
+        </g>
+    }
 </svg>
 
 @if (XAxisTitle is not null)

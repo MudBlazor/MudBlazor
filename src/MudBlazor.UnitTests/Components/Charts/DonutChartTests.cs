@@ -61,7 +61,7 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.ChartOptions, new ChartOptions { ChartPalette = _baseChartPalette })
                 .Add(p => p.ChartLabels, labels));
 
-            comp.Markup.Should().Contain("class=\"mud-chart-donut\"");
+            comp.Markup.Should().Contain("class=\"mud-chart-donut mud-ltr\"");
             comp.Markup.Should().Contain("class=\"mud-chart-serie\"");
             comp.Markup.Should().Contain("mud-chart-legend-item");
 

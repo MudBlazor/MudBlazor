@@ -13,6 +13,8 @@ internal class DebounceDispatcher
 {
     private readonly TimeSpan _interval;
     private CancellationTokenSource? _cancellationTokenSource;
+    private bool _hasExecutedOnce = false;
+    private Task? _delayedTask;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DebounceDispatcher"/> class with the specified interval.
@@ -62,6 +64,42 @@ internal class DebounceDispatcher
         catch (TaskCanceledException)
         {
             // If the task was canceled, ignore it
+        }
+    }
+
+    /// <summary>
+    /// Executes the first action immediately, debounces subsequent calls,
+    /// and ensures only the last call after the interval is executed.
+    /// </summary>
+    public async Task DebounceAfterFirstExecuteAsync(Func<Task> action, CancellationToken cancellationToken = default)
+    {
+        if (!_hasExecutedOnce)
+        {
+            _hasExecutedOnce = true;
+            await action();
+            return;
+        }
+
+        _cancellationTokenSource?.Cancel();
+        _cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+
+        var token = _cancellationTokenSource.Token;
+
+        try
+        {
+            _delayedTask = Task.Delay(_interval, token).ContinueWith(async t =>
+            {
+                if (!t.IsCanceled)
+                {
+                    try { await action(); } catch { /* swallow */ }
+                }
+            }, token, TaskContinuationOptions.OnlyOnRanToCompletion, TaskScheduler.Default).Unwrap();
+
+            await _delayedTask;
+        }
+        catch (TaskCanceledException)
+        {
+            // Ignore
         }
     }
 

@@ -11,7 +11,7 @@
     var series = _series.Where(x => x.Visible).ToList();
 }
 
-<svg @ref="_elementReference" @attributes="UserAttributes" class="mud-chart-heat mud-ltr" width="@MudChartParent?.Width" height="@MudChartParent?.Height" viewBox="0 0 @_boundWidth.ToS() @_boundHeight.ToS()" style="@style">
+<svg @ref="_elementReference" @attributes="UserAttributes" class="mud-chart-heat mud-ltr" width="@Width" height="@Height" viewBox="0 0 @_boundWidth.ToS() @_boundHeight.ToS()" style="@style">
     @if (_options is { EnableSmoothGradient: true })
     {
         <defs>
@@ -168,7 +168,7 @@
             </g>
 
             // XAxis Labels
-            var xAxisLabels = MudChartParent?.ChartLabels ?? [];
+            var xAxisLabels = ChartLabels ?? [];
             @if (row == 0 && _options?.XAxisLabelPosition == XAxisLabelPosition.Top && col < xAxisLabels.Length)
             {
                 <g transform="translate(@((x + _cellDimension.Width / 2).ToS()), @((y - CellPadding).ToS()))">
@@ -387,7 +387,7 @@
         <ChartTooltip Title="@_hoveredLegend.Value.value.ToString()" Color="@_hoveredLegend.Value.color" X="@_hoveredLegendPosition.X" Y="@_hoveredLegendPosition.Y" />
     }
 </svg>
-@if (MudChartParent?.CanHideSeries is true)
+@if (CanHideSeries is true)
 {
     <Legend Data="@_toggleLegend" />
 }

@@ -5,104 +5,85 @@
 @inherits MudAxisChartBase<BarChartOptions>
 
 <div class="@(MudChartParent is null ? Classname : string.Empty)">
-    <BaseAxisChart TChartOptions="PieChartOptions"
-                     ElementRefChanged="SetElementReference"
-                     Width="@(MudChartParent?.Width ?? Width)"
-                     Height="@(MudChartParent?.Height ?? Height)"
-                     ViewBoxWidth="_boundWidth"
-                     ViewBoxHeight="_boundHeight"
-                     ChartClass="mud-chart-bar"
-                     ChartSeries="@ChartSeries"
-                     ChartLabels="@ChartLabels"
-                     ChartOptions="@ChartOptions"
-                     Paths="@_paths"
-                     Legends="@_legends"
-                     CustomGraphics="@(MudChartParent?.CustomGraphics ?? CustomGraphics)"
-                     HoveredSegment="@_hoveredSegment"
-                     UserAttributes="@UserAttributes"
-                     TooltipTemplate="@(MudChartParent?.TooltipTemplate ?? TooltipTemplate)"
-                     TooltipPositionFunc="@(MudChartParent?.TooltipPositionFunc ?? TooltipPositionFunc)"
-                     OnPathClick="async (i) => await SetSelectedIndexAsync(i)"
-                     OnMouseOver="(x) => OnSegmentMouseOver(x.Args, x.Segment)"
-                     OnMouseOut="() => OnSegmentMouseOut()" />
+    <BaseAxisChart TChartOptions="BarChartOptions"
+                   AxisChanged="AxisChanged"
+                   ElementRefChanged="SetElementReference"
+                   Width="@Width"
+                   Height="@Height"
+                   ViewBoxWidth="_boundWidth"
+                   ViewBoxHeight="_boundHeight"
+                   ChartClass="mud-chart-bar"
+                   ChartSeries="@ChartSeries"
+                   ChartLabels="@ChartLabels"
+                   ChartOptions="@ChartOptions"
+                   ChartType="@ChartType"
+                   Paths="@_bars"
+                   SeriesContent="@RenderBars()"
+                   TooltipContent="@RenderTooltip()"
+                   CustomGraphics="@CustomGraphics"
+                   HoveredSegment="@_hoveredBar"
+                   HorizontalLines="@HorizontalLines"
+                   VerticalLines="@VerticalLines"
+                   HorizontalValues="@HorizontalValues"
+                   VerticalValues="@VerticalValues"
+                   UserAttributes="@UserAttributes"
+                   OnPathClick="async (i) => await SetSelectedIndexAsync(i)"
+                   OnMouseOver="(x) => OnBarMouseOver(x.Args, x.Segment)"
+                   OnMouseOut="() => OnBarMouseOut()" />
 
-    <Legend Data="@_legends" ShowLegend="@ChartOptions?.ShowLegend" CanHideSeries="@CanHideSeries"
+    <Legend Data="@Legends" ShowLegend="@ChartOptions?.ShowLegend" CanHideSeries="@CanHideSeries"
             ChartPalette="@ChartOptions?.ChartPalette" OnLegenedSelected="async (i) => await SetSelectedIndexAsync(i)" />
 </div>
 
-@* @{
-    var style = _hoveredBar != null ? "overflow: visible;" : "";
-}
-
-<svg @ref="_elementReference" @attributes="UserAttributes" class="mud-chart-bar mud-ltr" width="@MudChartParent?.Width" height="@MudChartParent?.Height" viewBox="0 0 @_boundWidth.ToS() @_boundHeight.ToS()" style="@style">
-    <Filters />
-    <g class="mud-charts-grid">
-        <g class="mud-charts-gridlines-yaxis">
-            @foreach (var horizontalLine in HorizontalLines)
-            {
-                <path stroke="#e0e0e0" stroke-width="0.3" d="@horizontalLine.Data"></path>
-            }
-        </g>
-        @if (ChartOptions.XAxisLines == true)
-        {
-            <g class="mud-charts-gridlines-xaxis-lines">
-                @foreach (var verticalLine in VerticalLines)
-                {
-                    <path stroke="gray" stroke-width="0.3" d="@verticalLine.Data"></path>
-                }
-            </g>
-        }
-    </g>
-    <g @ref="_yAxisGroupElementReference" class="mud-charts-yaxis">
-        @foreach (var horizontalLineValue in HorizontalValues)
-        {
-            @((MarkupString)$"<text x='{horizontalLineValue.X.ToS()}' y='{horizontalLineValue.Y.ToS()}' font-size='12px' text-anchor='end' dominant-baseline='auto'>{horizontalLineValue.Value?.ToString(CultureInfo.InvariantCulture)}</text>")
-        }
-    </g>
-    <g @ref="_xAxisGroupElementReference" class="mud-charts-xaxis">
-        @for (var i = 0; i < VerticalValues.Count; i++)
-        {
-            var verticalLineValue = VerticalValues[i];
-            var x = verticalLineValue.X.ToS();
-            var y = verticalLineValue.Y.ToS();
-            var rotation = (-ChartOptions.XAxisLabelRotation).ToString();
-            @((MarkupString)$"<text x='{x}' y='{y}' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate({rotation} {x} {y})'>{verticalLineValue.Value.ToString(CultureInfo.InvariantCulture)}</text>")
-        }
-    </g>
-    <g class="mud-charts-bar-series">
-        @foreach (var bar in _bars)
-        {
-            if (!Series[bar.Index].Visible) continue;
-
-            var color = ChartOptions.ChartPalette.GetValue(bar.Index % ChartOptions.ChartPalette.Length);
-
-            <path class="mud-chart-bar"
-                  @onclick="async () => await SetSelectedIndexAsync(bar.Index)"
-                  fill="@color"
-                  stroke="@color"
-                  stroke-width="@_barWidth.ToS()"
-                  d="@bar.Data"
-                  @onmouseover="(e) => OnBarMouseOver(e, bar)"
-                  @onmouseout="OnBarMouseOut">
-            </path>
-        }
-    </g>
-
-    @MudChartParent?.CustomGraphics
-
-    @if (_hoveredBar is not null && ChartOptions.ShowToolTips == true)
+@code {
+    private RenderFragment RenderBars() => builder =>
     {
-        var color = ChartOptions.ChartPalette.GetValue(_hoveredBar.Index % ChartOptions.ChartPalette.Length)?.ToString() ?? string.Empty;
+        var seq = 0;
+
+        foreach (var bar in _bars)
+        {
+            if (!Series[bar.Index].Visible)
+                continue;
+
+            var color = ChartOptions!.ChartPalette.GetValue(bar.Index % ChartOptions.ChartPalette.Length);
+
+            builder.OpenElement(seq++, "path");
+            builder.AddAttribute(seq++, "class", "mud-chart-bar");
+            builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create(this, () => SetSelectedIndexAsync(bar.Index)));
+            builder.AddAttribute(seq++, "fill", color);
+            builder.AddAttribute(seq++, "stroke", color);
+            builder.AddAttribute(seq++, "stroke-width", _barWidth.ToS());
+            builder.AddAttribute(seq++, "d", bar.Data);
+            builder.AddAttribute(seq++, "onmouseover", EventCallback.Factory.Create<MouseEventArgs>(this, e => OnBarMouseOver(e, bar)));
+            builder.AddAttribute(seq++, "onmouseout", EventCallback.Factory.Create(this, OnBarMouseOut));
+            builder.CloseElement();
+        }
+    };
+
+    private RenderFragment RenderTooltip() => builder =>
+    {
+        if (_hoveredBar is null)
+            return;
+
+        var seq = 0;
+
+        var color = ChartOptions.ChartPalette
+            .GetValue(_hoveredBar.Index % ChartOptions.ChartPalette.Length)
+            ?.ToString() ?? string.Empty;
 
         var (tooltipX, tooltipY) = TooltipPositionFunc?.Invoke(_hoveredBar) is { } pos
-                ? (pos.X, pos.Y)
-                : (_hoveredBar.LabelX, _hoveredBar.LabelY);
+            ? (pos.X, pos.Y)
+            : (_hoveredBar.LabelX, _hoveredBar.LabelY);
 
         if (TooltipTemplate is not null)
         {
-            <g class="mud-chart-tooltip" transform="translate(@tooltipX.ToS(), @tooltipY.ToS())">
-                @TooltipTemplate((_hoveredBar, color))
-            </g>
+            builder.OpenElement(seq++, "g");
+            builder.AddAttribute(seq++, "class", "mud-chart-tooltip");
+            builder.AddAttribute(seq++, "transform", $"translate({tooltipX.ToS()},{tooltipY.ToS()})");
+
+            builder.AddContent(seq++, TooltipTemplate((_hoveredBar, color)));
+
+            builder.CloseElement();
         }
         else
         {
@@ -113,18 +94,23 @@
             if (!string.IsNullOrWhiteSpace(tooltipTitleFormat))
             {
                 var tooltipTitle = tooltipTitleFormat
-                .Replace("{{SERIES_NAME}}", series.Name)
-                .Replace("{{X_VALUE}}", _hoveredBar.LabelXValue)
-                .Replace("{{Y_VALUE}}", _hoveredBar.LabelYValue);
+                    .Replace("{{SERIES_NAME}}", series.Name)
+                    .Replace("{{X_VALUE}}", _hoveredBar.LabelXValue)
+                    .Replace("{{Y_VALUE}}", _hoveredBar.LabelYValue);
 
                 var tooltipSubtitle = tooltipSubtitleFormat?
-                .Replace("{{SERIES_NAME}}", series.Name)
-                .Replace("{{X_VALUE}}", _hoveredBar.LabelXValue)
-                .Replace("{{Y_VALUE}}", _hoveredBar.LabelYValue) ?? string.Empty;
+                    .Replace("{{SERIES_NAME}}", series.Name)
+                    .Replace("{{X_VALUE}}", _hoveredBar.LabelXValue)
+                    .Replace("{{Y_VALUE}}", _hoveredBar.LabelYValue) ?? string.Empty;
 
-                <ChartTooltip Title="@tooltipTitle" Subtitle="@tooltipSubtitle" Color="@color" X="tooltipX" Y="tooltipY" />
+                builder.OpenComponent<ChartTooltip>(seq++);
+                builder.AddAttribute(seq++, "Title", tooltipTitle);
+                builder.AddAttribute(seq++, "Subtitle", tooltipSubtitle);
+                builder.AddAttribute(seq++, "Color", color);
+                builder.AddAttribute(seq++, "X", tooltipX);
+                builder.AddAttribute(seq++, "Y", tooltipY);
+                builder.CloseComponent();
             }
-        }        
-    }
-</svg>
-<Legend Data="@Legends" /> *@
+        }
+    };
+}

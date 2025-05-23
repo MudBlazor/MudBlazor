@@ -146,11 +146,8 @@ namespace MudBlazor.Charts
         {
             base.OnParametersSet();
 
-            if (MudChartParent is not null)
-            {
-                UpdateLegendPosition(MudChartParent.LegendPosition);
-                UpdateChartSeries(MudChartParent.ChartSeries);
-            }
+            UpdateLegendPosition(LegendPosition);
+            UpdateChartSeries(ChartSeries);
 
             if (ChartOptions is not null)
             {
@@ -273,7 +270,7 @@ namespace MudBlazor.Charts
                     }
                 }
 
-                if (MudChartParent?.CanHideSeries is true)
+                if (CanHideSeries is true)
                 {
                     var legend = new SvgLegend()
                     {
@@ -504,17 +501,17 @@ namespace MudBlazor.Charts
             _boundWidth = BoundWidth;
             _boundHeight = BoundHeight;
 
-            if (MudChartParent is not null && MudChartParent.MatchBoundsToSize)
+            if (MatchBoundsToSize)
             {
                 if (_elementSize is not null)
                 {
                     _boundWidth = _elementSize.Width;
                     _boundHeight = _elementSize.Height;
                 }
-                else if (MudChartParent.Width.EndsWith("px")
-                    && MudChartParent.Height.EndsWith("px")
-                    && double.TryParse(MudChartParent.Width.AsSpan(0, MudChartParent.Width.Length - 2), out var width)
-                    && double.TryParse(MudChartParent.Height.AsSpan(0, MudChartParent.Height.Length - 2), out var height))
+                else if (Width.EndsWith("px")
+                    && Height.EndsWith("px")
+                    && double.TryParse(Width.AsSpan(0, Width.Length - 2), out var width)
+                    && double.TryParse(Height.AsSpan(0, Height.Length - 2), out var height))
                 {
                     _boundWidth = width;
                     _boundHeight = height;
@@ -530,7 +527,7 @@ namespace MudBlazor.Charts
 
             _elementSize = elementSize;
 
-            if (MudChartParent?.MatchBoundsToSize is not true)
+            if (MatchBoundsToSize is not true)
                 return;
 
             if (Math.Abs(_boundWidth - _elementSize.Width) < Epsilon &&
@@ -539,7 +536,7 @@ namespace MudBlazor.Charts
                 return;
             }
 
-            _ = _debouncer.DebounceAsync(async () =>
+            _ = _debouncer.DebounceAfterFirstExecuteAsync(async () =>
             {
                 await InvokeAsync(() =>
                 {

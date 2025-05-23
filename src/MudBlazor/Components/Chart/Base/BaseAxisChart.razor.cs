@@ -3,15 +3,24 @@
 // See the LICENSE file in the project root for more information.
 
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
+using MudBlazor.Interop;
 
 #nullable enable
 namespace MudBlazor.Charts;
 
 public partial class BaseAxisChart<TChartOptions> : MudComponentBase where TChartOptions : IAxisChartOptions, new()
 {
+    [Inject]
+    private IJSRuntime JsRuntime { get; set; } = null!;
+
     private ElementReference _svgRef;
-    private ElementReference _xAxisGroupElementReference;
-    private ElementReference _yAxisGroupElementReference;
+    private ElementReference? _xAxisGroupElementReference;
+    private ElementReference? _yAxisGroupElementReference;
+
+    protected ElementSize? _yAxisLabelSize;
+    protected ElementSize? _xAxisLabelSize;
 
     [Parameter]
     [EditorRequired]
@@ -26,6 +35,16 @@ public partial class BaseAxisChart<TChartOptions> : MudComponentBase where TChar
     [Parameter]
     [EditorRequired]
     [Category(CategoryTypes.Chart.Appearance)]
+    public List<SvgPath> Paths { get; set; } = [];
+
+    [Parameter]
+    [EditorRequired]
+    [Category(CategoryTypes.Chart.Appearance)]
+    public ChartType? ChartType { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    [Category(CategoryTypes.Chart.Appearance)]
     public string ChartClass { get; set; } = string.Empty;
 
     [Parameter]
@@ -34,18 +53,13 @@ public partial class BaseAxisChart<TChartOptions> : MudComponentBase where TChar
     public List<ChartSeries> ChartSeries { get; set; } = [];
 
     [Parameter]
-    [Category(CategoryTypes.Chart.Appearance)]
-    public string[] ChartLabels { get; set; } = [];
-
-    [Parameter]
     [EditorRequired]
     [Category(CategoryTypes.Chart.Appearance)]
     public TChartOptions ChartOptions { get; set; }
 
     [Parameter]
-    [EditorRequired]
     [Category(CategoryTypes.Chart.Appearance)]
-    public List<SvgPath> Paths { get; set; } = [];
+    public string[] ChartLabels { get; set; } = [];
 
     [Parameter]
     [EditorRequired]
@@ -58,30 +72,89 @@ public partial class BaseAxisChart<TChartOptions> : MudComponentBase where TChar
     public double ViewBoxHeight { get; set; }
 
     [Parameter]
-    public IList<SvgPath> HorizontalLines { get; set; } = new List<SvgPath>();
+    [Category(CategoryTypes.Chart.Appearance)]
+    public RenderFragment? SeriesContent { get; set; }
 
     [Parameter]
-    public IList<SvgPath> VerticalLines { get; set; } = new List<SvgPath>();
+    [Category(CategoryTypes.Chart.Appearance)]
+    public RenderFragment? TooltipContent { get; set; }
 
     [Parameter]
-    public IList<SvgValue> HorizontalValues { get; set; } = new List<SvgValue>();
+    [Category(CategoryTypes.Chart.Appearance)]
+    public RenderFragment? CustomGraphics { get; set; }
 
     [Parameter]
-    public IList<SvgValue> VerticalValues { get; set; } = new List<SvgValue>();
+    [Category(CategoryTypes.Chart.Behavior)]
+    public SvgPath? HoveredSegment { get; set; }
 
     [Parameter]
-    public bool IsDataPointHovered { get; set; }
+    [Category(CategoryTypes.Chart.Appearance)]
+    public IList<SvgPath> HorizontalLines { get; set; } = [];
 
     [Parameter]
+    [Category(CategoryTypes.Chart.Appearance)]
+    public IList<SvgPath> VerticalLines { get; set; } = [];
+
+    [Parameter]
+    [Category(CategoryTypes.Chart.Appearance)]
+    public IList<SvgText> HorizontalValues { get; set; } = [];
+
+    [Parameter]
+    [Category(CategoryTypes.Chart.Appearance)]
+    public IList<SvgText> VerticalValues { get; set; } = [];
+
+    [Parameter]
+    [Category(CategoryTypes.Chart.Appearance)]
     public string? XAxisTitle { get; set; }
 
     [Parameter]
+    [Category(CategoryTypes.Chart.Appearance)]
     public string? YAxisTitle { get; set; }
 
     [Parameter]
-    public double XAxisLabelRotation { get; set; }
+    [Category(CategoryTypes.Chart.Behavior)]
+    public EventCallback OnMouseOut { get; set; }
+
+    [Parameter]
+    [Category(CategoryTypes.Chart.Behavior)]
+    public EventCallback<int> OnPathClick { get; set; }
+
+    [Parameter]
+    [Category(CategoryTypes.Chart.Behavior)]
+    public EventCallback AxisChanged { get; set; }
 
     [Parameter]
     [Category(CategoryTypes.Chart.Behavior)]
     public EventCallback<ElementReference> ElementRefChanged { get; set; }
+
+    [Parameter]
+    [Category(CategoryTypes.Chart.Behavior)]
+    public EventCallback<(MouseEventArgs Args, SvgPath Segment)> OnMouseOver { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && ElementRefChanged.HasDelegate)
+            await ElementRefChanged.InvokeAsync(_svgRef);
+
+        var yAxisLabelSize = _yAxisGroupElementReference != null ? await JsRuntime.InvokeAsync<ElementSize>("mudGetSvgBBox", _yAxisGroupElementReference) : null;
+        var xAxisLabelSize = _xAxisGroupElementReference != null ? await JsRuntime.InvokeAsync<ElementSize>("mudGetSvgBBox", _xAxisGroupElementReference) : null;
+
+        var axisChanged = false;
+        var comparer = new DoubleEpsilonEqualityComparer(0.01);
+
+        if (yAxisLabelSize != null && (_yAxisLabelSize == null || !comparer.Equals(yAxisLabelSize.Width, _yAxisLabelSize.Width)))
+        {
+            _yAxisLabelSize = yAxisLabelSize;
+            axisChanged = true;
+        }
+
+        if (xAxisLabelSize != null && (_xAxisLabelSize == null || !comparer.Equals(xAxisLabelSize.Height, _xAxisLabelSize.Height)))
+        {
+            _xAxisLabelSize = xAxisLabelSize;
+            axisChanged = true;
+        }
+
+        if (axisChanged && AxisChanged.HasDelegate)
+            await AxisChanged.InvokeAsync();
+    }
 }

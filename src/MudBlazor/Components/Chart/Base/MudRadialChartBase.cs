@@ -57,6 +57,8 @@ public abstract class MudRadialChartBase<TOptions> : MudChartBase<TOptions>, IDi
         HiddenIndices.Clear();
         _hoveredSegment = null;
 
+        if (MatchBoundsToSize is true && _elementSize is null) return;
+
         if (ChartSeries == null || ChartSeries.Count == 0)
             return;
 
@@ -198,7 +200,7 @@ public abstract class MudRadialChartBase<TOptions> : MudChartBase<TOptions>, IDi
         _boundWidth = minDimension;
         _boundHeight = minDimension;
 
-        _ = _debouncer.DebounceAsync(async () =>
+        _ = _debouncer.DebounceAfterFirstExecuteAsync(async () =>
         {
             await InvokeAsync(() =>
             {
