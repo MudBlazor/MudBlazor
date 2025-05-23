@@ -538,8 +538,9 @@ namespace MudBlazor
             if (Column is not null)
             {
                 await Column.SetGroupingAsync(true);
+                await DataGrid.UpdateGroupingOrder(Column, true);
             }
-
+            DataGrid.GroupItems();
             DataGrid.DropContainerHasChanged();
         }
 
@@ -548,8 +549,9 @@ namespace MudBlazor
             if (Column is not null)
             {
                 await Column.SetGroupingAsync(false);
+                await DataGrid.UpdateGroupingOrder(Column, false);
             }
-
+            DataGrid.GroupItems();
             DataGrid.DropContainerHasChanged();
         }
 

@@ -253,7 +253,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DarkMode_Test()
+        public void IsDarkModeTest()
         {
             var comp = Context.RenderComponent<MudThemeProvider>(parameters => parameters
                 .Add(p => p.IsDarkMode, true));
@@ -315,7 +315,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task WatchSystemTest()
+        public async Task WatchSystemDarkModeTest()
         {
             var systemMockValue = false;
             Task SystemChangedResult(bool newValue)
@@ -324,8 +324,8 @@ namespace MudBlazor.UnitTests.Components
                 return Task.CompletedTask;
             }
             var comp = Context.RenderComponent<MudThemeProvider>();
-            await comp.Instance.WatchSystemPreference(SystemChangedResult);
-            await comp.Instance.SystemPreferenceChanged(true);
+            await comp.Instance.WatchSystemDarkModeAsync(SystemChangedResult);
+            await comp.Instance.SystemDarkModeChangedAsync(true);
             systemMockValue.Should().BeTrue();
         }
 

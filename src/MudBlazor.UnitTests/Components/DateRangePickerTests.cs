@@ -828,6 +828,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [SetCulture("en-US")]
         public void FormatFirst_Should_RenderCorrectly()
         {
             DateRange range = new DateRange(new DateTime(2024, 04, 22), new DateTime(2024, 04, 23));
@@ -845,6 +846,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [SetCulture("en-US")]
         public void FormatLast_Should_RenderCorrectly()
         {
             DateRange range = new DateRange(new DateTime(2024, 04, 22), new DateTime(2024, 04, 23));
@@ -1200,6 +1202,25 @@ namespace MudBlazor.UnitTests.Components
                       .Where(x => x.TrimmedText().Equals(today.Day.ToString())).First().ClickAsync(new MouseEventArgs());
 
             comp.Instance.DateRange.Start.Should().Be(comp.Instance.DateRange.End);
+        }
+
+        [Test]
+        public async Task DateRangePicker_BlurAsync()
+        {
+            var comp = Context.RenderComponent<MudDateRangePicker>(parameters => parameters
+                    .Add(picker => picker.ReadOnly, false)
+                    .Add(picker => picker.Editable, true));
+
+            var input = comp.Find("input");
+
+            await comp.Instance.FocusStartAsync();
+
+            // the input is actually never focused because the test is run in a headless browser
+            //comp.Find("input").IsFocused.Should().BeTrue();
+
+            await comp.Instance.BlurAsync();
+
+            comp.Find("input").IsFocused.Should().BeFalse();
         }
     }
 

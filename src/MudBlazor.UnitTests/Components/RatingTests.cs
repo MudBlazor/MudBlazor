@@ -224,14 +224,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ReadOnlyRating_ShouldNotRenderInputs()
-        {
-            var comp = Context.RenderComponent<MudRating>(parameters => parameters
-                .Add(p => p.ReadOnly, true));
-            comp.FindAll("input").Should().BeEmpty();
-        }
-
-        [Test]
         public async Task RatingTest_KeyboardNavigation()
         {
             var comp = Context.RenderComponent<MudRating>(parameters => parameters

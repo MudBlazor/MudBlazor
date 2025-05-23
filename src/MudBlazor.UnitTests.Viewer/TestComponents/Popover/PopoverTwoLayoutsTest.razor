@@ -1,0 +1,62 @@
+﻿@layout MainLayoutTwo
+@page "/popover-switch-test/PopoverTwoLayoutsTest"
+@inject NavigationManager NavManager
+
+<MudPopoverProvider />
+
+<MudStack Class="mt-16" Row Justify="Justify.SpaceAround">
+    <MudButton OnClick="@(() => _isVisible = !_isVisible)" Variant="Variant.Filled" Color="Color.Primary">
+        Tooltip Test
+    </MudButton>
+    <MudMenu Icon="@Icons.Material.Filled.Settings" Color="Color.Inherit" AnchorOrigin="@Origin.BottomLeft"
+             TransformOrigin="@Origin.TopLeft" AriaLabel="User menu dropdown">
+        <MudMenuItem OnClick="@(NavigateToTest)">Popover Tooltip In Overlay</MudMenuItem>
+        <MudMenuItem Disabled>Same but with different Popover provider</MudMenuItem>
+    </MudMenu>
+</MudStack>
+
+<MudOverlay @bind-Visible="_isVisible" DarkBackground="true" Style="z-index:1203;" AutoClose="false">
+    <MudContainer MaxWidth="MaxWidth.ExtraSmall" Class="d-flex align-center" Style=@($"height: 100vh;min-width:{500}px;")>
+        <div class="d-flex flex-column mud-width-full">
+            <MudPaper Elevation="15" Class="px-8 pt-8 pb-2" Width="100%">
+                <MudText Typo="Typo.h6" GutterBottom="true">Test</MudText>
+                <div style="max-height:80vh;">
+                    <MudTooltip Text="Delete">
+                        <MudIconButton Icon="@Icons.Material.Filled.Delete" />
+                    </MudTooltip>
+                    <MudTooltip Text="Add">
+                        <MudFab StartIcon="@Icons.Material.Filled.Add" Color="Color.Secondary" />
+                    </MudTooltip>
+                </div>
+                <div class="pt-5 pb-2" style="width:100%">
+                    <MudStack Row="true" AlignItems="AlignItems.Center">
+                        <MudButton OnClick="@(() => _isVisible = !_isVisible)" Variant="Variant.Filled" FullWidth="true" Color="Color.Primary" ButtonType="ButtonType.Submit">Save</MudButton>
+                        <MudButton OnClick="@(() => _isVisible = !_isVisible)" Variant="Variant.Text" FullWidth="true" Color="Color.Primary" ButtonType="ButtonType.Button">Cancel</MudButton>
+                    </MudStack>
+                </div>
+            </MudPaper>
+        </div>
+    </MudContainer>
+</MudOverlay>
+
+@code {
+    public static string __description__ = "Tests the popover with a different layout than the default, presumabily with a new observer on the new provider.";
+
+    private bool _isVisible = false;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            if (!NavManager.Uri.Contains("popover-switch-test"))
+            {
+                NavManager.NavigateTo("/popover-switch-test/PopoverTwoLayoutsTest");
+            }
+        }
+    }
+
+    private void NavigateToTest()
+    {
+        NavManager.NavigateTo($"/?component={nameof(PopoverTooltipInOverlayTest)}");
+    }
+}

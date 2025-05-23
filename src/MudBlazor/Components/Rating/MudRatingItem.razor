@@ -1,35 +1,20 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-@if (ReadOnly)
-{
-    <span role="radio"
-          aria-checked="@(Checked.ToString().ToLower())"
-          class="@ClassName"
-          style="@Style">
+<span class="@ClassName"
+      style="@Style"
+      @onpointerover="HandlePointerOverAsync"
+      @onpointerout="HandlePointerOutAsync"
+      @onclick="HandleClickAsync">
+    <input @attributes="UserAttributes"
+           class="mud-rating-input"
+           type="radio"
+           tabindex="-1"
+           value="@ItemValue"
+           name="@Rating?.Name"
+           disabled="@Disabled"
+           checked="@Checked"
+           aria-readonly="@(ReadOnly.ToString().ToLower())" />
 
-        <MudIcon Icon="@ItemIcon" Color="@ItemColor" Size="@Size" />
-    </span>
-}
-else
-{
-    <span role="radio"
-          class="@ClassName"
-          style="@Style"
-          aria-checked="@(Checked.ToString().ToLower())"
-          @onpointerover="HandlePointerOverAsync"
-          @onpointerout="HandlePointerOutAsync"
-          @onclick="HandleClickAsync">
-
-        <input class="mud-rating-input"
-               type="radio"
-               tabindex="-1"
-               value="@ItemValue"
-               name="@Rating?.Name"
-               disabled="@Disabled"
-               checked="@Checked"
-               @attributes="UserAttributes" />
-
-        <MudIcon Icon="@ItemIcon" Color="@ItemColor" Size="@Size" />
-    </span>
-}
+    <MudIcon Icon="@ItemIcon" Color="@ItemColor" Size="@Size" />
+</span>

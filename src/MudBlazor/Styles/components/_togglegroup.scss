@@ -52,6 +52,8 @@
   padding: 6px;
   min-width: auto;
   border-style: none !important;
+  display: flex;
+  justify-content: center;
 
   & > .mud-button-label {
     min-height: 20px;
@@ -83,11 +85,11 @@
 
 .mud-toggle-item-fixed > .mud-button-label:has(>.mud-toggle-item-check-icon) {
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  grid-template-columns: 1fr repeat(3, auto) 1fr;
 }
 
 .mud-toggle-item-check-icon {
-  justify-self: end;
+  justify-self: start;
 }
 
 .mud-toggle-item-content {
