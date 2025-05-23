@@ -13,12 +13,6 @@ namespace MudBlazor.Docs.Shared
         protected override void OnInitialized()
         {
             LayoutService.MajorUpdateOccurred += OnMajorUpdateOccured;
-
-            if (!MudGlobal.EnablePreviewFeatures)
-            {
-                MudGlobal.TooltipDefaults.Delay = TimeSpan.FromMilliseconds(500);
-            }
-
             base.OnInitialized();
         }
 

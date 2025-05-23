@@ -190,8 +190,6 @@
     {
         await base.OnInitializedAsync();
 
-        MudGlobal.TooltipDefaults.Delay = TimeSpan.FromMilliseconds(500);
-
         _availableComponentTypes = GetTestComponentTypes().ToArray();
         _availableDirectories = GetTestFolders().ToArray();
 
