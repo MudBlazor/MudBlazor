@@ -20,6 +20,7 @@ public partial class SectionContent
 {
     [Inject] protected IJsApiService JsApiService { get; set; }
     [Inject] protected IDocsJsApiService DocsJsApiService { get; set; }
+    [Inject] protected ISnackbar SnackbarService { get; set; }
 
     protected string Classname =>
         new CssBuilder("docs-section-content")
@@ -108,6 +109,7 @@ public partial class SectionContent
         var code = Snippets.GetCode(Code);
         code ??= await DocsJsApiService.GetInnerTextByIdAsync(_snippetId);
         await JsApiService.CopyToClipboardAsync(code ?? $"Snippet '{Code}' not found!");
+        SnackbarService.Add("Copied to clipboard");
     }
 
     RenderFragment CodeComponent(string code) => builder =>
