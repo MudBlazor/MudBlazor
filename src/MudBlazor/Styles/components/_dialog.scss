@@ -208,3 +208,30 @@
     transform: scale(1);
   }
 }
+
+html:has(.mud-preview-enabled) {
+  .mud-dialog {
+    -webkit-animation: mud-open-dialog-center 0.1s cubic-bezier(0.4,0,0.2,1);
+    animation: mud-open-dialog-center 0.1s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  @-webkit-keyframes mud-open-dialog-center {
+    0% {
+      opacity: 0;
+    }
+
+    100% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes mud-open-dialog-center {
+    0% {
+      opacity: 0;
+    }
+
+    100% {
+      opacity: 1;
+    }
+  }
+}
