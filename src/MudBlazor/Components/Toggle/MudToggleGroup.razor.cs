@@ -377,6 +377,10 @@ namespace MudBlazor
                 }
 
                 await _values.SetValueAsync(selectedValues);
+                if (!ValuesChanged.HasDelegate)
+                {
+                    ApplySelectionState();
+                }
             }
             else if (SelectionMode == SelectionMode.ToggleSelection)
             {
@@ -395,6 +399,17 @@ namespace MudBlazor
             }
 
             // WithChangeHandler will update the selection state if the value/values changed
+            // but only if the user subscribes to it via bind or directly
+            // change handler is needed so the user can change the value programmatically            
+            if (!ValueChanged.HasDelegate)
+            {
+                // unselect previous item if not null and not the same as current item
+                if (previousItem != null && previousItem != item)
+                {
+                    ApplySelectionState(previousItem);
+                }
+                ApplySelectionState(item);
+            }
         }
 
         protected internal IEnumerable<MudToggleItem<T>> GetItems() => _items;

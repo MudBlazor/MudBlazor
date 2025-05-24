@@ -290,6 +290,9 @@ namespace MudBlazor.UnitTests.Components
             }
         }
 
+        /// <summary>
+        /// This test will fail if selection isn't working without someone being subscribed to the ValueChanged event
+        /// </summary>
         [Test]
         [TestCase(SelectionMode.SingleSelection)]
         [TestCase(SelectionMode.ToggleSelection)]
@@ -492,6 +495,11 @@ namespace MudBlazor.UnitTests.Components
             toggleGroup.Value.Should().BeNull();
         }
 
+        /// <summary>
+        /// This test is based on https://github.com/MudBlazor/MudBlazor/issues/11384
+        /// When a ToggleGroupItem is clicked, the value should be set or intercepted via the ValueChanged event
+        /// This test verifies that both scenarios update the ToggleGroupItem Selected state
+        /// </summary>
         [Test]
         public void ToggleGroup_ToggleSelectionTest()
         {
