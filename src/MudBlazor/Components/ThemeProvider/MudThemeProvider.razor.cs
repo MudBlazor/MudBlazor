@@ -334,7 +334,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IDisposable
         theme.AppendLine($"--{Palette}-overlay-dark: {palette.OverlayDark};");
         theme.AppendLine($"--{Palette}-overlay-light: {palette.OverlayLight};");
 
-        theme.AppendLine($"--{Palette}-border-opacity: {palette.BorderOpacity};");
+        theme.AppendLine($"--{Palette}-border-opacity: {palette.BorderOpacity.ToString(CultureInfo.InvariantCulture)};");
 
         //Ripple
         theme.AppendLine($"--{Ripple}-color: var(--{Palette}-text-primary);");
