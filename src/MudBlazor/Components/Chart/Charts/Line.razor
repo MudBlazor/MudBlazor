@@ -48,7 +48,9 @@
         foreach (var chartLine in ChartLines)
         {
             var series = Series[chartLine.Index];
-            var color = ChartOptions.ChartPalette?.GetValue(chartLine.Index % ChartOptions.ChartPalette.Length)?.ToString() ?? string.Empty;
+            var color = ChartOptions!.ChartPalette?.Length > 0
+                ? ChartOptions.ChartPalette.GetValue(chartLine.Index % ChartOptions.ChartPalette.Length)?.ToString() ?? string.Empty
+                : string.Empty;
             var showDataMarkers = ChartOptions?.ShowDataMarkers ?? false;
             var isHovered = HoveredDataPointPath?.Index == chartLine.Index;
             var overrideSettings = GetSeriesDisplayOverride(series);
@@ -130,7 +132,9 @@
         int seq = 0;
 
         var seriesIndex = HoveredDataPointPath.Index;
-        string color = ChartOptions.ChartPalette.GetValue(seriesIndex % ChartOptions.ChartPalette.Length)?.ToString() ?? string.Empty;
+        var color = ChartOptions!.ChartPalette?.Length > 0
+                ? ChartOptions.ChartPalette.GetValue(seriesIndex % ChartOptions.ChartPalette.Length)?.ToString() ?? string.Empty
+                : string.Empty;
 
         var (tooltipX, tooltipY) = TooltipPositionFunc?.Invoke(HoveredDataPointPath) is { } pos
             ? (pos.X, pos.Y)

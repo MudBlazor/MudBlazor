@@ -41,7 +41,9 @@
             if (!Series[bar.Index].Visible)
                 continue;
 
-            var color = ChartOptions!.ChartPalette?.GetValue(bar.Index % ChartOptions.ChartPalette.Length)?.ToString() ?? string.Empty;
+            var color = ChartOptions!.ChartPalette?.Length > 0
+                ? ChartOptions.ChartPalette.GetValue(bar.Index % ChartOptions.ChartPalette.Length)?.ToString() ?? string.Empty
+                : string.Empty;
 
             builder.OpenElement(seq++, "path");
             builder.AddAttribute(seq++, "class", "mud-chart-bar");
@@ -63,9 +65,9 @@
 
         var seq = 0;
 
-        var color = ChartOptions.ChartPalette
-            .GetValue(_hoveredBar.Index % ChartOptions.ChartPalette.Length)
-            ?.ToString() ?? string.Empty;
+        var color = ChartOptions!.ChartPalette?.Length > 0
+                        ? ChartOptions.ChartPalette.GetValue(_hoveredBar.Index % ChartOptions.ChartPalette.Length)?.ToString() ?? string.Empty
+                        : string.Empty;
 
         var (tooltipX, tooltipY) = TooltipPositionFunc?.Invoke(_hoveredBar) is { } pos
             ? (pos.X, pos.Y)
