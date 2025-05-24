@@ -183,7 +183,7 @@ public static class MudGlobal
     /// <summary>
     /// Applies regular rounding to components by default; additional rounding if set to true; or squares them if set to false for MudBlazor components.
     /// </summary>
-    public static bool? Rounded { get; set; }
+    public static bool? Rounded { get; set; } = EnablePreviewFeatures ? true : null;
 
     /// <summary>
     /// Enables new preview features that provide a glimpse into the next major version.
