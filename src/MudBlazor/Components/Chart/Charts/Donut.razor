@@ -22,5 +22,5 @@
                      OnMouseOut="() => OnSegmentMouseOut()" />
 
     <Legend Data="@_legends" ShowLegend="@ChartOptions?.ShowLegend" CanHideSeries="@CanHideSeries"
-            ChartPalette="@ChartOptions?.ChartPalette" OnLegenedSelected="async (i) => await SetSelectedIndexAsync(i)" />
+            ChartPalette="@ChartOptions?.ChartPalette" OnLegendSelected="async (i) => await SetSelectedIndexAsync(i)" />
 </div>

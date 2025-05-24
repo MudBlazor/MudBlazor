@@ -35,11 +35,6 @@ public partial class BaseAxisChart<TChartOptions> : MudComponentBase where TChar
     [Parameter]
     [EditorRequired]
     [Category(CategoryTypes.Chart.Appearance)]
-    public List<SvgPath> Paths { get; set; } = [];
-
-    [Parameter]
-    [EditorRequired]
-    [Category(CategoryTypes.Chart.Appearance)]
     public ChartType? ChartType { get; set; }
 
     [Parameter]
@@ -113,23 +108,11 @@ public partial class BaseAxisChart<TChartOptions> : MudComponentBase where TChar
 
     [Parameter]
     [Category(CategoryTypes.Chart.Behavior)]
-    public EventCallback OnMouseOut { get; set; }
-
-    [Parameter]
-    [Category(CategoryTypes.Chart.Behavior)]
-    public EventCallback<int> OnPathClick { get; set; }
-
-    [Parameter]
-    [Category(CategoryTypes.Chart.Behavior)]
     public EventCallback AxisChanged { get; set; }
 
     [Parameter]
     [Category(CategoryTypes.Chart.Behavior)]
     public EventCallback<ElementReference> ElementRefChanged { get; set; }
-
-    [Parameter]
-    [Category(CategoryTypes.Chart.Behavior)]
-    public EventCallback<(MouseEventArgs Args, SvgPath Segment)> OnMouseOver { get; set; }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

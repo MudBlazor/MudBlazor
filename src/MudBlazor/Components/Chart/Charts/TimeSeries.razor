@@ -17,7 +17,6 @@
                    ChartLabels="@ChartLabels"
                    ChartOptions="@ChartOptions"
                    ChartType="@ChartType"
-                   Paths="@ChartLines"
                    SeriesContent="@RenderLineSeries()"
                    TooltipContent="@RenderTooltip()"
                    CustomGraphics="@CustomGraphics"
@@ -26,13 +25,10 @@
                    VerticalLines="@VerticalLines"
                    HorizontalValues="@HorizontalValues"
                    VerticalValues="@VerticalValues"
-                   UserAttributes="@UserAttributes"
-                   OnPathClick="async (i) => await SetSelectedIndexAsync(i)"
-                   OnMouseOver="(x) => OnDataPointMouseOver(x.Args, x.Segment)"
-                   OnMouseOut="() => OnDataPointMouseOut()" />
+                   UserAttributes="@UserAttributes" />
 
     <Legend Data="@Legends" ShowLegend="@ChartOptions?.ShowLegend" CanHideSeries="@CanHideSeries"
-            ChartPalette="@ChartOptions?.ChartPalette" OnLegenedSelected="async (i) => await SetSelectedIndexAsync(i)" />
+            ChartPalette="@ChartOptions?.ChartPalette" OnLegendSelected="async (i) => await SetSelectedIndexAsync(i)" />
 </div>
 
 @code {
@@ -43,9 +39,9 @@
         var lineStrokeWidth = ChartOptions?.LineStrokeWidth ?? 3;
         var dataPointRadius = Math.Max(lineStrokeWidth / 2 + 2, 3);
         var dataPointHoverRadius = dataPointRadius + 1;
-        var dataPointStroke = 2;
+        var dataPointStroke = 2d;
 
-        _dataPointLabelOffset = dataPointHoverRadius + (dataPointStroke / 2);
+        _dataPointLabelOffset = dataPointHoverRadius + (dataPointStroke / 2d);
 
         var seq = 0;
 

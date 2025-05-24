@@ -8,7 +8,7 @@
         {
             <div class="mud-chart-legend-item" 
                  @onclick:stopPropagation=@(MudChartParent!=null)
-                 @onclick=@(async ()=>{ if (OnLegenedSelected.HasDelegate) { await OnLegenedSelected.InvokeAsync(item.Index); }})>
+                 @onclick=@(async ()=>{ if (OnLegendSelected.HasDelegate) { await OnLegendSelected.InvokeAsync(item.Index); }})>
                 @if(CanHideSeries == false)
                 {
                     <span class="mud-chart-legend-marker" style="@($"background-color:{ChartPalette!.GetValue(item.Index % ChartPalette.Length)}")"></span>

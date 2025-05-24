@@ -19,8 +19,8 @@
                      TooltipPositionFunc="@TooltipPositionFunc"
                      OnPathClick="async (i) => await SetSelectedIndexAsync(i)"
                      OnMouseOver="(x) => OnSegmentMouseOver(x.Args, x.Segment)"
-                     OnMouseOut="() => OnSegmentMouseOut()" />
+                     OnMouseOut="OnSegmentMouseOut" />
 
     <Legend Data="@_legends" ShowLegend="@ChartOptions?.ShowLegend" CanHideSeries="@CanHideSeries"
-            ChartPalette="@ChartOptions?.ChartPalette" OnLegenedSelected="async (i) => await SetSelectedIndexAsync(i)" />
+            ChartPalette="@ChartOptions?.ChartPalette" OnLegendSelected="async (i) => await SetSelectedIndexAsync(i)" />
 </div>

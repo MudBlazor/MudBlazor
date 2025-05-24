@@ -29,7 +29,7 @@ namespace MudBlazor.Charts
 
         [Parameter]
         [Category(CategoryTypes.Chart.Behavior)]
-        public EventCallback<int> OnLegenedSelected { get; set; }
+        public EventCallback<int> OnLegendSelected { get; set; }
 
         protected override void OnParametersSet()
         {
@@ -39,13 +39,13 @@ namespace MudBlazor.Charts
             ShowLegend ??= MudChartParent?.ChartOptions?.ShowLegend ?? true;
             ChartPalette ??= MudChartParent?.ChartOptions?.ChartPalette ?? [];
 
-            if (!OnLegenedSelected.HasDelegate && MudChartParent is not null)
-                OnLegenedSelected = EventCallback.Factory.Create<int>(this, async index => await MudChartParent!.SetSelectedIndexAsync(index));
+            if (!OnLegendSelected.HasDelegate && MudChartParent is not null)
+                OnLegendSelected = EventCallback.Factory.Create<int>(this, async index => await MudChartParent!.SetSelectedIndexAsync(index));
         }
 
         private string GetCheckBoxStyle(int index)
         {
-            var color = ChartPalette?.GetValue(index % ChartPalette.Length);
+            var color = ChartPalette?.GetValue(index % ChartPalette.Length)?.ToString() ?? string.Empty;
             return $"--checkbox-color: {color};";
         }
     }

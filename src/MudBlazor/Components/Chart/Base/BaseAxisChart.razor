@@ -49,7 +49,7 @@
             var verticalLineValue = VerticalValues[i];
             var x = verticalLineValue.X.ToS();
             var y = verticalLineValue.Y.ToS();
-            var rotation = (-ChartOptions.XAxisLabelRotation).ToString();
+            var rotation = (-ChartOptions?.XAxisLabelRotation ?? 0).ToString();
             @((MarkupString)$"<text x='{x}' y='{y}' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate({rotation} {x} {y})'>{verticalLineValue.Value?.ToString(CultureInfo.InvariantCulture)}</text>")
         }
     </g>

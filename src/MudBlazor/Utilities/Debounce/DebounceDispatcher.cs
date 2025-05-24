@@ -14,7 +14,6 @@ internal class DebounceDispatcher
     private readonly TimeSpan _interval;
     private CancellationTokenSource? _cancellationTokenSource;
     private bool _hasExecutedOnce = false;
-    private Task? _delayedTask;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DebounceDispatcher"/> class with the specified interval.
@@ -87,19 +86,13 @@ internal class DebounceDispatcher
 
         try
         {
-            _delayedTask = Task.Delay(_interval, token).ContinueWith(async t =>
-            {
-                if (!t.IsCanceled)
-                {
-                    try { await action(); } catch { /* swallow */ }
-                }
-            }, token, TaskContinuationOptions.OnlyOnRanToCompletion, TaskScheduler.Default).Unwrap();
+            await Task.Delay(_interval, token);
 
-            await _delayedTask;
+            await action();
         }
         catch (TaskCanceledException)
         {
-            // Ignore
+            // Ignore cancellation
         }
     }
 

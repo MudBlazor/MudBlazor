@@ -17,7 +17,6 @@
                    ChartLabels="@ChartLabels"
                    ChartOptions="@ChartOptions"
                    ChartType="@ChartType"
-                   Paths="@_bars"
                    SeriesContent="@RenderBars()"
                    TooltipContent="@RenderTooltip()"
                    CustomGraphics="@CustomGraphics"
@@ -26,13 +25,10 @@
                    VerticalLines="@VerticalLines"
                    HorizontalValues="@HorizontalValues"
                    VerticalValues="@VerticalValues"
-                   UserAttributes="@UserAttributes"
-                   OnPathClick="async (i) => await SetSelectedIndexAsync(i)"
-                   OnMouseOver="(x) => OnBarMouseOver(x.Args, x.Segment)"
-                   OnMouseOut="() => OnBarMouseOut()" />
+                   UserAttributes="@UserAttributes"/>
 
     <Legend Data="@Legends" ShowLegend="@ChartOptions?.ShowLegend" CanHideSeries="@CanHideSeries"
-            ChartPalette="@ChartOptions?.ChartPalette" OnLegenedSelected="async (i) => await SetSelectedIndexAsync(i)" />
+            ChartPalette="@ChartOptions?.ChartPalette" OnLegendSelected="async (i) => await SetSelectedIndexAsync(i)" />
 </div>
 
 @code {
@@ -45,7 +41,7 @@
             if (!Series[bar.Index].Visible)
                 continue;
 
-            var color = ChartOptions!.ChartPalette.GetValue(bar.Index % ChartOptions.ChartPalette.Length);
+            var color = ChartOptions!.ChartPalette?.GetValue(bar.Index % ChartOptions.ChartPalette.Length)?.ToString() ?? string.Empty;
 
             builder.OpenElement(seq++, "path");
             builder.AddAttribute(seq++, "class", "mud-chart-bar");

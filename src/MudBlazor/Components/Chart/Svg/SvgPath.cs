@@ -59,14 +59,7 @@ namespace MudBlazor
 
         public override int GetHashCode()
         {
-            var hash = 17;
-            hash = hash * 23 + Index.GetHashCode();
-            hash = hash * 23 + (Data?.GetHashCode() ?? 0);
-            hash = hash * 23 + (LabelXValue?.GetHashCode() ?? 0);
-            hash = hash * 23 + (LabelYValue?.GetHashCode() ?? 0);
-            hash = hash * 23 + LabelX.GetHashCode();
-            hash = hash * 23 + LabelY.GetHashCode();
-            return hash;
+            return HashCode.Combine(Index, Data, LabelXValue, LabelYValue, LabelX, LabelY);
         }
     }
 }

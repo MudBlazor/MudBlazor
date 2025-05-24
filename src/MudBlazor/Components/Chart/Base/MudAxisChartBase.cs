@@ -122,7 +122,7 @@ public abstract class MudAxisChartBase<TOptions> : MudChartBase<TOptions>, IDisp
         _elementSize = new ElementSize()
         {
             Height = elementSize.Height,
-            Width = Math.Min(elementSize.Width, elementSize.Width - 50).EnsureRange(0, elementSize.Width),
+            Width = Math.Max(0, elementSize.Width - 50),
             Timestamp = elementSize.Timestamp
         };
 

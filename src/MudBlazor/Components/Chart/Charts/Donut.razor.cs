@@ -123,7 +123,7 @@ namespace MudBlazor.Charts
 
             for (var i = 0; i < chartLabels.Length; i++)
             {
-                var labels = i < chartLabels.Length ? chartLabels[i] : "";
+                var labels = chartLabels[i];
 
                 if (labels.Length == 0)
                     continue;

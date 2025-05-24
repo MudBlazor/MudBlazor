@@ -92,7 +92,7 @@ public abstract class MudRadialChartBase<TOptions> : MudChartBase<TOptions>, IDi
                     if (!series.Visible)
                         continue;
 
-                    var values = series.Data.Values;
+                    var values = series.Data?.Values ?? [];
 
                     for (var i = 0; i < values.Length; i++)
                     {
