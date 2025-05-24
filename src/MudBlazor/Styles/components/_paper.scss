@@ -1,4 +1,4 @@
-﻿
+
 .mud-paper {
   color: var(--mud-palette-text-primary);
   background-color: var(--mud-palette-surface);
@@ -11,5 +11,5 @@
 }
 
 .mud-paper-outlined {
-  border: 1px solid var(--mud-palette-lines-default);
+  border: 1px solid rgb(from var(--mud-palette-lines-default) r g b / var(--mud-palette-border-opacity));
 }

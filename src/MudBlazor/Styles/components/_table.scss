@@ -11,7 +11,7 @@
   }
 
   &.mud-table-outlined {
-    border: 1px solid var(--mud-palette-lines-default);
+    border: 1px solid rgb(from var(--mud-palette-lines-default) r g b / var(--mud-palette-border-opacity));
   }
 }
 
