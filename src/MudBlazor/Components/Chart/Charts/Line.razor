@@ -97,15 +97,6 @@
                     builder.CloseElement();
                 }
 
-                // var path = new SvgPath
-                // {
-                //    Index = item.Index,
-                //    LabelX = item.LabelX,
-                //    LabelY = item.LabelY,
-                //    LabelXValue = item.LabelXValue,
-                //    LabelYValue = item.LabelYValue
-                // };
-
                 // Hoverable point (invisible until hovered)
                 builder.OpenElement(seq++, "circle");
                 builder.AddAttribute(seq++, "class", "mud-chart-serie mud-chart-point");

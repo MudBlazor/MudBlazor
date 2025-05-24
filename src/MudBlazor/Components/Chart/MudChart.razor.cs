@@ -44,6 +44,7 @@ public partial class MudChart
         ChartType.Donut => (DonutChartOptions)options,
         ChartType.HeatMap => (HeatMapChartOptions)options,
         ChartType.StackedBar => (StackedBarChartOptions)options,
+        ChartType.Timeseries => (TimeSeriesChartOptions)options,
         _ => ChartOptions!
     };
 
@@ -55,6 +56,7 @@ public partial class MudChart
         ChartType.Donut => new DonutChartOptions(),
         ChartType.HeatMap => new HeatMapChartOptions(),
         ChartType.StackedBar => new StackedBarChartOptions(),
+        ChartType.Timeseries => new TimeSeriesChartOptions(),
         _ => throw new NotImplementedException($"{ChartType} chart is not supported")
     };
 }
