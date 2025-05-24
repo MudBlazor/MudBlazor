@@ -127,7 +127,7 @@
   }
 
   &:disabled {
-    border: 1px solid rgb(from var(--mud-palette-action-disabled-background) r g b / var(--mud-palette-border-opacity));
+    border: 1px solid var(--mud-palette-action-disabled-background);
   }
 }
 
