@@ -282,37 +282,14 @@ $default-foreground: var(--mud-palette-text-primary);
     }
   }
 
-.mud-chat-outlined {
-  &-default {
-    color: $default-foreground;
-    border: 1px solid rgb(from $default-background r g b / var(--mud-palette-border-opacity));
-    --mud-ripple-color: $default-foreground;
-
-    &:before {
-      background-color: $default-background;
-    }
-
-    &.mud-chat-arrow-top {
-      &:before {
-        top: -0.05rem !important;
-      }
-    }
-
-    &.mud-chat-arrow-bottom {
-      &:before {
-        bottom: -0.07rem !important;
-      }
-    }
-  }
-
-  @each $color in $mud-palette-colors {
-    &-#{$color} {
-      color: var(--mud-palette-#{$color}-darken);
-      border: 1px solid rgb(from var(--mud-palette-#{$color}) r g b / var(--mud-palette-border-opacity));
-      --mud-ripple-color: var(--mud-palette-#{$color}-darken);
+  .mud-chat-outlined {
+    &-default {
+      color: $default-foreground;
+      border: 1px solid $default-background;
+      --mud-ripple-color: $default-foreground;
 
       &:before {
-        background-color: var(--mud-palette-#{$color}-darken);
+        background-color: $default-background;
       }
 
       &.mud-chat-arrow-top {
@@ -323,12 +300,35 @@ $default-foreground: var(--mud-palette-text-primary);
 
       &.mud-chat-arrow-bottom {
         &:before {
-          bottom: -0.02rem !important;
+          bottom: -0.07rem !important;
+        }
+      }
+    }
+
+    @each $color in $mud-palette-colors {
+      &-#{$color} {
+        color: var(--mud-palette-#{$color}-darken);
+        border: 1px solid var(--mud-palette-#{$color});
+        --mud-ripple-color: var(--mud-palette-#{$color}-darken);
+
+        &:before {
+          background-color: var(--mud-palette-#{$color}-darken);
+        }
+
+        &.mud-chat-arrow-top {
+          &:before {
+            top: -0.05rem !important;
+          }
+        }
+
+        &.mud-chat-arrow-bottom {
+          &:before {
+            bottom: -0.02rem !important;
+          }
         }
       }
     }
   }
-}
 
   .mud-chat-filled {
     &-default {
