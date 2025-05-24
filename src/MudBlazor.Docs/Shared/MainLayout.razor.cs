@@ -1,16 +1,14 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Services;
 
 namespace MudBlazor.Docs.Shared
 {
     public partial class MainLayout : LayoutComponentBase, IDisposable
     {
+        private MudThemeProvider _mudThemeProvider;
+
         [Inject]
         private LayoutService LayoutService { get; set; }
-
-        private MudThemeProvider _mudThemeProvider;
 
         static MainLayout()
         {
@@ -19,38 +17,33 @@ namespace MudBlazor.Docs.Shared
 
         protected override void OnInitialized()
         {
-            LayoutService.MajorUpdateOccurred += LayoutServiceOnMajorUpdateOccured;
+            LayoutService.MajorUpdateOccurred += OnMajorUpdateOccured;
             base.OnInitialized();
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            await base.OnAfterRenderAsync(firstRender);
-
             if (firstRender)
             {
-                await ApplyUserPreferences();
-                await _mudThemeProvider.WatchSystemPreference(OnSystemPreferenceChanged);
+                var dark = await _mudThemeProvider.GetSystemDarkModeAsync();
+
+                LayoutService.UpdateDarkModeState(dark);
+
+                await LayoutService.ApplyUserPreferencesAsync();
+
+                await _mudThemeProvider.WatchSystemDarkModeAsync(LayoutService.OnSystemModeChangedAsync);
+
                 StateHasChanged();
             }
-        }
 
-        private async Task ApplyUserPreferences()
-        {
-            var defaultDarkMode = await _mudThemeProvider.GetSystemPreference();
-            await LayoutService.ApplyUserPreferences(defaultDarkMode);
-        }
-
-        private async Task OnSystemPreferenceChanged(bool newValue)
-        {
-            await LayoutService.OnSystemPreferenceChanged(newValue);
+            await base.OnAfterRenderAsync(firstRender);
         }
 
         public void Dispose()
         {
-            LayoutService.MajorUpdateOccurred -= LayoutServiceOnMajorUpdateOccured;
+            LayoutService.MajorUpdateOccurred -= OnMajorUpdateOccured;
         }
 
-        private void LayoutServiceOnMajorUpdateOccured(object sender, EventArgs e) => StateHasChanged();
+        private void OnMajorUpdateOccured(object sender, EventArgs e) => StateHasChanged();
     }
 }
