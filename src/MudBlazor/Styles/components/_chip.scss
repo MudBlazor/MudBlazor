@@ -186,7 +186,7 @@
 
 .mud-chip-outlined {
   color: var(--mud-palette-text-primary);
-  border: 1px solid rgb(from var(--mud-palette-lines-inputs) r g b / var(--mud-palette-border-opacity));
+  border: 1px solid var(--mud-palette-lines-inputs);
 
   &.mud-clickable {
     @media(hover: hover) and (pointer: fine) {
