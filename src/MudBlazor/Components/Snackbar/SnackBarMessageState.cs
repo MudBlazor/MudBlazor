@@ -90,6 +90,7 @@ namespace MudBlazor
             get
             {
                 var template = "@keyframes " + AnimationId + " {{from{{ {0}: {1}; }} to{{ {0}: {2}; }}}}";
+
                 return SnackbarState switch
                 {
                     SnackbarState.Showing => Format(template, "opacity", "0%", Opacity),
