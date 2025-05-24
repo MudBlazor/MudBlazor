@@ -38,9 +38,9 @@ public partial class AppbarButtons : IDisposable
     /// </summary>
     public string DarkLightModeButtonText => LayoutService.CurrentDarkLightMode switch
     {
-        DarkLightMode.Dark => "Switch to System mode",
-        DarkLightMode.Light => "Switch to Dark mode",
-        _ => "Switch to Light mode"
+        DarkLightMode.Dark => "Auto mode",
+        DarkLightMode.Light => "Dark mode",
+        _ => "Light mode"
     };
 
     /// <summary>
