@@ -381,6 +381,7 @@ namespace MudBlazor
                 {
                     ApplySelectionState();
                 }
+                return;
             }
             else if (SelectionMode == SelectionMode.ToggleSelection)
             {
@@ -400,7 +401,8 @@ namespace MudBlazor
 
             // WithChangeHandler will update the selection state if the value/values changed
             // but only if the user subscribes to it via bind or directly
-            // change handler is needed so the user can change the value programmatically            
+            // change handler is needed so the user can change the value programmatically and
+            // the selection state still be updated
             if (!ValueChanged.HasDelegate)
             {
                 // unselect previous item if not null and not the same as current item
