@@ -97,6 +97,18 @@ namespace MudBlazor
         public string InfoFormat { get; set; } = string.Empty;
 
         /// <summary>
+        /// The format for numeric values displayed in the pager.
+        /// </summary>
+        /// <remarks>
+        /// Controls the number formatting used for displaying first item, last item, and total items counts.
+        /// For example, "N0" for no decimal places, "N2" for 2 decimal places.
+        /// If not specified, default numeric formatting will be used.
+        /// </remarks>
+        [Parameter]
+        public string NumberFormat { get; set; } = "N0";
+
+
+        /// <summary>
         /// The text displayed in the page-size dropdown when <see cref="PageSizeOptions"/> contains <see cref="int.MaxValue"/>.
         /// </summary>
         [Parameter]
@@ -110,6 +122,7 @@ namespace MudBlazor
                 {
                     return "Table==null";
                 }
+
                 Debug.Assert(Table != null);
 
                 // fetch number of filtered items (once only)
@@ -120,12 +133,13 @@ namespace MudBlazor
                 if (InfoFormat.Contains("{first_item}") || InfoFormat.Contains("{last_item}") || InfoFormat.Contains("{all_items}"))
                 {
                     return InfoFormat
-                        .Replace("{first_item}", $"{firstItem}")
-                        .Replace("{last_item}", $"{lastItem}")
-                        .Replace("{all_items}", $"{filteredItemsCount:N0}");
+                        .Replace("{first_item}", $"{firstItem:NumberFormat}")
+                        .Replace("{last_item}", $"{lastItem:NumberFormat}")
+                        .Replace("{all_items}", $"{filteredItemsCount:NumberFormat}");
                 }
 
-                return Localizer[LanguageResource.MudDataGridPager_InfoFormat, firstItem, lastItem, $"{filteredItemsCount:N0}"];
+                return Localizer[LanguageResource.MudDataGridPager_InfoFormat, firstItem.ToString(NumberFormat), lastItem.ToString(NumberFormat),
+                    $"{filteredItemsCount:NumberFormat}"];
             }
         }
 
