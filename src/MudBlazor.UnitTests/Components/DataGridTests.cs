@@ -25,8 +25,11 @@ using static Bunit.ComponentParameterFactory;
 namespace MudBlazor.UnitTests.Components
 {
     public record TestModel1(string Name, int? Age);
+
     public record TestModel2(string Name, int? Age, DateTime? Date);
+
     public record TestModel3(string Name, int? Age, Severity? Status);
+
     public record TestModel4(string Name, int? Age, bool? Hired);
 
     [TestFixture]
@@ -71,74 +74,158 @@ namespace MudBlazor.UnitTests.Components
             cells.Count.Should().Be(21, because: "We have 7 data rows with three columns");
 
             // Check the values of rows without sorting
-            cells[0].TextContent.Should().Be("B"); cells[1].TextContent.Should().Be("42"); cells[2].TextContent.Should().Be("555");
-            cells[3].TextContent.Should().Be("A"); cells[4].TextContent.Should().Be("73"); cells[5].TextContent.Should().Be("7");
-            cells[6].TextContent.Should().Be("A"); cells[7].TextContent.Should().Be("11"); cells[8].TextContent.Should().Be("4444");
-            cells[9].TextContent.Should().Be("C"); cells[10].TextContent.Should().Be("33"); cells[11].TextContent.Should().Be("33333");
-            cells[12].TextContent.Should().Be("A"); cells[13].TextContent.Should().Be("99"); cells[14].TextContent.Should().Be("66");
-            cells[15].TextContent.Should().Be("C"); cells[16].TextContent.Should().Be("44"); cells[17].TextContent.Should().Be("1111111");
-            cells[18].TextContent.Should().Be("C"); cells[19].TextContent.Should().Be("55"); cells[20].TextContent.Should().Be("222222");
+            cells[0].TextContent.Should().Be("B");
+            cells[1].TextContent.Should().Be("42");
+            cells[2].TextContent.Should().Be("555");
+            cells[3].TextContent.Should().Be("A");
+            cells[4].TextContent.Should().Be("73");
+            cells[5].TextContent.Should().Be("7");
+            cells[6].TextContent.Should().Be("A");
+            cells[7].TextContent.Should().Be("11");
+            cells[8].TextContent.Should().Be("4444");
+            cells[9].TextContent.Should().Be("C");
+            cells[10].TextContent.Should().Be("33");
+            cells[11].TextContent.Should().Be("33333");
+            cells[12].TextContent.Should().Be("A");
+            cells[13].TextContent.Should().Be("99");
+            cells[14].TextContent.Should().Be("66");
+            cells[15].TextContent.Should().Be("C");
+            cells[16].TextContent.Should().Be("44");
+            cells[17].TextContent.Should().Be("1111111");
+            cells[18].TextContent.Should().Be("C");
+            cells[19].TextContent.Should().Be("55");
+            cells[20].TextContent.Should().Be("222222");
 
             await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Ascending, x => { return x.Name; }));
             cells = dataGrid.FindAll("td");
 
             // Check the values of rows - should be sorted ascending by Name.
-            cells[0].TextContent.Should().Be("A"); cells[1].TextContent.Should().Be("73"); cells[2].TextContent.Should().Be("7");
-            cells[3].TextContent.Should().Be("A"); cells[4].TextContent.Should().Be("11"); cells[5].TextContent.Should().Be("4444");
-            cells[6].TextContent.Should().Be("A"); cells[7].TextContent.Should().Be("99"); cells[8].TextContent.Should().Be("66");
-            cells[9].TextContent.Should().Be("B"); cells[10].TextContent.Should().Be("42"); cells[11].TextContent.Should().Be("555");
-            cells[12].TextContent.Should().Be("C"); cells[13].TextContent.Should().Be("33"); cells[14].TextContent.Should().Be("33333");
-            cells[15].TextContent.Should().Be("C"); cells[16].TextContent.Should().Be("44"); cells[17].TextContent.Should().Be("1111111");
-            cells[18].TextContent.Should().Be("C"); cells[19].TextContent.Should().Be("55"); cells[20].TextContent.Should().Be("222222");
+            cells[0].TextContent.Should().Be("A");
+            cells[1].TextContent.Should().Be("73");
+            cells[2].TextContent.Should().Be("7");
+            cells[3].TextContent.Should().Be("A");
+            cells[4].TextContent.Should().Be("11");
+            cells[5].TextContent.Should().Be("4444");
+            cells[6].TextContent.Should().Be("A");
+            cells[7].TextContent.Should().Be("99");
+            cells[8].TextContent.Should().Be("66");
+            cells[9].TextContent.Should().Be("B");
+            cells[10].TextContent.Should().Be("42");
+            cells[11].TextContent.Should().Be("555");
+            cells[12].TextContent.Should().Be("C");
+            cells[13].TextContent.Should().Be("33");
+            cells[14].TextContent.Should().Be("33333");
+            cells[15].TextContent.Should().Be("C");
+            cells[16].TextContent.Should().Be("44");
+            cells[17].TextContent.Should().Be("1111111");
+            cells[18].TextContent.Should().Be("C");
+            cells[19].TextContent.Should().Be("55");
+            cells[20].TextContent.Should().Be("222222");
 
             await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Descending, x => { return x.Name; }));
             cells = dataGrid.FindAll("td");
 
             // Check the values of rows - should be sorted descending by Name.
-            cells[0].TextContent.Should().Be("C"); cells[1].TextContent.Should().Be("33"); cells[2].TextContent.Should().Be("33333");
-            cells[3].TextContent.Should().Be("C"); cells[4].TextContent.Should().Be("44"); cells[5].TextContent.Should().Be("1111111");
-            cells[6].TextContent.Should().Be("C"); cells[7].TextContent.Should().Be("55"); cells[8].TextContent.Should().Be("222222");
-            cells[9].TextContent.Should().Be("B"); cells[10].TextContent.Should().Be("42"); cells[11].TextContent.Should().Be("555");
-            cells[12].TextContent.Should().Be("A"); cells[13].TextContent.Should().Be("73"); cells[14].TextContent.Should().Be("7");
-            cells[15].TextContent.Should().Be("A"); cells[16].TextContent.Should().Be("11"); cells[17].TextContent.Should().Be("4444");
-            cells[18].TextContent.Should().Be("A"); cells[19].TextContent.Should().Be("99"); cells[20].TextContent.Should().Be("66");
+            cells[0].TextContent.Should().Be("C");
+            cells[1].TextContent.Should().Be("33");
+            cells[2].TextContent.Should().Be("33333");
+            cells[3].TextContent.Should().Be("C");
+            cells[4].TextContent.Should().Be("44");
+            cells[5].TextContent.Should().Be("1111111");
+            cells[6].TextContent.Should().Be("C");
+            cells[7].TextContent.Should().Be("55");
+            cells[8].TextContent.Should().Be("222222");
+            cells[9].TextContent.Should().Be("B");
+            cells[10].TextContent.Should().Be("42");
+            cells[11].TextContent.Should().Be("555");
+            cells[12].TextContent.Should().Be("A");
+            cells[13].TextContent.Should().Be("73");
+            cells[14].TextContent.Should().Be("7");
+            cells[15].TextContent.Should().Be("A");
+            cells[16].TextContent.Should().Be("11");
+            cells[17].TextContent.Should().Be("4444");
+            cells[18].TextContent.Should().Be("A");
+            cells[19].TextContent.Should().Be("99");
+            cells[20].TextContent.Should().Be("66");
 
             await comp.InvokeAsync(() => dataGrid.Instance.RemoveSortAsync("Name"));
             cells = dataGrid.FindAll("td");
 
             // Back to original order without sorting
-            cells[0].TextContent.Should().Be("B"); cells[1].TextContent.Should().Be("42"); cells[2].TextContent.Should().Be("555");
-            cells[3].TextContent.Should().Be("A"); cells[4].TextContent.Should().Be("73"); cells[5].TextContent.Should().Be("7");
-            cells[6].TextContent.Should().Be("A"); cells[7].TextContent.Should().Be("11"); cells[8].TextContent.Should().Be("4444");
-            cells[9].TextContent.Should().Be("C"); cells[10].TextContent.Should().Be("33"); cells[11].TextContent.Should().Be("33333");
-            cells[12].TextContent.Should().Be("A"); cells[13].TextContent.Should().Be("99"); cells[14].TextContent.Should().Be("66");
-            cells[15].TextContent.Should().Be("C"); cells[16].TextContent.Should().Be("44"); cells[17].TextContent.Should().Be("1111111");
-            cells[18].TextContent.Should().Be("C"); cells[19].TextContent.Should().Be("55"); cells[20].TextContent.Should().Be("222222");
+            cells[0].TextContent.Should().Be("B");
+            cells[1].TextContent.Should().Be("42");
+            cells[2].TextContent.Should().Be("555");
+            cells[3].TextContent.Should().Be("A");
+            cells[4].TextContent.Should().Be("73");
+            cells[5].TextContent.Should().Be("7");
+            cells[6].TextContent.Should().Be("A");
+            cells[7].TextContent.Should().Be("11");
+            cells[8].TextContent.Should().Be("4444");
+            cells[9].TextContent.Should().Be("C");
+            cells[10].TextContent.Should().Be("33");
+            cells[11].TextContent.Should().Be("33333");
+            cells[12].TextContent.Should().Be("A");
+            cells[13].TextContent.Should().Be("99");
+            cells[14].TextContent.Should().Be("66");
+            cells[15].TextContent.Should().Be("C");
+            cells[16].TextContent.Should().Be("44");
+            cells[17].TextContent.Should().Be("1111111");
+            cells[18].TextContent.Should().Be("C");
+            cells[19].TextContent.Should().Be("55");
+            cells[20].TextContent.Should().Be("222222");
 
             var column = dataGrid.FindComponent<Column<DataGridSortableTest.Item>>();
             await comp.InvokeAsync(() => column.Instance.SortBy = x => { return x.Name; });
             ////await comp.InvokeAsync(() => column.Instance.CompileSortBy());
 
             // Check the values of rows - should not be sorted and should be in the original order.
-            cells[0].TextContent.Should().Be("B"); cells[1].TextContent.Should().Be("42"); cells[2].TextContent.Should().Be("555");
-            cells[3].TextContent.Should().Be("A"); cells[4].TextContent.Should().Be("73"); cells[5].TextContent.Should().Be("7");
-            cells[6].TextContent.Should().Be("A"); cells[7].TextContent.Should().Be("11"); cells[8].TextContent.Should().Be("4444");
-            cells[9].TextContent.Should().Be("C"); cells[10].TextContent.Should().Be("33"); cells[11].TextContent.Should().Be("33333");
-            cells[12].TextContent.Should().Be("A"); cells[13].TextContent.Should().Be("99"); cells[14].TextContent.Should().Be("66");
-            cells[15].TextContent.Should().Be("C"); cells[16].TextContent.Should().Be("44"); cells[17].TextContent.Should().Be("1111111");
-            cells[18].TextContent.Should().Be("C"); cells[19].TextContent.Should().Be("55"); cells[20].TextContent.Should().Be("222222");
+            cells[0].TextContent.Should().Be("B");
+            cells[1].TextContent.Should().Be("42");
+            cells[2].TextContent.Should().Be("555");
+            cells[3].TextContent.Should().Be("A");
+            cells[4].TextContent.Should().Be("73");
+            cells[5].TextContent.Should().Be("7");
+            cells[6].TextContent.Should().Be("A");
+            cells[7].TextContent.Should().Be("11");
+            cells[8].TextContent.Should().Be("4444");
+            cells[9].TextContent.Should().Be("C");
+            cells[10].TextContent.Should().Be("33");
+            cells[11].TextContent.Should().Be("33333");
+            cells[12].TextContent.Should().Be("A");
+            cells[13].TextContent.Should().Be("99");
+            cells[14].TextContent.Should().Be("66");
+            cells[15].TextContent.Should().Be("C");
+            cells[16].TextContent.Should().Be("44");
+            cells[17].TextContent.Should().Be("1111111");
+            cells[18].TextContent.Should().Be("C");
+            cells[19].TextContent.Should().Be("55");
+            cells[20].TextContent.Should().Be("222222");
 
             // sort through the sort icon
             dataGrid.Find(".column-options button").Click();
             cells = dataGrid.FindAll("td");
             // Check the values of rows - should be sorted ascending by Name.
-            cells[0].TextContent.Should().Be("A"); cells[1].TextContent.Should().Be("73"); cells[2].TextContent.Should().Be("7");
-            cells[3].TextContent.Should().Be("A"); cells[4].TextContent.Should().Be("11"); cells[5].TextContent.Should().Be("4444");
-            cells[6].TextContent.Should().Be("A"); cells[7].TextContent.Should().Be("99"); cells[8].TextContent.Should().Be("66");
-            cells[9].TextContent.Should().Be("B"); cells[10].TextContent.Should().Be("42"); cells[11].TextContent.Should().Be("555");
-            cells[12].TextContent.Should().Be("C"); cells[13].TextContent.Should().Be("33"); cells[14].TextContent.Should().Be("33333");
-            cells[15].TextContent.Should().Be("C"); cells[16].TextContent.Should().Be("44"); cells[17].TextContent.Should().Be("1111111");
-            cells[18].TextContent.Should().Be("C"); cells[19].TextContent.Should().Be("55"); cells[20].TextContent.Should().Be("222222");
+            cells[0].TextContent.Should().Be("A");
+            cells[1].TextContent.Should().Be("73");
+            cells[2].TextContent.Should().Be("7");
+            cells[3].TextContent.Should().Be("A");
+            cells[4].TextContent.Should().Be("11");
+            cells[5].TextContent.Should().Be("4444");
+            cells[6].TextContent.Should().Be("A");
+            cells[7].TextContent.Should().Be("99");
+            cells[8].TextContent.Should().Be("66");
+            cells[9].TextContent.Should().Be("B");
+            cells[10].TextContent.Should().Be("42");
+            cells[11].TextContent.Should().Be("555");
+            cells[12].TextContent.Should().Be("C");
+            cells[13].TextContent.Should().Be("33");
+            cells[14].TextContent.Should().Be("33333");
+            cells[15].TextContent.Should().Be("C");
+            cells[16].TextContent.Should().Be("44");
+            cells[17].TextContent.Should().Be("1111111");
+            cells[18].TextContent.Should().Be("C");
+            cells[19].TextContent.Should().Be("55");
+            cells[20].TextContent.Should().Be("222222");
 
             // test other sort methods
             var headerCell = dataGrid.FindComponent<HeaderCell<DataGridSortableTest.Item>>();
@@ -189,73 +276,157 @@ namespace MudBlazor.UnitTests.Components
             cells.Count.Should().Be(21, because: "We have 7 data rows with three columns");
 
             // Check the values of rows without sorting
-            cells[0].TextContent.Should().Be("B"); cells[1].TextContent.Should().Be("42"); cells[2].TextContent.Should().Be("555");
-            cells[3].TextContent.Should().Be("A"); cells[4].TextContent.Should().Be("73"); cells[5].TextContent.Should().Be("7");
-            cells[6].TextContent.Should().Be("A"); cells[7].TextContent.Should().Be("11"); cells[8].TextContent.Should().Be("4444");
-            cells[9].TextContent.Should().Be("C"); cells[10].TextContent.Should().Be("33"); cells[11].TextContent.Should().Be("33333");
-            cells[12].TextContent.Should().Be("A"); cells[13].TextContent.Should().Be("99"); cells[14].TextContent.Should().Be("66");
-            cells[15].TextContent.Should().Be("C"); cells[16].TextContent.Should().Be("44"); cells[17].TextContent.Should().Be("1111111");
-            cells[18].TextContent.Should().Be("C"); cells[19].TextContent.Should().Be("55"); cells[20].TextContent.Should().Be("222222");
+            cells[0].TextContent.Should().Be("B");
+            cells[1].TextContent.Should().Be("42");
+            cells[2].TextContent.Should().Be("555");
+            cells[3].TextContent.Should().Be("A");
+            cells[4].TextContent.Should().Be("73");
+            cells[5].TextContent.Should().Be("7");
+            cells[6].TextContent.Should().Be("A");
+            cells[7].TextContent.Should().Be("11");
+            cells[8].TextContent.Should().Be("4444");
+            cells[9].TextContent.Should().Be("C");
+            cells[10].TextContent.Should().Be("33");
+            cells[11].TextContent.Should().Be("33333");
+            cells[12].TextContent.Should().Be("A");
+            cells[13].TextContent.Should().Be("99");
+            cells[14].TextContent.Should().Be("66");
+            cells[15].TextContent.Should().Be("C");
+            cells[16].TextContent.Should().Be("44");
+            cells[17].TextContent.Should().Be("1111111");
+            cells[18].TextContent.Should().Be("C");
+            cells[19].TextContent.Should().Be("55");
+            cells[20].TextContent.Should().Be("222222");
 
             await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Ascending, x => { return x.Name; }));
             cells = dataGrid.FindAll("td");
 
             // Check the values of rows - should be sorted ascending by Name.
-            cells[0].TextContent.Should().Be("A"); cells[1].TextContent.Should().Be("73"); cells[2].TextContent.Should().Be("7");
-            cells[3].TextContent.Should().Be("A"); cells[4].TextContent.Should().Be("11"); cells[5].TextContent.Should().Be("4444");
-            cells[6].TextContent.Should().Be("A"); cells[7].TextContent.Should().Be("99"); cells[8].TextContent.Should().Be("66");
-            cells[9].TextContent.Should().Be("B"); cells[10].TextContent.Should().Be("42"); cells[11].TextContent.Should().Be("555");
-            cells[12].TextContent.Should().Be("C"); cells[13].TextContent.Should().Be("33"); cells[14].TextContent.Should().Be("33333");
-            cells[15].TextContent.Should().Be("C"); cells[16].TextContent.Should().Be("44"); cells[17].TextContent.Should().Be("1111111");
-            cells[18].TextContent.Should().Be("C"); cells[19].TextContent.Should().Be("55"); cells[20].TextContent.Should().Be("222222");
+            cells[0].TextContent.Should().Be("A");
+            cells[1].TextContent.Should().Be("73");
+            cells[2].TextContent.Should().Be("7");
+            cells[3].TextContent.Should().Be("A");
+            cells[4].TextContent.Should().Be("11");
+            cells[5].TextContent.Should().Be("4444");
+            cells[6].TextContent.Should().Be("A");
+            cells[7].TextContent.Should().Be("99");
+            cells[8].TextContent.Should().Be("66");
+            cells[9].TextContent.Should().Be("B");
+            cells[10].TextContent.Should().Be("42");
+            cells[11].TextContent.Should().Be("555");
+            cells[12].TextContent.Should().Be("C");
+            cells[13].TextContent.Should().Be("33");
+            cells[14].TextContent.Should().Be("33333");
+            cells[15].TextContent.Should().Be("C");
+            cells[16].TextContent.Should().Be("44");
+            cells[17].TextContent.Should().Be("1111111");
+            cells[18].TextContent.Should().Be("C");
+            cells[19].TextContent.Should().Be("55");
+            cells[20].TextContent.Should().Be("222222");
 
             await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Descending, x => { return x.Name; }));
             cells = dataGrid.FindAll("td");
 
             // Check the values of rows - should be sorted descending by Name.
-            cells[0].TextContent.Should().Be("C"); cells[1].TextContent.Should().Be("33"); cells[2].TextContent.Should().Be("33333");
-            cells[3].TextContent.Should().Be("C"); cells[4].TextContent.Should().Be("44"); cells[5].TextContent.Should().Be("1111111");
-            cells[6].TextContent.Should().Be("C"); cells[7].TextContent.Should().Be("55"); cells[8].TextContent.Should().Be("222222");
-            cells[9].TextContent.Should().Be("B"); cells[10].TextContent.Should().Be("42"); cells[11].TextContent.Should().Be("555");
-            cells[12].TextContent.Should().Be("A"); cells[13].TextContent.Should().Be("73"); cells[14].TextContent.Should().Be("7");
-            cells[15].TextContent.Should().Be("A"); cells[16].TextContent.Should().Be("11"); cells[17].TextContent.Should().Be("4444");
-            cells[18].TextContent.Should().Be("A"); cells[19].TextContent.Should().Be("99"); cells[20].TextContent.Should().Be("66");
+            cells[0].TextContent.Should().Be("C");
+            cells[1].TextContent.Should().Be("33");
+            cells[2].TextContent.Should().Be("33333");
+            cells[3].TextContent.Should().Be("C");
+            cells[4].TextContent.Should().Be("44");
+            cells[5].TextContent.Should().Be("1111111");
+            cells[6].TextContent.Should().Be("C");
+            cells[7].TextContent.Should().Be("55");
+            cells[8].TextContent.Should().Be("222222");
+            cells[9].TextContent.Should().Be("B");
+            cells[10].TextContent.Should().Be("42");
+            cells[11].TextContent.Should().Be("555");
+            cells[12].TextContent.Should().Be("A");
+            cells[13].TextContent.Should().Be("73");
+            cells[14].TextContent.Should().Be("7");
+            cells[15].TextContent.Should().Be("A");
+            cells[16].TextContent.Should().Be("11");
+            cells[17].TextContent.Should().Be("4444");
+            cells[18].TextContent.Should().Be("A");
+            cells[19].TextContent.Should().Be("99");
+            cells[20].TextContent.Should().Be("66");
 
             await comp.InvokeAsync(() => dataGrid.Instance.RemoveSortAsync("Name"));
             cells = dataGrid.FindAll("td");
 
             // Back to original order without sorting
-            cells[0].TextContent.Should().Be("B"); cells[1].TextContent.Should().Be("42"); cells[2].TextContent.Should().Be("555");
-            cells[3].TextContent.Should().Be("A"); cells[4].TextContent.Should().Be("73"); cells[5].TextContent.Should().Be("7");
-            cells[6].TextContent.Should().Be("A"); cells[7].TextContent.Should().Be("11"); cells[8].TextContent.Should().Be("4444");
-            cells[9].TextContent.Should().Be("C"); cells[10].TextContent.Should().Be("33"); cells[11].TextContent.Should().Be("33333");
-            cells[12].TextContent.Should().Be("A"); cells[13].TextContent.Should().Be("99"); cells[14].TextContent.Should().Be("66");
-            cells[15].TextContent.Should().Be("C"); cells[16].TextContent.Should().Be("44"); cells[17].TextContent.Should().Be("1111111");
-            cells[18].TextContent.Should().Be("C"); cells[19].TextContent.Should().Be("55"); cells[20].TextContent.Should().Be("222222");
+            cells[0].TextContent.Should().Be("B");
+            cells[1].TextContent.Should().Be("42");
+            cells[2].TextContent.Should().Be("555");
+            cells[3].TextContent.Should().Be("A");
+            cells[4].TextContent.Should().Be("73");
+            cells[5].TextContent.Should().Be("7");
+            cells[6].TextContent.Should().Be("A");
+            cells[7].TextContent.Should().Be("11");
+            cells[8].TextContent.Should().Be("4444");
+            cells[9].TextContent.Should().Be("C");
+            cells[10].TextContent.Should().Be("33");
+            cells[11].TextContent.Should().Be("33333");
+            cells[12].TextContent.Should().Be("A");
+            cells[13].TextContent.Should().Be("99");
+            cells[14].TextContent.Should().Be("66");
+            cells[15].TextContent.Should().Be("C");
+            cells[16].TextContent.Should().Be("44");
+            cells[17].TextContent.Should().Be("1111111");
+            cells[18].TextContent.Should().Be("C");
+            cells[19].TextContent.Should().Be("55");
+            cells[20].TextContent.Should().Be("222222");
 
             var column = dataGrid.FindComponent<Column<DataGridSortableVirtualizeServerDataTest.Item>>();
             await comp.InvokeAsync(() => column.Instance.SortBy = x => { return x.Name; });
 
             // Check the values of rows - should not be sorted and should be in the original order.
-            cells[0].TextContent.Should().Be("B"); cells[1].TextContent.Should().Be("42"); cells[2].TextContent.Should().Be("555");
-            cells[3].TextContent.Should().Be("A"); cells[4].TextContent.Should().Be("73"); cells[5].TextContent.Should().Be("7");
-            cells[6].TextContent.Should().Be("A"); cells[7].TextContent.Should().Be("11"); cells[8].TextContent.Should().Be("4444");
-            cells[9].TextContent.Should().Be("C"); cells[10].TextContent.Should().Be("33"); cells[11].TextContent.Should().Be("33333");
-            cells[12].TextContent.Should().Be("A"); cells[13].TextContent.Should().Be("99"); cells[14].TextContent.Should().Be("66");
-            cells[15].TextContent.Should().Be("C"); cells[16].TextContent.Should().Be("44"); cells[17].TextContent.Should().Be("1111111");
-            cells[18].TextContent.Should().Be("C"); cells[19].TextContent.Should().Be("55"); cells[20].TextContent.Should().Be("222222");
+            cells[0].TextContent.Should().Be("B");
+            cells[1].TextContent.Should().Be("42");
+            cells[2].TextContent.Should().Be("555");
+            cells[3].TextContent.Should().Be("A");
+            cells[4].TextContent.Should().Be("73");
+            cells[5].TextContent.Should().Be("7");
+            cells[6].TextContent.Should().Be("A");
+            cells[7].TextContent.Should().Be("11");
+            cells[8].TextContent.Should().Be("4444");
+            cells[9].TextContent.Should().Be("C");
+            cells[10].TextContent.Should().Be("33");
+            cells[11].TextContent.Should().Be("33333");
+            cells[12].TextContent.Should().Be("A");
+            cells[13].TextContent.Should().Be("99");
+            cells[14].TextContent.Should().Be("66");
+            cells[15].TextContent.Should().Be("C");
+            cells[16].TextContent.Should().Be("44");
+            cells[17].TextContent.Should().Be("1111111");
+            cells[18].TextContent.Should().Be("C");
+            cells[19].TextContent.Should().Be("55");
+            cells[20].TextContent.Should().Be("222222");
 
             // sort through the sort icon
             dataGrid.Find(".column-options button").Click();
             cells = dataGrid.FindAll("td");
             // Check the values of rows - should be sorted ascending by Name.
-            cells[0].TextContent.Should().Be("A"); cells[1].TextContent.Should().Be("73"); cells[2].TextContent.Should().Be("7");
-            cells[3].TextContent.Should().Be("A"); cells[4].TextContent.Should().Be("11"); cells[5].TextContent.Should().Be("4444");
-            cells[6].TextContent.Should().Be("A"); cells[7].TextContent.Should().Be("99"); cells[8].TextContent.Should().Be("66");
-            cells[9].TextContent.Should().Be("B"); cells[10].TextContent.Should().Be("42"); cells[11].TextContent.Should().Be("555");
-            cells[12].TextContent.Should().Be("C"); cells[13].TextContent.Should().Be("33"); cells[14].TextContent.Should().Be("33333");
-            cells[15].TextContent.Should().Be("C"); cells[16].TextContent.Should().Be("44"); cells[17].TextContent.Should().Be("1111111");
-            cells[18].TextContent.Should().Be("C"); cells[19].TextContent.Should().Be("55"); cells[20].TextContent.Should().Be("222222");
+            cells[0].TextContent.Should().Be("A");
+            cells[1].TextContent.Should().Be("73");
+            cells[2].TextContent.Should().Be("7");
+            cells[3].TextContent.Should().Be("A");
+            cells[4].TextContent.Should().Be("11");
+            cells[5].TextContent.Should().Be("4444");
+            cells[6].TextContent.Should().Be("A");
+            cells[7].TextContent.Should().Be("99");
+            cells[8].TextContent.Should().Be("66");
+            cells[9].TextContent.Should().Be("B");
+            cells[10].TextContent.Should().Be("42");
+            cells[11].TextContent.Should().Be("555");
+            cells[12].TextContent.Should().Be("C");
+            cells[13].TextContent.Should().Be("33");
+            cells[14].TextContent.Should().Be("33333");
+            cells[15].TextContent.Should().Be("C");
+            cells[16].TextContent.Should().Be("44");
+            cells[17].TextContent.Should().Be("1111111");
+            cells[18].TextContent.Should().Be("C");
+            cells[19].TextContent.Should().Be("55");
+            cells[20].TextContent.Should().Be("222222");
 
             // test other sort methods
             var headerCell = dataGrid.FindComponent<HeaderCell<DataGridSortableVirtualizeServerDataTest.Item>>();
@@ -286,16 +457,28 @@ namespace MudBlazor.UnitTests.Components
             cells.Count.Should().Be(9, because: "We have 3 data rows with three columns");
 
             // Check the values of rows without sorting
-            cells[0].TextContent.Should().Be("B"); cells[1].TextContent.Should().Be("42"); cells[2].TextContent.Should().Be("555");
-            cells[3].TextContent.Should().Be("A"); cells[4].TextContent.Should().Be("73"); cells[5].TextContent.Should().Be("7");
-            cells[6].TextContent.Should().Be("A"); cells[7].TextContent.Should().Be("11"); cells[8].TextContent.Should().Be("4444");
+            cells[0].TextContent.Should().Be("B");
+            cells[1].TextContent.Should().Be("42");
+            cells[2].TextContent.Should().Be("555");
+            cells[3].TextContent.Should().Be("A");
+            cells[4].TextContent.Should().Be("73");
+            cells[5].TextContent.Should().Be("7");
+            cells[6].TextContent.Should().Be("A");
+            cells[7].TextContent.Should().Be("11");
+            cells[8].TextContent.Should().Be("4444");
 
             await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Ascending, x => { return x.Name; }));
             cells = dataGrid.FindAll("td");
 
-            cells[0].TextContent.Should().Be("A"); cells[1].TextContent.Should().Be("73"); cells[2].TextContent.Should().Be("7");
-            cells[3].TextContent.Should().Be("A"); cells[4].TextContent.Should().Be("11"); cells[5].TextContent.Should().Be("4444");
-            cells[6].TextContent.Should().Be("B"); cells[7].TextContent.Should().Be("42"); cells[8].TextContent.Should().Be("555");
+            cells[0].TextContent.Should().Be("A");
+            cells[1].TextContent.Should().Be("73");
+            cells[2].TextContent.Should().Be("7");
+            cells[3].TextContent.Should().Be("A");
+            cells[4].TextContent.Should().Be("11");
+            cells[5].TextContent.Should().Be("4444");
+            cells[6].TextContent.Should().Be("B");
+            cells[7].TextContent.Should().Be("42");
+            cells[8].TextContent.Should().Be("555");
         }
 
         [Test]
@@ -685,7 +868,8 @@ namespace MudBlazor.UnitTests.Components
             twoBFilter.Value = "B";
             await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(twoBFilter));
             dataGrid.FindAll("input[type=checkbox]")[0].IsChecked().Should().BeTrue(because: "select all checkbox should reflect 'all selected' state");
-            dataGrid.FindAll("tfoot input[type=checkbox]")[0].IsChecked().Should().BeTrue(because: "select all checkbox should reflect 'all selected' state");
+            dataGrid.FindAll("tfoot input[type=checkbox]")[0].IsChecked().Should()
+                .BeTrue(because: "select all checkbox should reflect 'all selected' state");
         }
 
         [Test]
@@ -778,7 +962,7 @@ namespace MudBlazor.UnitTests.Components
             var first = new TaskCompletionSource<GridData<int>>();
             // Set the ServerData function
             dataGrid.SetParam(p =>
-                p.VirtualizeServerData,
+                    p.VirtualizeServerData,
                 new Func<GridStateVirtualize<int>, CancellationToken, Task<GridData<int>>>((_, cancellationToken) =>
                 {
                     // Remember the cancellation token
@@ -798,7 +982,7 @@ namespace MudBlazor.UnitTests.Components
             var second = new TaskCompletionSource<GridData<int>>();
             // Set the VirtualizeServerData function to a new method...
             dataGrid.SetParam(p =>
-                p.VirtualizeServerData,
+                    p.VirtualizeServerData,
                 new Func<GridStateVirtualize<int>, CancellationToken, Task<GridData<int>>>((_, _) => second.Task));
 
             await Task.Delay(20);
@@ -845,20 +1029,20 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => dataGrid.Instance.NavigateTo(Page.First));
             dataGrid.Instance.CurrentPage.Should().Be(0);
         }
-        
+
         [Test]
         public async Task DataGridPaginationNumberFormattingTest()
         {
             var comp = Context.RenderComponent<DataGridPaginationNumberFormattingTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridPaginationNumberFormattingTest.Item>>();
-            
+
             // check that the page size number format is correct
             dataGrid.FindAll(".mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 20,000");
-            
+
             // navigate to the last page programmatically
             await comp.InvokeAsync(() => dataGrid.Instance.NavigateTo(Page.Last));
             dataGrid.Instance.CurrentPage.Should().Be(1999);
-            
+
             // check that the last page number format is correct
             dataGrid.FindAll(".mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("19,991-20,000 of 20,000");
         }
@@ -1090,7 +1274,8 @@ namespace MudBlazor.UnitTests.Components
             alertTextFunc.Should().Throw<ComponentNotFoundException>();
         }
 
-        [Test(Description = "Checks if clone strategy is working, if we used default one it would fail as STJ doesn't support abstract classes without additional configuration.")]
+        [Test(Description =
+            "Checks if clone strategy is working, if we used default one it would fail as STJ doesn't support abstract classes without additional configuration.")]
         public void DataGridDialogEditCloneStrategyTest1()
         {
             var comp = Context.RenderComponent<DataGridFormEditCloneStrategyTest>();
@@ -1336,49 +1521,105 @@ namespace MudBlazor.UnitTests.Components
             cells.Count.Should().Be(21, because: "We have 7 data rows with three columns");
 
             // Check the values of rows without sorting
-            cells[0].TextContent.Should().Be("B"); cells[1].TextContent.Should().Be("42"); cells[2].TextContent.Should().Be("555");
-            cells[3].TextContent.Should().Be("A"); cells[4].TextContent.Should().Be("73"); cells[5].TextContent.Should().Be("7");
-            cells[6].TextContent.Should().Be("A"); cells[7].TextContent.Should().Be("11"); cells[8].TextContent.Should().Be("4444");
-            cells[9].TextContent.Should().Be("C"); cells[10].TextContent.Should().Be("33"); cells[11].TextContent.Should().Be("33333");
-            cells[12].TextContent.Should().Be("A"); cells[13].TextContent.Should().Be("99"); cells[14].TextContent.Should().Be("66");
-            cells[15].TextContent.Should().Be("C"); cells[16].TextContent.Should().Be("44"); cells[17].TextContent.Should().Be("1111111");
-            cells[18].TextContent.Should().Be("C"); cells[19].TextContent.Should().Be("55"); cells[20].TextContent.Should().Be("222222");
+            cells[0].TextContent.Should().Be("B");
+            cells[1].TextContent.Should().Be("42");
+            cells[2].TextContent.Should().Be("555");
+            cells[3].TextContent.Should().Be("A");
+            cells[4].TextContent.Should().Be("73");
+            cells[5].TextContent.Should().Be("7");
+            cells[6].TextContent.Should().Be("A");
+            cells[7].TextContent.Should().Be("11");
+            cells[8].TextContent.Should().Be("4444");
+            cells[9].TextContent.Should().Be("C");
+            cells[10].TextContent.Should().Be("33");
+            cells[11].TextContent.Should().Be("33333");
+            cells[12].TextContent.Should().Be("A");
+            cells[13].TextContent.Should().Be("99");
+            cells[14].TextContent.Should().Be("66");
+            cells[15].TextContent.Should().Be("C");
+            cells[16].TextContent.Should().Be("44");
+            cells[17].TextContent.Should().Be("1111111");
+            cells[18].TextContent.Should().Be("C");
+            cells[19].TextContent.Should().Be("55");
+            cells[20].TextContent.Should().Be("222222");
 
             await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Ascending, x => { return x.Name; }));
             cells = dataGrid.FindAll("td");
 
             // Check the values of rows - should be sorted ascending by Name.
-            cells[0].TextContent.Should().Be("A"); cells[1].TextContent.Should().Be("73"); cells[2].TextContent.Should().Be("7");
-            cells[3].TextContent.Should().Be("A"); cells[4].TextContent.Should().Be("11"); cells[5].TextContent.Should().Be("4444");
-            cells[6].TextContent.Should().Be("A"); cells[7].TextContent.Should().Be("99"); cells[8].TextContent.Should().Be("66");
-            cells[9].TextContent.Should().Be("B"); cells[10].TextContent.Should().Be("42"); cells[11].TextContent.Should().Be("555");
-            cells[12].TextContent.Should().Be("C"); cells[13].TextContent.Should().Be("33"); cells[14].TextContent.Should().Be("33333");
-            cells[15].TextContent.Should().Be("C"); cells[16].TextContent.Should().Be("44"); cells[17].TextContent.Should().Be("1111111");
-            cells[18].TextContent.Should().Be("C"); cells[19].TextContent.Should().Be("55"); cells[20].TextContent.Should().Be("222222");
+            cells[0].TextContent.Should().Be("A");
+            cells[1].TextContent.Should().Be("73");
+            cells[2].TextContent.Should().Be("7");
+            cells[3].TextContent.Should().Be("A");
+            cells[4].TextContent.Should().Be("11");
+            cells[5].TextContent.Should().Be("4444");
+            cells[6].TextContent.Should().Be("A");
+            cells[7].TextContent.Should().Be("99");
+            cells[8].TextContent.Should().Be("66");
+            cells[9].TextContent.Should().Be("B");
+            cells[10].TextContent.Should().Be("42");
+            cells[11].TextContent.Should().Be("555");
+            cells[12].TextContent.Should().Be("C");
+            cells[13].TextContent.Should().Be("33");
+            cells[14].TextContent.Should().Be("33333");
+            cells[15].TextContent.Should().Be("C");
+            cells[16].TextContent.Should().Be("44");
+            cells[17].TextContent.Should().Be("1111111");
+            cells[18].TextContent.Should().Be("C");
+            cells[19].TextContent.Should().Be("55");
+            cells[20].TextContent.Should().Be("222222");
 
             await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Descending, x => { return x.Name; }));
             cells = dataGrid.FindAll("td");
 
             // Check the values of rows - should be sorted descending by A.
-            cells[0].TextContent.Should().Be("C"); cells[1].TextContent.Should().Be("33"); cells[2].TextContent.Should().Be("33333");
-            cells[3].TextContent.Should().Be("C"); cells[4].TextContent.Should().Be("44"); cells[5].TextContent.Should().Be("1111111");
-            cells[6].TextContent.Should().Be("C"); cells[7].TextContent.Should().Be("55"); cells[8].TextContent.Should().Be("222222");
-            cells[9].TextContent.Should().Be("B"); cells[10].TextContent.Should().Be("42"); cells[11].TextContent.Should().Be("555");
-            cells[12].TextContent.Should().Be("A"); cells[13].TextContent.Should().Be("73"); cells[14].TextContent.Should().Be("7");
-            cells[15].TextContent.Should().Be("A"); cells[16].TextContent.Should().Be("11"); cells[17].TextContent.Should().Be("4444");
-            cells[18].TextContent.Should().Be("A"); cells[19].TextContent.Should().Be("99"); cells[20].TextContent.Should().Be("66");
+            cells[0].TextContent.Should().Be("C");
+            cells[1].TextContent.Should().Be("33");
+            cells[2].TextContent.Should().Be("33333");
+            cells[3].TextContent.Should().Be("C");
+            cells[4].TextContent.Should().Be("44");
+            cells[5].TextContent.Should().Be("1111111");
+            cells[6].TextContent.Should().Be("C");
+            cells[7].TextContent.Should().Be("55");
+            cells[8].TextContent.Should().Be("222222");
+            cells[9].TextContent.Should().Be("B");
+            cells[10].TextContent.Should().Be("42");
+            cells[11].TextContent.Should().Be("555");
+            cells[12].TextContent.Should().Be("A");
+            cells[13].TextContent.Should().Be("73");
+            cells[14].TextContent.Should().Be("7");
+            cells[15].TextContent.Should().Be("A");
+            cells[16].TextContent.Should().Be("11");
+            cells[17].TextContent.Should().Be("4444");
+            cells[18].TextContent.Should().Be("A");
+            cells[19].TextContent.Should().Be("99");
+            cells[20].TextContent.Should().Be("66");
 
             await comp.InvokeAsync(() => dataGrid.Instance.RemoveSortAsync("Name"));
             cells = dataGrid.FindAll("td");
 
             // Check the values of rows - should be the default order of the items.
-            cells[0].TextContent.Should().Be("B"); cells[1].TextContent.Should().Be("42"); cells[2].TextContent.Should().Be("555");
-            cells[3].TextContent.Should().Be("A"); cells[4].TextContent.Should().Be("73"); cells[5].TextContent.Should().Be("7");
-            cells[6].TextContent.Should().Be("A"); cells[7].TextContent.Should().Be("11"); cells[8].TextContent.Should().Be("4444");
-            cells[9].TextContent.Should().Be("C"); cells[10].TextContent.Should().Be("33"); cells[11].TextContent.Should().Be("33333");
-            cells[12].TextContent.Should().Be("A"); cells[13].TextContent.Should().Be("99"); cells[14].TextContent.Should().Be("66");
-            cells[15].TextContent.Should().Be("C"); cells[16].TextContent.Should().Be("44"); cells[17].TextContent.Should().Be("1111111");
-            cells[18].TextContent.Should().Be("C"); cells[19].TextContent.Should().Be("55"); cells[20].TextContent.Should().Be("222222");
+            cells[0].TextContent.Should().Be("B");
+            cells[1].TextContent.Should().Be("42");
+            cells[2].TextContent.Should().Be("555");
+            cells[3].TextContent.Should().Be("A");
+            cells[4].TextContent.Should().Be("73");
+            cells[5].TextContent.Should().Be("7");
+            cells[6].TextContent.Should().Be("A");
+            cells[7].TextContent.Should().Be("11");
+            cells[8].TextContent.Should().Be("4444");
+            cells[9].TextContent.Should().Be("C");
+            cells[10].TextContent.Should().Be("33");
+            cells[11].TextContent.Should().Be("33333");
+            cells[12].TextContent.Should().Be("A");
+            cells[13].TextContent.Should().Be("99");
+            cells[14].TextContent.Should().Be("66");
+            cells[15].TextContent.Should().Be("C");
+            cells[16].TextContent.Should().Be("44");
+            cells[17].TextContent.Should().Be("1111111");
+            cells[18].TextContent.Should().Be("C");
+            cells[19].TextContent.Should().Be("55");
+            cells[20].TextContent.Should().Be("222222");
 
             await comp.InvokeAsync(() => dataGrid.Instance.SortMode = SortMode.None);
             dataGrid.Render();
@@ -1422,7 +1663,8 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.String.Contains,
                 Value = "Joe"
             };
-            dataGrid.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.CaseInsensitive));
+            dataGrid.SetParametersAndRender(parameters =>
+                parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.CaseInsensitive));
             func = filterDefinition.GenerateFilterFunction(new FilterOptions
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
@@ -1439,7 +1681,8 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.String.Contains,
                 Value = null,
             };
-            dataGrid.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.Default));
+            dataGrid.SetParametersAndRender(parameters =>
+                parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.Default));
             func = filterDefinition.GenerateFilterFunction(new FilterOptions
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
@@ -1455,7 +1698,8 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.String.Contains,
                 Value = null
             };
-            dataGrid.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.CaseInsensitive));
+            dataGrid.SetParametersAndRender(parameters =>
+                parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.CaseInsensitive));
             func = filterDefinition.GenerateFilterFunction(new FilterOptions
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
@@ -1475,7 +1719,8 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.String.NotContains,
                 Value = "Joe"
             };
-            dataGrid.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.Default));
+            dataGrid.SetParametersAndRender(parameters =>
+                parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.Default));
             func = filterDefinition.GenerateFilterFunction(new FilterOptions
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
@@ -1492,7 +1737,8 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.String.NotContains,
                 Value = "Joe"
             };
-            dataGrid.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.CaseInsensitive));
+            dataGrid.SetParametersAndRender(parameters =>
+                parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.CaseInsensitive));
             func = filterDefinition.GenerateFilterFunction(new FilterOptions
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
@@ -1509,7 +1755,8 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.String.NotContains,
                 Value = null
             };
-            dataGrid.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.Default));
+            dataGrid.SetParametersAndRender(parameters =>
+                parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.Default));
             func = filterDefinition.GenerateFilterFunction(new FilterOptions
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
@@ -1545,7 +1792,8 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.String.Equal,
                 Value = "Joe"
             };
-            dataGrid.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.CaseInsensitive));
+            dataGrid.SetParametersAndRender(parameters =>
+                parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.CaseInsensitive));
             func = filterDefinition.GenerateFilterFunction(new FilterOptions
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
@@ -1562,7 +1810,8 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.String.Equal,
                 Value = null,
             };
-            dataGrid.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.Default));
+            dataGrid.SetParametersAndRender(parameters =>
+                parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.Default));
             func = filterDefinition.GenerateFilterFunction(new FilterOptions
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
@@ -1578,7 +1827,8 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.String.Equal,
                 Value = null
             };
-            dataGrid.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.CaseInsensitive));
+            dataGrid.SetParametersAndRender(parameters =>
+                parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.CaseInsensitive));
             func = filterDefinition.GenerateFilterFunction(new FilterOptions
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
@@ -1599,7 +1849,8 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.String.NotEqual,
                 Value = "Joe"
             };
-            dataGrid.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.Default));
+            dataGrid.SetParametersAndRender(parameters =>
+                parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.Default));
             func = filterDefinition.GenerateFilterFunction(new FilterOptions
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
@@ -1616,7 +1867,8 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.String.NotEqual,
                 Value = "Joe"
             };
-            dataGrid.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.CaseInsensitive));
+            dataGrid.SetParametersAndRender(parameters =>
+                parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.CaseInsensitive));
             func = filterDefinition.GenerateFilterFunction(new FilterOptions
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
@@ -1633,7 +1885,8 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.String.NotEqual,
                 Value = null
             };
-            dataGrid.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.Default));
+            dataGrid.SetParametersAndRender(parameters =>
+                parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.Default));
             func = filterDefinition.GenerateFilterFunction(new FilterOptions
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
@@ -1669,7 +1922,8 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.String.StartsWith,
                 Value = "Joe"
             };
-            dataGrid.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.CaseInsensitive));
+            dataGrid.SetParametersAndRender(parameters =>
+                parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.CaseInsensitive));
             func = filterDefinition.GenerateFilterFunction(new FilterOptions
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
@@ -1686,7 +1940,8 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.String.StartsWith,
                 Value = null
             };
-            dataGrid.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.Default));
+            dataGrid.SetParametersAndRender(parameters =>
+                parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.Default));
             func = filterDefinition.GenerateFilterFunction(new FilterOptions
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
@@ -1722,7 +1977,8 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.String.EndsWith,
                 Value = "Joe"
             };
-            dataGrid.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.CaseInsensitive));
+            dataGrid.SetParametersAndRender(parameters =>
+                parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.CaseInsensitive));
             func = filterDefinition.GenerateFilterFunction(new FilterOptions
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
@@ -1739,7 +1995,8 @@ namespace MudBlazor.UnitTests.Components
                 Operator = FilterOperator.String.EndsWith,
                 Value = null
             };
-            dataGrid.SetParametersAndRender(parameters => parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.Default));
+            dataGrid.SetParametersAndRender(parameters =>
+                parameters.Add(parameter => parameter.FilterCaseSensitivity, DataGridFilterCaseSensitivity.Default));
             func = filterDefinition.GenerateFilterFunction(new FilterOptions
             {
                 FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
@@ -2772,16 +3029,17 @@ namespace MudBlazor.UnitTests.Components
 
             items.Count.Should().Be(4);
             items.ToMarkup()
-                 .Should().Contain("starts with")
-                 .And.Contain("ends with")
-                 .And.Contain("equals")
-                 .And.Contain("contains");
+                .Should().Contain("starts with")
+                .And.Contain("ends with")
+                .And.Contain("equals")
+                .And.Contain("contains");
         }
 
         [Test]
         public void DataGridInvalidFilterPerColumnTest()
         {
-            var exception = Assert.Throws<ArgumentException>(() => Context.RenderComponent<DataGridFilterPerColumnTest>(parameters => parameters.Add(x => x.AddInvalid, true)));
+            var exception = Assert.Throws<ArgumentException>(() =>
+                Context.RenderComponent<DataGridFilterPerColumnTest>(parameters => parameters.Add(x => x.AddInvalid, true)));
 
             exception.Message.Should().Be("Invalid filter operators for Severity: <");
         }
@@ -2942,7 +3200,7 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
 
             await comp.InvokeAsync(() => dataGrid.Instance
-            .ToggleHierarchyVisibilityAsync(dataGrid.Instance.Items.First()));
+                .ToggleHierarchyVisibilityAsync(dataGrid.Instance.Items.First()));
 
             dataGrid.FindAll("td")[5].TextContent.Trim().Should().StartWith("uid = Sam|56|Normal|");
         }
@@ -3016,7 +3274,7 @@ namespace MudBlazor.UnitTests.Components
                 buttons[10].Click();
 
                 dataGrid.FindAll("td")
-                .SingleOrDefault(x => x.TextContent.Trim().StartsWith("uid = Alicia|54|Info|")).Should().BeNull();
+                    .SingleOrDefault(x => x.TextContent.Trim().StartsWith("uid = Alicia|54|Info|")).Should().BeNull();
             });
         }
 
@@ -3490,10 +3748,7 @@ namespace MudBlazor.UnitTests.Components
 
             dataGrid.FindAll("tbody tr").Count.Should().Be(4);
 
-            await comp.InvokeAsync(async () =>
-            {
-                await comp.Instance.FilterHiredToggled(true, dataGrid.Instance);
-            });
+            await comp.InvokeAsync(async () => { await comp.Instance.FilterHiredToggled(true, dataGrid.Instance); });
 
             dataGrid.Render();
             dataGrid.FindAll("tbody tr").Count.Should().Be(1);
@@ -4072,7 +4327,8 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance.SortMode = SortMode.Single;
             dataGrid.Instance.SortMode.Should().Be(SortMode.Single);
 
-            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Value", SortDirection.Ascending, x => x.Value, new MudBlazor.Utilities.NaturalComparer()));
+            await comp.InvokeAsync(() =>
+                dataGrid.Instance.SetSortAsync("Value", SortDirection.Ascending, x => x.Value, new MudBlazor.Utilities.NaturalComparer()));
             dataGrid.Instance.DropContainerHasChanged();
             dataGrid.FindAll("th .sortable-column-header")[1].TextContent.Trim().Should().Be("Value");
             dataGrid.FindAll("th .sort-direction-icon")[0].ClassList.Contains("mud-direction-asc").Should().Be(false);
@@ -4080,7 +4336,8 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance.GetColumnSortDirection("Name").Should().Be(SortDirection.None);
             dataGrid.Instance.GetColumnSortDirection("Value").Should().Be(SortDirection.Ascending);
 
-            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Value", SortDirection.Descending, x => x.Value, new MudBlazor.Utilities.NaturalComparer()));
+            await comp.InvokeAsync(() =>
+                dataGrid.Instance.SetSortAsync("Value", SortDirection.Descending, x => x.Value, new MudBlazor.Utilities.NaturalComparer()));
             dataGrid.Instance.DropContainerHasChanged();
             dataGrid.Instance.GetColumnSortDirection("Name").Should().Be(SortDirection.None);
             dataGrid.Instance.GetColumnSortDirection("Value").Should().Be(SortDirection.Descending);
@@ -4095,14 +4352,16 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance.GetColumnSortDirection("Name").Should().Be(SortDirection.None);
             dataGrid.Instance.GetColumnSortDirection("Value").Should().Be(SortDirection.Ascending);
 
-            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Ascending, x => x.Name, new MudBlazor.Utilities.NaturalComparer()));
+            await comp.InvokeAsync(() =>
+                dataGrid.Instance.SetSortAsync("Name", SortDirection.Ascending, x => x.Name, new MudBlazor.Utilities.NaturalComparer()));
             dataGrid.Instance.DropContainerHasChanged();
             dataGrid.Instance.GetColumnSortDirection("Name").Should().Be(SortDirection.Ascending);
             dataGrid.Instance.GetColumnSortDirection("Value").Should().Be(SortDirection.None);
             dataGrid.FindAll("th .sort-direction-icon")[0].ClassList.Contains("mud-direction-asc").Should().Be(true);
             dataGrid.FindAll("th .sort-direction-icon")[1].ClassList.Contains("mud-direction-asc").Should().Be(false);
 
-            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Descending, x => x.Name, new MudBlazor.Utilities.NaturalComparer()));
+            await comp.InvokeAsync(() =>
+                dataGrid.Instance.SetSortAsync("Name", SortDirection.Descending, x => x.Name, new MudBlazor.Utilities.NaturalComparer()));
             dataGrid.Instance.DropContainerHasChanged();
             dataGrid.Instance.GetColumnSortDirection("Name").Should().Be(SortDirection.Descending);
             dataGrid.Instance.GetColumnSortDirection("Value").Should().Be(SortDirection.None);
@@ -4320,8 +4579,8 @@ namespace MudBlazor.UnitTests.Components
             newHeaderValues[2].InnerHtml.Should().Be("Age");
             newHeaderValues[3].InnerHtml.Should().Be("Hired");
             newHeaderValues[4].InnerHtml.Should().Be("HiredOn");
-
         }
+
         [Test]
         public void DataGridEditFormDialogIsCustomizableTest()
         {
@@ -4459,10 +4718,10 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
 
             await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridFiltersTest.Model>
-            { Column = dataGrid.Instance.GetColumnByPropertyName("Name"), Operator = FilterOperator.String.Empty }));
+                { Column = dataGrid.Instance.GetColumnByPropertyName("Name"), Operator = FilterOperator.String.Empty }));
 
             await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(new FilterDefinition<DataGridFiltersTest.Model>
-            { Column = dataGrid.Instance.GetColumnByPropertyName("Age"), Operator = FilterOperator.Number.GreaterThan, Value = 30 }));
+                { Column = dataGrid.Instance.GetColumnByPropertyName("Age"), Operator = FilterOperator.Number.GreaterThan, Value = 30 }));
 
             // test filter definition without value
             var nameHeaderCell = dataGrid.FindComponents<HeaderCell<DataGridFiltersTest.Model>>()[0];
@@ -4505,8 +4764,8 @@ namespace MudBlazor.UnitTests.Components
                 .GetField("_gridElement", BindingFlags.NonPublic | BindingFlags.Instance)!
                 .GetValue(dgComp.Instance)!;
             Context.JSInterop
-              .Setup<Interop.BoundingClientRect>("mudElementRef.getBoundingClientRect", gridElement)
-              .SetResult(new Interop.BoundingClientRect { Width = 50 });
+                .Setup<Interop.BoundingClientRect>("mudElementRef.getBoundingClientRect", gridElement)
+                .SetResult(new Interop.BoundingClientRect { Width = 50 });
             var colComps = comp.FindComponents<HeaderCell<DataGridHideAndResizeTest.Model>>();
             foreach (var colComp in colComps)
             {
@@ -4573,7 +4832,8 @@ namespace MudBlazor.UnitTests.Components
             var ageSort = new SortDefinition<DataGridFiltersTest.Model>("Age", Descending: false, 1, default!);
 
             var query = Array.Empty<DataGridFiltersTest.Model>().AsQueryable().OrderBy([nameSort, ageSort]);
-            query.ToString().Should().Be("MudBlazor.UnitTests.TestComponents.DataGrid.DataGridFiltersTest+Model[].OrderByDescending(x => x.Name).ThenBy(x => x.Age)");
+            query.ToString().Should()
+                .Be("MudBlazor.UnitTests.TestComponents.DataGrid.DataGridFiltersTest+Model[].OrderByDescending(x => x.Name).ThenBy(x => x.Age)");
         }
 
         [Test]
@@ -4583,7 +4843,8 @@ namespace MudBlazor.UnitTests.Components
             var ageSort = new SortDefinition<DataGridFiltersTest.Model>("Age", Descending: true, 1, default!);
 
             var query = Array.Empty<DataGridFiltersTest.Model>().AsQueryable().OrderBy([nameSort, ageSort]);
-            query.ToString().Should().Be("MudBlazor.UnitTests.TestComponents.DataGrid.DataGridFiltersTest+Model[].OrderBy(x => x.Name).ThenByDescending(x => x.Age)");
+            query.ToString().Should()
+                .Be("MudBlazor.UnitTests.TestComponents.DataGrid.DataGridFiltersTest+Model[].OrderBy(x => x.Name).ThenByDescending(x => x.Age)");
         }
 
         [Test]
@@ -4684,7 +4945,8 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync(sortByColumnName, SortDirection.Descending, x => x));
             var after = dataGrid.FindComponent<MudInput<string>>();
 
-            before.Should().NotBeSameAs(after, because: "If the @key is correctly set to the row item, child components will be recreated on row reordering.");
+            before.Should().NotBeSameAs(after,
+                because: "If the @key is correctly set to the row item, child components will be recreated on row reordering.");
 
             //Test the expanded group case
             comp.SetParametersAndRender(parameters => parameters.Add(p => p.Group, true));
@@ -4695,7 +4957,8 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync(sortByColumnName, SortDirection.Descending, x => x));
             after = dataGrid.FindComponent<MudInput<string>>();
 
-            before.Should().NotBeSameAs(after, because: "If the @key is correctly set to the row item, child components will be recreated on row reordering.");
+            before.Should().NotBeSameAs(after,
+                because: "If the @key is correctly set to the row item, child components will be recreated on row reordering.");
         }
 
         [Test]
