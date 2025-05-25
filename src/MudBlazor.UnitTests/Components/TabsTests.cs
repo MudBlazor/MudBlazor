@@ -698,7 +698,7 @@ namespace MudBlazor.UnitTests.Components
             Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserverFactory), factory));
 
             var comp = Context.RenderComponent<ScrollableTabsTest>();
-            
+
             comp.Instance.SetPanelActive(4);
 
             GetSliderValue(comp).Should().BeApproximately((4.0 / 6.0) * 100.0, 0.00001);
