@@ -1048,6 +1048,23 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGridPaginationInfoFormatVariationsTest()
+        {
+            var comp = Context.RenderComponent<DataGridPaginationNumberFormattingWithInfoFormatTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridPaginationNumberFormattingWithInfoFormatTest.Item>>();
+
+            // check that the page size number format is correct
+            dataGrid.FindAll(".mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 20,000");
+
+            // navigate to the last page programmatically
+            await comp.InvokeAsync(() => dataGrid.Instance.NavigateTo(Page.Last));
+            dataGrid.Instance.CurrentPage.Should().Be(1999);
+
+            // check that the last page number format is correct
+            dataGrid.FindAll(".mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("19,991-20,000 of 20,000");
+        }
+
+        [Test]
         public void DataGridPaginationPageSizeDropDownTest()
         {
             var comp = Context.RenderComponent<DataGridPaginationTest>(self => self.Add(x => x.PageSizeDropDown, false));

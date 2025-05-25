@@ -1,0 +1,36 @@
+﻿
+
+<MudDataGrid Items="@_items">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager PageSizeSelector="@PageSizeDropDown" InfoFormat="{first_item}-{last_item} of {all_items}" />
+    </PagerContent>
+</MudDataGrid>
+
+@code {
+    [Parameter]
+    public bool PageSizeDropDown { get; set; } = true;
+
+    private readonly List<Item> _items = new();
+
+    protected override void OnInitialized()
+    {
+        for (var i = 0; i < 20000; i++)
+        {
+            _items.Add(new Item(i.ToString()));
+        }
+    }
+
+    public class Item
+    {
+        public string Name { get; set; }
+
+        public Item(string name)
+        {
+            Name = name;
+        }
+    }
+
+}
