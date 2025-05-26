@@ -25,13 +25,13 @@ public static class MudGlobal
         /// <summary>
         /// The color of the <see cref="MudButton"/>.
         /// </summary>
-        [Obsolete("Color is a theme property and should be selected for a specific purpose, or via MudThemeProvider / CSS if possible")]
+        [Obsolete("Theming parameters should be selected for a specific purpose, or via MudThemeProvider / CSS if possible")]
         public static Color Color { get; set; } = Color.Default;
 
         /// <summary>
         /// The display variation to use for <see cref="MudButton"/>.
         /// </summary>
-        [Obsolete("Variant is a theme property and should be selected for a specific purpose, or via MudThemeProvider / CSS if possible")]
+        [Obsolete("Theming parameters should be selected for a specific purpose, or via MudThemeProvider / CSS if possible")]
         public static Variant Variant { get; set; } = Variant.Text;
     }
 
@@ -58,7 +58,7 @@ public static class MudGlobal
         /// <summary>
         /// The gap between items in <see cref="MudGrid"/>, measured in increments of <c>4px</c>.
         /// </summary>
-        [Obsolete("Spacing is a theme property and should be selected for a specific purpose, or via MudThemeProvider / CSS if possible")]
+        [Obsolete("Theming parameters should be selected for a specific purpose, or via MudThemeProvider / CSS if possible")]
         public static int Spacing { set; get; } = 6;
     }
 
@@ -72,19 +72,19 @@ public static class MudGlobal
         /// <summary>
         /// Shows the label inside the input if no <c>Value</c> is specified.
         /// </summary>
-        [Obsolete("ShrinkLabel is a theme property and should be selected for a specific purpose, or via MudThemeProvider / CSS if possible")]
+        [Obsolete("Theming parameters should be selected for a specific purpose, or via MudThemeProvider / CSS if possible")]
         public static bool ShrinkLabel { get; set; }
 
         /// <summary>
         /// The appearance variation to use.
         /// </summary>
-        [Obsolete("Variant is a theme property and should be selected for a specific purpose, or via MudThemeProvider / CSS if possible")]
+        [Obsolete("Theming parameters should be selected for a specific purpose, or via MudThemeProvider / CSS if possible")]
         public static Variant Variant { get; set; } = Variant.Text;
 
         /// <summary>
         /// The amount of vertical spacing for this input.
         /// </summary>
-        [Obsolete("Margin is a theme property and should be selected for a specific purpose, or via MudThemeProvider / CSS if possible")]
+        [Obsolete("Theming parameters should be selected for a specific purpose, or via MudThemeProvider / CSS if possible")]
         public static Margin Margin { get; set; } = Margin.None;
     }
 
@@ -98,19 +98,19 @@ public static class MudGlobal
         /// <summary>
         /// The color of the <see cref="MudLink"/>.
         /// </summary>
-        [Obsolete("Color is a theme property and should be selected for a specific purpose, or via MudThemeProvider / CSS if possible")]
+        [Obsolete("Theming parameters should be selected for a specific purpose, or via MudThemeProvider / CSS if possible")]
         public static Color Color { get; set; } = Color.Primary;
 
         /// <summary>
         /// The typography variant to use for <see cref="MudLink"/>.
         /// </summary>
-        [Obsolete("Typo is a theme property and should be selected for a specific purpose, or via MudThemeProvider / CSS if possible")]
+        [Obsolete("Theming parameters should be selected for a specific purpose, or via MudThemeProvider / CSS if possible")]
         public static Typo Typo { get; set; } = Typo.body1;
 
         /// <summary>
         /// Applies an underline to the <see cref="MudLink"/>.
         /// </summary>
-        [Obsolete("Underline is a theme property and should be selected for a specific purpose, or via MudThemeProvider / CSS if possible")]
+        [Obsolete("Theming parameters should be selected for a specific purpose, or via MudThemeProvider / CSS if possible")]
         public static Underline Underline { get; set; } = Underline.Hover;
     }
 
@@ -137,7 +137,7 @@ public static class MudGlobal
         /// <summary>
         /// The amount of drop shadow to apply to <see cref="MudPopover"/>.
         /// </summary>
-        [Obsolete("Elevation is a theme property and should be selected for a specific purpose, or via MudThemeProvider / CSS if possible")]
+        [Obsolete("Theming parameters should be selected for a specific purpose, or via MudThemeProvider / CSS if possible")]
         public static int Elevation { get; set; } = 8;
     }
 
@@ -151,7 +151,7 @@ public static class MudGlobal
         /// <summary>
         /// The gap between items in <see cref="MudStack"/>, measured in increments of <c>4px</c>.
         /// </summary>
-        [Obsolete("Spacing is a theme property and should be selected for a specific purpose, or via MudThemeProvider / CSS if possible")]
+        [Obsolete("Theming parameters should be selected for a specific purpose, or via MudThemeProvider / CSS if possible")]
         public static int Spacing { get; set; } = 3;
     }
 
