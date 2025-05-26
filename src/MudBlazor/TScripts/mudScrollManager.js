@@ -60,7 +60,12 @@ class MudScrollManager {
     lockScroll(selector, lockclass) {
         if (this._lockCount === 0) {
             const element = document.querySelector(selector) || document.body;
-            element.classList.add(lockclass);
+
+            //if the body doesn't have a scroll bar, don't add the lock class with padding
+            const hasScrollBar = window.innerWidth > document.body.clientWidth;
+            const classToAdd = hasScrollBar ? lockclass : lockclass + "-no-padding";
+
+            element.classList.add(classToAdd);
         }
         this._lockCount++;
     }
@@ -70,8 +75,10 @@ class MudScrollManager {
         this._lockCount = Math.max(0, this._lockCount - 1); // subtract 1 or stop at 0
         if (this._lockCount === 0) {
             const element = document.querySelector(selector) || document.body;
+            // remove both lock classes to be sure it's unlocked
             element.classList.remove(lockclass);
-        }
+            element.classList.remove(lockclass + "-no-padding");
+        }        
     }
 };
 window.mudScrollManager = new MudScrollManager();
