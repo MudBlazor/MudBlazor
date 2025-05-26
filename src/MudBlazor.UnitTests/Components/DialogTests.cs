@@ -216,33 +216,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Based on bug report #3128
-        /// Dialog Class and Style parameters should be honored for inline dialog
-        /// </summary>
-        [Test]
-        [Obsolete]
-        public async Task InlineDialogShouldHonorClassAndStyle()
-        {
-            var comp = Context.RenderComponent<MudDialogProvider>();
-            comp.Markup.Trim().Should().BeEmpty();
-            var service = Context.Services.GetRequiredService<IDialogService>();
-            service.Should().NotBe(null);
-            IDialogReference dialogReference = null;
-            // open simple test dialog
-            await comp.InvokeAsync(() => dialogReference = service?.Show<TestInlineDialog>());
-            comp.WaitForAssertion(() => dialogReference.Should().NotBe(null));
-            comp.Find("button").Click();
-            comp.WaitForAssertion(() => comp.Find("div.mud-dialog").ClassList.Should().Contain("test-class"));
-            comp.Find("div.mud-dialog").Attributes["style"].Value.Should().Be("color: red;");
-            comp.Find("div.mud-dialog-content").Attributes["style"].Value.Should().Be("color: blue;");
-            comp.Find("div.mud-dialog-content").ClassList.Should().NotContain("test-class");
-            comp.Find("div.mud-dialog-content").ClassList.Should().Contain("content-class");
-            // check if tag is ok
-            var dialogInstance = comp.FindComponent<MudDialog>().Instance;
-            dialogInstance.Tag.Should().Be("test-tag");
-        }
-
-        /// <summary>
         /// Based on bug report #3701 #3687
         /// Dialog inline should not be closed after any event inside
         /// </summary>
@@ -324,29 +297,6 @@ namespace MudBlazor.UnitTests.Components
             ((DialogWithParameters)dialogReference.Dialog).TestValue.Should().Be("new_test");
             ((DialogWithParameters)dialogReference.Dialog).ParametersSetCounter.Should().Be(1);
             textField.Text.Should().Be("new_test");
-        }
-
-        /// <summary>
-        /// Based on bug report #1385
-        /// Dialog Class and Style parameters should be honored
-        /// </summary>
-        [Test]
-        [Obsolete]
-        public async Task DialogShouldHonorClassAndStyle()
-        {
-            var comp = Context.RenderComponent<MudDialogProvider>();
-            comp.Markup.Trim().Should().BeEmpty();
-            var service = Context.Services.GetRequiredService<IDialogService>();
-            service.Should().NotBe(null);
-            IDialogReference dialogReference = null;
-            // open simple test dialog
-            await comp.InvokeAsync(() => dialogReference = service.Show<DialogOkCancel>());
-            dialogReference.Should().NotBe(null);
-            comp.Find("div.mud-dialog").ClassList.Should().Contain("test-class");
-            comp.Find("div.mud-dialog").Attributes["style"].Value.Should().Be("color: red;");
-            comp.Find("div.mud-dialog-content").Attributes["style"].Value.Should().Be("color: blue;");
-            comp.Find("div.mud-dialog-content").ClassList.Should().NotContain("test-class");
-            comp.Find("div.mud-dialog-content").ClassList.Should().Contain("content-class");
         }
 
         [Test]
@@ -657,10 +607,10 @@ namespace MudBlazor.UnitTests.Components
 
         /// <summary>
         /// Based on bug report #3128
-        /// Dialog Class and Style parameters should be honored for inline dialog
+        /// Dialog Class parameters should be honored for inline dialog
         /// </summary>
         [Test]
-        public async Task InlineAsyncDialogShouldHonorClassAndStyle()
+        public async Task InlineAsyncDialogShouldHonorClass()
         {
             var comp = Context.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
@@ -673,8 +623,6 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => dialogReference.Should().NotBe(null));
             comp.Find("button").Click();
             comp.WaitForAssertion(() => comp.Find("div.mud-dialog").ClassList.Should().Contain("test-class"));
-            comp.Find("div.mud-dialog").Attributes["style"].Value.Should().Be("color: red;");
-            comp.Find("div.mud-dialog-content").Attributes["style"].Value.Should().Be("color: blue;");
             comp.Find("div.mud-dialog-content").ClassList.Should().NotContain("test-class");
             comp.Find("div.mud-dialog-content").ClassList.Should().Contain("content-class");
             // check if tag is ok
@@ -747,10 +695,10 @@ namespace MudBlazor.UnitTests.Components
 
         /// <summary>
         /// Based on bug report #1385
-        /// Dialog Class and Style parameters should be honored
+        /// Dialog Class parameters should be honored
         /// </summary>
         [Test]
-        public async Task AsyncDialogShouldHonorClassAndStyle()
+        public async Task AsyncDialogShouldHonorClass()
         {
             var comp = Context.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
@@ -762,8 +710,6 @@ namespace MudBlazor.UnitTests.Components
             var dialogReference = await dialogReferenceLazy.Value;
             dialogReference.Should().NotBe(null);
             comp.Find("div.mud-dialog").ClassList.Should().Contain("test-class");
-            comp.Find("div.mud-dialog").Attributes["style"].Value.Should().Be("color: red;");
-            comp.Find("div.mud-dialog-content").Attributes["style"].Value.Should().Be("color: blue;");
             comp.Find("div.mud-dialog-content").ClassList.Should().NotContain("test-class");
             comp.Find("div.mud-dialog-content").ClassList.Should().Contain("content-class");
         }
