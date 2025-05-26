@@ -51,7 +51,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         public bool Checkable { get; set; }
-        
+
         /// <summary>
         /// The color of the checkbox. It supports the theme colors.
         /// </summary>

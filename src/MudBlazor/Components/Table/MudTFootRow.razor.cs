@@ -56,7 +56,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         public bool IgnoreCheckbox { get; set; }
-        
+
         /// <summary>
         /// The color of the checkbox. It supports the theme colors.
         /// </summary>

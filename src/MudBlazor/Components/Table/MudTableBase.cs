@@ -265,8 +265,6 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Table.Selecting)]
         public bool MultiSelection { get; set; }
-        
-        
 
         /// <summary>
         /// Disables the selection of rows but keep showing the selected rows.
@@ -364,7 +362,7 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Table.Appearance)]
         public string? ContainerClass { get; set; }
-        
+
         /// <summary>
         /// The color of the checkbox. It supports the theme colors.
         /// </summary>

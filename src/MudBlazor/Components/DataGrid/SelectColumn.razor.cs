@@ -73,7 +73,7 @@ public partial class SelectColumn<[DynamicallyAccessedMembers(DynamicallyAccesse
     /// </summary>
     [Parameter]
     public EventCallback<bool> HiddenChanged { get; set; }
-    
+
     /// <summary>
     /// The color of the checkbox. It supports the theme colors.
     /// </summary>
