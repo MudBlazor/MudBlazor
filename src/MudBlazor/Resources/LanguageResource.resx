@@ -268,25 +268,22 @@
     <value>Close Picker</value>
   </data>
   <data name="MudColorPicker_SpectrumView" xml:space="preserve">
-    <value>Switch to Spectrum View</value>
+    <value>Spectrum</value>
   </data>
   <data name="MudColorPicker_GridView" xml:space="preserve">
-    <value>Switch to Grid View</value>
+    <value>Grid</value>
   </data>
   <data name="MudColorPicker_PaletteView" xml:space="preserve">
-    <value>Switch to Palette View</value>
+    <value>Palette</value>
   </data>
-  <data name="MudColorPicker_ToggleCurrentColor" xml:space="preserve">
-    <value>Toggle Current Color</value>
+  <data name="MudColorPicker_ToggleCollection" xml:space="preserve">
+    <value>Toggle Collection</value>
   </data>
   <data name="MudColorPicker_HueSlider" xml:space="preserve">
     <value>Hue Slider</value>
   </data>
   <data name="MudColorPicker_AlphaSlider" xml:space="preserve">
     <value>Alpha Slider</value>
-  </data>
-  <data name="MudColorPicker_PaletteColor" xml:space="preserve">
-    <value>Select Palette Color</value>
   </data>
   <data name="MudColorPicker_ModeSwitch" xml:space="preserve">
     <value>Switch Mode</value>
@@ -332,9 +329,6 @@
   </data>
   <data name="MudCarousel_Previous" xml:space="preserve">
     <value>Previous</value>
-  </data>
-  <data name="MudColorPicker_ColorDot" xml:space="preserve">
-    <value>Select Color Dot</value>
   </data>
   <data name="MudDialog_Close" xml:space="preserve">
     <value>Close dialog</value>

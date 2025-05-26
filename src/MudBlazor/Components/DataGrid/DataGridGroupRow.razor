@@ -5,7 +5,7 @@
 <tr class="mud-table-row">
     <td class="@GroupClassname" colspan="1000" style="@GroupStylename">
         <div style="display:flex; align-items:center;">
-            <MudIconButton Class="mud-datagrid-group-button" Icon="@(DataGrid.GetGroupIcon(_expanded))"
+            <MudIconButton Class="mud-table-row-expander" Icon="@(DataGrid.GetGroupIcon(_expanded))"
                            OnClick="@GroupExpandClick" />
             @if (GroupDefinition?.GroupTemplate == null)
             {

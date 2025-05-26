@@ -183,20 +183,20 @@
     &.mud-button-group-horizontal {
       &:not(.mud-button-group-rtl) {
         .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
-          border-left: 1px solid var(--mud-palette-text-primary);
+          border-left: 1px solid rgb(from var(--mud-palette-text-primary) r g b / var(--mud-palette-border-opacity));
         }
       }
 
       &.mud-button-group-rtl {
         .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
-          border-right: 1px solid var(--mud-palette-text-primary);
+          border-right: 1px solid rgb(from var(--mud-palette-text-primary) r g b / var(--mud-palette-border-opacity));
         }
       }
     }
 
     &.mud-button-group-vertical {
       .mud-button-root:not(:last-child), > :not(:last-child) .mud-button-root {
-        border-bottom: 1px solid var(--mud-palette-text-primary);
+        border-bottom: 1px solid rgb(from var(--mud-palette-text-primary) r g b / var(--mud-palette-border-opacity));
       }
     }
 
@@ -220,20 +220,20 @@
         &.mud-button-group-horizontal {
           &:not(.mud-button-group-rtl) {
             .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
-              border-left: 1px solid var(--mud-palette-#{$color});
+              border-left: 1px solid rgb(from var(--mud-palette-#{$color}) r g b / var(--mud-palette-border-opacity));
             }
           }
 
           &.mud-button-group-rtl {
             .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
-              border-right: 1px solid var(--mud-palette-#{$color});
+              border-right: 1px solid rgb(from var(--mud-palette-#{$color}) r g b / var(--mud-palette-border-opacity));
             }
           }
         }
 
         &.mud-button-group-vertical {
           .mud-button-root:not(:last-child), > :not(:last-child) .mud-button-root {
-            border-bottom: 1px solid var(--mud-palette-#{$color});
+            border-bottom: 1px solid rgb(from var(--mud-palette-#{$color}) r g b / var(--mud-palette-border-opacity));
           }
         }
       }
@@ -245,13 +245,13 @@
   &.mud-button-group-override-styles {
     .mud-button-root {
       padding: 5px 15px;
-      border: 1px solid var(--mud-palette-text-primary);
+      border: 1px solid rgb(from var(--mud-palette-text-primary) r g b / var(--mud-palette-border-opacity));
     }
 
     @each $color in $mud-palette-colors {
       &.mud-button-group-outlined-#{$color} .mud-button-root {
         color: var(--mud-palette-#{$color});
-        border: 1px solid var(--mud-palette-#{$color});
+        border: 1px solid rgb(from var(--mud-palette-#{$color}) r g b / var(--mud-palette-border-opacity));
         --mud-ripple-color: var(--mud-palette-#{$color});
 
         @media(hover: hover) and (pointer: fine) {
@@ -294,20 +294,20 @@
     &.mud-button-group-horizontal {
       &:not(.mud-button-group-rtl) {
         .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
-          border-left: 1px solid var(--mud-palette-divider);
+          border-left: 1px solid rgb(from var(--mud-palette-divider) r g b / var(--mud-palette-border-opacity));
         }
       }
 
       &.mud-button-group-rtl {
         .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
-          border-right: 1px solid var(--mud-palette-divider);
+          border-right: 1px solid rgb(from var(--mud-palette-divider) r g b / var(--mud-palette-border-opacity));
         }
       }
     }
 
     &.mud-button-group-vertical {
       .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
-        border-top: 1px solid var(--mud-palette-divider);
+        border-top: 1px solid rgb(from var(--mud-palette-divider) r g b / var(--mud-palette-border-opacity));
       }
     }
 

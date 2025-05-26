@@ -15,7 +15,7 @@
 
         <DocsPageSection>
             <SectionHeader Title="Parts">
-                <Description>All parts of the color picker can be removed individually if you just want certain functionality.</Description>
+                <Description>All parts of the color picker can be removed individually if you only want certain features.</Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(ColorPickerPlaygroundExample)" ShowCode="false">
                 <ColorPickerPlaygroundExample />
@@ -24,7 +24,7 @@
 
         <DocsPageSection>
             <SectionHeader Title="Color Picker View">
-                <Description>The default view can be changed with <CodeInline>ColorPickerView</CodeInline> and can be useful when you want a minimalistic color picker or force the use of certain colors.</Description>
+                <Description>The default view can be changed with <CodeInline>ColorPickerView</CodeInline>. This is useful if you want a minimal color picker or want to restrict the available colors.</Description>
             </SectionHeader>
             <SectionContent Code="@nameof(ColorPickerViewModeExample)">
                 <ColorPickerViewModeExample />
@@ -33,7 +33,7 @@
 
         <DocsPageSection>
             <SectionHeader Title="Color Picker Mode">
-                <Description>You can set the default mode of the colorpicker with the <CodeInline>ColorPickerMode</CodeInline> prop. This can be useful combined with <CodeInline>ShowModeSwitch="false"</CodeInline> to force the usage of a specific color mode.</Description>
+                <Description>You can set the default mode of the color picker with the <CodeInline>ColorPickerMode</CodeInline> property. Combine this with <CodeInline>ShowModeSwitch="false"</CodeInline> to force a specific color mode.</Description>
             </SectionHeader>
             <SectionContent Code="@nameof(ColorPickerColorModeExample)">
                 <ColorPickerColorModeExample />
@@ -42,7 +42,7 @@
 
         <DocsPageSection>
             <SectionHeader Title="Custom Palette">
-                <Description>The default palette can be changed with <CodeInline>Palette</CodeInline> property. The first five colors show up in the quick view when clicking the color preview dot.</Description>
+                <Description>You can change the default palette with the <CodeInline>Palette</CodeInline> property. The first five colors appear in the quick view when clicking the color preview dot.</Description>
             </SectionHeader>
             <SectionContent Code="@nameof(ColorPickerPaletteExample)" ShowCode="false">
                 <ColorPickerPaletteExample />
@@ -51,7 +51,7 @@
 
         <DocsPageSection>
             <SectionHeader Title="Alpha">
-                <Description>You can disable the alpha slider and its textfield counterpart by setting <CodeInline>ShowAlpha="false"</CodeInline>. Doing so will remove any transparency from the color and output RGB, HSL, HEX instead of RGBA, HSLA and HEXA.</Description>
+                <Description>Disable the alpha slider and its text field by setting <CodeInline>ShowAlpha="false"</CodeInline>. This removes transparency and outputs RGB, HSL, or HEX instead of RGBA, HSLA, or HEXA.</Description>
             </SectionHeader>
             <SectionContent Code="@nameof(ColorPickerAlphaExample)">
                 <ColorPickerAlphaExample />
@@ -60,7 +60,7 @@
 
         <DocsPageSection>
             <SectionHeader Title="Switch Mode">
-                <Description>Switch Mode lets the user switch betwen RGB, HSL and HEX the button can be disabled with <CodeInline>ShowModeSwitch="false"</CodeInline>, this can be useful if you want to control what type of input/output should be used.</Description>
+                <Description>Switch Mode lets users switch between RGB, HSL, and HEX. You can disable the button with <CodeInline>ShowModeSwitch="false"</CodeInline> if you want to control the input/output type.</Description>
             </SectionHeader>
             <SectionContent Code="@nameof(ColorPickerSwitchModeExample)">
                 <ColorPickerSwitchModeExample />
@@ -88,8 +88,8 @@
         <DocsPageSection>
             <SectionHeader Title="Inline Non-modal Mode">
                 <Description>
-                    By default, the color picker is modal, preventing interaction with other elements while it is open.
-                    To allow interactions with other elements, set <CodeInline>Modal="false"</CodeInline>.
+                    By default, the color picker is modal, preventing interaction with other elements while open.
+                    To allow interaction with other elements, set <CodeInline>Modal="false"</CodeInline>.
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(ColorPickerInlineModelessExample)">
@@ -108,7 +108,7 @@
 
         <DocsPageSection>
             <SectionHeader Title="Elevation">
-                <Description>You can change the elevation with the <CodeInline>Elevation</CodeInline> parameter. The default level is 8 for Inline, and 0 for Static or Dialog.</Description>
+                <Description>You can change the elevation with the <CodeInline>Elevation</CodeInline> parameter. The default is 8 for Inline, and 0 for Static or Dialog.</Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Class="demo-datetime-margin" Code="@nameof(ColorPickerElevationExample)">
                 <ColorPickerElevationExample />
@@ -126,8 +126,8 @@
         <DocsPageSection>
             <SectionHeader Title="Drag Interaction">
                 <Description>
-                    The <CodeInline>ThrottleInterval</CodeInline> property controls how long to wait until the color is updated while dragging the pointer in the spectrum view.
-                    If the <CodeInline>DragEffect</CodeInline> property is set to false, the color selector (circle) will no longer follow the pointer.
+                    The <CodeInline>ThrottleInterval</CodeInline> property controls how long to wait before updating the color while dragging in the spectrum view.
+                    If <CodeInline>DragEffect</CodeInline> is set to false, the color selector (circle) will not follow the pointer.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(ColorPickerDragExample)">
