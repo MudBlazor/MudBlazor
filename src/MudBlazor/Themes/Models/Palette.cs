@@ -398,7 +398,7 @@ namespace MudBlazor
         /// <summary>
         /// The opacity value for most borders.
         /// </summary>
-        public virtual double BorderOpacity { get; set; } = 1.0;
+        public virtual double BorderOpacity { get; set; } = 0.5;
 
         /// <summary>
         /// The opacity value for hover effect.
