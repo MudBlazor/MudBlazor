@@ -118,17 +118,12 @@
   & .mud-dialog-actions {
     flex: 0 0 auto;
     display: flex;
+    gap: 8px;
     padding: 8px;
     align-items: center;
     justify-content: flex-end;
     border-bottom-left-radius: var(--mud-default-borderradius);
     border-bottom-right-radius: var(--mud-default-borderradius);
-
-    & > :not(:first-child) {
-      margin-left: 8px;
-      margin-inline-start: 8px;
-      margin-inline-end: unset;
-    }
   }
 }
 

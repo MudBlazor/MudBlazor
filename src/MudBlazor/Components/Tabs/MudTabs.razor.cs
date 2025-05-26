@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Collections;
 using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -27,8 +28,8 @@ namespace MudBlazor
         private bool _nextButtonDisabled;
         private bool _showScrollButtons;
         private ElementReference _tabsContentSize;
-        private double _sliderSize;
-        private double _sliderPosition;
+        private double _sliderSizePercentage;
+        private double _sliderPositionPercentage;
         private double _tabBarContentSize;
         private double _allTabsSize;
         private double _scrollPosition;
@@ -412,6 +413,26 @@ namespace MudBlazor
         public Func<TabInteractionEventArgs, Task>? OnPreviewInteraction { get; set; }
 
         /// <summary>
+        /// Sort tab labels lexicographically by <see cref="MudTabPanel.Text"/> or <see cref="MudTabPanel.SortKey"/>. Ignored if <see cref="SortComparer" /> is set.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="SortDirection.None"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Appearance)]
+        public SortDirection SortDirection { get; set; } = SortDirection.None;
+
+        /// <summary>
+        /// Specify a custom Comparer to sort tabs. When set, <see cref="SortDirection" /> is not used.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Appearance)]
+        public IComparer<MudTabPanel>? SortComparer { get; set; }
+
+        /// <summary>
         /// Can be used in derived class to add a class to the main container. If not overwritten return an empty string
         /// </summary>
         protected virtual string InternalClassName { get; } = string.Empty;
@@ -490,8 +511,11 @@ namespace MudBlazor
         internal void AddPanel(MudTabPanel tabPanel)
         {
             _panels.Add(tabPanel);
+            SortPanels();
+
             if (_panels.Count == _activePanelIndex + 1 || _activePanelIndex == -1 && _panels.Count == 1)
                 ActivePanel = tabPanel;
+
             StateHasChanged();
         }
 
@@ -601,6 +625,26 @@ namespace MudBlazor
             }
         }
 
+        private void SortPanels()
+        {
+            if (_panels.Count == 0 || SortDirection == SortDirection.None)
+                return;
+
+            _panels.Sort(GetTabSortExpression);
+        }
+
+        private int GetTabSortExpression(MudTabPanel a, MudTabPanel b)
+        {
+            if (SortComparer is not null)
+            {
+                return SortComparer.Compare(a, b);
+            }
+
+            var dir = SortDirection is SortDirection.Ascending ? 1 : -1;
+            return Comparer.Default.Compare(GetTabSortKey(a), GetTabSortKey(b)) * dir;
+        }
+
+        private static string? GetTabSortKey(MudTabPanel panel) => panel.SortKey ?? panel.Text;
         #endregion
 
         #region Style and classes
@@ -662,20 +706,20 @@ namespace MudBlazor
 
         protected string SliderStyle => RightToLeft
             ? new StyleBuilder()
-                .AddStyle("width", _sliderSize.ToPx(), Position is Position.Top or Position.Bottom)
-                .AddStyle("right", _sliderPosition.ToPx(), Position is Position.Top or Position.Bottom)
+                .AddStyle("width", $"{_sliderSizePercentage}%", Position is Position.Top or Position.Bottom)
+                .AddStyle("right", $"{_sliderPositionPercentage}%", Position is Position.Top or Position.Bottom)
                 .AddStyle("transition", SliderAnimation ? "right .3s cubic-bezier(.64,.09,.08,1);" : "none", Position is Position.Top or Position.Bottom)
                 .AddStyle("transition", SliderAnimation ? "top .3s cubic-bezier(.64,.09,.08,1);" : "none", IsVerticalTabs())
-                .AddStyle("height", _sliderSize.ToPx(), IsVerticalTabs())
-                .AddStyle("top", _sliderPosition.ToPx(), IsVerticalTabs())
+                .AddStyle("height", $"{_sliderSizePercentage}%", IsVerticalTabs())
+                .AddStyle("top", $"{_sliderPositionPercentage}%", IsVerticalTabs())
                 .Build()
             : new StyleBuilder()
-                .AddStyle("width", _sliderSize.ToPx(), Position is Position.Top or Position.Bottom)
-                .AddStyle("left", _sliderPosition.ToPx(), Position is Position.Top or Position.Bottom)
+                .AddStyle("width", $"{_sliderSizePercentage}%", Position is Position.Top or Position.Bottom)
+                .AddStyle("left", $"{_sliderPositionPercentage}%", Position is Position.Top or Position.Bottom)
                 .AddStyle("transition", SliderAnimation ? "left .3s cubic-bezier(.64,.09,.08,1);" : "none", Position is Position.Top or Position.Bottom)
                 .AddStyle("transition", SliderAnimation ? "top .3s cubic-bezier(.64,.09,.08,1);" : "none", IsVerticalTabs())
-                .AddStyle("height", _sliderSize.ToPx(), IsVerticalTabs())
-                .AddStyle("top", _sliderPosition.ToPx(), IsVerticalTabs())
+                .AddStyle("height", $"{_sliderSizePercentage}%", IsVerticalTabs())
+                .AddStyle("top", $"{_sliderPositionPercentage}%", IsVerticalTabs())
                 .Build();
 
         private bool IsVerticalTabs()
@@ -765,11 +809,11 @@ namespace MudBlazor
                 return;
             }
 
-            _sliderPosition = GetLengthOfPanelItems(ActivePanel);
-            _sliderSize = GetRelevantSize(ActivePanel.PanelRef);
+            _sliderPositionPercentage = (GetLengthOfPanelItems(ActivePanel) / _allTabsSize) * 100;
+            _sliderSizePercentage = (GetPanelLength(ActivePanel) / _allTabsSize) * 100;
         }
 
-        private bool IsSliderPositionDetermined => (_activePanelIndex > 0 && _sliderPosition > 0) ||
+        private bool IsSliderPositionDetermined => (_activePanelIndex > 0 && _sliderPositionPercentage > 0) ||
                                                    IsFirstVisiblePanel(ActivePanel);
 
         private void GetTabBarContentSize() => _tabBarContentSize = GetRelevantSize(_tabsContentSize);

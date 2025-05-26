@@ -3,20 +3,17 @@
 <DocsPage>
     <DocsPageHeader Title="Message Box" Component="@nameof(MudMessageBox)" />
     <DocsPageContent>
-
-        <DocsPageSection>
-            <MudText Typo="Typo.h6" GutterBottom="true">Note</MudText>
-            <MudText>The MessageBox depends on <CodeInline Class="docs-code-tertiary">IDialogService</CodeInline> and <CodeInline>MudDialogProvider</CodeInline></MudText>
-            <MudText>Any global configuration done on the MudDialogProvider will affect all MessageBoxes in your application.</MudText>
-            <MudText>Check the Dialog <MudLink Href="/components/dialog#configuration">Configuration</MudLink> section for instructions on how to configure your dialogs globally.</MudText>
-        </DocsPageSection>
+        
+        <MudAlert Severity="Severity.Info">
+            <MudText>The MessageBox component uses <CodeInline Class="docs-code-tertiary">IDialogService</CodeInline> and <CodeInline>MudDialogProvider</CodeInline> for its functionality.</MudText>
+            <MudText>Global settings on MudDialogProvider affect all MessageBoxes in your app.</MudText>
+            <MudText>See the Dialog <MudLink Href="/components/dialog#configuration">Configuration</MudLink> section for details on global dialog setup.</MudText>
+        </MudAlert>
 
         <DocsPageSection>
             <SectionHeader Title="Message Box">
                 <Description>
-                    The simplest way to show a message box is to use <CodeInline>IDialogService.ShowMessageBox</CodeInline>. It is a purely procedural way of showing a message box and awaiting the user's decision. 
-                    The number of buttons (Yes, No, Cancel) and their text are simply controlled via providing a string or leaving them null. The result is a nullable <CodeInline>bool</CodeInline> which corresponds directly 
-                    to the buttons: Yes => <CodeInline>true</CodeInline>, No => <CodeInline>false</CodeInline>, Cancel => <CodeInline>null</CodeInline>.
+                    The easiest way to show a message box is with <CodeInline>IDialogService.ShowMessageBox</CodeInline>. This method displays a message box and waits for the user's response. You can control which buttons (Yes, No, Cancel) appear and their text. The result is a nullable <CodeInline>bool</CodeInline>: Yes = <CodeInline>true</CodeInline>, No = <CodeInline>false</CodeInline>, Cancel = <CodeInline>null</CodeInline>.
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(MessageBoxSimpleExample)">
@@ -27,9 +24,7 @@
         <DocsPageSection>
             <SectionHeader Title="Custom Message Box">
                 <Description>
-                    <CodeInline>MudMessageBox</CodeInline> can also be inlined in Razor to be able to customize all its properties with render fragments. The following example shows how we customize the Yes button's color
-                    and icon. All visual elements of the message box can be customized. For <CodeInline>Title</CodeInline> there is <CodeInline>TitleContent</CodeInline>, for <CodeInline>Message</CodeInline> 
-                    there is <CodeInline>MessageContent</CodeInline>, etc.<br />
+                    You can inline <CodeInline>MudMessageBox</CodeInline> in Razor to fully customize its appearance using render fragments. For example, you can change the color and icon of the Yes button, or customize the title and message using <CodeInline>TitleContent</CodeInline> and <CodeInline>MessageContent</CodeInline>.
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(MessageBoxInlineExample)">
@@ -40,9 +35,7 @@
         <DocsPageSection>
             <SectionHeader Title="Multiline Message">
                 <Description>
-                    Instead of a string message you can also use MarkupString for the message box content. This is especially useful if you want to display multiline messages or do some basic styling, like highlighting a part of the message, without having to create a full-fledged custom dialog.
-                    <br />
-                    This example shows how a multiline MessageBox can still be a one-liner in code, thanks to MarkupString.
+                    Use <CodeInline>MarkupString</CodeInline> for the message content to support multiline text or basic HTML styling. This is useful for highlighting parts of the message or displaying longer content without creating a custom dialog.
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(MessageBoxMarkupContentExample)">
@@ -53,9 +46,7 @@
         <DocsPageSection>
             <SectionHeader Title="Message Box With DialogOptions">
                 <Description>
-                    You can also pass in custom DialogOptions to override default or global configurations. For example, allowing the message box to close on escape.
-                    <br />
-                    This example shows how a MessageBox can pass in custom DialogOptions to customize behavior or appearance.
+                    Pass custom <CodeInline>DialogOptions</CodeInline> to override default or global settings, such as allowing the message box to close on Escape. This lets you tailor the behavior or appearance for specific message boxes.
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(MessageBoxOptionsExample)">
