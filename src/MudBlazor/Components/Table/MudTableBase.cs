@@ -371,7 +371,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Appearance)]
-        public Color CheckMarkColor { get; set; } = Color.Default;
+        public Color CheckBoxColor { get; set; } = Color.Default;
 
         /// <summary>
         /// The content of this table's footer.

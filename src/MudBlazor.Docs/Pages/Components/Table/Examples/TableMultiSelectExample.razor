@@ -6,7 +6,7 @@
 <MudText HtmlTag="span">Item: @_selectedItemText</MudText>
 <MudText>Selected items (@selectedItems?.Count): @(selectedItems == null ? "" : string.Join(", ", selectedItems.OrderBy(x => x.Sign).Select(x => x.Sign)))</MudText>
 
-<MudTable @ref="_table" T="Element" Items="@Elements" MultiSelection="true" CheckMarkColor="Color.Primary" SelectionChangeable="_selectionChangeable" Hover="true"
+<MudTable @ref="_table" T="Element" Items="@Elements" MultiSelection="true" CheckBoxColor="Color.Primary" SelectionChangeable="_selectionChangeable" Hover="true"
           @bind-SelectedItems="selectedItems" OnRowClick="@OnRowClick" SelectOnRowClick="@_selectOnRowClick">
     <HeaderContent>
         <MudTh>Nr</MudTh>

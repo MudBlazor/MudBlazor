@@ -81,5 +81,5 @@ public partial class SelectColumn<[DynamicallyAccessedMembers(DynamicallyAccesse
     /// Defaults to <c>Color.Default</c>.
     /// </remarks>
     [Parameter]
-    public Color CheckMarkColor { get; set; } = Color.Default;
+    public Color CheckBoxColor { get; set; } = Color.Default;
 }

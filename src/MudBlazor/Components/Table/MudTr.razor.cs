@@ -59,7 +59,7 @@ namespace MudBlazor
         /// Defaults to <c>Color.Default</c>.  Managed automatically by the parent <see cref="MudTable{T}"/>.
         /// </remarks>
         [Parameter]
-        public Color CheckMarkColor { get; set; } = Color.Default;
+        public Color CheckBoxColor { get; set; } = Color.Default;
 
         /// <summary>
         /// Prevents the change of the current selection.
