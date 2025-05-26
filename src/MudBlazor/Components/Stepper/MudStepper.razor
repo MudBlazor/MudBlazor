@@ -1,9 +1,13 @@
-@namespace MudBlazor
+﻿@namespace MudBlazor
 @using MudBlazor.Resources
 @using MudBlazor.Utilities
 @inherits MudComponentBase
 
 @inject InternalMudLocalizer Localizer
+
+@{
+#pragma warning disable CS0618 // Type or member is obsolete
+}
 
 <div @attributes="@UserAttributes" class="@Classname" style="@Style">
     <div class="@NavClassname" role="tablist">

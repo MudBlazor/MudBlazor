@@ -209,6 +209,7 @@ namespace MudBlazor
                 if (_reference is not null)
                     return _reference;
 
+#pragma warning disable CS0618 // Type or member is obsolete
                 var parameters = new DialogParameters
                 {
                     [nameof(Class)] = Class,
@@ -226,6 +227,7 @@ namespace MudBlazor
                     [nameof(ContentStyle)] = ContentStyle,
                     [nameof(DefaultFocus)] = DefaultFocus,
                 };
+#pragma warning restore CS0618 // Type or member is obsolete
 
                 _reference = await DialogService.ShowAsync<MudDialog>(title, parameters, options ?? Options);
 

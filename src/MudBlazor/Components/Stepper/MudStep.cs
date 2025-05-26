@@ -34,10 +34,12 @@ public class MudStep : MudComponentBase, IAsyncDisposable
     internal ParameterState<bool> DisabledState { get; private set; }
     internal ParameterState<bool> HasErrorState { get; private set; }
 
+#pragma warning disable CS0618 // Type or member is obsolete
     internal string Styles => new StyleBuilder()
         .AddStyle(Parent?.StepStyle)
         .AddStyle(Style)
         .Build();
+#pragma warning restore CS0618 // Type or member is obsolete
 
     internal string LabelClassname =>
         new CssBuilder("mud-step-label")
