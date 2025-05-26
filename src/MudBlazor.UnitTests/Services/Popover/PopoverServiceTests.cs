@@ -264,7 +264,9 @@ public class PopoverServiceTests
         updatedState.Should().NotBeNull();
         updatedState!.ShowContent.Should().BeFalse();
         updatedState.Class.Should().BeEmpty();
+#pragma warning disable CS0618 // Type or member is obsolete
         updatedState.Style.Should().BeEmpty();
+#pragma warning restore CS0618 // Type or member is obsolete
         updatedState.Tag.Should().BeNull();
         updatedState.UserAttributes.Should().BeEmpty();
         updatedState.Fragment.Should().BeNull();
@@ -276,7 +278,9 @@ public class PopoverServiceTests
         isUpdated.Should().BeTrue();
         updatedState.ShowContent.Should().Be(popover.Open);
         updatedState.Class.Should().Be(popover.PopoverClass);
+#pragma warning disable CS0618 // Type or member is obsolete
         updatedState.Style.Should().Be(popover.PopoverStyles);
+#pragma warning restore CS0618 // Type or member is obsolete
         updatedState.Tag.Should().Be(popover.Tag);
         updatedState.UserAttributes.Should().BeSameAs(popover.UserAttributes);
         updatedState.Fragment.Should().Be(newRenderFragment);
@@ -320,7 +324,9 @@ public class PopoverServiceTests
         isUpdated.Should().BeFalse();
         updatedState!.ShowContent.Should().BeFalse();
         updatedState.Class.Should().BeEmpty();
+#pragma warning disable CS0618 // Type or member is obsolete
         updatedState.Style.Should().BeEmpty();
+#pragma warning restore CS0618 // Type or member is obsolete
         updatedState.Tag.Should().BeNull();
         updatedState.UserAttributes.Should().BeEmpty();
         //two notifications from CreatePopoverAsync and DestroyPopover, UpdatePopoverAsync shouldn't fire notification since destroyed

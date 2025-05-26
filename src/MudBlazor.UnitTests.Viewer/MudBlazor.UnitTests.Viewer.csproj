@@ -8,7 +8,7 @@
 
   <!-- Razor sourcegenerator doesn't work well with this kind of nullable (null for generic) https://github.com/dotnet/razor/issues/8720 -->
   <PropertyGroup>
-    <NoWarn>CS8669;CS0618</NoWarn>
+    <NoWarn>CS8669</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'MudBlazor.UnitTests.Viewer' " />
