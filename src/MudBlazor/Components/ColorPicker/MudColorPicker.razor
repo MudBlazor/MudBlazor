@@ -94,7 +94,7 @@
                                 <div class="@GetColorDotClass(item)"
                                      style="@($"background: {item.ToString(MudColorOutputFormats.RGBA)};")"
                                      @onclick="@GetSelectPaletteColorCallback(item)"
-                                     aria-label="@Localizer[LanguageResource.MudColorPicker_ColorDot]"></div>
+                                     aria-label="@item.ToString(MudColorOutputFormats.HexA)"></div>
                             }
                         </div>
                     }
@@ -112,7 +112,7 @@
                                 {
                                     <div class="mud-picker-color-dot mud-picker-color-dot-current mud-ripple"
                                          @onclick="ToggleCollection"
-                                         aria-label="@Localizer[LanguageResource.MudColorPicker_ToggleCurrentColor]">
+                                         aria-label="@Localizer[LanguageResource.MudColorPicker_ToggleCollection]">
                                         <div class="mud-picker-color-fill" style="@($"background: {_value?.ToString(MudColorOutputFormats.RGBA)};")"></div>
                                     </div>
                                 }
@@ -153,7 +153,7 @@
                                             <div class="@GetColorDotClass(item)"
                                                  style="@($"background: {item.ToString(MudColorOutputFormats.RGBA)};")"
                                                  @onclick="@GetSelectPaletteColorCallback(item)"
-                                                 aria-label="@Localizer[LanguageResource.MudColorPicker_PaletteColor]"></div>
+                                                 aria-label="@item.ToString(MudColorOutputFormats.HexA)"></div>
                                         }
                                     </div>
                                 }
@@ -283,7 +283,7 @@
                                 <div class="@GetColorDotClass(item)"
                                      style="@($"background: {item.ToString(MudColorOutputFormats.RGBA)};")"
                                      @onclick="@GetSelectPaletteColorCallback(item)"
-                                     aria-label="@Localizer[LanguageResource.MudColorPicker_PaletteColor]"></div>
+                                     aria-label="@item.ToString(MudColorOutputFormats.HexA)"></div>
                             }
                         </div>
                     </div>

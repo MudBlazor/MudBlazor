@@ -26,7 +26,7 @@ public partial class AppbarButtons : IDisposable
     /// <summary>
     /// Gets the text for the RTL toggle button, indicating the next state.
     /// </summary>
-    public string RtlButtonText => LayoutService.IsRTL ? "Switch to Left-to-right" : "Switch to Right-to-left";
+    public string RtlButtonText => LayoutService.IsRTL ? "Left-to-right" : "Right-to-left";
 
     /// <summary>
     /// Gets the icon for the RTL toggle button.
@@ -38,9 +38,9 @@ public partial class AppbarButtons : IDisposable
     /// </summary>
     public string DarkLightModeButtonText => LayoutService.CurrentDarkLightMode switch
     {
-        DarkLightMode.Dark => "Switch to System mode",
-        DarkLightMode.Light => "Switch to Dark mode",
-        _ => "Switch to Light mode"
+        DarkLightMode.Dark => "Auto mode",
+        DarkLightMode.Light => "Dark mode",
+        _ => "Light mode"
     };
 
     /// <summary>
