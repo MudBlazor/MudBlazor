@@ -2,6 +2,14 @@
   overflow: hidden;
 }
 
+.scroll-locked-no-padding {
+  overflow: hidden;
+}
+
+html:has(.scroll-locked-no-padding) {
+  scrollbar-gutter: auto;
+}
+
 .mud-scroll-to-top {
   position: fixed;
   cursor: pointer;
