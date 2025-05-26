@@ -91,7 +91,9 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
+#pragma warning disable CS0618 // Type or member is obsolete
         public int Elevation { set; get; } = MudGlobal.PopoverDefaults.Elevation;
+#pragma warning restore CS0618 // Type or member is obsolete
 
         /// <summary>
         /// Displays square borders around this popover.
@@ -103,7 +105,9 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
+#pragma warning disable CS0618 // Type or member is obsolete
         public bool Square { get; set; } = MudGlobal.Rounded == false;
+#pragma warning restore CS0618 // Type or member is obsolete
 
         /// <summary>
         /// Displays this popover in a fixed position, even through scrolling.

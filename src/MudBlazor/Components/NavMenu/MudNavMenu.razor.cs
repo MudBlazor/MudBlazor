@@ -60,7 +60,9 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.NavMenu.Appearance)]
+#pragma warning disable CS0618 // Type or member is obsolete
         public bool Rounded { get; set; } = MudGlobal.Rounded == true;
+#pragma warning restore CS0618 // Type or member is obsolete
 
         /// <summary>
         /// The vertical spacing between <see cref="MudNavLink" /> items.

@@ -211,7 +211,9 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
+#pragma warning disable CS0618 // Type or member is obsolete
         public Variant Variant { get; set; } = MudGlobal.InputDefaults.Variant;
+#pragma warning restore CS0618 // Type or member is obsolete
 
         /// <summary>
         /// The amount of vertical spacing for this input.
@@ -221,7 +223,9 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
+#pragma warning disable CS0618 // Type or member is obsolete
         public Margin Margin { get; set; } = MudGlobal.InputDefaults.Margin;
+#pragma warning restore CS0618 // Type or member is obsolete
 
         /// <summary>
         /// Typography for the input text.
@@ -333,7 +337,9 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
+#pragma warning disable CS0618 // Type or member is obsolete
         public bool ShrinkLabel { get; set; } = MudGlobal.InputDefaults.ShrinkLabel;
+#pragma warning restore CS0618 // Type or member is obsolete
 
         /// <summary>
         /// Occurs when the <see cref="Text"/> property has changed.
