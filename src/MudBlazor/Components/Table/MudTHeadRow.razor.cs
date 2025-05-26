@@ -56,6 +56,15 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         public bool IgnoreCheckbox { get; set; }
+        
+        /// <summary>
+        /// The color of the checkbox. It supports the theme colors.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>Color.Default</c>.  Managed automatically by the parent <see cref="MudTable{T}"/>.
+        /// </remarks>
+        [Parameter]
+        public Color CheckMarkColor { get; set; } = Color.Default;
 
         /// <summary>
         /// Hides the extra column displayed when <see cref="MudTableBase.Editable"/> is <c>true</c>.

@@ -45,7 +45,7 @@
                         }
                         else
                         {
-                            <MudTHeadRow Checkable="MultiSelection" SelectionChangeable="SelectionChangeable" Expandable="@(GroupBy?.Expandable ?? false)">
+                            <MudTHeadRow Checkable="MultiSelection" CheckMarkColor="CheckMarkColor" SelectionChangeable="SelectionChangeable" Expandable="@(GroupBy?.Expandable ?? false)">
                                 @if (HeaderContent != null)
                                 {
                                     @HeaderContent
@@ -163,7 +163,7 @@
                         }
                         else
                         {
-                            <MudTFootRow Checkable="MultiSelection" SelectionChangeable="SelectionChangeable" Expandable="@(GroupBy?.Expandable ?? false)">
+                            <MudTFootRow Checkable="MultiSelection" SelectionChangeable="SelectionChangeable" CheckMarkColor="CheckMarkColor" Expandable="@(GroupBy?.Expandable ?? false)">
                                 @if (FooterContent != null)
                                 {
                                     @FooterContent
