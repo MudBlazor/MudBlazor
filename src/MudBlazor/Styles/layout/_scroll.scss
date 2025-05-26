@@ -6,8 +6,12 @@
   overflow: hidden;
 }
 
-html:has(.scroll-locked-no-padding) {
-  scrollbar-gutter: auto;
+html {
+  scrollbar-gutter: stable;
+
+  &:has(.scroll-locked-no-padding) {
+    scrollbar-gutter: auto;
+  }
 }
 
 .mud-scroll-to-top {
