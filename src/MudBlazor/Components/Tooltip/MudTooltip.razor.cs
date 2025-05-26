@@ -133,6 +133,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>null</c>.
         /// </remarks>
+        [Obsolete("For better maintainability, use the RootClass property with CSS for styling.")]
         [Parameter]
         [Category(CategoryTypes.Tooltip.Appearance)]
         public string? RootStyle { get; set; }

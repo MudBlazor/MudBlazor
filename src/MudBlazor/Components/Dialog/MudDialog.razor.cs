@@ -156,6 +156,7 @@ namespace MudBlazor
         /// <summary>
         /// The CSS styles applied to the main dialog content.
         /// </summary>
+        [Obsolete("For better maintainability, use the ContentClass property with CSS for styling.")]
         [Parameter]
         [Category(CategoryTypes.Dialog.Appearance)]
         public string? ContentStyle { get; set; }

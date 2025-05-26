@@ -58,6 +58,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>""</c>.
         /// </remarks>
+        [Obsolete("For better maintainability, use the AddIconClass property with CSS for styling.")]
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
         public string AddIconStyle { get; set; } = string.Empty;
@@ -78,6 +79,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>""</c>.
         /// </remarks>
+        [Obsolete("For better maintainability, use the CloseIconClass property with CSS for styling.")]
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
         public string CloseIconStyle { get; set; } = string.Empty;
