@@ -97,7 +97,7 @@
                                @{ var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build(); }
                                @{ var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build(); }
                                <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item"
-                                      Checkable="MultiSelection" SelectionChangeable="SelectionChangeable" Editable="IsItemEditable(item)"
+                                      Checkable="MultiSelection" CheckMarkColor="CheckMarkColor" SelectionChangeable="SelectionChangeable" Editable="IsItemEditable(item)"
                                       Checked="@(IsCheckedRow(item))"
                                       CheckedChanged="((value) => { var x = item; OnRowCheckboxChanged(value, x); })">
 

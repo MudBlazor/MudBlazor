@@ -51,6 +51,15 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         public bool Checkable { get; set; }
+        
+        /// <summary>
+        /// The color of the checkbox. It supports the theme colors.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>Color.Default</c>.  Managed automatically by the parent <see cref="MudTable{T}"/>.
+        /// </remarks>
+        [Parameter]
+        public Color CheckMarkColor { get; set; } = Color.Default;
 
         /// <summary>
         /// Prevents the change of the current selection.
