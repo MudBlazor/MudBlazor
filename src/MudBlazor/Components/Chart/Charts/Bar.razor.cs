@@ -17,6 +17,8 @@ namespace MudBlazor.Charts
     {
         public static new ChartType ChartType => ChartType.Bar;
 
+        public override RenderFragment? OverlayContent { get; set; }
+
         private readonly List<SvgPath> _bars = [];
         private SvgPath? _hoveredBar;
 
@@ -32,23 +34,31 @@ namespace MudBlazor.Charts
             base.OnInitialized();
         }
 
-        protected override void RebuildChart()
+        public override void RebuildChart()
         {
-            Series = (MudChartParent != null && ChartReference is MudChart)
-                ? MudChartParent.ChartSeries
+            Series = (ChartContainer != null && ChartReference is MudChart)
+                ? ChartContainer.ChartSeries
                 : ChartSeries;
 
-            SetBounds();
-            ComputeUnitsAndNumberOfLines(out var gridYUnits, out var numHorizontalLines, out var lowestHorizontalLine, out var numVerticalLines);
+            GeneratePlotArea(out var gridYUnits, out var lowestHorizontalLine, out var numVerticalLines, out var horizontalSpace, out var verticalSpace);
 
-            var horizontalSpace = _boundWidth - HorizontalStartSpace - HorizontalEndSpace;
-            var verticalSpace = (_boundHeight - VerticalStartSpace - VerticalEndSpace) / Math.Max(1, numHorizontalLines - 1);
+            PlotArea = new PlotArea(horizontalSpace, verticalSpace, lowestHorizontalLine, numVerticalLines, gridYUnits);
+
+            GenerateBars(lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace, numVerticalLines);
+        }
+
+        private void GeneratePlotArea(out double gridYUnits, out int lowestHorizontalLine, out int numVerticalLines, out double horizontalSpace, out double verticalSpace)
+        {
+            SetBounds();
+            ComputeUnitsAndNumberOfLines(out gridYUnits, out var numHorizontalLines, out lowestHorizontalLine, out numVerticalLines);
+
+            horizontalSpace = _boundWidth - HorizontalStartSpace - HorizontalEndSpace;
+            verticalSpace = (_boundHeight - VerticalStartSpace - VerticalEndSpace) / Math.Max(1, numHorizontalLines - 1);
             var tickWidth = horizontalSpace / numVerticalLines;
 
             ComputeBarDimensions(tickWidth);
             GenerateHorizontalGridLines(numHorizontalLines, lowestHorizontalLine, gridYUnits, verticalSpace);
             GenerateVerticalGridLines(numVerticalLines, horizontalSpace);
-            GenerateBars(lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace, numVerticalLines);
         }
 
         private void ComputeUnitsAndNumberOfLines(out double gridYUnits, out int numHorizontalLines, out int lowestHorizontalLine, out int numVerticalLines)

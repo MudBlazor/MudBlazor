@@ -17,6 +17,8 @@ namespace MudBlazor.Charts
     {
         public static new ChartType ChartType => ChartType.StackedBar;
 
+        public override RenderFragment? OverlayContent { get; set; }
+
         private const double BarOverlapAmountFix = 0.5; // used to trigger slight overlap so the bars don't have gaps due to floating point rounding
 
         private readonly List<SvgPath> _bars = [];
@@ -32,26 +34,47 @@ namespace MudBlazor.Charts
             base.OnInitialized();
         }
 
-        protected override void RebuildChart()
+        public override void RebuildChart()
         {
-            Series = (MudChartParent != null && ChartReference is MudChart)
-                ? MudChartParent.ChartSeries
+            if (ChartReference is IMudAxisChart && PlotArea is null) return;
+
+            Series = (ChartContainer != null && ChartReference is MudChart)
+                ? ChartContainer.ChartSeries
                 : ChartSeries;
 
             // ensure the stacked bar width ratio is within the valid range
             ChartOptions!.BarWidthRatio = ChartOptions.BarWidthRatio.EnsureRange(0.01, 1);
 
+            if (ChartReference is not IMudAxisChart)
+            {
+                GeneratePlotArea(out var lowestHorizontalLine, out var gridYUnits, out var numVerticalLines, out var horizontalSpace, out var verticalSpace);
+
+                PlotArea = new PlotArea(horizontalSpace, verticalSpace, lowestHorizontalLine, numVerticalLines, gridYUnits);
+            }
+
+            if (PlotArea is not { } area) return;
+
+            GenerateStackedBars(area.LowestHorizontalLine, area.YAxisTicks, area.Width, area.Height);
+            GenerateLegends();
+
+            if (OverlayChart is IMudAxisChart overlay && PlotArea != overlay.PlotArea)
+            {
+                overlay.PlotArea = PlotArea;
+                overlay.RebuildChart();
+                StateHasChanged();
+            }
+        }
+
+        private void GeneratePlotArea(out int lowestHorizontalLine, out double gridYUnits, out int numVerticalLines, out double horizontalSpace, out double verticalSpace)
+        {
             SetBounds();
-            ComputeStackedUnitsAndNumberOfLines(out var lowestHorizontalLine, out var gridYUnits, out var numHorizontalLines, out var numVerticalLines);
+            ComputeStackedUnitsAndNumberOfLines(out lowestHorizontalLine, out gridYUnits, out var numHorizontalLines, out numVerticalLines);
 
             // Calculate spacing – note the horizontal space is computed so that the vertical grid lines line up
-            var horizontalSpace = _boundWidth - HorizontalStartSpace - HorizontalEndSpace;
-            var verticalSpace = (_boundHeight - VerticalStartSpace - VerticalEndSpace) / (numHorizontalLines > 1 ? (numHorizontalLines) : 1);
-
+            horizontalSpace = _boundWidth - HorizontalStartSpace - HorizontalEndSpace;
+            verticalSpace = (_boundHeight - VerticalStartSpace - VerticalEndSpace) / (numHorizontalLines > 1 ? (numHorizontalLines) : 1);
             GenerateHorizontalGridLines(numHorizontalLines, lowestHorizontalLine, gridYUnits, verticalSpace);
             GenerateVerticalGridLines(numVerticalLines, horizontalSpace);
-            GenerateStackedBars(lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace);
-            GenerateLegends();
         }
 
         /// <summary>

@@ -8,4 +8,6 @@ public interface IMudChart
 {
     List<ChartSeries> ChartSeries { get; set; }
     ChartType ChartType { get; }
+
+    void RebuildChart();
 }

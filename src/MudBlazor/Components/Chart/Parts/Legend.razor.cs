@@ -12,7 +12,7 @@ namespace MudBlazor.Charts
         /// The chart, if any, containing this component.
         /// </summary>
         [CascadingParameter]
-        public MudChart? MudChartParent { get; set; }
+        public MudChart? ChartContainer { get; set; }
 
         /// <summary>
         /// The data labels for this legend.
@@ -35,12 +35,12 @@ namespace MudBlazor.Charts
         {
             base.OnParametersSet();
 
-            CanHideSeries = MudChartParent?.CanHideSeries ?? CanHideSeries;
-            ShowLegend ??= MudChartParent?.ChartOptions?.ShowLegend ?? true;
-            ChartPalette ??= MudChartParent?.ChartOptions?.ChartPalette ?? [];
+            CanHideSeries = ChartContainer?.CanHideSeries ?? CanHideSeries;
+            ShowLegend ??= ChartContainer?.ChartOptions?.ShowLegend ?? true;
+            ChartPalette ??= ChartContainer?.ChartOptions?.ChartPalette ?? [];
 
-            if (!OnLegendSelected.HasDelegate && MudChartParent is not null)
-                OnLegendSelected = EventCallback.Factory.Create<int>(this, async index => await MudChartParent!.SetSelectedIndexAsync(index));
+            if (!OnLegendSelected.HasDelegate && ChartContainer is not null)
+                OnLegendSelected = EventCallback.Factory.Create<int>(this, async index => await ChartContainer!.SetSelectedIndexAsync(index));
         }
 
         private string GetCheckBoxStyle(int index)
@@ -48,5 +48,7 @@ namespace MudBlazor.Charts
             var color = ChartPalette?.GetValue(index % ChartPalette.Length)?.ToString() ?? string.Empty;
             return $"--checkbox-color: {color};";
         }
+
+        public override void RebuildChart() => ChartContainer?.RebuildChart();
     }
 }

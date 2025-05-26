@@ -4,7 +4,7 @@
 
 @inherits MudAxisLineChartBase<TimeSeriesChartOptions>
 
-<div class="@(MudChartParent is null ? Classname : string.Empty)">
+<div class="@(ChartContainer is null ? Classname : string.Empty)">
     <BaseAxisChart TChartOptions="TimeSeriesChartOptions"
                    AxisChanged="OnAxisChanged"
                    ElementRefChanged="SetElementReference"

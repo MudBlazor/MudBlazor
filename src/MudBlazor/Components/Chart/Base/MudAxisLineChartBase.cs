@@ -10,7 +10,7 @@ using MudBlazor.Interpolation;
 
 namespace MudBlazor.Charts;
 
-public abstract class MudAxisLineChartBase<TOptions> : MudAxisChartBase<TOptions> where TOptions : IAxisLineChartOptions
+public abstract class MudAxisLineChartBase<TOptions> : MudAxisChartBase<TOptions>, IMudAxisChart where TOptions : IAxisLineChartOptions
 {
     protected List<SvgPath> ChartLines { get; set; } = [];
     protected Dictionary<int, SvgPath> ChartAreas { get; set; } = [];

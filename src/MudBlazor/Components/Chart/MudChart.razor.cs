@@ -59,4 +59,6 @@ public partial class MudChart
         ChartType.Timeseries => new TimeSeriesChartOptions(),
         _ => throw new NotImplementedException($"{ChartType} chart is not supported")
     };
+
+    public override void RebuildChart() => ChartReference?.RebuildChart();
 }

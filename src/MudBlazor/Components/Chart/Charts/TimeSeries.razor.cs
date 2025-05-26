@@ -1,4 +1,5 @@
-﻿using MudBlazor.Interpolation;
+﻿using Microsoft.AspNetCore.Components;
+using MudBlazor.Interpolation;
 
 #nullable enable
 
@@ -10,6 +11,8 @@ namespace MudBlazor.Charts;
 partial class TimeSeries : MudAxisLineChartBase<TimeSeriesChartOptions>, IDisposable
 {
     public static new ChartType ChartType => ChartType.Timeseries;
+
+    public override RenderFragment? OverlayContent { get; set; }
 
     private DateTime _minDateTime;
     private DateTime _maxDateTime;
@@ -27,20 +30,32 @@ partial class TimeSeries : MudAxisLineChartBase<TimeSeriesChartOptions>, IDispos
         base.OnInitialized();
     }
 
-    protected override void RebuildChart()
+    public override void RebuildChart()
     {
-        Series = (MudChartParent != null && ChartReference is MudChart)
-            ? MudChartParent.ChartSeries
+        Series = (ChartContainer != null && ChartReference is MudChart)
+            ? ChartContainer.ChartSeries
             : ChartSeries;
 
         _cachedDataPoints = null;
 
+        GeneratePlotArea(out var gridYUnits, out var lowestHorizontalLine, out var horizontalSpace, out var verticalSpace);
+
+        PlotArea = new PlotArea(horizontalSpace, verticalSpace, lowestHorizontalLine, 0, gridYUnits);
+
+        if (Series.Count == 0) return;
+        if (!_generateChartLines) return;
+
+        GenerateChartLines(lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace);
+    }
+
+    private void GeneratePlotArea(out double gridYUnits, out int lowestHorizontalLine, out double horizontalSpace, out double verticalSpace)
+    {
         SetBounds();
         ComputeMinAndMaxDateTimes();
-        ComputeUnitsAndNumberOfLines(out var gridYUnits, out var numHorizontalLines, out var lowestHorizontalLine, out var numVerticalLines);
+        ComputeUnitsAndNumberOfLines(out gridYUnits, out var numHorizontalLines, out lowestHorizontalLine, out var numVerticalLines);
 
-        var horizontalSpace = (_boundWidth - HorizontalStartSpace - HorizontalEndSpace) / Math.Max(1, (_maxDateTime - _minDateTime) / ChartOptions!.TimeLabelSpacing);
-        var verticalSpace = (_boundHeight - VerticalStartSpace - VerticalEndSpace) / Math.Max(1, numHorizontalLines - 1);
+        horizontalSpace = (_boundWidth - HorizontalStartSpace - HorizontalEndSpace) / Math.Max(1, (_maxDateTime - _minDateTime) / ChartOptions!.TimeLabelSpacing);
+        verticalSpace = (_boundHeight - VerticalStartSpace - VerticalEndSpace) / Math.Max(1, numHorizontalLines - 1);
         var startOffset = 0.0;
 
         if (_minDateLabelOffset != TimeSpan.Zero)
@@ -56,11 +71,6 @@ partial class TimeSeries : MudAxisLineChartBase<TimeSeriesChartOptions>, IDispos
 
         GenerateHorizontalGridLines(numHorizontalLines, lowestHorizontalLine, gridYUnits, verticalSpace);
         GenerateVerticalGridLines(numVerticalLines, startOffset, horizontalSpace);
-
-        if (Series.Count == 0) return;
-        if (!_generateChartLines) return;
-
-        GenerateChartLines(lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace);
     }
 
     private void ComputeMinAndMaxDateTimes()

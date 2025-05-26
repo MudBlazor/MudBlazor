@@ -2,7 +2,7 @@
 
 @inherits MudAxisChartBase<BarChartOptions>
 
-<div class="@(MudChartParent is null ? Classname : string.Empty)">
+<div class="@(ChartContainer is null ? Classname : string.Empty)">
     <BaseAxisChart TChartOptions="BarChartOptions"
                    AxisChanged="AxisChanged"
                    ElementRefChanged="SetElementReference"

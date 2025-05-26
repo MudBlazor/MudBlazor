@@ -165,6 +165,8 @@ public abstract class MudChartBase<TOptions> : MudComponentBase, IMudChart where
             .WithEventCallback(() => SelectedIndexChanged);
     }
 
+    public abstract void RebuildChart();
+
     private Position ConvertLegendPosition(Position position) => position switch
     {
         Position.Start => RightToLeft ? Position.Right : Position.Left,

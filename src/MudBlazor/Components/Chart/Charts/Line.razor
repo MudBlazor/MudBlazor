@@ -4,32 +4,39 @@
 
 @inherits MudAxisLineChartBase<LineChartOptions>
 
-<div class="@(MudChartParent is null ? Classname : string.Empty)">
-    <BaseAxisChart TChartOptions="LineChartOptions"
-                   AxisChanged="AxisChanged"
-                   ElementRefChanged="SetElementReference"
-                   Width="@Width"
-                   Height="@Height"
-                   ViewBoxWidth="_boundWidth"
-                   ViewBoxHeight="_boundHeight"
-                   ChartClass="mud-chart-line"
-                   ChartSeries="@ChartSeries"
-                   ChartLabels="@ChartLabels"
-                   ChartOptions="@ChartOptions"
-                   ChartType="@ChartType"
-                   SeriesContent="@RenderChartLines()"
-                   TooltipContent="@RenderTooltip()"
-                   CustomGraphics="@CustomGraphics"
-                   HoveredSegment="@HoveredDataPointPath"
-                   HorizontalLines="@HorizontalLines"
-                   VerticalLines="@VerticalLines"
-                   HorizontalValues="@HorizontalValues"
-                   VerticalValues="@VerticalValues"
-                   UserAttributes="@UserAttributes"/>
+@if (ChartReference is IMudAxisChart)
+{
+    
+}
+else
+{
+    <div class="@(ChartContainer is null ? Classname : string.Empty)">
+        <BaseAxisChart TChartOptions="LineChartOptions"
+                       AxisChanged="AxisChanged"
+                       ElementRefChanged="SetElementReference"
+                       Width="@Width"
+                       Height="@Height"
+                       ViewBoxWidth="_boundWidth"
+                       ViewBoxHeight="_boundHeight"
+                       ChartClass="mud-chart-line"
+                       ChartSeries="@ChartSeries"
+                       ChartLabels="@ChartLabels"
+                       ChartOptions="@ChartOptions"
+                       ChartType="@ChartType"
+                       SeriesContent="@RenderChartLines()"
+                       TooltipContent="@RenderTooltip()"
+                       CustomGraphics="@CustomGraphics"
+                       HoveredSegment="@HoveredDataPointPath"
+                       HorizontalLines="@HorizontalLines"
+                       VerticalLines="@VerticalLines"
+                       HorizontalValues="@HorizontalValues"
+                       VerticalValues="@VerticalValues"
+                       UserAttributes="@UserAttributes" />
 
-    <Legend Data="@Legends" ShowLegend="@ChartOptions?.ShowLegend" CanHideSeries="@CanHideSeries"
-            ChartPalette="@ChartOptions?.ChartPalette" OnLegendSelected="async (i) => await SetSelectedIndexAsync(i)" />
-</div>
+        <Legend Data="@Legends" ShowLegend="@ChartOptions?.ShowLegend" CanHideSeries="@CanHideSeries"
+                ChartPalette="@ChartOptions?.ChartPalette" OnLegendSelected="async (i) => await SetSelectedIndexAsync(i)" />
+    </div>
+}
 
 @code {
     private double _dataPointLabelOffset;
@@ -40,7 +47,7 @@
         var dataPointRadius = Math.Max(lineStrokeWidth / 2 + 3, 4);
         var dataPointHoverRadius = dataPointRadius + 2;
         var dataPointStroke = 2d;
-        
+
         _dataPointLabelOffset = dataPointHoverRadius + (dataPointStroke / 2d);
 
         var seq = 0;
@@ -167,4 +174,9 @@
             }
         }
     };
+
+    private RenderFragment Chart =>@<g class="mud-charts-line-series">
+                                        @RenderChartLines()
+                                        @RenderTooltip()
+                                    </g>;
 }

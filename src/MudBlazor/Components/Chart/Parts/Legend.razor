@@ -7,7 +7,7 @@
         @foreach (var item in Data)        
         {
             <div class="mud-chart-legend-item" 
-                 @onclick:stopPropagation=@(MudChartParent!=null)
+                 @onclick:stopPropagation=@(ChartContainer!=null)
                  @onclick=@(async ()=>{ if (OnLegendSelected.HasDelegate) { await OnLegendSelected.InvokeAsync(item.Index); }})>
                 @if(CanHideSeries == false)
                 {

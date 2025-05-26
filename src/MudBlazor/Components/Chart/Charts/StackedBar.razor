@@ -2,7 +2,7 @@
 @using System.Globalization;
 @inherits MudAxisChartBase<StackedBarChartOptions>
 
-<div class="@(MudChartParent is null ? Classname : string.Empty)">
+<div class="@(ChartContainer is null ? Classname : string.Empty)">
     <BaseAxisChart TChartOptions="StackedBarChartOptions"
                    AxisChanged="AxisChanged"
                    ElementRefChanged="SetElementReference"
@@ -17,13 +17,15 @@
                    ChartType="@ChartType"
                    SeriesContent="@RenderStackedBars()"
                    TooltipContent="@RenderTooltip()"
+                   ChildContent="@OverlayContent"
                    CustomGraphics="@CustomGraphics"
                    HoveredSegment="@_hoveredBar"
                    HorizontalLines="@HorizontalLines"
                    VerticalLines="@VerticalLines"
                    HorizontalValues="@HorizontalValues"
                    VerticalValues="@VerticalValues"
-                   UserAttributes="@UserAttributes" />
+                   UserAttributes="@UserAttributes">
+    </BaseAxisChart>
 
     <Legend Data="@Legends" ShowLegend="@ChartOptions?.ShowLegend" CanHideSeries="@CanHideSeries"
             ChartPalette="@ChartOptions?.ChartPalette" OnLegendSelected="async (i) => await SetSelectedIndexAsync(i)" />

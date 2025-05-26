@@ -58,12 +58,12 @@ namespace MudBlazor.Charts
                 SvgPath path;
                 var pathStringBuilder = new StringBuilder();
 
-                pathStringBuilder.Append($"M {ToS(startx * CalculatedRadius)} {ToS(starty * CalculatedRadius)} "); // Move to the start point
+                pathStringBuilder.Append($"M {ToS(startx * Radius)} {ToS(starty * Radius)} "); // Move to the start point
                 if (data >= 1)
                 {
-                    pathStringBuilder.Append($"A {ToS(CalculatedRadius)} {ToS(CalculatedRadius)} 0 {ToS(largeArcFlag)} 1 {ToS(midx * CalculatedRadius)} {ToS(midy * CalculatedRadius)} "); // Add an arc to a mid point half way through the slice to support 100% pies
+                    pathStringBuilder.Append($"A {ToS(Radius)} {ToS(Radius)} 0 {ToS(largeArcFlag)} 1 {ToS(midx * Radius)} {ToS(midy * Radius)} "); // Add an arc to a mid point half way through the slice to support 100% pies
                 }
-                pathStringBuilder.Append($"A {ToS(CalculatedRadius)} {ToS(CalculatedRadius)} 0 {ToS(largeArcFlag)} 1 {ToS(endx * CalculatedRadius)} {ToS(endy * CalculatedRadius)} "); // Add an arc to the end point
+                pathStringBuilder.Append($"A {ToS(Radius)} {ToS(Radius)} 0 {ToS(largeArcFlag)} 1 {ToS(endx * Radius)} {ToS(endy * Radius)} "); // Add an arc to the end point
                 pathStringBuilder.Append("L 0 0 Z"); // Line to the center
 
                 // Standard pie slice path going to the center.
@@ -75,7 +75,7 @@ namespace MudBlazor.Charts
 
                 // Calculate the midpoint angle
                 var midAngle = cumulativeRadians - Math.PI * data;
-                var midRadius = CalculatedRadius * 0.5d;
+                var midRadius = Radius * 0.5d;
 
                 var midX = 0d;
                 var midY = 0d;
