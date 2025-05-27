@@ -1,10 +1,6 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-@{
-#pragma warning disable CS0618 // Type or member is obsolete
-}
-
 <div @attributes="UserAttributes" class="@ContainerClass" style="@RootStyle" @onpointerenter="@HandlePointerEnterAsync" @onpointerleave="@HandlePointerLeaveAsync" @onpointerup="@HandlePointerUpAsync" @onfocusin="@HandleFocusInAsync" @onfocusout="@HandleFocusOutAsync">
     @ChildContent
     @if (ShowToolTip())
