@@ -126,8 +126,8 @@
     <MudSwitch T="bool" @bind-Value="_customizeGroupTemplate" Color="@Color.Primary">Customize Group Template</MudSwitch>
     <MudSwitch T="bool" Value="@_customizeGroupBy" Color="@Color.Primary" ValueChanged="@CustomizeByGroupChanged">Customize Group By Industry</MudSwitch>
     <MudSwitch T="bool" @bind-Value="_customizeGroupStyle" Color="@Color.Primary">Customize Group Style</MudSwitch>
-    <MudButton OnClick="@ExpandAllGroupsAsync" Color="@Color.Primary" Disabled="@(!(_dataGrid?.IsGrouped ?? false))">Expand All</MudButton>
-    <MudButton OnClick="@CollapseAllGroupsAsync" Color="@Color.Primary" Disabled="@(!(_dataGrid?.IsGrouped ?? false))">Collapse All</MudButton>
+    <MudButton OnClick="@ExpandAllGroupsAsync" Color="@Color.Primary" Disabled="@(!(_dataGrid?.IsGrouped ?? false))">Expand all</MudButton>
+    <MudButton OnClick="@CollapseAllGroupsAsync" Color="@Color.Primary" Disabled="@(!(_dataGrid?.IsGrouped ?? false))">Collapse all</MudButton>
 </div>
 
 @code {

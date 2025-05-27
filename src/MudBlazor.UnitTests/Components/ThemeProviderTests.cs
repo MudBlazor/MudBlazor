@@ -118,6 +118,7 @@ namespace MudBlazor.UnitTests.Components
                 "--mud-palette-gray-darker: #616161;",
                 "--mud-palette-overlay-dark: rgba(33,33,33,0.4980392156862745);",
                 "--mud-palette-overlay-light: rgba(255,255,255,0.4980392156862745);",
+                "--mud-palette-border-opacity: 1;",
                 "--mud-ripple-color: var(--mud-palette-text-primary);",
                 "--mud-ripple-opacity: 0.1;",
                 "--mud-ripple-opacity-secondary: 0.2;",

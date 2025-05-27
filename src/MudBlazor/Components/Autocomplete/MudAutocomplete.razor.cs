@@ -492,6 +492,16 @@ namespace MudBlazor
         public EventCallback<int> ReturnedItemsCountChanged { get; set; }
 
         /// <summary>
+        /// Prevents scrolling while the dropdown is open.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public bool LockScroll { get; set; }
+
+        /// <summary>
         /// Displays the search result drop-down.
         /// </summary>
         /// <remarks>

@@ -10,11 +10,6 @@ namespace MudBlazor.Docs.Shared
         [Inject]
         private LayoutService LayoutService { get; set; }
 
-        static MainLayout()
-        {
-            MudGlobal.TooltipDefaults.Delay = TimeSpan.FromMilliseconds(500);
-        }
-
         protected override void OnInitialized()
         {
             LayoutService.MajorUpdateOccurred += OnMajorUpdateOccured;

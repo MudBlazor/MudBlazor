@@ -7,9 +7,7 @@
 <MudLayout>
     <MudRTLProvider RightToLeft="_rightToLeft">
         <MudAppBar Elevation="0">
-            <MudTooltip Text="Toggle drawer">
-                <MudIconButton Icon="@Icons.Material.Filled.Menu" Edge="Edge.Start" OnClick="DocsDrawerToggle" aria-label="Toggle drawer" />
-            </MudTooltip>
+            <MudIconButton Icon="@Icons.Material.Filled.Menu" Edge="Edge.Start" OnClick="DocsDrawerToggle" aria-label="Toggle drawer" />
             <MudSpacer />
             <MudAutocomplete @ref="_autocomplete" T="Type" Placeholder="Search all tests" SearchFunc="Search" Variant="Variant.Outlined" ValueChanged="OnSearchResult" Class="docs-search-bar" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentAriaLabel="Search">
                 <ItemTemplate Context="result">
@@ -173,7 +171,7 @@
 
     private string ThemeIcon => _isDarkMode ? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode;
 
-    private string ThemeLabel => _isDarkMode ? "Switch to light theme" : "Switch to dark theme";
+    private string ThemeLabel => _isDarkMode ? "Light mode" : "Dark mode";
 
     private void DocsDrawerToggle() => _drawerOpen = !_drawerOpen;
 

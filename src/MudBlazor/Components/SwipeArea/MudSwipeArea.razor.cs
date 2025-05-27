@@ -7,7 +7,7 @@ namespace MudBlazor
 #nullable enable
 
     /// <summary>
-    /// An area which receives swipe events for devices where touch events are supported.
+    /// An area which receives swipe events.
     /// </summary>
     public partial class MudSwipeArea : MudComponentBase
     {
