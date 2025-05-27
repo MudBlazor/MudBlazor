@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -24,6 +25,9 @@ namespace MudBlazor
         /// The reference to the underlying <see cref="MudInput{T}"/> component.
         /// </summary>
         public MudInput<string>? InputReference { get; private set; }
+
+        [Inject]
+        private IJSRuntime JsRuntime { get; set; } = null!;
 
         /// <summary>
         /// The type of input collected by this component.
@@ -232,5 +236,10 @@ namespace MudBlazor
             0 => (string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}"),
             _ => (string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") + $" / {Counter}"
         };
+
+        private async Task HandleClick()
+        {
+            await JsRuntime.InvokeVoidAsync("focusInput", InputElementId);
+        }
     }
 }

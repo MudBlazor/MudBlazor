@@ -12,3 +12,7 @@ class MudInput {
 }
 
 window.mudInput = new MudInput();
+
+window.focusInput = (elementId) => {
+    document.getElementById(elementId)?.focus();
+};
