@@ -28,8 +28,8 @@ namespace MudBlazor
         private bool _nextButtonDisabled;
         private bool _showScrollButtons;
         private ElementReference _tabsContentSize;
-        private double _sliderSize;
-        private double _sliderPosition;
+        private double _sliderSizePercentage;
+        private double _sliderPositionPercentage;
         private double _tabBarContentSize;
         private double _allTabsSize;
         private double _scrollPosition;
@@ -706,20 +706,20 @@ namespace MudBlazor
 
         protected string SliderStyle => RightToLeft
             ? new StyleBuilder()
-                .AddStyle("width", _sliderSize.ToPx(), Position is Position.Top or Position.Bottom)
-                .AddStyle("right", _sliderPosition.ToPx(), Position is Position.Top or Position.Bottom)
+                .AddStyle("width", $"{_sliderSizePercentage}%", Position is Position.Top or Position.Bottom)
+                .AddStyle("right", $"{_sliderPositionPercentage}%", Position is Position.Top or Position.Bottom)
                 .AddStyle("transition", SliderAnimation ? "right .3s cubic-bezier(.64,.09,.08,1);" : "none", Position is Position.Top or Position.Bottom)
                 .AddStyle("transition", SliderAnimation ? "top .3s cubic-bezier(.64,.09,.08,1);" : "none", IsVerticalTabs())
-                .AddStyle("height", _sliderSize.ToPx(), IsVerticalTabs())
-                .AddStyle("top", _sliderPosition.ToPx(), IsVerticalTabs())
+                .AddStyle("height", $"{_sliderSizePercentage}%", IsVerticalTabs())
+                .AddStyle("top", $"{_sliderPositionPercentage}%", IsVerticalTabs())
                 .Build()
             : new StyleBuilder()
-                .AddStyle("width", _sliderSize.ToPx(), Position is Position.Top or Position.Bottom)
-                .AddStyle("left", _sliderPosition.ToPx(), Position is Position.Top or Position.Bottom)
+                .AddStyle("width", $"{_sliderSizePercentage}%", Position is Position.Top or Position.Bottom)
+                .AddStyle("left", $"{_sliderPositionPercentage}%", Position is Position.Top or Position.Bottom)
                 .AddStyle("transition", SliderAnimation ? "left .3s cubic-bezier(.64,.09,.08,1);" : "none", Position is Position.Top or Position.Bottom)
                 .AddStyle("transition", SliderAnimation ? "top .3s cubic-bezier(.64,.09,.08,1);" : "none", IsVerticalTabs())
-                .AddStyle("height", _sliderSize.ToPx(), IsVerticalTabs())
-                .AddStyle("top", _sliderPosition.ToPx(), IsVerticalTabs())
+                .AddStyle("height", $"{_sliderSizePercentage}%", IsVerticalTabs())
+                .AddStyle("top", $"{_sliderPositionPercentage}%", IsVerticalTabs())
                 .Build();
 
         private bool IsVerticalTabs()
@@ -809,11 +809,11 @@ namespace MudBlazor
                 return;
             }
 
-            _sliderPosition = GetLengthOfPanelItems(ActivePanel);
-            _sliderSize = GetRelevantSize(ActivePanel.PanelRef);
+            _sliderPositionPercentage = (GetLengthOfPanelItems(ActivePanel) / _allTabsSize) * 100;
+            _sliderSizePercentage = (GetPanelLength(ActivePanel) / _allTabsSize) * 100;
         }
 
-        private bool IsSliderPositionDetermined => (_activePanelIndex > 0 && _sliderPosition > 0) ||
+        private bool IsSliderPositionDetermined => (_activePanelIndex > 0 && _sliderPositionPercentage > 0) ||
                                                    IsFirstVisiblePanel(ActivePanel);
 
         private void GetTabBarContentSize() => _tabBarContentSize = GetRelevantSize(_tabsContentSize);
