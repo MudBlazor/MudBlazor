@@ -62,10 +62,14 @@ namespace MudBlazor.Charts
             if (gridYUnits <= 0)
                 gridYUnits = 20;
 
-            if (_series.SelectMany(series => series.Data).Any())
+            var chartSeries = MudChartParent is { CanHideSeries: true, RecalculateScaleOnSeriesVisibilityChanged: true } ?
+                _series.Where(s => s.Visible).ToList() :
+                _series;
+
+            if (chartSeries.SelectMany(series => series.Data).Any())
             {
-                var minY = _series.SelectMany(series => series.Data).Min();
-                var maxY = _series.SelectMany(series => series.Data).Max();
+                var minY = chartSeries.SelectMany(series => series.Data).Min();
+                var maxY = chartSeries.SelectMany(series => series.Data).Max();
 
                 var includeYAxisZeroPoint = MudChartParent?.ChartOptions.YAxisRequireZeroPoint ?? false;
                 if (includeYAxisZeroPoint)
@@ -88,7 +92,7 @@ namespace MudBlazor.Charts
                     numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
                 }
 
-                numVerticalLines = _series.Max(series => series.Data.Length);
+                numVerticalLines = chartSeries.Max(series => series.Data.Length);
             }
             else
             {

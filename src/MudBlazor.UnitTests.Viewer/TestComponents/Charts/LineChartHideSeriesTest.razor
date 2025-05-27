@@ -1,0 +1,21 @@
+﻿<div>
+    <MudCheckBox @bind-Value="_recalculateScale" Label="Recalculate scale"></MudCheckBox>
+    <MudChart ChartType="ChartType.Line" ChartSeries="@Series" XAxisLabels="@XAxisLabels" CanHideSeries="true"
+              RecalculateScaleOnSeriesVisibilityChanged="_recalculateScale"
+              Width="100%" Height="350px"></MudChart>
+</div>
+
+@code {
+    public static string __description__ = "Hiding 'Series 3' should cause the chart to re-calculate the scale for the y-axis";
+
+    private bool _recalculateScale = true;
+
+    public List<ChartSeries> Series =
+    [
+        new() { Name = "Series 1", Data = [90, 79, 72, 69, 62, 62, 55, 65, 70] },
+        new() { Name = "Series 2", Data = [10, 41, 35, 51, 49, 62, 69, 91, 148] },
+        new() { Name = "Series 3", Data = [10, 41, 35, 500, 49, 62, 69, 91, 500] }
+    ];
+
+    public string[] XAxisLabels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"];
+}
