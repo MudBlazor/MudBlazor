@@ -4,32 +4,36 @@
 
 @inherits MudAxisLineChartBase<TimeSeriesChartOptions>
 
-<div class="@(ChartContainer is null ? Classname : string.Empty)">
-    <BaseAxisChart TChartOptions="TimeSeriesChartOptions"
-                   AxisChanged="OnAxisChanged"
-                   ElementRefChanged="SetElementReference"
-                   Width="@Width"
-                   Height="@Height"
-                   ViewBoxWidth="_boundWidth"
-                   ViewBoxHeight="@(_boundHeight + 20)"
-                   ChartClass="mud-chart-line"
-                   ChartSeries="@ChartSeries"
-                   ChartLabels="@ChartLabels"
-                   ChartOptions="@ChartOptions"
-                   ChartType="@ChartType"
-                   SeriesContent="@RenderLineSeries()"
-                   TooltipContent="@RenderTooltip()"
-                   CustomGraphics="@CustomGraphics"
-                   HoveredSegment="@HoveredDataPointPath"
-                   HorizontalLines="@HorizontalLines"
-                   VerticalLines="@VerticalLines"
-                   HorizontalValues="@HorizontalValues"
-                   VerticalValues="@VerticalValues"
-                   UserAttributes="@UserAttributes" />
+@if (!IsOverlayChart)
+{
+    <div class="@(ChartContainer is null ? Classname : string.Empty)">
+        <BaseAxisChart TChartOptions="TimeSeriesChartOptions"
+                       AxisChanged="OnAxisChanged"
+                       ElementRefChanged="SetElementReference"
+                       Width="@Width"
+                       Height="@Height"
+                       ViewBoxWidth="_boundWidth"
+                       ViewBoxHeight="@(_boundHeight + 20)"
+                       ChartClass="mud-chart-line"
+                       ChartSeries="@ChartSeries"
+                       ChartLabels="@ChartLabels"
+                       ChartOptions="@ChartOptions"
+                       ChartType="@ChartType"
+                       SeriesContent="@RenderLineSeries()"
+                       TooltipContent="@RenderTooltip()"
+                       ChildContent="@OverlayContent"
+                       CustomGraphics="@CustomGraphics"
+                       HoveredSegment="@HoveredDataPointPath"
+                       HorizontalLines="@HorizontalLines"
+                       VerticalLines="@VerticalLines"
+                       HorizontalValues="@HorizontalValues"
+                       VerticalValues="@VerticalValues"
+                       UserAttributes="@UserAttributes" />
 
-    <Legend Data="@Legends" ShowLegend="@ChartOptions?.ShowLegend" CanHideSeries="@CanHideSeries"
-            ChartPalette="@ChartOptions?.ChartPalette" OnLegendSelected="async (i) => await SetSelectedIndexAsync(i)" />
-</div>
+        <Legend Data="@Legends" ShowLegend="@ChartOptions?.ShowLegend" CanHideSeries="@CanHideSeries"
+                ChartPalette="@LegendPalette" OnLegendSelected="async (i) => await SetSelectedIndexAsync(i)" />
+    </div>
+}
 
 @code {
     private double _dataPointLabelOffset;
@@ -127,7 +131,7 @@
 
     private RenderFragment RenderTooltip() => builder =>
     {
-        if (HoveredDataPointPath is null || ChartDataPoints is null || ChartOptions?.ChartPalette is null)
+        if (HoveredDataPointPath is null || ChartDataPoints is null)
             return;
 
         var dataPoint = ChartDataPoints.FirstOrDefault(x => x.Value.Contains(HoveredDataPointPath));
@@ -183,4 +187,9 @@
             }
         }
     };
+
+    private RenderFragment Chart =>@<g class="mud-charts-line-series">
+                                        @RenderLineSeries()
+                                        @RenderTooltip()
+                                    </g>;
 }

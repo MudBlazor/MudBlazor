@@ -18,9 +18,10 @@ public abstract class MudAxisChartBase<TOptions> : MudChartBase<TOptions>, IMudA
     /// </summary>
     /// <remarks>
     /// The plot area is the region of the chart where data is visualized, excluding axes, labels, and other chart elements.
+    /// Values are shared between the overlay and the main chart.
     /// </remarks>
     [CascadingParameter]
-    public PlotArea? PlotArea { get; set; }
+    public AxisGridData? SharedData { get; set; }
 
     /// <summary>
     /// The chart, if any, containing this component.
@@ -29,6 +30,7 @@ public abstract class MudAxisChartBase<TOptions> : MudChartBase<TOptions>, IMudA
     public MudChart? ChartContainer { get; set; }
 
     public IMudChart? OverlayChart { get; set; }
+    public bool IsOverlayChart => ChartReference is IMudAxisChart;
 
     protected List<ChartSeries> Series { get; set; } = [];
 
@@ -50,7 +52,7 @@ public abstract class MudAxisChartBase<TOptions> : MudChartBase<TOptions>, IMudA
     protected double VerticalStartSpace => Math.Max(VerticalStartSpaceBuffer + (_xAxisLabelSize?.Height ?? 0), 30);
     protected const double VerticalEndSpace = 25.0;
     protected double XAxisLabelOffset => Math.Ceiling(_xAxisLabelSize?.Height ?? 20) / 2;
-
+    public override string[] LegendPalette => [.. (ChartOptions?.ChartPalette ?? []), .. OverlayChart?.LegendPalette ?? []];
     public abstract RenderFragment? OverlayContent { get; set; }
 
     protected double _boundWidth = BoundWidthDefault;
@@ -104,6 +106,13 @@ public abstract class MudAxisChartBase<TOptions> : MudChartBase<TOptions>, IMudA
 
     protected void SetBounds()
     {
+        if (ChartReference is IMudAxisChart chart && chart.SharedData is { } data)
+        {
+            _boundWidth = data.BoundWidth;
+            _boundHeight = data.BoundHeight;
+            return;
+        }
+
         _boundWidth = BoundWidthDefault;
         _boundHeight = BoundHeightDefault;
 
@@ -121,6 +130,39 @@ public abstract class MudAxisChartBase<TOptions> : MudChartBase<TOptions>, IMudA
             {
                 _boundWidth = width;
                 _boundHeight = height;
+            }
+        }
+    }
+
+    protected void GenerateLegends()
+    {
+        Legends.Clear();
+        for (var i = 0; i < Series.Count; i++)
+        {
+            var series = Series[i];
+            var legend = new SvgLegend()
+            {
+                Index = i,
+                Labels = series.Name,
+                Visible = series.Visible,
+                OnVisibilityChanged = EventCallback.Factory.Create<SvgLegend>(this, HandleLegendVisibilityChanged)
+            };
+            Legends.Add(legend);
+        }
+
+        if (OverlayChart is IMudAxisChart overlay)
+        {
+            for (var i = 0; i < overlay.ChartSeries.Count; i++)
+            {
+                var series = overlay.ChartSeries[i];
+                var legend = new SvgLegend()
+                {
+                    Index = Series.Count + i,
+                    Labels = series.Name,
+                    Visible = series.Visible,
+                    OnVisibilityChanged = EventCallback.Factory.Create<SvgLegend>(this, args => HandleOverlayChartLegendVisibility(overlay, i, args.Visible))
+                };
+                Legends.Add(legend);
             }
         }
     }
@@ -163,6 +205,16 @@ public abstract class MudAxisChartBase<TOptions> : MudChartBase<TOptions>, IMudA
         var series = Series[legend.Index];
         series.Visible = legend.Visible;
         RebuildChart();
+    }
+
+    protected void HandleOverlayChartLegendVisibility(IMudChart overlayChart, int index, bool isVisible)
+    {
+        if (overlayChart?.ChartSeries != null && index >= 0 && index < overlayChart.ChartSeries.Count)
+        {
+            overlayChart.ChartSeries[index].Visible = isVisible;
+            overlayChart.RebuildChart();
+            StateHasChanged();
+        }
     }
 
     public void Dispose()

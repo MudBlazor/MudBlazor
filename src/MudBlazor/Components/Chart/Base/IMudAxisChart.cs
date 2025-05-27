@@ -7,11 +7,11 @@ using Microsoft.AspNetCore.Components;
 #nullable enable
 namespace MudBlazor.Charts;
 
-public record struct PlotArea(double Width, double Height, int LowestHorizontalLine, double XAxisLines, double YAxisTicks);
+public record struct AxisGridData(int LowestHorizontalLine, int HorizontalLineCount, double YAxisTicks, double BoundWidth, double BoundHeight);
 
 public interface IMudAxisChart : IMudChart
 {
-    public PlotArea? PlotArea { get; set; }
+    public AxisGridData? SharedData { get; set; }
     public IMudChart? OverlayChart { get; set; }
     public RenderFragment? OverlayContent { get; set; }
 }

@@ -4,11 +4,7 @@
 
 @inherits MudAxisLineChartBase<LineChartOptions>
 
-@if (ChartReference is IMudAxisChart)
-{
-    
-}
-else
+@if (!IsOverlayChart)
 {
     <div class="@(ChartContainer is null ? Classname : string.Empty)">
         <BaseAxisChart TChartOptions="LineChartOptions"
@@ -25,6 +21,7 @@ else
                        ChartType="@ChartType"
                        SeriesContent="@RenderChartLines()"
                        TooltipContent="@RenderTooltip()"
+                       ChildContent="@OverlayContent"
                        CustomGraphics="@CustomGraphics"
                        HoveredSegment="@HoveredDataPointPath"
                        HorizontalLines="@HorizontalLines"
@@ -34,7 +31,7 @@ else
                        UserAttributes="@UserAttributes" />
 
         <Legend Data="@Legends" ShowLegend="@ChartOptions?.ShowLegend" CanHideSeries="@CanHideSeries"
-                ChartPalette="@ChartOptions?.ChartPalette" OnLegendSelected="async (i) => await SetSelectedIndexAsync(i)" />
+                ChartPalette="@LegendPalette" OnLegendSelected="async (i) => await SetSelectedIndexAsync(i)" />
     </div>
 }
 
@@ -44,7 +41,7 @@ else
     private RenderFragment RenderChartLines() => builder =>
     {
         var lineStrokeWidth = ChartOptions?.LineStrokeWidth ?? 3;
-        var dataPointRadius = Math.Max(lineStrokeWidth / 2 + 3, 4);
+        var dataPointRadius = Math.Max(lineStrokeWidth / 2 + 2, 3);
         var dataPointHoverRadius = dataPointRadius + 2;
         var dataPointStroke = 2d;
 
@@ -127,12 +124,12 @@ else
         if (HoveredDataPointPath is null)
             return;
 
-        int seq = 0;
+        var seq = 0;
 
         var seriesIndex = HoveredDataPointPath.Index;
         var color = ChartOptions!.ChartPalette?.Length > 0
-                ? ChartOptions.ChartPalette.GetValue(seriesIndex % ChartOptions.ChartPalette.Length)?.ToString() ?? string.Empty
-                : string.Empty;
+                        ? ChartOptions.ChartPalette.GetValue(seriesIndex % ChartOptions.ChartPalette.Length)?.ToString() ?? string.Empty
+                        : string.Empty;
 
         var (tooltipX, tooltipY) = TooltipPositionFunc?.Invoke(HoveredDataPointPath) is { } pos
             ? (pos.X, pos.Y)
