@@ -9,12 +9,9 @@ using MudBlazor.Docs.Services.Notifications;
 
 namespace MudBlazor.Docs.Shared;
 
-/// <summary>
-/// Code-behind for the AppbarButtons component, handling UI logic for theme and layout toggles, and notifications.
-/// </summary>
-public partial class AppbarButtons : IDisposable
+public partial class AppbarButtons
 {
-    private IDictionary<NotificationMessage, bool> _messages = new Dictionary<NotificationMessage, bool>();
+    private IDictionary<NotificationMessage, bool> _messages = null;
     private bool _newNotificationsAvailable;
 
     [Inject]
@@ -22,6 +19,7 @@ public partial class AppbarButtons : IDisposable
 
     [Inject]
     private LayoutService LayoutService { get; set; } = null!;
+
 
     /// <summary>
     /// Gets the text for the RTL toggle button, indicating the next state.
@@ -59,28 +57,15 @@ public partial class AppbarButtons : IDisposable
         _newNotificationsAvailable = false;
     }
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        await LoadNotificationsAsync();
-        LayoutService.MajorUpdateOccurred += OnMajorLayoutUpdateOccurred;
-        await base.OnInitializedAsync();
-    }
+        if (firstRender)
+        {
+            _newNotificationsAvailable = await NotificationService.AreNewNotificationsAvailable();
+            _messages = await NotificationService.GetNotifications();
+            StateHasChanged();
+        }
 
-    private async Task LoadNotificationsAsync()
-    {
-        _newNotificationsAvailable = await NotificationService.AreNewNotificationsAvailable();
-        _messages = await NotificationService.GetNotifications();
-    }
-
-    private void OnMajorLayoutUpdateOccurred(object sender, EventArgs e)
-    {
-        InvokeAsync(StateHasChanged);
-    }
-
-    // It's good practice to unsubscribe from events to prevent memory leaks.
-    public void Dispose()
-    {
-        LayoutService.MajorUpdateOccurred -= OnMajorLayoutUpdateOccurred;
-        GC.SuppressFinalize(this);
+        await base.OnAfterRenderAsync(firstRender);
     }
 }
