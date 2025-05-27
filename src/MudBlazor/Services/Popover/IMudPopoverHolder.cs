@@ -43,7 +43,6 @@ public interface IMudPopoverHolder
     /// <summary>
     /// Gets the inline styles of the popover.
     /// </summary>
-    [Obsolete("For better maintainability, use the Class property with CSS for styling.")]
     string? Style { get; }
 
     /// <summary>
