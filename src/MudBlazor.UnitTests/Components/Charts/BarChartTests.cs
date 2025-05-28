@@ -93,13 +93,13 @@ namespace MudBlazor.UnitTests.Charts
             if (chartSeries.TryGetIndexOfDataValue(0, 40, out var index))
             {
                 bars[index].OuterHtml.Should()
-                    .Contain("d=\"M 34 261 L 34 143\"");
+                    .Contain("d=\"M 34 270.8333 L 34 172.5\"");
             }
 
             if (chartSeries.TryGetIndexOfDataValue(0, 80, out index))
             {
                 bars[index].OuterHtml.Should()
-                    .Contain("d=\"M 569.5 261 L 569.5 25\"");
+                    .Contain("d=\"M 569.5 270.8333 L 569.5 74.1667\"");
             }
 
             comp.SetParametersAndRender(parameters => parameters
@@ -151,13 +151,13 @@ namespace MudBlazor.UnitTests.Charts
             if (chartSeries.TryGetIndexOfDataValue(0, 40, out var index))
             {
                 bars[index].OuterHtml.Should()
-                    .Contain("d=\"M 33 261 L 33 143\"");
+                    .Contain("d=\"M 33 270.8333 L 33 172.5\"");
             }
 
             if (chartSeries.TryGetIndexOfDataValue(0, 80, out index))
             {
                 bars[index].OuterHtml.Should()
-                    .Contain("d=\"M 575.7859 261 L 575.7859 25\"");
+                    .Contain("d=\"M 575.7859 270.8333 L 575.7859 74.1667\"");
             }
 
             comp.SetParametersAndRender(parameters => parameters.Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _modifiedPalette }));
