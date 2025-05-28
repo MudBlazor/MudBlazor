@@ -18,7 +18,7 @@
                      Margin="@Margin"
                      Required="@Required"
                      ForId="@InputElementId"
-                     @onclick="() => HandleClick()">
+                     @onclick="HandleClick">
         <InputContent>
             <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
                 @if (_mask == null)
