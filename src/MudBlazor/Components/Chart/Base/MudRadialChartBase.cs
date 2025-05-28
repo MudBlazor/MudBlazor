@@ -39,7 +39,7 @@ public abstract class MudRadialChartBase<TOptions> : MudChartBase<TOptions>, IDi
     internal SvgPath? _hoveredSegment;
 
     protected HashSet<int> HiddenIndices { get; set; } = [];
-    protected double CalculatedRadius => Math.Round(Math.Min(_boundWidth, _boundHeight) / 2);
+    protected double Radius => Math.Round(Math.Min(_boundWidth, _boundHeight) / 2);
 
     [DynamicDependency(nameof(OnElementSizeChanged))]
     [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(ElementSize))]

@@ -60,15 +60,15 @@ namespace MudBlazor.Charts
                 var pathStringBuilder = new StringBuilder();
 
                 // Calculate inner radius with a hole.
-                var innerRadius = CalculatedRadius * (1 - donutRadiusRatio);
+                var innerRadius = Radius * (1 - donutRadiusRatio);
 
                 // Outer coordinates
-                var outerStartX = startx * CalculatedRadius;
-                var outerStartY = starty * CalculatedRadius;
-                var outerMidX = midx * CalculatedRadius;
-                var outerMidY = midy * CalculatedRadius;
-                var outerEndX = endx * CalculatedRadius;
-                var outerEndY = endy * CalculatedRadius;
+                var outerStartX = startx * Radius;
+                var outerStartY = starty * Radius;
+                var outerMidX = midx * Radius;
+                var outerMidY = midy * Radius;
+                var outerEndX = endx * Radius;
+                var outerEndY = endy * Radius;
 
                 // Inner coordinates (for the hole)
                 var innerStartX = startx * innerRadius;
@@ -82,9 +82,9 @@ namespace MudBlazor.Charts
                 pathStringBuilder.Append($"M {ToS(outerStartX)} {ToS(outerStartY)} "); // Move to the start point
                 if (data >= 1)
                 {
-                    pathStringBuilder.Append($"A {ToS(CalculatedRadius)} {ToS(CalculatedRadius)} 0 {ToS(largeArcFlag)} 1 {ToS(outerMidX)} {ToS(outerMidY)} "); // Add an arc to a mid point half way through the slice (outer) to support 100% donuts
+                    pathStringBuilder.Append($"A {ToS(Radius)} {ToS(Radius)} 0 {ToS(largeArcFlag)} 1 {ToS(outerMidX)} {ToS(outerMidY)} "); // Add an arc to a mid point half way through the slice (outer) to support 100% donuts
                 }
-                pathStringBuilder.Append($"A {ToS(CalculatedRadius)} {ToS(CalculatedRadius)} 0 {ToS(largeArcFlag)} 1 {ToS(outerEndX)} {ToS(outerEndY)} "); // Add an arc to the end point (outer)
+                pathStringBuilder.Append($"A {ToS(Radius)} {ToS(Radius)} 0 {ToS(largeArcFlag)} 1 {ToS(outerEndX)} {ToS(outerEndY)} "); // Add an arc to the end point (outer)
                 pathStringBuilder.Append($"L {ToS(innerEndX)} {ToS(innerEndY)} "); // Line to the end point of the inner arc
                 if (data >= 1)
                 {
@@ -101,7 +101,7 @@ namespace MudBlazor.Charts
 
                 // Calculate the midpoint angle
                 var midAngle = cumulativeRadians - Math.PI * data;
-                var midRadius = CalculatedRadius * (1 - donutRadiusRatio / 2);
+                var midRadius = Radius * (1 - donutRadiusRatio / 2);
 
                 var midX = 0d;
                 var midY = 0d;
