@@ -239,7 +239,7 @@ namespace MudBlazor
 
         private async Task HandleClick()
         {
-            await JsRuntime.InvokeVoidAsync("focusInput", InputElementId);
+            await JsRuntime.InvokeVoidAsync("mudInput.focusInput", InputElementId);
         }
     }
 }
