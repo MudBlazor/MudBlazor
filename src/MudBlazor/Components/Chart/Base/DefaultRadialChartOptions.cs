@@ -10,7 +10,10 @@ public abstract class DefaultRadialChartOptions : DefaultChartOptions, IRadialCh
     /// <summary>
     /// The aggregation option to use for charts with multiple data sets.
     /// </summary>
-    public virtual AggregationOption AggregationOption { get; set; }
+    /// <remarks>
+    /// Defaults to <see cref="AggregationOption.GroupByLabel"/>
+    /// </remarks>
+    public virtual AggregationOption AggregationOption { get; set; } = AggregationOption.GroupByLabel;
 
     /// <summary>
     /// Show the series value as a percentage of the total.
