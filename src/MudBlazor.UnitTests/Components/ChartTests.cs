@@ -38,9 +38,9 @@ namespace MudBlazor.UnitTests.Components
             // print the generated html
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: -1");
             // now click something and see that the selected index changes:
-            comp.FindAll("circle.mud-chart-serie")[0].Click();
+            comp.FindAll("path.mud-chart-serie")[0].Click();
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: 0");
-            comp.FindAll("circle.mud-chart-serie")[3].Click();
+            comp.FindAll("path.mud-chart-serie")[3].Click();
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: 3");
         }
 
@@ -63,9 +63,18 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<BarChartSelectionTest>();
             // print the generated html
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: -1");
+
+            //check tooltip
+            comp.FindAll("path.mud-chart-bar")[0].MouseOver();
+            comp.Find("tspan").InnerHtml.Trim().Should().Be("40");
+
             // now click something and see that the selected index changes:
             comp.FindAll("path.mud-chart-bar")[0].Click();
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: 0");
+
+            comp.FindAll("path.mud-chart-bar")[10].MouseOver();
+            comp.Find("tspan").InnerHtml.Trim().Should().Be("24");
+
             comp.FindAll("path.mud-chart-bar")[10].Click();
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: 1");
         }
@@ -571,5 +580,57 @@ namespace MudBlazor.UnitTests.Components
             heatMap.Instance._legendPosition.Should().BeOneOf(Position.Top, Position.Bottom, Position.Left, Position.Right);
         }
 
+        [TestCase(null, null)]
+        [TestCase(0, 100)]
+        [TestCase(0, .95)]
+        public void HeatMap_Override_Min_Max(double? min, double? max)
+        {
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.HeatMap)
+                .Add(p => p.ChartSeries, new List<ChartSeries>
+                {
+                    new() { Name = "Series 1", Data = [-0.5, .5, .98] }
+                })
+                .Add(p => p.ChildContent, (RenderFragment)(builder =>
+                {
+                    builder.OpenComponent<MudHeatMapCell>(0);
+                    builder.AddAttribute(1, "Row", 0);
+                    builder.AddAttribute(2, "Column", 0);
+                    builder.AddAttribute(3, "MinValue", min);
+                    builder.AddAttribute(4, "MaxValue", max);
+                    builder.CloseComponent();
+                }))
+            );
+            var heatmap = comp.FindComponent<HeatMap>();
+            heatmap.Instance._minValue.Should().Be(min.HasValue ? min : -0.5);
+            heatmap.Instance._maxValue.Should().Be(max.HasValue ? max : .98);
+        }
+
+        [TestCase(ChartType.Donut)]
+        [TestCase(ChartType.Line)]
+        [TestCase(ChartType.Pie)]
+        [TestCase(ChartType.Bar)]
+        [TestCase(ChartType.StackedBar)]
+        [TestCase(ChartType.HeatMap)]
+        [Test]
+        public void NoLabel_Chart_IsValid(ChartType chart)
+        {
+            var series = new List<ChartSeries>()
+            {
+                new() { Name = "Series 1", Data = [90, 79, 72, 69, 62, 62, 55, 65, 70] },
+                new() { Name = "Series 2", Data = [10, 41, 35, 51, 49, 62, 69, 91, 148] },
+            };
+
+            double[] data = { 50, 25, 20, 5, 16, 14, 8, 4, 2, 8, 10, 19, 8, 17, 6, 11, 19, 24, 35, 13, 20, 12 };
+
+            var isRadial = chart == ChartType.Donut || chart == ChartType.Pie;
+
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+                              .Add(p => p.ChartType, chart)
+                              .Add(p => p.ChartOptions, new ChartOptions { InterpolationOption = InterpolationOption.Periodic })
+                              .Add(p => p.ChartSeries, !isRadial ? series : null)
+                              .Add(p => p.InputData, isRadial ? data : null));
+
+        }
     }
 }

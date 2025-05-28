@@ -1,0 +1,69 @@
+﻿@if (SortKeys is null && SortComparer is null)
+{
+    @if (SortDirection.HasValue)
+    {
+        @* default case - sorting by label text *@
+        <MudTabs SortDirection="@SortDirection.Value">
+            <MudTabPanel Text="2"></MudTabPanel>
+            <MudTabPanel Text="1"></MudTabPanel>
+            <MudTabPanel Text="3"></MudTabPanel>
+        </MudTabs>
+    }
+    else
+    {
+        @* default case - natural order when unspecified *@
+        <MudTabs>
+            <MudTabPanel Text="2"></MudTabPanel>
+            <MudTabPanel Text="1"></MudTabPanel>
+            <MudTabPanel Text="3"></MudTabPanel>
+        </MudTabs>
+    }
+}
+else if (SortKeys is not null)
+{
+    @if (SortDirection.HasValue)
+    {
+        @* default case - sorting by label text *@
+        <MudTabs SortDirection="@SortDirection.Value">
+            <MudTabPanel SortKey="@SortKeys[0]" Text="2"></MudTabPanel>
+            <MudTabPanel SortKey="@SortKeys[1]" Text="1"></MudTabPanel>
+            <MudTabPanel SortKey="@SortKeys[2]" Text="3"></MudTabPanel>
+            <MudTabPanel Text="4"></MudTabPanel>
+        </MudTabs>
+    }
+    else
+    {
+        @* default case - natural order when unspecified *@
+        <MudTabs>
+            <MudTabPanel SortKey="@SortKeys[0]" Text="2"></MudTabPanel>
+            <MudTabPanel SortKey="@SortKeys[1]" Text="1"></MudTabPanel>
+            <MudTabPanel SortKey="@SortKeys[2]" Text="3"></MudTabPanel>
+            <MudTabPanel Text="4"></MudTabPanel>
+        </MudTabs>
+    }
+}
+else if (SortComparer is not null)
+{
+    <MudTabs SortDirection="MudBlazor.SortDirection.Descending" SortComparer="SortComparer">
+        <MudTabPanel Tag="@( "Y" )" SortKey="3" Text="Apple"></MudTabPanel>
+        <MudTabPanel Tag="@( "Z" )" SortKey="2" Text="Banana"></MudTabPanel>
+        <MudTabPanel Tag="@( "X" )" SortKey="1" Text="Cherry"></MudTabPanel>
+    </MudTabs>
+}
+
+@code {
+    [Parameter]
+    public SortDirection? SortDirection { get; set; }
+
+    [Parameter]
+    public string[]? SortKeys { get; set; }
+
+    [Parameter]
+    public IComparer<MudTabPanel>? SortComparer { get; set; }
+
+    public class TestComparer : IComparer<MudTabPanel>
+    {
+        public int Compare(MudTabPanel? x, MudTabPanel? y)
+            => Comparer<string>.Default.Compare(x?.Tag as string, y?.Tag as string);
+    }
+}

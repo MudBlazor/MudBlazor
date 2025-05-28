@@ -1,6 +1,7 @@
 
 .mud-progress-circular {
   display: inline-block;
+  position: relative;
   color: var(--mud-palette-text-secondary);
 
   &.mud-progress-indeterminate {
@@ -31,6 +32,21 @@
 .mud-progress-circular-svg {
   display: block;
   transform: rotate(-90deg);
+}
+
+.mud-progress-circular-indeterminate-child {
+  animation: mud-progress-circular-keyframes-circular-rotate 1.4s linear reverse infinite;
+}
+
+.mud-progress-circular-percentage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .mud-progress-circular-circle {

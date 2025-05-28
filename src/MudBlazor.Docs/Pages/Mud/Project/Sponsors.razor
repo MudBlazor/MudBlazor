@@ -1,9 +1,9 @@
 ﻿@page "/mud/project/sponsor"
 
 <DocsPage DisplayFooter="true">
-    <DocsPageHeader Title="Sponsors & Backers" SubTitle="The continued development and maintenance of MudBlazor is secured by our sponsors" />
+    <DocsPageHeader Title="Sponsors & Backers" SubTitle="The continued development and maintenance of MudBlazor is secured by our sponsors"/>
     <DocsPageContent>
-        
+
         <DocsPageSection>
             <SectionHeader Title="Sponsor">
                 <Description>
@@ -13,18 +13,31 @@
                 </Description>
             </SectionHeader>
             
-            <MudButton DropShadow="false" StartIcon="@Icons.Custom.Brands.GitHub" Variant="Variant.Filled" Size="Size.Large" Class="docs-no-text-transform" Href="https://github.com/sponsors/MudBlazor" Target="_blank">Sponsor on GitHub</MudButton>
-            <MudButton DropShadow="false" StartIcon="@Icons.Material.Filled.DataUsage" IconColor="Color.Info" Size="Size.Large" Variant="Variant.Filled" Class="docs-no-text-transform mx-2" Href="https://opencollective.com/mudblazor" Target="_blank">Sponsor on Open Collective</MudButton>
-            
             <SectionSubGroups>
-                
+                <DocsPageSection>
+                    <SectionHeader Title="Become a sponsor">
+                        <Description>
+                            <MudButton DropShadow="false" StartIcon="@Icons.Material.Filled.DataUsage" IconColor="Color.Info" Size="Size.Large" Variant="Variant.Filled" Class="docs-no-text-transform" Href="https://opencollective.com/mudblazor" Target="_blank">Sponsor on Open Collective</MudButton>
+                        </Description>
+                    </SectionHeader>
+                </DocsPageSection>
+
+                <DocsPageSection>
+                    <SectionHeader Title="Sponsor Individuals">
+                        <Description>
+                            This is a great way to directly support the developers behind the library and recognize their ongoing efforts in maintaining and improving the project.<br/>
+                            Check the <MudLink Href="/mud/project/team">Team & Contributors</MudLink> page for individual sponsorship options.<br/>
+                        </Description>
+                    </SectionHeader>
+                </DocsPageSection>
+
                 <DocsPageSection>
                     <SectionHeader Title="What we do">
                         <Description>
                             <div class="d-flex flex-column px-2">
                                 <MudBadge Class="mt-1" Color="Color.Primary" Dot="true" Origin="Origin.CenterLeft">
                                     <div class="pl-4 docs-line-height-normal">
-                                       Oversee the library as a whole
+                                        Oversee the library as a whole
                                     </div>
                                 </MudBadge>
                                 <MudBadge Class="mt-1" Color="Color.Primary" Dot="true" Origin="Origin.CenterLeft">
@@ -59,7 +72,7 @@
                                 </MudBadge>
                                 <MudBadge Class="mt-1" Color="Color.Primary" Dot="true" Origin="Origin.CenterLeft">
                                     <div class="pl-4 docs-line-height-normal">
-                                       Manage Issues/Feature Requests/Discussions/Pull Requests/Reviews on GitHub
+                                        Manage Issues/Feature Requests/Discussions/Pull Requests/Reviews on GitHub
                                     </div>
                                 </MudBadge>
                                 <MudBadge Class="mt-1" Color="Color.Primary" Dot="true" Origin="Origin.CenterLeft">
@@ -76,51 +89,30 @@
                         </Description>
                     </SectionHeader>
                 </DocsPageSection>
-                
 
                 <DocsPageSection>
-                    <SectionHeader Title="Where does the money go?">
+                    <SectionHeader Title="What's the difference between sponsoring via Open Collective and GitHub?">
                         <Description>
-                            All funds are going to <CodeInline>Gardnet AB</CodeInline> which is a Swedish company owned by <MudLink Href="https://github.com/Garderoben">Garderoben</MudLink>, the creator of MudBlazor.<br/><br/>
-                            <CodeInline>Gardnet AB</CodeInline> is using the funds to:
-                            <div class="d-flex flex-column px-2">
-                                <MudBadge Class="mt-1" Color="Color.Primary" Dot="true" Origin="Origin.CenterLeft">
-                                    <div class="pl-4 docs-line-height-normal">
-                                        Secure MudBlazor's future as the best choice out there.
-                                    </div>
-                                </MudBadge>
-                                <MudBadge Class="mt-1" Color="Color.Primary" Dot="true" Origin="Origin.CenterLeft">
-                                    <div class="pl-4 docs-line-height-normal">
-                                        Cover expenses related to development of MudBlazor, e.g., domain names, certificates, hosting and licenses.
-                                    </div>
-                                </MudBadge>
-                            </div>
-                        </Description>
-                    </SectionHeader>
-                </DocsPageSection>
-
-                <DocsPageSection>
-                    <SectionHeader Title="What's the difference between GitHub and OpenCollective?">
-                        <Description>
-                            Funds received via <b>GitHub</b>, directly go to <CodeInline>Gardnet AB</CodeInline> and the core team's mission. The company is a profit entity with one goal, to secure MudBlazor's future.<br/><br/>
                             Funds received via <b>Open Collective</b> are managed transparently and aimed to sustain MudBlazor and its needs.<br/>
-                            As a <MudTooltip Color="Color.Dark" Placement="Placement.Top">
-                                     <ChildContent>
-                                         <MudText Class="docs-text-dec">Fiscal Host</MudText>
-                                     </ChildContent>
-                                     <TooltipContent>
-                                         A Fiscal Host is an entity that holds the money on<br/>
-                                         behalf of a Collective and takes care of<br/>
-                                         accounting, taxes, and invoices.
-                                     </TooltipContent>
-                                 </MudTooltip>, all funds are kept there until we submit an expense.
+                            As a
+                            <MudTooltip Color="Color.Dark" Placement="Placement.Top">
+                                <ChildContent>
+                                    <MudText Class="docs-text-dec">Fiscal Host</MudText>
+                                </ChildContent>
+                                <TooltipContent>
+                                    A Fiscal Host is an entity that holds the money on<br/>
+                                    behalf of a Collective and takes care of<br/>
+                                    accounting, taxes, and invoices.
+                                </TooltipContent>
+                            </MudTooltip>, all funds are kept there until we submit an expense.<br/><br/>
+                            Funds received via <b>GitHub</b>, directly go to <CodeInline>Gardnet AB</CodeInline> which is a Swedish company owned by <MudLink Href="https://github.com/Garderoben">Garderoben</MudLink>, the creator of MudBlazor. The company is a profit entity with one goal, to secure MudBlazor's future.
                         </Description>
                     </SectionHeader>
                 </DocsPageSection>
 
             </SectionSubGroups>
         </DocsPageSection>
-        
+
         <DocsPageSection>
             <SectionHeader Title="MudBlazor Sponsors"></SectionHeader>
             <SectionSubGroups>
@@ -132,7 +124,10 @@
                             <Sponsor Name="Adaris" Image="Adaris_color.png" Website="https://www.adaris.ch/"/>
                         </MudItem>
                         <MudItem xs="6" md="3">
-                            <Sponsor Name="Balesio" Image="Balesio_color.png" Website="https://blazor-agentur.ch/agency.html" />
+                            <Sponsor Name="Balesio" Image="Balesio_color.png" Website="https://blazor-agentur.ch/agency.html"/>
+                        </MudItem>
+                        <MudItem xs="6" md="3">
+                            <Sponsor Name="Blackhawk" Image="blackhawk_color.png" Website="https://blackhawk.io/"/>
                         </MudItem>
                         <MudItem xs="6" md="3">
                             <Sponsor Name="Timewarp" Image="Timewarp_color.png" Website="https://timewarp.at/"/>

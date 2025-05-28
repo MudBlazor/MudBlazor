@@ -1,7 +1,5 @@
 ﻿<div class="d-flex align-center flex-grow-1 d-md-none">
-    <MudTooltip Text="Drawer">
-        <MudIconButton OnClick="DrawerToggleCallback" Icon="@Icons.Material.Rounded.Notes" Color="Color.Inherit" Edge="Edge.Start" aria-label="Open drawer" />
-    </MudTooltip>
+    <MudIconButton OnClick="DrawerToggleCallback" Icon="@Icons.Material.Rounded.Notes" Color="Color.Inherit" Edge="Edge.Start" aria-label="Toggle drawer" />
     <MudSpacer />
     <NavLink ActiveClass="d-flex align-center" href="/">
         <MudBlazorLogo Class="docs-mudblazor-logo" />
@@ -92,7 +90,8 @@
         <MudAutocomplete @ref="_searchAutocomplete" T="ApiLinkServiceEntry" PopoverClass="docs-mobile-dialog-search-popover" DropdownSettings="@_dropdownBehavior"
                          AutoFocus="true" Placeholder="Search" Clearable="true" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search"
                          SearchFunc="async (text, token) => await Search(text, token)" DebounceInterval="0"
-                         ValueChanged="OnSearchResult" OpenChanged="o => _searchDialogAutocompleteOpen = o" ReturnedItemsCountChanged="c => _searchDialogReturnedItemsCount = c">
+                         ValueChanged="OnSearchResult" OpenChanged="o => _searchDialogAutocompleteOpen = o" ReturnedItemsCountChanged="c => _searchDialogReturnedItemsCount = c"
+                         Modal="false">
             <ItemTemplate Context="result">
                 <MudText>@result.Title</MudText> <MudText Typo="Typo.body2">@result.SubTitle</MudText>
             </ItemTemplate>

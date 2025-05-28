@@ -31,6 +31,12 @@ namespace MudBlazor
         public MudDataGrid<T> DataGrid { get; set; }
 
         /// <summary>
+        /// Whether the display should be right to left
+        /// </summary>
+        [CascadingParameter(Name = "RightToLeft")]
+        public bool RightToLeft { get; set; }
+
+        /// <summary>
         /// Shows this cell only in the header area.
         /// </summary>
         /// <remarks>
@@ -109,6 +115,10 @@ namespace MudBlazor
 
 
         #region Computed Properties and Functions
+
+        private bool Expanded => Column?.DataGrid._openHierarchies.Count > 1;
+
+        internal bool IncludeHierarchyToggle => Column?.HeaderClass?.Contains("mud-header-togglehierarchy") ?? false;
 
         private string computedTitle
         {
@@ -243,6 +253,28 @@ namespace MudBlazor
 
         #region Events
 
+        internal async Task ToggleHierarchyAsync()
+        {
+            if (DataGrid is null)
+            {
+                return;
+            }
+
+            if (Expanded)
+            {
+                await DataGrid.CollapseAllHierarchy();
+            }
+            else
+            {
+                await DataGrid.ExpandAllHierarchy();
+            }
+        }
+
+        internal string GetGroupIcon()
+        {
+            return DataGrid?.GetGroupIcon(Expanded, RightToLeft) ?? string.Empty;
+        }
+
         /// <summary>
         /// This is triggered by the DataGrid when a sort is applied
         /// e.g. from another HeaderCell.
@@ -356,7 +388,7 @@ namespace MudBlazor
 
             DataGrid.DropContainerHasChanged();
 
-            if (args.CtrlKey && DataGrid.SortMode == SortMode.Multiple)
+            if ((args.MetaKey || args.CtrlKey) && DataGrid.SortMode == SortMode.Multiple)
                 await InvokeAsync(() => DataGrid.ExtendSortAsync(Column.PropertyName, SortDirection, Column.GetLocalSortFunc(), Column.Comparer));
             else
                 await InvokeAsync(() => DataGrid.SetSortAsync(Column.PropertyName, SortDirection, Column.GetLocalSortFunc(), Column.Comparer));
@@ -506,8 +538,9 @@ namespace MudBlazor
             if (Column is not null)
             {
                 await Column.SetGroupingAsync(true);
+                await DataGrid.UpdateGroupingOrder(Column, true);
             }
-
+            DataGrid.GroupItems();
             DataGrid.DropContainerHasChanged();
         }
 
@@ -516,8 +549,9 @@ namespace MudBlazor
             if (Column is not null)
             {
                 await Column.SetGroupingAsync(false);
+                await DataGrid.UpdateGroupingOrder(Column, false);
             }
-
+            DataGrid.GroupItems();
             DataGrid.DropContainerHasChanged();
         }
 

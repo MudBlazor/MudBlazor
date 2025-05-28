@@ -3,10 +3,9 @@
 <DocsPage>
     <DocsPageHeader Title="Menus" Component="@nameof(MudMenu)">
         <Description>
-            <MudAlert Class="mt-4" Severity="Severity.Warning">
-                Note: Blazor static rendering is not supported.
-                <MudLink Href="/getting-started/installation#manual-install-add-components" Target="_blank">See install guide for more info</MudLink>.
-            </MudAlert>
+            Use menus to show items in a scannable way.
+            Make menus easy to open, close, and select.
+            Menus can open from a variety of components, including icon buttons and text fields.
         </Description>
     </DocsPageHeader>
     <DocsPageContent>
@@ -188,6 +187,18 @@
                     </SectionHeader>
                     <SectionContent Code="@nameof(MenuAdvancedPopoverExample)" ShowCode="false">
                         <MenuAdvancedPopoverExample />
+                    </SectionContent>
+                </DocsPageSection>
+
+                <DocsPageSection>
+                    <SectionHeader Title="Modal vs Non-modal">
+                        <Description>
+                            By default, the menu is modal, meaning that you cannot interact with other elements while it is open.
+                            To allow interactions with other elements, set the <CodeInline>Modal</CodeInline> property to <CodeInline>false</CodeInline>.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(MenuModalExample)" ShowCode="false">
+                        <MenuModalExample />
                     </SectionContent>
                 </DocsPageSection>
 

@@ -120,7 +120,7 @@ namespace MudBlazor
         public YAxisLabelPosition YAxisLabelPosition { get; set; } = YAxisLabelPosition.Left;
 
         /// <summary>
-        /// Enables tooltips for values in a <see cref="ChartType.HeatMap"/>
+        /// Enables tooltips for values
         /// Defaults to true
         /// </summary>
         public bool ShowToolTips { get; set; } = true;
@@ -143,5 +143,7 @@ namespace MudBlazor
         /// Defaults to "F2"
         /// </summary>
         public string ValueFormatString { get; set; } = "F2";
+
+        public string DefaultDataMarkerTooltipTitleFormat { get; set; } = "{{Y_VALUE}} - {{X_VALUE}}";
     }
 }

@@ -957,5 +957,116 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll(".mud-input-clear-button").Count.Should().Be(0);
 
         }
+
+        [Test]
+        public async Task MetaKeyShortcuts_Should_NotIntroduceExtraCharacters()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>();
+            comp.SetParam(x => x.Mask, RegexMask.Email());
+            var tf = comp.Instance;
+            var maskField = comp.FindComponent<MudMask>().Instance;
+
+            // prep field
+            await comp.InvokeAsync(() => maskField.OnFocused(new FocusEventArgs()));
+            await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs()
+            {
+                Key = "a"
+            }));
+            comp.WaitForAssertion(() => maskField.Text.Should().Be("a"));
+            comp.WaitForAssertion(() => tf.Value.Should().Be("a"));
+            await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs()
+            {
+                Key = "b"
+            }));
+            comp.WaitForAssertion(() => maskField.Text.Should().Be("ab"));
+            comp.WaitForAssertion(() => tf.Value.Should().Be("ab"));
+            await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs()
+            {
+                Key = "c"
+            }));
+            comp.WaitForAssertion(() => maskField.Text.Should().Be("abc"));
+            comp.WaitForAssertion(() => tf.Value.Should().Be("abc"));
+
+            // test common shortcuts
+            await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs()
+            {
+                Key = "c",
+                MetaKey = true
+            }));
+            comp.WaitForAssertion(() => maskField.Text.Should().Be("abc"));
+            comp.WaitForAssertion(() => tf.Value.Should().Be("abc"));
+            await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs()
+            {
+                Key = "v",
+                MetaKey = true
+            }));
+            comp.WaitForAssertion(() => maskField.Text.Should().Be("abc"));
+            comp.WaitForAssertion(() => tf.Value.Should().Be("abc"));
+            await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs()
+            {
+                Key = "x",
+                MetaKey = true
+            }));
+            comp.WaitForAssertion(() => maskField.Text.Should().Be("abc"));
+            comp.WaitForAssertion(() => tf.Value.Should().Be("abc"));
+        }
+
+        [Test]
+        public async Task CutShortcut_Should_ClearSelectionAndCopyItToClipboard()
+        {
+            var comp = Context.RenderComponent<MudTextField<string>>();
+            comp.SetParam(x => x.Mask, RegexMask.Email());
+            var tf = comp.Instance;
+            var maskField = comp.FindComponent<MudMask>().Instance;
+
+            // prep field
+            await comp.InvokeAsync(() => maskField.OnFocused(new FocusEventArgs()));
+            await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs()
+            {
+                Key = "a"
+            }));
+            comp.WaitForAssertion(() => maskField.Text.Should().Be("a"));
+            comp.WaitForAssertion(() => tf.Value.Should().Be("a"));
+            await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs()
+            {
+                Key = "b"
+            }));
+            comp.WaitForAssertion(() => maskField.Text.Should().Be("ab"));
+            comp.WaitForAssertion(() => tf.Value.Should().Be("ab"));
+            await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs()
+            {
+                Key = "c"
+            }));
+            comp.WaitForAssertion(() => maskField.Text.Should().Be("abc"));
+            comp.WaitForAssertion(() => tf.Value.Should().Be("abc"));
+
+            // select middle character ('b') and cut it
+            await comp.InvokeAsync(() =>
+            {
+                maskField.OnSelect(1, 2);
+                comp.Find("input").CutAsync(new ClipboardEventArgs
+                {
+                    Type = "cut"
+                });
+            });
+            comp.WaitForAssertion(() => maskField.Text.Should().Be("ac"));
+            comp.WaitForAssertion(() => tf.Value.Should().Be("ac"));
+            Context.JSInterop.VerifyInvoke("mudWindow.copyToClipboard", 1);
+            Context.JSInterop.Invocations["mudWindow.copyToClipboard"].Single().Arguments.Should().BeEquivalentTo(["b"]);
+
+            // select last character ('c') and cut it
+            await comp.InvokeAsync(() =>
+            {
+                maskField.OnSelect(1, 2);
+                comp.Find("input").CutAsync(new ClipboardEventArgs
+                {
+                    Type = "cut"
+                });
+            });
+            comp.WaitForAssertion(() => maskField.Text.Should().Be("a"));
+            comp.WaitForAssertion(() => tf.Value.Should().Be("a"));
+            Context.JSInterop.VerifyInvoke("mudWindow.copyToClipboard", 2);
+            Context.JSInterop.Invocations["mudWindow.copyToClipboard"][1].Arguments.Should().BeEquivalentTo(["c"]);
+        }
     }
 }

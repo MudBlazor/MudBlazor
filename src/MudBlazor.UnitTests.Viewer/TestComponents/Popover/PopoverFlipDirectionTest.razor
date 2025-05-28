@@ -1,0 +1,115 @@
+﻿
+<MudStack Spacing="2">
+    <MudButton OnClick="OnExpandCollapseClick">@(_expanded ? "Collapse" : "Expand")</MudButton>
+    <MudButton OnClick="OnExpandCollapseFor5sClickAsync">@(_expanded ? "Collapse" : "Expand") for 5 s</MudButton>
+    <MudButton OnClick="OnExpandListIn5sAsync">Expand list in 5 s</MudButton>
+    <MudDivider />
+    <MudCollapse Expanded="_expanded">
+        <div style="@($"height: {_height}px")">
+            <MudNumericField T="int" @bind-Value="_height" Min="0" Label="Section height (in px)" />
+            <MudCheckBox T="bool" @bind-Value="_hideBottom" Label="Hide bottom section" />
+            <MudSelect T="Origin"
+                       Label="Anchor Origin"
+                       @bind-Value="@_anchor">
+                <MudSelectItem Value="@Origin.TopLeft">Top Left</MudSelectItem>
+                <MudSelectItem Value="@Origin.TopCenter">Top Center</MudSelectItem>
+                <MudSelectItem Value="@Origin.TopRight">Top Right</MudSelectItem>
+                <MudSelectItem Value="@Origin.BottomLeft">Bottom Left</MudSelectItem>
+                <MudSelectItem Value="@Origin.BottomCenter">Bottom Center</MudSelectItem>
+                <MudSelectItem Value="@Origin.BottomRight">Bottom Right</MudSelectItem>
+                <MudSelectItem Value="@Origin.CenterLeft">Center Left</MudSelectItem>
+                <MudSelectItem Value="@Origin.CenterCenter">Center Center</MudSelectItem>
+                <MudSelectItem Value="@Origin.CenterRight">Center Right</MudSelectItem>
+            </MudSelect>
+            <MudSelect T="Origin"
+                       Label="Transform Origin"
+                       @bind-Value="@_transform">
+                <MudSelectItem Value="@Origin.TopLeft">Top Left</MudSelectItem>
+                <MudSelectItem Value="@Origin.TopCenter">Top Center</MudSelectItem>
+                <MudSelectItem Value="@Origin.TopRight">Top Right</MudSelectItem>
+                <MudSelectItem Value="@Origin.BottomLeft">Bottom Left</MudSelectItem>
+                <MudSelectItem Value="@Origin.BottomCenter">Bottom Center</MudSelectItem>
+                <MudSelectItem Value="@Origin.BottomRight">Bottom Right</MudSelectItem>
+                <MudSelectItem Value="@Origin.CenterLeft">Center Left</MudSelectItem>
+                <MudSelectItem Value="@Origin.CenterCenter">Center Center</MudSelectItem>
+                <MudSelectItem Value="@Origin.CenterRight">Center Right</MudSelectItem>
+            </MudSelect>
+        </div>
+    </MudCollapse>
+    <MudMenu Label="Open Scrollable Menu" FullWidth="true" AnchorOrigin="_anchor" TransformOrigin="_transform" RelativeWidth="DropdownWidth.Adaptive"
+             DropdownSettings="_dropdownSettings">
+        <MudMenuItem Label="AAAAAAAAAAAAA Long" />
+        <MudMenuItem Label="AAAAAAAAAAAAA List" />
+        <MudMenuItem Label="AAAAAAAAAAAAA Is" />
+        <MudMenuItem Label="AAAAAAAAAAAAA To" />
+        <MudMenuItem Label="AAAAAAAAAAAAA Long" />
+        <MudMenuItem Label="AAAAAAAAAAAAA Lets" />
+        <MudMenuItem Label="AAAAAAAAAAAAA Limit" />
+        <MudMenuItem Label="AAAAAAAAAAAAA Height" />
+        @if (_expandList)
+        {
+            <MudMenuItem Label="List" />
+            <MudMenuItem Label="Is" />
+            <MudMenuItem Label="To" />
+            <MudMenuItem Label="Long" />
+            <MudMenuItem Label="Lets" />
+            <MudMenuItem Label="Limit" />
+            <MudMenuItem Label="Height" />
+            <MudMenuItem Label="Long" />
+            <MudMenuItem Label="Lets" />
+            <MudMenuItem Label="Limit" />
+            <MudMenuItem Label="Height" />
+            <MudMenuItem Label="List" />
+            <MudMenuItem Label="Is" />
+            <MudMenuItem Label="To" />
+            <MudMenuItem Label="Long" />
+            <MudMenuItem Label="Lets" />
+            <MudMenuItem Label="Limit" />
+            <MudMenuItem Label="Height" />
+        }
+    </MudMenu>
+    @if (!_hideBottom)
+    {
+        <MudButton OnClick="OnExpandCollapseClick">@(_expanded ? "Collapse" : "Expand")</MudButton>
+        <MudButton OnClick="OnExpandCollapseFor5sClickAsync">@(_expanded ? "Collapse" : "Expand") for 5 s</MudButton>
+        <MudDivider />
+        <MudCollapse Expanded="_expanded">
+            <div style="@($"height: {_heightBottom}px")">
+                <MudNumericField T="int" @bind-Value="_heightBottom" Min="0" Label="Section height (in px)" />
+            </div>
+        </MudCollapse>
+    }
+</MudStack>
+@code {
+    public static string __description__ = "Popover should take the best available space";
+
+    private bool _hideBottom;
+    private bool _expandList;
+    private bool _expanded = true;
+    private int _height = 600;
+    private int _heightBottom = 400;
+    private Origin _anchor = Origin.BottomLeft;
+    private Origin _transform = Origin.TopLeft;
+
+	private readonly DropdownSettings _dropdownSettings = new()
+    {
+		OverflowBehavior = OverflowBehavior.FlipAlways
+	};
+	
+	private void OnExpandCollapseClick() => _expanded = !_expanded;
+
+    private async Task OnExpandCollapseFor5sClickAsync()
+	{
+		var expanded = _expanded;
+        _expanded = !expanded;
+        await Task.Delay(5000);
+        _expanded = expanded;
+    }
+
+	private async Task OnExpandListIn5sAsync()
+	{
+		_expandList = false;
+		await Task.Delay(5000);
+		_expandList = true;
+	}
+}

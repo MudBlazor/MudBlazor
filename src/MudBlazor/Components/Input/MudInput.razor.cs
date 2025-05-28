@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using MudBlazor.Utilities;
@@ -16,6 +17,13 @@ namespace MudBlazor
         private string? _oldText = null;
         private bool _shouldInitAutoGrow;
         private ElementReference _elementReference1;
+        private readonly Lazy<DotNetObjectReference<MudInput<T>>> _dotNetReferenceLazy;
+
+        [DynamicDependency(nameof(CallOnBlurredAsync))]
+        public MudInput()
+        {
+            _dotNetReferenceLazy = new Lazy<DotNetObjectReference<MudInput<T>>>(DotNetObjectReference.Create(this));
+        }
 
         protected string Classname =>
             new CssBuilder(
@@ -38,6 +46,7 @@ namespace MudBlazor
                 .AddClass("mud-icon-button-edge-end", Adornment == Adornment.End && HideSpinButtons)
                 .AddClass("me-6", Adornment != Adornment.End && HideSpinButtons == false)
                 .AddClass("mud-icon-button-edge-margin-end", Adornment != Adornment.End && HideSpinButtons)
+                .AddClass("mud-no-activator")
                 .Build();
 
         internal override InputType GetInputType() => InputType;
@@ -330,6 +339,12 @@ namespace MudBlazor
                     _oldText = _internalText;
                 }
             }
+            if (firstRender)
+            {
+                // add onblur event through javascript which will trigger CallOnBlurredAsync
+                // must do in javascript or it won't detect ios Keyboard button - limitation of Blazor/React/other frameworks of the DOM
+                await ElementReference.MudAttachBlurEventWithJS(_dotNetReferenceLazy.Value);
+            }
 
             await base.OnAfterRenderAsync(firstRender);
         }
@@ -359,12 +374,31 @@ namespace MudBlazor
         /// <inheritdoc />
         protected override async ValueTask DisposeAsyncCore()
         {
-            if (AutoGrow && IsJSRuntimeAvailable)
+            if (IsJSRuntimeAvailable)
             {
-                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputAutoGrow.destroy", ElementReference);
+                await ElementReference.MudDetachBlurEventWithJS(_dotNetReferenceLazy.Value);
+                if (AutoGrow)
+                {
+                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputAutoGrow.destroy", ElementReference);
+                }
+            }
+
+            if (_dotNetReferenceLazy.IsValueCreated)
+            {
+                _dotNetReferenceLazy.Value.Dispose();
             }
 
             await base.DisposeAsyncCore();
+        }
+
+        [JSInvokable]
+        public async Task CallOnBlurredAsync()
+        {
+            // If onblurred already fired then cancel
+            if (!_isFocused)
+                return;
+
+            await OnBlurredAsync(new FocusEventArgs { Type = "jsBlur.OnBlur" });
         }
     }
 
