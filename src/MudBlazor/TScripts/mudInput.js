@@ -14,5 +14,9 @@ class MudInput {
 window.mudInput = new MudInput();
 
 window.focusInput = (elementId) => {
-    document.getElementById(elementId).focus();
+    const input = document.getElementById(elementId);
+    if (input && document.activeElement !== input) {
+        input.focus();
+        input.click();
+    } 
 };
