@@ -17,10 +17,10 @@
         {
             <path @onclick="() => OnPathClick.InvokeAsync(item.Index)"
                   class="mud-chart-serie"
-                  fill="@GetColor(item.Index)"
                   fill-opacity="@ChartOptions.FillOpacity"
                   stroke="@GetColor(item.Index)"
                   stroke-width="@(ChartOptions is IDataPointOptions dataPoint ? dataPoint.StrokeWidth : 0)"
+                  fill="@GetColor(item.Index)"
                   d="@item.Data"
                   pointer-events="@(ChartOptions is IDataPointOptions ? "none" : "all")"
                   @onmouseover="(e) => OnMouseOver.InvokeAsync((Args: e, Segment: item))"
