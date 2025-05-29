@@ -9,14 +9,6 @@ namespace MudBlazor;
 
 public class PieChartOptions : DefaultRadialChartOptions
 {
-    /// <summary>
-    /// The aggregation option to use for charts with multiple data sets.
-    /// </summary>
-    /// <remarks>
-    /// Defaults to <see cref="AggregationOption.GroupByLabel"/>
-    /// </remarks>
-    public override AggregationOption AggregationOption { get; set; } = AggregationOption.GroupByLabel;
-
     public static implicit operator PieChartOptions(ChartOptions options) => new()
     {
         ShowLegend = options.ShowLegend,

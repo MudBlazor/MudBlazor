@@ -38,4 +38,12 @@ public enum ChartType
     /// Data is displayed as a heatmap. Similar to how github works.
     /// </summary>
     HeatMap,
+    /// <summary>
+    /// Data is displayed as sectors of varying radii on a circular chart.
+    /// </summary>
+    Rose,
+    /// <summary>
+    /// Data is displayed on multiple axes originating from a central point.
+    /// </summary>
+    Radar,
 }

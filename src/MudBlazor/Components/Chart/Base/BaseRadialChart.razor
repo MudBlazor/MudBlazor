@@ -11,15 +11,26 @@
     <Filters />
 
     <g transform="translate(@Radius.ToS(), @Radius.ToS())">
+        @ChartGrid
+
         @foreach (var item in Paths)
         {
             <path @onclick="() => OnPathClick.InvokeAsync(item.Index)"
                   class="mud-chart-serie"
                   fill="@GetColor(item.Index)"
+                  fill-opacity="@ChartOptions.FillOpacity"
+                  stroke="@GetColor(item.Index)"
+                  stroke-width="@(ChartOptions is IDataPointOptions dataPoint ? dataPoint.StrokeWidth : 0)"
                   d="@item.Data"
+                  pointer-events="@(ChartOptions is IDataPointOptions ? "none" : "all")"
                   @onmouseover="(e) => OnMouseOver.InvokeAsync((Args: e, Segment: item))"
                   @onmouseout="() => OnMouseOut.InvokeAsync()">
             </path>
+
+            @if (item is SvgPolygon points)
+            {
+                @ChartDataPoints(points)
+            }
         }
     </g>
 

@@ -10,7 +10,18 @@ public abstract class DefaultRadialChartOptions : DefaultChartOptions, IRadialCh
     /// <summary>
     /// The aggregation option to use for charts with multiple data sets.
     /// </summary>
-    public virtual AggregationOption AggregationOption { get; set; }
+    /// <remarks>
+    /// Defaults to <see cref="AggregationOption.GroupByLabel"/>
+    /// </remarks>
+    public virtual AggregationOption AggregationOption { get; set; } = AggregationOption.GroupByLabel;
+
+    /// <summary>
+    /// Gets or sets the opacity level of the fill, where 0 represents fully transparent and 1 represents fully opaque.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to 1 (fully opaque).
+    /// </remarks>
+    public virtual double FillOpacity { get; set; } = 1;
 
     /// <summary>
     /// Show the series value as a percentage of the total.
