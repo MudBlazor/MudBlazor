@@ -54,6 +54,10 @@
     margin: auto;
   }
 
+  & .mud-chart-line path {
+    transition: 0.2s
+  }
+
   & .mud-chart-legend {
     display: flex;
     padding: 10px 0px;
@@ -87,6 +91,7 @@
     }
   }
 }
+
 
 .mud-charts-yaxis {
   fill: var(--mud-palette-text-primary);
