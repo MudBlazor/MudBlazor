@@ -9,12 +9,9 @@ using MudBlazor.Docs.Services.Notifications;
 
 namespace MudBlazor.Docs.Shared;
 
-/// <summary>
-/// Code-behind for the AppbarButtons component, handling UI logic for theme and layout toggles, and notifications.
-/// </summary>
-public partial class AppbarButtons : IDisposable
+public partial class AppbarButtons
 {
-    private IDictionary<NotificationMessage, bool> _messages = new Dictionary<NotificationMessage, bool>();
+    private IDictionary<NotificationMessage, bool> _messages = null;
     private bool _newNotificationsAvailable;
 
     [Inject]
@@ -23,10 +20,11 @@ public partial class AppbarButtons : IDisposable
     [Inject]
     private LayoutService LayoutService { get; set; } = null!;
 
+
     /// <summary>
     /// Gets the text for the RTL toggle button, indicating the next state.
     /// </summary>
-    public string RtlButtonText => LayoutService.IsRTL ? "Switch to Left-to-right" : "Switch to Right-to-left";
+    public string RtlButtonText => LayoutService.IsRTL ? "Left-to-right" : "Right-to-left";
 
     /// <summary>
     /// Gets the icon for the RTL toggle button.
@@ -38,9 +36,9 @@ public partial class AppbarButtons : IDisposable
     /// </summary>
     public string DarkLightModeButtonText => LayoutService.CurrentDarkLightMode switch
     {
-        DarkLightMode.Dark => "Switch to System mode",
-        DarkLightMode.Light => "Switch to Dark mode",
-        _ => "Switch to Light mode"
+        DarkLightMode.Dark => "Auto mode",
+        DarkLightMode.Light => "Dark mode",
+        _ => "Light mode"
     };
 
     /// <summary>
@@ -59,28 +57,15 @@ public partial class AppbarButtons : IDisposable
         _newNotificationsAvailable = false;
     }
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        await LoadNotificationsAsync();
-        LayoutService.MajorUpdateOccurred += OnMajorLayoutUpdateOccurred;
-        await base.OnInitializedAsync();
-    }
+        if (firstRender)
+        {
+            _newNotificationsAvailable = await NotificationService.AreNewNotificationsAvailable();
+            _messages = await NotificationService.GetNotifications();
+            StateHasChanged();
+        }
 
-    private async Task LoadNotificationsAsync()
-    {
-        _newNotificationsAvailable = await NotificationService.AreNewNotificationsAvailable();
-        _messages = await NotificationService.GetNotifications();
-    }
-
-    private void OnMajorLayoutUpdateOccurred(object sender, EventArgs e)
-    {
-        InvokeAsync(StateHasChanged);
-    }
-
-    // It's good practice to unsubscribe from events to prevent memory leaks.
-    public void Dispose()
-    {
-        LayoutService.MajorUpdateOccurred -= OnMajorLayoutUpdateOccurred;
-        GC.SuppressFinalize(this);
+        await base.OnAfterRenderAsync(firstRender);
     }
 }

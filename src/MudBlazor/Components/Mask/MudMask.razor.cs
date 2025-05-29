@@ -199,7 +199,12 @@ namespace MudBlazor
         {
             try
             {
-                if ((e.CtrlKey && e.Key != "Backspace") || e.AltKey || GetReadOnlyState())
+                if (e.CtrlKey && e.Key != "Backspace"
+                    // on macOS, the copy-paste command is Cmd + V
+                    // cmd is identified using the MetaKey property
+                    || e.MetaKey && e.Key != "Backspace"
+                    || e.AltKey
+                    || GetReadOnlyState())
                     return;
                 switch (e.Key)
                 {
@@ -364,15 +369,7 @@ namespace MudBlazor
         }
 
         internal void OnCopy()
-        {
-            var text = Text;
-            if (Mask.Selection != null)
-            {
-                (_, text, _) = BaseMask.SplitSelection(text, Mask.Selection.Value);
-            }
-
-            JsApiService.CopyToClipboardAsync(text);
-        }
+            => CopySelectionToClipboard();
 
         internal async void OnPaste(string? text)
         {
@@ -467,6 +464,7 @@ namespace MudBlazor
             if (GetReadOnlyState())
                 return;
 
+            CopySelectionToClipboard();
             if (_selection != null)
                 Mask.Delete();
             await UpdateAsync();
@@ -488,6 +486,20 @@ namespace MudBlazor
                     await _jsEvent.DisposeAsync();
                 }
             }
+        }
+
+        /// <summary>
+        /// Copies the currently selected text (or the entire text if nothing is selected) to the clipboard.
+        /// </summary>
+        private void CopySelectionToClipboard()
+        {
+            var text = Text;
+            if (Mask.Selection != null)
+            {
+                (_, text, _) = BaseMask.SplitSelection(text, Mask.Selection.Value);
+            }
+
+            JsApiService.CopyToClipboardAsync(text);
         }
 
         [GeneratedRegex(@"^.$")]

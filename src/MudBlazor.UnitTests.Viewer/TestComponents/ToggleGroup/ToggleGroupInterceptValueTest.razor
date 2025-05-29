@@ -1,0 +1,52 @@
+﻿<MudToggleGroup T="AttendanceStatus" SelectionMode="SelectionMode.SingleSelection"
+                Value="UserAttendanceStatus"
+                ValueChanged="@(status => OnAttendanceStatusChanged(status))">
+    <MudToggleItem Text="Attendance.Update.ToggleGroup.Yes"
+                    Value="@(AttendanceStatus.Accepted)"/>
+    <MudToggleItem Text="Attendance.Update.ToggleGroup.No"
+                    Value="@(AttendanceStatus.Declined)"/>
+    <MudToggleItem Text="Attendance.Update.ToggleGroup.Maybe"
+                    Value="@(AttendanceStatus.Maybe)"/>    
+</MudToggleGroup>
+<MudPaper Class="mud-width-full">
+    <MudText>@UserAttendanceStatus.ToString()</MudText>
+</MudPaper>
+<MudRadioGroup @bind-Value="_updateStatus">
+    <MudTooltip Text="Value and Visual Selection Should Change">
+        <MudRadio Class="simulate-success" Value="true">Simulate Success</MudRadio>
+    </MudTooltip>
+    <MudTooltip Text="Value and Visual Selection Should Revert to Previous">
+        <MudRadio Class="simulate-failure" Value="false">Simulate Failure</MudRadio>
+    </MudTooltip>   
+</MudRadioGroup>
+@code {
+    public static string __description__ = "Visual Test for intercepted ValueChanged ToggleGroup";
+    public enum AttendanceStatus { Accepted, Declined, Maybe }
+    public AttendanceStatus UserAttendanceStatus { get; private set; } = AttendanceStatus.Declined;
+    private bool _updateStatus = true;
+    private AttendanceStatus prevStatus = default!;
+
+    protected override void OnInitialized()
+    {
+        prevStatus = UserAttendanceStatus;
+    }
+
+    private void OnAttendanceStatusChanged(AttendanceStatus newStatus)
+    {
+        Console.WriteLine(prevStatus.ToString() + " -> " + newStatus.ToString());
+        // _updateStatus is a simulated success, !_updateStatus is a simulated failure
+        if (_updateStatus)
+        {
+            // success
+            prevStatus = newStatus;
+            UserAttendanceStatus = newStatus;
+        }
+        else
+        {
+            // fail
+            UserAttendanceStatus = prevStatus;
+        }
+        StateHasChanged();
+    }
+
+}
