@@ -16,6 +16,14 @@ public abstract class DefaultRadialChartOptions : DefaultChartOptions, IRadialCh
     public virtual AggregationOption AggregationOption { get; set; } = AggregationOption.GroupByLabel;
 
     /// <summary>
+    /// Gets or sets the opacity level of the fill, where 0 represents fully transparent and 1 represents fully opaque.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to 1 (fully opaque).
+    /// </remarks>
+    public virtual double FillOpacity { get; set; } = 1;
+
+    /// <summary>
     /// Show the series value as a percentage of the total.
     /// </summary>
     public bool ShowAsPercentage { get; set; }

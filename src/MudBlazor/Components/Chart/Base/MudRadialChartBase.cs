@@ -31,8 +31,8 @@ public abstract class MudRadialChartBase<TOptions> : MudChartBase<TOptions>, IDi
     private readonly DebounceDispatcher _debouncer = new(DebounceIntervalMs);
 
     private ElementSize? _elementSize;
-    private double _boundWidth = 280;
-    private double _boundHeight = 280;
+    protected double _boundWidth = 280;
+    protected double _boundHeight = 280;
 
     internal List<SvgPath> _paths = [];
     internal List<SvgLegend> _legends = [];

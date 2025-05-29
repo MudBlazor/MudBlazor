@@ -110,6 +110,32 @@
                                                                              @ref="ChartReference"
                                                                              @bind-SelectedIndex:get="this.SelectedIndexState.Value"
                                                                              @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
+        (ChartType.Rose, RoseChartOptions roseOptions) => @<Rose ChartSeries="@ChartSeries"
+                                                                 ChartLabels="@ChartLabels"
+                                                                 ChartOptions="roseOptions"
+                                                                 CanHideSeries="@CanHideSeries"
+                                                                 LegendPosition="@LegendPosition"
+                                                                 TooltipTemplate="@TooltipTemplate"
+                                                                 TooltipPositionFunc="@TooltipPositionFunc"
+                                                                 MatchBoundsToSize="@MatchBoundsToSize"
+                                                                 CustomGraphics="@CustomGraphics"
+                                                                 Width="@Width" Height="@Height"
+                                                                 @ref="ChartReference"
+                                                                 @bind-SelectedIndex:get="this.SelectedIndexState.Value"
+                                                                 @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
+        (ChartType.Radar, RadarChartOptions radarOptions) => @<Radar ChartSeries="@ChartSeries"
+                                                                     ChartLabels="@ChartLabels"
+                                                                     ChartOptions="radarOptions"
+                                                                     CanHideSeries="@CanHideSeries"
+                                                                     LegendPosition="@LegendPosition"
+                                                                     TooltipTemplate="@TooltipTemplate"
+                                                                     TooltipPositionFunc="@TooltipPositionFunc"
+                                                                     MatchBoundsToSize="@MatchBoundsToSize"
+                                                                     CustomGraphics="@CustomGraphics"
+                                                                     Width="@Width" Height="@Height"
+                                                                     @ref="ChartReference"
+                                                                     @bind-SelectedIndex:get="this.SelectedIndexState.Value"
+                                                                     @bind-SelectedIndex:set="this.SelectedIndexState.SetValueAsync" />,
         _ => throw new NotImplementedException($"{ChartType} chart is not supported")
     };
 }

@@ -77,6 +77,14 @@ public partial class BaseRadialChart<TChartOptions> : MudComponentBase where TCh
 
     [Parameter]
     [Category(CategoryTypes.Chart.Appearance)]
+    public RenderFragment? ChartGrid { get; set; }
+
+    [Parameter]
+    [Category(CategoryTypes.Chart.Appearance)]
+    public RenderFragment<SvgPolygon>? ChartDataPoints { get; set; }
+
+    [Parameter]
+    [Category(CategoryTypes.Chart.Appearance)]
     public RenderFragment<(SvgPath Segment, string Color)>? TooltipTemplate { get; set; }
 
     [Parameter]

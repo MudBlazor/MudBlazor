@@ -45,6 +45,8 @@ public partial class MudChart
         ChartType.HeatMap => (HeatMapChartOptions)options,
         ChartType.StackedBar => (StackedBarChartOptions)options,
         ChartType.Timeseries => (TimeSeriesChartOptions)options,
+        ChartType.Rose => (RoseChartOptions)options,
+        ChartType.Radar => (RadarChartOptions)options,
         _ => ChartOptions!
     };
 
@@ -57,6 +59,8 @@ public partial class MudChart
         ChartType.HeatMap => new HeatMapChartOptions(),
         ChartType.StackedBar => new StackedBarChartOptions(),
         ChartType.Timeseries => new TimeSeriesChartOptions(),
+        ChartType.Rose => new RoseChartOptions(),
+        ChartType.Radar => new RadarChartOptions(),
         _ => throw new NotImplementedException($"{ChartType} chart is not supported")
     };
 }
