@@ -280,7 +280,7 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.ChartSeries, chartSeries)
                 .Add(p => p.XAxisLabels, xAxisLabels)
                 .Add(p => p.CanHideSeries, true)
-                .Add(p => p.RecalculateScaleOnSeriesVisibilityChanged, true));
+                .Add(p => p.DynamicRescaling, true));
 
             // The y-axis scale goes up to 520
             comp.Markup.Should().Contain(">520</text>");
@@ -328,7 +328,7 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.ChartSeries, chartSeries)
                 .Add(p => p.XAxisLabels, xAxisLabels)
                 .Add(p => p.CanHideSeries, true)
-                .Add(p => p.RecalculateScaleOnSeriesVisibilityChanged, false));
+                .Add(p => p.DynamicRescaling, false));
 
             // The y-axis scale goes up to 520
             comp.Markup.Should().Contain(">520</text>");

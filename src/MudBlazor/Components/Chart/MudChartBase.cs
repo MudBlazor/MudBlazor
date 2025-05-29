@@ -147,7 +147,7 @@ public abstract class MudChartBase : MudComponentBase
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Chart.Behavior)]
-    public bool RecalculateScaleOnSeriesVisibilityChanged { get; set; } = false;
+    public bool DynamicRescaling { get; set; } = false;
 
     internal List<MudHeatMapCell> MudHeatMapCells { get; set; } = [];
 

@@ -1,7 +1,7 @@
 ﻿<div>
     <MudCheckBox @bind-Value="_recalculateScale" Label="Recalculate scale"></MudCheckBox>
     <MudChart ChartType="ChartType.Line" ChartSeries="@Series" XAxisLabels="@XAxisLabels" CanHideSeries="true"
-              RecalculateScaleOnSeriesVisibilityChanged="_recalculateScale"
+              DynamicRescaling="_recalculateScale"
               Width="100%" Height="350px"></MudChart>
 </div>
 

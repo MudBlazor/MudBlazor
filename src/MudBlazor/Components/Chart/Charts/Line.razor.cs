@@ -62,7 +62,7 @@ namespace MudBlazor.Charts
             if (gridYUnits <= 0)
                 gridYUnits = 20;
 
-            var chartSeries = MudChartParent is { CanHideSeries: true, RecalculateScaleOnSeriesVisibilityChanged: true } ?
+            var chartSeries = MudChartParent is { CanHideSeries: true, DynamicRescaling: true } ?
                 _series.Where(s => s.Visible).ToList() :
                 _series;
 
