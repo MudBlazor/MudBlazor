@@ -195,7 +195,7 @@ namespace MudBlazor.UnitTests.Components
 
                 styleAttr.Should().Be("transform:translateX(-0px);");
 
-                GetSliderValue(comp).Should().Be(i * 250.0);
+                GetSliderValue(comp).Should().BeApproximately(i * (1.0 / 6.0) * 100, 0.00001);
             }
         }
 
@@ -256,7 +256,7 @@ namespace MudBlazor.UnitTests.Components
             var styleAttr = toolbarWrapper.GetAttribute("style");
 
             styleAttr.Should().Be($"transform:translateX(-{expectedTranslation.ToString(CultureInfo.InvariantCulture)}px);");
-            GetSliderValue(comp).Should().Be(2 * 100.0);
+            GetSliderValue(comp).Should().BeApproximately((2.0 / 6.0) * 100.0, 0.00001);
         }
 
         [Test]
@@ -290,7 +290,7 @@ namespace MudBlazor.UnitTests.Components
             var styleAttr = toolbarWrapper.GetAttribute("style");
 
             styleAttr.Should().Be($"transform:translateY(-{expectedTranslation.ToString(CultureInfo.InvariantCulture)}px);");
-            GetSliderValue(comp, "top").Should().Be(2 * 100.0);
+            GetSliderValue(comp, "top").Should().BeApproximately((2.0 / 6.0) * 100.0, 0.00001);
         }
 
         [Test]
@@ -330,7 +330,7 @@ namespace MudBlazor.UnitTests.Components
                 var styleAttr = toolbarWrapper.GetAttribute("style");
 
                 styleAttr.Should().Be($"transform:translateX(-{expectedTranslations[i].ToString(CultureInfo.InvariantCulture)}px);");
-                GetSliderValue(comp).Should().Be(i * 100.0);
+                GetSliderValue(comp).Should().BeApproximately((i / 6.0) * 100.0, 0.00001);
             }
         }
 
@@ -470,7 +470,7 @@ namespace MudBlazor.UnitTests.Components
                 var styleAttr = toolbarWrapper.GetAttribute("style");
 
                 styleAttr.Should().Be($"transform:translateX(-{expectedTranslation.ToString(CultureInfo.InvariantCulture)}px);");
-                GetSliderValue(comp).Should().Be(5 * 100.0);
+                GetSliderValue(comp).Should().BeApproximately((5.0 / 6.0) * 100.0, 0.00001);
             }
         }
 
@@ -493,12 +493,12 @@ namespace MudBlazor.UnitTests.Components
             var scrollButtons = comp.FindComponents<MudIconButton>();
 
             scrollButtons.First().Instance.Disabled.Should().BeTrue();
-            GetSliderValue(comp).Should().Be(1 * 100.0);
+            GetSliderValue(comp).Should().BeApproximately((1.0 / 6.0) * 100.0, 0.00001);
 
             observer.UpdateTotalPanelSize(200.0);
 
             scrollButtons.First().Instance.Disabled.Should().BeTrue();
-            GetSliderValue(comp).Should().Be(1 * 100.0);
+            GetSliderValue(comp).Should().BeApproximately((1.0 / 6.0) * 100.0, 0.00001);
         }
 
         [Test]
@@ -677,12 +677,12 @@ namespace MudBlazor.UnitTests.Components
 
             var scrollButtons = comp.FindComponents<MudIconButton>();
             scrollButtons.First().Instance.Disabled.Should().BeTrue();
-            GetSliderValue(comp).Should().Be(1 * 100.0);
+            GetSliderValue(comp).Should().BeApproximately((1.0 / 6.0) * 100.0, 0.00001);
 
             observer.UpdatePanelSize(0, 200.0);
 
             scrollButtons.First().Instance.Disabled.Should().BeTrue();
-            GetSliderValue(comp).Should().Be(200.0);
+            GetSliderValue(comp).Should().BeApproximately((2.0 / 7.0) * 100.0, 0.00001);
         }
 
         [Test]
@@ -701,11 +701,11 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Instance.SetPanelActive(4);
 
-            GetSliderValue(comp).Should().Be(4 * 100.0);
+            GetSliderValue(comp).Should().BeApproximately((4.0 / 6.0) * 100.0, 0.00001);
 
             await comp.Instance.AddPanel();
 
-            GetSliderValue(comp).Should().Be(4 * 100.0);
+            GetSliderValue(comp).Should().BeApproximately((4.0 / 7.0) * 100.0, 0.00001);
 
             var scrollButtons = comp.FindComponents<MudIconButton>();
             scrollButtons.Should().HaveCount(2);
@@ -739,7 +739,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Instance.SetPanelActive(2);
 
-            GetSliderValue(comp).Should().Be(2 * 100.0);
+            GetSliderValue(comp).Should().BeApproximately((2.0 / 6.0) * 100.0, 0.00001);
 
             var scrollButtons = comp.FindComponents<MudIconButton>();
 
@@ -756,7 +756,7 @@ namespace MudBlazor.UnitTests.Components
             styleAttr.Should().Be($"transform:translateX(-100px);");
 
             var sliderValue = GetSliderValue(comp);
-            GetSliderValue(comp).Should().Be(1 * 100.0);
+            GetSliderValue(comp).Should().BeApproximately((1.0 / 5.0) * 100.0, 0.00001);
         }
 
         [Test]
@@ -784,7 +784,7 @@ namespace MudBlazor.UnitTests.Components
                 toolbarWrapper.HasAttribute("style").Should().Be(true);
                 var styleAttr = toolbarWrapper.GetAttribute("style");
                 styleAttr.Should().Be($"transform:translateX(-100px);");
-                GetSliderValue(comp).Should().Be(2 * 100.0);
+                GetSliderValue(comp).Should().BeApproximately((2.0 / 6.0) * 100.0, 0.00001);
             }
 
             await comp.Instance.RemovePanel(5);
@@ -797,7 +797,7 @@ namespace MudBlazor.UnitTests.Components
                 toolbarWrapper.HasAttribute("style").Should().Be(true);
                 var styleAttr = toolbarWrapper.GetAttribute("style");
                 styleAttr.Should().Be($"transform:translateX(-100px);");
-                GetSliderValue(comp).Should().Be(2 * 100.0);
+                GetSliderValue(comp).Should().BeApproximately((2.0 / 5.0) * 100.0, 0.00001);
             }
         }
 
@@ -1249,7 +1249,7 @@ namespace MudBlazor.UnitTests.Components
             var styleAttribute = slider.GetAttribute("style");
             var indexToSplit = styleAttribute.IndexOf($"{attribute}:");
             var substring = styleAttribute.Substring(indexToSplit + attribute.Length + 1).Split(';')[0];
-            substring = substring.Remove(substring.Length - 2);
+            substring = substring.Remove(substring.Length - 1);
             var value = double.Parse(substring, CultureInfo.InvariantCulture);
 
             return value;

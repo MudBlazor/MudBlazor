@@ -290,6 +290,9 @@ namespace MudBlazor.UnitTests.Components
             }
         }
 
+        /// <summary>
+        /// This test will fail if selection isn't working without someone being subscribed to the ValueChanged event
+        /// </summary>
         [Test]
         [TestCase(SelectionMode.SingleSelection)]
         [TestCase(SelectionMode.ToggleSelection)]
@@ -314,6 +317,11 @@ namespace MudBlazor.UnitTests.Components
                 var currentItem = items[i];
                 currentItem.Selected.Should().BeTrue();
                 items.Except([currentItem]).All(x => !x.Selected).Should().BeTrue();
+                if (selMode == SelectionMode.ToggleSelection)
+                {
+                    comp.FindAll(".mud-toggle-item").GetItemByIndex(i).Click();
+                    currentItem.Selected.Should().BeFalse();
+                }
             }
         }
 
@@ -485,6 +493,66 @@ namespace MudBlazor.UnitTests.Components
 
             toggleGroup.Values.Should().BeEquivalentTo(["a"]);
             toggleGroup.Value.Should().BeNull();
+        }
+
+        /// <summary>
+        /// This test is based on https://github.com/MudBlazor/MudBlazor/issues/11384
+        /// When a ToggleGroupItem is clicked, the value should be set or intercepted via the ValueChanged event
+        /// This test verifies that both scenarios update the ToggleGroupItem Selected state
+        /// </summary>
+        [Test]
+        public void ToggleGroup_ToggleSelectionTest()
+        {
+            var comp = Context.RenderComponent<ToggleGroupInterceptValueTest>();
+            IElement GetYesButton() => comp.FindAll(".mud-toggle-group .mud-toggle-item")[0];
+            IElement GetNoButton() => comp.FindAll(".mud-toggle-group .mud-toggle-item")[1];
+            IElement GetMaybeButton() => comp.FindAll(".mud-toggle-group .mud-toggle-item")[2];
+
+            var toggleGroup = comp.FindComponent<MudToggleGroup<ToggleGroupInterceptValueTest.AttendanceStatus>>();
+            // verify 3 ToggleGroupItems
+            var nodes = comp.FindAll(".mud-toggle-group .mud-toggle-item");
+            nodes.Count.Should().Be(3);
+            GetYesButton().ClassList.Should().NotContain("mud-toggle-item-selected");
+            GetNoButton().ClassList.Should().Contain("mud-toggle-item-selected");
+            GetMaybeButton().ClassList.Should().NotContain("mud-toggle-item-selected");
+
+            // verify initial state
+            comp.Instance.UserAttendanceStatus.Should().Be(ToggleGroupInterceptValueTest.AttendanceStatus.Declined);
+
+            var success = comp.Find(".simulate-success input"); // radio button
+            var failure = comp.Find(".simulate-failure input"); // radio button
+
+            // start in success mode
+            var successStatus = comp.Find(".simulate-success .mud-button-root");
+            successStatus.ClassList.Should().Contain("mud-checked");
+            var failureStatus = comp.Find(".simulate-failure .mud-button-root");
+            failureStatus.ClassList.Should().NotContain("mud-checked");
+
+            // change to yes
+            GetYesButton().Click();
+            comp.WaitForAssertion(() => GetYesButton().ClassList.Should().Contain("mud-toggle-item-selected"));
+            GetNoButton().ClassList.Should().NotContain("mud-toggle-item-selected");
+            GetMaybeButton().ClassList.Should().NotContain("mud-toggle-item-selected");
+            comp.Instance.UserAttendanceStatus.Should().Be(ToggleGroupInterceptValueTest.AttendanceStatus.Accepted);
+
+            // change to maybe
+            GetMaybeButton().Click();
+            comp.WaitForAssertion(() => GetYesButton().ClassList.Should().NotContain("mud-toggle-item-selected"));
+            GetNoButton().ClassList.Should().NotContain("mud-toggle-item-selected");
+            GetMaybeButton().ClassList.Should().Contain("mud-toggle-item-selected");
+            comp.Instance.UserAttendanceStatus.Should().Be(ToggleGroupInterceptValueTest.AttendanceStatus.Maybe);
+
+            // simulate failure where it saves last success
+            failure.Click();
+
+            // click yes with failure enabled to simulate no change
+            GetYesButton().Click();
+            // check value has not changed, should still be maybe
+            comp.WaitForAssertion(() => comp.Instance.UserAttendanceStatus.Should().Be(ToggleGroupInterceptValueTest.AttendanceStatus.Maybe, "Value should not have changed form Maybe"));
+            // check selected has not changed, should still be maybe
+            GetYesButton().ClassList.Should().NotContain("mud-toggle-item-selected", "Selection should not have changed from maybe.");
+            GetNoButton().ClassList.Should().NotContain("mud-toggle-item-selected", "Selection should not have changed from maybe.");
+            GetMaybeButton().ClassList.Should().Contain("mud-toggle-item-selected", "Selection should still be maybe.");
         }
     }
 }
