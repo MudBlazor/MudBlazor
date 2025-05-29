@@ -7,5 +7,8 @@ namespace MudBlazor.Charts;
 public interface IMudChart
 {
     List<ChartSeries> ChartSeries { get; set; }
+    string[] LegendPalette { get; }
     ChartType ChartType { get; }
+
+    void RebuildChart();
 }

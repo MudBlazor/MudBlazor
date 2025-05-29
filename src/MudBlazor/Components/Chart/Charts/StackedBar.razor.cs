@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
+using MudBlazor.Interfaces;
 
 #nullable enable
 namespace MudBlazor.Charts
@@ -17,6 +18,8 @@ namespace MudBlazor.Charts
     {
         public static new ChartType ChartType => ChartType.StackedBar;
 
+        public override RenderFragment? OverlayContent { get; set; }
+
         private const double BarOverlapAmountFix = 0.5; // used to trigger slight overlap so the bars don't have gaps due to floating point rounding
 
         private readonly List<SvgPath> _bars = [];
@@ -29,29 +32,74 @@ namespace MudBlazor.Charts
         protected override void OnInitialized()
         {
             ChartOptions ??= new StackedBarChartOptions();
+
+            if (ChartReference is IMudAxisChart axisChart)
+            {
+                axisChart.OverlayChart = this;
+                axisChart.OverlayContent = this.Chart;
+            }
+
             base.OnInitialized();
         }
 
-        protected override void RebuildChart()
+        public override void RebuildChart()
         {
-            Series = (MudChartParent != null && ChartReference is MudChart)
-                ? MudChartParent.ChartSeries
+            // shared plot points should be initialized before generating overlay charts
+            if (IsOverlayChart && SharedData is null) return;
+
+            Series = (ChartContainer != null && ChartReference is MudChart)
+                ? ChartContainer.ChartSeries
                 : ChartSeries;
 
             // ensure the stacked bar width ratio is within the valid range
             ChartOptions!.BarWidthRatio = ChartOptions.BarWidthRatio.EnsureRange(0.01, 1);
 
+            GeneratePlotArea(out var lowestHorizontalLine, out var gridYUnits, out var numHorizontalLines, out var horizontalSpace, out var verticalSpace);
+
+            if (!IsOverlayChart)
+            {
+                // If this is not an overlay chart, we generate the shared plot points if an overlay exists
+                SharedData = OverlayChart is IMudAxisChart ? new AxisGridData(lowestHorizontalLine, numHorizontalLines, gridYUnits, _boundWidth, _boundHeight) : null;
+            }
+            else
+            {
+                // If this is an overlay chart, we use the shared plot points from the main chart
+                var area = SharedData!.Value;
+
+                lowestHorizontalLine = SharedData.Value.LowestHorizontalLine;
+                gridYUnits = SharedData.Value.YAxisTicks;
+
+                _boundWidth = area.BoundWidth;
+                _boundHeight = area.BoundHeight;
+            }
+
+            GenerateStackedBars(lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace);
+            GenerateLegends();
+
+            if (OverlayChart is IMudAxisChart overlay)
+            {
+                overlay.SharedData = SharedData;
+                overlay.RebuildChart();
+                StateHasChanged();
+            }
+        }
+
+        private void GeneratePlotArea(out int lowestHorizontalLine, out double gridYUnits, out int numHorizontalLines, out double horizontalSpace, out double verticalSpace)
+        {
             SetBounds();
-            ComputeStackedUnitsAndNumberOfLines(out var lowestHorizontalLine, out var gridYUnits, out var numHorizontalLines, out var numVerticalLines);
+            ComputeStackedUnitsAndNumberOfLines(out lowestHorizontalLine, out gridYUnits, out numHorizontalLines, out var numVerticalLines);
+
+            var horizontalLines = IsOverlayChart ? SharedData!.Value.HorizontalLineCount - 1 : numHorizontalLines;
 
             // Calculate spacing – note the horizontal space is computed so that the vertical grid lines line up
-            var horizontalSpace = _boundWidth - HorizontalStartSpace - HorizontalEndSpace;
-            var verticalSpace = (_boundHeight - VerticalStartSpace - VerticalEndSpace) / (numHorizontalLines > 1 ? (numHorizontalLines) : 1);
+            horizontalSpace = _boundWidth - HorizontalStartSpace - HorizontalEndSpace;
+            verticalSpace = (_boundHeight - VerticalStartSpace - VerticalEndSpace) / Math.Max(1, horizontalLines);
+
+            // If this is an overlay chart, we do not generate the grid lines
+            if (IsOverlayChart) return;
 
             GenerateHorizontalGridLines(numHorizontalLines, lowestHorizontalLine, gridYUnits, verticalSpace);
             GenerateVerticalGridLines(numVerticalLines, horizontalSpace);
-            GenerateStackedBars(lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace);
-            GenerateLegends();
         }
 
         /// <summary>
@@ -355,28 +403,20 @@ namespace MudBlazor.Charts
             return (int)Math.Max(0, spaceBetweenBars);
         }
 
-        /// <summary>
-        /// Generates legends for each data series.
-        /// </summary>
-        private void GenerateLegends()
+        private void OnBarMouseOver(MouseEventArgs _, SvgPath bar)
         {
-            Legends.Clear();
-            for (var i = 0; i < Series.Count; i++)
-            {
-                var series = Series[i];
-                var legend = new SvgLegend()
-                {
-                    Index = i,
-                    Labels = series.Name,
-                    Visible = series.Visible,
-                    OnVisibilityChanged = EventCallback.Factory.Create<SvgLegend>(this, HandleLegendVisibilityChanged)
-                };
-                Legends.Add(legend);
-            }
+            _hoveredBar = bar;
+
+            if (IsOverlayChart && ChartReference is IMudStateHasChanged chart)
+                chart.StateHasChanged();
         }
 
-        private void OnBarMouseOver(MouseEventArgs _, SvgPath bar) => _hoveredBar = bar;
+        private void OnBarMouseOut()
+        {
+            _hoveredBar = null;
 
-        private void OnBarMouseOut() => _hoveredBar = null;
+            if (IsOverlayChart && ChartReference is IMudStateHasChanged chart)
+                chart.StateHasChanged();
+        }
     }
 }

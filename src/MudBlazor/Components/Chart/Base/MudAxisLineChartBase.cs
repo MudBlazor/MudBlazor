@@ -6,11 +6,12 @@
 using System.Text;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Interfaces;
 using MudBlazor.Interpolation;
 
 namespace MudBlazor.Charts;
 
-public abstract class MudAxisLineChartBase<TOptions> : MudAxisChartBase<TOptions> where TOptions : IAxisLineChartOptions
+public abstract class MudAxisLineChartBase<TOptions> : MudAxisChartBase<TOptions>, IMudAxisChart where TOptions : IAxisLineChartOptions
 {
     protected List<SvgPath> ChartLines { get; set; } = [];
     protected Dictionary<int, SvgPath> ChartAreas { get; set; } = [];
@@ -86,7 +87,6 @@ public abstract class MudAxisLineChartBase<TOptions> : MudAxisChartBase<TOptions
 
     protected void GenerateChartLines(int lowestHorizontalLine, double gridYUnits, double horizontalSpace, double verticalSpace)
     {
-        Legends.Clear();
         ChartLines.Clear();
         ChartAreas.Clear();
         ChartDataPoints.Clear();
@@ -97,14 +97,6 @@ public abstract class MudAxisLineChartBase<TOptions> : MudAxisChartBase<TOptions
         for (var i = 0; i < Series.Count; i++)
         {
             var series = Series[i];
-
-            if (!series.Visible)
-            {
-                // Still add legend even if series is not visible
-                AddLegend(i, series);
-                continue;
-            }
-
             var chartLine = new StringBuilder();
             var chartDataCircles = new List<SvgCircle>();
             ChartDataPoints[i] = chartDataCircles;
@@ -143,8 +135,6 @@ public abstract class MudAxisLineChartBase<TOptions> : MudAxisChartBase<TOptions
             {
                 GenerateAreaChart(i, chartLine, lowestHorizontalLine, firstPointX, firstPointY, lastPointX);
             }
-
-            AddLegend(i, series);
         }
     }
 
@@ -196,7 +186,6 @@ public abstract class MudAxisLineChartBase<TOptions> : MudAxisChartBase<TOptions
             }
         }
     }
-
 
     protected void GenerateInterpolatedLines(int seriesIndex, StringBuilder chartLine, List<SvgCircle> chartDataCircles,
                                      int lowestHorizontalLine, double gridYUnits, double horizontalSpace, double verticalSpace,
@@ -325,7 +314,19 @@ public abstract class MudAxisLineChartBase<TOptions> : MudAxisChartBase<TOptions
             : null;
     }
 
-    protected void OnDataPointMouseOver(MouseEventArgs _, SvgPath hoveredPoint) => HoveredDataPointPath = hoveredPoint;
+    protected void OnDataPointMouseOver(MouseEventArgs _, SvgPath hoveredPoint)
+    {
+        HoveredDataPointPath = hoveredPoint;
 
-    protected void OnDataPointMouseOut() => HoveredDataPointPath = null;
+        if (IsOverlayChart && ChartReference is IMudStateHasChanged chart)
+            chart.StateHasChanged();
+    }
+
+    protected void OnDataPointMouseOut()
+    {
+        HoveredDataPointPath = null;
+
+        if (IsOverlayChart && ChartReference is IMudStateHasChanged chart)
+            chart.StateHasChanged();
+    }
 }

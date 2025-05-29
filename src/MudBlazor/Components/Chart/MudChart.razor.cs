@@ -63,4 +63,6 @@ public partial class MudChart
         ChartType.Radar => new RadarChartOptions(),
         _ => throw new NotImplementedException($"{ChartType} chart is not supported")
     };
+
+    public override void RebuildChart() => ChartReference?.RebuildChart();
 }

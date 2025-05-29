@@ -210,8 +210,6 @@ public abstract class MudRadialChartBase<TOptions> : MudChartBase<TOptions>, IDi
         });
     }
 
-    public abstract void RebuildChart();
-
     public void Dispose()
     {
         Dispose(true);

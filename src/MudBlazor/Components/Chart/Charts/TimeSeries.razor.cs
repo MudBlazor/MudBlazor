@@ -1,4 +1,5 @@
-﻿using MudBlazor.Interpolation;
+﻿using Microsoft.AspNetCore.Components;
+using MudBlazor.Interpolation;
 
 #nullable enable
 
@@ -10,6 +11,8 @@ namespace MudBlazor.Charts;
 partial class TimeSeries : MudAxisLineChartBase<TimeSeriesChartOptions>, IDisposable
 {
     public static new ChartType ChartType => ChartType.Timeseries;
+
+    public override RenderFragment? OverlayContent { get; set; }
 
     private DateTime _minDateTime;
     private DateTime _maxDateTime;
@@ -24,23 +27,70 @@ partial class TimeSeries : MudAxisLineChartBase<TimeSeriesChartOptions>, IDispos
     protected override void OnInitialized()
     {
         ChartOptions ??= new TimeSeriesChartOptions();
+
+        if (ChartReference is IMudAxisChart axisChart)
+        {
+            _generateChartLines = true;
+            axisChart.OverlayChart = this;
+            axisChart.OverlayContent = this.Chart;
+        }
+
         base.OnInitialized();
     }
 
-    protected override void RebuildChart()
+    public override void RebuildChart()
     {
-        Series = (MudChartParent != null && ChartReference is MudChart)
-            ? MudChartParent.ChartSeries
+        if (IsOverlayChart && SharedData is null) return;
+
+        Series = (ChartContainer != null && ChartReference is MudChart)
+            ? ChartContainer.ChartSeries
             : ChartSeries;
 
         _cachedDataPoints = null;
 
+        GeneratePlotArea(out var gridYUnits, out var lowestHorizontalLine, out var numHorizontalLines, out var horizontalSpace, out var verticalSpace);
+
+        if (Series.Count == 0) return;
+        if (!_generateChartLines) return;
+
+        if (!IsOverlayChart)
+        {
+            // If this is not an overlay chart, we generate the shared plot points if an overlay exists
+            SharedData = OverlayChart is IMudAxisChart ? new AxisGridData(lowestHorizontalLine, numHorizontalLines, gridYUnits, _boundWidth, _boundHeight) : null;
+        }
+        else
+        {
+            // If this is an overlay chart, we use the shared plot points from the main chart
+            var area = SharedData!.Value;
+
+            lowestHorizontalLine = SharedData.Value.LowestHorizontalLine;
+            gridYUnits = SharedData.Value.YAxisTicks;
+
+            _boundWidth = area.BoundWidth;
+            _boundHeight = area.BoundHeight;
+        }
+
+        GenerateChartLines(lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace);
+        GenerateLegends();
+
+        if (OverlayChart is IMudAxisChart overlay)
+        {
+            overlay.SharedData = SharedData;
+            OverlayChart?.RebuildChart();
+            StateHasChanged();
+        }
+    }
+
+    private void GeneratePlotArea(out double gridYUnits, out int lowestHorizontalLine, out int numHorizontalLines, out double horizontalSpace, out double verticalSpace)
+    {
         SetBounds();
         ComputeMinAndMaxDateTimes();
-        ComputeUnitsAndNumberOfLines(out var gridYUnits, out var numHorizontalLines, out var lowestHorizontalLine, out var numVerticalLines);
+        ComputeUnitsAndNumberOfLines(out gridYUnits, out numHorizontalLines, out lowestHorizontalLine, out var numVerticalLines);
 
-        var horizontalSpace = (_boundWidth - HorizontalStartSpace - HorizontalEndSpace) / Math.Max(1, (_maxDateTime - _minDateTime) / ChartOptions!.TimeLabelSpacing);
-        var verticalSpace = (_boundHeight - VerticalStartSpace - VerticalEndSpace) / Math.Max(1, numHorizontalLines - 1);
+        var horizontalLines = IsOverlayChart ? SharedData!.Value.HorizontalLineCount : numHorizontalLines - 1;
+
+        horizontalSpace = (_boundWidth - HorizontalStartSpace - HorizontalEndSpace) / Math.Max(1, (_maxDateTime - _minDateTime) / ChartOptions!.TimeLabelSpacing);
+        verticalSpace = (_boundHeight - VerticalStartSpace - VerticalEndSpace) / Math.Max(1, horizontalLines);
         var startOffset = 0.0;
 
         if (_minDateLabelOffset != TimeSpan.Zero)
@@ -56,11 +106,6 @@ partial class TimeSeries : MudAxisLineChartBase<TimeSeriesChartOptions>, IDispos
 
         GenerateHorizontalGridLines(numHorizontalLines, lowestHorizontalLine, gridYUnits, verticalSpace);
         GenerateVerticalGridLines(numVerticalLines, startOffset, horizontalSpace);
-
-        if (Series.Count == 0) return;
-        if (!_generateChartLines) return;
-
-        GenerateChartLines(lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace);
     }
 
     private void ComputeMinAndMaxDateTimes()

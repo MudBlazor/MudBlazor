@@ -150,6 +150,8 @@ public abstract class MudChartBase<TOptions> : MudComponentBase, IMudChart where
     [Category(CategoryTypes.Chart.Behavior)]
     public bool CanHideSeries { get; set; } = false;
 
+    public virtual string[] LegendPalette => ChartOptions?.ChartPalette ?? [];
+
     protected string Classname => new CssBuilder("mud-chart")
         .AddClass($"mud-chart-legend-{ConvertLegendPosition(LegendPosition).ToDescriptionString()}")
         .AddClass(Class)
@@ -164,6 +166,8 @@ public abstract class MudChartBase<TOptions> : MudComponentBase, IMudChart where
             .WithParameter(() => SelectedIndex)
             .WithEventCallback(() => SelectedIndexChanged);
     }
+
+    public abstract void RebuildChart();
 
     private Position ConvertLegendPosition(Position position) => position switch
     {

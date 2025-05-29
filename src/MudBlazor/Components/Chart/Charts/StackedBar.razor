@@ -1,33 +1,40 @@
-﻿@namespace MudBlazor.Charts
-@using System.Globalization;
+﻿@using System.Globalization;
+
+@namespace MudBlazor.Charts
+
 @inherits MudAxisChartBase<StackedBarChartOptions>
 
-<div class="@(MudChartParent is null ? Classname : string.Empty)">
-    <BaseAxisChart TChartOptions="StackedBarChartOptions"
-                   AxisChanged="AxisChanged"
-                   ElementRefChanged="SetElementReference"
-                   Width="@Width"
-                   Height="@Height"
-                   ViewBoxWidth="_boundWidth"
-                   ViewBoxHeight="_boundHeight"
-                   ChartClass="mud-chart-bar"
-                   ChartSeries="@ChartSeries"
-                   ChartLabels="@ChartLabels"
-                   ChartOptions="@ChartOptions"
-                   ChartType="@ChartType"
-                   SeriesContent="@RenderStackedBars()"
-                   TooltipContent="@RenderTooltip()"
-                   CustomGraphics="@CustomGraphics"
-                   HoveredSegment="@_hoveredBar"
-                   HorizontalLines="@HorizontalLines"
-                   VerticalLines="@VerticalLines"
-                   HorizontalValues="@HorizontalValues"
-                   VerticalValues="@VerticalValues"
-                   UserAttributes="@UserAttributes" />
+@if (!IsOverlayChart)
+{
+    <div class="@(ChartContainer is null ? Classname : string.Empty)">
+        <BaseAxisChart TChartOptions="StackedBarChartOptions"
+                       AxisChanged="AxisChanged"
+                       ElementRefChanged="SetElementReference"
+                       Width="@Width"
+                       Height="@Height"
+                       ViewBoxWidth="_boundWidth"
+                       ViewBoxHeight="_boundHeight"
+                       ChartClass="mud-chart-bar"
+                       ChartSeries="@ChartSeries"
+                       ChartLabels="@ChartLabels"
+                       ChartOptions="@ChartOptions"
+                       ChartType="@ChartType"
+                       SeriesContent="@RenderStackedBars()"
+                       TooltipContent="@RenderTooltip()"
+                       ChildContent="@OverlayContent"
+                       CustomGraphics="@CustomGraphics"
+                       HoveredSegment="@_hoveredBar"
+                       HorizontalLines="@HorizontalLines"
+                       VerticalLines="@VerticalLines"
+                       HorizontalValues="@HorizontalValues"
+                       VerticalValues="@VerticalValues"
+                       UserAttributes="@UserAttributes">
+        </BaseAxisChart>
 
-    <Legend Data="@Legends" ShowLegend="@ChartOptions?.ShowLegend" CanHideSeries="@CanHideSeries"
-            ChartPalette="@ChartOptions?.ChartPalette" OnLegendSelected="async (i) => await SetSelectedIndexAsync(i)" />
-</div>
+        <Legend Data="@Legends" ShowLegend="@ChartOptions?.ShowLegend" CanHideSeries="@CanHideSeries"
+                ChartPalette="@LegendPalette" OnLegendSelected="async (i) => await SetSelectedIndexAsync(i)" />
+    </div>
+}
 
 @code {
     private RenderFragment RenderStackedBars() => builder =>
@@ -64,8 +71,8 @@
         var seq = 0;
 
         var color = ChartOptions!.ChartPalette?.Length > 0
-            ? ChartOptions.ChartPalette.GetValue(_hoveredBar.Index % ChartOptions.ChartPalette.Length)?.ToString() ?? string.Empty
-            : string.Empty;
+                        ? ChartOptions.ChartPalette.GetValue(_hoveredBar.Index % ChartOptions.ChartPalette.Length)?.ToString() ?? string.Empty
+                        : string.Empty;
 
         var (tooltipX, tooltipY) = TooltipPositionFunc?.Invoke(_hoveredBar) is { } pos
             ? (pos.X, pos.Y)
@@ -76,9 +83,7 @@
             builder.OpenElement(seq++, "g");
             builder.AddAttribute(seq++, "class", "mud-chart-tooltip");
             builder.AddAttribute(seq++, "transform", $"translate({tooltipX.ToS()},{tooltipY.ToS()})");
-
             builder.AddContent(seq++, TooltipTemplate((_hoveredBar, color)));
-
             builder.CloseElement();
         }
         else
@@ -109,4 +114,9 @@
             }
         }
     };
+
+    private RenderFragment Chart =>@<g class="mud-charts-bar-series">
+                                        @RenderStackedBars()
+                                        @RenderTooltip()
+                                    </g>;
 }

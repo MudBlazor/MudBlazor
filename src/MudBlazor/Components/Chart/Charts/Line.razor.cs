@@ -1,4 +1,5 @@
-﻿using MudBlazor.Interpolation;
+﻿using Microsoft.AspNetCore.Components;
+using MudBlazor.Interpolation;
 
 #nullable enable
 namespace MudBlazor.Charts
@@ -13,32 +14,78 @@ namespace MudBlazor.Charts
     /// <seealso cref="TimeSeries"/>
     partial class Line : MudAxisLineChartBase<LineChartOptions>
     {
-
         public static new ChartType ChartType => ChartType.Line;
+
+        public override RenderFragment? OverlayContent { get; set; }
 
         protected override bool ShouldInterpolate => true;
 
         protected override void OnInitialized()
         {
             ChartOptions ??= new LineChartOptions();
+
+            if (ChartReference is IMudAxisChart axisChart)
+            {
+                axisChart.OverlayChart = this;
+                axisChart.OverlayContent = this.Chart;
+            }
+
             base.OnInitialized();
         }
 
-        protected override void RebuildChart()
+        public override void RebuildChart()
         {
-            Series = (MudChartParent != null && ChartReference is MudChart)
-                ? MudChartParent.ChartSeries
+            if (IsOverlayChart && SharedData is null) return;
+
+            Series = (ChartContainer != null && ChartReference is MudChart)
+                ? ChartContainer.ChartSeries
                 : ChartSeries;
 
-            SetBounds();
-            ComputeUnitsAndNumberOfLines(out var gridYUnits, out var numHorizontalLines, out var lowestHorizontalLine, out var numVerticalLines);
+            GeneratePlotArea(out var gridYUnits, out var lowestHorizontalLine, out var numHorizontalLines, out var horizontalSpace, out var verticalSpace);
 
-            var horizontalSpace = (_boundWidth - HorizontalStartSpace - HorizontalEndSpace) / Math.Max(1, numVerticalLines - 1);
-            var verticalSpace = (_boundHeight - VerticalStartSpace - VerticalEndSpace) / Math.Max(1, numHorizontalLines - 1);
+            if (!IsOverlayChart)
+            {
+                // If this is not an overlay chart, we generate the shared plot points if an overlay exists
+                SharedData = OverlayChart is IMudAxisChart ? new AxisGridData(lowestHorizontalLine, numHorizontalLines, gridYUnits, _boundWidth, _boundHeight) : null;
+            }
+            else
+            {
+                // If this is an overlay chart, we use the shared plot points from the main chart
+                var area = SharedData!.Value;
+
+                lowestHorizontalLine = SharedData.Value.LowestHorizontalLine;
+                gridYUnits = SharedData.Value.YAxisTicks;
+
+                _boundWidth = area.BoundWidth;
+                _boundHeight = area.BoundHeight;
+            }
+
+            GenerateChartLines(lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace);
+            GenerateLegends();
+
+            if (OverlayChart is IMudAxisChart overlay)
+            {
+                overlay.SharedData = SharedData;
+                OverlayChart?.RebuildChart();
+                StateHasChanged();
+            }
+        }
+
+        private void GeneratePlotArea(out double gridYUnits, out int lowestHorizontalLine, out int numHorizontalLines, out double horizontalSpace, out double verticalSpace)
+        {
+            SetBounds();
+            ComputeUnitsAndNumberOfLines(out gridYUnits, out numHorizontalLines, out lowestHorizontalLine, out var numVerticalLines);
+
+            var horizontalLines = IsOverlayChart ? SharedData!.Value.HorizontalLineCount : numHorizontalLines - 1;
+
+            horizontalSpace = (_boundWidth - HorizontalStartSpace - HorizontalEndSpace) / Math.Max(1, numVerticalLines - 1);
+            verticalSpace = (_boundHeight - VerticalStartSpace - VerticalEndSpace) / Math.Max(1, horizontalLines);
+
+            // If this is an overlay chart, we do not generate the grid lines
+            if (IsOverlayChart) return;
 
             GenerateHorizontalGridLines(numHorizontalLines, lowestHorizontalLine, gridYUnits, verticalSpace);
             GenerateVerticalGridLines(numVerticalLines, 0, horizontalSpace);
-            GenerateChartLines(lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace);
         }
 
         private void ComputeUnitsAndNumberOfLines(out double gridYUnits, out int numHorizontalLines, out int lowestHorizontalLine, out int numVerticalLines)

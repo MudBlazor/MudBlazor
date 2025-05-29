@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using MudBlazor.Interop;
 
@@ -65,6 +64,10 @@ public partial class BaseAxisChart<TChartOptions> : MudComponentBase where TChar
     [EditorRequired]
     [Category(CategoryTypes.Chart.Appearance)]
     public double ViewBoxHeight { get; set; }
+
+    [Parameter]
+    [Category(CategoryTypes.Chart.Appearance)]
+    public RenderFragment? ChildContent { get; set; }
 
     [Parameter]
     [Category(CategoryTypes.Chart.Appearance)]

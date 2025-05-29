@@ -4,32 +4,36 @@
 
 @inherits MudAxisLineChartBase<LineChartOptions>
 
-<div class="@(MudChartParent is null ? Classname : string.Empty)">
-    <BaseAxisChart TChartOptions="LineChartOptions"
-                   AxisChanged="AxisChanged"
-                   ElementRefChanged="SetElementReference"
-                   Width="@Width"
-                   Height="@Height"
-                   ViewBoxWidth="_boundWidth"
-                   ViewBoxHeight="_boundHeight"
-                   ChartClass="mud-chart-line"
-                   ChartSeries="@ChartSeries"
-                   ChartLabels="@ChartLabels"
-                   ChartOptions="@ChartOptions"
-                   ChartType="@ChartType"
-                   SeriesContent="@RenderChartLines()"
-                   TooltipContent="@RenderTooltip()"
-                   CustomGraphics="@CustomGraphics"
-                   HoveredSegment="@HoveredDataPointPath"
-                   HorizontalLines="@HorizontalLines"
-                   VerticalLines="@VerticalLines"
-                   HorizontalValues="@HorizontalValues"
-                   VerticalValues="@VerticalValues"
-                   UserAttributes="@UserAttributes"/>
+@if (!IsOverlayChart)
+{
+    <div class="@(ChartContainer is null ? Classname : string.Empty)">
+        <BaseAxisChart TChartOptions="LineChartOptions"
+                       AxisChanged="AxisChanged"
+                       ElementRefChanged="SetElementReference"
+                       Width="@Width"
+                       Height="@Height"
+                       ViewBoxWidth="_boundWidth"
+                       ViewBoxHeight="_boundHeight"
+                       ChartClass="mud-chart-line"
+                       ChartSeries="@ChartSeries"
+                       ChartLabels="@ChartLabels"
+                       ChartOptions="@ChartOptions"
+                       ChartType="@ChartType"
+                       SeriesContent="@RenderChartLines()"
+                       TooltipContent="@RenderTooltip()"
+                       ChildContent="@OverlayContent"
+                       CustomGraphics="@CustomGraphics"
+                       HoveredSegment="@HoveredDataPointPath"
+                       HorizontalLines="@HorizontalLines"
+                       VerticalLines="@VerticalLines"
+                       HorizontalValues="@HorizontalValues"
+                       VerticalValues="@VerticalValues"
+                       UserAttributes="@UserAttributes" />
 
-    <Legend Data="@Legends" ShowLegend="@ChartOptions?.ShowLegend" CanHideSeries="@CanHideSeries"
-            ChartPalette="@ChartOptions?.ChartPalette" OnLegendSelected="async (i) => await SetSelectedIndexAsync(i)" />
-</div>
+        <Legend Data="@Legends" ShowLegend="@ChartOptions?.ShowLegend" CanHideSeries="@CanHideSeries"
+                ChartPalette="@LegendPalette" OnLegendSelected="async (i) => await SetSelectedIndexAsync(i)" />
+    </div>
+}
 
 @code {
     private double _dataPointLabelOffset;
@@ -37,10 +41,10 @@
     private RenderFragment RenderChartLines() => builder =>
     {
         var lineStrokeWidth = ChartOptions?.LineStrokeWidth ?? 3;
-        var dataPointRadius = Math.Max(lineStrokeWidth / 2 + 3, 4);
+        var dataPointRadius = Math.Max(lineStrokeWidth / 2 + 2, 3);
         var dataPointHoverRadius = dataPointRadius + 2;
         var dataPointStroke = 2d;
-        
+
         _dataPointLabelOffset = dataPointHoverRadius + (dataPointStroke / 2d);
 
         var seq = 0;
@@ -120,12 +124,12 @@
         if (HoveredDataPointPath is null)
             return;
 
-        int seq = 0;
+        var seq = 0;
 
         var seriesIndex = HoveredDataPointPath.Index;
         var color = ChartOptions!.ChartPalette?.Length > 0
-                ? ChartOptions.ChartPalette.GetValue(seriesIndex % ChartOptions.ChartPalette.Length)?.ToString() ?? string.Empty
-                : string.Empty;
+                        ? ChartOptions.ChartPalette.GetValue(seriesIndex % ChartOptions.ChartPalette.Length)?.ToString() ?? string.Empty
+                        : string.Empty;
 
         var (tooltipX, tooltipY) = TooltipPositionFunc?.Invoke(HoveredDataPointPath) is { } pos
             ? (pos.X, pos.Y)
@@ -167,4 +171,9 @@
             }
         }
     };
+
+    private RenderFragment Chart =>@<g class="mud-charts-line-series">
+                                        @RenderChartLines()
+                                        @RenderTooltip()
+                                    </g>;
 }

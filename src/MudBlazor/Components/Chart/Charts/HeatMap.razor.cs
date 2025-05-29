@@ -231,7 +231,7 @@ namespace MudBlazor.Charts
             _cellDimension = new CellDimension(cellWidth, cellHeight, padding);
         }
 
-        public void RebuildChart()
+        public override void RebuildChart()
         {
             SetBounds();
             // Populate _heatmapCells based on data, e.g., matrix of values
