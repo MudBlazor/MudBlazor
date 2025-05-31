@@ -739,7 +739,20 @@ namespace MudBlazor
 
             if (MaxItems.HasValue)
             {
-                searchedItems = searchedItems.Take(MaxItems.Value).ToArray();
+                // Get range of items based off selected item so the selected item can be scrolled to when strict is set to false
+                if (!Strict && searchedItems.Length != 0 && !EqualityComparer<T>.Default.Equals(Value, default(T)))
+                {
+                    int split = (MaxItems.Value / 2) + 1;
+                    int valueIndex = Array.IndexOf(searchedItems, Value);
+                    int endIndex = Math.Min(valueIndex + split, searchedItems.Length);
+                    int startIndex = endIndex - Math.Min(MaxItems.Value, searchedItems.Length);
+
+                    searchedItems = searchedItems.Take(new Range(startIndex, endIndex)).ToArray();
+                }
+                else
+                {
+                    searchedItems = searchedItems.Take(MaxItems.Value).ToArray();
+                }
             }
 
             _items = searchedItems;
@@ -763,6 +776,12 @@ namespace MudBlazor
 
             _opening = false;
             StateHasChanged();
+
+            // If not strict scroll to the selected item
+            if (!Strict && _selectedListItemIndex > 0)
+            {
+                await ScrollToListItemAsync(_selectedListItemIndex);
+            }
         }
 
         /// <summary>
