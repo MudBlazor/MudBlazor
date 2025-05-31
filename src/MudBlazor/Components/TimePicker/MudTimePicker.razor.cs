@@ -756,18 +756,18 @@ namespace MudBlazor
             }
             if (_currentView == OpenToEnum.Minutes)
             {
-                if (TimeEditMode is TimeEditMode.Normal or TimeEditMode.MinutesSeconds)
+                if (TimeEditMode is TimeEditMode.HoursMinutesSeconds or TimeEditMode.MinutesSeconds)
                 {
                     _currentView = OpenToEnum.Seconds;
                 }
-                else if (TimeEditMode is TimeEditMode.OnlyMinutes or TimeEditMode.HoursMinutes)
+                else if (TimeEditMode is TimeEditMode.OnlyMinutes or TimeEditMode.Normal)
                 {
                     await SubmitAndCloseAsync();
                 }
             }
             else if (_currentView == OpenToEnum.Hours)
             {
-                if (TimeEditMode is TimeEditMode.Normal or TimeEditMode.HoursMinutes)
+                if (TimeEditMode is TimeEditMode.Normal or TimeEditMode.HoursMinutesSeconds)
                 {
                     _currentView = OpenToEnum.Minutes;
                 }

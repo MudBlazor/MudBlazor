@@ -10,7 +10,7 @@ namespace MudBlazor;
 public enum TimeEditMode
 {
     /// <summary>
-    /// Hours, minutes, and seconds can be edited.
+    /// Hours and minutes can be edited.
     /// </summary>
     Normal,
 
@@ -30,9 +30,9 @@ public enum TimeEditMode
     OnlySeconds,
 
     /// <summary>
-    /// Only hours and minutes can be edited.
+    /// Hours, minutes, and seconds can be edited.
     /// </summary>
-    HoursMinutes,
+    HoursMinutesSeconds,
 
     /// <summary>
     /// Only minutes and seconds can be edited.

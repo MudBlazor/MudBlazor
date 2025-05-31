@@ -11,7 +11,7 @@
             <div class="mud-timepicker-hourminutesecond mud-ltr">
                 @if (HoursVisible)
                 {
-                    if (TimeEditMode is TimeEditMode.Normal or TimeEditMode.HoursMinutes or TimeEditMode.OnlyHours)
+                    if (TimeEditMode is TimeEditMode.Normal or TimeEditMode.HoursMinutesSeconds or TimeEditMode.OnlyHours)
                     {
                         <MudButton Variant="@Variant.Text" Color="@Color.Inherit" Class="@HoursButtonClassname" OnClick="@OnHourClickAsync">@GetHourString()</MudButton>
                     }
@@ -21,7 +21,7 @@
                     }
                     <MudText Typo="ToolbarTextTypo" Class="mud-timepicker-separator">:</MudText>
                 }
-                @if (TimeEditMode is TimeEditMode.Normal or TimeEditMode.HoursMinutes or TimeEditMode.MinutesSeconds or TimeEditMode.OnlyMinutes)
+                @if (TimeEditMode is TimeEditMode.Normal or TimeEditMode.HoursMinutesSeconds or TimeEditMode.MinutesSeconds or TimeEditMode.OnlyMinutes)
                 {
                     <MudButton Variant="@Variant.Text" Color="@Color.Inherit" Class="@MinuteButtonClassname" OnClick="@OnMinutesClick">@GetMinuteString()</MudButton>
                 }

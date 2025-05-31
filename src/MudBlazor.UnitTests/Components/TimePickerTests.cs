@@ -164,7 +164,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TimeEditModeHoursMinutes_CheckMinutesAndSecondsHidden()
         {
-            var comp = OpenPicker(Parameter("TimeEditMode", TimeEditMode.HoursMinutes));
+            var comp = OpenPicker(Parameter("TimeEditMode", TimeEditMode.HoursMinutesSeconds));
             // Are Minutes hidden
             comp.FindAll("div.mud-time-picker-minute.mud-time-picker-dial-hidden").Count.Should().Be(1);
             // Are Seconds hidden
