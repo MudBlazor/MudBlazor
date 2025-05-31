@@ -21,8 +21,8 @@ namespace MudBlazor
     /// <seealso cref="MudDateRangePicker"/>
     public partial class MudTimePicker : MudPicker<TimeSpan?>
     {
-        private const string Format24Hours = "HH:mm:ss";
-        private const string Format12Hours = "hh:mm:ss tt";
+        private const string Format24Hours = "HH:mm";
+        private const string Format12Hours = "hh:mm tt";
 
         public MudTimePicker() : base(new DefaultConverter<TimeSpan?>())
         {
@@ -278,7 +278,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public bool SecondsVisible { get; set; } = true;
+        public bool SecondsVisible { get; set; } = false;
 
         /// <inheritdoc />
         protected override Task StringValueChangedAsync(string value)

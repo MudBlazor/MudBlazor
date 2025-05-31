@@ -3639,7 +3639,7 @@ namespace MudBlazor.UnitTests.Components
 
             var inputsBefore = dataGrid.FindAll("input").OfType<IHtmlInputElement>().Select(e => e.Value).ToList();
             var hireDate = new DateTime(2011, 1, 2).ToString(CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern, CultureInfo.CurrentCulture);
-            inputsBefore.Should().BeEquivalentTo("Ira", "27", "Success", "True", hireDate, "00:00:00");
+            inputsBefore.Should().BeEquivalentTo("Ira", "27", "Success", "True", hireDate, "00:00");
 
             IRefreshableElementCollection<IElement> ClearButtons() => dataGrid.FindAll(".align-self-center");
             ClearButtons().Should().HaveCount(5);
@@ -3671,7 +3671,7 @@ namespace MudBlazor.UnitTests.Components
 
             var inputsBefore = dataGrid.FindAll("input").OfType<IHtmlInputElement>().Select(e => e.Value).ToList();
             var hireDate = new DateTime(2011, 1, 2).ToString(CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern, CultureInfo.CurrentCulture);
-            inputsBefore.Should().BeEquivalentTo("Ira", "27", "Success", "True", hireDate, "00:00:00");
+            inputsBefore.Should().BeEquivalentTo("Ira", "27", "Success", "True", hireDate, "00:00");
 
             dataGrid.Find(".clear-all-filters").Click();
 
