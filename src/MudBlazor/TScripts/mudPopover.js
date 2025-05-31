@@ -312,9 +312,9 @@ window.mudpopoverHelper = {
                 offsetX = 0;
                 offsetY = 0;
 
-                // anchor position is the same as top/left
-                anchorY = top;
-                anchorX = left;
+                // anchor position is the same as top/left without scroll
+                anchorX = left - (window.scrollX > 0 ? window.scrollX : 0);
+                anchorY = top - (window.scrollY > 0 ? window.scrollY : 0);
 
                 // bounding rect for flipping
                 boundingRect = {
@@ -584,7 +584,9 @@ window.mudpopoverHelper = {
             if (isPositionFixed) {
                 popoverContentNode.style['position'] = 'fixed';
             }
-            else if (!classList.contains('mud-popover-fixed')) {
+            else if (!classList.contains('mud-popover-fixed') && !isPositionOverride) {
+                // position override calculates position by mouse cursor position
+                // easy to test in Docs menu buttom position at cusor
                 offsetX += window.scrollX;
                 offsetY += window.scrollY
             }
