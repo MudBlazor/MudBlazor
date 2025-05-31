@@ -28,7 +28,7 @@ public partial class Rose : MudRadialChartBase<RoseChartOptions>
         var chartData = AggregateSeriesData(ChartOptions!.AggregationOption);
         var normalizedData = GetNormalizedData();
         var nonZeroCount = normalizedData.Count(d => d > 0);
-        var angleStep = 2 * Math.PI / nonZeroCount; //normalizedData.Length;
+        var angleStep = 2 * Math.PI / nonZeroCount;
         var currentAngle = ChartOptions.AngleOffset * (Math.PI / 180);
 
         var chartLabels = ChartOptions!.AggregationOption == AggregationOption.GroupByDataSet
@@ -68,12 +68,6 @@ public partial class Rose : MudRadialChartBase<RoseChartOptions>
             pathStringBuilder.Append($"A {ToS(sectorRadius)} {ToS(sectorRadius)} 0 {largeArcFlag} 1 {ToS(endx * sectorRadius)} {ToS(endy * sectorRadius)} ");
             pathStringBuilder.Append('Z');
 
-            var path = new SvgPath()
-            {
-                Index = i,
-                Data = pathStringBuilder.ToString()
-            };
-
             var midAngle = currentAngle + angleStep / 2;
             var labelRadius = sectorRadius * 0.85; // Position label inside the sector a bit
             var midX = 0d;
@@ -84,10 +78,18 @@ public partial class Rose : MudRadialChartBase<RoseChartOptions>
                 midX = Math.Cos(midAngle) * labelRadius;
                 midY = Math.Sin(midAngle) * labelRadius;
             }
-            path.LabelX = midX;
-            path.LabelY = midY;
-            path.LabelXValue = ChartOptions.ShowAsPercentage ? ToS(Math.Round(dataValue / normalizedData.Sum() * 100, 1)) + "%" : seriesdata.ToS();
-            path.LabelYValue = chartLabels.Length > i ? chartLabels[i] : string.Empty;
+
+            var path = new SvgPetal
+            {
+                Index = i,
+                Data = pathStringBuilder.ToString(),
+                SegmentRadius = sectorRadius,
+                AngleRadians = angleStep,
+                LabelX = midX,
+                LabelY = midY,
+                LabelXValue = ChartOptions.ShowAsPercentage ? ToS(Math.Round(dataValue / normalizedData.Sum() * 100, 1)) + "%" : seriesdata.ToS(),
+                LabelYValue = chartLabels.Length > i ? chartLabels[i] : string.Empty
+            };
 
             _paths.Add(path);
             currentAngle += angleStep;

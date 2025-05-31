@@ -70,32 +70,32 @@
             {
                 // Apply the 4 gradient overlays with partial opacity
                 <rect x="@x.ToS()"
-                y="@y.ToS()"
-                width="@_cellDimension.Width.ToS()"
-                height="@_cellDimension.Height.ToS()"
-                fill="url(#gradient-topcenter-@row-@col)"
-                opacity="0.25" />
+                      y="@y.ToS()"
+                      width="@_cellDimension.Width.ToS()"
+                      height="@_cellDimension.Height.ToS()"
+                      fill="url(#gradient-topcenter-@row-@col)"
+                      opacity="0.25" />
 
                 <rect x="@x.ToS()"
-                y="@y.ToS()"
-                width="@_cellDimension.Width.ToS()"
-                height="@_cellDimension.Height.ToS()"
-                fill="url(#gradient-right-@row-@col)"
-                opacity="0.25" />
+                      y="@y.ToS()"
+                      width="@_cellDimension.Width.ToS()"
+                      height="@_cellDimension.Height.ToS()"
+                      fill="url(#gradient-right-@row-@col)"
+                      opacity="0.25" />
 
                 <rect x="@x.ToS()"
-                y="@y.ToS()"
-                width="@_cellDimension.Width.ToS()"
-                height="@_cellDimension.Height.ToS()"
-                fill="url(#gradient-bottomcenter-@row-@col)"
-                opacity="0.25" />
+                      y="@y.ToS()"
+                      width="@_cellDimension.Width.ToS()"
+                      height="@_cellDimension.Height.ToS()"
+                      fill="url(#gradient-bottomcenter-@row-@col)"
+                      opacity="0.25" />
 
                 <rect x="@x.ToS()"
-                y="@y.ToS()"
-                width="@_cellDimension.Width.ToS()"
-                height="@_cellDimension.Height.ToS()"
-                fill="url(#gradient-left-@row-@col)"
-                opacity="0.25" />
+                      y="@y.ToS()"
+                      width="@_cellDimension.Width.ToS()"
+                      height="@_cellDimension.Height.ToS()"
+                      fill="url(#gradient-left-@row-@col)"
+                      opacity="0.25" />
             }
 
 
@@ -109,25 +109,25 @@
                                 : cell?.MudColor?.ToString(Utilities.MudColorOutputFormats.RGBA) ?? GetColorForValue(cell?.Value);
                     }
                     <rect x="@x.ToS()"
-                    y="@y.ToS()"
-                    width="@_cellDimension.Width.ToS()"
-                    height="@_cellDimension.Height.ToS()"
-                    @onclick="async () => await SetSelectedCellAsync(rowIndex, colIndex)"
-                    @onmouseover="(e) => OnCellMouseOver(e, cell)"
-                    @onmouseout="OnCellMouseOut"
-                    fill="@(cellColor)" />
+                          y="@y.ToS()"
+                          width="@_cellDimension.Width.ToS()"
+                          height="@_cellDimension.Height.ToS()"
+                          @onclick="async () => await SetSelectedCellAsync(rowIndex, colIndex)"
+                          @onmouseover="(e) => OnCellMouseOver(e, cell)"
+                          @onmouseout="OnCellMouseOut"
+                          fill="@(cellColor)" />
 
                     @if (_options is { ShowLabels: true } && cell is { Value: not null } && cell is { CustomFragment: null })
                     {
                         <g>
                             <text @onclick="async () => await SetSelectedCellAsync(rowIndex, colIndex)"
-                            @onmouseover="(e) => OnCellMouseOver(e, cell)"
-                            @onmouseout="OnCellMouseOut"
-                            font-size="@_dynamicFontSize.ToS()"
-                            x="@((x + _cellDimension.Width / 2).ToS())"
-                            y="@((y + _cellDimension.Height / 2).ToS())"
-                            dominant-baseline="middle"
-                            text-anchor="middle">
+                                @onmouseover="(e) => OnCellMouseOver(e, cell)"
+                                @onmouseout="OnCellMouseOut"
+                                font-size="@_dynamicFontSize.ToS()"
+                                x="@((x + _cellDimension.Width / 2).ToS())"
+                                y="@((y + _cellDimension.Height / 2).ToS())"
+                                dominant-baseline="middle"
+                                text-anchor="middle">
                                 @FormatValueForDisplay(cell?.Value)
                             </text>
                         </g>
@@ -141,12 +141,12 @@
                             var tempHeight = cell.Height ?? _cellDimension.Height;
 
                             <svg x="@x.ToS()"
-                            y="@y.ToS()"
-                            @onclick="async () => await SetSelectedCellAsync(rowIndex, colIndex)"
-                            width="@_cellDimension.Width.ToS()"
-                            height="@_cellDimension.Height.ToS()"
-                            viewBox="0 0 @tempWidth.ToS() @tempHeight.ToS()"
-                            preserveAspectRatio="xMidYMid meet">
+                                y="@y.ToS()"
+                                @onclick="async () => await SetSelectedCellAsync(rowIndex, colIndex)"
+                                width="@_cellDimension.Width.ToS()"
+                                height="@_cellDimension.Height.ToS()"
+                                viewBox="0 0 @tempWidth.ToS() @tempHeight.ToS()"
+                                preserveAspectRatio="xMidYMid meet">
                                 @cell.CustomFragment
                             </svg>
                         }
@@ -154,10 +154,10 @@
                         {
                             // If no specific width/height, use cell dimensions with padding
                             <foreignObject x="@x.ToS()"
-                            y="@y.ToS()"
-                            @onclick="async () => await SetSelectedCellAsync(rowIndex, colIndex)"
-                            width="@_cellDimension.Width.ToS()"
-                            height="@_cellDimension.Height.ToS()">
+                                           y="@y.ToS()"
+                                           @onclick="async () => await SetSelectedCellAsync(rowIndex, colIndex)"
+                                           width="@_cellDimension.Width.ToS()"
+                                           height="@_cellDimension.Height.ToS()">
                                 <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%; height:100%;display:flex; align-items:center; justify-content:center;">
                                     @cell.CustomFragment
                                 </div>

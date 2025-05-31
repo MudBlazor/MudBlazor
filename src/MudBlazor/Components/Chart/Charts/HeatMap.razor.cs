@@ -433,7 +433,6 @@ namespace MudBlazor.Charts
         private static double CalculateFontSize(double cellWidth, double cellHeight, int defaultSize)
         {
             var minDimension = Math.Min(cellWidth, cellHeight);
-            //return Math.Max(defaultSize, Math.Min(22, minDimension * 0.4));
 
             return Math.Max(defaultSize, 2 * Math.Sqrt(minDimension));
         }

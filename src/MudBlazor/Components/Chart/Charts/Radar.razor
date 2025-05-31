@@ -30,6 +30,8 @@
 @code {
     private RenderFragment RenderChartGrid() => builder =>
     {
+        if (ChartOptions.ShowGridLines is not true || _gridLines.Count == 0) return;
+
         var seq = 0;
 
         // Grid lines group
@@ -62,7 +64,6 @@
 
             if (ChartOptions.ShowAxisLabels)
             {
-                //var anchor = axisLine.LabelX < 0 ? "end" : "start";
                 var anchor = Math.Abs(axisLine.LabelX) < 10 ? "middle" : (axisLine.LabelX < 0 ? "end" : "start");
                 var baseline = Math.Abs(axisLine.LabelY) < 10 ? "middle" : (axisLine.LabelY < 0 ? "auto" : "hanging");
                 builder.AddMarkupContent(seq++,

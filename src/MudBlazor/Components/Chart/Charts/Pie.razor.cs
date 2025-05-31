@@ -45,17 +45,24 @@ namespace MudBlazor.Charts
 
                 var seriesdata = Math.Max(0, chartData[i]); //Ensure non-negative values
                 var data = normalizedData[i];
+
                 var startx = Math.Cos(cumulativeRadians);
                 var starty = Math.Sin(cumulativeRadians);
-                cumulativeRadians += 2 * Math.PI * data / 2;
+
+                var sliceAngleRadians = 2 * Math.PI * data;
+                var halfAngle = sliceAngleRadians / 2;
+
+                cumulativeRadians += halfAngle;
+
                 var midx = Math.Cos(cumulativeRadians);
                 var midy = Math.Sin(cumulativeRadians);
-                cumulativeRadians += 2 * Math.PI * data / 2;
+
+                cumulativeRadians += halfAngle;
+
                 var endx = Math.Cos(cumulativeRadians);
                 var endy = Math.Sin(cumulativeRadians);
                 var largeArcFlag = data > 0.5 ? 1 : 0;
 
-                SvgPath path;
                 var pathStringBuilder = new StringBuilder();
 
                 pathStringBuilder.Append($"M {ToS(startx * Radius)} {ToS(starty * Radius)} "); // Move to the start point
@@ -65,13 +72,6 @@ namespace MudBlazor.Charts
                 }
                 pathStringBuilder.Append($"A {ToS(Radius)} {ToS(Radius)} 0 {ToS(largeArcFlag)} 1 {ToS(endx * Radius)} {ToS(endy * Radius)} "); // Add an arc to the end point
                 pathStringBuilder.Append("L 0 0 Z"); // Line to the center
-
-                // Standard pie slice path going to the center.
-                path = new SvgPath()
-                {
-                    Index = i,
-                    Data = pathStringBuilder.ToString()
-                };
 
                 // Calculate the midpoint angle
                 var midAngle = cumulativeRadians - Math.PI * data;
@@ -87,10 +87,19 @@ namespace MudBlazor.Charts
                     midY = Math.Sin(midAngle) * midRadius;
                 }
 
-                path.LabelX = midX;
-                path.LabelY = midY;
-                path.LabelXValue = ChartOptions.ShowAsPercentage ? Math.Round(data * 100, 1).ToInvariantString() + "%" : seriesdata.ToInvariantString();
-                path.LabelYValue = chartLabels.Length > i ? chartLabels[i] : string.Empty;
+                // Standard pie slice path going to the center.
+                var path = new SvgPetal
+                {
+                    Index = i,
+                    Data = pathStringBuilder.ToString(),
+                    LabelX = midX,
+                    LabelY = midY,
+                    LabelXValue = ChartOptions.ShowAsPercentage ? Math.Round(data * 100, 1).ToInvariantString() + "%" : seriesdata.ToInvariantString(),
+                    LabelYValue = chartLabels.Length > i ? chartLabels[i] : string.Empty,
+                    SegmentRadius = Radius,
+                    AngleRadians = sliceAngleRadians,
+                    LabelOffset = 0.5,
+                };
 
                 _paths.Add(path);
             }

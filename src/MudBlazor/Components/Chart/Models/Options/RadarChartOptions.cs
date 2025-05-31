@@ -6,7 +6,7 @@ using MudBlazor.Charts;
 
 namespace MudBlazor;
 
-public class RadarChartOptions : DefaultRadialChartOptions, IRadialChartOptions, IDataPointOptions
+public class RadarChartOptions : DefaultRadialChartOptions, IRadialChartOptions, IHasDataPointOptions
 {
     /// <summary>
     /// Gets or sets the starting angle offset for the first axis, in degrees.

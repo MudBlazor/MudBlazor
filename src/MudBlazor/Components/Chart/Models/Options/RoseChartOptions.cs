@@ -6,7 +6,7 @@ using MudBlazor.Charts;
 
 namespace MudBlazor;
 
-public class RoseChartOptions : DefaultRadialChartOptions, IRadialChartOptions
+public class RoseChartOptions : DefaultRadialChartOptions, IHasValueLabelOptions
 {
     /// <summary>
     /// Gets or sets the starting angle offset for the first sector, in degrees.
@@ -24,6 +24,11 @@ public class RoseChartOptions : DefaultRadialChartOptions, IRadialChartOptions
     /// Default is 0.9.
     /// </remarks>
     public double ScaleFactor { get; set; } = 0.9;
+
+    /// <summary>
+    /// Whether values should be displayed within the chart.
+    /// </summary>
+    public bool ShowValues { get; set; }
 
     public static implicit operator RoseChartOptions(ChartOptions options) => new()
     {

@@ -11,9 +11,14 @@ public interface IRadialChartOptions : IChartOptions
     public double FillOpacity { get; set; }
 }
 
-public interface IDataPointOptions
+public interface IHasDataPointOptions
 {
     public double StrokeWidth { get; set; }
     public bool ShowDataMarkers { get; set; }
     public double DataPointRadius { get; set; }
+}
+
+public interface IHasValueLabelOptions
+{
+    public bool ShowValues { get; set; }
 }

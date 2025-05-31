@@ -1,4 +1,5 @@
 ﻿@namespace MudBlazor.Charts
+@using MudBlazor.Extensions
 
 @inherits MudComponentBase
 @typeparam TChartOptions
@@ -11,6 +12,12 @@
     <Filters />
 
     <g transform="translate(@Radius.ToS(), @Radius.ToS())">
+        <defs>
+            <filter id="text-shadow" x="-50%" y="-50%" width="200%" height="200%">
+                <feDropShadow dx="0" dy="0" stdDeviation="1.0" flood-color="black" flood-opacity="1" />
+            </filter>
+        </defs>
+
         @ChartGrid
 
         @foreach (var item in Paths)
@@ -19,13 +26,23 @@
                   class="mud-chart-serie"
                   fill-opacity="@ChartOptions.FillOpacity"
                   stroke="@GetColor(item.Index)"
-                  stroke-width="@(ChartOptions is IDataPointOptions dataPoint ? dataPoint.StrokeWidth : 0)"
+                  stroke-width="@(ChartOptions is IHasDataPointOptions dataPoint ? dataPoint.StrokeWidth : 0)"
                   fill="@GetColor(item.Index)"
                   d="@item.Data"
-                  pointer-events="@(ChartOptions is IDataPointOptions ? "none" : "all")"
+                  pointer-events="@(ChartOptions is IHasDataPointOptions ? "none" : "all")"
                   @onmouseover="(e) => OnMouseOver.InvokeAsync((Args: e, Segment: item))"
                   @onmouseout="() => OnMouseOut.InvokeAsync()">
             </path>
+
+                @if (ChartOptions is IHasValueLabelOptions { ShowValues: true  })
+                {
+                    <g class="mud-chart-labels">
+                        @if (!string.IsNullOrEmpty(item.LabelXValue) || !string.IsNullOrEmpty(item.LabelYValue))
+                        {
+                            @RenderValueLabel(item as SvgPetal);
+                        }
+                    </g>
+                }
 
             @if (item is SvgPolygon points)
             {
@@ -57,3 +74,52 @@
         }
     }
 </svg>
+
+@code {
+    RenderFragment RenderValueLabel(SvgPetal path) => builder =>
+    {
+        var seq = 0;
+        var hasX = !string.IsNullOrWhiteSpace(path.LabelXValue);
+        var fontSize = EstimateFontSize(path.LabelXValue, path.SegmentRadius, path.AngleRadians) + (path.LabelOffset * 5);
+        var x = ToS((path.LabelX * 0.8) + (path.LabelX * path.LabelOffset));
+        var y = ToS((path.LabelY * 0.8) + (path.LabelY * path.LabelOffset));
+
+        builder.OpenElement(seq++, "text");
+        builder.AddAttribute(seq++, "class", "mud-chart-label-value");
+        builder.AddAttribute(seq++, "x", x);
+        builder.AddAttribute(seq++, "y", y);
+        builder.AddAttribute(seq++, "fill", "white");
+        builder.AddAttribute(seq++, "stroke", "black");
+        builder.AddAttribute(seq++, "stroke-width", "0.8");
+        builder.AddAttribute(seq++, "paint-order", "stroke");
+        builder.AddAttribute(seq++, "filter", "url(#text-shadow)");
+        builder.AddAttribute(seq++, "text-anchor", "middle");
+        builder.AddAttribute(seq++, "dominant-baseline", "central");
+        builder.AddAttribute(seq++, "style", $"font-size:{fontSize.ToS()}px");
+
+        if (hasX)
+        {
+            builder.OpenElement(seq++, "tspan");
+            builder.AddContent(seq++, path.LabelXValue);
+            builder.CloseElement();
+        }
+
+        builder.CloseElement(); // </text>
+    };
+
+    private static double EstimateFontSize(string text, double radius, double angleRadians)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+            return 8;
+
+        text = text.Replace(".", "").Trim();
+
+        var arcLength = angleRadians * radius;
+        var avgCharWidth = 0.6;
+        var estimatedTextWidth = Math.Max(text.Length.EnsureRange(6), 2) * avgCharWidth * Math.Sqrt(arcLength / 3);
+        var size = (arcLength / estimatedTextWidth) + 1.6;
+
+        return size.EnsureRange(6, 30);
+    }
+
+}
