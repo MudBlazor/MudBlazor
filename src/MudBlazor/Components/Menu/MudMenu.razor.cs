@@ -74,13 +74,10 @@ namespace MudBlazor
                 .Build();
 
         /// <summary>
-        /// Inline styles for positioning the menu at the cursor's location.
+        /// Inline data attributes for positioning the menu at the cursor's location.
         /// </summary>
-        protected string Stylename =>
-            new StyleBuilder()
-                .AddStyle("top", _openPosition.Top.ToPx(), PositionAtCursor)
-                .AddStyle("left", _openPosition.Left.ToPx(), PositionAtCursor)
-                .Build();
+        private Dictionary<string, object> PositionAttributes =>
+            new() { { "data-pc-x", _openPosition.Left.ToString() }, { "data-pc-y", _openPosition.Top.ToString() } };
 
         /// <summary>
         /// The text shown for this menu.
