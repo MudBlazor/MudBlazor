@@ -32,7 +32,7 @@
                 @if (SecondsVisible)
                 {
                     <MudText Typo="@Typo.h2" Class="mud-timepicker-separator">:</MudText>
-                    if (TimeEditMode is TimeEditMode.Normal or TimeEditMode.MinutesSeconds or TimeEditMode.OnlySeconds)
+                    if (TimeEditMode is TimeEditMode.HoursMinutesSeconds or TimeEditMode.MinutesSeconds or TimeEditMode.OnlySeconds)
                     {
                         <MudButton Variant="@Variant.Text" Color="@Color.Inherit" Class="@SecondButtonClassname" OnClick="@OnSecondsClick">@GetSecondString()</MudButton>
                     }
