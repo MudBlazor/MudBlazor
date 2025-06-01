@@ -17,9 +17,9 @@
                     }
                     else
                     {
-                        <MudText Typo="@Typo.h2" Class="mud-timepicker-toolbar-text">@GetHourString()</MudText>
+                        <MudText Typo="ToolbarTextTypo" Class="mud-timepicker-toolbar-text">@GetHourString()</MudText>
                     }
-                    <MudText Typo="@Typo.h2" Class="mud-timepicker-separator">:</MudText>
+                    <MudText Typo="ToolbarTextTypo" Class="mud-timepicker-separator">:</MudText>
                 }
                 @if (TimeEditMode is TimeEditMode.Normal or TimeEditMode.HoursMinutesSeconds or TimeEditMode.MinutesSeconds or TimeEditMode.OnlyMinutes)
                 {
@@ -27,18 +27,18 @@
                 }
                 else
                 {
-                    <MudText Typo="@Typo.h2" Class="mud-timepicker-toolbar-text">@GetMinuteString()</MudText>
+                    <MudText Typo="ToolbarTextTypo" Class="mud-timepicker-toolbar-text">@GetMinuteString()</MudText>
                 }
                 @if (SecondsVisible)
                 {
-                    <MudText Typo="@Typo.h2" Class="mud-timepicker-separator">:</MudText>
+                    <MudText Typo="ToolbarTextTypo" Class="mud-timepicker-separator">:</MudText>
                     if (TimeEditMode is TimeEditMode.HoursMinutesSeconds or TimeEditMode.MinutesSeconds or TimeEditMode.OnlySeconds)
                     {
                         <MudButton Variant="@Variant.Text" Color="@Color.Inherit" Class="@SecondButtonClassname" OnClick="@OnSecondsClick">@GetSecondString()</MudButton>
                     }
                     else
                     {
-                        <MudText Typo="@Typo.h2" Class="mud-timepicker-toolbar-text">@GetSecondString()</MudText>
+                        <MudText Typo="ToolbarTextTypo" Class="mud-timepicker-toolbar-text">@GetSecondString()</MudText>
                     }
                 }
             </div>

@@ -470,6 +470,8 @@ namespace MudBlazor
                 .AddClass("mud-time-picker-dial-hidden", _currentView != OpenToEnum.Seconds)
                 .Build();
 
+        private Typo ToolbarTextTypo => Orientation == Orientation.Portrait ? Typo.h2 : Typo.h3;
+
         private bool IsAm => _timeSet.Hour is >= 00 and < 12; // AM is 00:00 to 11:59.
         private bool IsPm => _timeSet.Hour is >= 12 and < 24; // PM is 12:00 to 23:59.
 
