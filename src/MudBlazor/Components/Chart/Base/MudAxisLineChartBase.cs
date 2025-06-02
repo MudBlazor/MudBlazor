@@ -97,6 +97,10 @@ public abstract class MudAxisLineChartBase<TOptions> : MudAxisChartBase<TOptions
         for (var i = 0; i < Series.Count; i++)
         {
             var series = Series[i];
+
+            if (!series.Visible || series.Data.Points.Count == 0)
+                continue;
+
             var chartLine = new StringBuilder();
             var chartDataCircles = new List<SvgCircle>();
             ChartDataPoints[i] = chartDataCircles;

@@ -4,6 +4,7 @@
 
 using System.Text;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 
 namespace MudBlazor.Charts;
@@ -15,6 +16,9 @@ public partial class Radar : MudRadialChartBase<RadarChartOptions>
     protected List<SvgPath> _gridLines = [];
     protected List<SvgPath> _axisLines = [];
     protected List<SvgPath> _axisValues = [];
+
+    public int? SelectedPointIndex { get; set; }
+    public int? HoveredPathIndex { get; set; }
 
     protected override void OnInitialized()
     {
@@ -36,7 +40,7 @@ public partial class Radar : MudRadialChartBase<RadarChartOptions>
             return;
 
         var normalizedData = GetNormalizedData();
-        var (seriesData, labelData) = GroupDataSet(ChartLabels ?? [], ChartSeries, ChartOptions!.AggregationOption == AggregationOption.GroupByDataSet);
+        var (seriesData, labelData) = Radar.GroupDataSet(ChartLabels ?? [], ChartSeries, ChartOptions!.AggregationOption == AggregationOption.GroupByDataSet);
         var numAxes = labelData.Length;
 
         // Setup Legends
@@ -157,11 +161,11 @@ public partial class Radar : MudRadialChartBase<RadarChartOptions>
                 pathStringBuilder.Append($"{ToS(x)} {ToS(y)} L ");
                 seriesPoints.Add(new SvgPath()
                 {
-                    Index = seriesIndex,
+                    Index = i,
                     LabelX = x,
                     LabelY = y,
-                    LabelXValue = series.Name,
-                    LabelYValue = value.ToS()
+                    LabelXValue = value.ToS(),
+                    LabelYValue = series.Name
                 });
             }
             pathStringBuilder.Length -= 2; // Remove last "L "
@@ -172,15 +176,15 @@ public partial class Radar : MudRadialChartBase<RadarChartOptions>
                 Index = seriesIndex,
                 Data = pathStringBuilder.ToString(),
                 Points = seriesPoints,
-                LabelXValue = series.Name,
-                LabelYValue = ChartOptions.ShowAsPercentage ? Math.Round(normalizedData[seriesIndex] * 100, 1).ToInvariantString() + "%" : series.Data.Values.Sum().ToS(),
+                LabelXValue = ChartOptions.ShowAsPercentage ? Math.Round(normalizedData[seriesIndex] * 100, 1).ToInvariantString() + "%" : series.Data.Values.Sum().ToS(),
+                LabelYValue = series.Name,
             };
 
             _paths.Add(path);
         }
     }
 
-    private (List<ChartSeries> Series, string[] Labels) GroupDataSet(string[] labels, List<ChartSeries> dataSet, bool groupByDataSet = false)
+    private static (List<ChartSeries> Series, string[] Labels) GroupDataSet(string[] labels, List<ChartSeries> dataSet, bool groupByDataSet = false)
     {
         if (groupByDataSet)
             return (dataSet, labels);
@@ -218,5 +222,26 @@ public partial class Radar : MudRadialChartBase<RadarChartOptions>
     private static double FindNextNiceStep(double minStep)
     {
         return Math.Ceiling(minStep / 5) * 5;
+    }
+
+    internal override void OnSegmentMouseOver(MouseEventArgs args, SvgPath segment)
+    {
+        base.OnSegmentMouseOver(args, segment);
+
+        HoveredPathIndex = segment.Index;
+    }
+
+    internal override void OnSegmentMouseOut()
+    {
+        base.OnSegmentMouseOut();
+
+        HoveredPathIndex = null;
+    }
+
+    internal async Task SetSelectedPointAsync(int index, int pointIndex)
+    {
+        SelectedPointIndex = index;
+
+        await SetSelectedIndexAsync(pointIndex);
     }
 }

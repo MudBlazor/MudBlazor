@@ -95,7 +95,7 @@
         {
             var dataPointPath = new SvgPath()
             {
-                Index = path.Index,
+                Index = point.Index,
                 LabelX = point.LabelX,
                 LabelY = point.LabelY,
                 LabelXValue = point.LabelXValue,
@@ -109,7 +109,7 @@
             builder.AddAttribute(seq++, "fill", color);
             builder.AddAttribute(seq++, "onmouseover", EventCallback.Factory.Create<MouseEventArgs>(this, e => OnSegmentMouseOver(e, dataPointPath)));
             builder.AddAttribute(seq++, "onmouseout", EventCallback.Factory.Create(this, OnSegmentMouseOut));
-            builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, async (i) => await SetSelectedIndexAsync(path.Index)));
+            builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, async (i) => await SetSelectedPointAsync(path.Index, point.Index)));
             builder.CloseElement();
         }
     };

@@ -181,9 +181,9 @@ public abstract class MudRadialChartBase<TOptions> : MudChartBase<TOptions>, IDi
         RebuildChart();
     }
 
-    internal void OnSegmentMouseOver(MouseEventArgs args, SvgPath segment) => _hoveredSegment = segment;
+    internal virtual void OnSegmentMouseOver(MouseEventArgs args, SvgPath segment) => _hoveredSegment = segment;
 
-    internal void OnSegmentMouseOut() => _hoveredSegment = null;
+    internal virtual void OnSegmentMouseOut() => _hoveredSegment = null;
 
     [JSInvokable]
     public void OnElementSizeChanged(ElementSize elementSize)

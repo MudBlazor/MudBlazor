@@ -96,6 +96,10 @@
   fill: var(--mud-palette-text-primary);
 }
 
+.mud-chart-axis-label {
+  fill: var(--mud-palette-text-primary);
+}
+
 .mud-chart-donut {
   & .mud-donut-hole {
     fill: transparent;
