@@ -76,8 +76,11 @@ namespace MudBlazor
         /// <summary>
         /// Inline data attributes for positioning the menu at the cursor's location.
         /// </summary>
-        private Dictionary<string, object> PositionAttributes =>
-            new() { { "data-pc-x", _openPosition.Left.ToString() }, { "data-pc-y", _openPosition.Top.ToString() } };
+        private Dictionary<string, object> PositionAttributes => new()
+        {
+            { "data-pc-x", _openPosition.Left.ToString() },
+            { "data-pc-y", _openPosition.Top.ToString() },
+        };
 
         /// <summary>
         /// The text shown for this menu.
