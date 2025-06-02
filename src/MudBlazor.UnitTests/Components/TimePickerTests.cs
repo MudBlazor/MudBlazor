@@ -182,7 +182,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void TimeEditModeNormal_CheckMinutesAndSecondsHidden()
+        public void TimeEditModeNormal_CheckMinutesAndSecondsDialsHidden()
         {
             var comp = OpenPicker(Parameter("TimeEditMode", TimeEditMode.Normal));
             // Are Minutes hidden
@@ -192,7 +192,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ChangeToMinutes_FromHours_CheckHoursAndSecondsHidden()
+        public void ChangeToMinutes_FromHours_CheckHoursAndSecondsDialsHidden()
         {
             var comp = OpenPicker();
             // click on the minutes input
@@ -204,9 +204,9 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ChangeToSeconds_FromHours_CheckHoursAndSecondsHidden()
+        public void ChangeToSeconds_FromHours_CheckHoursAndMinutesDialsHidden()
         {
-            var comp = OpenPicker();
+            var comp = OpenPicker(Parameter("TimeEditMode", TimeEditMode.HoursMinutesSeconds));
             // click on the seconds input
             comp.FindAll("button.mud-timepicker-button")[2].Click();
             // Are hours displayed
@@ -428,6 +428,7 @@ namespace MudBlazor.UnitTests.Components
             [
                 Parameter("Time", time),
                 Parameter("HoursVisible", false),
+                Parameter("TimeEditMode", TimeEditMode.HoursMinutesSeconds)
             ];
             var comp = OpenPicker(parameters);
 
