@@ -1092,7 +1092,7 @@ namespace MudBlazor
 #nullable disable
 
         #endregion
-        
+
         /// <summary>
         /// Allows a sort direction of <see cref="SortDirection.None"/> in addition to <see cref="SortDirection.Ascending"/> and <see cref="SortDirection.Descending"/>.
         /// </summary>
