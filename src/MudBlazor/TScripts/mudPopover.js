@@ -176,7 +176,6 @@ window.mudpopoverHelper = {
                 top = boundingRect.top + boundingRect.height;
             }
         }
-
         return {
             top: top, left: left, offsetX: offsetX, offsetY: offsetY, anchorY: top, anchorX: left
         };
@@ -278,6 +277,23 @@ window.mudpopoverHelper = {
             const zIndexAuto = popoverNodeStyle.getPropertyValue('z-index') === 'auto';
             const classListArray = Array.from(classList);
 
+            if (isPositionOverride) {
+                const positiontop = parseInt(popoverContentNode.getAttribute('data-pc-y')) || boundingRect.top;
+                const positionleft = parseInt(popoverContentNode.getAttribute('data-pc-x')) || boundingRect.left;
+                const scrollLeft = window.scrollX;
+                const scrollTop = window.scrollY;
+
+                // bounding rect for flipping
+                boundingRect = {
+                    left: positionleft - scrollLeft,
+                    top: positiontop - scrollTop,
+                    right: positionleft + 1,
+                    bottom: positiontop + 1,
+                    width: 1,
+                    height: 1
+                };
+            }
+
             // calculate position based on opening anchor/transform
             const position = window.mudpopoverHelper.calculatePopoverPosition(classListArray, boundingRect, selfRect);
             let left = position.left; // X-coordinate of the popover
@@ -301,30 +317,6 @@ window.mudpopoverHelper = {
             if (popoverContentNode.mudHeight && anchorY > 0 && anchorY < window.innerHeight) {
                 popoverContentNode.style.maxHeight = null;
                 popoverContentNode.mudHeight = null;
-            }
-
-            // get the top/left/ from popoverContentNode if the popover has been hardcoded for position
-            if (isPositionOverride) {
-                top = parseInt(popoverContentNode.getAttribute('data-pc-y')) || top;
-                left = parseInt(popoverContentNode.getAttribute('data-pc-x')) || left;                
-
-                // no offset when hardcoded
-                offsetX = 0;
-                offsetY = 0;
-
-                // anchor position is the same as top/left without scroll
-                anchorX = left - (window.scrollX > 0 ? window.scrollX : 0);
-                anchorY = top - (window.scrollY > 0 ? window.scrollY : 0);
-
-                // bounding rect for flipping
-                boundingRect = {
-                    left: left,
-                    top: top,
-                    right: left + selfRect.width,
-                    bottom: top + selfRect.height,
-                    width: selfRect.width,
-                    height: selfRect.height
-                };
             }
 
             // flipping logic
@@ -584,9 +576,7 @@ window.mudpopoverHelper = {
             if (isPositionFixed) {
                 popoverContentNode.style['position'] = 'fixed';
             }
-            else if (!classList.contains('mud-popover-fixed') && !isPositionOverride) {
-                // position override calculates position by mouse cursor position
-                // easy to test in Docs menu buttom position at cusor
+            else if (!classList.contains('mud-popover-fixed')) {
                 offsetX += window.scrollX;
                 offsetY += window.scrollY
             }
