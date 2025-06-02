@@ -65,11 +65,34 @@
                     <SectionHeader Title="Add References">
                         <Description>Add the following to your HTML head section, it's either <CodeInline>index.html</CodeInline> or <CodeInline>_Layout.cshtml</CodeInline>/<CodeInline>_Host.cshtml</CodeInline>/<CodeInline>App.razor</CodeInline> depending on whether you're running WebAssembly or Server.</Description>
                     </SectionHeader>
-                    <SectionContent Code="@nameof(InstallationManualCssFontsExample)" />
+                    <SectionContent Codes="@([
+                        new CodeFile(".NET 9", nameof(InstallationManualCssFontsExample)),
+                        new CodeFile(".NET 8", nameof(InstallationManualCssFontsExampleNet8)), 
+                        new CodeFile("WebAssembly Standalone", nameof(InstallationManualCssFontsExampleWasmStandalone)),
+                    ])" />
                     <SectionHeader Class="mt-6">
                         <Description>Next, add the MudBlazor js file next to the default Blazor script at the end:</Description>
                     </SectionHeader>
-                    <SectionContent Code="@nameof(InstallScriptManual)" />
+                    <SectionContent Codes="@([
+                        new CodeFile(".NET 9", nameof(InstallScriptManual)),
+                        new CodeFile(".NET 8", nameof(InstallScriptManualNet8)),
+                        new CodeFile("WebAssembly Standalone", nameof(InstallScriptManualWasmStandalone)),
+                    ])" />
+                    <SectionHeader Class="mt-6">
+                        <Description>
+                            On .NET 9 or later, ensure that the <CodeInline>app.MapStaticAssets()</CodeInline> middleware
+                            is enabled so that <CodeInline>@@Assets[""]</CodeInline> can fingerprint the files. When upgrading from
+                            an earlier .NET release this does not happen automatically.
+                        </Description>
+                    </SectionHeader>
+                    <SectionHeader Class="mt-6">
+                        <Description>
+                            <MudAlert Class="mt-4" Severity="Severity.Warning">
+                                Please make sure you've implemented a suitable cache busting strategy for all scripts and stylesheets as seen above.
+                                Otherwise your users will experience caching related issues when you update MudBlazor.
+                            </MudAlert>
+                        </Description>
+                    </SectionHeader>
                 </DocsPageSection>
 
                 <DocsPageSection>
