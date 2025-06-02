@@ -1,0 +1,19 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudChart ChartType="ChartType.Rose" ChartSeries="@_series" ChartOptions="@_options" Width="400px" Height="400px" ChartLabels="@_labels" />
+
+@code {
+    private List<ChartSeries> _series = new List<ChartSeries>()
+    {
+        new ChartSeries() { Name = "Sales Q1", Data = new double[] { 10, 40, 20, 30 } },
+        new ChartSeries() { Name = "Sales Q2", Data = new double[] { 15, 35, 25, 35 } } 
+    };
+    private string[] _labels = { "Product A", "Product B", "Product C", "Product D" };
+    private RoseChartOptions _options = new RoseChartOptions
+    {
+        AngleOffset = 90,
+        ScaleFactor = 1.0,
+        ShowAsPercentage = true,
+        AggregationOption = Charts.AggregationOption.GroupByDataSet
+    };
+}

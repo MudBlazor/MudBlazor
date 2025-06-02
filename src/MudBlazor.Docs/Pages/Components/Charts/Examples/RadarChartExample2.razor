@@ -1,0 +1,32 @@
+﻿@namespace MudBlazor.Docs.Examples
+@using MudBlazor.Charts
+
+<MudChart ChartType="ChartType.Radar" ChartSeries="@_series" ChartLabels="@_chartLabels" ChartOptions="@_options" Width="700px" Height="500px" MatchBoundsToSize />
+
+@code {
+    private string[] _chartLabels = { "Strength", "Agility", "Intelligence", "Charisma", "Stamina", "Luck" };
+    private List<ChartSeries> _series = new List<ChartSeries>()
+    {
+        new ChartSeries() { Name = "Warrior", Data = new double[] { 12, 5, 3, 5, 9, 2 } },
+        new ChartSeries() { Name = "Mage", Data = new double[] { 3, 5, 11, 7, 4, 6 } },
+        new ChartSeries() { Name = "Rogue", Data = new double[] { 5, 14, 7, 8, 6, 9 } }
+    };
+
+    private RadarChartOptions _options = new RadarChartOptions
+    {
+        ShowGridLines = true,
+        GridLevels = 3,
+        GridLineColor = "rgba(128,128,128,0.3)",
+        ShowAxisLabels = true,
+        AxisLineColor = "navy",
+        AxisLineWidth = 1.5,
+        FillOpacity = 0.3,
+        StrokeWidth = 2.5,
+        ShowDataMarkers = true,
+        DataPointRadius = 5,
+        AngleOffset = 30,
+        ChartPalette = new string[] { "#FF0000", "#00FF00", "#0000FF" },
+        AggregationOption = AggregationOption.GroupByDataSet,
+        TooltipTitleFormat = "{{SERIES_NAME}}: {{Y_VALUE}}",
+    };
+}

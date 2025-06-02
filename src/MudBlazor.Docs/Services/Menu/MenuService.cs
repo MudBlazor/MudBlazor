@@ -118,13 +118,15 @@ namespace MudBlazor.Docs.Services
 
             //Charts
             .AddNavGroup("Charts", false, new DocsComponents()
-                .AddItem("Donut Chart", typeof(Donut))
-                .AddItem("Line Chart", typeof(Line), typeof(Legend))
-                .AddItem("Pie Chart", typeof(Pie))
-                .AddItem("Bar Chart", typeof(Bar), typeof(ChartOptions))
-                .AddItem("Heat Map Chart", typeof(HeatMap))
-                .AddItem("Stacked Bar Chart", typeof(StackedBar))
-                .AddItem("Time Series Chart", typeof(TimeSeries))
+                .AddItem("Donut Chart", typeof(Donut), typeof(DonutChartOptions), typeof(Legend))
+                .AddItem("Line Chart", typeof(Line), typeof(LineChartOptions), typeof(Legend))
+                .AddItem("Pie Chart", typeof(Pie), typeof(PieChartOptions), typeof(Legend))
+                .AddItem("Bar Chart", typeof(Bar), typeof(BarChartOptions), typeof(Legend))
+                .AddItem("Heat Map Chart", typeof(HeatMap), typeof(HeatMapChartOptions), typeof(Legend))
+                .AddItem("Stacked Bar Chart", typeof(StackedBar), typeof(StackedBarChartOptions), typeof(Legend))
+                .AddItem("Time Series Chart", typeof(TimeSeries), typeof(TimeSeriesChartOptions), typeof(Legend))
+                .AddItem("Radar Chart", typeof(Radar), typeof(RadarChartOptions), typeof(Legend))
+                .AddItem("Rose Chart", typeof(Rose), typeof(RoseChartOptions), typeof(Legend))
             )
             // this must be last!
             .GetComponentsSortedByName();
