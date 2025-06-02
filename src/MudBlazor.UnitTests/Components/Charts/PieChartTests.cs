@@ -1,6 +1,7 @@
 ﻿// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
+using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using MudBlazor.Charts;
@@ -143,6 +144,72 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.ChartSeries, [data]));
 
             comp.Markup.Should().Contain("d=\"M 0 -140 A 140 140 0 1 1 0 140 A 140 140 0 1 1 -0 -140 L 0 0 Z\"");
+        }
+
+        [Test]
+        public void PieChart_CanHideSeries_Test()
+        {
+            var chartData = new double[] { 10, 20, 30, 40 };
+            string[] chartLabels = { "Slice 1", "Slice 2", "Slice 3", "Slice 4" };
+            var chartSeries = new List<ChartSeries>() { new ChartSeries { Data = chartData } };
+            // For Pie charts, individual data points (slices) are hidden, not the whole series object usually.
+            // The `ChartSeries.Visible` property might not apply here in the same way as for other charts if we want to hide slices.
+            // Instead, the legend interaction directly controls visibility of slices.
+
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Pie)
+                .Add(p => p.Height, "300px")
+                .Add(p => p.Width, "300px")
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, chartLabels)
+                .Add(p => p.CanHideSeries, true) // This enables legend item clicking to hide/show
+                .Add(p => p.ChartOptions, new PieChartOptions { ChartPalette = _baseChartPalette })
+            );
+
+            var seriesCheckboxes = comp.FindAll(".mud-checkbox-input");
+            seriesCheckboxes.Count.Should().Be(chartLabels.Length, "Number of checkboxes should match number of labels (slices)");
+
+            var series1 = "[stroke='#2979FF']";
+            var series2 = "[stroke='#1DE9B6']";
+            var series3 = "[stroke='#FFC400']";
+            var series4 = "[stroke='#FF9100']";
+
+            string[] series = [series1, series2, series3, series4];
+
+            // Initially, all slices should be visible and their checkboxes checked
+            for (var i = 0; i < chartLabels.Length; i++)
+            {
+                seriesCheckboxes[i].IsChecked().Should().BeTrue($"{chartLabels[i]} checkbox should be initially checked");
+                comp.FindAll($"path.mud-chart-serie{series[i]}").Count.Should().Be(1, $"{chartLabels[i]} path should be initially visible");
+            }
+
+            // Hide "Slice 1"
+            comp.InvokeAsync(() => seriesCheckboxes[0].Change(false));
+            seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
+            seriesCheckboxes[0].IsChecked().Should().BeFalse("Slice 1 checkbox should be unchecked after hiding");
+            comp.FindAll($"path.mud-chart-serie{series1}").Count.Should().Be(0, "Slice 1 path should be hidden");
+            comp.FindAll($"path.mud-chart-serie{series2}").Count.Should().Be(1, "Slice 2 path should remain visible"); // Check other slices
+
+            // Show "Slice 1" again
+            comp.InvokeAsync(() => seriesCheckboxes[0].Change(true));
+            seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
+            seriesCheckboxes[0].IsChecked().Should().BeTrue("Slice 1 checkbox should be checked after re-showing");
+            comp.FindAll($"path.mud-chart-serie{series1}").Count.Should().Be(1, "Slice 1 path should be visible again");
+
+            // Hide "Slice 3"
+            comp.InvokeAsync(() => seriesCheckboxes[2].Change(false));
+            seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
+            seriesCheckboxes[2].IsChecked().Should().BeFalse("Slice 3 checkbox should be unchecked after hiding");
+            comp.FindAll($"path.mud-chart-serie{series3}").Count.Should().Be(0, "Slice 3 path should be hidden");
+            comp.FindAll($"path.mud-chart-serie{series1}").Count.Should().Be(1, "Slice 1 path should still be visible");
+            comp.FindAll($"path.mud-chart-serie{series2}").Count.Should().Be(1, "Slice 2 path should still be visible");
+            comp.FindAll($"path.mud-chart-serie{series4}").Count.Should().Be(1, "Slice 4 path should still be visible");
+
+            // Show "Slice 3" again
+            comp.InvokeAsync(() => seriesCheckboxes[2].Change(true));
+            seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
+            seriesCheckboxes[2].IsChecked().Should().BeTrue("Slice 3 checkbox should be checked after re-showing");
+            comp.FindAll($"path.mud-chart-serie{series3}").Count.Should().Be(1, "Slice 3 path should be visible again");
         }
     }
 }

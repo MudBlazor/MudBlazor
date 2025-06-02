@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
@@ -197,5 +198,73 @@ public class RadarChartTests : BunitTest
         );
         comp.FindAll("path.mud-chart-serie").Count.Should().Be(3);
         comp.Find("path.mud-chart-serie").GetAttribute("d").Should().NotBeNullOrWhiteSpace();
+    }
+
+    [Test]
+    public void RadarChart_CanHideSeries_Test()
+    {
+        var chartSeries = new List<ChartSeries>()
+        {
+            new () { Name = "Series 1", Data = new double[] { 90, 79, 72, 69 } },
+            new () { Name = "Series 2", Data = new double[] { 10, 41, 35, 51 } },
+            new () { Name = "Series 3", Data = new double[] { 60, 20, 85, 30 }, Visible = false } // Initially hidden
+        };
+        string[] xAxisLabels = { "Cat A", "Cat B", "Cat C", "Cat D" };
+
+        var comp = Context.RenderComponent<MudChart>(parameters => parameters
+            .Add(p => p.ChartType, ChartType.Radar)
+            .Add(p => p.Height, "400px")
+            .Add(p => p.Width, "400px")
+            .Add(p => p.ChartSeries, chartSeries)
+            .Add(p => p.ChartLabels, xAxisLabels)
+            .Add(p => p.CanHideSeries, true)
+            .Add(p => p.ChartOptions, new RadarChartOptions { AggregationOption = AggregationOption.GroupByDataSet })
+        );
+
+        // Initial state assertions
+        var seriesCheckboxes = comp.FindAll(".mud-checkbox-input");
+        seriesCheckboxes.Count.Should().Be(chartSeries.Count, "Number of checkboxes should match number of series");
+
+        seriesCheckboxes[0].IsChecked().Should().BeTrue("Series 1 should be initially visible");
+        seriesCheckboxes[1].IsChecked().Should().BeTrue("Series 2 should be initially visible");
+        seriesCheckboxes[2].IsChecked().Should().BeFalse("Series 3 should be initially hidden");
+
+        var series1 = "[stroke='#2979FF']";
+        var series2 = "[stroke='#1DE9B6']";
+        var series3 = "[stroke='#FFC400']";
+
+        // A visible radar series should have 1 path. A hidden one should have 0.
+        comp.FindAll($"path.mud-chart-serie{series1}").Count.Should().Be(1, "Series 1 path should initially be visible");
+        comp.FindAll($"path.mud-chart-serie{series2}").Count.Should().Be(1, "Series 2 path should initially be visible");
+        comp.FindAll($"path.mud-chart-serie{series3}").Count.Should().Be(0, "Series 3 path should initially be hidden");
+
+        // Hide Series 1
+        comp.InvokeAsync(() => seriesCheckboxes[0].Change(false));
+        seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
+        seriesCheckboxes[0].IsChecked().Should().BeFalse("Series 1 checkbox should be unchecked after hiding");
+        chartSeries[0].Visible.Should().BeFalse("Series 1 Visible property should be false");
+        comp.FindAll($"path.mud-chart-serie{series1}").Count.Should().Be(0, "Series 1 path should be hidden after unchecking");
+
+        // Show Series 1 again
+        comp.InvokeAsync(() => seriesCheckboxes[0].Change(true));
+        seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
+        seriesCheckboxes[0].IsChecked().Should().BeTrue("Series 1 checkbox should be checked after showing");
+        chartSeries[0].Visible.Should().BeTrue("Series 1 Visible property should be true");
+        comp.FindAll($"path.mud-chart-serie{series1}").Count.Should().Be(1, "Series 1 path should be visible again after re-checking");
+
+        // Hide Series 2
+        comp.InvokeAsync(() => seriesCheckboxes[1].Change(false));
+        seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
+        seriesCheckboxes[1].IsChecked().Should().BeFalse("Series 2 checkbox should be unchecked after hiding");
+        chartSeries[1].Visible.Should().BeFalse("Series 2 Visible property should be false");
+        comp.FindAll($"path.mud-chart-serie{series2}").Count.Should().Be(0, "Series 2 path should be hidden");
+        comp.FindAll($"path.mud-chart-serie{series1}").Count.Should().Be(1, "Series 1 path should still be visible"); // Ensure other series not affected
+
+        // Show Series 3 (which was initially hidden)
+        comp.InvokeAsync(() => seriesCheckboxes[2].Change(true));
+        seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
+        seriesCheckboxes[2].IsChecked().Should().BeTrue("Series 3 checkbox should be checked after showing");
+        chartSeries[2].Visible.Should().BeTrue("Series 3 Visible property should be true");
+        comp.FindAll($"path.mud-chart-serie{series3}").Count.Should().Be(1, "Series 3 path should be visible after checking");
     }
 }

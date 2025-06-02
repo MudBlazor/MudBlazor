@@ -2,10 +2,10 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Charts;
 using MudBlazor.UnitTests.TestComponents.Charts;
 using MudBlazor.Utilities;
@@ -634,6 +634,66 @@ namespace MudBlazor.UnitTests.Components
                               .Add(p => p.ChartOptions, options)
                               .Add(p => p.ChartSeries, series));
 
+        }
+
+        [Test]
+        public void HeatmapChart_CanHideSeries_Test()
+        {
+            var chartSeries = new List<ChartSeries>()
+            {
+                new () { Name = "Sensor Alpha", Data = new double[] { 10, 20, 30, 25 } }, // Row 1
+                new () { Name = "Sensor Beta", Data = new double[] { 15, 25, 35, 20 } },  // Row 2
+                new () { Name = "Sensor Gamma", Data = new double[] { 5, 10, 15, 12 }, Visible = false } // Row 3, initially hidden
+            };
+            string[] xAxisLabels = { "Time 1", "Time 2", "Time 3", "Time 4" }; // Columns
+
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.HeatMap)
+                .Add(p => p.Height, "300px")
+                .Add(p => p.Width, "400px")
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels) // X-axis labels for columns
+                .Add(p => p.CanHideSeries, true)
+            );
+
+            // Initial state assertions for checkboxes
+            var seriesCheckboxes = comp.FindAll(".mud-checkbox-input");
+            seriesCheckboxes.Count.Should().Be(chartSeries.Count, "Number of checkboxes should match number of series");
+
+            seriesCheckboxes[0].IsChecked().Should().BeTrue("Sensor Alpha checkbox should be initially checked");
+            seriesCheckboxes[1].IsChecked().Should().BeTrue("Sensor Beta checkbox should be initially checked");
+            seriesCheckboxes[2].IsChecked().Should().BeFalse("Sensor Gamma checkbox should be initially unchecked");
+
+            // Initial state assertions for heatmap cells (rects)
+            comp.FindAll(".mud-chart-cell").Count.Should().Be(chartSeries.Where(x => x.Visible).Sum(x => x.Data.Count()), "should equal count of visible cells");
+
+            // Hide Sensor Alpha series
+            comp.InvokeAsync(() => seriesCheckboxes[0].Change(false));
+            seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
+            seriesCheckboxes[0].IsChecked().Should().BeFalse("Sensor Alpha checkbox should be unchecked after hiding");
+            chartSeries[0].Visible.Should().BeFalse("Sensor Alpha Visible property should be false after hiding");
+            comp.FindAll(".mud-chart-cell").Count.Should().Be(chartSeries.Where(x => x.Visible).Sum(x => x.Data.Count()), "should equal count of visible cells");
+
+            // Show Sensor Alpha series again
+            comp.InvokeAsync(() => seriesCheckboxes[0].Change(true));
+            seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
+            seriesCheckboxes[0].IsChecked().Should().BeTrue("Sensor Alpha checkbox should be checked after re-showing");
+            chartSeries[0].Visible.Should().BeTrue("Sensor Alpha Visible property should be true after re-showing");
+            comp.FindAll(".mud-chart-cell").Count.Should().Be(chartSeries.Where(x => x.Visible).Sum(x => x.Data.Count()), "should equal count of visible cells");
+
+            // Show Sensor Gamma series (initially hidden)
+            comp.InvokeAsync(() => seriesCheckboxes[2].Change(true));
+            seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
+            seriesCheckboxes[2].IsChecked().Should().BeTrue("Sensor Gamma checkbox should be checked after showing");
+            chartSeries[2].Visible.Should().BeTrue("Sensor Gamma Visible property should be true after showing");
+            comp.FindAll(".mud-chart-cell").Count.Should().Be(chartSeries.Where(x => x.Visible).Sum(x => x.Data.Count()), "should equal count of visible cells");
+
+            // Hide Sensor Gamma series again
+            comp.InvokeAsync(() => seriesCheckboxes[2].Change(false));
+            seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
+            seriesCheckboxes[2].IsChecked().Should().BeFalse("Sensor Gamma checkbox should be unchecked after hiding again");
+            chartSeries[2].Visible.Should().BeFalse("Sensor Gamma Visible property should be false after hiding again");
+            comp.FindAll(".mud-chart-cell").Count.Should().Be(chartSeries.Where(x => x.Visible).Sum(x => x.Data.Count()), "should equal count of visible cells");
         }
     }
 }

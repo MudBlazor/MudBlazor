@@ -55,7 +55,7 @@ public partial class Radar : MudRadialChartBase<RadarChartOptions>
             {
                 Index = i,
                 Labels = label,
-                Visible = !HiddenIndices.Contains(i),
+                Visible = ChartOptions.AggregationOption == AggregationOption.GroupByLabel ? !HiddenIndices.Contains(i) : ChartSeries[i].Visible,
                 OnVisibilityChanged = EventCallback.Factory.Create<SvgLegend>(this, HandleLegendVisibilityChanged)
             };
             _legends.Add(legend);

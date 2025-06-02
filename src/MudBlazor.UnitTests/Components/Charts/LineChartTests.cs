@@ -127,24 +127,54 @@ namespace MudBlazor.UnitTests.Charts
             if (comp.Instance.CanHideSeries)
             {
                 var seriesCheckboxes = comp.FindAll(".mud-checkbox-input");
+                seriesCheckboxes[0].IsChecked().Should().BeTrue("Series 1 checkbox initially checked");
+                seriesCheckboxes[1].IsChecked().Should().BeTrue("Series 2 checkbox initially checked");
+                seriesCheckboxes[2].IsChecked().Should().BeFalse("Series 3 checkbox initially unchecked");
 
-                comp.InvokeAsync(() =>
-                {
-                    seriesCheckboxes[0].Change(false);
-                });
+                var series1 = "[stroke='#2979FF']";
+                var series2 = "[stroke='#1DE9B6']";
+                var series3 = "[stroke='#FFC400']";
 
+                comp.FindAll($"path.mud-chart-line{series1}").Count.Should().Be(1, "Series 1 path expected to be visible");
+                comp.FindAll($"path.mud-chart-line{series2}").Count.Should().Be(1, "Series 2 path expected to be visible");
+                comp.FindAll($"path.mud-chart-line{series3}").Count.Should().Be(0, "Series 3 path expected to be hidden");
+
+                // Hide Series 1
+                comp.InvokeAsync(() => seriesCheckboxes[0].Change(false));
                 seriesCheckboxes = comp.FindAll(".mud-checkbox-input");
+                seriesCheckboxes[0].IsChecked().Should().BeFalse("Series 1 checkbox hidden");
+                chartSeries[0].Visible.Should().BeFalse("Series 1 data Visible false");
+                comp.FindAll($"path.mud-chart-line{series1}").Count.Should().Be(0, "Series 1 path hidden");
+                comp.FindAll($"path.mud-chart-line{series2}").Count.Should().Be(1, "Series 2 path still visible");
+                comp.FindAll($"path.mud-chart-line{series3}").Count.Should().Be(0, "Series 3 path still hidden");
 
-                comp.InvokeAsync(() =>
-                {
-                    seriesCheckboxes[2].Change(true);
-                });
-
+                // Show Series 1 again
+                comp.InvokeAsync(() => seriesCheckboxes[0].Change(true));
                 seriesCheckboxes = comp.FindAll(".mud-checkbox-input");
+                seriesCheckboxes[0].IsChecked().Should().BeTrue("Series 1 checkbox visible again");
+                chartSeries[0].Visible.Should().BeTrue("Series 1 data Visible true");
+                comp.FindAll($"path.mud-chart-line{series1}").Count.Should().Be(1, "Series 1 path visible again");
 
-                seriesCheckboxes[0].IsChecked().Should().BeFalse();
-                seriesCheckboxes[1].IsChecked().Should().BeTrue();
-                seriesCheckboxes[2].IsChecked().Should().BeTrue();
+                // Show Series 3 (was initially hidden)
+                comp.InvokeAsync(() => seriesCheckboxes[2].Change(true));
+                seriesCheckboxes = comp.FindAll(".mud-checkbox-input");
+                seriesCheckboxes[2].IsChecked().Should().BeTrue("Series 3 checkbox visible");
+                chartSeries[2].Visible.Should().BeTrue("Series 3 data Visible true");
+                comp.FindAll($"path.mud-chart-line{series3}").Count.Should().Be(1, "Series 3 path visible");
+                comp.FindAll($"path.mud-chart-line{series1}").Count.Should().Be(1, "Series 1 path still visible (after Series 3 shown)");
+                comp.FindAll($"path.mud-chart-line{series2}").Count.Should().Be(1, "Series 2 path still visible (after Series 3 shown)");
+
+                // Hide Series 3 again
+                comp.InvokeAsync(() => seriesCheckboxes[2].Change(false));
+                seriesCheckboxes = comp.FindAll(".mud-checkbox-input");
+                seriesCheckboxes[2].IsChecked().Should().BeFalse("Series 3 checkbox hidden again");
+                chartSeries[2].Visible.Should().BeFalse("Series 3 data Visible false again");
+                comp.FindAll($"path.mud-chart-line{series3}").Count.Should().Be(0, "Series 3 path hidden again");
+
+                // Final checkbox states
+                seriesCheckboxes[0].IsChecked().Should().BeTrue(); // Series 1 is visible
+                seriesCheckboxes[1].IsChecked().Should().BeTrue(); // Series 2 was untouched and visible
+                seriesCheckboxes[2].IsChecked().Should().BeFalse(); // Series 3 is hidden
             }
         }
 

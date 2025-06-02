@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
@@ -13,6 +14,13 @@ namespace MudBlazor.UnitTests.Charts;
 [TestFixture]
 public class RoseChartTests : BunitTest
 {
+    private readonly string[] _baseChartPalette = // Re-using a palette from other tests
+    {
+            "#2979FF", "#1DE9B6", "#FFC400", "#FF9100", "#651FFF", "#00E676", "#00B0FF", "#26A69A", "#FFCA28",
+            "#FFA726", "#EF5350", "#EF5350", "#7E57C2", "#66BB6A", "#29B6F6", "#FFA000", "#F57C00", "#D32F2F",
+            "#512DA8", "#616161"
+    };
+
     [Test]
     public void RoseChart_BasicRendering_NoData()
     {
@@ -162,5 +170,69 @@ public class RoseChartTests : BunitTest
         // Simulate click on the third path segment (index 2)
         comp.FindAll("path.mud-chart-serie").Last().Click();
         selectedIndex.Should().Be(2);
+    }
+
+    [Test]
+    public void RoseChart_CanHideSeries_Test()
+    {
+        var chartData = new double[] { 10, 20, 30, 40 };
+        string[] chartLabels = { "Petal 1", "Petal 2", "Petal 3", "Petal 4" };
+        // Rose charts, like Pie/Donut, typically use a single ChartSeries for their data segments.
+        var chartSeriesList = new List<ChartSeries>() { new ChartSeries { Data = chartData } };
+
+        var comp = Context.RenderComponent<MudChart>(parameters => parameters
+            .Add(p => p.ChartType, ChartType.Rose)
+            .Add(p => p.Height, "300px")
+            .Add(p => p.Width, "300px")
+            .Add(p => p.ChartSeries, chartSeriesList)
+            .Add(p => p.ChartLabels, chartLabels)
+            .Add(p => p.CanHideSeries, true)
+            .Add(p => p.ChartOptions, new RoseChartOptions { ChartPalette = _baseChartPalette })
+        );
+
+        var seriesCheckboxes = comp.FindAll(".mud-checkbox-input");
+        seriesCheckboxes.Count.Should().Be(chartLabels.Length, "Number of checkboxes should match number of labels (petals)");
+
+        var series1 = "[stroke='#2979FF']";
+        var series2 = "[stroke='#1DE9B6']";
+        var series3 = "[stroke='#FFC400']";
+        var series4 = "[stroke='#FF9100']";
+
+        string[] series = [series1, series2, series3, series4];
+
+        // Initially, all petals should be visible and their checkboxes checked
+        for (var i = 0; i < chartLabels.Length; i++)
+        {
+            seriesCheckboxes[i].IsChecked().Should().BeTrue($"{chartLabels[i]} checkbox should be initially checked");
+            comp.FindAll($"path.mud-chart-serie{series[i]}").Count.Should().Be(1, $"{chartLabels[i]} path should be initially visible");
+        }
+
+        // Hide "Petal 1"
+        comp.InvokeAsync(() => seriesCheckboxes[0].Change(false));
+        seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
+        seriesCheckboxes[0].IsChecked().Should().BeFalse("Petal 1 checkbox should be unchecked after hiding");
+        comp.FindAll($"path.mud-chart-serie{series1}").Count.Should().Be(0, "Petal 1 path should be hidden");
+        comp.FindAll($"path.mud-chart-serie{series2}").Count.Should().Be(1, "Petal 2 path should remain visible");
+
+        // Show "Petal 1" again
+        comp.InvokeAsync(() => seriesCheckboxes[0].Change(true));
+        seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
+        seriesCheckboxes[0].IsChecked().Should().BeTrue("Petal 1 checkbox should be checked after re-showing");
+        comp.FindAll($"path.mud-chart-serie{series1}").Count.Should().Be(1, "Petal 1 path should be visible again");
+
+        // Hide "Petal 3"
+        comp.InvokeAsync(() => seriesCheckboxes[2].Change(false));
+        seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
+        seriesCheckboxes[2].IsChecked().Should().BeFalse("Petal 3 checkbox should be unchecked after hiding");
+        comp.FindAll($"path.mud-chart-serie{series3}").Count.Should().Be(0, "Petal 3 path should be hidden");
+        comp.FindAll($"path.mud-chart-serie{series1}").Count.Should().Be(1, "Petal 1 path should still be visible");
+        comp.FindAll($"path.mud-chart-serie{series2}").Count.Should().Be(1, "Petal 2 path should still be visible");
+        comp.FindAll($"path.mud-chart-serie{series4}").Count.Should().Be(1, "Petal 4 path should still be visible");
+
+        // Show "Petal 3" again
+        comp.InvokeAsync(() => seriesCheckboxes[2].Change(true));
+        seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
+        seriesCheckboxes[2].IsChecked().Should().BeTrue("Petal 3 checkbox should be checked after re-showing");
+        comp.FindAll($"path.mud-chart-serie{series3}").Count.Should().Be(1, "Petal 3 path should be visible again");
     }
 }

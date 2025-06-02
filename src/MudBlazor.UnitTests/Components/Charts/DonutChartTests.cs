@@ -1,6 +1,7 @@
 ﻿// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
+using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using MudBlazor.Charts;
@@ -124,7 +125,7 @@ namespace MudBlazor.UnitTests.Charts
 
                 cx.Should().Be(0);
 
-                cx.Should().Be(0);
+                cy.Should().Be(0);
             }
         }
 
@@ -175,6 +176,70 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.ChartSeries, [data]));
 
             comp.Markup.Should().Contain("d=\"M 0 -140 A 140 140 0 1 1 0 140 A 140 140 0 1 1 -0 -140 L -0 -105 A 105 105 0 1 0 0 105 A 105 105 0 1 0 0 -105 Z\"");
+        }
+
+        [Test]
+        public void DonutChart_CanHideSeries_Test()
+        {
+            var chartData = new double[] { 25, 35, 15, 25 };
+            string[] chartLabels = { "Area A", "Area B", "Area C", "Area D" };
+            var chartSeries = new List<ChartSeries>() { new() { Data = chartData } };
+
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Donut)
+                .Add(p => p.Height, "300px")
+                .Add(p => p.Width, "300px")
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, chartLabels)
+                .Add(p => p.CanHideSeries, true)
+                .Add(p => p.ChartOptions, new DonutChartOptions { ChartPalette = _baseChartPalette })
+            );
+
+            var seriesCheckboxes = comp.FindAll(".mud-checkbox-input");
+            seriesCheckboxes.Count.Should().Be(chartLabels.Length, "Number of checkboxes should match number of labels (segments)");
+
+            var series1 = "[stroke='#2979FF']";
+            var series2 = "[stroke='#1DE9B6']";
+            var series3 = "[stroke='#FFC400']";
+            var series4 = "[stroke='#FF9100']";
+
+            string[] series = [series1, series2, series3, series4];
+
+
+            // Initially, all segments should be visible and their checkboxes checked
+            for (var i = 0; i < chartLabels.Length; i++)
+            {
+                seriesCheckboxes[i].IsChecked().Should().BeTrue($"{chartLabels[i]} checkbox should be initially checked");
+                comp.FindAll($"path.mud-chart-serie{series[i]}").Count.Should().Be(1, $"{chartLabels[i]} path should be initially visible");
+            }
+
+            // Hide "Area A"
+            comp.InvokeAsync(() => seriesCheckboxes[0].Change(false));
+            seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
+            seriesCheckboxes[0].IsChecked().Should().BeFalse("Area A checkbox should be unchecked after hiding");
+            comp.FindAll($"path.mud-chart-serie{series1}").Count.Should().Be(0, "Area A path should be hidden");
+            comp.FindAll($"path.mud-chart-serie{series2}").Count.Should().Be(1, "Area B path should remain visible");
+
+            // Show "Area A" again
+            comp.InvokeAsync(() => seriesCheckboxes[0].Change(true));
+            seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
+            seriesCheckboxes[0].IsChecked().Should().BeTrue("Area A checkbox should be checked after re-showing");
+            comp.FindAll($"path.mud-chart-serie{series1}").Count.Should().Be(1, "Area A path should be visible again");
+
+            // Hide "Area C"
+            comp.InvokeAsync(() => seriesCheckboxes[2].Change(false));
+            seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
+            seriesCheckboxes[2].IsChecked().Should().BeFalse("Area C checkbox should be unchecked after hiding");
+            comp.FindAll($"path.mud-chart-serie{series3}").Count.Should().Be(0, "Area C path should be hidden");
+            comp.FindAll($"path.mud-chart-serie{series1}").Count.Should().Be(1, "Area A path should still be visible");
+            comp.FindAll($"path.mud-chart-serie{series2}").Count.Should().Be(1, "Area B path should still be visible");
+            comp.FindAll($"path.mud-chart-serie{series4}").Count.Should().Be(1, "Area D path should still be visible");
+
+            // Show "Area C" again
+            comp.InvokeAsync(() => seriesCheckboxes[2].Change(true));
+            seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
+            seriesCheckboxes[2].IsChecked().Should().BeTrue("Area C checkbox should be checked after re-showing");
+            comp.FindAll($"path.mud-chart-serie{series3}").Count.Should().Be(1, "Area C path should be visible again");
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
+using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using MudBlazor.Charts;
@@ -230,6 +231,114 @@ namespace MudBlazor.UnitTests.Charts
                 var expectedTimeString = time.AddDays(i).ToString(format);
                 comp.Markup.Should().Contain(expectedTimeString);
             }
+        }
+
+        [Test]
+        public void TimeSeriesChart_CanHideSeries_Test()
+        {
+            var mockYAxisLabelSize = new ElementSize { Width = 27.5, Height = 14.8 };
+            var mockXAxisLabelSize = new ElementSize { Width = 50.5, Height = 14.8 }; // Adjusted width slightly
+            var jsInteropCounter = 1; // Use a different name to avoid conflict if other tests run in parallel context
+
+            Context.JSInterop.Setup<ElementSize>("mudGetSvgBBox", args =>
+            {
+                // This logic attempts to mimic distinct calls for X and Y, though it's a simplification.
+                // The core idea is to provide *some* valid ElementSize for the chart to proceed.
+                if (jsInteropCounter % 2 == 0)
+                {
+                    jsInteropCounter++;
+                    return true; // Should match the specific call if the args were inspected
+                }
+                return false;
+            }).SetResult(mockXAxisLabelSize);
+
+            Context.JSInterop.Setup<ElementSize>("mudGetSvgBBox", args =>
+            {
+                if (jsInteropCounter % 2 == 1)
+                {
+                    jsInteropCounter++;
+                    return true;
+                }
+                return false;
+            }).SetResult(mockYAxisLabelSize);
+
+            var time = new DateTime(2023, 1, 1);
+            var chartSeries = new List<ChartSeries>()
+            {
+                new () {
+                    Name = "Temperature",
+                    Data = new List<TimeSeries.DataPoint>() {
+                        new(time, 20), new(time.AddHours(1), 22), new(time.AddHours(2), 21)
+                    }
+                },
+                new () {
+                    Name = "Humidity",
+                    Data = new List<TimeSeries.DataPoint>() {
+                        new(time, 60), new(time.AddHours(1), 65), new(time.AddHours(2), 62)
+                    }
+                },
+                new () {
+                    Name = "Pressure",
+                    Data = new List<TimeSeries.DataPoint>() {
+                        new(time, 1012), new(time.AddHours(1), 1010), new(time.AddHours(2), 1011)
+                    },
+                    Visible = false // Initially hidden
+                }
+            };
+
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Timeseries)
+                .Add(p => p.Height, "350px")
+                .Add(p => p.Width, "100%")
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.CanHideSeries, true)
+                .Add(p => p.ChartOptions, new TimeSeriesChartOptions { TimeLabelSpacing = TimeSpan.FromHours(1), ChartPalette = ["#2979FF", "#1DE9B6", "#FFC400"] })
+            );
+
+            // Initial state assertions
+            var seriesCheckboxes = comp.FindAll(".mud-checkbox-input");
+            seriesCheckboxes.Count.Should().Be(chartSeries.Count, "Number of checkboxes should match number of series");
+
+            seriesCheckboxes[0].IsChecked().Should().BeTrue("Temperature checkbox should be initially checked");
+            seriesCheckboxes[1].IsChecked().Should().BeTrue("Humidity checkbox should be initially checked");
+            seriesCheckboxes[2].IsChecked().Should().BeFalse("Pressure checkbox should be initially unchecked");
+
+            var series1 = "[stroke='#2979FF']";
+            var series2 = "[stroke='#1DE9B6']";
+            var series3 = "[stroke='#FFC400']";
+
+            comp.FindAll($"path.mud-chart-line{series1}").Count.Should().Be(1, "Temperature series path should initially be visible");
+            comp.FindAll($"path.mud-chart-line{series2}").Count.Should().Be(1, "Humidity series path should initially be visible");
+            comp.FindAll($"path.mud-chart-line{series3}").Count.Should().Be(0, "Pressure series path should initially be hidden");
+
+            // Hide Temperature series
+            comp.InvokeAsync(() => seriesCheckboxes[0].Change(false));
+            seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
+            seriesCheckboxes[0].IsChecked().Should().BeFalse("Temperature checkbox should be unchecked after hiding");
+            chartSeries[0].Visible.Should().BeFalse("Temperature Visible property should be false after hiding");
+            comp.FindAll($"path.mud-chart-line{series1}").Count.Should().Be(0, "Temperature series path should be hidden");
+
+            // Show Temperature series again
+            comp.InvokeAsync(() => seriesCheckboxes[0].Change(true));
+            seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
+            seriesCheckboxes[0].IsChecked().Should().BeTrue("Temperature checkbox should be checked after re-showing");
+            chartSeries[0].Visible.Should().BeTrue("Temperature Visible property should be true after re-showing");
+            comp.FindAll($"path.mud-chart-line{series1}").Count.Should().Be(1, "Temperature series path should be visible again");
+
+            // Hide Humidity series
+            comp.InvokeAsync(() => seriesCheckboxes[1].Change(false));
+            seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
+            seriesCheckboxes[1].IsChecked().Should().BeFalse("Humidity checkbox should be unchecked after hiding");
+            chartSeries[1].Visible.Should().BeFalse("Humidity Visible property should be false after hiding");
+            comp.FindAll($"path.mud-chart-line{series2}").Count.Should().Be(0, "Humidity series path should be hidden");
+            comp.FindAll($"path.mud-chart-line{series1}").Count.Should().Be(1, "Temperature series path should remain visible");
+
+            // Show Pressure series
+            comp.InvokeAsync(() => seriesCheckboxes[2].Change(true));
+            seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
+            seriesCheckboxes[2].IsChecked().Should().BeTrue("Pressure checkbox should be checked after showing");
+            chartSeries[2].Visible.Should().BeTrue("Pressure Visible property should be true after showing");
+            comp.FindAll($"path.mud-chart-line{series3}").Count.Should().Be(1, "Pressure series path should be visible");
         }
     }
 }
