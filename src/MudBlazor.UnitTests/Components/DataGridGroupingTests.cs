@@ -645,5 +645,49 @@ namespace MudBlazor.UnitTests.Components
             expander.Click();
             comp.FindAll("tbody .mud-table-row").Count.Should().Be(8);
         }
+
+        [Test]
+        public async Task DataGridGroupingTemplateSetAtGridLevel()
+        {
+            var component = Context.RenderComponent<DataGridGroupingMultiLevelTest>();
+
+            var dataGrid = component.FindComponent<MudDataGrid<DataGridGroupingMultiLevelTest.USState>>();
+            await component.InvokeAsync(() => dataGrid.Instance.ReloadServerData());
+
+            //click to customize the group template
+            var groupingTemplateSwitch = component.FindComponent<MudSwitch<bool>>();
+            groupingTemplateSwitch.Find("input").Change(true);
+            dataGrid.Render();
+
+            //current grouping should use the defined template  
+            var groupRow = component.FindComponent<DataGridGroupRow<DataGridGroupingMultiLevelTest.USState>>().Find(".mud-datagrid-group");
+            var text = new string(groupRow.TextContent.Where(c => !Char.IsWhiteSpace(c)).ToArray());
+            text.Should().Be("Manufacturing1states");
+
+            //clear grouping
+            foreach (var col in dataGrid.Instance.RenderedColumns.Where(x => x.GroupingState.Value))
+            {
+                await component.InvokeAsync(() => col.RemoveGrouping());
+            }
+            //group by column with no grouptemplate
+            await component.InvokeAsync(() => dataGrid.Instance.RenderedColumns.Where(x => x.Title == nameof(DataGridGroupingMultiLevelTest.USState.Counties)).Single().SetGroupingAsync(true));
+            dataGrid.Render();
+            //grouping should be the template defined at grid level
+            groupRow = component.FindComponent<DataGridGroupRow<DataGridGroupingMultiLevelTest.USState>>().Find(".mud-datagrid-group");
+            text = new string(groupRow.TextContent.Where(c => !Char.IsWhiteSpace(c)).ToArray());
+            text.Should().Be("Counties:67Count:2Percentage:20.0%");
+        }
+
+        [Test]
+        public async Task DataGridGroupingTemplateDefault()
+        {
+            await Task.Yield();
+            var component = Context.RenderComponent<DataGridColumnGroupingTest>();
+
+            //grouping should be the built in default
+            var groupRow = component.FindComponent<DataGridGroupRow<DataGridColumnGroupingTest.Model>>().Find(".mud-datagrid-group");
+            var text = new string(groupRow.TextContent.Where(c => !Char.IsWhiteSpace(c)).ToArray());
+            text.Should().Be("Name:John");
+        }
     }
 }

@@ -33,10 +33,6 @@ jobs:
               console.log("PR type: documentation.");
             }
             
-            if(!pr.draft) {
-              labels.push("PR: needs review");
-            }
-            
             if(labels.length != 0) {
               github.rest.issues.addLabels({
                 issue_number: context.issue.number,
