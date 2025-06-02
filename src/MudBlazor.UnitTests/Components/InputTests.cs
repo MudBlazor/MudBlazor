@@ -31,7 +31,7 @@ public class InputTests : BunitTest
             .Add(x => x.AdornmentText, "Click Here")
             .Add(x => x.Adornment, Adornment.End)
             .Add(x => x.OnAdornmentClick, () => { }));
-        comp.Find("button.mud-button-text").Should().NotBeNull("Should render an button");
+        comp.Find("button.mud-input-adornment-text-button").Should().NotBeNull("Should render an button");
     }
 #nullable disable
 }
