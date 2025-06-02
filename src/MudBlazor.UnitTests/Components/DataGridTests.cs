@@ -4936,5 +4936,30 @@ namespace MudBlazor.UnitTests.Components
 
             dataGrid.Instance._openHierarchies.First().Should().Be(item);
         }
+        
+        [Test]
+        public async Task DataGrid_Should_AllowUnsorted_AscDescOnly()
+        {
+            var comp = Context.RenderComponent<DataGridAllowUnsortedTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridAllowUnsortedTest.Item>>();
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Ascending, x => x.Name));
+            var cells = dataGrid.FindAll("td");
+            cells[0].TextContent.Should().Be("A");
+            cells[3].TextContent.Should().Be("A");
+            cells[6].TextContent.Should().Be("B");
+            
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Descending, x => x.Name));
+            cells = dataGrid.FindAll("td");
+            cells[0].TextContent.Should().Be("B");
+            cells[3].TextContent.Should().Be("A");
+            cells[6].TextContent.Should().Be("A");
+            
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Ascending, x => x.Name));
+            cells = dataGrid.FindAll("td");
+            cells[0].TextContent.Should().Be("A");
+            cells[3].TextContent.Should().Be("A");
+            cells[6].TextContent.Should().Be("B");
+        }
     }
 }

@@ -1,0 +1,23 @@
+﻿<MudDataGrid Items="@_items" Sortable="true" AllowUnsorted="false">
+    <Columns>
+        <PropertyColumn Property="x => x.Name"/>
+        <PropertyColumn Property="x => x.Value"/>
+        <PropertyColumn Property="x => x.Misc"/>
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private readonly IEnumerable<Item> _items = new List<Item>
+    {
+        new("B", 42, "555"), 
+        new("A", 73, "7"), 
+        new("A", 11, "4444"),
+    };
+
+    public class Item(string name, int value, string misc)
+    {
+        public string Name { get; set; } = name;
+        public int Value { get; set; } = value;
+        public string Misc { get; set; } = misc;
+    }
+}
