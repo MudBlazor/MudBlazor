@@ -1,0 +1,21 @@
+﻿@page "/components/axischartcombo"
+@page "/components/combochart"
+@page "/components/combinationchart"
+
+<DocsPage>
+    <DocsPageHeader Title="Mixed Chart (Combo Chart)" Component="@nameof(MudChart)" />
+
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader Title="Overview">
+                <Description>
+                    Charts inheriting from <CodeInline>MudAxisChartBase</CodeInline> can be combined to create complex visualizations.
+                    You can overlay different chart types, such as Bar and Line charts, to display multiple datasets in a single chart.
+                </Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="@nameof(MixedChartExample1)">
+                <MixedChartExample1 />
+            </SectionContent>
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>

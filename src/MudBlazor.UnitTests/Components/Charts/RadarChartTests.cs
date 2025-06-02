@@ -28,7 +28,7 @@ public class RadarChartTests : BunitTest
         var comp = Context.RenderComponent<Radar>(parameters => parameters
             .Add(p => p.ChartSeries, new List<ChartSeries> { new ChartSeries { Name = "Series1", Data = new double[] { 10, 20, 30 } } })
             // No ChartLabels provided, should infer 3 axes from data
-            .Add(p => p.ChartOptions, new RadarChartOptions())
+            .Add(p => p.ChartOptions, new RadarChartOptions() { AggregationOption = AggregationOption.GroupByLabel })
             .Add(p => p.Width, "300px")
             .Add(p => p.Height, "300px")
         );
@@ -42,7 +42,7 @@ public class RadarChartTests : BunitTest
         var comp = Context.RenderComponent<Radar>(parameters => parameters
             .Add(p => p.ChartSeries, new List<ChartSeries> { new ChartSeries { Name = "Series1", Data = new double[] { 10, 20, 30, 40 } } })
             .Add(p => p.ChartLabels, new string[] { "A", "B", "C", "D" })
-            .Add(p => p.ChartOptions, new RadarChartOptions())
+            .Add(p => p.ChartOptions, new RadarChartOptions() { AggregationOption = AggregationOption.GroupByLabel })
             .Add(p => p.Width, "300px")
             .Add(p => p.Height, "300px")
         );
@@ -54,7 +54,7 @@ public class RadarChartTests : BunitTest
     [Test]
     public void RadarChart_Option_ShowGridLines_And_GridLevels()
     {
-        var options = new RadarChartOptions { ShowGridLines = true, GridLevels = 3 };
+        var options = new RadarChartOptions { ShowGridLines = true, GridLevels = 3, AggregationOption = AggregationOption.GroupByLabel };
         var comp = Context.RenderComponent<Radar>(parameters => parameters
             .Add(p => p.ChartSeries, new List<ChartSeries> { new ChartSeries { Name = "Series1", Data = new double[] { 10, 20, 30 } } })
             .Add(p => p.ChartLabels, new string[] { "A", "B", "C" })
@@ -187,7 +187,7 @@ public class RadarChartTests : BunitTest
         // Exact path data validation for AngleOffset is complex and brittle.
         // This test primarily ensures that the component renders without error when AngleOffset is used.
         // Visual inspection during development is important for verifying the geometric correctness.
-        var options = new RadarChartOptions { AngleOffset = 45 };
+        var options = new RadarChartOptions { AngleOffset = 45, AggregationOption = AggregationOption.GroupByLabel };
         var comp = Context.RenderComponent<Radar>(parameters => parameters
             .Add(p => p.ChartSeries, new List<ChartSeries> { new ChartSeries { Name = "Series1", Data = new double[] { 10, 20, 30 } } })
             .Add(p => p.ChartLabels, new string[] { "A", "B", "C" })

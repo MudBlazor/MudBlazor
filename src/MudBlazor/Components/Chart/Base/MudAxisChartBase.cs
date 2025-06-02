@@ -8,6 +8,15 @@ using MudBlazor.Utilities.Debounce;
 #nullable enable
 namespace MudBlazor.Charts;
 
+/// <summary>
+/// Serves as the base class for axis-based charts, providing core functionality for rendering and managing chart
+/// elements such as axes, grids, and legends.
+/// </summary>
+/// <remarks>
+/// Provides foundational features for axis-based charts, including support for shared data
+/// regions, overlay charts, and dynamic resizing.
+/// </remarks>
+/// <typeparam name="TOptions">The type of chart options used to configure the chart's behavior and appearance.</typeparam>
 public abstract class MudAxisChartBase<TOptions> : MudChartBase<TOptions>, IMudAxisChart, IDisposable where TOptions : IAxisChartOptions
 {
     [Inject]

@@ -6,7 +6,16 @@ using MudBlazor.Charts;
 
 namespace MudBlazor;
 
+/// <summary>
+/// Represents configuration options for a chart, including tooltip formatting.
+/// </summary>
+/// <remarks>
+/// This class provides customization options for chart behavior and appearance.
+/// </remarks>
 public sealed class ChartOptions : DefaultChartOptions, IChartOptions
 {
+    /// <summary>
+    /// The format applied to the data marker tooltip title.
+    /// </summary>
     public override string TooltipTitleFormat { get; set; } = "{{Y_VALUE}}";
 }
