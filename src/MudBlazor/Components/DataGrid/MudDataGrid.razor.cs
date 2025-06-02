@@ -1082,11 +1082,14 @@ namespace MudBlazor
         [Parameter]
         public IEqualityComparer<T> Comparer { get; set; } = EqualityComparer<T>.Default;
 
+#nullable enable
         /// <summary>
-        /// The default template used to display column grouping for all columns.
+        /// The default template used to display column grouping for any column that is grouped. 
         /// </summary>
+        /// <remarks>Can be overridden by using the column level GroupTemplate, defaults to <c>null</c>.</remarks>
         [Parameter]
-        public RenderFragment<GroupDefinition<T>> GroupTemplate { get; set; }
+        public RenderFragment<GroupDefinition<T>>? GroupTemplate { get; set; }
+#nullable disable
 
         #endregion
 

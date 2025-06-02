@@ -7,7 +7,7 @@
         <div style="display:flex; align-items:center;">
             <MudIconButton Class="mud-table-row-expander" Icon="@(DataGrid.GetGroupIcon(_expanded))"
                            OnClick="@GroupExpandClick" />
-            @if (GroupDefinition?.GroupTemplate is not null)
+            @if (GroupDefinition.GroupTemplate is not null)
             {
                 @GroupDefinition.GroupTemplate(GroupDefinition)
             }
@@ -17,7 +17,7 @@
             }
             else
             {
-                <span style="font-weight:bold">@GroupDefinition?.Title: @(Items?.Key ?? "null")</span>
+                <span style="font-weight:bold">@GroupDefinition.Title: @(Items?.Key ?? "null")</span>
             }
         </div>
     </td>
