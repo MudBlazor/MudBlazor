@@ -21,5 +21,17 @@ public class InputTests : BunitTest
         comp.SetParametersAndRender(p => p.Add(x => x.ReadOnly, true)); //no clear button when readonly
         comp.FindAll(".mud-input-clear-button").Count.Should().Be(0);
     }
+
+    [Test]
+
+    public void AdornmentTextWithOnAdornmentClickShouldBeButton()
+    {
+        var comp = Context.RenderComponent<MudInput<string>>(p => p
+            .Add(x => x.Text, "some value")
+            .Add(x => x.AdornmentText, "Click Here")
+            .Add(x => x.Adornment, Adornment.End)
+            .Add(x => x.OnAdornmentClick, () => { }));
+        comp.Find("button.mud-button-text").Should().NotBeNull("Should render an button");
+    }
 #nullable disable
 }
