@@ -376,7 +376,9 @@ namespace MudBlazor
             SortDirection = SortDirection switch
             {
                 SortDirection.Ascending => SortDirection.Descending,
-                SortDirection.Descending => SortDirection.None,
+                SortDirection.Descending => DataGrid?.AllowUnsorted ?? false
+                    ? SortDirection.None
+                    : SortDirection.Ascending,
                 _ => SortDirection.Ascending
             };
 
