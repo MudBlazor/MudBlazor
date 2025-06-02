@@ -4,11 +4,23 @@
 <div class="@Classname">
     @if (!string.IsNullOrWhiteSpace(Text))
     {
-        <MudText Class="mud-input-adornment-text"
-                 Color="@Color"
-                 tabindex="-1">
-            @Text
-        </MudText>
+        @if (AdornmentClick.HasDelegate)
+        {
+            <MudButton Size="@Size" 
+                       Color="@Color" 
+                       OnClick="@AdornmentClick" 
+                       tabindex="-1">
+                @Text
+            </MudButton>
+        }
+        else
+        {
+            <MudText Class="mud-input-adornment-text"
+                     Color="@Color"
+                     tabindex="-1">
+                @Text
+            </MudText>
+        }
     }
     else if (!string.IsNullOrWhiteSpace(Icon))
     {
