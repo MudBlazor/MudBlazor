@@ -1,20 +1,21 @@
 ﻿@namespace MudBlazor.Docs.Examples
 @using MudBlazor.Charts
 
-<MudChart ChartType="ChartType.Radar" ChartSeries="@_series" ChartLabels="@_chartLabels" @bind-SelectedIndex="_selectedIndex" ChartOptions="@_options" Width="650px" Height="400px">
+<MudChart @ref="_chart" ChartType="ChartType.Radar" ChartSeries="@_series" ChartLabels="@_chartLabels" ChartOptions="@_options" Width="650px" Height="400px">
     <CustomGraphics>
         <text class="mud-chart-selected-text" 
               x="300"
               y="30"
               dominant-baseline="middle"
               text-anchor="middle"
-              fill="@_options.ChartPalette[Math.Max(0, _selectedIndex)]">@(_selectedIndex >= 0 ? $"Selected: {_chartLabels[_selectedIndex]}" : "")
+              fill="@_options.ChartPalette[0]">@(_selectedIndex >= 0 ? $"Selected: {_chartLabels[_selectedIndex]}" : "")
         </text>
     </CustomGraphics>
 </MudChart>
 
 @code {
-    private int _selectedIndex = -1;
+    private MudChart _chart;
+    private int _selectedIndex => (_chart?.ChartReference as Radar)?.SelectedPointIndex ?? -1;
     private string[] _chartLabels = { "Category A", "Category B", "Category C", "Category D", "Category E" };
     private List<ChartSeries> _series = new List<ChartSeries>()
     {
@@ -28,7 +29,6 @@
         ShowAxisLabels = true,
         FillOpacity = 0.3,
         AngleOffset = 0,
-        TooltipTitleFormat = "{{Y_VALUE}}",
-        AggregationOption = AggregationOption.GroupByDataSet,
+        TooltipTitleFormat = "{{X_VALUE}}",
     };
 }

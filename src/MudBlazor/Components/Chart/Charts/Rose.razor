@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.Charts
 @inherits MudRadialChartBase<RoseChartOptions>
 
-<div class="@(MudChartParent is null ? Classname : string.Empty)">
+<div @attributes="UserAttributes" class="@Classname">
     <BaseRadialChart TChartOptions="RoseChartOptions"
                      ElementRefChanged="SetElementReference"
                      Width="@Width"

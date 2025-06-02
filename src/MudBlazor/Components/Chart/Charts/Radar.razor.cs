@@ -147,7 +147,7 @@ public partial class Radar : MudRadialChartBase<RadarChartOptions>
 
             var pathStringBuilder = new StringBuilder();
             pathStringBuilder.Append("M ");
-            var seriesPoints = new List<SvgPath>();
+            var seriesPoints = new List<SvgPathPoint>();
 
             for (var i = 0; i < Math.Min(series.Data.Values.Length, numAxes); i++) // Ensure we don't go beyond numAxes
             {
@@ -159,9 +159,10 @@ public partial class Radar : MudRadialChartBase<RadarChartOptions>
                 var x = Math.Cos(angle) * scale;
                 var y = Math.Sin(angle) * scale;
                 pathStringBuilder.Append($"{ToS(x)} {ToS(y)} L ");
-                seriesPoints.Add(new SvgPath()
+                seriesPoints.Add(new SvgPathPoint()
                 {
-                    Index = i,
+                    Index = seriesIndex,
+                    PointIndex = i,
                     LabelX = x,
                     LabelY = y,
                     LabelXValue = value.ToS(),
@@ -238,10 +239,10 @@ public partial class Radar : MudRadialChartBase<RadarChartOptions>
         HoveredPathIndex = null;
     }
 
-    internal async Task SetSelectedPointAsync(int index, int pointIndex)
+    internal async Task SetSelectedPointAsync(SvgPathPoint point)
     {
-        SelectedPointIndex = index;
+        SelectedPointIndex = point.PointIndex;
 
-        await SetSelectedIndexAsync(pointIndex);
+        await SetSelectedIndexAsync(point.Index);
     }
 }

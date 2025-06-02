@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.Charts
 @inherits MudRadialChartBase<RadarChartOptions>
 
-<div class="@(MudChartParent is null ? Classname : string.Empty)">
+<div @attributes="UserAttributes" class="@Classname">
     <BaseRadialChart TChartOptions="RadarChartOptions"
                      ElementRefChanged="SetElementReference"
                      Width="@Width"
@@ -93,23 +93,15 @@
         var seq = 0;
         foreach (var point in path.Points)
         {
-            var dataPointPath = new SvgPath()
-            {
-                Index = point.Index,
-                LabelX = point.LabelX,
-                LabelY = point.LabelY,
-                LabelXValue = point.LabelXValue,
-                LabelYValue = point.LabelYValue,
-            };
             builder.OpenElement(seq++, "circle");
             builder.AddAttribute(seq++, "class", "mud-chart-series-point");
             builder.AddAttribute(seq++, "cx", ToS(point.LabelX));
             builder.AddAttribute(seq++, "cy", ToS(point.LabelY));
             builder.AddAttribute(seq++, "r", ChartOptions.DataPointRadius);
             builder.AddAttribute(seq++, "fill", color);
-            builder.AddAttribute(seq++, "onmouseover", EventCallback.Factory.Create<MouseEventArgs>(this, e => OnSegmentMouseOver(e, dataPointPath)));
+            builder.AddAttribute(seq++, "onmouseover", EventCallback.Factory.Create<MouseEventArgs>(this, e => OnSegmentMouseOver(e, point)));
             builder.AddAttribute(seq++, "onmouseout", EventCallback.Factory.Create(this, OnSegmentMouseOut));
-            builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, async (i) => await SetSelectedPointAsync(path.Index, point.Index)));
+            builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, async (i) => await SetSelectedPointAsync(point)));
             builder.CloseElement();
         }
     };

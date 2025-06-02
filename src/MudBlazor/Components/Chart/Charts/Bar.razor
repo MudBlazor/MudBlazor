@@ -4,7 +4,7 @@
 
 @if (!IsOverlayChart)
 {
-    <div class="@(ChartContainer is null ? Classname : string.Empty)">
+    <div @attributes="UserAttributes" class="@Classname">
         <BaseAxisChart TChartOptions="BarChartOptions"
                        AxisChanged="AxisChanged"
                        ElementRefChanged="SetElementReference"

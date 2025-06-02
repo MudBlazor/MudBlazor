@@ -4,10 +4,10 @@
 
 namespace MudBlazor;
 
-public sealed class SvgPolygon : SvgPath
+public sealed class SvgPathPoint : SvgPath
 {
     /// <summary>
-    /// Stores the coordinates of individual data points for charts like Radar Chart.
+    /// The position of the point along a <see cref="SvgPath"/>
     /// </summary>
-    public List<SvgPathPoint> Points { get; set; } = [];
+    public int PointIndex { get; set; }
 }

@@ -87,6 +87,8 @@ public class RadarChartOptions : DefaultRadialChartOptions, IRadialChartOptions,
     /// </summary>
     public double DataPointRadius { get; set; } = 3.0;
 
+    public override AggregationOption AggregationOption { get; set; } = AggregationOption.GroupByDataSet;
+
     public static implicit operator RadarChartOptions(ChartOptions options) => new()
     {
         ShowLegend = options.ShowLegend,

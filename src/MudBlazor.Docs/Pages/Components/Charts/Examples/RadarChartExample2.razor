@@ -8,8 +8,8 @@
     private List<ChartSeries> _series = new List<ChartSeries>()
     {
         new ChartSeries() { Name = "Warrior", Data = new double[] { 12, 5, 3, 5, 9, 2 } },
-        new ChartSeries() { Name = "Mage", Data = new double[] { 3, 5, 11, 7, 4, 6 } },
-        new ChartSeries() { Name = "Rogue", Data = new double[] { 5, 14, 7, 8, 6, 9 } }
+        new ChartSeries() { Name = "Mage", Data = new double[] { 3, 3, 12, 7, 4, 7 } },
+        new ChartSeries() { Name = "Rogue", Data = new double[] { 4, 12, 6, 3, 6, 5 } }
     };
 
     private RadarChartOptions _options = new RadarChartOptions
@@ -25,8 +25,6 @@
         ShowDataMarkers = true,
         DataPointRadius = 5,
         AngleOffset = 30,
-        ChartPalette = new string[] { "#FF0000", "#00FF00", "#0000FF" },
-        AggregationOption = AggregationOption.GroupByDataSet,
-        TooltipTitleFormat = "{{SERIES_NAME}}: {{Y_VALUE}}",
+        TooltipTitleFormat = "{{SERIES_NAME}}: {{X_VALUE}}",
     };
 }

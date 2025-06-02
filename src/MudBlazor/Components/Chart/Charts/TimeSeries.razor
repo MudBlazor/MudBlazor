@@ -6,7 +6,7 @@
 
 @if (!IsOverlayChart)
 {
-    <div class="@(ChartContainer is null ? Classname : string.Empty)">
+    <div @attributes="UserAttributes" class="@Classname">
         <BaseAxisChart TChartOptions="TimeSeriesChartOptions"
                        AxisChanged="OnAxisChanged"
                        ElementRefChanged="SetElementReference"

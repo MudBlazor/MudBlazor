@@ -143,11 +143,17 @@ public partial class BaseRadialChart<TChartOptions> : MudComponentBase where TCh
                 if (chartSeries.Length == 1)
                     return chartSeries[0].Name;
 
+                if (HoveredSegment is SvgPathPoint point)
+                    return chartSeries[point.PointIndex].Name;
+
                 return chartSeries.Length.ToString();
 
             case AggregationOption.GroupByDataSet:
                 if (ChartLabels.Length == 1)
                     return ChartLabels[0];
+
+                if (HoveredSegment is SvgPathPoint hoveredPoint)
+                    return ChartLabels[hoveredPoint.PointIndex];
 
                 return ChartLabels.Length.ToString();
 
