@@ -4938,26 +4938,57 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task DataGrid_Should_AllowUnsorted_AscDescOnly()
+        public async Task DataGridShouldAllowUnsortedAscDescOnly()
         {
-            var comp = Context.RenderComponent<DataGridAllowUnsortedTest>();
+            var comp = Context.RenderComponent<DataGridAllowUnsortedTest>(parameters => parameters
+                .Add(p => p.AllowUnsorted, false));
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridAllowUnsortedTest.Item>>();
+            var headerCell = dataGrid.FindComponents<HeaderCell<DataGridAllowUnsortedTest.Item>>()[0];
 
-            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Ascending, x => x.Name));
+            await comp.InvokeAsync(() => headerCell.Instance.SortChangedAsync(new MouseEventArgs() { Button = 0 }));
+            headerCell.Instance.SortDirection.Should().Be(SortDirection.Ascending);
             var cells = dataGrid.FindAll("td");
             cells[0].TextContent.Should().Be("A");
-            cells[3].TextContent.Should().Be("A");
-            cells[6].TextContent.Should().Be("B");
+            cells[3].TextContent.Should().Be("B");
+            cells[6].TextContent.Should().Be("C");
 
-            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Descending, x => x.Name));
+            await comp.InvokeAsync(() => headerCell.Instance.SortChangedAsync(new MouseEventArgs() { Button = 0 }));
+            headerCell.Instance.SortDirection.Should().Be(SortDirection.Descending);
             cells = dataGrid.FindAll("td");
-            cells[0].TextContent.Should().Be("B");
-            cells[3].TextContent.Should().Be("A");
+            cells[0].TextContent.Should().Be("C");
+            cells[3].TextContent.Should().Be("B");
             cells[6].TextContent.Should().Be("A");
 
-            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Ascending, x => x.Name));
+            await comp.InvokeAsync(() => headerCell.Instance.SortChangedAsync(new MouseEventArgs() { Button = 0 }));
+            headerCell.Instance.SortDirection.Should().Be(SortDirection.Ascending);
             cells = dataGrid.FindAll("td");
             cells[0].TextContent.Should().Be("A");
+            cells[3].TextContent.Should().Be("B");
+            cells[6].TextContent.Should().Be("C");
+
+            comp = Context.RenderComponent<DataGridAllowUnsortedTest>(parameters => parameters
+                .Add(p => p.AllowUnsorted, true));
+            dataGrid = comp.FindComponent<MudDataGrid<DataGridAllowUnsortedTest.Item>>();
+            headerCell = dataGrid.FindComponents<HeaderCell<DataGridAllowUnsortedTest.Item>>()[0];
+
+            await comp.InvokeAsync(() => headerCell.Instance.SortChangedAsync(new MouseEventArgs() { Button = 0 }));
+            headerCell.Instance.SortDirection.Should().Be(SortDirection.Ascending);
+            cells = dataGrid.FindAll("td");
+            cells[0].TextContent.Should().Be("A");
+            cells[3].TextContent.Should().Be("B");
+            cells[6].TextContent.Should().Be("C");
+
+            await comp.InvokeAsync(() => headerCell.Instance.SortChangedAsync(new MouseEventArgs() { Button = 0 }));
+            headerCell.Instance.SortDirection.Should().Be(SortDirection.Descending);
+            cells = dataGrid.FindAll("td");
+            cells[0].TextContent.Should().Be("C");
+            cells[3].TextContent.Should().Be("B");
+            cells[6].TextContent.Should().Be("A");
+
+            await comp.InvokeAsync(() => headerCell.Instance.SortChangedAsync(new MouseEventArgs() { Button = 0 }));
+            headerCell.Instance.SortDirection.Should().Be(SortDirection.None);
+            cells = dataGrid.FindAll("td");
+            cells[0].TextContent.Should().Be("C");
             cells[3].TextContent.Should().Be("A");
             cells[6].TextContent.Should().Be("B");
         }

@@ -1,4 +1,4 @@
-﻿<MudDataGrid Items="@_items" Sortable="true" AllowUnsorted="false">
+﻿<MudDataGrid Items="@_items" Sortable="true" AllowUnsorted="@AllowUnsorted">
     <Columns>
         <PropertyColumn Property="x => x.Name"/>
         <PropertyColumn Property="x => x.Value"/>
@@ -7,11 +7,14 @@
 </MudDataGrid>
 
 @code {
-    private readonly IEnumerable<Item> _items = new List<Item>
+    [Parameter]
+    public bool AllowUnsorted { get; set; } = true;
+
+    private readonly List<Item> _items = new List<Item>
     {
-        new("B", 42, "555"), 
+        new("C", 42, "555"), 
         new("A", 73, "7"), 
-        new("A", 11, "4444"),
+        new("B", 11, "4444"),
     };
 
     public class Item(string name, int value, string misc)
