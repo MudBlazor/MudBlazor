@@ -1082,6 +1082,15 @@ namespace MudBlazor
         [Parameter]
         public IEqualityComparer<T> Comparer { get; set; } = EqualityComparer<T>.Default;
 
+#nullable enable
+        /// <summary>
+        /// The default template used to display column grouping for any column that is grouped. 
+        /// </summary>
+        /// <remarks>Can be overridden by using the column level GroupTemplate, defaults to <c>null</c>.</remarks>
+        [Parameter]
+        public RenderFragment<GroupDefinition<T>>? GroupTemplate { get; set; }
+#nullable disable
+
         #endregion
 
         #region Properties
@@ -2094,6 +2103,7 @@ namespace MudBlazor
                             column._groupExpandedState.Value;
             return new()
             {
+                DataGrid = this,
                 Selector = column.groupBy,
                 Expanded = expanded,
                 GroupTemplate = column.GroupTemplate,
@@ -2118,6 +2128,7 @@ namespace MudBlazor
                 }
                 result.Add(new GroupDefinition<T>
                 {
+                    DataGrid = this,
                     Selector = groupDef.Selector,
                     Expanded = expanded,
                     GroupTemplate = groupDef.GroupTemplate,

@@ -28,6 +28,7 @@
 
 .mud-menu-list {
   padding: 4px 0;
+  min-width: 112px;
 
   > .mud-menu {
     width: 100%;
@@ -83,4 +84,8 @@
 // If any menu item has an icon, then give the other ones the same gutters.
 .mud-menu-list:has(.mud-menu-item-icon) .mud-menu-item:not(:has(.mud-menu-item-icon)) .mud-menu-item-text {
   margin-inline-start: 36px;
+}
+
+.mud-menu-list:has(.mud-menu-submenu-icon) .mud-menu-item:not(:has(.mud-menu-submenu-icon)) .mud-menu-item-text {
+  margin-inline-end: 36px;
 }
