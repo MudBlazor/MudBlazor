@@ -18,7 +18,7 @@
         <DocsPageSection>
             <SectionHeader Title="Absolute">
                 <Description>
-                    The overlay can be restricted to its parent container by setting the <CodeInline>Absolute</CodeInline> property along with the CSS <CodeInline>position: relative;</CodeInline> style.
+                    The overlay can be contained inside its parent by setting the <CodeInline>Absolute</CodeInline> property along with the CSS <CodeInline>position: relative;</CodeInline> style.
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(OverlayAbsoluteExample)" ShowCode="false">
@@ -51,7 +51,7 @@
         <DocsPageSection>
             <SectionHeader Title="Loader">
                 <Description>
-                    Although the overlay can host any content, it's commonly used to indicate loading or processing states.
+                    The overlay can contain any child content but here it's used to display loading progress.
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(OverlayLoaderExample)" ShowCode="false" Block="true">
