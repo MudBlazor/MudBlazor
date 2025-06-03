@@ -8,7 +8,7 @@ namespace MudBlazor.Charts;
 /// <summary>
 /// A chart which displays values over time.
 /// </summary>
-partial class TimeSeries : MudAxisLineChartBase<TimeSeriesChartOptions>, IDisposable
+partial class TimeSeries : MudAxisLineChartBase<TimeSeriesChartOptions>
 {
     public static new ChartType ChartType => ChartType.Timeseries;
 

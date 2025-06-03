@@ -582,6 +582,7 @@ namespace MudBlazor.Charts
         {
             if (!disposing) return;
 
+            _debouncer?.Cancel();
             _dotNetObjectReference?.Dispose();
         }
     }
