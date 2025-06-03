@@ -9,6 +9,15 @@
         <MudText Typo="Typo.h6">Periodic Elements</MudText>
         <MudSpacer />
     </ToolBarContent>
+    <GroupTemplate>
+        <span style="font-weight:bold">
+            @context.Title: @context.Grouping.Key Count: @context.Grouping.Count()
+            @if (context.DataGrid.FilteredItems.Count() != 0)
+            {
+                @string.Format(" Percentage: {0:P1}", context.Grouping.Count() / ((double)context.DataGrid.FilteredItems.Count()))
+            }
+            </span>
+    </GroupTemplate>
     <Columns>
         <PropertyColumn Property="x => x.Number" Title="Nr" Filterable="false" Groupable="false" />
         <PropertyColumn Property="x => x.Sign" />

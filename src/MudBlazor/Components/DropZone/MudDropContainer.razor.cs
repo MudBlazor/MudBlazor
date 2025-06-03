@@ -55,8 +55,9 @@ namespace MudBlazor
         public RenderFragment<T>? ItemRenderer { get; set; }
 
         /// <summary>
-        /// The function which determines whether an item can be dropped within a drop zone.
+        /// The function which determines whether an item is within a <see cref="MudDropZone{T}"/>.
         /// </summary>
+        /// <remarks>Can be overridden by child <see cref="MudDropZone{T}"/>'s with their owm implementation of <see cref="MudDropZone{T}.ItemsSelector"/> </remarks>
         [Parameter]
         [Category(CategoryTypes.DropZone.Items)]
         public Func<T, string, bool>? ItemsSelector { get; set; }

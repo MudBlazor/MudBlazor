@@ -725,6 +725,8 @@ namespace MudBlazor
             //Only focus automatically after the first render cycle!
             if (firstRender && AutoFocus)
             {
+                // The preventScroll parameter is set to the opposite of AutoFocusScroll.
+                // If AutoFocusScroll is true, preventScroll is false, allowing the browser to scroll the focused element into view.
                 await FocusAsync(!AutoFocusScroll);
             }
 
