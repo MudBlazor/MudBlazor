@@ -1,0 +1,15 @@
+﻿<br/>
+<MudTextField @bind-Value="Text"
+                AdornmentText="Click Here"
+                Adornment="Adornment.End"
+                OnAdornmentClick="AdornmentClick"/>
+
+@code {
+    public static string __description__ = "Input Adornment Text Button Test";
+    private string Text { get; set; } = "Text";
+
+    void AdornmentClick()
+    {
+        Text = "Adornment Clicked";
+    }
+}
