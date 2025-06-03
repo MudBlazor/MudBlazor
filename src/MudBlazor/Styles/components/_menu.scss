@@ -90,7 +90,7 @@
   margin-inline-end: 36px;
 }
 
-// Prevent menu item hover effects peeking through the popover when it's rounded.
+// Prevent menu item hover effects peeking through rounded popovers.
 .mud-popover:has(> .mud-menu-list) {
   overflow: hidden;
 }
