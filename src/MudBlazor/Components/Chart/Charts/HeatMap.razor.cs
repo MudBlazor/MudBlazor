@@ -486,7 +486,7 @@ namespace MudBlazor.Charts
         {
             MudHeatMapCells.Add(cell);
 
-            _ = _debouncer.DebounceAsync(async () =>
+            _ = _debouncer.DebounceAfterFirstExecuteAsync(async () =>
             {
                 await InvokeAsync(() =>
                 {
@@ -580,7 +580,9 @@ namespace MudBlazor.Charts
 
         protected virtual void Dispose(bool disposing)
         {
-            _dotNetObjectReference.Dispose();
+            if (!disposing) return;
+
+            _dotNetObjectReference?.Dispose();
         }
     }
 }

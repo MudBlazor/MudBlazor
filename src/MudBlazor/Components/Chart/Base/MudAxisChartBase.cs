@@ -51,6 +51,7 @@ public abstract class MudAxisChartBase<TOptions> : MudChartBase<TOptions>, IMudA
 
     protected readonly List<SvgLegend> Legends = [];
 
+    private const double WidthAdjustment = 50.0;
     protected const double Epsilon = 1e-6;
     protected const double BoundWidthDefault = 700.0;
     protected const double BoundHeightDefault = 350.0;
@@ -60,6 +61,7 @@ public abstract class MudAxisChartBase<TOptions> : MudChartBase<TOptions>, IMudA
     protected const double VerticalStartSpaceBuffer = 10.0;
     protected double VerticalStartSpace => Math.Max(VerticalStartSpaceBuffer + (_xAxisLabelSize?.Height ?? 0), 30);
     protected const double VerticalEndSpace = 25.0;
+
     protected double XAxisLabelOffset => Math.Ceiling(_xAxisLabelSize?.Height ?? 20) / 2;
     public override string[] LegendPalette => [.. (ChartOptions?.ChartPalette ?? []), .. OverlayChart?.LegendPalette ?? []];
     public abstract RenderFragment? OverlayContent { get; set; }
@@ -176,6 +178,17 @@ public abstract class MudAxisChartBase<TOptions> : MudChartBase<TOptions>, IMudA
         }
     }
 
+    protected string FormatTooltipText(string? format, ChartSeries series, SvgPath path)
+    {
+        if (string.IsNullOrWhiteSpace(format))
+            return string.Empty;
+
+        return format
+            .Replace("{{SERIES_NAME}}", series.Name)
+            .Replace("{{X_VALUE}}", path.LabelXValue)
+            .Replace("{{Y_VALUE}}", path.LabelYValue);
+    }
+
     [JSInvokable]
     public void OnElementSizeChanged(ElementSize elementSize)
     {
@@ -185,7 +198,7 @@ public abstract class MudAxisChartBase<TOptions> : MudChartBase<TOptions>, IMudA
         _elementSize = new ElementSize()
         {
             Height = elementSize.Height,
-            Width = Math.Max(0, elementSize.Width - 50),
+            Width = Math.Max(0, elementSize.Width - WidthAdjustment),
             Timestamp = elementSize.Timestamp
         };
 
@@ -234,6 +247,11 @@ public abstract class MudAxisChartBase<TOptions> : MudChartBase<TOptions>, IMudA
 
     protected virtual void Dispose(bool disposing)
     {
+        if (disposing)
+        {
+            _debouncer.Cancel();
+        }
+
         _dotNetObjectReference.Dispose();
     }
 }

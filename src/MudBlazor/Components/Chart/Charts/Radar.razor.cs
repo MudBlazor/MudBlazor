@@ -44,22 +44,7 @@ public partial class Radar : MudRadialChartBase<RadarChartOptions>
         var numAxes = labelData.Length;
 
         // Setup Legends
-        for (var i = 0; i < seriesData.Count; i++)
-        {
-            var label = seriesData[i].Name;
-
-            if (label.Length == 0)
-                continue;
-
-            var legend = new SvgLegend()
-            {
-                Index = i,
-                Labels = label,
-                Visible = ChartOptions.AggregationOption == AggregationOption.GroupByLabel ? !HiddenIndices.Contains(i) : ChartSeries[i].Visible,
-                OnVisibilityChanged = EventCallback.Factory.Create<SvgLegend>(this, HandleLegendVisibilityChanged)
-            };
-            _legends.Add(legend);
-        }
+        SetupLegends(seriesData);
 
         var angleStep = 2 * Math.PI / numAxes;
         var currentAngle = -Math.PI / 2 + (ChartOptions.AngleOffset * (Math.PI / 180)); // Convert offset to radians
@@ -78,66 +63,17 @@ public partial class Radar : MudRadialChartBase<RadarChartOptions>
             radius = Math.Min(Radius, maxAllowableRadius);
         }
 
-        // Draw grid lines
-        if (ChartOptions.ShowGridLines)
-        {
-            var gridLevels = ChartOptions.GridLevels; // e.g., 5 levels
-            for (var i = 1; i <= gridLevels; i++)
-            {
-                var gridRadius = radius * (i / (double)gridLevels);
-                var pathStringBuilder = new StringBuilder();
-                pathStringBuilder.Append("M ");
-                for (var j = 0; j < numAxes; j++)
-                {
-                    var angle = currentAngle + j * angleStep;
-                    var x = Math.Cos(angle) * gridRadius;
-                    var y = Math.Sin(angle) * gridRadius;
-                    pathStringBuilder.Append($"{ToS(x)} {ToS(y)} L ");
-                }
-                pathStringBuilder.Length -= 2; // Remove last "L "
-                pathStringBuilder.Append('Z'); // Close path
-                _gridLines.Add(new SvgPath { Data = pathStringBuilder.ToString() });
-            }
-        }
+        GenerateGridLines(numAxes, angleStep, currentAngle, radius);
 
-        // Draw axis lines and labels
-        for (var i = 0; i < numAxes; i++)
-        {
-            var angle = currentAngle + i * angleStep;
-            var xOuter = Math.Cos(angle) * radius;
-            var yOuter = Math.Sin(angle) * radius;
+        GenerateAxisLinesAndLabels(labelData, numAxes, angleStep, currentAngle, radius);
 
-            _axisLines.Add(new SvgPath { Data = $"M 0 0 L {ToS(xOuter)} {ToS(yOuter)}", LabelX = Math.Cos(angle) * (radius * 1.06), LabelY = Math.Sin(angle) * (radius * 1.08), LabelYValue = labelData.Length > i ? labelData[i] : $"Axis {i + 1}" });
-        }
+        var axisMaxValue = GenerateAxisValues(numAxes, currentAngle, globalMaxValue, radius);
 
-        var axisMaxValue = globalMaxValue;
+        GeneratePaths(normalizedData, seriesData, numAxes, angleStep, currentAngle, radius, axisMaxValue);
+    }
 
-        // Draw axis values
-        if (ChartOptions.ShowAxisValues && numAxes > 0)
-        {
-            axisMaxValue = CalculateAxisMaxValue(globalMaxValue);
-
-            var axisAngle = currentAngle; // First axis (vertical upward)
-            var gridLevels = ChartOptions.GridLevels;
-            var stepValue = axisMaxValue / gridLevels;
-
-            for (var i = 1; i <= gridLevels; i++)
-            {
-                var value = i * stepValue;
-                var valueRadius = radius * (i / (double)gridLevels);
-                var x = Math.Cos(axisAngle) * valueRadius;
-                var y = Math.Sin(axisAngle) * valueRadius;
-
-                _axisValues.Add(new SvgPath
-                {
-                    LabelX = x + 5, // Offset slightly to avoid overlapping the axis line
-                    LabelY = y - 1,
-                    LabelYValue = ((int)value).ToString()
-                });
-            }
-        }
-
-        // Draw data series
+    private void GeneratePaths(double[] normalizedData, List<ChartSeries> seriesData, int numAxes, double angleStep, double currentAngle, double radius, double axisMaxValue)
+    {
         for (var seriesIndex = 0; seriesIndex < seriesData.Count; seriesIndex++)
         {
             var series = seriesData[seriesIndex];
@@ -185,17 +121,102 @@ public partial class Radar : MudRadialChartBase<RadarChartOptions>
         }
     }
 
+    private double GenerateAxisValues(int numAxes, double currentAngle, double globalMaxValue, double radius)
+    {
+        if (!ChartOptions.ShowAxisValues || numAxes <= 0) return globalMaxValue;
+
+        var axisMaxValue = CalculateAxisMaxValue(globalMaxValue);
+
+        var axisAngle = currentAngle; // First axis (vertical upward)
+        var gridLevels = ChartOptions.GridLevels;
+        var stepValue = axisMaxValue / gridLevels;
+
+        for (var i = 1; i <= gridLevels; i++)
+        {
+            var value = i * stepValue;
+            var valueRadius = radius * (i / (double)gridLevels);
+            var x = Math.Cos(axisAngle) * valueRadius;
+            var y = Math.Sin(axisAngle) * valueRadius;
+
+            _axisValues.Add(new SvgPath
+            {
+                LabelX = x + 5, // Offset slightly to avoid overlapping the axis line
+                LabelY = y - 1,
+                LabelYValue = ((int)value).ToString()
+            });
+        }
+
+        return axisMaxValue;
+    }
+
+    private void GenerateAxisLinesAndLabels(string[] labelData, int numAxes, double angleStep, double currentAngle, double radius)
+    {
+        for (var i = 0; i < numAxes; i++)
+        {
+            var angle = currentAngle + i * angleStep;
+            var xOuter = Math.Cos(angle) * radius;
+            var yOuter = Math.Sin(angle) * radius;
+
+            _axisLines.Add(new SvgPath { Data = $"M 0 0 L {ToS(xOuter)} {ToS(yOuter)}", LabelX = Math.Cos(angle) * (radius * 1.06), LabelY = Math.Sin(angle) * (radius * 1.08), LabelYValue = labelData.Length > i ? labelData[i] : $"Axis {i + 1}" });
+        }
+    }
+
+    private void GenerateGridLines(int numAxes, double angleStep, double currentAngle, double radius)
+    {
+        if (!ChartOptions.ShowGridLines) return;
+
+        var gridLevels = ChartOptions.GridLevels; // e.g., 5 levels
+        for (var i = 1; i <= gridLevels; i++)
+        {
+            var gridRadius = radius * (i / (double)gridLevels);
+            var pathStringBuilder = new StringBuilder();
+            pathStringBuilder.Append("M ");
+            for (var j = 0; j < numAxes; j++)
+            {
+                var angle = currentAngle + j * angleStep;
+                var x = Math.Cos(angle) * gridRadius;
+                var y = Math.Sin(angle) * gridRadius;
+                pathStringBuilder.Append($"{ToS(x)} {ToS(y)} L ");
+            }
+            pathStringBuilder.Length -= 2; // Remove last "L "
+            pathStringBuilder.Append('Z'); // Close path
+            _gridLines.Add(new SvgPath { Data = pathStringBuilder.ToString() });
+        }
+    }
+
+    private void SetupLegends(List<ChartSeries> seriesData)
+    {
+        for (var i = 0; i < seriesData.Count; i++)
+        {
+            var label = seriesData[i].Name;
+
+            if (label.Length == 0)
+                continue;
+
+            var legend = new SvgLegend()
+            {
+                Index = i,
+                Labels = label,
+                Visible = ChartOptions.AggregationOption == AggregationOption.GroupByLabel ? !HiddenIndices.Contains(i) : ChartSeries[i].Visible,
+                OnVisibilityChanged = EventCallback.Factory.Create<SvgLegend>(this, HandleLegendVisibilityChanged)
+            };
+            _legends.Add(legend);
+        }
+    }
+
     private static (List<ChartSeries> Series, string[] Labels) GroupDataSet(string[] labels, List<ChartSeries> dataSet, bool groupByDataSet = false)
     {
         if (groupByDataSet)
             return (dataSet, labels);
 
         var groupedData = new List<ChartSeries>();
-        var dataLength = dataSet[0].Data.Values.Length;
+        var dataLength = dataSet.Count != 0
+                            ? dataSet.Max(series => series.Data.Values.Length)
+                            : 0;
 
         for (var i = 0; i < dataLength; i++)
         {
-            var data = dataSet.Select(series => series.Data[i]).ToArray();
+            var data = dataSet.Select(series => i < series.Data.Values.Length ? series.Data[i] : 0.0).ToArray();
             var label = i < labels.Length ? labels[i] : $"Axis {i + 1}";
 
             groupedData.Add(new ChartSeries

@@ -53,7 +53,9 @@ public sealed class ChartSeries : IEquatable<ChartSeries>, IEnumerable<double>
 
     public bool Equals(ChartSeries? other)
     {
-        if (other is null) return false;
+        if (other is null || other.Data is null) return false;
+        if (ReferenceEquals(this, other)) return true;
+        if (Data?.Values?.Length != other.Data.Values.Length) return false;
 
         return Name == other.Name &&
                Data.Values.SequenceEqual(other.Data.Values);
@@ -64,14 +66,19 @@ public sealed class ChartSeries : IEquatable<ChartSeries>, IEnumerable<double>
     public override int GetHashCode()
     {
         var hashCode = new HashCode();
+
         hashCode.Add(Name);
+
         if (Data?.Values != null)
         {
-            foreach (var value in Data.Values)
+            hashCode.Add(Data.Values.Length);
+
+            for (var i = 0; i < Math.Min(10, Data.Values.Length); i++)
             {
-                hashCode.Add(value);
+                hashCode.Add(Data.Values[i]);
             }
         }
+
         return hashCode.ToHashCode();
     }
 }

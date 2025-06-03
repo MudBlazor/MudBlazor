@@ -119,6 +119,8 @@ public partial class BaseAxisChart<TChartOptions> : MudComponentBase where TChar
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        await base.OnAfterRenderAsync(firstRender);
+
         if (firstRender && ElementRefChanged.HasDelegate)
             await ElementRefChanged.InvokeAsync(_svgRef);
 

@@ -94,15 +94,8 @@
 
             if (!string.IsNullOrWhiteSpace(tooltipTitleFormat))
             {
-                var tooltipTitle = tooltipTitleFormat
-                    .Replace("{{SERIES_NAME}}", series.Name)
-                    .Replace("{{X_VALUE}}", _hoveredBar.LabelXValue)
-                    .Replace("{{Y_VALUE}}", _hoveredBar.LabelYValue);
-
-                var tooltipSubtitle = tooltipSubtitleFormat?
-                    .Replace("{{SERIES_NAME}}", series.Name)
-                    .Replace("{{X_VALUE}}", _hoveredBar.LabelXValue)
-                    .Replace("{{Y_VALUE}}", _hoveredBar.LabelYValue) ?? string.Empty;
+                var tooltipTitle = FormatTooltipText(tooltipTitleFormat, series, _hoveredBar);
+                var tooltipSubtitle = FormatTooltipText(tooltipSubtitleFormat, series, _hoveredBar);
 
                 builder.OpenComponent<ChartTooltip>(seq++);
                 builder.AddAttribute(seq++, "Title", tooltipTitle);

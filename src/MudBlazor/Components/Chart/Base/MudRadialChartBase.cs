@@ -218,6 +218,11 @@ public abstract class MudRadialChartBase<TOptions> : MudChartBase<TOptions>, IDi
 
     protected virtual void Dispose(bool disposing)
     {
+        if (disposing)
+        {
+            _debouncer?.Cancel();
+        }
+
         _dotNetObjectReference.Dispose();
     }
 }

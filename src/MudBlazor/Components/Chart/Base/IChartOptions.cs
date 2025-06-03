@@ -22,7 +22,13 @@ public interface IChartOptions
     /// </summary>
     public bool ShowToolTips { get; set; }
 
+    /// <summary>
+    /// The format string for tooltip titles.
+    /// </summary>
     public string TooltipTitleFormat { get; set; }
 
+    /// <summary>
+    /// The format string for tooltip subtitles.
+    /// </summary>
     public string? TooltipSubtitleFormat { get; set; }
 }

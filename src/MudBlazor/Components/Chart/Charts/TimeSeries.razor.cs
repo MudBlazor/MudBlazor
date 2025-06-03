@@ -248,10 +248,15 @@ partial class TimeSeries : MudAxisLineChartBase<TimeSeriesChartOptions>, IDispos
             for (var j = 0; j < points.Count; j++)
             {
                 var point = points[j];
-                data[j] = new DataPoint(
-                    DateTime.TryParse(point.X?.ToString(), out var date) ? date : DateTime.MinValue,
-                    point.Y
-                );
+                var date = point.X switch
+                {
+                    DateTime dt => dt,
+                    null => DateTime.MinValue,
+                    string s when DateTime.TryParse(s, out var parsed) => parsed,
+                    _ => throw new InvalidOperationException($"Unable to parse '{point.X}' as DateTime for time series chart")
+                };
+
+                data[j] = new DataPoint(date, point.Y);
             }
 
             _cachedDataPoints[i] = data;

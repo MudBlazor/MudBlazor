@@ -34,12 +34,12 @@
                   @onmouseout="() => OnMouseOut.InvokeAsync()">
             </path>
 
-                @if (ChartOptions is IHasValueLabelOptions { ShowValues: true  })
+                @if (ChartOptions is IHasValueLabelOptions { ShowValues: true  } && item is SvgPetal petal)
                 {
                     <g class="mud-chart-labels">
                         @if (!string.IsNullOrEmpty(item.LabelXValue) || !string.IsNullOrEmpty(item.LabelYValue))
                         {
-                            @RenderValueLabel(item as SvgPetal);
+                            @RenderValueLabel(petal);
                         }
                     </g>
                 }
@@ -112,14 +112,21 @@
         if (string.IsNullOrWhiteSpace(text))
             return 8;
 
-        text = text.Replace(".", "").Trim();
+        const int MinTextLength = 2;
+        const int MaxTextLength = 6;
+        const double ArcLengthDivisor = 3;
+        const double FontSizeOffset = 1.6;
+        const double MinFontSize = 6;
+        const double MaxFontSize = 30;
 
         var arcLength = angleRadians * radius;
         var avgCharWidth = 0.6;
-        var estimatedTextWidth = Math.Max(text.Length.EnsureRange(6), 2) * avgCharWidth * Math.Sqrt(arcLength / 3);
-        var size = (arcLength / estimatedTextWidth) + 1.6;
+        var estimatedTextWidth = text.Length.EnsureRange(MinTextLength, MaxTextLength)
+                                 * avgCharWidth
+                                 * Math.Sqrt(arcLength / ArcLengthDivisor);
+        var size = (arcLength / estimatedTextWidth) + FontSizeOffset;
 
-        return size.EnsureRange(6, 30);
+        return size.EnsureRange(MinFontSize, MaxFontSize);
     }
 
 }

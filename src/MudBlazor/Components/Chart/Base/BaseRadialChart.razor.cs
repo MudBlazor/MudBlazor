@@ -15,12 +15,12 @@ public partial class BaseRadialChart<TChartOptions> : MudComponentBase where TCh
     [Parameter]
     [EditorRequired]
     [Category(CategoryTypes.Chart.Appearance)]
-    public string Width { get; set; }
+    public string Width { get; set; } = string.Empty;
 
     [Parameter]
     [EditorRequired]
     [Category(CategoryTypes.Chart.Appearance)]
-    public string Height { get; set; }
+    public string Height { get; set; } = string.Empty;
 
     [Parameter]
     [EditorRequired]
@@ -35,7 +35,7 @@ public partial class BaseRadialChart<TChartOptions> : MudComponentBase where TCh
     [Parameter]
     [EditorRequired]
     [Category(CategoryTypes.Chart.Appearance)]
-    public TChartOptions ChartOptions { get; set; }
+    public TChartOptions ChartOptions { get; set; } = new();
 
     [Parameter]
     [EditorRequired]
@@ -110,7 +110,9 @@ public partial class BaseRadialChart<TChartOptions> : MudComponentBase where TCh
         if (HoveredSegment == null)
             return (string.Empty, string.Empty);
 
-        var series = ChartOptions.AggregationOption == AggregationOption.GroupByDataSet ? ChartSeries[HoveredSegment.Index] : null;
+        var series = ChartOptions.AggregationOption == AggregationOption.GroupByDataSet && HoveredSegment.Index >= 0 && HoveredSegment.Index < ChartSeries.Count
+                     ? ChartSeries[HoveredSegment.Index]
+                     : null;
         var tooltipTitleFormat = series?.TooltipTitleFormat ?? ChartOptions.TooltipTitleFormat;
         var tooltipSubtitleFormat = series?.TooltipSubtitleFormat ?? ChartOptions.TooltipSubtitleFormat;
 

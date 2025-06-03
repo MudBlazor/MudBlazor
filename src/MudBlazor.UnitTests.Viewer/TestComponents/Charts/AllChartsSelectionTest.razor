@@ -86,7 +86,6 @@
     private LineDisplayType _selectedDisplayType = LineDisplayType.Line;
     private AggregationOption _selectedAggregationOption = AggregationOption.GroupByLabel;
     private List<ChartSeries> _series = DataSet.Take(1).ToList();
-    private List<string> strings = new() { "United Kingdom", "United States", "Greenland", "Germany", "Norway", "Italy", "Spain", "Sweden" };
     private static List<ChartSeries> DataSet =>
     [
         new() { Name = "United Kingdom", Data = [60, 54, 23, 42, 67, 31, 45, 72, 38, 51, 63, 29] },

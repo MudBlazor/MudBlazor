@@ -63,7 +63,7 @@ public class RadarChartTests : BunitTest
             .Add(p => p.Width, "300px")
             .Add(p => p.Height, "300px")
         );
-        comp.FindAll("path.mud-chart-serie").Count.Should().Be(3); // 3 levels
+        comp.FindAll("path.mud-chart-grid-line").Count.Should().Be(3); // 3 levels
     }
 
     [Test]

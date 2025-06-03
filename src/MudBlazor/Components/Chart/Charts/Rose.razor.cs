@@ -28,6 +28,10 @@ public partial class Rose : MudRadialChartBase<RoseChartOptions>
         var chartData = AggregateSeriesData(ChartOptions!.AggregationOption);
         var normalizedData = GetNormalizedData();
         var nonZeroCount = normalizedData.Count(d => d > 0);
+
+        if (nonZeroCount == 0)
+            return;
+
         var angleStep = 2 * Math.PI / nonZeroCount;
         var currentAngle = ChartOptions.AngleOffset * (Math.PI / 180);
 
