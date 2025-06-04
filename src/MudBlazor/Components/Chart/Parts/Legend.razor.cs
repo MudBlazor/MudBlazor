@@ -37,7 +37,7 @@ namespace MudBlazor.Charts
 
             CanHideSeries = ChartContainer?.CanHideSeries ?? CanHideSeries;
             ShowLegend ??= ChartContainer?.ChartOptions?.ShowLegend ?? true;
-            ChartPalette ??= ChartContainer?.ChartOptions?.ChartPalette ?? [];
+            ChartPalette ??= ChartContainer?.ChartOptions?.ChartPalette ?? new ChartOptions().ChartPalette;
 
             if (!OnLegendSelected.HasDelegate && ChartContainer is not null)
                 OnLegendSelected = EventCallback.Factory.Create<int>(this, async index => await ChartContainer!.SetSelectedIndexAsync(index));

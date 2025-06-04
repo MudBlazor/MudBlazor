@@ -12,18 +12,25 @@ namespace MudBlazor;
 /// </summary>
 public partial class MudChart
 {
+    private ChartType? _chartType;
+    private IChartOptions? _chartOptions;
+
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
 
-        if (ChartOptions is null)
+        if (ChartType != _chartType)
         {
-            ChartOptions = GetDefaultOptionsForChart();
+            _chartType = ChartType;
+            _chartOptions = null; // Reset options when chart type changes
         }
-        else if (ChartOptions is ChartOptions options)
+
+        _chartOptions = ChartOptions switch
         {
-            ChartOptions = GetChartTypeOptions(options);
-        }
+            null => GetDefaultOptionsForChart(),
+            ChartOptions options => GetChartTypeOptions(options),
+            _ => ChartOptions
+        };
     }
 
     protected override void OnAfterRender(bool firstRender)

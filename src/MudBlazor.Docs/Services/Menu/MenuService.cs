@@ -127,7 +127,7 @@ namespace MudBlazor.Docs.Services
                 .AddItem("Time Series Chart", typeof(TimeSeries), typeof(TimeSeriesChartOptions), typeof(Legend))
                 .AddItem("Radar Chart", typeof(Radar), typeof(RadarChartOptions), typeof(Legend))
                 .AddItem("Rose Chart", typeof(Rose), typeof(RoseChartOptions), typeof(Legend))
-                .AddItem("Axis Chart Combo", typeof(MudChart), typeof(MudAxisChartBase<>), typeof(ChartOptions))
+                .AddItem("Universal Chart", typeof(MudChart), typeof(MudAxisChartBase<>), typeof(ChartOptions))
             )
             // this must be last!
             .GetComponentsSortedByName();

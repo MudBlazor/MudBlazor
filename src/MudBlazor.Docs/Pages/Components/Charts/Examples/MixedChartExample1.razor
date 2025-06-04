@@ -2,9 +2,11 @@
 
 @using MudBlazor.Charts
 
-<MudChart ChartType="ChartType.StackedBar" ChartSeries="@StackedDataSet" ChartOptions="@_barChartOptions" MatchBoundsToSize="true" Width="100%" Height="500px">
-    <Line ChartSeries="@LineDataSet" ChartOptions="@_lineChartOptions" />
-</MudChart>
+<MudPaper Class="doc-section-component-container">
+    <MudChart ChartType="ChartType.StackedBar" ChartSeries="@StackedDataSet" ChartOptions="@_barChartOptions" MatchBoundsToSize="true" Width="100%" Height="500px">
+        <Line ChartSeries="@LineDataSet" ChartOptions="@_lineChartOptions" />
+    </MudChart>
+</MudPaper>
 
 @code {
     private List<ChartSeries> StackedDataSet =>

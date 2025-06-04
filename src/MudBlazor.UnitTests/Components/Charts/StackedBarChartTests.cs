@@ -94,10 +94,10 @@ namespace MudBlazor.UnitTests.Charts
 
 
             comp.Markup.Should()
-                .Contain("d=\"M 37 320 L 37 235.2143\"");
+                .Contain("d=\"M 44 320 L 44 235.2143\"");
 
             comp.Markup.Should()
-                .Contain("d=\"M 663 223.0714 L 663 184.6429\"");
+                .Contain("d=\"M 656 223.0714 L 656 184.6429\"");
 
             comp.SetParametersAndRender(parameters => parameters
                 .Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _modifiedPalette }));

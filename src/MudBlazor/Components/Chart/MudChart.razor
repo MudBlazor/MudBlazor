@@ -17,7 +17,7 @@
 </CascadingValue>
 
 @code {
-    private RenderFragment ChartContent => (ChartType, ChartOptions) switch
+    private RenderFragment ChartContent => (_chartType, _chartOptions) switch
     {
         (ChartType.Donut, DonutChartOptions donutOptions) => @<Donut ChartSeries="@ChartSeries"
                                                                      ChartLabels="@ChartLabels"

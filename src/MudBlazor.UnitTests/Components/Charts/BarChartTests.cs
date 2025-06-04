@@ -153,13 +153,13 @@ namespace MudBlazor.UnitTests.Charts
             if (chartSeries.TryGetIndexOfDataValue(0, 40, out var index))
             {
                 bars[index].OuterHtml.Should()
-                    .Contain("d=\"M 33 270.8333 L 33 172.5\"");
+                    .Contain("d=\"M 34.183 270.8333 L 34.183 172.5\"");
             }
 
             if (chartSeries.TryGetIndexOfDataValue(0, 80, out index))
             {
                 bars[index].OuterHtml.Should()
-                    .Contain("d=\"M 575.7859 270.8333 L 575.7859 74.1667\"");
+                    .Contain("d=\"M 569.2941 270.8333 L 569.2941 74.1667\"");
             }
 
             comp.SetParametersAndRender(parameters => parameters.Add(p => p.ChartOptions, new ChartOptions() { ChartPalette = _modifiedPalette }));

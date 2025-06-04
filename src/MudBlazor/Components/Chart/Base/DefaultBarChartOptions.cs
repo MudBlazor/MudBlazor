@@ -7,7 +7,7 @@ namespace MudBlazor.Charts;
 public abstract class DefaultBarChartOptions : DefaultAxisChartOptions
 {
     private double _seriesSpacingRatio = 1;
-    private double _barWidthRatio = 0.20;
+    private double _barWidthRatio = 0.40;
 
     /// <summary>
     /// Specifies how bar groups are horizontally justified within the chart area.
@@ -33,7 +33,7 @@ public abstract class DefaultBarChartOptions : DefaultAxisChartOptions
     /// Value should be between 0.01 and 1.0.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>0.20</c> (20%).
+    /// Defaults to <c>0.40</c> (40%).
     /// </remarks>
     public double BarWidthRatio
     {

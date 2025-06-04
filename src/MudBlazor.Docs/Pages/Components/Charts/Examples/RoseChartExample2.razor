@@ -1,6 +1,8 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudChart ChartType="ChartType.Rose" ChartSeries="@_series" ChartOptions="@_options" Width="100%" Height="400px" ChartLabels="@_labels" />
+<MudPaper Class="doc-section-component-container mx-8">
+    <MudChart ChartType="ChartType.Rose" ChartSeries="@_series" ChartOptions="@_options" Width="100%" Height="400px" ChartLabels="@_labels" />
+</MudPaper>
 
 @code {
     private List<ChartSeries> _series = new List<ChartSeries>()
