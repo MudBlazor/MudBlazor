@@ -7,12 +7,12 @@
     </MudList>
 </MudPaper>
 
-<MudMenu @ref="contextMenu"
+<MudMenu @ref="_contextMenu"
          AnchorOrigin="@Origin.BottomLeft"
          Dense
          TransformOrigin="@Origin.BottomLeft"
          PopoverClass="menu-popover"
-         DropdownSettings="@dropdownSettings"
+         DropdownSettings="@_dropdownSettings"
          PositionAtCursor>
     <MudMenuItem Label="Enlist" />
     <MudMenuItem Label="Barracks" />
@@ -32,14 +32,14 @@
 </MudMenu>
 
 @code {
-    private MudMenu contextMenu = null!;
-    protected DropdownSettings dropdownSettings => new DropdownSettings() { OverflowBehavior = OverflowBehavior.FlipAlways };
+    private MudMenu _contextMenu = null!;
+    private readonly DropdownSettings _dropdownSettings = new DropdownSettings() { OverflowBehavior = OverflowBehavior.FlipAlways };
 
     private async Task ListItem_Clicked(MouseEventArgs e)
     {
-        if (contextMenu != null)
+        if (_contextMenu != null)
         {
-            await contextMenu.OpenMenuAsync(e);
+            await _contextMenu.OpenMenuAsync(e);
         }
     }
 }
