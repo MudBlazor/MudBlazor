@@ -89,3 +89,8 @@
 .mud-menu-list:has(.mud-menu-submenu-icon) .mud-menu-item:not(:has(.mud-menu-submenu-icon)) .mud-menu-item-text {
   margin-inline-end: 36px;
 }
+
+// Prevent menu item hover effects peeking through rounded popovers.
+.mud-popover:has(> .mud-menu-list) {
+  overflow: hidden;
+}
