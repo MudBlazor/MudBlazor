@@ -796,5 +796,13 @@ namespace MudBlazor
                 await JsRuntime.InvokeVoidAsync("mudInput.focusInput", InputElementId);
             }
         }
+
+        protected async Task HandleContainerDoubleClick()
+        {
+            if (IsJSRuntimeAvailable)
+            {
+                await JsRuntime.InvokeVoidAsync("mudInput.selectInput", InputElementId);
+            }
+        }
     }
 }
