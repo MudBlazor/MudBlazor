@@ -401,7 +401,7 @@ namespace MudBlazor
             DataGrid.DropContainerHasChanged();
         }
 
-        internal void AddFilter(MouseEventArgs args)
+        internal void AddFilter(MouseEventArgs args = null)
         {
             var filterDefinition = Column?.FilterContext.FilterDefinition;
             if (DataGrid.FilterMode == DataGridFilterMode.Simple && filterDefinition != null)
@@ -410,8 +410,11 @@ namespace MudBlazor
                 {
                     DataGrid.FilterDefinitions.Add(filterDefinition.Clone());
                 }
-                DataGrid._openPosition.Top = args.PageY;
-                DataGrid._openPosition.Left = args.PageX;
+                if (args != null)
+                {
+                    DataGrid._openPosition.Top = args.PageY;
+                    DataGrid._openPosition.Left = args.PageX;
+                }
                 DataGrid.OpenFilters();
             }
             else if (DataGrid.FilterMode == DataGridFilterMode.ColumnFilterMenu)
@@ -421,18 +424,24 @@ namespace MudBlazor
             }
         }
 
-        internal void OpenFilters(MouseEventArgs args)
+        internal void OpenFilters(MouseEventArgs args = null)
         {
             if (DataGrid.FilterMode == DataGridFilterMode.Simple)
             {
-                DataGrid._openPosition.Top = args.PageY;
-                DataGrid._openPosition.Left = args.PageX;
+                if (args != null)
+                {
+                    DataGrid._openPosition.Top = args.PageY;
+                    DataGrid._openPosition.Left = args.PageX;
+                }
                 DataGrid.OpenFilters();
             }
             else if (DataGrid.FilterMode == DataGridFilterMode.ColumnFilterMenu)
             {
-                DataGrid._openPosition.Top = args.PageY;
-                DataGrid._openPosition.Left = args.PageX;
+                if (args != null)
+                {
+                    DataGrid._openPosition.Top = args.PageY;
+                    DataGrid._openPosition.Left = args.PageX;
+                }
                 _filtersMenuVisible = true;
                 DataGrid.DropContainerHasChanged();
             }

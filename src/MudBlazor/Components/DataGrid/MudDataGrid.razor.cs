@@ -42,7 +42,7 @@ namespace MudBlazor
         internal Dictionary<GroupKey, bool> _groupExpansionsDict = [];
         private GridData<T> _serverData = new() { TotalItems = 0, Items = Array.Empty<T>() };
         private Func<IFilterDefinition<T>> _defaultFilterDefinitionFactory = () => new FilterDefinition<T>();
-        internal (double Top, double Left) _openPosition;
+        internal (double Top, double Left) _openPosition = (0, 0);
 
         private readonly ParameterState<T> _selectedItemState;
         private readonly ParameterState<HashSet<T>> _selectedItemsState;
@@ -1987,10 +1987,13 @@ namespace MudBlazor
         /// <summary>
         /// Shows a panel that lets you show, hide, filter, groupedColumns, sort and re-arrange columns.
         /// </summary>
-        public void ShowColumnsPanel(MouseEventArgs args)
+        public void ShowColumnsPanel(MouseEventArgs args = null)
         {
-            _openPosition.Top = args.PageY;
-            _openPosition.Left = args.PageX;
+            if (args != null)
+            {
+                _openPosition.Top = args.PageY;
+                _openPosition.Left = args.PageX;
+            }
             _columnsPanelVisible = true;
             StateHasChanged();
         }
