@@ -86,7 +86,7 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
-            if (Parent is HeatMap heatMap && heatMap is not null)
+            if (Parent is HeatMap heatMap)
             {
                 heatMap.AddCell(this);
             }
