@@ -136,6 +136,7 @@ $default-foreground: var(--mud-palette-text-primary);
     min-height: 2.75rem;
 
     &.mud-chat-bubble-clickable {
+      overflow: unset !important;
       cursor: pointer;
       user-select: none;
       -webkit-appearance: none;
