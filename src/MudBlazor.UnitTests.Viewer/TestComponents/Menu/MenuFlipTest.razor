@@ -8,12 +8,12 @@
 </MudPaper>
 
 <MudMenu @ref="contextMenu"
-AnchorOrigin="@Origin.BottomLeft"
-Dense
-TransformOrigin="@Origin.BottomLeft"
-PopoverClass="menu-popover"
-DropdownSettings="@dropdownSettings"
-PositionAtCursor>
+         AnchorOrigin="@Origin.BottomLeft"
+         Dense
+         TransformOrigin="@Origin.BottomLeft"
+         PopoverClass="menu-popover"
+         DropdownSettings="@dropdownSettings"
+         PositionAtCursor>
     <MudMenuItem Label="Enlist" />
     <MudMenuItem Label="Barracks" />
     <MudMenuItem Label="Armory" />
@@ -35,11 +35,11 @@ PositionAtCursor>
     private MudMenu contextMenu = null!;
     protected DropdownSettings dropdownSettings => new DropdownSettings() { OverflowBehavior = OverflowBehavior.FlipAlways };
 
-    private async void ListItem_Clicked(MouseEventArgs e)
+    private async Task ListItem_Clicked(MouseEventArgs e)
     {
         if (contextMenu != null)
         {
             await contextMenu.OpenMenuAsync(e);
-        }        
+        }
     }
 }
