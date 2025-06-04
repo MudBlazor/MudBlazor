@@ -1491,7 +1491,7 @@ namespace MudBlazor.UnitTests.Components
             var items = comp.FindComponents<MudListItem<AutocompleteStrictFalseTest.State>>().ToArray();
             items.Length.Should().Be(10);
             var item = items.SingleOrDefault(x => x.Markup.Contains(californiaString));
-            items.ToList().IndexOf(item).Should().Be(5);
+            items.ToList().IndexOf(item).Should().Be(4);
             comp.WaitForAssertion(() => items.Single(s => s.Markup.Contains(californiaString)).Find(listItemQuerySelector).ClassList.Should().Contain(selectedItemClassName));
 
             await comp.InvokeAsync(async () => await autocompleteComponent.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "Escape" })); // Close autocomplete.
@@ -1503,14 +1503,17 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.Text.Should().Be(virginiaString);
             autocomplete.Value.StateName.Should().Be(virginiaString);
 
-            //West Virginia is not in the first 10 states, so it should not appear in the list
             await comp.InvokeAsync(autocompleteComponent.Instance.OpenMenuAsync); // reopen menu because Enter closes it.
             comp.WaitForAssertion(() => comp.FindAll("div.mud-popover")[index].ClassList.Should().Contain("mud-popover-open"));
             var items2 = comp.FindComponents<MudListItem<AutocompleteStrictFalseTest.State>>().ToArray();
             items2.Length.Should().Be(10);
-            var item2 = items2.SingleOrDefault(x => x.Markup.Contains(virginiaString));
-            items2.ToList().IndexOf(item).Should().Be(-1);
-            items2.Count(s => s.Find(listItemQuerySelector).ClassList.Contains(selectedItemClassName)).Should().Be(0);
+            // Select Virginia
+            var item2 = items2.FirstOrDefault(x => x.Markup.Contains(virginiaString));
+            // Virginia and West Virginia should be in the list
+            var count = items2.Count(x => x.Markup.Contains(virginiaString));
+            count.Should().Be(2);
+            items2.ToList().IndexOf(item2).Should().Be(5);
+            items2.Count(s => s.Find(listItemQuerySelector).ClassList.Contains(selectedItemClassName)).Should().Be(1);
         }
 
         [Test]
