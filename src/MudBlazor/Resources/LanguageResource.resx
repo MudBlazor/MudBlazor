@@ -259,13 +259,13 @@
     <value>Toggle {0}</value>
   </data>
   <data name="MudAlert_Close" xml:space="preserve">
-    <value>Close alert</value>
+    <value>Close</value>
   </data>
   <data name="MudChip_Close" xml:space="preserve">
-    <value>Close chip</value>
+    <value>Close</value>
   </data>
   <data name="MudColorPicker_Close" xml:space="preserve">
-    <value>Close picker</value>
+    <value>Close</value>
   </data>
   <data name="MudColorPicker_SpectrumView" xml:space="preserve">
     <value>Spectrum</value>
@@ -319,7 +319,7 @@
     <value>Previous page</value>
   </data>
   <data name="MudRatingItem_Label" xml:space="preserve">
-    <value>{0} Rating</value>
+    <value>{0} rating</value>
   </data>
   <data name="MudCarousel_Index" xml:space="preserve">
     <value>Index {0}</value>
@@ -331,7 +331,7 @@
     <value>Previous</value>
   </data>
   <data name="MudDialog_Close" xml:space="preserve">
-    <value>Close dialog</value>
+    <value>Close</value>
   </data>
   <data name="MudInput_Clear" xml:space="preserve">
     <value>Clear</value>
@@ -343,7 +343,7 @@
     <value>Increment</value>
   </data>
   <data name="MudPageContentNavigation_NavMenu" xml:space="preserve">
-    <value>Table of contents</value>
+    <value>Contents</value>
   </data>
   <data name="MudTablePager_FirstPage" xml:space="preserve">
     <value>First page</value>
@@ -358,7 +358,7 @@
     <value>Previous page</value>
   </data>
   <data name="MudSnackbar_Close" xml:space="preserve">
-    <value>Close snackbar</value>
+    <value>Close</value>
   </data>
   <data name="MudDataGridPager_RowsPerPage" xml:space="preserve">
     <value>Rows per page:</value>
@@ -391,7 +391,7 @@
     <value>Open filters</value>
   </data>
   <data name="MudDataGrid_ToggleGroupExpansion" xml:space="preserve">
-    <value>Toggle group expansion</value>
+    <value>Toggle group</value>
   </data>
   <data name="MudDataGrid_RemoveFilter" xml:space="preserve">
     <value>Remove filter</value>
@@ -409,7 +409,7 @@
     <value>Last page</value>
   </data>
   <data name="MudDataGrid_ShowColumnOptions" xml:space="preserve">
-    <value>Show column options</value>
+    <value>Column options</value>
   </data>
   <data name="Converter_InvalidBoolean" xml:space="preserve">
     <value>Not a valid boolean</value>
