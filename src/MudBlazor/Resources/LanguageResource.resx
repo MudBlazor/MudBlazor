@@ -276,8 +276,11 @@
   <data name="MudColorPicker_PaletteView" xml:space="preserve">
     <value>Palette</value>
   </data>
-  <data name="MudColorPicker_ToggleCollection" xml:space="preserve">
-    <value>Toggle collection</value>
+  <data name="MudColorPicker_ShowSwatches" xml:space="preserve">
+    <value>Show swatches</value>
+  </data>
+  <data name="MudColorPicker_HideSwatches" xml:space="preserve">
+    <value>Hide swatches</value>
   </data>
   <data name="MudColorPicker_HueSlider" xml:space="preserve">
     <value>Hue slider</value>
