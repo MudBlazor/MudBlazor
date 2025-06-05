@@ -124,7 +124,7 @@
     <value>Clear</value>
   </data>
   <data name="MudDataGrid_AddFilter" xml:space="preserve">
-    <value>Add Filter</value>
+    <value>Add filter</value>
   </data>
   <data name="MudDataGrid_Cancel" xml:space="preserve">
     <value>Cancel</value>
@@ -136,22 +136,22 @@
     <value>Save</value>
   </data>
   <data name="MudDataGrid_HideAll" xml:space="preserve">
-    <value>Hide All</value>
+    <value>Hide all</value>
   </data>
   <data name="MudDataGrid_ShowAll" xml:space="preserve">
-    <value>Show All</value>
+    <value>Show all</value>
   </data>
   <data name="MudDataGrid_Columns" xml:space="preserve">
     <value>Columns</value>
   </data>
   <data name="MudDataGrid_ExpandAllGroups" xml:space="preserve">
-    <value>Expand All Groups</value>
+    <value>Expand all groups</value>
   </data>
   <data name="MudDataGrid_CollapseAllGroups" xml:space="preserve">
-    <value>Collapse All Groups</value>
+    <value>Collapse all groups</value>
   </data>
   <data name="MudDataGrid_RefreshData" xml:space="preserve">
-    <value>Refresh Data</value>
+    <value>Refresh data</value>
   </data>
   <data name="MudDataGrid_True" xml:space="preserve">
     <value>true</value>
@@ -247,10 +247,10 @@
     <value>Value</value>
   </data>
   <data name="MudDataGrid_MoveDown" xml:space="preserve">
-    <value>Move Down</value>
+    <value>Move down</value>
   </data>
   <data name="MudDataGrid_MoveUp" xml:space="preserve">
-    <value>Move Up</value>
+    <value>Move up</value>
   </data>
   <data name="MudDataGrid_Sort" xml:space="preserve">
     <value>Sort</value>
@@ -259,13 +259,13 @@
     <value>Toggle {0}</value>
   </data>
   <data name="MudAlert_Close" xml:space="preserve">
-    <value>Close Alert</value>
+    <value>Close alert</value>
   </data>
   <data name="MudChip_Close" xml:space="preserve">
-    <value>Close Chip</value>
+    <value>Close chip</value>
   </data>
   <data name="MudColorPicker_Close" xml:space="preserve">
-    <value>Close Picker</value>
+    <value>Close picker</value>
   </data>
   <data name="MudColorPicker_SpectrumView" xml:space="preserve">
     <value>Spectrum</value>
@@ -277,16 +277,16 @@
     <value>Palette</value>
   </data>
   <data name="MudColorPicker_ToggleCollection" xml:space="preserve">
-    <value>Toggle Collection</value>
+    <value>Toggle collection</value>
   </data>
   <data name="MudColorPicker_HueSlider" xml:space="preserve">
-    <value>Hue Slider</value>
+    <value>Hue slider</value>
   </data>
   <data name="MudColorPicker_AlphaSlider" xml:space="preserve">
-    <value>Alpha Slider</value>
+    <value>Alpha slider</value>
   </data>
   <data name="MudColorPicker_ModeSwitch" xml:space="preserve">
-    <value>Switch Mode</value>
+    <value>Switch mode</value>
   </data>
   <data name="MudBaseDatePicker_PrevYear" xml:space="preserve">
     <value>Previous year {0}</value>
@@ -343,7 +343,7 @@
     <value>Increment</value>
   </data>
   <data name="MudPageContentNavigation_NavMenu" xml:space="preserve">
-    <value>Table of Contents</value>
+    <value>Table of contents</value>
   </data>
   <data name="MudTablePager_FirstPage" xml:space="preserve">
     <value>First page</value>
@@ -385,31 +385,31 @@
     <value>Complete</value>
   </data>
   <data name="MudDataGrid_ClearFilter" xml:space="preserve">
-    <value>Clear Filter</value>
+    <value>Clear filter</value>
   </data>
   <data name="MudDataGrid_OpenFilters" xml:space="preserve">
-    <value>Open Filters</value>
+    <value>Open filters</value>
   </data>
   <data name="MudDataGrid_ToggleGroupExpansion" xml:space="preserve">
-    <value>Toggle Group Expansion</value>
+    <value>Toggle group expansion</value>
   </data>
   <data name="MudDataGrid_RemoveFilter" xml:space="preserve">
-    <value>Remove Filter</value>
+    <value>Remove filter</value>
   </data>
   <data name="MudDataGridPager_FirstPage" xml:space="preserve">
-    <value>First Page</value>
+    <value>First page</value>
   </data>
   <data name="MudDataGridPager_PreviousPage" xml:space="preserve">
-    <value>Previous Page</value>
+    <value>Previous page</value>
   </data>
   <data name="MudDataGridPager_NextPage" xml:space="preserve">
-    <value>Next Page</value>
+    <value>Next page</value>
   </data>
   <data name="MudDataGridPager_LastPage" xml:space="preserve">
-    <value>Last Page</value>
+    <value>Last page</value>
   </data>
   <data name="MudDataGrid_ShowColumnOptions" xml:space="preserve">
-    <value>Show Column Options</value>
+    <value>Show column options</value>
   </data>
   <data name="Converter_InvalidBoolean" xml:space="preserve">
     <value>Not a valid boolean</value>
