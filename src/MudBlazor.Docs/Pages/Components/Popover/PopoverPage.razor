@@ -6,12 +6,6 @@
     <DocsPageContent>
 
         <DocsPageSection>
-            <MudAlert Severity="Severity.Info">
-                Basic CSS knowledge is recommended when using this component, as it might not fully support every type of content out of the box.
-            </MudAlert>
-        </DocsPageSection>
-
-        <DocsPageSection>
             <SectionHeader Title="Simple Popover">
                 <Description>
                     You have full control over the popover's content and its open state.
@@ -37,14 +31,16 @@
         <DocsPageSection>
             <SectionHeader Title="Overflow Behavior">
                 <Description>
-                    Configure the popover overflow behavior with options: <CodeInline>FlipNever</CodeInline>, <CodeInline>FlipOnOpen</CodeInline>, or <CodeInline>FlipAlways</CodeInline>.<br />
-                    Resize the browser window slowly to observe how the popover adjusts in flip mode.
+                    Configure the popover's overflow behavior using one of the following options:
+                    <CodeInline>FlipNever</CodeInline>, <CodeInline>FlipOnOpen</CodeInline>, or <CodeInline>FlipAlways</CodeInline>.<br />
+                    When space is limited, the popover can flip its position to stay visible. In center mode, the popover flips vertically. Scroll the page to see this behavior in action.
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(PopoverOverflowBehaviorExample)" ShowCode="false">
                 <PopoverOverflowBehaviorExample />
             </SectionContent>
         </DocsPageSection>
+
 
         <DocsPageSection>
             <SectionHeader Title="Complex Content">
@@ -62,9 +58,9 @@
                 <Description>
                     Popovers can have their widths set relative to their activator or parent through the <CodeInline>DropdownWidth</CodeInline> enum:
                     <ul class="ml-2">
-                        <li><CodeInline>DropdownWidth.Ignore</CodeInline> (default): Popover width adjusts independently of the activator.</li>
-                        <li><CodeInline>DropdownWidth.Relative</CodeInline>: Popover width matches the activator’s width precisely.</li>
-                        <li><CodeInline>DropdownWidth.Adaptive</CodeInline>: Minimum width matches activator or parent, but popover can grow wider as needed.</li>
+                        <li><CodeInline>Ignore</CodeInline> (default): Popover width adjusts independently of the activator.</li>
+                        <li><CodeInline>Relative</CodeInline>: Popover width matches the activator’s width precisely.</li>
+                        <li><CodeInline>Adaptive</CodeInline>: Minimum width matches activator or parent, but popover can grow wider as needed.</li>
                     </ul>
                 </Description>
             </SectionHeader>
