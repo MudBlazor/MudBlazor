@@ -450,4 +450,10 @@
   <data name="HeatMap_More" xml:space="preserve">
     <value>More</value>
   </data>
+  <data name="MudTreeView_ExpandItem" xml:space="preserve">
+    <value>Expand</value>
+  </data>
+  <data name="MudTreeView_CollapseItem" xml:space="preserve">
+    <value>Collapse</value>
+  </data>
 </root>
