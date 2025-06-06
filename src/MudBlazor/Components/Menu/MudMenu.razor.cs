@@ -2,6 +2,8 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
@@ -76,11 +78,22 @@ namespace MudBlazor
         /// <summary>
         /// Inline styles for positioning the menu at the cursor's location.
         /// </summary>
+        [ExcludeFromCodeCoverage]
+        [Obsolete($"Will be removed in future, replaced by {nameof(PositionAttributes)}.")]
         protected string Stylename =>
             new StyleBuilder()
                 .AddStyle("top", _openPosition.Top.ToPx(), PositionAtCursor)
                 .AddStyle("left", _openPosition.Left.ToPx(), PositionAtCursor)
                 .Build();
+
+        /// <summary>
+        /// Inline data attributes for positioning the menu at the cursor's location.
+        /// </summary>
+        private Dictionary<string, object> PositionAttributes => new()
+        {
+            { "data-pc-x", _openPosition.Left.ToString(CultureInfo.InvariantCulture) },
+            { "data-pc-y", _openPosition.Top.ToString(CultureInfo.InvariantCulture) }
+        };
 
         /// <summary>
         /// The text shown for this menu.
