@@ -17,13 +17,6 @@ class MudInput {
             input.click();
         }
     }
-
-    selectInput(elementId) {
-        const input = document.getElementById(elementId);
-        if (input) {
-            input.select();
-        }
-    }
 }
 
 window.mudInput = new MudInput();
