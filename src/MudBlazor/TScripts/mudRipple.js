@@ -22,7 +22,7 @@ function startRipple(event) {
 function endRipple(event) {
     const target = event.target.closest(".mud-ripple");
     if (!target) return;
-    const minDuration = 500; // ms
+    const minDuration = 300; // ms
     const now = Date.now();
     const start = target._rippleStart || now;
     const elapsed = now - start;
