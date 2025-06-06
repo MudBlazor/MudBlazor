@@ -3,17 +3,22 @@
 // See the LICENSE file in the project root for more information.
 
 #nullable enable
-using System.Collections;
-using System.Runtime.CompilerServices;
+using System.Data;
+using System.Numerics;
 
 namespace MudBlazor;
 
-[CollectionBuilder(typeof(ChartSeries), nameof(Create))]
-public sealed class ChartSeries : IEquatable<ChartSeries>, IEnumerable<double>
+public interface IChartSeries
+{
+    string Name { get; }
+    bool Visible { get; }
+}
+
+public sealed class ChartSeries<T> : IChartSeries, IEquatable<ChartSeries<T>> where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
 {
     public ChartSeries() { }
 
-    public ChartSeries(double[] doubles) => Data = doubles;
+    public ChartSeries(IReadOnlyList<T> values) => Data = values.ToArray();
 
     /// <summary>
     /// The legend label for this data set.
@@ -23,7 +28,7 @@ public sealed class ChartSeries : IEquatable<ChartSeries>, IEnumerable<double>
     /// <summary>
     /// The values to display on the chart.
     /// </summary>
-    public ChartData Data { get; set; } = new();
+    public ChartData<T> Data { get; set; } = new();
 
     /// <summary>
     /// Displays this data set in the chart.
@@ -45,23 +50,17 @@ public sealed class ChartSeries : IEquatable<ChartSeries>, IEnumerable<double>
     /// </summary>
     public string? TooltipYValueFormat { get; set; }
 
-
-    public static implicit operator ChartSeries(double[] values) => new() { Data = values };
-    public static ChartSeries Create(ReadOnlySpan<double> values) => new(values.ToArray());
-    public IEnumerator<double> GetEnumerator() => Data.GetEnumerator();
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-    public bool Equals(ChartSeries? other)
+    public bool Equals(ChartSeries<T>? other)
     {
         if (other is null || other.Data is null) return false;
         if (ReferenceEquals(this, other)) return true;
-        if (Data?.Values?.Length != other.Data.Values.Length) return false;
+        if (Data?.Values?.Count != other.Data.Values.Count) return false;
 
         return Name == other.Name &&
                Data.Values.SequenceEqual(other.Data.Values);
     }
 
-    public override bool Equals(object? obj) => Equals(obj as ChartSeries);
+    public override bool Equals(object? obj) => Equals(obj as ChartSeries<T>);
 
     public override int GetHashCode()
     {
@@ -71,9 +70,9 @@ public sealed class ChartSeries : IEquatable<ChartSeries>, IEnumerable<double>
 
         if (Data?.Values != null)
         {
-            hashCode.Add(Data.Values.Length);
+            hashCode.Add(Data.Values.Count);
 
-            for (var i = 0; i < Math.Min(10, Data.Values.Length); i++)
+            for (var i = 0; i < Math.Min(10, Data.Values.Count); i++)
             {
                 hashCode.Add(Data.Values[i]);
             }
@@ -81,17 +80,19 @@ public sealed class ChartSeries : IEquatable<ChartSeries>, IEnumerable<double>
 
         return hashCode.ToHashCode();
     }
+
+    public static implicit operator ChartSeries<T>(T[] values) => new() { Data = values };
 }
 
 public static class ChartDataSetExtensions
 {
-    public static List<ChartSeries> AsList(this ChartSeries dataSet)
+    public static List<ChartSeries<T>> AsList<T>(this ChartSeries<T> dataSet) where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
     {
         return [dataSet];
     }
 
-    public static List<ChartSeries> AsChartDataSet(this double[] dataSet)
+    public static List<ChartSeries<T>> AsChartDataSet<T>(this T[] dataSet) where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
     {
-        return new ChartSeries(dataSet).AsList();
+        return new ChartSeries<T>(dataSet).AsList();
     }
 }

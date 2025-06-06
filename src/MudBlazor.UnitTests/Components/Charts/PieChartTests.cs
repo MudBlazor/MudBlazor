@@ -40,7 +40,7 @@ namespace MudBlazor.UnitTests.Charts
         [Test]
         public void PieChartEmptyData()
         {
-            var comp = Context.RenderComponent<Pie>(parameters => parameters
+            var comp = Context.RenderComponent<Pie<double>>(parameters => parameters
                 .Add(p => p.ChartSeries, null));
 
             comp.Markup.Should().Contain("mud-chart-pie");
@@ -56,7 +56,7 @@ namespace MudBlazor.UnitTests.Charts
                 "Polonium", "Astatine", "Radon", "Francium", "Radium", "Actinium", "Protactinium",
                 "Neptunium", "Americium", "Curium", "Berkelium", "Californium", "Einsteinium", "Mudblaznium" };
 
-            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Pie)
                 .Add(p => p.ChartOptions, new ChartOptions { ChartPalette = _baseChartPalette })
                 .Add(p => p.Height, "300px")
@@ -102,7 +102,7 @@ namespace MudBlazor.UnitTests.Charts
         {
             double[] data = { 50, 25, 20, 5, 16, 14, 8, 4, 2, 8, 10, 19, 8, 17, 6, 11, 19, 24, 35, 13, 20, 12 };
 
-            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Pie)
                 .Add(p => p.Height, "350px")
                 .Add(p => p.Width, "100%")
@@ -139,7 +139,7 @@ namespace MudBlazor.UnitTests.Charts
         {
             double[] data = { 50, 0, 0 };
 
-            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Pie)
                 .Add(p => p.ChartSeries, [data]));
 
@@ -151,12 +151,12 @@ namespace MudBlazor.UnitTests.Charts
         {
             var chartData = new double[] { 10, 20, 30, 40 };
             string[] chartLabels = { "Slice 1", "Slice 2", "Slice 3", "Slice 4" };
-            var chartSeries = new List<ChartSeries>() { new ChartSeries { Data = chartData } };
+            var chartSeries = new List<ChartSeries<double>>() { new() { Data = chartData } };
             // For Pie charts, individual data points (slices) are hidden, not the whole series object usually.
             // The `ChartSeries.Visible` property might not apply here in the same way as for other charts if we want to hide slices.
             // Instead, the legend interaction directly controls visibility of slices.
 
-            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Pie)
                 .Add(p => p.Height, "300px")
                 .Add(p => p.Width, "300px")

@@ -5,6 +5,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Globalization;
+using System.Numerics;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
@@ -16,7 +17,7 @@ using MudBlazor.Utilities.Debounce;
 
 namespace MudBlazor.Charts
 {
-    partial class HeatMap : MudChartBase<HeatMapChartOptions>, IDisposable
+    partial class HeatMap<T> : MudChartBase<T, HeatMapChartOptions>, IDisposable where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
     {
         internal record CellDimension(double Width, double Height, int Padding);
 
@@ -25,7 +26,7 @@ namespace MudBlazor.Charts
         [Inject]
         private IJSRuntime JsRuntime { get; set; } = null!;
 
-        private readonly DotNetObjectReference<HeatMap> _dotNetObjectReference;
+        private readonly DotNetObjectReference<HeatMap<T>> _dotNetObjectReference;
 
         protected ElementReference _elementReference;
 
@@ -33,7 +34,7 @@ namespace MudBlazor.Charts
 
         protected const double Epsilon = 1e-6;
 
-        private readonly List<HeatMapCell> _heatMapCells = [];
+        private readonly List<HeatMapCell<T>> _heatMapCells = [];
 
         private const double BoundWidth = 800.0;
 
@@ -79,15 +80,15 @@ namespace MudBlazor.Charts
         private double _verticalEndSpace = HeatMapPadding;
 
         // the minimum value in all series
-        internal double _minValue = double.MaxValue;
+        internal T _minValue = T.MaxValue;
 
         // the maximum value in all series
-        internal double _maxValue = double.MinValue;
+        internal T _maxValue = T.MinValue;
 
         private string[] _colorPalette = ["#587934"];
 
         // The maximum number of cells in a series
-        private int SeriesLength => _series.Select(s => s.Data?.Values.Length ?? 0).DefaultIfEmpty(0).Max();
+        private int SeriesLength => _series.Select(s => s.Data?.Values.Count ?? 0).DefaultIfEmpty(0).Max();
 
         // The number of rows visible
         private int RowCount => _series.Count > 0 ? _series.Count(s => s.Visible) : 0;
@@ -106,17 +107,17 @@ namespace MudBlazor.Charts
 
         private HeatMapChartOptions? _options;
 
-        private List<ChartSeries> _series = [];
+        private List<ChartSeries<T>> _series = [];
 
-        private List<(double value, string color)> _legends = [];
+        private List<(T value, string color)> _legends = [];
 
-        internal List<MudHeatMapCell> _customHeatMapCells = [];
+        internal List<MudHeatMapCell<T>> _customHeatMapCells = [];
 
         private CellDimension _cellDimension = new(0, 0, 0);
 
-        private HeatMapCell? _hoveredCell;
+        private HeatMapCell<T>? _hoveredCell;
 
-        private (double value, string color)? _hoveredLegend;
+        private (T value, string color)? _hoveredLegend;
 
         private PointF _hoveredLegendPosition;
 
@@ -125,7 +126,7 @@ namespace MudBlazor.Charts
         private const int DebounceIntervalMs = 150;
 
         /// <summary>
-        /// The currently selected <see cref="HeatMapCell"/>.
+        /// The currently selected <see cref="HeatMapCell{T}"/>.
         /// </summary>
         public (int Row, int Column) SelectedCell { get; set; }
 
@@ -133,7 +134,7 @@ namespace MudBlazor.Charts
         /// The chart, if any, containing this component.
         /// </summary>
         [CascadingParameter]
-        public MudChart? MudChartParent { get; set; }
+        public MudChart<T>? MudChartParent { get; set; }
 
         [DynamicDependency(nameof(OnElementSizeChanged))]
         [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(ElementSize))]
@@ -196,7 +197,7 @@ namespace MudBlazor.Charts
             }
         }
 
-        private void UpdateChartSeries(List<ChartSeries> chartSeriesList)
+        private void UpdateChartSeries(List<ChartSeries<T>> chartSeriesList)
         {
             var hasUpdatedList = chartSeriesList.Count > 0 && _series != chartSeriesList;
 
@@ -207,7 +208,7 @@ namespace MudBlazor.Charts
             }
         }
 
-        private void UpdateHeatMapCells(List<MudHeatMapCell> mudHeatMapCellsList)
+        private void UpdateHeatMapCells(List<MudHeatMapCell<T>> mudHeatMapCellsList)
         {
             var hasUpdatedList = mudHeatMapCellsList.Count > 0 && _customHeatMapCells != mudHeatMapCellsList;
 
@@ -237,8 +238,8 @@ namespace MudBlazor.Charts
             // Populate _heatmapCells based on data, e.g., matrix of values
             _heatMapCells.Clear();
             _toggleLegend.Clear();
-            _minValue = double.MaxValue;
-            _maxValue = double.MinValue;
+            _minValue = T.MaxValue;
+            _maxValue = T.MinValue;
 
             var hasValues = false;
             // # of rows
@@ -252,7 +253,7 @@ namespace MudBlazor.Charts
                 {
                     var mudHeatMapOverride = _customHeatMapCells.FirstOrDefault(x => x.Row == row && x.Column == col);
                     var value = mudHeatMapOverride?.Value ?? GetDataValue(row, col); // Method to retrieve the value for each cell                    
-                    _heatMapCells.Add(new HeatMapCell
+                    _heatMapCells.Add(new HeatMapCell<T>
                     {
                         Row = row,
                         Column = col,
@@ -264,8 +265,8 @@ namespace MudBlazor.Charts
                     });
                     if (value.HasValue)
                     {
-                        _minValue = Math.Min(_minValue, value.Value);
-                        _maxValue = Math.Max(_maxValue, value.Value);
+                        _minValue = T.Min(_minValue, value.Value);
+                        _maxValue = T.Max(_maxValue, value.Value);
                         hasValues = true;
                     }
                 }
@@ -286,8 +287,8 @@ namespace MudBlazor.Charts
             var overrideMinValue = _customHeatMapCells.LastOrDefault(x => x.MinValue.HasValue)?.MinValue;
             var overrideMaxValue = _customHeatMapCells.LastOrDefault(x => x.MaxValue.HasValue)?.MaxValue;
 
-            _minValue = overrideMinValue ?? (hasValues ? _minValue : 0.0);
-            _maxValue = overrideMaxValue ?? (hasValues ? _maxValue : 1.0);
+            _minValue = overrideMinValue ?? (hasValues ? _minValue : T.Zero);
+            _maxValue = overrideMaxValue ?? (hasValues ? _maxValue : T.One);
 
             CalculateAreas();
             BuildLegends();
@@ -366,12 +367,12 @@ namespace MudBlazor.Charts
             for (var i = 0; i < colors.Length; i++)
             {
                 var t = i / (double)(colors.Length - 1);
-                var value = _minValue + t * (_maxValue - _minValue);
+                var value = _minValue + T.CreateSaturating(t) * (_maxValue - _minValue);
                 _legends.Add((value, colors[i].ToString(MudColorOutputFormats.RGB)));
             }
         }
 
-        private double? GetDataValue(int row, int col)
+        private T? GetDataValue(int row, int col)
         {
             // need to ensure row index exists in case there is no data for a row in a series
             if (row < 0 || row >= _series.Count)
@@ -379,22 +380,25 @@ namespace MudBlazor.Charts
                 return null;
             }
             // need to ensure column index exists in case there is no data for a column in a series
-            if (col < 0 || _series[row].Data == null || col >= _series[row].Data.Values.Length)
+            if (col < 0 || _series[row].Data == null || col >= _series[row].Data.Values.Count)
             {
                 return null;
             }
-            return _series[row].Data[col];
+            return _series[row].Data[col].Y;
         }
 
-        private string GetColorForValue(double? value)
+        private string GetColorForValue(T? value)
         {
             if (value is null)
             {
                 return "#fff"; // Default color for missing data
             }
 
+            var range = _maxValue - _minValue;
+            var offset = value.Value - _minValue;
+
             // Find the closest matching color in the legends
-            var normalizedValue = Math.Clamp((value.Value - _minValue) / (_maxValue - _minValue), 0, 1);
+            var normalizedValue = Math.Clamp(double.CreateSaturating(offset / range), 0.0, 1.0);
             var legendIndex = (int)Math.Floor(normalizedValue * (_legends.Count - 1));
             return _legends[Math.Clamp(legendIndex, 0, _legends.Count - 1)].color;
         }
@@ -418,7 +422,7 @@ namespace MudBlazor.Charts
             }
         }
 
-        private string FormatValueForDisplay(double? value)
+        private string FormatValueForDisplay(T? value)
         {
             if (value == null)
                 return string.Empty;
@@ -480,9 +484,9 @@ namespace MudBlazor.Charts
                 (_options?.XAxisLabelPosition == XAxisLabelPosition.Top ? _dynamicFontSize + CellPadding : 0);
         }
 
-        internal List<MudHeatMapCell> MudHeatMapCells { get; set; } = [];
+        internal List<MudHeatMapCell<T>> MudHeatMapCells { get; set; } = [];
 
-        internal void AddCell(MudHeatMapCell cell)
+        internal void AddCell(MudHeatMapCell<T> cell)
         {
             MudHeatMapCells.Add(cell);
 
@@ -544,7 +548,7 @@ namespace MudBlazor.Charts
             });
         }
 
-        private void OnCellMouseOver(MouseEventArgs _, HeatMapCell cell)
+        private void OnCellMouseOver(MouseEventArgs _, HeatMapCell<T> cell)
         {
             _hoveredCell = cell;
         }
@@ -554,7 +558,7 @@ namespace MudBlazor.Charts
             _hoveredCell = null;
         }
 
-        private void OnLegendMouseOver(MouseEventArgs e, (double value, string color) legend, PointF position)
+        private void OnLegendMouseOver(MouseEventArgs _, (T value, string color) legend, PointF position)
         {
             _hoveredLegend = legend;
             _hoveredLegendPosition = position;

@@ -45,7 +45,7 @@ namespace MudBlazor.UnitTests.Charts
         [Test]
         public void LineChartEmptyData()
         {
-            var comp = Context.RenderComponent<Bar>();
+            var comp = Context.RenderComponent<Bar<double>>();
             comp.Markup.Should().Contain("mud-chart");
         }
 
@@ -53,15 +53,15 @@ namespace MudBlazor.UnitTests.Charts
         [TestCaseSource("GetInterpolationOptions")]
         public void LineChartExampleData(InterpolationOption opt)
         {
-            var chartSeries = new List<ChartSeries>()
+            var chartSeries = new List<ChartSeries<double>>()
             {
-                new ChartSeries() { Name = "Series 1", Data = new double[] { 90, 79, -72, 69, 62, 62, -55, 65, 70 } },
-                new ChartSeries() { Name = "Series 2", Data = new double[] { 10, 41, 35, 51, 49, 62, -69, 91, -148 } },
-                new ChartSeries() { Name = "Series 3", Data = new double[] { 10, 41, 35, 51, 49, 62, -69, 91, -148 }, Visible = false }
+                new ChartSeries<double>() { Name = "Series 1", Data = new double[] { 90, 79, -72, 69, 62, 62, -55, 65, 70 } },
+                new ChartSeries<double>() { Name = "Series 2", Data = new double[] { 10, 41, 35, 51, 49, 62, -69, 91, -148 } },
+                new ChartSeries<double>() { Name = "Series 3", Data = new double[] { 10, 41, 35, 51, 49, 62, -69, 91, -148 }, Visible = false }
             };
             string[] xAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
 
-            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Line)
                 .Add(p => p.Height, "350px")
                 .Add(p => p.Width, "100%")
@@ -103,7 +103,7 @@ namespace MudBlazor.UnitTests.Charts
                 }
             }
 
-            if (comp.Instance.ChartReference is Line { ChartOptions.InterpolationOption: InterpolationOption.Straight } && chartSeries.FirstOrDefault(x => x.Name == "Series 2") is not null)
+            if (comp.Instance.ChartReference is Line<double> { ChartOptions.InterpolationOption: InterpolationOption.Straight } && chartSeries.FirstOrDefault(x => x.Name == "Series 2") is not null)
             {
                 var path = comp.FindAll("path.mud-chart-line").Skip(1).First();
                 var d = path.GetAttribute("d");
@@ -182,13 +182,13 @@ namespace MudBlazor.UnitTests.Charts
         [TestCaseSource("GetInterpolationOptions")]
         public void LineChartExampleZeroValues(InterpolationOption opt)
         {
-            var chartSeries = new List<ChartSeries>()
+            var chartSeries = new List<ChartSeries<double>>()
             {
                 new() { Name = "Series 1", Data = new double[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 } }
             };
             string[] xAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
 
-            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Line)
                 .Add(p => p.Height, "350px")
                 .Add(p => p.Width, "100%")
@@ -233,33 +233,33 @@ namespace MudBlazor.UnitTests.Charts
         [Test]
         public void LineChartColoring()
         {
-            var chartSeries = new List<ChartSeries>()
+            var chartSeries = new List<ChartSeries<double>>()
             {
-                new ChartSeries() { Name = "Deep Sea Blue", Data = new double[] { 40, 20, 25, 27, 46 } },
-                new ChartSeries() { Name = "Venetian Red", Data = new double[] { 19, 24, 35, 13, 28 } },
-                new ChartSeries() { Name = "Banana Yellow", Data = new double[] { 8, 6, 11, 13, 4 } },
-                new ChartSeries() { Name = "La Salle Green", Data = new double[] { 18, 9, 7, 10, 7 } },
-                new ChartSeries() { Name = "Rich Carmine", Data = new double[] { 9, 14, 6, 15, 20 } },
-                new ChartSeries() { Name = "Shiraz", Data = new double[] { 9, 4, 11, 5, 19 } },
-                new ChartSeries() { Name = "Cloud Burst", Data = new double[] { 14, 9, 20, 16, 6 } },
-                new ChartSeries() { Name = "Neon Pink", Data = new double[] { 14, 8, 4, 14, 8 } },
-                new ChartSeries() { Name = "Ocean", Data = new double[] { 11, 20, 13, 5, 5 } },
-                new ChartSeries() { Name = "Orangey Red", Data = new double[] { 6, 6, 19, 20, 6 } },
-                new ChartSeries() { Name = "Catalina Blue", Data = new double[] { 3, 2, 20, 3, 10 } },
-                new ChartSeries() { Name = "Fountain Blue", Data = new double[] { 3, 18, 11, 12, 3 } },
-                new ChartSeries() { Name = "Irish Green", Data = new double[] { 20, 5, 15, 16, 13 } },
-                new ChartSeries() { Name = "Wild Strawberry", Data = new double[] { 15, 9, 12, 12, 1 } },
-                new ChartSeries() { Name = "Geraldine", Data = new double[] { 5, 13, 19, 15, 8 } },
-                new ChartSeries() { Name = "Grey Teal", Data = new double[] { 12, 16, 20, 16, 17 } },
-                new ChartSeries() { Name = "Baby Pink", Data = new double[] { 1, 18, 10, 19, 8 } },
-                new ChartSeries() { Name = "Thunderbird", Data = new double[] { 15, 16, 10, 8, 5 } },
-                new ChartSeries() { Name = "Navy", Data = new double[] { 16, 2, 3, 5, 5 } },
-                new ChartSeries() { Name = "Aqua Marina", Data = new double[] { 17, 6, 11, 19, 6 } },
-                new ChartSeries() { Name = "Lavender Pinocchio", Data = new double[] { 1, 11, 4, 18, 1 } },
-                new ChartSeries() { Name = "Deep Sea Blue", Data = new double[] { 1, 11, 4, 18, 1 } }
+                new ChartSeries<double>() { Name = "Deep Sea Blue", Data = new double[] { 40, 20, 25, 27, 46 } },
+                new ChartSeries<double>() { Name = "Venetian Red", Data = new double[] { 19, 24, 35, 13, 28 } },
+                new ChartSeries<double>() { Name = "Banana Yellow", Data = new double[] { 8, 6, 11, 13, 4 } },
+                new ChartSeries<double>() { Name = "La Salle Green", Data = new double[] { 18, 9, 7, 10, 7 } },
+                new ChartSeries<double>() { Name = "Rich Carmine", Data = new double[] { 9, 14, 6, 15, 20 } },
+                new ChartSeries<double>() { Name = "Shiraz", Data = new double[] { 9, 4, 11, 5, 19 } },
+                new ChartSeries<double>() { Name = "Cloud Burst", Data = new double[] { 14, 9, 20, 16, 6 } },
+                new ChartSeries<double>() { Name = "Neon Pink", Data = new double[] { 14, 8, 4, 14, 8 } },
+                new ChartSeries<double>() { Name = "Ocean", Data = new double[] { 11, 20, 13, 5, 5 } },
+                new ChartSeries<double>() { Name = "Orangey Red", Data = new double[] { 6, 6, 19, 20, 6 } },
+                new ChartSeries<double>() { Name = "Catalina Blue", Data = new double[] { 3, 2, 20, 3, 10 } },
+                new ChartSeries<double>() { Name = "Fountain Blue", Data = new double[] { 3, 18, 11, 12, 3 } },
+                new ChartSeries<double>() { Name = "Irish Green", Data = new double[] { 20, 5, 15, 16, 13 } },
+                new ChartSeries<double>() { Name = "Wild Strawberry", Data = new double[] { 15, 9, 12, 12, 1 } },
+                new ChartSeries<double>() { Name = "Geraldine", Data = new double[] { 5, 13, 19, 15, 8 } },
+                new ChartSeries<double>() { Name = "Grey Teal", Data = new double[] { 12, 16, 20, 16, 17 } },
+                new ChartSeries<double>() { Name = "Baby Pink", Data = new double[] { 1, 18, 10, 19, 8 } },
+                new ChartSeries<double>() { Name = "Thunderbird", Data = new double[] { 15, 16, 10, 8, 5 } },
+                new ChartSeries<double>() { Name = "Navy", Data = new double[] { 16, 2, 3, 5, 5 } },
+                new ChartSeries<double>() { Name = "Aqua Marina", Data = new double[] { 17, 6, 11, 19, 6 } },
+                new ChartSeries<double>() { Name = "Lavender Pinocchio", Data = new double[] { 1, 11, 4, 18, 1 } },
+                new ChartSeries<double>() { Name = "Deep Sea Blue", Data = new double[] { 1, 11, 4, 18, 1 } }
             };
 
-            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Line)
                 .Add(p => p.Height, "350px")
                 .Add(p => p.Width, "100%")

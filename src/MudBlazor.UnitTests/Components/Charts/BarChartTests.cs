@@ -42,14 +42,14 @@ namespace MudBlazor.UnitTests.Charts
         [Test]
         public void BarChartEmptyData()
         {
-            var comp = Context.RenderComponent<Bar>();
+            var comp = Context.RenderComponent<Bar<double>>();
             comp.Markup.Should().Contain("mud-chart");
         }
 
         [Test]
         public void BarChartExampleData()
         {
-            var chartSeries = new List<ChartSeries>()
+            var chartSeries = new List<ChartSeries<double>>()
             {
                 new () { Name = "United States", Data = new double[] { 40, 20, 25, 27, 46, 60, 48, 80, 15 } },
                 new () { Name = "Germany", Data = new double[] { 19, 24, 35, 13, 28, 15, -4, 16, 31 } },
@@ -57,7 +57,7 @@ namespace MudBlazor.UnitTests.Charts
             };
             string[] xAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
 
-            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Bar)
                 .Add(p => p.Height, "350px")
                 .Add(p => p.Width, "100%")
@@ -72,7 +72,7 @@ namespace MudBlazor.UnitTests.Charts
             comp.Markup.Should().Contain("mud-chart-legend-item");
 
             // find legend
-            var legend = comp.FindComponent<Legend>();
+            var legend = comp.FindComponent<Legend<double>>();
             const string LEGEND_CSS_SELECTOR = "div.mud-chart-legend-item";
             legend.Should().NotBeNull(because: "we have a legend");
             legend.FindAll(LEGEND_CSS_SELECTOR).Should().HaveCount(chartSeries.Count, because: "the number series should match the legend item count");
@@ -113,7 +113,7 @@ namespace MudBlazor.UnitTests.Charts
         [Test]
         public void BarChartExampleSingleXAxis()
         {
-            var chartSeries = new List<ChartSeries>()
+            var chartSeries = new List<ChartSeries<double>>()
             {
                 new () { Name = "United States", Data = new double[] { 40, 20, 25, 27, 46, 60, 48, 80, 15 } },
                 new () { Name = "Germany", Data = new double[] { 19, 24, 35, 13, 28, 15, -4, 16, 31 } },
@@ -121,7 +121,7 @@ namespace MudBlazor.UnitTests.Charts
             };
             string[] xAxisLabels = { "Jan" };
 
-            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Bar)
                 .Add(p => p.Height, "350px")
                 .Add(p => p.Width, "100%")
@@ -136,7 +136,7 @@ namespace MudBlazor.UnitTests.Charts
             comp.Markup.Should().Contain("mud-chart-legend-item");
 
             // find legend
-            var legend = comp.FindComponent<Legend>();
+            var legend = comp.FindComponent<Legend<double>>();
             const string LEGEND_CSS_SELECTOR = "div.mud-chart-legend-item";
             legend.Should().NotBeNull(because: "we have a legend");
             legend.FindAll(LEGEND_CSS_SELECTOR).Should().HaveCount(chartSeries.Count, because: "the number series should match the legend item count");
@@ -170,33 +170,33 @@ namespace MudBlazor.UnitTests.Charts
         [Test]
         public void BarChartColoring()
         {
-            var chartSeries = new List<ChartSeries>()
+            var chartSeries = new List<ChartSeries<double>>()
             {
-                new ChartSeries() { Name = "Deep Sea Blue", Data = new double[] { 40, 20, 25, 27, 46 } },
-                new ChartSeries() { Name = "Venetian Red", Data = new double[] { 19, 24, 35, 13, 28 } },
-                new ChartSeries() { Name = "Banana Yellow", Data = new double[] { 8, 6, 11, 13, 4 } },
-                new ChartSeries() { Name = "La Salle Green", Data = new double[] { 18, 9, 7, 10, 7 } },
-                new ChartSeries() { Name = "Rich Carmine", Data = new double[] { 9, 14, 6, 15, 20 } },
-                new ChartSeries() { Name = "Shiraz", Data = new double[] { 9, 4, 11, 5, 19 } },
-                new ChartSeries() { Name = "Cloud Burst", Data = new double[] { 14, 9, 20, 16, 6 } },
-                new ChartSeries() { Name = "Neon Pink", Data = new double[] { 14, 8, 4, 14, 8 } },
-                new ChartSeries() { Name = "Ocean", Data = new double[] { 11, 20, 13, 5, 5 } },
-                new ChartSeries() { Name = "Orangey Red", Data = new double[] { 6, 6, 19, 20, 6 } },
-                new ChartSeries() { Name = "Catalina Blue", Data = new double[] { 3, 2, 20, 3, 10 } },
-                new ChartSeries() { Name = "Fountain Blue", Data = new double[] { 3, 18, 11, 12, 3 } },
-                new ChartSeries() { Name = "Irish Green", Data = new double[] { 20, 5, 15, 16, 13 } },
-                new ChartSeries() { Name = "Wild Strawberry", Data = new double[] { 15, 9, 12, 12, 1 } },
-                new ChartSeries() { Name = "Geraldine", Data = new double[] { 5, 13, 19, 15, 8 } },
-                new ChartSeries() { Name = "Grey Teal", Data = new double[] { 12, 16, 20, 16, 17 } },
-                new ChartSeries() { Name = "Baby Pink", Data = new double[] { 1, 18, 10, 19, 8 } },
-                new ChartSeries() { Name = "Thunderbird", Data = new double[] { 15, 16, 10, 8, 5 } },
-                new ChartSeries() { Name = "Navy", Data = new double[] { 16, 2, 3, 5, 5 } },
-                new ChartSeries() { Name = "Aqua Marina", Data = new double[] { 17, 6, 11, 19, 6 } },
-                new ChartSeries() { Name = "Lavender Pinocchio", Data = new double[] { 1, 11, 4, 18, 1 } },
-                new ChartSeries() { Name = "Deep Sea Blue", Data = new double[] { 1, 11, 4, 18, 1 } }
+                new ChartSeries<double>() { Name = "Deep Sea Blue", Data = new double[] { 40, 20, 25, 27, 46 } },
+                new ChartSeries<double>() { Name = "Venetian Red", Data = new double[] { 19, 24, 35, 13, 28 } },
+                new ChartSeries<double>() { Name = "Banana Yellow", Data = new double[] { 8, 6, 11, 13, 4 } },
+                new ChartSeries<double>() { Name = "La Salle Green", Data = new double[] { 18, 9, 7, 10, 7 } },
+                new ChartSeries<double>() { Name = "Rich Carmine", Data = new double[] { 9, 14, 6, 15, 20 } },
+                new ChartSeries<double>() { Name = "Shiraz", Data = new double[] { 9, 4, 11, 5, 19 } },
+                new ChartSeries<double>() { Name = "Cloud Burst", Data = new double[] { 14, 9, 20, 16, 6 } },
+                new ChartSeries<double>() { Name = "Neon Pink", Data = new double[] { 14, 8, 4, 14, 8 } },
+                new ChartSeries<double>() { Name = "Ocean", Data = new double[] { 11, 20, 13, 5, 5 } },
+                new ChartSeries<double>() { Name = "Orangey Red", Data = new double[] { 6, 6, 19, 20, 6 } },
+                new ChartSeries<double>() { Name = "Catalina Blue", Data = new double[] { 3, 2, 20, 3, 10 } },
+                new ChartSeries<double>() { Name = "Fountain Blue", Data = new double[] { 3, 18, 11, 12, 3 } },
+                new ChartSeries<double>() { Name = "Irish Green", Data = new double[] { 20, 5, 15, 16, 13 } },
+                new ChartSeries<double>() { Name = "Wild Strawberry", Data = new double[] { 15, 9, 12, 12, 1 } },
+                new ChartSeries<double>() { Name = "Geraldine", Data = new double[] { 5, 13, 19, 15, 8 } },
+                new ChartSeries<double>() { Name = "Grey Teal", Data = new double[] { 12, 16, 20, 16, 17 } },
+                new ChartSeries<double>() { Name = "Baby Pink", Data = new double[] { 1, 18, 10, 19, 8 } },
+                new ChartSeries<double>() { Name = "Thunderbird", Data = new double[] { 15, 16, 10, 8, 5 } },
+                new ChartSeries<double>() { Name = "Navy", Data = new double[] { 16, 2, 3, 5, 5 } },
+                new ChartSeries<double>() { Name = "Aqua Marina", Data = new double[] { 17, 6, 11, 19, 6 } },
+                new ChartSeries<double>() { Name = "Lavender Pinocchio", Data = new double[] { 1, 11, 4, 18, 1 } },
+                new ChartSeries<double>() { Name = "Deep Sea Blue", Data = new double[] { 1, 11, 4, 18, 1 } }
             };
 
-            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Bar)
                 .Add(p => p.Height, "350px")
                 .Add(p => p.Width, "100%")
@@ -231,7 +231,7 @@ namespace MudBlazor.UnitTests.Charts
         [Test]
         public async Task BarChart_CanHideSeries_Test()
         {
-            var chartSeries = new List<ChartSeries>()
+            var chartSeries = new List<ChartSeries<double>>()
             {
                 new () { Name = "Series 1", Data = new double[] { 90, 79, 72, 69, 62, 62, 55, 65, 70 } },
                 new () { Name = "Series 2", Data = new double[] { 10, 41, 35, 51, 49, 62, 69, 91, 148 } },
@@ -239,7 +239,7 @@ namespace MudBlazor.UnitTests.Charts
             };
             string[] xAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
 
-            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Bar)
                 .Add(p => p.Height, "350px")
                 .Add(p => p.Width, "100%")
@@ -264,7 +264,7 @@ namespace MudBlazor.UnitTests.Charts
             comp.FindAll($"path.mud-chart-bar{series3}").Count.Should().Be(0, "Series 3 should have 0 bars initially");
 
             // Hide Series 1
-            comp.FindAll($"path.mud-chart-bar{series1}").Count.Should().Be(chartSeries[0].Data.Values.Length, "Series 1 bars should be visible");
+            comp.FindAll($"path.mud-chart-bar{series1}").Count.Should().Be(chartSeries[0].Data.Values.Count, "Series 1 bars should be visible");
             await seriesCheckboxes[0].ChangeAsync(new ChangeEventArgs() { Value = false });
             seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
             seriesCheckboxes[0].IsChecked().Should().BeFalse("Series 1 checkbox should be unchecked after hiding");
@@ -277,10 +277,10 @@ namespace MudBlazor.UnitTests.Charts
             seriesCheckboxes[0].IsChecked().Should().BeTrue("Series 1 checkbox should be checked after showing");
             chartSeries[0].Visible.Should().BeTrue("Series 1 Visible property should be true");
 
-            comp.FindAll($"path.mud-chart-bar{series1}").Count.Should().Be(chartSeries[0].Data.Values.Length, "Series 1 bars should be visible again after re-checking");
+            comp.FindAll($"path.mud-chart-bar{series1}").Count.Should().Be(chartSeries[0].Data.Values.Count, "Series 1 bars should be visible again after re-checking");
 
             // Now check Series 2 (which should have been visible from the start)
-            comp.FindAll($"path.mud-chart-bar{series2}").Count.Should().Be(chartSeries[1].Data.Values.Length, "Series 2 should have bars from the start");
+            comp.FindAll($"path.mud-chart-bar{series2}").Count.Should().Be(chartSeries[1].Data.Values.Count, "Series 2 should have bars from the start");
 
             // Hide Series 2
             await seriesCheckboxes[1].ChangeAsync(new ChangeEventArgs() { Value = false });
@@ -288,14 +288,14 @@ namespace MudBlazor.UnitTests.Charts
             seriesCheckboxes[1].IsChecked().Should().BeFalse("Series 2 checkbox should be unchecked after hiding");
             chartSeries[1].Visible.Should().BeFalse("Series 2 Visible property should be false");
             comp.FindAll($"path.mud-chart-bar{series2}").Count.Should().Be(0, "Series 2 bars should be hidden");
-            comp.FindAll($"path.mud-chart-bar{series1}").Count.Should().Be(chartSeries[0].Data.Values.Length, "Series 1 bars should still be visible"); // Ensure other series not affected
+            comp.FindAll($"path.mud-chart-bar{series1}").Count.Should().Be(chartSeries[0].Data.Values.Count, "Series 1 bars should still be visible"); // Ensure other series not affected
 
             // Show Series 3 (which was initially hidden)
             await seriesCheckboxes[2].ChangeAsync(new ChangeEventArgs() { Value = true });
             seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
             seriesCheckboxes[2].IsChecked().Should().BeTrue("Series 3 checkbox should be checked after showing");
             chartSeries[2].Visible.Should().BeTrue("Series 3 Visible property should be true");
-            comp.FindAll($"path.mud-chart-bar{series3}").Count.Should().Be(chartSeries[2].Data.Values.Length, "Series 3 bars should be visible");
+            comp.FindAll($"path.mud-chart-bar{series3}").Count.Should().Be(chartSeries[2].Data.Values.Count, "Series 3 bars should be visible");
         }
     }
 }

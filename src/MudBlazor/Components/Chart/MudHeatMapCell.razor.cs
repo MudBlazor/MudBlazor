@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 #nullable enable
+using System.Numerics;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Charts;
 using MudBlazor.Utilities;
@@ -10,14 +11,14 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a single cell in a <see cref="MudBlazor.Charts.HeatMap"/>. You can override the value from the <see cref="ChartSeries"/> 
+    /// Represents a single cell in a <see cref="HeatMap{T}"/>. You can override the value from the <see cref="ChartSeries{T}"/> 
     /// or provide a custom graphic to be shown inside the cell. You should provide a width and height for the custom graphic you are including
     /// so the Heat Map can resize it dynamically. 
     /// </summary>
-    public class MudHeatMapCell : MudComponentBase
+    public partial class MudHeatMapCell<T> : MudComponentBase where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
     {
         [CascadingParameter]
-        internal IMudChart? Parent { get; set; }
+        internal IMudChart<T>? Parent { get; set; }
 
         /// <summary>
         /// The row of the cell you want to modify. Rows use a 0 based index.
@@ -38,7 +39,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Chart.Behavior)]
-        public double? Value { get; set; }
+        public T? Value { get; set; }
 
         /// <summary>
         /// Optional, Override the color of the cell
@@ -63,19 +64,19 @@ namespace MudBlazor
 
         /// <summary>
         /// Optional, setting this will set the minimum value for the heatmap range, by default the range is calculated from the data. This only needs to be set on one
-        /// <see cref="MudHeatMapCell"/> in the <see cref="MudBlazor.Charts.HeatMap"/>."/> Only the last value set will be used.
+        /// <see cref="MudHeatMapCell{T}"/> in the <see cref="HeatMap{T}"/>."/> Only the last value set will be used.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Chart.Behavior)]
-        public double? MinValue { get; set; }
+        public T? MinValue { get; set; }
 
         /// <summary>
         /// Optional, setting this will set the maximum value for the heatmap range, by default the range is calculated from the data. This only needs to be set on one
-        /// <see cref="MudHeatMapCell"/> in the <see cref="MudBlazor.Charts.HeatMap"/>."/> Only the last value set will be used.
+        /// <see cref="MudHeatMapCell{T}"/> in the <see cref="HeatMap{T}"/>."/> Only the last value set will be used.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Chart.Behavior)]
-        public double? MaxValue { get; set; }
+        public T? MaxValue { get; set; }
 
         /// <summary>
         /// Optional, The custom svg element you want to include
@@ -86,7 +87,7 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
-            if (Parent is HeatMap heatMap)
+            if (Parent is HeatMap<T> heatMap)
             {
                 heatMap.AddCell(this);
             }
@@ -100,7 +101,7 @@ namespace MudBlazor
         {
             base.OnParametersSet();
 
-            if (Parent is HeatMap heatMap && heatMap is not null)
+            if (Parent is HeatMap<T> heatMap && heatMap is not null)
             {
                 heatMap.RebuildChart();
             }

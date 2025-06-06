@@ -33,11 +33,11 @@
 
     private ChartType _chartType = ChartType.Bar;
     private string[] _labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];
-    private List<ChartSeries> _dataSet =>
+    private List<ChartSeries<double>> _dataSet =>
     [
-            new() { Name = "United Kingdom", Data = [60, 54, 23, 42, 67, 31] },
-            new() { Name = "United States",  Data = [40, 12, 32, 58, 43, 65] },
-            new() { Name = "Greenland",      Data = [47, 30, 43, 25, 59, 63] },
-            new() { Name = "Norway",         Data = [14, 27, 65, 43, 21, 58] },
+            new() { Name = "United Kingdom", Data = new([60, 54, 23, 42, 67, 31]) },
+            new() { Name = "United States",  Data = new([40, 12, 32, 58, 43, 65]) },
+            new() { Name = "Greenland",      Data = new([47, 30, 43, 25, 59, 63]) },
+            new() { Name = "Norway",         Data = new([14, 27, 65, 43, 21, 58]) },
     ];
 }

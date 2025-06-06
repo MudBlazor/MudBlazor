@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System.Numerics;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Interpolation;
 
 #nullable enable
@@ -8,7 +9,7 @@ namespace MudBlazor.Charts;
 /// <summary>
 /// A chart which displays values over time.
 /// </summary>
-partial class TimeSeries : MudAxisLineChartBase<TimeSeriesChartOptions>
+partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
 {
     public static new ChartType ChartType => ChartType.Timeseries;
 
@@ -17,7 +18,7 @@ partial class TimeSeries : MudAxisLineChartBase<TimeSeriesChartOptions>
     private DateTime _minDateTime;
     private DateTime _maxDateTime;
     private TimeSpan _minDateLabelOffset;
-    private DataPoint[][]? _cachedDataPoints;
+    private TimeValue<T>[][]? _cachedDataPoints;
 
     private bool _generateChartLines;
     private double _timeToPixelRatio;
@@ -28,7 +29,7 @@ partial class TimeSeries : MudAxisLineChartBase<TimeSeriesChartOptions>
     {
         ChartOptions ??= new TimeSeriesChartOptions();
 
-        if (ChartReference is IMudAxisChart axisChart)
+        if (ChartReference is IMudAxisChart<T> axisChart)
         {
             _generateChartLines = true;
             axisChart.OverlayChart = this;
@@ -42,7 +43,7 @@ partial class TimeSeries : MudAxisLineChartBase<TimeSeriesChartOptions>
     {
         if (IsOverlayChart && SharedData is null) return;
 
-        Series = (ChartContainer != null && ChartReference is MudChart)
+        Series = (ChartContainer != null && ChartReference is MudChart<T>)
             ? ChartContainer.ChartSeries
             : ChartSeries;
 
@@ -56,7 +57,7 @@ partial class TimeSeries : MudAxisLineChartBase<TimeSeriesChartOptions>
         if (!IsOverlayChart)
         {
             // If this is not an overlay chart, we generate the shared plot points if an overlay exists
-            SharedData = OverlayChart is IMudAxisChart ? new AxisGridData(lowestHorizontalLine, numHorizontalLines, gridYUnits, _boundWidth, _boundHeight) : null;
+            SharedData = OverlayChart is IMudAxisChart<T> ? new AxisGridData<T>(lowestHorizontalLine, numHorizontalLines, gridYUnits, _boundWidth, _boundHeight) : null;
         }
         else
         {
@@ -73,7 +74,7 @@ partial class TimeSeries : MudAxisLineChartBase<TimeSeriesChartOptions>
         GenerateChartLines(lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace);
         GenerateLegends();
 
-        if (OverlayChart is IMudAxisChart overlay)
+        if (OverlayChart is IMudAxisChart<T> overlay)
         {
             overlay.SharedData = SharedData;
             OverlayChart?.RebuildChart();
@@ -81,7 +82,7 @@ partial class TimeSeries : MudAxisLineChartBase<TimeSeriesChartOptions>
         }
     }
 
-    private void GeneratePlotArea(out double gridYUnits, out int lowestHorizontalLine, out int numHorizontalLines, out double horizontalSpace, out double verticalSpace)
+    private void GeneratePlotArea(out T gridYUnits, out int lowestHorizontalLine, out int numHorizontalLines, out double horizontalSpace, out double verticalSpace)
     {
         SetBounds();
         ComputeMinAndMaxDateTimes();
@@ -166,52 +167,54 @@ partial class TimeSeries : MudAxisLineChartBase<TimeSeriesChartOptions>
         }
     }
 
-    private void ComputeUnitsAndNumberOfLines(out double gridYUnits, out int numHorizontalLines, out int lowestHorizontalLine, out int numVerticalLines)
+    private void ComputeUnitsAndNumberOfLines(out T gridYUnits, out int numHorizontalLines, out int lowestHorizontalLine, out int numVerticalLines)
     {
-        gridYUnits = ChartOptions?.YAxisTicks ?? 20;
-        if (gridYUnits <= 0)
-            gridYUnits = 20;
+        var yAxisTicks = ChartOptions?.YAxisTicks;
+        if (yAxisTicks.HasValue && yAxisTicks.Value > 0)
+            gridYUnits = T.CreateSaturating(yAxisTicks.Value);
+        else
+            gridYUnits = T.CreateSaturating(20);
 
-        if (Series.SelectMany(series => series.Data.Points).Any())
+        if (Series.Any(series => series.Data.Points != null && series.Data.Points.Any()))
         {
-            var minY = double.MaxValue;
-            var maxY = double.MinValue;
+            var minY = T.MaxValue;
+            var maxY = T.MinValue;
 
             foreach (var series in Series.Where(s => s.Visible))
             {
                 foreach (var point in series.Data.Points)
                 {
-                    minY = Math.Min(minY, point.Y);
-                    maxY = Math.Max(maxY, point.Y);
+                    minY = T.Min(minY, point.Y);
+                    maxY = T.Max(maxY, point.Y);
                 }
             }
 
-            if (minY == double.MaxValue)
+            if (minY == T.MaxValue)
             {
-                minY = 0;
-                maxY = 0;
+                minY = T.Zero;
+                maxY = T.Zero;
             }
 
             var hasAreaDisplay = ChartOptions?.LineDisplayType == LineDisplayType.Area || Series.Any(series => GetSeriesDisplayOverride(series)?.LineDisplayType == LineDisplayType.Area);
             var includeYAxisZeroPoint = ChartOptions?.YAxisRequireZeroPoint is true || hasAreaDisplay;
             if (includeYAxisZeroPoint)
             {
-                minY = Math.Min(minY, 0);
-                maxY = Math.Max(maxY, 0);
+                minY = T.Min(minY, T.Zero);
+                maxY = T.Max(maxY, T.Zero);
             }
 
-            maxY = ChartOptions?.YAxisSuggestedMax is null ? maxY : Math.Max(ChartOptions.YAxisSuggestedMax.Value, maxY);
+            maxY = ChartOptions?.YAxisSuggestedMax is null ? maxY : T.Max(T.CreateSaturating(ChartOptions.YAxisSuggestedMax.Value), maxY);
 
-            lowestHorizontalLine = (int)Math.Floor(minY / gridYUnits);
-            var highestHorizontalLine = (int)Math.Ceiling(maxY / gridYUnits);
+            lowestHorizontalLine = (int)Math.Floor(double.CreateSaturating(minY / gridYUnits));
+            var highestHorizontalLine = (int)Math.Ceiling(double.CreateSaturating(maxY / gridYUnits));
             numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
 
             var maxYTicks = ChartOptions?.MaxNumYAxisTicks ?? 100;
             while (numHorizontalLines > maxYTicks)
             {
-                gridYUnits *= 2;
-                lowestHorizontalLine = (int)Math.Floor(minY / gridYUnits);
-                highestHorizontalLine = (int)Math.Ceiling(maxY / gridYUnits);
+                gridYUnits *= T.CreateSaturating(2);
+                lowestHorizontalLine = (int)Math.Floor(double.CreateSaturating(minY / gridYUnits));
+                highestHorizontalLine = (int)Math.Ceiling(double.CreateSaturating(maxY / gridYUnits));
                 numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
             }
 
@@ -232,18 +235,18 @@ partial class TimeSeries : MudAxisLineChartBase<TimeSeriesChartOptions>
         return minDateTimeWithOffset.Add(ChartOptions!.TimeLabelSpacing * index).ToString(ChartOptions!.TimeLabelFormat);
     }
 
-    private DataPoint[][] GetCachedDataPoints()
+    private TimeValue<T>[][] GetCachedDataPoints()
     {
         if (_cachedDataPoints != null)
             return _cachedDataPoints;
 
-        _cachedDataPoints = new DataPoint[Series.Count][];
+        _cachedDataPoints = new TimeValue<T>[Series.Count][];
 
         for (var i = 0; i < Series.Count; i++)
         {
             var series = Series[i];
             var points = series.Data.Points;
-            var data = new DataPoint[points.Count];
+            var data = new TimeValue<T>[points.Count];
 
             for (var j = 0; j < points.Count; j++)
             {
@@ -256,7 +259,7 @@ partial class TimeSeries : MudAxisLineChartBase<TimeSeriesChartOptions>
                     _ => throw new InvalidOperationException($"Unable to parse '{point.X}' as DateTime for time series chart")
                 };
 
-                data[j] = new DataPoint(date, point.Y);
+                data[j] = new TimeValue<T>(date, point.Y);
             }
 
             _cachedDataPoints[i] = data;
@@ -272,30 +275,30 @@ partial class TimeSeries : MudAxisLineChartBase<TimeSeriesChartOptions>
         base.AxisChanged();
     }
 
-    protected override T GetDataValue<T>(int seriesIndex, int dataPointIndex)
+    protected override TReturn GetDataValue<TReturn>(int seriesIndex, int dataPointIndex)
     {
         var data = GetCachedDataPoints()[seriesIndex];
-        return (T)(object)data[dataPointIndex];
+        return (TReturn)(object)data[dataPointIndex];
     }
 
     protected override string GetDataValueAsString(int seriesIndex, int dataPointIndex)
     {
-        var dataValue = GetDataValue<DataPoint>(seriesIndex, dataPointIndex);
+        var dataValue = GetDataValue<TimeValue<double>>(seriesIndex, dataPointIndex);
         return dataValue.Value.ToString(Series[seriesIndex].TooltipYValueFormat);
     }
 
     protected override string GetLabelXValue(int seriesIndex, int dataPointIndex)
     {
-        var dataValue = GetDataValue<DataPoint>(seriesIndex, dataPointIndex);
+        var dataValue = GetDataValue<TimeValue<double>>(seriesIndex, dataPointIndex);
         return dataValue.DateTime.ToString(ChartOptions?.TooltipTimeLabelFormat ?? "G");
     }
 
-    protected override (double x, double y) GetXYForDataPoint(int seriesIndex, int dataPointIndex, int lowestHorizontalLine, double gridYUnits, double horizontalSpace, double verticalSpace)
+    protected override (double x, double y) GetXYForDataPoint(int seriesIndex, int dataPointIndex, int lowestHorizontalLine, T gridYUnits, double horizontalSpace, double verticalSpace)
     {
         var dataPoint = GetCachedDataPoints()[seriesIndex][dataPointIndex];
 
-        var gridValue = (dataPoint.Value / gridYUnits - lowestHorizontalLine) * verticalSpace;
-        var y = _boundHeight - VerticalStartSpace - gridValue;
+        var gridValue = (dataPoint.Value / T.CreateSaturating(gridYUnits) - T.CreateSaturating(lowestHorizontalLine)) * T.CreateSaturating(verticalSpace);
+        var y = _boundHeight - VerticalStartSpace - double.CreateSaturating(gridValue);
 
         var diffFromMin = dataPoint.DateTime - _minDateTime;
         var x = HorizontalStartSpace + (diffFromMin.TotalMilliseconds * _timeToPixelRatio);
@@ -303,10 +306,13 @@ partial class TimeSeries : MudAxisLineChartBase<TimeSeriesChartOptions>
         return (x, y);
     }
 
-    internal override ILineInterpolator CreateInterpolator(int seriesIndex, int lowestHorizontalLine, double gridYUnits, double horizontalSpace, double verticalSpace)
+    internal override ILineInterpolator CreateInterpolator(int seriesIndex, int lowestHorizontalLine, T gridYUnits, double horizontalSpace, double verticalSpace)
     {
         throw new NotImplementedException("Interpolation not implemented yet for timeseries charts");
     }
-
-    public readonly record struct DataPoint(DateTime DateTime, double Value);
 }
+
+/// <summary>
+/// Represents a data point in a time series chart, containing a DateTime and a value.
+/// </summary>
+public readonly record struct TimeValue<TNumber>(DateTime DateTime, TNumber Value) where TNumber : INumber<TNumber>;

@@ -2,13 +2,16 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Globalization;
+using System.Numerics;
 using System.Text;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Extensions;
 
 #nullable enable
 namespace MudBlazor.Charts;
 
-public partial class Rose : MudRadialChartBase<RoseChartOptions>
+public partial class Rose<T> : MudRadialChartBase<T, RoseChartOptions> where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
 {
     public static new ChartType ChartType => ChartType.Rose;
 
@@ -27,7 +30,7 @@ public partial class Rose : MudRadialChartBase<RoseChartOptions>
 
         var chartData = AggregateSeriesData(ChartOptions!.AggregationOption);
         var normalizedData = GetNormalizedData();
-        var nonZeroCount = normalizedData.Count(d => d > 0);
+        var nonZeroCount = normalizedData.Count(d => d > T.Zero);
 
         if (nonZeroCount == 0)
             return;
@@ -39,18 +42,18 @@ public partial class Rose : MudRadialChartBase<RoseChartOptions>
                 ? ChartSeries.Select(ds => ds.Name).ToArray()
                 : ChartLabels ?? [];
 
-        var maxValue = normalizedData.Length > 0 ? normalizedData.Max() : 0;
+        var maxValue = normalizedData.Length > 0 ? normalizedData.Max() : T.Zero;
 
         for (var i = 0; i < normalizedData.Length; i++)
         {
-            if (normalizedData[i] == 0)
+            if (normalizedData[i] == T.Zero)
                 continue;
 
-            var seriesdata = Math.Max(0, chartData[i]); //Ensure non-negative values
+            var seriesdata = T.Max(T.Zero, chartData[i]); //Ensure non-negative values
             var dataValue = normalizedData[i];
 
             // Scale radius based on data value
-            var sectorRadius = Radius * (dataValue / maxValue) * ChartOptions.ScaleFactor;
+            var sectorRadius = Radius * double.CreateSaturating((dataValue / maxValue)) * ChartOptions.ScaleFactor;
 
             sectorRadius = Math.Max(0, sectorRadius);
 
@@ -91,7 +94,9 @@ public partial class Rose : MudRadialChartBase<RoseChartOptions>
                 AngleRadians = angleStep,
                 LabelX = midX,
                 LabelY = midY,
-                LabelXValue = ChartOptions.ShowAsPercentage ? ToS(Math.Round(dataValue / normalizedData.Sum() * 100, 1)) + "%" : seriesdata.ToS(),
+                LabelXValue = ChartOptions.ShowAsPercentage
+                                ? ToS(Math.Round(double.CreateSaturating(dataValue / normalizedData.SumGeneric()) * 100, 1)) + "%"
+                                : seriesdata.ToString(null, CultureInfo.InvariantCulture),
                 LabelYValue = chartLabels.Length > i ? chartLabels[i] : string.Empty
             };
 

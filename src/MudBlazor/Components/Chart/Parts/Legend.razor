@@ -1,5 +1,8 @@
 ﻿@namespace MudBlazor.Charts
-@inherits MudChartBase<IChartOptions>
+
+@inherits MudChartBase<T, IChartOptions>
+
+@typeparam T
 
 @if (ShowLegend is not false)
 {

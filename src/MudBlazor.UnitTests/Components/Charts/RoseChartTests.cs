@@ -24,7 +24,7 @@ public class RoseChartTests : BunitTest
     [Test]
     public void RoseChart_BasicRendering_NoData()
     {
-        var comp = Context.RenderComponent<Rose>();
+        var comp = Context.RenderComponent<Rose<double>>();
         comp.Markup.Should().Contain("<svg");
         comp.FindAll("path.mud-chart-series").Count.Should().Be(0); // No data, no series paths
     }
@@ -32,8 +32,8 @@ public class RoseChartTests : BunitTest
     [Test]
     public void RoseChart_BasicRendering_WithData()
     {
-        var comp = Context.RenderComponent<Rose>(parameters => parameters
-            .Add(p => p.ChartSeries, new List<ChartSeries> { new ChartSeries { Name = "Series1", Data = new double[] { 10, 20, 30 } } })
+        var comp = Context.RenderComponent<Rose<double>>(parameters => parameters
+            .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series1", Data = new double[] { 10, 20, 30 } } })
             .Add(p => p.ChartOptions, new RoseChartOptions())
             .Add(p => p.Width, "300px")
             .Add(p => p.Height, "300px")
@@ -45,8 +45,8 @@ public class RoseChartTests : BunitTest
     public void RoseChart_Option_AngleOffset()
     {
         var options = new RoseChartOptions { AngleOffset = 90 };
-        var comp = Context.RenderComponent<Rose>(parameters => parameters
-            .Add(p => p.ChartSeries, new List<ChartSeries> { new ChartSeries { Name = "Series1", Data = new double[] { 10 } } })
+        var comp = Context.RenderComponent<Rose<double>>(parameters => parameters
+            .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series1", Data = new double[] { 10 } } })
             .Add(p => p.ChartOptions, options)
             .Add(p => p.Width, "300px")
             .Add(p => p.Height, "300px")
@@ -61,11 +61,11 @@ public class RoseChartTests : BunitTest
     [Test]
     public void RoseChart_Option_ScaleFactor()
     {
-        var series = new List<ChartSeries> { new ChartSeries { Name = "Series1", Data = new double[] { 10, 20 } } };
+        var series = new List<ChartSeries<double>> { new() { Name = "Series1", Data = new double[] { 10, 20 } } };
         var optionsSmall = new RoseChartOptions { ScaleFactor = 0.5 };
         var optionsLarge = new RoseChartOptions { ScaleFactor = 1.0 };
 
-        var compSmall = Context.RenderComponent<Rose>(parameters => parameters
+        var compSmall = Context.RenderComponent<Rose<double>>(parameters => parameters
             .Add(p => p.ChartSeries, series)
             .Add(p => p.ChartOptions, optionsSmall)
             .Add(p => p.Width, "300px")
@@ -73,7 +73,7 @@ public class RoseChartTests : BunitTest
         );
         var pathDataSmall = compSmall.Find("path.mud-chart-serie").GetAttribute("d");
 
-        var compLarge = Context.RenderComponent<Rose>(parameters => parameters
+        var compLarge = Context.RenderComponent<Rose<double>>(parameters => parameters
             .Add(p => p.ChartSeries, series)
             .Add(p => p.ChartOptions, optionsLarge)
             .Add(p => p.Width, "300px")
@@ -87,8 +87,8 @@ public class RoseChartTests : BunitTest
     [Test]
     public void RoseChart_Option_ShowChartLabels_True()
     {
-        var comp = Context.RenderComponent<Rose>(parameters => parameters
-            .Add(p => p.ChartSeries, new List<ChartSeries> { new ChartSeries { Name = "Series1", Data = new double[] { 10, 20 } } })
+        var comp = Context.RenderComponent<Rose<double>>(parameters => parameters
+            .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series1", Data = new double[] { 10, 20 } } })
             .Add(p => p.ChartOptions, new RoseChartOptions { ShowValues = true })
             .Add(p => p.ChartLabels, new string[] { "LabelA", "LabelB" })
             .Add(p => p.Width, "300px")
@@ -101,8 +101,8 @@ public class RoseChartTests : BunitTest
     [Test]
     public void RoseChart_Option_ShowChartLabels_False()
     {
-        var comp = Context.RenderComponent<Rose>(parameters => parameters
-            .Add(p => p.ChartSeries, new List<ChartSeries> { new ChartSeries { Name = "Series1", Data = new double[] { 10, 20 } } })
+        var comp = Context.RenderComponent<Rose<double>>(parameters => parameters
+            .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series1", Data = new double[] { 10, 20 } } })
             .Add(p => p.ChartOptions, new RoseChartOptions { ShowValues = false }) // Default
             .Add(p => p.ChartLabels, new string[] { "LabelA", "LabelB" })
             .Add(p => p.Width, "300px")
@@ -114,8 +114,8 @@ public class RoseChartTests : BunitTest
     [Test]
     public void RoseChart_Option_ShowAsPercentage()
     {
-        var comp = Context.RenderComponent<Rose>(parameters => parameters
-            .Add(p => p.ChartSeries, new List<ChartSeries> { new ChartSeries { Name = "Series1", Data = new double[] { 10, 30 } } }) // Total 40
+        var comp = Context.RenderComponent<Rose<double>>(parameters => parameters
+            .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series1", Data = new double[] { 10, 30 } } }) // Total 40
             .Add(p => p.ChartOptions, new RoseChartOptions { ShowValues = true, ShowAsPercentage = true })
             .Add(p => p.ChartLabels, new string[] { "A", "B" })
             .Add(p => p.Width, "300px")
@@ -129,8 +129,8 @@ public class RoseChartTests : BunitTest
     [Test]
     public void RoseChart_Data_EmptySeries()
     {
-        var comp = Context.RenderComponent<Rose>(parameters => parameters
-            .Add(p => p.ChartSeries, new List<ChartSeries>()) // Empty list of series
+        var comp = Context.RenderComponent<Rose<double>>(parameters => parameters
+            .Add(p => p.ChartSeries, new List<ChartSeries<double>>()) // Empty list of series
             .Add(p => p.ChartOptions, new RoseChartOptions())
             .Add(p => p.Width, "300px")
             .Add(p => p.Height, "300px")
@@ -141,8 +141,8 @@ public class RoseChartTests : BunitTest
     [Test]
     public void RoseChart_Data_SeriesWithEmptyData()
     {
-        var comp = Context.RenderComponent<Rose>(parameters => parameters
-            .Add(p => p.ChartSeries, new List<ChartSeries> { new ChartSeries { Name = "Series1", Data = new double[] { } } })
+        var comp = Context.RenderComponent<Rose<double>>(parameters => parameters
+            .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series1", Data = new double[] { } } })
             .Add(p => p.ChartOptions, new RoseChartOptions())
             .Add(p => p.Width, "300px")
             .Add(p => p.Height, "300px")
@@ -154,8 +154,8 @@ public class RoseChartTests : BunitTest
     public void RoseChart_Interaction_SelectedIndex()
     {
         var selectedIndex = -1;
-        var comp = Context.RenderComponent<Rose>(parameters => parameters
-            .Add(p => p.ChartSeries, new List<ChartSeries> { new ChartSeries { Name = "Series1", Data = new double[] { 10, 20, 30 } } })
+        var comp = Context.RenderComponent<Rose<double>>(parameters => parameters
+            .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series1", Data = new double[] { 10, 20, 30 } } })
             .Add(p => p.ChartOptions, new RoseChartOptions())
             .Add(p => p.Width, "300px")
             .Add(p => p.Height, "300px")
@@ -178,9 +178,9 @@ public class RoseChartTests : BunitTest
         var chartData = new double[] { 10, 20, 30, 40 };
         string[] chartLabels = { "Petal 1", "Petal 2", "Petal 3", "Petal 4" };
         // Rose charts, like Pie/Donut, typically use a single ChartSeries for their data segments.
-        var chartSeriesList = new List<ChartSeries>() { new ChartSeries { Data = chartData } };
+        var chartSeriesList = new List<ChartSeries<double>>() { new() { Data = chartData } };
 
-        var comp = Context.RenderComponent<MudChart>(parameters => parameters
+        var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
             .Add(p => p.ChartType, ChartType.Rose)
             .Add(p => p.Height, "300px")
             .Add(p => p.Width, "300px")

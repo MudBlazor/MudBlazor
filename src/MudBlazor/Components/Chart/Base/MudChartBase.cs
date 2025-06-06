@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Numerics;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Charts;
 using MudBlazor.State;
@@ -10,7 +11,9 @@ using MudBlazor.Utilities;
 #nullable enable
 namespace MudBlazor;
 
-public abstract class MudChartBase<TOptions> : MudComponentBase, IMudChart where TOptions : IChartOptions
+public abstract class MudChartBase<T, TOptions> : MudComponentBase, IMudChart<T>
+    where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
+    where TOptions : IChartOptions
 {
     [CascadingParameter(Name = "RightToLeft")]
     [Category(CategoryTypes.Chart.Behavior)]
@@ -18,13 +21,13 @@ public abstract class MudChartBase<TOptions> : MudComponentBase, IMudChart where
 
     [CascadingParameter]
     [Category(CategoryTypes.Chart.Behavior)]
-    public IMudChart? ChartReference { get; set; }
+    public IMudChart<T>? ChartReference { get; set; }
 
     /// <summary>
     /// The labels describing data values.
     /// </summary>
     /// <remarks>
-    /// The number of labels in this array is typically the same as the number of values in the <see cref="ChartSeries.Data"/> property.
+    /// The number of labels in this array is typically the same as the number of values in the <see cref="ChartSeries{T}.Data"/> property.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Chart.Behavior)]
@@ -35,7 +38,7 @@ public abstract class MudChartBase<TOptions> : MudComponentBase, IMudChart where
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Chart.Behavior)]
-    public List<ChartSeries> ChartSeries { get; set; } = [];
+    public List<ChartSeries<T>> ChartSeries { get; set; } = [];
 
     /// <summary>
     /// The display options applied to the chart.

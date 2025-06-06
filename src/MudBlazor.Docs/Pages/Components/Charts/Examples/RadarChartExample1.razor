@@ -17,12 +17,12 @@
 </MudPaper>
 
 @code {
-    private MudChart _chart;
-    private int _selectedIndex => (_chart?.ChartReference as Radar)?.SelectedPointIndex ?? -1;
+    private MudChart<double> _chart;
+    private int _selectedIndex => (_chart?.ChartReference as Radar<double>)?.SelectedPointIndex ?? -1;
     private string[] _chartLabels = { "A", "B", "C", "D", "E" };
-    private List<ChartSeries> _series = new List<ChartSeries>()
+    private List<ChartSeries<double>> _series = new()
     {
-        new ChartSeries() { Name = "Development", Data = new double[] { 90, 80, 60, 70, 85 } },
+        new ChartSeries<double>() { Name = "Development", Data = new double[] { 90, 80, 60, 70, 85 } },
     };
 
     private RadarChartOptions _options = new RadarChartOptions

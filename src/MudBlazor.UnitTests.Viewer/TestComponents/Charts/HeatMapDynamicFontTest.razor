@@ -1,5 +1,5 @@
 ﻿<MudPaper Class="pa-4">
-    <MudChart ChartType="ChartType.HeatMap" ChartSeries="@Series" ChartOptions="@Options"
+    <MudChart T="double" ChartType="ChartType.HeatMap" ChartSeries="@Series" ChartOptions="@Options"
               ChartLabels="@_xLabels" Width="100%" Height="350px">
         <MudHeatMapCell Row="0" Column="0" Value="2.5">
             <div>test</div>
@@ -40,7 +40,7 @@
 @code {
     public static string __description__ = "HeatMap Testing Dynamic Font sizing";
     private readonly string[] _colors = ["#5AC8FA", "#34C759", "#007AFF"];
-    private List<ChartSeries> Series = [];
+    private List<ChartSeries<double>> Series = [];
     private HeatMapChartOptions Options = new HeatMapChartOptions();
     private XAxisLabelPosition _XAxisLabelPosition = XAxisLabelPosition.Top;
     private YAxisLabelPosition _YAxisLabelPosition = YAxisLabelPosition.Left;
@@ -65,7 +65,7 @@
     private void RandomizeData()
     {
         string[] xaxis = ["A", "B", "C",];
-        var heatMapSeries = new List<ChartSeries>();
+        var heatMapSeries = new List<ChartSeries<double>>();
         int dataPoints = xaxis.Length;
         foreach (var x in xaxis)
         {
@@ -74,7 +74,7 @@
             {
                 data[i] = Math.Round(Random.Shared.NextDouble() * 100, 2);
             }
-            heatMapSeries.Add(new ChartSeries { Name = x, Data = data });
+            heatMapSeries.Add(new() { Name = x, Data = data });
         }
         _xLabels = xaxis;
         Series = heatMapSeries;

@@ -1,4 +1,6 @@
 ﻿using System.Data;
+using System.Globalization;
+using System.Numerics;
 using System.Text;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
@@ -9,12 +11,12 @@ namespace MudBlazor.Charts
     /// <summary>
     /// Represents a chart which displays values as a percentage of a circle.
     /// </summary>
-    /// <seealso cref="Bar"/>
-    /// <seealso cref="Donut"/>
-    /// <seealso cref="Line"/>
-    /// <seealso cref="StackedBar"/>
-    /// <seealso cref="TimeSeries"/>
-    partial class Pie : MudRadialChartBase<PieChartOptions>
+    /// <seealso cref="Bar{T}"/>
+    /// <seealso cref="Donut{T}"/>
+    /// <seealso cref="Line{T}"/>
+    /// <seealso cref="StackedBar{T}"/>
+    /// <seealso cref="TimeSeries{T}"/>
+    partial class Pie<T> : MudRadialChartBase<T, PieChartOptions> where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
     {
         public static new ChartType ChartType => ChartType.Pie;
 
@@ -40,16 +42,16 @@ namespace MudBlazor.Charts
 
             for (var i = 0; i < normalizedData.Length; i++)
             {
-                if (normalizedData[i] == 0)
+                if (normalizedData[i] == T.Zero)
                     continue;
 
-                var seriesdata = Math.Max(0, chartData[i]); //Ensure non-negative values
+                var seriesdata = T.Max(T.Zero, chartData[i]); //Ensure non-negative values
                 var data = normalizedData[i];
 
                 var startx = Math.Cos(cumulativeRadians);
                 var starty = Math.Sin(cumulativeRadians);
 
-                var sliceAngleRadians = 2 * Math.PI * data;
+                var sliceAngleRadians = 2 * Math.PI * double.CreateSaturating(data);
                 var halfAngle = sliceAngleRadians / 2;
 
                 cumulativeRadians += halfAngle;
@@ -61,12 +63,12 @@ namespace MudBlazor.Charts
 
                 var endx = Math.Cos(cumulativeRadians);
                 var endy = Math.Sin(cumulativeRadians);
-                var largeArcFlag = data > 0.5 ? 1 : 0;
+                var largeArcFlag = double.CreateSaturating(data) > 0.5 ? 1 : 0;
 
                 var pathStringBuilder = new StringBuilder();
 
                 pathStringBuilder.Append($"M {ToS(startx * Radius)} {ToS(starty * Radius)} "); // Move to the start point
-                if (data >= 1)
+                if (data >= T.One)
                 {
                     pathStringBuilder.Append($"A {ToS(Radius)} {ToS(Radius)} 0 {ToS(largeArcFlag)} 1 {ToS(midx * Radius)} {ToS(midy * Radius)} "); // Add an arc to a mid point half way through the slice to support 100% pies
                 }
@@ -74,13 +76,13 @@ namespace MudBlazor.Charts
                 pathStringBuilder.Append("L 0 0 Z"); // Line to the center
 
                 // Calculate the midpoint angle
-                var midAngle = cumulativeRadians - Math.PI * data;
+                var midAngle = cumulativeRadians - Math.PI * double.CreateSaturating(data);
                 var midRadius = Radius * 0.5d;
 
                 var midX = 0d;
                 var midY = 0d;
 
-                if (data < 1) // don't find mid point when data is 100%, just use the 0,0 point.
+                if (data < T.One) // don't find mid point when data is 100%, just use the 0,0 point.
                 {
                     // Calculate the midpoint coordinates at half the radius
                     midX = Math.Cos(midAngle) * midRadius;
@@ -94,7 +96,9 @@ namespace MudBlazor.Charts
                     Data = pathStringBuilder.ToString(),
                     LabelX = midX,
                     LabelY = midY,
-                    LabelXValue = ChartOptions.ShowAsPercentage ? Math.Round(data * 100, 1).ToInvariantString() + "%" : seriesdata.ToInvariantString(),
+                    LabelXValue = ChartOptions.ShowAsPercentage
+                        ? Math.Round(double.CreateSaturating(data) * 100, 1).ToInvariantString() + "%"
+                        : seriesdata.ToString(null, CultureInfo.InvariantCulture),
                     LabelYValue = chartLabels.Length > i ? chartLabels[i] : string.Empty,
                     SegmentRadius = Radius,
                     AngleRadians = sliceAngleRadians,

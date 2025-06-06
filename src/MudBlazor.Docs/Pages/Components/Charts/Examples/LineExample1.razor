@@ -41,10 +41,10 @@
     private int _height = 350;
     private bool _matchBoundsToSize = false;
 
-    private List<ChartSeries> _series = new List<ChartSeries>()
+    private List<ChartSeries<double>> _series = new List<ChartSeries<double>>()
     {
-        new ChartSeries() { Name = "Fossil", Data = new double[] { 90, 79, 72, 69, 62, 62, 55, 65, 70 } },
-        new ChartSeries() { Name = "Renewable", Data = new double[] { 10, 41, 35, 51, 49, 62, 69, 91, 148 } },
+        new ChartSeries<double>() { Name = "Fossil", Data = new double[] { 90, 79, 72, 69, 62, 62, 55, 65, 70 } },
+        new ChartSeries<double>() { Name = "Renewable", Data = new double[] { 10, 41, 35, 51, 49, 62, 69, 91, 148 } },
     };
     private string[] _xAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
 
@@ -52,7 +52,7 @@
     {
         base.OnInitialized();
 
-        _options.SeriesDisplayOverrides = new Dictionary<ChartSeries, SeriesDisplayOverride>()
+        _options.SeriesDisplayOverrides = new Dictionary<IChartSeries, SeriesDisplayOverride>()
         {
             { _series[0], new SeriesDisplayOverride() },
             { _series[1], new SeriesDisplayOverride() }

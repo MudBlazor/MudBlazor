@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 #nullable enable
+using System.Numerics;
 using System.Text;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -11,7 +12,9 @@ using MudBlazor.Interpolation;
 
 namespace MudBlazor.Charts;
 
-public abstract class MudAxisLineChartBase<TOptions> : MudAxisChartBase<TOptions>, IMudAxisChart where TOptions : IAxisLineChartOptions
+public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TOptions>, IMudAxisChart<T>
+    where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
+    where TOptions : IAxisLineChartOptions
 {
     protected List<SvgPath> ChartLines { get; set; } = [];
     protected Dictionary<int, SvgPath> ChartAreas { get; set; } = [];
@@ -19,44 +22,18 @@ public abstract class MudAxisLineChartBase<TOptions> : MudAxisChartBase<TOptions
     protected SvgPath? HoveredDataPointPath { get; set; }
     protected abstract bool ShouldInterpolate { get; }
 
-    protected abstract T GetDataValue<T>(int seriesIndex, int dataPointIndex);
+    protected abstract TReturn GetDataValue<TReturn>(int seriesIndex, int dataPointIndex);
     protected abstract string GetLabelXValue(int seriesIndex, int dataPointIndex);
     protected abstract string GetVerticalGridLineLabel(int index);
-    protected abstract (double x, double y) GetXYForDataPoint(int seriesIndex, int dataPointIndex, int lowestHorizontalLine, double gridYUnits, double horizontalSpace, double verticalSpace);
-    internal abstract ILineInterpolator CreateInterpolator(int seriesIndex, int lowestHorizontalLine, double gridYUnits, double horizontalSpace, double verticalSpace);
-
-    protected void GenerateHorizontalGridLines(int numHorizontalLines, int lowestHorizontalLine, double gridYUnits, double verticalSpace)
-    {
-        HorizontalLines.Clear();
-        HorizontalValues.Clear();
-
-        for (var i = 0; i < numHorizontalLines; i++)
-        {
-            var y = VerticalStartSpace + (i * verticalSpace);
-            var line = new SvgPath()
-            {
-                Index = i,
-                Data = $"M {ToS(HorizontalStartSpace)} {ToS(_boundHeight - y)} L {ToS(_boundWidth - HorizontalEndSpace)} {ToS(_boundHeight - y)}"
-            };
-            HorizontalLines.Add(line);
-
-            var startGridY = (lowestHorizontalLine + i) * gridYUnits;
-            var lineValue = new SvgText()
-            {
-                X = HorizontalStartSpace - 10,
-                Y = _boundHeight - y + 5,
-                Value = ToS(startGridY, ChartOptions?.YAxisFormat)
-            };
-            HorizontalValues.Add(lineValue);
-        }
-    }
+    protected abstract (double x, double y) GetXYForDataPoint(int seriesIndex, int dataPointIndex, int lowestHorizontalLine, T gridYUnits, double horizontalSpace, double verticalSpace);
+    internal abstract ILineInterpolator CreateInterpolator(int seriesIndex, int lowestHorizontalLine, T gridYUnits, double horizontalSpace, double verticalSpace);
 
     protected void GenerateVerticalGridLines(int numVerticalLines, double startOffset, double horizontalSpace)
     {
         VerticalLines.Clear();
         VerticalValues.Clear();
 
-        if (numVerticalLines == 0 || !Series.Any(x => x.Data.Values.Length > 0))
+        if (numVerticalLines == 0 || !Series.Any(x => x.Data.Values.Any()))
             return;
 
         for (var i = 0; i < numVerticalLines; i++)
@@ -85,7 +62,7 @@ public abstract class MudAxisLineChartBase<TOptions> : MudAxisChartBase<TOptions
         }
     }
 
-    protected void GenerateChartLines(int lowestHorizontalLine, double gridYUnits, double horizontalSpace, double verticalSpace)
+    protected void GenerateChartLines(int lowestHorizontalLine, T gridYUnits, double horizontalSpace, double verticalSpace)
     {
         ChartLines.Clear();
         ChartAreas.Clear();
@@ -98,7 +75,7 @@ public abstract class MudAxisLineChartBase<TOptions> : MudAxisChartBase<TOptions
         {
             var series = Series[i];
 
-            if (!series.Visible || series.Data.Points.Count == 0)
+            if (!series.Visible || !series.Data.Points.Any())
                 continue;
 
             var chartLine = new StringBuilder();
@@ -143,7 +120,7 @@ public abstract class MudAxisLineChartBase<TOptions> : MudAxisChartBase<TOptions
     }
 
     protected void GenerateStraightLines(int seriesIndex, StringBuilder chartLine, List<SvgCircle> chartDataCircles,
-                                 int lowestHorizontalLine, double gridYUnits, double horizontalSpace, double verticalSpace,
+                                 int lowestHorizontalLine, T gridYUnits, double horizontalSpace, double verticalSpace,
                                  out double firstPointX, out double firstPointY, out double lastPointX)
     {
         firstPointX = 0;
@@ -192,7 +169,7 @@ public abstract class MudAxisLineChartBase<TOptions> : MudAxisChartBase<TOptions
     }
 
     protected void GenerateInterpolatedLines(int seriesIndex, StringBuilder chartLine, List<SvgCircle> chartDataCircles,
-                                     int lowestHorizontalLine, double gridYUnits, double horizontalSpace, double verticalSpace,
+                                     int lowestHorizontalLine, T gridYUnits, double horizontalSpace, double verticalSpace,
                                      out double firstPointX, out double firstPointY, out double lastPointX)
     {
         firstPointX = 0;
@@ -251,7 +228,7 @@ public abstract class MudAxisLineChartBase<TOptions> : MudAxisChartBase<TOptions
         return value.ToString(Series[seriesIndex].TooltipYValueFormat) ?? string.Empty;
     }
 
-    protected void AddLegend(int seriesIndex, ChartSeries series)
+    protected void AddLegend(int seriesIndex, ChartSeries<T> series)
     {
         var legend = new SvgLegend()
         {
@@ -312,7 +289,7 @@ public abstract class MudAxisLineChartBase<TOptions> : MudAxisChartBase<TOptions
         return _boundHeight - VerticalStartSpace;
     }
 
-    protected SeriesDisplayOverride? GetSeriesDisplayOverride(ChartSeries series)
+    protected SeriesDisplayOverride? GetSeriesDisplayOverride(ChartSeries<T> series)
     {
         return ChartOptions?.SeriesDisplayOverrides?.TryGetValue(series, out var overrideData) is true
             ? overrideData

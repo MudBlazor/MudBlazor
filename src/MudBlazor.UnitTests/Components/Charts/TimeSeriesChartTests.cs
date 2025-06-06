@@ -58,13 +58,13 @@ namespace MudBlazor.UnitTests.Charts
 
             var time = new DateTime(2000, 1, 1);
 
-            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Timeseries)
                 .Add(p => p.ChartSeries, [
                     new ()
                     {
                         Name = "Series 1",
-                        Data = new[] {-1, 0, 1, 2}.Select(x => new TimeSeries.DataPoint(time.AddHours(x), 1000)).ToList(),
+                        Data = new[] {-1, 0, 1, 2}.Select(x => new TimeValue<double>(time.AddHours(x), 1000)).ToList(),
                         Visible = true,
                     }
                 ])
@@ -119,13 +119,13 @@ namespace MudBlazor.UnitTests.Charts
 
             var time = new DateTime(2000, 1, 1);
 
-            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Timeseries)
                 .Add(p => p.ChartSeries, [
                     new ()
                     {
                         Name = "Series 1",
-                        Data = new[] {-1, 0, 1, 2}.Select(x => new TimeSeries.DataPoint(time.AddHours(x), 1000)).ToList(),
+                        Data = new[] {-1, 0, 1, 2}.Select(x => new TimeValue<double>(time.AddHours(x), 1000)).ToList(),
                         Visible = true,
                     }
                 ])
@@ -143,13 +143,13 @@ namespace MudBlazor.UnitTests.Charts
         {
             var time = new DateTime(2000, 1, 1);
 
-            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Timeseries)
                 .Add(p => p.ChartSeries, [
                     new ()
                     {
                         Name = "Series 1",
-                        Data = new[] {-1, 0, 1, 2}.Select(x => new TimeSeries.DataPoint(time.AddHours(x).AddMinutes(10), 1000)).ToList(),
+                        Data = new[] {-1, 0, 1, 2}.Select(x => new TimeValue < double >(time.AddHours(x).AddMinutes(10), 1000)).ToList(),
                         Visible = true,
                     }
                 ])
@@ -170,13 +170,13 @@ namespace MudBlazor.UnitTests.Charts
         {
             var time = new DateTime(2000, 1, 1);
 
-            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Timeseries)
                 .Add(p => p.ChartSeries, [
                     new ()
                     {
                         Name = "Series 1",
-                        Data = new[] {-1, 0, 1, 2}.Select(x => new TimeSeries.DataPoint(time.AddHours(x).AddMinutes(10), 1000)).ToList(),
+                        Data = new[] {-1, 0, 1, 2}.Select(x => new TimeValue<double>(time.AddHours(x).AddMinutes(10), 1000)).ToList(),
                         Visible = true,
                     }
                 ])
@@ -199,7 +199,7 @@ namespace MudBlazor.UnitTests.Charts
         [Test]
         public void TimeSeriesChartEmptyData()
         {
-            var comp = Context.RenderComponent<TimeSeries>();
+            var comp = Context.RenderComponent<TimeSeries<double>>();
             comp.Markup.Should().Contain("mud-chart-line mud-ltr");
         }
 
@@ -209,13 +209,13 @@ namespace MudBlazor.UnitTests.Charts
             var time = new DateTime(2000, 1, 1);
             var format = "dd/MM HH:mm";
 
-            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Timeseries)
                 .Add(p => p.ChartSeries, new() {
-                    new ChartSeries()
+                    new ChartSeries<double>()
                     {
                         Name = "Series 1",
-                        Data = new[] {-1, 0, 1, 2}.Select(x => new TimeSeries.DataPoint(time.AddDays(x), 1000)).ToList(),
+                        Data = new[] {-1, 0, 1, 2}.Select(x => new TimeValue<double>(time.AddDays(x), 1000)).ToList(),
                         Visible = true,
                     }
                 })
@@ -263,30 +263,30 @@ namespace MudBlazor.UnitTests.Charts
             }).SetResult(mockYAxisLabelSize);
 
             var time = new DateTime(2023, 1, 1);
-            var chartSeries = new List<ChartSeries>()
+            var chartSeries = new List<ChartSeries<double>>()
             {
                 new () {
                     Name = "Temperature",
-                    Data = new List<TimeSeries.DataPoint>() {
+                    Data = new List<TimeValue<double>>() {
                         new(time, 20), new(time.AddHours(1), 22), new(time.AddHours(2), 21)
                     }
                 },
                 new () {
                     Name = "Humidity",
-                    Data = new List<TimeSeries.DataPoint>() {
+                    Data = new List<TimeValue<double>>() {
                         new(time, 60), new(time.AddHours(1), 65), new(time.AddHours(2), 62)
                     }
                 },
                 new () {
                     Name = "Pressure",
-                    Data = new List<TimeSeries.DataPoint>() {
+                    Data = new List<TimeValue<double>>() {
                         new(time, 1012), new(time.AddHours(1), 1010), new(time.AddHours(2), 1011)
                     },
                     Visible = false // Initially hidden
                 }
             };
 
-            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Timeseries)
                 .Add(p => p.Height, "350px")
                 .Add(p => p.Width, "100%")

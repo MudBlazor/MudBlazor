@@ -42,14 +42,14 @@
 
 @code {
 	public static string __description__ = "Charts with custom svg graphics using a RenderFragment.";
-    public ChartSeries Data = [10, 420, 20, 69];
+    public ChartSeries<double> Data = new([10, 420, 20, 69]);
     public string[] Labels = ["Data 1", "Data 2", "Data 3", "Data 4"];
 
-    public List<ChartSeries> Series =
+    public List<ChartSeries<double>> Series =
     [
-        new() { Name = "United States", Data = [40, 20, 25, 27, 46, 60, 48, 80, 15] },
-        new() { Name = "Germany", Data = [19, 24, 35, 13, 28, 15, -4, 16, 31] },
-        new() { Name = "Sweden", Data = [8, 6, -11, 13, 4, 16, 10, 16, 18] }
+        new() { Name = "United States", Data = new([40, 20, 25, 27, 46, 60, 48, 80, 15]) },
+        new() { Name = "Germany", Data = new([19, 24, 35, 13, 28, 15, -4, 16, 31]) },
+        new() { Name = "Sweden", Data = new([8, 6, -11, 13, 4, 16, 10, 16, 18]) }
     ];
 
     public string[] XAxisLabels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"];

@@ -60,11 +60,11 @@
             TimeLabelSpacing = TimeSpan.FromMinutes(5),
         };
 
-    private ChartSeries _chart1 = new();
-    private ChartSeries _chart2 = new();
-    private ChartSeries _chart3 = new();
+    private ChartSeries<double> _chart1 = new();
+    private ChartSeries<double> _chart2 = new();
+    private ChartSeries<double> _chart3 = new();
 
-    private List<ChartSeries> _series = new();
+    private List<ChartSeries<double>> _series = new();
 
     private readonly Random _random = new Random();
 
@@ -78,24 +78,24 @@
         base.OnInitialized();
 
         var now = DateTime.Now;
-        _chart1 = new ChartSeries
+        _chart1 = new ChartSeries<double>
             {
                 Name = "Series 1",
-                Data = Enumerable.Range(-360, 360).Select(x => new TimeSeries.DataPoint(now.AddSeconds(x * 10), _random.Next(6000, 15000))).ToList(),
+                Data = Enumerable.Range(-360, 360).Select(x => new TimeValue<double>(now.AddSeconds(x * 10), _random.Next(6000, 15000))).ToList(),
                 Visible = true,
             };
 
-        _chart2 = new ChartSeries
+        _chart2 = new ChartSeries<double>
             {
                 Name = "Series 2",
-                Data = Enumerable.Range(-360, 360).Select(x => new TimeSeries.DataPoint(now.AddSeconds(x * 10), _random.Next(0, 7000))).ToList(),
+                Data = Enumerable.Range(-360, 360).Select(x => new TimeValue<double>(now.AddSeconds(x * 10), _random.Next(0, 7000))).ToList(),
                 Visible = true,
             };
 
-        _chart3 = new ChartSeries
+        _chart3 = new ChartSeries<double>
             {
                 Name = "Series 3",
-                Data = Enumerable.Range(-90, 60).Select(x => new TimeSeries.DataPoint(now.AddSeconds(x * 30), _random.Next(4000, 10000))).ToList(),
+                Data = Enumerable.Range(-90, 60).Select(x => new TimeValue<double>(now.AddSeconds(x * 30), _random.Next(4000, 10000))).ToList(),
                 Visible = true,
             };
 
@@ -103,7 +103,7 @@
         _series.Add(_chart2);
         _series.Add(_chart3);
 
-        _options.SeriesDisplayOverrides = new Dictionary<ChartSeries, SeriesDisplayOverride>()
+        _options.SeriesDisplayOverrides = new Dictionary<IChartSeries, SeriesDisplayOverride>()
         {
             [_chart2] = new SeriesDisplayOverride
             {

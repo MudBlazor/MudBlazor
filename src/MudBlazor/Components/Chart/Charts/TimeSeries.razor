@@ -2,12 +2,15 @@
 
 @namespace MudBlazor.Charts
 
-@inherits MudAxisLineChartBase<TimeSeriesChartOptions>
+@inherits MudAxisLineChartBase<T, TimeSeriesChartOptions>
+
+@typeparam T
 
 @if (!IsOverlayChart)
 {
     <div @attributes="UserAttributes" class="@Classname">
-        <BaseAxisChart TChartOptions="TimeSeriesChartOptions"
+        <BaseAxisChart T="T"
+                       TChartOptions="TimeSeriesChartOptions"
                        AxisChanged="OnAxisChanged"
                        ElementRefChanged="SetElementReference"
                        Width="@Width"
@@ -30,7 +33,7 @@
                        VerticalValues="@VerticalValues"
                        UserAttributes="@UserAttributes" />
 
-        <Legend Data="@Legends" ShowLegend="@ChartOptions?.ShowLegend" CanHideSeries="@CanHideSeries"
+        <Legend T="T" Data="@Legends" ShowLegend="@ChartOptions?.ShowLegend" CanHideSeries="@CanHideSeries"
                 ChartPalette="@LegendPalette" OnLegendSelected="async (i) => await SetSelectedIndexAsync(i)" />
     </div>
 }

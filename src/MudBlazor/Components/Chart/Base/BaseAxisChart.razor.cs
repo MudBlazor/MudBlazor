@@ -5,11 +5,14 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using MudBlazor.Interop;
+using System.Numerics;
 
 #nullable enable
 namespace MudBlazor.Charts;
 
-public partial class BaseAxisChart<TChartOptions> : MudComponentBase where TChartOptions : IAxisChartOptions, new()
+public partial class BaseAxisChart<T, TChartOptions> : MudComponentBase
+    where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
+    where TChartOptions : IAxisChartOptions, new()
 {
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
@@ -44,7 +47,7 @@ public partial class BaseAxisChart<TChartOptions> : MudComponentBase where TChar
     [Parameter]
     [EditorRequired]
     [Category(CategoryTypes.Chart.Appearance)]
-    public List<ChartSeries> ChartSeries { get; set; } = [];
+    public List<ChartSeries<T>> ChartSeries { get; set; } = [];
 
     [Parameter]
     [EditorRequired]

@@ -6,7 +6,7 @@
 </div>
 
 @code {
-    private readonly List<ChartSeries> _series = new();
+    private readonly List<ChartSeries<double>> _series = new();
     private readonly LineChartOptions _options = new();
     private readonly string[] _xAxisLabels = { "1986-04-20", "1986-04-21", "1986-04-22", "1986-04-23", "1986-04-24", "1986-04-25", "1986-04-26" };
 
@@ -17,10 +17,10 @@
         double[] data3 = { 89, 91, 92, 92, 92, 92, 91 };
         double[] data4 = { 85, 86, 90, 90, 92, 99, 0 };
 
-        _series.Add(new ChartSeries { Name = "Chernobyl-1", Data = data1 });
-        _series.Add(new ChartSeries { Name = "Chernobyl-2", Data = data2 });
-        _series.Add(new ChartSeries { Name = "Chernobyl-3", Data = data3 });
-        _series.Add(new ChartSeries { Name = "Chernobyl-4", Data = data4 });
+        _series.Add(new ChartSeries<double> { Name = "Chernobyl-1", Data = data1 });
+        _series.Add(new ChartSeries<double> { Name = "Chernobyl-2", Data = data2 });
+        _series.Add(new ChartSeries<double> { Name = "Chernobyl-3", Data = data3 });
+        _series.Add(new ChartSeries<double> { Name = "Chernobyl-4", Data = data4 });
 
         _options.YAxisTicks = 50;
 

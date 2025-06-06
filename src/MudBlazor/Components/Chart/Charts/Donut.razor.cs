@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System.Globalization;
+using System.Numerics;
+using System.Text;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 
@@ -8,13 +10,13 @@ namespace MudBlazor.Charts
     /// <summary>
     /// Represents a chart which displays values as a percentage of a circle.
     /// </summary>
-    /// <seealso cref="Bar"/>
-    /// <seealso cref="Donut"/>
-    /// <seealso cref="Pie"/>
-    /// <seealso cref="Line"/>
-    /// <seealso cref="StackedBar"/>
-    /// <seealso cref="TimeSeries"/>
-    public partial class Donut : MudRadialChartBase<DonutChartOptions>
+    /// <seealso cref="Bar{T}"/>
+    /// <seealso cref="Donut{T}"/>
+    /// <seealso cref="Pie{T}"/>
+    /// <seealso cref="Line{T}"/>
+    /// <seealso cref="StackedBar{T}"/>
+    /// <seealso cref="TimeSeries{T}"/>
+    public partial class Donut<T> : MudRadialChartBase<T, DonutChartOptions> where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
     {
         public static new ChartType ChartType => ChartType.Donut;
 
@@ -41,20 +43,20 @@ namespace MudBlazor.Charts
 
             for (var i = 0; i < normalizedData.Length; i++)
             {
-                if (normalizedData[i] == 0)
+                if (normalizedData[i] == T.Zero)
                     continue;
 
-                var seriesdata = Math.Max(0, chartData[i]); //Ensure non-negative values
+                var seriesdata = T.Max(T.Zero, chartData[i]); //Ensure non-negative values
                 var data = normalizedData[i];
                 var startx = Math.Cos(cumulativeRadians);
                 var starty = Math.Sin(cumulativeRadians);
-                cumulativeRadians += 2 * Math.PI * data / 2;
+                cumulativeRadians += 2 * Math.PI * double.CreateSaturating(data) / 2;
                 var midx = Math.Cos(cumulativeRadians);
                 var midy = Math.Sin(cumulativeRadians);
-                cumulativeRadians += 2 * Math.PI * data / 2;
+                cumulativeRadians += 2 * Math.PI * double.CreateSaturating(data) / 2;
                 var endx = Math.Cos(cumulativeRadians);
                 var endy = Math.Sin(cumulativeRadians);
-                var largeArcFlag = data > 0.5 ? 1 : 0;
+                var largeArcFlag = double.CreateSaturating(data) > 0.5 ? 1 : 0;
 
                 SvgPath path;
                 var pathStringBuilder = new StringBuilder();
@@ -80,13 +82,13 @@ namespace MudBlazor.Charts
 
 
                 pathStringBuilder.Append($"M {ToS(outerStartX)} {ToS(outerStartY)} "); // Move to the start point
-                if (data >= 1)
+                if (data >= T.One)
                 {
                     pathStringBuilder.Append($"A {ToS(Radius)} {ToS(Radius)} 0 {ToS(largeArcFlag)} 1 {ToS(outerMidX)} {ToS(outerMidY)} "); // Add an arc to a mid point half way through the slice (outer) to support 100% donuts
                 }
                 pathStringBuilder.Append($"A {ToS(Radius)} {ToS(Radius)} 0 {ToS(largeArcFlag)} 1 {ToS(outerEndX)} {ToS(outerEndY)} "); // Add an arc to the end point (outer)
                 pathStringBuilder.Append($"L {ToS(innerEndX)} {ToS(innerEndY)} "); // Line to the end point of the inner arc
-                if (data >= 1)
+                if (data >= T.One)
                 {
                     pathStringBuilder.Append($"A {ToS(innerRadius)} {ToS(innerRadius)} 0 {ToS(largeArcFlag)} 0 {ToS(innerMidX)} {ToS(innerMidY)} ");  // Add an arc to a mid point half way through the slice to support 100% donuts
                 }
@@ -100,13 +102,13 @@ namespace MudBlazor.Charts
                 };
 
                 // Calculate the midpoint angle
-                var midAngle = cumulativeRadians - Math.PI * data;
+                var midAngle = cumulativeRadians - Math.PI * double.CreateSaturating(data);
                 var midRadius = Radius * (1 - donutRadiusRatio / 2);
 
                 var midX = 0d;
                 var midY = 0d;
 
-                if (donutRadiusRatio < 1 || data < 1) // don't find mid point when donut is 100% and data is 100%, just use the 0,0 point.
+                if (donutRadiusRatio < 1 || data < T.One) // don't find mid point when donut is 100% and data is 100%, just use the 0,0 point.
                 {
                     // Calculate the midpoint coordinates at half the radius
                     midX = Math.Cos(midAngle) * midRadius;
@@ -115,7 +117,9 @@ namespace MudBlazor.Charts
 
                 path.LabelX = midX;
                 path.LabelY = midY;
-                path.LabelXValue = ChartOptions.ShowAsPercentage ? Math.Round(data * 100, 1).ToInvariantString() + "%" : seriesdata.ToInvariantString();
+                path.LabelXValue = ChartOptions.ShowAsPercentage
+                    ? Math.Round(double.CreateSaturating(data) * 100, 1).ToInvariantString() + "%"
+                    : seriesdata.ToString(null, CultureInfo.InvariantCulture);
                 path.LabelYValue = chartLabels.Length > i ? chartLabels[i] : string.Empty;
 
                 _paths.Add(path);

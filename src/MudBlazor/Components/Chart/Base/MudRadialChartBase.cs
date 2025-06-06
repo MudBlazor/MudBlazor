@@ -3,16 +3,20 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Diagnostics.CodeAnalysis;
+using System.Numerics;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using MudBlazor.Interop;
 using MudBlazor.Utilities.Debounce;
+using MudBlazor.Extensions;
 
 #nullable enable
 namespace MudBlazor.Charts;
 
-public abstract class MudRadialChartBase<TOptions> : MudChartBase<TOptions>, IDisposable where TOptions : IRadialChartOptions
+public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions>, IDisposable
+    where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
+    where TOptions : IRadialChartOptions
 {
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
@@ -21,13 +25,13 @@ public abstract class MudRadialChartBase<TOptions> : MudChartBase<TOptions>, IDi
     /// The chart, if any, containing this component.
     /// </summary>
     [CascadingParameter]
-    public MudChart? MudChartParent { get; set; }
+    public MudChart<T>? MudChartParent { get; set; }
 
     private const double BoundWidthDefault = 280;
     private const double BoundHeightDefault = 280;
     private const int DebounceIntervalMs = 200;
 
-    private readonly DotNetObjectReference<MudRadialChartBase<TOptions>> _dotNetObjectReference;
+    private readonly DotNetObjectReference<MudRadialChartBase<T, TOptions>> _dotNetObjectReference;
     private readonly DebounceDispatcher _debouncer = new(DebounceIntervalMs);
 
     private ElementSize? _elementSize;
@@ -72,17 +76,17 @@ public abstract class MudRadialChartBase<TOptions> : MudChartBase<TOptions>, IDi
         OnElementSizeChanged(elementSize);
     }
 
-    protected double[] AggregateSeriesData(AggregationOption aggregation)
+    protected T[] AggregateSeriesData(AggregationOption aggregation)
     {
         if (aggregation == AggregationOption.None || ChartSeries is null || !ChartSeries.Any(x => x.Visible))
             return [];
 
         var maxCategoryLength = ChartOptions!.AggregationOption == AggregationOption.GroupByLabel
                 ? ChartLabels.Length == 0
-                    ? ChartSeries.Count > 0 ? ChartSeries.Where(x => x.Data?.Values != null).DefaultIfEmpty().Max(x => x?.Data?.Values.Length ?? 0) : 0
+                    ? ChartSeries.Count > 0 ? ChartSeries.Where(x => x.Data?.Values != null).DefaultIfEmpty().Max(x => x?.Data?.Values.Count ?? 0) : 0
                     : ChartLabels.Length
                 : ChartSeries.Count;
-        var aggregated = new double[maxCategoryLength];
+        var aggregated = new T[maxCategoryLength];
 
         switch (aggregation)
         {
@@ -94,7 +98,7 @@ public abstract class MudRadialChartBase<TOptions> : MudChartBase<TOptions>, IDi
 
                     var values = series.Data?.Values ?? [];
 
-                    for (var i = 0; i < values.Length; i++)
+                    for (var i = 0; i < values.Count; i++)
                     {
                         if (HiddenIndices.Contains(i))
                             continue;
@@ -117,7 +121,7 @@ public abstract class MudRadialChartBase<TOptions> : MudChartBase<TOptions>, IDi
                     if (index >= aggregated.Length)
                         break;
 
-                    aggregated[index] = series.Data?.Values?.Sum() ?? 0;
+                    aggregated[index] = series.Data.Values.SumGeneric();
                 }
                 break;
 
@@ -154,18 +158,18 @@ public abstract class MudRadialChartBase<TOptions> : MudChartBase<TOptions>, IDi
     /// <summary>
     /// Scales the input data to the range between 0 and 1
     /// </summary>
-    protected double[] GetNormalizedData()
+    protected T[] GetNormalizedData()
     {
         if (ChartSeries is null || ChartSeries.Count == 0)
             return [];
 
         var data = AggregateSeriesData(ChartOptions!.AggregationOption);
-        var total = data.Sum();
+        var total = data.SumGeneric();
 
-        if (total == 0)
+        if (total == T.Zero)
             return data;
 
-        return data.Select(x => Math.Abs(x) / total).ToArray();
+        return data.Select(x => T.Abs(x) / total).ToArray();
     }
 
     protected void HandleLegendVisibilityChanged(SvgLegend legend)

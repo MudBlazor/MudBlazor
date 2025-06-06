@@ -2,13 +2,16 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Numerics;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
 #nullable enable
 namespace MudBlazor.Charts;
 
-public partial class BaseRadialChart<TChartOptions> : MudComponentBase where TChartOptions : IRadialChartOptions, new()
+public partial class BaseRadialChart<T, TChartOptions> : MudComponentBase
+    where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
+    where TChartOptions : IRadialChartOptions, new()
 {
     private ElementReference _svgRef;
 
@@ -45,7 +48,7 @@ public partial class BaseRadialChart<TChartOptions> : MudComponentBase where TCh
     [Parameter]
     [EditorRequired]
     [Category(CategoryTypes.Chart.Appearance)]
-    public List<ChartSeries> ChartSeries { get; set; } = [];
+    public List<ChartSeries<T>> ChartSeries { get; set; } = [];
 
     [Parameter]
     [Category(CategoryTypes.Chart.Appearance)]

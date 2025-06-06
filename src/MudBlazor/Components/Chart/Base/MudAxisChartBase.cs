@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Numerics;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using MudBlazor.Interop;
@@ -16,8 +17,11 @@ namespace MudBlazor.Charts;
 /// Provides foundational features for axis-based charts, including support for shared data
 /// regions, overlay charts, and dynamic resizing.
 /// </remarks>
+/// <typeparam name="T">The type of numeric values used by the chart</typeparam>
 /// <typeparam name="TOptions">The type of chart options used to configure the chart's behavior and appearance.</typeparam>
-public abstract class MudAxisChartBase<TOptions> : MudChartBase<TOptions>, IMudAxisChart, IDisposable where TOptions : IAxisChartOptions
+public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>, IMudAxisChart<T>, IDisposable
+    where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
+    where TOptions : IAxisChartOptions
 {
     [Inject]
     private IJSRuntime JsRuntime { get; init; } = null!;
@@ -30,18 +34,18 @@ public abstract class MudAxisChartBase<TOptions> : MudChartBase<TOptions>, IMudA
     /// Values are shared between the overlay and the main chart.
     /// </remarks>
     [CascadingParameter]
-    public AxisGridData? SharedData { get; set; }
+    public AxisGridData<T>? SharedData { get; set; }
 
     /// <summary>
     /// The chart, if any, containing this component.
     /// </summary>
     [CascadingParameter]
-    public MudChart? ChartContainer { get; set; }
+    public MudChart<T>? ChartContainer { get; set; }
 
-    public IMudChart? OverlayChart { get; set; }
-    public bool IsOverlayChart => ChartReference is IMudAxisChart;
+    public IMudChart<T>? OverlayChart { get; set; }
+    public bool IsOverlayChart => ChartReference is IMudAxisChart<T>;
 
-    protected List<ChartSeries> Series { get; set; } = [];
+    protected List<ChartSeries<T>> Series { get; set; } = [];
 
     protected readonly List<SvgPath> HorizontalLines = [];
     protected readonly List<SvgText> HorizontalValues = [];
@@ -72,7 +76,7 @@ public abstract class MudAxisChartBase<TOptions> : MudChartBase<TOptions>, IMudA
     protected ElementSize? _yAxisLabelSize;
     protected ElementSize? _xAxisLabelSize;
 
-    private readonly DotNetObjectReference<MudAxisChartBase<TOptions>> _dotNetObjectReference;
+    private readonly DotNetObjectReference<MudAxisChartBase<T, TOptions>> _dotNetObjectReference;
     protected ElementReference _elementReference;
     protected ElementReference? _xAxisGroupElementReference;
     protected ElementReference? _yAxisGroupElementReference;
@@ -117,7 +121,7 @@ public abstract class MudAxisChartBase<TOptions> : MudChartBase<TOptions>, IMudA
 
     protected void SetBounds()
     {
-        if (ChartReference is IMudAxisChart chart && chart.SharedData is { } data)
+        if (ChartReference is IMudAxisChart<T> chart && chart.SharedData is { } data)
         {
             _boundWidth = data.BoundWidth;
             _boundHeight = data.BoundHeight;
@@ -145,6 +149,32 @@ public abstract class MudAxisChartBase<TOptions> : MudChartBase<TOptions>, IMudA
         }
     }
 
+    protected void GenerateHorizontalGridLines(int numHorizontalLines, int lowestHorizontalLine, T gridYUnits, double verticalSpace)
+    {
+        HorizontalLines.Clear();
+        HorizontalValues.Clear();
+
+        for (var i = 0; i < numHorizontalLines; i++)
+        {
+            var y = VerticalStartSpace + (i * verticalSpace);
+            var line = new SvgPath()
+            {
+                Index = i,
+                Data = $"M {ToS(HorizontalStartSpace)} {ToS(_boundHeight - y)} L {ToS(_boundWidth - HorizontalEndSpace)} {ToS(_boundHeight - y)}"
+            };
+            HorizontalLines.Add(line);
+
+            var startGridY = T.CreateSaturating(lowestHorizontalLine + i) * gridYUnits;
+            var lineValue = new SvgText()
+            {
+                X = HorizontalStartSpace - 10,
+                Y = _boundHeight - y + 5,
+                Value = startGridY.ToString(ChartOptions?.YAxisFormat, null)
+            };
+            HorizontalValues.Add(lineValue);
+        }
+    }
+
     protected void GenerateLegends()
     {
         Legends.Clear();
@@ -161,7 +191,7 @@ public abstract class MudAxisChartBase<TOptions> : MudChartBase<TOptions>, IMudA
             Legends.Add(legend);
         }
 
-        if (OverlayChart is IMudAxisChart overlay)
+        if (OverlayChart is IMudAxisChart<T> overlay)
         {
             for (var i = 0; i < overlay.ChartSeries.Count; i++)
             {
@@ -178,7 +208,7 @@ public abstract class MudAxisChartBase<TOptions> : MudChartBase<TOptions>, IMudA
         }
     }
 
-    protected string FormatTooltipText(string? format, ChartSeries series, SvgPath path)
+    protected string FormatTooltipText(string? format, ChartSeries<T> series, SvgPath path)
     {
         if (string.IsNullOrWhiteSpace(format))
             return string.Empty;
@@ -229,7 +259,7 @@ public abstract class MudAxisChartBase<TOptions> : MudChartBase<TOptions>, IMudA
         RebuildChart();
     }
 
-    protected void HandleOverlayChartLegendVisibility(IMudChart overlayChart, int index, bool isVisible)
+    protected void HandleOverlayChartLegendVisibility(IMudChart<T> overlayChart, int index, bool isVisible)
     {
         if (overlayChart?.ChartSeries != null && index >= 0 && index < overlayChart.ChartSeries.Count)
         {

@@ -7,11 +7,11 @@
 
 @code {
     private string[] _chartLabels = { "Strength", "Agility", "Intelligence", "Charisma", "Stamina", "Luck" };
-    private List<ChartSeries> _series = new List<ChartSeries>()
+    private List<ChartSeries<double>> _series = new List<ChartSeries<double>>()
     {
-        new ChartSeries() { Name = "Warrior", Data = new double[] { 12, 5, 3, 5, 9, 2 } },
-        new ChartSeries() { Name = "Mage", Data = new double[] { 3, 3, 12, 7, 4, 7 } },
-        new ChartSeries() { Name = "Rogue", Data = new double[] { 4, 12, 6, 3, 6, 5 } }
+        new() { Name = "Warrior", Data = new double[] { 12, 5, 3, 5, 9, 2 } },
+        new() { Name = "Mage", Data = new double[] { 3, 3, 12, 7, 4, 7 } },
+        new() { Name = "Rogue", Data = new double[] { 4, 12, 6, 3, 6, 5 } }
     };
 
     private RadarChartOptions _options = new RadarChartOptions

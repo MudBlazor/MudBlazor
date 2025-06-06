@@ -2,7 +2,9 @@
 
 @namespace MudBlazor.Charts
 
-@inherits MudChartBase<HeatMapChartOptions>
+@inherits MudChartBase<T, HeatMapChartOptions>
+
+@typeparam T
 
 @inject InternalMudLocalizer Localizer
 
@@ -18,7 +20,7 @@
             @* 4-point gradients for each cell *@
             @for (int row = 0; row < series.Count; row++)
             {
-                var dataLength = series[row].Data?.Values.Length ?? 0;
+                var dataLength = series[row].Data?.Values.Count ?? 0;
                 for (int col = 0; col < dataLength; col++)
                 {
                     var cell = _heatMapCells.FirstOrDefault(c => c.Row == row && c.Column == col);
@@ -57,7 +59,7 @@
 
         // how tall each cell should be
         var y = (row * (_cellDimension.Height + _cellDimension.Padding)) + _verticalStartSpace;
-        var seriesLength = series[row].Data != null ? series[row].Data.Values.Length : 0;
+        var seriesLength = series[row].Data != null ? series[row].Data.Values.Count : 0;
 
         @for (int col = 0; col < seriesLength; col++)
         {
@@ -121,14 +123,14 @@
                     {
                         <g>
                             <text @onclick="async () => await SetSelectedCellAsync(rowIndex, colIndex)"
-                                @onmouseover="(e) => OnCellMouseOver(e, cell)"
-                                @onmouseout="OnCellMouseOut"
-                                font-size="@_dynamicFontSize.ToS()"
-                                x="@((x + _cellDimension.Width / 2).ToS())"
-                                y="@((y + _cellDimension.Height / 2).ToS())"
-                                dominant-baseline="middle"
-                                text-anchor="middle">
-                                @FormatValueForDisplay(cell?.Value)
+                                  @onmouseover="(e) => OnCellMouseOver(e, cell)"
+                                  @onmouseout="OnCellMouseOut"
+                                  font-size="@_dynamicFontSize.ToS()"
+                                  x="@((x + _cellDimension.Width / 2).ToS())"
+                                  y="@((y + _cellDimension.Height / 2).ToS())"
+                                  dominant-baseline="middle"
+                                  text-anchor="middle">
+                                  @FormatValueForDisplay(cell?.Value)
                             </text>
                         </g>
                     }
@@ -141,13 +143,13 @@
                             var tempHeight = cell.Height ?? _cellDimension.Height;
 
                             <svg x="@x.ToS()"
-                                y="@y.ToS()"
-                                @onclick="async () => await SetSelectedCellAsync(rowIndex, colIndex)"
-                                width="@_cellDimension.Width.ToS()"
-                                height="@_cellDimension.Height.ToS()"
-                                viewBox="0 0 @tempWidth.ToS() @tempHeight.ToS()"
-                                preserveAspectRatio="xMidYMid meet">
-                                @cell.CustomFragment
+                                 y="@y.ToS()"
+                                 @onclick="async () => await SetSelectedCellAsync(rowIndex, colIndex)"
+                                 width="@_cellDimension.Width.ToS()"
+                                 height="@_cellDimension.Height.ToS()"
+                                 viewBox="0 0 @tempWidth.ToS() @tempHeight.ToS()"
+                                 preserveAspectRatio="xMidYMid meet">
+                                 @cell.CustomFragment
                             </svg>
                         }
                         else
@@ -389,5 +391,5 @@
 </svg>
 @if (CanHideSeries is true)
 {
-    <Legend Data="@_toggleLegend" />
+    <Legend T="T" Data="@_toggleLegend" />
 }

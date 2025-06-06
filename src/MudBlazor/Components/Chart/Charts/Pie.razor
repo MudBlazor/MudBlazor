@@ -1,8 +1,10 @@
 ﻿@namespace MudBlazor.Charts
-@inherits MudRadialChartBase<PieChartOptions>
+@inherits MudRadialChartBase<T, PieChartOptions>
+@typeparam T 
 
 <div @attributes="UserAttributes" class="@Classname">
-    <BaseRadialChart TChartOptions="PieChartOptions"
+    <BaseRadialChart T="T" 
+                     TChartOptions="PieChartOptions"
                      ElementRefChanged="SetElementReference"
                      Width="@Width"
                      Height="@Height"
@@ -21,6 +23,6 @@
                      OnMouseOver="(x) => OnSegmentMouseOver(x.Args, x.Segment)"
                      OnMouseOut="OnSegmentMouseOut" />
 
-    <Legend Data="@_legends" ShowLegend="@ChartOptions?.ShowLegend" CanHideSeries="@CanHideSeries"
+    <Legend T="T" Data="@_legends" ShowLegend="@ChartOptions?.ShowLegend" CanHideSeries="@CanHideSeries"
             ChartPalette="@ChartOptions?.ChartPalette" OnLegendSelected="async (i) => await SetSelectedIndexAsync(i)" />
 </div>

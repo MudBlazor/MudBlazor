@@ -118,16 +118,16 @@ namespace MudBlazor.Docs.Services
 
             //Charts
             .AddNavGroup("Charts", false, new DocsComponents()
-                .AddItem("Donut Chart", typeof(Donut), typeof(DonutChartOptions), typeof(Legend))
-                .AddItem("Line Chart", typeof(Line), typeof(LineChartOptions), typeof(Legend))
-                .AddItem("Pie Chart", typeof(Pie), typeof(PieChartOptions), typeof(Legend))
-                .AddItem("Bar Chart", typeof(Bar), typeof(BarChartOptions), typeof(Legend))
-                .AddItem("Heat Map Chart", typeof(HeatMap), typeof(HeatMapChartOptions), typeof(Legend))
-                .AddItem("Stacked Bar Chart", typeof(StackedBar), typeof(StackedBarChartOptions), typeof(Legend))
-                .AddItem("Time Series Chart", typeof(TimeSeries), typeof(TimeSeriesChartOptions), typeof(Legend))
-                .AddItem("Radar Chart", typeof(Radar), typeof(RadarChartOptions), typeof(Legend))
-                .AddItem("Rose Chart", typeof(Rose), typeof(RoseChartOptions), typeof(Legend))
-                .AddItem("Universal Chart", typeof(MudChart), typeof(MudAxisChartBase<>), typeof(ChartOptions))
+                .AddItem("Donut Chart", typeof(Donut<T>), typeof(DonutChartOptions), typeof(Legend<T>))
+                .AddItem("Line Chart", typeof(Line<T>), typeof(LineChartOptions), typeof(Legend<T>))
+                .AddItem("Pie Chart", typeof(Pie<T>), typeof(PieChartOptions), typeof(Legend<T>))
+                .AddItem("Bar Chart", typeof(Bar<T>), typeof(BarChartOptions), typeof(Legend<T>))
+                .AddItem("Heat Map Chart", typeof(HeatMap<T>), typeof(HeatMapChartOptions), typeof(Legend<T>))
+                .AddItem("Stacked Bar Chart", typeof(StackedBar<T>), typeof(StackedBarChartOptions), typeof(Legend<T>))
+                .AddItem("Time Series Chart", typeof(TimeSeries<T>), typeof(TimeSeriesChartOptions), typeof(Legend<T>))
+                .AddItem("Radar Chart", typeof(Radar<T>), typeof(RadarChartOptions), typeof(Legend<T>))
+                .AddItem("Rose Chart", typeof(Rose<T>), typeof(RoseChartOptions), typeof(Legend<T>))
+                .AddItem("Universal Chart", typeof(MudChart<T>), typeof(MudAxisChartBase<,>), typeof(ChartOptions))
             )
             // this must be last!
             .GetComponentsSortedByName();

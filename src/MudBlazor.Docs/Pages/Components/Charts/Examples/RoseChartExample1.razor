@@ -16,7 +16,7 @@
 
 @code {
     private int _selectedIndex = -1;
-    private List<ChartSeries> _series = new List<ChartSeries>() { new ChartSeries() { Name = "Single Series", Data = new double[] { 70, 20, 40, 50, 80 } }};
+    private List<ChartSeries<double>> _series = new() { new() { Name = "Single Series", Data = new double[] { 70, 20, 40, 50, 80 } } };
     private RoseChartOptions _options = new RoseChartOptions
     {
         ShowValues = true,

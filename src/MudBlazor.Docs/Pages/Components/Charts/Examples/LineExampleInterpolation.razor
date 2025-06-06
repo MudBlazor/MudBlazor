@@ -14,10 +14,10 @@
 
 @code {
     private LineChartOptions _options = new LineChartOptions();
-    public List<ChartSeries> Series = new List<ChartSeries>()
+    public List<ChartSeries<double>> Series = new List<ChartSeries<double>>()
     {
-        new ChartSeries() { Name = "Series 1", Data = new double[] { 90, 79, 72, 69, 62, 62, 55, 65, 70 } },
-        new ChartSeries() { Name = "Series 2", Data = new double[] { 35, 41, 35, 51, 49, 62, 69, 91, 148 } },
+        new ChartSeries<double>() { Name = "Series 1", Data = new double[] { 90, 79, 72, 69, 62, 62, 55, 65, 70 } },
+        new ChartSeries<double>() { Name = "Series 2", Data = new double[] { 35, 41, 35, 51, 49, 62, 69, 91, 148 } },
     };
     public string[] ChartLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
 
@@ -32,9 +32,9 @@
     {
         foreach (var series in Series)
         {
-            for (int i = 0; i < series.Data.Values.Length; i++)
+            for (int i = 0; i < series.Data.Values.Count; i++)
             {
-                series.Data[i] = random.NextDouble() * 100 + 10;
+                series.Data[i].Y = random.NextDouble() * 100 + 10;
             }
         }
 

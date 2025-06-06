@@ -1,8 +1,12 @@
 ﻿@using MudBlazor.Charts
+@using System.Numerics
 
 @namespace MudBlazor
 
-@inherits MudChartBase<IChartOptions>
+@inherits MudChartBase<T, IChartOptions>
+
+@typeparam T
+@attribute [CascadingTypeParameter(nameof(T))]
 
 <CascadingValue Value="@this" IsFixed="true">
     <div @attributes="UserAttributes" class="@Classname" style="@Style; width: @Width; height: @Height;" dir="ltr">

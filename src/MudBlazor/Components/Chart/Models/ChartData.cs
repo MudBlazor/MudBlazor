@@ -4,54 +4,46 @@
 
 #nullable enable
 using System.Collections;
-using System.Runtime.CompilerServices;
+using System.Numerics;
 using MudBlazor.Charts;
 
 namespace MudBlazor;
 
-[CollectionBuilder(typeof(ChartData), nameof(Create))]
-public class ChartData : IEnumerable<double>
+public class ChartData<T> : IEnumerable<T> where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
 {
-    private List<ChartPoint> _points = [];
+    private readonly IReadOnlyList<ChartPoint<T>> _points = [];
 
     public ChartData() { }
 
-    public ChartData(double value) => _points = [new ChartPoint(0, value)];
+    public ChartData(T value) => _points = [new ChartPoint<T>(null, value)];
 
-    public ChartData(IEnumerable<double> values) => _points = [.. values.Select(v => new ChartPoint(0, v))];
+    public ChartData(IReadOnlyList<T> values) => _points = [.. values.Select(v => new ChartPoint<T>(null, v))];
 
-    public ChartData(TimeSeries.DataPoint point) => _points = [new ChartPoint(point.DateTime, point.Value)];
+    public ChartData((DateTime dateTime, T value) timeValue) =>
+        _points = [new ChartPoint<T>(timeValue.dateTime, timeValue.value)];
 
-    public ChartData(IEnumerable<TimeSeries.DataPoint> points) =>
-        _points = [.. points.Select(p => new ChartPoint(p.DateTime, p.Value))];
+    public ChartData(IReadOnlyList<(DateTime dateTime, T value)> timeValues) =>
+        _points = [.. timeValues.Select(tv => new ChartPoint<T>(tv.dateTime, tv.value))];
 
-    public ChartData(IEnumerable<ChartPoint> points) => _points = [.. points];
+    public IReadOnlyList<ChartPoint<T>> Points => _points;
 
-    public ChartData((DateTime dateTime, double value) timeValue) =>
-        _points = [new ChartPoint(timeValue.dateTime, timeValue.value)];
+    public IReadOnlyList<T> Values => [.. _points.Select(p => p.Y)];
 
-    public ChartData(IEnumerable<(DateTime dateTime, double value)> timeValues) =>
-        _points = [.. timeValues.Select(tv => new ChartPoint(tv.dateTime, tv.value))];
+    public ChartPoint<T> this[int index] => _points[index];
 
-    public double[] Values => [.. _points.Select(p => p.Y)];
+    public T GetValue(int index) => _points[index].Y;
 
-    public IReadOnlyList<ChartPoint> Points => _points;
+    public int Count => _points.Count;
 
-    public double this[int index]
-    {
-        get => _points[index].Y;
-        set => _points[index].Y = value;
-    }
+    public static implicit operator ChartData<T>(T value) => new(value);
+    public static implicit operator ChartData<T>(T[] values) => new(values);
+    public static implicit operator ChartData<T>(List<T> values) => new(values);
+    public static implicit operator ChartData<T>((DateTime dateTime, T value)[] timeValues) => new(timeValues);
+    public static implicit operator ChartData<T>(List<(DateTime dateTime, T value)> timeValues) => new(timeValues);
+    public static implicit operator ChartData<T>(TimeValue<T> timeValue) => new((timeValue.DateTime, timeValue.Value));
+    public static implicit operator ChartData<T>(TimeValue<T>[] values) => new(values.Select(tv => (tv.DateTime, tv.Value)).ToArray());
+    public static implicit operator ChartData<T>(List<TimeValue<T>> values) => new(values.Select(tv => (tv.DateTime, tv.Value)).ToArray());
 
-    public static implicit operator ChartData(double value) => new(value);
-    public static implicit operator ChartData(double[] values) => new(values);
-    public static implicit operator ChartData(TimeSeries.DataPoint dataPoint) => new(dataPoint);
-    public static implicit operator ChartData(List<TimeSeries.DataPoint> dataPoints) => new(dataPoints);
-    public static implicit operator ChartData((DateTime dateTime, double value)[] timeValues) => new(timeValues);
-    public static implicit operator ChartData(List<(DateTime dateTime, double value)> timeValues) => new(timeValues);
-
-
-    public static ChartData Create(ReadOnlySpan<double> values) => new(values.ToArray());
-    public IEnumerator<double> GetEnumerator() => _points.Select(p => p.Y).GetEnumerator();
+    public IEnumerator<T> GetEnumerator() => Values.GetEnumerator();
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }
