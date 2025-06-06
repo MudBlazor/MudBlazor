@@ -401,7 +401,7 @@ namespace MudBlazor
             DataGrid.DropContainerHasChanged();
         }
 
-        internal void AddFilter()
+        internal void AddFilter(MouseEventArgs args = null)
         {
             var filterDefinition = Column?.FilterContext.FilterDefinition;
             if (DataGrid.FilterMode == DataGridFilterMode.Simple && filterDefinition != null)
@@ -409,6 +409,11 @@ namespace MudBlazor
                 if (DataGrid.FilterDefinitions.All(x => x.Title != filterDefinition.Title))
                 {
                     DataGrid.FilterDefinitions.Add(filterDefinition.Clone());
+                }
+                if (args != null)
+                {
+                    DataGrid._openPosition.Top = args.PageY;
+                    DataGrid._openPosition.Left = args.PageX;
                 }
                 DataGrid.OpenFilters();
             }
@@ -419,12 +424,24 @@ namespace MudBlazor
             }
         }
 
-        internal void OpenFilters()
+        internal void OpenFilters(MouseEventArgs args = null)
         {
             if (DataGrid.FilterMode == DataGridFilterMode.Simple)
+            {
+                if (args != null)
+                {
+                    DataGrid._openPosition.Top = args.PageY;
+                    DataGrid._openPosition.Left = args.PageX;
+                }
                 DataGrid.OpenFilters();
+            }
             else if (DataGrid.FilterMode == DataGridFilterMode.ColumnFilterMenu)
             {
+                if (args != null)
+                {
+                    DataGrid._openPosition.Top = args.PageY;
+                    DataGrid._openPosition.Left = args.PageX;
+                }
                 _filtersMenuVisible = true;
                 DataGrid.DropContainerHasChanged();
             }
