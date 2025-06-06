@@ -28,7 +28,7 @@
 
   &.mud-ripple-animating.mud-ripple-fade:after {
     opacity: 0;
-    transition: opacity 1s;
+    transition: opacity 300ms;
   }
 
   // disable ripple if a child element has an active ripple

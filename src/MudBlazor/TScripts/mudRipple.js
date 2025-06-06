@@ -7,17 +7,33 @@ function setRippleOffset(event, target) {
     target.style.setProperty("--mud-ripple-offset-y", `${y}px`);
 }
 
+let rippleTimeout;
+
 function startRipple(event) {
     const target = event.target.closest(".mud-ripple");
     if (!target) return;
     setRippleOffset(event, target);
     target.classList.add("mud-ripple-animating");
+    target.classList.remove("mud-ripple-fade");
+    // Store the start time
+    target._rippleStart = Date.now();
 }
 
 function endRipple(event) {
     const target = event.target.closest(".mud-ripple");
     if (!target) return;
-    target.classList.remove("mud-ripple-animating");
+    const minDuration = 500; // ms
+    const now = Date.now();
+    const start = target._rippleStart || now;
+    const elapsed = now - start;
+    const remaining = Math.max(0, minDuration - elapsed);
+    clearTimeout(target._rippleTimeout);
+    target._rippleTimeout = setTimeout(() => {
+        target.classList.add("mud-ripple-fade");
+        setTimeout(() => {
+            target.classList.remove("mud-ripple-animating", "mud-ripple-fade");
+        }, 300); // match fade transition duration in SCSS
+    }, remaining);
 }
 
 document.addEventListener("pointerdown", startRipple);
