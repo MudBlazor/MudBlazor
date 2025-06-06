@@ -2,52 +2,53 @@
 
 <DocsPage>
     <DocsPageHeader Title="Popover" Component="@nameof(MudPopover)" />
-	<DocsPageContent>
 
-		<DocsPageSection>
-			<MudAlert Severity="Severity.Warning"><b>Note:</b> When using this component it can be good to have some CSS knowledge it might not serve all types of content out of the box.</MudAlert>
-		</DocsPageSection>
+    <DocsPageContent>
 
-		<DocsPageSection>
-			<SectionHeader Title="Simple Popover">
-				<Description>The popover's open state is completely up to you, as well as the content of it.</Description>
-			</SectionHeader>
-			<SectionContent Code="@nameof(PopoverSimpleExample)">
-				<PopoverSimpleExample />
-			</SectionContent>
-		</DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Simple Popover">
+                <Description>
+                    You have full control over the popover's content and its open state.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(PopoverSimpleExample)">
+                <PopoverSimpleExample />
+            </SectionContent>
+        </DocsPageSection>
 
-		<DocsPageSection>
-			<SectionHeader Title="Direction and Location">
-				<Description>
-					<MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">Note: the location can be set with custom css or using the style tag.</MudAlert>
-					Control where the popover should start from relative to the parent. Offset the popover to be located outside of the parent.
-				</Description>
-			</SectionHeader>
-			<SectionContent Code="@nameof(PopoverLocationExample)" ShowCode="false">
-				<PopoverLocationExample />
-			</SectionContent>
-		</DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Direction and Location">
+                <Description>
+                    Define the starting point and offset of the popover relative to its parent component.
+                    You can set the popover location either through custom CSS or directly via inline styles.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(PopoverLocationExample)" ShowCode="false">
+                <PopoverLocationExample />
+            </SectionContent>
+        </DocsPageSection>
 
-		<DocsPageSection>
-			<SectionHeader Title="Overflow Behavior">
-				<Description>
-					You can set the overflow behavior of the popover to either <CodeInline>FlipNever</CodeInline>, <CodeInline>FilpOnOpen</CodeInline> or <CodeInline>FlipAlways</CodeInline><br/>
-                    Resize your browser window slowly so the popover wont fit to see result in flip mode.
-				</Description>
-			</SectionHeader>
-			<SectionContent Code="@nameof(PopoverOverflowBehaviorExample)" ShowCode="false">
+        <DocsPageSection>
+            <SectionHeader Title="Overflow Behavior">
+                <Description>
+                    Configure the popover's overflow behavior using one of the following options:
+                    <CodeInline>FlipNever</CodeInline>, <CodeInline>FlipOnOpen</CodeInline>, or <CodeInline>FlipAlways</CodeInline>.<br />
+                    When space is limited, the popover can flip its position to stay visible. In center mode, the popover flips vertically. Scroll the page to see this behavior in action.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(PopoverOverflowBehaviorExample)" ShowCode="false">
                 <PopoverOverflowBehaviorExample />
-			</SectionContent>
-		</DocsPageSection>
+            </SectionContent>
+        </DocsPageSection>
 
-		<DocsPageSection>
-			<SectionHeader Title="Complex Content">
-				<Description>
-					You can have any content within a popover like with any other Blazor component. The position of the popover is updated automatically
-				</Description>
-			</SectionHeader>
-            <SectionContent Codes="@(new[] {new CodeFile("Page.razor", "PopoverComplexContentExample"), new CodeFile("Component.razor", "PopoverDynamicContentExample")})" ShowCode="false">
+
+        <DocsPageSection>
+            <SectionHeader Title="Complex Content">
+                <Description>
+                    Popovers support complex content and adjust their position automatically to fit their surroundings, just like any other Blazor component.
+                </Description>
+            </SectionHeader>
+            <SectionContent Codes="@(new[] { new CodeFile("Page.razor", "PopoverComplexContentExample"), new CodeFile("Component.razor", "PopoverDynamicContentExample") })" ShowCode="false">
                 <PopoverComplexContentExample />
             </SectionContent>
         </DocsPageSection>
@@ -55,10 +56,12 @@
         <DocsPageSection>
             <SectionHeader Title="Popover RelativeWidth">
                 <Description>
-                    Popovers can be placed relative to their Activator or Parent. The <CodeInline>RelativeWidth</CodeInline> is an enum <CodeInline>DropdownWidth</CodeInline>,
-                    with a default value of <CodeInline>DropdownWidth.Ignore</CodeInline> which means the width is not associated to the Activator Width and can grow or shrink as needed. 
-                    Additional options are <CodeInline>DropdownWidth.Relative</CodeInline> which constrains the width of the popover to be the same size as the Activator Width and cannot grow.
-                    <CodeInline>DropdownWidth.Adaptive</CodeInline> which constrains the minimum width of the popover to be the same size as the Activator / Parent but can grow wider as needed.
+                    Popovers can have their widths set relative to their activator or parent through the <CodeInline>DropdownWidth</CodeInline> enum:
+                    <ul class="ml-2">
+                        <li><CodeInline>Ignore</CodeInline> (default): Popover width adjusts independently of the activator.</li>
+                        <li><CodeInline>Relative</CodeInline>: Popover width matches the activator’s width precisely.</li>
+                        <li><CodeInline>Adaptive</CodeInline>: Minimum width matches activator or parent, but popover can grow wider as needed.</li>
+                    </ul>
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(PopoverRelativeWidthExample)" ShowCode="false">
@@ -66,37 +69,37 @@
             </SectionContent>
         </DocsPageSection>
 
-		<DocsPageSection>
-			<SectionHeader Title="Popover Inception">
-				<Description>
-					Popovers can be placed within elements that are using popover for itself. Like tooltips that are placed inside a menu.
-				</Description>
-			</SectionHeader>
-			<SectionContent Code="@nameof(PopoverInceptionExampleExample)" ShowCode="false">
-				<PopoverInceptionExampleExample />
-			</SectionContent>
-		</DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Popover Inception">
+                <Description>
+                    Popovers can be nested within elements that already use a popover, such as tooltips inside menus.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(PopoverInceptionExampleExample)" ShowCode="false">
+                <PopoverInceptionExampleExample />
+            </SectionContent>
+        </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="DropdownSettings">
                 <Description>
-                    Some components use <MudLink Href="/components/popover">MudPopover</MudLink> to place their list of items in combination with <MudLink Href="/components/overlay">MudOverlay</MudLink>. Some of these
-                    settings can be controlled with <CodeInline>DropdownSettings</CodeInline> which contain defaults for the <CodeInline>MudPopover</CodeInline>
-                    appearance and behavior. Default settings for <CodeInline>DropdownSettings</CodeInline> are:
+                    Some components combine <MudLink Href="/components/popover">MudPopover</MudLink> with <MudLink Href="/components/overlay">MudOverlay</MudLink> to manage item lists. These can be customized using <CodeInline>DropdownSettings</CodeInline>, which sets default appearance and behavior options:
                     <ul class="ml-2">
-                        <li><CodeInline>Fixed</CodeInline> = <CodeInline>false</CodeInline> - Displays the dropdown popover in a fixed position, even while scrolling.</li>
-                        <li><CodeInline>OverflowBehavior</CodeInline> = <CodeInline>OverflowBehavior.FlipOnOpen</CodeInline> - The behavior applied when there is not enough space for the dropdown popover to be visible.</li>
+                        <li><CodeInline>Fixed = false</CodeInline>: Popover does not remain fixed during scrolling.</li>
+                        <li><CodeInline>OverflowBehavior = OverflowBehavior.FlipOnOpen</CodeInline>: Adjusts popover behavior when space is limited.</li>
                     </ul>
-                    <br/>Some settings reside on the <CodeInline>MudMenu</CodeInline> component itself due to differences between different types of dropdowns. <br />These settings and their defaults are:
+                    <br />Additional settings on the <CodeInline>MudMenu</CodeInline> component include:
                     <ul class="ml-2">
-                        <li><CodeInline>RelativeWidth</CodeInline> = <CodeInline>DropdownWidth.Ignore</CodeInline> - The width of the dropdown popover is not dependent upon the Activator or Parent.</li>
-                        <li><CodeInline>AnchorOrigin</CodeInline> = <CodeInline>Origin.BottomLeft</CodeInline> - The location where the popover will open from.</li>
+                        <li><CodeInline>RelativeWidth = DropdownWidth.Ignore</CodeInline>: Width adjusts independently.</li>
+                        <li><CodeInline>AnchorOrigin = Origin.BottomLeft</CodeInline>: Popover opening position.</li>
                         <ul class="ml-4">
-                            <li><MudText Typo="Typo.caption">
-                                * AnchorOrigin and TransformOrigin do not have to be set, and if not set will have a default Nested behavior that can be overridden.
-                            </MudText></li>
+                            <li>
+                                <MudText Typo="Typo.caption">
+                                    * Defaults apply if AnchorOrigin or TransformOrigin aren't explicitly set, with nested behavior available for customization.
+                                </MudText>
+                            </li>
                         </ul>
-                        <li><CodeInline>TransformOrigin</CodeInline> = <CodeInline>Origin.TopLeft</CodeInline> - The transform origin point for the popover.</li>
+                        <li><CodeInline>TransformOrigin = Origin.TopLeft</CodeInline>: Transform origin point.</li>
                     </ul>
                 </Description>
             </SectionHeader>
@@ -105,5 +108,5 @@
             </SectionContent>
         </DocsPageSection>
 
-	</DocsPageContent>
+    </DocsPageContent>
 </DocsPage>

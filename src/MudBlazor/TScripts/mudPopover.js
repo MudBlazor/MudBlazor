@@ -101,41 +101,14 @@ window.mudpopoverHelper = {
 
     // used to calculate the position of the popover
     calculatePopoverPosition: function (list, boundingRect, selfRect) {
-        let top = 0;
-        let left = 0;
-        if (list.indexOf('mud-popover-anchor-top-left') >= 0) {
-            left = boundingRect.left;
-            top = boundingRect.top;
-        } else if (list.indexOf('mud-popover-anchor-top-center') >= 0) {
-            left = boundingRect.left + boundingRect.width / 2;
-            top = boundingRect.top;
-        } else if (list.indexOf('mud-popover-anchor-top-right') >= 0) {
-            left = boundingRect.left + boundingRect.width;
-            top = boundingRect.top;
+        let top = boundingRect.top;     // default for mud-popover-anchor-top-left
+        let left = boundingRect.left;   // default for mud-popover-anchor-top-left
 
-        } else if (list.indexOf('mud-popover-anchor-center-left') >= 0) {
-            left = boundingRect.left;
-            top = boundingRect.top + boundingRect.height / 2;
-        } else if (list.indexOf('mud-popover-anchor-center-center') >= 0) {
-            left = boundingRect.left + boundingRect.width / 2;
-            top = boundingRect.top + boundingRect.height / 2;
-        } else if (list.indexOf('mud-popover-anchor-center-right') >= 0) {
-            left = boundingRect.left + boundingRect.width;
-            top = boundingRect.top + boundingRect.height / 2;
-
-        } else if (list.indexOf('mud-popover-anchor-bottom-left') >= 0) {
-            left = boundingRect.left;
-            top = boundingRect.top + boundingRect.height;
-        } else if (list.indexOf('mud-popover-anchor-bottom-center') >= 0) {
-            left = boundingRect.left + boundingRect.width / 2;
-            top = boundingRect.top + boundingRect.height;
-        } else if (list.indexOf('mud-popover-anchor-bottom-right') >= 0) {
-            left = boundingRect.left + boundingRect.width;
-            top = boundingRect.top + boundingRect.height;
-        }
+        const isPositionOverride = list.indexOf('mud-popover-position-override') >= 0;
 
         let offsetX = 0;
         let offsetY = 0;
+        // transform origin
 
         if (list.indexOf('mud-popover-top-left') >= 0) {
             offsetX = 0;
@@ -170,6 +143,39 @@ window.mudpopoverHelper = {
             offsetY = -selfRect.height;
         }
 
+        if (!isPositionOverride) {
+            // anchor origin, don't flip anchors on position override
+            if (list.indexOf('mud-popover-anchor-top-left') >= 0) {
+                left = boundingRect.left;
+                top = boundingRect.top;
+            } else if (list.indexOf('mud-popover-anchor-top-center') >= 0) {
+                left = boundingRect.left + boundingRect.width / 2;
+                top = boundingRect.top;
+            } else if (list.indexOf('mud-popover-anchor-top-right') >= 0) {
+                left = boundingRect.left + boundingRect.width;
+                top = boundingRect.top;
+
+            } else if (list.indexOf('mud-popover-anchor-center-left') >= 0) {
+                left = boundingRect.left;
+                top = boundingRect.top + boundingRect.height / 2;
+            } else if (list.indexOf('mud-popover-anchor-center-center') >= 0) {
+                left = boundingRect.left + boundingRect.width / 2;
+                top = boundingRect.top + boundingRect.height / 2;
+            } else if (list.indexOf('mud-popover-anchor-center-right') >= 0) {
+                left = boundingRect.left + boundingRect.width;
+                top = boundingRect.top + boundingRect.height / 2;
+
+            } else if (list.indexOf('mud-popover-anchor-bottom-left') >= 0) {
+                left = boundingRect.left;
+                top = boundingRect.top + boundingRect.height;
+            } else if (list.indexOf('mud-popover-anchor-bottom-center') >= 0) {
+                left = boundingRect.left + boundingRect.width / 2;
+                top = boundingRect.top + boundingRect.height;
+            } else if (list.indexOf('mud-popover-anchor-bottom-right') >= 0) {
+                left = boundingRect.left + boundingRect.width;
+                top = boundingRect.top + boundingRect.height;
+            }
+        }
         return {
             top: top, left: left, offsetX: offsetX, offsetY: offsetY, anchorY: top, anchorX: left
         };
@@ -271,6 +277,23 @@ window.mudpopoverHelper = {
             const zIndexAuto = popoverNodeStyle.getPropertyValue('z-index') === 'auto';
             const classListArray = Array.from(classList);
 
+            if (isPositionOverride) {
+                const positiontop = parseInt(popoverContentNode.getAttribute('data-pc-y')) || boundingRect.top;
+                const positionleft = parseInt(popoverContentNode.getAttribute('data-pc-x')) || boundingRect.left;
+                const scrollLeft = window.scrollX;
+                const scrollTop = window.scrollY;
+
+                // bounding rect for flipping
+                boundingRect = {
+                    left: positionleft - scrollLeft,
+                    top: positiontop - scrollTop,
+                    right: positionleft + 1,
+                    bottom: positiontop + 1,
+                    width: 1,
+                    height: 1
+                };
+            }
+
             // calculate position based on opening anchor/transform
             const position = window.mudpopoverHelper.calculatePopoverPosition(classListArray, boundingRect, selfRect);
             let left = position.left; // X-coordinate of the popover
@@ -296,23 +319,6 @@ window.mudpopoverHelper = {
                 popoverContentNode.mudHeight = null;
             }
 
-            // get the top/left/ from popoverContentNode if the popover has been hardcoded for position
-            if (isPositionOverride) {
-                left = parseInt(popoverContentNode.style['left']) || left;
-                top = parseInt(popoverContentNode.style['top']) || top;
-                // no offset when hardcoded 
-                offsetX = 0;
-                offsetY = 0;
-                // bounding rect for flipping
-                boundingRect = {
-                    left: left,
-                    top: top,
-                    right: left + selfRect.width,
-                    bottom: top + selfRect.height,
-                    width: selfRect.width,
-                    height: selfRect.height
-                };
-            }
             // flipping logic
             if (isFlipOnOpen || isFlipAlways) {
 
@@ -573,12 +579,6 @@ window.mudpopoverHelper = {
             else if (!classList.contains('mud-popover-fixed')) {
                 offsetX += window.scrollX;
                 offsetY += window.scrollY
-            }
-
-            if (isPositionOverride) {
-                // no offset if popover position is hardcoded
-                offsetX = 0;
-                offsetY = 0;
             }
 
             popoverContentNode.style['left'] = (left + offsetX) + 'px';
