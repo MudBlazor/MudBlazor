@@ -41,11 +41,11 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DatePickerOpenButtonAriaLabel()
+        public void DatePickerOpenButtonDefaultAriaLabel()
         {
             var comp = Context.RenderComponent<DatePickerValidationTest>();
             var openButton = comp.Find(".mud-input-adornment button");
-            openButton.Attributes.GetNamedItem("aria-label")?.Value.Should().Be("Open Date Picker");
+            openButton.Attributes.GetNamedItem("aria-label")?.Value.Should().Be("Open");
         }
 
         [Test]
