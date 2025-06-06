@@ -7,9 +7,9 @@ using System.Numerics;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
+using MudBlazor.Extensions;
 using MudBlazor.Interop;
 using MudBlazor.Utilities.Debounce;
-using MudBlazor.Extensions;
 
 #nullable enable
 namespace MudBlazor.Charts;

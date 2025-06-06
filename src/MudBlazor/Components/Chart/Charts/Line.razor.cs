@@ -109,7 +109,7 @@ namespace MudBlazor.Charts
 
                 var hasAreaDisplay = ChartOptions?.LineDisplayType == LineDisplayType.Area || visibleSeries.Any(series => GetSeriesDisplayOverride(series)?.LineDisplayType == LineDisplayType.Area);
                 var includeYAxisZeroPoint = ChartOptions?.YAxisRequireZeroPoint is true || hasAreaDisplay;
-                
+
                 if (includeYAxisZeroPoint)
                 {
                     minY = T.Min(minY, T.Zero); // we want to include the 0 in the grid
