@@ -459,4 +459,13 @@
   <data name="MudTreeView_CollapseItem" xml:space="preserve">
     <value>Collapse</value>
   </data>
+  <data name="MudTimePicker_Open" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="MudBaseDatePicker_Open" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="MudColorPicker_Open" xml:space="preserve">
+    <value>Open</value>
+  </data>
 </root>
