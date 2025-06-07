@@ -426,27 +426,27 @@ namespace MudBlazor
 
         protected string HoursButtonClassname =>
             new CssBuilder("mud-timepicker-button")
-                .AddClass("mud-timepicker-toolbar-text", _currentView != OpenToEnum.Hours)
+                .AddClass(MudTimePickerToolbarTextClassName, _currentView != OpenToEnum.Hours)
                 .Build();
 
         protected string MinuteButtonClassname =>
             new CssBuilder("mud-timepicker-button")
-                .AddClass("mud-timepicker-toolbar-text", _currentView != OpenToEnum.Minutes)
+                .AddClass(MudTimePickerToolbarTextClassName, _currentView != OpenToEnum.Minutes)
                 .Build();
 
         protected string SecondButtonClassname =>
             new CssBuilder("mud-timepicker-button")
-                .AddClass("mud-timepicker-toolbar-text", _currentView != OpenToEnum.Seconds)
+                .AddClass(MudTimePickerToolbarTextClassName, _currentView != OpenToEnum.Seconds)
                 .Build();
 
         protected string AmButtonClassname =>
             new CssBuilder("mud-timepicker-button")
-                .AddClass("mud-timepicker-toolbar-text", !IsAm) // gray it out.
+                .AddClass(MudTimePickerToolbarTextClassName, !IsAm) // gray it out.
                 .Build();
 
         protected string PmButtonClassname =>
             new CssBuilder("mud-timepicker-button")
-                .AddClass("mud-timepicker-toolbar-text", !IsPm) // gray it out.
+                .AddClass(MudTimePickerToolbarTextClassName, !IsPm) // gray it out.
                 .Build();
 
         private string HourDialClassname =>
