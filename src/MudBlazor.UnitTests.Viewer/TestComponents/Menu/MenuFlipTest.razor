@@ -1,0 +1,45 @@
+﻿<MudPaper Width="300px">
+    <MudList T="string" Dense>
+        @for (int i = 0; i < 20; i++)
+        {
+            <MudListItem Text=@($"Item {i}") OnClick="ListItem_Clicked" />
+        }
+    </MudList>
+</MudPaper>
+
+<MudMenu @ref="_contextMenu"
+         AnchorOrigin="@Origin.BottomLeft"
+         Dense
+         TransformOrigin="@Origin.BottomLeft"
+         PopoverClass="menu-popover"
+         DropdownSettings="@_dropdownSettings"
+         PositionAtCursor>
+    <MudMenuItem Label="Enlist" />
+    <MudMenuItem Label="Barracks" />
+    <MudMenuItem Label="Armory" />
+    <MudMenuItem Label="Enlist" />
+    <MudMenuItem Label="Barracks" />
+    <MudMenuItem Label="Armory" />
+    <MudMenuItem Label="Enlist" />
+    <MudMenuItem Label="Barracks" />
+    <MudMenuItem Label="Armory" />
+    <MudMenuItem Label="Enlist" />
+    <MudMenuItem Label="Barracks" />
+    <MudMenuItem Label="Armory" />
+    <MudMenuItem Label="Enlist" />
+    <MudMenuItem Label="Barracks" />
+    <MudMenuItem Label="Armory" />
+</MudMenu>
+
+@code {
+    private MudMenu _contextMenu = null!;
+    private readonly DropdownSettings _dropdownSettings = new DropdownSettings() { OverflowBehavior = OverflowBehavior.FlipAlways };
+
+    private async Task ListItem_Clicked(MouseEventArgs e)
+    {
+        if (_contextMenu != null)
+        {
+            await _contextMenu.OpenMenuAsync(e);
+        }
+    }
+}

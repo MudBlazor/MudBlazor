@@ -54,7 +54,6 @@ namespace MudBlazor
             ShowToolbar = false;
             Value = "#594ae2"; // MudBlazor Blue
             Text = GetColorTextValue();
-            AdornmentAriaLabel = "Open Color Picker";
             using var registerScope = CreateRegisterScope();
             _throttleIntervalState = registerScope.RegisterParameter<int>(nameof(ThrottleInterval))
                 .WithParameter(() => ThrottleInterval)
@@ -307,6 +306,7 @@ namespace MudBlazor
         {
             base.OnInitialized();
             SetThrottle(_throttleIntervalState.Value);
+            AdornmentAriaLabel ??= Localizer[Resources.LanguageResource.MudColorPicker_Open];
         }
 
         private void OnThrottleIntervalParameterChanged(ParameterChangedEventArgs<int> args)

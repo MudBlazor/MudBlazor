@@ -40,7 +40,7 @@ namespace MudBlazor
 
         protected string PanelContentClassname =>
             new CssBuilder("mud-expand-panel-content")
-                .AddClass("mud-expand-panel-gutters", Gutters || Parent?.Gutters == true)
+                .AddClass("mud-expand-panel-gutters", Gutters && Parent?.Gutters != false)
                 .AddClass("mud-expand-panel-dense", Dense || Parent?.Dense == true)
                 .Build();
 

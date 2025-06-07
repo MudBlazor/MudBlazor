@@ -29,7 +29,6 @@ namespace MudBlazor
             Converter.SetFunc = OnSet;
             ((DefaultConverter<TimeSpan?>)Converter).Format = Format24Hours;
             AdornmentIcon = Icons.Material.Filled.AccessTime;
-            AdornmentAriaLabel = "Open Time Picker";
         }
 
         private string OnSet(TimeSpan? timespan)
@@ -548,6 +547,7 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             base.OnInitialized();
+            AdornmentAriaLabel ??= Localizer[LanguageResource.MudTimePicker_Open];
             UpdateTimeSetFromTime();
             _currentView = OpenTo;
             _initialHour = _timeSet.Hour;

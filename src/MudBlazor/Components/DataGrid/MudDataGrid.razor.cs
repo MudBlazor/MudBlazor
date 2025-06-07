@@ -42,10 +42,20 @@ namespace MudBlazor
         internal Dictionary<GroupKey, bool> _groupExpansionsDict = [];
         private GridData<T> _serverData = new() { TotalItems = 0, Items = Array.Empty<T>() };
         private Func<IFilterDefinition<T>> _defaultFilterDefinitionFactory = () => new FilterDefinition<T>();
+        internal (double Top, double Left) _openPosition = (0, 0);
 
         private readonly ParameterState<T> _selectedItemState;
         private readonly ParameterState<HashSet<T>> _selectedItemsState;
         private readonly ParameterState<bool> _expandSingleRowState;
+
+        /// <summary>
+        /// Inline data attributes for positioning the menu at the cursor's location.
+        /// </summary>
+        internal Dictionary<string, object> PositionAttributes => new()
+        {
+            { "data-pc-x", _openPosition.Left.ToString(CultureInfo.InvariantCulture) },
+            { "data-pc-y", _openPosition.Top.ToString(CultureInfo.InvariantCulture) }
+        };
 
         public MudDataGrid()
         {
@@ -1082,6 +1092,15 @@ namespace MudBlazor
         [Parameter]
         public IEqualityComparer<T> Comparer { get; set; } = EqualityComparer<T>.Default;
 
+#nullable enable
+        /// <summary>
+        /// The default template used to display column grouping for any column that is grouped. 
+        /// </summary>
+        /// <remarks>Can be overridden by using the column level GroupTemplate, defaults to <c>null</c>.</remarks>
+        [Parameter]
+        public RenderFragment<GroupDefinition<T>>? GroupTemplate { get; set; }
+#nullable disable
+
         #endregion
 
         #region Properties
@@ -1968,8 +1987,13 @@ namespace MudBlazor
         /// <summary>
         /// Shows a panel that lets you show, hide, filter, groupedColumns, sort and re-arrange columns.
         /// </summary>
-        public void ShowColumnsPanel()
+        public void ShowColumnsPanel(MouseEventArgs args = null)
         {
+            if (args != null)
+            {
+                _openPosition.Top = args.PageY;
+                _openPosition.Left = args.PageX;
+            }
             _columnsPanelVisible = true;
             StateHasChanged();
         }
@@ -2094,6 +2118,7 @@ namespace MudBlazor
                             column._groupExpandedState.Value;
             return new()
             {
+                DataGrid = this,
                 Selector = column.groupBy,
                 Expanded = expanded,
                 GroupTemplate = column.GroupTemplate,
@@ -2118,6 +2143,7 @@ namespace MudBlazor
                 }
                 result.Add(new GroupDefinition<T>
                 {
+                    DataGrid = this,
                     Selector = groupDef.Selector,
                     Expanded = expanded,
                     GroupTemplate = groupDef.GroupTemplate,
