@@ -98,9 +98,11 @@ namespace MudBlazor.UnitTests.Components
         public void OpenToHours_CheckMinutesAndSecondsHidden()
         {
             var comp = OpenPicker(Parameter("OpenTo", OpenTo.Hours));
-            // Are minutes displayed
+            // Are hours visible
+            comp.FindAll("div.mud-time-picker-hour.mud-time-picker-dial-hidden").Count.Should().Be(0);
+            // Are minutes hidden
             comp.FindAll("div.mud-time-picker-minute.mud-time-picker-dial-hidden").Count.Should().Be(1);
-            // Are seconds displayed
+            // Are seconds hidden
             comp.FindAll("div.mud-time-picker-second.mud-time-picker-dial-hidden").Count.Should().Be(1);
         }
 
