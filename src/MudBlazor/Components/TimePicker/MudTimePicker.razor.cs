@@ -470,6 +470,8 @@ namespace MudBlazor
                 .AddClass("mud-time-picker-dial-hidden", _currentView != OpenToEnum.Seconds)
                 .Build();
 
+        private const string MudTimePickerToolbarTextClassName = "mud-timepicker-toolbar-text";
+
         private Typo ToolbarTextTypo => Orientation == Orientation.Portrait ? Typo.h2 : Typo.h3;
 
         private bool IsAm => _timeSet.Hour is >= 00 and < 12; // AM is 00:00 to 11:59.
@@ -614,9 +616,6 @@ namespace MudBlazor
         }
 
         private readonly SetTime _timeSet = new();
-        private int _initialHour;
-        private int _initialMinute;
-        private int _initialSecond;
         private DotNetObjectReference<MudTimePicker> _dotNetRef;
         private string _clockElementReferenceId;
 
@@ -624,9 +623,6 @@ namespace MudBlazor
         {
             base.OnInitialized();
             UpdateTimeSetFromTime();
-            _initialHour = _timeSet.Hour;
-            _initialMinute = _timeSet.Minute;
-            _initialSecond = _timeSet.Second;
             _dotNetRef = DotNetObjectReference.Create(this);
         }
 
@@ -798,7 +794,7 @@ namespace MudBlazor
             return hour;
         }
 
-        private int RoundToStepInterval(int value, int step)
+        private static int RoundToStepInterval(int value, int step)
         {
             if (step > 1) // Ignore if step is less than or equal to 1.
             {

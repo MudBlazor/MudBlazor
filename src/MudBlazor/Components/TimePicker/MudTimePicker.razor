@@ -17,7 +17,7 @@
                     }
                     else
                     {
-                        <MudText Typo="ToolbarTextTypo" Class="mud-timepicker-toolbar-text">@GetHourString()</MudText>
+                        <MudText Typo="ToolbarTextTypo" Class="@MudTimePickerToolbarTextClassName">@GetHourString()</MudText>
                     }
                     <MudText Typo="ToolbarTextTypo" Class="mud-timepicker-separator">:</MudText>
                 }
@@ -27,7 +27,7 @@
                 }
                 else
                 {
-                    <MudText Typo="ToolbarTextTypo" Class="mud-timepicker-toolbar-text">@GetMinuteString()</MudText>
+                    <MudText Typo="ToolbarTextTypo" Class="@MudTimePickerToolbarTextClassName">@GetMinuteString()</MudText>
                 }
                 @if (SecondsVisible)
                 {
@@ -38,7 +38,7 @@
                     }
                     else
                     {
-                        <MudText Typo="ToolbarTextTypo" Class="mud-timepicker-toolbar-text">@GetSecondString()</MudText>
+                        <MudText Typo="ToolbarTextTypo" Class="@MudTimePickerToolbarTextClassName">@GetSecondString()</MudText>
                     }
                 }
             </div>
