@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Noticias de Farándula</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 text-gray-900">
+  <header class="bg-pink-600 text-white p-4 text-center shadow">
+    <h1 class="text-3xl font-bold">Noticias de Farándula</h1>
+    <p class="text-sm">Lo último del mundo del espectáculo</p>
+  </header>
+
+  <main class="p-4 space-y-6">
+    <!-- Ejemplo de noticia -->
+    <article class="bg-white rounded-xl shadow p-4">
+      <h2 class="text-xl font-semibold">Famosa actriz anuncia su retiro</h2>
+      <p class="text-gray-600 text-sm">Publicado el 6 de junio de 2025</p>
+      <p class="mt-2">La reconocida actriz reveló hoy que dejará los escenarios para dedicarse a su familia. Sus seguidores están conmovidos con la noticia.</p>
+    </article>
+
+    <!-- Se pueden agregar más noticias similares aquí -->
+  </main>
+
+  <footer class="bg-gray-800 text-white p-4 text-center mt-6">
+    <p>&copy; 2025 Noticias de Farándula. Todos los derechos reservados.</p>
+  </footer>
+</body>
+</html>
