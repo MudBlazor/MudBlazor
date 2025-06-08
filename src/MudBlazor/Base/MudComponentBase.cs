@@ -5,8 +5,8 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
-using MudBlazor.Interfaces;
 using MudBlazor.Abstractions;
+using MudBlazor.Interfaces;
 
 namespace MudBlazor
 {
