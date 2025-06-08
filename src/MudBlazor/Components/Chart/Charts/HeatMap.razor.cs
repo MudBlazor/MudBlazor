@@ -109,7 +109,7 @@ namespace MudBlazor.Charts
 
         private List<ChartSeries<T>> _series = [];
 
-        private List<(T value, string color)> _legends = [];
+        private readonly List<(T value, string color)> _legends = [];
 
         internal List<MudHeatMapCell<T>> _customHeatMapCells = [];
 
@@ -271,7 +271,7 @@ namespace MudBlazor.Charts
                     }
                 }
 
-                if (CanHideSeries is true)
+                if (CanHideSeries)
                 {
                     var legend = new SvgLegend()
                     {
@@ -530,7 +530,7 @@ namespace MudBlazor.Charts
 
             _elementSize = elementSize;
 
-            if (MatchBoundsToSize is not true)
+            if (!MatchBoundsToSize)
                 return;
 
             if (Math.Abs(_boundWidth - _elementSize.Width) < Epsilon &&

@@ -67,7 +67,7 @@ namespace MudBlazor.Charts
             if (OverlayChart is IMudAxisChart<T> overlay)
             {
                 overlay.SharedData = SharedData;
-                OverlayChart?.RebuildChart();
+                OverlayChart.RebuildChart();
                 StateHasChanged();
             }
         }

@@ -9,6 +9,8 @@ namespace MudBlazor;
 
 public class StackedBarChartOptions : DefaultBarChartOptions
 {
+    public override double SeriesSpacingRatio { get; set; } = 0.8;
+
     public static implicit operator StackedBarChartOptions(ChartOptions options) => new()
     {
         ShowLegend = options.ShowLegend,

@@ -5,7 +5,6 @@
 using System.Globalization;
 using System.Numerics;
 using System.Text;
-using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 
 #nullable enable
@@ -31,93 +30,88 @@ public partial class Rose<T> : MudRadialChartBase<T, RoseChartOptions> where T :
         var chartData = AggregateSeriesData(ChartOptions!.AggregationOption);
         var normalizedData = GetNormalizedData();
         var nonZeroCount = normalizedData.Count(d => d > T.Zero);
-
-        if (nonZeroCount == 0)
-            return;
+        if (nonZeroCount == 0) return;
 
         var angleStep = 2 * Math.PI / nonZeroCount;
         var currentAngle = ChartOptions.AngleOffset * (Math.PI / 180);
-
-        var chartLabels = ChartOptions!.AggregationOption == AggregationOption.GroupByDataSet
-                ? ChartSeries.Select(ds => ds.Name).ToArray()
-                : ChartLabels ?? [];
-
+        var chartLabels = GetChartLabels();
         var maxValue = normalizedData.Length > 0 ? normalizedData.Max() : T.Zero;
+        var sum = normalizedData.SumGeneric();
 
         for (var i = 0; i < normalizedData.Length; i++)
         {
             if (normalizedData[i] == T.Zero)
                 continue;
 
-            var seriesdata = T.Max(T.Zero, chartData[i]); //Ensure non-negative values
-            var dataValue = normalizedData[i];
+            var value = T.Max(T.Zero, chartData[i]);
+            var data = normalizedData[i];
 
-            // Scale radius based on data value
-            var sectorRadius = Radius * double.CreateSaturating((dataValue / maxValue)) * ChartOptions.ScaleFactor;
-
-            sectorRadius = Math.Max(0, sectorRadius);
-
-            var startx = Math.Cos(currentAngle);
-            var starty = Math.Sin(currentAngle);
-            var endx = Math.Cos(currentAngle + angleStep);
-            var endy = Math.Sin(currentAngle + angleStep);
-            var largeArcFlag = nonZeroCount == 1 ? 1 : (angleStep > Math.PI ? 1 : 0);
-
-            var pathStringBuilder = new StringBuilder();
-            pathStringBuilder.Append($"M 0 0 "); // Move to center
-            pathStringBuilder.Append($"L {ToS(startx * sectorRadius)} {ToS(starty * sectorRadius)} ");
-
-            if (nonZeroCount == 1)
-            {
-                pathStringBuilder.Append($"A {ToS(sectorRadius)} {ToS(sectorRadius)} 0 {largeArcFlag} 1 {ToS(endx * sectorRadius * -1)} {ToS(endy * sectorRadius)} ");
-            }
-
-            pathStringBuilder.Append($"A {ToS(sectorRadius)} {ToS(sectorRadius)} 0 {largeArcFlag} 1 {ToS(endx * sectorRadius)} {ToS(endy * sectorRadius)} ");
-            pathStringBuilder.Append('Z');
+            var radius = CalculateScaledRadius(data, maxValue);
+            var coords = Rose<T>.GetSegmentCoordinates(currentAngle, angleStep, nonZeroCount);
+            var arc = Rose<T>.BuildRadialPath(coords, radius, angleStep, nonZeroCount);
 
             var midAngle = currentAngle + angleStep / 2;
-            var labelRadius = sectorRadius * 0.85; // Position label inside the sector a bit
-            var midX = 0d;
-            var midY = 0d;
+            var (x, y) = Rose<T>.GetRadialLabelPosition(midAngle, radius, nonZeroCount);
 
-            if (nonZeroCount > 1)
-            {
-                midX = Math.Cos(midAngle) * labelRadius;
-                midY = Math.Sin(midAngle) * labelRadius;
-            }
-
-            var path = new SvgPetal
+            _paths.Add(new SvgPetal
             {
                 Index = i,
-                Data = pathStringBuilder.ToString(),
-                SegmentRadius = sectorRadius,
+                Data = arc,
+                SegmentRadius = radius,
                 AngleRadians = angleStep,
-                LabelX = midX,
-                LabelY = midY,
+                LabelX = x,
+                LabelY = y,
                 LabelXValue = ChartOptions.ShowAsPercentage
-                                ? ToS(Math.Round(double.CreateSaturating(dataValue / normalizedData.SumGeneric()) * 100, 1)) + "%"
-                                : seriesdata.ToString(null, CultureInfo.InvariantCulture),
+                    ? $"{ToS(Math.Round(double.CreateSaturating(data / sum) * 100, 1))}%"
+                    : value.ToString(null, CultureInfo.InvariantCulture),
                 LabelYValue = chartLabels.Length > i ? chartLabels[i] : string.Empty
-            };
+            });
 
-            _paths.Add(path);
             currentAngle += angleStep;
         }
 
-        for (var i = 0; i < chartLabels.Length; i++)
-        {
-            var labels = chartLabels[i];
-            if (labels.Length == 0)
-                continue;
+        BuildLegends(chartLabels);
+    }
 
-            var legend = new SvgLegend()
-            {
-                Index = i,
-                Labels = labels,
-                Visible = ChartOptions.AggregationOption == AggregationOption.GroupByLabel ? !HiddenIndices.Contains(i) : ChartSeries[i].Visible,
-                OnVisibilityChanged = EventCallback.Factory.Create<SvgLegend>(this, HandleLegendVisibilityChanged)
-            };
-            _legends.Add(legend);
+    private double CalculateScaledRadius(T value, T max)
+    {
+        return Math.Max(0, Radius * double.CreateSaturating(value / max) * ChartOptions!.ScaleFactor);
+    }
+
+    private static SegmentCoordinates GetSegmentCoordinates(double angle, double step, int count) => new()
+    {
+        StartX = Math.Cos(angle),
+        StartY = Math.Sin(angle),
+        EndX = Math.Cos(angle + step),
+        EndY = Math.Sin(angle + step),
+        LargeArcFlag = (count == 1 || step > Math.PI) ? 1 : 0
+    };
+
+    private static string BuildRadialPath(SegmentCoordinates coords, double radius, double step, int count)
+    {
+        var sb = new StringBuilder();
+
+        sb.Append("M 0 0 ");
+        sb.Append($"L {ToS(coords.StartX * radius)} {ToS(coords.StartY * radius)} ");
+
+        if (count == 1)
+        {
+            sb.Append($"A {ToS(radius)} {ToS(radius)} 0 {coords.LargeArcFlag} 1 {ToS(coords.EndX * radius * -1)} {ToS(coords.EndY * radius)} ");
         }
+
+        sb.Append($"A {ToS(radius)} {ToS(radius)} 0 {coords.LargeArcFlag} 1 {ToS(coords.EndX * radius)} {ToS(coords.EndY * radius)} ");
+        sb.Append('Z');
+
+        return sb.ToString();
+    }
+
+    private static (double X, double Y) GetRadialLabelPosition(double midAngle, double radius, int count)
+    {
+        if (count <= 1)
+            return (0, 0);
+
+        var r = radius * 0.85;
+
+        return (Math.Cos(midAngle) * r, Math.Sin(midAngle) * r);
     }
 }

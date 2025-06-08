@@ -35,112 +35,102 @@ namespace MudBlazor.Charts
 
             var chartData = AggregateSeriesData(ChartOptions!.AggregationOption);
             var normalizedData = GetNormalizedData();
-            var cumulativeRadians = -Math.PI / 2; // Start at -90 degrees
-            var donutRadiusRatio = ChartOptions!.DonutRingRatio.EnsureRange(0.1, 1);
-            var chartLabels = ChartOptions!.AggregationOption == AggregationOption.GroupByDataSet
-                    ? ChartSeries.Select(ds => ds.Name).ToArray()
-                    : ChartLabels ?? [];
+            var cumulativeRadians = -Math.PI / 2;
+            var donutRatio = ChartOptions.DonutRingRatio.EnsureRange(0.1, 1);
+            var chartLabels = GetChartLabels();
 
             for (var i = 0; i < normalizedData.Length; i++)
             {
                 if (normalizedData[i] == T.Zero)
                     continue;
 
-                var seriesdata = T.Max(T.Zero, chartData[i]); //Ensure non-negative values
                 var data = normalizedData[i];
-                var startx = Math.Cos(cumulativeRadians);
-                var starty = Math.Sin(cumulativeRadians);
-                cumulativeRadians += 2 * Math.PI * double.CreateSaturating(data) / 2;
-                var midx = Math.Cos(cumulativeRadians);
-                var midy = Math.Sin(cumulativeRadians);
-                cumulativeRadians += 2 * Math.PI * double.CreateSaturating(data) / 2;
-                var endx = Math.Cos(cumulativeRadians);
-                var endy = Math.Sin(cumulativeRadians);
-                var largeArcFlag = double.CreateSaturating(data) > 0.5 ? 1 : 0;
+                var actualValue = T.Max(T.Zero, chartData[i]);
+                var radians = 2 * Math.PI * double.CreateSaturating(data);
+                var coords = Donut<T>.GetSegmentCoordinates(cumulativeRadians, radians);
+                cumulativeRadians += radians;
 
-                SvgPath path;
-                var pathStringBuilder = new StringBuilder();
-
-                // Calculate inner radius with a hole.
-                var innerRadius = Radius * (1 - donutRadiusRatio);
-
-                // Outer coordinates
-                var outerStartX = startx * Radius;
-                var outerStartY = starty * Radius;
-                var outerMidX = midx * Radius;
-                var outerMidY = midy * Radius;
-                var outerEndX = endx * Radius;
-                var outerEndY = endy * Radius;
-
-                // Inner coordinates (for the hole)
-                var innerStartX = startx * innerRadius;
-                var innerStartY = starty * innerRadius;
-                var innerMidX = midx * innerRadius;
-                var innerMidY = midy * innerRadius;
-                var innerEndX = endx * innerRadius;
-                var innerEndY = endy * innerRadius;
-
-
-                pathStringBuilder.Append($"M {ToS(outerStartX)} {ToS(outerStartY)} "); // Move to the start point
-                if (data >= T.One)
+                var geometry = new PathGeometry
                 {
-                    pathStringBuilder.Append($"A {ToS(Radius)} {ToS(Radius)} 0 {ToS(largeArcFlag)} 1 {ToS(outerMidX)} {ToS(outerMidY)} "); // Add an arc to a mid point half way through the slice (outer) to support 100% donuts
-                }
-                pathStringBuilder.Append($"A {ToS(Radius)} {ToS(Radius)} 0 {ToS(largeArcFlag)} 1 {ToS(outerEndX)} {ToS(outerEndY)} "); // Add an arc to the end point (outer)
-                pathStringBuilder.Append($"L {ToS(innerEndX)} {ToS(innerEndY)} "); // Line to the end point of the inner arc
-                if (data >= T.One)
-                {
-                    pathStringBuilder.Append($"A {ToS(innerRadius)} {ToS(innerRadius)} 0 {ToS(largeArcFlag)} 0 {ToS(innerMidX)} {ToS(innerMidY)} ");  // Add an arc to a mid point half way through the slice to support 100% donuts
-                }
-                pathStringBuilder.Append($"A {ToS(innerRadius)} {ToS(innerRadius)} 0 {ToS(largeArcFlag)} 0 {ToS(innerStartX)} {ToS(innerStartY)} Z"); // Add an arc to the start point (inner)
-
-                // Build a compound path: outer arc -> line to inner arc -> inner arc -> close
-                path = new SvgPath
-                {
-                    Index = i,
-                    Data = pathStringBuilder.ToString()
+                    Coords = coords,
+                    OuterRadius = Radius,
+                    InnerRadius = Radius * (1 - donutRatio),
+                    Data = data
                 };
 
-                // Calculate the midpoint angle
-                var midAngle = cumulativeRadians - Math.PI * double.CreateSaturating(data);
-                var midRadius = Radius * (1 - donutRadiusRatio / 2);
+                var pathData = Donut<T>.BuildSvgPath(geometry);
+                var midAngle = cumulativeRadians - radians / 2;
+                var (x, y) = Donut<T>.GetLabelPosition(midAngle, Radius, donutRatio, data);
 
-                var midX = 0d;
-                var midY = 0d;
-
-                if (donutRadiusRatio < 1 || data < T.One) // don't find mid point when donut is 100% and data is 100%, just use the 0,0 point.
-                {
-                    // Calculate the midpoint coordinates at half the radius
-                    midX = Math.Cos(midAngle) * midRadius;
-                    midY = Math.Sin(midAngle) * midRadius;
-                }
-
-                path.LabelX = midX;
-                path.LabelY = midY;
-                path.LabelXValue = ChartOptions.ShowAsPercentage
-                    ? Math.Round(double.CreateSaturating(data) * 100, 1).ToInvariantString() + "%"
-                    : seriesdata.ToString(null, CultureInfo.InvariantCulture);
-                path.LabelYValue = chartLabels.Length > i ? chartLabels[i] : string.Empty;
-
-                _paths.Add(path);
-            }
-
-            for (var i = 0; i < chartLabels.Length; i++)
-            {
-                var labels = chartLabels[i];
-
-                if (labels.Length == 0)
-                    continue;
-
-                var legend = new SvgLegend()
+                _paths.Add(new SvgPath
                 {
                     Index = i,
-                    Labels = labels,
-                    Visible = ChartOptions.AggregationOption == AggregationOption.GroupByLabel ? !HiddenIndices.Contains(i) : ChartSeries[i].Visible,
-                    OnVisibilityChanged = EventCallback.Factory.Create<SvgLegend>(this, HandleLegendVisibilityChanged)
-                };
-                _legends.Add(legend);
+                    Data = pathData,
+                    LabelX = x,
+                    LabelY = y,
+                    LabelXValue = ChartOptions.ShowAsPercentage
+                        ? $"{Math.Round(double.CreateSaturating(data) * 100, 1).ToInvariantString()}%"
+                        : actualValue.ToString(null, CultureInfo.InvariantCulture),
+                    LabelYValue = chartLabels.Length > i ? chartLabels[i] : string.Empty
+                });
             }
+
+            BuildLegends(chartLabels);
         }
+
+        private static SegmentCoordinates GetSegmentCoordinates(double startRadians, double segmentRadians)
+        {
+            var half = segmentRadians / 2;
+            return new SegmentCoordinates
+            {
+                StartX = Math.Cos(startRadians),
+                StartY = Math.Sin(startRadians),
+                MidX = Math.Cos(startRadians + half),
+                MidY = Math.Sin(startRadians + half),
+                EndX = Math.Cos(startRadians + segmentRadians),
+                EndY = Math.Sin(startRadians + segmentRadians)
+            };
+        }
+
+        private static string BuildSvgPath(PathGeometry g)
+        {
+            var sb = new StringBuilder();
+            var arcFlag = double.CreateSaturating(g.Data) > 0.5 ? 1 : 0;
+
+            static double ToR(double value, double radius) => value * radius;
+
+            sb.Append($"M {ToS(ToR(g.Coords.StartX, g.OuterRadius))} {ToS(ToR(g.Coords.StartY, g.OuterRadius))} ");
+
+            if (g.Data >= T.One)
+                sb.Append($"A {ToS(g.OuterRadius)} {ToS(g.OuterRadius)} 0 {arcFlag} 1 {ToS(ToR(g.Coords.MidX, g.OuterRadius))} {ToS(ToR(g.Coords.MidY, g.OuterRadius))} ");
+
+            sb.Append($"A {ToS(g.OuterRadius)} {ToS(g.OuterRadius)} 0 {arcFlag} 1 {ToS(ToR(g.Coords.EndX, g.OuterRadius))} {ToS(ToR(g.Coords.EndY, g.OuterRadius))} ");
+            sb.Append($"L {ToS(ToR(g.Coords.EndX, g.InnerRadius))} {ToS(ToR(g.Coords.EndY, g.InnerRadius))} ");
+
+            if (g.Data >= T.One)
+                sb.Append($"A {ToS(g.InnerRadius)} {ToS(g.InnerRadius)} 0 {arcFlag} 0 {ToS(ToR(g.Coords.MidX, g.InnerRadius))} {ToS(ToR(g.Coords.MidY, g.InnerRadius))} ");
+
+            sb.Append($"A {ToS(g.InnerRadius)} {ToS(g.InnerRadius)} 0 {arcFlag} 0 {ToS(ToR(g.Coords.StartX, g.InnerRadius))} {ToS(ToR(g.Coords.StartY, g.InnerRadius))} Z");
+
+            return sb.ToString();
+        }
+
+        private static (double X, double Y) GetLabelPosition(double angle, double outerRadius, double donutRatio, T data)
+        {
+            if (donutRatio >= 1 && data >= T.One)
+                return (0, 0);
+
+            var radius = outerRadius * (1 - donutRatio / 2);
+            return (Math.Cos(angle) * radius, Math.Sin(angle) * radius);
+        }
+
+        private readonly struct PathGeometry
+        {
+            public SegmentCoordinates Coords { get; init; }
+            public double OuterRadius { get; init; }
+            public double InnerRadius { get; init; }
+            public T Data { get; init; }
+        }
+
     }
 }

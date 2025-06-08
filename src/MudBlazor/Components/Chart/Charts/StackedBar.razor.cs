@@ -92,7 +92,6 @@ namespace MudBlazor.Charts
 
             var horizontalLines = IsOverlayChart ? SharedData!.Value.HorizontalLineCount - 1 : numHorizontalLines;
 
-            // Calculate spacing – note the horizontal space is computed so that the vertical grid lines line up
             horizontalSpace = _boundWidth - HorizontalStartSpace - HorizontalEndSpace;
             verticalSpace = (_boundHeight - VerticalStartSpace - VerticalEndSpace) / Math.Max(1, horizontalLines);
 
@@ -109,55 +108,73 @@ namespace MudBlazor.Charts
         private void ComputeStackedUnitsAndNumberOfLines(out int lowestHorizontalLine, out T gridYUnits, out int numHorizontalLines, out int numVerticalLines)
         {
             var yAxisTicks = ChartOptions?.YAxisTicks;
-            if (yAxisTicks.HasValue && yAxisTicks.Value > 0)
-                gridYUnits = T.CreateSaturating(yAxisTicks.Value);
-            else
-                gridYUnits = T.CreateSaturating(20);
 
-            // Determine the number of columns (i.e. vertical grid lines)
-            numVerticalLines = Series.Count != 0 ? Series.Max(series => series.Data.Values.Count) : 0;
+            gridYUnits = T.CreateSaturating(yAxisTicks.HasValue && yAxisTicks.Value > 0 ? yAxisTicks.Value : 20);
+            numVerticalLines = Series.Count == 0 ? 0 : Series.Max(series => series.Data.Values.Count);
 
             CalculateStrokeWidth(numVerticalLines);
 
-            // Compute the stacked total for each column
-            var stackedPositiveTotals = new T[numVerticalLines];
-            var stackedNegativeTotals = new T[numVerticalLines];
+            var (stackedPos, stackedNeg) = ComputeStackedColumnTotals(numVerticalLines);
+            var (maxY, minY) = GetYAxisExtremes(stackedPos, stackedNeg);
 
-            for (var j = 0; j < numVerticalLines; j++)
+            numHorizontalLines = StackedBar<T>.CalculateNumHorizontalLines(gridYUnits, maxY, minY, out lowestHorizontalLine);
+
+            ClampNumHorizontalLines(ref gridYUnits, ref numHorizontalLines, ref lowestHorizontalLine, maxY, minY);
+        }
+
+        private (T[] stackedPositive, T[] stackedNegative) ComputeStackedColumnTotals(int columnCount)
+        {
+            var posTotals = new T[columnCount];
+            var negTotals = new T[columnCount];
+
+            for (var j = 0; j < columnCount; j++)
             {
-                foreach (var series in Series)
+                foreach (var seriesData in Series.Select(x => x.Data))
                 {
-                    if (j < series.Data.Values.Count)
-                    {
-                        var dataValue = series.Data[j].Y;
+                    if (j >= seriesData.Values.Count)
+                        continue;
 
-                        if (dataValue < T.Zero)
-                            stackedNegativeTotals[j] += dataValue;
-                        else
-                            stackedPositiveTotals[j] += dataValue;
-                    }
+                    var value = seriesData[j].Y;
+
+                    if (value < T.Zero)
+                        negTotals[j] += value;
+                    else
+                        posTotals[j] += value;
                 }
             }
 
-            var maxY = stackedPositiveTotals.Length == 0 ? T.Zero : ChartOptions?.YAxisSuggestedMax is null
-                        ? stackedPositiveTotals.Max()
-                        : T.Max(T.CreateSaturating(ChartOptions.YAxisSuggestedMax.Value), stackedPositiveTotals.Max());
+            return (posTotals, negTotals);
+        }
 
-            var minY = stackedNegativeTotals.Length != 0 ? stackedNegativeTotals.Min() : T.Zero;
-            var highestHorizontalLine = Math.Max((int)Math.Ceiling(double.CreateSaturating(maxY / gridYUnits)), 0);
-            lowestHorizontalLine = Math.Min((int)Math.Floor(double.CreateSaturating(minY / gridYUnits)), 0);
-            numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
+        private (T maxY, T minY) GetYAxisExtremes(T[] stackedPositiveTotals, T[] stackedNegativeTotals)
+        {
+            var maxY = stackedPositiveTotals.Length == 0 ? T.Zero : stackedPositiveTotals.Max();
 
-            // this is a safeguard against millions of gridlines which might arise with very high values
-            var maxYTicks = ChartOptions?.MaxNumYAxisTicks ?? 20;
-            while (numHorizontalLines > maxYTicks)
+            if (ChartOptions?.YAxisSuggestedMax is { } suggestedMax)
+                maxY = T.Max(T.CreateSaturating(suggestedMax), maxY);
+
+            var minY = stackedNegativeTotals.Length == 0 ? T.Zero : stackedNegativeTotals.Min();
+
+            return (maxY, minY);
+        }
+
+        private static int CalculateNumHorizontalLines(T gridYUnits, T maxY, T minY, out int lowestLine)
+        {
+            var highestLine = Math.Max((int)Math.Ceiling(double.CreateSaturating(maxY / gridYUnits)), 0);
+            lowestLine = Math.Min((int)Math.Floor(double.CreateSaturating(minY / gridYUnits)), 0);
+            return highestLine - lowestLine + 1;
+        }
+
+        private void ClampNumHorizontalLines(ref T gridYUnits, ref int numLines, ref int lowestLine, T maxY, T minY)
+        {
+            var maxTicks = ChartOptions?.MaxNumYAxisTicks ?? 20;
+            while (numLines > maxTicks)
             {
                 gridYUnits *= T.CreateSaturating(2);
-                lowestHorizontalLine = Math.Min((int)Math.Floor(double.CreateSaturating(minY / gridYUnits)), 0);
-                highestHorizontalLine = Math.Max((int)Math.Ceiling(double.CreateSaturating(maxY / gridYUnits)), 0);
-                numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
+                numLines = CalculateNumHorizontalLines(gridYUnits, maxY, minY, out lowestLine);
             }
         }
+
 
         private void CalculateStrokeWidth(int numVerticalLines)
         {
@@ -196,7 +213,6 @@ namespace MudBlazor.Charts
             VerticalLines.Clear();
             VerticalValues.Clear();
 
-            var startPadding = (_barWidth / 2) + (horizontalSpace * (1 - ChartOptions!.BarWidthRatio) / 2);
             var maxSeriesLength = Series.Count != 0 ? Series.Max(series => series.Data.Values.Count) : 0;
             var barPositions = CalculateBarGroupPositions(horizontalSpace, maxSeriesLength);
 
@@ -229,55 +245,42 @@ namespace MudBlazor.Charts
         {
             _bars.Clear();
 
-            var startPadding = (_barWidth / 2) + (horizontalSpace * (1 - ChartOptions!.BarWidthRatio) / 2);
-
-            // For each series, stack the bars in each column
             var maxSeriesLength = Series.Count != 0 ? Series.Max(series => series.Data.Values.Count) : 0;
             var barPositions = CalculateBarGroupPositions(horizontalSpace, maxSeriesLength);
 
-            for (var j = 0; j < maxSeriesLength; j++)
+            for (var dataIndex = 0; dataIndex < maxSeriesLength; dataIndex++)
             {
-                var x = barPositions[j];
+                var x = barPositions[dataIndex];
+                var baseY = _boundHeight - VerticalStartSpace + (lowestHorizontalLine * verticalSpace);
+                var positiveStack = baseY;
+                var negativeStack = baseY;
 
-                var yStart = _boundHeight - VerticalStartSpace + (lowestHorizontalLine * verticalSpace);
-                var positiveEnd = yStart;
-                var negativeEnd = yStart;
-
-                for (var i = 0; i < Series.Count; i++)
+                foreach (var (series, seriesIndex) in Series.Select((s, i) => (s, i)))
                 {
-                    var series = Series[i];
-                    // Ensure the series has data for this index
-                    if (j >= series.Data.Values.Count)
-                    {
+                    if (dataIndex >= series.Data.Values.Count)
                         continue;
-                    }
 
-                    var dataValue = series.Visible ? series.Data[j].Y : T.Zero;
+                    var dataValue = series.Visible ? series.Data[dataIndex].Y : T.Zero;
                     var segmentHeight = (dataValue / T.CreateSaturating(gridYUnits)) * T.CreateSaturating(verticalSpace);
+                    var isNegative = dataValue < T.Zero;
 
-                    if (dataValue < T.Zero)
-                        yStart = negativeEnd;
-                    else
-                        yStart = positiveEnd;
-
+                    var yStart = isNegative ? negativeStack : positiveStack;
                     var yEnd = yStart - double.CreateSaturating(segmentHeight);
 
-                    var bar = new SvgPath()
+                    _bars.Add(new SvgPath
                     {
-                        Index = i,
+                        Index = seriesIndex,
                         Data = $"M {ToS(x)} {ToS(yStart)} L {ToS(x)} {ToS(yEnd - BarOverlapAmountFix)}",
-                        LabelXValue = ChartLabels.Length > j ? ChartLabels[j] : string.Empty,
+                        LabelXValue = ChartLabels.Length > dataIndex ? ChartLabels[dataIndex] : string.Empty,
                         LabelYValue = dataValue.ToString(series.TooltipYValueFormat, null),
                         LabelX = x,
-                        LabelY = dataValue < T.Zero ? yStart : yEnd
-                    };
-                    _bars.Add(bar);
+                        LabelY = isNegative ? yStart : yEnd
+                    });
 
-                    // Keep track of the offset for the next series at the same vertical
-                    if (dataValue < T.Zero)
-                        negativeEnd = yEnd;
+                    if (isNegative)
+                        negativeStack = yEnd;
                     else
-                        positiveEnd = yEnd;
+                        positiveStack = yEnd;
                 }
             }
         }
@@ -370,7 +373,7 @@ namespace MudBlazor.Charts
             var spaceCount = maxColumns - 1;
             var remainingWidth = horizontalSpace - (_barWidth * maxColumns);
             var spaceWidth = remainingWidth * ChartOptions!.SeriesSpacingRatio.EnsureRange(0.0, 1.0);
-            var spaceBetweenBars = spaceCount > 0 ? spaceWidth / spaceCount : 0;
+            var spaceBetweenBars = spaceWidth / spaceCount;
 
             return (int)Math.Max(0, spaceBetweenBars);
         }

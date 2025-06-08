@@ -94,14 +94,9 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
 
             var interpolationEnabled = ShouldInterpolate && interpolationOption is not InterpolationOption.Straight and not null;
 
-            if (interpolationEnabled)
-            {
-                GenerateInterpolatedLines(i, chartLine, chartDataCircles, lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace, out firstPointX, out firstPointY, out lastPointX);
-            }
-            else
-            {
-                GenerateStraightLines(i, chartLine, chartDataCircles, lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace, out firstPointX, out firstPointY, out lastPointX);
-            }
+            (firstPointX, firstPointY, lastPointX) = interpolationEnabled
+                ? GenerateInterpolatedLines(i, chartLine, chartDataCircles, lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace)
+                : GenerateStraightLines(i, chartLine, chartDataCircles, lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace);
 
             var line = new SvgPath()
             {
@@ -119,13 +114,15 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
         }
     }
 
-    protected void GenerateStraightLines(int seriesIndex, StringBuilder chartLine, List<SvgCircle> chartDataCircles,
-                                 int lowestHorizontalLine, T gridYUnits, double horizontalSpace, double verticalSpace,
-                                 out double firstPointX, out double firstPointY, out double lastPointX)
+    protected (double firstX, double firstY, double lastX) GenerateStraightLines(int seriesIndex,
+                                                                                 StringBuilder chartLine,
+                                                                                 List<SvgCircle> chartDataCircles,
+                                                                                 int lowestHorizontalLine,
+                                                                                 T gridYUnits,
+                                                                                 double horizontalSpace,
+                                                                                 double verticalSpace)
     {
-        firstPointX = 0;
-        firstPointY = 0;
-        lastPointX = 0;
+        double firstPointX = 0, firstPointY = 0, lastPointX = 0;
 
         var series = Series[seriesIndex];
         var dataLength = series.Data.Points.Count;
@@ -166,15 +163,19 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
                 });
             }
         }
+
+        return (firstPointX, firstPointY, lastPointX);
     }
 
-    protected void GenerateInterpolatedLines(int seriesIndex, StringBuilder chartLine, List<SvgCircle> chartDataCircles,
-                                     int lowestHorizontalLine, T gridYUnits, double horizontalSpace, double verticalSpace,
-                                     out double firstPointX, out double firstPointY, out double lastPointX)
+    protected (double firstX, double firstY, double lastX) GenerateInterpolatedLines(int seriesIndex,
+                                                                                     StringBuilder chartLine,
+                                                                                     List<SvgCircle> chartDataCircles,
+                                                                                     int lowestHorizontalLine,
+                                                                                     T gridYUnits,
+                                                                                     double horizontalSpace,
+                                                                                     double verticalSpace)
     {
-        firstPointX = 0;
-        firstPointY = 0;
-        lastPointX = 0;
+        double firstPointX = 0, firstPointY = 0, lastPointX = 0;
 
         var interpolationResolution = 10;
         var interpolator = CreateInterpolator(seriesIndex, lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace);
@@ -220,6 +221,8 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
                 });
             }
         }
+
+        return (firstPointX, firstPointY, lastPointX);
     }
 
     protected virtual string GetDataValueAsString(int seriesIndex, int dataPointIndex)

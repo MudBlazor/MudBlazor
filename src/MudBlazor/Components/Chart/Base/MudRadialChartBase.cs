@@ -61,7 +61,7 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
         HiddenIndices.Clear();
         _hoveredSegment = null;
 
-        if (MatchBoundsToSize is true && _elementSize is null) return;
+        if (MatchBoundsToSize && _elementSize is null) return;
 
         if (ChartSeries == null || ChartSeries.Count == 0)
             return;
@@ -76,57 +76,85 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
         OnElementSizeChanged(elementSize);
     }
 
+    protected string[] GetChartLabels()
+    {
+        return ChartOptions!.AggregationOption == AggregationOption.GroupByDataSet
+            ? ChartSeries.Select(ds => ds.Name).ToArray()
+            : ChartLabels ?? [];
+    }
+
     protected T[] AggregateSeriesData(AggregationOption aggregation)
     {
-        if (aggregation == AggregationOption.None || ChartSeries is null || !ChartSeries.Any(x => x.Visible))
+        if (aggregation == AggregationOption.None || ChartSeries is null || ChartSeries.Count == 0 || !ChartSeries.Any(x => x.Visible))
             return [];
 
         var maxCategoryLength = ChartOptions!.AggregationOption == AggregationOption.GroupByLabel
-                ? ChartLabels.Length == 0
-                    ? ChartSeries.Count > 0 ? ChartSeries.Where(x => x.Data?.Values != null).DefaultIfEmpty().Max(x => x?.Data?.Values.Count ?? 0) : 0
-                    : ChartLabels.Length
+                ? GetMaxCategoryLengthForLabelGrouping()
                 : ChartSeries.Count;
+
         var aggregated = new T[maxCategoryLength];
 
-        switch (aggregation)
+        return aggregation switch
         {
-            case AggregationOption.GroupByLabel:
-                foreach (var series in ChartSeries)
-                {
-                    if (!series.Visible)
-                        continue;
+            AggregationOption.GroupByLabel => AggregateByLabel(aggregated),
+            AggregationOption.GroupByDataSet => AggregateByDataSet(aggregated),
+            _ => throw new ArgumentOutOfRangeException(nameof(aggregation), $"Unsupported aggregation: {aggregation}")
+        };
+    }
 
-                    var values = series.Data?.Values ?? [];
+    private int GetMaxCategoryLengthForLabelGrouping()
+    {
+        if (ChartLabels.Length > 0)
+            return ChartLabels.Length;
 
-                    for (var i = 0; i < values.Count; i++)
-                    {
-                        if (HiddenIndices.Contains(i))
-                            continue;
+        return ChartSeries.Where(x => x.Data?.Values != null).DefaultIfEmpty()
+                          .Max(x => x?.Data?.Values.Count ?? 0);
+    }
 
-                        aggregated[i] += values[i];
-                    }
-                }
-                break;
+    private T[] AggregateByLabel(T[] aggregated)
+    {
+        foreach (var series in ChartSeries.Where(s => s.Visible))
+        {
+            var values = series.Data?.Values ?? [];
 
-            case AggregationOption.GroupByDataSet:
-                var index = -1;
+            for (var i = 0; i < values.Count; i++)
+            {
+                if (!HiddenIndices.Contains(i))
+                    aggregated[i] += values[i];
+            }
+        }
 
-                foreach (var series in ChartSeries)
-                {
-                    index++;
+        return aggregated;
+    }
 
-                    if (!series.Visible)
-                        continue;
+    protected void BuildLegends(string[] chartLabels)
+    {
+        for (var i = 0; i < chartLabels.Length; i++)
+        {
+            var label = chartLabels[i];
 
-                    if (index >= aggregated.Length)
-                        break;
+            if (string.IsNullOrWhiteSpace(label))
+                continue;
 
-                    aggregated[index] = series.Data.Values.SumGeneric();
-                }
-                break;
+            _legends.Add(new SvgLegend
+            {
+                Index = i,
+                Labels = label,
+                Visible = ChartOptions!.AggregationOption == AggregationOption.GroupByLabel
+                    ? !HiddenIndices.Contains(i)
+                    : ChartSeries[i].Visible,
+                OnVisibilityChanged = EventCallback.Factory.Create<SvgLegend>(this, HandleLegendVisibilityChanged)
+            });
+        }
+    }
 
-            default:
-                throw new ArgumentOutOfRangeException(nameof(aggregation), $"Unsupported aggregation: {aggregation}");
+    private T[] AggregateByDataSet(T[] aggregated)
+    {
+        var visibleSeries = ChartSeries.Where(s => s.Visible).Take(aggregated.Length);
+
+        foreach (var (series, index) in visibleSeries.Select((s, i) => (s, i)))
+        {
+            aggregated[index] = series.Data.Values.SumGeneric();
         }
 
         return aggregated;
@@ -137,17 +165,17 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
         _boundWidth = BoundWidthDefault;
         _boundHeight = BoundHeightDefault;
 
-        if (MudChartParent?.MatchBoundsToSize is true)
+        if (MatchBoundsToSize)
         {
             if (_elementSize is not null)
             {
                 _boundWidth = _elementSize.Width;
                 _boundHeight = _elementSize.Height;
             }
-            else if (MudChartParent.Width.EndsWith("px")
-                && MudChartParent.Height.EndsWith("px")
-                && double.TryParse(MudChartParent.Width.AsSpan(0, MudChartParent.Width.Length - 2), out var width)
-                && double.TryParse(MudChartParent.Height.AsSpan(0, MudChartParent.Height.Length - 2), out var height))
+            else if (Width.EndsWith("px")
+                && Height.EndsWith("px")
+                && double.TryParse(Width.AsSpan(0, Width.Length - 2), out var width)
+                && double.TryParse(Height.AsSpan(0, Height.Length - 2), out var height))
             {
                 _boundWidth = width;
                 _boundHeight = height;
@@ -184,6 +212,16 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
 
         RebuildChart();
     }
+    protected readonly struct SegmentCoordinates
+    {
+        public double StartX { get; init; }
+        public double StartY { get; init; }
+        public double MidX { get; init; }
+        public double MidY { get; init; }
+        public double EndX { get; init; }
+        public double EndY { get; init; }
+        public int LargeArcFlag { get; init; }
+    }
 
     internal virtual void OnSegmentMouseOver(MouseEventArgs args, SvgPath segment) => _hoveredSegment = segment;
 
@@ -197,7 +235,7 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
 
         _elementSize = elementSize;
 
-        if (MudChartParent?.MatchBoundsToSize is not true)
+        if (!MatchBoundsToSize)
             return;
 
         var minDimension = Math.Min(_elementSize.Width, _elementSize.Height);

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.Interfaces;
+using MudBlazor.Justification.BarGroup;
 
 #nullable enable
 namespace MudBlazor.Charts
@@ -115,21 +116,16 @@ namespace MudBlazor.Charts
                     ? allValues.Max()
                     : T.Max(T.CreateSaturating(ChartOptions.YAxisSuggestedMax.Value), allValues.Max());
 
-                var minYDivided = minY / gridYUnits;
-                var maxYDivided = maxY / gridYUnits;
-
                 lowestHorizontalLine = Math.Min((int)Math.Floor(double.CreateSaturating(minY / gridYUnits)), 0);
                 var highestHorizontalLine = Math.Max((int)Math.Ceiling(double.CreateSaturating(maxY / gridYUnits)), 0);
                 numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
 
                 // Safeguard against too many gridlines
                 var maxYTicks = ChartOptions?.MaxNumYAxisTicks ?? 20;
+
                 while (numHorizontalLines > maxYTicks)
                 {
                     gridYUnits *= T.CreateSaturating(2);
-                    minYDivided = minY / gridYUnits;
-                    maxYDivided = maxY / gridYUnits;
-
                     lowestHorizontalLine = Math.Min((int)Math.Floor(double.CreateSaturating(minY / gridYUnits)), 0);
                     highestHorizontalLine = Math.Max((int)Math.Ceiling(double.CreateSaturating(maxY / gridYUnits)), 0);
 
@@ -224,100 +220,23 @@ namespace MudBlazor.Charts
 
             if (dataSetCount == 0) return [];
 
-            var positions = new double[columnsPerDataSet];
-            var spaceBetweenGroups = Math.Max(dataSetCount == 1 ? 0 : _barGroupWidth, CalculateSpaceWidth(horizontalSpace, columnsPerDataSet));
-            var centerOffset = _barGroupWidth / 2;
-            var barWidthOffset = _barWidth / 2;
-            var barGapOffset = _barGap / 2;
-            var spacingOffset = spaceBetweenGroups / 2;
-            var spacingRatioOffset = ChartOptions!.SeriesSpacingRatio / 2;
-            var spacesPerGroup = dataSetCount - 1;
-            var gapsPerDataSet = columnsPerDataSet - 1;
-            var startingPoint = centerOffset;
-            var availableSpace = horizontalSpace - ((_barWidth * dataSetCount * columnsPerDataSet) + (_barGap * spacesPerGroup * columnsPerDataSet));
-
-            switch (ChartOptions.Justify)
+            var context = new BarGroupContext
             {
-                case Justify.FlexStart:
-                    startingPoint += HorizontalStartSpace;
+                ColumnsPerDataSet = columnsPerDataSet,
+                DataSetCount = dataSetCount,
+                HorizontalSpace = horizontalSpace,
+                BarWidth = _barWidth,
+                BarGap = _barGap,
+                BarGroupWidth = _barGroupWidth,
+                HorizontalStartSpace = HorizontalStartSpace,
+                HorizontalEndSpace = HorizontalEndSpace,
+                SeriesSpacingRatio = ChartOptions!.SeriesSpacingRatio,
+                CalculateSpaceWidth = CalculateSpaceWidth
+            };
 
-                    for (var i = 0; i < columnsPerDataSet; i++)
-                    {
-                        positions[i] = startingPoint + i * (spaceBetweenGroups + _barWidth + barGapOffset * spacingRatioOffset);
-                    }
-                    break;
+            var strategy = BarGroupStrategyFactory.GetStrategy(ChartOptions.Justify);
 
-                case Justify.FlexEnd:
-                    startingPoint = horizontalSpace + HorizontalEndSpace - (dataSetCount * _barGroupWidth + gapsPerDataSet * (spaceBetweenGroups + _barWidth)) + spacesPerGroup * barGapOffset;
-
-                    centerOffset = dataSetCount switch
-                    {
-                        <= 2 => centerOffset + spacesPerGroup * barGapOffset,
-                        3 => _barGroupWidth * spacesPerGroup,
-                        _ => (_barGroupWidth * spacesPerGroup) + (_barWidth * (spacesPerGroup - 2) * 0.5)
-                    };
-
-                    for (var i = 0; i < columnsPerDataSet; i++)
-                    {
-                        positions[i] = startingPoint + centerOffset + i * (spaceBetweenGroups + _barWidth - ((_barGap - _barWidth) / 64));
-                    }
-                    break;
-
-                case Justify.Center:
-                    startingPoint = HorizontalStartSpace + (horizontalSpace - dataSetCount * _barGroupWidth) / 2;
-
-                    centerOffset = dataSetCount switch
-                    {
-                        <= 2 => _barGroupWidth / 2,
-                        3 => _barGroupWidth + barWidthOffset,
-                        _ => ((_barGroupWidth + _barWidth) * (spacesPerGroup / 2.0)) - barWidthOffset
-                    };
-                    var leftShift = gapsPerDataSet * (barWidthOffset + spacingOffset);
-
-                    for (var i = 0; i < columnsPerDataSet; i++)
-                    {
-                        positions[i] = startingPoint + centerOffset - leftShift + spacesPerGroup * barGapOffset + i * (spaceBetweenGroups + _barWidth + barGapOffset * spacingRatioOffset);
-                    }
-                    break;
-
-                case Justify.SpaceBetween:
-                    if (columnsPerDataSet == 1)
-                    {
-                        positions[0] = startingPoint + HorizontalStartSpace + (horizontalSpace - (_barWidth * dataSetCount) - (_barGap * spacesPerGroup)) / 2;
-                        return positions;
-                    }
-
-                    var spaceBetween = availableSpace / Math.Max(1, gapsPerDataSet);
-
-                    for (var i = 0; i < columnsPerDataSet; i++)
-                    {
-                        positions[i] = startingPoint + HorizontalStartSpace + i * ((_barWidth * dataSetCount) + (_barGap * spacesPerGroup) + spaceBetween);
-                    }
-                    break;
-
-                case Justify.SpaceAround:
-                    var spaceAround = horizontalSpace / (columnsPerDataSet * 2);
-                    var offset = HorizontalStartSpace + spaceAround - (dataSetCount == 1 ? 0 : barWidthOffset);
-
-                    for (var i = 0; i < columnsPerDataSet; i++)
-                    {
-                        positions[i] = offset + i * spaceAround * 2;
-                    }
-                    break;
-
-                case Justify.SpaceEvenly:
-                    var evenSpace = availableSpace / (columnsPerDataSet + 1);
-
-                    positions[0] = startingPoint += HorizontalStartSpace + evenSpace;
-
-                    for (var i = 1; i < columnsPerDataSet; i++)
-                    {
-                        positions[i] = positions[i - 1] + evenSpace + (_barWidth * dataSetCount) + (_barGap * spacesPerGroup);
-                    }
-                    break;
-            }
-
-            return positions;
+            return strategy.CalculatePositions(context);
         }
 
         private int CalculateSpaceWidth(double horizontalSpace, int groupCount)
@@ -327,7 +246,7 @@ namespace MudBlazor.Charts
             var spaceCount = groupCount - 1;
             var remainingWidth = horizontalSpace - HorizontalStartSpace - HorizontalEndSpace - ((_barGroupWidth + (_barWidth / 2)) * groupCount);
             var spaceWidth = remainingWidth * ChartOptions!.SeriesSpacingRatio.EnsureRange(0.01, 1.0);
-            var spaceBetweenGroups = spaceCount > 0 ? spaceWidth / spaceCount : 0;
+            var spaceBetweenGroups = spaceWidth / spaceCount;
 
             return (int)Math.Max(0, spaceBetweenGroups);
         }

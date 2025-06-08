@@ -102,7 +102,7 @@ public partial class BaseRadialChart<T, TChartOptions> : MudComponentBase
 
     private string GetColor(int index)
     {
-        if (ChartOptions?.ChartPalette is null || ChartOptions?.ChartPalette.Length == 0)
+        if (ChartOptions?.ChartPalette is null || ChartOptions.ChartPalette.Length == 0)
             return string.Empty;
 
         return ChartOptions!.ChartPalette.GetValue(index % ChartOptions.ChartPalette.Length)?.ToString() ?? string.Empty;
@@ -122,7 +122,7 @@ public partial class BaseRadialChart<T, TChartOptions> : MudComponentBase
         if (string.IsNullOrWhiteSpace(tooltipTitleFormat))
             return (string.Empty, string.Empty);
 
-        var title = tooltipTitleFormat?
+        var title = tooltipTitleFormat
             .Replace("{{SERIES_NAME}}", GetSeriesName(ChartOptions.AggregationOption))
             .Replace("{{X_VALUE}}", HoveredSegment.LabelXValue)
             .Replace("{{Y_VALUE}}", HoveredSegment.LabelYValue);

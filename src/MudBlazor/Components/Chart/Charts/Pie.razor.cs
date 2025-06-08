@@ -35,95 +35,80 @@ namespace MudBlazor.Charts
 
             var chartData = AggregateSeriesData(ChartOptions!.AggregationOption);
             var normalizedData = GetNormalizedData();
-            var cumulativeRadians = -Math.PI / 2; // Start at -90 degrees
-            var chartLabels = ChartOptions!.AggregationOption == AggregationOption.GroupByDataSet
-                    ? ChartSeries.Select(ds => ds.Name).ToArray()
-                    : ChartLabels ?? [];
+            var cumulativeRadians = -Math.PI / 2;
+            var chartLabels = GetChartLabels();
 
             for (var i = 0; i < normalizedData.Length; i++)
             {
                 if (normalizedData[i] == T.Zero)
                     continue;
 
-                var seriesdata = T.Max(T.Zero, chartData[i]); //Ensure non-negative values
                 var data = normalizedData[i];
+                var value = T.Max(T.Zero, chartData[i]);
+                var radians = 2 * Math.PI * double.CreateSaturating(data);
+                var half = radians / 2;
 
-                var startx = Math.Cos(cumulativeRadians);
-                var starty = Math.Sin(cumulativeRadians);
+                var coords = Pie<T>.GetSegmentCoordinates(cumulativeRadians, half, radians);
+                cumulativeRadians += radians;
 
-                var sliceAngleRadians = 2 * Math.PI * double.CreateSaturating(data);
-                var halfAngle = sliceAngleRadians / 2;
+                var pathData = Pie<T>.BuildSvgPath(coords, Radius, data);
 
-                cumulativeRadians += halfAngle;
-
-                var midx = Math.Cos(cumulativeRadians);
-                var midy = Math.Sin(cumulativeRadians);
-
-                cumulativeRadians += halfAngle;
-
-                var endx = Math.Cos(cumulativeRadians);
-                var endy = Math.Sin(cumulativeRadians);
-                var largeArcFlag = double.CreateSaturating(data) > 0.5 ? 1 : 0;
-
-                var pathStringBuilder = new StringBuilder();
-
-                pathStringBuilder.Append($"M {ToS(startx * Radius)} {ToS(starty * Radius)} "); // Move to the start point
-                if (data >= T.One)
-                {
-                    pathStringBuilder.Append($"A {ToS(Radius)} {ToS(Radius)} 0 {ToS(largeArcFlag)} 1 {ToS(midx * Radius)} {ToS(midy * Radius)} "); // Add an arc to a mid point half way through the slice to support 100% pies
-                }
-                pathStringBuilder.Append($"A {ToS(Radius)} {ToS(Radius)} 0 {ToS(largeArcFlag)} 1 {ToS(endx * Radius)} {ToS(endy * Radius)} "); // Add an arc to the end point
-                pathStringBuilder.Append("L 0 0 Z"); // Line to the center
-
-                // Calculate the midpoint angle
                 var midAngle = cumulativeRadians - Math.PI * double.CreateSaturating(data);
-                var midRadius = Radius * 0.5d;
+                var (x, y) = Pie<T>.GetLabelPosition(midAngle, Radius, data);
 
-                var midX = 0d;
-                var midY = 0d;
-
-                if (data < T.One) // don't find mid point when data is 100%, just use the 0,0 point.
-                {
-                    // Calculate the midpoint coordinates at half the radius
-                    midX = Math.Cos(midAngle) * midRadius;
-                    midY = Math.Sin(midAngle) * midRadius;
-                }
-
-                // Standard pie slice path going to the center.
-                var path = new SvgPetal
+                _paths.Add(new SvgPetal
                 {
                     Index = i,
-                    Data = pathStringBuilder.ToString(),
-                    LabelX = midX,
-                    LabelY = midY,
+                    Data = pathData,
+                    LabelX = x,
+                    LabelY = y,
                     LabelXValue = ChartOptions.ShowAsPercentage
-                        ? Math.Round(double.CreateSaturating(data) * 100, 1).ToInvariantString() + "%"
-                        : seriesdata.ToString(null, CultureInfo.InvariantCulture),
+                        ? $"{Math.Round(double.CreateSaturating(data) * 100, 1).ToInvariantString()}%"
+                        : value.ToString(null, CultureInfo.InvariantCulture),
                     LabelYValue = chartLabels.Length > i ? chartLabels[i] : string.Empty,
                     SegmentRadius = Radius,
-                    AngleRadians = sliceAngleRadians,
+                    AngleRadians = radians,
                     LabelOffset = 0.5,
-                };
-
-                _paths.Add(path);
+                });
             }
 
-            for (var i = 0; i < chartLabels.Length; i++)
+            BuildLegends(chartLabels);
+        }
+
+        private static SegmentCoordinates GetSegmentCoordinates(double startAngle, double halfAngle, double fullAngle)
+        {
+            return new SegmentCoordinates
             {
-                var labels = chartLabels[i];
+                StartX = Math.Cos(startAngle),
+                StartY = Math.Sin(startAngle),
+                MidX = Math.Cos(startAngle + halfAngle),
+                MidY = Math.Sin(startAngle + halfAngle),
+                EndX = Math.Cos(startAngle + fullAngle),
+                EndY = Math.Sin(startAngle + fullAngle),
+                LargeArcFlag = fullAngle > Math.PI ? 1 : 0
+            };
+        }
 
-                if (labels.Length == 0)
-                    continue;
+        private static string BuildSvgPath(SegmentCoordinates c, double radius, T data)
+        {
+            var sb = new StringBuilder();
 
-                var legend = new SvgLegend()
-                {
-                    Index = i,
-                    Labels = labels,
-                    Visible = ChartOptions.AggregationOption == AggregationOption.GroupByLabel ? !HiddenIndices.Contains(i) : ChartSeries[i].Visible,
-                    OnVisibilityChanged = EventCallback.Factory.Create<SvgLegend>(this, HandleLegendVisibilityChanged)
-                };
-                _legends.Add(legend);
-            }
+            sb.Append($"M {ToS(c.StartX * radius)} {ToS(c.StartY * radius)} ");
+            if (data >= T.One)
+                sb.Append($"A {ToS(radius)} {ToS(radius)} 0 {c.LargeArcFlag} 1 {ToS(c.MidX * radius)} {ToS(c.MidY * radius)} ");
+            sb.Append($"A {ToS(radius)} {ToS(radius)} 0 {c.LargeArcFlag} 1 {ToS(c.EndX * radius)} {ToS(c.EndY * radius)} ");
+            sb.Append("L 0 0 Z");
+
+            return sb.ToString();
+        }
+
+        private static (double X, double Y) GetLabelPosition(double angle, double radius, T data)
+        {
+            if (data >= T.One)
+                return (0, 0);
+
+            var r = radius * 0.5;
+            return (Math.Cos(angle) * r, Math.Sin(angle) * r);
         }
     }
 }

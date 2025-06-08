@@ -95,7 +95,7 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
     {
         base.OnParametersSet();
 
-        if (MatchBoundsToSize is true && _elementSize is null) return;
+        if (MatchBoundsToSize && _elementSize is null) return;
 
         RebuildChart();
     }
@@ -232,7 +232,7 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
             Timestamp = elementSize.Timestamp
         };
 
-        if (ChartContainer?.MatchBoundsToSize is not true)
+        if (!MatchBoundsToSize)
             return;
 
         if (Math.Abs(_boundWidth - _elementSize.Width) < Epsilon &&

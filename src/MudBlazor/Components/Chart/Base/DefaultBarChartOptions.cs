@@ -22,7 +22,7 @@ public abstract class DefaultBarChartOptions : DefaultAxisChartOptions
     /// Defaults to <c>1</c> (100%). 
     /// This setting is only applicable when using <see cref="Justify.FlexStart"/>, <see cref="Justify.Center"/>, or <see cref="Justify.FlexEnd"/>.
     /// </remarks>
-    public double SeriesSpacingRatio
+    public virtual double SeriesSpacingRatio
     {
         get => _seriesSpacingRatio;
         set => _seriesSpacingRatio = Math.Clamp(value, 0.1, 1.0);
