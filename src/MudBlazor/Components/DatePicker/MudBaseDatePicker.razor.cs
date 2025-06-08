@@ -22,7 +22,6 @@ namespace MudBlazor
             Culture = CultureInfo.CurrentCulture
         })
         {
-            AdornmentAriaLabel = "Open Date Picker";
             _mudPickerCalendarContentElementId = Identifier.Create();
         }
 
@@ -707,6 +706,7 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             base.OnInitialized();
+            AdornmentAriaLabel ??= Localizer[Resources.LanguageResource.MudBaseDatePicker_Open];
             CurrentView = OpenTo;
 
             if (HighlightedDate is not null) return;

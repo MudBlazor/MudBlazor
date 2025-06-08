@@ -2,14 +2,14 @@
 
 @inject IDialogService DialogService
 
-<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Open">Open Inline</MudButton>
-<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Open2Async">Open With Show</MudButton>
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Open">Open inline</MudButton>
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Open2Async">Open with show</MudButton>
 
 @*Outer inline dialog*@
 <MudDialog @bind-Visible="_visible">
     <DialogContent>
         <MudText>Hi There, I'm an inline dialog!</MudText>
-        <MudButton Variant="Variant.Filled" Color="Color.Tertiary" OnClick="OpenNested">Open Nested</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Tertiary" OnClick="OpenNested">Open nested</MudButton>
         @*Nested inline dialog*@
         <MudDialog @bind-Visible="_nestedVisible">
             <DialogContent>

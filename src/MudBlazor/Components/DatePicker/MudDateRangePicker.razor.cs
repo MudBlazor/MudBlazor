@@ -29,7 +29,6 @@ namespace MudBlazor
                 .WithChangeHandler(RecalculateValidDays);
 
             DisplayMonths = 2;
-            AdornmentAriaLabel = "Open Date Range Picker";
         }
 
         /// <summary>
