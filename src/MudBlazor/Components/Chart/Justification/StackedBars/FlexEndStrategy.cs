@@ -9,12 +9,11 @@ internal class FlexEndStrategy : IStackedBarPositionStrategy
     public double[] CalculatePositions(StackedBarContext ctx)
     {
         var positions = new double[ctx.MaxColumns];
-        var spaceBetweenBars = (ctx.HorizontalSpace - (ctx.MaxColumns * ctx.BarWidth)) / Math.Max(ctx.MaxColumns - 1, 1);
-        var totalWidth = (ctx.MaxColumns * ctx.BarWidth) + (spaceBetweenBars * (ctx.MaxColumns - 1));
-        var start = ctx.HorizontalSpace + ctx.HorizontalStartSpace + ctx.HorizontalEndSpace - totalWidth + (ctx.BarWidth / 2);
+        var totalWidth = (ctx.MaxColumns * ctx.BarWidth) + (ctx.SpaceBetweenBars * (ctx.MaxColumns - 1));
+        var start = ctx.HorizontalSpace + ctx.HorizontalEndSpace - totalWidth + (ctx.BarWidth / 2);
 
         for (var i = 0; i < ctx.MaxColumns; i++)
-            positions[i] = start + i * (spaceBetweenBars + ctx.BarWidth);
+            positions[i] = start + i * (ctx.SpaceBetweenBars + ctx.BarWidth);
 
         return positions;
     }

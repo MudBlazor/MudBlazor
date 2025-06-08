@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.Interfaces;
+using MudBlazor.Justification.StackedBars;
 
 #nullable enable
 namespace MudBlazor.Charts
@@ -76,13 +77,7 @@ namespace MudBlazor.Charts
 
             GenerateStackedBars(lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace);
             GenerateLegends();
-
-            if (OverlayChart is IMudAxisChart<T> overlay)
-            {
-                overlay.SharedData = SharedData;
-                overlay.RebuildChart();
-                StateHasChanged();
-            }
+            RenderOverlay();
         }
 
         private void GeneratePlotArea(out int lowestHorizontalLine, out T gridYUnits, out int numHorizontalLines, out double horizontalSpace, out double verticalSpace)
@@ -174,7 +169,6 @@ namespace MudBlazor.Charts
                 numLines = CalculateNumHorizontalLines(gridYUnits, maxY, minY, out lowestLine);
             }
         }
-
 
         private void CalculateStrokeWidth(int numVerticalLines)
         {
@@ -289,81 +283,19 @@ namespace MudBlazor.Charts
         {
             if (Series.Count == 0) return [];
 
-            var positions = new double[maxColumns];
-            var spaceBetweenBars = CalculateSpaceWidth(horizontalSpace, maxColumns);
-            var centerOffset = _barWidth / 2;
-            var totalSpaces = maxColumns - 1;
-            var startingPoint = centerOffset;
-
-            switch (ChartOptions!.Justify)
+            var context = new StackedBarContext
             {
-                case Justify.FlexStart:
-                    startingPoint += HorizontalStartSpace;
+                BarWidth = _barWidth,
+                MaxColumns = maxColumns,
+                HorizontalSpace = horizontalSpace,
+                HorizontalStartSpace = HorizontalStartSpace,
+                HorizontalEndSpace = HorizontalEndSpace,
+                SpaceBetweenBars = CalculateSpaceWidth(horizontalSpace, maxColumns),
+            };
 
-                    for (var i = 0; i < maxColumns; i++)
-                    {
-                        positions[i] = startingPoint + i * (spaceBetweenBars + _barWidth);
-                    }
-                    break;
+            var strategy = StackedBarStrategyFactory.GetStrategy(ChartOptions!.Justify);
 
-                case Justify.FlexEnd:
-                    startingPoint += horizontalSpace + HorizontalEndSpace - ((maxColumns * _barWidth) + (spaceBetweenBars * totalSpaces));
-
-                    for (var i = 0; i < maxColumns; i++)
-                    {
-                        positions[i] = startingPoint + i * (spaceBetweenBars + _barWidth);
-                    }
-                    break;
-
-                case Justify.Center:
-                    startingPoint += HorizontalStartSpace + (horizontalSpace - (maxColumns * _barWidth) - (spaceBetweenBars * totalSpaces)) / 2;
-
-                    for (var i = 0; i < maxColumns; i++)
-                    {
-                        positions[i] = startingPoint + i * (spaceBetweenBars + _barWidth);
-                    }
-                    break;
-
-                case Justify.SpaceBetween:
-                    if (maxColumns == 1)
-                    {
-                        positions[0] = HorizontalStartSpace + centerOffset + (horizontalSpace - _barWidth) / 2;
-                        return positions;
-                    }
-
-                    var totalBarWidth = maxColumns * _barWidth;
-                    var spaceBetween = (horizontalSpace - totalBarWidth) / (maxColumns - 1);
-
-                    for (var i = 0; i < maxColumns; i++)
-                    {
-                        positions[i] = startingPoint + HorizontalStartSpace + i * (_barWidth + spaceBetween);
-                    }
-                    break;
-
-                case Justify.SpaceAround:
-                    var spaceAround = horizontalSpace / (maxColumns * 2);
-
-                    for (var i = 0; i < maxColumns; i++)
-                    {
-                        positions[i] = HorizontalStartSpace + spaceAround + i * (spaceAround * 2);
-                    }
-                    break;
-
-                case Justify.SpaceEvenly:
-                    var contentSpace = maxColumns * _barWidth;
-                    var remainingSpace = horizontalSpace - contentSpace;
-                    var evenSpace = remainingSpace / (maxColumns + 1);
-
-                    positions[0] = startingPoint += HorizontalStartSpace + evenSpace;
-
-                    for (var i = 1; i < maxColumns; i++)
-                    {
-                        positions[i] = positions[i - 1] + _barWidth + evenSpace;
-                    }
-                    break;
-            }
-
-            return positions;
+            return strategy.CalculatePositions(context);
         }
 
         private int CalculateSpaceWidth(double horizontalSpace, int maxColumns)

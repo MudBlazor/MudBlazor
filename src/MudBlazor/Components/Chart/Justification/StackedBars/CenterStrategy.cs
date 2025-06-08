@@ -9,12 +9,11 @@ internal class CenterStrategy : IStackedBarPositionStrategy
     public double[] CalculatePositions(StackedBarContext ctx)
     {
         var positions = new double[ctx.MaxColumns];
-        var spaceBetweenBars = (ctx.HorizontalSpace - (ctx.MaxColumns * ctx.BarWidth)) / Math.Max(ctx.MaxColumns - 1, 1);
-        var totalWidth = (ctx.MaxColumns * ctx.BarWidth) + (spaceBetweenBars * (ctx.MaxColumns - 1));
+        var totalWidth = (ctx.MaxColumns * ctx.BarWidth) + (ctx.SpaceBetweenBars * (ctx.MaxColumns - 1));
         var start = ctx.HorizontalStartSpace + (ctx.HorizontalSpace - totalWidth) / 2 + (ctx.BarWidth / 2);
 
         for (var i = 0; i < ctx.MaxColumns; i++)
-            positions[i] = start + i * (spaceBetweenBars + ctx.BarWidth);
+            positions[i] = start + i * (ctx.SpaceBetweenBars + ctx.BarWidth);
 
         return positions;
     }

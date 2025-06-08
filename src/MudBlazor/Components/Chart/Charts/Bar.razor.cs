@@ -74,13 +74,7 @@ namespace MudBlazor.Charts
 
             GenerateBars(lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace, numVerticalLines);
             GenerateLegends();
-
-            if (OverlayChart is IMudAxisChart<T> overlay)
-            {
-                overlay.SharedData = SharedData;
-                overlay.RebuildChart();
-                StateHasChanged();
-            }
+            RenderOverlay();
         }
 
         private void GeneratePlotArea(out T gridYUnits, out int lowestHorizontalLine, out int numHorizontalLines, out int numVerticalLines, out double horizontalSpace, out double verticalSpace)

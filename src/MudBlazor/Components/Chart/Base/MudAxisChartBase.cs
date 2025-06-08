@@ -100,6 +100,17 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
         RebuildChart();
     }
 
+    protected void RenderOverlay()
+    {
+        if (OverlayChart is IMudAxisChart<T> overlay)
+        {
+            overlay.SharedData = SharedData;
+            overlay.RebuildChart();
+            StateHasChanged();
+        }
+    }
+
+
     protected async Task SetElementReference(ElementReference elementRef)
     {
         var elementSize = await JsRuntime.InvokeAsync<ElementSize>("mudObserveElementSize", _dotNetObjectReference, elementRef);

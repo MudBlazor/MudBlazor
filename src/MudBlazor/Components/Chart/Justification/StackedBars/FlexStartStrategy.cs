@@ -9,11 +9,10 @@ internal class FlexStartStrategy : IStackedBarPositionStrategy
     public double[] CalculatePositions(StackedBarContext ctx)
     {
         var positions = new double[ctx.MaxColumns];
-        var spaceBetweenBars = (ctx.HorizontalSpace - (ctx.MaxColumns * ctx.BarWidth)) / Math.Max(ctx.MaxColumns - 1, 1);
         var startingPoint = ctx.HorizontalStartSpace + (ctx.BarWidth / 2);
 
         for (var i = 0; i < ctx.MaxColumns; i++)
-            positions[i] = startingPoint + i * (spaceBetweenBars + ctx.BarWidth);
+            positions[i] = startingPoint + i * (ctx.SpaceBetweenBars + ctx.BarWidth);
 
         return positions;
     }

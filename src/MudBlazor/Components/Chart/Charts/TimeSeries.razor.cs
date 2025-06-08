@@ -73,13 +73,7 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
 
         GenerateChartLines(lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace);
         GenerateLegends();
-
-        if (OverlayChart is IMudAxisChart<T> overlay)
-        {
-            overlay.SharedData = SharedData;
-            OverlayChart.RebuildChart();
-            StateHasChanged();
-        }
+        RenderOverlay();
     }
 
     private void GeneratePlotArea(out T gridYUnits, out int lowestHorizontalLine, out int numHorizontalLines, out double horizontalSpace, out double verticalSpace)
@@ -136,18 +130,12 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
     {
         DateTime? min = null, max = null;
 
-        foreach (var series in Series)
+        foreach (var series in Series.Where(s => s.Visible && s.Data.Points != null))
         {
-            if (!series.Visible || series.Data.Points == null)
-                continue;
-
-            foreach (var pointX in series.Data.Points.Select(point => point.X))
+            foreach (var dt in series.Data.Points.Select(p => p.X).OfType<DateTime>())
             {
-                if (pointX is DateTime dt)
-                {
-                    if (min == null || dt < min) min = dt;
-                    if (max == null || dt > max) max = dt;
-                }
+                if (min == null || dt < min) min = dt;
+                if (max == null || dt > max) max = dt;
             }
         }
 
@@ -199,8 +187,8 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
 
         AdjustSuggestedMax(ref maxY);
 
-        lowestHorizontalLine = TimeSeries<T>.GetLowestLine(minY, gridYUnits);
-        var highestHorizontalLine = TimeSeries<T>.GetHighestLine(maxY, gridYUnits);
+        lowestHorizontalLine = GetLowestLine(minY, gridYUnits);
+        var highestHorizontalLine = GetHighestLine(maxY, gridYUnits);
         numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
 
         ClampHorizontalLines(ref gridYUnits, minY, maxY, ref numHorizontalLines, ref lowestHorizontalLine);
@@ -266,9 +254,9 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
         while (numLines > maxTicks)
         {
             unit *= T.CreateSaturating(2);
-            lowestLine = TimeSeries<T>.GetLowestLine(minY, unit);
+            lowestLine = GetLowestLine(minY, unit);
 
-            var highestLine = TimeSeries<T>.GetHighestLine(maxY, unit);
+            var highestLine = GetHighestLine(maxY, unit);
 
             numLines = highestLine - lowestLine + 1;
         }

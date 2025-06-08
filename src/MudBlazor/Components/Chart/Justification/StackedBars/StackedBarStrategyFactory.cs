@@ -11,7 +11,7 @@ public interface IStackedBarPositionStrategy
 
 internal static class StackedBarStrategyFactory
 {
-    public static IStackedBarPositionStrategy Create(Justify justify) => justify switch
+    public static IStackedBarPositionStrategy GetStrategy(Justify justify) => justify switch
     {
         Justify.FlexStart => new FlexStartStrategy(),
         Justify.FlexEnd => new FlexEndStrategy(),
@@ -27,6 +27,7 @@ public class StackedBarContext
 {
     public int MaxColumns { get; init; }
     public double BarWidth { get; init; }
+    public int SpaceBetweenBars { get; init; }
     public double HorizontalSpace { get; init; }
     public double HorizontalStartSpace { get; init; }
     public double HorizontalEndSpace { get; init; }
