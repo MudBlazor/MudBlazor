@@ -23,6 +23,7 @@ GroupExpanded="true" RowContextMenuClick="@OnRowContextMenuClick">
 </div>
 
 @code {
+    private bool _groupable;
     private MudDataGrid<Fruit> _dataGrid = null!;
     private readonly List<Fruit> _fruits =
     [
@@ -32,7 +33,6 @@ GroupExpanded="true" RowContextMenuClick="@OnRowContextMenuClick">
     ];
     private readonly Func<Fruit, object> _groupBy = x => x.Category;
 
-    private bool _groupable;
     [Parameter]
     public bool Groupable { get; set; } = true;
 
