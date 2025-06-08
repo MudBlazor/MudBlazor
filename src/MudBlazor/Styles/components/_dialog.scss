@@ -82,6 +82,8 @@
 
   & .mud-dialog-title {
     z-index: +1;
+    align-items: center;
+    justify-content: space-between;
     flex: 0 0 auto;
     margin: 0;
     padding: 16px 24px;
@@ -92,10 +94,17 @@
       border-radius: 0
     }
 
+    &:not(.mud-button-close) {
+      flex: 1 1 auto;
+      min-width: 0;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+    }
+
     & .mud-button-close {
-      top: 8px;
-      right: 8px;
-      position: absolute;
+      flex-shrink: 0;
+      position: relative;
     }
   }
 
