@@ -77,8 +77,8 @@
             builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create(this, () => SetSelectedIndexAsync(index)));
             builder.AddAttribute(seq++, "fill", "none");
             builder.AddAttribute(seq++, "stroke", color);
-            builder.AddAttribute(seq++, "stroke-opacity", overrideSettings?.StrokeOpacity.ToS() ?? "1");
-            builder.AddAttribute(seq++, "stroke-width", lineStrokeWidth.ToS());
+            builder.AddAttribute(seq++, "stroke-opacity", overrideSettings?.StrokeOpacity.ToStr() ?? "1");
+            builder.AddAttribute(seq++, "stroke-width", lineStrokeWidth.ToStr());
             builder.AddAttribute(seq++, "d", chartLine.Data);
             builder.CloseElement();
 
@@ -91,7 +91,7 @@
                 builder.AddAttribute(seq++, "class", lineClass);
                 builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create(this, () => SetSelectedIndexAsync(index)));
                 builder.AddAttribute(seq++, "fill", color);
-                builder.AddAttribute(seq++, "fill-opacity", overrideSettings?.FillOpacity.ToS() ?? "0.4");
+                builder.AddAttribute(seq++, "fill-opacity", overrideSettings?.FillOpacity.ToStr() ?? "0.4");
                 builder.AddAttribute(seq++, "d", chartArea.Data);
                 builder.CloseElement();
             }
@@ -108,9 +108,9 @@
                     builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create(this, () => SetSelectedIndexAsync(index)));
                     builder.AddAttribute(seq++, "stroke", color);
                     builder.AddAttribute(seq++, "stroke-width", dataPointStroke);
-                    builder.AddAttribute(seq++, "cx", item.CX.ToS());
-                    builder.AddAttribute(seq++, "cy", item.CY.ToS());
-                    builder.AddAttribute(seq++, "r", dataPointRadius.ToS());
+                    builder.AddAttribute(seq++, "cx", item.CX.ToStr());
+                    builder.AddAttribute(seq++, "cy", item.CY.ToStr());
+                    builder.AddAttribute(seq++, "r", dataPointRadius.ToStr());
                     builder.CloseElement();
                 }
 
@@ -122,9 +122,9 @@
                 builder.AddAttribute(seq++, "stroke", color);
                 builder.AddAttribute(seq++, "stroke-width", dataPointStroke);
                 builder.AddAttribute(seq++, "opacity", isHoveredPoint ? 1 : 0);
-                builder.AddAttribute(seq++, "cx", item.CX.ToS());
-                builder.AddAttribute(seq++, "cy", item.CY.ToS());
-                builder.AddAttribute(seq++, "r", dataPointHoverRadius.ToS());
+                builder.AddAttribute(seq++, "cx", item.CX.ToStr());
+                builder.AddAttribute(seq++, "cy", item.CY.ToStr());
+                builder.AddAttribute(seq++, "r", dataPointHoverRadius.ToStr());
                 builder.AddAttribute(seq++, "onmouseover", EventCallback.Factory.Create<MouseEventArgs>(this, e => OnDataPointMouseOver(e, item)));
                 builder.AddAttribute(seq++, "onmouseout", EventCallback.Factory.Create(this, OnDataPointMouseOut));
                 builder.CloseElement();
@@ -156,7 +156,7 @@
         {
             builder.OpenElement(seq++, "g");
             builder.AddAttribute(seq++, "class", "mud-chart-tooltip");
-            builder.AddAttribute(seq++, "transform", $"translate({tooltipX.ToS()},{tooltipY.ToS()})");
+            builder.AddAttribute(seq++, "transform", $"translate({tooltipX.ToStr()},{tooltipY.ToStr()})");
             builder.AddContent(seq++, TooltipTemplate.Invoke((HoveredDataPointPath, color)));
             builder.CloseElement();
         }

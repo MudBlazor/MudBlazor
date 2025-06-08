@@ -101,7 +101,7 @@ namespace MudBlazor
         {
             base.OnParametersSet();
 
-            if (Parent is HeatMap<T> heatMap && heatMap is not null)
+            if (Parent is HeatMap<T> heatMap)
             {
                 heatMap.RebuildChart();
             }

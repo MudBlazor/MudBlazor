@@ -10,7 +10,7 @@
     var style = HoveredSegment is not null ? "overflow: visible;" : "";
 }
 
-<svg @ref="_svgRef" @attributes="UserAttributes" class="@($"{ChartClass} mud-ltr")" width="@Width" height="@Height" viewBox="0 0 @ViewBoxWidth.ToS() @ViewBoxHeight.ToS()" style="@style">
+<svg @ref="_svgRef" @attributes="UserAttributes" class="@($"{ChartClass} mud-ltr")" width="@Width" height="@Height" viewBox="0 0 @ViewBoxWidth.ToStr() @ViewBoxHeight.ToStr()" style="@style">
     <Filters />
 
     <g class="mud-charts-grid">
@@ -36,7 +36,7 @@
     <g @ref="_yAxisGroupElementReference" class="mud-charts-yaxis">
         @foreach (var horizontalLineValue in HorizontalValues)
         {
-            @((MarkupString)$"<text x='{horizontalLineValue.X.ToS()}' y='{horizontalLineValue.Y.ToS()}' font-size='12px' text-anchor='end' dominant-baseline='auto'>{horizontalLineValue.Value?.ToString(CultureInfo.InvariantCulture)}</text>")
+            @((MarkupString)$"<text x='{horizontalLineValue.X.ToStr()}' y='{horizontalLineValue.Y.ToStr()}' font-size='12px' text-anchor='end' dominant-baseline='auto'>{horizontalLineValue.Value?.ToString(CultureInfo.InvariantCulture)}</text>")
         }
         @if (YAxisTitle is not null)
         {
@@ -49,8 +49,8 @@
         @for (var i = 0; i < VerticalValues.Count; i++)
         {
             var verticalLineValue = VerticalValues[i];
-            var x = verticalLineValue.X.ToS();
-            var y = verticalLineValue.Y.ToS();
+            var x = verticalLineValue.X.ToStr();
+            var y = verticalLineValue.Y.ToStr();
             var rotation = (-ChartOptions?.XAxisLabelRotation ?? 0).ToString();
             @((MarkupString)$"<text x='{x}' y='{y}' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate({rotation} {x} {y})'>{verticalLineValue.Value?.ToString(CultureInfo.InvariantCulture)}</text>")
         }

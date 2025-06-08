@@ -47,11 +47,11 @@ public partial class Rose<T> : MudRadialChartBase<T, RoseChartOptions> where T :
             var data = normalizedData[i];
 
             var radius = CalculateScaledRadius(data, maxValue);
-            var coords = Rose<T>.GetSegmentCoordinates(currentAngle, angleStep, nonZeroCount);
-            var arc = Rose<T>.BuildRadialPath(coords, radius, angleStep, nonZeroCount);
+            var coords = GetSegmentCoordinates(currentAngle, angleStep, nonZeroCount);
+            var arc = BuildRadialPath(coords, radius, nonZeroCount);
 
             var midAngle = currentAngle + angleStep / 2;
-            var (x, y) = Rose<T>.GetRadialLabelPosition(midAngle, radius, nonZeroCount);
+            var (x, y) = GetRadialLabelPosition(midAngle, radius, nonZeroCount);
 
             _paths.Add(new SvgPetal
             {
@@ -87,7 +87,7 @@ public partial class Rose<T> : MudRadialChartBase<T, RoseChartOptions> where T :
         LargeArcFlag = (count == 1 || step > Math.PI) ? 1 : 0
     };
 
-    private static string BuildRadialPath(SegmentCoordinates coords, double radius, double step, int count)
+    private static string BuildRadialPath(SegmentCoordinates coords, double radius, int count)
     {
         var sb = new StringBuilder();
 

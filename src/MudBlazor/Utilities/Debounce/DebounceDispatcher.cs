@@ -79,7 +79,13 @@ internal class DebounceDispatcher
             return;
         }
 
-        _cancellationTokenSource?.Cancel();
+        if (_cancellationTokenSource is not null)
+        {
+            await _cancellationTokenSource.CancelAsync();
+
+            _cancellationTokenSource.Dispose();
+        }
+
         _cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
 
         var token = _cancellationTokenSource.Token;

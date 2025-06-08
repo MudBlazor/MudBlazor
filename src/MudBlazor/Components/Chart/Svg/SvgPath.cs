@@ -1,10 +1,12 @@
 ﻿#nullable enable
+using System.Diagnostics.CodeAnalysis;
+
 namespace MudBlazor
 {
     /// <summary>
     /// Represents an arbitrary SVG path.
     /// </summary>
-    public class SvgPath : IEquatable<SvgPath>
+    public class SvgPath : IEquatable<SvgPath>, IEqualityComparer<SvgPath>
     {
         /// <summary>
         /// The position of this path within a list.
@@ -57,9 +59,28 @@ namespace MudBlazor
             return Equals(obj as SvgPath);
         }
 
+        public bool Equals(SvgPath? x, SvgPath? y)
+        {
+            if (x is null && y is null)
+                return true;
+
+            if (x is null || y is null)
+                return false;
+
+            if (ReferenceEquals(x, y))
+                return true;
+
+            return x.Equals(y);
+        }
+
         public override int GetHashCode()
         {
             return HashCode.Combine(Index, Data, LabelXValue, LabelYValue, LabelX, LabelY);
+        }
+
+        public int GetHashCode([DisallowNull] SvgPath obj)
+        {
+            return HashCode.Combine(obj.Index, obj.Data, obj.LabelXValue, obj.LabelYValue, obj.LabelX, obj.LabelY);
         }
     }
 }

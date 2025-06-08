@@ -13,7 +13,7 @@
 <svg @ref="_svgRef" @attributes="UserAttributes" class="@($"{ChartClass} mud-ltr")" width="@Width" height="@Height" viewBox="0 0 @(ToS(Radius * 2)) @(ToS(Radius * 2))" style="@style">
     <Filters />
 
-    <g transform="translate(@Radius.ToS(), @Radius.ToS())">
+    <g transform="translate(@Radius.ToStr(), @Radius.ToStr())">
         <defs>
             <filter id="text-shadow" x="-50%" y="-50%" width="200%" height="200%">
                 <feDropShadow dx="0" dy="0" stdDeviation="1.0" flood-color="black" flood-opacity="1" />
@@ -65,7 +65,7 @@
 
         if (TooltipTemplate is not null)
         {
-            <g class="mud-chart-tooltip" transform="translate(@tooltipX.ToS(), @tooltipY.ToS())">
+            <g class="mud-chart-tooltip" transform="translate(@tooltipX.ToStr(), @tooltipY.ToStr())">
                 @TooltipTemplate((HoveredSegment, color))
             </g>
         }
@@ -97,7 +97,7 @@
         builder.AddAttribute(seq++, "filter", "url(#text-shadow)");
         builder.AddAttribute(seq++, "text-anchor", "middle");
         builder.AddAttribute(seq++, "dominant-baseline", "central");
-        builder.AddAttribute(seq++, "style", $"font-size:{fontSize.ToS()}px");
+        builder.AddAttribute(seq++, "style", $"font-size:{fontSize.ToStr()}px");
 
         if (hasX)
         {

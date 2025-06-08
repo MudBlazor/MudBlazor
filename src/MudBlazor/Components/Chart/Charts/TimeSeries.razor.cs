@@ -77,7 +77,7 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
         if (OverlayChart is IMudAxisChart<T> overlay)
         {
             overlay.SharedData = SharedData;
-            OverlayChart?.RebuildChart();
+            OverlayChart.RebuildChart();
             StateHasChanged();
         }
     }
@@ -113,120 +113,171 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
     {
         _minDateLabelOffset = TimeSpan.Zero;
 
-        DateTime? minDate = null;
-        DateTime? maxDate = null;
-
-        foreach (var series in Series)
-        {
-            if (!series.Visible || series.Data.Points == null)
-                continue;
-
-            foreach (var point in series.Data.Points)
-            {
-                if (point.X is DateTime dateTime)
-                {
-                    minDate = minDate == null || dateTime < minDate ? dateTime : minDate;
-                    maxDate = maxDate == null || dateTime > maxDate ? dateTime : maxDate;
-                }
-            }
-        }
+        var (minDate, maxDate) = GetVisibleDateRange();
 
         var labelSpacing = ChartOptions!.TimeLabelSpacing;
 
         if (minDate == null || maxDate == null)
         {
-            _minDateTime = DateTime.Now;
-            _maxDateTime = labelSpacing.Days > 0 ? DateTime.Now.AddDays(1) :
-                           labelSpacing.Minutes > 0 ? DateTime.Now.AddHours(1) :
-                           DateTime.Now.AddMinutes(1);
+            SetDefaultDateRange(labelSpacing);
             return;
         }
 
         _minDateTime = minDate.Value;
         _maxDateTime = maxDate.Value;
 
-        if (!ChartOptions!.TimeLabelSpacingRounding) return;
+        if (!ChartOptions.TimeLabelSpacingRounding)
+            return;
 
-        if (_minDateTime.Ticks % labelSpacing.Ticks != 0)
+        ApplyLabelRounding(labelSpacing);
+    }
+
+    private (DateTime? Min, DateTime? Max) GetVisibleDateRange()
+    {
+        DateTime? min = null, max = null;
+
+        foreach (var series in Series)
         {
-            var offset = new TimeSpan(_minDateTime.Ticks % labelSpacing.Ticks);
+            if (!series.Visible || series.Data.Points == null)
+                continue;
 
-            if (ChartOptions!.TimeLabelSpacingRoundingPadSeries)
+            foreach (var pointX in series.Data.Points.Select(point => point.X))
             {
-                _minDateTime = _minDateTime.Subtract(offset);
+                if (pointX is DateTime dt)
+                {
+                    if (min == null || dt < min) min = dt;
+                    if (max == null || dt > max) max = dt;
+                }
             }
-            else
-                _minDateLabelOffset = labelSpacing - offset;
         }
 
-        if (ChartOptions!.TimeLabelSpacingRoundingPadSeries && _maxDateTime.Ticks % labelSpacing.Ticks != 0)
-        {
-            var offset = labelSpacing - new TimeSpan(_maxDateTime.Ticks % labelSpacing.Ticks);
+        return (min, max);
+    }
 
+    private void SetDefaultDateRange(TimeSpan spacing)
+    {
+        var now = DateTime.Now;
+        _minDateTime = now;
+        _maxDateTime =
+            spacing.Days > 0 ? now.AddDays(1) :
+            spacing.Minutes > 0 ? now.AddHours(1) :
+            now.AddMinutes(1);
+    }
+
+    private void ApplyLabelRounding(TimeSpan spacing)
+    {
+        if (_minDateTime.Ticks % spacing.Ticks != 0)
+        {
+            var offset = new TimeSpan(_minDateTime.Ticks % spacing.Ticks);
+
+            if (ChartOptions!.TimeLabelSpacingRoundingPadSeries)
+                _minDateTime = _minDateTime.Subtract(offset);
+            else
+                _minDateLabelOffset = spacing - offset;
+        }
+
+        if (ChartOptions!.TimeLabelSpacingRoundingPadSeries && _maxDateTime.Ticks % spacing.Ticks != 0)
+        {
+            var offset = spacing - new TimeSpan(_maxDateTime.Ticks % spacing.Ticks);
             _maxDateTime = _maxDateTime.Add(offset);
         }
     }
 
     private void ComputeUnitsAndNumberOfLines(out T gridYUnits, out int numHorizontalLines, out int lowestHorizontalLine, out int numVerticalLines)
     {
-        var yAxisTicks = ChartOptions?.YAxisTicks;
-        if (yAxisTicks.HasValue && yAxisTicks.Value > 0)
-            gridYUnits = T.CreateSaturating(yAxisTicks.Value);
-        else
-            gridYUnits = T.CreateSaturating(20);
+        gridYUnits = GetInitialGridUnit();
 
-        if (Series.Any(series => series.Data.Points != null && series.Data.Points.Any()))
-        {
-            var minY = T.MaxValue;
-            var maxY = T.MinValue;
-
-            foreach (var series in Series.Where(s => s.Visible))
-            {
-                foreach (var point in series.Data.Points)
-                {
-                    minY = T.Min(minY, point.Y);
-                    maxY = T.Max(maxY, point.Y);
-                }
-            }
-
-            if (minY == T.MaxValue)
-            {
-                minY = T.Zero;
-                maxY = T.Zero;
-            }
-
-            var hasAreaDisplay = ChartOptions?.LineDisplayType == LineDisplayType.Area || Series.Any(series => GetSeriesDisplayOverride(series)?.LineDisplayType == LineDisplayType.Area);
-            var includeYAxisZeroPoint = ChartOptions?.YAxisRequireZeroPoint is true || hasAreaDisplay;
-            if (includeYAxisZeroPoint)
-            {
-                minY = T.Min(minY, T.Zero);
-                maxY = T.Max(maxY, T.Zero);
-            }
-
-            maxY = ChartOptions?.YAxisSuggestedMax is null ? maxY : T.Max(T.CreateSaturating(ChartOptions.YAxisSuggestedMax.Value), maxY);
-
-            lowestHorizontalLine = (int)Math.Floor(double.CreateSaturating(minY / gridYUnits));
-            var highestHorizontalLine = (int)Math.Ceiling(double.CreateSaturating(maxY / gridYUnits));
-            numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
-
-            var maxYTicks = ChartOptions?.MaxNumYAxisTicks ?? 100;
-            while (numHorizontalLines > maxYTicks)
-            {
-                gridYUnits *= T.CreateSaturating(2);
-                lowestHorizontalLine = (int)Math.Floor(double.CreateSaturating(minY / gridYUnits));
-                highestHorizontalLine = (int)Math.Ceiling(double.CreateSaturating(maxY / gridYUnits));
-                numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
-            }
-
-            var labelSpacing = ChartOptions!.TimeLabelSpacing;
-            numVerticalLines = (int)Math.Ceiling((_maxDateTime - _minDateTime) / labelSpacing) + 1;
-        }
-        else
+        if (!HasSeriesData())
         {
             numHorizontalLines = 1;
             lowestHorizontalLine = 0;
             numVerticalLines = 1;
+            return;
         }
+
+        var (minY, maxY) = GetYRangeWithPadding();
+
+        AdjustSuggestedMax(ref maxY);
+
+        lowestHorizontalLine = TimeSeries<T>.GetLowestLine(minY, gridYUnits);
+        var highestHorizontalLine = TimeSeries<T>.GetHighestLine(maxY, gridYUnits);
+        numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
+
+        ClampHorizontalLines(ref gridYUnits, minY, maxY, ref numHorizontalLines, ref lowestHorizontalLine);
+
+        numVerticalLines = CalculateVerticalLines();
+    }
+
+    private T GetInitialGridUnit()
+    {
+        var yAxisTicks = ChartOptions?.YAxisTicks;
+        return yAxisTicks is > 0
+            ? T.CreateSaturating(yAxisTicks.Value)
+            : T.CreateSaturating(20);
+    }
+
+    private bool HasSeriesData() =>
+        Series.Any(series => series.Data.Points is { Count: > 0 });
+
+    private (T minY, T maxY) GetYRangeWithPadding()
+    {
+        var minY = T.MaxValue;
+        var maxY = T.MinValue;
+
+        foreach (var point in Series.Where(s => s.Visible).SelectMany(s => s.Data.Points))
+        {
+            minY = T.Min(minY, point.Y);
+            maxY = T.Max(maxY, point.Y);
+        }
+
+        if (minY.Equals(T.MaxValue))
+            return (T.Zero, T.Zero);
+
+        var requireZero = ChartOptions?.YAxisRequireZeroPoint == true || HasAreaSeries();
+        if (requireZero)
+        {
+            minY = T.Min(minY, T.Zero);
+            maxY = T.Max(maxY, T.Zero);
+        }
+
+        return (minY, maxY);
+    }
+
+    private bool HasAreaSeries() =>
+        ChartOptions?.LineDisplayType == LineDisplayType.Area ||
+        Series.Any(s => GetSeriesDisplayOverride(s)?.LineDisplayType == LineDisplayType.Area);
+
+    private void AdjustSuggestedMax(ref T maxY)
+    {
+        if (ChartOptions?.YAxisSuggestedMax is { } suggested)
+            maxY = T.Max(T.CreateSaturating(suggested), maxY);
+    }
+
+    private static int GetLowestLine(T minY, T unit) =>
+        (int)Math.Floor(double.CreateSaturating(minY / unit));
+
+    private static int GetHighestLine(T maxY, T unit) =>
+        (int)Math.Ceiling(double.CreateSaturating(maxY / unit));
+
+    private void ClampHorizontalLines(ref T unit, T minY, T maxY, ref int numLines, ref int lowestLine)
+    {
+        var maxTicks = ChartOptions?.MaxNumYAxisTicks ?? 100;
+
+        while (numLines > maxTicks)
+        {
+            unit *= T.CreateSaturating(2);
+            lowestLine = TimeSeries<T>.GetLowestLine(minY, unit);
+
+            var highestLine = TimeSeries<T>.GetHighestLine(maxY, unit);
+
+            numLines = highestLine - lowestLine + 1;
+        }
+    }
+
+    private int CalculateVerticalLines()
+    {
+        var spacing = ChartOptions!.TimeLabelSpacing;
+        return (int)Math.Ceiling((_maxDateTime - _minDateTime) / spacing) + 1;
     }
 
     protected override string GetVerticalGridLineLabel(int index)

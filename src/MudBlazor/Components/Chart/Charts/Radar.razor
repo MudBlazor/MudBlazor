@@ -69,7 +69,7 @@
                 var anchor = Math.Abs(axisLine.LabelX) < 10 ? "middle" : (axisLine.LabelX < 0 ? "end" : "start");
                 var baseline = Math.Abs(axisLine.LabelY) < 10 ? "middle" : (axisLine.LabelY < 0 ? "auto" : "hanging");
                 builder.AddMarkupContent(seq++,
-                    $"<text class='mud-chart-axis-label' x='{axisLine.LabelX.ToS()}' y='{axisLine.LabelY.ToS()}' font-size='12px' text-anchor='{anchor}' dominant-baseline='{baseline}'>{axisLine.LabelYValue}</text>");
+                    $"<text class='mud-chart-axis-label' x='{axisLine.LabelX.ToStr()}' y='{axisLine.LabelY.ToStr()}' font-size='12px' text-anchor='{anchor}' dominant-baseline='{baseline}'>{axisLine.LabelYValue}</text>");
             }
         }
         builder.CloseElement(); // </g>
@@ -80,7 +80,7 @@
         foreach (var axisValue in _axisValues)
         {
             builder.AddMarkupContent(seq++,
-                $"<text class='mud-chart-axis-value' x='{axisValue.LabelX.ToS()}' y='{axisValue.LabelY.ToS()}' font-size='10px' text-anchor='start' dominant-baseline='middle' fill='#666'>{axisValue.LabelYValue}</text>");
+                $"<text class='mud-chart-axis-value' x='{axisValue.LabelX.ToStr()}' y='{axisValue.LabelY.ToStr()}' font-size='10px' text-anchor='start' dominant-baseline='middle' fill='#666'>{axisValue.LabelYValue}</text>");
         }
         builder.CloseElement(); // </g>
     };

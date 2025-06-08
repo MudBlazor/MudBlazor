@@ -208,7 +208,7 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
         }
     }
 
-    protected string FormatTooltipText(string? format, ChartSeries<T> series, SvgPath path)
+    protected static string FormatTooltipText(string? format, ChartSeries<T> series, SvgPath path)
     {
         if (string.IsNullOrWhiteSpace(format))
             return string.Empty;

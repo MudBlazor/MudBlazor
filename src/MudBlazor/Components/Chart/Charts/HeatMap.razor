@@ -13,7 +13,7 @@
     var series = _series.Where(x => x.Visible).ToList();
 }
 
-<svg @ref="_elementReference" @attributes="UserAttributes" class="mud-chart-heat mud-ltr" width="@Width" height="@Height" viewBox="0 0 @_boundWidth.ToS() @_boundHeight.ToS()" style="@style">
+<svg @ref="_elementReference" @attributes="UserAttributes" class="mud-chart-heat mud-ltr" width="@Width" height="@Height" viewBox="0 0 @_boundWidth.ToStr() @_boundHeight.ToStr()" style="@style">
     @if (_options is { EnableSmoothGradient: true })
     {
         <defs>
@@ -71,31 +71,31 @@
             @if (_options is { EnableSmoothGradient: true })
             {
                 // Apply the 4 gradient overlays with partial opacity
-                <rect x="@x.ToS()"
-                      y="@y.ToS()"
-                      width="@_cellDimension.Width.ToS()"
-                      height="@_cellDimension.Height.ToS()"
+                <rect x="@x.ToStr()"
+                      y="@y.ToStr()"
+                      width="@_cellDimension.Width.ToStr()"
+                      height="@_cellDimension.Height.ToStr()"
                       fill="url(#gradient-topcenter-@row-@col)"
                       opacity="0.25" />
 
-                <rect x="@x.ToS()"
-                      y="@y.ToS()"
-                      width="@_cellDimension.Width.ToS()"
-                      height="@_cellDimension.Height.ToS()"
+                <rect x="@x.ToStr()"
+                      y="@y.ToStr()"
+                      width="@_cellDimension.Width.ToStr()"
+                      height="@_cellDimension.Height.ToStr()"
                       fill="url(#gradient-right-@row-@col)"
                       opacity="0.25" />
 
-                <rect x="@x.ToS()"
-                      y="@y.ToS()"
-                      width="@_cellDimension.Width.ToS()"
-                      height="@_cellDimension.Height.ToS()"
+                <rect x="@x.ToStr()"
+                      y="@y.ToStr()"
+                      width="@_cellDimension.Width.ToStr()"
+                      height="@_cellDimension.Height.ToStr()"
                       fill="url(#gradient-bottomcenter-@row-@col)"
                       opacity="0.25" />
 
-                <rect x="@x.ToS()"
-                      y="@y.ToS()"
-                      width="@_cellDimension.Width.ToS()"
-                      height="@_cellDimension.Height.ToS()"
+                <rect x="@x.ToStr()"
+                      y="@y.ToStr()"
+                      width="@_cellDimension.Width.ToStr()"
+                      height="@_cellDimension.Height.ToStr()"
                       fill="url(#gradient-left-@row-@col)"
                       opacity="0.25" />
             }
@@ -110,10 +110,10 @@
                                 ? "transparent"
                                 : cell?.MudColor?.ToString(Utilities.MudColorOutputFormats.RGBA) ?? GetColorForValue(cell?.Value);
                     }
-                    <rect x="@x.ToS()"
-                          y="@y.ToS()"
-                          width="@_cellDimension.Width.ToS()"
-                          height="@_cellDimension.Height.ToS()"
+                    <rect x="@x.ToStr()"
+                          y="@y.ToStr()"
+                          width="@_cellDimension.Width.ToStr()"
+                          height="@_cellDimension.Height.ToStr()"
                           @onclick="async () => await SetSelectedCellAsync(rowIndex, colIndex)"
                           @onmouseover="(e) => OnCellMouseOver(e, cell)"
                           @onmouseout="OnCellMouseOut"
@@ -125,9 +125,9 @@
                             <text @onclick="async () => await SetSelectedCellAsync(rowIndex, colIndex)"
                                   @onmouseover="(e) => OnCellMouseOver(e, cell)"
                                   @onmouseout="OnCellMouseOut"
-                                  font-size="@_dynamicFontSize.ToS()"
-                                  x="@((x + _cellDimension.Width / 2).ToS())"
-                                  y="@((y + _cellDimension.Height / 2).ToS())"
+                                  font-size="@_dynamicFontSize.ToStr()"
+                                  x="@((x + _cellDimension.Width / 2).ToStr())"
+                                  y="@((y + _cellDimension.Height / 2).ToStr())"
                                   dominant-baseline="middle"
                                   text-anchor="middle">
                                   @FormatValueForDisplay(cell?.Value)
@@ -142,12 +142,12 @@
                             var tempWidth = cell.Width ?? _cellDimension.Width;
                             var tempHeight = cell.Height ?? _cellDimension.Height;
 
-                            <svg x="@x.ToS()"
-                                 y="@y.ToS()"
+                            <svg x="@x.ToStr()"
+                                 y="@y.ToStr()"
                                  @onclick="async () => await SetSelectedCellAsync(rowIndex, colIndex)"
-                                 width="@_cellDimension.Width.ToS()"
-                                 height="@_cellDimension.Height.ToS()"
-                                 viewBox="0 0 @tempWidth.ToS() @tempHeight.ToS()"
+                                 width="@_cellDimension.Width.ToStr()"
+                                 height="@_cellDimension.Height.ToStr()"
+                                 viewBox="0 0 @tempWidth.ToStr() @tempHeight.ToStr()"
                                  preserveAspectRatio="xMidYMid meet">
                                  @cell.CustomFragment
                             </svg>
@@ -155,11 +155,11 @@
                         else
                         {
                             // If no specific width/height, use cell dimensions with padding
-                            <foreignObject x="@x.ToS()"
-                                           y="@y.ToS()"
+                            <foreignObject x="@x.ToStr()"
+                                           y="@y.ToStr()"
                                            @onclick="async () => await SetSelectedCellAsync(rowIndex, colIndex)"
-                                           width="@_cellDimension.Width.ToS()"
-                                           height="@_cellDimension.Height.ToS()">
+                                           width="@_cellDimension.Width.ToStr()"
+                                           height="@_cellDimension.Height.ToStr()">
                                 <div xmlns="http://www.w3.org/1999/xhtml" style="width:100%; height:100%;display:flex; align-items:center; justify-content:center;">
                                     @cell.CustomFragment
                                 </div>
@@ -173,14 +173,14 @@
             var xAxisLabels = ChartLabels ?? [];
             @if (row == 0 && _options?.XAxisLabelPosition == XAxisLabelPosition.Top && col < xAxisLabels.Length)
             {
-                <g transform="translate(@((x + _cellDimension.Width / 2).ToS()), @((y - CellPadding).ToS()))">
-                    <text class="mud-charts-xaxis" x="0" y="0" text-anchor="middle" font-size="@_dynamicFontSize.ToS()">@xAxisLabels[col]</text>
+                <g transform="translate(@((x + _cellDimension.Width / 2).ToStr()), @((y - CellPadding).ToStr()))">
+                    <text class="mud-charts-xaxis" x="0" y="0" text-anchor="middle" font-size="@_dynamicFontSize.ToStr()">@xAxisLabels[col]</text>
                 </g>
             }
             else if (row == RowCount - 1 && _options?.XAxisLabelPosition == XAxisLabelPosition.Bottom && col < xAxisLabels.Length)
             {
-                <g transform="translate(@((x + _cellDimension.Width / 2).ToS()), @((y + _cellDimension.Height + _dynamicFontSize).ToS()))">
-                    <text class="mud-charts-xaxis" x="0" y="0" text-anchor="middle" fill="black" font-size="@_dynamicFontSize.ToS()">@xAxisLabels[col]</text>
+                <g transform="translate(@((x + _cellDimension.Width / 2).ToStr()), @((y + _cellDimension.Height + _dynamicFontSize).ToStr()))">
+                    <text class="mud-charts-xaxis" x="0" y="0" text-anchor="middle" fill="black" font-size="@_dynamicFontSize.ToStr()">@xAxisLabels[col]</text>
                 </g>
             }
         }
@@ -188,14 +188,14 @@
         // YAxis Labels
         @if (_options?.YAxisLabelPosition == YAxisLabelPosition.Left)
         {
-            <g transform="translate(@((_horizontalStartSpace - CellPadding).ToS()), @((y + _cellDimension.Height / 2).ToS()))">
-                @((MarkupString)$"<text class='mud-charts-yaxis' x='0' y='0' dominant-baseline='middle' text-anchor='end' font-size='{_dynamicFontSize.ToS()}'>{rowLabel}</text>")
+            <g transform="translate(@((_horizontalStartSpace - CellPadding).ToStr()), @((y + _cellDimension.Height / 2).ToStr()))">
+                @((MarkupString)$"<text class='mud-charts-yaxis' x='0' y='0' dominant-baseline='middle' text-anchor='end' font-size='{_dynamicFontSize.ToStr()}'>{rowLabel}</text>")
             </g>
         }
         else if (_options?.YAxisLabelPosition == YAxisLabelPosition.Right)
         {
-            <g transform="translate(@((_horizontalStartSpace + HeatmapWidth + CellPadding).ToS()), @((y + _cellDimension.Height / 2).ToS()))">
-                @((MarkupString)$"<text class='mud-charts-yaxis' x='0' y='0' dominant-baseline='middle' text-anchor='start' font-size='{_dynamicFontSize.ToS()}'>{rowLabel}</text>")
+            <g transform="translate(@((_horizontalStartSpace + HeatmapWidth + CellPadding).ToStr()), @((y + _cellDimension.Height / 2).ToStr()))">
+                @((MarkupString)$"<text class='mud-charts-yaxis' x='0' y='0' dominant-baseline='middle' text-anchor='start' font-size='{_dynamicFontSize.ToStr()}'>{rowLabel}</text>")
             </g>
         }
     }
@@ -215,7 +215,7 @@
                     var offsetX = -totalWidth / 2; // Center horizontally
                     var offsetY = LegendBox / 2; // Center vertically
 
-                    <g transform="translate(@((legendX + offsetX).ToS()), @(legendY.ToS()))">
+                    <g transform="translate(@((legendX + offsetX).ToStr()), @(legendY.ToStr()))">
                         <!-- "Less" label -->
                         <text class="mud-charts-xaxis" 
                         x="0"
@@ -230,13 +230,13 @@
                             var x = (textWidth / 2) + (i * (LegendBox + legendPadding));
                             var tooltipX = legendX + offsetX + x + (LegendBox / 2);
 
-                            <g transform="translate(@x.ToS(), 0)" class="mud-chart-heatmap-legend">
+                            <g transform="translate(@x.ToStr(), 0)" class="mud-chart-heatmap-legend">
                                 <rect @onmouseover="(e) => OnLegendMouseOver(e, _legends[index], new((float)tooltipX , (float)legendY))"
                                 @onmouseout="OnLegendMouseOut"
                                 x="0" 
-                                y="@((-LegendBox / 2).ToS())" 
-                                width="@LegendBox.ToS()" 
-                                height="@LegendBox.ToS()" 
+                                y="@((-LegendBox / 2).ToStr())" 
+                                width="@LegendBox.ToStr()" 
+                                height="@LegendBox.ToStr()" 
                                 fill="@_legends[i].color">
                                 </rect>
                                 @if (_options is { ShowLegendLabels: true })
@@ -246,20 +246,20 @@
                                     var y1 = _legendPosition == Position.Top ? -offsetY : offsetY;
                                     var y2 = _legendPosition == Position.Top ? -offsetY - LegendLineLength : offsetY + LegendLineLength;
 
-                                    <line x1="@x1.ToS()" 
-                                    y1="@y1.ToS()" 
-                                    x2="@x2.ToS()" 
-                                    y2="@y2.ToS()" 
+                                    <line x1="@x1.ToStr()" 
+                                    y1="@y1.ToStr()" 
+                                    x2="@x2.ToStr()" 
+                                    y2="@y2.ToStr()" 
                                     stroke-width="1" />
                                     var y3 = y2 + (_legendPosition == Position.Top ? -LegendLineLength : LegendLineLength);
-                                    @((MarkupString)@$"<text x='0' y='{y3.ToS()}' dominant-baseline='middle' text-anchor='start' font-size='{labelFontSize}'>{FormatValueForDisplay(_legends[i].value)}</text>")
+                                    @((MarkupString)@$"<text x='0' y='{y3.ToStr()}' dominant-baseline='middle' text-anchor='start' font-size='{labelFontSize}'>{FormatValueForDisplay(_legends[i].value)}</text>")
                                 }
                             </g>
                         }
 
                         <!-- "More" label -->
                         <text class="mud-charts-xaxis"
-                        x="@(((textWidth / 2) + (_legends.Count * (LegendBox + legendPadding))).ToS())"
+                        x="@(((textWidth / 2) + (_legends.Count * (LegendBox + legendPadding))).ToStr())"
                         y="0"
                         dominant-baseline="middle"
                         text-anchor="start"
@@ -278,11 +278,11 @@
                     var offsetX = -1.0; // Center horizontally
                     var offsetY = -totalHeight / 2; // Center vertically
 
-                    <g transform="translate(@legendX.ToS(), @((legendY + offsetY).ToS()))">
+                    <g transform="translate(@legendX.ToStr(), @((legendY + offsetY).ToStr()))">
                         <!-- "Less" label -->
                         <text class="mud-charts-xaxis" 
-                        x="@offsetX.ToS()" 
-                        y="@(((textHeight / 2) - CellPadding - LegendBox).ToS())" 
+                        x="@offsetX.ToStr()" 
+                        y="@(((textHeight / 2) - CellPadding - LegendBox).ToStr())" 
                         dominant-baseline="middle" 
                         text-anchor="start" 
                         font-size="@LegendFontSize">@Localizer[Resources.LanguageResource.HeatMap_Less]
@@ -294,13 +294,13 @@
                             var y = (textHeight / 2) + (i * (LegendBox + CellPadding));
                             var tooltipY = legendY + offsetY + y;
 
-                            <g transform="translate(0, @y.ToS())" class="mud-chart-heatmap-legend">
+                            <g transform="translate(0, @y.ToStr())" class="mud-chart-heatmap-legend">
                                 <rect @onmouseover="(e) => OnLegendMouseOver(e, _legends[index], new((float)(legendX + (LegendBox / 2)) , (float)tooltipY))"
                                 @onmouseout="OnLegendMouseOut"
                                 x="0" 
-                                y="@((-LegendBox / 2).ToS())" 
-                                width="@LegendBox.ToS()" 
-                                height="@LegendBox.ToS()" 
+                                y="@((-LegendBox / 2).ToStr())" 
+                                width="@LegendBox.ToStr()" 
+                                height="@LegendBox.ToStr()" 
                                 fill="@_legends[i].color">
                                 </rect>
                                 @if (_options is { ShowLegendLabels: true })
@@ -309,21 +309,21 @@
                                     double x2 = _legendPosition == Position.Right ? LegendBox + LegendLineLength : -LegendLineLength;
                                     var x3 = x2 + (_legendPosition == Position.Right ? CellPadding : -CellPadding);
 
-                                    <line x1="@x1.ToS()" 
-                                    y1="@y1.ToS()" 
-                                    x2="@x2.ToS()" 
-                                    y2="@y2.ToS()" 
+                                    <line x1="@x1.ToStr()" 
+                                    y1="@y1.ToStr()" 
+                                    x2="@x2.ToStr()" 
+                                    y2="@y2.ToStr()" 
                                     stroke-width="1" />
 
-                                    @((MarkupString)@$"<text x='{x3.ToS()}' y='0' dominant-baseline='middle' text-anchor='{(_legendPosition == Position.Right ? "start" : "end")}' font-size='{labelFontSize}'>{FormatValueForDisplay(_legends[i].value)}</text>")
+                                    @((MarkupString)@$"<text x='{x3.ToStr()}' y='0' dominant-baseline='middle' text-anchor='{(_legendPosition == Position.Right ? "start" : "end")}' font-size='{labelFontSize}'>{FormatValueForDisplay(_legends[i].value)}</text>")
                                 }
                             </g>
                         }
 
                         <!-- "More" label -->
                         <text class="mud-charts-xaxis"
-                        x="@offsetX.ToS()"
-                        y="@(((textHeight / 2) + ((_legends.Count) * (LegendBox + CellPadding))).ToS())" 
+                        x="@offsetX.ToStr()"
+                        y="@(((textHeight / 2) + ((_legends.Count) * (LegendBox + CellPadding))).ToStr())" 
                         dominant-baseline="middle" 
                         text-anchor="start" 
                         font-size="@LegendFontSize">@Localizer[Resources.LanguageResource.HeatMap_More]
@@ -358,7 +358,7 @@
 
         if (TooltipTemplate is not null)
         {
-            <g class="mud-chart-tooltip" transform="translate(@tooltipX.ToS(), @tooltipY.ToS())">
+            <g class="mud-chart-tooltip" transform="translate(@tooltipX.ToStr(), @tooltipY.ToStr())">
                 @TooltipTemplate((path, color))
             </g>
         }

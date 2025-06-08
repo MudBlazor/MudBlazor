@@ -25,7 +25,7 @@ internal static class StringHelpers
     /// <returns>
     /// The string representation of the double value. <br/>
     /// </returns>
-    public static string ToS(this double value)
+    public static string ToStr(this double value)
     {
         return ToS(value, null);
     }

@@ -9,7 +9,7 @@ public interface IStackedBarPositionStrategy
     double[] CalculatePositions(StackedBarContext ctx);
 }
 
-internal class StackedBarStrategyFactory
+internal static class StackedBarStrategyFactory
 {
     public static IStackedBarPositionStrategy Create(Justify justify) => justify switch
     {
