@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using MudBlazor.Interfaces;
+using MudBlazor.Abstractions;
 
 namespace MudBlazor
 {
@@ -15,6 +16,8 @@ namespace MudBlazor
     /// </summary>
     public abstract class MudComponentBase : ComponentBaseWithState, IMudStateHasChanged
     {
+        [Inject]
+        protected IClassProcessor? ClassProcessor { get; set; }
         [Inject]
         private ILoggerFactory LoggerFactory { get; set; } = null!;
         private ILogger? _logger;
@@ -75,6 +78,20 @@ namespace MudBlazor
         public string FieldId => UserAttributes.TryGetValue("id", out var id) && id is not null
             ? id.ToString() ?? _id
             : _id;
+
+        /// <summary>
+        /// Override this to modify the CSS class string before it's applied.
+        /// </summary>
+        protected virtual string? ProcessClass(string? classname)
+        {
+            return ClassProcessor?.Process(classname) ?? classname;
+        }
+
+        protected override void OnParametersSet()
+        {
+            Class = ProcessClass(Class);
+            base.OnParametersSet();
+        }
 
         /// <inheritdoc />
         protected override void OnAfterRender(bool firstRender)
