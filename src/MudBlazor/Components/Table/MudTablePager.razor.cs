@@ -117,15 +117,15 @@ namespace MudBlazor
                 var firstItem = (filteredItemsCount == 0 ? 0 : (Table?.CurrentPage * Table?.RowsPerPage) + 1) ?? 0;
                 var lastItem = Math.Min((Table?.CurrentPage + 1) * Table?.RowsPerPage ?? 0, filteredItemsCount);
 
-                if (InfoFormat.Contains("{first_item}") || InfoFormat.Contains("{last_item}") || InfoFormat.Contains("{all_items}"))
+                if (string.IsNullOrEmpty(InfoFormat))
                 {
-                    return InfoFormat
-                        .Replace("{first_item}", $"{firstItem}")
-                        .Replace("{last_item}", $"{lastItem}")
-                        .Replace("{all_items}", $"{filteredItemsCount:N0}");
+                    return Localizer[LanguageResource.MudDataGridPager_InfoFormat, firstItem, lastItem, $"{filteredItemsCount:N0}"];
                 }
 
-                return Localizer[LanguageResource.MudDataGridPager_InfoFormat, firstItem, lastItem, $"{filteredItemsCount:N0}"];
+                return InfoFormat
+                    .Replace("{first_item}", $"{firstItem}")
+                    .Replace("{last_item}", $"{lastItem}")
+                    .Replace("{all_items}", $"{filteredItemsCount:N0}");
             }
         }
 
