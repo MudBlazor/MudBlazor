@@ -133,7 +133,7 @@ namespace MudBlazor
         public EventCallback<int> GroupByOrderChanged { get; set; }
 
         /// <summary>
-        /// Whether the column is indented 48px beyond it's parent when grouped.
+        /// Indents the column <c>48px</c> beyond its parent when grouped.
         /// </summary>
         [Parameter]
         public bool GroupIndented { get; set; } = true;

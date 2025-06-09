@@ -38,7 +38,7 @@ namespace MudBlazor
             .Build();
 
         /// <summary>
-        /// Whether the display should be right to left
+        /// Displays content right-to-left.
         /// </summary>
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }

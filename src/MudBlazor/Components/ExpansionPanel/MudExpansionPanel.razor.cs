@@ -155,7 +155,7 @@ namespace MudBlazor
         public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// Indicates whether the next panel is currently expanded.
+        /// The next panel is currently expanded.
         /// </summary>
         public bool NextPanelExpanded { get; set; }
 
