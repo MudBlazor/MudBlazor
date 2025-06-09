@@ -706,20 +706,20 @@ namespace MudBlazor
 
         protected string SliderStyle => RightToLeft
             ? new StyleBuilder()
-                .AddStyle("width", $"{_sliderSizePercentage}%", Position is Position.Top or Position.Bottom)
-                .AddStyle("right", $"{_sliderPositionPercentage}%", Position is Position.Top or Position.Bottom)
+                .AddStyle("width", _sliderSizePercentage.ToPercent(), Position is Position.Top or Position.Bottom)
+                .AddStyle("right", _sliderPositionPercentage.ToPercent(), Position is Position.Top or Position.Bottom)
                 .AddStyle("transition", SliderAnimation ? "right .3s cubic-bezier(.64,.09,.08,1);" : "none", Position is Position.Top or Position.Bottom)
                 .AddStyle("transition", SliderAnimation ? "top .3s cubic-bezier(.64,.09,.08,1);" : "none", IsVerticalTabs())
-                .AddStyle("height", $"{_sliderSizePercentage}%", IsVerticalTabs())
-                .AddStyle("top", $"{_sliderPositionPercentage}%", IsVerticalTabs())
+                .AddStyle("height", _sliderSizePercentage.ToPercent(), IsVerticalTabs())
+                .AddStyle("top", _sliderPositionPercentage.ToPercent(), IsVerticalTabs())
                 .Build()
             : new StyleBuilder()
-                .AddStyle("width", $"{_sliderSizePercentage}%", Position is Position.Top or Position.Bottom)
-                .AddStyle("left", $"{_sliderPositionPercentage}%", Position is Position.Top or Position.Bottom)
+                .AddStyle("width", _sliderSizePercentage.ToPercent(), Position is Position.Top or Position.Bottom)
+                .AddStyle("left", _sliderPositionPercentage.ToPercent(), Position is Position.Top or Position.Bottom)
                 .AddStyle("transition", SliderAnimation ? "left .3s cubic-bezier(.64,.09,.08,1);" : "none", Position is Position.Top or Position.Bottom)
                 .AddStyle("transition", SliderAnimation ? "top .3s cubic-bezier(.64,.09,.08,1);" : "none", IsVerticalTabs())
-                .AddStyle("height", $"{_sliderSizePercentage}%", IsVerticalTabs())
-                .AddStyle("top", $"{_sliderPositionPercentage}%", IsVerticalTabs())
+                .AddStyle("height", _sliderSizePercentage.ToPercent(), IsVerticalTabs())
+                .AddStyle("top", _sliderPositionPercentage.ToPercent(), IsVerticalTabs())
                 .Build();
 
         private bool IsVerticalTabs()
