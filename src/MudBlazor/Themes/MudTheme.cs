@@ -43,7 +43,7 @@
         public PseudoCss PseudoCss { get; set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MudTheme"/> class.
+        /// Initializes the <see cref="MudTheme"/> class.
         /// </summary>
         public MudTheme()
         {
