@@ -225,7 +225,7 @@ internal class ObserverManager<TIdentity, TObserver> : IEnumerable<TObserver> wh
     private class ObserverEntry
     {
         /// <summary>
-        /// Gets or sets the observer.
+        /// Observer.
         /// </summary>
         public TObserver Observer { get; set; }
 

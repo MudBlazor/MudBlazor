@@ -7,38 +7,38 @@
     public class MudTheme
     {
         /// <summary>
-        /// Gets or sets the palette for the light theme.
+        /// Palette for the light theme.
         /// </summary>
         /// <remarks>Renamed from <c>Palette</c> to <c>PaletteLight</c> in v7.</remarks>
         public PaletteLight PaletteLight { get; set; }
 
         /// <summary>
-        /// Gets or sets the palette for the dark theme.
+        /// Palette for the dark theme.
         /// </summary>
         public PaletteDark PaletteDark { get; set; }
 
         /// <summary>
-        /// Gets or sets the shadow settings.
+        /// Shadow settings.
         /// </summary>
         public Shadow Shadows { get; set; }
 
         /// <summary>
-        /// Gets or sets the typography settings.
+        /// Typography settings.
         /// </summary>
         public Typography Typography { get; set; }
 
         /// <summary>
-        /// Gets or sets the layout properties.
+        /// Layout properties.
         /// </summary>
         public LayoutProperties LayoutProperties { get; set; }
 
         /// <summary>
-        /// Gets or sets the z-index values.
+        /// Z-index values.
         /// </summary>
         public ZIndex ZIndex { get; set; }
 
         /// <summary>
-        /// Gets or sets the pseudo CSS styles.
+        /// Pseudo CSS styles.
         /// </summary>
         public PseudoCss PseudoCss { get; set; }
 

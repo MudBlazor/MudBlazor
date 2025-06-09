@@ -31,7 +31,7 @@ namespace MudBlazor
         public Color Color { get; set; } = Color.Default;
 
         /// <summary>
-        /// Gets or sets the display variant to use.
+        /// Display variant to use.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Variant.Text" />. The variant changes the appearance of the chat bubbles, such as <c>Text</c>, <c>Outlined</c>, or <c>Filled</c>.
@@ -63,7 +63,7 @@ namespace MudBlazor
         public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// Gets or sets the size of the drop shadow.
+        /// Size of the drop shadow.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>0</c>.  A higher number creates a heavier drop shadow.  Use a value of <c>0</c> for no shadow.

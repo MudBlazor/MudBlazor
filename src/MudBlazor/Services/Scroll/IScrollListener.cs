@@ -11,7 +11,7 @@ namespace MudBlazor;
 public interface IScrollListener : IDisposable
 {
     /// <summary>
-    /// Gets or sets the CSS selector to which the scroll event will be attached.
+    /// CSS selector to which the scroll event will be attached.
     /// </summary>
     string? Selector { get; set; }
 

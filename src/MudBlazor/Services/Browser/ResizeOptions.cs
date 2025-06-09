@@ -35,7 +35,7 @@
         public bool NotifyOnBreakpointOnly { get; set; } = true;
 
         /// <summary>
-        /// Gets or sets the breakpoint definitions, representing specific breakpoints and their associated width.
+        /// Breakpoint definitions, representing specific breakpoints and their associated width.
         /// </summary>
         /// <value>
         /// A dictionary where each entry represents a breakpoint, and the corresponding <c>int</c> value represents the width.
