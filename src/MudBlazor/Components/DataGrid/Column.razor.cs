@@ -430,6 +430,16 @@ namespace MudBlazor
         [Parameter]
         public RenderFragment<CellContext<T>> EditTemplate { get; set; }
 
+        /// <summary>
+        /// The format applied to values.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
+        [Parameter]
+#nullable enable
+        public string? Format { get; set; }
+#nullable disable
         #endregion
 
         #region FooterCell Properties
@@ -756,10 +766,8 @@ namespace MudBlazor
         public virtual string PropertyName { get; }
 
 #nullable enable
-        protected internal virtual string? ContentFormat { get; }
+        public abstract object? CellContent(T item);
 #nullable disable
-
-        protected internal abstract object CellContent(T item);
 
         protected internal abstract object PropertyFunc(T item);
 

@@ -45,7 +45,7 @@ public class GroupDefinition<[DynamicallyAccessedMembers(DynamicallyAccessedMemb
     /// <summary>
     /// The template for the grouped column.
     /// </summary>
-    public RenderFragment<GroupDefinition<T>>? GroupTemplate { get; set; }
+    public required RenderFragment<GroupDefinition<T>> GroupTemplate { get; set; }
 
     /// <summary>
     /// The title of the grouped column
@@ -79,6 +79,11 @@ public class GroupDefinition<[DynamicallyAccessedMembers(DynamicallyAccessedMemb
     /// Indents the each Group beyond the first by 48 px.
     /// </summary>
     public bool Indentation { get; set; } = true;
+
+    /// <summary>
+    /// Grouping is the default empty group
+    /// </summary>
+    public bool IsEmptyGroup => !Grouping.Any();
 
     /// <summary>
     /// The parent group definition.

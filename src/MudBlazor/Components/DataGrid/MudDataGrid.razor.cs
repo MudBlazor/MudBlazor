@@ -38,7 +38,6 @@ namespace MudBlazor
         private PropertyInfo[] _properties = typeof(T).GetProperties();
         private CancellationTokenSource _serverDataCancellationTokenSource;
         private IEnumerable<T> _currentRenderFilteredItemsCache = null;
-        internal GroupDefinition<T> _groupDefinition;
         internal Dictionary<GroupKey, bool> _groupExpansionsDict = [];
         private GridData<T> _serverData = new() { TotalItems = 0, Items = Array.Empty<T>() };
         private Func<IFilterDefinition<T>> _defaultFilterDefinitionFactory = () => new FilterDefinition<T>();
@@ -1011,7 +1010,7 @@ namespace MudBlazor
 
                     if (!_groupable)
                     {
-                        _groupDefinition = null;
+                        GroupDefinition = null;
 
                         foreach (var column in RenderedColumns)
                             column.RemoveGrouping().CatchAndLog();
@@ -1092,18 +1091,13 @@ namespace MudBlazor
         [Parameter]
         public IEqualityComparer<T> Comparer { get; set; } = EqualityComparer<T>.Default;
 
-#nullable enable
-        /// <summary>
-        /// The default template used to display column grouping for any column that is grouped. 
-        /// </summary>
-        /// <remarks>Can be overridden by using the column level GroupTemplate, defaults to <c>null</c>.</remarks>
-        [Parameter]
-        public RenderFragment<GroupDefinition<T>>? GroupTemplate { get; set; }
-#nullable disable
 
         #endregion
 
         #region Properties
+
+
+        public GroupDefinition<T> GroupDefinition { get; internal set; }
 
         internal IEnumerable<T> CurrentPageItems
         {
@@ -2056,7 +2050,7 @@ namespace MudBlazor
             if (!noStateChange)
                 DropContainerHasChanged();
 
-            _groupDefinition = default;
+            GroupDefinition = default;
 
             if (!IsGrouped || GetFilteredItemsCount() == 0)
             {
@@ -2069,10 +2063,10 @@ namespace MudBlazor
             var groupedColumns = RenderedColumns.Where(x => x.GroupingState.Value).OrderBy(x => x._groupByOrderState.Value).ToList();
 
             // Initialize with the first group definition
-            _groupDefinition = ProcessGroup(groupedColumns[0]);
+            GroupDefinition = ProcessGroup(groupedColumns[0]);
 
             // Create a reference to build the hierarchy
-            var currentGroupDef = _groupDefinition;
+            var currentGroupDef = GroupDefinition;
 
             // Start from index 1 since we've already processed the first column
             for (var i = 1; i < groupedColumns.Count; i++)
@@ -2092,11 +2086,11 @@ namespace MudBlazor
         {
             get
             {
-                return GetItemsOfGroup(_groupDefinition, CurrentPageItems);
+                return GetItemsOfGroup(GroupDefinition, CurrentPageItems);
             }
         }
 
-        internal IEnumerable<IGrouping<object, T>> GetItemsOfGroup(GroupDefinition<T>? parent, IEnumerable<T>? sourceList)
+        public IEnumerable<IGrouping<object, T>> GetItemsOfGroup(GroupDefinition<T>? parent, IEnumerable<T>? sourceList)
         {
             if (parent is null || sourceList is null)
             {
@@ -2121,14 +2115,14 @@ namespace MudBlazor
                 DataGrid = this,
                 Selector = column.groupBy,
                 Expanded = expanded,
-                GroupTemplate = column.GroupTemplate,
+                GroupTemplate = column.GroupTemplate ?? GroupTemplate,
                 Indentation = column.GroupIndented,
                 Title = column.Title,
                 Grouping = new EmptyGrouping<object?, T>(null) // Ensure Grouping is not null
             };
         }
 
-        internal IEnumerable<GroupDefinition<T>> GetGroupDefinitions(GroupDefinition<T> groupDef, IEnumerable<IGrouping<object?, T>> groups)
+        public IEnumerable<GroupDefinition<T>> GetGroupDefinitions(GroupDefinition<T> groupDef, IEnumerable<IGrouping<object?, T>> groups)
         {
             List<GroupDefinition<T>> result = new();
             foreach (var group in groups)
@@ -2146,7 +2140,7 @@ namespace MudBlazor
                     DataGrid = this,
                     Selector = groupDef.Selector,
                     Expanded = expanded,
-                    GroupTemplate = groupDef.GroupTemplate,
+                    GroupTemplate = groupDef.GroupTemplate ?? GroupTemplate,
                     Indentation = groupDef.Indentation,
                     Title = groupDef.Title,
                     Parent = groupDef.Parent,
@@ -2210,7 +2204,7 @@ namespace MudBlazor
         /// </remarks>
         public async Task ExpandAllGroupsAsync()
         {
-            if (_groupDefinition != null && _groupable)
+            if (GroupDefinition != null && _groupable)
             {
                 await ToggleGroupExpandRecursively(true);
             }
@@ -2225,7 +2219,7 @@ namespace MudBlazor
         [Obsolete("Use ExpandAllGroupsAsync instead")]
         public void ExpandAllGroups()
         {
-            if (_groupDefinition != null && _groupable)
+            if (GroupDefinition != null && _groupable)
             {
                 ToggleGroupExpandRecursively(true).CatchAndLog();
             }
@@ -2239,7 +2233,7 @@ namespace MudBlazor
         /// </remarks>
         public async Task CollapseAllGroupsAsync()
         {
-            if (_groupDefinition != null && _groupable)
+            if (GroupDefinition != null && _groupable)
             {
                 await ToggleGroupExpandRecursively(false);
             }
@@ -2254,7 +2248,7 @@ namespace MudBlazor
         [Obsolete("Use CollapseAllGroupsAsync instead")]
         public void CollapseAllGroups()
         {
-            if (_groupDefinition != null && _groupable)
+            if (GroupDefinition != null && _groupable)
             {
                 ToggleGroupExpandRecursively(false).CatchAndLog();
             }

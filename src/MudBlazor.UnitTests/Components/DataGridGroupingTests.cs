@@ -571,14 +571,14 @@ namespace MudBlazor.UnitTests.Components
 
             var dataGrid = component.FindComponent<MudDataGrid<DataGridGroupingMultiLevelTest.USState>>();
             // by default has a groupdefinition
-            dataGrid.WaitForAssertion(() => dataGrid.Instance._groupDefinition.Should().NotBeNull());
+            dataGrid.WaitForAssertion(() => dataGrid.Instance.GroupDefinition.Should().NotBeNull());
             // turn off grouping for the whole grid
             dataGrid.SetParam(x => x.Groupable, false);
             dataGrid.Render();
             await component.InvokeAsync(() => dataGrid.Instance.ReloadServerData());
 
             // grouping shouldn't exist
-            dataGrid.Instance._groupDefinition.Should().BeNull();
+            dataGrid.Instance.GroupDefinition.Should().BeNull();
             foreach (var column in dataGrid.Instance.RenderedColumns)
             {
                 column.GroupingState.Value.Should().Be(false);
@@ -597,10 +597,10 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = component.FindComponent<MudDataGrid<DataGridGroupingMultiLevelTest.USState>>();
             await component.InvokeAsync(() => dataGrid.Instance.ReloadServerData());
             // grouping is already setup make sure group definition is not null and it's first inner definition is not null
-            dataGrid.WaitForAssertion(() => dataGrid.Instance._groupDefinition.Should().NotBeNull());
-            dataGrid.Instance._groupDefinition.InnerGroup.Should().NotBeNull();
-            dataGrid.Instance._groupDefinition.Grouping.Should().BeNullOrEmpty();
-            // _groupDefinition is the definition for all the groups but isn't combined into the items until display so we need to 
+            dataGrid.WaitForAssertion(() => dataGrid.Instance.GroupDefinition.Should().NotBeNull());
+            dataGrid.Instance.GroupDefinition.InnerGroup.Should().NotBeNull();
+            dataGrid.Instance.GroupDefinition.Grouping.Should().BeNullOrEmpty();
+            // GroupDefinition is the definition for all the groups but isn't combined into the items until display so we need to 
             // check the final definitions from within the DataGridGroupRow            
 
             var rows = component.FindComponents<DataGridGroupRow<DataGridGroupingMultiLevelTest.USState>>();

@@ -15,7 +15,7 @@ namespace MudBlazor
     /// <typeparam name="T">The type of data represented by this column.</typeparam>
     public partial class TemplateColumn<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : Column<T>
     {
-        protected internal override object? CellContent(T item)
+        public override object? CellContent(T item)
             => null;
 
         /// <summary>
