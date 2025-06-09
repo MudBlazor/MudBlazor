@@ -629,7 +629,7 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedTest.Fruit>>();
             provider.Should().NotBeNull();
             comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
-            var menus = comp.FindAll("span.column-options button[aria-label='Show Column Options']");
+            var menus = comp.FindAll("span.column-options button[aria-label='Column options']");
             menus.Count.Should().Be(3); // one for each column
             var countMenu = menus[1]; // 2nd column options (Count)
             countMenu.Click();
@@ -642,7 +642,7 @@ namespace MudBlazor.UnitTests.Components
             // no change in grid rows since Grouping did not change
             comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
 
-            menus = comp.FindAll("span.column-options button[aria-label='Show Column Options']");
+            menus = comp.FindAll("span.column-options button[aria-label='Column options']");
             menus.Count.Should().Be(3); // one for each column
             countMenu = menus[1]; // 2nd column options (Count)
             countMenu.Click();
