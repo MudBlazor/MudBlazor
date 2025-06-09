@@ -32,7 +32,7 @@ namespace MudBlazor.UnitTests.Extensions
             ((long?)3L).ToPx().Should().Be("3px");
             ((long?)null).ToPx().Should().Be(string.Empty);
         }
-        
+
         [Test]
         public void All_ToPercentMethods_Work()
         {
