@@ -40,7 +40,7 @@ namespace MudBlazor
         /// The custom content within this group.
         /// </summary>
         /// <remarks>
-        /// This property allows for custom content to displayed inside of the group, but it is not required.
+        /// This property allows for custom content to displayed inside of the group, but is not required.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ButtonGroup.Behavior)]

@@ -150,7 +150,7 @@ namespace MudBlazor
         /// Content within the alert.
         /// </summary>
         /// <remarks>
-        /// This property allows for custom content to displayed inside of the alert, but it is not required.
+        /// This property allows for custom content to displayed inside of the alert, but is not required.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Alert.Behavior)]

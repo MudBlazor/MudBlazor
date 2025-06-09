@@ -208,7 +208,7 @@ namespace MudBlazor
         /// Gets whether the tooltip should be shown.
         /// </summary>
         /// <remarks>
-        /// The tooltip will be displayed if it is not disabled, not already visible, and either <see cref="TooltipContent"/> or <see cref="Text"/> is specified.
+        /// The tooltip will be displayed if not disabled, not already visible, and either <see cref="TooltipContent"/> or <see cref="Text"/> is specified.
         /// </remarks>
         internal bool ShowToolTip()
         {

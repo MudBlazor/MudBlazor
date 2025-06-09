@@ -97,7 +97,7 @@ namespace MudBlazor
         /// The content within the avatar.
         /// </summary>
         /// <remarks>
-        /// This property allows for custom content to displayed inside of the avatar, but it is not required.
+        /// This property allows for custom content to displayed inside of the avatar, but is not required.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Avatar.Behavior)]

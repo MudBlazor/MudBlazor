@@ -10,11 +10,11 @@ namespace MudBlazor
         private string _scope = ":root";
 
         /// <summary>
-        /// Set different scopes for the generated Theme
+        /// Set different scopes for the generated Theme.
         /// </summary>
         /// <remarks>
-        /// Ensure you use a valid CSS scope <see href="https://developer.mozilla.org/docs/Web/CSS/:root">Pseudo-classes Mozilla</see> for a list of valid ones
-        /// Defaults to :root
+        /// Ensure you use a valid CSS scope <see href="https://developer.mozilla.org/docs/Web/CSS/:root">:root - CSS | MDN</see> for a list of valid ones.
+        /// Defaults to <c>:root</c>.
         /// </remarks>
         public string Scope
         {
