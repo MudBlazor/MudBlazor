@@ -14,37 +14,37 @@ namespace MudBlazor
 
         /// <summary>
         /// The breakpoint value for extra small screens (xs).
-        /// Default value is "0px".
+        /// Defaults to <c>0px</c>.
         /// </summary>
         public string xs { get; set; } = "0px";
 
         /// <summary>
         /// The breakpoint value for small screens (sm).
-        /// Default value is "600px".
+        /// Defaults to <c>600px</c>.
         /// </summary>
         public string sm { get; set; } = "600px";
 
         /// <summary>
         /// The breakpoint value for medium screens (md).
-        /// Default value is "960px".
+        /// Defaults to <c>960px</c>.
         /// </summary>
         public string md { get; set; } = "960px";
 
         /// <summary>
         /// The breakpoint value for large screens (lg).
-        /// Default value is "1280px".
+        /// Defaults to <c>1280px</c>.
         /// </summary>
         public string lg { get; set; } = "1280px";
 
         /// <summary>
         /// The breakpoint value for extra large screens (xl).
-        /// Default value is "1920px".
+        /// Defaults to <c>1920px</c>.
         /// </summary>
         public string xl { get; set; } = "1920px";
 
         /// <summary>
         /// The breakpoint value for extra extra large screens (xxl).
-        /// Default value is "2560px".
+        /// Defaults to <c>2560px</c>.
         /// </summary>
         public string xxl { get; set; } = "2560px";
 

@@ -8,37 +8,37 @@
     {
         /// <summary>
         /// The Z-index value for the Drawer component.
-        /// Default value is "1100"".
+        /// Defaults to <c>1100</c>..
         /// </summary>
         public int Drawer { get; set; } = 1100;
 
         /// <summary>
         /// The Z-index value for the Popover component.
-        /// Default value is "1200".
+        /// Defaults to <c>1200</c>.
         /// </summary>
         public int Popover { get; set; } = 1200;
 
         /// <summary>
         /// The Z-index value for the AppBar component.
-        /// Default value is "1300".
+        /// Defaults to <c>1300</c>.
         /// </summary>
         public int AppBar { get; set; } = 1300;
 
         /// <summary>
         /// The Z-index value for the Dialog component.
-        /// Default value is "1400".
+        /// Defaults to <c>1400</c>.
         /// </summary>
         public int Dialog { get; set; } = 1400;
 
         /// <summary>
         /// The Z-index value for the SnackBar component.
-        /// Default value is "1500".
+        /// Defaults to <c>1500</c>.
         /// </summary>
         public int Snackbar { get; set; } = 1500;
 
         /// <summary>
         /// The Z-index value for the Tooltip component.
-        /// Default value is "1600".
+        /// Defaults to <c>1600</c>.
         /// </summary>
         public int Tooltip { get; set; } = 1600;
     }
