@@ -7,7 +7,7 @@
     public class Shadow
     {
         /// <summary>
-        /// Elevation levels for the shadow.
+        /// Gets or sets the elevation levels for the shadow.
         /// </summary>
         public string[] Elevation { get; set; } =
         {

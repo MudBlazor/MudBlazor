@@ -7,12 +7,12 @@
 public class BrowserWindowSize : EventArgs
 {
     /// <summary>
-    /// Height of the browser window.
+    /// Gets or sets the height of the browser window.
     /// </summary>
     public int Height { get; set; }
 
     /// <summary>
-    /// Width of the browser window.
+    /// Gets or sets the width of the browser window.
     /// </summary>
     public int Width { get; set; }
 }

@@ -67,7 +67,7 @@ public interface IMudPopoverHolder
     Dictionary<string, object?> UserAttributes { get; }
 
     /// <summary>
-    /// Element reference for the <see cref="MudRender"/>.
+    /// Gets or sets the element reference for the <see cref="MudRender"/>.
     /// It's used to re-render the component individually.
     /// </summary>
     MudRender? ElementReference { get; set; }
