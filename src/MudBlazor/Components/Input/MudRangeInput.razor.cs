@@ -26,7 +26,11 @@ namespace MudBlazor
         }
 
         protected string Classname => MudInputCssHelper.GetClassname(this,
-            () => !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start || !string.IsNullOrWhiteSpace(PlaceholderStart) || !string.IsNullOrWhiteSpace(PlaceholderEnd));
+            () => !string.IsNullOrEmpty(Text)
+                  || Adornment == Adornment.Start
+                  || !string.IsNullOrWhiteSpace(PlaceholderStart)
+                  || !string.IsNullOrWhiteSpace(PlaceholderEnd)
+                  || ShrinkLabel);
 
         internal override InputType GetInputType() => InputType;
 
@@ -100,6 +104,12 @@ namespace MudBlazor
         /// Moves the cursor to the starting input component.
         /// </summary>
         public ValueTask FocusStartAsync() => _elementReferenceStart.FocusAsync();
+
+        public override async ValueTask BlurAsync()
+        {
+            await _elementReferenceStart.MudBlurAsync();
+            await _elementReferenceEnd.MudBlurAsync();
+        }
 
         /// <summary>
         /// Selects the text in the starting input.

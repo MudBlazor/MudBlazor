@@ -26,7 +26,8 @@ namespace MudBlazor
         internal int? _rowsPerPage;
         private int _currentPage = 0;
         private IEnumerable<T> _items;
-        private MudVirtualize<IndexBag<T>> _mudVirtualize;
+        internal bool _groupInitialExpanded = true;
+        internal MudVirtualize<IndexBag<T>> _mudVirtualize;
         private bool _isFirstRendered = false;
         private bool _filtersMenuVisible = false;
         private bool _columnsPanelVisible = false;
@@ -37,14 +38,24 @@ namespace MudBlazor
         private PropertyInfo[] _properties = typeof(T).GetProperties();
         private CancellationTokenSource _serverDataCancellationTokenSource;
         private IEnumerable<T> _currentRenderFilteredItemsCache = null;
-        internal Dictionary<NullableObject<object>, bool> _groupExpansionsDict = new();
-        private List<GroupDefinition<T>> _currentPageGroups = [];
-        private List<GroupDefinition<T>> _allGroups = [];
+        internal GroupDefinition<T> _groupDefinition;
+        internal Dictionary<GroupKey, bool> _groupExpansionsDict = [];
         private GridData<T> _serverData = new() { TotalItems = 0, Items = Array.Empty<T>() };
         private Func<IFilterDefinition<T>> _defaultFilterDefinitionFactory = () => new FilterDefinition<T>();
+        internal (double Top, double Left) _openPosition = (0, 0);
 
         private readonly ParameterState<T> _selectedItemState;
         private readonly ParameterState<HashSet<T>> _selectedItemsState;
+        private readonly ParameterState<bool> _expandSingleRowState;
+
+        /// <summary>
+        /// Inline data attributes for positioning the menu at the cursor's location.
+        /// </summary>
+        internal Dictionary<string, object> PositionAttributes => new()
+        {
+            { "data-pc-x", _openPosition.Left.ToString(CultureInfo.InvariantCulture) },
+            { "data-pc-y", _openPosition.Top.ToString(CultureInfo.InvariantCulture) }
+        };
 
         public MudDataGrid()
         {
@@ -60,6 +71,10 @@ namespace MudBlazor
                 .WithParameter(() => SelectedItems)
                 .WithEventCallback(() => SelectedItemsChanged)
                 .WithChangeHandler(OnSelectedItemsChanged);
+
+            _expandSingleRowState = registerScope.RegisterParameter<bool>(nameof(ExpandSingleRow))
+                .WithParameter(() => ExpandSingleRow)
+                .WithChangeHandler(OnExpandSingleRowChangedAsync);
         }
 
         protected string Classname =>
@@ -192,9 +207,7 @@ namespace MudBlazor
 
         private static void Swap<TItem>(List<TItem> list, int indexA, int indexB)
         {
-            var tmp = list[indexA];
-            list[indexA] = list[indexB];
-            list[indexB] = tmp;
+            (list[indexB], list[indexA]) = (list[indexA], list[indexB]);
         }
 
         private Task ItemUpdatedAsync(MudItemDropInfo<Column<T>> dropItem)
@@ -448,7 +461,7 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
-        /// Can be overridden by <see cref="MudGlobal.Rounded"/>
+        /// Override with <see cref="MudGlobal.Rounded"/>.
         /// </remarks>
         [Parameter]
         public bool Square { get; set; } = MudGlobal.Rounded == false;
@@ -476,7 +489,7 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// <para>
-        /// This property specifies a group of one or more columns in a table for formatting.  For example:
+        /// This property specifies a groupedColumns of one or more columns in a table for formatting.  For example:
         /// </para>
         /// <para>
         /// table
@@ -984,7 +997,7 @@ namespace MudBlazor
         /// Allows grouping of columns in this grid.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  When <c>true</c>, columns can be used to group sets of items.  Can be overridden for individual columns via <see cref="Column{T}.Groupable"/>.
+        /// Defaults to <c>false</c>.  When <c>true</c>, columns can be used to groupedColumns sets of items.  Can be overridden for individual columns via <see cref="Column{T}.Groupable"/>.
         /// </remarks>
         [Parameter]
         public bool Groupable
@@ -998,12 +1011,8 @@ namespace MudBlazor
 
                     if (!_groupable)
                     {
-                        _currentPageGroups.Clear();
-                        _allGroups.Clear();
-                        _groupExpansionsDict.Clear();
-
-                        foreach (var column in RenderedColumns)
-                            column.RemoveGrouping().CatchAndLog();
+                        _groupDefinition = null;
+                        // do not need to RemoveGrouping here, if Groupable is set to false they won't show
                     }
                 }
             }
@@ -1012,10 +1021,10 @@ namespace MudBlazor
         private bool _groupable = false;
 
         /// <summary>
-        /// Expands grouped columns by default.
+        /// Expands grouped columns by default. Overrides <see cref="Column{T}.GroupExpanded" />
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  Applies when <see cref="Groupable"/> is <c>true</c>.
+        /// Defaults to <c>false</c>. Applies when <see cref="Groupable"/> is <c>true</c>.
         /// </remarks>
         [Parameter]
         public bool GroupExpanded { get; set; }
@@ -1066,6 +1075,13 @@ namespace MudBlazor
         public bool ShowMenuIcon { get; set; } = false;
 
         /// <summary>
+        /// Ensures the user can only expand one Hierarchy row at a time. This only has an effect if you are using a Hierarchy column.
+        /// </summary>
+        /// <remarks>Defaults to <c>false</c>.</remarks>
+        [Parameter]
+        public bool ExpandSingleRow { get; set; }
+
+        /// <summary>
         /// The comparer used to determine row selection.
         /// </summary>
         /// <remarks>
@@ -1073,6 +1089,15 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         public IEqualityComparer<T> Comparer { get; set; } = EqualityComparer<T>.Default;
+
+#nullable enable
+        /// <summary>
+        /// The default template used to display column grouping for any column that is grouped. 
+        /// </summary>
+        /// <remarks>Can be overridden by using the column level GroupTemplate, defaults to <c>null</c>.</remarks>
+        [Parameter]
+        public RenderFragment<GroupDefinition<T>>? GroupTemplate { get; set; }
+#nullable disable
 
         #endregion
 
@@ -1176,11 +1201,14 @@ namespace MudBlazor
         [Parameter]
         public Interfaces.IForm Validator { get; set; } = new DataGridRowValidator();
 
-        internal Column<T> GroupedColumn
+        /// <summary>
+        /// Returns true if the grid successfully grouped any column
+        /// </summary>
+        public bool IsGrouped
         {
             get
             {
-                return RenderedColumns.FirstOrDefault(x => x.GroupingState.Value);
+                return _groupDefinition != null;
             }
         }
 
@@ -1188,16 +1216,18 @@ namespace MudBlazor
 
         #region Computed Properties
 
-        internal string GetGroupIcon(bool isExpanded, bool rtl)
+        internal string GetGroupIcon(bool isExpanded, bool? rtl = null)
         {
+            if (rtl == null)
+                rtl = RightToLeft;
             if (isExpanded)
             {
                 return Icons.Material.Filled.ExpandMore;
             }
-            return rtl ? Icons.Material.Filled.ChevronLeft : Icons.Material.Filled.ChevronRight;
+            return rtl.Value ? Icons.Material.Filled.ChevronLeft : Icons.Material.Filled.ChevronRight;
         }
 
-        private bool HasFooter
+        internal bool HasFooter
         {
             get
             {
@@ -1213,7 +1243,7 @@ namespace MudBlazor
             }
         }
 
-        private bool HasHierarchyColumn
+        internal bool HasHierarchyColumn
         {
             get
             {
@@ -1285,7 +1315,17 @@ namespace MudBlazor
             }
         }
 
-        #region Methods
+        private async Task OnExpandSingleRowChangedAsync(ParameterChangedEventArgs<bool> args)
+        {
+            // If user changes the ExpandSingleRow parameter, clear all open hierarchies except the first
+            if (_openHierarchies.Count > 0)
+            {
+                var first = _openHierarchies.First();
+                _openHierarchies.Clear();
+                _openHierarchies.Add(first);
+                await InvokeAsync(StateHasChanged);
+            }
+        }
 
         /// <summary>
         /// Check if a specific Footer cell is displayable
@@ -1943,10 +1983,15 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Shows a panel that lets you show, hide, filter, group, sort and re-arrange columns.
+        /// Shows a panel that lets you show, hide, filter, groupedColumns, sort and re-arrange columns.
         /// </summary>
-        public void ShowColumnsPanel()
+        public void ShowColumnsPanel(MouseEventArgs args = null)
         {
+            if (args != null)
+            {
+                _openPosition.Top = args.PageY;
+                _openPosition.Left = args.PageX;
+            }
             _columnsPanelVisible = true;
             StateHasChanged();
         }
@@ -1996,7 +2041,7 @@ namespace MudBlazor
             _dropContainer?.Refresh();
             _columnsPanelDropContainer?.Refresh();
         }
-
+#nullable enable
         /// <summary>
         /// Performs grouping of the current items.
         /// </summary>
@@ -2009,58 +2054,170 @@ namespace MudBlazor
             if (!noStateChange)
                 DropContainerHasChanged();
 
-            if (GroupedColumn?.groupBy == null)
+            _groupDefinition = default;
+
+            // get all columns that have Groupable set to true
+            var groupedColumns = RenderedColumns.Where(x => x.groupable).ToList();
+            // is groupable on either DataGrid level or column level
+            var isGroupable = Groupable || groupedColumns.Count > 0;
+            // any columns that are groupable and have grouping set to true
+            groupedColumns = [.. groupedColumns.Where(x => x.GroupingState.Value).OrderBy(x => x._groupByOrderState.Value)];
+            // it's only groupable if a column can be grouped
+            isGroupable = isGroupable && groupedColumns.Count > 0;
+
+            if (!isGroupable || GetFilteredItemsCount() == 0)
             {
-                _currentPageGroups = new List<GroupDefinition<T>>();
-                _allGroups = new List<GroupDefinition<T>>();
                 if (_isFirstRendered && !noStateChange)
                     StateHasChanged();
                 return;
             }
 
-            var currentPageGroupings = CurrentPageItems.GroupBy(GroupedColumn.groupBy);
+            // Initialize with the first group definition
+            _groupDefinition = ProcessGroup(groupedColumns[0]);
 
-            // Maybe group Items to keep groups expanded after clearing a filter?
-            var allGroupings = FilteredItems.GroupBy(GroupedColumn.groupBy).ToArray();
+            // Create a reference to build the hierarchy
+            var currentGroupDef = _groupDefinition;
 
-            if (GetFilteredItemsCount() > 0)
+            // Start from index 1 since we've already processed the first column
+            for (var i = 1; i < groupedColumns.Count; i++)
             {
-                foreach (var group in allGroupings)
-                {
-                    _groupExpansionsDict.TryAdd(group.Key, GroupExpanded);
-                }
+                var nextGroupDef = ProcessGroup(groupedColumns[i]);
+                // Connect it to the current level
+                currentGroupDef.InnerGroup = nextGroupDef;
+                // Move to the next level for the next iteration
+                currentGroupDef = nextGroupDef;
             }
-
-            // construct the groups
-            _currentPageGroups = currentPageGroupings.Select(x => new GroupDefinition<T>(x,
-                _groupExpansionsDict[x.Key])).ToList();
-
-            _allGroups = allGroupings.Select(x => new GroupDefinition<T>(x,
-                _groupExpansionsDict[x.Key])).ToList();
 
             if ((_isFirstRendered || HasServerData) && !noStateChange)
                 StateHasChanged();
         }
 
-        internal async Task ChangedGrouping(Column<T> column)
+        private IEnumerable<IGrouping<object, T>> GroupItemsPage
         {
-            foreach (var c in RenderedColumns)
+            get
             {
-                if (c.PropertyName != column.PropertyName)
-                    await c.RemoveGrouping();
+                return GetItemsOfGroup(_groupDefinition, CurrentPageItems);
             }
-
-            GroupItems();
         }
 
-        internal void ToggleGroupExpansion(GroupDefinition<T> g)
+        internal IEnumerable<IGrouping<object, T>> GetItemsOfGroup(GroupDefinition<T>? parent, IEnumerable<T>? sourceList)
         {
-            if (_groupExpansionsDict.TryGetValue(g.Grouping.Key, out var value))
+            if (parent is null || sourceList is null)
             {
-                _groupExpansionsDict[g.Grouping.Key] = !value;
+                return new List<IGrouping<object, T>>();
             }
 
-            GroupItems();
+            if (parent.Selector is not null)
+            {
+                return sourceList.GroupBy(parent.Selector).ToList();
+            }
+
+            return new List<IGrouping<object, T>>();
+        }
+
+        private GroupDefinition<T> ProcessGroup(Column<T> column)
+        {
+            var expanded = _groupInitialExpanded ?
+                            (GroupExpanded || column._groupExpandedState.Value) :
+                            column._groupExpandedState.Value;
+            return new()
+            {
+                DataGrid = this,
+                Selector = column.groupBy,
+                Expanded = expanded,
+                GroupTemplate = column.GroupTemplate,
+                Indentation = column.GroupIndented,
+                Title = column.Title,
+                Grouping = new EmptyGrouping<object?, T>(null) // Ensure Grouping is not null
+            };
+        }
+
+        internal IEnumerable<GroupDefinition<T>> GetGroupDefinitions(GroupDefinition<T> groupDef, IEnumerable<IGrouping<object?, T>> groups)
+        {
+            List<GroupDefinition<T>> result = new();
+            foreach (var group in groups)
+            {
+                var expanded = false;
+                if (group is not null)
+                {
+                    var key = new GroupKey(groupDef.Title, group.Key);
+                    expanded = _groupExpansionsDict.TryGetValue(key, out var value) ? value :
+                                   groupDef.Expanded;
+                    _groupExpansionsDict.TryAdd(key, expanded);
+                }
+                result.Add(new GroupDefinition<T>
+                {
+                    DataGrid = this,
+                    Selector = groupDef.Selector,
+                    Expanded = expanded,
+                    GroupTemplate = groupDef.GroupTemplate,
+                    Indentation = groupDef.Indentation,
+                    Title = groupDef.Title,
+                    Parent = groupDef.Parent,
+                    InnerGroup = groupDef.InnerGroup,
+                    Grouping = group ?? new EmptyGrouping<object?, T>(null)
+                });
+            }
+            return result;
+        }
+
+        internal async Task UpdateGroupingOrder(Column<T> column, bool added)
+        {
+            // if added then add to the end if no _groupByOrderState.Value
+            if (added)
+            {
+                var groupedColumns = RenderedColumns.Where(x => x.GroupingState.Value && x != column);
+                var newOrder = groupedColumns.Any() ? groupedColumns.Max(x => x._groupByOrderState.Value) + 1 : 0;
+                await column._groupByOrderState.SetValueAsync(newOrder);
+            }
+            // if removed then reset _groupByOrderState.Value 
+            else
+            {
+                await column._groupByOrderState.SetValueAsync(default);
+            }
+            // expand all but last grouped column when changed
+            await GroupExpansion();
+        }
+
+        private async Task GroupExpansion()
+        {
+            var groupedColumns = RenderedColumns.Where(x => x.GroupingState.Value).OrderBy(x => x._groupByOrderState.Value).SkipLast(1);
+            foreach (var col in groupedColumns.OrderBy(x => x._groupByOrderState.Value))
+            {
+                await col._groupExpandedState.SetValueAsync(true);
+            }
+        }
+
+        internal void ToggleGroupExpandAsync(string title, object? key, GroupDefinition<T> groupDef, bool expanded)
+        {
+            var groupKey = new GroupKey(title, key);
+
+            // update the expansion state for _groupExpansionsDict
+            // if it has a key we see if it differs from the definition Expanded State and update accordingly
+            // if it doesn't we add it if the new state doesn't match the definition
+            var col = RenderedColumns.FirstOrDefault(x => x.GroupBy == groupDef.Selector);
+            if (expanded == col?._groupExpandedState.Value)
+                _groupExpansionsDict.Remove(groupKey);
+            else
+                _groupExpansionsDict[groupKey] = expanded;
+
+            _groupInitialExpanded = false;
+            StateHasChanged();
+        }
+#nullable disable
+
+        /// <summary>
+        /// Expands all groups async.
+        /// </summary>
+        /// <remarks>
+        /// Applies when <see cref="Groupable"/> is <c>true</c>.
+        /// </remarks>
+        public async Task ExpandAllGroupsAsync()
+        {
+            if (_groupDefinition != null && _groupable)
+            {
+                await ToggleGroupExpandRecursively(true);
+            }
         }
 
         /// <summary>
@@ -2069,14 +2226,27 @@ namespace MudBlazor
         /// <remarks>
         /// Applies when <see cref="Groupable"/> is <c>true</c>.
         /// </remarks>
+        [Obsolete("Use ExpandAllGroupsAsync instead")]
         public void ExpandAllGroups()
         {
-            foreach (var group in _allGroups)
+            if (_groupDefinition != null && _groupable)
             {
-                group.Expanded = true;
-                _groupExpansionsDict[group.Grouping.Key] = true;
+                ToggleGroupExpandRecursively(true).CatchAndLog();
             }
-            GroupItems();
+        }
+
+        /// <summary>
+        /// Collapses all groups async.
+        /// </summary>
+        /// <remarks>
+        /// Applies when <see cref="Groupable"/> is <c>true</c>.
+        /// </remarks>
+        public async Task CollapseAllGroupsAsync()
+        {
+            if (_groupDefinition != null && _groupable)
+            {
+                await ToggleGroupExpandRecursively(false);
+            }
         }
 
         /// <summary>
@@ -2085,25 +2255,62 @@ namespace MudBlazor
         /// <remarks>
         /// Applies when <see cref="Groupable"/> is <c>true</c>.
         /// </remarks>
+        [Obsolete("Use CollapseAllGroupsAsync instead")]
         public void CollapseAllGroups()
         {
-            foreach (var group in _allGroups)
+            if (_groupDefinition != null && _groupable)
             {
-                group.Expanded = false;
-                _groupExpansionsDict[group.Grouping.Key] = false;
+                ToggleGroupExpandRecursively(false).CatchAndLog();
             }
+        }
+
+        private async Task ToggleGroupExpandRecursively(bool expanded)
+        {
+            _groupExpansionsDict.Clear();
+            foreach (var column in RenderedColumns)
+            {
+                if (column.GroupingState.Value)
+                {
+                    await column._groupExpandedState.SetValueAsync(expanded);
+                }
+            }
+            _groupInitialExpanded = false;
             GroupItems();
         }
 
-        #endregion
-
-        internal async Task ToggleHierarchyVisibilityAsync(T item)
+        /// <summary>
+        /// Expands all Hierarchy columns
+        /// </summary>
+        public async Task ExpandAllHierarchy()
         {
-            if (_openHierarchies.Contains(item))
+            _openHierarchies.Clear();
+            _openHierarchies.UnionWith(FilteredItems);
+            await InvokeAsync(StateHasChanged);
+        }
+
+        /// <summary>
+        /// Collapses all Hierarchy columns
+        /// </summary>
+        public async Task CollapseAllHierarchy()
+        {
+            _openHierarchies.Clear();
+            await InvokeAsync(StateHasChanged);
+        }
+
+        /// <summary>
+        /// Collapses or expands the hierarchy of the specified item.
+        /// </summary>
+        /// <param name="item">The item whose hierarchy visibility is to be toggled.</param>
+        public async Task ToggleHierarchyVisibilityAsync(T item)
+        {
+            // if ExpandSingleRow is true, clear all open hierarchies, which will immediately add the item that was clicked.
+            if (_expandSingleRowState.Value)
             {
-                _openHierarchies.Remove(item);
+                _openHierarchies.Clear();
             }
-            else
+
+            // if item doesn't exist remove will return false and add the item
+            if (!_openHierarchies.Remove(item))
             {
                 _openHierarchies.Add(item);
             }
@@ -2148,5 +2355,21 @@ namespace MudBlazor
             // TODO: Use IAsyncDisposable for MudDataGrid
             _resizeService?.DisposeAsync().CatchAndLog();
         }
+
+        private sealed class EmptyGrouping<TKey, TElement> : IGrouping<TKey, TElement>
+        {
+            public TKey Key { get; }
+
+            public EmptyGrouping(TKey key)
+            {
+                Key = key;
+            }
+
+            public IEnumerator<TElement> GetEnumerator() => Enumerable.Empty<TElement>().GetEnumerator();
+
+            System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
+        }
+
+        internal record GroupKey(string Title, object ItemsKey);
     }
 }

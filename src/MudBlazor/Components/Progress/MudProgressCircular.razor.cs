@@ -71,7 +71,7 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
-        /// Can be overridden by <see cref="MudGlobal.Rounded"/>
+        /// Override with <see cref="MudGlobal.Rounded"/>.
         /// When <c>true</c>, the CSS <c>stroke-linecap</c> is set to <c>round</c>.
         /// </remarks>
         [Parameter]
@@ -117,6 +117,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.ProgressCircular.Appearance)]
         public int StrokeWidth { get; set; } = 3;
+
+        /// <summary>
+        /// RenderFragment for rendering custom content
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.ProgressCircular.Appearance)]
+        public RenderFragment? ChildContent { get; set; }
 
         public MudProgressCircular()
         {

@@ -327,7 +327,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
                 return;
             }
 
-            await _popoverJsInterop.Initialize(PopoverOptions.ContainerClass, PopoverOptions.FlipMargin, _cancellationToken);
+            await _popoverJsInterop.Initialize(PopoverOptions.ContainerClass, PopoverOptions.FlipMargin, PopoverOptions.OverflowPadding, _cancellationToken);
             // Starts in background
             await _batchExecutor.StartAsync(_cancellationToken);
             IsInitialized = true;

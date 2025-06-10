@@ -28,9 +28,11 @@
 
 .mud-menu-list {
   padding: 4px 0;
+  min-width: 112px;
 
   > .mud-menu {
     width: 100%;
+    display: inline;
   }
 
   > .mud-divider {
@@ -82,4 +84,13 @@
 // If any menu item has an icon, then give the other ones the same gutters.
 .mud-menu-list:has(.mud-menu-item-icon) .mud-menu-item:not(:has(.mud-menu-item-icon)) .mud-menu-item-text {
   margin-inline-start: 36px;
+}
+
+.mud-menu-list:has(.mud-menu-submenu-icon) .mud-menu-item:not(:has(.mud-menu-submenu-icon)) .mud-menu-item-text {
+  margin-inline-end: 36px;
+}
+
+// Prevent menu item hover effects peeking through rounded popovers.
+.mud-popover:has(> .mud-menu-list) {
+  overflow: hidden;
 }

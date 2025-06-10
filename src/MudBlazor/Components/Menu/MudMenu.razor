@@ -71,7 +71,7 @@
     @* The portal has to include the cascading values inside because it's not able to teletransport the cascade *@
     <MudPopover Open="@_openState.Value"
                 Class="@PopoverClassname"
-                Style="@Stylename"
+                UserAttributes="@PositionAttributes"
                 MaxHeight="@MaxHeight"
                 AnchorOrigin="@GetAnchorOrigin()"
                 TransformOrigin="@TransformOrigin"
@@ -92,8 +92,7 @@
     </MudPopover>
     @if (ParentMenu is null)
     {
-        <MudOverlay Class="mud-skip-overlay-positioning"
-                    Visible="_openState.Value && !_isTransient"
+        <MudOverlay Visible="_openState.Value && !_isTransient"
                     AutoClose
                     OnClosed="CloseMenuAsync"
                     LockScroll="LockScroll"

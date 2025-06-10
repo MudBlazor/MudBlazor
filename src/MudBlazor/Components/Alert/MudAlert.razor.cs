@@ -50,7 +50,7 @@ namespace MudBlazor
         public bool RightToLeft { get; set; }
 
         /// <summary>
-        /// Gets or sets the position of the text to the start (Left in LTR and right in RTL).
+        /// Position of the text to the start (Left in LTR and right in RTL).
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="HorizontalAlignment.Left"/>.
@@ -66,7 +66,7 @@ namespace MudBlazor
         public EventCallback<MudAlert> CloseIconClicked { get; set; }
 
         /// <summary>
-        /// Gets or sets the icon used for the close button.
+        /// Icon used for the close button.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Icons.Material.Filled.Close"/>. This icon is only displayed when the <see cref="ShowCloseIcon"/> property is <c>true</c>.
@@ -76,7 +76,7 @@ namespace MudBlazor
         public string CloseIcon { get; set; } = Icons.Material.Filled.Close;
 
         /// <summary>
-        /// Gets or sets whether a close icon is displayed.
+        /// Displays a close icon.
         /// </summary>
         /// <remarks>
         /// To customize which icon is displayed for the close icon, set the <see cref="CloseIcon"/> property.
@@ -86,7 +86,7 @@ namespace MudBlazor
         public bool ShowCloseIcon { get; set; }
 
         /// <summary>
-        /// Gets or sets the size of the drop shadow.
+        /// Size of the drop shadow.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>0</c>.  A higher number creates a heavier drop shadow.  Use a value of <c>0</c> for no shadow.
@@ -96,18 +96,18 @@ namespace MudBlazor
         public int Elevation { set; get; } = 0;
 
         /// <summary>
-        /// Gets or sets whether rounded corners are disabled.
+        /// Disables rounded corners.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
-        /// Can be overridden by <see cref="MudGlobal.Rounded"/>
+        /// Override with <see cref="MudGlobal.Rounded"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Alert.Appearance)]
         public bool Square { get; set; } = MudGlobal.Rounded == false;
 
         /// <summary>
-        /// Gets or sets whether compact padding will be used.
+        /// Uses compact padding.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -117,7 +117,7 @@ namespace MudBlazor
         public bool Dense { get; set; }
 
         /// <summary>
-        /// Gets or sets whether no icon is displayed.
+        /// Displays the alert without an icon.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  To customize the icon, use the <see cref="Icon"/> property.
@@ -127,7 +127,7 @@ namespace MudBlazor
         public bool NoIcon { get; set; }
 
         /// <summary>
-        /// Gets or sets the severity of the alert.
+        /// Severity of the alert.
         /// </summary>
         /// <remarks>
         /// The severity determines the color and icon used.
@@ -137,7 +137,7 @@ namespace MudBlazor
         public Severity Severity { get; set; } = Severity.Normal;
 
         /// <summary>
-        /// Gets or sets the display variant to use.
+        /// Display variant to use.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Variant.Text" />. The variant changes the appearance of the alert, such as <c>Text</c>, <c>Outlined</c>, or <c>Filled</c>.
@@ -147,17 +147,17 @@ namespace MudBlazor
         public Variant Variant { get; set; } = Variant.Text;
 
         /// <summary>
-        /// Gets or sets the content within the alert.
+        /// Content within the alert.
         /// </summary>
         /// <remarks>
-        /// This property allows for custom content to displayed inside of the alert, but it is not required.
+        /// This property allows for custom content to displayed inside of the alert, but is not required.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Alert.Behavior)]
         public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// Gets or sets the icon displayed for this alert.
+        /// Icon displayed for this alert.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  When set, the custom icon will be displayed.  Otherwise, the icon will depend on the <see cref="Severity"/> property.

@@ -6,6 +6,12 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
+    /// <summary>
+    /// A hierarchical tree of expandable items with optional value selection.
+    /// </summary>
+    /// <typeparam name="T">The type of item to display.</typeparam>
+    /// <seealso cref="MudTreeViewItem{T}"/>
+    /// <seealso cref="MudTreeViewItemToggleButton"/>
     public partial class MudTreeView<T> : MudComponentBase
     {
         public MudTreeView()
@@ -70,208 +76,283 @@ namespace MudBlazor
         private MudTreeView<T> MudTreeRoot { get; set; }
 
         /// <summary>
-        /// The color of the selected TreeViewItem.
+        /// The color of the selected item.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Color.Primary"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Selecting)]
         public Color Color { get; set; } = Color.Primary;
 
         /// <summary>
-        /// Check box color if multiselection is used.
+        /// The color of checkboxes.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Color.Default"/>. Only applies when <see cref="SelectionMode"/> is <see cref="SelectionMode.MultiSelection" />.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Selecting)]
         public Color CheckBoxColor { get; set; }
 
         /// <summary>
-        /// The selection mode determines whether only a single item (SingleSelection) or multiple items
-        /// can be selected (MultiSelection) and whether the selected item can be toggled off by clicking a
-        /// second time (ToggleSelection).
+        /// Controls how many items can be selected at one time.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="SelectionMode.SingleSelection"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Selecting)]
         public SelectionMode SelectionMode { get; set; } = SelectionMode.SingleSelection;
 
         /// <summary>
-        /// If true, the checkboxes will use the undetermined state in MultiSelection if any children in the subtree
-        /// have a different selection value than the parent item.
+        /// Uses checkboxes which support an undetermined state.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>. Only applies when <see cref="SelectionMode"/> is <see cref="SelectionMode.MultiSelection"/>. When set, 
+        /// an item's checkbox will be in the "undetermined" state if child items have a mix of checked and unchecked states.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Selecting)]
         public bool TriState { get; set; } = true;
 
         /// <summary>
-        /// If true, selecting all children will result in the parent being automatically selected.
-        /// Unselecting a children will still unselect the parent.
-        /// Note: This only has an effect in SelectionMode.MultiSelection.
+        /// Automatically checks an item if all children are selected.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>. Only applies when <see cref="SelectionMode"/> is <see cref="SelectionMode.MultiSelection"/>. 
+        /// Items will also be deselected if any children are deselected.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Selecting)]
         public bool AutoSelectParent { get; set; } = true;
 
         /// <summary>
-        /// If true, clicking anywhere on the item will expand it, if it has children.
+        /// Expands an item with children if it is clicked anywhere (not just the expand/collapse buttons).
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.ClickAction)]
         public bool ExpandOnClick { get; set; }
 
         /// <summary>
-        /// If true, double-clicking anywhere on the item will expand it, if it has children.
+        /// Expands an item with children if it is double-clicked anywhere (not just the expand/collapse buttons).
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.ClickAction)]
         public bool ExpandOnDoubleClick { get; set; }
 
         /// <summary>
-        /// Gets or sets whether the tree automatically expands to reveal the selected item.
+        /// Automatically expands items to show selected children.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Selecting)]
         public bool AutoExpand { get; set; }
 
         /// <summary>
-        /// Hover effect for item's on mouse-over.
+        /// Shows an effect when items are hovered over.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Appearance)]
         public bool Hover { get; set; }
 
         /// <summary>
-        /// If true, compact vertical padding will be applied to all TreeView items.
+        /// Uses compact vertical padding.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Appearance)]
         public bool Dense { get; set; }
 
         /// <summary>
-        /// Setting a height will allow to scroll the TreeView. If not set, it will try to grow in height.
-        /// You can set this to any CSS value that the attribute 'height' accepts, i.e. 500px.
+        /// Sets a fixed height.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>. Can be a CSS value such as <c>500px</c> or <c>30%</c>. When set, items can be scrolled vertically. Otherwise, the height will grow automatically.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Appearance)]
         public string? Height { get; set; }
 
         /// <summary>
-        /// Setting a maximum height will allow to scroll the TreeView. If not set, it will try to grow in height.
-        /// You can set this to any CSS value that the attribute 'height' accepts, i.e. 500px.
+        /// Sets a maximum height.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>. Can be a CSS value such as <c>500px</c> or <c>30%</c>. When set, items can be scrolled vertically. Otherwise, the height will grow automatically.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Appearance)]
         public string? MaxHeight { get; set; }
 
         /// <summary>
-        /// Setting a width the TreeView. You can set this to any CSS value that the attribute 'height' accepts, i.e. 500px.
+        /// Sets a fixed width.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>. Can be a CSS value such as <c>500px</c> or <c>30%</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Appearance)]
         public string? Width { get; set; }
 
         /// <summary>
-        /// If true, TreeView will be disabled and all its children.
+        /// Prevents the user from interacting with any items.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Behavior)]
         public bool Disabled { get; set; }
 
         /// <summary>
-        /// Determines whether the <see cref="TreeItemData{T}"/> is displayed during filtering or not. True is visible and false is invisible.
+        /// Determines whether items are displayed.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>. The function provides an item and should return <c>true</c> to display the item, or <c>false</c> to hide it.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Behavior)]
         public Func<TreeItemData<T>, Task<bool>>? FilterFunc { get; set; }
 
         /// <summary>
-        /// Gets or sets whether to show a ripple effect when the user clicks the button. Default is true.
+        /// Shows a ripple effect when an item is clicked.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Appearance)]
         public bool Ripple { get; set; } = true;
 
         /// <summary>
-        /// Tree items that will be rendered using the Item
+        /// The items being displayed.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Data)]
         public IReadOnlyCollection<TreeItemData<T>>? Items { get; set; } = Array.Empty<TreeItemData<T>>();
 
+        /// <summary>
+        /// The currently selected value.
+        /// </summary>
+        /// <remarks>
+        /// Applies when <see cref="SelectionMode"/> is <see cref="SelectionMode.SingleSelection"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Selecting)]
         public T? SelectedValue { get; set; }
 
         /// <summary>
-        /// Called whenever the selected value changed.
+        /// Occurs when <see cref="SelectedValue"/> has changed.
         /// </summary>
         [Parameter]
         public EventCallback<T?> SelectedValueChanged { get; set; }
 
+        /// <summary>
+        /// The currently selected values.
+        /// </summary>
+        /// <remarks>
+        /// Applies when <see cref="SelectionMode"/> is <see cref="SelectionMode.MultiSelection"/> or <see cref="SelectionMode.ToggleSelection"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Selecting)]
         public IReadOnlyCollection<T>? SelectedValues { get; set; }
 
         /// <summary>
-        /// Called whenever the selection changes.
+        /// Occurs when <see cref="SelectedValues"/> has changed.
         /// </summary>
         [Parameter]
         public EventCallback<IReadOnlyCollection<T>?> SelectedValuesChanged { get; set; }
 
         /// <summary>
-        /// Child content of component.
+        /// The content within this component.
         /// </summary>
+        /// <remarks>
+        /// Applies when <see cref="ItemTemplate"/> and <see cref="Items"/> are both not set.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Data)]
         public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// ItemTemplate for rendering children.
+        /// The template for rendering each item.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Data)]
         public RenderFragment<TreeItemData<T>>? ItemTemplate { get; set; }
 
         /// <summary>
-        /// Comparer is used to check if two tree items are equal
+        /// The comparer used to check if two items are equal.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Selecting)]
         public IEqualityComparer<T?> Comparer { get; set; } = EqualityComparer<T?>.Default;
 
         /// <summary>
-        /// Supply a func that asynchronously loads tree view items on demand
+        /// The function for asynchronously loading items.
         /// </summary>
+        /// <remarks>
+        /// When set, the function will be called to load the children of a parent item. 
+        /// When the parent node is <c>null</c>, top-level items should be returned.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Data)]
         public Func<T?, Task<IReadOnlyCollection<TreeItemData<T?>>>>? ServerData { get; set; }
 
         /// <summary>
-        /// If true, the selection of the tree view can not be changed by clicking its items.
-        /// The currently selected value(s) are still displayed however
+        /// Prevents selections from being changed.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>. When <c>true</c>, selections cannot be changed, but the current
+        /// selections will continue to be displayed.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Selecting)]
         public bool ReadOnly { get; set; }
 
         /// <summary>
-        /// Custom checked icon.
+        /// The icon displayed for checked items.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.CheckBox"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Selecting)]
         public string CheckedIcon { get; set; } = Icons.Material.Filled.CheckBox;
 
         /// <summary>
-        /// Custom unchecked icon.
+        /// The icon displayed for unchecked items.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.CheckBoxOutlineBlank"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Selecting)]
         public string UncheckedIcon { get; set; } = Icons.Material.Filled.CheckBoxOutlineBlank;
 
         /// <summary>
-        /// Custom tri-state indeterminate icon.
+        /// The icon displayed for indeterminate items.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.IndeterminateCheckBox"/>. Only applies when <see cref="TriState"/> is <c>true</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Selecting)]
         public string IndeterminateIcon { get; set; } = Icons.Material.Filled.IndeterminateCheckBox;
 
+        /// <inheritdoc />
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender && MudTreeRoot == this)
@@ -284,9 +365,9 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Invokes the <see cref="FilterFunc"/> to be applied to every item.
+        /// Filters all items based on the <see cref="FilterFunc"/> function.
         /// </summary>
-        /// <returns>A task to represent the asynchronous operation.</returns>
+        /// <returns>A task representing the asynchronous operation.</returns>
         public async Task FilterAsync()
         {
             if (Items is null)
@@ -345,7 +426,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Expands all items and their children recursively.
+        /// Expands all items and their children.
         /// </summary>
         public async Task ExpandAllAsync()
         {
@@ -354,7 +435,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Collapses all items and their children recursively.
+        /// Collapses all items and their children.
         /// </summary>
         public async Task CollapseAllAsync()
         {

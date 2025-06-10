@@ -249,12 +249,12 @@ namespace MudBlazor.UnitTests.Components
 #pragma warning disable BL0005 // Component parameter should not be set outside of its component.
             comp.Instance.EnableSwipeGesture = false;
             await comp.InvokeAsync(() => mudSwipeArea.OnPointerDown(new PointerEventArgs { ClientX = 200, ClientY = 0 }));
-            await comp.InvokeAsync(async () => await mudSwipeArea.OnPointerUp(new PointerEventArgs { ClientX = 100, ClientY = 0 }));
+            await comp.InvokeAsync(async () => await mudSwipeArea.OnPointerUpAsync(new PointerEventArgs { ClientX = 100, ClientY = 0 }));
             comp.Instance.SelectedIndex.Should().Be(0);
 
             comp.Instance.EnableSwipeGesture = true;
             await comp.InvokeAsync(() => mudSwipeArea.OnPointerDown(new PointerEventArgs { ClientX = 200, ClientY = 0 }));
-            await comp.InvokeAsync(async () => await mudSwipeArea.OnPointerUp(new PointerEventArgs { ClientX = 100, ClientY = 0 }));
+            await comp.InvokeAsync(async () => await mudSwipeArea.OnPointerUpAsync(new PointerEventArgs { ClientX = 100, ClientY = 0 }));
             comp.Instance.SelectedIndex.Should().Be(1);
 #pragma warning restore BL0005 // Component parameter should not be set outside of its component.
         }

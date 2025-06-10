@@ -29,7 +29,6 @@ namespace MudBlazor
                 .WithChangeHandler(RecalculateValidDays);
 
             DisplayMonths = 2;
-            AdornmentAriaLabel = "Open Date Range Picker";
         }
 
         /// <summary>
@@ -211,6 +210,8 @@ namespace MudBlazor
         /// Selects the end input text.
         /// </summary>
         public ValueTask SelectEndAsync() => _rangeInput.SelectEndAsync();
+
+        public override ValueTask BlurAsync() => _rangeInput.BlurAsync();
 
         /// <summary>
         /// Selects a portion of the end input text.

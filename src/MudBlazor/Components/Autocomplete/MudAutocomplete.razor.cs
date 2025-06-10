@@ -32,6 +32,7 @@ namespace MudBlazor
         private T[]? _items;
         private List<int> _enabledItemIndices = [];
         private Func<T?, string?>? _toStringFunc;
+        private bool _handleNextFocus;
 
         [Inject]
         private IScrollManager ScrollManager { get; set; } = null!;
@@ -491,6 +492,16 @@ namespace MudBlazor
         public EventCallback<int> ReturnedItemsCountChanged { get; set; }
 
         /// <summary>
+        /// Prevents scrolling while the dropdown is open.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public bool LockScroll { get; set; }
+
+        /// <summary>
         /// Displays the search result drop-down.
         /// </summary>
         /// <remarks>
@@ -561,12 +572,8 @@ namespace MudBlazor
                     await _elementReference.SetText(optionText);
                 }
 
-                await FocusAsync();
-                // We want focus with a closed popover
                 Open = false;
-                // And update
                 StateHasChanged();
-
             }
             finally
             {
@@ -732,7 +739,20 @@ namespace MudBlazor
 
             if (MaxItems.HasValue)
             {
-                searchedItems = searchedItems.Take(MaxItems.Value).ToArray();
+                // Get range of items based off selected item so the selected item can be scrolled to when strict is set to false
+                if (!Strict && searchedItems.Length != 0 && !EqualityComparer<T>.Default.Equals(Value, default(T)))
+                {
+                    int split = (MaxItems.Value / 2) + 1;
+                    int valueIndex = Array.IndexOf(searchedItems, Value);
+                    int endIndex = Math.Min(valueIndex + split, searchedItems.Length);
+                    int startIndex = endIndex - Math.Min(MaxItems.Value, searchedItems.Length);
+
+                    searchedItems = searchedItems.Take(new Range(startIndex, endIndex)).ToArray();
+                }
+                else
+                {
+                    searchedItems = searchedItems.Take(MaxItems.Value).ToArray();
+                }
             }
 
             _items = searchedItems;
@@ -756,6 +776,12 @@ namespace MudBlazor
 
             _opening = false;
             StateHasChanged();
+
+            // If not strict scroll to the selected item
+            if (!Strict && _selectedListItemIndex > 0)
+            {
+                await ScrollToListItemAsync(_selectedListItemIndex);
+            }
         }
 
         /// <summary>
@@ -967,20 +993,53 @@ namespace MudBlazor
             }
         }
 
-        private Task OnInputClickedAsync() => OnInputActivationAsync(true);
-
-        private Task OnInputFocusedAsync() => OnInputActivationAsync(OpenOnFocus);
-
-        private async Task OnInputActivationAsync(bool openMenu)
+        private Task OnInputClickedAsync()
         {
+            if (GetDisabledState())
+            {
+                return Task.CompletedTask;
+            }
+
+            return OnInputActivatedAsync(true);
+        }
+
+        private async Task OnInputFocusedAsync()
+        {
+            if (GetDisabledState())
+            {
+                // This shouldn't be possible through the UI, but could be triggered in code.
+                return;
+            }
+
+            if (GetReadOnlyState())
+            {
+                // A readonly input doesn't trigger onblur later correctly, so we have to disable focus features for it.
+                return;
+            }
+
+            var wasFocused = _isFocused;
             _isFocused = true;
 
-            if (SelectOnActivation && !GetDisabledState() && !GetReadOnlyState())
+            // Skip features that are not meant for internal focus events.
+            if (_handleNextFocus)
+            {
+                _handleNextFocus = false;
+                return;
+            }
+
+            // Select the input text unless we're already focused or it will interfere with cursor selection.
+            if (!wasFocused && SelectOnActivation)
             {
                 await SelectAsync();
             }
 
-            if (openMenu && !Open && !_opening)
+            await OnInputActivatedAsync(OpenOnFocus);
+        }
+
+        private async Task OnInputActivatedAsync(bool openMenu)
+        {
+            // The click event also triggers the focus event so we don't want to unnecessarily handle both.
+            if (openMenu && !Open && !_opening && !GetReadOnlyState())
             {
                 await OpenMenuAsync();
             }
@@ -990,7 +1049,6 @@ namespace MudBlazor
         {
             // clear button clicked, let's make sure text is cleared and the menu has focus
             Open = true;
-            _isFocused = true;
             await SetValueAsync(default, false);
             await SetTextAsync(default, false);
             _selectedListItemIndex = default;
@@ -1016,6 +1074,7 @@ namespace MudBlazor
         private Task OnInputBlurredAsync(FocusEventArgs args)
         {
             _isFocused = false;
+            _handleNextFocus = false;
 
             // When Immediate is enabled, then the CoerceValue is set by TextChanged
             // So only coerce the value on blur when Immediate is disabled
@@ -1140,6 +1199,11 @@ namespace MudBlazor
             await SetTextAsync(text, true);
         }
 
-        private Task ListItemOnClickAsync(T item) => SelectOptionAsync(item);
+        private async Task ListItemOnClickAsync(T item)
+        {
+            await SelectOptionAsync(item);
+            _handleNextFocus = true; // Let the event handler know it doesn't need to do anything.
+            await FocusAsync();
+        }
     }
 }

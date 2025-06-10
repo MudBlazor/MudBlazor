@@ -195,7 +195,7 @@ namespace MudBlazor.UnitTests.Components
 
                 styleAttr.Should().Be("transform:translateX(-0px);");
 
-                GetSliderValue(comp).Should().Be(i * 250.0);
+                GetSliderValue(comp).Should().BeApproximately(i * (1.0 / 6.0) * 100, 0.00001);
             }
         }
 
@@ -256,7 +256,7 @@ namespace MudBlazor.UnitTests.Components
             var styleAttr = toolbarWrapper.GetAttribute("style");
 
             styleAttr.Should().Be($"transform:translateX(-{expectedTranslation.ToString(CultureInfo.InvariantCulture)}px);");
-            GetSliderValue(comp).Should().Be(2 * 100.0);
+            GetSliderValue(comp).Should().BeApproximately((2.0 / 6.0) * 100.0, 0.00001);
         }
 
         [Test]
@@ -290,7 +290,7 @@ namespace MudBlazor.UnitTests.Components
             var styleAttr = toolbarWrapper.GetAttribute("style");
 
             styleAttr.Should().Be($"transform:translateY(-{expectedTranslation.ToString(CultureInfo.InvariantCulture)}px);");
-            GetSliderValue(comp, "top").Should().Be(2 * 100.0);
+            GetSliderValue(comp, "top").Should().BeApproximately((2.0 / 6.0) * 100.0, 0.00001);
         }
 
         [Test]
@@ -330,7 +330,7 @@ namespace MudBlazor.UnitTests.Components
                 var styleAttr = toolbarWrapper.GetAttribute("style");
 
                 styleAttr.Should().Be($"transform:translateX(-{expectedTranslations[i].ToString(CultureInfo.InvariantCulture)}px);");
-                GetSliderValue(comp).Should().Be(i * 100.0);
+                GetSliderValue(comp).Should().BeApproximately((i / 6.0) * 100.0, 0.00001);
             }
         }
 
@@ -470,7 +470,7 @@ namespace MudBlazor.UnitTests.Components
                 var styleAttr = toolbarWrapper.GetAttribute("style");
 
                 styleAttr.Should().Be($"transform:translateX(-{expectedTranslation.ToString(CultureInfo.InvariantCulture)}px);");
-                GetSliderValue(comp).Should().Be(5 * 100.0);
+                GetSliderValue(comp).Should().BeApproximately((5.0 / 6.0) * 100.0, 0.00001);
             }
         }
 
@@ -493,12 +493,12 @@ namespace MudBlazor.UnitTests.Components
             var scrollButtons = comp.FindComponents<MudIconButton>();
 
             scrollButtons.First().Instance.Disabled.Should().BeTrue();
-            GetSliderValue(comp).Should().Be(1 * 100.0);
+            GetSliderValue(comp).Should().BeApproximately((1.0 / 6.0) * 100.0, 0.00001);
 
             observer.UpdateTotalPanelSize(200.0);
 
             scrollButtons.First().Instance.Disabled.Should().BeTrue();
-            GetSliderValue(comp).Should().Be(1 * 100.0);
+            GetSliderValue(comp).Should().BeApproximately((1.0 / 6.0) * 100.0, 0.00001);
         }
 
         [Test]
@@ -677,12 +677,12 @@ namespace MudBlazor.UnitTests.Components
 
             var scrollButtons = comp.FindComponents<MudIconButton>();
             scrollButtons.First().Instance.Disabled.Should().BeTrue();
-            GetSliderValue(comp).Should().Be(1 * 100.0);
+            GetSliderValue(comp).Should().BeApproximately((1.0 / 6.0) * 100.0, 0.00001);
 
             observer.UpdatePanelSize(0, 200.0);
 
             scrollButtons.First().Instance.Disabled.Should().BeTrue();
-            GetSliderValue(comp).Should().Be(200.0);
+            GetSliderValue(comp).Should().BeApproximately((2.0 / 7.0) * 100.0, 0.00001);
         }
 
         [Test]
@@ -701,11 +701,11 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Instance.SetPanelActive(4);
 
-            GetSliderValue(comp).Should().Be(4 * 100.0);
+            GetSliderValue(comp).Should().BeApproximately((4.0 / 6.0) * 100.0, 0.00001);
 
             await comp.Instance.AddPanel();
 
-            GetSliderValue(comp).Should().Be(4 * 100.0);
+            GetSliderValue(comp).Should().BeApproximately((4.0 / 7.0) * 100.0, 0.00001);
 
             var scrollButtons = comp.FindComponents<MudIconButton>();
             scrollButtons.Should().HaveCount(2);
@@ -739,7 +739,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Instance.SetPanelActive(2);
 
-            GetSliderValue(comp).Should().Be(2 * 100.0);
+            GetSliderValue(comp).Should().BeApproximately((2.0 / 6.0) * 100.0, 0.00001);
 
             var scrollButtons = comp.FindComponents<MudIconButton>();
 
@@ -756,7 +756,7 @@ namespace MudBlazor.UnitTests.Components
             styleAttr.Should().Be($"transform:translateX(-100px);");
 
             var sliderValue = GetSliderValue(comp);
-            GetSliderValue(comp).Should().Be(1 * 100.0);
+            GetSliderValue(comp).Should().BeApproximately((1.0 / 5.0) * 100.0, 0.00001);
         }
 
         [Test]
@@ -784,7 +784,7 @@ namespace MudBlazor.UnitTests.Components
                 toolbarWrapper.HasAttribute("style").Should().Be(true);
                 var styleAttr = toolbarWrapper.GetAttribute("style");
                 styleAttr.Should().Be($"transform:translateX(-100px);");
-                GetSliderValue(comp).Should().Be(2 * 100.0);
+                GetSliderValue(comp).Should().BeApproximately((2.0 / 6.0) * 100.0, 0.00001);
             }
 
             await comp.Instance.RemovePanel(5);
@@ -797,7 +797,7 @@ namespace MudBlazor.UnitTests.Components
                 toolbarWrapper.HasAttribute("style").Should().Be(true);
                 var styleAttr = toolbarWrapper.GetAttribute("style");
                 styleAttr.Should().Be($"transform:translateX(-100px);");
-                GetSliderValue(comp).Should().Be(2 * 100.0);
+                GetSliderValue(comp).Should().BeApproximately((2.0 / 5.0) * 100.0, 0.00001);
             }
         }
 
@@ -1249,7 +1249,7 @@ namespace MudBlazor.UnitTests.Components
             var styleAttribute = slider.GetAttribute("style");
             var indexToSplit = styleAttribute.IndexOf($"{attribute}:");
             var substring = styleAttribute.Substring(indexToSplit + attribute.Length + 1).Split(';')[0];
-            substring = substring.Remove(substring.Length - 2);
+            substring = substring.Remove(substring.Length - 1);
             var value = double.Parse(substring, CultureInfo.InvariantCulture);
 
             return value;
@@ -1334,6 +1334,123 @@ namespace MudBlazor.UnitTests.Components
             {
                 panel.ClassList.Should().Contain("mud-tab-panel-hidden");
             }
+        }
+
+        [Test]
+        public void LabelSorting_NaturalOrderIfSortingUnspecified()
+        {
+            // all parameters unspecified
+            var comp = Context.RenderComponent<LabelSortTest>();
+
+            // all labels should be present and in natural order
+            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab").Count.Should().Be(3);
+            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[0].InnerHtml.Should().Be("2");
+            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[1].InnerHtml.Should().Be("1");
+            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[2].InnerHtml.Should().Be("3");
+        }
+
+        [Test]
+        public void LabelSorting_SpecifiedDirectionWithoutKeysOrComparer()
+        {
+            /* ***
+             * all labels should be present and in natural order
+             */
+            var comp = Context.RenderComponent<LabelSortTest>(
+                            ComponentParameter.CreateParameter("SortDirection", SortDirection.None)
+                        );
+            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab").Count.Should().Be(3);
+            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[0].InnerHtml.Should().Be("2");
+            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[1].InnerHtml.Should().Be("1");
+            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[2].InnerHtml.Should().Be("3");
+
+            /* ***
+             * all labels should be present and in lexicographically ascending order
+             */
+            comp = Context.RenderComponent<LabelSortTest>(
+                            ComponentParameter.CreateParameter("SortDirection", SortDirection.Ascending)
+                        );
+            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab").Count.Should().Be(3);
+            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[0].InnerHtml.Should().Be("1");
+            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[1].InnerHtml.Should().Be("2");
+            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[2].InnerHtml.Should().Be("3");
+
+            /* ***
+             * all labels should be present and in lexicographically descending order
+             */
+            comp = Context.RenderComponent<LabelSortTest>(
+                            ComponentParameter.CreateParameter("SortDirection", SortDirection.Descending)
+                        );
+            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab").Count.Should().Be(3);
+            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[0].InnerHtml.Should().Be("3");
+            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[1].InnerHtml.Should().Be("2");
+            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[2].InnerHtml.Should().Be("1");
+        }
+
+        [Test]
+        public void LabelSorting_SpecifiedDirectionWithKeysAndDefaultComparer()
+        {
+            // Caution: intentionally descending order to ensure this behaviour overrides Text ordering
+            string[] sortKeys = ["c", "b", "a"];
+
+            /* ***
+             * all labels should be present and in natural order
+             */
+            var comp = Context.RenderComponent<LabelSortTest>(
+                            ComponentParameter.CreateParameter("SortDirection", SortDirection.None),
+                            ComponentParameter.CreateParameter("SortKeys", sortKeys)
+                        );
+            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab").Count.Should().Be(4);
+            // sort order is per markup: 2, 1, 3, 4. Keys are ignored as list is unsorted.
+            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[0].InnerHtml.Should().Be("2");
+            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[1].InnerHtml.Should().Be("1");
+            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[2].InnerHtml.Should().Be("3");
+            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[3].InnerHtml.Should().Be("4");
+
+            /* ***
+             * all labels should be present and in lexicographically ascending order
+             */
+            comp = Context.RenderComponent<LabelSortTest>(
+                            ComponentParameter.CreateParameter("SortDirection", SortDirection.Ascending),
+                            ComponentParameter.CreateParameter("SortKeys", sortKeys)
+                        );
+            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab").Count.Should().Be(4);
+            // sort order is: 4, a=3, b=1, c=2
+            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[0].InnerHtml.Should().Be("4");
+            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[1].InnerHtml.Should().Be("3");
+            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[2].InnerHtml.Should().Be("1");
+            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[3].InnerHtml.Should().Be("2");
+
+            /* ***
+             * all labels should be present and in lexicographically descending order
+             */
+            comp = Context.RenderComponent<LabelSortTest>(
+                            ComponentParameter.CreateParameter("SortDirection", SortDirection.Descending),
+                            ComponentParameter.CreateParameter("SortKeys", sortKeys)
+                        );
+            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab").Count.Should().Be(4);
+            // sort order is: c=2, b=1, a=3, 4
+            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[0].InnerHtml.Should().Be("2");
+            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[1].InnerHtml.Should().Be("1");
+            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[2].InnerHtml.Should().Be("3");
+            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[3].InnerHtml.Should().Be("4");
+        }
+
+        [Test]
+        public void LabelSorting_CustomSortComparer()
+        {
+            /* ***
+             * All labels should be present and in Tag order, ignoring SortDirection and Keys.
+             * For this test the Tabs.SortDirection is set to Descending in markup, and the SortKeys
+             * are set to Apple=3, Banana=2, Cherry=1, so there is no combination of SortKey, Label
+             * or SortDirection that could ellicit the same sort order as we get from TestComparer.
+             */
+            var comp = Context.RenderComponent<LabelSortTest>(
+                            ComponentParameter.CreateParameter("SortComparer", new LabelSortTest.TestComparer())
+                        );
+            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab").Count.Should().Be(3);
+            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[0].InnerHtml.Should().Be("Cherry");
+            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[1].InnerHtml.Should().Be("Apple");
+            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[2].InnerHtml.Should().Be("Banana");
         }
     }
 }
