@@ -221,7 +221,7 @@ namespace MudBlazor
             {
                 if (!_disposed)
                     await _dialogContainerReference.FocusAsync(); // Refocus the dialog panel if backdrop clicked
-                
+
                 return;
             }
 
