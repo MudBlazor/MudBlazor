@@ -461,7 +461,7 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
-        /// Can be overridden by <see cref="MudGlobal.Rounded"/>
+        /// Override with <see cref="MudGlobal.Rounded"/>.
         /// </remarks>
         [Parameter]
         public bool Square { get; set; } = MudGlobal.Rounded == false;
@@ -1012,9 +1012,7 @@ namespace MudBlazor
                     if (!_groupable)
                     {
                         _groupDefinition = null;
-
-                        foreach (var column in RenderedColumns)
-                            column.RemoveGrouping().CatchAndLog();
+                        // do not need to RemoveGrouping here, if Groupable is set to false they won't show
                     }
                 }
             }
@@ -1204,13 +1202,13 @@ namespace MudBlazor
         public Interfaces.IForm Validator { get; set; } = new DataGridRowValidator();
 
         /// <summary>
-        /// Returns true if <see cref="Groupable"/> is true and at least one column has <see cref="Column{T}.Grouping"/>Grouping toggled on.
+        /// Returns true if the grid successfully grouped any column
         /// </summary>
         public bool IsGrouped
         {
             get
             {
-                return Groupable && RenderedColumns.FirstOrDefault(x => x.GroupingState.Value) != null;
+                return _groupDefinition != null;
             }
         }
 
@@ -2058,15 +2056,21 @@ namespace MudBlazor
 
             _groupDefinition = default;
 
-            if (!IsGrouped || GetFilteredItemsCount() == 0)
+            // get all columns that have Groupable set to true
+            var groupedColumns = RenderedColumns.Where(x => x.groupable).ToList();
+            // is groupable on either DataGrid level or column level
+            var isGroupable = Groupable || groupedColumns.Count > 0;
+            // any columns that are groupable and have grouping set to true
+            groupedColumns = [.. groupedColumns.Where(x => x.GroupingState.Value).OrderBy(x => x._groupByOrderState.Value)];
+            // it's only groupable if a column can be grouped
+            isGroupable = isGroupable && groupedColumns.Count > 0;
+
+            if (!isGroupable || GetFilteredItemsCount() == 0)
             {
                 if (_isFirstRendered && !noStateChange)
                     StateHasChanged();
                 return;
             }
-
-            // get all columns that are grouped in the order they are grouped
-            var groupedColumns = RenderedColumns.Where(x => x.GroupingState.Value).OrderBy(x => x._groupByOrderState.Value).ToList();
 
             // Initialize with the first group definition
             _groupDefinition = ProcessGroup(groupedColumns[0]);

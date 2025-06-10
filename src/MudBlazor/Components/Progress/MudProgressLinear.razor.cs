@@ -80,7 +80,7 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
-        /// Can be overridden by <see cref="MudGlobal.Rounded"/>
+        /// Override with <see cref="MudGlobal.Rounded"/>.
         /// When <c>true</c>, the CSS <c>border-radius</c> is set to the theme's default value.
         /// </remarks>
         [Parameter]

@@ -22,13 +22,13 @@ namespace MudBlazor
         public bool Enabled { get; set; }
 
         /// <summary>
-        /// Gets or sets the item template for the list.
+        /// Item template for the list.
         /// </summary>
         [Parameter]
         public RenderFragment<T>? ChildContent { get; set; }
 
         /// <summary>
-        /// Gets or sets the template for the items that have not yet been loaded in memory.
+        /// Template for the items that have not yet been loaded in memory.
         /// </summary>
         [Parameter]
         public RenderFragment? Placeholder { get; set; }
@@ -40,13 +40,13 @@ namespace MudBlazor
         public RenderFragment? NoRecordsContent { get; set; }
 
         /// <summary>
-        /// Gets or sets the fixed item source.
+        /// Fixed item source.
         /// </summary>
         [Parameter]
         public ICollection<T>? Items { get; set; }
 
         /// <summary>
-        /// Gets or sets the function providing items to the list.
+        /// Function providing items to the list.
         /// </summary>
         [Parameter]
         public ItemsProviderDelegate<T>? ItemsProvider { get; set; }

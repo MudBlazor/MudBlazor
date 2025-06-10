@@ -1,4 +1,4 @@
-﻿<MudDataGrid T="Fruit" @ref="_dataGrid" Items="@_fruits" Filterable="true" Hideable="true" Groupable="true"
+﻿<MudDataGrid T="Fruit" @ref="_dataGrid" Items="@_fruits" Filterable="true" Hideable="true" Groupable="@_groupable"
 GroupExpanded="true" RowContextMenuClick="@OnRowContextMenuClick">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Fruits</MudText>
@@ -7,7 +7,7 @@ GroupExpanded="true" RowContextMenuClick="@OnRowContextMenuClick">
     <Columns>
         <PropertyColumn Property="x => x.Name" Title="Name" Filterable="false" Groupable="false" />
         <PropertyColumn Property="x => x.Count" />
-        <PropertyColumn Property="x => x.Category" Title="Category" Grouping="true" GroupBy="@_groupBy">
+        <PropertyColumn Property="x => x.Category" Title="Category" Groupable="true" Grouping="true" GroupBy="@_groupBy">
             <GroupTemplate>
                 <span style="font-weight:bold">Category: @context.Grouping.Key</span>
             </GroupTemplate>
@@ -19,9 +19,11 @@ GroupExpanded="true" RowContextMenuClick="@OnRowContextMenuClick">
     <MudButton Class="expand-all" OnClick="@ExpandAllGroups" Color="@Color.Primary">Expand All</MudButton>
     <MudButton OnClick="@CollapseAllGroups" Color="@Color.Primary">Collapse All</MudButton>
     <MudButton Class="add-button" OnClick="@AddFruit" Color="@Color.Primary">Add Fruit</MudButton>
+    <MudButton Class="toggle-groupable" OnClick="@(() => _groupable = !_groupable)" Color="@Color.Primary">Toggle Groupable</MudButton>
 </div>
 
 @code {
+    private bool _groupable;
     private MudDataGrid<Fruit> _dataGrid = null!;
     private readonly List<Fruit> _fruits =
     [
@@ -31,7 +33,16 @@ GroupExpanded="true" RowContextMenuClick="@OnRowContextMenuClick">
     ];
     private readonly Func<Fruit, object> _groupBy = x => x.Category;
 
+    [Parameter]
+    public bool Groupable { get; set; } = true;
+
     public bool RowContextMenuClicked { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        _groupable = Groupable;
+    }
 
     public void AddFruit()
     {

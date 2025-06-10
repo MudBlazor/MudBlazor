@@ -13,38 +13,38 @@ namespace MudBlazor
         // ReSharper disable InconsistentNaming
 
         /// <summary>
-        /// Gets or sets the breakpoint value for extra small screens (xs).
-        /// Default value is "0px".
+        /// The breakpoint value for extra small screens (xs).
+        /// Defaults to <c>0px</c>.
         /// </summary>
         public string xs { get; set; } = "0px";
 
         /// <summary>
-        /// Gets or sets the breakpoint value for small screens (sm).
-        /// Default value is "600px".
+        /// The breakpoint value for small screens (sm).
+        /// Defaults to <c>600px</c>.
         /// </summary>
         public string sm { get; set; } = "600px";
 
         /// <summary>
-        /// Gets or sets the breakpoint value for medium screens (md).
-        /// Default value is "960px".
+        /// The breakpoint value for medium screens (md).
+        /// Defaults to <c>960px</c>.
         /// </summary>
         public string md { get; set; } = "960px";
 
         /// <summary>
-        /// Gets or sets the breakpoint value for large screens (lg).
-        /// Default value is "1280px".
+        /// The breakpoint value for large screens (lg).
+        /// Defaults to <c>1280px</c>.
         /// </summary>
         public string lg { get; set; } = "1280px";
 
         /// <summary>
-        /// Gets or sets the breakpoint value for extra large screens (xl).
-        /// Default value is "1920px".
+        /// The breakpoint value for extra large screens (xl).
+        /// Defaults to <c>1920px</c>.
         /// </summary>
         public string xl { get; set; } = "1920px";
 
         /// <summary>
-        /// Gets or sets the breakpoint value for extra extra large screens (xxl).
-        /// Default value is "2560px".
+        /// The breakpoint value for extra extra large screens (xxl).
+        /// Defaults to <c>2560px</c>.
         /// </summary>
         public string xxl { get; set; } = "2560px";
 

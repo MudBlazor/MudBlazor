@@ -579,10 +579,7 @@ namespace MudBlazor.UnitTests.Components
 
             // grouping shouldn't exist
             dataGrid.Instance._groupDefinition.Should().BeNull();
-            foreach (var column in dataGrid.Instance.RenderedColumns)
-            {
-                column.GroupingState.Value.Should().Be(false);
-            }
+            // leaving grouping intact
 
             // no grouping rows
             var rows = component.FindComponents<DataGridGroupRow<DataGridGroupingMultiLevelTest.USState>>();
@@ -620,6 +617,39 @@ namespace MudBlazor.UnitTests.Components
             row = rows[7];
             row.Instance.Items.Should().NotBeNull();
             row.Instance.Items.Count().Should().Be(2);
+        }
+
+        [Test]
+        public void DataGrid_IsGrouping()
+        {
+            // Tests the IsGrouping property of MudDataGrid to ensure it handles a change properly
+            // and ensures the correct UI is rendered for column options
+            var provider = Context.RenderComponent<MudPopoverProvider>();
+            var comp = Context.RenderComponent<DataGridGroupExpandedTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedTest.Fruit>>();
+            provider.Should().NotBeNull();
+            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
+            var menus = comp.FindAll("span.column-options button[aria-label='Column options']");
+            menus.Count.Should().Be(3); // one for each column
+            var countMenu = menus[1]; // 2nd column options (Count)
+            countMenu.Click();
+            // Default is DataGrid Groupable = true and no Groupable override on column so should be groupable
+            provider.Markup.Should().Contain("Group");
+            var overlay = provider.Find(".mud-overlay");
+            overlay.Click(); // close the menu
+
+            comp.SetParametersAndRender(x => x.Add(x => x.Groupable, false));
+            // no change in grid rows since Grouping did not change
+            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-table-row").Count.Should().Be(7));
+
+            menus = comp.FindAll("span.column-options button[aria-label='Column options']");
+            menus.Count.Should().Be(3); // one for each column
+            countMenu = menus[1]; // 2nd column options (Count)
+            countMenu.Click();
+            // DataGrid Groupable now = false and no Groupable override on column so should not be groupable
+            provider.Markup.Should().NotContain("Group");
+            overlay = provider.Find(".mud-overlay");
+            overlay.Click(); // close the menu
         }
 
         // https://github.com/MudBlazor/MudBlazor/pull/10213 

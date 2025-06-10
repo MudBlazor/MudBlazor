@@ -31,7 +31,7 @@ namespace MudBlazor
         public MudDataGrid<T> DataGrid { get; set; }
 
         /// <summary>
-        /// Whether the display should be right to left
+        /// Displays the content right-to-left.
         /// </summary>
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
