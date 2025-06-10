@@ -1341,6 +1341,48 @@ namespace MudBlazor.UnitTests.Components
             await Task.Delay(1000);
             comp.FindComponents<MudDialog>().Count.Should().Be(1);
         }
+
+        [Test]
+        public async Task Dialog_FocusAndEscapeKeyHandling_Test()
+        {
+            var comp = Context.RenderComponent<MudDialogProvider>();
+            var service = Context.Services.GetRequiredService<IDialogService>();
+            IDialogReference dialogReference = null;
+
+            // Test with CloseOnEscapeKey = true
+            var optionsTrue = new DialogOptions { CloseOnEscapeKey = true };
+
+            await comp.InvokeAsync(async () => dialogReference = await service.ShowAsync<DialogOkCancel>("Test Dialog True", optionsTrue));
+
+            comp.Find("div.mud-dialog-container").Should().NotBeNull(); // Dialog is open
+            var dialogPanelTrue = comp.Find("div.mud-dialog");
+            dialogPanelTrue.GetAttribute("tabindex").Should().Be("-1");
+
+            var mudDialogContainerInstanceTrue = comp.FindComponent<MudDialogContainer>().Instance;
+            await comp.InvokeAsync(() => mudDialogContainerInstanceTrue.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Escape", Type = "keydown" }));
+
+            comp.Markup.Trim().Should().BeEmpty(); // Dialog should be closed
+            var resultTrue = await dialogReference!.Result;
+            resultTrue.Canceled.Should().BeTrue();
+
+            // Test with CloseOnEscapeKey = false
+            var optionsFalse = new DialogOptions { CloseOnEscapeKey = false };
+            await comp.InvokeAsync(async () => dialogReference = await service.ShowAsync<DialogOkCancel>("Test Dialog False", optionsFalse));
+
+            comp.Find("div.mud-dialog-container").Should().NotBeNull(); // Dialog is open
+            var dialogPanelFalse = comp.Find("div.mud-dialog");
+            dialogPanelFalse.GetAttribute("tabindex").Should().Be("-1"); // Still should have tabindex
+
+            var mudDialogContainerInstanceFalse = comp.FindComponent<MudDialogContainer>().Instance;
+            await comp.InvokeAsync(() => mudDialogContainerInstanceFalse.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Escape", Type = "keydown" }));
+
+            comp.Find("div.mud-dialog-container").Should().NotBeNull(); // Dialog should STILL be open
+
+            comp.FindAll("button")[0].Click(); // Click "Cancel" button in DialogOkCancel
+            var resultFalse = await dialogReference!.Result;
+            resultFalse.Canceled.Should().BeTrue(); // Ensure it closed as expected from the button click
+            comp.Markup.Trim().Should().BeEmpty();
+        }
     }
 
     internal class CustomDialogService : DialogService

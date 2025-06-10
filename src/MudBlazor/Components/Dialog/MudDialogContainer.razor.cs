@@ -26,6 +26,7 @@ namespace MudBlazor
     {
         private bool _disposed;
         private MudDialog? _dialog;
+        private ElementReference _dialogContainerReference;
         private readonly ParameterState<DialogOptions> _dialogOptionsState;
         private readonly ParameterState<string?> _titleState;
         private readonly string _elementId = Identifier.Create("dialog");
@@ -217,15 +218,26 @@ namespace MudBlazor
         private async Task HandleBackgroundClickAsync(MouseEventArgs args)
         {
             if (!GetBackdropClick())
-                return;
-
-            if (_dialog is null || !_dialog.OnBackdropClick.HasDelegate)
             {
-                ((IMudDialogInstance)this).Cancel();
+                if (!_disposed)
+                    await _dialogContainerReference.FocusAsync(); // Refocus the dialog panel if backdrop clicked
+                
                 return;
             }
 
-            await _dialog.OnBackdropClick.InvokeAsync(args);
+            if (_dialog is not null && _dialog.OnBackdropClick.HasDelegate)
+            {
+                await _dialog.OnBackdropClick.InvokeAsync(args);
+
+                if (!_disposed)
+                {
+                    await _dialogContainerReference.FocusAsync(); // Refocus the dialog panel if backdrop click did not close the dialog
+                }
+            }
+            else
+            {
+                ((IMudDialogInstance)this).Cancel();
+            }
         }
 
         private string GetPosition()
