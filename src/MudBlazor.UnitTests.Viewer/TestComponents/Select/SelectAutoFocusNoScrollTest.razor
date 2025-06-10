@@ -1,0 +1,17 @@
+﻿<div style="min-height: 50vh;"></div>
+
+<MudSelect T="string" Label="Click here">
+    <MudSelectItem T="string" Disabled="true">
+        <MudTextField T="string" AutoFocus="true" AutoFocusScroll="_autoFocusScroll" Disabled="false" Label="Auto Focus Field" Variant="Variant.Filled" />
+    </MudSelectItem>
+</MudSelect>
+
+<div style="min-height: 50vh;"></div>
+
+<MudCheckBox @bind-Value="_autoFocusScroll" Label="Auto-Focus Scroll" />
+
+@code {
+    public static string __description__ = "Scroll to bottom first. When Auto-Focus Scroll is disabled, opening the dropdown on the bottom shouldn't cause scroll.";
+
+    private bool _autoFocusScroll = false;
+}

@@ -570,7 +570,13 @@ namespace MudBlazor
         /// <summary>
         /// Focuses the input.
         /// </summary>
-        public virtual ValueTask FocusAsync() => _inputReference?.FocusAsync() ?? ValueTask.CompletedTask;
+        /// <param name="preventScroll">If set to true, the view will not scroll to focused element.</param>
+        public virtual ValueTask FocusAsync(bool preventScroll) => _inputReference?.FocusAsync(preventScroll) ?? ValueTask.CompletedTask;
+        /// <summary>
+        /// Obtains focus for this button.
+        /// </summary>
+        [Obsolete("Use overload with preventScroll parameter.")]
+        public virtual ValueTask FocusAsync() => FocusAsync(false);
 
         /// <summary>
         /// Releases focus for the input.
@@ -669,7 +675,7 @@ namespace MudBlazor
             {
                 Open = true;
                 await OnOpenedAsync();
-                await FocusAsync();
+                await FocusAsync(false);
             }
         }
 

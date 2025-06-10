@@ -343,20 +343,20 @@ namespace MudBlazor
         private async Task OnHourClickAsync()
         {
             _currentView = OpenTo.Hours;
-            await FocusAsync();
+            await FocusAsync(false);
         }
 
         private async Task OnMinutesClick()
         {
             _currentView = OpenTo.Minutes;
-            await FocusAsync();
+            await FocusAsync(false);
         }
 
         private async Task OnAmClickedAsync()
         {
             _timeSet.Hour %= 12;  // "12:-- am" is "00:--" in 24h.
             await UpdateTimeAsync();
-            await FocusAsync();
+            await FocusAsync(false);
         }
 
         private async Task OnPmClickedAsync()
@@ -368,7 +368,7 @@ namespace MudBlazor
 
             _timeSet.Hour %= 24;
             await UpdateTimeAsync();
-            await FocusAsync();
+            await FocusAsync(false);
         }
 
         protected string ToolbarClassname =>

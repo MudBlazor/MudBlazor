@@ -285,6 +285,16 @@ namespace MudBlazor
         public bool AutoFocus { get; set; }
 
         /// <summary>
+        /// Whether <see cref="AutoFocus"/> should cause view to automatically scroll to this element.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.  When <c>false</c>, <see cref="AutoFocus"/> will not cause the view to scroll to the focused component.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool AutoFocusScroll { get; set; } = true;
+
+        /// <summary>
         ///  A multiline input (textarea) will be shown, if set to more than one line.
         /// </summary>
         [Parameter]
@@ -472,8 +482,14 @@ namespace MudBlazor
         /// <summary>
         /// When overridden, obtains focus for this input.
         /// </summary>
+        /// <param name="preventScroll">If set to true, the view will not scroll to focused element.</param>
         /// <returns>A <see cref="ValueTask" /> object.</returns>
-        public virtual ValueTask FocusAsync() => ValueTask.CompletedTask;
+        public virtual ValueTask FocusAsync(bool preventScroll) => ValueTask.CompletedTask;
+        /// <summary>
+        /// Obtains focus for this button.
+        /// </summary>
+        [Obsolete("Use overload with preventScroll parameter.")]
+        public virtual ValueTask FocusAsync() => FocusAsync(false);
 
         /// <summary>
         /// When overridden, releases focus from this input.
@@ -713,7 +729,9 @@ namespace MudBlazor
             //Only focus automatically after the first render cycle!
             if (firstRender && AutoFocus)
             {
-                await FocusAsync();
+                // The preventScroll parameter is set to the opposite of AutoFocusScroll.
+                // If AutoFocusScroll is true, preventScroll is false, allowing the browser to scroll the focused element into view.
+                await FocusAsync(!AutoFocusScroll);
             }
 
             await base.OnAfterRenderAsync(firstRender);

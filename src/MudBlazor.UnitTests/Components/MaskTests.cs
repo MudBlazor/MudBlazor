@@ -623,7 +623,7 @@ namespace MudBlazor.UnitTests.Components
             comp.SetParam("Mask", new PatternMask("*00 000") { Placeholder = '_', CleanDelimiters = true });
 
             await comp.InvokeAsync(() => maskField.OnCopy());
-            await comp.InvokeAsync(async () => await maskField.FocusAsync());
+            await comp.InvokeAsync(async () => await maskField.FocusAsync(false));
             await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "1" }));
             comp.WaitForAssertion(() => maskField.Text.Should().Be("1__ ___"));
             comp.WaitForAssertion(() => maskField.Value.Should().Be("1"));
@@ -724,7 +724,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => textField.Text.Should().BeNullOrEmpty());
             comp.WaitForAssertion(() => textField.Value.Should().BeNullOrEmpty());
 
-            await comp.InvokeAsync(async () => await textField.FocusAsync());
+            await comp.InvokeAsync(async () => await textField.FocusAsync(false));
             await comp.InvokeAsync(async () => await textField.SelectAsync());
             await comp.InvokeAsync(async () => await textField.SelectRangeAsync(0, 1));
             await comp.InvokeAsync(() => textField.Clear());
@@ -944,7 +944,7 @@ namespace MudBlazor.UnitTests.Components
             // mask is now clearable but contains no text so, no clear button should show up
             comp.FindAll(".mud-input-clear-button").Count.Should().Be(0);
 
-            await comp.InvokeAsync(async () => await maskField.FocusAsync());
+            await comp.InvokeAsync(async () => await maskField.FocusAsync(false));
             await comp.InvokeAsync(() => maskField.HandleKeyDown(new KeyboardEventArgs() { Key = "1" }));
             comp.WaitForAssertion(() => maskField.Text.Should().Be("1__ ___"));
 
