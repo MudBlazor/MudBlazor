@@ -23,8 +23,8 @@ namespace MudBlazor
         }
 
         protected string ContainerClass => new CssBuilder("mud-tooltip-root")
-            .AddClass("mud-tooltip-inline", Inline)
-            .AddClass(RootClass)
+            //.AddClass("mud-tooltip-inline", Inline)
+            //.AddClass(RootClass)
             .Build();
 
         protected string Classname => new CssBuilder("mud-tooltip")
