@@ -38,6 +38,12 @@ namespace MudBlazor
         }
 
         private readonly string _id = Identifier.Create();
+        private readonly List<string> _validationErrors = [];
+        private readonly Dictionary<string, object> _errorTokens = new(StringComparer.OrdinalIgnoreCase)
+        {
+            { "fileName", string.Empty },
+            { "fileSize", 0 }
+        };
 
         protected string Classname =>
             new CssBuilder("mud-file-upload")
@@ -154,6 +160,24 @@ namespace MudBlazor
         public int MaximumFileCount { get; set; } = 10;
 
         /// <summary>
+        /// The maximum file size in bytes.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c> (no limit). When a file exceeds this limit, the upload for that file will be prevented.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FileUpload.Behavior)]
+        public long? MaxFileSize { get; set; }
+
+        /// <summary>
+        /// The error message template used when a file exceeds the maximum allowed size.
+        /// </summary>
+        /// <remarks>
+        /// Placeholders <c>{fileName}</c> and <c>{fileSize}</c> can be used to insert the file name and size, respectively.
+        /// </remarks>
+        public string? FileSizeErrorTemplate { get; set; } = "File '{fileName}' exceeds the maximum allowed size of {fileSize} bytes.";
+
+        /// <summary>
         /// Prevents the user from uploading files.
         /// </summary>
         /// <remarks>
@@ -180,7 +204,11 @@ namespace MudBlazor
 
         public async Task ClearAsync()
         {
+            ValidationErrors.RemoveAll(_validationErrors.Contains);
+
+            _validationErrors.Clear();
             _numberOfActiveFileInputs = 1;
+            
             await NotifyValueChangedAsync(default);
             await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInput.resetValue", GetActiveInputId());
         }
@@ -208,23 +236,69 @@ namespace MudBlazor
                 return;
             }
 
+            var hasErrorTemplate = !string.IsNullOrWhiteSpace(FileSizeErrorTemplate);
+
             T? value;
             if (typeof(T) == typeof(IReadOnlyList<IBrowserFile>))
             {
-                var newFiles = args.GetMultipleFiles(MaximumFileCount);
+                IReadOnlyCollection<IBrowserFile> initialNewFiles = [];
+
+                initialNewFiles = args.GetMultipleFiles(MaximumFileCount);
+
+                var validFiles = new List<IBrowserFile>();
+
+                if (MaxFileSize.HasValue)
+                {
+                    foreach (var file in initialNewFiles)
+                    {
+                        if (file.Size > MaxFileSize.Value && hasErrorTemplate)
+                        {
+                            _errorTokens["fileName"] = file.Name;
+                            _validationErrors.Add(FileSizeErrorTemplate!.ReplaceTokens(_errorTokens));
+                        }
+                        else
+                        {
+                            validFiles.Add(file);
+                        }
+                    }
+                }
+                else
+                {
+                    validFiles.AddRange(initialNewFiles);
+                }
+
+                var newFilesCollection = validFiles.AsReadOnly();
+
                 if (AppendMultipleFiles && _filesState.Value is IReadOnlyList<IBrowserFile> oldFiles)
                 {
-                    var allFiles = oldFiles.Concat(newFiles).ToList();
+                    var allFiles = oldFiles.Concat(newFilesCollection).ToList();
                     value = (T)(object)allFiles.AsReadOnly();
                 }
                 else
                 {
-                    value = (T)newFiles;
+                    value = (T)(object)newFilesCollection;
                 }
             }
             else if (typeof(T) == typeof(IBrowserFile))
             {
-                value = args.FileCount == 1 ? (T)args.File : default;
+                if (args.FileCount == 1)
+                {
+                    var file = args.File;
+                    if (MaxFileSize.HasValue && file.Size > MaxFileSize.Value && hasErrorTemplate)
+                    {
+                        _errorTokens["fileName"] = file.Name;
+                        _validationErrors.Add(FileSizeErrorTemplate!.ReplaceTokens(_errorTokens));
+                        value = default;
+                    }
+                    else
+                    {
+                        value = (T)file;
+                    }
+                }
+                else
+                {
+                    value = default;
+                }
             }
             else
             {
@@ -247,6 +321,11 @@ namespace MudBlazor
             }
 
             base.OnInitialized();
+
+            if (MaxFileSize.HasValue)
+            {
+                _errorTokens["fileSize"] = MaxFileSize.Value;
+            }
         }
 
         private async Task NotifyValueChangedAsync(T? value)
@@ -260,5 +339,21 @@ namespace MudBlazor
         protected override T? ReadValue() => _filesState.Value;
 
         protected override Task WriteValueAsync(T? value) => _filesState.SetValueAsync(value);
+
+        protected override async Task ValidateValue()
+        {
+            await base.ValidateValue();
+
+            ValidationErrors = [.. ValidationErrors, .. _validationErrors];
+            Error = ValidationErrors.Count > 0;
+            ErrorText = ValidationErrors.FirstOrDefault();
+        }
+
+        public override void ResetValidation()
+        {
+            _validationErrors.Clear();
+
+            base.ResetValidation();
+        }
     }
 }
