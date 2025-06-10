@@ -208,7 +208,7 @@ namespace MudBlazor
 
             _validationErrors.Clear();
             _numberOfActiveFileInputs = 1;
-            
+
             await NotifyValueChangedAsync(default);
             await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInput.resetValue", GetActiveInputId());
         }
