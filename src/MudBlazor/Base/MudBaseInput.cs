@@ -202,7 +202,7 @@ namespace MudBlazor
         public Size IconSize { get; set; } = Size.Medium;
 
         /// <summary>
-        /// Occurs when the adornment text or icon has been clicked.
+        /// Occurs when the adornment icon (but not the text) has been clicked.
         /// </summary>
         [Parameter]
         public EventCallback<MouseEventArgs> OnAdornmentClick { get; set; }
