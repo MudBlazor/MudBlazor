@@ -131,10 +131,12 @@ public static class MudGlobal
         public static int Elevation { get; set; } = 8;
 
         /// <summary>
-        /// The default value of <see cref="MudOverlay.Modal"/> for components that use a
-        /// <see cref="MudOverlay"/> to detect clicks outside a <see cref="MudPopover"/>, such as
-        /// <see cref="MudSelect{T}"/>.
+        /// Prevents interaction with background elements.
         /// </summary>
+        /// <remarks>
+        /// Only applies to components that use a <see cref="MudPopover"/> in conjunction with a <see cref="MudOverlay"/>
+        /// to close the popover when a user clicks outside, such as <see cref="MudSelect{T}"/>.
+        /// </remarks>
         public static bool ModalOverlay { get; set; } = true;
     }
 
