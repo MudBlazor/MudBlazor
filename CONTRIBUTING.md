@@ -7,8 +7,6 @@
 </h1>
 
 <!-- TOC start (generated with https://github.com/derlin/bitdowntoc) -->
-
-- [](#)
 - [Information and Guidelines for Contributors](#information-and-guidelines-for-contributors)
   - [Code of Conduct](#code-of-conduct)
   - [Minimal Prerequisites to Compile from Source](#minimal-prerequisites-to-compile-from-source)
