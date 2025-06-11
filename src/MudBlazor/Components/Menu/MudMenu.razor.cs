@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
 using MudBlazor.State;
 using MudBlazor.Utilities;
-using MudBlazor.Utilities.Debounce;
 
 namespace MudBlazor
 {
@@ -25,14 +24,11 @@ namespace MudBlazor
         private (double Top, double Left) _openPosition;
         private bool _isPointerOver;
         private bool _isTransient;
-        internal DebounceDispatcher _showDebouncer;
-        internal DebounceDispatcher _hideDebouncer;
+        private CancellationTokenSource? _hoverCts;
+        private CancellationTokenSource? _leaveCts;
 
         public MudMenu()
         {
-            _showDebouncer = new DebounceDispatcher(MudGlobal.MenuDefaults.HoverDelay);
-            _hideDebouncer = new DebounceDispatcher(MudGlobal.MenuDefaults.HoverDelay);
-
             using var registerScope = CreateRegisterScope();
             _openState = registerScope.RegisterParameter<bool>(nameof(Open))
                 .WithParameter(() => Open)
@@ -75,9 +71,6 @@ namespace MudBlazor
                 .AddClass("mud-disabled", Disabled)
                 .Build();
 
-        /// <summary>
-        /// Inline styles for positioning the menu at the cursor's location.
-        /// </summary>
         [ExcludeFromCodeCoverage]
         [Obsolete($"Will be removed in future, replaced by {nameof(PositionAttributes)}.")]
         protected string Stylename =>
@@ -567,56 +560,73 @@ namespace MudBlazor
         /// <summary>
         /// Handles the pointer entering either the activator or the menu list.
         /// </summary>
-        internal async Task PointerEnterAsync(PointerEventArgs args)
+        private async Task PointerEnterAsync(PointerEventArgs args)
         {
             _isPointerOver = true;
+
+            CancelPendingActions();
 
             if (!IsHoverable(args))
             {
                 return;
             }
 
-            // Cancel any pending hide operation
-            _hideDebouncer.Cancel();
-
-            // Schedule the show operation with debouncing
-            await _showDebouncer.DebounceAsync(async () =>
+            if (MudGlobal.MenuDefaults.HoverDelay > 0)
             {
-                if (!_openState.Value)
+                _hoverCts = new();
+
+                try
                 {
-                    await OpenSubMenuAsync(args);
+                    // Wait a bit to allow the cursor to move over the activator if the user isn't trying to open it.
+                    await Task.Delay(MudGlobal.MenuDefaults.HoverDelay, _hoverCts.Token);
                 }
-            });
+                catch (TaskCanceledException)
+                {
+                    // Hover action was canceled.
+                    return;
+                }
+            }
+
+            if (!_openState.Value)
+            {
+                await OpenSubMenuAsync(args);
+            }
         }
 
         /// <summary>
         /// Handles the pointer leaving either the activator or the menu list.
         /// </summary>
-        internal async Task PointerLeaveAsync(PointerEventArgs args)
+        private async Task PointerLeaveAsync(PointerEventArgs args)
         {
             _isPointerOver = false;
-            var isSubmenu = ParentMenu is not null;
-            if (!isSubmenu && ActivationEvent != MouseEvent.MouseOver)
-            {
-                return; // main menu that doesn't use mouseover
-            }
+
+            CancelPendingActions();
 
             if (!_isTransient || !IsHoverable(args))
             {
                 return;
             }
 
-            // Cancel any pending show operation
-            _showDebouncer.Cancel();
-
-            // Schedule the hide operation with debouncing
-            await _hideDebouncer.DebounceAsync(async () =>
+            if (MudGlobal.MenuDefaults.HoverDelay > 0)
             {
-                if (!HasPointerOver(this))
+                _leaveCts = new();
+
+                try
                 {
-                    await CloseMenuAsync();
+                    // Wait a bit to allow the cursor to move from the activator to the items popover.
+                    await Task.Delay(MudGlobal.MenuDefaults.HoverDelay, _leaveCts.Token);
                 }
-            });
+                catch (TaskCanceledException)
+                {
+                    // Leave action was canceled.
+                    return;
+                }
+            }
+
+            if (!HasPointerOver(this))
+            {
+                await CloseMenuAsync();
+            }
         }
 
         protected bool HasPointerOver(MudMenu menu)
@@ -633,8 +643,10 @@ namespace MudBlazor
         /// </summary>
         private void CancelPendingActions()
         {
-            _showDebouncer.Cancel();
-            _hideDebouncer.Cancel();
+            // ReSharper disable MethodHasAsyncOverload
+            _leaveCts?.Cancel();
+            _hoverCts?.Cancel();
+            // ReSharper restore MethodHasAsyncOverload
         }
 
         /// <summary>
@@ -659,7 +671,11 @@ namespace MudBlazor
         {
             if (disposing)
             {
-                CancelPendingActions();
+                _hoverCts?.Cancel();
+                _hoverCts?.Dispose();
+
+                _leaveCts?.Cancel();
+                _leaveCts?.Dispose();
 
                 ParentMenu?.UnregisterChild(this);
             }
