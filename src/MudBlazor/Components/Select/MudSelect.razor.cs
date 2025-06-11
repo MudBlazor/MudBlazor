@@ -287,7 +287,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
-        public bool Modal { get; set; } = true;
+        public bool Modal { get; set; } = MudGlobal.PopoverDefaults.ModalOverlay;
 
         /// <summary>
         /// The content within this component, typically a list of <see cref="MudSelectItem{T}"/> components.
@@ -1042,7 +1042,7 @@ namespace MudBlazor
         /// Occurs when the <c>Clear</c> button has been clicked.
         /// </summary>
         /// <remarks>
-        /// This is the first event raised when the clear button is clicked.  
+        /// This is the first event raised when the clear button is clicked.
         /// The <see cref="SelectedValues"/> are cleared and the <see cref="OnClearButtonClick"/> event is raised.
         /// </remarks>
         protected async ValueTask SelectClearButtonClickHandlerAsync(MouseEventArgs e)
@@ -1109,9 +1109,9 @@ namespace MudBlazor
         /// The icon to display whether all, none, or some items are selected.
         /// </summary>
         /// <remarks>
-        /// Only applies when <see cref="MultiSelection"/> is <c>true</c>.  
+        /// Only applies when <see cref="MultiSelection"/> is <c>true</c>.
         /// If all items are selected, <see cref="CheckedIcon"/> is returned.
-        /// If no items are selected, <see cref="UncheckedIcon"/> is returned.  
+        /// If no items are selected, <see cref="UncheckedIcon"/> is returned.
         /// Otherwise, <see cref="IndeterminateIcon"/> is returned.
         /// </remarks>
         protected string SelectAllCheckBoxIcon

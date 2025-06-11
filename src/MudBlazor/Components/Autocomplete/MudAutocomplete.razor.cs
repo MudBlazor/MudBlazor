@@ -375,7 +375,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
-        public bool Modal { get; set; } = true;
+        public bool Modal { get; set; } = MudGlobal.PopoverDefaults.ModalOverlay;
 
         /// <summary>
         /// Determines the width of this Popover dropdown in relation to the parent container.
