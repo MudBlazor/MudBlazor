@@ -116,5 +116,14 @@
     "Link": "https://mudpdf.info",
     "GitHubUserPath": "tgothorp",
     "GitHubRepoPath": "MudBlazor.PdfViewer"
+  },
+  {
+    "AvatarImageSrc": "https://raw.githubusercontent.com/phmatray/FormCraft/refs/heads/main/FormCraft/icon.png",
+    "Category": "Utility",
+    "Name": "FormCraft",
+    "Description": "A powerful, type-safe dynamic form library for Blazor applications with fluent API design. Provides seamless integration with MudBlazor components, enabling developers to build complex forms with minimal code.",
+    "Link": "https://phmatray.github.io/FormCraft",
+    "GitHubUserPath": "phmatray",
+    "GitHubRepoPath": "FormCraft"
   }
 ]

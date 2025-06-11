@@ -1337,6 +1337,32 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void TabsDragAndDrop()
+        {
+            var comp = Context.RenderComponent<TabsDragAndDropTest>();
+            var tabs = comp.FindComponent<MudTabs>().Instance;
+
+            tabs.Should().NotBeNull();
+
+            var tab = tabs._panels[0];
+            tab.Should().NotBeNull();
+            var tabText = tab.Text;
+
+            // should be 3 draggable tabs
+            var droptabs = comp.FindAll("div[draggable='false']");
+            droptabs.Count.Should().Be(2); // disabled droptab plus beginning ghost tab
+            droptabs = comp.FindAll("div[draggable='true']");
+            droptabs.Count.Should().Be(3); // enabled droptabs
+            // should be 1 draggable "drop zone" to allow reordering
+            var dropzone = comp.FindAll("div.mud-drop-zone");
+            dropzone.Count.Should().Be(1);
+            // simulate dragging a tab? moving tab at index 0 to index 2
+            var dropInfo = new MudItemDropInfo<MudTabPanel>(tab, "mud-drop-zone", 2);
+            tabs.ItemUpdated(dropInfo);
+            comp.WaitForAssertion(() => tabs._panels[2].Text.Should().Be(tabText));
+        }
+
+        [Test]
         public void LabelSorting_NaturalOrderIfSortingUnspecified()
         {
             // all parameters unspecified

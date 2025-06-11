@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interop;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
+using MudBlazor.Utilities.Throttle;
 
 #nullable enable
 namespace MudBlazor
@@ -36,6 +37,8 @@ namespace MudBlazor
 
         private IResizeObserver? _resizeObserver = null;
 
+        private readonly ThrottleDispatcher _throttleDispatcher;
+
         /// <summary>
         /// Displays text right-to-left.
         /// </summary>
@@ -47,6 +50,14 @@ namespace MudBlazor
 
         [Inject]
         private IResizeObserverFactory _resizeObserverFactory { get; set; } = null!;
+
+        /// <summary>
+        /// Enables drag-and-drop re-ordering of tabs.
+        /// </summary>
+        /// <remarks>Defaults to <c>false</c>.</remarks>
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Behavior)]
+        public bool EnableDragAndDrop { get; set; }
 
         /// <summary>
         /// Persists the content of tabs when they are not visible.
@@ -362,7 +373,7 @@ namespace MudBlazor
         /// </remarks>
         public IReadOnlyList<MudTabPanel> Panels { get; private set; }
 
-        private List<MudTabPanel> _panels;
+        internal List<MudTabPanel> _panels;
 
         /// <summary>
         /// The custom content added before or after the list of tabs.
@@ -445,6 +456,7 @@ namespace MudBlazor
 
         public MudTabs()
         {
+            _throttleDispatcher = new ThrottleDispatcher(500);
             _panels = new List<MudTabPanel>();
             Panels = _panels.AsReadOnly();
         }
@@ -462,6 +474,7 @@ namespace MudBlazor
             _resizeObserver ??= _resizeObserverFactory.Create();
 
             Rerender();
+            StateHasChanged();
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -478,8 +491,6 @@ namespace MudBlazor
 
                 _resizeObserver.OnResized += OnResized;
 
-                Rerender();
-                StateHasChanged();
                 ActivatePanel(ActivePanelIndex);
 
                 _isRendered = true;
@@ -621,7 +632,8 @@ namespace MudBlazor
                 SetSliderState();
                 SetScrollButtonVisibility();
                 SetScrollabilityStates();
-                StateHasChanged();
+                Rerender();
+                await InvokeAsync(StateHasChanged);
             }
         }
 
@@ -697,6 +709,13 @@ namespace MudBlazor
                 .AddClass($"mud-tab-slider-vertical", IsVerticalTabs())
                 .AddClass($"mud-tab-slider-horizontal-reverse", Position == Position.Bottom)
                 .AddClass($"mud-tab-slider-vertical-reverse", Position == Position.Right || Position == Position.Start && RightToLeft || Position == Position.End && !RightToLeft)
+                .Build();
+
+        protected string DropZoneClassnames =>
+            new CssBuilder("mud-tabs-dropzone")
+                .AddClass("d-flex", !IsVerticalTabs())
+                .AddClass($"mud-tabs-vertical", IsVerticalTabs())
+                .AddClass("flex-grow-1")
                 .Build();
 
         protected string MaxHeightStyles =>
@@ -1042,5 +1061,34 @@ namespace MudBlazor
         }
 
         #endregion
+
+        internal void ItemUpdated(MudItemDropInfo<MudTabPanel> dropItem)
+        {
+            if (dropItem.Item is null)
+            {
+                return;
+            }
+
+            // get the old index where this item was at
+            var oldIndex = _panels.IndexOf(dropItem.Item);
+            // get the new index in _panels using IndexInZone
+            var newIndex = dropItem.IndexInZone;
+
+            // remove the item from the old index
+            _panels.RemoveAt(oldIndex);
+
+            // insert the item at the new index
+            if (newIndex < _panels.Count)
+            {
+                _panels.Insert(newIndex, dropItem.Item);
+            }
+            else
+            {
+                _panels.Add(dropItem.Item);
+            }
+
+            // Set the dragged tab as active
+            ActivatePanel(dropItem.Item);
+        }
     }
 }
