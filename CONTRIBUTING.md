@@ -1,4 +1,10 @@
-# ![MudBlazor](content/MudBlazor-GitHub-NoBg.png)
+﻿<h1>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="content/MudBlazor-GitHub-NoBg-Dark.png">
+    <source media="(prefers-color-scheme: light)" srcset="content/MudBlazor-GitHub-NoBg.png">
+    <img alt="MudBlazor" src="content/MudBlazor-GitHub-NoBg.png">
+  </picture>
+</h1>
 
 <!-- TOC start (generated with https://github.com/derlin/bitdowntoc) -->
 
