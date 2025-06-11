@@ -75,7 +75,7 @@ public partial class Rose<T> : MudRadialChartBase<T, RoseChartOptions> where T :
 
     private double CalculateScaledRadius(T value, T max)
     {
-        return Math.Max(0, Radius * double.CreateSaturating(value / max) * ChartOptions!.ScaleFactor);
+        return Math.Max(0, Radius * (max == T.Zero ? 0 : double.CreateSaturating(value / max)) * ChartOptions!.ScaleFactor);
     }
 
     private static SegmentCoordinates GetSegmentCoordinates(double angle, double step, int count) => new()

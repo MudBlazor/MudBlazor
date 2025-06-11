@@ -119,9 +119,21 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
 
             for (var i = 0; i < values.Count; i++)
             {
-                if (!HiddenIndices.Contains(i))
+                if (!HiddenIndices.Contains(i) && i < aggregated.Length)
                     aggregated[i] += values[i];
             }
+        }
+
+        return aggregated;
+    }
+
+    private T[] AggregateByDataSet(T[] aggregated)
+    {
+        var visibleSeries = ChartSeries.Where(s => s.Visible).Take(aggregated.Length);
+
+        foreach (var (series, index) in visibleSeries.Select((s, i) => (s, i)))
+        {
+            aggregated[index] = series.Data?.Values.SumGeneric() ?? T.Zero;
         }
 
         return aggregated;
@@ -146,18 +158,6 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
                 OnVisibilityChanged = EventCallback.Factory.Create<SvgLegend>(this, HandleLegendVisibilityChanged)
             });
         }
-    }
-
-    private T[] AggregateByDataSet(T[] aggregated)
-    {
-        var visibleSeries = ChartSeries.Where(s => s.Visible).Take(aggregated.Length);
-
-        foreach (var (series, index) in visibleSeries.Select((s, i) => (s, i)))
-        {
-            aggregated[index] = series.Data.Values.SumGeneric();
-        }
-
-        return aggregated;
     }
 
     protected void SetBounds()
@@ -212,6 +212,7 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
 
         RebuildChart();
     }
+
     protected readonly struct SegmentCoordinates
     {
         public double StartX { get; init; }

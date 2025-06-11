@@ -53,7 +53,7 @@ public partial class Radar<T> : MudRadialChartBase<T, RadarChartOptions> where T
         var axisMaxValue = CalculateAxisMaxValue(
             seriesData
                 .Where((x, i) => x.Visible && !HiddenIndices.Contains(i))
-                .SelectMany(s => s.Data)
+                .SelectMany(s => s.Data ?? T.Zero)
                 .DefaultIfEmpty(T.Zero)
                 .Max()
         );
@@ -120,7 +120,7 @@ public partial class Radar<T> : MudRadialChartBase<T, RadarChartOptions> where T
         for (var i = 0; i < Math.Min(series.Data.Values.Count, numAxes); i++)
         {
             var value = series.Data[i].Y;
-            var scale = radius * double.CreateSaturating(value / axisMaxValue);
+            var scale = radius * (axisMaxValue == T.Zero ? 0 : double.CreateSaturating(value / axisMaxValue));
             scale = Math.Max(0, scale);
 
             var angle = currentAngle + i * angleStep;
