@@ -2,22 +2,14 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Threading;
-using System.Threading.Tasks;
-using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.Mocks;
-using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.FileUpload;
 using NUnit.Framework;
 
@@ -440,29 +432,29 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MaxFileSize_SingleFile_WithinLimit()
         {
-            var comp = Context.RenderComponent<FileUploadMultipleFilesTest>(parameters => parameters.Add(p => p.MaxFileSize, 100L));
+            var comp = Context.RenderComponent<FileUploadSingleFileTest>(parameters => parameters.Add(p => p.MaxFileSize, 100L));
 
             var file = CreateDummyFile("test.txt", 50);
             var input = comp.FindComponent<InputFile>();
 
             input.UploadFiles(file);
 
-            comp.Instance.Files.Should().NotBeNull();
-            comp.Instance.Files[0].Name.Should().Be("test.txt");
-            comp.Instance.Files[0].Size.Should().Be(50);
+            comp.Instance.File.Should().NotBeNull();
+            comp.Instance.File.Name.Should().Be("test.txt");
+            comp.Instance.File.Size.Should().Be(50);
         }
 
         [Test]
         public void MaxFileSize_SingleFile_ExceedsLimit()
         {
-            var comp = Context.RenderComponent<FileUploadMultipleFilesTest>(parameters => parameters.Add(p => p.MaxFileSize, 100L));
+            var comp = Context.RenderComponent<FileUploadSingleFileTest>(parameters => parameters.Add(p => p.MaxFileSize, 100L));
 
             var file = CreateDummyFile("test.txt", 150);
             var input = comp.FindComponent<InputFile>();
 
             input.UploadFiles(file);
 
-            comp.Instance.Files.Should().BeEmpty(); // File should be rejected
+            comp.Instance.File.Should().BeNull(); // File should be rejected
             comp.Instance.FileUpload.Error.Should().BeTrue();
             comp.Instance.FileUpload.ErrorText.Should().Be("File 'test.txt' exceeds the maximum allowed size of 100 bytes.");
         }
@@ -470,16 +462,16 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MaxFileSize_SingleFile_NoLimit()
         {
-            var comp = Context.RenderComponent<FileUploadMultipleFilesTest>(parameters => parameters.Add(p => p.MaxFileSize, null));
+            var comp = Context.RenderComponent<FileUploadSingleFileTest>(parameters => parameters.Add(p => p.MaxFileSize, null));
 
             var file = CreateDummyFile("test.txt", 200);
             var input = comp.FindComponent<InputFile>();
 
             input.UploadFiles(file);
 
-            comp.Instance.Files.Should().NotBeNull();
-            comp.Instance.Files[0].Name.Should().Be("test.txt");
-            comp.Instance.Files[0].Size.Should().Be(200);
+            comp.Instance.File.Should().NotBeNull();
+            comp.Instance.File.Name.Should().Be("test.txt");
+            comp.Instance.File.Size.Should().Be(200);
             comp.Instance.FileUpload.Error.Should().BeFalse();
             comp.Instance.FileUpload.ErrorText.Should().BeNullOrEmpty();
         }
@@ -585,10 +577,35 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.FileUpload.Error.Should().BeTrue();
             comp.Instance.FileUpload.ErrorText.Should().Be("File 'test1.txt' exceeds the maximum allowed size of 100 bytes.");
 
-            await comp.InvokeAsync(() => comp.Instance.FileUpload.ClearAsync());
+            await comp.InvokeAsync(comp.Instance.FileUpload.ClearAsync);
 
             // Assert cleared state
             comp.Instance.Files.Should().BeNull();
+            comp.Instance.FileUpload.Error.Should().BeFalse(); // Errors should be cleared
+            comp.Instance.FileUpload.ErrorText.Should().BeNullOrEmpty(); // ErrorText should be cleared
+            comp.Instance.FileUpload.ValidationErrors.Should().BeEmpty(); // ValidationErrors related to MaxFileSize should be cleared
+        }
+
+        [Test]
+        public async Task MaxFileSize_ResetValidationAfterError()
+        {
+            var comp = Context.RenderComponent<FileUploadSingleFileTest>(parameters => parameters.Add(p => p.MaxFileSize, 100));
+
+            var file1 = CreateDummyFile("test1.txt", 200);
+
+            var input = comp.FindComponent<InputFile>();
+
+            input.UploadFiles(file1);
+
+            // Assert initial error state
+            comp.Instance.File.Should().BeNull();
+            comp.Instance.FileUpload.Error.Should().BeTrue();
+            comp.Instance.FileUpload.ErrorText.Should().Be("File 'test1.txt' exceeds the maximum allowed size of 100 bytes.");
+
+            await comp.InvokeAsync(comp.Instance.FileUpload.ResetValidation);
+
+            // Assert cleared state
+            comp.Instance.File.Should().BeNull();
             comp.Instance.FileUpload.Error.Should().BeFalse(); // Errors should be cleared
             comp.Instance.FileUpload.ErrorText.Should().BeNullOrEmpty(); // ErrorText should be cleared
             comp.Instance.FileUpload.ValidationErrors.Should().BeEmpty(); // ValidationErrors related to MaxFileSize should be cleared
