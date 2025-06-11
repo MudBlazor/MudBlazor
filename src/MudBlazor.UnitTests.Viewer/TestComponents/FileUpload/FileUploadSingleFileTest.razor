@@ -1,4 +1,4 @@
-﻿<MudFileUpload @ref="FileUpload" T="IBrowserFile" MaxFileSize="@MaxFileSize" @bind-Files="File">
+﻿<MudFileUpload T="IBrowserFile" MaxFileSize="@MaxFileSize" @bind-Files="File">
     <SelectedTemplate>
         <div>
             Select Template
@@ -7,7 +7,6 @@
 </MudFileUpload>
 
 @code {
-    public required MudFileUpload<IBrowserFile> FileUpload { get; set; }
     public IBrowserFile? File { get; private set; }
 
     [Parameter]
