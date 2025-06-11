@@ -1,0 +1,300 @@
+﻿@inherits LayoutComponentBase
+
+<!-- MudBlazor Theme Provider - Manages theme switching and dark/light mode -->
+<MudThemeProvider @ref="_mudThemeProvider" Theme="_layoutService.Theme" IsDarkMode="_layoutService.IsDarkMode" />
+
+<!-- Main Layout Container -->
+<MudLayout>
+    <!-- Top Application Bar -->
+    <MudAppBar Elevation="1">
+        <!-- Menu Toggle Button - Opens/closes the navigation drawer -->
+        <MudTooltip Text="@_translator.GetText("Toggle")" Placement="Placement.Top">
+            <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start"
+                           OnClick="@_layoutService.ToggleDrawer" />
+        </MudTooltip>
+
+        <!-- Application Title -->
+        <MudText Typo="Typo.h5" Class="ml-3">@_translator.GetText("Application")</MudText>
+
+        <!-- Spacer to push right-side buttons to the end -->
+        <MudSpacer />
+
+        <!-- More Options Button (currently no functionality) -->
+        <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" />
+
+        <!-- Dark/Light Mode Toggle Button -->
+        <MudTooltip Text="@_translator.GetText(_layoutService.DarkLightModeButtonText)">
+            <MudIconButton OnClick="@_layoutService.CycleDarkLightMode" Icon="@_layoutService.DarkLightModeButtonIcon"
+                           Color="Color.Inherit" aria-label="@_translator.GetText(_layoutService.DarkLightModeButtonText)" />
+        </MudTooltip>
+
+        <!-- Language Selection Menu -->
+        <MudTooltip Text="@_translator.GetText("Language")">
+            <MudMenu Icon="@Icons.Material.Filled.Translate" Color="Color.Inherit" AnchorOrigin="Origin.BottomLeft"
+                     TransformOrigin="Origin.TopLeft">
+                <!-- English Language Option -->
+                <MudTooltip Text="English" Placement="Placement.Left">
+                    <MudMenuItem Label="🏴󠁧󠁢󠁥󠁮󠁧󠁿" OnClick="@(() => SetLanguage("en"))" />
+                </MudTooltip>
+                <!-- Irish Language Option -->
+                <MudTooltip Text="Irish" Placement="Placement.Left">
+                    <MudMenuItem OnClick="@(() => SetLanguage("ga"))">
+                        @((MarkupString)"&#x1F1EE;&#x1F1EA;")
+                    </MudMenuItem>
+                </MudTooltip>
+            </MudMenu>
+        </MudTooltip>
+
+    </MudAppBar>
+
+    <!-- Side Navigation Drawer -->
+    <MudDrawer @bind-Open="_layoutService.IsDrawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
+        <MudPaper Elevation="0">
+            <!-- Navigation Menu -->
+            <MudNavMenu Color="Color.Primary" Bordered="true">
+                <MudNavLink Href="#" Icon="@Icons.Material.Filled.Dashboard">@_translator.GetText("Hangfire")</MudNavLink>
+                <MudNavLink Href="#" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Storage">@_translator.GetText("Servers")</MudNavLink>
+                <MudNavLink Href="#" Disabled="true">@_translator.GetText("Billing")</MudNavLink>
+
+                <MudNavGroup Title="@_translator.GetText("Settings")" Expanded="true">
+                    <MudNavLink Href="#">@_translator.GetText("Users")</MudNavLink>
+                    <MudNavLink Href="#">@_translator.GetText("Security")</MudNavLink>
+                </MudNavGroup>
+
+                <MudNavLink Href="#">@_translator.GetText("About")</MudNavLink>
+            </MudNavMenu>
+        </MudPaper>
+    </MudDrawer>
+
+    <!-- Main Content Area -->
+    <MudMainContent>
+        <MudTimeline>
+            <MudTimelineItem Color="Color.Info" Size="Size.Small">
+                <ItemOpposite>
+                    <MudText Color="Color.Info" Typo="Typo.h5">1970</MudText>
+                </ItemOpposite>
+                <ItemContent>
+                    <MudText Color="Color.Info" Typo="Typo.h6" GutterBottom="true">@_translator.GetText("Atom Towns")</MudText>
+                    <MudText>@_translator.GetText("Construction of the town of Pripyat, one of 9 \"atom towns\" begins, to be inhabited by future employees of the nuclear power plants.")</MudText>
+                </ItemContent>
+            </MudTimelineItem>
+
+            <MudTimelineItem Color="Color.Success" Size="Size.Small">
+                <ItemOpposite>
+                    <MudText Color="Color.Success" Typo="Typo.h5">1977</MudText>
+                </ItemOpposite>
+                <ItemContent>
+                    <MudText Color="Color.Success" Typo="Typo.h6" GutterBottom="true">@_translator.GetText("Operational")</MudText>
+                    <MudText>@_translator.GetText("The first of the Chernobyl Nuclear Power Plants four reactors is ready to operate followed by number 2 in 1978.")</MudText>
+                </ItemContent>
+            </MudTimelineItem>
+
+            <MudTimelineItem Color="Color.Error" Size="Size.Small">
+                <ItemOpposite>
+                    <MudText Color="Color.Error" Typo="Typo.h5">1979</MudText>
+                </ItemOpposite>
+                <ItemContent>
+                    <MudText Color="Color.Error" Typo="Typo.h6" GutterBottom="true">@_translator.GetText("Pripyat")</MudText>
+                    <MudText>@_translator.GetText("Pripyat officially proclaimed as a city.")<br />@_translator.GetText("The Chernobyl Atomic Power Station reaches its first 10 billion kilowatt-hours of electical output.")</MudText>
+                </ItemContent>
+            </MudTimelineItem>
+        </MudTimeline>
+    </MudMainContent>
+</MudLayout>
+
+@code {
+#nullable enable
+    private MudThemeProvider _mudThemeProvider = null!;
+    private LayoutService _layoutService = new();
+    private TranslationService _translator = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await _layoutService.InitializeAsync(_mudThemeProvider);
+            _layoutService.StateChanged += OnLayoutStateChanged;
+            StateHasChanged();
+        }
+
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    private void OnLayoutStateChanged(object? sender, EventArgs e)
+    {
+        StateHasChanged();
+    }
+
+    private void SetLanguage(string languageCode)
+    {
+        _translator.SetLanguage(languageCode);
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        if (_layoutService != null)
+        {
+            _layoutService.StateChanged -= OnLayoutStateChanged;
+            _layoutService.Dispose();
+        }
+    }
+
+    public class LayoutService : IDisposable
+    {
+        public enum DarkLightMode
+        {
+            System = 0,
+            Light = 1,
+            Dark = 2
+        }
+
+        private bool _systemDarkMode;
+        private MudThemeProvider? _mudThemeProvider;
+
+        public DarkLightMode CurrentDarkLightMode { get; private set; } = DarkLightMode.System;
+        public bool IsDarkMode { get; private set; }
+        public bool ObserveSystemThemeChange { get; private set; } = true;
+        public bool IsDrawerOpen { get; set; } = true;
+
+        public MudTheme Theme { get; } = new()
+            {
+                PaletteLight = new PaletteLight
+                {
+                    Primary = Colors.Pink.Default,
+                    Secondary = Colors.Teal.Accent4,
+                    AppbarBackground = Colors.Pink.Default
+                },
+                PaletteDark = new PaletteDark
+                {
+                    Primary = Colors.Pink.Default
+                }
+            };
+
+        public event EventHandler? StateChanged;
+
+        public async Task InitializeAsync(MudThemeProvider mudThemeProvider)
+        {
+            _mudThemeProvider = mudThemeProvider;
+            var systemDarkMode = await _mudThemeProvider.GetSystemDarkModeAsync();
+            UpdateDarkModeState(systemDarkMode);
+            await _mudThemeProvider.WatchSystemDarkModeAsync(OnSystemDarkModeChanged);
+            OnStateChanged();
+        }
+
+        public void ToggleDrawer()
+        {
+            IsDrawerOpen = !IsDrawerOpen;
+            OnStateChanged();
+        }
+
+        public void CycleDarkLightMode()
+        {
+            CurrentDarkLightMode = CurrentDarkLightMode switch
+            {
+                DarkLightMode.System => DarkLightMode.Light,
+                DarkLightMode.Light => DarkLightMode.Dark,
+                _ => DarkLightMode.System
+            };
+
+            ObserveSystemThemeChange = CurrentDarkLightMode == DarkLightMode.System;
+            UpdateDarkModeState();
+        }
+
+        public string DarkLightModeButtonText => CurrentDarkLightMode switch
+        {
+            DarkLightMode.Dark => "Auto mode",
+            DarkLightMode.Light => "Dark mode",
+            _ => "Light mode"
+        };
+
+        public string DarkLightModeButtonIcon => CurrentDarkLightMode switch
+        {
+            DarkLightMode.Dark => Icons.Material.Outlined.DarkMode,
+            DarkLightMode.Light => Icons.Material.Filled.LightMode,
+            _ => Icons.Material.Rounded.AutoMode
+        };
+
+        private Task OnSystemDarkModeChanged(bool newValue)
+        {
+            _systemDarkMode = newValue;
+            if (CurrentDarkLightMode == DarkLightMode.System)
+            {
+                UpdateDarkModeState();
+                OnStateChanged();
+            }
+            return Task.CompletedTask;
+        }
+
+        private void UpdateDarkModeState(bool? systemMode = null)
+        {
+            if (systemMode.HasValue)
+            {
+                _systemDarkMode = systemMode.Value;
+            }
+            IsDarkMode = CurrentDarkLightMode switch
+            {
+                DarkLightMode.Dark => true,
+                DarkLightMode.Light => false,
+                _ => _systemDarkMode
+            };
+        }
+
+        private void OnStateChanged()
+        {
+            StateChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void Dispose()
+        {
+            StateChanged = null;
+        }
+    }
+
+    public class TranslationService
+    {
+        private string _currentLanguage = "en";
+        private readonly Dictionary<string, string> _irishTranslations = new()
+        {
+            { "Toggle", "Scoránaigh" },
+            { "Application", "Feidhmchlár" },
+            { "Language", "Teanga" },
+            { "Auto mode", "Mód uathoibríoch" },
+            { "Dark mode", "Mód dorcha" },
+            { "Light mode", "Mód éadrom" },
+            { "Hangfire", "Hangfire" },
+            { "Servers", "Freastalaithe" },
+            { "Billing", "Billeáil" },
+            { "Settings", "Socruithe" },
+            { "Users", "Úsáideoirí" },
+            { "Security", "Slándáil" },
+            { "About", "Faoi" },
+            { "Atom Towns", "Bailte Adamhacha" },
+            { "Construction of the town of Pripyat, one of 9 \"atom towns\" begins, to be inhabited by future employees of the nuclear power plants.", "Tosaíonn tógáil bhaile Pripyat, ceann de 9 \"baile adamhach\", le cónaí ag fostaithe todhchaí na ngléasraí cumhachta núicléacha." },
+            { "Operational", "Oibríochtúil" },
+            { "The first of the Chernobyl Nuclear Power Plants four reactors is ready to operate followed by number 2 in 1978.", "Tá an chéad cheann de cheithre imoibreoir Stáisiún Cumhachta Núicléach Chernobyl réidh le hoibriú agus lean uimhir 2 é in 1978." },
+            { "Pripyat", "Pripyat" },
+            { "Pripyat officially proclaimed as a city.", "Fógraíodh Pripyat go hoifigiúil mar chathair." },
+            { "The Chernobyl Atomic Power Station reaches its first 10 billion kilowatt-hours of electical output.", "Shroich Stáisiún Cumhachta Adamhach Chernobyl a chéad 10 billiún kileavat-uair d'aschur leictreach." }
+        };
+
+        public string CurrentLanguage => _currentLanguage;
+
+        public void SetLanguage(string languageCode)
+        {
+            _currentLanguage = languageCode.ToLowerInvariant();
+        }
+
+        public string GetText(string key)
+        {
+            if (_currentLanguage == "ga" && _irishTranslations.TryGetValue(key, out var translation))
+            {
+                return translation;
+            }
+            return key;
+        }
+
+        public bool IsIrish => _currentLanguage == "ga";
+        public bool IsEnglish => _currentLanguage == "en";
+    }
+}
