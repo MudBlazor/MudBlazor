@@ -85,7 +85,7 @@ namespace MudBlazor
         private Dictionary<string, object> PositionAttributes => new()
         {
             { "data-pc-x", _openPosition.Left.ToString(CultureInfo.InvariantCulture) },
-            { "data-pc-y", _openPosition.Top.ToString(CultureInfo.InvariantCulture) }
+            { "data-pc-y", _openPosition.Top.ToString(CultureInfo.InvariantCulture) },
         };
 
         /// <summary>
@@ -449,6 +449,7 @@ namespace MudBlazor
         /// </remarks>
         public async Task CloseMenuAsync()
         {
+            // Discard any pending pointer actions so the menu doesn't re-open or try to close twice.
             CancelPendingActions();
 
             // Recursively close all child menus.
@@ -457,6 +458,7 @@ namespace MudBlazor
                 await child.CloseMenuAsync();
             }
 
+            // Now close this menu itself.
             await _openState.SetValueAsync(false);
             await InvokeAsync(StateHasChanged);
         }
@@ -505,12 +507,13 @@ namespace MudBlazor
 
             _isTransient = transient;
 
-            // Set the menu position if the event has cursor coordinates.
+            // Set the menu position to the cursor if the event has coordinates.
             if (args is MouseEventArgs mouseEventArgs)
             {
                 _openPosition = (mouseEventArgs.PageY, mouseEventArgs.PageX);
             }
 
+            // Officially open the menu.
             await _openState.SetValueAsync(true);
             await InvokeAsync(StateHasChanged);
         }
@@ -603,6 +606,7 @@ namespace MudBlazor
         {
             _isPointerOver = true;
 
+            // Prevent conflicting actions.
             CancelPendingActions();
 
             if (!IsHoverable(args))
@@ -641,9 +645,10 @@ namespace MudBlazor
         {
             _isPointerOver = false;
 
+            // Prevent conflicting actions.
             CancelPendingActions();
 
-            // Only close if the menu is transient (e.g., hover-activated) and is hoverable.
+            // Only close if the menu is transient (e.g. hover-activated) and is hoverable.
             if (!_isTransient || !IsHoverable(args))
             {
                 return;
