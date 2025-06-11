@@ -1201,9 +1201,10 @@ namespace MudBlazor
 
         private async Task ListItemOnClickAsync(T item)
         {
-            await SelectOptionAsync(item);
             _handleNextFocus = true; // Let the event handler know it doesn't need to do anything.
             await FocusAsync();
+
+            await SelectOptionAsync(item);
         }
     }
 }
