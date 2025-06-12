@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
@@ -63,6 +64,16 @@ namespace MudBlazor
         [Category(CategoryTypes.Button.Behavior)]
         public bool PreventDefault { get; set; }
 
+        /// <summary>
+        /// Makes the html element follow the dark/light mode of the application.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Button.Appearance)]
+        public bool FollowThemeColorScheme { get; set; } = false;
+
         protected override void BuildRenderTree(RenderTreeBuilder builder)
         {
             base.BuildRenderTree(builder);
@@ -77,9 +88,14 @@ namespace MudBlazor
             // Splatted attributes.
             builder.AddMultipleAttributes(seq++, UserAttributes!);
 
+            string StyleWithColorScheme = new StyleBuilder()
+                .AddStyle(Style)
+                .AddStyle("color-scheme", "var(--mud-native-html-color-scheme)", FollowThemeColorScheme)
+                .Build();
+
             // Add class and style attributes.
             builder.AddAttribute(seq++, "class", Class);
-            builder.AddAttribute(seq++, "style", Style);
+            builder.AddAttribute(seq++, "style", StyleWithColorScheme);
 
             // Add event attributes.
             builder.AddEventStopPropagationAttribute(seq++, "onclick", !ClickPropagation);
