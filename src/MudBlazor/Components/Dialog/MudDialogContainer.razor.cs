@@ -219,24 +219,26 @@ namespace MudBlazor
         {
             if (!GetBackdropClick())
             {
-                if (!_disposed)
-                    await _dialogContainerReference.FocusAsync(); // Refocus the dialog panel if backdrop clicked
-
+                await RefocusDialogAsync();
                 return;
             }
 
             if (_dialog is not null && _dialog.OnBackdropClick.HasDelegate)
             {
                 await _dialog.OnBackdropClick.InvokeAsync(args);
-
-                if (!_disposed)
-                {
-                    await _dialogContainerReference.FocusAsync(); // Refocus the dialog panel if backdrop click did not close the dialog
-                }
+                await RefocusDialogAsync();
             }
             else
             {
                 ((IMudDialogInstance)this).Cancel();
+            }
+        }
+
+        private async Task RefocusDialogAsync()
+        {
+            if (!_disposed)
+            {
+                await _dialogContainerReference.FocusAsync();
             }
         }
 

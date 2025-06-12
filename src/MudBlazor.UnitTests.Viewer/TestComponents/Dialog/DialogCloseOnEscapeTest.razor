@@ -4,6 +4,8 @@
 <MudButton OnClick="@OpenDialog" Variant="Variant.Filled" Color="Color.Primary">Open Dialog (Test Esc Key)</MudButton>
 
 @code {
+    public static string __description__ = "Open Dialog -> Click overlay -> Press Esc";
+
     private async Task OpenDialog()
     {
         var options = new DialogOptions
