@@ -88,14 +88,20 @@ namespace MudBlazor
             // Splatted attributes.
             builder.AddMultipleAttributes(seq++, UserAttributes!);
 
-            string StyleWithColorScheme = new StyleBuilder()
+            // Add class and style attributes.
+            builder.AddAttribute(seq++, "class", Class);
+            if (FollowThemeColorScheme)
+            {
+                string StyleWithColorScheme = new StyleBuilder()
                 .AddStyle(Style)
                 .AddStyle("color-scheme", "var(--mud-native-html-color-scheme)", FollowThemeColorScheme)
                 .Build();
-
-            // Add class and style attributes.
-            builder.AddAttribute(seq++, "class", Class);
-            builder.AddAttribute(seq++, "style", StyleWithColorScheme);
+                builder.AddAttribute(seq++, "style", StyleWithColorScheme);
+            }
+            else
+            {
+                builder.AddAttribute(seq++, "style", Style);
+            }
 
             // Add event attributes.
             builder.AddEventStopPropagationAttribute(seq++, "onclick", !ClickPropagation);
