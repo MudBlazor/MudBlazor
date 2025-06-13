@@ -2562,5 +2562,25 @@ namespace MudBlazor.UnitTests.Components
             icon.ClassList.Contains("mud-direction-asc").Should().Be(direction == SortDirection.Ascending);
             icon.ClassList.Contains("mud-direction-desc").Should().Be(direction == SortDirection.Descending);
         }
+
+        [Test]
+        [TestCase(SortDirection.None)]
+        [TestCase(SortDirection.Ascending)]
+        [TestCase(SortDirection.Descending)]
+        public void TableSortDirectionStartLabelDirectionClasses(SortDirection startDirection)
+        {
+            var comp = Context.RenderComponent<MudTableSortLabel<string>>(parameters => parameters
+                .Add(p => p.SortDirectionStart, startDirection)
+            );
+
+            comp.Instance.ToggleSortDirection();
+            comp.Render();
+
+            var icon = comp.Find(".mud-table-sort-label-icon");
+
+            icon.ClassList.Should().Contain("mud-table-sort-label-icon");
+            icon.ClassList.Contains("mud-direction-asc").Should().Be(startDirection is SortDirection.None or SortDirection.Ascending);
+            icon.ClassList.Contains("mud-direction-desc").Should().Be(startDirection == SortDirection.Descending);
+        }
     }
 }

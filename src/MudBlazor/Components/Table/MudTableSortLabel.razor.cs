@@ -59,6 +59,15 @@ namespace MudBlazor
         public SortDirection InitialDirection { get; set; } = SortDirection.None;
 
         /// <summary>
+        /// The sort direction when the user first clicks the sort header.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="SortDirection.Ascending"/>. <see cref="SortDirection.None"/> is not supported and will overriden to <see cref="SortDirection.Ascending"/> if set
+        /// </remarks>
+        [Parameter]
+        public SortDirection SortDirectionStart { get; set; } = SortDirection.Ascending;
+
+        /// <summary>
         /// Allows sorting by this column.
         /// </summary>
         /// <remarks>
@@ -147,9 +156,11 @@ namespace MudBlazor
 
             return SortDirection switch
             {
-                SortDirection.None => UpdateSortDirectionAsync(SortDirection.Ascending),
-                SortDirection.Ascending => UpdateSortDirectionAsync(SortDirection.Descending),
-                SortDirection.Descending => UpdateSortDirectionAsync(Table?.AllowUnsorted ?? false
+                SortDirection.None => UpdateSortDirectionAsync(SortDirectionStart),
+                SortDirection.Ascending => UpdateSortDirectionAsync(Table?.AllowUnsorted == true && SortDirectionStart == SortDirection.Descending
+                    ? SortDirection.None
+                    : SortDirection.Descending),
+                SortDirection.Descending => UpdateSortDirectionAsync(Table?.AllowUnsorted == true && SortDirectionStart == SortDirection.Ascending
                     ? SortDirection.None
                     : SortDirection.Ascending),
                 _ => throw new NotImplementedException()
@@ -159,6 +170,7 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             base.OnInitialized();
+            SortDirectionStart = SortDirectionStart == SortDirection.None ? SortDirection.Ascending : SortDirectionStart;
             Context?.SortLabels.Add(this);
             Context?.InitializeSorting();
         }

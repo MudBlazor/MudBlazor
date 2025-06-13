@@ -5,11 +5,11 @@
 
 <MudTable Items="@Elements" Hover="true" SortLabel="Sort By">
     <HeaderContent>
-        <MudTh><MudTableSortLabel SortBy="new Func<Element, object>(x=>x.Number)">Nr</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel Enabled="@enabled" SortBy="new Func<Element, object>(x=>x.Sign)">Sign</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<Element, object>(x=>x.Name)">Name</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel SortBy="new Func<Element, object>(x=>x.Position)">Position</MudTableSortLabel></MudTh>
-        <MudTh><MudTableSortLabel SortBy="new Func<Element, object>(x=>x.Molar)">Mass</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortDirectionStart="@sortDirectionStart" SortBy="new Func<Element, object>(x=>x.Number)">Nr</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortDirectionStart="@sortDirectionStart" Enabled="@enabled" SortBy="new Func<Element, object>(x => x.Sign)">Sign</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortDirectionStart="@sortDirectionStart" InitialDirection="SortDirection.Ascending" SortBy="new Func<Element, object>(x => x.Name)">Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortDirectionStart="@sortDirectionStart" SortBy="new Func<Element, object>(x => x.Position)">Position</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortDirectionStart="@sortDirectionStart" SortBy="new Func<Element, object>(x => x.Molar)">Mass</MudTableSortLabel></MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Nr">@context.Number</MudTd>
@@ -24,10 +24,17 @@
 </MudTable>
 
 <MudSwitch @bind-Value="enabled" Color="Color.Info">Enable sorting on the Sign Column</MudSwitch>
+<MudSelect T="SortDirection" Label="SortDirectionStart" @bind-Value="sortDirectionStart">
+    <MudSelectItem Value="SortDirection.Ascending">Ascending</MudSelectItem>
+    <MudSelectItem Value="SortDirection.Descending">Descending</MudSelectItem>
+</MudSelect>
 
 @code {
+
     private bool enabled = true;
     private IEnumerable<Element> Elements = new List<Element>();
+
+    private SortDirection sortDirectionStart = SortDirection.Ascending;
 
     protected override async Task OnInitializedAsync()
     {
