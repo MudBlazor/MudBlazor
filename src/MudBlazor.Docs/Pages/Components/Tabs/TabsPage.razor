@@ -117,6 +117,19 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Drag and Drop Tabs">
+                <Description>
+                    Tab reordering can be enabled by setting <CodeInline>EnableDragAndDrop</CodeInline> to <CodeInline>true</CodeInline>.
+                    When enabled, users can rearrange tabs by dragging them to new positions. This is useful for dynamic interfaces where the number or order of tabs may change.
+                    The example below demonstrates drag-and-drop with a variable number of tabs that can be reordered interactively at various positions.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TabsDragAndDropExample)" ShowCode="false" HighLight="EnableDragAndDrop">
+                <TabsDragAndDropExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Scrolling Tabs">
                 <Description>
                     If the total size of all tabs exceeds the size of the container, scroll buttons are automatically added.

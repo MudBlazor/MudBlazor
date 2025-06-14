@@ -288,7 +288,7 @@ namespace MudBlazor
                 await UpdateHeightAsync();
                 if (!_disposed)
                 {
-                    await BrowserViewportService.SubscribeAsync(this, fireImmediately: true);
+                    _ = BrowserViewportService.SubscribeAsync(this, fireImmediately: true);
                 }
 
                 _isRendered = true;

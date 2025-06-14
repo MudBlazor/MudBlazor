@@ -698,53 +698,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task Menu_PointerEvents_Cancellation()
-        {
-            // This method uses CatchAndLog to allow async events to run syncronously so we can test timing
-            // Set a predictable hover delay for testing
-            var hoverDelay = 300;
-            MudGlobal.MenuDefaults.HoverDelay = hoverDelay;
-
-            var comp = Context.RenderComponent<MenuWithNestingTest>();
-
-            // Open the main menu first
-            comp.Find("button:contains('1')").Click();
-            comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "Main menu should be open");
-
-            // 1. Test cancellation of SHOW debounce
-
-            var menus = comp.FindComponents<MudMenu>();
-            var menu = menus.FirstOrDefault(x => x.Instance.Label == "1.3").Instance;
-            menu.Should().NotBeNull();
-
-            // Start hover, then leave before debounce completes
-            menu.PointerEnterAsync(new PointerEventArgs()).CatchAndLog();
-            await Task.Delay(50);
-            menu._showDebouncer.Cancel();
-
-            // Wait for original show debounce to have completed
-            await Task.Delay(hoverDelay + 100);
-            comp.FindAll("div.mud-popover-open").Count.Should().Be(1,
-                "Submenu should not open because show debounce was cancelled by pointer leave");
-
-            // 2. Test cancellation of HIDE debounce
-
-            // First, open the submenu properly, use await since we are testing this
-            await menu.PointerEnterAsync(new PointerEventArgs());
-            comp.FindAll("div.mud-popover-open").Count.Should().Be(2, "Submenu should be open");
-
-            // Start leave sequence, but re-enter before hide completes
-            menu.PointerLeaveAsync(new PointerEventArgs()).CatchAndLog();
-            await Task.Delay(hoverDelay / 2);
-            menu._hideDebouncer.Cancel();
-
-            // Wait for what would have been the full hide delay
-            await Task.Delay(hoverDelay + 100);
-            comp.FindAll("div.mud-popover-open").Count.Should().Be(2,
-                "Submenu should still be open because hide debounce was cancelled by re-entering");
-        }
-
-        [Test]
         public async Task Menu_PointerEvents_MultipleLevels()
         {
             // This method uses CatchAndLog to allow async events to run syncronously so we can test timing

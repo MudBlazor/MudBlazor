@@ -3,7 +3,7 @@
 namespace MudBlazor.Utilities;
 
 #nullable enable
-internal static class StringHelpers
+internal static partial class StringHelpers
 {
     /// <summary>
     /// Converts a double value to its string representation, rounded to 4 decimal places.

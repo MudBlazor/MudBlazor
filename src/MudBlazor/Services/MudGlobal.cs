@@ -129,6 +129,15 @@ public static class MudGlobal
         /// The amount of drop shadow to apply to <see cref="MudPopover"/>.
         /// </summary>
         public static int Elevation { get; set; } = 8;
+
+        /// <summary>
+        /// Prevents interaction with background elements.
+        /// </summary>
+        /// <remarks>
+        /// Only applies to components that use a <see cref="MudPopover"/> in conjunction with a <see cref="MudOverlay"/>
+        /// to close the popover when a user clicks outside, such as <see cref="MudSelect{T}"/>.
+        /// </remarks>
+        public static bool ModalOverlay { get; set; } = true;
     }
 
     /// <summary>
@@ -152,7 +161,7 @@ public static class MudGlobal
     public static class TooltipDefaults
     {
         /// <summary>
-        /// The amount of time in milliseconds to wait from opening the <see cref="MudTooltip"/> before beginning to perform the transition. 
+        /// The amount of time in milliseconds to wait from opening the <see cref="MudTooltip"/> before beginning to perform the transition.
         /// </summary>
         public static TimeSpan Delay { get; set; } = TransitionDefaults.Delay;
 
@@ -175,7 +184,7 @@ public static class MudGlobal
         public static TimeSpan Delay { get; set; } = TimeSpan.Zero;
 
         /// <summary>
-        /// The amount of time in milliseconds to wait from opening the popover before beginning to perform the transition. 
+        /// The amount of time in milliseconds to wait from opening the popover before beginning to perform the transition.
         /// </summary>
         public static TimeSpan Duration { get; set; } = TimeSpan.FromMilliseconds(251);
     }
