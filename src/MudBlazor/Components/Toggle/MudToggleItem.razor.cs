@@ -131,15 +131,7 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             base.OnInitialized();
-
-            if (Parent is null)
-            {
-
-            }
-            else
-            {
-                Parent.Register(this);
-            }
+            Parent.Register(this);
         }
 
         /// <summary>
@@ -149,7 +141,8 @@ namespace MudBlazor
         {
             if (disposing)
             {
-                Parent?.Unregister(this);
+                // Don't assume we have a parent during disposal.
+                NullableParent?.Unregister(this);
             }
         }
 
