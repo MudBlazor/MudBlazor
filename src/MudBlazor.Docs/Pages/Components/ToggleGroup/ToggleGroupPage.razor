@@ -1,20 +1,20 @@
 ﻿@page "/components/togglegroup"
 
 <DocsPage>
-    <DocsPageHeader Title="Toggle Group" Component="@nameof(MudToggleGroup<T>)" SubTitle="A group of toggle buttons offering various selection modes for choosing between multiple values." />
-
+    <DocsPageHeader Title="Toggle Group" Component="@nameof(MudToggleGroup<T>)" SubTitle="Toggle buttons grouped to select one or multiple values." />
     <DocsPageContent>
+
         <DocsPageSection>
             <SectionHeader Title="Usage">
                 <Description>
-                    The <CodeInline>MudToggleGroup</CodeInline> holds a number of <CodeInline>MudToggleItems</CodeInline>
-                    and semantically groups them together into a selection. The items can be configured to show text or
-                    custom content such as an icon. To show a check mark set the <CodeInline>CheckMark</CodeInline> parameter.
-                    The check mark will push the text to the side by default. If you don't want this you can set
-                    the <CodeInline>FixedContent</CodeInline> parameter to counterbalance the checkmark with padding on the right.
+                    <CodeInline>MudToggleGroup</CodeInline> groups several <CodeInline>MudToggleItem</CodeInline> components together, allowing selection from multiple options.
+                    Each item can display text, icons, or custom content.
+
+                    Use <CodeInline>CheckMark</CodeInline> to display a checkmark beside selected items.
+                    If this pushes content too far, set <CodeInline>FixedContent</CodeInline> to balance spacing.
+
                     <MudAlert Severity="Severity.Info" Class="mt-3">
-                        If you don't set the <CodeInline>Text</CodeInline> property the items will simply show the
-                        <CodeInline>Value</CodeInline> if you didn't define the child content of a <CodeInline>MudToggleItem</CodeInline>.
+                        If <CodeInline>Text</CodeInline> isn't set, items default to displaying their <CodeInline>Value</CodeInline>, unless custom content is defined.
                     </MudAlert>
                 </Description>
             </SectionHeader>
@@ -24,20 +24,22 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Selection Mode">
+            <SectionHeader Title="Selection Modes">
                 <Description>
-                    <CodeInline>MudToggleGroup</CodeInline> has three different selection modes: <CodeInline>SelectionMode.SingleSelection</CodeInline>,
-                    <CodeInline>SelectionMode.MultiSelection</CodeInline> and <CodeInline>SelectionMode.ToggleSelection</CodeInline>.
-                    Single selection is the default and allows only one choice to be selected at the same time, just like in a radio group.
-                    With multi-selection many items can be selected at the same time or none. Toggle-selection is an exclusive single
-                    selection which allows toggling off the selected value so that nothing is selected.
+                    The <CodeInline>MudToggleGroup</CodeInline> offers three modes:
+
+                    <ul>
+                        <li><CodeInline>SingleSelection</CodeInline> (default): Only one item selected at a time.</li>
+                        <li><CodeInline>MultiSelection</CodeInline>: Multiple items or none can be selected.</li>
+                        <li><CodeInline>ToggleSelection</CodeInline>: Allows deselecting the current choice, resulting in no selection.</li>
+                    </ul>
+
                     <MudAlert Severity="Severity.Info" Class="mt-3">
-                        You must set the <CodeInline>Value</CodeInline> property of each item to a unique value or the selection
-                        won't work. Also, the type of the item's value must match the group's <CodeInline>T</CodeInline> parameter.
+                        Ensure each item's <CodeInline>Value</CodeInline> is unique and matches the group's type parameter (<CodeInline>T</CodeInline>).
                     </MudAlert>
+
                     <MudAlert Severity="Severity.Info" Class="mt-3">
-                        Make sure to bind the toggle group's <CodeInline>Value</CodeInline> property in single- and toggle-selection mode
-                        and <CodeInline>Values</CodeInline> with multi-selection.
+                        Bind the group's <CodeInline>Value</CodeInline> (single/toggle selection) or <CodeInline>Values</CodeInline> (multi-selection) properties appropriately.
                     </MudAlert>
                 </Description>
             </SectionHeader>
@@ -49,7 +51,7 @@
         <DocsPageSection>
             <SectionHeader Title="Custom Selection Style">
                 <Description>
-                    You can customize the look of selected items with <CodeInline>SelectedClass</CodeInline>.
+                    Customize the appearance of selected items using <CodeInline>SelectedClass</CodeInline>.
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(ToggleCustomSelectionStyleExample)" ShowCode="false">
@@ -60,10 +62,9 @@
         <DocsPageSection>
             <SectionHeader Title="Custom Content">
                 <Description>
-                    <CodeInline>MudToggleItem</CodeInline> supports customization of its content with a
-                    <CodeInline>RenderFragment<CodeInline Tag>bool</CodeInline></CodeInline> where the parameter conveys
-                    whether or not the item is currently selected. In the example the <CodeInline>context</CodeInline>
-                    variable was used to color the selected chip green.
+                    Customize each <CodeInline>MudToggleItem</CodeInline> content using a <CodeInline>RenderFragment&lt;bool&gt;</CodeInline>, where the boolean parameter indicates selection state.
+                    This allows dynamic styling, such as coloring selected items.
+                    In the example the <CodeInline>context</CodeInline> variable was used to color the selected chip green.
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(ToggleCustomContentExample)" ShowCode="false">
