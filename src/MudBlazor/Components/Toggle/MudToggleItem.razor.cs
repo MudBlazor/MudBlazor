@@ -19,31 +19,31 @@ namespace MudBlazor
     public partial class MudToggleItem<T> : MudComponentBase, IDisposable
     {
         protected string Classname => new CssBuilder("mud-toggle-item")
-            .AddClass(Parent.SelectedClass, Selected && !string.IsNullOrEmpty(Parent.SelectedClass))
+            .AddClass(AssertedParent.SelectedClass, Selected && !string.IsNullOrEmpty(AssertedParent.SelectedClass))
             .AddClass("mud-toggle-item-selected", Selected)
-            .AddClass("mud-toggle-item-vertical", Parent.Vertical)
-            .AddClass("mud-toggle-item-delimiter", Parent.Delimiters)
-            .AddClass("mud-toggle-item-fixed", Parent.CheckMark && Parent.FixedContent)
-            .AddClass($"mud-toggle-item-size-{Parent.Size.ToDescriptionString()}")
-            .AddClass("mud-ripple", Parent.Ripple)
+            .AddClass("mud-toggle-item-vertical", AssertedParent.Vertical)
+            .AddClass("mud-toggle-item-delimiter", AssertedParent.Delimiters)
+            .AddClass("mud-toggle-item-fixed", AssertedParent.CheckMark && AssertedParent.FixedContent)
+            .AddClass($"mud-toggle-item-size-{AssertedParent.Size.ToDescriptionString()}")
+            .AddClass("mud-ripple", AssertedParent.Ripple)
             .AddClass("mud-typography-input")
             .AddClass(Class)
             .Build();
 
         protected string CheckMarkClassname => new CssBuilder("mud-toggle-item-check-icon")
-            .AddClass(Parent.CheckMarkClass)
+            .AddClass(AssertedParent.CheckMarkClass)
             .Build();
 
         /// <summary>
-        /// The <see cref="MudToggleGroup{T}"/> hosting this item.
+        /// The <see cref="MudToggleGroup{T}"/> hosting this item if one exists.
         /// </summary>
         [CascadingParameter]
-        private MudToggleGroup<T>? NullableParent { get; set; }
+        public MudToggleGroup<T>? Parent { get; set; }
 
         /// <summary>
         /// The <see cref="MudToggleGroup{T}"/> hosting this item, but validated to be non-null.
         /// </summary>
-        private MudToggleGroup<T> Parent => NullableParent ?? throw new InvalidOperationException($"{nameof(MudToggleItem<T>)} must be used within a {nameof(MudToggleGroup<T>)}.");
+        private MudToggleGroup<T> AssertedParent => Parent ?? throw new InvalidOperationException($"{nameof(MudToggleItem<T>)} must be used within a {nameof(MudToggleGroup<T>)}.");
 
         /// <summary>
         /// Prevents the user from interacting with this item.
@@ -110,7 +110,7 @@ namespace MudBlazor
 
         private string? GetCurrentIcon()
         {
-            if (!Parent.CheckMark)
+            if (!AssertedParent.CheckMark)
             {
                 return null;
             }
@@ -120,7 +120,7 @@ namespace MudBlazor
                 return SelectedIcon;
             }
 
-            if (UnselectedIcon is null && Parent.FixedContent)
+            if (UnselectedIcon is null && AssertedParent.FixedContent)
             {
                 return Icons.Custom.Uncategorized.Empty;
             }
@@ -131,7 +131,7 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            Parent.Register(this);
+            AssertedParent.Register(this);
         }
 
         /// <summary>
@@ -142,7 +142,7 @@ namespace MudBlazor
             if (disposing)
             {
                 // Don't assume we have a parent during disposal.
-                NullableParent?.Unregister(this);
+                Parent?.Unregister(this);
             }
         }
 
@@ -167,7 +167,7 @@ namespace MudBlazor
 
         protected async Task HandleOnClickAsync()
         {
-            await Parent.ToggleItemAsync(this);
+            await AssertedParent.ToggleItemAsync(this);
         }
     }
 }
