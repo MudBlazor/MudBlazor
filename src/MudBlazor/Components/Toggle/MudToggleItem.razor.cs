@@ -38,7 +38,7 @@ namespace MudBlazor
         /// The <see cref="MudToggleGroup{T}"/> hosting this item.
         /// </summary>
         [CascadingParameter]
-        public MudToggleGroup<T>? NullableParent { get; set; }
+        private MudToggleGroup<T>? NullableParent { get; set; }
 
         /// <summary>
         /// The <see cref="MudToggleGroup{T}"/> hosting this item, but validated to be non-null.
