@@ -1,6 +1,6 @@
-# 🔧 Testing a PR Locally
+# Testing a PR Locally
 
-1. **Clone and check out the PR:**
+1. **Clone and check out the PR (replace `PR_NUMBER`):**
 
 ```bash
 git clone https://github.com/MudBlazor/MudBlazor.git
@@ -40,4 +40,19 @@ dotnet restore
 dotnet build
 ```
 
-✅ You're all set!
+## 🔄 Undo the changes after testing
+
+Once you're done testing, switch back to the official release by:
+
+- Removing the local source from your `nuget.config` (or deleting the file entirely if not otherwise needed).
+- Restoring the original version in your `.csproj`:
+
+```xml
+<PackageReference Include="MudBlazor" Version="8.x.x" />
+```
+
+Then run:
+
+```bash
+dotnet restore
+```
