@@ -110,7 +110,7 @@ namespace MudBlazor
 
         private string? GetCurrentIcon()
         {
-            if (Parent.CheckMark != true)
+            if (!Parent.CheckMark)
             {
                 return null;
             }
@@ -120,7 +120,7 @@ namespace MudBlazor
                 return SelectedIcon;
             }
 
-            if (UnselectedIcon is null && Parent.FixedContent == true)
+            if (UnselectedIcon is null && Parent.FixedContent)
             {
                 return Icons.Custom.Uncategorized.Empty;
             }
