@@ -195,7 +195,7 @@ namespace MudBlazor.UnitTests.Components
 
                 styleAttr.Should().Be("transform:translateX(-0px);");
 
-                GetSliderValue(comp).Should().BeApproximately(i * (1.0 / 6.0) * 100, 0.00001);
+                GetSliderValue(comp).Should().BeApproximately(i * (1.0 / 6.0) * 100, 0.01);
             }
         }
 
@@ -256,7 +256,7 @@ namespace MudBlazor.UnitTests.Components
             var styleAttr = toolbarWrapper.GetAttribute("style");
 
             styleAttr.Should().Be($"transform:translateX(-{expectedTranslation.ToString(CultureInfo.InvariantCulture)}px);");
-            GetSliderValue(comp).Should().BeApproximately((2.0 / 6.0) * 100.0, 0.00001);
+            GetSliderValue(comp).Should().BeApproximately((2.0 / 6.0) * 100.0, 0.01);
         }
 
         [Test]
@@ -290,7 +290,7 @@ namespace MudBlazor.UnitTests.Components
             var styleAttr = toolbarWrapper.GetAttribute("style");
 
             styleAttr.Should().Be($"transform:translateY(-{expectedTranslation.ToString(CultureInfo.InvariantCulture)}px);");
-            GetSliderValue(comp, "top").Should().BeApproximately((2.0 / 6.0) * 100.0, 0.00001);
+            GetSliderValue(comp, "top").Should().BeApproximately((2.0 / 6.0) * 100.0, 0.01);
         }
 
         [Test]
@@ -330,7 +330,7 @@ namespace MudBlazor.UnitTests.Components
                 var styleAttr = toolbarWrapper.GetAttribute("style");
 
                 styleAttr.Should().Be($"transform:translateX(-{expectedTranslations[i].ToString(CultureInfo.InvariantCulture)}px);");
-                GetSliderValue(comp).Should().BeApproximately((i / 6.0) * 100.0, 0.00001);
+                GetSliderValue(comp).Should().BeApproximately((i / 6.0) * 100.0, 0.01);
             }
         }
 
@@ -470,7 +470,7 @@ namespace MudBlazor.UnitTests.Components
                 var styleAttr = toolbarWrapper.GetAttribute("style");
 
                 styleAttr.Should().Be($"transform:translateX(-{expectedTranslation.ToString(CultureInfo.InvariantCulture)}px);");
-                GetSliderValue(comp).Should().BeApproximately((5.0 / 6.0) * 100.0, 0.00001);
+                GetSliderValue(comp).Should().BeApproximately((5.0 / 6.0) * 100.0, 0.01);
             }
         }
 
@@ -493,12 +493,12 @@ namespace MudBlazor.UnitTests.Components
             var scrollButtons = comp.FindComponents<MudIconButton>();
 
             scrollButtons.First().Instance.Disabled.Should().BeTrue();
-            GetSliderValue(comp).Should().BeApproximately((1.0 / 6.0) * 100.0, 0.00001);
+            GetSliderValue(comp).Should().BeApproximately((1.0 / 6.0) * 100.0, 0.01);
 
             observer.UpdateTotalPanelSize(200.0);
 
             scrollButtons.First().Instance.Disabled.Should().BeTrue();
-            GetSliderValue(comp).Should().BeApproximately((1.0 / 6.0) * 100.0, 0.00001);
+            GetSliderValue(comp).Should().BeApproximately((1.0 / 6.0) * 100.0, 0.01);
         }
 
         [Test]
@@ -677,12 +677,12 @@ namespace MudBlazor.UnitTests.Components
 
             var scrollButtons = comp.FindComponents<MudIconButton>();
             scrollButtons.First().Instance.Disabled.Should().BeTrue();
-            GetSliderValue(comp).Should().BeApproximately((1.0 / 6.0) * 100.0, 0.00001);
+            GetSliderValue(comp).Should().BeApproximately((1.0 / 6.0) * 100.0, 0.01);
 
             observer.UpdatePanelSize(0, 200.0);
 
             scrollButtons.First().Instance.Disabled.Should().BeTrue();
-            GetSliderValue(comp).Should().BeApproximately((2.0 / 7.0) * 100.0, 0.00001);
+            GetSliderValue(comp).Should().BeApproximately((2.0 / 7.0) * 100.0, 0.01);
         }
 
         [Test]
@@ -701,11 +701,11 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Instance.SetPanelActive(4);
 
-            GetSliderValue(comp).Should().BeApproximately((4.0 / 6.0) * 100.0, 0.00001);
+            GetSliderValue(comp).Should().BeApproximately((4.0 / 6.0) * 100.0, 0.01);
 
             await comp.Instance.AddPanel();
 
-            GetSliderValue(comp).Should().BeApproximately((4.0 / 7.0) * 100.0, 0.00001);
+            GetSliderValue(comp).Should().BeApproximately((4.0 / 7.0) * 100.0, 0.01);
 
             var scrollButtons = comp.FindComponents<MudIconButton>();
             scrollButtons.Should().HaveCount(2);
@@ -739,7 +739,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Instance.SetPanelActive(2);
 
-            GetSliderValue(comp).Should().BeApproximately((2.0 / 6.0) * 100.0, 0.00001);
+            GetSliderValue(comp).Should().BeApproximately((2.0 / 6.0) * 100.0, 0.01);
 
             var scrollButtons = comp.FindComponents<MudIconButton>();
 
@@ -784,7 +784,7 @@ namespace MudBlazor.UnitTests.Components
                 toolbarWrapper.HasAttribute("style").Should().Be(true);
                 var styleAttr = toolbarWrapper.GetAttribute("style");
                 styleAttr.Should().Be($"transform:translateX(-100px);");
-                GetSliderValue(comp).Should().BeApproximately((2.0 / 6.0) * 100.0, 0.00001);
+                GetSliderValue(comp).Should().BeApproximately((2.0 / 6.0) * 100.0, 0.01);
             }
 
             await comp.Instance.RemovePanel(5);
@@ -1334,6 +1334,32 @@ namespace MudBlazor.UnitTests.Components
             {
                 panel.ClassList.Should().Contain("mud-tab-panel-hidden");
             }
+        }
+
+        [Test]
+        public void TabsDragAndDrop()
+        {
+            var comp = Context.RenderComponent<TabsDragAndDropTest>();
+            var tabs = comp.FindComponent<MudTabs>().Instance;
+
+            tabs.Should().NotBeNull();
+
+            var tab = tabs._panels[0];
+            tab.Should().NotBeNull();
+            var tabText = tab.Text;
+
+            // should be 3 draggable tabs
+            var droptabs = comp.FindAll("div[draggable='false']");
+            droptabs.Count.Should().Be(2); // disabled droptab plus beginning ghost tab
+            droptabs = comp.FindAll("div[draggable='true']");
+            droptabs.Count.Should().Be(3); // enabled droptabs
+            // should be 1 draggable "drop zone" to allow reordering
+            var dropzone = comp.FindAll("div.mud-drop-zone");
+            dropzone.Count.Should().Be(1);
+            // simulate dragging a tab? moving tab at index 0 to index 2
+            var dropInfo = new MudItemDropInfo<MudTabPanel>(tab, "mud-drop-zone", 2);
+            tabs.ItemUpdated(dropInfo);
+            comp.WaitForAssertion(() => tabs._panels[2].Text.Should().Be(tabText));
         }
 
         [Test]

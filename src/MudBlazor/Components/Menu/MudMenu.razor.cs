@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
 using MudBlazor.State;
 using MudBlazor.Utilities;
-using MudBlazor.Utilities.Debounce;
 
 namespace MudBlazor
 {
@@ -25,14 +24,11 @@ namespace MudBlazor
         private (double Top, double Left) _openPosition;
         private bool _isPointerOver;
         private bool _isTransient;
-        internal DebounceDispatcher _showDebouncer;
-        internal DebounceDispatcher _hideDebouncer;
+        private CancellationTokenSource? _hoverCts;
+        private CancellationTokenSource? _leaveCts;
 
         public MudMenu()
         {
-            _showDebouncer = new DebounceDispatcher(MudGlobal.MenuDefaults.HoverDelay);
-            _hideDebouncer = new DebounceDispatcher(MudGlobal.MenuDefaults.HoverDelay);
-
             using var registerScope = CreateRegisterScope();
             _openState = registerScope.RegisterParameter<bool>(nameof(Open))
                 .WithParameter(() => Open)
@@ -75,9 +71,6 @@ namespace MudBlazor
                 .AddClass("mud-disabled", Disabled)
                 .Build();
 
-        /// <summary>
-        /// Inline styles for positioning the menu at the cursor's location.
-        /// </summary>
         [ExcludeFromCodeCoverage]
         [Obsolete($"Will be removed in future, replaced by {nameof(PositionAttributes)}.")]
         protected string Stylename =>
@@ -92,7 +85,7 @@ namespace MudBlazor
         private Dictionary<string, object> PositionAttributes => new()
         {
             { "data-pc-x", _openPosition.Left.ToString(CultureInfo.InvariantCulture) },
-            { "data-pc-y", _openPosition.Top.ToString(CultureInfo.InvariantCulture) }
+            { "data-pc-y", _openPosition.Top.ToString(CultureInfo.InvariantCulture) },
         };
 
         /// <summary>
@@ -350,7 +343,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Menu.PopupBehavior)]
-        public bool Modal { get; set; } = true;
+        public bool Modal { get; set; } = MudGlobal.PopoverDefaults.ModalOverlay;
 
         /// <summary>
         /// The <see cref="MudMenuItem" /> components within this menu.
@@ -385,15 +378,23 @@ namespace MudBlazor
         /// </summary>
         internal bool GetDense() => Dense || ParentMenu?.GetDense() == true;
 
+        /// <summary>
+        /// Determines the positioning origin for the menu popover.
+        /// </summary>
+        /// <remarks>
+        /// This establishes where the menu will appear relative to its activator or the cursor.
+        /// </remarks>
         protected Origin GetAnchorOrigin()
         {
             if (AnchorOrigin is not null)
             {
+                // Use the defined anchor origin if set.
                 return AnchorOrigin.Value;
             }
 
             if (ParentMenu is not null)
             {
+                // Sub-menus typically open to the right of their parent.
                 return Origin.TopRight;
             }
             else if (PositionAtCursor)
@@ -401,14 +402,25 @@ namespace MudBlazor
                 return Origin.TopLeft;
             }
 
+            // Default behavior for a top-level menu is to open below its activator.
             return Origin.BottomLeft;
         }
 
+        /// <summary>
+        /// Registers a child menu with this menu, allowing for hierarchical menu management.
+        /// This is crucial for controlling the open/close state of nested menus.
+        /// </summary>
+        /// <param name="child">The child <see cref="MudMenu"/> to register.</param>
         protected void RegisterChild(MudMenu child)
         {
             _subMenus.Add(child);
         }
 
+        /// <summary>
+        /// Unregisters a child menu from this menu.
+        /// This is called when a child menu is disposed or removed, maintaining accurate tracking of nested menus.
+        /// </summary>
+        /// <param name="child">The child <see cref="MudMenu"/> to unregister.</param>
         protected void UnregisterChild(MudMenu child)
         {
             _subMenus.Remove(child);
@@ -417,6 +429,8 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             base.OnInitialized();
+
+            // If this menu is a sub-menu, register it with its parent.
             ParentMenu?.RegisterChild(this);
         }
 
@@ -430,8 +444,12 @@ namespace MudBlazor
         /// <summary>
         /// Closes this menu and any descendants if it's a nested menu.
         /// </summary>
+        /// <remarks>
+        /// It ensures that all nested menus are also closed when a parent menu is closed.
+        /// </remarks>
         public async Task CloseMenuAsync()
         {
+            // Discard any pending pointer actions so the menu doesn't re-open or try to close twice.
             CancelPendingActions();
 
             // Recursively close all child menus.
@@ -440,6 +458,7 @@ namespace MudBlazor
                 await child.CloseMenuAsync();
             }
 
+            // Now close this menu itself.
             await _openState.SetValueAsync(false);
             await InvokeAsync(StateHasChanged);
         }
@@ -447,6 +466,9 @@ namespace MudBlazor
         /// <summary>
         /// Closes all menus in the hierarchy, starting from the top-most parent.
         /// </summary>
+        /// <remarks>
+        /// This is useful for dismissing all open menus with a single action, such as clicking outside the menu area.
+        /// </remarks>
         public async Task CloseAllMenusAsync()
         {
             // Traverse up the menu hierarchy to find the top-most parent.
@@ -485,20 +507,24 @@ namespace MudBlazor
 
             _isTransient = transient;
 
-            // Set the menu position if the event has cursor coordinates.
+            // Set the menu position to the cursor if the event has coordinates.
             if (args is MouseEventArgs mouseEventArgs)
             {
                 _openPosition = (mouseEventArgs.PageY, mouseEventArgs.PageX);
             }
 
+            // Officially open the menu.
             await _openState.SetValueAsync(true);
             await InvokeAsync(StateHasChanged);
         }
 
         /// <summary>
-        /// Closes siblings before opening as a "mouse over" menu.
-        /// This is called in place of <see cref="OpenMenuAsync"/> if the menu activator is implicitly rendered for the submenu.
+        /// Closes sibling menus before opening as a "mouse over" menu.
+        /// It prevents multiple sub-menus at the same level from being open simultaneously when hovering.
         /// </summary>
+        /// <remarks>
+        /// This is called in place of <see cref="OpenMenuAsync"/> if the menu activator is implicitly rendered for the submenu.
+        /// </remarks>
         protected async Task OpenSubMenuAsync(EventArgs args)
         {
             // Close siblings (and self) first.
@@ -547,6 +573,12 @@ namespace MudBlazor
                 : OpenMenuAsync(args);
         }
 
+        /// <summary>
+        /// Determines if the menu should respond to hover events.
+        /// </summary>
+        /// <remarks>
+        /// This prevents hover-related actions on devices that don't support traditional hovering (e.g., touchscreens).
+        /// </remarks>
         private bool IsHoverable(PointerEventArgs args)
         {
             // If hover isn't explicitly enabled (or implicitly by being a submenu) there's no work to be done.
@@ -567,58 +599,90 @@ namespace MudBlazor
         /// <summary>
         /// Handles the pointer entering either the activator or the menu list.
         /// </summary>
-        internal async Task PointerEnterAsync(PointerEventArgs args)
+        /// <remarks>
+        /// This initiates a hover delay before opening the menu to provide a more forgiving user experience.
+        /// </remarks>
+        private async Task PointerEnterAsync(PointerEventArgs args)
         {
             _isPointerOver = true;
+
+            // Prevent conflicting actions.
+            CancelPendingActions();
 
             if (!IsHoverable(args))
             {
                 return;
             }
 
-            // Cancel any pending hide operation
-            _hideDebouncer.Cancel();
-
-            // Schedule the show operation with debouncing
-            await _showDebouncer.DebounceAsync(async () =>
+            if (MudGlobal.MenuDefaults.HoverDelay > 0)
             {
-                if (!_openState.Value)
+                _hoverCts = new();
+
+                try
                 {
-                    await OpenSubMenuAsync(args);
+                    await Task.Delay(MudGlobal.MenuDefaults.HoverDelay, _hoverCts.Token);
                 }
-            });
+                catch (TaskCanceledException)
+                {
+                    // Hover action was canceled, meaning another action (like moving the pointer away) occurred.
+                    return;
+                }
+            }
+
+            if (!_openState.Value)
+            {
+                await OpenSubMenuAsync(args);
+            }
         }
 
         /// <summary>
         /// Handles the pointer leaving either the activator or the menu list.
         /// </summary>
-        internal async Task PointerLeaveAsync(PointerEventArgs args)
+        /// <remarks>
+        /// This introduces a delay before closing the menu to allow smooth transitions between nested menus.
+        /// </remarks>
+        private async Task PointerLeaveAsync(PointerEventArgs args)
         {
             _isPointerOver = false;
-            var isSubmenu = ParentMenu is not null;
-            if (!isSubmenu && ActivationEvent != MouseEvent.MouseOver)
-            {
-                return; // main menu that doesn't use mouseover
-            }
 
+            // Prevent conflicting actions.
+            CancelPendingActions();
+
+            // Only close if the menu is transient (e.g. hover-activated) and is hoverable.
             if (!_isTransient || !IsHoverable(args))
             {
                 return;
             }
 
-            // Cancel any pending show operation
-            _showDebouncer.Cancel();
-
-            // Schedule the hide operation with debouncing
-            await _hideDebouncer.DebounceAsync(async () =>
+            // Add a delay if one is configured.
+            if (MudGlobal.MenuDefaults.HoverDelay > 0)
             {
-                if (!HasPointerOver(this))
+                _leaveCts = new();
+
+                try
                 {
-                    await CloseMenuAsync();
+                    await Task.Delay(MudGlobal.MenuDefaults.HoverDelay, _leaveCts.Token);
                 }
-            });
+                catch (TaskCanceledException)
+                {
+                    // Leave action was canceled, meaning the pointer re-entered the menu area.
+                    return;
+                }
+            }
+
+            // Close the menu only if the pointer is no longer over this menu or any of its sub-menus.
+            if (!HasPointerOver(this))
+            {
+                await CloseMenuAsync();
+            }
         }
 
+        /// <summary>
+        /// Recursively checks if the pointer is currently over this menu or any of its sub-menus.
+        /// </summary>
+        /// <remarks>
+        /// This is crucial for determining when to close hover-activated menus.
+        /// </remarks>
         protected bool HasPointerOver(MudMenu menu)
         {
             if (menu._isPointerOver)
@@ -629,24 +693,35 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Use if another action is started or explicitly called.
+        /// Cancels any pending hover or leave actions.
         /// </summary>
+        /// <remarks>
+        /// This is called when a new menu action is initiated, preventing conflicting or stale operations.
+        /// </remarks>
         private void CancelPendingActions()
         {
-            _showDebouncer.Cancel();
-            _hideDebouncer.Cancel();
+            // ReSharper disable MethodHasAsyncOverload
+            // Cancels any ongoing hover-to-open or leave-to-close delays.
+            _leaveCts?.Cancel();
+            _hoverCts?.Cancel();
+            // ReSharper restore MethodHasAsyncOverload
         }
 
         /// <summary>
         /// Implementation of IActivatable.Activate, toggles the menu.
         /// </summary>
+        /// <remarks>
+        /// This method serves as the entry point for activating the menu via an external activator.
+        /// </remarks>
         void IActivatable.Activate(object activator, MouseEventArgs args)
         {
+            // Prevent activation if the activator button has a specific CSS class that marks it as non-activatable.
             if (activator is MudBaseButton activatorButton &&
                 (activatorButton.Class?.Contains("mud-no-activator") ?? false))
             {
                 return;
             }
+
             ToggleMenuAsync(args).CatchAndLog();
         }
 
@@ -659,7 +734,11 @@ namespace MudBlazor
         {
             if (disposing)
             {
-                CancelPendingActions();
+                _hoverCts?.Cancel();
+                _hoverCts?.Dispose();
+
+                _leaveCts?.Cancel();
+                _leaveCts?.Dispose();
 
                 ParentMenu?.UnregisterChild(this);
             }

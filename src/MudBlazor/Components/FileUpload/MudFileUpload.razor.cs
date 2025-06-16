@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using MudBlazor.Interfaces;
+using MudBlazor.Resources;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
@@ -26,6 +27,9 @@ namespace MudBlazor
         [Inject]
         private IJSRuntime JsRuntime { get; set; } = null!;
 
+        [Inject]
+        private InternalMudLocalizer Localizer { get; set; } = null!;
+
         /// <summary>
         /// Creates a new instance.
         /// </summary>
@@ -38,6 +42,7 @@ namespace MudBlazor
         }
 
         private readonly string _id = Identifier.Create();
+        private readonly List<string> _validationErrors = [];
 
         protected string Classname =>
             new CssBuilder("mud-file-upload")
@@ -154,6 +159,16 @@ namespace MudBlazor
         public int MaximumFileCount { get; set; } = 10;
 
         /// <summary>
+        /// The maximum file size in bytes.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c> (no limit). When a file exceeds this limit, the upload for that file will be prevented.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FileUpload.Behavior)]
+        public long? MaxFileSize { get; set; }
+
+        /// <summary>
         /// Prevents the user from uploading files.
         /// </summary>
         /// <remarks>
@@ -180,7 +195,11 @@ namespace MudBlazor
 
         public async Task ClearAsync()
         {
+            ValidationErrors.RemoveAll(_validationErrors.Contains);
+
+            _validationErrors.Clear();
             _numberOfActiveFileInputs = 1;
+
             await NotifyValueChangedAsync(default);
             await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInput.resetValue", GetActiveInputId());
         }
@@ -204,27 +223,22 @@ namespace MudBlazor
             _numberOfActiveFileInputs++;
 
             if (GetDisabledState())
-            {
                 return;
-            }
 
+            await ProcessFileChangeAsync(args);
+        }
+
+        private async Task ProcessFileChangeAsync(InputFileChangeEventArgs args)
+        {
             T? value;
+
             if (typeof(T) == typeof(IReadOnlyList<IBrowserFile>))
             {
-                var newFiles = args.GetMultipleFiles(MaximumFileCount);
-                if (AppendMultipleFiles && _filesState.Value is IReadOnlyList<IBrowserFile> oldFiles)
-                {
-                    var allFiles = oldFiles.Concat(newFiles).ToList();
-                    value = (T)(object)allFiles.AsReadOnly();
-                }
-                else
-                {
-                    value = (T)newFiles;
-                }
+                value = (T?)(object)ProcessMultipleFiles(args.GetMultipleFiles(MaximumFileCount));
             }
             else if (typeof(T) == typeof(IBrowserFile))
             {
-                value = args.FileCount == 1 ? (T)args.File : default;
+                value = (T?)ProcessSingleFile(args.FileCount == 1 ? args.File : null);
             }
             else
             {
@@ -233,10 +247,46 @@ namespace MudBlazor
 
             await NotifyValueChangedAsync(value);
 
-            if (!Error || !SuppressOnChangeWhenInvalid) // only trigger FilesChanged if validation passes or SuppressOnChangeWhenInvalid is false
-            {
+            if (!Error || !SuppressOnChangeWhenInvalid)
                 await OnFilesChanged.InvokeAsync(args);
+        }
+
+        private IReadOnlyList<IBrowserFile> ProcessMultipleFiles(IReadOnlyCollection<IBrowserFile> files)
+        {
+            var validFiles = new List<IBrowserFile>();
+
+            foreach (var file in files)
+            {
+                if (MaxFileSize.HasValue && file.Size > MaxFileSize.Value)
+                {
+                    _validationErrors.Add(Localizer[LanguageResource.MudFileUpload_FileSizeError, file.Name, MaxFileSize.Value.ToString()]);
+                }
+                else
+                {
+                    validFiles.Add(file);
+                }
             }
+
+            var newFiles = validFiles.AsReadOnly();
+
+            if (AppendMultipleFiles && _filesState.Value is IReadOnlyList<IBrowserFile> oldFiles)
+                return oldFiles.Concat(newFiles).ToList().AsReadOnly();
+
+            return newFiles;
+        }
+
+        private IBrowserFile? ProcessSingleFile(IBrowserFile? file)
+        {
+            if (file == null)
+                return null;
+
+            if (MaxFileSize.HasValue && file.Size > MaxFileSize.Value)
+            {
+                _validationErrors.Add(Localizer[LanguageResource.MudFileUpload_FileSizeError, file.Name, MaxFileSize.Value.ToString()]);
+                return null;
+            }
+
+            return file;
         }
 
         protected override void OnInitialized()
@@ -260,5 +310,21 @@ namespace MudBlazor
         protected override T? ReadValue() => _filesState.Value;
 
         protected override Task WriteValueAsync(T? value) => _filesState.SetValueAsync(value);
+
+        protected override async Task ValidateValue()
+        {
+            await base.ValidateValue();
+
+            ValidationErrors = [.. ValidationErrors, .. _validationErrors];
+            Error = ValidationErrors.Count > 0;
+            ErrorText = ValidationErrors.FirstOrDefault();
+        }
+
+        public override void ResetValidation()
+        {
+            _validationErrors.Clear();
+
+            base.ResetValidation();
+        }
     }
 }
