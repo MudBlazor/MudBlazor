@@ -1,9 +1,9 @@
 ﻿@page "/components/treeview"
 
 <DocsPage>
-    <DocsPageHeader Title="Tree View" Component="@nameof(MudTreeView<T>)">
+    <DocsPageHeader Title="Tree View" Component="@nameof(MudTreeView<T>)">
         <Description>
-            A highly‑customizable tree component that supports selection, lazy‑loading and templating.
+            A highly‑customizable component for visualising hierarchical data with rich selection, lazy‑loading, filtering, and templating features.
         </Description>
     </DocsPageHeader>
 
@@ -12,22 +12,14 @@
         <DocsPageSection>
             <SectionHeader Title="Basic">
                 <Description>
-                    <p>
-                        <strong>MudTreeView</strong> visualizes <em>hierarchical</em> data. Every item can have a
-                        <CodeInline>Text</CodeInline> label and an optional <CodeInline>Value</CodeInline> of type
-                        <CodeInline>T</CodeInline>.
-                    </p>
+                    <p><strong>MudTreeView</strong> renders items in a parent-child hierarchy. Every <CodeInline Tag>MudTreeViewItem</CodeInline> has a <CodeInline>Text</CodeInline> label and can carry a <CodeInline>Value</CodeInline> of type <CodeInline>T</CodeInline>.</p>
+                    <p>The label-value relationship works as follows:</p>
                     <ul>
-                        <li>If <CodeInline>T</CodeInline> is <CodeInline>string</CodeInline> and no
-                            <CodeInline>Value</CodeInline> is supplied, the <CodeInline>Text</CodeInline> is also used
-                            as the value.</li>
-                        <li>If only <CodeInline>Value</CodeInline> is supplied the text is generated from the value.</li>
-                        <li>You can supply both to display a label that differs from the stored value.</li>
+                        <li>If <CodeInline>T</CodeInline> is <CodeInline>string</CodeInline> and you omit <CodeInline>Value</CodeInline>, the <CodeInline>Text</CodeInline> is also stored as the value.</li>
+                        <li>If you omit <CodeInline>Text</CodeInline> but set <CodeInline>Value</CodeInline>, the component calls <CodeInline>.ToString()</CodeInline> on the value to generate a label.</li>
+                        <li>You may provide both to display a label that differs from the stored value—helpful when <CodeInline>T</CodeInline> is a complex type.</li>
                     </ul>
-                    <p>
-                        In this demo <CodeInline>ReadOnly</CodeInline> is <code>true</code>; therefore no item can be
-                        selected.
-                    </p>
+                    <p>This example sets <CodeInline>ReadOnly="true"</CodeInline>, so the user cannot select items, allowing you to focus on how data is displayed.</p>
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(TreeViewBasicExample)">
@@ -39,19 +31,13 @@
             <SectionHeader Title="Usage">
                 <Description>
                     <ul>
-                        <li><CodeInline>Hover</CodeInline> – highlights an item when the pointer is over it.</li>
-                        <li><CodeInline>Ripple</CodeInline> – shows a ripple on click (ignored when
-                            <CodeInline>ExpandOnDoubleClick</CodeInline> is <code>true</code>).</li>
-                        <li><CodeInline>Dense</CodeInline> – reduces vertical padding for a compact look.</li>
-                        <li><CodeInline>Disabled</CodeInline> – disables all user interaction.</li>
-                        <li><CodeInline>ExpandOnClick</CodeInline> – single‑click expands/collapses a subtree.</li>
-                        <li><CodeInline>ExpandOnDoubleClick</CodeInline> – double‑click expands/collapses a subtree and
-                            raises <CodeInline>OnDoubleClick</CodeInline>.</li>
+                        <li><CodeInline>Hover</CodeInline> - highlight item on pointer‑over.</li>
+                        <li><CodeInline>Ripple</CodeInline> - show click animation (<em>ignored when</em> <CodeInline>ExpandOnDoubleClick</CodeInline> is true).</li>
+                        <li><CodeInline>Dense</CodeInline> - compress vertical padding to fit more rows.</li>
+                        <li><CodeInline>Disabled</CodeInline> - suppress all user interaction.</li>
+                        <li><CodeInline>ExpandOnClick</CodeInline> - single‑click expands/collapses a branch.</li>
+                        <li><CodeInline>ExpandOnDoubleClick</CodeInline> - double‑click expands/collapses and invokes <CodeInline>OnDoubleClick</CodeInline>. This overrides <CodeInline>ExpandOnClick</CodeInline>.</li>
                     </ul>
-                    <MudAlert Severity="Severity.Info" Class="my-3">
-                        <CodeInline>ExpandOnDoubleClick</CodeInline> overrides
-                        <CodeInline>ExpandOnClick</CodeInline> when both are set.
-                    </MudAlert>
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(TreeViewUsageExample)" ShowCode="false">
@@ -62,9 +48,7 @@
         <DocsPageSection>
             <SectionHeader Title="Icons">
                 <Description>
-                    Customize each node with <CodeInline>Icon</CodeInline> and <CodeInline>IconColor</CodeInline>.
-                    The <CodeInline>ExpandButtonIcon</CodeInline> property changes the expand/collapse button, and
-                    <CodeInline>IconExpanded</CodeInline> lets you show an alternate icon when the node is open.
+                    Customise each node with <CodeInline>Icon</CodeInline> and <CodeInline>IconColor</CodeInline>. You can also change the expand/collapse button via <CodeInline>ExpandButtonIcon</CodeInline> and display an alternate icon when the node is open with <CodeInline>IconExpanded</CodeInline>.
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(TreeViewIconExample)" ShowCode="false">
@@ -73,19 +57,10 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Single Selection">
+            <SectionHeader Title="Single Selection">
                 <Description>
-                    <p>
-                        Set <CodeInline>SelectionMode</CodeInline> to <CodeInline>SelectionMode.SingleSelection</CodeInline>
-                        to allow exactly one selected value.
-                    </p>
-                    <ul>
-                        <li>Use <CodeInline>SelectionMode.ToggleSelection</CodeInline> to toggle the single selection off
-                            by clicking the selected item again.</li>
-                        <li>Bind <CodeInline>@@bind-SelectedValue</CodeInline> to read or change the selection.
-                        </li>
-                        <li>Change the highlight with the <CodeInline>Color</CodeInline> property.</li>
-                    </ul>
+                    <p>Set <CodeInline>SelectionMode="SelectionMode.SingleSelection"</CodeInline> to allow exactly one selected value in the entire tree. With <CodeInline>SelectionMode.ToggleSelection</CodeInline> the user can click the selected node again to clear the selection.</p>
+                    <p>Use <CodeInline>@@bind-SelectedValue</CodeInline> to react to or programmatically change the selection, and adjust the highlight color via <CodeInline>Color</CodeInline>.</p>
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(TreeViewSingleSelectionExample)" ShowCode="false">
@@ -94,16 +69,9 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Multi Selection">
+            <SectionHeader Title="Multi Selection">
                 <Description>
-                    <p>
-                        With <CodeInline>SelectionMode.MultiSelection</CodeInline> users can pick multiple values.
-                    </p>
-                    <ul>
-                        <li>Bind <CodeInline>@@bind-SelectedValues</CodeInline> (note the trailing <em>s</em>) to read or
-                            change the selection.</li>
-                        <li>Customize checkbox color using <CodeInline>CheckBoxColor</CodeInline>.</li>
-                    </ul>
+                    <p>With <CodeInline>SelectionMode="SelectionMode.MultiSelection"</CodeInline> users can tick multiple values. Bind <CodeInline>@@bind-SelectedValues</CodeInline> (note the trailing <em>s</em>) to read or control the selection, and change the checkbox colour using <CodeInline>CheckBoxColor</CodeInline>.</p>
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(TreeViewMultiSelectionExample)" ShowCode="false">
@@ -112,11 +80,9 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Binding Items Directly">
+            <SectionHeader Title="Binding Items Directly">
                 <Description>
-                    You may bind <CodeInline>Selected</CodeInline> and <CodeInline>Expanded</CodeInline> directly on
-                    individual <CodeInline Tag>MudTreeViewItem</CodeInline> components. This is especially handy when
-                    you build the tree via <CodeInline>ItemTemplate</CodeInline> (next example).
+                    <p>You may bind <CodeInline>Selected</CodeInline> and <CodeInline>Expanded</CodeInline> directly on individual <CodeInline Tag>MudTreeViewItem</CodeInline> components. This pattern is useful when you generate items with <CodeInline>ItemTemplate</CodeInline> and need fine‑grained control per node.</p>
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(TreeViewBindItemsExample)" ShowCode="false">
@@ -127,14 +93,8 @@
         <DocsPageSection>
             <SectionHeader Title="Auto‑Expand">
                 <Description>
-                    <p>
-                        When <CodeInline>AutoExpand</CodeInline> is <code>true</code>, a collapsed branch that becomes
-                        selected expands automatically.
-                    </p>
-                    <p>
-                        Call <CodeInline>ExpandAll()</CodeInline> or <CodeInline>CollapseAll()</CodeInline> to expand or
-                        collapse the entire tree.
-                    </p>
+                    <p>When <CodeInline>AutoExpand="true"</CodeInline> a branch that is collapsed automatically expands as soon as a descendant item becomes selected.</p>
+                    <p>Programmatically call <CodeInline>ExpandAll()</CodeInline> to open, or <CodeInline>CollapseAll()</CodeInline> to close, every level in the tree.</p>
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(TreeViewAutoExpandExample)" ShowCode="false">
@@ -143,9 +103,9 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Item Template">
+            <SectionHeader Title="Item Template">
                 <Description>
-                    Build nodes automatically from hierarchical data with <CodeInline>ItemTemplate</CodeInline>.
+                    <p>Use <CodeInline>ItemTemplate</CodeInline> to generate nodes from a hierarchical data structure without hand‑coding every item. The template receives your model and can render custom content, attach icons, and propagate the model further down the tree.</p>
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(TreeViewItemTemplateExample)" ShowCode="false">
@@ -154,16 +114,12 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Server‑Side Data & Lazy Loading">
+            <SectionHeader Title="Server‑Side Data">
                 <Description>
-                    <p>
-                        Load children on demand using the <CodeInline>ServerData</CodeInline> callback.
-                    </p>
+                    <p>Load children on demand with the asynchronous <CodeInline>ServerData</CodeInline> callback. The control will call your function the first time the user expands a node that has no children yet.</p>
                     <ul>
-                        <li>Show a custom loading icon with <CodeInline>LoadingIcon</CodeInline> and
-                            <CodeInline>LoadingIconColor</CodeInline>.</li>
-                        <li>Disable lazy‑loading for a specific node by setting <CodeInline>CanExpand</CodeInline> to
-                            <code>false</code>.</li>
+                        <li>Display a custom spinner or icon with <CodeInline>LoadingIcon</CodeInline> and optionally colour it via <CodeInline>LoadingIconColor</CodeInline>.</li>
+                        <li>If you already know that a node cannot have children, set <CodeInline>CanExpand="false"</CodeInline> to disable lazy‑loading for that node and avoid an unnecessary network request.</li>
                     </ul>
                 </Description>
             </SectionHeader>
@@ -175,9 +131,7 @@
         <DocsPageSection>
             <SectionHeader Title="Filtering">
                 <Description>
-                    Provide a <CodeInline>FilterFunc</CodeInline> to decide whether each node should be visible.
-                    Call <CodeInline>Filter()</CodeInline> to apply the filter; the method sets the
-                    <CodeInline>Visible</CodeInline> flag on every node.
+                    <p>You can hide nodes that do not match a search term or rule by providing a <CodeInline>FilterFunc</CodeInline>. Call <CodeInline>Filter()</CodeInline> on the <CodeInline>MudTreeView</CodeInline> instance to evaluate the predicate for every node; the helper then sets each node's <CodeInline>Visible</CodeInline> flag.</p>
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(TreeViewFilteringExample)" ShowCode="false">
@@ -186,19 +140,11 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Custom Look & Behavior">
+            <SectionHeader Title="Custom Look & Behaviour">
                 <Description>
-                    <p>
-                        Set the <CodeInline>Content</CodeInline> render fragment on a
-                        <CodeInline Tag>MudTreeViewItem</CodeInline> to fully replace its default layout. This allows
-                        you to build any behavior you need—for example, the demo below implements non‑standard multi‑
-                        selection where parent and child selections are independent.
-                    </p>
-                    <p>
-                        To achieve smooth scrolling like in the demo, constrain the container’s
-                        <CodeInline>height</CodeInline> or <CodeInline>max-height</CodeInline> and set
-                        <CodeInline>overflow-y</CodeInline> accordingly.
-                    </p>
+                    <p>Assign the <CodeInline>Content</CodeInline> fragment on a <CodeInline Tag>MudTreeViewItem</CodeInline> to replace the default layout entirely. This gives you full control over markup, events, and styling.</p>
+                    <p>The demo illustrates a non‑standard multi‑selection scheme where selecting a parent does <em>not</em> automatically select its children (and vice‑versa). Only items that satisfy a predicate can be selected.</p>
+                    <p>To reproduce the smooth scrolling behaviour, set a fixed <CodeInline>height</CodeInline> or <CodeInline>max‑height</CodeInline> on the surrounding container and enable <CodeInline>overflow‑y: auto</CodeInline>.</p>
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(TreeViewCustomExample)" ShowCode="false">
@@ -207,10 +153,9 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Custom Body Content">
+            <SectionHeader Title="Custom Body Content">
                 <Description>
-                    Use <CodeInline Tag>BodyContent</CodeInline> instead of <CodeInline Tag>Content</CodeInline> if you
-                    want to customize the body but keep the built‑in icons and expander buttons.
+                    <p>Use <CodeInline Tag>BodyContent</CodeInline> instead of <CodeInline Tag>Content</CodeInline> if you only need to customise the body of the item but still want the built‑in icons and expander button.</p>
                 </Description>
             </SectionHeader>
             <SectionContent Outlined="true" Code="@nameof(TreeViewBodyContentExample)" ShowCode="false">
