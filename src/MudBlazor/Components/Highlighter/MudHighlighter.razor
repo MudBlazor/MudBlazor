@@ -1,20 +1,56 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 @using System.Text.RegularExpressions
-@using static MudBlazor.Components.Highlighter.Splitter
+@using MudBlazor.Components.Highlighter
+@using System.Text
 
-@foreach (var fragment in _fragments.Span)
+@if (Markup)
 {
-    if (IsMatch(fragment))
-   {
-      <mark class="@Class" style="@Style" @attributes="@UserAttributes"> @fragment </mark>
-   }
-   else if (Markup)
-   {
-      @ToRenderFragment(fragment)
-   }
-   else
-   {
-      @fragment
-   }
+    if (_htmlAwareFragments != null) // Check if not null
+    {
+        var sb = new StringBuilder();
+        foreach (var fragmentInfo in _htmlAwareFragments)
+        {
+            switch (fragmentInfo.Type)
+            {
+                case FragmentType.HighlightedText:
+                    sb.Append($"<mark class=\"{@Class}\" style=\"{@Style}\" >{@fragmentInfo.Content}</mark>");
+                    break;
+                case FragmentType.Markup:
+                    sb.Append(fragmentInfo.Content);
+                    break;
+                case FragmentType.Text:
+                default:
+                    sb.Append(@fragmentInfo.Content);
+                    break;
+            }
+        }
+
+        @ToRenderFragment(sb.ToString());
+    }
+    else if (!string.IsNullOrEmpty(Text)) // Fallback if _htmlAwareFragments is null but Text exists
+    {
+        // This case should ideally not be hit if OnParametersSet correctly initializes _htmlAwareFragments.
+        // However, as a safeguard, render Text as MarkupString if Markup is true.
+        @((MarkupString)Text)
+    }
+}
+else if (_fragments.Length > 0)
+{
+    foreach (var fragment in _fragments.Span)
+    {
+        if (IsMatch(fragment))
+        {
+            <mark class="@Class" style="@Style" @attributes="@UserAttributes">@fragment</mark>
+        }
+        else
+        {
+            @fragment
+        }
+    }
+}
+else if (!string.IsNullOrEmpty(Text)) // Fallback for non-Markup or if _fragments is empty
+{
+    // If Markup is false and _fragments is empty, or if Text is set but highlighting results in no fragments.
+    @Text
 }

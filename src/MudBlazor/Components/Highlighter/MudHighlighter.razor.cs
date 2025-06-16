@@ -2,12 +2,11 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Components;
-using static MudBlazor.Components.Highlighter.Splitter;
+using MudBlazor.Components.Highlighter; // Added for FragmentInfo
+// Removed: using static MudBlazor.Components.Highlighter.Splitter; 
+// We will call Splitter methods statically: Splitter.GetFragments, Splitter.GetHtmlAwareFragments
 
 namespace MudBlazor;
 
@@ -20,6 +19,7 @@ public partial class MudHighlighter : MudComponentBase
 {
     private Memory<string> _fragments;
     private string? _regex;
+    private List<FragmentInfo> _htmlAwareFragments = new List<FragmentInfo>(); // Added
 
     /// <summary>
     /// The text to consider for highlighting.
@@ -40,7 +40,7 @@ public partial class MudHighlighter : MudComponentBase
     /// </summary>
     [Parameter]
     [Category(CategoryTypes.Highlighter.Behavior)]
-    public IEnumerable<string> HighlightedTexts { get; set; } = Enumerable.Empty<string>();
+    public IEnumerable<string> HighlightedTexts { get; set; } = [];
 
     /// <summary>
     /// Whether highlighted text is case sensitive.
@@ -79,12 +79,29 @@ public partial class MudHighlighter : MudComponentBase
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
-        _fragments = GetFragments(Text, HighlightedText, HighlightedTexts, out _regex, CaseSensitive, UntilNextBoundary);
+        if (Markup)
+        {
+            _htmlAwareFragments = Splitter.GetHtmlAwareFragments(Text, HighlightedText, HighlightedTexts, CaseSensitive, UntilNextBoundary);
+            _fragments = Memory<string>.Empty;
+            _regex = string.Empty;
+        }
+        else
+        {
+            _fragments = Splitter.GetFragments(Text, HighlightedText, HighlightedTexts, out _regex, CaseSensitive, UntilNextBoundary);
+            // Ensure _htmlAwareFragments is not null and is empty if not used
+            if (_htmlAwareFragments == null)
+                _htmlAwareFragments = new List<FragmentInfo>();
+            else
+                _htmlAwareFragments.Clear();
+        }
     }
 
+    // IsMatch is still needed for the Markup=false case
     bool IsMatch(string fragment) => !string.IsNullOrWhiteSpace(fragment) &&
                                      !string.IsNullOrWhiteSpace(_regex) &&
                                      Regex.IsMatch(fragment, _regex, CaseSensitive ? RegexOptions.None : RegexOptions.IgnoreCase);
 
+    // This static method seems unused by the new .razor logic, consider removing if confirmed.
+    // For now, keeping it as it's not directly part of this subtask's changes to .razor logic.
     static RenderFragment ToRenderFragment(string markupContent) => builder => { builder.AddMarkupContent(0, markupContent); };
 }
