@@ -376,7 +376,7 @@ namespace MudBlazor
         {
             if (IsJSRuntimeAvailable)
             {
-                await ElementReference.MudDetachBlurEventWithJS(_dotNetReferenceLazy.Value);
+                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudElementRef.removeOnBlurEvent", ElementReference);
                 if (AutoGrow)
                 {
                     await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputAutoGrow.destroy", ElementReference);
