@@ -1366,7 +1366,7 @@ namespace MudBlazor.UnitTests.Components
 
             dialog = comp.Find("div.mud-dialog");
             dialog.TextContent.Should().Contain("Progress"); //change from "Initial state" to "Progress"
-            
+
             var progressComponent = comp.FindComponent<MudProgressLinear>();
             var progressValue = progressComponent.Instance.Value;
             progressValue.Should().BeGreaterThan(0).And.BeLessThan(100);
