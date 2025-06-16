@@ -115,6 +115,7 @@ namespace MudBlazor
                 .AddClass("mud-dialog-width-full", GetFullWidth() && !GetFullScreen())
                 .AddClass("mud-dialog-fullscreen", GetFullScreen())
                 .AddClass("mud-dialog-rtl", RightToLeft)
+                .AddClass("outline-none")
                 .AddClass(_dialog?.Class)
                 .Build();
 
@@ -158,6 +159,12 @@ namespace MudBlazor
                 // Since the event originates from KeyInterceptor it will not cause a render automatically.
                 await InvokeAsync(StateHasChanged);
             }
+        }
+
+        public async void OnMouseUp(MouseEventArgs args)
+        {
+            if (args.Button > 0)
+                await RefocusDialogAsync();
         }
 
         internal async Task HandleKeyUpAsync(KeyboardEventArgs args)
@@ -236,7 +243,7 @@ namespace MudBlazor
 
         private async Task RefocusDialogAsync()
         {
-            if (!_disposed)
+            if (GetCloseOnEscapeKey() && !_disposed)
             {
                 await _dialogContainerReference.FocusAsync();
             }
