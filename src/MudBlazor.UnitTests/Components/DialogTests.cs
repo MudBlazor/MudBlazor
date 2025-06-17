@@ -558,11 +558,11 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => dialogReference = service.Show<DialogToggleFullscreen>());
             dialogReference.Should().NotBe(null);
 
-            comp.Find("div.mud-dialog").GetAttribute("class").Should().Be("mud-dialog mud-dialog-width-sm outline-none");
+            comp.Find("div.mud-dialog").GetAttribute("class").Should().Be("mud-dialog mud-dialog-width-sm");
             comp.Find("button").Click();
-            comp.Find("div.mud-dialog").GetAttribute("class").Should().Be("mud-dialog mud-dialog-fullscreen outline-none");
+            comp.Find("div.mud-dialog").GetAttribute("class").Should().Be("mud-dialog mud-dialog-fullscreen");
             comp.Find("button").Click();
-            comp.Find("div.mud-dialog").GetAttribute("class").Should().Be("mud-dialog mud-dialog-width-sm outline-none");
+            comp.Find("div.mud-dialog").GetAttribute("class").Should().Be("mud-dialog mud-dialog-width-sm");
         }
 
         ///-------------------------------
@@ -908,11 +908,11 @@ namespace MudBlazor.UnitTests.Components
             var dialogReference = await dialogReferenceLazy.Value;
             dialogReference.Should().NotBe(null);
 
-            comp.Find("div.mud-dialog").GetAttribute("class").Should().Be("mud-dialog mud-dialog-width-sm outline-none");
+            comp.Find("div.mud-dialog").GetAttribute("class").Should().Be("mud-dialog mud-dialog-width-sm");
             comp.Find("button").Click();
-            comp.Find("div.mud-dialog").GetAttribute("class").Should().Be("mud-dialog mud-dialog-fullscreen outline-none");
+            comp.Find("div.mud-dialog").GetAttribute("class").Should().Be("mud-dialog mud-dialog-fullscreen");
             comp.Find("button").Click();
-            comp.Find("div.mud-dialog").GetAttribute("class").Should().Be("mud-dialog mud-dialog-width-sm outline-none");
+            comp.Find("div.mud-dialog").GetAttribute("class").Should().Be("mud-dialog mud-dialog-width-sm");
         }
 
         [Test]

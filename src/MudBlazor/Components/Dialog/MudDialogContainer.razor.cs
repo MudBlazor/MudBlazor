@@ -115,7 +115,6 @@ namespace MudBlazor
                 .AddClass("mud-dialog-width-full", GetFullWidth() && !GetFullScreen())
                 .AddClass("mud-dialog-fullscreen", GetFullScreen())
                 .AddClass("mud-dialog-rtl", RightToLeft)
-                .AddClass("outline-none")
                 .AddClass(_dialog?.Class)
                 .Build();
 
