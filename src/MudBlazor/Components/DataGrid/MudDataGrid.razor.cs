@@ -2063,6 +2063,64 @@ namespace MudBlazor
             DropContainerHasChanged();
             StateHasChanged();
         }
+        
+        /// <summary>
+        /// Hides only the specified columns by title.
+        /// </summary>
+        /// <param name="columnTitles">List of column titles to be hidden</param>
+        /// <remarks>
+        /// Applies to <see cref="Columns"/> where <see cref="Column{T}.Hideable"/> is <c>true</c>.
+        /// </remarks>
+        public async Task HideColumnsAsync(List<string> columnTitles)
+        {
+            if (columnTitles.Count == 0)
+                return;
+
+            var hideableRenderedColumns = RenderedColumns
+                .Where(c => c.hideable)
+                .ToDictionary(column => column.Title);
+            
+            foreach (var columnTitle in columnTitles)
+            {
+                if (hideableRenderedColumns.TryGetValue(columnTitle, out var renderedColumn))
+                {
+                    await renderedColumn.HideAsync();
+                }
+            }
+            
+            DropContainerHasChanged();
+            StateHasChanged();
+        }
+        
+        /// <summary>
+        /// Shows only the specified columns by title.
+        /// </summary>
+        /// <param name="columnTitles">List of column titles to be shown</param>
+        /// <remarks>
+        /// Applies to <see cref="Columns"/> where <see cref="Column{T}.Hideable"/> is <c>true</c>.
+        /// </remarks>
+        public async Task ShowColumnsAsync(List<string> columnTitles)
+        {
+            if (columnTitles.Count == 0)
+                return;
+
+            await HideAllColumnsAsync();
+            
+            var hideableRenderedColumns = RenderedColumns
+                .Where(c => c.hideable)
+                .ToDictionary(column => column.Title);
+            
+            foreach (var columnTitle in columnTitles)
+            {
+                if (hideableRenderedColumns.TryGetValue(columnTitle, out var renderedColumn))
+                {
+                    await renderedColumn.ShowAsync();
+                }
+            }
+            
+            DropContainerHasChanged();
+            StateHasChanged();
+        }
 
         /// <summary>
         /// Shows a panel that lets you show, hide, filter, groupedColumns, sort and re-arrange columns.
