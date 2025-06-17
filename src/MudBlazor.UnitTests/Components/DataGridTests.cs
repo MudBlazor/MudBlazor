@@ -4863,6 +4863,40 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DataGrid_ShowColumnsAsync()
+        {
+            var comp = Context.RenderComponent<DataGridShowAndHideProgramaticallyTest>();
+            var dgComp = comp.FindComponent<MudDataGrid<DataGridShowAndHideProgramaticallyTest.Model>>();
+
+            var renderedColumnNames = dgComp.Instance.RenderedColumns.Select(c => c.Title).ToList();
+
+            renderedColumnNames.Count.Should().Be(5);
+            
+            List<string> columnsToShow = ["Column1", "Column3", "Column5"];
+            await comp.InvokeAsync(() => dgComp.Instance.ShowColumnsAsync(columnsToShow));
+            
+            renderedColumnNames.Count.Should().Be(3);
+            renderedColumnNames.Should().BeEquivalentTo(columnsToShow);
+        }
+        
+        [Test]
+        public async Task DataGrid_HideColumnsAsync()
+        {
+            var comp = Context.RenderComponent<DataGridShowAndHideProgramaticallyTest>();
+            var dgComp = comp.FindComponent<MudDataGrid<DataGridShowAndHideProgramaticallyTest.Model>>();
+
+            var renderedColumnNames = dgComp.Instance.RenderedColumns.Select(c => c.Title).ToList();
+
+            renderedColumnNames.Count.Should().Be(5);
+            
+            List<string> columnsToHide = ["Column2", "Column4"];
+            await comp.InvokeAsync(() => dgComp.Instance.HideColumnsAsync(columnsToHide));
+            
+            renderedColumnNames.Count.Should().Be(3);
+            renderedColumnNames.Should().BeEquivalentTo(renderedColumnNames.Except(columnsToHide));
+        }
+        
+        [Test]
         public void QueryFilterExtensionTest()
         {
             var comp = Context.RenderComponent<DataGridFiltersTest>();

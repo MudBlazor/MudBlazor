@@ -1,0 +1,29 @@
+﻿<MudPopoverProvider/>
+
+<MudDataGrid @ref="dataGrid" T="Model" Items="@_items" Dense ColumnResizeMode="ResizeMode.Column" Hideable>
+    <ToolBarContent>
+        <MudButton Class="mr-2" Color="Color.Primary" Variant="Variant.Outlined" OnClick="@(() => dataGrid.ShowAllColumnsAsync())">Show All Columns</MudButton>
+        <MudButton Class="mr-2" Color="Color.Primary" Variant="Variant.Outlined" OnClick="@(() => dataGrid.HideAllColumnsAsync())">Hide All Columns</MudButton>
+        <MudButton Class="mr-2" Color="Color.Primary" Variant="Variant.Outlined" OnClick="@(() => dataGrid.ShowColumnsAsync(["Column1", "Column3", "Column5"]))">Show Columns 1, 3 and 5</MudButton>
+        <MudButton Class="mr-2" Color="Color.Primary" Variant="Variant.Outlined" OnClick="@(() => dataGrid.HideColumnsAsync(["Column2", "Column4"]))">Hide Columns 2 and 4</MudButton>
+    </ToolBarContent>
+    <Columns>
+        <PropertyColumn Property="x => x.Column1"/>
+        <PropertyColumn Property="x => x.Column2"/>
+        <PropertyColumn Property="x => x.Column3"/>
+        <PropertyColumn Property="x => x.Column4"/>
+        <PropertyColumn Property="x => x.Column5"/>
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private MudDataGrid<Model> dataGrid = new();
+    private IEnumerable<Model> _items = new List<Model>();
+
+    public record Model(
+        string Column1,
+        string Column2,
+        string Column3,
+        string Column4,
+        string Column5);
+}
