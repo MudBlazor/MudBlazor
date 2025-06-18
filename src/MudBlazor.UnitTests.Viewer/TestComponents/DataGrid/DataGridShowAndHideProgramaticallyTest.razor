@@ -17,6 +17,8 @@
 </MudDataGrid>
 
 @code {
+    public static string __description__ = "Tests if it is possible to show and hide columns programmatically in the MudDataGrid component.";
+    
     private MudDataGrid<Model> dataGrid = new();
     private IEnumerable<Model> _items = new List<Model>();
 
