@@ -2154,6 +2154,34 @@ namespace MudBlazor
             return Task.CompletedTask;
         }
 
+        /// <summary>
+        /// Shows only the specified columns by title.
+        /// </summary>
+        /// <param name="columnTitles">List of column titles to be shown</param>
+        /// <remarks>
+        /// Applies to <see cref="Columns"/> where <see cref="Column{T}.Hideable"/> is <c>true</c>.
+        /// </remarks>
+        public async Task OrderColumnsAsync(List<string> columnTitles)
+        {
+            if (columnTitles.Count == 0)
+                return;
+
+            var renderedColumns = RenderedColumns
+                .ToDictionary(column => column.Title);
+            
+            foreach (var column in columnTitles.Select((title, index) => (title: title, index)))
+            {
+                if (renderedColumns.TryGetValue(column.title, out var renderedColumn))
+                {
+                    RenderedColumns.Remove(renderedColumn);
+                    RenderedColumns.Insert(column.index, renderedColumn);
+                }
+            }
+            
+            DropContainerHasChanged();
+            await InvokeAsync(StateHasChanged);
+        }
+        
         private void ColumnUp(Column<T> column)
         {
             var index = RenderedColumns.IndexOf(column);
