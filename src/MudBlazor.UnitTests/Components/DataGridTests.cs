@@ -4897,6 +4897,23 @@ namespace MudBlazor.UnitTests.Components
         }
         
         [Test]
+        public async Task DataGrid_OrderColumnsAsync()
+        {
+            var comp = Context.RenderComponent<DataGridShowAndHideProgramaticallyTest>();
+            var dgComp = comp.FindComponent<MudDataGrid<DataGridShowAndHideProgramaticallyTest.Model>>();
+
+            var renderedColumnNames = dgComp.Instance.RenderedColumns.Select(c => c.Title).ToList();
+
+            renderedColumnNames.Count.Should().Be(5);
+            
+            List<string> columnsToOrder = ["Column5", "Column4", "Column3"];
+            await comp.InvokeAsync(() => dgComp.Instance.OrderColumnsAsync(columnsToOrder));
+            
+            renderedColumnNames.Count.Should().Be(5);
+            renderedColumnNames.Should().BeEquivalentTo(["Column5", "Column4", "Column3", "Column1", "Column2"]);
+        }
+        
+        [Test]
         public void QueryFilterExtensionTest()
         {
             var comp = Context.RenderComponent<DataGridFiltersTest>();
