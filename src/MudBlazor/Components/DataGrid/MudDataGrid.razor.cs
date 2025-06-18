@@ -2089,7 +2089,7 @@ namespace MudBlazor
             }
             
             DropContainerHasChanged();
-            StateHasChanged();
+            await InvokeAsync(StateHasChanged);
         }
         
         /// <summary>
@@ -2119,7 +2119,7 @@ namespace MudBlazor
             }
             
             DropContainerHasChanged();
-            StateHasChanged();
+            await InvokeAsync(StateHasChanged);
         }
 
         /// <summary>
