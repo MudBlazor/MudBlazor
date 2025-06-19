@@ -43,7 +43,7 @@ jobs:
               console.log("Bug type: docs.");
             } 
             
-            if (body.includes("Version (working)\n\n") && body.match(/Version \(working\)\n\n.+/)) {
+            if (body.match(/Version \(working\)\n\n.+/)) {
               labels.push("regression");
               console.log("Bug is a regression.");
             }
