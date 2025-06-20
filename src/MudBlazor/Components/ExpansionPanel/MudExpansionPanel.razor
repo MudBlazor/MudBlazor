@@ -2,7 +2,7 @@
 @inherits MudComponentBase
 
 <div @attributes="UserAttributes" class="@Classname" style="@Style">
-    <div class="@HeaderClassname" @onclick="ToggleExpansionAsync">
+	<div class="@HeaderClassname" @onclick="ToggleExpansionAsync" tabindex="0" @onkeydown="HandleKeyDown">
         <div class="mud-expand-panel-text">
             @if (TitleContent is not null)
             {
@@ -19,8 +19,11 @@
         }
     </div>
     <MudCollapse Expanded="_expandedState.Value" MaxHeight="@MaxHeight">
-        <div class="@PanelContentClassname">
-            @ChildContent
-        </div>
+		@if (_expandedState.Value)
+		{
+			<div class="@PanelContentClassname">
+				@ChildContent
+			</div>
+		}
     </MudCollapse>
 </div>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
@@ -251,6 +252,14 @@ namespace MudBlazor
             if (disposing)
             {
                 Parent?.RemovePanel(this);
+            }
+        }
+
+        private async Task HandleKeyDown(KeyboardEventArgs e)
+        {
+            if (e.Key == "Enter" || e.Key == " ")
+            {
+                await ToggleExpansionAsync();
             }
         }
     }
