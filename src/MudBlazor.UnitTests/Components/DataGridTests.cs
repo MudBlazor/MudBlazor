@@ -2790,6 +2790,9 @@ namespace MudBlazor.UnitTests.Components
             // check the number of filters displayed in the filters panel is 1
             comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(1);
 
+            // Wait for the filter panel to render properly
+            comp.WaitForState(() => comp.FindAll(".filter-operator").Count > 0, timeout: TimeSpan.FromSeconds(5));
+
             await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
 
             //set operator to CONTAINS
@@ -2802,6 +2805,9 @@ namespace MudBlazor.UnitTests.Components
 
             //set operator to NOT CONTAINS
             FilterButton().Click();
+
+            // Wait for the filter panel to render properly
+            comp.WaitForState(() => comp.FindAll(".filter-operator").Count > 0, timeout: TimeSpan.FromSeconds(5));
 
             await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
 
