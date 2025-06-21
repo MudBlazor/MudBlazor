@@ -1,17 +1,18 @@
 ﻿@page "/mud/project/team"
 @inject GitHubApiClient _gitHubApiClient;
 
-<PageTitle>Meet the team - MudBlazor</PageTitle>
+<PageTitle>Meet the Team - MudBlazor</PageTitle>
 <DocsPage DisplayFooter="true">
     <MudContainer>
-        <MudText Typo="Typo.h3" GutterBottom="true">Meet the team</MudText>
+        <MudText Typo="Typo.h3" GutterBottom="true">Meet the Team</MudText>
         <MudText Typo="Typo.subtitle1">
-            MudBlazor is not a one-person show. A nice little community has emerged and a couple of highly motivated people are working on improvements and are regularly adding more components.
-            Everyone is welcome to join in and contribute to make this library even more awesome than it already is.
+            MudBlazor is driven by a dedicated and expanding team of engineers, designers, and contributors who actively shape its direction, quality, and growth.
         </MudText>
 
         <MudText Typo="Typo.h4" Class="mt-16" GutterBottom="true" Color="Color.Primary">Core Team</MudText>
-        <MudText Class="mb-8">The Core Team who guide, develop and direct the development of MudBlazor.</MudText>
+        <MudText Class="mb-8">
+            A dedicated group of maintainers and developers who guide MudBlazor's technical direction, ensure code quality, make strategic architectural decisions, and manage the ongoing growth and stability of the framework.
+        </MudText>
         <MudGrid>
             <MudItem xs="12" md="6">
                 <MudCard Elevation="4">
@@ -88,7 +89,9 @@
         </MudGrid>
 
         <MudText Typo="Typo.h4" Class="mt-16" GutterBottom="true" Color="Color.Secondary">Contribution Team</MudText>
-        <MudText Class="mb-8">Core Contributors who work closely with the Core Team and are actively working on MudBlazor.</MudText>
+        <MudText Class="mb-8">
+            Talented developers working hand-in-hand with the Core Team, regularly contributing features, fixing issues, and shaping MudBlazor's continuous improvement and functionality.
+        </MudText>
 
         <MudGrid>
             @foreach (var contributor in _contributors)
@@ -100,7 +103,9 @@
         </MudGrid>
 
         <MudText Typo="Typo.h4" Class="mt-16" GutterBottom="true" Color="Color.Tertiary">Awesome coders</MudText>
-        <MudText Class="mb-8">Who allowed us to use some of their code in MudBlazor.</MudText>
+        <MudText Class="mb-8">
+            Developers recognized for generously contributing valuable code, ideas, or solutions from other projects.
+        </MudText>
         <MudGrid>
             <MudItem xs="12" md="6">
                 <MudContributor Firstname="Alessandro" Lastname="Ghidini" AvatarLink="https://avatars1.githubusercontent.com/u/251532?s=460&v=4" GitHubLink="https://github.com/sotsera/sotsera.blazor.toaster">
@@ -112,7 +117,7 @@
                     Donated the Blazored Modal source code
                 </MudContributor>
             </MudItem>
-            <MudItem xs="12" md="12">
+            <MudItem xs="12" md="6">
                 <MudContributor Firstname="Zachary" Lastname="Patten" AvatarLink="https://avatars1.githubusercontent.com/u/3385986?s=460&u=e7884f25057513e6987883867a16bc167ce4a6a6&v=4" GitHubLink="https://github.com/ZacharyPatten/Towel">
                     Donated the XmlDoc loading code for the docs
                 </MudContributor>
