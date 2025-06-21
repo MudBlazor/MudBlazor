@@ -75,7 +75,8 @@ namespace MudBlazor
         private double? valueNumber => fieldType.IsNumber ? (double?)Column.FilterContext.FilterDefinition.Value : default;
         private bool? valueBool => fieldType.IsBoolean && Column.FilterContext.FilterDefinition.Value is not null ? (bool?)Column.FilterContext.FilterDefinition.Value : default;
         private Enum valueEnum => fieldType.IsEnum && Column.FilterContext.FilterDefinition.Value is not null ? (Enum)Column.FilterContext.FilterDefinition.Value : default;
-        private DateTime? valueDate => fieldType.IsDateTime ? (DateTime?)Column.FilterContext.FilterDefinition.Value : default;
+        private DateTime? valueDateTimeForPicker => fieldType.IsDateTime ? (DateTime?)Column.FilterContext.FilterDefinition.Value : default;
+        private DateTime? valueDateOnlyForPicker => fieldType.IsDateOnly && Column.FilterContext.FilterDefinition.Value != null ? ((DateOnly)Column.FilterContext.FilterDefinition.Value).ToDateTime(TimeOnly.MinValue) : null;
         private TimeSpan? valueTime => fieldType.IsDateTime && Column.FilterContext.FilterDefinition.Value is not null ? ((DateTime?)Column.FilterContext.FilterDefinition.Value).Value.TimeOfDay : null;
         private string @operator => Column.FilterContext.FilterDefinition.Operator ?? operators.FirstOrDefault();
 
@@ -118,8 +119,9 @@ namespace MudBlazor
             await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
         }
 
-        internal async Task DateValueChangedAsync(DateTime? value)
+        internal async Task DateTimeValueChangedAsync(DateTime? value)
         {
+            // For DateTime fields, handle both date and time components
             if (value != null)
             {
                 var date = value.Value.Date;
@@ -127,29 +129,44 @@ namespace MudBlazor
                 // get the time component and add it to the date.
                 if (valueTime != null)
                 {
-                    date.Add(valueTime.Value);
+                    date = date.Add(valueTime.Value);
                 }
 
                 Column.FilterContext.FilterDefinition.Value = date;
-                await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
             }
             else
             {
                 Column.FilterContext.FilterDefinition.Value = value;
-                await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
             }
+
+            await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
+        }
+
+        internal async Task DateOnlyValueChangedAsync(DateTime? value)
+        {
+            // For DateOnly fields, convert DateTime to DateOnly
+            if (value != null)
+            {
+                var dateOnly = DateOnly.FromDateTime(value.Value);
+                Column.FilterContext.FilterDefinition.Value = dateOnly;
+            }
+            else
+            {
+                Column.FilterContext.FilterDefinition.Value = null;
+            }
+            await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
         }
 
         internal async Task TimeValueChangedAsync(TimeSpan? value)
         {
-            if (valueDate != null)
+            if (valueDateTimeForPicker != null)
             {
-                var date = valueDate.Value.Date;
+                var date = valueDateTimeForPicker.Value.Date;
 
                 // get the time component and add it to the date.
-                if (valueTime != null)
+                if (value != null)
                 {
-                    date = date.Add(valueTime.Value);
+                    date = date.Add(value.Value);
                 }
 
                 Column.FilterContext.FilterDefinition.Value = date;
