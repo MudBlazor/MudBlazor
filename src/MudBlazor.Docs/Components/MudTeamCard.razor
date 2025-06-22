@@ -7,23 +7,6 @@
             <MudText Typo="Typo.body1" Style="font-weight:500;">@Member.Name</MudText>
             <MudText Typo="Typo.body2">@Member.GitHub</MudText>
         </div>
-        <div class="d-flex flex-sm-column-reverse flex-md-row align-baseline justify-end me-n2 mt-n2">
-            @if(Member.LinkedIn != null)
-            {
-                <MudTooltip Text="LinkedIn" Placement="Placement.Top" Class="d-flex">
-                    <MudIconButton Icon="@Icons.Custom.Brands.LinkedIn" Href="@Member.LinkedIn" Color="Color.Primary" Target="_blank" Edge="Edge.End" />
-                </MudTooltip>
-            }
-            @if(Member.GitHubSponsor)
-            {
-                <MudTooltip Text="Sponsor" Placement="Placement.Top" Class="d-flex">
-                    <MudIconButton Icon="@Icons.Material.Filled.FavoriteBorder" Href="@($"https://github.com/sponsors/{Member.GitHub}")" Color="Color.Secondary" Edge="Edge.End" Target="_blank" />
-                </MudTooltip>
-            }
-            <MudTooltip Text="GitHub" Placement="Placement.Top" Class="d-flex">
-                <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Href="@($"https://github.com/{Member.GitHub}")" Color="Color.Inherit" Target="_blank" />
-            </MudTooltip>
-        </div>
     </div>
     <div class="d-flex flex-column mt-5">
         <div class="d-flex flex-row align-center">
@@ -34,6 +17,25 @@
         {
             <MudText Typo="Typo.body2" Class="mt-4">@Member.Bio</MudText>
         }
+        <div class="d-flex flex-row flex-wrap mt-4 gap-2">
+            <MudChip T="string" Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Target="_blank" Href="@($"https://github.com/{Member.GitHub}")">
+                GitHub
+            </MudChip>
+
+            @if (Member.GitHubSponsor)
+            {
+                <MudChip T="string" Icon="@Icons.Material.Filled.FavoriteBorder" Color="Color.Secondary" Target="_blank" Href="@($"https://github.com/sponsors/{Member.GitHub}")">
+                    Sponsor
+                </MudChip>
+            }
+
+            @if (Member.LinkedIn != null)
+            {
+                <MudChip T="string" Icon="@Icons.Custom.Brands.LinkedIn" Color="Color.Primary" Target="_blank" Href="@Member.LinkedIn">
+                    LinkedIn
+                </MudChip>
+            }
+        </div>
     </div>
 </MudPaper>
 
