@@ -9,14 +9,14 @@
         <MudText Typo="Typo.h3" GutterBottom="true">Meet the Team</MudText>
         <MudText Typo="Typo.subtitle1">
             MudBlazor is an open-source project built by a growing community of contributors from around the world.
-            What started as a small initiative has evolved into a mature UI framework, maintained by a group of volunteers who review code, guide development, and keep the project moving forward.
+            What started as a small initiative has evolved into a mature UI framework, maintained by volunteers who review code, guide development, and keep the project moving forward.
             Contributions are always welcome, from a single PR to ongoing involvement, and the community continues to grow with each release.
         </MudText>
 
         @* Core Team *@
         <MudText Typo="Typo.h4" Class="mt-16" GutterBottom="true" Color="Color.Primary">Core Team</MudText>
         <MudText Class="mb-8">
-            The volunteers who steer the project, review contributions, and ensure MudBlazor remains aligned with its long-term goals.
+            Project leads who oversee development and review contributions in their free time.
         </MudText>
         <MudGrid>
             @foreach (var member in TeamMemberData.GetCoreTeam())
@@ -30,7 +30,7 @@
         @* Contribution Team *@
         <MudText Typo="Typo.h4" Class="mt-16" GutterBottom="true" Color="Color.Secondary">Contribution Team</MudText>
         <MudText Class="mb-8">
-            Community members that work with the Core Team and are recognized for their high-quality contributions.
+            Community members in close collaboration, recognized for their high-quality contributions.
         </MudText>
         <MudGrid>
             @foreach (var contributor in TeamMemberData.GetContributionTeam())

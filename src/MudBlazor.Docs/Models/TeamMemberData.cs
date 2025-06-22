@@ -10,7 +10,7 @@ namespace MudBlazor.Docs.Models
         [
             new TeamMember
             {
-                Name = "Jonny Larsson",
+                Name = "Jonny Larsson (Creator)",
                 From = "Örebro, Sweden",
                 GitHub = "Garderoben",
                 Avatar = "https://avatars.githubusercontent.com/u/10367109?v=4",
@@ -19,7 +19,7 @@ namespace MudBlazor.Docs.Models
             },
             new TeamMember
             {
-                Name = "Meinrad Recheis",
+                Name = "Meinrad Recheis (Co-Creator)",
                 From = "Vienna, Austria",
                 GitHub = "henon",
                 Avatar = "https://avatars.githubusercontent.com/u/44090?v=4",
