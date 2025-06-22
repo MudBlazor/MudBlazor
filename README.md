@@ -67,6 +67,10 @@ For larger features or changes, feel free to chat with us [on Discord](https://d
 
 📚 Check out our [contribution guidelines](/CONTRIBUTING.md) to get started and learn more about how the project works.
 
+### Testing a PR Locally
+
+✅ If a PR fixes something you reported, [locally test a preview version](/TESTING.md) to ensure your app works as expected before the update is released.
+
 ## 🚀 Getting Started
 We have ready-to-go templates at the [MudBlazor.Templates](https://github.com/mudblazor/Templates) repository, or follow the quick install guide to set things up manually:
 
