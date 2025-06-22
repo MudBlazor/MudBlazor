@@ -10,6 +10,24 @@ namespace MudBlazor.Docs.Models
         [
             new TeamMember
             {
+                Name = "Jonny Larsson",
+                From = "Örebro, Sweden",
+                GitHub = "Garderoben",
+                Avatar = "https://avatars.githubusercontent.com/u/10367109?v=4",
+                LinkedIn = "https://www.linkedin.com/in/jonny-larsson-b72480161/",
+                Bio = "DevOps Engineer.\r\nRecently been doing more developing in free time and for in house applications for my company to automate processes.",
+            },
+            new TeamMember
+            {
+                Name = "Meinrad Recheis",
+                From = "Vienna, Austria",
+                GitHub = "henon",
+                Avatar = "https://avatars.githubusercontent.com/u/44090?v=4",
+                LinkedIn = "https://www.linkedin.com/in/meinrad-recheis-6a9885171/",
+                Bio = "Entrepreneur and Open Source contributor. Co-founder of MudBlazor. Creator of Numpy.NET and Python.Included. ",
+            },
+            new TeamMember
+            {
                 Name = "András Tangl",
                 From = "Szombathely, Hungary",
                 GitHub = "tungi52",
