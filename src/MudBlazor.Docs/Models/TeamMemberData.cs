@@ -15,6 +15,7 @@ namespace MudBlazor.Docs.Models
                 GitHub = "tungi52",
                 Avatar = "https://avatars.githubusercontent.com/u/22996720?v=4",
                 LinkedIn = "https://www.linkedin.com/in/andr%C3%A1s-tangl-683a20215/",
+                Bio = null,
             },
             new TeamMember
             {
@@ -23,6 +24,7 @@ namespace MudBlazor.Docs.Models
                 GitHub = "mikes-gh",
                 Avatar = "https://avatars.githubusercontent.com/u/16208742?v=4",
                 LinkedIn = null,
+                Bio = null,
             },
             new TeamMember
             {
@@ -31,6 +33,7 @@ namespace MudBlazor.Docs.Models
                 GitHub = "just-the-benno",
                 Avatar = "https://avatars.githubusercontent.com/u/51370361?v=4",
                 LinkedIn = "https://www.linkedin.com/in/benjamin-kappel-558428168/",
+                Bio = "A long time ago, there was an enormous book with an even more significant discount on it, titled C#. That is the starting point of still ongoing love.",
             },
             new TeamMember
             {
@@ -39,6 +42,7 @@ namespace MudBlazor.Docs.Models
                 GitHub = "JonBunator",
                 Avatar = "https://avatars.githubusercontent.com/u/62108893?v=4",
                 LinkedIn = null,
+                Bio = null,
             },
             new TeamMember
             {
@@ -47,6 +51,7 @@ namespace MudBlazor.Docs.Models
                 GitHub = "Mr-Technician",
                 Avatar = "https://avatars.githubusercontent.com/u/26885142?v=4",
                 LinkedIn = "https://www.linkedin.com/in/riley-nielsen-a57399223/",
+                Bio = null,
             },
             new TeamMember
             {
@@ -56,6 +61,7 @@ namespace MudBlazor.Docs.Models
                 GitHubSponsor = true,
                 Avatar = "https://avatars.githubusercontent.com/u/19953225?v=4",
                 LinkedIn = "https://www.linkedin.com/in/artyommelnikov/",
+                Bio = ".NET/Java developer",
             },
             new TeamMember
             {
@@ -64,6 +70,7 @@ namespace MudBlazor.Docs.Models
                 GitHub = "danielchalmers",
                 Avatar = "https://avatars.githubusercontent.com/u/7112040?v=4",
                 LinkedIn = "https://www.linkedin.com/in/daniel-c-5799252b1",
+                Bio = "Full stack engineer specializing in .NET, Blazor, CSS, WPF. Building accessible apps with a focus on modern UI/UX",
             },
         ];
 
@@ -76,6 +83,7 @@ namespace MudBlazor.Docs.Models
                 GitHub = "HClausing",
                 Avatar = "https://avatars.githubusercontent.com/u/15158923?v=4",
                 LinkedIn = "https://www.linkedin.com/in/henrique-clausing-cunha-45085944/",
+                Bio = "Contador e Desenvolvedor .NET. Fundador da Eficaz Sistemas.",
             },
             new TeamMember
             {
@@ -84,6 +92,7 @@ namespace MudBlazor.Docs.Models
                 GitHub = "porkopek",
                 Avatar = "https://avatars.githubusercontent.com/u/13745954?v=4",
                 LinkedIn = null,
+                Bio = null,
             },
             new TeamMember
             {
@@ -92,6 +101,7 @@ namespace MudBlazor.Docs.Models
                 GitHub = "mckaragoz",
                 Avatar = "https://avatars.githubusercontent.com/u/78308169?v=4",
                 LinkedIn = null,
+                Bio = null,
             },
             new TeamMember
             {
@@ -100,6 +110,7 @@ namespace MudBlazor.Docs.Models
                 GitHub = "jperson2000",
                 Avatar = "https://avatars.githubusercontent.com/u/18043079?v=4",
                 LinkedIn = null,
+                Bio = "I'm a full-stack C# developer for the U.S. Department of Defense who specializes in Blazor, durable back-end systems, and reusable frameworks.",
             },
             new TeamMember
             {
@@ -108,6 +119,7 @@ namespace MudBlazor.Docs.Models
                 GitHub = "Flaflo",
                 Avatar = "https://avatars.githubusercontent.com/u/12973684?v=4",
                 LinkedIn = null,
+                Bio = ".NET & Java Full-Stack Developer",
             },
             new TeamMember
             {
@@ -117,6 +129,7 @@ namespace MudBlazor.Docs.Models
                 GitHubSponsor = true,
                 Avatar = "https://avatars.githubusercontent.com/u/15004223?v=4",
                 LinkedIn = null,
+                Bio = "Web & Mobile Analyst Developer with a faible for Open Source and Cybersecurity.",
             },
             new TeamMember
             {
@@ -125,6 +138,7 @@ namespace MudBlazor.Docs.Models
                 GitHub = "meenzen",
                 Avatar = "https://avatars.githubusercontent.com/u/22305878?v=4",
                 LinkedIn = null,
+                Bio = null,
             },
             new TeamMember
             {
@@ -133,6 +147,7 @@ namespace MudBlazor.Docs.Models
                 GitHub = "xC0dex",
                 Avatar = "https://avatars.githubusercontent.com/u/22918366?v=4",
                 LinkedIn = null,
+                Bio = null,
             },
             new TeamMember
             {
@@ -141,6 +156,7 @@ namespace MudBlazor.Docs.Models
                 GitHub = "ralvarezing",
                 Avatar = "https://avatars.githubusercontent.com/u/40799354?v=4",
                 LinkedIn = null,
+                Bio = "DevOps at SONDA & Computing Engineering student.",
             },
             new TeamMember
             {
@@ -150,6 +166,7 @@ namespace MudBlazor.Docs.Models
                 GitHubSponsor = true,
                 Avatar = "https://avatars.githubusercontent.com/u/148913404?v=4",
                 LinkedIn = null,
+                Bio = null,
             },
             new TeamMember
             {
@@ -158,6 +175,7 @@ namespace MudBlazor.Docs.Models
                 GitHub = "anu6is",
                 Avatar = "https://avatars.githubusercontent.com/u/4596077?v=4",
                 LinkedIn = null,
+                Bio = null,
             },
         ];
     }

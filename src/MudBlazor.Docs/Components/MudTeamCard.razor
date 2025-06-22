@@ -30,6 +30,10 @@
             <MudIcon Icon="@Icons.Material.Filled.Place" Color="Color.Inherit" Class="ms-4" />
             <MudText Typo="Typo.body2" Class="ps-9">@Member.From</MudText>
         </div>
+        @if (!string.IsNullOrWhiteSpace(Member.Bio))
+        {
+            <MudText Typo="Typo.body2" Class="mt-4">@Member.Bio</MudText>
+        }
     </div>
 </MudPaper>
 
