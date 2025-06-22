@@ -10,7 +10,9 @@ public class Program
         var success =
             new CodeSnippets().Execute()
             && new ApiDocumentationBuilder().Execute()
-            && new ExamplesMarkup().Execute();
+            && new ExamplesMarkup().Execute()
+            && new GitHubInfoFetcher().Execute()
+            && new GitHubProfileAssetGenerator().Execute();
 
         Console.WriteLine(@$"Docs.Compiler completed in {stopWatch.ElapsedMilliseconds} milliseconds.");
         return success ? 0 : 1;
