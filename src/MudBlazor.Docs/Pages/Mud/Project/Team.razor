@@ -1,8 +1,5 @@
 ﻿@page "/mud/project/team"
-@inject HttpClient Http
-@inject NavigationManager Nav
-
-@using MudBlazor.Docs.Pages.Mud.Project
+@inject GitHubApiClient _gitHubApiClient;
 
 <PageTitle>Meet the Team - MudBlazor</PageTitle>
 <DocsPage DisplayFooter="true">
@@ -85,34 +82,10 @@
                     </MudCardContent>
                 </MudCard>
             </MudItem>
-            @foreach (var member in _coreTeamProfiles)
+            @foreach (var member in _coreTeam)
             {
                 <MudItem xs="12" md="6">
-                    <MudCard Elevation="4">
-                        <MudCardHeader>
-                            <CardHeaderAvatar>
-                                <MudAvatar Size="Size.Large" Class="mud-elevation-4">
-                                    <MudImage Src="@member.avatar_url" />
-                                </MudAvatar>
-                            </CardHeaderAvatar>
-                            <CardHeaderContent>
-                                <MudText Typo="Typo.h6">@member.name (@member.login)</MudText>
-                                <MudText Typo="Typo.body1" Color="Color.Primary" Style="font-weight:500;">Core Team</MudText>
-                            </CardHeaderContent>
-                            <CardHeaderActions>
-                                <MudTooltip Text="GitHub" Placement="Placement.Top">
-                                    <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Href="https://github.com/@member.login" Color="Color.Inherit" Target="_blank" />
-                                </MudTooltip>
-                            </CardHeaderActions>
-                        </MudCardHeader>
-                        <MudCardContent Class="pt-0 pb-1">
-                            <MudList T="string" Dense="true">
-                                <MudListItem Icon="@Icons.Custom.Brands.GitHub" Text="@member.login" IconColor="Color.Default" />
-                                <MudListItem Icon="@Icons.Material.Filled.Place" Text="@member.location" IconColor="Color.Default" />
-                                <MudListItem Icon="@Icons.Material.Filled.Info" Text="@member.bio" IconColor="Color.Default" />
-                            </MudList>
-                        </MudCardContent>
-                    </MudCard>
+                    <MudTeamCard Member="member" />
                 </MudItem>
             }
         </MudGrid>
@@ -123,38 +96,35 @@
         </MudText>
 
         <MudGrid>
-            @foreach (var contributor in _contributorProfiles)
+            @foreach (var contributor in _contributors)
             {
                 <MudItem xs="12" md="6">
-                    <MudCard Elevation="4">
-                        <MudCardHeader>
-                            <CardHeaderAvatar>
-                                <MudAvatar Size="Size.Large" Class="mud-elevation-4">
-                                    <MudImage Src="@contributor.avatar_url" />
-                                </MudAvatar>
-                            </CardHeaderAvatar>
-                            <CardHeaderContent>
-                                <MudText Typo="Typo.h6">@contributor.name (@contributor.login)</MudText>
-                                <MudText Typo="Typo.body1" Color="Color.Secondary" Style="font-weight:500;">Contributor</MudText>
-                            </CardHeaderContent>
-                            <CardHeaderActions>
-                                <MudTooltip Text="GitHub" Placement="Placement.Top">
-                                    <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Href="https://github.com/@contributor.login" Color="Color.Inherit" Target="_blank" />
-                                </MudTooltip>
-                            </CardHeaderActions>
-                        </MudCardHeader>
-                        <MudCardContent Class="pt-0 pb-1">
-                            <MudList T="string" Dense="true">
-                                <MudListItem Icon="@Icons.Custom.Brands.GitHub" Text="@contributor.login" IconColor="Color.Default" />
-                                <MudListItem Icon="@Icons.Material.Filled.Place" Text="@contributor.location" IconColor="Color.Default" />
-                                <MudListItem Icon="@Icons.Material.Filled.Info" Text="@contributor.bio" IconColor="Color.Default" />
-                            </MudList>
-                        </MudCardContent>
-                    </MudCard>
+                    <MudTeamCard Member="contributor" />
                 </MudItem>
             }
         </MudGrid>
 
+        <MudText Typo="Typo.h4" Class="mt-16" GutterBottom="true" Color="Color.Tertiary">Awesome coders</MudText>
+        <MudText Class="mb-8">
+            Developers who generously allowed us to reuse parts of their code.
+        </MudText>
+        <MudGrid>
+            <MudItem xs="12" md="6">
+                <MudContributor Firstname="Alessandro" Lastname="Ghidini" AvatarLink="https://avatars1.githubusercontent.com/u/251532?s=460&v=4" GitHubLink="https://github.com/sotsera/sotsera.blazor.toaster">
+                    Donated the Sotsera Blazor Toaster code
+                </MudContributor>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudContributor Firstname="Chris" Lastname="Sainty" AvatarLink="https://avatars2.githubusercontent.com/u/6171719?s=460&u=02c821ee398d3601618b845f28514b9ad33d4306&v=4" GitHubLink="https://github.com/Blazored/Modal">
+                    Donated the Blazored Modal source code
+                </MudContributor>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudContributor Firstname="Zachary" Lastname="Patten" AvatarLink="https://avatars1.githubusercontent.com/u/3385986?s=460&u=e7884f25057513e6987883867a16bc167ce4a6a6&v=4" GitHubLink="https://github.com/ZacharyPatten/Towel">
+                    Donated the XmlDoc loading code for the docs
+                </MudContributor>
+            </MudItem>
+        </MudGrid>
         <MudText Typo="Typo.h4" Class="mt-16 mb-8">All contributors</MudText>
         <MudText Class="mb-8">
             A growing list of developers who’ve helped shape the project.
@@ -182,36 +152,36 @@
 
 @code
 {
-    private List<GitHubProfile> _coreTeamProfiles = new();
-    private List<GitHubProfile> _contributorProfiles = new();
-    private readonly string[] _coreTeamUsernames = new[]
-    {
-        "tungi52",
-        "mikes-gh",
-        "just-the-benno",
-        "JonBunator",
-        "Mr-Technician",
-        "ScarletKuro",
-        "danielchalmers"
-    };
-    private readonly string[] _contributorUsernames = new[]
-    {
-        "HClausing",
-        "porkopek",
-        "mckaragoz",
-        "jperson2000",
-        "Flaflo",
-        "igotinfected",
-        "meenzen",
-        "xC0dex",
-        "ralvarezing",
-        "versile2",
-        "anu6is"
-    };
+    private GithubContributors[] _githubContributors;
     protected override async Task OnInitializedAsync()
     {
-        var service = new GitHubProfileService(Http, Nav);
-        _coreTeamProfiles = await service.LoadProfilesAsync(_coreTeamUsernames);
-        _contributorProfiles = await service.LoadProfilesAsync(_contributorUsernames);
+        _githubContributors = await _gitHubApiClient.GetContributorsAsync();
+        StateHasChanged();
     }
+
+    private readonly TeamMember[] _coreTeam = new TeamMember[]
+    {
+        new TeamMember { Name = "András Tangl", From = "Szombathely, Hungary", GitHub = "tungi52", Avatar = "https://avatars.githubusercontent.com/u/22996720?v=4", LinkedIn = "https://www.linkedin.com/in/andr%C3%A1s-tangl-683a20215/"},
+        new TeamMember { Name = "Mike Surcouf", From = "Jersey, Channel Islands", GitHub = "mikes-gh", Avatar = "https://avatars.githubusercontent.com/u/16208742?v=4", LinkedIn = null},
+        new TeamMember { Name = "Benjamin Kappel", From = "Mexico", GitHub = "just-the-benno", Avatar = "https://avatars.githubusercontent.com/u/51370361?v=4", LinkedIn = "https://www.linkedin.com/in/benjamin-kappel-558428168/"},
+        new TeamMember { Name = "Jonas B", From = "Germany", GitHub = "JonBunator", Avatar = "https://avatars.githubusercontent.com/u/62108893?v=4", LinkedIn = null},
+        new TeamMember { Name = "Riley Nielsen", From = "Minnesota, United States", GitHub = "Mr-Technician", Avatar = "https://avatars.githubusercontent.com/u/26885142?v=4", LinkedIn = "https://www.linkedin.com/in/riley-nielsen-a57399223/"},
+        new TeamMember { Name = "Artyom Melnikov", From = "Tallinn, Harjumaa, Estonia", GitHub = "ScarletKuro", GitHubSponsor = true, Avatar = "https://avatars.githubusercontent.com/u/19953225?v=4", LinkedIn = "https://www.linkedin.com/in/artyommelnikov/"},
+        new TeamMember { Name = "Daniel Chalmers", From = "United States", GitHub = "danielchalmers", Avatar = "https://avatars.githubusercontent.com/u/7112040?v=4", LinkedIn = "https://www.linkedin.com/in/daniel-c-5799252b1"},
+    };
+
+    private readonly TeamMember[] _contributors = new TeamMember[]
+    {
+        new TeamMember { Name = "Henrique Clausing", From = "Minas Gerais, Brazil", GitHub = "HClausing", Avatar = "https://avatars.githubusercontent.com/u/15158923?v=4", LinkedIn = "https://www.linkedin.com/in/henrique-clausing-cunha-45085944/"},
+        new TeamMember { Name = "Porkopek", From = "Fundão, Portugal", GitHub = "porkopek", Avatar = "https://avatars.githubusercontent.com/u/13745954?v=4", LinkedIn = null},
+        new TeamMember { Name = "Mehmet Can Karagöz", From = "Alanya, Turkey", GitHub = "mckaragoz", Avatar = "https://avatars.githubusercontent.com/u/78308169?v=4", LinkedIn = null},
+        new TeamMember { Name = "Jon Person", From = "Colorado, United States", GitHub = "jperson2000", Avatar = "https://avatars.githubusercontent.com/u/18043079?v=4", LinkedIn = null},
+        new TeamMember { Name = "Lukas Klinger", From = "Germany", GitHub = "Flaflo", Avatar = "https://avatars.githubusercontent.com/u/12973684?v=4", LinkedIn = null},
+        new TeamMember { Name = "Jason Rebelo", From = "Luxembourg", GitHub = "igotinfected", GitHubSponsor = true, Avatar = "https://avatars.githubusercontent.com/u/15004223?v=4", LinkedIn = null},
+        new TeamMember { Name = "Samuel Meenzen", From = "Germany", GitHub = "meenzen", Avatar = "https://avatars.githubusercontent.com/u/22305878?v=4", LinkedIn = null},
+        new TeamMember { Name = "Justin Lampe", From = "Germany", GitHub = "xC0dex", Avatar = "https://avatars.githubusercontent.com/u/22918366?v=4", LinkedIn = null},
+        new TeamMember { Name = "Roman Alvarez", From = "Uruguay", GitHub = "ralvarezing", Avatar = "https://avatars.githubusercontent.com/u/40799354?v=4", LinkedIn = null},
+        new TeamMember { Name = "Versile Johnson", From = "Texas, United States", GitHub = "versile2", GitHubSponsor = true, Avatar = "https://avatars.githubusercontent.com/u/148913404?v=4", LinkedIn = null},
+        new TeamMember { Name = "Curtis Mayers", From = "Trinidad & Tobago", GitHub = "anu6is", Avatar = "https://avatars.githubusercontent.com/u/4596077?v=4", LinkedIn = null},
+    };
 }
