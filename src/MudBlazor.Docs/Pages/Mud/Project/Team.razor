@@ -156,26 +156,7 @@
     protected override async Task OnInitializedAsync()
     {
         _githubContributors = await _gitHubApiClient.GetContributorsAsync();
-        await FetchGitHubUserDetails(_coreTeam);
-        await FetchGitHubUserDetails(_contributors);
         StateHasChanged();
-    }
-
-    private async Task FetchGitHubUserDetails(TeamMember[] members)
-    {
-        foreach (var member in members)
-        {
-            if (!string.IsNullOrWhiteSpace(member.GitHub))
-            {
-                var user = await _gitHubApiClient.GetUserAsync(member.GitHub);
-                if (user != null)
-                {
-                    member.DynamicAvatar = user.AvatarUrl;
-                    member.DynamicLocation = user.Location;
-                    member.Bio = user.Bio;
-                }
-            }
-        }
     }
 
     private readonly TeamMember[] _coreTeam = new TeamMember[]

@@ -1,7 +1,7 @@
 ﻿<MudPaper Elevation="4" Class="pa-4">
     <div class="d-flex flex-row">
         <MudAvatar Size="Size.Large" Class="mud-elevation-4">
-            <MudImage Src="@(Member.DynamicAvatar ?? Member.Avatar)" />
+            <MudImage Src="@Member.Avatar" />
         </MudAvatar>
         <div class="d-flex flex-column flex-grow-1 px-5 my-2">
             <MudText Typo="Typo.body1" Style="font-weight:500;">@Member.Name</MudText>
@@ -26,13 +26,9 @@
         </div>
     </div>
     <div class="d-flex flex-column mt-5">
-        @if (!string.IsNullOrWhiteSpace(Member.Bio))
-        {
-            <MudText Typo="Typo.body2" Class="ps-4 pb-2">@Member.Bio</MudText>
-        }
         <div class="d-flex flex-row align-center">
             <MudIcon Icon="@Icons.Material.Filled.Place" Color="Color.Inherit" Class="ms-4" />
-            <MudText Typo="Typo.body2" Class="ps-9">@(Member.DynamicLocation ?? Member.From)</MudText>
+            <MudText Typo="Typo.body2" Class="ps-9">@Member.From</MudText>
         </div>
     </div>
 </MudPaper>

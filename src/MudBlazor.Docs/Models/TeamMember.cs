@@ -12,8 +12,5 @@ namespace MudBlazor.Docs.Models
         public bool GitHubSponsor { get; set; }
         public string Avatar { get; set; }
         public string LinkedIn { get; set; }
-        public string Bio { get; set; } // GitHub bio
-        public string DynamicLocation { get; set; } // GitHub location
-        public string DynamicAvatar { get; set; } // GitHub avatar
     }
 }
