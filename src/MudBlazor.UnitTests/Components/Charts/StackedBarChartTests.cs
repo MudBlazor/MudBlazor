@@ -1,13 +1,13 @@
 ﻿// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
-using System.Reflection.Emit;
 using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Charts;
 using MudBlazor.Extensions;
-using MudBlazor.UnitTests.Components;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Charts
@@ -40,11 +40,804 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
+        public void StackedBarChart_DefaultRender_ShouldNotThrow()
+        {
+            // Test basic rendering with default parameters to ensure no exceptions.
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar));
+            comp.Should().NotBeNull();
+            comp.Markup.Should().Contain("mud-chart");
+        }
+
+        [Test]
+        public void StackedBarChart_EmptyData_ShouldRenderAxesAndLegend()
+        {
+            // Test rendering with empty ChartSeries and ChartLabels.
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.ChartSeries, new List<ChartSeries<double>>())
+                .Add(p => p.ChartLabels, System.Array.Empty<string>()));
+
+            comp.Markup.Should().Contain("mud-chart");
+            comp.Markup.Should().Contain("class=\"mud-charts-xaxis\""); // X-axis should still render
+            comp.Markup.Should().Contain("class=\"mud-charts-yaxis\""); // Y-axis should still render
+            comp.FindAll("path.mud-chart-bar").Count.Should().Be(0); // No bars
+            comp.FindAll("div.mud-chart-legend-item").Count.Should().Be(0); // No legend items
+        }
+
+        [Test]
         public void BarChartEmptyData()
         {
             var comp = Context.RenderComponent<StackedBar<double>>();
             comp.Markup.Should().Contain("mud-chart");
         }
+
+        [Test]
+        public void StackedBarChart_SingleSeries_ShouldRenderCorrectly()
+        {
+            var chartSeries = new List<ChartSeries<double>>()
+            {
+                new () { Name = "Series 1", Data = new double[] { 10, 20, 30 } }
+            };
+            string[] xAxisLabels = { "A", "B", "C" };
+
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels));
+
+            comp.FindAll("path.mud-chart-bar").Count.Should().Be(3); // 3 bars for 3 data points
+            comp.FindAll("div.mud-chart-legend-item").Count.Should().Be(1); // 1 legend item
+            comp.Find("div.mud-chart-legend-item").TextContent.Should().Contain("Series 1");
+
+            var xAxisTexts = comp.FindAll("g.mud-charts-xaxis text");
+            xAxisTexts.Should().HaveCount(3);
+            xAxisTexts.Select(x => x.TextContent).Should().BeEquivalentTo(xAxisLabels);
+        }
+
+        [Test]
+        public void StackedBarChart_MultipleSeries_ShouldRenderCorrectly()
+        {
+            var chartSeries = new List<ChartSeries<double>>()
+            {
+                new () { Name = "Series 1", Data = new double[] { 10, 20 } },
+                new () { Name = "Series 2", Data = new double[] { 15, 25 } }
+            };
+            string[] xAxisLabels = { "A", "B" };
+
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels));
+
+            comp.FindAll("path.mud-chart-bar").Count.Should().Be(4);
+            comp.FindAll("div.mud-chart-legend-item").Count.Should().Be(2);
+            var legendItems = comp.FindAll("div.mud-chart-legend-item");
+            legendItems[0].TextContent.Should().Contain("Series 1");
+            legendItems[1].TextContent.Should().Contain("Series 2");
+        }
+
+        [Test]
+        public void StackedBarChart_SeriesWithVaryingDataPoints_ShouldRenderCorrectly()
+        {
+            var chartSeries = new List<ChartSeries<double>>()
+            {
+                new () { Name = "Series 1", Data = new double[] { 10, 20, 30 } }, // 3 points
+                new () { Name = "Series 2", Data = new double[] { 15, 25 } }      // 2 points
+            };
+            // Labels should ideally match the series with the most data points
+            string[] xAxisLabels = { "A", "B", "C" };
+
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels));
+
+            comp.FindAll("path.mud-chart-bar").Count.Should().Be(5);
+            comp.FindAll("div.mud-chart-legend-item").Count.Should().Be(2);
+
+            var xAxisTexts = comp.FindAll("g.mud-charts-xaxis text");
+            xAxisTexts.Should().HaveCount(3); // Based on xAxisLabels
+            xAxisTexts.Select(x => x.TextContent).Should().BeEquivalentTo(xAxisLabels);
+        }
+
+        [Test]
+        public void StackedBarChart_Dynamic_AddSeries_ShouldUpdateChart()
+        {
+            var initialSeries = new List<ChartSeries<double>>()
+            {
+                new () { Name = "Series 1", Data = new double[] { 10, 20 } }
+            };
+            string[] xAxisLabels = { "A", "B" };
+
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.ChartSeries, initialSeries)
+                .Add(p => p.ChartLabels, xAxisLabels));
+
+            comp.FindAll("path.mud-chart-bar").Count.Should().Be(2);
+            comp.FindAll("div.mud-chart-legend-item").Count.Should().Be(1);
+
+            var updatedSeries = new List<ChartSeries<double>>(initialSeries)
+            {
+                new () { Name = "Series 2", Data = new double[] { 15, 25 } }
+            };
+            comp.SetParametersAndRender(parameters => parameters
+                .Add(p => p.ChartSeries, updatedSeries));
+
+            comp.FindAll("path.mud-chart-bar").Count.Should().Be(4); // 2 from Series 1 + 2 from Series 2
+            comp.FindAll("div.mud-chart-legend-item").Count.Should().Be(2);
+            comp.FindAll("div.mud-chart-legend-item")[1].TextContent.Should().Contain("Series 2");
+        }
+
+        [Test]
+        public void StackedBarChart_Dynamic_RemoveSeries_ShouldUpdateChart()
+        {
+            var initialSeries = new List<ChartSeries<double>>()
+            {
+                new () { Name = "Series 1", Data = new double[] { 10, 20 } },
+                new () { Name = "Series 2", Data = new double[] { 15, 25 } }
+            };
+            string[] xAxisLabels = { "A", "B" };
+
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.ChartSeries, initialSeries)
+                .Add(p => p.ChartLabels, xAxisLabels));
+
+            comp.FindAll("path.mud-chart-bar").Count.Should().Be(4);
+            comp.FindAll("div.mud-chart-legend-item").Count.Should().Be(2);
+
+            var updatedSeries = new List<ChartSeries<double>>()
+            {
+                initialSeries[0] // Keep only Series 1
+            };
+            comp.SetParametersAndRender(parameters => parameters
+                .Add(p => p.ChartSeries, updatedSeries));
+
+            comp.FindAll("path.mud-chart-bar").Count.Should().Be(2); // Only Series 1's bars
+            comp.FindAll("div.mud-chart-legend-item").Count.Should().Be(1);
+            comp.Find("div.mud-chart-legend-item").TextContent.Should().Contain("Series 1");
+        }
+
+        [Test]
+        public void StackedBarChart_Dynamic_ChangeSeriesData_ShouldUpdateChart()
+        {
+            var chartSeries = new List<ChartSeries<double>>()
+            {
+                new () { Name = "Series 1", Data = new double[] { 10, 20 } }
+            };
+            string[] xAxisLabels = { "A", "B" };
+
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels));
+
+            var initialPaths = comp.FindAll("path.mud-chart-bar");
+            initialPaths.Count.Should().Be(2);
+
+            // Modify data
+            chartSeries[0].Data = new double[] { 30, 40 };
+            comp.SetParametersAndRender(parameters => parameters
+                .Add(p => p.ChartSeries, new List<ChartSeries<double>>(chartSeries))); // Re-pass to trigger update
+
+            var updatedPaths = comp.FindAll("path.mud-chart-bar");
+            updatedPaths.Count.Should().Be(2);
+        }
+
+        [Test]
+        public void StackedBarChart_Dynamic_ChangeLabels_ShouldUpdateChart()
+        {
+            var chartSeries = new List<ChartSeries<double>>()
+            {
+                new () { Name = "Series 1", Data = new double[] { 10, 20 } }
+            };
+            string[] initialXAxisLabels = { "A", "B" };
+
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, initialXAxisLabels));
+
+            var initialLabels = comp.FindAll("g.mud-charts-xaxis text").Select(x => x.TextContent).ToArray();
+            initialLabels.Should().BeEquivalentTo(initialXAxisLabels);
+
+            string[] updatedXAxisLabels = { "X", "Y" };
+            comp.SetParametersAndRender(parameters => parameters
+                .Add(p => p.ChartLabels, updatedXAxisLabels));
+
+            var updatedLabels = comp.FindAll("g.mud-charts-xaxis text").Select(x => x.TextContent).ToArray();
+            updatedLabels.Should().BeEquivalentTo(updatedXAxisLabels);
+        }
+
+        [Test]
+        public void StackedBarChart_ChartOptions_ShowLegendFalse_ShouldNotRenderLegend()
+        {
+            var chartSeries = new List<ChartSeries<double>>() { new() { Name = "Series 1", Data = new double[] { 10 } } };
+            string[] xAxisLabels = { "A" };
+
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels)
+                .Add(p => p.ChartOptions, new ChartOptions { ShowLegend = false }));
+
+            comp.FindAll("div.mud-chart-legend").Should().BeEmpty();
+            comp.FindAll("div.mud-chart-legend-item").Should().BeEmpty();
+        }
+
+        [Test]
+        [TestCase(Position.Top)]
+        [TestCase(Position.Bottom)]
+        [TestCase(Position.Left)]
+        [TestCase(Position.Right)]
+        public void StackedBarChart_LegendPosition_ShouldApplyCorrectClass(Position position)
+        {
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.LegendPosition, position)
+                .Add(p => p.ChartSeries, new List<ChartSeries<double>>() { new() { Name = "S1", Data = new[] { 1.0 } } })
+                .Add(p => p.ChartLabels, new[] { "L1" })
+            );
+
+            var chartElement = comp.Find(".mud-chart");
+            var expectedClass = $"mud-chart-legend-{position.ToDescriptionString()}";
+            chartElement.ClassList.Should().Contain(expectedClass);
+        }
+
+        [Test]
+        public void StackedBarChart_ChartOptions_ChartPalette_ShouldApplyColors()
+        {
+            var chartSeries = new List<ChartSeries<double>>()
+            {
+                new () { Name = "Series 1", Data = new double[] { 10 } },
+                new () { Name = "Series 2", Data = new double[] { 20 } }
+            };
+            string[] xAxisLabels = { "A" };
+            var customPalette = new string[] { "#FF0000", "#00FF00" }; // Red, Green
+
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels)
+                .Add(p => p.ChartOptions, new ChartOptions { ChartPalette = customPalette }));
+
+            var bars = comp.FindAll("path.mud-chart-bar");
+            bars.Should().HaveCount(2);
+            // Note: fill is "none" for stacked bar, stroke is the color
+            bars[0].Attributes.GetNamedItem("stroke")?.Value.Should().Be(customPalette[0]);
+            bars[1].Attributes.GetNamedItem("stroke")?.Value.Should().Be(customPalette[1]);
+        }
+
+        [Test]
+        public void StackedBarChart_ChartOptions_ChartPalette_CycleColorsWhenSeriesExceedPalette()
+        {
+            var chartSeries = new List<ChartSeries<double>>()
+            {
+                new () { Name = "Series 1", Data = new double[] { 10 } },
+                new () { Name = "Series 2", Data = new double[] { 20 } },
+                new () { Name = "Series 3", Data = new double[] { 30 } }
+            };
+            string[] xAxisLabels = { "A" };
+            var customPalette = new string[] { "#111111", "#222222" }; // Only two colors
+
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels)
+                .Add(p => p.ChartOptions, new ChartOptions { ChartPalette = customPalette }));
+
+            var bars = comp.FindAll("path.mud-chart-bar");
+            bars.Should().HaveCount(3);
+            bars[0].Attributes.GetNamedItem("stroke")?.Value.Should().Be(customPalette[0]);
+            bars[1].Attributes.GetNamedItem("stroke")?.Value.Should().Be(customPalette[1]);
+            bars[2].Attributes.GetNamedItem("stroke")?.Value.Should().Be(customPalette[0]); // Cycled back
+        }
+
+        [Test]
+        [TestCase("300px", "400px")]
+        [TestCase("50%", "75%")]
+        public void StackedBarChart_WidthAndHeight_ShouldApplyToSvg(string width, string height)
+        {
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.Width, width)
+                .Add(p => p.Height, height));
+
+            var svgElement = comp.Find("svg.mud-chart-bar");
+            svgElement.Attributes.GetNamedItem("width")?.Value.Should().Contain(width);
+            svgElement.Attributes.GetNamedItem("height")?.Value.Should().Contain(height);
+        }
+
+        [Test]
+        public void StackedBarChart_RightToLeft_True_ShouldAdjustLegendPositionStartEnd()
+        {
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.RightToLeft, true)
+                .Add(p => p.LegendPosition, Position.Start) // Should become Right in RTL
+                .Add(p => p.ChartSeries, new List<ChartSeries<double>>() { new() { Name = "S1", Data = new[] { 1.0 } } })
+                .Add(p => p.ChartLabels, new[] { "L1" })
+                );
+
+            var chartElement = comp.Find(".mud-chart");
+            chartElement.ClassList.Should().Contain("mud-chart-legend-right");
+
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.LegendPosition, Position.End)); // Should become Left in RTL
+            chartElement = comp.Find(".mud-chart");
+            chartElement.ClassList.Should().Contain("mud-chart-legend-left");
+        }
+
+        [Test]
+        public void StackedBarChart_DataEdge_AllZeroValues_ShouldRenderCorrectly()
+        {
+            var chartSeries = new List<ChartSeries<double>>()
+            {
+                new () { Name = "Series 1", Data = new double[] { 0, 0, 0 } },
+                new () { Name = "Series 2", Data = new double[] { 0, 0, 0 } }
+            };
+            string[] xAxisLabels = { "A", "B", "C" };
+
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels)
+                .Add(p => p.ChartOptions, new StackedBarChartOptions { YAxisTicks = 10 })); // Ensure some scale
+
+            var bars = comp.FindAll("path.mud-chart-bar");
+            bars.Count.Should().Be(6); // 2 series * 3 data points
+
+            foreach (var bar in bars)
+            {
+                var d = bar.GetAttribute("d");
+                var parts = d.Split(new[] { 'M', 'L', ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                             .Select(p => double.Parse(p, System.Globalization.CultureInfo.InvariantCulture))
+                             .ToArray();
+                parts[0].Should().BeApproximately(parts[2], 0.001); // x1 == x2
+                parts[1].Should().BeApproximately(parts[3] + /*StackedBar.BarOverlapAmountFix*/0.5, 0.001); // y1 == y2 (approx due to overlap fix)
+            }
+
+            var yAxisLabels = comp.FindAll("g.mud-charts-yaxis text").Select(e => e.TextContent).ToList();
+            yAxisLabels.Should().Contain("0");
+        }
+
+        [Test]
+        public void StackedBarChart_DataEdge_NegativeValues_ShouldRenderBelowXAxis()
+        {
+            var chartSeries = new List<ChartSeries<double>>()
+            {
+                new () { Name = "Series 1", Data = new double[] { -10, -20 } },
+                new () { Name = "Series 2", Data = new double[] { -5, -15 } }
+            };
+            string[] xAxisLabels = { "A", "B" };
+
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels)
+                .Add(p => p.ChartOptions, new StackedBarChartOptions { YAxisTicks = 5 }));
+
+            var bars = comp.FindAll("path.mud-chart-bar");
+            bars.Count.Should().Be(4);
+
+            var yAxisLabels = comp.FindAll("g.mud-charts-yaxis text").Select(e => e.TextContent).ToList();
+            yAxisLabels.Should().Contain(l => l.Contains("-")); // Check for negative sign
+            yAxisLabels.Should().Contain("-5"); // Or other negative values based on scale
+            yAxisLabels.Should().Contain("-20"); // Or other negative values based on scale
+            yAxisLabels.Should().Contain("0"); // Zero line should be present
+
+            foreach (var bar in bars)
+            {
+                var d = bar.GetAttribute("d");
+                var parts = d.Split(new[] { 'M', 'L', ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                             .Select(p => double.Parse(p, System.Globalization.CultureInfo.InvariantCulture))
+                             .ToArray();
+                (parts[3] > parts[1] - 0.501).Should().BeTrue(); // yEnd > yStart (approx, considering overlap)
+            }
+        }
+
+        [Test]
+        public void StackedBarChart_DataEdge_MixedPositiveNegativeZeroValues_ShouldRenderCorrectly()
+        {
+            var chartSeries = new List<ChartSeries<double>>()
+            {
+                new () { Name = "Profit", Data = new double[] { 10, -5, 0, 20 } },
+                new () { Name = "Expenses", Data = new double[] { -5, -10, -2, 5 } } // Note: Expenses are often positive, but for testing mixed stack.
+            };
+            string[] xAxisLabels = { "Q1", "Q2", "Q3", "Q4" };
+
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels)
+                .Add(p => p.ChartOptions, new StackedBarChartOptions { YAxisTicks = 5 }));
+
+            var bars = comp.FindAll("path.mud-chart-bar");
+            bars.Count.Should().Be(8); // 2 series * 4 data points
+
+            var yAxisLabels = comp.FindAll("g.mud-charts-yaxis text").Select(e => e.TextContent).ToList();
+            yAxisLabels.Should().Contain("0");
+            yAxisLabels.Should().Contain(l => l.StartsWith("-") || l.StartsWith("-$")); // Negative values
+            yAxisLabels.Should().Contain(l => char.IsDigit(l[0])); // Positive values (simple check)
+        }
+
+        [Test]
+        public void StackedBarChart_DataEdge_VeryLargeValues_ShouldScaleCorrectly()
+        {
+            var chartSeries = new List<ChartSeries<double>>()
+            {
+                new () { Name = "Series 1", Data = new double[] { 1_000_000, 5_000_000 } },
+                new () { Name = "Series 2", Data = new double[] { 2_000_000, 3_000_000 } }
+            };
+            string[] xAxisLabels = { "A", "B" };
+
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels)
+                .Add(p => p.ChartOptions, new StackedBarChartOptions { YAxisFormat = "N0" })); // Number format
+
+            var bars = comp.FindAll("path.mud-chart-bar");
+            bars.Count.Should().Be(4);
+
+            var yAxisLabels = comp.FindAll("g.mud-charts-yaxis text").Select(e => e.TextContent).ToList();
+            // Labels should represent large numbers
+            double.Parse(yAxisLabels[1]).Should().BeGreaterThan(500_000);
+        }
+
+        [Test]
+        public void StackedBarChart_DataEdge_SingleDataPointInSeries_ShouldRender()
+        {
+            var chartSeries = new List<ChartSeries<double>>()
+            {
+                new () { Name = "Series 1", Data = new double[] { 10 } },
+                new () { Name = "Series 2", Data = new double[] { 20 } }
+            };
+            // Only one X-axis label for the single data point category
+            string[] xAxisLabels = { "Category A" };
+
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels));
+
+            comp.FindAll("path.mud-chart-bar").Count.Should().Be(2); // 2 series * 1 data point
+            comp.FindAll("div.mud-chart-legend-item").Count.Should().Be(2);
+            var xAxisTexts = comp.FindAll("g.mud-charts-xaxis text");
+            xAxisTexts.Should().HaveCount(1);
+            xAxisTexts.First().TextContent.Should().Be("Category A");
+        }
+
+        [Test]
+        public void StackedBarChart_DataEdge_SingleSeriesSingleDataPoint_ShouldRender()
+        {
+            var chartSeries = new List<ChartSeries<double>>()
+            {
+                new () { Name = "Solo Series", Data = new double[] { 100 } }
+            };
+            string[] xAxisLabels = { "Solo Point" };
+
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels));
+
+            comp.FindAll("path.mud-chart-bar").Count.Should().Be(1); // 1 series * 1 data point
+            comp.FindAll("div.mud-chart-legend-item").Count.Should().Be(1);
+            comp.Find("div.mud-chart-legend-item").TextContent.Should().Contain("Solo Series");
+            var xAxisTexts = comp.FindAll("g.mud-charts-xaxis text");
+            xAxisTexts.Should().HaveCount(1);
+            xAxisTexts.First().TextContent.Should().Be("Solo Point");
+        }
+
+        [Test]
+        public void StackedBarChart_Tooltip_ShowToolTipsFalse_ShouldNotRenderTooltipComponent()
+        {
+            var chartSeries = new List<ChartSeries<double>>() { new() { Name = "S1", Data = new[] { 10.0 } } };
+            string[] xAxisLabels = { "A" };
+
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels)
+                .Add(p => p.ChartOptions, new StackedBarChartOptions { ShowToolTips = false }));
+
+            // The ChartTooltip component should not be found in the render tree
+            comp.FindComponents<ChartTooltip>().Should().BeEmpty();
+        }
+
+        [Test]
+        public void StackedBarChart_Tooltip_ShowToolTipsTrue_ShouldRenderTooltipComponent()
+        {
+            var chartSeries = new List<ChartSeries<double>>() { new() { Name = "S1", Data = new[] { 10.0 } } };
+            string[] xAxisLabels = { "A" };
+
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels)
+                .Add(p => p.ChartOptions, new StackedBarChartOptions { ShowToolTips = true }));
+
+            // The ChartTooltip component should be present
+            var bar = comp.Find("path.mud-chart-bar");
+
+            bar.TriggerEvent("onmouseover", new MouseEventArgs());
+
+            var tooltip = comp.Find("g.svg-tooltip");
+            tooltip.Should().NotBeNull();
+        }
+
+        [Test]
+        public void StackedBarChart_Selection_LegendClick_ShouldUpdateSelectedIndexAndFireEvent()
+        {
+            var chartSeries = new List<ChartSeries<double>>()
+            {
+                new () { Name = "Series A", Data = new double[] { 10, 20 } },
+                new () { Name = "Series B", Data = new double[] { 15, 25 } },
+            };
+            string[] xAxisLabels = { "X1", "X2" };
+            var selectedIndex = -1; // Initial value, should be different from what we click
+            var eventFiredCount = 0;
+
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels)
+                .Add(p => p.SelectedIndex, selectedIndex)
+                .Add(p => p.SelectedIndexChanged, EventCallback.Factory.Create<int>(this, (newIndex) =>
+                {
+                    selectedIndex = newIndex;
+                    eventFiredCount++;
+                }))
+                .Add(p => p.ChartOptions, new ChartOptions { ShowLegend = true })
+            );
+
+            var legendItems = comp.FindAll("div.mud-chart-legend-item");
+            legendItems.Should().HaveCount(2);
+
+            // Click the second legend item (index 1)
+            legendItems[1].Click();
+            comp.WaitForAssertion(() => selectedIndex.Should().Be(1));
+            eventFiredCount.Should().Be(1);
+
+            comp.Instance.GetState(x => x.SelectedIndex).Should().Be(1);
+
+            // Click the first legend item (index 0)
+            legendItems = comp.FindAll("div.mud-chart-legend-item");
+            legendItems[0].Click();
+            comp.WaitForAssertion(() => selectedIndex.Should().Be(0));
+            eventFiredCount.Should().Be(2);
+            comp.Instance.GetState(x => x.SelectedIndex).Should().Be(0);
+        }
+
+        [Test]
+        public void StackedBarChart_Selection_ProgrammaticChange_ShouldReflectInLegend()
+        {
+            var chartSeries = new List<ChartSeries<double>>()
+            {
+                new () { Name = "Series X", Data = new double[] { 10 } },
+                new () { Name = "Series Y", Data = new double[] { 20 } },
+            };
+            string[] xAxisLabels = { "X" };
+
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels)
+                .Add(p => p.SelectedIndex, 0) // Initially select Series X
+                .Add(p => p.ChartOptions, new ChartOptions { ShowLegend = true })
+            );
+
+            // Programmatically change SelectedIndex
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.SelectedIndex, 1));
+
+            comp.Instance.GetState(x => x.SelectedIndex).Should().Be(1);
+        }
+
+        [Test]
+        public void StackedBarChart_CustomGraphics_ShouldRenderInsideSvg()
+        {
+            var chartSeries = new List<ChartSeries<double>>() { new() { Name = "S1", Data = new[] { 10.0 } } };
+            string[] xAxisLabels = { "A" };
+
+            RenderFragment customGraphics = builder =>
+            {
+                builder.OpenElement(0, "rect");
+                builder.AddAttribute(1, "x", "10");
+                builder.AddAttribute(2, "y", "10");
+                builder.AddAttribute(3, "width", "50");
+                builder.AddAttribute(4, "height", "50");
+                builder.AddAttribute(5, "fill", "red");
+                builder.AddAttribute(6, "class", "custom-graphic-element");
+                builder.CloseElement();
+            };
+
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels)
+                .Add(p => p.CustomGraphics, customGraphics));
+
+            var svgElement = comp.Find("svg.mud-chart-bar");
+            svgElement.Should().NotBeNull();
+
+            // Check if the custom graphic element is rendered within the SVG
+            var customElement = svgElement.QuerySelector(".custom-graphic-element");
+            customElement.Should().NotBeNull();
+            customElement.TagName.Should().Be("rect");
+            customElement.GetAttribute("fill").Should().Be("red");
+            customElement.GetAttribute("x").Should().Be("10");
+        }
+
+        [Test]
+        public void StackedBarChart_Tooltip_TooltipTemplate_ShouldRenderCustomTooltip()
+        {
+            var chartSeries = new List<ChartSeries<double>>() { new() { Name = "TemplateSeries", Data = new[] { 77.0 } } };
+            string[] xAxisLabels = { "TX" };
+            RenderFragment<(SvgPath Segment, string Color)> tooltipTemplate = (context) => builder =>
+            {
+                builder.OpenElement(0, "div");
+                builder.AddAttribute(1, "class", "custom-tooltip-content");
+                builder.AddContent(2, $"Custom: {context.Segment.LabelXValue} -> {context.Segment.LabelYValue} ({context.Color})");
+                builder.CloseElement();
+            };
+
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels)
+                .Add(p => p.ChartOptions, new StackedBarChartOptions { ShowToolTips = true })
+                .Add(p => p.TooltipTemplate, tooltipTemplate));
+
+            var bar = comp.Find("path.mud-chart-bar");
+
+            bar.TriggerEvent("onmouseover", new MouseEventArgs());
+
+            var customContent = comp.Find("div.custom-tooltip-content");
+            customContent.Should().NotBeNull();
+        }
+
+        private bool _tooltipPositionFuncCalled = false;
+        private (double X, double Y) CustomTooltipPositionFunc(SvgPath segment)
+        {
+            _tooltipPositionFuncCalled = true;
+            return (segment.LabelX + 10, segment.LabelY - 10);
+        }
+
+        [Test]
+        public void StackedBarChart_Tooltip_TooltipPositionFunc_ShouldBeCalledOnHover()
+        {
+            _tooltipPositionFuncCalled = false;
+            var chartSeries = new List<ChartSeries<double>>() { new() { Name = "PosFuncSeries", Data = new[] { 55.0 } } };
+            string[] xAxisLabels = { "PFX" };
+
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels)
+                .Add(p => p.ChartOptions, new StackedBarChartOptions { ShowToolTips = true })
+                .Add(p => p.TooltipPositionFunc, CustomTooltipPositionFunc));
+
+            var bar = comp.Find("path.mud-chart-bar");
+
+            bar.TriggerEvent("onmouseover", new MouseEventArgs());
+
+            _tooltipPositionFuncCalled.Should().BeTrue();
+
+            var tooltipDiv = comp.Find("g.svg-tooltip text");
+            tooltipDiv.Should().NotBeNull();
+        }
+
+        [Test]
+        public void StackedBarChart_Options_YAxisFormat_ShouldFormatYAxisLabels()
+        {
+            var chartSeries = new List<ChartSeries<double>>() { new() { Name = "S1", Data = new[] { 1000.0, 2000.0 } } };
+            string[] xAxisLabels = { "A", "B" };
+
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels)
+                .Add(p => p.ChartOptions, new StackedBarChartOptions { YAxisFormat = "C0", YAxisTicks = 1000 })); // Currency, 0 decimal places
+
+            var yAxisLabels = comp.FindAll("g.mud-charts-yaxis text").Select(e => e.TextContent).ToList();
+            yAxisLabels.Should().Contain(l => l.Contains(System.Globalization.CultureInfo.CurrentCulture.NumberFormat.CurrencySymbol));
+            yAxisLabels.Should().Contain(l => !l.Contains('.')); // No decimal places
+        }
+
+        [Test]
+        public void StackedBarChart_Options_YAxisTicks_And_MaxNumYAxisTicks_ShouldControlYAxisGrid()
+        {
+            var chartSeries = new List<ChartSeries<double>>() { new() { Name = "S1", Data = new[] { 0.0, 100.0 } } };
+            string[] xAxisLabels = { "A" };
+
+            // Test with specific YAxisTicks
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels)
+                .Add(p => p.ChartOptions, new StackedBarChartOptions { YAxisTicks = 20 }));
+
+            var yAxisLabels1 = comp.FindAll("g.mud-charts-yaxis text").Select(e => e.TextContent).ToList();
+            // Expected labels: "0", "20", "40", "60", "80", "100" (6 labels, 6 lines)
+            yAxisLabels1.Should().HaveCount(6);
+            yAxisLabels1.Should().ContainInOrder("0", "20", "40", "60", "80", "100");
+
+            // Test with MaxNumYAxisTicks forcing fewer, larger ticks
+            comp.SetParametersAndRender(parameters => parameters
+                .Add(p => p.ChartOptions, new StackedBarChartOptions { YAxisTicks = 10, MaxNumYAxisTicks = 3 })); // Max 3 ticks, initial step 10
+
+            var yAxisLabels2 = comp.FindAll("g.mud-charts-yaxis text").Select(e => e.TextContent).ToList();
+
+            yAxisLabels2.Should().HaveCount(3);
+            yAxisLabels2.Should().ContainInOrder("0", "80", "160");
+        }
+
+        [Test]
+        public void StackedBarChart_Options_YAxisSuggestedMax_ShouldInfluenceScale()
+        {
+            var chartSeries = new List<ChartSeries<double>>() { new() { Name = "S1", Data = new[] { 10.0, 50.0 } } };
+            string[] xAxisLabels = { "A", "B" };
+
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels)
+                .Add(p => p.ChartOptions, new StackedBarChartOptions { YAxisSuggestedMax = 100, YAxisTicks = 20 }));
+
+            var yAxisLabels = comp.FindAll("g.mud-charts-yaxis text").Select(e => e.TextContent).ToList();
+            yAxisLabels.Should().Contain("100"); // The suggested max
+
+            // If actual max is higher, suggestedMax is ignored
+            comp.SetParametersAndRender(parameters => parameters
+                 .Add(p => p.ChartOptions, new StackedBarChartOptions { YAxisSuggestedMax = 30, YAxisTicks = 10 }));
+
+            yAxisLabels = comp.FindAll("g.mud-charts-yaxis text").Select(e => e.TextContent).ToList();
+            yAxisLabels.Should().Contain("50"); // Actual max 50
+            yAxisLabels.Should().NotContain("100");
+        }
+
+        [Test]
+        public void StackedBarChart_Options_AxisVisibility_False_ShouldWork()
+        {
+            var chartSeries = new List<ChartSeries<double>>() { new() { Name = "S1", Data = new[] { 10.0 } } };
+            string[] xAxisLabels = { "A" };
+
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels)
+                .Add(p => p.ChartOptions, new StackedBarChartOptions
+                {
+                    XAxisLines = false,
+                    YAxisLines = false,
+                }));
+
+            comp.FindAll("g.mud-charts-gridlines-yaxis").Should().BeEmpty();
+            comp.FindAll("g.mud-charts-gridlines-xaxis-lines").Should().BeEmpty();
+        }
+
+        [Test]
+        public void StackedBarChart_Options_AxisVisibility_True_ShouldWork()
+        {
+            var chartSeries = new List<ChartSeries<double>>() { new() { Name = "S1", Data = new[] { 10.0 } } };
+            string[] xAxisLabels = { "A" };
+
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels)
+                .Add(p => p.ChartOptions, new StackedBarChartOptions
+                {
+                    XAxisLines = true,
+                    YAxisLines = true,
+                }));
+
+            comp.FindAll("g.mud-charts-gridlines-yaxis").Should().NotBeEmpty();
+            comp.FindAll("g.mud-charts-gridlines-xaxis-lines").Should().NotBeEmpty();
+        }
+
 
         [Test]
         public void BarChartExampleData()
