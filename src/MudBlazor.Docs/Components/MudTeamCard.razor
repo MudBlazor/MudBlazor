@@ -7,24 +7,33 @@
         </CardHeaderAvatar>
 
         <CardHeaderContent>
-            <MudText Typo="Typo.h6">@Member.Name</MudText>
-            <MudText Typo="Typo.body2">@Member.GitHub</MudText>
-            @if (!string.IsNullOrWhiteSpace(Member.From))
-            {
-                <MudText Typo="Typo.body2" Class="mt-1">
-                    <MudIcon Icon="@Icons.Material.Filled.Place" Color="Color.Inherit" Class="me-1" />
-                    @Member.From
-                </MudText>
-            }
+            <div class="d-flex flex-row align-center justify-space-between">
+                <div class="d-flex flex-column">
+                    <MudText Typo="Typo.h6">@Member.Name</MudText>
+
+                    <MudText Typo="Typo.body2">@Member.GitHub</MudText>
+                </div>
+
+                @if (!string.IsNullOrWhiteSpace(Member.From))
+                {
+                    <div class="d-flex flex-row align-center justify-center">
+                        <MudIcon Icon="@Icons.Material.Filled.Place" Color="Color.Inherit" Class="me-1" />
+
+                        <MudText Typo="Typo.body2">
+                            @Member.From
+                        </MudText>
+                    </div>
+                }
+            </div>
         </CardHeaderContent>
     </MudCardHeader>
 
-    <MudCardContent>
-        @if (!string.IsNullOrWhiteSpace(Member.Bio))
-        {
+    @if (!string.IsNullOrWhiteSpace(Member.Bio))
+    {
+        <MudCardContent>
             <MudText Typo="Typo.body2">@Member.Bio</MudText>
-        }
-    </MudCardContent>
+        </MudCardContent>
+    }
 
     <MudCardActions>
         <MudChip T="string" Variant="Variant.Outlined" Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Target="_blank" Href="@($"https://github.com/{Member.GitHub}")">
