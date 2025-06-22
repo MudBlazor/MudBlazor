@@ -129,10 +129,12 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
 
     private T[] AggregateByDataSet(T[] aggregated)
     {
-        var visibleSeries = ChartSeries.Where(s => s.Visible).Take(aggregated.Length);
+        var chartSeries = ChartSeries.Take(aggregated.Length);
 
-        foreach (var (series, index) in visibleSeries.Select((s, i) => (s, i)))
+        foreach (var (series, index) in chartSeries.Select((s, i) => (s, i)))
         {
+            if (!series.Visible) continue;
+
             aggregated[index] = series.Data?.Values.SumGeneric() ?? T.Zero;
         }
 
