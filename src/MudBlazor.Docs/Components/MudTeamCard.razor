@@ -2,7 +2,7 @@
     <MudCardHeader>
         <CardHeaderAvatar>
             <MudAvatar Size="Size.Large" Class="mud-elevation-4">
-                <MudImage Src="@Member.Avatar" />
+                <MudImage Src="@Member.Avatar" Alt="GitHub Avatar" />
             </MudAvatar>
         </CardHeaderAvatar>
 
@@ -16,7 +16,7 @@
 
                 @if (!string.IsNullOrWhiteSpace(Member.From))
                 {
-                    <div class="d-flex flex-row align-top justify-center">
+                    <div class="d-flex flex-row align-self-start align-center justify-center">
                         <MudIcon Icon="@Icons.Material.Filled.Place" Color="Color.Inherit" Class="me-1" />
 
                         <MudText Typo="Typo.body2">
@@ -47,7 +47,7 @@
             </MudChip>
         }
 
-        @if (Member.LinkedIn != null)
+        @if (!string.IsNullOrWhiteSpace(Member.LinkedIn))
         {
             <MudChip T="string" Variant="Variant.Outlined" Icon="@Icons.Custom.Brands.LinkedIn" Color="Color.Primary" Target="_blank" Href="@Member.LinkedIn">
                 LinkedIn
