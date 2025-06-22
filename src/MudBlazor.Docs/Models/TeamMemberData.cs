@@ -1,0 +1,164 @@
+﻿// Copyright (c) MudBlazor 2021
+// MudBlazor licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+namespace MudBlazor.Docs.Models
+{
+    public class TeamMemberData
+    {
+        public static TeamMember[] GetCoreTeam() =>
+        [
+            new TeamMember
+            {
+                Name = "András Tangl",
+                From = "Szombathely, Hungary",
+                GitHub = "tungi52",
+                Avatar = "https://avatars.githubusercontent.com/u/22996720?v=4",
+                LinkedIn = "https://www.linkedin.com/in/andr%C3%A1s-tangl-683a20215/",
+            },
+            new TeamMember
+            {
+                Name = "Mike Surcouf",
+                From = "Jersey, Channel Islands",
+                GitHub = "mikes-gh",
+                Avatar = "https://avatars.githubusercontent.com/u/16208742?v=4",
+                LinkedIn = null,
+            },
+            new TeamMember
+            {
+                Name = "Benjamin Kappel",
+                From = "Malaysia",
+                GitHub = "just-the-benno",
+                Avatar = "https://avatars.githubusercontent.com/u/51370361?v=4",
+                LinkedIn = "https://www.linkedin.com/in/benjamin-kappel-558428168/",
+            },
+            new TeamMember
+            {
+                Name = "Jonas B.",
+                From = "Germany",
+                GitHub = "JonBunator",
+                Avatar = "https://avatars.githubusercontent.com/u/62108893?v=4",
+                LinkedIn = null,
+            },
+            new TeamMember
+            {
+                Name = "Riley Nielsen",
+                From = "Minnesota, United States",
+                GitHub = "Mr-Technician",
+                Avatar = "https://avatars.githubusercontent.com/u/26885142?v=4",
+                LinkedIn = "https://www.linkedin.com/in/riley-nielsen-a57399223/",
+            },
+            new TeamMember
+            {
+                Name = "Artyom M.",
+                From = "Estonia, Tallinn",
+                GitHub = "ScarletKuro",
+                GitHubSponsor = true,
+                Avatar = "https://avatars.githubusercontent.com/u/19953225?v=4",
+                LinkedIn = "https://www.linkedin.com/in/artyommelnikov/",
+            },
+            new TeamMember
+            {
+                Name = "Daniel Chalmers",
+                From = "Texas, United States",
+                GitHub = "danielchalmers",
+                Avatar = "https://avatars.githubusercontent.com/u/7112040?v=4",
+                LinkedIn = "https://www.linkedin.com/in/daniel-c-5799252b1",
+            },
+        ];
+
+        public static TeamMember[] GetContributionTeam() =>
+        [
+            new TeamMember
+            {
+                Name = "Henrique Clausing",
+                From = "Brazil",
+                GitHub = "HClausing",
+                Avatar = "https://avatars.githubusercontent.com/u/15158923?v=4",
+                LinkedIn = "https://www.linkedin.com/in/henrique-clausing-cunha-45085944/",
+            },
+            new TeamMember
+            {
+                Name = "Porkopek",
+                From = "Fundão, Portugal",
+                GitHub = "porkopek",
+                Avatar = "https://avatars.githubusercontent.com/u/13745954?v=4",
+                LinkedIn = null,
+            },
+            new TeamMember
+            {
+                Name = "Mehmet Can Karagöz",
+                From = "Alanya, Turkey",
+                GitHub = "mckaragoz",
+                Avatar = "https://avatars.githubusercontent.com/u/78308169?v=4",
+                LinkedIn = null,
+            },
+            new TeamMember
+            {
+                Name = "Jon Person",
+                From = "Denver, CO",
+                GitHub = "jperson2000",
+                Avatar = "https://avatars.githubusercontent.com/u/18043079?v=4",
+                LinkedIn = null,
+            },
+            new TeamMember
+            {
+                Name = "Lukas Klinger",
+                From = "Germany",
+                GitHub = "Flaflo",
+                Avatar = "https://avatars.githubusercontent.com/u/12973684?v=4",
+                LinkedIn = null,
+            },
+            new TeamMember
+            {
+                Name = "Jason Rebelo",
+                From = "Luxembourg",
+                GitHub = "igotinfected",
+                GitHubSponsor = true,
+                Avatar = "https://avatars.githubusercontent.com/u/15004223?v=4",
+                LinkedIn = null,
+            },
+            new TeamMember
+            {
+                Name = "Samuel Meenzen",
+                From = "Germany",
+                GitHub = "meenzen",
+                Avatar = "https://avatars.githubusercontent.com/u/22305878?v=4",
+                LinkedIn = null,
+            },
+            new TeamMember
+            {
+                Name = "Justin Lampe",
+                From = null,
+                GitHub = "xC0dex",
+                Avatar = "https://avatars.githubusercontent.com/u/22918366?v=4",
+                LinkedIn = null,
+            },
+            new TeamMember
+            {
+                Name = "Roman Alvarez",
+                From = "Uruguay",
+                GitHub = "ralvarezing",
+                Avatar = "https://avatars.githubusercontent.com/u/40799354?v=4",
+                LinkedIn = null,
+            },
+            new TeamMember
+            {
+                Name = "Versile Johnson II",
+                From = null,
+                GitHub = "versile2",
+                GitHubSponsor = true,
+                Avatar = "https://avatars.githubusercontent.com/u/148913404?v=4",
+                LinkedIn = null,
+            },
+            new TeamMember
+            {
+                Name = "Anu6is",
+                From = null,
+                GitHub = "anu6is",
+                Avatar = "https://avatars.githubusercontent.com/u/4596077?v=4",
+                LinkedIn = null,
+            },
+        ];
+    }
+}
