@@ -93,6 +93,20 @@ namespace MudBlazor.Docs.Services
             }
         }
 
+        public async Task<GitHubUser?> GetUserAsync(string username)
+        {
+            try
+            {
+                var result = await _http.GetFromJsonAsync<GitHubUser>($"users/{username}", _jsonSerializerOptions);
+                return result;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return null;
+            }
+        }
+
         public void Dispose()
         {
             _http.Dispose();

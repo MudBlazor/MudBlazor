@@ -9,6 +9,7 @@ namespace MudBlazor.Docs.Models.Context
     [JsonSerializable(typeof(GithubContributors[]))]
     [JsonSerializable(typeof(GitHubReleases[]))]
     [JsonSerializable(typeof(GitHubRepository))]
+    [JsonSerializable(typeof(GitHubUser))]
     public sealed partial class GithubApiJsonSerializerContext : JsonSerializerContext
     {
     }
