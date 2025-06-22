@@ -16,7 +16,7 @@
         @* Core Team *@
         <MudText Typo="Typo.h4" Class="mt-16" GutterBottom="true" Color="Color.Primary">Core Team</MudText>
         <MudText Class="mb-8">
-            The group of volunteers who steer the project, review contributions, and ensure MudBlazor remains stable and aligned with its long-term goals.
+            The volunteers who steer the project, review contributions, and ensure MudBlazor remains aligned with its long-term goals.
         </MudText>
         <MudGrid>
             @foreach (var member in TeamMemberData.GetCoreTeam())
@@ -30,7 +30,7 @@
         @* Contribution Team *@
         <MudText Typo="Typo.h4" Class="mt-16" GutterBottom="true" Color="Color.Secondary">Contribution Team</MudText>
         <MudText Class="mb-8">
-            Community members recognized for their frequent high-quality contribution or specialized expertise.
+            Community members that work with the Core Team and are recognized for their high-quality contributions.
         </MudText>
         <MudGrid>
             @foreach (var contributor in TeamMemberData.GetContributionTeam())
@@ -67,7 +67,7 @@
         @* All Contributors *@
         <MudText Typo="Typo.h4" Class="mt-16 mb-8">All contributors</MudText>
         <MudText Class="mb-8">
-            A growing list of developers who’ve helped shape the project.
+            A growing list of people who’ve helped shape the project.
         </MudText>
         <MudGrid>
             @if (_githubContributors == null)
