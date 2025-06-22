@@ -195,6 +195,15 @@ namespace MudBlazor.Docs.Models
                 LinkedIn = null,
                 Bio = null,
             },
+            new TeamMember
+            {
+                Name = "digitaldirk",
+                From = "the woods",
+                GitHub = "digitaldirk",
+                Avatar = "https://avatars.githubusercontent.com/u/22691956?v=4",
+                LinkedIn = null,
+                Bio = "C# and game things",
+            },
         ];
     }
 }
