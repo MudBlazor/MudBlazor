@@ -107,7 +107,7 @@ namespace MudBlazor.Docs.Models
                 GitHub = "HClausing",
                 Avatar = "https://avatars.githubusercontent.com/u/15158923?v=4",
                 LinkedIn = "https://www.linkedin.com/in/henrique-clausing-cunha-45085944/",
-                Bio = "Contador e Desenvolvedor .NET. Fundador da Eficaz Sistemas.",
+                Bio = "Accountant and Full-Stack .NET developer. Founder of Eficaz Sistemas.",
             },
             new TeamMember
             {
@@ -185,7 +185,7 @@ namespace MudBlazor.Docs.Models
             new TeamMember
             {
                 Name = "Versile Johnson II",
-                From = null,
+                From = "Texas, United States",
                 GitHub = "versile2",
                 GitHubSponsor = true,
                 Avatar = "https://avatars.githubusercontent.com/u/148913404?v=4",
@@ -195,7 +195,7 @@ namespace MudBlazor.Docs.Models
             new TeamMember
             {
                 Name = "Anu6is",
-                From = null,
+                From = "Trinidad & Tobago",
                 GitHub = "anu6is",
                 Avatar = "https://avatars.githubusercontent.com/u/4596077?v=4",
                 LinkedIn = null,
