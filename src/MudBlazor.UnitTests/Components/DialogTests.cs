@@ -1341,6 +1341,43 @@ namespace MudBlazor.UnitTests.Components
             await Task.Delay(1000);
             comp.FindComponents<MudDialog>().Count.Should().Be(1);
         }
+
+        [Test]
+        public async Task Dialog_TitleContent_And_ProgressBar_ShouldUpdate()
+        {
+            var comp = Context.RenderComponent<MudDialogProvider>();
+            comp.Markup.Trim().Should().BeEmpty();
+
+            var service = Context.Services.GetRequiredService<IDialogService>();
+
+            var comp1 = Context.RenderComponent<InlineDialogTitleRefreshTest>();
+
+            comp1.Find("button").Click();
+
+            var dialog = comp.Find("div.mud-dialog");
+
+            dialog.Should().NotBeNull();
+            dialog.TextContent.Trim().Should().Be("Initial state"); // Initial title
+            comp.FindComponent<MudProgressLinear>().Instance.Value.Should().Be(0); // Initial progress value - 0
+
+            // Wait for mid-progress (simulate that loop is progressing)
+            await Task.Delay(1000);
+            //comp.Render();
+
+            dialog = comp.Find("div.mud-dialog");
+            dialog.TextContent.Should().Contain("Progress"); //change from "Initial state" to "Progress"
+
+            var progressComponent = comp.FindComponent<MudProgressLinear>();
+            var progressValue = progressComponent.Instance.Value;
+            progressValue.Should().BeGreaterThan(0).And.BeLessThan(100);
+
+            // Wait for dialog to close and state reset
+            await Task.Delay(3000); // Ensure loop finishes
+            comp.Render();
+
+            // Assert the dialog is now hidden
+            comp.Markup.Trim().Should().NotContain("mud-dialog");
+        }
     }
 
     internal class CustomDialogService : DialogService
