@@ -124,7 +124,7 @@ public static partial class Splitter
     {
         regex = string.Empty;
 
-        if (terms.Count == 0) return new Regex("^$");
+        if (terms.Count == 0) return new Regex("^$", RegexOptions.NonBacktracking);
 
         regex = BuildRegexPattern(terms, untilNextBoundary);
 
@@ -141,16 +141,13 @@ public static partial class Splitter
 
         foreach (var fragment in rawFragments.Where(s => !string.IsNullOrEmpty(s)))
         {
-            if (IsDirectMatch(fragment, highlightTerms, stringComparison))
-            {
-                var text = _htmlTagRegex.IsMatch(fragment)
-                                ? WebUtility.HtmlEncode(fragment)
-                                : fragment;
-                tempFragments.Add(new FragmentInfo(text, FragmentType.HighlightedText));
-            }
-            else if (_htmlTagRegex.IsMatch(fragment))
+            if (_htmlTagRegex.IsMatch(fragment))
             {
                 tempFragments.Add(new FragmentInfo(fragment, FragmentType.Markup));
+            }
+            else if (IsDirectMatch(fragment, highlightTerms, stringComparison))
+            {
+                tempFragments.Add(new FragmentInfo(fragment, FragmentType.HighlightedText));
             }
             else
             {
@@ -273,9 +270,8 @@ public static partial class Splitter
             }
             else
             {
-                var encoded = WebUtility.HtmlEncode(fragment.Content);
                 var isHighlight = highlightTerms.Contains(fragment.Content);
-                result[i] = new FragmentInfo(encoded, isHighlight ? FragmentType.HighlightedText : FragmentType.Text);
+                result[i] = new FragmentInfo(fragment.Content, isHighlight ? FragmentType.HighlightedText : FragmentType.Text);
             }
             break;
         }
@@ -291,16 +287,16 @@ public static partial class Splitter
             if (match.Index > lastIndex)
             {
                 var unmatchedSegment = segment.Substring(lastIndex, match.Index - lastIndex);
-                tempFragments.Add(new FragmentInfo(WebUtility.HtmlEncode(unmatchedSegment), FragmentType.Text));
+                tempFragments.Add(new FragmentInfo(unmatchedSegment, FragmentType.Text));
             }
 
-            tempFragments.Add(new FragmentInfo(WebUtility.HtmlEncode(match.Value), FragmentType.HighlightedText));
+            tempFragments.Add(new FragmentInfo(match.Value, FragmentType.HighlightedText));
             lastIndex = match.Index + match.Length;
         }
 
         if (lastIndex > 0 && lastIndex < segment.Length)
         {
-            tempFragments.Add(new FragmentInfo(WebUtility.HtmlEncode(segment.Substring(lastIndex)), FragmentType.Text));
+            tempFragments.Add(new FragmentInfo(segment.Substring(lastIndex), FragmentType.Text));
         }
 
         return tempFragments;
@@ -344,7 +340,7 @@ public static partial class Splitter
 
     private static RegexOptions GetRegexOptions(bool caseSensitive)
     {
-        return caseSensitive ? RegexOptions.None : RegexOptions.IgnoreCase;
+        return caseSensitive ? RegexOptions.NonBacktracking : RegexOptions.IgnoreCase | RegexOptions.NonBacktracking;
     }
 
     private static StringComparison GetStringComparison(bool caseSensitive)

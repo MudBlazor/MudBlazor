@@ -277,7 +277,7 @@ namespace MudBlazor.UnitTests.Components
             var highlightedTextParam = Parameter(nameof(MudHighlighter.HighlightedText), "<World>");
             var markupParam = Parameter(nameof(MudHighlighter.Markup), true);
             var comp = Context.RenderComponent<MudHighlighter>(textParam, highlightedTextParam, markupParam);
-            comp.MarkupMatches("Hello <mark>&amp;lt;World&amp;gt;</mark>");
+            comp.MarkupMatches("Hello <mark>&lt;World&gt;</mark>");
         }
 
         [Test]
@@ -288,6 +288,16 @@ namespace MudBlazor.UnitTests.Components
             var markupParam = Parameter(nameof(MudHighlighter.Markup), true);
             var comp = Context.RenderComponent<MudHighlighter>(textParam, highlightedTextParam, markupParam);
             comp.MarkupMatches("<div class='foo'><mark>div</mark> content <mark>div</mark></div>");
+        }
+
+        [Test]
+        public void MudHighlighter_MarkupTrue_HtmlTag_ShouldNotHighlight()
+        {
+            var textParam = Parameter(nameof(MudHighlighter.Text), "Hello <i>Mud</i> World");
+            var highlightedTextParam = Parameter(nameof(MudHighlighter.HighlightedText), "<i>");
+            var markupParam = Parameter(nameof(MudHighlighter.Markup), true);
+            var comp = Context.RenderComponent<MudHighlighter>(textParam, highlightedTextParam, markupParam);
+            comp.MarkupMatches("Hello <i>Mud</i> World");
         }
 
         [Test]
@@ -359,7 +369,7 @@ namespace MudBlazor.UnitTests.Components
             var highlightedTextParam = Parameter(nameof(MudHighlighter.HighlightedText), ""); // Or null, effectively no highlight
             var markupParam = Parameter(nameof(MudHighlighter.Markup), true);
             var comp = Context.RenderComponent<MudHighlighter>(textParam, highlightedTextParam, markupParam);
-            comp.MarkupMatches("Hello &amp;lt;ambitious&amp;gt; world");
+            comp.MarkupMatches("Hello &lt;ambitious&gt; world");
         }
 
         [Test]
@@ -369,7 +379,7 @@ namespace MudBlazor.UnitTests.Components
             var highlightedTextParam = Parameter(nameof(MudHighlighter.HighlightedText), "world");
             var markupParam = Parameter(nameof(MudHighlighter.Markup), true);
             var comp = Context.RenderComponent<MudHighlighter>(textParam, highlightedTextParam, markupParam);
-            comp.MarkupMatches("Hello &amp;lt;ambitious&amp;gt; <mark>world</mark>");
+            comp.MarkupMatches("Hello &lt;ambitious&gt; <mark>world</mark>");
         }
 
         [Test]
@@ -379,7 +389,7 @@ namespace MudBlazor.UnitTests.Components
             var highlightedTextParam = Parameter(nameof(MudHighlighter.HighlightedText), "bit");
             var markupParam = Parameter(nameof(MudHighlighter.Markup), true);
             var comp = Context.RenderComponent<MudHighlighter>(textParam, highlightedTextParam, markupParam);
-            comp.MarkupMatches("Hello &amp;lt;am<mark>bit</mark>ious&amp;gt; world");
+            comp.MarkupMatches("Hello &lt;am<mark>bit</mark>ious&gt; world");
         }
     }
 }
