@@ -1,7 +1,7 @@
 ﻿using Bunit;
 using FluentAssertions;
-using NUnit.Framework;
 using MudBlazor.Components.Highlighter;
+using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
 using static MudBlazor.Components.Highlighter.Splitter;
 
