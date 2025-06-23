@@ -41,7 +41,7 @@ public static partial class Splitter
         }
 
         regex = BuildRegexPattern(highlightTerms, untilNextBoundary);
-        var splits = Regex.Split(text, regex, GetRegexOptions(caseSensitive));
+        var splits = Regex.Split(text, regex, GetRegexOptions(caseSensitive) | RegexOptions.NonBacktracking);
         var nonEmpty = splits.Where(s => !string.IsNullOrEmpty(s)).ToArray();
 
         return new Memory<string>(nonEmpty);
@@ -128,7 +128,7 @@ public static partial class Splitter
 
         regex = BuildRegexPattern(terms, untilNextBoundary);
 
-        return new Regex(regex, GetRegexOptions(caseSensitive) | RegexOptions.Singleline);
+        return new Regex(regex, GetRegexOptions(caseSensitive) | RegexOptions.Singleline | RegexOptions.NonBacktracking);
     }
 
     private static List<FragmentInfo> ProcessRawFragments(
@@ -340,7 +340,7 @@ public static partial class Splitter
 
     private static RegexOptions GetRegexOptions(bool caseSensitive)
     {
-        return caseSensitive ? RegexOptions.NonBacktracking : RegexOptions.IgnoreCase | RegexOptions.NonBacktracking;
+        return caseSensitive ? RegexOptions.None : RegexOptions.IgnoreCase;
     }
 
     private static StringComparison GetStringComparison(bool caseSensitive)
