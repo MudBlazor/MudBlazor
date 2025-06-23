@@ -8,8 +8,8 @@
 }
 
 <div @attributes="UserAttributes" id="@_elementId" class="mud-dialog-container @GetPosition()">
-    <MudOverlay Visible="true" OnClick="HandleBackgroundClickAsync" Class="@BackgroundClassname" DarkBackground="true" />
-    <div id="_@Id.ToString("N")" role="dialog" class="@Classname" style="@Style">
+    <MudOverlay Visible="true" OnClick="HandleBackgroundClickAsync" Class="@BackgroundClassname" DarkBackground="true" @onmouseup="OnMouseUp" />
+    <div @ref="_dialogContainerReference" id="_@Id.ToString("N")" role="dialog" class="@Classname" style="@Style" tabindex="-1">
         @if (!GetHideHeader())
         {
             <div class="@TitleClassname">

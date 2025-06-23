@@ -1,8 +1,11 @@
 ﻿using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
-using MudBlazor.UnitTests.TestComponents;
+using Microsoft.JSInterop;
+using Microsoft.JSInterop.Infrastructure;
+using Moq;
 using MudBlazor.UnitTests.TestComponents.Dialog;
 using NUnit.Framework;
 
@@ -1378,8 +1381,87 @@ namespace MudBlazor.UnitTests.Components
             // Assert the dialog is now hidden
             comp.Markup.Trim().Should().NotContain("mud-dialog");
         }
-    }
 
+        [Test]
+        public async Task HandleBackgroundClickAsync_Should_Call_RefocusDialogAsync_When_BackdropClick_Disabled()
+        {
+            // Arrange
+            IDialogReference dialogReference = null;
+
+            var jsRuntimeMock = new Mock<IJSRuntime>();
+
+            jsRuntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("Blazor._internal.domWrapper.focus", It.IsAny<object[]>()));
+
+            Context.Services.AddSingleton(jsRuntimeMock.Object);
+
+            var comp = Context.RenderComponent<MudDialogProvider>();
+            var service = Context.Services.GetRequiredService<IDialogService>();
+            var dialogOptions = new DialogOptions { BackdropClick = false, CloseOnEscapeKey = true };
+
+            //Act
+            await comp.InvokeAsync(async () => dialogReference = await service.ShowAsync<DialogOkCancel>("Test Dialog True", dialogOptions));
+
+            jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("Blazor._internal.domWrapper.focus",
+                It.Is<object[]>(args =>
+                    args.Length == 2 &&
+                    args[0] is ElementReference &&
+                    args[1] is bool)),
+                Times.AtMost(1)); // Focus should be called once when dialog is opened (FocusTrap)
+
+            comp.Find("div.mud-dialog-container").Should().NotBeNull(); // Dialog is open
+            comp.Find("div.mud-overlay").Click(); // Simulate a click on the backdrop
+
+            //Assert
+            comp.Find("div.mud-dialog-container").Should().NotBeNull(); // Dialog should still be open
+
+            jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("Blazor._internal.domWrapper.focus",
+                It.Is<object[]>(args =>
+                    args.Length == 2 &&
+                    args[0] is ElementReference &&
+                    args[1] is bool)),
+                Times.AtMost(2)); // Focus should be called once when dialog is opened and once when backdrop is clicked (refouus)
+        }
+
+        [Test]
+        public async Task HandleBackgroundClickAsync_Should_Call_OnBackdropClick_And_RefocusDialog_When_Delegate_Defined()
+        {
+            // Arrange
+            var jsRuntimeMock = new Mock<IJSRuntime>();
+
+            jsRuntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("Blazor._internal.domWrapper.focus", It.IsAny<object[]>()));
+
+            Context.Services.AddSingleton(jsRuntimeMock.Object);
+
+            var comp = Context.RenderComponent<MudDialogProvider>();
+
+            // Create a dialog component with OnBackdropClick delegate
+            var dialogComponent = Context.RenderComponent<DialogCloseOnEscapeTest>();
+
+            // Act
+            await dialogComponent.FindComponent<MudButton>().Find("button").ClickAsync(new MouseEventArgs()); // Open the dialog
+
+            jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("Blazor._internal.domWrapper.focus",
+                It.Is<object[]>(args =>
+                    args.Length == 2 &&
+                    args[0] is ElementReference &&
+                    args[1] is bool)),
+                Times.AtMost(1)); // Focus should be called once when dialog is opened
+
+            comp.Find("div.mud-dialog-container").Should().NotBeNull(); // Dialog is open
+
+            await comp.Find("div.mud-overlay").ClickAsync(new MouseEventArgs()); // Simulate a click on the backdrop
+
+            // Assert
+            comp.Find("div.mud-dialog-container").Should().NotBeNull(); // Dialog should still be open (not closed)
+
+            jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("Blazor._internal.domWrapper.focus",
+                It.Is<object[]>(args =>
+                    args.Length == 2 &&
+                    args[0] is ElementReference &&
+                    args[1] is bool)),
+                Times.AtMost(2)); // Focus should be called once when dialog opens and once for refocus after backdrop click
+        }
+    }
     internal class CustomDialogService : DialogService
     {
         public override IDialogReference CreateReference() => new CustomDialogReference(Guid.NewGuid(), this);
