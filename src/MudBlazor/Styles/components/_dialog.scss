@@ -74,6 +74,7 @@
   max-height: calc(100vh - var(--mud-appbar-height)); // keep as fallback
   max-height: calc(100dvh - var(--mud-appbar-height));
   overflow-y: auto;
+  outline-style: none;
 
   &.mud-dialog-rtl .mud-dialog-title .mud-button-close {
     right: unset;
