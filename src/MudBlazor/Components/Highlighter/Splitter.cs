@@ -10,6 +10,8 @@ public record FragmentInfo(string Content, FragmentType Type);
 
 public static partial class Splitter
 {
+    private static readonly TimeSpan _regexTimeout = TimeSpan.FromSeconds(5);
+
     private static readonly Regex _htmlTagRegex = HtmlTagMatcher();
 
     private static readonly Regex _tagParser = HtmlTagParser();
@@ -41,7 +43,7 @@ public static partial class Splitter
         }
 
         regex = BuildRegexPattern(highlightTerms, untilNextBoundary);
-        var splits = Regex.Split(text, regex, GetRegexOptions(caseSensitive) | RegexOptions.NonBacktracking);
+        var splits = Regex.Split(text, regex, GetRegexOptions(caseSensitive) | RegexOptions.NonBacktracking, _regexTimeout);
         var nonEmpty = splits.Where(s => !string.IsNullOrEmpty(s)).ToArray();
 
         return new Memory<string>(nonEmpty);
@@ -124,11 +126,11 @@ public static partial class Splitter
     {
         regex = string.Empty;
 
-        if (terms.Count == 0) return new Regex("^$", RegexOptions.NonBacktracking);
+        if (terms.Count == 0) return new Regex("^$", RegexOptions.NonBacktracking, _regexTimeout);
 
         regex = BuildRegexPattern(terms, untilNextBoundary);
 
-        return new Regex(regex, GetRegexOptions(caseSensitive) | RegexOptions.Singleline | RegexOptions.NonBacktracking);
+        return new Regex(regex, GetRegexOptions(caseSensitive) | RegexOptions.Singleline | RegexOptions.NonBacktracking, _regexTimeout);
     }
 
     private static List<FragmentInfo> ProcessRawFragments(
