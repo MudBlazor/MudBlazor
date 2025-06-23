@@ -267,11 +267,11 @@ namespace MudBlazor
 
         private async Task HandleKeyDown(KeyboardEventArgs e)
         {
-            if(Disabled)
+            if (Disabled)
             {
                 return;
             }
-            
+
             if (e.Key == "Enter" || e.Key == " ")
             {
                 await ToggleExpansionAsync();
