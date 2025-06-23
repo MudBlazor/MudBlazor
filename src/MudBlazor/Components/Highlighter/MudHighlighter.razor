@@ -6,32 +6,12 @@
 
 @if (Markup)
 {
-    if (_htmlAwareFragments != null) // Check if not null
+    if (_htmlAwareFragments != null)
     {
-        var sb = new StringBuilder();
-        foreach (var fragmentInfo in _htmlAwareFragments)
-        {
-            switch (fragmentInfo.Type)
-            {
-                case FragmentType.HighlightedText:
-                    sb.Append($"<mark class=\"{@Class}\" style=\"{@Style}\" >{@fragmentInfo.Content}</mark>");
-                    break;
-                case FragmentType.Markup:
-                    sb.Append(fragmentInfo.Content);
-                    break;
-                case FragmentType.Text:
-                default:
-                    sb.Append(@fragmentInfo.Content);
-                    break;
-            }
-        }
-
-        @ToRenderFragment(sb.ToString());
+        @CreateFragmentContent();
     }
-    else if (!string.IsNullOrEmpty(Text)) // Fallback if _htmlAwareFragments is null but Text exists
+    else if (!string.IsNullOrEmpty(Text))
     {
-        // This case should ideally not be hit if OnParametersSet correctly initializes _htmlAwareFragments.
-        // However, as a safeguard, render Text as MarkupString if Markup is true.
         @((MarkupString)Text)
     }
 }
@@ -49,8 +29,50 @@ else if (_fragments.Length > 0)
         }
     }
 }
-else if (!string.IsNullOrEmpty(Text)) // Fallback for non-Markup or if _fragments is empty
+else if (!string.IsNullOrEmpty(Text))
 {
-    // If Markup is false and _fragments is empty, or if Text is set but highlighting results in no fragments.
     @Text
+}
+
+@code {
+    private RenderFragment CreateFragmentContent() => builder =>
+    {
+        int sequence = 0;
+    
+        foreach (var fragmentInfo in _htmlAwareFragments)
+        {
+            switch (fragmentInfo.Type)
+            {
+                case FragmentType.HighlightedText:
+                    if (IsMatch(fragmentInfo.Content))
+                    {
+                        builder.OpenElement(sequence++, "mark");
+
+                        if (!string.IsNullOrWhiteSpace(Class))
+                            builder.AddAttribute(sequence++, "class", Class);
+
+                        if (!string.IsNullOrWhiteSpace(Style))
+                            builder.AddAttribute(sequence++, "style", Style);
+        
+                        if (UserAttributes != null || UserAttributes.Count != 0)
+                            builder.AddMultipleAttributes(sequence++, UserAttributes);
+
+                        builder.AddContent(sequence++, fragmentInfo.Content);
+                        builder.CloseElement();
+                    }
+                    else
+                    {
+                        builder.AddContent(sequence++, fragmentInfo.Content);
+                    }
+                    break;
+                case FragmentType.Markup:
+                    builder.AddMarkupContent(sequence++, fragmentInfo.Content);
+                    break;
+                case FragmentType.Text:
+                default:
+                    builder.AddContent(sequence++, fragmentInfo.Content);
+                    break;
+            }
+        }
+    };
 }

@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 
 #nullable enable
 namespace MudBlazor.Components.Highlighter;
@@ -12,30 +8,24 @@ namespace MudBlazor.Components.Highlighter;
 public enum FragmentType { Text, HighlightedText, Markup }
 public record FragmentInfo(string Content, FragmentType Type);
 
-public static class Splitter
+public static partial class Splitter
 {
-    private static readonly Regex HtmlTagRegex = new Regex(@"(<\s*/?\s*\w+[^>]*?/?>)", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
+    private static readonly Regex _htmlTagRegex = HtmlTagMatcher();
 
-    private static readonly Regex TagParser = new Regex(@"^<\s*(/)?\s*(\w+)[^>]*?(\/)?\s*>$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private static readonly Regex _tagParser = HtmlTagParser();
 
-    private static readonly HashSet<string> VoidElements = new(StringComparer.OrdinalIgnoreCase)
+    private static readonly HashSet<string> _voidElements = new(StringComparer.OrdinalIgnoreCase)
     {
         "area", "base", "br", "col", "embed", "hr", "img",
         "input", "link", "meta", "source", "track", "wbr"
     };
 
     private const string NextBoundary = ".*?\\b";
-    private static StringBuilder? s_stringBuilderCached;
-    private static List<string> _highlightTerms = [];
-    private static Regex _highlightRegex = new("^$");
+    private static StringBuilder? _stringBuilderCached;
 
-    public static Memory<string> GetFragments(
-    string? text,
-    string? highlightedText,
-    IEnumerable<string>? highlightedTexts,
-    out string regex,
-    bool caseSensitive = false,
-    bool untilNextBoundary = false)
+    public static Memory<string> GetFragments(string? text, string? highlightedText,
+                                              IEnumerable<string>? highlightedTexts, out string regex,
+                                              bool caseSensitive = false, bool untilNextBoundary = false)
     {
         if (string.IsNullOrEmpty(text))
         {
@@ -43,269 +33,330 @@ public static class Splitter
             return Memory<string>.Empty;
         }
 
-        var builder = Interlocked.Exchange(ref s_stringBuilderCached, null) ?? new StringBuilder();
-        builder.Append("((?:");
-
-        bool hasPattern = false;
-        AppendIfNotEmpty(highlightedText);
-
-        if (highlightedTexts != null)
-        {
-            foreach (var ht in highlightedTexts.Where(s => !string.IsNullOrEmpty(s)))
-            {
-                if (hasPattern) builder.Append(")|(?:");
-                AppendPattern(ht);
-            }
-        }
-
-        if (hasPattern)
-        {
-            builder.Append("))");
-        }
-        else
+        var highlightTerms = BuildHighlightTermsList(highlightedText, highlightedTexts);
+        if (highlightTerms.Count == 0)
         {
             regex = string.Empty;
-            builder.Clear();
-            s_stringBuilderCached = builder;
             return new[] { text };
         }
 
-        regex = builder.ToString();
-        builder.Clear();
-        s_stringBuilderCached = builder;
-
-        var splits = Regex.Split(text, regex, caseSensitive ? RegexOptions.None : RegexOptions.IgnoreCase);
+        regex = BuildRegexPattern(highlightTerms, untilNextBoundary);
+        var splits = Regex.Split(text, regex, GetRegexOptions(caseSensitive));
         var nonEmpty = splits.Where(s => !string.IsNullOrEmpty(s)).ToArray();
+
         return new Memory<string>(nonEmpty);
-
-        void AppendIfNotEmpty(string? s)
-        {
-            if (!string.IsNullOrEmpty(s))
-            {
-                AppendPattern(s);
-            }
-        }
-
-        void AppendPattern(string s)
-        {
-            hasPattern = true;
-            builder.Append(Regex.Escape(s));
-            if (untilNextBoundary) builder.Append(NextBoundary);
-        }
     }
 
-    public static List<FragmentInfo> GetHtmlAwareFragments(
-        string? text,
-        string? highlightedText,
-        IEnumerable<string>? highlightedTexts,
-        bool caseSensitive,
-        bool untilNextBoundary)
+    public static List<FragmentInfo> GetHtmlAwareFragments(string? text, string? highlightedText,
+                                                           IEnumerable<string>? highlightedTexts, out string regex,
+                                                           bool caseSensitive, bool untilNextBoundary)
     {
-        var results = new List<FragmentInfo>();
-        if (string.IsNullOrEmpty(text)) return results;
+        regex = string.Empty;
 
-        _highlightTerms = BuildHighlightTerms(highlightedText, highlightedTexts);
-        _highlightRegex = BuildHighlightRegex(_highlightTerms, caseSensitive, untilNextBoundary);
+        if (string.IsNullOrEmpty(text))
+            return [];
 
-        var stringComparison = caseSensitive ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
+        var highlightTerms = BuildHighlightTermsList(highlightedText, highlightedTexts);
+        var highlightRegex = BuildHighlightRegex(highlightTerms, caseSensitive, untilNextBoundary, out regex);
+        var stringComparison = GetStringComparison(caseSensitive);
 
-        var rawFragments = HtmlTagRegex.Split(text);
-        var tempFragments = new List<FragmentInfo>();
+        var rawFragments = _htmlTagRegex.Split(text);
+        var tempFragments = ProcessRawFragments(rawFragments, highlightTerms, highlightRegex, stringComparison);
 
-        foreach (var segment in rawFragments)
-        {
-            if (string.IsNullOrEmpty(segment)) continue;
-
-            if (_highlightTerms.Any(term => string.Equals(segment, term, stringComparison)))
-            {
-                tempFragments.Add(new FragmentInfo(segment, FragmentType.HighlightedText));
-            }
-            else if (HtmlTagRegex.IsMatch(segment))
-            {
-                tempFragments.Add(new FragmentInfo(segment, FragmentType.Markup));
-            }
-            else
-            {
-                int last = 0;
-                foreach (Match match in _highlightRegex.Matches(segment))
-                {
-                    if (match.Index > last)
-                    {
-                        tempFragments.Add(new FragmentInfo(segment.Substring(last, match.Index - last), FragmentType.Text));
-                    }
-                    tempFragments.Add(new FragmentInfo(match.Value, FragmentType.HighlightedText));
-                    last = match.Index + match.Length;
-                }
-                if (last < segment.Length)
-                {
-                    tempFragments.Add(new FragmentInfo(segment.Substring(last), FragmentType.Text));
-                }
-            }
-        }
-
-        return SanitizeFragments(tempFragments);
+        return SanitizeFragments(tempFragments, highlightTerms, highlightRegex);
     }
 
-    private static List<string> BuildHighlightTerms(string? single, IEnumerable<string>? multiple)
+    private static List<string> BuildHighlightTermsList(string? single, IEnumerable<string>? multiple)
     {
-        var list = new List<string>();
-        if (!string.IsNullOrEmpty(single))
-        {
-            list.Add(single);
-            list.Add(WebUtility.HtmlEncode(single));
-        }
+        var terms = new List<string>();
+
+        AddTermIfNotEmpty(terms, single);
 
         if (multiple != null)
         {
-            list.AddRange(multiple.Where(str => !string.IsNullOrEmpty(str)));
-            list.AddRange(multiple.Where(str => !string.IsNullOrEmpty(WebUtility.UrlEncode(str))));
+            foreach (var term in multiple.Where(s => !string.IsNullOrEmpty(s)))
+            {
+                AddTermIfNotEmpty(terms, term);
+            }
         }
 
-        return list;
-    }
+        return terms;
 
-    private static Regex BuildHighlightRegex(List<string> terms, bool caseSensitive, bool untilNextBoundary)
-    {
-        if (!terms.Any()) return new Regex("^$");
-
-        var builder = new StringBuilder();
-        for (int i = 0; i < terms.Count; i++)
+        static void AddTermIfNotEmpty(List<string> terms, string? term)
         {
-            builder.Append("(").Append(Regex.Escape(terms[i]));
-            if (untilNextBoundary) builder.Append(NextBoundary);
-            builder.Append(")");
-            if (i < terms.Count - 1) builder.Append("|");
-        }
+            if (string.IsNullOrEmpty(term)) return;
 
-        return new Regex(builder.ToString(),
-            (caseSensitive ? RegexOptions.None : RegexOptions.IgnoreCase) | RegexOptions.Singleline);
+            terms.Add(term);
+
+            var encoded = WebUtility.HtmlEncode(term);
+            if (encoded != term)
+            {
+                terms.Add(encoded);
+            }
+        }
     }
 
-    private static List<FragmentInfo> SanitizeFragments(List<FragmentInfo> fragments)
+    private static string BuildRegexPattern(List<string> terms, bool untilNextBoundary)
+    {
+        var builder = GetStringBuilder();
+
+        try
+        {
+            builder.Append("((?:");
+
+            for (var i = 0; i < terms.Count; i++)
+            {
+                if (i > 0) builder.Append(")|(?:");
+                builder.Append(Regex.Escape(terms[i]));
+                if (untilNextBoundary) builder.Append(NextBoundary);
+            }
+
+            builder.Append("))");
+            return builder.ToString();
+        }
+        finally
+        {
+            ReturnStringBuilder(builder);
+        }
+    }
+
+    private static Regex BuildHighlightRegex(List<string> terms, bool caseSensitive, bool untilNextBoundary, out string regex)
+    {
+        regex = string.Empty;
+
+        if (terms.Count == 0) return new Regex("^$");
+
+        regex = BuildRegexPattern(terms, untilNextBoundary);
+
+        return new Regex(regex, GetRegexOptions(caseSensitive) | RegexOptions.Singleline);
+    }
+
+    private static List<FragmentInfo> ProcessRawFragments(
+        string[] rawFragments,
+        List<string> highlightTerms,
+        Regex highlightRegex,
+        StringComparison stringComparison)
+    {
+        var tempFragments = new List<FragmentInfo>();
+
+        foreach (var fragment in rawFragments.Where(s => !string.IsNullOrEmpty(s)))
+        {
+            if (IsDirectMatch(fragment, highlightTerms, stringComparison))
+            {
+                var text = _htmlTagRegex.IsMatch(fragment)
+                                ? WebUtility.HtmlEncode(fragment)
+                                : fragment;
+                tempFragments.Add(new FragmentInfo(text, FragmentType.HighlightedText));
+            }
+            else if (_htmlTagRegex.IsMatch(fragment))
+            {
+                tempFragments.Add(new FragmentInfo(fragment, FragmentType.Markup));
+            }
+            else
+            {
+                tempFragments.AddRange(ProcessTextSegment(fragment, highlightRegex));
+            }
+        }
+
+        return tempFragments;
+    }
+
+    private static bool IsDirectMatch(string segment, List<string> highlightTerms, StringComparison comparison)
+    {
+        return highlightTerms.Any(term => string.Equals(segment, term, comparison));
+    }
+
+    private static IEnumerable<FragmentInfo> ProcessTextSegment(string segment, Regex highlightRegex)
+    {
+        var fragments = new List<FragmentInfo>();
+        var lastIndex = 0;
+
+        foreach (Match match in highlightRegex.Matches(segment))
+        {
+            if (match.Index > lastIndex)
+            {
+                var textPart = segment.Substring(lastIndex, match.Index - lastIndex);
+                fragments.Add(new FragmentInfo(textPart, FragmentType.Text));
+            }
+
+            fragments.Add(new FragmentInfo(match.Value, FragmentType.HighlightedText));
+            lastIndex = match.Index + match.Length;
+        }
+
+        if (lastIndex < segment.Length)
+        {
+            fragments.Add(new FragmentInfo(segment.Substring(lastIndex), FragmentType.Text));
+        }
+
+        return fragments;
+    }
+
+    private static List<FragmentInfo> SanitizeFragments(
+        List<FragmentInfo> fragments,
+        List<string> highlightTerms,
+        Regex highlightRegex)
     {
         var result = new List<FragmentInfo>();
         var tagStack = new Stack<string>();
 
-        foreach (var frag in fragments)
+        foreach (var fragment in fragments)
         {
-            if (frag.Type != FragmentType.Markup)
+            if (fragment.Type != FragmentType.Markup)
             {
-                result.Add(frag);
+                result.Add(fragment);
                 continue;
             }
 
-            var tag = frag.Content;
-            var match = TagParser.Match(tag);
-
-            if (!match.Success)
-            {
-                result.Add(HtmlEncodeFragment(frag));
-                continue;
-            }
-
-            bool isClosing = match.Groups[1].Success;
-            var tagName = match.Groups[2].Value;
-            bool isSelfClosing = match.Groups[3].Success || VoidElements.Contains(tagName);
-
-            if (isSelfClosing)
-            {
-                result.Add(frag);
-            }
-            else if (isClosing)
-            {
-                if (tagStack.Count > 0 && string.Equals(tagStack.Peek(), tagName, StringComparison.OrdinalIgnoreCase))
-                {
-                    tagStack.Pop();
-                    result.Add(frag);
-                }
-                else
-                {
-                    result.Add(HtmlEncodeFragment(frag));
-                }
-            }
-            else // opening
-            {
-                tagStack.Push(tagName);
-                result.Add(frag);
-            }
+            ProcessMarkupFragment(fragment, result, tagStack);
         }
 
-        // Reclassify any unmatched opening tags left on the stack
+        ProcessUnmatchedTags(result, tagStack, highlightTerms, highlightRegex);
+        return result;
+    }
+
+    private static void ProcessMarkupFragment(FragmentInfo fragment, List<FragmentInfo> result, Stack<string> tagStack)
+    {
+        if (!TryParseTag(fragment.Content, out var tagInfo))
+        {
+            result.Add(HtmlEncodeFragment(fragment));
+            return;
+        }
+
+        if (tagInfo.IsSelfClosing)
+        {
+            result.Add(fragment);
+        }
+        else if (tagInfo.IsClosing)
+        {
+            if (tagStack.Count > 0 && string.Equals(tagStack.Peek(), tagInfo.Name, StringComparison.OrdinalIgnoreCase))
+            {
+                tagStack.Pop();
+                result.Add(fragment);
+            }
+            else
+            {
+                result.Add(HtmlEncodeFragment(fragment));
+            }
+        }
+        else // opening tag
+        {
+            tagStack.Push(tagInfo.Name);
+            result.Add(fragment);
+        }
+    }
+
+    private static void ProcessUnmatchedTags(List<FragmentInfo> result, Stack<string> tagStack, List<string> highlightTerms, Regex highlightRegex)
+    {
         while (tagStack.Count > 0)
         {
-            var unmatchedTag = tagStack.Pop(); // e.g., "b", "i"
+            var unmatchedTag = tagStack.Pop();
+            ProcessUnmatchedTag(result, unmatchedTag, highlightTerms, highlightRegex);
+        }
+    }
 
-            // Look backwards for the last matching opening tag fragment
-            for (int i = result.Count - 1; i >= 0; i--)
+    private static void ProcessUnmatchedTag(List<FragmentInfo> result, string unmatchedTag, List<string> highlightTerms, Regex highlightRegex)
+    {
+        for (var i = result.Count - 1; i >= 0; i--)
+        {
+            var fragment = result[i];
+
+            if (fragment.Type != FragmentType.Markup) continue;
+            if (!TryParseTag(fragment.Content, out var tagInfo)) continue;
+            if (tagInfo.IsClosing || !string.Equals(tagInfo.Name, unmatchedTag, StringComparison.OrdinalIgnoreCase)) continue;
+
+            var processedFragments = ProcessTextSegmentForUnmatched(fragment.Content, highlightRegex);
+
+            if (processedFragments.Count > 0)
             {
-                var frag = result[i];
-                if (frag.Type == FragmentType.Markup && TryGetTagName(frag.Content, out var tagName, out bool isClosing, out bool isSelfClosing))
-                {
-                    if (!isClosing && string.Equals(tagName, unmatchedTag, StringComparison.OrdinalIgnoreCase))
-                    {
-                        int last = 0;
-                        var segment = frag.Content;
-                        var tempFragments = new List<FragmentInfo>();
-
-                        foreach (Match match in _highlightRegex.Matches(segment))
-                        {
-                            if (match.Index > last)
-                            {
-                                var unmatchedSegment = segment.Substring(last, match.Index - last);
-                                tempFragments.Add(new FragmentInfo(WebUtility.HtmlEncode(unmatchedSegment), FragmentType.Text));
-                            }
-                            tempFragments.Add(new FragmentInfo(WebUtility.HtmlEncode(match.Value), FragmentType.HighlightedText));
-                            last = match.Index + match.Length;
-                        }
-
-                        if (last == 0 && segment.Length > 0)
-                        {
-                            // This tag was unmatched — reclassify it
-                            var encoded = WebUtility.HtmlEncode(frag.Content);
-                            var isHighlight = _highlightTerms.Contains(frag.Content);
-
-                            result[i] = new FragmentInfo(encoded, isHighlight ? FragmentType.HighlightedText : FragmentType.Text);
-                            break;
-                        }
-                        else if (last < segment.Length)
-                        {
-                            tempFragments.Add(new FragmentInfo(segment.Substring(last), FragmentType.Text));
-                        }
-
-                        result.RemoveAt(i);
-                        result.InsertRange(i, tempFragments);
-                        break;
-                    }
-                }
+                result.RemoveAt(i);
+                result.InsertRange(i, processedFragments);
             }
+            else
+            {
+                var encoded = WebUtility.HtmlEncode(fragment.Content);
+                var isHighlight = highlightTerms.Contains(fragment.Content);
+                result[i] = new FragmentInfo(encoded, isHighlight ? FragmentType.HighlightedText : FragmentType.Text);
+            }
+            break;
+        }
+    }
+
+    private static List<FragmentInfo> ProcessTextSegmentForUnmatched(string segment, Regex highlightRegex)
+    {
+        var tempFragments = new List<FragmentInfo>();
+        var lastIndex = 0;
+
+        foreach (Match match in highlightRegex.Matches(segment))
+        {
+            if (match.Index > lastIndex)
+            {
+                var unmatchedSegment = segment.Substring(lastIndex, match.Index - lastIndex);
+                tempFragments.Add(new FragmentInfo(WebUtility.HtmlEncode(unmatchedSegment), FragmentType.Text));
+            }
+
+            tempFragments.Add(new FragmentInfo(WebUtility.HtmlEncode(match.Value), FragmentType.HighlightedText));
+            lastIndex = match.Index + match.Length;
         }
 
-        return result;
+        if (lastIndex > 0 && lastIndex < segment.Length)
+        {
+            tempFragments.Add(new FragmentInfo(WebUtility.HtmlEncode(segment.Substring(lastIndex)), FragmentType.Text));
+        }
+
+        return tempFragments;
     }
 
     private static FragmentInfo HtmlEncodeFragment(FragmentInfo original)
     {
-        var encoded = System.Net.WebUtility.HtmlEncode(original.Content);
-        return new FragmentInfo(encoded, original.Type == FragmentType.HighlightedText ? FragmentType.HighlightedText : FragmentType.Text);
+        var encoded = WebUtility.HtmlEncode(original.Content);
+        var type = original.Type == FragmentType.HighlightedText ? FragmentType.HighlightedText : FragmentType.Text;
+        return new FragmentInfo(encoded, type);
     }
 
-    private static bool TryGetTagName(string markup, out string tagName, out bool isClosing, out bool isSelfClosing)
+    private static bool TryParseTag(string markup, out TagInfo tagInfo)
     {
-        var match = TagParser.Match(markup);
+        var match = _tagParser.Match(markup);
 
         if (match.Success)
         {
-            isClosing = match.Groups[1].Success;
-            tagName = match.Groups[2].Value;
-            isSelfClosing = match.Groups[3].Success || VoidElements.Contains(tagName);
+            var isClosing = match.Groups[1].Success;
+            var tagName = match.Groups[2].Value;
+            var isSelfClosing = match.Groups[3].Success || _voidElements.Contains(tagName);
 
+            tagInfo = new TagInfo(tagName, isClosing, isSelfClosing);
             return true;
         }
 
-        tagName = string.Empty;
-        isClosing = false;
-        isSelfClosing = false;
-
+        tagInfo = default;
         return false;
     }
+
+    private static StringBuilder GetStringBuilder()
+    {
+        return Interlocked.Exchange(ref _stringBuilderCached, null) ?? new StringBuilder();
+    }
+
+    private static void ReturnStringBuilder(StringBuilder builder)
+    {
+        builder.Clear();
+        _stringBuilderCached = builder;
+    }
+
+    private static RegexOptions GetRegexOptions(bool caseSensitive)
+    {
+        return caseSensitive ? RegexOptions.None : RegexOptions.IgnoreCase;
+    }
+
+    private static StringComparison GetStringComparison(bool caseSensitive)
+    {
+        return caseSensitive ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
+    }
+
+    private readonly record struct TagInfo(string Name, bool IsClosing, bool IsSelfClosing);
+
+    [GeneratedRegex(@"(<\s*/?\s*\w+[^>]*?/?>)", RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.Singleline, "en-US")]
+    private static partial Regex HtmlTagMatcher();
+
+    [GeneratedRegex(@"^<\s*(/)?\s*(\w+)[^>]*?(\/)?\s*>$", RegexOptions.IgnoreCase | RegexOptions.Compiled, "en-US")]
+    private static partial Regex HtmlTagParser();
 }
