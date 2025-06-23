@@ -4,6 +4,12 @@
 
 namespace MudBlazor.Docs.Models
 {
+    /// <summary>
+    /// The content for the team page
+    /// </summary>
+    /// <remarks>
+    /// Data is taken from GitHub and updated manually. In the future this could be automated.
+    /// </remarks>
     public class TeamMemberData
     {
         public static TeamMember[] GetCoreTeam() =>
