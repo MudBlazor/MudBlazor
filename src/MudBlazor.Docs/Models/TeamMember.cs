@@ -12,5 +12,6 @@ namespace MudBlazor.Docs.Models
         public bool GitHubSponsor { get; set; }
         public string Avatar { get; set; }
         public string LinkedIn { get; set; }
+        public string Bio { get; set; }
     }
 }
