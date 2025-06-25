@@ -4,6 +4,7 @@
 
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.Mask;
 using NUnit.Framework;
@@ -1067,6 +1068,29 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => tf.Value.Should().Be("a"));
             Context.JSInterop.VerifyInvoke("mudWindow.copyToClipboard", 2);
             Context.JSInterop.Invocations["mudWindow.copyToClipboard"][1].Arguments.Should().BeEquivalentTo(["c"]);
+        }
+
+        [Test]
+        public async Task Mask_Autofill_ShouldUpdateValueAndText_WhenAutofilled()
+        {
+            // Arrange
+            var mask = new PatternMask("(000) 000-0000");
+            var autofillValue = "(123) 456-7890";
+
+            var comp = Context.RenderComponent<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Mask, mask)
+                .Add(p => p.DebounceInterval, 0)
+            );
+
+            var textField = comp.Instance;
+            var inputElement = comp.Find("input");
+
+            // Act
+            // Simulate the 'oninput' event that occurs during browser autofill
+            await inputElement.InputAsync(new ChangeEventArgs() { Value = autofillValue });
+
+            // Assert
+            textField.Text.Should().Be(autofillValue);
         }
     }
 }

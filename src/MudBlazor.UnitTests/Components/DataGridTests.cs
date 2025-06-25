@@ -2233,6 +2233,285 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void FilterDefinitionDateOnlyTest()
+        {
+            var comp = Context.RenderComponent<DataGridDateOnlyFilterTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridDateOnlyFilterTest.Model>>();
+            var dateColumn = dataGrid.Instance.GetColumnByPropertyName("HiredOn");
+            var testDate = new DateOnly(2020, 3, 10);
+
+            #region FilterOperator.DateOnly.Is
+
+            var filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateOnly.Is,
+                Value = testDate
+            };
+            var func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 56, testDate)).Should().BeTrue();
+            func.Invoke(new("Joe", 32, null)).Should().BeFalse();
+            func.Invoke(new("Ira", 27, new DateOnly(2011, 1, 2))).Should().BeFalse();
+
+            // null value
+            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateOnly.Is,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 56, testDate)).Should().BeTrue();
+            func.Invoke(new("Joe", 32, null)).Should().BeTrue();
+
+            #endregion
+
+            #region FilterOperator.DateOnly.IsNot
+
+            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateOnly.IsNot,
+                Value = testDate
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 56, testDate)).Should().BeFalse();
+            func.Invoke(new("Joe", 32, null)).Should().BeTrue();
+            func.Invoke(new("Ira", 27, new DateOnly(2011, 1, 2))).Should().BeTrue();
+
+            // null value
+            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateOnly.IsNot,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 56, testDate)).Should().BeTrue();
+            func.Invoke(new("Joe", 32, null)).Should().BeTrue();
+
+            #endregion
+
+            #region FilterOperator.DateOnly.After
+
+            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateOnly.After,
+                Value = testDate
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 56, testDate)).Should().BeFalse();
+            func.Invoke(new("Joe", 32, null)).Should().BeFalse();
+            func.Invoke(new("John", 32, new DateOnly(2022, 6, 15))).Should().BeTrue();
+
+            // null value
+            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateOnly.After,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 56, testDate)).Should().BeTrue();
+            func.Invoke(new("Joe", 32, null)).Should().BeTrue();
+
+            #endregion
+
+            #region FilterOperator.DateOnly.OnOrAfter
+
+            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateOnly.OnOrAfter,
+                Value = testDate
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 56, testDate)).Should().BeTrue();
+            func.Invoke(new("Joe", 32, null)).Should().BeFalse();
+            func.Invoke(new("John", 32, new DateOnly(2022, 6, 15))).Should().BeTrue();
+
+            // null value
+            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateOnly.OnOrAfter,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 56, testDate)).Should().BeTrue();
+            func.Invoke(new("Joe", 32, null)).Should().BeTrue();
+
+            #endregion
+
+            #region FilterOperator.DateOnly.Before
+
+            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateOnly.Before,
+                Value = testDate
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 56, testDate)).Should().BeFalse();
+            func.Invoke(new("Joe", 32, null)).Should().BeFalse();
+            func.Invoke(new("Ira", 27, new DateOnly(2011, 1, 2))).Should().BeTrue();
+
+            // null value
+            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateOnly.Before,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 56, testDate)).Should().BeTrue();
+            func.Invoke(new("Joe", 32, null)).Should().BeTrue();
+
+            #endregion
+
+            #region FilterOperator.DateOnly.OnOrBefore
+
+            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateOnly.OnOrBefore,
+                Value = testDate
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 56, testDate)).Should().BeTrue();
+            func.Invoke(new("Joe", 32, null)).Should().BeFalse();
+            func.Invoke(new("Ira", 27, new DateOnly(2011, 1, 2))).Should().BeTrue();
+
+            // null value
+            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateOnly.OnOrBefore,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 56, testDate)).Should().BeTrue();
+            func.Invoke(new("Joe", 32, null)).Should().BeTrue();
+
+            #endregion
+
+            #region FilterOperator.DateOnly.Empty
+
+            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateOnly.Empty,
+                Value = testDate
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 56, testDate)).Should().BeFalse();
+            func.Invoke(new("Joe", 32, null)).Should().BeTrue();
+            func.Invoke(new("Ira", 27, new DateOnly(2011, 1, 2))).Should().BeFalse();
+
+            // null value
+            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateOnly.Empty,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 56, testDate)).Should().BeFalse();
+            func.Invoke(new("Joe", 32, null)).Should().BeTrue();
+
+            #endregion
+
+            #region FilterOperator.DateOnly.NotEmpty
+
+            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateOnly.NotEmpty,
+                Value = testDate
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 56, testDate)).Should().BeTrue();
+            func.Invoke(new("Joe", 32, null)).Should().BeFalse();
+            func.Invoke(new("Ira", 27, new DateOnly(2011, 1, 2))).Should().BeTrue();
+
+            // null value
+            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = FilterOperator.DateOnly.NotEmpty,
+                Value = null
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 56, testDate)).Should().BeTrue();
+            func.Invoke(new("Joe", 32, null)).Should().BeFalse();
+
+            #endregion
+
+            // null operator
+            filterDefinition = new FilterDefinition<DataGridDateOnlyFilterTest.Model>
+            {
+                Column = dateColumn,
+                Operator = null,
+                Value = testDate
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 56, testDate)).Should().BeTrue();
+            func.Invoke(new("Joe", 32, null)).Should().BeTrue();
+        }
+
+        [Test]
         public void FilterDefinitionNumberTest()
         {
             var comp = Context.RenderComponent<DataGridFiltersTest>();
@@ -2508,6 +2787,9 @@ namespace MudBlazor.UnitTests.Components
             // check the number of filters displayed in the filters panel is 1
             comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(1);
 
+            // Wait for the filter panel to render properly
+            comp.WaitForState(() => comp.FindAll(".filter-operator").Count > 0, timeout: TimeSpan.FromSeconds(5));
+
             await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
 
             //set operator to CONTAINS
@@ -2520,6 +2802,9 @@ namespace MudBlazor.UnitTests.Components
 
             //set operator to NOT CONTAINS
             FilterButton().Click();
+
+            // Wait for the filter panel to render properly
+            comp.WaitForState(() => comp.FindAll(".filter-operator").Count > 0, timeout: TimeSpan.FromSeconds(5));
 
             await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
 
