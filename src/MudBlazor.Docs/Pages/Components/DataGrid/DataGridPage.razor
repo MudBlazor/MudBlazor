@@ -212,6 +212,18 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Advanced Row Selection">
+                <Description>
+                    Row selection can be controlled on an per-row basis by using the <CodeInline>Disabled</CodeInline> parameter on the <CodeInline>SelectColumn</CodeInline>.
+                    In this example, rows 5 and 10 are disabled based on the function provided.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(DataGridSelectionExample)" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridSelectionExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Row Detail View">
                 <Description>
                     The <CodeInline>&lt;MudDataGrid></CodeInline> allows you to create hierarchical layouts. To do that the <CodeInline>HierarchyColumn</CodeInline> has to be added in the <CodeInline>Columns</CodeInline> definitions.
@@ -364,6 +376,7 @@
                 <DataGridColumReorderingExample />
             </SectionContent>
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader Title="Columns Panel">
                 <Description>

@@ -5,6 +5,7 @@
 #pragma warning disable BL0005 // Set parameter outside component
 
 using System.Globalization;
+using System.Linq.Expressions;
 using System.Reflection;
 using AngleSharp.Css.Dom;
 using AngleSharp.Dom;
@@ -603,10 +604,6 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(async () => await dataGrid.Instance.SetSelectedItemAsync(false, secondItem));
             dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0);
             dataGrid.Instance.GetState(x => x.SelectedItem).Should().BeNull();
-
-            // nothing should happen as the "select all" shouldn't do anything in single selection mode
-            dataGrid.FindAll("input")[0].Change(true);
-            dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0);
         }
 
         [Test]
@@ -4935,6 +4932,223 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance._openHierarchies.Count.Should().Be(1);
 
             dataGrid.Instance._openHierarchies.First().Should().Be(item);
+        }
+
+        public class TestDataItem
+        {
+            public int Id { get; set; }
+            public string Name { get; set; }
+            public bool ShouldBeDisabled { get; set; }
+        }
+
+        private static RenderFragment SelectColumnWithFunc => builder =>
+        {
+            builder.OpenComponent<SelectColumn<TestDataItem>>(0);
+            builder.AddAttribute(1, nameof(SelectColumn<TestDataItem>.Disabled), (Func<TestDataItem, bool>)(item => item.ShouldBeDisabled));
+            builder.CloseComponent();
+            builder.OpenComponent<PropertyColumn<TestDataItem, int>>(2);
+            builder.AddAttribute(3, nameof(PropertyColumn<TestDataItem, int>.Property), (Expression<Func<TestDataItem, int>>)(x => x.Id));
+            builder.CloseComponent();
+        };
+
+        private static RenderFragment SelectColumnNoFunc => builder =>
+        {
+            builder.OpenComponent<SelectColumn<TestDataItem>>(0);
+            builder.CloseComponent();
+            builder.OpenComponent<PropertyColumn<TestDataItem, int>>(1);
+            builder.AddAttribute(2, nameof(PropertyColumn<TestDataItem, int>.Property), (Expression<Func<TestDataItem, int>>)(x => x.Id));
+            builder.CloseComponent();
+        };
+
+        [Test]
+        public void SelectColumn_RowCheckbox_ShouldBeDisabled_WhenDisabledFuncReturnsTrue()
+        {
+            var items = new List<TestDataItem> { new() { Id = 1, Name = "Item 1", ShouldBeDisabled = true } };
+
+            var comp = Context.RenderComponent<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.MultiSelection, true)
+                .Add(p => p.Columns, SelectColumnWithFunc)
+            );
+
+            // Find the checkbox input element for the row
+            var checkbox = comp.Find("td.mud-table-cell .mud-checkbox input");
+            checkbox.Should().NotBeNull();
+            checkbox.HasAttribute("disabled").Should().BeTrue();
+        }
+
+        [Test]
+        public void SelectColumn_RowCheckbox_ShouldBeEnabled_WhenDisabledFuncReturnsFalse()
+        {
+            var items = new List<TestDataItem> { new() { Id = 1, Name = "Item 1", ShouldBeDisabled = false } };
+
+            var comp = Context.RenderComponent<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.Columns, SelectColumnWithFunc)
+            );
+
+            var checkbox = comp.Find("td.mud-table-cell .mud-checkbox input");
+            checkbox.Should().NotBeNull();
+            checkbox.HasAttribute("disabled").Should().BeFalse();
+        }
+
+        [Test]
+        public void SelectColumn_RowCheckbox_ShouldBeEnabled_WhenNoDisabledFuncIsProvided()
+        {
+            var items = new List<TestDataItem> { new() { Id = 1, Name = "Item 1" } };
+
+            var comp = Context.RenderComponent<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.Columns, SelectColumnNoFunc)
+            );
+
+            var checkbox = comp.Find("td.mud-table-cell .mud-checkbox input");
+            checkbox.Should().NotBeNull();
+            checkbox.HasAttribute("disabled").Should().BeFalse();
+        }
+
+        [Test]
+        public void SelectColumn_HeaderCheckbox_ShouldNotRender_WhenMultiSelectionIsFalse()
+        {
+            var items = new List<TestDataItem> { new() { Id = 1, Name = "Item 1" } };
+
+            var comp = Context.RenderComponent<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.MultiSelection, false) // Explicitly set MultiSelection to false
+                .Add(p => p.Columns, SelectColumnNoFunc)
+            );
+
+            // Check if the header checkbox is rendered
+            var headerCheckbox = comp.FindAll("th.mud-table-cell .mud-checkbox input");
+            headerCheckbox.Should().BeEmpty();
+        }
+
+        [Test]
+        public void SelectColumn_HeaderCheckbox_ShouldRender_WhenMultiSelectionIsTrue()
+        {
+            var items = new List<TestDataItem> { new TestDataItem { Id = 1, Name = "Item 1" } };
+
+            var comp = Context.RenderComponent<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.MultiSelection, true) // Explicitly set MultiSelection to true
+                .Add(p => p.Columns, SelectColumnNoFunc)
+            );
+
+            var headerCheckbox = comp.Find("th.mud-table-cell .mud-checkbox input");
+            headerCheckbox.Should().NotBeNull();
+        }
+
+        [Test]
+        public void SelectOnRowClick_IgnoresDisabledRows()
+        {
+            var items = new List<TestDataItem>
+            {
+                new TestDataItem { Id = 1, Name = "Enabled Item 1", ShouldBeDisabled = false },
+                new TestDataItem { Id = 2, Name = "Disabled Item 1", ShouldBeDisabled = true },
+                new TestDataItem { Id = 3, Name = "Enabled Item 2", ShouldBeDisabled = false }
+            };
+            Func<TestDataItem, bool> disabledFunc = item => item.ShouldBeDisabled;
+
+            var comp = Context.RenderComponent<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.SelectOnRowClick, true)
+                .Add(p => p.MultiSelection, true) // Enable multi-selection to check SelectedItems
+                .Add(p => p.Columns, SelectColumnWithFunc)
+            );
+
+            // Simulate click on the disabled row (row index 1 for "Disabled Item 1")
+            var rows = comp.FindAll("tbody tr");
+            rows[1].Click(); // Click on the row of "Disabled Item 1"
+
+            comp.Instance.GetState(x => x.SelectedItems).Should().NotContain(items[1]); // Disabled item should not be selected
+            comp.Instance.GetState(x => x.SelectedItems).Should().BeEmpty(); // Or be the previously selected item if any, but not items[1]
+
+            // Simulate click on an enabled row (row index 0 for "Enabled Item 1")
+            rows = comp.FindAll("tbody tr");
+            rows[0].Click(); // Click on the row of "Enabled Item 1"
+
+            comp.Instance.GetState(x => x.SelectedItems).Should().Contain(items[0]);
+            comp.Instance.GetState(x => x.SelectedItems).Count.Should().Be(1);
+
+            // Further check: click another enabled item to ensure multi-selection works for enabled items
+            // and that the disabled item is still not selected.
+            rows = comp.FindAll("tbody tr");
+            rows[2].Click(); // Click on the row of "Enabled Item 2"
+            comp.Instance.GetState(x => x.SelectedItems).Should().Contain(items[0]);
+            comp.Instance.GetState(x => x.SelectedItems).Should().Contain(items[2]);
+            comp.Instance.GetState(x => x.SelectedItems).Should().NotContain(items[1]);
+        }
+
+        [Test]
+        public async Task SelectAll_IgnoresDisabledRows()
+        {
+            var items = new List<TestDataItem>
+            {
+                new TestDataItem { Id = 1, Name = "Enabled Item 1", ShouldBeDisabled = false },
+                new TestDataItem { Id = 2, Name = "Disabled Item 1", ShouldBeDisabled = true },
+                new TestDataItem { Id = 3, Name = "Enabled Item 2", ShouldBeDisabled = false },
+                new TestDataItem { Id = 4, Name = "Disabled Item 2", ShouldBeDisabled = true }
+            };
+            Func<TestDataItem, bool> disabledFunc = item => item.ShouldBeDisabled;
+
+            var comp = Context.RenderComponent<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.MultiSelection, true)
+                .Add(p => p.Columns, SelectColumnWithFunc)
+            );
+
+            await comp.Instance.SetSelectAllAsync(true);
+
+            comp.Instance.GetState(x => x.SelectedItems).Should().Contain(items[0]); // Enabled Item 1
+            comp.Instance.GetState(x => x.SelectedItems).Should().NotContain(items[1]); // Disabled Item 1
+            comp.Instance.GetState(x => x.SelectedItems).Should().Contain(items[2]); // Enabled Item 2
+            comp.Instance.GetState(x => x.SelectedItems).Should().NotContain(items[3]); // Disabled Item 2
+            comp.Instance.GetState(x => x.SelectedItems).Count.Should().Be(2);
+        }
+
+        [Test]
+        public async System.Threading.Tasks.Task SelectAll_WithNoDisabledFunc_StillWorks()
+        {
+            var items = new List<TestDataItem>
+            {
+                new TestDataItem { Id = 1, Name = "Item 1" },
+                new TestDataItem { Id = 2, Name = "Item 2" }
+            };
+
+            var comp = Context.RenderComponent<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.MultiSelection, true)
+                .Add(p => p.Columns, SelectColumnNoFunc)
+            );
+
+            await comp.Instance.SetSelectAllAsync(true);
+
+            comp.Instance.GetState(x => x.SelectedItems).Should().Contain(items[0]);
+            comp.Instance.GetState(x => x.SelectedItems).Should().Contain(items[1]);
+            comp.Instance.GetState(x => x.SelectedItems).Count.Should().Be(2);
+        }
+
+        [Test]
+        public async Task SelectAll_WithDisabledFunc_ReturningAllFalse_StillWorks()
+        {
+            var items = new List<TestDataItem>
+            {
+                new TestDataItem { Id = 1, Name = "Item 1", ShouldBeDisabled = false },
+                new TestDataItem { Id = 2, Name = "Item 2", ShouldBeDisabled = false }
+            };
+            Func<TestDataItem, bool> disabledFunc = item => false; // All items are effectively enabled
+
+            var comp = Context.RenderComponent<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.MultiSelection, true)
+                .Add(p => p.Columns, SelectColumnWithFunc)
+            );
+
+            await comp.Instance.SetSelectAllAsync(true);
+
+            comp.Instance.GetState(x => x.SelectedItems).Should().Contain(items[0]);
+            comp.Instance.GetState(x => x.SelectedItems).Should().Contain(items[1]);
+            comp.Instance.GetState(x => x.SelectedItems).Count.Should().Be(2);
         }
     }
 }

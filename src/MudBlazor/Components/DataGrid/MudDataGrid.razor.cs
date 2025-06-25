@@ -1541,6 +1541,11 @@ namespace MudBlazor
 
         internal async Task SetSelectedItemAsync(bool value, T item)
         {
+            var selectColumn = RenderedColumns.OfType<SelectColumn<T>>().FirstOrDefault();
+
+            if (selectColumn?.Disabled?.Invoke(item) is true)
+                return; // Do not change selection if the item is disabled
+
             if (value)
             {
                 if (!MultiSelection)
@@ -1602,14 +1607,20 @@ namespace MudBlazor
             if (!MultiSelection)
                 return;
 
-            var items = HasServerData
-                    ? ServerItems
-                    : FilteredItems;
+            Selection.Clear(); // Clear selection first, regardless of selecting or unselecting all.
 
-            Selection.Clear();
-            if (value)
+            if (value) // Logic for selecting all
             {
-                Selection.UnionWith(items);
+                var itemsToSelect = HasServerData ? ServerItems : FilteredItems;
+
+                var selectColumn = RenderedColumns.OfType<SelectColumn<T>>().FirstOrDefault();
+                if (selectColumn?.Disabled != null)
+                {
+                    // Filter out disabled items before adding to selection
+                    itemsToSelect = itemsToSelect.Where(item => !selectColumn.Disabled(item));
+                }
+
+                Selection.UnionWith(itemsToSelect);
             }
 
             await InvokeAsync(async () => await _selectedItemsState.SetValueAsync(Selection));
