@@ -423,10 +423,13 @@ namespace MudBlazor
                 _isEditingStartEllipsis = false;
                 _isEditingEndEllipsis = true;
             }
+
             _ellipsisInputValue = string.Empty;
             StateHasChanged();
 
-            if (_ellipsisInputReference != null)
+            await Task.Delay(50); // Delay to ensure the UI updates before focusing
+
+            if (_ellipsisInputReference is not null)
             {
                 await _ellipsisInputReference.FocusAsync();
             }
@@ -436,12 +439,9 @@ namespace MudBlazor
         {
             if (e.Key == "Enter")
             {
-                if (int.TryParse(_ellipsisInputValue, out var pageNumber))
+                if (int.TryParse(_ellipsisInputValue, out var pageNumber) && pageNumber >= 1 && pageNumber <= _countState.Value)
                 {
-                    if (pageNumber >= 1 && pageNumber <= _countState.Value)
-                    {
-                        await SetSelectedAsync(pageNumber);
-                    }
+                    await SetSelectedAsync(pageNumber);
                 }
 
                 if (isStartEllipsis)
@@ -452,6 +452,7 @@ namespace MudBlazor
                 {
                     _isEditingEndEllipsis = false;
                 }
+
                 _ellipsisInputValue = string.Empty;
                 StateHasChanged();
             }
@@ -465,6 +466,7 @@ namespace MudBlazor
                 {
                     _isEditingEndEllipsis = false;
                 }
+
                 _ellipsisInputValue = string.Empty;
                 StateHasChanged();
             }

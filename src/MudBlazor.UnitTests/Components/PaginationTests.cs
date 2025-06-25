@@ -591,12 +591,12 @@ namespace MudBlazor.UnitTests.Components
             Context.JSInterop.SetupVoid("mudElementRef.addOnBlurEvent", _ => true).SetVoidResult();
             Context.JSInterop.SetupVoid("mudElementRef.removeOnBlurEvent", _ => true).SetVoidResult();
 
-            var selectedPage = 1;
+            var selectedPage = 10;
             var initialSelectedPage = selectedPage;
             var selectedChangedCalled = false;
 
             var comp = Context.RenderComponent<MudPagination>(parameters => parameters
-                .Add(p => p.Count, 10)
+                .Add(p => p.Count, 20)
                 .Add(p => p.MiddleCount, 2)
                 .Add(p => p.BoundaryCount, 1)
                 .Add(p => p.Selected, selectedPage)
@@ -628,6 +628,25 @@ namespace MudBlazor.UnitTests.Components
 
             selectedChangedCalled.Should().BeFalse("SelectedChanged should not be called on blur.");
             selectedPage.Should().Be(initialSelectedPage, "Page selection should not change on blur.");
+
+            ellipsisButton = comp.FindAll(".mud-pagination-ellipsis-button").Last();
+            await ellipsisButton.ClickAsync(new Microsoft.AspNetCore.Components.Web.MouseEventArgs());
+            comp.WaitForState(() => comp.FindAll(".mud-pagination-ellipsis-input input").Any(), TimeSpan.FromSeconds(1));
+
+
+            // Find the input element
+            inputElement = comp.Find(".mud-pagination-ellipsis-input input");
+            inputElement.Should().NotBeNull("Input element should be present after clicking ellipsis.");
+
+            // Simulate blur on the input element
+            await inputElement.BlurAsync(new Microsoft.AspNetCore.Components.Web.FocusEventArgs());
+
+            // After blur, the input should be gone, and the button should reappear.
+            comp.WaitForAssertion(() =>
+            {
+                comp.FindAll(".mud-pagination-ellipsis-input input").Should().BeEmpty("Input should disappear after blur.");
+                comp.FindAll(".mud-pagination-ellipsis-button").Should().NotBeEmpty("Ellipsis button should reappear after blur.");
+            }, TimeSpan.FromSeconds(1));
         }
     }
 }
