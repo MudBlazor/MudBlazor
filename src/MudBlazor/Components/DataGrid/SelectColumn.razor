@@ -22,7 +22,7 @@
                       Size="@Size"
                       Value="@context.Selected"
                       ValueChanged="@context.Actions.SetSelectedItemAsync"
-                      Disabled="@(Disabled?.Invoke(context.Item) ?? false)" />;
+                      Disabled="@(DisabledFunc?.Invoke(context.Item) ?? false)" />;
 
     private RenderFragment<FooterContext<T>> GetFooterTemplate() => context =>
     {

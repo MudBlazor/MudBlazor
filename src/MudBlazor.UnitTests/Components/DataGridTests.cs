@@ -4944,7 +4944,7 @@ namespace MudBlazor.UnitTests.Components
         private static RenderFragment SelectColumnWithFunc => builder =>
         {
             builder.OpenComponent<SelectColumn<TestDataItem>>(0);
-            builder.AddAttribute(1, nameof(SelectColumn<TestDataItem>.Disabled), (Func<TestDataItem, bool>)(item => item.ShouldBeDisabled));
+            builder.AddAttribute(1, nameof(SelectColumn<TestDataItem>.DisabledFunc), (Func<TestDataItem, bool>)(item => item.ShouldBeDisabled));
             builder.CloseComponent();
             builder.OpenComponent<PropertyColumn<TestDataItem, int>>(2);
             builder.AddAttribute(3, nameof(PropertyColumn<TestDataItem, int>.Property), (Expression<Func<TestDataItem, int>>)(x => x.Id));

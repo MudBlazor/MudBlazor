@@ -1543,7 +1543,7 @@ namespace MudBlazor
         {
             var selectColumn = RenderedColumns.OfType<SelectColumn<T>>().FirstOrDefault();
 
-            if (selectColumn?.Disabled?.Invoke(item) is true)
+            if (selectColumn?.DisabledFunc?.Invoke(item) is true)
                 return; // Do not change selection if the item is disabled
 
             if (value)
@@ -1614,10 +1614,10 @@ namespace MudBlazor
                 var itemsToSelect = HasServerData ? ServerItems : FilteredItems;
 
                 var selectColumn = RenderedColumns.OfType<SelectColumn<T>>().FirstOrDefault();
-                if (selectColumn?.Disabled != null)
+                if (selectColumn?.DisabledFunc != null)
                 {
                     // Filter out disabled items before adding to selection
-                    itemsToSelect = itemsToSelect.Where(item => !selectColumn.Disabled(item));
+                    itemsToSelect = itemsToSelect.Where(item => !selectColumn.DisabledFunc(item));
                 }
 
                 Selection.UnionWith(itemsToSelect);
