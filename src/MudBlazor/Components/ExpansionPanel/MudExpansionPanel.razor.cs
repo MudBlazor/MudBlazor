@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.State;
 using MudBlazor.Utilities;
@@ -156,14 +154,11 @@ namespace MudBlazor
         public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// If true, the panel content is removed from the DOM when collapsed.
+        /// When true, the content remains in the DOM even when the panel is collapsed.
         /// </summary>
-        /// <remarks>
-        /// Defaults to false for backwards compatibility. When true, this can improve performance at the cost of component re-rendering.
-        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Behavior)]
-        public bool RemoveContentOnCollapse { get; set; } = false;
+        public bool KeepContentAlive { get; set; } = true;
 
         /// <summary>
         /// The next panel is currently expanded.
@@ -265,7 +260,7 @@ namespace MudBlazor
             }
         }
 
-        private async Task HandleKeyDown(KeyboardEventArgs e)
+        private async Task HandleKeyDownAsync(KeyboardEventArgs e)
         {
             if (Disabled)
             {
