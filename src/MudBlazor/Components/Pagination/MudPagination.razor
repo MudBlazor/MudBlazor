@@ -18,13 +18,39 @@
     }
     @if (ShowPageButtons)
     {
+        var ellipsisCounter = 0;
         foreach (var state in GeneratePagination())
         {
             var currentPage = state;
             if (currentPage == -1)
             {
+                var isStartEllipsis = ellipsisCounter == 0;
+                ellipsisCounter++;
+
                 <li class="@ItemClassname">
-                    <MudText disabled="@Disabled">...</MudText>
+                    @if (isStartEllipsis ? _isEditingStartEllipsis : _isEditingEndEllipsis)
+                    {
+                        <MudTextField @ref="_ellipsisInputReference" @bind-Value="_ellipsisInputValue"
+                                      Placeholder="..."
+                                      Variant="Variant.Text"
+                                      T="string" 
+                                      Typo="Typo.button"
+                                      Class="mud-pagination-ellipsis-input"
+                                      Style="width: 38px;" 
+                                      Immediate="true" 
+                                      OnKeyDown="@((KeyboardEventArgs e) => HandleEllipsisInputKeyDown(e, isStartEllipsis))"
+                                      @onblur="@(() => HandleEllipsisInputBlur(isStartEllipsis))"
+                                      aria-label="@Localizer[LanguageResource.MudPagination_EnterPage]" />
+                    }
+                    else
+                    {
+                        <MudButton Variant="@Variant.Text"
+                                   Size="@Size.Small" 
+                                   Disabled="@Disabled"
+                                   OnClick="@(() => HandleEllipsisClick(isStartEllipsis))"
+                                   Class="mud-pagination-ellipsis-button"
+                                   aria-label="@Localizer[LanguageResource.MudPagination_EditPage]">...</MudButton>
+                    }
                 </li>
             }
             else if (currentPage == _selectedState.Value)

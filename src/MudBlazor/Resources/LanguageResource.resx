@@ -471,4 +471,10 @@
   <data name="MudFileUpload_FileSizeError" xml:space="preserve">
     <value>File '{0}' exceeds the maximum allowed size of {1} bytes.</value>
   </data>
+  <data name="MudPagination_EnterPage" xml:space="preserve">
+    <value>Enter page number</value>
+  </data>
+  <data name="MudPagination_EditPage" xml:space="preserve">
+    <value>Edit page number</value>
+  </data>
 </root>
