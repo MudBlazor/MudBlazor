@@ -93,9 +93,9 @@ namespace MudBlazor
             if (FollowThemeColorScheme)
             {
                 string StyleWithColorScheme = new StyleBuilder()
-                .AddStyle(Style)
-                .AddStyle("color-scheme", "var(--mud-native-html-color-scheme)", FollowThemeColorScheme)
-                .Build();
+                    .AddStyle(Style)
+                    .AddStyle("color-scheme", "var(--mud-native-html-color-scheme)", FollowThemeColorScheme)
+                    .Build();
                 builder.AddAttribute(seq++, "style", StyleWithColorScheme);
             }
             else
