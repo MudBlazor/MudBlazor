@@ -197,9 +197,9 @@ namespace MudBlazor
             }
         }
 
-        protected override async Task ResetValueAsync()
+        protected override Task ResetValueAsync()
         {
-            await SetSelectedOptionAsync(default(T), true);
+            return SetSelectedOptionAsync(default(T), true);
         }
 
         private static T? GetValueOrDefault(MudRadio<T>? radio)
