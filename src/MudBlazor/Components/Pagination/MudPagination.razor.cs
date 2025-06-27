@@ -22,7 +22,7 @@ namespace MudBlazor
 
         private bool _isEditingStartEllipsis = false;
         private bool _isEditingEndEllipsis = false;
-        private string _ellipsisInputValue = string.Empty;
+        private int? _ellipsisInputValue;
 
         private string Classname =>
             new CssBuilder("mud-pagination")
@@ -409,7 +409,7 @@ namespace MudBlazor
         }
 
         // Field to reference the input element for focusing
-        private MudTextField<string>? _ellipsisInputReference;
+        private MudNumericField<int?>? _ellipsisInputReference;
 
         private async Task HandleEllipsisClick(bool isStartEllipsis)
         {
@@ -424,7 +424,7 @@ namespace MudBlazor
                 _isEditingEndEllipsis = true;
             }
 
-            _ellipsisInputValue = string.Empty;
+            _ellipsisInputValue = null;
             StateHasChanged();
 
             await Task.Delay(50); // Delay to ensure the UI updates before focusing
@@ -439,7 +439,7 @@ namespace MudBlazor
         {
             if (e.Key == "Enter")
             {
-                if (int.TryParse(_ellipsisInputValue, out var pageNumber) && pageNumber >= 1 && pageNumber <= _countState.Value)
+                if ((_ellipsisInputValue is { } pageNumber) && pageNumber >= 1 && pageNumber <= _countState.Value)
                 {
                     await SetSelectedAsync(pageNumber);
                 }
@@ -453,7 +453,7 @@ namespace MudBlazor
                     _isEditingEndEllipsis = false;
                 }
 
-                _ellipsisInputValue = string.Empty;
+                _ellipsisInputValue = null;
                 StateHasChanged();
             }
             else if (e.Key == "Escape")
@@ -467,7 +467,7 @@ namespace MudBlazor
                     _isEditingEndEllipsis = false;
                 }
 
-                _ellipsisInputValue = string.Empty;
+                _ellipsisInputValue = null;
                 StateHasChanged();
             }
         }
@@ -479,13 +479,13 @@ namespace MudBlazor
             if (isStartEllipsis && _isEditingStartEllipsis)
             {
                 _isEditingStartEllipsis = false;
-                _ellipsisInputValue = string.Empty;
+                _ellipsisInputValue = null;
                 needsStateChange = true;
             }
             else if (!isStartEllipsis && _isEditingEndEllipsis)
             {
                 _isEditingEndEllipsis = false;
-                _ellipsisInputValue = string.Empty;
+                _ellipsisInputValue = null;
                 needsStateChange = true;
             }
 

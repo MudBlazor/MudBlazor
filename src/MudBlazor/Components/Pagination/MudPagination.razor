@@ -30,17 +30,18 @@
                 <li class="@ItemClassname">
                     @if (isStartEllipsis ? _isEditingStartEllipsis : _isEditingEndEllipsis)
                     {
-                        <MudTextField @ref="_ellipsisInputReference" @bind-Value="_ellipsisInputValue"
-                                      Placeholder="..."
-                                      Variant="Variant.Text" 
-                                      T="string" 
-                                      Typo="Typo.button"
-                                      Class="mud-pagination-ellipsis-input"
-                                      Style="width: 38px;" 
-                                      Immediate="true" 
-                                      OnKeyDown="@((KeyboardEventArgs e) => HandleEllipsisInputKeyDown(e, isStartEllipsis))"
-                                      @onblur="@(() => HandleEllipsisInputBlur(isStartEllipsis))"
-                                      aria-label="@Localizer[LanguageResource.MudPagination_EnterPage]" />
+                        <MudNumericField @ref="_ellipsisInputReference" @bind-Value="_ellipsisInputValue"
+                                         Placeholder="..."
+                                         Variant="Variant.Text" 
+                                         T="int?" 
+                                         Typo="Typo.button"
+                                         Class="mud-pagination-ellipsis-input"
+                                         Style="width: 38px;" 
+                                         Immediate="true"
+                                         HideSpinButtons="true"
+                                         OnKeyDown="@((KeyboardEventArgs e) => HandleEllipsisInputKeyDown(e, isStartEllipsis))"
+                                         @onblur="@(() => HandleEllipsisInputBlur(isStartEllipsis))"
+                                         aria-label="@Localizer[LanguageResource.MudPagination_EnterPage]" />
                     }
                     else
                     {
