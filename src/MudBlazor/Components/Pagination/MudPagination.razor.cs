@@ -425,9 +425,8 @@ namespace MudBlazor
             }
 
             _ellipsisInputValue = null;
-            StateHasChanged();
 
-            await Task.Delay(50); // Delay to ensure the UI updates before focusing
+            await Task.Yield(); // Ensure the UI updates before focusing
 
             if (_ellipsisInputReference is not null)
             {
