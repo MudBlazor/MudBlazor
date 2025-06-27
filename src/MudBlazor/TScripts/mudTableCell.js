@@ -27,7 +27,7 @@ class MudTableCell {
 
             if (input) {
                 input.focus();
-                input.select?.();
+                input.select();
             }
         }
     }
