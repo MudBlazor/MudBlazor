@@ -251,6 +251,21 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Programmatic Scroll & Focus">
+                <Description>
+                    The MudTable component provides methods to programmatically control scrolling to specific items and focusing on individual cells. These methods are accessible via an <CodeInline>@("@ref")</CodeInline> to the table instance.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(TableScrollFocusExample)" ShowCode="false" Block="true" FullWidth="true">
+                <MudText Typo="Typo.h6">Scroll To Item</MudText> - Scrolls the table to bring the specified data item (row) into view. This is useful for navigating to a specific item in a large or virtualized table.
+                <br/>
+                <MudText Typo="Typo.h6">Focus Cell</MudText> - Scrolls to the row corresponding to the specified data item and sets focus to a specific cell within that row.
+                <br/>
+                <TableScrollFocusExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Grouping (Basic)">
                 <Description>
                     Displays items in a grouped way, with Header and Footer by every group, allowing summaries on both.<br />
