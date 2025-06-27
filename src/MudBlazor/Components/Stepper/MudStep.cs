@@ -46,19 +46,30 @@ public class MudStep : MudComponentBase, IAsyncDisposable
 
     internal string LabelIconClassname =>
         new CssBuilder("mud-step-label-icon")
-            .AddClass($"mud-{(CompletedStepColor.HasValue ? CompletedStepColor.Value.ToDescriptionString() : Parent?.CompletedStepColor.ToDescriptionString())}", CompletedState && !HasErrorState && Parent?.CompletedStepColor != Color.Default && (Parent?.ActiveStep != this || (Parent?.IsCompleted == true && Parent?.NonLinear == false)))
-            .AddClass($"mud-{(ErrorStepColor.HasValue ? ErrorStepColor.Value.ToDescriptionString() : Parent?.ErrorStepColor.ToDescriptionString())}", HasErrorState)
-            .AddClass($"mud-{Parent?.CurrentStepColor.ToDescriptionString()}", Parent?.ActiveStep == this && !(Parent?.IsCompleted == true && Parent?.NonLinear == false))
+            .AddClass($"mud-{(Colors?.CompletedStepColor.HasValue == true ? Colors?.CompletedStepColor.Value.ToDescriptionString() : Parent?.Colors.CompletedStepColor.ToDescriptionString())}", CompletedState && !HasErrorState && Parent?.Colors.CompletedStepColor != Color.Default && (Parent?.ActiveStep != this || (Parent?.IsCompleted == true && Parent?.NonLinear == false)))
+            .AddClass($"mud-{(Colors?.ErrorStepColor.HasValue == true ? Colors?.ErrorStepColor.Value.ToDescriptionString() : Parent?.Colors.ErrorStepColor.ToDescriptionString())}", HasErrorState)
+            .AddClass($"mud-{Parent?.Colors.CurrentStepColor.ToDescriptionString()}", Parent?.ActiveStep == this && !(Parent?.IsCompleted == true && Parent?.NonLinear == false))
             .Build();
 
     internal string LabelContentClassname =>
         new CssBuilder("mud-step-label-content")
-            .AddClass($"mud-{(ErrorStepColor.HasValue ? ErrorStepColor.Value.ToDescriptionString() : Parent?.ErrorStepColor.ToDescriptionString())}-text", HasErrorState)
+            .AddClass($"mud-{(Colors?.ErrorStepColor.HasValue == true ? Colors?.ErrorStepColor.Value.ToDescriptionString() : Parent?.Colors.ErrorStepColor.ToDescriptionString())}-text", HasErrorState)
             .Build();
 
     internal string Classname => new CssBuilder(Parent?.StepClassname)
         .AddClass(Class)
         .Build();
+
+    #region Grouped Parameters
+
+    /// <summary>
+    /// The grouped parameter that contains the colors for the step.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.List.Appearance)]
+    public StepColors? Colors { get; set; }
+
+    #endregion
 
     [CascadingParameter] internal MudStepper? Parent { get; set; }
 
@@ -96,26 +107,6 @@ public class MudStep : MudComponentBase, IAsyncDisposable
     /// Whether this step is the current one being displayed.
     /// </summary>
     public bool IsActive => Parent?.ActiveStep == this;
-
-    /// <summary>
-    /// The color used when this step is completed.
-    /// </summary>
-    /// <remarks>
-    /// Defaults to <c>null</c>.
-    /// </remarks>
-    [Parameter]
-    [Category(CategoryTypes.List.Appearance)]
-    public Color? CompletedStepColor { get; set; }
-
-    /// <summary>
-    /// The color used when this step has an error.
-    /// </summary>
-    /// <remarks>
-    /// Defaults to <c>null</c>.
-    /// </remarks>
-    [Parameter]
-    [Category(CategoryTypes.List.Appearance)]
-    public Color? ErrorStepColor { get; set; }
 
     /// <summary>
     /// Whether the user can skip this step.

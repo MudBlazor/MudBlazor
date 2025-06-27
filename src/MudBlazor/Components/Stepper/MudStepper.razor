@@ -1,8 +1,7 @@
-@namespace MudBlazor
+﻿@namespace MudBlazor
 @using MudBlazor.Resources
 @using MudBlazor.Utilities
 @inherits MudComponentBase
-
 @inject InternalMudLocalizer Localizer
 
 <div @attributes="@UserAttributes" class="@Classname" style="@Style">
@@ -24,7 +23,7 @@
                 @RenderStepLabel(step, isActive)
             </button>
 
-            @if (Vertical && !(IsCompleted && CompletedContent is not null)) 
+            @if (Vertical && !(IsCompleted && CompletedContent is not null))
             {
                 @StepContent(step)
             }
@@ -51,7 +50,8 @@
             @CompletedContent
         </div>
     }
-    else if (!Vertical && ActiveStep is not null) {
+    else if (!Vertical && ActiveStep is not null)
+    {
         @StepContent(ActiveStep)
     }
 
@@ -65,7 +65,7 @@
             @if (ShowResetButton)
             {
                 @* Reset Button *@
-                <MudButton StartIcon="@ResetButtonIcon" Class="mud-stepper-button-reset" Disabled="@(!CanReset)" OnClick="@(async () => await ResetAsync())">
+                <MudButton StartIcon="@(Icons.ResetButtonIcon)" Class="mud-stepper-button-reset" Disabled="@(!CanReset)" OnClick="@(async () => await ResetAsync())">
                     @Localizer[LanguageResource.MudStepper_Reset]
                 </MudButton>
             }
@@ -73,33 +73,33 @@
             @if (!IsCompleted)
             {
                 @* Previous Button *@
-                <MudButton StartIcon="@PreviousButtonIcon" Class="mud-stepper-button-previous" OnClick="PreviousStepAsync" Disabled="@(!PreviousStepEnabled)">
+                <MudButton StartIcon="@(Icons.PreviousButtonIcon)" Class="mud-stepper-button-previous" OnClick="PreviousStepAsync" Disabled="@(!PreviousStepEnabled)">
                     @Localizer[LanguageResource.MudStepper_Previous]
                 </MudButton>
             }
 
-            <MudSpacer/>
+            <MudSpacer />
 
             @if (!IsCompleted)
             {
                 @if (IsCurrentStepSkippable)
                 {
                     @* Skip Button *@
-                    <MudButton StartIcon="@SkipButtonIcon" Class="mud-stepper-button-skip" OnClick="SkipCurrentStepAsync">
+                    <MudButton StartIcon="@(Icons.SkipButtonIcon)" Class="mud-stepper-button-skip" OnClick="SkipCurrentStepAsync">
                         @Localizer[LanguageResource.MudStepper_Skip]
                     </MudButton>
                 }
                 @if (ShowCompleteInsteadOfNext)
                 {
                     @* Complete Button *@
-                    <MudButton StartIcon="@CompleteButtonIcon" Class="mud-stepper-button-complete" OnClick="NextStepAsync" Color="Color.Primary">
+                    <MudButton StartIcon="@(Icons.CompleteButtonIcon)" Class="mud-stepper-button-complete" OnClick="NextStepAsync" Color="Color.Primary">
                         @Localizer[LanguageResource.MudStepper_Complete]
                     </MudButton>
                 }
-                else 
+                else
                 {
                     @* Next Button *@
-                    <MudButton StartIcon="@NextButtonIcon" Class="mud-stepper-button-next" OnClick="NextStepAsync" Color="Color.Primary" Disabled="@(!CanGoToNextStep)">
+                    <MudButton StartIcon="@(Icons.NextButtonIcon)" Class="mud-stepper-button-next" OnClick="NextStepAsync" Color="Color.Primary" Disabled="@(!CanGoToNextStep)">
                         @Localizer[LanguageResource.MudStepper_Next]
                     </MudButton>
                 }
@@ -124,11 +124,11 @@
                 <div class="@step.LabelIconClassname">
                     @if(step.HasErrorState.Value)
                     {
-                        <MudIcon Size="Size.Small" Icon="@StepErrorIcon" />
+                        <MudIcon Size="Size.Small" Icon="@Icons.StepErrorIcon" />
                     }
                     else if (step.CompletedState.Value)
                     {
-                        <MudIcon Size="Size.Small" Icon="@StepCompleteIcon" />
+                        <MudIcon Size="Size.Small" Icon="@Icons.StepCompleteIcon" />
                     }
                     else
                     {
@@ -169,4 +169,5 @@
                 @step.ChildContent
             }
         </div>;
+}
 }
