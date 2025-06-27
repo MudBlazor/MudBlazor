@@ -851,12 +851,8 @@ namespace MudBlazor
                     await ScrollManager.ScrollIntoViewAsync($"#{targetItemId}", ScrollBehavior.Auto);
                 }
 
-                // Then, focus the cell using the existing JS interop.
-                await JSRuntime.InvokeVoidAsync("mudScrollManager.focusCell", targetItemId, cellIndex);
-            }
-            else
-            {
-                // Item not found
+                await JSRuntime.InvokeVoidAsync("mudTableCell.focusCell", targetItemId, cellIndex);
+                await JSRuntime.InvokeVoidAsync("mudTableCell.selectCell", targetItemId, cellIndex);
             }
         }
     }

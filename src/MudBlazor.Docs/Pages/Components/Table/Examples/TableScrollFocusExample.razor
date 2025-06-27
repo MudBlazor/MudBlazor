@@ -1,7 +1,13 @@
 ﻿@namespace MudBlazor.Docs.Examples
 @inject ISnackbar Snackbar
 
-<MudTable @ref="_table" Items="@Elements" @bind-SelectedItem="_selectedElement" Virtualize="true" FixedHeader="true" Height="300px" T="Element">
+<MudTable @ref="_table" T="Element" Items="@Elements" @bind-SelectedItem="_selectedElement"
+          RowEditPreview="BackupItem" 
+          RowEditCancel="ResetItemValues"
+          EditTrigger="TableEditTrigger.RowClick"
+          Virtualize FixedHeader 
+          RowsPerPage="100"
+          Height="300px" >
     <HeaderContent>
         <MudTh>Nr</MudTh>
         <MudTh>Sign</MudTh>
@@ -16,18 +22,30 @@
         <MudTd DataLabel="Position">@context.Position</MudTd>
         <MudTd DataLabel="Molar mass">@context.Molar</MudTd>
     </RowTemplate>
+    <RowEditingTemplate>
+        <MudTd DataLabel="Nr">@context.Number</MudTd>
+        <MudTd DataLabel="Sign">
+            <MudTextField @bind-Value="context.Sign" Required />
+        </MudTd>
+        <MudTd DataLabel="Name">
+            <MudTextField @bind-Value="context.Name" Required />
+        </MudTd>
+        <MudTd DataLabel="Position">@context.Position</MudTd>
+        <MudTd DataLabel="Molar mass">@context.Molar</MudTd>
+    </RowEditingTemplate>
     <PagerContent>
         <MudTablePager />
     </PagerContent>
 </MudTable>
 
-<div class="d-flex flex-wrap mt-4">
-    <MudNumericField @bind-Value="_scrollToIndex" Label="Scroll to Index (0-based)" Min="0" Max="@(Elements.Count - 1)" For="@(() => _scrollToIndex)" Class="mr-2 mb-2" />
-    <MudButton OnClick="ScrollToElementByIndex" Variant="Variant.Filled" Color="Color.Primary" Class="mr-4 mb-2" Style="align-self: center;">Scroll to Element by Index</MudButton>
-
-    <MudNumericField @bind-Value="_focusCellIndex" Label="Focus Cell Index (0-based)" Min="0" Max="4" For="@(() => _focusCellIndex)" Class="mr-2 mb-2" />
-    <MudButton OnClick="FocusOnCellOfSelectedElement" Variant="Variant.Filled" Color="Color.Secondary" Disabled="@(_selectedElement == null)" Class="mb-2" Style="align-self: center;">Focus Cell in Selected</MudButton>
-</div>
+<MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center">
+    <MudSpacer />
+    <MudNumericField @bind-Value="_scrollToRow" Label="Scroll to Row Number" Min="1" Max="@(Elements.Count)" For="@(() => _scrollToRow)" Class="mr-2 mb-2" />
+    <MudButton OnClick="ScrollToElementByIndex" Variant="Variant.Filled" Color="Color.Primary" Class="mr-4 mb-2" Style="align-self: center;">Scroll to Element</MudButton>
+    <MudButton OnClick="@(() => FocusOnCellOfSelectedElement(1))" Variant="Variant.Filled" Color="Color.Secondary" Disabled="@(_selectedElement == null)" Class="mb-2" Style="align-self: center;">Edit Sign</MudButton>
+    <MudButton OnClick="@(() => FocusOnCellOfSelectedElement(2))" Variant="Variant.Filled" Color="Color.Secondary" Disabled="@(_selectedElement == null)" Class="mb-2" Style="align-self: center;">Edit Name</MudButton>
+    <MudSpacer />
+</MudStack>
 
 @code {
     #nullable enable
@@ -35,8 +53,7 @@
     private MudTable<Element> _table = null!;
     private List<Element> Elements = new List<Element>();
     private Element? _selectedElement;
-    private int _scrollToIndex = 10; // Default to an index that requires scrolling
-    private int _focusCellIndex = 0;
+    private int _scrollToRow = 10;
 
     protected override void OnInitialized()
     {
@@ -49,11 +66,11 @@
 
     private async Task ScrollToElementByIndex()
     {
-        if (_scrollToIndex >= 0 && _scrollToIndex < Elements.Count)
+        if (_scrollToRow > 0 && _scrollToRow <= Elements.Count)
         {
-            _selectedElement = Elements[_scrollToIndex];
+            _selectedElement = Elements[_scrollToRow - 1];
             await _table.ScrollToItemAsync(_selectedElement);
-            Snackbar.Add($"Scrolled to: {_selectedElement.Name}", Severity.Info);
+            Snackbar.Add($"Scrolled to: {_selectedElement.Name} Row {_scrollToRow}", Severity.Info);
         }
         else
         {
@@ -61,19 +78,11 @@
         }
     }
 
-    private async Task FocusOnCellOfSelectedElement()
+    private async Task FocusOnCellOfSelectedElement(int column)
     {
         if (_selectedElement != null)
         {
-            if (_focusCellIndex >= 0 && _focusCellIndex < 5) // Assuming 5 columns in RowTemplate
-            {
-                await _table.FocusCellAsync(_selectedElement, _focusCellIndex);
-                Snackbar.Add($"Attempted to focus cell {_focusCellIndex} in row: {_selectedElement.Name}", Severity.Info);
-            }
-            else
-            {
-                Snackbar.Add("Cell index out of bounds for this table (0-4).", Severity.Warning);
-            }
+            await _table.FocusCellAsync(_selectedElement, column);
         }
         else
         {
@@ -81,7 +90,6 @@
         }
     }
 
-    // Sample Element class
     public class Element
     {
         public int Number { get; set; }
@@ -89,5 +97,22 @@
         public string? Name { get; set; }
         public int Position { get; set; }
         public string? Molar { get; set; }
+    }
+
+    private Element? elementBeforeEdit;
+
+    private void BackupItem(object element)
+    {
+        elementBeforeEdit = new()
+        {
+            Sign = ((Element)element).Sign,
+            Name = ((Element)element).Name,
+        };
+    }
+
+    private void ResetItemValues(object element)
+    {
+        ((Element)element).Sign = elementBeforeEdit?.Sign;
+        ((Element)element).Name = elementBeforeEdit?.Name;
     }
 }

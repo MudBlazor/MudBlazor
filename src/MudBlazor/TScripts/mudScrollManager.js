@@ -89,7 +89,6 @@ class MudScrollManager {
         }
 
         // Calculate initial estimated scroll position
-        // Ensure container is scrollable
         const isScrollable = container.scrollHeight > container.clientHeight || container.scrollWidth > container.clientWidth;
         const actualContainer = (container === document.documentElement || container === document.body) && !isScrollable ? window : container;
 
@@ -111,24 +110,6 @@ class MudScrollManager {
                 }
             });
         });
-    }
-
-    focusCell(rowId, cellIndex) {
-        const row = document.getElementById(rowId);
-        if (!row) {
-            //console.warn(`Row with id '${rowId}' not found.`);
-            return;
-        }
-
-        const cells = row.querySelectorAll('td, th');
-        if (cellIndex >= 0 && cellIndex < cells.length) {
-            const cell = cells[cellIndex];
-
-            cell.setAttribute('tabindex', '-1'); // Make cell focusable programmatically
-            cell.focus();
-        } else {
-            //console.warn(`Cell with index ${cellIndex} not found in row '${rowId}'.`);
-        }
     }
 };
 window.mudScrollManager = new MudScrollManager();
