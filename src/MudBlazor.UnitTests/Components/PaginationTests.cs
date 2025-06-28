@@ -456,7 +456,7 @@ namespace MudBlazor.UnitTests.Components
                     expectedPage = selectedPageTracker;
                     selectedPageTracker.Should().Be(1);
                 }
-                else if (input > 10) 
+                else if (input > 10)
                 {
                     expectedPage = selectedPageTracker;
                     selectedPageTracker.Should().Be(10);
