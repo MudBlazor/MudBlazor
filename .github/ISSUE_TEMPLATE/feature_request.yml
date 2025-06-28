@@ -50,13 +50,6 @@ body:
       description: Please provide a clear and concise description of any alternative solutions or features you've considered.
       placeholder: Describe alternatives!
   - type: checkboxes
-    id: pr
-    attributes:
-      label: Pull Request
-      description: If you want to see this feature soon, consider submitting a Pull Request! Our team has limited resources so we rely on community contributions. We greatly appreciate all contributions and will review them as soon as possible for inclusion in the next version!
-      options:
-        - label: I would like to do a Pull Request
-  - type: checkboxes
     id: terms
     attributes:
       label: Code of Conduct
