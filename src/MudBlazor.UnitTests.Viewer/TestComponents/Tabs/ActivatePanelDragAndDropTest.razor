@@ -1,4 +1,4 @@
-﻿<MudTabs Outlined="true" Elevation="4" Rounded="true" Border="true"
+﻿<MudTabs Outlined="true" Elevation="4" Rounded="true" Border="true" ActiveTabClass="@ActiveTabClass"
          ApplyEffectsToContainer="true" Class="mt-8" PanelClass="pa-6"
          EnableDragAndDrop="@_dragDrop" @bind-ActivePanelIndex="_activePanelIndex">
     <MudTabPanel Text="One">
@@ -21,6 +21,8 @@
 
 @code {
     private bool _dragDrop { get; set; }
-
     private int _activePanelIndex { get; set; } = 1;
+
+    [Parameter]
+    public string? ActiveTabClass { get; set; }
 }

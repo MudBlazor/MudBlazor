@@ -1,4 +1,5 @@
-﻿<MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6" EnableDragAndDrop="true">
+﻿<MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6" 
+         EnableDragAndDrop="true" OnItemDropped="@ItemDroppedFired">
     <MudTabPanel Text="Tab One">
         <MudText>Content One</MudText>
     </MudTabPanel>
@@ -15,4 +16,7 @@
 
 @code {
     public static string __description__ = "Viewer for MudTabs. Drag and drop tabs to reorder them.";
+
+    [Parameter]
+    public EventCallback<MudItemDropInfo<MudTabPanel>> ItemDroppedFired { get; set; }
 }
