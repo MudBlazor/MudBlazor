@@ -26,10 +26,6 @@
                                               ItemDisabled="@((item) => item.Disabled)">
                                 <ChildContent>
                                     <MudDropZone T="MudTabPanel" Identifier="mud-tabs-dropzone" Class="@DropZoneClassnames" AllowReorder="true" />
-                                    @if (!HideSlider && IsSliderPositionDetermined)
-                                    {
-                                        <div class="@SliderClass" style="@SliderStyle"></div>
-                                    }
                                 </ChildContent>
                                 <ItemRenderer>
                                     @RenderTab(context)
