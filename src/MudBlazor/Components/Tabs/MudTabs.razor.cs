@@ -54,10 +54,17 @@ namespace MudBlazor
         /// <summary>
         /// Enables drag-and-drop re-ordering of tabs.
         /// </summary>
-        /// <remarks>Defaults to <c>false</c>.</remarks>
+        /// <remarks>Defaults to <c>false</c>. <see cref="HideSlider"/> does not work with Drag and Drop enabled and will function as if true.</remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Behavior)]
         public bool EnableDragAndDrop { get; set; }
+
+        /// <summary>
+        /// When <see cref="EnableDragAndDrop" /> is set to true, this event will be raised when an item is dropped. 
+        /// The dropped item is provided in the <see cref="MudItemDropInfo{T}"/> and will have already been moved to its new position.
+        /// </summary>
+        [Parameter]
+        public EventCallback<MudItemDropInfo<MudTabPanel>> OnItemDropped { get; set; }
 
         /// <summary>
         /// Persists the content of tabs when they are not visible.
@@ -117,7 +124,8 @@ namespace MudBlazor
         /// Hides the slider underneath the tab header.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.
+        /// Defaults to <c>false</c>. 
+        /// <para>If Drag and Drop is enabled, the slider will always be hidden.</para>
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
@@ -1076,8 +1084,6 @@ namespace MudBlazor
 
         #endregion
 
-        public EventCallback<MudItemDropInfo<MudTabPanel>> OnItemUpdated { get; set; }
-
         internal void ItemUpdated(MudItemDropInfo<MudTabPanel> dropItem)
         {
             if (dropItem.Item is null)
@@ -1106,9 +1112,9 @@ namespace MudBlazor
             // Set the dragged tab as active
             ActivatePanel(dropItem.Item);
 
-            if (OnItemUpdated.HasDelegate)
+            if (OnItemDropped.HasDelegate)
             {
-                OnItemUpdated.InvokeAsync(dropItem);
+                OnItemDropped.InvokeAsync(dropItem);
             }
         }
     }
