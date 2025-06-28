@@ -20,7 +20,7 @@ namespace MudBlazor
     public partial class MudTabs : MudComponentBase, IAsyncDisposable
     {
         private bool _isDisposed;
-
+        private MudDropContainer<MudTabPanel>? _dropContainer;
         private int _activePanelIndex = 0;
         private int _scrollIndex = 0;
 
@@ -355,7 +355,9 @@ namespace MudBlazor
                     }
                 }
                 else if (validPanel)
+                {
                     ActivePanel = _panels[value];
+                }
             }
         }
 
@@ -479,6 +481,8 @@ namespace MudBlazor
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
+            await base.OnAfterRenderAsync(firstRender);
+
             if (firstRender)
             {
                 var items = _panels.Select(x => x.PanelRef).ToList();
@@ -494,6 +498,13 @@ namespace MudBlazor
                 ActivatePanel(ActivePanelIndex);
 
                 _isRendered = true;
+                // fix activepanelindex on initial render
+                // https://github.com/MudBlazor/MudBlazor/issues/11519
+                CenterScrollPositionAroundSelectedItem();
+                SetScrollButtonVisibility();
+                SetScrollabilityStates();
+                SetSliderState();
+                await InvokeAsync(StateHasChanged);
             }
         }
 
@@ -627,13 +638,15 @@ namespace MudBlazor
                     await ActivePanel.OnClick.InvokeAsync(ev);
                 }
 
+                _dropContainer?.Refresh();
+
                 CenterScrollPositionAroundSelectedItem();
                 SetScrollabilityStates();
                 SetSliderState();
                 SetScrollButtonVisibility();
                 SetScrollabilityStates();
                 Rerender();
-                await InvokeAsync(StateHasChanged);
+                StateHasChanged();
             }
         }
 
@@ -827,7 +840,8 @@ namespace MudBlazor
             {
                 return;
             }
-
+            // forces drawing of the active panels
+            ActivePanel.PanelRef.MudGetBoundingClientRectAsync().CatchAndLog();
             _sliderPositionPercentage = (GetLengthOfPanelItems(ActivePanel) / _allTabsSize) * 100;
             _sliderSizePercentage = (GetPanelLength(ActivePanel) / _allTabsSize) * 100;
         }
@@ -1062,6 +1076,8 @@ namespace MudBlazor
 
         #endregion
 
+        public EventCallback<MudItemDropInfo<MudTabPanel>> OnItemUpdated { get; set; }
+
         internal void ItemUpdated(MudItemDropInfo<MudTabPanel> dropItem)
         {
             if (dropItem.Item is null)
@@ -1089,6 +1105,11 @@ namespace MudBlazor
 
             // Set the dragged tab as active
             ActivatePanel(dropItem.Item);
+
+            if (OnItemUpdated.HasDelegate)
+            {
+                OnItemUpdated.InvokeAsync(dropItem);
+            }
         }
     }
 }

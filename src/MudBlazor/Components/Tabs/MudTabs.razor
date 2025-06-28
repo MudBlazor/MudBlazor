@@ -21,7 +21,7 @@
                 <div @ref="@_tabsContentSize" class="mud-tabs-tabbar-content">
                         @if (EnableDragAndDrop)
                         {
-                            <MudDropContainer T="MudTabPanel" Class="@WrapperClassnames" Style="@WrapperScrollStyle" Items="_panels" 
+                            <MudDropContainer @ref="_dropContainer" T="MudTabPanel" Class="@WrapperClassnames" Style="@WrapperScrollStyle" Items="_panels"
                                               ItemsSelector="@((item,dropzone) => true)" ItemDropped="@ItemUpdated"
                                               ItemDisabled="@((item) => item.Disabled)">
                                 <ChildContent>
@@ -34,7 +34,7 @@
                                 <ItemRenderer>
                                     @RenderTab(context)
                                 </ItemRenderer>
-                            </MudDropContainer>                            
+                            </MudDropContainer>                        
                         }
                         else
                         {
@@ -100,7 +100,7 @@
         }
     </text>;
 
-    RenderFragment RenderTab(MudTabPanel panel) => @<div @ref="panel.PanelRef" class="@GetTabClass(panel)" style="@GetTabStyle(panel)" @onclick=@( e => ActivatePanel(panel, e, false) )>
+    RenderFragment RenderTab(MudTabPanel panel) => @<div @ref="panel.PanelRef" class="@GetTabClass(panel)" style="@GetTabStyle(panel)" @onclick="@( e => ActivatePanel(panel, e, false) )">
         @if (TabPanelHeaderPosition == TabHeaderPosition.Before && TabPanelHeader != null)
             {
                 <div class="mud-tabs-panel-header mud-tabs-panel-header-before">

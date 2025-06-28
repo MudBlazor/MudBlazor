@@ -1478,5 +1478,70 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[1].InnerHtml.Should().Be("Apple");
             comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[2].InnerHtml.Should().Be("Banana");
         }
+
+        [Test]
+        public void Tab_DragAndDrop_ActiveIndexShouldNotChangeDisplay()
+        {
+            // https://github.com/MudBlazor/MudBlazor/issues/11519
+            var comp = Context.RenderComponent<ActivatePanelDragAndDropTest>();
+            var divs = comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab");
+            // no drop container
+            comp.FindAll("div.mud-drop-container").Count().Should().Be(0);
+            // all tabs should show
+            divs.Count.Should().Be(4);
+            divs[0].InnerHtml.Should().Be("One");
+            divs[1].InnerHtml.Should().Be("Two");
+            divs[2].InnerHtml.Should().Be("Three");
+            divs[3].InnerHtml.Should().Be("Four");
+            // no scroll bar should show
+            comp.FindAll(".mud-tabs-scroll-button").Should().BeEmpty();
+            // enable drag and drop 
+            var cbox = comp.Find("div.drag-drop-class input");
+            cbox.Change(true);
+            comp.SetParametersAndRender();
+            // drop container
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-drop-container").Count.Should().Be(1));
+            divs = comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab");
+            // all tabs should show
+            divs.Count.Should().Be(4);
+            divs[0].InnerHtml.Should().Be("One");
+            divs[1].InnerHtml.Should().Be("Two");
+            divs[2].InnerHtml.Should().Be("Three");
+            divs[3].InnerHtml.Should().Be("Four");
+        }
+
+        [Test]
+        public void Tab_DragAndDrop_ActivatePanel()
+        {
+            // https://github.com/MudBlazor/MudBlazor/issues/11549
+            var comp = Context.RenderComponent<ActivatePanelDragAndDropTest>();
+            var divs = comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab");
+            // no drop container
+            comp.FindAll("div.mud-drop-container").Count().Should().Be(0);
+            // all tabs should show
+            divs.Count.Should().Be(4);
+            divs[0].InnerHtml.Should().Be("One");
+            divs[1].InnerHtml.Should().Be("Two");
+            divs[2].InnerHtml.Should().Be("Three");
+            divs[3].InnerHtml.Should().Be("Four");
+            // no scroll bar should show
+            comp.FindAll(".mud-tabs-scroll-button").Should().BeEmpty();
+            // clicking a tab should activate it and update the class
+            divs[2].Click(); // activate Three
+            comp.WaitForAssertion(() => divs[2].ClassList.Contains("mud-tabs-tabbar-active-tab").Should().BeTrue());
+            // enable drag and drop 
+            var cbox = comp.Find("div.drag-drop-class input");
+            cbox.Change(true);
+            comp.SetParametersAndRender();
+            // drop container
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-drop-container").Count.Should().Be(1));
+            divs = comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab");
+            // all tabs should show
+            divs.Count.Should().Be(4);
+            divs[0].InnerHtml.Should().Be("One");
+            divs[1].InnerHtml.Should().Be("Two");
+            divs[2].InnerHtml.Should().Be("Three");
+            divs[3].InnerHtml.Should().Be("Four");
+        }
     }
 }
