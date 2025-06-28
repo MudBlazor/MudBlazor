@@ -447,12 +447,30 @@ namespace MudBlazor.UnitTests.Components
             await inputField.InputAsync(new Microsoft.AspNetCore.Components.ChangeEventArgs { Value = invalidInput });
             await inputField.KeyDownAsync(new Microsoft.AspNetCore.Components.Web.KeyboardEventArgs { Key = "Enter" });
 
-            selectedPageTracker.Should().Be(initialSelectedPage); // SelectedChanged should not be called with a new value
+            var expectedPage = initialSelectedPage;
+
+            if (int.TryParse(invalidInput, out var input))
+            {
+                if (input < 1)
+                {
+                    expectedPage = selectedPageTracker;
+                    selectedPageTracker.Should().Be(1);
+                }
+                else if (input > 10) 
+                {
+                    expectedPage = selectedPageTracker;
+                    selectedPageTracker.Should().Be(10);
+                }
+            }
+            else
+            {
+                selectedPageTracker.Should().Be(initialSelectedPage); // SelectedChanged should not be called with a new value
+            }
 
             comp.FindAll(".mud-pagination-ellipsis-input", enableAutoRefresh: true).Should().BeEmpty();
             comp.FindAll(".mud-pagination-ellipsis-button", enableAutoRefresh: true).Should().NotBeEmpty();
             // Verify active page button by checking its text content
-            comp.WaitForAssertion(() => comp.Find("li.mud-pagination-item-selected button.mud-button-root").TextContent.Trim().Should().Be(initialSelectedPage.ToString()), TimeSpan.FromSeconds(1));
+            comp.WaitForAssertion(() => comp.Find("li.mud-pagination-item-selected button.mud-button-root").TextContent.Trim().Should().Be(expectedPage.ToString()), TimeSpan.FromSeconds(1));
         }
 
         [Test]

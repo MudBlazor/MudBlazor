@@ -39,6 +39,7 @@
                                          Style="width: 38px;" 
                                          Immediate="true"
                                          HideSpinButtons="true"
+                                         Min="1" Max="@_countState.Value"
                                          OnKeyDown="@((KeyboardEventArgs e) => HandleEllipsisInputKeyDown(e, isStartEllipsis))"
                                          @onblur="@(() => HandleEllipsisInputBlur(isStartEllipsis))"
                                          aria-label="@Localizer[LanguageResource.MudPagination_EnterPage]" />
