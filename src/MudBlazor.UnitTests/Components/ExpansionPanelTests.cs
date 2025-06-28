@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
-using MudBlazor.UnitTests.TestComponents;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.ExpansionPanel;
 using NUnit.Framework;
 
@@ -298,6 +296,95 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => comp.Instance.Expansion[1].Should().BeFalse());
             comp.WaitForAssertion(() => comp.Instance.Expansion[2].Should().BeFalse());
             comp.WaitForAssertion(() => comp.Instance.Expansion[3].Should().BeFalse());
+        }
+
+        /// <summary>
+        /// Tests that the panel toggles expansion state when the Enter and Space keys are pressed.
+        /// </summary>
+        [Test]
+        public async Task MudExpansionPanel_Handles_KeyDown_For_Toggle()
+        {
+            var comp = Context.RenderComponent<ExpansionPanelKeyboardTest>();
+            var header = comp.Find(".mud-expand-panel-header");
+
+            comp.Markup.Should().NotContain("mud-panel-expanded");
+            await header.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Enter" });
+            comp.Markup.Should().Contain("mud-panel-expanded");
+            await header.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = " " });
+            comp.Markup.Should().NotContain("mud-panel-expanded");
+        }
+
+        /// <summary>
+        /// Tests that buttons and other interactive content within a collapsed expansion panel 
+        /// are properly hidden from accessibility tools and keyboard navigation by being placed 
+        /// in a container with the hidden attribute.
+        /// </summary>
+        [Test]
+        public void MudExpansionPanel_Button_IsInHiddenContainer_When_Panel_Collapsed()
+        {
+            var comp = Context.RenderComponent<ExpansionPanelKeyboardTest>();
+            var button = comp.Find("button");
+            var hiddenParent = button
+                .GetAncestors()
+                .OfType<IElement>()
+                .FirstOrDefault(e => e.HasAttribute("hidden"));
+
+            hiddenParent.Should().NotBeNull("button should not be accessible when the panel is collapsed");
+        }
+
+        /// <summary>
+        /// Tests that HandleKeyDownAsync ignores key presses when the panel is disabled.
+        /// </summary>
+        [Test]
+        public async Task MudExpansionPanel_HandleKeyDownAsync_IgnoresKeys_When_Disabled()
+        {
+            var comp = Context.RenderComponent<MudExpansionPanel>(parameters => parameters
+                .Add(p => p.Disabled, true)
+                .Add(p => p.Text, "Disabled Panel"));
+
+            var header = comp.Find(".mud-expand-panel-header");
+            comp.Markup.Should().NotContain("mud-panel-expanded");
+
+            // Try to expand with Enter key - should be ignored
+            await header.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Enter" });
+            comp.Markup.Should().NotContain("mud-panel-expanded");
+
+            // Try to expand with Space key - should be ignored
+            await header.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = " " });
+            comp.Markup.Should().NotContain("mud-panel-expanded");
+        }
+
+        /// <summary>
+        /// Tests that content is rendered even when collapsed when KeepContentAlive is true.
+        /// </summary>
+        [Test]
+        public void MudExpansionPanel_KeepContentAlive_True_RendersContentWhenCollapsed()
+        {
+            var comp = Context.RenderComponent<MudExpansionPanel>(parameters => parameters
+                .Add(p => p.Text, "Test Panel")
+                .Add(p => p.KeepContentAlive, true)
+                .Add(p => p.ChildContent, builder => builder.AddMarkupContent(0, "<button>Test Button</button>")));
+
+            comp.Markup.Should().NotContain("mud-panel-expanded");
+            comp.Find("button").Should().NotBeNull();
+
+            var contentDiv = comp.Find(".mud-expand-panel-content");
+            contentDiv.HasAttribute("hidden").Should().BeTrue();
+        }
+
+        /// <summary>
+        /// Tests that content is not rendered when collapsed when KeepContentAlive is false.
+        /// </summary>
+        [Test]
+        public void MudExpansionPanel_KeepContentAlive_False_DoesNotRenderContentWhenCollapsed()
+        {
+            var comp = Context.RenderComponent<MudExpansionPanel>(parameters => parameters
+                .Add(p => p.Text, "Test Panel")
+                .Add(p => p.KeepContentAlive, false)
+                .Add(p => p.ChildContent, builder => builder.AddMarkupContent(0, "<button>Test Button</button>")));
+
+            comp.Markup.Should().NotContain("mud-panel-expanded");
+            comp.FindAll("button").Should().BeEmpty();
         }
     }
 }

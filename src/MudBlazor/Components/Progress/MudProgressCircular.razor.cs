@@ -19,6 +19,9 @@ namespace MudBlazor
         private int _svgValue;
         private readonly ParameterState<double> _valueState;
         private const int MagicNumber = 126; // weird, but required for the SVG to work
+        private string _viewBox = string.Empty;
+        private const double CircleRadius = 20.0;
+        private const double CircleCenter = 44.0;
 
         protected string Classname =>
             new CssBuilder("mud-progress-circular")
@@ -145,6 +148,20 @@ namespace MudBlazor
         {
             base.OnInitialized();
             _svgValue = ToSvgValue(_valueState.Value);
+        }
+
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
+
+            var strokeWidth = Math.Max(0, StrokeWidth);
+            var viewBoxSize = (2 * CircleRadius) + strokeWidth;
+            var viewBoxMin = CircleCenter - (viewBoxSize / 2.0);
+
+            var size = ToS(viewBoxSize);
+            var min = ToS(viewBoxMin);
+
+            _viewBox = $"{min} {min} {size} {size}";
         }
 
         private int ToSvgValue(double value)
