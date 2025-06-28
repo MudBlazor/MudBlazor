@@ -1101,6 +1101,15 @@ namespace MudBlazor
 
         #endregion
 
+        /// <summary>
+        /// Allows a sort direction of <see cref="SortDirection.None"/> in addition to <see cref="SortDirection.Ascending"/> and <see cref="SortDirection.Descending"/>.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.  When <c>false</c>, the sort mode will only toggle between <see cref="SortDirection.Ascending"/> and <see cref="SortDirection.Descending"/>.
+        /// </remarks>
+        [Parameter]
+        public bool AllowUnsorted { get; set; } = true;
+
         #region Properties
 
         internal IEnumerable<T> CurrentPageItems
