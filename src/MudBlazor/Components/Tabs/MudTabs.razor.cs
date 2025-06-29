@@ -54,7 +54,7 @@ namespace MudBlazor
         /// <summary>
         /// Enables drag-and-drop re-ordering of tabs.
         /// </summary>
-        /// <remarks>Defaults to <c>false</c>. <see cref="HideSlider"/> does not work with Drag and Drop enabled and will function as if true.</remarks>
+        /// <remarks>Defaults to <c>false</c>.
         [Parameter]
         [Category(CategoryTypes.Tabs.Behavior)]
         public bool EnableDragAndDrop { get; set; }
@@ -125,7 +125,6 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>. 
-        /// <para>If Drag and Drop is enabled, the slider will always be hidden.</para>
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
