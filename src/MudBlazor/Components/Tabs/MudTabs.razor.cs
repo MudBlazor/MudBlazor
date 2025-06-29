@@ -54,7 +54,7 @@ namespace MudBlazor
         /// <summary>
         /// Enables drag-and-drop re-ordering of tabs.
         /// </summary>
-        /// <remarks>Defaults to <c>false</c>.
+        /// <remarks>Defaults to <c>false</c>.</remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Behavior)]
         public bool EnableDragAndDrop { get; set; }
@@ -114,7 +114,7 @@ namespace MudBlazor
         /// Centers tabs horizontally in the tab header.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.
+        /// Defaults to <c>false</c>. 
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
@@ -362,9 +362,7 @@ namespace MudBlazor
                     }
                 }
                 else if (validPanel)
-                {
                     ActivePanel = _panels[value];
-                }
             }
         }
 
@@ -845,8 +843,6 @@ namespace MudBlazor
             {
                 return;
             }
-            // forces drawing of the active panels
-            ActivePanel.PanelRef.MudGetBoundingClientRectAsync().CatchAndLog();
             _sliderPositionPercentage = (GetLengthOfPanelItems(ActivePanel) / _allTabsSize) * 100;
             _sliderSizePercentage = (GetPanelLength(ActivePanel) / _allTabsSize) * 100;
         }
