@@ -646,8 +646,6 @@ namespace MudBlazor
                     await ActivePanel.OnClick.InvokeAsync(ev);
                 }
 
-                _dropContainer?.Refresh();
-
                 CenterScrollPositionAroundSelectedItem();
                 SetScrollabilityStates();
                 SetSliderState();
@@ -828,7 +826,7 @@ namespace MudBlazor
         {
             _nextIcon = RightToLeft ? PrevIcon : NextIcon;
             _prevIcon = RightToLeft ? NextIcon : PrevIcon;
-
+            _dropContainer?.Refresh();
             GetTabBarContentSize();
             GetAllTabsSize();
             SetScrollButtonVisibility();
