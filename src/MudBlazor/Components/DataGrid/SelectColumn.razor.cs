@@ -5,6 +5,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 
+#nullable enable
 namespace MudBlazor;
 
 /// <summary>
@@ -49,7 +50,7 @@ public partial class SelectColumn<[DynamicallyAccessedMembers(DynamicallyAccesse
     /// When set, this function is called for each row to determine if the checkbox should be disabled.
     /// </remarks>
     [Parameter]
-    public Func<T, bool> DisabledFunc { get; set; }
+    public Func<T, bool>? DisabledFunc { get; set; }
 
     protected override void OnInitialized()
     {

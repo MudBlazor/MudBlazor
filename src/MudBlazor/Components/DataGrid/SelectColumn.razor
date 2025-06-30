@@ -4,7 +4,7 @@
 
 @code {
 #nullable enable
-    public RenderFragment<HeaderContext<T>> GetHeaderTemplate() => context =>
+    public RenderFragment<HeaderContext<T>>? GetHeaderTemplate() => context =>
     {
         if (ShowInHeader && context.IsMultiSelection)
         {
@@ -24,7 +24,8 @@
                       ValueChanged="@context.Actions.SetSelectedItemAsync"
                       Disabled="@(DisabledFunc?.Invoke(context.Item) ?? false)" />;
 
-    private RenderFragment<FooterContext<T>> GetFooterTemplate() => context =>
+#nullable enable
+    private RenderFragment<FooterContext<T>>? GetFooterTemplate() => context =>
     {
         if (ShowInFooter && context.IsMultiSelection)
         {
