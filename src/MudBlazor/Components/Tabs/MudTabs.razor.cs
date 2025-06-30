@@ -1090,5 +1090,103 @@ namespace MudBlazor
             // Set the dragged tab as active
             ActivatePanel(dropItem.Item);
         }
+
+
+        /// <summary>
+        /// Handles keyboard navigation for tabs according to W3C accessibility guidelines
+        /// Supports Enter/Space for activation and arrow keys for navigation
+        /// </summary>
+        private async Task HandleTabKeyDownAsync(KeyboardEventArgs e, MudTabPanel panel)
+        {
+            var handled = false;
+
+            switch (e.Key)
+            {
+                case "Enter":
+                case " ":
+                    ActivatePanel(panel, null, false);
+                    handled = true;
+                    break;
+
+                case "ArrowLeft":
+                    if (!IsVerticalTabs())
+                    {
+                        await MoveFocusToPreviousTab(panel);
+                        handled = true;
+                    }
+                    break;
+
+                case "ArrowRight":
+                    if (!IsVerticalTabs())
+                    {
+                        await MoveFocusToNextTab(panel);
+                        handled = true;
+                    }
+                    break;
+
+                case "ArrowUp":
+                    if (IsVerticalTabs())
+                    {
+                        await MoveFocusToPreviousTab(panel);
+                        handled = true;
+                    }
+                    break;
+
+                case "ArrowDown":
+                    if (IsVerticalTabs())
+                    {
+                        await MoveFocusToNextTab(panel);
+                        handled = true;
+                    }
+                    break;
+            }
+
+            if (handled)
+            {
+                await Task.CompletedTask;
+            }
+        }
+
+
+        /// <summary>
+        /// Allows the user to move to the previous tab using keyarrow
+        /// </summary>
+        private async Task MoveFocusToPreviousTab(MudTabPanel currentPanel)
+        {
+            var enabledPanels = _panels.Where(p => !p.Disabled).ToList();
+            if (enabledPanels.Count <= 1) return;
+
+            var currentIndex = enabledPanels.IndexOf(currentPanel);
+            var previousIndex = currentIndex <= 0 ? enabledPanels.Count - 1 : currentIndex - 1;
+            var previousPanel = enabledPanels[previousIndex];
+
+            await FocusPanel(previousPanel);
+        }
+
+        /// <summary>
+        /// Allows the user to move to the previous tab using keyarrow
+        /// </summary>
+        private async Task MoveFocusToNextTab(MudTabPanel currentPanel)
+        {
+            var enabledPanels = _panels.Where(p => !p.Disabled).ToList();
+            if (enabledPanels.Count <= 1) return;
+
+            var currentIndex = enabledPanels.IndexOf(currentPanel);
+            var nextIndex = currentIndex >= enabledPanels.Count - 1 ? 0 : currentIndex + 1;
+            var nextPanel = enabledPanels[nextIndex];
+
+            await FocusPanel(nextPanel);
+        }
+
+        /// <summary>
+        /// Focuses user onto selected panel
+        /// </summary>
+        private async Task FocusPanel(MudTabPanel panel)
+        {
+            if (panel.PanelRef.Context != null)
+            {
+                await panel.PanelRef.FocusAsync();
+            }
+        }
     }
 }

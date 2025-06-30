@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.TestComponents.Tabs;
@@ -1477,6 +1478,100 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[0].InnerHtml.Should().Be("Cherry");
             comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[1].InnerHtml.Should().Be("Apple");
             comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[2].InnerHtml.Should().Be("Banana");
+        }
+
+        /// <summary>
+        /// Tabs activate on keyboard Enter and Space keys, and disabled tabs cannot be activated.
+        /// </summary>
+        [Test]
+        public async Task KeyboardActivation_DisablesDisabledTab_EnterSpace()
+        {
+            var comp = Context.RenderComponent<TabsKeyboardAccessibilityTest>();
+            comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content One");
+
+            var tabs = comp.FindAll("div.mud-tab");
+            await tabs[1].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Enter" });
+            comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content Two");
+
+            tabs = comp.FindAll("div.mud-tab");
+            await tabs[2].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Enter" });
+            comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content Two");
+
+            tabs = comp.FindAll("div.mud-tab");
+            await tabs[1].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = " " });
+            comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content Two");
+        }
+
+        /// <summary>
+        /// Tabs activate on keyboard Left and Right arrow keys.
+        /// </summary>
+        [Test]
+        public async Task KeyboardActivation_DisablesDisabledTab_LeftRight()
+        {
+            var comp = Context.RenderComponent<TabsKeyboardAccessibilityTest>();
+            comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content One");
+
+            await comp.InvokeAsync(async () =>
+            {
+                var tabs = comp.FindAll("div.mud-tab");
+                await tabs[0].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowRight" });
+            });
+            var tabsAfterArrowRight = comp.FindAll("div.mud-tab");
+            await comp.InvokeAsync(async () =>
+            {
+                await tabsAfterArrowRight[1].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Enter" });
+            });
+            comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content Two");
+
+            await comp.InvokeAsync(async () =>
+            {
+                var tabs = comp.FindAll("div.mud-tab");
+                await tabs[1].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowLeft" });
+            });
+            var tabsAfterArrowLeft = comp.FindAll("div.mud-tab");
+            await comp.InvokeAsync(async () =>
+            {
+                await tabsAfterArrowLeft[0].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Enter" });
+            });
+            comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content One");
+        }
+
+        [Test]
+        public async Task VerticalTabs_SupportsArrowUpDownNavigation()
+        {
+            var comp = Context.RenderComponent<VerticalTabsKeyboardAccessibilityTest>();
+            await comp.InvokeAsync(async () =>
+            {
+                var tabs = comp.FindAll("div.mud-tab");
+                await tabs[0].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
+            });
+
+            var tabsAfterArrowDown = comp.FindAll("div.mud-tab");
+            await comp.InvokeAsync(async () =>
+            {
+                await tabsAfterArrowDown[1].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Enter" });
+            });
+
+            comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content Two");
+        }
+
+        [Test]
+        public async Task KeyboardNavigation_LeftArrow_WrapsToLastEnabledTab()
+        {
+            var comp = Context.RenderComponent<TabsKeyboardAccessibilityTest>();
+            await comp.InvokeAsync(async () =>
+            {
+                var tabs = comp.FindAll("div.mud-tab");
+                await tabs[0].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowLeft" });
+            });
+
+            var tabsAfterArrowDown = comp.FindAll("div.mud-tab");
+            await comp.InvokeAsync(async () =>
+            {
+                await tabsAfterArrowDown[1].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Enter" });
+            });
+
+            comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content Two");
         }
     }
 }

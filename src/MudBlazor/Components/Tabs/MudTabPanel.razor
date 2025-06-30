@@ -4,7 +4,7 @@
 
 @if (Parent?.KeepPanelsAlive == true)
 {
-    <div @attributes="UserAttributes" class="@Classname" style="@Stylename">
+    <div @attributes="UserAttributes" class="@Classname" style="@Stylename" role="tabpanel" tabindex="0">
         @ChildContent
     </div>
 }
@@ -12,6 +12,8 @@ else
 {
     @if (Parent?.ActivePanel == this)
     {
-        @ChildContent
+		<div role="tabpanel" tabindex="0">
+            @ChildContent
+        </div>
     }
 }
