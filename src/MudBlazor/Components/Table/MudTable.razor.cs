@@ -19,7 +19,7 @@ namespace MudBlazor
         [Inject] private IJSRuntime JSRuntime { get; set; } = null!;
         [Inject] private IScrollManager ScrollManager { get; set; } = null!;
 
-        private string _tableId = Identifier.Create("mudtable_");
+        private readonly string _tableId = Identifier.Create("mudtable_");
         private T? _selectedItem;
         private IEnumerable<T>? _items;
         private IEnumerable<T>? _preEditSort;

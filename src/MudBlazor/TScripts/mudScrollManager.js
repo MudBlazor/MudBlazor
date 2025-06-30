@@ -105,8 +105,6 @@ class MudScrollManager {
                 if (targetElement) {
                     let scrollBehavior = behaviorString === 'smooth' ? 'smooth' : 'auto';
                     targetElement.scrollIntoView({ behavior: scrollBehavior, block: 'nearest', inline: 'nearest' });
-                } else {
-                    //console.warn(`ScrollManager.scrollToVirtualizedItem: Target element with id '${targetItemId}' not found after initial scroll.`);
                 }
             });
         });
