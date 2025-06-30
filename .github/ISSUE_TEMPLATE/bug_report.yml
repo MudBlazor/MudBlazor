@@ -119,7 +119,17 @@ body:
         - Other
     validations:
       required: true
-
+  - type: dropdown
+    id: rendering-mode
+    attributes:
+      label: Blazor rendering mode
+      description: Specify the Blazor rendering mode you are using.
+      multiple: false
+      options:
+        - WASM
+        - Server
+        - Hybrid
+      default: 0
   - type: checkboxes
     id: pr
     attributes:

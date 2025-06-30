@@ -12,7 +12,7 @@
      @attributes="UserAttributes">
     @if (Indeterminate)
     {
-        <svg class="mud-progress-circular-svg" viewBox="22 22 44 44">
+        <svg class="mud-progress-circular-svg" viewBox="@_viewBox">
             <circle class="@SvgClassname" cx="44" cy="44" r="20" fill="none" stroke-width="@StrokeWidth"></circle>
         </svg>
 
@@ -22,7 +22,7 @@
     }
     else
     {
-        <svg class="mud-progress-circular-svg" viewBox="22 22 44 44">
+        <svg class="mud-progress-circular-svg" viewBox="@_viewBox">
             <circle class="@SvgClassname" cx="44" cy="44" r="20" fill="none" stroke-width="@StrokeWidth" style="stroke-dasharray: @MagicNumber; stroke-dashoffset: @_svgValue;"></circle>
         </svg>
 
