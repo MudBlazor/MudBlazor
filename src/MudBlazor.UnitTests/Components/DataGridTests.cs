@@ -1,4 +1,4 @@
-// Copyright (c) MudBlazor 2021
+﻿// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -5434,6 +5434,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.GetState(x => x.SelectedItems).Should().Contain(items[0]);
             comp.Instance.GetState(x => x.SelectedItems).Should().Contain(items[1]);
             comp.Instance.GetState(x => x.SelectedItems).Count.Should().Be(2);
+        }
 
         [Test]
         public async Task DataGridShouldAllowUnsortedAscDescOnly()
