@@ -1609,7 +1609,7 @@ namespace MudBlazor.UnitTests.Components
                     break;
             }
         }
-        
+
         [Test]
         public void SelectMultiSelectFieldChangedTest()
         {
@@ -1621,7 +1621,7 @@ namespace MudBlazor.UnitTests.Components
             //open the popover
             var input = comp.Find("div.mud-input-control");
             input.MouseDown();
-            
+
             //click an item and see the value change
             comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
             comp.Find(".mud-list-item").Click();
