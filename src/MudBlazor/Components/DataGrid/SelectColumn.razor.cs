@@ -52,6 +52,10 @@ public partial class SelectColumn<[DynamicallyAccessedMembers(DynamicallyAccesse
     [Parameter]
     public Func<T, bool>? DisabledFunc { get; set; }
 
+    public override RenderFragment<HeaderContext<T>>? HeaderTemplate { get => ShowInHeader ? GetHeaderTemplate() : null; set { } }
+    public override RenderFragment<CellContext<T>> CellTemplate { get => GetCellTemplate(); set { } }
+    public override RenderFragment<FooterContext<T>>? FooterTemplate { get => ShowInFooter ? GetFooterTemplate() : null; set { } }
+
     public SelectColumn()
     {
         Tag = "select-column";
@@ -61,8 +65,5 @@ public partial class SelectColumn<[DynamicallyAccessedMembers(DynamicallyAccesse
         Filterable = false;
         ShowColumnOptions = false;
         HeaderStyle = "width:0%";
-        HeaderTemplate = ShowInHeader ? GetHeaderTemplate() : null;
-        CellTemplate = GetCellTemplate();
-        FooterTemplate = ShowInFooter ? GetFooterTemplate() : null;
     }
 }

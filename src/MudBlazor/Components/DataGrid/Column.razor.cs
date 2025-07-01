@@ -85,31 +85,31 @@ namespace MudBlazor
         /// The template used to display this column's header.
         /// </summary>
         [Parameter]
-        public RenderFragment<HeaderContext<T>> HeaderTemplate { get; set; }
+        public virtual RenderFragment<HeaderContext<T>> HeaderTemplate { get; set; }
 
         /// <summary>
         /// The template used to display this column's value cells.
         /// </summary>
         [Parameter]
-        public RenderFragment<CellContext<T>> CellTemplate { get; set; }
+        public virtual RenderFragment<CellContext<T>> CellTemplate { get; set; }
 
         /// <summary>
         /// The template used to display this column's footer.
         /// </summary>
         [Parameter]
-        public RenderFragment<FooterContext<T>> FooterTemplate { get; set; }
+        public virtual RenderFragment<FooterContext<T>> FooterTemplate { get; set; }
 
         /// <summary>
         /// The template used to display this column's grouping.
         /// </summary>
         [Parameter]
-        public RenderFragment<GroupDefinition<T>> GroupTemplate { get; set; }
+        public virtual RenderFragment<GroupDefinition<T>> GroupTemplate { get; set; }
 
         /// <summary>
         /// The template used to display this column's aggregate.
         /// </summary>
         [Parameter]
-        public RenderFragment<IEnumerable<T>> AggregateTemplate { get; set; }
+        public virtual RenderFragment<IEnumerable<T>> AggregateTemplate { get; set; }
 
         /// <summary>
         /// The function which groups values in this column.
