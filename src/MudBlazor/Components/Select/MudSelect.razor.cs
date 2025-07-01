@@ -442,9 +442,9 @@ namespace MudBlazor
                     }
                 }
 
-                var newValue = new HashSet<T?>(_selectedValues, _comparer);
-                SelectedValuesChanged.InvokeAsync(newValue);
-                FieldChanged(newValue);
+                var newValues = new HashSet<T?>(_selectedValues, _comparer);
+                SelectedValuesChanged.InvokeAsync(newValues);
+                FieldChanged(newValues);
                 if (MultiSelection && typeof(T) == typeof(string))
                     SetValueAsync((T?)(object?)Text, updateText: false).CatchAndLog();
             }
