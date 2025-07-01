@@ -5,6 +5,7 @@
           RowEditPreview="BackupItem" 
           RowEditCancel="ResetItemValues"
           EditTrigger="TableEditTrigger.RowClick"
+          RowClassFunc="@SelectedRowClassFunc"
           Virtualize FixedHeader 
           RowsPerPage="100"
           Height="300px" >
@@ -54,6 +55,7 @@
     private List<Element> Elements = new List<Element>();
     private Element? _selectedElement;
     private int _scrollToRow = 10;
+    private int _editRowNumber = -1;
 
     protected override void OnInitialized()
     {
@@ -82,11 +84,24 @@
     {
         if (_selectedElement != null)
         {
+            _editRowNumber = _selectedElement.Number - 1;
             await _table.FocusCellAsync(_selectedElement, column);
         }
         else
         {
             Snackbar.Add("Please select an element from the table first by clicking on a row.", Severity.Error);
+        }
+    }
+
+    private string SelectedRowClassFunc(Element element, int rowNumber)
+    {
+        if (_selectedElement != null && _selectedElement.Equals(element))
+        {
+            return _editRowNumber == rowNumber ? "" : "selected";
+        }
+        else
+        {
+            return string.Empty;
         }
     }
 
@@ -116,3 +131,15 @@
         ((Element)element).Name = elementBeforeEdit?.Name;
     }
 }
+
+<style>
+    .selected {
+        background-color: #1E88E5 !important;
+    }
+    .selected > td {
+        color: white !important;
+    }
+    .selected > td .mud-input {
+        color: white !important;
+    }
+</style>
