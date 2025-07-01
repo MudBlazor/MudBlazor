@@ -52,15 +52,13 @@ public partial class SelectColumn<[DynamicallyAccessedMembers(DynamicallyAccesse
     [Parameter]
     public Func<T, bool>? DisabledFunc { get; set; }
 
-    protected override void OnInitialized()
+    public SelectColumn()
     {
-        base.OnInitialized();
-
         Tag = "select-column";
+        Editable = false;
         Sortable = false;
         Resizable = false;
         Filterable = false;
-        Editable = false;
         ShowColumnOptions = false;
         HeaderStyle = "width:0%";
         HeaderTemplate = ShowInHeader ? GetHeaderTemplate() : null;
