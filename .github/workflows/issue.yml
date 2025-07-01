@@ -41,11 +41,6 @@ jobs:
             } else if (body.includes("### Bug type\n\nDocs (mudblazor.com)")) {
               labels.push("docs");
               console.log("Bug type: docs.");
-            } 
-            
-            if (body.match(/Version \(working\)\n\n.+/)) {
-              labels.push("regression");
-              console.log("Bug is a regression.");
             }
             
             if(labels.length != 0) {
