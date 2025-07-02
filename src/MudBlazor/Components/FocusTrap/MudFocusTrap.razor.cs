@@ -78,12 +78,26 @@ namespace MudBlazor
 
             if (firstRender)
             {
-                await SaveFocusAsync();
+                try
+                {
+                    await SaveFocusAsync();
+                }
+                catch (Exception)
+                {
+                    // Catching exceptions to prevent application crashes when JS interop fails.
+                }
             }
 
             if (!_initialized)
             {
-                await InitializeFocusAsync();
+                try
+                {
+                    await InitializeFocusAsync();
+                }
+                catch (Exception)
+                {
+                    // Catching exceptions to prevent application crashes when JS interop fails.
+                }
             }
         }
 
