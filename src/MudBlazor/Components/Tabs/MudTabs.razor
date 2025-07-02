@@ -23,9 +23,9 @@
                         {
                             <MudDropContainer T="MudTabPanel" Class="@WrapperClassnames" Style="@WrapperScrollStyle" Items="_panels"
                                 ItemsSelector="@((item,dropzone) => true)" ItemDropped="@ItemUpdated"
-                                ItemDisabled="@((item) => item.Disabled)" role="tabpanel">
+                                ItemDisabled="@((item) => item.Disabled)" role="tablist">
                                 <ChildContent>
-                                    <MudDropZone T="MudTabPanel" Identifier="mud-tabs-dropzone" Class="@DropZoneClassnames" AllowReorder="true" role="tablist"/>
+                                    <MudDropZone T="MudTabPanel" Identifier="mud-tabs-dropzone" Class="@DropZoneClassnames" AllowReorder="true"/>
                                     @if (!HideSlider && IsSliderPositionDetermined)
                                     {
                                         <div class="@SliderClass" style="@SliderStyle"></div>
