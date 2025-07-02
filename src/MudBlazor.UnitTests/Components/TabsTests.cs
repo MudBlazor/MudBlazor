@@ -126,7 +126,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// When KeepPanelsAlive="true" the panels are not destroyed and recreated on tab-switch. We prove that by using a button click counter on every tab and
+        /// When KeepPanelsAlive="false" the panels are not destroyed and recreated on tab-switch. We prove that by using a button click counter on every tab and
         /// a callback that is fired only when OnRenderAsync of the tab panel happens the first time (which outputs a message at the bottom).
         /// </summary>
         [Test]
@@ -137,8 +137,9 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button").Count.Should().Be(1);
             // only the first panel should be rendered first
             comp.FindAll("p")[^1].MarkupMatches("<p>Panel 1<br></p>");
-            // no child divs in div.mud-tabs-panels
-            comp.FindAll("div.mud-tabs-panels > div").Count.Should().Be(0);
+            // exactly one tabpanel div should exist with proper accessibility attributes
+            comp.FindAll("div.mud-tabs-panels > div[role='tabpanel']").Count.Should().Be(1);
+            comp.FindAll("div.mud-tabs-panels > div[role='tabpanel'][tabindex='0']").Count.Should().Be(1);
             // click first button and show button click counters
             comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 1=0");
             comp.FindAll("button")[0].Click();
@@ -149,6 +150,8 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("p")[^1].MarkupMatches("<p>Panel 1<br>Panel 2<br></p>");
             // only one panel should be evident in the markup:
             comp.FindAll("button").Count.Should().Be(1);
+            // still exactly one tabpanel div should exist
+            comp.FindAll("div.mud-tabs-panels > div[role='tabpanel']").Count.Should().Be(1);
             comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 2=0");
             // click the button twice
             comp.FindAll("button")[0].Click();
@@ -159,12 +162,16 @@ namespace MudBlazor.UnitTests.Components
             // second panel should be displayed
             comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 3=0");
             comp.FindAll("p")[^1].MarkupMatches("<p>Panel 1<br>Panel 2<br>Panel 3<br></p>");
+            // still exactly one tabpanel div should exist
+            comp.FindAll("div.mud-tabs-panels > div[role='tabpanel']").Count.Should().Be(1);
             // switch back to the first tab:
             comp.FindAll("div.mud-tab")[0].Click();
             comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 1=0");
             comp.FindAll("button")[0].Click();
             comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 1=1");
             comp.FindAll("p")[^1].MarkupMatches("<p>Panel 1<br>Panel 2<br>Panel 3<br>Panel 1<br></p>");
+            // final check - still exactly one tabpanel div should exist
+            comp.FindAll("div.mud-tabs-panels > div[role='tabpanel']").Count.Should().Be(1);
         }
 
 
