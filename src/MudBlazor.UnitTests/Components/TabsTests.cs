@@ -1481,28 +1481,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Tabs activate on keyboard Enter and Space keys, and disabled tabs cannot be activated.
-        /// </summary>
-        [Test]
-        public async Task KeyboardActivation_DisablesDisabledTab_EnterSpace()
-        {
-            var comp = Context.RenderComponent<TabsKeyboardAccessibilityTest>();
-            comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content One");
-
-            var tabs = comp.FindAll("div.mud-tab");
-            await tabs[1].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Enter" });
-            comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content Two");
-
-            tabs = comp.FindAll("div.mud-tab");
-            await tabs[2].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Enter" });
-            comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content Two");
-
-            tabs = comp.FindAll("div.mud-tab");
-            await tabs[1].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = " " });
-            comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content Two");
-        }
-
-        /// <summary>
         /// Tab selection changes on keyboard Left and Right arrow keys, is activated by Enter/Space keys and ensures disabled tab is not selectable. 
         /// </summary>
         [Test]
