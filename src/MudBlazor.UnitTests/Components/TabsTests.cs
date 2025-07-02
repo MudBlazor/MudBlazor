@@ -1503,7 +1503,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Tabs activate on keyboard Left and Right arrow keys.
+        /// Tab selection changes on keyboard Left and Right arrow keys, is activated by Enter/Space keys and ensures disabled tab is not selectable. 
         /// </summary>
         [Test]
         public async Task KeyboardActivation_DisablesDisabledTab_LeftRight()
@@ -1536,6 +1536,9 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content One");
         }
 
+        /// <summary>
+        /// Tab selection changes on keyboard Up and Down arrow keys, is activated by Enter/Space keys
+        /// </summary>
         [Test]
         public async Task VerticalTabs_SupportsArrowUpDownNavigation()
         {
@@ -1555,6 +1558,9 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content Two");
         }
 
+        /// <summary>
+        /// Tab selection wraps on keyboard Left and Right arrow keys, is activated by Enter/Space keys and ensures disabled tab is not selectable. 
+        /// </summary>
         [Test]
         public async Task KeyboardNavigation_LeftArrow_WrapsToLastEnabledTab()
         {
