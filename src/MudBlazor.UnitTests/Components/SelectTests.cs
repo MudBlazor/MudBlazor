@@ -1609,6 +1609,25 @@ namespace MudBlazor.UnitTests.Components
                     break;
             }
         }
+
+        [Test]
+        public void SelectMultiSelectFieldChangedTest()
+        {
+            var comp = Context.RenderComponent<SelectMultiSelectFieldChangedTest>();
+
+            //default values
+            comp.Instance.FormFieldChangedEventArgs.Should().BeNull();
+
+            //open the popover
+            var input = comp.Find("div.mud-input-control");
+            input.MouseDown();
+
+            //click an item and see the value change
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
+            comp.Find(".mud-list-item").Click();
+
+            comp.Instance.FormFieldChangedEventArgs.NewValue.Should().BeEquivalentTo(comp.Instance.States.Take(2).Reverse());
+        }
 #nullable disable
     }
 }
