@@ -26,8 +26,8 @@ jobs:
             }
             
             // Check for regression (user specified a previous working version)
-            const versionWorkingMatch = body.match(/### Version \(working\)\s*\n\s*([^\n]*)/);
-            if (versionWorkingMatch && versionWorkingMatch[1].trim() !== "" && versionWorkingMatch[1].trim() !== "_No response_") {
+            const regressionMatch = body.match(/### Version \(working\)\s*\n\s*[^\n#]*?v?\d+\.\d+/s);
+            if (regressionMatch) {
               labels.push("regression");
               console.log("Working version specified - adding regression label.");
             }
