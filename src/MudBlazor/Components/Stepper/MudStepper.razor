@@ -1,4 +1,4 @@
-@namespace MudBlazor
+﻿@namespace MudBlazor
 @using MudBlazor.Resources
 @using MudBlazor.Utilities
 @inherits MudComponentBase
@@ -47,7 +47,7 @@
 
     @if (IsCompleted && CompletedContent is not null)
     {
-        <div class="@StepClassname mud-stepper-complete" style="@StepStyle">
+        <div class="@StepClassname mud-stepper-complete">
             @CompletedContent
         </div>
     }
