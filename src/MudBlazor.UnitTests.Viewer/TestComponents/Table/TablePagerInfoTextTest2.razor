@@ -1,0 +1,22 @@
+﻿﻿@using System.ComponentModel
+
+<MudTable Items="_items">
+    <RowTemplate>
+        <MudTd>@context</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager InfoFormat="@InfoFormat" />
+    </PagerContent>
+</MudTable>
+
+@code {
+    public static string __description__ = "Info in pager should be correctly formated";
+    
+    [Parameter]
+    public string? InfoFormat { get; set; }
+
+    private readonly string[] _items =
+    [
+        "A", "B", "C"
+    ];
+}

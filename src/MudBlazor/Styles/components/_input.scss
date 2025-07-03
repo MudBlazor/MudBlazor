@@ -392,12 +392,9 @@
 
     &.mud-input-root-filled {
       box-sizing: border-box;
-      margin-top: 0;
+      margin-top: 27px;
       margin-bottom: 0;
-      padding: 27px 12px 10px;
-      mask-image: linear-gradient(to bottom,
-        transparent 27px,
-        black 27px);
+      padding: 0px 12px 10px;
 
       &.mud-input-root-margin-dense {
         padding-top: 23px;
@@ -460,12 +457,9 @@
 
   &.mud-input-root-outlined {
     box-sizing: border-box;
-    margin-top: 0;
+    margin-top: 18.5px;
     margin-bottom: 0;
-    padding: 18.5px 14px;
-    mask-image: linear-gradient(to bottom,
-      transparent 18.5px,
-      black 18.5px);
+    padding: 0px 18.5px 14px;
 
     &.mud-input-root:-webkit-autofill {
       border-radius: inherit;
@@ -544,4 +538,8 @@
 
 .mud-picker .mud-shrink .mud-range-input-separator {
   visibility: visible;
+}
+
+.mud-input-input-control {
+  user-select: none;
 }

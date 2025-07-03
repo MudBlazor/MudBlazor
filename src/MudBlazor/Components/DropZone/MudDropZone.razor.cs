@@ -63,7 +63,7 @@ namespace MudBlazor
         public RenderFragment<T>? ItemRenderer { get; set; }
 
         /// <summary>
-        /// The function which determines whether an item can be dropped within this drop zone.
+        /// The function which determines whether an item is within this <see cref="MudDropZone{T}"/> .
         /// </summary>
         /// <remarks>
         /// When set, overrides the <see cref="MudDropContainer{T}.ItemsSelector"/> function.

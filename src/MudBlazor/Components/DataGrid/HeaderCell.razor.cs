@@ -31,7 +31,7 @@ namespace MudBlazor
         public MudDataGrid<T> DataGrid { get; set; }
 
         /// <summary>
-        /// Whether the display should be right to left
+        /// Displays the content right-to-left.
         /// </summary>
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
@@ -376,7 +376,9 @@ namespace MudBlazor
             SortDirection = SortDirection switch
             {
                 SortDirection.Ascending => SortDirection.Descending,
-                SortDirection.Descending => SortDirection.None,
+                SortDirection.Descending => DataGrid?.AllowUnsorted ?? false
+                    ? SortDirection.None
+                    : SortDirection.Ascending,
                 _ => SortDirection.Ascending
             };
 
@@ -386,9 +388,9 @@ namespace MudBlazor
                 return;
             }
 
-            DataGrid.DropContainerHasChanged();
+            DataGrid?.DropContainerHasChanged();
 
-            if ((args.MetaKey || args.CtrlKey) && DataGrid.SortMode == SortMode.Multiple)
+            if ((args.MetaKey || args.CtrlKey) && DataGrid?.SortMode == SortMode.Multiple)
                 await InvokeAsync(() => DataGrid.ExtendSortAsync(Column.PropertyName, SortDirection, Column.GetLocalSortFunc(), Column.Comparer));
             else
                 await InvokeAsync(() => DataGrid.SetSortAsync(Column.PropertyName, SortDirection, Column.GetLocalSortFunc(), Column.Comparer));
@@ -401,7 +403,7 @@ namespace MudBlazor
             DataGrid.DropContainerHasChanged();
         }
 
-        internal void AddFilter()
+        internal void AddFilter(MouseEventArgs args = null)
         {
             var filterDefinition = Column?.FilterContext.FilterDefinition;
             if (DataGrid.FilterMode == DataGridFilterMode.Simple && filterDefinition != null)
@@ -409,6 +411,11 @@ namespace MudBlazor
                 if (DataGrid.FilterDefinitions.All(x => x.Title != filterDefinition.Title))
                 {
                     DataGrid.FilterDefinitions.Add(filterDefinition.Clone());
+                }
+                if (args != null)
+                {
+                    DataGrid._openPosition.Top = args.PageY;
+                    DataGrid._openPosition.Left = args.PageX;
                 }
                 DataGrid.OpenFilters();
             }
@@ -419,12 +426,24 @@ namespace MudBlazor
             }
         }
 
-        internal void OpenFilters()
+        internal void OpenFilters(MouseEventArgs args = null)
         {
             if (DataGrid.FilterMode == DataGridFilterMode.Simple)
+            {
+                if (args != null)
+                {
+                    DataGrid._openPosition.Top = args.PageY;
+                    DataGrid._openPosition.Left = args.PageX;
+                }
                 DataGrid.OpenFilters();
+            }
             else if (DataGrid.FilterMode == DataGridFilterMode.ColumnFilterMenu)
             {
+                if (args != null)
+                {
+                    DataGrid._openPosition.Top = args.PageY;
+                    DataGrid._openPosition.Left = args.PageX;
+                }
                 _filtersMenuVisible = true;
                 DataGrid.DropContainerHasChanged();
             }

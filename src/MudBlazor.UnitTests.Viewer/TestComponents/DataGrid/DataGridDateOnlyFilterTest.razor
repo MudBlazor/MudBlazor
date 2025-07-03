@@ -1,0 +1,20 @@
+<MudDataGrid Items="@_people" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterRow">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" Title="Name" />
+        <PropertyColumn Property="x => x.Age" Title="Age" />
+        <PropertyColumn Property="x => x.HiredOn" Title="Hired On" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    public static string __description__ = @"Test DateOnly filtering in DataGrid";
+    public record Model(string Name, int? Age, DateOnly? HiredOn);
+    
+    private readonly IEnumerable<Model> _people =
+    [
+        new("Sam", 56, new DateOnly(2020, 3, 10)),
+        new("Alicia", 54, null),
+        new("Ira", 27, new DateOnly(2011, 1, 2)),
+        new("John", 32, new DateOnly(2022, 6, 15))
+    ];
+}

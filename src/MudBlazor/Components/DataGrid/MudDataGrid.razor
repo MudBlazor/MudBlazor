@@ -62,7 +62,7 @@
                                     <MudOverlay @bind-Visible="@_filtersMenuVisible" AutoClose OnClosed="@CloseFilters"></MudOverlay>
                                     <tr class="mud-table-row" style="visibility: collapse; opacity: 0;overflow: hidden;">
                                         <th colspan="@RenderedColumns.Count" class="mud-table-cell mud-filter-panel-cell">
-                                            <MudPopover Open="@_filtersMenuVisible" Paper="true" Class="filters-panel pa-2" OverflowBehavior="OverflowBehavior.FlipAlways" AnchorOrigin="Origin.TopLeft"
+                                            <MudPopover UserAttributes="@PositionAttributes" Open="@_filtersMenuVisible" Paper="true" Class="filters-panel pa-2 mud-popover-position-override" OverflowBehavior="OverflowBehavior.FlipAlways" AnchorOrigin="Origin.TopLeft"
                                                         TransformOrigin="Origin.TopLeft" Elevation="4" Style="width:700px;max-width:700px;" MaxHeight="400">
                                                 @if (FilterTemplate == null)
                                                 {
@@ -92,7 +92,7 @@
                                     <MudOverlay @bind-Visible="_columnsPanelVisible" AutoClose></MudOverlay>
                                     <tr class="mud-table-row" style="visibility: collapse; opacity: 0; overflow: hidden;">
                                         <th colspan="@RenderedColumns.Count" class="mud-table-cell mud-filter-panel-cell">
-                                            <MudPopover Open="@_columnsPanelVisible" Paper="true" Class="mud-data-grid-columns-panel px-2" OverflowBehavior="OverflowBehavior.FlipAlways"
+                                            <MudPopover UserAttributes="@PositionAttributes" Open="@_columnsPanelVisible" Paper="true" Class="mud-data-grid-columns-panel px-2 mud-popover-position-override" OverflowBehavior="OverflowBehavior.FlipAlways"
                                                         AnchorOrigin="Origin.TopLeft"
                                                         TransformOrigin="Origin.TopLeft" Elevation="4"
                                                         Style="max-width:700px;" MaxHeight="400">
@@ -154,11 +154,11 @@
 
                                                                 @if (context.HeaderCell.hasFilter)
                                                                 {
-                                                                    <MudIconButton Ripple="false" Class="filter-button filtered" Icon="@Icons.Material.Filled.FilterAlt" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_Filter] Disabled="!context.filterable" OnClick="@(e => context?.HeaderCell.OpenFilters())"></MudIconButton>
+                                                                    <MudIconButton Ripple="false" Class="filter-button filtered" Icon="@Icons.Material.Filled.FilterAlt" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_Filter] Disabled="!context.filterable" OnClick="@(e => context?.HeaderCell.OpenFilters(e))"></MudIconButton>
                                                                 }
                                                                 else
                                                                 {
-                                                                    <MudIconButton Ripple="false" Class="filter-button" Icon="@Icons.Material.Outlined.FilterAlt" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_Filter] Disabled="!context.filterable" OnClick="@(e => context?.HeaderCell.AddFilter())"></MudIconButton>
+                                                                    <MudIconButton Ripple="false" Class="filter-button" Icon="@Icons.Material.Outlined.FilterAlt" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_Filter] Disabled="!context.filterable" OnClick="@(e => context?.HeaderCell.AddFilter(e))"></MudIconButton>
                                                                 }
 
                                                                 @if (ColumnsPanelReordering)
@@ -321,7 +321,7 @@
     @<text>
         <MudMenu Icon="@Icons.Material.Outlined.Settings" Size="Size.Small" Dense="true">
             <MudMenuItem OnClick="@dataGrid.ShowColumnsPanel">@Localizer[LanguageResource.MudDataGrid_Columns]</MudMenuItem>
-                @if (dataGrid.Groupable)
+                @if (dataGrid.IsGrouped)
                 {
                     <MudMenuItem OnClick="@dataGrid.ExpandAllGroupsAsync">@Localizer[LanguageResource.MudDataGrid_ExpandAllGroups]</MudMenuItem>
                     <MudMenuItem OnClick="@dataGrid.CollapseAllGroupsAsync">@Localizer[LanguageResource.MudDataGrid_CollapseAllGroups]</MudMenuItem>

@@ -79,7 +79,8 @@ namespace MudBlazor
             .AddClass("mud-toggle-group-vertical", Vertical)
             .AddClass($"mud-toggle-group-size-{Size.ToDescriptionString()}")
             .AddClass("mud-toggle-group-rtl", RightToLeft)
-            .AddClass($"border mud-border-{Color.ToDescriptionString()} border-solid", Outlined)
+            .AddClass($"mud-toggle-group-{Color.ToDescriptionString()}")
+            .AddClass("mud-toggle-group-outlined", Outlined)
             .AddClass("mud-disabled", Disabled)
             .AddClass(Class)
             .Build();
@@ -317,13 +318,16 @@ namespace MudBlazor
             }
         }
 
-        private void OnValueChanged()
+        private void OnValueChanged(ParameterChangedEventArgs<T?> args)
         {
             // perform Selection after user consumes Value Changed logic
-            ApplySelectionState();
+            var selectedItem = _items.FirstOrDefault(x => EqualityComparer<T>.Default.Equals(x.Value, args.Value));
+            var previousItem = _items.FirstOrDefault(x => EqualityComparer<T>.Default.Equals(x.Value, args.LastValue));
+            if (selectedItem != null) ApplySelectionState(selectedItem);
+            if (previousItem != null) ApplySelectionState(previousItem);
         }
 
-        private void OnValuesChanged()
+        private void OnValuesChanged(ParameterChangedEventArgs<IEnumerable<T?>?> args)
         {
             // perform Selection after user consumes Values Changed logic
             ApplySelectionState();
@@ -374,6 +378,11 @@ namespace MudBlazor
                 }
 
                 await _values.SetValueAsync(selectedValues);
+                if (!ValuesChanged.HasDelegate)
+                {
+                    ApplySelectionState();
+                }
+                return;
             }
             else if (SelectionMode == SelectionMode.ToggleSelection)
             {
@@ -391,13 +400,19 @@ namespace MudBlazor
                 await _value.SetValueAsync(itemValue);
             }
 
-            // unselect previous item if not null and not the same as current item
-            if (previousItem != null && previousItem != item)
+            // WithChangeHandler will update the selection state if the value/values changed
+            // but only if the user subscribes to it via bind or directly
+            // change handler is needed so the user can change the value programmatically and
+            // the selection state still be updated
+            if (!ValueChanged.HasDelegate)
             {
-                ApplySelectionState(previousItem);
+                // unselect previous item if not null and not the same as current item
+                if (previousItem != null && previousItem != item)
+                {
+                    ApplySelectionState(previousItem);
+                }
+                ApplySelectionState(item);
             }
-
-            ApplySelectionState(item);
         }
 
         protected internal IEnumerable<MudToggleItem<T>> GetItems() => _items;
