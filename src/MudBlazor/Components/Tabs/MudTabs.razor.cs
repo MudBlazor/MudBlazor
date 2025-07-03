@@ -1107,7 +1107,7 @@ namespace MudBlazor
 
             if (OnItemDropped.HasDelegate)
             {
-                OnItemDropped.InvokeAsync(dropItem);
+                _ = OnItemDropped.InvokeAsync(dropItem);
             }
         }
     }
