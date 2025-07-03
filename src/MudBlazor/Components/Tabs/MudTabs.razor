@@ -25,7 +25,7 @@
                                               ItemsSelector="@((item,dropzone) => true)" ItemDropped="@ItemUpdated"
                                               ItemDisabled="@((item) => item.Disabled)" role="tablist">
                                 <ChildContent>
-                                    <MudDropZone T="MudTabPanel" Identifier="mud-tabs-dropzone" Class="@DropZoneClassnames" AllowReorder="true"/>
+                                    <MudDropZone T="MudTabPanel" Identifier="mud-tabs-dropzone" Class="@DropZoneClassnames" AllowReorder="true" />
                                     @if (!HideSlider && IsSliderPositionDetermined)
                                     {
                                         <div class="@SliderClass" style="@SliderStyle"></div>
@@ -101,7 +101,8 @@
     </text>;
 
     RenderFragment RenderTab(MudTabPanel panel) => @<div @ref="panel.PanelRef" class="@GetTabClass(panel)" style="@GetTabStyle(panel)" @onclick=@( e => ActivatePanel(panel, e, false) ) 
-        tabindex="@(panel.Disabled ? "-1" : ActivePanel == panel ? "0" : "-1")" @onkeydown="(e => HandleTabKeyDownAsync(e, panel))" role="tab" aria-selected="@(ActivePanel == panel ? "true" : "false")">
+        tabindex="@(panel.Disabled ? "-1" : ActivePanel == panel ? "0" : "-1")" @onkeydown="(e => HandleTabKeyDownAsync(e, panel))" role="tab" aria-selected="@(ActivePanel == panel ? "true" : "false")"
+		id="@GetTabId(panel)" aria-controls="@GetPanelId(panel)">
         @if (TabPanelHeaderPosition == TabHeaderPosition.Before && TabPanelHeader != null)
             {
                 <div class="mud-tabs-panel-header mud-tabs-panel-header-before">

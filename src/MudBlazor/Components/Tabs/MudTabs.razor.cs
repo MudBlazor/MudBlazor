@@ -452,6 +452,13 @@ namespace MudBlazor
 
         private string? _nextIcon;
 
+        /// <summary>
+        /// Unique identifier for this MudTabs component instance.
+        /// Used to generate stable, unique IDs for tabs and panels to ensure ARIA compliance.
+        /// Prevents ID conflicts when multiple tab components exist on the same page.
+        /// </summary>
+        private readonly string _componentId = Guid.NewGuid().ToString("N")[..8];
+
         #region Life cycle management
 
         public MudTabs()
@@ -1174,6 +1181,26 @@ namespace MudBlazor
             {
                 await panel.PanelRef.FocusAsync();
             }
+        }
+
+        /// <summary>
+        /// Generates a unique ID for a tab element using the panel's index.
+        /// Required for aria-controls attribute to link tab to its panel.
+        /// </summary>
+        public string GetTabId(MudTabPanel panel)
+        {
+            var panelIndex = _panels.IndexOf(panel);
+            return $"mud-tabs-{_componentId}-tab-{panelIndex}";
+        }
+
+        /// <summary>
+        /// Generates a unique ID for a panel element using the panel's index.
+        /// Required for aria-labelledby attribute to link panel back to its tab.
+        /// </summary>
+        public string GetPanelId(MudTabPanel panel)
+        {
+            var panelIndex = _panels.IndexOf(panel);
+            return $"mud-tabs-{_componentId}-panel-{panelIndex}";
         }
     }
 }
