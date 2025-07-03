@@ -1098,21 +1098,17 @@ namespace MudBlazor
         /// </summary>
         private async Task HandleTabKeyDownAsync(KeyboardEventArgs e, MudTabPanel panel)
         {
-            var handled = false;
-
             switch (e.Key)
             {
                 case "Enter":
                 case " ":
                     ActivatePanel(panel, null, false);
-                    handled = true;
                     break;
 
                 case "ArrowLeft":
                     if (!IsVerticalTabs())
                     {
                         await MoveFocusToPreviousTab(panel);
-                        handled = true;
                     }
                     break;
 
@@ -1120,7 +1116,6 @@ namespace MudBlazor
                     if (!IsVerticalTabs())
                     {
                         await MoveFocusToNextTab(panel);
-                        handled = true;
                     }
                     break;
 
@@ -1128,7 +1123,6 @@ namespace MudBlazor
                     if (IsVerticalTabs())
                     {
                         await MoveFocusToPreviousTab(panel);
-                        handled = true;
                     }
                     break;
 
@@ -1136,20 +1130,13 @@ namespace MudBlazor
                     if (IsVerticalTabs())
                     {
                         await MoveFocusToNextTab(panel);
-                        handled = true;
                     }
                     break;
             }
-
-            if (handled)
-            {
-                await Task.CompletedTask;
-            }
         }
 
-
         /// <summary>
-        /// Allows the user to move to the previous tab using keyarrow
+        /// Allows the user to move to the next tab using keyarrow
         /// </summary>
         private async Task MoveFocusToPreviousTab(MudTabPanel currentPanel)
         {
