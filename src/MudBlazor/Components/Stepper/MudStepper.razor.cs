@@ -219,17 +219,6 @@ public partial class MudStepper : MudComponentBase
     public string? StepClass { get; set; }
 
     /// <summary>
-    /// The CSS styles applied to all steps.
-    /// </summary>
-    /// <remarks>
-    /// Defaults to <c>null</c>.
-    /// </remarks>
-    [Obsolete("For better maintainability, use the StepClass property with CSS for styling.")]
-    [Parameter]
-    [Category(CategoryTypes.List.Appearance)]
-    public string? StepStyle { get; set; }
-
-    /// <summary>
     /// Centers the labels for each step below the circle.
     /// </summary>
     /// <remarks>

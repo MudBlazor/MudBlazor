@@ -36,7 +36,6 @@ public class MudStep : MudComponentBase, IAsyncDisposable
 
 #pragma warning disable CS0618 // Type or member is obsolete
     internal string Styles => new StyleBuilder()
-        .AddStyle(Parent?.StepStyle)
         .AddStyle(Style)
         .Build();
 #pragma warning restore CS0618 // Type or member is obsolete
@@ -58,7 +57,8 @@ public class MudStep : MudComponentBase, IAsyncDisposable
             .AddClass($"mud-{(ErrorStepColor.HasValue ? ErrorStepColor.Value.ToDescriptionString() : Parent?.ErrorStepColor.ToDescriptionString())}-text", HasErrorState)
             .Build();
 
-    internal string Classname => new CssBuilder(Parent?.StepClassname)
+    internal string Classname => new CssBuilder()
+        .AddClass(Parent?.StepClassname)
         .AddClass(Class)
         .Build();
 
