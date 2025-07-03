@@ -12,7 +12,7 @@ else
 {
     @if (Parent?.ActivePanel == this)
     {
-		<div role="tabpanel" tabindex="0" id="@Parent.GetPanelId(this)" aria-labelledby="@Parent.GetTabId(this)">
+		<div @attributes="UserAttributes" class="@Classname" style="@Stylename" role="tabpanel" tabindex="0" id="@Parent.GetPanelId(this)" aria-labelledby="@Parent.GetTabId(this)">
             @ChildContent
         </div>
     }
