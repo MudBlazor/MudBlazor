@@ -174,7 +174,6 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-tabs-panels > div[role='tabpanel']").Count.Should().Be(1);
         }
 
-
         [Test]
         public void TabHeaderClassPropagated()
         {

@@ -22,8 +22,8 @@
                         @if (EnableDragAndDrop)
                         {
                             <MudDropContainer T="MudTabPanel" Class="@WrapperClassnames" Style="@WrapperScrollStyle" Items="_panels"
-                                ItemsSelector="@((item,dropzone) => true)" ItemDropped="@ItemUpdated"
-                                ItemDisabled="@((item) => item.Disabled)" role="tablist">
+                                              ItemsSelector="@((item,dropzone) => true)" ItemDropped="@ItemUpdated"
+                                              ItemDisabled="@((item) => item.Disabled)" role="tablist">
                                 <ChildContent>
                                     <MudDropZone T="MudTabPanel" Identifier="mud-tabs-dropzone" Class="@DropZoneClassnames" AllowReorder="true"/>
                                     @if (!HideSlider && IsSliderPositionDetermined)
@@ -74,7 +74,7 @@
 
 @code {
     #nullable enable
-        RenderFragment RenderTabSection() =>
+    RenderFragment RenderTabSection() =>
     @<text>
         @foreach (MudTabPanel panel in _panels)
         {
@@ -100,41 +100,40 @@
         }
     </text>;
 
-    RenderFragment RenderTab(MudTabPanel panel) => 
-    @<div @ref="panel.PanelRef" class="@GetTabClass(panel)" style="@GetTabStyle(panel)" @onclick=@( e => ActivatePanel(panel, e, false) ) 
+    RenderFragment RenderTab(MudTabPanel panel) => @<div @ref="panel.PanelRef" class="@GetTabClass(panel)" style="@GetTabStyle(panel)" @onclick=@( e => ActivatePanel(panel, e, false) ) 
         tabindex="@(panel.Disabled ? "-1" : ActivePanel == panel ? "0" : "-1")" @onkeydown="(e => HandleTabKeyDownAsync(e, panel))" role="tab" aria-selected="@(ActivePanel == panel ? "true" : "false")">
         @if (TabPanelHeaderPosition == TabHeaderPosition.Before && TabPanelHeader != null)
-        {
-            <div class="mud-tabs-panel-header mud-tabs-panel-header-before">
-                @TabPanelHeader(panel)
-            </div>
-        }
-        @if (panel.TabContent != null)
-        {
-            @panel.TabContent
-        }
-        else if (!String.IsNullOrEmpty(panel.Text) && String.IsNullOrEmpty(panel.Icon))
-        {
-            @panel.Text
-        }
-        else if (String.IsNullOrEmpty(panel.Text) && !String.IsNullOrEmpty(panel.Icon))
-        {
-            <MudIcon Icon="@panel.Icon" Color="@GetPanelIconColor(panel)" />
-        }
-        else if (!String.IsNullOrEmpty(panel.Text) && !String.IsNullOrEmpty(panel.Icon))
-        {
-            <MudIcon Icon="@panel.Icon" Color="@GetPanelIconColor(panel)" Class="mud-tab-icon-text" />
-            @panel.Text
-        }
-        @if (panel.BadgeData != null || panel.BadgeIcon != null || panel.BadgeDot)
-        {
-            <MudBadge Dot="@panel.BadgeDot" Content="@panel.BadgeData" Icon="@panel.BadgeIcon" Color="@panel.BadgeColor" Class="mud-tab-badge" />
-        }
-        @if (TabPanelHeaderPosition == TabHeaderPosition.After && TabPanelHeader != null)
-        {
-            <div class="mud-tabs-panel-header mud-tabs-panel-header-after">
-                @TabPanelHeader(panel)
-            </div>
-        }
-    </div>;
+            {
+                <div class="mud-tabs-panel-header mud-tabs-panel-header-before">
+                    @TabPanelHeader(panel)
+                </div>
+            }
+            @if (panel.TabContent != null)
+            {
+                @panel.TabContent
+            }
+            else if (!String.IsNullOrEmpty(panel.Text) && String.IsNullOrEmpty(panel.Icon))
+            {
+                @panel.Text
+            }
+            else if (String.IsNullOrEmpty(panel.Text) && !String.IsNullOrEmpty(panel.Icon))
+            {
+                <MudIcon Icon="@panel.Icon" Color="@GetPanelIconColor(panel)" />
+            }
+            else if (!String.IsNullOrEmpty(panel.Text) && !String.IsNullOrEmpty(panel.Icon))
+            {
+                <MudIcon Icon="@panel.Icon" Color="@GetPanelIconColor(panel)" Class="mud-tab-icon-text" />
+                @panel.Text
+            }
+            @if (panel.BadgeData != null || panel.BadgeIcon != null || panel.BadgeDot)
+            {
+                <MudBadge Dot="@panel.BadgeDot" Content="@panel.BadgeData" Icon="@panel.BadgeIcon" Color="@panel.BadgeColor" Class="mud-tab-badge" />
+            }
+            @if (TabPanelHeaderPosition == TabHeaderPosition.After && TabPanelHeader != null)
+            {
+                <div class="mud-tabs-panel-header mud-tabs-panel-header-after">
+                    @TabPanelHeader(panel)
+                </div>
+            }
+        </div>;
 }
