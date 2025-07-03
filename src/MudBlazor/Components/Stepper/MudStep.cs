@@ -34,6 +34,10 @@ public class MudStep : MudComponentBase, IAsyncDisposable
     internal ParameterState<bool> DisabledState { get; private set; }
     internal ParameterState<bool> HasErrorState { get; private set; }
 
+    internal string Styles => new StyleBuilder()
+        .AddStyle(Style)
+        .Build();
+
     internal string LabelClassname =>
         new CssBuilder("mud-step-label")
             .AddClass("mud-step-label-active", IsActive)
