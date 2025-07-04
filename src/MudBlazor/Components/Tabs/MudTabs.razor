@@ -23,7 +23,7 @@
                         {
                             <MudDropContainer T="MudTabPanel" Class="@WrapperClassnames" Style="@WrapperScrollStyle" Items="_panels"
                                               ItemsSelector="@((item,dropzone) => true)" ItemDropped="@ItemUpdated"
-                                              ItemDisabled="@((item) => item.Disabled)" role="tablist">
+                                              ItemDisabled="@((item) => item.Disabled)" role="tablist" aria-labelledby="@GetTabListId()">
                                 <ChildContent>
                                     <MudDropZone T="MudTabPanel" Identifier="mud-tabs-dropzone" Class="@DropZoneClassnames" AllowReorder="true" />
                                     @if (!HideSlider && IsSliderPositionDetermined)
@@ -38,7 +38,7 @@
                         }
                         else
                         {
-                            <div class="@WrapperClassnames" style="@WrapperScrollStyle" role="tablist">
+                            <div class="@WrapperClassnames" style="@WrapperScrollStyle" role="tablist" aria-labelledby="@GetTabListId()">
                                 @RenderTabSection()
                                 @if (!HideSlider && IsSliderPositionDetermined)
                                 {
@@ -102,7 +102,7 @@
 
     RenderFragment RenderTab(MudTabPanel panel) => @<div @ref="panel.PanelRef" class="@GetTabClass(panel)" style="@GetTabStyle(panel)" @onclick=@( e => ActivatePanel(panel, e, false) ) 
         tabindex="@(panel.Disabled ? "-1" : ActivePanel == panel ? "0" : "-1")" @onkeydown="(e => HandleTabKeyDownAsync(e, panel))" role="tab" aria-selected="@(ActivePanel == panel ? "true" : "false")"
-		id="@GetTabId(panel)" aria-controls="@GetPanelId(panel)">
+		id="@GetTabId(panel)" aria-controls="@GetTabPanelId(panel)">
         @if (TabPanelHeaderPosition == TabHeaderPosition.Before && TabPanelHeader != null)
             {
                 <div class="mud-tabs-panel-header mud-tabs-panel-header-before">

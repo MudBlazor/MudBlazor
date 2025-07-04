@@ -457,7 +457,7 @@ namespace MudBlazor
         /// Used to generate stable, unique IDs for tabs and panels to ensure ARIA compliance.
         /// Prevents ID conflicts when multiple tab components exist on the same page.
         /// </summary>
-        private readonly string _componentId = Guid.NewGuid().ToString("N")[..8];
+        private readonly string _componentId = Identifier.Create();
 
         #region Life cycle management
 
@@ -1184,23 +1184,32 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Generates a unique ID for a tab element using the panel's index.
+        /// Generates a unique ID for a tab element using the tab's index.
         /// Required for aria-controls attribute to link tab to its panel.
         /// </summary>
         public string GetTabId(MudTabPanel panel)
         {
-            var panelIndex = _panels.IndexOf(panel);
-            return $"mud-tabs-{_componentId}-tab-{panelIndex}";
+            var tabIndex = _panels.IndexOf(panel);
+            return $"tablist-{_componentId}-tab-{tabIndex}";
         }
 
         /// <summary>
-        /// Generates a unique ID for a panel element using the panel's index.
-        /// Required for aria-labelledby attribute to link panel back to its tab.
+        /// Generates a unique ID for a tab panel element using the tab's index.
+        /// Required for aria-controls attribute to link tab panel to its tab.
         /// </summary>
-        public string GetPanelId(MudTabPanel panel)
+        public string GetTabPanelId(MudTabPanel panel)
         {
-            var panelIndex = _panels.IndexOf(panel);
-            return $"mud-tabs-{_componentId}-panel-{panelIndex}";
+            var tabIndex = _panels.IndexOf(panel);
+            return $"tablist-{_componentId}-tabpanel-{tabIndex}";
+        }
+
+        /// <summary>
+        /// Generates a unique ID for a tab list. 
+        /// Required for aria-controls attribute to identify each tablist.
+        /// </summary>
+        public string GetTabListId()
+        {
+            return $"tablist-{_componentId}";
         }
     }
 }
