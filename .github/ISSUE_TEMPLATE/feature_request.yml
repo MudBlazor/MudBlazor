@@ -10,7 +10,7 @@ body:
   - type: dropdown
     id: enhancement-type
     attributes:
-      label: Which kind of feature?
+      label: Feature request type
       options:
         - Enhance component
         - New component

@@ -12,16 +12,15 @@ jobs:
             const body = context.payload.issue.body;
             let labels = [];
         
-            // Feature requests
-            if (body.includes("### Which kind of feature?\n\nNew component")) {
+            if (body.includes("### Feature request type\n\nNew component")) {
               labels.push("new component");
               console.log("Feature request type: new component.");
               
-            } else if (body.includes("### Which kind of feature?\n\nPerformance improvement")) {
+            } else if (body.includes("### Feature request type\n\nPerformance improvement")) {
               labels.push("performance");
               console.log("Feature request type: Performance improvement.");
               
-            } else if (body.includes("### What kind of bug is this?\n\nDocs (mudblazor.com)")) {
+            } else if (body.includes("### Bug type\n\nDocs (mudblazor.com)")) {
               labels.push("docs");
               console.log("Bug type: docs.");
             }

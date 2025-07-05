@@ -21,7 +21,7 @@ body:
   - type: dropdown
     id: bug-type
     attributes:
-      label: What kind of bug is this?
+      label: Bug type
       multiple: true
       options:
         - Component
