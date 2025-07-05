@@ -27,7 +27,7 @@ body:
     id: related-problem
     attributes:
       label: What problem does this solve?
-      description: Describe the frustration or gap you're facing.
+      description: Explain the problem or limitation this feature would solve.
   - type: textarea
     id: expected-behavior
     attributes:
