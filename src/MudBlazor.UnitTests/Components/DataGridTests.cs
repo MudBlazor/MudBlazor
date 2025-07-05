@@ -2904,6 +2904,7 @@ namespace MudBlazor.UnitTests.Components
                 Operator = "contains",
                 Value = "John"
             };
+
             // test filter definition on the Age property (int >)
             var intFilterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
             {
@@ -2911,6 +2912,7 @@ namespace MudBlazor.UnitTests.Components
                 Operator = ">",
                 Value = 30
             };
+
             // test filter definition on the Status property (Enum is)
             var enumFilterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
             {
@@ -2918,6 +2920,7 @@ namespace MudBlazor.UnitTests.Components
                 Operator = "is",
                 Value = Severity.Normal
             };
+
             // test filter definition on the Hired property (Bool is)
             var boolFilterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
             {
@@ -2925,6 +2928,14 @@ namespace MudBlazor.UnitTests.Components
                 Operator = "is",
                 Value = true
             };
+
+            // test filter definition on the Hired property (Bool null)
+            var boolFilterDefinitionWithNull = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = dataGrid.Instance.GetColumnByPropertyName("Hired"),
+                Value = null
+            };
+
             // test filter definition on the HiredOn property (DateTime is)
             var dateTimeFilterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
             {
@@ -2932,6 +2943,14 @@ namespace MudBlazor.UnitTests.Components
                 Operator = "is",
                 Value = DateTime.UtcNow.Date
             };
+
+            // test filter definition on the HiredOn property (DateTime null)
+            var dateTimeFilterDefinitionWithNull = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = dataGrid.Instance.GetColumnByPropertyName("HiredOn"),
+                Value = null
+            };
+
             // test filter definition on the StartDate property (DateOnly is)
             var dateOnlyFilterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
             {
@@ -2939,6 +2958,14 @@ namespace MudBlazor.UnitTests.Components
                 Operator = "is",
                 Value = new DateOnly(2020, 3, 10)
             };
+
+            // test filter definition on the StartDate property (DateOnly null)
+            var dateOnlyFilterDefinitionWithNull = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = dataGrid.Instance.GetColumnByPropertyName("StartDate"),
+                Value = null
+            };
+
             // test filter definition on the ApplicationId property (Guid equals)
             var guidFilterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
             {
@@ -3000,8 +3027,8 @@ namespace MudBlazor.UnitTests.Components
             // test internal filter class for enum data type.
             internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, enumFilterDefinition, null);
             enumFilterDefinition.Column.dataType.Should().Be(typeof(Severity?));
-            await comp.InvokeAsync(() => internalFilter.NumberValueChanged(35));
-            enumFilterDefinition.Value.Should().Be(35);
+            await comp.InvokeAsync(() => internalFilter.EnumValueChanged(Severity.Warning));
+            enumFilterDefinition.Value.Should().Be(Severity.Warning);
             enumFilterDefinition.FieldType.IsEnum.Should().Be(true);
 
             // test internal filter class for bool data type.
@@ -3010,21 +3037,42 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => internalFilter.BoolValueChanged(false));
             boolFilterDefinition.Value.Should().Be(false);
 
-            // test internal filter class for datetime data type.
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(boolFilterDefinitionWithNull)); // Test adding Bool filter with null value
+            boolFilterDefinitionWithNull.Value.Should().BeNull();
+
+            // test internal filter class for datetime data type
             var date = DateTime.UtcNow;
             internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, dateTimeFilterDefinition, null);
             dateTimeFilterDefinition.Column.dataType.Should().Be(typeof(DateTime?));
+
             await comp.InvokeAsync(() => internalFilter.DateValueChanged(date));
             dateTimeFilterDefinition.Value.Should().Be(date.Date);
+
             await comp.InvokeAsync(() => internalFilter.TimeValueChanged(date.TimeOfDay));
             dateTimeFilterDefinition.Value.Should().Be(date);
+
+            await comp.InvokeAsync(() => internalFilter.TimeValueChanged(null));
+            dateTimeFilterDefinition.Value.Should().Be(date.Date);
+
+            await comp.InvokeAsync(() => internalFilter.DateValueChanged(null));
+            dateTimeFilterDefinition.Value.Should().BeNull();
+
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(dateTimeFilterDefinitionWithNull)); // Test adding DateTime filter with null value
+            dateTimeFilterDefinitionWithNull.Value.Should().BeNull();
 
             // test internal filter class for dateonly data type.
             var dateOnlyDateTimeInput = DateTime.UtcNow;
             internalFilter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, dateOnlyFilterDefinition, null);
             dateOnlyFilterDefinition.Column.dataType.Should().Be(typeof(DateOnly?));
+
             await comp.InvokeAsync(() => internalFilter.DateOnlyValueChanged(dateOnlyDateTimeInput));
             dateOnlyFilterDefinition.Value.Should().Be(DateOnly.FromDateTime(dateOnlyDateTimeInput));
+
+            await comp.InvokeAsync(() => internalFilter.DateOnlyValueChanged(null));
+            dateOnlyFilterDefinition.Value.Should().BeNull();
+
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(dateOnlyFilterDefinitionWithNull)); // Test Adding DateOnly filter with null value
+            dateOnlyFilterDefinitionWithNull.Value.Should().BeNull();
 
             // test internal filter class for guid data type.
             var guid = Guid.NewGuid();
@@ -3032,6 +3080,50 @@ namespace MudBlazor.UnitTests.Components
             guidFilterDefinition.Column.dataType.Should().Be(typeof(Guid?));
             await comp.InvokeAsync(() => internalFilter.GuidValueChanged(guid));
             guidFilterDefinition.Value.Should().Be(guid);
+        }
+
+        [Test]
+        public async Task DataGridFilterRemoveAsyncTest()
+        {
+            var comp = Context.RenderComponent<DataGridFiltersTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
+
+            var filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = dataGrid.Instance.GetColumnByPropertyName("Name"),
+                Operator = "contains",
+                Value = "Test"
+            };
+
+            await comp.InvokeAsync(() => dataGrid.Instance.AddFilterAsync(filterDefinition));
+            comp.WaitForAssertion(() => dataGrid.Instance.FilterDefinitions.Should().Contain(filterDefinition));
+
+            var filter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, filterDefinition, null);
+            await comp.InvokeAsync(() => filter.RemoveFilterAsync());
+
+            comp.WaitForAssertion(() => dataGrid.Instance.FilterDefinitions.Should().NotContain(filterDefinition));
+        }
+
+        [Test]
+        public void DataGridFilterFieldChangedTest()
+        {
+            var comp = Context.RenderComponent<DataGridFiltersTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
+
+            var filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = dataGrid.Instance.GetColumnByPropertyName("Name")
+            };
+
+            var filter = new Filter<DataGridFiltersTest.Model>(dataGrid.Instance, filterDefinition, null);
+            var newBoolColumn = dataGrid.Instance.GetColumnByPropertyName("Hired");
+
+            filter.FieldChanged(newBoolColumn!);
+
+            filterDefinition.Column.Should().Be(newBoolColumn);
+            filterDefinition.Operator.Should().Be(FilterOperator.Boolean.Is);
+            filterDefinition.Title.Should().Be(newBoolColumn.Title);
+            filterDefinition.Value.Should().BeNull();
         }
 
         [Test]
