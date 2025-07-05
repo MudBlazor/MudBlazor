@@ -1,15 +1,16 @@
 name: Feature Request
-description: Suggest an idea for this project
+description: Request a new feature
 labels: [triage, enhancement]
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking the time to fill out this feature request for [MudBlazor](https://mudblazor.com). Note: this template is only for feature requests. Please use [Github Discussions](https://github.com/MudBlazor/MudBlazor/discussions) or [Discord](https://discord.gg/mudblazor) for any questions.
+        Use this template **only** to ask for new features.  
+        If you have a question, please use [GitHub Discussions](https://github.com/MudBlazor/MudBlazor/discussions) or [Discord](https://discord.gg/mudblazor).
   - type: dropdown
     id: enhancement-type
     attributes:
-      label: Feature request type
+      label: Feature type
       options:
         - Enhance component
         - New component
@@ -21,34 +22,34 @@ body:
     id: component-name
     attributes:
       label: Component name
-      description: If this feature request is about a component, please provide the name.
+      description: If your request is about a component, tell us its name.
       placeholder: MudComponent
   - type: textarea
     id: related-problem
     attributes:
-      label: Is your feature request related to a problem?
-      description: Please provide a clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
-      placeholder: Describe your problem!
+      label: Is this request related to a problem?
+      description: Briefly describe the problem. For example, I'm frustrated when [...]
+      placeholder: Describe your problem
   - type: textarea
     id: expected-behavior
     attributes:
       label: Describe the solution you'd like
-      description: Please provide a clear and concise description of what you want to happen.
-      placeholder: Describe your request!
+      description: Describe what you would like to see happen.
+      placeholder: Describe your request
     validations:
       required: true
   - type: textarea
     id: examples
     attributes:
       label: Have you seen this feature anywhere else?
-      description: Please provide links to the Material Design guidelines, other implementations, or screenshots or videos of the expected behavior if possible.
-      placeholder: Show us examples!
+      description: If possible, add links to Material Design guidelines, other implementations, screenshots, or videos.
+      placeholder: Add examples
   - type: textarea
     id: alternatives
     attributes:
       label: Describe alternatives you've considered
-      description: Please provide a clear and concise description of any alternative solutions or features you've considered.
-      placeholder: Describe alternatives!
+      description: Describe any other solutions or work‑arounds you have tried or considered.
+      placeholder: Describe alternatives
   - type: checkboxes
     id: terms
     attributes:
