@@ -1,11 +1,11 @@
 name: Bug Report
-description: Report a bug
+description: Tell us about a problem you found
 labels: [triage]
 body:
   - type: markdown
     attributes:
       value: |
-        Use this template **only** for bug reports.  
+        This template is for **reporting a problem** in MudBlazor.
         If you have a question, please use [GitHub Discussions](https://github.com/MudBlazor/MudBlazor/discussions) or [Discord](https://discord.gg/mudblazor).
   - type: checkboxes
     id: preconditions
@@ -14,14 +14,14 @@ body:
       options:
         - label: I have searched the **existing issues** for this bug
           required: true
-        - label: I confirmed the bug also occurs in a **private/incognito** browser window (to rule out caching)
+        - label: I tried it in a **private/incognito** browser (to rule out caching)
           required: true
     validations:
       required: true
   - type: dropdown
     id: bug-type
     attributes:
-      label: Type of bug
+      label: What kind of bug is this?
       multiple: true
       options:
         - Component
@@ -32,38 +32,35 @@ body:
   - type: input
     id: component-name
     attributes:
-      label: Component name
-      description: If this issue involves a component, please enter its name.
+      label: Component name (if applicable)
       placeholder: MudComponent
   - type: textarea
     id: what-happened
     attributes:
-      label: What happened?
-      description: Briefly describe the issue. You can add code snippets, screenshots, or videos. Enclose code snippets in backticks; do not upload them as images.
-      placeholder: Describe the issue
+      label: What went wrong?
+      description: Describe the issue. You can add code snippets, screenshots, videos, or links.
     validations:
       required: true
   - type: textarea
     id: expected-behavior
     attributes:
-      label: Expected behavior
-      description: Clearly describe what you expected to happen.
-      placeholder: Describe the expected behavior
+      label: What did you expect?
+      description: Explain what you expected to happen.
     validations:
       required: true
   - type: input
     id: repro-link
     attributes:
       label: Reproduction link
-      description: If possible, reproduce the issue on [try.mudblazor.com](https://try.mudblazor.com). Otherwise, share a link to a minimal GitHub repository (not a full application).
-      placeholder: https://try.mudblazor.com/snippet/XXXXXXXXXXXXXXXX
+      description: Share a live example on [try.mudblazor.com](https://try.mudblazor.com) or a small GitHub repo.
+      placeholder: https://try.mudblazor.com/snippet/...
     validations:
       required: true
   - type: textarea
     id: repro-steps
     attributes:
-      label: Reproduction steps
-      description: How can we trigger this bug? List each step.
+      label: How to reproduce
+      description: List the steps to trigger the issue.
       value: |
         1.
         2.
@@ -74,8 +71,8 @@ body:
   - type: textarea
     id: logs
     attributes:
-      label: Relevant log output
-      description: Please copy and paste any relevant log output. It will be automatically formatted as code, so backticks are not needed.
+      label: Logs or error messages
+      description: Paste any relevant logs (no backticks needed).
       render: shell
   - type: input
     id: bug-version
@@ -94,7 +91,7 @@ body:
   - type: dropdown
     id: browsers
     attributes:
-      label: Which browsers show the problem?
+      label: Browsers showing this issue
       description: You don't need to test every browser.
       multiple: true
       options:
@@ -108,15 +105,15 @@ body:
   - type: dropdown
     id: os
     attributes:
-      label: Which operating systems show the issue?
+      label: Operating systems affected
       description: You don't need to test every OS.
       multiple: true
       options:
         - Windows
         - macOS
-        - Linux
         - iOS
         - Android
+        - Linux
         - Other
     validations:
       required: true
@@ -135,7 +132,7 @@ body:
     id: terms
     attributes:
       label: Code of Conduct
-      description: By submitting this issue, you agree to follow our [Code of Conduct](https://github.com/MudBlazor/MudBlazor/blob/dev/CODE_OF_CONDUCT.md).
+      description: By submitting, you agree to follow our [Code of Conduct](https://github.com/MudBlazor/MudBlazor/blob/dev/CODE_OF_CONDUCT.md).
       options:
         - label: I agree to follow this project's Code of Conduct
           required: true
