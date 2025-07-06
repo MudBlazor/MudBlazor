@@ -12,22 +12,17 @@ jobs:
             const body = context.payload.issue.body;
             let labels = [];
         
-            // Feature requests
             if (body.includes("### Feature request type\n\nNew component")) {
               labels.push("new component");
               console.log("Feature request type: new component.");
+              
             } else if (body.includes("### Feature request type\n\nPerformance improvement")) {
               labels.push("performance");
               console.log("Feature request type: Performance improvement.");
-            }
-            // Bug reports
-            else if (body.includes("### Bug type\n\nDocs (mudblazor.com)")) {
+              
+            } else if (body.includes("### Bug type\n\nDocs (mudblazor.com)")) {
               labels.push("docs");
               console.log("Bug type: docs.");
-            } else if (body.includes("### Bug type\n\nComponent")) {
-              console.log("Bug type: component.");
-            } else if (body.includes("### Bug type\n\nOther")) {
-              console.log("Bug type: other.");
             }
 
             // Run bug-specific checks if this is a bug report
@@ -45,14 +40,14 @@ jobs:
                 console.log("Accessibility issue detected.");
               }
               
-              // Mobile issues (OS)
+              // Check for mobile issues (iOS/Android selected in OS section)
               const osMatch = body.match(/### Operating systems affected\s*\n\s*([^#]*?)(?=\n###|$)/s);
-              if (osMatch && /(iOS|Android)/.test(osMatch[1])) {
+              if (osMatch && (osMatch[1].includes("iOS") || osMatch[1].includes("Android"))) {
                 labels.push("mobile");
                 console.log("Mobile platform selected in OS section.");
               }
               
-              // Safari/iOS browser issues
+              // Check for Safari/iOS browser issues (Safari in browsers section OR iOS in OS section)
               const browsersMatch = body.match(/### Browsers showing this issue\s*\n\s*([^#]*?)(?=\n###|$)/s);
               const safariInBrowsers = browsersMatch && browsersMatch[1].includes("Safari");
               const iosInOS = osMatch && osMatch[1].includes("iOS");
@@ -61,7 +56,7 @@ jobs:
                 console.log("Safari browser or iOS platform selected.");
               }
               
-              // Missing example link
+              // Check for missing snippet (no mudblazor or github link)
               const hasMudBlazorLink = /https:\/\/[^"\s]*mudblazor[^"\s]*/i.test(body);
               const hasGitHubLink = /https:\/\/github\.com[^"\s]*/i.test(body);
               if (!hasMudBlazorLink && !hasGitHubLink) {
