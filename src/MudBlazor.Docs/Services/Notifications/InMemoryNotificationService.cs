@@ -89,8 +89,8 @@ public class InMemoryNotificationService : INotificationService
     {
         _messages.Add(new NotificationMessage(
             typeof(Announcement_v8_GA).Name,
-            "Major Version 8 Released",
-            "v8.0.0 Migration Guide",
+            "MudBlazor v8.0.0 Released",
+            "Major Version",
             "Announcement",
             new DateTime(2025, 01, 19),
             "https://github.com/MudBlazor/MudBlazor/blob/f979c2c84e3ddd5f01a20ebc1102838d32a4b01b/content/Nuget.png",
@@ -100,8 +100,8 @@ public class InMemoryNotificationService : INotificationService
 
         _messages.Add(new NotificationMessage(
             typeof(Announcement_v7_GA).Name,
-            "Major Version 7 Released",
-            "v7.0.0 Migration Guide",
+            "MudBlazor v7.0.0 Released",
+            "Major Version",
             "Announcement",
             new DateTime(2024, 06, 29),
             "https://github.com/MudBlazor/MudBlazor/blob/f979c2c84e3ddd5f01a20ebc1102838d32a4b01b/content/Nuget.png",
