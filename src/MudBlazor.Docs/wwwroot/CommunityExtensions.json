@@ -1,8 +1,7 @@
 [
   {
-    "CategoryComment": "// Valid Categories are Parent, Components, Utility, Style, Other,",
-    "AvatarImageSrc": "a link to an image file for the Avatar area",
-    "Category": "Invalid selections are ignored, Valid options are: Parent, Components, Utility, Style, or Other",
+    "CategoryComment": "// Valid Categories are Components, Utility, Style, Other,",
+    "Category": "Invalid selections are ignored, Valid options are: Components, Utility, Style, or Other",
     "Name": "The name of your extension, avoid super long names if possible.",
     "Description": "A brief description of what the extension does for MudBlazor users",
     "Link": "Your preferred landing page, users will have this link and a link to github automatically generated",
