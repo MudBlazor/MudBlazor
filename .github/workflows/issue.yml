@@ -40,22 +40,6 @@ jobs:
                 console.log("Accessibility issue detected.");
               }
               
-              // Check for mobile issues (iOS/Android selected in OS section)
-              const osMatch = body.match(/### On which operating systems are you experiencing the issue\?\s*\n\s*([^#]*?)(?=\n###|$)/s);
-              if (osMatch && (osMatch[1].includes("iOS") || osMatch[1].includes("Android"))) {
-                labels.push("mobile");
-                console.log("Mobile platform selected in OS section.");
-              }
-              
-              // Check for Safari/iOS browser issues (Safari in browsers section OR iOS in OS section)
-              const browsersMatch = body.match(/### What browsers are you seeing the problem on\?\s*\n\s*([^#]*?)(?=\n###|$)/s);
-              const safariInBrowsers = browsersMatch && browsersMatch[1].includes("Safari");
-              const iosInOS = osMatch && osMatch[1].includes("iOS");
-              if (safariInBrowsers || iosInOS) {
-                labels.push("safari");
-                console.log("Safari browser or iOS platform selected.");
-              }
-              
               // Check for missing snippet (no mudblazor or github link)
               const hasMudBlazorLink = /https:\/\/[^"\s]*mudblazor[^"\s]*/i.test(body);
               const hasGitHubLink = /https:\/\/github\.com[^"\s]*/i.test(body);
