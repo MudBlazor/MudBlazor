@@ -24,7 +24,7 @@ jobs:
               labels.push("docs");
               console.log("Bug type: docs.");
             }
-
+            
             // Run bug-specific checks if this is a bug report
             if (body.includes("### Bug type")) {
               // Check for regression (user specified a previous working version)
