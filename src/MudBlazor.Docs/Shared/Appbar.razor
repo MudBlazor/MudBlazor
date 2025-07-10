@@ -20,9 +20,6 @@
     <MudButton Href="/mud/project/team" Color="Color.Inherit" Variant="Variant.Text" Class="@GetActiveClass(DocsBasePage.DiscoverMore)">Learn More</MudButton>
     <MudMenu Color="Color.Inherit" Variant="Variant.Text" Class="mx-1 px-3" PopoverClass="docs-layout-menu-shadow" ListClass="d-flex px-4 pb-2 docs-appbar-special-menu" LockScroll="true" Label="Projects" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter">
         <MudList T="string">
-            <MudListSubheader>
-                Official
-            </MudListSubheader>
             <MudListItem Href="/mud/introduction">
                 <div class="d-flex">
                     <MudText Color="Color.Primary">MudBlazor</MudText>
@@ -45,18 +42,27 @@
                 <div class="d-flex">
                     <MudText>Templates</MudText>
                 </div>
-                <MudText Typo="Typo.body2">Blazor templates loaded with MudBlazor</MudText>
+                <MudText Typo="Typo.body2">Blazor templates with MudBlazor</MudText>
             </MudListItem>
         </MudList>
         <MudList T="string" Class="relative">
-            <MudListSubheader>
-                Community
-            </MudListSubheader>            
+            <MudListItem Href="https://github.com/MudBlazor/MudBlazor.Icons">
+                <div class="d-flex">
+                    <MudText>Icon Pack</MudText>
+                </div>
+                <MudText Typo="Typo.body2">Extra Material icons and symbols</MudText>
+            </MudListItem>
+            <MudListItem Href="https://github.com/MudBlazor/Translations">
+                <div class="d-flex">
+                    <MudText>Translations</MudText>
+                </div>
+                <MudText Typo="Typo.body2">Support for additional locales</MudText>
+            </MudListItem>
             <MudListItem Href="/mud/community/extensions">
                 <div class="d-flex">
-                    <MudText>Community</MudText> <MudText Color="Color.Warning">Extensions</MudText>
+                    <MudText Color="Color.Warning">Extensions</MudText>
                 </div>                
-                <MudText Typo="Typo.body2">Links and Github Repositories</MudText>
+                <MudText Typo="Typo.body2">Community Extensions</MudText>
             </MudListItem>
         </MudList>
     </MudMenu>
