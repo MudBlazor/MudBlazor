@@ -11,20 +11,7 @@ jobs:
           script: |
             const body = context.payload.issue.body;
             let labels = [];
-        
-            if (body.includes("### Feature request type\n\nNew component")) {
-              labels.push("new component");
-              console.log("Feature request type: new component.");
-              
-            } else if (body.includes("### Feature request type\n\nPerformance improvement")) {
-              labels.push("performance");
-              console.log("Feature request type: Performance improvement.");
-              
-            } else if (body.includes("### Bug type\n\nDocs (mudblazor.com)")) {
-              labels.push("docs");
-              console.log("Bug type: docs.");
-            }
-            
+           
             // Run bug-specific checks if this is a bug report
             if (body.includes("### Bug type")) {
               // Check for regression (user specified a previous working version)

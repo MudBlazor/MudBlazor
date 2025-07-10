@@ -1,6 +1,6 @@
 name: Bug Report
 description: Tell us about a problem you found
-labels: [triage]
+labels: []
 body:
   - type: markdown
     attributes:
@@ -18,22 +18,6 @@ body:
           required: true
     validations:
       required: true
-  - type: dropdown
-    id: bug-type
-    attributes:
-      label: Bug type
-      multiple: true
-      options:
-        - Component
-        - Docs (mudblazor.com)
-        - Other
-    validations:
-      required: true
-  - type: input
-    id: component-name
-    attributes:
-      label: Component name (if applicable)
-      placeholder: MudComponent
   - type: textarea
     id: what-happened
     attributes:

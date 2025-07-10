@@ -1,38 +1,17 @@
 name: Feature Request
-description: Suggest a new feature or improvement
-labels: [triage, enhancement]
+description: Suggest an idea
+labels: [enhancement]
 body:
   - type: markdown
     attributes:
       value: |
         This template is for **suggesting new features** in MudBlazor.
         If you have a question, please use [GitHub Discussions](https://github.com/MudBlazor/MudBlazor/discussions) or [Discord](https://discord.gg/mudblazor).
-  - type: dropdown
-    id: enhancement-type
-    attributes:
-      label: Feature request type
-      options:
-        - Enhance component
-        - New component
-        - Performance improvement
-        - Other
-    validations:
-      required: true
-  - type: input
-    id: component-name
-    attributes:
-      label: Component name (if applicable)
-      placeholder: MudComponent
-  - type: textarea
-    id: related-problem
-    attributes:
-      label: What problem does this solve?
-      description: Explain the problem or limitation this feature would solve.
   - type: textarea
     id: expected-behavior
     attributes:
       label: Describe your idea
-      description: Explain how the new feature should work.
+      description: Explain the problem or limitation this feature would solve and how the new feature should work.
     validations:
       required: true
   - type: textarea
