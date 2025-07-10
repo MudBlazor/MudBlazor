@@ -11,8 +11,11 @@ jobs:
           script: |
             const pr = context.payload.pull_request;
             const body = pr.body;
+            const title = pr.title;
             let labels = [];
             const isChecked = /-\s*\[\s*[x|X]\s*\]\s*/;
+            
+            // Check type of change checkboxes
             if(RegExp(isChecked.source + "Bug fix").test(body)) {
               labels.push("bug");
               console.log("PR type: bug fix.");
@@ -23,13 +26,30 @@ jobs:
               console.log("PR type: enhancement.");
             }
 
-            if(RegExp(isChecked.source + "Documentation").test(body)) {
-              labels.push("docs");
-              console.log("PR type: documentation.");
-            }
-
             if(RegExp(isChecked.source + "Other").test(body)) {
               console.log("PR type: other.");
+            }
+            
+            // Check title prefixes
+            if(/^build:/i.test(title)) {
+              labels.push("build");
+              console.log("PR title indicates: build.");
+            }
+            
+            if(/^docs:/i.test(title)) {
+              labels.push("docs");
+              console.log("PR title indicates: docs.");
+            }
+            
+            // Check for keywords in title
+            if(/tests/i.test(title)) {
+              labels.push("tests");
+              console.log("PR title indicates: tests.");
+            }
+            
+            if(/refactor/i.test(title)) {
+              labels.push("refactor");
+              console.log("PR title indicates: refactor.");
             }
             
             if(labels.length != 0) {

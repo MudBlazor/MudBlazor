@@ -11,7 +11,6 @@ https://github.com/MudBlazor/MudBlazor/blob/dev/CONTRIBUTING.md
 
 - [ ] Bug fix
 - [ ] New feature
-- [ ] Documentation
 - [ ] Other
 
 **Checklist:**
