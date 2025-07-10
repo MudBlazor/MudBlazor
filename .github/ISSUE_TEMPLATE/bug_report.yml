@@ -100,7 +100,7 @@ body:
     id: rendering-mode
     attributes:
       label: Blazor rendering mode
-      description: The Blazor rendering mode you are using.
+      description: The Blazor rendering mode being used.
       multiple: false
       options:
         - WASM
