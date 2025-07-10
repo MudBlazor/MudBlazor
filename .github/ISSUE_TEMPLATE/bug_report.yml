@@ -68,12 +68,6 @@ body:
         ...
     validations:
       required: true
-  - type: textarea
-    id: logs
-    attributes:
-      label: Logs or error messages
-      description: Paste any relevant logs (this will be automatically formatted into code, so no backticks needed).
-      render: shell
   - type: input
     id: bug-version
     attributes:
@@ -86,7 +80,7 @@ body:
     id: working-version
     attributes:
       label: Version (working)
-      description: If it worked before, on which version did it work?
+      description: What was the last version that worked?
       placeholder: v7.x.x
   - type: dropdown
     id: browsers
@@ -95,25 +89,10 @@ body:
       description: You don't need to test every browser.
       multiple: true
       options:
-        - Firefox
         - Chrome
         - Edge
+        - Firefox
         - Safari
-        - Other
-    validations:
-      required: true
-  - type: dropdown
-    id: os
-    attributes:
-      label: Operating systems affected
-      description: You don't need to test every OS.
-      multiple: true
-      options:
-        - Windows
-        - macOS
-        - iOS
-        - Android
-        - Linux
         - Other
     validations:
       required: true
@@ -121,7 +100,7 @@ body:
     id: rendering-mode
     attributes:
       label: Blazor rendering mode
-      description: Specify the Blazor rendering mode you are using.
+      description: The Blazor rendering mode you are using.
       multiple: false
       options:
         - WASM
