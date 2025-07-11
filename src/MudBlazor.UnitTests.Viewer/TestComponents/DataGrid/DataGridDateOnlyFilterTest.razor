@@ -1,4 +1,13 @@
-<MudDataGrid Items="@_people" Filterable="true" FilterMode="DataGridFilterMode.ColumnFilterRow">
+<MudStack Class="mb-4">
+    <MudText Typo="Typo.h6">Filter Mode:</MudText>
+    <MudToggleGroup T="DataGridFilterMode" @bind-Value="_filterMode" Color="Color.Primary" SelectionMode="SelectionMode.SingleSelection">
+        <MudToggleItem Value="DataGridFilterMode.ColumnFilterRow" Text="Column Filter Row" />
+        <MudToggleItem Value="DataGridFilterMode.Simple" Text="Simple" />
+        <MudToggleItem Value="DataGridFilterMode.ColumnFilterMenu" Text="Column Filter Menu" />
+    </MudToggleGroup>
+</MudStack>
+
+<MudDataGrid Items="@_people" Filterable="true" FilterMode="@_filterMode">
     <Columns>
         <PropertyColumn Property="x => x.Name" Title="Name" />
         <PropertyColumn Property="x => x.Age" Title="Age" />
@@ -7,8 +16,10 @@
 </MudDataGrid>
 
 @code {
-    public static string __description__ = @"Test DateOnly filtering in DataGrid";
+    public static string __description__ = @"Test DateOnly filtering in DataGrid with all filter modes";
     public record Model(string Name, int? Age, DateOnly? HiredOn);
+    
+    private DataGridFilterMode _filterMode = DataGridFilterMode.ColumnFilterRow;
     
     private readonly IEnumerable<Model> _people =
     [

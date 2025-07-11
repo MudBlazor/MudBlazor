@@ -11,18 +11,29 @@ jobs:
           script: |
             const body = context.payload.issue.body;
             let labels = [];
-        
-            if (body.includes("### Feature request type\n\nNew component")) {
-              labels.push("new component");
-              console.log("Feature request type: new component.");
+           
+            // Run bug-specific checks if this is a bug report
+            if (body.includes("### Bug type")) {
+              // Check for regression (user specified a previous working version)
+              const regressionMatch = body.match(/### Version \(working\)\s*\n\s*[^\n#]*?v?\d+\.\d+/s);
+              if (regressionMatch) {
+                labels.push("regression");
+                console.log("Working version specified - adding regression label.");
+              }
               
-            } else if (body.includes("### Feature request type\n\nPerformance improvement")) {
-              labels.push("performance");
-              console.log("Feature request type: Performance improvement.");
+              // Check for accessibility issues
+              if (body.toLowerCase().includes("wcag") || body.toLowerCase().includes("screen reader") || body.toLowerCase().includes("nvda")) {
+                labels.push("accessibility");
+                console.log("Accessibility issue detected.");
+              }
               
-            } else if (body.includes("### Bug type\n\nDocs (mudblazor.com)")) {
-              labels.push("docs");
-              console.log("Bug type: docs.");
+              // Check for missing snippet (no mudblazor or github link)
+              const hasMudBlazorLink = /https:\/\/[^"\s]*mudblazor[^"\s]*/i.test(body);
+              const hasGitHubLink = /https:\/\/github\.com[^"\s]*/i.test(body);
+              if (!hasMudBlazorLink && !hasGitHubLink) {
+                labels.push("needs example");
+                console.log("No MudBlazor or GitHub link found - adding needs example label.");
+              }
             }
             
             if(labels.length != 0) {

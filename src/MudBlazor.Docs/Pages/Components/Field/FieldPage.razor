@@ -5,8 +5,13 @@
     <DocsPageContent>
 
         <DocsPageSection>
-            <SectionHeader Title="Example Fields">
-                <Description></Description>
+            <SectionHeader Title="Basic Usage">
+                <Description>
+                    MudField provides the foundation for creating custom input controls with consistent styling and behavior. 
+                    It offers the same visual variants as <MudLink Href="/components/textfield">text fields</MudLink> and 
+                    <MudLink Href="/components/numericfield">numeric fields</MudLink> while allowing you to embed any custom content.
+                    Fields support labels, helper text, validation states, and adornments just like other input components.
+                </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(FieldBasicExample)" ShowCode="false">
                 <FieldBasicExample />
@@ -14,30 +19,43 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Minimize Content Padding">
+            <SectionHeader Title="Layout & Styling">
                 <Description>
-                    Set <CodeInline>InnerPadding</CodeInline> to false to minimize the inner padding.
-                    It does not remove the full inner padding, but it is minimized to the absolute necessary value, to not concur with the label.
+                    Customize the field's appearance and spacing to fit your design requirements.
                 </Description>
             </SectionHeader>
-            <SectionContent Code="@nameof(FieldMinimizePaddingExample)" ShowCode="false">
-                <FieldMinimizePaddingExample />
-            </SectionContent>
+            <SectionSubGroups>
+
+                <DocsPageSection>
+                    <SectionHeader Title="Content Padding">
+                        <Description>
+                            Set <CodeInline>InnerPadding="false"</CodeInline> to minimize the internal padding around your content.
+                            This is particularly useful when embedding components that need to fill the available space, such as radio groups or custom controls.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(FieldMinimizePaddingExample)" ShowCode="false">
+                        <FieldMinimizePaddingExample />
+                    </SectionContent>
+                </DocsPageSection>
+
+            </SectionSubGroups>
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Advanced Usage">
                 <Description>
-                    Ultimately you could build your own custom input controls with <CodeInline Tag>MudField</CodeInline>. One step in that 
-                    direction is to define the content as a <CodeInline>RenderFragment</CodeInline>. This allows to set the 
-                    <CodeInline>ChildContent</CodeInline> to null which results in the label becoming a placeholder automatically. 
-                    Of course it makes a lot of sense to add some kind of input in the content like we did in this example with a
-                    native color picker.
+                    Build custom input controls by leveraging MudField's flexible content system. When <CodeInline>ChildContent</CodeInline> is null, 
+                    the label automatically becomes a placeholder, enabling dynamic behavior based on content state.
+                    This example demonstrates creating a custom color picker input using native HTML controls within a MudField wrapper.
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(FieldLabelPlaceholderExample)" ShowCode="false">
                 <FieldLabelPlaceholderExample />
             </SectionContent>
+            <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
+                <strong>Related Components:</strong> For ready-made input controls, see <MudLink Href="/components/textfield">TextField</MudLink> and 
+                <MudLink Href="/components/numericfield">NumericField</MudLink> which are built on top of MudField.
+            </MudAlert>
         </DocsPageSection>
 
     </DocsPageContent>
