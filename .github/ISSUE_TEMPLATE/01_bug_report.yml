@@ -81,6 +81,21 @@ body:
     validations:
       required: true
   - type: dropdown
+    id: os
+    attributes:
+      label: Operating systems affected
+      description: You don't need to test every OS.
+      multiple: true
+      options:
+        - Windows
+        - macOS
+        - iOS
+        - Android
+        - Linux
+        - Other
+    validations:
+      required: true
+  - type: dropdown
     id: rendering-mode
     attributes:
       label: Blazor rendering mode
