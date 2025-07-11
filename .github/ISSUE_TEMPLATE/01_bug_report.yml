@@ -1,0 +1,116 @@
+name: Bug Report
+description: Tell us about a problem you found
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This template is for **reporting a problem** in MudBlazor.
+        If you have a question, please use [GitHub Discussions](https://github.com/MudBlazor/MudBlazor/discussions) or [Discord](https://discord.gg/mudblazor).
+  - type: checkboxes
+    id: preconditions
+    attributes:
+      label: Before reporting
+      options:
+        - label: I have searched the **existing issues** for this bug
+          required: true
+        - label: I tried it in a **private/incognito** browser (to rule out caching)
+          required: true
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What went wrong?
+      description: Describe the issue. You can add code snippets, screenshots, videos, or links.
+    validations:
+      required: true
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: What did you expect?
+      description: Explain what you expected to happen.
+    validations:
+      required: true
+  - type: input
+    id: repro-link
+    attributes:
+      label: Reproduction link
+      description: Share a live example on [try.mudblazor.com](https://try.mudblazor.com) or a small GitHub repo.
+      placeholder: https://try.mudblazor.com/snippet/...
+    validations:
+      required: true
+  - type: textarea
+    id: repro-steps
+    attributes:
+      label: Reproduction steps
+      description: List the steps to trigger the issue.
+      value: |
+        1.
+        2.
+        3.
+        ...
+    validations:
+      required: true
+  - type: input
+    id: bug-version
+    attributes:
+      label: Version (bug)
+      description: Which version shows the issue?
+      placeholder: v8.x.x
+    validations:
+      required: true
+  - type: input
+    id: working-version
+    attributes:
+      label: Version (working)
+      description: What was the last version that worked?
+      placeholder: v7.x.x
+  - type: dropdown
+    id: browsers
+    attributes:
+      label: Browsers showing this issue
+      description: You don't need to test every browser.
+      multiple: true
+      options:
+        - Chrome
+        - Edge
+        - Firefox
+        - Safari
+        - Other
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating systems affected
+      description: You don't need to test every OS.
+      multiple: true
+      options:
+        - Windows
+        - macOS
+        - iOS
+        - Android
+        - Linux
+        - Other
+    validations:
+      required: true
+  - type: dropdown
+    id: rendering-mode
+    attributes:
+      label: Blazor rendering mode
+      description: The Blazor rendering mode being used.
+      multiple: false
+      options:
+        - WASM
+        - Server
+        - Hybrid
+      default: 0
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: By submitting, you agree to follow our [Code of Conduct](https://github.com/MudBlazor/MudBlazor/blob/dev/CODE_OF_CONDUCT.md).
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true

@@ -79,7 +79,8 @@ namespace MudBlazor
             .AddClass("mud-toggle-group-vertical", Vertical)
             .AddClass($"mud-toggle-group-size-{Size.ToDescriptionString()}")
             .AddClass("mud-toggle-group-rtl", RightToLeft)
-            .AddClass($"border mud-border-{Color.ToDescriptionString()} border-solid", Outlined)
+            .AddClass($"mud-toggle-group-{Color.ToDescriptionString()}")
+            .AddClass("mud-toggle-group-outlined", Outlined)
             .AddClass("mud-disabled", Disabled)
             .AddClass(Class)
             .Build();

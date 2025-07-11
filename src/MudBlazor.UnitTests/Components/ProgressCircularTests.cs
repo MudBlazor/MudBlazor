@@ -1,7 +1,4 @@
-﻿
-using System;
-using System.Globalization;
-using Bunit;
+﻿using Bunit;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -76,7 +73,7 @@ namespace MudBlazor.UnitTests.Components
 
         [Test]
         [TestCase(true)]
-        [TestCase(true)]
+        [TestCase(false)]
         public void TestClassesForRounded(bool rounded)
         {
             var comp = Context.RenderComponent<MudProgressCircular>(x => x.Add(y => y.Rounded, rounded));
@@ -95,7 +92,7 @@ namespace MudBlazor.UnitTests.Components
 
         [Test]
         [TestCase(true)]
-        [TestCase(true)]
+        [TestCase(false)]
         public void TestClassesForIntermediate(bool indeterminate)
         {
             var comp = Context.RenderComponent<MudProgressCircular>(x => x.Add(y => y.Indeterminate, indeterminate));
@@ -105,10 +102,12 @@ namespace MudBlazor.UnitTests.Components
             if (indeterminate)
             {
                 container.ClassList.Should().Contain("mud-progress-indeterminate");
+                container.ClassList.Should().NotContain("mud-progress-static");
             }
             else
             {
-                container.ClassList.Should().NotContain("mud-progress-static");
+                container.ClassList.Should().Contain("mud-progress-static");
+                container.ClassList.Should().NotContain("mud-progress-indeterminate");
             }
 
             var circleContainer = comp.Find(".mud-progress-circular-circle");
@@ -116,10 +115,12 @@ namespace MudBlazor.UnitTests.Components
             if (indeterminate)
             {
                 circleContainer.ClassList.Should().Contain("mud-progress-indeterminate");
+                circleContainer.ClassList.Should().NotContain("mud-progress-static");
             }
             else
             {
-                circleContainer.ClassList.Should().NotContain("mud-progress-static");
+                circleContainer.ClassList.Should().Contain("mud-progress-static");
+                circleContainer.ClassList.Should().NotContain("mud-progress-indeterminate");
             }
         }
 
@@ -147,6 +148,39 @@ namespace MudBlazor.UnitTests.Components
             var container = comp.Find(".mud-progress-circular");
 
             container.ClassList.Should().Contain($"mud-{expectedString}-text");
+        }
+
+        [Test]
+        [TestCase(3, "22.5 22.5 43 43")]
+        [TestCase(5, "21.5 21.5 45 45")]
+        [TestCase(10, "19 19 50 50")]
+        [TestCase(1, "23.5 23.5 41 41")]
+        [TestCase(0, "24 24 40 40")]
+        public void MudProgressCircular_ShouldHaveCorrectViewBox_BasedOnStrokeWidth(int strokeWidth, string expectedViewBox)
+        {
+            var comp = Context.RenderComponent<MudProgressCircular>(parameters => parameters
+                .Add(p => p.StrokeWidth, strokeWidth)
+            );
+
+            // Find the SVG element
+            var svgElement = comp.Find("svg");
+            svgElement.Should().NotBeNull();
+
+            // Check the viewBox attribute
+            var viewBoxAttribute = svgElement.GetAttribute("viewBox");
+            viewBoxAttribute.Should().Be(expectedViewBox);
+
+            // Test with Indeterminate = true as well
+            var compIndeterminate = Context.RenderComponent<MudProgressCircular>(parameters => parameters
+                .Add(p => p.StrokeWidth, strokeWidth)
+                .Add(p => p.Indeterminate, true)
+            );
+
+            var svgElementIndeterminate = compIndeterminate.Find("svg");
+            svgElementIndeterminate.Should().NotBeNull();
+
+            var viewBoxAttributeIndeterminate = svgElementIndeterminate.GetAttribute("viewBox");
+            viewBoxAttributeIndeterminate.Should().Be(expectedViewBox);
         }
     }
 }

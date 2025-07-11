@@ -10,33 +10,6 @@
     "GitHubRepoPath": "Your github repo"
   },
   {
-    "AvatarImageSrc": "https://mudblazor.com/_content/MudBlazor.Docs/images/logo.png",
-    "Category": "Parent",
-    "Name": "MudBlazor",
-    "Description": "With millions of downloads, from hobby developers to large enterprises, MudBlazor enables you to rapidly build amazing web applications without leaving your beloved C# language and toolchain.",
-    "Link": "https://mudblazor.com",
-    "GitHubUserPath": "MudBlazor",
-    "GitHubRepoPath": "MudBlazor"
-  },
-  {
-    "AvatarImageSrc": "https://mudblazor.com/_content/MudBlazor.Docs/images/logo.png",
-    "Category": "Parent",
-    "Name": "MudBlazor Translations",
-    "Description": "Crowdsourced translations for the MudBlazor component library.",
-    "Link": "https://github.com/MudBlazor/Translations",
-    "GitHubUserPath": "MudBlazor",
-    "GitHubRepoPath": "Translations"
-  },
-  {
-    "AvatarImageSrc": "https://mudblazor.com/_content/MudBlazor.Docs/images/logo.png",
-    "Category": "Parent",
-    "Name": "MudBlazor Icons",
-    "Description": "Official Material Icon & Symbols pack for MudBlazor.",
-    "Link": "https://github.com/MudBlazor/MudBlazor.Icons",
-    "GitHubUserPath": "MudBlazor",
-    "GitHubRepoPath": "MudBlazor.Icons"
-  },
-  {
     "AvatarImageSrc": "https://themes.arctechonline.tech/ThemeCreator.png",
     "Category": "Style",
     "Name": "Theme Creator",

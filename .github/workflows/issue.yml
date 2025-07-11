@@ -11,36 +11,29 @@ jobs:
           script: |
             const body = context.payload.issue.body;
             let labels = [];
-            if (body.includes("- [X] I would like to do a Pull Request")) {
-              labels.push("wants to do a PR");
-              const author = context.payload.issue.user.login;              
-              const comment = 'Thanks for wanting to do a PR, @' + author + ' !\n\nWe try to merge all non-breaking bugfixes and will deliberate the value of new features for the community. Please note there is no guarantee your pull request will be merged, so if you want to be sure before investing the work, feel free to contact the team first.'
-              github.rest.issues.createComment({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                body: comment
-              })
-              github.rest.issues.addAssignees({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                assignees: [author]
-              })
-              console.log("Author wants to do a PR.");
-            }
-        
-            if (body.includes("### Feature request type\n\nNew component")) {
-              labels.push("new component");
-              console.log("Feature request type: new component.");
+           
+            // Run bug-specific checks if this is a bug report
+            if (body.includes("### Bug type")) {
+              // Check for regression (user specified a previous working version)
+              const regressionMatch = body.match(/### Version \(working\)\s*\n\s*[^\n#]*?v?\d+\.\d+/s);
+              if (regressionMatch) {
+                labels.push("regression");
+                console.log("Working version specified - adding regression label.");
+              }
               
-            } else if (body.includes("### Feature request type\n\nPerformance improvement")) {
-              labels.push("performance");
-              console.log("Feature request type: Performance improvement.");
+              // Check for accessibility issues
+              if (body.toLowerCase().includes("wcag") || body.toLowerCase().includes("screen reader") || body.toLowerCase().includes("nvda")) {
+                labels.push("accessibility");
+                console.log("Accessibility issue detected.");
+              }
               
-            } else if (body.includes("### Bug type\n\nDocs (mudblazor.com)")) {
-              labels.push("docs");
-              console.log("Bug type: docs.");
+              // Check for missing snippet (no mudblazor or github link)
+              const hasMudBlazorLink = /https:\/\/[^"\s]*mudblazor[^"\s]*/i.test(body);
+              const hasGitHubLink = /https:\/\/github\.com[^"\s]*/i.test(body);
+              if (!hasMudBlazorLink && !hasGitHubLink) {
+                labels.push("needs example");
+                console.log("No MudBlazor or GitHub link found - adding needs example label.");
+              }
             }
             
             if(labels.length != 0) {
