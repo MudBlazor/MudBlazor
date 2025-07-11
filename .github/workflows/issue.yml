@@ -3,44 +3,28 @@ on:
     types: [opened]
 
 jobs:
-  apply-label:
+  triage-bot:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/github-script@v7
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          script: |
-            const body = context.payload.issue.body;
-            let labels = [];
-           
-            // Run bug-specific checks if this is a bug report
-            if (body.includes("### Bug type")) {
-              // Check for regression (user specified a previous working version)
-              const regressionMatch = body.match(/### Version \(working\)\s*\n\s*[^\n#]*?v?\d+\.\d+/s);
-              if (regressionMatch) {
-                labels.push("regression");
-                console.log("Working version specified - adding regression label.");
-              }
-              
-              // Check for accessibility issues
-              if (body.toLowerCase().includes("wcag") || body.toLowerCase().includes("screen reader") || body.toLowerCase().includes("nvda")) {
-                labels.push("accessibility");
-                console.log("Accessibility issue detected.");
-              }
-              
-              // Check for missing snippet (no mudblazor or github link)
-              const hasMudBlazorLink = /https:\/\/[^"\s]*mudblazor[^"\s]*/i.test(body);
-              const hasGitHubLink = /https:\/\/github\.com[^"\s]*/i.test(body);
-              if (!hasMudBlazorLink && !hasGitHubLink) {
-                labels.push("needs example");
-                console.log("No MudBlazor or GitHub link found - adding needs example label.");
-              }
-            }
-            
-            if(labels.length != 0) {
-              github.rest.issues.addLabels({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                labels: labels
-              })
-            }
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install node-fetch@2 @actions/core @actions/github
+
+      - name: Run AI labeling script
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AUTOTRIAGE_ENABLED: ${{ vars.AUTOTRIAGE_ENABLED }}
+          AUTOTRIAGE_VERBOSE: ${{ vars.AUTOTRIAGE_VERBOSE }}
+          AUTOTRIAGE_PROMPT: ${{ vars.AUTOTRIAGE_PROMPT }}
+          AUTOTRIAGE_MODEL: ${{ vars.AUTOTRIAGE_MODEL }}
+          AUTOTRIAGE_LABELS: ${{ vars.AUTOTRIAGE_LABELS }}
+        run: node ./.github/scripts/AutoTriage.js
