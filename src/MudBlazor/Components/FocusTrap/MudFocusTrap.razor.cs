@@ -18,6 +18,7 @@ namespace MudBlazor
     {
         private bool _shiftDown;
         private bool _disabled;
+        private bool _disposed;
         private bool _initialized;
         private bool _shouldRender = true;
 
@@ -76,28 +77,15 @@ namespace MudBlazor
         {
             await base.OnAfterRenderAsync(firstRender);
 
+            if (_disposed) return;
             if (firstRender)
             {
-                try
-                {
-                    await SaveFocusAsync();
-                }
-                catch (Exception)
-                {
-                    // Catching exceptions to prevent application crashes when JS interop fails.
-                }
+                await SaveFocusAsync();
             }
 
             if (!_initialized)
             {
-                try
-                {
-                    await InitializeFocusAsync();
-                }
-                catch (Exception)
-                {
-                    // Catching exceptions to prevent application crashes when JS interop fails.
-                }
+                await InitializeFocusAsync();
             }
         }
 
@@ -198,6 +186,7 @@ namespace MudBlazor
         /// </summary>
         public void Dispose()
         {
+            _disposed = true;
             if (!_disabled)
             {
                 RestoreFocusAsync().CatchAndLog(ignoreExceptions: true);
