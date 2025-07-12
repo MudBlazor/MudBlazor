@@ -1,21 +1,25 @@
 /**
- * AutoTriage - AI Issue Analyzer
- * Leverages AI to analyze, categorize, and quality-check issues automatically.
+ * AutoTriage - AI Issue & Pull Request Analyzer
+ * Leverages AI to analyze, categorize, and quality-check issues and apply labels to pull requests automatically.
  * Based on https://gist.github.com/danielchalmers/503d6b9c30e635fccb1221b2671af5f8 - Copyright (c) 2025 Daniel Chalmers.
  *
  * HOW THIS SCRIPT WORKS:
  * 
- * This script automatically analyzes GitHub issues using AI to:
+ * For ISSUES - Full analysis including:
  * 1. Apply appropriate labels based on issue content
  * 2. Post helpful comments with suggestions or guidance
  * 3. Close issues that are duplicates, spam, or off-topic
+ * 
+ * For PULL REQUESTS - Label-only mode:
+ * 1. Apply appropriate labels based on PR content
+ * 2. No quality checking, commenting, or closing
  * 
  * The script runs in "dry-run" mode by default for safety - it will log what actions
  * it would take without actually performing them. Set AUTOTRIAGE_ENABLED=true to enable.
  * 
  * REQUIRED ENVIRONMENT VARIABLES:
  * - GEMINI_API_KEY: Your Google Gemini API key for AI analysis
- * - GITHUB_TOKEN: GitHub token with issue management permissions (automatically provided in Actions)
+ * - GITHUB_TOKEN: GitHub token with issue/PR management permissions (automatically provided in Actions)
  * 
  * OPTIONAL ENVIRONMENT VARIABLES:
  * - AUTOTRIAGE_ENABLED: Set to 'true' to enable actual actions (default: dry-run mode)
@@ -29,14 +33,15 @@
  *   "bug": "Something isn't working correctly",
  *   "enhancement": "Request for new feature or improvement",
  *   "question": "Further information is requested",
- *   "invalid": "This doesn't seem right or is spam"
+ *   "invalid": "This doesn't seem right or is spam",
+ *   "breaking change": "Changes that break backward compatibility"
  * }
  * 
  * SETUP INSTRUCTIONS:
  * 1. Get a Gemini API key from Google AI Studio
  * 2. Add GEMINI_API_KEY to your repository secrets
  * 3. Add other environment variables as repository secrets or variables as needed
- * 4. Set up a GitHub Actions workflow to trigger this script on issue events
+ * 4. Set up GitHub Actions workflows to trigger this script on issue and pull_request events
  * 5. Test with AUTOTRIAGE_ENABLED=false first, then enable when ready
  */
 
@@ -291,35 +296,53 @@ async function runScript() {
     const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
     const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
     const issue = github.context.payload.issue;
+    const pullRequest = github.context.payload.pull_request;
     const repo = github.context.repo;
 
-    if (!issue) {
-        core.warning('No issue context found. Skipping.');
+    // Handle both issues and pull requests
+    if (issue) {
+        // Full issue analysis with quality checking
+        const issueText = `${issue.title}\n\n${issue.body || ''}`;
+        console.log(`📝 Issue #${issue.number}: ${issue.title}`);
+
+        // Analyze issue and get structured response
+        const analysis = await analyzeIssue(issueText, GEMINI_API_KEY);
+
+        // Validate the analysis (adds extra safety)
+        validateAnalysis(analysis);
+
+        // Always apply suggested labels regardless of quality
+        await applyLabels(analysis.labels, issue, repo, GITHUB_TOKEN);
+
+        // Handle comments - could be for quality improvement OR helpful suggestions
+        if (analysis.comment !== null) {
+            console.log(`💡 A comment could help: ${analysis.reason}`);
+            await postQualityComment(issue, repo, GITHUB_TOKEN, analysis.comment);
+        }
+
+        // Handle actions determined by AI (replaces manual label checking)
+        if (analysis.action === 'close') {
+            console.log(`🔒 AI determined issue should be closed: ${analysis.reason}`);
+            await closeIssue(issue, repo, GITHUB_TOKEN, 'not_planned');
+        }
+    } else if (pullRequest) {
+        // Simple PR labeling only - no quality checking, comments, or closing
+        const prText = `${pullRequest.title}\n\n${pullRequest.body || ''}`;
+        console.log(`📝 Pull Request #${pullRequest.number}: ${pullRequest.title}`);
+
+        // Analyze PR and get structured response (labels only)
+        const analysis = await analyzeIssue(prText, GEMINI_API_KEY);
+
+        // Validate the analysis (adds extra safety)
+        validateAnalysis(analysis);
+
+        // Only apply suggested labels for PRs
+        await applyLabels(analysis.labels, pullRequest, repo, GITHUB_TOKEN);
+
+        console.log(`✅ PR #${pullRequest.number} processed - labels applied only`);
+    } else {
+        core.warning('No issue or pull request context found. Skipping.');
         return;
-    }
-
-    const issueText = `${issue.title}\n\n${issue.body || ''}`;
-    console.log(`📝 Issue #${issue.number}: ${issue.title}`);
-
-    // Analyze issue and get structured response
-    const analysis = await analyzeIssue(issueText, GEMINI_API_KEY);
-
-    // Validate the analysis (adds extra safety)
-    validateAnalysis(analysis);
-
-    // Always apply suggested labels regardless of quality
-    await applyLabels(analysis.labels, issue, repo, GITHUB_TOKEN);
-
-    // Handle comments - could be for quality improvement OR helpful suggestions
-    if (analysis.comment !== null) {
-        console.log(`💡 A comment could help: ${analysis.reason}`);
-        await postQualityComment(issue, repo, GITHUB_TOKEN, analysis.comment);
-    }
-
-    // Handle actions determined by AI (replaces manual label checking)
-    if (analysis.action === 'close') {
-        console.log(`🔒 AI determined issue should be closed: ${analysis.reason}`);
-        await closeIssue(issue, repo, GITHUB_TOKEN, 'not_planned');
     }
 }
 

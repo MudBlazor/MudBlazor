@@ -3,60 +3,28 @@ on:
     types: [opened]
 
 jobs:
-  pr-bot:
+  triage-pr:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/github-script@v7
-        with:
-          script: |
-            const pr = context.payload.pull_request;
-            const body = pr.body;
-            const title = pr.title;
-            let labels = [];
-            const isChecked = /-\s*\[\s*[x|X]\s*\]\s*/;
-            
-            // Check type of change checkboxes
-            if(RegExp(isChecked.source + "Bug fix").test(body)) {
-              labels.push("bug");
-              console.log("PR type: bug fix.");
-            }
-            
-            if(RegExp(isChecked.source + "New feature").test(body)) {
-              labels.push("enhancement");
-              console.log("PR type: enhancement.");
-            }
 
-            if(RegExp(isChecked.source + "Other").test(body)) {
-              console.log("PR type: other.");
-            }
-            
-            // Check title prefixes
-            if(/^build:/i.test(title)) {
-              labels.push("build");
-              console.log("PR title indicates: build.");
-            }
-            
-            if(/^docs:/i.test(title)) {
-              labels.push("docs");
-              console.log("PR title indicates: docs.");
-            }
-            
-            // Check for keywords in title
-            if(/tests/i.test(title)) {
-              labels.push("tests");
-              console.log("PR title indicates: tests.");
-            }
-            
-            if(/refactor/i.test(title)) {
-              labels.push("refactor");
-              console.log("PR title indicates: refactor.");
-            }
-            
-            if(labels.length != 0) {
-              github.rest.issues.addLabels({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                labels: labels
-              })
-            }
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm install node-fetch@2 @actions/core @actions/github
+
+      - name: Run AI triage script
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AUTOTRIAGE_ENABLED: ${{ vars.AUTOTRIAGE_ENABLED }}
+          AUTOTRIAGE_VERBOSE: ${{ vars.AUTOTRIAGE_VERBOSE }}
+          AUTOTRIAGE_PROMPT: ${{ vars.AUTOTRIAGE_PROMPT }}
+          AUTOTRIAGE_MODEL: ${{ vars.AUTOTRIAGE_MODEL }}
+          AUTOTRIAGE_LABELS: ${{ vars.AUTOTRIAGE_LABELS }}
+        run: node ./.github/scripts/AutoTriage.js

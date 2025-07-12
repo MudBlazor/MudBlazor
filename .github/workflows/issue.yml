@@ -3,7 +3,7 @@ on:
     types: [opened]
 
 jobs:
-  triage-bot:
+  triage-issue:
     runs-on: ubuntu-latest
 
     steps:
@@ -18,7 +18,7 @@ jobs:
       - name: Install dependencies
         run: npm install node-fetch@2 @actions/core @actions/github
 
-      - name: Run AI labeling script
+      - name: Run AI triage script
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
