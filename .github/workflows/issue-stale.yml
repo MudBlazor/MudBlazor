@@ -1,0 +1,43 @@
+name: 'Close stale issues'
+on:
+  schedule:
+    - cron: '0 */3 * * *'
+  workflow_dispatch: # Allow manual trigger
+
+env:
+  DEBUG_MODE: ${{ vars.ENABLE_STALE_ACTIONS != 'true' }} # Debug mode is on unless the workflow is explicitly enabled.
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Mark/close stale issues
+        uses: actions/stale@v9
+        with:
+          # Only target issues with certain labels
+          any-of-labels: 'info required,needs example,needs screenshot'
+          
+          # Days before an issue is marked stale
+          days-before-stale: 21
+          
+          # Days before a stale issue is closed
+          days-before-close: 7
+          
+          # Message to post when marking an issue as stale
+          stale-issue-message: |
+            This issue has been marked as stale because more info is needed.
+
+            It will be automatically closed if no response is received.
+
+          # Don't process pull requests, only issues
+          days-before-pr-stale: -1
+          days-before-pr-close: -1
+          
+          # Apply a label when marking as stale
+          stale-issue-label: 'stale'
+          
+          # Enable debug mode (no actual changes when true)
+          debug-only: ${{ env.DEBUG_MODE }}
+          
+          # Limit the number of operations per run to avoid hitting API limits and minimize risk from bad configuration
+          operations-per-run: 10
