@@ -1,0 +1,28 @@
+name: Remove 'Info Required' Label
+
+on:
+  issue_comment:
+    types: [created] # Trigger only when a new comment is created
+
+jobs:
+  remove_label_on_author_comment:
+    runs-on: ubuntu-latest
+
+    # This 'if' condition ensures the job only runs when all criteria are met:
+    # 1. The comment author is the same as the issue author.
+    # 2. The issue currently has the label "info required".
+    if: |
+      github.event.comment.user.login == github.event.issue.user.login &&
+      contains(github.event.issue.labels.*.name, 'info required')
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Remove "info required" label
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        ISSUE_NUMBER: ${{ github.event.issue.number }}
+      run: |
+        echo "Removing 'info required' label from issue #$ISSUE_NUMBER"
+        gh issue edit "$ISSUE_NUMBER" --remove-label "info required"
