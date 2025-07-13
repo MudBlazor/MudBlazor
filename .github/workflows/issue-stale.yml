@@ -1,7 +1,7 @@
 name: Stale Issues
 on:
   schedule:
-    - cron: '0 */3 * * *'
+    - cron: '0 */8 * * *'
   workflow_dispatch: # Allow manual trigger
 
 env:
@@ -41,4 +41,4 @@ jobs:
           debug-only: ${{ env.DEBUG_MODE }}
           
           # Limit the number of operations per run (when not debugging) to avoid hitting API limits and minimize risk from bad configuration
-          operations-per-run: ${{ env.DEBUG_MODE == 'true' && 100 || 5 }}
+          operations-per-run: ${{ env.DEBUG_MODE == 'true' && 100 || 15 }}

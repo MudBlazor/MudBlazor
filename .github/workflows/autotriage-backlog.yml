@@ -1,0 +1,41 @@
+name: AutoTriage Backlog Processing
+
+on:
+  schedule:
+    - cron: '0 */8 * * *'
+  
+  workflow_dispatch:
+    inputs:
+      backlog-size:
+        description: 'Number of issues to process in this run'
+        required: false
+        default: '4'
+        type: string
+
+jobs:
+  backlog-triage:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v4
+    
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+    
+    - name: Install dependencies
+      run: npm install node-fetch@2 @actions/core @actions/github
+    
+    - name: Run AI backlog triage script
+      env:
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        AUTOTRIAGE_ENABLED: ${{ vars.AUTOTRIAGE_ENABLED }}
+        AUTOTRIAGE_VERBOSE: ${{ vars.AUTOTRIAGE_VERBOSE }}
+        AUTOTRIAGE_PROMPT: ${{ vars.AUTOTRIAGE_PROMPT }}
+        AUTOTRIAGE_MODEL: ${{ vars.AUTOTRIAGE_MODEL }}
+        AUTOTRIAGE_LABELS: ${{ vars.AUTOTRIAGE_LABELS }}
+        BACKLOG_SIZE: ${{ github.event.inputs.backlog-size || '4' }}
+      run: node ./.github/scripts/AutoTriageBacklog.js

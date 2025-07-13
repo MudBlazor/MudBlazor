@@ -97,7 +97,7 @@ try {
 /**
  * Completely analyze issue quality and get label suggestions in one optimized call
  */
-async function analyzeIssue(issueText, apiKey) {
+async function analyzeIssue(issueText, apiKey, metadata = {}) {
     const hasLabels = Object.keys(validLabels).length > 0;
 
     const labelDescriptions = hasLabels
@@ -106,13 +106,37 @@ async function analyzeIssue(issueText, apiKey) {
             .join('\n')
         : 'No labels configured';
 
+    // Format metadata for the prompt
+    let metadataText = '';
+    if (metadata.created_at) {
+        metadataText += `Created: ${metadata.created_at}\n`;
+    }
+    if (metadata.updated_at) {
+        metadataText += `Last Updated: ${metadata.updated_at}\n`;
+    }
+    if (metadata.number) {
+        metadataText += `Issue Number: #${metadata.number}\n`;
+    }
+    if (metadata.author) {
+        metadataText += `Author: ${metadata.author}\n`;
+    }
+    if (metadata.comments_count !== undefined) {
+        metadataText += `Comments: ${metadata.comments_count}\n`;
+    }
+    if (metadata.reactions_total !== undefined) {
+        metadataText += `Reactions: ${metadata.reactions_total}\n`;
+    }
+
     const prompt = `${basePrompt}
 
 ISSUE TO ANALYZE:
 ${issueText}
 
+${metadataText ? `ISSUE METADATA:
+${metadataText}` : ''}
 VALID LABELS:
 ${labelDescriptions}
+
 
 Analyze this issue and provide your structured response.`;
 
@@ -291,6 +315,59 @@ async function postQualityComment(issue, repo, githubToken, aiComment) {
     console.log(`💬 Posted comment on issue #${issue.number}`);
 }
 
+/**
+ * Process a single issue or PR with AI analysis
+ * This function can be reused by other scripts like the backlog processor
+ */
+async function processIssue(issueOrPR, repo, githubToken, geminiApiKey) {
+    const isIssue = !issueOrPR.pull_request;
+    const itemType = isIssue ? 'issue' : 'pull request';
+    const itemText = `${issueOrPR.title}\n\n${issueOrPR.body || ''}`;
+    
+    console.log(`📝 Processing ${itemType} #${issueOrPR.number}: ${issueOrPR.title}`);
+
+    // Skip locked issues
+    if (issueOrPR.locked) {
+        console.log(`🔒 Skipping locked ${itemType} #${issueOrPR.number}`);
+        return null;
+    }
+
+    // Prepare metadata for AI analysis
+    const metadata = {
+        number: issueOrPR.number,
+        created_at: issueOrPR.created_at,
+        updated_at: issueOrPR.updated_at,
+        author: issueOrPR.user?.login || 'unknown',
+        comments_count: issueOrPR.comments || 0,
+        reactions_total: (issueOrPR.reactions?.total_count || 0)
+    };
+
+    // Analyze using the same AI logic with metadata
+    const analysis = await analyzeIssue(itemText, geminiApiKey, metadata);
+    validateAnalysis(analysis);
+
+    // Always apply suggested labels regardless of quality
+    await applyLabels(analysis.labels, issueOrPR, repo, githubToken);
+
+    if (isIssue) {
+        // For issues: Handle comments and closing
+        if (analysis.comment !== null) {
+            console.log(`💡 A comment could help: ${analysis.reason}`);
+            await postQualityComment(issueOrPR, repo, githubToken, analysis.comment);
+        }
+
+        if (analysis.action === 'close') {
+            console.log(`🔒 AI determined issue should be closed: ${analysis.reason}`);
+            await closeIssue(issueOrPR, repo, githubToken, 'not_planned');
+        }
+    } else {
+        // For PRs: Only labeling, no quality checking or closing
+        console.log(`✅ PR #${issueOrPR.number} processed - labels applied only`);
+    }
+
+    return analysis;
+}
+
 // Main execution with retry logic
 async function runScript() {
     const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
@@ -299,47 +376,11 @@ async function runScript() {
     const pullRequest = github.context.payload.pull_request;
     const repo = github.context.repo;
 
-    // Handle both issues and pull requests
+    // Handle both issues and pull requests using the shared processIssue function
     if (issue) {
-        // Full issue analysis with quality checking
-        const issueText = `${issue.title}\n\n${issue.body || ''}`;
-        console.log(`📝 Issue #${issue.number}: ${issue.title}`);
-
-        // Analyze issue and get structured response
-        const analysis = await analyzeIssue(issueText, GEMINI_API_KEY);
-
-        // Validate the analysis (adds extra safety)
-        validateAnalysis(analysis);
-
-        // Always apply suggested labels regardless of quality
-        await applyLabels(analysis.labels, issue, repo, GITHUB_TOKEN);
-
-        // Handle comments - could be for quality improvement OR helpful suggestions
-        if (analysis.comment !== null) {
-            console.log(`💡 A comment could help: ${analysis.reason}`);
-            await postQualityComment(issue, repo, GITHUB_TOKEN, analysis.comment);
-        }
-
-        // Handle actions determined by AI (replaces manual label checking)
-        if (analysis.action === 'close') {
-            console.log(`🔒 AI determined issue should be closed: ${analysis.reason}`);
-            await closeIssue(issue, repo, GITHUB_TOKEN, 'not_planned');
-        }
+        await processIssue(issue, repo, GITHUB_TOKEN, GEMINI_API_KEY);
     } else if (pullRequest) {
-        // Simple PR labeling only - no quality checking, comments, or closing
-        const prText = `${pullRequest.title}\n\n${pullRequest.body || ''}`;
-        console.log(`📝 Pull Request #${pullRequest.number}: ${pullRequest.title}`);
-
-        // Analyze PR and get structured response (labels only)
-        const analysis = await analyzeIssue(prText, GEMINI_API_KEY);
-
-        // Validate the analysis (adds extra safety)
-        validateAnalysis(analysis);
-
-        // Only apply suggested labels for PRs
-        await applyLabels(analysis.labels, pullRequest, repo, GITHUB_TOKEN);
-
-        console.log(`✅ PR #${pullRequest.number} processed - labels applied only`);
+        await processIssue(pullRequest, repo, GITHUB_TOKEN, GEMINI_API_KEY);
     } else {
         core.warning('No issue or pull request context found. Skipping.');
         return;
@@ -351,7 +392,15 @@ if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
         analyzeIssue,
         validateAnalysis,
-        validLabels
+        processIssue,
+        applyLabels,
+        closeIssue,
+        postQualityComment,
+        getValidLabels: () => validLabels,
+        // Export these constants for reuse
+        dryRun,
+        verbose,
+        aiModel
     };
 }
 
