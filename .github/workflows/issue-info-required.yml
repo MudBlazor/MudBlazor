@@ -1,8 +1,8 @@
-name: Remove 'Info Required' Label
+name: Remove 'info required' Label
 
 on:
   issue_comment:
-    types: [created] # Trigger only when a new comment is created
+    types: [created]
 
 jobs:
   remove_label_on_author_comment:
@@ -16,7 +16,7 @@ jobs:
       contains(github.event.issue.labels.*.name, 'info required')
 
     steps:
-    - name: Checkout repository
+    - name: Check out repository
       uses: actions/checkout@v4
 
     - name: Remove "info required" label

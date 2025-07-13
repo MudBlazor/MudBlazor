@@ -1,4 +1,4 @@
-name: 'Close stale issues'
+name: Stale Issues
 on:
   schedule:
     - cron: '0 */3 * * *'
@@ -11,23 +11,24 @@ jobs:
   stale:
     runs-on: ubuntu-latest
     steps:
-      - name: Mark/close stale issues
-        uses: actions/stale@v9
+      - uses: actions/stale@v9
         with:
           # Only target issues with certain labels
-          any-of-labels: 'info required,needs example,needs screenshot'
+          #any-of-labels: 'info required,needs example,needs screenshot,answered'
+          any-of-labels: 'info required'
           
           # Days before an issue is marked stale
-          days-before-stale: 21
+          days-before-stale: 14
           
           # Days before a stale issue is closed
-          days-before-close: 7
+          days-before-close: 14
           
           # Message to post when marking an issue as stale
           stale-issue-message: |
-            This issue has been marked as stale because more info is needed.
+            This issue has been marked as stale.  
+            If you have any updates or additional information, please comment below.
 
-            It will be automatically closed if no response is received.
+            If no response is received, it will be automatically closed.
 
           # Don't process pull requests, only issues
           days-before-pr-stale: -1
@@ -39,5 +40,5 @@ jobs:
           # Enable debug mode (no actual changes when true)
           debug-only: ${{ env.DEBUG_MODE }}
           
-          # Limit the number of operations per run to avoid hitting API limits and minimize risk from bad configuration
-          operations-per-run: 10
+          # Limit the number of operations per run (when not debugging) to avoid hitting API limits and minimize risk from bad configuration
+          operations-per-run: ${{ env.DEBUG_MODE == 'true' && 100 || 5 }}
