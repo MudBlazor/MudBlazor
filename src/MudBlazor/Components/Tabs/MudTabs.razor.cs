@@ -6,6 +6,7 @@ using System.Collections;
 using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Interfaces;
 using MudBlazor.Interop;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
@@ -633,6 +634,7 @@ namespace MudBlazor
                 SetScrollButtonVisibility();
                 SetScrollabilityStates();
                 Rerender();
+                NotifyActivePanelStateChangedAsync();
                 await InvokeAsync(StateHasChanged);
             }
         }
@@ -1089,6 +1091,14 @@ namespace MudBlazor
 
             // Set the dragged tab as active
             ActivatePanel(dropItem.Item);
+        }
+
+        private void NotifyActivePanelStateChangedAsync()
+        {
+            if (ActivePanel is IMudStateHasChanged mudStateHasChanged)
+            {
+                InvokeAsync(mudStateHasChanged.StateHasChanged);
+            }
         }
     }
 }

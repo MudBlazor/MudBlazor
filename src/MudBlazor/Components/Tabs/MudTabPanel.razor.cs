@@ -4,6 +4,7 @@
 
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 
 namespace MudBlazor;
@@ -13,7 +14,7 @@ namespace MudBlazor;
 /// <summary>
 /// A tab as part of a <see cref="MudTabs"/> or <see cref="MudDynamicTabs"/> component.
 /// </summary>
-public partial class MudTabPanel
+public partial class MudTabPanel : IMudStateHasChanged
 {
     private Boolean _disposed;
 
