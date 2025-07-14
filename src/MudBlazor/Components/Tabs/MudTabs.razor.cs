@@ -634,7 +634,7 @@ namespace MudBlazor
                 SetScrollButtonVisibility();
                 SetScrollabilityStates();
                 Rerender();
-                NotifyActivePanelStateChangedAsync();
+                await NotifyActivePanelStateChangedAsync();
                 await InvokeAsync(StateHasChanged);
             }
         }
@@ -1093,11 +1093,11 @@ namespace MudBlazor
             ActivatePanel(dropItem.Item);
         }
 
-        private void NotifyActivePanelStateChangedAsync()
+        private async Task NotifyActivePanelStateChangedAsync()
         {
             if (ActivePanel is IMudStateHasChanged mudStateHasChanged)
             {
-                InvokeAsync(mudStateHasChanged.StateHasChanged);
+                await InvokeAsync(mudStateHasChanged.StateHasChanged);
             }
         }
     }
