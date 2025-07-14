@@ -122,6 +122,11 @@ async function findIssues(octokit, repo, limit) {
     console.log(`🚀 Starting backlog processing for repository: ${github.context.repo.owner}/${github.context.repo.repo}`);
 
     const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
+
+    // Log the current API rate limit
+    const rateLimit = await octokit.rest.rateLimit.get();
+    console.log(`🔢 GitHub API Rate Limit: ${rateLimit.data.rate.remaining}/${rateLimit.data.rate.limit} requests remaining`);
+
     const issuesToProcess = await findIssues(octokit, github.context.repo, backlogSize);
 
     if (issuesToProcess.length === 0) {

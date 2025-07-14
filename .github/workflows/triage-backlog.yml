@@ -2,7 +2,7 @@ name: Triage Backlog
 
 on:
   schedule:
-    - cron: '0 * * * *' # Regularly check the backlog so we don't make too many calls at once by doing it in bulk.
+    - cron: '0 6 * * *' # This will take until 2026 to get through the backlog, which gives us many chances to iterate on the triage process.
   
   workflow_dispatch:
     inputs:
@@ -42,5 +42,5 @@ jobs:
         AUTOTRIAGE_PROMPT: ${{ vars.AUTOTRIAGE_PROMPT }}
         AUTOTRIAGE_MODEL: ${{ vars.AUTOTRIAGE_MODEL }}
         AUTOTRIAGE_LABELS: ${{ vars.AUTOTRIAGE_LABELS }}
-        BACKLOG_SIZE: ${{ github.event.inputs.backlog-size || '1' }} # Small default to avoid overwhelming the API (https://ai.google.dev/gemini-api/docs/rate-limits).
+        BACKLOG_SIZE: ${{ github.event.inputs.backlog-size || '1' }} # Avoid overwhelming the API (https://ai.google.dev/gemini-api/docs/rate-limits).
       run: node ./.github/scripts/AutoTriageBacklog.js
