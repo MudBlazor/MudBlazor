@@ -340,7 +340,9 @@ async function processIssue(issueOrPR, repo, githubToken, geminiApiKey) {
         updated_at: issueOrPR.updated_at,
         author: issueOrPR.user?.login || 'unknown',
         comments_count: issueOrPR.comments || 0,
-        reactions_total: (issueOrPR.reactions?.total_count || 0)
+        reactions_total: (issueOrPR.reactions?.total_count || 0),
+        state: issueOrPR.state,
+        type: issueOrPR.pull_request ? 'pull_request' : 'issue'
     };
 
     // Analyze using the same AI logic with metadata
