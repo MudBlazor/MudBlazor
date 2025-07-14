@@ -3971,6 +3971,21 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void DataGrid_ColumnFilterMenuOption_NotPassingMouseArgs()
+        {
+            // https://github.com/MudBlazor/MudBlazor/issues/11518
+            var comp = Context.RenderComponent<DataGridServerDataColumnFilterMenuTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerDataColumnFilterMenuTest.Model>>();
+
+            dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(4);
+
+            (double Top, double Left) openPosition = (0, 0);
+
+            comp.Find(".filter-button").Click();
+            comp.WaitForAssertion(() => dataGrid.Instance._openPosition.Should().NotBe(openPosition));
+        }
+
+        [Test]
         public async Task DataGridServerDataColumnFilterMenuApplyTwiceTest()
         {
             var comp = Context.RenderComponent<DataGridServerDataColumnFilterMenuTest>();
