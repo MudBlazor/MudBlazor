@@ -1,0 +1,78 @@
+﻿@using MudBlazor.Examples.Data
+@using MudBlazor.Examples.Data.Models
+
+<MudText Class="mb-10">Test</MudText>
+
+<MudTabs Elevation="1" Rounded="true" PanelClass="pa-6" KeepPanelsAlive ActiveTabClass="border-solid border-2 mud-border-primary">
+    <MudTabPanel>
+        <ChildContent>
+            <MudDataGrid @ref="dataGrid" T="Element" ServerData="ServerReload" Filterable="true"
+                         SortDefinitions="@SortDefinitions" FilterDefinitions="@FilterDefinitions">
+                <Columns>
+                    <PropertyColumn Property="x => x.Number" Title="Nr" />
+                    <PropertyColumn Property="x => x.Sign" />
+                    <PropertyColumn Property="x => x.Name" />
+                    <PropertyColumn Property="x => x.Position" />
+                    <PropertyColumn Property="x => x.Molar" Title="Molar mass" />
+                    <PropertyColumn Property="x => x.Group" Title="Category" />
+                </Columns>
+                <PagerContent>
+                    <MudDataGridPager T="Element" />
+                </PagerContent>
+            </MudDataGrid>
+        </ChildContent>
+        <TabContent>
+            Item One
+        </TabContent>
+    </MudTabPanel>
+    <MudTabPanel>
+        <ChildContent>
+        </ChildContent>
+
+        <TabContent>
+            Item Two
+        </TabContent>
+    </MudTabPanel>
+</MudTabs>
+
+@code {
+#nullable enable
+    private Element? ActivePanel { get; set; } = null;public static string __description__ = "Switch Tab Panels to Test Panel refresh, Issue #11178";
+    public List<IFilterDefinition<Element>> FilterDefinitions = new List<IFilterDefinition<Element>>();
+    public Dictionary<string, SortDefinition<Element>> SortDefinitions = new Dictionary<string, SortDefinition<Element>>();
+
+    MudDataGrid<Element>? dataGrid;
+
+    private async Task<GridData<Element>> ServerReload(GridState<Element> state)
+    {
+        var service = new PeriodicTableService();
+        IEnumerable<Element> data = await service.GetElements();
+        await Task.Delay(300);
+        var totalItems = data?.Count() ?? 0;
+
+        SortDefinitions = state.SortDefinitions.ToDictionary(i => i.SortBy, i => i);
+        FilterDefinitions = state.FilterDefinitions.ToList();
+
+        FilterOptions filterOptions = new FilterOptions() { FilterCaseSensitivity = DataGridFilterCaseSensitivity.CaseInsensitive };
+        if (FilterDefinitions != null && FilterDefinitions.Any())
+        {
+            foreach (var filter in FilterDefinitions)
+            {
+                data = data?.Where(filter.GenerateFilterFunction(filterOptions)).ToList() ?? new List<Element>(); // Apply filtering
+            }
+        }
+
+        // Apply sorting using explicit cast to resolve ambiguity
+        if (SortDefinitions != null && SortDefinitions.Any())
+        {
+            data = DataGridExtensions.OrderBySortDefinitions(data ?? new List<Element>(), (ICollection<SortDefinition<Element>>)SortDefinitions.Values).ToList();
+        }
+
+        var pagedData = data?.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray() ?? Array.Empty<Element>(); // Ensure pagedData is not null
+        return new GridData<Element>
+        {
+            TotalItems = totalItems,
+            Items = pagedData
+        };
+    }
+}
