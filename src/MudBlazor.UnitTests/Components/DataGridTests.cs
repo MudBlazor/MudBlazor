@@ -3971,7 +3971,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DataGrid_ColumnFilterMenuOption_NotPassingMouseArgs()
+        public void DataGrid_ColumnFilterMenu_OpensAtCursorPosition()
         {
             // https://github.com/MudBlazor/MudBlazor/issues/11518
             var comp = Context.RenderComponent<DataGridServerDataColumnFilterMenuTest>();
@@ -3980,12 +3980,12 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(4);
 
             (double Top, double Left) openPosition = (50, 50);
-            var mouseAargs = new MouseEventArgs
+            var mouseArgs = new MouseEventArgs
             {
                 PageY = openPosition.Top,
                 PageX = openPosition.Left
             };
-            comp.Find(".filter-button").Click(mouseAargs);
+            comp.Find(".filter-button").Click(mouseArgs);
             comp.WaitForAssertion(() => dataGrid.Instance._openPosition.Should().Be(openPosition));
         }
 
