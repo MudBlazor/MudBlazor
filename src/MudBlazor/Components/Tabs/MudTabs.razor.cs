@@ -114,7 +114,7 @@ namespace MudBlazor
         /// Centers tabs horizontally in the tab header.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>. 
+        /// Defaults to <c>false</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
@@ -124,7 +124,7 @@ namespace MudBlazor
         /// Hides the slider underneath the tab header.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>. 
+        /// Defaults to <c>false</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tabs.Appearance)]
@@ -1077,7 +1077,7 @@ namespace MudBlazor
 
         #endregion
 
-        internal void ItemUpdated(MudItemDropInfo<MudTabPanel> dropItem)
+        internal async Task ItemUpdated(MudItemDropInfo<MudTabPanel> dropItem)
         {
             if (dropItem.Item is null)
             {
@@ -1107,7 +1107,7 @@ namespace MudBlazor
 
             if (OnItemDropped.HasDelegate)
             {
-                _ = OnItemDropped.InvokeAsync(dropItem);
+                await OnItemDropped.InvokeAsync(dropItem);
             }
         }
     }
