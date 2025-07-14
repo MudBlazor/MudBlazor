@@ -324,7 +324,7 @@ async function processIssue(issueOrPR, repo, githubToken, geminiApiKey) {
     const isIssue = !issueOrPR.pull_request;
     const itemType = isIssue ? 'issue' : 'pull request';
     const itemText = `${issueOrPR.title}\n\n${issueOrPR.body || ''}`;
-    
+
     console.log(`📝 Processing ${itemType} #${issueOrPR.number}: ${issueOrPR.title}`);
 
     // Skip locked issues
