@@ -3979,10 +3979,14 @@ namespace MudBlazor.UnitTests.Components
 
             dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(4);
 
-            (double Top, double Left) openPosition = (0, 0);
-
-            comp.Find(".filter-button").Click();
-            comp.WaitForAssertion(() => dataGrid.Instance._openPosition.Should().NotBe(openPosition));
+            (double Top, double Left) openPosition = (50, 50);
+            var mouseAargs = new MouseEventArgs
+            {
+                PageY = openPosition.Top,
+                PageX = openPosition.Left
+            };
+            comp.Find(".filter-button").Click(mouseAargs);
+            comp.WaitForAssertion(() => dataGrid.Instance._openPosition.Should().Be(openPosition));
         }
 
         [Test]
