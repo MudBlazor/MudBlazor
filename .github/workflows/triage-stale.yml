@@ -41,4 +41,4 @@ jobs:
           debug-only: ${{ env.DEBUG_MODE }}
           
           # Limit the number of operations per run (when not debugging) to avoid hitting API limits and minimize risk from bad configuration
-          operations-per-run: ${{ env.DEBUG_MODE == 'true' && 100 || 15 }}
+          operations-per-run: ${{ env.DEBUG_MODE == 'true' && 100 || 10 }}
