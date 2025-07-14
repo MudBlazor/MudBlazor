@@ -2,9 +2,7 @@
  * AutoTriageBacklog - Simple wrapper for processing issue backlog
  * Finds existing issues with no labels and no comments, then processes them using AutoTriage functionality.
  * Designed to run as a cron job to gradually clean up the issue backlog.
- * Based on work by Copyright (c) 2025 Daniel Chalmers.
- * 
- * This is a minimal wrapper that reuses all the core logic from AutoTriage.js
+ * Based on work by Daniel Chalmers - Copyright (c) 2025.
  */
 
 const github = require('@actions/github');
@@ -20,9 +18,9 @@ console.log(`📦 Backlog size: ${backlogSize} issue(s)`);
 /**
  * Find issues with no labels and no comments from others (excluding author comments)
  */
-async function findUnlabeledUncommentedIssues(octokit, repo, limit = 10) {
+async function findIssues(octokit, repo, limit) {
     console.log(`🔍 Searching for unlabeled, uncommented issues (limit: ${limit})...`);
-    
+
     try {
         const uncommentedIssues = [];
         let page = 1;
@@ -70,7 +68,7 @@ async function findUnlabeledUncommentedIssues(octokit, repo, limit = 10) {
                     if (issue.comments === 0) {
                         uncommentedIssues.push(issue);
                         if (AutoTriage.verbose) {
-                            console.log(`✅ Found unlabeled issue #${issue.number} with no comments`);
+                            console.log(`✅ Found unlabeled issue #${issue.number} with no comments (page ${page})`);
                         }
                     } else {
                         // If there are comments, check if they're only from the author
@@ -90,7 +88,7 @@ async function findUnlabeledUncommentedIssues(octokit, repo, limit = 10) {
                             if (nonAuthorComments.length === 0) {
                                 uncommentedIssues.push(issue);
                                 if (AutoTriage.verbose) {
-                                    console.log(`✅ Found unlabeled issue #${issue.number} with only author comments`);
+                                    console.log(`✅ Found unlabeled issue #${issue.number} with only author comments (page ${page})`);
                                 }
                             }
                         } catch (commentError) {
@@ -108,15 +106,10 @@ async function findUnlabeledUncommentedIssues(octokit, repo, limit = 10) {
             }
 
             page++;
-
-            // Add a small delay between pages to be respectful to the API
-            if (hasMorePages && uncommentedIssues.length < limit) {
-                await new Promise(resolve => setTimeout(resolve, 1000));
-            }
         }
 
         console.log(`📋 Found ${uncommentedIssues.length} issues with no labels and no comments from others (scanned ${totalScanned} total issues)`);
-        
+
         return uncommentedIssues.slice(0, limit);
     } catch (error) {
         console.error('❌ Error searching for issues:', error.message);
@@ -124,29 +117,12 @@ async function findUnlabeledUncommentedIssues(octokit, repo, limit = 10) {
     }
 }
 
-// Main execution
-async function runBacklogScript() {
-    const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-    const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
-    const repo = github.context.repo;
+// Run the backlog script
+(async () => {
+    console.log(`🚀 Starting backlog processing for repository: ${github.context.repo.owner}/${github.context.repo.repo}`);
 
-    if (!GEMINI_API_KEY) {
-        throw new Error('GEMINI_API_KEY environment variable is required');
-    }
-
-    if (!GITHUB_TOKEN) {
-        throw new Error('GITHUB_TOKEN environment variable is required');
-    }
-
-    console.log(`🚀 Starting backlog processing for repository: ${repo.owner}/${repo.repo}`);
-    console.log(`✅ Enabled: ${AutoTriage.dryRun ? 'false (dry-run mode)' : 'true'}`);
-    console.log(`🔍 Verbose: ${AutoTriage.verbose}`);
-    console.log(`🤖 Gemini model: ${AutoTriage.aiModel}`);
-    
-    const octokit = github.getOctokit(GITHUB_TOKEN);
-
-    // Find issues to process
-    const issuesToProcess = await findUnlabeledUncommentedIssues(octokit, repo, backlogSize);
+    const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
+    const issuesToProcess = await findIssues(octokit, github.context.repo, backlogSize);
 
     if (issuesToProcess.length === 0) {
         console.log('🎉 No unlabeled, uncommented issues found. Repository backlog is up to date!');
@@ -158,23 +134,17 @@ async function runBacklogScript() {
     let successCount = 0;
     let failureCount = 0;
 
-    // Process each issue using the AutoTriage processIssue function
+    // Process each issue using the AutoTriage function
     for (const issue of issuesToProcess) {
         console.log(`\n🕒 Created: ${issue.created_at}`);
-        
+
         try {
-            await AutoTriage.processIssue(issue, repo, GITHUB_TOKEN, GEMINI_API_KEY);
+            await AutoTriage.processIssue(issue, github.context.repo, process.env.GITHUB_TOKEN, process.env.GEMINI_API_KEY);
             console.log(`✅ Successfully processed issue #${issue.number}`);
             successCount++;
         } catch (error) {
             console.error(`❌ Failed to process issue #${issue.number}:`, error.message);
             failureCount++;
-        }
-
-        // Add a small delay between issues to be respectful to the APIs
-        if (issuesToProcess.length > 1) {
-            console.log('⏳ Waiting 5 seconds before next issue...');
-            await new Promise(resolve => setTimeout(resolve, 5000));
         }
     }
 
@@ -182,21 +152,4 @@ async function runBacklogScript() {
     console.log(`✅ Successfully processed: ${successCount}`);
     console.log(`❌ Failed to process: ${failureCount}`);
     console.log(`📈 Total processed: ${successCount + failureCount}`);
-}
-
-// Only run the main script if this file is executed directly (not imported)
-if (require.main === module) {
-    (async () => {
-        try {
-            await runBacklogScript();
-        } catch (error) {
-            console.log(`❌ Backlog script failed: ${error.message}`);
-            core.setFailed(`❌ Backlog script failed: ${error.message}`);
-        }
-    })();
-}
-
-module.exports = {
-    findUnlabeledUncommentedIssues,
-    runBacklogScript
-};
+})();

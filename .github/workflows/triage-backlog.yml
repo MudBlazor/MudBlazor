@@ -1,16 +1,21 @@
-name: AutoTriage Backlog Processing
+name: Triage Backlog
 
 on:
   schedule:
-    - cron: '0 */8 * * *'
+    - cron: '0 * * * *' # Regularly check the backlog so we don't make too many calls at once by doing it in bulk.
   
   workflow_dispatch:
     inputs:
       backlog-size:
-        description: 'Number of issues to process in this run'
+        description: 'Number of issues to process'
         required: false
-        default: '4'
+        default: '1'
         type: string
+      verbose:
+        description: 'Enable verbose logging'
+        required: false
+        default: false
+        type: boolean
 
 jobs:
   backlog-triage:
@@ -33,9 +38,9 @@ jobs:
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         AUTOTRIAGE_ENABLED: ${{ vars.AUTOTRIAGE_ENABLED }}
-        AUTOTRIAGE_VERBOSE: ${{ vars.AUTOTRIAGE_VERBOSE }}
+        AUTOTRIAGE_VERBOSE: ${{ github.event.inputs.verbose }}
         AUTOTRIAGE_PROMPT: ${{ vars.AUTOTRIAGE_PROMPT }}
         AUTOTRIAGE_MODEL: ${{ vars.AUTOTRIAGE_MODEL }}
         AUTOTRIAGE_LABELS: ${{ vars.AUTOTRIAGE_LABELS }}
-        BACKLOG_SIZE: ${{ github.event.inputs.backlog-size || '4' }}
+        BACKLOG_SIZE: ${{ github.event.inputs.backlog-size || '1' }} # Small default to avoid overwhelming the API (https://ai.google.dev/gemini-api/docs/rate-limits).
       run: node ./.github/scripts/AutoTriageBacklog.js

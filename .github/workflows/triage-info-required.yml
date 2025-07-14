@@ -1,4 +1,4 @@
-name: Remove 'info required' Label
+name: Triage 'info required'
 
 on:
   issue_comment:

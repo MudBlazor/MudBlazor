@@ -1,3 +1,5 @@
+name: Triage Pull Requests
+
 on:
   pull_request_target:
     types: [opened]
@@ -23,7 +25,6 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           AUTOTRIAGE_ENABLED: ${{ vars.AUTOTRIAGE_ENABLED }}
-          AUTOTRIAGE_VERBOSE: ${{ vars.AUTOTRIAGE_VERBOSE }}
           AUTOTRIAGE_PROMPT: ${{ vars.AUTOTRIAGE_PROMPT }}
           AUTOTRIAGE_MODEL: ${{ vars.AUTOTRIAGE_MODEL }}
           AUTOTRIAGE_LABELS: ${{ vars.AUTOTRIAGE_LABELS }}

@@ -1,7 +1,7 @@
-name: Stale Issues
+name: Triage Stale
 on:
   schedule:
-    - cron: '0 */8 * * *'
+    - cron: '0 5 * * *'
   workflow_dispatch: # Allow manual trigger
 
 env:

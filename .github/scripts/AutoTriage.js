@@ -186,7 +186,8 @@ Analyze this issue and provide your structured response.`;
                         required: ["reason", "comment", "action", "labels"]
                     }
                 }
-            })
+            }),
+            timeout: 60000
         }
     );
 
