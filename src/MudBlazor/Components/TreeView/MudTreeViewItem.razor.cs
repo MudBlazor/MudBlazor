@@ -1,6 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.Interfaces;
@@ -10,6 +8,15 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
+    /// <summary>
+    /// An expandable branch of a <see cref="MudTreeView{T}"/>.
+    /// </summary>
+    /// <typeparam name="T">The type of the selectable value held by the item.</typeparam>
+    /// <remarks>
+    /// Used as the data model of the tree.
+    /// </remarks>
+    /// <seealso cref="MudTreeView{T}"/>
+    /// <seealso cref="MudTreeViewItemToggleButton"/>
     public partial class MudTreeViewItem<T> : MudComponentBase, IDisposable
     {
         private bool _isServerLoaded;
@@ -62,29 +69,42 @@ namespace MudBlazor
         internal MudTreeViewItem<T>? Parent { get; set; }
 
         /// <summary>
-        /// Value of the TreeViewItem. Acts as the displayed text if no text is set.
+        /// The value associated with this item.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>. Acts as the displayed text if no text is set.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Data)]
         public T? Value { get; set; }
 
         /// <summary>
-        /// The text to display
+        /// The text to display.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>. When no value is set, the <see cref="Value"/> is used if it is a basic value such as <c>string</c> or <c>int</c>, etc.<br />
+        /// Ignored if <see cref="BodyContent"/> is set.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Behavior)]
         public string? Text { get; set; }
 
         /// <summary>
-        /// Typography for the text.
+        /// The size of the text.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Typo.body1"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Appearance)]
         public Typo TextTypo { get; set; } = Typo.body1;
 
         /// <summary>
-        /// User class names for the text, separated by space.
+        /// The CSS classes applied to the <see cref="Text"/> parameter.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>. Multiple values must be separated by spaces.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Appearance)]
         public string? TextClass { get; set; }
@@ -92,127 +112,168 @@ namespace MudBlazor
         /// <summary>
         /// The text at the end of the item.
         /// </summary>
+        /// <remarks>
+        /// Ignored if <see cref="BodyContent"/> is set.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Behavior)]
         public string? EndText { get; set; }
 
         /// <summary>
-        /// Typography for the endtext.
+        /// The size of the end text.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Typo.body1"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Appearance)]
         public Typo EndTextTypo { get; set; } = Typo.body1;
 
         /// <summary>
-        /// User class names for the endtext, separated by space.
+        /// The CSS classes applied to the <see cref="EndText"/> parameter.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>. Multiple values must be separated by spaces.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Appearance)]
         public string? EndTextClass { get; set; }
 
         /// <summary>
-        /// Indicates whether the tree view item and its children are visible.
+        /// Whether this item and its children are displayed.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Appearance)]
         public bool Visible { get; set; } = true;
 
         /// <summary>
-        /// If true, TreeViewItem will be disabled.
+        /// Prevents the user from interacting with this item.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Behavior)]
         public bool Disabled { get; set; }
 
         /// <summary>
-        /// If true, the MudTreeViewItem's selection can not be changed.  
+        /// Prevents this item from being selected.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Behavior)]
         public bool ReadOnly { get; set; }
 
         /// <summary>
-        /// If false, TreeViewItem will not be able to expand.
+        /// Allows this item to expand to display children.
         /// </summary>
         /// <remarks>
-        /// This is especially useful for lazy-loaded items via ServerData. If you know that an item has no children
-        /// you can pre-emptively prevent expansion which would only lead to a server request that would
-        /// not return children anyway.
+        /// Defaults to <c>true</c>. A value of <c>false</c> is typically used for lazy-loaded items via <see cref="MudTreeView{T}.ServerData" />.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Behavior)]
         public bool CanExpand { get; set; } = true;
 
         /// <summary>
-        /// Child content of component used to create sub levels.
+        /// The child items within this item.
         /// </summary>
+        /// <remarks>
+        /// Must be one or more <see cref="MudTreeViewItem{T}"/> components. Only applies when <see cref="Content"/> is not set.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Data)]
         public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// Content of the item, if used completely replaced the default rendering.
+        /// The custom content within this item.
         /// </summary>
+        /// <remarks>
+        /// When set, completely controls the rendering of child items. For <see cref="MudTreeViewItem{T}"/> children, use <see cref="Items"/> or <see cref="ChildContent"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Behavior)]
         public RenderFragment? Content { get; set; }
 
         /// <summary>
-        /// Content of the item body, if used replaced the text, end text and end icon rendering.
+        /// The custom content for the text, end text, and end icon.
         /// </summary>
+        /// <remarks>
+        /// When set, the <see cref="Text"/>, <see cref="EndText"/>, and <see cref="EndIcon"/> properties are ignored.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Behavior)]
         public RenderFragment<MudTreeViewItem<T?>>? BodyContent { get; set; }
 
+        /// <summary>
+        /// The child items underneath this item.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.TreeView.Data)]
         public IReadOnlyCollection<TreeItemData<T?>>? Items { get; set; }
 
         /// <summary>
-        /// Called whenever children were loaded from the server
+        /// Occurs when <see cref="Items"/> has changed.
         /// </summary>
         [Parameter]
         public EventCallback<IReadOnlyCollection<TreeItemData<T?>>?> ItemsChanged { get; set; }
 
         /// <summary>
-        /// Expand or collapse TreeView item when it has children. Two-way bindable. Note: if you directly set this to
-        /// true or false (instead of using two-way binding) it will force the item's expansion state.
+        /// Shows the children items underneath this item.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Expanding)]
         public bool Expanded { get; set; }
 
         /// <summary>
-        /// Called whenever expanded changed.
+        /// Occurs when <see cref="Expanded"/> has changed.
         /// </summary>
         [Parameter]
         public EventCallback<bool> ExpandedChanged { get; set; }
 
         /// <summary>
-        /// Set this to true to mark the item initially selected in single selection mode or checked in multi selection mode.
-        /// You can two-way bind this to get selection updates from this item
+        /// Selects this item.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>. Can be set alongside other items if <see cref="MudTreeView{T}.SelectionMode"/> is <see cref="SelectionMode.MultiSelection"/> or <see cref="SelectionMode.ToggleSelection"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Selecting)]
         public bool Selected { get; set; }
 
         /// <summary>
-        /// Icon placed before the text if set.
+        /// The item shown before the text.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Behavior)]
         public string? Icon { get; set; }
 
         /// <summary>
-        /// Alternative icon to show instead of Icon if expanded.
+        /// The icon shown when this item is expanded.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Behavior)]
         public string? IconExpanded { get; set; }
 
         /// <summary>
-        /// The color of the icon. It supports the theme colors.
+        /// The color of the icon when <see cref="Icon"/> is set.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Color.Default"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Appearance)]
         public Color IconColor { get; set; } = Color.Default;
@@ -220,59 +281,77 @@ namespace MudBlazor
         /// <summary>
         /// Icon placed after the text if set.
         /// </summary>
+        /// <remarks>
+        /// Ignored if <see cref="BodyContent"/> is set.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Behavior)]
         public string? EndIcon { get; set; }
 
         /// <summary>
-        /// The color of the icon. It supports the theme colors.
+        /// The color of the end icon when <see cref="EndIcon"/> is set.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Color.Default"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Appearance)]
         public Color EndIconColor { get; set; } = Color.Default;
 
         /// <summary>
-        /// The expand/collapse icon.
+        /// The icon shown for the expand/collapse button.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.ChevronRight"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Expanding)]
         public string ExpandButtonIcon { get; set; } = Icons.Material.Filled.ChevronRight;
 
         /// <summary>
-        /// The color of the expand/collapse button. It supports the theme colors.
+        /// The color of the expand/collapse button.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Color.Default"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Expanding)]
         public Color ExpandButtonIconColor { get; set; } = Color.Default;
 
         /// <summary>
-        /// The loading icon.
+        /// The icon shown while this item is loading.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.Loop"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Appearance)]
         public string LoadingIcon { get; set; } = Icons.Material.Filled.Loop;
 
         /// <summary>
-        /// The color of the loading. It supports the theme colors.
+        /// The color of the loading icon.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Color.Default"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Appearance)]
         public Color LoadingIconColor { get; set; } = Color.Default;
 
         /// <summary>
-        /// Called whenever the selected value changed.
+        /// Occurs when <see cref="Selected"/> has changed.
         /// </summary>
         [Parameter]
         public EventCallback<bool> SelectedChanged { get; set; }
 
         /// <summary>
-        /// Tree item click event.
+        /// Occurs when this item has been clicked.
         /// </summary>
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
 
         /// <summary>
-        /// Tree item double click event.
+        /// Occurs when this item has been double-clicked.
         /// </summary>
         [Parameter]
         public EventCallback<MouseEventArgs> OnDoubleClick { get; set; }
@@ -330,7 +409,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Expand this item and all its children recursively
+        /// Expands this item and all children recursively.
         /// </summary>
         public async Task ExpandAllAsync()
         {
@@ -348,7 +427,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Collapse this item and all its children recursively
+        /// Collapse this item and all children recursively.
         /// </summary>
         public async Task CollapseAllAsync()
         {
@@ -361,6 +440,7 @@ namespace MudBlazor
                 await item.CollapseAllAsync();
         }
 
+        /// <inheritdoc />
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
@@ -477,7 +557,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Clear the tree items, and try to reload from server.
+        /// Clears the children under this item.
         /// </summary>
         public async Task ReloadAsync()
         {
@@ -544,7 +624,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Update the Selected state of all items and sub-items.
+        /// Updates the selection state of all items and sub-items.
         /// </summary>
         /// <param name="selectedValues"></param>
         /// <returns>True if the item or any sub-item changed from non-selected to selected.</returns>
@@ -573,6 +653,9 @@ namespace MudBlazor
             return selectedBecameTrue || childSelectedBecameTrue;
         }
 
+        /// <summary>
+        /// Disposes the resources used by this component.
+        /// </summary>
         public void Dispose()
         {
             MudTreeRoot?.RemoveChild(this);

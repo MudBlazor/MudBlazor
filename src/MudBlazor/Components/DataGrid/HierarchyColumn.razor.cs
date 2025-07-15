@@ -16,7 +16,7 @@ namespace MudBlazor;
 public partial class HierarchyColumn<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase
 {
     /// <summary>
-    /// Whether the display should be right to left
+    /// Displays the content right-to-left.
     /// </summary>
     [CascadingParameter(Name = "RightToLeft")]
     public bool RightToLeft { get; set; }

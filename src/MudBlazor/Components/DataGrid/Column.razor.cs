@@ -133,7 +133,7 @@ namespace MudBlazor
         public EventCallback<int> GroupByOrderChanged { get; set; }
 
         /// <summary>
-        /// Whether the column is indented 48px beyond it's parent when grouped.
+        /// Indents the column <c>48px</c> beyond its parent when grouped.
         /// </summary>
         [Parameter]
         public bool GroupIndented { get; set; } = true;
@@ -593,32 +593,11 @@ namespace MudBlazor
                 .WithChangeHandler(OnGroupByOrderChangedAsync);
         }
 
-        private async Task OnGroupingParameterChangedAsync()
-        {
-            // Regroup DataGrid           
-            if (DataGrid is not null)
-            {
-                await DataGrid.ChangedGrouping(this);
-            }
-        }
+        private void OnGroupingParameterChangedAsync() => DataGrid?.GroupItems();
 
-        private async Task OnGroupExpandedChangedAsync()
-        {
-            // Regroup DataGrid
-            if (DataGrid is not null)
-            {
-                await DataGrid.ChangedGrouping();
-            }
-        }
+        private void OnGroupByOrderChangedAsync() => DataGrid?.GroupItems();
 
-        private async Task OnGroupByOrderChangedAsync()
-        {
-            // Regroup DataGrid           
-            if (DataGrid is not null)
-            {
-                await DataGrid.ChangedGrouping();
-            }
-        }
+        private void OnGroupExpandedChangedAsync() => DataGrid?.GroupItems();
 
         protected override void OnInitialized()
         {

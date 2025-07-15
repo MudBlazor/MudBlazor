@@ -13,6 +13,15 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class TableTests : BunitTest
     {
+        [Test]
+        public void CustomTableClass()
+        {
+            var comp = Context.RenderComponent<TableRowClickTest>();
+            var table = comp.FindComponent<MudTable<int>>();
+            table.SetParametersAndRender(parameters => parameters.Add(x => x.TableClass, "table-custom-class"));
+            table.Markup.Should().Contain("class=\"mud-table-root table-custom-class\"");
+        }
+
         /// <summary>
         /// OnRowClick event callback should be fired regardless of the selection state
         /// </summary>
@@ -2201,10 +2210,10 @@ namespace MudBlazor.UnitTests.Components
         /// Tests the correct output when filter does not return any matching elements
         /// </summary>
         [Test]
-        public void TablePagerInfoTextTest()
+        public void TablePagerInfoTextTest1()
         {
             // create the component
-            var tableComponent = Context.RenderComponent<TablePagerInfoTextTest>();
+            var tableComponent = Context.RenderComponent<TablePagerInfoTextTest1>();
 
             // print the generated html
 
@@ -2233,6 +2242,23 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Tests the correct output when custom info format provided
+        /// </summary>
+        [Test]
+        [TestCase("", "1-3 of 3")]
+        [TestCase("Test", "Test")]
+        [TestCase("{first_item}-{last_item}/{all_items}", "1-3/3")]
+        public void TablePagerInfoTextTest2(string infoFormat, string expectedInfoText)
+        {
+            // create the component
+            var tableComponent = Context.RenderComponent<TablePagerInfoTextTest2>(parameters => parameters
+                .Add(p => p.InfoFormat, infoFormat));
+
+            // assert correct info-text
+            tableComponent.Find("div.mud-table-page-number-information").Text().Should().Be(expectedInfoText);
+        }
+
+        /// <summary>
         /// Tests the aria-labels for the pager control buttons
         /// </summary>
         /// <param name="controlButton">The type of the control button. Page.First for the navigate-to-first-page button.</param>
@@ -2244,7 +2270,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TablePagerControlButtonAriaLabelTest(Page controlButton, string expectedButtonAriaLabel)
         {
-            var tableComponent = Context.RenderComponent<TablePagerInfoTextTest>();
+            var tableComponent = Context.RenderComponent<TablePagerInfoTextTest1>();
 
             //get control button
             var buttons = tableComponent.FindAll("div.mud-table-pagination-actions button");

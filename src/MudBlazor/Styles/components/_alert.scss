@@ -37,13 +37,13 @@
 .mud-alert-outlined {
   &-normal {
     color: var(--mud-palette-text-primary);
-    border: 1px solid var(--mud-palette-text-primary);
+    border: 1px solid rgb(from var(--mud-palette-text-primary) r g b / var(--mud-palette-border-opacity));
   }
 
   @each $color in $mud-palette-colors {
     &-#{$color} {
       color: var(--mud-palette-#{$color}-darken);
-      border: 1px solid var(--mud-palette-#{$color});
+      border: 1px solid rgb(from var(--mud-palette-#{$color}) r g b / var(--mud-palette-border-opacity));
 
       & .mud-alert-icon {
         color: var(--mud-palette-#{$color});

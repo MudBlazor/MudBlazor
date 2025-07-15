@@ -2,9 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using FluentAssertions;
 using MudBlazor.Utilities;
@@ -337,6 +334,7 @@ namespace MudBlazor.UnitTests.Utilities
         /// Test if comparer works as intended
         /// </summary>
         [Test]
+        [SetCulture("en-US")]
         public void SortFiles()
         {
             var fileNames = Encoding.UTF8.GetString(Convert.FromBase64String(s_encodedFileNames))

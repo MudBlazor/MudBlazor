@@ -80,11 +80,11 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DateRangePickerOpenButtonAriaLabel()
+        public void DateRangePickerOpenButtonDefaultAriaLabel()
         {
             var comp = Context.RenderComponent<MudDateRangePicker>();
             var openButton = comp.Find(".mud-input-adornment button");
-            openButton.Attributes.GetNamedItem("aria-label")?.Value.Should().Be("Open Date Range Picker");
+            openButton.Attributes.GetNamedItem("aria-label")?.Value.Should().Be("Open");
         }
 
         [Test]
@@ -828,6 +828,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [SetCulture("en-US")]
         public void FormatFirst_Should_RenderCorrectly()
         {
             DateRange range = new DateRange(new DateTime(2024, 04, 22), new DateTime(2024, 04, 23));
@@ -845,6 +846,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [SetCulture("en-US")]
         public void FormatLast_Should_RenderCorrectly()
         {
             DateRange range = new DateRange(new DateTime(2024, 04, 22), new DateTime(2024, 04, 23));

@@ -54,7 +54,6 @@ namespace MudBlazor
             ShowToolbar = false;
             Value = "#594ae2"; // MudBlazor Blue
             Text = GetColorTextValue();
-            AdornmentAriaLabel = "Open Color Picker";
             using var registerScope = CreateRegisterScope();
             _throttleIntervalState = registerScope.RegisterParameter<int>(nameof(ThrottleInterval))
                 .WithParameter(() => ThrottleInterval)
@@ -296,17 +295,18 @@ namespace MudBlazor
         /// The delay, in milliseconds, between updates to the selected color when <see cref="DragEffect"/> is <c>true</c>.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>300</c> milliseconds between updates.
+        /// Defaults to <c>50</c> milliseconds between updates.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
-        public int ThrottleInterval { get; set; } = 300;
+        public int ThrottleInterval { get; set; } = 50;
 
         /// <inheritdoc />
         protected override void OnInitialized()
         {
             base.OnInitialized();
             SetThrottle(_throttleIntervalState.Value);
+            AdornmentAriaLabel ??= Localizer[Resources.LanguageResource.MudColorPicker_Open];
         }
 
         private void OnThrottleIntervalParameterChanged(ParameterChangedEventArgs<int> args)

@@ -17,7 +17,8 @@
                      Disabled="@GetDisabledState()"
                      Margin="@Margin"
                      Required="@Required"
-                     ForId="@InputElementId">
+                     ForId="@InputElementId"
+                     @onclick="HandleContainerClick">
         <InputContent>
             <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
                 @if (_mask == null)

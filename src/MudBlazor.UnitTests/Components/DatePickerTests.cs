@@ -41,11 +41,11 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DatePickerOpenButtonAriaLabel()
+        public void DatePickerOpenButtonDefaultAriaLabel()
         {
             var comp = Context.RenderComponent<DatePickerValidationTest>();
             var openButton = comp.Find(".mud-input-adornment button");
-            openButton.Attributes.GetNamedItem("aria-label")?.Value.Should().Be("Open Date Picker");
+            openButton.Attributes.GetNamedItem("aria-label")?.Value.Should().Be("Open");
         }
 
         [Test]
@@ -1443,6 +1443,7 @@ namespace MudBlazor.UnitTests.Components
         /// Test to check if the outlined dates class shows up correctly
         /// </summary>
         [Test]
+        [SetCulture("en-US")]
         public void DatePicker_CustomTimerProviderTest()
         {
             var timeProvider = new FakeTimeProvider();

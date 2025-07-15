@@ -275,6 +275,10 @@ namespace MudBlazor
                     {
                         // Forward render update to instance
                         (_reference.Dialog as IMudStateHasChanged)?.StateHasChanged();
+
+                        //forward render update to instance container
+                        if (_reference.Dialog is MudDialog { DialogInstance: not null } dialog)
+                            await InvokeAsync(dialog.DialogInstance!.StateHasChanged);
                     }
                     else
                     {

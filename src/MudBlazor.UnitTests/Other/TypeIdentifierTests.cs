@@ -97,6 +97,20 @@ namespace MudBlazor.UnitTests.Other
         [TestCase(null, false)]
         [TestCase(typeof(int), false)]
         [TestCase(typeof(int?), false)]
+        [TestCase(typeof(DateOnly), true)]
+        [TestCase(typeof(DateOnly?), true)]
+        [TestCase(typeof(DateTime), false)]
+        [TestCase(typeof(DateTime?), false)]
+        public void IsDateOnly_Test(Type type, bool expected)
+        {
+            var isDateOnly = TypeIdentifier.IsDateOnly(type);
+            isDateOnly.Should().Be(expected);
+        }
+
+        [Test]
+        [TestCase(null, false)]
+        [TestCase(typeof(int), false)]
+        [TestCase(typeof(int?), false)]
         [TestCase(typeof(Guid), true)]
         [TestCase(typeof(Guid?), true)]
         public void IsGuid_Test(Type type, bool expected)
