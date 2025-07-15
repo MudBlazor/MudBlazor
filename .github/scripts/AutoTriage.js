@@ -26,16 +26,6 @@
  * - AUTOTRIAGE_VERBOSE: Set to 'true' for detailed logging including AI prompts/responses
  * - AUTOTRIAGE_PROMPT: Custom AI prompt (default: basic GitHub issue analysis assistant). This is where all the context of your project and how you want issues to be triaged should be defined.
  * - AUTOTRIAGE_MODEL: Gemini model to use (default: 'gemini-2.5-flash')
- * - AUTOTRIAGE_LABELS: JSON object mapping label names to descriptions (optional, disables labeling if not provided)
- * 
- * EXAMPLE AUTOTRIAGE_LABELS:
- * {
- *   "bug": "Something isn't working correctly",
- *   "enhancement": "Request for new feature or improvement",
- *   "question": "Further information is requested",
- *   "invalid": "This doesn't seem right or is spam",
- *   "breaking change": "Changes that break backward compatibility"
- * }
  * 
  * SETUP INSTRUCTIONS:
  * 1. Get a Gemini API key from Google AI Studio
@@ -78,21 +68,6 @@ console.log(`📋 Base prompt: ${process.env.AUTOTRIAGE_PROMPT ? 'custom provide
 // Allow model configuration via environment variable
 const aiModel = process.env.AUTOTRIAGE_MODEL || 'gemini-2.5-pro';
 console.log(`🤖 Gemini model: ${aiModel}`);
-
-// Load labels from environment variable (JSON format) - optional
-let validLabels = {};
-try {
-    if (process.env.AUTOTRIAGE_LABELS) {
-        validLabels = JSON.parse(process.env.AUTOTRIAGE_LABELS);
-        console.log(`🏷️ Loaded ${Object.keys(validLabels).length} valid labels`);
-    } else {
-        console.log('ℹ️ No labels provided - labeling functionality disabled');
-    }
-} catch (error) {
-    console.error('❌ Failed to parse AUTOTRIAGE_LABELS:', error.message);
-    console.log('ℹ️ Continuing without labels - labeling functionality disabled');
-    validLabels = {};
-}
 
 /**
  * Completely analyze issue quality and get label suggestions in one optimized call
@@ -252,22 +227,14 @@ function validateAnalysis(analysis) {
  * Apply labels to the GitHub issue
  */
 async function applyLabels(labels, issue, repo, githubToken) {
-    // Skip if no labels are configured
-    if (Object.keys(validLabels).length === 0) {
-        return;
-    }
-
-    // Get current labels
     const currentLabels = Array.isArray(issue.labels) ? issue.labels.map(l => typeof l === 'string' ? l : l.name) : [];
     const labelsToAdd = labels.filter(l => !currentLabels.includes(l));
     const labelsToRemove = currentLabels.filter(l => !labels.includes(l) && Object.keys(validLabels).includes(l));
-
     if (dryRun) {
         console.log(`🏷️ [SKIP] Would add labels to issue #${issue.number}:`, labelsToAdd);
         console.log(`🏷️ [SKIP] Would remove labels from issue #${issue.number}:`, labelsToRemove);
         return;
     }
-
     const octokit = github.getOctokit(githubToken);
     if (labelsToAdd.length > 0) {
         await octokit.rest.issues.addLabels({
