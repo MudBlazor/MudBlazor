@@ -130,13 +130,22 @@ async function analyzeIssue(issueText, apiKey, metadata = {}) {
         metadataText += `Current Labels: ${metadata.labels.join(', ')}\n`;
     }
 
+    // Add all comments as additional context if provided
+    let commentsText = '';
+    if (metadata.comments && Array.isArray(metadata.comments) && metadata.comments.length > 0) {
+        commentsText = '\nISSUE COMMENTS:';
+        metadata.comments.forEach((comment, idx) => {
+            commentsText += `\nComment ${idx + 1} by ${comment.author || 'unknown'}:\n${comment.body}`;
+        });
+    }
+
     const prompt = `${basePrompt}
 
 ISSUE TO ANALYZE:
 ${issueText}
 
-${metadataText ? `ISSUE METADATA:
-${metadataText}` : ''}
+${metadataText ? `ISSUE METADATA:\n${metadataText}` : ''}
+${commentsText}
 VALID LABELS:
 ${labelDescriptions}
 
