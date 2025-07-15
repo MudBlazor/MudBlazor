@@ -60,7 +60,7 @@ namespace MudBlazor
         public bool EnableDragAndDrop { get; set; }
 
         /// <summary>
-        /// When <see cref="EnableDragAndDrop" /> is set to true, this event will be raised when an item is dropped. 
+        /// When <see cref="EnableDragAndDrop" /> is set to true, this event will be raised when an item is dropped.
         /// The dropped item is provided in the <see cref="MudItemDropInfo{T}"/> and will have already been moved to its new position.
         /// </summary>
         [Parameter]
@@ -283,7 +283,7 @@ namespace MudBlazor
         public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// This fragment is placed between tabHeader and panels. 
+        /// This fragment is placed between tabHeader and panels.
         /// It can be used to display additional content like an address line in a browser.
         /// The active tab will be the content of this RenderFragement
         /// </summary>
@@ -373,7 +373,7 @@ namespace MudBlazor
         public EventCallback<int> ActivePanelIndexChanged { get; set; }
 
         /// <summary>
-        /// A read-only list of the panels within this component. 
+        /// A read-only list of the panels within this component.
         /// </summary>
         /// <remarks>
         /// Tab panels are controlled by either adding more <see cref="MudTabPanel"/> components in the Razor page, or by using the <see cref="MudDynamicTabs"/> component instead.
@@ -655,7 +655,7 @@ namespace MudBlazor
 
         private void SortPanels()
         {
-            if (_panels.Count == 0 || SortDirection == SortDirection.None)
+            if (_panels.Count == 0 || (SortDirection == SortDirection.None && SortComparer is null))
                 return;
 
             _panels.Sort(GetTabSortExpression);

@@ -96,7 +96,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-tabs-panels > div")[0].GetAttribute("style").Should().Be("display:none;");
             comp.FindAll("div.mud-tabs-panels > div")[1].GetAttribute("style").Should().Be("display:contents;");
             comp.FindAll("div.mud-tabs-panels > div")[2].GetAttribute("style").Should().Be("display:none;");
-            // click second button twice and show button click counters. the click of the first button should still be evident 
+            // click second button twice and show button click counters. the click of the first button should still be evident
             comp.FindAll("button")[1].Click();
             comp.FindAll("button")[1].Click();
             comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 1=1");
@@ -1475,21 +1475,41 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void LabelSorting_CustomSortComparer()
+        public void LabelSorting_CustomSortComparerIgnoresSortDirection()
         {
             /* ***
              * All labels should be present and in Tag order, ignoring SortDirection and Keys.
-             * For this test the Tabs.SortDirection is set to Descending in markup, and the SortKeys
+             * For this test the Tabs.SortDirection is set to Descending, and the SortKeys
              * are set to Apple=3, Banana=2, Cherry=1, so there is no combination of SortKey, Label
              * or SortDirection that could ellicit the same sort order as we get from TestComparer.
              */
             var comp = Context.RenderComponent<LabelSortTest>(
-                            ComponentParameter.CreateParameter("SortComparer", new LabelSortTest.TestComparer())
+                            ComponentParameter.CreateParameter("SortComparer", new LabelSortTest.TestComparer()),
+                            ComponentParameter.CreateParameter("SortDirection", SortDirection.Descending)
                         );
             comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab").Count.Should().Be(3);
             comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[0].InnerHtml.Should().Be("Cherry");
             comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[1].InnerHtml.Should().Be("Apple");
             comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[2].InnerHtml.Should().Be("Banana");
+        }
+
+        [Test]
+        public void LabelSorting_CustomSortComparerWorksWithoutSortDirection()
+        {
+            /* ***
+             * All labels should be present and in Tag order, SortDirection and Keys are unspecified.
+             * For this test the Tabs.SortDirection is left unset, and the SortKeys
+             * are set to Apple=3, Banana=2, Cherry=1, so there is no combination of SortKey, Label
+             * or SortDirection that could ellicit the same sort order as we get from TestComparer.
+             */
+            var comp = Context.RenderComponent<LabelSortTest>(
+                            ComponentParameter.CreateParameter("SortComparer", new LabelSortTest.TestComparer()),
+                            ComponentParameter.CreateParameter("SortDirection", null)
+                        );
+            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab" ).Count.Should().Be( 3 );
+            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab" )[0].InnerHtml.Should().Be("Cherry");
+            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab" )[1].InnerHtml.Should().Be("Apple");
+            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab" )[2].InnerHtml.Should().Be("Banana");
         }
 
         [Test]
@@ -1510,7 +1530,7 @@ namespace MudBlazor.UnitTests.Components
             divs[3].InnerHtml.Should().Be("Four");
             // no scroll bar should show
             comp.FindAll(".mud-tabs-scroll-button").Should().BeEmpty();
-            // enable drag and drop 
+            // enable drag and drop
             var cbox = comp.Find("div.drag-drop-class input");
             cbox.Change(true);
             comp.SetParametersAndRender();
@@ -1550,7 +1570,7 @@ namespace MudBlazor.UnitTests.Components
             divs[2].Click(); // activate Three
             divs = comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab");
             comp.WaitForAssertion(() => divs[2].ClassList.Contains("mud-tab-active").Should().BeTrue());
-            // enable drag and drop 
+            // enable drag and drop
             var cbox = comp.Find("div.drag-drop-class input");
             cbox.Change(true);
             comp.SetParametersAndRender(p => p.Add(p => p.ActiveTabClass, "test-active"));
