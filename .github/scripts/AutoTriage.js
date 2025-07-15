@@ -181,11 +181,6 @@ Analyze this issue and provide your structured response.`;
                                 description: "Technical comment to reply with",
                                 nullable: true
                             },
-                            action: {
-                                type: "string",
-                                description: "Action to take on the issue, such as closing it",
-                                nullable: true
-                            },
                             labels: {
                                 type: "array",
                                 items: {
@@ -197,7 +192,7 @@ Analyze this issue and provide your structured response.`;
                                     : "Array of labels (none configured)"
                             }
                         },
-                        required: ["reason", "comment", "action", "labels"]
+                        required: ["reason", "comment", "labels"]
                     }
                 }
             }),
@@ -385,15 +380,9 @@ async function processIssue(issueOrPR, repo, githubToken, geminiApiKey) {
     await applyLabels(analysis.labels, issueOrPR, repo, githubToken);
 
     if (isIssue) {
-        // For issues: Handle comments and closing
         if (analysis.comment !== null) {
             console.log(`💡 A comment could help: ${analysis.reason}`);
             await postQualityComment(issueOrPR, repo, githubToken, analysis.comment);
-        }
-
-        if (analysis.action === 'close') {
-            console.log(`🔒 AI determined issue should be closed: ${analysis.reason}`);
-            await closeIssue(issueOrPR, repo, githubToken, 'not_planned');
         }
     } else {
         // For PRs: Only labeling, no quality checking or closing
