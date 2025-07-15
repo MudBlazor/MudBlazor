@@ -1506,10 +1506,10 @@ namespace MudBlazor.UnitTests.Components
                             ComponentParameter.CreateParameter("SortComparer", new LabelSortTest.TestComparer()),
                             ComponentParameter.CreateParameter("SortDirection", null)
                         );
-            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab" ).Count.Should().Be( 3 );
-            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab" )[0].InnerHtml.Should().Be("Cherry");
-            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab" )[1].InnerHtml.Should().Be("Apple");
-            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab" )[2].InnerHtml.Should().Be("Banana");
+            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab").Count.Should().Be(3);
+            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[0].InnerHtml.Should().Be("Cherry");
+            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[1].InnerHtml.Should().Be("Apple");
+            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[2].InnerHtml.Should().Be("Banana");
         }
 
         [Test]
