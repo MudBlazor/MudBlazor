@@ -21,7 +21,7 @@ namespace MudBlazor
     public partial class MudTabs : MudComponentBase, IAsyncDisposable
     {
         private bool _isDisposed;
-
+        private MudDropContainer<MudTabPanel>? _dropContainer;
         private int _activePanelIndex = 0;
         private int _scrollIndex = 0;
 
@@ -59,6 +59,13 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Tabs.Behavior)]
         public bool EnableDragAndDrop { get; set; }
+
+        /// <summary>
+        /// When <see cref="EnableDragAndDrop" /> is set to true, this event will be raised when an item is dropped. 
+        /// The dropped item is provided in the <see cref="MudItemDropInfo{T}"/> and will have already been moved to its new position.
+        /// </summary>
+        [Parameter]
+        public EventCallback<MudItemDropInfo<MudTabPanel>> OnItemDropped { get; set; }
 
         /// <summary>
         /// Persists the content of tabs when they are not visible.
@@ -480,6 +487,8 @@ namespace MudBlazor
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
+            await base.OnAfterRenderAsync(firstRender);
+
             if (firstRender)
             {
                 var items = _panels.Select(x => x.PanelRef).ToList();
@@ -495,6 +504,13 @@ namespace MudBlazor
                 ActivatePanel(ActivePanelIndex);
 
                 _isRendered = true;
+                // fix activepanelindex on initial render
+                // https://github.com/MudBlazor/MudBlazor/issues/11519
+                CenterScrollPositionAroundSelectedItem();
+                SetScrollButtonVisibility();
+                SetScrollabilityStates();
+                SetSliderState();
+                await InvokeAsync(StateHasChanged);
             }
         }
 
@@ -809,7 +825,7 @@ namespace MudBlazor
         {
             _nextIcon = RightToLeft ? PrevIcon : NextIcon;
             _prevIcon = RightToLeft ? NextIcon : PrevIcon;
-
+            _dropContainer?.Refresh();
             GetTabBarContentSize();
             GetAllTabsSize();
             SetScrollButtonVisibility();
@@ -829,7 +845,6 @@ namespace MudBlazor
             {
                 return;
             }
-
             _sliderPositionPercentage = (GetLengthOfPanelItems(ActivePanel) / _allTabsSize) * 100;
             _sliderSizePercentage = (GetPanelLength(ActivePanel) / _allTabsSize) * 100;
         }
@@ -1064,7 +1079,7 @@ namespace MudBlazor
 
         #endregion
 
-        internal void ItemUpdated(MudItemDropInfo<MudTabPanel> dropItem)
+        internal async Task ItemUpdated(MudItemDropInfo<MudTabPanel> dropItem)
         {
             if (dropItem.Item is null)
             {
@@ -1091,6 +1106,11 @@ namespace MudBlazor
 
             // Set the dragged tab as active
             ActivatePanel(dropItem.Item);
+
+            if (OnItemDropped.HasDelegate)
+            {
+                await OnItemDropped.InvokeAsync(dropItem);
+            }
         }
 
         private async Task NotifyActivePanelStateChangedAsync()

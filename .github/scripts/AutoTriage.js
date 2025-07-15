@@ -126,6 +126,9 @@ async function analyzeIssue(issueText, apiKey, metadata = {}) {
     if (metadata.reactions_total !== undefined) {
         metadataText += `Reactions: ${metadata.reactions_total}\n`;
     }
+    if (metadata.labels && Array.isArray(metadata.labels)) {
+        metadataText += `Current Labels: ${metadata.labels.join(', ')}\n`;
+    }
 
     const prompt = `${basePrompt}
 
@@ -180,7 +183,9 @@ Analyze this issue and provide your structured response.`;
                                     type: "string",
                                     ...(hasLabels ? { enum: Object.keys(validLabels) } : {})
                                 },
-                                description: hasLabels ? "Array of valid labels to apply" : "Array of labels (none configured)"
+                                description: hasLabels
+                                    ? "Array of valid labels to apply. This array will be used to synchronize labels: any label not included will be removed, and any label included will be added. Do not include labels that should be removed."
+                                    : "Array of labels (none configured)"
                             }
                         },
                         required: ["reason", "comment", "action", "labels"]
@@ -248,23 +253,40 @@ async function applyLabels(labels, issue, repo, githubToken) {
         return;
     }
 
+    // Get current labels
+    const currentLabels = Array.isArray(issue.labels) ? issue.labels.map(l => typeof l === 'string' ? l : l.name) : [];
+    const labelsToAdd = labels.filter(l => !currentLabels.includes(l));
+    const labelsToRemove = currentLabels.filter(l => !labels.includes(l) && Object.keys(validLabels).includes(l));
+
     if (dryRun) {
-        console.log(`🏷️ [SKIP] Would apply labels to issue #${issue.number}:`, labels);
+        console.log(`🏷️ [SKIP] Would add labels to issue #${issue.number}:`, labelsToAdd);
+        console.log(`🏷️ [SKIP] Would remove labels from issue #${issue.number}:`, labelsToRemove);
         return;
     }
 
-    if (labels.length > 0) {
-        const octokit = github.getOctokit(githubToken);
+    const octokit = github.getOctokit(githubToken);
+    if (labelsToAdd.length > 0) {
         await octokit.rest.issues.addLabels({
             owner: repo.owner,
             repo: repo.repo,
             issue_number: issue.number,
-            labels
+            labels: labelsToAdd
         });
-
-        console.log(`✅ Labels applied to issue #${issue.number}:`, labels);
-    } else {
-        console.log('ℹ️ No labels to apply.');
+        console.log(`✅ Labels added to issue #${issue.number}:`, labelsToAdd);
+    }
+    if (labelsToRemove.length > 0) {
+        for (const label of labelsToRemove) {
+            await octokit.rest.issues.removeLabel({
+                owner: repo.owner,
+                repo: repo.repo,
+                issue_number: issue.number,
+                name: label
+            });
+        }
+        console.log(`✅ Labels removed from issue #${issue.number}:`, labelsToRemove);
+    }
+    if (labelsToAdd.length === 0 && labelsToRemove.length === 0) {
+        console.log('ℹ️ No label changes needed.');
     }
 }
 
@@ -342,7 +364,8 @@ async function processIssue(issueOrPR, repo, githubToken, geminiApiKey) {
         comments_count: issueOrPR.comments || 0,
         reactions_total: (issueOrPR.reactions?.total_count || 0),
         state: issueOrPR.state,
-        type: issueOrPR.pull_request ? 'pull_request' : 'issue'
+        type: issueOrPR.pull_request ? 'pull_request' : 'issue',
+        labels: Array.isArray(issueOrPR.labels) ? issueOrPR.labels.map(l => typeof l === 'string' ? l : l.name) : []
     };
 
     // Analyze using the same AI logic with metadata

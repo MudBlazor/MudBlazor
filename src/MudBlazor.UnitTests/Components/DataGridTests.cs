@@ -145,8 +145,8 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => headerCell.Instance.SortChangedAsync(new Microsoft.AspNetCore.Components.Web.MouseEventArgs()));
             //await comp.InvokeAsync(() => headerCell.Instance.GetDataType());
             await comp.InvokeAsync(() => headerCell.Instance.RemoveSortAsync());
-            await comp.InvokeAsync(() => headerCell.Instance.AddFilter());
-            await comp.InvokeAsync(() => headerCell.Instance.OpenFilters());
+            await comp.InvokeAsync(() => headerCell.Instance.AddFilter(new MouseEventArgs()));
+            await comp.InvokeAsync(() => headerCell.Instance.OpenFilters(new MouseEventArgs()));
 
             await comp.InvokeAsync(() => dataGrid.Instance.SortMode = SortMode.None);
             dataGrid.Render();
@@ -262,8 +262,8 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => headerCell.Instance.SortChangedAsync(new Microsoft.AspNetCore.Components.Web.MouseEventArgs()));
             //await comp.InvokeAsync(() => headerCell.Instance.GetDataType());
             await comp.InvokeAsync(() => headerCell.Instance.RemoveSortAsync());
-            await comp.InvokeAsync(() => headerCell.Instance.AddFilter());
-            await comp.InvokeAsync(() => headerCell.Instance.OpenFilters());
+            await comp.InvokeAsync(() => headerCell.Instance.AddFilter(new MouseEventArgs()));
+            await comp.InvokeAsync(() => headerCell.Instance.OpenFilters(new MouseEventArgs()));
 
             await comp.InvokeAsync(() => dataGrid.Instance.SortMode = SortMode.None);
             dataGrid.Render();
@@ -3971,6 +3971,25 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void DataGrid_ColumnFilterMenu_OpensAtCursorPosition()
+        {
+            // https://github.com/MudBlazor/MudBlazor/issues/11518
+            var comp = Context.RenderComponent<DataGridServerDataColumnFilterMenuTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerDataColumnFilterMenuTest.Model>>();
+
+            dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(4);
+
+            (double Top, double Left) openPosition = (50, 50);
+            var mouseArgs = new MouseEventArgs
+            {
+                PageY = openPosition.Top,
+                PageX = openPosition.Left
+            };
+            comp.Find(".filter-button").Click(mouseArgs);
+            comp.WaitForAssertion(() => dataGrid.Instance._openPosition.Should().Be(openPosition));
+        }
+
+        [Test]
         public async Task DataGridServerDataColumnFilterMenuApplyTwiceTest()
         {
             var comp = Context.RenderComponent<DataGridServerDataColumnFilterMenuTest>();
@@ -4574,9 +4593,9 @@ namespace MudBlazor.UnitTests.Components
             //await comp.InvokeAsync(() => headerCell.Instance.GetDataType());
             await comp.InvokeAsync(() => headerCell.Instance.RemoveSortAsync());
             dataGrid.Instance.FilteringRunCount.Should().Be(initialFilterCount + 7);
-            await comp.InvokeAsync(() => headerCell.Instance.AddFilter());
+            await comp.InvokeAsync(() => headerCell.Instance.AddFilter(new MouseEventArgs()));
             dataGrid.Instance.FilteringRunCount.Should().Be(initialFilterCount + 8);
-            await comp.InvokeAsync(() => headerCell.Instance.OpenFilters());
+            await comp.InvokeAsync(() => headerCell.Instance.OpenFilters(new MouseEventArgs()));
             dataGrid.Instance.FilteringRunCount.Should().Be(initialFilterCount + 9);
 
             await comp.InvokeAsync(() => dataGrid.Instance.SortMode = SortMode.None);
