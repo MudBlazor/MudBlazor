@@ -5404,7 +5404,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => comp.FindAll("tr")[iraIndex - 2].QuerySelector("button").Click());
 
             // Find button with aria-label = "Next Page"
-            var nextButton = comp.Find("button[aria-label='Next Page']");
+            var nextButton = comp.Find("button[aria-label='Next page']");
             nextButton.Should().NotBeNull();
             nextButton.Click();
 
@@ -5416,7 +5416,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Should().NotContain("uid = Henon|54|Info|");
 
             // go back and make sure Ira isn't re-expanded
-            var prevButton = comp.Find("button[aria-label='Previous Page']");
+            var prevButton = comp.Find("button[aria-label='Previous page']");
             prevButton.Should().NotBeNull();
             prevButton.Click();
 
@@ -5427,7 +5427,8 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Should().NotContain("uid = Alicia|54|Info|");
             comp.Markup.Should().NotContain("uid = John|32|Warning|");
         }
-        
+
+        [Test]
         public async Task DataGridShouldAllowUnsortedAscDescOnly()
         {
             var comp = Context.RenderComponent<DataGridAllowUnsortedTest>(parameters => parameters
