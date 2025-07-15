@@ -16,14 +16,15 @@ jobs:
           node-version: '22'
 
       - name: Install dependencies
-        run: npm install node-fetch@2 @actions/core @actions/github
+        run: npm install node-fetch@2 @actions/core @octokit/rest
 
       - name: Run AI triage script
         env:
+          GITHUB_ISSUE_URL: ${{ github.event.issue.html_url }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           AUTOTRIAGE_ENABLED: ${{ vars.AUTOTRIAGE_ENABLED }}
           AUTOTRIAGE_PROMPT: ${{ vars.AUTOTRIAGE_PROMPT }}
           AUTOTRIAGE_MODEL: ${{ vars.AUTOTRIAGE_MODEL }}
-          AUTOTRIAGE_LABELS: ${{ vars.AUTOTRIAGE_LABELS }}
         run: node ./.github/scripts/AutoTriage.js
+        

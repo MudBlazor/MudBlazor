@@ -3,16 +3,29 @@ name: Triage Backlog
 on:
   schedule:
     - cron: '0 6 * * *'
-  
   workflow_dispatch:
     inputs:
       backlog-size:
-        description: 'Number of issues to process'
+        description: 'Number of issues to process in automated mode (when no direct issue numbers are provided).'
         required: false
-        default: '1'
+        default: '5'
+        type: string
+      issue-numbers:
+        description: 'List of issue numbers to process directly. If provided, these issues will be triaged instead of using automated selection.'
+        required: false
+        type: string
+      enabled:
+        description: 'Enable real actions (labeling, commenting). If false, the workflow runs in dry-run mode and only logs actions.'
+        required: false
+        default: false
+        type: boolean
+      model:
+        description: 'Gemini model to use.'
+        required: false
+        default: 'gemini-2.5-flash'
         type: string
       verbose:
-        description: 'Enable verbose logging'
+        description: 'Enable verbose logging.'
         required: false
         default: false
         type: boolean
@@ -31,16 +44,62 @@ jobs:
         node-version: '22'
     
     - name: Install dependencies
-      run: npm install node-fetch@2 @actions/core @actions/github
+      run: npm install node-fetch@2 @actions/core @octokit/rest
     
-    - name: Run AI backlog triage script
+    - name: Parse direct issue numbers
+      if: ${{ github.event.inputs.issue-numbers != '' }}
+      id: parse_issues
+      run: |
+        issues="${{ github.event.inputs.issue-numbers }}"
+        if [ -z "$issues" ]; then
+          echo "No issue numbers provided."
+          echo "issues_found=false" >> $GITHUB_OUTPUT
+          exit 0
+        fi
+        # Split by comma or space, remove empty, and convert to JSON array
+        echo "$issues" | tr ', ' '\n' | grep -v '^$' | jq -R . | jq -s . > issues.json
+        echo "Found $(cat issues.json | jq length) issues"
+        echo "issues_found=true" >> $GITHUB_OUTPUT
+    
+    - name: Find issues for automated mode
+      if: ${{ github.event.inputs.issue-numbers == '' }}
+      id: find_issues
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        backlog_size="${{ github.event.inputs.backlog-size }}"
+        if [ -z "$backlog_size" ]; then
+          backlog_size="1"
+        fi
+        # Find issues with no labels
+        issue_numbers=$(gh issue list --state open --json number,comments,labels --jq '.[] | select((.labels | length == 0)) | .number' | head -n "$backlog_size")
+        if [ -z "$issue_numbers" ]; then
+          echo "No suitable issues found."
+          echo "issues_found=false" >> $GITHUB_OUTPUT
+          exit 0
+        fi
+        # Save issue numbers as JSON array
+        echo "$issue_numbers" | grep -v '^$' | jq -R . | jq -s . > issues.json
+        echo "Found $(cat issues.json | jq length) issues"
+        echo "issues_found=true" >> $GITHUB_OUTPUT
+    
+    - name: Process issues
+      if: (github.event.inputs.issue-numbers != '' && steps.parse_issues.outputs.issues_found == 'true') || (github.event.inputs.issue-numbers == '' && steps.find_issues.outputs.issues_found == 'true')
       env:
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        AUTOTRIAGE_ENABLED: ${{ vars.AUTOTRIAGE_ENABLED }}
-        AUTOTRIAGE_VERBOSE: ${{ github.event.inputs.verbose }}
+        AUTOTRIAGE_ENABLED: ${{ github.event.inputs.enabled != '' && github.event.inputs.enabled || vars.AUTOTRIAGE_ENABLED }}
         AUTOTRIAGE_PROMPT: ${{ vars.AUTOTRIAGE_PROMPT }}
-        AUTOTRIAGE_MODEL: ${{ vars.AUTOTRIAGE_MODEL }}
-        AUTOTRIAGE_LABELS: ${{ vars.AUTOTRIAGE_LABELS }}
-        BACKLOG_SIZE: ${{ github.event.inputs.backlog-size || '3' }} # Avoid overwhelming the API (https://ai.google.dev/gemini-api/docs/rate-limits).
-      run: node ./.github/scripts/AutoTriageBacklog.js
+        AUTOTRIAGE_MODEL: ${{ github.event.inputs.model != '' && github.event.inputs.model || vars.AUTOTRIAGE_MODEL }}
+        AUTOTRIAGE_VERBOSE: ${{ github.event.inputs.verbose }}
+      run: |
+        # Process each issue number from the JSON array
+        cat issues.json | jq -r '.[]' | while read -r issue_number; do
+          if [ -n "$issue_number" ]; then
+            echo "Starting triage process for #$issue_number"
+            export GITHUB_ISSUE_NUMBER="$issue_number"
+            node .github/scripts/AutoTriage.js
+            # Add a small delay between processing to avoid rate limits
+            sleep 15
+          fi
+        done
