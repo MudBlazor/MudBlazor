@@ -29,7 +29,6 @@ namespace MudBlazor
                 .WithChangeHandler(RecalculateValidDays);
 
             DisplayMonths = 2;
-            AdornmentAriaLabel = "Open Date Range Picker";
         }
 
         /// <summary>
@@ -212,6 +211,8 @@ namespace MudBlazor
         /// </summary>
         public ValueTask SelectEndAsync() => _rangeInput.SelectEndAsync();
 
+        public override ValueTask BlurAsync() => _rangeInput.BlurAsync();
+
         /// <summary>
         /// Selects a portion of the end input text.
         /// </summary>
@@ -259,14 +260,14 @@ namespace MudBlazor
         {
             var start = MinDays switch
             {
-                null => selectedDate,
+                null => MinDate ?? DateTime.MinValue,
                 _ when _allowDisabledDatesInCountState.Value => selectedDate.Date.AddDays(MinDays.Value - 1),
                 _ => _minValidDate
             };
 
             var end = MaxDays switch
             {
-                null => DateTime.MaxValue,
+                null => MaxDate ?? DateTime.MaxValue,
                 _ when _allowDisabledDatesInCountState.Value => selectedDate.Date.AddDays(MaxDays.Value - 1),
                 _ => _maxValidDate
             };

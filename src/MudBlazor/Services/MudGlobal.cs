@@ -5,10 +5,21 @@
 namespace MudBlazor;
 
 /// <summary>
-/// A collection of settings that let you control the default behavior or appearance of MudBlazor components.
+/// <para>
+/// Static properties that let you control the default behavior of some parts of MudBlazor.
+/// </para>
+/// <para>
+/// <b>Warning:</b> This feature is under development and breaking changes to the API <b>will occur</b> between releases.
+/// See <see href="https://mudblazor.com/customization/globals#usage">our website</see> for more info including our support policy.
+/// </para>
 /// </summary>
 public static class MudGlobal
 {
+    /// <summary>
+    /// Default settings for <see cref="MudButton"/>.
+    /// <br/>
+    /// <b>Warning:</b> This feature is under development and breaking changes to the API <b>will occur</b> between releases.
+    /// </summary>
     public static class ButtonDefaults
     {
         /// <summary>
@@ -22,6 +33,11 @@ public static class MudGlobal
         public static Variant Variant { get; set; } = Variant.Text;
     }
 
+    /// <summary>
+    /// Default settings for <see cref="MudDialog"/>.
+    /// <br/>
+    /// <b>Warning:</b> This feature is under development and breaking changes to the API <b>will occur</b> between releases.
+    /// </summary>
     public static class DialogDefaults
     {
         /// <summary>
@@ -30,6 +46,11 @@ public static class MudGlobal
         public static DefaultFocus DefaultFocus { get; set; } = DefaultFocus.Element;
     }
 
+    /// <summary>
+    /// Default settings for <see cref="MudGrid"/>.
+    /// <br/>
+    /// <b>Warning:</b> This feature is under development and breaking changes to the API <b>will occur</b> between releases.
+    /// </summary>
     public static class GridDefaults
     {
         /// <summary>
@@ -38,6 +59,11 @@ public static class MudGlobal
         public static int Spacing { set; get; } = 6;
     }
 
+    /// <summary>
+    /// Default settings for MudBlazor input components.
+    /// <br/>
+    /// <b>Warning:</b> This feature is under development and breaking changes to the API <b>will occur</b> between releases.
+    /// </summary>
     public static class InputDefaults
     {
         /// <summary>
@@ -56,6 +82,11 @@ public static class MudGlobal
         public static Margin Margin { get; set; } = Margin.None;
     }
 
+    /// <summary>
+    /// Default settings for <see cref="MudLink"/>.
+    /// <br/>
+    /// <b>Warning:</b> This feature is under development and breaking changes to the API <b>will occur</b> between releases.
+    /// </summary>
     public static class LinkDefaults
     {
         /// <summary>
@@ -74,23 +105,46 @@ public static class MudGlobal
         public static Underline Underline { get; set; } = Underline.Hover;
     }
 
+    /// <summary>
+    /// Default settings for <see cref="MudMenu"/>.
+    /// <br/>
+    /// <b>Warning:</b> This feature is under development and breaking changes to the API <b>will occur</b> between releases.
+    /// </summary>
     public static class MenuDefaults
     {
         /// <summary>
-        /// The time in milliseconds before a <see cref="MudMenu"/> is activated by the cursor hovering over it
-        /// or before it is hidden after the cursor leaves the menu.
+        /// The delay in milliseconds before a <see cref="MudMenu"/> is shown when hovered, or hidden after the cursor moves away.
         /// </summary>
         public static int HoverDelay { get; set; } = 300;
     }
 
+    /// <summary>
+    /// Default settings for <see cref="MudPopover"/>.
+    /// <br/>
+    /// <b>Warning:</b> This feature is under development and breaking changes to the API <b>will occur</b> between releases.
+    /// </summary>
     public static class PopoverDefaults
     {
         /// <summary>
         /// The amount of drop shadow to apply to <see cref="MudPopover"/>.
         /// </summary>
         public static int Elevation { get; set; } = 8;
+
+        /// <summary>
+        /// Prevents interaction with background elements.
+        /// </summary>
+        /// <remarks>
+        /// Only applies to components that use a <see cref="MudPopover"/> in conjunction with a <see cref="MudOverlay"/>
+        /// to close the popover when a user clicks outside, such as <see cref="MudSelect{T}"/>.
+        /// </remarks>
+        public static bool ModalOverlay { get; set; } = true;
     }
 
+    /// <summary>
+    /// Default settings for <see cref="MudStack"/>.
+    /// <br/>
+    /// <b>Warning:</b> This feature is under development and breaking changes to the API <b>will occur</b> between releases.
+    /// </summary>
     public static class StackDefaults
     {
         /// <summary>
@@ -99,10 +153,15 @@ public static class MudGlobal
         public static int Spacing { get; set; } = 3;
     }
 
+    /// <summary>
+    /// Default settings for <see cref="MudTooltip"/>.
+    /// <br/>
+    /// <b>Warning:</b> This feature is under development and breaking changes to the API <b>will occur</b> between releases.
+    /// </summary>
     public static class TooltipDefaults
     {
         /// <summary>
-        /// The amount of time in milliseconds to wait from opening the <see cref="MudTooltip"/> before beginning to perform the transition. 
+        /// The amount of time in milliseconds to wait from opening the <see cref="MudTooltip"/> before beginning to perform the transition.
         /// </summary>
         public static TimeSpan Delay { get; set; } = TransitionDefaults.Delay;
 
@@ -112,6 +171,11 @@ public static class MudGlobal
         public static TimeSpan Duration { get; set; } = TransitionDefaults.Duration;
     }
 
+    /// <summary>
+    /// Default settings for transitions in MudBlazor components.
+    /// <br/>
+    /// <b>Warning:</b> This feature is under development and breaking changes to the API <b>will occur</b> between releases.
+    /// </summary>
     public static class TransitionDefaults
     {
         /// <summary>
@@ -120,13 +184,13 @@ public static class MudGlobal
         public static TimeSpan Delay { get; set; } = TimeSpan.Zero;
 
         /// <summary>
-        /// The amount of time in milliseconds to wait from opening the popover before beginning to perform the transition. 
+        /// The amount of time in milliseconds to wait from opening the popover before beginning to perform the transition.
         /// </summary>
         public static TimeSpan Duration { get; set; } = TimeSpan.FromMilliseconds(251);
     }
 
     /// <summary>
-    /// Applies regular rounding by default; additional rounding if set to true; or squares them if set to false for MudBlazor components.
+    /// Applies regular rounding to components by default; additional rounding if set to true; or squares them if set to false for MudBlazor components.
     /// </summary>
     public static bool? Rounded { get; set; }
 

@@ -19,7 +19,7 @@
     }
   }
 
-  &:focus-visible, &:active {
+  &:has(:focus-visible), &:active {
     background-color: var(--mud-palette-action-default-hover);
   }
 

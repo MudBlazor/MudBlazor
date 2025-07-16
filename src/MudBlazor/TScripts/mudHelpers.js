@@ -88,6 +88,8 @@ window.serializeParameter = (data, spec) => {
 
 // mudGetSvgBBox is a helper function to get the size of an svgElement
 window.mudGetSvgBBox = (svgElement) => {
+    if (svgElement == null) return null;
+
     const bbox = svgElement.getBBox();
     return {
         x: bbox.x,
@@ -108,13 +110,13 @@ window.mudObserveElementSize = (dotNetReference, element, functionName = 'OnElem
 
     // Throttled notification function.
     const throttledNotify = (width, height) => {
-        const now = Date.now();
-        const timeSinceLast = now - lastNotifiedTime;
+        const timestamp = Date.now();
+        const timeSinceLast = timestamp - lastNotifiedTime;
         if (timeSinceLast >= debounceMillis) {
             // Enough time has passed, notify immediately.
-            lastNotifiedTime = now;
+            lastNotifiedTime = timestamp;
             try {
-                dotNetReference.invokeMethodAsync(functionName, { width, height });
+                dotNetReference.invokeMethodAsync(functionName, { width, height, timestamp });
             }
             catch (error) {
                 this.logger("[MudBlazor] Error in mudObserveElementSize:", { error });
@@ -128,7 +130,7 @@ window.mudObserveElementSize = (dotNetReference, element, functionName = 'OnElem
                 lastNotifiedTime = Date.now();
                 scheduledCall = null;
                 try {
-                    dotNetReference.invokeMethodAsync(functionName, { width, height });
+                    dotNetReference.invokeMethodAsync(functionName, { width, height, timestamp });
                 }
                 catch (error) {
                     this.logger("[MudBlazor] Error in mudObserveElementSize:", { error });
@@ -139,6 +141,8 @@ window.mudObserveElementSize = (dotNetReference, element, functionName = 'OnElem
 
     // Create the ResizeObserver to notify on size changes.
     const resizeObserver = new ResizeObserver(entries => {
+        if (element.isConnected === false) { return; } // Element is no longer in the DOM.
+
         // Use the last entry's contentRect (or element's client dimensions).
         let width = element.clientWidth;
         let height = element.clientHeight;

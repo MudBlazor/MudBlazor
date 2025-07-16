@@ -103,7 +103,7 @@ namespace MudBlazor
 
         /// <summary>
         /// Enables smooth color transitions for heatmap cells and removes all padding between cells in a <see cref="ChartType.HeatMap"/>
-        /// Defaults to false
+        /// Defaults to <c>false</c>
         /// </summary>
         public bool EnableSmoothGradient { get; set; } = false;
 
@@ -120,27 +120,26 @@ namespace MudBlazor
         public YAxisLabelPosition YAxisLabelPosition { get; set; } = YAxisLabelPosition.Left;
 
         /// <summary>
-        /// Enables tooltips for values in a <see cref="ChartType.HeatMap"/>
-        /// Defaults to true
+        /// Enables tooltips for values
+        /// Defaults to <c>true</c>
         /// </summary>
         public bool ShowToolTips { get; set; } = true;
 
         /// <summary>
         /// Enables labels for every box in a <see cref="ChartType.HeatMap"/>
-        /// Defaults to true
+        /// Defaults to <c>true</c>
         /// </summary>
         public bool ShowLabels { get; set; } = true;
 
         /// <summary>
         /// Enables label values for the legend boxes in a <see cref="ChartType.HeatMap"/>
-        /// Defaults to false
+        /// Defaults to <c>false</c>
         /// </summary>
-        /// 
         public bool ShowLegendLabels { get; set; } = false;
 
         /// <summary>
         /// The format applied to labels for every box in a <see cref="ChartType.HeatMap"/>
-        /// Defaults to "F2"
+        /// Defaults to <c>"F2"</c>
         /// </summary>
         public string ValueFormatString { get; set; } = "F2";
 

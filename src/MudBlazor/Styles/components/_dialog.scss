@@ -74,6 +74,7 @@
   max-height: calc(100vh - var(--mud-appbar-height)); // keep as fallback
   max-height: calc(100dvh - var(--mud-appbar-height));
   overflow-y: auto;
+  outline-style: none;
 
   &.mud-dialog-rtl .mud-dialog-title .mud-button-close {
     right: unset;
@@ -118,17 +119,12 @@
   & .mud-dialog-actions {
     flex: 0 0 auto;
     display: flex;
+    gap: 8px;
     padding: 8px;
     align-items: center;
     justify-content: flex-end;
     border-bottom-left-radius: var(--mud-default-borderradius);
     border-bottom-right-radius: var(--mud-default-borderradius);
-
-    & > :not(:first-child) {
-      margin-left: 8px;
-      margin-inline-start: 8px;
-      margin-inline-end: unset;
-    }
   }
 }
 

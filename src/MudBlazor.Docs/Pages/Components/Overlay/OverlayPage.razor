@@ -6,7 +6,9 @@
 
         <DocsPageSection>
             <SectionHeader Title="AutoClose">
-                <Description>The <CodeInline>AutoClose</CodeInline> property is used to let users close the overlay by clicking it.</Description>
+                <Description>
+                    Use the <CodeInline>AutoClose</CodeInline> property to allow users to close the overlay by clicking anywhere on it.
+                </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(OverlayUsageExample)">
                 <OverlayUsageExample />
@@ -15,7 +17,9 @@
 
         <DocsPageSection>
             <SectionHeader Title="Absolute">
-                <Description>The overlay can be contained inside its parent using the <CodeInline>Absolute</CodeInline> property and CSS <CodeInline>Style="position: relative;"</CodeInline>.</Description>
+                <Description>
+                    The overlay can be contained inside its parent by setting the <CodeInline>Absolute</CodeInline> property along with the <CodeInline>relative</CodeInline> class (or CSS <CodeInline>position: relative</CodeInline> style).
+                </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(OverlayAbsoluteExample)" ShowCode="false">
                 <OverlayAbsoluteExample />
@@ -24,7 +28,9 @@
 
         <DocsPageSection>
             <SectionHeader Title="Color">
-                <Description>The overlay is <CodeInline>transparent</CodeInline> by default but can be changed with <CodeInline>DarkBackground</CodeInline> or <CodeInline>LightBackground</CodeInline>.</Description>
+                <Description>
+                    The overlay's default color is transparent, but you can adjust its appearance using either the <CodeInline>DarkBackground</CodeInline> or <CodeInline>LightBackground</CodeInline> properties.
+                </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(OverlayColorsExample)" ShowCode="false">
                 <OverlayColorsExample />
@@ -32,8 +38,10 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Z-index">
-                <Description>With the <CodeInline>ZIndex</CodeInline> property you can control the stack order of the component.</Description>
+            <SectionHeader Title="Z-Index">
+                <Description>
+                    Control the stacking order of the overlay relative to other elements by adjusting the <CodeInline>ZIndex</CodeInline> property.
+                </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(OverlayZIndexExample)" ShowCode="false">
                 <OverlayZIndexExample />
@@ -42,7 +50,9 @@
 
         <DocsPageSection>
             <SectionHeader Title="Loader">
-                <Description>The Overlay component can take any child content but here we are using it to display loading progress.</Description>
+                <Description>
+                    The overlay can contain any child content but here it's used to display loading progress.
+                </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(OverlayLoaderExample)" ShowCode="false" Block="true">
                 <OverlayLoaderExample />

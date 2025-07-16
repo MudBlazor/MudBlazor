@@ -15,7 +15,7 @@ namespace MudBlazor;
 /// </summary>
 public partial class MudTabPanel
 {
-    private Boolean _disposed;
+    private bool _disposed;
 
     protected string Stylename =>
         new StyleBuilder()
@@ -189,6 +189,16 @@ public partial class MudTabPanel
     [Parameter]
     [Category(CategoryTypes.Tabs.Behavior)]
     public string? ToolTip { get; set; }
+
+    /// <summary>
+    /// Value to use when ordering tabs lexicographically, in place of <see cref="MudTabPanel.Text" />.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Tabs.Appearance)]
+    public string? SortKey { get; set; }
 
     /// <inheritdoc/>
     protected override async Task OnAfterRenderAsync(bool firstRender)

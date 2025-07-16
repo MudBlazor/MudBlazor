@@ -84,7 +84,7 @@
 
 .mud-button-outlined {
   color: var(--mud-palette-text-primary);
-  border: 1px solid var(--mud-palette-text-primary);
+  border: 1px solid rgb(from var(--mud-palette-text-primary) r g b / var(--mud-palette-border-opacity));
   padding: 5px 15px;
 
   &.mud-button-outlined-inherit {
@@ -110,17 +110,17 @@
     &.mud-button-outlined-#{$color} {
       color: var(--mud-palette-#{$color});
       --mud-ripple-color: var(--mud-palette-#{$color});
-      border: 1px solid var(--mud-palette-#{$color});
+      border: 1px solid rgb(from var(--mud-palette-#{$color}) r g b / var(--mud-palette-border-opacity));
 
       @media(hover: hover) and (pointer: fine) {
         &:hover {
-          border: 1px solid var(--mud-palette-#{$color});
+          border: 1px solid rgb(from var(--mud-palette-#{$color}) r g b / var(--mud-palette-border-opacity));
           background-color: var(--mud-palette-#{$color}-hover);
         }
       }
 
       &:focus-visible, &:active {
-        border: 1px solid var(--mud-palette-#{$color});
+        border: 1px solid rgb(from var(--mud-palette-#{$color}) r g b / var(--mud-palette-border-opacity));
         background-color: var(--mud-palette-#{$color}-hover);
       }
     }

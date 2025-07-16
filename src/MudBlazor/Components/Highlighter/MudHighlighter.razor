@@ -1,20 +1,78 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 @using System.Text.RegularExpressions
-@using static MudBlazor.Components.Highlighter.Splitter
+@using MudBlazor.Components.Highlighter
+@using System.Text
 
-@foreach (var fragment in _fragments.Span)
+@if (Markup)
 {
-    if (IsMatch(fragment))
-   {
-      <mark class="@Class" style="@Style" @attributes="@UserAttributes"> @fragment </mark>
-   }
-   else if (Markup)
-   {
-      @ToRenderFragment(fragment)
-   }
-   else
-   {
-      @fragment
-   }
+    if (_htmlAwareFragments != null)
+    {
+        @CreateFragmentContent();
+    }
+    else if (!string.IsNullOrEmpty(Text))
+    {
+        @((MarkupString)Text)
+    }
+}
+else if (_fragments.Length > 0)
+{
+    foreach (var fragment in _fragments.Span)
+    {
+        if (IsMatch(fragment))
+        {
+            <mark class="@Class" style="@Style" @attributes="@UserAttributes">@fragment</mark>
+        }
+        else
+        {
+            @fragment
+        }
+    }
+}
+else if (!string.IsNullOrEmpty(Text))
+{
+    @Text
+}
+
+@code {
+    private RenderFragment CreateFragmentContent() => builder =>
+    {
+        int sequence = 0;
+    
+        foreach (var fragmentInfo in _htmlAwareFragments)
+        {
+            switch (fragmentInfo.Type)
+            {
+                case FragmentType.HighlightedText:
+                    if (IsMatch(fragmentInfo.Content))
+                    {
+                        builder.OpenElement(sequence++, "mark");
+
+                        if (!string.IsNullOrWhiteSpace(Class))
+                            builder.AddAttribute(sequence++, "class", Class);
+
+                        if (!string.IsNullOrWhiteSpace(Style))
+                            builder.AddAttribute(sequence++, "style", Style);
+        
+                        if (UserAttributes != null || UserAttributes.Count != 0)
+                            builder.AddMultipleAttributes(sequence++, UserAttributes);
+
+                        builder.AddContent(sequence++, fragmentInfo.Content);
+                        builder.CloseElement();
+                    }
+                    else
+                    {
+                        builder.AddContent(sequence++, fragmentInfo.Content);
+                    }
+                    break;
+                case FragmentType.Markup:
+                    builder.AddMarkupContent(sequence++, fragmentInfo.Content);
+                    break;
+                case FragmentType.Text:
+                default:
+                    builder.AddContent(sequence++, fragmentInfo.Content);
+                    break;
+            }
+        }
+    };
 }
