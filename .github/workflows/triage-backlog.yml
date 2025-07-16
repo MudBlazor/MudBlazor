@@ -60,7 +60,7 @@ jobs:
         echo "$issues" | tr ', ' '\n' | grep -v '^$' | jq -R . | jq -s . > issues.json
         echo "Found $(cat issues.json | jq length) issues"
         echo "issues_found=true" >> $GITHUB_OUTPUT
-    
+
     - name: Find issues for automated mode
       if: ${{ github.event.inputs.issue-numbers == '' }}
       id: find_issues
@@ -73,7 +73,7 @@ jobs:
           backlog_size="1"
         fi
         # Find issues with no labels (GitHub CLI returns newest first by default)
-        issue_numbers=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --json number,labels --jq '.[] | select((.labels // [] | length == 0)) | .number' | head -n "$backlog_size")
+        issue_numbers=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --limit 9999 --json number,labels --jq '.[] | select((.labels // [] | length == 0)) | .number' | head -n "$backlog_size")
         if [ -z "$issue_numbers" ]; then
           echo "No suitable issues found."
           echo "issues_found=false" >> $GITHUB_OUTPUT
