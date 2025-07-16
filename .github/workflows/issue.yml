@@ -20,7 +20,7 @@ jobs:
 
       - name: Run AI triage script
         env:
-          GITHUB_ISSUE_URL: ${{ github.event.issue.html_url }}
+          GITHUB_ISSUE_NUMBER: ${{ github.event.issue.number }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           AUTOTRIAGE_ENABLED: ${{ vars.AUTOTRIAGE_ENABLED }}

@@ -16,7 +16,6 @@
  * - If any issue/PR fails to process, the script marks the run as failed and exits immediately.
  *
  * Environment variables:
- * - GITHUB_ISSUE_URL: GitHub issue or PR URL (required) - e.g., https://github.com/owner/repo/issues/123
  * - GEMINI_API_KEY: Google Gemini API key (required)
  * - GITHUB_TOKEN: GitHub token with repo permissions (required for real actions)
  * - AUTOTRIAGE_ENABLED: Set to 'true' to enable real actions (default: dry-run)
