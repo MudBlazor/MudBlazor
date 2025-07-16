@@ -19,7 +19,7 @@ namespace MudBlazor
                 .AddClass($"mud-input-adorned-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
                 .AddClass($"mud-input-margin-{Margin.ToDescriptionString()}", () => Margin != Margin.None)
                 .AddClass("mud-input-underline", () => Underline && Variant != Variant.Outlined)
-                .AddClass("mud-shrink", () => !string.IsNullOrWhiteSpace(ChildContent?.ToString()) || Adornment == Adornment.Start)
+                .AddClass("mud-shrink", () => (!ShrinkLabel))
                 .AddClass("mud-disabled", Disabled)
                 .AddClass("mud-input-error", Error && !string.IsNullOrEmpty(ErrorText))
                 .AddClass($"mud-typography-{Typo.ToDescriptionString()}")
@@ -178,6 +178,16 @@ namespace MudBlazor
         public Color AdornmentColor { get; set; } = Color.Default;
 
         /// <summary>
+        /// The <c>aria-label</c> for the adornment.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public string? AdornmentAriaLabel { get; set; }
+
+        /// <summary>
         /// The size of the icon.
         /// </summary>
         /// <remarks>
@@ -212,5 +222,17 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Field.Appearance)]
         public bool Underline { get; set; } = true;
+
+        /// <summary>
+        /// Controls whether the label is displayed inside or above the field when an inside element does not have focus.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>. 
+        /// <para>When <c>false</c>, the label remains above the field regardless of content.</para>
+        /// <para>When <c>true</c>, the label always shrinks into the field (could collide with content) unless it has focus.</para>   
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public bool ShrinkLabel { get; set; } = false;
     }
 }
