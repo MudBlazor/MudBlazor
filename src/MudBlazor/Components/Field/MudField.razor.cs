@@ -12,7 +12,6 @@ namespace MudBlazor
     /// <seealso cref="MudTextField{T}"/>
     public partial class MudField : MudComponentBase
     {
-        private bool _shrinkLabel = false;
         protected string Classname =>
             new CssBuilder("mud-input")
                 .AddClass($"mud-input-{Variant.ToDescriptionString()}")
@@ -24,7 +23,7 @@ namespace MudBlazor
                 // Apply "mud-shrink" only if ShrinkLabel is false AND
                 // (there is content OR the adornment is at the start)
                 .AddClass("mud-shrink",
-                    !_shrinkLabel &&
+                    !ShrinkLabel &&
                          (ChildContent != null || Adornment == Adornment.Start))
                 .AddClass("mud-disabled", Disabled)
                 .AddClass("mud-input-error", Error && !string.IsNullOrEmpty(ErrorText))
@@ -240,14 +239,5 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
         public bool ShrinkLabel { get; set; } = false;
-
-        protected override void OnParametersSet()
-        {
-            base.OnParametersSet();
-            if (_shrinkLabel != ShrinkLabel)
-            {
-                _shrinkLabel = ShrinkLabel;
-            }
-        }
     }
 }
