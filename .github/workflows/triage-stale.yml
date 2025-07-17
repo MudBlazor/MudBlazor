@@ -2,7 +2,7 @@ name: Triage Stale
 on:
   schedule:
     - cron: '0 5 * * *'
-  workflow_dispatch: # Allow manual trigger
+  workflow_dispatch:
 
 env:
   DEBUG_MODE: ${{ vars.ENABLE_STALE_ACTIONS != 'true' }} # Debug mode is on unless the workflow is explicitly enabled.
@@ -10,6 +10,10 @@ env:
 jobs:
   stale:
     runs-on: ubuntu-latest
+    
+    # Only run scheduled jobs on the main repository, but allow manual triggers on forks
+    if: github.event_name == 'workflow_dispatch' || github.repository == 'MudBlazor/MudBlazor'
+
     steps:
       - uses: actions/stale@v9
         with:

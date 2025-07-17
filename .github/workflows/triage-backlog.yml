@@ -34,6 +34,9 @@ jobs:
   backlog-triage:
     runs-on: ubuntu-latest
     
+    # Only run scheduled jobs on the main repository, but allow manual triggers on forks
+    if: github.event_name == 'workflow_dispatch' || github.repository == 'MudBlazor/MudBlazor'
+    
     steps:
     - name: Check out repository
       uses: actions/checkout@v4
