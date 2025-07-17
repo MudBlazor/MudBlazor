@@ -12,6 +12,7 @@ namespace MudBlazor
     /// <seealso cref="MudTextField{T}"/>
     public partial class MudField : MudComponentBase
     {
+        private bool _shrinkLabel = false;
         protected string Classname =>
             new CssBuilder("mud-input")
                 .AddClass($"mud-input-{Variant.ToDescriptionString()}")
@@ -19,7 +20,12 @@ namespace MudBlazor
                 .AddClass($"mud-input-adorned-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
                 .AddClass($"mud-input-margin-{Margin.ToDescriptionString()}", () => Margin != Margin.None)
                 .AddClass("mud-input-underline", () => Underline && Variant != Variant.Outlined)
-                .AddClass("mud-shrink", () => (!ShrinkLabel))
+                // Without the mud-shrink class, the label will become a placeholder
+                // Apply "mud-shrink" only if ShrinkLabel is false AND
+                // (there is content OR the adornment is at the start)
+                .AddClass("mud-shrink",
+                    !_shrinkLabel &&
+                         (ChildContent != null || Adornment == Adornment.Start))
                 .AddClass("mud-disabled", Disabled)
                 .AddClass("mud-input-error", Error && !string.IsNullOrEmpty(ErrorText))
                 .AddClass($"mud-typography-{Typo.ToDescriptionString()}")
@@ -224,15 +230,24 @@ namespace MudBlazor
         public bool Underline { get; set; } = true;
 
         /// <summary>
-        /// Controls whether the label is displayed inside or above the field when an inside element does not have focus.
+        /// Controls whether the label is displayed inside the field or shrinks above it when the field does not have focus.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>. 
-        /// <para>When <c>false</c>, the label remains above the field regardless of content.</para>
-        /// <para>When <c>true</c>, the label always shrinks into the field (could collide with content) unless it has focus.</para>   
+        /// Defaults to <c>false</c>.
+        /// <para>When <c>false</c>, the label behaves like a placeholder and shrinks only if there is content or an adornment at the start.</para>
+        /// <para>When <c>true</c>, the label does not shrink and remains inside the field regardless of content, which may result in overlap.</para>
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
         public bool ShrinkLabel { get; set; } = false;
+
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
+            if (_shrinkLabel != ShrinkLabel)
+            {
+                _shrinkLabel = ShrinkLabel;
+            }
+        }
     }
 }

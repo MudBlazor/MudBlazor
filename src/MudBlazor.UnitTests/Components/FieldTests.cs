@@ -29,19 +29,18 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void FieldTests_ShrinkLabel()
         {
-            // Issue 7533, when Child Content is null, the mud-shrink class is applied
-            // Bug - the mud-shrink class should always be applied unless overridden
+            // Issue 7533, when ChildContent is null, the mud-shrink class is applied
+            // Add a shrink label override to the field in addition to the ChildContent
             var comp = Context.RenderComponent<FieldStartAdornmentTest>();
             // find all the mud-fields inner area
             var fields = comp.FindAll(".mud-input-control.mud-field > .mud-input-control-input-container > .mud-input");
             var fieldLabels = comp.FindAll(".mud-input-control.mud-field > .mud-input-control-input-container label");
             fields.Should().HaveCount(5);
 
-            // mud-shrink tells it to display at top
-            // with end adornment
-            fields[0].ClassList.Should().Contain("mud-shrink");
+            // with end adornment no content
+            fields[0].ClassList.Should().NotContain("mud-shrink");
             fieldLabels[0].TextContent.Trim().Should().Contain("What am I? (0)");
-            // with start adornment            
+            // with start adornment        
             fields[1].ClassList.Should().Contain("mud-shrink");
             fieldLabels[1].TextContent.Trim().Should().Be("What am I? (1)");
             // content
