@@ -28,7 +28,7 @@
     <g @ref="_yAxisGroupElementReference" class="mud-charts-yaxis">
         @foreach (var horizontalLineValue in _horizontalValues)
         {
-            @((MarkupString)$"<text x='{horizontalLineValue.X.ToString(CultureInfo.InvariantCulture)}' y='{horizontalLineValue.Y.ToString(CultureInfo.InvariantCulture)}' font-size='12px' text-anchor='end' dominant-baseline='auto'>{horizontalLineValue.Value}</text>")
+            @((MarkupString)$"<text x='{horizontalLineValue.X.ToString(CultureInfo.InvariantCulture)}' y='{horizontalLineValue.Y.ToString(CultureInfo.InvariantCulture)}' font-size='12px' text-anchor='end' dominant-baseline='auto'>{horizontalLineValue.Value?.ToString(CultureInfo.InvariantCulture)}</text>")
         }
     </g>
     <g @ref="_xAxisGroupElementReference" class="mud-charts-xaxis">
@@ -47,10 +47,10 @@
             var color = MudChartParent?.ChartOptions.ChartPalette.GetValue(bar.Index % MudChartParent.ChartOptions.ChartPalette.Length);
 
             <path class="mud-chart-bar"
-                  @onclick="() => SelectedIndex = bar.Index" 
+                  @onclick="() => SelectedIndex = bar.Index"
                   fill="@color"
                   stroke="@color"
-                  stroke-width="@BarStroke" 
+                  stroke-width="@BarStroke"
                   d="@bar.Data"
                   @onmouseover="(e) => OnBarMouseOver(e, bar)"
                   @onmouseout="OnBarMouseOut">
@@ -69,14 +69,14 @@
         if (!string.IsNullOrWhiteSpace(series.DataMarkerTooltipTitleFormat))
         {
             var tooltipTitle = series.DataMarkerTooltipTitleFormat
-                .Replace("{{SERIES_NAME}}", series.Name)
-                .Replace("{{X_VALUE}}", _hoveredBar.LabelXValue)
-                .Replace("{{Y_VALUE}}", _hoveredBar.LabelYValue);
+            .Replace("{{SERIES_NAME}}", series.Name)
+            .Replace("{{X_VALUE}}", _hoveredBar.LabelXValue)
+            .Replace("{{Y_VALUE}}", _hoveredBar.LabelYValue);
 
             var tooltipSubtitle = series.DataMarkerTooltipSubtitleFormat?
-                .Replace("{{SERIES_NAME}}", series.Name)
-                .Replace("{{X_VALUE}}", _hoveredBar.LabelXValue)
-                .Replace("{{Y_VALUE}}", _hoveredBar.LabelYValue) ?? string.Empty;
+            .Replace("{{SERIES_NAME}}", series.Name)
+            .Replace("{{X_VALUE}}", _hoveredBar.LabelXValue)
+            .Replace("{{Y_VALUE}}", _hoveredBar.LabelYValue) ?? string.Empty;
 
             <ChartTooltip Title="@tooltipTitle" Subtitle="@tooltipSubtitle" Color="@color" X="_hoveredBar.LabelX" Y="_hoveredBar.LabelY" />
         }

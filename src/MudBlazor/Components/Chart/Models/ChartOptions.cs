@@ -41,15 +41,11 @@ namespace MudBlazor
         public string? YAxisFormat { get; set; }
 
         /// <summary>
-        /// The culture used to format the numbers on the vertical axis.
+        /// Custom formatting function for vertical axis values.
+        /// If set, this function will be used to convert Y-axis values to strings for display purposes.
+        /// If not provided, <see cref="YAxisFormat"/> will be used instead.
         /// </summary>
-        /// <remarks>
-        /// If not specified, the <see cref="CultureInfo.InvariantCulture" /> is used by default.  
-        /// This affects things like thousands separators and decimal symbols depending on the locale.
-        /// For more information about available cultures, see: 
-        /// <see href="https://learn.microsoft.com/dotnet/api/system.globalization.cultureinfo" />
-        /// </remarks>
-        public CultureInfo? YAxisCulture { get; set; }
+        public Func<double, string>? YAxisToStringFunc { get; set; }
 
         /// <summary>
         /// Shows vertical axis lines.
