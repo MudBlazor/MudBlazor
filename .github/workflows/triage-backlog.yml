@@ -2,7 +2,7 @@ name: Triage Backlog
 
 on:
   schedule:
-    - cron: '0 6 * * *'
+    - cron: '0 5 * * *'
   workflow_dispatch:
     inputs:
       backlog-size:
@@ -30,12 +30,52 @@ on:
         default: false
         type: boolean
 
+env:
+  DEBUG_MODE: ${{ vars.AUTOTRIAGE_ENABLED != 'true' }} # Debug mode is on unless the workflow is explicitly enabled.
+
 jobs:
-  backlog-triage:
+  stale-issues:
     runs-on: ubuntu-latest
-    
     # Only run scheduled jobs on the main repository, but allow manual triggers on forks
-    if: github.event_name == 'workflow_dispatch' || github.repository == 'MudBlazor/MudBlazor'
+    if: (github.event_name == 'workflow_dispatch' || github.repository == 'MudBlazor/MudBlazor')
+    
+    steps:
+      - uses: actions/stale@v9
+        with:
+          # Only target issues with certain labels
+          #any-of-labels: 'info required,needs example,needs screenshot,answered'
+          any-of-labels: 'info required'
+          
+          # Days before an issue is marked stale
+          days-before-stale: 14
+          
+          # Days before a stale issue is closed
+          days-before-close: 14
+          
+          # Message to post when marking an issue as stale
+          stale-issue-message: |
+            This issue has been marked as stale.  
+            If you have any updates or additional information, please comment below.
+
+            If no response is received, it will be automatically closed.
+
+          # Don't process pull requests, only issues
+          days-before-pr-stale: -1
+          days-before-pr-close: -1
+          
+          # Apply a label when marking as stale
+          stale-issue-label: 'stale'
+          
+          # Enable debug mode (no actual changes when true)
+          debug-only: ${{ env.DEBUG_MODE }}
+          
+          # Limit the number of operations per run (when not debugging) to avoid hitting API limits and minimize risk from bad configuration
+          operations-per-run: ${{ env.DEBUG_MODE == 'true' && 100 || 15 }}
+
+  auto-triage:
+    runs-on: ubuntu-latest
+    needs: stale-issues
+    if: (github.event_name == 'workflow_dispatch' || github.repository == 'MudBlazor/MudBlazor')
     
     steps:
     - name: Check out repository
@@ -79,7 +119,7 @@ jobs:
         if [ -z "$issue_numbers" ]; then
           echo "No suitable issues found."
           echo "issues_found=false" >> $GITHUB_OUTPUT
-          exit 1
+          exit 0
         fi
         # Save issue numbers as JSON array
         echo "$issue_numbers" | grep -v '^$' | jq -R . | jq -s . > issues.json
