@@ -213,9 +213,6 @@ namespace MudBlazor
         private MudTimePicker _timePickerRef { get; set; }
 
         public MudDateTimePicker() : base(new DefaultConverter<DateTime?>())
-        { }
-
-        protected override void OnInitialized()
         {
             Converter.GetFunc = OnGet;
             Converter.SetFunc = OnSet;
@@ -247,20 +244,17 @@ namespace MudBlazor
 
         protected DateTime? OnGet(string value)
         {
-            if (string.IsNullOrEmpty(value))
+            if (!string.IsNullOrEmpty(value))
             {
-                return null;
-            }
-
-            DateTime date;
-            bool parsed = System.DateTime.TryParseExact(value, GetDateTimeFormat(), Culture, DateTimeStyles.None, out date);
-            if (!parsed)
-            {
-                parsed = System.DateTime.TryParse(value, Culture, DateTimeStyles.None, out date);
-            }
-            if (parsed)
-            {
-                return date;
+                DateTime date;
+                if (System.DateTime.TryParseExact(value, GetDateTimeFormat(), Culture, DateTimeStyles.None, out date))
+                {
+                    return date;
+                }
+                if (System.DateTime.TryParse(value, Culture, DateTimeStyles.None, out date))
+                {
+                    return date;
+                }
             }
             HandleParsingError();
             return null;
@@ -403,7 +397,7 @@ namespace MudBlazor
             {
                 Touched = true;
 
-                if (date is not null && IsDateTimeDisabledFunc is not null && IsDateTimeDisabledFunc((DateTime) date))
+                if (date is not null && IsDateTimeDisabledFunc is not null && IsDateTimeDisabledFunc((DateTime)date))
                     return;
 
                 _value = date;
