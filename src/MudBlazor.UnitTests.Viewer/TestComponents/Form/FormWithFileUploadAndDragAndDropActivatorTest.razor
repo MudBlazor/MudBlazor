@@ -1,6 +1,17 @@
 ﻿@using System.IO
 @using System.Text
 
+<style>
+    .file-upload-input {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        z-index: 10;
+        opacity: 0;
+    }
+</style>
+
 <MudForm Model="@_model"
          @bind-IsValid="_isValid"
          @bind-IsTouched="_isTouched"
@@ -12,8 +23,6 @@
                            @bind-Files="@_model.File"
                            Accept=".png,.jpg,.jpeg"
                            Hidden="@false"
-                           InputClass="absolute mud-width-full mud-height-full overflow-hidden z-20"
-                           InputStyle="opacity:0"
                            tabindex="-1"
                            Required="@true"
                            @ondrop="@ClearDragClass"

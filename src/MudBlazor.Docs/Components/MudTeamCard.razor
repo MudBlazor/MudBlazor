@@ -1,37 +1,60 @@
-﻿<MudPaper Elevation="4" Class="pa-4">
-    <div class="d-flex flex-row">
-        <MudAvatar Size="Size.Large" Class="mud-elevation-4">
-            <MudImage Src="@Member.Avatar" />
-        </MudAvatar>
-        <div class="d-flex flex-column flex-grow-1 px-5 my-2">
-            <MudText Typo="Typo.body1" Style="font-weight:500;">@Member.Name</MudText>
-            <MudText Typo="Typo.body2">@Member.GitHub</MudText>
-        </div>
-        <div class="d-flex flex-sm-column-reverse flex-md-row align-baseline justify-end me-n2 mt-n2">
-            @if(Member.LinkedIn != null)
+﻿<MudCard Style="height: 100%">
+    <MudCardHeader>
+        <CardHeaderAvatar>
+            <MudAvatar Size="Size.Large" Class="mud-elevation-4">
+                <MudImage Src="@Member.Avatar" Alt="GitHub Avatar" />
+            </MudAvatar>
+        </CardHeaderAvatar>
+
+        <CardHeaderContent>
+            <div class="d-flex flex-row justify-space-between">
+                <div class="d-flex flex-column">
+                    <MudText Typo="Typo.h6">@Member.Name</MudText>
+
+                    <MudText Typo="Typo.body2">@Member.GitHub</MudText>
+                </div>
+
+                @if (!string.IsNullOrWhiteSpace(Member.From))
+                {
+                    <div class="d-flex flex-row align-self-start align-center justify-center">
+                        <MudIcon Icon="@Icons.Material.Filled.Place" Color="Color.Inherit" Class="me-1" />
+
+                        <MudText Typo="Typo.body2">
+                            @Member.From
+                        </MudText>
+                    </div>
+                }
+            </div>
+        </CardHeaderContent>
+    </MudCardHeader>
+
+        <MudCardContent Class="py-0">
+            @if (!string.IsNullOrWhiteSpace(Member.Bio))
             {
-                <MudTooltip Text="LinkedIn" Placement="Placement.Top" Class="d-flex">
-                    <MudIconButton Icon="@Icons.Custom.Brands.LinkedIn" Href="@Member.LinkedIn" Color="Color.Primary" Target="_blank" Edge="Edge.End" />
-                </MudTooltip>
+                <MudText Typo="Typo.body2">@Member.Bio</MudText>
             }
-            @if(Member.GitHubSponsor)
-            {
-                <MudTooltip Text="Sponsor" Placement="Placement.Top" Class="d-flex">
-                    <MudIconButton Icon="@Icons.Material.Filled.FavoriteBorder" Href="@($"https://github.com/sponsors/{Member.GitHub}")" Color="Color.Secondary" Edge="Edge.End" Target="_blank" />
-                </MudTooltip>
-            }
-            <MudTooltip Text="GitHub" Placement="Placement.Top" Class="d-flex">
-                <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Href="@($"https://github.com/{Member.GitHub}")" Color="Color.Inherit" Target="_blank" />
-            </MudTooltip>
-        </div>
-    </div>
-    <div class="d-flex flex-column mt-5">
-        <div class="d-flex flex-row align-center">
-            <MudIcon Icon="@Icons.Material.Filled.Place" Color="Color.Inherit" Class="ms-4" />
-            <MudText Typo="Typo.body2" Class="ps-9">@Member.From</MudText>
-        </div>
-    </div>
-</MudPaper>
+        </MudCardContent>
+
+    <MudCardActions>
+        <MudChip T="string" Variant="Variant.Outlined" Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Target="_blank" Href="@($"https://github.com/{Member.GitHub}")">
+            GitHub
+        </MudChip>
+
+        @if (Member.GitHubSponsor)
+        {
+            <MudChip T="string" Variant="Variant.Outlined" Icon="@Icons.Material.Filled.FavoriteBorder" Color="Color.Secondary" Target="_blank" Href="@($"https://github.com/sponsors/{Member.GitHub}")">
+                Sponsor
+            </MudChip>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(Member.LinkedIn))
+        {
+            <MudChip T="string" Variant="Variant.Outlined" Icon="@Icons.Custom.Brands.LinkedIn" Color="Color.Primary" Target="_blank" Href="@Member.LinkedIn">
+                LinkedIn
+            </MudChip>
+        }
+    </MudCardActions>
+</MudCard>
 
 @code {
     [Parameter] public TeamMember Member { get; set; }

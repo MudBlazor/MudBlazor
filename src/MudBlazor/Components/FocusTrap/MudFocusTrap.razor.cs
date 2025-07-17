@@ -18,6 +18,7 @@ namespace MudBlazor
     {
         private bool _shiftDown;
         private bool _disabled;
+        private bool _disposed;
         private bool _initialized;
         private bool _shouldRender = true;
 
@@ -76,6 +77,7 @@ namespace MudBlazor
         {
             await base.OnAfterRenderAsync(firstRender);
 
+            if (_disposed) return;
             if (firstRender)
             {
                 await SaveFocusAsync();
@@ -184,6 +186,7 @@ namespace MudBlazor
         /// </summary>
         public void Dispose()
         {
+            _disposed = true;
             if (!_disabled)
             {
                 RestoreFocusAsync().CatchAndLog(ignoreExceptions: true);

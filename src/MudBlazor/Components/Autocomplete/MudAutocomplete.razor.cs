@@ -375,7 +375,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
-        public bool Modal { get; set; } = true;
+        public bool Modal { get; set; } = MudGlobal.PopoverDefaults.ModalOverlay;
 
         /// <summary>
         /// Determines the width of this Popover dropdown in relation to the parent container.
@@ -490,6 +490,16 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         public EventCallback<int> ReturnedItemsCountChanged { get; set; }
+
+        /// <summary>
+        /// Prevents scrolling while the dropdown is open.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public bool LockScroll { get; set; }
 
         /// <summary>
         /// Displays the search result drop-down.
@@ -729,7 +739,35 @@ namespace MudBlazor
 
             if (MaxItems.HasValue)
             {
-                searchedItems = searchedItems.Take(MaxItems.Value).ToArray();
+                // Get range of items based off selected item so the selected item can be scrolled to when strict is set to false
+                if (!Strict && searchedItems.Length != 0 && !EqualityComparer<T>.Default.Equals(Value, default(T)))
+                {
+                    int maxItems = MaxItems.Value;
+                    int valueIndex = Array.IndexOf(searchedItems, Value);
+
+                    // Center the selected item in the list if possible
+                    int half = maxItems / 2;
+                    int startIndex = valueIndex - half;
+                    int endIndex = startIndex + maxItems;
+
+                    // Adjust if out of bounds
+                    if (startIndex < 0)
+                    {
+                        startIndex = 0;
+                        endIndex = Math.Min(maxItems, searchedItems.Length);
+                    }
+                    else if (endIndex > searchedItems.Length)
+                    {
+                        endIndex = searchedItems.Length;
+                        startIndex = Math.Max(0, endIndex - maxItems);
+                    }
+
+                    searchedItems = searchedItems.Take(new Range(startIndex, endIndex)).ToArray();
+                }
+                else
+                {
+                    searchedItems = searchedItems.Take(MaxItems.Value).ToArray();
+                }
             }
 
             _items = searchedItems;
@@ -753,6 +791,12 @@ namespace MudBlazor
 
             _opening = false;
             StateHasChanged();
+
+            // If not strict scroll to the selected item
+            if (!Strict && _selectedListItemIndex > 0)
+            {
+                await ScrollToListItemAsync(_selectedListItemIndex);
+            }
         }
 
         /// <summary>
@@ -1130,7 +1174,6 @@ namespace MudBlazor
         /// </summary>
         public override ValueTask FocusAsync()
         {
-            _handleNextFocus = true; // Let the event handler know it was not triggered by the user.
             return _elementReference.FocusAsync();
         }
 
@@ -1173,8 +1216,10 @@ namespace MudBlazor
 
         private async Task ListItemOnClickAsync(T item)
         {
-            await SelectOptionAsync(item);
+            _handleNextFocus = true; // Let the event handler know it doesn't need to do anything.
             await FocusAsync();
+
+            await SelectOptionAsync(item);
         }
     }
 }

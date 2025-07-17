@@ -50,7 +50,7 @@ namespace MudBlazor.UnitTests.UserAttributes
             {
                 nameof(MudPopover), nameof(MudStep), nameof(MudContextualActionBar), nameof(MudHeatMapCell),
                 "Column`1", "FooterCell`1", "HeaderCell`1", "FilterHeaderCell`1", "SelectColumn`1",
-                "HierarchyColumn`1", "PropertyColumn`2", "TemplateColumn`1",
+                "HierarchyColumn`1", "PropertyColumn`2", "TemplateColumn`1", "MudToggleItem`1",
             };
 
             foreach (var componentType in mudComponentTypes)

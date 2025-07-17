@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
@@ -40,6 +41,9 @@ namespace MudBlazor
                 .WithParameter(() => InputId)
                 .WithChangeHandler(UpdateInputIdStateAsync);
         }
+
+        [Inject]
+        private IJSRuntime JsRuntime { get; set; } = null!;
 
         /// <summary>
         /// Allows the component to receive input.
@@ -198,7 +202,7 @@ namespace MudBlazor
         public Size IconSize { get; set; } = Size.Medium;
 
         /// <summary>
-        /// Occurs when the adornment text or icon has been clicked.
+        /// Occurs when the adornment icon (but not the text) has been clicked.
         /// </summary>
         [Parameter]
         public EventCallback<MouseEventArgs> OnAdornmentClick { get; set; }
@@ -783,6 +787,14 @@ namespace MudBlazor
             }
 
             await _inputIdState.SetValueAsync(_componentId);
+        }
+
+        protected async Task HandleContainerClick()
+        {
+            if (!_isFocused && IsJSRuntimeAvailable)
+            {
+                await JsRuntime.InvokeVoidAsync("mudInput.focusInput", InputElementId);
+            }
         }
     }
 }

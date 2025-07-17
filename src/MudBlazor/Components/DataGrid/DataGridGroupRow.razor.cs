@@ -82,26 +82,8 @@ namespace MudBlazor
         internal void GroupExpandClick()
         {
             _expanded = !_expanded;
-            // update the expansion state for _groupExpansionsDict
-            // if it has a key we see if it differs from the definition Expanded State and update accordingly
-            // if it doesn't we add it if the new state doesn't match the definition
             if (Items != null)
-            {
-                var key = new { GroupDefinition.Title, Items.Key };
-                if (DataGrid._groupExpansionsDict.ContainsKey(key))
-                {
-                    if (_expanded == GroupDefinition.Expanded)
-                        DataGrid._groupExpansionsDict.Remove(key);
-                    else
-                        DataGrid._groupExpansionsDict[key] = _expanded;
-                }
-                else
-                {
-                    if (_expanded != GroupDefinition.Expanded)
-                        DataGrid._groupExpansionsDict.TryAdd(key, _expanded);
-                }
-            }
-            DataGrid._groupInitialExpanded = false;
+                DataGrid.ToggleGroupExpandAsync(GroupDefinition.Title, Items.Key, GroupDefinition, _expanded);
         }
     }
 }

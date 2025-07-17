@@ -159,7 +159,7 @@ class MudElementReference {
                 return;
             }
             e.preventDefault();
-            element.blur();
+            
             if (dotNetReference) {
                 dotNetReference.invokeMethodAsync('CallOnBlurredAsync').catch(err => {
                     console.warn("Error invoking CallOnBlurredAsync, possibly disposed:", err);

@@ -9,6 +9,14 @@ class MudInput {
             input.value = '';
         }
     }
+
+    focusInput(elementId) {
+        const input = document.getElementById(elementId);
+        if (input && document.activeElement !== input) {
+            input.focus();
+            input.click();
+        }
+    }
 }
 
 window.mudInput = new MudInput();

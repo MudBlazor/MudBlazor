@@ -19,7 +19,7 @@ public partial class HierarchyColumn<[DynamicallyAccessedMembers(DynamicallyAcce
     private readonly HashSet<CellContext<T>> _initiallyExpandedItems = [];
 
     /// <summary>
-    /// Whether the display should be right to left
+    /// Displays the content right-to-left.
     /// </summary>
     [CascadingParameter(Name = "RightToLeft")]
     public bool RightToLeft { get; set; }
