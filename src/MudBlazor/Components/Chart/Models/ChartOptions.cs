@@ -4,6 +4,8 @@
 
 #nullable enable
 
+using System.Globalization;
+
 namespace MudBlazor
 {
     /// <summary>
@@ -37,6 +39,17 @@ namespace MudBlazor
         /// Values in this property are standard .NET format strings, such as those passed into the <c>ToString()</c> method.  For a list of common formats, see: <see href="https://learn.microsoft.com/dotnet/standard/base-types/formatting-types" />
         /// </remarks>
         public string? YAxisFormat { get; set; }
+
+        /// <summary>
+        /// The culture used to format the numbers on the vertical axis.
+        /// </summary>
+        /// <remarks>
+        /// If not specified, the <see cref="CultureInfo.InvariantCulture" /> is used by default.  
+        /// This affects things like thousands separators and decimal symbols depending on the locale.
+        /// For more information about available cultures, see: 
+        /// <see href="https://learn.microsoft.com/dotnet/api/system.globalization.cultureinfo" />
+        /// </remarks>
+        public CultureInfo? YAxisCulture { get; set; }
 
         /// <summary>
         /// Shows vertical axis lines.

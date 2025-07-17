@@ -10,11 +10,16 @@ internal static partial class StringHelpers
     /// </summary>
     /// <param name="value">The double value to convert.</param>
     /// <param name="format">An optional format string.</param>
+    /// <param name="culture">An optional culture.</param>
     /// <returns>The string representation of the double value.</returns>
-    public static string ToS(double value, string? format = null)
+    public static string ToS(double value, string? format = null, CultureInfo? culture = null)
     {
-        return string.IsNullOrEmpty(format)
-            ? Math.Round(value, 4).ToString(CultureInfo.InvariantCulture)
-            : Math.Round(value, 4).ToString(format);
+        culture ??= CultureInfo.InvariantCulture;
+
+        var result = string.IsNullOrEmpty(format)
+            ? Math.Round(value, 4).ToString(culture)
+            : Math.Round(value, 4).ToString(format, culture);
+
+        return result;
     }
 }
