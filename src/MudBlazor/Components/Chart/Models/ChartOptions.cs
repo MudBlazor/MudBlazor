@@ -4,8 +4,6 @@
 
 #nullable enable
 
-using System.Globalization;
-
 namespace MudBlazor
 {
     /// <summary>
