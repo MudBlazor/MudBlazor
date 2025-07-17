@@ -27,6 +27,19 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void FieldTest_ShouldRender_AriaAdornment()
+        {
+            var comp = Context.RenderComponent<FieldTest>();
+            var fields = comp.FindAll(".mud-grid .mud-input-control.mud-field");
+            fields.Should().HaveCount(3);
+            fields[0].ClassList.Should().Contain("mud-input-text-with-label");
+            fields[0].TextContent.Trim().Should().Be("Standard");
+            var adornmentAria = comp.Find(".mud-grid .mud-input-control.mud-field svg.mud-input-adornment-icon");
+            // get what adornmentAria aria-label says
+            adornmentAria.GetAttribute("aria-label").Trim().Should().Be("test-aria");
+        }
+
+        [Test]
         public void FieldTests_ShrinkLabel()
         {
             // Issue 7533, when ChildContent is null, the mud-shrink class is applied
