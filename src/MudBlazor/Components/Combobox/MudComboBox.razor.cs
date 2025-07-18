@@ -8,16 +8,17 @@ namespace MudBlazor
 {
     // ReSharper disable MemberCanBePrivate.Global
     // TODO Remove ReSharper disable 
-    public partial class MudComboBox<T> : MudBaseInput<T>
+    public partial class MudComboBox<T> : MudFormComponent<T, string>
     {
+        private readonly object _itemsLock = new();
         private int _selectedComboBoxIndex = -1;
         private int _elementKey = 0;
         private int _filteredTake = 0;
         private bool _activatorEvents;
         private readonly string _componentId = Identifier.Create();
+        private readonly List<MudComboBoxItem<T>> _comboBoxItems = [];
 
         private ParameterState<HashSet<T>> _selectedItemsState;
-        private ParameterState<bool> _openItemListState;
         private ParameterState<bool> _isLoadingState;
 
         private CancellationTokenSource? _cancellationTokenSrc;
@@ -27,19 +28,10 @@ namespace MudBlazor
 
         public MudComboBox()
         {
-            // default values, can be overridden
-            Adornment = Adornment.End;
-            IconSize = Size.Medium;
-            base.Immediate = true;
-
             using var registerScope = CreateRegisterScope();
             _selectedItemsState = registerScope.RegisterParameter<HashSet<T>>(nameof(SelectedItems))
                 .WithParameter(() => SelectedItems)
                 .WithEventCallback(() => SelectedItemsChanged);
-            _openItemListState = registerScope.RegisterParameter<bool>(nameof(OpenItemList))
-                .WithParameter(() => OpenItemList)
-                .WithEventCallback(() => OpenItemListChanged)
-                .WithChangeHandler(OnOpenChanged);
             _isLoadingState = registerScope.RegisterParameter<bool>(nameof(IsLoading))
                 .WithParameter(() => IsLoading)
                 .WithEventCallback(() => IsLoadingChanged);
@@ -52,7 +44,6 @@ namespace MudBlazor
         private InternalMudLocalizer Localizer { get; set; } = null!;
 
         protected string Classname => new CssBuilder()
-            .AddClass($"mud-theme-{Color.ToDescriptionString()}")
             .AddClass("mud-combobox--with-progress", ShowProgressIndicator && IsLoading)
             .AddClass("mud-autocomplete--with-progress", ShowProgressIndicator && IsLoading)
             .AddClass(Class)
@@ -69,7 +60,6 @@ namespace MudBlazor
             .Build();
 
         protected string SelectedChipClassname => new CssBuilder("mud-combobox-selected-items")
-            .AddClass($"mud-theme-{Color.ToDescriptionString()}")
             .Build();
 
         protected string CircularProgressClassname =>
@@ -286,11 +276,11 @@ namespace MudBlazor
         /// The maximum number of items to display.
         /// </summary>
         /// <remarks>
-        /// <para>Defaults to <c>10</c>. A value of 0 will display all items.</para>
+        /// <para>Defaults to <c>0</c>. A value of 0 will display all items.</para>
         /// <para>Value cannot be less than 0</para>
         /// </remarks>
         [Parameter]
-        public int MaxItems { get; set; } = 10;
+        public int MaxItems { get; set; } = 0;
 
         /// <summary>
         /// The minimum number of characters typed to initiate a search. 
@@ -302,33 +292,14 @@ namespace MudBlazor
         [Parameter]
         public int MinCharacters { get; set; }
 
-        /// <summary>
-        /// Always set to the last item of type T when selecting items. Cleared if item is removed even if more items exist.
-        /// </summary>
-        public new T? Value { get; private set; }
-
         #endregion
-
-        #region Hidden members of MudBaseInput<T> or it's descendants
-
-        private new bool HelperTextOnFocus { get; set; } = false;
-        private new bool Immediate { get; set; } = true;
-        private new EventCallback<T?> ValueChanged { get; set; }
-
-        #endregion
-
-        /// <summary>
-        /// The theming of the component
-        /// </summary>
-        [Parameter]
-        public Color Color { get; set; } = Color.Primary;
 
         /// <summary>
         /// Sets the point at which the list becomes a BottomSheet encompassing the entire bottom (or top) of the presumed mobile display.
         /// <para>--TODO--</para>
         /// </summary>
         [Parameter]
-        public Breakpoint? SmallScreens { get; set; } = Breakpoint.SmAndDown;
+        public Breakpoint? BottomSheet { get; set; } = Breakpoint.SmAndDown;
 
         /// <summary>
         /// The function used to determine if an item should be disabled.
@@ -354,7 +325,7 @@ namespace MudBlazor
         /// Shows the progress indicator during searches.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  The progress indicator uses the color specified in the <see cref="ProgressIndicatorColor"/> property.
+        /// Defaults to <c>false</c>. The progress indicator uses the color specified in the <see cref="ProgressIndicatorColor"/> property.
         /// </remarks>
         [Parameter]
         public bool ShowProgressIndicator { get; set; }
@@ -375,7 +346,7 @@ namespace MudBlazor
         /// This function searches for items containing the specified <c>string</c> value, and returns items which match up to the <see cref="MaxItems"/> property.  You can use the provided <see cref="CancellationToken"/> which is marked as canceled when the user changes the search text or selects a value from the list.
         /// </remarks>
         [Parameter]
-        public Func<string?, CancellationToken, Task<IEnumerable<T>>?>? SearchFunc { get; set; }
+        public Func<string?, CancellationToken?, Task<IEnumerable<T>>?>? SearchFunc { get; set; }
 
         /// <summary>
         /// Reset the selected value if the user deletes the text.
@@ -405,17 +376,18 @@ namespace MudBlazor
         public int DebounceInterval { get; set; } = 100;
 
         /// <summary>
-        /// The template used to display all the items in the PopoverList, contains a context of <c>ComboBoxItem<typeparamref name="T"/></c>
+        /// The template used to display all the items in the PopoverList, contains a context of <see cref="MudComboBoxItem{T}"/>.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
-        public RenderFragment<ComboBoxItem<T>>? ItemTemplate { get; set; }
+        public RenderFragment<MudComboBoxItem<T>>? ItemTemplate { get; set; }
 
         /// <summary>
-        /// The template used to display selected items in the textbox area. When <c>Filterable</c> is <c>true</c> the template is shown under the input.
+        /// The template used to display selected items in the textbox area, contains a context of <see cref="MudComboBoxItem{T}"/>.
         /// </summary>
         [Parameter]
-        public RenderFragment<ComboBoxItem<T>>? SelectedItemsTemplate { get; set; }
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public RenderFragment<MudComboBoxItem<T>>? SelectedItemsTemplate { get; set; }
 
         /// <summary>
         /// Whether a user can select multiple items
@@ -426,39 +398,36 @@ namespace MudBlazor
         [Parameter]
         public bool MultiSelection { get; set; }
 
-
         /// <summary>
         /// The currently selected ComboBox items
         /// </summary>
         [Parameter]
         public HashSet<T> SelectedItems { get; set; } = [];
 
+        /// <summary>
+        /// Gets the number of items currently selected.
+        /// </summary>
         public int SelectedItemsCount { get => SelectedItems.Count; }
 
         /// <summary>
-        /// Event is fired when the selected items change
+        /// Event is fired when the selected item(s) change
         /// </summary>
         [Parameter]
         public EventCallback<HashSet<T>> SelectedItemsChanged { get; set; }
 
         /// <summary>
-        /// Sets the filter type, Client filters based on ComboBox Items, Server expects user to update ComboBoxItems via the Search function.
+        /// Sets the filter type, Client filters based on <see cref="Items"/>, Server expects user to return <see cref="SearchFunc"/> results.
         /// Default is Client
         /// </summary>
         [Parameter]
         public ComboBoxFilterType FilterType { get; set; } = ComboBoxFilterType.Client;
 
-        [Parameter]
-        public bool OpenOnEnter { get; set; }
-
-        [Parameter]
-        public bool OpenItemList { get; set; }
-
-        [Parameter]
-        public EventCallback<bool> OpenItemListChanged { get; set; }
-
+        /// <summary>
+        /// Whether or not to the built in progress indicator is being currently shown.
+        /// </summary>
         [Parameter]
         public bool IsLoading { get; set; }
+
         [Parameter]
         public EventCallback<bool> IsLoadingChanged { get; set; }
 
@@ -480,26 +449,10 @@ namespace MudBlazor
         public bool CoerceText { get; set; } = true;
 
         /// <summary>
-        /// Controls whether non-matching text input affects the bound Value property. Only applies to current/last Value when Multiselection is true.
+        /// The list of items filtered 
+        /// TODO: Add SortFunc
         /// </summary>
-        /// <remarks>
-        /// <para>
-        /// When true: Text entered by the user will update the bound Value property even if it 
-        /// doesn't match any item in the dropdown. This enables validation on user-entered text.
-        /// </para>
-        /// <para>
-        /// When false (default): Only text that matches a dropdown item will update the bound Value property.
-        /// Non-matching text remains in the input but doesn't affect the underlying Value.
-        /// </para>
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool CoerceValue { get; set; }
-
-        /// <summary>
-        /// The list of items filtered
-        /// </summary>
-        public IList<T> FilteredItems { get; private set; } = [];
+        public IReadOnlyList<T> FilteredItems { get; private set; } = [];
 
         /// <summary>
         /// The number of items currently filtered
@@ -507,10 +460,27 @@ namespace MudBlazor
         public int FilteredItemsCount { get => FilteredItems.Count; }
 
         /// <summary>
-        /// The list of items to display in the ComboBox, the ToString method is used for display
+        /// The list of items in the ComboBox when using <see cref="ComboBoxFilterType.Client"/>, the <see cref="ToStringFunc"/> is used for display with <c>ToString()</c> used as fallback.
         /// </summary>
         [Parameter]
-        public IReadOnlyCollection<T> Items { get; set; } = [];
+        public IEnumerable<T> Items
+        {
+            get { return value; }
+            set
+            {
+                foreach (var item in value)
+                {
+                    if (item is null)
+                        continue;
+                    var comboBoxItem = new MudComboBoxItem<T>()
+                    {
+                        Value = item,
+                        ComboBox = this,
+                        ItemId = GetListItemId(_comboBoxItems.Count)
+                    };
+                }
+            }
+        }
 
         /// <summary>
         /// The number of items
@@ -530,10 +500,8 @@ namespace MudBlazor
             }
             catch (NullReferenceException)
             {
-                // ignore
+                return "null";
             }
-
-            return "null";
         }
 
         private string GetListItemId(in int index)
@@ -968,24 +936,12 @@ namespace MudBlazor
 
         private bool ShowAddButton => !GetDisabledState() && !GetReadOnlyState() && Text?.Length > MinCharacters && OnAddItemClick.HasDelegate;
 
-        private bool ShouldLabelShrink =>
-            SelectedItemsCount == 0 &&              // no SelectedItems to Display
-            string.IsNullOrEmpty(Text) &&           // no text in the input
-            Adornment != Adornment.Start &&         // no adornment set to Adornment.Start
-            string.IsNullOrEmpty(Placeholder) &&    // no Placeholder Text
-            !_isFocused &&                          // element isn't focused
-            !_openItemListState.Value &&            // popover is closed
-            !ShrinkLabel;                           // is allowed to shrink into input area
-
         /// <summary>
         /// Returns a value for the <c>autocomplete</c> html attribute, either supplied by default or the one specified in the attribute overrides.
         /// </summary>
         protected object? GetAutocomplete() => UserAttributes.GetValueOrDefault("autocomplete", "off");
 
         private string GetDropDownIcon => _openItemListState.Value ? CloseIcon : OpenIcon;
-
-        private string GetThemeHover => Color is not Color.Default and not Color.Inherit and not Color.Transparent
-                                        ? $"mud-{Color.ToDescriptionString()}-hover" : "mud-dark-hover";
 
         protected override void OnInitialized()
         {
@@ -999,6 +955,31 @@ namespace MudBlazor
                             .AsReadOnly();
 
                 ToStringFunc = value => value?.ToString();
+            }
+        }
+
+        internal void RegisterItem(MudComboBoxItem<T> item)
+        {
+            if (item is null || item.ComboBox != null)
+                return;
+            // add the item to the ComboBox
+            lock (_itemsLock)
+            {
+                _comboBoxItems.Add(item);
+                StateHasChanged();
+            }
+        }
+
+        internal void UnRegisterItem(MudComboBoxItem<T> item)
+        {
+            if (item is null || item.ComboBox != this)
+                return;
+            // remove the item from the ComboBox
+            lock (_itemsLock)
+            {
+                item.ComboBox = null;
+                _comboBoxItems.Remove(item);
+                StateHasChanged();
             }
         }
     }

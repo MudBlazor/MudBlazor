@@ -1,17 +1,16 @@
 ﻿namespace MudBlazor
 {
     /// <summary>
-    /// The type of filter AutoComplete uses. 
-    /// Default is Client.
+    /// The type of filter ComboBox uses. 
     /// </summary>
     public enum ComboBoxFilterType
     {
         /// <summary>
-        /// Server will use AutoCompleteItems regardless of what's in it and allow client to do the filtering.
+        /// Server will use <see cref="MudComboBox{T}.SearchFunc" />.
         /// </summary>
         Server = 0,
         /// <summary>
-        /// Client will use AutoCompleteItems and filter them based on the input.
+        /// Client will use Items and filter them based on the input.
         /// </summary>
         Client = 1,
     }
