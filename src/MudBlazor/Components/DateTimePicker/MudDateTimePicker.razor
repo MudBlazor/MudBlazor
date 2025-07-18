@@ -18,7 +18,7 @@
                                OpenTo="@DateOpenTo" ShowWeekNumbers="@ShowWeekNumbers" StartMonth="@StartMonth" TitleDateFormat="@TitleDateTimeFormat"
                                NextIcon="@DateNextIcon" PreviousIcon="@DatePreviousIcon" IsDateDisabledFunc="@IsDateTimeDisabledFunc" AdditionalDateClassesFunc="AdditionalDateClassesFunc"
                                PickerMonth="@PickerMonth" PickerMonthChanged="@OnPickerMonthChanged" />
-                <MudTimePicker @ref="_timePickerRef" PickerVariant="PickerVariant.Static" Time="_timePicked" TimeChanged="TimeSelected" Disabled="@Disabled" Culture="@Culture"
+                <MudTimePicker PickerVariant="PickerVariant.Static" Time="_timePicked" TimeChanged="TimeSelected" Disabled="@Disabled" Culture="@Culture"
                                ShowToolbar="false" OpenTo="@TimeOpenTo" MinuteSelectionStep="@MinuteSelectionStep" TimeEditMode="@TimeEditMode" />
             </div>
         </MudPickerContent>

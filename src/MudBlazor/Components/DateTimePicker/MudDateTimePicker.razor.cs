@@ -210,7 +210,6 @@ namespace MudBlazor
         private bool _timePickedChanged { get; set; }
 
         private MudDatePicker _datePickerRef { get; set; }
-        private MudTimePicker _timePickerRef { get; set; }
 
         public MudDateTimePicker() : base(new DefaultConverter<DateTime?>())
         {
@@ -229,11 +228,8 @@ namespace MudBlazor
 
         protected override Task OnOpenedAsync()
         {
-            if (_value is not null)
-            {
-                _datePicked = _value?.Date;
-                _timePicked = _value?.TimeOfDay;
-            }
+            _datePicked = _value?.Date;
+            _timePicked = _value?.TimeOfDay;
             return base.OnOpenedAsync();
         }
 
@@ -300,7 +296,7 @@ namespace MudBlazor
 
         protected DateTime? GetPartialDateTime()
         {
-            return _datePicked is null || _timePicked is null ? null : _datePicked?.Add((TimeSpan)_timePicked);
+            return _timePicked is null ? _datePicked : _datePicked?.Add((TimeSpan)_timePicked);
         }
 
         protected string GetFormattedYearString()
@@ -364,7 +360,7 @@ namespace MudBlazor
         /// </summary>
         protected void TimeSelected(TimeSpan? time)
         {
-            _timePickedChanged = _timePicked is not null && (_timePicked?.Minutes != time?.Minutes || _timePicked?.Seconds != time?.Seconds);
+            _timePickedChanged = _timePicked?.Minutes != time?.Minutes || _timePicked?.Seconds != time?.Seconds;
             _timePicked = time;
             SubmitAndClose();
         }

@@ -249,7 +249,7 @@ public class DateTimeMask : PatternMask
         if (index < 0 || index >= alignedText.Length)
             return (string.Empty, -1);
         var subString = alignedText.Substring(index, Math.Min(maskPart.Length, alignedText.Length - index));
-        if (!Regex.IsMatch(subString, @"^\d+$"))
+        if (!Regex.IsMatch(subString, @"^\d+$", RegexOptions.CultureInvariant, matchTimeout: TimeSpan.FromMicroseconds(500)))
             return (string.Empty, -1);
         return (subString, index);
     }
