@@ -526,14 +526,15 @@ window.mudpopoverHelper = {
                 }
 
                 const firstChild = popoverContentNode.firstElementChild;
-
+                console.log(firstChild);
                 // adjust the popover position/maxheight if it or firstChild does not have a max-height set (even if set to 'none')
                 // exceeds the bounds and doesn't have a max-height set by the user
                 // maxHeight adjustments stop the minute popoverNode is no longer inside the window
                 // Check if max-height is set on popover or firstChild
                 const hasMaxHeight = popoverContentNode.style.maxHeight != '' || (firstChild && firstChild.style.maxHeight != '');
+                const isList = firstChild?.classList?.contains("mud-list") ?? false;
 
-                if (!hasMaxHeight) {
+                if (!hasMaxHeight && isList) {
                     // in case of a reflow check it should show from top properly
                     let shouldShowFromTop = false;
                     // calculate new max height if it exceeds bounds
