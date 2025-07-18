@@ -2,43 +2,69 @@ name: Triage Backlog
 
 on:
   schedule:
-    - cron: '0 6 * * *'
+    - cron: '0 5 * * *'
   workflow_dispatch:
     inputs:
       backlog-size:
-        description: 'Number of issues to process in automated mode (when no direct issue numbers are provided).'
+        description: 'Number of issues to auto-discover'
         required: false
         default: '5'
         type: string
       issue-numbers:
-        description: 'List of issue numbers to process directly. If provided, these issues will be triaged instead of using automated selection.'
+        description: 'Or use issue numbers (comma-separated)'
         required: false
         type: string
-      enabled:
-        description: 'Enable real actions (labeling, commenting). If false, the workflow runs in dry-run mode and only logs actions.'
-        required: false
-        default: false
-        type: boolean
       model:
-        description: 'Gemini model to use.'
+        description: 'Gemini model'
         required: false
         default: 'gemini-2.5-flash'
         type: string
+      dry-run:
+        description: 'Dry-run (no actual changes)'
+        required: false
+        default: true
+        type: boolean
       verbose:
-        description: 'Enable verbose logging.'
+        description: 'Verbose logging'
         required: false
         default: false
         type: boolean
 
+env:
+  DRY_RUN: ${{ inputs.dry-run || vars.AUTOTRIAGE_ENABLED != 'true' }}
+
 jobs:
-  backlog-triage:
+  stale-issues:
     runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || github.repository == 'MudBlazor/MudBlazor'
     
     steps:
-    - name: Check out repository
+      - name: Mark stale issues
+        uses: actions/stale@v9
+        with:
+          any-of-labels: 'info required'
+          days-before-stale: 14
+          days-before-close: 14
+          stale-issue-message: |
+            This issue has been marked as stale.  
+            If you have any updates or additional information, please comment below.
+
+            If no response is received, it will be automatically closed.
+          days-before-pr-stale: -1
+          days-before-pr-close: -1
+          stale-issue-label: 'stale'
+          debug-only: ${{ env.DRY_RUN }}
+
+  auto-triage:
+    runs-on: ubuntu-latest
+    needs: stale-issues
+    if: github.event_name == 'workflow_dispatch' || github.repository == 'MudBlazor/MudBlazor'
+    
+    steps:
+    - name: Checkout repository
       uses: actions/checkout@v4
     
-    - name: Set up Node.js
+    - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '22'
@@ -46,60 +72,53 @@ jobs:
     - name: Install dependencies
       run: npm install node-fetch@2 @actions/core @octokit/rest
     
-    - name: Parse direct issue numbers
-      if: ${{ github.event.inputs.issue-numbers != '' }}
-      id: parse_issues
-      run: |
-        issues="${{ github.event.inputs.issue-numbers }}"
-        if [ -z "$issues" ]; then
-          echo "No issue numbers provided."
-          echo "issues_found=false" >> $GITHUB_OUTPUT
-          exit 0
-        fi
-        # Split by comma or space, remove empty, and convert to JSON array
-        echo "$issues" | tr ', ' '\n' | grep -v '^$' | jq -R . | jq -s . > issues.json
-        echo "Found $(cat issues.json | jq length) issues"
-        echo "issues_found=true" >> $GITHUB_OUTPUT
-
-    - name: Find issues for automated mode
-      if: ${{ github.event.inputs.issue-numbers == '' }}
-      id: find_issues
+    - name: Get issues to process
+      id: get-issues
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        backlog_size="${{ github.event.inputs.backlog-size }}"
-        if [ -z "$backlog_size" ]; then
-          backlog_size="1"
+        if [ -n "${{ inputs.issue-numbers }}" ]; then
+          # Process specific issues
+          echo "Processing specific issues: ${{ inputs.issue-numbers }}"
+          echo "${{ inputs.issue-numbers }}" | tr ', ' '\n' | grep -v '^$' | jq -R . | jq -s . > issues.json
+        else
+          # Find unlabeled issues for automated processing
+          backlog_size="${{ inputs.backlog-size || '5' }}"
+          echo "Finding $backlog_size unlabeled issues"
+          gh issue list \
+            --state open \
+            --limit 99999 \
+            --json number,labels \
+            --jq '.[] | select((.labels // [] | length == 0)) | .number' \
+            | head -n "$backlog_size" \
+            | jq -R . | jq -s . > issues.json
         fi
-        # Find issues with no labels (GitHub CLI returns newest first by default)
-        issue_numbers=$(gh issue list --state open --limit 99999 --json number,labels --jq '.[] | select((.labels // [] | length == 0)) | .number' | head -n "$backlog_size")
-        if [ -z "$issue_numbers" ]; then
-          echo "No suitable issues found."
-          echo "issues_found=false" >> $GITHUB_OUTPUT
-          exit 1
+        
+        issue_count=$(cat issues.json | jq length)
+        echo "Found $issue_count issues to process"
+        echo "issue-count=$issue_count" >> $GITHUB_OUTPUT
+        
+        if [ "$issue_count" -eq 0 ]; then
+          echo "No issues found to process"
+          exit 0
         fi
-        # Save issue numbers as JSON array
-        echo "$issue_numbers" | grep -v '^$' | jq -R . | jq -s . > issues.json
-        echo "Found $(cat issues.json | jq length) issues"
-        echo "issues_found=true" >> $GITHUB_OUTPUT
     
     - name: Process issues
-      if: (github.event.inputs.issue-numbers != '' && steps.parse_issues.outputs.issues_found == 'true') || (github.event.inputs.issue-numbers == '' && steps.find_issues.outputs.issues_found == 'true')
+      if: steps.get-issues.outputs.issue-count > 0
       env:
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        AUTOTRIAGE_ENABLED: ${{ github.event.inputs.enabled != '' && github.event.inputs.enabled || vars.AUTOTRIAGE_ENABLED }}
+        AUTOTRIAGE_ENABLED: ${{ env.DRY_RUN == 'false' }}
         AUTOTRIAGE_PROMPT: ${{ vars.AUTOTRIAGE_PROMPT }}
-        AUTOTRIAGE_MODEL: ${{ github.event.inputs.model != '' && github.event.inputs.model || vars.AUTOTRIAGE_MODEL }}
-        AUTOTRIAGE_VERBOSE: ${{ github.event.inputs.verbose }}
+        AUTOTRIAGE_MODEL: ${{ inputs.model || vars.AUTOTRIAGE_MODEL }}
+        AUTOTRIAGE_VERBOSE: ${{ inputs.verbose }}
       run: |
-        # Process each issue number from the JSON array
         cat issues.json | jq -r '.[]' | while read -r issue_number; do
           if [ -n "$issue_number" ]; then
-            echo "Starting triage process for #$issue_number"
+            echo "——————————————————————————————————Issue #$issue_number——————————————————————————————————"
             export GITHUB_ISSUE_NUMBER="$issue_number"
             node .github/scripts/AutoTriage.js
-            # Add a small delay between processing to avoid rate limits
+            # Rate limiting delay
             sleep 15
           fi
         done
