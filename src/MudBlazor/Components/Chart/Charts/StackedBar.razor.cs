@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
+using static MudBlazor.Colors;
 
 #nullable enable
 namespace MudBlazor.Charts
@@ -141,7 +142,9 @@ namespace MudBlazor.Charts
                 {
                     X = HorizontalStartSpace - 10,
                     Y = _boundHeight - y + 5,
-                    Value = ToS(lineValue, MudChartParent?.ChartOptions.YAxisFormat)
+                    Value = MudChartParent?.ChartOptions.YAxisToStringFunc is null
+                        ? ToS(lineValue, MudChartParent?.ChartOptions.YAxisFormat)
+                        : MudChartParent.ChartOptions.YAxisToStringFunc(lineValue)
                 };
                 _horizontalValues.Add(text);
             }
