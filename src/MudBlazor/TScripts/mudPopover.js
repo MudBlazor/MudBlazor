@@ -526,7 +526,7 @@ window.mudpopoverHelper = {
                 }
 
                 const firstChild = popoverContentNode.firstElementChild;
-                console.log(firstChild);
+
                 // adjust the popover position/maxheight if it or firstChild does not have a max-height set (even if set to 'none')
                 // exceeds the bounds and doesn't have a max-height set by the user
                 // maxHeight adjustments stop the minute popoverNode is no longer inside the window
