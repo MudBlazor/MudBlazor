@@ -131,11 +131,6 @@ namespace MudBlazor
 
         protected abstract void RebuildChart();
 
-        protected string BuildYAxisValueString(double value) =>
-            MudChartParent?.ChartOptions.YAxisToStringFunc is null
-                ? ToS(value, MudChartParent?.ChartOptions.YAxisFormat)
-                : MudChartParent.ChartOptions.YAxisToStringFunc(value);
-
         public void Dispose()
         {
             Dispose(true);

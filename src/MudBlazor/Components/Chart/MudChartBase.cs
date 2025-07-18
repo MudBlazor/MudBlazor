@@ -120,6 +120,7 @@ public abstract class MudChartBase : MudComponentBase
             }
         }
     }
+
     internal void SetSelectedIndex(int index)
     {
         SelectedIndex = index;
@@ -148,4 +149,9 @@ public abstract class MudChartBase : MudComponentBase
     {
         MudHeatMapCells.Add(cell);
     }
+
+    protected string BuildYAxisValueString(double value) =>
+        ChartOptions.YAxisToStringFunc is null
+            ? ToS(value, ChartOptions.YAxisFormat)
+            : ChartOptions.YAxisToStringFunc(value);
 }
