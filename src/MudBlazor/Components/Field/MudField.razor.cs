@@ -234,10 +234,10 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>false</c>.
         /// <para>When <c>false</c>, the label behaves like a placeholder and shrinks only if there is content or an adornment at the start.</para>
-        /// <para>When <c>true</c>, the label does not shrink and remains inside the field regardless of content, which may result in overlap.</para>
+        /// <para>When <c>true</c>, the label does not shrink and remains as a placeholder regardless of content, which may result in overlap.</para>
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
-        public bool ShrinkLabel { get; set; } = false;
+        public bool ShrinkLabel { get; set; }
     }
 }
