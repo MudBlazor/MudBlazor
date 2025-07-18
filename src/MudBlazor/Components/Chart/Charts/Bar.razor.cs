@@ -109,9 +109,7 @@ namespace MudBlazor.Charts
                 {
                     X = HorizontalStartSpace - 10,
                     Y = _boundHeight - y + 5,
-                    Value = MudChartParent?.ChartOptions.YAxisToStringFunc is null
-                        ? ToS(startGridY, MudChartParent?.ChartOptions.YAxisFormat)
-                        : MudChartParent.ChartOptions.YAxisToStringFunc(startGridY)
+                    Value = BuildYAxisValueString(startGridY)
                 };
                 _horizontalValues.Add(lineValue);
             }
