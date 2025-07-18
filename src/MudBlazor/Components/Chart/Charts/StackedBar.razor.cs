@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
-using static MudBlazor.Colors;
 
 #nullable enable
 namespace MudBlazor.Charts
