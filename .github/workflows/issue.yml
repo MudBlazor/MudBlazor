@@ -24,7 +24,5 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           AUTOTRIAGE_ENABLED: ${{ vars.AUTOTRIAGE_ENABLED }}
-          AUTOTRIAGE_PROMPT: ${{ vars.AUTOTRIAGE_PROMPT }}
-          AUTOTRIAGE_MODEL: ${{ vars.AUTOTRIAGE_MODEL }}
         run: node ./.github/scripts/AutoTriage.js
         

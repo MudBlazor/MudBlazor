@@ -2,13 +2,13 @@ name: Triage Backlog
 
 on:
   schedule:
-    - cron: '0 5 * * *'
+    - cron: '30 06 * * *' # Gemini rates reset at 7am, so we can use up the remaining quota for the day.
   workflow_dispatch:
     inputs:
       backlog-size:
         description: 'Number of issues to auto-discover'
         required: false
-        default: '5'
+        default: '3'
         type: string
       issue-numbers:
         description: 'Or use issue numbers (comma-separated)'
@@ -23,11 +23,6 @@ on:
         description: 'Dry-run (no actual changes)'
         required: false
         default: true
-        type: boolean
-      verbose:
-        description: 'Verbose logging'
-        required: false
-        default: false
         type: boolean
 
 env:
@@ -53,14 +48,15 @@ jobs:
             If no response is received, it will be automatically closed.
 
           stale-pr-label: 'stale'
+          exempt-pr-labels: 'on hold,breaking change'
           days-before-pr-stale: 180
           days-before-pr-close: 90
           stale-pr-message: |
-            This pull request has been marked as stale.
+            Hi, this pull request hasn't had any recent activity and has been marked as stale.
 
-            Please let us know how we can help move it forwards! @MudBlazor/triage
+            Please let us know if you're still working on it or if we can help move it forwards! @MudBlazor/triage
           close-pr-message: |
-            This pull request was closed automatically due to inactivity.
+            This pull request has been closed due to inactivity.
 
             If you would like to continue working on it, please open a new PR referencing this one.
 
@@ -95,7 +91,7 @@ jobs:
           echo "${{ inputs.issue-numbers }}" | tr ', ' '\n' | grep -v '^$' | jq -R . | jq -s . > issues.json
         else
           # Find unlabeled issues for automated processing
-          backlog_size="${{ inputs.backlog-size || '5' }}"
+          backlog_size="${{ inputs.backlog-size || '15' }}"
           echo "Finding $backlog_size unlabeled issues"
           gh issue list \
             --state open \
@@ -121,9 +117,6 @@ jobs:
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         AUTOTRIAGE_ENABLED: ${{ env.DRY_RUN == 'false' }}
-        AUTOTRIAGE_PROMPT: ${{ vars.AUTOTRIAGE_PROMPT }}
-        AUTOTRIAGE_MODEL: ${{ inputs.model || vars.AUTOTRIAGE_MODEL }}
-        AUTOTRIAGE_VERBOSE: ${{ inputs.verbose }}
       run: |
         cat issues.json | jq -r '.[]' | while read -r issue_number; do
           if [ -n "$issue_number" ]; then
