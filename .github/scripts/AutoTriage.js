@@ -45,7 +45,7 @@ try {
     process.exit(1);
 }
 
-console.log(`🤖 Using Gemini ${aiModel} (${dryRun ? 'DRY RUN' : 'LIVE'})`);
+console.log(`🤖 Using ${aiModel} (${dryRun ? 'DRY RUN' : 'LIVE'})`);
 
 /**
  * Call Gemini to analyze the issue content and return structured response
@@ -67,7 +67,7 @@ async function callGemini(prompt, apiKey) {
                     responseSchema: {
                         type: "object",
                         properties: {
-                            rating: { type: "integer", description: "Intervention urgency rating on a scale of 1 to 10" },
+                            rating: { type: "integer", description: "How much an intervention is needed on a scale of 1 to 10" },
                             reason: { type: "string", description: "Brief technical explanation for logging purposes" },
                             comment: { type: "string", description: "A comment to reply to the issue with", nullable: true },
                             labels: { type: "array", items: { type: "string" }, description: "Array of labels to apply" }
@@ -79,7 +79,7 @@ async function callGemini(prompt, apiKey) {
             timeout: 60000
         }
     );
-    console.log(`🤖 Gemini response time: ${Date.now() - start}ms`);
+    console.log(`🤖 Gemini returned analysis in ${Date.now() - start}ms with intervention rating of ${analysis.rating}/10`);
 
     if (!response.ok) {
         const errText = await response.text();
@@ -106,9 +106,9 @@ function formatMetadata(issue) {
 
     return `${issue.state} ${itemType} #${issue.number} by ${issue.user?.login || 'unknown'}
 Created: ${issue.created_at}
-Last Updated: ${issue.updated_at}
-Current labels: ${labels.join(', ') || 'none'}
-Comments: ${issue.comments || 0}, Reactions: ${issue.reactions?.total_count || 0}`;
+Updated: ${issue.updated_at}
+Comments: ${issue.comments || 0}, Reactions: ${issue.reactions?.total_count || 0}
+Current labels: ${labels.join(', ') || 'none'}`;
 }
 
 /**
@@ -160,7 +160,7 @@ async function updateLabels(issue, suggestedLabels, owner, repo, octokit) {
         ...labelsToAdd.map(l => `+${l}`),
         ...labelsToRemove.map(l => `-${l}`)
     ];
-    console.log(`🏷️ Label changes: ${changes.join(' ')}`);
+    console.log(`🏷️ Label changes: ${changes.join(', ')}`);
 
     // Exit early if dry run
     if (dryRun || !octokit) return;
@@ -190,11 +190,6 @@ async function updateLabels(issue, suggestedLabels, owner, repo, octokit) {
  * Add AI-generated comment to the issue
  */
 async function addComment(issue, comment, owner, repo, octokit) {
-    const fullComment = `${comment}\n\n---\n*I'm an AI. Did I miss something? Let me know in a reply!*`;
-
-    console.log(`💬 Posting comment:`);
-    console.log(fullComment.replace(/^/gm, '> '));
-
     // Exit early if dry run
     if (dryRun || !octokit) return;
 
@@ -202,7 +197,7 @@ async function addComment(issue, comment, owner, repo, octokit) {
         owner,
         repo,
         issue_number: issue.number,
-        body: fullComment
+        body: `${comment}\n\n---\n*I'm an AI. Did I miss something? Let me know in a reply!*`
     });
 }
 
@@ -251,26 +246,26 @@ async function processIssue(issue, comments, owner, repo, geminiApiKey, octokit)
     }
 
     // Log what we're processing
-    console.log(`\n📝 Processing: ${issue.title}`);
+    console.log(`📝 ${issue.title}`);
     console.log(formatMetadata(issue).replace(/^/gm, '📝 '));
 
     // Build prompt and call AI
-    console.log('🤖 Analyzing...');
     const prompt = buildPrompt(issue, comments);
     const analysis = await callGemini(prompt, geminiApiKey);
 
-    if (!analysis || typeof analysis !== 'object') {
-        throw new Error('Invalid analysis result from Gemini');
-    }
-
-    console.log(`🤖 ${analysis.rating}/10 severity: ${analysis.reason}`);
+    console.log(`🤖 ${analysis.reason}`);
 
     // Apply the AI's suggestions
     await updateLabels(issue, analysis.labels, owner, repo, octokit);
 
     // Add comment if one was generated
     if (analysis.comment) {
+        console.log(`💬 Posting comment:`);
+        console.log(analysis.comment.replace(/^/gm, '> '));
+
         await addComment(issue, analysis.comment, owner, repo, octokit);
+    } else {
+        console.log(`💬 No comment suggested.`);
     }
 
     return analysis;
@@ -293,8 +288,6 @@ async function main() {
     const issueNumber = parseInt(process.env.GITHUB_ISSUE_NUMBER, 10);
     const geminiApiKey = process.env.GEMINI_API_KEY;
 
-    console.log(`📂 Repository: ${owner}/${repo}`);
-
     // Setup GitHub API client
     let octokit = null;
     if (process.env.GITHUB_TOKEN) {
@@ -308,6 +301,8 @@ async function main() {
 
     // Process it
     await processIssue(issue, comments, owner, repo, geminiApiKey, octokit);
+
+    console.log(`\n`);
 }
 
 // Run the script
