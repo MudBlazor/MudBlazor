@@ -69,7 +69,8 @@ async function callGemini(prompt, apiKey) {
                             rating: { type: "integer", description: "How much an intervention is needed on a scale of 1 to 10" },
                             reason: { type: "string", description: "Brief technical explanation for logging purposes" },
                             comment: { type: "string", description: "A comment to reply to the issue with", nullable: true },
-                            labels: { type: "array", items: { type: "string" }, description: "Array of labels to apply" }
+                            labels: { type: "array", items: { type: "string" }, description: "Array of labels to apply" },
+                            close: { type: "boolean", description: "Set to true if the issue should be closed as part of this action", nullable: true }
                         },
                         required: ["rating", "reason", "comment", "labels"]
                     }
@@ -105,6 +106,7 @@ function formatMetadata(issue) {
     return `${issue.state} ${itemType} #${issue.number} by ${issue.user?.login || 'unknown'}
 Created: ${issue.created_at}
 Updated: ${issue.updated_at}
+Current system time: ${new Date().toISOString()}
 Comments: ${issue.comments || 0}, Reactions: ${issue.reactions?.total_count || 0}
 Current labels: ${labels.join(', ') || 'none'}`;
 }
@@ -195,7 +197,7 @@ async function addComment(issue, comment, owner, repo, octokit) {
         owner,
         repo,
         issue_number: issue.number,
-        body: `${comment}\n\n---\n*I'm an AI. Did I miss something? Let me know in a reply!*`
+        body: comment
     });
 }
 
@@ -232,6 +234,26 @@ async function getIssueFromGitHub(owner, repo, number, octokit) {
 }
 
 /**
+ * Close issue with specified reason
+ */
+async function closeIssue(issue, repo, githubToken, reason = 'not_planned') {
+    console.log(`🔒 Closing #${issue.number} as ${reason}`);
+
+    // Exit early if dry run
+    if (dryRun || !octokit) return;
+
+    const octokit = github.getOctokit(githubToken);
+
+    await octokit.rest.issues.update({
+        owner: repo.owner,
+        repo: repo.repo,
+        issue_number: issue.number,
+        state: 'closed',
+        state_reason: reason
+    });
+}
+
+/**
  * Main processing function - analyze and act on a single issue/PR
  */
 async function processIssue(issue, comments, owner, repo, geminiApiKey, octokit) {
@@ -251,8 +273,8 @@ async function processIssue(issue, comments, owner, repo, geminiApiKey, octokit)
     const prompt = buildPrompt(issue, comments);
     const start = Date.now();
     const analysis = await callGemini(prompt, geminiApiKey);
-    console.log(`🤖 Gemini returned analysis in ${Date.now() - start}ms with intervention rating of ${analysis.rating}/10`);
 
+    console.log(`🤖 Gemini returned analysis in ${Date.now() - start}ms with intervention rating of ${analysis.rating}/10`);
     console.log(`🤖 ${analysis.reason}`);
 
     // Apply the AI's suggestions
@@ -262,10 +284,15 @@ async function processIssue(issue, comments, owner, repo, geminiApiKey, octokit)
     if (analysis.comment) {
         console.log(`💬 Posting comment:`);
         console.log(analysis.comment.replace(/^/gm, '> '));
-
         await addComment(issue, analysis.comment, owner, repo, octokit);
     } else {
         console.log(`💬 No comment suggested.`);
+    }
+
+    // If AI requested to close the issue, and this is an issue (not PR), and not dryRun
+    if (analysis.close) {
+        console.log('🤖 Closing due to AI request.');
+        await closeIssue(issue, { owner, repo }, process.env.GITHUB_TOKEN, 'not_planned');
     }
 
     return analysis;
@@ -301,8 +328,6 @@ async function main() {
 
     // Process it
     await processIssue(issue, comments, owner, repo, geminiApiKey, octokit);
-
-    console.log(`\n`);
 }
 
 // Run the script
