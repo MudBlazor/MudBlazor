@@ -8,7 +8,7 @@ on:
       backlog-size:
         description: 'Number of issues to auto-discover'
         required: false
-        default: '3'
+        default: '5'
         type: string
       issue-numbers:
         description: 'Or use issue numbers (comma-separated)'
@@ -17,7 +17,7 @@ on:
       model:
         description: 'Gemini model'
         required: false
-        default: 'gemini-2.5-flash'
+        default: 'gemini-2.5-pro'
         type: string
       dry-run:
         description: 'Dry-run (no actual changes)'
@@ -120,6 +120,7 @@ jobs:
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         AUTOTRIAGE_ENABLED: ${{ env.DRY_RUN == 'false' }}
+        AUTOTRIAGE_MODEL: ${{ inputs.model }}
       run: |
         cat issues.json | jq -r '.[]' | while read -r issue_number; do
           if [ -n "$issue_number" ]; then

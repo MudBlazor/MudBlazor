@@ -21,7 +21,7 @@
  * • GITHUB_REPOSITORY - Repository in format "owner/repo"
  * • AUTOTRIAGE_ENABLED - Set to 'true' to enable real actions (default: dry-run)
  * 
- * Based on original work by Daniel Chalmers
+ * Original work by Daniel Chalmers
  * https://gist.github.com/danielchalmers/503d6b9c30e635fccb1221b2671af5f8
  */
 
@@ -33,41 +33,24 @@ const path = require('path');
 
 // Configuration
 const dryRun = process.env.AUTOTRIAGE_ENABLED !== 'true';
-const aiModel = 'gemini-2.5-pro';
+const aiModel = process.env.AUTOTRIAGE_MODEL || 'gemini-2.5-pro';
 
-// Load AI prompt
+// Load AI prompt template
+const promptPath = path.join(__dirname, 'AutoTriage.prompt');
 let basePrompt = '';
 try {
-    const promptPath = path.join(__dirname, 'AutoTriage.prompt');
     basePrompt = fs.readFileSync(promptPath, 'utf8');
-    console.log('🤖 Base prompt loaded from AutoTriage.prompt\n');
 } catch (err) {
     console.error('❌ Failed to load AutoTriage.prompt:', err.message);
     process.exit(1);
 }
 
-console.log(`🤖 Using Gemini model: ${aiModel}`);
+console.log(`🤖 Using Gemini model: ${aiModel} (${dryRun ? 'DRY RUN' : 'LIVE'})`);
 
 /**
- * Analyze an issue or PR using Gemini AI
+ * Call Gemini AI to analyze the issue content and return structured response
  */
-async function analyzeIssue(issueText, apiKey, metadata = {}) {
-    const metadataText = buildMetadataText(metadata);
-    const commentsText = buildCommentsText(metadata.comments);
-
-    const prompt = `${basePrompt}
-
-ISSUE TO ANALYZE:
-${issueText}
-
-ISSUE METADATA:
-${metadataText}
-
-COMMENTS:
-${commentsText}
-
-Analyze this issue and provide your structured response.`;
-
+async function callGeminiAI(prompt, apiKey) {
     const response = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/${aiModel}:generateContent`,
         {
@@ -111,112 +94,131 @@ Analyze this issue and provide your structured response.`;
 }
 
 /**
- * Build metadata text for AI prompt
+ * Create metadata string for both logging and AI analysis
  */
-function buildMetadataText(metadata) {
-    const parts = [];
-    if (metadata.created_at) parts.push(`Created: ${metadata.created_at}`);
-    if (metadata.updated_at) parts.push(`Last Updated: ${metadata.updated_at}`);
-    if (metadata.number) parts.push(`Issue Number: #${metadata.number}`);
-    if (metadata.author) parts.push(`Author: ${metadata.author}`);
-    if (metadata.comments_count !== undefined) parts.push(`Comments: ${metadata.comments_count}`);
-    if (metadata.reactions_total !== undefined) parts.push(`Reactions: ${metadata.reactions_total}`);
-    if (metadata.labels?.length) parts.push(`Labels: ${metadata.labels.join(', ')}`);
+function formatMetadata(issue) {
+    const isIssue = !issue.pull_request;
+    const itemType = isIssue ? 'issue' : 'pull request';
+    const labels = issue.labels?.map(l => typeof l === 'string' ? l : l.name) || [];
 
-    return parts.length ? parts.join('\n') : 'No metadata available.';
+    return `${issue.state} ${itemType} #${issue.number} by ${issue.user?.login || 'unknown'}
+Created: ${issue.created_at}
+Last Updated: ${issue.updated_at}
+Current labels: ${labels.join(', ') || 'none'}
+Comments: ${issue.comments || 0}, Reactions: ${issue.reactions?.total_count || 0}`;
 }
 
 /**
- * Build comments text for AI prompt
+ * Build the full prompt by combining base template with issue data
  */
-function buildCommentsText(comments) {
-    if (!comments?.length) return 'No comments available.';
+function buildPrompt(issue, comments) {
+    const issueText = `${issue.title}\n\n${issue.body || ''}`;
+    const metadata = formatMetadata(issue);
 
-    let text = '\nISSUE COMMENTS:';
-    comments.forEach((comment, idx) => {
-        text += `\nComment ${idx + 1} by ${comment.author}:\n${comment.body}`;
-    });
-    return text;
+    // Format comments
+    let commentsText = 'No comments available.';
+    if (comments?.length) {
+        commentsText = '\nISSUE COMMENTS:';
+        comments.forEach((comment, idx) => {
+            commentsText += `\nComment ${idx + 1} by ${comment.author}:\n${comment.body}`;
+        });
+    }
+
+    return `${basePrompt}
+
+ISSUE TO ANALYZE:
+${issueText}
+
+ISSUE METADATA:
+${metadata}
+
+COMMENTS:
+${commentsText}
+
+Analyze this issue and provide your structured response.`;
 }
 
 /**
- * Apply labels to match AI suggestions
+ * Update GitHub issue labels based on AI recommendations
  */
-async function applyLabels(suggestedLabels, issue, repo, octokit) {
+async function updateLabels(issue, suggestedLabels, owner, repo, octokit) {
     const currentLabels = issue.labels?.map(l => typeof l === 'string' ? l : l.name) || [];
     const labelsToAdd = suggestedLabels.filter(l => !currentLabels.includes(l));
     const labelsToRemove = currentLabels.filter(l => !suggestedLabels.includes(l));
 
+    // Nothing to change
     if (labelsToAdd.length === 0 && labelsToRemove.length === 0) {
-        console.log('🏷️ No label changes needed');
+        console.log('🏷️ No label changes suggested');
         return;
     }
 
-    if (!octokit) {
-        console.log(`🏷️ [DRY RUN] Would add: [${labelsToAdd.join(', ')}]`);
-        console.log(`🏷️ [DRY RUN] Would remove: [${labelsToRemove.join(', ')}]`);
-        return;
-    }
+    // Show what we're changing
+    const changes = [];
+    if (labelsToAdd.length > 0) changes.push(`+${labelsToAdd.join(', ')}`);
+    if (labelsToRemove.length > 0) changes.push(`-${labelsToRemove.join(', ')}`);
 
+    console.log(`🏷️ Label changes: ${changes.join(' ')}`);
+
+    // Exit early if dry run
+    if (dryRun || !octokit) return;
+
+    // Add new labels
     if (labelsToAdd.length > 0) {
         await octokit.rest.issues.addLabels({
-            owner: repo.owner,
-            repo: repo.repo,
+            owner,
+            repo,
             issue_number: issue.number,
             labels: labelsToAdd
         });
-        console.log(`🏷️ Added: [${labelsToAdd.join(', ')}]`);
     }
 
+    // Remove old labels (one by one since GitHub API requires it)
     for (const label of labelsToRemove) {
         await octokit.rest.issues.removeLabel({
-            owner: repo.owner,
-            repo: repo.repo,
+            owner,
+            repo,
             issue_number: issue.number,
             name: label
         });
     }
-    if (labelsToRemove.length > 0) {
-        console.log(`🏷️ Removed: [${labelsToRemove.join(', ')}]`);
-    }
 }
 
 /**
- * Post a comment on an issue
+ * Add AI-generated comment to the issue
  */
-async function postComment(issue, repo, octokit, comment) {
-    const commentWithFooter = `${comment}\n\n---\n*This comment was automatically generated using AI. If you have any feedback or questions, please share it in a reply.*`;
+async function addComment(issue, comment, owner, repo, octokit) {
+    const fullComment = `${comment}\n\n---\n*This comment was automatically generated using AI. If you have any feedback or questions, please share it in a reply.*`;
 
-    if (!octokit) {
-        console.log(`💬 [DRY RUN] Would post comment:`);
-        console.log(commentWithFooter.replace(/^/gm, '> '));
-        return;
-    }
+    console.log(`💬 Posting comment`);
+    console.log(fullComment.replace(/^/gm, '> '));
+
+    // Exit early if dry run
+    if (dryRun || !octokit) return;
 
     await octokit.rest.issues.createComment({
-        owner: repo.owner,
-        repo: repo.repo,
+        owner,
+        repo,
         issue_number: issue.number,
-        body: commentWithFooter
+        body: fullComment
     });
-
-    console.log(`💬 Posted comment`);
 }
 
 /**
- * Fetch issue data from GitHub
+ * Get issue/PR and its comments from GitHub
  */
-async function fetchIssueData(owner, repo, number, octokit) {
+async function getIssueFromGitHub(owner, repo, number, octokit) {
     if (!octokit) {
         throw new Error('GitHub token required to fetch issue data');
     }
 
+    // Get the issue/PR
     const { data: issue } = await octokit.rest.issues.get({
         owner,
         repo,
         issue_number: number
     });
 
+    // Get comments if there are any
     let comments = [];
     if (issue.comments > 0) {
         const { data: commentsData } = await octokit.rest.issues.listComments({
@@ -234,91 +236,78 @@ async function fetchIssueData(owner, repo, number, octokit) {
 }
 
 /**
- * Process a single issue or PR
+ * Main processing function - analyze and act on a single issue/PR
  */
-async function processIssue(issue, repo, geminiApiKey, octokit, comments = []) {
+async function processIssue(issue, comments, owner, repo, geminiApiKey, octokit) {
     const isIssue = !issue.pull_request;
-    const itemType = isIssue ? 'issue' : 'pull request';
 
+    // Skip locked issues
     if (issue.locked) {
-        console.log(`🔒 Skipping locked ${itemType} #${issue.number}`);
-        return null;
+        console.log(`🔒 Skipping locked ${isIssue ? 'issue' : 'pull request'} #${issue.number}`);
+        return;
     }
 
-    const metadata = {
-        number: issue.number,
-        created_at: issue.created_at,
-        updated_at: issue.updated_at,
-        author: issue.user?.login || 'unknown',
-        comments_count: issue.comments || 0,
-        reactions_total: issue.reactions?.total_count || 0,
-        state: issue.state,
-        type: isIssue ? 'issue' : 'pull_request',
-        labels: issue.labels?.map(l => typeof l === 'string' ? l : l.name) || [],
-        comments: comments
-    };
+    // Log what we're processing (reuse the same format as AI sees)
+    console.log(`\n📝 Processing: ${issue.title}`);
+    console.log(formatMetadata(issue).replace(/^/gm, '📝 '));
 
-    // Log issue info
-    console.log(`\n📝 ${issue.title}`);
-    console.log(`📝 ${metadata.state} ${itemType} by ${metadata.author} (${metadata.created_at})`);
-    console.log(`🏷️ Current labels: [${metadata.labels.join(', ') || 'none'}]`);
-    console.log(`💬 Comments: ${metadata.comments_count}, Reactions: ${metadata.reactions_total}`);
-
-    // Analyze with AI
-    const issueText = `${issue.title}\n\n${issue.body || ''}`;
-    const analysis = await analyzeIssue(issueText, geminiApiKey, metadata);
+    // Build prompt and call AI
+    console.log('🤖 Analyzing with AI...');
+    const prompt = buildPrompt(issue, comments);
+    const analysis = await callGeminiAI(prompt, geminiApiKey);
 
     if (!analysis || typeof analysis !== 'object') {
-        throw new Error('Invalid analysis result');
+        throw new Error('Invalid analysis result from AI');
     }
 
-    console.log(`💡 ${analysis.reason}`);
+    console.log(`💡 AI says: ${analysis.reason}`);
 
-    // Apply labels
-    await applyLabels(analysis.labels, issue, repo, octokit);
+    // Apply the AI's suggestions
+    await updateLabels(issue, analysis.labels, owner, repo, octokit);
 
-    // Post comment for issues only
+    // Add comment for issues only (not pull requests)
     if (isIssue && analysis.comment) {
-        await postComment(issue, repo, octokit, analysis.comment);
+        await addComment(issue, analysis.comment, owner, repo, octokit);
     }
 
     return analysis;
 }
 
 /**
- * Main execution
+ * Main entry point
  */
 async function main() {
-    // Validate environment
-    const required = ['GITHUB_ISSUE_NUMBER', 'GEMINI_API_KEY', 'GITHUB_REPOSITORY'];
-    for (const env of required) {
-        if (!process.env[env]) {
-            throw new Error(`${env} environment variable is required`);
+    // Check required environment variables
+    const requiredEnvVars = ['GITHUB_ISSUE_NUMBER', 'GEMINI_API_KEY', 'GITHUB_REPOSITORY'];
+    for (const envVar of requiredEnvVars) {
+        if (!process.env[envVar]) {
+            throw new Error(`Missing required environment variable: ${envVar}`);
         }
     }
 
+    // Parse configuration
     const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
-    const number = parseInt(process.env.GITHUB_ISSUE_NUMBER, 10);
+    const issueNumber = parseInt(process.env.GITHUB_ISSUE_NUMBER, 10);
+    const geminiApiKey = process.env.GEMINI_API_KEY;
 
-    console.log(`📝 Processing ${owner}/${repo}#${number}`);
-    console.log(`🔧 Mode: ${dryRun ? 'DRY RUN' : 'LIVE'}`);
+    console.log(`📂 Repository: ${owner}/${repo}`);
 
-    // Initialize GitHub client
+    // Setup GitHub API client
     let octokit = null;
     if (process.env.GITHUB_TOKEN) {
         octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
+    } else {
+        console.log('⚠️  No GITHUB_TOKEN provided - running in read-only mode');
     }
 
-    // Fetch and process issue
-    const { issue, comments } = await fetchIssueData(owner, repo, number, octokit);
-    const octokitForOps = dryRun ? null : octokit;
+    // Get the issue/PR data from GitHub
+    const { issue, comments } = await getIssueFromGitHub(owner, repo, issueNumber, octokit);
 
-    await processIssue(issue, { owner, repo }, process.env.GEMINI_API_KEY, octokitForOps, comments);
-
-    console.log('\n✅ AutoTriage completed successfully');
+    // Process it with AI
+    await processIssue(issue, comments, owner, repo, geminiApiKey, octokit);
 }
 
-// Execute
+// Run the script
 main().catch(err => {
     console.error('\n❌ Error:', err.message);
     core.setFailed(err.message);
