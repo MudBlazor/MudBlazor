@@ -48,16 +48,16 @@ jobs:
 
             If no response is received, it will be automatically closed.
           close-issue-message: |
-            If you feel the problem has not been resolved, please open a new issue referencing this one.
+            If you're still experiencing this problem, please open a new issue with updated details.
 
           stale-pr-label: 'stale'
           exempt-pr-labels: 'on hold,breaking change'
           days-before-pr-stale: 180
           days-before-pr-close: 90
           stale-pr-message: |
-            Hi, this pull request hasn't had any recent activity and has been marked as stale.
+            Hi, this pull request hasn't had activity in a few months and has been marked as stale.
 
-            Please let us know if you're still working on it or if we can help move it forwards! @MudBlazor/triage
+            Please let us know if you're still working on it! @MudBlazor/triage
           close-pr-message: |
             This pull request has been closed due to inactivity.
 
