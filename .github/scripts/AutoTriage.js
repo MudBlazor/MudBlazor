@@ -271,8 +271,8 @@ async function processIssue(issue, comments, owner, repo, geminiApiKey, octokit)
     // Apply the AI's suggestions
     await updateLabels(issue, analysis.labels, owner, repo, octokit);
 
-    // Add comment for issues only (not pull requests)
-    if (isIssue && analysis.comment) {
+    // Add comment if one was generated
+    if (analysis.comment) {
         await addComment(issue, analysis.comment, owner, repo, octokit);
     }
 
@@ -303,7 +303,7 @@ async function main() {
     if (process.env.GITHUB_TOKEN) {
         octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
     } else {
-        console.log('⚠️  No GITHUB_TOKEN provided - running in read-only mode');
+        console.log('⚠️ No GITHUB_TOKEN provided - running in read-only mode');
     }
 
     // Get the issue/PR data from GitHub

@@ -89,6 +89,9 @@ Consider an issue's age and update frequency. Note engagement like comments and 
 - Technical details and screenshots provided
 - Descriptive title
 
+## LABELING GUIDELINES
+Do not label 'draft' pull requests or closed issues.
+
 ## COMMENTING GUIDELINES
 The decision to comment is based on one question: "Can I add clear value to this issue without getting in the way of human contributors?"
 If you have previously commented on this issue then the bar to add something new is raised. It should not appear like you are creating spam.
@@ -100,11 +103,13 @@ When you see a potential link to a common problem (caching, static rendering, or
 - Old or inactive issue to confirm a bug reported on a very outdated version is still reproducible on the latest version
 
 **DO NOT comment if:**
+- It is a pull request and not an issue
+- The issue is closed
+- The issue has a `stale` label
 - The issue meets all criteria for a high-quality report and needs no further input
 - The same information has already been requested by you or someone else
 - The discussion is an active, ongoing technical debate
 - To summarize, thank the user, or compliment the issue
-- The issue has a `stale` label
 
 ## COMMENT STYLE
 Use markdown as it will be posted on GitHub.
