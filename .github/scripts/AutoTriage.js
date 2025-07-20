@@ -21,7 +21,7 @@
  * • GITHUB_REPOSITORY - Repository in format "owner/repo"
  * • AUTOTRIAGE_ENABLED - Set to 'true' to enable real actions (default: dry-run)
  * 
- * Original work by Daniel Chalmers
+ * Original work by Daniel Chalmers © 2025
  * https://gist.github.com/danielchalmers/503d6b9c30e635fccb1221b2671af5f8
  */
 
@@ -66,7 +66,7 @@ async function callGeminiAI(prompt, apiKey) {
                     responseSchema: {
                         type: "object",
                         properties: {
-                            rating: { type: "integer", description: "Rating of the urgency of intervention in issue on a scale of 1 to 100" },
+                            rating: { type: "integer", description: "Intervention urgency rating on a scale of 1 to 10" },
                             reason: { type: "string", description: "Brief technical explanation for logging purposes" },
                             comment: { type: "string", description: "A comment to reply to the issue with", nullable: true },
                             labels: { type: "array", items: { type: "string" }, description: "Array of labels to apply" }
@@ -261,7 +261,7 @@ async function processIssue(issue, comments, owner, repo, geminiApiKey, octokit)
         throw new Error('Invalid analysis result from AI');
     }
 
-    console.log(`💡 AI gives a rating of ${analysis.rating}/100: ${analysis.reason}`);
+    console.log(`💡 AI rated ${analysis.rating}/10: ${analysis.reason}`);
 
     // Apply the AI's suggestions
     await updateLabels(issue, analysis.labels, owner, repo, octokit);
