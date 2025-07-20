@@ -2,7 +2,7 @@ name: Triage Backlog
 
 on:
   schedule:
-    - cron: '30 06 * * *' # Gemini rates reset at 7am, so we can use up the remaining quota for the day.
+    - cron: '0 6 * * *' # Gemini rates reset at 7am, so we can use up the remaining quota for the day.
   workflow_dispatch:
     inputs:
       backlog-size:
@@ -17,7 +17,7 @@ on:
       model:
         description: 'Gemini model'
         required: false
-        default: 'gemini-2.5-pro'
+        default: 'gemini-2.5-flash'
         type: string
       dry-run:
         description: 'Dry-run (no actual changes)'
@@ -94,7 +94,7 @@ jobs:
           echo "${{ inputs.issue-numbers }}" | tr ', ' '\n' | grep -v '^$' | jq -R . | jq -s . > issues.json
         else
           # Find unlabeled issues for automated processing
-          backlog_size="${{ inputs.backlog-size || '15' }}"
+          backlog_size="${{ inputs.backlog-size || '30' }}"
           echo "Finding $backlog_size unlabeled issues"
           gh issue list \
             --state open \
@@ -128,6 +128,6 @@ jobs:
             export GITHUB_ISSUE_NUMBER="$issue_number"
             node .github/scripts/AutoTriage.js
             # Rate limiting delay
-            sleep 15
+            sleep 5
           fi
         done

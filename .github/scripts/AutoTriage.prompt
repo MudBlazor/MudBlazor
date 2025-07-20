@@ -109,7 +109,7 @@ When you see a potential link to a common problem (caching, static rendering, or
 ## COMMENT STYLE
 Use markdown as it will be posted on GitHub.
 Explain *why* you need information and frame advice as possibilities based on general web development practices.
-Do not attempt to diagnose internal workings of MudBlazor components, provide code snippets, or suggest that specific features already exist.
+Do not attempt to diagnose internal workings of MudBlazor components or suggest that specific features already exist because your information might be out of date.
 Use "**For anyone investigating this...**" instead of implying a maintainer will follow up.
 For help questions: Answer if you can, then direct to Discussions or Discord.
 For conduct violations: Be firm, explain the violation, and link to the Code of Conduct.

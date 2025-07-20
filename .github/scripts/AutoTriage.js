@@ -1,7 +1,7 @@
 /**
  * AutoTriage - AI-Powered GitHub Issue & PR Analyzer
  * 
- * Automatically analyzes GitHub issues and pull requests using Google Gemini AI,
+ * Automatically analyzes GitHub issues and pull requests using Gemini,
  * then applies appropriate labels and helpful comments to improve project management.
  * 
  * Features:
@@ -33,7 +33,7 @@ const path = require('path');
 
 // Configuration
 const dryRun = process.env.AUTOTRIAGE_ENABLED !== 'true';
-const aiModel = process.env.AUTOTRIAGE_MODEL || 'gemini-2.5-pro';
+const aiModel = process.env.AUTOTRIAGE_MODEL || 'gemini-2.5-flash';
 
 // Load AI prompt template
 const promptPath = path.join(__dirname, 'AutoTriage.prompt');
@@ -45,12 +45,13 @@ try {
     process.exit(1);
 }
 
-console.log(`🤖 Using Gemini model: ${aiModel} (${dryRun ? 'DRY RUN' : 'LIVE'})`);
+console.log(`🤖 Using Gemini ${aiModel} (${dryRun ? 'DRY RUN' : 'LIVE'})`);
 
 /**
- * Call Gemini AI to analyze the issue content and return structured response
+ * Call Gemini to analyze the issue content and return structured response
  */
-async function callGeminiAI(prompt, apiKey) {
+async function callGemini(prompt, apiKey) {
+    const start = Date.now();
     const response = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/${aiModel}:generateContent`,
         {
@@ -73,22 +74,26 @@ async function callGeminiAI(prompt, apiKey) {
                         },
                         required: ["rating", "reason", "comment", "labels"]
                     }
-                }
+                },
+                tools: [{
+                    googleSearch: {} // Enable search grounding
+                }]
             }),
             timeout: 60000
         }
     );
+    console.log(`⏱️ Gemini response time: ${Date.now() - start}ms`);
 
     if (!response.ok) {
         const errText = await response.text();
-        throw new Error(`AI API error: ${response.status} ${response.statusText} — ${errText}`);
+        throw new Error(`Gemini API error: ${response.status} ${response.statusText} — ${errText}`);
     }
 
     const data = await response.json();
     const analysisResult = data?.candidates?.[0]?.content?.parts?.[0]?.text;
 
     if (!analysisResult) {
-        throw new Error('No analysis result in AI response');
+        throw new Error('No analysis result in Gemini response');
     }
 
     return JSON.parse(analysisResult);
@@ -153,11 +158,11 @@ async function updateLabels(issue, suggestedLabels, owner, repo, octokit) {
         return;
     }
 
-    // Show what we're changing
-    const changes = [];
-    if (labelsToAdd.length > 0) changes.push(`+${labelsToAdd.join(', ')}`);
-    if (labelsToRemove.length > 0) changes.push(`-${labelsToRemove.join(', ')}`);
-
+    // Show what we're changing, prefixing each label with + or -
+    const changes = [
+        ...labelsToAdd.map(l => `+${l}`),
+        ...labelsToRemove.map(l => `-${l}`)
+    ];
     console.log(`🏷️ Label changes: ${changes.join(' ')}`);
 
     // Exit early if dry run
@@ -188,7 +193,7 @@ async function updateLabels(issue, suggestedLabels, owner, repo, octokit) {
  * Add AI-generated comment to the issue
  */
 async function addComment(issue, comment, owner, repo, octokit) {
-    const fullComment = `${comment}\n\n---\n*This comment was automatically generated using AI. If you have any feedback or questions, please share it in a reply.*`;
+    const fullComment = `${comment}\n\n---\n*I'm an AI. Did I miss something? Let me know in a reply!*`;
 
     console.log(`💬 Posting comment:`);
     console.log(fullComment.replace(/^/gm, '> '));
@@ -248,20 +253,20 @@ async function processIssue(issue, comments, owner, repo, geminiApiKey, octokit)
         return;
     }
 
-    // Log what we're processing (reuse the same format as AI sees)
+    // Log what we're processing
     console.log(`\n📝 Processing: ${issue.title}`);
     console.log(formatMetadata(issue).replace(/^/gm, '📝 '));
 
     // Build prompt and call AI
-    console.log('🤖 Analyzing with AI...');
+    console.log('🤖 Analyzing...');
     const prompt = buildPrompt(issue, comments);
-    const analysis = await callGeminiAI(prompt, geminiApiKey);
+    const analysis = await callGemini(prompt, geminiApiKey);
 
     if (!analysis || typeof analysis !== 'object') {
-        throw new Error('Invalid analysis result from AI');
+        throw new Error('Invalid analysis result from Gemini');
     }
 
-    console.log(`💡 AI rated ${analysis.rating}/10: ${analysis.reason}`);
+    console.log(`🤖 ${analysis.rating}/10 severity: ${analysis.reason}`);
 
     // Apply the AI's suggestions
     await updateLabels(issue, analysis.labels, owner, repo, octokit);
@@ -304,7 +309,7 @@ async function main() {
     // Get the issue/PR data from GitHub
     const { issue, comments } = await getIssueFromGitHub(owner, repo, issueNumber, octokit);
 
-    // Process it with AI
+    // Process it
     await processIssue(issue, comments, owner, repo, geminiApiKey, octokit);
 }
 
