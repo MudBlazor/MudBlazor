@@ -190,7 +190,7 @@ async function updateLabels(issue, suggestedLabels, owner, repo, octokit) {
 async function addComment(issue, comment, owner, repo, octokit) {
     const fullComment = `${comment}\n\n---\n*This comment was automatically generated using AI. If you have any feedback or questions, please share it in a reply.*`;
 
-    console.log(`💬 Posting comment`);
+    console.log(`💬 Posting comment:`);
     console.log(fullComment.replace(/^/gm, '> '));
 
     // Exit early if dry run
