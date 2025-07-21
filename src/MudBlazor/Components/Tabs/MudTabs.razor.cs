@@ -1125,7 +1125,7 @@ namespace MudBlazor
         /// Handles keyboard navigation for tabs according to W3C accessibility guidelines
         /// Supports Enter/Space for activation and arrow keys for navigation
         /// </summary>
-        private async Task HandleTabKeyDownAsync(KeyboardEventArgs e, MudTabPanel panel)
+        protected virtual async Task HandleTabKeyDownAsync(KeyboardEventArgs e, MudTabPanel panel)
         {
             switch (e.Key)
             {
