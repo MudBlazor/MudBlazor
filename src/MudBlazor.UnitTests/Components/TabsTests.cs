@@ -138,7 +138,7 @@ namespace MudBlazor.UnitTests.Components
             // only the first panel should be rendered first
             comp.FindAll("p")[^1].MarkupMatches("<p>Panel 1<br></p>");
             // no child divs in div.mud-tabs-panels
-            comp.FindAll("div.mud-tabs-panels > div").Count.Should().Be(0);
+            comp.FindAll("div.mud-tabs-panels > div").Count.Should().Be(1);
             // click first button and show button click counters
             comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 1=0");
             comp.FindAll("button")[0].Click();
@@ -1619,7 +1619,7 @@ namespace MudBlazor.UnitTests.Components
             var tabsAfterArrowLeft = comp.FindAll("div.mud-tab");
             await comp.InvokeAsync(async () =>
             {
-                await tabsAfterArrowLeft[0].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Enter" });
+                await tabsAfterArrowLeft[0].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = " " });
             });
             comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content One");
         }
@@ -1637,14 +1637,27 @@ namespace MudBlazor.UnitTests.Components
                 await tabs[0].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
             });
 
-            var tabsAfterArrowDown = comp.FindAll("div.mud-tab");
             await comp.InvokeAsync(async () =>
             {
-                await tabsAfterArrowDown[1].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Enter" });
+                var tabs = comp.FindAll("div.mud-tab");
+                await tabs[1].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Enter" });
             });
 
             comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content Two");
+            await comp.InvokeAsync(async () =>
+            {
+                var tabs = comp.FindAll("div.mud-tab");
+                await tabs[1].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
+            });
+
+            await comp.InvokeAsync(async () =>
+            {
+                var tabs = comp.FindAll("div.mud-tab");
+                await tabs[2].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = " " });
+            });
+            comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content Three");
         }
+
 
         /// <summary>
         /// Tab selection wraps on keyboard Left and Right arrow keys, is activated by Enter/Space keys and ensures disabled tab is not selectable. 
@@ -1659,13 +1672,26 @@ namespace MudBlazor.UnitTests.Components
                 await tabs[0].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowLeft" });
             });
 
-            var tabsAfterArrowDown = comp.FindAll("div.mud-tab");
             await comp.InvokeAsync(async () =>
             {
-                await tabsAfterArrowDown[1].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Enter" });
+                var tabs = comp.FindAll("div.mud-tab");
+                await tabs[1].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Enter" });
             });
 
             comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content Two");
+            await comp.InvokeAsync(async () =>
+            {
+                var tabs = comp.FindAll("div.mud-tab");
+                await tabs[1].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowLeft" });
+            });
+
+            await comp.InvokeAsync(async () =>
+            {
+                var tabs = comp.FindAll("div.mud-tab");
+                await tabs[0].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = " " });
+            });
+            comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content One");
         }
+
     }
 }

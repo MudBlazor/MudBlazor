@@ -1204,30 +1204,28 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Generates a unique ID for a tab element using the tab's index.
+        /// Generates a unique ID for a tab element using the tab panels field id.
         /// Required for aria-controls attribute to link tab to its panel.
         /// </summary>
-        public string GetTabId(MudTabPanel panel)
+        internal string GetTabId(MudTabPanel panel)
         {
-            var tabIndex = _panels.IndexOf(panel);
-            return $"tablist-{_componentId}-tab-{tabIndex}";
+            return $"tablist-{_componentId}-tab-{panel.FieldId}";
         }
 
         /// <summary>
-        /// Generates a unique ID for a tab panel element using the tab's index.
+        /// Generates a unique ID for a tab panel element using the tab panels field id.
         /// Required for aria-controls attribute to link tab panel to its tab.
         /// </summary>
-        public string GetTabPanelId(MudTabPanel panel)
+        internal string GetTabPanelId(MudTabPanel panel)
         {
-            var tabIndex = _panels.IndexOf(panel);
-            return $"tablist-{_componentId}-tabpanel-{tabIndex}";
+            return $"tablist-{_componentId}-tabpanel-{panel.FieldId}";
         }
 
         /// <summary>
         /// Generates a unique ID for a tab list. 
         /// Required for aria-controls attribute to identify each tablist.
         /// </summary>
-        public string GetTabListId()
+        internal string GetTabListId()
         {
             return $"tablist-{_componentId}";
         }
