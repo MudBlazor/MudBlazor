@@ -39,17 +39,17 @@ jobs:
       with:
         node-version: '22'
 
-    - name: Install dependencies
-      run: npm install node-fetch@2 @actions/core @octokit/rest
-
-    - name: Restore Triage Database
+    - name: Cache Triage Database
       id: cache-db
       uses: actions/cache@v4
       with:
-        # The path to the file to cache.
         path: .github/triage-db.json
-        # A key to identify the cache.
-        key: ${{ runner.os }}-triage-db-v1
+        key: ${{ runner.os }}-triage-db-v2
+        restore-keys: |
+          ${{ runner.os }}-triage-db-v2
+
+    - name: Install dependencies
+      run: npm install node-fetch@2 @actions/core @octokit/rest
 
     - name: Triage Issues
       env:
@@ -81,7 +81,11 @@ jobs:
             echo "Initializing new triage database."
             mkdir -p "$(dirname "$DB_PATH")"
             echo "{}" > "$DB_PATH"
+          else
+            echo "Triage database found at $DB_PATH."
           fi
+          issue_count=$(jq 'keys | length' "$DB_PATH")
+          echo "Number of issues stored in triage database: $issue_count"
 
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             LIMIT=99999
@@ -97,43 +101,43 @@ jobs:
 
           gh issue list --state open --limit "$LIMIT" --json number,updatedAt \
             --jq 'sort_by(.updatedAt) | reverse | .[]' | jq -c '.' | while IFS= read -r issue_json; do
-
             issue_number=$(echo "$issue_json" | jq '.number')
             issue_updated_at=$(echo "$issue_json" | jq -r '.updatedAt')
-
-            last_triage_at=$(jq -r ".[\"$issue_number\"] // \"\"" "$DB_PATH")
-
+            export issue_number
+            # Use only string key lookup for last_triage_at using jq env
+            last_triage_at=$(jq -r '.[env.issue_number] // ""' "$DB_PATH")
+            # If the issue is in the database and has not been updated since last triage, skip it
             if [ -n "$last_triage_at" ]; then
-              last_triage_seconds=$(date -d "$last_triage_at" +%s)
-              issue_updated_seconds=$(date -d "$issue_updated_at" +%s)
-              if [ "$last_triage_seconds" -ge "$issue_updated_seconds" ]; then
-                echo "Issue #${issue_number} has no new activity since last triage ($last_triage_at)."
-                continue
-              else
-                echo "Issue #${issue_number} has been updated since last triage ($last_triage_at)."
+              last_triage_seconds=$(date -u -d "$last_triage_at" +%s 2>/dev/null || echo "0")
+              issue_updated_seconds=$(date -u -d "$issue_updated_at" +%s 2>/dev/null || echo "0")
+              # Only skip if both timestamps are valid and update is not newer than last triage
+              if [ "$last_triage_seconds" -ne 0 ] && [ "$issue_updated_seconds" -ne 0 ]; then
+                if [ "$issue_updated_seconds" -le "$last_triage_seconds" ]; then
+                  continue
+                fi
               fi
             fi
-
             export GITHUB_ISSUE_NUMBER="$issue_number"
             export AUTOTRIAGE_ENABLED="${AUTOTRIAGE_ENABLED}"
             export AUTOTRIAGE_MODEL="${AUTOTRIAGE_MODEL}"
             node .github/scripts/AutoTriage.js
-
-            current_timestamp=$(date --iso-8601=seconds)
-            jq ".[\"$issue_number\"] = \"$current_timestamp\"" "$DB_PATH" > "${DB_PATH}.tmp" && mv "${DB_PATH}.tmp" "$DB_PATH"
-            
+            # Only update the cache if not in dry mode
+            if [ "$AUTOTRIAGE_ENABLED" = "true" ]; then
+              current_timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+              jq ".[\"$issue_number\"] = \"$current_timestamp\" | ." "$DB_PATH" > "${DB_PATH}.tmp" && mv "${DB_PATH}.tmp" "$DB_PATH"
+              sync
+            fi
             sleep 3
-
             # Increment the counter for successfully processed issues.
             processed_count=$((processed_count + 1))
-            echo "Processed count: $processed_count"
-
-            # Check if the processing limit has been reached.
-            if [ "$processed_count" -ge "$MAX_PROCESSED" ]; then
-              echo "Reached processing limit of $MAX_PROCESSED issues."
-              break
-            fi
           done
         fi
-
+        
         echo "Triage run complete."
+
+    - name: Upload Triage Database for Inspection
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: triage-db-contents
+        path: .github/triage-db.json

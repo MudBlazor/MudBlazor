@@ -104,9 +104,9 @@ function formatMetadata(issue) {
     const labels = issue.labels?.map(l => typeof l === 'string' ? l : l.name) || [];
 
     return `${issue.state} ${itemType} #${issue.number} by ${issue.user?.login || 'unknown'}
-Created: ${issue.created_at}
-Updated: ${issue.updated_at}
-Current: ${new Date().toISOString()}
+Created Date: ${issue.created_at}
+Updated Date: ${issue.updated_at}
+Current Date: ${new Date().toISOString()}
 Comments: ${issue.comments || 0}, Reactions: ${issue.reactions?.total_count || 0}
 Current labels: ${labels.join(', ') || 'none'}`;
 }
