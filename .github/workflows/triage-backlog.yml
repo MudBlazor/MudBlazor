@@ -2,7 +2,7 @@ name: Triage Backlog
 
 on:
   schedule:
-    - cron: '0 6 * * *' # Gemini rates reset at 7am, so we can use up the remaining quota for the day.
+    - cron: '0 6 * * *'
   workflow_dispatch:
     inputs:
       backlog-size:
@@ -28,58 +28,108 @@ on:
 jobs:
   auto-triage:
     runs-on: ubuntu-latest
+    # Run on dispatch or for scheduled runs on the main repository.
     if: github.event_name == 'workflow_dispatch' || github.repository == 'MudBlazor/MudBlazor'
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '22'
+
     - name: Install dependencies
       run: npm install node-fetch@2 @actions/core @octokit/rest
-    - name: Get issues to process
-      id: get-issues
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        if [ -n "${{ inputs.issue-numbers }}" ]; then
-          # Process specific issues
-          echo "Processing specific issues: ${{ inputs.issue-numbers }}"
-          echo "${{ inputs.issue-numbers }}" | tr ', ' '\n' | grep -v '^$' | jq -R . | jq -s . > issues.json
-        else
-          # Find unlabeled issues for automated processing
-          backlog_size="${{ inputs.backlog-size || '30' }}"
-          echo "Finding $backlog_size unlabeled issues"
-          gh issue list \
-            --state open \
-            --limit 99999 \
-            --json number,labels \
-            --jq '.[] | select((.labels // [] | length == 0)) | .number' \
-            | head -n "$backlog_size" \
-            | jq -R . | jq -s . > issues.json
-        fi
-        issue_count=$(cat issues.json | jq length)
-        echo "Found $issue_count issues to process"
-        echo "issue-count=$issue_count" >> $GITHUB_OUTPUT
-        if [ "$issue_count" -eq 0 ]; then
-          echo "No issues found to process"
-          exit 0
-        fi
-    - name: Process issues
-      if: steps.get-issues.outputs.issue-count > 0
+
+    - name: Restore Triage Database
+      id: cache-db
+      uses: actions/cache@v4
+      with:
+        # The path to the file to cache.
+        path: .github/triage-db.json
+        # A key to identify the cache.
+        key: ${{ runner.os }}-triage-db-v1
+
+    - name: Triage Issues
       env:
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        AUTOTRIAGE_ENABLED: ${{ (inputs.dry-run || vars.AUTOTRIAGE_ENABLED != 'true') == false }}
+        AUTOTRIAGE_ENABLED: ${{ inputs.dry-run != 'true' }}
         AUTOTRIAGE_MODEL: ${{ inputs.model }}
       run: |
-        cat issues.json | jq -r '.[]' | while read -r issue_number; do
-          if [ -n "$issue_number" ]; then
-            echo "——————————————————————————————————Issue #$issue_number——————————————————————————————————"
-            export GITHUB_ISSUE_NUMBER="$issue_number"
-            node .github/scripts/AutoTriage.js
-            # Rate limiting delay
-            sleep 3
+        # MODE 1: Process specific issue numbers if provided. This mode bypasses the cache and 50-issue limit.
+        if [ -n "${{ inputs.issue-numbers }}" ]; then
+          echo "Processing specific issues provided via input: ${{ inputs.issue-numbers }}"
+          echo "${{ inputs.issue-numbers }}" | tr ',' ' ' | while read -r issue_number; do
+            if [ -n "$issue_number" ]; then
+              echo "——————————————————————————————————Issue #$issue_number——————————————————————————————————"
+              export GITHUB_ISSUE_NUMBER="$issue_number"
+              export AUTOTRIAGE_ENABLED="${AUTOTRIAGE_ENABLED}"
+              export AUTOTRIAGE_MODEL="${AUTOTRIAGE_MODEL}"
+              node .github/scripts/AutoTriage.js
+              sleep 3 # Rate limiting delay
+            fi
+          done
+        else
+          # MODE 2: Process backlog using the cache. Applies to scheduled runs or manual runs without specific numbers.
+          DB_PATH=".github/triage-db.json"
+          # Initialize a counter for processed issues.
+          processed_count=0
+
+          if [ ! -f "$DB_PATH" ]; then
+            echo "Initializing new triage database."
+            mkdir -p "$(dirname "$DB_PATH")"
+            echo "{}" > "$DB_PATH"
           fi
-        done
+
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            LIMIT=${{ inputs.backlog-size }}
+            echo "Manual run detected. Processing up to $LIMIT issues from the backlog."
+          else
+            LIMIT=99999
+            echo "Scheduled run detected. Processing all open issues."
+          fi
+
+          echo "Fetching issues, sorted by most recently updated..."
+
+          gh issue list --state open --limit "$LIMIT" --json number,updatedAt \
+            --jq 'sort_by(.updatedAt) | reverse | .[]' | jq -c '.' | while IFS= read -r issue_json; do
+
+            issue_number=$(echo "$issue_json" | jq '.number')
+            issue_updated_at=$(echo "$issue_json" | jq -r '.updatedAt')
+
+            last_triage_at=$(jq -r ".[\"$issue_number\"] // \"\"" "$DB_PATH")
+
+            if [ -n "$last_triage_at" ]; then
+              last_triage_seconds=$(date -d "$last_triage_at" +%s)
+              issue_updated_seconds=$(date -d "$issue_updated_at" +%s)
+              if [ "$last_triage_seconds" -ge "$issue_updated_seconds" ]; then
+                echo "Skipping: Issue #${issue_number} has no new activity since last triage ($last_triage_at)."
+                continue
+              fi
+            fi
+
+            export GITHUB_ISSUE_NUMBER="$issue_number"
+            export AUTOTRIAGE_ENABLED="${AUTOTRIAGE_ENABLED}"
+            export AUTOTRIAGE_MODEL="${AUTOTRIAGE_MODEL}"
+            node .github/scripts/AutoTriage.js
+
+            current_timestamp=$(date --iso-8601=seconds)
+            jq ".[\"$issue_number\"] = \"$current_timestamp\"" "$DB_PATH" > "${DB_PATH}.tmp" && mv "${DB_PATH}.tmp" "$DB_PATH"
+            
+            sleep 3
+
+            # Increment the counter for successfully processed issues.
+            processed_count=$((processed_count + 1))
+            echo "Processed issues count: $processed_count"
+
+            # Check if the processing limit has been reached.
+            if [ "$processed_count" -ge 50 ]; then
+              echo "✅ Reached processing limit of 50 issues."
+              break
+            fi
+          done
+        fi
+
+        echo "Triage run complete."

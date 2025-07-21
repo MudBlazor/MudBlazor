@@ -66,7 +66,7 @@ async function callGemini(prompt, apiKey) {
                     responseSchema: {
                         type: "object",
                         properties: {
-                            rating: { type: "integer", description: "How much an intervention is needed on a scale of 1 to 10" },
+                            rating: { type: "integer", description: "How much a human intervention is needed on a scale of 1 to 10" },
                             reason: { type: "string", description: "Brief technical explanation for logging purposes" },
                             comment: { type: "string", description: "A comment to reply to the issue with", nullable: true },
                             labels: { type: "array", items: { type: "string" }, description: "Array of labels to apply" },
@@ -236,13 +236,11 @@ async function getIssueFromGitHub(owner, repo, number, octokit) {
 /**
  * Close issue with specified reason
  */
-async function closeIssue(issue, repo, githubToken, reason = 'not_planned') {
+async function closeIssue(issue, repo, octokit, reason = 'not_planned') {
     console.log(`🔒 Closing #${issue.number} as ${reason}`);
 
     // Exit early if dry run
     if (dryRun || !octokit) return;
-
-    const octokit = github.getOctokit(githubToken);
 
     await octokit.rest.issues.update({
         owner: repo.owner,
@@ -274,7 +272,7 @@ async function processIssue(issue, comments, owner, repo, geminiApiKey, octokit)
     const start = Date.now();
     const analysis = await callGemini(prompt, geminiApiKey);
 
-    console.log(`🤖 Gemini returned analysis in ${Date.now() - start}ms with intervention rating of ${analysis.rating}/10`);
+    console.log(`🤖 Gemini returned analysis in ${Date.now() - start}ms with human intervention rating of ${analysis.rating}/10`);
     console.log(`🤖 ${analysis.reason}`);
 
     // Apply the AI's suggestions
@@ -291,8 +289,7 @@ async function processIssue(issue, comments, owner, repo, geminiApiKey, octokit)
 
     // If AI requested to close the issue, and this is an issue (not PR), and not dryRun
     if (analysis.close) {
-        console.log('🤖 Closing due to AI request.');
-        await closeIssue(issue, { owner, repo }, process.env.GITHUB_TOKEN, 'not_planned');
+        await closeIssue(issue, { owner, repo }, octokit, 'not_planned');
     }
 
     return analysis;
