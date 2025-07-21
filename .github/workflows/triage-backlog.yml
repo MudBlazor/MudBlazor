@@ -28,116 +28,99 @@ on:
 jobs:
   auto-triage:
     runs-on: ubuntu-latest
-    # Run on dispatch or for scheduled runs on the main repository.
     if: github.event_name == 'workflow_dispatch' || github.repository == 'MudBlazor/MudBlazor'
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '22'
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
 
-    - name: Cache Triage Database
-      id: cache-db
-      uses: actions/cache@v4
-      with:
-        path: .github/triage-db.json
-        key: ${{ runner.os }}-triage-db-v2
-        restore-keys: |
-          ${{ runner.os }}-triage-db-v2
+      - name: Cache Triage Database
+        id: cache-db
+        uses: actions/cache@v4
+        with:
+          path: .github/triage-db.json
+          key: ${{ runner.os }}-triage-db-v2
 
-    - name: Install dependencies
-      run: npm install node-fetch@2 @actions/core @octokit/rest
+      - name: Install dependencies
+        run: npm install node-fetch@2 @actions/core @octokit/rest
 
-    - name: Triage Issues
-      env:
-        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        AUTOTRIAGE_ENABLED: ${{ inputs.dry-run != 'true' }}
-        AUTOTRIAGE_MODEL: ${{ inputs.model }}
-      run: |
-        # MODE 1: Process specific issue numbers if provided. This mode bypasses the cache and 50-issue limit.
-        if [ -n "${{ inputs.issue-numbers }}" ]; then
-          echo "Processing specific issues provided via input: ${{ inputs.issue-numbers }}"
-          echo "${{ inputs.issue-numbers }}" | tr ',' ' ' | while read -r issue_number; do
-            if [ -n "$issue_number" ]; then
-              echo "——————————————————————————————————Issue #$issue_number——————————————————————————————————"
+      - name: Triage Issues 🤖
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AUTOTRIAGE_MODEL: ${{ inputs.model }}
+          AUTOTRIAGE_ENABLED: ${{ inputs.dry-run != 'true' }}
+          # Set max issues based on the trigger event (schedule vs. manual)
+          MAX_ISSUES: ${{ github.event_name == 'schedule' && 50 || inputs.backlog-size }}
+        run: |
+          set -e
+
+          # MODE 1: Process specific issues from input.
+          if [ -n "${{ inputs.issue-numbers }}" ]; then
+            echo "Processing specified issues: ${{ inputs.issue-numbers }}"
+            for issue_number in $(echo "${{ inputs.issue-numbers }}" | tr ',' ' '); do
+              echo "--- Processing Issue #${issue_number} ---"
               export GITHUB_ISSUE_NUMBER="$issue_number"
-              export AUTOTRIAGE_ENABLED="${AUTOTRIAGE_ENABLED}"
-              export AUTOTRIAGE_MODEL="${AUTOTRIAGE_MODEL}"
               node .github/scripts/AutoTriage.js
-              sleep 3 # Rate limiting delay
-            fi
-          done
-        else
-          # MODE 2: Process backlog using the cache. Applies to scheduled runs or manual runs without specific numbers.
-          DB_PATH=".github/triage-db.json"
-          # Initialize a counter for processed issues.
-          processed_count=0
-
-          if [ ! -f "$DB_PATH" ]; then
-            echo "Initializing new triage database."
-            mkdir -p "$(dirname "$DB_PATH")"
-            echo "{}" > "$DB_PATH"
+              sleep 3
+            done
           else
-            echo "Triage database found at $DB_PATH."
-          fi
-          issue_count=$(jq 'keys | length' "$DB_PATH")
-          echo "Number of issues stored in triage database: $issue_count"
-
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            LIMIT=99999
-            MAX_PROCESSED=${{ inputs.backlog-size }}
-            echo "Manual run detected. Processing up to $MAX_PROCESSED issues from the backlog."
-          else
-            LIMIT=99999
-            MAX_PROCESSED=50
-            echo "Scheduled run detected. Processing up to $MAX_PROCESSED issues."
-          fi
-
-          echo "Fetching issues, sorted by most recently updated..."
-
-          gh issue list --state open --limit "$LIMIT" --json number,updatedAt \
-            --jq 'sort_by(.updatedAt) | reverse | .[]' | jq -c '.' | while IFS= read -r issue_json; do
-            issue_number=$(echo "$issue_json" | jq '.number')
-            issue_updated_at=$(echo "$issue_json" | jq -r '.updatedAt')
-            export issue_number
-            # Use only string key lookup for last_triage_at using jq env
-            last_triage_at=$(jq -r '.[env.issue_number] // ""' "$DB_PATH")
-            # If the issue is in the database and has not been updated since last triage, skip it
-            if [ -n "$last_triage_at" ]; then
-              last_triage_seconds=$(date -u -d "$last_triage_at" +%s 2>/dev/null || echo "0")
-              issue_updated_seconds=$(date -u -d "$issue_updated_at" +%s 2>/dev/null || echo "0")
-              # Only skip if both timestamps are valid and update is not newer than last triage
-              if [ "$last_triage_seconds" -ne 0 ] && [ "$issue_updated_seconds" -ne 0 ]; then
-                if [ "$issue_updated_seconds" -le "$last_triage_seconds" ]; then
+            # MODE 2: Discover and process issues from the backlog.
+            echo "Processing up to $MAX_ISSUES issues from the backlog."
+            DB_PATH=".github/triage-db.json"
+            
+            # Initialize DB file if cache was missed.
+            [ -f "$DB_PATH" ] || { mkdir -p "$(dirname "$DB_PATH")" && echo "{}" > "$DB_PATH"; }
+            
+            processed_count=0
+            # Fetch up to 500 recent issues and pipe them to the processing loop.
+            gh issue list --state open --limit 500 --json number,updatedAt \
+              --jq 'sort_by(.updatedAt) | reverse | .[]' | jq -c '.' | while IFS= read -r issue_json; do
+              
+              if [ "$processed_count" -ge "$MAX_ISSUES" ]; then
+                echo "Reached processing limit of $MAX_ISSUES."
+                break
+              fi
+              
+              # Read issue number and update timestamp in one command.
+              read -r issue_number issue_updated_at <<< "$(echo "$issue_json" | jq -r '.number, .updatedAt')"
+              
+              # Check if the issue was updated since the last triage.
+              last_triage_at=$(jq -r ".\"$issue_number\" // \"\"" "$DB_PATH")
+              if [ -n "$last_triage_at" ]; then
+                last_triage_seconds=$(date -u -d "$last_triage_at" +%s 2>/dev/null || true)
+                issue_updated_seconds=$(date -u -d "$issue_updated_at" +%s 2>/dev/null || true)
+                
+                # Skip if the issue has not been updated since the last triage.
+                if [[ -n "$last_triage_seconds" && -n "$issue_updated_seconds" && "$issue_updated_seconds" -le "$last_triage_seconds" ]]; then
                   continue
                 fi
               fi
-            fi
-            export GITHUB_ISSUE_NUMBER="$issue_number"
-            export AUTOTRIAGE_ENABLED="${AUTOTRIAGE_ENABLED}"
-            export AUTOTRIAGE_MODEL="${AUTOTRIAGE_MODEL}"
-            node .github/scripts/AutoTriage.js
-            # Only update the cache if not in dry mode
-            if [ "$AUTOTRIAGE_ENABLED" = "true" ]; then
-              current_timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-              jq ".[\"$issue_number\"] = \"$current_timestamp\" | ." "$DB_PATH" > "${DB_PATH}.tmp" && mv "${DB_PATH}.tmp" "$DB_PATH"
-              sync
-            fi
-            sleep 3
-            # Increment the counter for successfully processed issues.
-            processed_count=$((processed_count + 1))
-          done
-        fi
-        
-        echo "Triage run complete."
+              
+              echo "--- Processing Issue #${issue_number} ---"
+              export GITHUB_ISSUE_NUMBER="$issue_number"
+              node .github/scripts/AutoTriage.js
+              
+              # Update the triage database if not in dry-run mode.
+              if [ "$AUTOTRIAGE_ENABLED" = "true" ]; then
+                current_timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+                jq ".[\"$issue_number\"] = \"$current_timestamp\"" "$DB_PATH" > "${DB_PATH}.tmp" && mv "${DB_PATH}.tmp" "$DB_PATH"
+              fi
+              
+              processed_count=$((processed_count + 1))
+              sleep 3
+            done
+          fi
+          
+          echo "Triage run complete."
 
-    - name: Upload Triage Database for Inspection
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: triage-db-contents
-        path: .github/triage-db.json
+      - name: Upload Triage Database
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: triage-db-contents
+          path: .github/triage-db.json
