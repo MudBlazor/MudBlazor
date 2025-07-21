@@ -106,7 +106,7 @@ function formatMetadata(issue) {
     return `${issue.state} ${itemType} #${issue.number} by ${issue.user?.login || 'unknown'}
 Created: ${issue.created_at}
 Updated: ${issue.updated_at}
-Current system time: ${new Date().toISOString()}
+Current: ${new Date().toISOString()}
 Comments: ${issue.comments || 0}, Reactions: ${issue.reactions?.total_count || 0}
 Current labels: ${labels.join(', ') || 'none'}`;
 }

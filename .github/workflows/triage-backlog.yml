@@ -84,11 +84,13 @@ jobs:
           fi
 
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            LIMIT=${{ inputs.backlog-size }}
-            echo "Manual run detected. Processing up to $LIMIT issues from the backlog."
+            LIMIT=99999
+            MAX_PROCESSED=${{ inputs.backlog-size }}
+            echo "Manual run detected. Processing up to $MAX_PROCESSED issues from the backlog."
           else
             LIMIT=99999
-            echo "Scheduled run detected. Processing all open issues."
+            MAX_PROCESSED=50
+            echo "Scheduled run detected. Processing up to $MAX_PROCESSED issues."
           fi
 
           echo "Fetching issues, sorted by most recently updated..."
@@ -105,8 +107,10 @@ jobs:
               last_triage_seconds=$(date -d "$last_triage_at" +%s)
               issue_updated_seconds=$(date -d "$issue_updated_at" +%s)
               if [ "$last_triage_seconds" -ge "$issue_updated_seconds" ]; then
-                echo "Skipping: Issue #${issue_number} has no new activity since last triage ($last_triage_at)."
+                echo "Issue #${issue_number} has no new activity since last triage ($last_triage_at)."
                 continue
+              else
+                echo "Issue #${issue_number} has been updated since last triage ($last_triage_at)."
               fi
             fi
 
@@ -122,11 +126,11 @@ jobs:
 
             # Increment the counter for successfully processed issues.
             processed_count=$((processed_count + 1))
-            echo "Processed issues count: $processed_count"
+            echo "Processed count: $processed_count"
 
             # Check if the processing limit has been reached.
-            if [ "$processed_count" -ge 50 ]; then
-              echo "✅ Reached processing limit of 50 issues."
+            if [ "$processed_count" -ge "$MAX_PROCESSED" ]; then
+              echo "Reached processing limit of $MAX_PROCESSED issues."
               break
             fi
           done
