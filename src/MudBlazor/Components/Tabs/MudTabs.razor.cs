@@ -465,6 +465,7 @@ namespace MudBlazor
         /// Prevents ID conflicts when multiple tab components exist on the same page.
         /// </summary>
         private readonly string _componentId = Identifier.Create();
+        private string? _tabListId;
 
         #region Life cycle management
 
@@ -478,6 +479,7 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             _resizeObserver = _resizeObserverFactory.Create();
+            _tabListId = $"tablist-{_componentId}";
             base.OnInitialized();
         }
 
@@ -1227,7 +1229,7 @@ namespace MudBlazor
         /// </summary>
         internal string GetTabListId()
         {
-            return $"tablist-{_componentId}";
+            return _tabListId!;
         }
     }
 }
