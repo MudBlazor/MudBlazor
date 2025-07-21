@@ -1626,6 +1626,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
             comp.Find(".mud-list-item").Click();
 
+            comp.WaitForAssertion(() => comp.Instance.FormFieldChangedEventArgs.Should().NotBeNull());
             comp.Instance.FormFieldChangedEventArgs.NewValue.Should().BeEquivalentTo(comp.Instance.States.Take(2).Reverse());
         }
 #nullable disable

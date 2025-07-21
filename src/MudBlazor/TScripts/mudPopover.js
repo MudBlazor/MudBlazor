@@ -532,8 +532,9 @@ window.mudpopoverHelper = {
                 // maxHeight adjustments stop the minute popoverNode is no longer inside the window
                 // Check if max-height is set on popover or firstChild
                 const hasMaxHeight = popoverContentNode.style.maxHeight != '' || (firstChild && firstChild.style.maxHeight != '');
+                const isList = firstChild && firstChild.classList && firstChild.classList.contains("mud-list");
 
-                if (!hasMaxHeight) {
+                if (!hasMaxHeight && isList) {
                     // in case of a reflow check it should show from top properly
                     let shouldShowFromTop = false;
                     // calculate new max height if it exceeds bounds
@@ -567,6 +568,8 @@ window.mudpopoverHelper = {
                             top = window.mudpopoverHelper.overflowPadding;                          
                             offsetY = 0;
                         }
+                        // set newMaxHeight to be minimum of 3x overflow padding, by default 72px (or 3 items roughly)
+                        newMaxHeight = Math.max(newMaxHeight, window.mudpopoverHelper.overflowPadding * 3);
                         popoverContentNode.style.maxHeight = (newMaxHeight) + 'px';
                         popoverContentNode.mudHeight = "setmaxheight";
                     }
