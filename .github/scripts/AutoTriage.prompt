@@ -159,12 +159,12 @@ If an issue is marked as `info required` or `stale`, you must re-evaluate the is
 - The issue has been open for at least 14 days
 - The issue has one of these labels: `info required`, `question`, `answered`, `not planned`, `duplicate`, `invalid`, `fixed`
 - The issue does NOT have the `on hold` label
-- The issue has no assignee OR you are explicitly told to ignore assignees
+- The issue has no assignee
 
 **Mark a pull request as stale if ALL of these conditions are met:**
 - The PR has been open for at least 180 days (6 months)
 - The PR does NOT have the `on hold` or `breaking change` labels
-- The PR has no assignee OR you are explicitly told to ignore assignees
+- The PR has no assignee
 
 ## STALE ISSUE ACTIONS
 
@@ -213,4 +213,3 @@ If you would like to continue working on it, please open a new PR referencing th
 **Never mark as stale or close if:**
 - The item has the `on hold` label
 - The item is a PR with the `breaking change` label
-- The item was created by a maintainer team member

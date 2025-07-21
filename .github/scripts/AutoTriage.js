@@ -102,13 +102,15 @@ function formatMetadata(issue) {
     const isIssue = !issue.pull_request;
     const itemType = isIssue ? 'issue' : 'pull request';
     const labels = issue.labels?.map(l => typeof l === 'string' ? l : l.name) || [];
+    const hasAssignee = Array.isArray(issue.assignees) ? issue.assignees.length > 0 : !!issue.assignee;
 
     return `${issue.state} ${itemType} #${issue.number} by ${issue.user?.login || 'unknown'}
 Created Date: ${issue.created_at}
 Updated Date: ${issue.updated_at}
 Current Date: ${new Date().toISOString()}
 Comments: ${issue.comments || 0}, Reactions: ${issue.reactions?.total_count || 0}
-Current labels: ${labels.join(', ') || 'none'}`;
+Current labels: ${labels.join(', ') || 'none'}
+Has assignee: ${hasAssignee}`;
 }
 
 /**
@@ -316,15 +318,58 @@ async function main() {
     let octokit = null;
     if (process.env.GITHUB_TOKEN) {
         octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
+
+        const rate = await octokit.rest.rateLimit.get();
+        console.log(`⚙️ GitHub API calls left: ${rate.data.rate.remaining} (resets at ${new Date(rate.data.rate.reset * 1000).toLocaleString()})`);
     } else {
         console.log('⚠️ No GITHUB_TOKEN provided - running in read-only mode');
+    }
+
+    // Load or initialize database
+    const dbPath = path.resolve(__dirname, '../triage-db.json');
+    let triageDb = {};
+    if (fs.existsSync(dbPath)) {
+        const dbRaw = fs.readFileSync(dbPath, 'utf8');
+        triageDb = dbRaw ? JSON.parse(dbRaw) : {};
     }
 
     // Get the issue/PR data from GitHub
     const { issue, comments } = await getIssueFromGitHub(owner, repo, issueNumber, octokit);
 
+    // Check last triage time
+    const lastTriaged = triageDb[issueNumber];
+    if (lastTriaged) {
+        const lastTriagedDate = new Date(lastTriaged);
+        const updatedDate = new Date(issue.updated_at);
+
+        // If the issue has not been updated since last triage, check labels
+        if (updatedDate <= lastTriagedDate) {
+            const labels = (issue.labels || []).map(l => typeof l === 'string' ? l : l.name);
+            const hasLabelThatNeedsChecking = labels.includes('info required') || labels.includes('stale');
+            const sevenDaysMs = 7 * 24 * 60 * 60 * 1000; // Re-check after 7 days so we don't waste API calls
+
+            if (hasLabelThatNeedsChecking) {
+                if (Date.now() - lastTriagedDate.getTime() > sevenDaysMs) {
+                    console.log(`⚙️ #${issueNumber} is eligible to be re-checked.`);
+                } else {
+                    console.log(`⚙️ #${issueNumber} is not eligible to be re-checked.`);
+                    return;
+                }
+            } else {
+                console.log(`⚙️ #${issueNumber} has not updated since last triage (${lastTriaged})`);
+                return;
+            }
+        }
+    }
+
     // Process it
     await processIssue(issue, comments, owner, repo, geminiApiKey, octokit);
+
+    // Update database if not dry run
+    if (!dryRun) {
+        triageDb[issueNumber] = new Date().toISOString();
+        fs.writeFileSync(dbPath, JSON.stringify(triageDb, null, 2));
+    }
 }
 
 // Run the script
