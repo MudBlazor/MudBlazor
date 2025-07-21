@@ -126,7 +126,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// When KeepPanelsAlive="false" the panels are not destroyed and recreated on tab-switch. We prove that by using a button click counter on every tab and
+        /// When KeepPanelsAlive="true" the panels are not destroyed and recreated on tab-switch. We prove that by using a button click counter on every tab and
         /// a callback that is fired only when OnRenderAsync of the tab panel happens the first time (which outputs a message at the bottom).
         /// </summary>
         [Test]
@@ -137,9 +137,8 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button").Count.Should().Be(1);
             // only the first panel should be rendered first
             comp.FindAll("p")[^1].MarkupMatches("<p>Panel 1<br></p>");
-            // exactly one tabpanel div should exist with proper accessibility attributes
-            comp.FindAll("div.mud-tabs-panels > div[role='tabpanel']").Count.Should().Be(1);
-            comp.FindAll("div.mud-tabs-panels > div[role='tabpanel'][tabindex='0']").Count.Should().Be(1);
+            // no child divs in div.mud-tabs-panels
+            comp.FindAll("div.mud-tabs-panels > div").Count.Should().Be(0);
             // click first button and show button click counters
             comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 1=0");
             comp.FindAll("button")[0].Click();
@@ -150,8 +149,6 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("p")[^1].MarkupMatches("<p>Panel 1<br>Panel 2<br></p>");
             // only one panel should be evident in the markup:
             comp.FindAll("button").Count.Should().Be(1);
-            // still exactly one tabpanel div should exist
-            comp.FindAll("div.mud-tabs-panels > div[role='tabpanel']").Count.Should().Be(1);
             comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 2=0");
             // click the button twice
             comp.FindAll("button")[0].Click();
@@ -162,17 +159,14 @@ namespace MudBlazor.UnitTests.Components
             // second panel should be displayed
             comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 3=0");
             comp.FindAll("p")[^1].MarkupMatches("<p>Panel 1<br>Panel 2<br>Panel 3<br></p>");
-            // still exactly one tabpanel div should exist
-            comp.FindAll("div.mud-tabs-panels > div[role='tabpanel']").Count.Should().Be(1);
             // switch back to the first tab:
             comp.FindAll("div.mud-tab")[0].Click();
             comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 1=0");
             comp.FindAll("button")[0].Click();
             comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 1=1");
             comp.FindAll("p")[^1].MarkupMatches("<p>Panel 1<br>Panel 2<br>Panel 3<br>Panel 1<br></p>");
-            // final check - still exactly one tabpanel div should exist
-            comp.FindAll("div.mud-tabs-panels > div[role='tabpanel']").Count.Should().Be(1);
         }
+
 
         [Test]
         public void TabHeaderClassPropagated()
@@ -1345,7 +1339,7 @@ namespace MudBlazor.UnitTests.Components
 
 #nullable enable
         [Test]
-        public void TabsDragAndDrop_With_FiresOnItemDropped()
+        public async Task TabsDragAndDrop_With_FiresOnItemDroppedAsync()
         {
             bool onItemDroppedCalled = false;
             MudItemDropInfo<MudTabPanel>? finalDropInfo = null;
@@ -1374,7 +1368,7 @@ namespace MudBlazor.UnitTests.Components
 
             // simulate dragging a tab to index 2
             var dropInfo = new MudItemDropInfo<MudTabPanel>(draggableTab, "mud-drop-zone", 2);
-            tabs.ItemUpdated(dropInfo);
+            await tabs.ItemUpdated(dropInfo);
 
             // Assert that OnItemDropped was called
             comp.WaitForAssertion(() => onItemDroppedCalled.Should().BeTrue());
@@ -1595,82 +1589,83 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => divs[3].ClassList.Contains("mud-tab-active").Should().BeTrue());
             comp.WaitForAssertion(() => divs[3].ClassList.Contains("test-active").Should().BeTrue());
         }
-		/// <summary>
-		/// Tab selection changes on keyboard Left and Right arrow keys, is activated by Enter/Space keys and ensures disabled tab is not selectable. 
-		/// </summary>
-		[Test]
-		public async Task KeyboardActivation_DisablesDisabledTab_LeftRight()
-		{
-			var comp = Context.RenderComponent<TabsKeyboardAccessibilityTest>();
-			comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content One");
 
-			await comp.InvokeAsync(async () =>
-			{
-				var tabs = comp.FindAll("div.mud-tab");
-				await tabs[0].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowRight" });
-			});
-			var tabsAfterArrowRight = comp.FindAll("div.mud-tab");
-			await comp.InvokeAsync(async () =>
-			{
-				await tabsAfterArrowRight[1].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Enter" });
-			});
-			comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content Two");
+        /// <summary>
+        /// Tab selection changes on keyboard Left and Right arrow keys, is activated by Enter/Space keys and ensures disabled tab is not selectable. 
+        /// </summary>
+        [Test]
+        public async Task KeyboardActivation_DisablesDisabledTab_LeftRight()
+        {
+            var comp = Context.RenderComponent<TabsKeyboardAccessibilityTest>();
+            comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content One");
 
-			await comp.InvokeAsync(async () =>
-			{
-				var tabs = comp.FindAll("div.mud-tab");
-				await tabs[1].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowLeft" });
-			});
-			var tabsAfterArrowLeft = comp.FindAll("div.mud-tab");
-			await comp.InvokeAsync(async () =>
-			{
-				await tabsAfterArrowLeft[0].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Enter" });
-			});
-			comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content One");
-		}
+            await comp.InvokeAsync(async () =>
+            {
+                var tabs = comp.FindAll("div.mud-tab");
+                await tabs[0].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowRight" });
+            });
+            var tabsAfterArrowRight = comp.FindAll("div.mud-tab");
+            await comp.InvokeAsync(async () =>
+            {
+                await tabsAfterArrowRight[1].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Enter" });
+            });
+            comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content Two");
 
-		/// <summary>
-		/// Tab selection changes on keyboard Up and Down arrow keys, is activated by Enter/Space keys
-		/// </summary>
-		[Test]
-		public async Task VerticalTabs_SupportsArrowUpDownNavigation()
-		{
-			var comp = Context.RenderComponent<VerticalTabsKeyboardAccessibilityTest>();
-			await comp.InvokeAsync(async () =>
-			{
-				var tabs = comp.FindAll("div.mud-tab");
-				await tabs[0].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
-			});
+            await comp.InvokeAsync(async () =>
+            {
+                var tabs = comp.FindAll("div.mud-tab");
+                await tabs[1].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowLeft" });
+            });
+            var tabsAfterArrowLeft = comp.FindAll("div.mud-tab");
+            await comp.InvokeAsync(async () =>
+            {
+                await tabsAfterArrowLeft[0].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Enter" });
+            });
+            comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content One");
+        }
 
-			var tabsAfterArrowDown = comp.FindAll("div.mud-tab");
-			await comp.InvokeAsync(async () =>
-			{
-				await tabsAfterArrowDown[1].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Enter" });
-			});
+        /// <summary>
+        /// Tab selection changes on keyboard Up and Down arrow keys, is activated by Enter/Space keys
+        /// </summary>
+        [Test]
+        public async Task VerticalTabs_SupportsArrowUpDownNavigation()
+        {
+            var comp = Context.RenderComponent<VerticalTabsKeyboardAccessibilityTest>();
+            await comp.InvokeAsync(async () =>
+            {
+                var tabs = comp.FindAll("div.mud-tab");
+                await tabs[0].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
+            });
 
-			comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content Two");
-		}
+            var tabsAfterArrowDown = comp.FindAll("div.mud-tab");
+            await comp.InvokeAsync(async () =>
+            {
+                await tabsAfterArrowDown[1].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Enter" });
+            });
 
-		/// <summary>
-		/// Tab selection wraps on keyboard Left and Right arrow keys, is activated by Enter/Space keys and ensures disabled tab is not selectable. 
-		/// </summary>
-		[Test]
-		public async Task KeyboardNavigation_LeftArrow_WrapsToLastEnabledTab()
-		{
-			var comp = Context.RenderComponent<TabsKeyboardAccessibilityTest>();
-			await comp.InvokeAsync(async () =>
-			{
-				var tabs = comp.FindAll("div.mud-tab");
-				await tabs[0].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowLeft" });
-			});
+            comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content Two");
+        }
 
-			var tabsAfterArrowDown = comp.FindAll("div.mud-tab");
-			await comp.InvokeAsync(async () =>
-			{
-				await tabsAfterArrowDown[1].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Enter" });
-			});
+        /// <summary>
+        /// Tab selection wraps on keyboard Left and Right arrow keys, is activated by Enter/Space keys and ensures disabled tab is not selectable. 
+        /// </summary>
+        [Test]
+        public async Task KeyboardNavigation_LeftArrow_WrapsToLastEnabledTab()
+        {
+            var comp = Context.RenderComponent<TabsKeyboardAccessibilityTest>();
+            await comp.InvokeAsync(async () =>
+            {
+                var tabs = comp.FindAll("div.mud-tab");
+                await tabs[0].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowLeft" });
+            });
 
-			comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content Two");
-		}
-	}
+            var tabsAfterArrowDown = comp.FindAll("div.mud-tab");
+            await comp.InvokeAsync(async () =>
+            {
+                await tabsAfterArrowDown[1].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Enter" });
+            });
+
+            comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content Two");
+        }
+    }
 }
