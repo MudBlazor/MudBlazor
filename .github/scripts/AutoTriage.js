@@ -15,7 +15,13 @@ const fs = require('fs');
 const path = require('path');
 
 // Configuration
-const dryRun = process.env.AUTOTRIAGE_ENABLED !== 'true';
+// AUTOTRIAGE_PERMISSIONS is a comma-separated list of allowed actions: 'label', 'comment', 'close'
+const permissions = new Set(
+    (process.env.AUTOTRIAGE_PERMISSIONS || 'none')
+        .split(',')
+        .map(p => p.trim())
+        .filter(p => p !== '')
+);
 const aiModel = process.env.AUTOTRIAGE_MODEL || 'gemini-2.5-flash';
 
 // Load AI prompt template
@@ -28,7 +34,8 @@ try {
     process.exit(1);
 }
 
-console.log(`🤖 Using ${aiModel} (${dryRun ? 'DRY RUN' : 'LIVE'})`);
+console.log(`🤖 Using ${aiModel}`);
+console.log(`⚙️ Permissions: ${Array.from(permissions).join(', ') || 'none (dry run)'}`);
 
 /**
  * Call Gemini to analyze the issue content and return structured response
@@ -152,7 +159,7 @@ async function updateLabels(issue, suggestedLabels, owner, repo, octokit) {
     ];
     console.log(`🏷️ Label changes: ${changes.join(', ')}`);
 
-    if (!octokit) return;
+    if (!octokit || !permissions.has('label')) return;
 
     if (labelsToAdd.length > 0) {
         await octokit.rest.issues.addLabels({
@@ -177,7 +184,7 @@ async function updateLabels(issue, suggestedLabels, owner, repo, octokit) {
  * Add AI-generated comment to the issue
  */
 async function addComment(issue, comment, owner, repo, octokit) {
-    if (!octokit) return;
+    if (!octokit || !permissions.has('comment')) return;
 
     await octokit.rest.issues.createComment({
         owner,
@@ -266,7 +273,7 @@ async function getLabelAddedTimestamps(owner, repo, issue_number, octokit) {
 async function closeIssue(issue, repo, octokit, reason = 'not_planned') {
     console.log(`🔒 Closing #${issue.number} as ${reason}`);
 
-    if (!octokit) return;
+    if (!octokit || !permissions.has('close')) return;
 
     await octokit.rest.issues.update({
         owner: repo.owner,
@@ -376,9 +383,11 @@ async function main() {
 
     await processIssue(issue, comments, owner, repo, geminiApiKey, octokit);
 
-    if (!dryRun) {
+    if (permissions.size > 0) {
         triageDb[issueNumber] = new Date().toISOString();
         fs.writeFileSync(dbPath, JSON.stringify(triageDb, null, 2));
+    } else {
+        console.log('⚙️ No permissions granted, skipping triage DB update (dry run).');
     }
 }
 

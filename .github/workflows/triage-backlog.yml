@@ -19,11 +19,11 @@ on:
         required: false
         default: 'gemini-2.5-flash'
         type: string
-      dry-run:
-        description: 'Dry-run (no actual changes)'
+      permissions:
+        description: 'Permissions (empty for dry run)'
         required: false
-        default: true
-        type: boolean
+        default: 'label, comment, stale, close' 
+        type: string
 
 jobs:
   auto-triage:
@@ -46,10 +46,11 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           AUTOTRIAGE_MODEL: ${{ inputs.model }}
-          AUTOTRIAGE_ENABLED: ${{ inputs.dry-run && 'false' || 'true' }}
+          AUTOTRIAGE_PERMISSIONS: ${{ inputs.permissions || vars.AUTOTRIAGE_PERMISSIONS }}
           MAX_ISSUES: ${{ github.event_name == 'schedule' && 50 || inputs.backlog-size }}
         run: |
           set -e
+          
           if [ -n "${{ inputs.issue-numbers }}" ]; then
             echo "Processing specified issues: ${{ inputs.issue-numbers }}"
             issue_numbers="${{ inputs.issue-numbers }}"
@@ -72,4 +73,3 @@ jobs:
             count=$((count + 1))
             sleep 5
           done
-
