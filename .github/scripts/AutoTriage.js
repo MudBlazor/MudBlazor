@@ -58,7 +58,7 @@ async function callGemini(prompt, apiKey) {
                         type: "object",
                         properties: {
                             rating: { type: "integer", description: "How much a human intervention is needed on a scale of 1 to 10" },
-                            reason: { type: "string", description: "Brief technical explanation for logging purposes" },
+                            reason: { type: "string", description: "Brief thought process for logging purposes" },
                             comment: { type: "string", description: "A comment to reply to the issue with", nullable: true },
                             labels: { type: "array", items: { type: "string" }, description: "Array of labels to apply" },
                             close: { type: "boolean", description: "Set to true if the issue should be closed as part of this action", nullable: true },
