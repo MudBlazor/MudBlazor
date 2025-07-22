@@ -1473,7 +1473,13 @@ namespace MudBlazor
             }
         }
 
-        internal void RemoveColumn(Column<T> column)
+        /// <summary>
+        /// Removes the specified column from the collection of rendered columns.
+        /// </summary>
+        /// <remarks>This method removes the specified column from the <c>RenderedColumns</c> collection. 
+        /// If the column is not present in the collection, no action is taken.</remarks>
+        /// <param name="column">The column to remove. Must not be null.</param>
+        public void RemoveColumn(Column<T> column)
         {
             RenderedColumns.Remove(column);
         }
