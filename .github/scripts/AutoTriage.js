@@ -17,7 +17,7 @@ const path = require('path');
 // Configuration
 // AUTOTRIAGE_PERMISSIONS is a comma-separated list of allowed actions: 'label', 'comment', 'close', 'edit'
 const permissions = new Set(
-    (process.env.AUTOTRIAGE_PERMISSIONS || 'none')
+    (process.env.AUTOTRIAGE_PERMISSIONS || '')
         .split(',')
         .map(p => p.trim())
         .filter(p => p !== '')
@@ -34,8 +34,7 @@ try {
     process.exit(1);
 }
 
-console.log(`🤖 Using ${aiModel}`);
-console.log(`⚙️ Permissions: ${Array.from(permissions).join(', ') || 'none (dry run)'}`);
+console.log(`🤖 Using ${aiModel} with ${Array.from(permissions).join(', ') || 'none (dry run)'} permissions`);
 
 /**
  * Call Gemini to analyze the issue content and return structured response
@@ -101,12 +100,22 @@ async function buildMetadata(issue, owner, repo, octokit) {
         return `${labelName}${timestamp}`;
     }) || [];
 
-    return `${issue.state} ${itemType} #${issue.number} by ${issue.user?.login || 'unknown'}
-Created Date: ${issue.created_at}
-Updated Date: ${issue.updated_at}
-Comments: ${issue.comments || 0}, Reactions: ${issue.reactions?.total_count || 0}
-Labels: ${currentLabelsWithTimestamps.join(', ') || 'none'}
-Assigned: ${hasAssignee}`;
+    const { data: collabData } = await octokit.rest.repos.listCollaborators({ owner, repo });
+    let collaborators = collabData.map(c => c.login);
+
+    return {
+        state: issue.state,
+        type: itemType,
+        number: issue.number,
+        author: issue.user?.login || 'unknown',
+        created_at: issue.created_at,
+        updated_at: issue.updated_at,
+        comments: issue.comments || 0,
+        reactions: issue.reactions?.total_count || 0,
+        labels: currentLabelsWithTimestamps,
+        assigned: hasAssignee,
+        collaborators
+    };
 }
 
 /**
@@ -115,7 +124,6 @@ Assigned: ${hasAssignee}`;
 async function buildPrompt(issue, comments, owner, repo, octokit) {
     const issueText = `${issue.title}\n\n${issue.body || ''}`;
     const metadata = await buildMetadata(issue, owner, repo, octokit);
-    const { data: collaborators } = await octokit.rest.repos.listCollaborators({ owner, repo });
 
     let commentsText = 'No comments available.';
     if (comments?.length) {
@@ -131,8 +139,7 @@ ISSUE TO ANALYZE:
 ${issueText}
 
 ISSUE METADATA:
-${metadata}
-Repository collaborators: ${collaborators.map(c => c.login).join(', ')}
+${JSON.stringify(metadata, null, 2)}
 
 COMMENTS:
 ${commentsText}
@@ -150,7 +157,6 @@ async function updateLabels(issue, suggestedLabels, owner, repo, octokit) {
     const labelsToRemove = currentLabels.filter(l => !suggestedLabels.includes(l));
 
     if (labelsToAdd.length === 0 && labelsToRemove.length === 0) {
-        console.log('🏷️ No labels suggested');
         return;
     }
 
@@ -312,15 +318,20 @@ async function processIssue(issue, comments, owner, repo, geminiApiKey, octokit)
         return;
     }
 
-    console.log(`📝 ${issue.title}`);
-    const metadataString = await buildMetadata(issue, owner, repo, octokit);
-    console.log(metadataString.replace(/^/gm, '📝 '));
+    const metadata = await buildMetadata(issue, owner, repo, octokit);
+    const formattedMetadata = [
+        `${metadata.state} ${metadata.type} #${metadata.number} by ${metadata.author}`,
+        `Title: ${metadata.title}`,
+        `Updated: ${metadata.updated_at}`,
+        `Labels: ${metadata.labels.join(', ') || 'none'}`,
+    ].join('\n');
+    console.log(formattedMetadata.replace(/^/gm, '📝 '));
 
     const prompt = await buildPrompt(issue, comments, owner, repo, octokit);
     const start = Date.now();
     const analysis = await callGemini(prompt, geminiApiKey);
 
-    console.log(`🤖 Gemini returned analysis in ${Date.now() - start}ms with human intervention rating of ${analysis.rating}/10`);
+    console.log(`🤖 Gemini returned analysis in ${((Date.now() - start) / 1000).toFixed(1)}s with human intervention rating of ${analysis.rating}/10`);
     console.log(`🤖 ${analysis.reason}`);
 
     await updateLabels(issue, analysis.labels, owner, repo, octokit);
@@ -362,7 +373,12 @@ async function main() {
         octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
 
         const rate = await octokit.rest.rateLimit.get();
-        console.log(`⚙️ GitHub API calls left: ${rate.data.rate.remaining} (resets at ${new Date(rate.data.rate.reset * 1000).toLocaleString()})`);
+        if (rate.data.rate.remaining < 1000) {
+            console.log(`⚠️ GitHub API calls left: ${rate.data.rate.remaining} (resets at ${new Date(rate.data.rate.reset * 1000).toLocaleString()})`);
+        } else if (rate.data.rate.remaining < 500) {
+            console.log('❌ Too few GitHub API calls left, ending early to avoid hitting rate limit');
+            process.exit(1);
+        }
     } else {
         console.log('⚠️ No GITHUB_TOKEN provided - running in read-only mode');
     }

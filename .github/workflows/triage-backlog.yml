@@ -28,7 +28,7 @@ on:
 jobs:
   auto-triage:
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch' || github.repository == 'MudBlazor/MudBlazor'
+    if: github.event_name == 'workflow_dispatch' || vars.AUTOTRIAGE_PERMISSIONS # Run manually or on a schedule if permissions are set up.
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
