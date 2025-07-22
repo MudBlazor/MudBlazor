@@ -97,7 +97,7 @@ async function buildMetadata(issue, owner, repo, octokit) {
     const labelTimestamps = await getLabelAddedTimestamps(owner, repo, issue.number, octokit);
     const currentLabelsWithTimestamps = issue.labels?.map(l => {
         const labelName = typeof l === 'string' ? l : l.name;
-        const timestamp = labelTimestamps[labelName] ? ` (added: ${labelTimestamps[labelName]})` : '';
+        const timestamp = labelTimestamps[labelName] ? ` (${labelTimestamps[labelName]})` : '';
         return `${labelName}${timestamp}`;
     }) || [];
 
@@ -329,8 +329,6 @@ async function processIssue(issue, comments, owner, repo, geminiApiKey, octokit)
         console.log(`💬 Posting comment:`);
         console.log(analysis.comment.replace(/^/gm, '> '));
         await addComment(issue, analysis.comment, owner, repo, octokit);
-    } else {
-        console.log(`💬 No comments suggested.`);
     }
 
     if (analysis.close) {

@@ -22,7 +22,7 @@ on:
       permissions:
         description: 'Permissions (empty for dry run)'
         required: false
-        default: 'label, comment, stale, close, edit' 
+        default: 'label, comment, close, edit' 
         type: string
 
 jobs:
@@ -51,13 +51,16 @@ jobs:
         run: |
           set -e
           
+          # This is set up wrong because issues that don't get processed shouldn't count towards the backlog size.
+          # Maybe we should handle the storage blob in here instead of making it run node AND sleep.
+
           if [ -n "${{ inputs.issue-numbers }}" ]; then
             echo "Processing specified issues: ${{ inputs.issue-numbers }}"
             issue_numbers="${{ inputs.issue-numbers }}"
             max_count=""
           else
             echo "Processing up to $MAX_ISSUES issues from the backlog."
-            issue_numbers=$(gh issue list --state open --limit 9999 --json number --jq '.[].number')
+            issue_numbers=$(gh issue list --state open --limit 9999 --search 'sort:updated-desc' --json number --jq '.[].number')
             max_count="$MAX_ISSUES"
           fi
 
