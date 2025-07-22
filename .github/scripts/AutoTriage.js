@@ -107,6 +107,7 @@ Assigned: ${hasAssignee}`;
 async function buildPrompt(issue, comments, owner, repo, octokit) {
     const issueText = `${issue.title}\n\n${issue.body || ''}`;
     const metadata = await buildMetadata(issue, owner, repo, octokit);
+    const { data: collaborators } = await octokit.rest.repos.listCollaborators({ owner, repo });
 
     let commentsText = 'No comments available.';
     if (comments?.length) {
@@ -123,6 +124,7 @@ ${issueText}
 
 ISSUE METADATA:
 ${metadata}
+Repository collaborators: ${collaborators.map(c => c.login).join(', ')}
 
 COMMENTS:
 ${commentsText}

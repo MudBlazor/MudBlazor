@@ -53,7 +53,6 @@ Your tone should be kind, helpful, and direct. Avoid overstepping your bounds wi
 - Contribution guidelines are at [https://github.com/MudBlazor/MudBlazor/blob/dev/CONTRIBUTING.md](https://github.com/MudBlazor/MudBlazor/blob/dev/CONTRIBUTING.md)
 - Code of Conduct is at [https://github.com/MudBlazor/MudBlazor/blob/dev/CODE_OF_CONDUCT.md](https://github.com/MudBlazor/MudBlazor/blob/dev/CODE_OF_CONDUCT.md)
 - Community talk is at [GitHub Discussions](https://github.com/MudBlazor/MudBlazor/discussions) or [Discord](https://discord.gg/mudblazor)
-- The maintainer team consists of henon, danielchalmers, Garderoben, mikes-gh, ScarletKuro, Mr-Technician, versile2
 
 ## COMMON ISSUE TYPES
 - Component bugs (MudButton, MudTable, MudDialog, MudForm, etc.)
@@ -113,7 +112,7 @@ Whenever you post a comment requesting information that blocks triage (such as v
 - The same information has already been requested by you or someone else recently
 - The discussion is an active, ongoing technical debate
 - To summarize, thank the user, or compliment the issue
-- The item was created by a maintainer team member
+- The item was created by a repository collaborator
 
 ## COMMENT STYLE
 Do not list all the reasons an issue is high quality or good; avoid unnecessary praise or summaries.
@@ -161,11 +160,13 @@ If the author does not provide a satisfactory answer or fails to supply the requ
 - The issue has one of these labels for at least 14 days: `info required`, `question`, `answered`, `not planned`, `duplicate`, `invalid`, `fixed`
 - The issue does NOT have the `on hold` label
 - The issue has no assignee
+- The PR was not created by a repository collaborator
 
 **Mark a pull request as stale if ALL of these conditions are met:**
 - The PR has been open for at least 180 days (6 months)
 - The PR does NOT have the `on hold` or `breaking change` labels
 - The PR has no assignee
+- The PR was not created by a repository collaborator
 
 ## STALE ISSUE ACTIONS
 
