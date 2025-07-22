@@ -153,11 +153,12 @@ Always end your comment with: "\n\n---\n*I'm an AI assistant—If I missed somet
 
 ## STALE ISSUE IDENTIFICATION
 
-If an issue is marked as `info required` or `stale`, you must re-evaluate the issue after the author's follow-up. If the author provides a satisfactory response and all required information, remove the `info required` or `stale` label and proceed as normal. If the author does not provide a satisfactory answer or fails to supply the requested information, you may keep or add the `stale` label and proceed with the stale/close process.
+If an issue is marked as `info required` or `stale`, you must re-evaluate the issue after the author's follow-up.
+If the issue has been updated, always remove the `stale` label, but the `info required` label may remain if the issue is still missing necessary details.
+If the author does not provide a satisfactory answer or fails to supply the requested information, you may keep or add the `info required` label and proceed with the stale/close process.
 
 **Mark an issue as stale if ALL of these conditions are met:**
-- The issue has been open for at least 14 days
-- The issue has one of these labels: `info required`, `question`, `answered`, `not planned`, `duplicate`, `invalid`, `fixed`
+- The issue has one of these labels for at least 14 days: `info required`, `question`, `answered`, `not planned`, `duplicate`, `invalid`, `fixed`
 - The issue does NOT have the `on hold` label
 - The issue has no assignee
 
@@ -207,9 +208,3 @@ This pull request has been closed due to inactivity.
 
 If you would like to continue working on it, please open a new PR referencing this one.
 ```
-
-## EXEMPTIONS
-
-**Never mark as stale or close if:**
-- The item has the `on hold` label
-- The item is a PR with the `breaking change` label

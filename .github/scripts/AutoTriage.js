@@ -1,26 +1,9 @@
 /**
  * AutoTriage - AI-Powered GitHub Issue & PR Analyzer
- * 
+ *
  * Automatically analyzes GitHub issues and pull requests using Gemini,
  * then applies appropriate labels and helpful comments to improve project management.
- * 
- * Features:
- * • Smart labeling based on content analysis
- * • Helpful AI-generated comments for issues (not PRs)
- * • Safe dry-run mode by default
- * • Comprehensive error handling and logging
- * 
- * Usage:
- * • Issues: Analyzes, labels, comments, and can close if appropriate
- * • Pull Requests: Analyzes and labels only (no comments or closing)
- * 
- * Required Environment Variables:
- * • GEMINI_API_KEY - Google Gemini API key
- * • GITHUB_TOKEN - GitHub token with repo permissions
- * • GITHUB_ISSUE_NUMBER - Issue/PR number to process
- * • GITHUB_REPOSITORY - Repository in format "owner/repo"
- * • AUTOTRIAGE_ENABLED - Set to 'true' to enable real actions (default: dry-run)
- * 
+ *
  * Original work by Daniel Chalmers © 2025
  * https://gist.github.com/danielchalmers/503d6b9c30e635fccb1221b2671af5f8
  */
@@ -98,29 +81,33 @@ async function callGemini(prompt, apiKey) {
 /**
  * Create metadata string for both logging and AI analysis
  */
-function formatMetadata(issue) {
+async function buildMetadata(issue, owner, repo, octokit) {
     const isIssue = !issue.pull_request;
     const itemType = isIssue ? 'issue' : 'pull request';
-    const labels = issue.labels?.map(l => typeof l === 'string' ? l : l.name) || [];
     const hasAssignee = Array.isArray(issue.assignees) ? issue.assignees.length > 0 : !!issue.assignee;
+
+    const labelTimestamps = await getLabelAddedTimestamps(owner, repo, issue.number, octokit);
+    const currentLabelsWithTimestamps = issue.labels?.map(l => {
+        const labelName = typeof l === 'string' ? l : l.name;
+        const timestamp = labelTimestamps[labelName] ? ` (added: ${labelTimestamps[labelName]})` : '';
+        return `${labelName}${timestamp}`;
+    }) || [];
 
     return `${issue.state} ${itemType} #${issue.number} by ${issue.user?.login || 'unknown'}
 Created Date: ${issue.created_at}
 Updated Date: ${issue.updated_at}
-Current Date: ${new Date().toISOString()}
 Comments: ${issue.comments || 0}, Reactions: ${issue.reactions?.total_count || 0}
-Current labels: ${labels.join(', ') || 'none'}
-Has assignee: ${hasAssignee}`;
+Labels: ${currentLabelsWithTimestamps.join(', ') || 'none'}
+Assigned: ${hasAssignee}`;
 }
 
 /**
  * Build the full prompt by combining base template with issue data
  */
-function buildPrompt(issue, comments) {
+async function buildPrompt(issue, comments, owner, repo, octokit) {
     const issueText = `${issue.title}\n\n${issue.body || ''}`;
-    const metadata = formatMetadata(issue);
+    const metadata = await buildMetadata(issue, owner, repo, octokit);
 
-    // Format comments
     let commentsText = 'No comments available.';
     if (comments?.length) {
         commentsText = '\nISSUE COMMENTS:';
@@ -140,7 +127,8 @@ ${metadata}
 COMMENTS:
 ${commentsText}
 
-Analyze this issue and provide your structured response.`;
+Analyze this issue and provide your structured response.
+Current Date: ${new Date().toISOString()}.`;
 }
 
 /**
@@ -151,23 +139,19 @@ async function updateLabels(issue, suggestedLabels, owner, repo, octokit) {
     const labelsToAdd = suggestedLabels.filter(l => !currentLabels.includes(l));
     const labelsToRemove = currentLabels.filter(l => !suggestedLabels.includes(l));
 
-    // Nothing to change
     if (labelsToAdd.length === 0 && labelsToRemove.length === 0) {
-        console.log('🏷️ No label changes suggested');
+        console.log('🏷️ No labels suggested');
         return;
     }
 
-    // Show what we're changing, prefixing each label with + or -
     const changes = [
         ...labelsToAdd.map(l => `+${l}`),
         ...labelsToRemove.map(l => `-${l}`)
     ];
     console.log(`🏷️ Label changes: ${changes.join(', ')}`);
 
-    // Exit early if dry run
-    if (dryRun || !octokit) return;
+    if (!octokit) return;
 
-    // Add new labels
     if (labelsToAdd.length > 0) {
         await octokit.rest.issues.addLabels({
             owner,
@@ -177,7 +161,6 @@ async function updateLabels(issue, suggestedLabels, owner, repo, octokit) {
         });
     }
 
-    // Remove old labels (one by one since GitHub API requires it)
     for (const label of labelsToRemove) {
         await octokit.rest.issues.removeLabel({
             owner,
@@ -192,8 +175,7 @@ async function updateLabels(issue, suggestedLabels, owner, repo, octokit) {
  * Add AI-generated comment to the issue
  */
 async function addComment(issue, comment, owner, repo, octokit) {
-    // Exit early if dry run
-    if (dryRun || !octokit) return;
+    if (!octokit) return;
 
     await octokit.rest.issues.createComment({
         owner,
@@ -211,14 +193,12 @@ async function getIssueFromGitHub(owner, repo, number, octokit) {
         throw new Error('GitHub token required to fetch issue data');
     }
 
-    // Get the issue/PR
     const { data: issue } = await octokit.rest.issues.get({
         owner,
         repo,
         issue_number: number
     });
 
-    // Get comments if there are any
     let comments = [];
     if (issue.comments > 0) {
         const { data: commentsData } = await octokit.rest.issues.listComments({
@@ -236,13 +216,55 @@ async function getIssueFromGitHub(owner, repo, number, octokit) {
 }
 
 /**
+ * Fetch timeline events to get label addition timestamps
+ */
+async function getLabelAddedTimestamps(owner, repo, issue_number, octokit) {
+    const labelTimestamps = {};
+    if (!octokit) {
+        return labelTimestamps;
+    }
+
+    try {
+        const { data: timelineEvents } = await octokit.rest.issues.listEventsForTimeline({
+            owner,
+            repo,
+            issue_number,
+        });
+
+        const activeLabels = new Set();
+        timelineEvents.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+
+        for (const event of timelineEvents) {
+            if (event.event === 'labeled' && event.label?.name) {
+                labelTimestamps[event.label.name] = event.created_at;
+                activeLabels.add(event.label.name);
+            } else if (event.event === 'unlabeled' && event.label?.name) {
+                activeLabels.delete(event.label.name);
+            }
+        }
+
+        const finalTimestamps = {};
+        for (const label of activeLabels) {
+            if (labelTimestamps[label]) {
+                finalTimestamps[label] = labelTimestamps[label];
+            }
+        }
+        return finalTimestamps;
+
+    } catch (error) {
+        console.error(`Error fetching timeline events for issue #${issue_number}:`, error.message);
+        return labelTimestamps;
+    }
+}
+
+
+/**
  * Close issue with specified reason
  */
 async function closeIssue(issue, repo, octokit, reason = 'not_planned') {
     console.log(`🔒 Closing #${issue.number} as ${reason}`);
 
-    // Exit early if dry run
-    if (dryRun || !octokit) return;
+    if (!octokit) return;
 
     await octokit.rest.issues.update({
         owner: repo.owner,
@@ -259,37 +281,32 @@ async function closeIssue(issue, repo, octokit, reason = 'not_planned') {
 async function processIssue(issue, comments, owner, repo, geminiApiKey, octokit) {
     const isIssue = !issue.pull_request;
 
-    // Skip locked issues
     if (issue.locked) {
         console.log(`🔒 Skipping locked ${isIssue ? 'issue' : 'pull request'} #${issue.number}`);
         return;
     }
 
-    // Log what we're processing
     console.log(`📝 ${issue.title}`);
-    console.log(formatMetadata(issue).replace(/^/gm, '📝 '));
+    const metadataString = await buildMetadata(issue, owner, repo, octokit);
+    console.log(metadataString.replace(/^/gm, '📝 '));
 
-    // Build prompt and call AI
-    const prompt = buildPrompt(issue, comments);
+    const prompt = await buildPrompt(issue, comments, owner, repo, octokit);
     const start = Date.now();
     const analysis = await callGemini(prompt, geminiApiKey);
 
     console.log(`🤖 Gemini returned analysis in ${Date.now() - start}ms with human intervention rating of ${analysis.rating}/10`);
     console.log(`🤖 ${analysis.reason}`);
 
-    // Apply the AI's suggestions
     await updateLabels(issue, analysis.labels, owner, repo, octokit);
 
-    // Add comment if one was generated
     if (analysis.comment) {
         console.log(`💬 Posting comment:`);
         console.log(analysis.comment.replace(/^/gm, '> '));
         await addComment(issue, analysis.comment, owner, repo, octokit);
     } else {
-        console.log(`💬 No comment suggested.`);
+        console.log(`💬 No comments suggested.`);
     }
 
-    // If AI requested to close the issue, and this is an issue (not PR), and not dryRun
     if (analysis.close) {
         await closeIssue(issue, { owner, repo }, octokit, 'not_planned');
     }
@@ -301,7 +318,6 @@ async function processIssue(issue, comments, owner, repo, geminiApiKey, octokit)
  * Main entry point
  */
 async function main() {
-    // Check required environment variables
     const requiredEnvVars = ['GITHUB_ISSUE_NUMBER', 'GEMINI_API_KEY', 'GITHUB_REPOSITORY'];
     for (const envVar of requiredEnvVars) {
         if (!process.env[envVar]) {
@@ -309,12 +325,10 @@ async function main() {
         }
     }
 
-    // Parse configuration
     const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
     const issueNumber = parseInt(process.env.GITHUB_ISSUE_NUMBER, 10);
     const geminiApiKey = process.env.GEMINI_API_KEY;
 
-    // Setup GitHub API client
     let octokit = null;
     if (process.env.GITHUB_TOKEN) {
         octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
@@ -325,7 +339,6 @@ async function main() {
         console.log('⚠️ No GITHUB_TOKEN provided - running in read-only mode');
     }
 
-    // Load or initialize database
     const dbPath = path.resolve(__dirname, '../triage-db.json');
     let triageDb = {};
     if (fs.existsSync(dbPath)) {
@@ -333,20 +346,17 @@ async function main() {
         triageDb = dbRaw ? JSON.parse(dbRaw) : {};
     }
 
-    // Get the issue/PR data from GitHub
     const { issue, comments } = await getIssueFromGitHub(owner, repo, issueNumber, octokit);
 
-    // Check last triage time
     const lastTriaged = triageDb[issueNumber];
     if (lastTriaged) {
         const lastTriagedDate = new Date(lastTriaged);
         const updatedDate = new Date(issue.updated_at);
 
-        // If the issue has not been updated since last triage, check labels
         if (updatedDate <= lastTriagedDate) {
             const labels = (issue.labels || []).map(l => typeof l === 'string' ? l : l.name);
             const hasLabelThatNeedsChecking = labels.includes('info required') || labels.includes('stale');
-            const sevenDaysMs = 7 * 24 * 60 * 60 * 1000; // Re-check after 7 days so we don't waste API calls
+            const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
 
             if (hasLabelThatNeedsChecking) {
                 if (Date.now() - lastTriagedDate.getTime() > sevenDaysMs) {
@@ -362,17 +372,14 @@ async function main() {
         }
     }
 
-    // Process it
     await processIssue(issue, comments, owner, repo, geminiApiKey, octokit);
 
-    // Update database if not dry run
     if (!dryRun) {
         triageDb[issueNumber] = new Date().toISOString();
         fs.writeFileSync(dbPath, JSON.stringify(triageDb, null, 2));
     }
 }
 
-// Run the script
 main().catch(err => {
     console.error('\n❌ Error:', err.message);
     core.setFailed(err.message);
