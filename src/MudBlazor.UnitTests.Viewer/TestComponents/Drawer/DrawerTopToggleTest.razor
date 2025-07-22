@@ -1,0 +1,45 @@
+﻿<MudPaper Height="800px" Style="overflow:hidden; position:relative;">
+    <MudDrawerContainer Class="mud-width-full">
+        <MudDrawer @bind-Open="@_openTop" Elevation="0" Variant="@DrawerVariant.Persistent" Anchor="Anchor.Top" Color="Color.Error" Height="300px">
+            <MudDrawerHeader>
+                <MudText Typo="Typo.h6">My App</MudText>
+            </MudDrawerHeader>
+            <MudNavMenu>
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Dashboard" IconColor="Color.Error">Dashboard</MudNavLink>
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.LocalLibrary" IconColor="Color.Error">Library</MudNavLink>
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.People" IconColor="Color.Error">Community</MudNavLink>
+            </MudNavMenu>
+        </MudDrawer>
+        <MudDrawer @bind-Open="@_openBottom" Elevation="0" Variant="@DrawerVariant.Persistent" Anchor="Anchor.Bottom" Color="Color.Error" Height="300px">
+            <MudDrawerHeader>
+                <MudText Typo="Typo.h6">My App</MudText>
+            </MudDrawerHeader>
+            <MudNavMenu>
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Dashboard" IconColor="Color.Error">Dashboard</MudNavLink>
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.LocalLibrary" IconColor="Color.Error">Library</MudNavLink>
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.People" IconColor="Color.Error">Community</MudNavLink>
+            </MudNavMenu>
+        </MudDrawer>
+        <div class="d-flex justify-center align-center mud-height-full">
+            <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="@ToggleDrawerTop">Toggle Top</MudButton>
+        </div>
+        <div class="d-flex justify-center align-center absolute" style="bottom:0">
+            <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="@ToggleDrawerBottom">Toggle Bottom</MudButton>
+        </div>
+    </MudDrawerContainer>
+</MudPaper>
+
+@code {
+    private bool _openTop = false;
+    private bool _openBottom = false;
+
+    private void ToggleDrawerTop()
+    {
+        _openTop = !_openTop;
+    }
+
+    private void ToggleDrawerBottom()
+    {
+        _openBottom = !_openBottom;
+    }
+}
