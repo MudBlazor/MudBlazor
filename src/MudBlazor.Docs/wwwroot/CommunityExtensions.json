@@ -10,11 +10,11 @@
   },
   {
     "Category": "Style",
-    "Name": "Theme Creator",
-    "Description": "Blazor Theme Creator site for MudBlazor library. This app is designed to be used to create and manage themes for MudBlazor, not as part of your application.",
-    "Link": "https://themes.arctechonline.tech",
-    "GitHubUserPath": "versile2",
-    "GitHubRepoPath": "ThemeCreatorMudBlazor"
+    "Name": "MudX Theme Creator",
+    "Description": "Blazor Theme Creator site for MudBlazor library. This app is designed to be used to create and export themes for MudBlazor, not as part of your application.",
+    "Link": "https://themes.mudx.org",
+    "GitHubUserPath": "MudXtra",
+    "GitHubRepoPath": "MudXThemeCreator"
   },
   {
     "Category": "Components",
@@ -87,5 +87,13 @@
     "Link": "https://phmatray.github.io/FormCraft",
     "GitHubUserPath": "phmatray",
     "GitHubRepoPath": "FormCraft"
+  },
+  {
+    "Category": "Components",
+    "Name": "MudX Extensions",
+    "Description": "A collection of components designed for MudBlazor. SecurityCode for seamless verification code input, Outline for scrollspy navigation, CodeBlock for Prism.js highlighting, and more.",
+    "Link": "https://mudx.org",
+    "GitHubUserPath": "MudXtra",
+    "GitHubRepoPath": "MudX"
   }
 ]
