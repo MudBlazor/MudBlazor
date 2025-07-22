@@ -278,19 +278,21 @@ Issue titles must NOT use component prefixes (e.g., "MudButton:") or include ver
 
 ## HUMAN INTERVENTION GUIDELINES
 
-The **human intervention rating** indicates how critical it is for a maintainer to address an issue quickly. This rating, on a scale of 1 to 10, is based on factors such as:
+The **human intervention rating** indicates how critical it is for a maintainer to address an issue quickly. This rating, on a scale of **1 to 10**, is based on factors such as:
 
-- **Security Vulnerabilities:** Issues that represent a direct security risk to users or the project. These will typically receive a higher rating (8-10).
-- **Regressions:** Bugs where a previously working feature is now broken, especially if it impacts a core component or a large number of users. The severity of the regression will influence the rating (6-10).
-- **Widespread Impact:** Issues affecting a broad user base or a fundamental part of the framework (7-9).
-- **Blocking Issues:** Bugs that prevent users from performing essential tasks (6-8).
-- **Clarity and Reproducibility:** Well-documented issues with clear reproduction steps allow for quicker intervention and might receive a slightly higher rating than vague reports of similar severity (e.g., a critical bug with a perfect reproduction might be a 9, while the same bug with vague steps might start as a 7 until clarity is achieved).
-- **Community Engagement:** High community interest (e.g., many reactions, comments from diverse users) can subtly increase the priority of an issue that isn't inherently critical (e.g., a popular enhancement request might be a 4-6, whereas a less popular one is a 1-3).
-- **Age of Issue:** Older issues generally have a lower intervention priority. If an issue has gone unaddressed for an extended period without new activity, it typically suggests less urgency or widespread impact, lowering its rating (1-3 for very old, inactive issues).
+- **Security Vulnerabilities:** Issues that represent a direct security risk to users or the project. These will typically receive a higher rating (**8-10**). The higher end is for actively exploitable vulnerabilities.
+- **Regressions:** Bugs where a previously working feature is now broken, especially if it impacts a core component or a large number of users. The severity and impact of the regression will influence the rating (**6-10**). A regression that crashes the app for many users is higher than a minor visual regression.
+- **Widespread Impact:** Issues affecting a broad user base or a fundamental part of the framework (**7-9**). This can be a new bug or a critical missing feature.
+- **Blocking Issues:** Bugs that prevent users from performing essential tasks or progressing in their development (**6-8**). This often means there's no easy workaround.
+- **Clarity and Reproducibility:** Well-documented issues with clear reproduction steps allow for quicker intervention and might receive a slightly higher rating than vague reports of similar severity (e.g., a critical bug with a perfect reproduction might be a **9**, while the same bug with vague steps might start as a **7** until clarity is achieved). This rewards good reporting.
+- **Community Engagement:** High community interest (e.g., many reactions, comments from diverse users) can subtly increase the priority of an issue that isn't inherently critical (e.g., a popular enhancement request might be a **4-6**, whereas a less popular one is a **1-3**). This indicates broader desire.
+- **Age of Issue:** Older issues generally have a lower intervention priority. If an issue has gone unaddressed for an extended period without new activity, it typically suggests less urgency or widespread impact, lowering its rating (**1-3** for very old, inactive issues). This prevents the backlog from being constantly re-prioritized by old items.
+
+Low-quality issues (e.g., empty, unintelligible, or extremely low-effort) do **not** warrant a high human intervention rating (9-10) or a triage ping (`cc @MudBlazor/triage`). These issues will be handled by the stale bot.
 
 ### Intervention Rating Scale
 
-- **1-3 (Low Intervention):** Routine enhancements, minor documentation fixes, or very old, inactive issues with low impact. These can be triaged at leisure.
-- **4-6 (Moderate Intervention):** General bug reports, clear enhancement requests with moderate impact, or issues requiring some investigation but not immediate action.
-- **7-8 (High Intervention):** Important bugs impacting several users, significant enhancements, or issues that, while not critical, should be addressed within a reasonable timeframe.
+- **1-3 (Low Intervention):** Routine enhancements, minor documentation fixes, or very old, inactive issues with low impact. These can be triaged at leisure. *Examples: Cosmetic bug in an obscure component, request for a minor new prop, a year-old issue with no comments.*
+- **4-6 (Moderate Intervention):** General bug reports with clear steps but not critical impact, clear enhancement requests with moderate impact, or issues requiring some investigation but not immediate action. *Examples: Component behaving slightly unexpectedly but with a workaround, a well-defined feature request for a commonly used component.*
+- **7-8 (High Intervention):** Important bugs impacting several users, significant enhancements, or issues that, while not critical, should be addressed within a reasonable timeframe. *Examples: A bug that makes a widely used component difficult to use without a clear workaround, a feature that significantly improves developer experience or solves a common integration challenge.*
 - **9-10 (Critical Intervention):** This signifies the highest level of urgency. This includes critical security vulnerabilities, regressions impacting core functionality for many users, or issues causing severe application failures. If an issue warrants this rating, you should comment with "cc @MudBlazor/triage" to alert the triage team immediately.
