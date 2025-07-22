@@ -1426,7 +1426,12 @@ namespace MudBlazor
             GroupItems();
         }
 
-        internal void AddColumn(Column<T> column)
+        /// <summary>
+        /// Adds a column to this grid. Hierarchy and select columns are added to the beginning of the list, while other columns are added to the end.
+        /// </summary>
+        /// <param name="column"></param>
+        /// <param name="newIndex">(optional) The index where you wish to place the column, by default it is at the end.</param>
+        public void AddColumn(Column<T> column, int? newIndex = null)
         {
             if (column.Tag?.ToString() == "hierarchy-column")
             {
@@ -1443,6 +1448,11 @@ namespace MudBlazor
                 {
                     RenderedColumns.Insert(0, column);
                 }
+            }
+            // else if newIndex is not null and a valid index, insert the column at that index
+            else if (newIndex != null && newIndex.Value >= 0 && newIndex.Value <= RenderedColumns.Count)
+            {
+                RenderedColumns.Insert(newIndex.Value, column);
             }
             else
             {
@@ -2025,7 +2035,11 @@ namespace MudBlazor
             return Task.CompletedTask;
         }
 
-        private void ColumnUp(Column<T> column)
+        /// <summary>
+        /// Moves the specified column up in the rendered columns list by 1.
+        /// </summary>
+        /// <param name="column">The specified column to move.</param>
+        public void ColumnUp(Column<T> column)
         {
             var index = RenderedColumns.IndexOf(column);
             if (index > 0)
@@ -2036,7 +2050,11 @@ namespace MudBlazor
             DropContainerHasChanged();
         }
 
-        private void ColumnDown(Column<T> column)
+        /// <summary>
+        /// Moves the specified column down in the rendered columns list by 1.
+        /// </summary>
+        /// <param name="column">The specified column to move.</param>
+        public void ColumnDown(Column<T> column)
         {
             var index = RenderedColumns.IndexOf(column);
             if (index < RenderedColumns.Count - 1)
