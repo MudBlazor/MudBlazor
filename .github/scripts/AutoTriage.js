@@ -15,7 +15,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Configuration
-// AUTOTRIAGE_PERMISSIONS is a comma-separated list of allowed actions: 'label', 'comment', 'close'
+// AUTOTRIAGE_PERMISSIONS is a comma-separated list of allowed actions: 'label', 'comment', 'close', 'edit'
 const permissions = new Set(
     (process.env.AUTOTRIAGE_PERMISSIONS || 'none')
         .split(',')
@@ -60,7 +60,8 @@ async function callGemini(prompt, apiKey) {
                             reason: { type: "string", description: "Brief technical explanation for logging purposes" },
                             comment: { type: "string", description: "A comment to reply to the issue with", nullable: true },
                             labels: { type: "array", items: { type: "string" }, description: "Array of labels to apply" },
-                            close: { type: "boolean", description: "Set to true if the issue should be closed as part of this action", nullable: true }
+                            close: { type: "boolean", description: "Set to true if the issue should be closed as part of this action", nullable: true },
+                            newTitle: { type: "string", description: "A new title for the issue or pull request, if needed", nullable: true }
                         },
                         required: ["rating", "reason", "comment", "labels"]
                     }
@@ -195,6 +196,22 @@ async function addComment(issue, comment, owner, repo, octokit) {
 }
 
 /**
+ * Update issue/PR title
+ */
+async function updateTitle(issue, newTitle, owner, repo, octokit) {
+    console.log(`✏️ Updating title from "${issue.title}" to "${newTitle}"`);
+
+    if (!octokit || !permissions.has('edit')) return;
+
+    await octokit.rest.issues.update({
+        owner,
+        repo,
+        issue_number: issue.number,
+        title: newTitle
+    });
+}
+
+/**
  * Get issue/PR and its comments from GitHub
  */
 async function getIssueFromGitHub(owner, repo, number, octokit) {
@@ -318,6 +335,10 @@ async function processIssue(issue, comments, owner, repo, geminiApiKey, octokit)
 
     if (analysis.close) {
         await closeIssue(issue, { owner, repo }, octokit, 'not_planned');
+    }
+
+    if (analysis.newTitle) {
+        await updateTitle(issue, analysis.newTitle, owner, repo, octokit);
     }
 
     return analysis;

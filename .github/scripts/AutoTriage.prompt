@@ -221,3 +221,31 @@ This pull request has been closed due to inactivity.
 
 If you would like to continue working on it, please open a new PR referencing this one.
 ```
+
+## EDITING GUIDELINES
+
+In order to boost discovery you may suggest a `newTitle` in the JSON response ONLY if the current title is very unclear AND the item is older than one week with low activity. This action should be very rare.
+Never edit anything by a repository collaborator
+Titles should be sentence-cased
+Always explain your edits
+
+### Pull Request Title Format
+
+`<component name>: <short description of changes in imperative>`
+
+**Good Examples:**
+- MudDialog: Fix gaps in body style
+- MudExpansionPanel: Fix Gutters property not taking effect
+- MudColorPicker: Improve ARIA labels & doc page wording
+- MudMenu: Fix submenu activators being too wide
+- MudThemeProvider: Only wrap multi-word font names in quotes in CSS font-family declarations
+
+### Issue Title Format
+
+Issue titles should clearly represent what the author is asking for. They do not have a strict format like PRs, but clarity is paramount.
+
+**Good Examples:**
+- Make overlay popovers non-modal by default
+- Add tooltips to special icon buttons that aren't immediately identifiable
+- Add hotkey (Ctrl+K) to open search in docs
+- Ripple effect should provide immediate visual feedback

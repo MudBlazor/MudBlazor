@@ -22,7 +22,7 @@ on:
       permissions:
         description: 'Permissions (empty for dry run)'
         required: false
-        default: 'label, comment, stale, close' 
+        default: 'label, comment, stale, close, edit' 
         type: string
 
 jobs:
