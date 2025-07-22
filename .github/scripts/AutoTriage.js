@@ -15,6 +15,9 @@ const fs = require('fs');
 const path = require('path');
 
 // Configuration
+function can(action) {
+    return permissions.has(action) && !permissions.has("none");
+}
 // AUTOTRIAGE_PERMISSIONS is a comma-separated list of allowed actions: 'label', 'comment', 'close', 'edit'
 const permissions = new Set(
     (process.env.AUTOTRIAGE_PERMISSIONS || '')
@@ -22,6 +25,7 @@ const permissions = new Set(
         .map(p => p.trim())
         .filter(p => p !== '')
 );
+
 const aiModel = process.env.AUTOTRIAGE_MODEL || 'gemini-2.5-flash';
 
 // Load AI prompt template
@@ -33,8 +37,6 @@ try {
     console.error('❌ Failed to load AutoTriage.prompt:', err.message);
     process.exit(1);
 }
-
-console.log(`🤖 Using ${aiModel} with ${Array.from(permissions).join(', ') || 'none (dry run)'} permissions`);
 
 /**
  * Call Gemini to analyze the issue content and return structured response
@@ -104,6 +106,7 @@ async function buildMetadata(issue, owner, repo, octokit) {
     let collaborators = collabData.map(c => c.login);
 
     return {
+        title: issue.title,
         state: issue.state,
         type: itemType,
         number: issue.number,
@@ -166,7 +169,7 @@ async function updateLabels(issue, suggestedLabels, owner, repo, octokit) {
     ];
     console.log(`🏷️ Label changes: ${changes.join(', ')}`);
 
-    if (!octokit || !permissions.has('label')) return;
+    if (!octokit || !can('label')) return;
 
     if (labelsToAdd.length > 0) {
         await octokit.rest.issues.addLabels({
@@ -191,7 +194,7 @@ async function updateLabels(issue, suggestedLabels, owner, repo, octokit) {
  * Add AI-generated comment to the issue
  */
 async function addComment(issue, comment, owner, repo, octokit) {
-    if (!octokit || !permissions.has('comment')) return;
+    if (!octokit || !can('comment')) return;
 
     await octokit.rest.issues.createComment({
         owner,
@@ -207,7 +210,7 @@ async function addComment(issue, comment, owner, repo, octokit) {
 async function updateTitle(issue, newTitle, owner, repo, octokit) {
     console.log(`✏️ Updating title from "${issue.title}" to "${newTitle}"`);
 
-    if (!octokit || !permissions.has('edit')) return;
+    if (!octokit || !can('edit')) return;
 
     await octokit.rest.issues.update({
         owner,
@@ -296,7 +299,7 @@ async function getLabelAddedTimestamps(owner, repo, issue_number, octokit) {
 async function closeIssue(issue, repo, octokit, reason = 'not_planned') {
     console.log(`🔒 Closing #${issue.number} as ${reason}`);
 
-    if (!octokit || !permissions.has('close')) return;
+    if (!octokit || !can('close')) return;
 
     await octokit.rest.issues.update({
         owner: repo.owner,
@@ -320,7 +323,7 @@ async function processIssue(issue, comments, owner, repo, geminiApiKey, octokit)
 
     const metadata = await buildMetadata(issue, owner, repo, octokit);
     const formattedMetadata = [
-        `${metadata.state} ${metadata.type} #${metadata.number} by ${metadata.author}`,
+        `This ${metadata.state} ${metadata.type} #${metadata.number} was created by ${metadata.author}`,
         `Title: ${metadata.title}`,
         `Updated: ${metadata.updated_at}`,
         `Labels: ${metadata.labels.join(', ') || 'none'}`,
@@ -331,7 +334,7 @@ async function processIssue(issue, comments, owner, repo, geminiApiKey, octokit)
     const start = Date.now();
     const analysis = await callGemini(prompt, geminiApiKey);
 
-    console.log(`🤖 Gemini returned analysis in ${((Date.now() - start) / 1000).toFixed(1)}s with human intervention rating of ${analysis.rating}/10`);
+    console.log(`🤖 Gemini returned analysis in ${((Date.now() - start) / 1000).toFixed(1)}s with human intervention rating of ${analysis.rating}/10:`);
     console.log(`🤖 ${analysis.reason}`);
 
     await updateLabels(issue, analysis.labels, owner, repo, octokit);
@@ -404,25 +407,26 @@ async function main() {
 
             if (hasLabelThatNeedsChecking) {
                 if (Date.now() - lastTriagedDate.getTime() > sevenDaysMs) {
-                    console.log(`⚙️ #${issueNumber} is eligible to be re-checked.`);
+                    // Issue is eligible to be re-checked
                 } else {
-                    console.log(`⚙️ #${issueNumber} is not eligible to be re-checked.`);
-                    return;
+                    console.log(`#${issueNumber} is not eligible to be re-checked`);
+                    process.exit(2);
                 }
             } else {
-                console.log(`⚙️ #${issueNumber} has not updated since last triage (${lastTriaged})`);
-                return;
+                console.log(`#${issueNumber} has not updated since last triage (${lastTriaged})`);
+                process.exit(2);
             }
         }
     }
 
+    console.log(`🤖 Using ${aiModel} with [${Array.from(permissions).join(', ') || 'none (dry run)'}] permissions`);
     await processIssue(issue, comments, owner, repo, geminiApiKey, octokit);
 
     if (permissions.size > 0) {
         triageDb[issueNumber] = new Date().toISOString();
         fs.writeFileSync(dbPath, JSON.stringify(triageDb, null, 2));
     } else {
-        console.log('⚙️ No permissions granted, skipping triage DB update (dry run).');
+        console.log('⚙️ No permissions granted, skipping DB update');
     }
 }
 

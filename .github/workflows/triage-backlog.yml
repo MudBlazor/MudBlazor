@@ -20,7 +20,7 @@ on:
         default: 'gemini-2.5-flash'
         type: string
       permissions:
-        description: 'Permissions (empty for dry run)'
+        description: 'Permissions (`none` for dry run)'
         required: false
         default: 'label, comment, close, edit' 
         type: string
@@ -46,33 +46,40 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           AUTOTRIAGE_MODEL: ${{ inputs.model }}
-          AUTOTRIAGE_PERMISSIONS: ${{ inputs.permissions || vars.AUTOTRIAGE_PERMISSIONS }}
+          AUTOTRIAGE_PERMISSIONS: ${{ github.event_name == 'workflow_dispatch' && inputs.permissions || vars.AUTOTRIAGE_PERMISSIONS }}
           MAX_ISSUES: ${{ github.event_name == 'schedule' && 50 || inputs.backlog-size }}
         run: |
-          set -e
-          
-          # This is set up wrong because issues that don't get processed shouldn't count towards the backlog size.
-          # Maybe we should handle the storage blob in here instead of making it run node AND sleep.
-
           if [ -n "${{ inputs.issue-numbers }}" ]; then
             echo "Processing specified issues: ${{ inputs.issue-numbers }}"
             issue_numbers="${{ inputs.issue-numbers }}"
             max_count=""
           else
-            echo "Processing up to $MAX_ISSUES issues from the backlog."
+            echo "Processing up to $MAX_ISSUES issues from the backlog"
             issue_numbers=$(gh issue list --state open --limit 9999 --search 'sort:updated-desc' --json number --jq '.[].number')
             max_count="$MAX_ISSUES"
           fi
 
           count=0
+          exit_code=0
           for issue_number in $issue_numbers; do
             if [ -n "$max_count" ] && [ "$count" -ge "$max_count" ]; then
               echo "Reached max issues ($max_count)"
               break
             fi
-            echo "--- Processing Issue #${issue_number} ---"
+            #echo "--- Processing Issue #${issue_number} ---"
             export GITHUB_ISSUE_NUMBER="$issue_number"
-            node .github/scripts/AutoTriage.js
-            count=$((count + 1))
-            sleep 5
+            node .github/scripts/AutoTriage.js || true
+            exit_code=$?
+            if [ -z "$exit_code" ]; then
+              exit_code=0
+            fi
+            if [ "$exit_code" -eq 1 ]; then
+              echo "❌ Fatal error while processing #${issue_number}"
+              exit 1
+            elif [ "$exit_code" -eq 2 ]; then
+              exit_code=0
+              continue
+            elif [ "$exit_code" -eq 0 ]; then
+              count=$((count + 1))
+            fi
           done
