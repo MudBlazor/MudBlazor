@@ -334,7 +334,7 @@ async function processIssue(issue, comments, owner, repo, geminiApiKey, octokit)
     const start = Date.now();
     const analysis = await callGemini(prompt, geminiApiKey);
 
-    console.log(`🤖 Gemini returned analysis in ${((Date.now() - start) / 1000).toFixed(1)}s with human intervention rating of ${analysis.rating}/10:`);
+    console.log(`🤖 Gemini returned analysis in ${((Date.now() - start) / 1000).toFixed(1)}s with a human intervention rating of ${analysis.rating}/10:`);
     console.log(`🤖 ${analysis.reason}`);
 
     await updateLabels(issue, analysis.labels, owner, repo, octokit);
@@ -419,7 +419,7 @@ async function main() {
         }
     }
 
-    console.log(`🤖 Using ${aiModel} with [${Array.from(permissions).join(', ') || 'none (dry run)'}] permissions`);
+    console.log(`🤖 Using ${aiModel} with [${Array.from(permissions).join(', ') || 'none'}] permissions`);
     await processIssue(issue, comments, owner, repo, geminiApiKey, octokit);
 
     if (permissions.size > 0) {
