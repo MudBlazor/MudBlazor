@@ -51,6 +51,9 @@ namespace MudBlazor
         [Inject]
         private IResizeObserverFactory _resizeObserverFactory { get; set; } = null!;
 
+        [Inject]
+        private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
+
         /// <summary>
         /// Enables drag-and-drop re-ordering of tabs.
         /// </summary>
@@ -465,6 +468,7 @@ namespace MudBlazor
         /// Prevents ID conflicts when multiple tab components exist on the same page.
         /// </summary>
         private readonly string _componentId = Identifier.Create();
+        private string _elementId = Identifier.Create("tab");
         private string? _tabListId;
 
         #region Life cycle management
@@ -496,7 +500,6 @@ namespace MudBlazor
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             await base.OnAfterRenderAsync(firstRender);
-
             if (firstRender)
             {
                 var items = _panels.Select(x => x.PanelRef).ToList();
@@ -514,6 +517,19 @@ namespace MudBlazor
                 _isRendered = true;
                 // fix activepanelindex on initial render
                 // https://github.com/MudBlazor/MudBlazor/issues/11519
+
+                var options = new KeyInterceptorOptions(
+                    "mud-tab",
+                    [
+                        // prevent scrolling page
+                        new(" ", preventDown: "key+none", preventUp: "key+none"),
+                        new("Enter", preventDown: "key+none"),
+                        new("NumpadEnter", preventDown: "key+none"),
+                        new("Backspace", preventDown: "key+none")
+                    ]);
+
+                await KeyInterceptorService.SubscribeAsync(_elementId, options, keyDown: HandleKeyInterceptorAsync);
+
                 CenterScrollPositionAroundSelectedItem();
                 SetScrollButtonVisibility();
                 SetScrollabilityStates();
@@ -537,6 +553,10 @@ namespace MudBlazor
                 {
                     await _resizeObserver.DisposeAsync();
                 }
+            }
+            if (IsJSRuntimeAvailable)
+            {
+                await KeyInterceptorService.UnsubscribeAsync(_elementId);
             }
         }
 
@@ -1161,6 +1181,15 @@ namespace MudBlazor
                         await MoveFocusToNextTab(panel);
                     }
                     break;
+            }
+        }
+
+        private async Task HandleKeyInterceptorAsync(KeyboardEventArgs e)
+        {
+            var focusedPanel = ActivePanel;
+            if (focusedPanel != null)
+            {
+                await HandleTabKeyDownAsync(e, focusedPanel);
             }
         }
 

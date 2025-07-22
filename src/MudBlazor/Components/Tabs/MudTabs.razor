@@ -4,7 +4,7 @@
 <div @attributes="UserAttributes" class="@TabsClassnames" style="@Style">
     <CascadingValue Value="this" IsFixed="true">
         <div class="@TabBarClassnames">
-            <div class="mud-tabs-tabbar-inner" style="@MaxHeightStyles">
+            <div class="mud-tabs-tabbar-inner" style="@MaxHeightStyles" id="@_elementId">
                 @if (HeaderPosition == TabHeaderPosition.Before && Header != null)
                 {
                     <div class="mud-tabs-header mud-tabs-header-before">
