@@ -6,25 +6,20 @@ using MudBlazor.Utilities;
 #nullable enable
 namespace MudBlazor
 {
-    // ReSharper disable MemberCanBePrivate.Global
-    // TODO Remove ReSharper disable 
-    public partial class MudComboBox<T> : MudFormComponent<T, string>
+    public partial class MudComboBox<T> : MudBaseInput<T>
     {
         private readonly object _itemsLock = new();
-        private int _selectedComboBoxIndex = -1;
-        private int _elementKey = 0;
-        private int _filteredTake = 0;
-        private bool _activatorEvents;
-        private readonly string _componentId = Identifier.Create();
-        private readonly List<MudComboBoxItem<T>> _comboBoxItems = [];
+        private readonly string _elementId = Identifier.Create("select");
+        private readonly List<ComboBoxItem<T>> _comboBoxItems = [];
 
         private ParameterState<HashSet<T>> _selectedItemsState;
         private ParameterState<bool> _isLoadingState;
+        private ParameterState<bool> _openItemListState;
 
         private CancellationTokenSource? _cancellationTokenSrc;
         private Timer? _debounceTimer;
 
-        private ElementReference _elementReference = default!;
+        private MudInput<string> _elementReference = default!;
 
         public MudComboBox()
         {
@@ -35,6 +30,9 @@ namespace MudBlazor
             _isLoadingState = registerScope.RegisterParameter<bool>(nameof(IsLoading))
                 .WithParameter(() => IsLoading)
                 .WithEventCallback(() => IsLoadingChanged);
+            _openItemListState = registerScope.RegisterParameter<bool>(nameof(OpenItemList))
+                .WithParameter(() => OpenItemList)
+                .WithEventCallback(() => OpenItemListChanged);
         }
 
         [Inject]
@@ -43,38 +41,29 @@ namespace MudBlazor
         [Inject]
         private InternalMudLocalizer Localizer { get; set; } = null!;
 
-        protected string Classname => new CssBuilder()
-            .AddClass("mud-combobox--with-progress", ShowProgressIndicator && IsLoading)
-            .AddClass("mud-autocomplete--with-progress", ShowProgressIndicator && IsLoading)
-            .AddClass(Class)
-            .Build();
-
-        protected string ComboBoxClassname =>
-            new CssBuilder("mud-combobox")
-                //.AddClass("mud-width-full", FullWidth) 
+        protected string OuterClassname =>
+            new CssBuilder("mud-select")
+                .AddClass("mud-width-full", FullWidth)
+                .AddClass("mud-width-content", FitContent && !FullWidth)
+                .AddClass(OuterClass)
                 .Build();
 
-        protected string InputClassname => new CssBuilder(MudInputCssHelper.GetInputClassname(this))
-            .AddClass("mud-combobox-items", SelectedItemsCount > 0)
-            .AddClass(InputClass)
-            .Build();
-
-        protected string SelectedChipClassname => new CssBuilder("mud-combobox-selected-items")
-            .Build();
-
-        protected string CircularProgressClassname =>
-            new CssBuilder("progress-indicator-circular")
-                .AddClass("progress-indicator-circular--with-adornment", Adornment == Adornment.End)
+        protected string Classname =>
+            new CssBuilder("mud-select")
+                .AddClass(Class)
                 .Build();
 
-        protected string ClearButtonClassname =>
-            new CssBuilder("mud-input-clear-button")
+        protected string InputClassname =>
+            new CssBuilder("mud-select-input")
+                .AddClass(InputClass)
                 .Build();
 
-        protected string GetListItemClassname(ComboBoxItem<T> item) =>
-            new CssBuilder("mud-combobox-item")
-                .AddClass(GetThemeHover, item.IsHovered)
-                .AddClass($"mud-selected-item mud-{Color.ToDescriptionString()}-text", item.IsSelected) // mud-primary-hover
+        protected string FillerClassname =>
+            new CssBuilder("mud-select-filler")
+                .AddClass("d-inline-block")
+                .AddClass("invisible")
+                .AddClass("mx-2", Variant == Variant.Text)
+                .AddClass("mx-4", Variant != Variant.Text)
                 .Build();
 
         /// <summary>
@@ -197,6 +186,26 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Popover.Appearance)]
         public DropdownWidth RelativeWidth { get; set; } = DropdownWidth.Relative;
+
+        /// <summary>
+        /// Sets the container width to match its contents.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>. Requires FullWidth to be <c>false</c>
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public bool FitContent { get; set; }
+
+        /// <summary>
+        /// The CSS classes applied to the outer <c>div</c>.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  Multiple classes must be separated by spaces.
+        /// </remarks>
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        [Parameter]
+        public string? OuterClass { get; set; }
 
         /// <summary>
         /// The behavior of the ComboBox dropdown. 
@@ -421,6 +430,18 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public ComboBoxFilterType FilterType { get; set; } = ComboBoxFilterType.Client;
+
+        /// <summary>
+        /// Whether the item list is currently open or not, in a MudPopover
+        /// </summary>
+        [Parameter]
+        public bool OpenItemList { get; set; }
+
+        /// <summary>
+        /// Gets or sets the callback that is invoked when the state of the open item list changes.
+        /// </summary>
+        [Parameter]
+        public EventCallback<bool> OpenItemListChanged { get; set; }
 
         /// <summary>
         /// Whether or not to the built in progress indicator is being currently shown.
@@ -906,11 +927,44 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// Sets the focus to this component.
+        /// </summary>
+        public override ValueTask FocusAsync()
+        {
+            return _elementReference.FocusAsync();
+        }
+
+        /// <summary>
+        /// Releases the focus from this component.
+        /// </summary>
+        public override ValueTask BlurAsync()
+        {
+            return _elementReference.BlurAsync();
+        }
+
+        private async Task OnFocusOutAsync(FocusEventArgs focusEventArgs)
+        {
+            if (_openItemListState.Value)
+            {
+                // when the menu is open we immediately get back the focus if we lose it (i.e. because of checkboxes in multi-select)
+                // otherwise we can't receive key strokes any longer
+                await FocusAsync();
+            }
+        }
+
         internal async Task AddButtonClickHandlerAsync()
         {
             await OnAddItemClick.InvokeAsync();
             await CloseListAsync();
             await SetTextAsync(default, false);
+        }
+
+        internal Task HandleMouseDown(MouseEventArgs args)
+        {
+            if (args.Button != 0) // if it wasn't left click drop out
+                return Task.CompletedTask;
+            return OpenListAsync();
         }
 
         private void CancelToken()

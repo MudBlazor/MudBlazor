@@ -10,7 +10,7 @@
         /// </summary>
         Server = 0,
         /// <summary>
-        /// Client will use Items and filter them based on the input.
+        /// Client will use Items and/or ChildContent and filter them based on the input.
         /// </summary>
         Client = 1,
     }

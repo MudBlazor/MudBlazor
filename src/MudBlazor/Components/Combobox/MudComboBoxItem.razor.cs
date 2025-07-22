@@ -20,62 +20,6 @@ namespace MudBlazor
 
         private bool _registered;
         private bool _isDisposed;
-        internal string ItemId { get; } = Identifier.Create();
-
-        /// <summary>
-        /// Whether the item is selected.
-        /// </summary>
-        public bool IsSelected
-        {
-            get
-            {
-                if (Value is null)
-                    return false;
-                return ComboBox?.SelectedItems.Contains(Value) ?? false;
-            }
-        }
-
-        /// <summary>
-        /// Gets a value indicating whether the current item is disabled.
-        /// </summary>
-        /// <remarks>The value is determined based on the item's state and an optional function provided
-        /// by the associated <see cref="MudComboBox{T}"/>.</remarks>
-        public bool IsDisabled
-        {
-            get
-            {
-                if (Value is null)
-                    return false;
-                return IsDisabled ? true : ComboBox?.ItemDisabledFunc?.Invoke(Value) ?? false;
-            }
-        }
-
-        internal string? CheckBoxIcon
-        {
-            get
-            {
-                if (IsSelected)
-                    return Icons.Material.Filled.CheckBox;
-                return Icons.Material.Filled.CheckBoxOutlineBlank;
-            }
-        }
-
-        internal RenderFragment? DisplayFragment
-        {
-            get
-            {
-                if (Value is null)
-                    return null;
-                if (ChildContent != null)
-                    return ChildContent;
-                if (ComboBox?.ItemTemplate != null)
-                    return ComboBox.ItemTemplate(this);
-                var stringVal = ComboBox?.ToStringFunc?.Invoke(Value) ?? Value.ToString();
-                if (stringVal != null)
-                    return StringFragment(stringVal);
-                return null;
-            }
-        }
 
         /// <summary>
         /// The custom value associated with this item.
@@ -110,13 +54,6 @@ namespace MudBlazor
                 _registered = true;
             }
         }
-
-        public Func<Task> ToggleSelectedItem => async () =>
-        {
-            if (ComboBox == null || Value == null || IsDisabled)
-                return;
-            await ComboBox.ComboBoxToggleItem(Value);
-        };
 
         /// <summary>
         /// Releases resources used by this component.
