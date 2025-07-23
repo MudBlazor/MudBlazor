@@ -432,6 +432,8 @@ async function main() {
         triageDb[issueNumber] = new Date().toISOString();
         fs.writeFileSync(dbPath, JSON.stringify(triageDb, null, 2));
     }
+
+    console.log();
 }
 
 main().catch(err => {
