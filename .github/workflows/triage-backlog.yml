@@ -1,0 +1,133 @@
+name: Triage Backlog
+
+on:
+  schedule:
+    - cron: '0 6 * * *' # Gemini rates reset at 7am, so we can use up the remaining quota for the day.
+  workflow_dispatch:
+    inputs:
+      backlog-size:
+        description: 'Number of issues to auto-discover'
+        required: false
+        default: '5'
+        type: string
+      issue-numbers:
+        description: 'Or use issue numbers (comma-separated)'
+        required: false
+        type: string
+      model:
+        description: 'Gemini model'
+        required: false
+        default: 'gemini-2.5-flash'
+        type: string
+      dry-run:
+        description: 'Dry-run (no actual changes)'
+        required: false
+        default: true
+        type: boolean
+
+env:
+  DRY_RUN: ${{ inputs.dry-run || vars.AUTOTRIAGE_ENABLED != 'true' }}
+
+jobs:
+  stale-issues:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || github.repository == 'MudBlazor/MudBlazor'
+    
+    steps:
+      - name: Mark stale issues
+        uses: actions/stale@v9
+        with:
+          stale-issue-label: 'stale'
+          any-of-issue-labels: 'info required,question,answered,not planned,duplicate,invalid,fixed'
+          exempt-issue-labels: 'on hold'
+          days-before-issue-stale: 14
+          days-before-issue-close: 14
+          stale-issue-message: |
+            This issue has been marked as stale.  
+            If you have any updates or additional information, please comment below.
+
+            If no response is received, it will be automatically closed.
+          close-issue-message: |
+            If you're still experiencing this problem, please open a new issue with updated details.
+
+          stale-pr-label: 'stale'
+          exempt-pr-labels: 'on hold,breaking change'
+          days-before-pr-stale: 180
+          days-before-pr-close: 90
+          stale-pr-message: |
+            Hi, this pull request hasn't had activity in a few months and has been marked as stale.
+
+            Please let us know if you're still working on it! @MudBlazor/triage
+          close-pr-message: |
+            This pull request has been closed due to inactivity.
+
+            If you would like to continue working on it, please open a new PR referencing this one.
+
+          exempt-all-assignees: true
+          debug-only: ${{ env.DRY_RUN }}
+
+  auto-triage:
+    runs-on: ubuntu-latest
+    needs: stale-issues
+    if: github.event_name == 'workflow_dispatch' || github.repository == 'MudBlazor/MudBlazor'
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+    
+    - name: Install dependencies
+      run: npm install node-fetch@2 @actions/core @octokit/rest
+    
+    - name: Get issues to process
+      id: get-issues
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        if [ -n "${{ inputs.issue-numbers }}" ]; then
+          # Process specific issues
+          echo "Processing specific issues: ${{ inputs.issue-numbers }}"
+          echo "${{ inputs.issue-numbers }}" | tr ', ' '\n' | grep -v '^$' | jq -R . | jq -s . > issues.json
+        else
+          # Find unlabeled issues for automated processing
+          backlog_size="${{ inputs.backlog-size || '30' }}"
+          echo "Finding $backlog_size unlabeled issues"
+          gh issue list \
+            --state open \
+            --limit 99999 \
+            --json number,labels \
+            --jq '.[] | select((.labels // [] | length == 0)) | .number' \
+            | head -n "$backlog_size" \
+            | jq -R . | jq -s . > issues.json
+        fi
+        
+        issue_count=$(cat issues.json | jq length)
+        echo "Found $issue_count issues to process"
+        echo "issue-count=$issue_count" >> $GITHUB_OUTPUT
+        
+        if [ "$issue_count" -eq 0 ]; then
+          echo "No issues found to process"
+          exit 0
+        fi
+    
+    - name: Process issues
+      if: steps.get-issues.outputs.issue-count > 0
+      env:
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        AUTOTRIAGE_ENABLED: ${{ env.DRY_RUN == 'false' }}
+        AUTOTRIAGE_MODEL: ${{ inputs.model }}
+      run: |
+        cat issues.json | jq -r '.[]' | while read -r issue_number; do
+          if [ -n "$issue_number" ]; then
+            echo "——————————————————————————————————Issue #$issue_number——————————————————————————————————"
+            export GITHUB_ISSUE_NUMBER="$issue_number"
+            node .github/scripts/AutoTriage.js
+            # Rate limiting delay
+            sleep 3
+          fi
+        done

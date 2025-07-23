@@ -103,7 +103,7 @@
                                 {
                                     <div class="mud-picker-color-dot mud-picker-color-dot-current mud-ripple"
                                          @onclick="ToggleCollection"
-                                         aria-label="@Localizer[LanguageResource.MudColorPicker_ToggleCollection]">
+                                         aria-label="@(_collectionOpen ? @Localizer[LanguageResource.MudColorPicker_HideSwatches] : @Localizer[LanguageResource.MudColorPicker_ShowSwatches])">
                                         <div class="mud-picker-color-fill" style="@($"background: {_value?.ToString(MudColorOutputFormats.RGBA)};")"></div>
                                     </div>
                                 }

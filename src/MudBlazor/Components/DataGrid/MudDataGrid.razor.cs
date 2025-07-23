@@ -42,10 +42,20 @@ namespace MudBlazor
         internal Dictionary<GroupKey, bool> _groupExpansionsDict = [];
         private GridData<T> _serverData = new() { TotalItems = 0, Items = Array.Empty<T>() };
         private Func<IFilterDefinition<T>> _defaultFilterDefinitionFactory = () => new FilterDefinition<T>();
+        internal (double Top, double Left) _openPosition = (0, 0);
 
         private readonly ParameterState<T> _selectedItemState;
         private readonly ParameterState<HashSet<T>> _selectedItemsState;
         private readonly ParameterState<bool> _expandSingleRowState;
+
+        /// <summary>
+        /// Inline data attributes for positioning the menu at the cursor's location.
+        /// </summary>
+        internal Dictionary<string, object> PositionAttributes => new()
+        {
+            { "data-pc-x", _openPosition.Left.ToString(CultureInfo.InvariantCulture) },
+            { "data-pc-y", _openPosition.Top.ToString(CultureInfo.InvariantCulture) }
+        };
 
         public MudDataGrid()
         {
@@ -451,7 +461,7 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
-        /// Can be overridden by <see cref="MudGlobal.Rounded"/>
+        /// Override with <see cref="MudGlobal.Rounded"/>.
         /// </remarks>
         [Parameter]
         public bool Square { get; set; } = MudGlobal.Rounded == false;
@@ -1002,9 +1012,7 @@ namespace MudBlazor
                     if (!_groupable)
                     {
                         _groupDefinition = null;
-
-                        foreach (var column in RenderedColumns)
-                            column.RemoveGrouping().CatchAndLog();
+                        // do not need to RemoveGrouping here, if Groupable is set to false they won't show
                     }
                 }
             }
@@ -1082,7 +1090,27 @@ namespace MudBlazor
         [Parameter]
         public IEqualityComparer<T> Comparer { get; set; } = EqualityComparer<T>.Default;
 
+#nullable enable
+        /// <summary>
+        /// The default template used to display column grouping for any column that is grouped. 
+        /// </summary>
+        /// <remarks>Can be overridden by using the column level GroupTemplate, defaults to <c>null</c>.</remarks>
+        [Parameter]
+        public RenderFragment<GroupDefinition<T>>? GroupTemplate { get; set; }
+#nullable disable
+
         #endregion
+
+        /// <summary>
+        /// Determines whether an unsorted state (<see cref="SortDirection.None"/>) is allowed when toggling sort directions.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>. When <c>false</c>, the sort direction toggles only between 
+        /// <see cref="SortDirection.Ascending"/> and <see cref="SortDirection.Descending"/>.
+        /// When <c>true</c>, a third toggle state, <see cref="SortDirection.None"/>, is included.
+        /// </remarks>
+        [Parameter]
+        public bool AllowUnsorted { get; set; } = false;
 
         #region Properties
 
@@ -1185,13 +1213,13 @@ namespace MudBlazor
         public Interfaces.IForm Validator { get; set; } = new DataGridRowValidator();
 
         /// <summary>
-        /// Returns true if <see cref="Groupable"/> is true and at least one column has <see cref="Column{T}.Grouping"/>Grouping toggled on.
+        /// Returns true if the grid successfully grouped any column
         /// </summary>
         public bool IsGrouped
         {
             get
             {
-                return Groupable && RenderedColumns.FirstOrDefault(x => x.GroupingState.Value) != null;
+                return _groupDefinition != null;
             }
         }
 
@@ -1968,8 +1996,13 @@ namespace MudBlazor
         /// <summary>
         /// Shows a panel that lets you show, hide, filter, groupedColumns, sort and re-arrange columns.
         /// </summary>
-        public void ShowColumnsPanel()
+        public void ShowColumnsPanel(MouseEventArgs args = null)
         {
+            if (args != null)
+            {
+                _openPosition.Top = args.PageY;
+                _openPosition.Left = args.PageX;
+            }
             _columnsPanelVisible = true;
             StateHasChanged();
         }
@@ -2034,15 +2067,21 @@ namespace MudBlazor
 
             _groupDefinition = default;
 
-            if (!IsGrouped || GetFilteredItemsCount() == 0)
+            // get all columns that have Groupable set to true
+            var groupedColumns = RenderedColumns.Where(x => x.groupable).ToList();
+            // is groupable on either DataGrid level or column level
+            var isGroupable = Groupable || groupedColumns.Count > 0;
+            // any columns that are groupable and have grouping set to true
+            groupedColumns = [.. groupedColumns.Where(x => x.GroupingState.Value).OrderBy(x => x._groupByOrderState.Value)];
+            // it's only groupable if a column can be grouped
+            isGroupable = isGroupable && groupedColumns.Count > 0;
+
+            if (!isGroupable || GetFilteredItemsCount() == 0)
             {
                 if (_isFirstRendered && !noStateChange)
                     StateHasChanged();
                 return;
             }
-
-            // get all columns that are grouped in the order they are grouped
-            var groupedColumns = RenderedColumns.Where(x => x.GroupingState.Value).OrderBy(x => x._groupByOrderState.Value).ToList();
 
             // Initialize with the first group definition
             _groupDefinition = ProcessGroup(groupedColumns[0]);
@@ -2094,6 +2133,7 @@ namespace MudBlazor
                             column._groupExpandedState.Value;
             return new()
             {
+                DataGrid = this,
                 Selector = column.groupBy,
                 Expanded = expanded,
                 GroupTemplate = column.GroupTemplate,
@@ -2118,6 +2158,7 @@ namespace MudBlazor
                 }
                 result.Add(new GroupDefinition<T>
                 {
+                    DataGrid = this,
                     Selector = groupDef.Selector,
                     Expanded = expanded,
                     GroupTemplate = groupDef.GroupTemplate,

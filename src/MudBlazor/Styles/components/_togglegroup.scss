@@ -4,47 +4,56 @@
   display: grid;
   overflow: hidden;
   box-sizing: border-box;
-  border-width: 0;
   border-radius: var(--mud-default-borderradius);
 
   & > .mud-toggle-item {
     box-shadow: none;
     border-width: inherit;
-    border-style: none;
     border-color: inherit;
     border-radius: 0;
   }
 }
 
-.mud-toggle-group-horizontal {
-  &:not(.mud-toggle-group-rtl) {
+.mud-toggle-group-outlined {
+  border-width: 1px;
+  border-color: rgb(from var(--mud-palette-text-primary) r g b / var(--mud-palette-border-opacity));
+
+  @each $color in $mud-palette-colors {
+    &.mud-toggle-group-#{$color} {
+      border-color: rgb(from var(--mud-palette-#{$color}) r g b / var(--mud-palette-border-opacity));
+    }
+  }
+
+  &.mud-toggle-group-horizontal {
+    &:not(.mud-toggle-group-rtl) {
+      > .mud-toggle-item:not(:first-child), > :not(:first-child) .mud-toggle-item {
+        &.mud-toggle-item-delimiter {
+          border-left-style: solid !important;
+        }
+
+        margin-left: -1px;
+      }
+    }
+
+    &.mud-toggle-group-rtl {
+      > .mud-toggle-item:not(:last-child), > :not(:last-child) .mud-toggle-item {
+        &.mud-toggle-item-delimiter {
+          border-left-style: solid !important;
+        }
+
+        margin-left: -1px;
+      }
+    }
+  }
+
+  &.mud-toggle-group-vertical {
     > .mud-toggle-item:not(:first-child), > :not(:first-child) .mud-toggle-item {
       &.mud-toggle-item-delimiter {
-        border-left-style: solid !important;
+        border-top-style: solid !important;
       }
 
-      margin-left: -1px;
+      margin-top: -1px;
     }
-  }
-
-  &.mud-toggle-group-rtl {
-    > .mud-toggle-item:not(:last-child), > :not(:last-child) .mud-toggle-item {
-      &.mud-toggle-item-delimiter {
-        border-left-style: solid !important;
-      }
-
-      margin-left: -1px;
-    }
-  }
-}
-
-.mud-toggle-group-vertical {
-  > .mud-toggle-item:not(:first-child), > :not(:first-child) .mud-toggle-item {
-    &.mud-toggle-item-delimiter {
-      border-top-style: solid !important;
-    }
-
-    margin-top: -1px;
   }
 }
 

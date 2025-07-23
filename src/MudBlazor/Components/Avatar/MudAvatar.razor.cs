@@ -45,7 +45,7 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
-        /// Can be overridden by <see cref="MudGlobal.Rounded"/>
+        /// Override with <see cref="MudGlobal.Rounded"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Avatar.Appearance)]
@@ -56,7 +56,7 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
-        /// Can be overridden by <see cref="MudGlobal.Rounded"/>
+        /// Override with <see cref="MudGlobal.Rounded"/>.
         /// When <c>true</c>, the <c>border-radius</c> style is set to the theme's default value.
         /// </remarks>
         [Parameter]
@@ -97,7 +97,7 @@ namespace MudBlazor
         /// The content within the avatar.
         /// </summary>
         /// <remarks>
-        /// This property allows for custom content to displayed inside of the avatar, but it is not required.
+        /// This property allows for custom content to displayed inside of the avatar, but is not required.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Avatar.Behavior)]
