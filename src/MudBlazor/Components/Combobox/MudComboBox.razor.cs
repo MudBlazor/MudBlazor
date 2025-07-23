@@ -9,12 +9,18 @@ namespace MudBlazor
     public partial class MudComboBox<T> : MudBaseInput<T>
     {
         private readonly object _itemsLock = new();
-        private readonly string _elementId = Identifier.Create("select");
-        private readonly List<ComboBoxItem<T>> _comboBoxItems = [];
+        private readonly string _elementId = Identifier.Create("combobox");
+        private readonly HashSet<ComboBoxItem<T>> _comboBoxItems = [];
 
         private ParameterState<HashSet<T>> _selectedItemsState;
         private ParameterState<bool> _isLoadingState;
         private ParameterState<bool> _openItemListState;
+
+        private int _filteredTake = 0;
+        private int _selectedComboBoxIndex = -1;
+
+        private HashSet<ComboBoxItem<T>> _items = [];
+        private HashSet<ComboBoxItem<T>> _filteredItems = [];
 
         private CancellationTokenSource? _cancellationTokenSrc;
         private Timer? _debounceTimer;
@@ -44,7 +50,6 @@ namespace MudBlazor
         protected string OuterClassname =>
             new CssBuilder("mud-select")
                 .AddClass("mud-width-full", FullWidth)
-                .AddClass("mud-width-content", FitContent && !FullWidth)
                 .AddClass(OuterClass)
                 .Build();
 
@@ -66,6 +71,16 @@ namespace MudBlazor
                 .AddClass("mx-4", Variant != Variant.Text)
                 .Build();
 
+        protected string CircularProgressClassname =>
+            new CssBuilder("progress-indicator-circular")
+                .AddClass("progress-indicator-circular--with-adornment", Adornment == Adornment.End)
+                .Build();
+
+        protected string GetListItemClassname(bool isSelected) =>
+            new CssBuilder()
+                .AddClass("mud-selected-item mud-primary-text mud-primary-hover", isSelected)
+                .Build();
+
         /// <summary>
         /// The Right to Left designated by the parent
         /// </summary>
@@ -73,6 +88,13 @@ namespace MudBlazor
         public bool RightToLeft { get; set; }
 
         #region Confirmed Parameters
+
+        /// <summary>
+        /// Gets or sets the manual items to be included in <see cref="Items"/> calculations when in <see cref="ComboBoxFilterType.Client"/> mode."/>
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Data)]
+        public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
         /// The class or classes applied to the input element.
@@ -168,6 +190,12 @@ namespace MudBlazor
         public RenderFragment? BeforeItemsTemplate { get; set; }
 
         /// <summary>
+        /// Any template you wish to place After the Items list.
+        /// </summary>
+        [Parameter]
+        public RenderFragment? AfterItemsTemplate { get; set; }
+
+        /// <summary>
         /// What is displayed when there are no AutoCompleteItems. 
         /// </summary>
         [Parameter]
@@ -188,14 +216,14 @@ namespace MudBlazor
         public DropdownWidth RelativeWidth { get; set; } = DropdownWidth.Relative;
 
         /// <summary>
-        /// Sets the container width to match its contents.
+        /// Uses compact vertical padding for all items.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>. Requires FullWidth to be <c>false</c>
+        /// Defaults to <c>false</c>.
         /// </remarks>
         [Parameter]
-        [Category(CategoryTypes.FormComponent.Appearance)]
-        public bool FitContent { get; set; }
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
+        public bool Dense { get; set; }
 
         /// <summary>
         /// The CSS classes applied to the outer <c>div</c>.
@@ -206,6 +234,52 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Appearance)]
         [Parameter]
         public string? OuterClass { get; set; }
+
+        /// <summary>
+        /// The icon used for selected items.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.CheckBox"/>.  Only applies when <see cref="MultiSelection"/> is <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
+        public string CheckedIcon { get; set; } = Icons.Material.Filled.CheckBox;
+
+        /// <summary>
+        /// The icon used for unselected items.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.CheckBoxOutlineBlank"/>.  Only applies when <see cref="MultiSelection"/> is <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
+        public string UncheckedIcon { get; set; } = Icons.Material.Filled.CheckBoxOutlineBlank;
+
+        /// <summary>
+        /// The icon used when at least one, but not all, items are selected.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.IndeterminateCheckBox"/>.  Only applies when <see cref="MultiSelection"/> is <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
+        public string IndeterminateIcon { get; set; } = Icons.Material.Filled.IndeterminateCheckBox;
+
+        /// <summary>
+        /// The icon to display whether all, none, or some items are selected.
+        /// </summary>
+        /// <remarks>
+        /// Only applies when <see cref="MultiSelection"/> is <c>true</c>.
+        /// If all items are selected, <see cref="CheckedIcon"/> is returned.
+        /// If no items are selected, <see cref="UncheckedIcon"/> is returned.
+        /// Otherwise, <see cref="IndeterminateIcon"/> is returned.
+        /// </remarks>
+        protected string SelectAllCheckBoxIcon
+        { // TODO Fix having to ! all _selectedItemsState.Value it's annoying
+            get => _items.Count == _selectedItemsState.Value!.Count ?
+                    CheckedIcon :
+                        _selectedItemsState.Value!.Count == 0 ? UncheckedIcon : IndeterminateIcon;
+        }
 
         /// <summary>
         /// The behavior of the ComboBox dropdown. 
@@ -233,11 +307,20 @@ namespace MudBlazor
         /// Displays the Clear icon button. Has no impact if Filterable is not <c>true</c>.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  When <c>true</c>, an icon is displayed which, when clicked, clears the filter Text.  Use the <c>ClearIcon</c> property to control the Clear button icon.
+        /// Defaults to <c>false</c>.  When <c>true</c>, an icon is displayed which, when clicked, clears the filter Text.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool Clearable { get; set; }
+
+        /// <summary>
+        /// Occurs when the clear button is clicked.
+        /// </summary>
+        /// <remarks>
+        /// Only occurs when <see cref="Clearable"/> is <c>true</c>.   This event occurs after the <c>Text</c> and <c>Value</c> have been cleared.
+        /// </remarks>
+        [Parameter]
+        public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
 
         /// <summary>
         /// The "open" Combobox icon.
@@ -258,13 +341,19 @@ namespace MudBlazor
         public string CloseIcon { get; set; } = Icons.Material.Filled.ArrowDropUp;
 
         /// <summary>
+        /// The icon to display when an item is selected and no Item Template has been defined.
+        /// </summary>
+        [Parameter]
+        public string SelectIcon { get; set; } = Icons.Material.Filled.Check;
+
+        /// <summary>
         /// The icon to display when <see cref="Clearable"/> is <c>true</c>.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Icons.Material.Filled.Clear"/>.
         /// </remarks>
         [Parameter]
-        public string ClearIcon { get; set; } = Icons.Material.Filled.Cancel;
+        public string ClearIcon { get; set; } = Icons.Material.Filled.Clear;
 
         /// <summary>
         /// The Add Combobox item icon. When OnAddItemClick is defined this icon is shown when the Text property exceeds MinCharacters.
@@ -300,6 +389,16 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         public int MinCharacters { get; set; }
+
+        /// <summary>
+        /// Restricts the selected values to the ones defined in <see cref="MudSelectItem{T}"/> items.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  When <c>true</c>, any values not defined will not be displayed.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool Strict { get; set; }
 
         #endregion
 
@@ -385,18 +484,26 @@ namespace MudBlazor
         public int DebounceInterval { get; set; } = 100;
 
         /// <summary>
-        /// The template used to display all the items in the PopoverList, contains a context of <see cref="MudComboBoxItem{T}"/>.
+        /// The template used to display all the items in the PopoverList, contains a context of <see cref="ComboBoxItem{T}"/>.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
-        public RenderFragment<MudComboBoxItem<T>>? ItemTemplate { get; set; }
+        public RenderFragment<ComboBoxItem<T>>? ItemTemplate { get; set; }
 
         /// <summary>
-        /// The template used to display selected items in the textbox area, contains a context of <see cref="MudComboBoxItem{T}"/>.
+        /// The template used to display selected items in the textbox area, contains a context of a list of <see cref="ComboBoxItem{T}"/>.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListBehavior)]
-        public RenderFragment<MudComboBoxItem<T>>? SelectedItemsTemplate { get; set; }
+        public RenderFragment<List<ComboBoxItem<T>>>? SelectedItemsTemplate { get; set; }
+
+        /// <summary>
+        /// The template used to display a single selected items in the textbox area, contains a <see cref="ComboBoxItem{T}"/>.
+        /// </summary>
+        /// <remarks>If <see cref="SelectedItemsTemplate"/> is defined it will be used and this ignored.</remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public RenderFragment<ComboBoxItem<T>>? SelectedItemTemplate { get; set; }
 
         /// <summary>
         /// Whether a user can select multiple items
@@ -406,6 +513,26 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         public bool MultiSelection { get; set; }
+
+        /// <summary>
+        /// Shows a "Select all" checkbox to select all items.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  Only applies when <see cref="MultiSelection"/> is <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public bool SelectAll { get; set; }
+
+        /// <summary>
+        /// The text of the "Select all" checkbox.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>"Select all"</c>.  Only applies when <see cref="SelectAll"/> is <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
+        public string SelectAllText { get; set; } = "Select all";
 
         /// <summary>
         /// The currently selected ComboBox items
@@ -473,7 +600,13 @@ namespace MudBlazor
         /// The list of items filtered 
         /// TODO: Add SortFunc
         /// </summary>
-        public IReadOnlyList<T> FilteredItems { get; private set; } = [];
+        public List<ComboBoxItem<T>> FilteredItems
+        {
+            get
+            {  // Apply SortFunc
+                return _filteredItems.ToList();
+            }
+        }
 
         /// <summary>
         /// The number of items currently filtered
@@ -484,29 +617,26 @@ namespace MudBlazor
         /// The list of items in the ComboBox when using <see cref="ComboBoxFilterType.Client"/>, the <see cref="ToStringFunc"/> is used for display with <c>ToString()</c> used as fallback.
         /// </summary>
         [Parameter]
-        public IEnumerable<T> Items
+        public IEnumerable<T>? Items { get; set; }
+
+        internal override InputType GetInputType() => CanRenderValue || (Strict && !IsValueInList) ? InputType.Hidden : InputType.Text;
+
+        internal string CurrentIcon => !string.IsNullOrWhiteSpace(AdornmentIcon) ? AdornmentIcon : _openItemListState.Value ? CloseIcon : OpenIcon;
+
+        protected bool IsValueInList
         {
-            get { return value; }
-            set
+            get
             {
-                foreach (var item in value)
+                if (Value is null || _selectedItemsState.Value is null)
                 {
-                    if (item is null)
-                        continue;
-                    var comboBoxItem = new MudComboBoxItem<T>()
-                    {
-                        Value = item,
-                        ComboBox = this,
-                        ItemId = GetListItemId(_comboBoxItems.Count)
-                    };
+                    return false;
                 }
+                return _selectedItemsState.Value.Contains(Value);
             }
         }
 
-        /// <summary>
-        /// The number of items
-        /// </summary>
-        public int ItemsCount { get => Items.Count(); }
+
+        protected bool CanRenderValue => Filterable && _openItemListState.Value;
 
         private string? GetItemString(T? item)
         {
@@ -527,7 +657,7 @@ namespace MudBlazor
 
         private string GetListItemId(in int index)
         {
-            return $"{_componentId}_item{index}";
+            return $"{_elementId}_item{index}";
         }
 
         /// <summary>
@@ -648,7 +778,7 @@ namespace MudBlazor
         /// </summary>
         public override ValueTask SelectAsync()
         {
-            return _elementReference.MudSelectAsync();
+            return _elementReference.SelectAsync();
         }
 
         /// <summary>
@@ -659,40 +789,7 @@ namespace MudBlazor
         /// <returns>A <see cref="ValueTask"/> object.</returns>
         public override ValueTask SelectRangeAsync(int pos1, int pos2)
         {
-            return _elementReference.MudSelectRangeAsync(pos1, pos2);
-        }
-
-        private async Task OnInputClickedAsync()
-        {
-            // this fires at nearly the same time as OnInputFocusedAsync, so we need to delay when both fire together
-            // to prevent running the search method twice
-            await Task.Delay(5);
-            if (_activatorEvents)
-            {
-                _activatorEvents = false;
-                return;
-            }
-            await InputActivationAsync(true);
-        }
-
-        private async Task OnInputFocusedAsync()
-        {
-            if (OpenOnFocus)
-            {
-                _activatorEvents = true;
-            }
-            await InputActivationAsync(OpenOnFocus);
-        }
-
-        private async Task InputActivationAsync(bool openMenu)
-        {
-            if (SelectOnActivation)
-            {
-                await SelectAsync();
-            }
-
-            if (openMenu)
-                await OpenListAsync();
+            return _elementReference.SelectRangeAsync(pos1, pos2);
         }
 
         public async Task PerformSearchAsync()
@@ -706,13 +803,13 @@ namespace MudBlazor
                 if (Filterable)
                 {
                     // Filter the items based on the text
-                    FilteredItems = Items
-                        .Where(x => GetItemString(x)?.Contains(Text ?? string.Empty, StringComparison.CurrentCultureIgnoreCase) ?? false).ToList();
+                    _filteredItems = _items
+                        .Where(x => GetItemString(x.Value)?.Contains(Text ?? string.Empty, StringComparison.CurrentCultureIgnoreCase) ?? false).ToHashSet();
                 }
                 else
                 {
                     // No filtering, just show all items
-                    FilteredItems = Items.ToList();
+                    _filteredItems = _items;
                 }
             }
             else if (FilterType == ComboBoxFilterType.Server)
@@ -724,10 +821,10 @@ namespace MudBlazor
                 // User does the filtering himself via SearchFunc
                 try
                 {
-                    FilteredItems = searchTask switch
+                    _filteredItems = searchTask switch
                     {
                         null => [],
-                        _ => (await searchTask).ToList()
+                        _ => (await searchTask).Select(x => ToComboBoxItem(x)).ToHashSet()
                     };
                 }
                 catch (TaskCanceledException)
@@ -840,7 +937,7 @@ namespace MudBlazor
             // list of valid indices that are not disabled and less than the _filteredTake
             // _filteredTake is set by MaxItems initially and updated during performsearch
             var enabledItemIndices = items.Select((item, index) => (item, index))
-                .Where(x => !ItemDisabledFunc?.Invoke(x.item) ?? true &&
+                .Where(x => !ItemDisabledFunc?.Invoke(x.item.Value) ?? true &&
                             x.index < _filteredTake)
                 .Select(x => x.index)
                 .ToList();
@@ -888,7 +985,7 @@ namespace MudBlazor
             else if (_selectedComboBoxIndex >= 0 && _selectedComboBoxIndex < FilteredItemsCount)
             {
                 // toggle the item we know it's a valid index and ComboBox doesn't care if it's invalid.
-                await ComboBoxToggleItem(FilteredItems[_selectedComboBoxIndex], AutoClose);
+                await ComboBoxToggleItem(FilteredItems[_selectedComboBoxIndex].Value, AutoClose);
             }
         }
 
@@ -909,9 +1006,44 @@ namespace MudBlazor
             return ScrollManager.ScrollToListItemAsync(id, false);
         }
 
-        private Task ClearButtonClickHandlerAsync()
+        /// <summary>
+        /// Occurs when the <c>Clear</c> button has been clicked.
+        /// </summary>
+        /// <remarks>
+        /// This is the first event raised when the clear button is clicked.
+        /// The <see cref="SelectedItems"/> are cleared and the <see cref="OnClearButtonClick"/> event is raised.
+        /// </remarks>
+        protected async Task ClearButtonClickHandlerAsync(MouseEventArgs e)
         {
-            return SetTextAsync(default, false);
+            // clear value, text, and items, then trigger events
+            await ClearAsync(true);
+            await OnClearButtonClick.InvokeAsync(e);
+        }
+
+        /// <summary>
+        /// Clears the current selection, resets the associated state, and triggers necessary updates and events.
+        /// </summary>
+        /// <remarks>This method resets the value, text, and selected items to their default states. It
+        /// also performs validation, updates the component's state, and invokes any associated change events. Use this
+        /// method to programmatically  clear the component's state and notify listeners of the change.</remarks>
+        /// <param name="triggerEvents">If <c>true</c>, the <see cref="SelectedItemsChanged"/> event and any associated <see cref="MudForm"/>
+        /// events will be triggered.</param>
+        public async Task ClearAsync(bool triggerEvents)
+        {
+            // reset value and text property
+            await SetValueAsync(default, false);
+            await SetTextAsync(default, false);
+            // reset selected items
+            await _selectedItemsState.SetValueAsync(new HashSet<T>());
+            // validate
+            await BeginValidateAsync();
+            StateHasChanged();
+            // events to trigger
+            if (triggerEvents)
+            {
+                await SelectedItemsChanged.InvokeAsync(_selectedItemsState.Value);
+                FieldChanged(Value);
+            }
         }
 
         internal async Task AdornmentClickHandlerAsync()
@@ -986,7 +1118,31 @@ namespace MudBlazor
             return SetTextAsync(args?.Value as string);
         }
 
-        private bool ShowClearButton => !GetDisabledState() && !GetReadOnlyState() && Clearable && Text?.Length > MinCharacters;
+        private async Task SelectAllClickAsync()
+        {
+            // Define the items selection
+            if (_selectedItemsState.Value!.Count < _items.Count)
+                await SelectAllItems();
+            else
+                await ClearAsync(false);
+        }
+
+        private async Task SelectAllItems()
+        {
+            if (!MultiSelection)
+                return;
+            if (_selectedItemsState.Value!.Count == _items.Count)
+            {
+                // if all items are selected, clear the selection
+                await ClearAsync(false);
+                return;
+            }
+            // Select all items that are not disabled
+            var allItems = _items.Where(x => x.IsDisabled.Invoke()).Select(x => x.Value).ToHashSet() ?? new HashSet<T>();
+            await _selectedItemsState.SetValueAsync(allItems);
+        }
+
+        private bool ShowClearButton => !GetDisabledState() && !GetReadOnlyState() && Clearable && (Text?.Length > MinCharacters || _selectedItemsState.Value!.Count > 0);
 
         private bool ShowAddButton => !GetDisabledState() && !GetReadOnlyState() && Text?.Length > MinCharacters && OnAddItemClick.HasDelegate;
 
@@ -1012,6 +1168,38 @@ namespace MudBlazor
             }
         }
 
+        private ComboBoxItem<T> ToComboBoxItem(T item)
+        {
+            // Add the ComboBoxItem to the items list
+            ComboBoxItem<T>? comboBoxItem = null;
+            lock (_itemsLock)
+            {
+                // Create a new ComboBoxItem with the provided item
+                comboBoxItem = _items.FirstOrDefault(x => x.Equals(item));
+            }
+            if (comboBoxItem == null)
+            {
+                throw new ArgumentNullException("Item of type T cannot be null."); // TODO: Handle this better
+            }
+            return comboBoxItem;
+        }
+
+        private ComboBoxItem<T> ToComboBoxItem(MudComboBoxItem<T> item)
+        {
+            if (item == null || item.Value == null)
+            {
+                throw new ArgumentNullException("Item of type MudComboBoxItem or Value of Item cannot be null."); // TODO: Handle this better
+            }
+            // Convert MudComboBoxItem to ComboBoxItem
+            return new ComboBoxItem<T>(
+                Value = item.Value,
+                () => _selectedItemsState.Value!.Contains(item.Value), // IsSelected
+                () => item.Disabled || (item.Value != null && ItemDisabledFunc?.Invoke(item.Value) == true),
+                item.ChildContent,
+                () => ComboBoxToggleItem(item.Value, AutoClose),
+                ToStringFunc);
+        }
+
         internal void RegisterItem(MudComboBoxItem<T> item)
         {
             if (item is null || item.ComboBox != null)
@@ -1019,7 +1207,7 @@ namespace MudBlazor
             // add the item to the ComboBox
             lock (_itemsLock)
             {
-                _comboBoxItems.Add(item);
+                _comboBoxItems.Add(ToComboBoxItem(item));
                 StateHasChanged();
             }
         }
@@ -1032,7 +1220,8 @@ namespace MudBlazor
             lock (_itemsLock)
             {
                 item.ComboBox = null;
-                _comboBoxItems.Remove(item);
+                // remove all items that have a matchign value from _comboBoxItems
+                _comboBoxItems.RemoveWhere(x => x.Value?.Equals(item.Value) ?? false);
                 StateHasChanged();
             }
         }

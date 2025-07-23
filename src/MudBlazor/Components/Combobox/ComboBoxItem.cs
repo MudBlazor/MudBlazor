@@ -3,16 +3,18 @@
 // See the LICENSE file in the project root for more information.
 
 using Microsoft.AspNetCore.Components;
-
+#nullable enable
 namespace MudBlazor.Components.Combobox
 {
-    public record ComboBoxItem<T>(T Value, bool IsSelected, bool IsDisabled, bool IsHovered, Func<Task> ToggleSelectedItem)
+    public record ComboBoxItem<T>(T Value, Func<bool> IsSelected, Func<bool> IsDisabled, RenderFragment? ChildContent, Func<Task> ToggleSelectedItem, Func<T?, string?>? ToStringFunc)
     {
-        public RenderFragment? DisplayFragment()
+        public RenderFragment DisplayFragment()
         {
-            if (Value is null)
-                return null;
-            return StringFragment(Value.ToString());
+            if (ChildContent != null)
+            {
+                return ChildContent;
+            }
+            return StringFragment(ToStringFunc?.Invoke(Value) ?? Value?.ToString() ?? string.Empty);
         }
 
         private RenderFragment StringFragment(string stringVal) => __builder =>
@@ -22,7 +24,7 @@ namespace MudBlazor.Components.Combobox
 
         public string CheckBoxIcon()
         {
-            if (IsSelected)
+            if (IsSelected.Invoke())
                 return Icons.Material.Filled.CheckBox;
             return Icons.Material.Filled.CheckBoxOutlineBlank;
         }

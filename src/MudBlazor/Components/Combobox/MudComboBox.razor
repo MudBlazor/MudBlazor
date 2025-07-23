@@ -3,8 +3,6 @@
 @inherits MudBaseInput<T>
 @typeparam T
 <!--  TODO: Implement Bottom Sheets for XS screens -->
-<!--  TODO: Implement Styling by Color.??? will need to make sure the proper Color.Inherit's are set. -->
-<!--  TODO: Implement proper FullWidth / FitWidth / Width parameter -->
 <!--  TODO: hide methods inherited that aren't used -->
 <!--  TODO: Finish sorting parameters that have not been verified -->
 <!--  TODO: Look at _activatorEvents and improve using Debounce , perhaps have a minimum 50 debounce value -->
@@ -30,7 +28,7 @@
                          @onmousedown="@HandleMouseDown">
             <InputContent>
                 <MudInput @ref="_elementReference"
-                          InputType="@(CanRenderValue || (Strict && !IsValueInList) ? InputType.Hidden : InputType.Text)"
+                          InputType="@(GetInputType())"
                           Class="@InputClassname"
                           Margin="@Margin"
                           Placeholder="@Placeholder"
@@ -38,7 +36,7 @@
                           Variant="@Variant"
                           Typo="@Typo"
                           TextUpdateSuppression="false"
-                          Value="@(Strict && !IsValueInList ? null : Text)"
+                          Value="@(Filterable ? Text : (Strict && !IsValueInList) ? null : Text)"
                           Underline="@Underline"
                           Disabled="@GetDisabledState()"
                           ReadOnly="true"
@@ -47,43 +45,113 @@
                           HelperId="@GetHelperId()"
                           HelperText="@HelperText"
                           AdornmentText="@AdornmentText"
-                          AdornmentIcon="@_currentIcon"
+                          AdornmentIcon="@CurrentIcon"
                           Adornment="@Adornment"
                           AdornmentColor="@AdornmentColor"
                           IconSize="@IconSize"
                           AdornmentAriaLabel="@AdornmentAriaLabel"
                           OnAdornmentClick="@OnAdornmentClick"
-                          Clearable="@(Clearable && !GetReadOnlyState())"
+                          Clearable="@(ShowClearButton)"
                           ClearIcon="@ClearIcon"
-                          OnClearButtonClick="@(async (e) => await SelectClearButtonClickHandlerAsync(e))"
+                          OnClearButtonClick="@ClearButtonClickHandlerAsync"
                           @attributes="UserAttributes"
-                          OnBlur="@OnBlurAsync"
                           ShrinkLabel="@ShrinkLabel"
                           InputId="@InputElementId"
                           Required="@Required">
-                @GetSelectedValuePresenter()
-                @if (ShowClearButton)
+                    @GetSelectedValuePresenter()
+                    @if (ShowAddButton)
+                    {
+                        <MudIconButton Class="mud-combobox-add-button"
+                                       Color="@Color.Success"
+                                       Icon="@AddIcon"
+                                       Size="@Size.Small"
+                                       OnClick="@AddButtonClickHandlerAsync"
+                                       aria-label="@Localizer[Resources.LanguageResource.MudInput_Add]"
+                                       tabindex="-1" @onmousedown:stopPropagation />
+                    }
+                </MudInput>
+                <!-- Popover for the List and List Items -->
+                @if (_openItemListState.Value)
                 {
-                    <MudIconButton Class="@ClearButtonClassname"
-                    Color="@Color.Inherit"
-                    Icon="@ClearIcon"
-                    Size="@Size.Small"
-                    OnClick="@ClearButtonClickHandlerAsync"
-                    aria-label="@Localizer[Resources.LanguageResource.MudInput_Clear]"
-                    tabindex="-1" @onmousedown:stopPropagation />
-                }
-                @if (ShowAddButton)
-                {
-                    <MudIconButton Class="@ClearButtonClassname"
-                    Color="@Color.Success"
-                    Icon="@AddIcon"
-                    Size="@Size.Small"
-                    OnClick="@AddButtonClickHandlerAsync"
-                    aria-label="@Localizer[Resources.LanguageResource.MudInput_Add]"
-                    tabindex="-1" @onmousedown:stopPropagation />
-                }
-            </MudInput>
+                <MudPopover Open="true"
+                            MaxHeight="@MaxHeight"
+                            Class="@PopoverClass"
+                            AnchorOrigin="@AnchorOrigin"
+                            TransformOrigin="@TransformOrigin"
+                            Fixed="@DropdownSettings.Fixed"
+                            OverflowBehavior="@DropdownSettings.OverflowBehavior"
+                            RelativeWidth="@RelativeWidth">
+                    <MudList Class="mud-combobox-list" T="T" Dense="@Dense">
+                        @if (BeforeItemsTemplate is not null)
+                        {
+                            <MudListSubheader>
+                                <div class="mud-combobox-before-items pa-1">
+                                    @BeforeItemsTemplate
+                                </div>
+                            </MudListSubheader>
+                        }
 
+                        @if (FilteredItems.Count > 0)
+                        {
+                            @if (MultiSelection && SelectAll)
+                            {
+                                <MudListItem Value="@("__SelectAll__")"
+                                                Icon="@SelectAllCheckBoxIcon"
+                                                Text="@SelectAllText"
+                                                OnClick="SelectAllClickAsync"
+                                                OnClickPreventDefault="true"
+                                                Dense="@Dense"
+                                                Class="mb-2" />
+                                <MudDivider />
+                            }
+                            var displayedItems = FilteredItems.Take(_filteredTake).ToList();
+
+                            @foreach (var item in displayedItems)
+                            {
+                                var index = FilteredItems.IndexOf(item);
+                                @if (ItemTemplate != null)
+                                {
+                                    <MudListItem T="T" @key="@index" id="@GetListItemId(index)">
+                                        @ItemTemplate(item);
+                                    </MudListItem>                                            
+                                }
+                                else
+                                {
+                                    <MudListItem T="T" @key="@index" id="@GetListItemId(index)" Value="@item.Value"
+                                                    OnClick="@item.ToggleSelectedItem"
+                                                    OnClickPreventDefault="true"
+                                                    Disabled="@item.IsDisabled.Invoke()"
+                                                    Icon="@(item.IsSelected.Invoke() ? SelectIcon : null)"
+                                                    Class="@GetListItemClassname(item.IsSelected.Invoke())">
+                                        @item.DisplayFragment()
+                                    </MudListItem>
+                                }
+                            }
+
+                            @if (_filteredTake < FilteredItems.Count)
+                            {
+                                            <MudDivider />
+                                            <MudListItem OnClick="NextFilteredPage" Class="mud-underline mud-theme-info">More...</MudListItem>
+                            }
+                        }
+
+                        @if (NoRecords is not null && FilteredItems.Count <= 0)
+                        {
+                            <MudListSubheader>
+                                @NoRecords
+                            </MudListSubheader>
+                        }
+
+                        @if (AfterItemsTemplate is not null)
+                        {
+                            <MudDivider />
+                            <div class="mud-combobox-after-items pa-1">
+                                @AfterItemsTemplate
+                            </div>
+                        }
+                    </MudList>
+                </MudPopover>
+                }
             <!-- Progress Indicator -->
             @if (ShowProgressIndicator && _isLoadingState.Value)
             {
@@ -100,73 +168,6 @@
             }
             </InputContent>
         </MudInputControl>
-        <!-- TODO look again after overlay bug has been merged -->
-        <!-- Dropdown/Popover for the List and List Items Must be inside MudField or you can't click anywhere in MudField when it's open -->
-            <MudPopover Open="_openItemListState.Value" Class="@PopoverClass" MaxHeight="@MaxHeight"
-                        AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin"
-                        Fixed="DropdownSettings.Fixed" OverflowBehavior="DropdownSettings.OverflowBehavior"
-                        RelativeWidth="@RelativeWidth">
-                <CascadingValue Value="this">
-                    <MudList Class="mud-combobox-list" T="T" Dense="@(Margin == Margin.Dense ? true : false)">
-
-                        @if (BeforeItemsTemplate is not null)
-                        {
-                            <MudListSubheader>
-                                <div class="mud-combobox-before-items pa-1">
-                                    @BeforeItemsTemplate
-                                </div>
-                            </MudListSubheader>
-                        }
-
-                        @if (FilteredItems.Count > 0)
-                        {
-                            var displayedItems = FilteredItems.Take(_filteredTake).ToList();
-                            <!-- TODO: Enable Grouping with GroupByFunc? -->
-                            @foreach (var item in displayedItems)
-                            {
-                                var isSelected = _selectedItemsState.Value!.Contains(item);
-                                var isDisabled = ItemDisabledFunc?.Invoke(item) ?? false;
-                                var index = FilteredItems.IndexOf(item);
-                                var isHovered = index == _selectedComboBoxIndex;
-#nullable enable
-                                Func<Task>? task = GetReadOnlyState() || GetDisabledState() ? null : async () => await ComboBoxToggleItem(item, AutoClose);
-                                var itemContext = new ComboBoxItem<T>(item, isSelected, isDisabled, isHovered, task);
-                                @if (ItemTemplate != null)
-                                {
-                                    <MudListItem T="T" @key="@index" id="@GetListItemId(index)">
-                                        @ItemTemplate(itemContext);
-                                    </MudListItem>
-                                }
-                                else
-                                {
-                                    <MudListItem T="T" @key="@index" id="@GetListItemId(index)" Value="@itemContext.Item"
-                                                 OnClick="@(async () => await itemContext.ToggleSelectedItem())"
-                                                 OnClickPreventDefault="true"
-                                                 Disabled="@itemContext.IsDisabled"
-                                                 Icon="@(itemContext.IsSelected ? Icons.Material.Filled.Check : "")"
-                                                 Class="@GetListItemClassname(itemContext)">
-                                        @GetItemString(itemContext.Item)
-                                    </MudListItem>
-                                }
-                            }
-
-                            @if (_filteredTake < FilteredItems.Count)
-                            {
-                                <MudDivider />
-                                <MudListItem OnClick="NextFilteredPage" Class="mud-underline mud-theme-info">More...</MudListItem>
-                            }
-                        }
-
-                        @if (NoRecords is not null)
-                        {
-                            <MudListSubheader>
-                                @NoRecords
-                            </MudListSubheader>
-                        }
-
-                    </MudList>
-                </CascadingValue>
-            </MudPopover>
     </div>
 </CascadingValue>
 
@@ -174,4 +175,51 @@
 @if (Overlay && _openItemListState.Value)
 {
     <MudOverlay Visible="@true" AutoClose="true" OnClick="@(async () => await CloseListAsync())"></MudOverlay>
+}
+
+<!-- Shadow Select Items used as ChildContent -->
+<CascadingValue Value="this" IsFixed="true">
+    @ChildContent
+</CascadingValue>
+
+@code {
+#nullable enable
+    private RenderFragment? GetSelectedValuePresenter()
+    {
+        var _selectedItems = (_selectedItemsState.Value ?? new HashSet<T>()).Select(x => ToComboBoxItem(x)).ToList();
+        // TODO SortFunc
+        if (_selectedItems.Count > 0)
+        {
+            if (SelectedItemsTemplate != null)
+            {
+                return SelectedItemsTemplate(_selectedItems);
+            }
+            else if (SelectedItemTemplate != null && Value != null)
+            {
+                var item = _selectedItems.FirstOrDefault(x => x.Value.Equals(Value));
+                if (item != null)
+                {
+                    return SelectedItemTemplate(item);              
+                }                
+            }
+            else
+            {
+                return@<MudText Typo="@Typo">@string.Join(", ", _selectedItems.Select(x => x.DisplayFragment()))</MudText>;
+            }
+        }
+        return null;
+    }
+
+    private RenderFragment FitContentExtras =>
+        @<text>
+            @AdornmentText
+            @if (AdornmentText is null)
+            {
+                <MudIcon Icon="@(AdornmentIcon ?? OpenIcon)" Size="IconSize"></MudIcon>
+            }
+            @if (Clearable)
+            {
+                <MudIcon Icon="@ClearIcon" Size="IconSize"></MudIcon>
+            }
+        </text>;
 }
