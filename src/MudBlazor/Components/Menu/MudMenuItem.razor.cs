@@ -153,5 +153,19 @@ namespace MudBlazor
                 await OnClick.InvokeAsync(ev);
             }
         }
+
+        protected override void OnInitialized()
+        {
+            ParentMenu?.RegisterItem(this);
+        }
+
+        internal async Task InvokeClickAsync()
+        {
+            var args = new MouseEventArgs();
+            await OnClickHandlerAsync(args);
+        }
+
+        public ElementReference ElementRef { get; set; }
+
     }
 }

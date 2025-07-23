@@ -752,5 +752,59 @@ namespace MudBlazor
             Dispose(true);
             GC.SuppressFinalize(this);
         }
+
+        private int _focusedIndex = -1;
+        private List<MudMenuItem> _menuItems = [];
+        private ElementReference _menuListRef;
+
+        private async Task HandleMenuKeyDown(KeyboardEventArgs e)
+        {
+            var items = _menuItems.ToList();
+
+            if (items.Count == 0)
+                return;
+
+            if (e.Key == "ArrowDown")
+            {
+                _focusedIndex = (_focusedIndex + 1) % items.Count;
+                await FocusItem(_focusedIndex);
+            }
+            else if (e.Key == "ArrowUp")
+            {
+                _focusedIndex = (_focusedIndex - 1 + items.Count) % items.Count;
+                await FocusItem(_focusedIndex);
+            }
+            else if (e.Key == "Enter" || e.Key == " ")
+            {
+                await items[_focusedIndex].InvokeClickAsync();
+            }
+        }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            await base.OnAfterRenderAsync(firstRender);
+
+            if (_openState.Value && _focusedIndex == -1 && _menuItems.Count > 0)
+            {
+                _focusedIndex = 0;
+                await FocusItem(_focusedIndex);
+
+                await _menuListRef.FocusAsync();
+            }
+        }
+
+        internal void RegisterItem(MudMenuItem item)
+        {
+            if (!_menuItems.Contains(item))
+                _menuItems.Add(item);
+        }
+
+        private async Task FocusItem(int index)
+        {
+            var item = _menuItems[index];
+            await item.ElementRef.FocusAsync();
+        }
+
+
     }
 }
