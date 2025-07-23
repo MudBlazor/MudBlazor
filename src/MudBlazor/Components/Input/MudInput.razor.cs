@@ -401,13 +401,13 @@ namespace MudBlazor
             await OnBlurredAsync(new FocusEventArgs { Type = "jsBlur.OnBlur" });
         }
 
-        //protected async Task HandleContainerClick()
-        //{
-        //    if (!_isFocused && IsJSRuntimeAvailable)
-        //    {
-        //       await ElementReference.FocusAsync();
-        //    }
-        //}
+        protected async Task HandleContainerClick()
+        {
+            if (!_isFocused && IsJSRuntimeAvailable)
+            {
+                await ElementReference.FocusAsync();
+            }
+        }
     }
 
     /// <summary>
