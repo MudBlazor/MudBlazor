@@ -48,6 +48,7 @@ jobs:
           AUTOTRIAGE_MODEL: ${{ inputs.model }}
           AUTOTRIAGE_PERMISSIONS: ${{ github.event_name == 'workflow_dispatch' && inputs.permissions || vars.AUTOTRIAGE_PERMISSIONS }}
           MAX_ISSUES: ${{ github.event_name == 'schedule' && 50 || inputs.backlog-size }}
+          AUTOTRIAGE_USE_DATABASE: true
         run: |
           if [ -n "${{ inputs.issue-numbers }}" ]; then
             echo "Processing specified issues: ${{ inputs.issue-numbers }}"

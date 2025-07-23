@@ -387,34 +387,40 @@ async function main() {
     }
 
     const dbPath = path.resolve(__dirname, '../triage-db.json');
-    let triageDb = {};
-    if (fs.existsSync(dbPath)) {
-        const dbRaw = fs.readFileSync(dbPath, 'utf8');
-        triageDb = dbRaw ? JSON.parse(dbRaw) : {};
+    const useDatabase = process.env.AUTOTRIAGE_USE_DATABASE === 'true' && permissions.size > 0;
+
+    if (useDatabase) {
+        let triageDb = {};
+        if (fs.existsSync(dbPath)) {
+            const dbRaw = fs.readFileSync(dbPath, 'utf8');
+            triageDb = dbRaw ? JSON.parse(dbRaw) : {};
+        }
     }
 
     const { issue, comments } = await getIssueFromGitHub(owner, repo, issueNumber, octokit);
 
-    const lastTriaged = triageDb[issueNumber];
-    if (lastTriaged) {
-        const lastTriagedDate = new Date(lastTriaged);
-        const updatedDate = new Date(issue.updated_at);
+    if (useDatabase) {
+        const lastTriaged = triageDb[issueNumber];
+        if (lastTriaged) {
+            const lastTriagedDate = new Date(lastTriaged);
+            const updatedDate = new Date(issue.updated_at);
 
-        if (updatedDate <= lastTriagedDate) {
-            const labels = (issue.labels || []).map(l => typeof l === 'string' ? l : l.name);
-            const hasLabelThatNeedsChecking = labels.includes('info required') || labels.includes('stale');
-            const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
+            if (updatedDate <= lastTriagedDate) {
+                const labels = (issue.labels || []).map(l => typeof l === 'string' ? l : l.name);
+                const hasLabelThatNeedsChecking = labels.includes('info required') || labels.includes('stale');
+                const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
 
-            if (hasLabelThatNeedsChecking) {
-                if (Date.now() - lastTriagedDate.getTime() > sevenDaysMs) {
-                    // Issue is eligible to be re-checked
+                if (hasLabelThatNeedsChecking) {
+                    if (Date.now() - lastTriagedDate.getTime() > sevenDaysMs) {
+                        // Issue is eligible to be re-checked
+                    } else {
+                        console.log(`#${issueNumber} is not eligible to be re-checked`);
+                        process.exit(2);
+                    }
                 } else {
-                    console.log(`#${issueNumber} is not eligible to be re-checked`);
+                    console.log(`#${issueNumber} has not updated since last triage (${lastTriaged})`);
                     process.exit(2);
                 }
-            } else {
-                console.log(`#${issueNumber} has not updated since last triage (${lastTriaged})`);
-                process.exit(2);
             }
         }
     }
@@ -422,11 +428,9 @@ async function main() {
     console.log(`🤖 Using ${aiModel} with [${Array.from(permissions).join(', ') || 'none'}] permissions`);
     await processIssue(issue, comments, owner, repo, geminiApiKey, octokit);
 
-    if (permissions.size > 0) {
+    if (useDatabase) {
         triageDb[issueNumber] = new Date().toISOString();
         fs.writeFileSync(dbPath, JSON.stringify(triageDb, null, 2));
-    } else {
-        console.log('⚙️ No permissions granted, skipping DB update');
     }
 }
 
