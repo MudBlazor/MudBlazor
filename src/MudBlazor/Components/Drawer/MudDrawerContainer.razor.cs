@@ -129,7 +129,7 @@ namespace MudBlazor
 
         private MudDrawer? FindBottomDrawer()
         {
-            return _drawers.FirstOrDefault(d => d.Anchor == Anchor.Top);
+            return _drawers.FirstOrDefault(d => d.Anchor == Anchor.Bottom);
         }
 
         private MudDrawer? FindLeftMiniDrawer()
