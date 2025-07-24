@@ -1102,13 +1102,15 @@ namespace MudBlazor
         #endregion
 
         /// <summary>
-        /// Allows a sort direction of <see cref="SortDirection.None"/> in addition to <see cref="SortDirection.Ascending"/> and <see cref="SortDirection.Descending"/>.
+        /// Determines whether an unsorted state (<see cref="SortDirection.None"/>) is allowed when toggling sort directions.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>true</c>.  When <c>false</c>, the sort mode will only toggle between <see cref="SortDirection.Ascending"/> and <see cref="SortDirection.Descending"/>.
+        /// Defaults to <c>false</c>. When <c>false</c>, the sort direction toggles only between 
+        /// <see cref="SortDirection.Ascending"/> and <see cref="SortDirection.Descending"/>.
+        /// When <c>true</c>, a third toggle state, <see cref="SortDirection.None"/>, is included.
         /// </remarks>
         [Parameter]
-        public bool AllowUnsorted { get; set; } = true;
+        public bool AllowUnsorted { get; set; } = false;
 
         #region Properties
 

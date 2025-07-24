@@ -441,7 +441,10 @@ namespace MudBlazor
                         SetTextAsync(string.Join(Delimiter, _selectedValues.Select(Converter.Set)), updateValue: false).CatchAndLog();
                     }
                 }
-                SelectedValuesChanged.InvokeAsync(new HashSet<T?>(_selectedValues, _comparer));
+
+                var newValues = new HashSet<T?>(_selectedValues, _comparer);
+                SelectedValuesChanged.InvokeAsync(newValues);
+                FieldChanged(newValues);
                 if (MultiSelection && typeof(T) == typeof(string))
                     SetValueAsync((T?)(object?)Text, updateText: false).CatchAndLog();
             }
@@ -810,6 +813,7 @@ namespace MudBlazor
 
             HighlightItemForValueAsync(value);
             await SelectedValuesChanged.InvokeAsync(SelectedValues);
+            FieldChanged(SelectedValues);
             if (MultiSelection && typeof(T) == typeof(string))
                 await SetValueAsync((T?)(object?)Text, updateText: false);
             await InvokeAsync(StateHasChanged);
@@ -1053,6 +1057,7 @@ namespace MudBlazor
             await BeginValidateAsync();
             StateHasChanged();
             await SelectedValuesChanged.InvokeAsync(_selectedValues);
+            FieldChanged(_selectedValues);
             await OnClearButtonClick.InvokeAsync(e);
         }
 
@@ -1254,6 +1259,7 @@ namespace MudBlazor
             await BeginValidateAsync();
             StateHasChanged();
             await SelectedValuesChanged.InvokeAsync(_selectedValues);
+            FieldChanged(_selectedValues);
         }
 
         /// <summary>
@@ -1302,6 +1308,7 @@ namespace MudBlazor
             _selectedValues = selectedValues; // need to force selected values because Blazor overwrites it under certain circumstances due to changes of Text or Value
             await BeginValidateAsync();
             await SelectedValuesChanged.InvokeAsync(SelectedValues);
+            FieldChanged(SelectedValues);
             if (MultiSelection && typeof(T) == typeof(string))
                 SetValueAsync((T?)(object?)Text, updateText: false).CatchAndLog();
         }
@@ -1393,7 +1400,9 @@ namespace MudBlazor
             }
             else
             {
-                await SelectedValuesChanged.InvokeAsync(new HashSet<T?>(SelectedValues!, _comparer));
+                var newValues = new HashSet<T?>(SelectedValues!, _comparer);
+                await SelectedValuesChanged.InvokeAsync(newValues);
+                FieldChanged(newValues);
             }
         }
     }
