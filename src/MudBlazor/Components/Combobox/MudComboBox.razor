@@ -71,9 +71,7 @@
                     }
                 </MudInput>
                 <!-- Popover for the List and List Items -->
-                @if (_openItemListState.Value)
-                {
-                <MudPopover Open="true"
+                <MudPopover Open="@_openItemListState.Value"
                             MaxHeight="@MaxHeight"
                             Class="@PopoverClass"
                             AnchorOrigin="@AnchorOrigin"
@@ -151,7 +149,6 @@
                         }
                     </MudList>
                 </MudPopover>
-                }
             <!-- Progress Indicator -->
             @if (ShowProgressIndicator && _isLoadingState.Value)
             {
@@ -196,7 +193,7 @@
             }
             else if (SelectedItemTemplate != null && Value != null)
             {
-                var item = _selectedItems.FirstOrDefault(x => x.Value.Equals(Value));
+                var item = _selectedItems.FirstOrDefault(x => x.Value != null && x.Value.Equals(Value));
                 if (item != null)
                 {
                     return SelectedItemTemplate(item);              
@@ -209,17 +206,4 @@
         }
         return null;
     }
-
-    private RenderFragment FitContentExtras =>
-        @<text>
-            @AdornmentText
-            @if (AdornmentText is null)
-            {
-                <MudIcon Icon="@(AdornmentIcon ?? OpenIcon)" Size="IconSize"></MudIcon>
-            }
-            @if (Clearable)
-            {
-                <MudIcon Icon="@ClearIcon" Size="IconSize"></MudIcon>
-            }
-        </text>;
 }
