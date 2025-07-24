@@ -360,6 +360,8 @@ async function processIssue(issue, comments, owner, repo, geminiApiKey, octokit)
  * Main entry point
  */
 async function main() {
+    console.log();
+
     const requiredEnvVars = ['GITHUB_ISSUE_NUMBER', 'GEMINI_API_KEY', 'GITHUB_REPOSITORY'];
     for (const envVar of requiredEnvVars) {
         if (!process.env[envVar]) {
@@ -388,9 +390,9 @@ async function main() {
 
     const dbPath = path.resolve(__dirname, '../triage-db.json');
     const useDatabase = process.env.AUTOTRIAGE_USE_DATABASE === 'true' && permissions.size > 0;
+    let triageDb = {};
 
     if (useDatabase) {
-        let triageDb = {};
         if (fs.existsSync(dbPath)) {
             const dbRaw = fs.readFileSync(dbPath, 'utf8');
             triageDb = dbRaw ? JSON.parse(dbRaw) : {};
@@ -432,12 +434,10 @@ async function main() {
         triageDb[issueNumber] = new Date().toISOString();
         fs.writeFileSync(dbPath, JSON.stringify(triageDb, null, 2));
     }
-
-    console.log();
 }
 
 main().catch(err => {
-    console.error('\n❌ Error:', err.message);
+    console.error('❌ Error:', err.message);
     core.setFailed(err.message);
     process.exit(1);
 });

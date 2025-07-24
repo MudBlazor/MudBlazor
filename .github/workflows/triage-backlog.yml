@@ -48,7 +48,7 @@ jobs:
           AUTOTRIAGE_MODEL: ${{ inputs.model }}
           AUTOTRIAGE_PERMISSIONS: ${{ github.event_name == 'workflow_dispatch' && inputs.permissions || vars.AUTOTRIAGE_PERMISSIONS }}
           AUTOTRIAGE_USE_DATABASE: true
-          MAX_ISSUES: ${{ github.event_name == 'schedule' && 50 || inputs.backlog-size }}
+          MAX_ISSUES: ${{ github.event_name == 'schedule' && 100 || inputs.backlog-size }}
         run: |
           if [ -n "${{ inputs.issue-numbers }}" ]; then
             echo "Processing specified issues: ${{ inputs.issue-numbers }}"
@@ -82,5 +82,8 @@ jobs:
               continue
             elif [ "$exit_code" -eq 0 ]; then
               count=$((count + 1))
+              left=$((max_count - count))
+              echo "$(date '+%Y-%m-%d %H:%M:%S'): $left left"
+              sleep 3
             fi
           done
