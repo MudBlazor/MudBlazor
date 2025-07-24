@@ -1,0 +1,193 @@
+@import '../abstracts/variables';
+
+.mud-dropdown {
+  display: flex;
+  flex-grow: 1;
+  position: relative;
+
+  & .mud-input-slot {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  //Theme Settings
+  @each $color in $mud-palette-colors {
+    &.mud-dropdown-#{$color} {
+      .mud-input {
+        color: var(--mud-palette-#{$color});
+        border-color: var(--mud-palette-#{$color});
+        --mud-ripple-color: var(--mud-palette-#{$color});
+
+        ~ label.mud-input-label.mud-input-label-inputcontrol {
+          color: var(--mud-palette-#{$color});
+
+          &:hover {
+            color: var(--mud-palette-#{$color}-darken);
+          }
+        }
+
+        &:focus-within ~ label.mud-input-label.mud-input-label-inputcontrol {
+          color: var(--mud-palette-#{$color}-darken);
+        }
+
+        &.mud-input-underline {
+          &:before {
+            border-bottom-color: var(--mud-palette-#{$color});
+          }
+
+          @media(hover: hover) and (pointer: fine) {
+            &:hover:not(.mud-disabled):before {
+              border-bottom-color: var(--mud-palette-#{$color}-darken);
+            }
+          }
+
+          &:after {
+            border-bottom-color: var(--mud-palette-#{$color}-darken);
+          }
+        }
+
+        .mud-input-adornment-icon-button svg path {
+          color: var(--mud-palette-#{$color});
+
+          &:focus-within,
+          &:hover {
+            color: var(--mud-palette-#{$color});
+          }
+        }
+
+        &.mud-input-outlined {
+          & > .mud-input-outlined-border {
+            border-color: var(--mud-palette-#{$color});
+          }
+
+          @media(hover: hover) and (pointer: fine) {
+            &:not(.mud-disabled):not(:focus-within):hover > .mud-input-outlined-border {
+              border-color: var(--mud-palette-#{$color}-darken);
+            }
+          }
+
+          &:focus-within > .mud-input-outlined-border {
+            border-color: var(--mud-palette-#{$color}-darken);
+          }
+        }
+      }
+
+      .mud-input-filled {
+        background-color: var(--mud-palette-#{$color});
+        color: var(--mud-palette-#{$color}-text);
+        border-bottom-color: var(--mud-palette-#{$color}-darken);
+        --mud-ripple-color: var(--mud-palette-#{$color}-text);
+
+        &:hover {
+          background-color: var(--mud-palette-#{$color}-darken);
+        }
+
+        ~ label.mud-input-label.mud-input-label-inputcontrol {
+          color: var(--mud-palette-#{$color}-text);
+
+          &:hover {
+            color: var(--mud-palette-#{$color}-text);
+          }
+        }
+
+        &:focus-within ~ label.mud-input-label.mud-input-label-inputcontrol {
+          color: var(--mud-palette-#{$color}-text);
+        }
+
+        .mud-input-adornment-icon-button svg path {
+          color: var(--mud-palette-#{$color}-text);
+
+          &:focus-within {
+            color: var(--mud-palette-#{$color}-text);
+          }
+
+          &:hover {
+            color: var(--mud-palette-#{$color}-text);
+          }
+        }
+      }
+    }
+  }
+}
+
+.mud-dropdown-input input {
+  &.mud-input-root {
+    font: inherit;
+    color: currentColor;
+    min-width: 100px;
+    flex: 1;
+    border: 0;
+    height: 1lh;
+    margin: 0;
+    width: 100px;
+    background: none;
+    position: relative;
+    box-sizing: content-box;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-tap-highlight-color: transparent;
+
+    @include inputplaceholder {
+      color: currentColor;
+      opacity: 0.42;
+      transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    }
+
+    &:focus, &:active {
+      outline: 0;
+    }
+
+    &:invalid {
+      box-shadow: none;
+    }
+
+    &:disabled {
+      opacity: 1;
+    }
+  }
+
+  &::-ms-reveal, &::-ms-clear {
+    display: none !important;
+  }
+}
+
+.mud-dropdown--with-progress {
+  & .mud-dropdown-input input {
+    padding-right: 3.5rem !important;
+  }
+
+  & .mud-input-adorned-end input {
+    padding-right: 4.5rem !important;
+  }
+  // If autocomplete has a progress indicator, the adornment should be hidden when loading
+  & .mud-dropdown-input .mud-icon-button {
+    display: none !important;
+  }
+
+  & .progress-indicator-circular {
+    position: absolute;
+    width: 100%;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+    padding-right: 1rem;
+  }
+
+  & .mud-progress-linear {
+    position: absolute;
+    bottom: -1px;
+    height: 2px;
+  }
+}
+
+.mud-combobox-selected-items {
+  max-height: 19px;
+  margin: 0px;
+  padding: 0px 12px;
+}
+

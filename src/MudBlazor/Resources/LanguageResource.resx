@@ -453,6 +453,9 @@
   <data name="HeatMap_More" xml:space="preserve">
     <value>More</value>
   </data>
+  <data name="MudInput_Add" xml:space="preserve">
+    <value>Add</value>
+  </data>
   <data name="MudTreeView_ExpandItem" xml:space="preserve">
     <value>Expand</value>
   </data>

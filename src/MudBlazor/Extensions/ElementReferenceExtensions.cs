@@ -25,6 +25,12 @@ namespace MudBlazor
             return null;
         }
 
+        /// <summary>
+        /// Ensures focus after requestAnimationFrame is complete. Allowing the render to finish then focusing the element.
+        /// </summary>
+        public static ValueTask MudForceFocusAsync(this ElementReference elementReference) =>
+            elementReference.GetJSRuntime()?.InvokeVoidAsync("mudElementRef.forceFocus", elementReference) ?? ValueTask.CompletedTask;
+
         public static ValueTask MudFocusFirstAsync(this ElementReference elementReference, int skip = 0, int min = 0) =>
             elementReference.GetJSRuntime()?.InvokeVoidAsync("mudElementRef.focusFirst", elementReference, skip, min) ?? ValueTask.CompletedTask;
 

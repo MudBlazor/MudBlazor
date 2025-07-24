@@ -46,7 +46,7 @@
 
         public ValueTask ScrollToFragmentAsync(string id, ScrollBehavior behavior) => ValueTask.CompletedTask;
 
-        public ValueTask ScrollToListItemAsync(string elementId) => ValueTask.CompletedTask;
+        public ValueTask ScrollToListItemAsync(string elementId, bool forceScroll = true) => ValueTask.CompletedTask;
 
         public Task ScrollToTop(ScrollBehavior scrollBehavior = ScrollBehavior.Auto) => Task.CompletedTask;
 

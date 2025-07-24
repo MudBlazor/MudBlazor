@@ -47,8 +47,9 @@ public interface IScrollManager
     /// Scrolls to the list item element with the given ID.
     /// </summary>
     /// <param name="elementId">The ID of the list item element to scroll.</param>
+    /// <param name="forceScroll">Defaults to <c>true</c>. If set to false it will only scroll if item isn't visible.</param>
     /// <returns>A task that represents the asynchronous operation.</returns>
-    ValueTask ScrollToListItemAsync(string elementId);
+    ValueTask ScrollToListItemAsync(string elementId, bool forceScroll = true);
 
     /// <summary>
     /// Locks the scroll for the element matching the specified selector by adding a CSS class.

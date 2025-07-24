@@ -15,6 +15,14 @@ class MudElementReference {
         }
     }
 
+    forceFocus(element) {
+        if (element) {
+            requestAnimationFrame(() => {
+                element.focus();
+            });
+        }
+    }
+
     blur(element) {
         if (element) {
             element.blur();

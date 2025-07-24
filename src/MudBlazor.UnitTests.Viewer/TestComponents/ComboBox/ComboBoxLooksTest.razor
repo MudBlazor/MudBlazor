@@ -1,0 +1,163 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudStack Row Class="justify-space-between mud-width-full">
+    <MudStack Style="width: 500px">
+        @foreach (var variant in Enum.GetValues(typeof(Variant)).Cast<Variant>())
+        {
+            <MudStack Row Spacing="4" AlignItems="AlignItems.End">
+                <MudComboBox @bind-Text="@_value"
+                             Items="@_stateList"
+                             SearchFunc="Search"
+                             FullWidth
+                             Variant="variant"
+                             Color="@(_colorComboBox?.Value ?? Color.Default)"
+                             Label="@variant.ToString()"
+                             Filterable="_filterable"
+                             MultiSelection="_multiSelection"
+                             @bind-OpenItemList="_openStates[variant]"
+                             @bind-SelectedItems="_selectedItems"
+                             OnAddItemClick="@(_addItem ? EventCallback.Factory.Create<MouseEventArgs>(this, (MouseEventArgs e) => AddItem(e)) : default)"
+                             AutoClose="_autoClose"
+                             Margin="@(_dense ? Margin.Dense : Margin.Normal)"
+                             Disabled="_disabled"
+                             ReadOnly="_readonly"
+                             Placeholder="@(_placeholder ? "Placeholder" : null)"
+                             HelperText="@(_helperText ? "Helper Text" : null)"
+                             Clearable="_clearable" />
+                <MudSwitch @bind-Value="_openStates[variant]" Label="Open" Color="Color.Primary" />
+            </MudStack>
+        }
+            <MudStack Row Spacing="4" AlignItems="AlignItems.End">
+                <MudAutocomplete @bind-Value="@_value"
+                                 OpenChanged="OnOpenChanged"
+                                 SearchFunc="Search"
+                                 FullWidth
+                                 Variant="Variant.Filled"
+                                 Label="MudAutoComplete"
+                                 Dense="_dense"
+                                 Disabled="_disabled"
+                                 ReadOnly="_readonly"
+                                 Placeholder="@(_placeholder ? "Placeholder" : null)"
+                                 HelperText="@(_helperText ? "Helper Text" : null)"
+                                 Clearable="_clearable" />
+                <MudSwitch @bind-Value="_autoCompleteOpen" ReadOnly Label="Open" Color="Color.Primary" />
+            </MudStack>
+
+        <MudComboBox @bind-Text="@_value"
+                     @ref="_comboBox"
+                     @bind-SelectedItems="_selectedItems"
+                     Color="@(_colorComboBox?.Value ?? Color.Default)"
+                     Items="@_stateList"
+                     SearchFunc="Search"
+                     FullWidth
+                     Variant="Variant.Filled"
+                     Label="MudComboBoxWithRef"
+                     Filterable="_filterable"
+                     MultiSelection="_multiSelection"
+                     AutoClose="_autoClose"
+                     OnAddItemClick="@(_addItem ? EventCallback.Factory.Create<MouseEventArgs>(this, (MouseEventArgs e) => AddItem(e)) : default)"
+                     Margin="_dense ? Margin.Dense : Margin.Normal"
+                     Disabled="_disabled"
+                     ReadOnly="_readonly"
+                     Placeholder="@(_placeholder ? "Placeholder" : null)"
+                     HelperText="@(_helperText ? "Helper Text" : null)"
+                     Clearable="_clearable" />
+        <MudText>Value: @_comboBox?.Value</MudText>
+    </MudStack>
+
+    <MudStack>
+        <MudComboBox @ref="@_colorComboBox" T="MudBlazor.Color" Color="Color.Default"
+                     FullWidth
+                     Label="Select Theme" />
+        <MudSwitch @bind-Value="_dense" Label="Dense" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_readonly" Label="ReadOnly" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_disabled" Label="Disabled" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_autoClose" Label="Auto Close" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_multiSelection" Label="MultiSelection" Color="Color.Primary" />
+    </MudStack>
+
+    <MudStack>
+        <MudSwitch @bind-Value="_placeholder" Label="Placeholder" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_helperText" Label="HelperText" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_filterable" Label="Filterable" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_addItem" Label="Add Enable" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_clearable" Label="Clearable" Color="Color.Primary" />
+    </MudStack>
+
+</MudStack>
+
+@code {
+
+#nullable enable
+
+    string _value = string.Empty;
+    string _lastValue = string.Empty;
+    bool _autoCompleteOpen = false;
+    bool _addItem;
+    bool _dense;
+    bool _disabled;
+    bool _readonly;
+    bool _autoClose = true;
+    bool _filterable;
+    bool _placeholder;
+    bool _helperText;
+    bool _clearable;
+    bool _multiSelection;
+
+    private readonly Dictionary<Variant, bool> _openStates = new();
+    private List<string> _stateList = new();
+    private HashSet<string> _selectedItems = new();
+    private MudComboBox<string>? _comboBox;
+    private MudComboBox<MudBlazor.Color>? _colorComboBox;
+
+    protected override void OnInitialized()
+    {
+        foreach (var variant in Enum.GetValues(typeof(Variant)).Cast<Variant>())
+        {
+            _openStates[variant] = false; // Initialize each variant's state
+        }
+
+        _stateList = _states.OrderBy(x => x).ToList();
+    }
+
+    private void AddItem(MouseEventArgs args)
+    {
+        if (string.IsNullOrEmpty(_value))
+            return;
+
+        _stateList.Add(_value);
+
+        _stateList = _stateList.OrderBy(x => x).ToList();
+    }
+
+    private void OnOpenChanged(bool open)
+    {
+        _autoCompleteOpen = open;
+    }
+
+    private async Task<IEnumerable<string>> Search(string value, CancellationToken token)
+    {
+        // In real life use an asynchronous function for fetching data from an api.
+        await Task.Delay(5, token);
+
+        // if text is null or empty, show complete list
+        if (string.IsNullOrEmpty(value))
+            return _states;
+
+        return _states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    private readonly string[] _states =
+    [
+        "Alabama", "Alaska", "Arizona", "Arkansas", "California",
+    "Colorado", "Connecticut", "Delaware", "Florida", "Georgia",
+    "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas",
+    "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts",
+    "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana",
+    "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico",
+    "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma",
+    "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota",
+    "Tennessee", "Texas", "Utah", "Vermont", "Virginia",
+    "Washington", "West Virginia", "Wisconsin", "Wyoming"
+    ];
+}

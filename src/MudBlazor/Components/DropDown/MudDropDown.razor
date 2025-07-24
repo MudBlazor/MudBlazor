@@ -1,0 +1,92 @@
+﻿@namespace MudBlazor
+@using System.Globalization
+@inherits MudFormComponent<T, string>
+@typeparam T
+
+<!-- Material 3 specifications from menu:  https://m3.material.io/components/menus/  -->
+<CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
+    <div class="@DropDownClassname">
+        <MudField Class="@Classname"
+                  ContentShrink="@(ShouldLabelShrink)"
+                  Disabled="@GetDisabledState()"
+                  Error="@HasErrors"
+                  FullWidth="@FullWidth"
+                  HelperText="@HelperText"
+                  Label="@Label"
+                  IconSize="@IconSize"
+                  Margin="@Margin"
+                  Style="@Style"
+                  tabindex="-1"
+                  Variant="@Variant"
+                  Adornment="@Adornment" AdornmentAriaLabel="@AdornmentAriaLabel" OnAdornmentClick="@AdornmentClickHandlerAsync"
+                  AdornmentIcon="@GetDropDownIcon" AdornmentColor="@AdornmentColor" AdornmentText="@AdornmentText"
+                  @onmousedown="@OnInputClickedAsync">
+            <MudStack Wrap="Wrap.Wrap" Row Class="@($"mud-dropdown-input {(Variant == Variant.Filled ? "align-self-end" : "")}")" 
+                      Spacing="2" AlignItems="AlignItems.Center" tabindex="-1">
+                @* TODO: @onblur="@OnBlurredAsync" onblur is set in javascript  *@
+                <input @ref="@_elementReference" @key="_elementKey" id="@InputElementId"
+                       @attributes="UserAttributes" autocomplete="@GetAutocomplete()"
+                       @onfocus="@OnInputFocusedAsync"
+                       @oninput="OnInput"
+                       @onkeydown="@OnInputKeyDown"
+                       @onkeyup="@OnInputKeyUp"
+                       @onkeydown:preventDefault="false"
+                       @onkeyup:preventDefault="@false"
+                       aria-describedby="@GetAriaDescribedByString()"
+                       aria-invalid="@Error.ToString().ToLowerInvariant()"
+                       aria-required="@Required.ToString().ToLowerInvariant()"
+                       class="@InputClassname"
+                       disabled=@GetDisabledState()
+                       inputmode="@(InputType.Text.ToDescriptionString())"
+                       pattern="@Pattern"
+                       placeholder="@Placeholder"
+                       readonly="@(GetReadOnlyState() || !Filterable)"
+                       required="@Required"
+                       type="@(InputType.Text.ToDescriptionString())"
+                       value="@_textState.Value" />
+                @if (ShowClearButton)
+                {
+                    <MudIconButton Class="@ClearButtonClassname"
+                                    Color="@Color.Inherit"
+                                    Icon="@ClearIcon"
+                                    Size="@IconSize"
+                                    OnClick="@ClearButtonClickHandlerAsync"
+                                    aria-label="@Localizer[Resources.LanguageResource.MudInput_Clear]"
+                                    tabindex="-1" @onmousedown:stopPropagation />                    
+                }
+                @if (ShowAddButton)
+                {
+                    <MudIconButton Class="@ClearButtonClassname"
+                                    Color="@Color.Inherit"
+                                    Icon="@AddIcon"
+                                    Size="@IconSize"
+                                    OnClick="@AddButtonClickHandlerAsync"
+                                    aria-label="@Localizer[Resources.LanguageResource.MudInput_Add]"
+                                    tabindex="-1" @onmousedown:stopPropagation />
+                }
+            </MudStack>
+
+            <!-- Progress Indicator -->
+            @if (ShowProgressIndicator && _isLoadingState.Value)
+            {
+                <div class="@CircularProgressClassname">
+                    <MudProgressCircular Color="ProgressIndicatorColor" Indeterminate="true" Size="@IconSize" tabindex="-1" />
+                </div>
+            }
+        </MudField>
+        <!-- Popover for the DropDownContent Must be inside MudField or you can't click anywhere in MudField when it's open -->
+        <MudPopover Open="@_openMenuState.Value" Class="@PopoverClass" MaxHeight="@MaxHeight"
+                    AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin"
+                    Fixed="DropdownSettings.Fixed" OverflowBehavior="DropdownSettings.OverflowBehavior"
+                    RelativeWidth="@RelativeWidth">
+            @DropDownContent(this)
+        </MudPopover>
+    </div>
+</CascadingValue>
+
+<!-- Overlay for the Popover, optional -->
+@if (Overlay)
+{
+                            <MudOverlay Visible="@_openMenuState.Value" AutoClose="true" OnClick="@(async () => await CloseMenuAsync())"></MudOverlay>
+}
+
