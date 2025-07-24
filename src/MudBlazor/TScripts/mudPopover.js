@@ -277,6 +277,12 @@ window.mudpopoverHelper = {
             const zIndexAuto = popoverNodeStyle.getPropertyValue('z-index') === 'auto';
             const classListArray = Array.from(classList);
 
+            // MudSheet edge positioning
+            const isSheet = classListArray.indexOf('mud-sheet-popover') >= 0;
+            if (isSheet) {
+                this.setMudSheetEdge(popoverContentNode, classListArray);
+            }
+
             if (isPositionOverride) {
                 const positiontop = parseInt(popoverContentNode.getAttribute('data-pc-y')) || boundingRect.top;
                 const positionleft = parseInt(popoverContentNode.getAttribute('data-pc-x')) || boundingRect.left;
@@ -582,7 +588,8 @@ window.mudpopoverHelper = {
             }
             else if (!classList.contains('mud-popover-fixed')) {
                 offsetX += window.scrollX;
-                offsetY += window.scrollY
+                offsetY += window.scrollY;
+                console.log(`offsetX: ${offsetX}, offsetY: ${offsetY}, scrollX: ${window.scrollX}, scrollY: ${window.scrollY}`);
             }
 
             popoverContentNode.style['left'] = (left + offsetX) + 'px';
@@ -603,6 +610,36 @@ window.mudpopoverHelper = {
         else {
             //console.log(`popoverNode: ${popoverNode} ${popoverNode ? popoverNode.parentNode : ""}`);
         }
+    },
+
+    setMudSheetEdge: function (popoverContentNode, classListArray) {
+        // Start at center of viewport
+        let positionleft = window.innerWidth / 2;
+        let positiontop = window.innerHeight / 2;
+
+        console.log(`Base Center => Top: ${positiontop}, Left: ${positionleft}`);
+
+        if (classListArray.includes('mud-sheet-position-top')) {
+            positiontop = 0;
+            console.log("position-top");
+        }
+        if (classListArray.includes('mud-sheet-position-bottom')) {
+            positiontop = window.innerHeight;
+            console.log("position-bottom");
+        }
+        if (classListArray.includes('mud-sheet-position-left')) {
+            positionleft = 0;
+            console.log("position-left");
+        }
+        if (classListArray.includes('mud-sheet-position-right')) {
+            positionleft = window.innerWidth;
+            console.log("position-right");
+        }
+
+        console.log(`Calculated Position => Top: ${positiontop}, Left: ${positionleft}`);
+
+        popoverContentNode.setAttribute('data-pc-x', positionleft);
+        popoverContentNode.setAttribute('data-pc-y', positiontop);
     },
 
     // cycles through popovers to reposition those that are open, classSelector is passed on

@@ -519,6 +519,12 @@
             public const string Appearance = "Appearance";
         }
 
+        public static class Sheet
+        {
+            public const string Behavior = "Behavior";
+            public const string Appearance = "Appearance";
+        }
+
         public static class SimpleTable
         {
             public const string Behavior = "Behavior";

@@ -1,0 +1,103 @@
+@import '../abstracts/variables';
+
+.mud-sheet-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  margin: 0 auto;
+  pointer-events: none;
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+  background-color: var(--mud-palette-surface);
+  border-radius: var(--mud-default-borderradius);
+  transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+
+  .mud-sheet-content {
+    color: var(--mud-palette-text-primary);
+  }
+
+  // Positioning
+  &.mud-sheet-position-bottom {
+    align-items: flex-end;
+
+    .mud-sheet-content {
+      padding: 0 16px 16px 16px;
+    }
+  }
+
+  &.mud-sheet-position-top {
+    flex-direction: column-reverse;
+    align-items: flex-start;
+
+    .mud-sheet-content {
+      padding: 16px 16px 0 16px;
+    }
+  }
+
+  &.mud-sheet-position-left {
+    flex-direction: row;
+    align-items: stretch;
+
+    .mud-sheet-content {
+      padding: 16px 0 16px 16px;
+    }
+  }
+
+  &.mud-sheet-position-right {
+    flex-direction: row-reverse;
+    align-items: stretch;
+
+    .mud-sheet-content {
+      padding: 16px 16px 16px 0;
+    }
+  }
+
+  &.mud-sheet-position-center {
+    align-items: center;
+    justify-content: center;
+
+    .mud-sheet-handle {
+      display: none;
+    }
+    // No drag handle for CenterSheet
+    .mud-sheet-content {
+      padding: 24px;
+    }
+  }
+  // Handle styling (Material Design touch target)
+  &:not(.mud-sheet-position-center) {
+    .mud-sheet-handle {
+      display: flex;
+      cursor: grab;
+      touch-action: none;
+      min-height: 32px;
+      min-width: 32px;
+      align-items: center;
+      justify-content: center;
+      color: var(--mud-palette-divider);
+    }
+
+    &.mud-sheet-orientation-vertical .mud-sheet-handle {
+      padding: 8px 0 4px 0;
+    }
+
+    &.mud-sheet-orientation-horizontal .mud-sheet-handle {
+      padding: 0 8px 0 4px;
+    }
+  }
+
+  // Size constraints (Material Design)
+  &.mud-sheet-orientation-vertical {
+    max-width: 640px;
+    max-height: calc(100vh - 56px);
+  }
+
+  &.mud-sheet-orientation-horizontal {
+    max-width: calc(100vw - 56px);
+  }
+}
+
+div[mudsheet] {
+    position: fixed;
+}
