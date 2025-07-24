@@ -1,0 +1,107 @@
+﻿
+<MudContainer MaxWidth="MaxWidth.Large">
+    <MudGrid Class="d-flex mx-auto">
+        <MudItem xs="6" md="3" lg="2">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => OpenSheet(1))">Toggle Bottom</MudButton>
+        </MudItem>
+        <MudItem xs="6" md="3" lg="2">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => OpenSheet(2))">Toggle Top</MudButton>
+        </MudItem>
+        <MudItem xs="6" md="3" lg="2">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => OpenSheet(3))">Toggle Start @(RightToLeft ? "Right" : "Left")</MudButton>
+        </MudItem>
+        <MudItem xs="6" md="3" lg="2">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => OpenSheet(4))">Toggle End @(RightToLeft ? "Left" : "Right")</MudButton>
+        </MudItem>
+        <MudItem xs="6" md="3" lg="2">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => OpenSheet(5))">Toggle Center</MudButton>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+<MudSheet @bind-Open="@_sheet1Open" Position="Position.Bottom">
+    <MudIconButton Icon="@Icons.Material.Filled.Delete" aria-label="delete" />
+    <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Primary" aria-label="github" />
+    <MudIconButton Icon="@Icons.Material.Filled.Favorite" Color="Color.Secondary" aria-label="add to favorite" />
+    <MudIconButton Icon="@Icons.Material.Filled.Share" Disabled="true" aria-label="share" />
+</MudSheet>
+
+<MudSheet @bind-Open="@_sheet2Open" Position="Position.Top">
+    <MudIconButton Icon="@Icons.Material.Filled.Delete" aria-label="delete" />
+    <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Primary" aria-label="github" />
+    <MudIconButton Icon="@Icons.Material.Filled.Favorite" Color="Color.Secondary" aria-label="add to favorite" />
+    <MudIconButton Icon="@Icons.Material.Filled.Share" Disabled="true" aria-label="share" />
+</MudSheet>
+
+<MudSheet @bind-Open="@_sheet3Open" Position="Position.Start">
+    <MudIconButton Icon="@Icons.Material.Filled.Delete" aria-label="delete" />
+    <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Primary" aria-label="github" />
+    <MudIconButton Icon="@Icons.Material.Filled.Favorite" Color="Color.Secondary" aria-label="add to favorite" />
+    <MudIconButton Icon="@Icons.Material.Filled.Share" Disabled="true" aria-label="share" />
+</MudSheet>
+
+<MudSheet @bind-Open="@_sheet4Open" Position="Position.End">
+    <MudIconButton Icon="@Icons.Material.Filled.Delete" aria-label="delete" />
+    <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Primary" aria-label="github" />
+    <MudIconButton Icon="@Icons.Material.Filled.Favorite" Color="Color.Secondary" aria-label="add to favorite" />
+    <MudIconButton Icon="@Icons.Material.Filled.Share" Disabled="true" aria-label="share" />
+</MudSheet>
+
+<MudSheet @bind-Open="@_sheet5Open" Position="Position.Center">
+    <MudCarousel Class="mud-width-full" ShowArrows="true" AutoCycle="true" TData="object">
+        <MudCarouselItem Transition="transition" Color="@Color.Primary">
+            <div class="d-flex" style="height:100%">
+                <MudIcon Class="mx-auto my-auto" Icon="@Icons.Custom.Brands.MudBlazor" Size="@Size.Large" />
+            </div>
+        </MudCarouselItem>
+        <MudCarouselItem Transition="transition" Color="@Color.Secondary">
+            <div class="d-flex" style="height:100%">
+                <MudIcon Class="mx-auto my-auto" Icon="@Icons.Custom.Brands.MudBlazor" Size="@Size.Large" />
+            </div>
+        </MudCarouselItem>
+        <MudCarouselItem Transition="transition">
+            <div class="d-flex" style="height:100%">
+                <MudIcon Class="mx-auto my-auto" Icon="@Icons.Custom.Brands.MudBlazor" Color="@Color.Primary" Size="@Size.Large" />
+            </div>
+        </MudCarouselItem>
+    </MudCarousel>
+</MudSheet>
+
+@code {
+    private bool _sheet1Open = false;
+    private bool _sheet2Open = false;
+    private bool _sheet3Open = false;
+    private bool _sheet4Open = false;
+    private bool _sheet5Open = false;
+
+    private Transition transition = Transition.Slide;
+
+    /// <summary>
+    /// Gets a cascading value indicating whether the layout and text direction are rendered in a right-to-left format.
+    /// </summary>
+    [CascadingParameter(Name = "RightToLeft")]
+    [Category(CategoryTypes.Sheet.Appearance)]
+    public bool RightToLeft { get; set; }
+
+    private void OpenSheet(int sheet)
+    {
+        switch (sheet)
+        {
+            case 1:
+                _sheet1Open = !_sheet1Open;
+                break;
+            case 2:
+                _sheet2Open = !_sheet2Open;
+                break;
+            case 3:
+                _sheet3Open = !_sheet3Open;
+                break;
+            case 4:
+                _sheet4Open = !_sheet4Open;
+                break;
+            case 5:
+                _sheet5Open = !_sheet5Open;
+                break;
+        }
+    }
+}

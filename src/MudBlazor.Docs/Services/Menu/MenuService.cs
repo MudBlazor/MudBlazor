@@ -56,6 +56,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("Icons", typeof(MudIcon))
             .AddItem("List", typeof(MudList<T>), typeof(MudListItem<T>), typeof(MudListSubheader))
             .AddItem("Paper", typeof(MudPaper))
+            .AddItem("Sheet", typeof(MudSheet))
             .AddItem("Rating", typeof(MudRating), typeof(MudRatingItem))
             .AddItem("Skeleton", typeof(MudSkeleton))
             .AddItem("Table", typeof(MudTable<T>), typeof(MudTableBase), typeof(MudTablePager), typeof(MudTableGroupRow<T>), typeof(MudTableSortLabel<T>), typeof(MudTd), typeof(MudTh), typeof(MudTr), typeof(MudTFootRow), typeof(MudTHeadRow))

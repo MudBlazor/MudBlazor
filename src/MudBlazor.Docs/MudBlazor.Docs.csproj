@@ -93,5 +93,8 @@
     <Content Remove="compilerconfig.json" />
     <Content Remove="sasscompiler.json" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Pages\Components\Sheet\Examples\" />
+  </ItemGroup>
 
 </Project>
