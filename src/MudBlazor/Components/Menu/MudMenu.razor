@@ -82,7 +82,6 @@
 				Duration="@(GetDense() ? 0 : MudGlobal.TransitionDefaults.Duration.TotalMilliseconds)">
 		<CascadingValue Value="@this">
 			<div tabindex="0"
-				 @ref="_menuListRef"
 				 @onkeydown="HandleMenuKeyDown"
 				 @onpointerenter="@PointerEnterAsync"
 				 @onpointerleave="@PointerLeaveAsync">

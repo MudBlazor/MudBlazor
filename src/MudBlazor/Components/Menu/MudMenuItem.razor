@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<div @ref="ElementRef" tabindex="0">
+<div @ref="ElementRef" tabindex="@(!GetDisabled() ? "0" : "-1")">
 	<MudElement HtmlTag="@GetHtmlTag()"
 				Class="@Classname"
 				Style="@Style"

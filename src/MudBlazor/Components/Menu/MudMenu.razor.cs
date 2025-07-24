@@ -459,6 +459,8 @@ namespace MudBlazor
             }
 
             // Now close this menu itself.
+            _focusedIndex = -1;
+            _menuItems.Clear();
             await _openState.SetValueAsync(false);
             await InvokeAsync(StateHasChanged);
         }
@@ -755,11 +757,10 @@ namespace MudBlazor
 
         private int _focusedIndex = -1;
         private List<MudMenuItem> _menuItems = [];
-        private ElementReference _menuListRef;
 
         private async Task HandleMenuKeyDown(KeyboardEventArgs e)
         {
-            var items = _menuItems.ToList();
+            var items = _menuItems.Where(x => !x.GetDisabled()).ToList();
 
             if (items.Count == 0)
                 return;
@@ -787,9 +788,8 @@ namespace MudBlazor
             if (_openState.Value && _focusedIndex == -1 && _menuItems.Count > 0)
             {
                 _focusedIndex = 0;
+                await Task.Yield();
                 await FocusItem(_focusedIndex);
-
-                await _menuListRef.FocusAsync();
             }
         }
 
@@ -802,9 +802,11 @@ namespace MudBlazor
         private async Task FocusItem(int index)
         {
             var item = _menuItems[index];
-            await item.ElementRef.FocusAsync();
+
+            if (item.ElementRef.Context is not null)
+            {
+                await item.ElementRef.FocusAsync();
+            }
         }
-
-
     }
 }
