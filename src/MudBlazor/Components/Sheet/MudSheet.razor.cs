@@ -17,7 +17,6 @@ namespace MudBlazor
     {
         private string _elementId = Identifier.Create("sheet-");
         private bool _dragging;
-        private int _currentSize = 25;
 
         private ParameterState<bool> _openSheetState;
 
@@ -66,6 +65,16 @@ namespace MudBlazor
             new CssBuilder("mud-sheet-popover")
                 .AddClass($"mud-sheet-position-{Positioning}")
                 .AddClass("mud-popover-fixed")
+                .Build();
+
+        /// <summary>
+        /// Gets the computed styles for the popover element based on the current style configuration.
+        /// </summary>
+        protected string PopoverStylename =>
+            new StyleBuilder()
+                .AddStyle("width", $"{CurrentSize}vw", CurrentSize > 0 && (Position is not (Position.Top or Position.Bottom)))
+                .AddStyle("height", $"{CurrentSize}vh", CurrentSize > 0 && (Position is Position.Top or Position.Bottom or Position.Center))
+                .AddStyle(Style, !string.IsNullOrEmpty(Style))
                 .Build();
 
         /// <summary>
@@ -259,7 +268,7 @@ namespace MudBlazor
         /// <summary>
         /// Returns the Current Size of the sheet as a percentage of the viewport height (vh) or width (vw).
         /// </summary>
-        public int CurrentSize => _currentSize;
+        public int CurrentSize { get; private set; } = 25;
 
         /// <summary>
         /// Opens the sheet if it is not already open.
@@ -272,7 +281,7 @@ namespace MudBlazor
             var open = _openSheetState.Value;
             if (!open)
             {
-                _currentSize = OpeningSize;
+                CurrentSize = OpeningSize;
                 // calling the open event shouldn't trigger a callback if open did not change
                 await _openSheetState.SetValueAsync(true);
                 await OpenChanged.InvokeAsync(true);
@@ -289,7 +298,7 @@ namespace MudBlazor
             var open = _openSheetState.Value;
             if (open)
             {
-                _currentSize = 0; // Reset the size when closing the sheet
+                CurrentSize = 0; // Reset the size when closing the sheet
                 // calling the close event shouldn't trigger a callback if open did not change
                 await _openSheetState.SetValueAsync(false);
                 await OpenChanged.InvokeAsync(false);
@@ -306,7 +315,7 @@ namespace MudBlazor
         /// </returns>
         public async Task<int> ToggleSize()
         {
-            var nextIndex = (Array.IndexOf(PresetSizes, _currentSize) + 1);
+            var nextIndex = (Array.IndexOf(PresetSizes, CurrentSize) + 1);
             if (nextIndex >= PresetSizes.Length)
             {
                 await CloseSheetAsync();
@@ -314,9 +323,9 @@ namespace MudBlazor
             }
             else
             {
-                _currentSize = PresetSizes[nextIndex];
+                CurrentSize = PresetSizes[nextIndex];
             }
-            return _currentSize;
+            return CurrentSize;
         }
 
         /// <summary>
@@ -326,6 +335,8 @@ namespace MudBlazor
         /// <param name="ignoreSnapMode">If <c>true</c>, the size change will ignore the snap mode and set the size directly.</param>
         public async Task ChangeSize(int size, bool ignoreSnapMode = false)
         {
+            _dragging = true;
+            await Task.Yield();
             if (size < 0)
                 size = 0;
             else if (size > 100)
@@ -334,12 +345,12 @@ namespace MudBlazor
             if (!ignoreSnapMode && SnapMode)
             {
                 var nearestPresetIndex = Array.FindIndex(PresetSizes, s => s >= size);
-                _currentSize = nearestPresetIndex >= 0 ? PresetSizes[nearestPresetIndex] : size;
+                CurrentSize = nearestPresetIndex >= 0 ? PresetSizes[nearestPresetIndex] : size;
             }
             else
-                _currentSize = size;
+                CurrentSize = size;
 
-            await Task.CompletedTask;
+            _dragging = false;
         }
 
         /// <summary>
@@ -360,13 +371,13 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            // Ensure OpeningSize is within valid range and set to starting _currentSize
+            // Ensure OpeningSize is within valid range and set to starting CurrentSize
             if (OpeningSize < 0)
                 OpeningSize = 0;
             else if (OpeningSize > 100)
                 OpeningSize = 100;
-            if (_currentSize != OpeningSize)
-                _currentSize = OpeningSize;
+            if (CurrentSize != OpeningSize)
+                CurrentSize = OpeningSize;
 
             // Ensure AriaLabel is set if not provided
             if (string.IsNullOrWhiteSpace(AriaLabel))

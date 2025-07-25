@@ -632,19 +632,20 @@ window.mudpopoverHelper = {
         let positionleft = window.innerWidth / 2;
         let positiontop = window.innerHeight / 2;
 
-        if (classListArray.includes('mud-sheet-position-top')) {
-            positiontop = 0;
-        }
         if (classListArray.includes('mud-sheet-position-bottom')) {
             positiontop = window.innerHeight;
         }
-        if (classListArray.includes('mud-sheet-position-left')) {
+        else if (classListArray.includes('mud-sheet-position-top')) {
+            positiontop = 0;
+        }
+        else if (classListArray.includes('mud-sheet-position-left')) {
             positionleft = 0;
         }
-        if (classListArray.includes('mud-sheet-position-right')) {
+        else if (classListArray.includes('mud-sheet-position-right')) {
             positionleft = window.innerWidth;
         }
-
+        positionleft += window.scrollX;
+        positiontop += window.scrollY;
         popoverContentNode.setAttribute('data-pc-x', positionleft);
         popoverContentNode.setAttribute('data-pc-y', positiontop);
     },
@@ -946,7 +947,7 @@ class MudPopover {
                         if (target && !target.classList.contains('mud-popover-open')) {
                             target.style.removeProperty('left');
                             target.style.removeProperty('top');
-                        }                        
+                        }
                     }, delay);
                 }
                 // reset flip status
@@ -963,11 +964,11 @@ class MudPopover {
             // when data-ticks attribute is the mutation something has changed with the popover
             // and it needs to be repositioned and shown, note we don't use mud-popover-open here
             // instead we use data-ticks since we know the newest data-ticks > 0 is the top most.            
-            const tickAttribute = target.getAttribute('data-ticks');            
+            const tickAttribute = target.getAttribute('data-ticks');
             // data ticks is not 0 so let's reposition the popover and overlay
             if (tickAttribute > 0 && target.parentNode && this.map[id] && this.map[id].isOpened) {
                 // reposition popover individually
-                window.mudpopoverHelper.placePopoverByNode(target);           
+                window.mudpopoverHelper.placePopoverByNode(target);
             }
         }
     }

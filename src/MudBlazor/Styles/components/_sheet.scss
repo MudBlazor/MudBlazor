@@ -60,6 +60,7 @@ div[mudsheet] {
   height: 100%;
   background-color: var(--mud-palette-surface);
   border-radius: var(--sheet-borderradius);
+  transition: height 200ms cubic-bezier(0.4, 0, 0.2, 1), width 200ms cubic-bezier(0.4, 0, 0.2, 1);
 
   .mud-sheet-content {
     color: var(--mud-palette-text-primary);
