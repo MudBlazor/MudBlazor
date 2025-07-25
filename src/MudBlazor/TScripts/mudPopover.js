@@ -340,15 +340,14 @@ window.mudpopoverHelper = {
                 popoverContentNode.mudHeight = null;
             }
 
-            // Appbar Calculations
-            const appBarElements = document.getElementsByClassName("mud-appbar mud-appbar-fixed-top");
-            let appBarOffset = 0;
-            if (appBarElements.length > 0) {
-                appBarOffset = appBarElements[0].getBoundingClientRect().height;
-            }
-
             // flipping logic
             if (isFlipOnOpen || isFlipAlways) {
+
+                const appBarElements = document.getElementsByClassName("mud-appbar mud-appbar-fixed-top");
+                let appBarOffset = 0;
+                if (appBarElements.length > 0) {
+                    appBarOffset = appBarElements[0].getBoundingClientRect().height;
+                }
 
                 // mudPopoverFliped is the flip direction for first flip on flip - onopen popovers
                 let selector = popoverContentNode.mudPopoverFliped;
@@ -541,6 +540,12 @@ window.mudpopoverHelper = {
                     offsetY = 0;
                 }
 
+                // will be covered by appbar so adjust zindex with appbar as parent
+                if (top + offsetY < appBarOffset &&
+                    appBarElements.length > 0) {
+                    this.updatePopoverZIndex(popoverContentNode, appBarElements[0]);
+                }
+
                 const firstChild = popoverContentNode.firstElementChild;
 
                 // adjust the popover position/maxheight if it or firstChild does not have a max-height set (even if set to 'none')
@@ -593,12 +598,6 @@ window.mudpopoverHelper = {
                 }
             }
 
-            // will be covered by appbar so adjust zindex with appbar as parent
-            if (top + offsetY < appBarOffset &&
-                appBarElements.length > 0) {
-                this.updatePopoverZIndex(popoverContentNode, appBarElements[0]);
-            }
-
             if (isPositionFixed) {
                 popoverContentNode.style['position'] = 'fixed';
             }
@@ -632,6 +631,12 @@ window.mudpopoverHelper = {
         let positionleft = window.innerWidth / 2;
         let positiontop = window.innerHeight / 2;
 
+        var appBarFixedTop = document.querySelectorAll('.mud-appbar-fixed-top');
+        var appBarFixedBottom = document.querySelectorAll('.mud-appbar-fixed-bottom');
+
+        // .AddClass($"mud-appbar-fixed-top", Fixed && !Bottom)
+        // .AddClass($"mud-appbar-fixed-bottom", Fixed && Bottom)
+
         if (classListArray.includes('mud-sheet-position-bottom')) {
             positiontop = window.innerHeight;
         }
@@ -644,6 +649,25 @@ window.mudpopoverHelper = {
         else if (classListArray.includes('mud-sheet-position-right')) {
             positionleft = window.innerWidth;
         }
+        // Should not cover an appbar
+        if (classListArray.includes('mud-sheet-cover-appbar-true')) {
+            if (appBarFixedTop.length > 0) {
+                popoverContentNode.style['margin-top'] = appBarFixedTop[0].getBoundingClientRect().height + 'px';
+            }
+            if (appBarFixedBottom.length > 0) {
+                popoverContentNode.style['margin-bottom'] = appBarFixedBottom[0].getBoundingClientRect().height + 'px';
+            }
+        }
+        else {
+            // if not covering the appbar it should be above the appbar
+            if (appBarFixedTop.length > 0) {
+                this.updatePopoverZIndex(popoverContentNode, appBarFixedTop[0]);               
+            }
+            else if (appBarFixedBottom.length > 0) {
+                this.updatePopoverZIndex(popoverContentNode, appBarFixedBottom[0]);
+            }
+        }
+        // add scroll offset manually
         positionleft += window.scrollX;
         positiontop += window.scrollY;
         popoverContentNode.setAttribute('data-pc-x', positionleft);

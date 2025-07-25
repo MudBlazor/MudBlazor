@@ -1,7 +1,8 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<MudPopover Open="@_openSheetState.Value"
+<MudPopover @ref="@_popover"
+            Open="@_openSheetState.Value"
             Class="@PopoverClassname"
             Style="@PopoverStylename"
             AnchorOrigin="@Origin"
@@ -10,36 +11,43 @@
             RelativeWidth="DropdownWidth.Ignore"
             UserAttributes="@(new Dictionary<string, object> { ["mudsheet"] = true })"
             Paper="false">
-    <!-- Outer Sheet -->
-    <div id="@_elementId" class="@Classname" style="@Stylename" @attributes=@UserAttributes aria-label="@AriaLabel">
-        <!-- Sheet Handle (Toggle Button and Dragging) -->
-        <div class="mud-sheet-handle">
-            <MudIconButton Icon="@DragHandle" OnClick="@ToggleSize" Color="Color.Inherit" />
+            <!-- If sheet is modal focus is brought to firstchild, which will be the sheet handle -->
+    <MudFocusTrap DefaultFocus="@(Standard ? DefaultFocus.None : DefaultFocus.FirstChild)">
+        <!-- Outer Sheet -->
+        @{
+            var userAttributes = UserAttributes;
+            foreach (var attr in AriaAttributes)
+            {
+                userAttributes.TryAdd(attr.Key, attr.Value);
+            }
+        }
+        <div id="@ElementId" class="@Classname" style="@Stylename" @attributes="@userAttributes" @onkeydown="@HandleKeyDownAsync">
+            <!-- Sheet Handle (Toggle Button and Dragging) -->
+            <div class="mud-sheet-handle" @onpointerdown="@HandlePointerDown" @onpointermove="@HandlePointerMove" @onpointerup="@HandlePointerUp">
+                @SheetHandleFragment
+            </div>
+            <!-- Sheet Content -->
+            <div class="mud-sheet-content">
+                @ChildContent
+            </div>
         </div>
-        <!-- Sheet Content -->
-        <div class="mud-sheet-content">
-            @ChildContent
-        </div>
-    </div>        
+    </MudFocusTrap>
 </MudPopover>
 
 <!-- Modal mode -->
-@if (!Standard)
+@if (_openSheetState.Value && !Standard)
 {
-<!-- 
-pointerdown instead of click needed to close the menu before OnLostFocus runs
-
-When Modal is false the overlay does not receive pointer events so we activate
-the auto close feature and call CloseMenu in OnClosed. The modeless auto close
-feature relies on pointerdown event resulting in the same order of events.
-
-When a Sheet is Open in non standard mode, we prevent scrolling.
--->
-    <MudOverlay Visible="_openSheetState.Value"
-                @onpointerdown="@(async () => await CloseSheetAsync())"
+    <MudOverlay Visible="true"
+                Class="@($"mud-{ElementId}")"
                 LockScroll="true"
                 AutoClose="true"
-                Modal="@false"
+                Modal="true"
                 DarkBackground="true"
-                OnClosed="@(async () => await CloseSheetAsync())"/>
+                OnClosed="@CloseSheetAsync"/>
 }
+
+@code {
+    private RenderFragment DefaultHandleFragment => 
+        @<MudIconButton Icon="@DragHandle" Class="mud-sheet-handle-button" OnClick="@ToggleSize" aria-controls="@ElementId" />;
+}
+

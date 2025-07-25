@@ -4,6 +4,8 @@ $sheet-margin: 16px; // Margin for sheet positioning
 
 div[mudsheet] {
   display: flex;
+  min-width: 32px; /* Ensures a sheet can't hide the handle to simulate a close on accident */
+  min-height: 32px; /* Ensures a sheet can't hide the handle to simulate a close on accident */
 
   &.mud-sheet-position-bottom, &.mud-sheet-position-top {
     width: 100%;
@@ -61,6 +63,19 @@ div[mudsheet] {
   background-color: var(--mud-palette-surface);
   border-radius: var(--sheet-borderradius);
   transition: height 200ms cubic-bezier(0.4, 0, 0.2, 1), width 200ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  .mud-sheet-handle {
+    pointer-events: auto;
+    cursor: grab;
+
+    &:hover {
+      /* option effect for hovering */
+    }
+
+    &:active {
+      cursor: grabbing;
+    }
+  }
 
   .mud-sheet-content {
     color: var(--mud-palette-text-primary);

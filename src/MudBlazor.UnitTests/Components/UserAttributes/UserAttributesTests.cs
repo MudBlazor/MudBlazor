@@ -25,6 +25,7 @@ namespace MudBlazor.UnitTests.UserAttributes
             Exclude(typeof(MudOverlay));        // Sectioned component, skip
             Exclude(typeof(DataGridGroupRow<>));  // Internal component, skip
             Exclude(typeof(DataGridVirtualizeRow<>)); // Internal component, skip
+            Exclude(typeof(MudSheet)); // Uses Popover, so doesn't render unless open
         }
 
         [Test]
