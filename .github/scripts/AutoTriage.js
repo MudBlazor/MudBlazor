@@ -5,7 +5,6 @@
  * then applies appropriate labels and helpful comments to improve project management.
  *
  * Original work by Daniel Chalmers © 2025
- * https://gist.github.com/danielchalmers/503d6b9c30e635fccb1221b2671af5f8
  */
 
 const fetch = require('node-fetch');
@@ -124,7 +123,7 @@ async function buildMetadata(issue, owner, repo, octokit) {
 /**
  * Build the full prompt by combining base template with issue data
  */
-async function buildPrompt(issue, comments, owner, repo, octokit) {
+async function buildPrompt(issue, comments, owner, repo, octokit, previousContext = null) {
     const issueText = `${issue.title}\n\n${issue.body || ''}`;
     const metadata = await buildMetadata(issue, owner, repo, octokit);
 
@@ -147,8 +146,11 @@ ${JSON.stringify(metadata, null, 2)}
 COMMENTS:
 ${commentsText}
 
-Analyze this issue and provide your structured response.
-Current Date: ${new Date().toISOString()}.`;
+Last triaged: ${previousContext.lastTriaged}
+Previous reasoning: ${previousContext.previousReasoning}
+Current date: ${new Date().toISOString()}
+
+Analyze this issue and provide your structured response.`;
 }
 
 /**
@@ -313,7 +315,7 @@ async function closeIssue(issue, repo, octokit, reason = 'not_planned') {
 /**
  * Main processing function - analyze and act on a single issue/PR
  */
-async function processIssue(issue, comments, owner, repo, geminiApiKey, octokit) {
+async function processIssue(issue, comments, owner, repo, geminiApiKey, octokit, previousContext = null) {
     const isIssue = !issue.pull_request;
 
     if (issue.locked) {
@@ -323,14 +325,14 @@ async function processIssue(issue, comments, owner, repo, geminiApiKey, octokit)
 
     const metadata = await buildMetadata(issue, owner, repo, octokit);
     const formattedMetadata = [
-        `This ${metadata.state} ${metadata.type} #${metadata.number} was created by ${metadata.author}`,
+        `#${metadata.number} (${metadata.state} ${metadata.type}) was created by ${metadata.author}`,
         `Title: ${metadata.title}`,
         `Updated: ${metadata.updated_at}`,
         `Labels: ${metadata.labels.join(', ') || 'none'}`,
     ].join('\n');
     console.log(formattedMetadata.replace(/^/gm, '📝 '));
 
-    const prompt = await buildPrompt(issue, comments, owner, repo, octokit);
+    const prompt = await buildPrompt(issue, comments, owner, repo, octokit, previousContext);
     const start = Date.now();
     const analysis = await callGemini(prompt, geminiApiKey);
 
@@ -354,6 +356,39 @@ async function processIssue(issue, comments, owner, repo, geminiApiKey, octokit)
     }
 
     return analysis;
+}
+
+/**
+ * Get previous triage context for an issue from the database
+ */
+function getPreviousContextForIssue(triageDb, issueNumber, issue) {
+    const lastTriageEntry = triageDb[issueNumber];
+    if (!lastTriageEntry) return null;
+    const lastTriagedDate = new Date(lastTriageEntry.lastTriaged);
+    const updatedDate = new Date(issue.updated_at);
+    const labels = (issue.labels || []).map(l => typeof l === 'string' ? l : l.name);
+    const hasFollowupLabel = labels.includes('info required') || labels.includes('stale');
+    const naturalFollowupDelayMs = 7 * 24 * 60 * 60 * 1000;
+
+    if (updatedDate <= lastTriagedDate && hasFollowupLabel && Date.now() - lastTriagedDate.getTime() > naturalFollowupDelayMs) {
+        // Issue is eligible to be re-checked
+        return {
+            lastTriaged: lastTriageEntry.lastTriaged,
+            previousReasoning: lastTriageEntry.previousReasoning || 'No previous reasoning available'
+        };
+    } else if (updatedDate <= lastTriagedDate && hasFollowupLabel) {
+        console.log(`#${issueNumber} is not eligible to be re-checked`);
+        process.exit(2);
+    } else if (updatedDate <= lastTriagedDate) {
+        console.log(`#${issueNumber} has not updated since last triage (${lastTriageEntry.lastTriaged})`);
+        process.exit(2);
+    } else {
+        // Issue has been updated since last triage, provide previous context
+        return {
+            lastTriaged: lastTriageEntry.lastTriaged,
+            previousReasoning: lastTriageEntry.previousReasoning || 'No previous reasoning available'
+        };
+    }
 }
 
 /**
@@ -401,37 +436,16 @@ async function main() {
 
     const { issue, comments } = await getIssueFromGitHub(owner, repo, issueNumber, octokit);
 
-    if (useDatabase) {
-        const lastTriaged = triageDb[issueNumber];
-        if (lastTriaged) {
-            const lastTriagedDate = new Date(lastTriaged);
-            const updatedDate = new Date(issue.updated_at);
-
-            if (updatedDate <= lastTriagedDate) {
-                const labels = (issue.labels || []).map(l => typeof l === 'string' ? l : l.name);
-                const hasLabelThatNeedsChecking = labels.includes('info required') || labels.includes('stale');
-                const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
-
-                if (hasLabelThatNeedsChecking) {
-                    if (Date.now() - lastTriagedDate.getTime() > sevenDaysMs) {
-                        // Issue is eligible to be re-checked
-                    } else {
-                        console.log(`#${issueNumber} is not eligible to be re-checked`);
-                        process.exit(2);
-                    }
-                } else {
-                    console.log(`#${issueNumber} has not updated since last triage (${lastTriaged})`);
-                    process.exit(2);
-                }
-            }
-        }
-    }
+    let previousContext = getPreviousContextForIssue(triageDb, issueNumber, issue);
 
     console.log(`🤖 Using ${aiModel} with [${Array.from(permissions).join(', ') || 'none'}] permissions`);
-    await processIssue(issue, comments, owner, repo, geminiApiKey, octokit);
+    const analysis = await processIssue(issue, comments, owner, repo, geminiApiKey, octokit, previousContext);
 
     if (useDatabase) {
-        triageDb[issueNumber] = new Date().toISOString();
+        triageDb[issueNumber] = {
+            lastTriaged: new Date().toISOString(),
+            previousReasoning: analysis.reason
+        };
         fs.writeFileSync(dbPath, JSON.stringify(triageDb, null, 2));
     }
 }
