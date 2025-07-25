@@ -335,6 +335,12 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<FormFieldChangedEventArgs> FormFieldChanged { get; set; }
 
+        /// <summary>
+        /// Occurs when hierarchy visibility toggled.
+        /// </summary>
+        [Parameter]
+        public EventCallback<DataGridHierarchyVisibilityToggledEventArgs<T>> HierarchyVisibilityToggled { get; set; }
+
         #endregion
 
         #region Parameters
@@ -1378,6 +1384,10 @@ namespace MudBlazor
             if (_openHierarchies.Count > 0)
             {
                 var first = _openHierarchies.First();
+                foreach (var item in _openHierarchies.Skip(1))
+                {
+                    await HierarchyVisibilityToggled.InvokeAsync(new() { Item = item, Expanded = false });
+                }
                 _openHierarchies.Clear();
                 _openHierarchies.Add(first);
                 await InvokeAsync(StateHasChanged);
@@ -2365,8 +2375,13 @@ namespace MudBlazor
         /// </summary>
         public async Task ExpandAllHierarchy()
         {
-            _openHierarchies.Clear();
-            _openHierarchies.UnionWith(FilteredItems.Where(x => !_buttonDisabledFunc(x)));
+            foreach (var item in FilteredItems)
+            {
+                if (!_buttonDisabledFunc(item) && _openHierarchies.Add(item))
+                {
+                    await HierarchyVisibilityToggled.InvokeAsync(new() { Item = item, Expanded = true });
+                }
+            }
             await InvokeAsync(StateHasChanged);
         }
 
@@ -2375,7 +2390,11 @@ namespace MudBlazor
         /// </summary>
         public async Task CollapseAllHierarchy()
         {
-            _openHierarchies.RemoveWhere(x => !_buttonDisabledFunc(x));
+            foreach (var openedHierarchy in _openHierarchies.Where(x => !_buttonDisabledFunc(x)).ToList())
+            {
+                await HierarchyVisibilityToggled.InvokeAsync(new() { Item = openedHierarchy, Expanded = false });
+                _openHierarchies.Remove(openedHierarchy);
+            }
             await InvokeAsync(StateHasChanged);
         }
 
@@ -2388,6 +2407,10 @@ namespace MudBlazor
             // if ExpandSingleRow is true, clear all open hierarchies, which will immediately add the item that was clicked.
             if (_expandSingleRowState.Value)
             {
+                foreach (var openedHierarchy in _openHierarchies.Where(x => !x.Equals(item)))
+                {
+                    await HierarchyVisibilityToggled.InvokeAsync(new() { Item = openedHierarchy, Expanded = false });
+                }
                 _openHierarchies.Clear();
             }
 
@@ -2395,6 +2418,11 @@ namespace MudBlazor
             if (!_openHierarchies.Remove(item))
             {
                 _openHierarchies.Add(item);
+                await HierarchyVisibilityToggled.InvokeAsync(new() { Item = item, Expanded = true });
+            }
+            else
+            {
+                await HierarchyVisibilityToggled.InvokeAsync(new() { Item = item, Expanded = false });
             }
 
             await InvokeAsync(StateHasChanged);
