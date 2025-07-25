@@ -106,9 +106,17 @@ jobs:
         run: |
           if [ -f "triage-db.json" ]; then
             total_entries=$(jq 'length' triage-db.json)
-            echo "📂 Database now contains $total_entries triaged issues"
-            echo "📂 Most recent entries:"
+            echo "Database now contains $total_entries triaged issues"
+            echo "Most recent entries:"
             jq -r 'to_entries | sort_by(.value.lastTriaged) | reverse | .[0:5] | .[] | "  #\(.key): \(.value.lastTriaged)"' triage-db.json || echo "  No entries found"
           else
-            echo "❌ Database file not found!"
+            echo "Database file not found"
           fi
+
+      - name: Upload triage artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: triage-artifacts
+          path: |
+            triage-db.json
+            artifacts/
