@@ -62,12 +62,12 @@
 
             var lineClass = isHovered ? "mud-chart-serie mud-chart-line mud-chart-serie-hovered" : "mud-chart-serie mud-chart-line";
 
-            <path class="@lineClass" @onclick="() => SelectedIndex = chartLine.Index" fill="none" stroke="@color" stroke-opacity="@series.StrokeOpacity" stroke-width="@MudChartParent?.ChartOptions.LineStrokeWidth" d="@chartLine.Data"></path>
+            <path class="@lineClass" @onclick="() => SelectedIndex = chartLine.Index" fill="none" stroke="@color" stroke-opacity="@series.StrokeOpacity.ToString(CultureInfo.InvariantCulture)" stroke-width="@MudChartParent?.ChartOptions.LineStrokeWidth" d="@chartLine.Data"></path>
 
             if (series.LineDisplayType == LineDisplayType.Area)
             {
                 var chartArea = _chartAreas[chartLine.Index];
-                <path class="@lineClass" @onclick="() => SelectedIndex = chartLine.Index" fill="@color" fill-opacity="@series.FillOpacity" d="@chartArea.Data"></path>
+                <path class="@lineClass" @onclick="() => SelectedIndex = chartLine.Index" fill="@color" fill-opacity="@series.FillOpacity.ToString(CultureInfo.InvariantCulture)" d="@chartArea.Data"></path>
             }
 
             @foreach (var item in _chartDataPoints[chartLine.Index].OrderBy(x => x.Index))

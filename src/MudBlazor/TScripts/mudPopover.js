@@ -571,6 +571,7 @@ window.mudpopoverHelper = {
                         // set newMaxHeight to be minimum of 3x overflow padding, by default 72px (or 3 items roughly)
                         newMaxHeight = Math.max(newMaxHeight, window.mudpopoverHelper.overflowPadding * 3);
                         popoverContentNode.style.maxHeight = (newMaxHeight) + 'px';
+                        firstChild.style.maxHeight = (newMaxHeight) + 'px';
                         popoverContentNode.mudHeight = "setmaxheight";
                     }
                 }
