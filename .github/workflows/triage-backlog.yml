@@ -91,6 +91,7 @@ jobs:
               count=$((count + 1))
               left=$((max_count - count))
               echo "$(date '+%Y-%m-%d %H:%M:%S'): $left left"
+              sleep 1
             fi
           done
 

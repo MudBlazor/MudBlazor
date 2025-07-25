@@ -99,7 +99,7 @@ async function buildMetadata(issue, owner, repo, octokit) {
     const labelTimestamps = await getLabelAddedTimestamps(owner, repo, issue.number, octokit);
     const currentLabelsWithTimestamps = issue.labels?.map(l => {
         const labelName = typeof l === 'string' ? l : l.name;
-        const timestamp = labelTimestamps[labelName] ? ` (${labelTimestamps[labelName]})` : '';
+        const timestamp = labelTimestamps[labelName] ? ` (since ${labelTimestamps[labelName]})` : '';
         return `${labelName}${timestamp}`;
     }) || [];
 
@@ -148,8 +148,8 @@ ${JSON.stringify(metadata, null, 2)}
 COMMENTS:
 ${commentsText}
 
-Last triaged: ${previousContext.lastTriaged}
-Previous reasoning: ${previousContext.previousReasoning}
+Last triaged: ${previousContext?.lastTriaged}
+Previous reasoning: ${previousContext?.previousReasoning}
 Current date: ${new Date().toISOString()}
 
 Analyze this issue and provide your structured response.`;
@@ -427,19 +427,19 @@ async function main() {
 
     let triageDb = {};
 
-    if (dbPath && fs.existsSync(dbPath) && permissions.size > 0) {
+    if (dbPath && fs.existsSync(dbPath)) {
         const contents = fs.readFileSync(dbPath, 'utf8');
         triageDb = contents ? JSON.parse(contents) : {};
     }
 
     const { issue, comments } = await getIssueFromGitHub(owner, repo, issueNumber, octokit);
 
-    previousContext = getPreviousContextForIssue(triageDb, issueNumber, issue);
+    const previousContext = getPreviousContextForIssue(triageDb, issueNumber, issue);
 
     console.log(`🤖 Using ${aiModel} with [${Array.from(permissions).join(', ') || 'none'}] permissions`);
     const analysis = await processIssue(issue, comments, owner, repo, geminiApiKey, octokit, previousContext);
 
-    if (triageDb && analysis) {
+    if (dbPath && analysis && !permissions.has("none")) {
         triageDb[issueNumber] = {
             lastTriaged: new Date().toISOString(),
             previousReasoning: analysis.reason
