@@ -7,6 +7,7 @@ using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
+using MudBlazor.Services;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
@@ -26,6 +27,10 @@ namespace MudBlazor
         private bool _isTransient;
         private CancellationTokenSource? _hoverCts;
         private CancellationTokenSource? _leaveCts;
+        private string _elementId = Identifier.Create("menu");
+
+        [Inject]
+        private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
         public MudMenu()
         {
@@ -461,6 +466,7 @@ namespace MudBlazor
             // Now close this menu itself.
             _focusedIndex = -1;
             _menuItems.Clear();
+            await KeyInterceptorService.UnsubscribeAsync(_elementId);
             await _openState.SetValueAsync(false);
             await InvokeAsync(StateHasChanged);
         }
@@ -518,6 +524,11 @@ namespace MudBlazor
             // Officially open the menu.
             await _openState.SetValueAsync(true);
             await InvokeAsync(StateHasChanged);
+
+            // Wait for rendering to finish so the element with the ID is in the DOM
+            await Task.Yield();
+
+            await SubscribeToMenuKeyInterceptorAsync();
         }
 
         /// <summary>
@@ -758,7 +769,7 @@ namespace MudBlazor
         private int _focusedIndex = -1;
         private List<MudMenuItem> _menuItems = [];
 
-        private async Task HandleMenuKeyDown(KeyboardEventArgs e)
+        private async Task HandleKeyDownAsync(KeyboardEventArgs e)
         {
             var items = _menuItems.Where(x => !x.GetDisabled()).ToList();
 
@@ -778,6 +789,11 @@ namespace MudBlazor
             else if (e.Key == "Enter" || e.Key == " ")
             {
                 await items[_focusedIndex].InvokeClickAsync();
+            }
+            else if (e.Key == "Tab")
+            {
+                // Close the menu when tabbing out
+                await CloseMenuAsync();
             }
         }
 
@@ -806,6 +822,33 @@ namespace MudBlazor
             if (item.ElementRef.Context is not null)
             {
                 await item.ElementRef.FocusAsync();
+            }
+        }
+
+        private async Task SubscribeToMenuKeyInterceptorAsync()
+        {
+            // Subscribe key interceptor to prevent default scrolling
+            var options = new KeyInterceptorOptions(
+                    "mud-list",
+                    [
+                        // prevent scrolling page
+                        new(" ", preventDown: "key+none", preventUp: "key+none"),
+                        new("Enter", preventDown: "key+none"),
+                        new("Tab", preventDown: "key+none"),
+                        new("ArrowDown", preventDown: "key+none"),
+                        new("ArrowUp", preventDown: "key+none"),
+                        new("NumpadEnter", preventDown: "key+none"),
+                        new("Backspace", preventDown: "key+none")
+                    ]);
+
+            await KeyInterceptorService.SubscribeAsync(_elementId, options, keyDown: HandleKeyDownAsync);
+        }
+
+        public async Task FocusCurrentItemAsync()
+        {
+            if (_focusedIndex >= 0 && _focusedIndex < _menuItems.Count)
+            {
+                await FocusItem(_focusedIndex);
             }
         }
     }
