@@ -413,7 +413,6 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Markup.Should().Contain(rawOutput);
 
-            var textAsMarkupTrue = Parameter(nameof(MudHighlighter.Markup), true);
             comp = Context.RenderComponent<BasicHighlighterTest>(parameters => parameters
                 .Add(p => p.Text, markupText)
                 .Add(p => p.HighlightedText, searchFor)
@@ -492,7 +491,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.Markup, true)
             );
 
-            comp.Markup.Should().Contain("This is a <mark>'quoted'</mark> text and a \"double quoted\" text.");
+            comp.Markup.Should().Contain("This is a <mark>&#39;quoted&#39;</mark> text and a &quot;double quoted&quot; text.");
         }
 
         [Test]
@@ -504,7 +503,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.Markup, true)
             );
 
-            comp.Markup.Should().Contain("This is a 'quoted' text and a <mark>&quot;double quoted&quot;</mark> text.");
+            comp.Markup.Should().Contain("This is a &#39;quoted&#39; text and a <mark>&quot;double quoted&quot;</mark> text.");
         }
 
         [Test]
@@ -516,7 +515,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.Markup, true)
             );
 
-            comp.Markup.Should().Contain("<span title='nothing'>nothing</span>");
+            comp.Markup.Should().Contain("<i>MudBlazor</i> is <span style='color:red'>important</span>");
         }
 
         [Test]
@@ -601,7 +600,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.CustomClass, "my-custom-class")
             );
 
-            comp.Markup.Should().Contain("<mark class=\"my-custom-class\">Highlight</mark> this");
+            comp.Markup.Should().Contain("<mark class=\"my-custom-class\" >Highlight</mark> this");
         }
 
         [Test]

@@ -1,17 +1,11 @@
-﻿<MudTextField Style="max-width:250px" @bind-Value="@HighlightedText" Immediate="true" Label="Highlighted Text" />
-<MudPaper Class="pa-4 mt-4" Elevation="0">
-    <MudText Class="ma-2">
-        <MudHighlighter Text="@Text"
-                        HighlightedText="@HighlightedText"
-                        UntilNextBoundary="@UntilNextBoundary"
-                        CaseSensitive="@CaseSensitive"
-                        Markup="@Markup"
-                        Class="@(CustomClass ?? (UntilNextBoundary ? "pa-1 mud-elevation-2 mud-theme-primary": ""))" />
-    </MudText>
-</MudPaper>
-<MudSwitch @bind-Value="@UntilNextBoundary" Label="UntilNextBoundary" Color="Color.Primary" />
-<MudSwitch @bind-Value="@CaseSensitive" Label="CaseSensitive" Color="Color.Primary" />
-<MudSwitch @bind-Value="@Markup" Label="Markup" Color="Color.Primary" />
+﻿<MudText Class="ma-2">
+    <MudHighlighter Text="@Text"
+                    HighlightedText="@HighlightedText"
+                    UntilNextBoundary="@UntilNextBoundary"
+                    CaseSensitive="@CaseSensitive"
+                    Markup="@Markup"
+                    Class="@(CustomClass ?? (UntilNextBoundary ? "pa-1 mud-elevation-2 mud-theme-primary": null))" />
+</MudText>
 
 @code {
     public static string __description__ = "Various text and search options";
