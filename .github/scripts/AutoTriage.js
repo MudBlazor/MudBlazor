@@ -364,33 +364,36 @@ async function processIssue(issue, comments, owner, repo, geminiApiKey, octokit,
  * Get previous triage context for an issue from the database
  */
 function getPreviousContextForIssue(triageDb, issueNumber, issue) {
-    const lastTriageEntry = triageDb[issueNumber];
-    if (!lastTriageEntry) return null;
-    const lastTriagedDate = new Date(lastTriageEntry.lastTriaged);
-    const updatedDate = new Date(issue.updated_at);
-    const labels = (issue.labels || []).map(l => typeof l === 'string' ? l : l.name);
-    const hasFollowupLabel = labels.includes('info required') || labels.includes('stale');
-    const naturalFollowupDelayMs = 7 * 24 * 60 * 60 * 1000;
+    const triageEntry = triageDb[issueNumber];
 
-    if (updatedDate <= lastTriagedDate && hasFollowupLabel && Date.now() - lastTriagedDate.getTime() > naturalFollowupDelayMs) {
-        // Issue is eligible to be re-checked
+    // 1. Triage if it's never been checked.
+    if (!triageEntry) {
+        return { lastTriaged: null, previousReasoning: 'This issue has never been triaged.' };
+    }
+
+    // --- Define conditions for re-triaging ---
+    const MS_PER_DAY = 86400000; // 24 * 60 * 60 * 1000
+    const timeSinceTriaged = Date.now() - new Date(triageEntry.lastTriaged).getTime();
+
+    // 2. Triage if it's been > 14 days since the last check.
+    const hasExpired = timeSinceTriaged > 14 * MS_PER_DAY;
+
+    // 3. Triage if it's been > 3 days and has a follow-up label.
+    const labels = (issue.labels || []).map(l => l.name || l);
+    const needsFollowUp =
+        (labels.includes('info required') || labels.includes('stale')) &&
+        timeSinceTriaged > 3 * MS_PER_DAY;
+
+    // If any condition for re-triaging is met, return the context.
+    if (hasExpired || needsFollowUp) {
         return {
-            lastTriaged: lastTriageEntry.lastTriaged,
-            previousReasoning: lastTriageEntry.previousReasoning || 'No previous reasoning available'
-        };
-    } else if (updatedDate <= lastTriagedDate && hasFollowupLabel) {
-        console.log(`📝 #${issueNumber} is not eligible to be re-checked`);
-        process.exit(2);
-    } else if (updatedDate <= lastTriagedDate) {
-        console.log(`📝 #${issueNumber} has no activity since last triage (${lastTriageEntry.lastTriaged})`);
-        process.exit(2);
-    } else {
-        // Issue has been updated since last triage, provide previous context
-        return {
-            lastTriaged: lastTriageEntry.lastTriaged,
-            previousReasoning: lastTriageEntry.previousReasoning || 'No previous reasoning available'
+            lastTriaged: triageEntry.lastTriaged,
+            previousReasoning: triageEntry.previousReasoning || 'No previous reasoning available.',
         };
     }
+
+    // Otherwise, no triage is needed.
+    return null;
 }
 
 /**
@@ -433,6 +436,11 @@ async function main() {
     const { issue, comments } = await getIssueFromGitHub(owner, repo, issueNumber, octokit);
 
     const previousContext = getPreviousContextForIssue(triageDb, issueNumber, issue);
+
+    if (!previousContext) {
+        console.log(`⏭️ #${issueNumber} does not require triaging`);
+        process.exit(2);
+    }
 
     console.log("⏭️");
     console.log("⏭️");
