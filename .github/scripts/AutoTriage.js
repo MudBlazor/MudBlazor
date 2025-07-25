@@ -25,6 +25,8 @@ const permissions = new Set(
         .filter(p => p !== '')
 );
 
+const dbPath = process.env.AUTOTRIAGE_DB_PATH;
+
 const aiModel = process.env.AUTOTRIAGE_MODEL || 'gemini-2.5-flash';
 
 // Load AI prompt template
@@ -423,25 +425,21 @@ async function main() {
         console.log('⚠️ No GITHUB_TOKEN provided - running in read-only mode');
     }
 
-    const dbPath = path.resolve(__dirname, '../triage-db.json');
-    const useDatabase = process.env.AUTOTRIAGE_USE_DATABASE === 'true' && permissions.size > 0;
     let triageDb = {};
 
-    if (useDatabase) {
-        if (fs.existsSync(dbPath)) {
-            const dbRaw = fs.readFileSync(dbPath, 'utf8');
-            triageDb = dbRaw ? JSON.parse(dbRaw) : {};
-        }
+    if (dbPath && fs.existsSync(dbPath) && permissions.size > 0) {
+        const contents = fs.readFileSync(dbPath, 'utf8');
+        triageDb = contents ? JSON.parse(contents) : {};
     }
 
     const { issue, comments } = await getIssueFromGitHub(owner, repo, issueNumber, octokit);
 
-    let previousContext = getPreviousContextForIssue(triageDb, issueNumber, issue);
+    previousContext = getPreviousContextForIssue(triageDb, issueNumber, issue);
 
     console.log(`🤖 Using ${aiModel} with [${Array.from(permissions).join(', ') || 'none'}] permissions`);
     const analysis = await processIssue(issue, comments, owner, repo, geminiApiKey, octokit, previousContext);
 
-    if (useDatabase) {
+    if (triageDb && analysis) {
         triageDb[issueNumber] = {
             lastTriaged: new Date().toISOString(),
             previousReasoning: analysis.reason

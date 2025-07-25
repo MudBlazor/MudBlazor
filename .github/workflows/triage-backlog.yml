@@ -41,13 +41,20 @@ jobs:
       - name: Install dependencies
         run: npm install node-fetch@2 @actions/core @octokit/rest
 
+      - name: Download previous triage database
+        uses: actions/download-artifact@v4
+        with:
+          name: triage-database
+          path: .
+        continue-on-error: true # This is important for the very first run
+
       - name: Triage Issues
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           AUTOTRIAGE_MODEL: ${{ inputs.model }}
           AUTOTRIAGE_PERMISSIONS: ${{ github.event_name == 'workflow_dispatch' && inputs.permissions || vars.AUTOTRIAGE_PERMISSIONS }}
-          AUTOTRIAGE_USE_DATABASE: true
+          AUTOTRIAGE_DB_PATH: ${{ github.workspace }}/triage-db.json
           MAX_ISSUES: ${{ github.event_name == 'schedule' && 100 || inputs.backlog-size }}
         run: |
           if [ -n "${{ inputs.issue-numbers }}" ]; then
@@ -86,3 +93,24 @@ jobs:
               echo "$(date '+%Y-%m-%d %H:%M:%S'): $left left"
             fi
           done
+
+      - name: Upload updated triage database
+        uses: actions/upload-artifact@v4
+        with:
+          name: triage-database
+          path: triage-db.json
+          retention-days: 90
+        if: always()
+
+      - name: Display database stats
+        if: always()
+        run: |
+          if [ -f "triage-db.json" ]; then
+            total_entries=$(jq 'length' triage-db.json)
+            echo "📂 Database now contains $total_entries triaged issues"
+            
+            echo "📂 Most recent entries:"
+            jq -r 'to_entries | sort_by(.value.lastTriaged) | reverse | .[0:5] | .[] | "  #\(.key): \(.value.lastTriaged)"' triage-db.json || echo "  No entries found"
+          else
+            echo "❌ Database file not found!"
+          fi
