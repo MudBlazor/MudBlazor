@@ -127,7 +127,7 @@ namespace MudBlazor
         /// <summary>
         /// The menu item is acting as the activator for a sub menu.
         /// </summary>
-        protected bool ActivatesSubMenu => Class?.Contains("mud-menu-sub-menu-activator") == true;
+        internal bool ActivatesSubMenu => Class?.Contains("mud-menu-sub-menu-activator") == true;
 
         protected async Task OnClickHandlerAsync(MouseEventArgs ev)
         {

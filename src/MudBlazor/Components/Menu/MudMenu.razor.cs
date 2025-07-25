@@ -786,14 +786,89 @@ namespace MudBlazor
                 _focusedIndex = (_focusedIndex - 1 + items.Count) % items.Count;
                 await FocusItem(_focusedIndex);
             }
+            else if (e.Key == "ArrowRight")
+            {
+                // Enter submenu if the current item has one
+                if (_focusedIndex >= 0 && _focusedIndex < items.Count)
+                {
+                    var currentItem = items[_focusedIndex];
+
+                    // Check if this item activates a submenu by looking for a submenu that belongs to this menu
+                    // and isn't currently open (to handle multiple submenus)
+                    if (currentItem.ActivatesSubMenu)
+                    {
+                        // Find the submenu associated with this item
+                        // Since we can't rely on registration timing, we'll use the order of items and submenus
+                        var itemIndex = _menuItems.IndexOf(currentItem);
+                        var submenuItems = _menuItems.Where(item => item.ActivatesSubMenu).ToList();
+                        var itemSubmenuIndex = submenuItems.IndexOf(currentItem);
+
+                        if (itemSubmenuIndex >= 0 && itemSubmenuIndex < _subMenus.Count)
+                        {
+                            var submenu = _subMenus[itemSubmenuIndex];
+                            if (submenu != null)
+                            {
+                                // Open the submenu
+                                await submenu.OpenSubMenuAsync(EventArgs.Empty);
+                            }
+                        }
+                    }
+                }
+            }
+            else if (e.Key == "ArrowLeft")
+            {
+                // Exit to parent menu if this is a submenu
+                if (ParentMenu != null)
+                {
+                    // Close this submenu
+                    await CloseMenuAsync();
+
+                    // Return focus to the parent menu
+                    // The parent should already have the correct focused index
+                    if (ParentMenu._focusedIndex >= 0 && ParentMenu._focusedIndex < ParentMenu._menuItems.Count)
+                    {
+                        await ParentMenu.FocusItem(ParentMenu._focusedIndex);
+                    }
+                }
+            }
             else if (e.Key == "Enter" || e.Key == " ")
             {
-                await items[_focusedIndex].InvokeClickAsync();
+                if (_focusedIndex >= 0 && _focusedIndex < items.Count)
+                {
+                    var currentItem = items[_focusedIndex];
+
+                    // If this item has a submenu, open it instead of invoking click
+                    if (_itemToSubmenuMap.ContainsKey(currentItem))
+                    {
+                        var submenu = _itemToSubmenuMap[currentItem];
+                        await submenu.OpenSubMenuAsync(EventArgs.Empty);
+                    }
+                    else
+                    {
+                        await currentItem.InvokeClickAsync();
+                    }
+                }
             }
             else if (e.Key == "Tab")
             {
                 // Close the menu when tabbing out
                 await CloseMenuAsync();
+            }
+            else if (e.Key == "Escape")
+            {
+                // Close current menu or all menus if at top level
+                if (ParentMenu != null)
+                {
+                    await CloseMenuAsync();
+                    if (ParentMenu._focusedIndex >= 0 && ParentMenu._focusedIndex < ParentMenu._menuItems.Count)
+                    {
+                        await ParentMenu.FocusItem(ParentMenu._focusedIndex);
+                    }
+                }
+                else
+                {
+                    await CloseAllMenusAsync();
+                }
             }
         }
 
@@ -815,13 +890,16 @@ namespace MudBlazor
                 _menuItems.Add(item);
         }
 
-        private async Task FocusItem(int index)
+        internal async Task FocusItem(int index)
         {
-            var item = _menuItems[index];
-
-            if (item.ElementRef.Context is not null)
+            if (index >= 0 && index < _menuItems.Count)
             {
-                await item.ElementRef.FocusAsync();
+                var item = _menuItems[index];
+
+                if (item.ElementRef.Context is not null)
+                {
+                    await item.ElementRef.FocusAsync();
+                }
             }
         }
 
@@ -844,12 +922,6 @@ namespace MudBlazor
             await KeyInterceptorService.SubscribeAsync(_elementId, options, keyDown: HandleKeyDownAsync);
         }
 
-        public async Task FocusCurrentItemAsync()
-        {
-            if (_focusedIndex >= 0 && _focusedIndex < _menuItems.Count)
-            {
-                await FocusItem(_focusedIndex);
-            }
-        }
+        private readonly Dictionary<MudMenuItem, MudMenu> _itemToSubmenuMap = new();
     }
 }
