@@ -379,10 +379,10 @@ function getPreviousContextForIssue(triageDb, issueNumber, issue) {
             previousReasoning: lastTriageEntry.previousReasoning || 'No previous reasoning available'
         };
     } else if (updatedDate <= lastTriagedDate && hasFollowupLabel) {
-        console.log(`#${issueNumber} is not eligible to be re-checked`);
+        console.log(`📝 #${issueNumber} is not eligible to be re-checked`);
         process.exit(2);
     } else if (updatedDate <= lastTriagedDate) {
-        console.log(`#${issueNumber} has no activity since last triage (${lastTriageEntry.lastTriaged})`);
+        console.log(`📝 #${issueNumber} has no activity since last triage (${lastTriageEntry.lastTriaged})`);
         process.exit(2);
     } else {
         // Issue has been updated since last triage, provide previous context
@@ -397,7 +397,7 @@ function getPreviousContextForIssue(triageDb, issueNumber, issue) {
  * Main entry point
  */
 async function main() {
-    console.log("\n");
+    console.log("⏭️⏭️⏭️");
 
     const requiredEnvVars = ['GITHUB_ISSUE_NUMBER', 'GEMINI_API_KEY', 'GITHUB_REPOSITORY'];
     for (const envVar of requiredEnvVars) {

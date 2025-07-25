@@ -22,7 +22,7 @@ on:
       permissions:
         description: 'Permissions (`none` for dry run)'
         required: false
-        default: 'label, comment, close, edit' 
+        default: 'label, comment, close, edit'
         type: string
 
 jobs:
@@ -41,12 +41,16 @@ jobs:
       - name: Install dependencies
         run: npm install node-fetch@2 @actions/core @octokit/rest
 
-      - name: Restore triage database from cache
+      - name: Cache triage database
         uses: actions/cache@v4
         id: cache-db
         with:
           path: triage-db.json
-          key: ${{ runner.os }}-triage-database
+          # 1. The key is unique on every run, forcing a save on success.
+          key: ${{ runner.os }}-triage-database-${{ github.run_id }}
+          # 2. Restore-keys finds the most recent cache to use at the start.
+          restore-keys: |
+            ${{ runner.os }}-triage-database-
 
       - name: Triage Issues
         env:
@@ -68,26 +72,38 @@ jobs:
           fi
 
           count=0
-          exit_code=0
           for issue_number in $issue_numbers; do
             if [ -n "$max_count" ] && [ "$count" -ge "$max_count" ]; then
               break
             fi
-            #echo "--- Processing Issue #${issue_number} ---"
-            export GITHUB_ISSUE_NUMBER="$issue_number"
-            node .github/scripts/AutoTriage.js
-            exit_code=$?
             
-            if [ "$exit_code" -eq 1 ]; then
-              echo "❌ Fatal error while processing #${issue_number}"
-              exit 1
-            elif [ "$exit_code" -eq 2 ]; then
-              continue
-            elif [ "$exit_code" -eq 0 ]; then
+            export GITHUB_ISSUE_NUMBER="$issue_number"
+
+            # This structure tells the shell we are handling the exit code ourselves
+            if node .github/scripts/AutoTriage.js; then
+              # SUCCESS (exit code 0)
               count=$((count + 1))
-              left=$((max_count - count))
-              echo "$(date '+%Y-%m-%d %H:%M:%S'): $left issues left in queue"
+              if [ -n "$max_count" ]; then
+                left=$((max_count - count))
+                echo "$(date '+%Y-%m-%d %H:%M:%S'): $left left"
+              fi
               sleep 1
+            else
+              # FAILURE (exit code is non-zero)
+              exit_code=$?
+              if [ "$exit_code" -eq 1 ]; then
+                # Fatal error, fail the entire workflow
+                echo "❌ Fatal error while processing #${issue_number}"
+                exit 1
+              elif [ "$exit_code" -eq 2 ]; then
+                # Skippable issue. Do nothing and let the loop continue.
+                # The step will not be marked as failed.
+                :
+              else
+                # Any other unexpected error
+                echo "❌ Unexpected error (exit code $exit_code) for #${issue_number}"
+                exit "$exit_code"
+              fi
             fi
           done
 
