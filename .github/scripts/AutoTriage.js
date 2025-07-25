@@ -13,11 +13,10 @@ const core = require('@actions/core');
 const fs = require('fs');
 const path = require('path');
 
-// Configuration
-function can(action) {
-    return permissions.has(action) && !permissions.has("none");
-}
-// AUTOTRIAGE_PERMISSIONS is a comma-separated list of allowed actions: 'label', 'comment', 'close', 'edit'
+const aiModel = 'gemini-2.5-pro';
+const dbPath = process.env.AUTOTRIAGE_DB_PATH; // Optional path to a JSON file for storing triage history
+
+// Allowed actions: 'label', 'comment', 'close', 'edit'
 const permissions = new Set(
     (process.env.AUTOTRIAGE_PERMISSIONS || '')
         .split(',')
@@ -25,18 +24,8 @@ const permissions = new Set(
         .filter(p => p !== '')
 );
 
-const dbPath = process.env.AUTOTRIAGE_DB_PATH;
-
-const aiModel = process.env.AUTOTRIAGE_MODEL || 'gemini-2.5-flash';
-
-// Load AI prompt template
-const promptPath = path.join(__dirname, 'AutoTriage.prompt');
-let basePrompt = '';
-try {
-    basePrompt = fs.readFileSync(promptPath, 'utf8');
-} catch (err) {
-    console.error('❌ Failed to load AutoTriage.prompt:', err.message);
-    process.exit(1);
+function can(action) {
+    return permissions.has(action) && !permissions.has("none");
 }
 
 /**
@@ -126,6 +115,8 @@ async function buildMetadata(issue, owner, repo, octokit) {
  * Build the full prompt by combining base template with issue data
  */
 async function buildPrompt(issue, comments, owner, repo, octokit, previousContext = null) {
+    let basePrompt = fs.readFileSync(path.join(__dirname, 'AutoTriage.prompt'), 'utf8');
+
     const issueText = `${issue.title}\n\n${issue.body || ''}`;
     const metadata = await buildMetadata(issue, owner, repo, octokit);
 

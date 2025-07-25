@@ -14,11 +14,6 @@ on:
         description: 'Or use issue numbers (space-separated)'
         required: false
         type: string
-      model:
-        description: 'Gemini model'
-        required: false
-        default: 'gemini-2.5-flash'
-        type: string
       permissions:
         description: 'Permissions (`none` for dry run)'
         required: false
@@ -56,7 +51,6 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          AUTOTRIAGE_MODEL: ${{ inputs.model }}
           AUTOTRIAGE_PERMISSIONS: ${{ github.event_name == 'workflow_dispatch' && inputs.permissions || vars.AUTOTRIAGE_PERMISSIONS }}
           AUTOTRIAGE_DB_PATH: ${{ github.workspace }}/triage-db.json
           MAX_ISSUES: ${{ github.event_name == 'schedule' && 50 || inputs.backlog-size }}
@@ -87,7 +81,7 @@ jobs:
                 left=$((max_count - count))
                 echo "⏭️ $(date '+%Y-%m-%d %H:%M:%S'): $left left"
               fi
-              sleep 1
+              sleep 10 # Rate limit
             else
               # FAILURE (exit code is non-zero)
               exit_code=$?
