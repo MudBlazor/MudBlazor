@@ -434,7 +434,6 @@ async function main() {
     }
 
     console.log("⏭️");
-    console.log("⏭️");
     console.log(`🤖 Using ${aiModel} with [${Array.from(permissions).join(', ') || 'none'}] permissions`);
     const analysis = await processIssue(issue, comments, owner, repo, geminiApiKey, octokit, previousContext);
 
