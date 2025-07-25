@@ -133,7 +133,7 @@ async function buildPrompt(issue, comments, owner, repo, octokit, previousContex
     if (comments?.length) {
         commentsText = '\nISSUE COMMENTS:';
         comments.forEach((comment, idx) => {
-            commentsText += `\nComment ${idx + 1} by ${comment.author}:\n${comment.body}`;
+            commentsText += `\nComment ${idx + 1} by ${comment.author} (created: ${comment.created_at}):\n${comment.body}`;
         });
     }
 
@@ -150,9 +150,9 @@ ${commentsText}
 
 Last triaged: ${previousContext?.lastTriaged}
 Previous reasoning: ${previousContext?.previousReasoning}
-Current date: ${new Date().toISOString()}
+Current triage date: ${new Date().toISOString()}
 
-Analyze this issue and provide your structured response.`;
+Analyze this issue. Your entire response must be a single, valid JSON object and nothing else. Do not use Markdown, code fences, or any explanatory text.`;
 }
 
 /**
@@ -339,7 +339,7 @@ async function processIssue(issue, comments, owner, repo, geminiApiKey, octokit,
     const analysis = await callGemini(prompt, geminiApiKey);
 
     console.log(`🤖 Gemini returned analysis in ${((Date.now() - start) / 1000).toFixed(1)}s with a human intervention rating of ${analysis.rating}/10:`);
-    console.log(`🤖 ${analysis.reason}`);
+    console.log(`🤖 "${analysis.reason}"`);
 
     await updateLabels(issue, analysis.labels, owner, repo, octokit);
 
@@ -397,8 +397,6 @@ function getPreviousContextForIssue(triageDb, issueNumber, issue) {
  * Main entry point
  */
 async function main() {
-    console.log("⏭️⏭️⏭️");
-
     const requiredEnvVars = ['GITHUB_ISSUE_NUMBER', 'GEMINI_API_KEY', 'GITHUB_REPOSITORY'];
     for (const envVar of requiredEnvVars) {
         if (!process.env[envVar]) {
@@ -436,6 +434,8 @@ async function main() {
 
     const previousContext = getPreviousContextForIssue(triageDb, issueNumber, issue);
 
+    console.log("⏭️");
+    console.log("⏭️");
     console.log(`🤖 Using ${aiModel} with [${Array.from(permissions).join(', ') || 'none'}] permissions`);
     const analysis = await processIssue(issue, comments, owner, repo, geminiApiKey, octokit, previousContext);
 

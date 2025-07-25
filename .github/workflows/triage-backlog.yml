@@ -85,7 +85,7 @@ jobs:
               count=$((count + 1))
               if [ -n "$max_count" ]; then
                 left=$((max_count - count))
-                echo "$(date '+%Y-%m-%d %H:%M:%S'): $left left"
+                echo "⏭️ $(date '+%Y-%m-%d %H:%M:%S'): $left left"
               fi
               sleep 1
             else
