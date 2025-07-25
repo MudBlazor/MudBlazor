@@ -411,7 +411,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.Markup, false)
             );
 
-            comp.Markup.Contains(rawOutput);
+            comp.Markup.Should().Contain(rawOutput);
 
             var textAsMarkupTrue = Parameter(nameof(MudHighlighter.Markup), true);
             comp = Context.RenderComponent<BasicHighlighterTest>(parameters => parameters
@@ -420,7 +420,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.Markup, true)
             );
 
-            comp.Markup.Contains(formattedOutput);
+            comp.Markup.Should().Contain(formattedOutput);
         }
 
         [Test]
@@ -432,7 +432,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.Markup, true)
             );
 
-            comp.Markup.Contains("<span><mark>Hello</mark></span> World");
+            comp.Markup.Should().Contain("<span><mark>Hello</mark></span> World");
         }
 
         [Test]
@@ -444,7 +444,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.Markup, true)
             );
 
-            comp.Markup.Contains("Hello <mark>&lt;World&gt;</mark>");
+            comp.Markup.Should().Contain("Hello <mark>&lt;World&gt;</mark>");
         }
 
         [Test]
@@ -456,7 +456,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.Markup, true)
             );
 
-            comp.Markup.Contains("<div class='foo'><mark>div</mark> content <mark>div</mark></div>");
+            comp.Markup.Should().Contain("<div class='foo'><mark>div</mark> content <mark>div</mark></div>");
         }
 
         [Test]
@@ -468,7 +468,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.Markup, true)
             );
 
-            comp.Markup.Contains("Hello <i>Mud</i> World");
+            comp.Markup.Should().Contain("Hello <i>Mud</i> World");
         }
 
         [Test]
@@ -480,7 +480,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.Markup, true)
             );
 
-            comp.Markup.Contains("Hello <mark>&amp;amp;</mark> World");
+            comp.Markup.Should().Contain("Hello <mark>&amp;amp;</mark> World");
         }
 
         [Test]
@@ -492,7 +492,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.Markup, true)
             );
 
-            comp.Markup.Contains("This is a <mark>'quoted'</mark> text and a \"double quoted\" text.");
+            comp.Markup.Should().Contain("This is a <mark>'quoted'</mark> text and a \"double quoted\" text.");
         }
 
         [Test]
@@ -504,7 +504,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.Markup, true)
             );
 
-            comp.Markup.Contains("This is a 'quoted' text and a <mark>&quot;double quoted&quot;</mark> text.");
+            comp.Markup.Should().Contain("This is a 'quoted' text and a <mark>&quot;double quoted&quot;</mark> text.");
         }
 
         [Test]
@@ -516,7 +516,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.Markup, true)
             );
 
-            comp.Markup.Contains("<span title='nothing'>nothing</span>");
+            comp.Markup.Should().Contain("<span title='nothing'>nothing</span>");
         }
 
         [Test]
@@ -528,7 +528,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.Markup, true)
             );
 
-            comp.Markup.Contains("<i><mark>MudBlazor</mark></i> is <span style='color:red'>important</span>");
+            comp.Markup.Should().Contain("<i><mark>MudBlazor</mark></i> is <span style='color:red'>important</span>");
         }
 
         [Test]
@@ -540,7 +540,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.Markup, true)
             );
 
-            comp.Markup.Contains("Normal <b><mark>bold</mark></b> normal");
+            comp.Markup.Should().Contain("Normal <b><mark>bold</mark></b> normal");
         }
 
         [Test]
@@ -552,7 +552,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.Markup, true)
             );
 
-            comp.Markup.Contains("Hello &lt;ambitious&gt; world");
+            comp.Markup.Should().Contain("Hello &lt;ambitious&gt; world");
         }
 
         [Test]
@@ -564,7 +564,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.Markup, true)
             );
 
-            comp.Markup.Contains("Hello &lt;ambitious&gt; <mark>world</mark>");
+            comp.Markup.Should().Contain("Hello &lt;ambitious&gt; <mark>world</mark>");
         }
 
         [Test]
@@ -576,7 +576,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.Markup, true)
             );
 
-            comp.Markup.Contains("Hello &lt;am<mark>bit</mark>ious&gt; world");
+            comp.Markup.Should().Contain("Hello &lt;am<mark>bit</mark>ious&gt; world");
         }
 
         [Test]
@@ -588,7 +588,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.Markup, true)
             );
 
-            comp.Markup.Contains("Some text");
+            comp.Markup.Should().Contain("Some text");
         }
 
         [Test]
@@ -601,7 +601,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.CustomClass, "my-custom-class")
             );
 
-            comp.Markup.Contains("<mark class=\"my-custom-class\">Highlight</mark> this");
+            comp.Markup.Should().Contain("<mark class=\"my-custom-class\">Highlight</mark> this");
         }
 
         [Test]
@@ -617,7 +617,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.Markup, true)
             );
 
-            comp.Markup.Contains("Test with <b>HTML</b> and <mark>highlight</mark>");
+            comp.Markup.Should().Contain("Test with <b>HTML</b> and <mark>highlight</mark>");
 
             // 2. Re-render with Markup = false
             comp.SetParametersAndRender(parameters => parameters
@@ -625,7 +625,7 @@ namespace MudBlazor.UnitTests.Components
             );
 
             var expectedMarkup = "Test with &lt;b&gt;HTML&lt;/b&gt; and <mark>highlight</mark>";
-            comp.Markup.Contains(expectedMarkup);
+            comp.Markup.Should().Contain(expectedMarkup);
         }
     }
 }
