@@ -41,12 +41,12 @@ jobs:
       - name: Install dependencies
         run: npm install node-fetch@2 @actions/core @octokit/rest
 
-      - name: Download previous triage database
-        uses: actions/download-artifact@v4
+      - name: Restore triage database from cache
+        uses: actions/cache@v4
+        id: cache-db
         with:
-          name: triage-database
-          path: .
-        continue-on-error: true # This is important for the very first run
+          path: triage-db.json
+          key: ${{ runner.os }}-triage-database
 
       - name: Triage Issues
         env:
@@ -71,7 +71,6 @@ jobs:
           exit_code=0
           for issue_number in $issue_numbers; do
             if [ -n "$max_count" ] && [ "$count" -ge "$max_count" ]; then
-              echo "Reached max issues ($max_count)"
               break
             fi
             #echo "--- Processing Issue #${issue_number} ---"
@@ -90,18 +89,10 @@ jobs:
             elif [ "$exit_code" -eq 0 ]; then
               count=$((count + 1))
               left=$((max_count - count))
-              echo "$(date '+%Y-%m-%d %H:%M:%S'): $left left"
+              echo "$(date '+%Y-%m-%d %H:%M:%S'): $left issues left in queue"
               sleep 1
             fi
           done
-
-      - name: Upload updated triage database
-        uses: actions/upload-artifact@v4
-        with:
-          name: triage-database
-          path: triage-db.json
-          retention-days: 90
-        if: always()
 
       - name: Display database stats
         if: always()
@@ -109,7 +100,6 @@ jobs:
           if [ -f "triage-db.json" ]; then
             total_entries=$(jq 'length' triage-db.json)
             echo "📂 Database now contains $total_entries triaged issues"
-            
             echo "📂 Most recent entries:"
             jq -r 'to_entries | sort_by(.value.lastTriaged) | reverse | .[0:5] | .[] | "  #\(.key): \(.value.lastTriaged)"' triage-db.json || echo "  No entries found"
           else
