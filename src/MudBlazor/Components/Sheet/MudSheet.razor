@@ -12,8 +12,8 @@
     <!-- Outer Sheet -->
     <div id="@_elementId" class="@Classname" style="@Stylename" @attributes=@UserAttributes aria-label="@AriaLabel">
         <!-- Sheet Handle (Toggle Button and Dragging) -->
-        <div class="mud-sheet-handle" @onclick="@ToggleSize">
-            <MudIcon Icon="@DragHandle" Color="Color.Inherit" />                
+        <div class="mud-sheet-handle">
+            <MudIconButton Icon="@DragHandle" OnClick="@ToggleSize" Color="Color.Inherit" />
         </div>
         <!-- Sheet Content -->
         <div class="mud-sheet-content">
@@ -39,5 +39,6 @@ When a Sheet is Open in non standard mode, we prevent scrolling.
                 LockScroll="true"
                 AutoClose="true"
                 Modal="@false"
+                DarkBackground="true"
                 OnClosed="@(async () => await CloseSheetAsync())"/>
 }

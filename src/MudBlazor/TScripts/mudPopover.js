@@ -281,6 +281,19 @@ window.mudpopoverHelper = {
             const isSheet = classListArray.indexOf('mud-sheet-popover') >= 0;
             if (isSheet) {
                 this.setMudSheetEdge(popoverContentNode, classListArray);
+                const positiontop = parseInt(popoverContentNode.getAttribute('data-pc-y'));
+                const positionleft = parseInt(popoverContentNode.getAttribute('data-pc-x'));
+                const scrollLeft = window.scrollX;
+                const scrollTop = window.scrollY;
+                // bounding rect for flipping
+                boundingRect = {
+                    left: positionleft - scrollLeft,
+                    top: positiontop - scrollTop,
+                    right: positionleft + 1,
+                    bottom: positiontop + 1,
+                    width: 1,
+                    height: 1
+                };
             }
 
             if (isPositionOverride) {
@@ -307,16 +320,18 @@ window.mudpopoverHelper = {
             let offsetX = position.offsetX; // Horizontal offset of the popover
             let offsetY = position.offsetY; // Vertical offset of the popover
             let anchorY = position.anchorY; // Y-coordinate of the opening anchor
-            let anchorX = position.anchorX; // X-coordinate of the opening anchor
+            let anchorX = position.anchorX; // X-coordinate of the opening anchor            
 
             // reset widths and allow them to be changed after initial creation
-            popoverContentNode.style['max-width'] = 'none';
-            popoverContentNode.style['min-width'] = 'none';
-            if (isRelativeWidth) {
-                popoverContentNode.style['max-width'] = (boundingRect.width) + 'px';
-            }
-            else if (isAdaptiveWidth) {
-                popoverContentNode.style['min-width'] = (boundingRect.width) + 'px';
+            if (!isSheet) {
+                popoverContentNode.style['max-width'] = 'none';
+                popoverContentNode.style['min-width'] = 'none';
+                if (isRelativeWidth) {
+                    popoverContentNode.style['max-width'] = (boundingRect.width) + 'px';
+                }
+                else if (isAdaptiveWidth) {
+                    popoverContentNode.style['min-width'] = (boundingRect.width) + 'px';
+                }
             }
 
             // Reset max-height if it was previously set and anchor is in bounds
@@ -325,14 +340,15 @@ window.mudpopoverHelper = {
                 popoverContentNode.mudHeight = null;
             }
 
+            // Appbar Calculations
+            const appBarElements = document.getElementsByClassName("mud-appbar mud-appbar-fixed-top");
+            let appBarOffset = 0;
+            if (appBarElements.length > 0) {
+                appBarOffset = appBarElements[0].getBoundingClientRect().height;
+            }
+
             // flipping logic
             if (isFlipOnOpen || isFlipAlways) {
-
-                const appBarElements = document.getElementsByClassName("mud-appbar mud-appbar-fixed-top");
-                let appBarOffset = 0;
-                if (appBarElements.length > 0) {
-                    appBarOffset = appBarElements[0].getBoundingClientRect().height;
-                }
 
                 // mudPopoverFliped is the flip direction for first flip on flip - onopen popovers
                 let selector = popoverContentNode.mudPopoverFliped;
@@ -525,12 +541,6 @@ window.mudpopoverHelper = {
                     offsetY = 0;
                 }
 
-                // will be covered by appbar so adjust zindex with appbar as parent
-                if (top + offsetY < appBarOffset &&
-                    appBarElements.length > 0) {
-                    this.updatePopoverZIndex(popoverContentNode, appBarElements[0]);
-                }
-
                 const firstChild = popoverContentNode.firstElementChild;
 
                 // adjust the popover position/maxheight if it or firstChild does not have a max-height set (even if set to 'none')
@@ -583,13 +593,18 @@ window.mudpopoverHelper = {
                 }
             }
 
+            // will be covered by appbar so adjust zindex with appbar as parent
+            if (top + offsetY < appBarOffset &&
+                appBarElements.length > 0) {
+                this.updatePopoverZIndex(popoverContentNode, appBarElements[0]);
+            }
+
             if (isPositionFixed) {
                 popoverContentNode.style['position'] = 'fixed';
             }
             else if (!classList.contains('mud-popover-fixed')) {
                 offsetX += window.scrollX;
                 offsetY += window.scrollY;
-                console.log(`offsetX: ${offsetX}, offsetY: ${offsetY}, scrollX: ${window.scrollX}, scrollY: ${window.scrollY}`);
             }
 
             popoverContentNode.style['left'] = (left + offsetX) + 'px';
@@ -617,26 +632,18 @@ window.mudpopoverHelper = {
         let positionleft = window.innerWidth / 2;
         let positiontop = window.innerHeight / 2;
 
-        console.log(`Base Center => Top: ${positiontop}, Left: ${positionleft}`);
-
         if (classListArray.includes('mud-sheet-position-top')) {
             positiontop = 0;
-            console.log("position-top");
         }
         if (classListArray.includes('mud-sheet-position-bottom')) {
             positiontop = window.innerHeight;
-            console.log("position-bottom");
         }
         if (classListArray.includes('mud-sheet-position-left')) {
             positionleft = 0;
-            console.log("position-left");
         }
         if (classListArray.includes('mud-sheet-position-right')) {
             positionleft = window.innerWidth;
-            console.log("position-right");
         }
-
-        console.log(`Calculated Position => Top: ${positiontop}, Left: ${positionleft}`);
 
         popoverContentNode.setAttribute('data-pc-x', positionleft);
         popoverContentNode.setAttribute('data-pc-y', positiontop);

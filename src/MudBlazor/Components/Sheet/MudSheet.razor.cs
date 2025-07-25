@@ -16,7 +16,8 @@ namespace MudBlazor
     public partial class MudSheet : MudComponentBase
     {
         private string _elementId = Identifier.Create("sheet-");
-        private int _currentSize { get; set; } = 25;
+        private bool _dragging;
+        private int _currentSize = 25;
 
         private ParameterState<bool> _openSheetState;
 
@@ -28,7 +29,8 @@ namespace MudBlazor
             using var registerScope = CreateRegisterScope();
             _openSheetState = registerScope.RegisterParameter<bool>(nameof(Open))
                 .WithParameter(() => Open)
-                .WithEventCallback(() => OpenChanged);
+                .WithEventCallback(() => OpenChanged)
+                .WithChangeHandler(OnOpenChanged);
         }
 
         /// <summary>
@@ -41,7 +43,9 @@ namespace MudBlazor
                 .AddClass("mud-sheet-orientation-horizontal", Position is not (Position.Top or Position.Bottom))
                 .AddClass("mud-sheet-standard", Standard)
                 .AddClass("mud-sheet-modal", !Standard)
-                .AddClass($"mud-elevation-{Elevation}", Elevation > 0)
+                .AddClass($"mud-sheet-borderradius-{BorderRadius}", BorderRadius != null)
+                .AddClass($"mud-elevation-{Elevation}", !_dragging && Elevation > 0)
+                .AddClass($"mud-elevation-{DragElevation}", _dragging && DragElevation > 0)
                 .AddClass(Class)
                 .Build();
 
@@ -50,7 +54,7 @@ namespace MudBlazor
         /// </summary>
         protected string Stylename =>
             new StyleBuilder()
-                .AddStyle("width", $"{CurrentSize}vw", CurrentSize > 0 && (Position is Position.Left or Position.Right or Position.Center))
+                .AddStyle("width", $"{CurrentSize}vw", CurrentSize > 0 && (Position is not (Position.Top or Position.Bottom)))
                 .AddStyle("height", $"{CurrentSize}vh", CurrentSize > 0 && (Position is Position.Top or Position.Bottom or Position.Center))
                 .AddStyle(Style, !string.IsNullOrEmpty(Style))
                 .Build();
@@ -61,7 +65,7 @@ namespace MudBlazor
         protected string PopoverClassname =>
             new CssBuilder("mud-sheet-popover")
                 .AddClass($"mud-sheet-position-{Positioning}")
-                .AddClass("mud-popover-position-override")
+                .AddClass("mud-popover-fixed")
                 .Build();
 
         /// <summary>
@@ -98,6 +102,25 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Paper.Appearance)]
         public int Elevation { set; get; } = 16;
+
+        /// <summary>
+        /// The size of the drop shadow during drag events.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>25</c>, the maximum. 
+        /// </remarks>
+        public int DragElevation { get; set; } = 25;
+
+        /// <summary>
+        /// The border radius of the sheet. Does not apply to the connecting edge.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>16</c>.<br/>
+        /// Can be set to <c>null</c> to default to MudTheme border radius.<br/>
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Sheet.Appearance)]
+        public int? BorderRadius { get; set; } = 16;
 
         /// <summary>
         /// The icon used as the drag handle when <see cref="Position"/> is <c>Top</c> or <c>Bottom</c>.
@@ -193,12 +216,12 @@ namespace MudBlazor
         /// List of snap point heights (in vh%) to toggle or drag
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>20, 40, 50, 70, 90, 100</c>.<br/>
+        /// Defaults to <c>[20, 40, 50, 70, 90, 100]</c>.<br/>
         /// Valid values are between 10 and 100, inclusive.<br/>
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Sheet.Appearance)]
-        public int[] PresetSizes { get; set; } = new[] { 20, 40, 50, 70, 90, 100 };
+        public int[] PresetSizes { get; set; } = [20, 40, 50, 70, 90, 100];
 
         /// <summary>
         /// Indicates whether the drag or toggle methods can roam outside of <see cref="PresetSizes"/> or not.
@@ -217,7 +240,7 @@ namespace MudBlazor
         /// <summary>
         /// Returns the Current Drag Handle Icon based on the Position of the sheet.
         /// </summary>
-        protected string DragHandle => Position is Position.Top or Position.Bottom ? VerticalHandle : HorizontalHandle;
+        protected string DragHandle => Position is Position.Top or Position.Bottom or Position.Center ? VerticalHandle : HorizontalHandle;
 
         /// <summary>
         /// Returns the Positioning string for the popover using RightToLeft logic.
@@ -236,7 +259,7 @@ namespace MudBlazor
         /// <summary>
         /// Returns the Current Size of the sheet as a percentage of the viewport height (vh) or width (vw).
         /// </summary>
-        public int CurrentSize => _openSheetState.Value ? _currentSize : 0;
+        public int CurrentSize => _currentSize;
 
         /// <summary>
         /// Opens the sheet if it is not already open.
@@ -249,6 +272,7 @@ namespace MudBlazor
             var open = _openSheetState.Value;
             if (!open)
             {
+                _currentSize = OpeningSize;
                 // calling the open event shouldn't trigger a callback if open did not change
                 await _openSheetState.SetValueAsync(true);
                 await OpenChanged.InvokeAsync(true);
@@ -265,6 +289,7 @@ namespace MudBlazor
             var open = _openSheetState.Value;
             if (open)
             {
+                _currentSize = 0; // Reset the size when closing the sheet
                 // calling the close event shouldn't trigger a callback if open did not change
                 await _openSheetState.SetValueAsync(false);
                 await OpenChanged.InvokeAsync(false);
@@ -285,7 +310,7 @@ namespace MudBlazor
             if (nextIndex >= PresetSizes.Length)
             {
                 await CloseSheetAsync();
-                _currentSize = 0;
+                return 0; // return 0 if the sheet is closed
             }
             else
             {
@@ -318,33 +343,36 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Override SetParametersAsync to update any needed changes
+        /// Fires when the open state of the sheet changes from outside of the component.
         /// </summary>
-        /// <param name="parameters"></param>
-        /// <returns></returns>
-        public override async Task SetParametersAsync(ParameterView parameters)
+        private async Task OnOpenChanged(ParameterChangedEventArgs<bool> args)
         {
-            // track changes
-            var ariaChanged = parameters.TryGetValue<string>(nameof(AriaLabel), out var ariaLabel) &&
-                ariaLabel != AriaLabel || string.IsNullOrEmpty(AriaLabel);
-            var startSizeChanged = parameters.TryGetValue<int>(nameof(OpeningSize), out var openingSize) &&
-                openingSize != OpeningSize || openingSize != _currentSize;
-
-            // make relative updates, the out var will be set to the value of the parameter if it exists,
-            // but if it doesn't exist it will be the default value of the type.
-            if (ariaChanged)
+            if (args.Value)
             {
-                if (parameters.)
-                    AriaLabel = $"{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(Positioning.ToString().ToLower())} Sheet";
+                await OpenSheetAsync();
             }
-            if (startSizeChanged)
+            else
             {
-                _currentSize = openingSize;
-                // Check if OpeningSize was actually passed
-                var openingSizeWasPassed = parameters.TryGetValue<int>(nameof(OpeningSize), out var oopeningSize);
-
+                await CloseSheetAsync();
             }
-            await base.SetParametersAsync(parameters);
+        }
+
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+            // Ensure OpeningSize is within valid range and set to starting _currentSize
+            if (OpeningSize < 0)
+                OpeningSize = 0;
+            else if (OpeningSize > 100)
+                OpeningSize = 100;
+            if (_currentSize != OpeningSize)
+                _currentSize = OpeningSize;
+
+            // Ensure AriaLabel is set if not provided
+            if (string.IsNullOrWhiteSpace(AriaLabel))
+            {
+                AriaLabel = $"{CultureInfo.InvariantCulture.TextInfo.ToTitleCase(Positioning)} Sheet";
+            }
         }
     }
 }
