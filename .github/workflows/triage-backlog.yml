@@ -55,7 +55,7 @@ jobs:
           AUTOTRIAGE_MODEL: ${{ inputs.model }}
           AUTOTRIAGE_PERMISSIONS: ${{ github.event_name == 'workflow_dispatch' && inputs.permissions || vars.AUTOTRIAGE_PERMISSIONS }}
           AUTOTRIAGE_DB_PATH: ${{ github.workspace }}/triage-db.json
-          MAX_ISSUES: ${{ github.event_name == 'schedule' && 100 || inputs.backlog-size }}
+          MAX_ISSUES: ${{ github.event_name == 'schedule' && 50 || inputs.backlog-size }}
         run: |
           if [ -n "${{ inputs.issue-numbers }}" ]; then
             echo "Processing specified issues: ${{ inputs.issue-numbers }}"
@@ -63,7 +63,7 @@ jobs:
             max_count=""
           else
             echo "Processing up to $MAX_ISSUES issues from the backlog"
-            issue_numbers=$(gh issue list --state open --limit 9999 --search 'sort:updated-desc' --json number --jq '.[].number')
+            issue_numbers=$(gh issue list --state open --limit 9999 --search 'sort:updated-desc -label:enhancement -label:"on hold"' --json number --jq '.[].number')
             max_count="$MAX_ISSUES"
           fi
 
@@ -75,16 +75,13 @@ jobs:
             fi
             #echo "--- Processing Issue #${issue_number} ---"
             export GITHUB_ISSUE_NUMBER="$issue_number"
-            node .github/scripts/AutoTriage.js || true
+            node .github/scripts/AutoTriage.js
             exit_code=$?
-            if [ -z "$exit_code" ]; then
-              exit_code=0
-            fi
+            
             if [ "$exit_code" -eq 1 ]; then
               echo "❌ Fatal error while processing #${issue_number}"
               exit 1
             elif [ "$exit_code" -eq 2 ]; then
-              exit_code=0
               continue
             elif [ "$exit_code" -eq 0 ]; then
               count=$((count + 1))
