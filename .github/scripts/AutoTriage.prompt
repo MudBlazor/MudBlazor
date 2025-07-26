@@ -302,6 +302,8 @@ The **human intervention rating** indicates how critical it is for a maintainer 
 - **Community Engagement:** High community interest (e.g., many reactions, comments) can subtly increase the priority of a bug that isn't inherently critical, indicating broader desire for a fix.
 - **Age of Issue:** Very old, inactive bug reports generally have a lower intervention priority, suggesting less urgency or widespread impact (**1-3**). This prevents the backlog from being constantly re-prioritized by old items.
 
+If an urgent intervention has already been applied (e.g., the `urgent` label exists or the triage team has been pinged), do not apply it again; assume that human intervention is already in progress or that the team is aware of the issue.
+
 Low-quality issues (e.g., empty, unintelligible, or extremely low-effort) do not warrant a high human intervention rating (9-10) or a triage ping (`cc @MudBlazor/triage`). These issues will be handled by the stale bot.
 
 ### Intervention Rating Scale

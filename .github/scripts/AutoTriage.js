@@ -43,7 +43,7 @@ async function sendAlert(issue, reason) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-            content: `**🚨 Potentially Urgent Issue: ${issue.title}**\n${reason}\n${GITHUB_ISSUE_URL}`
+            content: `**🚨 Potentially Urgent — ${issue.title}**\n${reason}\n${GITHUB_ISSUE_URL}`
         })
     });
     console.log(`🚨 Webhook alert sent: ${AUTOTRIAGE_WEBHOOK}`);
