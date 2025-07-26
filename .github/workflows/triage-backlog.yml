@@ -23,7 +23,9 @@ on:
 jobs:
   auto-triage:
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch' || vars.AUTOTRIAGE_PERMISSIONS # Run manually or on a schedule if permissions are set up.
+    # Safety switch: Scheduled runs require the AUTOTRIAGE_PERMISSIONS repo variable to be set.
+    if: github.event_name == 'workflow_dispatch' || vars.AUTOTRIAGE_PERMISSIONS
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -36,14 +38,15 @@ jobs:
       - name: Install dependencies
         run: npm install node-fetch@2 @actions/core @octokit/rest
 
-      - name: Cache triage database
+      # Persist the processed issues database (triage-db.json) between runs.
+      - name: Cache Triage Database
         uses: actions/cache@v4
         id: cache-db
         with:
           path: triage-db.json
-          # 1. The key is unique on every run, forcing a save on success.
+          # Unique key forces a new cache save on each successful run.
           key: ${{ runner.os }}-triage-database-${{ github.run_id }}
-          # 2. Restore-keys finds the most recent cache to use at the start.
+          # Restore key prefix finds the latest available cache.
           restore-keys: |
             ${{ runner.os }}-triage-database-
 
@@ -51,17 +54,20 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          AUTOTRIAGE_PERMISSIONS: ${{ github.event_name == 'workflow_dispatch' && inputs.permissions || vars.AUTOTRIAGE_PERMISSIONS }}
           AUTOTRIAGE_DB_PATH: ${{ github.workspace }}/triage-db.json
+          # Use input for permissions, fallback to repo variable for scheduled runs.
+          AUTOTRIAGE_PERMISSIONS: ${{ github.event_name == 'workflow_dispatch' && inputs.permissions || vars.AUTOTRIAGE_PERMISSIONS }}
+          # Use a fixed limit for scheduled runs, fallback to manual input.
           MAX_ISSUES: ${{ github.event_name == 'schedule' && 50 || inputs.backlog-size }}
         run: |
+          # Process specified issues, or fetch from the backlog.
           if [ -n "${{ inputs.issue-numbers }}" ]; then
             echo "Processing specified issues: ${{ inputs.issue-numbers }}"
             issue_numbers="${{ inputs.issue-numbers }}"
             max_count=""
           else
             echo "Processing up to $MAX_ISSUES issues from the backlog"
-            issue_numbers=$(gh issue list --state open --limit 9999 --search 'sort:updated-desc -label:enhancement -label:"on hold"' --json number --jq '.[].number')
+            issue_numbers=$(gh issue list --state open --limit 9999 --search 'sort:updated-desc -label:enhancement -label:"on hold" -is:locked' --json number --jq '.[].number')
             max_count="$MAX_ISSUES"
           fi
 
@@ -73,9 +79,8 @@ jobs:
             
             export GITHUB_ISSUE_NUMBER="$issue_number"
 
-            # This structure tells the shell we are handling the exit code ourselves
+            # Handle script exit codes: 0=Success, 1=Fatal Error, 2=Skip Issue.
             if node .github/scripts/AutoTriage.js; then
-              # SUCCESS (exit code 0)
               count=$((count + 1))
               if [ -n "$max_count" ]; then
                 left=$((max_count - count))
@@ -83,37 +88,21 @@ jobs:
               fi
               sleep 10 # Rate limit
             else
-              # FAILURE (exit code is non-zero)
               exit_code=$?
               if [ "$exit_code" -eq 1 ]; then
-                # Fatal error, fail the entire workflow
-                echo "❌ Fatal error while processing #${issue_number}"
+                echo "❌ Fatal error on #${issue_number}"
                 exit 1
               elif [ "$exit_code" -eq 2 ]; then
-                # Skippable issue. Do nothing and let the loop continue.
-                # The step will not be marked as failed.
+                # No-op for skippable issues.
                 :
               else
-                # Any other unexpected error
-                echo "❌ Unexpected error (exit code $exit_code) for #${issue_number}"
+                echo "❌ Unexpected error (code $exit_code) on #${issue_number}"
                 exit "$exit_code"
               fi
             fi
           done
 
-      - name: Display database stats
-        if: always()
-        run: |
-          if [ -f "triage-db.json" ]; then
-            total_entries=$(jq 'length' triage-db.json)
-            echo "Database now contains $total_entries triaged issues"
-            echo "Most recent entries:"
-            jq -r 'to_entries | sort_by(.value.lastTriaged) | reverse | .[0:5] | .[] | "  #\(.key): \(.value.lastTriaged)"' triage-db.json || echo "  No entries found"
-          else
-            echo "Database file not found"
-          fi
-
-      - name: Upload triage artifacts
+      - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: triage-artifacts
