@@ -274,7 +274,7 @@ Suggest a `newTitle` in the JSON **only if** the current title is **very unclear
 
 ### Pull Request Title Format
 
-PR titles must be prefixed with the relevant component.
+PR titles must be prefixed with the relevant component (colon format).
 
 **Examples:**
 - MudDialog: Fix gaps in body style
@@ -282,7 +282,8 @@ PR titles must be prefixed with the relevant component.
 
 ### Issue Title Format
 
-Issue titles must NOT use component prefixes (e.g., "MudButton:") or include version numbers.
+Issue titles don't need to use the colon format (e.g., "MudButton: ...")
+Issue titles don't need to include version numbers or labels that are already present in the body.
 
 **Examples:**
 - Make overlay popovers non-modal by default

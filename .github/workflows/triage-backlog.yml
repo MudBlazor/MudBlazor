@@ -2,7 +2,7 @@ name: Triage Backlog
 
 on:
   schedule:
-    - cron: '0 6 * * *'
+    - cron: '0 */6 * * *'
   workflow_dispatch:
     inputs:
       backlog-size:
@@ -23,7 +23,7 @@ on:
 jobs:
   auto-triage:
     runs-on: ubuntu-latest
-    # Safety switch: Scheduled runs require the AUTOTRIAGE_PERMISSIONS repo variable to be set.
+    # Safety: Scheduled runs require the AUTOTRIAGE_PERMISSIONS repo variable to be set.
     if: github.event_name == 'workflow_dispatch' || vars.AUTOTRIAGE_PERMISSIONS
 
     steps:
@@ -59,7 +59,7 @@ jobs:
           # Use input for permissions, fallback to repo variable for scheduled runs.
           AUTOTRIAGE_PERMISSIONS: ${{ github.event_name == 'workflow_dispatch' && inputs.permissions || vars.AUTOTRIAGE_PERMISSIONS }}
           # Use a fixed limit for scheduled runs, fallback to manual input.
-          MAX_ISSUES: ${{ github.event_name == 'schedule' && 50 || inputs.backlog-size }}
+          MAX_ISSUES: ${{ github.event_name == 'schedule' && 20 || inputs.backlog-size }} # Gemini can handle 100 issues per day.
         run: |
           # Process specified issues, or fetch from the backlog.
           if [ -n "${{ inputs.issue-numbers }}" ]; then
@@ -67,10 +67,12 @@ jobs:
             issue_numbers="${{ inputs.issue-numbers }}"
             max_count=""
           else
-            echo "Processing up to $MAX_ISSUES issues from the backlog"
+            echo "Analyzing up to $MAX_ISSUES issues"
             issue_numbers=$(gh issue list --state open --limit 9999 --search 'sort:updated-desc -label:enhancement -label:"on hold" -is:locked' --json number --jq '.[].number')
             max_count="$MAX_ISSUES"
           fi
+
+          echo "Searching through $(echo \"$issue_numbers\" | wc -w) total issues from GitHub..."
 
           count=0
           for issue_number in $issue_numbers; do
@@ -87,7 +89,7 @@ jobs:
                 left=$((max_count - count))
                 echo "⏭️ $(date '+%Y-%m-%d %H:%M:%S'): $left left"
               fi
-              sleep 10 # Rate limit
+              sleep 3 # Rate limit
             else
               exit_code=$?
               if [ "$exit_code" -eq 1 ]; then

@@ -36,21 +36,17 @@ if (PERMISSIONS.has('none')) PERMISSIONS.clear();
 
 const can = action => PERMISSIONS.has(action);
 
-// Send a Discord webhook alert for urgent issues
-async function sendWebhookAlert(issue, reason) {
+// Send a Discord alert for urgent issues
+async function sendAlert(issue, reason) {
     if (!AUTOTRIAGE_WEBHOOK || !can('alert')) return;
-    try {
-        await fetch(AUTOTRIAGE_WEBHOOK, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                content: `**🚨 Potentially Urgent Issue: ${issue.title}**\n${reason}\n${GITHUB_ISSUE_URL}`
-            })
-        });
-        console.log(`🚨 Webhook alert sent: ${AUTOTRIAGE_WEBHOOK}`);
-    } catch (err) {
-        console.error('❌ Failed to send webhook alert:', err.message);
-    }
+    await fetch(AUTOTRIAGE_WEBHOOK, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            content: `**🚨 Potentially Urgent Issue: ${issue.title}**\n${reason}\n${GITHUB_ISSUE_URL}`
+        })
+    });
+    console.log(`🚨 Webhook alert sent: ${AUTOTRIAGE_WEBHOOK}`);
 }
 
 // Call Gemini to analyze the issue content and return structured response
@@ -85,7 +81,7 @@ async function callGemini(prompt) {
     );
 
     if (!response.ok) {
-        throw new Error(`Gemini API error: ${response.status} ${response.statusText} — ${await response.text()}`);
+        throw new Error(`Gemini: ${response.status} ${response.statusText} — ${await response.text()}`);
     }
 
     const data = await response.json();
@@ -94,7 +90,6 @@ async function callGemini(prompt) {
     saveArtifact('gemini-output.json', JSON.stringify(data, null, 2));
     saveArtifact('gemini-analysis.json', result);
 
-    if (!result) throw new Error('No analysis result in Gemini response');
     return JSON.parse(result);
 }
 
@@ -247,7 +242,7 @@ async function processIssue(issue, octokit, previousContext = null) {
     console.log(`🤖 "${analysis.reason}"`);
 
     if (analysis.rating >= 9) {
-        await sendWebhookAlert(issue, analysis.reason);
+        await sendAlert(issue, analysis.reason);
     }
 
     await updateLabels(analysis.labels, octokit);
@@ -333,7 +328,7 @@ async function main() {
 
     // Cancel early
     if (!previousContext) {
-        console.log(`⏭️ #${GITHUB_ISSUE_NUMBER} does not need to be triaged right now`);
+        //console.log(`⏭️ #${String(GITHUB_ISSUE_NUMBER).padStart(5, '0')} does not need to be triaged right now`);
         process.exit(2);
     }
 
