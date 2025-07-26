@@ -17,7 +17,7 @@ on:
       permissions:
         description: 'Permissions (`none` for dry run)'
         required: false
-        default: 'label, comment, close, edit'
+        default: 'label, comment, close, edit, alert'
         type: string
 
 jobs:
@@ -54,6 +54,7 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AUTOTRIAGE_WEBHOOK: ${{ vars.AUTOTRIAGE_WEBHOOK }}
           AUTOTRIAGE_DB_PATH: ${{ github.workspace }}/triage-db.json
           # Use input for permissions, fallback to repo variable for scheduled runs.
           AUTOTRIAGE_PERMISSIONS: ${{ github.event_name == 'workflow_dispatch' && inputs.permissions || vars.AUTOTRIAGE_PERMISSIONS }}

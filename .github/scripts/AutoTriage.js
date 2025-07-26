@@ -20,8 +20,10 @@ const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const GITHUB_REPOSITORY = process.env.GITHUB_REPOSITORY;
 const GITHUB_ISSUE_NUMBER = parseInt(process.env.GITHUB_ISSUE_NUMBER, 10);
+const AUTOTRIAGE_WEBHOOK = process.env.AUTOTRIAGE_WEBHOOK;
 const [OWNER, REPO] = (GITHUB_REPOSITORY || '').split('/');
 const issueParams = { owner: OWNER, repo: REPO, issue_number: GITHUB_ISSUE_NUMBER };
+const GITHUB_ISSUE_URL = `https://github.com/${OWNER}/${REPO}/issues/${GITHUB_ISSUE_NUMBER}`;
 
 // Allowed actions: 'label', 'comment', 'close', 'edit'; 'none' disables all actions.
 let PERMISSIONS = new Set(
@@ -33,6 +35,23 @@ let PERMISSIONS = new Set(
 if (PERMISSIONS.has('none')) PERMISSIONS.clear();
 
 const can = action => PERMISSIONS.has(action);
+
+// Send a Discord webhook alert for urgent issues
+async function sendWebhookAlert(issue, reason) {
+    if (!AUTOTRIAGE_WEBHOOK || !can('alert')) return;
+    try {
+        await fetch(AUTOTRIAGE_WEBHOOK, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                content: `**🚨 Potentially Urgent Issue: ${issue.title}**\n${reason}\n${GITHUB_ISSUE_URL}`
+            })
+        });
+        console.log(`🚨 Webhook alert sent: ${AUTOTRIAGE_WEBHOOK}`);
+    } catch (err) {
+        console.error('❌ Failed to send webhook alert:', err.message);
+    }
+}
 
 // Call Gemini to analyze the issue content and return structured response
 async function callGemini(prompt) {
@@ -151,6 +170,8 @@ ${JSON.stringify(timelineReport, null, 2)}
 Last triaged: ${previousContext?.lastTriaged}
 Previous reasoning: ${previousContext?.previousReasoning}
 Current triage date: ${new Date().toISOString()}
+Current permissions: ${Array.from(PERMISSIONS).join(', ') || 'none'}
+All possible permissions: label (add/remove labels), comment (post comments), close (close issue), edit (edit title), alert (send Discord notification)
 
 === SECTION: INSTRUCTIONS ===
 Analyze this issue, its metadata, and its full timeline. Your entire response must be a single, valid JSON object and nothing else. Do not use Markdown, code fences, or any explanatory text.`;
@@ -224,6 +245,10 @@ async function processIssue(issue, octokit, previousContext = null) {
 
     console.log(`🤖 Gemini returned analysis in ${analysisTimeSeconds}s with a human intervention rating of ${analysis.rating}/10:`);
     console.log(`🤖 "${analysis.reason}"`);
+
+    if (analysis.rating >= 9) {
+        await sendWebhookAlert(issue, analysis.reason);
+    }
 
     await updateLabels(analysis.labels, octokit);
 
