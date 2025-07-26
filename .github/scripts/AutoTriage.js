@@ -33,9 +33,7 @@ const PERMISSIONS = new Set(
 
 const can = action => PERMISSIONS.has(action) && !PERMISSIONS.has("none");
 
-/**
- * Call Gemini to analyze the issue content and return structured response
- */
+// Call Gemini to analyze the issue content and return structured response
 async function callGemini(prompt) {
     const response = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/${AI_MODEL}:generateContent`,
@@ -85,9 +83,7 @@ async function callGemini(prompt) {
     return JSON.parse(analysisResult);
 }
 
-/**
- * Create issue metadata for analysis
- */
+// Create issue metadata for analysis
 async function buildMetadata(issue, octokit) {
     const isIssue = !issue.pull_request;
     const currentLabels = issue.labels?.map(l => l.name || l) || [];
@@ -110,9 +106,7 @@ async function buildMetadata(issue, octokit) {
     };
 }
 
-/**
- * Build timeline report from GitHub events
- */
+// Build timeline report from GitHub events
 async function buildTimeline(octokit, issue_number) {
     const { data: timelineEvents } = await octokit.rest.issues.listEventsForTimeline({
         owner: OWNER,
@@ -140,9 +134,7 @@ async function buildTimeline(octokit, issue_number) {
     }).filter(Boolean);
 }
 
-/**
- * Build the full prompt by combining base template with issue data
- */
+// Build the full prompt by combining base template with issue data
 async function buildPrompt(issue, octokit, previousContext = null) {
     let basePrompt = fs.readFileSync(path.join(__dirname, 'AutoTriage.prompt'), 'utf8');
 
@@ -171,16 +163,12 @@ Current triage date: ${new Date().toISOString()}
 === SECTION: INSTRUCTIONS ===
 Analyze this issue, its metadata, and its full timeline. Your entire response must be a single, valid JSON object and nothing else. Do not use Markdown, code fences, or any explanatory text.`;
 
-    // Save prompt to artifacts folder
     saveArtifact(`gemini-input.md`, promptString);
     return promptString;
 }
 
-/**
- * Update GitHub issue labels
- */
+// Update GitHub issue labels
 async function updateLabels(suggestedLabels, octokit) {
-    // ...existing code...
     const { data: issue } = await octokit.rest.issues.get(issueParams);
     const currentLabels = issue.labels?.map(l => l.name || l) || [];
     const labelsToAdd = suggestedLabels.filter(l => !currentLabels.includes(l));
@@ -205,47 +193,36 @@ async function updateLabels(suggestedLabels, octokit) {
     }
 }
 
-/**
- * Add AI-generated comment to the issue
- */
+// Add AI-generated comment to the issue
 async function addComment(comment, octokit) {
     if (!octokit || !can('comment')) return;
     await octokit.rest.issues.createComment({ ...issueParams, body: comment });
 }
 
-/**
- * Update issue/PR title
- */
+// Update issue/PR title
 async function updateTitle(title, newTitle, octokit) {
     console.log(`✏️ Updating title from "${title}" to "${newTitle}"`);
     if (!octokit || !can('edit')) return;
     await octokit.rest.issues.update({ ...issueParams, title: newTitle });
 }
 
-/**
- * Get issue/PR from GitHub
- */
+// Get issue/PR from GitHub
 async function getIssueFromGitHub(octokit) {
     if (!octokit) {
         throw new Error('GitHub token required to fetch issue data');
     }
     const { data: issue } = await octokit.rest.issues.get(issueParams);
-    // Comments are now fetched as part of the full timeline in buildPrompt
     return issue;
 }
 
-/**
- * Close issue with specified reason
- */
+// Close issue with specified reason
 async function closeIssue(octokit, reason = 'not_planned') {
     console.log(`🔒 Closing issue as ${reason}`);
     if (!octokit || !can('close')) return;
     await octokit.rest.issues.update({ ...issueParams, state: 'closed', state_reason: reason });
 }
 
-/**
- * Main processing function - analyze and act on a single issue/PR
- */
+// Main processing function - analyze and act on a single issue/PR
 async function processIssue(issue, octokit, previousContext = null) {
     const isIssue = !issue.pull_request;
 
@@ -289,9 +266,7 @@ async function processIssue(issue, octokit, previousContext = null) {
     return analysis;
 }
 
-/**
- * Get previous triage context for re-triage conditions
- */
+// Get previous triage context for re-triage conditions
 function getPreviousContextForIssue(triageDb, issue) {
     const triageEntry = triageDb[GITHUB_ISSUE_NUMBER];
 
@@ -325,9 +300,7 @@ function getPreviousContextForIssue(triageDb, issue) {
     return null;
 }
 
-/**
- * Write contents to an artifact file
- */
+// Write contents to an artifact file
 function saveArtifact(name, contents) {
     const artifactsDir = path.join(process.cwd(), 'artifacts');
     if (!fs.existsSync(artifactsDir)) {
@@ -337,9 +310,6 @@ function saveArtifact(name, contents) {
     fs.writeFileSync(filePath, contents, 'utf8');
 }
 
-/**
- * Main entry point
- */
 async function main() {
     const requiredEnvVars = ['GITHUB_ISSUE_NUMBER', 'GEMINI_API_KEY', 'GITHUB_REPOSITORY'];
     for (const envVar of requiredEnvVars) {
