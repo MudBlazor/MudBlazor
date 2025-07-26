@@ -409,14 +409,6 @@ async function main() {
     let octokit = null;
     if (process.env.GITHUB_TOKEN) {
         octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
-
-        const rate = await octokit.rest.rateLimit.get();
-        if (rate.data.rate.remaining < 1000) {
-            console.log(`⚠️ GitHub API calls left: ${rate.data.rate.remaining} (resets at ${new Date(rate.data.rate.reset * 1000).toLocaleString()})`);
-        } else if (rate.data.rate.remaining < 500) {
-            console.log('❌ Too few GitHub API calls left, ending early to avoid hitting rate limit');
-            process.exit(1);
-        }
     } else {
         console.log('⚠️ No GITHUB_TOKEN provided - running in read-only mode');
     }
@@ -441,7 +433,7 @@ async function main() {
     console.log(`🤖 Using ${aiModel} with [${Array.from(permissions).join(', ') || 'none'}] permissions`);
     const analysis = await processIssue(issue, owner, repo, geminiApiKey, octokit, previousContext);
 
-    if (dbPath && analysis && !permissions.has("none")) {
+    if (dbPath && analysis && permissions.size > 0 && !permissions.has("none")) {
         triageDb[issueNumber] = {
             lastTriaged: new Date().toISOString(),
             previousReasoning: analysis.reason
