@@ -139,9 +139,23 @@ namespace MudBlazor
         /// <summary>
         /// The content shown while table data is loading and the table has no rows.
         /// </summary>
+        /// <remarks>
+        /// This is what is shown when <c>Loading</c> is set to <c>true</c> and the table has no rows.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Data)]
         public RenderFragment? LoadingContent { get; set; }
+
+        /// <summary>
+        /// The content shown while table data is loading and the table has no rows. 
+        /// </summary>
+        /// <remarks>
+        /// This is what is shown when <c>Loading</c> is set to <c>true</c> and the table has no rows, this will override 
+        /// <see cref="LoadingContent"/> if not null.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Table.Data)]
+        public RenderFragment? LoadingContentBody { get; set; }
 
         /// <summary>
         /// Shows a horizontal scroll bar if the content exceeds the maximum width.

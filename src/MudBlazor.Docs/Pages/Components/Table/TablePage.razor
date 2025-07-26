@@ -188,6 +188,19 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Loading Content Body">
+                <Description>
+                    Use the <CodeInline>LoadingContent</CodeInline> to determine the displayed value when data is loading and there are no previous rows loaded.
+                    Previous examples of server usage used this property. This property displays content as a single cell in a table, so it doesn't support emulating multiple columns or rows.
+                    Use instead <CodeInline>LoadingContentBody</CodeInline> to display arbitrary table content, as it allows to write rows and columns.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(TableServerSidePaginateBodyExample)" ShowCode="false" Block="true" FullWidth="true">
+                <TableServerSidePaginateBodyExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Record Type Support">
                 <Description>
                     By default, mutable <CodeInline>record</CodeInline> types do not work with multi-selection or editing. This is due to the way record equality works. To support multi-selection or editing of records in a <CodeInline>MudTable</CodeInline>,
