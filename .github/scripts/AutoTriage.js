@@ -43,12 +43,12 @@ async function callGemini(prompt) {
             responseSchema: {
                 type: "object",
                 properties: {
-                    rating: { type: "integer", description: "Human intervention needed (1-10)" },
-                    reason: { type: "string", description: "Brief thought process" },
-                    comment: { type: "string", description: "Reply comment", nullable: true },
-                    labels: { type: "array", items: { type: "string" }, description: "Labels to apply" },
-                    close: { type: "boolean", description: "Should close issue", nullable: true },
-                    newTitle: { type: "string", description: "New title if needed", nullable: true }
+                    rating: { type: "integer", description: "How much a human intervention is needed on a scale of 1 to 10" },
+                    reason: { type: "string", description: "Brief thought process for logging purposes" },
+                    comment: { type: "string", description: "A comment to reply to the issue with", nullable: true },
+                    labels: { type: "array", items: { type: "string" }, description: "The final set of labels the issue should have" },
+                    close: { type: "boolean", description: "Set to true if the issue should be closed as part of this action", nullable: true },
+                    newTitle: { type: "string", description: "A new title for the issue or pull request", nullable: true }
                 },
                 required: ["rating", "reason", "comment", "labels"]
             }
