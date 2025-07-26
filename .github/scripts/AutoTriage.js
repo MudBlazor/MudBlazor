@@ -21,6 +21,7 @@ const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const GITHUB_REPOSITORY = process.env.GITHUB_REPOSITORY;
 const GITHUB_ISSUE_NUMBER = parseInt(process.env.GITHUB_ISSUE_NUMBER, 10);
 const [OWNER, REPO] = (GITHUB_REPOSITORY || '').split('/');
+const issueParams = { owner: OWNER, repo: REPO, issue_number: GITHUB_ISSUE_NUMBER };
 
 // Allowed actions: 'label', 'comment', 'close', 'edit'
 const PERMISSIONS = new Set(
@@ -30,9 +31,7 @@ const PERMISSIONS = new Set(
         .filter(p => p !== '')
 );
 
-function can(action) {
-    return PERMISSIONS.has(action) && !PERMISSIONS.has("none");
-}
+const can = action => PERMISSIONS.has(action) && !PERMISSIONS.has("none");
 
 /**
  * Call Gemini to analyze the issue content and return structured response
@@ -87,19 +86,18 @@ async function callGemini(prompt) {
 }
 
 /**
- * Create metadata string for both logging and AI analysis
+ * Create issue metadata for analysis
  */
 async function buildMetadata(issue, octokit) {
     const isIssue = !issue.pull_request;
-    const itemType = isIssue ? 'issue' : 'pull request';
-    const currentLabels = issue.labels?.map(l => (typeof l === 'string' ? l : l.name)) || [];
+    const currentLabels = issue.labels?.map(l => l.name || l) || [];
     const hasAssignee = Array.isArray(issue.assignees) ? issue.assignees.length > 0 : !!issue.assignee;
-    const collaborators = (await octokit.rest.repos.listCollaborators({ owner: OWNER, repo: REPO })).data.map(c => c.login);
+    const { data: collaboratorsData } = await octokit.rest.repos.listCollaborators({ owner: OWNER, repo: REPO });
 
     return {
         title: issue.title,
         state: issue.state,
-        type: itemType,
+        type: isIssue ? 'issue' : 'pull request',
         number: issue.number,
         author: issue.user?.login || 'unknown',
         created_at: issue.created_at,
@@ -108,59 +106,38 @@ async function buildMetadata(issue, octokit) {
         reactions: issue.reactions?.total_count || 0,
         labels: currentLabels,
         assigned: hasAssignee,
-        collaborators
+        collaborators: collaboratorsData.map(c => c.login)
     };
 }
 
 /**
- * Build a structured JSON report of the issue's full timeline
+ * Build timeline report from GitHub events
  */
 async function buildTimeline(octokit, issue_number) {
-    // Fetch all events from the issue's timeline
     const { data: timelineEvents } = await octokit.rest.issues.listEventsForTimeline({
         owner: OWNER,
         repo: REPO,
         issue_number,
-        per_page: 100, // Adjust as needed
+        per_page: 100
     });
 
-    // Map each event to a simplified, standard JSON object
-    const timelineReport = timelineEvents.map(event => {
-        const reportEvent = {
-            event: event.event,
-            actor: event.actor?.login,
-            timestamp: event.created_at,
-        };
+    return timelineEvents.map(event => {
+        const base = { event: event.event, actor: event.actor?.login, timestamp: event.created_at };
 
         switch (event.event) {
-            case 'commented':
-                return { ...reportEvent, body: event.body };
-
-            case 'labeled':
-                return { ...reportEvent, label: { name: event.label.name, color: event.label.color } };
-
-            case 'unlabeled':
-                return { ...reportEvent, label: { name: event.label.name } };
-
-            case 'renamed':
-                return { ...reportEvent, title: { from: event.rename.from, to: event.rename.to } };
-
+            case 'commented': return { ...base, body: event.body };
+            case 'labeled': return { ...base, label: { name: event.label.name, color: event.label.color } };
+            case 'unlabeled': return { ...base, label: { name: event.label.name } };
+            case 'renamed': return { ...base, title: { from: event.rename.from, to: event.rename.to } };
             case 'assigned':
-            case 'unassigned':
-                return { ...reportEvent, user: event.assignee?.login };
-
+            case 'unassigned': return { ...base, user: event.assignee?.login };
             case 'closed':
             case 'reopened':
             case 'locked':
-            case 'unlocked':
-                return reportEvent; // These events need no extra properties
-
-            default:
-                return null; // Ignore other event types (e.g., 'committed', 'reviewed')
+            case 'unlocked': return base;
+            default: return null;
         }
-    }).filter(Boolean); // Removes any null entries from the final array
-
-    return timelineReport;
+    }).filter(Boolean);
 }
 
 /**
@@ -200,16 +177,16 @@ Analyze this issue, its metadata, and its full timeline. Your entire response mu
 }
 
 /**
- * Update GitHub issue labels based on AI recommendations
+ * Update GitHub issue labels
  */
-async function updateLabels(issue, suggestedLabels, octokit) {
-    const currentLabels = issue.labels?.map(l => typeof l === 'string' ? l : l.name) || [];
+async function updateLabels(suggestedLabels, octokit) {
+    // ...existing code...
+    const { data: issue } = await octokit.rest.issues.get(issueParams);
+    const currentLabels = issue.labels?.map(l => l.name || l) || [];
     const labelsToAdd = suggestedLabels.filter(l => !currentLabels.includes(l));
     const labelsToRemove = currentLabels.filter(l => !suggestedLabels.includes(l));
 
-    if (labelsToAdd.length === 0 && labelsToRemove.length === 0) {
-        return;
-    }
+    if (labelsToAdd.length === 0 && labelsToRemove.length === 0) return;
 
     const changes = [
         ...labelsToAdd.map(l => `+${l}`),
@@ -220,52 +197,29 @@ async function updateLabels(issue, suggestedLabels, octokit) {
     if (!octokit || !can('label')) return;
 
     if (labelsToAdd.length > 0) {
-        await octokit.rest.issues.addLabels({
-            owner: OWNER,
-            repo: REPO,
-            issue_number: issue.number,
-            labels: labelsToAdd
-        });
+        await octokit.rest.issues.addLabels({ ...issueParams, labels: labelsToAdd });
     }
 
     for (const label of labelsToRemove) {
-        await octokit.rest.issues.removeLabel({
-            owner: OWNER,
-            repo: REPO,
-            issue_number: issue.number,
-            name: label
-        });
+        await octokit.rest.issues.removeLabel({ ...issueParams, name: label });
     }
 }
 
 /**
  * Add AI-generated comment to the issue
  */
-async function addComment(issue, comment, octokit) {
+async function addComment(comment, octokit) {
     if (!octokit || !can('comment')) return;
-
-    await octokit.rest.issues.createComment({
-        owner: OWNER,
-        repo: REPO,
-        issue_number: issue.number,
-        body: comment
-    });
+    await octokit.rest.issues.createComment({ ...issueParams, body: comment });
 }
 
 /**
  * Update issue/PR title
  */
-async function updateTitle(issue, newTitle, octokit) {
-    console.log(`✏️ Updating title from "${issue.title}" to "${newTitle}"`);
-
+async function updateTitle(title, newTitle, octokit) {
+    console.log(`✏️ Updating title from "${title}" to "${newTitle}"`);
     if (!octokit || !can('edit')) return;
-
-    await octokit.rest.issues.update({
-        owner: OWNER,
-        repo: REPO,
-        issue_number: issue.number,
-        title: newTitle
-    });
+    await octokit.rest.issues.update({ ...issueParams, title: newTitle });
 }
 
 /**
@@ -275,13 +229,7 @@ async function getIssueFromGitHub(octokit) {
     if (!octokit) {
         throw new Error('GitHub token required to fetch issue data');
     }
-
-    const { data: issue } = await octokit.rest.issues.get({
-        owner: OWNER,
-        repo: REPO,
-        issue_number: GITHUB_ISSUE_NUMBER
-    });
-
+    const { data: issue } = await octokit.rest.issues.get(issueParams);
     // Comments are now fetched as part of the full timeline in buildPrompt
     return issue;
 }
@@ -289,18 +237,10 @@ async function getIssueFromGitHub(octokit) {
 /**
  * Close issue with specified reason
  */
-async function closeIssue(issue, octokit, reason = 'not_planned') {
-    console.log(`🔒 Closing #${issue.number} as ${reason}`);
-
+async function closeIssue(octokit, reason = 'not_planned') {
+    console.log(`🔒 Closing issue as ${reason}`);
     if (!octokit || !can('close')) return;
-
-    await octokit.rest.issues.update({
-        owner: OWNER,
-        repo: REPO,
-        issue_number: issue.number,
-        state: 'closed',
-        state_reason: reason
-    });
+    await octokit.rest.issues.update({ ...issueParams, state: 'closed', state_reason: reason });
 }
 
 /**
@@ -330,30 +270,30 @@ async function processIssue(issue, octokit, previousContext = null) {
     console.log(`🤖 Gemini returned analysis in ${((Date.now() - start) / 1000).toFixed(1)}s with a human intervention rating of ${analysis.rating}/10:`);
     console.log(`🤖 "${analysis.reason}"`);
 
-    await updateLabels(issue, analysis.labels, octokit);
+    await updateLabels(analysis.labels, octokit);
 
     if (analysis.comment) {
         console.log(`💬 Posting comment:`);
         console.log(analysis.comment.replace(/^/gm, '> '));
-        await addComment(issue, analysis.comment, octokit);
+        await addComment(analysis.comment, octokit);
     }
 
     if (analysis.close) {
-        await closeIssue(issue, octokit, 'not_planned');
+        await closeIssue(octokit, 'not_planned');
     }
 
     if (analysis.newTitle) {
-        await updateTitle(issue, analysis.newTitle, octokit);
+        await updateTitle(issue.title, analysis.newTitle, octokit);
     }
 
     return analysis;
 }
 
 /**
- * Get previous triage context for an issue from the database
+ * Get previous triage context for re-triage conditions
  */
-function getPreviousContextForIssue(triageDb, issueNumber, issue) {
-    const triageEntry = triageDb[issueNumber];
+function getPreviousContextForIssue(triageDb, issue) {
+    const triageEntry = triageDb[GITHUB_ISSUE_NUMBER];
 
     // 1. Triage if it's never been checked.
     if (!triageEntry) {
@@ -424,7 +364,7 @@ async function main() {
 
     const issue = await getIssueFromGitHub(octokit);
 
-    const previousContext = getPreviousContextForIssue(triageDb, GITHUB_ISSUE_NUMBER, issue);
+    const previousContext = getPreviousContextForIssue(triageDb, issue);
 
     if (!previousContext) {
         console.log(`⏭️ #${GITHUB_ISSUE_NUMBER} does not need to be triaged yet`);
