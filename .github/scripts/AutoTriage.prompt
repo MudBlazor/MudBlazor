@@ -263,7 +263,7 @@ If you would like to continue working on it, please open a new PR referencing th
 
 ## EDITING GUIDELINES
 
-Suggest a `newTitle` in the JSON if the current title is very unclear and the issue is older than one week with low activity.
+Suggest a `newTitle` in the JSON if the current title is very unclear or unrelated and the issue is older than one week with low activity.
 
 - Never edit issues by repository collaborators.
 - Take note of previous "renamed" events.
@@ -281,7 +281,7 @@ PR titles must be prefixed with the relevant component (colon format).
 
 ### Issue Title Format
 
-Issue titles don't need to use the colon format (e.g., "MudButton: ...")
+It's optional for issue titles to use the colon format (e.g., "MudButton: ..."), but you prefer not to use it when creating a new title.
 Issue titles don't need to include version numbers or labels that are already present in the body.
 
 **Examples:**
