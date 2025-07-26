@@ -255,7 +255,8 @@ function getPreviousContextForIssue(triageDb, issue) {
 
     // --- Define conditions for re-triaging ---
     const MS_PER_DAY = 86400000; // 24 * 60 * 60 * 1000
-    const timeSinceTriaged = Date.now() - new Date(triageEntry.lastTriaged).getTime();
+    const lastTriagedDate = new Date(triageEntry.lastTriaged);
+    const timeSinceTriaged = Date.now() - lastTriagedDate.getTime();
 
     // 2. Triage if it's been > 14 days since the last check.
     const hasExpired = timeSinceTriaged > 14 * MS_PER_DAY;
@@ -266,8 +267,12 @@ function getPreviousContextForIssue(triageDb, issue) {
         (labels.includes('info required') || labels.includes('stale')) &&
         timeSinceTriaged > 3 * MS_PER_DAY;
 
+    // 4. Triage if the issue was updated since last triage
+    const issueUpdatedDate = new Date(issue.updated_at);
+    const wasUpdatedSinceTriaged = issueUpdatedDate > lastTriagedDate;
+
     // If any condition for re-triaging is met, return the context.
-    if (hasExpired || needsFollowUp) {
+    if (hasExpired || needsFollowUp || wasUpdatedSinceTriaged) {
         return {
             lastTriaged: triageEntry.lastTriaged,
             previousReasoning: triageEntry.previousReasoning || 'No previous reasoning available.',
