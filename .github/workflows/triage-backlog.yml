@@ -64,7 +64,7 @@ jobs:
           # Use input for permissions, fallback to repo variable for scheduled runs.
           AUTOTRIAGE_PERMISSIONS: ${{ github.event_name == 'workflow_dispatch' && inputs.permissions || vars.AUTOTRIAGE_PERMISSIONS }}
           # Use a fixed limit for scheduled runs, fallback to manual input.
-          MAX_ISSUES: ${{ github.event_name == 'schedule' && 100 || inputs.backlog-size }} # Gemini Pro can handle 100/day in the free tier so we can use up the remaining quota for the day.
+          MAX_ISSUES: ${{ github.event_name == 'schedule' && 100 || inputs.backlog-size }}
         run: |
           # Process specified issues, or fetch from the backlog.
           if [ -n "${{ inputs.issue-numbers }}" ]; then
