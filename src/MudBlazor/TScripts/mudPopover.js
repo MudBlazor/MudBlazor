@@ -280,20 +280,7 @@ window.mudpopoverHelper = {
             // MudSheet edge positioning
             const isSheet = classListArray.indexOf('mud-sheet-popover') >= 0;
             if (isSheet) {
-                this.setMudSheetEdge(popoverContentNode, classListArray);
-                const positiontop = parseInt(popoverContentNode.getAttribute('data-pc-y'));
-                const positionleft = parseInt(popoverContentNode.getAttribute('data-pc-x'));
-                const scrollLeft = window.scrollX;
-                const scrollTop = window.scrollY;
-                // bounding rect for flipping
-                boundingRect = {
-                    left: positionleft - scrollLeft,
-                    top: positiontop - scrollTop,
-                    right: positionleft + 1,
-                    bottom: positiontop + 1,
-                    width: 1,
-                    height: 1
-                };
+                boundingRect = window.mudsheetHelper.setMudSheetEdge(popoverContentNode, classListArray);
             }
 
             if (isPositionOverride) {
@@ -624,54 +611,6 @@ window.mudpopoverHelper = {
         else {
             //console.log(`popoverNode: ${popoverNode} ${popoverNode ? popoverNode.parentNode : ""}`);
         }
-    },
-
-    setMudSheetEdge: function (popoverContentNode, classListArray) {
-        // Start at center of viewport
-        let positionleft = window.innerWidth / 2;
-        let positiontop = window.innerHeight / 2;
-
-        var appBarFixedTop = document.querySelectorAll('.mud-appbar-fixed-top');
-        var appBarFixedBottom = document.querySelectorAll('.mud-appbar-fixed-bottom');
-
-        // .AddClass($"mud-appbar-fixed-top", Fixed && !Bottom)
-        // .AddClass($"mud-appbar-fixed-bottom", Fixed && Bottom)
-
-        if (classListArray.includes('mud-sheet-position-bottom')) {
-            positiontop = window.innerHeight;
-        }
-        else if (classListArray.includes('mud-sheet-position-top')) {
-            positiontop = 0;
-        }
-        else if (classListArray.includes('mud-sheet-position-left')) {
-            positionleft = 0;
-        }
-        else if (classListArray.includes('mud-sheet-position-right')) {
-            positionleft = window.innerWidth;
-        }
-        // Should not cover an appbar
-        if (classListArray.includes('mud-sheet-cover-appbar-true')) {
-            if (appBarFixedTop.length > 0) {
-                popoverContentNode.style['margin-top'] = appBarFixedTop[0].getBoundingClientRect().height + 'px';
-            }
-            if (appBarFixedBottom.length > 0) {
-                popoverContentNode.style['margin-bottom'] = appBarFixedBottom[0].getBoundingClientRect().height + 'px';
-            }
-        }
-        else {
-            // if not covering the appbar it should be above the appbar
-            if (appBarFixedTop.length > 0) {
-                this.updatePopoverZIndex(popoverContentNode, appBarFixedTop[0]);               
-            }
-            else if (appBarFixedBottom.length > 0) {
-                this.updatePopoverZIndex(popoverContentNode, appBarFixedBottom[0]);
-            }
-        }
-        // add scroll offset manually
-        positionleft += window.scrollX;
-        positiontop += window.scrollY;
-        popoverContentNode.setAttribute('data-pc-x', positionleft);
-        popoverContentNode.setAttribute('data-pc-y', positiontop);
     },
 
     // cycles through popovers to reposition those that are open, classSelector is passed on

@@ -21,10 +21,17 @@
                 userAttributes.TryAdd(attr.Key, attr.Value);
             }
         }
-        <div id="@ElementId" class="@Classname" style="@Stylename" @attributes="@userAttributes" @onkeydown="@HandleKeyDownAsync">
+        <div id="@ElementId" class="@Classname" style="@Stylename" 
+             @attributes="@userAttributes" @onkeydown="@HandleKeyDownAsync">             
             <!-- Sheet Handle (Toggle Button and Dragging) -->
-            <div class="mud-sheet-handle" @onpointerdown="@HandlePointerDown" @onpointermove="@HandlePointerMove" @onpointerup="@HandlePointerUp">
-                @SheetHandleFragment
+            <div @ref="@_handleRef" class="mud-sheet-handle"
+                 @onpointerdown="@HandlePointerDownAsync" @onpointerdown:preventDefault
+                 @onpointerup="@HandlePointerUpAsync" @onpointerup:preventDefault
+                 @onpointercancel="@HandlePointerCancelAsync" @onpointercancel:preventDefault
+                 @onlostpointercapture="@HandlePointerCancelAsync" @onlostpointercapture:preventDefault             
+                 @onpointermove="@HandlePointerMoveAsync" @onpointermove:preventDefault
+                 @ongotpointercapture="@HandlePointerMoveAsync" @ongotpointercapture:preventDefault>
+                @(SheetHandleFragment ?? DefaultHandleFragment)
             </div>
             <!-- Sheet Content -->
             <div class="mud-sheet-content">
@@ -43,11 +50,10 @@
                 AutoClose="true"
                 Modal="true"
                 DarkBackground="true"
-                OnClosed="@CloseSheetAsync"/>
+                OnClosed="@CloseSheetAsync" />
 }
 
 @code {
     private RenderFragment DefaultHandleFragment => 
-        @<MudIconButton Icon="@DragHandle" Class="mud-sheet-handle-button" OnClick="@ToggleSize" aria-controls="@ElementId" />;
+        @<MudIconButton Icon="@DragHandle" Class="mud-sheet-handle-button" OnClick="@ToggleSizeAsync" aria-controls="@ElementId" />;
 }
-

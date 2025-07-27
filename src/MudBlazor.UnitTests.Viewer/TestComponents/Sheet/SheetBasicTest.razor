@@ -8,10 +8,13 @@
             <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => OpenSheet(2))">Toggle Top</MudButton>
         </MudItem>
         <MudItem xs="6" md="3">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => OpenSheet(3))">Toggle Start @(RightToLeft ? "Right" : "Left")</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => OpenSheet(3))">Toggle Start (@(RightToLeft ? "Right" : "Left"))</MudButton>
         </MudItem>
         <MudItem xs="6" md="3">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => OpenSheet(4))">Toggle End @(RightToLeft ? "Left" : "Right")</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => OpenSheet(4))">Toggle End (@(RightToLeft ? "Left" : "Right"))</MudButton>
+        </MudItem>
+        <MudItem xs="6" md="3">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => OpenSheet(5))">Toggle Center</MudButton>
         </MudItem>
         <MudItem xs="6" md="3">
             <MudSwitch Color="Color.Primary" Label="Standard" LabelPlacement="Placement.Right" @bind-Value="_standard" />
