@@ -2,7 +2,7 @@ name: Triage Backlog
 
 on:
   schedule:
-    - cron: '0 */8 * * *'
+    - cron: '0 5 * * *' # Gemini rates reset at 7.
   workflow_dispatch:
     inputs:
       backlog-size:
@@ -19,6 +19,10 @@ on:
         required: false
         default: 'label, comment, close, edit, alert'
         type: string
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
 
 jobs:
   auto-triage:
@@ -54,12 +58,13 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          AUTOTRIAGE_WEBHOOK: ${{ vars.AUTOTRIAGE_WEBHOOK }}
-          AUTOTRIAGE_DB_PATH: ${{ github.workspace }}/triage-db.json
+          AUTOTRIAGE_WEBHOOK: ${{ secrets.AUTOTRIAGE_WEBHOOK }}
+          # Only define AUTOTRIAGE_DB_PATH if not analyzing specified issue numbers from input
+          AUTOTRIAGE_DB_PATH: ${{ !inputs.issue-numbers && format('{0}/triage-db.json', github.workspace) || '' }}
           # Use input for permissions, fallback to repo variable for scheduled runs.
           AUTOTRIAGE_PERMISSIONS: ${{ github.event_name == 'workflow_dispatch' && inputs.permissions || vars.AUTOTRIAGE_PERMISSIONS }}
           # Use a fixed limit for scheduled runs, fallback to manual input.
-          MAX_ISSUES: ${{ github.event_name == 'schedule' && 25 || inputs.backlog-size }} # Gemini can handle 100 issues per day.
+          MAX_ISSUES: ${{ github.event_name == 'schedule' && 100 || inputs.backlog-size }} # Gemini Pro can handle 100/day in the free tier so we can use up the remaining quota for the day.
         run: |
           # Process specified issues, or fetch from the backlog.
           if [ -n "${{ inputs.issue-numbers }}" ]; then
@@ -89,7 +94,7 @@ jobs:
                 left=$((max_count - count))
                 echo "⏭️ $(date '+%Y-%m-%d %H:%M:%S'): $left left"
               fi
-              sleep 3 # Rate limit
+              sleep 10 # Rate limit
             else
               exit_code=$?
               if [ "$exit_code" -eq 1 ]; then

@@ -25,14 +25,13 @@ const [OWNER, REPO] = (GITHUB_REPOSITORY || '').split('/');
 const issueParams = { owner: OWNER, repo: REPO, issue_number: GITHUB_ISSUE_NUMBER };
 const GITHUB_ISSUE_URL = `https://github.com/${OWNER}/${REPO}/issues/${GITHUB_ISSUE_NUMBER}`;
 
-// Allowed actions: 'label', 'comment', 'close', 'edit'; 'none' disables all actions.
+const VALID_PERMISSIONS = new Set(['label', 'comment', 'close', 'edit']);
 let PERMISSIONS = new Set(
     (process.env.AUTOTRIAGE_PERMISSIONS || '')
         .split(',')
         .map(p => p.trim())
-        .filter(p => p !== '')
+        .filter(p => VALID_PERMISSIONS.has(p))
 );
-if (PERMISSIONS.has('none')) PERMISSIONS.clear();
 
 const can = action => PERMISSIONS.has(action);
 
@@ -43,10 +42,10 @@ async function sendAlert(issue, reason) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-            content: `**🚨 Potentially Urgent — ${issue.title}**\n${reason}\n${GITHUB_ISSUE_URL}`
+            content: `**🚨 Intervention Requested — ${issue.title}**\n${reason}\n${GITHUB_ISSUE_URL}`
         })
     });
-    console.log(`🚨 Webhook alert sent: ${AUTOTRIAGE_WEBHOOK}`);
+    console.log(`🚨 Sent webhook alert`);
 }
 
 // Call Gemini to analyze the issue content and return structured response
@@ -79,6 +78,11 @@ async function callGemini(prompt) {
             timeout: 60000
         }
     );
+
+    if (response.status === 503) {
+        console.error('❌ Gemini API returned 503 (Model overloaded). Skipping this issue.');
+        process.exit(2);
+    }
 
     if (!response.ok) {
         throw new Error(`Gemini: ${response.status} ${response.statusText} — ${await response.text()}`);
@@ -241,7 +245,7 @@ async function processIssue(issue, octokit, previousContext = null) {
     console.log(`🤖 Gemini returned analysis in ${analysisTimeSeconds}s with a human intervention rating of ${analysis.rating}/10:`);
     console.log(`🤖 "${analysis.reason}"`);
 
-    if (analysis.rating >= 9) {
+    if (analysis.rating >= 7) {
         await sendAlert(issue, analysis.reason);
     }
 
