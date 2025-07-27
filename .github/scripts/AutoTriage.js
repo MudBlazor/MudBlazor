@@ -245,7 +245,7 @@ async function processIssue(issue, octokit, previousContext = null) {
     console.log(`🤖 Gemini returned analysis in ${analysisTimeSeconds}s with a human intervention rating of ${analysis.rating}/10:`);
     console.log(`🤖 "${analysis.reason}"`);
 
-    if (analysis.rating >= 7) {
+    if (analysis.rating >= 8) {
         await sendAlert(issue, analysis.reason);
     }
 
