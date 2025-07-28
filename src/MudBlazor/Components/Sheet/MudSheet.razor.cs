@@ -13,7 +13,7 @@ namespace MudBlazor;
 
 /// <summary>
 /// A Material Design sheet component that slides in from an edge of the screen to display contextual content. 
-/// Commonly used in mobile UIs for lists or selections (bottom sheet) or in desktop layouts for menus or side panels (side sheet).
+/// Commonly used in mobile UIs for lists or selections (bottom sheet) or in desktop layouts for menus or side panels (side sheet). 
 /// Supports positioning at the top, bottom, left, right, or center.
 /// </summary>
 public partial class MudSheet : MudComponentBase, IAsyncDisposable
@@ -25,6 +25,7 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
     private string _ariaLabel = string.Empty;
     private bool _dragging;
     private bool _isDisposing = false;
+    private bool _updateState;
 
     private record struct DragPoints(double XDown, double YDown, int StartSize);
     private DragPoints? _points;
@@ -578,6 +579,12 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
     /// <param name="args">The pointer event arguments containing details about the pointer interaction.</param>
     private async Task SetDraggingState(bool isDragging, PointerEventArgs args)
     {
+        if (!EnableDragToSize)
+        {
+            // let the click focus
+            await _handleRef.FocusAsync();
+        }
+
         _dragging = isDragging;
         // Reset the swipe deltas when starting or stopping dragging
         _points = null;
@@ -657,6 +664,21 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
     }
 
     /// <summary>
+    /// 
+    /// </summary>
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+        if (_updateState)
+        {
+            // If the state has been updated, we need to re-render the component
+            _updateState = false;
+            UpdateAriaAttributes();
+            StateHasChanged();
+        }
+    }
+
+    /// <summary>
     /// Override the setting of Parameters
     /// </summary>
     public override Task SetParametersAsync(ParameterView parameters)
@@ -671,27 +693,41 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
             throw new ArgumentOutOfRangeException("CurrentSize", "CurrentSize must be between 0 and 100.");
         }
 
-        var rebuildAria = AriaAttributes.Count == 0;
+        _updateState = AriaAttributes.Count == 0;
 
         // Check Aria attributes for override
         // AriaLabel updated?
-        rebuildAria = rebuildAria ||
+        _updateState = _updateState ||
             (parameters.TryGetValue<string>(nameof(AriaLabel), out var newAriaLabel) &&
                 newAriaLabel != _ariaLabel);
 
         // Position updated?
-        rebuildAria = rebuildAria ||
+        _updateState = _updateState ||
             (parameters.TryGetValue<Position>(nameof(Position), out var newPosition) &&
                 newPosition != Position);
 
         // Standard updated?
-        rebuildAria = rebuildAria ||
+        _updateState = _updateState ||
             (parameters.TryGetValue<bool>(nameof(Standard), out var newStandard) &&
                 newStandard != Standard);
 
-        if (rebuildAria)
+        // have any other parameters changed that require a re-render?
+        foreach (var param in parameters)
         {
-            UpdateAriaAttributes();
+            if (_updateState)
+            {
+                break;
+            }
+            if (param.Name is nameof(Open) or nameof(CurrentSize) or nameof(AriaLabel))
+            {
+                // Parameters Open and CurrentSize are handled by the ParameterState
+                // AriaLabel is handled by above
+                continue;
+            }
+            else
+            {
+                _updateState = true;
+            }
         }
 
         return base.SetParametersAsync(parameters);

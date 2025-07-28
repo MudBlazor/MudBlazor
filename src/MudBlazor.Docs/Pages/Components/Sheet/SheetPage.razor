@@ -17,11 +17,32 @@
         <DocsPageSection>
             <SectionHeader Title="Basic Usage">
                 <Description>
-                    The <CodeInline Tag="true">MudSheet</CodeInline> component is versatile for displaying content coming from the edges of the screen. Default MaxWidth for a Top
-                    or bottom sheet is 640px. 
+                    <CodeInline Tag="true">MudSheet</CodeInline> is used to show content from the screen edges:
+                    <ul class="mt-2" style="list-style: initial; padding-left: 1.5rem;">
+                        <li><CodeInline>Standard</CodeInline>: Defaults to <strong>true</strong> (non-modal); Set to <c>false</c> for Modal.</li>
+                        <li><CodeInline>EnableDragToSize</CodeInline>: Draggable via the handle if true, (vertical or horizontal based on <CodeInline>Position</CodeInline>).</li>
+                        <li><CodeInline>CSS</CodeInline>: Top/Bottom sheets have a default max width of 640px — override via CSS.</li>
+                    </ul>
                 </Description>
             </SectionHeader>
-            <SectionContent Code="@nameof(SheetBasicUsageExample)">
+            <SectionContent Code="@nameof(SheetBasicUsageExample)" ShowCode="false">
+                <SheetBasicUsageExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Appearance">
+                <Description>
+                    There are many Appearance properties that can be used to customize the look and feel or even of 
+                    the sheet, see the API for all of the options.
+                    <ul class="mt-2" style="list-style: initial; padding-left: 1.5rem;">
+                        <li><CodeInline>Standard</CodeInline>: Defaults to <strong>true</strong> (non-modal); Set to <c>false</c> for Modal.</li>
+                        <li><CodeInline>EnableDragToSize</CodeInline>: Draggable via the handle if true, (vertical or horizontal based on <CodeInline>Position</CodeInline>).</li>
+                        <li><CodeInline>CSS</CodeInline>: Top/Bottom sheets have a default max width of 640px — override via CSS.</li>
+                    </ul>
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(SheetBasicUsageExample)" ShowCode="false">
                 <SheetBasicUsageExample />
             </SectionContent>
         </DocsPageSection>

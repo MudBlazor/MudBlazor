@@ -6,8 +6,8 @@ $appbar-dense: calc(#{$appbar-height} - #{$appbar-height}/4);
 
 div[mudsheet] {
   display: flex;
-  min-width: 32px; /* Ensures a sheet can't hide the handle to simulate a close on accident */
-  min-height: 32px; /* Ensures a sheet can't hide the handle to simulate a close on accident */
+  min-width: 32px;
+  min-height: 32px;
 
   &[appbar] {
     /* Shared layout contstraint for when any appbar is present */
@@ -52,8 +52,8 @@ div[mudsheet] {
   }
 
   &.mud-sheet-position-center .mud-sheet-content {
-    align-items: center;
-    justify-content: center;
+    align-items: center; /* Vertical Alignment */
+    justify-content: center; /* Horizontal Alignment */
   }
 
   .mud-sheet-container {
@@ -69,7 +69,7 @@ div[mudsheet] {
       --sheet-borderradius: #{$i}px;
     }
   }
-
+  /* Container flex setup, since it's sized by it's parent width/height must always be 100% */
   display: flex;
   width: 100%;
   height: 100%;
@@ -83,8 +83,7 @@ div[mudsheet] {
     display: flex;
     flex: 1;
   }
-
-  /* Positioning & Border Radius & Padding */
+  /* Flex style Positioning & Border Radius & Padding */
   &.mud-sheet-position-bottom {
     flex-direction: column;
     border-radius: var(--sheet-borderradius) var(--sheet-borderradius) 0 0;
@@ -149,7 +148,6 @@ div[mudsheet] {
       padding: #{$sheet-margin};
     }
   }
-
   // Handle styling (Material Design touch target)
   .mud-sheet-handle {
     display: flex;
@@ -159,28 +157,31 @@ div[mudsheet] {
     justify-content: center;
     color: var(--mud-palette-divider);
     flex-shrink: 0;
-    pointer-events: auto;
-    cursor: grab;
 
-    &:active {
-      cursor: grabbing;
+    &.mud-draggable {
+      pointer-events: auto;
+      cursor: grab;
+
+      &:active {
+        cursor: grabbing;
+      }
     }
+
     &:focus {
       outline: none;
     }
   }
-
-  /* Vertical orientation (top/bottom) */
+  /* Vertical orientation (top/bottom) margin/handle customization */
   &.mud-sheet-position-top,
   &.mud-sheet-position-center,
   &.mud-sheet-position-bottom {
     margin: 0 auto;
+
     .mud-sheet-handle {
       width: 100%;
     }
   }
-
-  /* Horizontal orientation (left/right) */
+  /* Horizontal orientation (left/right) margin/handle customization */
   &.mud-sheet-position-left,
   &.mud-sheet-position-right {
     .mud-sheet-handle {

@@ -1,5 +1,16 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
+@if (_customCss)
+{
+    <style>
+      div[mudsheet].mud-sheet-position-bottom.mud-sheet-popover,
+      div[mudsheet].mud-sheet-position-top.mud-sheet-popover
+      { 
+        max-width: 100%;
+      }
+    </style>
+}
+
 <MudContainer MaxWidth="MaxWidth.Large">
     <MudGrid Class="d-flex mx-auto">
         <MudItem xs="6" md="3">
@@ -20,24 +31,30 @@
         <MudItem xs="6" md="3">
             <MudSwitch Color="Color.Primary" Label="Standard" LabelPlacement="Placement.Right" @bind-Value="_standard" />
         </MudItem>
+        <MudItem xs="6" md="3">
+            <MudSwitch Color="Color.Primary" Label="Apply CSS" LabelPlacement="Placement.Right" @bind-Value="_customCss" @bind-Value:after="@(() => StateHasChanged())" />
+        </MudItem>
+        <MudItem xs="6" md="3">
+            <MudSwitch Color="Color.Primary" Label="Drag to Size" LabelPlacement="Placement.Right" @bind-Value="_enableDrag" />
+        </MudItem>
     </MudGrid>
 </MudContainer>
 
-<MudSheet @bind-Open="@_sheet1Open" Position="Position.Bottom" Standard="@_standard">
+<MudSheet @bind-Open="@_sheet1Open" Position="Position.Bottom" Standard="@_standard" EnableDragToSize="@_enableDrag">
     <MudIconButton Icon="@Icons.Material.Filled.Delete" aria-label="delete" />
     <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Primary" aria-label="github" />
     <MudIconButton Icon="@Icons.Material.Filled.Favorite" Color="Color.Secondary" aria-label="add to favorite" />
     <MudIconButton Icon="@Icons.Material.Filled.Share" Disabled="true" aria-label="share" />
 </MudSheet>
 
-<MudSheet @bind-Open="@_sheet2Open" Position="Position.Top" Standard="@_standard">
+<MudSheet @bind-Open="@_sheet2Open" Position="Position.Top" Standard="@_standard" EnableDragToSize="@_enableDrag">
     <MudIconButton Icon="@Icons.Material.Filled.Delete" aria-label="delete" />
     <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Primary" aria-label="github" />
     <MudIconButton Icon="@Icons.Material.Filled.Favorite" Color="Color.Secondary" aria-label="add to favorite" />
     <MudIconButton Icon="@Icons.Material.Filled.Share" Disabled="true" aria-label="share" />
 </MudSheet>
 
-<MudSheet @bind-Open="@_sheet3Open" Position="Position.Start" Standard="@_standard">
+<MudSheet @bind-Open="@_sheet3Open" Position="Position.Start" Standard="@_standard" EnableDragToSize="@_enableDrag">
     <MudStack Spacing="4">
         <MudText Typo="Typo.h6">User Settings</MudText>
         <MudTextField T="string" Label="Display Name" Variant="Variant.Outlined" />
@@ -56,7 +73,7 @@
     </MudStack>
 </MudSheet>
 
-<MudSheet @bind-Open="@_sheet4Open" Position="Position.End" Standard="@_standard">
+<MudSheet @bind-Open="@_sheet4Open" Position="Position.End" Standard="@_standard" EnableDragToSize="@_enableDrag">
     <MudStack Spacing="4">
         <MudText Typo="Typo.h6">User Settings</MudText>
         <MudTextField T="string" Label="Display Name" Variant="Variant.Outlined" />
@@ -75,7 +92,7 @@
     </MudStack>
 </MudSheet>
 
-<MudSheet @bind-Open="@_sheet5Open" Position="Position.Center" Standard="@_standard">
+<MudSheet @bind-Open="@_sheet5Open" Position="Position.Center" Standard="@_standard" EnableDragToSize="@_enableDrag">
     <MudCarousel Class="mud-width-full mud-height-full" ShowArrows="true" AutoCycle="true" TData="object">
         <MudCarouselItem Transition="transition" Color="@Color.Primary">
             <div class="d-flex" style="height:100%">
@@ -102,6 +119,8 @@
     private bool _sheet4Open = false;
     private bool _sheet5Open = false;
     private bool _standard = true;
+    private bool _customCss;
+    private bool _enableDrag = true;
 
     private Transition transition = Transition.Slide;
 

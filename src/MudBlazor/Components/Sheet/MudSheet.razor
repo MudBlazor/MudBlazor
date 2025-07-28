@@ -23,7 +23,7 @@
         <div id="@ElementId" class="@Classname" style="@Stylename"
              @attributes="@userAttributes" @onkeydown="@HandleKeyDownAsync">
             <!-- Sheet Handle (Toggle Button and Dragging) -->
-            <div @ref="@_handleRef" class="mud-sheet-handle" tabindex="-1"
+            <div @ref="@_handleRef" class="@($"mud-sheet-handle{(EnableDragToSize ? " mud-draggable" : string.Empty)}")" tabindex="-1"
                  @onpointerdown="@HandlePointerDownAsync" @onpointerdown:preventDefault
                  @onpointerup="@HandlePointerUpAsync" @onpointerup:preventDefault
                  @onpointercancel="@HandlePointerCancelAsync" @onpointercancel:preventDefault
