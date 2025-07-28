@@ -818,13 +818,9 @@ namespace MudBlazor
                 }
                 else
                 {
-                    var selector = $"tbody > tr:nth-child(${itemIndex + 1})";
-                    await ScrollManager.ScrollIntoViewAsync(selector, ScrollBehavior.Smooth);
+                    var targetItemId = $"{_tableId}_row_{itemIndex}";
+                    await ScrollManager.ScrollIntoViewAsync($"#{targetItemId}", ScrollBehavior.Smooth);
                 }
-            }
-            else
-            {
-                // Item not found
             }
         }
 

@@ -103,7 +103,7 @@
                                     <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item" RowId="@generatedRowId"
                                            Checkable="MultiSelection" SelectionChangeable="SelectionChangeable" Editable="IsItemEditable(item)"
                                            Checked="@(IsCheckedRow(item))"
-                                           CheckedChanged="((value) => { var x = item; OnRowCheckboxChanged(value, x); })">
+                                           CheckedChanged="((value) => OnRowCheckboxChanged(value, item))">
 
                                         @if ((!ReadOnly) && Editable && Equals(_editingItem, item))
                                         {
