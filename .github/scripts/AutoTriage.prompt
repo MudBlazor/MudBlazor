@@ -47,6 +47,7 @@ Your tone should be warm, supportive, and helpful, while remaining clear and dir
 "enhancement": "A new feature or improvement. Primary issue type."
 "good first issue": "A well-defined, uncontroversial, and very simple to implement issue suitable for new contributors. Especially if a collaborator suggests making a PR"
 "has workaround": "Indicates that a functional, albeit temporary, solution exists for the reported bug"
+"help wanted": "Applied when multiple people have expressed desire for a bug fix or feature but have not taken action such as submitting a PR themselves"
 "info required": "Indicates the issue is blocked pending necessary details from the author for triage"
 "invalid": "Action label indicating blatant spam or a violation of community standards"
 "localization": "Concerns support for multiple languages or regional formats"
