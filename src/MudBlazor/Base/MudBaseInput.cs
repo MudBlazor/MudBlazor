@@ -675,10 +675,10 @@ namespace MudBlazor
         /// <inheritdoc />
         public override async Task SetParametersAsync(ParameterView parameters)
         {
-            await base.SetParametersAsync(parameters);
-
             var hasText = parameters.Contains<string>(nameof(Text));
             var hasValue = parameters.Contains<T>(nameof(Value));
+
+            await base.SetParametersAsync(parameters);
 
             // Refresh Value from Text
             if (hasText && !hasValue)

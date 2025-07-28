@@ -15,7 +15,7 @@ namespace MudBlazor;
 /// </summary>
 public partial class MudTabPanel
 {
-    private Boolean _disposed;
+    private bool _disposed;
 
     protected string Stylename =>
         new StyleBuilder()

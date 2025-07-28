@@ -50,7 +50,7 @@
                                 {
                                     @HeaderContent
                                 }
-                                
+
                                 @if (Columns != null)
                                 {
                                     @Columns(Def)
@@ -82,10 +82,10 @@
                     {
                         @foreach (var group in GroupItemsPage)
                         {
-                            <MudTableGroupRow GroupDefinition="GroupBy" Items="group" Checkable="MultiSelection" SelectionChangeable="SelectionChangeable"
-                                              HeaderClass="@GroupHeaderClass" HeaderStyle="@GroupHeaderStyle" 
-                                              FooterClass="@GroupFooterClass" FooterStyle="@GroupFooterStyle"
-                                              HeaderTemplate="@GroupHeaderTemplate" FooterTemplate="@GroupFooterTemplate" T="T"  />
+                            <MudTableGroupRow @key="group.Key" T="T" GroupDefinition="GroupBy" Items="group"
+                                              Checkable="MultiSelection" SelectionChangeable="SelectionChangeable"
+                                              HeaderClass="@GroupHeaderClass" HeaderStyle="@GroupHeaderStyle" HeaderTemplate="@GroupHeaderTemplate"
+                                              FooterClass="@GroupFooterClass" FooterStyle="@GroupFooterStyle" FooterTemplate="@GroupFooterTemplate" />
                         }
                     }
                     else
@@ -174,7 +174,7 @@
                                 }
                                 @if (Columns != null)
                                 {
-                                        @Columns(Def)
+                                    @Columns(Def)
                                 }
                             </MudTFootRow>
                         }
@@ -198,10 +198,10 @@
     {
         var rowIndex = 0;
 
-         RenderFragment rootNode =
+        RenderFragment rootNode =
             @<text>
-        <MudVirtualize Enabled="@Virtualize" Items="@source?.ToList()" OverscanCount="@OverscanCount" ItemSize="@ItemSize" Context="item" ChildContent="@child()">
-        </MudVirtualize>
+                <MudVirtualize Enabled="@Virtualize" Items="@source?.ToList()" OverscanCount="@OverscanCount" ItemSize="@ItemSize" Context="item" ChildContent="@child()">
+                </MudVirtualize>
             </text>;
 
          RenderFragment<T> child() => item =>
@@ -219,25 +219,25 @@
                     {
                         <CascadingValue Value="@Validator" IsFixed="true">
                             @if(RowEditingTemplate != null)
-							{
-								@RowEditingTemplate(item)
-							}
-							@if (Columns != null)
-							{
+                            {
+	                            @RowEditingTemplate(item)
+                            }
+                            @if (Columns != null)
+                            {
                                 @Columns(item)
-							}
+                            }
                         </CascadingValue>
                     }
                     else
                     {
                         if (RowTemplate != null)
-						{
-							@RowTemplate(item)
-						}
-						@if (Columns != null)
-						{
+                        {
+	                        @RowTemplate(item)
+                        }
+                        @if (Columns != null)
+                        {
                             @Columns(item)
-						}
+                        }
                     }
                 </MudTr>
                 @if (ChildRowContent != null)
@@ -245,9 +245,7 @@
                     @ChildRowContent(item)
                 }
                 @{rowIndex++;}
-        </text>
-    ;
-
+        </text>;
 
         return rootNode;
     }
