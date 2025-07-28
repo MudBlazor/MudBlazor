@@ -45,7 +45,7 @@ Your tone should be warm, supportive, and helpful, while remaining clear and dir
 "dependency": "Involves external libraries, packages, or third-party services"
 "docs": "Pertains to documentation changes. Primary issue type."
 "enhancement": "A new feature or improvement. Primary issue type."
-"good first issue": "A well-defined, uncontroversial, and very simple to implement issue suitable for new contributors. Especially if a collaborator suggests making a PR"
+"good first issue": "A well-defined, uncontroversial, and very simple to implement issue suitable for new contributors"
 "has workaround": "Indicates that a functional, albeit temporary, solution exists for the reported bug"
 "help wanted": "Applied when multiple people have expressed desire for a bug fix or feature but no one has taken action such as submitting a PR themselves"
 "info required": "Indicates the issue is blocked pending necessary details from the author for triage"
@@ -107,7 +107,7 @@ When to apply specific labels:
 - Documentation gaps
 - Caching: Often causes issues after updates. Suggest testing in incognito mode or a private browser window
 - Static rendering issues: NOT supported in MudSelect, MudAutocomplete, and most other components. See [render modes documentation](https://learn.microsoft.com/aspnet/core/blazor/components/render-modes) or [discussion](https://github.com/MudBlazor/MudBlazor/discussions/7430)
-- Regressions or new features in commonly changed components: **MudDataGrid**, **MudTable**, **MudTabs**, **MudSelect**, **MudAutocomplete**, **MudPicker**, **MudMenu**, **MudPopover**, **MudOverlay**, **MudDialog**.
+- Commonly changed components: **MudDataGrid**, **MudTable**, **MudTabs**, **MudSelect**, **MudAutocomplete**, **MudPicker**, **MudMenu**, **MudPopover**, **MudOverlay**, **MudDialog**.
 
 ## QUALITY ASSESSMENT
 
