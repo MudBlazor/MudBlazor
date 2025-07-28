@@ -5,86 +5,112 @@
     <DocsPageContent>
 
         <DocsPageSection>
-            <MudAlert Severity="Severity.Warning" Dense="true" Class="mt-3">
-                By default, the following rules are enforced:
-                <ul style="list-style:inside;">
-                    <li><strong>Decimal Separator:</strong> Always uses a dot (.) as the decimal separator, regardless of the user's culture.</li>
-                    <li><strong>Thousands Separator:</strong> Does not support thousands separators (e.g., no commas or spaces for grouping digits).</li>
-                    <li><strong>Input Format:</strong> The expected format is [-]digits[.digits], which is language-neutral and not localized.</li>
-                </ul>
-                Define your preferred <CodeInline>Culture</CodeInline> or <CodeInline>Format</CodeInline> for alternative input options
-            </MudAlert>
-            <SectionHeader Title="Basic Numeric Fields">
+            <SectionHeader Title="Basic Usage">
                 <Description>
-                    Numeric fields are just like <MudLink Href="/components/textfield">text fields</MudLink> but work well with numeric values of any type. The input is automatically restricted to numeric values and it works regardless of the browser locale settings for decimal types.<br/>
-                    <CodeInline>Min</CodeInline> and <CodeInline>Max</CodeInline> attributes allow to restrict the value within the limits. If they are not specified, the full value range for the type (i.e <CodeInline>@int.MinValue</CodeInline> and <CodeInline>@int.MaxValue</CodeInline> for <CodeInline>int</CodeInline>) is permitted.
-                    The <CodeInline>Step</CodeInline> attribute defines how much the value changes when using the up/down buttons on the right, or with the up/down keys on the keyboard. If not specified, the default value is 1.
-                    <br/>
-                    <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">Note: for floating point or decimal values, passing a string literal for <CodeInline>Min</CodeInline>, <CodeInline>Max</CodeInline> or <CodeInline>Step</CodeInline> might trigger a compilation error in the generated Razor code. You can either add a decimal point (i.e. <CodeInline>0.0</CodeInline>) or suffix (i.e. <CodeInline>0.5M</CodeInline> for decimal).</MudAlert>
-                    <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">Note: check out <MudLink Href="/components/textfield">MudTextField</MudLink> for examples regarding Adornments, Usage in a Form, Select and Focus etc.</MudAlert>
+                    Numeric fields are specialized input controls designed for collecting numeric values of any type. Built on the foundation of <MudLink Href="/components/field">fields</MudLink>, they automatically restrict input to valid numbers and provide intuitive controls for incrementing and decrementing values.
+                    Use <CodeInline>Min</CodeInline> and <CodeInline>Max</CodeInline> to set boundaries, and <CodeInline>Step</CodeInline> to control increment amounts.
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(NumericFieldBasicExample)">
                 <NumericFieldBasicExample/>
             </SectionContent>
+            <MudAlert Severity="Severity.Warning" Dense="true" Class="mt-3">
+                <strong>Default Input Behavior:</strong> Numeric fields use a language-neutral format by default:
+                <ul style="list-style:inside; margin-top: 8px;">
+                    <li><strong>Decimal Separator:</strong> Always uses a dot (.) regardless of culture</li>
+                    <li><strong>Thousands Separator:</strong> Not supported by default</li>
+                    <li><strong>Input Format:</strong> [-]digits[.digits] format</li>
+                </ul>
+                Use <CodeInline>Culture</CodeInline> and <CodeInline>Format</CodeInline> properties for localized input.
+            </MudAlert>
+            <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
+                For advanced features like adornments, validation, and form integration, see the <MudLink Href="/components/textfield">TextField documentation</MudLink> which shares the same underlying capabilities.
+            </MudAlert>
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Hide Spin Buttons">
+            <SectionHeader Title="Common Properties">
                 <Description>
-                    This property can be set to hide the spinner buttons, preventing the user to increase and decrease the value by mouse or touch input.<br>
-                    It can still be changed with the keyboard up/down keys, or manually.
+                    Control the most frequently used properties to customize the behavior and appearance of numeric fields.
                 </Description>
             </SectionHeader>
-            <SectionContent Class="demo-numericfield" Code="@nameof(NumericFieldHideButtonsExample)" ShowCode="false">
-                <NumericFieldHideButtonsExample/>
-            </SectionContent>
+            <SectionSubGroups>
+
+                <DocsPageSection>
+                    <SectionHeader Title="Spin Buttons">
+                        <Description>
+                            By default, numeric fields display up/down spin buttons for easy value adjustment. Set <CodeInline>HideSpinButtons="true"</CodeInline> to hide these controls while preserving keyboard navigation (arrow keys) and manual input.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent Class="demo-numericfield" Code="@nameof(NumericFieldHideButtonsExample)" ShowCode="false">
+                        <NumericFieldHideButtonsExample/>
+                    </SectionContent>
+                </DocsPageSection>
+
+            </SectionSubGroups>
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Setting Culture and Format">
+            <SectionHeader Title="Data Binding">
                 <Description>
-                    You can set a custom culture and format which will be used for parsing the numeric value from the input string as well as for presentation.
+                    Numeric fields support different data binding patterns depending on your requirements for default values and empty states.
+                </Description>
+            </SectionHeader>
+            <SectionSubGroups>
+
+                <DocsPageSection>
+                    <SectionHeader Title="Value Types vs Nullables">
+                        <Description>
+                            Value types always have a default value (e.g., <CodeInline>0</CodeInline> for <CodeInline>int</CodeInline>), so fields won't appear empty initially.
+                            Use nullable types (e.g., <CodeInline>int?</CodeInline>) when you want fields to start empty until the user enters a value.
+                            <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
+                                <strong>Tip:</strong> Do not assign null values to <CodeInline>Min</CodeInline>, <CodeInline>Max</CodeInline> and <CodeInline>Step</CodeInline> properties.
+                            </MudAlert>
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(NumericFieldBindingValueTypesExample)" ShowCode="false">
+                        <NumericFieldBindingValueTypesExample/>
+                    </SectionContent>
+                </DocsPageSection>
+
+                <DocsPageSection>
+                    <SectionHeader Title="Update Timing">
+                        <Description>
+                            By default, numeric fields update the bound value on Enter or when focus is lost. Set <CodeInline>Immediate="true"</CodeInline> to update values as the user types.
+                            You can also use <CodeInline>DebounceInterval</CodeInline> to delay updates until the user stops typing, preventing excessive updates during input. The debounced example updates 500ms after typing stops.
+                            <MudAlert Severity="Severity.Warning" Dense="true" Class="mt-3">
+                                <strong>Note:</strong> Arrow keys and Shift + mouse wheel interactions are not debounced for immediate responsiveness.
+                            </MudAlert>
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(DebouncedNumericFieldExample)" ShowCode="false">
+                        <DebouncedNumericFieldExample/>
+                    </SectionContent>
+                </DocsPageSection>
+
+            </SectionSubGroups>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Localization & Formatting">
+                <Description>
+                    Customize how numeric values are displayed and parsed to match different cultural conventions and formatting requirements.
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(NumericFieldCultureExample)">
                 <NumericFieldCultureExample/>
             </SectionContent>
+            <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
+                <strong>For Floating Point Values:</strong> When using string literals for <CodeInline>Min</CodeInline>, <CodeInline>Max</CodeInline> or <CodeInline>Step</CodeInline>, 
+                add a decimal point (e.g., <CodeInline>0.0</CodeInline>) or suffix (e.g., <CodeInline>0.5M</CodeInline> for decimal) to avoid compilation errors.
+            </MudAlert>
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Binding Value Types vs Nullables">
+            <SectionHeader Title="Mouse Wheel Support">
                 <Description>
-                    When you bind value types, the numeric field will not be empty even if the user hasn't entered a value yet because a value type always has a value, even when unassigned.
-                    The two-way-bindable <CodeInline>Value</CodeInline> property will automatically assume the default value of that type (i.e. <CodeInline>0</CodeInline> for <CodeInline>int</CodeInline>).<br/>
-                    Thus, if you want your numeric fields to be empty, as long as nothing has been entered yet or after the field has been cleared, use the nullable version of that type (i.e. <CodeInline>int?</CodeInline>).<br/>
-                    Do not assign null values to <CodeInline>Min</CodeInline>, <CodeInline>Max</CodeInline> and <CodeInline>Step</CodeInline>.
-                </Description>
-            </SectionHeader>
-            <SectionContent Code="@nameof(NumericFieldBindingValueTypesExample)" ShowCode="false">
-                <NumericFieldBindingValueTypesExample/>
-            </SectionContent>
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader Title="Normal vs Immediate vs Debounced">
-                <Description>
-                    By default, <CodeInline>MudNumericField</CodeInline> updates the bound value on Enter or when it loses focus. Set <CodeInline>Immediate="true"</CodeInline> to update the value whenever the user types.<br/>
-                    You can also set the <CodeInline>DebounceInterval</CodeInline> parameter to the number of milliseconds you want to wait before updating the bound value. If you need to know when the interval elapses, you can pass an <CodeInline>OnDebounceIntervalElapsed</CodeInline> EventCallback.
-                    Notice how in this example the debounced text only updates 500 ms after you stop typing.
-                    <MudAlert Severity="Severity.Warning" Dense="true" Class="mt-3">Warning: Pressing Arrow Up/Down or Shift + MouseWheel are not debounced.</MudAlert>
-                </Description>
-            </SectionHeader>
-            <SectionContent Code="@nameof(DebouncedNumericFieldExample)" ShowCode="false">
-                <DebouncedNumericFieldExample/>
-            </SectionContent>
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader Title="Change the Value with the Mouse Wheel">
-                <Description>
-                    You can change MudNumericField's value (by step) with Shift + MouseWheel.
-                    You can also set the <CodeInline>InvertMouseWheel</CodeInline> parameter to reverse the mouse wheel up and down event.
+                    Enhance user experience by allowing value changes via mouse wheel. Hold Shift while scrolling to increment or decrement values by the configured step amount.
+                    Use <CodeInline>InvertMouseWheel="true"</CodeInline> to reverse the scroll direction if desired.
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(ChangeTheValueWithTheMouseWheelExample)" ShowCode="false">

@@ -42,9 +42,19 @@ else if (SortKeys is not null)
         </MudTabs>
     }
 }
+else if (SortComparer is not null && SortDirection.HasValue)
+{
+    @* custom comparer - SortDirection is ignored for custom comparer *@
+    <MudTabs SortDirection="SortDirection.Value" SortComparer="SortComparer">
+        <MudTabPanel Tag="@( "Y" )" SortKey="3" Text="Apple"></MudTabPanel>
+        <MudTabPanel Tag="@( "Z" )" SortKey="2" Text="Banana"></MudTabPanel>
+        <MudTabPanel Tag="@( "X" )" SortKey="1" Text="Cherry"></MudTabPanel>
+    </MudTabs>
+}
 else if (SortComparer is not null)
 {
-    <MudTabs SortDirection="MudBlazor.SortDirection.Descending" SortComparer="SortComparer">
+    @* custom comparer - SortDirection is not used with custom comparer and can be unspecified *@
+    <MudTabs SortComparer="SortComparer">
         <MudTabPanel Tag="@( "Y" )" SortKey="3" Text="Apple"></MudTabPanel>
         <MudTabPanel Tag="@( "Z" )" SortKey="2" Text="Banana"></MudTabPanel>
         <MudTabPanel Tag="@( "X" )" SortKey="1" Text="Cherry"></MudTabPanel>

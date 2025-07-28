@@ -15,7 +15,7 @@
       display: table-row-group;
 
       > tr:last-child {
-        > td {
+        > td, > th {
           border-bottom: none;
         }
       }

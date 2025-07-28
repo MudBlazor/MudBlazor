@@ -4,6 +4,17 @@
 
 @inject ISnackbar Snackbar
 
+<style>
+    .file-upload-input {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        z-index: 10;
+        opacity: 0;
+    }
+</style>
+
 <MudStack Style="width: 100%">
     <MudForm Model="@_model"
              @bind-IsValid="_isValid"
@@ -16,8 +27,7 @@
                            For="@(() => _model.Files)"
                            AppendMultipleFiles
                            Hidden="@false"
-                           InputClass="absolute mud-width-full mud-height-full overflow-hidden z-10"
-                           InputStyle="opacity:0"
+                           InputClass="file-upload-input"
                            ErrorText="@string.Empty"
                            tabindex="-1"
                            @ondrop="@ClearDragClass"

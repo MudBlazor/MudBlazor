@@ -6,7 +6,7 @@
 @*HEADER:*@
 @if (HeaderTemplate != null && GroupDefinition != null)
 {
-<tr class="@HeaderClassname" @onclick="@OnRowClick" style="@HeaderStyle" @attributes="@UserAttributes">        
+<tr class="@HeaderClassname" @onclick="@OnRowClick" style="@HeaderStyle" @attributes="@UserAttributes">
     @if ((GroupDefinition?.IsThisOrParentExpandable ?? false) || (Context?.Table?.MultiSelection ?? false))
     {
         <MudTd>
@@ -38,7 +38,7 @@
 }
 else
 {
-<MudText @attributes="@UserAttributes">@("There aren't any group definition to use with this component.")</MudText>
+    <MudText @attributes="@UserAttributes">@("There aren't any group definition to use with this component.")</MudText>
 }
 
 @if (Expanded)
@@ -50,10 +50,11 @@ else
     {
         @foreach (var group in _innerGroupItems)
         {
-            <MudTableGroupRow GroupDefinition="GroupDefinition.InnerGroup" Items="@group" Checkable="@Checkable" SelectionChangeable="SelectionChangeable"
-                              HeaderClass="@HeaderClass" HeaderStyle="@HeaderStyle"
-                              FooterClass="@FooterClass" FooterStyle="@FooterStyle"
-                              HeaderTemplate="@HeaderTemplate" FooterTemplate="@FooterTemplate" T="T" @attributes="@UserAttributes" />
+            <MudTableGroupRow @key="group.Key" T="T" GroupDefinition="GroupDefinition.InnerGroup" Items="@group"
+                              Checkable="@Checkable" SelectionChangeable="SelectionChangeable"
+                              HeaderClass="@HeaderClass" HeaderStyle="@HeaderStyle" HeaderTemplate="@HeaderTemplate"
+                              FooterClass="@FooterClass" FooterStyle="@FooterStyle" FooterTemplate="@FooterTemplate"
+                              @attributes="@UserAttributes" />
         }
     }
     else
@@ -74,7 +75,6 @@ else
             {
                 <MudTd />
             }
-
         </tr>
     }
 }

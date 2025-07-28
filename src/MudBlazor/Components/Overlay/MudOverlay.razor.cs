@@ -12,7 +12,7 @@ namespace MudBlazor;
 #nullable enable
 
 /// <summary>
-/// A layer which darkens a window, often as part of showing a <see cref="MudDialog" />.
+/// A layer that can be used for various purposes such as displaying loading indicators, modals, or blocking user interaction with underlying content.
 /// </summary>
 public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, IAsyncDisposable
 {
