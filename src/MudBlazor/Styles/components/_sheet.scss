@@ -165,6 +165,9 @@ div[mudsheet] {
     &:active {
       cursor: grabbing;
     }
+    &:focus {
+      outline: none;
+    }
   }
 
   /* Vertical orientation (top/bottom) */

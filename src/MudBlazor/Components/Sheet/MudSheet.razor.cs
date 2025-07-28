@@ -24,10 +24,17 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
     public string ElementId { get; private set; } = Identifier.Create("sheet-");
     private string _ariaLabel = string.Empty;
     private bool _dragging;
-    private (double RightSwipe, double LeftSwipe, double TopSwipe, double BottomSwipe) _swipes = (0.0, 0.0, 0.0, 0.0);
     private bool _isDisposing = false;
+
+    private record struct DragPoints(double XDown, double YDown, int StartSize);
+    private DragPoints? _points;
+    private DateTime _lastPointerMove = DateTime.MinValue;
+    private static readonly TimeSpan PointerMoveThrottle = TimeSpan.FromMilliseconds(16); // ~60fps
+
+    private record struct ViewPortSize(double Width, double Height);
+    private ViewPortSize? _viewportSize;
+
     private bool JSRuntimeReady => !_isDisposing && IsJSRuntimeAvailable;
-    private MudPopover? _popover;
     private ElementReference _handleRef = default!;
 
     private ParameterState<bool> _openSheetState;
@@ -168,7 +175,6 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
     [Category(CategoryTypes.Sheet.Behavior)]
     public bool? CoverAppBar { get; set; }
 
-
     /// <summary>
     /// The icon used as the drag handle when <see cref="Position"/> is <c>Top</c> or <c>Bottom</c>.
     /// </summary>
@@ -201,7 +207,7 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Sheet.Behavior)]
-    public bool Open { get; set; } // TODO: See if a change handler is needed to update state if set outside of the component
+    public bool Open { get; set; }
 
     /// <summary>
     /// The callback that is invoked when the open state of the sheet changes.
@@ -215,8 +221,9 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
     /// </summary>
     /// <remarks>
     /// Defaults to 50% of the viewport height or width, depending on the position.<br/>
-    /// If the sheet is closed and reopened, it will retain its last size.
+    /// If the sheet is closed and reopened, it will retain its last size. 
     /// </remarks>
+    /// <para>Typically Side Sheets should only start at 25%</para>
     [Parameter]
     [Category(CategoryTypes.Sheet.Behavior)]
     public int CurrentSize { get; set; } = 50;
@@ -247,7 +254,7 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
     /// </summary>
     /// <remarks>
     /// Defaults to:
-    /// <c>@&lt;MudIconButton Icon=&quot;@DragHandle&quot; Class=&quot;mud-sheet-handle-button&quot; OnClick=&quot;@ToggleSizeAsync&quot; aria-controls="@ElementId" /&gt;</c>
+    /// <c>@&lt;MudIconButton Icon=&quot;@DragHandle&quot; Class=&quot;mud-sheet-handle-button&quot; OnClick=&quot;@ToggleSizeAsync&quot; @onpointerdown:stopPropagation aria-controls="@ElementId" /&gt;</c>
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Sheet.Behavior)]
@@ -279,6 +286,13 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
     public bool Standard { get; set; } = true;
 
     /// <summary>
+    /// A value indicating whether the user can resize the sheet by dragging.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Sheet.Behavior)]
+    public bool EnableDragToSize { get; set; } = true;
+
+    /// <summary>
     /// List of snap point heights (in viewport height or width) to toggle or drag
     /// </summary>
     /// <remarks>
@@ -290,7 +304,7 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
     public int[] PresetSizes { get; set; } = [25, 50, 75, 100];
 
     /// <summary>
-    /// Indicates whether the drag or toggle methods can roam outside of <see cref="PresetSizes"/> or not.
+    /// Indicates whether the drag methods can roam outside of <see cref="PresetSizes"/> or not.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>false</c>. 
@@ -337,6 +351,11 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
     /// Returns the Current Drag Handle Icon based on the Position of the sheet.
     /// </summary>
     protected string DragHandle => Position is Position.Top or Position.Bottom or Position.Center ? VerticalHandle : HorizontalHandle;
+
+    /// <summary>
+    /// Gets a value indicating whether dragging is currently allowed.
+    /// </summary>
+    private bool CanDrag => _dragging && _openSheetState.Value && _points is not null && _viewportSize is not null;
 
     /// <summary>
     /// Returns the Positioning string for the popover using RightToLeft logic.
@@ -420,11 +439,7 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
     /// <param name="newSize">The new size value. Must be between 0 and 100.</param>
     private async Task ChangeSize(int newSize)
     {
-        if (newSize < 0)
-            newSize = 0;
-        else if (newSize > 100)
-            newSize = 100;
-
+        Math.Clamp(newSize, 0, 100);
         await _currentSizeState.SetValueAsync(newSize);
         await CurrentSizeChanged.InvokeAsync(newSize);
     }
@@ -480,6 +495,8 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
         if (_openSheetState.Value)
         {
             await SetDraggingState(true, args);
+            // set starting point after extending pointer capture and starting drag
+            _points = new DragPoints(args.ClientX, args.ClientY, _currentSizeState.Value);
         }
     }
 
@@ -492,8 +509,16 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
     /// </remarks>
     private async Task HandlePointerUpAsync(PointerEventArgs args)
     {
-        // perform a final "move" 
-        await HandlePointerMoveAsync(args);
+        // perform a final "move" checking original points
+        if (!CanDrag)
+        {
+            // If not dragging or points are not set, we do nothing
+            return;
+        }
+
+        await PerformPointerDrag(_points!.Value.XDown, _points!.Value.YDown,
+            args.ClientX, args.ClientY, _points!.Value.StartSize);
+
         // if SnapMode is enabled, adjust the size to the nearest preset size
         if (SnapMode)
         {
@@ -518,26 +543,20 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
     /// - Outside Container via setPointerCapture 
     /// Update points if dragging
     /// </remarks>
-    private async Task HandlePointerMoveAsync(PointerEventArgs args)
+    private Task HandlePointerMoveAsync(PointerEventArgs args)
     {
-        // If the sheet is open and dragging, we handle the pointer move
-        if (!_dragging || !_openSheetState.Value) return;
+        // If the sheet is open and dragging and points set, we handle the pointer move
+        if (!CanDrag) return Task.CompletedTask;
 
-        GetDeltas(args);
-        var newSize = _currentSizeState.Value;
-        _dragging = true; // Set dragging state to true when swiping
-        if (Position is Position.Top or Position.Bottom or Position.Center)
-        {
-            // downward _swipes increase size, upward _swipes decrease size
-            newSize += (int)(_swipes.BottomSwipe - _swipes.TopSwipe);
-            await ChangeSize(newSize);
-        }
-        else if (Position is Position.Right or Position.Left)
-        {
-            // right _swipes increase size, left _swipes decrease size
-            newSize += (int)(_swipes.RightSwipe - _swipes.LeftSwipe);
-            await ChangeSize(newSize);
-        }
+        // Throttle pointer move events to avoid excessive updates
+        var now = DateTime.UtcNow;
+        if (now - _lastPointerMove < PointerMoveThrottle)
+            return Task.CompletedTask;
+
+        _lastPointerMove = now;
+
+        return PerformPointerDrag(_points!.Value.XDown, _points!.Value.YDown,
+            args.ClientX, args.ClientY, _points!.Value.StartSize);
     }
 
     /// <summary>
@@ -546,10 +565,10 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
     /// <remarks>
     /// Explicit releasePointerCapture
     /// </remarks>
-    private async Task HandlePointerCancelAsync(PointerEventArgs args)
+    private Task HandlePointerCancelAsync(PointerEventArgs args)
     {
         // If the sheet is open, we reset the dragging state to false
-        await SetDraggingState(false, args);
+        return SetDraggingState(false, args);
     }
 
     /// <summary>
@@ -557,68 +576,76 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
     /// </summary>
     /// <param name="isDragging">A boolean indicating whether the sheet is in a dragging operation.</param>
     /// <param name="args">The pointer event arguments containing details about the pointer interaction.</param>
-    private ValueTask SetDraggingState(bool isDragging, PointerEventArgs? args = null)
+    private async Task SetDraggingState(bool isDragging, PointerEventArgs args)
     {
         _dragging = isDragging;
         // Reset the swipe deltas when starting or stopping dragging
-        _swipes = (0.0, 0.0, 0.0, 0.0);
-        if (JSRuntimeReady && args != null)
+        _points = null;
+        _viewportSize = null;
+        if (JSRuntimeReady)
         {
             // Notify JS that dragging has started or stopped
             if (_dragging)
             {
-                return JSRuntime.InvokeVoidAsync("window.mudsheetHelper.startDrag", _handleRef, args.PointerId);
+                var sizeArray = await JSRuntime.InvokeAsync<double[]>("window.mudsheetHelper.startDrag", _handleRef, args.PointerId);
+                if (sizeArray.Length != 2)
+                {
+                    throw new InvalidOperationException("JSInterop did not return the expected MudSheet size array.");
+                }
+                _viewportSize = new ViewPortSize(sizeArray[0], sizeArray[1]);
             }
             else
             {
-                return JSRuntime.InvokeVoidAsync("window.mudsheetHelper.cancelDrag", _handleRef, args.PointerId);
+                await JSRuntime.InvokeVoidAsync("window.mudsheetHelper.cancelDrag", _handleRef, args.PointerId);
             }
         }
-        return ValueTask.CompletedTask;
     }
 
     /// <summary>
-    /// Sets a swipe tuple containing the deltas for each swipe direction.
+    /// Set's the new size during a drag operation based on the pointer movement.
     /// </summary>
-    /// <param name="args"></param>
-    private void GetDeltas(PointerEventArgs args)
+    /// <param name="baseSize">Size of the sheet at the starting point.</param>
+    /// <param name="startX">x coordinate of the starting point.</param>
+    /// <param name="startY">y coordinate of the starting point.</param>
+    /// <param name="currentX">x coordinate of the current point.</param>
+    /// <param name="currentY">y coordinate of the current point.</param>
+    private Task PerformPointerDrag(double startX, double startY, double currentX, double currentY, int baseSize)
     {
-        //SwipeDirection[] swipeDirections = [args.SwipeDirections[0], args.SwipeDirections[1]];
-        //double?[] swipeDeltas = [args.SwipeDeltas[0], args.SwipeDeltas[1]];
-        //for (var i = 0; i < swipeDirections.Length; i++)
-        //{
-        //    if (swipeDirections[i] == SwipeDirection.LeftToRight)
-        //    {
-        //        _swipes.RightSwipe += Math.Abs(swipeDeltas[i] ?? 0);
-        //    }
-        //    else if (swipeDirections[i] == SwipeDirection.RightToLeft)
-        //    {
-        //        _swipes.LeftSwipe += Math.Abs(swipeDeltas[i] ?? 0);
-        //    }
-        //    else if (swipeDirections[i] == SwipeDirection.BottomToTop)
-        //    {
-        //        _swipes.TopSwipe += Math.Abs(swipeDeltas[i] ?? 0);
-        //    }
-        //    else if (swipeDirections[i] == SwipeDirection.TopToBottom)
-        //    {
-        //        _swipes.BottomSwipe += Math.Abs(swipeDeltas[i] ?? 0);
-        //    }
-        //}
+        // Get pixel movement in the appropriate direction
+        var delta = Positioning switch
+        {
+            "top" => currentY - startY,
+            "bottom" or "center" => startY - currentY,
+            "left" => currentX - startX,
+            "right" => startX - currentX,
+            _ => 0
+        };
+
+        // Get the relevant viewport dimension
+        var viewportPixels = Positioning switch
+        {
+            "top" or "bottom" => _viewportSize!.Value.Height,
+            "left" or "right" => _viewportSize!.Value.Width,
+            "center" => _viewportSize!.Value.Height / 2,
+            _ => 1
+        };
+
+        // Convert pixel movement into percentage of viewport
+        var newSize = baseSize + (delta / viewportPixels * 100);
+
+        return ChangeSize((int)newSize);
     }
 
     /// <summary>
     /// Fires when the open state of the sheet changes from outside of the component.
     /// </summary>
-    private async Task OnOpenChanged(ParameterChangedEventArgs<bool> args)
+    private Task OnOpenChanged(ParameterChangedEventArgs<bool> args)
     {
         if (args.Value)
         {
-            await OpenSheetAsync();
+            return OpenSheetAsync();
         }
-        else
-        {
-            await CloseSheetAsync();
-        }
+        return CloseSheetAsync();
     }
 
     /// <summary>

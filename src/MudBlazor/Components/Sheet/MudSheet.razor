@@ -1,8 +1,7 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<MudPopover @ref="@_popover"
-            Open="@_openSheetState.Value"
+<MudPopover Open="@_openSheetState.Value"
             Class="@PopoverClassname"
             Style="@PopoverStylename"
             AnchorOrigin="@Origin"
@@ -21,16 +20,15 @@
                 userAttributes.TryAdd(attr.Key, attr.Value);
             }
         }
-        <div id="@ElementId" class="@Classname" style="@Stylename" 
-             @attributes="@userAttributes" @onkeydown="@HandleKeyDownAsync">             
+        <div id="@ElementId" class="@Classname" style="@Stylename"
+             @attributes="@userAttributes" @onkeydown="@HandleKeyDownAsync">
             <!-- Sheet Handle (Toggle Button and Dragging) -->
-            <div @ref="@_handleRef" class="mud-sheet-handle"
+            <div @ref="@_handleRef" class="mud-sheet-handle" tabindex="-1"
                  @onpointerdown="@HandlePointerDownAsync" @onpointerdown:preventDefault
                  @onpointerup="@HandlePointerUpAsync" @onpointerup:preventDefault
                  @onpointercancel="@HandlePointerCancelAsync" @onpointercancel:preventDefault
                  @onlostpointercapture="@HandlePointerCancelAsync" @onlostpointercapture:preventDefault             
-                 @onpointermove="@HandlePointerMoveAsync" @onpointermove:preventDefault
-                 @ongotpointercapture="@HandlePointerMoveAsync" @ongotpointercapture:preventDefault>
+                 @onpointermove="@HandlePointerMoveAsync" @onpointermove:preventDefault>
                 @(SheetHandleFragment ?? DefaultHandleFragment)
             </div>
             <!-- Sheet Content -->
@@ -55,5 +53,5 @@
 
 @code {
     private RenderFragment DefaultHandleFragment => 
-        @<MudIconButton Icon="@DragHandle" Class="mud-sheet-handle-button" OnClick="@ToggleSizeAsync" aria-controls="@ElementId" />;
+        @<MudIconButton Icon="@DragHandle" Class="mud-sheet-handle-button" OnClick="@ToggleSizeAsync" @onpointerdown:stopPropagation aria-controls="@ElementId" />;
 }

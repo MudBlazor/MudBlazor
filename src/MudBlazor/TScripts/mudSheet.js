@@ -83,13 +83,24 @@ window.mudsheetHelper = {
     startDrag: function (element, pointerId) {
         if (element) {
             element.setPointerCapture(pointerId);
+            // ensure the element can receive keyboard down event
+            element.focus();
         }
+        return [window.innerWidth, window.innerHeight];
     },
 
     cancelDrag: function (element, pointerId) {
         // Cancel the pointer events
         if (element) {
             element.releasePointerCapture(pointerId);
+
+            // focus the first inner focusable element
+            const focusable = element.querySelector(
+                'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+            );
+            if (focusable) {
+                focusable.focus();
+            }
         }
     },
 };
