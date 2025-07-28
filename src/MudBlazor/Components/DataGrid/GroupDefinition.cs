@@ -4,6 +4,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Components.DataGrid;
 
 namespace MudBlazor;
 
@@ -25,6 +26,12 @@ public class GroupDefinition<[DynamicallyAccessedMembers(DynamicallyAccessedMemb
     /// The LINQ definition of the grouping.
     /// </summary>
     public required IGrouping<object?, T> Grouping { get; set; }
+
+    /// <summary>
+    /// List of keys representing the hierarchical path of this group
+    /// Each item in the list corresponds to a grouping level.
+    /// </summary>
+    public required GroupHierarchyKeysCollection HierarchyKeys { get; init; }
 
     /// <summary>
     /// The function which selects items for this group.
