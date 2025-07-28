@@ -17,7 +17,7 @@ on:
       permissions:
         description: 'Permissions (`none` for dry run)'
         required: false
-        default: 'label, comment, close, edit, alert'
+        default: 'label, comment, close, edit'
         type: string
 
 concurrency:
