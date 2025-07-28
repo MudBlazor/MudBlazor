@@ -1,4 +1,4 @@
-﻿
+
 .mud-simple-table {
 
   table {
@@ -14,8 +14,8 @@
     tbody {
       display: table-row-group;
 
-      tr:last-child {
-        td {
+      > tr:last-child {
+        > td, > th {
           border-bottom: none;
         }
       }

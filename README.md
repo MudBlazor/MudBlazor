@@ -20,72 +20,42 @@
 [![NuGet version](https://img.shields.io/nuget/v/MudBlazor?color=ff4081&label=nuget%20version&logo=nuget&style=flat-square)](https://www.nuget.org/packages/MudBlazor/)
 [![NuGet downloads](https://img.shields.io/nuget/dt/MudBlazor?color=ff4081&label=nuget%20downloads&logo=nuget&style=flat-square)](https://www.nuget.org/packages/MudBlazor/)
 
-MudBlazor is an ambitious Material Design component framework for Blazor with an emphasis on ease of use and clear structure. It is perfect for .NET developers who want to rapidly build web applications without having to struggle with CSS and Javascript. MudBlazor, being written entirely in C#, empowers you to adapt, fix or extend the framework. There are plenty of examples in the documentation, which makes understanding and learning MudBlazor very easy.
+MudBlazor is an ambitious Material Design component library for Blazor. Accelerate your web application development and build intuitive user interfaces, leveraging the full power of C# to adapt and extend this open-source framework.
 
-## 📘 Documentation & Demo
-- 🌐 [MudBlazor.com](https://mudblazor.com) – Full documentation
-- ⚡ [Try.MudBlazor.com](https://try.mudblazor.com/) – Interactive playground
+**🌐 [Documentation](https://mudblazor.com) ⚡ [Interactive Playground](https://try.mudblazor.com/)**
 
-## 💎 Why is MudBlazor so successful?
-- Aesthetic design that follows Material Design principles.
-- Intuitive, consistent component structure.
-- Rich documentation with tons of examples and code snippets.
-- Fully written in C# with minimal JavaScript.
-- Build beautiful UIs without CSS (but fully customizable when needed).
-- No third-party component dependencies – maximum flexibility.
-- Strive for stability with extensive test coverage.
-- Frequent releases so devs get their fixes and features fast.
+## 💎 Why Choose MudBlazor?
 
-## ⚙️ Prerequisites
-| MudBlazor | .NET | Support |
-| :--- | :---: | :---: |
-| 1.x.x - 2.0.x | .NET 3.1 | Ended 03/2021 |
-| 5.x.x | .NET 5 | Ended 01/2022 |
-| 6.x.x | [.NET 6](https://dotnet.microsoft.com/download/dotnet/6.0), [.NET 7](https://dotnet.microsoft.com/download/dotnet/7.0), [.NET 8](https://dotnet.microsoft.com/download/dotnet/8.0) | Ended 01/2025 |
-| 7.x.x | [.NET 7](https://dotnet.microsoft.com/download/dotnet/7.0), [.NET 8](https://dotnet.microsoft.com/download/dotnet/8.0) | Limited |
-| 8.x.x | [.NET 8](https://dotnet.microsoft.com/download/dotnet/8.0), [.NET 9](https://dotnet.microsoft.com/download/dotnet/9.0) | :heavy_check_mark: |
-
-> [!TIP]
-> Upgrading? Check our [Migration Guide](https://github.com/MudBlazor/MudBlazor/blob/dev/MIGRATION.md) for help with breaking changes.  
-
-> [!WARNING]
-> 1. Static rendering is not supported - [Learn more](https://learn.microsoft.com/aspnet/core/blazor/components/render-modes).
-> 2. Older browsers may not be supported. Use a modern, up-to-date browser - [Blazor supported platforms](https://learn.microsoft.com/aspnet/core/blazor/supported-platforms).
+🎨 Beautiful Material Design components.  
+💻 Fully written in C# with minimal JavaScript.  
+📖 Rich documentation with extensive examples.  
+📦 No third-party dependencies for maximum flexibility.  
+✅ Extensive test coverage for stability.  
 
 ## 📊 Repo Stats
-![Alt](https://repobeats.axiom.co/api/embed/db53a44092e88fc34a4c0f37db12773b6787ec7e.svg "Repobeats analytics image")
 
-## 🤝 Contributing
-Thanks for wanting to contribute! 👋  
-Contributions from the community are what makes MudBlazor successful.
-
-If you're comfortable with C#, Blazor, JavaScript, or CSS, we'd love your help!  
-Whether it's fixing bugs, adding features, or improving documentation, every contribution counts.
-
-We aim to review and merge non-breaking pull requests quickly.  
-For larger features or changes, feel free to chat with us [on Discord](https://discord.gg/mudblazor) first to get feedback before diving in.
-
-📚 Check out our [contribution guidelines](/CONTRIBUTING.md) to get started and learn more about how the project works.
-
-### Testing a PR Locally
-
-✅ If a PR fixes something you reported, [locally test a preview version](/TESTING.md) to ensure your app works as expected before the update is released.
+![Repobeats analytics image](https://repobeats.axiom.co/api/embed/db53a44092e88fc34a4c0f37db12773b6787ec7e.svg)
 
 ## 🚀 Getting Started
-We have ready-to-go templates at the [MudBlazor.Templates](https://github.com/mudblazor/Templates) repository, or follow the quick install guide to set things up manually:
 
-### 🛠️ Quick Install
+We have ready-to-go templates at the [Templates](https://github.com/MudBlazor/Templates) repository, or follow the quick install guide below:
+
+### Installation
+
 Install Package:
-```
+
+```bash
 dotnet add package MudBlazor
 ```
 
 Add to `_Imports.razor`:
+
 ```razor
 @using MudBlazor
 ```
 
-Add to the `MainLayout.razor` or `App.razor`:
+Add to `MainLayout.razor` or `App.razor`:
+
 ```razor
 <MudThemeProvider/>
 <MudPopoverProvider/>
@@ -93,30 +63,31 @@ Add to the `MainLayout.razor` or `App.razor`:
 <MudSnackbarProvider/>
 ```
 
-Add to your HTML `head` section:
+Add to your HTML `head` section (`index.html`/`_Layout.cshtml`/`_Host.cshtml`/`App.razor`):
+
 ```razor
 <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
 <link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
 ```
-It's either `index.html` or `_Layout.cshtml`/`_Host.cshtml`/`App.razor` depending on whether you're running WebAssembly or Server.
- 
-Next, add to the default Blazor script at the end of the `body`:
+
+Add to the default Blazor script at the end of the `body`:
+
 ```razor
 <script src="_content/MudBlazor/MudBlazor.min.js"></script>
 ```
 
 Add to the relevant sections of `Program.cs`:
+
 ```c#
 using MudBlazor.Services;
 ```
+
 ```c#
 builder.Services.AddMudServices();
 ```
 
-### 🔗 Full Setup Guide
-For more details, see the [complete installation guide](https://mudblazor.com/getting-started/installation) on our website.
+### Example Usage
 
-### 💻 Example Usage
 ```razor
 <MudText Typo="Typo.h6">
     MudBlazor is @Text
@@ -141,3 +112,35 @@ For more details, see the [complete installation guide](https://mudblazor.com/ge
     }
 }
 ```
+
+For more details, see the [complete installation guide](https://mudblazor.com/getting-started/installation) on our website.
+
+## 🤝 Contributing
+
+Contributions from the community are what makes MudBlazor successful.
+
+If you're comfortable with C#, Blazor, JavaScript, or CSS, we'd love your help!  
+Whether it's fixing bugs, adding features, or improving documentation, every contribution counts.
+
+We aim to review and merge non-breaking pull requests quickly.  
+For larger features or changes, feel free to chat with us [on Discord](https://discord.gg/mudblazor) to get feedback before diving in.
+
+📚 Check out our [contribution guidelines](/CONTRIBUTING.md) to get started and learn more about how the project works.  
+✅ If a PR fixes something you reported, [locally test a preview version](/TESTING.md) to ensure your app works as expected.
+
+## ⚙️ Version Support
+
+| MudBlazor | .NET | Support |
+| :--- | :---: | :---: |
+| 5.x.x | .NET 5 | Ended (Jan 2022) |
+| 6.x.x | [.NET 6](https://dotnet.microsoft.com/download/dotnet/6.0), [.NET 7](https://dotnet.microsoft.com/download/dotnet/7.0), [.NET 8](https://dotnet.microsoft.com/download/dotnet/8.0) | Ended (Jan 2025) |
+| 7.x.x | [.NET 7](https://dotnet.microsoft.com/download/dotnet/7.0), [.NET 8](https://dotnet.microsoft.com/download/dotnet/8.0) | Limited Support |
+| 8.x.x | [.NET 8](https://dotnet.microsoft.com/download/dotnet/8.0), [.NET 9](https://dotnet.microsoft.com/download/dotnet/9.0) | :heavy_check_mark: Full Support |
+
+> [!TIP]
+> Upgrading? Check our [Migration Guide](https://github.com/MudBlazor/MudBlazor/blob/dev/MIGRATION.md) for help with breaking changes.  
+
+> [!WARNING]
+>
+> 1. Static rendering is not supported - [Learn more](https://learn.microsoft.com/aspnet/core/blazor/components/render-modes).
+> 2. Older browsers may not be supported. Use a modern, up-to-date browser - [Blazor supported platforms](https://learn.microsoft.com/aspnet/core/blazor/supported-platforms).

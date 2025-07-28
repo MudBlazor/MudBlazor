@@ -1101,6 +1101,17 @@ namespace MudBlazor
 
         #endregion
 
+        /// <summary>
+        /// Determines whether an unsorted state (<see cref="SortDirection.None"/>) is allowed when toggling sort directions.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>. When <c>false</c>, the sort direction toggles only between 
+        /// <see cref="SortDirection.Ascending"/> and <see cref="SortDirection.Descending"/>.
+        /// When <c>true</c>, a third toggle state, <see cref="SortDirection.None"/>, is included.
+        /// </remarks>
+        [Parameter]
+        public bool AllowUnsorted { get; set; } = false;
+
         #region Properties
 
         internal IEnumerable<T> CurrentPageItems
