@@ -613,5 +613,15 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll(".mud-drawer-overlay").Count.Should().Be(expectedToggledDrawerCount);
             comp.Instance.Drawer.Open.Should().Be(!initialState);
         }
+
+
+        [Test]
+        public void DrawerPersistentTopAndBottomTest()
+        {
+            var comp = Context.RenderComponent<DrawerPersistentTest>(
+                Parameter(nameof(DrawerPersistentTest.Anchor), Anchor.Top));
+
+        }
+      
     }
 }
