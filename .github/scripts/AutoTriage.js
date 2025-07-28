@@ -1,10 +1,6 @@
 /**
- * AutoTriage - AI-Powered GitHub Issue & PR Analyzer
- *
- * Automatically analyzes GitHub issues and pull requests using Gemini,
- * then applies appropriate labels and helpful comments to improve project management.
- *
- * Original work by Daniel Chalmers © 2025
+ * AutoTriage - AI-powered GitHub triage bot
+ * © Daniel Chalmers 2025
  */
 
 const fetch = require('node-fetch');
@@ -20,12 +16,10 @@ const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const GITHUB_REPOSITORY = process.env.GITHUB_REPOSITORY;
 const GITHUB_ISSUE_NUMBER = parseInt(process.env.GITHUB_ISSUE_NUMBER, 10);
-const AUTOTRIAGE_WEBHOOK = process.env.AUTOTRIAGE_WEBHOOK;
 const [OWNER, REPO] = (GITHUB_REPOSITORY || '').split('/');
 const issueParams = { owner: OWNER, repo: REPO, issue_number: GITHUB_ISSUE_NUMBER };
-const GITHUB_ISSUE_URL = `https://github.com/${OWNER}/${REPO}/issues/${GITHUB_ISSUE_NUMBER}`;
-
 const VALID_PERMISSIONS = new Set(['label', 'comment', 'close', 'edit']);
+
 let PERMISSIONS = new Set(
     (process.env.AUTOTRIAGE_PERMISSIONS || '')
         .split(',')
@@ -33,22 +27,6 @@ let PERMISSIONS = new Set(
         .filter(p => VALID_PERMISSIONS.has(p))
 );
 
-const can = action => PERMISSIONS.has(action);
-
-// Send a Discord alert for urgent issues
-async function sendAlert(issue, reason) {
-    if (!AUTOTRIAGE_WEBHOOK || !can('alert')) return;
-    await fetch(AUTOTRIAGE_WEBHOOK, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            content: `**🚨 Intervention Requested — ${issue.title}**\n${reason}\n${GITHUB_ISSUE_URL}`
-        })
-    });
-    console.log(`🚨 Sent webhook alert`);
-}
-
-// Call Gemini to analyze the issue content and return structured response
 async function callGemini(prompt) {
     const payload = {
         contents: [{ parts: [{ text: prompt }] }],
@@ -57,14 +35,14 @@ async function callGemini(prompt) {
             responseSchema: {
                 type: "object",
                 properties: {
-                    rating: { type: "integer", description: "How much a human intervention is needed on a scale of 1 to 10" },
+                    severity: { type: "integer", description: "How severe the issue is on a scale of 1 to 10" },
                     reason: { type: "string", description: "Brief thought process for logging purposes" },
                     comment: { type: "string", description: "A comment to reply to the issue with", nullable: true },
                     labels: { type: "array", items: { type: "string" }, description: "The final set of labels the issue should have" },
                     close: { type: "boolean", description: "Set to true if the issue should be closed as part of this action", nullable: true },
                     newTitle: { type: "string", description: "A new title for the issue or pull request", nullable: true }
                 },
-                required: ["rating", "reason", "comment", "labels"]
+                required: ["severity", "reason", "labels"]
             }
         }
     };
@@ -97,12 +75,12 @@ async function callGemini(prompt) {
     return JSON.parse(result);
 }
 
-// Create issue metadata for analysis
 async function buildMetadata(issue, octokit) {
     const isIssue = !issue.pull_request;
     const currentLabels = issue.labels?.map(l => l.name || l) || [];
     const hasAssignee = Array.isArray(issue.assignees) ? issue.assignees.length > 0 : !!issue.assignee;
     const { data: collaboratorsData } = await octokit.rest.repos.listCollaborators({ owner: OWNER, repo: REPO });
+    const { data: releasesData } = await octokit.rest.repos.listReleases({ owner: OWNER, repo: REPO });
 
     return {
         title: issue.title,
@@ -116,11 +94,11 @@ async function buildMetadata(issue, octokit) {
         reactions: issue.reactions?.total_count || 0,
         labels: currentLabels,
         assigned: hasAssignee,
-        collaborators: collaboratorsData.map(c => c.login)
+        collaborators: collaboratorsData.map(c => c.login),
+        releases: releasesData.map(r => ({ name: r.tag_name, date: r.published_at })),
     };
 }
 
-// Build timeline report from GitHub events
 async function buildTimeline(octokit, issue_number) {
     const { data: timelineEvents } = await octokit.rest.issues.listEventsForTimeline({
         owner: OWNER,
@@ -147,7 +125,6 @@ async function buildTimeline(octokit, issue_number) {
     }).filter(Boolean);
 }
 
-// Build the full prompt by combining base template with issue data
 async function buildPrompt(issue, octokit, previousContext = null) {
     let basePrompt = fs.readFileSync(path.join(__dirname, 'AutoTriage.prompt'), 'utf8');
 
@@ -170,17 +147,17 @@ Last triaged: ${previousContext?.lastTriaged}
 Previous reasoning: ${previousContext?.previousReasoning}
 Current triage date: ${new Date().toISOString()}
 Current permissions: ${Array.from(PERMISSIONS).join(', ') || 'none'}
-All possible permissions: label (add/remove labels), comment (post comments), close (close issue), edit (edit title), alert (send Discord notification)
+All possible permissions: label (add/remove labels), comment (post comments), close (close issue), edit (edit title)
 
 === SECTION: INSTRUCTIONS ===
-Analyze this issue, its metadata, and its full timeline. Your entire response must be a single, valid JSON object and nothing else. Do not use Markdown, code fences, or any explanatory text.`;
+Analyze this issue, its metadata, and its full timeline.
+Your entire response must be a single, valid JSON object and nothing else. Do not use Markdown, code fences, or any explanatory text.`;
 
     saveArtifact(`github-timeline.md`, JSON.stringify(timelineReport, null, 2));
     saveArtifact(`gemini-input.md`, promptString);
     return promptString;
 }
 
-// Update GitHub issue labels
 async function updateLabels(suggestedLabels, octokit) {
     const { data: issue } = await octokit.rest.issues.get(issueParams);
     const currentLabels = issue.labels?.map(l => l.name || l) || [];
@@ -195,7 +172,7 @@ async function updateLabels(suggestedLabels, octokit) {
     ];
     console.log(`🏷️ Label changes: ${changes.join(', ')}`);
 
-    if (!octokit || !can('label')) return;
+    if (!octokit || !PERMISSIONS.has('label')) return;
 
     if (labelsToAdd.length > 0) {
         await octokit.rest.issues.addLabels({ ...issueParams, labels: labelsToAdd });
@@ -206,27 +183,23 @@ async function updateLabels(suggestedLabels, octokit) {
     }
 }
 
-// Add AI-generated comment to the issue
 async function createComment(body, octokit) {
-    if (!octokit || !can('comment')) return;
+    if (!octokit || !PERMISSIONS.has('comment')) return;
     await octokit.rest.issues.createComment({ ...issueParams, body: body });
 }
 
-// Update issue/PR title
 async function updateTitle(title, newTitle, octokit) {
     console.log(`✏️ Updating title from "${title}" to "${newTitle}"`);
-    if (!octokit || !can('edit')) return;
+    if (!octokit || !PERMISSIONS.has('edit')) return;
     await octokit.rest.issues.update({ ...issueParams, title: newTitle });
 }
 
-// Close issue with specified reason
 async function closeIssue(octokit, reason = 'not_planned') {
     console.log(`🔒 Closing issue as ${reason}`);
-    if (!octokit || !can('close')) return;
+    if (!octokit || !PERMISSIONS.has('close')) return;
     await octokit.rest.issues.update({ ...issueParams, state: 'closed', state_reason: reason });
 }
 
-// Main processing function - analyze and act on a single issue/PR
 async function processIssue(issue, octokit, previousContext = null) {
     const metadata = await buildMetadata(issue, octokit);
     const formattedMetadata = [
@@ -242,12 +215,8 @@ async function processIssue(issue, octokit, previousContext = null) {
     const analysis = await callGemini(prompt);
     const analysisTimeSeconds = ((Date.now() - startTime) / 1000).toFixed(1);
 
-    console.log(`🤖 Gemini returned analysis in ${analysisTimeSeconds}s with a human intervention rating of ${analysis.rating}/10:`);
+    console.log(`🤖 Gemini returned analysis in ${analysisTimeSeconds}s with a severity score of ${analysis.severity}/10:`);
     console.log(`🤖 "${analysis.reason}"`);
-
-    if (analysis.rating >= 8) {
-        await sendAlert(issue, analysis.reason);
-    }
 
     await updateLabels(analysis.labels, octokit);
 
@@ -268,7 +237,6 @@ async function processIssue(issue, octokit, previousContext = null) {
     return analysis;
 }
 
-// Get previous triage context for re-triage conditions
 function getPreviousContextForIssue(triageDb, issue) {
     const triageEntry = triageDb[GITHUB_ISSUE_NUMBER];
 

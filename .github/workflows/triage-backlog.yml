@@ -58,7 +58,6 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          AUTOTRIAGE_WEBHOOK: ${{ secrets.AUTOTRIAGE_WEBHOOK }}
           # Only define AUTOTRIAGE_DB_PATH if not analyzing specified issue numbers from input
           AUTOTRIAGE_DB_PATH: ${{ !inputs.issue-numbers && format('{0}/triage-db.json', github.workspace) || '' }}
           # Use input for permissions, fallback to repo variable for scheduled runs.
