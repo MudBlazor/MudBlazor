@@ -2117,6 +2117,128 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// A table with 3 unexpanded groups. The first group is expanded, next removed.
+        /// The other groups remain unexpanded.
+        /// </summary>
+        /// <remarks>
+        /// https://github.com/MudBlazor/MudBlazor/issues/10250
+        /// </remarks>
+        [Test]
+        public void TableGrouping_ExpandFirstGroupAndRemoveIt_OtherGroupsRemainUnexpanded()
+        {
+            // Arrange
+
+            var comp = Context.RenderComponent<TableGroupingTest3>();
+            var table = comp.Instance.TableInstance;
+            comp.Render();
+
+            // Assert : Three groups are unexpanded
+
+            table.Context.GroupRows.Count.Should().Be(3);
+            table.Context.GroupRows.ElementAt(0).Expanded.Should().BeFalse();
+            table.Context.GroupRows.ElementAt(1).Expanded.Should().BeFalse();
+            table.Context.GroupRows.ElementAt(2).Expanded.Should().BeFalse();
+
+            // Act : Expend the first group
+
+            comp.FindAll("button")[0].Click();
+
+            // Assert : Only the first group is expanded
+
+            table.Context.GroupRows.Count.Should().Be(3);
+            table.Context.GroupRows.ElementAt(0).Expanded.Should().BeTrue();
+            table.Context.GroupRows.ElementAt(1).Expanded.Should().BeFalse();
+            table.Context.GroupRows.ElementAt(2).Expanded.Should().BeFalse();
+
+            // Act : Remove the first group
+
+            comp.Instance.Items.RemoveAll(i => i.Group == "One");
+            comp.Render();
+
+            // Assert : Two groups are unexpanded
+
+            table.Context.GroupRows.Count.Should().Be(2);
+            table.Context.GroupRows.ElementAt(0).Expanded.Should().BeFalse();
+            table.Context.GroupRows.ElementAt(1).Expanded.Should().BeFalse();
+        }
+
+        /// <summary>
+        /// A table with unexpanded groups and unexpanded nested groups.
+        /// The first group and its first nested group are expanded. Then remove the first nested group.
+        /// The other nested group remains unexpanded.
+        /// </summary>
+        /// <remarks>
+        /// https://github.com/MudBlazor/MudBlazor/issues/10250
+        /// </remarks>
+        [Test]
+        public void TableGrouping_ExpandFirstNestedGroupAndRemoveIt_OtherNestedGroupsRemainUnexpanded()
+        {
+            // Arrange
+
+            var comp = Context.RenderComponent<TableGroupingNestedTest>();
+            var table = comp.Instance.TableInstance;
+            comp.Render();
+
+            // Assert : All groups are unexpanded
+
+            {
+                var groups = table.Context.GroupRows;
+                groups.Count.Should().Be(3);
+                groups.Single(g => g.Items.Key.ToString() == "G1").Expanded.Should().BeFalse();
+                groups.Single(g => g.Items.Key.ToString() == "G2").Expanded.Should().BeFalse();
+                groups.Single(g => g.Items.Key.ToString() == "G3").Expanded.Should().BeFalse();
+            }
+
+            // Act : Expend the first group
+
+            comp.FindAll("button")[0].Click();
+
+            // Assert : Only the first group is expanded
+
+            {
+                var groups = table.Context.GroupRows;
+                groups.Count.Should().Be(5);
+                groups.Single(g => g.Items.Key.ToString() == "G1").Expanded.Should().BeTrue();
+                groups.Single(g => g.Items.Key.ToString() == "G1 > N1").Expanded.Should().BeFalse();
+                groups.Single(g => g.Items.Key.ToString() == "G1 > N2").Expanded.Should().BeFalse();
+                groups.Single(g => g.Items.Key.ToString() == "G2").Expanded.Should().BeFalse();
+                groups.Single(g => g.Items.Key.ToString() == "G3").Expanded.Should().BeFalse();
+            }
+
+            // Act : Expand the first nested group in the first group
+
+            comp.FindAll("button")[1].Click();
+
+            // Assert : Only the first group and its first nested group are expanded
+
+            {
+                var groups = table.Context.GroupRows;
+                groups.Count.Should().Be(5);
+                groups.Single(g => g.Items.Key.ToString() == "G1").Expanded.Should().BeTrue();
+                groups.Single(g => g.Items.Key.ToString() == "G1 > N1").Expanded.Should().BeTrue();
+                groups.Single(g => g.Items.Key.ToString() == "G1 > N2").Expanded.Should().BeFalse();
+                groups.Single(g => g.Items.Key.ToString() == "G2").Expanded.Should().BeFalse();
+                groups.Single(g => g.Items.Key.ToString() == "G3").Expanded.Should().BeFalse();
+            }
+
+            // Act : Remove the first nested group in first group
+
+            comp.Instance.Items.RemoveAll(i => i.Group == "G1" && i.Nested == "N1");
+            comp.Render();
+
+            // Assert : Only the first group is expanded and its remaining nested group is unexpanded
+
+            {
+                var groups = table.Context.GroupRows;
+                groups.Count.Should().Be(4);
+                groups.Single(g => g.Items.Key.ToString() == "G1").Expanded.Should().BeTrue();
+                groups.Single(g => g.Items.Key.ToString() == "G1 > N2").Expanded.Should().BeFalse();
+                groups.Single(g => g.Items.Key.ToString() == "G2").Expanded.Should().BeFalse();
+                groups.Single(g => g.Items.Key.ToString() == "G3").Expanded.Should().BeFalse();
+            }
+        }
+
+        /// <summary>
         /// Tests the grouping behavior and ensure that it won't break anything else.
         /// </summary>
         /// <returns></returns>
