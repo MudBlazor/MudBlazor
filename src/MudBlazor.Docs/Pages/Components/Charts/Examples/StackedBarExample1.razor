@@ -30,6 +30,9 @@
         </MudStack>
     </MudItem>
     <MudItem md="6" xs="12">
+        <MudTextField @bind-Value="_axisChartOptions.LabelFontSize" Label="Label Font Size"></MudTextField>
+    </MudItem>
+    <MudItem md="6" xs="12">
         <MudStack>
             <MudText Typo="Typo.body1">Legend Position</MudText>
             <MudRadioGroup T="Position" @bind-Value="_legendPosition">

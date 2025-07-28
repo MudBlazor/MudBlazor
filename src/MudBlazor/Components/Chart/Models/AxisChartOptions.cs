@@ -26,6 +26,11 @@ public class AxisChartOptions
     public int LabelExtraHeight { get; set; }
 
     /// <summary>
+    /// Font size of labels. Defaults to '12px'.
+    /// </summary>
+    public string LabelFontSize { get; set; } = "12px";
+
+    /// <summary>
     /// The ratio of the width of the bars to the space between them.
     /// </summary>
     public double StackedBarWidthRatio { get; set; } = 0.5;
