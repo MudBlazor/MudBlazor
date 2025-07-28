@@ -1,0 +1,73 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudContainer MaxWidth="MaxWidth.Large">
+    <MudGrid Class="d-flex mx-auto">
+        <MudItem xs="6" md="4">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => OpenSheet(1))">Top Sheet</MudButton>
+        </MudItem>
+        <MudItem xs="6" md="4">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => OpenSheet(1))">Bottom Sheet</MudButton>
+        </MudItem>
+        <MudItem xs="6" md="4">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => OpenSheet(4))">Side Sheet (Left)</MudButton>
+        </MudItem>
+        <MudItem xs="6" md="4">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => OpenSheet(4))">Side Sheet (Right)</MudButton>
+        </MudItem>
+        <MudItem xs="12" md="6">
+            <MudSlider @bind-Value="@_currentSize" Variant="Variant.Filled" Min="0" Max="100">Current Size</MudSlider>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+<MudSheet @bind-Open="@_sheet1Open" @bind-CurrentSize="@_currentSize" Position="Position.Bottom">
+    <MudIconButton Icon="@Icons.Material.Filled.Delete" aria-label="delete" />
+    <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Primary" aria-label="github" />
+    <MudIconButton Icon="@Icons.Material.Filled.Favorite" Color="Color.Secondary" aria-label="add to favorite" />
+    <MudIconButton Icon="@Icons.Material.Filled.Share" Disabled="true" aria-label="share" />
+</MudSheet>
+
+<MudSheet @bind-Open="@_sheet4Open" @bind-CurrentSize="@_currentSize" Position="Position.End">
+    <MudStack Spacing="4">
+        <MudText Typo="Typo.h6">User Settings</MudText>
+        <MudTextField T="string" Label="Display Name" Variant="Variant.Outlined" />
+        <MudTextField T="string" Label="Email Address" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Email" />
+        <MudSelect T="string" Label="Theme" Variant="Variant.Outlined">
+            <MudSelectItem Value="@("Light")">Light</MudSelectItem>
+            <MudSelectItem Value="@("Dark")">Dark</MudSelectItem>
+            <MudSelectItem Value="@("System")">System Default</MudSelectItem>
+        </MudSelect>
+        <MudSwitch Value="false" Label="Enable Notifications" Color="Color.Primary" />
+        <MudDivider />
+        <MudStack Row="true" Justify="Justify.FlexEnd" Spacing="2">
+            <MudButton Variant="Variant.Text" Color="Color.Default">Cancel</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary">Save</MudButton>
+        </MudStack>
+    </MudStack>
+</MudSheet>
+
+@code {
+    private bool _sheet1Open = false;
+    private bool _sheet4Open = false;
+    private int _currentSize = 25;
+
+    /// <summary>
+    /// Gets a cascading value indicating whether the layout and text direction are rendered in a right-to-left format.
+    /// </summary>
+    [CascadingParameter(Name = "RightToLeft")]
+    [Category(CategoryTypes.Sheet.Appearance)]
+    public bool RightToLeft { get; set; }
+
+    private void OpenSheet(int sheet)
+    {
+        switch (sheet)
+        {
+            case 1:
+                _sheet1Open = !_sheet1Open;
+                break;
+            case 4:
+                _sheet4Open = !_sheet4Open;
+                break;
+        }
+    }
+}

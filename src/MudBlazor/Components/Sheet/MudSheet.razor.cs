@@ -22,7 +22,6 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
     /// The id for the sheet container element, used for accessibility and styling purposes.
     /// </summary>
     public string ElementId { get; private set; } = Identifier.Create("sheet-");
-    private string _ariaLabel = string.Empty;
     private bool _dragging;
     private bool _isDisposing = false;
     private bool _updateState;
@@ -30,7 +29,7 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
     private record struct DragPoints(double XDown, double YDown, int StartSize);
     private DragPoints? _points;
     private DateTime _lastPointerMove = DateTime.MinValue;
-    private static readonly TimeSpan PointerMoveThrottle = TimeSpan.FromMilliseconds(16); // ~60fps
+    private static readonly TimeSpan PointerMoveThrottle = TimeSpan.FromMilliseconds(16);
 
     private record struct ViewPortSize(double Width, double Height);
     private ViewPortSize? _viewportSize;
@@ -66,7 +65,6 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
             .AddClass($"mud-sheet-position-{Positioning}")
             .AddClass($"mud-sheet-borderradius-{BorderRadius}", BorderRadius != null)
             .AddClass($"mud-elevation-{Elevation}", !_dragging && Elevation > 0)
-            .AddClass($"mud-elevation-{DragElevation}", _dragging && DragElevation > 0)
             .AddClass("mud-sheet-dragging", _dragging)
             .AddClass(Class)
             .Build();
@@ -134,6 +132,17 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
     public bool RightToLeft { get; set; }
 
     /// <summary>
+    /// Displays content within a <see cref="MudPaper"/>.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>true</c>.<br/>
+    /// When true it spans 100% width, 100% height, and overflow: auto
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Popover.Appearance)]
+    public bool Paper { get; set; } = true;
+
+    /// <summary>
     /// The size of the drop shadow.
     /// </summary>
     /// <remarks>
@@ -144,21 +153,12 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
     public int Elevation { set; get; } = 16;
 
     /// <summary>
-    /// The size of the drop shadow during drag events.
-    /// </summary>
-    /// <remarks>
-    /// Defaults to <c>25</c>, the maximum. 
-    /// </remarks>
-    [Parameter]
-    [Category(CategoryTypes.Sheet.Appearance)]
-    public int DragElevation { get; set; } = 25;
-
-    /// <summary>
     /// The border radius of the sheet. Does not apply to the connecting edge.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>16</c>.<br/>
     /// Can be set to <c>null</c> to default to MudTheme border radius.<br/>
+    /// Any value above 24 is ignored and set to <c>null</c>.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Sheet.Appearance)]
@@ -349,6 +349,40 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
     public Dictionary<string, object?> AriaAttributes { get; private set; } = [];
 
     /// <summary>
+    /// Return a combined list of attributes used on the MudSheet Container element.
+    /// </summary>
+    /// <returns></returns>
+    private Dictionary<string, object?> UpdatedAttributes
+    {
+        get
+        {
+            var _ariaLabel = $"{CultureInfo.InvariantCulture.TextInfo.ToTitleCase(Positioning)} Sheet";
+            // Update AriaAttributes based on the sheet's properties
+            AriaAttributes.Clear();
+            // Ensure the container is outside of the tab order
+            AriaAttributes.Add("tabindex", -1);
+            AriaAttributes["aria-label"] = AriaLabel ?? _ariaLabel;
+            if (Standard)
+            {
+                // sets region role for standard sheets
+                AriaAttributes["role"] = "region";
+            }
+            else
+            {
+                // lets screen readers know this is a modal dialog and must be interacted with or dismissed
+                AriaAttributes["role"] = "dialog";
+                AriaAttributes["aria-modal"] = "true";
+            }
+            var mergedAttributes = new Dictionary<string, object?>(AriaAttributes);
+            foreach (var attr in base.UserAttributes)
+            {
+                mergedAttributes[attr.Key] = attr.Value;
+            }
+            return mergedAttributes;
+        }
+    }
+
+    /// <summary>
     /// Returns the Current Drag Handle Icon based on the Position of the sheet.
     /// </summary>
     protected string DragHandle => Position is Position.Top or Position.Bottom or Position.Center ? VerticalHandle : HorizontalHandle;
@@ -443,30 +477,6 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
         Math.Clamp(newSize, 0, 100);
         await _currentSizeState.SetValueAsync(newSize);
         await CurrentSizeChanged.InvokeAsync(newSize);
-    }
-
-    /// <summary>
-    /// Updates the ARIA attributes for the sheet based on its properties.
-    /// </summary>
-    private void UpdateAriaAttributes()
-    {
-        _ariaLabel = $"{CultureInfo.InvariantCulture.TextInfo.ToTitleCase(Positioning)} Sheet";
-        // Update AriaAttributes based on the sheet's properties
-        AriaAttributes.Clear();
-        // Ensure the container is outside of the tab order
-        AriaAttributes.Add("tabindex", -1);
-        AriaAttributes["aria-label"] = AriaLabel ?? _ariaLabel;
-        if (Standard)
-        {
-            // sets region role for standard sheets
-            AriaAttributes["role"] = "region";
-        }
-        else
-        {
-            // lets screen readers know this is a modal dialog and must be interacted with or dismissed
-            AriaAttributes["role"] = "dialog";
-            AriaAttributes["aria-modal"] = "true";
-        }
     }
 
     /// <summary>
@@ -664,7 +674,7 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
     }
 
     /// <summary>
-    /// 
+    /// Override OnAfterRender
     /// </summary>
     protected override void OnAfterRender(bool firstRender)
     {
@@ -673,7 +683,6 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
         {
             // If the state has been updated, we need to re-render the component
             _updateState = false;
-            UpdateAriaAttributes();
             StateHasChanged();
         }
     }
@@ -690,16 +699,16 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
                 (newCurrentSize < 0 || newCurrentSize > 100))
         {
             // [Fail Fast] throw an exception so the user knows the error
-            throw new ArgumentOutOfRangeException("CurrentSize", "CurrentSize must be between 0 and 100.");
+            throw new ArgumentOutOfRangeException(newCurrentSize.GetType().Name, "CurrentSize must be between 0 and 100.");
         }
 
         _updateState = AriaAttributes.Count == 0;
 
         // Check Aria attributes for override
-        // AriaLabel updated?
+        AriaAttributes.TryGetValue("aria-label", out var ariaLabelold);
         _updateState = _updateState ||
             (parameters.TryGetValue<string>(nameof(AriaLabel), out var newAriaLabel) &&
-                newAriaLabel != _ariaLabel);
+                newAriaLabel != (string?)ariaLabelold);
 
         // Position updated?
         _updateState = _updateState ||

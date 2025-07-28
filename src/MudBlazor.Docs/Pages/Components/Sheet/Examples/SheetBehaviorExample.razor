@@ -1,0 +1,171 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudContainer MaxWidth="MaxWidth.Large">
+    <MudGrid Class="d-flex mx-auto">
+        <MudItem xs="12" md="6">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => OpenSheet(1))">Bottom Sheet</MudButton>
+        </MudItem>
+        <MudItem xs="12" md="6">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => OpenSheet(4))">Side Sheet (End)</MudButton>
+        </MudItem>
+        <MudItem xs="12" md="6" Class="align-content-center">
+            <MudSwitch Color="Color.Primary" Label="Close On Escape" LabelPlacement="Placement.Right" @bind-Value="_closeOnEsc" />
+        </MudItem>
+        <MudItem xs="12" md="6">
+            <MudStack>
+                <MudText>Cover AppBar</MudText>
+                <MudToggleGroup T="bool?" SelectionMode="SelectionMode.ToggleSelection" @bind-Value="_coverAppBar" Color="Color.Tertiary" CheckMark>
+                    <MudToggleItem Value="@((bool?)true)" Text="True" />
+                    <MudToggleItem Value="@((bool?)false)" Text="False" />
+                </MudToggleGroup>
+            </MudStack>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+<MudSheet @bind-Open="@_sheet1Open" Position="Position.Bottom" CloseOnEscapeKey="@_closeOnEsc" CoverAppBar="@_coverAppBar">
+    <MudList SelectionMode="@SelectionMode.MultiSelection" T="Drink">
+        @foreach (Drink item in Enum.GetValues(typeof(Drink))) 
+        {
+            <MudListItem Value="@item">@item</MudListItem>
+        }
+    </MudList>
+</MudSheet>
+
+<MudSheet @bind-Open="@_sheet4Open" Position="Position.End" CloseOnEscapeKey="@_closeOnEsc" CoverAppBar="@_coverAppBar">
+    <MudStack AlignItems="AlignItems.Center">
+        <MudTextField T="string" Label="Search" 
+                        Adornment="Adornment.Start" 
+                        AdornmentIcon="@Icons.Material.Filled.Search" 
+                        @bind-Value="@_searchPhrase" 
+                        @bind-Value:after="@(() => _treeView?.FilterAsync())"
+                        Immediate="true" Clearable="true" />
+        <MudTreeView Items="@_treeItemData" @ref="_treeView" FilterFunc="MatchesText" @bind-SelectedValues="@_selectedTreeValues">
+            <ItemTemplate>
+                <MudTreeViewItem @bind-Expanded="@context.Expanded" Items="@context.Children" Value="@context.Value"
+                                    Icon="@context.Icon" Text="@context.Text" Visible="@context.Visible" />
+            </ItemTemplate>
+        </MudTreeView>
+    </MudStack>
+</MudSheet>
+
+@code {
+    #nullable enable
+    private bool _sheet1Open = false;
+    private bool _sheet4Open = false;
+    private bool _closeOnEsc = true;
+    private bool? _coverAppBar;
+    public enum Drink { Tea, SparklingWater, SoftDrink, Cider, Beer, Wine, Moonshine, Wodka, Cola, GreeTea, FruitJuice, Lemonade, HotWater, SpringWater, IceWater, }
+
+    /// <summary>
+    /// Gets a cascading value indicating whether the layout and text direction are rendered in a right-to-left format.
+    /// </summary>
+    [CascadingParameter(Name = "RightToLeft")]
+    [Category(CategoryTypes.Sheet.Appearance)]
+    public bool RightToLeft { get; set; }
+
+    private IReadOnlyCollection<string> _selectedTreeValues { get; set; } = [];
+    private string _searchPhrase = string.Empty;
+    private MudTreeView<string>? _treeView;
+    private List<TreeItemData<string>> _treeItemData = new()
+    {
+        new TreeItemPresenter("General", Icons.Material.Filled.Settings)
+        {
+            Expanded = true,
+            Children =
+            [
+            new TreeItemPresenter("Appearance", Icons.Material.Filled.ColorLens),
+            new TreeItemPresenter("Notifications", Icons.Material.Filled.Notifications),
+            new TreeItemPresenter("Privacy", Icons.Material.Filled.Lock),
+            new TreeItemPresenter("Language", Icons.Material.Filled.Language)
+            ]
+        },
+
+        new TreeItemPresenter("Account", Icons.Material.Filled.Person)
+        {
+            Expanded = true,
+            Children =
+            [
+            new TreeItemPresenter("Profile", Icons.Material.Filled.AccountCircle),
+            new TreeItemPresenter("Security", Icons.Material.Filled.Security),
+            new TreeItemPresenter("Subscription", Icons.Material.Filled.CreditCard),
+            new TreeItemPresenter("Connected Apps", Icons.Material.Filled.Link)
+            ]
+        },
+
+        new TreeItemPresenter("System", Icons.Material.Filled.Computer)
+        {
+            Expanded = true,
+            Children =
+            [
+            new TreeItemPresenter("Performance", Icons.Material.Filled.Speed),
+            new TreeItemPresenter("Storage", Icons.Material.Filled.Storage),
+            new TreeItemPresenter("Updates", Icons.Material.Filled.SystemUpdate),
+            new TreeItemPresenter("Startup", Icons.Material.Filled.Power)
+            ]
+        },
+
+        new TreeItemPresenter("Network", Icons.Material.Filled.Wifi)
+        {
+            Expanded = true,
+            Children =
+            [
+            new TreeItemPresenter("Wi-Fi", Icons.Material.Filled.NetworkWifi),
+            new TreeItemPresenter("VPN", Icons.Material.Filled.VpnLock),
+            new TreeItemPresenter("Proxy", Icons.Material.Filled.Dns),
+            new TreeItemPresenter("Firewall", Icons.Material.Filled.Shield)
+            ]
+        },
+
+        new TreeItemPresenter("Developer", Icons.Material.Filled.Code)
+        {
+            Expanded = true,
+            Children =
+            [
+            new TreeItemPresenter("Debug Mode", Icons.Material.Filled.BugReport),
+            new TreeItemPresenter("API Keys", Icons.Material.Filled.VpnKey),
+            new TreeItemPresenter("Feature Flags", Icons.Material.Filled.Flag),
+            new TreeItemPresenter("Logs", Icons.Material.Filled.List)
+            ]
+        },
+
+        new TreeItemPresenter("Support", Icons.Material.Filled.Help)
+        {
+            Expanded = true,
+            Children =
+            [
+            new TreeItemPresenter("Documentation", Icons.Material.Filled.MenuBook),
+            new TreeItemPresenter("Contact Us", Icons.Material.Filled.SupportAgent),
+            new TreeItemPresenter("Feedback", Icons.Material.Filled.Feedback)
+            ]
+        }
+    };
+
+    private class TreeItemPresenter : TreeItemData<string>
+    {
+        public TreeItemPresenter(string text, string icon) : base(text) { Text = text; Icon = icon; }
+
+        public TreeItemPresenter(string text) : base(text) { Text = text; }
+    }
+
+    private Task<bool> MatchesText(TreeItemData<string> item)
+    {
+        if (string.IsNullOrWhiteSpace(item.Text))
+            return Task.FromResult(false);
+
+        return Task.FromResult(item.Text.Contains(_searchPhrase, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private void OpenSheet(int sheet)
+    {
+        switch (sheet)
+        {
+            case 1:
+                _sheet1Open = !_sheet1Open;
+                break;
+            case 4:
+                _sheet4Open = !_sheet4Open;
+                break;
+        }
+    }
+}

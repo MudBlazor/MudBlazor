@@ -21,7 +21,7 @@
                     <ul class="mt-2" style="list-style: initial; padding-left: 1.5rem;">
                         <li><CodeInline>Standard</CodeInline>: Defaults to <strong>true</strong> (non-modal); Set to <c>false</c> for Modal.</li>
                         <li><CodeInline>EnableDragToSize</CodeInline>: Draggable via the handle if true, (vertical or horizontal based on <CodeInline>Position</CodeInline>).</li>
-                        <li><CodeInline>CSS</CodeInline>: Top/Bottom sheets have a default max width of 640px — override via CSS.</li>
+                        <li><b>CSS</b>: Top/Bottom sheets have a default max width of 640px — override via CSS.</li>
                     </ul>
                 </Description>
             </SectionHeader>
@@ -31,19 +31,37 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Appearance">
+            <SectionHeader Title="Two Way Bind">
                 <Description>
-                    There are many Appearance properties that can be used to customize the look and feel or even of 
-                    the sheet, see the API for all of the options.
-                    <ul class="mt-2" style="list-style: initial; padding-left: 1.5rem;">
-                        <li><CodeInline>Standard</CodeInline>: Defaults to <strong>true</strong> (non-modal); Set to <c>false</c> for Modal.</li>
-                        <li><CodeInline>EnableDragToSize</CodeInline>: Draggable via the handle if true, (vertical or horizontal based on <CodeInline>Position</CodeInline>).</li>
-                        <li><CodeInline>CSS</CodeInline>: Top/Bottom sheets have a default max width of 640px — override via CSS.</li>
-                    </ul>
+                    You can two-way bind both the <CodeInline>Open</CodeInline> property as well as the <CodeInline>CurrentSize</CodeInline> property.
                 </Description>
             </SectionHeader>
-            <SectionContent Code="@nameof(SheetBasicUsageExample)" ShowCode="false">
-                <SheetBasicUsageExample />
+            <SectionContent Code="@nameof(SheetBindExample)" ShowCode="false">
+                <SheetBindExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Appearance">
+                <Description>
+                    There are many Appearance properties that can be used to customize the look and feel of 
+                    the sheet, see the API for all of the options. Two examples shown here are <CodeInline>BorderRadius</CodeInline> or <CodeInline>AriaLabel</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(SheetAppearanceExample)" ShowCode="false">
+                <SheetAppearanceExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Behavior">
+                <Description>
+                    There are many Behavior properties that can be used to customize the way the sheet works, 
+                    see the API for all of the options. Two examples shown here are <CodeInline>CoverAppBar</CodeInline> and <CodeInline>CloseOnEscapeKey</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(SheetBehaviorExample)" ShowCode="false">
+                <SheetBehaviorExample />
             </SectionContent>
         </DocsPageSection>
 

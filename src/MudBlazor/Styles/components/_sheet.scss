@@ -58,6 +58,14 @@ div[mudsheet] {
 
   .mud-sheet-container {
     position: relative;
+
+    &.mud-sheet-dragging {
+      border: 1px solid var(--mud-palette-divider);
+    }
+  }
+
+  .mud-sheet-content {
+    padding: #{$sheet-margin};
   }
 }
 
@@ -76,21 +84,22 @@ div[mudsheet] {
   background-color: var(--mud-palette-surface);
   border-radius: var(--sheet-borderradius);
   transition: height 200ms cubic-bezier(0.4, 0, 0.2, 1), width 200ms cubic-bezier(0.4, 0, 0.2, 1);
+
   /* Sheet Content */
   .mud-sheet-content {
     color: var(--mud-palette-text-primary);
-    overflow: auto;
+    overflow: hidden;
     display: flex;
     flex: 1;
+
+    > .mud-paper {
+      border-radius: unset;
+    }
   }
-  /* Flex style Positioning & Border Radius & Padding */
+  /* Flex style Positioning & Border Radius */
   &.mud-sheet-position-bottom {
     flex-direction: column;
     border-radius: var(--sheet-borderradius) var(--sheet-borderradius) 0 0;
-
-    .mud-sheet-content {
-      padding: 0 #{$sheet-margin} #{$sheet-margin} #{$sheet-margin};
-    }
 
     .mud-sheet-handle {
       order: -1; // Handle goes above content
@@ -101,10 +110,6 @@ div[mudsheet] {
     flex-direction: column;
     border-radius: 0 0 var(--sheet-borderradius) var(--sheet-borderradius);
 
-    .mud-sheet-content {
-      padding: #{$sheet-margin} #{$sheet-margin} 0 #{$sheet-margin};
-    }
-
     .mud-sheet-handle {
       order: 1; // Handle goes below content
     }
@@ -114,10 +119,6 @@ div[mudsheet] {
     flex-direction: row;
     border-radius: 0 var(--sheet-borderradius) var(--sheet-borderradius) 0;
 
-    .mud-sheet-content {
-      padding: #{$sheet-margin} 0 #{$sheet-margin} #{$sheet-margin};
-    }
-
     .mud-sheet-handle {
       order: 1; // Handle goes to the right of content
     }
@@ -126,10 +127,6 @@ div[mudsheet] {
   &.mud-sheet-position-right {
     flex-direction: row;
     border-radius: var(--sheet-borderradius) 0 0 var(--sheet-borderradius);
-
-    .mud-sheet-content {
-      padding: #{$sheet-margin} #{$sheet-margin} #{$sheet-margin} 0;
-    }
 
     .mud-sheet-handle {
       order: -1; // Handle goes to the left of content
@@ -143,10 +140,6 @@ div[mudsheet] {
     .mud-sheet-handle {
       order: -1;
     }
-
-    .mud-sheet-content {
-      padding: #{$sheet-margin};
-    }
   }
   // Handle styling (Material Design touch target)
   .mud-sheet-handle {
@@ -157,10 +150,11 @@ div[mudsheet] {
     justify-content: center;
     color: var(--mud-palette-divider);
     flex-shrink: 0;
+    border: none;
 
     &.mud-draggable {
       pointer-events: auto;
-      cursor: grab;
+      cursor: grab;      
 
       &:active {
         cursor: grabbing;

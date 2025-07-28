@@ -13,15 +13,8 @@
             <!-- If sheet is modal focus is brought to firstchild, which will be the sheet handle -->
     <MudFocusTrap DefaultFocus="@(Standard ? DefaultFocus.None : DefaultFocus.FirstChild)">
         <!-- Outer Sheet -->
-        @{
-            var userAttributes = UserAttributes;
-            foreach (var attr in AriaAttributes)
-            {
-                userAttributes.TryAdd(attr.Key, attr.Value);
-            }
-        }
         <div id="@ElementId" class="@Classname" style="@Stylename"
-             @attributes="@userAttributes" @onkeydown="@HandleKeyDownAsync">
+             @attributes="@UpdatedAttributes" @onkeydown="@HandleKeyDownAsync">
             <!-- Sheet Handle (Toggle Button and Dragging) -->
             <div @ref="@_handleRef" class="@($"mud-sheet-handle{(EnableDragToSize ? " mud-draggable" : string.Empty)}")" tabindex="-1"
                  @onpointerdown="@HandlePointerDownAsync" @onpointerdown:preventDefault
@@ -33,7 +26,9 @@
             </div>
             <!-- Sheet Content -->
             <div class="mud-sheet-content">
-                @ChildContent
+                <MudElement Class="@(Paper ? "mud-width-full mud-height-full mud-paper overflow-auto" : string.Empty)" HtmlTag="@(Paper ? "div" : "content")">
+                    @ChildContent      
+                </MudElement>                   
             </div>
         </div>
     </MudFocusTrap>
