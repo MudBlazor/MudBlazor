@@ -9,7 +9,6 @@ using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
-using MudBlazor.Components.DataGrid;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 using MudBlazor.Utilities.Clone;
@@ -2157,7 +2156,7 @@ namespace MudBlazor
                 {
                     currentHierarchyKeys.Add(group.Key);
                     hierarchyKeys = new GroupHierarchyKeysCollection(currentHierarchyKeys);
-                    var key = new GroupKey(groupDef.Title, hierarchyKeys.HierarchyPath);
+                    var key = new GroupKey(groupDef.Title, hierarchyKeys);
                     expanded = _groupExpansionsDict.TryGetValue(key, out var value) ? value :
                                    groupDef.Expanded;
                     _groupExpansionsDict.TryAdd(key, expanded);

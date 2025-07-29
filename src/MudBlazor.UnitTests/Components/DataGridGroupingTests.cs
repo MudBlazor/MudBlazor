@@ -727,7 +727,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DataGridMultilevelGroupingNestedGroupExpansionTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridMultilevelGroupingNestedGroupExpansionTest.Model>>();
             var subGroupColName = nameof(DataGridMultilevelGroupingNestedGroupExpansionTest.Model.SubGroup);
-            var groupKey = "A>X";
+            var groupKey = new GroupHierarchyKeysCollection(["A", "X"]);
 
             await comp.InvokeAsync(() => dataGrid.Instance.ToggleGroupExpand(
                 subGroupColName,
@@ -740,8 +740,8 @@ namespace MudBlazor.UnitTests.Components
                 .Where(x => x.Instance.GroupDefinition.Title == subGroupColName)
                 .ToList();
 
-            var groupRowA_X = subGroupRows.First(x => x.Instance.GroupDefinition.HierarchyKeys.HierarchyPath == groupKey);
-            var groupRowB_X = subGroupRows.First(x => x.Instance.GroupDefinition.HierarchyKeys.HierarchyPath != groupKey);
+            var groupRowA_X = subGroupRows.First(x => x.Instance.GroupDefinition.HierarchyKeys.Equals(groupKey));
+            var groupRowB_X = subGroupRows.First(x => !x.Instance.GroupDefinition.HierarchyKeys.Equals(groupKey));
 
             Assert.That(groupRowA_X.Instance.GroupDefinition.Expanded, Is.True, "SubGroup X under group A should be expanded");
             Assert.That(groupRowB_X.Instance.GroupDefinition.Expanded, Is.False, "SubGroup X under group B should remain collapsed");

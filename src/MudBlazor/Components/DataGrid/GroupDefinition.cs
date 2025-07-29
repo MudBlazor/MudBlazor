@@ -4,7 +4,6 @@
 
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Components.DataGrid;
 
 namespace MudBlazor;
 
