@@ -2,11 +2,17 @@
 
 <MudContainer MaxWidth="MaxWidth.Large">
     <MudGrid Class="d-flex mx-auto">
-        <MudItem xs="12" md="6">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => OpenSheet(1))">Bottom Sheet</MudButton>
+        <MudItem xs="6" md="3">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => OpenSheet(1))">Toggle Bottom</MudButton>
         </MudItem>
-        <MudItem xs="12" md="6">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => OpenSheet(4))">Side Sheet (End)</MudButton>
+        <MudItem xs="6" md="3">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => OpenSheet(2))">Toggle Top</MudButton>
+        </MudItem>
+        <MudItem xs="6" md="3">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => OpenSheet(3))">Toggle Right</MudButton>
+        </MudItem>
+        <MudItem xs="6" md="3">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => OpenSheet(4))">Toggle Left</MudButton>
         </MudItem>
         <MudItem xs="12" md="6" Class="align-content-center">
             <MudTextField @bind-Value="@_ariaLabel" Variant="Variant.Outlined" Clearable />
@@ -18,13 +24,20 @@
 </MudContainer>
 
 <MudSheet @bind-Open="@_sheet1Open" Position="Position.Bottom" CurrentSize="25" BorderRadius="@_borderRadius" AriaLabel="@GetAriaLabel">
-    <MudIconButton Icon="@Icons.Material.Filled.Delete" aria-label="delete" />
+    <MudIconButton Icon="@Icons.Material.Filled.Delete" aria-label="cancel" OnClick="@(() => _sheet1Open = !_sheet1Open)" />
     <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Primary" aria-label="github" />
     <MudIconButton Icon="@Icons.Material.Filled.Favorite" Color="Color.Secondary" aria-label="add to favorite" />
     <MudIconButton Icon="@Icons.Material.Filled.Share" Disabled="true" aria-label="share" />
 </MudSheet>
 
-<MudSheet @bind-Open="@_sheet4Open" Position="Position.End" CurrentSize="25" BorderRadius="@_borderRadius" AriaLabel="@GetAriaLabel">
+<MudSheet @bind-Open="@_sheet2Open" Position="Position.Top" CurrentSize="25" Paper="false" BorderRadius="@_borderRadius" AriaLabel="@GetAriaLabel">
+    <MudIconButton Icon="@Icons.Material.Filled.Delete" aria-label="cancel" OnClick="@(() => _sheet2Open = !_sheet2Open)" />
+    <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Primary" aria-label="github" />
+    <MudIconButton Icon="@Icons.Material.Filled.Favorite" Color="Color.Secondary" aria-label="add to favorite" />
+    <MudIconButton Icon="@Icons.Material.Filled.Share" Disabled="true" aria-label="share" />
+</MudSheet>
+
+<MudSheet @bind-Open="@_sheet3Open" Position="Position.Right" CurrentSize="25" BorderRadius="@_borderRadius" AriaLabel="@GetAriaLabel">
     <MudStack Spacing="4">
         <MudText Typo="Typo.h6">User Settings</MudText>
         <MudTextField T="string" Label="Display Name" Variant="Variant.Outlined" />
@@ -37,7 +50,26 @@
         <MudSwitch Value="false" Label="Enable Notifications" Color="Color.Primary" />
         <MudDivider />
         <MudStack Row="true" Justify="Justify.FlexEnd" Spacing="2">
-            <MudButton Variant="Variant.Text" Color="Color.Default">Cancel</MudButton>
+            <MudButton Variant="Variant.Text" Color="Color.Default" OnClick="@(() => _sheet3Open = !_sheet3Open)">Cancel</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary">Save</MudButton>
+        </MudStack>
+    </MudStack>
+</MudSheet>
+
+<MudSheet @bind-Open="@_sheet4Open" Position="Position.Left" CurrentSize="25" Paper="false" BorderRadius="@_borderRadius" AriaLabel="@GetAriaLabel">
+    <MudStack Spacing="4">
+        <MudText Typo="Typo.h6">User Settings</MudText>
+        <MudTextField T="string" Label="Display Name" Variant="Variant.Outlined" />
+        <MudTextField T="string" Label="Email Address" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Email" />
+        <MudSelect T="string" Label="Theme" Variant="Variant.Outlined">
+            <MudSelectItem Value="@("Light")">Light</MudSelectItem>
+            <MudSelectItem Value="@("Dark")">Dark</MudSelectItem>
+            <MudSelectItem Value="@("System")">System Default</MudSelectItem>
+        </MudSelect>
+        <MudSwitch Value="false" Label="Enable Notifications" Color="Color.Primary" />
+        <MudDivider />
+        <MudStack Row="true" Justify="Justify.FlexEnd" Spacing="2">
+            <MudButton Variant="Variant.Text" Color="Color.Default" OnClick="@(() => _sheet4Open = !_sheet4Open)">Cancel</MudButton>
             <MudButton Variant="Variant.Filled" Color="Color.Primary">Save</MudButton>
         </MudStack>
     </MudStack>
@@ -45,6 +77,8 @@
 
 @code {
     private bool _sheet1Open = false;
+    private bool _sheet2Open = false;
+    private bool _sheet3Open = false;
     private bool _sheet4Open = false;
     private int _borderRadius = 16;
     private string _ariaLabel = string.Empty;
@@ -64,6 +98,12 @@
         {
             case 1:
                 _sheet1Open = !_sheet1Open;
+                break;
+            case 2:
+                _sheet2Open = !_sheet2Open;
+                break;
+            case 3:
+                _sheet3Open = !_sheet3Open;
                 break;
             case 4:
                 _sheet4Open = !_sheet4Open;

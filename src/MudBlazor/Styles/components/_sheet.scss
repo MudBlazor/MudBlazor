@@ -96,6 +96,7 @@ div[mudsheet] {
       border-radius: unset;
     }
   }
+
   /* Flex style Positioning & Border Radius */
   &.mud-sheet-position-bottom {
     flex-direction: column;
@@ -141,6 +142,7 @@ div[mudsheet] {
       order: -1;
     }
   }
+
   // Handle styling (Material Design touch target)
   .mud-sheet-handle {
     display: flex;
@@ -175,6 +177,7 @@ div[mudsheet] {
       width: 100%;
     }
   }
+
   /* Horizontal orientation (left/right) margin/handle customization */
   &.mud-sheet-position-left,
   &.mud-sheet-position-right {
@@ -182,6 +185,23 @@ div[mudsheet] {
       height: 100%;
       /*padding: 0 8px;*/
       writing-mode: vertical-rl; // For vertical handle icon
+    }
+  }
+}
+
+.mud-rtl-provider[dir='rtl'] {
+  .mud-sheet-container {
+
+    &.mud-sheet-position-left {
+      .mud-sheet-handle {
+        order: -1; // Handle goes to the right of content
+      }
+    }
+
+    &.mud-sheet-position-right {
+      .mud-sheet-handle {
+        order: 1; // Handle goes to the left of content
+      }
     }
   }
 }

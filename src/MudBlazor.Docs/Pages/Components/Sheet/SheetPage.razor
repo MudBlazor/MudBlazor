@@ -31,10 +31,15 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Two Way Bind">
+            <SectionHeader Title="Primary Controls">
                 <Description>
-                    You can two-way bind both the <CodeInline>Open</CodeInline> property as well as the <CodeInline>CurrentSize</CodeInline> property.
+                    You can two-way bind both the <CodeInline>Open</CodeInline> and <CodeInline>CurrentSize</CodeInline> properties.
+                    With <CodeInline>SnapMode</CodeInline> enabled, the sheet will snap to the nearest value in
+                    <CodeInline>PresetSizes</CodeInline> when dragging ends. You can also control the sheet programmatically using
+                    <CodeInline>ToggleSizeAsync</CodeInline>, <CodeInline>OpenSheetAsync</CodeInline>, and
+                    <CodeInline>CloseSheetAsync</CodeInline>.
                 </Description>
+
             </SectionHeader>
             <SectionContent Code="@nameof(SheetBindExample)" ShowCode="false">
                 <SheetBindExample />
@@ -44,8 +49,10 @@
         <DocsPageSection>
             <SectionHeader Title="Appearance">
                 <Description>
-                    There are many Appearance properties that can be used to customize the look and feel of 
-                    the sheet, see the API for all of the options. Two examples shown here are <CodeInline>BorderRadius</CodeInline> or <CodeInline>AriaLabel</CodeInline>.
+                    Customize the sheet's appearance using various properties—see the API for all options.
+                    Examples include <CodeInline>BorderRadius</CodeInline> and <CodeInline>AriaLabel</CodeInline>.
+                    By default, <CodeInline>MudSheet</CodeInline> uses <CodeInline>MudPaper</CodeInline>.
+                    Here, the <b>Left</b> and <b>Top</b> sheets have Paper disabled; <b>Bottom</b> and <b>Right</b> use the default.
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(SheetAppearanceExample)" ShowCode="false">
@@ -56,8 +63,11 @@
         <DocsPageSection>
             <SectionHeader Title="Behavior">
                 <Description>
-                    There are many Behavior properties that can be used to customize the way the sheet works, 
-                    see the API for all of the options. Two examples shown here are <CodeInline>CoverAppBar</CodeInline> and <CodeInline>CloseOnEscapeKey</CodeInline>.
+                    Customize the sheet's behavior using various properties—see the API for all options.
+                    Examples include <CodeInline>CoverAppBar</CodeInline> which allows you to cover the 
+                    appbar in Standard or not cover the appbar in Modal modes. <CodeInline>CloseOnEscapeKey</CodeInline> 
+                    allows the Escape Key to close the sheet so long as any part of it has focus.
+                    Below are two common use cases for the <CodeInline>Sheet</CodeInline> component.
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(SheetBehaviorExample)" ShowCode="false">

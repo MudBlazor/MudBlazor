@@ -95,8 +95,8 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
     /// </summary>
     protected string PopoverStylename =>
         new StyleBuilder()
-            .AddStyle("width", $"{_currentSizeState.Value}vw", _currentSizeState.Value > 0 && (Position is not (Position.Top or Position.Bottom)))
-            .AddStyle("height", $"{_currentSizeState.Value}vh", _currentSizeState.Value > 0 && (Position is Position.Top or Position.Bottom or Position.Center))
+            .AddStyle("width", $"{_currentSizeState.Value}vw", Positioning is "left" or "right" or "center")
+            .AddStyle("height", $"{_currentSizeState.Value}vh", Positioning is "top" or "bottom" or "center")
             .AddStyle(Style, !string.IsNullOrEmpty(Style))
             .Build();
 
@@ -107,14 +107,12 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
     /// applicable,  the <see cref="RightToLeft"/> layout setting. This ensures the origin aligns correctly with 
     /// the specified position and text direction resulting in a BottomSheet, or SideSheet.</remarks>
     protected Origin Origin =>
-        Position switch
+        Positioning switch
         {
-            Position.Bottom => Origin.BottomCenter,
-            Position.Start => RightToLeft ? Origin.CenterRight : Origin.CenterLeft,
-            Position.End => RightToLeft ? Origin.CenterLeft : Origin.CenterRight,
-            Position.Left => Origin.CenterLeft,
-            Position.Right => Origin.CenterRight,
-            Position.Top => Origin.TopCenter,
+            "bottom" => Origin.BottomCenter,
+            "left" => Origin.CenterLeft,
+            "right" => Origin.CenterRight,
+            "top" => Origin.TopCenter,
             _ => Origin.CenterCenter
         };
 
@@ -385,7 +383,7 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
     /// <summary>
     /// Returns the Current Drag Handle Icon based on the Position of the sheet.
     /// </summary>
-    protected string DragHandle => Position is Position.Top or Position.Bottom or Position.Center ? VerticalHandle : HorizontalHandle;
+    protected string DragHandle => Positioning is not "left" or "right" ? VerticalHandle : HorizontalHandle;
 
     /// <summary>
     /// Gets a value indicating whether dragging is currently allowed.

@@ -1,5 +1,14 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
+<style>
+    .sticky-search {
+      position: sticky;
+      top: 0;
+      background: white;
+      z-index: 1;
+    }
+</style>
+
 <MudContainer MaxWidth="MaxWidth.Large">
     <MudGrid Class="d-flex mx-auto">
         <MudItem xs="12" md="6">
@@ -23,7 +32,7 @@
     </MudGrid>
 </MudContainer>
 
-<MudSheet @bind-Open="@_sheet1Open" Position="Position.Bottom" CloseOnEscapeKey="@_closeOnEsc" CoverAppBar="@_coverAppBar">
+<MudSheet @bind-Open="@_sheet1Open" Position="Position.Bottom" Standard="false" CloseOnEscapeKey="@_closeOnEsc" CoverAppBar="@_coverAppBar">
     <MudList SelectionMode="@SelectionMode.MultiSelection" T="Drink">
         @foreach (Drink item in Enum.GetValues(typeof(Drink))) 
         {
@@ -32,10 +41,10 @@
     </MudList>
 </MudSheet>
 
-<MudSheet @bind-Open="@_sheet4Open" Position="Position.End" CloseOnEscapeKey="@_closeOnEsc" CoverAppBar="@_coverAppBar">
+<MudSheet @bind-Open="@_sheet4Open" Position="Position.End" CurrentSize="25" CloseOnEscapeKey="@_closeOnEsc" CoverAppBar="@_coverAppBar">
     <MudStack AlignItems="AlignItems.Center">
-        <MudTextField T="string" Label="Search" 
-                        Adornment="Adornment.Start" 
+        <MudTextField T="string" Label="Search"
+                        Adornment="Adornment.Start" Class="mb-4 sticky-search"
                         AdornmentIcon="@Icons.Material.Filled.Search" 
                         @bind-Value="@_searchPhrase" 
                         @bind-Value:after="@(() => _treeView?.FilterAsync())"
