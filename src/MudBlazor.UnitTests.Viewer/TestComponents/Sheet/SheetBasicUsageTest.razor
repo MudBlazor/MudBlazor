@@ -1,0 +1,153 @@
+﻿
+@if (_customCss)
+{
+    <style>
+      div[mudsheet].mud-sheet-position-bottom.mud-sheet-popover,
+      div[mudsheet].mud-sheet-position-top.mud-sheet-popover
+      { 
+        max-width: 100%;
+      }
+    </style>
+}
+
+<MudContainer MaxWidth="MaxWidth.Large">
+    <MudGrid Class="d-flex mx-auto">
+        <MudItem xs="6" md="3">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => OpenSheet(1))">Toggle Bottom</MudButton>
+        </MudItem>
+        <MudItem xs="6" md="3">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => OpenSheet(2))">Toggle Top</MudButton>
+        </MudItem>
+        <MudItem xs="6" md="3">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => OpenSheet(3))">Toggle Start (@(RightToLeft ? "Right" : "Left"))</MudButton>
+        </MudItem>
+        <MudItem xs="6" md="3">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => OpenSheet(4))">Toggle End (@(RightToLeft ? "Left" : "Right"))</MudButton>
+        </MudItem>
+        <MudItem xs="6" md="3">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => OpenSheet(5))">Toggle Center</MudButton>
+        </MudItem>
+        <MudItem xs="6" md="3">
+            <MudSwitch Color="Color.Primary" Label="Standard" LabelPlacement="Placement.Right" @bind-Value="_standard" />
+        </MudItem>
+        <MudItem xs="6" md="3">
+            <MudSwitch Color="Color.Primary" Label="Apply CSS" LabelPlacement="Placement.Right" @bind-Value="_customCss" @bind-Value:after="@(() => StateHasChanged())" />
+        </MudItem>
+        <MudItem xs="6" md="3">
+            <MudSwitch Color="Color.Primary" Label="Drag to Size" LabelPlacement="Placement.Right" @bind-Value="_enableDrag" />
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+<MudSheet @bind-Open="@_sheet1Open" CurrentSize="14" Position="Position.Bottom" Standard="@_standard" Paper="false" EnableDragToSize="@_enableDrag">
+    <MudIconButton Icon="@Icons.Material.Filled.Delete" aria-label="close" OnClick="@(() => _sheet1Open = !_sheet1Open)" />
+    <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Primary" aria-label="github" />
+    <MudIconButton Icon="@Icons.Material.Filled.Favorite" Color="Color.Secondary" aria-label="add to favorite" />
+    <MudIconButton Icon="@Icons.Material.Filled.Share" Disabled="true" aria-label="share" />
+</MudSheet>
+
+<MudSheet @bind-Open="@_sheet2Open" CurrentSize="14" Position="Position.Top" Standard="@_standard" Paper="false" EnableDragToSize="@_enableDrag">
+    <MudIconButton Icon="@Icons.Material.Filled.Delete" aria-label="close" OnClick="@(() => _sheet2Open = !_sheet2Open)" />
+    <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Primary" aria-label="github" />
+    <MudIconButton Icon="@Icons.Material.Filled.Favorite" Color="Color.Secondary" aria-label="add to favorite" />
+    <MudIconButton Icon="@Icons.Material.Filled.Share" Disabled="true" aria-label="share" />
+</MudSheet>
+
+<MudSheet @bind-Open="@_sheet3Open" CurrentSize="25" Position="Position.Start" Standard="@_standard" EnableDragToSize="@_enableDrag">
+    <MudStack Spacing="4">
+        <MudText Typo="Typo.h6">User Settings</MudText>
+        <MudTextField T="string" Label="Display Name" Variant="Variant.Outlined" />
+        <MudTextField T="string" Label="Email Address" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Email" />
+        <MudSelect T="string" Label="Theme" Variant="Variant.Outlined">
+            <MudSelectItem Value="@("Light")">Light</MudSelectItem>
+            <MudSelectItem Value="@("Dark")">Dark</MudSelectItem>
+            <MudSelectItem Value="@("System")">System Default</MudSelectItem>
+        </MudSelect>
+        <MudSwitch Value="false" Label="Enable Notifications" Color="Color.Primary" />
+        <MudDivider />
+        <MudStack Row="true" Justify="Justify.FlexEnd" Spacing="2">
+            <MudButton Variant="Variant.Text" Color="Color.Default" OnClick="@(() => _sheet3Open = !_sheet3Open)">Cancel</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary">Save</MudButton>
+        </MudStack>
+    </MudStack>
+</MudSheet>
+
+<MudSheet @bind-Open="@_sheet4Open" CurrentSize="25" Position="Position.End" Standard="@_standard" EnableDragToSize="@_enableDrag">
+    <MudStack Spacing="4">
+        <MudText Typo="Typo.h6">User Settings</MudText>
+        <MudTextField T="string" Label="Display Name" Variant="Variant.Outlined" />
+        <MudTextField T="string" Label="Email Address" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Email" />
+        <MudSelect T="string" Label="Theme" Variant="Variant.Outlined">
+            <MudSelectItem Value="@("Light")">Light</MudSelectItem>
+            <MudSelectItem Value="@("Dark")">Dark</MudSelectItem>
+            <MudSelectItem Value="@("System")">System Default</MudSelectItem>
+        </MudSelect>
+        <MudSwitch Value="false" Label="Enable Notifications" Color="Color.Primary" />
+        <MudDivider />
+        <MudStack Row="true" Justify="Justify.FlexEnd" Spacing="2">
+            <MudButton Variant="Variant.Text" Color="Color.Default" OnClick="@(() => _sheet4Open = !_sheet4Open)">Cancel</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary">Save</MudButton>
+        </MudStack>
+    </MudStack>
+</MudSheet>
+
+<MudSheet @bind-Open="@_sheet5Open" CurrentSize="25" Position="Position.Center" Standard="@_standard" EnableDragToSize="@_enableDrag">
+    <MudCarousel Class="mud-width-full mud-height-full" ShowArrows="true" AutoCycle="true" TData="object">
+        <MudCarouselItem Transition="Transition.Slide" Color="@Color.Primary">
+            <div class="d-flex" style="height:100%">
+                <MudIcon Class="mx-auto my-auto" Icon="@Icons.Custom.Brands.MudBlazor" Size="@Size.Large" />
+            </div>
+        </MudCarouselItem>
+        <MudCarouselItem Transition="Transition.Slide" Color="@Color.Secondary">
+            <div class="d-flex" style="height:100%">
+                <MudIcon Class="mx-auto my-auto" Icon="@Icons.Custom.Brands.MudBlazor" Size="@Size.Large" />
+            </div>
+        </MudCarouselItem>
+        <MudCarouselItem Transition="Transition.Slide">
+            <div class="d-flex" style="height:100%">
+                <MudIcon Class="mx-auto my-auto" Icon="@Icons.Custom.Brands.MudBlazor" Color="@Color.Primary" Size="@Size.Large" />
+            </div>
+        </MudCarouselItem>
+    </MudCarousel>
+</MudSheet>
+
+@code {
+    public static string __description__ = "Test the MudSheet Basic Usage";
+    private bool _sheet1Open = false;
+    private bool _sheet2Open = false;
+    private bool _sheet3Open = false;
+    private bool _sheet4Open = false;
+    private bool _sheet5Open = false;
+    private bool _standard = true;
+    private bool _customCss;
+    private bool _enableDrag = true;
+
+    /// <summary>
+    /// Gets a cascading value indicating whether the layout and text direction are rendered in a right-to-left format.
+    /// </summary>
+    [CascadingParameter(Name = "RightToLeft")]
+    [Category(CategoryTypes.Sheet.Appearance)]
+    public bool RightToLeft { get; set; }
+
+    private void OpenSheet(int sheet)
+    {
+        switch (sheet)
+        {
+            case 1:
+                _sheet1Open = !_sheet1Open;
+                break;
+            case 2:
+                _sheet2Open = !_sheet2Open;
+                break;
+            case 3:
+                _sheet3Open = !_sheet3Open;
+                break;
+            case 4:
+                _sheet4Open = !_sheet4Open;
+                break;
+            case 5:
+                _sheet5Open = !_sheet5Open;
+                break;
+        }
+    }
+}

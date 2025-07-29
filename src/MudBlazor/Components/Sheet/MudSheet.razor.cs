@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Data;
 using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -350,16 +351,16 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
     /// Return a combined list of attributes used on the MudSheet Container element.
     /// </summary>
     /// <returns></returns>
-    private Dictionary<string, object?> UpdatedAttributes
+    internal Dictionary<string, object?> UpdatedAttributes
     {
         get
         {
-            var _ariaLabel = $"{CultureInfo.InvariantCulture.TextInfo.ToTitleCase(Positioning)} Sheet";
+            var ariaLabel = $"{CultureInfo.InvariantCulture.TextInfo.ToTitleCase(Positioning)} Sheet";
             // Update AriaAttributes based on the sheet's properties
             AriaAttributes.Clear();
             // Ensure the container is outside of the tab order
             AriaAttributes.Add("tabindex", -1);
-            AriaAttributes["aria-label"] = AriaLabel ?? _ariaLabel;
+            AriaAttributes["aria-label"] = AriaLabel ?? ariaLabel;
             if (Standard)
             {
                 // sets region role for standard sheets
@@ -412,7 +413,16 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
     /// sheet's state to open and triggers the <see cref="OpenChanged"/> event with a value of <see
     /// langword="true"/>.
     /// </remarks>
-    public async Task OpenSheetAsync()
+    public Task OpenSheetAsync()
+    {
+        return OpenSheetAsync(updateState: true);
+    }
+
+    /// <summary>
+    /// Internal method to open the sheet asynchronously without updating the state.
+    /// </summary>
+    /// <param name="updateState">Whether to call StateHasChanged after opening the sheet</param>
+    private async Task OpenSheetAsync(bool updateState)
     {
         var open = _openSheetState.Value;
         if (!open)
@@ -420,6 +430,10 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
             // calling the open event shouldn't trigger a callback if open did not change
             await _openSheetState.SetValueAsync(true);
             await OpenChanged.InvokeAsync(true);
+            if (updateState)
+            {
+                StateHasChanged();
+            }
         }
     }
 
@@ -437,6 +451,7 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
             await _openSheetState.SetValueAsync(false);
             await OpenChanged.InvokeAsync(false);
             await OnDismissed.InvokeAsync();
+            StateHasChanged();
         }
     }
 
@@ -470,7 +485,7 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
     /// Changes the current size to the specified value.
     /// </summary>
     /// <param name="newSize">The new size value. Must be between 0 and 100.</param>
-    private async Task ChangeSize(int newSize)
+    internal async Task ChangeSize(int newSize)
     {
         Math.Clamp(newSize, 0, 100);
         await _currentSizeState.SetValueAsync(newSize);
@@ -658,7 +673,7 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
     {
         if (args.Value)
         {
-            return OpenSheetAsync();
+            return OpenSheetAsync(updateState: false);
         }
         return CloseSheetAsync();
     }
