@@ -23,20 +23,20 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
     /// The id for the sheet container element, used for accessibility and styling purposes.
     /// </summary>
     public string ElementId { get; private set; } = Identifier.Create("sheet-");
-    private bool _dragging;
+    internal bool _dragging;
     private bool _isDisposing = false;
     private bool _updateState;
 
-    private record struct DragPoints(double XDown, double YDown, int StartSize);
-    private DragPoints? _points;
-    private DateTime _lastPointerMove = DateTime.MinValue;
-    private static readonly TimeSpan PointerMoveThrottle = TimeSpan.FromMilliseconds(16);
+    internal record struct DragPoints(double XDown, double YDown, int StartSize);
+    internal DragPoints? _points;
+    internal DateTime _lastPointerMove = DateTime.MinValue;
+    internal readonly TimeSpan PointerMoveThrottle = TimeSpan.FromMilliseconds(16);
 
-    private record struct ViewPortSize(double Width, double Height);
-    private ViewPortSize? _viewportSize;
+    internal record struct ViewPortSize(double Width, double Height);
+    internal ViewPortSize? _viewportSize;
 
-    private bool JSRuntimeReady => !_isDisposing && IsJSRuntimeAvailable;
-    private ElementReference _handleRef = default!;
+    internal bool JSRuntimeReady => !_isDisposing && IsJSRuntimeAvailable;
+    internal ElementReference _handleRef = default!;
 
     private ParameterState<bool> _openSheetState;
     private ParameterState<int> _currentSizeState;
@@ -288,6 +288,9 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
     /// <summary>
     /// A value indicating whether the user can resize the sheet by dragging.
     /// </summary>
+    /// <remarks>
+    /// Defaults to <c>true</c>.<br/>
+    /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Sheet.Behavior)]
     public bool EnableDragToSize { get; set; } = true;
@@ -591,7 +594,6 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
     /// </remarks>
     private Task HandlePointerCancelAsync(PointerEventArgs args)
     {
-        // If the sheet is open, we reset the dragging state to false
         return SetDraggingState(false, args);
     }
 
@@ -606,6 +608,7 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
         {
             // let the click focus
             await _handleRef.FocusAsync();
+            return;
         }
 
         _dragging = isDragging;
@@ -618,7 +621,7 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
             if (_dragging)
             {
                 var sizeArray = await JSRuntime.InvokeAsync<double[]>("window.mudsheetHelper.startDrag", _handleRef, args.PointerId);
-                if (sizeArray.Length != 2)
+                if (sizeArray is not { Length: 2 })
                 {
                     throw new InvalidOperationException("JSInterop did not return the expected MudSheet size array.");
                 }
@@ -760,9 +763,9 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
     /// </summary>
     public async ValueTask DisposeAsync()
     {
-        _isDisposing = true;
         if (JSRuntimeReady && _dragging)
         {
+            _isDisposing = true;
             // Notify JS that the component is being disposed and to stop a drag
             await JSRuntime.InvokeVoidAsync("window.mudsheetHelper.cancelDrag", _handleRef);
         }

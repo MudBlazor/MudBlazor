@@ -2,8 +2,12 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Reflection;
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.Sheet;
 using NUnit.Framework;
 #nullable enable
@@ -222,8 +226,8 @@ namespace MudBlazor.UnitTests.Components
             var currentSizeCallback = false;
             var onDismissedCallback = false;
             var comp = Context.RenderComponent<MudSheet>(p => p
-                .Add(p => p.OpenChanged, (bool value) => openCallback = value)
-                .Add(p => p.CurrentSizeChanged, (int _) => currentSizeCallback = true)
+                .Add(p => p.OpenChanged, value => openCallback = value)
+                .Add(p => p.CurrentSizeChanged, value => currentSizeCallback = true)
                 .Add(p => p.OnDismissed, () => { onDismissedCallback = true; }));
             comp.Instance.Should().NotBeNull();
 
@@ -252,21 +256,369 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        private void Sheet_TestDragging()
+        public async Task Sheet_TestDragging_Full_WithSnapMode()
         {
-            // lots of js
+            var jsInterop = Context.JSInterop;
+
+            var provider = Context.RenderComponent<MudPopoverProvider>();
+            var comp = Context.RenderComponent<MudSheet>(p => p
+                .Add(p => p.EnableDragToSize, true)
+                .Add(p => p.CurrentSize, 25)
+                .Add(p => p.SnapMode, true)
+                .Add(p => p.PresetSizes, [25, 50, 75, 100]));
+
+            await comp.InvokeAsync(async () => await comp.Instance.OpenSheetAsync());
+            comp.WaitForAssertion(() => provider.FindAll(".mud-sheet-container").Count.Should().Be(1));
+
+            // make sure the component is initialized and handle is rendered
+            var handleRef = comp.Instance._handleRef;
+            handleRef.Should().NotBe(default(ElementReference));
+
+            // get the handle
+            var handle = provider.Find(".mud-sheet-handle");
+            handle.Should().NotBeNull();
+
+            // simulate a drag start
+            var pointer = new PointerEventArgs
+            {
+                Button = 0,
+                ClientX = 200,
+                ClientY = 360,
+                PointerId = 1,
+                PointerType = "mouse"
+            };
+            // double[] is width and height in that order
+            var dragStartMock = jsInterop
+                .Setup<double[]>("window.mudsheetHelper.startDrag", handleRef, pointer.PointerId)
+                .SetResult([640, 480]); // width, then height
+
+            await handle.TriggerEventAsync("onpointerdown", pointer);
+
+            // verify the drag start was called
+            dragStartMock.VerifyInvoke("window.mudsheetHelper.startDrag").Arguments.Should().BeEquivalentTo(new object[] { handleRef, pointer.PointerId });
+
+            // verify the ViewPortSize struct was passed correctly
+            var viewSize = comp.Instance._viewportSize;
+            viewSize.Should().NotBeNull();
+            viewSize.Value.Width.Should().Be(640);
+            viewSize.Value.Height.Should().Be(480);
+
+            // verify the DragPoints struct was initialized and set properly
+            var dragPoints = comp.Instance._points;
+            dragPoints.Should().NotBeNull();
+            dragPoints.Value.XDown.Should().Be(200);
+            dragPoints.Value.YDown.Should().Be(360);
+            dragPoints.Value.StartSize.Should().Be(25);
+
+            // verify drag mode enabled
+            comp.Instance._dragging.Should().BeTrue();
+
+            // setup the mock to test the throttle before we trigger the first move
+            var throttleCheckPoint = new PointerEventArgs
+            {
+                Button = 0,
+                ClientX = 205,
+                ClientY = 200, // not quite 60% but a tad over 60% of the height
+                PointerId = 1,
+                PointerType = "mouse"
+            };
+            // 25 + ((dragPoints.Value.YDown - 200) / viewSize.Value.Height * 100);
+            // 25 + ((360 - 200) / 480 * 100) = 25 + (160 / 480 * 100) = 25 + 33.3333 = 58.3333
+            var newHeight = dragPoints.Value.StartSize + ((dragPoints.Value.YDown - 200) / viewSize.Value.Height * 100);
+            newHeight.Should().BeApproximately(58.3333, 0.001);
+
+            // trigger the first drag move
+            // get the updated height by method, should "SnapMode" to 50% since it's closer than 75%
+            // start size is 25 + the result of ydown (360) minus the new y position (235) or 125 / the total height 480 or -.26041 * 100 or -26.041 + 25
+            newHeight = dragPoints.Value.StartSize + ((dragPoints.Value.YDown - 235) / viewSize.Value.Height * 100);
+            newHeight.Should().BeApproximately(51.041, 0.001);
+            await handle.TriggerEventAsync("onpointermove", new PointerEventArgs
+            {
+                Button = 0,
+                ClientX = 205,
+                ClientY = 235, // not quite 60% but a tad over 60% of the height
+                PointerId = 1,
+                PointerType = "mouse"
+            });
+
+            comp.Instance.GetState<int>(nameof(comp.Instance.CurrentSize)).Should().Be(51);
+
+            // 2nd drag move no wait
+            await handle.TriggerEventAsync("onpointermove", throttleCheckPoint);
+            // move will fail due to throttle of PointerMoveThrottle (16ms) and stay at 51 instead of the new 58
+            comp.Instance.GetState<int>(nameof(comp.Instance.CurrentSize)).Should().Be(51);
+
+            // ensure time elapsed for throttle
+            await Task.Delay(20);
+            // 3nd drag move with wait
+            await handle.TriggerEventAsync("onpointermove", throttleCheckPoint);
+            // new value of 58
+            comp.Instance.GetState<int>(nameof(comp.Instance.CurrentSize)).Should().Be(58);
+
+            // finish the drag at 51% with snap mode enabled
+            await handle.TriggerEventAsync("onpointerup", new PointerEventArgs
+            {
+                Button = 0,
+                ClientX = 205,
+                ClientY = 235, // not quite 60% but a tad over 60% of the height
+                PointerId = 1,
+                PointerType = "mouse"
+            });
+
+            // we already know the math (same as above) so we can just verify the final size
+            // which will be 50 since snap mode is enabled
+            comp.Instance.GetState<int>(nameof(comp.Instance.CurrentSize)).Should().Be(50);
+
+            // verify the drag stop was called
+            Context.JSInterop.VerifyInvoke("window.mudsheetHelper.cancelDrag")
+                .Arguments.Should().BeEquivalentTo(new object[] { handleRef, pointer.PointerId });
+            comp.Instance._points.Should().BeNull();
+            comp.Instance._dragging.Should().BeFalse();
+            comp.Instance._viewportSize.Should().BeNull();
+            await comp.Instance.DisposeAsync();
         }
 
         [Test]
-        private void Sheet_TestToggleSize()
+        public async Task Sheet_TestDragging_NoSnapMode()
         {
-            // cycling through preset sizes
+            var jsInterop = Context.JSInterop;
+            var provider = Context.RenderComponent<MudPopoverProvider>();
+            var comp = Context.RenderComponent<MudSheet>(p => p
+                .Add(p => p.EnableDragToSize, true)
+                .Add(p => p.CurrentSize, 25)
+                .Add(p => p.SnapMode, false)
+                .Add(p => p.PresetSizes, [25, 50, 75, 100]));
+
+            await comp.InvokeAsync(async () => await comp.Instance.OpenSheetAsync());
+            comp.WaitForAssertion(() => provider.FindAll(".mud-sheet-container").Count.Should().Be(1));
+
+            // get the handle
+            var handle = provider.Find(".mud-sheet-handle");
+            handle.Should().NotBeNull();
+
+            var handleRef = comp.Instance._handleRef;
+
+            // start drag again to verify no snap mode
+            // simulate a drag start
+            var pointer = new PointerEventArgs
+            {
+                Button = 0,
+                ClientX = 200,
+                ClientY = 360,
+                PointerId = 1,
+                PointerType = "mouse"
+            };
+
+            // double[] is width and height in that order
+            jsInterop
+                .Setup<double[]>("window.mudsheetHelper.startDrag", handleRef, pointer.PointerId)
+                .SetResult([640, 480]); // width, then height
+
+            await handle.TriggerEventAsync("onpointerdown", pointer);
+            comp.Instance._dragging.Should().BeTrue();
+
+            // trigger a drag move
+            await handle.TriggerEventAsync("onpointermove", new PointerEventArgs
+            {
+                Button = 0,
+                ClientX = 205,
+                ClientY = 235, // not quite 60% but a tad over 60% of the height
+                PointerId = 1,
+                PointerType = "mouse"
+            });
+
+            // same math as previous method, "move" doesn't snap so it should be 51
+            comp.Instance.GetState<int>(nameof(comp.Instance.CurrentSize)).Should().Be(51);
+
+            // finish the drag at 58% with snap mode disabled, same math as previous method
+            await handle.TriggerEventAsync("onpointerup", new PointerEventArgs
+            {
+                Button = 0,
+                ClientX = 205,
+                ClientY = 200, // not quite 60%
+                PointerId = 1,
+                PointerType = "mouse"
+            });
+
+            // verify no snapmode and drops any deciaml points (straight int cast)
+            comp.Instance.GetState<int>(nameof(comp.Instance.CurrentSize)).Should().Be(58);
+            await comp.Instance.DisposeAsync();
         }
 
         [Test]
-        private void Sheet_TestDispose()
+        public async Task Sheet_EnableDrag_PreventsDrag()
+        {
+            var jsInterop = Context.JSInterop;
+            var provider = Context.RenderComponent<MudPopoverProvider>();
+            var comp = Context.RenderComponent<MudSheet>(p => p
+                .Add(p => p.EnableDragToSize, false));
+
+            comp.Instance.Should().NotBeNull();
+
+            // open the sheet
+            await comp.InvokeAsync(async () => await comp.Instance.OpenSheetAsync());
+            comp.WaitForAssertion(() => provider.FindAll(".mud-sheet-container").Count.Should().Be(1));
+
+            var handle = provider.Find(".mud-sheet-handle");
+
+            // start drag again to verify no snap mode
+            // simulate a drag start
+            var pointer = new PointerEventArgs
+            {
+                Button = 0,
+                ClientX = 200,
+                ClientY = 360,
+                PointerId = 1,
+                PointerType = "mouse"
+            };
+
+            await handle.TriggerEventAsync("onpointerdown", pointer);
+            comp.Instance._dragging.Should().BeFalse();
+
+            await comp.Instance.DisposeAsync();
+        }
+
+        [Test]
+        public async Task Sheet_TestToggleSize()
+        {
+            var comp = Context.RenderComponent<MudSheet>(p => p
+                .Add(p => p.EnableDragToSize, true)
+                .Add(p => p.Open, true)
+                .Add(p => p.CurrentSize, 25)
+                .Add(p => p.PresetSizes, []));
+            comp.Instance.Should().NotBeNull();
+            var sheet = comp.Instance;
+
+            // verify sheet started open
+            sheet.GetState<bool>(nameof(sheet.Open)).Should().BeTrue();
+
+            // toggle with no sizes should close the sheet
+            await comp.InvokeAsync(async () => await sheet.ToggleSizeAsync());
+            sheet.GetState<bool>(nameof(sheet.Open)).Should().BeFalse();
+
+            comp.SetParametersAndRender(p => p
+                .Add(p => p.PresetSizes, [25, 50, 75, 100]));
+
+            await comp.InvokeAsync(async () => await sheet.OpenSheetAsync());
+            sheet.GetState<bool>(nameof(sheet.Open)).Should().BeTrue();
+
+            // verify current size is 25%
+            sheet.GetState<int>(nameof(sheet.CurrentSize)).Should().Be(25);
+            // toggle size should change to 50% (next in preset sizes)
+            await comp.InvokeAsync(async () => await sheet.ToggleSizeAsync());
+            sheet.GetState<int>(nameof(sheet.CurrentSize)).Should().Be(50);
+
+            await comp.Instance.DisposeAsync();
+        }
+
+        [Test]
+        public async Task Sheet_TestDispose()
         {
             // make sure it disposes correctly
+            var comp = Context.RenderComponent<MudSheet>(p => p
+                .Add(p => p.Open, true));
+            comp.Instance.Should().NotBeNull();
+            var sheet = comp.Instance;
+
+            // reflection to update IsJsRuntimeAvailable
+            var field = typeof(MudSheet).GetField("IsJsRuntimeAvailable", BindingFlags.NonPublic | BindingFlags.Instance);
+            field!.SetValue(comp.Instance, false);
+            sheet.JSRuntimeReady.Should().BeFalse();
+            sheet._dragging = true;
+
+            // won't run because JSRuntimeReady is false
+            await comp.Instance.DisposeAsync();
+
+            field!.SetValue(comp.Instance, true);
+            sheet._dragging = false;
+
+            // won't run because _dragging is false but sets IsJsRuntimeAvailable to false either way
+            sheet.JSRuntimeReady.Should().BeTrue();
+            await comp.Instance.DisposeAsync();
+            sheet.JSRuntimeReady.Should().BeFalse();
+
+            sheet._dragging = true;
+            field!.SetValue(comp.Instance, true);
+            sheet.JSRuntimeReady.Should().BeTrue();
+
+            // should run now
+            await comp.Instance.DisposeAsync();
+
+            // verify the calls can't run anymore
+            sheet.JSRuntimeReady.Should().BeFalse();
+
+            // verify it won't run twice
+            await comp.Instance.DisposeAsync();
+
+            // verify the JS interop was called to cancel the drag but only once even though we disposed multiple times
+            Context.JSInterop.VerifyInvoke("window.mudsheetHelper.cancelDrag");
+        }
+
+        [Test]
+        public void Sheet_OnOpenChanged_And_OnCurrentSizeChanged_Handlers()
+        {
+            var comp = Context.RenderComponent<MudSheet>();
+            // Open should be false initially
+            comp.Instance.GetState<bool>(nameof(comp.Instance.Open)).Should().BeFalse();
+
+            // Change Open to true via SetParametersAndRender (triggers OnOpenChanged)
+            comp.SetParametersAndRender(p => p.Add(p => p.Open, true));
+            comp.Instance.GetState<bool>(nameof(comp.Instance.Open)).Should().BeTrue();
+
+            // Change CurrentSize via SetParametersAndRender (triggers OnCurrentSizeChanged)
+            comp.SetParametersAndRender(p => p.Add(p => p.CurrentSize, 42));
+            comp.Instance.GetState<int>(nameof(comp.Instance.CurrentSize)).Should().Be(42);
+        }
+
+        [Test]
+        public async Task Sheet_HandleKeyDownAsync_Closes_On_Escape()
+        {
+            var provider = Context.RenderComponent<MudPopoverProvider>();
+            var comp = Context.RenderComponent<MudSheet>(p => p.Add(p => p.Open, true));
+            comp.Instance.GetState<bool>(nameof(comp.Instance.Open)).Should().BeTrue();
+
+            // Simulate Escape keydown
+            var sheetDiv = provider.Find(".mud-sheet-container");
+            await sheetDiv.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Escape" });
+
+            // Should be closed
+            comp.Instance.GetState<bool>(nameof(comp.Instance.Open)).Should().BeFalse();
+        }
+
+        [Test]
+        public async Task Sheet_OnAfterRender_Triggers_ReRender_When_UpdateState()
+        {
+            var comp = Context.RenderComponent<MudSheet>();
+            // Use reflection to set _updateState to true
+            var field = typeof(MudSheet).GetField("_updateState", BindingFlags.NonPublic | BindingFlags.Instance);
+            field!.SetValue(comp.Instance, true);
+
+            // Track render count
+            int renderCount = 0;
+            comp.OnAfterRender += (_, _) => renderCount++;
+
+            // Trigger OnAfterRender
+            await comp.InvokeAsync(() => comp.Instance.GetType()
+                .GetMethod("OnAfterRender", BindingFlags.NonPublic | BindingFlags.Instance)!
+                .Invoke(comp.Instance, new object[] { false }));
+
+            // Should have re-rendered at least once
+            renderCount.Should().BeGreaterThan(0);
+        }
+
+        [Test]
+        public void Sheet_SetParametersAsync_Throws_On_Invalid_CurrentSize()
+        {
+            var comp = Context.RenderComponent<MudSheet>();
+            // Try to set CurrentSize to an invalid value (<0)
+            var ex1 = Assert.Throws<ArgumentOutOfRangeException>(() =>
+                comp.SetParametersAndRender(p => p.Add(p => p.CurrentSize, -1)));
+            ex1!.Message.Should().Contain("CurrentSize must be between 0 and 100.");
+
+            // Try to set CurrentSize to an invalid value (>100)
+            var ex2 = Assert.Throws<ArgumentOutOfRangeException>(() =>
+                comp.SetParametersAndRender(p => p.Add(p => p.CurrentSize, 101)));
+            ex2!.Message.Should().Contain("CurrentSize must be between 0 and 100.");
         }
     }
 }
