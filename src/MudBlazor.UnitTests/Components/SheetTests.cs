@@ -521,15 +521,15 @@ namespace MudBlazor.UnitTests.Components
             var sheet = comp.Instance;
 
             // reflection to update IsJsRuntimeAvailable
-            var field = typeof(MudSheet).GetField("IsJsRuntimeAvailable", BindingFlags.NonPublic | BindingFlags.Instance);
-            field!.SetValue(comp.Instance, false);
+            var prop = typeof(MudComponentBase).GetProperty("IsJSRuntimeAvailable", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+            prop!.SetValue(comp.Instance, false);
             sheet.JSRuntimeReady.Should().BeFalse();
             sheet._dragging = true;
 
             // won't run because JSRuntimeReady is false
             await comp.Instance.DisposeAsync();
 
-            field!.SetValue(comp.Instance, true);
+            prop!.SetValue(comp.Instance, true);
             sheet._dragging = false;
 
             // won't run because _dragging is false but sets IsJsRuntimeAvailable to false either way
@@ -538,7 +538,7 @@ namespace MudBlazor.UnitTests.Components
             sheet.JSRuntimeReady.Should().BeFalse();
 
             sheet._dragging = true;
-            field!.SetValue(comp.Instance, true);
+            prop!.SetValue(comp.Instance, true);
             sheet.JSRuntimeReady.Should().BeTrue();
 
             // should run now
