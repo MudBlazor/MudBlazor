@@ -90,17 +90,23 @@ window.mudsheetHelper = {
     },
 
     cancelDrag: function (element, pointerId) {
-        // Cancel the pointer events
         if (element) {
-            element.releasePointerCapture(pointerId);
+            try {
+                if (element.hasPointerCapture && element.hasPointerCapture(pointerId)) {
+                    element.releasePointerCapture(pointerId);
+                }
 
-            // focus the first inner focusable element
-            const focusable = element.querySelector(
-                'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-            );
-            if (focusable) {
-                focusable.focus();
+                const focusable = element.querySelector(
+                    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+                );
+                if (focusable) {
+                    focusable.focus();
+                }
+            } catch (e) {
+                // Optional: log the error if needed
+                console.warn("cancelDrag error:", e);
             }
         }
     },
+
 };

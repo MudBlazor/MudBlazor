@@ -706,16 +706,17 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
     /// <summary>
     /// Override the setting of Parameters
     /// </summary>
-    public override Task SetParametersAsync(ParameterView parameters)
+    public override async Task SetParametersAsync(ParameterView parameters)
     {
         // var currentSize is true if the parameters contain a value
         var currentSize = parameters.TryGetValue<int>(nameof(CurrentSize), out var newCurrentSize);
-        // if it's different from the current state and out of range throw
+        // if it's different from the current state and out of range clamp it
         if (currentSize && newCurrentSize != _currentSizeState.Value &&
                 (newCurrentSize < 0 || newCurrentSize > 100))
         {
-            // [Fail Fast] throw an exception so the user knows the error
-            throw new ArgumentOutOfRangeException(newCurrentSize.GetType().Name, "CurrentSize must be between 0 and 100.");
+            newCurrentSize = Math.Clamp(newCurrentSize, 0, 100);
+            await _currentSizeState.SetValueAsync(newCurrentSize);
+            _updateState = true;
         }
 
         _updateState = AriaAttributes.Count == 0;
@@ -755,7 +756,7 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
             }
         }
 
-        return base.SetParametersAsync(parameters);
+        await base.SetParametersAsync(parameters);
     }
 
     /// <summary>
