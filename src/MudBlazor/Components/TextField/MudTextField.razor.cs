@@ -232,5 +232,13 @@ namespace MudBlazor
             0 => (string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}"),
             _ => (string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") + $" / {Counter}"
         };
+
+        protected async Task HandleContainerClick()
+        {
+            if (!_isFocused && IsJSRuntimeAvailable && InputReference != null)
+            {
+                await InputReference.FocusAsync();
+            }
+        }
     }
 }

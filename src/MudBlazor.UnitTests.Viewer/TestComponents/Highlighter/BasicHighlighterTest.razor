@@ -1,0 +1,30 @@
+﻿<MudText Class="ma-2">
+    <MudHighlighter Text="@Text"
+                    HighlightedText="@HighlightedText"
+                    UntilNextBoundary="@UntilNextBoundary"
+                    CaseSensitive="@CaseSensitive"
+                    Markup="@Markup"
+                    Class="@(CustomClass ?? (UntilNextBoundary ? "pa-1 mud-elevation-2 mud-theme-primary": null))" />
+</MudText>
+
+@code {
+    public static string __description__ = "Various text and search options";
+
+    [Parameter]
+    public string Text { get; set; } = "This is a test text for highlighting.";
+
+    [Parameter]
+    public string HighlightedText { get; set; } = "test";
+
+    [Parameter]
+    public bool UntilNextBoundary { get; set; } = false;
+
+    [Parameter]
+    public bool CaseSensitive { get; set; } = false;
+
+    [Parameter]
+    public bool Markup { get; set; } = true;
+
+    [Parameter]
+    public string? CustomClass { get; set; }
+}
