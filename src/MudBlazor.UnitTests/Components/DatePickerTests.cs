@@ -472,10 +472,7 @@ namespace MudBlazor.UnitTests.Components
             comp.SelectDate("23");
 
             // Wait for the date picker to update its state after selection
-            comp.WaitForAssertion(() =>
-            {
-                picker.Instance.Date.Should().Be(expectedDate);
-            }, timeout: TimeSpan.FromSeconds(1));
+            comp.WaitForAssertion(() => picker.Instance.Date.Should().Be(expectedDate));
         }
 
         [Test]
