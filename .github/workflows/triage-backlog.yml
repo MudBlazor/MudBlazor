@@ -86,7 +86,7 @@ jobs:
             
             export GITHUB_ISSUE_NUMBER="$issue_number"
 
-            # Handle script exit codes: 0=Success, 1=Fatal Error, 2=Skip Issue.
+            # Handle script exit codes: 0=Success, 1=Fatal Error, 2=Skip Issue, 3=Cancel All
             if node .github/scripts/AutoTriage.js; then
               count=$((count + 1))
               if [ -n "$max_count" ]; then
@@ -102,6 +102,9 @@ jobs:
               elif [ "$exit_code" -eq 2 ]; then
                 # No-op for skippable issues.
                 :
+              elif [ "$exit_code" -eq 3 ]; then
+                echo "🚫 Gemini API quota exceeded (exit code 3). Cancelling backlog triage."
+                exit 0
               else
                 echo "❌ Unexpected error (code $exit_code) on #${issue_number}"
                 exit "$exit_code"

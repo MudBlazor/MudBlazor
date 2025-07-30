@@ -9,18 +9,17 @@ const core = require('@actions/core');
 const fs = require('fs');
 const path = require('path');
 
-// Global variables
+// Global constants
 const AI_MODEL = 'gemini-2.5-pro';
 const DB_PATH = process.env.AUTOTRIAGE_DB_PATH;
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const GITHUB_REPOSITORY = process.env.GITHUB_REPOSITORY;
-const GITHUB_ISSUE_NUMBER = parseInt(process.env.GITHUB_ISSUE_NUMBER, 10);
+const ISSUE_NUMBER = parseInt(process.env.GITHUB_ISSUE_NUMBER, 10);
 const [OWNER, REPO] = (GITHUB_REPOSITORY || '').split('/');
-const issueParams = { owner: OWNER, repo: REPO, issue_number: GITHUB_ISSUE_NUMBER };
+const ISSUE_PARAMS = { owner: OWNER, repo: REPO, issue_number: ISSUE_NUMBER };
 const VALID_PERMISSIONS = new Set(['label', 'comment', 'close', 'edit']);
-
-let PERMISSIONS = new Set(
+const PERMISSIONS = new Set(
     (process.env.AUTOTRIAGE_PERMISSIONS || '')
         .split(',')
         .map(p => p.trim())
@@ -56,6 +55,11 @@ async function callGemini(prompt) {
             timeout: 60000
         }
     );
+
+    if (response.status === 429) {
+        console.error('❌ Gemini API returned 429 (Quota exceeded). Exiting and cancelling backlog.');
+        process.exit(3);
+    }
 
     if (response.status === 503) {
         console.error('❌ Gemini API returned 503 (Model overloaded). Skipping this issue.');
@@ -99,14 +103,8 @@ async function buildMetadata(issue, octokit) {
     };
 }
 
-async function buildTimeline(octokit, issue_number) {
-    const { data: timelineEvents } = await octokit.rest.issues.listEventsForTimeline({
-        owner: OWNER,
-        repo: REPO,
-        issue_number,
-        per_page: 100
-    });
-
+async function buildTimeline(octokit) {
+    const { data: timelineEvents } = await octokit.rest.issues.listEventsForTimeline({ ...ISSUE_PARAMS, per_page: 100 });
     return timelineEvents.map(event => {
         const base = { event: event.event, actor: event.actor?.login, timestamp: event.created_at };
         switch (event.event) {
@@ -126,11 +124,10 @@ async function buildTimeline(octokit, issue_number) {
 }
 
 async function buildPrompt(issue, octokit, previousContext = null) {
-    let basePrompt = fs.readFileSync(path.join(__dirname, 'AutoTriage.prompt'), 'utf8');
-
+    const basePrompt = fs.readFileSync(path.join(__dirname, 'AutoTriage.prompt'), 'utf8');
     const issueText = `${issue.title}\n\n${issue.body || ''}`;
     const metadata = await buildMetadata(issue, octokit);
-    const timelineReport = await buildTimeline(octokit, issue.number);
+    const timelineReport = await buildTimeline(octokit);
     const promptString = `${basePrompt}
 
 === SECTION: ISSUE TO ANALYZE ===
@@ -159,7 +156,7 @@ Your entire response must be a single, valid JSON object and nothing else. Do no
 }
 
 async function updateLabels(suggestedLabels, octokit) {
-    const { data: issue } = await octokit.rest.issues.get(issueParams);
+    const { data: issue } = await octokit.rest.issues.get(ISSUE_PARAMS);
     const currentLabels = issue.labels?.map(l => l.name || l) || [];
     const labelsToAdd = suggestedLabels.filter(l => !currentLabels.includes(l));
     const labelsToRemove = currentLabels.filter(l => !suggestedLabels.includes(l));
@@ -175,32 +172,32 @@ async function updateLabels(suggestedLabels, octokit) {
     if (!octokit || !PERMISSIONS.has('label')) return;
 
     if (labelsToAdd.length > 0) {
-        await octokit.rest.issues.addLabels({ ...issueParams, labels: labelsToAdd });
+        await octokit.rest.issues.addLabels({ ...ISSUE_PARAMS, labels: labelsToAdd });
     }
 
     for (const label of labelsToRemove) {
-        await octokit.rest.issues.removeLabel({ ...issueParams, name: label });
+        await octokit.rest.issues.removeLabel({ ...ISSUE_PARAMS, name: label });
     }
 }
 
 async function createComment(body, octokit) {
     if (!octokit || !PERMISSIONS.has('comment')) return;
-    await octokit.rest.issues.createComment({ ...issueParams, body: body });
+    await octokit.rest.issues.createComment({ ...ISSUE_PARAMS, body: body });
 }
 
 async function updateTitle(title, newTitle, octokit) {
     console.log(`✏️ Updating title from "${title}" to "${newTitle}"`);
     if (!octokit || !PERMISSIONS.has('edit')) return;
-    await octokit.rest.issues.update({ ...issueParams, title: newTitle });
+    await octokit.rest.issues.update({ ...ISSUE_PARAMS, title: newTitle });
 }
 
 async function closeIssue(octokit, reason = 'not_planned') {
     console.log(`🔒 Closing issue as ${reason}`);
     if (!octokit || !PERMISSIONS.has('close')) return;
-    await octokit.rest.issues.update({ ...issueParams, state: 'closed', state_reason: reason });
+    await octokit.rest.issues.update({ ...ISSUE_PARAMS, state: 'closed', state_reason: reason });
 }
 
-async function processIssue(issue, octokit, previousContext = null) {
+async function processIssue(issue, octokit, previousContext) {
     const metadata = await buildMetadata(issue, octokit);
     const formattedMetadata = [
         `#${metadata.number} (${metadata.state} ${metadata.type}) was created by ${metadata.author}`,
@@ -213,9 +210,9 @@ async function processIssue(issue, octokit, previousContext = null) {
     const prompt = await buildPrompt(issue, octokit, previousContext);
     const startTime = Date.now();
     const analysis = await callGemini(prompt);
-    const analysisTimeSeconds = ((Date.now() - startTime) / 1000).toFixed(1);
+    const analysisTime = ((Date.now() - startTime) / 1000).toFixed(1);
 
-    console.log(`🤖 Gemini returned analysis in ${analysisTimeSeconds}s with a severity score of ${analysis.severity}/10:`);
+    console.log(`🤖 Gemini returned analysis in ${analysisTime}s with a severity score of ${analysis.severity}/10:`);
     console.log(`🤖 "${analysis.reason}"`);
 
     await updateLabels(analysis.labels, octokit);
@@ -237,37 +234,30 @@ async function processIssue(issue, octokit, previousContext = null) {
     return analysis;
 }
 
-function getPreviousContextForIssue(triageDb, issue) {
-    const triageEntry = triageDb[GITHUB_ISSUE_NUMBER];
+function getPreviousTriageContext(triageDb, issue) {
+    const triageEntry = triageDb[ISSUE_NUMBER];
 
-    // 1. Triage if it's never been checked.
+    // Triage if it never has been.
     if (!triageEntry) {
         return { lastTriaged: null, previousReasoning: 'This issue has never been triaged.' };
     }
 
-    // --- Define conditions for re-triaging ---
-    const MS_PER_DAY = 86400000; // 24 * 60 * 60 * 1000
     const lastTriagedDate = new Date(triageEntry.lastTriaged);
     const timeSinceTriaged = Date.now() - lastTriagedDate.getTime();
 
-    // 2. Triage if it's been > 14 days since the last check.
-    const hasExpired = timeSinceTriaged > 14 * MS_PER_DAY;
-
-    // 3. Triage if it's been > 3 days and has a follow-up label.
+    // Triage if it has a follow-up label.
     const labels = (issue.labels || []).map(l => l.name || l);
     const needsFollowUp =
         (labels.includes('info required') || labels.includes('stale')) &&
-        timeSinceTriaged > 3 * MS_PER_DAY;
+        timeSinceTriaged > 14 * 86400000; // 14 days.
 
-    // 4. Triage if the issue was updated since last triage
-    const issueUpdatedDate = new Date(issue.updated_at);
-    const wasUpdatedSinceTriaged = issueUpdatedDate > lastTriagedDate;
+    // Triage if the issue was updated since last triage
+    const wasUpdatedSinceTriaged = new Date(issue.updated_at) > lastTriagedDate;
 
-    // If any condition for re-triaging is met, return the context.
-    if (hasExpired || needsFollowUp || wasUpdatedSinceTriaged) {
+    if (wasUpdatedSinceTriaged || needsFollowUp) {
         return {
             lastTriaged: triageEntry.lastTriaged,
-            previousReasoning: triageEntry.previousReasoning || 'No previous reasoning available.',
+            previousReasoning: triageEntry.previousReasoning,
         };
     }
 
@@ -276,7 +266,7 @@ function getPreviousContextForIssue(triageDb, issue) {
 
 function saveArtifact(name, contents) {
     const artifactsDir = path.join(process.cwd(), 'artifacts');
-    const filePath = path.join(artifactsDir, `${GITHUB_ISSUE_NUMBER}-${name}`);
+    const filePath = path.join(artifactsDir, `${ISSUE_NUMBER}-${name}`);
     fs.mkdirSync(artifactsDir, { recursive: true });
     fs.writeFileSync(filePath, contents, 'utf8');
 }
@@ -295,12 +285,11 @@ async function main() {
 
     // Setup
     const octokit = new Octokit({ auth: GITHUB_TOKEN });
-    const issue = (await octokit.rest.issues.get(issueParams)).data;
-    const previousContext = getPreviousContextForIssue(triageDb, issue);
+    const issue = (await octokit.rest.issues.get(ISSUE_PARAMS)).data;
+    const previousContext = getPreviousTriageContext(triageDb, issue);
 
-    // Cancel early
+    // We don't need to triage
     if (!previousContext) {
-        //console.log(`⏭️ #${String(GITHUB_ISSUE_NUMBER).padStart(5, '0')} does not need to be triaged right now`);
         process.exit(2);
     }
 
@@ -311,7 +300,7 @@ async function main() {
 
     // Save database
     if (DB_PATH && analysis && PERMISSIONS.size > 0) {
-        triageDb[GITHUB_ISSUE_NUMBER] = {
+        triageDb[ISSUE_NUMBER] = {
             lastTriaged: new Date().toISOString(),
             previousReasoning: analysis.reason
         };
