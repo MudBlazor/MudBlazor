@@ -607,18 +607,18 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void Sheet_SetParametersAsync_Throws_On_Invalid_CurrentSize()
+        public async Task Sheet_SetParametersAsync_Clamps_On_Invalid_CurrentSize()
         {
             var comp = Context.RenderComponent<MudSheet>();
             // Try to set CurrentSize to an invalid value (<0)
-            var ex1 = Assert.Throws<ArgumentOutOfRangeException>(() =>
-                comp.SetParametersAndRender(p => p.Add(p => p.CurrentSize, -1)));
-            ex1!.Message.Should().Contain("CurrentSize must be between 0 and 100.");
-
+            comp.SetParametersAndRender(p => p.Add(p => p.CurrentSize, -1));
+            await comp.InvokeAsync(async () => await comp.Instance.OpenSheetAsync());
+            comp.Instance.GetState<int>(nameof(comp.Instance.CurrentSize)).Should().Be(0);
+            await comp.InvokeAsync(async () => await comp.Instance.CloseSheetAsync());
             // Try to set CurrentSize to an invalid value (>100)
-            var ex2 = Assert.Throws<ArgumentOutOfRangeException>(() =>
-                comp.SetParametersAndRender(p => p.Add(p => p.CurrentSize, 101)));
-            ex2!.Message.Should().Contain("CurrentSize must be between 0 and 100.");
+            comp.SetParametersAndRender(p => p.Add(p => p.CurrentSize, 101));
+            await comp.InvokeAsync(async () => await comp.Instance.OpenSheetAsync());
+            comp.Instance.GetState<int>(nameof(comp.Instance.CurrentSize)).Should().Be(100);
         }
     }
 }

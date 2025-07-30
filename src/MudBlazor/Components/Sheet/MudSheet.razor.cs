@@ -38,8 +38,8 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
     internal bool JSRuntimeReady => !_isDisposing && IsJSRuntimeAvailable;
     internal ElementReference _handleRef = default!;
 
-    private ParameterState<bool> _openSheetState;
-    private ParameterState<int> _currentSizeState;
+    private readonly ParameterState<bool> _openSheetState;
+    private readonly ParameterState<int> _currentSizeState;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MudSheet"/> class.
@@ -63,7 +63,7 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
     /// </summary>
     protected string Classname =>
         new CssBuilder("mud-sheet-container")
-            .AddClass($"mud-sheet-position-{Positioning}")
+            .AddClass($"mud-sheet-position-{Positioning.ToDescriptionString()}")
             .AddClass($"mud-sheet-borderradius-{BorderRadius}", BorderRadius != null)
             .AddClass($"mud-elevation-{Elevation}", !_dragging && Elevation > 0)
             .AddClass("mud-sheet-dragging", _dragging)
@@ -83,7 +83,7 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
     /// </summary>
     protected string PopoverClassname =>
         new CssBuilder("mud-sheet-popover")
-            .AddClass($"mud-sheet-position-{Positioning}")
+            .AddClass($"mud-sheet-position-{Positioning.ToDescriptionString()}")
             .AddClass("mud-popover-fixed")
             .AddClass($"mud-sheet-cover-appbar",
                 // If value has been set then use it
@@ -96,8 +96,8 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
     /// </summary>
     protected string PopoverStylename =>
         new StyleBuilder()
-            .AddStyle("width", $"{_currentSizeState.Value}vw", Positioning is "left" or "right" or "center")
-            .AddStyle("height", $"{_currentSizeState.Value}vh", Positioning is "top" or "bottom" or "center")
+            .AddStyle("width", $"{_currentSizeState.Value}vw", Positioning is Position.Left or Position.Right or Position.Center)
+            .AddStyle("height", $"{_currentSizeState.Value}vh", Positioning is Position.Top or Position.Bottom or Position.Center)
             .AddStyle(Style, !string.IsNullOrEmpty(Style))
             .Build();
 
@@ -110,10 +110,10 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
     protected Origin Origin =>
         Positioning switch
         {
-            "bottom" => Origin.BottomCenter,
-            "left" => Origin.CenterLeft,
-            "right" => Origin.CenterRight,
-            "top" => Origin.TopCenter,
+            Position.Bottom => Origin.BottomCenter,
+            Position.Left => Origin.CenterLeft,
+            Position.Right => Origin.CenterRight,
+            Position.Top => Origin.TopCenter,
             _ => Origin.CenterCenter
         };
 
@@ -358,7 +358,7 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
     {
         get
         {
-            var ariaLabel = $"{CultureInfo.InvariantCulture.TextInfo.ToTitleCase(Positioning)} Sheet";
+            var ariaLabel = $"{CultureInfo.InvariantCulture.TextInfo.ToTitleCase(Positioning.ToDescriptionString())} Sheet";
             // Update AriaAttributes based on the sheet's properties
             AriaAttributes.Clear();
             // Ensure the container is outside of the tab order
@@ -387,7 +387,7 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
     /// <summary>
     /// Returns the Current Drag Handle Icon based on the Position of the sheet.
     /// </summary>
-    protected string DragHandle => Positioning is not "left" or "right" ? VerticalHandle : HorizontalHandle;
+    protected string DragHandle => Positioning is not Position.Left or Position.Right ? VerticalHandle : HorizontalHandle;
 
     /// <summary>
     /// Gets a value indicating whether dragging is currently allowed.
@@ -397,15 +397,15 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
     /// <summary>
     /// Returns the Positioning string for the popover using RightToLeft logic.
     /// </summary>
-    protected string Positioning => Position switch
+    protected Position Positioning => Position switch
     {
-        Position.Bottom => "bottom",
-        Position.Start => RightToLeft ? "right" : "left",
-        Position.End => RightToLeft ? "left" : "right",
-        Position.Left => "left",
-        Position.Right => "right",
-        Position.Top => "top",
-        _ => "center"
+        Position.Bottom => Position.Bottom,
+        Position.Start => RightToLeft ? Position.Right : Position.Left,
+        Position.End => RightToLeft ? Position.Left : Position.Right,
+        Position.Left => Position.Left,
+        Position.Right => Position.Right,
+        Position.Top => Position.Top,
+        _ => Position.Center
     };
 
     /// <summary>
@@ -430,6 +430,14 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
         var open = _openSheetState.Value;
         if (!open)
         {
+            // double check size is within bounds
+            var size = Math.Clamp(_currentSizeState.Value, 0, 100);
+            if (size != _currentSizeState.Value)
+            {
+                // if size was out of bounds, set it to the clamped value
+                await _currentSizeState.SetValueAsync(size);
+            }
+
             // calling the open event shouldn't trigger a callback if open did not change
             await _openSheetState.SetValueAsync(true);
             await OpenChanged.InvokeAsync(true);
@@ -647,19 +655,19 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
         // Get pixel movement in the appropriate direction
         var delta = Positioning switch
         {
-            "top" => currentY - startY,
-            "bottom" or "center" => startY - currentY,
-            "left" => currentX - startX,
-            "right" => startX - currentX,
+            Position.Top => currentY - startY,
+            Position.Bottom or Position.Center => startY - currentY,
+            Position.Left => currentX - startX,
+            Position.Right => startX - currentX,
             _ => 0
         };
 
         // Get the relevant viewport dimension
         var viewportPixels = Positioning switch
         {
-            "top" or "bottom" => _viewportSize!.Value.Height,
-            "left" or "right" => _viewportSize!.Value.Width,
-            "center" => _viewportSize!.Value.Height / 2,
+            Position.Top or Position.Bottom => _viewportSize!.Value.Height,
+            Position.Left or Position.Right => _viewportSize!.Value.Width,
+            Position.Center => _viewportSize!.Value.Height / 2,
             _ => 1
         };
 
@@ -750,10 +758,7 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
                 // AriaLabel is handled by above
                 continue;
             }
-            else
-            {
-                _updateState = true;
-            }
+            _updateState = true;
         }
 
         await base.SetParametersAsync(parameters);

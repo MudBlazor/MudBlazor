@@ -23,21 +23,21 @@
     </MudGrid>
 </MudContainer>
 
-<MudSheet @bind-Open="@_sheet1Open" Position="Position.Bottom" CurrentSize="25" BorderRadius="@_borderRadius" AriaLabel="@GetAriaLabel">
+<MudSheet @bind-Open="@_sheet1Open" Position="Position.Bottom" CurrentSize="25" BorderRadius="@_borderRadius" AriaLabel="@AriaLabelValue">
     <MudIconButton Icon="@Icons.Material.Filled.Delete" aria-label="cancel" OnClick="@(() => _sheet1Open = !_sheet1Open)" />
     <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Primary" aria-label="github" />
     <MudIconButton Icon="@Icons.Material.Filled.Favorite" Color="Color.Secondary" aria-label="add to favorite" />
     <MudIconButton Icon="@Icons.Material.Filled.Share" Disabled="true" aria-label="share" />
 </MudSheet>
 
-<MudSheet @bind-Open="@_sheet2Open" Position="Position.Top" CurrentSize="25" Paper="false" BorderRadius="@_borderRadius" AriaLabel="@GetAriaLabel">
+<MudSheet @bind-Open="@_sheet2Open" Position="Position.Top" CurrentSize="25" Paper="false" BorderRadius="@_borderRadius" AriaLabel="@AriaLabelValue">
     <MudIconButton Icon="@Icons.Material.Filled.Delete" aria-label="cancel" OnClick="@(() => _sheet2Open = !_sheet2Open)" />
     <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Primary" aria-label="github" />
     <MudIconButton Icon="@Icons.Material.Filled.Favorite" Color="Color.Secondary" aria-label="add to favorite" />
     <MudIconButton Icon="@Icons.Material.Filled.Share" Disabled="true" aria-label="share" />
 </MudSheet>
 
-<MudSheet @bind-Open="@_sheet3Open" Position="Position.Right" CurrentSize="25" BorderRadius="@_borderRadius" AriaLabel="@GetAriaLabel">
+<MudSheet @bind-Open="@_sheet3Open" Position="Position.Right" CurrentSize="25" BorderRadius="@_borderRadius" AriaLabel="@AriaLabelValue">
     <MudStack Spacing="4">
         <MudText Typo="Typo.h6">User Settings</MudText>
         <MudTextField T="string" Label="Display Name" Variant="Variant.Outlined" />
@@ -56,7 +56,7 @@
     </MudStack>
 </MudSheet>
 
-<MudSheet @bind-Open="@_sheet4Open" Position="Position.Left" CurrentSize="25" Paper="false" BorderRadius="@_borderRadius" AriaLabel="@GetAriaLabel">
+<MudSheet @bind-Open="@_sheet4Open" Position="Position.Left" CurrentSize="25" Paper="false" BorderRadius="@_borderRadius" AriaLabel="@AriaLabelValue">
     <MudStack Spacing="4">
         <MudText Typo="Typo.h6">User Settings</MudText>
         <MudTextField T="string" Label="Display Name" Variant="Variant.Outlined" />
@@ -83,7 +83,7 @@
     private int _borderRadius = 16;
     private string _ariaLabel = string.Empty;
 
-    private string GetAriaLabel => string.IsNullOrWhiteSpace(_ariaLabel) ? null : _ariaLabel;
+    private string AriaLabelValue => string.IsNullOrWhiteSpace(_ariaLabel) ? null : _ariaLabel;
 
     /// <summary>
     /// Gets a cascading value indicating whether the layout and text direction are rendered in a right-to-left format.

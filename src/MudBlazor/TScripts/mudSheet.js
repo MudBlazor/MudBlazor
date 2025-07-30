@@ -5,64 +5,53 @@
 window.mudsheetHelper = {
 
     setMudSheetEdge: function (popoverContentNode, classListArray) {
-        // Start at center of viewport
+        // center of viewport
         let positionleft = window.innerWidth / 2;
         let positiontop = window.innerHeight / 2;
-
-        // adjust for appbar and set attributes for css
-        const appBarFixedTop = document.querySelectorAll('.mud-appbar-fixed-top');
-        const appBarFixedBottom = document.querySelectorAll('.mud-appbar-fixed-bottom');
         let appbarTop = 0;
         let appbarBottom = 0;
-        // Should not cover an appbar
-        if (!classListArray.includes('mud-sheet-cover-appbar')) {
-            if (appBarFixedTop.length > 0) {
-                popoverContentNode.setAttribute("appbar", "top");
-                if (appBarFixedTop[0].classList.contains("mud-appbar-dense")) {
+
+        const appBarFixedTop = document.querySelectorAll('.mud-appbar-fixed-top');
+        const appBarFixedBottom = document.querySelectorAll('.mud-appbar-fixed-bottom');
+        const coverAppbar = classListArray.includes('mud-sheet-cover-appbar');
+
+        function handleAppbar(appbarNodes, position, attrValue) {
+            if (appbarNodes.length === 0) return 0;
+            if (!coverAppbar) {
+                popoverContentNode.setAttribute("appbar", attrValue);
+                if (appbarNodes[0].classList.contains("mud-appbar-dense")) {
                     popoverContentNode.setAttribute("appbar-dense", "true");
                 }
-                appbarTop += appBarFixedTop[0].getBoundingClientRect().height || 0;
-            }
-            if (appBarFixedBottom.length > 0) {
-                popoverContentNode.setAttribute("appbar", "bottom");
-                if (appBarFixedBottom[0].classList.contains("mud-appbar-dense")) {
-                    popoverContentNode.setAttribute("appbar-dense", "true");
+                return appbarNodes[0].getBoundingClientRect().height || 0;
+            } else {
+                if (position === 'top' || position === 'bottom') {
+                    window.mudpopoverHelper.updatePopoverZIndex(popoverContentNode, appbarNodes[0]);
                 }
-                appbarBottom += appBarFixedBottom[0].getBoundingClientRect().height || 0;
+                return 0;
             }
         }
-        else {
+
+        appbarTop = handleAppbar(appBarFixedTop, 'top', 'top');
+        appbarBottom = handleAppbar(appBarFixedBottom, 'bottom', 'bottom');
+
+        if (coverAppbar) {
             popoverContentNode.removeAttribute("appbar");
             popoverContentNode.removeAttribute("appbar-dense");
-            // if not covering the appbar it should be above the appbar
-            if (appBarFixedTop.length > 0) {
-                window.mudpopoverHelper.updatePopoverZIndex(popoverContentNode, appBarFixedTop[0]);
-            }
-            else if (appBarFixedBottom.length > 0) {
-                window.mudpopoverHelper.updatePopoverZIndex(popoverContentNode, appBarFixedBottom[0]);
-            }
         }
 
-        // the += and -= are adding or removing appbar heights from the top style        
-        positiontop += (appbarTop - appbarBottom) / 2; // center,left,right
-        positiontop += 1; // the 1 is for the 1px box it uses for positioning
+        positiontop += (appbarTop - appbarBottom) / 2;
+        positiontop += 1; // adjust for positioning pixel
 
         if (classListArray.includes('mud-sheet-position-bottom')) {
-            positiontop = window.innerHeight;
-            positiontop -= appbarBottom + 1;
-        }
-        else if (classListArray.includes('mud-sheet-position-top')) {
-            positiontop = 0;
-            positiontop += appbarTop;
-        }
-        else if (classListArray.includes('mud-sheet-position-left')) {
+            positiontop = window.innerHeight - appbarBottom - 1;
+        } else if (classListArray.includes('mud-sheet-position-top')) {
+            positiontop = appbarTop;
+        } else if (classListArray.includes('mud-sheet-position-left')) {
             positionleft = 0;
-        }
-        else if (classListArray.includes('mud-sheet-position-right')) {
+        } else if (classListArray.includes('mud-sheet-position-right')) {
             positionleft = window.innerWidth;
         }
 
-        // console.log(`Top: ${positiontop}, Left: ${positionleft}, ScrollY: ${window.scrollY}, ScrollX: ${window.scrollX}`);
         popoverContentNode.setAttribute('data-pc-x', positionleft);
         popoverContentNode.setAttribute('data-pc-y', positiontop);
         return this.getUpdatedBoundingClientRect(positiontop, positionleft);
