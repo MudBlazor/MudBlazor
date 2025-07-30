@@ -1,5 +1,4 @@
-﻿<MudDataGrid @ref="_dataGrid"
-             T="Model"
+﻿<MudDataGrid T="Model"
              ServerData="@ServerReload"
              Groupable
              Height="600px">
@@ -10,8 +9,6 @@
 </MudDataGrid>
 
 @code {
-    private MudDataGrid<Model> _dataGrid = null!;
-
     private static List<Model> _rows = new()
     {
         new Model("A", "X"),

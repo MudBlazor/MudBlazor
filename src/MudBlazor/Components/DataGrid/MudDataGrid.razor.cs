@@ -2140,7 +2140,7 @@ namespace MudBlazor
                 Indentation = column.GroupIndented,
                 Title = column.Title,
                 Grouping = new EmptyGrouping<object?, T>(null), // Ensure Grouping is not null
-                HierarchyKeys = new GroupHierarchyKeysCollection([])
+                KeyPath = new GroupKeyPath([])
             };
         }
 
@@ -2150,13 +2150,13 @@ namespace MudBlazor
             foreach (var group in groups)
             {
                 var expanded = false;
-                var currentHierarchyKeys = groupDef.Parent?.HierarchyKeys.ToList() ?? [];
-                GroupHierarchyKeysCollection? hierarchyKeys = null;
+                var currentKeyPath = groupDef.Parent?.KeyPath.ToList() ?? [];
+                GroupKeyPath? keyPath = null;
                 if (group is not null)
                 {
-                    currentHierarchyKeys.Add(group.Key);
-                    hierarchyKeys = new GroupHierarchyKeysCollection(currentHierarchyKeys);
-                    var key = new GroupKey(groupDef.Title, hierarchyKeys);
+                    currentKeyPath.Add(group.Key);
+                    keyPath = new GroupKeyPath(currentKeyPath);
+                    var key = new GroupKey(groupDef.Title, keyPath);
                     expanded = _groupExpansionsDict.TryGetValue(key, out var value) ? value :
                                    groupDef.Expanded;
                     _groupExpansionsDict.TryAdd(key, expanded);
@@ -2171,13 +2171,13 @@ namespace MudBlazor
                     Title = groupDef.Title,
                     Parent = groupDef.Parent,
                     Grouping = group ?? new EmptyGrouping<object?, T>(null),
-                    HierarchyKeys = hierarchyKeys ?? new GroupHierarchyKeysCollection(currentHierarchyKeys),
+                    KeyPath = keyPath ?? new GroupKeyPath(currentKeyPath),
                 };
 
                 var innerGroup = groupDef.InnerGroup;
                 if (innerGroup != null)
                 {
-                    // Create a new InnerGroup instance to prevent unwanted side effects from shared references in the group hierarchy (e.g., tracking the Expanded state)
+                    // Create a new InnerGroup instance to prevent unwanted side effects from shared references at different grouping levels (e.g., tracking the Expanded state)
                     newGroupDefinition.InnerGroup = new GroupDefinition<T>
                     {
                         DataGrid = this,
@@ -2188,7 +2188,7 @@ namespace MudBlazor
                         Title = innerGroup.Title,
                         Parent = newGroupDefinition,
                         Grouping = innerGroup.Grouping,
-                        HierarchyKeys = new GroupHierarchyKeysCollection(innerGroup.HierarchyKeys),
+                        KeyPath = new GroupKeyPath(innerGroup.KeyPath),
                         InnerGroup = innerGroup.InnerGroup
                     };
                 }

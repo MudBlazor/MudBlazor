@@ -27,10 +27,10 @@ public class GroupDefinition<[DynamicallyAccessedMembers(DynamicallyAccessedMemb
     public required IGrouping<object?, T> Grouping { get; set; }
 
     /// <summary>
-    /// List of keys representing the hierarchical path of this group
+    /// List of keys representing the path of this group across all grouping levels.
     /// Each item in the list corresponds to a grouping level.
     /// </summary>
-    public required GroupHierarchyKeysCollection HierarchyKeys { get; init; }
+    public required GroupKeyPath KeyPath { get; init; }
 
     /// <summary>
     /// The function which selects items for this group.
