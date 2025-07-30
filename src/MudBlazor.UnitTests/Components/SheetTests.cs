@@ -38,6 +38,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(async () => await comp.Instance.OpenSheetAsync());
             // container should be rendered without manual re-render
             comp.WaitForAssertion(() => provider.FindAll(".mud-sheet-container").Count.Should().Be(1));
+            provider.Find(".mud-sheet-popover").Should().NotBeNull();
             provider.Find($"#{comp.Instance.ElementId}").Should().NotBeNull();
             // position should match
             provider.Find($".mud-sheet-position-{result}").Should().NotBeNull();
@@ -583,6 +584,17 @@ namespace MudBlazor.UnitTests.Components
 
             // Should be closed
             comp.Instance.GetState<bool>(nameof(comp.Instance.Open)).Should().BeFalse();
+
+            // reopen
+            comp.SetParametersAndRender(p => p.Add(p => p.CloseOnEscapeKey, false));
+            await comp.InvokeAsync(async () => await comp.Instance.OpenSheetAsync());
+            comp.Instance.GetState<bool>(nameof(comp.Instance.Open)).Should().BeTrue();
+
+            // simulate escape keydown again
+            sheetDiv = provider.Find(".mud-sheet-container");
+            await sheetDiv.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Escape" });
+            // Should still be open since CloseOnEscapeKey is false
+            comp.Instance.GetState<bool>(nameof(comp.Instance.Open)).Should().BeTrue();
         }
 
         [Test]
@@ -607,6 +619,41 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task Sheet_CanDrag()
+        {
+            var comp = Context.RenderComponent<MudSheet>();
+
+            var prop = typeof(MudSheet).GetProperty("CanDrag", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+
+            // _dragging starts false, _openState.Value starts false, 
+            // _points is null, and _viewportSize is null, all of these have to flip for CanDrag to return true.
+
+            // with sheet open , CanDrag should still be false
+            await comp.InvokeAsync(async () => await comp.Instance.OpenSheetAsync());
+            prop!.GetValue(comp.Instance).Should().Be(false);
+
+            // with _dragging set to true, CanDrag should still be false
+            comp.Instance._dragging = true;
+            prop!.GetValue(comp.Instance).Should().Be(false);
+
+            // with _points set to a valid value, CanDrag should still be false
+            comp.Instance._points = new MudSheet.DragPoints(0, 0, 0);
+            prop!.GetValue(comp.Instance).Should().Be(false);
+
+            // test methods that rely on CanDrag
+            var method1 = typeof(MudSheet).GetMethod("HandlePointerMoveAsync", BindingFlags.NonPublic | BindingFlags.Instance);
+            var method2 = typeof(MudSheet).GetMethod("HandlePointerCancelAsync", BindingFlags.NonPublic | BindingFlags.Instance);
+
+            // these methods should not throw when CanDrag is false and just return a Task
+            var task = method1!.Invoke(comp.Instance, new object[] { new PointerEventArgs() });
+            task.Should().Be(Task.CompletedTask);
+
+            // with _viewportSize set to a valid value, CanDrag should finally be true
+            comp.Instance._viewportSize = new MudSheet.ViewPortSize(640, 480);
+            prop!.GetValue(comp.Instance).Should().Be(true);
+        }
+
+        [Test]
         public async Task Sheet_SetParametersAsync_Clamps_On_Invalid_CurrentSize()
         {
             var comp = Context.RenderComponent<MudSheet>();
@@ -619,6 +666,56 @@ namespace MudBlazor.UnitTests.Components
             comp.SetParametersAndRender(p => p.Add(p => p.CurrentSize, 101));
             await comp.InvokeAsync(async () => await comp.Instance.OpenSheetAsync());
             comp.Instance.GetState<int>(nameof(comp.Instance.CurrentSize)).Should().Be(100);
+        }
+
+        [Test]
+        public async Task Sheet_HandlePointerCancelAsync_ResetsDraggingState()
+        {
+            var comp = Context.RenderComponent<MudSheet>(p => p.Add(p => p.EnableDragToSize, true));
+            await comp.InvokeAsync(async () => await comp.Instance.OpenSheetAsync());
+
+            // Set up drag state
+            comp.Instance._dragging = true;
+            comp.Instance._points = new MudSheet.DragPoints(10, 20, 30);
+            comp.Instance._viewportSize = new MudSheet.ViewPortSize(100, 100);
+
+            var pointerArgs = new PointerEventArgs { PointerId = 1 };
+
+            // Use reflection to invoke private method
+            var method = typeof(MudSheet).GetMethod("HandlePointerCancelAsync", BindingFlags.NonPublic | BindingFlags.Instance);
+            var task = (Task)method!.Invoke(comp.Instance, new object[] { pointerArgs })!;
+            await task;
+
+            // After cancel, dragging and points should be reset
+            comp.Instance._dragging.Should().BeFalse();
+            comp.Instance._points.Should().BeNull();
+            comp.Instance._viewportSize.Should().BeNull();
+        }
+
+        [TestCase(100, 100, 100, 120, 50, 70, Position.Top)]     // Top: delta = 20, height = 100
+        [TestCase(100, 100, 120, 100, 50, 70, Position.Left)]    // Left: delta = 20, width = 100
+        [TestCase(120, 100, 100, 100, 50, 70, Position.Right)]   // Right: delta = 20, width = 100
+        [TestCase(100, 100, 100, 120, 50, 10, Position.Center)]  // Center: delta = -20, height/2 = 50, 50 - (-20 / 50 * 100)
+        [Test]
+        public async Task Sheet_PerformPointerDrag_Math(double startX, double startY, double currentX, double currentY, int baseSize, int expected, Position pos)
+        {
+            var comp = Context.RenderComponent<MudSheet>(p => p
+                .Add(p => p.SnapMode, false)
+                .Add(p => p.Position, pos));
+            await comp.InvokeAsync(async () => await comp.Instance.OpenSheetAsync());
+
+            // Set up viewport size
+            comp.Instance._viewportSize = new MudSheet.ViewPortSize(100, 100);
+
+            // Use reflection to invoke private method
+            var method = typeof(MudSheet).GetMethod("PerformPointerDrag", BindingFlags.NonPublic | BindingFlags.Instance);
+
+            // Call PerformPointerDrag
+            var task = (Task)method!.Invoke(comp.Instance, new object[] { startX, startY, currentX, currentY, baseSize })!;
+            await task;
+
+            // Check the new CurrentSize
+            comp.Instance.GetState<int>(nameof(comp.Instance.CurrentSize)).Should().Be(expected);
         }
     }
 }
