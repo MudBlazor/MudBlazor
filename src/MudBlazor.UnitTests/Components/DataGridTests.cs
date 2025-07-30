@@ -2784,111 +2784,52 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
             IElement FilterButton() => dataGrid.FindAll(".filter-button")[0];
 
-            // click on the filter button
+            // Helper method to select a filter operator and verify the outcome
+            async Task SelectFilterOperator(int operatorIndex, int expectedFilterCount)
+            {
+                // Ensure the filter panel is open before interacting
+                if (comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count == 0)
+                {
+                    FilterButton().Click();
+                    comp.WaitForElement(".filter-operator");
+                }
+
+                // Open the operator dropdown and select an item
+                await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
+                var listItems = comp.WaitForElements(".mud-list .mud-list-item");
+                listItems[operatorIndex].Click();
+
+                // Click the overlay to close the dropdown and commit the selection
+                comp.Find(".mud-overlay").Click();
+
+                // Assert that the number of active filters is correct
+                comp.WaitForAssertion(() =>
+                {
+                    dataGrid.Instance.FilterDefinitions.Count.Should().Be(expectedFilterCount);
+                });
+
+                // Close the filter panel to ensure a clean state for the next test
+                if (comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count > 0)
+                {
+                    FilterButton().Click();
+                }
+            }
+
+            // 1. Initial state: Open the filter panel and confirm it's visible
             FilterButton().Click();
+            comp.WaitForAssertion(() => comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(1));
 
-            // check the number of filters displayed in the filters panel is 1
-            comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(1);
+            // 2. Test operators that should be removed when their value is empty
+            await SelectFilterOperator(0, 0); // "contains"
+            await SelectFilterOperator(1, 0); // "not contains"
+            await SelectFilterOperator(2, 0); // "equals"
+            await SelectFilterOperator(3, 0); // "not equals"
+            await SelectFilterOperator(4, 0); // "starts with"
+            await SelectFilterOperator(5, 0); // "ends with"
 
-            // Wait for the filter panel to render properly
-            comp.WaitForState(() => comp.FindAll(".filter-operator").Count > 0, timeout: TimeSpan.FromSeconds(5));
-
-            await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
-
-            //set operator to CONTAINS
-            comp.FindAll(".mud-list .mud-list-item")[0].Click();
-            comp.Find(".mud-overlay").Click();
-            comp.Render();
-
-            //should be removed since no value is provided
-            dataGrid.Instance.FilterDefinitions.Count.Should().Be(0);
-
-            //set operator to NOT CONTAINS
-            FilterButton().Click();
-
-            // Wait for the filter panel to render properly
-            comp.WaitForState(() => comp.FindAll(".filter-operator").Count > 0, timeout: TimeSpan.FromSeconds(5));
-
-            await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
-
-            comp.FindAll(".mud-list .mud-list-item")[1].Click();
-            comp.Find(".mud-overlay").Click();
-            comp.Render();
-
-            //should be removed since no value is provided
-            dataGrid.Instance.FilterDefinitions.Count.Should().Be(0);
-
-            //set operator to EQUALS
-            FilterButton().Click();
-
-            await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
-
-            comp.FindAll(".mud-list .mud-list-item")[2].Click();
-            comp.Find(".mud-overlay").Click();
-            comp.Render();
-
-            //should be removed since no value is provided
-            dataGrid.Instance.FilterDefinitions.Count.Should().Be(0);
-
-            //set operator to NOT EQUALS
-            FilterButton().Click();
-
-            await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
-
-            comp.FindAll(".mud-list .mud-list-item")[3].Click();
-            comp.Find(".mud-overlay").Click();
-            comp.Render();
-
-            //should be removed since no value is provided
-            dataGrid.Instance.FilterDefinitions.Count.Should().Be(0);
-
-            //set operator to STARTS WITH
-            FilterButton().Click();
-
-            await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
-
-            comp.FindAll(".mud-list .mud-list-item")[4].Click();
-            comp.Find(".mud-overlay").Click();
-            comp.Render();
-
-            //should be removed since no value is provided
-            dataGrid.Instance.FilterDefinitions.Count.Should().Be(0);
-
-            //set operator to ENDS WITH
-            FilterButton().Click();
-
-            await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
-
-            comp.FindAll(".mud-list .mud-list-item")[5].Click();
-            comp.Find(".mud-overlay").Click();
-            comp.Render();
-
-            //should be removed since no value is provided
-            dataGrid.Instance.FilterDefinitions.Count.Should().Be(0);
-
-            //set operator to IS EMPTY
-            FilterButton().Click();
-
-            await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
-
-            comp.FindAll(".mud-list .mud-list-item")[6].Click();
-            comp.Find(".mud-overlay").Click();
-            comp.Render();
-
-            //should maintain filter, no value is required
-            dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
-
-            //set operator to IS NOT EMPTY
-            FilterButton().Click();
-
-            await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
-
-            comp.FindAll(".mud-list .mud-list-item")[7].Click();
-            comp.Find(".mud-overlay").Click();
-            comp.Render();
-
-            //should maintain filter, no value is required
-            dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
+            // 3. Test operators that are valid without a value
+            await SelectFilterOperator(6, 1); // "is empty"
+            await SelectFilterOperator(7, 1); // "is not empty"
         }
 
         [Test]
