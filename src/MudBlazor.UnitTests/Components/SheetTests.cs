@@ -38,7 +38,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(async () => await comp.Instance.OpenSheetAsync());
             // container should be rendered without manual re-render
             comp.WaitForAssertion(() => provider.FindAll(".mud-sheet-container").Count.Should().Be(1));
-            provider.Find(".mud-sheet-popover").Should().NotBeNull();
+
             provider.Find($"#{comp.Instance.ElementId}").Should().NotBeNull();
             // position should match
             provider.Find($".mud-sheet-position-{result}").Should().NotBeNull();
@@ -49,6 +49,12 @@ namespace MudBlazor.UnitTests.Components
             // content should be rendered
             var content = provider.Find(".mud-sheet-container .mud-sheet-content");
             content.TextContent.Should().Be(textContent);
+
+            // ensure popover contains base class
+            var prop = typeof(MudSheet).GetProperty("PopoverClassname", BindingFlags.NonPublic | BindingFlags.Instance);
+            prop.Should().NotBeNull();
+            var popoverClass = prop!.GetValue(comp.Instance) as string;
+            popoverClass.Should().Contain("mud-sheet-popover");
 
             // close the sheet
             await comp.InvokeAsync(async () => await comp.Instance.CloseSheetAsync());
@@ -696,6 +702,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(100, 100, 120, 100, 50, 70, Position.Left)]    // Left: delta = 20, width = 100
         [TestCase(120, 100, 100, 100, 50, 70, Position.Right)]   // Right: delta = 20, width = 100
         [TestCase(100, 100, 100, 120, 50, 10, Position.Center)]  // Center: delta = -20, height/2 = 50, 50 - (-20 / 50 * 100)
+        [TestCase(100, 100, 100, 120, 50, 50, Position.Right)] // An else case to test the math
         [Test]
         public async Task Sheet_PerformPointerDrag_Math(double startX, double startY, double currentX, double currentY, int baseSize, int expected, Position pos)
         {
