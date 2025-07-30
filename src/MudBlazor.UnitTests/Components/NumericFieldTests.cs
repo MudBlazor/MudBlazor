@@ -22,7 +22,7 @@ namespace MudBlazor.UnitTests.Components
     {
         // TestCaseSource does not know about "Nullable<T>" so having values as Nullable<T> does not make sense here
         static object[] TypeCases =
-        {
+        [
             new object[] { (byte)5 },
             new object[] { (sbyte)5 },
             new object[] { (short)5 },
@@ -34,7 +34,7 @@ namespace MudBlazor.UnitTests.Components
             new object[] { (float)5 },
             new object[] { (double)5 },
             new object[] { (decimal)5 }
-        };
+        ];
 
         /// <summary>
         /// Numeric Field id should propagate to label for attribute

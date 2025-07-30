@@ -15,13 +15,13 @@ namespace MudBlazor.UnitTests
     public class IJSRuntimeExtensionsTests
     {
         private static object[] _caughtExceptions =
-        {
+        [
 #if !DEBUG
             new object[] { new JSException("only testing") },
 #endif
             new object[] { new TaskCanceledException() },
             new object[] { new JSDisconnectedException("only testing") },
-        };
+        ];
 
         [Test]
         public async Task InvokeVoidAsyncWithErrorHandling_NoException()

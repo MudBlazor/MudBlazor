@@ -48,7 +48,7 @@ namespace MudBlazor
         /// The allowed page sizes when <see cref="PageSizeSelector"/> is <c>true</c>.  Defaults to <c>10</c>, <c>25</c>, <c>50</c>, <c>100</c>.
         /// </summary>
         [Parameter]
-        public int[] PageSizeOptions { get; set; } = new int[] { 10, 25, 50, 100 };
+        public int[] PageSizeOptions { get; set; } = [10, 25, 50, 100];
 
         /// <summary>
         /// The format for the first item, last item, and number of total items.

@@ -320,10 +320,10 @@ namespace MudBlazor.UnitTests.Components
             comp.SetParam(x => x.Mask,
                 new PatternMask("(bb+) 999-bb")
                 {
-                    MaskChars = new MaskChar[]
-                    {
+                    MaskChars =
+                    [
                         MaskChar.Letter('b'), MaskChar.Digit('9'), MaskChar.LetterOrDigit('+'),
-                    },
+                    ],
                     Placeholder = '_',
                     CleanDelimiters = true
                 });
@@ -342,11 +342,11 @@ namespace MudBlazor.UnitTests.Components
             {
                 Placeholder = '_',
                 CleanDelimiters = true,
-                MaskChars = new[]
-            {
+                MaskChars =
+            [
                 new MaskChar('L', "[a-z]"),
                 new MaskChar('U', "[A-Z]")
-            }
+            ]
             });
             var maskField = comp.Instance;
 

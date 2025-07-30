@@ -31,8 +31,8 @@ namespace MudBlazor.UnitTests.Components
         private const string CssSelector = ".mud-picker-color-overlay-black .mud-picker-color-overlay";
         private const string _mudToolbarButtonsCssSelector = ".mud-toolbar button";
 
-        private static readonly MudColor[] _mudGridDefaultColors = new MudColor[]
-                        {
+        private static readonly MudColor[] _mudGridDefaultColors =
+                        [
                 "#FFFFFF","#ebebeb","#d6d6d6","#c2c2c2","#adadad","#999999","#858586","#707070","#5c5c5c","#474747","#333333","#000000",
                 "#133648","#071d53","#0f0638","#2a093b","#370c1b","#541107","#532009","#53350d","#523e0f","#65611b","#505518","#2b3d16",
                 "#1e4c63","#0f2e76","#180b4e","#3f1256","#4e1629","#781e0e","#722f10","#734c16","#73591a","#8c8629","#707625","#3f5623",
@@ -43,10 +43,10 @@ namespace MudBlazor.UnitTests.Components
                 "#78d3f8","#7fa6f8","#7e52f5","#c45ff6","#de789d","#f09286","#f2a984","#f6c983","#f9da85","#fef9a1","#ebf29b","#badc94",
                 "#a5e1fa","#adc5fa","#ab8df7","#d696f8","#e8a7bf","#f4b8b1","#f6c7af","#f9daae","#fae5af","#fefbc0","#f3f7be","#d2e7ba",
                 "#d2effd","#d6e1fc","#d6c9fa","#e9cbfb","#f3d4df","#f9dcd9","#fae3d8","#fcecd7","#fdf2d8","#fefce0","#f7fade","#e3edd6"
-                        };
+                        ];
 
-        private static readonly MudColor[] _mudGridPaletteDefaultColors = new MudColor[]
-                {
+        private static readonly MudColor[] _mudGridPaletteDefaultColors =
+                [
                    "#424242", "#2196f3", "#00c853", "#ff9800", "#f44336",
                   "#f6f9fb", "#9df1fa", "#bdffcf", "#fff0a3", "#ffd254",
                   "#e6e9eb", "#27dbf5", "#7ef7a0", "#ffe273", "#ffb31f",
@@ -54,7 +54,7 @@ namespace MudBlazor.UnitTests.Components
                   "#858791", "#0989c2", "#1bbd66", "#ebb323", "#fe6800",
                   "#585b62", "#17698e", "#17a258", "#d9980d", "#dc3f11",
                   "#353940", "#113b53", "#127942", "#bf7d11", "#aa0000"
-                };
+                ];
 
         private void CheckColorRelatedValues(IRenderedComponent<SimpleColorPickerTest> comp, double expectedX, double expectedY, MudColor expectedColor, ColorPickerMode mode, bool checkInstanceValue = true, bool isRtl = false)
         {

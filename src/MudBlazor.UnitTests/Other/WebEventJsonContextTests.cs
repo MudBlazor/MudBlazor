@@ -60,13 +60,13 @@ namespace MudBlazor.UnitTests.Other
                 DataTransfer = new DataTransfer()
                 {
                     DropEffect = "Effect",
-                    Items = new DataTransferItem[]
-                    {
+                    Items =
+                    [
                         new()
                         {
                             Type = "TestType"
                         }
-                    }
+                    ]
                 },
                 Type = "TestType",
                 ClientX = 10,
@@ -139,8 +139,8 @@ namespace MudBlazor.UnitTests.Other
             var eventArgs = new TouchEventArgs
             {
                 Type = "TestType",
-                TargetTouches = new[]
-                {
+                TargetTouches =
+                [
                     new TouchPoint()
                     {
                         ClientX = 0
@@ -149,7 +149,7 @@ namespace MudBlazor.UnitTests.Other
                     {
                         ClientX = 10
                     }
-                }
+                ]
             };
             var eventData = JsonSerializer.Serialize(eventArgs, evenType);
             var @event = (TouchEventArgs)JsonSerializer.Deserialize(eventData, evenType, new WebEventJsonContext());

@@ -12,10 +12,10 @@ public abstract class BaseMask : IMask
     protected bool _initialized;
     protected Dictionary<char, MaskChar> _maskDict;
 
-    protected MaskChar[] _maskChars = new MaskChar[]
-    {
+    protected MaskChar[] _maskChars =
+    [
         MaskChar.Letter('a'), MaskChar.Digit('0'), MaskChar.LetterOrDigit('*'),
-    };
+    ];
 
     // per definition (unless defined otherwise in subclasses) delimiters are chars
     // in the mask which do not match any MaskChar
@@ -152,7 +152,7 @@ public abstract class BaseMask : IMask
         }
         if (other.MaskChars != null)
         {
-            var maskChars = new HashSet<MaskChar>(_maskChars ?? new MaskChar[0]);
+            var maskChars = new HashSet<MaskChar>(_maskChars ?? []);
             if (other.MaskChars.Length != MaskChars.Length || other.MaskChars.Any(x => !maskChars.Contains(x)))
             {
                 _maskChars = other.MaskChars;

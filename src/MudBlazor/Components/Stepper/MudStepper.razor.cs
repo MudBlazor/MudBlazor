@@ -274,12 +274,12 @@ public partial class MudStepper : MudComponentBase
     /// <remarks>
     /// Typically used to enable or disable a custon <c>Next</c> button.
     /// </remarks>
-    public bool CanGoToNextStep => _steps.Any() && _steps.SkipWhile(x => _steps.IndexOf(x) <= _activeIndex).Count(x => !x.DisabledState) > 0;
+    public bool CanGoToNextStep => _steps.Any() && _steps.SkipWhile(x => _steps.IndexOf(x) <= _activeIndex).Any(x => !x.DisabledState);
 
     /// <summary>
     /// Whether the <c>Previous</c> button is enabled.
     /// </summary>
-    public bool PreviousStepEnabled => _steps.Any() && _steps.TakeWhile(x => _steps.IndexOf(x) < _activeIndex).Count(x => !x.DisabledState) > 0;
+    public bool PreviousStepEnabled => _steps.Any() && _steps.TakeWhile(x => _steps.IndexOf(x) < _activeIndex).Any(x => !x.DisabledState);
 
     /// <summary>
     /// Whether all steps have been completed.

@@ -61,12 +61,12 @@ namespace MudBlazor.UnitTests.Components
             var checkboxClasses = comp.Find(".mud-button-root.mud-icon-button.mud-switch-base");
             // check initial state
             box.Value.Should().Be(false);
-            checkboxClasses.ClassList.Should().ContainInOrder(new[] { $"mud-{uncheckedcolor.ToDescriptionString()}-text", $"hover:mud-{uncheckedcolor.ToDescriptionString()}-hover" });
+            checkboxClasses.ClassList.Should().ContainInOrder([$"mud-{uncheckedcolor.ToDescriptionString()}-text", $"hover:mud-{uncheckedcolor.ToDescriptionString()}-hover"]);
 
             // click and check if it has new color
             comp.Find("input").Change(true);
             box.Value.Should().Be(true);
-            checkboxClasses.ClassList.Should().ContainInOrder(new[] { $"mud-{color.ToDescriptionString()}-text", $"hover:mud-{color.ToDescriptionString()}-hover" });
+            checkboxClasses.ClassList.Should().ContainInOrder([$"mud-{color.ToDescriptionString()}-text", $"hover:mud-{color.ToDescriptionString()}-hover"]);
         }
 
         [Test]

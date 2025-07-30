@@ -11,8 +11,8 @@ namespace MudBlazor.UnitTests.TestData
     {
         public static TestCaseData[] AllCombinations()
         {
-            return new[]
-            {
+            return
+            [
                 // Xs
                 new TestCaseData(Breakpoint.Xs, Breakpoint.Xs, true),
                 new TestCaseData(Breakpoint.Xs, Breakpoint.Sm, false),
@@ -143,7 +143,7 @@ namespace MudBlazor.UnitTests.TestData
 
                 // Invalid
                 new TestCaseData((Breakpoint)(-1), (Breakpoint)(-1), false),
-            };
+            ];
         }
     }
 }

@@ -168,7 +168,7 @@ namespace MudBlazor.UnitTests.Components
 
             var wrapperDivNode = comp.Find("#my-tooltip-content").ParentElement;
 
-            wrapperDivNode.ClassList.Should().BeEquivalentTo(new[] { "d-block" });
+            wrapperDivNode.ClassList.Should().BeEquivalentTo(["d-block"]);
         }
 
         [Test]

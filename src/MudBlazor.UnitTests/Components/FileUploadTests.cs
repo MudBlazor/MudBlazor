@@ -181,10 +181,10 @@ namespace MudBlazor.UnitTests.Components
         public async Task FileUpload_FileValueChangedTest()
         {
             InputFileContent[] fileContent =
-            {
+            [
                 InputFileContent.CreateFromText("Garderoben is a farmer!", "upload.txt"),
                 InputFileContent.CreateFromText("A Balrog, servant of Morgoth", "upload2.txt")
-            };
+            ];
 
             var comp = Context.RenderComponent<FileUploadFormValidationTest>();
 
@@ -216,10 +216,10 @@ namespace MudBlazor.UnitTests.Components
         public async Task FileUpload_ValidationTest()
         {
             InputFileContent[] fileContent =
-            {
+            [
                 InputFileContent.CreateFromText("Garderoben is a farmer!", "upload.txt"),
                 InputFileContent.CreateFromText("A Balrog, servant of Morgoth", "upload2.txt")
-            };
+            ];
 
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture; //<<< rework this!
             Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;

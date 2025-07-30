@@ -28,7 +28,7 @@ namespace MudBlazor.UnitTests.Other
         {
             // Currently, these classes inheriting from MudComponentBase have uncategorized properties.
             // If you want you can categorize them, and then remove from this list.
-            Type[] exceptions = {
+            Type[] exceptions = [
                 typeof(MudDataGrid<>),  // TODO: remove it later
                 typeof(FilterHeaderCell<>),
                 typeof(Column<>),
@@ -63,7 +63,7 @@ namespace MudBlazor.UnitTests.Other
                 typeof(MudBlazor.Charts.Legend),
 
                 typeof(MudRatingItem),  // TODO: remove it later; see also: https://github.com/MudBlazor/MudBlazor/discussions/3452
-            };
+            ];
 
             var isTestOK = true;
 

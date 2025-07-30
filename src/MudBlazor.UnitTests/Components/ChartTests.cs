@@ -621,7 +621,7 @@ namespace MudBlazor.UnitTests.Components
                 new() { Name = "Series 2", Data = [10, 41, 35, 51, 49, 62, 69, 91, 148] },
             };
 
-            double[] data = { 50, 25, 20, 5, 16, 14, 8, 4, 2, 8, 10, 19, 8, 17, 6, 11, 19, 24, 35, 13, 20, 12 };
+            double[] data = [50, 25, 20, 5, 16, 14, 8, 4, 2, 8, 10, 19, 8, 17, 6, 11, 19, 24, 35, 13, 20, 12];
 
             var isRadial = chart == ChartType.Donut || chart == ChartType.Pie;
 

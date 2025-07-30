@@ -431,7 +431,7 @@ namespace MudBlazor.Charts
                         var (firstPointX, firstPointY) = GetXYForDataPoint(0);
                         var (lastPointX, _) = GetXYForDataPoint(data.Count - 1);
 
-                        chartArea.Append(chartLine.ToString()); // the line up to this point is the same as the area, so we can reuse it
+                        chartArea.Append(chartLine); // the line up to this point is the same as the area, so we can reuse it
 
                         // add an extra point based on the x of the last point and 0 to add the area to the bottom
 

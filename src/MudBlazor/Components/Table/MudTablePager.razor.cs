@@ -80,7 +80,7 @@ namespace MudBlazor
         /// Defaults to <c>10</c>, <c>25</c>, <c>50</c>, and <c>100</c>.  Requires <see cref="HideRowsPerPage"/> to be <c>false</c>.
         /// </remarks>
         [Parameter]
-        public int[] PageSizeOptions { get; set; } = new[] { 10, 25, 50, 100 };
+        public int[] PageSizeOptions { get; set; } = [10, 25, 50, 100];
 
         /// <summary>
         /// The format of the text label.

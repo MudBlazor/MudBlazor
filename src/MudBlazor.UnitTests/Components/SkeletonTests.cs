@@ -19,7 +19,7 @@ namespace MudBlazor.UnitTests.Components
             // check initial state
             span.Attributes.GetNamedItem("style")?.Value.Should().BeNullOrEmpty();
             skeleton.Style.Should().BeNullOrEmpty();
-            skeletonClasses.ClassList.Should().ContainInOrder(new[] { "mud-skeleton", "mud-skeleton-text", "mud-skeleton-pulse" });
+            skeletonClasses.ClassList.Should().ContainInOrder(["mud-skeleton", "mud-skeleton-text", "mud-skeleton-pulse"]);
 
             // add new style and check if it was applied
             comp.SetParametersAndRender(p => p.Add(x => x.Style, "background:blue"));
@@ -39,7 +39,7 @@ namespace MudBlazor.UnitTests.Components
             // check initial state
             span.Attributes.GetNamedItem("style")?.Value.Should().Be("height:100px;");
             skeleton.Height.Should().Be("100px");
-            skeletonClasses.ClassList.Should().ContainInOrder(new[] { "mud-skeleton", "mud-skeleton-text", "mud-skeleton-pulse" });
+            skeletonClasses.ClassList.Should().ContainInOrder(["mud-skeleton", "mud-skeleton-text", "mud-skeleton-pulse"]);
 
             // add new style and check if it was applied
             comp.SetParametersAndRender(p => p.Add(x => x.Height, "50px"));
@@ -59,7 +59,7 @@ namespace MudBlazor.UnitTests.Components
             // check initial state
             span.Attributes.GetNamedItem("style")?.Value.Should().Be("width:300px;");
             skeleton.Width.Should().Be("300px");
-            skeletonClasses.ClassList.Should().ContainInOrder(new[] { "mud-skeleton", "mud-skeleton-text", "mud-skeleton-pulse" });
+            skeletonClasses.ClassList.Should().ContainInOrder(["mud-skeleton", "mud-skeleton-text", "mud-skeleton-pulse"]);
 
             // add new style and check if it was applied
             comp.SetParametersAndRender(p => p.Add(x => x.Width, "500px"));

@@ -42,7 +42,7 @@ namespace MudBlazor
         public MultiMask(string defaultMask, params MaskOption[] options) : base(defaultMask)
         {
             _defaultMask = defaultMask;
-            _options = options ?? new MaskOption[0];
+            _options = options ?? [];
         }
 
         private string _defaultMask;
@@ -131,7 +131,7 @@ namespace MudBlazor
                 return;
             // no need to re-initialize, just update the options
             _defaultMask = o._defaultMask;
-            _options = o._options ?? new MaskOption[0];
+            _options = o._options ?? [];
             OptionDetected = o.OptionDetected;
             Refresh();
         }

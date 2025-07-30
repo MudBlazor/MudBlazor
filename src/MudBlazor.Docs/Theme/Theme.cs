@@ -91,7 +91,7 @@ namespace MudBlazor.Docs
         {
             Default = new DefaultTypography()
             {
-                FontFamily = new[] { "Public Sans", "Roboto", "Arial", "sans-serif" },
+                FontFamily = ["Public Sans", "Roboto", "Arial", "sans-serif"],
                 LetterSpacing = "normal"
             },
             H1 = new H1Typography()
@@ -178,8 +178,8 @@ namespace MudBlazor.Docs
 
         private static readonly Shadow LandingPageShadows = new()
         {
-            Elevation = new string[]
-            {
+            Elevation =
+            [
             "none",
             "0 2px 4px -1px rgba(6, 24, 44, 0.2)",
             "0px 3px 1px -2px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 5px 0px rgba(0,0,0,0.12)",
@@ -206,7 +206,7 @@ namespace MudBlazor.Docs
             "0 50px 100px -20px rgba(50, 50, 93, 0.25), 0 30px 60px -30px rgba(0, 0, 0, 0.30)",
             "2.8px 2.8px 2.2px rgba(0, 0, 0, 0.02),6.7px 6.7px 5.3px rgba(0, 0, 0, 0.028),12.5px 12.5px 10px rgba(0, 0, 0, 0.035),22.3px 22.3px 17.9px rgba(0, 0, 0, 0.042),41.8px 41.8px 33.4px rgba(0, 0, 0, 0.05),100px 100px 80px rgba(0, 0, 0, 0.07)",
             "0px 0px 20px 0px rgba(0, 0, 0, 0.05)"
-            }
+            ]
         };
         #endregion
     }

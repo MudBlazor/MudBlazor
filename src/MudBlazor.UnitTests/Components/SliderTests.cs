@@ -54,7 +54,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudSlider<int>>(x => x.Add(p => p.Size, size));
 
             IElement Slider() => comp.Find(".mud-slider");
-            Slider().ClassList.Should().ContainInOrder(new[] { "mud-slider", $"mud-slider-{expectedSizeClass}" });
+            Slider().ClassList.Should().ContainInOrder(["mud-slider", $"mud-slider-{expectedSizeClass}"]);
         }
 
 
@@ -64,12 +64,12 @@ namespace MudBlazor.UnitTests.Components
             var verticalSliderComponent = Context.RenderComponent<MudSlider<int>>(x => x.Add(p => p.Vertical, true));
 
             IElement VerticalSlider() => verticalSliderComponent.Find(".mud-slider");
-            VerticalSlider().ClassList.Should().ContainInOrder(new[] { "mud-slider", "mud-slider-small", "mud-slider-vertical" });
+            VerticalSlider().ClassList.Should().ContainInOrder(["mud-slider", "mud-slider-small", "mud-slider-vertical"]);
 
             var horizontalSliderComponent = Context.RenderComponent<MudSlider<int>>(x => x.Add(p => p.Vertical, true));
 
             IElement HorizontalSlider() => horizontalSliderComponent.Find(".mud-slider");
-            HorizontalSlider().ClassList.Should().ContainInOrder(new[] { "mud-slider", "mud-slider-small" });
+            HorizontalSlider().ClassList.Should().ContainInOrder(["mud-slider", "mud-slider-small"]);
         }
 
         [Test]
@@ -81,7 +81,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudSlider<int>>(x => x.Add(p => p.Size, size));
 
             IElement Slider() => comp.Find(".mud-slider");
-            Slider().ClassList.Should().ContainInOrder(new[] { "mud-slider", $"mud-slider-{expectedSizeClass}", "mud-slider-primary" });
+            Slider().ClassList.Should().ContainInOrder(["mud-slider", $"mud-slider-{expectedSizeClass}", "mud-slider-primary"]);
         }
 
         [Test]
@@ -102,7 +102,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudSlider<int>>(x => x.Add(p => p.Color, color));
 
             IElement Slider() => comp.Find(".mud-slider");
-            Slider().ClassList.Should().ContainInOrder(new[] { "mud-slider", "mud-slider-small", $"mud-slider-{expectedColorClass}" });
+            Slider().ClassList.Should().ContainInOrder(["mud-slider", "mud-slider-small", $"mud-slider-{expectedColorClass}"]);
         }
 
         [Test]
