@@ -15,9 +15,6 @@ namespace MudBlazor;
 /// <seealso cref="MudDataGrid{T}"/>
 public partial class HierarchyColumn<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase
 {
-    private bool _finishedInitialExpanded;
-    private readonly HashSet<CellContext<T>> _initiallyExpandedItems = [];
-
     /// <summary>
     /// Displays the content right-to-left.
     /// </summary>
@@ -136,32 +133,18 @@ public partial class HierarchyColumn<[DynamicallyAccessedMembers(DynamicallyAcce
     [Parameter]
     public RenderFragment<CellContext<T>> CellTemplate { get; set; }
 
+#nullable enable
     /// <summary>
     /// The function which determines whether the row should be initially expanded.
     /// </summary>
     /// <remarks>
     /// This function takes an item of type <typeparamref name="T"/> as input and returns a boolean indicating
-    /// whether the row should be expanded.
+    /// whether the row should be expanded. Requires item to override the Equals and GetHashCode methods.
     /// Defaults to a function that always returns <c>false</c>.
     /// </remarks>
     [Parameter]
-    public Func<T, bool> InitiallyExpandedFunc { get; set; } = _ => false;
-
-    /// <inheritdoc/>
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        await base.OnAfterRenderAsync(firstRender);
-
-        if (firstRender)
-        {
-            _finishedInitialExpanded = true;
-
-            foreach (var context in _initiallyExpandedItems)
-            {
-                await context.Actions.ToggleHierarchyVisibilityForItemAsync.Invoke();
-            }
-        }
-    }
+    public Func<T, bool>? InitiallyExpandedFunc { get; set; }
+#nullable disable
 
     private string GetGroupIcon(CellContext<T> context)
     {

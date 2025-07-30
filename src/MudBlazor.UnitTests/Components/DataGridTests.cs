@@ -3346,7 +3346,8 @@ namespace MudBlazor.UnitTests.Components
             await dataGrid.InvokeAsync(() => dataGrid.Instance.CollapseAllHierarchy());
             dataGrid.WaitForAssertion(() => dataGrid.Instance._openHierarchies.Count.Should().Be(0));
             await dataGrid.InvokeAsync(() => dataGrid.Instance.ExpandAllHierarchy());
-            dataGrid.WaitForAssertion(() => dataGrid.Instance._openHierarchies.Count.Should().Be(5));
+            // one is disabled and will not be expanded
+            dataGrid.WaitForAssertion(() => dataGrid.Instance._openHierarchies.Count.Should().Be(4));
         }
 
         [Test]
@@ -3398,28 +3399,6 @@ namespace MudBlazor.UnitTests.Components
                 dataGrid.FindAll("td")
                 .SingleOrDefault(x => x.TextContent.Trim().StartsWith("uid = Alicia|54|Info|")).Should().BeNull();
             });
-        }
-
-        [Test]
-        public void DataGridRowDetailInitiallyExpandedMultipleTest()
-        {
-            var comp = Context.RenderComponent<DataGridHierarchyColumnTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
-
-            var item = dataGrid.Instance.Items.FirstOrDefault(x => x.Name == "Ira");
-
-            dataGrid.Instance._openHierarchies.Should().Contain(item);
-
-            item = dataGrid.Instance.Items.FirstOrDefault(x => x.Name == "Anders");
-
-            dataGrid.Instance._openHierarchies.Should().Contain(item);
-
-            comp.Markup.Should().Contain("uid = Ira|27|Success|");
-            comp.Markup.Should().Contain("uid = Anders|24|Error|");
-
-            comp.Markup.Should().NotContain("uid = Sam|56|Normal|");
-            comp.Markup.Should().NotContain("uid = Alicia|54|Info|");
-            comp.Markup.Should().NotContain("uid = John|32|Warning|");
         }
 
         [Test]
@@ -5237,7 +5216,7 @@ namespace MudBlazor.UnitTests.Components
             // Click again to expand all
             toggleButton = headerElement.QuerySelector(".mud-hierarchy-toggle-button");
             toggleButton.Click();
-            comp.WaitForAssertion(() => dataGrid.Instance._openHierarchies.Count.Should().Be(5));
+            comp.WaitForAssertion(() => dataGrid.Instance._openHierarchies.Count.Should().Be(4)); // one disabled
         }
 
         [Test]
@@ -5303,8 +5282,8 @@ namespace MudBlazor.UnitTests.Components
             // Call ToggleHierarchy again
             await accessor.ToggleHierarchyAsync();
 
-            // Now all hierarchies should be expanded
-            dataGrid.Instance._openHierarchies.Count.Should().Be(5);
+            // Now all hierarchies should be expanded (except the disabled one)
+            dataGrid.Instance._openHierarchies.Count.Should().Be(4);
         }
 
         [Test]
@@ -5351,6 +5330,102 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance._openHierarchies.Count.Should().Be(1);
 
             dataGrid.Instance._openHierarchies.First().Should().Be(item);
+        }
+
+        [Test]
+        public void DataGridRowDetailInitiallyExpandedMultipleTest()
+        {
+            // just setting Items
+            var comp = Context.RenderComponent<DataGridHierarchyColumnTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
+
+            var item = dataGrid.Instance.Items.FirstOrDefault(x => x.Name == "Ira");
+
+            dataGrid.Instance._openHierarchies.Should().Contain(item);
+
+            item = dataGrid.Instance.Items.FirstOrDefault(x => x.Name == "Anders");
+
+            dataGrid.Instance._openHierarchies.Should().Contain(item);
+
+            comp.Markup.Should().Contain("uid = Ira|27|Success|");
+            comp.Markup.Should().Contain("uid = Anders|24|Error|");
+
+            comp.Markup.Should().NotContain("uid = Sam|56|Normal|");
+            comp.Markup.Should().NotContain("uid = Alicia|54|Info|");
+            comp.Markup.Should().NotContain("uid = John|32|Warning|");
+        }
+
+        [Test]
+        public void DataGridRowDetailInitiallyExpandedObservableMultipleTest()
+        {
+            // updating an observable collection of items after initial load
+            var comp = Context.RenderComponent<DataGridHierarchyInitiallyExpandedItemsTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyInitiallyExpandedItemsTest.Model>>();
+
+            var item = dataGrid.Instance.Items.FirstOrDefault(x => x.Name == "Ira");
+
+            dataGrid.Instance._openHierarchies.Should().Contain(item);
+
+            item = dataGrid.Instance.Items.FirstOrDefault(x => x.Name == "Anders");
+
+            dataGrid.Instance._openHierarchies.Should().Contain(item);
+
+            comp.Markup.Should().Contain("uid = Ira|27|Success|");
+            comp.Markup.Should().Contain("uid = Anders|24|Error|");
+
+            comp.Markup.Should().NotContain("uid = Sam|56|Normal|");
+            comp.Markup.Should().NotContain("uid = Alicia|54|Info|");
+            comp.Markup.Should().NotContain("uid = John|32|Warning|");
+        }
+
+        [Test]
+        public async Task DataGridRowDetailInitiallyExpandedServerMultipleTest()
+        {
+            // ServerReload different pages
+            var comp = Context.RenderComponent<DataGridHierarchyInitiallyExpandedServerDataTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyInitiallyExpandedServerDataTest.Model>>();
+
+            comp.WaitForAssertion(() => comp.Markup.Should().Contain("uid = Ira|27|Success|"));
+            comp.Markup.Should().Contain("uid = Anders|24|Error|");
+
+            comp.Markup.Should().NotContain("uid = Sam|56|Normal|");
+            comp.Markup.Should().NotContain("uid = Alicia|54|Info|");
+            comp.Markup.Should().NotContain("uid = John|32|Warning|");
+
+            // Collapse Ira to ensure it remains collapsed when we return to the row
+            // Use LINQ to find the index of the row containing "uid = Ira"
+            var iraIndex = comp.FindAll("tr")
+                .Select((row, index) => new { row, index })
+                .First(r => r.row.InnerHtml.Contains("uid = Ira")).index;
+
+            iraIndex.Should().BeGreaterThan(0, "Expected a row above the Ira detail row");
+
+            // Now access the row above and find the toggle button and click it
+            await comp.InvokeAsync(() => comp.FindAll("tr")[iraIndex - 2].QuerySelector("button").Click());
+
+            // Find button with aria-label = "Next Page"
+            var nextButton = comp.Find("button[aria-label='Next page']");
+            nextButton.Should().NotBeNull();
+            nextButton.Click();
+
+            comp.WaitForAssertion(() => comp.Markup.Should().Contain("uid = ScarletKuro|27|Success|"));
+
+            comp.Markup.Should().NotContain("uid = Versile2|24|Error|");
+            comp.Markup.Should().NotContain("uid = Anu6is|56|Normal|");
+            comp.Markup.Should().NotContain("uid = Garderoben|32|Warning|");
+            comp.Markup.Should().NotContain("uid = Henon|54|Info|");
+
+            // go back and make sure Ira isn't re-expanded
+            var prevButton = comp.Find("button[aria-label='Previous page']");
+            prevButton.Should().NotBeNull();
+            prevButton.Click();
+
+            comp.WaitForAssertion(() => comp.Markup.Should().Contain("uid = Anders|24|Error|"));
+
+            comp.Markup.Should().NotContain("uid = Ira|27|Success|");
+            comp.Markup.Should().NotContain("uid = Sam|56|Normal|");
+            comp.Markup.Should().NotContain("uid = Alicia|54|Info|");
+            comp.Markup.Should().NotContain("uid = John|32|Warning|");
         }
 
         [Test]
