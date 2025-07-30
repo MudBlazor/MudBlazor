@@ -498,7 +498,7 @@ public partial class MudSheet : MudComponentBase, IAsyncDisposable
     /// <param name="newSize">The new size value. Must be between 0 and 100.</param>
     internal async Task ChangeSize(int newSize)
     {
-        Math.Clamp(newSize, 0, 100);
+        newSize = Math.Clamp(newSize, 0, 100);
         await _currentSizeState.SetValueAsync(newSize);
         await CurrentSizeChanged.InvokeAsync(newSize);
     }
