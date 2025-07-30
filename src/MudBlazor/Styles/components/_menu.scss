@@ -90,7 +90,11 @@
   margin-inline-end: 36px;
 }
 
-// Prevent menu item hover effects peeking through rounded popovers.
 .mud-popover:has(> .mud-menu-list) {
+  // Prevent menu item hover effects peeking through rounded popovers.
   overflow: hidden;
+  // Hide the menu if it doesn't have any content.
+  &:has(> .mud-menu-list:empty) {
+    visibility: hidden;
+  }
 }
