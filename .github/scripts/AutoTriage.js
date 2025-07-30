@@ -234,10 +234,8 @@ async function processIssue(issue, octokit, previousContext) {
     return analysis;
 }
 
-function getPreviousTriageContext(triageDb, issue) {
-    const triageEntry = triageDb[ISSUE_NUMBER];
-
-    // Triage if it never has been.
+function getPreviousTriageContext(triageEntry) {
+    // Triage for the first time.
     if (!triageEntry) {
         return { lastTriaged: null, previousReasoning: 'This issue has never been triaged.' };
     }
@@ -245,20 +243,9 @@ function getPreviousTriageContext(triageDb, issue) {
     const lastTriagedDate = new Date(triageEntry.lastTriaged);
     const timeSinceTriaged = Date.now() - lastTriagedDate.getTime();
 
-    // Triage if it has a follow-up label.
-    const labels = (issue.labels || []).map(l => l.name || l);
-    const needsFollowUp =
-        (labels.includes('info required') || labels.includes('stale')) &&
-        timeSinceTriaged > 14 * 86400000; // 14 days.
-
-    // Triage if the issue was updated since last triage
-    const wasUpdatedSinceTriaged = new Date(issue.updated_at) > lastTriagedDate;
-
-    if (wasUpdatedSinceTriaged || needsFollowUp) {
-        return {
-            lastTriaged: triageEntry.lastTriaged,
-            previousReasoning: triageEntry.previousReasoning,
-        };
+    // Recheck after 14 days for stale checks and prompt updates.
+    if (timeSinceTriaged > 14 * 86400000) {
+        return { lastTriaged: triageEntry.lastTriaged, previousReasoning: triageEntry.previousReasoning };
     }
 
     return null; // Otherwise, no triage is needed.
@@ -286,7 +273,7 @@ async function main() {
     // Setup
     const octokit = new Octokit({ auth: GITHUB_TOKEN });
     const issue = (await octokit.rest.issues.get(ISSUE_PARAMS)).data;
-    const previousContext = getPreviousTriageContext(triageDb, issue);
+    const previousContext = getPreviousTriageContext(triageDb[ISSUE_NUMBER]);
 
     // We don't need to triage
     if (!previousContext) {
