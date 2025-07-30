@@ -233,7 +233,7 @@ namespace MudBlazor
             _ => (string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") + $" / {Counter}"
         };
 
-        protected async Task HandleContainerClick(MouseEventArgs _)
+        protected async Task HandleContainerClick()
         {
             if (!_isFocused && IsJSRuntimeAvailable && InputReference != null)
             {
