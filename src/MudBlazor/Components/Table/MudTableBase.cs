@@ -679,10 +679,15 @@ namespace MudBlazor
                 return;
             }
 
-            var currentPageHasChanged = _currentPage != 0;
+
+            var currentPageHasChanged = false;
+            if (_rowsPerPage.HasValue)
+            {
+                currentPageHasChanged = _currentPage != 0;
+                _currentPage = 0;
+            }
+
             _rowsPerPage = size;
-            _currentPage = 0;
-            StateHasChanged();
             RowsPerPageChanged.InvokeAsync(_rowsPerPage.Value);
 
             if (currentPageHasChanged)
@@ -694,6 +699,8 @@ namespace MudBlazor
             {
                 InvokeServerLoadFunc();
             }
+
+            StateHasChanged();
         }
 
         protected abstract int NumPages { get; }
