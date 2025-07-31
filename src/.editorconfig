@@ -55,39 +55,42 @@ end_of_line = lf
 insert_final_newline = true
 trim_trailing_whitespace = true
 
-# Dotnet code style settings:
-[*.{cs,vb}]
+# C# files
+[*.cs]
 
-# IDE0055: Fix formatting
-dotnet_diagnostic.IDE0055.severity = warning
+# New line preferences
+csharp_new_line_before_open_brace = all
+csharp_new_line_before_else = true
+csharp_new_line_before_catch = true
+csharp_new_line_before_finally = true
+csharp_new_line_before_members_in_object_initializers = true
+csharp_new_line_before_members_in_anonymous_types = true
+csharp_new_line_between_query_expression_clauses = true
 
-# Sort using and Import directives with System.* appearing first
-dotnet_sort_system_directives_first = true
-dotnet_separate_import_directive_groups = false
+# Indentation preferences
+csharp_indent_block_contents = true
+csharp_indent_braces = false
+csharp_indent_case_contents = true
+csharp_indent_case_contents_when_block = true
+csharp_indent_labels = flush_left
+csharp_indent_switch_labels = true
+csharp_indent_labels = flush_left
 
-# Avoid "this." and "Me." if not necessary
-dotnet_style_qualification_for_field = false:refactoring
-dotnet_style_qualification_for_property = false:refactoring
-dotnet_style_qualification_for_method = false:refactoring
-dotnet_style_qualification_for_event = false:refactoring
+# Modifier preferences
+csharp_preferred_modifier_order = public,private,protected,internal,file,static,extern,new,virtual,abstract,sealed,override,readonly,unsafe,required,volatile,async:suggestion
 
-# Use language keywords instead of framework type names for type references
+# avoid this. unless absolutely necessary
+dotnet_style_qualification_for_field = false:suggestion
+dotnet_style_qualification_for_property = false:suggestion
+dotnet_style_qualification_for_method = false:suggestion
+dotnet_style_qualification_for_event = false:suggestion
+
+# Types: use keywords instead of BCL types, and permit var only when the type is clear
+csharp_style_var_for_built_in_types = true:suggestion
+csharp_style_var_when_type_is_apparent = true:suggestion
+csharp_style_var_elsewhere = true:suggestion
 dotnet_style_predefined_type_for_locals_parameters_members = true:suggestion
 dotnet_style_predefined_type_for_member_access = true:suggestion
-
-# Suggest more modern language features when available
-dotnet_style_object_initializer = true:suggestion
-dotnet_style_collection_initializer = true:suggestion
-dotnet_style_prefer_collection_expression = when_types_exactly_match
-dotnet_style_coalesce_expression = true:suggestion
-dotnet_style_null_propagation = true:suggestion
-dotnet_style_explicit_tuple_names = true:suggestion
-dotnet_style_prefer_is_null_check_over_reference_equality_method = true:suggestion
-dotnet_style_prefer_inferred_tuple_names = true:suggestion
-dotnet_style_prefer_inferred_anonymous_type_member_names = true:suggestion
-dotnet_style_prefer_auto_properties = true:suggestion
-dotnet_style_prefer_conditional_expression_over_assignment = true:silent
-dotnet_style_prefer_conditional_expression_over_return = true:silent
 
 # Non-private static fields are PascalCase
 dotnet_naming_rule.non_private_static_fields_should_be_pascal_case.severity = suggestion
@@ -191,10 +194,6 @@ dotnet_naming_style.pascal_case_style.capitalization = pascal_case
 # error RS2008: Enable analyzer release tracking for the analyzer project containing rule '{0}'
 dotnet_diagnostic.RS2008.severity = none
 
-# IDE0073: File header
-dotnet_diagnostic.IDE0073.severity = warning
-file_header_template = Copyright (c) MudBlazor 2021\nMudBlazor licenses this file to you under the MIT license.\nSee the LICENSE file in the project root for more information.
-
 # IDE0035: Remove unreachable code
 dotnet_diagnostic.IDE0035.severity = warning
 
@@ -210,30 +209,36 @@ dotnet_diagnostic.IDE0044.severity = warning
 # RS0016: Only enable if API files are present
 dotnet_public_api_analyzer.require_api_files = true
 
-# CSharp code style settings:
-[*.cs]
-# Newline settings
-csharp_new_line_before_open_brace = all
-csharp_new_line_before_else = true
-csharp_new_line_before_catch = true
-csharp_new_line_before_finally = true
-csharp_new_line_before_members_in_object_initializers = true
-csharp_new_line_before_members_in_anonymous_types = true
-csharp_new_line_between_query_expression_clauses = true
-
-# Indentation preferences
-csharp_indent_block_contents = true
-csharp_indent_braces = false
-csharp_indent_case_contents = true
-csharp_indent_case_contents_when_block = true
-csharp_indent_labels = flush_left
-csharp_indent_switch_labels = true
-csharp_indent_labels = flush_left
-
 # Prefer "var" everywhere
 csharp_style_var_for_built_in_types = true:suggestion
 csharp_style_var_when_type_is_apparent = true:suggestion
 csharp_style_var_elsewhere = true:suggestion
+
+# Code style defaults
+csharp_using_directive_placement = outside_namespace:suggestion
+dotnet_sort_system_directives_first = true
+csharp_prefer_braces = true:silent
+csharp_preserve_single_line_blocks = true
+csharp_preserve_single_line_statements = true
+csharp_prefer_static_local_function = true:suggestion
+csharp_prefer_simple_using_statement = true:warning
+csharp_style_prefer_switch_expression = true:suggestion
+dotnet_style_readonly_field = true:none
+
+# Expression-level preferences
+dotnet_style_object_initializer = true:suggestion
+dotnet_style_collection_initializer = true:suggestion
+dotnet_style_prefer_collection_expression = when_types_exactly_match
+dotnet_style_explicit_tuple_names = true:suggestion
+dotnet_style_coalesce_expression = true:suggestion
+dotnet_style_null_propagation = true:suggestion
+dotnet_style_prefer_is_null_check_over_reference_equality_method = true:suggestion
+dotnet_style_prefer_inferred_tuple_names = true:suggestion
+dotnet_style_prefer_inferred_anonymous_type_member_names = true:suggestion
+dotnet_style_prefer_auto_properties = true:suggestion
+dotnet_style_prefer_conditional_expression_over_assignment = true:silent
+dotnet_style_prefer_conditional_expression_over_return = true:silent
+csharp_prefer_simple_default_expression = true:suggestion
 
 # Expression-bodied members
 csharp_style_expression_bodied_methods = false:none
@@ -245,9 +250,6 @@ csharp_style_expression_bodied_accessors = true:none
 csharp_style_expression_bodied_lambdas = true:silent
 csharp_style_expression_bodied_local_functions = true:silent
 
-# Other features
-csharp_style_pattern_local_over_anonymous_function = false:none
-
 # Pattern matching
 csharp_style_pattern_matching_over_is_with_cast_check = true:suggestion
 csharp_style_pattern_matching_over_as_with_null_check = true:suggestion
@@ -256,6 +258,11 @@ csharp_style_inlined_variable_declaration = true:suggestion
 # Null checking preferences
 csharp_style_throw_expression = true:suggestion
 csharp_style_conditional_delegate_call = true:suggestion
+
+# Other features
+csharp_style_prefer_index_operator = true:none
+csharp_style_prefer_range_operator = true:none
+csharp_style_pattern_local_over_anonymous_function = false:none
 
 # Space preferences
 csharp_space_after_cast = false
@@ -281,19 +288,6 @@ csharp_space_between_method_declaration_parameter_list_parentheses = false
 csharp_space_between_parentheses = false
 csharp_space_between_square_brackets = false
 
-# Other code style preferences
-csharp_using_directive_placement = outside_namespace:suggestion
-csharp_prefer_braces = true:silent
-csharp_preserve_single_line_blocks = true
-csharp_preserve_single_line_statements = true
-csharp_prefer_static_local_function = true:suggestion
-csharp_style_prefer_switch_expression = true:suggestion
-csharp_prefer_simple_default_expression = true:suggestion
-csharp_preferred_modifier_order = public,private,protected,internal,file,static,extern,new,virtual,abstract,sealed,override,readonly,unsafe,required,volatile,async:suggestion
-
-# License header (sample)
-file_header_template = Licensed to the .NET Foundation under one or more agreements.\nThe .NET Foundation licenses this file to you under the MIT license.
-
 ############################################################################
 #                                                                          #
 #                         MudBlazor Team Overrides                         #
@@ -303,24 +297,16 @@ file_header_template = Licensed to the .NET Foundation under one or more agreeme
 ############################################################################
 
 [*.{cs,razor}]
-# Rules converted to option-based syntax for readability
-dotnet_style_readonly_field = true:none                                 # IDE0044
-csharp_prefer_simple_default_expression = true:none                     # IDE0034
-csharp_style_prefer_index_operator = true:none                          # IDE0056
-csharp_style_prefer_range_operator = true:none                          # IDE0057
+file_header_template = Copyright (c) MudBlazor 2021\nMudBlazor licenses this file to you under the MIT license.\nSee the LICENSE file in the project root for more information.
 csharp_style_prefer_primary_constructors = true:none                    # IDE0290
 csharp_remove_unnecessary_imports = true:warning                        # IDE0005
 dotnet_style_remove_unnecessary_value_assignment = true:warning         # IDE0059
 dotnet_code_style_unused_parameters = all:warning                       # IDE0060
-dotnet_style_predefined_type_for_locals_parameters_members = true:suggestion # IDE0049
 dotnet_style_prefer_compound_assignment = true:suggestion               # IDE0054
-csharp_prefer_simple_using_statement = true:warning                     # IDE0063
-csharp_style_prefer_switch_expression = true:suggestion                 # IDE0066
 dotnet_style_prefer_simplified_conditional_expression = true:suggestion # IDE0075
 dotnet_style_remove_unnecessary_cast = true:error                       # IDE0090
 
 # Rules that must use diagnostic syntax
-
 # CS1591: Missing XML comment for publicly visible type or member
 dotnet_diagnostic.CS1591.severity = none
 # IDE0073: Require file header
