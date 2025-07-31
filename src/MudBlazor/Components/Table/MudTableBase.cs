@@ -681,6 +681,9 @@ namespace MudBlazor
 
 
             var currentPageHasChanged = false;
+
+            // On intialization, don't reset CurrentPage
+            // https://github.com/MudBlazor/MudBlazor/issues/11727
             if (_rowsPerPage.HasValue)
             {
                 currentPageHasChanged = _currentPage != 0;
