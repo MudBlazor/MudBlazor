@@ -10,12 +10,18 @@ root = true
 [*]
 indent_style = space
 # (Please don't specify an indent_size here; that has too many unintended consequences.)
+insert_final_newline = true
+trim_trailing_whitespace = true
 
 # Code files
 [*.{cs,csx,vb,vbx,razor}]
 indent_size = 4
 insert_final_newline = true
 charset = utf-8-bom
+
+# Generated code
+[*{_AssemblyInfo.cs,.notsupported.cs,AsmOffsets.cs}]
+generated_code = true
 
 # XML project files
 [*.{csproj,vbproj,vcxproj,vcxproj.filters,proj,projitems,shproj}]
@@ -38,6 +44,9 @@ indent_size = 2
 end_of_line = lf
 indent_size = 2
 
+[*.{cmd,bat}]
+end_of_line = crlf
+
 # Sassy CSS - CSS preprocessor
 [*.scss]
 charset = utf-8
@@ -55,6 +64,7 @@ dotnet_diagnostic.IDE0055.severity = warning
 # Sort using and Import directives with System.* appearing first
 dotnet_sort_system_directives_first = true
 dotnet_separate_import_directive_groups = false
+
 # Avoid "this." and "Me." if not necessary
 dotnet_style_qualification_for_field = false:refactoring
 dotnet_style_qualification_for_property = false:refactoring
@@ -68,9 +78,16 @@ dotnet_style_predefined_type_for_member_access = true:suggestion
 # Suggest more modern language features when available
 dotnet_style_object_initializer = true:suggestion
 dotnet_style_collection_initializer = true:suggestion
+dotnet_style_prefer_collection_expression = when_types_exactly_match
 dotnet_style_coalesce_expression = true:suggestion
 dotnet_style_null_propagation = true:suggestion
 dotnet_style_explicit_tuple_names = true:suggestion
+dotnet_style_prefer_is_null_check_over_reference_equality_method = true:suggestion
+dotnet_style_prefer_inferred_tuple_names = true:suggestion
+dotnet_style_prefer_inferred_anonymous_type_member_names = true:suggestion
+dotnet_style_prefer_auto_properties = true:suggestion
+dotnet_style_prefer_conditional_expression_over_assignment = true:silent
+dotnet_style_prefer_conditional_expression_over_return = true:silent
 
 # Non-private static fields are PascalCase
 dotnet_naming_rule.non_private_static_fields_should_be_pascal_case.severity = suggestion
@@ -114,6 +131,25 @@ dotnet_naming_symbols.static_fields.required_modifiers = static
 
 dotnet_naming_style.static_field_style.capitalization = camel_case
 dotnet_naming_style.static_field_style.required_prefix = _
+
+# Static fields should have s_ prefix (sample)
+dotnet_naming_rule.static_fields_should_have_prefix.severity = suggestion
+dotnet_naming_rule.static_fields_should_have_prefix.symbols  = static_fields
+dotnet_naming_rule.static_fields_should_have_prefix.style    = static_prefix_style
+dotnet_naming_symbols.static_fields.applicable_kinds   = field
+dotnet_naming_symbols.static_fields.required_modifiers = static
+dotnet_naming_symbols.static_fields.applicable_accessibilities = private, internal, private_protected
+dotnet_naming_style.static_prefix_style.required_prefix = s_
+dotnet_naming_style.static_prefix_style.capitalization = camel_case
+
+# Internal and private fields should be _camelCase (sample)
+dotnet_naming_rule.camel_case_for_private_internal_fields.severity = suggestion
+dotnet_naming_rule.camel_case_for_private_internal_fields.symbols  = private_internal_fields
+dotnet_naming_rule.camel_case_for_private_internal_fields.style    = camel_case_underscore_style
+dotnet_naming_symbols.private_internal_fields.applicable_kinds = field
+dotnet_naming_symbols.private_internal_fields.applicable_accessibilities = private, internal
+dotnet_naming_style.camel_case_underscore_style.required_prefix = _
+dotnet_naming_style.camel_case_underscore_style.capitalization = camel_case
 
 # Instance fields are camelCase and start with _
 dotnet_naming_rule.instance_fields_should_be_camel_case.severity = suggestion
@@ -190,6 +226,7 @@ csharp_indent_block_contents = true
 csharp_indent_braces = false
 csharp_indent_case_contents = true
 csharp_indent_case_contents_when_block = true
+csharp_indent_labels = flush_left
 csharp_indent_switch_labels = true
 csharp_indent_labels = flush_left
 
@@ -198,20 +235,25 @@ csharp_style_var_for_built_in_types = true:suggestion
 csharp_style_var_when_type_is_apparent = true:suggestion
 csharp_style_var_elsewhere = true:suggestion
 
-# Prefer method-like constructs to have a block body
+# Expression-bodied members
 csharp_style_expression_bodied_methods = false:none
 csharp_style_expression_bodied_constructors = false:none
 csharp_style_expression_bodied_operators = false:none
-
-# Prefer property-like constructs to have an expression-body
 csharp_style_expression_bodied_properties = true:none
 csharp_style_expression_bodied_indexers = true:none
 csharp_style_expression_bodied_accessors = true:none
+csharp_style_expression_bodied_lambdas = true:silent
+csharp_style_expression_bodied_local_functions = true:silent
 
-# Suggest more modern language features when available
+# Other features
+csharp_style_pattern_local_over_anonymous_function = false:none
+
+# Pattern matching
 csharp_style_pattern_matching_over_is_with_cast_check = true:suggestion
 csharp_style_pattern_matching_over_as_with_null_check = true:suggestion
 csharp_style_inlined_variable_declaration = true:suggestion
+
+# Null checking preferences
 csharp_style_throw_expression = true:suggestion
 csharp_style_conditional_delegate_call = true:suggestion
 
@@ -239,35 +281,91 @@ csharp_space_between_method_declaration_parameter_list_parentheses = false
 csharp_space_between_parentheses = false
 csharp_space_between_square_brackets = false
 
-# Blocks are allowed
+# Other code style preferences
+csharp_using_directive_placement = outside_namespace:suggestion
 csharp_prefer_braces = true:silent
 csharp_preserve_single_line_blocks = true
 csharp_preserve_single_line_statements = true
+csharp_prefer_static_local_function = true:suggestion
+csharp_style_prefer_switch_expression = true:suggestion
+csharp_prefer_simple_default_expression = true:suggestion
+csharp_preferred_modifier_order = public,private,protected,internal,file,static,extern,new,virtual,abstract,sealed,override,readonly,unsafe,required,volatile,async:suggestion
 
-# MudBlazor Team Overrides
-# Settings in editorconfig are last in wins so add overrides here
+# License header (sample)
+file_header_template = Licensed to the .NET Foundation under one or more agreements.\nThe .NET Foundation licenses this file to you under the MIT license.
+
+############################################################################
+#                                                                          #
+#                         MudBlazor Team Overrides                         #
+#                                                                          #
+#    Settings in editorconfig are last in wins so add overrides here       #
+#                                                                          #
+############################################################################
 
 [*.{cs,razor}]
-# CS1591 Missing XML comment for publicly visible type or member
-# We should try and finish the documentation and remove this
-# For now its too noisy
+# Rules converted to option-based syntax for readability
+dotnet_style_readonly_field = true:none                                 # IDE0044
+csharp_prefer_simple_default_expression = true:none                     # IDE0034
+csharp_style_prefer_index_operator = true:none                          # IDE0056
+csharp_style_prefer_range_operator = true:none                          # IDE0057
+csharp_style_prefer_primary_constructors = true:none                    # IDE0290
+csharp_remove_unnecessary_imports = true:warning                        # IDE0005
+dotnet_style_remove_unnecessary_value_assignment = true:warning         # IDE0059
+dotnet_code_style_unused_parameters = all:warning                       # IDE0060
+dotnet_style_predefined_type_for_locals_parameters_members = true:suggestion # IDE0049
+dotnet_style_prefer_compound_assignment = true:suggestion               # IDE0054
+csharp_prefer_simple_using_statement = true:warning                     # IDE0063
+csharp_style_prefer_switch_expression = true:suggestion                 # IDE0066
+dotnet_style_prefer_simplified_conditional_expression = true:suggestion # IDE0075
+dotnet_style_remove_unnecessary_cast = true:error                       # IDE0090
+
+# Rules that must use diagnostic syntax
+
+# CS1591: Missing XML comment for publicly visible type or member
 dotnet_diagnostic.CS1591.severity = none
-# IDE0071 Require file header
+# IDE0073: Require file header
 dotnet_diagnostic.IDE0073.severity = none
 # IDE0055: Fix formatting
 dotnet_diagnostic.IDE0055.severity = suggestion
-# IDE0044: Make field readonly
-dotnet_diagnostic.IDE0044.severity = none
-# IDE0034: 'default' expression can be simplified
-dotnet_diagnostic.IDE0034.severity = none
-# IDE0056 Indexing can be simplified
-dotnet_diagnostic.IDE0056.severity = none
-# IDE0057 Substring can be simplified
-dotnet_diagnostic.IDE0057.severity = none
-# BL0007 Component Parameters must be auto props
+# BL0007: Component parameters should be auto-properties
 dotnet_diagnostic.BL0007.severity = suggestion
-# IDE0290 Use primary constructor
-dotnet_diagnostic.IDE0290.severity = none
+# CS4014: Because this call is not awaited, execution of the current method continues before the call is completed
+dotnet_diagnostic.CS4014.severity = error
+# IDE0051: Remove unused private members
+dotnet_diagnostic.IDE0051.severity = error
+# IDE0052: Remove unread private members
+dotnet_diagnostic.IDE0052.severity = suggestion
+
+# Rules that could be warnings but were added too late to the project
+
+# CA1816: Dispose methods should call SuppressFinalize
+dotnet_diagnostic.CA1816.severity = suggestion
+# CA1822: Mark members as static
+dotnet_diagnostic.CA1822.severity = suggestion
+# CA1860: Use 'Length' or 'Count' property instead of 'Any()'
+dotnet_diagnostic.CA1860.severity = suggestion
+# CA1827: Do not use Count() or LongCount() when Any() can be used
+dotnet_diagnostic.CA1827.severity = suggestion
+# CA1825: Avoid zero-length array allocations
+dotnet_diagnostic.CA1825.severity = suggestion
+# CA1859: Use concrete types when possible for improved performance
+dotnet_diagnostic.CA1859.severity = suggestion
+# CA1830: Prefer strongly-typed Appends and Inserts on StringBuilder
+dotnet_diagnostic.CA1830.severity = suggestion
+# CA1866: Use char overload
+dotnet_diagnostic.CA1866.severity = suggestion
+# CA1862: Use 'StringComparison' method overloads for string comparisons
+dotnet_diagnostic.CA1862.severity = suggestion
+# IDE0051: Remove unused private members
+dotnet_diagnostic.IDE0051.severity = suggestion
+# CA2254: Template should be a static expression
+dotnet_diagnostic.CA2254.severity = suggestion
+# CA2012: Use ValueTasks correctly
+dotnet_diagnostic.CA2012.severity = suggestion
+# CA2211: Non-constant fields should not be visible
+dotnet_diagnostic.CA2211.severity = suggestion
+# CA1806: Do not ignore method results
+dotnet_diagnostic.CA1806.severity = suggestion
 
 [MudBlazor/**/*.{cs,razor}]
 dotnet_style_namespace_match_folder = false

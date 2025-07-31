@@ -26,9 +26,14 @@
   </PropertyGroup>
   
   <PropertyGroup>
+    <!-- Trim -->
     <IsTrimmable>true</IsTrimmable>
     <TrimMode>link</TrimMode>
     <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+
+    <!-- Code Quality -->
+    <AnalysisLevel>9-minimum</AnalysisLevel>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>
 
   <PropertyGroup>
