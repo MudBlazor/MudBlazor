@@ -10,8 +10,6 @@ root = true
 [*]
 indent_style = space
 # (Please don't specify an indent_size here; that has too many unintended consequences.)
-insert_final_newline = true
-trim_trailing_whitespace = true
 
 # Code files
 [*.{cs,csx,vb,vbx,razor}]
@@ -202,9 +200,6 @@ dotnet_diagnostic.IDE0036.severity = warning
 
 # IDE0043: Format string contains invalid placeholder
 dotnet_diagnostic.IDE0043.severity = warning
-
-# IDE0044: Make field readonly
-dotnet_diagnostic.IDE0044.severity = warning
 
 # RS0016: Only enable if API files are present
 dotnet_public_api_analyzer.require_api_files = true
