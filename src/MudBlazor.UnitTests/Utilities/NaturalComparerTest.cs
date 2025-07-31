@@ -55,8 +55,8 @@ namespace MudBlazor.UnitTests.Utilities
                 "bjEyKsKtbjEzKsSwKg==";
 
 
-        private static string[] s_orderedFileNames =
-        [
+        private static string[] s_orderedFileNames = new string[]
+        {
             "_1.txt"
             ,"-n12.txt"
             ,"-n13.txt"
@@ -328,7 +328,7 @@ namespace MudBlazor.UnitTests.Utilities
             ,"z20"
             ,"z22"
             ,"za21"
-        ];
+        };
 
         /// <summary>
         /// Test if comparer works as intended
@@ -338,7 +338,7 @@ namespace MudBlazor.UnitTests.Utilities
         public void SortFiles()
         {
             var fileNames = Encoding.UTF8.GetString(Convert.FromBase64String(s_encodedFileNames))
-                .Replace("*", ".txt?").Split(["?"], StringSplitOptions.RemoveEmptyEntries)
+                .Replace("*", ".txt?").Split(new[] { "?" }, StringSplitOptions.RemoveEmptyEntries)
                 .Select(n => _expand(n)).ToArray();
 
             var orderedFiles = fileNames.OrderBy(x => x, new NaturalComparer()).ToArray();

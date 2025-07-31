@@ -215,7 +215,7 @@ namespace MudBlazor.UnitTests.Components
             list.SelectedValue.Should().Be("Sparkling Water");
 
             var listItemClasses = comp.Find(".mud-selected-item");
-            listItemClasses.ClassList.Should().ContainInOrder([$"mud-{color.ToDescriptionString()}-text", $"mud-{color.ToDescriptionString()}-hover"]);
+            listItemClasses.ClassList.Should().ContainInOrder(new[] { $"mud-{color.ToDescriptionString()}-text", $"mud-{color.ToDescriptionString()}-hover" });
         }
 
         /// <summary>

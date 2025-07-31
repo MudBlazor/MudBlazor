@@ -76,7 +76,7 @@ namespace MudBlazor.UnitTests.Components
 
             var container = comp.Find(".mud-drop-container");
 
-            container.ClassList.Should().BeEquivalentTo(["mud-drop-container", "d-flex"]);
+            container.ClassList.Should().BeEquivalentTo(new[] { "mud-drop-container", "d-flex" });
 
             container.Children.Should().HaveCount(2);
 
@@ -121,7 +121,7 @@ namespace MudBlazor.UnitTests.Components
 
             var container = comp.Find(".mud-drop-container");
 
-            container.ClassList.Should().BeEquivalentTo(["mud-drop-container", "d-flex"]);
+            container.ClassList.Should().BeEquivalentTo(new[] { "mud-drop-container", "d-flex" });
 
             container.Children.Should().HaveCount(2);
 
@@ -1124,7 +1124,7 @@ namespace MudBlazor.UnitTests.Components
             secondDropZone.Children[3].TextContent.Trim().Should().Be("Item 6");
 
             comp.Instance.IndexHistory.Should().ContainInOrder(
-                [2, 2, 2, 1]);
+                new[] { 2, 2, 2, 1 });
 
         }
 

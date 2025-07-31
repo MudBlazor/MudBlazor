@@ -248,6 +248,7 @@ This document outlines the coding standards, best practices, and contribution gu
 - A `DataTable` or `DataSet` should not be serialized with untrusted data
 - Dynamic binding should not be used with user-controlled strings
 - Variables should not be compared to themselves
+- Self-assignments should be removed
 - `const` and `static readonly` fields should not be changed
 
 #### Async/Await
@@ -263,6 +264,7 @@ This document outlines the coding standards, best practices, and contribution gu
 #### Code Structure
 
 - Use a `while` loop instead of a `for` loop that has no update statement
+- Unused `private` methods should be removed
 - `if`/`else if` chains should not have gratuitous `else` clauses
 - Members should not be initialized to their default values
 - `ISerializable` should be implemented correctly
@@ -275,6 +277,7 @@ This document outlines the coding standards, best practices, and contribution gu
 - Remove empty methods
 - Methods should not be empty
 - `async` methods should not be `void`
+- `async` methods should be awaited
 - Property setters should not be empty
 
 #### Exception Handling
@@ -334,11 +337,14 @@ This document outlines the coding standards, best practices, and contribution gu
 #### Code Maintenance
 
 - `TODO` and `FIXME` comments should be resolved
+- Unnecessary `using` directives should be removed
 - Avoid empty `catch` blocks
+- Unused method parameters should be removed
 - Avoid duplicate conditions in `if`/`else if` chains
 - `switch` statements should have no more than 30 `case` clauses
 - Avoid `goto` statements
 - Boolean expressions should not be nested
+- Unnecessary assignments should be removed
 
 #### Object-Oriented Design
 
@@ -376,6 +382,7 @@ This document outlines the coding standards, best practices, and contribution gu
 - Avoid obsolete `using` directives
 - Avoid empty `switch` statements
 - Do not use `throw` in a `finally` block
+- Remove unused `private` fields
 - Avoid unnecessary `public` members in `sealed` classes
 - Avoid empty `static` constructors
 - Use `nameof()` instead of hard-coded names

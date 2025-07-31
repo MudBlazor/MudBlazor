@@ -583,7 +583,7 @@ namespace MudBlazor.Utilities
 
         private static double NormalizeAlpha(int a, int digit = 2) => Math.Round(a / 255.0, digit);
 
-        private static byte GetByteFromValuePart(string input, int index) => byte.Parse(new string([input[index], input[index + 1]]), NumberStyles.HexNumber);
+        private static byte GetByteFromValuePart(string input, int index) => byte.Parse(new string(new[] { input[index], input[index + 1] }), NumberStyles.HexNumber);
 
         private static (byte r, byte g, byte b) HslToRgb(in HSL hsl)
         {
@@ -675,10 +675,10 @@ namespace MudBlazor.Utilities
             switch (value.Length)
             {
                 case 3:
-                    value = new string([value[0], value[0], value[1], value[1], value[2], value[2], 'F', 'F']);
+                    value = new string(new[] { value[0], value[0], value[1], value[1], value[2], value[2], 'F', 'F' });
                     break;
                 case 4:
-                    value = new string([value[0], value[0], value[1], value[1], value[2], value[2], value[3], value[3]]);
+                    value = new string(new[] { value[0], value[0], value[1], value[1], value[2], value[2], value[3], value[3] });
                     break;
                 case 6:
                     value += "FF";

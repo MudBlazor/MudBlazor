@@ -14,7 +14,7 @@ public partial class TablePagerChangeRowsPerPageTest : ComponentBase
     private const int Toggle2 = 10;
     private int _rows = Toggle1;
     private readonly string[] _states =
-    [
+    {
         "Alabama", "Alaska", "American Samoa", "Arizona",
         "Arkansas", "California", "Colorado", "Connecticut",
         "Delaware", "District of Columbia", "Federated States of Micronesia",
@@ -29,7 +29,7 @@ public partial class TablePagerChangeRowsPerPageTest : ComponentBase
         "Rhode Island", "South Carolina", "South Dakota", "Tennessee",
         "Texas", "Utah", "Vermont", "Virgin Island", "Virginia",
         "Washington", "West Virginia", "Wisconsin", "Wyoming"
-    ];
+    };
 
     private void ToggleRows()
     {

@@ -305,7 +305,7 @@ namespace MudBlazor.Charts
                     {
                         var chartArea = new StringBuilder();
 
-                        chartArea.Append(chartLine); // the line up to this point is the same as the area, so we can reuse it
+                        chartArea.Append(chartLine.ToString()); // the line up to this point is the same as the area, so we can reuse it
 
                         // add an extra point based on the x of the last point and 0 to add the area to the bottom
 

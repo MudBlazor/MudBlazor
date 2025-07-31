@@ -256,8 +256,8 @@ namespace MudBlazor
         {
             if (fieldType.IsString)
             {
-                return
-                [
+                return new[]
+                {
                     String.Contains,
                     String.NotContains,
                     String.Equal,
@@ -266,12 +266,12 @@ namespace MudBlazor
                     String.EndsWith,
                     String.Empty,
                     String.NotEmpty,
-                ];
+                };
             }
             if (fieldType.IsNumber)
             {
-                return
-                [
+                return new[]
+                {
                     Number.Equal,
                     Number.NotEqual,
                     Number.GreaterThan,
@@ -280,26 +280,26 @@ namespace MudBlazor
                     Number.LessThanOrEqual,
                     Number.Empty,
                     Number.NotEmpty,
-                ];
+                };
             }
             if (fieldType.IsEnum)
             {
-                return [
+                return new[] {
                     Enum.Is,
                     Enum.IsNot,
-                ];
+                };
             }
             if (fieldType.IsBoolean)
             {
-                return
-                [
+                return new[]
+                {
                     Boolean.Is,
-                ];
+                };
             }
             if (fieldType.IsDateOnly)
             {
-                return
-                [
+                return new[]
+                {
                     DateOnly.Is,
                     DateOnly.IsNot,
                     DateOnly.After,
@@ -308,12 +308,12 @@ namespace MudBlazor
                     DateOnly.OnOrBefore,
                     DateOnly.Empty,
                     DateOnly.NotEmpty,
-                ];
+                };
             }
             if (fieldType.IsDateTime)
             {
-                return
-                [
+                return new[]
+                {
                     DateTime.Is,
                     DateTime.IsNot,
                     DateTime.After,
@@ -322,15 +322,15 @@ namespace MudBlazor
                     DateTime.OnOrBefore,
                     DateTime.Empty,
                     DateTime.NotEmpty,
-                ];
+                };
             }
             if (fieldType.IsGuid)
             {
-                return
-                [
+                return new[]
+                {
                     Guid.Equal,
                     Guid.NotEqual,
-                ];
+                };
             }
 
             // default

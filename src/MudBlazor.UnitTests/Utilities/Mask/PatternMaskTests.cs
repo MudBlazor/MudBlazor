@@ -240,7 +240,7 @@ public class PatternMaskTests
     {
         var mask = new PatternMask("(bb+) 999-bb")
         {
-            MaskChars = [MaskChar.Letter('b'), MaskChar.Digit('9'), MaskChar.LetterOrDigit('+'),],
+            MaskChars = new MaskChar[] { MaskChar.Letter('b'), MaskChar.Digit('9'), MaskChar.LetterOrDigit('+'), },
         };
         mask.Insert("xyz");
         mask.ToString().Should().Be("(xyz) |");
@@ -276,7 +276,7 @@ public class PatternMaskTests
         mask.SetText("abc12");
         mask.Selection = (1, 2);
         mask.ToString().Should().Be("([a]bc) 12");
-        mask.UpdateFrom(new PatternMask("999") { Placeholder = '#', MaskChars = [new MaskChar('9', "[0-9]")], CleanDelimiters = true });
+        mask.UpdateFrom(new PatternMask("999") { Placeholder = '#', MaskChars = new[] { new MaskChar('9', "[0-9]") }, CleanDelimiters = true });
         mask.MaskChars.Length.Should().Be(1); // '9'
         mask.MaskChars[0].Char.Should().Be('9');
         mask.MaskChars[0].Regex.Should().Be("[0-9]");

@@ -319,12 +319,12 @@ namespace MudBlazor.UnitTests.Components
 
             // check initial state
             box.Value.Should().Be(false);
-            comp.Find(".mud-button-root.mud-icon-button").ClassList.Should().ContainInOrder([$"mud-{uncheckedcolor.ToDescriptionString()}-text", $"hover:mud-{uncheckedcolor.ToDescriptionString()}-hover"]);
+            comp.Find(".mud-button-root.mud-icon-button").ClassList.Should().ContainInOrder(new[] { $"mud-{uncheckedcolor.ToDescriptionString()}-text", $"hover:mud-{uncheckedcolor.ToDescriptionString()}-hover" });
 
             // click and check if it has new color
             comp.Find("input").Change(true);
             box.Value.Should().Be(true);
-            comp.Find(".mud-button-root.mud-icon-button").ClassList.Should().ContainInOrder([$"mud-{color.ToDescriptionString()}-text", $"hover:mud-{color.ToDescriptionString()}-hover"]);
+            comp.Find(".mud-button-root.mud-icon-button").ClassList.Should().ContainInOrder(new[] { $"mud-{color.ToDescriptionString()}-text", $"hover:mud-{color.ToDescriptionString()}-hover" });
         }
 
         [Test]
