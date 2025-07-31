@@ -632,5 +632,29 @@ namespace MudBlazor.UnitTests.Components
                               .Add(p => p.InputData, isRadial ? data : null));
 
         }
+
+        [TestCase(ChartType.Line)]
+        [TestCase(ChartType.Bar)]
+        [TestCase(ChartType.StackedBar)]
+        [Test]
+        public void AxisChartOptions_LabelFontSize_ShouldApplyCorrectly(ChartType chartType)
+        {
+            var options = new AxisChartOptions { LabelFontSize = "9px" };
+            options.LabelFontSize.Should().Be("9px");
+
+            var series = new List<ChartSeries>()
+            {
+                new() { Name = "Series 1", Data = [90, 79, 72, 69, 62, 62, 55, 65, 70] },
+                new() { Name = "Series 2", Data = [10, 41, 35, 51, 49, 62, 69, 91, 148] },
+            };
+
+            double[] data = { 50, 25, 20, 5, 16, 14, 8, 4, 2, 8, 10, 19, 8, 17, 6, 11, 19, 24, 35, 13, 20, 12 };
+
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+                              .Add(p => p.ChartType, chartType)
+                              .Add(p => p.ChartOptions, new ChartOptions { InterpolationOption = InterpolationOption.Periodic })
+                              .Add(p => p.ChartSeries, series)
+                              .Add(p => p.InputData, null));
+        }
     }
 }
