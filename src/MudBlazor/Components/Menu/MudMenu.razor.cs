@@ -851,8 +851,10 @@ namespace MudBlazor
             }
             else if (e.Key == "Tab")
             {
-                // Close the menu when tabbing out
                 await CloseMenuAsync();
+
+                // Focus the activator and then simulate tab navigation
+                await FocusActivatorAsync();
             }
             else if (e.Key == "Escape")
             {
@@ -922,5 +924,37 @@ namespace MudBlazor
         }
 
         private readonly Dictionary<MudMenuItem, MudMenu> _itemToSubmenuMap = new();
+        private MudButton? _buttonActivator;
+        private MudIconButton? _iconButtonActivator;
+        private MudMenuItem? _menuItemActivator;
+
+        private async Task FocusActivatorAsync()
+        {
+            try
+            {
+                if (ParentMenu is null)
+                {
+                    if (_buttonActivator is not null)
+                    {
+                        await _buttonActivator.FocusAsync();
+                    }
+                    else if (_iconButtonActivator is not null)
+                    {
+                        await _iconButtonActivator.FocusAsync();
+                    }
+                }
+                else
+                {
+                    if (_menuItemActivator is not null)
+                    {
+                        await _menuItemActivator.ElementRef.FocusAsync();
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // No focus added - menu closed without focusing
+            }
+        }
     }
 }
