@@ -7,8 +7,8 @@
         <DocsPageSection>
             <SectionHeader Title="Basic Usage">
                 <Description>
-                    MudField provides the foundation for creating custom input controls with consistent styling and behavior. 
-                    It offers the same visual variants as <MudLink Href="/components/textfield">text fields</MudLink> and 
+                    MudField provides the foundation for creating custom input controls with consistent styling and behavior.
+                    It offers the same visual variants as <MudLink Href="/components/textfield">text fields</MudLink> and
                     <MudLink Href="/components/numericfield">numeric fields</MudLink> while allowing you to embed any custom content.
                     Fields support labels, helper text, validation states, and adornments just like other input components.
                 </Description>
@@ -44,17 +44,30 @@
         <DocsPageSection>
             <SectionHeader Title="Advanced Usage">
                 <Description>
-                    Build custom input controls by leveraging MudField's flexible content system. When <CodeInline>ChildContent</CodeInline> is null, 
-                    the label automatically becomes a placeholder, enabling dynamic behavior based on content state.
-                    This example demonstrates creating a custom color picker input using native HTML controls within a MudField wrapper.
+                    <MudText HtmlTag="p">
+                        Build custom input controls by leveraging MudField's flexible content system.
+                        When <CodeInline>ChildContent</CodeInline> is null, the label automatically becomes a placeholder,
+                        enabling dynamic behavior based on content or adornment.
+                    </MudText>
+                    <MudText HtmlTag="p">
+                        Use the <CodeInline>ShrinkLabel</CodeInline> parameter to override this behavior:
+                        when set to <CodeInline>true</CodeInline>, the label remains inside the field regardless of state,
+                        which is useful when you want to suppress automatic shrinking without causing the content to re-render
+                        or you want to maintain a custom portion of your ChildContent such as an extra ending adornment.
+                    </MudText>
+                    <MudText HtmlTag="p">
+                        Anytime the <CodeInline Tag="true">MudField</CodeInline> has focus within the label will shrink and
+                        not act as a placeholder.
+                    </MudText>
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(FieldLabelPlaceholderExample)" ShowCode="false">
                 <FieldLabelPlaceholderExample />
             </SectionContent>
             <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
-                <strong>Related Components:</strong> For ready-made input controls, see <MudLink Href="/components/textfield">TextField</MudLink> and 
-                <MudLink Href="/components/numericfield">NumericField</MudLink> which are built on top of MudField.
+                <strong>Related Components:</strong> For ready-made input controls, see <MudLink Href="/components/textfield">TextField</MudLink> and
+                <MudLink Href="/components/numericfield">NumericField</MudLink> which are built nearly identical to <CodeInline Tag="true">MudField</CodeInline>,
+                except they have a built-in <c>input</c>.
             </MudAlert>
         </DocsPageSection>
 
