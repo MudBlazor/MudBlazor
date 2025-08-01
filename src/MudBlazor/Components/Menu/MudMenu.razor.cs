@@ -465,6 +465,7 @@ namespace MudBlazor
 
             // Now close this menu itself.
             _focusedIndex = -1;
+            _hasFocusedOnce = false;
             _menuItems.Clear();
             await KeyInterceptorService.UnsubscribeAsync(_elementId);
             await _openState.SetValueAsync(false);
@@ -492,6 +493,7 @@ namespace MudBlazor
             }
 
             // Close the top-most menu, which will cascade down to close all its children.
+            _hasFocusedOnce = false;
             await top.CloseMenuAsync();
         }
 
@@ -768,6 +770,7 @@ namespace MudBlazor
 
         private int _focusedIndex = -1;
         private List<MudMenuItem> _menuItems = [];
+        private bool _hasFocusedOnce = false;
 
         private async Task HandleKeyDownAsync(KeyboardEventArgs e)
         {
@@ -778,8 +781,16 @@ namespace MudBlazor
 
             if (e.Key == "ArrowDown")
             {
-                _focusedIndex = (_focusedIndex + 1) % items.Count;
-                await FocusItem(_focusedIndex);
+                if (!_hasFocusedOnce)
+                {
+                    _hasFocusedOnce = true;
+                    await FocusItem(_focusedIndex);
+                }
+                else
+                {
+                    _focusedIndex = (_focusedIndex + 1) % items.Count;
+                    await FocusItem(_focusedIndex);
+                }
             }
             else if (e.Key == "ArrowUp")
             {
@@ -869,6 +880,7 @@ namespace MudBlazor
                 }
                 else
                 {
+                    _hasFocusedOnce = false;
                     await CloseAllMenusAsync();
                 }
             }
