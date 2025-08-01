@@ -5,6 +5,7 @@
 
 @(ClearFilterCache()) @*Clear filtered items cache for this render*@
 
+
 <div @attributes="UserAttributes" class="@Classname" style="@Style">
 @if (Items != null || ServerData != null)
 {
@@ -26,6 +27,12 @@
                         }
                     </MudSelect>
                 </CascadingValue>
+            </div>
+        }
+        @if (PagerContent != null && PagerAtTop)
+        {
+            <div class="mud-table-pagination">
+                @PagerContent
             </div>
         }
         <div class="mud-table-container @TableContainerClass" style="@TableContainerStyle @(GetHorizontalScrollbarStyle())">
@@ -178,7 +185,7 @@
                 }
             </table>
         </div>
-        @if (PagerContent != null)
+        @if (PagerContent != null && !PagerAtTop)
         {
             <div class="mud-table-pagination">
                 @PagerContent
