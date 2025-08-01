@@ -912,7 +912,6 @@ namespace MudBlazor
                         // prevent scrolling page
                         new(" ", preventDown: "key+none", preventUp: "key+none"),
                         new("Enter", preventDown: "key+none"),
-                        new("Tab", preventDown: "key+none"),
                         new("ArrowDown", preventDown: "key+none"),
                         new("ArrowUp", preventDown: "key+none"),
                         new("NumpadEnter", preventDown: "key+none"),
