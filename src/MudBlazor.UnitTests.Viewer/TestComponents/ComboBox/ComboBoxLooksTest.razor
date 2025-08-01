@@ -10,7 +10,6 @@
                              SearchFunc="Search"
                              FullWidth
                              Variant="variant"
-                             Color="@(_colorComboBox?.Value ?? Color.Default)"
                              Label="@variant.ToString()"
                              Filterable="_filterable"
                              MultiSelection="_multiSelection"
@@ -27,21 +26,6 @@
                 <MudSwitch @bind-Value="_openStates[variant]" Label="Open" Color="Color.Primary" />
             </MudStack>
         }
-            <MudStack Row Spacing="4" AlignItems="AlignItems.End">
-                <MudAutocomplete @bind-Value="@_value"
-                                 OpenChanged="OnOpenChanged"
-                                 SearchFunc="Search"
-                                 FullWidth
-                                 Variant="Variant.Filled"
-                                 Label="MudAutoComplete"
-                                 Dense="_dense"
-                                 Disabled="_disabled"
-                                 ReadOnly="_readonly"
-                                 Placeholder="@(_placeholder ? "Placeholder" : null)"
-                                 HelperText="@(_helperText ? "Helper Text" : null)"
-                                 Clearable="_clearable" />
-                <MudSwitch @bind-Value="_autoCompleteOpen" ReadOnly Label="Open" Color="Color.Primary" />
-            </MudStack>
 
         <MudComboBox @bind-Text="@_value"
                      @ref="_comboBox"
@@ -135,16 +119,16 @@
         _autoCompleteOpen = open;
     }
 
-    private async Task<IEnumerable<string>> Search(string value, CancellationToken token)
+    private async Task<IEnumerable<string>> Search(string? value, CancellationToken? token)
     {
         // In real life use an asynchronous function for fetching data from an api.
-        await Task.Delay(5, token);
+        await Task.Delay(5, token ?? CancellationToken.None); // Ensure token is not null
 
         // if text is null or empty, show complete list
         if (string.IsNullOrEmpty(value))
             return _states;
 
-        return _states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+        return _states.Where(x => x.Contains(value!, StringComparison.InvariantCultureIgnoreCase)); // Use null-forgiving operator
     }
 
     private readonly string[] _states =

@@ -9,7 +9,7 @@ namespace MudBlazor
     public partial class MudComboBox<T> : MudBaseInput<T>
     {
         private readonly object _itemsLock = new();
-        private readonly string _elementId = Identifier.Create("combobox");
+        internal readonly string _elementId = Identifier.Create("combobox-");
         private readonly HashSet<ComboBoxItem<T>> _comboBoxItems = [];
 
         private ParameterState<HashSet<T>> _selectedItemsState;
@@ -49,6 +49,7 @@ namespace MudBlazor
 
         protected string OuterClassname =>
             new CssBuilder("mud-select")
+                .AddClass("mud-combobox")
                 .AddClass("mud-width-full", FullWidth)
                 .AddClass(OuterClass)
                 .Build();
@@ -215,15 +216,8 @@ namespace MudBlazor
         [Category(CategoryTypes.Popover.Appearance)]
         public DropdownWidth RelativeWidth { get; set; } = DropdownWidth.Relative;
 
-        /// <summary>
-        /// Uses compact vertical padding for all items.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.ListAppearance)]
-        public bool Dense { get; set; }
+        // override to use Dense in new code but maintain Margin compatibility
+        private bool Dense => Margin is Margin.Dense ? true : false;
 
         /// <summary>
         /// The CSS classes applied to the outer <c>div</c>.
@@ -1092,9 +1086,15 @@ namespace MudBlazor
             await SetTextAsync(default, false);
         }
 
-        internal Task HandleMouseDown(MouseEventArgs args)
+        /// <summary>
+        /// When the container receives a pointer down event, it will open the list.
+        /// </summary>
+        /// <remarks>
+        /// It's important to note when the list is open this event will never fire as it's the MudOverlay that handles it.
+        /// </remarks>
+        private Task HandleMouseDown(MouseEventArgs args)
         {
-            if (args.Button != 0) // if it wasn't left click drop out
+            if (args.Button != 0)
                 return Task.CompletedTask;
             return OpenListAsync();
         }
