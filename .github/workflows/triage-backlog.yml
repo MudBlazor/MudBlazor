@@ -72,7 +72,8 @@ jobs:
             max_count=""
           else
             echo "Analyzing up to $MAX_ISSUES issues"
-            issue_numbers=$(gh issue list --state open --limit 9999 --search 'sort:updated-desc -label:enhancement -label:"on hold" -is:locked' --json number --jq '.[].number')
+            issue_numbers=$(gh issue list --state open --limit 9999 --search 'sort:updated-desc' --json number --jq '.[].number')
+            issue_numbers+=" $(gh pr list --state open --limit 9999 --search 'sort:updated-desc' --json number --jq '.[].number')"
             max_count="$MAX_ISSUES"
           fi
 
@@ -97,16 +98,13 @@ jobs:
             else
               exit_code=$?
               if [ "$exit_code" -eq 1 ]; then
-                echo "❌ Fatal error on #${issue_number}"
                 exit 1
               elif [ "$exit_code" -eq 2 ]; then
                 # No-op for skippable issues.
                 :
               elif [ "$exit_code" -eq 3 ]; then
-                echo "🚫 Gemini API quota exceeded (exit code 3). Cancelling backlog triage."
                 exit 0
               else
-                echo "❌ Unexpected error (code $exit_code) on #${issue_number}"
                 exit "$exit_code"
               fi
             fi
