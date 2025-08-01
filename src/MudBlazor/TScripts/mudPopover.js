@@ -320,9 +320,7 @@ window.mudpopoverHelper = {
                 // Adjust .mud-list children if they would run off screen even after flipping
                 const firstChild = popoverContentNode.firstElementChild;
                 // Check if firstChild exists, has a classList, and is a mud-list
-                var isList = firstChild &&
-                    firstChild.classList &&
-                    firstChild.classList.contains("mud-list");
+                const isList = firstChild?.classList?.contains("mud-list");
                 // we do it here to ensure it flips properly if more space becomes available on the other side.
                 if (popoverContentNode.mudHeight && anchorY > 0 && anchorY < window.innerHeight) {
                     popoverContentNode.style.maxHeight = null;
@@ -542,10 +540,10 @@ window.mudpopoverHelper = {
 
                     // If there is no max height set we need to check the height
                     // we reset previously flipped at the start of flipping logic
-                    const checkHeight = true && !(
-                        (popoverStyle.maxHeight && popoverStyle.maxHeight !== '') ||
-                        (listStyle.maxHeight && listStyle.maxHeight !== '')
-                    );
+                    // a Style setting of max-height: unset; will bypass this check
+                    const isUnset = (val) =>
+                        val == null || val === '' || val === 'none';
+                    const checkHeight = isUnset(popoverStyle.maxHeight) && isUnset(listStyle.maxHeight);
 
                     if (checkHeight) {
                         const overflowPadding = window.mudpopoverHelper.overflowPadding;
@@ -564,7 +562,7 @@ window.mudpopoverHelper = {
                         let shouldClamp = false;
 
                         if (isFlippedUpward) {
-                            availableHeight = anchorY - overflowPadding;
+                            availableHeight = anchorY - overflowPadding - popoverNode.offsetHeight;
                             shouldClamp = availableHeight < popoverContentNode.offsetHeight;
                             if (shouldClamp) {
                                 top = overflowPadding;
