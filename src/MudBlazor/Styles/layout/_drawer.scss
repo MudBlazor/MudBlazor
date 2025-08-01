@@ -108,7 +108,7 @@
     &.mud-drawer-pos-top {
       width: 100%;
       bottom: auto;
-      height: var(--mud-drawer-height, var(--mud-drawer-height-bottom));
+      height: var(--mud-drawer-height, var(--mud-drawer-height-top));
 
       &.mud-drawer--open {
         top: 0;
