@@ -1,28 +1,6 @@
 /**
- * AutoTriage - AI-Powered GitHub Issue & PR Analyzer
- * 
- * Automatically analyzes GitHub issues and pull requests using Gemini,
- * then applies appropriate labels and helpful comments to improve project management.
- * 
- * Features:
- * • Smart labeling based on content analysis
- * • Helpful AI-generated comments for issues (not PRs)
- * • Safe dry-run mode by default
- * • Comprehensive error handling and logging
- * 
- * Usage:
- * • Issues: Analyzes, labels, comments, and can close if appropriate
- * • Pull Requests: Analyzes and labels only (no comments or closing)
- * 
- * Required Environment Variables:
- * • GEMINI_API_KEY - Google Gemini API key
- * • GITHUB_TOKEN - GitHub token with repo permissions
- * • GITHUB_ISSUE_NUMBER - Issue/PR number to process
- * • GITHUB_REPOSITORY - Repository in format "owner/repo"
- * • AUTOTRIAGE_ENABLED - Set to 'true' to enable real actions (default: dry-run)
- * 
- * Original work by Daniel Chalmers © 2025
- * https://gist.github.com/danielchalmers/503d6b9c30e635fccb1221b2671af5f8
+ * AutoTriage - AI-powered GitHub triage bot
+ * © Daniel Chalmers 2025
  */
 
 const fetch = require('node-fetch');
@@ -31,283 +9,294 @@ const core = require('@actions/core');
 const fs = require('fs');
 const path = require('path');
 
-// Configuration
-const dryRun = process.env.AUTOTRIAGE_ENABLED !== 'true';
-const aiModel = process.env.AUTOTRIAGE_MODEL || 'gemini-2.5-flash';
+// Global constants
+const AI_MODEL = 'gemini-2.5-pro';
+const DB_PATH = process.env.AUTOTRIAGE_DB_PATH;
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const GITHUB_REPOSITORY = process.env.GITHUB_REPOSITORY;
+const ISSUE_NUMBER = parseInt(process.env.GITHUB_ISSUE_NUMBER, 10);
+const [OWNER, REPO] = (GITHUB_REPOSITORY || '').split('/');
+const ISSUE_PARAMS = { owner: OWNER, repo: REPO, issue_number: ISSUE_NUMBER };
+const VALID_PERMISSIONS = new Set(['label', 'comment', 'close', 'edit']);
+const PERMISSIONS = new Set(
+    (process.env.AUTOTRIAGE_PERMISSIONS || '')
+        .split(',')
+        .map(p => p.trim())
+        .filter(p => VALID_PERMISSIONS.has(p))
+);
 
-// Load AI prompt template
-const promptPath = path.join(__dirname, 'AutoTriage.prompt');
-let basePrompt = '';
-try {
-    basePrompt = fs.readFileSync(promptPath, 'utf8');
-} catch (err) {
-    console.error('❌ Failed to load AutoTriage.prompt:', err.message);
-    process.exit(1);
-}
+async function callGemini(prompt) {
+    const payload = {
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: {
+            responseMimeType: "application/json",
+            responseSchema: {
+                type: "object",
+                properties: {
+                    severity: { type: "integer", description: "How severe the issue is on a scale of 1 to 10" },
+                    reason: { type: "string", description: "Brief thought process for logging purposes" },
+                    comment: { type: "string", description: "A comment to reply to the issue with", nullable: true },
+                    labels: { type: "array", items: { type: "string" }, description: "The final set of labels the issue should have" },
+                    close: { type: "boolean", description: "Set to true if the issue should be closed as part of this action", nullable: true },
+                    newTitle: { type: "string", description: "A new title for the issue or pull request", nullable: true }
+                },
+                required: ["severity", "reason", "labels"]
+            }
+        }
+    };
 
-console.log(`🤖 Using ${aiModel} (${dryRun ? 'DRY RUN' : 'LIVE'})`);
-
-/**
- * Call Gemini to analyze the issue content and return structured response
- */
-async function callGemini(prompt, apiKey) {
     const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${aiModel}:generateContent`,
+        `https://generativelanguage.googleapis.com/v1beta/models/${AI_MODEL}:generateContent`,
         {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-goog-api-key': apiKey
-            },
-            body: JSON.stringify({
-                contents: [{ parts: [{ text: prompt }] }],
-                generationConfig: {
-                    responseMimeType: "application/json",
-                    responseSchema: {
-                        type: "object",
-                        properties: {
-                            rating: { type: "integer", description: "How much an intervention is needed on a scale of 1 to 10" },
-                            reason: { type: "string", description: "Brief technical explanation for logging purposes" },
-                            comment: { type: "string", description: "A comment to reply to the issue with", nullable: true },
-                            labels: { type: "array", items: { type: "string" }, description: "Array of labels to apply" }
-                        },
-                        required: ["rating", "reason", "comment", "labels"]
-                    }
-                }
-            }),
+            headers: { 'Content-Type': 'application/json', 'X-goog-api-key': GEMINI_API_KEY },
+            body: JSON.stringify(payload),
             timeout: 60000
         }
     );
 
+    if (response.status === 429) {
+        console.error('❌ Gemini API returned 429 (Quota exceeded). Exiting and cancelling backlog.');
+        process.exit(3);
+    }
+
+    if (response.status === 503) {
+        console.error('❌ Gemini API returned 503 (Model overloaded). Skipping this issue.');
+        process.exit(2);
+    }
+
     if (!response.ok) {
-        const errText = await response.text();
-        throw new Error(`Gemini API error: ${response.status} ${response.statusText} — ${errText}`);
+        throw new Error(`Gemini: ${response.status} ${response.statusText} — ${await response.text()}`);
     }
 
     const data = await response.json();
-    const analysisResult = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+    const result = data?.candidates?.[0]?.content?.parts?.[0]?.text;
 
-    if (!analysisResult) {
-        throw new Error('No analysis result in Gemini response');
-    }
+    saveArtifact('gemini-output.json', JSON.stringify(data, null, 2));
+    saveArtifact('gemini-analysis.json', result);
 
-    return JSON.parse(analysisResult);
+    return JSON.parse(result);
 }
 
-/**
- * Create metadata string for both logging and AI analysis
- */
-function formatMetadata(issue) {
+async function buildMetadata(issue, octokit) {
     const isIssue = !issue.pull_request;
-    const itemType = isIssue ? 'issue' : 'pull request';
-    const labels = issue.labels?.map(l => typeof l === 'string' ? l : l.name) || [];
+    const currentLabels = issue.labels?.map(l => l.name || l) || [];
+    const hasAssignee = Array.isArray(issue.assignees) ? issue.assignees.length > 0 : !!issue.assignee;
+    const { data: collaboratorsData } = await octokit.rest.repos.listCollaborators({ owner: OWNER, repo: REPO });
+    const { data: releasesData } = await octokit.rest.repos.listReleases({ owner: OWNER, repo: REPO });
 
-    return `${issue.state} ${itemType} #${issue.number} by ${issue.user?.login || 'unknown'}
-Created: ${issue.created_at}
-Updated: ${issue.updated_at}
-Comments: ${issue.comments || 0}, Reactions: ${issue.reactions?.total_count || 0}
-Current labels: ${labels.join(', ') || 'none'}`;
+    return {
+        title: issue.title,
+        state: issue.state,
+        type: isIssue ? 'issue' : 'pull request',
+        number: issue.number,
+        author: issue.user?.login || 'unknown',
+        created_at: issue.created_at,
+        updated_at: issue.updated_at,
+        comments: issue.comments || 0,
+        reactions: issue.reactions?.total_count || 0,
+        labels: currentLabels,
+        assigned: hasAssignee,
+        collaborators: collaboratorsData.map(c => c.login),
+        releases: releasesData.map(r => ({ name: r.tag_name, date: r.published_at })),
+    };
 }
 
-/**
- * Build the full prompt by combining base template with issue data
- */
-function buildPrompt(issue, comments) {
+async function buildTimeline(octokit) {
+    const { data: timelineEvents } = await octokit.rest.issues.listEventsForTimeline({ ...ISSUE_PARAMS, per_page: 100 });
+    return timelineEvents.map(event => {
+        const base = { event: event.event, actor: event.actor?.login, timestamp: event.created_at };
+        switch (event.event) {
+            case 'commented': return { ...base, body: event.body };
+            case 'labeled': return { ...base, label: { name: event.label.name, color: event.label.color } };
+            case 'unlabeled': return { ...base, label: { name: event.label.name } };
+            case 'renamed': return { ...base, title: { from: event.rename.from, to: event.rename.to } };
+            case 'assigned':
+            case 'unassigned': return { ...base, user: event.assignee?.login };
+            case 'closed':
+            case 'reopened':
+            case 'locked':
+            case 'unlocked': return base;
+            default: return null;
+        }
+    }).filter(Boolean);
+}
+
+async function buildPrompt(issue, octokit, previousContext = null) {
+    const basePrompt = fs.readFileSync(path.join(__dirname, 'AutoTriage.prompt'), 'utf8');
     const issueText = `${issue.title}\n\n${issue.body || ''}`;
-    const metadata = formatMetadata(issue);
+    const metadata = await buildMetadata(issue, octokit);
+    const timelineReport = await buildTimeline(octokit);
+    const promptString = `${basePrompt}
 
-    // Format comments
-    let commentsText = 'No comments available.';
-    if (comments?.length) {
-        commentsText = '\nISSUE COMMENTS:';
-        comments.forEach((comment, idx) => {
-            commentsText += `\nComment ${idx + 1} by ${comment.author}:\n${comment.body}`;
-        });
-    }
-
-    return `${basePrompt}
-
-ISSUE TO ANALYZE:
+=== SECTION: ISSUE TO ANALYZE ===
 ${issueText}
 
-ISSUE METADATA:
-${metadata}
+=== SECTION: ISSUE METADATA (JSON) ===
+${JSON.stringify(metadata, null, 2)}
 
-COMMENTS:
-${commentsText}
+=== SECTION: ISSUE TIMELINE (JSON) ===
+${JSON.stringify(timelineReport, null, 2)}
 
-Analyze this issue and provide your structured response.`;
+=== SECTION: TRIAGE CONTEXT ===
+Last triaged: ${previousContext?.lastTriaged}
+Previous reasoning: ${previousContext?.previousReasoning}
+Current triage date: ${new Date().toISOString()}
+Current permissions: ${Array.from(PERMISSIONS).join(', ') || 'none'}
+All possible permissions: label (add/remove labels), comment (post comments), close (close issue), edit (edit title)
+
+=== SECTION: INSTRUCTIONS ===
+Analyze this issue, its metadata, and its full timeline.
+Your entire response must be a single, valid JSON object and nothing else. Do not use Markdown, code fences, or any explanatory text.`;
+
+    saveArtifact(`github-timeline.md`, JSON.stringify(timelineReport, null, 2));
+    saveArtifact(`gemini-input.md`, promptString);
+    return promptString;
 }
 
-/**
- * Update GitHub issue labels based on AI recommendations
- */
-async function updateLabels(issue, suggestedLabels, owner, repo, octokit) {
-    const currentLabels = issue.labels?.map(l => typeof l === 'string' ? l : l.name) || [];
+async function updateLabels(suggestedLabels, octokit) {
+    const { data: issue } = await octokit.rest.issues.get(ISSUE_PARAMS);
+    const currentLabels = issue.labels?.map(l => l.name || l) || [];
     const labelsToAdd = suggestedLabels.filter(l => !currentLabels.includes(l));
     const labelsToRemove = currentLabels.filter(l => !suggestedLabels.includes(l));
 
-    // Nothing to change
-    if (labelsToAdd.length === 0 && labelsToRemove.length === 0) {
-        console.log('🏷️ No label changes suggested');
-        return;
-    }
+    if (labelsToAdd.length === 0 && labelsToRemove.length === 0) return;
 
-    // Show what we're changing, prefixing each label with + or -
     const changes = [
         ...labelsToAdd.map(l => `+${l}`),
         ...labelsToRemove.map(l => `-${l}`)
     ];
     console.log(`🏷️ Label changes: ${changes.join(', ')}`);
 
-    // Exit early if dry run
-    if (dryRun || !octokit) return;
+    if (!octokit || !PERMISSIONS.has('label')) return;
 
-    // Add new labels
     if (labelsToAdd.length > 0) {
-        await octokit.rest.issues.addLabels({
-            owner,
-            repo,
-            issue_number: issue.number,
-            labels: labelsToAdd
-        });
+        await octokit.rest.issues.addLabels({ ...ISSUE_PARAMS, labels: labelsToAdd });
     }
 
-    // Remove old labels (one by one since GitHub API requires it)
     for (const label of labelsToRemove) {
-        await octokit.rest.issues.removeLabel({
-            owner,
-            repo,
-            issue_number: issue.number,
-            name: label
-        });
+        await octokit.rest.issues.removeLabel({ ...ISSUE_PARAMS, name: label });
     }
 }
 
-/**
- * Add AI-generated comment to the issue
- */
-async function addComment(issue, comment, owner, repo, octokit) {
-    // Exit early if dry run
-    if (dryRun || !octokit) return;
-
-    await octokit.rest.issues.createComment({
-        owner,
-        repo,
-        issue_number: issue.number,
-        body: `${comment}\n\n---\n*I'm an AI. Did I miss something? Let me know in a reply!*`
-    });
+async function createComment(body, octokit) {
+    if (!octokit || !PERMISSIONS.has('comment')) return;
+    await octokit.rest.issues.createComment({ ...ISSUE_PARAMS, body: body });
 }
 
-/**
- * Get issue/PR and its comments from GitHub
- */
-async function getIssueFromGitHub(owner, repo, number, octokit) {
-    if (!octokit) {
-        throw new Error('GitHub token required to fetch issue data');
-    }
-
-    // Get the issue/PR
-    const { data: issue } = await octokit.rest.issues.get({
-        owner,
-        repo,
-        issue_number: number
-    });
-
-    // Get comments if there are any
-    let comments = [];
-    if (issue.comments > 0) {
-        const { data: commentsData } = await octokit.rest.issues.listComments({
-            owner,
-            repo,
-            issue_number: number
-        });
-        comments = commentsData.map(comment => ({
-            author: comment.user?.login || 'unknown',
-            body: comment.body || ''
-        }));
-    }
-
-    return { issue, comments };
+async function updateTitle(title, newTitle, octokit) {
+    console.log(`✏️ Updating title from "${title}" to "${newTitle}"`);
+    if (!octokit || !PERMISSIONS.has('edit')) return;
+    await octokit.rest.issues.update({ ...ISSUE_PARAMS, title: newTitle });
 }
 
-/**
- * Main processing function - analyze and act on a single issue/PR
- */
-async function processIssue(issue, comments, owner, repo, geminiApiKey, octokit) {
-    const isIssue = !issue.pull_request;
+async function closeIssue(octokit, reason = 'not_planned') {
+    console.log(`🔒 Closing issue as ${reason}`);
+    if (!octokit || !PERMISSIONS.has('close')) return;
+    await octokit.rest.issues.update({ ...ISSUE_PARAMS, state: 'closed', state_reason: reason });
+}
 
-    // Skip locked issues
-    if (issue.locked) {
-        console.log(`🔒 Skipping locked ${isIssue ? 'issue' : 'pull request'} #${issue.number}`);
-        return;
-    }
+async function processIssue(issue, octokit, previousContext) {
+    const metadata = await buildMetadata(issue, octokit);
+    const formattedMetadata = [
+        `#${metadata.number} (${metadata.state} ${metadata.type}) was created by ${metadata.author}`,
+        `Title: ${metadata.title}`,
+        `Updated: ${metadata.updated_at}`,
+        `Labels: ${metadata.labels.join(', ') || 'none'}`,
+    ].map(line => `📝 ${line}`).join('\n');
+    console.log(formattedMetadata);
 
-    // Log what we're processing
-    console.log(`📝 ${issue.title}`);
-    console.log(formatMetadata(issue).replace(/^/gm, '📝 '));
+    const prompt = await buildPrompt(issue, octokit, previousContext);
+    const startTime = Date.now();
+    const analysis = await callGemini(prompt);
+    const analysisTime = ((Date.now() - startTime) / 1000).toFixed(1);
 
-    // Build prompt and call AI
-    const prompt = buildPrompt(issue, comments);
-    const start = Date.now();
-    const analysis = await callGemini(prompt, geminiApiKey);
-    console.log(`🤖 Gemini returned analysis in ${Date.now() - start}ms with intervention rating of ${analysis.rating}/10`);
+    console.log(`🤖 Gemini returned analysis in ${analysisTime}s with a severity score of ${analysis.severity}/10:`);
+    console.log(`🤖 "${analysis.reason}"`);
 
-    console.log(`🤖 ${analysis.reason}`);
+    await updateLabels(analysis.labels, octokit);
 
-    // Apply the AI's suggestions
-    await updateLabels(issue, analysis.labels, owner, repo, octokit);
-
-    // Add comment if one was generated
     if (analysis.comment) {
         console.log(`💬 Posting comment:`);
         console.log(analysis.comment.replace(/^/gm, '> '));
+        await createComment(analysis.comment, octokit);
+    }
 
-        await addComment(issue, analysis.comment, owner, repo, octokit);
-    } else {
-        console.log(`💬 No comment suggested.`);
+    if (analysis.close) {
+        await closeIssue(octokit, 'not_planned');
+    }
+
+    if (analysis.newTitle) {
+        await updateTitle(issue.title, analysis.newTitle, octokit);
     }
 
     return analysis;
 }
 
-/**
- * Main entry point
- */
-async function main() {
-    // Check required environment variables
-    const requiredEnvVars = ['GITHUB_ISSUE_NUMBER', 'GEMINI_API_KEY', 'GITHUB_REPOSITORY'];
-    for (const envVar of requiredEnvVars) {
-        if (!process.env[envVar]) {
-            throw new Error(`Missing required environment variable: ${envVar}`);
-        }
+function getPreviousTriageContext(triageEntry) {
+    // Triage for the first time.
+    if (!triageEntry) {
+        return { lastTriaged: null, previousReasoning: 'This issue has never been triaged.' };
     }
 
-    // Parse configuration
-    const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
-    const issueNumber = parseInt(process.env.GITHUB_ISSUE_NUMBER, 10);
-    const geminiApiKey = process.env.GEMINI_API_KEY;
+    const lastTriagedDate = new Date(triageEntry.lastTriaged);
+    const timeSinceTriaged = Date.now() - lastTriagedDate.getTime();
 
-    // Setup GitHub API client
-    let octokit = null;
-    if (process.env.GITHUB_TOKEN) {
-        octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
-    } else {
-        console.log('⚠️ No GITHUB_TOKEN provided - running in read-only mode');
+    // Recheck after 14 days for stale checks and prompt updates.
+    if (timeSinceTriaged > 14 * 86400000) {
+        return { lastTriaged: triageEntry.lastTriaged, previousReasoning: triageEntry.previousReasoning };
     }
 
-    // Get the issue/PR data from GitHub
-    const { issue, comments } = await getIssueFromGitHub(owner, repo, issueNumber, octokit);
-
-    // Process it
-    await processIssue(issue, comments, owner, repo, geminiApiKey, octokit);
-
-    console.log(`\n`);
+    return null; // Otherwise, no triage is needed.
 }
 
-// Run the script
+function saveArtifact(name, contents) {
+    const artifactsDir = path.join(process.cwd(), 'artifacts');
+    const filePath = path.join(artifactsDir, `${ISSUE_NUMBER}-${name}`);
+    fs.mkdirSync(artifactsDir, { recursive: true });
+    fs.writeFileSync(filePath, contents, 'utf8');
+}
+
+async function main() {
+    for (const envVar of ['GITHUB_ISSUE_NUMBER', 'GEMINI_API_KEY', 'GITHUB_REPOSITORY', 'GITHUB_TOKEN']) {
+        if (!process.env[envVar]) throw new Error(`Missing environment variable: ${envVar}`);
+    }
+
+    // Initialize database
+    let triageDb = {};
+    if (DB_PATH && fs.existsSync(DB_PATH)) {
+        const contents = fs.readFileSync(DB_PATH, 'utf8');
+        triageDb = contents ? JSON.parse(contents) : {};
+    }
+
+    // Setup
+    const octokit = new Octokit({ auth: GITHUB_TOKEN });
+    const issue = (await octokit.rest.issues.get(ISSUE_PARAMS)).data;
+    const previousContext = getPreviousTriageContext(triageDb[ISSUE_NUMBER]);
+
+    // We don't need to triage
+    if (!previousContext) {
+        process.exit(2);
+    }
+
+    // Take action on issue
+    console.log("⏭️");
+    console.log(`🤖 Using ${AI_MODEL} with [${Array.from(PERMISSIONS).join(', ') || 'none'}] permissions`);
+    const analysis = await processIssue(issue, octokit, previousContext);
+
+    // Save database
+    if (DB_PATH && analysis && PERMISSIONS.size > 0) {
+        triageDb[ISSUE_NUMBER] = {
+            lastTriaged: new Date().toISOString(),
+            previousReasoning: analysis.reason
+        };
+        fs.writeFileSync(DB_PATH, JSON.stringify(triageDb, null, 2));
+    }
+}
+
 main().catch(err => {
-    console.error('\n❌ Error:', err.message);
+    console.error('❌ Error:', err.message);
     core.setFailed(err.message);
     process.exit(1);
 });

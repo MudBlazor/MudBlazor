@@ -2784,111 +2784,52 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
             IElement FilterButton() => dataGrid.FindAll(".filter-button")[0];
 
-            // click on the filter button
+            // Helper method to select a filter operator and verify the outcome
+            async Task SelectFilterOperator(int operatorIndex, int expectedFilterCount)
+            {
+                // Ensure the filter panel is open before interacting
+                if (comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count == 0)
+                {
+                    FilterButton().Click();
+                    comp.WaitForElement(".filter-operator");
+                }
+
+                // Open the operator dropdown and select an item
+                await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
+                var listItems = comp.WaitForElements(".mud-list .mud-list-item");
+                listItems[operatorIndex].Click();
+
+                // Click the overlay to close the dropdown and commit the selection
+                comp.Find(".mud-overlay").Click();
+
+                // Assert that the number of active filters is correct
+                comp.WaitForAssertion(() =>
+                {
+                    dataGrid.Instance.FilterDefinitions.Count.Should().Be(expectedFilterCount);
+                });
+
+                // Close the filter panel to ensure a clean state for the next test
+                if (comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count > 0)
+                {
+                    FilterButton().Click();
+                }
+            }
+
+            // 1. Initial state: Open the filter panel and confirm it's visible
             FilterButton().Click();
+            comp.WaitForAssertion(() => comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(1));
 
-            // check the number of filters displayed in the filters panel is 1
-            comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(1);
+            // 2. Test operators that should be removed when their value is empty
+            await SelectFilterOperator(0, 0); // "contains"
+            await SelectFilterOperator(1, 0); // "not contains"
+            await SelectFilterOperator(2, 0); // "equals"
+            await SelectFilterOperator(3, 0); // "not equals"
+            await SelectFilterOperator(4, 0); // "starts with"
+            await SelectFilterOperator(5, 0); // "ends with"
 
-            // Wait for the filter panel to render properly
-            comp.WaitForState(() => comp.FindAll(".filter-operator").Count > 0, timeout: TimeSpan.FromSeconds(5));
-
-            await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
-
-            //set operator to CONTAINS
-            comp.FindAll(".mud-list .mud-list-item")[0].Click();
-            comp.Find(".mud-overlay").Click();
-            comp.Render();
-
-            //should be removed since no value is provided
-            dataGrid.Instance.FilterDefinitions.Count.Should().Be(0);
-
-            //set operator to NOT CONTAINS
-            FilterButton().Click();
-
-            // Wait for the filter panel to render properly
-            comp.WaitForState(() => comp.FindAll(".filter-operator").Count > 0, timeout: TimeSpan.FromSeconds(5));
-
-            await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
-
-            comp.FindAll(".mud-list .mud-list-item")[1].Click();
-            comp.Find(".mud-overlay").Click();
-            comp.Render();
-
-            //should be removed since no value is provided
-            dataGrid.Instance.FilterDefinitions.Count.Should().Be(0);
-
-            //set operator to EQUALS
-            FilterButton().Click();
-
-            await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
-
-            comp.FindAll(".mud-list .mud-list-item")[2].Click();
-            comp.Find(".mud-overlay").Click();
-            comp.Render();
-
-            //should be removed since no value is provided
-            dataGrid.Instance.FilterDefinitions.Count.Should().Be(0);
-
-            //set operator to NOT EQUALS
-            FilterButton().Click();
-
-            await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
-
-            comp.FindAll(".mud-list .mud-list-item")[3].Click();
-            comp.Find(".mud-overlay").Click();
-            comp.Render();
-
-            //should be removed since no value is provided
-            dataGrid.Instance.FilterDefinitions.Count.Should().Be(0);
-
-            //set operator to STARTS WITH
-            FilterButton().Click();
-
-            await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
-
-            comp.FindAll(".mud-list .mud-list-item")[4].Click();
-            comp.Find(".mud-overlay").Click();
-            comp.Render();
-
-            //should be removed since no value is provided
-            dataGrid.Instance.FilterDefinitions.Count.Should().Be(0);
-
-            //set operator to ENDS WITH
-            FilterButton().Click();
-
-            await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
-
-            comp.FindAll(".mud-list .mud-list-item")[5].Click();
-            comp.Find(".mud-overlay").Click();
-            comp.Render();
-
-            //should be removed since no value is provided
-            dataGrid.Instance.FilterDefinitions.Count.Should().Be(0);
-
-            //set operator to IS EMPTY
-            FilterButton().Click();
-
-            await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
-
-            comp.FindAll(".mud-list .mud-list-item")[6].Click();
-            comp.Find(".mud-overlay").Click();
-            comp.Render();
-
-            //should maintain filter, no value is required
-            dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
-
-            //set operator to IS NOT EMPTY
-            FilterButton().Click();
-
-            await comp.Find(".filter-operator").MouseDownAsync(new MouseEventArgs());
-
-            comp.FindAll(".mud-list .mud-list-item")[7].Click();
-            comp.Find(".mud-overlay").Click();
-            comp.Render();
-
-            //should maintain filter, no value is required
-            dataGrid.Instance.FilterDefinitions.Count.Should().Be(1);
+            // 3. Test operators that are valid without a value
+            await SelectFilterOperator(6, 1); // "is empty"
+            await SelectFilterOperator(7, 1); // "is not empty"
         }
 
         [Test]
@@ -3346,7 +3287,8 @@ namespace MudBlazor.UnitTests.Components
             await dataGrid.InvokeAsync(() => dataGrid.Instance.CollapseAllHierarchy());
             dataGrid.WaitForAssertion(() => dataGrid.Instance._openHierarchies.Count.Should().Be(0));
             await dataGrid.InvokeAsync(() => dataGrid.Instance.ExpandAllHierarchy());
-            dataGrid.WaitForAssertion(() => dataGrid.Instance._openHierarchies.Count.Should().Be(5));
+            // one is disabled and will not be expanded
+            dataGrid.WaitForAssertion(() => dataGrid.Instance._openHierarchies.Count.Should().Be(4));
         }
 
         [Test]
@@ -3398,28 +3340,6 @@ namespace MudBlazor.UnitTests.Components
                 dataGrid.FindAll("td")
                 .SingleOrDefault(x => x.TextContent.Trim().StartsWith("uid = Alicia|54|Info|")).Should().BeNull();
             });
-        }
-
-        [Test]
-        public void DataGridRowDetailInitiallyExpandedMultipleTest()
-        {
-            var comp = Context.RenderComponent<DataGridHierarchyColumnTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
-
-            var item = dataGrid.Instance.Items.FirstOrDefault(x => x.Name == "Ira");
-
-            dataGrid.Instance._openHierarchies.Should().Contain(item);
-
-            item = dataGrid.Instance.Items.FirstOrDefault(x => x.Name == "Anders");
-
-            dataGrid.Instance._openHierarchies.Should().Contain(item);
-
-            comp.Markup.Should().Contain("uid = Ira|27|Success|");
-            comp.Markup.Should().Contain("uid = Anders|24|Error|");
-
-            comp.Markup.Should().NotContain("uid = Sam|56|Normal|");
-            comp.Markup.Should().NotContain("uid = Alicia|54|Info|");
-            comp.Markup.Should().NotContain("uid = John|32|Warning|");
         }
 
         [Test]
@@ -5237,7 +5157,7 @@ namespace MudBlazor.UnitTests.Components
             // Click again to expand all
             toggleButton = headerElement.QuerySelector(".mud-hierarchy-toggle-button");
             toggleButton.Click();
-            comp.WaitForAssertion(() => dataGrid.Instance._openHierarchies.Count.Should().Be(5));
+            comp.WaitForAssertion(() => dataGrid.Instance._openHierarchies.Count.Should().Be(4)); // one disabled
         }
 
         [Test]
@@ -5303,8 +5223,8 @@ namespace MudBlazor.UnitTests.Components
             // Call ToggleHierarchy again
             await accessor.ToggleHierarchyAsync();
 
-            // Now all hierarchies should be expanded
-            dataGrid.Instance._openHierarchies.Count.Should().Be(5);
+            // Now all hierarchies should be expanded (except the disabled one)
+            dataGrid.Instance._openHierarchies.Count.Should().Be(4);
         }
 
         [Test]
@@ -5351,6 +5271,102 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance._openHierarchies.Count.Should().Be(1);
 
             dataGrid.Instance._openHierarchies.First().Should().Be(item);
+        }
+
+        [Test]
+        public void DataGridRowDetailInitiallyExpandedMultipleTest()
+        {
+            // just setting Items
+            var comp = Context.RenderComponent<DataGridHierarchyColumnTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
+
+            var item = dataGrid.Instance.Items.FirstOrDefault(x => x.Name == "Ira");
+
+            dataGrid.Instance._openHierarchies.Should().Contain(item);
+
+            item = dataGrid.Instance.Items.FirstOrDefault(x => x.Name == "Anders");
+
+            dataGrid.Instance._openHierarchies.Should().Contain(item);
+
+            comp.Markup.Should().Contain("uid = Ira|27|Success|");
+            comp.Markup.Should().Contain("uid = Anders|24|Error|");
+
+            comp.Markup.Should().NotContain("uid = Sam|56|Normal|");
+            comp.Markup.Should().NotContain("uid = Alicia|54|Info|");
+            comp.Markup.Should().NotContain("uid = John|32|Warning|");
+        }
+
+        [Test]
+        public void DataGridRowDetailInitiallyExpandedObservableMultipleTest()
+        {
+            // updating an observable collection of items after initial load
+            var comp = Context.RenderComponent<DataGridHierarchyInitiallyExpandedItemsTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyInitiallyExpandedItemsTest.Model>>();
+
+            var item = dataGrid.Instance.Items.FirstOrDefault(x => x.Name == "Ira");
+
+            dataGrid.Instance._openHierarchies.Should().Contain(item);
+
+            item = dataGrid.Instance.Items.FirstOrDefault(x => x.Name == "Anders");
+
+            dataGrid.Instance._openHierarchies.Should().Contain(item);
+
+            comp.Markup.Should().Contain("uid = Ira|27|Success|");
+            comp.Markup.Should().Contain("uid = Anders|24|Error|");
+
+            comp.Markup.Should().NotContain("uid = Sam|56|Normal|");
+            comp.Markup.Should().NotContain("uid = Alicia|54|Info|");
+            comp.Markup.Should().NotContain("uid = John|32|Warning|");
+        }
+
+        [Test]
+        public async Task DataGridRowDetailInitiallyExpandedServerMultipleTest()
+        {
+            // ServerReload different pages
+            var comp = Context.RenderComponent<DataGridHierarchyInitiallyExpandedServerDataTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyInitiallyExpandedServerDataTest.Model>>();
+
+            comp.WaitForAssertion(() => comp.Markup.Should().Contain("uid = Ira|27|Success|"));
+            comp.Markup.Should().Contain("uid = Anders|24|Error|");
+
+            comp.Markup.Should().NotContain("uid = Sam|56|Normal|");
+            comp.Markup.Should().NotContain("uid = Alicia|54|Info|");
+            comp.Markup.Should().NotContain("uid = John|32|Warning|");
+
+            // Collapse Ira to ensure it remains collapsed when we return to the row
+            // Use LINQ to find the index of the row containing "uid = Ira"
+            var iraIndex = comp.FindAll("tr")
+                .Select((row, index) => new { row, index })
+                .First(r => r.row.InnerHtml.Contains("uid = Ira")).index;
+
+            iraIndex.Should().BeGreaterThan(0, "Expected a row above the Ira detail row");
+
+            // Now access the row above and find the toggle button and click it
+            await comp.InvokeAsync(() => comp.FindAll("tr")[iraIndex - 2].QuerySelector("button").Click());
+
+            // Find button with aria-label = "Next Page"
+            var nextButton = comp.Find("button[aria-label='Next page']");
+            nextButton.Should().NotBeNull();
+            nextButton.Click();
+
+            comp.WaitForAssertion(() => comp.Markup.Should().Contain("uid = ScarletKuro|27|Success|"));
+
+            comp.Markup.Should().NotContain("uid = Versile2|24|Error|");
+            comp.Markup.Should().NotContain("uid = Anu6is|56|Normal|");
+            comp.Markup.Should().NotContain("uid = Garderoben|32|Warning|");
+            comp.Markup.Should().NotContain("uid = Henon|54|Info|");
+
+            // go back and make sure Ira isn't re-expanded
+            var prevButton = comp.Find("button[aria-label='Previous page']");
+            prevButton.Should().NotBeNull();
+            prevButton.Click();
+
+            comp.WaitForAssertion(() => comp.Markup.Should().Contain("uid = Anders|24|Error|"));
+
+            comp.Markup.Should().NotContain("uid = Ira|27|Success|");
+            comp.Markup.Should().NotContain("uid = Sam|56|Normal|");
+            comp.Markup.Should().NotContain("uid = Alicia|54|Info|");
+            comp.Markup.Should().NotContain("uid = John|32|Warning|");
         }
 
         [Test]
