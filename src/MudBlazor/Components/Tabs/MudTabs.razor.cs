@@ -500,6 +500,7 @@ namespace MudBlazor
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             await base.OnAfterRenderAsync(firstRender);
+
             if (firstRender)
             {
                 var items = _panels.Select(x => x.PanelRef).ToList();
@@ -1194,7 +1195,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Allows the user to move to the next tab using keyarrow
+        /// Allows the user to move to the previous tab using key arrow
         /// </summary>
         private async Task MoveFocusToPreviousTab(MudTabPanel currentPanel)
         {
@@ -1209,7 +1210,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Allows the user to move to the previous tab using keyarrow
+        /// Allows the user to move to the next tab using keyarrow
         /// </summary>
         private async Task MoveFocusToNextTab(MudTabPanel currentPanel)
         {

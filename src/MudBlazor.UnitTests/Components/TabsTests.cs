@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Reflection;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
@@ -1693,5 +1694,25 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content One");
         }
 
+        /// <summary>
+        /// Code coverage test showed a missing test line, this tests the return tabListId returns the correct ID. 
+        /// </summary>
+        [Test]
+        public void TabListId_ReturnsCorrectId()
+        {
+            var comp = Context.RenderComponent<MudTabs>();
+            var instance = comp.Instance;
+
+            // Use reflection to set the internal field _tabListId
+            var field = typeof(MudTabs).GetField("_tabListId", BindingFlags.NonPublic | BindingFlags.Instance);
+            field.Should().NotBeNull("because the field '_tabListId' should exist on MudTabs");
+            field!.SetValue(instance, "test-tab-list-id");
+
+            var method = typeof(MudTabs).GetMethod("GetTabListId", BindingFlags.NonPublic | BindingFlags.Instance);
+            method.Should().NotBeNull("because the method 'GetTabListId' should exist on MudTabs");
+            var result = method!.Invoke(instance, null);
+
+            result.Should().Be("test-tab-list-id");
+        }
     }
 }
