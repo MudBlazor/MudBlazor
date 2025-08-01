@@ -78,7 +78,7 @@ namespace MudBlazor
             return className;
         }
 
-        private string? GetDrawerWidth(MudDrawer? drawer)
+        private static string? GetDrawerWidth(MudDrawer? drawer)
         {
             if (drawer is null)
             {
@@ -88,7 +88,7 @@ namespace MudBlazor
             return drawer.Width;
         }
 
-        private string? GetDrawerHeight(MudDrawer? drawer)
+        private static string? GetDrawerHeight(MudDrawer? drawer)
         {
             if (drawer is null)
             {
