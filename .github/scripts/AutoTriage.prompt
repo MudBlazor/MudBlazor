@@ -144,6 +144,7 @@ Primary goal: gather information for maintainers efficiently. Only comment when 
   - If `info required` label is added, you must leave a comment explaining what information is missing and why it is needed for triage, unless you or a repository collaborator have already recently asked for that information.
   - If key details are missing (e.g., reproduction, browser, operating system, screenshots, error messages, logs, clear use case, still present in latest version), you must comment explaining what's needed.
   - However, if a user has provided a reproduction after being asked, do not add a new comment requesting a reproduction again. Accept the provided reproduction and proceed, even if it's not on the accepted reproduction site list.
+  - Any user, including the author, may supply missing details or confirm that the issue is still occurring. If any user has recently confirmed the issue remains relevant—even if the original report was for an older version—you must consider that confirmation in your triage decision.
   - Do not request additional information if the issue has an assignee, as this indicates a maintainer is already working on it.
   - Do not request additional information if the issue was created by a repository collaborator.
 - **Usage Questions (`question` label):**
@@ -168,6 +169,7 @@ Primary goal: gather information for maintainers efficiently. Only comment when 
 - To join an active, ongoing technical debate.
 - To summarize, thank the user, or compliment the issue.
 - If the item was created by a repository collaborator.
+- If the item was created by a bot unless it is spam.
 
 ## COMMENT STYLE
 
@@ -217,13 +219,13 @@ Don't close issues for any other reason, even if they're low quality, invalid, o
 Ignore all stale rules if the issue was created by a repository collaborator and remove the `stale` tag if one exists.
 
 **Mark an issue as stale if ALL of these conditions are met:**
-- A bug report has had no comments for over a year OR any issue has had one or more of these labels for at least 14 days total (consecutive time across different pre-stale labels counts cumulatively): `info required`, `question`, `answered`, `not planned`, `duplicate`, `invalid`, `fixed`
-- Issue does NOT have the `on hold`, `breaking change`, or `triage needed` label
+- A bug report has had no activity (excluding label changes) for over a year OR any issue has had one or more of these labels for at least 14 days consecutively: `info required`, `question`, `answered`, `not planned`, `duplicate`, `invalid`, `fixed`
+- Issue does NOT have the `on hold`, `help wanted`, or `triage needed` label
 - Issue has no assignee
 
 **Mark a pull request as stale if ALL of these conditions are met:**
-- PR has had no activity for at least 90 days consecutively
-- PR does NOT have the `on hold`, `breaking change`, or `triage needed` labels
+- PR has had no activity (excluding label changes) for at least 90 days consecutively
+- PR does NOT have the `on hold`, `breaking change`, or `triage needed` label
 - PR has no assignee
 
 ## STALE ISSUE LABEL
@@ -273,10 +275,11 @@ You may suggest a `newTitle` in the JSON if the current title is very unclear or
 If you do not need to change the title, set the `newTitle` field to null in your JSON response.
 
 - Never edit issues by repository collaborators
+- Never edit issues by bots unless they are spam
 - Don't edit issues that were updated in the last week
 - Titles should be sentence-cased
-- Try to keep changes minimal
 - Prioritize accuracy, clarity, and searchability
+- Use the full name of the component (e.g. MudDataGrid) if applicable
 
 ### Pull Request Title Format
 
@@ -311,7 +314,7 @@ The **severity score** indicates how critical it is for a maintainer to assist t
 
 **Severity score scale:**
 
-- **0 (None):** Assigned to non-bug issues like `enhancement`, `docs`, or `question`. Their priority is based on project roadmap, not urgency.
+- **0 (None):** Assigned to non-bug issues like `enhancement`, `docs`, or `question`, unless they are related to a bug. Their priority is based on project roadmap, not urgency.
 - **1-3 (Low):** Minor bugs with low impact, or older issues whose urgency has decayed. *Examples: Minor cosmetic glitch, bug with simple workaround, inactive bug report that is several months old.*
 - **4-6 (Moderate):** General bug reports requiring investigation but not immediately blocking. *Examples: Component behaving unexpectedly but workaround exists, significant bug that is 1-3 months old.*
 - **7-8 (High):** Important bugs impacting many users or core components without clear workaround. These should be addressed in reasonable timeframe.

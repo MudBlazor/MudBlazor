@@ -72,8 +72,8 @@ jobs:
             max_count=""
           else
             echo "Analyzing up to $MAX_ISSUES issues"
-            issue_numbers=$(gh issue list --state open --limit 9999 --search 'sort:updated-desc' --json number --jq '.[].number')
-            issue_numbers+=" $(gh pr list --state open --limit 9999 --search 'sort:updated-desc' --json number --jq '.[].number')"
+            issue_numbers=$(gh pr list --state open --limit 9999 --search 'sort:updated-desc' --json number --jq '.[].number')
+            issue_numbers+=" $(gh issue list --state open --limit 9999 --search 'sort:updated-desc' --json number --jq '.[].number')"
             max_count="$MAX_ISSUES"
           fi
 

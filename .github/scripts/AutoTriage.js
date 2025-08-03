@@ -105,6 +105,7 @@ async function buildMetadata(issue, octokit) {
 
 async function buildTimeline(octokit) {
     const { data: timelineEvents } = await octokit.rest.issues.listEventsForTimeline({ ...ISSUE_PARAMS, per_page: 100 });
+    saveArtifact(`github-timeline.md`, JSON.stringify(timelineEvents, null, 2));
     return timelineEvents.map(event => {
         const base = { event: event.event, actor: event.actor?.login, timestamp: event.created_at };
         switch (event.event) {
@@ -118,6 +119,17 @@ async function buildTimeline(octokit) {
             case 'reopened':
             case 'locked':
             case 'unlocked': return base;
+            case 'milestoned':
+            case 'demilestoned': return { ...base, milestone: event.milestone?.title };
+            case 'referenced': return { ...base, commit_id: event.commit_id, commit_url: event.commit_url };
+            case 'mentioned': return base;
+            case 'review_requested':
+            case 'review_request_removed': return { ...base, requested_reviewer: event.requested_reviewer?.login };
+            case 'review_dismissed': return { ...base, review: { state: event.dismissed_review?.state, dismissal_message: event.dismissal_message } };
+            case 'merged': return { ...base, commit_id: event.commit_id, commit_url: event.commit_url };
+            case 'convert_to_draft':
+            case 'ready_for_review': return base;
+            case 'transferred': return { ...base, new_repository: event.new_repository?.full_name };
             default: return null;
         }
     }).filter(Boolean);
@@ -150,7 +162,6 @@ All possible permissions: label (add/remove labels), comment (post comments), cl
 Analyze this issue, its metadata, and its full timeline.
 Your entire response must be a single, valid JSON object and nothing else. Do not use Markdown, code fences, or any explanatory text.`;
 
-    saveArtifact(`github-timeline.md`, JSON.stringify(timelineReport, null, 2));
     saveArtifact(`gemini-input.md`, promptString);
     return promptString;
 }
