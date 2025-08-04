@@ -42,9 +42,6 @@ indent_size = 2
 end_of_line = lf
 indent_size = 2
 
-[*.{cmd,bat}]
-end_of_line = crlf
-
 # Sassy CSS - CSS preprocessor
 [*.scss]
 charset = utf-8
@@ -72,7 +69,6 @@ csharp_indent_case_contents = true
 csharp_indent_case_contents_when_block = true
 csharp_indent_labels = flush_left
 csharp_indent_switch_labels = true
-csharp_indent_labels = flush_left
 
 # Modifier preferences
 csharp_preferred_modifier_order = public,private,protected,internal,file,static,extern,new,virtual,abstract,sealed,override,readonly,unsafe,required,volatile,async:suggestion
@@ -132,25 +128,6 @@ dotnet_naming_symbols.static_fields.required_modifiers = static
 
 dotnet_naming_style.static_field_style.capitalization = camel_case
 dotnet_naming_style.static_field_style.required_prefix = _
-
-# Static fields should have s_ prefix (sample)
-dotnet_naming_rule.static_fields_should_have_prefix.severity = suggestion
-dotnet_naming_rule.static_fields_should_have_prefix.symbols  = static_fields
-dotnet_naming_rule.static_fields_should_have_prefix.style    = static_prefix_style
-dotnet_naming_symbols.static_fields.applicable_kinds   = field
-dotnet_naming_symbols.static_fields.required_modifiers = static
-dotnet_naming_symbols.static_fields.applicable_accessibilities = private, internal, private_protected
-dotnet_naming_style.static_prefix_style.required_prefix = s_
-dotnet_naming_style.static_prefix_style.capitalization = camel_case
-
-# Internal and private fields should be _camelCase (sample)
-dotnet_naming_rule.camel_case_for_private_internal_fields.severity = suggestion
-dotnet_naming_rule.camel_case_for_private_internal_fields.symbols  = private_internal_fields
-dotnet_naming_rule.camel_case_for_private_internal_fields.style    = camel_case_underscore_style
-dotnet_naming_symbols.private_internal_fields.applicable_kinds = field
-dotnet_naming_symbols.private_internal_fields.applicable_accessibilities = private, internal
-dotnet_naming_style.camel_case_underscore_style.required_prefix = _
-dotnet_naming_style.camel_case_underscore_style.capitalization = camel_case
 
 # Instance fields are camelCase and start with _
 dotnet_naming_rule.instance_fields_should_be_camel_case.severity = suggestion
@@ -337,8 +314,6 @@ dotnet_diagnostic.CA1830.severity = suggestion
 dotnet_diagnostic.CA1866.severity = suggestion
 # CA1862: Use 'StringComparison' method overloads for string comparisons
 dotnet_diagnostic.CA1862.severity = suggestion
-# IDE0051: Remove unused private members
-dotnet_diagnostic.IDE0051.severity = suggestion
 # CA2254: Template should be a static expression
 dotnet_diagnostic.CA2254.severity = suggestion
 # CA2012: Use ValueTasks correctly
