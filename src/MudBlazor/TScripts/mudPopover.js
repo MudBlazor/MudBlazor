@@ -320,7 +320,10 @@ window.mudpopoverHelper = {
                 // Adjust .mud-list children if they would run off screen even after flipping
                 const firstChild = popoverContentNode.firstElementChild;
                 // Check if firstChild exists, has a classList, and is a mud-list
-                const isList = firstChild?.classList?.contains("mud-list");
+                const isList =
+                    firstChild &&
+                    firstChild.classList &&
+                    firstChild.classList.contains("mud-list");
                 // we do it here to ensure it flips properly if more space becomes available on the other side.
                 if (popoverContentNode.mudHeight && anchorY > 0 && anchorY < window.innerHeight) {
                     popoverContentNode.style.maxHeight = null;
