@@ -193,9 +193,9 @@ csharp_prefer_braces = true:silent
 csharp_preserve_single_line_blocks = true
 csharp_preserve_single_line_statements = true
 csharp_prefer_static_local_function = true:suggestion
-csharp_prefer_simple_using_statement = true:warning
+csharp_prefer_simple_using_statement = true:suggestion
 csharp_style_prefer_switch_expression = true:suggestion
-dotnet_style_readonly_field = true:none
+dotnet_style_readonly_field = true:suggestion
 
 # Expression-level preferences
 dotnet_style_object_initializer = true:suggestion
@@ -289,8 +289,6 @@ dotnet_diagnostic.IDE0055.severity = suggestion
 dotnet_diagnostic.BL0007.severity = suggestion
 # CS4014: Because this call is not awaited, execution of the current method continues before the call is completed
 dotnet_diagnostic.CS4014.severity = error
-# IDE0051: Remove unused private members
-dotnet_diagnostic.IDE0051.severity = error
 # IDE0052: Remove unread private members
 dotnet_diagnostic.IDE0052.severity = suggestion
 
@@ -314,6 +312,8 @@ dotnet_diagnostic.CA1830.severity = suggestion
 dotnet_diagnostic.CA1866.severity = suggestion
 # CA1862: Use 'StringComparison' method overloads for string comparisons
 dotnet_diagnostic.CA1862.severity = suggestion
+# IDE0051: Remove unused private members
+dotnet_diagnostic.IDE0051.severity = suggestion
 # CA2254: Template should be a static expression
 dotnet_diagnostic.CA2254.severity = suggestion
 # CA2012: Use ValueTasks correctly
