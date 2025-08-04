@@ -28,6 +28,13 @@ namespace MudBlazor
         private CancellationTokenSource? _hoverCts;
         private CancellationTokenSource? _leaveCts;
         private string _elementId = Identifier.Create("menu");
+        private readonly Dictionary<MudMenuItem, MudMenu> _itemToSubmenuMap = new();
+        private MudButton? _buttonActivator;
+        private MudIconButton? _iconButtonActivator;
+        private MudMenuItem? _menuItemActivator;
+        private int _focusedIndex = -1;
+        private List<object> _menuItems = [];
+        private bool _hasFocusedOnce = false;
 
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
@@ -437,6 +444,11 @@ namespace MudBlazor
 
             // If this menu is a sub-menu, register it with its parent.
             ParentMenu?.RegisterChild(this);
+
+            if (ParentMenu != null)
+            {
+                ParentMenu.RegisterItem(this); // Pass the MudMenu directly
+            }
         }
 
         protected Task OnOpenChanged(ParameterChangedEventArgs<bool> args)
@@ -768,14 +780,13 @@ namespace MudBlazor
             GC.SuppressFinalize(this);
         }
 
-        private int _focusedIndex = -1;
-        private List<MudMenuItem> _menuItems = [];
-        private bool _hasFocusedOnce = false;
-
+        /// <summary>
+        /// Handles keyboard navigation and interaction logic within the menu, including arrow keys,
+        /// enter/space to select or open submenus, tab to close and move focus, and escape to close.
+        /// </summary>
         private async Task HandleKeyDownAsync(KeyboardEventArgs e)
         {
-            var items = _menuItems.Where(x => !x.GetDisabled()).ToList();
-
+            var items = _menuItems.Where(x => !GetItemDisabled(x)).ToList();
             if (items.Count == 0)
                 return;
 
@@ -800,28 +811,27 @@ namespace MudBlazor
             else if (e.Key == "ArrowRight")
             {
                 // Enter submenu if the current item has one
-                if (_focusedIndex >= 0 && _focusedIndex < items.Count)
+                if (_focusedIndex >= 0 && _focusedIndex < _menuItems.Count)
                 {
-                    var currentItem = items[_focusedIndex];
+                    var currentItem = _menuItems[_focusedIndex];
 
-                    // Check if this item activates a submenu by looking for a submenu that belongs to this menu
-                    // and isn't currently open (to handle multiple submenus)
-                    if (currentItem.ActivatesSubMenu)
+                    // Check if this item activates a submenu
+                    if (GetItemActivatesSubMenu(currentItem))
                     {
-                        // Find the submenu associated with this item
-                        // Since we can't rely on registration timing, we'll use the order of items and submenus
-                        var itemIndex = _menuItems.IndexOf(currentItem);
-                        var submenuItems = _menuItems.Where(item => item.ActivatesSubMenu).ToList();
-                        var itemSubmenuIndex = submenuItems.IndexOf(currentItem);
-
-                        if (itemSubmenuIndex >= 0 && itemSubmenuIndex < _subMenus.Count)
+                        // Handle submenu activation
+                        if (currentItem is MudMenuItem menuItem && menuItem.ActivatesSubMenu)
                         {
-                            var submenu = _subMenus[itemSubmenuIndex];
-                            if (submenu != null)
+                            // If this item has a submenu, open it
+                            if (_itemToSubmenuMap.ContainsKey(menuItem))
                             {
-                                // Open the submenu
+                                var submenu = _itemToSubmenuMap[menuItem];
                                 await submenu.OpenSubMenuAsync(EventArgs.Empty);
                             }
+                        }
+                        else if (currentItem is MudMenu submenu)
+                        {
+                            // Open the submenu directly
+                            await submenu.OpenSubMenuAsync(EventArgs.Empty);
                         }
                     }
                 }
@@ -835,28 +845,38 @@ namespace MudBlazor
                     await CloseMenuAsync();
 
                     // Return focus to the parent menu
-                    // The parent should already have the correct focused index
                     if (ParentMenu._focusedIndex >= 0 && ParentMenu._focusedIndex < ParentMenu._menuItems.Count)
                     {
                         await ParentMenu.FocusItem(ParentMenu._focusedIndex);
                     }
                 }
             }
-            else if (e.Key == "Enter" || e.Key == " ")
+            if (e.Key == "Enter" || e.Key == " ")
             {
                 if (_focusedIndex >= 0 && _focusedIndex < items.Count)
                 {
                     var currentItem = items[_focusedIndex];
 
-                    // If this item has a submenu, open it instead of invoking click
-                    if (_itemToSubmenuMap.ContainsKey(currentItem))
+                    // Handle different item types
+                    switch (currentItem)
                     {
-                        var submenu = _itemToSubmenuMap[currentItem];
-                        await submenu.OpenSubMenuAsync(EventArgs.Empty);
-                    }
-                    else
-                    {
-                        await currentItem.InvokeClickAsync();
+                        case MudMenuItem menuItem:
+                            // If this item has a submenu, open it instead of invoking click
+                            if (_itemToSubmenuMap.ContainsKey(menuItem))
+                            {
+                                var submenu = _itemToSubmenuMap[menuItem];
+                                await submenu.OpenSubMenuAsync(EventArgs.Empty);
+                            }
+                            else
+                            {
+                                await menuItem.InvokeClickAsync();
+                            }
+                            break;
+
+                        case MudMenu menu:
+                            // For MudMenu items, always open the submenu
+                            await menu.OpenSubMenuAsync(EventArgs.Empty);
+                            break;
                     }
                 }
             }
@@ -886,37 +906,61 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// Runs after component rendering. If the menu is open and no item is focused,
+        /// it automatically focuses the first enabled item in the list.
+        /// </summary>
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             await base.OnAfterRenderAsync(firstRender);
 
-            if (_openState.Value && _focusedIndex == -1 && _menuItems.Count > 0)
+            if (_openState.Value && _focusedIndex == -1)
             {
-                _focusedIndex = 0;
                 await Task.Yield();
-                await FocusItem(_focusedIndex);
+
+                var enabledItems = _menuItems.Where(x => !GetItemDisabled(x)).ToList();
+                if (enabledItems.Count > 0)
+                {
+                    var firstItem = enabledItems.First();
+                    _focusedIndex = _menuItems.IndexOf(firstItem);
+                    await FocusItem(_focusedIndex);
+                }
             }
         }
 
-        internal void RegisterItem(MudMenuItem item)
+        /// <summary>
+        /// Registers a new menu item or submenu with the current menu.
+        /// Ensures the item is only added once and logs debug information.
+        /// </summary>
+        internal void RegisterItem(object item)
         {
             if (!_menuItems.Contains(item))
+            {
                 _menuItems.Add(item);
+            }
         }
 
+        /// <summary>
+        /// Sets focus to the menu item at the specified index, if the index is valid.
+        /// </summary>
         internal async Task FocusItem(int index)
         {
             if (index >= 0 && index < _menuItems.Count)
             {
                 var item = _menuItems[index];
 
-                if (item.ElementRef.Context is not null)
+                var elementRef = GetItemElementRef(item);
+                if (elementRef.Context is not null)
                 {
-                    await item.ElementRef.FocusAsync();
+                    await elementRef.FocusAsync();
                 }
             }
         }
 
+        /// <summary>
+        /// Subscribes to keyboard events for this menu using the <see cref="KeyInterceptorService"/>,
+        /// preventing default browser scrolling behaviour for certain keys.
+        /// </summary>
         private async Task SubscribeToMenuKeyInterceptorAsync()
         {
             // Subscribe key interceptor to prevent default scrolling
@@ -935,11 +979,10 @@ namespace MudBlazor
             await KeyInterceptorService.SubscribeAsync(_elementId, options, keyDown: HandleKeyDownAsync);
         }
 
-        private readonly Dictionary<MudMenuItem, MudMenu> _itemToSubmenuMap = new();
-        private MudButton? _buttonActivator;
-        private MudIconButton? _iconButtonActivator;
-        private MudMenuItem? _menuItemActivator;
-
+        /// <summary>
+        /// Focuses the activator element that opened this menu. This could be a button,
+        /// icon button, or another menu item depending on the context.
+        /// </summary>
         private async Task FocusActivatorAsync()
         {
             try
@@ -967,6 +1010,46 @@ namespace MudBlazor
             {
                 // No focus added - menu closed without focusing
             }
+        }
+
+        /// <summary>
+        /// Determines whether the specified menu item or submenu is disabled.
+        /// </summary>
+        private bool GetItemDisabled(object item)
+        {
+            return item switch
+            {
+                MudMenuItem menuItem => menuItem.GetDisabled(),
+                MudMenu menu => menu.Disabled,
+                _ => false
+            };
+        }
+
+        /// <summary>
+        /// Retrieves the <see cref="ElementReference"/> associated with a menu item or submenu
+        /// to allow focus control.
+        /// </summary>
+        private ElementReference GetItemElementRef(object item)
+        {
+            return item switch
+            {
+                MudMenuItem menuItem => menuItem.ElementRef,
+                MudMenu menu => menu._menuItemActivator?.ElementRef ?? default,
+                _ => default
+            };
+        }
+
+        /// <summary>
+        /// Determines whether the specified menu item or submenu activates a nested submenu.
+        /// </summary>
+        private bool GetItemActivatesSubMenu(object item)
+        {
+            return item switch
+            {
+                MudMenuItem menuItem => menuItem.ActivatesSubMenu,
+                MudMenu menu => true,
+                _ => false
+            };
         }
     }
 }
