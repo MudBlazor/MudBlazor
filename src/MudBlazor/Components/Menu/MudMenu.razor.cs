@@ -34,7 +34,6 @@ namespace MudBlazor
         private MudMenuItem? _menuItemActivator;
         private int _focusedIndex = -1;
         private List<object> _menuItems = [];
-        private bool _hasFocusedOnce = false;
 
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
@@ -477,7 +476,6 @@ namespace MudBlazor
 
             // Now close this menu itself.
             _focusedIndex = -1;
-            _hasFocusedOnce = false;
             _menuItems.Clear();
             await KeyInterceptorService.UnsubscribeAsync(_elementId);
             await _openState.SetValueAsync(false);
@@ -505,8 +503,10 @@ namespace MudBlazor
             }
 
             // Close the top-most menu, which will cascade down to close all its children.
-            _hasFocusedOnce = false;
             await top.CloseMenuAsync();
+
+            // Return focus to the menu
+            await top.FocusActivatorAsync();
         }
 
         /// <summary>
@@ -792,16 +792,8 @@ namespace MudBlazor
 
             if (e.Key == "ArrowDown")
             {
-                if (!_hasFocusedOnce)
-                {
-                    _hasFocusedOnce = true;
-                    await FocusItem(_focusedIndex);
-                }
-                else
-                {
-                    _focusedIndex = (_focusedIndex + 1) % items.Count;
-                    await FocusItem(_focusedIndex);
-                }
+                _focusedIndex = (_focusedIndex + 1) % items.Count;
+                await FocusItem(_focusedIndex);
             }
             else if (e.Key == "ArrowUp")
             {
@@ -834,6 +826,11 @@ namespace MudBlazor
                             await submenu.OpenSubMenuAsync(EventArgs.Empty);
                         }
                     }
+                    else
+                    {
+                        // Close the menu if there are no further menu items on the arrow right
+                        await CloseAllMenusAsync();
+                    }
                 }
             }
             else if (e.Key == "ArrowLeft")
@@ -849,6 +846,11 @@ namespace MudBlazor
                     {
                         await ParentMenu.FocusItem(ParentMenu._focusedIndex);
                     }
+                }
+                else
+                {
+                    // Close the menu if there are no further menu items on the arrow left
+                    await CloseAllMenusAsync();
                 }
             }
             if (e.Key == "Enter" || e.Key == " ")
@@ -882,10 +884,7 @@ namespace MudBlazor
             }
             else if (e.Key == "Tab")
             {
-                await CloseMenuAsync();
-
-                // Focus the activator and then simulate tab navigation
-                await FocusActivatorAsync();
+                await CloseAllMenusAsync();
             }
             else if (e.Key == "Escape")
             {
@@ -900,7 +899,6 @@ namespace MudBlazor
                 }
                 else
                 {
-                    _hasFocusedOnce = false;
                     await CloseAllMenusAsync();
                 }
             }
@@ -930,7 +928,7 @@ namespace MudBlazor
 
         /// <summary>
         /// Registers a new menu item or submenu with the current menu.
-        /// Ensures the item is only added once and logs debug information.
+        /// Ensures the item is only added once
         /// </summary>
         internal void RegisterItem(object item)
         {

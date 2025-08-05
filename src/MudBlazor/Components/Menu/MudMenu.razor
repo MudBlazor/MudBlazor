@@ -16,8 +16,12 @@
     }
     else if (ActivatorContent is not null)
     {
-        <CascadingValue Value="@((IActivatable)this)" IsFixed="true">
-            <div @onclick="ToggleMenuAsync" disabled="@Disabled" class="@ActivatorClassname">
+        <CascadingValue 
+            Value="@((IActivatable)this)" 
+            IsFixed="true">
+            <div @onclick="ToggleMenuAsync" 
+                disabled="@Disabled" 
+                class="@ActivatorClassname">
                 @ActivatorContent
             </div>
         </CascadingValue>
@@ -51,7 +55,7 @@
                          Disabled="@Disabled"
                          OnClick="OpenSubMenuAsync"
                          AutoClose="false"
-						 Label="@Label"
+                         Label="@Label"
                          aria-label="@AriaLabel">
                 @Label
             </MudMenuItem>
