@@ -659,6 +659,49 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void ResetButton_ShouldTriggerResetStepActionForSkippedSteps()
+        {
+            var cancel = false;
+            var actions = new List<StepAction>();
+            var index = -1;
+            Task OnPreviewInteraction(StepperInteractionEventArgs args)
+            {
+                actions.Add(args.Action);
+                index = args.StepIndex;
+                args.Cancel = cancel;
+                return Task.CompletedTask;
+            }
+            var stepper = Context.RenderComponent<MudStepper>(self =>
+            {
+                self.Add(x => x.OnPreviewInteraction, OnPreviewInteraction);
+                self.Add(x => x.ShowResetButton, true);
+                self.Add(x => x.NonLinear, true);
+                self.AddChildContent<MudStep>(step => { step.Add(s => s.Skippable, true); });
+                self.AddChildContent<MudStep>(step => { step.Add(s => s.Skippable, true); });
+                self.AddChildContent<MudStep>(step => { step.Add(s => s.Skippable, true); });
+            });
+
+            // clicking skip sends Skip action requests to get us in a state that reset is a valid click
+            stepper.Instance.GetState<int>(nameof(MudStepper.ActiveIndex)).Should().Be(0);
+            stepper.Find(".mud-stepper-button-skip").Click();
+            index.Should().Be(0);
+            actions[0].Should().Be(StepAction.Skip);
+            stepper.Instance.GetState<int>(nameof(MudStepper.ActiveIndex)).Should().Be(1);
+            stepper.Find(".mud-stepper-button-skip").Click();
+            index.Should().Be(1);
+            actions[1].Should().Be(StepAction.Skip);
+            stepper.Instance.GetState<int>(nameof(MudStepper.ActiveIndex)).Should().Be(2);
+
+            // check that clicking reset sends Reset StepAction
+            stepper.Find(".mud-stepper-button-reset").Click();
+            actions[2].Should().Be(StepAction.Reset);
+            actions[3].Should().Be(StepAction.Reset);
+            actions[4].Should().Be(StepAction.Reset);
+            actions[5].Should().Be(StepAction.Activate);
+            stepper.Instance.GetState<int>(nameof(MudStepper.ActiveIndex)).Should().Be(0);
+        }
+
+        [Test]
         public void NextButton_ShouldTriggerCompleteStepAction()
         {
             var cancel = false;
@@ -689,6 +732,38 @@ namespace MudBlazor.UnitTests.Components
             action.Should().Be(StepAction.Complete);
             stepper.Instance.GetState<int>(nameof(MudStepper.ActiveIndex)).Should().Be(1);
         }
+
+        [Test]
+        public void SkipButton_ShouldTriggerSkipStepAction()
+        {
+            var cancel = false;
+            var action = StepAction.Reset;
+            var index = -1;
+            Task OnPreviewInteraction(StepperInteractionEventArgs args)
+            {
+                action = args.Action;
+                index = args.StepIndex;
+                args.Cancel = cancel;
+                return Task.CompletedTask;
+            }
+            var stepper = Context.RenderComponent<MudStepper>(self =>
+            {
+                self.Add(x => x.OnPreviewInteraction, OnPreviewInteraction);
+                self.Add(x => x.ShowResetButton, true);
+                self.Add(x => x.NonLinear, true);
+                self.AddChildContent<MudStep>(step => { step.Add(s => s.Skippable, true); });
+                self.AddChildContent<MudStep>(step => { step.Add(s => s.Skippable, true); });
+                self.AddChildContent<MudStep>(step => { step.Add(s => s.Skippable, true); });
+            });
+
+            // clicking skip sends Skipped action requests
+            stepper.Instance.GetState<int>(nameof(MudStepper.ActiveIndex)).Should().Be(0);
+            stepper.Find(".mud-stepper-button-skip").Click();
+            index.Should().Be(0);
+            action.Should().Be(StepAction.Skip);
+            stepper.Instance.GetState<int>(nameof(MudStepper.ActiveIndex)).Should().Be(1);
+        }
+
 
         [Test]
         public void BackButton_ShouldTriggerActivateStepAction()

@@ -17,6 +17,7 @@
                 .AddClass("mud-clickable", NonLinear && !step.DisabledState.Value)
                 .AddClass("mud-step-error", step.HasErrorState.Value)
                 .AddClass("mud-step-completed", step.CompletedState.Value)
+                .AddClass("mud-step-skipped", step.SkippedState.Value)
                 .Build();
 
             <button class="@stepClassname" role="tab" type="button" aria-controls="@step.Title" aria-selected="@(isActive.ToString().ToLower())"
@@ -125,6 +126,10 @@
                     @if(step.HasErrorState.Value)
                     {
                         <MudIcon Size="Size.Small" Icon="@StepErrorIcon" />
+                    }
+                    else if(step.SkippedState.Value && ShowSkip)
+                    {
+                        <MudIcon Size="Size.Small" Icon="@StepSkippedIcon" />
                     }
                     else if (step.CompletedState.Value)
                     {

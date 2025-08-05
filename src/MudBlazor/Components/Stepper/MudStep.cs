@@ -27,12 +27,17 @@ public class MudStep : MudComponentBase, IAsyncDisposable
             .WithParameter(() => HasError)
             .WithEventCallback(() => HasErrorChanged)
             .WithChangeHandler(OnParameterChanged);
+        SkippedState = registerScope.RegisterParameter<bool>(nameof(Skipped))
+            .WithParameter(() => Skipped)
+            .WithEventCallback(() => SkippedChanged)
+            .WithChangeHandler(OnParameterChanged);
     }
 
     private bool _disposed;
     internal ParameterState<bool> CompletedState { get; private set; }
     internal ParameterState<bool> DisabledState { get; private set; }
     internal ParameterState<bool> HasErrorState { get; private set; }
+    internal ParameterState<bool> SkippedState { get; private set; }
 
     internal string Styles => new StyleBuilder()
         .AddStyle(Style)
@@ -47,6 +52,7 @@ public class MudStep : MudComponentBase, IAsyncDisposable
         new CssBuilder("mud-step-label-icon")
             .AddClass($"mud-{(CompletedStepColor.HasValue ? CompletedStepColor.Value.ToDescriptionString() : Parent?.CompletedStepColor.ToDescriptionString())}", CompletedState && !HasErrorState && Parent?.CompletedStepColor != Color.Default && (Parent?.ActiveStep != this || (Parent?.IsCompleted == true && Parent?.NonLinear == false)))
             .AddClass($"mud-{(ErrorStepColor.HasValue ? ErrorStepColor.Value.ToDescriptionString() : Parent?.ErrorStepColor.ToDescriptionString())}", HasErrorState)
+            .AddClass($"mud-{(SkippedStepColor.HasValue ? SkippedStepColor.Value.ToDescriptionString() : Parent?.SkippedStepColor.ToDescriptionString())}", SkippedState)
             .AddClass($"mud-{Parent?.CurrentStepColor.ToDescriptionString()}", Parent?.ActiveStep == this && !(Parent?.IsCompleted == true && Parent?.NonLinear == false))
             .Build();
 
@@ -118,14 +124,14 @@ public class MudStep : MudComponentBase, IAsyncDisposable
     public Color? ErrorStepColor { get; set; }
 
     /// <summary>
-    /// Whether the user can skip this step.
+    /// The color used when this step is skipped.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>false</c>.
+    /// Defaults to <c>null</c>.
     /// </remarks>
     [Parameter]
-    [Category(CategoryTypes.List.Behavior)]
-    public bool Skippable { get; set; }
+    [Category(CategoryTypes.List.Appearance)]
+    public Color? SkippedStepColor { get; set; }
 
     /// <summary>
     /// Whether this step is completed.
@@ -182,6 +188,31 @@ public class MudStep : MudComponentBase, IAsyncDisposable
     [Category(CategoryTypes.List.Behavior)]
     public EventCallback<MouseEventArgs> OnClick { get; set; }
 
+    /// <summary>
+    /// Whether the user can skip this step.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.List.Behavior)]
+    public bool Skippable { get; set; }
+    /// <summary>
+    /// Whether this step has been skipped.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.List.Behavior)]
+    public bool Skipped { get; set; }
+    /// <summary>
+    /// Occurs when <see cref="Skipped"/> has changed.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.List.Behavior)]
+    public EventCallback<bool> SkippedChanged { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         base.OnInitialized();
@@ -218,6 +249,16 @@ public class MudStep : MudComponentBase, IAsyncDisposable
     public async Task SetDisabledAsync(bool value, bool refreshParent = true)
     {
         await DisabledState.SetValueAsync(value);
+        if (refreshParent)
+            RefreshParent();
+    }
+
+    /// <summary>
+    /// Sets the <see cref="Skipped"/> parameter, and optionally refreshes the parent <see cref="MudStepper"/>.
+    /// </summary>
+    public async Task SetSkippedAsync(bool value, bool refreshParent = true)
+    {
+        await SkippedState.SetValueAsync(value);
         if (refreshParent)
             RefreshParent();
     }
