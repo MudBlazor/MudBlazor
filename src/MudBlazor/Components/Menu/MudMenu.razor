@@ -89,7 +89,9 @@
                 DropShadow="@DropShadow"
                 Duration="@(GetDense() ? 0 : MudGlobal.TransitionDefaults.Duration.TotalMilliseconds)">
         <CascadingValue Value="@this">
-            <div tabindex="0" id="@_elementId"
+            <div tabindex="0" 
+                 id="@_elementId"
+                 data-testid="menu-wrapper"
                  @onkeydown="HandleKeyDownAsync"
                  @onpointerenter="@PointerEnterAsync"
                  @onpointerleave="@PointerLeaveAsync">

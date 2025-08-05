@@ -171,11 +171,11 @@ namespace MudBlazor.UnitTests.Components
             comp.FindComponent<MudPopover>().Instance.Open.Should().BeTrue();
 
             // Hover the list shouldn't change anything.
-            await comp.Find("div.mud-list").TriggerEventAsync("onpointerenter", new PointerEventArgs());
+            await comp.Find("[data-testid='menu-wrapper']").TriggerEventAsync("onpointerenter", new PointerEventArgs());
             comp.FindComponent<MudPopover>().Instance.Open.Should().BeTrue();
 
             // Leave the list shouldn't change anything.
-            await comp.Find("div.mud-list").TriggerEventAsync("onpointerleave", new PointerEventArgs());
+            await comp.Find("[data-testid='menu-wrapper']").TriggerEventAsync("onpointerleave", new PointerEventArgs());
             comp.FindComponent<MudPopover>().Instance.Open.Should().BeTrue();
 
             // Clicking the button should now close the menu.
@@ -523,7 +523,6 @@ namespace MudBlazor.UnitTests.Components
         public void ActivatorClass()
         {
             var comp = Context.RenderComponent<MenuActivatorsTest>();
-            Console.Write(comp.Markup);
 
             comp.FindAll(".mud-menu")[0].FirstElementChild.ClassName.Should().Contain("mud-menu-button-activator");
 
