@@ -523,6 +523,7 @@ namespace MudBlazor.UnitTests.Components
         public void ActivatorClass()
         {
             var comp = Context.RenderComponent<MenuActivatorsTest>();
+            Console.Write(comp.Markup);
 
             comp.FindAll(".mud-menu")[0].FirstElementChild.ClassName.Should().Contain("mud-menu-button-activator");
 
