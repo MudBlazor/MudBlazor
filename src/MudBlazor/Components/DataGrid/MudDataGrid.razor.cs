@@ -1386,7 +1386,7 @@ namespace MudBlazor
                 var first = _openHierarchies.First();
                 foreach (var item in _openHierarchies.Skip(1))
                 {
-                    await HierarchyVisibilityToggled.InvokeAsync(new() { Item = item, Expanded = false });
+                    await HierarchyVisibilityToggled.InvokeAsync(new(item, false));
                 }
                 _openHierarchies.Clear();
                 _openHierarchies.Add(first);
@@ -2379,7 +2379,7 @@ namespace MudBlazor
             {
                 if (!_buttonDisabledFunc(item) && _openHierarchies.Add(item))
                 {
-                    await HierarchyVisibilityToggled.InvokeAsync(new() { Item = item, Expanded = true });
+                    await HierarchyVisibilityToggled.InvokeAsync(new(item, true));
                 }
             }
             await InvokeAsync(StateHasChanged);
@@ -2392,7 +2392,7 @@ namespace MudBlazor
         {
             foreach (var openedHierarchy in _openHierarchies.Where(x => !_buttonDisabledFunc(x)).ToList())
             {
-                await HierarchyVisibilityToggled.InvokeAsync(new() { Item = openedHierarchy, Expanded = false });
+                await HierarchyVisibilityToggled.InvokeAsync(new(openedHierarchy, false));
                 _openHierarchies.Remove(openedHierarchy);
             }
             await InvokeAsync(StateHasChanged);
@@ -2409,7 +2409,7 @@ namespace MudBlazor
             {
                 foreach (var openedHierarchy in _openHierarchies.Where(x => !x.Equals(item)))
                 {
-                    await HierarchyVisibilityToggled.InvokeAsync(new() { Item = openedHierarchy, Expanded = false });
+                    await HierarchyVisibilityToggled.InvokeAsync(new(openedHierarchy, false));
                 }
                 _openHierarchies.Clear();
             }
@@ -2418,11 +2418,11 @@ namespace MudBlazor
             if (!_openHierarchies.Remove(item))
             {
                 _openHierarchies.Add(item);
-                await HierarchyVisibilityToggled.InvokeAsync(new() { Item = item, Expanded = true });
+                await HierarchyVisibilityToggled.InvokeAsync(new(item, true));
             }
             else
             {
-                await HierarchyVisibilityToggled.InvokeAsync(new() { Item = item, Expanded = false });
+                await HierarchyVisibilityToggled.InvokeAsync(new(item, false));
             }
 
             await InvokeAsync(StateHasChanged);

@@ -13,10 +13,16 @@ namespace MudBlazor.Utilities
         /// <summary>
         /// The item whose visibility was changed.
         /// </summary>
-        public T Item { get; set; }
+        public T Item { get; }
         /// <summary>
-        /// If <code>true</code> item was expanded, otherwise collapsed
+        /// If <c>true</c> item was expanded, otherwise collapsed
         /// </summary>
-        public bool Expanded { get; set; }
+        public bool Expanded { get; }
+
+        public DataGridHierarchyVisibilityToggledEventArgs(T item, bool expanded)
+        {
+            Item = item;
+            Expanded = expanded;
+        }
     }
 }
