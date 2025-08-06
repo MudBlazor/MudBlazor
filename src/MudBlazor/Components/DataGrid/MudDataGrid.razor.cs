@@ -2063,7 +2063,7 @@ namespace MudBlazor
             DropContainerHasChanged();
             StateHasChanged();
         }
-        
+
         /// <summary>
         /// Hides only the specified columns by title.
         /// </summary>
@@ -2079,11 +2079,11 @@ namespace MudBlazor
             var titles = columnTitles.ToArray();
             if (titles.Length == 0)
                 return;
-            
+
             var hideableRenderedColumns = RenderedColumns
                 .Where(c => c.hideable)
                 .ToDictionary(column => column.Title);
-            
+
             foreach (var columnTitle in titles)
             {
                 if (hideableRenderedColumns.TryGetValue(columnTitle, out var renderedColumn))
@@ -2091,11 +2091,11 @@ namespace MudBlazor
                     await renderedColumn.HideAsync();
                 }
             }
-            
+
             DropContainerHasChanged();
             await InvokeAsync(StateHasChanged);
         }
-        
+
         /// <summary>
         /// Shows only the specified columns by title.
         /// </summary>
@@ -2111,13 +2111,13 @@ namespace MudBlazor
             var titles = columnTitles.ToArray();
             if (titles.Length == 0)
                 return;
-            
+
             await HideAllColumnsAsync();
-            
+
             var hideableRenderedColumns = RenderedColumns
                 .Where(c => c.hideable)
                 .ToDictionary(column => column.Title);
-            
+
             foreach (var columnTitle in titles)
             {
                 if (hideableRenderedColumns.TryGetValue(columnTitle, out var renderedColumn))
@@ -2125,7 +2125,7 @@ namespace MudBlazor
                     await renderedColumn.ShowAsync();
                 }
             }
-            
+
             DropContainerHasChanged();
             await InvokeAsync(StateHasChanged);
         }
@@ -2191,7 +2191,7 @@ namespace MudBlazor
             DropContainerHasChanged();
             await InvokeAsync(StateHasChanged);
         }
-        
+
         private void ColumnUp(Column<T> column)
         {
             var index = RenderedColumns.IndexOf(column);

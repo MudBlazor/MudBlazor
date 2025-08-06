@@ -4869,13 +4869,13 @@ namespace MudBlazor.UnitTests.Components
             var dgComp = comp.FindComponent<MudDataGrid<DataGridShowAndHideProgramaticallyTest.Model>>();
 
             dgComp.Instance.RenderedColumns.Select(c => c.Title).Count().Should().Be(5);
-            
+
             List<string> columnsToShow = ["Column1", "Column3", "Column5"];
             await comp.InvokeAsync(() => dgComp.Instance.ShowColumnsAsync(columnsToShow));
-            
+
             dgComp.Instance.RenderedColumns.Where(column => !column.HiddenState.Value).Select(c => c.Title).Should().Equal(columnsToShow);
         }
-        
+
         [Test]
         public async Task DataGrid_HideColumnsAsync()
         {
@@ -4883,18 +4883,18 @@ namespace MudBlazor.UnitTests.Components
             var dgComp = comp.FindComponent<MudDataGrid<DataGridShowAndHideProgramaticallyTest.Model>>();
 
             dgComp.Instance.RenderedColumns.Select(c => c.Title).Count().Should().Be(5);
-            
+
             List<string> columnsToHide = ["Column2", "Column4"];
             await comp.InvokeAsync(() => dgComp.Instance.HideColumnsAsync(columnsToHide));
-            
+
             var renderedColumnNames = dgComp.Instance.RenderedColumns
                 .Where(column => !column.HiddenState.Value)
                 .Select(c => c.Title)
                 .ToList();
-            
+
             renderedColumnNames.Should().Equal(renderedColumnNames.Except(columnsToHide));
         }
-        
+
         [Test]
         public async Task DataGrid_OrderColumnsAsync()
         {
@@ -4902,13 +4902,13 @@ namespace MudBlazor.UnitTests.Components
             var dgComp = comp.FindComponent<MudDataGrid<DataGridOrderColumnsProgramaticallyTest.Model>>();
 
             dgComp.Instance.RenderedColumns.Select(c => c.Title).Count().Should().Be(5);
-            
+
             List<string> columnsToOrder = ["Column5", "Column4", "Column3"];
             await comp.InvokeAsync(() => dgComp.Instance.OrderColumnsAsync(columnsToOrder));
-            
+
             dgComp.Instance.RenderedColumns.Select(c => c.Title).Should().Equal(["Column5", "Column4", "Column3", "Column1", "Column2"]);
         }
-        
+
         [Test]
         public void QueryFilterExtensionTest()
         {
