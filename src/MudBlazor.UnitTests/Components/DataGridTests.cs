@@ -4898,8 +4898,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DataGrid_OrderColumnsAsync()
         {
-            var comp = Context.RenderComponent<DataGridShowAndHideProgramaticallyTest>();
-            var dgComp = comp.FindComponent<MudDataGrid<DataGridShowAndHideProgramaticallyTest.Model>>();
+            var comp = Context.RenderComponent<DataGridOrderColumnsProgramaticallyTest>();
+            var dgComp = comp.FindComponent<MudDataGrid<DataGridOrderColumnsProgramaticallyTest.Model>>();
 
             dgComp.Instance.RenderedColumns.Select(c => c.Title).Count().Should().Be(5);
             
