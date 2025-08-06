@@ -6,7 +6,7 @@
             Style="@Style"
             tabindex="0"
             href="@Href"
-            target="@Target"
+            target="@Target.GetDescriptionStringOrFrameTarget(FrameTarget)"
             PreventDefault="GetDisabled()"
             ClickPropagation="false"
             @attributes="UserAttributes"

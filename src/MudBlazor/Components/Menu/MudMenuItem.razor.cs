@@ -64,14 +64,25 @@ namespace MudBlazor
         public string? Href { get; set; }
 
         /// <summary>
-        /// The browser tab/window opened when a click occurs and <see cref="Href"/> is set.
+        /// The browser frame to open this link when <see cref="Href"/> is specified.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>null</c>. This property allows navigation to open a new tab/window or to reuse a specific tab.  Possible values are <c>_blank</c>, <c>_self</c>, <c>_parent</c>, <c>_top</c>, <c>noopener</c>, or the name of an <c>iframe</c> element.
+        /// Defaults to <see cref="LinkTarget.Self"/> in <see cref="MudGlobal.LinkDefaults.LinkTarget"/>.
         /// </remarks>
         [Parameter]
-        [Category(CategoryTypes.Button.ClickAction)]
-        public string? Target { get; set; }
+        [Category(CategoryTypes.Link.Behavior)]
+        public LinkTarget Target { get; set; } = MudGlobal.LinkDefaults.LinkTarget;
+
+        /// <summary>
+        /// The iframe to which to target when <see cref="Target"/> is set to <see cref="LinkTarget.Iframe"/>
+        /// </summary>
+        /// <remarks>
+        /// Value should be a <i>frame name</i>. <br/>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.NavMenu.ClickAction)]
+        public string? FrameTarget { get; set; }
 
         /// <summary>
         /// Performs a full page load during navigation.
@@ -143,7 +154,7 @@ namespace MudBlazor
 
             // Manual navigation is only required when the target is empty and a
             // forced reload is necessary; all other scenarios are managed by the HTML anchor.
-            if (ForceLoad && !string.IsNullOrEmpty(Href) && string.IsNullOrEmpty(Target))
+            if (ForceLoad && !string.IsNullOrEmpty(Href) && string.IsNullOrEmpty(Target.GetDescriptionStringOrFrameTarget(FrameTarget)))
             {
                 UriHelper.NavigateTo(Href, forceLoad: ForceLoad);
             }

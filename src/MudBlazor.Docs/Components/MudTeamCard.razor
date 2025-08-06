@@ -36,20 +36,20 @@
         </MudCardContent>
 
     <MudCardActions>
-        <MudChip T="string" Variant="Variant.Outlined" Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Target="_blank" Href="@($"https://github.com/{Member.GitHub}")">
+        <MudChip T="string" Variant="Variant.Outlined" Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Target="@LinkTarget.Blank" Href="@($"https://github.com/{Member.GitHub}")">
             GitHub
         </MudChip>
 
         @if (Member.GitHubSponsor)
         {
-            <MudChip T="string" Variant="Variant.Outlined" Icon="@Icons.Material.Filled.FavoriteBorder" Color="Color.Secondary" Target="_blank" Href="@($"https://github.com/sponsors/{Member.GitHub}")">
+            <MudChip T="string" Variant="Variant.Outlined" Icon="@Icons.Material.Filled.FavoriteBorder" Color="Color.Secondary" Target="@LinkTarget.Blank" Href="@($"https://github.com/sponsors/{Member.GitHub}")">
                 Sponsor
             </MudChip>
         }
 
         @if (!string.IsNullOrWhiteSpace(Member.LinkedIn))
         {
-            <MudChip T="string" Variant="Variant.Outlined" Icon="@Icons.Custom.Brands.LinkedIn" Color="Color.Primary" Target="_blank" Href="@Member.LinkedIn">
+            <MudChip T="string" Variant="Variant.Outlined" Icon="@Icons.Custom.Brands.LinkedIn" Color="Color.Primary" Target="@LinkTarget.Blank" Href="@Member.LinkedIn">
                 LinkedIn
             </MudChip>
         }

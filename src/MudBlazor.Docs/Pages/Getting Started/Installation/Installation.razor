@@ -11,13 +11,13 @@
                     You can play with MudBlazor online directly in your browser with TryMudBlazor, no installation required.
                 </Description>
             </SectionHeader>
-            <MudButton DropShadow="false" EndIcon="@Icons.Material.Rounded.OpenInNew" Variant="Variant.Filled" Color="Color.Primary" Class="docs-no-text-transform" Href="https://try.mudblazor.com/" Target="_blank">Play on TryMudBlazor</MudButton>
+            <MudButton DropShadow="false" EndIcon="@Icons.Material.Rounded.OpenInNew" Variant="Variant.Filled" Color="Color.Primary" Class="docs-no-text-transform" Href="https://try.mudblazor.com/" Target="@LinkTarget.Blank">Play on TryMudBlazor</MudButton>
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader Title="Using Templates">
                 <Description>
-                    To get started quickly, you can use our <MudLink Href="https://github.com/MudBlazor/Templates" Target="_blank"><b>dotnet templates</b></MudLink>.
+                    To get started quickly, you can use our <MudLink Href="https://github.com/MudBlazor/Templates" Target="@LinkTarget.Blank"><b>dotnet templates</b></MudLink>.
                     They're based on the Microsoft Web App template but have been modified to include MudBlazor components.
                     <br /><br />
                     Open a terminal and install them using this command:
@@ -67,7 +67,7 @@
                     </SectionHeader>
                     <SectionContent Codes="@([
                         new CodeFile(".NET 9", nameof(InstallationManualCssFontsExample)),
-                        new CodeFile(".NET 8", nameof(InstallationManualCssFontsExampleNet8)), 
+                        new CodeFile(".NET 8", nameof(InstallationManualCssFontsExampleNet8)),
                         new CodeFile("WebAssembly Standalone", nameof(InstallationManualCssFontsExampleWasmStandalone)),
                     ])" />
                     <SectionHeader Class="mt-6">
@@ -125,9 +125,9 @@
                             <MudAlert Class="mt-4" Severity="Severity.Warning">
                                 If you experience issues such as certain components not responding to user interactions, your render mode may be configured incorrectly.
                                 Static rendering is not supported and the rendering mode must be interactive.
-                                <MudLink Href="https://learn.microsoft.com/aspnet/core/blazor/components/render-modes" Target="_blank">Learn about render modes</MudLink>
+                                <MudLink Href="https://learn.microsoft.com/aspnet/core/blazor/components/render-modes" Target="@LinkTarget.Blank">Learn about render modes</MudLink>
                                 or
-                                <MudLink Href="https://github.com/MudBlazor/MudBlazor/discussions/7430" Target="_blank">view a related discussion</MudLink>.
+                                <MudLink Href="https://github.com/MudBlazor/MudBlazor/discussions/7430" Target="@LinkTarget.Blank">view a related discussion</MudLink>.
                             </MudAlert>
                         </Description>
                     </SectionHeader>

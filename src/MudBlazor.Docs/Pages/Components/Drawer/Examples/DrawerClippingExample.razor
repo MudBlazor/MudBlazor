@@ -6,7 +6,7 @@
     <MudAppBar Elevation="1" Dense="@_dense">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
         <MudSpacer />
-        <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Href="https://github.com/MudBlazor/MudBlazor" Target="_blank" />
+        <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Href="https://github.com/MudBlazor/MudBlazor" Target="@LinkTarget.Blank" />
     </MudAppBar>
     <MudDrawer @bind-Open="@_open" ClipMode="_clipMode" Elevation="1" Variant="@DrawerVariant.Responsive">
         <MudDrawerHeader>

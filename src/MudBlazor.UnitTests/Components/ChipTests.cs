@@ -31,13 +31,15 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         [Combinatorial]
         public void Chip_ShouldRenderAnchorIfLinkSet(
-            [Values("", "ASDF", "nofollow", "_blank")] string target,
+            [Values(LinkTarget.Self, LinkTarget.Iframe, LinkTarget.Blank)] LinkTarget target,
+            [Values("", "ASDF", "nofollow")] string frame,
             [Values(null, "noopener", "nofollow")] string rel)
         {
 
             var comp = Context.RenderComponent<MudChip<string>>(parameters => parameters
                 .Add(p => p.Href, "https://example.com")
                 .Add(p => p.Target, target)
+                .Add(p => p.FrameTarget, frame)
                 .Add(p => p.Rel, rel)
             );
 
@@ -46,9 +48,9 @@ namespace MudBlazor.UnitTests.Components
             chip.TagName.Should().Be("A");
 
             chip.GetAttribute("href").Should().Be("https://example.com");
-            chip.GetAttribute("target").Should().Be(target);
+            chip.GetAttribute("target").Should().Be(target.GetDescriptionStringOrFrameTarget(frame));
 
-            var expectedRel = rel ?? (target == "_blank" ? "noopener" : null);
+            var expectedRel = rel ?? (target == LinkTarget.Blank ? "noopener" : null);
             chip.GetAttribute("rel").Should().Be(expectedRel);
         }
 
@@ -56,13 +58,15 @@ namespace MudBlazor.UnitTests.Components
         [Combinatorial]
         public void Chip_ShouldRenderButtonAndNotAnchorIfOnClickSet(
             [Values(null, "", "https://example.com")] string href,
-            [Values(null, "", "ASDF", "_blank")] string target,
+            [Values(null, LinkTarget.Self, LinkTarget.Iframe, LinkTarget.Blank)] LinkTarget target,
+            [Values(null, "", "ASDF")] string frame,
             [Values(null, "", "noopener", "nofollow")] string rel)
         {
             var comp = Context.RenderComponent<MudChip<string>>(parameters => parameters
                 .Add(p => p.OnClick, () => { })
                 .Add(p => p.Href, href)
                 .Add(p => p.Target, target)
+                .Add(p => p.FrameTarget, frame)
                 .Add(p => p.Rel, rel)
             );
 

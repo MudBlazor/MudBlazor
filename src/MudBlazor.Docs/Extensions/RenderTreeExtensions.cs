@@ -103,7 +103,7 @@ public static class RenderTreeExtensions
     /// <param name="cssClass"></param>
     /// <param name="target"></param>
     /// <param name="color"></param>
-    public static void AddMudLink(this RenderTreeBuilder builder, int sequence, string href, string text = null, Typo typo = Typo.body1, string cssClass = null, string target = null, Action<int, RenderTreeBuilder> childContentBuilder = null)
+    public static void AddMudLink(this RenderTreeBuilder builder, int sequence, string href, string text = null, Typo typo = Typo.body1, string cssClass = null, LinkTarget target = LinkTarget.Self, Action<int, RenderTreeBuilder> childContentBuilder = null)
     {
         builder.OpenRegion(sequence);
         builder.OpenComponent<MudLink>(0);
@@ -112,10 +112,7 @@ public static class RenderTreeExtensions
         {
             builder.AddComponentParameter(2, "Class", cssClass);
         }
-        if (!string.IsNullOrEmpty(target))
-        {
-            builder.AddComponentParameter(3, "Target", target);
-        }
+        builder.AddComponentParameter(3, "Target", target);
         builder.AddComponentParameter(4, "Typo", typo);
         builder.AddComponentParameter(3, "ChildContent", (RenderFragment)(contentBuilder =>
         {

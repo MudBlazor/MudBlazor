@@ -135,7 +135,7 @@ public sealed class ApiTypeLink : ComponentBase
                     // Is this a linkable type?
                     if (!TypeName.Contains("[["))
                     {
-                        builder.AddMudLink(0, $"https://learn.microsoft.com/dotnet/api/{TypeName}", TypeFriendlyName, Typo, "docs-link docs-code docs-code-primary", "_external", (linkSequence, linkBuilder) =>
+                        builder.AddMudLink(0, $"https://learn.microsoft.com/dotnet/api/{TypeName}", TypeFriendlyName, Typo, "docs-link docs-code docs-code-primary", LinkTarget.External, (linkSequence, linkBuilder) =>
                         {
                             linkBuilder.AddContent(linkSequence++, TypeFriendlyName);
                             linkBuilder.AddMudTooltip(linkSequence++, Placement.Top, $"External Link", (tooltipSequence, tooltipBuilder) =>

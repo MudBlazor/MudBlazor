@@ -14,16 +14,15 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// When Target is not empty, rel attribute should be equals to "noopener noreferrer" on the a element
         /// </summary>
-        [TestCase(null, "")]
-        [TestCase("", "")]
-        [TestCase("_self", "noopener noreferrer")]
-        [TestCase("_blank", "noopener noreferrer")]
-        [TestCase("_parent", "noopener noreferrer")]
-        [TestCase("_top", "noopener noreferrer")]
-        [TestCase("myFrameName", "noopener noreferrer")]
-        public void NavLink_CheckRelAttribute(string target, string expectedRel)
+        [TestCase(LinkTarget.Self, "noopener noreferrer")]
+        [TestCase(LinkTarget.Blank, "noopener noreferrer")]
+        [TestCase(LinkTarget.Parent, "noopener noreferrer")]
+        [TestCase(LinkTarget.Top, "noopener noreferrer")]
+        [TestCase(LinkTarget.Iframe, "noopener noreferrer", "myFrameName")]
+        [TestCase(LinkTarget.Iframe, "")]
+        public void NavLink_CheckRelAttribute(LinkTarget target, string expectedRel, string iframe = "")
         {
-            var comp = Context.RenderComponent<MudNavLink>(Parameter(nameof(MudNavLink.Target), target));
+            var comp = Context.RenderComponent<MudNavLink>(Parameter(nameof(MudNavLink.Target), target), Parameter(nameof(MudNavLink.FrameTarget), iframe));
             // print the generated html
             // select elements needed for the test
             comp.Find("a").GetAttribute("rel").Should().Be(expectedRel);

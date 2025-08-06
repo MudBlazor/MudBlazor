@@ -1,8 +1,8 @@
-﻿<a href="@Website" target="@Target" rel="nofollow">
+﻿<MudLink Href="@Website" Target="@Target" Rel="nofollow">
     <MudPaper Elevation="@(LandingPage? 0 : 25)" Class="@GetClassnames()" Height="100%">
         <MudImage Src="@($"_content/MudBlazor.Docs/images/sponsors/{Image}")" Alt="@Name" ObjectFit="ObjectFit.Cover" ObjectPosition="ObjectPosition.Center" />
     </MudPaper>
-</a>
+</MudLink>
 
 @code {
     [Parameter] public string Website { get; set; }
@@ -10,8 +10,8 @@
     [Parameter] public string Image { get; set; }
     [Parameter] public bool LandingPage { get; set; }
 
-    [Parameter] public string Target { get; set; } = "_blank";
-    
+    [Parameter] public LinkTarget Target { get; set; } = LinkTarget.Blank;
+
     private string GetClassnames()
     {
         if (LandingPage)

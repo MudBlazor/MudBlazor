@@ -9,7 +9,7 @@
             @attributes="UserAttributes"
             @onclick="OnClickHandlerAsync"
             href="@Href"
-            target="@Target"
+            target="@Target.GetDescriptionStringOrFrameTarget(FrameTarget)"
             PreventDefault="@GetPreventDefault()"
             ClickPropagation="@GetClickPropagation()">
 

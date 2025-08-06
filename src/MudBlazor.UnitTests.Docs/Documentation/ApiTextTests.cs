@@ -106,7 +106,7 @@ public sealed class ApiTextTests : BunitTest
         // There should be a text span
         comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-caption\">Occurs when </span>");
         // Then a link to /api/MudComponentBase#Class
-        comp.Markup.Should().Contain("<a href=\"/api/MudComponentBase#Class\" blazor:onclick=\"6\" class=\"mud-typography mud-link mud-primary-text mud-link-underline-hover mud-typography-caption docs-link docs-code docs-code-primary\">Class</a>");
+        comp.Markup.Should().Contain("<a href=\"/api/MudComponentBase#Class\" target=\"_self\" blazor:onclick=\"6\" class=\"mud-typography mud-link mud-primary-text mud-link-underline-hover mud-typography-caption docs-link docs-code docs-code-primary\">Class</a>");
         // Ending with another text span
         comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-caption\"> has changed.</span>");
     }
@@ -133,10 +133,11 @@ public sealed class ApiTextTests : BunitTest
     public void ApiText_RenderSeeCref_ExistingMethod()
     {
         var comp = Context.RenderComponent<ApiText>(Parameter("Text", "When set, calls <see cref=\"M:MudBlazor.AggregateDefinition`1.SimpleAvg\" /> to receive viewport changes."));
+        Console.WriteLine(comp.Markup);
         // There should be a text span
         comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-caption\">When set, calls </span>");
         // Then a link to /api/AggregateDefinition`1#SimpleAvg
-        comp.Markup.Should().Contain("<a href=\"/api/AggregateDefinition`1#SimpleAvg\" blazor:onclick=\"6\" class=\"mud-typography mud-link mud-primary-text mud-link-underline-hover mud-typography-caption docs-link docs-code docs-code-primary\">SimpleAvg</a>");
+        comp.Markup.Should().Contain("<a href=\"/api/AggregateDefinition`1#SimpleAvg\" target=\"_self\" blazor:onclick=\"6\" class=\"mud-typography mud-link mud-primary-text mud-link-underline-hover mud-typography-caption docs-link docs-code docs-code-primary\">SimpleAvg</a>");
         // Ending with another text span
         comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-caption\"> to receive viewport changes.</span>");
     }

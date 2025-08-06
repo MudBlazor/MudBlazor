@@ -93,18 +93,28 @@ namespace MudBlazor
         /// The browser frame to open this link when <see cref="Href"/> is specified.
         /// </summary>
         /// <remarks>
-        /// Possible values include <c>_blank</c>, <c>_self</c>, <c>_parent</c>, <c>_top</c>, or a <i>frame name</i>. <br/>
+        /// Defaults to <see cref="LinkTarget.Self"/> in <see cref="MudGlobal.LinkDefaults.LinkTarget"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Link.Behavior)]
+        public LinkTarget Target { get; set; } = MudGlobal.LinkDefaults.LinkTarget;
+
+        /// <summary>
+        /// The iframe to which to target when <see cref="Target"/> is set to <see cref="LinkTarget.Iframe"/>
+        /// </summary>
+        /// <remarks>
+        /// Value should be a <i>frame name</i>. <br/>
         /// Defaults to <c>null</c>.
         /// </remarks>
         [Parameter]
-        [Category(CategoryTypes.Button.ClickAction)]
-        public string? Target { get; set; }
+        [Category(CategoryTypes.NavMenu.ClickAction)]
+        public string? FrameTarget { get; set; }
 
         /// <summary>
         /// Causes a full page refresh when this list item is clicked and <see cref="Href"/> is set.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  When <c>true</c>, bypasses client-side routing and forces the browser to load the 
+        /// Defaults to <c>false</c>.  When <c>true</c>, bypasses client-side routing and forces the browser to load the
         /// new page from the server, whether or not the URI would normally be handled by the client-side router.
         /// See: <see cref="NavigationManager.NavigateTo(string, bool, bool)"/>
         /// </remarks>
@@ -328,7 +338,7 @@ namespace MudBlazor
             // the only case a manual Navigition is required, is when
             // the target is empty, but a force reload is desired, all other cases are handled
             // by the html anchor
-            if (ForceLoad && string.IsNullOrEmpty(Href) == false && string.IsNullOrEmpty(Target))
+            if (ForceLoad && string.IsNullOrEmpty(Href) == false)
             {
                 UriHelper.NavigateTo(Href, forceLoad: ForceLoad);
             }
@@ -396,7 +406,7 @@ namespace MudBlazor
         /// <summary>
         /// returns the kind of element the list item should render to
         /// When <see cref="OnClickPreventDefault"/> is set the link should not be followed thus it is rendered as div
-        /// </summary>        
+        /// </summary>
         private string HtmlTag => string.IsNullOrEmpty(Href) || OnClickPreventDefault ? "div" : "a";
 
         private bool GetPreventDefault() => GetDisabled();

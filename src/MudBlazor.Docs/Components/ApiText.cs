@@ -90,7 +90,7 @@ public sealed partial class ApiText : ComponentBase
                                             var className = parts[parts.Length - 1].Replace("`1", "<T>").Replace("`2", "<T, U>");
                                             // Calculate the Microsoft Docs link
                                             var msLink = linkRef.Replace("`1", "-1").Replace("`2", "-2").ToLowerInvariant();
-                                            builder.AddMudLink(sequence++, $"https://learn.microsoft.com/dotnet/api/{msLink}", className, Typo, "docs-link docs-code docs-code-primary", "_external", (linkSequence, linkBuilder) =>
+                                            builder.AddMudLink(sequence++, $"https://learn.microsoft.com/dotnet/api/{msLink}", className, Typo, "docs-link docs-code docs-code-primary", LinkTarget.External, (linkSequence, linkBuilder) =>
                                             {
                                                 linkBuilder.AddContent(linkSequence++, className);
                                                 linkBuilder.AddMudTooltip(linkSequence++, Placement.Top, $"External Link", (tooltipSequence, tooltipBuilder) =>
@@ -130,7 +130,7 @@ public sealed partial class ApiText : ComponentBase
                                             var memberName = parts[parts.Length - 1];
                                             // Calculate the Microsoft Docs link
                                             var msLink = linkRef.Replace("`1", "-1").Replace("`2", "-2").ToLowerInvariant();
-                                            builder.AddMudLink(sequence++, $"https://learn.microsoft.com/dotnet/api/{msLink}", className + "." + memberName, Typo, "docs-link docs-code docs-code-primary", "_external", (linkSequence, linkBuilder) =>
+                                            builder.AddMudLink(sequence++, $"https://learn.microsoft.com/dotnet/api/{msLink}", className + "." + memberName, Typo, "docs-link docs-code docs-code-primary", LinkTarget.External, (linkSequence, linkBuilder) =>
                                             {
                                                 linkBuilder.AddContent(linkSequence++, className + "." + memberName);
                                                 linkBuilder.AddMudTooltip(linkSequence++, Placement.Top, $"External Link", (tooltipSequence, tooltipBuilder) =>
@@ -152,7 +152,7 @@ public sealed partial class ApiText : ComponentBase
                                     }
                                     if (isEmptyElement)
                                     {
-                                        builder.AddMudLink(sequence++, link, link, Typo, "docs-link docs-code docs-code-primary", "_external", (linkSequence, linkBuilder) =>
+                                        builder.AddMudLink(sequence++, link, link, Typo, "docs-link docs-code docs-code-primary", LinkTarget.External, (linkSequence, linkBuilder) =>
                                         {
                                             linkBuilder.AddContent(linkSequence++, link);
                                             linkBuilder.AddMudTooltip(linkSequence++, Placement.Top, $"External Link", (tooltipSequence, tooltipBuilder) =>
@@ -167,7 +167,7 @@ public sealed partial class ApiText : ComponentBase
                                         reader.Read();
                                         var text = string.IsNullOrEmpty(reader.Value) ? link : reader.Value;
 
-                                        builder.AddMudLink(sequence++, link, text, Typo, "docs-link docs-code docs-code-primary", "_external", (linkSequence, linkBuilder) =>
+                                        builder.AddMudLink(sequence++, link, text, Typo, "docs-link docs-code docs-code-primary", LinkTarget.External, (linkSequence, linkBuilder) =>
                                         {
                                             linkBuilder.AddContent(linkSequence++, text);
                                             linkBuilder.AddMudTooltip(linkSequence++, Placement.Top, $"External Link", (tooltipSequence, tooltipBuilder) =>

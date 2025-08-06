@@ -6,22 +6,22 @@
             </MudAvatar>
         </CardHeaderAvatar>
         <CardHeaderContent>
-            <MudText Class="docs-extensions-clamp" role="heading" Typo="Typo.h6">@Extension.Name</MudText>          
+            <MudText Class="docs-extensions-clamp" role="heading" Typo="Typo.h6">@Extension.Name</MudText>
         </CardHeaderContent>
     </MudCardHeader>
     <MudCardContent>
         <MudText Typo="Typo.button" Class="mud-text-disabled">@CategoryName</MudText>
         <MudPaper Class="d-flex justify-center pa-2 docs-extensions-paper" Elevation="0">
             <MudText Typo="Typo.body2">@Extension.Description</MudText>
-        </MudPaper>        
+        </MudPaper>
     </MudCardContent>
     <MudCardActions>
         <MudButton Variant="Variant.Text" Color="Color.Primary" EndIcon="@Icons.Material.Filled.ArrowForward"
-        FullWidth="false" Target="_blank" Href="@Extension.Link" aria-label="@_ariaDetailsButton">
+        FullWidth="false" Target="@LinkTarget.Blank" Href="@Extension.Link" aria-label="@_ariaDetailsButton">
             Details
         </MudButton>
         <MudSpacer />
-        <MudButton Href="@Extension.GitHubLink" Target="_blank">        
+        <MudButton Href="@Extension.GitHubLink" Target="@LinkTarget.Blank">
             <MudImage alt="@_gitHubAlt" Src="@($"https://img.shields.io/github/stars/{Extension.GitHubUserPath}/{Extension.GitHubRepoPath}")" />
         </MudButton>
     </MudCardActions>

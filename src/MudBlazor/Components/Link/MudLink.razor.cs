@@ -36,7 +36,8 @@ public partial class MudLink : MudComponentBase
             else
             {
                 attributes["href"] = Href;
-                attributes["target"] = Target;
+                attributes["target"] = Target.GetDescriptionStringOrFrameTarget(FrameTarget);
+                attributes["rel"] = Rel;
             }
 
             if (OnClick.HasDelegate)
@@ -98,12 +99,29 @@ public partial class MudLink : MudComponentBase
     /// The browser frame to open this link when <see cref="Href"/> is specified.
     /// </summary>
     /// <remarks>
-    /// Possible values include <c>_blank</c>, <c>_self</c>, <c>_parent</c>, <c>_top</c>, or a <i>frame name</i>. <br/>
-    /// Defaults to <c>null</c>.
+    /// Defaults to <see cref="LinkTarget.Self"/> in <see cref="MudGlobal.LinkDefaults.LinkTarget"/>.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Link.Behavior)]
-    public string? Target { get; set; }
+    public LinkTarget Target { get; set; } = MudGlobal.LinkDefaults.LinkTarget;
+
+    /// <summary>
+    /// The iframe to which to target when <see cref="Target"/> is set to <see cref="LinkTarget.Iframe"/>
+    /// </summary>
+    /// <remarks>
+    /// Value should be a <i>frame name</i>. <br/>
+    /// Defaults to <c>null</c>.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.NavMenu.ClickAction)]
+    public string? FrameTarget { get; set; }
+
+    /// <summary>
+    /// Rel
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.NavMenu.ClickAction)]
+    public string? Rel { get; set; }
 
     /// <summary>
     /// Prevents user interaction with this link.

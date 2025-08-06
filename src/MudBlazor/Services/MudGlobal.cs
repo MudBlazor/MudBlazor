@@ -103,6 +103,8 @@ public static class MudGlobal
         /// Applies an underline to the <see cref="MudLink"/>.
         /// </summary>
         public static Underline Underline { get; set; } = Underline.Hover;
+
+        public static LinkTarget LinkTarget { get; set; } = LinkTarget.Self;
     }
 
     /// <summary>

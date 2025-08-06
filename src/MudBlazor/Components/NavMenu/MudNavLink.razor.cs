@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.AspNetCore.Components.Web;
@@ -40,8 +41,8 @@ namespace MudBlazor
             get => Disabled ? new Dictionary<string, object?>() : new Dictionary<string, object?>
             {
                 { "href", Href },
-                { "target", Target },
-                { "rel", !string.IsNullOrWhiteSpace(Target) ? "noopener noreferrer" : string.Empty }
+                { "target", Target.GetDescriptionStringOrFrameTarget(FrameTarget) },
+                { "rel", !string.IsNullOrEmpty(Target.GetDescriptionStringOrFrameTarget(FrameTarget)) ? "noopener noreferrer" : string.Empty }
             };
         }
 
@@ -90,12 +91,22 @@ namespace MudBlazor
         /// The browser frame to open this link when <see cref="Href"/> is specified.
         /// </summary>
         /// <remarks>
-        /// Possible values include <c>_blank</c>, <c>_self</c>, <c>_parent</c>, <c>_top</c>, or a <i>frame name</i>. <br/>
+        /// Defaults to <see cref="LinkTarget.Self"/> in <see cref="MudGlobal.LinkDefaults.LinkTarget"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Link.Behavior)]
+        public LinkTarget Target { get; set; } = MudGlobal.LinkDefaults.LinkTarget;
+
+        /// <summary>
+        /// The iframe to which to target when <see cref="Target"/> is set to <see cref="LinkTarget.Iframe"/>
+        /// </summary>
+        /// <remarks>
+        /// Value should be a <i>frame name</i>. <br/>
         /// Defaults to <c>null</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.NavMenu.ClickAction)]
-        public string? Target { get; set; }
+        public string? FrameTarget { get; set; }
 
         /// <summary>
         /// The CSS applied when this link is active.

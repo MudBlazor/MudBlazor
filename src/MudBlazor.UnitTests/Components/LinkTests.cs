@@ -21,7 +21,8 @@ public class LinkTests : BunitTest
         comp.Instance.Typo.Should().Be(Typo.body1);
         comp.Instance.Underline.Should().Be(Underline.Hover);
         comp.Instance.Href.Should().BeNull();
-        comp.Instance.Target.Should().BeNull();
+        comp.Instance.Target.GetDescriptionStringOrFrameTarget(comp.Instance.FrameTarget).Should().Be(LinkTarget.Self.GetDescriptionStringOrFrameTarget(""));
+        comp.Instance.FrameTarget.Should().BeNull();
         comp.Instance.Disabled.Should().BeFalse();
     }
 
@@ -113,19 +114,21 @@ public class LinkTests : BunitTest
         linkElement.ClassList.Should().Contain(expectedClass);
     }
 
-    [TestCase("_blank")]
-    [TestCase("_self")]
-    [TestCase("_parent")]
-    [TestCase("_top")]
-    public void TargetProperty_AppliesCorrectAttribute(string target)
+    [TestCase(LinkTarget.Blank, "")]
+    [TestCase(LinkTarget.Self, "")]
+    [TestCase(LinkTarget.Parent, "")]
+    [TestCase(LinkTarget.Top, "")]
+    [TestCase(LinkTarget.Iframe, "mud-link-top")]
+    public void TargetProperty_AppliesCorrectAttribute(LinkTarget target, string iframe)
     {
         var comp = Context.RenderComponent<MudLink>(builder => builder
             .Add(p => p.Href, "#")
             .Add(p => p.Target, target)
+            .Add(p => p.FrameTarget, iframe)
         );
 
         var linkElement = comp.Find("a");
-        linkElement.GetAttribute("target").Should().Be(target);
+        linkElement.GetAttribute("target").Should().Be(target.GetDescriptionStringOrFrameTarget(iframe));
     }
 
     [Test]
@@ -144,7 +147,7 @@ public class LinkTests : BunitTest
     {
         var comp = Context.RenderComponent<MudLink>(builder => builder
             .Add(p => p.Href, "#")
-            .Add(p => p.Target, "_self")
+            .Add(p => p.Target, LinkTarget.Self)
             .Add(p => p.UserAttributes, new()
             {
                 { "target", "custom-target" },

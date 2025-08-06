@@ -46,7 +46,7 @@ namespace MudBlazor.UnitTests.Components
         public void MudButtonShouldRenderAnAnchorIfLinkIsSetAndIsNotDisabled()
         {
             var link = Parameter(nameof(MudButton.Href), "https://www.google.com");
-            var target = Parameter(nameof(MudButton.Target), "_blank");
+            var target = Parameter(nameof(MudButton.Target), LinkTarget.Blank);
             var disabled = Parameter(nameof(MudButton.Disabled), true);
             var comp = Context.RenderComponent<MudButton>(link, target);
             //Link property is set, so it has to render an anchor element
@@ -58,7 +58,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup
                 .Should()
                 .Contain("rel=\"noopener\"");
-            //it is an anchor and not contains stopPropagation 
+            //it is an anchor and not contains stopPropagation
             comp.Markup
                 .Replace(" ", string.Empty)
                 .Should()
@@ -95,7 +95,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var link = Parameter(nameof(MudButton.Href), "https://www.google.com");
             // setting target to _blank by default sets rel to noopener
-            var target = Parameter(nameof(MudButton.Target), "_blank");
+            var target = Parameter(nameof(MudButton.Target), LinkTarget.Blank);
             var rel = Parameter(nameof(MudButton.Rel), "nofollow");
             var comp = Context.RenderComponent<MudButton>(link, target, rel);
             comp
@@ -113,7 +113,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var link = Parameter(nameof(MudButton.Href), "https://www.google.com");
             var rel = Parameter(nameof(MudButton.Rel), "");
-            var target = Parameter(nameof(MudButton.Target), "_blank");
+            var target = Parameter(nameof(MudButton.Target), LinkTarget.Blank);
             var comp = Context.RenderComponent<MudButton>(link, rel, target);
             comp
                 .Find("a")
@@ -123,14 +123,14 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// MudButton should not render rel if it's null and target is not _blank
+        /// MudButton should not render rel if it's null and target is iFrame
         /// </summary>
         [Test]
-        public void MudButtonShouldNotRenderRelIfNullAndTargetNotBlank()
+        public void MudButtonShouldNotRenderRelIfNullAndTargetIsIframeWithNoFrame()
         {
             var link = Parameter(nameof(MudButton.Href), "https://www.google.com");
             var rel = Parameter(nameof(MudButton.Rel), null);
-            var target = Parameter(nameof(MudButton.Target), "_notblank");
+            var target = Parameter(nameof(MudButton.Target), LinkTarget.Iframe);
             var comp = Context.RenderComponent<MudButton>(link, rel, target);
             comp
                 .Find("a")
@@ -166,7 +166,7 @@ namespace MudBlazor.UnitTests.Components
         {
             using var ctx = new Bunit.TestContext();
             var link = Parameter(nameof(MudIconButton.Href), "https://www.google.com");
-            var target = Parameter(nameof(MudIconButton.Target), "_blank");
+            var target = Parameter(nameof(MudIconButton.Target), LinkTarget.Blank);
             var comp = ctx.RenderComponent<MudIconButton>(link, target);
             //Link property is set, so it has to render an anchor element
             comp.Instance
@@ -208,7 +208,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var link = Parameter(nameof(MudIconButton.Href), "https://www.google.com");
             // setting target to _blank by default sets rel to noopener
-            var target = Parameter(nameof(MudIconButton.Target), "_blank");
+            var target = Parameter(nameof(MudIconButton.Target), LinkTarget.Blank);
             var rel = Parameter(nameof(MudIconButton.Rel), "nofollow");
             var comp = Context.RenderComponent<MudIconButton>(link, target, rel);
             comp
@@ -226,7 +226,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var link = Parameter(nameof(MudIconButton.Href), "https://www.google.com");
             // setting target to _blank by default sets rel to noopener
-            var target = Parameter(nameof(MudIconButton.Target), "_blank");
+            var target = Parameter(nameof(MudIconButton.Target), LinkTarget.Blank);
             var rel = Parameter(nameof(MudIconButton.Rel), "");
             var comp = Context.RenderComponent<MudIconButton>(link, rel, target);
             comp
@@ -237,20 +237,37 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// MudIconButton should not render rel if it's null and target is not _blank
+        /// MudIconButton should not render rel if it's null and target is iFrame
         /// </summary>
         [Test]
-        public void MudIconButtonShouldNotRenderRelIfNullAndTargetNotBlank()
+        public void MudIconButtonShouldNotRenderRelIfNullAndTargetIsIframeWithNoFrame()
         {
             var link = Parameter(nameof(MudIconButton.Href), "https://www.google.com");
             var rel = Parameter(nameof(MudIconButton.Rel), null);
-            var target = Parameter(nameof(MudIconButton.Target), "_notblank");
+            var target = Parameter(nameof(MudButton.Target), LinkTarget.Iframe);
             var comp = Context.RenderComponent<MudIconButton>(link, rel, target);
             comp
                 .Find("a")
                 .HasAttribute("rel")
                 .Should()
                 .BeFalse();
+        }
+
+        /// <summary>
+        /// MudIconButton should render rel if it's not null and target is iframe
+        /// </summary>
+        [Test]
+        public void MudIconButtonShouldRenderRelIfNotNullAndTargetIsIframeWithNoFrame()
+        {
+            var link = Parameter(nameof(MudIconButton.Href), "https://www.google.com");
+            var rel = Parameter(nameof(MudIconButton.Rel), "");
+            var target = Parameter(nameof(MudButton.Target), LinkTarget.Iframe);
+            var comp = Context.RenderComponent<MudIconButton>(link, rel, target);
+            comp
+                .Find("a")
+                .HasAttribute("rel")
+                .Should()
+                .BeTrue();
         }
 
         /// <summary>
@@ -279,7 +296,7 @@ namespace MudBlazor.UnitTests.Components
         public void MudFabShouldRenderAnAnchorIfLinkIsSet()
         {
             var link = Parameter(nameof(MudFab.Href), "https://www.google.com");
-            var target = Parameter(nameof(MudFab.Target), "_blank");
+            var target = Parameter(nameof(MudFab.Target), LinkTarget.Blank);
             var comp = Context.RenderComponent<MudFab>(link, target);
             //Link property is set, so it has to render an anchor element
             comp.Instance
@@ -333,7 +350,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var link = Parameter(nameof(MudFab.Href), "https://www.google.com");
             // setting target to _blank by default sets rel to noopener
-            var target = Parameter(nameof(MudFab.Target), "_blank");
+            var target = Parameter(nameof(MudFab.Target), LinkTarget.Blank);
             var rel = Parameter(nameof(MudFab.Rel), "nofollow");
             var comp = Context.RenderComponent<MudFab>(link, target, rel);
             comp
@@ -351,7 +368,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var link = Parameter(nameof(MudFab.Href), "https://www.google.com");
             // setting target to _blank by default sets rel to noopener
-            var target = Parameter(nameof(MudFab.Target), "_blank");
+            var target = Parameter(nameof(MudFab.Target), LinkTarget.Blank);
             var rel = Parameter(nameof(MudFab.Rel), "");
             var comp = Context.RenderComponent<MudFab>(link, target, rel);
             comp
@@ -362,14 +379,14 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// MudFab should not render rel if it's null and target is not _blank
+        /// MudFab should not render rel if it's null and target is iFrame
         /// </summary>
         [Test]
-        public void MudFabShouldNotRenderRelIfNullAndTargetNotBlank()
+        public void MudFabShouldNotRenderRelIfNullAndTargetIsIframeWithNoFrame()
         {
             var link = Parameter(nameof(MudFab.Href), "https://www.google.com");
             var rel = Parameter(nameof(MudFab.Rel), null);
-            var target = Parameter(nameof(MudFab.Target), "_notblank");
+            var target = Parameter(nameof(MudButton.Target), LinkTarget.Iframe);
             var comp = Context.RenderComponent<MudFab>(link, rel, target);
             comp
                 .Find("a")
