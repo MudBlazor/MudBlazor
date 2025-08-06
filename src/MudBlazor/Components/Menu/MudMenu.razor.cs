@@ -781,10 +781,29 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Handles keyboard navigation and interaction logic within the menu, including arrow keys,
+        /// Handles keyboard navigation and interaction logic within the menu. including arrow keys,
         /// enter/space to select or open submenus, tab to close and move focus, and escape to close.
         /// </summary>
         private async Task HandleKeyDownAsync(KeyboardEventArgs e)
+        {
+            if (e.Key == "ArrowDown" || e.Key == "ArrowUp" || e.Key == "ArrowRight" || e.Key == "ArrowLeft")
+            {
+                await HandleNavigationKeyAsync(e);
+            }
+            else if (e.Key == "Enter" || e.Key == " ")
+            {
+                await HandleActivationKeyAsync(e);
+            }
+            else if (e.Key == "Tab" || e.Key == "Escape")
+            {
+                await HandleDismissalKeyAsync(e);
+            }
+        }
+
+        /// <summary>
+        /// Handles keyboard navigation and interaction logic within the menu for arrow keys.
+        /// </summary>
+        private async Task HandleNavigationKeyAsync(KeyboardEventArgs e)
         {
             var items = _menuItems.Where(x => !GetItemDisabled(x)).ToList();
             if (items.Count == 0)
@@ -853,36 +872,55 @@ namespace MudBlazor
                     await CloseAllMenusAsync();
                 }
             }
-            if (e.Key == "Enter" || e.Key == " ")
+        }
+
+        /// <summary>
+        /// Handles keyboard navigation and interaction logic within the menu for enter/space to select or open submenus.
+        /// </summary>
+        private async Task HandleActivationKeyAsync(KeyboardEventArgs e)
+        {
+            var items = _menuItems.Where(x => !GetItemDisabled(x)).ToList();
+            if (items.Count == 0)
+                return;
+
+            if (_focusedIndex >= 0 && _focusedIndex < items.Count)
             {
-                if (_focusedIndex >= 0 && _focusedIndex < items.Count)
+                var currentItem = items[_focusedIndex];
+
+                // Handle different item types
+                switch (currentItem)
                 {
-                    var currentItem = items[_focusedIndex];
+                    case MudMenuItem menuItem:
+                        // If this item has a submenu, open it instead of invoking click
+                        if (_itemToSubmenuMap.ContainsKey(menuItem))
+                        {
+                            var submenu = _itemToSubmenuMap[menuItem];
+                            await submenu.OpenSubMenuAsync(EventArgs.Empty);
+                        }
+                        else
+                        {
+                            await menuItem.InvokeClickAsync();
+                        }
+                        break;
 
-                    // Handle different item types
-                    switch (currentItem)
-                    {
-                        case MudMenuItem menuItem:
-                            // If this item has a submenu, open it instead of invoking click
-                            if (_itemToSubmenuMap.ContainsKey(menuItem))
-                            {
-                                var submenu = _itemToSubmenuMap[menuItem];
-                                await submenu.OpenSubMenuAsync(EventArgs.Empty);
-                            }
-                            else
-                            {
-                                await menuItem.InvokeClickAsync();
-                            }
-                            break;
-
-                        case MudMenu menu:
-                            // For MudMenu items, always open the submenu
-                            await menu.OpenSubMenuAsync(EventArgs.Empty);
-                            break;
-                    }
+                    case MudMenu menu:
+                        // For MudMenu items, always open the submenu
+                        await menu.OpenSubMenuAsync(EventArgs.Empty);
+                        break;
                 }
             }
-            else if (e.Key == "Tab")
+        }
+
+        /// <summary>
+        /// Handles keyboard navigation and interaction logic within the menu for tab to close and move focus, and escape to close.
+        /// </summary>
+        private async Task HandleDismissalKeyAsync(KeyboardEventArgs e)
+        {
+            var items = _menuItems.Where(x => !GetItemDisabled(x)).ToList();
+            if (items.Count == 0)
+                return;
+
+            if (e.Key == "Tab")
             {
                 await CloseAllMenusAsync();
             }
@@ -1004,9 +1042,9 @@ namespace MudBlazor
                     }
                 }
             }
-            catch (Exception)
+            catch (Microsoft.JSInterop.JSException)
             {
-                // No focus added - menu closed without focusing
+                // No focus added - menu closed without focusing, as the element is likely gone from the DOM.
             }
         }
 
@@ -1044,7 +1082,7 @@ namespace MudBlazor
         {
             return item switch
             {
-                MudMenuItem menuItem => menuItem.ActivatesSubMenu,
+                MudMenuItem menuItem => _itemToSubmenuMap.ContainsKey(menuItem),
                 MudMenu menu => true,
                 _ => false
             };
