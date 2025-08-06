@@ -12,13 +12,13 @@ namespace MudBlazor.UnitTests.Components
     public class NavLinkTests : BunitTest
     {
         /// <summary>
-        /// When Target is not empty, rel attribute should be equals to "noopener noreferrer" on the a element
+        /// When Target is set to Blank, it should equal noopener noreferrer, otherwise it should be empty.
         /// </summary>
-        [TestCase(LinkTarget.Self, "noopener noreferrer")]
+        [TestCase(LinkTarget.Self, "")]
         [TestCase(LinkTarget.Blank, "noopener noreferrer")]
-        [TestCase(LinkTarget.Parent, "noopener noreferrer")]
-        [TestCase(LinkTarget.Top, "noopener noreferrer")]
-        [TestCase(LinkTarget.Iframe, "noopener noreferrer", "myFrameName")]
+        [TestCase(LinkTarget.Parent, "")]
+        [TestCase(LinkTarget.Top, "")]
+        [TestCase(LinkTarget.Iframe, "", "myFrameName")]
         [TestCase(LinkTarget.Iframe, "")]
         public void NavLink_CheckRelAttribute(LinkTarget target, string expectedRel, string iframe = "")
         {
