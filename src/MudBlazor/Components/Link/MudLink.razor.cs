@@ -37,7 +37,7 @@ public partial class MudLink : MudComponentBase
             {
                 attributes["href"] = Href;
                 attributes["target"] = Target.GetDescriptionStringOrFrameTarget(FrameTarget);
-                attributes["rel"] = Rel;
+                attributes["rel"] = GetRel();
             }
 
             if (OnClick.HasDelegate)
@@ -154,5 +154,14 @@ public partial class MudLink : MudComponentBase
         }
 
         await OnClick.InvokeAsync(ev);
+    }
+
+    protected string? GetRel()
+    {
+        if (Rel is null && Target == LinkTarget.Blank)
+        {
+            return "noopener";
+        }
+        return Rel;
     }
 }

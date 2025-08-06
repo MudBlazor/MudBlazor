@@ -261,7 +261,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var link = Parameter(nameof(MudIconButton.Href), "https://www.google.com");
             var rel = Parameter(nameof(MudIconButton.Rel), "");
-            var target = Parameter(nameof(MudButton.Target), LinkTarget.Iframe);
+            var target = Parameter(nameof(MudIconButton.Target), LinkTarget.Iframe);
             var comp = Context.RenderComponent<MudIconButton>(link, rel, target);
             comp
                 .Find("a")
@@ -386,7 +386,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var link = Parameter(nameof(MudFab.Href), "https://www.google.com");
             var rel = Parameter(nameof(MudFab.Rel), null);
-            var target = Parameter(nameof(MudButton.Target), LinkTarget.Iframe);
+            var target = Parameter(nameof(MudFab.Target), LinkTarget.Iframe);
             var comp = Context.RenderComponent<MudFab>(link, rel, target);
             comp
                 .Find("a")

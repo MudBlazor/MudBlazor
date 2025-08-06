@@ -2,7 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.AspNetCore.Components.Web;
@@ -42,7 +41,7 @@ namespace MudBlazor
             {
                 { "href", Href },
                 { "target", Target.GetDescriptionStringOrFrameTarget(FrameTarget) },
-                { "rel", !string.IsNullOrEmpty(Target.GetDescriptionStringOrFrameTarget(FrameTarget)) ? "noopener noreferrer" : string.Empty }
+                { "rel", Target == LinkTarget.Blank ? "noopener noreferrer" : string.Empty }
             };
         }
 

@@ -39,12 +39,6 @@ public enum LinkTarget
     External,
 
     /// <summary>
-    /// Opens the linked document in a new window or tab
-    /// </summary>
-    [Description("noopener")]
-    NoOpener,
-
-    /// <summary>
     /// Opens the linked document in an iframe. Requires FrameTarget
     /// </summary>
     [Description("iframe")]

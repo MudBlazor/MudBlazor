@@ -133,7 +133,6 @@ public sealed class ApiTextTests : BunitTest
     public void ApiText_RenderSeeCref_ExistingMethod()
     {
         var comp = Context.RenderComponent<ApiText>(Parameter("Text", "When set, calls <see cref=\"M:MudBlazor.AggregateDefinition`1.SimpleAvg\" /> to receive viewport changes."));
-        Console.WriteLine(comp.Markup);
         // There should be a text span
         comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-caption\">When set, calls </span>");
         // Then a link to /api/AggregateDefinition`1#SimpleAvg
