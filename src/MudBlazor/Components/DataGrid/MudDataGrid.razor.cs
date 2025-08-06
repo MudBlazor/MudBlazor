@@ -2155,29 +2155,31 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Shows only the specified columns by title.
+        /// Reorders the columns based on a provided list of column titles.
         /// </summary>
-        /// <param name="columnTitles">List of column titles to be shown</param>
-        /// <remarks>
-        /// Applies to <see cref="Columns"/> where <see cref="Column{T}.Hideable"/> is <c>true</c>.
-        /// </remarks>
-        public async Task OrderColumnsAsync(List<string> columnTitles)
+        /// <param name="columnTitles">An ordered list of column titles. These columns will be moved to the start of the column list in the specified order.</param>
+        public async Task OrderColumnsAsync(IReadOnlyList<string> columnTitles)
         {
-            if (columnTitles.Count == 0)
+            if (columnTitles is null || columnTitles.Count == 0)
                 return;
 
-            var renderedColumns = RenderedColumns
-                .ToDictionary(column => column.Title);
-            
-            foreach (var column in columnTitles.Select((title, index) => (title: title, index)))
+            var columnDict = RenderedColumns.ToDictionary(c => c.Title);
+
+            var orderedPortion = new List<Column<T>>(columnTitles.Count);
+            foreach (var title in columnTitles)
             {
-                if (renderedColumns.TryGetValue(column.title, out var renderedColumn))
+                if (columnDict.TryGetValue(title, out var column))
                 {
-                    RenderedColumns.Remove(renderedColumn);
-                    RenderedColumns.Insert(column.index, renderedColumn);
+                    orderedPortion.Add(column);
                 }
             }
-            
+
+            var remaining = RenderedColumns.Except(orderedPortion).ToList();
+
+            RenderedColumns.Clear();
+            RenderedColumns.AddRange(orderedPortion);
+            RenderedColumns.AddRange(remaining);
+
             DropContainerHasChanged();
             await InvokeAsync(StateHasChanged);
         }
