@@ -531,7 +531,8 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll(".mud-menu")[2].FirstElementChild.ClassName.Should().Contain("mud-menu-activator");
 
             comp.FindAll(".mud-menu")[3].FirstElementChild.Click();
-            comp.Find(".mud-popover-open > .mud-menu-list .mud-menu-item.mud-menu-sub-menu-activator").Should().NotBeNull();
+
+            comp.Find(".mud-popover-open .mud-menu-list .mud-menu-item.mud-menu-sub-menu-activator").Should().NotBeNull();
         }
 
         [Test]
