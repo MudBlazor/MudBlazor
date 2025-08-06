@@ -2071,16 +2071,20 @@ namespace MudBlazor
         /// <remarks>
         /// Applies to <see cref="Columns"/> where <see cref="Column{T}.Hideable"/> is <c>true</c>.
         /// </remarks>
-        public async Task HideColumnsAsync(List<string> columnTitles)
+        public async Task HideColumnsAsync(IEnumerable<string> columnTitles)
         {
-            if (columnTitles.Count == 0)
+            if (columnTitles is null)
                 return;
 
+            var titles = columnTitles.ToArray();
+            if (titles.Length == 0)
+                return;
+            
             var hideableRenderedColumns = RenderedColumns
                 .Where(c => c.hideable)
                 .ToDictionary(column => column.Title);
             
-            foreach (var columnTitle in columnTitles)
+            foreach (var columnTitle in titles)
             {
                 if (hideableRenderedColumns.TryGetValue(columnTitle, out var renderedColumn))
                 {
@@ -2099,18 +2103,22 @@ namespace MudBlazor
         /// <remarks>
         /// Applies to <see cref="Columns"/> where <see cref="Column{T}.Hideable"/> is <c>true</c>.
         /// </remarks>
-        public async Task ShowColumnsAsync(List<string> columnTitles)
+        public async Task ShowColumnsAsync(IEnumerable<string> columnTitles)
         {
-            if (columnTitles.Count == 0)
+            if (columnTitles is null)
                 return;
 
+            var titles = columnTitles.ToArray();
+            if (titles.Length == 0)
+                return;
+            
             await HideAllColumnsAsync();
             
             var hideableRenderedColumns = RenderedColumns
                 .Where(c => c.hideable)
                 .ToDictionary(column => column.Title);
             
-            foreach (var columnTitle in columnTitles)
+            foreach (var columnTitle in titles)
             {
                 if (hideableRenderedColumns.TryGetValue(columnTitle, out var renderedColumn))
                 {
