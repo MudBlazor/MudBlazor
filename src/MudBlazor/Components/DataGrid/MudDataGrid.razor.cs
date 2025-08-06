@@ -2375,12 +2375,10 @@ namespace MudBlazor
         /// </summary>
         public async Task ExpandAllHierarchy()
         {
-            foreach (var item in FilteredItems)
+            var expandedItems = FilteredItems.Where(x => !_buttonDisabledFunc(x) && _openHierarchies.Add(x));
+            foreach (var item in expandedItems)
             {
-                if (!_buttonDisabledFunc(item) && _openHierarchies.Add(item))
-                {
-                    await HierarchyVisibilityToggled.InvokeAsync(new(item, true));
-                }
+                await HierarchyVisibilityToggled.InvokeAsync(new(item, true));
             }
             await InvokeAsync(StateHasChanged);
         }
