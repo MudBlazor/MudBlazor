@@ -1,5 +1,6 @@
 comment:
   require_changes: true
+  only_if_failed: true
 coverage:
   status:
     project:

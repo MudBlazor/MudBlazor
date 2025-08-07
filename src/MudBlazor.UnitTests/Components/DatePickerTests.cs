@@ -463,11 +463,16 @@ namespace MudBlazor.UnitTests.Components
 
             picker.Markup.Should().Contain("mud-selected"); //confirm selected date is shown
 
+
+            // Calculate expected date before selection
+            var date = DateTime.Today.Subtract(TimeSpan.FromDays(60));
+            var expectedDate = new DateTime(date.Year, date.Month, 23);
+
+            // Select the date
             comp.SelectDate("23");
 
-            var date = DateTime.Today.Subtract(TimeSpan.FromDays(60));
-
-            picker.Instance.Date.Should().Be(new DateTime(date.Year, date.Month, 23));
+            // Wait for the date picker to update its state after selection
+            comp.WaitForAssertion(() => picker.Instance.Date.Should().Be(expectedDate));
         }
 
         [Test]

@@ -313,14 +313,25 @@ window.mudpopoverHelper = {
                 popoverContentNode.style['min-width'] = (boundingRect.width) + 'px';
             }
 
-            // Reset max-height if it was previously set and anchor is in bounds
-            if (popoverContentNode.mudHeight && anchorY > 0 && anchorY < window.innerHeight) {
-                popoverContentNode.style.maxHeight = null;
-                popoverContentNode.mudHeight = null;
-            }
-
             // flipping logic
             if (isFlipOnOpen || isFlipAlways) {
+
+                // Reset max-height if it was previously set and anchor is in bounds
+                // Adjust .mud-list children if they would run off screen even after flipping
+                const firstChild = popoverContentNode.firstElementChild;
+                // Check if firstChild exists, has a classList, and is a mud-list
+                const isList =
+                    firstChild &&
+                    firstChild.classList &&
+                    firstChild.classList.contains("mud-list");
+                // we do it here to ensure it flips properly if more space becomes available on the other side.
+                if (popoverContentNode.mudHeight && anchorY > 0 && anchorY < window.innerHeight) {
+                    popoverContentNode.style.maxHeight = null;
+                    if (isList) {
+                        popoverContentNode.firstElementChild.style.maxHeight = null;
+                    }
+                    popoverContentNode.mudHeight = null;
+                }
 
                 const appBarElements = document.getElementsByClassName("mud-appbar mud-appbar-fixed-top");
                 let appBarOffset = 0;
@@ -525,54 +536,55 @@ window.mudpopoverHelper = {
                     this.updatePopoverZIndex(popoverContentNode, appBarElements[0]);
                 }
 
-                const firstChild = popoverContentNode.firstElementChild;
+                // height adjustment logic for mud lists
+                if (isList) {
+                    const popoverStyle = popoverContentNode.style;
+                    const listStyle = firstChild.style;
 
-                // adjust the popover position/maxheight if it or firstChild does not have a max-height set (even if set to 'none')
-                // exceeds the bounds and doesn't have a max-height set by the user
-                // maxHeight adjustments stop the minute popoverNode is no longer inside the window
-                // Check if max-height is set on popover or firstChild
-                const hasMaxHeight = popoverContentNode.style.maxHeight != '' || (firstChild && firstChild.style.maxHeight != '');
-                const isList = firstChild && firstChild.classList && firstChild.classList.contains("mud-list");
+                    // If there is no max height set we need to check the height
+                    // we reset previously flipped at the start of flipping logic
+                    // a Style setting of max-height: unset; will bypass this check
+                    const isUnset = (val) =>
+                        val == null || val === '' || val === 'none';
+                    const checkHeight = isUnset(popoverStyle.maxHeight) && isUnset(listStyle.maxHeight);
 
-                if (!hasMaxHeight && isList) {
-                    // in case of a reflow check it should show from top properly
-                    let shouldShowFromTop = false;
-                    // calculate new max height if it exceeds bounds
-                    let newMaxHeight = window.innerHeight - top - offsetY - window.mudpopoverHelper.overflowPadding; // downwards
+                    if (checkHeight) {
+                        const overflowPadding = window.mudpopoverHelper.overflowPadding;
+                        const isCentered = Array.from(classList).some(cls =>
+                            cls.includes('mud-popover-anchor-center')
+                        );
 
-                    // Check if this is a flipped popover showing upward
-                    // Convert classList to an array and check if any class contains the substring
-                    const isCentered = Array.from(classList).some(className => className.includes('mud-popover-anchor-center'));
-                    const isFlippedUpward = !isCentered && ( // center anchors don't flip
-                                            popoverContentNode.getAttribute('data-mudpopover-flip') === 'top' ||
-                                            popoverContentNode.getAttribute('data-mudpopover-flip') === 'top-and-left' ||
-                                            popoverContentNode.getAttribute('data-mudpopover-flip') === 'top-and-right');
+                        const flipAttr = popoverContentNode.getAttribute('data-mudpopover-flip');
+                        const isFlippedUpward = !isCentered && (
+                            flipAttr === 'top' ||
+                            flipAttr === 'top-and-left' ||
+                            flipAttr === 'top-and-right'
+                        );
 
-                    // moving upwards
-                    if (top + offsetY < anchorY || top + offsetY == window.mudpopoverHelper.overflowPadding) {
-                        shouldShowFromTop = true;
-                        // adjust newMaxHeight if flipped upwards
+                        let availableHeight;
+                        let shouldClamp = false;
+
                         if (isFlippedUpward) {
-                            newMaxHeight = anchorY - window.mudpopoverHelper.overflowPadding - popoverNode.offsetHeight;
+                            availableHeight = anchorY - overflowPadding - popoverNode.offsetHeight;
+                            shouldClamp = availableHeight < popoverContentNode.offsetHeight;
+                            if (shouldClamp) {
+                                top = overflowPadding;
+                                offsetY = 0;
+                            }
+                        } else {
+                            // Space from popover top down to bottom of screen
+                            const popoverTopEdge = top + offsetY;
+                            availableHeight = window.innerHeight - popoverTopEdge - overflowPadding;
+                            shouldClamp = popoverContentNode.offsetHeight > availableHeight;
                         }
-                        // adjust newMaxHeight if not flipped upwards
-                        else {
-                            newMaxHeight = anchorY - window.mudpopoverHelper.overflowPadding;
-                        }
-                    }
 
-                    // if calculated height exceeds the new maxheight
-                    if (popoverContentNode.offsetHeight > newMaxHeight) {
-                        if (shouldShowFromTop) { // adjust top to show from top
-                            // also adjust newMaxHeight 
-                            top = window.mudpopoverHelper.overflowPadding;                          
-                            offsetY = 0;
+                        if (shouldClamp) {
+                            const minVisibleHeight = overflowPadding * 3;
+                            const newMaxHeight = Math.max(availableHeight, minVisibleHeight);
+                            popoverContentNode.style.maxHeight = `${newMaxHeight}px`;
+                            firstChild.style.maxHeight = `${newMaxHeight}px`;
+                            popoverContentNode.mudHeight = "setmaxheight";
                         }
-                        // set newMaxHeight to be minimum of 3x overflow padding, by default 72px (or 3 items roughly)
-                        newMaxHeight = Math.max(newMaxHeight, window.mudpopoverHelper.overflowPadding * 3);
-                        popoverContentNode.style.maxHeight = (newMaxHeight) + 'px';
-                        firstChild.style.maxHeight = (newMaxHeight) + 'px';
-                        popoverContentNode.mudHeight = "setmaxheight";
                     }
                 }
             }
