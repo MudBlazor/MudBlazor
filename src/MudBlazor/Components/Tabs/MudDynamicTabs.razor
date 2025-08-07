@@ -29,7 +29,8 @@
                         <MudIconButton Icon="@CloseTabIcon"
                                        Class="@CloseIconClass"
                                        Style="@CloseIconStyle"
-                                       OnClick="() => CloseTab.InvokeAsync(context)"/>
+                                       OnClick="() => CloseTab.InvokeAsync(context)"
+                                       @onkeydown="@(e => HandleTabKeyDownAsync(e, context))"/>
                     </MudTooltip>
                 }
                 else
@@ -37,7 +38,8 @@
                     <MudIconButton Icon="@CloseTabIcon"
                                    Class="@CloseIconClass"
                                    Style="@CloseIconStyle"
-                                   OnClick="() => CloseTab.InvokeAsync(context)"/>
+                                   OnClick="() => CloseTab.InvokeAsync(context)"
+                                   @onkeydown="@(e => HandleTabKeyDownAsync(e, context))"/>
                 }
             }
         </MudRender>;

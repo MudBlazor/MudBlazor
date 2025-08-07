@@ -1,0 +1,113 @@
+﻿@using System.Collections.ObjectModel
+<CascadingValue Name="RightToLeft" Value="@RightToLeft" IsFixed="true">
+    <MudDataGrid @ref="_dataGrid" T="Model" ServerData="ServerReload" Filterable="false" ExpandSingleRow="@ExpandSingleRow" RowsPerPage="_rowsPerPage">
+        <Columns>
+            <HierarchyColumn EnableHeaderToggle="@EnableHeaderToggle" ButtonDisabledFunc="@(x => x.Name == "Alicia")" InitiallyExpandedFunc="@(x => x.Name == "Ira" || x.Name == "Anders" || x.Name == "ScarletKuro")" />
+            <PropertyColumn Property="x => x.Name" />
+            <PropertyColumn Property="x => x.Age" />
+            <PropertyColumn Property="x => x.Status" />
+        </Columns>
+        <ChildRowContent>
+            <tr>
+                <td colspan="3">@($"uid = {context.Item.Name}|{context.Item.Age}|{context.Item.Status}|{Guid.NewGuid()}")</td>
+            </tr>
+        </ChildRowContent>
+        <PagerContent>
+            <MudDataGridPager />
+        </PagerContent>        
+    </MudDataGrid>
+</CascadingValue>
+<MudButton OnClick="@ExpandAll" Color="@Color.Primary">Expand All</MudButton>
+<MudButton OnClick="@CollapseAll" Color="@Color.Primary">Collapse All</MudButton>
+<MudSwitch @bind-Value="EnableHeaderToggle" Label="Enable Header Toggle" />
+<MudSwitch @bind-Value="ExpandSingleRow" Label="Expand Single Row" />
+@code {
+    public static string __description__ = "A test for Initially Expanded when Items are from ServerData.";
+    [Parameter]
+    public bool RightToLeft { get; set; }
+
+    [Parameter]
+    public bool EnableHeaderToggle { get; set; }
+
+    [Parameter]
+    public bool ExpandSingleRow { get; set; }
+
+    private MudDataGrid<Model> _dataGrid = null!;
+    private int _rowsPerPage = 5;
+
+    private List<Model> _itemList = 
+        new List<Model>
+        {
+            new Model("Sam", 56, Severity.Normal),
+            new Model("Alicia", 54, Severity.Info),
+            new Model("Ira", 27, Severity.Success),
+            new Model("John", 32, Severity.Warning),
+            new Model("Anders", 24, Severity.Error),
+            new Model("Anu6is", 56, Severity.Normal),
+            new Model("Henon", 54, Severity.Info),
+            new Model("ScarletKuro", 27, Severity.Success),
+            new Model("Garderoben", 32, Severity.Warning),
+            new Model("Versile2", 24, Severity.Error)
+        };
+
+    private async Task<GridData<Model>> ServerReload(GridState<Model> state)
+    {
+        await Task.Delay(200);
+
+        IEnumerable<Model> data = _itemList;
+
+        IOrderedEnumerable<Model>? orderedData = null;
+
+        foreach (var sort in state.SortDefinitions)
+        {
+            Func<Model, object>? keySelector = sort.SortBy switch
+            {
+                nameof(Model.Name) => x => x.Name,
+                nameof(Model.Age) => x => x.Age,
+                nameof(Model.Status) => x => x.Status,
+                _ => null
+            };
+
+            if (keySelector == null)
+                continue;
+
+            if (orderedData == null)
+            {
+                orderedData = sort.Descending
+                    ? data.OrderByDescending(keySelector)
+                    : data.OrderBy(keySelector);
+            }
+            else
+            {
+                orderedData = sort.Descending
+                    ? orderedData.ThenByDescending(keySelector)
+                    : orderedData.ThenBy(keySelector);
+            }
+        }
+
+        var finalData = (orderedData ?? data);
+
+        var pagedData = finalData
+            .Skip(state.Page * state.PageSize)
+            .Take(state.PageSize)
+            .ToList();
+
+        return new GridData<Model>
+        {
+            TotalItems = _itemList.Count,
+            Items = pagedData
+        };
+    }
+
+    private Task ExpandAll()
+    {
+        return _dataGrid.ExpandAllHierarchy();
+    }
+
+    private Task CollapseAll()
+    {
+        return _dataGrid.CollapseAllHierarchy();
+    }
+
+    public record Model(string Name, int Age, Severity Status);
+}

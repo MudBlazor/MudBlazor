@@ -788,13 +788,5 @@ namespace MudBlazor
 
             await _inputIdState.SetValueAsync(_componentId);
         }
-
-        protected async Task HandleContainerClick()
-        {
-            if (!_isFocused && IsJSRuntimeAvailable)
-            {
-                await JsRuntime.InvokeVoidAsync("mudInput.focusInput", InputElementId);
-            }
-        }
     }
 }

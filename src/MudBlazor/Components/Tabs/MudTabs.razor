@@ -4,7 +4,7 @@
 <div @attributes="UserAttributes" class="@TabsClassnames" style="@Style">
     <CascadingValue Value="this" IsFixed="true">
         <div class="@TabBarClassnames">
-            <div class="mud-tabs-tabbar-inner" style="@MaxHeightStyles">
+            <div class="mud-tabs-tabbar-inner" style="@MaxHeightStyles" id="@_elementId">
                 @if (HeaderPosition == TabHeaderPosition.Before && Header != null)
                 {
                     <div class="mud-tabs-header mud-tabs-header-before">
@@ -23,7 +23,7 @@
                         {
                             <MudDropContainer @ref="_dropContainer" T="MudTabPanel" Class="@WrapperClassnames" Style="@WrapperScrollStyle" Items="_panels"
                                               ItemsSelector="@((item,dropzone) => true)" ItemDropped="@ItemUpdated"
-                                              ItemDisabled="@((item) => item.Disabled)">
+                                              ItemDisabled="@((item) => item.Disabled)" role="tablist">
                                 <ChildContent>
                                     <MudDropZone T="MudTabPanel" Identifier="mud-tabs-dropzone" Class="@DropZoneClassnames" AllowReorder="true" />
                                     @if (!HideSlider && IsSliderPositionDetermined)
@@ -38,7 +38,7 @@
                         }
                         else
                         {
-                            <div class="@WrapperClassnames" style="@WrapperScrollStyle">
+                            <div class="@WrapperClassnames" style="@WrapperScrollStyle" role="tablist">
                                 @RenderTabSection()
                                 @if (!HideSlider && IsSliderPositionDetermined)
                                 {
@@ -100,9 +100,10 @@
         }
     </text>;
 
-    RenderFragment RenderTab(MudTabPanel panel) => @<div @ref="panel.PanelRef" class="@GetTabClass(panel)" style="@GetTabStyle(panel)" @onclick="@( e => ActivatePanel(panel, e, false) )">
+    RenderFragment RenderTab(MudTabPanel panel) => @<div @ref="panel.PanelRef" class="@GetTabClass(panel)" style="@GetTabStyle(panel)" @onclick="@( e => ActivatePanel(panel, e, false) )"
+    aria-controls="@GetTabPanelId(panel)" role="tab" id="@GetTabId(panel)" aria-selected="@(panel == ActivePanel ? "true" : "false")" tabindex="@(panel == ActivePanel ? "0" : "-1")" @onkeydown="@(e => HandleTabKeyDownAsync(e, panel))">
         @if (TabPanelHeaderPosition == TabHeaderPosition.Before && TabPanelHeader != null)
-            {
+            { 
                 <div class="mud-tabs-panel-header mud-tabs-panel-header-before">
                     @TabPanelHeader(panel)
                 </div>
