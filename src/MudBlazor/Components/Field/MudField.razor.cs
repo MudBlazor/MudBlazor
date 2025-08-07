@@ -19,7 +19,12 @@ namespace MudBlazor
                 .AddClass($"mud-input-adorned-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
                 .AddClass($"mud-input-margin-{Margin.ToDescriptionString()}", () => Margin != Margin.None)
                 .AddClass("mud-input-underline", () => Underline && Variant != Variant.Outlined)
-                .AddClass("mud-shrink", () => !string.IsNullOrWhiteSpace(ChildContent?.ToString()) || Adornment == Adornment.Start)
+                // Without the mud-shrink class, the label will become a placeholder
+                // Apply "mud-shrink" only if ShrinkLabel is false AND
+                // (there is content OR the adornment is at the start)
+                .AddClass("mud-shrink",
+                    !ShrinkLabel &&
+                         (ChildContent != null || Adornment == Adornment.Start))
                 .AddClass("mud-disabled", Disabled)
                 .AddClass("mud-input-error", Error && !string.IsNullOrEmpty(ErrorText))
                 .AddClass($"mud-typography-{Typo.ToDescriptionString()}")
@@ -178,6 +183,16 @@ namespace MudBlazor
         public Color AdornmentColor { get; set; } = Color.Default;
 
         /// <summary>
+        /// The <c>aria-label</c> for the adornment.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public string? AdornmentAriaLabel { get; set; }
+
+        /// <summary>
         /// The size of the icon.
         /// </summary>
         /// <remarks>
@@ -212,5 +227,17 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Field.Appearance)]
         public bool Underline { get; set; } = true;
+
+        /// <summary>
+        /// Controls whether the label is displayed inside the field or shrinks above it when the field does not have focus.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// <para>When <c>false</c>, the label behaves like a placeholder and shrinks only if there is content or an adornment at the start.</para>
+        /// <para>When <c>true</c>, the label does not shrink and remains as a placeholder regardless of content, which may result in overlap.</para>
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public bool ShrinkLabel { get; set; }
     }
 }

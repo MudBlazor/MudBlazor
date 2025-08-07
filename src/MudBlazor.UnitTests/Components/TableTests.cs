@@ -5,6 +5,7 @@ using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.UnitTests.TestComponents.DataGrid;
 using MudBlazor.UnitTests.TestComponents.Table;
 using NUnit.Framework;
 
@@ -2666,6 +2667,30 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll(".mud-table-pagination-actions .mud-button-root")[2].Click();
             comp.WaitForAssertion(() => table.CurrentPage.Should().Be(2));
             comp.WaitForAssertion(() => comp.Find(".mud-table-body .mud-table-row .mud-table-cell").TextContent.Should().Be("3"));
+        }
+
+        /// <summary>
+        /// Table initialized to display the third page
+        /// </summary>
+        /// <remarks>
+        /// Table.CurrentPage start at 0, so 2 is the second page
+        /// https://github.com/MudBlazor/MudBlazor/issues/11727
+        /// </remarks>
+        [Test]
+        public void Table_WithCurrentPage_ShouldFirstRenderThisPage()
+        {
+            // Arrange
+
+            var comp = Context.RenderComponent<TableCurrentPageParameterIntialized>();
+            var table = comp.FindComponent<MudTable<int>>().Instance;
+
+            // Assert : DataGrid is initialized with CurrentPage at 2
+
+            table.CurrentPage.Should().Be(2);
+
+            // Assert : The first item in the third page is 20
+
+            comp.Find(".mud-table-body .mud-table-row .mud-table-cell").TextContent.Should().Be("20");
         }
 
         [Test]
