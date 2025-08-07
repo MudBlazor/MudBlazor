@@ -2,7 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-class MudTableCell {
+window.mudTableCell = {
     focusCell(rowId, cellIndex) {
         const row = document.getElementById(rowId);
         if (!row) return;
@@ -14,7 +14,7 @@ class MudTableCell {
             cell.focus();
             cell.click();
         }
-    }
+    },
 
     selectCell(rowId, cellIndex) {
         const row = document.getElementById(rowId);
@@ -32,5 +32,3 @@ class MudTableCell {
         }
     }
 }
-
-window.mudTableCell = new MudTableCell();
