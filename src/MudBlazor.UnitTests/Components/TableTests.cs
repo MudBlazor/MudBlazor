@@ -9,7 +9,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 using Microsoft.JSInterop.Infrastructure;
 using Moq;
-using MudBlazor.UnitTests.TestComponents.DataGrid;
 using MudBlazor.UnitTests.TestComponents.Table;
 using NUnit.Framework;
 
