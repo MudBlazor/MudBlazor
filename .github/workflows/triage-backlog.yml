@@ -63,7 +63,7 @@ jobs:
           # Use input for permissions, fallback to repo variable for scheduled runs.
           AUTOTRIAGE_PERMISSIONS: ${{ github.event_name == 'workflow_dispatch' && inputs.permissions || vars.AUTOTRIAGE_PERMISSIONS }}
           # Use a fixed limit for scheduled runs, fallback to manual input.
-          MAX_ISSUES: ${{ github.event_name == 'schedule' && 100 || inputs.backlog-size }}
+          MAX_ISSUES: ${{ github.event_name == 'schedule' && 1000 || inputs.backlog-size }}
         run: |
           # Process specified issues, or fetch from the backlog.
           if [ -n "${{ inputs.issue-numbers }}" ]; then
@@ -71,13 +71,11 @@ jobs:
             issue_numbers="${{ inputs.issue-numbers }}"
             max_count=""
           else
-            echo "Analyzing up to $MAX_ISSUES issues"
+            echo "Scanning all issues; analyzing up to $MAX_ISSUES with $AUTOTRIAGE_PERMISSIONS permissions"
             issue_numbers=$(gh pr list --state open --limit 9999 --search 'sort:updated-desc' --json number --jq '.[].number')
             issue_numbers+=" $(gh issue list --state open --limit 9999 --search 'sort:updated-desc' --json number --jq '.[].number')"
             max_count="$MAX_ISSUES"
           fi
-
-          echo "Searching through $(echo \"$issue_numbers\" | wc -w) total issues from GitHub..."
 
           count=0
           for issue_number in $issue_numbers; do
@@ -92,18 +90,17 @@ jobs:
               count=$((count + 1))
               if [ -n "$max_count" ]; then
                 left=$((max_count - count))
-                echo "⏭️ $(date '+%Y-%m-%d %H:%M:%S'): $left left"
               fi
-              sleep 10 # Rate limit
             else
               exit_code=$?
               if [ "$exit_code" -eq 1 ]; then
                 exit 1
               elif [ "$exit_code" -eq 2 ]; then
-                # No-op for skippable issues.
-                :
+                sleep 10 # Rate limit
               elif [ "$exit_code" -eq 3 ]; then
                 exit 0
+              elif [ "$exit_code" -eq 4 ]; then
+                : # Skip issue
               else
                 exit "$exit_code"
               fi
@@ -112,6 +109,7 @@ jobs:
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: triage-artifacts
           path: |

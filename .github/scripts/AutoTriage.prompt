@@ -89,7 +89,7 @@ versile2
 "security": "Impacts application security, including vulnerabilities or data protection"
 "stale": "Indicates an issue is inactive and will be closed if no further updates occur"
 "tests": "Relates to unit, integration, or other automated testing frameworks"
-"triage needed": "Applied to issues or pull requests that are urgent, or when the author is making a genuine effort in follow up comments to engage with maintainers but no collaborator has responded in over two weeks"
+"triage needed": "Applied to issues or pull requests that need attention from a maintainer"
 "PR: needs review": "Legacy label that no longer exists and should be ignored in the timeline"
 
 ## LABELING GUIDELINES
@@ -117,9 +117,11 @@ When to apply specific labels:
     - Always post a comment explaining why label was added and direct to appropriate community channels.
 - 'triage needed':
     - Apply to urgent issues or pull requests requiring immediate attention due to severity, impact, or time sensitivity.
-    - Also apply to issues or pull requests where the author is making a genuine effort to work with maintainers (e.g., providing details, responding to feedback, or constructively following up), but no collaborator has responded in over a month (compare last collaborator reply date to "Current triage date").
+    - Apply when the author is making a genuine effort to work with maintainers (e.g., providing details, responding to feedback, or constructively following up), but no collaborator has responded in over a month (compare last collaborator reply date to "Current triage date").
     - Do NOT apply if the author is only posting 'bump', 'any update?', or similar non-constructive comments, because that will reset the timer.
     - This label is for surfacing items that need a maintainer's attention, not for low-effort follow-ups.
+    - Do NOT apply when the issue was not created by a collaborator or a bot"
+    - Do NOT apply when the issue has no assignee
 - 'regression': Apply with 'bug' to indicate high-priority bug where a feature that previously worked is now broken.
 - 'good first issue': Only apply to issues that are completely clear, well-defined, and have reached consensus. Never apply to ambiguous issues or those still under discussion about the approach or requirements.
 - 'help wanted': Only apply when there is demonstrated ongoing community interest through multiple comments, reactions, or confirmations from different users.
@@ -243,14 +245,17 @@ Don't close issues for any other reason, even if they're low quality, invalid, o
 ## STALE ISSUE IDENTIFICATION
 
 **Mark an issue as stale if ALL of these conditions are met:**
-- A bug report has had no activity (excluding label changes) for over a year OR any issue has had one or more of these labels for at least 14 days consecutively: `info required`, `question`, `answered`, `not planned`, `duplicate`, `invalid`, `fixed`
+- The issue meets at least one of the following criteria:
+  - It is a bug report with no activity (excluding label or title changes) for over one year.
+  - It is a feature request with no activity (excluding label or title changes) for over two years.
+  - It has had one or more of these labels for at least 14 days consecutively: `info required`, `question`, `answered`, `not planned`, `duplicate`, `invalid`, `fixed`.
 - Issue does NOT have the `on hold`, `help wanted`, or `triage needed` label
 - Issue was not created by a collaborator or a bot
 - Issue has no assignee
 
 **Mark a pull request as stale if ALL of these conditions are met:**
-- PR has had no activity (excluding label changes) for at least 90 days consecutively
-- PR does NOT have the `on hold`, `breaking change`, or `triage needed` label
+- PR has had no activity (excluding label or title changes) for at least 90 days consecutively
+- PR does NOT have the `on hold` or `triage needed` label
 - PR was not created by a collaborator or a bot
 - PR has no assignee
 
