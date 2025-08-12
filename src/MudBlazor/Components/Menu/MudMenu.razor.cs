@@ -380,7 +380,7 @@ namespace MudBlazor
         public EventCallback<bool> OpenChanged { get; set; }
 
         [CascadingParameter]
-        protected MudMenu? ParentMenu { get; set; }
+        internal MudMenu? ParentMenu { get; set; }
 
         protected bool GetActivatorHidden() => ActivatorContent is null && string.IsNullOrWhiteSpace(Label) && string.IsNullOrWhiteSpace(Icon);
 
@@ -811,12 +811,22 @@ namespace MudBlazor
 
             if (e.Key == "ArrowDown")
             {
-                _focusedIndex = (_focusedIndex + 1) % items.Count;
+                do
+                {
+                    _focusedIndex = (_focusedIndex + 1) % items.Count;
+                }
+                while (GetItemDisabled(_menuItems[_focusedIndex]));
+
                 await FocusItem(_focusedIndex);
             }
             else if (e.Key == "ArrowUp")
             {
-                _focusedIndex = (_focusedIndex - 1 + items.Count) % items.Count;
+                do
+                {
+                    _focusedIndex = (_focusedIndex - 1 + items.Count) % _menuItems.Count;
+                }
+                while (GetItemDisabled(_menuItems[_focusedIndex]));
+
                 await FocusItem(_focusedIndex);
             }
             else if (e.Key == "ArrowRight")

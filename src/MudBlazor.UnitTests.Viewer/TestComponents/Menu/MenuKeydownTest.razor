@@ -1,0 +1,23 @@
+﻿<MudPopoverProvider />
+
+<MudMenu Label="Full Menu Width" Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" PopoverClass="menu-popover-class" Disabled="DisableMenu">
+	<MudMenuItem Class="test-class">1</MudMenuItem>
+	<MudMenuItem Href="https://www.test.com">2</MudMenuItem>
+	<MudMenuItem Href="https://www.test.com" Target="_blank">3</MudMenuItem>
+	<MudMenu Label="4">
+		<MudMenu Label="4.1">
+			<MudMenuItem Label="4.1.1" />
+			<MudMenuItem Label="4.1.2" />
+			<MudMenuItem Label="4.1.3" />
+		</MudMenu>
+
+		<MudMenuItem Label="4.2" />
+	</MudMenu>
+	<MudMenuItem Disabled>5 Disabled</MudMenuItem>
+	<MudMenuItem>6</MudMenuItem>
+</MudMenu>
+
+@code {
+	[Parameter]
+	public bool DisableMenu { get; set; }
+}
