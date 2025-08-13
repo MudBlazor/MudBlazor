@@ -835,29 +835,34 @@ namespace MudBlazor
                 if (_focusedIndex >= 0 && _focusedIndex < _menuItems.Count)
                 {
                     var currentItem = _menuItems[_focusedIndex];
+                    bool openedSubMenu = false;
 
-                    // Check if this item activates a submenu
-                    if (GetItemActivatesSubMenu(currentItem))
+                    switch (currentItem)
                     {
-                        // Handle submenu activation
-                        if (currentItem is MudMenuItem menuItem && menuItem.ActivatesSubMenu)
-                        {
-                            // If this item has a submenu, open it
-                            if (_itemToSubmenuMap.ContainsKey(menuItem))
+                        case MudMenuItem menuItem:
+                            if (_itemToSubmenuMap.TryGetValue(menuItem, out var submenu))
                             {
-                                var submenu = _itemToSubmenuMap[menuItem];
                                 await submenu.OpenSubMenuAsync(EventArgs.Empty);
+                                openedSubMenu = true;
                             }
-                        }
-                        else if (currentItem is MudMenu submenu)
-                        {
-                            // Open the submenu directly
-                            await submenu.OpenSubMenuAsync(EventArgs.Empty);
-                        }
+                            else
+                            {
+                                await menuItem.InvokeClickAsync();
+                            }
+                            break;
+
+                        case MudMenu menu:
+                            await menu.OpenSubMenuAsync(EventArgs.Empty);
+                            openedSubMenu = true;
+                            break;
+
+                        default:
+                            break;
                     }
-                    else
+
+                    // Else close all menus
+                    if (!openedSubMenu)
                     {
-                        // Close the menu if there are no further menu items on the arrow right
                         await CloseAllMenusAsync();
                     }
                 }
@@ -995,7 +1000,14 @@ namespace MudBlazor
             {
                 var item = _menuItems[index];
 
-                var elementRef = GetItemElementRef(item);
+                /// Retrieves the cref ElementRef associated with a menu item or submenu to allow focus control.
+                ElementReference elementRef = item switch
+                {
+                    MudMenuItem menuItem => menuItem.ElementRef,
+                    MudMenu menu => menu._menuItemActivator?.ElementRef ?? default,
+                    _ => default
+                };
+
                 if (elementRef.Context is not null)
                 {
                     await elementRef.FocusAsync();
@@ -1063,33 +1075,6 @@ namespace MudBlazor
             {
                 MudMenuItem menuItem => menuItem.GetDisabled(),
                 MudMenu menu => menu.Disabled,
-                _ => false
-            };
-        }
-
-        /// <summary>
-        /// Retrieves the <see cref="ElementReference"/> associated with a menu item or submenu
-        /// to allow focus control.
-        /// </summary>
-        private ElementReference GetItemElementRef(object item)
-        {
-            return item switch
-            {
-                MudMenuItem menuItem => menuItem.ElementRef,
-                MudMenu menu => menu._menuItemActivator?.ElementRef ?? default,
-                _ => default
-            };
-        }
-
-        /// <summary>
-        /// Determines whether the specified menu item or submenu activates a nested submenu.
-        /// </summary>
-        private bool GetItemActivatesSubMenu(object item)
-        {
-            return item switch
-            {
-                MudMenuItem menuItem => _itemToSubmenuMap.ContainsKey(menuItem),
-                MudMenu menu => true,
                 _ => false
             };
         }
