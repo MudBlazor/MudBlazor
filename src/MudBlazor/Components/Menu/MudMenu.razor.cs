@@ -1000,7 +1000,7 @@ namespace MudBlazor
             {
                 var item = _menuItems[index];
 
-                /// Retrieves the cref ElementRef associated with a menu item or submenu to allow focus control.
+                // Retrieves the cref ElementRef associated with a menu item or submenu to allow focus control.
                 ElementReference elementRef = item switch
                 {
                     MudMenuItem menuItem => menuItem.ElementRef,
@@ -1069,7 +1069,7 @@ namespace MudBlazor
         /// <summary>
         /// Determines whether the specified menu item or submenu is disabled.
         /// </summary>
-        private bool GetItemDisabled(object item)
+        internal bool GetItemDisabled(object item)
         {
             return item switch
             {

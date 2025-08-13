@@ -1067,6 +1067,90 @@ namespace MudBlazor.UnitTests.Components
             GetParentMenuFocusedIndex(comp).Should().Be(5);
         }
 
+        [Test]
+        public async Task GetItemDisabled_Fallback_ReturnsFalse()
+        {
+            // Render your test host that contains a <MudMenu> with items
+            var host = Context.RenderComponent<MenuHrefTest>();
+
+            // Grab the real MudMenu instance rendered inside the host
+            var menu = host.FindComponent<MudMenu>().Instance;
+
+            // Reflect the private method from the MudMenu type
+            var method = typeof(MudMenu).GetMethod(
+                "GetItemDisabled",
+                BindingFlags.NonPublic | BindingFlags.Instance);
+
+            method.Should().NotBeNull("we must invoke the method on MudMenu itself");
+
+            bool result = false;
+
+            // Execute on the renderer's sync context
+            await host.InvokeAsync(() =>
+            {
+                result = (bool)method!.Invoke(menu, [new object()]);
+            });
+
+            result.Should().BeFalse();
+        }
+
+        [Test]
+        public async Task GetItemDisabled_On_MudMenu_Respects_Disabled()
+        {
+            var host = Context.RenderComponent<MenuHrefTest>();
+            var menu = host.FindComponent<MudMenu>().Instance;
+
+            var method = typeof(MudMenu).GetMethod("GetItemDisabled",
+                BindingFlags.NonPublic | BindingFlags.Instance)!;
+            bool whenFalse = false, whenTrue = false;
+
+            await host.InvokeAsync(() =>
+            {
+                // Disabled == false by default
+                whenFalse = (bool)method.Invoke(menu, [menu])!;
+
+                // Flip Disabled to true via reflection so we cover both outcomes
+                var disabledProp = typeof(MudMenu).GetProperty("Disabled",
+                    BindingFlags.Public | BindingFlags.Instance)!;
+                disabledProp.SetValue(menu, true);
+
+                whenTrue = (bool)method.Invoke(menu, [menu])!;
+            });
+
+            whenFalse.Should().BeFalse();
+            whenTrue.Should().BeTrue();
+        }
+
+        [Test]
+        public async Task GetItemDisabled_On_MudMenuItem_Respects_Item_Disabled()
+        {
+            var host = Context.RenderComponent<MenuHrefTest>();
+
+            // Ensure items are rendered
+            await host.InvokeAsync(() =>
+                host.Find(".mud-menu-button-activator").Click()
+            );
+
+            var menu = host.FindComponent<MudMenu>().Instance;
+            var method = typeof(MudMenu).GetMethod("GetItemDisabled",
+                BindingFlags.NonPublic | BindingFlags.Instance)!;
+
+            // Find first enabled and first disabled item instances
+            var items = host.FindComponents<MudMenuItem>().Select(c => c.Instance).ToList();
+            var disabledItem = items.First(i => i.Disabled);
+            var enabledItem = items.First(i => !i.Disabled);
+
+            bool disabledRes = false, enabledRes = true;
+
+            await host.InvokeAsync(() =>
+            {
+                disabledRes = (bool)method.Invoke(menu, [disabledItem])!;
+                enabledRes = (bool)method.Invoke(menu, [enabledItem])!;
+            });
+
+            disabledRes.Should().BeTrue();
+            enabledRes.Should().BeFalse();
+        }
 
         // Test helper for parent menu targeting
         private int GetParentMenuFocusedIndex(IRenderedComponent<MenuKeydownTest> comp)
@@ -1079,6 +1163,5 @@ namespace MudBlazor.UnitTests.Components
                         .Instance
                 );
         }
-
     }
 }
