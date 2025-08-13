@@ -885,7 +885,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Handles keyboard navigation and interaction logic within the menu for enter/space to select or open submenus.
+        /// Handles keyboard navigation and interaction logic within the menu and submenu for enter/space
         /// </summary>
         private async Task HandleActivationKeyAsync(KeyboardEventArgs e)
         {
@@ -1014,12 +1014,8 @@ namespace MudBlazor
                     "mud-list",
                     [
                         // prevent scrolling page
-                        new(" ", preventDown: "key+none", preventUp: "key+none"),
-                        new("Enter", preventDown: "key+none"),
                         new("ArrowDown", preventDown: "key+none"),
                         new("ArrowUp", preventDown: "key+none"),
-                        new("NumpadEnter", preventDown: "key+none"),
-                        new("Backspace", preventDown: "key+none")
                     ]);
 
             await KeyInterceptorService.SubscribeAsync(_elementId, options, keyDown: HandleKeyDownAsync);
