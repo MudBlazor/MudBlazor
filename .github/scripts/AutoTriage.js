@@ -10,14 +10,18 @@ const fs = require('fs');
 const path = require('path');
 
 // Global constants
-const AI_MODEL = 'gemini-2.5-pro';
+const AI_MODEL_FAST = 'gemini-2.5-flash-lite';
+const AI_MODEL_PRO = 'gemini-2.5-pro';
 const DB_PATH = process.env.AUTOTRIAGE_DB_PATH;
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const GITHUB_REPOSITORY = process.env.GITHUB_REPOSITORY;
-const ISSUE_NUMBER = parseInt(process.env.GITHUB_ISSUE_NUMBER, 10);
 const [OWNER, REPO] = (GITHUB_REPOSITORY || '').split('/');
-const ISSUE_PARAMS = { owner: OWNER, repo: REPO, issue_number: ISSUE_NUMBER };
+const PROCESSING_BACKLOG = 'MAX_ISSUES' in process.env;
+const MAX_ISSUES = parseInt(process.env.MAX_ISSUES, 10);
+const GITHUB_ISSUE_NUMBER = process.env.GITHUB_ISSUE_NUMBER ? parseInt(process.env.GITHUB_ISSUE_NUMBER, 10) : null;
+const SPECIFIC_ISSUES = GITHUB_ISSUE_NUMBER ? [GITHUB_ISSUE_NUMBER] :
+    (process.env.ISSUE_NUMBERS ? process.env.ISSUE_NUMBERS.split(/\s+/).map(n => parseInt(n.trim(), 10)).filter(n => !isNaN(n)) : []);
 const VALID_PERMISSIONS = new Set(['label', 'comment', 'close', 'edit']);
 const PERMISSIONS = new Set(
     (process.env.AUTOTRIAGE_PERMISSIONS || '')
@@ -26,7 +30,7 @@ const PERMISSIONS = new Set(
         .filter(p => VALID_PERMISSIONS.has(p))
 );
 
-async function callGemini(prompt) {
+async function callGemini(prompt, model, issueNumber) {
     const payload = {
         contents: [{ parts: [{ text: prompt }] }],
         generationConfig: {
@@ -39,52 +43,49 @@ async function callGemini(prompt) {
                     comment: { type: "string", description: "A comment to reply to the issue with", nullable: true },
                     labels: { type: "array", items: { type: "string" }, description: "The final set of labels the issue should have" },
                     close: { type: "boolean", description: "Set to true if the issue should be closed as part of this action", nullable: true },
-                    newTitle: { type: "string", description: "A new title for the issue or pull request", nullable: true }
+                    newTitle: { type: "string", description: "A new title for the issue or pull request", nullable: true },
+                    needsAction: { type: "boolean", description: "Whether an action should be performed" },
                 },
-                required: ["severity", "reason", "labels"]
+                required: ["severity", "reason", "labels", "needsAction"]
             }
         }
     };
 
     const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${AI_MODEL}:generateContent`,
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
         {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-goog-api-key': GEMINI_API_KEY },
-            body: JSON.stringify(payload),
-            timeout: 60000
+            headers: {
+                'Content-Type': 'application/json',
+                'X-goog-api-key': GEMINI_API_KEY
+            },
+            body: JSON.stringify(payload)
         }
     );
 
-    if (response.status === 429) {
-        console.error('❌ Gemini API returned 429 (Quota exceeded). Exiting and cancelling backlog.');
-        process.exit(3);
-    }
-
-    if (response.status === 503) {
-        console.error('❌ Gemini API returned 503 (Model overloaded). Skipping this issue.');
-        process.exit(2);
-    }
-
+    // Handle specific error cases
+    if (response.status === 429) throw new Error('QUOTA_EXCEEDED');
+    if (response.status === 503) throw new Error('MODEL_OVERLOADED');
     if (!response.ok) {
-        throw new Error(`Gemini: ${response.status} ${response.statusText} — ${await response.text()}`);
+        throw new Error(`${response.status} ${response.statusText}`);
     }
 
     const data = await response.json();
     const result = data?.candidates?.[0]?.content?.parts?.[0]?.text;
 
-    saveArtifact('gemini-output.json', JSON.stringify(data, null, 2));
-    saveArtifact('gemini-analysis.json', result);
+    saveArtifact(issueNumber, `gemini-output-${model}.json`, JSON.stringify(data, null, 2));
 
-    return JSON.parse(result);
+    try {
+        return JSON.parse(result);
+    } catch {
+        throw new Error('INVALID_RESPONSE');
+    }
 }
 
-async function buildMetadata(issue, octokit) {
+async function buildMetadata(issue, sharedData) {
     const isIssue = !issue.pull_request;
     const currentLabels = issue.labels?.map(l => l.name || l) || [];
     const hasAssignee = Array.isArray(issue.assignees) ? issue.assignees.length > 0 : !!issue.assignee;
-    const { data: collaboratorsData } = await octokit.rest.repos.listCollaborators({ owner: OWNER, repo: REPO, per_page: 100 });
-    const { data: releasesData } = await octokit.rest.repos.listReleases({ owner: OWNER, repo: REPO, per_page: 100 });
 
     return {
         title: issue.title,
@@ -98,14 +99,20 @@ async function buildMetadata(issue, octokit) {
         reactions: issue.reactions?.total_count || 0,
         labels: currentLabels,
         assigned: hasAssignee,
-        collaborators: collaboratorsData.map(c => c.login),
-        releases: releasesData.map(r => ({ name: r.tag_name, date: r.published_at })),
+        collaborators: sharedData.collaborators,
+        releases: sharedData.releases,
     };
 }
 
-async function buildTimeline(octokit) {
-    const { data: timelineEvents } = await octokit.rest.issues.listEventsForTimeline({ ...ISSUE_PARAMS, per_page: 100 });
-    saveArtifact(`github-timeline.md`, JSON.stringify(timelineEvents, null, 2));
+async function buildTimeline(octokit, issueNumber) {
+    const timelineEvents = await octokit.paginate(octokit.rest.issues.listEventsForTimeline, {
+        owner: OWNER,
+        repo: REPO,
+        issue_number: issueNumber,
+        per_page: 100
+    });
+
+    saveArtifact(issueNumber, `github-timeline.md`, JSON.stringify(timelineEvents, null, 2));
     return timelineEvents.map(event => {
         const base = { event: event.event, actor: event.actor?.login, timestamp: event.created_at };
         switch (event.event) {
@@ -135,11 +142,11 @@ async function buildTimeline(octokit) {
     }).filter(Boolean);
 }
 
-async function buildPrompt(issue, octokit, previousContext = null) {
+async function buildPrompt(octokit, issue, lastTriaged, previousReasoning, sharedData) {
     const basePrompt = fs.readFileSync(path.join(__dirname, 'AutoTriage.prompt'), 'utf8');
     const issueText = `${issue.title}\n\n${issue.body || ''}`;
-    const metadata = await buildMetadata(issue, octokit);
-    const timelineReport = await buildTimeline(octokit);
+    const metadata = await buildMetadata(issue, sharedData);
+    const timelineReport = await buildTimeline(octokit, issue.number);
     const promptString = `${basePrompt}
 
 === SECTION: ISSUE TO ANALYZE ===
@@ -152,8 +159,8 @@ ${JSON.stringify(metadata, null, 2)}
 ${JSON.stringify(timelineReport, null, 2)}
 
 === SECTION: TRIAGE CONTEXT ===
-Last triaged: ${previousContext?.lastTriaged}
-Previous reasoning: ${previousContext?.previousReasoning}
+Last triaged: ${lastTriaged}
+Previous reasoning: ${previousReasoning}
 Current triage date: ${new Date().toISOString()}
 Current permissions: ${Array.from(PERMISSIONS).join(', ') || 'none'}
 All possible permissions: label (add/remove labels), comment (post comments), close (close issue), edit (edit title)
@@ -162,12 +169,11 @@ All possible permissions: label (add/remove labels), comment (post comments), cl
 Analyze this issue, its metadata, and its full timeline.
 Your entire response must be a single, valid JSON object and nothing else. Do not use Markdown, code fences, or any explanatory text.`;
 
-    saveArtifact(`gemini-input.md`, promptString);
+    saveArtifact(issue.number, `gemini-input.md`, promptString);
     return promptString;
 }
 
-async function updateLabels(suggestedLabels, octokit) {
-    const { data: issue } = await octokit.rest.issues.get(ISSUE_PARAMS);
+async function updateLabels(octokit, issueNumber, issue, existingLabels, suggestedLabels) {
     const currentLabels = issue.labels?.map(l => l.name || l) || [];
     const labelsToAdd = suggestedLabels.filter(l => !currentLabels.includes(l));
     const labelsToRemove = currentLabels.filter(l => !suggestedLabels.includes(l));
@@ -178,136 +184,256 @@ async function updateLabels(suggestedLabels, octokit) {
         ...labelsToAdd.map(l => `+${l}`),
         ...labelsToRemove.map(l => `-${l}`)
     ];
-    console.log(`🏷️ Label changes: ${changes.join(', ')}`);
+    console.log(`  🏷️ Labels: ${existingLabels.join(', ') || 'none'}`);
+    console.log(`  🏷️ Changes: ${changes.join(', ')}`);
 
     if (!octokit || !PERMISSIONS.has('label')) return;
 
     if (labelsToAdd.length > 0) {
-        await octokit.rest.issues.addLabels({ ...ISSUE_PARAMS, labels: labelsToAdd });
+        await octokit.rest.issues.addLabels({
+            owner: OWNER,
+            repo: REPO,
+            issue_number: issueNumber,
+            labels: labelsToAdd
+        });
     }
 
     for (const label of labelsToRemove) {
-        await octokit.rest.issues.removeLabel({ ...ISSUE_PARAMS, name: label });
+        await octokit.rest.issues.removeLabel({
+            owner: OWNER,
+            repo: REPO,
+            issue_number: issueNumber,
+            name: label
+        });
     }
 }
 
-async function createComment(body, octokit) {
-    if (!octokit || !PERMISSIONS.has('comment')) return;
-    await octokit.rest.issues.createComment({ ...ISSUE_PARAMS, body: body });
-}
-
-async function updateTitle(title, newTitle, octokit) {
-    console.log(`✏️ Updating title from "${title}" to "${newTitle}"`);
-    if (!octokit || !PERMISSIONS.has('edit')) return;
-    await octokit.rest.issues.update({ ...ISSUE_PARAMS, title: newTitle });
-}
-
-async function closeIssue(octokit, reason = 'not_planned') {
-    console.log(`🔒 Closing issue as ${reason}`);
-    if (!octokit || !PERMISSIONS.has('close')) return;
-    await octokit.rest.issues.update({ ...ISSUE_PARAMS, state: 'closed', state_reason: reason });
-}
-
-async function processIssue(issue, octokit, previousContext) {
-    const metadata = await buildMetadata(issue, octokit);
-    const formattedMetadata = [
-        `#${metadata.number} (${metadata.state} ${metadata.type}) was created by ${metadata.author}`,
-        `Title: ${metadata.title}`,
-        `Updated: ${metadata.updated_at}`,
-        `Labels: ${metadata.labels.join(', ') || 'none'}`,
-    ].map(line => `📝 ${line}`).join('\n');
-    console.log(formattedMetadata);
-
-    const prompt = await buildPrompt(issue, octokit, previousContext);
-    const startTime = Date.now();
-    const analysis = await callGemini(prompt);
-    const analysisTime = ((Date.now() - startTime) / 1000).toFixed(1);
-
-    console.log(`🤖 Gemini returned analysis in ${analysisTime}s with a severity score of ${analysis.severity}/10:`);
-    console.log(`🤖 "${analysis.reason}"`);
-
-    await updateLabels(analysis.labels, octokit);
+async function executeActions(octokit, issueNumber, issue, analysis, metadata) {
+    if (analysis.labels) {
+        await updateLabels(octokit, issueNumber, issue, metadata.labels, analysis.labels);
+    }
 
     if (analysis.comment) {
-        console.log(`💬 Posting comment:`);
-        console.log(analysis.comment.replace(/^/gm, '> '));
-        await createComment(analysis.comment, octokit);
-    }
-
-    if (analysis.close) {
-        await closeIssue(octokit, 'not_planned');
+        console.log(`  💬 Comments: ${metadata.comments}, Reactions: ${metadata.reactions}`);
+        console.log(`  💬 Posting comment:`);
+        console.log(analysis.comment.replace(/^/gm, '  > '));
+        await createComment(octokit, issueNumber, analysis.comment);
     }
 
     if (analysis.newTitle) {
-        await updateTitle(issue.title, analysis.newTitle, octokit);
+        await updateTitle(octokit, issueNumber, issue.title, analysis.newTitle);
     }
 
+    if (analysis.close) {
+        await closeIssue(octokit, issueNumber, 'not_planned');
+    }
+}
+
+async function createComment(octokit, issueNumber, body) {
+    if (!octokit || !PERMISSIONS.has('comment')) return;
+    await octokit.rest.issues.createComment({
+        owner: OWNER,
+        repo: REPO,
+        issue_number: issueNumber,
+        body: body
+    });
+}
+
+async function updateTitle(octokit, issueNumber, title, newTitle) {
+    console.log(`  ✏️ Updating title from "${title}" to "${newTitle}"`);
+    if (!octokit || !PERMISSIONS.has('edit')) return;
+    await octokit.rest.issues.update({
+        owner: OWNER,
+        repo: REPO,
+        issue_number: issueNumber,
+        title: newTitle
+    });
+}
+
+async function closeIssue(octokit, issueNumber, reason = 'not_planned') {
+    console.log(`  🔒 Closing issue as ${reason}`);
+    if (!octokit || !PERMISSIONS.has('close')) return;
+    await octokit.rest.issues.update({
+        owner: OWNER,
+        repo: REPO,
+        issue_number: issueNumber,
+        state: 'closed',
+        state_reason: reason
+    });
+}
+
+async function processIssue(octokit, issue, lastTriaged, issueNumber, sharedData) {
+    const daysSinceTriage = lastTriaged ? (Date.now() - new Date(lastTriaged).getTime()) / 86400000 : Infinity;
+    const hasRecentActivity = !lastTriaged || new Date(issue.updated_at) > new Date(lastTriaged);
+
+    // Build prompt just-in-time
+    const prompt = await buildPrompt(octokit, issue, lastTriaged, lastTriaged ? `Last triaged ${lastTriaged}` : '', sharedData);
+
+    // Fast pass when processing backlog and recently triaged
+    if (PROCESSING_BACKLOG && daysSinceTriage < 28) {
+        if (!hasRecentActivity) return { skipped: true, reason: 'no recent activity' };
+        const initial = await callGemini(prompt, AI_MODEL_FAST, issueNumber);
+        if (!initial.needsAction) {
+            console.log(`❌ #${issueNumber}: ${initial.reason}`);
+            initial._model = 'fast';
+            return initial;
+        }
+    }
+
+    const metadata = await buildMetadata(issue, sharedData);
+    const analysis = await callGemini(prompt, AI_MODEL_PRO, issueNumber);
+    analysis._model = 'pro';
+    console.log(`✅ #${issueNumber}: ${analysis.reason}`);
+
+    await executeActions(octokit, issueNumber, issue, analysis, metadata);
     return analysis;
 }
 
-function getPreviousTriageContext(triageEntry) {
-    // Triage for the first time.
-    if (!triageEntry) {
-        return { lastTriaged: null, previousReasoning: 'This issue has never been triaged.' };
-    }
-
-    const lastTriagedDate = new Date(triageEntry.lastTriaged);
-    const timeSinceTriaged = Date.now() - lastTriagedDate.getTime();
-
-    // Recheck after 14 days for stale checks and prompt updates.
-    if (timeSinceTriaged > 14 * 86400000) {
-        return { lastTriaged: triageEntry.lastTriaged, previousReasoning: triageEntry.previousReasoning };
-    }
-
-    return null; // Otherwise, no triage is needed.
-}
-
-function saveArtifact(name, contents) {
+function saveArtifact(issueNumber, name, contents = '') {
     const artifactsDir = path.join(process.cwd(), 'artifacts');
-    const filePath = path.join(artifactsDir, `${ISSUE_NUMBER}-${name}`);
+    const filePath = path.join(artifactsDir, `${issueNumber}-${name}`);
     fs.mkdirSync(artifactsDir, { recursive: true });
     fs.writeFileSync(filePath, contents, 'utf8');
 }
 
+async function fetchAllIssuesAndPRs(octokit, specificIssues = []) {
+    // If specific issues are provided, fetch those sequentially
+    if (Array.isArray(specificIssues) && specificIssues.length > 0) {
+        console.log(`Fetching ${specificIssues.length} specified issues...`);
+        const issues = [];
+        for (const issueNumber of specificIssues) {
+            try {
+                const { data } = await octokit.rest.issues.get({
+                    owner: OWNER,
+                    repo: REPO,
+                    issue_number: issueNumber
+                });
+                issues.push(data);
+            } catch (error) {
+                console.error(`Failed to fetch #${issueNumber}: ${error.message}`);
+            }
+        }
+        return issues;
+    }
+
+    // Use Octokit's paginate to fetch all open issues (includes PRs)
+    const allIssues = await octokit.paginate(octokit.rest.issues.listForRepo, {
+        owner: OWNER,
+        repo: REPO,
+        state: 'open',
+        sort: 'updated',
+        direction: 'desc',
+        per_page: 100
+    });
+
+    console.log(`Processing up to ${allIssues.length} items`);
+    return allIssues;
+}
+
 async function main() {
-    for (const envVar of ['GITHUB_ISSUE_NUMBER', 'GEMINI_API_KEY', 'GITHUB_REPOSITORY', 'GITHUB_TOKEN']) {
+    for (const envVar of ['GEMINI_API_KEY', 'GITHUB_REPOSITORY', 'GITHUB_TOKEN']) {
         if (!process.env[envVar]) throw new Error(`Missing environment variable: ${envVar}`);
     }
 
-    // Initialize database
-    let triageDb = {};
-    if (DB_PATH && fs.existsSync(DB_PATH)) {
-        const contents = fs.readFileSync(DB_PATH, 'utf8');
-        triageDb = contents ? JSON.parse(contents) : {};
-    }
+    const triageDb = loadDatabase();
 
-    // Setup
+    // Fetch shared data
     const octokit = new Octokit({ auth: GITHUB_TOKEN });
-    const issue = (await octokit.rest.issues.get(ISSUE_PARAMS)).data;
-    const previousContext = getPreviousTriageContext(triageDb[ISSUE_NUMBER]);
+    const collaboratorsData = await octokit.paginate(octokit.rest.repos.listCollaborators, { owner: OWNER, repo: REPO, per_page: 100 });
+    const releasesData = await octokit.paginate(octokit.rest.repos.listReleases, { owner: OWNER, repo: REPO, per_page: 100 });
+    const sharedData = {
+        collaborators: collaboratorsData.map(c => c.login),
+        releases: releasesData.map(r => ({ name: r.tag_name, date: r.published_at })),
+    };
 
-    // We don't need to triage
-    if (!previousContext) {
-        process.exit(2);
+    // Get list of issues to process (specific or backlog handled in helper)
+    const fetchedIssues = await fetchAllIssuesAndPRs(octokit, SPECIFIC_ISSUES);
+    const issues = new Map(fetchedIssues.map(i => [i.number, i]));
+
+    let processedCount = 0;
+    let skippedCount = 0;
+
+    // Process each issue one by one
+    for (const [issueNumber, issue] of issues) {
+        try {
+            const lastTriaged = triageDb[issueNumber]?.lastTriaged;
+            const analysis = await processIssue(octokit, issue, lastTriaged, issueNumber, sharedData);
+
+            if (analysis.skipped) {
+                skippedCount++;
+                continue;
+            }
+
+            // Update in-memory database
+            if (DB_PATH && analysis) {
+                triageDb[issueNumber] = {
+                    lastTriaged: new Date().toISOString(),
+                    previousReasoning: analysis.reason
+                };
+            }
+
+            if (analysis._model === 'pro') {
+                processedCount++;
+                if (processedCount >= MAX_ISSUES) {
+                    break;
+                }
+            }
+        } catch (error) {
+            const msg = (error && error.message) ? error.message : String(error);
+            if (msg === 'QUOTA_EXCEEDED') {
+                console.error(`❌ #${issueNumber}: Quota exceeded`);
+                break;
+            }
+            if (msg === 'MODEL_OVERLOADED') {
+                console.warn(`⚠️ #${issueNumber}: Model overloaded`);
+                skippedCount++;
+                await new Promise(resolve => setTimeout(resolve, 10000));
+                continue;
+            }
+            if (msg === 'INVALID_RESPONSE') {
+                console.warn(`⚠️ #${issueNumber}: Invalid response`);
+                skippedCount++;
+                continue;
+            }
+            throw error;
+        }
     }
 
-    // Take action on issue
-    console.log("⏭️");
-    console.log(`🤖 Using ${AI_MODEL} with [${Array.from(PERMISSIONS).join(', ') || 'none'}] permissions`);
-    const analysis = await processIssue(issue, octokit, previousContext);
+    console.log(`Analyzed ${processedCount} out of ${MAX_ISSUES} issues, skipped ${skippedCount}`);
+    saveDatabase(triageDb);
+}
 
-    // Save database
-    if (DB_PATH && analysis && PERMISSIONS.size > 0) {
-        triageDb[ISSUE_NUMBER] = {
-            lastTriaged: new Date().toISOString(),
-            previousReasoning: analysis.reason
-        };
-        fs.writeFileSync(DB_PATH, JSON.stringify(triageDb, null, 2));
+function loadDatabase() {
+    if (!DB_PATH) return {};
+
+    if (!fs.existsSync(DB_PATH)) {
+        console.log(`Database file not found. Starting with empty database.`);
+        return {};
+    }
+
+    try {
+        const contents = fs.readFileSync(DB_PATH, 'utf8');
+        const db = contents ? JSON.parse(contents) : {};
+        console.log(`Loaded database with ${Object.keys(db).length} existing entries`);
+        return db;
+    } catch (error) {
+        console.error(`Failed to load database: ${error.message}. Starting with empty database.`);
+        return {};
     }
 }
 
-main().catch(err => {
-    console.error('❌ Error:', err.message);
-    core.setFailed(err.message);
+function saveDatabase(db) {
+    if (!DB_PATH) return;
+    try {
+        fs.writeFileSync(DB_PATH, JSON.stringify(db, null, 2));
+        console.log(`Database saved successfully`);
+    } catch (error) {
+        console.error(`Failed to save database: ${error.message}`);
+    }
+}
+
+main().catch(error => {
+    console.error(`💥 CRITICAL: ${error.message}`);
+    core.setFailed(error.message);
     process.exit(1);
 });

@@ -5424,5 +5424,58 @@ namespace MudBlazor.UnitTests.Components
             cells[3].TextContent.Should().Be("A");
             cells[6].TextContent.Should().Be("B");
         }
+
+        [Test]
+        public async Task DataGrid_HierarchyVisibilityToggled_SingleRowToggle()
+        {
+            var comp = Context.RenderComponent<DataGridHierarchyVisibilityToggledTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyVisibilityToggledTest.Model>>();
+            var testComponent = comp.Instance;
+
+            await comp.InvokeAsync(() => dataGrid.Instance
+                .ToggleHierarchyVisibilityAsync(dataGrid.Instance.Items.First()));
+
+            testComponent.ToggledEvents.Should().HaveCount(1);
+            testComponent.ToggledEvents[0].Item.Name.Should().Be("John");
+            testComponent.ToggledEvents[0].Expanded.Should().BeTrue();
+
+            await comp.InvokeAsync(() => dataGrid.Instance
+                .ToggleHierarchyVisibilityAsync(dataGrid.Instance.Items.First()));
+
+            testComponent.ToggledEvents.Should().HaveCount(2);
+            testComponent.ToggledEvents[1].Item.Name.Should().Be("John");
+            testComponent.ToggledEvents[1].Expanded.Should().BeFalse();
+        }
+
+        [Test]
+        public async Task DataGrid_HierarchyVisibilityToggled_CollapseAll()
+        {
+            var comp = Context.RenderComponent<DataGridHierarchyVisibilityToggledTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyVisibilityToggledTest.Model>>();
+            var testComponent = comp.Instance;
+
+
+            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllHierarchy());
+            testComponent.ToggledEvents.Clear();
+
+            await comp.InvokeAsync(() => dataGrid.Instance.CollapseAllHierarchy());
+
+            testComponent.ToggledEvents.Should().HaveCount(3);
+            testComponent.ToggledEvents.Select(x => x.Item.Name).Should().BeEquivalentTo(["John", "Jane", "Bob"]);
+        }
+
+        [Test]
+        public async Task DataGrid_HierarchyVisibilityToggled_ExpandAll()
+        {
+            var comp = Context.RenderComponent<DataGridHierarchyVisibilityToggledTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyVisibilityToggledTest.Model>>();
+            var testComponent = comp.Instance;
+
+            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllHierarchy());
+
+            testComponent.ToggledEvents.Should().HaveCount(3);
+            testComponent.ToggledEvents.Should().OnlyContain(x => x.Expanded == true);
+            testComponent.ToggledEvents.Select(x => x.Item.Name).Should().BeEquivalentTo(["John", "Jane", "Bob"]);
+        }
     }
 }
