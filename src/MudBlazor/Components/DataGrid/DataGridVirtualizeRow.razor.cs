@@ -25,6 +25,10 @@ namespace MudBlazor
 
         [Parameter]
         [Category(CategoryTypes.DataGrid.Selecting)]
+        public EventCallback<(MouseEventArgs args, T item, int index)> RowDoubleClick { get; set; }
+
+        [Parameter]
+        [Category(CategoryTypes.DataGrid.Selecting)]
         public EventCallback<(MouseEventArgs args, T item, int index)> ContextRowClick { get; set; }
     }
 }

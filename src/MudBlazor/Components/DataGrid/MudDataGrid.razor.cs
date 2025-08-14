@@ -300,6 +300,12 @@ namespace MudBlazor
         public EventCallback<DataGridRowClickEventArgs<T>> RowClick { get; set; }
 
         /// <summary>
+        /// Occurs when a row has been double clicked.
+        /// </summary>
+        [Parameter]
+        public EventCallback<DataGridRowClickEventArgs<T>> RowDoubleClick { get; set; }
+
+        /// <summary>
         /// Occurs when a row has been right-clicked.
         /// </summary>
         [Parameter]
@@ -1791,6 +1797,11 @@ namespace MudBlazor
                 await SetEditingItemAsync(item);
 
             await SetSelectedItemAsync(item);
+        }
+
+        internal Task OnRowDoubleClickedAsync(MouseEventArgs args, T item, int rowIndex)
+        {
+            return RowDoubleClick.InvokeAsync(new DataGridRowClickEventArgs<T>(args, item, rowIndex));
         }
 
         internal Task OnContextMenuClickedAsync(MouseEventArgs args, T item, int rowIndex)

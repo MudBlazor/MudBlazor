@@ -1307,6 +1307,28 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void DataGridOnDoubleClick()
+        {
+            var comp = Context.RenderComponent<DataGridRowClickTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridRowClickTest.Model>>();
+            var rows = dataGrid.FindAll(".mud-table-body tr");
+
+            // Include callbacks in test coverage.
+            dataGrid.Instance.RowClick.HasDelegate.Should().Be(true);
+            dataGrid.Instance.RowDoubleClick.HasDelegate.Should().Be(true);
+
+            // Make sure that the callbacks have not been fired yet.
+            comp.Instance.RowClicked.Should().Be(false);
+            comp.Instance.RowDoubleClicked.Should().Be(false);
+
+            // Fire RowDoubleClick
+            rows[0].DoubleClick();
+
+            // Make sure that the callbacks have been fired.
+            comp.Instance.RowDoubleClicked.Should().Be(true);
+        }
+
+        [Test]
         public async Task DataGridServerSideSortableTest()
         {
             // Disable simulated load on server side:

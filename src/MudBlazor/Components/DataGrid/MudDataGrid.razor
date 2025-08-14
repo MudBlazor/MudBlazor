@@ -228,7 +228,8 @@
                                             GroupClassFunc="@GroupClassFunc"
                                             GroupStyleFunc="@GroupStyleFunc"
                                             DataGrid="this"
-                                            RowClick="@(args => OnRowClickedAsync(args.args, args.item, args.index))"
+                                            RowClick="@(args => OnRowClickedAsync(args.args, args.item, args.index))" 
+                                            RowDoubleClick="@(args => OnRowDoubleClickedAsync(args.args, args.item, args.index))" 
                                             ContextRowClick="@(args => OnContextMenuClickedAsync(args.args, args.item, args.index))" />
                                         }
                                     }
@@ -236,6 +237,7 @@
                                     {
                                         <DataGridVirtualizeRow T="T" DataGrid="this" 
                                         RowClick="@(args => OnRowClickedAsync(args.args, args.item, args.index))" 
+                                        RowDoubleClick="@(args => OnRowDoubleClickedAsync(args.args, args.item, args.index))" 
                                         ContextRowClick="@(args => OnContextMenuClickedAsync(args.args, args.item, args.index))" />
                                     }
                                 }

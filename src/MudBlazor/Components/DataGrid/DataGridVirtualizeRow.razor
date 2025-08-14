@@ -54,6 +54,7 @@
         }
         <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="itemBag.Item"
             @onclick="@((args) => RowClick.InvokeAsync((args, itemBag.Item, itemBag.Index)))"
+            @ondblclick="@((args) => RowDoubleClick.InvokeAsync((args, itemBag.Item, itemBag.Index)))"
             @oncontextmenu="@((args) => ContextRowClick.InvokeAsync((args, itemBag.Item, itemBag.Index)))"
             @oncontextmenu:preventDefault="@(DataGrid.RowContextMenuClick.HasDelegate ? true : false)">
             <CascadingValue Value="@DataGrid.Validator" IsFixed="true">

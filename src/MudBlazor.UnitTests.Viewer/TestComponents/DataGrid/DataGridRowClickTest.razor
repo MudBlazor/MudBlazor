@@ -1,0 +1,55 @@
+﻿<MudDataGrid T="Model" Items="_clients" Filterable="true"
+             RowClick="@RowClickedAsync"
+             RowDoubleClick="@RowDoubleClickedAsync">
+    <Columns>
+        <PropertyColumn Property="x => x.Username" Title="Username" />
+        <PropertyColumn Property="x => x.Id" Title="HWID" />
+        <TemplateColumn T="Tuple<string, string>" Title="Status">
+            <CellTemplate>
+                <MudChip Color="Color.Error" Size="Size.Small">Offline</MudChip>
+            </CellTemplate>
+        </TemplateColumn>
+    </Columns>
+</MudDataGrid>
+
+<MudField Label="Filled" Variant="Variant.Filled">@comment</MudField>
+
+dwdw
+
+@code {
+    public static string __description__ = "Test of a Datagrid with Row click Test";
+
+    public record Model(string Username, string Id);
+
+    private string comment = "";
+
+    private readonly List<Model> _clients =
+    [
+        new("user123", "000-000-000-000"),
+        new("joedoe", "111-000-111-000"),
+    ];
+
+    public bool RowClicked { get; set; }
+
+    public bool RowDoubleClicked { get; set; }
+
+    private async Task RowClickedAsync(DataGridRowClickEventArgs<Model> args)
+    {
+        RowClicked = true;
+
+        await Task.Delay(3000); // Simulate some processing delay
+
+        comment = $"Row clicked: {args.Item.Username} with HWID {args.Item.Id}";
+
+        await Task.CompletedTask;
+    }
+
+    private async Task RowDoubleClickedAsync(DataGridRowClickEventArgs<Model> args)
+    {
+        RowDoubleClicked = true;
+
+        comment = $"Row double clicked: {args.Item.Username} with HWID {args.Item.Id}";
+
+        await Task.CompletedTask;
+    }
+}

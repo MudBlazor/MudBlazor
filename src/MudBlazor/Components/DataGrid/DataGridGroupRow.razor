@@ -40,6 +40,7 @@
                                 GroupStyleFunc="@GroupStyleFunc"
                                 DataGrid="@DataGrid"
                                 RowClick="@((args) => RowClick.InvokeAsync((args.args, args.item, args.index)))"
+                                RowDoubleClick="@((args) => RowDoubleClick.InvokeAsync((args.args, args.item, args.index)))"
                                 ContextRowClick="@((args) => ContextRowClick.InvokeAsync((args.args, args.item, args.index)))"/>
         }
     }
@@ -51,6 +52,7 @@
                                     DataGrid="@DataGrid"
                                     GroupedItems="@Items"
                                     RowClick="@((args) => RowClick.InvokeAsync((args.args, args.item, args.index)))"
+                                    RowDoubleClick="@((args) => RowDoubleClick.InvokeAsync((args.args, args.item, args.index)))"
                                     ContextRowClick="@((args) => ContextRowClick.InvokeAsync((args.args, args.item, args.index)))"/>
             <!-- Group Footer -->
             <tr class="mud-table-row">
