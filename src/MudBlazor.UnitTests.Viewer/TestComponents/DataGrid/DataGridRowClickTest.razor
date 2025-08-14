@@ -1,6 +1,6 @@
 ﻿<MudDataGrid T="Model" Items="_clients" Filterable="true"
              RowClick="@RowClickedAsync"
-             RowDoubleClick="@RowDoubleClickedAsync">
+             RowDoubleClick="@RowDoubleClick">
     <Columns>
         <PropertyColumn Property="x => x.Username" Title="Username" />
         <PropertyColumn Property="x => x.Id" Title="HWID" />
@@ -13,8 +13,6 @@
 </MudDataGrid>
 
 <MudField Label="Filled" Variant="Variant.Filled">@comment</MudField>
-
-dwdw
 
 @code {
     public static string __description__ = "Test of a Datagrid with Row click Test";
@@ -40,16 +38,12 @@ dwdw
         await Task.Delay(3000); // Simulate some processing delay
 
         comment = $"Row clicked: {args.Item.Username} with HWID {args.Item.Id}";
-
-        await Task.CompletedTask;
     }
 
-    private async Task RowDoubleClickedAsync(DataGridRowClickEventArgs<Model> args)
+    private void RowDoubleClick(DataGridRowClickEventArgs<Model> args)
     {
         RowDoubleClicked = true;
 
         comment = $"Row double clicked: {args.Item.Username} with HWID {args.Item.Id}";
-
-        await Task.CompletedTask;
     }
 }
