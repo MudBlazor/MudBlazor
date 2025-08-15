@@ -123,6 +123,7 @@ namespace MudBlazor
         protected string HeadClassname =>
             new CssBuilder("mud-table-head")
                 .AddClass(HeaderClass)
+                .AddClass("mud-table-dense", Dense)
                 .Build();
 
         protected string FootClassname =>
