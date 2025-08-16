@@ -1,5 +1,10 @@
 @import '../abstracts/variables';
 
+$header-height: 59px;
+$header-height-dense: 39px;
+$header-height-with-filter: 109px; // 59px + 50px (filter row height)
+$header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
+
 .mud-table {
   color: var(--mud-palette-text-primary);
   background-color: var(--mud-palette-surface);
@@ -273,37 +278,39 @@
       & * .mud-table-cell:last-child {
         border-radius: 0px var(--mud-default-borderradius) 0px 0px;
       }
-      // Row 1 (always)
+      //Shared Sticky Header Styles
       .mud-table-cell, .mud-table-loading {
         background-color: var(--mud-palette-surface);
         position: sticky;
         z-index: 2;
+      }
+      // Row 1 (always)
+      .mud-table-cell {
         top: 0;
       }
-
       // Row 2 (filter or panel row)
       .filter-header-cell {
-        top: 59px;
+        top: $header-height;
       }
       // Row 2 (filter or panel row if table is dense)
       &.mud-table-dense .filter-header-cell {
-        top: 39px;
+        top: $header-height-dense;
       }
       // Row 2 (loading row without filter header)
       .mud-table-loading {
-        top: 59px;
+        top: $header-height;
       }
       // Row 2 (loading row without filter header if table is dense)
       &.mud-table-dense .mud-table-loading {
-        top: 39px;
+        top: $header-height-dense;
       }
       // Row 3 (loading row with filter header)
       &:has(.filter-header-cell) .mud-table-loading {
-        top: 109px;
+        top: $header-height-with-filter;
       }
       // Row 3 (loading row with filter header if table is dense)
       &.mud-table-dense:has(.filter-header-cell) .mud-table-loading {
-        top: 89px;
+        top: $header-height-with-filter-dense;
       }
 
       & * .mud-table-cell.sticky-left,
