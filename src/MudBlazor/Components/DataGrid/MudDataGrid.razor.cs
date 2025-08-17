@@ -2081,15 +2081,15 @@ namespace MudBlazor
                 return;
 
             var hideableRenderedColumns = RenderedColumns
-                .Where(c => c.hideable)
-                .ToDictionary(column => column.Title);
+                .Where(column => column.hideable)
+                .GroupBy(column => column.Title)
+                .ToDictionary(group => group.Key);
 
             foreach (var columnTitle in titles)
             {
-                if (hideableRenderedColumns.TryGetValue(columnTitle, out var renderedColumn))
-                {
-                    await renderedColumn.HideAsync();
-                }
+                if (hideableRenderedColumns.TryGetValue(columnTitle, out var renderedColumns))
+                    foreach (var renderedColumn in renderedColumns)
+                        await renderedColumn.HideAsync();
             }
 
             DropContainerHasChanged();
@@ -2116,14 +2116,14 @@ namespace MudBlazor
 
             var hideableRenderedColumns = RenderedColumns
                 .Where(c => c.hideable)
-                .ToDictionary(column => column.Title);
+                .GroupBy(column => column.Title)
+                .ToDictionary(group => group.Key);
 
             foreach (var columnTitle in titles)
             {
-                if (hideableRenderedColumns.TryGetValue(columnTitle, out var renderedColumn))
-                {
-                    await renderedColumn.ShowAsync();
-                }
+                if (hideableRenderedColumns.TryGetValue(columnTitle, out var renderedColumns))
+                    foreach (var renderedColumn in renderedColumns)
+                        await renderedColumn.ShowAsync();
             }
 
             DropContainerHasChanged();
