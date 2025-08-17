@@ -69,7 +69,14 @@
         if (!string.IsNullOrWhiteSpace(series.DataMarkerTooltipTitleFormat))
         {
             var tooltipTitle = series.DataMarkerTooltipTitleFormat
-            .Replace("{{SERIES_NAME}}", series.Name)
+                .Replace("{{SERIES_NAME}}", series.Name)
+                .Replace("{{X_VALUE}}", _hoveredBar.LabelXValue)
+                .Replace("{{Y_VALUE}}", _hoveredBar.LabelYValue);
+
+var tooltipSubtitle = series.DataMarkerTooltipSubtitleFormat?
+                .Replace("{{SERIES_NAME}}", series.Name)
+                .Replace("{{X_VALUE}}", _hoveredBar.LabelXValue)
+                .Replace("{{Y_VALUE}}", _hoveredBar.LabelYValue) ?? string.Empty;
             .Replace("{{X_VALUE}}", _hoveredBar.LabelXValue)
             .Replace("{{Y_VALUE}}", _hoveredBar.LabelYValue);
 
