@@ -4877,7 +4877,7 @@ namespace MudBlazor.UnitTests.Components
                 .Count(column => column.HiddenState.Value)
                 .Should()
                 .Be(2);
-            
+
             dgComp.Instance.RenderedColumns.Where(column => !column.HiddenState.Value).Select(c => c.Title).Should().Equal(columnsToShow);
         }
 
@@ -4893,7 +4893,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => dgComp.Instance.HideColumnsAsync(columnsToHide));
 
             dgComp.Instance.RenderedColumns.Count(column => column.HiddenState.Value).Should().Be(2);
-            
+
             var renderedColumnNames = dgComp.Instance.RenderedColumns
                 .Where(column => !column.HiddenState.Value)
                 .Select(c => c.Title)
@@ -4909,9 +4909,9 @@ namespace MudBlazor.UnitTests.Components
             var dgComp = comp.FindComponent<MudDataGrid<DataGridShowAndHideProgramaticallyWithDuplicateTitlesTest.Model>>();
 
             dgComp.Instance.RenderedColumns.Count(column => column.HiddenState.Value == false).Should().Be(7);
-            
+
             await comp.InvokeAsync(() => dgComp.Instance.HideAllColumnsAsync());
-            
+
             dgComp.Instance.RenderedColumns
                 .Count(column => column.HiddenState.Value == false)
                 .Should()
@@ -4924,12 +4924,12 @@ namespace MudBlazor.UnitTests.Components
                 .Count(column => column.HiddenState.Value)
                 .Should()
                 .Be(3);
-            
+
             var renderedColumnNames = dgComp.Instance.RenderedColumns
                 .Where(column => !column.HiddenState.Value)
                 .Select(c => c.Title)
                 .ToList();
-            
+
             renderedColumnNames.Should().Equal(["Column1", "Column3", "Column3", "Column5"]);
         }
 
@@ -4945,27 +4945,13 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => dgComp.Instance.HideColumnsAsync(columnsToHide));
 
             dgComp.Instance.RenderedColumns.Count(column => column.HiddenState.Value).Should().Be(3);
-            
+
             var renderedColumnNames = dgComp.Instance.RenderedColumns
                 .Where(column => !column.HiddenState.Value)
                 .Select(c => c.Title)
                 .ToList();
 
             renderedColumnNames.Should().Equal(["Column1", "Column3", "Column3", "Column5"]);
-        }
-        
-        [Test]
-        public async Task DataGrid_OrderColumnsAsync()
-        {
-            var comp = Context.RenderComponent<DataGridOrderColumnsProgramaticallyTest>();
-            var dgComp = comp.FindComponent<MudDataGrid<DataGridOrderColumnsProgramaticallyTest.Model>>();
-
-            dgComp.Instance.RenderedColumns.Select(c => c.Title).Count().Should().Be(5);
-
-            List<string> columnsToOrder = ["Column5", "Column4", "Column3"];
-            await comp.InvokeAsync(() => dgComp.Instance.OrderColumnsAsync(columnsToOrder));
-
-            dgComp.Instance.RenderedColumns.Select(c => c.Title).Should().Equal(["Column5", "Column4", "Column3", "Column1", "Column2"]);
         }
 
         [Test]

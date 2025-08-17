@@ -2162,36 +2162,6 @@ namespace MudBlazor
             return Task.CompletedTask;
         }
 
-        /// <summary>
-        /// Reorders the columns based on a provided list of column titles.
-        /// </summary>
-        /// <param name="columnTitles">An ordered list of column titles. These columns will be moved to the start of the column list in the specified order.</param>
-        public async Task OrderColumnsAsync(IReadOnlyList<string> columnTitles)
-        {
-            if (columnTitles is null || columnTitles.Count == 0)
-                return;
-
-            var columnDict = RenderedColumns.ToDictionary(c => c.Title);
-
-            var orderedPortion = new List<Column<T>>(columnTitles.Count);
-            foreach (var title in columnTitles)
-            {
-                if (columnDict.TryGetValue(title, out var column))
-                {
-                    orderedPortion.Add(column);
-                }
-            }
-
-            var remaining = RenderedColumns.Except(orderedPortion).ToList();
-
-            RenderedColumns.Clear();
-            RenderedColumns.AddRange(orderedPortion);
-            RenderedColumns.AddRange(remaining);
-
-            DropContainerHasChanged();
-            await InvokeAsync(StateHasChanged);
-        }
-
         private void ColumnUp(Column<T> column)
         {
             var index = RenderedColumns.IndexOf(column);
