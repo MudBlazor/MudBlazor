@@ -17,5 +17,4 @@ internal static partial class StringHelpers
             ? Math.Round(value, 4).ToString(CultureInfo.InvariantCulture)
             : Math.Round(value, 4).ToString(format);
     }
-
 }
