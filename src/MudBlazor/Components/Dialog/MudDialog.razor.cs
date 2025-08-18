@@ -205,7 +205,7 @@ namespace MudBlazor
                     throw new InvalidOperationException("You can only show an inlined dialog.");
                 }
 
-                if (_reference is not null)
+                if (_reference is not null && !_reference.Result.IsCompleted)
                     return _reference;
 
                 var parameters = new DialogParameters
