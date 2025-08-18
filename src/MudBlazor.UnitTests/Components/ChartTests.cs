@@ -5,6 +5,7 @@
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Options;
 using MudBlazor.Charts;
 using MudBlazor.UnitTests.TestComponents.Charts;
 using MudBlazor.Utilities;
@@ -631,6 +632,34 @@ namespace MudBlazor.UnitTests.Components
                               .Add(p => p.ChartSeries, !isRadial ? series : null)
                               .Add(p => p.InputData, isRadial ? data : null));
 
+        }
+
+        public record YAxisTestCase(Func<double, string> YAxisToStringFunc, string ExpectedValue);
+
+        private const double YAxisTestValue = 20;
+
+        private static IEnumerable<YAxisTestCase> YAxisFuncs()
+        {
+            yield return new YAxisTestCase(x => "hardcoded", "hardcoded");
+            yield return new YAxisTestCase(x => $"{x}/tCO2e", "20/tCO2e");
+            yield return new YAxisTestCase(x => $"{x:00}", "20.00");
+            yield return new YAxisTestCase(null!, "20");
+        }
+
+        [Test, TestCaseSource(nameof(YAxisFuncs))]
+        [SetCulture("en-US")]
+        public void YAxisToStringFuncTest(YAxisTestCase testCase)
+        {
+            var comp = Context.RenderComponent<MudChart>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.XAxisLabels, [""])
+                .Add(p => p.ChartOptions, new() { YAxisToStringFunc = testCase.YAxisToStringFunc })
+                .Add(p => p.ChartSeries, [new() { Data = [YAxisTestValue] }])
+            );
+
+            var yaxis = comp.FindAll("g.mud-charts-yaxis");
+            yaxis.Should().NotBeNull();
+            yaxis[0].Children[0].InnerHtml.Trim().Should().Be(testCase.ExpectedValue);
         }
     }
 }
