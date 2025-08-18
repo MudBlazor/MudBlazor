@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Globalization;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
@@ -642,7 +643,7 @@ namespace MudBlazor.UnitTests.Components
         {
             yield return new YAxisTestCase(x => "hardcoded", "hardcoded");
             yield return new YAxisTestCase(x => $"{x}/tCO2e", "20/tCO2e");
-            yield return new YAxisTestCase(x => $"{x:00}", "20.00");
+            yield return new YAxisTestCase(x => x.ToString("0.00", CultureInfo.InvariantCulture), "20.00");
             yield return new YAxisTestCase(null!, "20");
         }
 
