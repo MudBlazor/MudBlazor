@@ -40,7 +40,7 @@
                 "ReportGenerator",
                 "bunit",
                 "Microsoft.NET.Test.Sdk",
-                "Moq",
+                "AwesomeAssertions",
                 "Moq"
             ],
             "matchUpdateTypes": [
