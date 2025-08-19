@@ -3,9 +3,9 @@
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-<MudDataGrid T="Element" MultiSelection="true" Items="@Elements.Take(4)">
+<MudDataGrid MultiSelection="true" Items="@Elements.Take(4)">
     <Columns>
-        <SelectColumn T="Element" />
+        <SelectColumn />
         <PropertyColumn Property="x => x.Number" Title="Nr" />
         <PropertyColumn Property="x => x.Sign" />
         <PropertyColumn Property="x => x.Name" />
@@ -13,11 +13,6 @@
         <PropertyColumn Property="x => x.Molar" Title="Molar mass" />
     </Columns>
 </MudDataGrid>
-
-<MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
-    <strong>Multi-selection requirement:</strong> Custom objects must override <CodeInline>Equals</CodeInline> and <CodeInline>GetHashCode</CodeInline> methods. 
-    The Element model implements these for proper HashSet functionality.
-</MudAlert>
 
 @code { 
     private IEnumerable<Element> Elements = new List<Element>();
