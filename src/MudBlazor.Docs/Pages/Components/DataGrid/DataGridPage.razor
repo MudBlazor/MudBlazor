@@ -68,7 +68,8 @@
                     <br>
                     For simple data types (like <CodeInline>string</CodeInline>, <CodeInline>int</CodeInline>, etc.), this is not required as they already implement equality correctly. 
                     For complex objects, implement <CodeInline>IEquatable&lt;T></CodeInline> or override <CodeInline>Equals</CodeInline> and <CodeInline>GetHashCode</CodeInline> 
-                    based on a unique identifier (such as an ID property). Alternatively, you can provide a custom <CodeInline>Comparer</CodeInline> to the data grid.
+                    based on a unique identifier (such as an ID property). Alternatively, you can provide a custom <CodeInline>Comparer</CodeInline> parameter to the data grid 
+                    that implements <CodeInline>IEqualityComparer&lt;T></CodeInline>.
                     <br><br>
                     The example below demonstrates multi-selection using the <CodeInline>Element</CodeInline> model, which properly implements <CodeInline>Equals</CodeInline> 
                     and <CodeInline>GetHashCode</CodeInline> methods.
