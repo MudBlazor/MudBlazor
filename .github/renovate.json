@@ -37,7 +37,7 @@
         "bunit",
         "Microsoft.NET.Test.Sdk",
         "Moq",
-        "FluentValidation"
+        "Moq"
       ],
       "matchUpdateTypes": ["minor", "patch"],
       "automerge": true,
