@@ -10,7 +10,7 @@
   "labels": [
     "dependency"
   ],
-  "minimumReleaseAge": "3 days"
+  "minimumReleaseAge": "3 days",
   "vulnerabilityAlerts": {
     "enabled": true,
     "labels": ["triage needed"]
