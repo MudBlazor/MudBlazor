@@ -1,53 +1,66 @@
 {
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:recommended"
-  ],
-  "ignorePresets": [
-    ":ignoreModulesAndTests",
-    "mergeConfidence:all-badges"
-  ],
-  "labels": [
-    "dependency"
-  ],
-  "minimumReleaseAge": "3 days",
-  "vulnerabilityAlerts": {
-    "enabled": true,
-    "labels": ["triage needed"]
-  },
-  "packageRules": [
-    {
-      "matchPackageNames": [
-        "Microsoft.CodeAnalysis**"
-      ],
-      "groupName": "code-analysis monorepo"
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "extends": [
+        "config:recommended"
+    ],
+    "ignorePresets": [
+        ":ignoreModulesAndTests",
+        "mergeConfidence:all-badges"
+    ],
+    "labels": [
+        "dependency"
+    ],
+    "minimumReleaseAge": "3 days",
+    "vulnerabilityAlerts": {
+        "enabled": true,
+        "labels": [
+            "triage needed"
+        ]
     },
-    {
-      "matchPackageNames": [
-        "Microsoft.CodeAnalysis.CSharp"
-      ],
-      "enabled": false
-    },
-    {
-      "matchManagers": ["nuget"],
-      "matchPackageNames": [
-        "NUnit",
-        "NUnit3TestAdapter",
-        "ReportGenerator",
-        "bunit",
-        "Microsoft.NET.Test.Sdk",
-        "Moq",
-        "Moq"
-      ],
-      "matchUpdateTypes": ["minor", "patch"],
-      "automerge": true,
-      "automergeType": "pr",
-      "addLabels": ["tests"]
-    },
-    {
-      "matchManagers": ["nuget"],
-      "matchUpdateTypes": ["major"],
-      "draftPR": true
-    }
-  ]
+    "packageRules": [
+        {
+            "matchPackageNames": [
+                "Microsoft.CodeAnalysis**"
+            ],
+            "groupName": "code-analysis monorepo"
+        },
+        {
+            "matchPackageNames": [
+                "Microsoft.CodeAnalysis.CSharp"
+            ],
+            "enabled": false
+        },
+        {
+            "matchManagers": [
+                "nuget"
+            ],
+            "matchPackageNames": [
+                "NUnit",
+                "NUnit3TestAdapter",
+                "ReportGenerator",
+                "bunit",
+                "Microsoft.NET.Test.Sdk",
+                "Moq",
+                "Moq"
+            ],
+            "matchUpdateTypes": [
+                "minor",
+                "patch"
+            ],
+            "automerge": true,
+            "automergeType": "pr",
+            "addLabels": [
+                "tests"
+            ]
+        },
+        {
+            "matchManagers": [
+                "nuget"
+            ],
+            "matchUpdateTypes": [
+                "major"
+            ],
+            "draftPR": true
+        }
+    ]
 }
