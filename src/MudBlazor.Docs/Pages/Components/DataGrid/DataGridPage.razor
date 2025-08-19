@@ -55,6 +55,31 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Selection">
+                <Description>
+                    The <CodeInline>&lt;MudDataGrid></CodeInline> supports both single and multi-selection of rows. To enable selection, add a <CodeInline>&lt;SelectColumn></CodeInline> 
+                    to your column definitions. For single selection, the current selected item can be accessed via the <CodeInline>SelectedItem</CodeInline> parameter. 
+                    For multi-selection, set <CodeInline>MultiSelection="true"</CodeInline> and use the <CodeInline>SelectedItems</CodeInline> parameter to access the selected items.
+                    <br><br>
+                    <MudAlert Severity="Severity.Warning" Dense="true" Class="mt-3">
+                        <strong>Important:</strong> When using multi-selection with custom objects, you must override the <CodeInline>Equals</CodeInline> and <CodeInline>GetHashCode</CodeInline> 
+                        methods in your data model. The data grid uses <CodeInline>HashSet&lt;T></CodeInline> internally to track selected items, which relies on proper equality comparison.
+                    </MudAlert>
+                    <br>
+                    For simple data types (like <CodeInline>string</CodeInline>, <CodeInline>int</CodeInline>, etc.), this is not required as they already implement equality correctly. 
+                    For complex objects, implement <CodeInline>IEquatable&lt;T></CodeInline> or override <CodeInline>Equals</CodeInline> and <CodeInline>GetHashCode</CodeInline> 
+                    based on a unique identifier (such as an ID property). Alternatively, you can provide a custom <CodeInline>Comparer</CodeInline> to the data grid.
+                    <br><br>
+                    The example below demonstrates multi-selection using the <CodeInline>Element</CodeInline> model, which properly implements <CodeInline>Equals</CodeInline> 
+                    and <CodeInline>GetHashCode</CodeInline> methods.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(DataGridSelectionExample)" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridSelectionExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Visual Styling">
                 <Description>
                     The <CodeInline>&lt;MudDataGrid></CodeInline> has many built in properties to change its style and also allows for custom styling as well.

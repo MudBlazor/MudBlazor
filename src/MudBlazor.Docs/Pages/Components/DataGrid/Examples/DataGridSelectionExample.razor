@@ -3,21 +3,99 @@
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-<MudDataGrid Items="@Elements.Take(4)">
+<MudDataGrid T="Element" MultiSelection="true" Items="@Elements.Take(6)" SelectedItemsChanged="@SelectedItemsChanged">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Multi-Selection Example</MudText>
+        <MudSpacer />
+        <MudText Typo="Typo.body2">Selected: @SelectedItems.Count items</MudText>
+    </ToolBarContent>
     <Columns>
+        <SelectColumn T="Element" />
         <PropertyColumn Property="x => x.Number" Title="Nr" />
         <PropertyColumn Property="x => x.Sign" />
         <PropertyColumn Property="x => x.Name" />
         <PropertyColumn Property="x => x.Position" />
-        <PropertyColumn Property="x => x.Molar" Title="Molar mass" />
+        <PropertyColumn Property="x => x.Molar" Title="Molar mass" Format="F2" />
     </Columns>
 </MudDataGrid>
 
-@code { 
+<MudPaper Class="pa-4 mt-4">
+    <MudText Typo="Typo.h6" Class="mb-2">Selected Elements:</MudText>
+    @if (SelectedItems.Any())
+    {
+        <MudList Dense="true">
+            @foreach (var item in SelectedItems)
+            {
+                <MudListItem>
+                    <MudText>@item.Name (@item.Sign) - Position @item.Position</MudText>
+                </MudListItem>
+            }
+        </MudList>
+    }
+    else
+    {
+        <MudText Typo="Typo.body2" Color="Color.Secondary">No items selected</MudText>
+    }
+</MudPaper>
+
+<MudExpansionPanels Class="mt-4">
+    <MudExpansionPanel Text="View Element Model Implementation">
+        <TitleContent>
+            <div style="display: flex;">
+                <MudIcon Icon="Icons.Material.Outlined.Code" class="mr-3" />
+                <div>
+                    <MudText>Element Model Implementation</MudText>
+                    <MudText Typo="Typo.body2">How Equals and GetHashCode are implemented for multi-selection</MudText>
+                </div>
+            </div>
+        </TitleContent>
+        <ChildContent>
+            <div class="csharp">
+                <pre>public class Element
+{
+    public string? Name { get; set; }
+    public string? Sign { get; set; }
+    public int Number { get; set; }
+    public int Position { get; set; }
+    public double Molar { get; set; }
+    // ... other properties
+
+    /// &lt;summary&gt;
+    /// Overriding Equals is essential for use with Select and Table because they use HashSets internally
+    /// &lt;/summary&gt;
+    public override bool Equals(object? obj) => Equals(GetHashCode(), obj?.GetHashCode());
+
+    /// &lt;summary&gt;
+    /// Overriding GetHashCode is essential for use with Select and Table because they use HashSets internally
+    /// &lt;/summary&gt;
+    public override int GetHashCode() => Name?.GetHashCode() ?? 0;
+
+    public override string ToString() => $"{Sign} - {Name}";
+}</pre>
+            </div>
+            <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
+                <MudText>
+                    <strong>Key Points:</strong><br/>
+                    • The <CodeInline>GetHashCode()</CodeInline> method returns a hash based on the <CodeInline>Name</CodeInline> property, which serves as the unique identifier<br/>
+                    • The <CodeInline>Equals()</CodeInline> method compares hash codes to determine equality<br/>
+                    • Without these overrides, multi-selection would not work correctly as the DataGrid couldn't properly track selected items in its internal HashSet
+                </MudText>
+            </MudAlert>
+        </ChildContent>
+    </MudExpansionPanel>
+</MudExpansionPanels>
+
+@code {
     private IEnumerable<Element> Elements = new List<Element>();
+    private HashSet<Element> SelectedItems = new HashSet<Element>();
 
     protected override async Task OnInitializedAsync()
     {
         Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
+    }
+
+    void SelectedItemsChanged(HashSet<Element> items)
+    {
+        SelectedItems = items;
     }
 }
