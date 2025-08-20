@@ -1,9 +1,10 @@
 ﻿<MudTextField T="string"
-              @bind-Value="@Value"
+			  Value="@Value"
               Immediate="@true"
               DebounceInterval="@DebounceInterval"
               Required="@true"
-              RequiredError="Enter a star" />
+              RequiredError="Enter a star" 
+			  TextChanged="val => Value = val" />
 
 <MudButton id="re-render-button"
            Variant="@Variant.Filled"

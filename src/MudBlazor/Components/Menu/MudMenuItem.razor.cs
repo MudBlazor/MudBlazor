@@ -118,7 +118,7 @@ namespace MudBlazor
 
         protected string GetHtmlTag() => string.IsNullOrEmpty(Href) ? "div" : "a";
 
-        internal bool GetDisabled() => Disabled || ParentMenu?.Disabled == true;
+        protected internal bool GetDisabled() => Disabled || ParentMenu?.Disabled == true;
 
         protected bool GetDense() => ParentMenu?.GetDense() == true;
 

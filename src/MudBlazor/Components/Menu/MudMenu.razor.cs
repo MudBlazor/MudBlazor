@@ -380,7 +380,7 @@ namespace MudBlazor
         public EventCallback<bool> OpenChanged { get; set; }
 
         [CascadingParameter]
-        internal MudMenu? ParentMenu { get; set; }
+        protected MudMenu? ParentMenu { get; set; }
 
         protected bool GetActivatorHidden() => ActivatorContent is null && string.IsNullOrWhiteSpace(Label) && string.IsNullOrWhiteSpace(Icon);
 
@@ -817,7 +817,7 @@ namespace MudBlazor
                 }
                 while (GetItemDisabled(_menuItems[_focusedIndex]));
 
-                await FocusItem(_focusedIndex);
+                await FocusItemAsync(_focusedIndex);
             }
             else if (e.Key == "ArrowUp")
             {
@@ -827,7 +827,7 @@ namespace MudBlazor
                 }
                 while (GetItemDisabled(_menuItems[_focusedIndex]));
 
-                await FocusItem(_focusedIndex);
+                await FocusItemAsync(_focusedIndex);
             }
             else if (e.Key == "ArrowRight")
             {
@@ -878,7 +878,7 @@ namespace MudBlazor
                     // Return focus to the parent menu
                     if (ParentMenu._focusedIndex >= 0 && ParentMenu._focusedIndex < ParentMenu._menuItems.Count)
                     {
-                        await ParentMenu.FocusItem(ParentMenu._focusedIndex);
+                        await ParentMenu.FocusItemAsync(ParentMenu._focusedIndex);
                     }
                 }
                 else
@@ -947,7 +947,7 @@ namespace MudBlazor
                     await CloseMenuAsync();
                     if (ParentMenu._focusedIndex >= 0 && ParentMenu._focusedIndex < ParentMenu._menuItems.Count)
                     {
-                        await ParentMenu.FocusItem(ParentMenu._focusedIndex);
+                        await ParentMenu.FocusItemAsync(ParentMenu._focusedIndex);
                     }
                 }
                 else
@@ -974,7 +974,7 @@ namespace MudBlazor
                 {
                     var firstItem = enabledItems.First();
                     _focusedIndex = _menuItems.IndexOf(firstItem);
-                    await FocusItem(_focusedIndex);
+                    await FocusItemAsync(_focusedIndex);
                 }
             }
         }
@@ -994,7 +994,7 @@ namespace MudBlazor
         /// <summary>
         /// Sets focus to the menu item at the specified index, if the index is valid.
         /// </summary>
-        internal async Task FocusItem(int index)
+        internal async Task FocusItemAsync(int index)
         {
             if (index >= 0 && index < _menuItems.Count)
             {
