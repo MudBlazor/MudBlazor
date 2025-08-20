@@ -131,7 +131,7 @@ namespace MudBlazor
         /// </summary>
         protected bool ActivatesSubMenu => Class?.Contains("mud-menu-sub-menu-activator") == true;
 
-        protected async Task OnClickHandlerAsync(MouseEventArgs ev)
+        protected internal async Task OnClickHandlerAsync(MouseEventArgs ev)
         {
             if (GetDisabled())
             {
@@ -160,12 +160,6 @@ namespace MudBlazor
         {
             base.OnInitialized();
             ParentMenu?.RegisterItem(this);
-        }
-
-        internal Task InvokeClickAsync()
-        {
-            var args = new MouseEventArgs();
-            return OnClickHandlerAsync(args);
         }
     }
 }

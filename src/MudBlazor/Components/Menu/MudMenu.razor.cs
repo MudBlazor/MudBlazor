@@ -847,16 +847,13 @@ namespace MudBlazor
                             }
                             else
                             {
-                                await menuItem.InvokeClickAsync();
+                                await menuItem.OnClickHandlerAsync(new MouseEventArgs());
                             }
                             break;
 
                         case MudMenu menu:
                             await menu.OpenSubMenuAsync(EventArgs.Empty);
                             openedSubMenu = true;
-                            break;
-
-                        default:
                             break;
                     }
 
@@ -907,14 +904,13 @@ namespace MudBlazor
                 {
                     case MudMenuItem menuItem:
                         // If this item has a submenu, open it instead of invoking click
-                        if (_itemToSubmenuMap.ContainsKey(menuItem))
+                        if (_itemToSubmenuMap.TryGetValue(menuItem, out var submenu))
                         {
-                            var submenu = _itemToSubmenuMap[menuItem];
                             await submenu.OpenSubMenuAsync(EventArgs.Empty);
                         }
                         else
                         {
-                            await menuItem.InvokeClickAsync();
+                            await menuItem.OnClickHandlerAsync(new MouseEventArgs());
                         }
                         break;
 
