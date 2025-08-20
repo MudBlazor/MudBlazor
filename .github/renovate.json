@@ -58,7 +58,7 @@
             ],
             "matchPaths": [
                 "src/MudBlazor.Docs*/**/*.csproj",
-                "src/**/MudBlazor.Docs*/**/*.csproj"
+                "src/MudBlazor.Docs*/**/*.csproj"
             ],
             "matchUpdateTypes": [
                 "minor",
