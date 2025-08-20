@@ -2,7 +2,7 @@ name: Triage Backlog
 
 on:
   schedule:
-    - cron: '0 5 * * *' # Gemini rates reset at 7.
+    - cron: '0 6 * * *' # Gemini rates reset at 7.
   workflow_dispatch:
     inputs:
       backlog-size:
@@ -32,7 +32,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -57,9 +57,9 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          AUTOTRIAGE_DB_PATH: ${{ github.workspace }}/triage-db.json
-          AUTOTRIAGE_PERMISSIONS: ${{ inputs.permissions || 'none' }}
-          MAX_ISSUES: ${{ inputs.backlog-size || '80' }}
+          AUTOTRIAGE_DB_PATH: ${{ !inputs.issue-numbers && format('{0}/triage-db.json', github.workspace) || '' }}
+          AUTOTRIAGE_PERMISSIONS: ${{ github.event_name == 'workflow_dispatch' && inputs.permissions || vars.AUTOTRIAGE_PERMISSIONS }}
+          MAX_ISSUES: ${{ inputs.backlog-size || '90' }}
           ISSUE_NUMBERS: ${{ inputs.issue-numbers }}
         run: |
           node .github/scripts/AutoTriage.js

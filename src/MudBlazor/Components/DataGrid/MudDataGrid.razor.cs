@@ -2220,7 +2220,8 @@ namespace MudBlazor
                 GroupTemplate = column.GroupTemplate,
                 Indentation = column.GroupIndented,
                 Title = column.Title,
-                Grouping = new EmptyGrouping<object?, T>(null) // Ensure Grouping is not null
+                Grouping = new EmptyGrouping<object?, T>(null), // Ensure Grouping is not null
+                KeyPath = new GroupKeyPath([])
             };
         }
 
@@ -2230,14 +2231,18 @@ namespace MudBlazor
             foreach (var group in groups)
             {
                 var expanded = false;
+                var currentKeyPath = groupDef.Parent?.KeyPath.ToList() ?? [];
+                GroupKeyPath? keyPath = null;
                 if (group is not null)
                 {
-                    var key = new GroupKey(groupDef.Title, group.Key);
+                    currentKeyPath.Add(group.Key);
+                    keyPath = new GroupKeyPath(currentKeyPath);
+                    var key = new GroupKey(groupDef.Title, keyPath);
                     expanded = _groupExpansionsDict.TryGetValue(key, out var value) ? value :
                                    groupDef.Expanded;
                     _groupExpansionsDict.TryAdd(key, expanded);
                 }
-                result.Add(new GroupDefinition<T>
+                var newGroupDefinition = new GroupDefinition<T>
                 {
                     DataGrid = this,
                     Selector = groupDef.Selector,
@@ -2246,9 +2251,29 @@ namespace MudBlazor
                     Indentation = groupDef.Indentation,
                     Title = groupDef.Title,
                     Parent = groupDef.Parent,
-                    InnerGroup = groupDef.InnerGroup,
-                    Grouping = group ?? new EmptyGrouping<object?, T>(null)
-                });
+                    Grouping = group ?? new EmptyGrouping<object?, T>(null),
+                    KeyPath = keyPath ?? new GroupKeyPath(currentKeyPath),
+                };
+
+                var innerGroup = groupDef.InnerGroup;
+                if (innerGroup != null)
+                {
+                    // Create a new InnerGroup instance to prevent unwanted side effects from shared references at different grouping levels (e.g., tracking the Expanded state)
+                    newGroupDefinition.InnerGroup = new GroupDefinition<T>
+                    {
+                        DataGrid = this,
+                        Selector = innerGroup.Selector,
+                        Expanded = innerGroup.Expanded,
+                        GroupTemplate = innerGroup.GroupTemplate,
+                        Indentation = innerGroup.Indentation,
+                        Title = innerGroup.Title,
+                        Parent = newGroupDefinition,
+                        Grouping = innerGroup.Grouping,
+                        KeyPath = new GroupKeyPath(innerGroup.KeyPath),
+                        InnerGroup = innerGroup.InnerGroup
+                    };
+                }
+                result.Add(newGroupDefinition);
             }
             return result;
         }
@@ -2280,14 +2305,20 @@ namespace MudBlazor
             }
         }
 
-        internal void ToggleGroupExpandAsync(string title, object? key, GroupDefinition<T> groupDef, bool expanded)
+        /// <summary>
+        /// Toggles the expanded or collapsed state of the specified group by column name and key.
+        /// </summary>
+        /// <param name="columnName">The name of the grouped column.</param>
+        /// <param name="key">The group key identifying the specific group to expand or collapse.</param>
+        /// <param name="expanded">Whether the group should be expanded (true) or collapsed (false).</param>
+        public void ToggleGroupExpand(string columnName, object? key, bool expanded)
         {
-            var groupKey = new GroupKey(title, key);
+            var groupKey = new GroupKey(columnName, key);
 
             // update the expansion state for _groupExpansionsDict
             // if it has a key we see if it differs from the definition Expanded State and update accordingly
             // if it doesn't we add it if the new state doesn't match the definition
-            var col = RenderedColumns.FirstOrDefault(x => x.GroupBy == groupDef.Selector);
+            var col = RenderedColumns.FirstOrDefault(x => x.PropertyName == columnName);
             if (expanded == col?._groupExpandedState.Value)
                 _groupExpansionsDict.Remove(groupKey);
             else

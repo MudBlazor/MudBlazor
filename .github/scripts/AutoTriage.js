@@ -10,7 +10,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Global constants
-const AI_MODEL_FAST = 'gemini-2.5-flash-lite';
+const AI_MODEL_FAST = 'gemini-2.5-flash';
 const AI_MODEL_PRO = 'gemini-2.5-pro';
 const DB_PATH = process.env.AUTOTRIAGE_DB_PATH;
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
@@ -36,18 +36,18 @@ async function callGemini(prompt, model, issueNumber) {
         generationConfig: {
             responseMimeType: "application/json",
             responseSchema: {
-                type: "object",
+                type: "OBJECT",
                 properties: {
-                    severity: { type: "integer", description: "How severe the issue is on a scale of 1 to 10" },
-                    reason: { type: "string", description: "Brief thought process for logging purposes" },
-                    comment: { type: "string", description: "A comment to reply to the issue with", nullable: true },
-                    labels: { type: "array", items: { type: "string" }, description: "The final set of labels the issue should have" },
-                    close: { type: "boolean", description: "Set to true if the issue should be closed as part of this action", nullable: true },
-                    newTitle: { type: "string", description: "A new title for the issue or pull request", nullable: true },
-                    needsAction: { type: "boolean", description: "Whether an action should be performed" },
+                    severity: { type: "INTEGER", description: "How severe the issue is on a scale of 1 to 10" },
+                    reason: { type: "STRING", description: "Brief thought process for logging purposes" },
+                    comment: { type: "STRING", description: "A comment to reply to the issue with" },
+                    labels: { type: "ARRAY", items: { type: "STRING" }, description: "The final set of labels the issue should have" },
+                    close: { type: "BOOLEAN", description: "Set to true if the issue should be closed as part of this action" },
+                    newTitle: { type: "STRING", description: "A new title for the issue or pull request" },
                 },
-                required: ["severity", "reason", "labels", "needsAction"]
-            }
+                required: ["severity", "reason", "labels"]
+            },
+            temperature: 0.0,
         }
     };
 
@@ -65,8 +65,11 @@ async function callGemini(prompt, model, issueNumber) {
 
     // Handle specific error cases
     if (response.status === 429) throw new Error('QUOTA_EXCEEDED');
+    if (response.status === 500) throw new Error('MODEL_INTERNAL_ERROR');
     if (response.status === 503) throw new Error('MODEL_OVERLOADED');
     if (!response.ok) {
+        const bodyText = await response.text().catch(() => '<no body>');
+        saveArtifact(issueNumber || 'global', `gemini-error-${model}-${Date.now()}.log`, `${response.status} ${response.statusText}\n\n${bodyText}`);
         throw new Error(`${response.status} ${response.statusText}`);
     }
 
@@ -77,12 +80,13 @@ async function callGemini(prompt, model, issueNumber) {
 
     try {
         return JSON.parse(result);
-    } catch {
+    } catch (parseErr) {
+        saveArtifact(issueNumber || 'global', `gemini-parse-error-${model}-${Date.now()}.json`, JSON.stringify({ message: parseErr.message, stack: parseErr.stack }, null, 2));
         throw new Error('INVALID_RESPONSE');
     }
 }
 
-async function buildMetadata(issue, sharedData) {
+async function buildMetadata(issue) {
     const isIssue = !issue.pull_request;
     const currentLabels = issue.labels?.map(l => l.name || l) || [];
     const hasAssignee = Array.isArray(issue.assignees) ? issue.assignees.length > 0 : !!issue.assignee;
@@ -99,8 +103,6 @@ async function buildMetadata(issue, sharedData) {
         reactions: issue.reactions?.total_count || 0,
         labels: currentLabels,
         assigned: hasAssignee,
-        collaborators: sharedData.collaborators,
-        releases: sharedData.releases,
     };
 }
 
@@ -112,45 +114,42 @@ async function buildTimeline(octokit, issueNumber) {
         per_page: 100
     });
 
-    saveArtifact(issueNumber, `github-timeline.md`, JSON.stringify(timelineEvents, null, 2));
-    return timelineEvents.map(event => {
+    return timelineEvents.slice(-10).map(event => {
         const base = { event: event.event, actor: event.actor?.login, timestamp: event.created_at };
         switch (event.event) {
             case 'commented': return { ...base, body: event.body };
-            case 'labeled': return { ...base, label: { name: event.label.name, color: event.label.color } };
-            case 'unlabeled': return { ...base, label: { name: event.label.name } };
+            //case 'labeled': return { ...base, label: { name: event.label.name, color: event.label.color } };
+            //case 'unlabeled': return { ...base, label: { name: event.label.name } };
             case 'renamed': return { ...base, title: { from: event.rename.from, to: event.rename.to } };
-            case 'assigned':
+            case 'assigned': return { ...base, user: event.assignee?.login };
             case 'unassigned': return { ...base, user: event.assignee?.login };
             case 'closed':
             case 'reopened':
-            case 'locked':
-            case 'unlocked': return base;
-            case 'milestoned':
-            case 'demilestoned': return { ...base, milestone: event.milestone?.title };
-            case 'referenced': return { ...base, commit_id: event.commit_id, commit_url: event.commit_url };
-            case 'mentioned': return base;
-            case 'review_requested':
-            case 'review_request_removed': return { ...base, requested_reviewer: event.requested_reviewer?.login };
-            case 'review_dismissed': return { ...base, review: { state: event.dismissed_review?.state, dismissal_message: event.dismissal_message } };
-            case 'merged': return { ...base, commit_id: event.commit_id, commit_url: event.commit_url };
+            //case 'locked':
+            //case 'unlocked': return base;
+            //case 'milestoned':
+            //case 'demilestoned': return { ...base, milestone: event.milestone?.title };
+            //case 'referenced': return { ...base, commit_id: event.commit_id, commit_url: event.commit_url };
+            //case 'mentioned': return base;
+            //case 'review_requested':
+            //case 'review_request_removed': return { ...base, requested_reviewer: event.requested_reviewer?.login };
+            //case 'review_dismissed': return { ...base, review: { state: event.dismissed_review?.state, dismissal_message: event.dismissal_message } };
+            //case 'merged': return { ...base, commit_id: event.commit_id, commit_url: event.commit_url };
             case 'convert_to_draft':
             case 'ready_for_review': return base;
-            case 'transferred': return { ...base, new_repository: event.new_repository?.full_name };
+            //case 'transferred': return { ...base, new_repository: event.new_repository?.full_name };
             default: return null;
         }
     }).filter(Boolean);
 }
 
-async function buildPrompt(octokit, issue, lastTriaged, previousReasoning, sharedData) {
+async function buildPrompt(octokit, issue, metadata, lastTriaged, previousReasoning) {
     const basePrompt = fs.readFileSync(path.join(__dirname, 'AutoTriage.prompt'), 'utf8');
-    const issueText = `${issue.title}\n\n${issue.body || ''}`;
-    const metadata = await buildMetadata(issue, sharedData);
     const timelineReport = await buildTimeline(octokit, issue.number);
     const promptString = `${basePrompt}
 
-=== SECTION: ISSUE TO ANALYZE ===
-${issueText}
+=== SECTION: BODY OF ISSUE TO ANALYZE ===
+${issue.body}
 
 === SECTION: ISSUE METADATA (JSON) ===
 ${JSON.stringify(metadata, null, 2)}
@@ -159,33 +158,58 @@ ${JSON.stringify(metadata, null, 2)}
 ${JSON.stringify(timelineReport, null, 2)}
 
 === SECTION: TRIAGE CONTEXT ===
-Last triaged: ${lastTriaged}
-Previous reasoning: ${previousReasoning}
-Current triage date: ${new Date().toISOString()}
-Current permissions: ${Array.from(PERMISSIONS).join(', ') || 'none'}
-All possible permissions: label (add/remove labels), comment (post comments), close (close issue), edit (edit title)
+Last triaged: ${lastTriaged || 'never'}
+Previous reasoning: ${previousReasoning || 'none'}
+Current date: ${new Date().toISOString()}. Do all date logic by explicit comparison to the provided "Current date" timestamp (no vague relative wording).
+Current permissions: ${Array.from(PERMISSIONS).join(', ') || 'none'}. Possible permissions: label (add/remove labels), comment (post comments), close (close issue), edit (edit title)
 
-=== SECTION: INSTRUCTIONS ===
-Analyze this issue, its metadata, and its full timeline.
-Your entire response must be a single, valid JSON object and nothing else. Do not use Markdown, code fences, or any explanatory text.`;
+=== SECTION: OUTPUT FORMAT ===
+Return only valid JSON (no Markdown fences, no prose).
+
+Required keys:
+- severity: integer in [1, 10]
+- reason: string (brief rationale)
+- labels: array of strings (final label set)
+
+Optional keys:
+- comment: string
+- close: boolean
+- newTitle: string
+
+Rules:
+- Do not include any keys other than the ones above.
+- Do not output "null" for any field; omit optional fields instead.
+- If you propose closing, set 'close: true'.
+- If you propose a title change, set 'newTitle' to the exact new title.
+
+`;
 
     saveArtifact(issue.number, `gemini-input.md`, promptString);
     return promptString;
 }
 
-async function updateLabels(octokit, issueNumber, issue, existingLabels, suggestedLabels) {
-    const currentLabels = issue.labels?.map(l => l.name || l) || [];
-    const labelsToAdd = suggestedLabels.filter(l => !currentLabels.includes(l));
-    const labelsToRemove = currentLabels.filter(l => !suggestedLabels.includes(l));
+function getLabelChanges(existingLabels, suggestedLabels) {
+    const current = Array.isArray(existingLabels) ? existingLabels : [];
+    const proposed = Array.isArray(suggestedLabels) ? suggestedLabels : [];
 
-    if (labelsToAdd.length === 0 && labelsToRemove.length === 0) return;
+    const labelsToAdd = proposed.filter(l => !current.includes(l));
+    const labelsToRemove = current.filter(l => !proposed.includes(l));
 
     const changes = [
         ...labelsToAdd.map(l => `+${l}`),
         ...labelsToRemove.map(l => `-${l}`)
     ];
-    console.log(`  🏷️ Labels: ${existingLabels.join(', ') || 'none'}`);
-    console.log(`  🏷️ Changes: ${changes.join(', ')}`);
+    const mergedLabels = [...current, ...changes].filter(Boolean);
+
+    return { labelsToAdd, labelsToRemove, mergedLabels };
+}
+
+async function updateLabels(octokit, issueNumber, issue, existingLabels, suggestedLabels) {
+    const { labelsToAdd, labelsToRemove, mergedLabels } = getLabelChanges(existingLabels, suggestedLabels);
+
+    if (labelsToAdd.length === 0 && labelsToRemove.length === 0) return;
+
+    console.log(`  🏷️ Labels: ${mergedLabels.length ? mergedLabels.join(', ') : 'none'}`);
 
     if (!octokit || !PERMISSIONS.has('label')) return;
 
@@ -262,28 +286,37 @@ async function closeIssue(octokit, issueNumber, reason = 'not_planned') {
     });
 }
 
-async function processIssue(octokit, issue, lastTriaged, issueNumber, sharedData) {
+async function processIssue(octokit, issue, lastTriaged, previousReasoning, issueNumber) {
     const daysSinceTriage = lastTriaged ? (Date.now() - new Date(lastTriaged).getTime()) / 86400000 : Infinity;
-    const hasRecentActivity = !lastTriaged || new Date(issue.updated_at) > new Date(lastTriaged);
+    const hasNewActivity = !lastTriaged || new Date(issue.updated_at) > new Date(lastTriaged);
 
-    // Build prompt just-in-time
-    const prompt = await buildPrompt(octokit, issue, lastTriaged, lastTriaged ? `Last triaged ${lastTriaged}` : '', sharedData);
-
-    // Fast pass when processing backlog and recently triaged
-    if (PROCESSING_BACKLOG && daysSinceTriage < 28) {
-        if (!hasRecentActivity) return { skipped: true, reason: 'no recent activity' };
-        const initial = await callGemini(prompt, AI_MODEL_FAST, issueNumber);
-        if (!initial.needsAction) {
-            console.log(`❌ #${issueNumber}: ${initial.reason}`);
-            initial._model = 'fast';
-            return initial;
-        }
+    // Skip early without building prompt if working through backlog and the issue hasn't expired
+    if (PROCESSING_BACKLOG && daysSinceTriage < 7 && !hasNewActivity) {
+        return { skipped: true, reason: 'no recent activity' };
     }
 
-    const metadata = await buildMetadata(issue, sharedData);
+    const metadata = await buildMetadata(issue);
+    const prompt = await buildPrompt(octokit, issue, metadata, lastTriaged, previousReasoning || '');
+
+    // Quick analysis before going further.
+    const initial = await callGemini(prompt, AI_MODEL_FAST, issueNumber);
+    initial._model = 'fast';
+
+    // If the model proposes no actions, skip further analysis.
+    const { labelsToAdd, labelsToRemove } = getLabelChanges(metadata.labels, initial.labels);
+    const hasLabelChanges = labelsToAdd.length > 0 || labelsToRemove.length > 0;
+    const hasComment = initial.comment && initial.comment.length > 0;
+    const hasTitleChange = initial.newTitle && initial.newTitle !== issue.title;
+    const wantsClose = initial.close === true;
+    if (!hasLabelChanges && !hasComment && !hasTitleChange && !wantsClose) {
+        console.log(`⏭️ #${issueNumber}: ${initial.reason}`);
+        return { skipped: true, reason: initial.reason || 'no actions' };
+    }
+
+    // Full analysis before taking any action for highest quality results.
     const analysis = await callGemini(prompt, AI_MODEL_PRO, issueNumber);
     analysis._model = 'pro';
-    console.log(`✅ #${issueNumber}: ${analysis.reason}`);
+    console.log(`🤖 #${issueNumber}: ${analysis.reason}`);
 
     await executeActions(octokit, issueNumber, issue, analysis, metadata);
     return analysis;
@@ -335,21 +368,12 @@ async function main() {
         if (!process.env[envVar]) throw new Error(`Missing environment variable: ${envVar}`);
     }
 
+    console.log('Permissions:', Array.from(PERMISSIONS).join(', ') || 'none');
+
     const triageDb = loadDatabase();
-
-    // Fetch shared data
     const octokit = new Octokit({ auth: GITHUB_TOKEN });
-    const collaboratorsData = await octokit.paginate(octokit.rest.repos.listCollaborators, { owner: OWNER, repo: REPO, per_page: 100 });
-    const releasesData = await octokit.paginate(octokit.rest.repos.listReleases, { owner: OWNER, repo: REPO, per_page: 100 });
-    const sharedData = {
-        collaborators: collaboratorsData.map(c => c.login),
-        releases: releasesData.map(r => ({ name: r.tag_name, date: r.published_at })),
-    };
-
-    // Get list of issues to process (specific or backlog handled in helper)
     const fetchedIssues = await fetchAllIssuesAndPRs(octokit, SPECIFIC_ISSUES);
     const issues = new Map(fetchedIssues.map(i => [i.number, i]));
-
     let processedCount = 0;
     let skippedCount = 0;
 
@@ -357,7 +381,8 @@ async function main() {
     for (const [issueNumber, issue] of issues) {
         try {
             const lastTriaged = triageDb[issueNumber]?.lastTriaged;
-            const analysis = await processIssue(octokit, issue, lastTriaged, issueNumber, sharedData);
+            const previousReasoning = triageDb[issueNumber]?.previousReasoning;
+            const analysis = await processIssue(octokit, issue, lastTriaged, previousReasoning, issueNumber);
 
             if (analysis.skipped) {
                 skippedCount++;
@@ -380,19 +405,23 @@ async function main() {
             }
         } catch (error) {
             const msg = (error && error.message) ? error.message : String(error);
+            skippedCount++;
             if (msg === 'QUOTA_EXCEEDED') {
                 console.error(`❌ #${issueNumber}: Quota exceeded`);
                 break;
             }
+            if (msg === 'MODEL_INTERNAL_ERROR') {
+                console.error(`⚠️ #${issueNumber}: Model internal error`);
+                await new Promise(resolve => setTimeout(resolve, 30000));
+                continue;
+            }
             if (msg === 'MODEL_OVERLOADED') {
                 console.warn(`⚠️ #${issueNumber}: Model overloaded`);
-                skippedCount++;
-                await new Promise(resolve => setTimeout(resolve, 10000));
+                await new Promise(resolve => setTimeout(resolve, 30000));
                 continue;
             }
             if (msg === 'INVALID_RESPONSE') {
                 console.warn(`⚠️ #${issueNumber}: Invalid response`);
-                skippedCount++;
                 continue;
             }
             throw error;
@@ -433,7 +462,13 @@ function saveDatabase(db) {
 }
 
 main().catch(error => {
-    console.error(`💥 CRITICAL: ${error.message}`);
+    console.error(`💥 ${error.message}`);
+    try {
+        const contents = (error && error.stack) ? error.stack : (typeof error === 'string' ? error : JSON.stringify(error, null, 2));
+        saveArtifact('global', "error.log", contents);
+    } catch (e) {
+        console.error('Failed to write error artifact:', e && e.message);
+    }
     core.setFailed(error.message);
     process.exit(1);
 });
