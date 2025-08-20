@@ -35,7 +35,7 @@
                 "nuget"
             ],
             "matchPaths": [
-                "src/**/MudBlazor.UnitTests*/**/*.csproj",
+                "src/MudBlazor.UnitTests*/**/*.csproj",
                 "src/**/MudBlazor.UnitTests*.csproj"
             ],
             "matchUpdateTypes": [
