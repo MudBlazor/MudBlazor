@@ -10,7 +10,7 @@
 			ClickPropagation="false"
 			@attributes="UserAttributes"
 			@onclick="OnClickHandlerAsync"
-			@bind-Ref="ElementRef"
+			@bind-Ref="ElementReference"
 			tabindex="@(!GetDisabled() ? "0" : "-1")">
 
 	@if (!string.IsNullOrWhiteSpace(Icon))
