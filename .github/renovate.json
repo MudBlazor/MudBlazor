@@ -10,7 +10,7 @@
     "labels": [
         "dependency"
     ],
-    "minimumReleaseAge": "3 days",
+    "minimumReleaseAge": "7 days",
     "vulnerabilityAlerts": {
         "enabled": true,
         "labels": [
@@ -34,23 +34,44 @@
             "matchManagers": [
                 "nuget"
             ],
-            "matchPackageNames": [
-                "NUnit",
-                "NUnit3TestAdapter",
-                "ReportGenerator",
-                "bunit",
-                "Microsoft.NET.Test.Sdk",
-                "AwesomeAssertions",
-                "Moq"
+            "matchPaths": [
+                "src/**/MudBlazor.UnitTests*/**/*.csproj",
+                "src/**/MudBlazor.UnitTests*.csproj"
             ],
             "matchUpdateTypes": [
                 "minor",
                 "patch"
             ],
+            "groupName": "tests dependencies",
             "automerge": true,
             "automergeType": "pr",
+            "requiredStatusChecks": [
+                "*"
+            ],
             "addLabels": [
                 "tests"
+            ]
+        },
+        {
+            "matchManagers": [
+                "nuget"
+            ],
+            "matchPaths": [
+                "src/MudBlazor.Docs*/**/*.csproj",
+                "src/**/MudBlazor.Docs*/**/*.csproj"
+            ],
+            "matchUpdateTypes": [
+                "minor",
+                "patch"
+            ],
+            "groupName": "docs dependencies",
+            "automerge": true,
+            "automergeType": "pr",
+            "requiredStatusChecks": [
+                "*"
+            ],
+            "addLabels": [
+                "docs"
             ]
         },
         {
