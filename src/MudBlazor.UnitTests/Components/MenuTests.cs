@@ -495,9 +495,12 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-popover-open").Count.Should().Be(1, "One popover should be visible after opening.");
 
             SwitchElement().Change(false);
-            menu.Instance.GetState(x => x.Open).Should().BeFalse("Manually setting Open to false should close the menu.");
-            comp.Instance.Open.Should().BeFalse();
-            comp.FindAll("div.mud-popover-open").Count.Should().Be(0, "Popover should disappear after closing.");
+            comp.WaitForAssertion(() =>
+            {
+                menu.Instance.GetState(x => x.Open).Should().BeFalse("Manually setting Open to false should close the menu.");
+                comp.Instance.Open.Should().BeFalse();
+                comp.FindAll("div.mud-popover-open").Count.Should().Be(0, "Popover should disappear after closing.");
+            });
 
             comp.Find("button.mud-button-root").Click();
             menu.Instance.GetState(x => x.Open).Should().BeTrue("Clicking the button again should open the menu.");
