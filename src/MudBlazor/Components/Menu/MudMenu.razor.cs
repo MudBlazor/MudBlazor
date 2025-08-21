@@ -33,7 +33,6 @@ namespace MudBlazor
         private MudIconButton? _iconButtonActivator;
         private readonly List<object> _menuItems = [];
         private readonly string _elementId = Identifier.Create("menu");
-        private readonly Dictionary<MudMenuItem, MudMenu> _itemToSubmenuMap = new();
 
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
@@ -805,7 +804,7 @@ namespace MudBlazor
         /// </summary>
         private async Task HandleNavigationKeyAsync(KeyboardEventArgs e)
         {
-            var items = _menuItems.Where(x => !GetItemDisabled(x)).ToList();
+            var items = _menuItems.Where(x => x is MudMenuItem).ToList();
             if (items.Count == 0)
                 return;
 
@@ -834,8 +833,6 @@ namespace MudBlazor
         /// </summary>
         private async Task MoveFocusAsync(int direction, int itemCount)
         {
-            var items = _menuItems.Where(x => !GetItemDisabled(x)).ToList();
-
             do
             {
                 if (direction > 0)
@@ -847,7 +844,7 @@ namespace MudBlazor
                     _focusedIndex = (_focusedIndex - 1 + itemCount) % itemCount;
                 }
             }
-            while (GetItemDisabled(items[_focusedIndex]));
+            while (false);
 
             await FocusItemAsync(_focusedIndex);
         }
@@ -857,11 +854,17 @@ namespace MudBlazor
         /// </summary>
         private async Task HandleArrowRightAsync()
         {
-            var items = _menuItems.Where(x => !GetItemDisabled(x)).ToList();
-
-            if (_focusedIndex >= 0 && _focusedIndex < items.Count)
+            if (_focusedIndex >= 0 && _focusedIndex < _menuItems.Count)
             {
-                var currentItem = items[_focusedIndex];
+                var currentItem = _menuItems[_focusedIndex];
+
+                // Check if the current item is disabled - if so, do nothing
+                if (GetItemDisabled(currentItem))
+                {
+                    await CloseAllMenusAsync();
+                    return;
+                }
+
                 bool openedSubMenu = false;
 
                 switch (currentItem)
@@ -921,13 +924,19 @@ namespace MudBlazor
         /// </summary>
         private async Task HandleActivationKeyAsync(KeyboardEventArgs e)
         {
-            var items = _menuItems.Where(x => !GetItemDisabled(x)).ToList();
-            if (items.Count == 0)
+            if (_menuItems.Count == 0)
                 return;
 
-            if (_focusedIndex >= 0 && _focusedIndex < items.Count)
+            if (_focusedIndex >= 0 && _focusedIndex < _menuItems.Count)
             {
-                var currentItem = items[_focusedIndex];
+                var currentItem = _menuItems[_focusedIndex];
+
+                // Check if the current item is disabled - if so, do nothing
+                if (GetItemDisabled(currentItem))
+                {
+                    await CloseAllMenusAsync();
+                    return;
+                }
 
                 // Handle different item types
                 switch (currentItem)
@@ -958,8 +967,7 @@ namespace MudBlazor
         /// </summary>
         private async Task HandleDismissalKeyAsync(KeyboardEventArgs e)
         {
-            var items = _menuItems.Where(x => !GetItemDisabled(x)).ToList();
-            if (items.Count == 0)
+            if (_menuItems.Count == 0)
                 return;
 
             if (e.Key == "Tab")
@@ -995,12 +1003,9 @@ namespace MudBlazor
             if (_openState.Value && _focusedIndex == -1)
             {
                 await Task.Yield();
-
-                var enabledItems = _menuItems.Where(x => !GetItemDisabled(x)).ToList();
-                if (enabledItems.Count > 0)
+                if (_menuItems.Count > 0)
                 {
-                    var firstItem = enabledItems.First();
-                    _focusedIndex = _menuItems.IndexOf(firstItem);
+                    _focusedIndex = 0;
                     await FocusItemAsync(_focusedIndex);
                 }
             }
