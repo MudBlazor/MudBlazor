@@ -28,7 +28,6 @@ namespace MudBlazor
         private CancellationTokenSource? _hoverCts;
         private CancellationTokenSource? _leaveCts;
         private string _elementId = Identifier.Create("menu");
-        private readonly Dictionary<MudMenuItem, MudMenu> _itemToSubmenuMap = new();
         private MudButton? _buttonActivator;
         private MudIconButton? _iconButtonActivator;
         private MudMenuItem? _menuItemActivator;
@@ -809,83 +808,110 @@ namespace MudBlazor
             if (items.Count == 0)
                 return;
 
-            if (e.Key == "ArrowDown")
+            switch (e.Key)
             {
-                do
-                {
-                    _focusedIndex = (_focusedIndex + 1) % items.Count;
-                }
-                while (GetItemDisabled(_menuItems[_focusedIndex]));
+                case "ArrowDown":
+                    await MoveFocusAsync(1, items.Count);
+                    break;
 
-                await FocusItemAsync(_focusedIndex);
+                case "ArrowUp":
+                    await MoveFocusAsync(-1, items.Count);
+                    break;
+
+                case "ArrowRight":
+                    await HandleArrowRightAsync();
+                    break;
+
+                case "ArrowLeft":
+                    await HandleArrowLeftAsync();
+                    break;
             }
-            else if (e.Key == "ArrowUp")
+        }
+
+        /// <summary>
+        /// Moves focus up or down in the menu, skipping disabled items.
+        /// </summary>
+        private async Task MoveFocusAsync(int direction, int itemCount)
+        {
+            var items = _menuItems.Where(x => !GetItemDisabled(x)).ToList();
+
+            do
             {
-                do
+                if (direction > 0)
                 {
-                    _focusedIndex = (_focusedIndex - 1 + items.Count) % _menuItems.Count;
-                }
-                while (GetItemDisabled(_menuItems[_focusedIndex]));
-
-                await FocusItemAsync(_focusedIndex);
-            }
-            else if (e.Key == "ArrowRight")
-            {
-                // Enter submenu if the current item has one
-                if (_focusedIndex >= 0 && _focusedIndex < _menuItems.Count)
-                {
-                    var currentItem = _menuItems[_focusedIndex];
-                    bool openedSubMenu = false;
-
-                    switch (currentItem)
-                    {
-                        case MudMenuItem menuItem:
-                            if (_itemToSubmenuMap.TryGetValue(menuItem, out var submenu))
-                            {
-                                await submenu.OpenSubMenuAsync(EventArgs.Empty);
-                                openedSubMenu = true;
-                            }
-                            else
-                            {
-                                await menuItem.InvokeClickAsync();
-                            }
-                            break;
-
-                        case MudMenu menu:
-                            await menu.OpenSubMenuAsync(EventArgs.Empty);
-                            openedSubMenu = true;
-                            break;
-
-                        default:
-                            break;
-                    }
-
-                    // Else close all menus
-                    if (!openedSubMenu)
-                    {
-                        await CloseAllMenusAsync();
-                    }
-                }
-            }
-            else if (e.Key == "ArrowLeft")
-            {
-                // Exit to parent menu if this is a submenu
-                if (ParentMenu != null)
-                {
-                    // Close this submenu
-                    await CloseMenuAsync();
-
-                    // Return focus to the parent menu
-                    if (ParentMenu._focusedIndex >= 0 && ParentMenu._focusedIndex < ParentMenu._menuItems.Count)
-                    {
-                        await ParentMenu.FocusItemAsync(ParentMenu._focusedIndex);
-                    }
+                    _focusedIndex = (_focusedIndex + 1) % itemCount;
                 }
                 else
                 {
-                    // Close the menu if there are no further menu items on the arrow left
+                    _focusedIndex = (_focusedIndex - 1 + itemCount) % itemCount;
+                }
+            }
+            while (GetItemDisabled(items[_focusedIndex]));
+
+            await FocusItemAsync(_focusedIndex);
+        }
+
+        /// <summary>
+        /// Handles the ArrowRight key - opens submenu or invokes click.
+        /// </summary>
+        private async Task HandleArrowRightAsync()
+        {
+            var items = _menuItems.Where(x => !GetItemDisabled(x)).ToList();
+
+            if (_focusedIndex >= 0 && _focusedIndex < items.Count)
+            {
+                var currentItem = items[_focusedIndex];
+                bool openedSubMenu = false;
+
+                switch (currentItem)
+                {
+                    case MudMenuItem menuItem:
+                        var submenu = FindSubmenuForItem(menuItem);
+                        if (submenu != null)
+                        {
+                            await submenu.OpenSubMenuAsync(EventArgs.Empty);
+                            openedSubMenu = true;
+                        }
+                        else
+                        {
+                            await menuItem.InvokeClickAsync();
+                        }
+                        break;
+
+                    case MudMenu menu:
+                        await menu.OpenSubMenuAsync(EventArgs.Empty);
+                        openedSubMenu = true;
+                        break;
+                }
+
+                // Close all menus if no submenu was opened
+                if (!openedSubMenu)
+                {
                     await CloseAllMenusAsync();
                 }
+            }
+        }
+
+        /// <summary>
+        /// Handles the ArrowLeft key - closes current submenu or all menus.
+        /// </summary>
+        private async Task HandleArrowLeftAsync()
+        {
+            // Exit to parent menu if this is a submenu
+            if (ParentMenu != null)
+            {
+                await CloseMenuAsync();
+
+                // Return focus to the parent menu
+                if (ParentMenu._focusedIndex >= 0 && ParentMenu._focusedIndex < ParentMenu._menuItems.Count)
+                {
+                    await ParentMenu.FocusItemAsync(ParentMenu._focusedIndex);
+                }
+            }
+            else
+            {
+                // Close the menu if there are no further menu items on the arrow left
+                await CloseAllMenusAsync();
             }
         }
 
@@ -907,9 +933,9 @@ namespace MudBlazor
                 {
                     case MudMenuItem menuItem:
                         // If this item has a submenu, open it instead of invoking click
-                        if (_itemToSubmenuMap.ContainsKey(menuItem))
+                        var submenu = FindSubmenuForItem(menuItem);
+                        if (submenu != null)
                         {
-                            var submenu = _itemToSubmenuMap[menuItem];
                             await submenu.OpenSubMenuAsync(EventArgs.Empty);
                         }
                         else
@@ -941,7 +967,6 @@ namespace MudBlazor
             }
             else if (e.Key == "Escape")
             {
-                // Close current menu or all menus if at top level
                 if (ParentMenu != null)
                 {
                     await CloseMenuAsync();
@@ -1077,6 +1102,14 @@ namespace MudBlazor
                 MudMenu menu => menu.Disabled,
                 _ => false
             };
+        }
+
+        /// <summary>
+        /// Finds the submenu associated with a given menu item by checking the _subMenus collection.
+        /// </summary>
+        private MudMenu? FindSubmenuForItem(MudMenuItem menuItem)
+        {
+            return _subMenus.FirstOrDefault(submenu => submenu._menuItemActivator == menuItem);
         }
     }
 }
