@@ -11,7 +11,8 @@
 			@attributes="UserAttributes"
 			@onclick="OnClickHandlerAsync"
 			@bind-Ref="ElementReference"
-			tabindex="@(!GetDisabled() ? "0" : "-1")">
+			tabindex="@(!GetDisabled() ? "0" : "-1")"
+			aria-disabled="@(GetDisabled() ? "true" : "false")">
 
 	@if (!string.IsNullOrWhiteSpace(Icon))
 	{
