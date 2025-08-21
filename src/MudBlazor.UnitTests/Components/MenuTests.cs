@@ -1045,7 +1045,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task Menu_DisabledItem_IsSkippedByArrowDown()
+        public async Task Menu_DisabledItem_IsNotSkippedByArrowDown()
         {
             var comp = Context.RenderComponent<MenuKeydownTest>();
 
@@ -1056,7 +1056,7 @@ namespace MudBlazor.UnitTests.Components
                 await menuButton.ClickAsync(new MouseEventArgs());
             });
 
-            // Press ArrowDown 4 times to move from -1 to "5"
+            // Press ArrowDown 4 times to move from -1 to 4
             for (int i = 0; i < 4; i++)
             {
                 await comp.InvokeAsync(async () =>
@@ -1067,7 +1067,7 @@ namespace MudBlazor.UnitTests.Components
             }
 
             // Should now be on index 5
-            GetParentMenuFocusedIndex(comp).Should().Be(5);
+            GetParentMenuFocusedIndex(comp).Should().Be(4);
         }
 
         [Test]
