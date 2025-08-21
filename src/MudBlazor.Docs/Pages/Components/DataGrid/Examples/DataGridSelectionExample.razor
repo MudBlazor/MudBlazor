@@ -3,9 +3,8 @@
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-<MudDataGrid MultiSelection="true" Items="@Elements.Take(4)">
+<MudDataGrid Items="@Elements.Take(4)">
     <Columns>
-        <SelectColumn />
         <PropertyColumn Property="x => x.Number" Title="Nr" />
         <PropertyColumn Property="x => x.Sign" />
         <PropertyColumn Property="x => x.Name" />
