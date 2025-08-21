@@ -27,12 +27,13 @@ namespace MudBlazor
         private bool _isTransient;
         private CancellationTokenSource? _hoverCts;
         private CancellationTokenSource? _leaveCts;
-        private string _elementId = Identifier.Create("menu");
-        private MudButton? _buttonActivator;
-        private MudIconButton? _iconButtonActivator;
-        private MudMenuItem? _menuItemActivator;
         private int _focusedIndex = -1;
-        private List<object> _menuItems = [];
+        private MudButton? _buttonActivator;
+        private MudMenuItem? _menuItemActivator;
+        private MudIconButton? _iconButtonActivator;
+        private readonly List<object> _menuItems = [];
+        private readonly string _elementId = Identifier.Create("menu");
+        private readonly Dictionary<MudMenuItem, MudMenu> _itemToSubmenuMap = new();
 
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
@@ -874,7 +875,7 @@ namespace MudBlazor
                         }
                         else
                         {
-                            await menuItem.InvokeClickAsync();
+                            await menuItem.OnClick.InvokeAsync();
                         }
                         break;
 
@@ -940,7 +941,7 @@ namespace MudBlazor
                         }
                         else
                         {
-                            await menuItem.InvokeClickAsync();
+                            await menuItem.OnClickHandlerAsync(new MouseEventArgs());
                         }
                         break;
 
@@ -967,6 +968,7 @@ namespace MudBlazor
             }
             else if (e.Key == "Escape")
             {
+                // Close current menu or all menus if at top level
                 if (ParentMenu != null)
                 {
                     await CloseMenuAsync();
@@ -1028,8 +1030,8 @@ namespace MudBlazor
                 // Retrieves the cref ElementRef associated with a menu item or submenu to allow focus control.
                 ElementReference elementRef = item switch
                 {
-                    MudMenuItem menuItem => menuItem.ElementRef,
-                    MudMenu menu => menu._menuItemActivator?.ElementRef ?? default,
+                    MudMenuItem menuItem => menuItem.ElementReference,
+                    MudMenu menu => menu._menuItemActivator?.ElementReference ?? default,
                     _ => default
                 };
 
@@ -1081,7 +1083,7 @@ namespace MudBlazor
                 {
                     if (_menuItemActivator is not null)
                     {
-                        await _menuItemActivator.ElementRef.FocusAsync();
+                        await _menuItemActivator.ElementReference.FocusAsync();
                     }
                 }
             }

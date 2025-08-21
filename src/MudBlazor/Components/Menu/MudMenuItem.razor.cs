@@ -116,6 +116,8 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
 
+        public ElementReference ElementReference { get; private set; }
+
         protected string GetHtmlTag() => string.IsNullOrEmpty(Href) ? "div" : "a";
 
         protected internal bool GetDisabled() => Disabled || ParentMenu?.Disabled == true;
@@ -129,7 +131,7 @@ namespace MudBlazor
         /// </summary>
         protected bool ActivatesSubMenu => Class?.Contains("mud-menu-sub-menu-activator") == true;
 
-        protected async Task OnClickHandlerAsync(MouseEventArgs ev)
+        protected internal async Task OnClickHandlerAsync(MouseEventArgs ev)
         {
             if (GetDisabled())
             {
@@ -156,16 +158,8 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
+            base.OnInitialized();
             ParentMenu?.RegisterItem(this);
         }
-
-        internal async Task InvokeClickAsync()
-        {
-            var args = new MouseEventArgs();
-            await OnClickHandlerAsync(args);
-        }
-
-        public ElementReference ElementRef { get; set; }
-
     }
 }
