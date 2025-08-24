@@ -621,7 +621,7 @@ namespace MudBlazor
 
         /// <summary>
         /// A RenderFragment that will be used as a placeholder when the Virtualize component is asynchronously loading data.
-        /// This placeholder is displayed for each item in the data source that is yet to be loaded. Useful for presenting a loading indicator 
+        /// This placeholder is displayed for each item in the data source that is yet to be loaded. Useful for presenting a loading indicator
         /// in a data grid row while the actual data is being fetched from the server.
         /// </summary>
         [Parameter]
@@ -771,12 +771,16 @@ namespace MudBlazor
             {
                 changed.CollectionChanged += (s, e) =>
                 {
-                    _currentRenderFilteredItemsCache = null;
+                    InvokeAsync(() =>
+                    {
+                        _currentRenderFilteredItemsCache = null;
 
-                    if (Groupable)
-                        GroupItems();
+                        if (Groupable)
+                            GroupItems();
 
-                    ApplyInitialExpansionForNewItems(e);
+                        ApplyInitialExpansionForNewItems(e);
+                        StateHasChanged();
+                    });
                 };
             }
         }
@@ -960,7 +964,7 @@ namespace MudBlazor
         /// <remarks>
         /// The function accepts a <see cref="GridStateVirtualize{T}"/> with current sorting, filtering, and pagination parameters.
         /// Then, return a <see cref="GridData{T}"/> with a list of values, and the total (unpaginated) items count in <see cref="GridData{T}.TotalItems"/>.
-        /// This property is used when you need to display a list without a paginator, 
+        /// This property is used when you need to display a list without a paginator,
         /// but with loading data from the server as the scroll position changes.
         /// </remarks>
         [Parameter]
@@ -1144,7 +1148,7 @@ namespace MudBlazor
 
 #nullable enable
         /// <summary>
-        /// The default template used to display column grouping for any column that is grouped. 
+        /// The default template used to display column grouping for any column that is grouped.
         /// </summary>
         /// <remarks>Can be overridden by using the column level GroupTemplate, defaults to <c>null</c>.</remarks>
         [Parameter]
@@ -1157,7 +1161,7 @@ namespace MudBlazor
         /// Determines whether an unsorted state (<see cref="SortDirection.None"/>) is allowed when toggling sort directions.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>. When <c>false</c>, the sort direction toggles only between 
+        /// Defaults to <c>false</c>. When <c>false</c>, the sort direction toggles only between
         /// <see cref="SortDirection.Ascending"/> and <see cref="SortDirection.Descending"/>.
         /// When <c>true</c>, a third toggle state, <see cref="SortDirection.None"/>, is included.
         /// </remarks>
@@ -2287,7 +2291,7 @@ namespace MudBlazor
                 var newOrder = groupedColumns.Any() ? groupedColumns.Max(x => x._groupByOrderState.Value) + 1 : 0;
                 await column._groupByOrderState.SetValueAsync(newOrder);
             }
-            // if removed then reset _groupByOrderState.Value 
+            // if removed then reset _groupByOrderState.Value
             else
             {
                 await column._groupByOrderState.SetValueAsync(default);
