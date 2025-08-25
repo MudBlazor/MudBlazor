@@ -1,0 +1,52 @@
+@using MudBlazor.Examples.Data
+<MudPopoverProvider />
+
+<MudAutocomplete @bind-Value="_value1" SearchFunc="@Search1" CoerceValue Strict="false" Converter="_elementConverter" PopoverClass="autocomplete-popover-class" />
+
+@code {
+    public static string __description__ = "Strict = false should work when a Converter is provided and CoerceValue is true";
+
+    private ConverterElement? _value1;
+    private PeriodicTableService _service = new PeriodicTableService();
+    
+    private Converter<ConverterElement?> _elementConverter = new Converter<ConverterElement?>
+    {
+        SetFunc = value => value?.ToString(), //convert to string
+        GetFunc = text => new ConverterElement { Name = text } //convert to element
+    };
+
+    private readonly string[] _states =
+    [
+        "Alabama", "Alaska", "American Samoa", "Arizona",
+        "Arkansas", "California", "Colorado", "Connecticut",
+        "Delaware", "District of Columbia", "Federated States of Micronesia",
+        "Florida", "Georgia", "Guam", "Hawaii", "Idaho",
+        "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky",
+        "Louisiana", "Maine", "Marshall Islands", "Maryland",
+        "Massachusetts", "Michigan", "Minnesota", "Mississippi",
+        "Missouri", "Montana", "Nebraska", "Nevada",
+        "New Hampshire", "New Jersey", "New Mexico", "New York",
+        "North Carolina", "North Dakota", "Northern Mariana Islands", "Ohio",
+        "Oklahoma", "Oregon", "Palau", "Pennsylvania", "Puerto Rico",
+        "Rhode Island", "South Carolina", "South Dakota", "Tennessee",
+        "Texas", "Utah", "Vermont", "Virgin Island", "Virginia",
+        "Washington", "West Virginia", "Wisconsin", "Wyoming"
+    ];
+
+    private async Task<IEnumerable<ConverterElement?>> Search1(string value, CancellationToken token)
+    {
+        // In real life use an asynchronous function for fetching data from an api.
+        await Task.Delay(50, token);
+
+        value ??= string.Empty;
+        var elements = await _service.GetElements(value);
+        return elements.Select(x => new ConverterElement { Name = x.Name });
+    }
+    
+    public class ConverterElement
+    {
+        public string? Name { get; set; }
+        
+        public override string ToString() => Name ?? string.Empty;
+    }
+}
