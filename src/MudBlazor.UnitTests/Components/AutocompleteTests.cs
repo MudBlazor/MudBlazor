@@ -21,7 +21,6 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class AutocompleteTests : BunitTest
     {
-#nullable enable
         [Test]
         public void Autocomplete_Should_Handle_Converter_WithStrict()
         {
