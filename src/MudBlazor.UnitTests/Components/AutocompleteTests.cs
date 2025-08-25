@@ -21,15 +21,14 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class AutocompleteTests : BunitTest
     {
-        #nullable enable
+#nullable enable
         [Test]
         public void Autocomplete_Should_Handle_Converter_WithStrict()
         {
             var comp = Context.RenderComponent<AutocompleteConverterStrictTest>();
             var autocompleteComponent = comp.FindComponent<MudAutocomplete<AutocompleteConverterStrictTest.ConverterElement>>();
-            var autocomplete = autocompleteComponent.Instance;
             comp.Markup.Should().NotContain("mud-popover-open");
-            
+
             autocompleteComponent.Find(".mud-button-root.mud-no-activator").Click(); // open popover
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             var items = comp.FindComponents<MudListItem<AutocompleteConverterStrictTest.ConverterElement>>().ToArray();
@@ -43,8 +42,7 @@ namespace MudBlazor.UnitTests.Components
             var filteredItems = comp.FindComponents<MudListItem<AutocompleteConverterStrictTest.ConverterElement>>().ToArray();
             filteredItems.Length.Should().Be(4, "The popover should contain 4 items.");
         }
-#nullable disable
-        
+
         /// <summary>
         /// Initial value should be shown and popup should not open.
         /// </summary>
