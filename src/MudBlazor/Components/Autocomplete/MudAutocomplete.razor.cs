@@ -1149,8 +1149,10 @@ namespace MudBlazor
 
             var value = Converter.Get(Text);
             await SetValueAsync(value, updateText: false);
-
-            _isValueCoerced = true; //we must set _isValueCoerced to true after calling SetValueAsync, as it sets it to false
+            
+            // We must set _isValueCoerced to true after calling SetValueAsync, as it sets it to false
+            // CoerceValue is always true at this point, so we can set the value to true rather than checking the property again
+            _isValueCoerced = true;
         }
 
         /// <inheritdoc />
