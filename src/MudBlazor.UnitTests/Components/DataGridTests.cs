@@ -4112,6 +4112,45 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(8);
         }
 
+        /// <summary>
+        /// Checks that when the collection is modified, the change is applied in the rendering.
+        /// </summary>
+        /// <remarks>
+        /// https://github.com/MudBlazor/MudBlazor/issues/11758
+        /// </remarks>
+        [Test]
+        public void DataGridObservabilityTest2()
+        {
+            // Arrange
+
+            var sup = Context.RenderComponent<DataGridObservabilityTest>();
+            var comp = sup.Instance;
+            var dataGrid = sup.FindComponent<MudDataGrid<DataGridObservabilityTest.Model>>();
+
+            // Assert : Initial state with 8 rows
+
+            dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(8);
+
+            // Act : Add 2 items
+
+            comp.AddItem();
+            comp.AddItem();
+
+            // Arrange : DataGrid should display 10 rows
+
+            dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(10);
+
+            // Act : Remove 3 items
+
+            comp.RemoveItem();
+            comp.RemoveItem();
+            comp.RemoveItem();
+
+            // Arrange : DataGrid should display 7 rows
+
+            dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(7);
+        }
+
         public void TableFilterGuid()
         {
             var comp = Context.RenderComponent<DataGridFilterGuid<Guid>>();
@@ -5423,6 +5462,59 @@ namespace MudBlazor.UnitTests.Components
             cells[0].TextContent.Should().Be("C");
             cells[3].TextContent.Should().Be("A");
             cells[6].TextContent.Should().Be("B");
+        }
+
+        [Test]
+        public async Task DataGrid_HierarchyVisibilityToggled_SingleRowToggle()
+        {
+            var comp = Context.RenderComponent<DataGridHierarchyVisibilityToggledTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyVisibilityToggledTest.Model>>();
+            var testComponent = comp.Instance;
+
+            await comp.InvokeAsync(() => dataGrid.Instance
+                .ToggleHierarchyVisibilityAsync(dataGrid.Instance.Items.First()));
+
+            testComponent.ToggledEvents.Should().HaveCount(1);
+            testComponent.ToggledEvents[0].Item.Name.Should().Be("John");
+            testComponent.ToggledEvents[0].Expanded.Should().BeTrue();
+
+            await comp.InvokeAsync(() => dataGrid.Instance
+                .ToggleHierarchyVisibilityAsync(dataGrid.Instance.Items.First()));
+
+            testComponent.ToggledEvents.Should().HaveCount(2);
+            testComponent.ToggledEvents[1].Item.Name.Should().Be("John");
+            testComponent.ToggledEvents[1].Expanded.Should().BeFalse();
+        }
+
+        [Test]
+        public async Task DataGrid_HierarchyVisibilityToggled_CollapseAll()
+        {
+            var comp = Context.RenderComponent<DataGridHierarchyVisibilityToggledTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyVisibilityToggledTest.Model>>();
+            var testComponent = comp.Instance;
+
+
+            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllHierarchy());
+            testComponent.ToggledEvents.Clear();
+
+            await comp.InvokeAsync(() => dataGrid.Instance.CollapseAllHierarchy());
+
+            testComponent.ToggledEvents.Should().HaveCount(3);
+            testComponent.ToggledEvents.Select(x => x.Item.Name).Should().BeEquivalentTo(["John", "Jane", "Bob"]);
+        }
+
+        [Test]
+        public async Task DataGrid_HierarchyVisibilityToggled_ExpandAll()
+        {
+            var comp = Context.RenderComponent<DataGridHierarchyVisibilityToggledTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyVisibilityToggledTest.Model>>();
+            var testComponent = comp.Instance;
+
+            await comp.InvokeAsync(() => dataGrid.Instance.ExpandAllHierarchy());
+
+            testComponent.ToggledEvents.Should().HaveCount(3);
+            testComponent.ToggledEvents.Should().OnlyContain(x => x.Expanded == true);
+            testComponent.ToggledEvents.Select(x => x.Item.Name).Should().BeEquivalentTo(["John", "Jane", "Bob"]);
         }
     }
 }
