@@ -3,9 +3,11 @@
 // See the LICENSE file in the project root for more information.
 
 using AngleSharp.Dom;
+using System.Globalization;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Options;
 using MudBlazor.Charts;
 using MudBlazor.UnitTests.TestComponents.Charts;
 using MudBlazor.Utilities;
@@ -694,6 +696,34 @@ namespace MudBlazor.UnitTests.Components
             seriesCheckboxes[2].IsChecked().Should().BeFalse("Sensor Gamma checkbox should be unchecked after hiding again");
             chartSeries[2].Visible.Should().BeFalse("Sensor Gamma Visible property should be false after hiding again");
             comp.FindAll(".mud-chart-cell").Count.Should().Be(chartSeries.Where(x => x.Visible).Sum(x => x.Data.Count()), "should equal count of visible cells");
+        }
+
+        public record YAxisTestCase(Func<double, string> YAxisToStringFunc, string ExpectedValue);
+
+        private const double YAxisTestValue = 20;
+
+        private static IEnumerable<YAxisTestCase> YAxisFuncs()
+        {
+            yield return new YAxisTestCase(x => "hardcoded", "hardcoded");
+            yield return new YAxisTestCase(x => $"{x}/tCO2e", "20/tCO2e");
+            yield return new YAxisTestCase(x => x.ToString("0.00", CultureInfo.InvariantCulture), "20.00");
+            yield return new YAxisTestCase(null!, "20");
+        }
+
+        [Test, TestCaseSource(nameof(YAxisFuncs))]
+        [SetCulture("en-US")]
+        public void YAxisToStringFuncTest(YAxisTestCase testCase)
+        {
+            var comp = Context.RenderComponent<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.ChartLabels, [""])
+                .Add(p => p.ChartOptions, new LineChartOptions() { YAxisToStringFunc = testCase.YAxisToStringFunc })
+                .Add(p => p.ChartSeries, [new() { Data = new([YAxisTestValue]) }])
+            );
+
+            var yaxis = comp.FindAll("g.mud-charts-yaxis");
+            yaxis.Should().NotBeNull();
+            yaxis[0].Children[0].InnerHtml.Trim().Should().Be(testCase.ExpectedValue);
         }
     }
 }

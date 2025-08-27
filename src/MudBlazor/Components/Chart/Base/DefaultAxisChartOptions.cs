@@ -55,6 +55,13 @@ public abstract class DefaultAxisChartOptions : DefaultChartOptions, IAxisChartO
     public string? YAxisFormat { get; set; }
 
     /// <summary>
+    /// Custom formatting function for vertical axis values.
+    /// If set, this function will be used to convert Y-axis values to strings for display purposes.
+    /// If not provided, <see cref="YAxisFormat"/> will be used instead.
+    /// </summary>
+    public Func<double, string>? YAxisToStringFunc { get; set; }
+
+    /// <summary>
     /// Shows vertical axis lines.
     /// </summary>
     /// <remarks>

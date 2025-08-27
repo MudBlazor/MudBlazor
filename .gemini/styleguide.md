@@ -43,6 +43,10 @@ This document outlines the coding standards, best practices, and contribution gu
 - Avoid nesting `switch` statements
 - Remove assignments to variables that are never used (dead stores)
 - Avoid unnecessary boolean expressions
+- Do not update a collection while iterating over it
+- Do not use `NaN` in direct comparisons; use `isNaN()` instead
+- Ensure server ports are positive numbers
+- Always check the return value of `read` and `receive` methods
 
 #### Security Requirements
 
@@ -52,14 +56,17 @@ This document outlines the coding standards, best practices, and contribution gu
 - Do not use hard-coded secrets in code
 - Secrets (API keys, tokens, credentials) should not be guessable
 - Do not use hard-coded IP addresses for security checks
+- Do not use APIs that are known to be vulnerable
+- Do not disable server-side certificate validation
+- Do not use `postMessage` with a wildcard `*` as the target origin
+- Ensure that JSON Web Tokens (JWTs) are validated before use
+- Do not use components with known vulnerabilities
+- Do not allow unrestricted file uploads (remote code execution risk)
+- Do not use insecure templating engines vulnerable to XSS
 
-#### Data Safety
+#### Exception Handling
 
-- Do not update a collection while iterating over it
 - When catching and rethrowing an exception, preserve the original exception
-- Do not use `NaN` in direct comparisons; use `isNaN()` instead
-- Ensure server ports are positive numbers
-- Always check the return value of `read` and `receive` methods
 
 #### Cryptography and Security
 
@@ -68,16 +75,8 @@ This document outlines the coding standards, best practices, and contribution gu
 - Do not use insecure key-stretching algorithms
 - Do not use weak pseudo-random number generators like `Math.random()`
 - Do not use empty passwords for cryptographic operations
-
-#### Web Security
-
-- Do not use APIs that are known to be vulnerable
-- Do not disable server-side certificate validation
-- Do not use `postMessage` with a wildcard `*` as the target origin
-- Ensure that JSON Web Tokens (JWTs) are validated before use
-- Do not use components with known vulnerabilities
-- Do not allow unrestricted file uploads (remote code execution risk)
-- Do not use insecure templating engines vulnerable to XSS
+- Do not use insecure SSL/TLS protocols
+- Do not use insecure hashing algorithms like MD5 or SHA-1
 
 #### Regular Expressions
 
@@ -94,29 +93,27 @@ This document outlines the coding standards, best practices, and contribution gu
 - Remove empty methods and functions
 - `return` statements should not be duplicated in `if/else if` chains
 - Do not have more than 4 `return` statements in a function
-
-#### Security and Best Practices
-
-- Using `eval` is a security risk
 - Do not use the same value on both sides of a binary operator
-- `Promises` should be handled appropriately
-- Do not use insecure SSL/TLS protocols
-- Regular expression patterns should not be vulnerable to injection attacks
-- Do not use HTTP for sensitive data; use HTTPS instead
-- Do not use insecure hashing algorithms like MD5 or SHA-1
-
-#### Performance and Logic
-
 - Do not create and start threads in a loop
-- Do not use `alert`, `confirm`, or `prompt` in server-side code
 - `for` loop counters should not be modified within the loop body
 - Cognitive Complexity of functions should not be higher than 15
 - Do not perform database queries in a loop
 
+#### Security and Best Practices
+
+- Using `eval` is a security risk
+- `Promises` should be handled appropriately
+- Regular expression patterns should not be vulnerable to injection attacks
+- Do not use HTTP for sensitive data; use HTTPS instead
+- Do not use weak key-exchange mechanisms
+- Do not use insecure randomness sources
+- Do not perform redirects to user-controlled URLs without validation
+- Do not use insecure XML parsers
+
 #### JavaScript-Specific
 
+- Do not use `alert`, `confirm`, or `prompt` in server-side code
 - `String.prototype.split()` should not be used with lookbehind assertions
-- Do not use non-cryptographically secure random number generators for security
 - Using `this` outside of a class constructor or method can have unintended consequences
 - Do not use `delete` on variables; use it only on object properties
 - Do not use `arguments.callee` and `arguments.caller`
@@ -124,26 +121,14 @@ This document outlines the coding standards, best practices, and contribution gu
 - `async` functions should contain `await` expressions or return a `Promise`
 - Do not modify the query string of a URL directly
 - Do not use `__proto__` property
-- Do not use `Function` constructor`
+- Do not use `Function` constructor
 - Do not use `with` statement
-
-#### Security Vulnerabilities
-
-- Do not use weak SSL/TLS protocols
-- Do not use regular expressions vulnerable to ReDoS
-- Do not use weak key-exchange mechanisms
-- Do not use insecure randomness sources
-- Do not perform redirects to user-controlled URLs without validation
-- Do not use insecure XML parsers
 - Do not use `this` in a static context to call a non-static method
 - Server-side code should not be vulnerable to path traversal attacks
 - Do not use `Buffer` constructor without sanitizing input
-- Do not use insecure pseudo-random number generators
 - Do not use `eval` with expressions from tamperable sources
 - Do not disable certificate validation for HTTPS connections
 - Do not use `child_process` with unsanitized user input
-- Do not use hard-coded credentials
-- Do not use insecure template engines
 - Do not use `new Function()` with untrusted strings
 
 #### Framework-Specific
@@ -167,6 +152,7 @@ This document outlines the coding standards, best practices, and contribution gu
 - `switch` statements should have a `default` case
 - `switch` statements should have no more than 30 `case` clauses
 - Remove unnecessary assignments to variables
+- `if` statements should not be nested too deeply
 
 #### Security Configuration
 
@@ -179,7 +165,6 @@ This document outlines the coding standards, best practices, and contribution gu
 #### Documentation
 
 - Use JSDoc comments for functions, methods, and classes
-- `if` statements should not be nested too deeply
 
 ### Minor Issues (Style and Consistency)
 
@@ -193,7 +178,6 @@ This document outlines the coding standards, best practices, and contribution gu
 - Remove commented-out code
 - `for` loop update clauses should be correct
 - `throw` statements should not be nested in `finally` blocks
-- `switch` statements should not have too many `case` clauses
 - Use `===` and `!==` instead of `==` and `!=`
 - Use secure defaults for `Cross-Origin-Resource-Policy` headers
 
@@ -219,13 +203,6 @@ This document outlines the coding standards, best practices, and contribution gu
 - Code should not be vulnerable to SQL injection
 - Cookies should be created with the `secure` and `HttpOnly` flags
 - Code should not be vulnerable to LDAP injection
-- Do not disable server-side certificate validation
-- Do not use insecure cryptographic algorithms like DES
-- Do not use insecure protocols that accept self-signed certificates
-- Do not use weak RSA padding schemes like PKCS1
-- Do not use insecure key-stretching algorithms
-- Do not use weak pseudo-random number generators
-- Ensure that JSON Web Tokens (JWTs) are properly validated before use
 - Secrets (like API keys or tokens) should not be guessable
 
 #### Threading and Concurrency
@@ -237,7 +214,6 @@ This document outlines the coding standards, best practices, and contribution gu
 
 #### Memory and Resource Management
 
-- Remove assignments to variables that are never used (dead stores)
 - Return values from `Stream.Read` and related methods should be checked
 - `SafeHandle.ReleaseHandle` should not be called from constructors
 - Avoid making calls to `GC.Collect`
@@ -299,49 +275,26 @@ This document outlines the coding standards, best practices, and contribution gu
 
 #### Type Design
 
-- Do not use the same value on both sides of a binary comparison
 - `GetHashCode` should not be overridden on mutable types
 - Overriding `Equals` on a type that does not implement `IEquatable<T>` can be error-prone
 - A `[Flags]` enum should not have a member with the value zero
-
-#### Performance
-
-- Cognitive Complexity of functions should not be higher than 15
-- Do not perform database queries in a loop
 
 #### Async Patterns
 
 - Do not use `Task.Factory.StartNew` with an `async` lambda
 - Do not use `Task.Result` or `Task.Wait()` on a `Task` that is not completed
 
-#### Security
-
-- Do not use `System.Reflection.Assembly.Load` with a byte array
-- Avoid using insecure protocols like SSL/TLS
-- Regular expressions should not be vulnerable to Denial of Service (DoS) attacks
-- Do not use weak random number generators
-- Do not allow redirects to user-controlled URLs without validation
-- Do not use insecure XML parsers
-
 ### Major Issues (Should Fix)
 
 #### Code Structure
 
 - Avoid duplicate `if` statements
-- Methods should not have more than 7 parameters
 - Empty statements should be removed
 - Classes should not have more than 5 levels of inheritance
 - Avoid unnecessary `continue` statements
 - Finalizers should not be empty
-
-#### Code Maintenance
-
-- `TODO` and `FIXME` comments should be resolved
-- Unnecessary `using` directives should be removed
-- Avoid empty `catch` blocks
 - Unused method parameters should be removed
 - Avoid duplicate conditions in `if`/`else if` chains
-- `switch` statements should have no more than 30 `case` clauses
 - Avoid `goto` statements
 - Boolean expressions should not be nested
 - Unnecessary assignments should be removed
@@ -349,7 +302,6 @@ This document outlines the coding standards, best practices, and contribution gu
 #### Object-Oriented Design
 
 - Do not call `virtual` methods in constructors
-- `switch` statements should have a `default` case
 - Avoid nested `if` statements
 - `async` methods should have "Async" as a suffix
 - Avoid empty interfaces
@@ -390,7 +342,6 @@ This document outlines the coding standards, best practices, and contribution gu
 ### Info Issues (Documentation and Cleanup)
 
 - Deprecated code should be removed
-- Commented-out code should be removed
 
 ## CSS Standards
 
@@ -410,7 +361,6 @@ This document outlines the coding standards, best practices, and contribution gu
 
 ### Major Issues (Should Fix)
 
-- Remove commented-out code
 - Do not use the `!important` keyword, as it disrupts the natural cascade of styles
 - Hex colors should be written in lowercase for consistency
 - Avoid using more than three universal selectors (`*`) in a selector list
@@ -427,7 +377,6 @@ This document outlines the coding standards, best practices, and contribution gu
 ### Minor Issues (Style and Consistency)
 
 - Selectors for IDs should not be overqualified by including a type selector
-- Remove commented-out code blocks
 
 ## Blazor Component Guidelines
 
@@ -560,12 +509,6 @@ private Task ToggleAsync()
 - Add summary comments for every public property using XML documentation
 - Use `CssBuilder` for classes and styles
 - Add comprehensive unit tests for any component containing logic
-- CSS styling alone requires no testing
-
-#### CSS Variables
-
-- Use CSS variables instead of hard-coding colors or other values
-- Follow the established design system patterns
 
 ## Testing Requirements
 

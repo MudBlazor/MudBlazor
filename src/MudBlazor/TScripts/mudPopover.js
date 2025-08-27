@@ -328,7 +328,8 @@ window.mudpopoverHelper = {
                 if (popoverContentNode.mudHeight && anchorY > 0 && anchorY < window.innerHeight) {
                     popoverContentNode.style.maxHeight = null;
                     if (isList) {
-                        popoverContentNode.firstElementChild.style.maxHeight = null;
+                        popoverContentNode.mudScrollTop = firstChild.scrollTop;
+                        firstChild.style.maxHeight = null;
                     }
                     popoverContentNode.mudHeight = null;
                 }
@@ -584,6 +585,10 @@ window.mudpopoverHelper = {
                             popoverContentNode.style.maxHeight = `${newMaxHeight}px`;
                             firstChild.style.maxHeight = `${newMaxHeight}px`;
                             popoverContentNode.mudHeight = "setmaxheight";
+                            if (popoverContentNode.mudScrollTop) {
+                                firstChild.scrollTop = popoverContentNode.mudScrollTop;
+                                popoverContentNode.mudScrollTop = null;
+                            }
                         }
                     }
                 }

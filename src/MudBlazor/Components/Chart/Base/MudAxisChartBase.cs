@@ -180,7 +180,7 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
             {
                 X = HorizontalStartSpace - 10,
                 Y = _boundHeight - y + 5,
-                Value = startGridY.ToString(ChartOptions?.YAxisFormat, null)
+                Value = BuildYAxisValueString(startGridY)
             };
             HorizontalValues.Add(lineValue);
         }
@@ -217,6 +217,15 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
                 Legends.Add(legend);
             }
         }
+    }
+
+    protected string BuildYAxisValueString(T value)
+    {
+        var doubleValue = double.CreateSaturating(value);
+
+        return ChartOptions?.YAxisToStringFunc is null
+            ? ToS(doubleValue, ChartOptions?.YAxisFormat)
+            : ChartOptions.YAxisToStringFunc(doubleValue);
     }
 
     protected static string FormatTooltipText(string? format, ChartSeries<T> series, SvgPath path)
