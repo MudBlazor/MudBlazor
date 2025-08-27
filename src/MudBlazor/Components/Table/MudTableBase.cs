@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
 
@@ -42,6 +40,7 @@ namespace MudBlazor
 
         protected string HeadClassname => new CssBuilder("mud-table-head")
             .AddClass(HeaderClass)
+            .AddClass("mud-table-dense", Dense)
             .Build();
 
         protected string FootClassname => new CssBuilder("mud-table-foot")

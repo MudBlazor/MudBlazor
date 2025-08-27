@@ -41,7 +41,10 @@ namespace MudBlazor.Charts
         protected override void RebuildChart()
         {
             if (MudChartParent != null)
+            {
                 _series = MudChartParent.ChartSeries;
+                ChartOptions = MudChartParent.ChartOptions;
+            }
 
             SetBounds();
             ComputeUnitsAndNumberOfLines(out var gridXUnits, out var gridYUnits, out var numHorizontalLines, out var lowestHorizontalLine, out var numVerticalLines);
@@ -118,7 +121,7 @@ namespace MudBlazor.Charts
                 {
                     X = HorizontalStartSpace - 10,
                     Y = _boundHeight - y + 5,
-                    Value = ToS(startGridY, MudChartParent?.ChartOptions.YAxisFormat)
+                    Value = BuildYAxisValueString(startGridY)
                 };
                 _horizontalValues.Add(lineValue);
             }

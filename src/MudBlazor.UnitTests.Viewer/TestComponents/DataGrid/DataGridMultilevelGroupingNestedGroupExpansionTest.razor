@@ -1,0 +1,30 @@
+﻿<MudDataGrid T="Model"
+             ServerData="@ServerReload"
+             Groupable
+             Height="600px">
+    <Columns>
+        <PropertyColumn Property="x => x.Group" Title="Group" Groupable="true" Grouping GroupExpanded />
+        <PropertyColumn Property="x => x.SubGroup" Title="SubGroup" Groupable="true" Grouping />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private static List<Model> _rows = new()
+    {
+        new Model("A", "X"),
+        new Model("A", "X"),
+        new Model("B", "X"),
+        new Model("B", "X"),
+    };
+
+    private Task<GridData<Model>> ServerReload(GridState<Model> state)
+    {
+        return Task.FromResult(new GridData<Model>
+        {
+            TotalItems = _rows.Count,
+            Items = _rows
+        });
+    }
+
+    public record Model(string Group, string SubGroup);
+}

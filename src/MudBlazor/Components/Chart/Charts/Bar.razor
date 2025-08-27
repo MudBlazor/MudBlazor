@@ -47,10 +47,10 @@
             var color = MudChartParent?.ChartOptions.ChartPalette.GetValue(bar.Index % MudChartParent.ChartOptions.ChartPalette.Length);
 
             <path class="mud-chart-bar"
-                  @onclick="() => SelectedIndex = bar.Index" 
+                  @onclick="() => SelectedIndex = bar.Index"
                   fill="@color"
                   stroke="@color"
-                  stroke-width="@BarStroke" 
+                  stroke-width="@BarStroke"
                   d="@bar.Data"
                   @onmouseover="(e) => OnBarMouseOver(e, bar)"
                   @onmouseout="OnBarMouseOut">
