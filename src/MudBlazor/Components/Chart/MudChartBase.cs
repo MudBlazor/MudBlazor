@@ -2,7 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
@@ -120,6 +119,7 @@ public abstract class MudChartBase : MudComponentBase
             }
         }
     }
+
     internal void SetSelectedIndex(int index)
     {
         SelectedIndex = index;
@@ -148,4 +148,9 @@ public abstract class MudChartBase : MudComponentBase
     {
         MudHeatMapCells.Add(cell);
     }
+
+    protected string BuildYAxisValueString(double value) =>
+        ChartOptions.YAxisToStringFunc is null
+            ? ToS(value, ChartOptions.YAxisFormat)
+            : ChartOptions.YAxisToStringFunc(value);
 }

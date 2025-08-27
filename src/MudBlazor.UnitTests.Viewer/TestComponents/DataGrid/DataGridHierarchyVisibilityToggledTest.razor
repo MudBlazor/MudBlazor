@@ -1,0 +1,33 @@
+﻿@using MudBlazor
+@using System.Collections.Generic
+@using MudBlazor.Utilities
+
+<MudDataGrid T="Model" Items="@Items" HierarchyVisibilityToggled="@OnHierarchyVisibilityToggled">
+    <Columns>
+        <HierarchyColumn />
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Age" />
+    </Columns>
+    <ChildRowContent>
+        <MudText>Child content for @context.Item.Name</MudText>
+    </ChildRowContent>
+</MudDataGrid>
+
+@code {
+    public record Model(string Name, int Age);
+
+    public List<Model> Items = new()
+    {
+        new Model("John", 25),
+        new Model("Jane", 30),
+        new Model("Bob", 35)
+    };
+
+    public List<DataGridHierarchyVisibilityToggledEventArgs<Model>> ToggledEvents = [];
+
+    private Task OnHierarchyVisibilityToggled(DataGridHierarchyVisibilityToggledEventArgs<Model> args)
+    {
+        ToggledEvents.Add(args);
+        return Task.CompletedTask;
+    }
+}
