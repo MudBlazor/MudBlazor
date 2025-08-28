@@ -329,11 +329,16 @@ namespace MudBlazor.UnitTests.Components
                 var items = popoverProvider.FindComponents<MudMenuItem>();
                 items.Count.Should().BeGreaterThan(0);
             });
+
             var listItems = popoverProvider.FindComponents<MudMenuItem>();
+            var expectedMenuTexts = new[] { "Unsort", "Group" };
+
+            listItems.Count.Should().Be(expectedMenuTexts.Length);
 
             for (int i = 0; i < listItems.Count; i++)
             {
-                var itemText = listItems[i].Find(".mud-menu-item-text").TextContent;
+                var itemText = listItems[i].Find(".mud-menu-item-text").TextContent.Trim();
+                itemText.Should().Be(expectedMenuTexts[i]);
             }
 
             var clickablePopover = listItems[1].Find(".mud-menu-item");

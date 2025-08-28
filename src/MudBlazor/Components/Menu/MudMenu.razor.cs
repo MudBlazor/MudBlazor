@@ -829,24 +829,13 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Moves focus up or down in the menu, skipping disabled items.
+        /// Moves focus up or down in the menu.
         /// </summary>
-        private async Task MoveFocusAsync(int direction, int itemCount)
+        private Task MoveFocusAsync(int direction, int itemCount)
         {
-            do
-            {
-                if (direction > 0)
-                {
-                    _focusedIndex = (_focusedIndex + 1) % itemCount;
-                }
-                else
-                {
-                    _focusedIndex = (_focusedIndex - 1 + itemCount) % itemCount;
-                }
-            }
-            while (false);
+            _focusedIndex = (_focusedIndex + direction + itemCount) % itemCount;
 
-            await FocusItemAsync(_focusedIndex);
+            return FocusItemAsync(_focusedIndex);
         }
 
         /// <summary>
@@ -1051,18 +1040,17 @@ namespace MudBlazor
         /// Subscribes to keyboard events for this menu using the <see cref="KeyInterceptorService"/>,
         /// preventing default browser scrolling behaviour for certain keys.
         /// </summary>
-        private async Task SubscribeToMenuKeyInterceptorAsync()
+        private Task SubscribeToMenuKeyInterceptorAsync()
         {
             // Subscribe key interceptor to prevent default scrolling
             var options = new KeyInterceptorOptions(
-                    "mud-list",
-                    [
-                        // prevent scrolling page
-                        new("ArrowDown", preventDown: "key+none"),
-                        new("ArrowUp", preventDown: "key+none"),
-                    ]);
-
-            await KeyInterceptorService.SubscribeAsync(_elementId, options, keyDown: HandleKeyDownAsync);
+                "mud-list",
+                [
+                    // prevent scrolling page
+                    new("ArrowDown", preventDown: "key+none"),
+                    new("ArrowUp", preventDown: "key+none"),
+                ]);
+            return KeyInterceptorService.SubscribeAsync(_elementId, options, keyDown: HandleKeyDownAsync);
         }
 
         /// <summary>

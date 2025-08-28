@@ -787,9 +787,8 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task Menu_ArrowDown_FocusesNextItem()
+        public async Task Menu_ArrowDown_FocusSecondItem()
         {
-            // Open the menu (focus starts at index 0)
             var comp = Context.RenderComponent<MenuKeydownTest>();
 
             await comp.InvokeAsync(async () =>
@@ -798,38 +797,37 @@ namespace MudBlazor.UnitTests.Components
                 await menuButton.ClickAsync(new MouseEventArgs());
             });
 
-            // Press ArrowDown
             await comp.InvokeAsync(async () =>
             {
                 var menuWrapper = comp.Find("[data-testid='menu-wrapper']");
                 await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
+                await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Enter" });
             });
 
-            // Ensure the menu is on index 1
-            GetParentMenuFocusedIndex(comp).Should().Be(1);
+            var last = comp.Instance.LastInvokedIndex;
+            last.Should().Be(1);
         }
 
         [Test]
-        public async Task Menu_ArrowUp_FocusesPreviousItem()
+        public async Task Menu_ArrowUp_FocusLastItem()
         {
             var comp = Context.RenderComponent<MenuKeydownTest>();
 
-            // Open the menu (focus starts at index 0)
             await comp.InvokeAsync(async () =>
             {
                 var menuButton = comp.Find(".mud-menu-button-activator");
                 await menuButton.ClickAsync(new MouseEventArgs());
             });
 
-            // Press ArrowUp
             await comp.InvokeAsync(async () =>
             {
                 var menuWrapper = comp.Find("[data-testid='menu-wrapper']");
                 await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowUp" });
+                await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Enter" });
             });
 
-            // Ensure the menu has looped backward and is on index 5
-            GetParentMenuFocusedIndex(comp).Should().Be(5);
+            var last = comp.Instance.LastInvokedIndex;
+            last.Should().Be(5);
         }
 
         [Test]
@@ -1049,15 +1047,15 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MenuKeydownTest>();
 
-            // Open menu
+            // Open the root menu
             await comp.InvokeAsync(async () =>
             {
                 var menuButton = comp.Find(".mud-menu-button-activator");
                 await menuButton.ClickAsync(new MouseEventArgs());
             });
 
-            // Press ArrowDown 4 times to move from -1 to 4
-            for (int i = 0; i < 4; i++)
+            // Press ArrowDown 5 times to move from 0 to 5
+            for (int i = 0; i < 5; i++)
             {
                 await comp.InvokeAsync(async () =>
                 {
@@ -1066,8 +1064,15 @@ namespace MudBlazor.UnitTests.Components
                 });
             }
 
-            // Should now be on index 5
-            GetParentMenuFocusedIndex(comp).Should().Be(4);
+            await comp.InvokeAsync(async () =>
+            {
+                var menuWrapper = comp.Find("[data-testid='menu-wrapper']");
+                await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Enter" });
+            });
+
+            // Should now be on index 5, so it did focus on the disabled item
+            var last = comp.Instance.LastInvokedIndex;
+            last.Should().Be(5);
         }
 
         [Test]
@@ -1153,18 +1158,6 @@ namespace MudBlazor.UnitTests.Components
 
             disabledRes.Should().BeTrue();
             enabledRes.Should().BeFalse();
-        }
-
-        // Test helper for parent menu targeting
-        private int GetParentMenuFocusedIndex(IRenderedComponent<MenuKeydownTest> comp)
-        {
-            return (int)typeof(MudMenu)
-                .GetField("_focusedIndex", BindingFlags.NonPublic | BindingFlags.Instance)
-                .GetValue(
-                    comp.FindComponents<MudMenu>()
-                        .First(m => m.Instance.Label == "Full Menu Width")
-                        .Instance
-                );
         }
     }
 }
