@@ -4112,6 +4112,45 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(8);
         }
 
+        /// <summary>
+        /// Checks that when the collection is modified, the change is applied in the rendering.
+        /// </summary>
+        /// <remarks>
+        /// https://github.com/MudBlazor/MudBlazor/issues/11758
+        /// </remarks>
+        [Test]
+        public void DataGridObservabilityTest2()
+        {
+            // Arrange
+
+            var sup = Context.RenderComponent<DataGridObservabilityTest>();
+            var comp = sup.Instance;
+            var dataGrid = sup.FindComponent<MudDataGrid<DataGridObservabilityTest.Model>>();
+
+            // Assert : Initial state with 8 rows
+
+            dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(8);
+
+            // Act : Add 2 items
+
+            comp.AddItem();
+            comp.AddItem();
+
+            // Arrange : DataGrid should display 10 rows
+
+            dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(10);
+
+            // Act : Remove 3 items
+
+            comp.RemoveItem();
+            comp.RemoveItem();
+            comp.RemoveItem();
+
+            // Arrange : DataGrid should display 7 rows
+
+            dataGrid.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(7);
+        }
+
         public void TableFilterGuid()
         {
             var comp = Context.RenderComponent<DataGridFilterGuid<Guid>>();

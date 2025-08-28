@@ -9,6 +9,7 @@ using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Examples.Data;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents.Autocomplete;
 using NUnit.Framework;
@@ -20,6 +21,27 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class AutocompleteTests : BunitTest
     {
+        [Test]
+        public void Autocomplete_Should_Handle_Converter_WithStrict()
+        {
+            var comp = Context.RenderComponent<AutocompleteConverterStrictTest>();
+            var autocompleteComponent = comp.FindComponent<MudAutocomplete<AutocompleteConverterStrictTest.ConverterElement>>();
+            comp.Markup.Should().NotContain("mud-popover-open");
+
+            autocompleteComponent.Find(".mud-button-root.mud-no-activator").Click(); // open popover
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+            var items = comp.FindComponents<MudListItem<AutocompleteConverterStrictTest.ConverterElement>>().ToArray();
+            items.Length.Should().Be(10, "The popover should contain 10 items."); // default maxitems is 10
+            comp.Find(".mud-button-root.mud-no-activator").Click(); // close popover
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+
+            // set search
+            autocompleteComponent.Find("input").Input("he");
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+            var filteredItems = comp.FindComponents<MudListItem<AutocompleteConverterStrictTest.ConverterElement>>().ToArray();
+            filteredItems.Length.Should().Be(4, "The popover should contain 4 items.");
+        }
+
         /// <summary>
         /// Initial value should be shown and popup should not open.
         /// </summary>
