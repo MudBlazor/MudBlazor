@@ -256,7 +256,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Check if if empty row text is correct when using LoadingContent
+        /// Check if empty row text is correct when using LoadingContent
         /// </summary>
         [Test]
         public void TableHeadContentTest()
@@ -282,7 +282,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Check if if empty row text is correct when using LoadingContentBody
+        /// Check if empty row text is correct when using LoadingContentBody
         /// </summary>
         [Test]
         public void TableHeadContentBodyTest()
