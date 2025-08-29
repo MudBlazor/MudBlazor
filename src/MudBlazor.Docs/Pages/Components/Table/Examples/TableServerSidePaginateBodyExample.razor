@@ -4,7 +4,9 @@
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-<MudTable ServerData="ServerReload" Dense="true" Hover="true">
+<MudTable ServerData="ServerReload" Dense="true" Hover="true"
+    LoadingContent="@(useLoadingContentBody ? null : loadingContent)"
+    LoadingContentBody="@(useLoadingContentBody ? loadingContentBody : null)">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Periodic Elements</MudText>
     </ToolBarContent>
@@ -25,7 +27,17 @@
     <NoRecordsContent>
         <MudText>No records found</MudText>
     </NoRecordsContent>
-    <LoadingContentBody>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+<MudSwitch @bind-Value="@useLoadingContentBody">Use Loading Content Body</MudSwitch>
+
+@code {
+    private bool useLoadingContentBody = true;
+
+    private readonly RenderFragment loadingContent = @<MudSkeleton/>;
+    private readonly RenderFragment loadingContentBody = @<text>
         @for (int r = 0; r < 4; r++) // 4 fake rows
         {
             <MudTr>
@@ -35,13 +47,8 @@
                 }
             </MudTr>
         }
-    </LoadingContentBody>
-    <PagerContent>
-        <MudTablePager />
-    </PagerContent>
-</MudTable>
+    </text>;
 
-@code {
     /// <summary>
     /// Here we simulate a perpetual loading for the purpose of the example.
     /// </summary>
