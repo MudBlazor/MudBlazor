@@ -995,7 +995,11 @@ namespace MudBlazor
                 if (_menuItems.Count > 0)
                 {
                     _focusedIndex = 0;
-                    await FocusItemAsync(_focusedIndex);
+
+                    if (!_isPointerOver)
+                    {
+                        await FocusItemAsync(_focusedIndex);
+                    }
                 }
             }
         }
@@ -1017,6 +1021,7 @@ namespace MudBlazor
         /// </summary>
         internal async Task FocusItemAsync(int index)
         {
+
             if (index >= 0 && index < _menuItems.Count)
             {
                 var item = _menuItems[index];
