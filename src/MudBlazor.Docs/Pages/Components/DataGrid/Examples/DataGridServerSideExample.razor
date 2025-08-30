@@ -41,7 +41,7 @@
     private async Task<GridData<Element>> ServerReload(GridState<Element> state, CancellationToken token)
     {
         IEnumerable<Element> data = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable", token);
-        await Task.Delay(300);
+        await Task.Delay(300, token);
         data = data.Where(element =>
         {
             if(string.IsNullOrWhiteSpace(searchString))
