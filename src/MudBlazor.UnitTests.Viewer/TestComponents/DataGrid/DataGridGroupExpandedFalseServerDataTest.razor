@@ -31,9 +31,9 @@
         new("Orange", 4, "Citrus")
     ];
 
-    private async Task<GridData<Fruit>> ServerDataFunc(GridState<Fruit> gridState)
+    private async Task<GridData<Fruit>> ServerDataFunc(GridState<Fruit> gridState, CancellationToken token)
     {
-        await Task.Delay(100);
+        await Task.Delay(100, token);
         return new GridData<Fruit>
         {
             Items = _fruits,

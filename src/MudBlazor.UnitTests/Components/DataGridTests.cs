@@ -3451,10 +3451,10 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance.CurrentPage = 2;
             var serverDataCallCount = 0;
             var originalServerDataFunc = dataGrid.Instance.ServerData;
-            dataGrid.Instance.ServerData = (state) =>
+            dataGrid.Instance.ServerData = (state, token) =>
             {
                 serverDataCallCount++;
-                return originalServerDataFunc(state);
+                return originalServerDataFunc(state, token);
             };
 
             // Act

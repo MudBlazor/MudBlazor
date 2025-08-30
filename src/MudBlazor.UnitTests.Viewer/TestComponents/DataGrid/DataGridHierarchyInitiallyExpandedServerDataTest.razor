@@ -50,9 +50,9 @@
             new Model("Versile2", 24, Severity.Error)
         };
 
-    private async Task<GridData<Model>> ServerReload(GridState<Model> state)
+    private async Task<GridData<Model>> ServerReload(GridState<Model> state, CancellationToken token)
     {
-        await Task.Delay(200);
+        await Task.Delay(200, token);
 
         IEnumerable<Model> data = _itemList;
 
