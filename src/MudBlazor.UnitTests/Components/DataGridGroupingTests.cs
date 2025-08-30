@@ -677,6 +677,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [SetCulture("en-US")] // Adding culture setting to ensure consistent number formatting
         public async Task DataGridGroupingTemplateSetAtGridLevel()
         {
             var component = Context.RenderComponent<DataGridGroupingMultiLevelTest>();
