@@ -291,6 +291,9 @@ namespace MudBlazor.UnitTests.Components
             var searchString = comp.Find("#searchString");
             var switchElement = comp.Find("#switch");
 
+            searchString.Input(null);
+            switchElement.Change(false);
+
             // It should be equal to 3 = two rows + header row
             comp.FindAll("tr").Count.Should().Be(3);
 
@@ -298,7 +301,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll(".mud-skeleton").Count.Should().Be(0);
 
             // Filter out all table rows
-            searchString.Change("ZZZ");
+            searchString.Input("ZZZ");
 
             // It should be equal to 2 = two rows + header row
             comp.FindAll("tr").Count.Should().Be(2);

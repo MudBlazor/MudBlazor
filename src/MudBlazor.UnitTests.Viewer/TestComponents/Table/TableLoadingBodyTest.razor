@@ -1,7 +1,7 @@
 ﻿<MudTable Items="@_elements" Hover="true" Breakpoint="Breakpoint.Sm"
           Loading="@_isLoading" Filter="new Func<Element, bool>(FilterFunc)" Striped>
     <ToolBarContent>
-        <MudTextField id="searchString" @bind-Value="_searchString" Placeholder="Search"></MudTextField>
+        <MudTextField id="searchString" @bind-Value="_searchString" Placeholder="Search" Immediate="true"></MudTextField>
     </ToolBarContent>
     <HeaderContent>
         <MudTh>Nr</MudTh>
@@ -40,8 +40,8 @@
                                                    Dynamically added columns should not affect number of cells in the loader row.
                                            ";
 
-    private bool _isLoading;
-    private string? _searchString;
+    private bool _isLoading = true;
+    private string? _searchString = "ABC";
     private IEnumerable<Element> _elements = new List<Element>();
 
     protected override void OnInitialized()
