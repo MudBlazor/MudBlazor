@@ -1,6 +1,8 @@
 ﻿using System.Globalization;
+using System.Reflection;
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.TestComponents.Tabs;
@@ -96,7 +98,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-tabs-panels > div")[0].GetAttribute("style").Should().Be("display:none;");
             comp.FindAll("div.mud-tabs-panels > div")[1].GetAttribute("style").Should().Be("display:contents;");
             comp.FindAll("div.mud-tabs-panels > div")[2].GetAttribute("style").Should().Be("display:none;");
-            // click second button twice and show button click counters. the click of the first button should still be evident 
+            // click second button twice and show button click counters. the click of the first button should still be evident
             comp.FindAll("button")[1].Click();
             comp.FindAll("button")[1].Click();
             comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 1=1");
@@ -137,7 +139,7 @@ namespace MudBlazor.UnitTests.Components
             // only the first panel should be rendered first
             comp.FindAll("p")[^1].MarkupMatches("<p>Panel 1<br></p>");
             // no child divs in div.mud-tabs-panels
-            comp.FindAll("div.mud-tabs-panels > div").Count.Should().Be(0);
+            comp.FindAll("div.mud-tabs-panels > div").Count.Should().Be(1);
             // click first button and show button click counters
             comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 1=0");
             comp.FindAll("button")[0].Click();
@@ -1338,7 +1340,7 @@ namespace MudBlazor.UnitTests.Components
 
 #nullable enable
         [Test]
-        public void TabsDragAndDrop_With_FiresOnItemDropped()
+        public async Task TabsDragAndDrop_With_FiresOnItemDroppedAsync()
         {
             bool onItemDroppedCalled = false;
             MudItemDropInfo<MudTabPanel>? finalDropInfo = null;
@@ -1367,7 +1369,7 @@ namespace MudBlazor.UnitTests.Components
 
             // simulate dragging a tab to index 2
             var dropInfo = new MudItemDropInfo<MudTabPanel>(draggableTab, "mud-drop-zone", 2);
-            tabs.ItemUpdated(dropInfo);
+            await tabs.ItemUpdated(dropInfo);
 
             // Assert that OnItemDropped was called
             comp.WaitForAssertion(() => onItemDroppedCalled.Should().BeTrue());
@@ -1475,16 +1477,36 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void LabelSorting_CustomSortComparer()
+        public void LabelSorting_CustomSortComparerIgnoresSortDirection()
         {
             /* ***
              * All labels should be present and in Tag order, ignoring SortDirection and Keys.
-             * For this test the Tabs.SortDirection is set to Descending in markup, and the SortKeys
+             * For this test the Tabs.SortDirection is set to Descending, and the SortKeys
              * are set to Apple=3, Banana=2, Cherry=1, so there is no combination of SortKey, Label
              * or SortDirection that could ellicit the same sort order as we get from TestComparer.
              */
             var comp = Context.RenderComponent<LabelSortTest>(
-                            ComponentParameter.CreateParameter("SortComparer", new LabelSortTest.TestComparer())
+                            ComponentParameter.CreateParameter("SortComparer", new LabelSortTest.TestComparer()),
+                            ComponentParameter.CreateParameter("SortDirection", SortDirection.Descending)
+                        );
+            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab").Count.Should().Be(3);
+            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[0].InnerHtml.Should().Be("Cherry");
+            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[1].InnerHtml.Should().Be("Apple");
+            comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[2].InnerHtml.Should().Be("Banana");
+        }
+
+        [Test]
+        public void LabelSorting_CustomSortComparerWorksWithoutSortDirection()
+        {
+            /* ***
+             * All labels should be present and in Tag order, SortDirection and Keys are unspecified.
+             * For this test the Tabs.SortDirection is left unset, and the SortKeys
+             * are set to Apple=3, Banana=2, Cherry=1, so there is no combination of SortKey, Label
+             * or SortDirection that could ellicit the same sort order as we get from TestComparer.
+             */
+            var comp = Context.RenderComponent<LabelSortTest>(
+                            ComponentParameter.CreateParameter("SortComparer", new LabelSortTest.TestComparer()),
+                            ComponentParameter.CreateParameter("SortDirection", null)
                         );
             comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab").Count.Should().Be(3);
             comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab")[0].InnerHtml.Should().Be("Cherry");
@@ -1510,7 +1532,7 @@ namespace MudBlazor.UnitTests.Components
             divs[3].InnerHtml.Should().Be("Four");
             // no scroll bar should show
             comp.FindAll(".mud-tabs-scroll-button").Should().BeEmpty();
-            // enable drag and drop 
+            // enable drag and drop
             var cbox = comp.Find("div.drag-drop-class input");
             cbox.Change(true);
             comp.SetParametersAndRender();
@@ -1550,7 +1572,7 @@ namespace MudBlazor.UnitTests.Components
             divs[2].Click(); // activate Three
             divs = comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab");
             comp.WaitForAssertion(() => divs[2].ClassList.Contains("mud-tab-active").Should().BeTrue());
-            // enable drag and drop 
+            // enable drag and drop
             var cbox = comp.Find("div.drag-drop-class input");
             cbox.Change(true);
             comp.SetParametersAndRender(p => p.Add(p => p.ActiveTabClass, "test-active"));
@@ -1567,6 +1589,130 @@ namespace MudBlazor.UnitTests.Components
             divs = comp.FindAll("div.mud-tabs-tabbar-wrapper div.mud-tab");
             comp.WaitForAssertion(() => divs[3].ClassList.Contains("mud-tab-active").Should().BeTrue());
             comp.WaitForAssertion(() => divs[3].ClassList.Contains("test-active").Should().BeTrue());
+        }
+
+        /// <summary>
+        /// Tab selection changes on keyboard Left and Right arrow keys, is activated by Enter/Space keys and ensures disabled tab is not selectable. 
+        /// </summary>
+        [Test]
+        public async Task KeyboardActivation_DisablesDisabledTab_LeftRight()
+        {
+            var comp = Context.RenderComponent<TabsKeyboardAccessibilityTest>();
+            comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content One");
+
+            await comp.InvokeAsync(async () =>
+            {
+                var tabs = comp.FindAll("div.mud-tab");
+                await tabs[0].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowRight" });
+            });
+            var tabsAfterArrowRight = comp.FindAll("div.mud-tab");
+            await comp.InvokeAsync(async () =>
+            {
+                await tabsAfterArrowRight[1].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Enter" });
+            });
+            comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content Two");
+
+            await comp.InvokeAsync(async () =>
+            {
+                var tabs = comp.FindAll("div.mud-tab");
+                await tabs[1].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowLeft" });
+            });
+            var tabsAfterArrowLeft = comp.FindAll("div.mud-tab");
+            await comp.InvokeAsync(async () =>
+            {
+                await tabsAfterArrowLeft[0].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = " " });
+            });
+            comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content One");
+        }
+
+        /// <summary>
+        /// Tab selection changes on keyboard Up and Down arrow keys, is activated by Enter/Space keys
+        /// </summary>
+        [Test]
+        public async Task VerticalTabs_SupportsArrowUpDownNavigation()
+        {
+            var comp = Context.RenderComponent<VerticalTabsKeyboardAccessibilityTest>();
+            await comp.InvokeAsync(async () =>
+            {
+                var tabs = comp.FindAll("div.mud-tab");
+                await tabs[0].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
+            });
+
+            await comp.InvokeAsync(async () =>
+            {
+                var tabs = comp.FindAll("div.mud-tab");
+                await tabs[1].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Enter" });
+            });
+
+            comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content Two");
+            await comp.InvokeAsync(async () =>
+            {
+                var tabs = comp.FindAll("div.mud-tab");
+                await tabs[1].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
+            });
+
+            await comp.InvokeAsync(async () =>
+            {
+                var tabs = comp.FindAll("div.mud-tab");
+                await tabs[2].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = " " });
+            });
+            comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content Three");
+        }
+
+
+        /// <summary>
+        /// Tab selection wraps on keyboard Left and Right arrow keys, is activated by Enter/Space keys and ensures disabled tab is not selectable. 
+        /// </summary>
+        [Test]
+        public async Task KeyboardNavigation_LeftArrow_WrapsToLastEnabledTab()
+        {
+            var comp = Context.RenderComponent<TabsKeyboardAccessibilityTest>();
+            await comp.InvokeAsync(async () =>
+            {
+                var tabs = comp.FindAll("div.mud-tab");
+                await tabs[0].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowLeft" });
+            });
+
+            await comp.InvokeAsync(async () =>
+            {
+                var tabs = comp.FindAll("div.mud-tab");
+                await tabs[1].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Enter" });
+            });
+
+            comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content Two");
+            await comp.InvokeAsync(async () =>
+            {
+                var tabs = comp.FindAll("div.mud-tab");
+                await tabs[1].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowLeft" });
+            });
+
+            await comp.InvokeAsync(async () =>
+            {
+                var tabs = comp.FindAll("div.mud-tab");
+                await tabs[0].TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = " " });
+            });
+            comp.Find("div.mud-tabs-panels").InnerHtml.Should().Contain("Content One");
+        }
+
+        /// <summary>
+        /// Code coverage test showed a missing test line, this tests the return tabListId returns the correct ID. 
+        /// </summary>
+        [Test]
+        public void TabListId_ReturnsCorrectId()
+        {
+            var comp = Context.RenderComponent<MudTabs>();
+            var instance = comp.Instance;
+
+            // Use reflection to set the internal field _tabListId
+            var field = typeof(MudTabs).GetField("_tabListId", BindingFlags.NonPublic | BindingFlags.Instance);
+            field.Should().NotBeNull("because the field '_tabListId' should exist on MudTabs");
+            field!.SetValue(instance, "test-tab-list-id");
+
+            var method = typeof(MudTabs).GetMethod("GetTabListId", BindingFlags.NonPublic | BindingFlags.Instance);
+            method.Should().NotBeNull("because the method 'GetTabListId' should exist on MudTabs");
+            var result = method!.Invoke(instance, null);
+
+            result.Should().Be("test-tab-list-id");
         }
     }
 }

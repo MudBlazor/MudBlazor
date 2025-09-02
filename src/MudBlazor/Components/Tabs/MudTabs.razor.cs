@@ -51,6 +51,9 @@ namespace MudBlazor
         [Inject]
         private IResizeObserverFactory _resizeObserverFactory { get; set; } = null!;
 
+        [Inject]
+        private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
+
         /// <summary>
         /// Enables drag-and-drop re-ordering of tabs.
         /// </summary>
@@ -60,7 +63,7 @@ namespace MudBlazor
         public bool EnableDragAndDrop { get; set; }
 
         /// <summary>
-        /// When <see cref="EnableDragAndDrop" /> is set to true, this event will be raised when an item is dropped. 
+        /// When <see cref="EnableDragAndDrop" /> is set to true, this event will be raised when an item is dropped.
         /// The dropped item is provided in the <see cref="MudItemDropInfo{T}"/> and will have already been moved to its new position.
         /// </summary>
         [Parameter]
@@ -283,7 +286,7 @@ namespace MudBlazor
         public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// This fragment is placed between tabHeader and panels. 
+        /// This fragment is placed between tabHeader and panels.
         /// It can be used to display additional content like an address line in a browser.
         /// The active tab will be the content of this RenderFragement
         /// </summary>
@@ -373,7 +376,7 @@ namespace MudBlazor
         public EventCallback<int> ActivePanelIndexChanged { get; set; }
 
         /// <summary>
-        /// A read-only list of the panels within this component. 
+        /// A read-only list of the panels within this component.
         /// </summary>
         /// <remarks>
         /// Tab panels are controlled by either adding more <see cref="MudTabPanel"/> components in the Razor page, or by using the <see cref="MudDynamicTabs"/> component instead.
@@ -459,6 +462,15 @@ namespace MudBlazor
 
         private string? _nextIcon;
 
+        /// <summary>
+        /// Unique identifier for this MudTabs component instance.
+        /// Used to generate stable, unique IDs for tabs and panels to ensure ARIA compliance.
+        /// Prevents ID conflicts when multiple tab components exist on the same page.
+        /// </summary>
+        private readonly string _componentId = Identifier.Create();
+        private string _elementId = Identifier.Create("tab");
+        private string? _tabListId;
+
         #region Life cycle management
 
         public MudTabs()
@@ -471,6 +483,7 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             _resizeObserver = _resizeObserverFactory.Create();
+            _tabListId = $"tablist-{_componentId}";
             base.OnInitialized();
         }
 
@@ -505,6 +518,19 @@ namespace MudBlazor
                 _isRendered = true;
                 // fix activepanelindex on initial render
                 // https://github.com/MudBlazor/MudBlazor/issues/11519
+
+                var options = new KeyInterceptorOptions(
+                    "mud-tab",
+                    [
+                        // prevent scrolling page
+                        new(" ", preventDown: "key+none", preventUp: "key+none"),
+                        new("Enter", preventDown: "key+none"),
+                        new("NumpadEnter", preventDown: "key+none"),
+                        new("Backspace", preventDown: "key+none")
+                    ]);
+
+                await KeyInterceptorService.SubscribeAsync(_elementId, options, keyDown: HandleKeyInterceptorAsync);
+
                 CenterScrollPositionAroundSelectedItem();
                 SetScrollButtonVisibility();
                 SetScrollabilityStates();
@@ -528,6 +554,10 @@ namespace MudBlazor
                 {
                     await _resizeObserver.DisposeAsync();
                 }
+            }
+            if (IsJSRuntimeAvailable)
+            {
+                await KeyInterceptorService.UnsubscribeAsync(_elementId);
             }
         }
 
@@ -655,7 +685,7 @@ namespace MudBlazor
 
         private void SortPanels()
         {
-            if (_panels.Count == 0 || SortDirection == SortDirection.None)
+            if (_panels.Count == 0 || (SortDirection == SortDirection.None && SortComparer is null))
                 return;
 
             _panels.Sort(GetTabSortExpression);
@@ -1109,6 +1139,127 @@ namespace MudBlazor
             {
                 await OnItemDropped.InvokeAsync(dropItem);
             }
+        }
+
+
+        /// <summary>
+        /// Handles keyboard navigation for tabs according to W3C accessibility guidelines
+        /// Supports Enter/Space for activation and arrow keys for navigation
+        /// </summary>
+        protected virtual async Task HandleTabKeyDownAsync(KeyboardEventArgs e, MudTabPanel panel)
+        {
+            switch (e.Key)
+            {
+                case "Enter":
+                case " ":
+                    ActivatePanel(panel, null, false);
+                    break;
+
+                case "ArrowLeft":
+                    if (!IsVerticalTabs())
+                    {
+                        await MoveFocusToPreviousTab(panel);
+                    }
+                    break;
+
+                case "ArrowRight":
+                    if (!IsVerticalTabs())
+                    {
+                        await MoveFocusToNextTab(panel);
+                    }
+                    break;
+
+                case "ArrowUp":
+                    if (IsVerticalTabs())
+                    {
+                        await MoveFocusToPreviousTab(panel);
+                    }
+                    break;
+
+                case "ArrowDown":
+                    if (IsVerticalTabs())
+                    {
+                        await MoveFocusToNextTab(panel);
+                    }
+                    break;
+            }
+        }
+
+        private async Task HandleKeyInterceptorAsync(KeyboardEventArgs e)
+        {
+            var focusedPanel = ActivePanel;
+            if (focusedPanel != null)
+            {
+                await HandleTabKeyDownAsync(e, focusedPanel);
+            }
+        }
+
+        /// <summary>
+        /// Allows the user to move to the previous tab using key arrow
+        /// </summary>
+        private async Task MoveFocusToPreviousTab(MudTabPanel currentPanel)
+        {
+            var enabledPanels = _panels.Where(p => !p.Disabled).ToList();
+            if (enabledPanels.Count <= 1) return;
+
+            var currentIndex = enabledPanels.IndexOf(currentPanel);
+            var previousIndex = currentIndex <= 0 ? enabledPanels.Count - 1 : currentIndex - 1;
+            var previousPanel = enabledPanels[previousIndex];
+
+            await FocusPanel(previousPanel);
+        }
+
+        /// <summary>
+        /// Allows the user to move to the next tab using keyarrow
+        /// </summary>
+        private async Task MoveFocusToNextTab(MudTabPanel currentPanel)
+        {
+            var enabledPanels = _panels.Where(p => !p.Disabled).ToList();
+            if (enabledPanels.Count <= 1) return;
+
+            var currentIndex = enabledPanels.IndexOf(currentPanel);
+            var nextIndex = currentIndex >= enabledPanels.Count - 1 ? 0 : currentIndex + 1;
+            var nextPanel = enabledPanels[nextIndex];
+
+            await FocusPanel(nextPanel);
+        }
+
+        /// <summary>
+        /// Focuses user onto selected panel
+        /// </summary>
+        private async Task FocusPanel(MudTabPanel panel)
+        {
+            if (panel.PanelRef.Context != null)
+            {
+                await panel.PanelRef.FocusAsync();
+            }
+        }
+
+        /// <summary>
+        /// Generates a unique ID for a tab element using the tab panels field id.
+        /// Required for aria-controls attribute to link tab to its panel.
+        /// </summary>
+        internal string GetTabId(MudTabPanel panel)
+        {
+            return $"tablist-{_componentId}-tab-{panel.FieldId}";
+        }
+
+        /// <summary>
+        /// Generates a unique ID for a tab panel element using the tab panels field id.
+        /// Required for aria-controls attribute to link tab panel to its tab.
+        /// </summary>
+        internal string GetTabPanelId(MudTabPanel panel)
+        {
+            return $"tablist-{_componentId}-tabpanel-{panel.FieldId}";
+        }
+
+        /// <summary>
+        /// Generates a unique ID for a tab list. 
+        /// Required for aria-controls attribute to identify each tablist.
+        /// </summary>
+        internal string GetTabListId()
+        {
+            return _tabListId!;
         }
     }
 }

@@ -3,12 +3,34 @@
 @using System.Text.RegularExpressions
 @using MudBlazor.Components.Highlighter
 @using System.Text
+@using System.Net
 
 @if (Markup)
 {
     if (_htmlAwareFragments != null)
     {
-        @CreateFragmentContent();
+        var sb = new StringBuilder();
+        foreach (var fragmentInfo in _htmlAwareFragments)
+        {
+            switch (fragmentInfo.Type)
+            {
+                case FragmentType.HighlightedText:
+                    var attributes = RenderAttributes(UserAttributes);
+                    var classNames = string.IsNullOrWhiteSpace(Class) ? string.Empty : $" class=\"{Class}\" ";
+                    var styles = string.IsNullOrWhiteSpace(Style) ? string.Empty : $" style=\"{Style}\" ";
+                    sb.Append($"<mark{classNames}{styles}{attributes}>{WebUtility.HtmlEncode(fragmentInfo.Content)}</mark>");
+                    break;
+                case FragmentType.Markup:
+                    sb.Append(fragmentInfo.Content);
+                    break;
+                case FragmentType.Text:
+                default:
+                    sb.Append(WebUtility.HtmlEncode(fragmentInfo.Content));
+                    break;
+            }
+        }
+
+        @((MarkupString)sb.ToString())
     }
     else if (!string.IsNullOrEmpty(Text))
     {
@@ -35,44 +57,18 @@ else if (!string.IsNullOrEmpty(Text))
 }
 
 @code {
-    private RenderFragment CreateFragmentContent() => builder =>
+    private string RenderAttributes(IDictionary<string, object> attributes)
     {
-        int sequence = 0;
-    
-        foreach (var fragmentInfo in _htmlAwareFragments)
+        if (attributes == null) return string.Empty;
+
+        var sb = new StringBuilder();
+        foreach (var kvp in attributes)
         {
-            switch (fragmentInfo.Type)
-            {
-                case FragmentType.HighlightedText:
-                    if (IsMatch(fragmentInfo.Content))
-                    {
-                        builder.OpenElement(sequence++, "mark");
-
-                        if (!string.IsNullOrWhiteSpace(Class))
-                            builder.AddAttribute(sequence++, "class", Class);
-
-                        if (!string.IsNullOrWhiteSpace(Style))
-                            builder.AddAttribute(sequence++, "style", Style);
-        
-                        if (UserAttributes != null || UserAttributes.Count != 0)
-                            builder.AddMultipleAttributes(sequence++, UserAttributes);
-
-                        builder.AddContent(sequence++, fragmentInfo.Content);
-                        builder.CloseElement();
-                    }
-                    else
-                    {
-                        builder.AddContent(sequence++, fragmentInfo.Content);
-                    }
-                    break;
-                case FragmentType.Markup:
-                    builder.AddMarkupContent(sequence++, fragmentInfo.Content);
-                    break;
-                case FragmentType.Text:
-                default:
-                    builder.AddContent(sequence++, fragmentInfo.Content);
-                    break;
-            }
+            var attrName = System.Net.WebUtility.HtmlEncode(kvp.Key);
+            var attrValue = System.Net.WebUtility.HtmlEncode(kvp.Value?.ToString());
+            sb.Append($" {attrName}=\"{attrValue}\" ");
         }
-    };
+
+        return sb.ToString();
+    }
 }

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
 
@@ -42,6 +40,7 @@ namespace MudBlazor
 
         protected string HeadClassname => new CssBuilder("mud-table-head")
             .AddClass(HeaderClass)
+            .AddClass("mud-table-dense", Dense)
             .Build();
 
         protected string FootClassname => new CssBuilder("mud-table-foot")
@@ -679,10 +678,18 @@ namespace MudBlazor
                 return;
             }
 
-            var currentPageHasChanged = _currentPage != 0;
+
+            var currentPageHasChanged = false;
+
+            // On intialization, don't reset CurrentPage
+            // https://github.com/MudBlazor/MudBlazor/issues/11727
+            if (_rowsPerPage.HasValue)
+            {
+                currentPageHasChanged = _currentPage != 0;
+                _currentPage = 0;
+            }
+
             _rowsPerPage = size;
-            _currentPage = 0;
-            StateHasChanged();
             RowsPerPageChanged.InvokeAsync(_rowsPerPage.Value);
 
             if (currentPageHasChanged)
@@ -694,6 +701,8 @@ namespace MudBlazor
             {
                 InvokeServerLoadFunc();
             }
+
+            StateHasChanged();
         }
 
         protected abstract int NumPages { get; }

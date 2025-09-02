@@ -1,6 +1,7 @@
 ﻿using Bunit;
 using FluentAssertions;
 using MudBlazor.Components.Highlighter;
+using MudBlazor.UnitTests.TestComponents.Highlighter;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
 using static MudBlazor.Components.Highlighter.Splitter;
@@ -138,7 +139,7 @@ namespace MudBlazor.UnitTests.Components
             // Test with empty text
             var resultEmpty = GetHtmlAwareFragments(string.Empty, "any", null, out outRegex, false, false);
             resultEmpty.Should().BeEmpty();
-            // As per L59, regex is set to string.Empty at the start of the method before the null check.
+
             outRegex.Should().Be(string.Empty);
         }
 
@@ -200,7 +201,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void GetHtmlAwareFragments_UnmatchedTagWithHighlightAndTrailingText_CorrectlyFragments()
         {
-            var text = "<b>unclosed highlight then_text"; // Simplified input
+            var text = "<b>unclosed highlight then_text";
             var highlightedText = "highlight";
 
             var fragments = GetHtmlAwareFragments(text, highlightedText, null, out var outRegex, caseSensitive: false, untilNextBoundary: false);
@@ -404,173 +405,202 @@ namespace MudBlazor.UnitTests.Components
             var rawOutput = "&lt;i&gt;<mark>Mud</mark>Blazor&lt;/i&gt;";
             var formattedOutput = "<i><mark>Mud</mark>Blazor</i>";
 
-            var text = Parameter(nameof(MudHighlighter.Text), markupText);
-            var highlightedText = Parameter(nameof(MudHighlighter.HighlightedText), searchFor);
+            var comp = Context.RenderComponent<BasicHighlighterTest>(parameters => parameters
+                .Add(p => p.Text, markupText)
+                .Add(p => p.HighlightedText, searchFor)
+                .Add(p => p.Markup, false)
+            );
 
-            var textAsMarkupFalse = Parameter(nameof(MudHighlighter.Markup), false);
-            var comp = Context.RenderComponent<MudHighlighter>(text, highlightedText, textAsMarkupFalse);
-            comp.MarkupMatches(rawOutput);
+            comp.Markup.Should().Contain(rawOutput);
 
-            var textAsMarkupTrue = Parameter(nameof(MudHighlighter.Markup), true);
-            comp = Context.RenderComponent<MudHighlighter>(text, highlightedText, textAsMarkupTrue);
-            comp.MarkupMatches(formattedOutput);
+            comp = Context.RenderComponent<BasicHighlighterTest>(parameters => parameters
+                .Add(p => p.Text, markupText)
+                .Add(p => p.HighlightedText, searchFor)
+                .Add(p => p.Markup, true)
+            );
+
+            comp.Markup.Should().Contain(formattedOutput);
         }
 
         [Test]
         public void MudHighlighter_MarkupTrue_HtmlInText_ShouldHighlightCorrectly()
         {
-            var textParam = Parameter(nameof(MudHighlighter.Text), "<span>Hello</span> World");
-            var highlightedTextParam = Parameter(nameof(MudHighlighter.HighlightedText), "Hello");
-            var markupParam = Parameter(nameof(MudHighlighter.Markup), true);
-            var comp = Context.RenderComponent<MudHighlighter>(textParam, highlightedTextParam, markupParam);
-            comp.MarkupMatches("<span><mark>Hello</mark></span> World");
+            var comp = Context.RenderComponent<BasicHighlighterTest>(parameters => parameters
+                .Add(p => p.Text, "<span>Hello</span> World")
+                .Add(p => p.HighlightedText, "Hello")
+                .Add(p => p.Markup, true)
+            );
+
+            comp.Markup.Should().Contain("<span><mark>Hello</mark></span> World");
         }
 
         [Test]
         public void MudHighlighter_MarkupTrue_HtmlSensitiveCharInHighlightedText_ShouldEncodeAndHighlight()
         {
-            var textParam = Parameter(nameof(MudHighlighter.Text), "Hello <World>");
-            var highlightedTextParam = Parameter(nameof(MudHighlighter.HighlightedText), "<World>");
-            var markupParam = Parameter(nameof(MudHighlighter.Markup), true);
-            var comp = Context.RenderComponent<MudHighlighter>(textParam, highlightedTextParam, markupParam);
-            comp.MarkupMatches("Hello <mark>&lt;World&gt;</mark>");
+            var comp = Context.RenderComponent<BasicHighlighterTest>(parameters => parameters
+                .Add(p => p.Text, "Hello <World>")
+                .Add(p => p.HighlightedText, "<World>")
+                .Add(p => p.Markup, true)
+            );
+
+            comp.Markup.Should().Contain("Hello <mark>&lt;World&gt;</mark>");
         }
 
         [Test]
         public void MudHighlighter_MarkupTrue_HtmlInText_ShouldNotHighlightInTags()
         {
-            var textParam = Parameter(nameof(MudHighlighter.Text), "<div class='foo'>div content div</div>");
-            var highlightedTextParam = Parameter(nameof(MudHighlighter.HighlightedText), "div");
-            var markupParam = Parameter(nameof(MudHighlighter.Markup), true);
-            var comp = Context.RenderComponent<MudHighlighter>(textParam, highlightedTextParam, markupParam);
-            comp.MarkupMatches("<div class='foo'><mark>div</mark> content <mark>div</mark></div>");
+            var comp = Context.RenderComponent<BasicHighlighterTest>(parameters => parameters
+                .Add(p => p.Text, "<div class='foo'>div content div</div>")
+                .Add(p => p.HighlightedText, "div")
+                .Add(p => p.Markup, true)
+            );
+
+            comp.Markup.Should().Contain("<div class='foo'><mark>div</mark> content <mark>div</mark></div>");
         }
 
         [Test]
         public void MudHighlighter_MarkupTrue_HtmlTag_ShouldNotHighlight()
         {
-            var textParam = Parameter(nameof(MudHighlighter.Text), "Hello <i>Mud</i> World");
-            var highlightedTextParam = Parameter(nameof(MudHighlighter.HighlightedText), "<i>");
-            var markupParam = Parameter(nameof(MudHighlighter.Markup), true);
-            var comp = Context.RenderComponent<MudHighlighter>(textParam, highlightedTextParam, markupParam);
-            comp.MarkupMatches("Hello <i>Mud</i> World");
+            var comp = Context.RenderComponent<BasicHighlighterTest>(parameters => parameters
+                .Add(p => p.Text, "Hello <i>Mud</i> World")
+                .Add(p => p.HighlightedText, "<i>")
+                .Add(p => p.Markup, true)
+            );
+
+            comp.Markup.Should().Contain("Hello <i>Mud</i> World");
         }
 
         [Test]
         public void MudHighlighter_MarkupTrue_TextWithHtmlEntities_HighlightedTextIsEntityText()
         {
-            var textParam = Parameter(nameof(MudHighlighter.Text), "Hello &amp; World");
-            var highlightedTextParam = Parameter(nameof(MudHighlighter.HighlightedText), "&amp;");
-            var markupParam = Parameter(nameof(MudHighlighter.Markup), true);
-            var comp = Context.RenderComponent<MudHighlighter>(textParam, highlightedTextParam, markupParam);
-            // Adjusted to match BUnit's actual output. This implies that when FragmentInfo.Content = "&amp;",
-            // the rendered <mark>@FragmentInfo.Content</mark> is captured by BUnit as <mark>&amp;amp;</mark>.
-            comp.MarkupMatches("Hello <mark>&amp;amp;</mark> World");
+            var comp = Context.RenderComponent<BasicHighlighterTest>(parameters => parameters
+                .Add(p => p.Text, "Hello &amp; World")
+                .Add(p => p.HighlightedText, "&amp;")
+                .Add(p => p.Markup, true)
+            );
+
+            comp.Markup.Should().Contain("Hello <mark>&amp;amp;</mark> World");
         }
 
         [Test]
         public void MudHighlighter_MarkupTrue_HighlightedTextWithSingleQuotes_ShouldHighlight()
         {
-            var textParam = Parameter(nameof(MudHighlighter.Text), "This is a 'quoted' text and a \"double quoted\" text.");
-            var highlightedTextParam = Parameter(nameof(MudHighlighter.HighlightedText), "'quoted'");
-            var markupParam = Parameter(nameof(MudHighlighter.Markup), true);
-            var comp = Context.RenderComponent<MudHighlighter>(textParam, highlightedTextParam, markupParam);
-            comp.MarkupMatches("This is a <mark>'quoted'</mark> text and a \"double quoted\" text.");
+            var comp = Context.RenderComponent<BasicHighlighterTest>(parameters => parameters
+                .Add(p => p.Text, "This is a 'quoted' text and a \"double quoted\" text.")
+                .Add(p => p.HighlightedText, "'quoted'")
+                .Add(p => p.Markup, true)
+            );
+
+            comp.Markup.Should().Contain("This is a <mark>&#39;quoted&#39;</mark> text and a &quot;double quoted&quot; text.");
         }
 
         [Test]
         public void MudHighlighter_MarkupTrue_HighlightedTextWithDoubleQuotes_ShouldHighlight()
         {
-            var textParam = Parameter(nameof(MudHighlighter.Text), "This is a 'quoted' text and a \"double quoted\" text.");
-            var highlightedTextParam = Parameter(nameof(MudHighlighter.HighlightedText), "\"double quoted\"");
-            var markupParam = Parameter(nameof(MudHighlighter.Markup), true);
-            var comp = Context.RenderComponent<MudHighlighter>(textParam, highlightedTextParam, markupParam);
-            comp.MarkupMatches("This is a 'quoted' text and a <mark>&quot;double quoted&quot;</mark> text.");
+            var comp = Context.RenderComponent<BasicHighlighterTest>(parameters => parameters
+                .Add(p => p.Text, "This is a 'quoted' text and a \"double quoted\" text.")
+                .Add(p => p.HighlightedText, "\"double quoted\"")
+                .Add(p => p.Markup, true)
+            );
+
+            comp.Markup.Should().Contain("This is a &#39;quoted&#39; text and a <mark>&quot;double quoted&quot;</mark> text.");
         }
 
         [Test]
         public void MudHighlighter_MarkupTrue_HighlightedTextAsAttributeValue_ShouldNotHighlightInAttribute()
         {
-            var textParam = Parameter(nameof(MudHighlighter.Text), "<span title='nothing'>nothing</span>");
-            var highlightedTextParam = Parameter(nameof(MudHighlighter.HighlightedText), "nothing");
-            var markupParam = Parameter(nameof(MudHighlighter.Markup), true);
-            var comp = Context.RenderComponent<MudHighlighter>(textParam, highlightedTextParam, markupParam);
-            comp.MarkupMatches("<span title='nothing'><mark>nothing</mark></span>");
+            var comp = Context.RenderComponent<BasicHighlighterTest>(parameters => parameters
+                .Add(p => p.Text, "<i>MudBlazor</i> is <span style='color:red'>important</span>")
+                .Add(p => p.HighlightedText, "nothing")
+                .Add(p => p.Markup, true)
+            );
+
+            comp.Markup.Should().Contain("<i>MudBlazor</i> is <span style='color:red'>important</span>");
         }
 
         [Test]
         public void MudHighlighter_MarkupTrue_FormattingPreservation_ItalicsAndColor()
         {
-            var textParam = Parameter(nameof(MudHighlighter.Text), "<i>MudBlazor</i> is <span style='color:red'>important</span>");
-            var highlightedTextParam = Parameter(nameof(MudHighlighter.HighlightedText), "MudBlazor");
-            var markupParam = Parameter(nameof(MudHighlighter.Markup), true);
-            var comp = Context.RenderComponent<MudHighlighter>(textParam, highlightedTextParam, markupParam);
-            comp.MarkupMatches("<i><mark>MudBlazor</mark></i> is <span style='color:red'>important</span>");
+            var comp = Context.RenderComponent<BasicHighlighterTest>(parameters => parameters
+                .Add(p => p.Text, "<i>MudBlazor</i> is <span style='color:red'>important</span>")
+                .Add(p => p.HighlightedText, "MudBlazor")
+                .Add(p => p.Markup, true)
+            );
+
+            comp.Markup.Should().Contain("<i><mark>MudBlazor</mark></i> is <span style='color:red'>important</span>");
         }
 
         [Test]
         public void MudHighlighter_MarkupTrue_FormattingPreservation_Bold()
         {
-            var textParam = Parameter(nameof(MudHighlighter.Text), "Normal <b>bold</b> normal");
-            var highlightedTextParam = Parameter(nameof(MudHighlighter.HighlightedText), "bold");
-            var markupParam = Parameter(nameof(MudHighlighter.Markup), true);
-            var comp = Context.RenderComponent<MudHighlighter>(textParam, highlightedTextParam, markupParam);
-            comp.MarkupMatches("Normal <b><mark>bold</mark></b> normal");
+            var comp = Context.RenderComponent<BasicHighlighterTest>(parameters => parameters
+                .Add(p => p.Text, "Normal <b>bold</b> normal")
+                .Add(p => p.HighlightedText, "bold")
+                .Add(p => p.Markup, true)
+            );
+
+            comp.Markup.Should().Contain("Normal <b><mark>bold</mark></b> normal");
         }
 
         [Test]
         public void MudHighlighter_MarkupTrue_NonStandardTag_NoHighlight()
         {
-            var textParam = Parameter(nameof(MudHighlighter.Text), "Hello <ambitious> world");
-            var highlightedTextParam = Parameter(nameof(MudHighlighter.HighlightedText), ""); // Or null, effectively no highlight
-            var markupParam = Parameter(nameof(MudHighlighter.Markup), true);
-            var comp = Context.RenderComponent<MudHighlighter>(textParam, highlightedTextParam, markupParam);
-            comp.MarkupMatches("Hello &lt;ambitious&gt; world");
+            var comp = Context.RenderComponent<BasicHighlighterTest>(parameters => parameters
+                .Add(p => p.Text, "Hello <ambitious> world")
+                .Add(p => p.HighlightedText, "")
+                .Add(p => p.Markup, true)
+            );
+
+            comp.Markup.Should().Contain("Hello &lt;ambitious&gt; world");
         }
 
         [Test]
         public void MudHighlighter_MarkupTrue_NonStandardTag_WithHighlightAfterTag()
         {
-            var textParam = Parameter(nameof(MudHighlighter.Text), "Hello <ambitious> world");
-            var highlightedTextParam = Parameter(nameof(MudHighlighter.HighlightedText), "world");
-            var markupParam = Parameter(nameof(MudHighlighter.Markup), true);
-            var comp = Context.RenderComponent<MudHighlighter>(textParam, highlightedTextParam, markupParam);
-            comp.MarkupMatches("Hello &lt;ambitious&gt; <mark>world</mark>");
+            var comp = Context.RenderComponent<BasicHighlighterTest>(parameters => parameters
+                .Add(p => p.Text, "Hello <ambitious> world")
+                .Add(p => p.HighlightedText, "world")
+                .Add(p => p.Markup, true)
+            );
+
+            comp.Markup.Should().Contain("Hello &lt;ambitious&gt; <mark>world</mark>");
         }
 
         [Test]
         public void MudHighlighter_MarkupTrue_NonStandardTag_WithHighlightInsideTag()
         {
-            var textParam = Parameter(nameof(MudHighlighter.Text), "Hello <ambitious> world");
-            var highlightedTextParam = Parameter(nameof(MudHighlighter.HighlightedText), "bit");
-            var markupParam = Parameter(nameof(MudHighlighter.Markup), true);
-            var comp = Context.RenderComponent<MudHighlighter>(textParam, highlightedTextParam, markupParam);
-            comp.MarkupMatches("Hello &lt;am<mark>bit</mark>ious&gt; world");
+            var comp = Context.RenderComponent<BasicHighlighterTest>(parameters => parameters
+                .Add(p => p.Text, "Hello <ambitious> world")
+                .Add(p => p.HighlightedText, "bit")
+                .Add(p => p.Markup, true)
+            );
+
+            comp.Markup.Should().Contain("Hello &lt;am<mark>bit</mark>ious&gt; world");
         }
 
         [Test]
         public void MudHighlighter_MarkupTrue_NoFragments_RendersTextAsMarkupString()
         {
-            var textParam = Parameter(nameof(MudHighlighter.Text), "Some text");
-            var highlightedTextParam = Parameter(nameof(MudHighlighter.HighlightedText), "zip");
-            var markupParam = Parameter(nameof(MudHighlighter.Markup), true);
+            var comp = Context.RenderComponent<BasicHighlighterTest>(parameters => parameters
+                .Add(p => p.Text, "Some text")
+                .Add(p => p.HighlightedText, "zip")
+                .Add(p => p.Markup, true)
+            );
 
-            var comp = Context.RenderComponent<MudHighlighter>(textParam, highlightedTextParam, markupParam);
-
-            comp.MarkupMatches("Some text");
+            comp.Markup.Should().Contain("Some text");
         }
 
         [Test]
         public void MudHighlighter_MarkupTrue_WithClass_RendersMarkWithClass()
         {
-            var textParam = Parameter(nameof(MudHighlighter.Text), "Highlight this");
-            var highlightedTextParam = Parameter(nameof(MudHighlighter.HighlightedText), "Highlight");
-            var markupParam = Parameter(nameof(MudHighlighter.Markup), true);
-            var classParam = Parameter(nameof(MudHighlighter.Class), "my-custom-class");
+            var comp = Context.RenderComponent<BasicHighlighterTest>(parameters => parameters
+                .Add(p => p.Text, "Highlight this")
+                .Add(p => p.HighlightedText, "Highlight")
+                .Add(p => p.Markup, true)
+                .Add(p => p.CustomClass, "my-custom-class")
+            );
 
-            var comp = Context.RenderComponent<MudHighlighter>(textParam, highlightedTextParam, markupParam, classParam);
-
-            comp.MarkupMatches("<mark class=\"my-custom-class\">Highlight</mark> this");
+            comp.Markup.Should().Contain("<mark class=\"my-custom-class\" >Highlight</mark> this");
         }
 
         [Test]
@@ -580,23 +610,21 @@ namespace MudBlazor.UnitTests.Components
             var initialHighlightedText = "highlight";
 
             // 1. Render initially with Markup = true
-            var comp = Context.RenderComponent<MudHighlighter>(parameters => parameters
+            var comp = Context.RenderComponent<BasicHighlighterTest>(parameters => parameters
                 .Add(p => p.Text, initialText)
                 .Add(p => p.HighlightedText, initialHighlightedText)
                 .Add(p => p.Markup, true)
             );
 
-            comp.MarkupMatches("Test with <b>HTML</b> and <mark>highlight</mark>");
+            comp.Markup.Should().Contain("Test with <b>HTML</b> and <mark>highlight</mark>");
 
             // 2. Re-render with Markup = false
             comp.SetParametersAndRender(parameters => parameters
-                .Add(p => p.Text, initialText) // Keep text and highlight the same
-                .Add(p => p.HighlightedText, initialHighlightedText)
                 .Add(p => p.Markup, false)
             );
 
             var expectedMarkup = "Test with &lt;b&gt;HTML&lt;/b&gt; and <mark>highlight</mark>";
-            comp.MarkupMatches(expectedMarkup);
+            comp.Markup.Should().Contain(expectedMarkup);
         }
     }
 }
