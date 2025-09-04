@@ -847,15 +847,6 @@ namespace MudBlazor
             {
                 var currentItem = _menuItems[_focusedIndex];
 
-                // Check if the current item is disabled - if so, do nothing
-                if (GetItemDisabled(currentItem))
-                {
-                    await CloseAllMenusAsync();
-                    return;
-                }
-
-                bool openedSubMenu = false;
-
                 switch (currentItem)
                 {
                     case MudMenuItem menuItem:
@@ -863,7 +854,6 @@ namespace MudBlazor
                         if (submenu != null)
                         {
                             await submenu.OpenSubMenuAsync(EventArgs.Empty);
-                            openedSubMenu = true;
                         }
                         else
                         {
@@ -873,14 +863,7 @@ namespace MudBlazor
 
                     case MudMenu menu:
                         await menu.OpenSubMenuAsync(EventArgs.Empty);
-                        openedSubMenu = true;
                         break;
-                }
-
-                // Close all menus if no submenu was opened
-                if (!openedSubMenu)
-                {
-                    await CloseAllMenusAsync();
                 }
             }
         }
@@ -919,13 +902,6 @@ namespace MudBlazor
             if (_focusedIndex >= 0 && _focusedIndex < _menuItems.Count)
             {
                 var currentItem = _menuItems[_focusedIndex];
-
-                // Check if the current item is disabled - if so, do nothing
-                if (GetItemDisabled(currentItem))
-                {
-                    await CloseAllMenusAsync();
-                    return;
-                }
 
                 // Handle different item types
                 switch (currentItem)
@@ -1089,19 +1065,6 @@ namespace MudBlazor
             {
                 // No focus added - menu closed without focusing, as the element is likely gone from the DOM.
             }
-        }
-
-        /// <summary>
-        /// Determines whether the specified menu item or submenu is disabled.
-        /// </summary>
-        internal bool GetItemDisabled(object item)
-        {
-            return item switch
-            {
-                MudMenuItem menuItem => menuItem.GetDisabled(),
-                MudMenu menu => menu.Disabled,
-                _ => false
-            };
         }
 
         /// <summary>
