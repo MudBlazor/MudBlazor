@@ -971,11 +971,7 @@ namespace MudBlazor
                 if (_menuItems.Count > 0)
                 {
                     _focusedIndex = 0;
-
-                    if (!_isPointerOver)
-                    {
-                        await FocusItemAsync(_focusedIndex);
-                    }
+                    await FocusItemAsync(_focusedIndex);
                 }
             }
         }
