@@ -29,7 +29,7 @@
             </div>
         }
         <div id="@_tableId" class="mud-table-container @TableContainerClass" style="@TableContainerStyle @(GetHorizontalScrollbarStyle())">
-    <table class="@TableClassname">
+            <table class="@TableClassname">
                 @if (ColGroup != null)
                 {
                     <colgroup>
@@ -93,49 +93,49 @@
                         @if (CurrentPageItems != null && CurrentPageItems.Any())
                         {
                             var rowIndex = 0;
-                                <MudVirtualize Enabled="@Virtualize" Items="@CurrentPageItems?.ToList()" OverscanCount="@OverscanCount" ItemSize="@ItemSize" Context="item">
-                                    @{
-                                        var itemIndex = FilteredItems.ToList().IndexOf(item);
-                                        string generatedRowId = itemIndex != -1 ? $"{_tableId}_row_{itemIndex}" : null;
-                                        var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, itemIndex)).Build();
-                                        var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, itemIndex)).Build();
-                                    }
-                                    <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item" RowId="@generatedRowId"
-                                           Checkable="MultiSelection" SelectionChangeable="SelectionChangeable" Editable="IsItemEditable(item)"
-                                           Checked="@(IsCheckedRow(item))"
-                                           CheckedChanged="((value) => OnRowCheckboxChanged(value, item))">
+                            <MudVirtualize Enabled="@Virtualize" Items="@CurrentPageItems?.ToList()" OverscanCount="@OverscanCount" ItemSize="@ItemSize" Context="item">
+                                @{
+                                    var itemIndex = FilteredItems.ToList().IndexOf(item);
+                                    string generatedRowId = itemIndex != -1 ? $"{_tableId}_row_{itemIndex}" : null;
+                                    var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, itemIndex)).Build();
+                                    var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, itemIndex)).Build();
+                                }
+                                <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item" RowId="@generatedRowId"
+                                        Checkable="MultiSelection" SelectionChangeable="SelectionChangeable" Editable="IsItemEditable(item)"
+                                        Checked="@(IsCheckedRow(item))"
+                                        CheckedChanged="((value) => OnRowCheckboxChanged(value, item))">
 
-                                        @if ((!ReadOnly) && Editable && Equals(_editingItem, item))
-                                        {
-                                            <CascadingValue Value="@Validator" IsFixed="true">
-                                                @if (RowEditingTemplate != null)
-                                                {
-                                                    @RowEditingTemplate(item)
-                                                }
-                                                @if (Columns != null)
-                                                {
-                                                    @Columns(item)
-                                                }
-                                            </CascadingValue>
-                                        }
-                                        else
-                                        {
-                                            if (RowTemplate != null)
+                                    @if ((!ReadOnly) && Editable && Equals(_editingItem, item))
+                                    {
+                                        <CascadingValue Value="@Validator" IsFixed="true">
+                                            @if (RowEditingTemplate != null)
                                             {
-                                                @RowTemplate(item)
+                                                @RowEditingTemplate(item)
                                             }
                                             @if (Columns != null)
                                             {
                                                 @Columns(item)
                                             }
-                                        }
-                                    </MudTr>
-                                    @if (ChildRowContent != null)
-                                    {
-                                        @ChildRowContent(item)
+                                        </CascadingValue>
                                     }
-                                    @{ rowIndex++; }
-                                </MudVirtualize>
+                                    else
+                                    {
+                                        if (RowTemplate != null)
+                                        {
+                                            @RowTemplate(item)
+                                        }
+                                        @if (Columns != null)
+                                        {
+                                            @Columns(item)
+                                        }
+                                    }
+                                </MudTr>
+                                @if (ChildRowContent != null)
+                                {
+                                    @ChildRowContent(item)
+                                }
+                                @{ rowIndex++; }
+                            </MudVirtualize>
                         }
                     }
                     @if (!(CurrentPageItems is not null && CurrentPageItems.Any()))
@@ -219,37 +219,37 @@
                  var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, itemIndexForId)).Build();
              }
              <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item" RowId="@generatedRowId" Checkable="MultiSelection" SelectionChangeable="SelectionChangeable" Editable="IsItemEditable(item)" Expandable="expandable"
-                    Checked="Context.Selection.Contains(item)" CheckedChanged="((value) => { var x = item; OnRowCheckboxChanged(value, x); })">
-                    @if ((!ReadOnly) && Editable && Equals(_editingItem, item))
-                    {
-                        <CascadingValue Value="@Validator" IsFixed="true">
-                            @if(RowEditingTemplate != null)
-                            {
-	                            @RowEditingTemplate(item)
-                            }
-                            @if (Columns != null)
-                            {
-                                @Columns(item)
-                            }
-                        </CascadingValue>
-                    }
-                    else
-                    {
-                        if (RowTemplate != null)
+                Checked="Context.Selection.Contains(item)" CheckedChanged="((value) => { var x = item; OnRowCheckboxChanged(value, x); })">
+                @if ((!ReadOnly) && Editable && Equals(_editingItem, item))
+                {
+                    <CascadingValue Value="@Validator" IsFixed="true">
+                        @if(RowEditingTemplate != null)
                         {
-	                        @RowTemplate(item)
+	                        @RowEditingTemplate(item)
                         }
                         @if (Columns != null)
                         {
                             @Columns(item)
                         }
-                    }
-                </MudTr>
-                @if (ChildRowContent != null)
-                {
-                    @ChildRowContent(item)
+                    </CascadingValue>
                 }
-                @{rowIndex++;}
+                else
+                {
+                    if (RowTemplate != null)
+                    {
+	                    @RowTemplate(item)
+                    }
+                    @if (Columns != null)
+                    {
+                        @Columns(item)
+                    }
+                }
+            </MudTr>
+            @if (ChildRowContent != null)
+            {
+                @ChildRowContent(item)
+            }
+            @{rowIndex++;}
         </text>;
 
         return rootNode;

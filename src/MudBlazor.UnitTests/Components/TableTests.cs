@@ -2839,7 +2839,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<MudTable<TestItem>>(parameters => parameters
                 .Add(p => p.Items, items)
                 .Add(p => p.Virtualize, false)
-                 .Add(p => p.HeaderContent, builder =>
+                .Add(p => p.HeaderContent, builder =>
                  {
                      builder.OpenComponent<MudTh>(0); builder.AddAttribute(1, "ChildContent", (RenderFragment)(b => b.AddContent(2, "Name"))); builder.CloseComponent();
                  })
@@ -2869,7 +2869,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.Virtualize, true)
                 .Add(p => p.Height, "300px")
                 .Add(p => p.FixedHeader, true)
-                 .Add(p => p.HeaderContent, builder =>
+                .Add(p => p.HeaderContent, builder =>
                  {
                      builder.OpenComponent<MudTh>(0); builder.AddAttribute(1, "ChildContent", (RenderFragment)(b => b.AddContent(2, "Name"))); builder.CloseComponent();
                  })
