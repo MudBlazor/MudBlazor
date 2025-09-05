@@ -188,6 +188,21 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Loading Content">
+                <Description>
+                    Use <CodeInline>LoadingContent</CodeInline> to define what is shown when data is loading and no rows are currently available.
+                    This renders inside a single table row with one spanning cell, which makes it simple for messages or placeholders but not suitable for simulating multiple rows or columns.
+                    <br><br>
+                    For more complex layouts, use <CodeInline>LoadingContentBody</CodeInline>.
+                    This renders directly in the table body and gives you full control to create rows and columns (e.g., with <CodeInline>MudTr</CodeInline> and <CodeInline>MudTd</CodeInline>), without affecting the loading animation itself.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(TableServerSidePaginateBodyExample)" ShowCode="false" Block="true" FullWidth="true">
+                <TableServerSidePaginateBodyExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Record Type Support">
                 <Description>
                     By default, mutable <CodeInline>record</CodeInline> types do not work with multi-selection or editing. This is due to the way record equality works. To support multi-selection or editing of records in a <CodeInline>MudTable</CodeInline>,

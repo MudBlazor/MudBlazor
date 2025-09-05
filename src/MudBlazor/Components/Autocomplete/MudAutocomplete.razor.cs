@@ -25,6 +25,7 @@ namespace MudBlazor
         private int _returnedItemsCount;
         private bool _open;
         private bool _opening;
+        private bool _isValueCoerced;
         private MudInput<string> _elementReference = null!;
         private CancellationTokenSource? _cancellationTokenSrc;
         private Task? _currentSearchTask;
@@ -710,7 +711,7 @@ namespace MudBlazor
                 }
 
                 // Search while selected if enabled and the Text is equivalent to the Value.
-                searchingWhileSelected = !Strict && Value != null && (Value.ToString() == Text || (ToStringFunc != null && ToStringFunc(Value) == Text));
+                searchingWhileSelected = !_isValueCoerced && !Strict && Value != null && (Value.ToString() == Text || (ToStringFunc != null && ToStringFunc(Value) == Text));
                 _cancellationTokenSrc ??= new CancellationTokenSource();
                 var searchText = searchingWhileSelected ? string.Empty : Text;
                 var searchTask = SearchFunc?.Invoke(searchText, _cancellationTokenSrc.Token);
@@ -797,6 +798,12 @@ namespace MudBlazor
             {
                 await ScrollToListItemAsync(_selectedListItemIndex);
             }
+        }
+
+        protected override Task SetValueAsync(T? value, bool updateText = true, bool force = false)
+        {
+            _isValueCoerced = false;
+            return base.SetValueAsync(value, updateText, force);
         }
 
         /// <summary>
@@ -1133,15 +1140,19 @@ namespace MudBlazor
             return Task.CompletedTask;
         }
 
-        private Task CoerceValueToTextAsync()
+        private async Task CoerceValueToTextAsync()
         {
             if (!CoerceValue)
-                return Task.CompletedTask;
+                return;
 
             _debounceTimer?.Dispose();
 
             var value = Converter.Get(Text);
-            return SetValueAsync(value, updateText: false);
+            await SetValueAsync(value, updateText: false);
+
+            // We must set _isValueCoerced to true after calling SetValueAsync, as it sets it to false
+            // CoerceValue is always true at this point, so we can set the value to true rather than checking the property again
+            _isValueCoerced = true;
         }
 
         /// <inheritdoc />
