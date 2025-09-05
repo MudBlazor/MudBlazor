@@ -190,6 +190,19 @@ public static class MudGlobal
     }
 
     /// <summary>
+    /// Default settings for <see cref="MudDataGrid{T}"/>.
+    /// <br/>
+    /// <b>Warning:</b> This feature is under development and breaking changes to the API <b>will occur</b> between releases.
+    /// </summary>
+    public static class DataGridDefault
+    {
+        /// <summary>
+        /// The default number of rows per page.
+        /// </summary>
+        public static int RowsPerPage { get; set; } = 10;
+    }
+
+    /// <summary>
     /// Applies regular rounding to components by default; additional rounding if set to true; or squares them if set to false for MudBlazor components.
     /// </summary>
     public static bool? Rounded { get; set; }

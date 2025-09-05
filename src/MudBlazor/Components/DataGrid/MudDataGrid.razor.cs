@@ -980,7 +980,7 @@ namespace MudBlazor
         [Parameter]
         public int RowsPerPage
         {
-            get => _rowsPerPage ?? 10;
+            get => _rowsPerPage ?? MudGlobal.DataGridDefault.RowsPerPage;
             set
             {
                 if (_rowsPerPage == null)
