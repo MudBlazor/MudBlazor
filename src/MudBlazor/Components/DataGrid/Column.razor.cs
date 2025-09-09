@@ -309,7 +309,7 @@ namespace MudBlazor
         /// The color of the sort icon.
         /// </summary>
         [Parameter]
-        public Color SortIconColor { get; set; } = Color.Default;
+        public Color SortIconColor { get; set; }
 
         /// <summary>
         /// The empty filter icon shown when <see cref="Filterable"/> is <c>true</c>.
@@ -333,19 +333,19 @@ namespace MudBlazor
         /// The color of the empty filter icon.
         /// </summary>
         [Parameter]
-        public Color FilterIconEmptyColor { get; set; } = Color.Default;
+        public Color FilterIconEmptyColor { get; set; }
 
         /// <summary>
         /// The color of the filled filter icon.
         /// </summary>
         [Parameter]
-        public Color FilterIconFilledColor { get; set; } = Color.Default;
+        public Color FilterIconFilledColor { get; set; }
 
         /// <summary>
         /// The color of the clear filter icon.
         /// </summary>
         [Parameter]
-        public Color FilterIconClearColor { get; set; } = Color.Default;
+        public Color FilterIconClearColor { get; set; }
 
         /// <summary>
         /// Allows values in this column to be grouped.
