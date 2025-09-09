@@ -76,11 +76,11 @@ else if (Column != null && !Column.HiddenState.Value)
                 {
                     if (SortDirection == SortDirection.None)
                     {
-                        <MudIconButton Icon="@Column.SortIcon" Class="@sortIconClass" Size="@Size.Small" OnClick="@SortChangedAsync" aria-label="@Localizer[LanguageResource.MudDataGrid_Sort]"></MudIconButton>
+                        <MudIconButton Icon="@Column.SortIcon" Class="@sortIconClass" Size="@Size.Small" Color="@Column.SortIconColor" OnClick="@SortChangedAsync" aria-label="@Localizer[LanguageResource.MudDataGrid_Sort]"></MudIconButton>
                     }
                     else
                     {
-                        <MudIconButton Icon="@Column.SortIcon" Class="@sortIconClass" Size="@Size.Small" OnClick="@SortChangedAsync" aria-label="@Localizer[LanguageResource.MudDataGrid_Sort]"></MudIconButton>
+                        <MudIconButton Icon="@Column.SortIcon" Class="@sortIconClass" Size="@Size.Small" Color="@Column.SortIconColor" OnClick="@SortChangedAsync" aria-label="@Localizer[LanguageResource.MudDataGrid_Sort]"></MudIconButton>
                     }
 
                     if (DataGrid.SortMode == SortMode.Multiple)
@@ -100,11 +100,11 @@ else if (Column != null && !Column.HiddenState.Value)
                 {
                     if (hasFilter)
                     {
-                        <MudIconButton Class="filter-button filtered" Icon="@Icons.Material.Filled.FilterAlt" Size="@Size.Small" OnClick="@OpenFilters" aria-label="@Localizer[LanguageResource.MudDataGrid_OpenFilters]"></MudIconButton>
+                        <MudIconButton Class="filter-button filtered" Icon="@Column.FilterIconFilled" Size="@Size.Small" Color="@Column.FilterIconFilledColor" OnClick="@OpenFilters" aria-label="@Localizer[LanguageResource.MudDataGrid_OpenFilters]"></MudIconButton>
                     }
                     else if (showFilterIcon)
                     {
-                        <MudIconButton Class="filter-button" Icon="@Icons.Material.Outlined.FilterAlt" Size="@Size.Small" OnClick="@AddFilter" aria-label="@Localizer[LanguageResource.MudDataGrid_AddFilter]"></MudIconButton>
+                        <MudIconButton Class="filter-button" Icon="@Column.FilterIconEmpty" Size="@Size.Small" Color="@Column.FilterIconEmptyColor" OnClick="@AddFilter" aria-label="@Localizer[LanguageResource.MudDataGrid_AddFilter]"></MudIconButton>
                     }
                 }
 
