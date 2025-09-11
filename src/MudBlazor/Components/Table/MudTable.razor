@@ -60,7 +60,7 @@
                         @if (Loading)
                         {
                             <tr class="mud-table-row">
-                                <th colspan="1000" class="@(CurrentPageItems.Any() || LoadingContent is not null ? "mud-table-loading" : "")">
+                                <th colspan="1000" class="@(CurrentPageItems.Any() || (LoadingContent is not null || LoadingContentBody is not null) ? "mud-table-loading" : "")">
                                     <MudProgressLinear Color="@LoadingProgressColor" Class="mud-table-loading-progress" Indeterminate="true" />
                                 </th>
                             </tr>
@@ -71,7 +71,7 @@
                 {
                     <thead class="@HeadClassname">
                         <tr class="mud-table-row">
-                            <th colspan="1000" class="@(CurrentPageItems.Any() || LoadingContent is not null ? "mud-table-loading" : "")">
+                            <th colspan="1000" class="@(CurrentPageItems.Any() || (LoadingContent is not null || LoadingContentBody is not null) ? "mud-table-loading" : "")">
                                 <MudProgressLinear Color="@LoadingProgressColor" Class="mud-table-loading-progress" Indeterminate="true" />
                             </th>
                         </tr>
@@ -134,24 +134,29 @@
                             </MudVirtualize>
                         }
                     }
-                    @if(!(CurrentPageItems is not null && CurrentPageItems.Any())
-                        && (Loading ? LoadingContent != null : NoRecordsContent != null)
-                    )
+                    @if (!(CurrentPageItems is not null && CurrentPageItems.Any()))
                     {
-                        <tr>
-                            <th colspan="1000" class="mud-table-empty-row">
-                                <div Class="my-3">
-                                    @if(Loading)
-                                    {
-                                        @LoadingContent
-                                    }
-                                    else
-                                    {
-                                        @NoRecordsContent
-                                    }
-                                </div>
-                            </th>
-                        </tr>
+                        if (Loading && LoadingContentBody != null)
+                        {
+                            @LoadingContentBody
+                        }
+                        else if (Loading ? LoadingContent != null : NoRecordsContent != null)
+                        {                            
+                            <tr>
+                                <th colspan="1000" class="mud-table-empty-row">
+                                    <div Class="my-3">
+                                        @if(Loading)
+                                        {
+                                            @LoadingContent
+                                        }
+                                        else
+                                        {
+                                            @NoRecordsContent
+                                        }
+                                    </div>
+                                </th>
+                            </tr>    
+                        }
                     }
                 </tbody>
                 @if (FooterContent != null || Columns != null)
