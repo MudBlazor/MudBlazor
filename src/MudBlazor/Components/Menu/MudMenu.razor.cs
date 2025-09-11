@@ -984,9 +984,6 @@ namespace MudBlazor
                 {
                     _focusedIndex = 0;
                     await FocusItemAsync(_focusedIndex);
-
-                    // Add this line to reset the keyboard flag after the first item is focused
-                    _lastInteractionWasKeyboard = false;
                 }
             }
         }
