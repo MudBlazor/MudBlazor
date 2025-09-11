@@ -25,12 +25,14 @@ namespace MudBlazor
         private (double Top, double Left) _openPosition;
         private bool _isPointerOver;
         private bool _isTransient;
+        private bool _lastInteractionWasKeyboard;
         private CancellationTokenSource? _hoverCts;
         private CancellationTokenSource? _leaveCts;
         private int _focusedIndex = -1;
         private MudButton? _buttonActivator;
         private MudMenuItem? _menuItemActivator;
         private MudIconButton? _iconButtonActivator;
+        private ElementReference _menuWrapperRef;
         private readonly List<object> _menuItems = [];
         private readonly string _elementId = Identifier.Create("menu");
 
@@ -475,6 +477,7 @@ namespace MudBlazor
 
             // Now close this menu itself.
             _focusedIndex = -1;
+            _lastInteractionWasKeyboard = false;
             _menuItems.Clear();
             await KeyInterceptorService.UnsubscribeAsync(_elementId);
             await _openState.SetValueAsync(false);
@@ -631,6 +634,7 @@ namespace MudBlazor
         private async Task PointerEnterAsync(PointerEventArgs args)
         {
             _isPointerOver = true;
+            _lastInteractionWasKeyboard = false;
 
             // Prevent conflicting actions.
             CancelPendingActions();
@@ -899,6 +903,11 @@ namespace MudBlazor
             if (_menuItems.Count == 0)
                 return;
 
+            if (!_lastInteractionWasKeyboard)
+            {
+                await OpenMenuAsync(e);
+            }
+
             if (_focusedIndex >= 0 && _focusedIndex < _menuItems.Count)
             {
                 var currentItem = _menuItems[_focusedIndex];
@@ -967,11 +976,17 @@ namespace MudBlazor
 
             if (_openState.Value && _focusedIndex == -1)
             {
-                await Task.Yield();
-                if (_menuItems.Count > 0)
+                // Focus the container first. This makes the menu "listen" for keys.
+                await _menuWrapperRef.FocusAsync(preventScroll: true);
+
+                // Check if opened with keyboard and focus the first item
+                if (_lastInteractionWasKeyboard && _menuItems.Count > 0)
                 {
                     _focusedIndex = 0;
                     await FocusItemAsync(_focusedIndex);
+
+                    // Add this line to reset the keyboard flag after the first item is focused
+                    _lastInteractionWasKeyboard = false;
                 }
             }
         }
@@ -1069,6 +1084,15 @@ namespace MudBlazor
         private MudMenu? FindSubmenuForItem(MudMenuItem menuItem)
         {
             return _subMenus.FirstOrDefault(submenu => submenu._menuItemActivator == menuItem);
+        }
+
+        /// <summary>
+        /// Track whether the menu is selected or not 
+        /// </summary>
+        /// <param name="e"></param>
+        private void TrackKeyboardInteraction(KeyboardEventArgs e)
+        {
+            _lastInteractionWasKeyboard = true;
         }
     }
 }
