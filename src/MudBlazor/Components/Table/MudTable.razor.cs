@@ -137,11 +137,33 @@ namespace MudBlazor
         public RenderFragment? NoRecordsContent { get; set; }
 
         /// <summary>
-        /// The content shown while table data is loading and the table has no rows.
+        /// The content shown while <c>Loading</c> is <c>true</c> and the table has no rows.
         /// </summary>
+        /// <remarks>
+        /// Rendered as a single table row containing one cell that spans the table width.
+        /// Use this for simple messages or placeholders (for example "Loading…").<br/>
+        /// This content is displayed in addition to the table's loading animation.<br/>
+        /// For multi-row or multi-column loading layouts, use <see cref="LoadingContentBody"/> instead.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Data)]
         public RenderFragment? LoadingContent { get; set; }
+
+        /// <summary>
+        /// The content shown while <c>Loading</c> is <c>true</c> and the table has no rows.
+        /// </summary>
+        /// <remarks>
+        /// Rendered directly into the table body at the top.
+        /// You must supply valid table row/cell markup (for example <c>&lt;MudTr&gt;</c> and <c>&lt;MudTd&gt;</c>).
+        /// If you place plain text or non-table markup here most browsers will ignore it.
+        /// Use this when you need to produce arbitrary rows and columns while the table is loading.<br/>
+        /// This content is displayed in addition to the table's loading animation.<br/>
+        /// For a single row column loading layout or text, use <see cref="LoadingContent"/> instead.<br/>
+        /// This value is optional, and will override <see cref="LoadingContent"/> if not <c>null</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Table.Data)]
+        public RenderFragment? LoadingContentBody { get; set; }
 
         /// <summary>
         /// Shows a horizontal scroll bar if the content exceeds the maximum width.

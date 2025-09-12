@@ -257,7 +257,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Check if if empty row text is correct
+        /// Check if empty row text is correct when using LoadingContent
         /// </summary>
         [Test]
         public void TableHeadContentTest()
@@ -280,6 +280,40 @@ namespace MudBlazor.UnitTests.Components
             switchElement.Change(true);
             comp.FindAll("tr").Count.Should().Be(3);
             comp.FindAll("tr")[2].TextContent.Should().Be("Loading...");
+        }
+
+        /// <summary>
+        /// Check if empty row text is correct when using LoadingContentBody
+        /// </summary>
+        [Test]
+        public void TableHeadContentBodyTest()
+        {
+            var comp = Context.RenderComponent<TableLoadingBodyTest>();
+            var searchString = comp.Find("#searchString");
+            var switchElement = comp.Find("#switch");
+
+            searchString.Input(null);
+            switchElement.Change(false);
+
+            // It should be equal to 3 = two rows + header row
+            comp.FindAll("tr").Count.Should().Be(3);
+
+            // There should be no skeletons.
+            comp.FindAll(".mud-skeleton").Count.Should().Be(0);
+
+            // Filter out all table rows
+            searchString.Input("ZZZ");
+
+            // It should be equal to 2 = two rows + header row
+            comp.FindAll("tr").Count.Should().Be(2);
+            comp.FindAll("tr")[1].TextContent.Should().Be("No matching records found");
+
+            // It should be equal to 6 = 4 loading rows + header row + loading row
+            switchElement.Change(true);
+            comp.FindAll("tr").Count.Should().Be(6);
+
+            // It should be equal to 20 = 4 rows * 5 colmns
+            comp.FindAll(".mud-skeleton").Count.Should().Be(20);
         }
 
         /// <summary>
