@@ -300,7 +300,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MudCarousel<object>>();
 
-            // check for the ddefault buttons
+            // check for the default buttons
             comp.FindAll("button.mud-icon-button").Count.Should().Be(2); //left + right
 
             // adding one page
