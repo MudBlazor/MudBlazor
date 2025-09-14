@@ -284,6 +284,20 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// When the select has a null value, the text should be displayed, and the mud-shrink class should be applied.
+        /// </summary>
+        [Test]
+        public void SelectNullValueTest()
+        {
+            var comp = Context.RenderComponent<SelectNullValueTest>();
+            var select = comp.FindComponent<MudSelect<int?>>();
+            
+            select.Instance.Value.Should().Be(null);
+            select.Instance.Text.Should().Be("None");
+            select.Markup.Should().Contain("mud-shrink");
+        }
+
+        /// <summary>
         /// The items have no render fragments, so instead of RF the select must display the converted string value
         /// </summary>
         [Test]
