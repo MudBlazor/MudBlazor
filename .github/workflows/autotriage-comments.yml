@@ -35,7 +35,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: triage-artifacts-${{ github.run_number }}
+          name: triage-artifacts-comment-${{ github.event.issue.number }}
           path: |
             triage-db.json
             artifacts/
