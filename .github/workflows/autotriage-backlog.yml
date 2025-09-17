@@ -47,10 +47,11 @@ jobs:
       - name: AutoTriage - triage backlog
         uses: danielchalmers/AutoTriage@main
         with:
-          prompt-path: .github/AutoTriage.prompt
           issue-numbers: ${{ github.event.inputs.issues }}
+          prompt-path: .github/AutoTriage.prompt
+          enabled: false
           db-path: triage-db.json
-          enabled: ${{ github.event_name == 'workflow_dispatch' && inputs.enabled || true }}
+          #enabled: ${{ github.event_name == 'workflow_dispatch' && inputs.enabled || true }}
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
