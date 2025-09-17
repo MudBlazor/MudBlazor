@@ -34,7 +34,7 @@
             "matchManagers": [
                 "nuget"
             ],
-            "matchPaths": [
+            "matchFileNames": [
                 "src/**/MudBlazor.UnitTests*.csproj"
             ],
             "matchUpdateTypes": [
@@ -44,9 +44,6 @@
             "groupName": "tests dependencies",
             "automerge": true,
             "automergeType": "pr",
-            "requiredStatusChecks": [
-                "*"
-            ],
             "addLabels": [
                 "tests"
             ]
@@ -55,7 +52,7 @@
             "matchManagers": [
                 "nuget"
             ],
-            "matchPaths": [
+            "matchFileNames": [
                 "src/**/MudBlazor.Docs*.csproj"
             ],
             "matchUpdateTypes": [
@@ -65,9 +62,6 @@
             "groupName": "docs dependencies",
             "automerge": true,
             "automergeType": "pr",
-            "requiredStatusChecks": [
-                "*"
-            ],
             "addLabels": [
                 "docs"
             ]
