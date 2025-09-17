@@ -20,8 +20,10 @@ jobs:
         with:
           app-id: ${{ vars.MUDBOT_APP_ID }}
           private-key: ${{ secrets.MUDBOT_PRIVATE_KEY }}
+
       - uses: actions/checkout@v4
-      - name: AutoTriage - triage PR
+
+      - name: AutoTriage - triage pull request
         uses: danielchalmers/AutoTriage@main
         with:
           issue-number: ${{ github.event.pull_request.number }}
