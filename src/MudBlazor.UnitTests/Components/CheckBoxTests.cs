@@ -179,7 +179,6 @@ namespace MudBlazor.UnitTests.Components
             checkbox.Instance.ErrorText.Should().Be(null);
         }
 
-
         /// <summary>
         /// A required tristate checkbox must have a value of true or false, but not null.
         /// </summary>
