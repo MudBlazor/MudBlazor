@@ -205,7 +205,6 @@ namespace MudBlazor.UnitTests.Components
         public void Check_Intial_DateTime_Format()
         {
             var culture = CultureInfo.CurrentCulture;
-            string dateFormat = $"{culture.DateTimeFormat.ShortDatePattern} {culture.DateTimeFormat.ShortTimePattern}";
             DateTime? date = DateTime.Parse("2024-01-28 10:15:00");
             var comp = Context.RenderComponent<MudDateTimePicker>(parameters => parameters
                 .Add(p => p.Culture, CultureInfo.InvariantCulture)
@@ -215,6 +214,21 @@ namespace MudBlazor.UnitTests.Components
             var picker = comp.Instance;
             picker.DateTime.Should().Be(DateTime.Parse("2024-01-28 10:15:00"));
             picker.Text.Should().Be(DateTime.Parse("2024-01-28 10:15:00").ToString("dd/MM/yyyy HH:mm"));
+        }
+
+        [Test]
+        public void StringChange_ShouldUpdateValue()
+        {
+            var culture = CultureInfo.CurrentCulture;
+            string dateFormat = $"{culture.DateTimeFormat.ShortDatePattern} {culture.DateTimeFormat.ShortTimePattern}";
+            var comp = Context.RenderComponent<MudDateTimePicker>(parameters => parameters
+                .Add(p => p.Culture, CultureInfo.InvariantCulture)
+                .Add(p => p.DateTimeFormat, "dd/MM/yyyy HH:mm")
+            );
+            comp.SetParam(p => p.Text, "28/01/2024 10:15");
+            comp.Instance.DateTime.Should().Be(DateTime.Parse("2024-01-28 10:15"));
+            comp.SetParam(p => p.Text, string.Empty);
+            comp.Instance.DateTime.Should().Be(null);
         }
 
         [Test]

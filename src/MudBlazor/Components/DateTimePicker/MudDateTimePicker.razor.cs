@@ -21,7 +21,7 @@ namespace MudBlazor
             set => SetDateTimeAsync(value, true).CatchAndLog();
         }
 
-        /// <summary>
+        /// <summary> 
         /// Fired when the DateTime changes.
         /// </summary>
         [Parameter]
@@ -46,7 +46,7 @@ namespace MudBlazor
             {
                 if (Converter is DefaultConverter<DateTime?> defaultConverter)
                 {
-                    defaultConverter.Format = value;
+                    defaultConverter.Format = value ?? $"{Culture.DateTimeFormat.ShortDatePattern} {Culture.DateTimeFormat.ShortTimePattern}";
                 }
                 DateFormatChangedAsync(value);
             }
@@ -216,7 +216,7 @@ namespace MudBlazor
             Converter.GetFunc = OnGet;
             Converter.SetFunc = OnSet;
             ((DefaultConverter<DateTime?>)Converter).Culture = Culture;
-            ((DefaultConverter<DateTime?>)Converter).Format = "yyyy-MM-dd HH:mm:ss";
+            ((DefaultConverter<DateTime?>)Converter).Format = $"{Culture.DateTimeFormat.ShortDatePattern} {Culture.DateTimeFormat.ShortTimePattern}";
         }
 
         protected override async Task OnPickerOpenedAsync()
@@ -284,14 +284,7 @@ namespace MudBlazor
 
         protected string GetDateTimeFormat()
         {
-            if (!string.IsNullOrEmpty(((DefaultConverter<DateTime?>)Converter).Format))
-            {
-                return ((DefaultConverter<DateTime?>)Converter).Format;
-            }
-            else
-            {
-                return $"{Culture.DateTimeFormat.ShortDatePattern} {Culture.DateTimeFormat.ShortTimePattern}";
-            }
+            return ((DefaultConverter<DateTime?>)Converter).Format;
         }
 
         protected DateTime? GetPartialDateTime()
