@@ -215,6 +215,26 @@ namespace MudBlazor
             await base.OnAfterRenderAsync(firstRender);
         }
 
+        /// <summary>
+        /// Determines whether the checkbox is considered to have a value.
+        /// </summary>
+        /// <returns>
+        /// <c>true</c> if a value is considered present; otherwise, <c>false</c>.<br/>
+        /// When <see cref="TriState"/> is <c>true</c>, this returns <c>true</c> if <paramref name="value"/> is not <c>null</c>.
+        /// Otherwise, it defers to the base implementation.
+        /// </returns>
+        protected override bool HasValue(T? value)
+        {
+            if (TriState)
+            {
+                return BoolValue is not null;
+            }
+            else
+            {
+                return base.HasValue(value);
+            }
+        }
+
         /// <inheritdoc />
         protected override async ValueTask DisposeAsyncCore()
         {
