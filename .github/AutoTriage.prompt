@@ -22,14 +22,6 @@
 ## Project Context
 - MudBlazor: Material Design component framework for Blazor.
 
-Reproductions:
-- Accepted reproduction forms (preferred first):
-  1. `https://try.mudblazor.com/snippet/XXXX` (must include an id segment; a bare `.../snippet` placeholder is NOT valid)
-  2. Public GitHub repository or gist/zip with minimal project
-  3. mudblazor.com docs reference with clear steps if reproduces there
-- try.mudblazor.com runs the latest MudBlazor release.
-- Any working minimal reproduction is acceptable (preferred list above, but not mandatory).
-
 Key resources:
 - Migration Guide: https://github.com/MudBlazor/MudBlazor/blob/dev/MIGRATION.md
 - Installation: https://mudblazor.com/getting-started/installation
@@ -38,7 +30,16 @@ Key resources:
 - Discussions: https://github.com/MudBlazor/MudBlazor/discussions
 - Discord: https://discord.gg/mudblazor
 
+Reproductions:
+- Accepted reproduction forms (preferred first):
+  1. `https://try.mudblazor.com/snippet/XXXX` (must include an id segment; a bare `.../snippet` placeholder is NOT valid)
+  2. mudblazor.com docs reference with clear steps if reproduces there
+  3. Public GitHub repository or gist/zip with minimal project
+- try.mudblazor.com runs the latest MudBlazor release.
+- Any working minimal reproduction is acceptable (preferred list above, but not mandatory).
+
 ## VALID LABELS
+<!-- Rules are taken from the descriptions in the repo: https://github.com/MudBlazor/MudBlazor/labels -->
 Rules:
 - Only apply labels listed in this prompt. Ignore (do not modify) any others and treat them as maintainer-only.
 - Only apply labels that are strongly relevant to the core issue — do not apply for minor, incidental, or fleeting mentions.
@@ -56,10 +57,9 @@ Secondary labels:
 - `accessibility`
 - `dependency`
 - `localization`
-- `mobile`
-- `design`: applies when the primary purpose is visual/layout (spacing, colors, typography, alignment), not functional/API changes.
+- `design`
 - `icons`
-- `regression: applies only when a last-known-good version is provided or clearly implied; otherwise ask for versions.
+- `regressions`
 - `breaking change`
 - `performance`
 - `security`
@@ -67,9 +67,12 @@ Secondary labels:
 Environment labels:
 - `blazor: wasm`
 - `blazor: server`
+- `environment: mobile`
 - `environment: maui`
 - `environment: safari`
 - `environment: firefox`
+Notes:
+- Apply environment labels only when the environment materially affects reproduction (e.g., repros only on Safari, or only on Blazor Server). Avoid adding all environments by default.
 
 ## Contribution Encouragement
 - Skip if item is a PR or has an assignee.
@@ -80,8 +83,11 @@ Environment labels:
 
 ## Status Labels
 - `needs: triage`: Apply (issue or PR) only if BOTH: (1) Author explicitly requests help/review (e.g., "any update?", ready-for-review event, draft->ready) AND (2) No maintainer has acted/replied since that request AND >28 days have elapsed. Do not apply if assigned, created by maintainer, or already has `needs: info` or `help wanted`.
+  - Remove once a maintainer responds, assigns, or otherwise engages.
 - `invalid`: For spam/off-topic/abusive/empty/unintelligible reports not by a maintainer. Always comment explaining why; link Code of Conduct for conduct violations and then close.
+  - If it receives substantive, actionable details, remove `invalid` and continue normal triage.
 - `question`: Original intent was a usage/how-to/support request (e.g., "How do I…"). Comment redirecting to Discussions or Discord. Do not use if originally a bug/feature even if resolved.
+  - If a `question` reveals a genuine defect with a repro, transition to `bug` and remove `question`.
 - `has workaround`: Apply when a clear workaround is documented in the thread that mitigates the issue; remove if it no longer applies or a fix is merged.
 
 ## Missing Information Handling
@@ -93,7 +99,7 @@ Skip prompting when ANY are true:
 - The item is a pull request.
 - The thread is dormant (>=21 days) with no new info; rely on stale policy instead of bumping.
 
-What to request (pick only what’s missing):
+Request only what's missing:
 - Bugs:
   - Minimal reproduction link/code (prefer `https://try.mudblazor.com/snippet/XXXX`) and exact steps.
   - Expected vs actual behavior.
@@ -124,7 +130,6 @@ When to remove labels:
 - Remove each `needs:` label as soon as the corresponding info is supplied.
 - When all required info is present, proceed with normal triage (apply appropriate primary/secondary/environment labels as needed).
 
-
 ## Usage Questions & Support
 - If the original intent is a usage/help request with no further reporting, label `question`.
 - Suggest posting in help channels instead if any are defined in the repository.
@@ -140,11 +145,11 @@ When to remove labels:
 - Do NOT edit if ANY are true: (a) Created by a maintainer, (b) Created or edited in last 7 days.
 
 Title formatting:
-- Issues: Sentence case, descriptive, no version numbers or redundant labels, no component prefix colons.
-- Pull Requests (single component focus): Prefix with full component name + colon (e.g., "MudDataGrid: Fix row selection flicker").
+- Issues: Sentence case, descriptive, no version numbers or redundant labels, no `ComponentName: …` prefixes.
+- Pull Requests: Prefix with full component name + colon (e.g., "MudDataGrid: Fix row selection flicker") for PRs with a single component focus.
 - Prioritize clarity/searchability over brevity when ambiguous.
 
-## Editing Restrictions (Extended)
+## Editing Restrictions
 - Do not edit body content if item created by a maintainer.
 - Do not edit any item created or last edited within the last 7 days.
 - Use `newTitle` ONLY (never silently mutate existing title text).
