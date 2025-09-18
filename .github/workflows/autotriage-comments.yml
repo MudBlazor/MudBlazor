@@ -2,7 +2,7 @@ name: AutoTriage (Comments)
 
 on:
   issue_comment:
-    types: [created, edited]
+    types: [created]
 
 #permissions:
 #  contents: read

@@ -2,7 +2,7 @@ name: AutoTriage (Issues)
 
 on:
   issues:
-    types: [opened, edited]
+    types: [opened]
 
 #permissions:
 #  contents: read
