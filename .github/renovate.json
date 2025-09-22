@@ -34,46 +34,15 @@
             "matchManagers": [
                 "nuget"
             ],
-            "matchFileNames": [
-                "src/**/MudBlazor.UnitTests*.csproj"
-            ],
-            "matchUpdateTypes": [
-                "minor",
-                "patch"
-            ],
-            "groupName": "tests dependencies",
-            "automerge": true,
-            "automergeType": "pr",
-            "addLabels": [
-                "tests"
-            ]
-        },
-        {
-            "matchManagers": [
-                "nuget"
-            ],
-            "matchFileNames": [
-                "src/**/MudBlazor.Docs*.csproj"
-            ],
-            "matchUpdateTypes": [
-                "minor",
-                "patch"
-            ],
-            "groupName": "docs dependencies",
-            "automerge": true,
-            "automergeType": "pr",
-            "addLabels": [
-                "docs"
-            ]
-        },
-        {
-            "matchManagers": [
-                "nuget"
-            ],
             "matchUpdateTypes": [
                 "major"
             ],
             "draftPR": true
+        },
+        {
+            "matchFileNames": ["src/MudBlazor/MudBlazor.csproj"],
+            "matchPackageNames": ["Microsoft**"],
+            "enabled": false
         }
     ]
 }
