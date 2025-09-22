@@ -268,7 +268,6 @@ namespace MudBlazor
             {
                 await DataGrid.ExpandAllHierarchy();
             }
-            await InvokeAsync(StateHasChanged);
         }
 
         internal string GetGroupIcon()
