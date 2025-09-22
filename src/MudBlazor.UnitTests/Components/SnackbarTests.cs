@@ -814,7 +814,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task GlobalHideIcon_True_HidesIcon()
+        public async Task SnackbarShouldNotRenderIconWhenGlobalHideIconIsTrue()
         {
             // Arrange: set global via configuration
             _service.Configuration.HideIcon = true;
@@ -830,7 +830,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task PerSnackbarOverride_ShowsIcon_WhenGlobalHideIconTrue()
+        public async Task SnackbarShouldRenderIconWhenPerSnackbarOverrideIsFalse()
         {
             // Arrange: globally hide icons
             _service.Configuration.HideIcon = true;
@@ -848,7 +848,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task Default_GlobalHideIcon_False_ShowsIcon()
+        public async Task SnackbarShouldRenderIconByDefault()
         {
             // Arrange: globally hide icons
             _service.Configuration.HideIcon = false;
