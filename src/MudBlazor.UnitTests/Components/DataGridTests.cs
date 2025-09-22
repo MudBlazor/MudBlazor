@@ -3292,6 +3292,23 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void DataGrid_RowDetail_ExpandCollapseAllWithOneTest()
+        {
+            var comp = Context.RenderComponent<DataGridHierarchyColumnTest>(p => p
+                .Add(x => x.LimitRowsToOne, true)
+                .Add(x => x.EnableHeaderToggle, true)
+            );
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHierarchyColumnTest.Model>>();
+
+            dataGrid.WaitForAssertion(() => dataGrid.Instance._openHierarchies.Count.Should().Be(0));
+            var headerToggle = dataGrid.Find("th button.mud-hierarchy-toggle-button");
+            headerToggle.Click();
+            dataGrid.WaitForAssertion(() => dataGrid.Instance._openHierarchies.Count.Should().Be(1));
+            headerToggle.Click();
+            dataGrid.WaitForAssertion(() => dataGrid.Instance._openHierarchies.Count.Should().Be(0));
+        }
+
+        [Test]
         [TestCase(true)]
         [TestCase(false)]
         public void DataGrid_RowDetail_RTL_GroupIcon(bool rightToLeft)
