@@ -306,48 +306,6 @@ namespace MudBlazor
         public string SortIcon { get; set; } = Icons.Material.Filled.ArrowUpward;
 
         /// <summary>
-        /// The color of the sort icon.
-        /// </summary>
-        [Parameter]
-        public Color SortIconColor { get; set; }
-
-        /// <summary>
-        /// The empty filter icon shown when <see cref="Filterable"/> is <c>true</c>.
-        /// </summary>
-        [Parameter]
-        public string FilterIconEmpty { get; set; } = Icons.Material.Outlined.FilterAlt;
-
-        /// <summary>
-        /// The filled filter icon shown when <see cref="Filterable"/> is <c>true</c>.
-        /// </summary>
-        [Parameter]
-        public string FilterIconFilled { get; set; } = Icons.Material.Filled.FilterAlt;
-
-        /// <summary>
-        /// The clear filter icon shown when <see cref="Filterable"/> is <c>true</c>.
-        /// </summary>
-        [Parameter]
-        public string FilterIconClear { get; set; } = Icons.Material.Filled.FilterAltOff;
-
-        /// <summary>
-        /// The color of the empty filter icon.
-        /// </summary>
-        [Parameter]
-        public Color FilterIconEmptyColor { get; set; }
-
-        /// <summary>
-        /// The color of the filled filter icon.
-        /// </summary>
-        [Parameter]
-        public Color FilterIconFilledColor { get; set; }
-
-        /// <summary>
-        /// The color of the clear filter icon.
-        /// </summary>
-        [Parameter]
-        public Color FilterIconClearColor { get; set; }
-
-        /// <summary>
         /// Allows values in this column to be grouped.
         /// </summary>
         /// <remarks>
