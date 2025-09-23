@@ -40,13 +40,24 @@
             "draftPR": true
         },
         {
-            "matchFileNames": ["src/MudBlazor/MudBlazor.csproj"],
-            "matchPackageNames": ["Microsoft**"],
+            "matchFileNames": [
+                "src/MudBlazor/MudBlazor.csproj"
+            ],
+            "matchPackageNames": [
+                "Microsoft.AspNetCore**",
+                "Microsoft.Extensions**"
+            ],
             "enabled": false
         },
         {
-            "matchFileNames": ["src/**/MudBlazor.UnitTests*.csproj", "src/**/MudBlazor.Docs*.csproj"],
-            "matchUpdateTypes": ["patch", "minor"],
+            "matchFileNames": [
+                "src/**/MudBlazor.UnitTests*.csproj",
+                "src/**/MudBlazor.Docs*.csproj"
+            ],
+            "matchUpdateTypes": [
+                "patch",
+                "minor"
+            ],
             "automerge": true
         }
     ]
