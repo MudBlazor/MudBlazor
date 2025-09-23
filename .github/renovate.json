@@ -43,6 +43,11 @@
             "matchFileNames": ["src/MudBlazor/MudBlazor.csproj"],
             "matchPackageNames": ["Microsoft**"],
             "enabled": false
+        },
+        {
+            "matchFileNames": ["src/**/MudBlazor.UnitTests*.csproj", "src/**/MudBlazor.Docs*.csproj"],
+            "matchUpdateTypes": ["patch", "minor"],
+            "automerge": true
         }
     ]
 }
