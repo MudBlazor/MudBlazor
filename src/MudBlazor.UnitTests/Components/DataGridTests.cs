@@ -6,6 +6,7 @@
 
 using System.Globalization;
 using System.Reflection;
+using System.Xml.Linq;
 using AngleSharp.Css.Dom;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
@@ -5515,6 +5516,35 @@ namespace MudBlazor.UnitTests.Components
             testComponent.ToggledEvents.Should().HaveCount(3);
             testComponent.ToggledEvents.Should().OnlyContain(x => x.Expanded == true);
             testComponent.ToggledEvents.Select(x => x.Item.Name).Should().BeEquivalentTo(["John", "Jane", "Bob"]);
+        }
+
+        [Test]
+        public void DataGridFilterIconsTest()
+        {
+            var comp = Context.RenderComponent<DataGridFilterIconsTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFilterIconsTest.Model>>();
+
+            // Note: svg are formatted differently in the icon and in the button html, so we check with svg path
+
+            var filterEmptyButton = dataGrid.FindAll(".filter-button")[0];
+            string expectedFilterEmptyIconPath =
+                XDocument.Parse($"<svg>{Icons.Material.Filled.Battery0Bar}</svg>")
+                    .Descendants("path")
+                    .Select(p => p.Attribute("d")?.Value)
+                    .Where(d => !string.IsNullOrEmpty(d))
+                    .ToList().First();
+            filterEmptyButton.Html().Should().Contain(expectedFilterEmptyIconPath);
+
+            filterEmptyButton.Click();
+
+            var filterFilledButton = dataGrid.FindAll(".filter-button.filtered")[0];
+            string expectedFilterFilledIconPath =
+                XDocument.Parse($"<svg>{Icons.Material.Filled.BatteryFull}</svg>")
+                    .Descendants("path")
+                    .Select(p => p.Attribute("d")?.Value)
+                    .Where(d => !string.IsNullOrEmpty(d))
+                    .ToList().First();
+            filterFilledButton.Html().Should().Contain(expectedFilterFilledIconPath);
         }
     }
 }
