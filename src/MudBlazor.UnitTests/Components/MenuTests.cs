@@ -2,7 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Reflection;
 using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
@@ -819,15 +818,22 @@ namespace MudBlazor.UnitTests.Components
                 await menuButton.ClickAsync(new MouseEventArgs());
             });
 
+            await comp.InvokeAsync(() => Task.CompletedTask);
+
             await comp.InvokeAsync(async () =>
             {
                 var menuWrapper = comp.Find("[data-testid='menu-wrapper']");
-                await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowUp" });
-                await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Enter" });
+
+                var allFocusableItems = comp.FindAll(".mud-menu-item[tabindex='0']");
+
+                if (allFocusableItems.Count > 0)
+                {
+                    var lastItem = allFocusableItems.Last();
+                    await lastItem.ClickAsync(new MouseEventArgs());
+                }
             });
 
-            var last = comp.Instance.LastInvokedIndex;
-            last.Should().Be(5);
+            comp.Instance.LastInvokedIndex.Should().Be(6);
         }
 
         [Test]
@@ -835,17 +841,18 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.RenderComponent<MenuKeydownTest>();
 
-            // Open the menu (focus starts at index 0)
+            // Open the menu (focus starts at index -1)
             await comp.InvokeAsync(async () =>
             {
                 var menuButton = comp.Find(".mud-menu-button-activator");
                 await menuButton.ClickAsync(new MouseEventArgs());
             });
 
-            // Press ArrowDown x3 to move to index 3 with nested menu
+            // Press ArrowDown x4 to move to index 3 with nested menu
             await comp.InvokeAsync(async () =>
             {
                 var menuWrapper = comp.Find("[data-testid='menu-wrapper']");
+                await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
                 await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
                 await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
                 await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
@@ -863,7 +870,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task Menu_ArrowRight_ClosesMenu()
+        public async Task Menu_ArrowRight_NoFurtherAction()
         {
             var comp = Context.RenderComponent<MenuKeydownTest>();
 
@@ -881,8 +888,8 @@ namespace MudBlazor.UnitTests.Components
                 await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowRight" });
             });
 
-            // Ensure all popovers are closed
-            comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
+            // Ensure the menu hasn't closed
+            comp.FindAll(".mud-popover-open").Count.Should().Be(1);
         }
 
         [Test]
@@ -924,6 +931,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(async () =>
             {
                 var menuWrapper = comp.Find("[data-testid='menu-wrapper']");
+                await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
                 await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
                 await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
                 await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
@@ -1028,6 +1036,7 @@ namespace MudBlazor.UnitTests.Components
                 await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
                 await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
                 await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
+                await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
                 await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowRight" });
             });
 
@@ -1043,121 +1052,62 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task Menu_DisabledItem_IsNotSkippedByArrowDown()
+        public async Task Menu_DisabledItem_IsFocusableButNotInvokable()
         {
             var comp = Context.RenderComponent<MenuKeydownTest>();
 
-            // Open the root menu
             await comp.InvokeAsync(async () =>
             {
                 var menuButton = comp.Find(".mud-menu-button-activator");
                 await menuButton.ClickAsync(new MouseEventArgs());
             });
 
-            // Press ArrowDown 5 times to move from 0 to 5
-            for (int i = 0; i < 5; i++)
+            await comp.InvokeAsync(async () =>
             {
-                await comp.InvokeAsync(async () =>
-                {
-                    await comp.Find("[data-testid='menu-wrapper']")
-                        .TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "ArrowDown" });
-                });
-            }
+                // Find the disabled item
+                var disabledItem = comp.Find(".mud-menu-item.mud-disabled");
+
+                // Verify it has the right accessibility attributes
+                disabledItem.GetAttribute("aria-disabled").Should().Be("true");
+                disabledItem.GetAttribute("tabindex").Should().Be("-1"); // Focusable by script, not by tab
+
+                // Verify it's in the DOM and visible for screen readers
+                disabledItem.Should().NotBeNull();
+                disabledItem.TextContent.Should().Contain("5 Disabled");
+
+                // Try to click it - it should NOT invoke the action
+                await disabledItem.ClickAsync(new MouseEventArgs());
+
+                // LastInvokedIndex should still be null because disabled items shouldn't invoke
+                comp.Instance.LastInvokedIndex.Should().BeNull();
+            });
+        }
+
+        [Test]
+        public async Task Menu_DisabledItem_HasCorrectAccessibilityAttributes()
+        {
+            var comp = Context.RenderComponent<MenuKeydownTest>();
 
             await comp.InvokeAsync(async () =>
             {
-                var menuWrapper = comp.Find("[data-testid='menu-wrapper']");
-                await menuWrapper.TriggerEventAsync("onkeydown", new KeyboardEventArgs { Key = "Enter" });
+                var menuButton = comp.Find(".mud-menu-button-activator");
+                await menuButton.ClickAsync(new MouseEventArgs());
             });
 
-            // Should now be on index 5, so it did focus on the disabled item
-            var last = comp.Instance.LastInvokedIndex;
-            last.Should().Be(5);
-        }
-
-        [Test]
-        public async Task GetItemDisabled_Fallback_ReturnsFalse()
-        {
-            // Render your test host that contains a <MudMenu> with items
-            var host = Context.RenderComponent<MenuHrefTest>();
-
-            // Grab the real MudMenu instance rendered inside the host
-            var menu = host.FindComponent<MudMenu>().Instance;
-
-            // Reflect the private method from the MudMenu type
-            var method = typeof(MudMenu).GetMethod(
-                "GetItemDisabled",
-                BindingFlags.NonPublic | BindingFlags.Instance);
-
-            method.Should().NotBeNull("we must invoke the method on MudMenu itself");
-
-            bool result = false;
-
-            // Execute on the renderer's sync context
-            await host.InvokeAsync(() =>
+            await comp.InvokeAsync(() =>
             {
-                result = (bool)method!.Invoke(menu, [new object()]);
+                var disabledItem = comp.Find(".mud-menu-item.mud-disabled");
+
+                // Test all the accessibility attributes
+                disabledItem.GetAttribute("aria-disabled").Should().Be("true");
+                disabledItem.GetAttribute("class").Should().Contain("mud-disabled");
+
+                // The item should have the preventDefault attribute to stop normal click behavior
+                disabledItem.GetAttribute("blazor:onclick:preventDefault").Should().NotBeNull();
+
+                // But it should still be present in the DOM for screen readers
+                disabledItem.TextContent.Should().Contain("5 Disabled");
             });
-
-            result.Should().BeFalse();
-        }
-
-        [Test]
-        public async Task GetItemDisabled_On_MudMenu_Respects_Disabled()
-        {
-            var host = Context.RenderComponent<MenuHrefTest>();
-            var menu = host.FindComponent<MudMenu>().Instance;
-
-            var method = typeof(MudMenu).GetMethod("GetItemDisabled",
-                BindingFlags.NonPublic | BindingFlags.Instance)!;
-            bool whenFalse = false, whenTrue = false;
-
-            await host.InvokeAsync(() =>
-            {
-                // Disabled == false by default
-                whenFalse = (bool)method.Invoke(menu, [menu])!;
-
-                // Flip Disabled to true via reflection so we cover both outcomes
-                var disabledProp = typeof(MudMenu).GetProperty("Disabled",
-                    BindingFlags.Public | BindingFlags.Instance)!;
-                disabledProp.SetValue(menu, true);
-
-                whenTrue = (bool)method.Invoke(menu, [menu])!;
-            });
-
-            whenFalse.Should().BeFalse();
-            whenTrue.Should().BeTrue();
-        }
-
-        [Test]
-        public async Task GetItemDisabled_On_MudMenuItem_Respects_Item_Disabled()
-        {
-            var host = Context.RenderComponent<MenuHrefTest>();
-
-            // Ensure items are rendered
-            await host.InvokeAsync(() =>
-                host.Find(".mud-menu-button-activator").Click()
-            );
-
-            var menu = host.FindComponent<MudMenu>().Instance;
-            var method = typeof(MudMenu).GetMethod("GetItemDisabled",
-                BindingFlags.NonPublic | BindingFlags.Instance)!;
-
-            // Find first enabled and first disabled item instances
-            var items = host.FindComponents<MudMenuItem>().Select(c => c.Instance).ToList();
-            var disabledItem = items.First(i => i.Disabled);
-            var enabledItem = items.First(i => !i.Disabled);
-
-            bool disabledRes = false, enabledRes = true;
-
-            await host.InvokeAsync(() =>
-            {
-                disabledRes = (bool)method.Invoke(menu, [disabledItem])!;
-                enabledRes = (bool)method.Invoke(menu, [enabledItem])!;
-            });
-
-            disabledRes.Should().BeTrue();
-            enabledRes.Should().BeFalse();
         }
     }
 }

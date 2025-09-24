@@ -1,22 +1,32 @@
 ﻿<MudPopoverProvider />
 
 <MudMenu Label="Full Menu Width" Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" PopoverClass="menu-popover-class" Disabled="DisableMenu">
-    <MudMenuItem Class="test-class" OnClick="@(() => InvokeItem(0))">1</MudMenuItem>
-    <MudMenuItem Href="https://www.test.com" OnClick="@(() => InvokeItem(1))">2</MudMenuItem>
-    <MudMenuItem Href="https://www.test.com" Target="_blank" OnClick="@(() => InvokeItem(2))">3</MudMenuItem>
+    <MudMenuItem Class="test-class" OnClick="@(() => InvokeItem(1))">1</MudMenuItem>
+    <MudMenuItem Href="https://www.test.com" OnClick="@(() => InvokeItem(2))">2</MudMenuItem>
+    <MudMenuItem Href="https://www.test.com" Target="_blank" OnClick="@(() => InvokeItem(3))">3</MudMenuItem>
 
-    <MudMenu OnClick="@(() => InvokeItem(3))" Label="4">
-        <MudMenu Label="4.1" OnClick="@(() => InvokeItem(31))">
-            <MudMenuItem Label="4.1.1" OnClick="@(() => InvokeItem(311))" />
-            <MudMenuItem Label="4.1.2" OnClick="@(() => InvokeItem(312))" />
-            <MudMenuItem Label="4.1.3" OnClick="@(() => InvokeItem(313))" />
-        </MudMenu>
+    <MudMenu Label="4">
+        <ActivatorContent>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => InvokeItem(4))">Button</MudButton>
+        </ActivatorContent>
+        <ChildContent>
+            <MudMenu Label="4.1">
+                 <ActivatorContent>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => InvokeItem(41))">Button</MudButton>
+                 </ActivatorContent>
+                 <ChildContent>
+                    <MudMenuItem Label="4.1.1" OnClick="@(() => InvokeItem(411))" />
+                    <MudMenuItem Label="4.1.2" OnClick="@(() => InvokeItem(412))" />
+                    <MudMenuItem Label="4.1.3" OnClick="@(() => InvokeItem(413))" />
+                </ChildContent>
+            </MudMenu>
 
-        <MudMenuItem Label="4.2" OnClick="@(() => InvokeItem(32))" />
+            <MudMenuItem Label="4.2" OnClick="@(() => InvokeItem(42))" />
+        </ChildContent>
     </MudMenu>
 
-    <MudMenuItem OnClick="@(() => InvokeItem(4))" Disabled>5 Disabled</MudMenuItem>
-    <MudMenuItem OnClick="@(() => InvokeItem(5))">6</MudMenuItem>
+    <MudMenuItem OnClick="@(() => InvokeItem(5))" Disabled>5 Disabled</MudMenuItem>
+    <MudMenuItem OnClick="@(() => InvokeItem(6))">6</MudMenuItem>
 </MudMenu>
 
 @code {

@@ -1005,7 +1005,6 @@ namespace MudBlazor
         /// </summary>
         internal async Task FocusItemAsync(int index)
         {
-
             if (index >= 0 && index < _menuItems.Count)
             {
                 var item = _menuItems[index];
@@ -1084,12 +1083,26 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Track whether the menu is selected or not 
+        /// Track whether the menu is selected or not and move to the correct position on Arrow Up/Down
         /// </summary>
         /// <param name="e"></param>
         private void TrackKeyboardInteraction(KeyboardEventArgs e)
         {
             _lastInteractionWasKeyboard = true;
+
+            if (_openState.Value && _focusedIndex == -1 && _menuItems.Count > 0)
+            {
+                if (e.Key == "ArrowDown")
+                {
+                    _focusedIndex = 0;
+                    _ = InvokeAsync(() => FocusItemAsync(_focusedIndex));
+                }
+                else if (e.Key == "ArrowUp")
+                {
+                    _focusedIndex = _menuItems.Count - 1;
+                    _ = InvokeAsync(() => FocusItemAsync(_focusedIndex));
+                }
+            }
         }
     }
 }
