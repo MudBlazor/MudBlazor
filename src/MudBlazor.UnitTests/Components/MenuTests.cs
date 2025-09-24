@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Reflection;
 using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
@@ -1108,6 +1109,89 @@ namespace MudBlazor.UnitTests.Components
                 // But it should still be present in the DOM for screen readers
                 disabledItem.TextContent.Should().Contain("5 Disabled");
             });
+        }
+
+        [Test]
+        public void TrackKeyboardInteraction_WhenMenuClosed_DoesNothing()
+        {
+            var comp = Context.RenderComponent<MenuKeydownTest>();
+            var menu = comp.FindComponent<MudMenu>().Instance;
+
+            // Menu should start closed
+            menu.GetState(x => x.Open).Should().BeFalse();
+
+            // Simulate an ArrowDown key press when the menu is closed
+            comp.InvokeAsync(() =>
+            {
+                var method = typeof(MudMenu)
+                    .GetMethod("TrackKeyboardInteraction", BindingFlags.NonPublic | BindingFlags.Instance);
+                method!.Invoke(menu, new object[] { new KeyboardEventArgs { Key = "ArrowDown" } });
+            });
+
+            // Nothing should change
+            menu.GetState(x => x.Open).Should().BeFalse();
+        }
+
+        [Test]
+        public async Task TrackKeyboardInteraction_WhenArrowDown_FocusesFirstItem()
+        {
+            var comp = Context.RenderComponent<MenuKeydownTest>();
+            var menu = comp.FindComponent<MudMenu>().Instance;
+
+            // Open the menu through its activator
+            await comp.InvokeAsync(async () =>
+            {
+                var button = comp.Find(".mud-menu-button-activator");
+                await button.ClickAsync(new MouseEventArgs());
+            });
+
+            // Simulate ArrowDown to move focus to the first item
+            await comp.InvokeAsync(() =>
+            {
+                var method = typeof(MudMenu)
+                    .GetMethod("TrackKeyboardInteraction", BindingFlags.NonPublic | BindingFlags.Instance);
+                method!.Invoke(menu, new object[] { new KeyboardEventArgs { Key = "ArrowDown" } });
+            });
+
+            // Verify that the focused index is now 0 (the first item)
+            var focusedIndex = (int)typeof(MudMenu)
+                .GetField("_focusedIndex", BindingFlags.NonPublic | BindingFlags.Instance)!
+                .GetValue(menu)!;
+
+            focusedIndex.Should().Be(0);
+        }
+
+        [Test]
+        public async Task TrackKeyboardInteraction_WhenArrowUp_FocusesLastItem()
+        {
+            var comp = Context.RenderComponent<MenuKeydownTest>();
+            var menu = comp.FindComponent<MudMenu>().Instance;
+
+            // Open the menu through its activator
+            await comp.InvokeAsync(async () =>
+            {
+                var button = comp.Find(".mud-menu-button-activator");
+                await button.ClickAsync(new MouseEventArgs());
+            });
+
+            // Simulate ArrowUp to move focus to the last item
+            await comp.InvokeAsync(() =>
+            {
+                var method = typeof(MudMenu)
+                    .GetMethod("TrackKeyboardInteraction", BindingFlags.NonPublic | BindingFlags.Instance);
+                method!.Invoke(menu, new object[] { new KeyboardEventArgs { Key = "ArrowUp" } });
+            });
+
+            // Verify that the focused index is now the last in the menu
+            var menuItems = (IReadOnlyList<object>)typeof(MudMenu)
+                .GetField("_menuItems", BindingFlags.NonPublic | BindingFlags.Instance)!
+                .GetValue(menu)!;
+
+            var focusedIndex = (int)typeof(MudMenu)
+                .GetField("_focusedIndex", BindingFlags.NonPublic | BindingFlags.Instance)!
+                .GetValue(menu)!;
+
+            focusedIndex.Should().Be(menuItems.Count - 1);
         }
     }
 }
