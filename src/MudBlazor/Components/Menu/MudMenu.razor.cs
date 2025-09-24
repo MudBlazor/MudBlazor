@@ -977,7 +977,8 @@ namespace MudBlazor
             if (_openState.Value && _focusedIndex == -1)
             {
                 // Focus the container first. This makes the menu "listen" for keys.
-                await _menuWrapperRef.FocusAsync(preventScroll: true);
+                if (_menuWrapperRef.Context is not null)
+                    await _menuWrapperRef.FocusAsync(preventScroll: true);
 
                 // Check if opened with keyboard and focus the first item
                 if (_lastInteractionWasKeyboard && _menuItems.Count > 0)
