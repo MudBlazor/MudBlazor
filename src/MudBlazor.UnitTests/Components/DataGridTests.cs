@@ -6,7 +6,6 @@
 
 using System.Globalization;
 using System.Reflection;
-using System.Xml.Linq;
 using AngleSharp.Css.Dom;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
