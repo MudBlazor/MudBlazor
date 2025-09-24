@@ -5522,29 +5522,38 @@ namespace MudBlazor.UnitTests.Components
         public void DataGridFilterIconsTest()
         {
             var comp = Context.RenderComponent<DataGridFilterIconsTest>();
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFilterIconsTest.Model>>();
+            MudIconButton FirstFilterButton() =>
+                comp.FindComponents<MudIconButton>().FirstOrDefault(x => x.Markup.Contains("filter-button"))?.Instance;
+            
+            // Check filter buttons when no filter applied
+            var mudIconButton = FirstFilterButton();
+            mudIconButton.Icon.Should().Be(Icons.Material.Filled.Battery0Bar);
+            
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.FilterMode, DataGridFilterMode.ColumnFilterMenu));
+            
+            mudIconButton = FirstFilterButton();
+            mudIconButton.Icon.Should().Be(Icons.Material.Filled.Battery0Bar);
+            
+            // Check filter buttons when filter applied
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.FilterMode, DataGridFilterMode.Simple));
+            comp.Find("button.filter-button").Click();
 
-            // Note: svg are formatted differently in the icon and in the button html, so we check with svg path
+            mudIconButton = FirstFilterButton();
+            mudIconButton.Icon.Should().Be(Icons.Material.Filled.BatteryFull);
+            
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.FilterMode, DataGridFilterMode.ColumnFilterMenu));
 
-            var filterEmptyButton = dataGrid.FindAll(".filter-button")[0];
-            string expectedFilterEmptyIconPath =
-                XDocument.Parse($"<svg>{Icons.Material.Filled.Battery0Bar}</svg>")
-                    .Descendants("path")
-                    .Select(p => p.Attribute("d")?.Value)
-                    .Where(d => !string.IsNullOrEmpty(d))
-                    .ToList().First();
-            filterEmptyButton.Html().Should().Contain(expectedFilterEmptyIconPath);
+            mudIconButton = FirstFilterButton();
+            mudIconButton.Icon.Should().Be(Icons.Material.Filled.BatteryFull);
+            
+            // Check filter buttons when FilterMode is ColumnFilterRow
+            comp.SetParametersAndRender(parameters => parameters.Add(p => p.FilterMode, DataGridFilterMode.ColumnFilterRow));
 
-            filterEmptyButton.Click();
+            var mudMenu = comp.FindComponents<MudMenu>().FirstOrDefault(x => x.Markup.Contains("column-filter-menu"))?.Instance;
+            mudMenu.Icon.Should().Be(Icons.Material.Filled.BatteryFull);
 
-            var filterFilledButton = dataGrid.FindAll(".filter-button.filtered")[0];
-            string expectedFilterFilledIconPath =
-                XDocument.Parse($"<svg>{Icons.Material.Filled.BatteryFull}</svg>")
-                    .Descendants("path")
-                    .Select(p => p.Attribute("d")?.Value)
-                    .Where(d => !string.IsNullOrEmpty(d))
-                    .ToList().First();
-            filterFilledButton.Html().Should().Contain(expectedFilterFilledIconPath);
+            mudIconButton = FirstFilterButton();
+            mudIconButton.Icon.Should().Be(Icons.Material.Filled.BatteryAlert);
         }
     }
 }
