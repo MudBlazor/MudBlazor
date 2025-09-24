@@ -5524,28 +5524,28 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.RenderComponent<DataGridFilterIconsTest>();
             MudIconButton FirstFilterButton() =>
                 comp.FindComponents<MudIconButton>().FirstOrDefault(x => x.Markup.Contains("filter-button"))?.Instance;
-            
+
             // Check filter buttons when no filter applied
             var mudIconButton = FirstFilterButton();
             mudIconButton.Icon.Should().Be(Icons.Material.Filled.Battery0Bar);
-            
+
             comp.SetParametersAndRender(parameters => parameters.Add(p => p.FilterMode, DataGridFilterMode.ColumnFilterMenu));
-            
+
             mudIconButton = FirstFilterButton();
             mudIconButton.Icon.Should().Be(Icons.Material.Filled.Battery0Bar);
-            
+
             // Check filter buttons when filter applied
             comp.SetParametersAndRender(parameters => parameters.Add(p => p.FilterMode, DataGridFilterMode.Simple));
             comp.Find("button.filter-button").Click();
 
             mudIconButton = FirstFilterButton();
             mudIconButton.Icon.Should().Be(Icons.Material.Filled.BatteryFull);
-            
+
             comp.SetParametersAndRender(parameters => parameters.Add(p => p.FilterMode, DataGridFilterMode.ColumnFilterMenu));
 
             mudIconButton = FirstFilterButton();
             mudIconButton.Icon.Should().Be(Icons.Material.Filled.BatteryFull);
-            
+
             // Check filter buttons when FilterMode is ColumnFilterRow
             comp.SetParametersAndRender(parameters => parameters.Add(p => p.FilterMode, DataGridFilterMode.ColumnFilterRow));
 
