@@ -1,0 +1,37 @@
+name: AutoTriage (Comments)
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  triage_comment:
+    if: ${{ github.event.sender.type != 'Bot' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate app token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.MUDBOT_APP_ID }}
+          private-key: ${{ secrets.MUDBOT_PRIVATE_KEY }}
+
+      - uses: actions/checkout@v5
+      
+      - name: AutoTriage - triage comment
+        uses: danielchalmers/AutoTriage@main
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          prompt-path: .github/AutoTriage.prompt
+        env:
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: triage-artifacts-comment-${{ github.event.issue.number }}
+          path: |
+            triage-db.json
+            artifacts/

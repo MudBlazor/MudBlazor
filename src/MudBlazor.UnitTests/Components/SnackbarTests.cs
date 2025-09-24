@@ -812,5 +812,55 @@ namespace MudBlazor.UnitTests.Components
             // Only one click should have been successful and multiple clicks should have been attempted.
             successfulClicks.Should().Be(1).And.BeLessThan(clickAttempts);
         }
+
+        [Test]
+        public async Task SnackbarShouldNotRenderIconWhenGlobalHideIconIsTrue()
+        {
+            // Arrange: set global via configuration
+            _service.Configuration.HideIcon = true;
+
+            // Act
+            await _provider.InvokeAsync(() => _service.Add("Hello world", Severity.Success));
+
+            // Assert: Snackbar is rendered, but no icon element
+            _provider.WaitForAssertion(() =>
+                _provider.FindAll(".mud-snackbar").Count.Should().Be(1)
+            );
+            _provider.FindAll(".mud-snackbar-icon").Count.Should().Be(0);
+        }
+
+        [Test]
+        public async Task SnackbarShouldRenderIconWhenPerSnackbarOverrideIsFalse()
+        {
+            // Arrange: globally hide icons
+            _service.Configuration.HideIcon = true;
+
+            // Act: override for this one snackbar
+            await _provider.InvokeAsync(() =>
+                _service.Add("Hello world", Severity.Success, opts => opts.HideIcon = false)
+            );
+
+            // Assert: Snackbar is rendered and icon appears due to per-snackbar override
+            _provider.WaitForAssertion(() =>
+                _provider.FindAll(".mud-snackbar").Count.Should().Be(1)
+            );
+            _provider.FindAll(".mud-snackbar-icon").Count.Should().Be(1);
+        }
+
+        [Test]
+        public async Task SnackbarShouldRenderIconByDefault()
+        {
+            // Arrange: globally hide icons
+            _service.Configuration.HideIcon = false;
+
+            // Act
+            await _provider.InvokeAsync(() => _service.Add("Hello world", Severity.Info));
+
+            // Assert: Snackbar is rendered and icon appears as default
+            _provider.WaitForAssertion(() =>
+                _provider.FindAll(".mud-snackbar").Count.Should().Be(1)
+            );
+            _provider.FindAll(".mud-snackbar-icon").Count.Should().Be(1);
+        }
     }
 }

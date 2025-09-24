@@ -5,7 +5,10 @@ using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.UnitTests.TestComponents.DataGrid;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.JSInterop;
+using Microsoft.JSInterop.Infrastructure;
+using Moq;
 using MudBlazor.UnitTests.TestComponents.Table;
 using NUnit.Framework;
 
@@ -2742,6 +2745,299 @@ namespace MudBlazor.UnitTests.Components
             icon.ClassList.Should().Contain("mud-table-sort-label-icon");
             icon.ClassList.Contains("mud-direction-asc").Should().Be(direction == SortDirection.Ascending);
             icon.ClassList.Contains("mud-direction-desc").Should().Be(direction == SortDirection.Descending);
+        }
+
+        private Mock<IScrollManager> _mockScrollManager = null!;
+
+        public class TestItem { public int Id { get; set; } public string Name { get; set; } }
+
+        private List<TestItem> GetTestItems(int count)
+        {
+            var items = new List<TestItem>();
+            for (int i = 1; i <= count; i++)
+            {
+                items.Add(new TestItem { Id = i, Name = $"Item {i}" });
+            }
+            return items;
+        }
+
+        [SetUp]
+        public void SetupScrollManagerMock()
+        {
+            _mockScrollManager = new Mock<IScrollManager>();
+            Context.Services.AddSingleton(_mockScrollManager.Object);
+        }
+
+        [Test]
+        public async Task ScrollToItemAsync_NonVirtualized_ItemExists_CallsScrollIntoViewAsync()
+        {
+            // Arrange
+            var items = GetTestItems(10);
+            var itemToScrollTo = items[5]; // 6th item, index 5
+
+            var comp = Context.RenderComponent<MudTable<TestItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.Virtualize, false) // Ensure non-virtualized
+                .Add(p => p.RowTemplate, (context) => builder =>
+                {
+                    builder.OpenComponent<MudTd>(0);
+                    builder.AddAttribute(1, "ChildContent", (RenderFragment)(b => b.AddContent(2, context.Name)));
+                    builder.CloseComponent();
+                }));
+
+            var tableInstance = comp.Instance;
+
+
+            // Act
+            await comp.InvokeAsync(() => tableInstance.ScrollToItemAsync(itemToScrollTo));
+
+            // Assert
+            _mockScrollManager.Verify(sm => sm.ScrollIntoViewAsync(It.IsAny<string>(), It.IsAny<ScrollBehavior>()), Times.Once);
+            _mockScrollManager.Verify(sm => sm.ScrollToVirtualizedItemAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<double>(), It.IsAny<string>(), It.IsAny<ScrollBehavior>()), Times.Never);
+        }
+
+        [Test]
+        public async Task ScrollToItemAsync_Virtualized_ItemExists_CallsScrollToVirtualizedItemAsync()
+        {
+            // Arrange
+            var items = GetTestItems(50); // Larger list for virtualization
+            var itemToScrollTo = items[25];
+
+            var comp = Context.RenderComponent<MudTable<TestItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.Virtualize, true)
+                .Add(p => p.FixedHeader, true)
+                .Add(p => p.Height, "300px")
+                .Add(p => p.HeaderContent, builder =>
+                {
+                    builder.OpenComponent<MudTh>(0); builder.AddAttribute(1, "ChildContent", (RenderFragment)(b => b.AddContent(2, "Name"))); builder.CloseComponent();
+                })
+                .Add(p => p.RowTemplate, (context) => builder =>
+                {
+                    builder.OpenComponent<MudTd>(0);
+                    builder.AddAttribute(1, "ChildContent", (RenderFragment)(b => b.AddContent(2, context.Name)));
+                    builder.CloseComponent();
+                }));
+
+            var tableInstance = comp.Instance;
+
+            // Act
+            await comp.InvokeAsync(() => tableInstance.ScrollToItemAsync(itemToScrollTo));
+
+            // Assert
+            _mockScrollManager.Verify(sm => sm.ScrollIntoViewAsync(It.IsAny<string>(), It.IsAny<ScrollBehavior>()), Times.Never);
+            _mockScrollManager.Verify(sm => sm.ScrollToVirtualizedItemAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<double>(), It.IsAny<string>(), It.IsAny<ScrollBehavior>()), Times.Once);
+        }
+
+        [Test]
+        public async Task ScrollToItemAsync_ItemNotFound_NonVirtualized_DoesNotCallScrollManager()
+        {
+            // Arrange
+            var items = GetTestItems(5);
+            var itemToScrollTo = new TestItem { Id = 99, Name = "NonExistent" };
+
+            var comp = Context.RenderComponent<MudTable<TestItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.Virtualize, false)
+                .Add(p => p.HeaderContent, builder =>
+                 {
+                     builder.OpenComponent<MudTh>(0); builder.AddAttribute(1, "ChildContent", (RenderFragment)(b => b.AddContent(2, "Name"))); builder.CloseComponent();
+                 })
+                .Add(p => p.RowTemplate, (context) => builder =>
+                {
+                    builder.OpenComponent<MudTd>(0); builder.AddAttribute(1, "ChildContent", (RenderFragment)(b => b.AddContent(2, context.Name))); builder.CloseComponent();
+                }));
+            var tableInstance = comp.Instance;
+
+            // Act
+            await comp.InvokeAsync(() => tableInstance.ScrollToItemAsync(itemToScrollTo));
+
+            // Assert
+            _mockScrollManager.Verify(sm => sm.ScrollIntoViewAsync(It.IsAny<string>(), It.IsAny<ScrollBehavior>()), Times.Never);
+            _mockScrollManager.Verify(sm => sm.ScrollToVirtualizedItemAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<double>(), It.IsAny<string>(), It.IsAny<ScrollBehavior>()), Times.Never);
+        }
+
+        [Test]
+        public async Task ScrollToItemAsync_ItemNotFound_Virtualized_DoesNotCallScrollManager()
+        {
+            // Arrange
+            var items = GetTestItems(5);
+            var itemToScrollTo = new TestItem { Id = 99, Name = "NonExistent" };
+
+            var comp = Context.RenderComponent<MudTable<TestItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.Virtualize, true)
+                .Add(p => p.Height, "300px")
+                .Add(p => p.FixedHeader, true)
+                .Add(p => p.HeaderContent, builder =>
+                 {
+                     builder.OpenComponent<MudTh>(0); builder.AddAttribute(1, "ChildContent", (RenderFragment)(b => b.AddContent(2, "Name"))); builder.CloseComponent();
+                 })
+                .Add(p => p.RowTemplate, (context) => builder =>
+                {
+                    builder.OpenComponent<MudTd>(0); builder.AddAttribute(1, "ChildContent", (RenderFragment)(b => b.AddContent(2, context.Name))); builder.CloseComponent();
+                }));
+            var tableInstance = comp.Instance;
+
+            // Act
+            await comp.InvokeAsync(() => tableInstance.ScrollToItemAsync(itemToScrollTo));
+
+            // Assert
+            _mockScrollManager.Verify(sm => sm.ScrollIntoViewAsync(It.IsAny<string>(), It.IsAny<ScrollBehavior>()), Times.Never);
+            _mockScrollManager.Verify(sm => sm.ScrollToVirtualizedItemAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<double>(), It.IsAny<string>(), It.IsAny<ScrollBehavior>()), Times.Never);
+        }
+
+        [Test]
+        public async Task FocusCellAsync_NonVirtualized_ItemAndCellExist_CallsScrollIntoViewAndJSRuntime()
+        {
+            // Arrange
+            var items = GetTestItems(10);
+            var itemToFocus = items[3];
+            var cellIndexToFocus = 0;
+            var jsRuntimeMock = new Mock<IJSRuntime>();
+
+            jsRuntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudTableCell.focusCell", It.IsAny<object[]>()));
+
+            Context.Services.AddSingleton(jsRuntimeMock.Object);
+
+            var comp = Context.RenderComponent<MudTable<TestItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.Virtualize, false)
+                .Add(p => p.HeaderContent, builder =>
+                {
+                    builder.OpenComponent<MudTh>(0); builder.AddAttribute(1, "ChildContent", (RenderFragment)(b => b.AddContent(2, "Name"))); builder.CloseComponent();
+                })
+                .Add(p => p.RowTemplate, (context) => builder =>
+                {
+                    builder.OpenComponent<MudTd>(0);
+                    builder.AddAttribute(1, "ChildContent", (RenderFragment)(b => b.AddContent(2, context.Name)));
+                    builder.CloseComponent();
+                }));
+
+            var tableInstance = comp.Instance;
+
+            // Act
+            await comp.InvokeAsync(() => tableInstance.FocusCellAsync(itemToFocus, cellIndexToFocus));
+
+            // Assert
+            _mockScrollManager.Verify(sm => sm.ScrollIntoViewAsync(It.IsAny<string>(), It.IsAny<ScrollBehavior>()), Times.Once);
+            _mockScrollManager.Verify(sm => sm.ScrollToVirtualizedItemAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<double>(), It.IsAny<string>(), It.IsAny<ScrollBehavior>()), Times.Never);
+
+            jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudTableCell.focusCell", It.IsAny<object[]>()), Times.Once);
+        }
+
+        [Test]
+        public async Task FocusCellAsync_Virtualized_ItemAndCellExist_CallsScrollToVirtualizedItemAndJSRuntime()
+        {
+            // Arrange
+            var items = GetTestItems(50);
+            var itemToFocus = items[25];
+            var cellIndexToFocus = 0;
+            var jsRuntimeMock = new Mock<IJSRuntime>();
+
+            jsRuntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudTableCell.focusCell", It.IsAny<object[]>()));
+
+            Context.Services.AddSingleton(jsRuntimeMock.Object);
+
+            var comp = Context.RenderComponent<MudTable<TestItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.Virtualize, true)
+                .Add(p => p.FixedHeader, true)
+                .Add(p => p.Height, "300px")
+                .Add(p => p.HeaderContent, builder =>
+                {
+                    builder.OpenComponent<MudTh>(0); builder.AddAttribute(1, "ChildContent", (RenderFragment)(b => b.AddContent(2, "Name"))); builder.CloseComponent();
+                })
+                .Add(p => p.RowTemplate, (context) => builder =>
+                {
+                    builder.OpenComponent<MudTd>(0);
+                    builder.AddAttribute(1, "ChildContent", (RenderFragment)(b => b.AddContent(2, context.Name)));
+                    builder.CloseComponent();
+                }));
+
+            var tableInstance = comp.Instance;
+
+            // Act
+            await comp.InvokeAsync(() => tableInstance.FocusCellAsync(itemToFocus, cellIndexToFocus));
+
+            // Assert
+            _mockScrollManager.Verify(sm => sm.ScrollIntoViewAsync(It.IsAny<string>(), It.IsAny<ScrollBehavior>()), Times.Never);
+            _mockScrollManager.Verify(sm => sm.ScrollToVirtualizedItemAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<double>(), It.IsAny<string>(), It.IsAny<ScrollBehavior>()), Times.Once);
+
+            jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudTableCell.focusCell", It.IsAny<object[]>()));
+        }
+
+
+        [Test]
+        public async Task FocusCellAsync_ItemNotFound_NonVirtualized_DoesNotCallScrollManagerOrJSRuntime()
+        {
+            // Arrange
+            var items = GetTestItems(5);
+            var itemToFocus = new TestItem { Id = 99, Name = "NonExistent" };
+            var cellIndexToFocus = 0;
+            var jsRuntimeMock = new Mock<IJSRuntime>();
+
+            jsRuntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudTableCell.focusCell", It.IsAny<object[]>()));
+
+            Context.Services.AddSingleton(jsRuntimeMock.Object);
+
+            var comp = Context.RenderComponent<MudTable<TestItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.Virtualize, false)
+                .Add(p => p.HeaderContent, builder =>
+                {
+                    builder.OpenComponent<MudTh>(0); builder.AddAttribute(1, "ChildContent", (RenderFragment)(b => b.AddContent(2, "Name"))); builder.CloseComponent();
+                })
+                .Add(p => p.RowTemplate, (context) => builder =>
+                {
+                    builder.OpenComponent<MudTd>(0); builder.AddAttribute(1, "ChildContent", (RenderFragment)(b => b.AddContent(2, context.Name))); builder.CloseComponent();
+                }));
+            var tableInstance = comp.Instance;
+
+            // Act
+            await comp.InvokeAsync(() => tableInstance.FocusCellAsync(itemToFocus, cellIndexToFocus));
+
+            // Assert
+            _mockScrollManager.Verify(sm => sm.ScrollIntoViewAsync(It.IsAny<string>(), It.IsAny<ScrollBehavior>()), Times.Never);
+            _mockScrollManager.Verify(sm => sm.ScrollToVirtualizedItemAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<double>(), It.IsAny<string>(), It.IsAny<ScrollBehavior>()), Times.Never);
+            jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudTableCell.focusCell", It.IsAny<object[]>()), Times.Never);
+        }
+
+        [Test]
+        public async Task FocusCellAsync_ItemNotFound_Virtualized_DoesNotCallScrollManagerOrJSRuntime()
+        {
+            // Arrange
+            var items = GetTestItems(5);
+            var itemToFocus = new TestItem { Id = 99, Name = "NonExistent" };
+            var cellIndexToFocus = 0;
+            var jsRuntimeMock = new Mock<IJSRuntime>();
+
+            jsRuntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudTableCell.focusCell", It.IsAny<object[]>()));
+
+            Context.Services.AddSingleton(jsRuntimeMock.Object);
+
+            var comp = Context.RenderComponent<MudTable<TestItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.Virtualize, true)
+                .Add(p => p.Height, "300px")
+                .Add(p => p.FixedHeader, true)
+                .Add(p => p.HeaderContent, builder =>
+                {
+                    builder.OpenComponent<MudTh>(0); builder.AddAttribute(1, "ChildContent", (RenderFragment)(b => b.AddContent(2, "Name"))); builder.CloseComponent();
+                })
+                .Add(p => p.RowTemplate, (context) => builder =>
+                {
+                    builder.OpenComponent<MudTd>(0); builder.AddAttribute(1, "ChildContent", (RenderFragment)(b => b.AddContent(2, context.Name))); builder.CloseComponent();
+                }));
+            var tableInstance = comp.Instance;
+
+            // Act
+            await comp.InvokeAsync(() => tableInstance.FocusCellAsync(itemToFocus, cellIndexToFocus));
+
+            // Assert
+            _mockScrollManager.Verify(sm => sm.ScrollIntoViewAsync(It.IsAny<string>(), It.IsAny<ScrollBehavior>()), Times.Never);
+            _mockScrollManager.Verify(sm => sm.ScrollToVirtualizedItemAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<double>(), It.IsAny<string>(), It.IsAny<ScrollBehavior>()), Times.Never);
+            jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudTableCell.focusCell", It.IsAny<object[]>()), Times.Never);
         }
     }
 }
