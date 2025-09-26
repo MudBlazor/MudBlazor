@@ -1562,6 +1562,7 @@ namespace MudBlazor
             try
             {
                 _serverDataCancellationTokenSource?.Cancel();
+                _serverDataCancellationTokenSource?.Dispose();
             }
             catch { /*ignored*/ }
             finally
