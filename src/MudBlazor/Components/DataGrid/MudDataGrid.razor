@@ -154,11 +154,11 @@
 
                                                                 @if (context.HeaderCell.hasFilter)
                                                                 {
-                                                                    <MudIconButton Ripple="false" Class="filter-button filtered" Icon="@Icons.Material.Filled.FilterAlt" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_Filter] Disabled="!context.filterable" OnClick="@context.HeaderCell.OpenFilters"></MudIconButton>
+                                                                    <MudIconButton Ripple="false" Class="filter-button filtered" Icon="@context.DataGrid.FilterIconFilled" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_Filter] Disabled="!context.filterable" OnClick="@context.HeaderCell.OpenFilters"></MudIconButton>
                                                                 }
                                                                 else
                                                                 {
-                                                                    <MudIconButton Ripple="false" Class="filter-button" Icon="@Icons.Material.Outlined.FilterAlt" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_Filter] Disabled="!context.filterable" OnClick="@context.HeaderCell.AddFilter"></MudIconButton>
+                                                                    <MudIconButton Ripple="false" Class="filter-button" Icon="@context.DataGrid.FilterIconEmpty" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_Filter] Disabled="!context.filterable" OnClick="@context.HeaderCell.AddFilter"></MudIconButton>
                                                                 }
 
                                                                 @if (ColumnsPanelReordering)

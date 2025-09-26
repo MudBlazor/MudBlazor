@@ -570,6 +570,24 @@ namespace MudBlazor
         public bool ShowFilterIcons { get; set; } = true;
 
         /// <summary>
+        /// The empty filter icon shown on a column when <see cref="Filterable"/> is <c>true</c> and no filters are applied to this column.
+        /// </summary>
+        [Parameter]
+        public string FilterIconEmpty { get; set; } = Icons.Material.Outlined.FilterAlt;
+
+        /// <summary>
+        /// The filled filter icon shown on a column when <see cref="Filterable"/> is <c>true</c> and filters are applied to this column.
+        /// </summary>
+        [Parameter]
+        public string FilterIconFilled { get; set; } = Icons.Material.Filled.FilterAlt;
+
+        /// <summary>
+        /// The clear filter icon shown on a column when <see cref="Filterable"/> is <c>true</c> to remove filters applied to this column.
+        /// </summary>
+        [Parameter]
+        public string FilterIconClear { get; set; } = Icons.Material.Filled.FilterAltOff;
+
+        /// <summary>
         /// The way that this grid filters data.
         /// </summary>
         /// <remarks>

@@ -16,5 +16,5 @@ body:
   - type: textarea
     id: examples
     attributes:
-      label: Alternatives and examples
+      label: Alternatives or examples
       description: Other solutions you tried, or links/screenshots of similar features.

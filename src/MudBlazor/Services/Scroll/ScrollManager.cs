@@ -56,4 +56,8 @@ internal sealed class ScrollManager : IScrollManager
     /// <inheritdoc />
     public ValueTask UnlockScrollAsync(string selector = "body", string cssClass = "scroll-locked") =>
         _jSRuntime.InvokeVoidAsyncIgnoreErrors("mudScrollManager.unlockScroll", selector, cssClass);
+
+    /// <inheritdoc />
+    public ValueTask ScrollToVirtualizedItemAsync(string containerId, int itemIndex, double itemHeight, string targetItemId, ScrollBehavior scrollBehavior = ScrollBehavior.Auto) =>
+        _jSRuntime.InvokeVoidAsyncIgnoreErrors("mudScrollManager.scrollToVirtualizedItem", containerId, itemIndex, itemHeight, targetItemId, scrollBehavior.ToDescriptionString());
 }

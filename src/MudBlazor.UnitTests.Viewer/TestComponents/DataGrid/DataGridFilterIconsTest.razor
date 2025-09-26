@@ -1,0 +1,22 @@
+﻿<MudDataGrid T="Model" Items="@_items" Filterable="true" FilterMode="FilterMode"
+             FilterIconEmpty="@Icons.Material.Filled.Battery0Bar" FilterIconFilled="@Icons.Material.Filled.BatteryFull" FilterIconClear="@Icons.Material.Filled.BatteryAlert">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Age" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    public record Model(string Name, int Age);
+
+    [Parameter]
+    public DataGridFilterMode FilterMode { get; set; } = DataGridFilterMode.Simple;
+
+    private readonly IEnumerable<Model> _items = new List<Model>()
+    {
+        new("Sam", 56),
+        new("Alicia", 54),
+        new("Ira", 27),
+        new("John", 32)
+    };
+}
