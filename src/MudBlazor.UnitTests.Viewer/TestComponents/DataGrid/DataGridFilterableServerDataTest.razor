@@ -1,6 +1,6 @@
 ﻿<MudPopoverProvider />
 
-<MudDataGrid T="Item" Filterable="true" ServerData="this.ServerDataFunc">
+<MudDataGrid T="Item" Filterable="true" ServerDataAsync="this.ServerDataFunc">
     <Columns>
         <PropertyColumn Property="x => x.Name" />
     </Columns>

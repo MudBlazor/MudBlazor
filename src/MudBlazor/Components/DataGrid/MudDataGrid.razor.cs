@@ -141,11 +141,11 @@ namespace MudBlazor
             base.OnParametersSet();
             if (Items != null)
             {
-                if (ServerData != null)
+                if (ServerDataAsync != null)
                 {
                     throw new InvalidOperationException(
                         $"{GetType()} can only accept one item source from its parameters. " +
-                        $"Do not supply both '{nameof(Items)}' and '{nameof(ServerData)}'.");
+                        $"Do not supply both '{nameof(Items)}' and '{nameof(ServerDataAsync)}'.");
                 }
                 if (VirtualizeServerData != null)
                 {
@@ -158,11 +158,11 @@ namespace MudBlazor
 
             if (VirtualizeServerData != null)
             {
-                if (ServerData != null)
+                if (ServerDataAsync != null)
                 {
                     throw new InvalidOperationException(
                         $"{GetType()} can only accept one item source from its parameters. " +
-                        $"Do not supply both '{nameof(VirtualizeServerData)}' and '{nameof(ServerData)}'.");
+                        $"Do not supply both '{nameof(VirtualizeServerData)}' and '{nameof(ServerDataAsync)}'.");
                 }
                 if (QuickFilter != null)
                 {
@@ -172,10 +172,10 @@ namespace MudBlazor
                 return;
             }
 
-            if (ServerData != null && QuickFilter != null)
+            if (ServerDataAsync != null && QuickFilter != null)
             {
                 throw new InvalidOperationException(
-                    $"Do not supply both '{nameof(ServerData)}' and '{nameof(QuickFilter)}'.");
+                    $"Do not supply both '{nameof(ServerDataAsync)}' and '{nameof(QuickFilter)}'.");
             }
         }
 
@@ -748,10 +748,10 @@ namespace MudBlazor
         public ICloneStrategy<T> CloneStrategy { get; set; } = SystemTextJsonDeepCloneStrategy<T>.Instance;
 
         /// <summary>
-        /// The data for this grid when <see cref="ServerData"/> is not set.
+        /// The data for this grid when <see cref="ServerDataAsync"/> is not set.
         /// </summary>
         /// <remarks>
-        /// One row will be displayed per item.  Use the <see cref="ServerData"/> function instead of this property to get data on demand.
+        /// One row will be displayed per item.  Use the <see cref="ServerDataAsync"/> function instead of this property to get data on demand.
         /// </remarks>
         [Parameter]
         public IEnumerable<T> Items
@@ -837,7 +837,7 @@ namespace MudBlazor
         /// Shows a loading animation while querying data.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  This property is <c>true</c> while the <see cref="ServerData"/> function is executing.
+        /// Defaults to <c>false</c>.  This property is <c>true</c> while the <see cref="ServerDataAsync"/> function is executing.
         /// </remarks>
         [Parameter]
         public bool Loading { get; set; }
@@ -975,7 +975,7 @@ namespace MudBlazor
         /// The function accepts a <see cref="GridState{T}"/> with current sorting, filtering, and pagination parameters.  Then, return a <see cref="GridData{T}"/> with a page of values, and the total (unpaginated) items set in <see cref="GridData{T}.TotalItems"/>.  When set, the <see cref="Items"/> property cannot be set.
         /// </remarks>
         [Parameter]
-        public Func<GridState<T>, CancellationToken, Task<GridData<T>>> ServerData { get; set; }
+        public Func<GridState<T>, CancellationToken, Task<GridData<T>>> ServerDataAsync { get; set; }
 
         /// <summary>
         /// The function which gets data for this grid.
@@ -1224,7 +1224,7 @@ namespace MudBlazor
         public bool HasPager { get; set; }
 
         /// <summary>
-        /// The items returned by the <see cref="ServerData"/> function.
+        /// The items returned by the <see cref="ServerDataAsync"/> function.
         /// </summary>
         public IEnumerable<T> ServerItems => _serverData.Items;
 
@@ -1338,9 +1338,9 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// This property is determined by checking if the <see cref="ServerData"/> or <see cref="VirtualizeServerData"/> property is not null.
+        /// This property is determined by checking if the <see cref="ServerDataAsync"/> or <see cref="VirtualizeServerData"/> property is not null.
         /// </summary>
-        internal bool HasServerData => ServerData != null || VirtualizeServerData != null;
+        internal bool HasServerData => ServerDataAsync != null || VirtualizeServerData != null;
 
         #endregion
 
@@ -1493,7 +1493,7 @@ namespace MudBlazor
                 // Cancel any prior request
                 CancelServerDataToken();
 
-                _serverData = await ServerData(state, _serverDataCancellationTokenSource.Token);
+                _serverData = await ServerDataAsync(state, _serverDataCancellationTokenSource.Token);
                 _currentRenderFilteredItemsCache = null;
 
                 if (CurrentPage * RowsPerPage > _serverData.TotalItems)
@@ -1828,7 +1828,7 @@ namespace MudBlazor
         /// Gets the total count of filtered items in the data grid.
         /// </summary>
         /// <returns>
-        /// The number of items remaining after applying filters.  When <see cref="ServerData"/> is in use, the <see cref="GridData{T}.TotalItems"/> value is returned.
+        /// The number of items remaining after applying filters.  When <see cref="ServerDataAsync"/> is in use, the <see cref="GridData{T}.TotalItems"/> value is returned.
         /// </returns>
         public int GetFilteredItemsCount()
         {
@@ -2052,7 +2052,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Reloads grid data by calling the <see cref="ServerData"/> function.
+        /// Reloads grid data by calling the <see cref="ServerDataAsync"/> function.
         /// </summary>
         public Task ReloadServerData()
         {
