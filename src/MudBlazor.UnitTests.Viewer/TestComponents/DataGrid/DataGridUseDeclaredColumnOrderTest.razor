@@ -1,0 +1,29 @@
+﻿<MudDataGrid Items="_data"
+             Dense="true"
+             Hover="true"
+             UseDeclaredColumnOrder="@UseDeclaredColumnOrder">
+    <Columns>
+        <PropertyColumn Property="e => e.Name" Title="Name" />
+        <PropertyColumn Property="e => e.Number" Title="Number" />
+        <PropertyColumn Property="e => e.Group" Title="Group" />
+        <SelectColumn />
+        <HierarchyColumn />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    [Parameter] public bool UseDeclaredColumnOrder { get; set; }
+
+    private readonly List<Element> _data = new()
+    {
+        new() { Name = "Hydrogen", Number = 1, Group = "Nonmetal" },
+        new() { Name = "Helium", Number = 2, Group = "Noble gas" }
+    };
+
+    public class Element
+    {
+        public string Name { get; set; } = "";
+        public int Number { get; set; }
+        public string Group { get; set; } = "";
+    }
+}

@@ -5482,6 +5482,35 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void DataGridRespectDeclaredColumnOrderWhenEnabled()
+        {
+            var comp = Context.RenderComponent<DataGridUseDeclaredColumnOrderTest>(
+                parameters => parameters.Add(p => p.UseDeclaredColumnOrder, false));
+            var grid = comp.FindComponent<MudDataGrid<DataGridUseDeclaredColumnOrderTest.Element>>();
+            var columns = grid.Instance.RenderedColumns;
+
+            columns.Should().HaveCount(5);
+            columns[0].Tag?.ToString().Should().Be("hierarchy-column");
+            columns[1].Tag?.ToString().Should().Be("select-column");
+            columns.Skip(2).Select(c => c.Title).Should().ContainInOrder("Name", "Number", "Group");
+
+            comp = Context.RenderComponent<DataGridUseDeclaredColumnOrderTest>(
+                parameters => parameters.Add(p => p.UseDeclaredColumnOrder, true));
+            grid = comp.FindComponent<MudDataGrid<DataGridUseDeclaredColumnOrderTest.Element>>();
+
+            columns = grid.Instance.RenderedColumns;
+
+            columns.Should().HaveCount(5);
+
+            columns[0].Title.Should().Be("Name");
+            columns[1].Title.Should().Be("Number");
+            columns[2].Title.Should().Be("Group");
+            columns[3].Tag?.ToString().Should().Be("select-column");
+            columns[4].Tag?.ToString().Should().Be("hierarchy-column");
+
+        }
+
+        [Test]
         public async Task DataGrid_HierarchyVisibilityToggled_SingleRowToggle()
         {
             var comp = Context.RenderComponent<DataGridHierarchyVisibilityToggledTest>();

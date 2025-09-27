@@ -1187,6 +1187,16 @@ namespace MudBlazor
         [Parameter]
         public bool AllowUnsorted { get; set; } = false;
 
+        /// <summary>
+        /// Use the order in which columns are declared in the markup when rendering the grid.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>. When <c>true</c>, columns are displayed in the order they are declared in the markup.
+        /// When <c>false</c>, hierarchy and select columns are positioned first.
+        /// </remarks>
+        [Parameter]
+        public bool UseDeclaredColumnOrder { get; set; } = false;
+
         #region Properties
 
         internal IEnumerable<T> CurrentPageItems
@@ -1518,9 +1528,13 @@ namespace MudBlazor
 
         internal void AddColumn(Column<T> column)
         {
-            if (column.Tag?.ToString() == "hierarchy-column")
+            if (UseDeclaredColumnOrder)
             {
-                if (column is TemplateColumn<T> templateColumn)
+                // When using declared order, always append to maintain markup order
+                RenderedColumns.Add(column);
+
+                // Handle special column initialization logic regardless of ordering mode
+                if (column.Tag?.ToString() == "hierarchy-column" && column is TemplateColumn<T> templateColumn)
                 {
                     _initialExpandedFunc = templateColumn.InitiallyExpandedFunc;
                     _buttonDisabledFunc = templateColumn.ButtonDisabledFunc;
@@ -1534,23 +1548,45 @@ namespace MudBlazor
                         ApplyInitialExpansionForItems(_serverData.Items);
                     }
                 }
-                RenderedColumns.Insert(0, column);
-            }
-            else if (column.Tag?.ToString() == "select-column")
-            {
-                // Position SelectColumn after HierarchyColumn if present
-                if (RenderedColumns.Select(x => x.Tag).Contains("hierarchy-column"))
-                {
-                    RenderedColumns.Insert(1, column);
-                }
-                else
-                {
-                    RenderedColumns.Insert(0, column);
-                }
             }
             else
             {
-                RenderedColumns.Add(column);
+                // Legacy behavior: special columns first
+                if (column.Tag?.ToString() == "hierarchy-column")
+                {
+                    if (column is TemplateColumn<T> templateColumn)
+                    {
+                        _initialExpandedFunc = templateColumn.InitiallyExpandedFunc;
+                        _buttonDisabledFunc = templateColumn.ButtonDisabledFunc;
+                        // Apply expansion now if items or _serverData.Items is already set
+                        if (_items is not null)
+                        {
+                            ApplyInitialExpansionForItems(_items);
+                        }
+                        else if (_serverData?.Items?.Any() == true)
+                        {
+                            ApplyInitialExpansionForItems(_serverData.Items);
+                        }
+                    }
+
+                    RenderedColumns.Insert(0, column);
+                }
+                else if (column.Tag?.ToString() == "select-column")
+                {
+                    // Position SelectColumn after HierarchyColumn if present
+                    if (RenderedColumns.Select(x => x.Tag).Contains("hierarchy-column"))
+                    {
+                        RenderedColumns.Insert(1, column);
+                    }
+                    else
+                    {
+                        RenderedColumns.Insert(0, column);
+                    }
+                }
+                else
+                {
+                    RenderedColumns.Add(column);
+                }
             }
         }
 
