@@ -445,7 +445,7 @@ namespace MudBlazor.UnitTests.Components
                 new Func<GridState<TestModel1>, CancellationToken, Task<GridData<TestModel1>>>((x, c) => throw new NotImplementedException());
             var exception = Assert.Throws<InvalidOperationException>(() =>
                 Context.RenderComponent<MudDataGrid<TestModel1>>(
-                    Parameter(nameof(MudDataGrid<TestModel1>.ServerDataAsync), serverDataFunc),
+                    Parameter(nameof(MudDataGrid<TestModel1>.ServerData), serverDataFunc),
                     Parameter(nameof(MudDataGrid<TestModel1>.Items), Array.Empty<TestModel1>())
                 )
             );
@@ -463,7 +463,7 @@ namespace MudBlazor.UnitTests.Components
                 new Func<GridState<TestModel1>, CancellationToken, Task<GridData<TestModel1>>>((x, c) => throw new NotImplementedException());
             var exception = Assert.Throws<InvalidOperationException>(() =>
                 Context.RenderComponent<MudDataGrid<TestModel1>>(
-                    Parameter(nameof(MudDataGrid<TestModel1>.ServerDataAsync), serverDataFunc),
+                    Parameter(nameof(MudDataGrid<TestModel1>.ServerData), serverDataFunc),
                     Parameter(nameof(MudDataGrid<TestModel1>.QuickFilter), (TestModel1 x) => true)
                 )
             );
@@ -493,7 +493,7 @@ namespace MudBlazor.UnitTests.Components
                 new Func<GridStateVirtualize<TestModel1>, CancellationToken, Task<GridData<TestModel1>>>((x, c) => throw new NotImplementedException());
             var exception = Assert.Throws<InvalidOperationException>(() =>
                 Context.RenderComponent<MudDataGrid<TestModel1>>(
-                    Parameter(nameof(MudDataGrid<TestModel1>.ServerDataAsync), serverDataFunc),
+                    Parameter(nameof(MudDataGrid<TestModel1>.ServerData), serverDataFunc),
                     Parameter(nameof(MudDataGrid<TestModel1>.VirtualizeServerData), virtualizeServerDataFunc)
                 )
             );
@@ -3467,8 +3467,8 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerPaginationTest.Model>>();
             dataGrid.Instance.CurrentPage = 2;
             var serverDataCallCount = 0;
-            var originalServerDataFunc = dataGrid.Instance.ServerDataAsync;
-            dataGrid.Instance.ServerDataAsync = (state, token) =>
+            var originalServerDataFunc = dataGrid.Instance.ServerData;
+            dataGrid.Instance.ServerData = (state, token) =>
             {
                 serverDataCallCount++;
                 return originalServerDataFunc(state, token);

@@ -1,5 +1,5 @@
 ﻿<MudDataGrid MultiSelection="true" @bind-SelectedItems="_selectedItems"
-    ServerDataAsync="@(new Func<GridState<Item>, CancellationToken, Task<GridData<Item>>>(ServerReload))">
+    ServerData="@(new Func<GridState<Item>, CancellationToken, Task<GridData<Item>>>(ServerReload))">
     <Columns>
         <SelectColumn T="Item" ShowInFooter="true"/>
         <PropertyColumn Property="x => x.Name" />

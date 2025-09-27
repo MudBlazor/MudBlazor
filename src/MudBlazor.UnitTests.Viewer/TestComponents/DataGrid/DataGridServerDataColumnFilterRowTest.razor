@@ -1,6 +1,6 @@
 ﻿<MudPopoverProvider />
 
-<MudDataGrid T="Model" Filterable="true" ServerDataAsync="ServerDataFunc" FilterMode="DataGridFilterMode.ColumnFilterRow">
+<MudDataGrid T="Model" Filterable="true" ServerData="ServerDataFunc" FilterMode="DataGridFilterMode.ColumnFilterRow">
     <Columns>
         <PropertyColumn Property="x => x.Name" />
         <PropertyColumn Property="x => x.Age" Filterable="false" />

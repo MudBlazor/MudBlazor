@@ -3,7 +3,7 @@
 @namespace MudBlazor.Docs.Examples
 
 <MudDataGrid @ref="@_dataGrid" T="USState"
-             ServerDataAsync="@ServerReload"
+             ServerData="@ServerReload"
              Hover FixedHeader Groupable
              Height="500px" 
              GroupClass="@(_customizeGroupStyle ? "pa-4" : null)"
