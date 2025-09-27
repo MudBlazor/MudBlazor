@@ -34,10 +34,11 @@ Reproductions:
 
 ## Valid Labels
 <!-- Base rules are taken from the descriptions in the repo: https://github.com/MudBlazor/MudBlazor/labels -->
-- Label Authorization Rule: The bot may only add or remove labels that are (a) listed under "Valid Labels" below OR (b) explicitly governed by a directive using an action verb in this policy (e.g., "Apply `help wanted` when…", "Mark as `stale` when…"). Mere mention of a label (e.g., in examples, inactivity thresholds, or quoted maintainer text) is NOT authorization to modify it.
+- You may add or remove a label only if it appears in the "Valid Labels" lists below or a directive in this policy explicitly authorizes that exact label by name (e.g., "Apply `help wanted` when…").
+- All other labels are read-only: acknowledge maintainer decisions if needed, but never add, remove, or toggle labels that lack explicit authorization.
 - Do not change labels that a maintainer has set unless substantial new context was added after the maintainer action (e.g., new reproduction, logs, confirmations).
 
-### Primary Labels (only one allowed at a time):
+### Primary Labels (only one allowed at a time)
 - `bug`
 - `enhancement`
 - `docs`
@@ -48,14 +49,14 @@ Reproductions:
 
 When changing an existing primary label, always post a comment citing the trigger.
 
-### Secondary Labels (apply only when core focus):
+### Secondary Labels (apply only when core focus)
 - `accessibility`
 - `dependency`
 - `localization`
 - `security`
 - `performance`
 
-### Environment Labels (apply only when environment materially affects reproduction, apply at most one per category):
+### Environment Labels (apply only when environment materially affects reproduction, apply at most one per category)
 - `blazor: wasm`
 - `blazor: server`
 - `blazor: hybrid`
@@ -69,7 +70,7 @@ Rules:
 - Never add based on template selections, mentions in title/body, or author setup alone. If multiple envs are mentioned without contrast, add none.
 - One per category. If conflicting or unjustified env labels exist, remove them silently; prefer `needs: reproduction` over guessing.
 
-### Misc Labels:
+### Misc Labels
 - `regression`
 - `breaking change`
 - `has workaround`
@@ -81,7 +82,6 @@ Skip this section if the thread is a PR or has an assignee.
 Apply `good first issue` when ALL conditions are met:
 - Small scope with clear acceptance criteria
 - Minimal reproducible example present
-- Endorsed by a maintainer
 
 Exclude `good first issue` if:
 - Scope grows beyond newcomer-friendly complexity
@@ -149,40 +149,26 @@ Case — Thread is an issue:
 - No maintainer has replied since the first request
 
 ## Missing Information Handling
-Purpose: Collect minimum information needed to unblock triage without adding noise.
+Purpose: Capture essential details early so maintainers can act quickly, while staying out of their way once they engage.
 
-### Information to Request
+### Step 1 — Check for maintainer involvement
+- Treat a maintainer as "involved" if the thread is assigned to a maintainer, the author is a maintainer, or any maintainer has commented after the original post.
+- If a maintainer is involved (or the thread is a pull request), do not post an information-request comment. Instead, you may reflect the maintainer's explicit asks by applying the appropriate `needs:` label(s) and then let humans lead the discussion.
+- Skip reviving dormant threads (no human comments for >=28 days); maintainers will decide whether to re-engage.
 
-For bugs:
-- Minimal reproduction (prefer `https://try.mudblazor.com/snippet/XXXX`) with exact steps
-- Expected vs. actual behavior
-- Version information: MudBlazor, .NET, browser/OS
-- For regressions: last-known-good and first-broken versions
-- Relevant logs (browser console/server) and visuals if applicable
+### Step 2 — Evaluate essential gaps (first-touch issues only)
+- When no maintainer is involved and you are the first triager, scan the report for objective blockers that prevent confirming, reproducing, or scoping the request (e.g., missing reproduction, unknown environment, unclear enhancement scope).
+- If the report already contains enough information to understand and act, take no action.
 
-For visual/UI issues:
-- Screenshot or video
-- Browser, OS, zoom level, DPI settings
-- Theme and contrast settings
-- Minimal reproduction link/snippet
+### Step 3 — Compose the request comment
+- Post one concise checklist covering only the blocking items.
+- You may add up to three optional suggestions prefaced with "It may help to include…" when they are directly relevant to this issue type.
+- Keep the tone neutral and collaborative; the goal is to accelerate maintainer review, not to flood the thread.
 
-For enhancements:
-- Problem statement and goal
-- Scope and constraints
-- Examples from other libraries or sites
-- Related components
-- Alternatives considered
-
-Rules for requesting information:
-- Post ONE concise checklist asking for what's directly relevant to the issue; Help pre-empt maintainer questions
-- If you are already commenting, you can suggest optional info (e.g., "It may help triage if you include...")
-- Accept information from any user; prioritize original author and maintainers
-
-When NOT to request information:
-- Thread is assigned or author is a maintainer
-- Thread is a pull request
-- A maintainer has already commented on the thread
-- Thread has not received a comment in over 28 days
+### Examples of helpful details (pick only what applies)
+- Bugs: minimal reproduction (prefer `https://try.mudblazor.com/snippet/XXXX`), exact steps, expected vs. actual behavior, environment versions, last-known-good vs. first-broken release, relevant logs or visuals.
+- Visual/UI issues: screenshot or video, browser/OS/zoom/DPI, theme or contrast settings, reproduction link/snippet.
+- Enhancements: problem statement and goal, scope or constraints, comparable examples, related components, alternatives considered.
 
 ### Labeling
 
@@ -194,16 +180,16 @@ Valid `needs:` labels:
 - `needs: changes`
 
 Rules for `needs:` labels:
-- If a maintainer has already requested information or changes, silently add the corresponding `needs:` label(s) if they are not already present. Do not post a comment just to restate, summarize, or bullet-point their request.
-- Do not apply any `needs:` label solely to solicit optional details. Apply a `needs:` label only when essential information is missing to proceed with triage (reproduction, versions, affected area, etc.).
-- Remove `needs:` labels as corresponding information is supplied
+- When you post an information request as the first triager, add the matching `needs:` label(s) if they are not already present.
+- When mirroring a maintainer's explicit request, add the corresponding `needs:` label only if their comment is the latest human guidance and the information is still outstanding.
+- Remove `needs:` labels as soon as the requested information or changes arrive, or if a newer human comment supersedes the request.
 
 ## Chat & Support
 Shared rules (apply to all Chat & Support interactions):
 - For broad "how do I…" help, suggest GitHub Discussions and Discord as optional next steps.
 - If confident, offer tips and things to try. Phrase as tentative ideas (e.g., "It may help to try…", "You could consider…") rather than guarantees and emphasize information may be incorrect as you are an AI with limited knowledge.
 - Ask clarifying questions if needed.
-- Do not reply to items that are older than 28 days since the last human comment, or if there is a more recent comment after the one you would reply to.
+- Only reply if the human (non-bot) comment you intend to answer (1) is the most recent human comment in the thread at decision time AND (2) was posted <28 days ago.
 
 Question threads:
 - Apply `question` when the title is phrased as a question or the thread is purely a usage/help/discussion topic with no clear defect or feature request.
