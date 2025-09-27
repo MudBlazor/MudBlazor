@@ -19,7 +19,7 @@
     }
   }
 
-  &:has(:focus-visible), &:active {
+  &:focus-within, &:active {
     background-color: var(--mud-palette-action-default-hover);
   }
 
@@ -42,7 +42,7 @@
     }
   }
 
-  &:focus-visible, &:active {
+  &:focus-within, &:active {
     background-color: var(--mud-palette-action-default-hover);
   }
 }

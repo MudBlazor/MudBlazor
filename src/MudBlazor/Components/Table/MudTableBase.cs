@@ -296,7 +296,7 @@ namespace MudBlazor
         /// Displays a loading animation while <c>ServerData</c> executes.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  Becomes <c>true</c> before <c>ServerData</c> is called, then becomes <c>false</c>.  When <c>true</c>, either a <see cref="MudProgressLinear"/> is displayed or custom content if <c>LoadingContent</c> is set.
+        /// Defaults to <c>false</c>.  Becomes <c>true</c> before <c>ServerData</c> is called, then becomes <c>false</c>.  When <c>true</c>, either a <see cref="MudProgressLinear"/> is displayed or custom content if <c>LoadingContent</c> or <c>LoadingContentBody</c> is set.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Data)]
@@ -306,7 +306,7 @@ namespace MudBlazor
         /// The color of the <see cref="MudProgressLinear"/> while <see cref="Loading"/> is <c>true</c>.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Color.Info"/>.  Has no effect if <c>LoadingContent</c> is set.
+        /// Defaults to <see cref="Color.Info"/>.  Has no effect if <c>LoadingContent</c> or <c>LoadingContentBody</c> is set.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Data)]
