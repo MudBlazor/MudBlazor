@@ -9,6 +9,26 @@ namespace MudBlazor
     public abstract class MudCategoryChartBase : MudChartBase
     {
         /// <summary>
+        /// The nodes to be displayed.
+        /// </summary>
+        /// <remarks>
+        /// Applies only to <c>Sankey</c> charts.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Chart.Behavior)]
+        public IEnumerable<SankeyChartNode> Nodes { get; set; } = [];
+
+        /// <summary>
+        /// The edges to be displayed.
+        /// </summary>
+        /// <remarks>
+        /// Applies only to <c>Sankey</c> charts.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Chart.Behavior)]
+        public IEnumerable<SankeyChartEdge> Edges { get; set; } = [];
+        
+        /// <summary>
         /// The data to be displayed.
         /// </summary>
         /// <remarks>

@@ -1,0 +1,23 @@
+﻿@page "/components/sankeychart"
+@page "/components/chart-types/sankeychart"
+@page "/components/sankey"
+
+<DocsPage>
+    <DocsPageHeader Title="Sankey Chart" Component="@nameof(MudBlazor.Charts.Sankey)" />
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Basic Usage">
+                <Description>
+                    To get a Sankey Chart use <CodeInline>ChartType="ChartType.Sankey"</CodeInline> to render the configured <CodeInline>Nodes</CodeInline> and <CodeInline>Edges</CodeInline>.
+                    Like in the other chart types, the nodes and edges in the chart are clickable. You can bind <CodeInline>SelectedNode</CodeInline> and <CodeInline>SelectedEdge</CodeInline> 
+                    to make your chart interactive.  
+                </Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="@nameof(SankeyExample1)">
+                <SankeyExample1 />
+            </SectionContent>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>

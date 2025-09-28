@@ -120,6 +120,7 @@ namespace MudBlazor.Docs.Services
             .AddNavGroup("Charts", false, new DocsComponents()
                 .AddItem("Donut Chart", typeof(Donut))
                 .AddItem("Line Chart", typeof(Line), typeof(Legend))
+                .AddItem("Sankey Chart", typeof(Sankey), typeof(Legend))
                 .AddItem("Pie Chart", typeof(Pie))
                 .AddItem("Bar Chart", typeof(Bar), typeof(ChartOptions))
                 .AddItem("Heat Map Chart", typeof(HeatMap))

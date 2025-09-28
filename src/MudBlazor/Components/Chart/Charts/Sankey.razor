@@ -1,0 +1,32 @@
+﻿@namespace MudBlazor.Charts
+
+@inherits MudCategoryChartBase
+
+<svg @attributes="UserAttributes" class="mud-chart-sankey mud-ltr" width="@Width" height="@Height" viewBox="0 0 650 350">
+    <defs>
+        @foreach (var edge in _edgePaths)
+        {
+            <linearGradient id="@($"gradient_{_nodeRects[edge.Source].Hash}_{_nodeRects[edge.Target].Hash}")">
+                <stop stop-color="@_nodeRects[edge.Source].Color" offset="0"/>
+                <stop stop-color="@_nodeRects[edge.Target].Color" offset="1"/>
+            </linearGradient>
+        }
+    </defs>
+    @foreach (var edge in _edgePaths)
+    {
+        <path d="@edge.D"
+              fill="@($"url(#gradient_{_nodeRects[edge.Source].Hash}_{_nodeRects[edge.Target].Hash})")"
+              id="@($"edge_{_nodeRects[edge.Source].Hash}_{_nodeRects[edge.Target].Hash}")"
+              opacity="@EdgeOpacity.ToString(Culture)"/>
+    }
+    @foreach (KeyValuePair<string, NodeRect> kv in _nodeRects)
+    {
+        <rect x="@kv.Value.X.ToString(Culture)"
+              y="@kv.Value.Y.ToString(Culture)"
+              width="@kv.Value.Width.ToString(Culture)"
+              height="@kv.Value.Height.ToString(Culture)"
+              fill="@kv.Value.Color"
+              id="@($"node_{kv.Key}")"/>
+    }
+    @MudChartParent?.CustomGraphics
+</svg>
