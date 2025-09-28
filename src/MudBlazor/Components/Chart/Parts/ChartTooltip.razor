@@ -4,27 +4,37 @@
     var hasSubtitle = !string.IsNullOrWhiteSpace(Subtitle);
     var subtitleHeight = hasSubtitle ? 16 : 0;
     var opacity = _boxWidth > 0 ? 1 : 0;
+    var triangleOffset = ShowTriangle ? 14 : -4;
+    var x = RelativePositionX switch
+    {
+        ChartTooltipRelativePositionX.Start => X - _boxWidth / 2,
+        ChartTooltipRelativePositionX.Center => X,
+        ChartTooltipRelativePositionX.End => X + _boxWidth / 2,
+        _ => throw new ArgumentException($"Unknown relative position {RelativePositionX}")
+    };
 }
 <g class="svg-tooltip" opacity="@opacity" style="pointer-events: none;">
     <!-- The triangle pointing down (8px wide at the top) -->
-    <polygon points="@ToS(X - 8),@ToS(Y - 8) @ToS(X + 8),@ToS(Y - 8) @ToS(X),@ToS(Y - 1.5)"
-            fill="@Color"
-            stroke="white"
-            stroke-width="2" />
+    @if (ShowTriangle)
+    {
+        <polygon points="@ToS(x - 8),@ToS(Y - 8) @ToS(x + 8),@ToS(Y - 8) @ToS(x),@ToS(Y - 1.5)"
+                 fill="@Color"
+                 stroke="white"
+                 stroke-width="2"/>
+        <polygon points="@ToS(x - 10),@ToS(Y - 10) @ToS(x + 10),@ToS(Y - 10) @ToS(x),@ToS(Y - 1.5)"
+                 fill="@Color"
+                 stroke="white"
+                 stroke-width="0"/>
+    }
 
-    <rect x="@ToS(X - (_boxWidth / 2))" y="@ToS(Y - 30 - subtitleHeight)" width="@ToS(_boxWidth)" height="@ToS(24 + subtitleHeight)" rx="4" ry="4" fill="@Color" stroke="white" stroke-width="1" />
+    <rect x="@ToS(x - (_boxWidth / 2))" y="@ToS(Y - triangleOffset - 16 - subtitleHeight)" width="@ToS(_boxWidth)" height="@ToS(24 + subtitleHeight)" rx="4" ry="4" fill="@Color" stroke="white"
+          stroke-width="@StrokeWidth"/>
 
-    <polygon points="@ToS(X - 10),@ToS(Y - 10) @ToS(X + 10),@ToS(Y - 10) @ToS(X),@ToS(Y - 1.5)"
-            fill="@Color"
-            stroke="white"
-            stroke-width="0" />
-
-
-    <text @ref="_hoverTextTitle" x="@ToS(X)" y="@ToS(Y - 14 - subtitleHeight)" text-anchor="middle" font-size="12px">
-        <tspan x="@ToS(X)" dy="0">@Title</tspan>
+    <text @ref="_hoverTextTitle" x="@ToS(x)" y="@ToS(Y - triangleOffset - subtitleHeight)" text-anchor="middle" font-size="12px" fill="@FontColor">
+        <tspan x="@ToS(x)" dy="0">@Title</tspan>
         @if (hasSubtitle)
         {
-            <tspan x="@ToS(X)" dy="16">@Subtitle</tspan>
+            <tspan x="@ToS(x)" dy="16">@Subtitle</tspan>
         }
     </text>
 </g>

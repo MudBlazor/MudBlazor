@@ -1,5 +1,5 @@
-﻿using System.Globalization;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
 
 #nullable enable
@@ -14,22 +14,17 @@ namespace MudBlazor.Charts
 
         private const double BoundHeight = 350;
 
-        private const double NodeWidth = 10;
-
-        private const double MinVerticalSpacing = 10;
-
-        private const double EdgeOpacity = 0.5;
-
-        private static readonly CultureInfo Culture = CultureInfo.InvariantCulture;
-
-        private record NodeRect(int Hash, double X, double Y, double Width, double Height, string Color)
+        private record NodeRect(int Hash, string Name, double X, double Y, double Width, double Height, string Color)
         {
             public double LowestIncomingNodeY { get; set; } = Y;
         }
-        private record EdgePath(string Source, string Target, string D);
+        private record EdgePath(NodeRect Source, NodeRect Target, string D, double Value, double CenterX, double CenterY);
 
         private Dictionary<string, NodeRect> _nodeRects { get; } = [];
+        
         private List<EdgePath> _edgePaths { get; } = [];
+        
+        private Dictionary<string, double> _nodeValues { get; set; } = [];
 
         /// <summary>
         /// The chart, if any, containing this component.
@@ -50,11 +45,25 @@ namespace MudBlazor.Charts
 
             if (MudChartParent != null)
             {
+                _nodeValues = GetAllNodeValues();
                 var (maxColumnValue, relativeBoundHeight) = GenerateNodeRects();
                 GenerateEdgePaths(maxColumnValue, relativeBoundHeight);
             }
         }
+        
+        private Dictionary<string, double> GetAllNodeValues()
+        {
+            var nodeValues = Edges
+                .GroupBy(e => e.Target)
+                .ToDictionary(grp => grp.Key, grp => grp.Sum(e => e.Value));
+            Edges.Where(e => !nodeValues.ContainsKey(e.Source))
+                .GroupBy(e => e.Source)
+                .ToList()
+                .ForEach(grp => nodeValues[grp.Key] = grp.Sum(e => e.Value));
 
+            return nodeValues;
+        }
+        
         private (double MaxNodeValue, double RealtiveBoundHeight) GenerateNodeRects()
         {
             _nodeRects.Clear();
@@ -63,18 +72,17 @@ namespace MudBlazor.Charts
                 .GroupBy(x => x.Column)
                 .OrderBy(grp => grp.Key)
                 .ToArray();
-            var allNodeValues = GetAllNodeValues();
             var maxColumnValue = Nodes
                 .GroupBy(n => n.Column)
-                .Select(grp => grp.Sum(n => allNodeValues[n.Name]))
+                .Select(grp => grp.Sum(n => _nodeValues[n.Name]))
                 .Max();
-            var relativeNodesValuesMapping = GetNormalisedNodeValuesMapping(allNodeValues, maxColumnValue);
+            var relativeNodesValuesMapping = GetNormalisedNodeValuesMapping(maxColumnValue);
 
             // Calculate grid sizes
             var maxRows = nodesPerColumn.Max(n => n.Count());
             var maxColumns = nodesPerColumn.Length - 1;
-            var boundHeightRelativeToNodeHeight = BoundHeight - MinVerticalSpacing * maxRows;
-            var boundWidthRelativeToNodeWidth = BoundWidth - NodeWidth * maxColumns;
+            var boundHeightRelativeToNodeHeight = BoundHeight - NodeChartOptions.MinVerticalSpacing * maxRows;
+            var boundWidthRelativeToNodeWidth = BoundWidth - NodeChartOptions.NodeWidth * maxColumns;
 
             // Draw all nodes column per column
             foreach (var column in nodesPerColumn)
@@ -82,7 +90,7 @@ namespace MudBlazor.Charts
                 var x = column.First().Column / (double)maxColumns * boundWidthRelativeToNodeWidth;
                 var totalRelativeColumnValue = column.Sum(n => relativeNodesValuesMapping[n]);
                 var totalVerticalSpace = BoundHeight - totalRelativeColumnValue * boundHeightRelativeToNodeHeight;
-                var verticalSpacing = Math.Max(totalVerticalSpace / (column.Count() + 1), MinVerticalSpacing);
+                var verticalSpacing = Math.Max(totalVerticalSpace / (column.Count() + 1), NodeChartOptions.MinVerticalSpacing);
 
                 double currentY = 0;
                 foreach (var node in column)
@@ -92,9 +100,10 @@ namespace MudBlazor.Charts
 
                     _nodeRects[node.Name] = new NodeRect(
                         Hash: node.GetHashCode(),
+                        Name: node.Name,
                         X: x,
                         Y: y,
-                        Width: NodeWidth,
+                        Width: NodeChartOptions.NodeWidth,
                         Height: height,
                         Color: GetNextHexColorForNodeRect(node)
                     );
@@ -102,14 +111,14 @@ namespace MudBlazor.Charts
                     currentY = y + height;
                 }
             }
-            
+
             return (maxColumnValue, boundHeightRelativeToNodeHeight);
         }
 
         private SankeyChartNode[] NormaliseNodeColumnIndices()
         {
             var nodes = Nodes.ToArray();
-            
+
             // Normalise column indices
             var columnMap = nodes
                 .Select(n => n.Column)
@@ -121,26 +130,13 @@ namespace MudBlazor.Charts
 
             return nodes;
         }
-
-        private Dictionary<string, double> GetAllNodeValues()
-        {
-            var nodeValues = Edges
-                .GroupBy(e => e.Target)
-                .ToDictionary(grp => grp.Key, grp => grp.Sum(e => e.Value));
-            Edges.Where(e => !nodeValues.ContainsKey(e.Source))
-                .GroupBy(e => e.Source)
-                .ToList()
-                .ForEach(grp => nodeValues[grp.Key] = grp.Sum(e => e.Value));
-            
-            return nodeValues;
-        }
-
-        private Dictionary<SankeyChartNode, double> GetNormalisedNodeValuesMapping(Dictionary<string, double> nodeValues, double maxColumnValue)
+        
+        private Dictionary<SankeyChartNode, double> GetNormalisedNodeValuesMapping(double maxColumnValue)
         {
             var result = new Dictionary<SankeyChartNode, double>();
             foreach (var node in Nodes)
             {
-                result[node] = nodeValues[node.Name] / maxColumnValue;
+                result[node] = _nodeValues[node.Name] / maxColumnValue;
             }
 
             return result;
@@ -155,7 +151,7 @@ namespace MudBlazor.Charts
         private void GenerateEdgePaths(double maxColumnValue, double relativeBoundHeight)
         {
             _edgePaths.Clear();
-            
+
             var edgesPerSources = Edges.GroupBy(e => e.Source).ToList();
             foreach (var sourceGrp in edgesPerSources)
             {
@@ -173,16 +169,19 @@ namespace MudBlazor.Charts
                     var height = edge.Value / maxColumnValue * relativeBoundHeight;
 
                     _edgePaths.Add(new EdgePath(
-                        Source: edge.Source,
-                        Target: edge.Target,
+                        Source: rectSource,
+                        Target: rectTarget,
                         D: BuildSankyEdgePath(
-                            sourceX: startX,
+                            sourceX: startX - 0.1, // -0.1 to prevent a visible edge when setting the edge opacity to 1
                             sourceY: startY,
                             sourceHeight: height,
-                            targetX: endX,
+                            targetX: endX + 0.1, // +0.1 to prevent a visible edge when setting the edge opacity to 1
                             targetY: endY,
                             targetHeight: height
-                        )
+                        ),
+                        Value: edge.Value,
+                        CenterX: startX + Math.Abs(startX - endX) / 2,
+                        CenterY: startY + Math.Abs(startY - (endY + height)) / 2
                     ));
 
                     startYOffset += height;
@@ -204,14 +203,24 @@ namespace MudBlazor.Charts
             var cx0 = sourceX + (targetX - sourceX) * curvature;
             var cx1 = targetX - (targetX - sourceX) * curvature;
 
-            return $"M{sourceX.ToString(Culture)},{sy0.ToString(Culture)} " + // Top-left of source
-                   $"C{cx0.ToString(Culture)},{sy0.ToString(Culture)} " + // Control point 1
-                   $"{cx1.ToString(Culture)},{ty0.ToString(Culture)} " + // Control point 2
-                   $"{targetX.ToString(Culture)},{ty0.ToString(Culture)} " + // Top of target
-                   $"L{targetX.ToString(Culture)},{ty1.ToString(Culture)} " + // Bottom of target
-                   $"C{cx1.ToString(Culture)},{ty1.ToString(Culture)} " + // Control point 2 mirrored
-                   $"{cx0.ToString(Culture)},{sy1.ToString(Culture)} " + // Control point 1 mirrored
-                   $"{sourceX.ToString(Culture)},{sy1.ToString(Culture)} Z"; // Bottom of source
+            return $"M{ToS(sourceX)},{ToS(sy0)} " + // Top-left of source
+                   $"C{ToS(cx0)},{ToS(sy0)} " + // Control point 1
+                   $"{ToS(cx1)},{ToS(ty0)} " + // Control point 2
+                   $"{ToS(targetX)},{ToS(ty0)} " + // Top of target
+                   $"L{ToS(targetX)},{ToS(ty1)} " + // Bottom of target
+                   $"C{ToS(cx1)},{ToS(ty1)} " + // Control point 2 mirrored
+                   $"{ToS(cx0)},{ToS(sy1)} " + // Control point 1 mirrored
+                   $"{ToS(sourceX)},{ToS(sy1)} Z"; // Bottom of source
         }
+
+        private void OnNodeMouseOver(MouseEventArgs _, NodeRect rect) { }
+
+        private void OnNodeMouseOut(MouseEventArgs _) { }
+
+        private void OnNodeClick(MouseEventArgs _, NodeRect rect) { }
+
+        private void OnEdgeMouseOver(MouseEventArgs _, EdgePath path) { }
+
+        private void OnEdgeMouseOut(MouseEventArgs _) { }
     }
 }

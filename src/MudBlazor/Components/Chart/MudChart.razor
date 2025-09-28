@@ -21,7 +21,7 @@
             }
             @if (ChartType == ChartType.Sankey)
             {
-                <Sankey Nodes="@Nodes" Edges="@Edges" AxisChartOptions="AxisChartOptions" @bind-SelectedIndex="@SelectedIndex"></Sankey>
+                <Sankey Nodes="@Nodes" Edges="@Edges" ChartOptions="ChartOptions" NodeChartOptions="NodeChartOptions" @bind-SelectedIndex="@SelectedIndex"></Sankey>
             }
             @if (ChartType == ChartType.Bar)
             {

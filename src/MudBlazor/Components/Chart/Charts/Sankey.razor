@@ -6,27 +6,55 @@
     <defs>
         @foreach (var edge in _edgePaths)
         {
-            <linearGradient id="@($"gradient_{_nodeRects[edge.Source].Hash}_{_nodeRects[edge.Target].Hash}")">
-                <stop stop-color="@_nodeRects[edge.Source].Color" offset="0"/>
-                <stop stop-color="@_nodeRects[edge.Target].Color" offset="1"/>
+            <linearGradient id="@($"gradient_{_nodeRects[edge.Source.Name].Hash}_{_nodeRects[edge.Target.Name].Hash}")">
+                <stop stop-color="@_nodeRects[edge.Source.Name].Color" offset="0"/>
+                <stop stop-color="@_nodeRects[edge.Target.Name].Color" offset="1"/>
             </linearGradient>
         }
     </defs>
     @foreach (var edge in _edgePaths)
     {
         <path d="@edge.D"
-              fill="@($"url(#gradient_{_nodeRects[edge.Source].Hash}_{_nodeRects[edge.Target].Hash})")"
-              id="@($"edge_{_nodeRects[edge.Source].Hash}_{_nodeRects[edge.Target].Hash}")"
-              opacity="@EdgeOpacity.ToString(Culture)"/>
+              fill="@($"url(#gradient_{_nodeRects[edge.Source.Name].Hash}_{_nodeRects[edge.Target.Name].Hash})")"
+              id="@($"edge_{_nodeRects[edge.Source.Name].Hash}_{_nodeRects[edge.Target.Name].Hash}")"
+              opacity="@ToS(NodeChartOptions.EdgeOpacity)"
+              @onmouseover="@((e) => OnEdgeMouseOver(e, edge))"
+              @onmouseout="@OnEdgeMouseOut"/>
+
+        if (NodeChartOptions.ShowEdgeLabels)
+        {
+            <ChartTooltip Title="@($"{edge.Source.Name} => {edge.Target.Name} ({edge.Value})")"
+                          Color="rgba(0,0,0,0.25)"
+                          X="@edge.CenterX"
+                          Y="@edge.CenterY"
+                          ShowTriangle="false"
+                          StrokeWidth="0"
+                          FontColor="var(--mud-palette-text-primary)"/>
+        }
     }
     @foreach (KeyValuePair<string, NodeRect> kv in _nodeRects)
     {
-        <rect x="@kv.Value.X.ToString(Culture)"
-              y="@kv.Value.Y.ToString(Culture)"
-              width="@kv.Value.Width.ToString(Culture)"
-              height="@kv.Value.Height.ToString(Culture)"
+        <rect x="@ToS(kv.Value.X)"
+              y="@ToS(kv.Value.Y)"
+              width="@ToS(kv.Value.Width)"
+              height="@ToS(kv.Value.Height)"
               fill="@kv.Value.Color"
-              id="@($"node_{kv.Key}")"/>
+              id="@($"node_{kv.Key}")"
+              @onmouseover="@((e) => OnNodeMouseOver(e, kv.Value))"
+              @onmouseout="@OnNodeMouseOut"
+              @onclick="@(e => OnNodeClick(e, kv.Value))"/>
+
+        if (ChartOptions.ShowLabels)
+        {
+            <ChartTooltip Title="@(NodeChartOptions.ShowNodeValues ? $"{kv.Key} ({_nodeValues[kv.Key]})" : kv.Key)"
+                          Color="rgba(0,0,0,0.25)"
+                          X="@(kv.Value.X + (kv.Value.X == 0 ? kv.Value.Width : 0))"
+                          Y="@(kv.Value.Y + kv.Value.Height / 2)"
+                          ShowTriangle="false"
+                          StrokeWidth="0"
+                          FontColor="var(--mud-palette-text-primary)"
+                          RelativePositionX="@(kv.Value.X == 0 ? ChartTooltipRelativePositionX.End : ChartTooltipRelativePositionX.Start)"/>
+        }
     }
     @MudChartParent?.CustomGraphics
 </svg>

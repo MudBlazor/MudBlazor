@@ -49,6 +49,42 @@ public partial class ChartTooltip : ComponentBase
     [Parameter]
     public string Color { get; set; } = "darkgrey";
 
+    /// <summary>
+    /// The color of the text.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>"black"</c>.
+    /// </remarks>
+    [Parameter]
+    public string FontColor { get; set; } = "black";
+
+    /// <summary>
+    /// The width of the border.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>1</c>.
+    /// </remarks>
+    [Parameter]
+    public int StrokeWidth { get; set; } = 1;
+    
+    /// <summary>
+    /// Whether to show the triangle pointing down.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>true</c>.
+    /// </remarks>
+    [Parameter]
+    public bool ShowTriangle { get; set; } = true;
+    
+    /// <summary>
+    /// How to align the tooltip in respect to the given x coordinates.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>ChartTooltipRelativePositionX.Center</c>.
+    /// </remarks>
+    [Parameter]
+    public ChartTooltipRelativePositionX RelativePositionX { get; set; } = ChartTooltipRelativePositionX.Center;
+
     [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(BBox))]
     public ChartTooltip()
     {
@@ -79,4 +115,11 @@ public partial class ChartTooltip : ComponentBase
 
         public double Height { get; set; }
     }
+}
+
+public enum ChartTooltipRelativePositionX
+{
+    Start,
+    Center,
+    End
 }

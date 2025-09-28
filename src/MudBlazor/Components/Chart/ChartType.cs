@@ -39,7 +39,7 @@ public enum ChartType
     /// </summary>
     HeatMap,
     /// <summary>
-    /// Data is displayed as connected flows.
+    /// Data is displayed as nodes connected by edges.
     /// </summary>
     Sankey,
 }
