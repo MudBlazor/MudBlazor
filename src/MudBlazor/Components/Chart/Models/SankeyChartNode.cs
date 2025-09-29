@@ -1,8 +1,9 @@
 ﻿using MudBlazor.Utilities;
 
+#nullable enable
+
 namespace MudBlazor
 {
-    #nullable enable
     public class SankeyChartNode
     {
         /// <summary>
