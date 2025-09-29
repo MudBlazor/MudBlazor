@@ -15,7 +15,7 @@ namespace MudBlazor.Charts
             public double LowestIncomingNodeY { get; set; } = Y;
         }
 
-        private record EdgePath(string Name, NodeRect Source, NodeRect Target, string D, double Value, double CenterX, double CenterY);
+        private record EdgePath(string Name, NodeRect Source, NodeRect Target, string D, double CenterX, double CenterY);
 
         private const double BoundWidth = 650;
 
@@ -66,13 +66,21 @@ namespace MudBlazor.Charts
 
         private Dictionary<string, double> GetAllNodeValues()
         {
-            var nodeValues = Edges
+            var incoming = Edges
                 .GroupBy(e => e.Target)
-                .ToDictionary(grp => grp.Key, grp => grp.Sum(e => e.Value));
-            Edges.Where(e => !nodeValues.ContainsKey(e.Source))
+                .ToDictionary(grp => grp.Key, g => g.Sum(e => e.Value));
+            var outgoing = Edges
                 .GroupBy(e => e.Source)
-                .ToList()
-                .ForEach(grp => nodeValues[grp.Key] = grp.Sum(e => e.Value));
+                .ToDictionary(grp => grp.Key, g => g.Sum(e => e.Value));
+            
+            var nodeValues = new Dictionary<string, double>();
+            var allNodeNames = Nodes.Select(n => n.Name).Distinct();
+            foreach (var nodeName in allNodeNames)
+            {
+                incoming.TryGetValue(nodeName, out var inValue);
+                outgoing.TryGetValue(nodeName, out var outValue);
+                nodeValues[nodeName] = Math.Max(inValue, outValue);
+            }
 
             return nodeValues;
         }
@@ -157,8 +165,17 @@ namespace MudBlazor.Charts
 
         private string GetNextHexColorForNodeRect(SankeyChartNode node)
         {
-            return node.Color?.ToString(MudColorOutputFormats.HexA)
-                   ?? MudChartParent?.ChartOptions.ChartPalette.GetValue(_nodeRects.Count % MudChartParent.ChartOptions.ChartPalette.Length)!.ToString()!;
+            if (node.Color is not null)
+            {
+                return node.Color.ToString(MudColorOutputFormats.HexA);
+            }
+
+            if (MudChartParent?.ChartOptions.ChartPalette is { Length: > 0 } palette)
+            {
+                return palette[_nodeRects.Count % palette.Length];
+            }
+
+            return Colors.Gray.Default;
         }
 
         private void GenerateEdgePaths(double maxColumnValue, double relativeBoundHeight)
@@ -193,7 +210,6 @@ namespace MudBlazor.Charts
                             targetY: endY,
                             targetHeight: height
                         ),
-                        Value: edge.Value,
                         CenterX: startX + Math.Abs(startX - endX) / 2,
                         CenterY: startY + Math.Abs(startY - (endY + height)) / 2
                     ));

@@ -8,10 +8,9 @@ namespace MudBlazor.Charts;
 public partial class ChartTooltip : ComponentBase
 {
     private double _boxWidth = 40;
-    private ElementReference? _hoverTextTitle = null;
+    private ElementReference? _hoverTextTitle;
 
-    [Inject]
-    protected IJSRuntime JsRuntime { get; set; } = null!;
+    [Inject] protected IJSRuntime JsRuntime { get; set; } = null!;
 
     /// <summary>
     /// The title of the tooltip.
@@ -53,10 +52,10 @@ public partial class ChartTooltip : ComponentBase
     /// The font size of the text.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>"0.875rem"</c>.
+    /// Defaults to <c>"12px"</c>.
     /// </remarks>
     [Parameter]
-    public string FontSize { get; set; } = "0.875rem";
+    public string FontSize { get; set; } = "12px";
 
     /// <summary>
     /// The color of the text.
@@ -75,7 +74,7 @@ public partial class ChartTooltip : ComponentBase
     /// </remarks>
     [Parameter]
     public int StrokeWidth { get; set; } = 1;
-    
+
     /// <summary>
     /// Whether to show the triangle pointing down.
     /// </summary>
@@ -84,7 +83,7 @@ public partial class ChartTooltip : ComponentBase
     /// </remarks>
     [Parameter]
     public bool ShowTriangle { get; set; } = true;
-    
+
     /// <summary>
     /// How to align the tooltip in respect to the given x coordinates.
     /// </summary>
@@ -95,9 +94,7 @@ public partial class ChartTooltip : ComponentBase
     public ChartTooltipRelativePositionX RelativePositionX { get; set; } = ChartTooltipRelativePositionX.Center;
 
     [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(BBox))]
-    public ChartTooltip()
-    {
-    }
+    public ChartTooltip() { }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -125,7 +122,6 @@ public partial class ChartTooltip : ComponentBase
         public double Height { get; set; }
     }
 }
-
 public enum ChartTooltipRelativePositionX
 {
     Start,
