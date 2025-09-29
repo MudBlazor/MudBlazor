@@ -53,7 +53,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Chart.Behavior)]
-        public IEnumerable<SankeyChartNode> Nodes { get; set; } = [];
+        public List<SankeyChartNode> Nodes { get; set; } = [];
 
         /// <summary>
         /// The edges to be displayed.
@@ -63,7 +63,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Chart.Behavior)]
-        public IEnumerable<SankeyChartEdge> Edges { get; set; } = [];
+        public List<SankeyChartEdge> Edges { get; set; } = [];
 
         /// <summary>
         /// Scales the input data to the range between 0 and 1

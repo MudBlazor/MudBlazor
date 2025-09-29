@@ -166,4 +166,9 @@
 
 .mud-chart-sankey text {
   fill: var(--mud-palette-text-primary);
+  font-family: var(--mud-typography-caption-family), sans-serif;
+  font-weight: var(--mud-typography-caption-weight);
+  line-height: var(--mud-typography-caption-lineheight);
+  letter-spacing: var(--mud-typography-caption-letterspacing);
+  text-transform: var(--mud-typography-caption-text-transform);
 }

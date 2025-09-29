@@ -30,7 +30,7 @@
     <rect x="@ToS(x - (_boxWidth / 2))" y="@ToS(Y - triangleOffset - 16 - subtitleHeight)" width="@ToS(_boxWidth)" height="@ToS(24 + subtitleHeight)" rx="4" ry="4" fill="@Color" stroke="white"
           stroke-width="@StrokeWidth"/>
 
-    <text @ref="_hoverTextTitle" x="@ToS(x)" y="@ToS(Y - triangleOffset - subtitleHeight)" text-anchor="middle" font-size="12px" fill="@FontColor">
+    <text @ref="_hoverTextTitle" x="@ToS(x)" y="@ToS(Y - triangleOffset - subtitleHeight)" text-anchor="middle" font-size="@FontSize" fill="@FontColor">
         <tspan x="@ToS(x)" dy="0">@Title</tspan>
         @if (hasSubtitle)
         {

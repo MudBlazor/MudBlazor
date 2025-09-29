@@ -50,13 +50,22 @@ public partial class ChartTooltip : ComponentBase
     public string Color { get; set; } = "darkgrey";
 
     /// <summary>
+    /// The font size of the text.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>"0.875rem"</c>.
+    /// </remarks>
+    [Parameter]
+    public string FontSize { get; set; } = "0.875rem";
+
+    /// <summary>
     /// The color of the text.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>"black"</c>.
+    /// Defaults to <c>"unset"</c>.
     /// </remarks>
     [Parameter]
-    public string FontColor { get; set; } = "black";
+    public string FontColor { get; set; } = "unset";
 
     /// <summary>
     /// The width of the border.

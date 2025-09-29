@@ -10,21 +10,28 @@ namespace MudBlazor.Charts
     /// </summary>
     partial class Sankey : MudCategoryChartBase
     {
-        private const double BoundWidth = 650;
-
-        private const double BoundHeight = 350;
-
         private record NodeRect(int Hash, string Name, double X, double Y, double Width, double Height, string Color)
         {
             public double LowestIncomingNodeY { get; set; } = Y;
         }
-        private record EdgePath(NodeRect Source, NodeRect Target, string D, double Value, double CenterX, double CenterY);
+
+        private record EdgePath(string Name, NodeRect Source, NodeRect Target, string D, double Value, double CenterX, double CenterY);
+
+        private const double BoundWidth = 650;
+
+        private const double BoundHeight = 350;
+
+        private const double HorizontalPadding = 10;
 
         private Dictionary<string, NodeRect> _nodeRects { get; } = [];
-        
+
         private List<EdgePath> _edgePaths { get; } = [];
-        
+
         private Dictionary<string, double> _nodeValues { get; set; } = [];
+
+        private string? _activeNode { get; set; }
+
+        private string? _activeEdge { get; set; }
 
         /// <summary>
         /// The chart, if any, containing this component.
@@ -50,7 +57,7 @@ namespace MudBlazor.Charts
                 GenerateEdgePaths(maxColumnValue, relativeBoundHeight);
             }
         }
-        
+
         private Dictionary<string, double> GetAllNodeValues()
         {
             var nodeValues = Edges
@@ -63,7 +70,7 @@ namespace MudBlazor.Charts
 
             return nodeValues;
         }
-        
+
         private (double MaxNodeValue, double RealtiveBoundHeight) GenerateNodeRects()
         {
             _nodeRects.Clear();
@@ -82,12 +89,12 @@ namespace MudBlazor.Charts
             var maxRows = nodesPerColumn.Max(n => n.Count());
             var maxColumns = nodesPerColumn.Length - 1;
             var boundHeightRelativeToNodeHeight = BoundHeight - NodeChartOptions.MinVerticalSpacing * maxRows;
-            var boundWidthRelativeToNodeWidth = BoundWidth - NodeChartOptions.NodeWidth * maxColumns;
+            var boundWidthRelativeToNodeWidth = BoundWidth - NodeChartOptions.NodeWidth * maxColumns - 2 * HorizontalPadding;
 
             // Draw all nodes column per column
             foreach (var column in nodesPerColumn)
             {
-                var x = column.First().Column / (double)maxColumns * boundWidthRelativeToNodeWidth;
+                var x = column.First().Column / (double)maxColumns * boundWidthRelativeToNodeWidth + HorizontalPadding;
                 var totalRelativeColumnValue = column.Sum(n => relativeNodesValuesMapping[n]);
                 var totalVerticalSpace = BoundHeight - totalRelativeColumnValue * boundHeightRelativeToNodeHeight;
                 var verticalSpacing = Math.Max(totalVerticalSpace / (column.Count() + 1), NodeChartOptions.MinVerticalSpacing);
@@ -130,7 +137,7 @@ namespace MudBlazor.Charts
 
             return nodes;
         }
-        
+
         private Dictionary<SankeyChartNode, double> GetNormalisedNodeValuesMapping(double maxColumnValue)
         {
             var result = new Dictionary<SankeyChartNode, double>();
@@ -169,6 +176,7 @@ namespace MudBlazor.Charts
                     var height = edge.Value / maxColumnValue * relativeBoundHeight;
 
                     _edgePaths.Add(new EdgePath(
+                        Name: $"{rectSource.Name} => {rectTarget.Name} ({edge.Value})",
                         Source: rectSource,
                         Target: rectTarget,
                         D: BuildSankyEdgePath(
@@ -213,14 +221,29 @@ namespace MudBlazor.Charts
                    $"{ToS(sourceX)},{ToS(sy1)} Z"; // Bottom of source
         }
 
-        private void OnNodeMouseOver(MouseEventArgs _, NodeRect rect) { }
+        private void OnNodeMouseOver(MouseEventArgs _, NodeRect rect)
+        {
+            if (NodeChartOptions.HighlightOnHover) _activeNode = rect.Name;
+        }
 
-        private void OnNodeMouseOut(MouseEventArgs _) { }
+        private void OnNodeMouseOut(MouseEventArgs _)
+        {
+            _activeNode = null;
+        }
 
-        private void OnNodeClick(MouseEventArgs _, NodeRect rect) { }
+        private void OnNodeClick(MouseEventArgs _, NodeRect rect)
+        {
+            SelectedIndex = Nodes.IndexOf(Nodes.First(n => n.Name == rect.Name));
+        }
 
-        private void OnEdgeMouseOver(MouseEventArgs _, EdgePath path) { }
+        private void OnEdgeMouseOver(MouseEventArgs _, EdgePath edge)
+        {
+            if (NodeChartOptions.HighlightOnHover) _activeEdge = edge.Name;
+        }
 
-        private void OnEdgeMouseOut(MouseEventArgs _) { }
+        private void OnEdgeMouseOut(MouseEventArgs _)
+        {
+            _activeEdge = null;
+        }
     }
 }
