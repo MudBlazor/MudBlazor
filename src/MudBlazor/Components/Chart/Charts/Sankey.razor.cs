@@ -50,7 +50,13 @@ namespace MudBlazor.Charts
                 throw new ArgumentException("All nodes must have unique names");
             }
 
-            if (MudChartParent != null)
+            var edgeWithInvalidNode = Edges.FirstOrDefault(e => Nodes.All(n => n.Name != e.Source) || Nodes.All(n => n.Name != e.Target));
+            if (edgeWithInvalidNode != null)
+            {
+                throw new ArgumentException($"Edge {edgeWithInvalidNode.Source} => {edgeWithInvalidNode.Target} specifies an non-existing node");
+            }
+
+            if (Nodes.Any())
             {
                 _nodeValues = GetAllNodeValues();
                 var (maxColumnValue, relativeBoundHeight) = GenerateNodeRects();
@@ -81,7 +87,7 @@ namespace MudBlazor.Charts
                 .ToArray();
             var maxColumnValue = Nodes
                 .GroupBy(n => n.Column)
-                .Select(grp => grp.Sum(n => _nodeValues[n.Name]))
+                .Select(grp => grp.Sum(n => _nodeValues.GetValueOrDefault(n.Name)))
                 .Max();
             var relativeNodesValuesMapping = GetNormalisedNodeValuesMapping(maxColumnValue);
 
@@ -143,7 +149,7 @@ namespace MudBlazor.Charts
             var result = new Dictionary<SankeyChartNode, double>();
             foreach (var node in Nodes)
             {
-                result[node] = _nodeValues[node.Name] / maxColumnValue;
+                result[node] = _nodeValues.GetValueOrDefault(node.Name) / maxColumnValue;
             }
 
             return result;

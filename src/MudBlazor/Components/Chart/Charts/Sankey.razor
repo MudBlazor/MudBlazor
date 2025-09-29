@@ -48,7 +48,7 @@
 
         if (ChartOptions.ShowLabels)
         {
-            <ChartTooltip Title="@(NodeChartOptions.ShowNodeValues ? $"{kv.Key} ({_nodeValues[kv.Key!]})" : kv.Key!)"
+            <ChartTooltip Title="@(NodeChartOptions.ShowNodeValues ? $"{kv.Key} ({_nodeValues.GetValueOrDefault(kv.Key!)})" : kv.Key!)"
                           Color="rgba(0,0,0,0.25)"
                           X="@(kv.Value.X + (kv.Value.X <= 10 ? kv.Value.Width : 0))"
                           Y="@(kv.Value.Y + kv.Value.Height / 2)"
