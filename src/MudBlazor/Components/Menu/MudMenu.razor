@@ -1,4 +1,4 @@
-@namespace MudBlazor
+﻿@namespace MudBlazor
 @using MudBlazor.Interfaces
 @inherits MudComponentBase
 
@@ -71,7 +71,7 @@
     @* The portal has to include the cascading values inside because it's not able to teletransport the cascade *@
     <MudPopover Open="@_openState.Value"
                 Class="@PopoverClassname"
-                Style="@Stylename"
+                UserAttributes="@PositionAttributes"
                 MaxHeight="@MaxHeight"
                 AnchorOrigin="@GetAnchorOrigin()"
                 TransformOrigin="@TransformOrigin"
@@ -90,6 +90,12 @@
             </MudList>
         </CascadingValue>
     </MudPopover>
-
-    <MudOverlay Visible="_openState.Value && !_isTransient" AutoClose OnClosed="CloseMenuAsync" LockScroll="LockScroll" />
+    @if (ParentMenu is null)
+    {
+        <MudOverlay Visible="_openState.Value && !_isTransient"
+                    AutoClose
+                    OnClosed="CloseMenuAsync"
+                    LockScroll="LockScroll"
+                    Modal="@Modal" />
+    }
 </div>

@@ -10,8 +10,8 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="bunit" Version="1.38.5" />
-    <PackageReference Include="nunit" Version="4.2.2" />
+    <PackageReference Include="bunit" Version="1.40.0" />
+    <PackageReference Include="nunit" Version="4.4.0" />
   </ItemGroup>
 
 </Project>

@@ -92,7 +92,7 @@ namespace MudBlazor
         public string? Label { get; set; }
 
         /// <summary>
-        /// Gets or sets whether to show a ripple effect when the user clicks the button. Default is true.
+        /// Shows a ripple effect when button is clicked. Default is <c>true</c>.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]

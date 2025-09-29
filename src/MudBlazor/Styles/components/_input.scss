@@ -370,7 +370,7 @@
     }
 
     &.mud-input-root-margin-dense {
-      margin-top: 3px;
+      padding-top: 3px;
     }
 
     &.mud-input-root-type-search {
@@ -392,12 +392,9 @@
 
     &.mud-input-root-filled {
       box-sizing: border-box;
-      margin-top: 0;
+      margin-top: 27px;
       margin-bottom: 0;
-      padding: 27px 12px 10px;
-      mask-image: linear-gradient(to bottom,
-        transparent 27px,
-        black 27px);
+      padding: 0px 12px 10px;
 
       &.mud-input-root-margin-dense {
         padding-top: 23px;
@@ -429,15 +426,15 @@
       }
 
       &.mud-input-root-adorned-start {
-        margin-left: 0;
-        margin-inline-start: 0;
-        margin-inline-end: 12px;
+        padding-left: 0;
+        padding-inline-start: 0;
+        padding-inline-end: 12px;
       }
 
       &.mud-input-root-adorned-end {
-        margin-right: 0;
-        margin-inline-end: unset;
-        margin-inline-start: 12px;
+        padding-right: 0;
+        padding-inline-end: unset;
+        padding-inline-start: 12px;
       }
     }
 
@@ -460,18 +457,16 @@
 
   &.mud-input-root-outlined {
     box-sizing: border-box;
-    margin-top: 0;
+    margin-top: 18.5px;
     margin-bottom: 0;
-    padding: 18.5px 14px;
-    mask-image: linear-gradient(to bottom,
-      transparent 18.5px,
-      black 18.5px);
+    padding: 0px 14px 18.5px;
 
     &.mud-input-root:-webkit-autofill {
       border-radius: inherit;
     }
 
     &.mud-input-root-margin-dense {
+      margin-top: 0px;
       padding-top: 10.5px;
       padding-bottom: 10.5px;
       mask-image: linear-gradient(to bottom,
@@ -480,15 +475,15 @@
     }
 
     &.mud-input-root-adorned-start {
-      margin-left: 0;
-      margin-inline-start: 0;
-      margin-inline-end: 14px;
+      padding-left: 0;
+      padding-inline-start: 0;
+      padding-inline-end: 14px;
     }
 
     &.mud-input-root-adorned-end {
-      margin-right: 0;
-      margin-inline-end: 0;
-      margin-inline-start: 14px;
+      padding-right: 0;
+      padding-inline-end: 0;
+      padding-inline-start: 14px;
     }
   }
 }
@@ -544,4 +539,8 @@
 
 .mud-picker .mud-shrink .mud-range-input-separator {
   visibility: visible;
+}
+
+.mud-input-input-control {
+  user-select: none;
 }

@@ -3,6 +3,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents.Select;
+using MudBlazor.UnitTests.TestData;
 using NUnit.Framework;
 using static MudBlazor.UnitTests.TestComponents.Select.SelectWithEnumTest;
 
@@ -673,7 +674,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MultiSelect_Initial_Values()
         {
-            var comp = Context.RenderComponent<MultiSelectWithInitialValues>();
+            var comp = Context.RenderComponent<MultiSelectWithInitialValuesTest>();
             // print the generated html
 
             // select the input of the select
@@ -1523,7 +1524,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task SelectFullWidthTest()
+        public async Task SelectPopoverFullWidthTest()
         {
             var comp = Context.RenderComponent<SelectPopoverRelativeWidthTest>();
 
@@ -1545,6 +1546,88 @@ namespace MudBlazor.UnitTests.Components
 
             //confirm relative width class not applied
             comp.Find(".expanded").ClassList.Should().Contain("mud-popover-open").And.NotContain("mud-popover-relative-width");
+        }
+
+        [Test]
+        public void SelectFitContentTest()
+        {
+            var comp = Context.RenderComponent<SelectFitContentTest>();
+
+            //default values
+            comp.Instance.FullWidth.Should().BeFalse();
+            comp.Instance.FitContent.Should().BeFalse();
+
+            var select = comp.Find(".mud-select");
+
+            select.ClassList.Should().NotContain("mud-width-content");
+
+            //set fit content
+            comp.SetParametersAndRender(parameters => parameters.Add(c => c.FitContent, true));
+
+            comp.Instance.FullWidth.Should().BeFalse();
+            comp.Instance.FitContent.Should().BeTrue();
+
+            select.ClassList.Should().Contain("mud-width-content");
+
+            var filler = comp.Find(".mud-select-filler");
+
+            filler.ClassList.Should().Contain("d-inline-block").And.Contain("mx-4");
+            filler.TextContent.Trim().Should().Be("Federated States of Micronesia");
+
+            //set full width
+            comp.SetParametersAndRender(parameters => parameters.Add(c => c.FullWidth, true));
+
+            comp.Instance.FullWidth.Should().BeTrue();
+            comp.Instance.FitContent.Should().BeTrue();
+
+            select.ClassList.Should().NotContain("mud-width-content");
+        }
+
+        [TestCaseSource(typeof(MouseEventArgsTestCase), nameof(MouseEventArgsTestCase.AllCombinations))]
+        [Test]
+        public async Task Select_HandleMouseDown(MouseEventArgs args)
+        {
+            var comp = Context.RenderComponent<MudSelect<string>>(p => p
+                .Add(x => x.Text, "some value")
+                .Add(x => x.Clearable, true)
+                .Add(x => x.ReadOnly, false));
+
+            var instance = comp.Instance;
+
+            instance._open.Should().BeFalse();
+
+            await comp.InvokeAsync(async () => await instance.HandleMouseDown(args));
+
+            switch (args.Button)
+            {
+                case 0:
+                    instance._open.Should().BeTrue();
+                    break;
+                case 1:
+                case 2:
+                    instance._open.Should().BeFalse();
+                    break;
+            }
+        }
+
+        [Test]
+        public void SelectMultiSelectFieldChangedTest()
+        {
+            var comp = Context.RenderComponent<SelectMultiSelectFieldChangedTest>();
+
+            //default values
+            comp.Instance.FormFieldChangedEventArgs.Should().BeNull();
+
+            //open the popover
+            var input = comp.Find("div.mud-input-control");
+            input.MouseDown();
+
+            //click an item and see the value change
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
+            comp.Find(".mud-list-item").Click();
+
+            comp.WaitForAssertion(() => comp.Instance.FormFieldChangedEventArgs.Should().NotBeNull());
+            comp.Instance.FormFieldChangedEventArgs.NewValue.Should().BeEquivalentTo(comp.Instance.States.Take(2).Reverse());
         }
 #nullable disable
     }

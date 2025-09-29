@@ -1,6 +1,8 @@
 ﻿using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using MudBlazor.UnitTests.TestComponents.Overlay;
 using NUnit.Framework;
 
@@ -151,6 +153,37 @@ public class OverlayTests : BunitTest
     }
 
     [Test]
+    [TestCase(true)]
+    [TestCase(false)]
+    public void ShouldApplyCorrectPointerEvents(bool modal)
+    {
+        var providerComp = Context.RenderComponent<MudPopoverProvider>();
+        var comp = Context.RenderComponent<MudOverlay>(parameters => parameters
+            .Add(p => p.Visible, true)
+            .Add(p => p.Modal, modal)
+        );
+
+        if (modal)
+        {
+            providerComp.Find("div.mud-overlay").Attributes["style"].Value.Should().NotContain("pointer-events:none");
+        }
+        else
+        {
+            providerComp.Find("div.mud-overlay").Attributes["style"].Value.Should().Contain("pointer-events:none");
+        }
+    }
+
+    [Test]
+    public void ShouldHaveId()
+    {
+        var providerComp = Context.RenderComponent<MudPopoverProvider>();
+        var comp = Context.RenderComponent<MudOverlay>(parameters => parameters
+            .Add(p => p.Visible, true)
+        );
+        providerComp.Find("div.mud-overlay").Attributes["id"].Value.Should().NotBeNullOrEmpty();
+    }
+
+    [Test]
     [TestCase(true, "", false, 0)] // Absolute is true
     [TestCase(false, "mud-skip-overlay-section", false, 1)] // Dialog
     [TestCase(false, "", true, 3)]  // Child content
@@ -221,5 +254,138 @@ public class OverlayTests : BunitTest
         );
 
         comp.Find("div.child-content").TextContent.Should().Be("Hello World");
+    }
+
+    [Test]
+    [TestCase(true, true, false, true)]
+    [TestCase(true, false, false, false)]
+    [TestCase(true, false, true, false)]
+    [TestCase(true, true, true, false)]
+    [TestCase(false, true, false, false)]
+    [TestCase(false, false, false, false)]
+    [TestCase(false, false, true, false)]
+    [TestCase(false, true, true, false)]
+    public void CallsSubscribeAsyncOnPointerEventsNoneServiceWhenExpected(bool visible, bool autoClose, bool modal, bool callsStart)
+    {
+        Context.Services.Remove(ServiceDescriptor.Scoped<IPointerEventsNoneService, PointerEventsNoneService>());
+        var serviceMock = new Mock<IPointerEventsNoneService>();
+        serviceMock
+            .Setup(s => s.SubscribeAsync(It.IsAny<IPointerEventsNoneObserver>(), It.IsAny<PointerEventsNoneOptions>()))
+            .Returns(Task.CompletedTask)
+            .Verifiable();
+        Context.Services.AddScoped(_ => serviceMock.Object);
+
+        var comp = Context.RenderComponent<MudOverlay>(parameters => parameters
+            .Add(p => p.Visible, visible)
+            .Add(p => p.AutoClose, autoClose)
+            .Add(p => p.Modal, modal)
+        );
+
+        serviceMock.Verify(s => s.SubscribeAsync(It.IsAny<IPointerEventsNoneObserver>(), It.IsAny<PointerEventsNoneOptions>()), callsStart ? Times.Once() : Times.Never());
+    }
+
+    [Test]
+    public void Overlay_ShouldHaveElementId_AndMatchRenderedDivId()
+    {
+        // Arrange
+        var providerComp = Context.RenderComponent<MudPopoverProvider>();
+        var comp = Context.RenderComponent<MudOverlay>(parameters => parameters
+            .Add(p => p.Visible, true)
+        );
+
+        // Act
+        var elementId = ((IPointerEventsNoneObserver)comp.Instance).ElementId;
+        var overlayDiv = providerComp.Find("div.mud-overlay");
+
+        // Assert
+        elementId.Should().NotBeNullOrWhiteSpace();
+        overlayDiv.Id.Should().Be(elementId);
+    }
+
+    [Test]
+    [TestCase(true, true)]
+    [TestCase(true, false)]
+    [TestCase(false, true)]
+    [TestCase(false, false)]
+    public async Task Overlay_HandleLockScrollChanges(bool absolute, bool lockscroll)
+    {
+        var scrollManagerMock = new Mock<IScrollManager>();
+        Context.Services.AddSingleton(scrollManagerMock.Object);
+
+        var visible = true;
+
+        // === Initial: Visible = true, should lock scroll if conditions match ===
+        var comp = Context.RenderComponent<MudOverlay>(parameters => parameters
+            .Add(p => p.Absolute, absolute)
+            .Bind(p => p.Visible, visible, p => visible = p)
+            .Add(p => p.LockScroll, lockscroll)
+        );
+
+        var mudOverlay = comp.Instance;
+
+        // Initial unlock state without JSRuntime
+        scrollManagerMock.Verify(s => s.UnlockScrollAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never());
+
+        if (!absolute && lockscroll)
+        {
+            scrollManagerMock.Verify(s => s.LockScrollAsync("body", mudOverlay.LockScrollClass), Times.Once());
+        }
+        else
+        {
+            scrollManagerMock.Verify(s => s.LockScrollAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never());
+        }
+
+        // === Manually re-trigger HandleLockScrollChange (should not change counts) ===
+        await mudOverlay.HandleLockScrollChange();
+
+        if (!absolute && lockscroll)
+        {
+            scrollManagerMock.Verify(s => s.LockScrollAsync("body", mudOverlay.LockScrollClass), Times.Once());
+        }
+        else
+        {
+            scrollManagerMock.Verify(s => s.LockScrollAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never());
+        }
+
+        // === Toggle visible to false, expect unlock ===
+        visible = false;
+        comp.SetParametersAndRender(p => p.Add(p => p.Visible, visible));
+
+        if (!absolute && lockscroll)
+        {
+            scrollManagerMock.Verify(s => s.UnlockScrollAsync("body", mudOverlay.LockScrollClass), Times.Once());
+        }
+        else
+        {
+            scrollManagerMock.Verify(s => s.UnlockScrollAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never());
+        }
+
+        // open it
+        visible = true;
+        comp.SetParametersAndRender(p => p.Add(p => p.Visible, visible));
+
+        // close it by method
+        await mudOverlay.CloseOverlayAsync();
+
+        if (!absolute && lockscroll)
+        {
+            scrollManagerMock.Verify(s => s.UnlockScrollAsync("body", mudOverlay.LockScrollClass), Times.Exactly(2));
+        }
+        else
+        {
+            scrollManagerMock.Verify(s => s.UnlockScrollAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never());
+        }
+
+        // === Dispose component ===
+        await mudOverlay.DisposeAsync();
+
+        if (!absolute && lockscroll)
+        {
+            scrollManagerMock.Verify(s => s.UnlockScrollAsync("body", mudOverlay.LockScrollClass), Times.AtLeast(2));
+        }
+        else
+        {
+            scrollManagerMock.Verify(s => s.UnlockScrollAsync(It.IsAny<string>(), It.IsAny<string>()), Times.AtMostOnce());
+        }
     }
 }

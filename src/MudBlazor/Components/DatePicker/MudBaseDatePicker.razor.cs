@@ -22,7 +22,6 @@ namespace MudBlazor
             Culture = CultureInfo.CurrentCulture
         })
         {
-            AdornmentAriaLabel = "Open Date Picker";
             _mudPickerCalendarContentElementId = Identifier.Create();
         }
 
@@ -342,6 +341,11 @@ namespace MudBlazor
             {
                 return Culture.Calendar.MinSupportedDateTime;
             }
+
+            if (_picker_month.HasValue && _picker_month.Value.Year == 9999 && _picker_month.Value.Month == 12 && month >= 1)
+            {
+                return Culture.Calendar.MaxSupportedDateTime;
+            }
             return Culture.Calendar.AddMonths(monthStartDate, month);
         }
 
@@ -371,9 +375,17 @@ namespace MudBlazor
             if (index is < 0 or > 5)
                 throw new ArgumentException("Index must be between 0 and 5");
             var month_first = GetMonthStart(month);
-            var week_first = month_first.AddDays(index * 7).StartOfWeek(GetFirstDayOfWeek());
-            for (var i = 0; i < 7; i++)
-                yield return week_first.AddDays(i);
+            if ((Culture.Calendar.MaxSupportedDateTime - month_first).Days >= index * 7)
+            {
+                var week_first = month_first.AddDays(index * 7).StartOfWeek(GetFirstDayOfWeek());
+                for (var i = 0; i < 7; i++)
+                {
+                    if ((Culture.Calendar.MaxSupportedDateTime - week_first).Days >= i)
+                        yield return week_first.AddDays(i);
+                    else
+                        yield return Culture.Calendar.MaxSupportedDateTime;
+                }
+            }
         }
 
         private string GetWeekNumber(int month, int index)
@@ -418,6 +430,13 @@ namespace MudBlazor
                     await CloseAsync(false);
                 }
             }
+        }
+
+        protected virtual bool IsDayDisabled(DateTime date)
+        {
+            return date < MinDate ||
+                   date > MaxDate ||
+                   IsDateDisabledFunc(date);
         }
 
         protected abstract string GetDayClasses(int month, DateTime day);
@@ -687,6 +706,7 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             base.OnInitialized();
+            AdornmentAriaLabel ??= Localizer[Resources.LanguageResource.MudBaseDatePicker_Open];
             CurrentView = OpenTo;
 
             if (HighlightedDate is not null) return;

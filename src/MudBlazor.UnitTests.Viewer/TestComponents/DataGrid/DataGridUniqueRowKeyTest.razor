@@ -1,16 +1,17 @@
 ﻿
 @* The input element will be tested to see if it gets recreated when row order changes. *@
-<MudDataGrid Items="@_items" ReadOnly="false" EditMode="DataGridEditMode.Cell">
+<MudDataGrid Items="@_items" ReadOnly="false" EditMode="DataGridEditMode.Cell" GroupExpanded>
     <Columns>
-        <PropertyColumn Property="x => x" Grouping="Group">
+        <PropertyColumn Property="x => x" Grouping="@Group" Title="test">
             <EditTemplate>
-                <MudInput T="string"></MudInput>
+                <MudInput T="string" @bind-Value="@context.Item"></MudInput>
             </EditTemplate>
         </PropertyColumn>
     </Columns>
 </MudDataGrid>
 
 @code {
+
     [Parameter]
     public bool Group { get; set; }
 

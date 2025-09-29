@@ -8,6 +8,11 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
 #nullable enable
+
+    /// <summary>
+    /// Displays items in chronological order.
+    /// </summary>
+    /// <seealso cref="MudTimelineItem"/>
     public partial class MudTimeline : MudBaseItemsControl<MudTimelineItem>
     {
         protected string Classnames =>
@@ -25,36 +30,55 @@ namespace MudBlazor
         public bool RightToLeft { get; set; }
 
         /// <summary>
-        /// Sets the orientation of the timeline and its timeline items.
+        /// The orientation of the timeline and its items.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="TimelineOrientation.Vertical"/>.<br />
+        /// When set to <see cref="TimelineOrientation.Vertical"/>, <see cref="TimelinePosition"/> can be set to <c>Left</c>, <c>Right</c>, <c>Alternate</c>, <c>Start</c>, or <c>End</c>.<br />
+        /// When set to <see cref="TimelineOrientation.Horizontal"/>, <see cref="TimelinePosition"/> can be set to <c>Top</c>, <c>Bottom</c>, or <c>Alternate</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Timeline.Behavior)]
         public TimelineOrientation TimelineOrientation { get; set; } = TimelineOrientation.Vertical;
 
         /// <summary>
-        /// The position the timeline itself and how the timeline items should be displayed.
+        /// The position the timeline and how its items are displayed.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="TimelinePosition.Alternate"/>.<br />
+        /// Can be set to <c>Left</c>, <c>Right</c>, <c>Alternate</c>, <c>Start</c>, or <c>End</c> when <see cref="TimelineOrientation"/> is <see cref="TimelineOrientation.Vertical"/>.<br />
+        /// Can be set to <c>Top</c>, <c>Bottom</c>, or <c>Alternate</c> when <see cref="TimelineOrientation"/> is <see cref="TimelineOrientation.Horizontal"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Timeline.Behavior)]
         public TimelinePosition TimelinePosition { get; set; } = TimelinePosition.Alternate;
 
         /// <summary>
-        /// Aligns the dot and any item modifiers is changed, in default mode they are centered to the item.
+        /// The position of each item's dot relative to its text.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="TimelineAlign.Default"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Timeline.Behavior)]
         public TimelineAlign TimelineAlign { get; set; } = TimelineAlign.Default;
 
         /// <summary>
-        /// Reverse the order of TimelineItems when TimelinePosition is set to Alternate.
+        /// Reverses the order of items when <see cref="TimelinePosition"/> is <see cref="TimelinePosition.Alternate"/>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Timeline.Behavior)]
         public bool Reverse { get; set; } = false;
 
         /// <summary>
-        /// If true, enables all TimelineItem modifiers, like adding a caret to a MudCard. Enabled by default.
+        /// Enables modifiers for items, such as adding a caret for a <see cref="MudCard"/>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Timeline.Behavior)]
         public bool Modifiers { get; set; } = true;

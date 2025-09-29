@@ -1,4 +1,4 @@
-@namespace MudBlazor
+﻿@namespace MudBlazor
 @inherits MudFormComponent<T, string>
 @typeparam T
 
@@ -7,36 +7,37 @@
 #nullable enable
     protected virtual RenderFragment? InputContent =>
         // note: Mask needs to remain before Text!
-        @<MudTextField
-             T="string"
-             @ref="_inputReference"
-             @attributes="UserAttributes"
-             Style="@Style"
-             Label="@Label"
-             Mask="@_mask"
-             @bind-Value="@Text"
-             Immediate="@(ImmediateText && Editable)"
-             Placeholder="@Placeholder"
-             HelperText="@HelperText"
-             HelperTextOnFocus="@HelperTextOnFocus"
-             Variant="@Variant"
-             ReadOnly="@(!Editable || GetReadOnlyState())"
-             Disabled="@GetDisabledState()"
-             Underline="@Underline"
-             OnAdornmentClick="ToggleStateAsync"
-             Adornment="@Adornment"
-             AdornmentIcon="@AdornmentIcon"
-             AdornmentColor="@AdornmentColor"
-             AdornmentAriaLabel="@AdornmentAriaLabel"
-             IconSize="@IconSize"
-             Margin="@Margin"
-             Required="@Required"
-             RequiredError="@RequiredError"
-             Error="@Error"
-             ErrorText="@ErrorText"
-             Clearable="@(Clearable && !GetReadOnlyState())"
-             OnClearButtonClick="@(async () => await ClearAsync())"
-             @onclick="OnClickAsync"/>;
+        @<MudTextField T="string"
+                       @ref="_inputReference"
+                       @attributes="UserAttributes"
+                       Style="@Style"
+                       Label="@Label"
+                       Mask="@_mask"
+                       @bind-Value="@Text"
+                       Immediate="@(ImmediateText && Editable)"
+                       Placeholder="@Placeholder"
+                       HelperText="@HelperText"
+                       HelperTextOnFocus="@HelperTextOnFocus"
+                       Variant="@Variant"
+                       ReadOnly="@(!Editable || GetReadOnlyState())"
+                       Disabled="@GetDisabledState()"
+                       Underline="@Underline"
+                       OnAdornmentClick="ToggleStateAsync"
+                       Adornment="@Adornment"
+                       AdornmentIcon="@AdornmentIcon"
+                       AdornmentColor="@AdornmentColor"
+                       AdornmentAriaLabel="@AdornmentAriaLabel"
+                       IconSize="@IconSize"
+                       Margin="@Margin"
+                       Required="@Required"
+                       RequiredError="@RequiredError"
+                       Error="@Error"
+                       ErrorText="@ErrorText"
+                       Clearable="@(Clearable && !GetReadOnlyState())"
+                       OnClearButtonClick="@(async () => await ClearAsync())"
+                       TextUpdateSuppression="@(Editable && !GetReadOnlyState())"
+                       ShrinkLabel="@ShrinkLabel"
+                       @onclick="OnClickAsync" />;
 
 #nullable enable
     /// <summary>
@@ -118,7 +119,11 @@
             </div>
             @if (PickerVariant == PickerVariant.Inline)
             {
-                <MudOverlay Visible="@Open" OnClick="CloseOverlayAsync" LockScroll="false"/>
+                <MudOverlay Visible="@Open"
+                            AutoClose
+                            Modal="@Modal"
+                            OnClosed="CloseOverlayAsync"
+                            LockScroll="false"/>
             }
         </CascadingValue>;
 }

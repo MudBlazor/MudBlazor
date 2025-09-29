@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
 
@@ -42,6 +40,7 @@ namespace MudBlazor
 
         protected string HeadClassname => new CssBuilder("mud-table-head")
             .AddClass(HeaderClass)
+            .AddClass("mud-table-dense", Dense)
             .Build();
 
         protected string FootClassname => new CssBuilder("mud-table-foot")
@@ -73,7 +72,7 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
-        /// Can be overridden by <see cref="MudGlobal.Rounded"/>.
+        /// Override with <see cref="MudGlobal.Rounded"/>..
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Appearance)]
@@ -105,6 +104,16 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Table.Appearance)]
         public bool Dense { get; set; } = true;
+
+        /// <summary>
+        /// The CSS classes applied to all cells of the table.
+        /// </summary>
+        /// <remarks>
+        /// Multiple classes must be separated by spaces.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Table.Appearance)]
+        public string? CellClass { get; set; }
 
         /// <summary>
         /// Highlights rows when hovering over them.
@@ -669,10 +678,18 @@ namespace MudBlazor
                 return;
             }
 
-            var currentPageHasChanged = _currentPage != 0;
+
+            var currentPageHasChanged = false;
+
+            // On intialization, don't reset CurrentPage
+            // https://github.com/MudBlazor/MudBlazor/issues/11727
+            if (_rowsPerPage.HasValue)
+            {
+                currentPageHasChanged = _currentPage != 0;
+                _currentPage = 0;
+            }
+
             _rowsPerPage = size;
-            _currentPage = 0;
-            StateHasChanged();
             RowsPerPageChanged.InvokeAsync(_rowsPerPage.Value);
 
             if (currentPageHasChanged)
@@ -684,6 +701,8 @@ namespace MudBlazor
             {
                 InvokeServerLoadFunc();
             }
+
+            StateHasChanged();
         }
 
         protected abstract int NumPages { get; }

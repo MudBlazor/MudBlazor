@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
@@ -33,6 +29,11 @@ namespace MudBlazor
 
         [MemberNotNullWhen(true, nameof(ServerData))]
         internal override bool HasServerData => ServerData is not null;
+
+        protected string TableClassname =>
+            new CssBuilder("mud-table-root")
+                .AddClass(TableClass)
+                .Build();
 
         /// <summary>
         /// The columns for each row in this table.
@@ -379,6 +380,13 @@ namespace MudBlazor
                     _groupBy.Context = Context;
             }
         }
+
+        /// <summary>
+        /// The custom CSS classes to apply to the table.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Table.Appearance)]
+        public string? TableClass { get; set; }
 
         /// <summary>
         /// The content for the header of each group when <see cref="GroupBy"/> is set.
