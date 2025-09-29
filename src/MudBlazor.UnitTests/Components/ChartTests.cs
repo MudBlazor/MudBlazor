@@ -6,7 +6,6 @@ using System.Globalization;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.Options;
 using MudBlazor.Charts;
 using MudBlazor.UnitTests.TestComponents.Charts;
 using MudBlazor.Utilities;
@@ -82,7 +81,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void LineChartYAxisFormat()
+        [TestCase(ChartType.Bar)]
+        [TestCase(ChartType.Line)]
+        [TestCase(ChartType.StackedBar)]
+        public void ChartYAxisFormat(ChartType chartType)
         {
             var options = new ChartOptions();
             var series = new List<ChartSeries>()
@@ -95,7 +97,7 @@ namespace MudBlazor.UnitTests.Components
             var height = "350px";
 
             var comp = Context.RenderComponent<MudChart>(parameters => parameters
-                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.ChartType, chartType)
                 .Add(p => p.ChartSeries, series)
                 .Add(p => p.XAxisLabels, xAxis)
                 .Add(p => p.ChartOptions, options)
@@ -111,7 +113,7 @@ namespace MudBlazor.UnitTests.Components
             // now, we will apply currency format
             options.YAxisFormat = "c2";
             comp.SetParametersAndRender(parameters => parameters
-                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.ChartType, chartType)
                 .Add(p => p.ChartSeries, series)
                 .Add(p => p.XAxisLabels, xAxis)
                 .Add(p => p.ChartOptions, options)
@@ -125,7 +127,7 @@ namespace MudBlazor.UnitTests.Components
             //number format
             options.YAxisFormat = "n6";
             comp.SetParametersAndRender(parameters => parameters
-                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.ChartType, chartType)
                 .Add(p => p.ChartSeries, series)
                 .Add(p => p.XAxisLabels, xAxis)
                 .Add(p => p.ChartOptions, options)
