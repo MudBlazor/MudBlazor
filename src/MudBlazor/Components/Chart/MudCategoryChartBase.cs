@@ -44,7 +44,7 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Chart.Behavior)]
         public List<ChartSeries> ChartSeries { get; set; } = [];
-        
+
         /// <summary>
         /// The nodes to be displayed.
         /// </summary>

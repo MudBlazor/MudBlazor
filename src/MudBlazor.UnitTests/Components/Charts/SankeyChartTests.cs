@@ -38,7 +38,7 @@ namespace MudBlazor.UnitTests.Charts
         public void InvalidDataOnlyEdges()
         {
             var (_, edges) = GetNodesAndEdges();
-            
+
             Assert.Throws<ArgumentException>(() => RenderSankey([], edges));
         }
 

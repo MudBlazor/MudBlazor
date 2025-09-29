@@ -72,7 +72,7 @@ namespace MudBlazor.Charts
             var outgoing = Edges
                 .GroupBy(e => e.Source)
                 .ToDictionary(grp => grp.Key, g => g.Sum(e => e.Value));
-            
+
             var nodeValues = new Dictionary<string, double>();
             var allNodeNames = Nodes.Select(n => n.Name).Distinct();
             foreach (var nodeName in allNodeNames)
